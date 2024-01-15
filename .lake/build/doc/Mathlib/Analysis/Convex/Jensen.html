@@ -1,0 +1,917 @@
+<html lang="en"><head><meta charset="UTF-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><link rel="stylesheet" href="../../.././style.css"></link><link rel="stylesheet" href="../../.././src/pygments.css"></link><link rel="shortcut icon" href="../../.././favicon.ico"></link><link rel="prefetch" href="../../.././/declarations/declaration-data.bmp" as="image"></link><title>Mathlib.Analysis.Convex.Jensen</title><script defer="true" src="../../.././mathjax-config.js"></script><script defer="true" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script defer="true" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>const SITE_ROOT="../../.././";</script><script>const MODULE_NAME="Mathlib.Analysis.Convex.Jensen";</script><script type="module" src="../../.././jump-src.js"></script><script type="module" src="../../.././search.js"></script><script type="module" src="../../.././expand-nav.js"></script><script type="module" src="../../.././how-about.js"></script><script type="module" src="../../.././instances.js"></script><script type="module" src="../../.././importedBy.js"></script></head><body><input id="nav_toggle" type="checkbox"></input><header><h1><label for="nav_toggle"></label><span>Documentation</span></h1><h2 class="header_filename break_within"><span class="name">Mathlib</span>.<span class="name">Analysis</span>.<span class="name">Convex</span>.<span class="name">Jensen</span></h2><form action="https://google.com/search" method="get" id="search_form"><input type="hidden" name="sitesearch" value="https://leanprover-community.github.io/mathlib4_docs"></input><input type="text" name="q" autocomplete="off"></input>&#32;
+            <button id="search_button" onclick="javascript: form.action='../../.././search.html';">Search</button><button>Google site search</button></form></header><nav class="internal_nav"><p><a href="#top">return to top</a></p><p class="gh_nav_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean">source</a></p><div class="imports"><details><summary>Imports</summary><ul><li><a href="../../.././Init.html">Init</a></li><li><a href="../../.././Mathlib/Tactic/FieldSimp.html">Mathlib.Tactic.FieldSimp</a></li><li><a href="../../.././Mathlib/Analysis/Convex/Combination.html">Mathlib.Analysis.Convex.Combination</a></li><li><a href="../../.././Mathlib/Analysis/Convex/Function.html">Mathlib.Analysis.Convex.Function</a></li></ul></details><details><summary>Imported by</summary><ul id="imported-by-Mathlib.Analysis.Convex.Jensen" class="imported-by-list"></ul></details></div><div class="nav_link"><a class="break_within" href="#ConvexOn.map_centerMass_le"><span class="name">ConvexOn</span>.<span class="name">map_centerMass_le</span></a></div><div class="nav_link"><a class="break_within" href="#ConcaveOn.le_map_centerMass"><span class="name">ConcaveOn</span>.<span class="name">le_map_centerMass</span></a></div><div class="nav_link"><a class="break_within" href="#ConvexOn.map_sum_le"><span class="name">ConvexOn</span>.<span class="name">map_sum_le</span></a></div><div class="nav_link"><a class="break_within" href="#ConcaveOn.le_map_sum"><span class="name">ConcaveOn</span>.<span class="name">le_map_sum</span></a></div><div class="nav_link"><a class="break_within" href="#ConvexOn.map_add_sum_le"><span class="name">ConvexOn</span>.<span class="name">map_add_sum_le</span></a></div><div class="nav_link"><a class="break_within" href="#ConcaveOn.map_add_sum_le"><span class="name">ConcaveOn</span>.<span class="name">map_add_sum_le</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConvexOn.map_sum_lt"><span class="name">StrictConvexOn</span>.<span class="name">map_sum_lt</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConcaveOn.lt_map_sum"><span class="name">StrictConcaveOn</span>.<span class="name">lt_map_sum</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConvexOn.eq_of_le_map_sum"><span class="name">StrictConvexOn</span>.<span class="name">eq_of_le_map_sum</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConcaveOn.eq_of_map_sum_eq"><span class="name">StrictConcaveOn</span>.<span class="name">eq_of_map_sum_eq</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConvexOn.map_sum_eq_iff"><span class="name">StrictConvexOn</span>.<span class="name">map_sum_eq_iff</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConcaveOn.map_sum_eq_iff"><span class="name">StrictConcaveOn</span>.<span class="name">map_sum_eq_iff</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConvexOn.map_sum_eq_iff'"><span class="name">StrictConvexOn</span>.<span class="name">map_sum_eq_iff'</span></a></div><div class="nav_link"><a class="break_within" href="#StrictConcaveOn.map_sum_eq_iff'"><span class="name">StrictConcaveOn</span>.<span class="name">map_sum_eq_iff'</span></a></div><div class="nav_link"><a class="break_within" href="#le_sup_of_mem_convexHull"><span class="name">le_sup_of_mem_convexHull</span></a></div><div class="nav_link"><a class="break_within" href="#inf_le_of_mem_convexHull"><span class="name">inf_le_of_mem_convexHull</span></a></div><div class="nav_link"><a class="break_within" href="#ConvexOn.exists_ge_of_centerMass"><span class="name">ConvexOn</span>.<span class="name">exists_ge_of_centerMass</span></a></div><div class="nav_link"><a class="break_within" href="#ConcaveOn.exists_le_of_centerMass"><span class="name">ConcaveOn</span>.<span class="name">exists_le_of_centerMass</span></a></div><div class="nav_link"><a class="break_within" href="#ConvexOn.exists_ge_of_mem_convexHull"><span class="name">ConvexOn</span>.<span class="name">exists_ge_of_mem_convexHull</span></a></div><div class="nav_link"><a class="break_within" href="#ConcaveOn.exists_le_of_mem_convexHull"><span class="name">ConcaveOn</span>.<span class="name">exists_le_of_mem_convexHull</span></a></div><div class="nav_link"><a class="break_within" href="#ConvexOn.le_max_of_mem_segment"><span class="name">ConvexOn</span>.<span class="name">le_max_of_mem_segment</span></a></div><div class="nav_link"><a class="break_within" href="#ConcaveOn.min_le_of_mem_segment"><span class="name">ConcaveOn</span>.<span class="name">min_le_of_mem_segment</span></a></div><div class="nav_link"><a class="break_within" href="#ConvexOn.le_max_of_mem_Icc"><span class="name">ConvexOn</span>.<span class="name">le_max_of_mem_Icc</span></a></div><div class="nav_link"><a class="break_within" href="#ConcaveOn.min_le_of_mem_Icc"><span class="name">ConcaveOn</span>.<span class="name">min_le_of_mem_Icc</span></a></div></nav><main>
+<div class="mod_doc"><h1 class="markdown-heading" id="Jensen-s-inequality-and-maximum-principle-for-convex-functions">Jensen's inequality and maximum principle for convex functions <a class="hover-link" href="#Jensen-s-inequality-and-maximum-principle-for-convex-functions">#</a></h1><p>In this file, we prove the finite Jensen inequality and the finite maximum principle for convex
+functions. The integral versions are to be found in <code>Analysis.Convex.Integral</code>.</p><h2 class="markdown-heading" id="Main-declarations">Main declarations <a class="hover-link" href="#Main-declarations">#</a></h2><p>Jensen's inequalities:</p><ul>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.map_centerMass_le">ConvexOn.map_centerMass_le</a></code>, <code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.map_sum_le">ConvexOn.map_sum_le</a></code>: Convex Jensen's inequality. The image of a
+convex combination of points under a convex function is less than the convex combination of the
+images.</li>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.le_map_centerMass">ConcaveOn.le_map_centerMass</a></code>, <code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.le_map_sum">ConcaveOn.le_map_sum</a></code>: Concave Jensen's inequality.</li>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.map_sum_lt">StrictConvexOn.map_sum_lt</a></code>: Convex strict Jensen inequality.</li>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.lt_map_sum">StrictConcaveOn.lt_map_sum</a></code>: Concave strict Jensen inequality.</li>
+</ul><p>As corollaries, we get:</p><ul>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.map_sum_eq_iff">StrictConvexOn.map_sum_eq_iff</a></code>: Equality case of the convex Jensen inequality.</li>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.map_sum_eq_iff">StrictConcaveOn.map_sum_eq_iff</a></code>: Equality case of the concave Jensen inequality.</li>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.exists_ge_of_mem_convexHull">ConvexOn.exists_ge_of_mem_convexHull</a></code>: Maximum principle for convex functions.</li>
+<li><code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.exists_le_of_mem_convexHull">ConcaveOn.exists_le_of_mem_convexHull</a></code>: Minimum principle for concave functions.</li>
+</ul></div><div class="mod_doc"><h3 class="markdown-heading" id="Jensen-s-inequality">Jensen's inequality <a class="hover-link" href="#Jensen-s-inequality">#</a></h3></div><div class="decl" id="ConvexOn.map_centerMass_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L51-L57">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.map_centerMass_le"><span class="name">ConvexOn</span>.<span class="name">map_centerMass_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a> <span class="fn">t</span> <span class="fn">w</span> <span class="fn">p</span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a> <span class="fn">t</span> <span class="fn">w</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../.././Init/Prelude.html#Function.comp">∘</a> <span class="fn">p</span></span>)</span></span></span></div></div><p>Convex <strong>Jensen's inequality</strong>, <code><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a></code> version.</p></div></div><div class="decl" id="ConcaveOn.le_map_centerMass"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L61-L64">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.le_map_centerMass"><span class="name">ConcaveOn</span>.<span class="name">le_map_centerMass</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a> <span class="fn">t</span> <span class="fn">w</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../.././Init/Prelude.html#Function.comp">∘</a> <span class="fn">p</span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a> <span class="fn">t</span> <span class="fn">w</span> <span class="fn">p</span></span>)</span></span></span></div></div><p>Concave <strong>Jensen's inequality</strong>, <code><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a></code> version.</p></div></div><div class="decl" id="ConvexOn.map_sum_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L68-L71">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.map_sum_le"><span class="name">ConvexOn</span>.<span class="name">map_sum_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span></div></div><p>Convex <strong>Jensen's inequality</strong>, <code><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a></code> version.</p></div></div><div class="decl" id="ConcaveOn.le_map_sum"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L75-L78">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.le_map_sum"><span class="name">ConcaveOn</span>.<span class="name">le_map_sum</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span></span></div></div><p>Concave <strong>Jensen's inequality</strong>, <code><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a></code> version.</p></div></div><div class="decl" id="ConvexOn.map_add_sum_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L82-L90">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.map_add_sum_le"><span class="name">ConvexOn</span>.<span class="name">map_add_sum_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn">𝕜</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{q : <span class="fn">E</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hv : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hq : <span class="fn"><span class="fn">q</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn"><span class="fn">v</span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn">q</span></span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn"><span class="fn">v</span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">q</span></span></span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span></span></div></div><p>Convex <strong>Jensen's inequality</strong> where an element plays a distinguished role.</p></div></div><div class="decl" id="ConcaveOn.map_add_sum_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L93-L96">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.map_add_sum_le"><span class="name">ConcaveOn</span>.<span class="name">map_add_sum_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn">𝕜</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{q : <span class="fn">E</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hv : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hq : <span class="fn"><span class="fn">q</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn"><span class="fn">v</span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">q</span></span></span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn"><span class="fn">v</span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn">q</span></span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span></span>)</span></span></span></div></div><p>Concave <strong>Jensen's inequality</strong> where an element plays a distinguished role.</p></div></div><div class="mod_doc"><h3 class="markdown-heading" id="Strict-Jensen-inequality">Strict Jensen inequality <a class="hover-link" href="#Strict-Jensen-inequality">#</a></h3></div><div class="decl" id="StrictConvexOn.map_sum_lt"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L106-L142">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.map_sum_lt"><span class="name">StrictConvexOn</span>.<span class="name">map_sum_lt</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConvexOn">StrictConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hp : <span class="fn">∃ j ∈ <span class="fn">t</span>, <span class="fn">∃ k ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn"><span class="fn">p</span> <span class="fn">k</span></span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span></div></div><p>Convex <strong>strict Jensen inequality</strong>.</p><p>If the function is strictly convex, the weights are strictly positive and the indexed family of
+points is non-constant, then Jensen's inequality is strict.</p><p>See also <code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.map_sum_eq_iff">StrictConvexOn.map_sum_eq_iff</a></code>.</p></div></div><div class="decl" id="StrictConcaveOn.lt_map_sum"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L150-L152">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.lt_map_sum"><span class="name">StrictConcaveOn</span>.<span class="name">lt_map_sum</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConcaveOn">StrictConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hp : <span class="fn">∃ j ∈ <span class="fn">t</span>, <span class="fn">∃ k ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn"><span class="fn">p</span> <span class="fn">k</span></span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span></span></div></div><p>Concave <strong>strict Jensen inequality</strong>.</p><p>If the function is strictly concave, the weights are strictly positive and the indexed family of
+points is non-constant, then Jensen's inequality is strict.</p><p>See also <code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.map_sum_eq_iff">StrictConcaveOn.map_sum_eq_iff</a></code>.</p></div></div><div class="mod_doc"><h3 class="markdown-heading" id="Equality-case-of-Jensen-s-inequality">Equality case of Jensen's inequality <a class="hover-link" href="#Equality-case-of-Jensen-s-inequality">#</a></h3></div><div class="decl" id="StrictConvexOn.eq_of_le_map_sum"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L162-L166">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.eq_of_le_map_sum"><span class="name">StrictConvexOn</span>.<span class="name">eq_of_le_map_sum</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConvexOn">StrictConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h_eq : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">⦃j : <span class="fn">ι</span>⦄</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">j</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">t</span></span> → <span class="fn">∀ ⦃<span class="fn">k</span> : <span class="fn">ι</span>⦄, <span class="fn"><span class="fn"><span class="fn">k</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">t</span></span> → <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">p</span> <span class="fn">k</span></span></span></span></span></span></div></div><p>A form of the <strong>equality case of Jensen's equality</strong>.</p><p>For a strictly convex function <code>f</code> and positive weights <code>w</code>, if
+<code>f (∑ i in t, w i • p i) = ∑ i in t, w i • f (p i)</code>, then the points <code>p</code> are all equal.</p><p>See also <code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.map_sum_eq_iff">StrictConvexOn.map_sum_eq_iff</a></code>.</p></div></div><div class="decl" id="StrictConcaveOn.eq_of_map_sum_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L174-L178">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.eq_of_map_sum_eq"><span class="name">StrictConcaveOn</span>.<span class="name">eq_of_map_sum_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConcaveOn">StrictConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h_eq : <span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">⦃j : <span class="fn">ι</span>⦄</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">j</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">t</span></span> → <span class="fn">∀ ⦃<span class="fn">k</span> : <span class="fn">ι</span>⦄, <span class="fn"><span class="fn"><span class="fn">k</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">t</span></span> → <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">p</span> <span class="fn">k</span></span></span></span></span></span></div></div><p>A form of the <strong>equality case of Jensen's equality</strong>.</p><p>For a strictly concave function <code>f</code> and positive weights <code>w</code>, if
+<code>f (∑ i in t, w i • p i) = ∑ i in t, w i • f (p i)</code>, then the points <code>p</code> are all equal.</p><p>See also <code><a href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.map_sum_eq_iff">StrictConcaveOn.map_sum_eq_iff</a></code>.</p></div></div><div class="decl" id="StrictConvexOn.map_sum_eq_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L185-L204">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.map_sum_eq_iff"><span class="name">StrictConvexOn</span>.<span class="name">map_sum_eq_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConvexOn">StrictConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span>)</span> <a href="../../.././Init/Core.html#Iff">↔</a>   <span class="fn">∀ <span class="fn">j</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span></span></span></span></div></div><p>Canonical form of the <strong>equality case of Jensen's equality</strong>.</p><p>For a strictly convex function <code>f</code> and positive weights <code>w</code>, we have
+<code>f (∑ i in t, w i • p i) = ∑ i in t, w i • f (p i)</code> if and only if the points <code>p</code> are all equal
+(and in fact all equal to their center of mass wrt <code>w</code>).</p></div></div><div class="decl" id="StrictConcaveOn.map_sum_eq_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L211-L214">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.map_sum_eq_iff"><span class="name">StrictConcaveOn</span>.<span class="name">map_sum_eq_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConcaveOn">StrictConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span>)</span> <a href="../../.././Init/Core.html#Iff">↔</a>   <span class="fn">∀ <span class="fn">j</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span></span></span></span></div></div><p>Canonical form of the <strong>equality case of Jensen's equality</strong>.</p><p>For a strictly concave function <code>f</code> and positive weights <code>w</code>, we have
+<code>f (∑ i in t, w i • p i) = ∑ i in t, w i • f (p i)</code> if and only if the points <code>p</code> are all equal
+(and in fact all equal to their center of mass wrt <code>w</code>).</p></div></div><div class="decl" id="StrictConvexOn.map_sum_eq_iff'"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L221-L231">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConvexOn.map_sum_eq_iff'"><span class="name">StrictConvexOn</span>.<span class="name">map_sum_eq_iff'</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConvexOn">StrictConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span>)</span> <a href="../../.././Init/Core.html#Iff">↔</a>   <span class="fn">∀ <span class="fn">j</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">j</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span> → <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span></span></span></span></span></div></div><p>Canonical form of the <strong>equality case of Jensen's equality</strong>.</p><p>For a strictly convex function <code>f</code> and nonnegative weights <code>w</code>, we have
+<code>f (∑ i in t, w i • p i) = ∑ i in t, w i • f (p i)</code> if and only if the points <code>p</code> with nonzero
+weight are all equal (and in fact all equal to their center of mass wrt <code>w</code>).</p></div></div><div class="decl" id="StrictConcaveOn.map_sum_eq_iff'"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L238-L241">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#StrictConcaveOn.map_sum_eq_iff'"><span class="name">StrictConcaveOn</span>.<span class="name">map_sum_eq_iff'</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#OrderedAddCommGroup">OrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#StrictConcaveOn">StrictConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hmem : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span>)</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></span></span>)</span> <a href="../../.././Init/Core.html#Iff">↔</a>   <span class="fn">∀ <span class="fn">j</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">j</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span> → <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">j</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">w</span> <span class="fn">i</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">p</span> <span class="fn">i</span></span></span></span></span></span></span></span></span></div></div><p>Canonical form of the <strong>equality case of Jensen's equality</strong>.</p><p>For a strictly concave function <code>f</code> and nonnegative weights <code>w</code>, we have
+<code>f (∑ i in t, w i • p i) = ∑ i in t, w i • f (p i)</code> if and only if the points <code>p</code> with nonzero
+weight are all equal (and in fact all equal to their center of mass wrt <code>w</code>).</p></div></div><div class="mod_doc"><h3 class="markdown-heading" id="Maximum-principle">Maximum principle <a class="hover-link" href="#Maximum-principle">#</a></h3></div><div class="decl" id="le_sup_of_mem_convexHull"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L254-L259">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#le_sup_of_mem_convexHull"><span class="name">le_sup_of_mem_convexHull</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">E</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">↑<span class="fn">s</span></span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hx : <span class="fn"><span class="fn">x</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">↑<span class="fn">s</span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><a href="../../.././Mathlib/Data/Finset/Lattice.html#Finset.sup'">Finset.sup'</a> <span class="fn">s</span> <span class="fn">(_ : <span class="fn"><span class="fn">s</span>.Nonempty</span>)</span> <span class="fn">f</span></span></span></div></div></div></div><div class="decl" id="inf_le_of_mem_convexHull"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L262-L265">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#inf_le_of_mem_convexHull"><span class="name">inf_le_of_mem_convexHull</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">E</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">↑<span class="fn">s</span></span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hx : <span class="fn"><span class="fn">x</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">↑<span class="fn">s</span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Data/Finset/Lattice.html#Finset.inf'">Finset.inf'</a> <span class="fn">s</span> <span class="fn">(_ : <span class="fn"><span class="fn">s</span>.Nonempty</span>)</span> <span class="fn">f</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">x</span></span></span></div></div></div></div><div class="decl" id="ConvexOn.exists_ge_of_centerMass"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L270-L282">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.exists_ge_of_centerMass"><span class="name">ConvexOn</span>.<span class="name">exists_ge_of_centerMass</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hw₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hw₁ : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hp : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∃ i ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a> <span class="fn">t</span> <span class="fn">w</span> <span class="fn">p</span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span></span></span></div></div><p>If a function <code>f</code> is convex on <code>s</code>, then the value it takes at some center of mass of points of
+<code>s</code> is less than the value it takes on one of those points.</p></div></div><div class="decl" id="ConcaveOn.exists_le_of_centerMass"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L287-L289">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.exists_le_of_centerMass"><span class="name">ConcaveOn</span>.<span class="name">exists_le_of_centerMass</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">ι</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p : <span class="fn"><span class="fn">ι</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">s</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hw₀ : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hw₁ : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn"><a href="../../.././Mathlib/Algebra/BigOperators/Basic.html#Finset.sum">Finset.sum</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><span class="fn">w</span> <span class="fn">i</span></span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hp : <span class="fn">∀ <span class="fn">i</span> ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">p</span> <span class="fn">i</span></span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∃ i ∈ <span class="fn">t</span>, <span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><span class="fn">p</span> <span class="fn">i</span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Combination.html#Finset.centerMass">Finset.centerMass</a> <span class="fn">t</span> <span class="fn">w</span> <span class="fn">p</span></span>)</span></span></span></span></div></div><p>If a function <code>f</code> is concave on <code>s</code>, then the value it takes at some center of mass of points of
+<code>s</code> is greater than the value it takes on one of those points.</p></div></div><div class="decl" id="ConvexOn.exists_ge_of_mem_convexHull"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L294-L301">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.exists_ge_of_mem_convexHull"><span class="name">ConvexOn</span>.<span class="name">exists_ge_of_mem_convexHull</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">s</span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">E</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hx : <span class="fn"><span class="fn">x</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∃ y ∈ <span class="fn">s</span>, <span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">y</span></span></span></span></div></div><p><strong>Maximum principle</strong> for convex functions. If a function <code>f</code> is convex on the convex hull of
+<code>s</code>, then the eventual maximum of <code>f</code> on <code><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> 𝕜 s</code> lies in <code>s</code>.</p></div></div><div class="decl" id="ConcaveOn.exists_le_of_mem_convexHull"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L306-L308">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.exists_le_of_mem_convexHull"><span class="name">ConcaveOn</span>.<span class="name">exists_le_of_mem_convexHull</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">s</span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">E</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hx : <span class="fn"><span class="fn">x</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> <span class="fn">𝕜</span></span>)</span> <span class="fn">s</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∃ y ∈ <span class="fn">s</span>, <span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">y</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">x</span></span></span></span></div></div><p><strong>Minimum principle</strong> for concave functions. If a function <code>f</code> is concave on the convex hull of
+<code>s</code>, then the eventual minimum of <code>f</code> on <code><a href="../../.././Mathlib/Analysis/Convex/Hull.html#convexHull">convexHull</a> 𝕜 s</code> lies in <code>s</code>.</p></div></div><div class="decl" id="ConvexOn.le_max_of_mem_segment"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L313-L315">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.le_max_of_mem_segment"><span class="name">ConvexOn</span>.<span class="name">le_max_of_mem_segment</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">E</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{y : <span class="fn">E</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{z : <span class="fn">E</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Segment.html#segment">segment</a> <span class="fn">𝕜</span> <span class="fn">x</span> <span class="fn">y</span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hz : <span class="fn"><span class="fn">z</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Segment.html#segment">segment</a> <span class="fn">𝕜</span> <span class="fn">x</span> <span class="fn">y</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">z</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><a href="../../.././Init/Prelude.html#Max.max">max</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">y</span></span>)</span></span></span></div></div><p><strong>Maximum principle</strong> for convex functions on a segment. If a function <code>f</code> is convex on the
+segment <code>[x, y]</code>, then the eventual maximum of <code>f</code> on <code>[x, y]</code> is at <code>x</code> or <code>y</code>.</p></div></div><div class="decl" id="ConcaveOn.min_le_of_mem_segment"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L319-L321">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.min_le_of_mem_segment"><span class="name">ConcaveOn</span>.<span class="name">min_le_of_mem_segment</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">E</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">E</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{y : <span class="fn">E</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{z : <span class="fn">E</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Segment.html#segment">segment</a> <span class="fn">𝕜</span> <span class="fn">x</span> <span class="fn">y</span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hz : <span class="fn"><span class="fn">z</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Segment.html#segment">segment</a> <span class="fn">𝕜</span> <span class="fn">x</span> <span class="fn">y</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Init/Prelude.html#Min.min">min</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">y</span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">z</span></span></span></div></div><p><strong>Minimum principle</strong> for concave functions on a segment. If a function <code>f</code> is concave on the
+segment <code>[x, y]</code>, then the eventual minimum of <code>f</code> on <code>[x, y]</code> is at <code>x</code> or <code>y</code>.</p></div></div><div class="decl" id="ConvexOn.le_max_of_mem_Icc"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L325-L327">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConvexOn.le_max_of_mem_Icc"><span class="name">ConvexOn</span>.<span class="name">le_max_of_mem_Icc</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">𝕜</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">𝕜</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{y : <span class="fn">𝕜</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{z : <span class="fn">𝕜</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConvexOn">ConvexOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">x</span> <span class="fn">y</span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hz : <span class="fn"><span class="fn">z</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">x</span> <span class="fn">y</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">z</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><a href="../../.././Init/Prelude.html#Max.max">max</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">y</span></span>)</span></span></span></div></div><p><strong>Maximum principle</strong> for convex functions on an interval. If a function <code>f</code> is convex on the
+interval <code>[x, y]</code>, then the eventual maximum of <code>f</code> on <code>[x, y]</code> is at <code>x</code> or <code>y</code>.</p></div></div><div class="decl" id="ConcaveOn.min_le_of_mem_Icc"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Convex/Jensen.lean#L331-L333">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Convex/Jensen.html#ConcaveOn.min_le_of_mem_Icc"><span class="name">ConcaveOn</span>.<span class="name">min_le_of_mem_Icc</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_4}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Field/Defs.html#LinearOrderedField">LinearOrderedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Group/Defs.html#LinearOrderedAddCommGroup">LinearOrderedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Order/Module/OrderedSMul.html#OrderedSMul">OrderedSMul</a> <span class="fn">𝕜</span> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">𝕜</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">𝕜</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{y : <span class="fn">𝕜</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{z : <span class="fn">𝕜</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Analysis/Convex/Function.html#ConcaveOn">ConcaveOn</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">x</span> <span class="fn">y</span></span>)</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hz : <span class="fn"><span class="fn">z</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">x</span> <span class="fn">y</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Init/Prelude.html#Min.min">min</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">y</span></span>)</span></span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn">f</span> <span class="fn">z</span></span></span></div></div><p><strong>Minimum principle</strong> for concave functions on an interval. If a function <code>f</code> is concave on the
+interval <code>[x, y]</code>, then the eventual minimum of <code>f</code> on <code>[x, y]</code> is at <code>x</code> or <code>y</code>.</p></div></div></main>
+<nav class="nav"><iframe src="../../.././navbar.html" class="navframe" frameBorder="0"></iframe></nav></body></html>

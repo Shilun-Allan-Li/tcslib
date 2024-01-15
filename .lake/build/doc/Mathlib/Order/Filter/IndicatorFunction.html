@@ -1,0 +1,504 @@
+<html lang="en"><head><meta charset="UTF-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><link rel="stylesheet" href="../../.././style.css"></link><link rel="stylesheet" href="../../.././src/pygments.css"></link><link rel="shortcut icon" href="../../.././favicon.ico"></link><link rel="prefetch" href="../../.././/declarations/declaration-data.bmp" as="image"></link><title>Mathlib.Order.Filter.IndicatorFunction</title><script defer="true" src="../../.././mathjax-config.js"></script><script defer="true" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script defer="true" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>const SITE_ROOT="../../.././";</script><script>const MODULE_NAME="Mathlib.Order.Filter.IndicatorFunction";</script><script type="module" src="../../.././jump-src.js"></script><script type="module" src="../../.././search.js"></script><script type="module" src="../../.././expand-nav.js"></script><script type="module" src="../../.././how-about.js"></script><script type="module" src="../../.././instances.js"></script><script type="module" src="../../.././importedBy.js"></script></head><body><input id="nav_toggle" type="checkbox"></input><header><h1><label for="nav_toggle"></label><span>Documentation</span></h1><h2 class="header_filename break_within"><span class="name">Mathlib</span>.<span class="name">Order</span>.<span class="name">Filter</span>.<span class="name">IndicatorFunction</span></h2><form action="https://google.com/search" method="get" id="search_form"><input type="hidden" name="sitesearch" value="https://leanprover-community.github.io/mathlib4_docs"></input><input type="text" name="q" autocomplete="off"></input>&#32;
+            <button id="search_button" onclick="javascript: form.action='../../.././search.html';">Search</button><button>Google site search</button></form></header><nav class="internal_nav"><p><a href="#top">return to top</a></p><p class="gh_nav_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean">source</a></p><div class="imports"><details><summary>Imports</summary><ul><li><a href="../../.././Init.html">Init</a></li><li><a href="../../.././Mathlib/Algebra/Function/Indicator.html">Mathlib.Algebra.Function.Indicator</a></li><li><a href="../../.././Mathlib/Order/Filter/AtTopBot.html">Mathlib.Order.Filter.AtTopBot</a></li></ul></details><details><summary>Imported by</summary><ul id="imported-by-Mathlib.Order.Filter.IndicatorFunction" class="imported-by-list"></ul></details></div><div class="nav_link"><a class="break_within" href="#indicator_eventuallyEq"><span class="name">indicator_eventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#mulIndicator_eventuallyEq"><span class="name">mulIndicator_eventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#indicator_union_eventuallyEq"><span class="name">indicator_union_eventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#mulIndicator_union_eventuallyEq"><span class="name">mulIndicator_union_eventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#indicator_eventuallyLE_indicator"><span class="name">indicator_eventuallyLE_indicator</span></a></div><div class="nav_link"><a class="break_within" href="#mulIndicator_eventuallyLE_mulIndicator"><span class="name">mulIndicator_eventuallyLE_mulIndicator</span></a></div><div class="nav_link"><a class="break_within" href="#Monotone.indicator_eventuallyEq_iUnion"><span class="name">Monotone</span>.<span class="name">indicator_eventuallyEq_iUnion</span></a></div><div class="nav_link"><a class="break_within" href="#Monotone.mulIndicator_eventuallyEq_iUnion"><span class="name">Monotone</span>.<span class="name">mulIndicator_eventuallyEq_iUnion</span></a></div><div class="nav_link"><a class="break_within" href="#Monotone.tendsto_indicator"><span class="name">Monotone</span>.<span class="name">tendsto_indicator</span></a></div><div class="nav_link"><a class="break_within" href="#Monotone.tendsto_mulIndicator"><span class="name">Monotone</span>.<span class="name">tendsto_mulIndicator</span></a></div><div class="nav_link"><a class="break_within" href="#Antitone.indicator_eventuallyEq_iInter"><span class="name">Antitone</span>.<span class="name">indicator_eventuallyEq_iInter</span></a></div><div class="nav_link"><a class="break_within" href="#Antitone.mulIndicator_eventuallyEq_iInter"><span class="name">Antitone</span>.<span class="name">mulIndicator_eventuallyEq_iInter</span></a></div><div class="nav_link"><a class="break_within" href="#Antitone.tendsto_indicator"><span class="name">Antitone</span>.<span class="name">tendsto_indicator</span></a></div><div class="nav_link"><a class="break_within" href="#Antitone.tendsto_mulIndicator"><span class="name">Antitone</span>.<span class="name">tendsto_mulIndicator</span></a></div><div class="nav_link"><a class="break_within" href="#indicator_biUnion_finset_eventuallyEq"><span class="name">indicator_biUnion_finset_eventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#mulIndicator_biUnion_finset_eventuallyEq"><span class="name">mulIndicator_biUnion_finset_eventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#tendsto_indicator_biUnion_finset"><span class="name">tendsto_indicator_biUnion_finset</span></a></div><div class="nav_link"><a class="break_within" href="#tendsto_mulIndicator_biUnion_finset"><span class="name">tendsto_mulIndicator_biUnion_finset</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.support"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">support</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.mulSupport"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">mulSupport</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.indicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">indicator</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.mulIndicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">mulIndicator</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.indicator_zero"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">indicator_zero</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.mulIndicator_one"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">mulIndicator_one</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.of_indicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_indicator</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.of_mulIndicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_mulIndicator</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.of_indicator_const"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_indicator_const</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.of_mulIndicator_const"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_mulIndicator_const</span></a></div></nav><main>
+<div class="mod_doc"><h1 class="markdown-heading" id="Indicator-function-and-filters">Indicator function and filters <a class="hover-link" href="#Indicator-function-and-filters">#</a></h1><p>Properties of additive and multiplicative indicator functions involving <code>=ᶠ</code> and <code>≤ᶠ</code>.</p><h2 class="markdown-heading" id="Tags">Tags <a class="hover-link" href="#Tags">#</a></h2><p>indicator, characteristic, filter</p></div><div class="decl" id="indicator_eventuallyEq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L28-L28">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#indicator_eventuallyEq"><span class="name">indicator_eventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{M : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">M</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">M</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><span class="fn">l</span> <a href="../../.././Mathlib/Order/Basic.html#Inf.inf">⊓</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.principal">Filter.principal</a> <span class="fn">s</span></span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><span class="fn">s</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">t</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">t</span> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="mulIndicator_eventuallyEq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L29-L34">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#mulIndicator_eventuallyEq"><span class="name">mulIndicator_eventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{M : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">M</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">M</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><span class="fn">l</span> <a href="../../.././Mathlib/Order/Basic.html#Inf.inf">⊓</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.principal">Filter.principal</a> <span class="fn">s</span></span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><span class="fn">s</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">t</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">t</span> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="indicator_union_eventuallyEq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L43-L43">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#indicator_union_eventuallyEq"><span class="name">indicator_union_eventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{M : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#AddMonoid">AddMonoid</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">M</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn">∀ᶠ (a : <span class="fn">α</span>) in <span class="fn">l</span>, <span class="fn"><span class="fn">a</span> ∉ <span class="fn"><span class="fn">s</span> <a href="../../.././Std/Classes/SetNotation.html#Inter.inter">∩</a> <span class="fn">t</span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <a href="../../.././Std/Classes/SetNotation.html#Union.union">∪</a> <span class="fn">t</span></span>)</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">t</span> <span class="fn">f</span></span></span></span></div></div></div></div><div class="decl" id="mulIndicator_union_eventuallyEq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L44-L46">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#mulIndicator_union_eventuallyEq"><span class="name">mulIndicator_union_eventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{M : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Algebra/Group/Defs.html#Monoid">Monoid</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">M</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn">∀ᶠ (a : <span class="fn">α</span>) in <span class="fn">l</span>, <span class="fn"><span class="fn">a</span> ∉ <span class="fn"><span class="fn">s</span> <a href="../../.././Std/Classes/SetNotation.html#Inter.inter">∩</a> <span class="fn">t</span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <a href="../../.././Std/Classes/SetNotation.html#Union.union">∪</a> <span class="fn">t</span></span>)</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Init/Prelude.html#HMul.hMul">*</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">t</span> <span class="fn">f</span></span></span></span></div></div></div></div><div class="decl" id="indicator_eventuallyLE_indicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L55-L55">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#indicator_eventuallyLE_indicator"><span class="name">indicator_eventuallyLE_indicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">≤ᶠ[</a><span class="fn"><span class="fn">l</span> <a href="../../.././Mathlib/Order/Basic.html#Inf.inf">⊓</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.principal">Filter.principal</a> <span class="fn">s</span></span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">≤ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="mulIndicator_eventuallyLE_mulIndicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L56-L58">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#mulIndicator_eventuallyLE_mulIndicator"><span class="name">mulIndicator_eventuallyLE_mulIndicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">≤ᶠ[</a><span class="fn"><span class="fn">l</span> <a href="../../.././Mathlib/Order/Basic.html#Inf.inf">⊓</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.principal">Filter.principal</a> <span class="fn">s</span></span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">≤ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyLE">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="Monotone.indicator_eventuallyEq_iUnion"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L63-L63">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Monotone.indicator_eventuallyEq_iUnion"><span class="name">Monotone</span>.<span class="name">indicator_eventuallyEq_iUnion</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Monotone">Monotone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">Filter.atTop</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn">⋃ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span></span></div></div></div></div><div class="decl" id="Monotone.mulIndicator_eventuallyEq_iUnion"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L64-L67">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Monotone.mulIndicator_eventuallyEq_iUnion"><span class="name">Monotone</span>.<span class="name">mulIndicator_eventuallyEq_iUnion</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Monotone">Monotone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">Filter.atTop</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn">⋃ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span></span></div></div></div></div><div class="decl" id="Monotone.tendsto_indicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L69-L69">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Monotone.tendsto_indicator"><span class="name">Monotone</span>.<span class="name">tendsto_indicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Monotone">Monotone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <span class="fn">Filter.atTop</span> <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Pure.pure">pure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn">⋃ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="Monotone.tendsto_mulIndicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L70-L73">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Monotone.tendsto_mulIndicator"><span class="name">Monotone</span>.<span class="name">tendsto_mulIndicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Monotone">Monotone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <span class="fn">Filter.atTop</span> <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Pure.pure">pure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn">⋃ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="Antitone.indicator_eventuallyEq_iInter"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L76-L76">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Antitone.indicator_eventuallyEq_iInter"><span class="name">Antitone</span>.<span class="name">indicator_eventuallyEq_iInter</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Antitone">Antitone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">Filter.atTop</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn">⋂ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span></span></div></div></div></div><div class="decl" id="Antitone.mulIndicator_eventuallyEq_iInter"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L77-L80">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Antitone.mulIndicator_eventuallyEq_iInter"><span class="name">Antitone</span>.<span class="name">mulIndicator_eventuallyEq_iInter</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Antitone">Antitone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">Filter.atTop</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn">⋂ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span></span></div></div></div></div><div class="decl" id="Antitone.tendsto_indicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L82-L82">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Antitone.tendsto_indicator"><span class="name">Antitone</span>.<span class="name">tendsto_indicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Antitone">Antitone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <span class="fn">Filter.atTop</span> <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Pure.pure">pure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn">⋂ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="Antitone.tendsto_mulIndicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L83-L86">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Antitone.tendsto_mulIndicator"><span class="name">Antitone</span>.<span class="name">tendsto_mulIndicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#Preorder">Preorder</a> <span class="fn">ι</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../.././Mathlib/Order/Monotone/Basic.html#Antitone">Antitone</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">ι</span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <span class="fn">i</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <span class="fn">Filter.atTop</span> <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Pure.pure">pure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn">⋂ (i : <span class="fn">ι</span>), <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="indicator_biUnion_finset_eventuallyEq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L89-L89">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#indicator_biUnion_finset_eventuallyEq"><span class="name">indicator_biUnion_finset_eventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn">fun (<span class="fn">n</span> : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn">⋃ i ∈ <span class="fn">n</span>, <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">Filter.atTop</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>) =&gt;
+  <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Lattice.html#Set.iUnion">Set.iUnion</a> <span class="fn">s</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span></span></div></div></div></div><div class="decl" id="mulIndicator_biUnion_finset_eventuallyEq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L90-L95">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#mulIndicator_biUnion_finset_eventuallyEq"><span class="name">mulIndicator_biUnion_finset_eventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn">fun (<span class="fn">n</span> : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn">⋃ i ∈ <span class="fn">n</span>, <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">Filter.atTop</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>) =&gt;
+  <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Lattice.html#Set.iUnion">Set.iUnion</a> <span class="fn">s</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span></span></div></div></div></div><div class="decl" id="tendsto_indicator_biUnion_finset"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L97-L97">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#tendsto_indicator_biUnion_finset"><span class="name">tendsto_indicator_biUnion_finset</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">n</span> : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn">⋃ i ∈ <span class="fn">n</span>, <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <span class="fn">Filter.atTop</span>
+  <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Pure.pure">pure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Lattice.html#Set.iUnion">Set.iUnion</a> <span class="fn">s</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="tendsto_mulIndicator_biUnion_finset"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L98-L101">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#tendsto_mulIndicator_biUnion_finset"><span class="name">tendsto_mulIndicator_biUnion_finset</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ι : <a href="../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><span class="fn">ι</span> → <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(a : <span class="fn">α</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">n</span> : <span class="fn"><a href="../../.././Mathlib/Data/Finset/Basic.html#Finset">Finset</a> <span class="fn">ι</span></span>) =&gt; <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn">⋃ i ∈ <span class="fn">n</span>, <span class="fn"><span class="fn">s</span> <span class="fn">i</span></span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span></span>)</span> <span class="fn">Filter.atTop</span>
+  <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Pure.pure">pure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Lattice.html#Set.iUnion">Set.iUnion</a> <span class="fn">s</span></span>)</span> <span class="fn">f</span> <span class="fn">a</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.support"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L104-L104">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.support"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">support</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Support.html#Function.support">Function.support</a> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Support.html#Function.support">Function.support</a> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.mulSupport"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L105-L108">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.mulSupport"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">mulSupport</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Support.html#Function.mulSupport">Function.mulSupport</a> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Support.html#Function.mulSupport">Function.mulSupport</a> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.indicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L111-L111">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.indicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">indicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hfg : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.mulIndicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L112-L114">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.mulIndicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">mulIndicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hfg : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.indicator_zero"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L117-L117">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.indicator_zero"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">indicator_zero</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">0</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">0</span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.mulIndicator_one"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L118-L120">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.mulIndicator_one"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">mulIndicator_one</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">1</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">1</span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.of_indicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L123-L123">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.of_indicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_indicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn">∀ᶠ (x : <span class="fn">α</span>) in <span class="fn">l</span>, <span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">x</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">t</span> <span class="fn">f</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">s</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">t</span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.of_mulIndicator"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L124-L130">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.of_mulIndicator"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_mulIndicator</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn">∀ᶠ (x : <span class="fn">α</span>) in <span class="fn">l</span>, <span class="fn"><span class="fn"><span class="fn">f</span> <span class="fn">x</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">1</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">f</span></span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">t</span> <span class="fn">f</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">s</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">t</span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.of_indicator_const"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L132-L132">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.of_indicator_const"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_indicator_const</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#Zero">Zero</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <span class="fn">β</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hc : <span class="fn"><span class="fn">c</span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">s</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn">c</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.indicator">Set.indicator</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn">c</span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">s</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">t</span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.of_mulIndicator_const"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Order/Filter/IndicatorFunction.lean#L133-L135">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Order/Filter/IndicatorFunction.html#Filter.EventuallyEq.of_mulIndicator_const"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">of_mulIndicator_const</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/ZeroOne.html#One">One</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <span class="fn">β</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hc : <span class="fn"><span class="fn">c</span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">1</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">(<span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">s</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn">c</span></span></span>)</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><a href="../../.././Mathlib/Algebra/Function/Indicator.html#Set.mulIndicator">Set.mulIndicator</a> <span class="fn">t</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn">c</span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">s</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">t</span></span></div></div></div></div></main>
+<nav class="nav"><iframe src="../../.././navbar.html" class="navframe" frameBorder="0"></iframe></nav></body></html>

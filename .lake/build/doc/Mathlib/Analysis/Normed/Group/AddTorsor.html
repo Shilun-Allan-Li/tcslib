@@ -1,0 +1,949 @@
+<html lang="en"><head><meta charset="UTF-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><link rel="stylesheet" href="../../../.././style.css"></link><link rel="stylesheet" href="../../../.././src/pygments.css"></link><link rel="shortcut icon" href="../../../.././favicon.ico"></link><link rel="prefetch" href="../../../.././/declarations/declaration-data.bmp" as="image"></link><title>Mathlib.Analysis.Normed.Group.AddTorsor</title><script defer="true" src="../../../.././mathjax-config.js"></script><script defer="true" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script defer="true" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>const SITE_ROOT="../../../.././";</script><script>const MODULE_NAME="Mathlib.Analysis.Normed.Group.AddTorsor";</script><script type="module" src="../../../.././jump-src.js"></script><script type="module" src="../../../.././search.js"></script><script type="module" src="../../../.././expand-nav.js"></script><script type="module" src="../../../.././how-about.js"></script><script type="module" src="../../../.././instances.js"></script><script type="module" src="../../../.././importedBy.js"></script></head><body><input id="nav_toggle" type="checkbox"></input><header><h1><label for="nav_toggle"></label><span>Documentation</span></h1><h2 class="header_filename break_within"><span class="name">Mathlib</span>.<span class="name">Analysis</span>.<span class="name">Normed</span>.<span class="name">Group</span>.<span class="name">AddTorsor</span></h2><form action="https://google.com/search" method="get" id="search_form"><input type="hidden" name="sitesearch" value="https://leanprover-community.github.io/mathlib4_docs"></input><input type="text" name="q" autocomplete="off"></input>&#32;
+            <button id="search_button" onclick="javascript: form.action='../../../.././search.html';">Search</button><button>Google site search</button></form></header><nav class="internal_nav"><p><a href="#top">return to top</a></p><p class="gh_nav_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean">source</a></p><div class="imports"><details><summary>Imports</summary><ul><li><a href="../../../.././Init.html">Init</a></li><li><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/AffineSubspace.html">Mathlib.LinearAlgebra.AffineSpace.AffineSubspace</a></li><li><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/Midpoint.html">Mathlib.LinearAlgebra.AffineSpace.Midpoint</a></li><li><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html">Mathlib.Analysis.Normed.Group.Basic</a></li></ul></details><details><summary>Imported by</summary><ul id="imported-by-Mathlib.Analysis.Normed.Group.AddTorsor" class="imported-by-list"></ul></details></div><div class="nav_link"><a class="break_within" href="#NormedAddTorsor"><span class="name">NormedAddTorsor</span></a></div><div class="nav_link"><a class="break_within" href="#NormedAddTorsor.toAddTorsor'"><span class="name">NormedAddTorsor</span>.<span class="name">toAddTorsor'</span></a></div><div class="nav_link"><a class="break_within" href="#NormedAddTorsor.to_isometricVAdd"><span class="name">NormedAddTorsor</span>.<span class="name">to_isometricVAdd</span></a></div><div class="nav_link"><a class="break_within" href="#SeminormedAddCommGroup.toNormedAddTorsor"><span class="name">SeminormedAddCommGroup</span>.<span class="name">toNormedAddTorsor</span></a></div><div class="nav_link"><a class="break_within" href="#AffineSubspace.toNormedAddTorsor"><span class="name">AffineSubspace</span>.<span class="name">toNormedAddTorsor</span></a></div><div class="nav_link"><a class="break_within" href="#dist_eq_norm_vsub"><span class="name">dist_eq_norm_vsub</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_eq_nnnorm_vsub"><span class="name">nndist_eq_nnnorm_vsub</span></a></div><div class="nav_link"><a class="break_within" href="#dist_eq_norm_vsub'"><span class="name">dist_eq_norm_vsub'</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_eq_nnnorm_vsub'"><span class="name">nndist_eq_nnnorm_vsub'</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vadd_cancel_left"><span class="name">dist_vadd_cancel_left</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vadd_cancel_left"><span class="name">nndist_vadd_cancel_left</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vadd_cancel_right"><span class="name">dist_vadd_cancel_right</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vadd_cancel_right"><span class="name">nndist_vadd_cancel_right</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vadd_left"><span class="name">dist_vadd_left</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vadd_left"><span class="name">nndist_vadd_left</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vadd_right"><span class="name">dist_vadd_right</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vadd_right"><span class="name">nndist_vadd_right</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.vaddConst_apply"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_apply</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.vaddConst_toFun"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_toFun</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.vaddConst_invFun"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_invFun</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.vaddConst_symm_apply"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_symm_apply</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.vaddConst"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vsub_cancel_left"><span class="name">dist_vsub_cancel_left</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vsub_cancel_left"><span class="name">nndist_vsub_cancel_left</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.constVSub_toFun"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_toFun</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.constVSub_symm_apply"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_symm_apply</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.constVSub_invFun"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_invFun</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.constVSub_apply"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_apply</span></a></div><div class="nav_link"><a class="break_within" href="#IsometryEquiv.constVSub"><span class="name">IsometryEquiv</span>.<span class="name">constVSub</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vsub_cancel_right"><span class="name">dist_vsub_cancel_right</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vsub_cancel_right"><span class="name">nndist_vsub_cancel_right</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vadd_vadd_le"><span class="name">dist_vadd_vadd_le</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vadd_vadd_le"><span class="name">nndist_vadd_vadd_le</span></a></div><div class="nav_link"><a class="break_within" href="#dist_vsub_vsub_le"><span class="name">dist_vsub_vsub_le</span></a></div><div class="nav_link"><a class="break_within" href="#nndist_vsub_vsub_le"><span class="name">nndist_vsub_vsub_le</span></a></div><div class="nav_link"><a class="break_within" href="#edist_vadd_vadd_le"><span class="name">edist_vadd_vadd_le</span></a></div><div class="nav_link"><a class="break_within" href="#edist_vsub_vsub_le"><span class="name">edist_vsub_vsub_le</span></a></div><div class="nav_link"><a class="break_within" href="#pseudoMetricSpaceOfNormedAddCommGroupOfAddTorsor"><span class="name">pseudoMetricSpaceOfNormedAddCommGroupOfAddTorsor</span></a></div><div class="nav_link"><a class="break_within" href="#metricSpaceOfNormedAddCommGroupOfAddTorsor"><span class="name">metricSpaceOfNormedAddCommGroupOfAddTorsor</span></a></div><div class="nav_link"><a class="break_within" href="#LipschitzWith.vadd"><span class="name">LipschitzWith</span>.<span class="name">vadd</span></a></div><div class="nav_link"><a class="break_within" href="#LipschitzWith.vsub"><span class="name">LipschitzWith</span>.<span class="name">vsub</span></a></div><div class="nav_link"><a class="break_within" href="#uniformContinuous_vadd"><span class="name">uniformContinuous_vadd</span></a></div><div class="nav_link"><a class="break_within" href="#uniformContinuous_vsub"><span class="name">uniformContinuous_vsub</span></a></div><div class="nav_link"><a class="break_within" href="#NormedAddTorsor.to_continuousVAdd"><span class="name">NormedAddTorsor</span>.<span class="name">to_continuousVAdd</span></a></div><div class="nav_link"><a class="break_within" href="#continuous_vsub"><span class="name">continuous_vsub</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.Tendsto.vsub"><span class="name">Filter</span>.<span class="name">Tendsto</span>.<span class="name">vsub</span></a></div><div class="nav_link"><a class="break_within" href="#Continuous.vsub"><span class="name">Continuous</span>.<span class="name">vsub</span></a></div><div class="nav_link"><a class="break_within" href="#ContinuousAt.vsub"><span class="name">ContinuousAt</span>.<span class="name">vsub</span></a></div><div class="nav_link"><a class="break_within" href="#ContinuousWithinAt.vsub"><span class="name">ContinuousWithinAt</span>.<span class="name">vsub</span></a></div><div class="nav_link"><a class="break_within" href="#ContinuousOn.vsub"><span class="name">ContinuousOn</span>.<span class="name">vsub</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.Tendsto.lineMap"><span class="name">Filter</span>.<span class="name">Tendsto</span>.<span class="name">lineMap</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.Tendsto.midpoint"><span class="name">Filter</span>.<span class="name">Tendsto</span>.<span class="name">midpoint</span></a></div><div class="nav_link"><a class="break_within" href="#IsClosed.vadd_right_of_isCompact"><span class="name">IsClosed</span>.<span class="name">vadd_right_of_isCompact</span></a></div></nav><main>
+<div class="mod_doc"><h1 class="markdown-heading" id="Torsors-of-additive-normed-group-actions">Torsors of additive normed group actions. <a class="hover-link" href="#Torsors-of-additive-normed-group-actions">#</a></h1><p>This file defines torsors of additive normed group actions, with a
+metric space structure.  The motivating case is Euclidean affine
+spaces.</p></div><div class="decl" id="NormedAddTorsor"><div class="class"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L33-L35">source</a></div><div class="decl_header"><span class="decl_kind">class</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor"><span class="name">NormedAddTorsor</span></a></span><span class="decl_args">
+<span class="fn">(V : <span class="fn"><a href="../../../.././Init/Prelude.html#outParam">outParam</a> <a href="../../../.././foundational_types.html">(<a href="../../../.././foundational_types.html">Type</a> u_1)</a></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(P : <a href="../../../.././foundational_types.html">Type</a> u_2)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Init/Prelude.html#outParam">outParam</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>)</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_extends">extends</span><span class="decl_parent">
+<span class="fn"><a class="break_within" href="../../../.././Mathlib/Algebra/AddTorsor.html#AddTorsor"><span class="name">AddTorsor</span></a></span></span>
+<span class="decl_args"> :</span><div class="decl_type"><a href="../../../.././foundational_types.html">Type</a> (max u_1 u_2)</div></div><p>A <code><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> V P</code> is a torsor of an additive seminormed group
+action by a <code><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> V</code> on points <code>P</code>. We bundle the pseudometric space
+structure and require the distance to be the same as results from the
+norm (which in fact implies the distance yields a pseudometric space, but
+bundling just the distance and using an instance for the pseudometric space
+results in type class problems).</p><ul class="structure_fields" id="NormedAddTorsor.mk"><li id="NormedAddTorsor.vadd" class="structure_field"><div class="structure_field_info">vadd : <span class="fn"><span class="fn">V</span> → <span class="fn"><span class="fn">P</span> → <span class="fn">P</span></span></span></div></li><li id="NormedAddTorsor.zero_vadd" class="structure_field"><div class="structure_field_info">zero_vadd : <span class="fn">∀ (<span class="fn">p</span> : <span class="fn">P</span>), <span class="fn"><span class="fn"><span class="fn">0</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">p</span></span></span></div></li><li id="NormedAddTorsor.add_vadd" class="structure_field"><div class="structure_field_info">add_vadd : <span class="fn">∀ (<span class="fn">g₁ </span>g₂ : <span class="fn">V</span>) (<span class="fn">p</span> : <span class="fn">P</span>), <span class="fn"><span class="fn"><span class="fn"><span class="fn">g₁</span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn">g₂</span></span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">g₁</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">(<span class="fn"><span class="fn">g₂</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p</span></span>)</span></span></span></span></div></li><li id="NormedAddTorsor.vsub" class="structure_field"><div class="structure_field_info">vsub : <span class="fn"><span class="fn">P</span> → <span class="fn">P</span> → <span class="fn">V</span></span></div></li><li id="NormedAddTorsor.nonempty" class="structure_field"><div class="structure_field_info">nonempty : <span class="fn"><a href="../../../.././Init/Prelude.html#Nonempty">Nonempty</a> <span class="fn">P</span></span></div></li><li id="NormedAddTorsor.vsub_vadd'" class="structure_field"><div class="structure_field_info">vsub_vadd' : <span class="fn">∀ (<span class="fn">p1 </span>p2 : <span class="fn">P</span>), <span class="fn"><span class="fn"><span class="fn"><span class="fn">p1</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p2</span></span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p2</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">p1</span></span></span></div></li><li id="NormedAddTorsor.vadd_vsub'" class="structure_field"><div class="structure_field_info">vadd_vsub' : <span class="fn">∀ (<span class="fn">g</span> : <span class="fn">V</span>) (<span class="fn">p</span> : <span class="fn">P</span>), <span class="fn"><span class="fn"><span class="fn"><span class="fn">g</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p</span></span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">g</span></span></span></div></li><li id="NormedAddTorsor.dist_eq_norm'" class="structure_field"><div class="structure_field_info">dist_eq_norm' : <span class="fn">∀ (<span class="fn">x </span>y : <span class="fn">P</span>), <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">x</span> <span class="fn">y</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a><span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">y</span></span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a></span></span></span></div></li></ul><details class="instances"><summary>Instances</summary><ul id="instances-list-NormedAddTorsor" class="instances-list"></ul></details></div></div><div class="decl" id="NormedAddTorsor.toAddTorsor'"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L39-L41">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor.toAddTorsor'"><span class="name">NormedAddTorsor</span>.<span class="name">toAddTorsor'</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/Basic.html#MetricSpace">MetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/AddTorsor.html#AddTorsor">AddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span></div></div><p>Shortcut instance to help typeclass inference out.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">NormedAddTorsor.toAddTorsor'</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">NormedAddTorsor.toAddTorsor</span></span></li></ul></details></div></div><div class="decl" id="NormedAddTorsor.to_isometricVAdd"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L47-L50">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor.to_isometricVAdd"><span class="name">NormedAddTorsor</span>.<span class="name">to_isometricVAdd</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/IsometricSMul.html#IsometricVAdd">IsometricVAdd</a> <span class="fn">V</span> <span class="fn">P</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/IsometricSMul.html#IsometricVAdd">IsometricVAdd</a> <span class="fn">V</span> <span class="fn">P</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/IsometricSMul.html#IsometricVAdd">IsometricVAdd</a> <span class="fn">V</span> <span class="fn">P</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="SeminormedAddCommGroup.toNormedAddTorsor"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L54-L55">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#SeminormedAddCommGroup.toNormedAddTorsor"><span class="name">SeminormedAddCommGroup</span>.<span class="name">toNormedAddTorsor</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">V</span></span></div></div><p>A <code><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a></code> is a <code><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a></code> over itself.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">SeminormedAddCommGroup.toNormedAddTorsor</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor.mk">NormedAddTorsor.mk</a> <span class="fn">(_ : <span class="fn">∀ (<span class="fn">a </span>b : <span class="fn">V</span>), <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">a</span> <span class="fn">b</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a><span class="fn"><span class="fn">a</span> <a href="../../../.././Init/Prelude.html#HSub.hSub">-</a> <span class="fn">b</span></span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a></span></span></span>)</span></span></span></li></ul></details></div></div><div class="decl" id="AffineSubspace.toNormedAddTorsor"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L60-L63">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#AffineSubspace.toNormedAddTorsor"><span class="name">AffineSubspace</span>.<span class="name">toNormedAddTorsor</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{R : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#Ring">Ring</a> <span class="fn">R</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">R</span> <span class="fn">V</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(s : <span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/AffineSubspace.html#AffineSubspace">AffineSubspace</a> <span class="fn">R</span> <span class="fn">P</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Init/Prelude.html#Nonempty">Nonempty</a> <span class="fn">↥<span class="fn">s</span></span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">↥<span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/AffineSubspace.html#AffineSubspace.direction">AffineSubspace.direction</a> <span class="fn">s</span></span>)</span></span> <span class="fn">↥<span class="fn">s</span></span></span></div></div><p>A nonempty affine subspace of a <code><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a></code> is itself a <code><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a></code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#AffineSubspace.toNormedAddTorsor">AffineSubspace.toNormedAddTorsor</a> <span class="fn">s</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">let src := <span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/AffineSubspace.html#AffineSubspace.toAddTorsor">AffineSubspace.toAddTorsor</a> <span class="fn">s</span></span>;
+  <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor.mk">NormedAddTorsor.mk</a> <span class="fn">(_ : <span class="fn">∀ (<span class="fn">x </span>y : <span class="fn">↥<span class="fn">s</span></span>), <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">↑<span class="fn">x</span></span> <span class="fn">↑<span class="fn">y</span></span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a><span class="fn"><span class="fn">↑<span class="fn">x</span></span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">↑<span class="fn">y</span></span></span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a></span></span></span>)</span></span></span></span></li></ul></details></div></div><div class="decl" id="dist_eq_norm_vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L73-L74">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_eq_norm_vsub"><span class="name">dist_eq_norm_vsub</span></a></span><span class="decl_args">
+<span class="fn">(V : <a href="../../../.././foundational_types.html">Type</a> u_2)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">x</span> <span class="fn">y</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a><span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">y</span></span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a></span></span></div></div><p>The distance equals the norm of subtracting two points. In this
+lemma, it is necessary to have <code>V</code> as an explicit argument; otherwise
+<code>rw <a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_eq_norm_vsub">dist_eq_norm_vsub</a></code> sometimes doesn't work.</p></div></div><div class="decl" id="nndist_eq_nnnorm_vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L77-L78">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_eq_nnnorm_vsub"><span class="name">nndist_eq_nnnorm_vsub</span></a></span><span class="decl_args">
+<span class="fn">(V : <a href="../../../.././foundational_types.html">Type</a> u_2)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">x</span> <span class="fn">y</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖</a><span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">y</span></span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖₊</a></span></span></div></div></div></div><div class="decl" id="dist_eq_norm_vsub'"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L85-L86">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_eq_norm_vsub'"><span class="name">dist_eq_norm_vsub'</span></a></span><span class="decl_args">
+<span class="fn">(V : <a href="../../../.././foundational_types.html">Type</a> u_2)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">x</span> <span class="fn">y</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a><span class="fn"><span class="fn">y</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">x</span></span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a></span></span></div></div><p>The distance equals the norm of subtracting two points. In this
+lemma, it is necessary to have <code>V</code> as an explicit argument; otherwise
+<code>rw <a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_eq_norm_vsub'">dist_eq_norm_vsub'</a></code> sometimes doesn't work.</p></div></div><div class="decl" id="nndist_eq_nnnorm_vsub'"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L89-L90">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_eq_nnnorm_vsub'"><span class="name">nndist_eq_nnnorm_vsub'</span></a></span><span class="decl_args">
+<span class="fn">(V : <a href="../../../.././foundational_types.html">Type</a> u_2)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">x</span> <span class="fn">y</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖</a><span class="fn"><span class="fn">y</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">x</span></span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖₊</a></span></span></div></div></div></div><div class="decl" id="dist_vadd_cancel_left"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L95-L96">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vadd_cancel_left"><span class="name">dist_vadd_cancel_left</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">y</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">x</span> <span class="fn">y</span></span></span></div></div></div></div><div class="decl" id="nndist_vadd_cancel_left"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L100-L101">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vadd_cancel_left"><span class="name">nndist_vadd_cancel_left</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">y</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">x</span> <span class="fn">y</span></span></span></div></div></div></div><div class="decl" id="dist_vadd_cancel_right"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L104-L105">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vadd_cancel_right"><span class="name">dist_vadd_cancel_right</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v₁ : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v₂ : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">(<span class="fn"><span class="fn">v₁</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">v₂</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">v₁</span> <span class="fn">v₂</span></span></span></div></div></div></div><div class="decl" id="nndist_vadd_cancel_right"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L109-L110">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vadd_cancel_right"><span class="name">nndist_vadd_cancel_right</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v₁ : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v₂ : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">(<span class="fn"><span class="fn">v₁</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">v₂</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">v₁</span> <span class="fn">v₂</span></span></span></div></div></div></div><div class="decl" id="dist_vadd_left"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L114-L116">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vadd_left"><span class="name">dist_vadd_left</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span> <span class="fn">x</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a><span class="fn">v</span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a></span></span></div></div></div></div><div class="decl" id="nndist_vadd_left"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L120-L121">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vadd_left"><span class="name">nndist_vadd_left</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span> <span class="fn">x</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖</a><span class="fn">v</span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖₊</a></span></span></div></div></div></div><div class="decl" id="dist_vadd_right"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L125-L125">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vadd_right"><span class="name">dist_vadd_right</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">x</span> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a><span class="fn">v</span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm.norm">‖</a></span></span></div></div></div></div><div class="decl" id="nndist_vadd_right"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L129-L130">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vadd_right"><span class="name">nndist_vadd_right</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">x</span> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖</a><span class="fn">v</span><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NNNorm.nnnorm">‖₊</a></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.vaddConst_apply"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L135-L135">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst_apply"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_apply</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst">IsometryEquiv.vaddConst</a> <span class="fn">x</span></span>)</span> <span class="fn">v</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.vaddConst_toFun"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L135-L135">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst_toFun"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_toFun</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst">IsometryEquiv.vaddConst</a> <span class="fn">x</span></span>)</span> <span class="fn">v</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.vaddConst_invFun"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L135-L135">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst_invFun"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_invFun</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p' : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Logic/Equiv/Defs.html#Equiv.invFun">Equiv.invFun</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst">IsometryEquiv.vaddConst</a> <span class="fn">x</span></span>)</span>.toEquiv</span> <span class="fn">p'</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">p'</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">x</span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.vaddConst_symm_apply"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L135-L135">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst_symm_apply"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst_symm_apply</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p' : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/Isometry.html#IsometryEquiv.symm">IsometryEquiv.symm</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst">IsometryEquiv.vaddConst</a> <span class="fn">x</span></span>)</span></span>)</span> <span class="fn">p'</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">p'</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">x</span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.vaddConst"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L136-L138">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst"><span class="name">IsometryEquiv</span>.<span class="name">vaddConst</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">V</span> <a href="../../../.././Mathlib/Topology/MetricSpace/Isometry.html#IsometryEquiv">≃ᵢ</a> <span class="fn">P</span></span></div></div><p>Isometry between the tangent space <code>V</code> of a (semi)normed add torsor <code>P</code> and <code>P</code> given by
+addition/subtraction of <code>x : P</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.vaddConst">IsometryEquiv.vaddConst</a> <span class="fn">x</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">{ <span class="fn">toEquiv</span> := <span class="fn"><a href="../../../.././Mathlib/Algebra/AddTorsor.html#Equiv.vaddConst">Equiv.vaddConst</a> <span class="fn">x</span></span>, <span class="fn">isometry_toFun</span> := <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/Isometry.html#Isometry">Isometry</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Algebra/AddTorsor.html#Equiv.vaddConst">Equiv.vaddConst</a> <span class="fn">x</span></span>)</span>.toFun</span></span>)</span> }</span></span></li></ul></details><details id="instances-for-list-IsometryEquiv.vaddConst" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="dist_vsub_cancel_left"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L142-L143">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vsub_cancel_left"><span class="name">dist_vsub_cancel_left</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(z : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">(<span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">y</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">z</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">y</span> <span class="fn">z</span></span></span></div></div></div></div><div class="decl" id="nndist_vsub_cancel_left"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L148-L149">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vsub_cancel_left"><span class="name">nndist_vsub_cancel_left</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(z : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">(<span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">y</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">z</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">y</span> <span class="fn">z</span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.constVSub_toFun"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L153-L153">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub_toFun"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_toFun</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∀ (<span class="fn">x_1</span> : <span class="fn">P</span>), <span class="fn"><span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub">IsometryEquiv.constVSub</a> <span class="fn">x</span></span>)</span> <span class="fn">x_1</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">x_1</span></span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.constVSub_symm_apply"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L153-L153">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub_symm_apply"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_symm_apply</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∀ (<span class="fn">x_1</span> : <span class="fn">V</span>), <span class="fn"><span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/Isometry.html#IsometryEquiv.symm">IsometryEquiv.symm</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub">IsometryEquiv.constVSub</a> <span class="fn">x</span></span>)</span></span>)</span> <span class="fn">x_1</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn"><a href="../../../.././Init/Prelude.html#Neg.neg">-</a><span class="fn">x_1</span></span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.constVSub_invFun"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L153-L153">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub_invFun"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_invFun</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∀ (<span class="fn">x_1</span> : <span class="fn">V</span>), <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Logic/Equiv/Defs.html#Equiv.invFun">Equiv.invFun</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub">IsometryEquiv.constVSub</a> <span class="fn">x</span></span>)</span>.toEquiv</span> <span class="fn">x_1</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn"><a href="../../../.././Init/Prelude.html#Neg.neg">-</a><span class="fn">x_1</span></span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">x</span></span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.constVSub_apply"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L153-L153">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub_apply"><span class="name">IsometryEquiv</span>.<span class="name">constVSub_apply</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∀ (<span class="fn">x_1</span> : <span class="fn">P</span>), <span class="fn"><span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub">IsometryEquiv.constVSub</a> <span class="fn">x</span></span>)</span> <span class="fn">x_1</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">x_1</span></span></span></span></div></div></div></div><div class="decl" id="IsometryEquiv.constVSub"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L154-L156">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub"><span class="name">IsometryEquiv</span>.<span class="name">constVSub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">P</span> <a href="../../../.././Mathlib/Topology/MetricSpace/Isometry.html#IsometryEquiv">≃ᵢ</a> <span class="fn">V</span></span></div></div><p>Isometry between the tangent space <code>V</code> of a (semi)normed add torsor <code>P</code> and <code>P</code> given by
+subtraction from <code>x : P</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsometryEquiv.constVSub">IsometryEquiv.constVSub</a> <span class="fn">x</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">{ <span class="fn">toEquiv</span> := <span class="fn"><a href="../../../.././Mathlib/Algebra/AddTorsor.html#Equiv.constVSub">Equiv.constVSub</a> <span class="fn">x</span></span>, <span class="fn">isometry_toFun</span> := <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/Isometry.html#Isometry">Isometry</a> <span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Algebra/AddTorsor.html#Equiv.constVSub">Equiv.constVSub</a> <span class="fn">x</span></span>)</span>.toFun</span></span>)</span> }</span></span></li></ul></details><details id="instances-for-list-IsometryEquiv.constVSub" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="dist_vsub_cancel_right"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L160-L161">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vsub_cancel_right"><span class="name">dist_vsub_cancel_right</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(z : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">(<span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">z</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">y</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">z</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">x</span> <span class="fn">y</span></span></span></div></div></div></div><div class="decl" id="nndist_vsub_cancel_right"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L165-L166">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vsub_cancel_right"><span class="name">nndist_vsub_cancel_right</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(z : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">(<span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">z</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">y</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">z</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">x</span> <span class="fn">y</span></span></span></div></div></div></div><div class="decl" id="dist_vadd_vadd_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L169-L171">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vadd_vadd_le"><span class="name">dist_vadd_vadd_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v' : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p' : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">v'</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p'</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">v</span> <span class="fn">v'</span></span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">p</span> <span class="fn">p'</span></span></span></span></div></div></div></div><div class="decl" id="nndist_vadd_vadd_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L174-L176">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vadd_vadd_le"><span class="name">nndist_vadd_vadd_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v' : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p' : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">v'</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p'</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">v</span> <span class="fn">v'</span></span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">p</span> <span class="fn">p'</span></span></span></span></div></div></div></div><div class="decl" id="dist_vsub_vsub_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L179-L182">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#dist_vsub_vsub_le"><span class="name">dist_vsub_vsub_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(p₁ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₂ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₃ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₄ : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">(<span class="fn"><span class="fn">p₁</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p₂</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">p₃</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p₄</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">p₁</span> <span class="fn">p₃</span></span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">p₂</span> <span class="fn">p₄</span></span></span></span></div></div></div></div><div class="decl" id="nndist_vsub_vsub_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L185-L187">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#nndist_vsub_vsub_le"><span class="name">nndist_vsub_vsub_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(p₁ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₂ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₃ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₄ : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">(<span class="fn"><span class="fn">p₁</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p₂</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">p₃</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p₄</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">p₁</span> <span class="fn">p₃</span></span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#NNDist.nndist">nndist</a> <span class="fn">p₂</span> <span class="fn">p₄</span></span></span></span></div></div></div></div><div class="decl" id="edist_vadd_vadd_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L190-L194">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#edist_vadd_vadd_le"><span class="name">edist_vadd_vadd_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v' : <span class="fn">V</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p' : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#EDist.edist">edist</a> <span class="fn">(<span class="fn"><span class="fn">v</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">v'</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">p'</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#EDist.edist">edist</a> <span class="fn">v</span> <span class="fn">v'</span></span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#EDist.edist">edist</a> <span class="fn">p</span> <span class="fn">p'</span></span></span></span></div></div></div></div><div class="decl" id="edist_vsub_vsub_le"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L197-L201">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#edist_vsub_vsub_le"><span class="name">edist_vsub_vsub_le</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(p₁ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₂ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₃ : <span class="fn">P</span>)</span></span>
+<span class="decl_args">
+<span class="fn">(p₄ : <span class="fn">P</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#EDist.edist">edist</a> <span class="fn">(<span class="fn"><span class="fn">p₁</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p₂</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">p₃</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">p₄</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#EDist.edist">edist</a> <span class="fn">p₁</span> <span class="fn">p₃</span></span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#EDist.edist">edist</a> <span class="fn">p₂</span> <span class="fn">p₄</span></span></span></span></div></div></div></div><div class="decl" id="pseudoMetricSpaceOfNormedAddCommGroupOfAddTorsor"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L206-L216">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#pseudoMetricSpaceOfNormedAddCommGroupOfAddTorsor"><span class="name">pseudoMetricSpaceOfNormedAddCommGroupOfAddTorsor</span></a></span><span class="decl_args">
+<span class="fn">(V : <a href="../../../.././foundational_types.html">Type</a> u_6)</span></span>
+<span class="decl_args">
+<span class="fn">(P : <a href="../../../.././foundational_types.html">Type</a> u_7)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/AddTorsor.html#AddTorsor">AddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span></div></div><p>The pseudodistance defines a pseudometric space structure on the torsor. This
+is not an instance because it depends on <code>V</code> to define a <code><a href="../../../.././Mathlib/Topology/MetricSpace/Basic.html#MetricSpace">MetricSpace</a> P</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation">One or more equations did not get rendered due to their size.</li></ul></details><details id="instances-for-list-pseudoMetricSpaceOfNormedAddCommGroupOfAddTorsor" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="metricSpaceOfNormedAddCommGroupOfAddTorsor"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L221-L231">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#metricSpaceOfNormedAddCommGroupOfAddTorsor"><span class="name">metricSpaceOfNormedAddCommGroupOfAddTorsor</span></a></span><span class="decl_args">
+<span class="fn">(V : <a href="../../../.././foundational_types.html">Type</a> u_6)</span></span>
+<span class="decl_args">
+<span class="fn">(P : <a href="../../../.././foundational_types.html">Type</a> u_7)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/AddTorsor.html#AddTorsor">AddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/Basic.html#MetricSpace">MetricSpace</a> <span class="fn">P</span></span></div></div><p>The distance defines a metric space structure on the torsor. This
+is not an instance because it depends on <code>V</code> to define a <code><a href="../../../.././Mathlib/Topology/MetricSpace/Basic.html#MetricSpace">MetricSpace</a> P</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#metricSpaceOfNormedAddCommGroupOfAddTorsor">metricSpaceOfNormedAddCommGroupOfAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/Basic.html#MetricSpace.mk">MetricSpace.mk</a> <span class="fn">(_ : <span class="fn">∀ {<span class="fn">x </span>y : <span class="fn">P</span>}, <span class="fn"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Dist.dist">dist</a> <span class="fn">x</span> <span class="fn">y</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span> → <span class="fn"><span class="fn">x</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">y</span></span></span></span>)</span></span></span></li></ul></details><details id="instances-for-list-metricSpaceOfNormedAddCommGroupOfAddTorsor" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="LipschitzWith.vadd"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L234-L241">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#LipschitzWith.vadd"><span class="name">LipschitzWith</span>.<span class="name">vadd</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#PseudoEMetricSpace">PseudoEMetricSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">V</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Kf : <a href="../../../.././Mathlib/Data/Real/NNReal.html#NNReal">NNReal</a>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Kg : <a href="../../../.././Mathlib/Data/Real/NNReal.html#NNReal">NNReal</a>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Lipschitz.html#LipschitzWith">LipschitzWith</a> <span class="fn">Kf</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Lipschitz.html#LipschitzWith">LipschitzWith</a> <span class="fn">Kg</span> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Lipschitz.html#LipschitzWith">LipschitzWith</a> <span class="fn">(<span class="fn"><span class="fn">Kf</span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn">Kg</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">g</span></span>)</span></span></div></div></div></div><div class="decl" id="LipschitzWith.vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L244-L251">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#LipschitzWith.vsub"><span class="name">LipschitzWith</span>.<span class="name">vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Basic.html#PseudoEMetricSpace">PseudoEMetricSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Kf : <a href="../../../.././Mathlib/Data/Real/NNReal.html#NNReal">NNReal</a>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Kg : <a href="../../../.././Mathlib/Data/Real/NNReal.html#NNReal">NNReal</a>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Lipschitz.html#LipschitzWith">LipschitzWith</a> <span class="fn">Kf</span> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Lipschitz.html#LipschitzWith">LipschitzWith</a> <span class="fn">Kg</span> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/EMetricSpace/Lipschitz.html#LipschitzWith">LipschitzWith</a> <span class="fn">(<span class="fn"><span class="fn">Kf</span> <a href="../../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn">Kg</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">g</span></span>)</span></span></div></div></div></div><div class="decl" id="uniformContinuous_vadd"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L254-L255">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#uniformContinuous_vadd"><span class="name">uniformContinuous_vadd</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/UniformSpace/Basic.html#UniformContinuous">UniformContinuous</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><span class="fn">V</span> <a href="../../../.././Init/Prelude.html#Prod">×</a> <span class="fn">P</span></span>) =&gt; <span class="fn"><span class="fn"><span class="fn">x</span>.1</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn"><span class="fn">x</span>.2</span></span></span></span></div></div></div></div><div class="decl" id="uniformContinuous_vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L258-L259">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#uniformContinuous_vsub"><span class="name">uniformContinuous_vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/UniformSpace/Basic.html#UniformContinuous">UniformContinuous</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><span class="fn">P</span> <a href="../../../.././Init/Prelude.html#Prod">×</a> <span class="fn">P</span></span>) =&gt; <span class="fn"><span class="fn"><span class="fn">x</span>.1</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn"><span class="fn">x</span>.2</span></span></span></span></div></div></div></div><div class="decl" id="NormedAddTorsor.to_continuousVAdd"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L262-L263">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor.to_continuousVAdd"><span class="name">NormedAddTorsor</span>.<span class="name">to_continuousVAdd</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousVAdd">ContinuousVAdd</a> <span class="fn">V</span> <span class="fn">P</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousVAdd">ContinuousVAdd</a> <span class="fn">V</span> <span class="fn">P</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousVAdd">ContinuousVAdd</a> <span class="fn">V</span> <span class="fn">P</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="continuous_vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L266-L267">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#continuous_vsub"><span class="name">continuous_vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><span class="fn">P</span> <a href="../../../.././Init/Prelude.html#Prod">×</a> <span class="fn">P</span></span>) =&gt; <span class="fn"><span class="fn"><span class="fn">x</span>.1</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn"><span class="fn">x</span>.2</span></span></span></span></div></div></div></div><div class="decl" id="Filter.Tendsto.vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L270-L272">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#Filter.Tendsto.vsub"><span class="name">Filter</span>.<span class="name">Tendsto</span>.<span class="name">vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">P</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{y : <span class="fn">P</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">f</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">x</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">g</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">y</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">g</span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">(<span class="fn"><span class="fn">x</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">y</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="Continuous.vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L279-L281">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#Continuous.vsub"><span class="name">Continuous</span>.<span class="name">vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">g</span></span>)</span></span></div></div></div></div><div class="decl" id="ContinuousAt.vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L284-L287">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#ContinuousAt.vsub"><span class="name">ContinuousAt</span>.<span class="name">vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">α</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#ContinuousAt">ContinuousAt</a> <span class="fn">f</span> <span class="fn">x</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#ContinuousAt">ContinuousAt</a> <span class="fn">g</span> <span class="fn">x</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#ContinuousAt">ContinuousAt</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">g</span></span>)</span> <span class="fn">x</span></span></div></div></div></div><div class="decl" id="ContinuousWithinAt.vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L290-L293">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#ContinuousWithinAt.vsub"><span class="name">ContinuousWithinAt</span>.<span class="name">vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">α</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../../.././Mathlib/Topology/ContinuousOn.html#ContinuousWithinAt">ContinuousWithinAt</a> <span class="fn">f</span> <span class="fn">s</span> <span class="fn">x</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Topology/ContinuousOn.html#ContinuousWithinAt">ContinuousWithinAt</a> <span class="fn">g</span> <span class="fn">s</span> <span class="fn">x</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/ContinuousOn.html#ContinuousWithinAt">ContinuousWithinAt</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">g</span></span>)</span> <span class="fn">s</span> <span class="fn">x</span></span></div></div></div></div><div class="decl" id="ContinuousOn.vsub"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L296-L298">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#ContinuousOn.vsub"><span class="name">ContinuousOn</span>.<span class="name">vsub</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">f</span> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">g</span> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">(<span class="fn"><span class="fn">f</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#VSub.vsub">-ᵥ</a> <span class="fn">g</span></span>)</span> <span class="fn">s</span></span></div></div></div></div><div class="decl" id="Filter.Tendsto.lineMap"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L306-L309">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#Filter.Tendsto.lineMap"><span class="name">Filter</span>.<span class="name">Tendsto</span>.<span class="name">lineMap</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{R : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#Ring">Ring</a> <span class="fn">R</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">R</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">R</span> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">R</span> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn">R</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p₁ : <span class="fn">P</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p₂ : <span class="fn">P</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <span class="fn">R</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">f₁</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">p₁</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">f₂</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">p₂</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">g</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">c</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/AffineMap.html#AffineMap.lineMap">AffineMap.lineMap</a> <span class="fn">(<span class="fn"><span class="fn">f₁</span> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f₂</span> <span class="fn">x</span></span>)</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">g</span> <span class="fn">x</span></span>)</span></span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/AffineMap.html#AffineMap.lineMap">AffineMap.lineMap</a> <span class="fn">p₁</span> <span class="fn">p₂</span></span>)</span> <span class="fn">c</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="Filter.Tendsto.midpoint"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L312-L315">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#Filter.Tendsto.midpoint"><span class="name">Filter</span>.<span class="name">Tendsto</span>.<span class="name">midpoint</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{R : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#Ring">Ring</a> <span class="fn">R</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">R</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">R</span> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">R</span> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Invertible/Defs.html#Invertible">Invertible</a> <span class="fn">2</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">P</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p₁ : <span class="fn">P</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{p₂ : <span class="fn">P</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h₁ : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">f₁</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">p₁</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">f₂</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">p₂</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/Midpoint.html#midpoint">midpoint</a> <span class="fn">R</span> <span class="fn">(<span class="fn"><span class="fn">f₁</span> <span class="fn">x</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f₂</span> <span class="fn">x</span></span>)</span></span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/AffineSpace/Midpoint.html#midpoint">midpoint</a> <span class="fn">R</span> <span class="fn">p₁</span> <span class="fn">p₂</span></span>)</span></span>)</span></span></div></div></div></div><div class="decl" id="IsClosed.vadd_right_of_isCompact"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Normed/Group/AddTorsor.lean#L324-L334">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#IsClosed.vadd_right_of_isCompact"><span class="name">IsClosed</span>.<span class="name">vadd_right_of_isCompact</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{V : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{P : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/Basic.html#SeminormedAddCommGroup">SeminormedAddCommGroup</a> <span class="fn">V</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Analysis/Normed/Group/AddTorsor.html#NormedAddTorsor">NormedAddTorsor</a> <span class="fn">V</span> <span class="fn">P</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">V</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><a href="../../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">P</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hs : <span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#IsClosed">IsClosed</a> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(ht : <span class="fn"><a href="../../../.././Mathlib/Topology/Compactness/Compact.html#IsCompact">IsCompact</a> <span class="fn">t</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#IsClosed">IsClosed</a> <span class="fn">(<span class="fn"><span class="fn">s</span> <a href="../../../.././Mathlib/Algebra/Group/Defs.html#HVAdd.hVAdd">+ᵥ</a> <span class="fn">t</span></span>)</span></span></div></div></div></div></main>
+<nav class="nav"><iframe src="../../../.././navbar.html" class="navframe" frameBorder="0"></iframe></nav></body></html>

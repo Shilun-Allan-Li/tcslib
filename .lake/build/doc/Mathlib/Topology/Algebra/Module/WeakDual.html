@@ -1,0 +1,1026 @@
+<html lang="en"><head><meta charset="UTF-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><link rel="stylesheet" href="../../../.././style.css"></link><link rel="stylesheet" href="../../../.././src/pygments.css"></link><link rel="shortcut icon" href="../../../.././favicon.ico"></link><link rel="prefetch" href="../../../.././/declarations/declaration-data.bmp" as="image"></link><title>Mathlib.Topology.Algebra.Module.WeakDual</title><script defer="true" src="../../../.././mathjax-config.js"></script><script defer="true" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script defer="true" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>const SITE_ROOT="../../../.././";</script><script>const MODULE_NAME="Mathlib.Topology.Algebra.Module.WeakDual";</script><script type="module" src="../../../.././jump-src.js"></script><script type="module" src="../../../.././search.js"></script><script type="module" src="../../../.././expand-nav.js"></script><script type="module" src="../../../.././how-about.js"></script><script type="module" src="../../../.././instances.js"></script><script type="module" src="../../../.././importedBy.js"></script></head><body><input id="nav_toggle" type="checkbox"></input><header><h1><label for="nav_toggle"></label><span>Documentation</span></h1><h2 class="header_filename break_within"><span class="name">Mathlib</span>.<span class="name">Topology</span>.<span class="name">Algebra</span>.<span class="name">Module</span>.<span class="name">WeakDual</span></h2><form action="https://google.com/search" method="get" id="search_form"><input type="hidden" name="sitesearch" value="https://leanprover-community.github.io/mathlib4_docs"></input><input type="text" name="q" autocomplete="off"></input>&#32;
+            <button id="search_button" onclick="javascript: form.action='../../../.././search.html';">Search</button><button>Google site search</button></form></header><nav class="internal_nav"><p><a href="#top">return to top</a></p><p class="gh_nav_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean">source</a></p><div class="imports"><details><summary>Imports</summary><ul><li><a href="../../../.././Init.html">Init</a></li><li><a href="../../../.././Mathlib/LinearAlgebra/BilinearMap.html">Mathlib.LinearAlgebra.BilinearMap</a></li><li><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html">Mathlib.Topology.Algebra.Module.Basic</a></li></ul></details><details><summary>Imported by</summary><ul id="imported-by-Mathlib.Topology.Algebra.Module.WeakDual" class="imported-by-list"></ul></details></div><div class="nav_link"><a class="break_within" href="#WeakBilin"><span class="name">WeakBilin</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instAddCommMonoid"><span class="name">WeakBilin</span>.<span class="name">instAddCommMonoid</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instModule"><span class="name">WeakBilin</span>.<span class="name">instModule</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instAddCommGroup"><span class="name">WeakBilin</span>.<span class="name">instAddCommGroup</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instModule'"><span class="name">WeakBilin</span>.<span class="name">instModule'</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instIsScalarTower"><span class="name">WeakBilin</span>.<span class="name">instIsScalarTower</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instTopologicalSpace"><span class="name">WeakBilin</span>.<span class="name">instTopologicalSpace</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.coeFn_continuous"><span class="name">WeakBilin</span>.<span class="name">coeFn_continuous</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.eval_continuous"><span class="name">WeakBilin</span>.<span class="name">eval_continuous</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.continuous_of_continuous_eval"><span class="name">WeakBilin</span>.<span class="name">continuous_of_continuous_eval</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.embedding"><span class="name">WeakBilin</span>.<span class="name">embedding</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.tendsto_iff_forall_eval_tendsto"><span class="name">WeakBilin</span>.<span class="name">tendsto_iff_forall_eval_tendsto</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instContinuousAdd"><span class="name">WeakBilin</span>.<span class="name">instContinuousAdd</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instContinuousSMul"><span class="name">WeakBilin</span>.<span class="name">instContinuousSMul</span></a></div><div class="nav_link"><a class="break_within" href="#WeakBilin.instTopologicalAddGroup"><span class="name">WeakBilin</span>.<span class="name">instTopologicalAddGroup</span></a></div><div class="nav_link"><a class="break_within" href="#topDualPairing"><span class="name">topDualPairing</span></a></div><div class="nav_link"><a class="break_within" href="#topDualPairing_apply"><span class="name">topDualPairing_apply</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual"><span class="name">WeakDual</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instAddCommMonoid"><span class="name">WeakDual</span>.<span class="name">instAddCommMonoid</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instModule"><span class="name">WeakDual</span>.<span class="name">instModule</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instTopologicalSpace"><span class="name">WeakDual</span>.<span class="name">instTopologicalSpace</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instContinuousAdd"><span class="name">WeakDual</span>.<span class="name">instContinuousAdd</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instInhabited"><span class="name">WeakDual</span>.<span class="name">instInhabited</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instContinuousLinearMapClass"><span class="name">WeakDual</span>.<span class="name">instContinuousLinearMapClass</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instCoeFunWeakDualForAll"><span class="name">WeakDual</span>.<span class="name">instCoeFunWeakDualForAll</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instMulAction"><span class="name">WeakDual</span>.<span class="name">instMulAction</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instDistribMulAction"><span class="name">WeakDual</span>.<span class="name">instDistribMulAction</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instModule'"><span class="name">WeakDual</span>.<span class="name">instModule'</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instContinuousConstSMul"><span class="name">WeakDual</span>.<span class="name">instContinuousConstSMul</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instContinuousSMul"><span class="name">WeakDual</span>.<span class="name">instContinuousSMul</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.coeFn_continuous"><span class="name">WeakDual</span>.<span class="name">coeFn_continuous</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.eval_continuous"><span class="name">WeakDual</span>.<span class="name">eval_continuous</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.continuous_of_continuous_eval"><span class="name">WeakDual</span>.<span class="name">continuous_of_continuous_eval</span></a></div><div class="nav_link"><a class="break_within" href="#WeakDual.instT2Space"><span class="name">WeakDual</span>.<span class="name">instT2Space</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace"><span class="name">WeakSpace</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace.instAddCommMonoid"><span class="name">WeakSpace</span>.<span class="name">instAddCommMonoid</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace.instModule"><span class="name">WeakSpace</span>.<span class="name">instModule</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace.instTopologicalSpace"><span class="name">WeakSpace</span>.<span class="name">instTopologicalSpace</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace.instContinuousAdd"><span class="name">WeakSpace</span>.<span class="name">instContinuousAdd</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace.map"><span class="name">WeakSpace</span>.<span class="name">map</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace.map_apply"><span class="name">WeakSpace</span>.<span class="name">map_apply</span></a></div><div class="nav_link"><a class="break_within" href="#WeakSpace.coe_map"><span class="name">WeakSpace</span>.<span class="name">coe_map</span></a></div><div class="nav_link"><a class="break_within" href="#tendsto_iff_forall_eval_tendsto_topDualPairing"><span class="name">tendsto_iff_forall_eval_tendsto_topDualPairing</span></a></div></nav><main>
+<div class="mod_doc"><h1 class="markdown-heading" id="Weak-dual-topology">Weak dual topology <a class="hover-link" href="#Weak-dual-topology">#</a></h1><p>This file defines the weak topology given two vector spaces <code>E</code> and <code>F</code> over a commutative semiring
+<code>𝕜</code> and a bilinear form <code>B : E →ₗ[𝕜] F →ₗ[𝕜] 𝕜</code>. The weak topology on <code>E</code> is the coarsest topology
+such that for all <code>y : F</code> every map <code>fun x =&gt; B x y</code> is continuous.</p><p>In the case that <code>F = E →L[𝕜] 𝕜</code> and <code>B</code> being the canonical pairing, we obtain the weak-* topology,
+<code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E := (E →L[𝕜] 𝕜)</code>. Interchanging the arguments in the bilinear form yields the
+weak topology <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> 𝕜 E := E</code>.</p><h2 class="markdown-heading" id="Main-definitions">Main definitions <a class="hover-link" href="#Main-definitions">#</a></h2><p>The main definitions are the types <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> for the general case and the two special cases
+<code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E</code> and <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> 𝕜 E</code> with the respective topology instances on it.</p><ul>
+<li>Given <code>B : E →ₗ[𝕜] F →ₗ[𝕜] 𝕜</code>, the type <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> is a type synonym for <code>E</code>.</li>
+<li>The instance <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instTopologicalSpace">WeakBilin.instTopologicalSpace</a></code> is the weak topology induced by the bilinear form
+<code>B</code>.</li>
+<li><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E</code> is a type synonym for <code>Dual 𝕜 E</code> (when the latter is defined): both are equal to
+the type <code>E →L[𝕜] 𝕜</code> of continuous linear maps from a module <code>E</code> over <code>𝕜</code> to the ring <code>𝕜</code>.</li>
+<li>The instance <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instTopologicalSpace">WeakDual.instTopologicalSpace</a></code> is the weak-* topology on <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E</code>, i.e., the
+coarsest topology making the evaluation maps at all <code>z : E</code> continuous.</li>
+<li><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> 𝕜 E</code> is a type synonym for <code>E</code> (when the latter is defined).</li>
+<li>The instance <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.instTopologicalSpace">WeakSpace.instTopologicalSpace</a></code> is the weak topology on <code>E</code>, i.e., the
+coarsest topology such that all <code>v : dual 𝕜 E</code> remain continuous.</li>
+</ul><h2 class="markdown-heading" id="Main-results">Main results <a class="hover-link" href="#Main-results">#</a></h2><p>We establish that <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> has the following structure:</p><ul>
+<li><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instContinuousAdd">WeakBilin.instContinuousAdd</a></code>: The addition in <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> is continuous.</li>
+<li><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instContinuousSMul">WeakBilin.instContinuousSMul</a></code>: The scalar multiplication in <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> is continuous.</li>
+</ul><p>We prove the following results characterizing the weak topology:</p><ul>
+<li><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.eval_continuous">eval_continuous</a></code>: For any <code>y : F</code>, the evaluation mapping <code>fun x =&gt; B x y</code> is continuous.</li>
+<li><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.continuous_of_continuous_eval">continuous_of_continuous_eval</a></code>: For a mapping to <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> to be continuous,
+it suffices that its compositions with pairing with <code>B</code> at all points <code>y : F</code> is continuous.</li>
+<li><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.tendsto_iff_forall_eval_tendsto">tendsto_iff_forall_eval_tendsto</a></code>: Convergence in <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> can be characterized
+in terms of convergence of the evaluations at all points <code>y : F</code>.</li>
+</ul><h2 class="markdown-heading" id="Notations">Notations <a class="hover-link" href="#Notations">#</a></h2><p>No new notation is introduced.</p><h2 class="markdown-heading" id="References">References <a class="hover-link" href="#References">#</a></h2><ul>
+<li>[H. H. Schaefer, <em>Topological Vector Spaces</em>][schaefer1966]</li>
+</ul><h2 class="markdown-heading" id="Tags">Tags <a class="hover-link" href="#Tags">#</a></h2><p>weak-star, weak dual, duality</p></div><div class="decl" id="WeakBilin"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L78-L79">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin"><span class="name">WeakBilin</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span> → <a href="../../../.././foundational_types.html">Type</a> u_5</span></div></div><p>The space <code>E</code> equipped with the weak topology induced by the bilinear form <code>B</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">x</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">E</span></span></li></ul></details><details id="instances-for-list-WeakBilin" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="WeakBilin.instAddCommMonoid"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L85-L86">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instAddCommMonoid"><span class="name">WeakBilin</span>.<span class="name">instAddCommMonoid</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[a : <span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instAddCommMonoid">WeakBilin.instAddCommMonoid</a> <span class="fn">B</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">a</span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.instModule"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L88-L89">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instModule"><span class="name">WeakBilin</span>.<span class="name">instModule</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[m : <span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instModule">WeakBilin.instModule</a> <span class="fn">B</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">m</span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.instAddCommGroup"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L91-L92">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instAddCommGroup"><span class="name">WeakBilin</span>.<span class="name">instAddCommGroup</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[a : <span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instAddCommGroup">WeakBilin.instAddCommGroup</a> <span class="fn">B</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">a</span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.instModule'"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L94-L96">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instModule'"><span class="name">WeakBilin</span>.<span class="name">instModule'</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕝 : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕝</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[m : <span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕝</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕝</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instModule'">WeakBilin.instModule'</a> <span class="fn">B</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">m</span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.instIsScalarTower"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L99-L101">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instIsScalarTower"><span class="name">WeakBilin</span>.<span class="name">instIsScalarTower</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕝 : <a href="../../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕝</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#SMul">SMul</a> <span class="fn">𝕝</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕝</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[s : <span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#IsScalarTower">IsScalarTower</a> <span class="fn">𝕝</span> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#IsScalarTower">IsScalarTower</a> <span class="fn">𝕝</span> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#IsScalarTower">IsScalarTower</a> <span class="fn">𝕝</span> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">s</span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.instTopologicalSpace"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L113-L114">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instTopologicalSpace"><span class="name">WeakBilin</span>.<span class="name">instTopologicalSpace</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instTopologicalSpace">WeakBilin.instTopologicalSpace</a> <span class="fn">B</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a>   <span class="fn"><a href="../../../.././Mathlib/Topology/Order.html#TopologicalSpace.induced">TopologicalSpace.induced</a> <span class="fn">(<span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>) (<span class="fn">y</span> : <span class="fn">F</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">B</span> <span class="fn">x</span></span>)</span> <span class="fn">y</span></span></span>)</span> <span class="fn">Pi.topologicalSpace</span></span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.coeFn_continuous"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L117-L118">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.coeFn_continuous"><span class="name">WeakBilin</span>.<span class="name">coeFn_continuous</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>) (<span class="fn">y</span> : <span class="fn">F</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">B</span> <span class="fn">x</span></span>)</span> <span class="fn">y</span></span></span></span></div></div><p>The coercion <code>(fun x y =&gt; B x y) : E → (F → 𝕜)</code> is continuous.</p></div></div><div class="decl" id="WeakBilin.eval_continuous"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L121-L122">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.eval_continuous"><span class="name">WeakBilin</span>.<span class="name">eval_continuous</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(y : <span class="fn">F</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">B</span> <span class="fn">x</span></span>)</span> <span class="fn">y</span></span></span></span></div></div></div></div><div class="decl" id="WeakBilin.continuous_of_continuous_eval"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L125-L127">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.continuous_of_continuous_eval"><span class="name">WeakBilin</span>.<span class="name">continuous_of_continuous_eval</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn">∀ (<span class="fn">y</span> : <span class="fn">F</span>), <span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">fun (<span class="fn">a</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">B</span> <span class="fn">(<span class="fn"><span class="fn">g</span> <span class="fn">a</span></span>)</span></span>)</span> <span class="fn">y</span></span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">g</span></span></div></div></div></div><div class="decl" id="WeakBilin.embedding"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L131-L133">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.embedding"><span class="name">WeakBilin</span>.<span class="name">embedding</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hB : <span class="fn"><a href="../../../.././Mathlib/Init/Function.html#Function.Injective">Function.Injective</a> <span class="fn">⇑<span class="fn">B</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Maps.html#Embedding">Embedding</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>) (<span class="fn">y</span> : <span class="fn">F</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">B</span> <span class="fn">x</span></span>)</span> <span class="fn">y</span></span></span></span></div></div><p>The coercion <code>(fun x y =&gt; B x y) : E → (F → 𝕜)</code> is an embedding.</p></div></div><div class="decl" id="WeakBilin.tendsto_iff_forall_eval_tendsto"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L136-L140">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.tendsto_iff_forall_eval_tendsto"><span class="name">WeakBilin</span>.<span class="name">tendsto_iff_forall_eval_tendsto</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hB : <span class="fn"><a href="../../../.././Mathlib/Init/Function.html#Function.Injective">Function.Injective</a> <span class="fn">⇑<span class="fn">B</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">f</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">x</span></span>)</span></span> <a href="../../../.././Init/Core.html#Iff">↔</a> <span class="fn">∀ (<span class="fn">y</span> : <span class="fn">F</span>), <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">B</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">i</span></span>)</span></span>)</span> <span class="fn">y</span></span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><span class="fn">B</span> <span class="fn">x</span></span>)</span> <span class="fn">y</span></span>)</span></span>)</span></span></span></span></div></div></div></div><div class="decl" id="WeakBilin.instContinuousAdd"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L144-L150">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instContinuousAdd"><span class="name">WeakBilin</span>.<span class="name">instContinuousAdd</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><p>Addition in <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> is continuous.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.instContinuousSMul"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L153-L158">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instContinuousSMul"><span class="name">WeakBilin</span>.<span class="name">instContinuousSMul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><p>Scalar multiplication by <code>𝕜</code> on <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> is continuous.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="WeakBilin.instTopologicalAddGroup"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L175-L185">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instTopologicalAddGroup"><span class="name">WeakBilin</span>.<span class="name">instTopologicalAddGroup</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommRing">CommRing</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommGroup">AddCommGroup</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(B : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">F</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Group/Basic.html#TopologicalAddGroup">TopologicalAddGroup</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span></div></div><p><code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> B</code> is a <code><a href="../../../.././Mathlib/Topology/Algebra/Group/Basic.html#TopologicalAddGroup">TopologicalAddGroup</a></code>, meaning that addition and negation are
+continuous.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Group/Basic.html#TopologicalAddGroup">TopologicalAddGroup</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Group/Basic.html#TopologicalAddGroup">TopologicalAddGroup</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">B</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="topDualPairing"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L196-L198">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing"><span class="name">topDualPairing</span></a></span><span class="decl_args">
+<span class="fn">(𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="decl_args">
+<span class="fn">(E : <a href="../../../.././foundational_types.html">Type</a> u_9)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">→L[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">]</a> <span class="fn">𝕜</span></span>)</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">→ₗ[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Algebra/Module/LinearMap.html#LinearMap">]</a> <span class="fn">𝕜</span></span></span></div></div><p>The canonical pairing of a vector space and its topological dual.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap.coeLM">ContinuousLinearMap.coeLM</a> <span class="fn">𝕜</span></span></span></li></ul></details><details id="instances-for-list-topDualPairing" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="topDualPairing_apply"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L207-L208">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing_apply"><span class="name">topDualPairing_apply</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(v : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">→L[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">]</a> <span class="fn">𝕜</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">E</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span> <span class="fn">v</span></span>)</span> <span class="fn">x</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">v</span> <span class="fn">x</span></span></span></div></div></div></div><div class="decl" id="WeakDual"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L213-L215">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual"><span class="name">WeakDual</span></a></span><span class="decl_args">
+<span class="fn">(𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="decl_args">
+<span class="fn">(E : <a href="../../../.././foundational_types.html">Type</a> u_9)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><a href="../../../.././foundational_types.html">Type</a> (max u_8 u_9)</div></div><p>The weak star topology is the topology coarsest topology on <code>E →L[𝕜] 𝕜</code> such that all
+functionals <code>fun v =&gt; v x</code> are continuous.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></span></li></ul></details><details id="instances-for-list-WeakDual" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="WeakDual.instAddCommMonoid"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L221-L222">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instAddCommMonoid"><span class="name">WeakDual</span>.<span class="name">instAddCommMonoid</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakDual.instAddCommMonoid</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instAddCommMonoid">WeakBilin.instAddCommMonoid</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instModule"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L224-L225">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instModule"><span class="name">WeakDual</span>.<span class="name">instModule</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakDual.instModule</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instModule">WeakBilin.instModule</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instTopologicalSpace"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L227-L228">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instTopologicalSpace"><span class="name">WeakDual</span>.<span class="name">instTopologicalSpace</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakDual.instTopologicalSpace</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instTopologicalSpace">WeakBilin.instTopologicalSpace</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instContinuousAdd"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L230-L231">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instContinuousAdd"><span class="name">WeakDual</span>.<span class="name">instContinuousAdd</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instInhabited"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L233-L234">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instInhabited"><span class="name">WeakDual</span>.<span class="name">instInhabited</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Init/Prelude.html#Inhabited">Inhabited</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakDual.instInhabited</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">ContinuousLinearMap.inhabited</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instContinuousLinearMapClass"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L236-L237">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instContinuousLinearMapClass"><span class="name">WeakDual</span>.<span class="name">instContinuousLinearMapClass</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMapClass">ContinuousLinearMapClass</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span> <span class="fn">𝕜</span> <span class="fn">E</span> <span class="fn">𝕜</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakDual.instContinuousLinearMapClass</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">ContinuousLinearMap.continuousSemilinearMapClass</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instCoeFunWeakDualForAll"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L242-L243">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instCoeFunWeakDualForAll"><span class="name">WeakDual</span>.<span class="name">instCoeFunWeakDualForAll</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Init/Coe.html#CoeFun">CoeFun</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>) =&gt; <span class="fn"><span class="fn">E</span> → <span class="fn">𝕜</span></span></span></span></div></div><p>Helper instance for when there's too many metavariables to apply <code><a href="../../../.././Mathlib/Data/FunLike/Basic.html#FunLike.hasCoeToFun">FunLike.hasCoeToFun</a></code>
+directly.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakDual.instCoeFunWeakDualForAll</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">FunLike.hasCoeToFun</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instMulAction"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L247-L249">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instMulAction"><span class="name">WeakDual</span>.<span class="name">instMulAction</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(M : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#Monoid">Monoid</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#DistribMulAction">DistribMulAction</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#SMulCommClass">SMulCommClass</a> <span class="fn">𝕜</span> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#MulAction">MulAction</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><p>If a monoid <code>M</code> distributively continuously acts on <code>𝕜</code> and this action commutes with
+multiplication on <code>𝕜</code>, then it acts on <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instMulAction">WeakDual.instMulAction</a> <span class="fn">M</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">ContinuousLinearMap.mulAction</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instDistribMulAction"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L253-L255">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instDistribMulAction"><span class="name">WeakDual</span>.<span class="name">instDistribMulAction</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(M : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#Monoid">Monoid</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#DistribMulAction">DistribMulAction</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#SMulCommClass">SMulCommClass</a> <span class="fn">𝕜</span> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#DistribMulAction">DistribMulAction</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><p>If a monoid <code>M</code> distributively continuously acts on <code>𝕜</code> and this action commutes with
+multiplication on <code>𝕜</code>, then it acts distributively on <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instDistribMulAction">WeakDual.instDistribMulAction</a> <span class="fn">M</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">ContinuousLinearMap.distribMulAction</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instModule'"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L259-L261">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instModule'"><span class="name">WeakDual</span>.<span class="name">instModule'</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(R : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#Semiring">Semiring</a> <span class="fn">R</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">R</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#SMulCommClass">SMulCommClass</a> <span class="fn">𝕜</span> <span class="fn">R</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">R</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">R</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><p>If <code>𝕜</code> is a topological module over a semiring <code>R</code> and scalar multiplication commutes with the
+multiplication on <code>𝕜</code>, then <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E</code> is a module over <code>R</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instModule'">WeakDual.instModule'</a> <span class="fn">R</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">ContinuousLinearMap.module</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instContinuousConstSMul"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L264-L267">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instContinuousConstSMul"><span class="name">WeakDual</span>.<span class="name">instContinuousConstSMul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(M : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#Monoid">Monoid</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#DistribMulAction">DistribMulAction</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#SMulCommClass">SMulCommClass</a> <span class="fn">𝕜</span> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.instContinuousSMul"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L271-L274">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instContinuousSMul"><span class="name">WeakDual</span>.<span class="name">instContinuousSMul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(M : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#Monoid">Monoid</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#DistribMulAction">DistribMulAction</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/GroupTheory/GroupAction/Defs.html#SMulCommClass">SMulCommClass</a> <span class="fn">𝕜</span> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">M</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">M</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><p>If a monoid <code>M</code> distributively continuously acts on <code>𝕜</code> and this action commutes with
+multiplication on <code>𝕜</code>, then it continuously acts on <code><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> 𝕜 E</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/MulAction.html#ContinuousSMul">ContinuousSMul</a> <span class="fn">M</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="WeakDual.coeFn_continuous"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L276-L277">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.coeFn_continuous"><span class="name">WeakDual</span>.<span class="name">coeFn_continuous</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>) (<span class="fn">y</span> : <span class="fn">E</span>) =&gt; <span class="fn"><span class="fn">x</span> <span class="fn">y</span></span></span></span></div></div></div></div><div class="decl" id="WeakDual.eval_continuous"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L280-L281">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.eval_continuous"><span class="name">WeakDual</span>.<span class="name">eval_continuous</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(y : <span class="fn">E</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">fun (<span class="fn">x</span> : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>) =&gt; <span class="fn"><span class="fn">x</span> <span class="fn">y</span></span></span></span></div></div></div></div><div class="decl" id="WeakDual.continuous_of_continuous_eval"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L284-L286">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.continuous_of_continuous_eval"><span class="name">WeakDual</span>.<span class="name">continuous_of_continuous_eval</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">α</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">α</span> → <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn">∀ (<span class="fn">y</span> : <span class="fn">E</span>), <span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">fun (<span class="fn">a</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">g</span> <span class="fn">a</span></span>)</span> <span class="fn">y</span></span></span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">g</span></span></div></div></div></div><div class="decl" id="WeakDual.instT2Space"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L289-L292">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual.instT2Space"><span class="name">WeakDual</span>.<span class="name">instT2Space</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="WeakSpace"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L298-L300">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace"><span class="name">WeakSpace</span></a></span><span class="decl_args">
+<span class="fn">(𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_8)</span></span>
+<span class="decl_args">
+<span class="fn">(E : <a href="../../../.././foundational_types.html">Type</a> u_9)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><a href="../../../.././foundational_types.html">Type</a> u_9</div></div><p>The weak topology is the topology coarsest topology on <code>E</code> such that all functionals
+<code>fun x =&gt; v x</code> are continuous.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/BilinearMap.html#LinearMap.flip">LinearMap.flip</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span></span></li></ul></details><details id="instances-for-list-WeakSpace" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="WeakSpace.instAddCommMonoid"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L306-L307">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.instAddCommMonoid"><span class="name">WeakSpace</span>.<span class="name">instAddCommMonoid</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakSpace.instAddCommMonoid</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instAddCommMonoid">WeakBilin.instAddCommMonoid</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/BilinearMap.html#LinearMap.flip">LinearMap.flip</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span></span></li></ul></details></div></div><div class="decl" id="WeakSpace.instModule"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L309-L310">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.instModule"><span class="name">WeakSpace</span>.<span class="name">instModule</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakSpace.instModule</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instModule">WeakBilin.instModule</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/BilinearMap.html#LinearMap.flip">LinearMap.flip</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span></span></li></ul></details></div></div><div class="decl" id="WeakSpace.instTopologicalSpace"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L312-L313">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.instTopologicalSpace"><span class="name">WeakSpace</span>.<span class="name">instTopologicalSpace</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">WeakSpace.instTopologicalSpace</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin.instTopologicalSpace">WeakBilin.instTopologicalSpace</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/BilinearMap.html#LinearMap.flip">LinearMap.flip</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span></span></li></ul></details></div></div><div class="decl" id="WeakSpace.instContinuousAdd"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L315-L316">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.instContinuousAdd"><span class="name">WeakSpace</span>.<span class="name">instContinuousAdd</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakBilin">WeakBilin</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/LinearAlgebra/BilinearMap.html#LinearMap.flip">LinearMap.flip</a> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span></span>)</span></span>)</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="WeakSpace.map"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L322-L325">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.map"><span class="name">WeakSpace</span>.<span class="name">map</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">→L[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">]</a> <span class="fn">F</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span> <a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">→L[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">]</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace">WeakSpace</a> <span class="fn">𝕜</span> <span class="fn">F</span></span></span></div></div><p>A continuous linear map from <code>E</code> to <code>F</code> is still continuous when <code>E</code> and <code>F</code> are equipped with
+their weak topologies.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.map">WeakSpace.map</a> <span class="fn">f</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap.mk">ContinuousLinearMap.mk</a> <span class="fn">↑<span class="fn">f</span></span></span></span></li></ul></details><details id="instances-for-list-WeakSpace.map" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="WeakSpace.map_apply"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L328-L329">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.map_apply"><span class="name">WeakSpace</span>.<span class="name">map_apply</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">→L[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">]</a> <span class="fn">F</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(x : <span class="fn">E</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.map">WeakSpace.map</a> <span class="fn">f</span></span>)</span> <span class="fn">x</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">f</span> <span class="fn">x</span></span></span></div></div></div></div><div class="decl" id="WeakSpace.coe_map"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L333-L334">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.coe_map"><span class="name">WeakSpace</span>.<span class="name">coe_map</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <a href="../../../.././foundational_types.html">Type</a> u_6}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">F</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">F</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(f : <span class="fn"><span class="fn">E</span> <a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">→L[</a><span class="fn">𝕜</span><a href="../../../.././Mathlib/Topology/Algebra/Module/Basic.html#ContinuousLinearMap">]</a> <span class="fn">F</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">⇑<span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakSpace.map">WeakSpace.map</a> <span class="fn">f</span></span>)</span></span> <a href="../../../.././Init/Prelude.html#Eq">=</a> <span class="fn">⇑<span class="fn">f</span></span></span></div></div></div></div><div class="decl" id="tendsto_iff_forall_eval_tendsto_topDualPairing"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Topology/Algebra/Module/WeakDual.lean#L339-L343">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#tendsto_iff_forall_eval_tendsto_topDualPairing"><span class="name">tendsto_iff_forall_eval_tendsto_topDualPairing</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../../.././foundational_types.html">Type</a> u_5}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Ring/Defs.html#CommSemiring">CommSemiring</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Monoid.html#ContinuousAdd">ContinuousAdd</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/ConstMulAction.html#ContinuousConstSMul">ContinuousConstSMul</a> <span class="fn">𝕜</span> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Group/Defs.html#AddCommMonoid">AddCommMonoid</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Algebra/Module/Basic.html#Module">Module</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#WeakDual">WeakDual</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">f</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">x</span></span>)</span></span> <a href="../../../.././Init/Core.html#Iff">↔</a>   <span class="fn">∀ (<span class="fn">y</span> : <span class="fn">E</span>), <span class="fn"><a href="../../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn">fun (<span class="fn">i</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">f</span> <span class="fn">i</span></span>)</span></span>)</span> <span class="fn">y</span></span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><span class="fn">(<span class="fn"><a href="../../../.././Mathlib/Topology/Algebra/Module/WeakDual.html#topDualPairing">topDualPairing</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>)</span> <span class="fn">x</span></span>)</span> <span class="fn">y</span></span>)</span></span>)</span></span></span></span></div></div></div></div></main>
+<nav class="nav"><iframe src="../../../.././navbar.html" class="navframe" frameBorder="0"></iframe></nav></body></html>

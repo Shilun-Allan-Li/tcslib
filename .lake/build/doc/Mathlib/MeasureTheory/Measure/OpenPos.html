@@ -1,0 +1,741 @@
+<html lang="en"><head><meta charset="UTF-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><link rel="stylesheet" href="../../.././style.css"></link><link rel="stylesheet" href="../../.././src/pygments.css"></link><link rel="shortcut icon" href="../../.././favicon.ico"></link><link rel="prefetch" href="../../.././/declarations/declaration-data.bmp" as="image"></link><title>Mathlib.MeasureTheory.Measure.OpenPos</title><script defer="true" src="../../.././mathjax-config.js"></script><script defer="true" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script defer="true" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>const SITE_ROOT="../../.././";</script><script>const MODULE_NAME="Mathlib.MeasureTheory.Measure.OpenPos";</script><script type="module" src="../../.././jump-src.js"></script><script type="module" src="../../.././search.js"></script><script type="module" src="../../.././expand-nav.js"></script><script type="module" src="../../.././how-about.js"></script><script type="module" src="../../.././instances.js"></script><script type="module" src="../../.././importedBy.js"></script></head><body><input id="nav_toggle" type="checkbox"></input><header><h1><label for="nav_toggle"></label><span>Documentation</span></h1><h2 class="header_filename break_within"><span class="name">Mathlib</span>.<span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">OpenPos</span></h2><form action="https://google.com/search" method="get" id="search_form"><input type="hidden" name="sitesearch" value="https://leanprover-community.github.io/mathlib4_docs"></input><input type="text" name="q" autocomplete="off"></input>&#32;
+            <button id="search_button" onclick="javascript: form.action='../../.././search.html';">Search</button><button>Google site search</button></form></header><nav class="internal_nav"><p><a href="#top">return to top</a></p><p class="gh_nav_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean">source</a></p><div class="imports"><details><summary>Imports</summary><ul><li><a href="../../.././Init.html">Init</a></li><li><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpace.html">Mathlib.MeasureTheory.Measure.MeasureSpace</a></li><li><a href="../../.././Mathlib/MeasureTheory/Constructions/BorelSpace/Basic.html">Mathlib.MeasureTheory.Constructions.BorelSpace.Basic</a></li></ul></details><details><summary>Imported by</summary><ul id="imported-by-Mathlib.MeasureTheory.Measure.OpenPos" class="imported-by-list"></ul></details></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.IsOpenPosMeasure"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">IsOpenPosMeasure</span></a></div><div class="nav_link"><a class="break_within" href="#IsOpen.measure_ne_zero"><span class="name">IsOpen</span>.<span class="name">measure_ne_zero</span></a></div><div class="nav_link"><a class="break_within" href="#IsOpen.measure_pos"><span class="name">IsOpen</span>.<span class="name">measure_pos</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.instNeZeroMeasureInstZero"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">instNeZeroMeasureInstZero</span></a></div><div class="nav_link"><a class="break_within" href="#IsOpen.measure_pos_iff"><span class="name">IsOpen</span>.<span class="name">measure_pos_iff</span></a></div><div class="nav_link"><a class="break_within" href="#IsOpen.measure_eq_zero_iff"><span class="name">IsOpen</span>.<span class="name">measure_eq_zero_iff</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.measure_pos_of_nonempty_interior"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_pos_of_nonempty_interior</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.measure_pos_of_mem_nhds"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_pos_of_mem_nhds</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.isOpenPosMeasure_smul"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">isOpenPosMeasure_smul</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.AbsolutelyContinuous.isOpenPosMeasure"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">AbsolutelyContinuous</span>.<span class="name">isOpenPosMeasure</span></a></div><div class="nav_link"><a class="break_within" href="#LE.le.isOpenPosMeasure"><span class="name">LE</span>.<span class="name">le</span>.<span class="name">isOpenPosMeasure</span></a></div><div class="nav_link"><a class="break_within" href="#IsOpen.measure_zero_iff_eq_empty"><span class="name">IsOpen</span>.<span class="name">measure_zero_iff_eq_empty</span></a></div><div class="nav_link"><a class="break_within" href="#IsOpen.ae_eq_empty_iff_eq"><span class="name">IsOpen</span>.<span class="name">ae_eq_empty_iff_eq</span></a></div><div class="nav_link"><a class="break_within" href="#IsOpen.eq_empty_of_measure_zero"><span class="name">IsOpen</span>.<span class="name">eq_empty_of_measure_zero</span></a></div><div class="nav_link"><a class="break_within" href="#IsClosed.ae_eq_univ_iff_eq"><span class="name">IsClosed</span>.<span class="name">ae_eq_univ_iff_eq</span></a></div><div class="nav_link"><a class="break_within" href="#IsClosed.measure_eq_univ_iff_eq"><span class="name">IsClosed</span>.<span class="name">measure_eq_univ_iff_eq</span></a></div><div class="nav_link"><a class="break_within" href="#IsClosed.measure_eq_one_iff_eq_univ"><span class="name">IsClosed</span>.<span class="name">measure_eq_one_iff_eq_univ</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.interior_eq_empty_of_null"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">interior_eq_empty_of_null</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.eqOn_open_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_open_of_ae_eq</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.eq_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eq_of_ae_eq</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.eqOn_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_of_ae_eq</span></a></div><div class="nav_link"><a class="break_within" href="#Continuous.ae_eq_iff_eq"><span class="name">Continuous</span>.<span class="name">ae_eq_iff_eq</span></a></div><div class="nav_link"><a class="break_within" href="#Continuous.isOpenPosMeasure_map"><span class="name">Continuous</span>.<span class="name">isOpenPosMeasure_map</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.measure_Ioi_pos"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Ioi_pos</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.measure_Iio_pos"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Iio_pos</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.measure_Ioo_pos"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Ioo_pos</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.measure_Ioo_eq_zero"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Ioo_eq_zero</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.eqOn_Ioo_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Ioo_of_ae_eq</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.eqOn_Ioc_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Ioc_of_ae_eq</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.eqOn_Ico_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Ico_of_ae_eq</span></a></div><div class="nav_link"><a class="break_within" href="#MeasureTheory.Measure.eqOn_Icc_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Icc_of_ae_eq</span></a></div><div class="nav_link"><a class="break_within" href="#Metric.measure_ball_pos"><span class="name">Metric</span>.<span class="name">measure_ball_pos</span></a></div><div class="nav_link"><a class="break_within" href="#Metric.measure_closedBall_pos"><span class="name">Metric</span>.<span class="name">measure_closedBall_pos</span></a></div><div class="nav_link"><a class="break_within" href="#Metric.measure_closedBall_pos_iff"><span class="name">Metric</span>.<span class="name">measure_closedBall_pos_iff</span></a></div><div class="nav_link"><a class="break_within" href="#EMetric.measure_ball_pos"><span class="name">EMetric</span>.<span class="name">measure_ball_pos</span></a></div><div class="nav_link"><a class="break_within" href="#EMetric.measure_closedBall_pos"><span class="name">EMetric</span>.<span class="name">measure_closedBall_pos</span></a></div></nav><main>
+<div class="mod_doc"><h1 class="markdown-heading" id="Measures-positive-on-nonempty-opens">Measures positive on nonempty opens <a class="hover-link" href="#Measures-positive-on-nonempty-opens">#</a></h1><p>In this file we define a typeclass for measures that are positive on nonempty opens, see
+<code><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a></code>. Examples include (additive) Haar measures, as well as
+measures that have positive density with respect to a Haar measure. We also prove some basic facts
+about these measures.</p></div><div class="decl" id="MeasureTheory.Measure.IsOpenPosMeasure"><div class="class"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L36-L37">source</a></div><div class="decl_header"><span class="decl_kind">class</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">IsOpenPosMeasure</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><a href="../../.././foundational_types.html">Prop</a></div></div><p>A measure is said to be <code><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">IsOpenPosMeasure</a></code> if it is positive on nonempty open sets.</p><ul class="structure_fields" id="MeasureTheory.Measure.IsOpenPosMeasure.mk"><li id="MeasureTheory.Measure.IsOpenPosMeasure.open_pos" class="structure_field"><div class="structure_field_info">open_pos : <span class="fn">∀ (<span class="fn">U</span> : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>), <span class="fn"><span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span> → <span class="fn"><span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set.Nonempty">Set.Nonempty</a> <span class="fn">U</span></span> → <span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">U</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span></span></span></span></div></li></ul><details class="instances"><summary>Instances</summary><ul id="instances-list-MeasureTheory.Measure.IsOpenPosMeasure" class="instances-list"></ul></details></div></div><div class="decl" id="IsOpen.measure_ne_zero"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L42-L43">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsOpen.measure_ne_zero"><span class="name">IsOpen</span>.<span class="name">measure_ne_zero</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hne : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set.Nonempty">Set.Nonempty</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">U</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span></div></div></div></div><div class="decl" id="IsOpen.measure_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L46-L47">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsOpen.measure_pos"><span class="name">IsOpen</span>.<span class="name">measure_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hne : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set.Nonempty">Set.Nonempty</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">U</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.instNeZeroMeasureInstZero"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L50-L51">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.instNeZeroMeasureInstZero"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">instNeZeroMeasureInstZero</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Init/Prelude.html#Nonempty">Nonempty</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Algebra/NeZero.html#NeZero">NeZero</a> <span class="fn">μ</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">(_ : <span class="fn"><a href="../../.././Mathlib/Algebra/NeZero.html#NeZero">NeZero</a> <span class="fn">μ</span></span>)</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">(_ : <span class="fn"><a href="../../.././Mathlib/Algebra/NeZero.html#NeZero">NeZero</a> <span class="fn">μ</span></span>)</span></span></li></ul></details></div></div><div class="decl" id="IsOpen.measure_pos_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L53-L54">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsOpen.measure_pos_iff"><span class="name">IsOpen</span>.<span class="name">measure_pos_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">U</span></span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set.Nonempty">Set.Nonempty</a> <span class="fn">U</span></span></span></div></div></div></div><div class="decl" id="IsOpen.measure_eq_zero_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L57-L59">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsOpen.measure_eq_zero_iff"><span class="name">IsOpen</span>.<span class="name">measure_eq_zero_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">U</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">U</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <a href="../../.././Init/Core.html#EmptyCollection.emptyCollection">∅</a></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.measure_pos_of_nonempty_interior"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L62-L63">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.measure_pos_of_nonempty_interior"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_pos_of_nonempty_interior</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set.Nonempty">Set.Nonempty</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#interior">interior</a> <span class="fn">s</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">s</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.measure_pos_of_mem_nhds"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L66-L67">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.measure_pos_of_mem_nhds"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_pos_of_mem_nhds</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">X</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">s</span> <a href="../../.././Init/Prelude.html#Membership.mem">∈</a> <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">x</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">s</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.isOpenPosMeasure_smul"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L70-L71">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.isOpenPosMeasure_smul"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">isOpenPosMeasure_smul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <a href="../../.././Mathlib/Data/Real/ENNReal.html#ENNReal">ENNReal</a>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">c</span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">(<span class="fn"><span class="fn">c</span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn">μ</span></span>)</span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.AbsolutelyContinuous.isOpenPosMeasure"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L76-L77">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.AbsolutelyContinuous.isOpenPosMeasure"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">AbsolutelyContinuous</span>.<span class="name">isOpenPosMeasure</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ν : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpace.html#MeasureTheory.Measure.AbsolutelyContinuous">MeasureTheory.Measure.AbsolutelyContinuous</a> <span class="fn">μ</span> <span class="fn">ν</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">ν</span></span></div></div></div></div><div class="decl" id="LE.le.isOpenPosMeasure"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L80-L81">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#LE.le.isOpenPosMeasure"><span class="name">LE</span>.<span class="name">le</span>.<span class="name">isOpenPosMeasure</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{ν : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">μ</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn">ν</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">ν</span></span></div></div></div></div><div class="decl" id="IsOpen.measure_zero_iff_eq_empty"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L84-L86">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsOpen.measure_zero_iff_eq_empty"><span class="name">IsOpen</span>.<span class="name">measure_zero_iff_eq_empty</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">U</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">U</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <a href="../../.././Init/Core.html#EmptyCollection.emptyCollection">∅</a></span></span></div></div></div></div><div class="decl" id="IsOpen.ae_eq_empty_iff_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L88-L90">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsOpen.ae_eq_empty_iff_eq"><span class="name">IsOpen</span>.<span class="name">ae_eq_empty_iff_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">U</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">μ</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <a href="../../.././Init/Core.html#EmptyCollection.emptyCollection">∅</a></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">U</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <a href="../../.././Init/Core.html#EmptyCollection.emptyCollection">∅</a></span></span></div></div></div></div><div class="decl" id="IsOpen.eq_empty_of_measure_zero"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L92-L93">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsOpen.eq_empty_of_measure_zero"><span class="name">IsOpen</span>.<span class="name">eq_empty_of_measure_zero</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₀ : <span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">U</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">U</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <a href="../../.././Init/Core.html#EmptyCollection.emptyCollection">∅</a></span></div></div></div></div><div class="decl" id="IsClosed.ae_eq_univ_iff_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L96-L99">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsClosed.ae_eq_univ_iff_eq"><span class="name">IsClosed</span>.<span class="name">ae_eq_univ_iff_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hF : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsClosed">IsClosed</a> <span class="fn">F</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">F</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">μ</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">Set.univ</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">F</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">Set.univ</span></span></span></div></div></div></div><div class="decl" id="IsClosed.measure_eq_univ_iff_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L101-L104">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsClosed.measure_eq_univ_iff_eq"><span class="name">IsClosed</span>.<span class="name">measure_eq_univ_iff_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Constructions/BorelSpace/Basic.html#OpensMeasurableSpace">OpensMeasurableSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Typeclasses.html#MeasureTheory.IsFiniteMeasure">MeasureTheory.IsFiniteMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(hF : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsClosed">IsClosed</a> <span class="fn">F</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">F</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">Set.univ</span></span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">F</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">Set.univ</span></span></span></div></div></div></div><div class="decl" id="IsClosed.measure_eq_one_iff_eq_univ"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L106-L109">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#IsClosed.measure_eq_one_iff_eq_univ"><span class="name">IsClosed</span>.<span class="name">measure_eq_one_iff_eq_univ</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{F : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Constructions/BorelSpace/Basic.html#OpensMeasurableSpace">OpensMeasurableSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Typeclasses.html#MeasureTheory.IsProbabilityMeasure">MeasureTheory.IsProbabilityMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(hF : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsClosed">IsClosed</a> <span class="fn">F</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">F</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">1</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">F</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">Set.univ</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.interior_eq_empty_of_null"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L111-L112">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.interior_eq_empty_of_null"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">interior_eq_empty_of_null</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hs : <span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">s</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#interior">interior</a> <span class="fn">s</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <a href="../../.././Init/Core.html#EmptyCollection.emptyCollection">∅</a></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.eqOn_open_of_ae_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L117-L128">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.eqOn_open_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_open_of_ae_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{U : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Restrict.html#MeasureTheory.Measure.restrict">MeasureTheory.Measure.restrict</a> <span class="fn">μ</span> <span class="fn">U</span></span>)</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hU : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#IsOpen">IsOpen</a> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">f</span> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">g</span> <span class="fn">U</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Data/Set/Function.html#Set.EqOn">Set.EqOn</a> <span class="fn">f</span> <span class="fn">g</span> <span class="fn">U</span></span></div></div><p>If two functions are a.e. equal on an open set and are continuous on this set, then they are
+equal on this set.</p></div></div><div class="decl" id="MeasureTheory.Measure.eq_of_ae_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L132-L134">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.eq_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eq_of_ae_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">μ</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">f</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">g</span></span></div></div><p>If two continuous functions are a.e. equal, then they are equal.</p></div></div><div class="decl" id="MeasureTheory.Measure.eqOn_of_ae_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L137-L142">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.eqOn_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_of_ae_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{s : <span class="fn"><a href="../../.././Mathlib/Init/Set.html#Set">Set</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Restrict.html#MeasureTheory.Measure.restrict">MeasureTheory.Measure.restrict</a> <span class="fn">μ</span> <span class="fn">s</span></span>)</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">f</span> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">g</span> <span class="fn">s</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hU : <span class="fn"><span class="fn">s</span> <a href="../../.././Std/Classes/SetNotation.html#HasSubset.Subset">⊆</a> <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#closure">closure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#interior">interior</a> <span class="fn">s</span></span>)</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Data/Set/Function.html#Set.EqOn">Set.EqOn</a> <span class="fn">f</span> <span class="fn">g</span> <span class="fn">s</span></span></div></div></div></div><div class="decl" id="Continuous.ae_eq_iff_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L147-L149">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#Continuous.ae_eq_iff_eq"><span class="name">Continuous</span>.<span class="name">ae_eq_iff_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">μ</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">f</span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">g</span></span></span></div></div></div></div><div class="decl" id="Continuous.isOpenPosMeasure_map"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L154-L160">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#Continuous.isOpenPosMeasure_map"><span class="name">Continuous</span>.<span class="name">isOpenPosMeasure_map</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Constructions/BorelSpace/Basic.html#OpensMeasurableSpace">OpensMeasurableSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Z : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Z</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">Z</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Constructions/BorelSpace/Basic.html#BorelSpace">BorelSpace</a> <span class="fn">Z</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Z</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#Continuous">Continuous</a> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf_surj : <span class="fn"><a href="../../.././Mathlib/Init/Function.html#Function.Surjective">Function.Surjective</a> <span class="fn">f</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpace.html#MeasureTheory.Measure.map">MeasureTheory.Measure.map</a> <span class="fn">f</span> <span class="fn">μ</span></span>)</span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.measure_Ioi_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L170-L171">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.measure_Ioi_pos"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Ioi_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Order/Max.html#NoMaxOrder">NoMaxOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(a : <span class="fn">X</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioi">Set.Ioi</a> <span class="fn">a</span></span>)</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.measure_Iio_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L174-L175">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.measure_Iio_pos"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Iio_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Order/Max.html#NoMinOrder">NoMinOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(a : <span class="fn">X</span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Iio">Set.Iio</a> <span class="fn">a</span></span>)</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.measure_Ioo_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L178-L179">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.measure_Ioo_pos"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Ioo_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Order/Basic.html#DenselyOrdered">DenselyOrdered</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{a : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{b : <span class="fn">X</span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioo">Set.Ioo</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">a</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">b</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.measure_Ioo_eq_zero"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L182-L183">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.measure_Ioo_eq_zero"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">measure_Ioo_eq_zero</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Order/Basic.html#DenselyOrdered">DenselyOrdered</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{a : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{b : <span class="fn">X</span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioo">Set.Ioo</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">b</span> <a href="../../.././Init/Prelude.html#LE.le">≤</a> <span class="fn">a</span></span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.eqOn_Ioo_of_ae_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L186-L188">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.eqOn_Ioo_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Ioo_of_ae_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{a : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{b : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hfg : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Restrict.html#MeasureTheory.Measure.restrict">MeasureTheory.Measure.restrict</a> <span class="fn">μ</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioo">Set.Ioo</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioo">Set.Ioo</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioo">Set.Ioo</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Data/Set/Function.html#Set.EqOn">Set.EqOn</a> <span class="fn">f</span> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioo">Set.Ioo</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.eqOn_Ioc_of_ae_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L191-L194">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.eqOn_Ioc_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Ioc_of_ae_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Order/Basic.html#DenselyOrdered">DenselyOrdered</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{a : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{b : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hfg : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Restrict.html#MeasureTheory.Measure.restrict">MeasureTheory.Measure.restrict</a> <span class="fn">μ</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioc">Set.Ioc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioc">Set.Ioc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioc">Set.Ioc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Data/Set/Function.html#Set.EqOn">Set.EqOn</a> <span class="fn">f</span> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ioc">Set.Ioc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.eqOn_Ico_of_ae_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L197-L200">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.eqOn_Ico_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Ico_of_ae_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Order/Basic.html#DenselyOrdered">DenselyOrdered</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{a : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{b : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hfg : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Restrict.html#MeasureTheory.Measure.restrict">MeasureTheory.Measure.restrict</a> <span class="fn">μ</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ico">Set.Ico</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ico">Set.Ico</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ico">Set.Ico</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Data/Set/Function.html#Set.EqOn">Set.EqOn</a> <span class="fn">f</span> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Ico">Set.Ico</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span></div></div></div></div><div class="decl" id="MeasureTheory.Measure.eqOn_Icc_of_ae_eq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L203-L206">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.eqOn_Icc_of_ae_eq"><span class="name">MeasureTheory</span>.<span class="name">Measure</span>.<span class="name">eqOn_Icc_of_ae_eq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{Y : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Init/Order/Defs.html#LinearOrder">LinearOrder</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#TopologicalSpace">TopologicalSpace</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Separation.html#T2Space">T2Space</a> <span class="fn">Y</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Order/Basic.html#DenselyOrdered">DenselyOrdered</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{a : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{b : <span class="fn">X</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hne : <span class="fn"><span class="fn">a</span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">b</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g : <span class="fn"><span class="fn">X</span> → <span class="fn">Y</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hfg : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure.ae">MeasureTheory.Measure.ae</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Restrict.html#MeasureTheory.Measure.restrict">MeasureTheory.Measure.restrict</a> <span class="fn">μ</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hf : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">f</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hg : <span class="fn"><a href="../../.././Mathlib/Topology/ContinuousOn.html#ContinuousOn">ContinuousOn</a> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Data/Set/Function.html#Set.EqOn">Set.EqOn</a> <span class="fn">f</span> <span class="fn">g</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Data/Set/Intervals/Basic.html#Set.Icc">Set.Icc</a> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span></div></div></div></div><div class="decl" id="Metric.measure_ball_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L222-L223">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#Metric.measure_ball_pos"><span class="name">Metric</span>.<span class="name">measure_ball_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">X</span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{r : <a href="../../.././Mathlib/Data/Real/Basic.html#Real">ℝ</a>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hr : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">r</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Metric.ball">Metric.ball</a> <span class="fn">x</span> <span class="fn">r</span></span>)</span></span></span></div></div></div></div><div class="decl" id="Metric.measure_closedBall_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L227-L228">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#Metric.measure_closedBall_pos"><span class="name">Metric</span>.<span class="name">measure_closedBall_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#PseudoMetricSpace">PseudoMetricSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">X</span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{r : <a href="../../.././Mathlib/Data/Real/Basic.html#Real">ℝ</a>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hr : <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">r</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Metric.closedBall">Metric.closedBall</a> <span class="fn">x</span> <span class="fn">r</span></span>)</span></span></span></div></div><p>See also <code><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#Metric.measure_closedBall_pos_iff">Metric.measure_closedBall_pos_iff</a></code>.</p></div></div><div class="decl" id="Metric.measure_closedBall_pos_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L231-L236">source</a></div><div class="attributes">@[simp]</div>
+<div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#Metric.measure_closedBall_pos_iff"><span class="name">Metric</span>.<span class="name">measure_closedBall_pos_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/MetricSpace/Basic.html#MetricSpace">MetricSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/Typeclasses.html#MeasureTheory.NoAtoms">MeasureTheory.NoAtoms</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{x : <span class="fn">X</span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{r : <a href="../../.././Mathlib/Data/Real/Basic.html#Real">ℝ</a>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/MetricSpace/PseudoMetric.html#Metric.closedBall">Metric.closedBall</a> <span class="fn">x</span> <span class="fn">r</span></span>)</span></span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">r</span></span></span></div></div></div></div><div class="decl" id="EMetric.measure_ball_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L245-L246">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#EMetric.measure_ball_pos"><span class="name">EMetric</span>.<span class="name">measure_ball_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/EMetricSpace/Basic.html#PseudoEMetricSpace">PseudoEMetricSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">X</span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{r : <a href="../../.././Mathlib/Data/Real/ENNReal.html#ENNReal">ENNReal</a>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hr : <span class="fn"><span class="fn">r</span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/EMetricSpace/Basic.html#EMetric.ball">EMetric.ball</a> <span class="fn">x</span> <span class="fn">r</span></span>)</span></span></span></div></div></div></div><div class="decl" id="EMetric.measure_closedBall_pos"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/MeasureTheory/Measure/OpenPos.lean#L249-L250">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#EMetric.measure_closedBall_pos"><span class="name">EMetric</span>.<span class="name">measure_closedBall_pos</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{X : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/EMetricSpace/Basic.html#PseudoEMetricSpace">PseudoEMetricSpace</a> <span class="fn">X</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{m : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/MeasurableSpace/Defs.html#MeasurableSpace">MeasurableSpace</a> <span class="fn">X</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(μ : <span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/MeasureSpaceDef.html#MeasureTheory.Measure">MeasureTheory.Measure</a> <span class="fn">X</span></span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/MeasureTheory/Measure/OpenPos.html#MeasureTheory.Measure.IsOpenPosMeasure">MeasureTheory.Measure.IsOpenPosMeasure</a> <span class="fn">μ</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(x : <span class="fn">X</span>)</span></span>
+<span class="impl_arg"><span class="decl_args">
+<span class="fn">{r : <a href="../../.././Mathlib/Data/Real/ENNReal.html#ENNReal">ENNReal</a>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hr : <span class="fn"><span class="fn">r</span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">0</span> <a href="../../.././Init/Prelude.html#LT.lt">&lt;</a> <span class="fn">↑<span class="fn">↑<span class="fn">μ</span></span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/EMetricSpace/Basic.html#EMetric.closedBall">EMetric.closedBall</a> <span class="fn">x</span> <span class="fn">r</span></span>)</span></span></span></div></div></div></div></main>
+<nav class="nav"><iframe src="../../.././navbar.html" class="navframe" frameBorder="0"></iframe></nav></body></html>

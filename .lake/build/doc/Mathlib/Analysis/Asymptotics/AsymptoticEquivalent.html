@@ -1,0 +1,913 @@
+<html lang="en"><head><meta charset="UTF-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><link rel="stylesheet" href="../../.././style.css"></link><link rel="stylesheet" href="../../.././src/pygments.css"></link><link rel="shortcut icon" href="../../.././favicon.ico"></link><link rel="prefetch" href="../../.././/declarations/declaration-data.bmp" as="image"></link><title>Mathlib.Analysis.Asymptotics.AsymptoticEquivalent</title><script defer="true" src="../../.././mathjax-config.js"></script><script defer="true" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script defer="true" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>const SITE_ROOT="../../.././";</script><script>const MODULE_NAME="Mathlib.Analysis.Asymptotics.AsymptoticEquivalent";</script><script type="module" src="../../.././jump-src.js"></script><script type="module" src="../../.././search.js"></script><script type="module" src="../../.././expand-nav.js"></script><script type="module" src="../../.././how-about.js"></script><script type="module" src="../../.././instances.js"></script><script type="module" src="../../.././importedBy.js"></script></head><body><input id="nav_toggle" type="checkbox"></input><header><h1><label for="nav_toggle"></label><span>Documentation</span></h1><h2 class="header_filename break_within"><span class="name">Mathlib</span>.<span class="name">Analysis</span>.<span class="name">Asymptotics</span>.<span class="name">AsymptoticEquivalent</span></h2><form action="https://google.com/search" method="get" id="search_form"><input type="hidden" name="sitesearch" value="https://leanprover-community.github.io/mathlib4_docs"></input><input type="text" name="q" autocomplete="off"></input>&#32;
+            <button id="search_button" onclick="javascript: form.action='../../.././search.html';">Search</button><button>Google site search</button></form></header><nav class="internal_nav"><p><a href="#top">return to top</a></p><p class="gh_nav_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean">source</a></p><div class="imports"><details><summary>Imports</summary><ul><li><a href="../../.././Init.html">Init</a></li><li><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html">Mathlib.Analysis.Asymptotics.Asymptotics</a></li><li><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html">Mathlib.Analysis.Asymptotics.Theta</a></li><li><a href="../../.././Mathlib/Analysis/Normed/Order/Basic.html">Mathlib.Analysis.Normed.Order.Basic</a></li></ul></details><details><summary>Imported by</summary><ul id="imported-by-Mathlib.Analysis.Asymptotics.AsymptoticEquivalent" class="imported-by-list"></ul></details></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.«term_~[_]_»"><span class="name">Asymptotics</span>.<span class="name">«term_~[_]_»</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isLittleO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.isBigO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isBigO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.isBigO_symm"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isBigO_symm</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.isTheta"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isTheta</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.isTheta_symm"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isTheta_symm</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.refl"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">refl</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.symm"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">symm</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.trans"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.congr_left"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">congr_left</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.congr_right"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">congr_right</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.isEquivalent_zero_iff_eventually_zero"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_zero_iff_eventually_zero</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.isEquivalent_zero_iff_isBigO_zero"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_zero_iff_isBigO_zero</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.isEquivalent_const_iff_tendsto"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_const_iff_tendsto</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.tendsto_const"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_const</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.tendsto_nhds"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_nhds</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.tendsto_nhds_iff"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_nhds_iff</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.add_isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">add_isLittleO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.sub_isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">sub_isLittleO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsLittleO.add_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsLittleO</span>.<span class="name">add_isEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsLittleO.isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsLittleO</span>.<span class="name">isEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.neg"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">neg</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.isEquivalent_iff_exists_eq_mul"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_iff_exists_eq_mul</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.exists_eq_mul"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">exists_eq_mul</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.isEquivalent_of_tendsto_one"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_of_tendsto_one</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.isEquivalent_of_tendsto_one'"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_of_tendsto_one'</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.isEquivalent_iff_tendsto_one"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_iff_tendsto_one</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.smul"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">smul</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.mul"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">mul</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.inv"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">inv</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.div"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">div</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.tendsto_atTop"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atTop</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.tendsto_atTop_iff"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atTop_iff</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.tendsto_atBot"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atBot</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.tendsto_atBot_iff"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atBot_iff</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.isEquivalent"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">isEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Filter.EventuallyEq.trans_isEquivalent"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">trans_isEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsEquivalentIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transEventuallyEqIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transEventuallyEqIsEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.trans_eventuallyEq"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_eventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsEquivalentEventuallyEq"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentEventuallyEq</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.trans_isBigO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_isBigO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsEquivalentIsBigO"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsBigO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsBigO.trans_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsBigO</span>.<span class="name">trans_isEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsBigOIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsBigOIsEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.trans_isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_isLittleO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsEquivalentIsLittleO"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsLittleO</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsLittleO.trans_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsLittleO</span>.<span class="name">trans_isEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsLittleOIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsLittleOIsEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsEquivalent.trans_isTheta"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_isTheta</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsEquivalentIsTheta"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsTheta</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.IsTheta.trans_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsTheta</span>.<span class="name">trans_isEquivalent</span></a></div><div class="nav_link"><a class="break_within" href="#Asymptotics.transIsThetaIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsThetaIsEquivalent</span></a></div></nav><main>
+<div class="mod_doc"><h1 class="markdown-heading" id="Asymptotic-equivalence">Asymptotic equivalence <a class="hover-link" href="#Asymptotic-equivalence">#</a></h1><p>In this file, we define the relation <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">IsEquivalent</a> l u v</code>, which means that <code>u-v</code> is little o of
+<code>v</code> along the filter <code>l</code>.</p><p>Unlike <code>Is(Little|Big)O</code> relations, this one requires <code>u</code> and <code>v</code> to have the same codomain <code>β</code>.
+While the definition only requires <code>β</code> to be a <code><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a></code>, most interesting properties
+require it to be a <code><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a></code>.</p><h2 class="markdown-heading" id="Notations">Notations <a class="hover-link" href="#Notations">#</a></h2><p>We introduce the notation <code>u ~[l] v := <a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">IsEquivalent</a> l u v</code>, which you can use by opening the
+<code>Asymptotics</code> locale.</p><h2 class="markdown-heading" id="Main-results">Main results <a class="hover-link" href="#Main-results">#</a></h2><p>If <code>β</code> is a <code><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a></code> :</p><ul>
+<li><code>_ ~[l] _</code> is an equivalence relation</li>
+<li>Equivalent statements for <code>u ~[l] const _ c</code> :
+<ul>
+<li>If <code>c ≠ 0</code>, this is true iff <code>Tendsto u l (𝓝 c)</code> (see <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_const_iff_tendsto">isEquivalent_const_iff_tendsto</a></code>)</li>
+<li>For <code>c = 0</code>, this is true iff <code>u =ᶠ[l] 0</code> (see <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_zero_iff_eventually_zero">isEquivalent_zero_iff_eventually_zero</a></code>)</li>
+</ul>
+</li>
+</ul><p>If <code>β</code> is a <code><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a></code> :</p><ul>
+<li>
+<p>Alternative characterization of the relation (see <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_iff_exists_eq_mul">isEquivalent_iff_exists_eq_mul</a></code>) :</p>
+<p><code>u ~[l] v ↔ ∃ (φ : α → β) (hφ : Tendsto φ l (𝓝 1)), u =ᶠ[l] φ * v</code></p>
+</li>
+<li>
+<p>Provided some non-vanishing hypothesis, this can be seen as <code>u ~[l] v ↔ Tendsto (u/v) l (𝓝 1)</code>
+(see <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_iff_tendsto_one">isEquivalent_iff_tendsto_one</a></code>)</p>
+</li>
+<li>
+<p>For any constant <code>c</code>, <code>u ~[l] v</code> implies <code>Tendsto u l (𝓝 c) ↔ Tendsto v l (𝓝 c)</code>
+(see <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_nhds_iff">IsEquivalent.tendsto_nhds_iff</a></code>)</p>
+</li>
+<li>
+<p><code>*</code> and <code>/</code> are compatible with <code>_ ~[l] _</code> (see <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.mul">IsEquivalent.mul</a></code> and <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.div">IsEquivalent.div</a></code>)</p>
+</li>
+</ul><p>If <code>β</code> is a <code><a href="../../.././Mathlib/Analysis/Normed/Order/Basic.html#NormedLinearOrderedField">NormedLinearOrderedField</a></code> :</p><ul>
+<li>If <code>u ~[l] v</code>, we have <code>Tendsto u l atTop ↔ Tendsto v l atTop</code>
+(see <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_atTop_iff">IsEquivalent.tendsto_atTop_iff</a></code>)</li>
+</ul><h2 class="markdown-heading" id="Implementation-Notes">Implementation Notes <a class="hover-link" href="#Implementation-Notes">#</a></h2><p>Note that <code><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">IsEquivalent</a></code> takes the parameters <code>(l : <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> α) (u v : α → β)</code> in that order.
+This is to enable <code><a href="../../.././Init/NotationExtra.html#calc">calc</a></code> support, as <code><a href="../../.././Init/NotationExtra.html#calc">calc</a></code> requires that the last two explicit arguments are <code>u v</code>.</p></div><div class="decl" id="Asymptotics.IsEquivalent"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L73-L74">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><a href="../../.././foundational_types.html">Prop</a></div></div><p>Two functions <code>u</code> and <code>v</code> are said to be asymptotically equivalent along a filter <code>l</code> when
+<code>u x - v x = o(v x)</code> as <code>x</code> converges along <code>l</code>.</p><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn"><span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HSub.hSub">-</a> <span class="fn">v</span></span>)</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">v</span></span></span></li></ul></details><details id="instances-for-list-Asymptotics.IsEquivalent" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="Asymptotics.«term_~[_]_»"><div class="def"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L77-L77">source</a></div><div class="decl_header"><span class="decl_kind">def</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.«term_~[_]_»"><span class="name">Asymptotics</span>.<span class="name">«term_~[_]_»</span></a></span><span class="decl_args"> :</span><div class="decl_type"><a href="../../.././Init/Prelude.html#Lean.TrailingParserDescr">Lean.TrailingParserDescr</a></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation">One or more equations did not get rendered due to their size.</li></ul></details><details id="instances-for-list-Asymptotics.«term_~[_]_»" class="instances-for-list"><summary>Instances For</summary><ul class="instances-for-enum"></ul></details></div></div><div class="decl" id="Asymptotics.IsEquivalent.isLittleO"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L81-L81">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isLittleO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HSub.hSub">-</a> <span class="fn">v</span></span>)</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.isBigO"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L84-L85">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.isBigO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isBigO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.isBigO_symm"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L89-L91">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.isBigO_symm"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isBigO_symm</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">v</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">u</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.isTheta"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L95-L96">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.isTheta"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isTheta</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.isTheta_symm"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L98-L99">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.isTheta_symm"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">isTheta_symm</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">v</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">u</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.refl"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L102-L104">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.refl"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">refl</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">u</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.symm"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L108-L109">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.symm"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">symm</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">v</span> <span class="fn">u</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.trans"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L113-L115">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.trans"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hvw : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">v</span> <span class="fn">w</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">w</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.congr_left"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L118-L120">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.congr_left"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">congr_left</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(huw : <span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">w</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">w</span> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.congr_right"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L123-L125">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.congr_right"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">congr_right</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hvw : <span class="fn"><span class="fn">v</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">w</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">w</span></span></div></div></div></div><div class="decl" id="Asymptotics.isEquivalent_zero_iff_eventually_zero"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L128-L130">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_zero_iff_eventually_zero"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_zero_iff_eventually_zero</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">0</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">0</span></span></span></div></div></div></div><div class="decl" id="Asymptotics.isEquivalent_zero_iff_isBigO_zero"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L133-L136">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_zero_iff_isBigO_zero"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_zero_iff_isBigO_zero</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">0</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">0</span></span></span></div></div></div></div><div class="decl" id="Asymptotics.isEquivalent_const_iff_tendsto"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L140-L148">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_const_iff_tendsto"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_const_iff_tendsto</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <span class="fn">β</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">c</span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Function.const">Function.const</a> <span class="fn">α</span> <span class="fn">c</span></span>)</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">c</span></span>)</span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.tendsto_const"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L151-L154">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_const"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_const</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <span class="fn">β</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hu : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">(<span class="fn"><a href="../../.././Init/Prelude.html#Function.const">Function.const</a> <span class="fn">α</span> <span class="fn">c</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">c</span></span>)</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.tendsto_nhds"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L157-L164">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_nhds"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_nhds</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <span class="fn">β</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hu : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">c</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">v</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">c</span></span>)</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.tendsto_nhds_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L167-L169">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_nhds_iff"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_nhds_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{c : <span class="fn">β</span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">c</span></span>)</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">v</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">c</span></span>)</span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.add_isLittleO"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L172-L173">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.add_isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">add_isLittleO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hwv : <span class="fn"><span class="fn">w</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn">w</span></span>)</span> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.sub_isLittleO"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L176-L177">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.sub_isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">sub_isLittleO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hwv : <span class="fn"><span class="fn">w</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HSub.hSub">-</a> <span class="fn">w</span></span>)</span> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsLittleO.add_isEquivalent"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L180-L181">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsLittleO.add_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsLittleO</span>.<span class="name">add_isEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hu : <span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">w</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">v</span> <span class="fn">w</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HAdd.hAdd">+</a> <span class="fn">v</span></span>)</span> <span class="fn">w</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsLittleO.isEquivalent"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L184-L184">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsLittleO.isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsLittleO</span>.<span class="name">isEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HSub.hSub">-</a> <span class="fn">v</span></span>)</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.neg"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L187-L190">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.neg"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">neg</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><a href="../../.././Init/Prelude.html#Neg.neg">-</a><span class="fn"><span class="fn">u</span> <span class="fn">x</span></span></span></span>)</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><a href="../../.././Init/Prelude.html#Neg.neg">-</a><span class="fn"><span class="fn">v</span> <span class="fn">x</span></span></span></span></span></div></div></div></div><div class="decl" id="Asymptotics.isEquivalent_iff_exists_eq_mul"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L201-L210">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_iff_exists_eq_mul"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_iff_exists_eq_mul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn">∃ (φ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>) (_ : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">φ</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">1</span></span>)</span></span>), <span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><span class="fn">φ</span> <a href="../../.././Init/Prelude.html#HMul.hMul">*</a> <span class="fn">v</span></span></span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.exists_eq_mul"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L213-L215">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.exists_eq_mul"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">exists_eq_mul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn">∃ (φ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>) (_ : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">φ</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">1</span></span>)</span></span>), <span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn"><span class="fn">φ</span> <a href="../../.././Init/Prelude.html#HMul.hMul">*</a> <span class="fn">v</span></span></span></span></div></div></div></div><div class="decl" id="Asymptotics.isEquivalent_of_tendsto_one"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L218-L221">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_of_tendsto_one"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_of_tendsto_one</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hz : <span class="fn">∀ᶠ (x : <span class="fn">α</span>) in <span class="fn">l</span>, <span class="fn"><span class="fn"><span class="fn"><span class="fn">v</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span> → <span class="fn"><span class="fn"><span class="fn">u</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HDiv.hDiv">/</a> <span class="fn">v</span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">1</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.isEquivalent_of_tendsto_one'"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L224-L226">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_of_tendsto_one'"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_of_tendsto_one'</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hz : <span class="fn">∀ (<span class="fn">x</span> : <span class="fn">α</span>), <span class="fn"><span class="fn"><span class="fn"><span class="fn">v</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span> → <span class="fn"><span class="fn"><span class="fn">u</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#Eq">=</a> <span class="fn">0</span></span></span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HDiv.hDiv">/</a> <span class="fn">v</span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">1</span></span>)</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Asymptotics.isEquivalent_iff_tendsto_one"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L229-L240">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.isEquivalent_iff_tendsto_one"><span class="name">Asymptotics</span>.<span class="name">isEquivalent_iff_tendsto_one</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hz : <span class="fn">∀ᶠ (x : <span class="fn">α</span>) in <span class="fn">l</span>, <span class="fn"><span class="fn"><span class="fn">v</span> <span class="fn">x</span></span> <a href="../../.././Init/Core.html#Ne">≠</a> <span class="fn">0</span></span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HDiv.hDiv">/</a> <span class="fn">v</span></span>)</span> <span class="fn">l</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Topology/Basic.html#nhds">nhds</a> <span class="fn">1</span></span>)</span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.smul"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L247-L281">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.smul"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">smul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{E : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{𝕜 : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">𝕜</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/NormedSpace/Basic.html#NormedSpace">NormedSpace</a> <span class="fn">𝕜</span> <span class="fn">E</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{a : <span class="fn"><span class="fn">α</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{b : <span class="fn"><span class="fn">α</span> → <span class="fn">𝕜</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">E</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(hab : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">a</span> <span class="fn">b</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">a</span> <span class="fn">x</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">u</span> <span class="fn">x</span></span></span></span>)</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">b</span> <span class="fn">x</span></span> <a href="../../.././Mathlib/Algebra/Group/Defs.html#HSMul.hSMul">•</a> <span class="fn"><span class="fn">v</span> <span class="fn">x</span></span></span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.mul"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L290-L291">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.mul"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">mul</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(htu : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">t</span> <span class="fn">u</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hvw : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">v</span> <span class="fn">w</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn"><span class="fn">t</span> <a href="../../.././Init/Prelude.html#HMul.hMul">*</a> <span class="fn">v</span></span>)</span> <span class="fn">(<span class="fn"><span class="fn">u</span> <a href="../../.././Init/Prelude.html#HMul.hMul">*</a> <span class="fn">w</span></span>)</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.inv"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L294-L300">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.inv"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">inv</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">u</span> <span class="fn">x</span></span>)</span><a href="../../.././Mathlib/Algebra/Group/Defs.html#Inv.inv">⁻¹</a></span></span>)</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn">(<span class="fn"><span class="fn">v</span> <span class="fn">x</span></span>)</span><a href="../../.././Mathlib/Algebra/Group/Defs.html#Inv.inv">⁻¹</a></span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.div"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L303-L305">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.div"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">div</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Field/Basic.html#NormedField">NormedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{t : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{w : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(htu : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">t</span> <span class="fn">u</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hvw : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">v</span> <span class="fn">w</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">(<span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">t</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#HDiv.hDiv">/</a> <span class="fn"><span class="fn">v</span> <span class="fn">x</span></span></span></span>)</span> <span class="fn">fun (<span class="fn">x</span> : <span class="fn">α</span>) =&gt; <span class="fn"><span class="fn"><span class="fn">u</span> <span class="fn">x</span></span> <a href="../../.././Init/Prelude.html#HDiv.hDiv">/</a> <span class="fn"><span class="fn">w</span> <span class="fn">x</span></span></span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.tendsto_atTop"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L314-L317">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_atTop"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atTop</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Order/Basic.html#NormedLinearOrderedField">NormedLinearOrderedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hu : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">Filter.atTop</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">v</span> <span class="fn">l</span> <span class="fn">Filter.atTop</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.tendsto_atTop_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L320-L322">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_atTop_iff"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atTop_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Order/Basic.html#NormedLinearOrderedField">NormedLinearOrderedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">Filter.atTop</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">v</span> <span class="fn">l</span> <span class="fn">Filter.atTop</span></span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.tendsto_atBot"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L325-L329">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_atBot"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atBot</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Order/Basic.html#NormedLinearOrderedField">NormedLinearOrderedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(hu : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">Filter.atBot</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">v</span> <span class="fn">l</span> <span class="fn">Filter.atBot</span></span></div></div></div></div><div class="decl" id="Asymptotics.IsEquivalent.tendsto_atBot_iff"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L332-L334">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.tendsto_atBot_iff"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">tendsto_atBot_iff</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Order/Basic.html#NormedLinearOrderedField">NormedLinearOrderedField</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Topology/Order/Basic.html#OrderTopology">OrderTopology</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="decl_args">
+<span class="fn">(huv : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">u</span> <span class="fn">l</span> <span class="fn">Filter.atBot</span></span> <a href="../../.././Init/Core.html#Iff">↔</a> <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.Tendsto">Filter.Tendsto</a> <span class="fn">v</span> <span class="fn">l</span> <span class="fn">Filter.atBot</span></span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.isEquivalent"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L347-L348">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Filter.EventuallyEq.isEquivalent"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">isEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{u : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{v : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">u</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">v</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">u</span> <span class="fn">v</span></span></div></div></div></div><div class="decl" id="Filter.EventuallyEq.trans_isEquivalent"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L352-L354">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Filter.EventuallyEq.trans_isEquivalent"><span class="name">Filter</span>.<span class="name">EventuallyEq</span>.<span class="name">trans_isEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">g₁</span> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">f</span> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsEquivalentIsEquivalent"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L358-L360">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsEquivalentIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation">One or more equations did not get rendered due to their size.</li></ul></details></div></div><div class="decl" id="Asymptotics.transEventuallyEqIsEquivalent"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L362-L364">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transEventuallyEqIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transEventuallyEqIsEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">Filter.EventuallyEq</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transEventuallyEqIsEquivalent</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a </span>b c : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}, <span class="fn"><span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">b</span> <span class="fn">c</span></span> → <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">a</span> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div><div class="decl" id="Asymptotics.IsEquivalent.trans_eventuallyEq"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L367-L369">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.trans_eventuallyEq"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_eventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">f</span> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><span class="fn">g₁</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">f</span> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsEquivalentEventuallyEq"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L371-L373">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsEquivalentEventuallyEq"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentEventuallyEq</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">Filter.EventuallyEq</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transIsEquivalentEventuallyEq</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a </span>b c : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}, <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">a</span> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><span class="fn">b</span> <a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">=ᶠ[</a><span class="fn">l</span><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter.EventuallyEq">]</a> <span class="fn">c</span></span> → <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">a</span> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div><div class="decl" id="Asymptotics.IsEquivalent.trans_isBigO"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L376-L378">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.trans_isBigO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_isBigO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">f</span> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><span class="fn">g₁</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsEquivalentIsBigO"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L380-L382">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsEquivalentIsBigO"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsBigO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">Asymptotics.IsBigO</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">Asymptotics.IsBigO</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transIsEquivalentIsBigO</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a </span>b : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>} {<span class="fn">c</span> : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}, <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">a</span> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><span class="fn">b</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">c</span></span> → <span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div><div class="decl" id="Asymptotics.IsBigO.trans_isEquivalent"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L385-L387">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsBigO.trans_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsBigO</span>.<span class="name">trans_isEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">g₁</span> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsBigOIsEquivalent"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L389-L391">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsBigOIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsBigOIsEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">Asymptotics.IsBigO</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">Asymptotics.IsBigO</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transIsBigOIsEquivalent</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a</span> : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>} {<span class="fn">b </span>c : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}, <span class="fn"><span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">b</span> <span class="fn">c</span></span> → <span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">=O[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsBigO">]</a> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div><div class="decl" id="Asymptotics.IsEquivalent.trans_isLittleO"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L394-L396">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.trans_isLittleO"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_isLittleO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">f</span> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><span class="fn">g₁</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsEquivalentIsLittleO"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L398-L400">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsEquivalentIsLittleO"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsLittleO</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">Asymptotics.IsLittleO</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">Asymptotics.IsLittleO</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transIsEquivalentIsLittleO</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a </span>b : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>} {<span class="fn">c</span> : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}, <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">a</span> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><span class="fn">b</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">c</span></span> → <span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div><div class="decl" id="Asymptotics.IsLittleO.trans_isEquivalent"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L403-L405">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsLittleO.trans_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsLittleO</span>.<span class="name">trans_isEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">g₁</span> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsLittleOIsEquivalent"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L407-L409">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsLittleOIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsLittleOIsEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">Asymptotics.IsLittleO</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">Asymptotics.IsLittleO</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transIsLittleOIsEquivalent</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a</span> : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>} {<span class="fn">b </span>c : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}, <span class="fn"><span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">b</span> <span class="fn">c</span></span> → <span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">=o[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Asymptotics.html#Asymptotics.IsLittleO">]</a> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div><div class="decl" id="Asymptotics.IsEquivalent.trans_isTheta"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L412-L414">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent.trans_isTheta"><span class="name">Asymptotics</span>.<span class="name">IsEquivalent</span>.<span class="name">trans_isTheta</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">f</span> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><span class="fn">g₁</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsEquivalentIsTheta"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L416-L418">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsEquivalentIsTheta"><span class="name">Asymptotics</span>.<span class="name">transIsEquivalentIsTheta</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">Asymptotics.IsTheta</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">Asymptotics.IsTheta</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transIsEquivalentIsTheta</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a </span>b : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>} {<span class="fn">c</span> : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}, <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">a</span> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><span class="fn">b</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">c</span></span> → <span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div><div class="decl" id="Asymptotics.IsTheta.trans_isEquivalent"><div class="theorem"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L421-L423">source</a></div><div class="decl_header"><span class="decl_kind">theorem</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsTheta.trans_isEquivalent"><span class="name">Asymptotics</span>.<span class="name">IsTheta</span>.<span class="name">trans_isEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{f : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₁ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{g₂ : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}</span></span>
+</span><span class="decl_args">
+<span class="fn">(h : <span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">g₁</span></span>)</span></span>
+<span class="decl_args">
+<span class="fn">(h₂ : <span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">g₁</span> <span class="fn">g₂</span></span>)</span></span>
+<span class="decl_args"> :</span><div class="decl_type"><span class="fn"><span class="fn">f</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">g₂</span></span></div></div></div></div><div class="decl" id="Asymptotics.transIsThetaIsEquivalent"><div class="instance"><div class="gh_link"><a href="https://github.com/leanprover-community/mathlib4/blob/3b81a542da60bafaae06756ff194ad50e9c83921/Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.lean#L425-L427">source</a></div><div class="decl_header"><span class="decl_kind">instance</span>
+<span class="decl_name"><a class="break_within" href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.transIsThetaIsEquivalent"><span class="name">Asymptotics</span>.<span class="name">transIsThetaIsEquivalent</span></a></span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{α : <a href="../../.././foundational_types.html">Type</a> u_1}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β : <a href="../../.././foundational_types.html">Type</a> u_2}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{β₂ : <a href="../../.././foundational_types.html">Type</a> u_3}</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#NormedAddCommGroup">NormedAddCommGroup</a> <span class="fn">β</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">[<span class="fn"><a href="../../.././Mathlib/Analysis/Normed/Group/Basic.html#Norm">Norm</a> <span class="fn">β₂</span></span>]</span></span>
+</span><span class="impl_arg"><span class="decl_args">
+<span class="fn">{l : <span class="fn"><a href="../../.././Mathlib/Order/Filter/Basic.html#Filter">Filter</a> <span class="fn">α</span></span>}</span></span>
+</span><span class="decl_args"> :</span><div class="decl_type"><span class="fn"><a href="../../.././Init/Prelude.html#Trans">Trans</a> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">Asymptotics.IsTheta</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span></span>)</span> <span class="fn">(<span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">Asymptotics.IsTheta</a> <span class="fn">l</span></span>)</span></span></div></div><details><summary>Equations</summary><ul class="equations"><li class="equation"><span class="fn"><span class="fn">Asymptotics.transIsThetaIsEquivalent</span> <a href="../../.././Init/Prelude.html#Eq">=</a>   <span class="fn">{ <span class="fn">trans</span> := <span class="fn">(_ : <span class="fn">∀ {<span class="fn">a</span> : <span class="fn"><span class="fn">α</span> → <span class="fn">β₂</span></span>} {<span class="fn">b </span>c : <span class="fn"><span class="fn">α</span> → <span class="fn">β</span></span>}, <span class="fn"><span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">b</span></span> → <span class="fn"><span class="fn"><a href="../../.././Mathlib/Analysis/Asymptotics/AsymptoticEquivalent.html#Asymptotics.IsEquivalent">Asymptotics.IsEquivalent</a> <span class="fn">l</span> <span class="fn">b</span> <span class="fn">c</span></span> → <span class="fn"><span class="fn">a</span> <a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">=Θ[</a><span class="fn">l</span><a href="../../.././Mathlib/Analysis/Asymptotics/Theta.html#Asymptotics.IsTheta">]</a> <span class="fn">c</span></span></span></span></span>)</span> }</span></span></li></ul></details></div></div></main>
+<nav class="nav"><iframe src="../../.././navbar.html" class="navframe" frameBorder="0"></iframe></nav></body></html>
