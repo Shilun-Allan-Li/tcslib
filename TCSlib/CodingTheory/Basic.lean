@@ -28,15 +28,15 @@ variable {n k : ℕ}
 
 
 /-- A type that represents the set of symbols in the code -/
-def Alphabet := Set α
+abbrev Alphabet := Set α
 
 
 /-- An element of 𝔽ⁿ. -/
-def Codeword (n : ℕ) (𝔽 : Type*) [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽] := Fin n → 𝔽
+abbrev Codeword (n : ℕ) (𝔽 : Type*) [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽] := Fin n → 𝔽
 
 
 /-- Code `Code n 𝔽` is a subset of 𝔽ⁿ. -/
-def Code (n : ℕ) (𝔽 : Type*) [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽] := Finset (Codeword n 𝔽)
+abbrev Code (n : ℕ) (𝔽 : Type*) [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽] := Finset (Codeword n 𝔽)
 
 
 /-- AsymptoticCodes is a map from ℕ to `Code n 𝔽`. -/
@@ -48,4 +48,4 @@ def hamming_distance (c1 c2 : Codeword n 𝔽) : ℕ :=
 
 
 -- def distance {n : ℕ} (C : Code n 𝔽) : ℕ :=
---   min {d | ∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d}
+--   Finset.min' {d : Fin n | ∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d}
