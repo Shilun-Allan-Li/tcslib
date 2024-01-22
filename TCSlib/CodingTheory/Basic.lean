@@ -23,29 +23,25 @@ open Set Filter Asymptotics Finset
 namespace CodingTheory
 
 variable {𝔽 : Type*} [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽]
-variable {α : Type} [Fintype 𝔽] [DecidableEq α]
+variable {α : Type*} [Fintype α] [DecidableEq α] -- the alphabet
 variable {n k : ℕ}
 
 
-/-- A type that represents the set of symbols in the code -/
-abbrev Alphabet := Set α
-
-
 /-- An element of 𝔽ⁿ. -/
-abbrev Codeword (n : ℕ) (𝔽 : Type*) [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽] := Fin n → 𝔽
+abbrev Codeword (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := (i : Fin n) → α
 
 
 /-- Code `Code n 𝔽` is a subset of 𝔽ⁿ. -/
-abbrev Code (n : ℕ) (𝔽 : Type*) [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽] := Finset (Codeword n 𝔽)
+abbrev Code (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := Finset (Codeword n α)
 
 
 /-- AsymptoticCodes is a map from ℕ to `Code n 𝔽`. -/
-def AsymptoticCodes (𝔽 : Type*) [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽] :=  (n : ℕ) → Code n 𝔽
+def AsymptoticCodes (α : Type*) [Fintype α] [DecidableEq α] :=  (n : ℕ) → Code n α
 
 
-def hamming_distance (c1 c2 : Codeword n 𝔽) : ℕ :=
+def hamming_distance (c1 c2 : Codeword n α) : ℕ :=
   hammingDist c1 c2
 
 
--- def distance {n : ℕ} (C : Code n 𝔽) : ℕ :=
---   Finset.min' {d : Fin n | ∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d}
+def distance {n : ℕ} (C : Code n 𝔽) (d : ℕ) : Prop :=
+  (∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d) ∧ (∀ z ∈ C, ∀ w ∈ C, z ≠ w → hamming_distance z w ≥ d)

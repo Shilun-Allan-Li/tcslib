@@ -1,23 +1,23 @@
 \chapter{This is a Test}
 
-In this chapter, blablabla.
+In this chapter, this is a test.
 
-\begin{lemma}[ASDASD]
+\begin{lemma}[Welch-Berlekamp Algorithm]
   \lean{TCSlib.test.existence}\leanok
-  There exist code $C$ for ...
+  If there is a polynomial $f$ with degree at most $k-1$ such that $\Delta(f,w)\leq e$, then there exists $E$ and $Q$ satisfying:
+    \begin{itemize}
+        \item $\textrm{deg}(E(X))=e$ and $E(X)$ is monic.
+        \item $\textrm{deg}(Q(X))\leq e+k-1$.
+        \item $w_i\cdot E(\alpha_i)=Q(\alpha_i)$ for all $i=1,...,n$.
+    \end{itemize}
 \end{lemma}
 
-\begin{proof} \leanok Check that $h'$ is strictly monotone decreasing.
+\begin{proof} \leanok
+  Consider the error-locator polynomial of the form
+  $$E(X)=\Pi_{i: f(a_i)\neq y_i}(x-a_i).$$
 \end{proof}
 
 
-\begin{lemma}[Concavity]\label{concave}
-  \lean{Real.strictConcaveOn_negMulLog}\leanok
-  $h$ is strictly concave on $[0,1]$.
-\end{lemma}
-
-\begin{proof} \leanok Check that $h'$ is strictly monotone decreasing.
-\end{proof}
 
 \begin{lemma}[Jensen]\label{jensen}
   \lean{Real.sum_negMulLog_le} \leanok
