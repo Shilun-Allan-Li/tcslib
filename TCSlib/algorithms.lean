@@ -22,15 +22,13 @@ end Asymptotics
 
 structure Algorithm (α : Type) (β : Type) where
   (func : α → β)
-  (time : ℕ → ℝ)
-  (length : ℕ → ℕ)
+  (time : α → ℝ)
 
 
 theorem composition_time (f : Algorithm α β) (g : Algorithm β γ) :
 ∃h : Algorithm α γ,
   h.func = g.func ∘ f.func ∧
-  h.time = f.time + g.time ∘ f.length ∧
-  h.length = g.length ∘ f.length
+  h.time = f.time + g.time ∘ f.func
 := sorry
 
 
