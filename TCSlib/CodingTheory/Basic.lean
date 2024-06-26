@@ -22,7 +22,7 @@ open Set Filter Asymptotics Finset
 
 namespace CodingTheory
 
-variable {𝔽 : Type*} [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽]
+-- variable {𝔽 : Type*} [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽]
 variable {α : Type*} [Fintype α] [DecidableEq α] -- the alphabet
 variable {n k : ℕ}
 
@@ -36,12 +36,20 @@ abbrev Code (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := Finset (Code
 
 
 /-- AsymptoticCodes is a map from ℕ to `Code n 𝔽`. -/
-def AsymptoticCodes (α : Type*) [Fintype α] [DecidableEq α] :=  (n : ℕ) → Code n α
+-- def AsymptoticCodes (α : Type*) (S : Set ℕ) (hs : S.Infinite) [Fintype α] [DecidableEq α] :=  (n : S) → Code n α
 
 
 def hamming_distance (c1 c2 : Codeword n α) : ℕ :=
   hammingDist c1 c2
 
 
-def distance {n : ℕ} (C : Code n 𝔽) (d : ℕ) : Prop :=
+def distance (C : Code n α) (d : ℕ) : Prop :=
   (∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d) ∧ (∀ z ∈ C, ∀ w ∈ C, z ≠ w → hamming_distance z w ≥ d)
+
+
+theorem singleton_bound (C : Code n α) (d : ℕ) : C.card ≤ (Fintype.card α)^(n - d + 1) :=
+  sorry
+
+
+theorem hamming_bound (C : Code n α) (d : ℕ) : C.card ≤ (Fintype.card α)^n / Finset.sum (Finset.range (d + 1)) (λ i=> Nat.choose n i * (q - 1)^i) :=
+  sorry
