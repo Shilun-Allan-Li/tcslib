@@ -35,21 +35,6 @@ abbrev Codeword (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := (i : Fin
 /-- Code `Code n 𝔽` is a subset of 𝔽ⁿ. -/
 abbrev Code (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := Finset (Codeword n α)
 
-instance CodeOrder : LinearOrder (Code n α) where
-  le := fun (a: Code n α) (b: Code n α ) ↦ a.card ≤ b.card
-  le_refl := by {
-    simp
-  }
-  le_trans := by {
-    intros a b c hab hbc
-    simp at *
-    exact Nat.le_trans hab hbc
-  }
-  le_antisymm := by {
-    intros a b hab hab
-    simp at *
-
-  }
 
 
 /-- AsymptoticCodes is a map from ℕ to `Code n 𝔽`. -/
@@ -67,6 +52,7 @@ def distance (C : Code n α) (d : ℕ) : Prop :=
 
 def max_size (n d: ℕ) (A : ℕ): Prop :=
   ∃ C : Code n α, (distance C d ∧ (C.card = A) ∧ (∀ c : Code n α, distance c d → c.card ≤ C.card))
+
 
 lemma dist_le_length (C : Code n α) (d : ℕ) (h : distance C d) : d <= n := by{
   rcases h with ⟨h1, _⟩
@@ -209,17 +195,70 @@ theorem singleton_bound (C : Code n α) (d : ℕ) (h : distance C d) (hα : Nont
 @[simp]
 def hamming_ball (l : ℕ) (c : Codeword n α) : Finset (Codeword n α) := {c' : Codeword n α | hamming_distance c' c ≤ l}.toFinset
 
-lemma hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c).card = (Finset.sum (Finset.range (l + 1)) (λ i=> Nat.choose n i * (Fintype.card α - 1)^i)) := by{
+theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c).card = (Finset.sum (Finset.range (l + 1)) (λ i=> Nat.choose n i * (q - 1)^i)) := by{
   intro c
   simp
   rw[Set.toFinset_card]
+  have h_card_dist_eq : ∀ d, {c' : Codeword n α | hamming_distance c' c = d}.toFinset.card = Nat.choose n d * (q - 1)^d
+  · intro d
+    dsimp [hamming_distance]
+    rw[Set.toFinset_card]
+    simp
+    dsimp[hammingDist]
+    sorry
 
+  induction' l with d ih
+  · simp [hamming_distance]
+  · simp
+    rw[Nat.succ_add]
+    rw[Finset.sum_range_succ]
+    rw[← ih]
+    simp
+    rw[Nat.succ_eq_add_one]
+    have : Fintype.card { x // hamming_distance x c ≤ d + 1 } = Fintype.card { x // hamming_distance x c ≤ d } + Fintype.card { x // hamming_distance x c = d + 1}
+    · have : fun x ↦ hamming_distance x c ≤ d + 1 = fun x ↦ hamming_distance x c ≤ d ∨ hamming_distance x c = d + 1
+      · ext x
+        constructor
+        · intros h_d1
+          apply Nat.eq_or_lt_of_le at h_d1
+          rcases h_d1 with hl | hr
+          right
+          exact hl
+          left
+          linarith
+        · intros h_or
+          rcases h_or with hl | hr
+          linarith
+          linarith
+
+      have : {x // hamming_distance x c ≤ d + 1} = {x // hamming_distance x c ≤ d ∨ hamming_distance x c = d + 1 }
+      · exact congrArg Subtype this
+
+      have : Fintype.card {x // hamming_distance x c ≤ d + 1} = Fintype.card {x // hamming_distance x c ≤ d ∨ hamming_distance x c = d + 1 }
+      · exact Fintype.card_congr' this
+
+      rw[this]
+
+      have : Disjoint (fun x ↦ hamming_distance x c ≤ d)  (fun x ↦ hamming_distance x c = d + 1)
+      · sorry
+
+      apply Fintype.card_subtype_or_disjoint
+      exact this
+
+
+    rw[this]
+    simp
+    have : {c' : Codeword n α | hamming_distance c' c = d + 1}.toFinset.card = Nat.choose n (d+1) * (q - 1)^(d + 1)
+    · exact h_card_dist_eq (d + 1)
+
+    rw[Set.toFinset_card] at this
+    simp at this
+    linarith
 }
-
 
 set_option maxHeartbeats 1000000
 
-lemma hamming_ball_non_intersect (C : Code n α) (h : distance C d) (h' : 0 < d): ∀ c₁ c₂ : Codeword n α, (c₁ ∈ C ∧ c₂ ∈ C ∧ c₁ ≠ c₂) → ∀ c' : Codeword n α, c' ∈ (hamming_ball (Nat.floor ((d-1)/2)) c₁) → c' ∉  (hamming_ball (Nat.floor ((d-1)/2)) c₂) := by {
+lemma hamming_ball_non_intersect (C : Code n α) (h : distance C d) (h' : 0 < d): ∀ c₁ c₂ : Codeword n α, (c₁ ∈ C ∧ c₂ ∈ C ∧ c₁ ≠ c₂) → ∀ c' : Codeword n α, c' ∈ (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₁) → c' ∉  (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₂) := by {
   intros c₁ c₂ hc₁₂ c' hc'
 
   dsimp [hamming_ball, hamming_distance] at *
@@ -227,7 +266,7 @@ lemma hamming_ball_non_intersect (C : Code n α) (h : distance C d) (h' : 0 < d)
   have h_dist_c₁₂ : hamming_distance c₁ c₂ ≥ d
   · exact h.2 c₁ hc₁₂.1 c₂ hc₁₂.2.1 hc₁₂.2.2
 
-  have h_dist_c₁' : hamming_distance c₁ c' ≤ (d-1)/2
+  have h_dist_c₁' : (hamming_distance c₁ c') ≤ (Nat.floor (((d : ℝ)-1)/2))
   · apply Set.mem_toFinset.1 at hc'
     simp at hc'
     rw[hammingDist_comm c' c₁] at hc'
@@ -237,27 +276,46 @@ lemma hamming_ball_non_intersect (C : Code n α) (h : distance C d) (h' : 0 < d)
   apply Set.mem_toFinset.1 at h_dist_c'₂
   simp at h_dist_c'₂
 
-  have : (d - 1)/2 + (d - 1)/2 = (d - 1)
-  · refine Int.coe_nat_inj'.mp ?this.a
-    refine Rat.intCast_inj.mp ?this.a.a
+  have : (Nat.floor (((d : ℝ)-1)/2)) ≤ ((d : ℝ)-1)/2
+  · apply Nat.floor_le
+    apply div_nonneg
     simp
-    ring
-    rw[div_mul_cancel (d-1) 2]
+    exact h'
+    linarith
+
+  have : (Nat.floor (((d : ℝ)-1)/2)) + (Nat.floor (((d : ℝ)-1)/2)) ≤ ((d - (1 : ℕ) ) : ℝ)
+  · simp
+    linarith
+
+
+  have : ((Nat.floor (((d : ℝ)-1)/2)) + (Nat.floor (((d : ℝ)-1)/2))) < d
+  · suffices (Nat.floor (((d : ℝ)-1)/2)) + (Nat.floor (((d : ℝ)-1)/2)) ≤ d - 1 by {
+      exact Nat.lt_of_le_pred h' this
+    }
+    rw[← Nat.cast_sub] at this
+    rw[← Nat.cast_add] at this
+    exact Nat.cast_le.1 this
+    linarith
+
+
+
 
 
   have h_cont : hamming_distance c₁ c₂ < d
   · simp [hamming_distance] at *
     calc
       hammingDist c₁ c₂ ≤ hammingDist c₁ c' + hammingDist c' c₂ := by exact hammingDist_triangle c₁ c' c₂
-      _                 ≤ (d - 1)/2         + (d - 1)/2         := by linarith [h_dist_c₁', h_dist_c'₂]
-      _                 = d - 1                                 := by exact this
-      _                 < d                                     := by exact Nat.sub_lt h' Nat.one_pos
+      _                 ≤ (Nat.floor (((d : ℝ)-1)/2)) + (Nat.floor (((d : ℝ)-1)/2))    := by linarith [h_dist_c₁', h_dist_c'₂]
+      _                 < d                                     := by linarith[this]
+
 
   linarith
 
+
+
 }
 
-lemma hamming_ball'_disjoint (C : Code n α) (h : distance C d) (h' : 0 < d) : ∀ c₁ c₂ : Codeword n α, (c₁ ∈ C ∧ c₂ ∈ C ∧ c₁ ≠ c₂) → Disjoint (hamming_ball (Nat.floor ((d-1)/2)) c₁) (hamming_ball (Nat.floor ((d-1)/2)) c₂) := by {
+lemma hamming_ball'_disjoint (C : Code n α) (h : distance C d) (h' : 0 < d) : ∀ c₁ c₂ : Codeword n α, (c₁ ∈ C ∧ c₂ ∈ C ∧ c₁ ≠ c₂) → Disjoint (hamming_ball (Nat.floor (((d : ℝ) - 1)/2)) c₁) (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₂) := by {
   intros c₁ c₂ hc₁₂
   dsimp [hamming_ball]
   apply Set.disjoint_toFinset.2
@@ -265,7 +323,7 @@ lemma hamming_ball'_disjoint (C : Code n α) (h : distance C d) (h' : 0 < d) : �
   intros c' hc'
   simp at *
   rcases hc' with ⟨hc'₁, hc'₂⟩
-  have : c' ∈ (hamming_ball (Nat.floor ((d-1)/2)) c₁)
+  have : c' ∈ (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₁)
   · dsimp [hamming_ball]
     apply Set.mem_toFinset.2
     simp
@@ -280,15 +338,35 @@ lemma hamming_ball'_disjoint (C : Code n α) (h : distance C d) (h' : 0 < d) : �
 }
 
 
-theorem hamming_bound (C : Code n α) (d A : ℕ) (h : distance C d) (h' : Fintype.card α = q) (h'' : Fintype.card α >1) :
-C.card ≤ q^n / (Finset.sum (Finset.range (d + 1)) (λ i=> Nat.choose n i * (q - 1)^i)) := by {
-  have h1 : 0 < Finset.sum (Finset.range (d + 1)) (λ i=> Nat.choose n i * (q - 1)^i)
+theorem hamming_bound (n d A : ℕ) (C : Code n α) (h : distance C d) (h' : Fintype.card α = q) (h'' : Fintype.card α >1)(hd : 0 < d):
+C.card ≤ q^n / (Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) (λ i=> Nat.choose n i * (q - 1)^i)) := by {
+  have h1 : 0 < Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) (λ i=> Nat.choose n i * (q - 1)^i)
   · apply Finset.sum_pos
     intros i hi
     apply mul_pos
     · apply Nat.choose_pos
+      have : (Nat.floor (((d : ℝ)-1)/2)) + 1 ≤ d
+      · suffices (Nat.floor (((d : ℝ)-1)/2)) ≤ d - 1 by exact Nat.add_le_of_le_sub hd this
+        suffices (Nat.floor (((d : ℝ)-1)/2)) ≤ ((d - (1 : ℕ) ) : ℝ) by{
+          rw[← Nat.cast_sub] at this
+          exact Nat.cast_le.1 this
+          exact hd
+        }
+        calc
+          (Nat.floor (((d : ℝ)-1)/2)) ≤ ((d : ℝ)-1)/2        := by {
+            apply Nat.floor_le
+            apply div_nonneg
+            simp
+            exact hd
+            linarith
+          }
+          _                           ≤ ((d - (1 : ℕ) ) : ℝ) := by {
+            simp
+            linarith
+          }
       calc
-        i ≤ d  := by linarith [Finset.mem_range.1 hi]
+        i ≤ ((Nat.floor (((d : ℝ)-1)/2)) + 1)  := by linarith [Finset.mem_range.1 hi]
+        _ ≤ d  := by exact this
         _ ≤ n  := by exact dist_le_length C d h
     · rw[← h']
       apply Nat.pos_pow_of_pos
@@ -297,7 +375,7 @@ C.card ≤ q^n / (Finset.sum (Finset.range (d + 1)) (λ i=> Nat.choose n i * (q 
     simp
 
 
-  suffices C.card * (Finset.sum (Finset.range (d + 1)) (λ i=> Nat.choose n i * (q - 1)^i)) ≤ q^n by exact (Nat.le_div_iff_mul_le h1).mpr this
+  suffices C.card * (Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) (λ i=> Nat.choose n i * (q - 1)^i)) ≤ q^n by exact (Nat.le_div_iff_mul_le h1).mpr this
 
   let S : Finset (Codeword n α) := Finset.univ
   have h_Scard: S.card = q ^ n
@@ -306,8 +384,24 @@ C.card ≤ q^n / (Finset.sum (Finset.range (d + 1)) (λ i=> Nat.choose n i * (q 
     simp
     rw[h']
 
-  let SU : Finset (Codeword n α) := (⋃ (c : C), (hamming_ball (Nat.floor ((d-1)/2)) c))
 
+  have h_disjoint : (C.toSet).PairwiseDisjoint (fun c ↦ (hamming_ball (Nat.floor (((d:ℝ)-1)/2)) c))
+  · intros x hx y hy hxy
+    simp at hx hy
+    exact hamming_ball'_disjoint C h hd x y ⟨hx, hy, hxy⟩
+
+  let SU : Finset (Codeword n α) := Finset.disjiUnion C (fun c ↦ (hamming_ball (Nat.floor (((d:ℝ)-1)/2)) c)) h_disjoint
+
+
+  have h_SUcard : SU.card = C.card * (Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) (λ i=> Nat.choose n i * (q - 1)^i))
+  · rw[Finset.card_disjiUnion]
+    apply Finset.sum_eq_card_nsmul
+    exact fun a a_1 => hamming_ball_size n (Nat.floor (((d : ℝ)-1)/2)) a
+
+  calc
+    (C.card * Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) fun i => Nat.choose n i * (q - 1) ^ i) = SU.card := by exact h_SUcard.symm
+    _                                                                                                            ≤ S.card  := by exact Finset.card_le_univ SU
+    _                                                                                                            = q ^ n   := by exact h_Scard
 
 
 }
