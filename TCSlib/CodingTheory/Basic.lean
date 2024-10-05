@@ -221,8 +221,8 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
   have h_card_x0 : ∀ d, {c' : Codeword n α | hamming_distance c' Codeword.zero = d}.toFinset.card = Nat.choose n d * (Fintype.card α - 1)^d
   · intro d
     dsimp [hamming_distance, zero]
-    rw[toFinset_card]
-    simp [hammingDist]
+    -- rw[toFinset_card]
+    -- simp [hammingDist]
 
     let d_comb : Finset (Finset (Fin n)) := Finset.powersetCard d Finset.univ
     have h_card_d_comb : d_comb.card = Nat.choose n d
@@ -259,9 +259,28 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
       rw[Finset.sum_eq_card_nsmul this, h_card_d_comb]
       rfl
 
+
     rw[← h_card_S]
-    let f' : ((i : Finset (Fin n)) × ({ x // x ∈ i } → { x // x ∈ α_nonzero })) → _ → Codeword n α := fun s _ ↦ (fun i ↦ if i ∈ s.1 then s.2 Finset.mem_subtype.2 i else 0)
-    apply Finset.card_congr
+    let f' : (s : ((k : Finset (Fin n)) × ({ x // x ∈ k } → { x // x ∈ α_nonzero }))) → s ∈ S → Codeword n α := fun s _ ↦ (fun i ↦ if h : i ∈ s.1 then s.2 ⟨i, h⟩ else 0)
+
+    symm
+    apply Finset.card_congr f'
+
+    -- f' maps S to the hamming ball
+    have h_f'_map_to_ball: ∀ (a : (k : Finset (Fin n)) × ({ x // x ∈ k } → { x // x ∈ α_nonzero })) (ha : a ∈ S), f' a ha ∈ toFinset {c' | hammingDist c' zero = d}
+    · sorry
+    exact h_f'_map_to_ball
+
+    -- f' is injective
+    have h_f'_injective: ∀ (a b : (k : Finset (Fin n)) × ({ x // x ∈ k } → { x // x ∈ α_nonzero })) (ha : a ∈ S) (hb : b ∈ S), f' a ha = f' b hb → a = b
+    · sorry
+    exact h_f'_injective
+
+    -- f' is surjective
+    have h_f'_surjective: ∀ b ∈ toFinset {c' | hammingDist c' zero = d}, ∃ a, ∃ (ha : a ∈ S), f' a ha = b
+    · sorry
+    exact h_f'_surjective
+
 
 
 
@@ -501,27 +520,3 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
 
 
 }
-
-
-
-All Messages (2)
-let f' : Finset (Fin n) → (Fin n → α_nonzero) → Codeword n α := fun s f'' ↦ (fun i ↦ if i ∈ s then f'' i else 0)
-
-    let S_funcs : Finset (Fin n → α_nonzero) := {x | (filter (fun i => x i ∈ α_nonzero) Finset.univ) ∈ d_comb}.toFinset
-    have h_card_Sfuncs : S_funcs.card = (Fintype.card α - 1)^d
-    · simp
-      rw[Finset.univ_filter_card_eq]
-      rw[Fintype.card_fun]
-      sorry
-
-
-
-    let S_equiv := Finset.image₂ f' d_comb S_funcs
-
-    have h_card_S_equiv : S_equiv.card = Nat.choose n d * (Fintype.card α - 1)^d
-    · rw[Finset.card_image₂]
-      rw[h_card_d_comb, h_card_Sfuncs]
-      intros a₁ a₂ b₁ b₂ hab
-
-
-    rw[Fintype.card_of_subtype]
