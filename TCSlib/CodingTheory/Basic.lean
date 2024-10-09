@@ -314,6 +314,8 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
     let f : Codeword n α → Codeword n α := fun x ↦ sub x c
     apply Finset.card_congr (fun a _ ↦ f a)
     simp [toFinset]
+    dsimp [toFinset]
+    simp
     · intros a ha
       dsimp [hamming_distance, sub] at *
       rw[hammingDist_eq_hammingNorm] at ha
@@ -328,6 +330,8 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
     · intros b hb
       use add b c
       simp [toFinset, hamming_distance] at *
+      dsimp [toFinset] at *
+      simp at *
       constructor
       · rw[hammingDist_eq_hammingNorm]
         have : add b c - c = b
