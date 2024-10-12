@@ -268,7 +268,30 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
 
     -- f' maps S to the hamming ball
     have h_f'_map_to_ball: ∀ (a : (k : Finset (Fin n)) × ({ x // x ∈ k } → { x // x ∈ α_nonzero })) (ha : a ∈ S), f' a ha ∈ toFinset {c' | hammingDist c' zero = d}
-    · sorry
+    · intros a ha
+      apply Finset.mem_sigma.1 at ha
+      rw[toFinset]
+      simp [hammingDist]
+      have : (filter (fun i => i ∈ a.fst) Finset.univ).card = d
+      · simp at *
+        exact ha
+
+      rw[← this]
+      rw[← Fintype.card_subtype]
+      simp
+      apply Fintype.card_of_subtype
+      intros x
+      constructor
+      · intro hx
+        use hx
+        have : ↑(a.snd ⟨x, hx⟩) ∈  α_nonzero
+        · exact coe_mem (Sigma.snd a { val := x, property := hx })
+        simp at this
+        exact this
+      · intros hx
+        rcases hx with ⟨h₁, h₂⟩
+        exact h₁
+
     exact h_f'_map_to_ball
 
     -- f' is injective
@@ -362,6 +385,8 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
     let f : Codeword n α → Codeword n α := fun x ↦ sub x c
     apply Finset.card_congr (fun a _ ↦ f a)
     simp [toFinset]
+    dsimp [toFinset]
+    simp
     · intros a ha
       dsimp [hamming_distance, sub] at *
       rw[hammingDist_eq_hammingNorm] at ha
@@ -376,6 +401,8 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
     · intros b hb
       use add b c
       simp [toFinset, hamming_distance] at *
+      dsimp [toFinset] at *
+      simp at *
       constructor
       · rw[hammingDist_eq_hammingNorm]
         have : add b c - c = b
