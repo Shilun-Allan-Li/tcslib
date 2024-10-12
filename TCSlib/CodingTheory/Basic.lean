@@ -273,7 +273,78 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
 
     -- f' is injective
     have h_f'_injective: ∀ (a b : (k : Finset (Fin n)) × ({ x // x ∈ k } → { x // x ∈ α_nonzero })) (ha : a ∈ S) (hb : b ∈ S), f' a ha = f' b hb → a = b
-    · sorry
+    · intros a b h_a h_b
+      intro h_feq
+      let f_a := (f' a h_a)
+      let f_b := (f' b h_b)
+      have fab_eq: f_a = f_b := by exact h_feq
+
+      have first_eq: a.1 = b.1
+      · ext x
+        constructor
+        · intro h1
+          by_contra h_xb
+          have h_fbzero: f_b x = 0 := by simp; intro h_inb; exact absurd h_inb h_xb
+          have h_fazero: f_a x = 0 := by rw[fab_eq]; exact h_fbzero
+          simp at h_fazero
+          let a₀ := a.2 ⟨x, h1⟩
+          apply h_fazero at h1
+          have h_azero : ¬a₀.val ≠ 0 := by simp; exact h1
+          have h_anonzero : a₀.val ∈ α_nonzero := by exact a₀.property
+          rw [Set.mem_toFinset, Set.mem_setOf] at h_anonzero
+          exact absurd h_anonzero h_azero
+        · intro h2
+          by_contra h_xa
+          have h_fazero: f_a x = 0 := by simp; intro h_ina; exact absurd h_ina h_xa
+          have h_fbzero: f_b x = 0 := by rw[←fab_eq]; exact h_fazero
+          simp at h_fbzero
+          let b₀ := b.2 ⟨x, h2⟩
+          apply h_fbzero at h2
+          have h_bzero : ¬b₀.val ≠ 0 := by simp; exact h2
+          have h_bnonzero : b₀.val ∈ α_nonzero := by exact b₀.property
+          rw [Set.mem_toFinset, Set.mem_setOf] at h_bnonzero
+          exact absurd h_bnonzero h_bzero
+
+      have h_2eq : ({ x // x ∈ b.fst } → { x // x ∈ α_nonzero }) = ({ x // x ∈ a.fst } → { x // x ∈ α_nonzero })
+      · rw[first_eq]
+
+      have h_pls : {x // x ∈ a.1} = {x // x ∈ b.1} := by rw[first_eq]
+
+      let b' := cast h_2eq b.2
+      have h_bheq : HEq b' b.2 := by simp
+
+
+
+      have second_eq : a.2 = b'
+      · funext x
+
+        have h₁ : HEq (a.2 x) (f_a x)
+        · have h₁' : f_a x = a.2 x := by simp
+          rw[h₁']
+          sorry
+          -- This simply comes down to showing HEq (a.2 x) ↑(a.2 x), somehow this is very difficult
+
+        have h₂ : HEq (f_a x) (f_b x)
+        · rw[fab_eq]
+
+        have h₃ : HEq (f_b x) (b' x)
+        · have h₃' : ↑x ∈ b.1
+          · have h₃'' : ↑x ∈ a.1 := by simp
+            -- rw[first_eq] would complete this proof but does not work, unsure why
+            sorry
+          simp[h₃']
+          sorry
+          -- Similar problem to above with showing HEq under coercion
+
+        have h₄ : HEq (a.2 x) (b' x)
+        · apply HEq.trans (HEq.trans h₁ h₂) h₃
+
+        exact eq_of_heq h₄
+
+      ext
+      rw[first_eq]
+      exact HEq.trans (heq_of_eq second_eq) h_bheq
+
     exact h_f'_injective
 
     -- f' is surjective
