@@ -331,12 +331,8 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
       have h_2eq : ({ x // x ∈ b.fst } → { x // x ∈ α_nonzero }) = ({ x // x ∈ a.fst } → { x // x ∈ α_nonzero })
       · rw[first_eq]
 
-      have h_pls : {x // x ∈ a.1} = {x // x ∈ b.1} := by rw[first_eq]
-
       let b' := cast h_2eq b.2
       have h_bheq : HEq b' b.2 := by simp
-
-
 
       have second_eq : a.2 = b'
       · funext x
