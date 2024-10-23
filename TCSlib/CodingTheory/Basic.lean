@@ -334,35 +334,70 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
       let b' := cast h_2eq b.2
       have h_bheq : HEq b' b.2 := by simp
 
-      have second_eq : a.2 = b'
-      · funext x
 
-        have h₁ : HEq (a.2 x) (f_a x)
-        · have h₁' : f_a x = a.2 x := by simp
-          rw[h₁']
-          sorry
-          -- This simply comes down to showing HEq (a.2 x) ↑(a.2 x), somehow this is very difficult
+      -- have second_eq : a.2 = b'
+      -- · funext x
 
-        have h₂ : HEq (f_a x) (f_b x)
-        · rw[fab_eq]
+      --   have h₁ : HEq (a.2 x) (f_a x)
+      --   · have h₁' : f_a x = a.2 x := by simp
+      --     rw[h₁']
+      --     sorry
+      --     -- This simply comes down to showing HEq (a.2 x) ↑(a.2 x), somehow this is very difficult
 
-        have h₃ : HEq (f_b x) (b' x)
-        · have h₃' : ↑x ∈ b.1
-          · have h₃'' : ↑x ∈ a.1 := by simp
-            -- rw[first_eq] would complete this proof but does not work, unsure why
-            sorry
-          simp[h₃']
-          sorry
-          -- Similar problem to above with showing HEq under coercion
+      --   have h₂ : HEq (f_a x) (f_b x)
+      --   · rw[fab_eq]
 
-        have h₄ : HEq (a.2 x) (b' x)
-        · apply HEq.trans (HEq.trans h₁ h₂) h₃
+      --   have h₃ : HEq (f_b x) (b' x)
+      --   · have h₃' : ↑x ∈ b.1
+      --     · have h₃'' : ↑x ∈ a.1 := by simp
+      --       -- rw[first_eq] would complete this proof but does not work, unsure why
+      --       sorry
+      --     simp[h₃']
+      --     sorry
+      --     -- Similar problem to above with showing HEq under coercion
 
-        exact eq_of_heq h₄
+      --   have h₄ : HEq (a.2 x) (b' x)
+      --   · apply HEq.trans (HEq.trans h₁ h₂) h₃
+
+      --   exact eq_of_heq h₄
 
       ext
       rw[first_eq]
-      exact HEq.trans (heq_of_eq second_eq) h_bheq
+      refine HEq.symm (heq_of_cast_eq h_2eq ?h_f'_injective.a.x)
+      funext x
+      suffices b' x = a.snd x by {
+        exact this
+      }
+
+      have h₁' : f_a x = a.2 x
+      · simp
+
+      have h₂ : (f_a x) = (f_b x)
+      ·  rw[fab_eq]
+
+      have h₃ : (f_b x) = (b' x)
+      ·
+        have h₃' : ↑x ∈ b.1
+        · have h₃'' : ↑x ∈ a.1 := by simp
+          rw[← first_eq]
+          exact h₃''
+
+        simp[h₃']
+
+        have : Sigma.snd b { val := ↑x, property := (h₃' : ↑x ∈ b.fst) } = b' x
+        · simp
+          apply congr_heq -- Life Saving Theorem
+          exact h_bheq.symm
+          refine (Subtype.heq_iff_coe_eq ?this.h₂.h).mpr rfl
+          rw[first_eq]
+          tauto
+
+        exact congrArg Subtype.val this
+
+
+      rw[h₃] at h₂
+      rw[h₂] at h₁'
+      exact SetCoe.ext h₁'
 
     exact h_f'_injective
 
