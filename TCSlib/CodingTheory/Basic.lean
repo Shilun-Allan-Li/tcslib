@@ -334,33 +334,6 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
       let b' := cast h_2eq b.2
       have h_bheq : HEq b' b.2 := by simp
 
-
-      -- have second_eq : a.2 = b'
-      -- · funext x
-
-      --   have h₁ : HEq (a.2 x) (f_a x)
-      --   · have h₁' : f_a x = a.2 x := by simp
-      --     rw[h₁']
-      --     sorry
-      --     -- This simply comes down to showing HEq (a.2 x) ↑(a.2 x), somehow this is very difficult
-
-      --   have h₂ : HEq (f_a x) (f_b x)
-      --   · rw[fab_eq]
-
-      --   have h₃ : HEq (f_b x) (b' x)
-      --   · have h₃' : ↑x ∈ b.1
-      --     · have h₃'' : ↑x ∈ a.1 := by simp
-      --       -- rw[first_eq] would complete this proof but does not work, unsure why
-      --       sorry
-      --     simp[h₃']
-      --     sorry
-      --     -- Similar problem to above with showing HEq under coercion
-
-      --   have h₄ : HEq (a.2 x) (b' x)
-      --   · apply HEq.trans (HEq.trans h₁ h₂) h₃
-
-      --   exact eq_of_heq h₄
-
       ext
       rw[first_eq]
       refine HEq.symm (heq_of_cast_eq h_2eq ?h_f'_injective.a.x)
@@ -403,9 +376,68 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
 
     -- f' is surjective
     have h_f'_surjective: ∀ b ∈ toFinset {c' | hammingDist c' zero = d}, ∃ a, ∃ (ha : a ∈ S), f' a ha = b
-    · sorry
-    exact h_f'_surjective
+    · intro b
+      intro h_b
+      let a₁ := toFinset { i | b i ≠ 0 }
 
+      have h_y : ∀ y ∈ a₁, (b ↑y) ∈ α_nonzero := by simp
+
+      let a₂ (y : { x // x ∈ a₁ }) : { x // x ∈ α_nonzero } := ⟨b y, by {
+        apply h_y
+        exact y.property
+      }⟩
+
+      use ⟨a₁, a₂⟩
+
+      have h_a : ⟨a₁, a₂⟩ ∈ S
+      · simp
+        have h_d : hammingDist b zero = d
+        · rw[Set.mem_toFinset, Set.mem_setOf] at h_b
+          exact h_b
+        unfold hammingDist at h_d
+        have h_setEq : (toFinset {i | ¬b i = 0}) = (filter (fun i => b i ≠ zero i) Finset.univ)
+        · simp
+          apply Finset.ext
+          intro t
+          constructor
+          · intro h₁
+            have h₁' : ¬b t = 0
+            · rw[Set.mem_toFinset, Set.mem_setOf] at h₁
+              exact h₁
+            simp
+            exact h₁'
+          · intro h₂
+            contrapose h₂
+            rw[Set.mem_toFinset, Set.mem_setOf] at h₂
+            simp at h₂
+            simp[h₂]
+
+        rw[h_setEq]
+        exact h_d
+
+      use h_a
+      simp
+      funext x
+
+      by_cases h_x : b x = 0
+      · simp
+        intro h'
+        rw[h_x]
+      · simp
+        intro h'
+        by_contra h_x
+        have h_xb : x ∈ toFinset {i | ¬b i = 0}
+        · apply Set.mem_toFinset.2
+          simp
+          contrapose h_x
+          simp at h_x
+          simp
+          rw[h_x]
+        exact absurd h_xb h'
+
+
+
+    exact h_f'_surjective
 
 
 
