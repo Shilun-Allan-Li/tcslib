@@ -63,7 +63,7 @@ def distance (C : Code n α) (d : ℕ) : Prop :=
   (∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d)∧ (∀ z ∈ C, ∀ w ∈ C, z ≠ w → hamming_distance z w ≥ d)
 
 
-def max_size (n d: ℕ) (A : ℕ): Prop :=
+def max_size (n d A : ℕ) : Prop :=
   ∃ C : Code n α, (distance C d ∧ (C.card = A) ∧ (∀ c : Code n α, distance c d → c.card ≤ C.card))
 
 
@@ -213,7 +213,7 @@ set_option maxHeartbeats 1000000
 
 
 
-theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c).card = (Finset.sum (Finset.range (l + 1)) (λ i=> Nat.choose n i * (Fintype.card α - 1)^i)) := by{
+theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c).card = (Finset.sum (Finset.range (l + 1)) (λ i=> Nat.choose n i * (Fintype.card α - 1)^i)) := by {
   intro c
   simp
   rw[Set.toFinset_card]
@@ -680,4 +680,25 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
     _                                                                                                            = Fintype.card α ^ n   := by exact h_Scard
 
 
+}
+
+
+-- Same result, converted into a form more compatible with existing definitions
+
+theorem gv_bound (n d : ℕ) (h' : Fintype.card α = q) (h'' : Fintype.card α > 1) (hd : d > 0):
+∃ C : Code n α, (distance C d) ∧ (C.card ≥ Fintype.card α ^ n / (Finset.sum (Finset.range (d)) (λ i => Nat.choose n i * (Fintype.card α - 1)^i))) := by {
+    -- Proof structure:
+    -- Define greedy algorithm to choose codewords as done here: https://www.cs.cmu.edu/~venkatg/teaching/codingtheory/notes/notes2.pdf
+    -- Prove greedy process should terminate in finite steps.
+    -- Prove the code chosen by the greedy process saturates the space. Can do this by contradiction.
+    -- From there, should be straightforward to rearrange terms and get desired bound.
+
+    -- Attempt at defining greedy algorithm:
+
+    -- let rec greedy (S: Code n α) : Code n α :=
+    --   if ∀ c : Codeword n α, ∃ c' ∈ S, hamming_distance c c' < d then S
+    --   else
+    --     let c := Classical.choose (...)
+
+  sorry
 }
