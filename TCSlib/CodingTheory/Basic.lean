@@ -685,6 +685,6 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
 }
 
 theorem dist_eq_min_weight (n d : ℕ) (C : Code n α) (h : distance C d) :
-(∃c ∈ C, weight c = d ∧ ∀c ∈ C, weight c ≥ d) := by {
+(∃c ∈ C, weight c = d ∧ ∀c ∈ C, c ≠ zero → weight c ≥ d) := by {
   sorry
 }
