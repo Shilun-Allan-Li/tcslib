@@ -62,12 +62,14 @@ def hamming_distance (c1 c2 : Codeword n α) : ℕ :=
 def distance (C : Code n α) (d : ℕ) : Prop :=
   (∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d)∧ (∀ z ∈ C, ∀ w ∈ C, z ≠ w → hamming_distance z w ≥ d)
 
+def weight (c: Codeword n α) : ℕ := hamming_distance c zero
+
 
 def max_size (n d A : ℕ) : Prop :=
   ∃ C : Code n α, (distance C d ∧ (C.card = A) ∧ (∀ c : Code n α, distance c d → c.card ≤ C.card))
 
 
-lemma dist_le_length (C : Code n α) (d : ℕ) (h : distance C d) : d <= n := by{
+lemma dist_le_length (C : Code n α) (d : ℕ) (h : distance C d) : d <= n := by {
   rcases h with ⟨h1, _⟩
   rcases h1 with ⟨c₁, ⟨_, ⟨c₂, ⟨_, ⟨_, hdeq⟩⟩⟩⟩⟩
   have hle : hammingDist c₁ c₂ <= n
@@ -79,7 +81,7 @@ lemma dist_le_length (C : Code n α) (d : ℕ) (h : distance C d) : d <= n := by
   exact hle
 }
 
-theorem singleton_bound (C : Code n α) (d : ℕ) (h : distance C d) (hα : Nontrivial α):
+theorem singleton_bound (C : Code n α) (d : ℕ) (h : distance C d) (hα : Nontrivial α) :
   C.card ≤ (Fintype.card α)^(n - d + 1) := by {
   by_cases h01: C.card = 0 ∨ C.card = 1
   · rcases h01 with h0|h1
@@ -682,23 +684,7 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
 
 }
 
-
--- Same result, converted into a form more compatible with existing definitions
-
-theorem gv_bound (n d : ℕ) (h' : Fintype.card α = q) (h'' : Fintype.card α > 1) (hd : d > 0):
-∃ C : Code n α, (distance C d) ∧ (C.card ≥ Fintype.card α ^ n / (Finset.sum (Finset.range (d)) (λ i => Nat.choose n i * (Fintype.card α - 1)^i))) := by {
-    -- Proof structure:
-    -- Define greedy algorithm to choose codewords as done here: https://www.cs.cmu.edu/~venkatg/teaching/codingtheory/notes/notes2.pdf
-    -- Prove greedy process should terminate in finite steps.
-    -- Prove the code chosen by the greedy process saturates the space. Can do this by contradiction.
-    -- From there, should be straightforward to rearrange terms and get desired bound.
-
-    -- Attempt at defining greedy algorithm:
-
-    -- let rec greedy (S: Code n α) : Code n α :=
-    --   if ∀ c : Codeword n α, ∃ c' ∈ S, hamming_distance c c' < d then S
-    --   else
-    --     let c := Classical.choose (...)
-
+theorem dist_eq_min_weight (n d : ℕ) (C : Code n α) (h : distance C d) :
+(∃c ∈ C, weight c = d ∧ ∀c ∈ C, weight c ≥ d) := by {
   sorry
 }
