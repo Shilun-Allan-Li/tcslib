@@ -13,6 +13,10 @@ import Mathlib.Init.Set
 import Mathlib.Tactic.Linarith
 import Mathlib.Data.Fintype.Perm
 import Mathlib.Data.Finmap
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.Matrix.Rank
+import Mathlib.Probability.ProbabilityMassFunction.Uniform
 /-!
 # Code Definitions
 
@@ -684,7 +688,23 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
 
 }
 
+abbrev vector (n : ℕ) := Matrix (Fin n) (Fin 1) α
+
 theorem dist_eq_min_weight (n d : ℕ) (C : Code n α) (h : distance C d) :
 (∃c ∈ C, weight c = d ∧ ∀c ∈ C, c ≠ zero → weight c ≥ d) := by {
   sorry
 }
+
+theorem generators_nonempty (n : ℕ) (k : ℕ) (h : k ≤ n) :
+{ M : Matrix (Fin n) (Fin k) α | M.rank = k}.toFinset.Nonempty := by {
+  sorry
+}
+
+noncomputable def uniform_generator_matrix (n : ℕ) (k : ℕ) (h : k ≤ n) : PMF (Matrix (Fin n) (Fin k) α) :=
+  PMF.uniformOfFinset {M : Matrix (Fin n) (Fin k) α | M.rank = k}.toFinset (generators_nonempty n k h)
+
+theorem uniformity_lemma (n k: ℕ) (h : k ≤ n) (P : PMF (Matrix (Fin n) (Fin k) α)) (G: Matrix (Fin n) (Fin k) α) (x : vector k)
+(h' : P = uniform_generator_matrix n k h) (h : P.map G = uniformOn {M : Matrix (Fin n) (Fin k) α | M.rank = k}.toFinset) : true := by{
+  sorry
+}
+-- Currently trying to figure out how to express that G follows the uniform distribution
