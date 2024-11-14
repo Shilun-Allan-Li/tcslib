@@ -17,6 +17,7 @@ import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 import Mathlib.Data.Matrix.Basic
 import Mathlib.Data.Matrix.Rank
 import Mathlib.Probability.ProbabilityMassFunction.Uniform
+import Mathlib.Data.Matrix.Basic
 /-!
 # Code Definitions
 
@@ -52,6 +53,10 @@ def zero : Codeword n α := fun (i : Fin n) ↦ 0
 /-- Code `Code n 𝔽` is a subset of 𝔽ⁿ. -/
 abbrev Code (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := Finset (Codeword n α)
 
+/-- Linear Code as a `Code n 𝔽` with a Generator Matrix. -/
+def Linear_Code (C : Code n α) (G : Matrix (Fin n) (Fin m) α) := (∀ c' : Codeword m α, Matrix.mulVec G c' ∈ C) ∧ (∀ c ∈ C, ∃ c' : Codeword m α, c = Matrix.mulVec G c')
+
+def Linear_Code' (C : Code n α) (m : ℕ) := ∃ (G : Matrix (Fin n) (Fin m) α), (∀ c' : Codeword m α, Matrix.mulVec G c' ∈ C) ∧ (∀ c ∈ C, ∃ c' : Codeword m α, c = Matrix.mulVec G c')
 
 
 /-- AsymptoticCodes is a map from ℕ to `Code n 𝔽`. -/
@@ -66,7 +71,7 @@ def hamming_distance (c1 c2 : Codeword n α) : ℕ :=
 def distance (C : Code n α) (d : ℕ) : Prop :=
   (∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d)∧ (∀ z ∈ C, ∀ w ∈ C, z ≠ w → hamming_distance z w ≥ d)
 
-def weight (c: Codeword n α) : ℕ := hamming_distance c zero
+def weight (c: Codeword n α) : ℕ := hamming_distance c 0
 
 
 def max_size (n d A : ℕ) : Prop :=
@@ -690,9 +695,32 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
 
 abbrev vector (n : ℕ) := Matrix (Fin n) (Fin 1) α
 
-theorem dist_eq_min_weight (n d : ℕ) (C : Code n α) (h : distance C d) :
-(∃c ∈ C, weight c = d ∧ ∀c ∈ C, c ≠ zero → weight c ≥ d) := by {
-  sorry
+lemma Linear_Code_dist_eq_min_weight (C : Code n α) (h_linear : Linear_Code' C m) (h : distance C d) :
+ (∀c ∈ C, c ≠ 0 → weight c ≥ d) ∧ (∃c ∈ C, weight c = d):= by {
+  rcases h_linear with ⟨G, hG⟩
+  constructor
+  · intros c hc c_nzero
+    simp [weight]
+    apply h.2 c hc 0
+    rcases hG with ⟨hG_image, hG_preimage⟩
+    specialize hG_image 0
+    simp at hG_image
+    exact hG_image
+    exact c_nzero
+  · rcases h.1 with ⟨c₁, ⟨hc₁, c₂, ⟨hc₂, ⟨hc₁₂neq, hc₁₂dist_eq_d⟩⟩⟩⟩
+    use c₁ - c₂
+    rcases hG with ⟨hG_image, hG_preimage⟩
+    apply hG_preimage at hc₁
+    apply hG_preimage at hc₂
+    rcases hc₁ with ⟨c₁', hc₁'⟩
+    rcases hc₂ with ⟨c₂', hc₂'⟩
+    constructor
+    · rw[hc₁', hc₂']
+      rw[sub_eq_add_neg, ← Matrix.mulVec_neg, ← Matrix.mulVec_add, ← sub_eq_add_neg]
+      exact hG_image (c₁' - c₂')
+    · rw[← hc₁₂dist_eq_d]
+      simp [hamming_distance, weight]
+      exact (hammingDist_eq_hammingNorm c₁ c₂).symm
 }
 
 theorem generators_nonempty (n : ℕ) (k : ℕ) (h : k ≤ n) :
