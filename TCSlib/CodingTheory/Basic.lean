@@ -725,19 +725,17 @@ lemma Linear_Code_dist_eq_min_weight (C : Code n α) (h_linear : Linear_Code' C 
 
 
 -- Uniform distribution on length-n vectors. Function from vectors to probabilities
-noncomputable def uniform_vector_dist (n : ℕ) (α : Type*) [Fintype α] : (Matrix (Fin n) (Fin 1) α) → ℝ :=
+noncomputable def uniform_vector_dist (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α]: (Codeword n α) → ℝ :=
   fun _ => 1 / ((Fintype.card α) ^ n)
 
-
-
 -- Theorem saying that the set of matrices G satisfying Gx = v is finite
-theorem finite_matrix_dist (n k : ℕ) (v : Matrix (Fin n) (Fin 1) α) (x : Matrix (Fin k) (Fin 1) α) :
-Set.Finite { G : Matrix (Fin n) (Fin k) α | G * x = v } := by {
+theorem finite_matrix_dist (n k : ℕ) (v : Codeword n α) (x : Codeword k α) :
+Set.Finite { G : Matrix (Fin n) (Fin k) α | Matrix.mulVec G x = v } := by {
 
-  have dist_subset : { G : Matrix (Fin n) (Fin k) α | G * x = v } ⊆ (Set.univ : Set (Matrix (Fin n) (Fin k) α))
+  have dist_subset : { G : Matrix (Fin n) (Fin k) α | Matrix.mulVec G x = v } ⊆ (Set.univ : Set (Matrix (Fin n) (Fin k) α))
   · simp
 
-  have matrices_fintype : Finite ↑{G | G * x = v}
+  have matrices_fintype : Finite ↑{G | Matrix.mulVec G x = v}
   · exact Finite.Set.subset (Set.univ : Set (Matrix (Fin n) (Fin k) α)) dist_subset
 
   exact (Set.finite_coe_iff.mp matrices_fintype)
@@ -746,7 +744,7 @@ Set.Finite { G : Matrix (Fin n) (Fin k) α | G * x = v } := by {
 
 
 -- Measure on length-n vectors v defined by the proportion of matrices G that satisfy Gx = v
-noncomputable def matrix_dist (n k : ℕ) (x : Matrix (Fin k) (Fin 1) α) : (Matrix (Fin n) (Fin 1) α) → ℝ :=
+noncomputable def matrix_dist (n k : ℕ) (x : Codeword k α) : (Codeword n α) → ℝ :=
 fun v => (Set.Finite.toFinset (finite_matrix_dist n k v x)).card / ((Fintype.card α) ^ (n * k))
 
 
@@ -758,7 +756,7 @@ Matrix.of (fun _ j => (M i) j)
 
 
 -- Actual lemma stating that Gx is uniformly distributed
-theorem uniformity_lemma (n k : ℕ) (x : Matrix (Fin k) (Fin 1) α) (h_x : x ≠ 0) (h_k : k ≥ 1):
+theorem uniformity_lemma (n k : ℕ) (x : Codeword k α) (h_x : x ≠ 0) (h_k : k ≥ 1):
 matrix_dist n k x = uniform_vector_dist n α := by {
 
   unfold matrix_dist uniform_vector_dist
@@ -766,10 +764,10 @@ matrix_dist n k x = uniform_vector_dist n α := by {
   simp
   field_simp
 
-  have h : (filter (fun G => G * x = v) Finset.univ).card = (Fintype.card α)^(n * (k-1))
+  have h : (filter (fun G => Matrix.mulVec G x = v) Finset.univ).card = (Fintype.card α)^(n * (k-1))
   · -- Says that the amount of matrices G such that Gx = v is equal to the amount of matrices G such that
     -- for each row G_i, G_ix = v_i
-    have h2 : (fun G => G * x = v) = (fun G => ∀i, (get_matrix_row n k G i) * x = get_matrix_row n 1 v i)
+    have h2 : (fun G => Matrix.mulVec G x = v) = (fun G => ∀i, Matrix.mulVec (get_matrix_row n k G i) x = fun _ => v i)
     · funext G
       apply propext
       apply Iff.intro
@@ -780,12 +778,12 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
     -- Says that the number of matrices G such that for each row G_i, G_ix = v_i is equal to the product
     -- over i of the number of row vectors g such that gx = v_i
-    have h3 : (filter (fun G => ∀ (i : Fin n), get_matrix_row n k G i * x = get_matrix_row n 1 v i) Finset.univ).card
-    = Finset.prod Finset.univ (fun (i : Fin n) => (filter (fun g : Matrix (Fin 1) (Fin k) α => g * x = get_matrix_row n 1 v i) Finset.univ).card)
+    have h3 : (filter (fun G => ∀ (i : Fin n), Matrix.mulVec (get_matrix_row n k G i) x = fun _ => v i) Finset.univ).card
+    = Finset.prod Finset.univ (fun (i : Fin n) => (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun _ => v i) Finset.univ).card)
     · sorry
 
     -- Says that the number of row vectors g such that gx = v_i is equal to |α|^(k-1)
-    have h4 : ∀i, (filter (fun g : Matrix (Fin 1) (Fin k) α => g * x = get_matrix_row n 1 v i) Finset.univ).card = (Fintype.card α)^(k-1)
+    have h4 : ∀i, (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun _ => v i) Finset.univ).card = (Fintype.card α)^(k-1)
     · sorry
 
     simp_rw[h2, h3, h4]
