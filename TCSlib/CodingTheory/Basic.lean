@@ -48,7 +48,7 @@ def add (c₁ c₂ : Codeword n α) : Codeword n α := fun i ↦ (c₁ i + c₂ 
 def sub (c₁ c₂ : Codeword n α) : Codeword n α := fun i ↦ (c₁ i - c₂ i)
 
 @[simp]
-def zero : Codeword n α := fun (i : Fin n) ↦ 0
+def zero : Codeword n α := fun (_ : Fin n) ↦ 0
 
 
 /-- Code `Code n 𝔽` is a subset of 𝔽ⁿ. -/
@@ -272,7 +272,7 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
       rfl
 
 
-    rw[← h_card_S]
+    rw[←h_card_S]
     let f' : (s : ((k : Finset (Fin n)) × ({ x // x ∈ k } → { x // x ∈ α_nonzero }))) → s ∈ S → Codeword n α := fun s _ ↦ (fun i ↦ if h : i ∈ s.1 then s.2 ⟨i, h⟩ else 0)
 
     symm
@@ -771,16 +771,111 @@ matrix_dist n k x = uniform_vector_dist n α := by {
     · funext G
       apply propext
       apply Iff.intro
-      · intro h_G
-        sorry -- Probably have to use Matrix.mul_apply here
+      · intro h_G i
+        funext x'
+        unfold get_matrix_row Matrix.mulVec Matrix.dotProduct
+        simp
+        unfold Matrix.mulVec Matrix.dotProduct at h_G
+        simp at h_G
+        exact congrFun h_G i
       · intro h_g
-        sorry
+        unfold Matrix.mulVec Matrix.dotProduct
+        simp
+        unfold get_matrix_row Matrix.mulVec Matrix.dotProduct at h_g
+        simp at h_g
+        funext x₀
+        have h_g' : (fun x_1 => Finset.sum Finset.univ fun x_2 => G x₀ x_2 * x x_2) = fun x => v x₀
+        · exact h_g x₀
+        exact congrFun h_g' x₀
 
     -- Says that the number of matrices G such that for each row G_i, G_ix = v_i is equal to the product
     -- over i of the number of row vectors g such that gx = v_i
     have h3 : (filter (fun G => ∀ (i : Fin n), Matrix.mulVec (get_matrix_row n k G i) x = fun _ => v i) Finset.univ).card
     = Finset.prod Finset.univ (fun (i : Fin n) => (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun _ => v i) Finset.univ).card)
-    · sorry
+    · have h3₀ : (fun G => ∀ (i : Fin n), Matrix.mulVec (get_matrix_row n k G i) x = fun _ => v i)
+      = (fun G => ∀ (i : Fin n), (Finset.sum Finset.univ fun j => G i j * x j) = v i)
+      · unfold get_matrix_row Matrix.mulVec Matrix.dotProduct
+        simp
+        funext G₀
+        simp
+        apply Iff.intro
+        · intro h_fun i₀
+          specialize h_fun i₀
+          have h_f : ∀x₀, (fun x_1 => Finset.sum Finset.univ fun x_2 => G₀ i₀ x_2 * x x_2) x₀ = v i₀ := by exact congr_fun h_fun
+          let x₀ : Fin 1 := 1
+          specialize h_f x₀
+          exact h_f
+        · intro h_all i₀
+          funext x₀
+          specialize h_all i₀
+          exact h_all
+
+      have h3₁ : Finset.prod Finset.univ (fun i => (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun x => v i) Finset.univ).card)
+      = ((Finset.univ : Finset (Fin n)).pi (fun i => (filter (fun g : Matrix (Fin 1) (Fin k) α => (Matrix.mulVec g x = fun x => v i)) Finset.univ))).card
+      · simp
+
+      let S : Finset ((a : Fin n) → a ∈ Finset.univ → Matrix (Fin 1) (Fin k) α) :=
+      ((Finset.univ : Finset (Fin n)).pi (fun i => (filter (fun g : Matrix (Fin 1) (Fin k) α => (Matrix.mulVec g x = fun _ => v i)) Finset.univ)))
+
+      have h3₂ : S.card = (filter (fun G : Matrix (Fin n) (Fin k) α => ∀ (i : Fin n), (Finset.sum Finset.univ fun j => G i j * x j) = v i) Finset.univ).card
+      · let f : (s : (a : Fin n) → a ∈ Finset.univ → Matrix (Fin 1) (Fin k) α) → s ∈ S → (Matrix (Fin n) (Fin k) α) := fun s _ ↦ Matrix.of (fun i j => (s i (Finset.mem_univ i)) 1 j)
+
+        apply Finset.card_congr f
+
+        have h_map_to_generator : ∀ (a : (a : Fin n) → a ∈ Finset.univ → Matrix (Fin 1) (Fin k) α) (ha : a ∈ S),
+        f a ha ∈ filter (fun G => ∀ (i : Fin n), (Finset.sum Finset.univ fun j => G i j * x j) = v i) Finset.univ
+        · intro a ha
+          simp
+          intro i
+
+          have h_av : Matrix.mulVec (a i (Finset.mem_univ i)) x = fun _ => v i
+          · apply Finset.mem_pi.mp at ha
+            specialize ha i
+            specialize ha (Finset.mem_univ i)
+            apply Finset.mem_filter.mp at ha
+            simp[ha]
+
+          unfold Matrix.mulVec Matrix.dotProduct at h_av
+          simp at h_av
+          have h_av₂ : ∀x₀, (fun x_1 => Finset.sum Finset.univ fun x_2 => a i (_ : i ∈ Finset.univ) x_1 x_2 * x x_2) x₀ = v i
+          · apply congr_fun h_av
+          let x₀ : Fin 1 := 1
+          specialize h_av₂ x₀
+          simp[h_av₂]
+
+        exact h_map_to_generator
+
+        have h_f_injective : ∀ (a b : (a : Fin n) → a ∈ Finset.univ → Matrix (Fin 1) (Fin k) α) (ha : a ∈ S) (hb : b ∈ S), f a ha = f b hb → a = b
+        · intro a b ha hb
+          intro h_fab_eq
+          funext y h_y
+          apply congr_fun at h_fab_eq
+          specialize h_fab_eq y
+          simp at h_fab_eq
+          apply congr_fun at h_fab_eq
+          funext 1 x_k
+          specialize h_fab_eq x_k
+          simp at h_fab_eq
+          simp[h_fab_eq]
+
+        exact h_f_injective
+
+        have h_f_surjective : ∀ b ∈ filter (fun G => ∀ (i : Fin n), (Finset.sum Finset.univ fun j => G i j * x j) = v i) Finset.univ, ∃ a, ∃ (ha : a ∈ S), f a ha = b
+        · simp
+          intro b h_eq
+          let a₀ : ((a : Fin n) → a ∈ Finset.univ → Matrix (Fin 1) (Fin k) α) := fun a h_a => Matrix.of (fun i j => b a j)
+          use a₀
+          simp
+          constructor
+          · unfold Matrix.mulVec Matrix.dotProduct
+            simp[h_eq]
+          · funext i j
+            simp
+
+        exact h_f_surjective
+
+
+      simp_rw[h3₀, h3₁, h3₂]
 
     -- Says that the number of row vectors g such that gx = v_i is equal to |α|^(k-1)
     have h4 : ∀i, (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun _ => v i) Finset.univ).card = (Fintype.card α)^(k-1)
@@ -791,7 +886,7 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
 
 
-  norm_cast
+  norm_cast 
   rw[h, ←pow_add]
   congr
   calc
