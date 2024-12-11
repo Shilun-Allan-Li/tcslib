@@ -756,7 +756,7 @@ Matrix.of (fun _ j => (M i) j)
 
 
 -- Actual lemma stating that Gx is uniformly distributed
-theorem uniformity_lemma (n k : ℕ) (x : Codeword k α) (h_x : x ≠ 0) (h_k : k ≥ 1):
+theorem uniformity_lemma (n k : ℕ) (x : Codeword k α) (h_x : x ≠ 0) (h_k : k ≥ 1) :
 matrix_dist n k x = uniform_vector_dist n α := by {
 
   unfold matrix_dist uniform_vector_dist
@@ -886,11 +886,41 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
 
 
-  norm_cast 
+  norm_cast
   rw[h, ←pow_add]
   congr
   calc
     n * (k - 1) + n = n * (k - 1) + n * 1 := by rw [Nat.mul_one]
     _               = n * ((k - 1) + 1)   := by rw [←Nat.mul_add]
     _               = n * k               := by rw[Nat.sub_add_cancel h_k]
+}
+
+theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ):
+(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card ≤
+(hamming_ball d (G * x)).card / (Fintype.card α)^n := by {
+
+  let S := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}
+  let S' := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | (Matrix.mulVec G x) ∈ hamming_ball (d-1) zero}
+
+  have h_card_eq : S.card = S'.card
+  · let f : (G : Matrix (Fin n) (Fin k) α) → G ∈ S → (Matrix (Fin n) (Fin k) α) := fun G _ ↦ G
+    apply Finset.card_congr f
+
+    have h_map : ∀ (G : Matrix (Fin n) (Fin k) α) (hG : G ∈ S), f G hG ∈ S'
+    · sorry
+
+    exact h_map
+
+    have h_inj : ∀ (G G' : Matrix (Fin n) (Fin k) α) (hG : G ∈ S) (hG' : G' ∈ S), f G hG = f G' hG' → G = G'
+    · sorry
+
+    exact h_inj
+
+    have h_surj : ∀ G' ∈ S', ∃ G, ∃ (hG : G ∈ S), f G hG = G'
+    · sorry
+
+    exact h_surj
+
+  simp_rw[h_card_eq]
+  sorry
 }
