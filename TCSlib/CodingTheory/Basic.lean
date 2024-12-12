@@ -3,9 +3,9 @@ Copyright (c) 2024 Shilun Li. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shilun Li
 -/
-
 import Mathlib.Logic.Equiv.Fin
 import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Data.Nat.Log
 import Mathlib.InformationTheory.Hamming
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
@@ -895,9 +895,9 @@ matrix_dist n k x = uniform_vector_dist n α := by {
     _               = n * k               := by rw[Nat.sub_add_cancel h_k]
 }
 
-theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ):
+theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) :
 (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card ≤
-(hamming_ball d (G * x)).card / (Fintype.card α)^n := by {
+(hamming_ball (d-1) (zero : Codeword n α)).card := by {
 
   let S := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}
   let S' := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | (Matrix.mulVec G x) ∈ hamming_ball (d-1) zero}
@@ -922,5 +922,17 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ):
     exact h_surj
 
   simp_rw[h_card_eq]
+  -- Need to use the uniformity lemma above here
+  sorry
+}
+
+theorem existence_bound (d: ℕ) :
+(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), weight (Matrix.mulVec G x) < d}).card ≤
+(Fintype.card α)^k * ((hamming_ball (d-1) (zero : Codeword n α)).card) := by {
+  sorry
+}
+
+theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - ((Nat.clog q) (hamming_ball (d-1) (zero : Codeword n α)).card) - 1):
+(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∀ (x : Codeword k α), weight (Matrix.mulVec G x) ≥ d}).card ≥ 1 := by {
   sorry
 }
