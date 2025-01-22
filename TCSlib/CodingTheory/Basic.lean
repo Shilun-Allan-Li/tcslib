@@ -19,6 +19,13 @@ import Mathlib.Data.Matrix.Basic
 import Mathlib.Data.Matrix.Rank
 import Mathlib.Probability.ProbabilityMassFunction.Uniform
 import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.Real.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.SetTheory.Ordinal.Arithmetic
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import Mathlib.Algebra.Order.Ring.Abs
+
 /-!
 # Code Definitions
 
@@ -59,6 +66,7 @@ def Linear_Code (C : Code n α) (G : Matrix (Fin n) (Fin m) α) := (∀ c' : Cod
 
 def Linear_Code' (C : Code n α) (m : ℕ) := ∃ (G : Matrix (Fin n) (Fin m) α), (∀ c' : Codeword m α, Matrix.mulVec G c' ∈ C) ∧ (∀ c ∈ C, ∃ c' : Codeword m α, c = Matrix.mulVec G c')
 
+noncomputable def qaryEntropy (q : ℕ) (p : ℝ) := p * (Real.logb q (q-1)) - p * (Real.logb q p) - (1-p)*(Real.logb q (1 -p))
 
 /-- AsymptoticCodes is a map from ℕ to `Code n 𝔽`. -/
 -- def AsymptoticCodes (α : Type*) (S : Set ℕ) (hs : S.Infinite) [Fintype α] [DecidableEq α] :=  (n : S) → Code n α
@@ -545,7 +553,238 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
     linarith
 }
 
+lemma hamming_ball_size_asymptotic (q n : ℕ) (p : ℝ) (hq : q = Fintype.card α) (hα : Nontrivial α) (hnp : (Nat.floor (n*p)) = n*p) (hp : 0 < p ∧ p ≤ 1 - 1/q):
+∀ c : Codeword n α, (hamming_ball (Nat.floor (n*p)) c).card ≤ Real.rpow q ((qaryEntropy q p) * n) := by {
+  intro c
+  rw[hamming_ball_size]
+  rw[← hq]
+  have : 0 < Real.rpow q ((qaryEntropy q p) * n)
+  · apply Real.rpow_pos_of_pos
+    rw[hq]
+    simp
+    exact Fintype.card_pos
+  apply (div_le_one this).1
+  simp
+  dsimp[qaryEntropy]
 
+  -- Using sub lemmas
+  have hq₁ : (0 : ℝ) < ↑q
+  · rw[hq]
+    simp
+    exact Fintype.card_pos
+
+  have hq₂ : (0 : ℝ) ≤ ↑q - 1
+  · simp
+    rw[hq]
+    exact Nat.one_le_of_lt Fintype.card_pos
+
+  have hq₃ : (0 : ℝ) < ↑q - 1
+  · simp
+    rw[hq]
+    exact Fintype.one_lt_card
+
+  have h₁ : 0 < 1 - p
+  · suffices p < 1 by exact sub_pos.mpr this
+    calc
+      p ≤ 1 - 1/↑q               := by exact hp.2
+      _ = 1 - 1/(Fintype.card α) := by rw[hq]
+      _ < 1                      := by exact sub_lt_self 1 (one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero Fintype.card_ne_zero)))
+  have hp₂ : p < 1
+  · linarith
+
+  rw[div_eq_mul_inv, ← Real.rpow_neg]
+  have : -((p * Real.logb (↑q) (↑q - 1) - p * Real.logb (↑q) p - (1 - p) * Real.logb (↑q) (1 - p)) * ↑n) =
+          (Real.logb (↑q) (↑q - 1)) * (-p * ↑n) + (Real.logb (↑q) p) * (p * ↑n) + (Real.logb (↑q) (1 - p)) * ((1-p) * ↑n)
+  · linarith
+  rw[this]
+
+  rw[Real.rpow_add, Real.rpow_add, Real.rpow_mul, Real.rpow_logb, Real.rpow_mul, Real.rpow_mul, Real.rpow_mul,Real.rpow_mul]
+  rw[Real.rpow_logb, Real.rpow_logb]
+  rw[← Real.rpow_mul, ← Real.rpow_mul]
+  rw[Finset.sum_mul]
+
+
+  simp
+
+-- Doing all the algebra
+  have h_alg1 : ∀ x, ↑(Nat.choose n x) * ↑(q - 1) ^ x * ((↑q - 1) ^ (-(p * ↑n)) * p ^ (p * ↑n) * (1 - p) ^ ((1 - p) * ↑n)) =
+  ↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p/((q-1)*(1-p)))^(p*↑n)
+  · intro x
+    rw[one_sub_mul, sub_eq_add_neg ↑n (p * ↑n)]
+    rw[Real.rpow_add h₁, ← mul_assoc, ← Real.rpow_nat_cast]
+    calc
+      ↑(Nat.choose n x) * ↑(q - 1) ^ (x :ℝ) * ((↑q - 1) ^ (-(p * ↑n)) * p ^ (p * ↑n)) * ((1 - p) ^ (n : ℝ) * (1 - p) ^ (-(p * ↑n))) =
+      ↑(Nat.choose n x) * ↑(q - 1) ^ (x : ℝ) * (1 - p) ^ (n : ℝ) * ((((1 - p) ^(-(p * ↑n)) * (↑q - 1) ^ (-(p * ↑n)))) * p ^ (p * ↑n)) := by linarith
+      _ = ↑(Nat.choose n x) * ↑(q - 1) ^ (x : ℝ) * (1 - p) ^ (n : ℝ) * (p / ((↑q - 1) * (1 - p))) ^ (p * ↑n) := by {
+        rw[← Real.mul_rpow]
+        rw[Real.rpow_neg, ← Real.inv_rpow]
+        rw[← Real.mul_rpow]
+        rw[← div_eq_inv_mul]
+        ring
+        · apply inv_nonneg.2
+          apply mul_nonneg
+          exact le_of_lt h₁
+          exact hq₂
+        · linarith
+        · exact (zero_le_mul_left h₁).mpr hq₂
+        · exact (zero_le_mul_left h₁).mpr hq₂
+        · exact le_of_lt h₁
+        · exact hq₂
+      }
+
+  have h_alg_2 : ∀ x ∈ (Finset.range (⌊↑n * p⌋₊ + 1)), ↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p / ((↑q - 1) * (1 - p))) ^ (p * ↑n) ≤ (↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p / ((↑q - 1) * (1 - p))) ^ x)
+  · intros x hx
+    suffices (p / ((↑q - 1) * (1 - p))) ^ (p * ↑n) ≤ (p / ((↑q - 1) * (1 - p))) ^ x by {
+      calc
+        ↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p / ((↑q - 1) * (1 - p))) ^ (p * ↑n) =
+        (↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ)) * (p / ((↑q - 1) * (1 - p))) ^ (p * ↑n) := by linarith
+        _ ≤ (↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p / ((↑q - 1) * (1 - p))) ^ x) := by rel[this]
+    }
+    simp at hx
+    have : 0 < (p / ((↑q - 1) * (1 - p))) ∧ (p / ((↑q - 1) * (1 - p))) ≤ 1
+    · constructor
+      · apply div_pos
+        linarith[hp.1]
+        apply mul_pos
+        exact hq₃
+        linarith[h₁]
+      · suffices p / (q - 1) ≤ 1 - p by {
+          rw[← div_div]
+          apply (div_le_one h₁).2
+          exact this
+        }
+        calc
+          p / (↑q - 1) ≤ 1/q := by {
+            apply (div_le_iff hq₃).2
+            rw[mul_sub]
+            simp
+            simp at hp
+            rw[inv_mul_cancel]
+            exact hp.2
+            exact ne_of_gt hq₁
+          }
+          _ ≤ 1 - p := by linarith
+
+    have h_x_le_pn : x ≤ p * n
+    · have : 0 ≤ n*p
+      · apply mul_nonneg
+        exact Nat.cast_nonneg n
+        linarith[hp.1]
+      rw[mul_comm]
+      apply (Nat.le_floor_iff this).1
+      exact Nat.lt_succ.mp hx
+
+    rw[← Real.rpow_nat_cast]
+    apply Real.rpow_le_rpow_of_exponent_ge this.1 this.2 h_x_le_pn
+
+
+
+  calc
+      (Finset.sum (Finset.range (⌊↑n * p⌋₊ + 1)) fun x =>
+    ↑(Nat.choose n x) * ↑(q - 1) ^ x * ((↑q - 1) ^ (-(p * ↑n)) * p ^ (p * ↑n) * (1 - p) ^ ((1 - p) * ↑n))) =  (Finset.sum (Finset.range (⌊↑n * p⌋₊ + 1)) fun x =>
+    ↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p/((q-1)*(1-p)))^(p*↑n)) := by {
+      apply Finset.sum_congr
+      rfl
+      intro x hx
+      exact h_alg1 x
+    }
+    _ ≤ (Finset.sum (Finset.range (⌊↑n * p⌋₊ + 1)) fun x => (↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p / ((↑q - 1) * (1 - p))) ^ x)) := by {
+      apply Finset.sum_le_sum
+      intros i hi
+      exact h_alg_2 i hi
+    }
+    _ ≤ (Finset.sum (Finset.range (n + 1)) fun x => (↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ (n : ℝ) * (p / ((↑q - 1) * (1 - p))) ^ x)) := by {
+      apply Finset.sum_le_sum_of_subset_of_nonneg
+
+      apply range_subset.2
+      simp
+      apply Nat.floor_le_of_le
+      calc
+        ↑n * p ≤ ↑n * 1 := by exact mul_le_mul_of_nonneg_left (le_of_lt hp₂) (Nat.cast_nonneg n)
+        _      ≤ ↑n     := by simp
+      intros i _ _
+      apply mul_nonneg
+      apply mul_nonneg
+      apply mul_nonneg
+      simp
+      simp
+      simp
+      exact pow_nonneg (le_of_lt h₁) n
+      apply pow_nonneg
+      apply div_nonneg
+      exact le_of_lt hp.1
+      apply mul_nonneg
+      exact hq₂
+      exact le_of_lt h₁
+    }
+    _ = Finset.sum (Finset.range (n + 1)) fun x => (↑(Nat.choose n x) * p ^ x * (1 - p) ^ ((n : ℝ) - x)) := by{
+      apply Finset.sum_congr
+      rfl
+      intros x hx
+      simp at hx
+      apply Nat.lt_succ.1 at hx
+      field_simp
+      rw[mul_pow, ←mul_assoc]
+      symm
+      calc
+        ↑(Nat.choose n x) * p ^ x * (1 - p) ^ ((n:ℝ) - (x:ℝ)) * (↑q - 1) ^ x * (1 - p) ^ x =
+        ↑(Nat.choose n x) * (↑q - 1) ^ x * ((1 - p) ^ ((n:ℝ) - (x:ℝ)) * (1 - p) ^ x) * p ^ x := by linarith
+        _ = ↑(Nat.choose n x) * (↑q - 1) ^ x * ((1 - p) ^ (n - x) * (1 - p) ^ x) * p ^ x := by rw[←Nat.cast_sub hx, Real.rpow_nat_cast]
+        _ = ↑(Nat.choose n x) * (↑q - 1) ^ x * (1 - p) ^ n * p ^ x := by rw[←pow_add, Nat.sub_add_cancel hx]
+        _ = ↑(Nat.choose n x) * ↑(q - 1) ^ x * (1 - p) ^ n * p ^ x := by {
+          simp
+          left
+          left
+          left
+          rw[Nat.cast_sub]
+          simp
+          rw[hq]
+          exact Nat.one_le_of_lt Fintype.card_pos
+        }
+
+
+
+
+    }
+    _ = Finset.sum (Finset.range (n + 1)) fun x => (p ^ x * (1 - p) ^ (n - x) * ↑(Nat.choose n x)) := by {
+      apply Finset.sum_congr
+      rfl
+      intros x hx
+      simp at hx
+      apply Nat.lt_succ.1 at hx
+      rw[←Nat.cast_sub hx, Real.rpow_nat_cast]
+      linarith
+    }
+    _ = 1 := by {
+      rw[← add_pow p (1-p) n]
+      simp
+    }
+
+  -- More algebras on ineqaulities
+  exact le_of_lt hp.1
+  exact hq₂
+  exact hq₁
+  linarith[hq₃]
+  exact h₁
+  exact hq₁
+  linarith[hq₃]
+  exact hp.1
+  exact le_of_lt hq₁
+  rw[Real.rpow_logb]
+  exact le_of_lt hp.1
+  exact hq₁
+  linarith[hq₃]
+  exact hp.1
+  linarith[hq₁]
+  exact hq₂
+  exact hq₁
+  linarith[hq₃]
+  exact hq₃
+  linarith[hq₁]
+  exact hq₁
+  exact hq₁
+  linarith[hq₁]
+}
 
 lemma hamming_ball_non_intersect (C : Code n α) (h : distance C d) (h' : 0 < d): ∀ c₁ c₂ : Codeword n α, (c₁ ∈ C ∧ c₂ ∈ C ∧ c₁ ≠ c₂) → ∀ c' : Codeword n α, c' ∈ (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₁) → c' ∉  (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₂) := by {
   intros c₁ c₂ hc₁₂ c' hc'
