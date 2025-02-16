@@ -879,7 +879,12 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
     -- Says that the number of row vectors g such that gx = v_i is equal to |α|^(k-1)
     have h4 : ∀i, (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun _ => v i) Finset.univ).card = (Fintype.card α)^(k-1)
-    · sorry
+    · intro i
+
+      let S := (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun _ => v i) Finset.univ)
+      let S' := Finset.univ (Matrix (Fin 1) (Fin k-1) α) = Fintype.card α ^ (k - 1)
+      have h4₀ : (filter (fun g => Matrix.mulVec g x = fun x => v i) Finset.univ) =
+      sorry
 
     simp_rw[h2, h3, h4]
     simp[←pow_mul, mul_comm]
@@ -922,6 +927,7 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) :
     exact h_surj
 
   simp_rw[h_card_eq]
+  simp
   -- Need to use the uniformity lemma above here
   sorry
 }
@@ -929,10 +935,36 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) :
 theorem existence_bound (d: ℕ) :
 (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), weight (Matrix.mulVec G x) < d}).card ≤
 (Fintype.card α)^k * ((hamming_ball (d-1) (zero : Codeword n α)).card) := by {
-  sorry
+
+  let S := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), weight (Matrix.mulVec G x) < d}
+  let S_u := Set.toFinset (⋃ (x : Codeword k α), {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d})
+
+  have h_union_eq : S = S_u
+  · ext G
+    apply Iff.intro
+    · intro h_S
+      rw[Set.mem_toFinset, Set.mem_setOf] at h_S
+      simp[h_S]
+    · intro h_Su
+      sorry
+
+  let card_sum := (Finset.sum Finset.univ fun (x : Codeword k α) => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card)
+
+  have h_union_bound : S_u.card ≤ card_sum
+  · sorry -- apply Finset.card_union_le. Might need induction.
+
+  have h_sum_leq : card_sum ≤ (Fintype.card α)^k * ((hamming_ball (d-1) (zero : Codeword n α)).card)
+  · sorry -- Use previous lemma prob_leq_ball_size
+
+  change S.card ≤ (Fintype.card α)^k * ((hamming_ball (d-1) (zero : Codeword n α)).card)
+  rw[h_union_eq]
+
+  trans card_sum
+  · exact h_union_bound
+  · exact h_sum_leq
 }
 
 theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - ((Nat.clog q) (hamming_ball (d-1) (zero : Codeword n α)).card) - 1):
-(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∀ (x : Codeword k α), weight (Matrix.mulVec G x) ≥ d}).card ≥ 1 := by {
+(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∀ (x : Codeword k α), x ≠ 0 → weight (Matrix.mulVec G x) ≥ d}).card ≥ 1 := by {
   sorry
 }

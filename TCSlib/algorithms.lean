@@ -37,47 +37,47 @@ def self_composition (func : α → α) : ℕ → α → α
   | n+1 => func ∘ (self_composition func n)
 
 
-theorem loop_time (f : Algorithm α α) (n : ℕ) :
-  ∃h : Algorithm α α,
-    h.func = self_composition f.func n ∧
-    h.time = (fun (m : ℕ) => (Finset.sum (Finset.range n) (fun i => (f.time ∘ self_composition f.length i) m))) ∧
-    h.length = fun (m : ℕ) => self_composition f.length n m
-  := by
-  use { func := self_composition f.func n,
-        time := fun (m : ℕ) => (Finset.sum (Finset.range n) (fun i => (f.time ∘ self_composition f.length i) m)),
-        length := fun (m : ℕ) => self_composition f.length n m }
+-- theorem loop_time (f : Algorithm α α) (n : ℕ) :
+--   ∃h : Algorithm α α,
+--     h.func = self_composition f.func n ∧
+--     h.time = (fun (m : ℕ) => (Finset.sum (Finset.range n) (fun i => (f.time ∘ self_composition f.length i) m))) ∧
+--     h.length = fun (m : ℕ) => self_composition f.length n m
+--   := by
+--   use { func := self_composition f.func n,
+--         time := fun (m : ℕ) => (Finset.sum (Finset.range n) (fun i => (f.time ∘ self_composition f.length i) m)),
+--         length := fun (m : ℕ) => self_composition f.length n m }
 
 
-noncomputable def add_alg : Algorithm (ℕ × ℕ) ℕ :=
-  { func := fun (p : ℕ × ℕ) => p.1 + p.2,
-    time := fun (n : ℕ) => Real.log n,
-    length := fun (n : ℕ) => n }
+-- noncomputable def add_alg : Algorithm (ℕ × ℕ) ℕ :=
+--   { func := fun (p : ℕ × ℕ) => p.1 + p.2,
+--     time := fun (n : ℕ) => Real.log n,
+--     length := fun (n : ℕ) => n }
 
 
 -- Harvey-Hoeven algorithm
-noncomputable def mult_alg : Algorithm (ℕ × ℕ) ℕ :=
-  { func := fun (p : ℕ × ℕ) => p.1 * p.2,
-    time := fun (n : ℕ) => Real.log n * Real.log (Real.log n),
-    length := fun (n : ℕ) => 2*n }
+-- noncomputable def mult_alg : Algorithm (ℕ × ℕ) ℕ :=
+--   { func := fun (p : ℕ × ℕ) => p.1 * p.2,
+--     time := fun (n : ℕ) => Real.log n * Real.log (Real.log n),
+--     length := fun (n : ℕ) => 2*n }
 
 
-noncomputable def matrix_mult_alg : Algorithm (ℕ × ℕ) ℕ :=
-  { func := fun (p : ℕ × ℕ) => p.1 + p.2,
-    time := fun (n : ℕ) => Real.log n,
-    length := fun (n : ℕ) => n }
+-- noncomputable def matrix_mult_alg : Algorithm (ℕ × ℕ) ℕ :=
+--   { func := fun (p : ℕ × ℕ) => p.1 + p.2,
+--     time := fun (n : ℕ) => Real.log n,
+--     length := fun (n : ℕ) => n }
 
 
-def polytime_computible (f : α → β) :=
-  ∃(alg : Algorithm α β), alg.func = f ∧ ∃(c : ℕ), Asymptotics.IsBigO l alg.time (fun (n : ℕ) => (n^c : ℝ))
+-- def polytime_computible (f : α → β) :=
+--   ∃(alg : Algorithm α β), alg.func = f ∧ ∃(c : ℕ), Asymptotics.IsBigO l alg.time (fun (n : ℕ) => (n^c : ℝ))
 
 
-theorem mergesort :
-  ∃(alg : Algorithm (List ℕ) (List ℕ)),
-    ∀ (lst : List ℕ), ∀ i j : Fin (alg.func lst).length, i < j → (alg.func lst).get i < (alg.func lst).get j ∧
-    ∃ inv_perm : List ℕ → List ℕ, inv_perm (alg.func lst) = lst ∧
-    Asymptotics.IsBigO l alg.time (fun (n : ℕ) => (n * Real.log n : ℝ)) ∧
-    alg.length = id
-  := sorry
+-- theorem mergesort :
+--   ∃(alg : Algorithm (List ℕ) (List ℕ)),
+--     ∀ (lst : List ℕ), ∀ i j : Fin (alg.func lst).length, i < j → (alg.func lst).get i < (alg.func lst).get j ∧
+--     ∃ inv_perm : List ℕ → List ℕ, inv_perm (alg.func lst) = lst ∧
+--     Asymptotics.IsBigO l alg.time (fun (n : ℕ) => (n * Real.log n : ℝ)) ∧
+--     alg.length = id
+--   := sorry
 
 
 -- def P (A : Language α) : Prop := ∃(alg : Algorithm (List α) Bool),
@@ -85,18 +85,18 @@ theorem mergesort :
 --   ∃(c : ℕ), Asymptotics.IsBigO l alg.time (fun (n : ℕ) => (n^c : ℝ))
 
 
-def NP (A : Language α) : Prop := ∃(alg : Algorithm (List α) Bool),
-  ∃(c : ℕ),
-    Asymptotics.IsBigO l alg.time (fun (n : ℕ) => (n^c : ℝ)) ∧
-    ∀ (x : List α), x ∈ A ↔ ∃ (w : List α), w.length < x.length^c ∧ alg.func (w ++ x) = true
+-- def NP (A : Language α) : Prop := ∃(alg : Algorithm (List α) Bool),
+--   ∃(c : ℕ),
+--     Asymptotics.IsBigO l alg.time (fun (n : ℕ) => (n^c : ℝ)) ∧
+--     ∀ (x : List α), x ∈ A ↔ ∃ (w : List α), w.length < x.length^c ∧ alg.func (w ++ x) = true
 
 
-theorem master_thm (alg : Algorithm α β) (recur_step : Algorithm α β) (a b : ℝ) : (∀ n, alg.time n = a * alg.time (n) + recur_step.time n) →
- let c_crit := Real.log a / Real.log b
- (∃ (c : ℝ), c < c_crit ∧ Asymptotics.IsBigO l recur_step.time (fun (m : ℕ) => (m^c : ℝ)) →  Asymptotics.IsTheta l alg.time (fun (m : ℕ) => (m^c_crit : ℝ))) ∧
- (∃ (k : ℝ), Asymptotics.IsTheta l recur_step.time (fun (m : ℕ) => (m^c_crit * (Real.log n)^k : ℝ)) →  Asymptotics.IsTheta l alg.time (fun (m : ℕ) => (m^c_crit * (Real.log n)^(k+1) : ℝ))) ∧
- (∃ (c : ℝ), c > c_crit ∧ Asymptotics.IsOmega l recur_step.time (fun (m : ℕ) => (m^c : ℝ)) →  Asymptotics.IsTheta l alg.time recur_step.time)
- := sorry
+-- theorem master_thm (alg : Algorithm α β) (recur_step : Algorithm α β) (a b : ℝ) : (∀ n, alg.time n = a * alg.time (n) + recur_step.time n) →
+--  let c_crit := Real.log a / Real.log b
+--  (∃ (c : ℝ), c < c_crit ∧ Asymptotics.IsBigO l recur_step.time (fun (m : ℕ) => (m^c : ℝ)) →  Asymptotics.IsTheta l alg.time (fun (m : ℕ) => (m^c_crit : ℝ))) ∧
+--  (∃ (k : ℝ), Asymptotics.IsTheta l recur_step.time (fun (m : ℕ) => (m^c_crit * (Real.log n)^k : ℝ)) →  Asymptotics.IsTheta l alg.time (fun (m : ℕ) => (m^c_crit * (Real.log n)^(k+1) : ℝ))) ∧
+--  (∃ (c : ℝ), c > c_crit ∧ Asymptotics.IsOmega l recur_step.time (fun (m : ℕ) => (m^c : ℝ)) →  Asymptotics.IsTheta l alg.time recur_step.time)
+--  := sorry
 
 
 -- list decoding
