@@ -1121,8 +1121,8 @@ matrix_dist n k x = uniform_vector_dist n α := by {
     · intro i
 
       let S := (filter (fun g : Matrix (Fin 1) (Fin k) α => Matrix.mulVec g x = fun _ => v i) Finset.univ)
-      let S' := Finset.univ (Matrix (Fin 1) (Fin k-1) α) = Fintype.card α ^ (k - 1)
-      have h4₀ : (filter (fun g => Matrix.mulVec g x = fun x => v i) Finset.univ) =
+      -- let S' := Finset.univ (Matrix (Fin 1) (Fin k-1) α) = Fintype.card α ^ (k - 1)
+      -- have h4₀ : (filter (fun g => Matrix.mulVec g x = fun x => v i) Finset.univ) =
       sorry
 
     simp_rw[h2, h3, h4]
