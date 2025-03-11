@@ -1126,16 +1126,30 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
       have h4₀ : (filter (fun g : Matrix (Fin 1) (Fin k) α => (fun x_1 => Finset.sum Finset.univ fun x_2 => g x_1 x_2 * x x_2) = fun x => v i) Finset.univ) =
       Set.toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum (Finset.univ : Finset (Fin k)) fun a => (g 1 a) * (x a)) = v i}
-      · sorry -- Definitely doable, just simplifying the mess
+      · ext x
+        simp
+        constructor
+        · intro h_filter
+          apply congr_fun at h_filter
+          specialize h_filter 1
+          rw[Set.mem_toFinset, Set.mem_setOf]
+          exact h_filter
+        · intro h_univ
+          rw[Set.mem_toFinset, Set.mem_setOf] at h_univ
+          funext 1
+          exact h_univ
 
       let S := (toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum Finset.univ fun a => g 1 a * x a) = v i})
 
       have h4₁ : S.card = (Finset.univ : Finset (Codeword (k-1) α)).card
-      · let f : (g : Matrix (Fin 1) (Fin k) α) → g ∈ S → Codeword (k-1) α := fun g _ => zero -- This is a placeholder, obviously not the correct bijection
-        sorry -- This is the sticking point. It is true but seems very difficult to prove
+      · sorry -- This is the sticking point. It is true but seems very difficult to prove
+        -- pseudoinverse of matrix to find solution set, find dimension of space of solutions
 
       have h4₂ : (Finset.univ : Finset (Codeword (k-1) α)).card = (Fintype.card α)^(k-1)
-      · sorry -- This is obvious but could be nontrivial to prove
+      · rw[Finset.card_univ]
+        unfold Codeword
+        rw[Fintype.card_fun]
+        simp
 
       rw[h4₀, h4₁, h4₂]
 
@@ -1168,14 +1182,13 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
     · simp
       unfold weight
       intro G h_dist_le_d
-      have h_dist_leq_dminus1 : hamming_distance (Matrix.mulVec G x) 0 ≤ d - 1
-      · have h₁ : (hamming_distance (Matrix.mulVec G x) 0) + 1 ≤ d := by exact Nat.succ_le_of_lt h_dist_le_d
-        have h₂ : (hamming_distance (Matrix.mulVec G x) 0) + 1 - 1 ≤ d - 1 := by exact Nat.sub_le_sub_right h₁ 1
+      have h_dist_leq_dminus1 : hamming_distance (Matrix.mulVec G x) zero ≤ d - 1
+      · have h₁ : (hamming_distance (Matrix.mulVec G x) zero) + 1 ≤ d := by exact Nat.succ_le_of_lt h_dist_le_d
+        have h₂ : (hamming_distance (Matrix.mulVec G x) zero) + 1 - 1 ≤ d - 1 := by exact Nat.sub_le_sub_right h₁ 1
         rw[Nat.add_sub_cancel] at h₂
         exact h₂
       rw [mem_toFinset]
       simp[h_dist_leq_dminus1]
-      exact h_dist_leq_dminus1
 
     exact h_map
 
@@ -1194,7 +1207,9 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
       rw[mem_toFinset] at h_G'inS'
       simp[Set.mem_setOf] at h_G'inS'
       unfold weight
-      sorry -- This is easily doable
+      apply Nat.lt_of_le_pred
+      simp[h_d]
+      exact h_G'inS'
     exact h_surj
 
   simp_rw[h_card_eq]
@@ -1204,14 +1219,24 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
   unfold matrix_dist uniform_vector_dist at matrix_uniformity
   simp at matrix_uniformity
 
-  have h_unif (v: Codeword n α) : (toFinset {G | Matrix.mulVec G x = v}).card / Fintype.card α ^ (n * k) = 1 / (Fintype.card α)^n -- TODO: Should this be ≤?
+  have h_unif (v: Codeword n α) : (toFinset {G | Matrix.mulVec G x = v}).card / Fintype.card α ^ (n * k) = 1 / ((Fintype.card α : ℝ))^n -- TODO: Should this be ≤?
   · apply congr_fun at matrix_uniformity
     specialize matrix_uniformity v
-    have h_filter : ↑(filter (fun x_1 => Matrix.mulVec x_1 x = v) Finset.univ) = (toFinset {G | Matrix.mulVec G x = v})
-    · sorry -- Just wrestling with types
-    rw[←h_filter]
+    have h_filter_eq : ↑(filter (fun x_1 => Matrix.mulVec x_1 x = v) Finset.univ) = (toFinset {G | Matrix.mulVec G x = v})
+    · ext y
+      constructor
+      · intro h_filter
+        rw[Finset.mem_filter] at h_filter
+        simp_rw[Set.mem_toFinset, Set.mem_setOf, h_filter]
+      · intro h_finset
+        rw[Set.mem_toFinset, Set.mem_setOf] at h_finset
+        rw[Finset.mem_filter]
+        simp[h_finset]
 
-    sorry -- Casting mess
+    rw[←h_filter_eq]
+    have h_inv : ((Fintype.card α : ℝ) ^ n)⁻¹ = 1 / (Fintype.card α : ℕ) ^ n := by simp
+    rw_mod_cast[←h_inv]
+    exact matrix_uniformity
 
   have h_sum : (toFinset {G | Matrix.mulVec G x ∈ hamming_ball (d - 1) zero}).card / Fintype.card α ^ (n * k) = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => 1 / (Fintype.card α)^n
   · sorry -- Use h_unif
