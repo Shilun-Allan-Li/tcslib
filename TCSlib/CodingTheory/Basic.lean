@@ -40,7 +40,7 @@ open Set Filter Asymptotics Finset Linarith
 namespace CodingTheory
 
 -- variable {𝔽 : Type*} [Field 𝔽] [Fintype 𝔽] [DecidableEq 𝔽]
-variable {α : Type*} [Fintype α] [DecidableEq α] [Field α]-- the alphabet
+variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]-- the alphabet
 variable {n k : ℕ}
 
 
@@ -941,12 +941,12 @@ lemma Linear_Code_dist_eq_min_weight (C : Code n α) (h_linear : Linear_Code' C 
   · intros c hc c_nzero
     simp [weight]
     apply h.2 c hc 0
-    rcases hG with ⟨hG_image, hG_preimage⟩
+    rcases hG with ⟨hG_image, _⟩
     specialize hG_image 0
     simp at hG_image
     exact hG_image
     exact c_nzero
-  · rcases h.1 with ⟨c₁, ⟨hc₁, c₂, ⟨hc₂, ⟨hc₁₂neq, hc₁₂dist_eq_d⟩⟩⟩⟩
+  · rcases h.1 with ⟨c₁, ⟨hc₁, c₂, ⟨hc₂, ⟨_, hc₁₂dist_eq_d⟩⟩⟩⟩
     use c₁ - c₂
     rcases hG with ⟨hG_image, hG_preimage⟩
     apply hG_preimage at hc₁
@@ -996,7 +996,7 @@ Matrix.of (fun _ j => (M i) j)
 
 
 -- Actual lemma stating that Gx is uniformly distributed
-theorem uniformity_lemma (n k : ℕ) (x : Codeword k α) (h_x : x ≠ 0) (h_k : k ≥ 1) :
+theorem uniformity_lemma (n k : ℕ) (x : Codeword k α) (h_x : x ≠ zero) (h_k : k ≥ 1) :
 matrix_dist n k x = uniform_vector_dist n α := by {
 
   unfold matrix_dist uniform_vector_dist
@@ -1139,19 +1139,69 @@ matrix_dist n k x = uniform_vector_dist n α := by {
           funext 1
           exact h_univ
 
-      let S := (toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum Finset.univ fun a => g 1 a * x a) = v i})
+      let c := v i
+      let S := (toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum Finset.univ fun a => g 1 a * x a) = c})
 
-      have h4₁ : S.card = (Finset.univ : Finset (Codeword (k-1) α)).card
-      · sorry -- This is the sticking point. It is true but seems very difficult to prove
-        -- pseudoinverse of matrix to find solution set, find dimension of space of solutions
+      have h4₁ : S.card = (Fintype.card α)^(k-1)
+      · have h_nonzero_element : ∃ (j : Fin k), x j ≠ 0
+        · sorry -- Should be simple, use h_x
 
-      have h4₂ : (Finset.univ : Finset (Codeword (k-1) α)).card = (Fintype.card α)^(k-1)
-      · rw[Finset.card_univ]
-        unfold Codeword
-        rw[Fintype.card_fun]
-        simp
+        rcases h_nonzero_element with ⟨j, h_j⟩
 
-      rw[h4₀, h4₁, h4₂]
+        have h_rearrange : S = (toFinset {g : Matrix (Fin 1) (Fin k) α | (g 1 j) = (c - Finset.sum (Finset.univ.erase j) fun a => (g 1 a)*(x a)) / (x j)})
+        · ext y
+          simp
+          constructor
+          · intro h_sum
+            field_simp[h_sum]
+          · intro h_formula
+            field_simp at h_formula
+            rw[eq_sub_iff_add_eq] at h_formula
+            simp_all[Finset.sum_sub_distrib, mul_sub]
+
+        simp_rw[h_rearrange]
+        let S₂ := (toFinset {g : Matrix (Fin 1) (Fin k) α | g 1 j = (v i - Finset.sum (erase Finset.univ j) fun a => g 1 a * x a) / x j})
+
+        have h_g_bijection : S₂.card = (Finset.univ : Finset (Codeword (k-1) α)).card
+        · let f : (g : Matrix (Fin 1) (Fin k) α) → g ∈ S₂ → (Codeword (k-1) α) := fun g h_g => (fun (l : Fin (k-1)) => if h_llt : l.val < j then (g 1 ⟨l.val, by sorry⟩) else (g 1 ⟨l.val + 1, by sorry⟩))
+          apply Finset.card_congr f
+
+          simp_all
+
+          have h_f_inj : ∀ (a b : Matrix (Fin 1) (Fin k) α) (ha : a ∈ S₂) (hb : b ∈ S₂), f a ha = f b hb → a = b
+          · simp
+            intro a b h_a h_b h_l
+            ext i₁ iκ
+            have h_i1 : i₁ = 0 := by fin_cases i₁; simp
+            rw[h_i1]
+            have h_cases : iκ.val < j.val ∨ iκ.val = j.val ∨ iκ.val > j.val
+            · exact Nat.lt_trichotomy iκ.val j.val
+            rcases h_cases with (h_lt | h_eq | h_gt)
+            · sorry -- Case 1: iκ > j
+            · sorry -- Case 2: iκ = j
+            · sorry -- Case 3: iκ < j
+
+          exact h_f_inj
+
+          have h_f_surj : ∀ b ∈ Finset.univ, ∃ a, ∃ (ha : a ∈ S₂), f a ha = b
+          · intro b h_b
+            sorry
+
+          exact h_f_surj
+
+        rw[h_g_bijection]
+
+        have h_codeword_card : (Finset.univ : Finset (Codeword (k-1) α)).card = (Fintype.card α)^(k-1)
+        · rw[Finset.card_univ]
+          unfold Codeword
+          rw[Fintype.card_fun]
+          simp
+
+        rw[h_codeword_card]
+
+
+
+      rw[h4₀, h4₁]
 
     simp_rw[h2, h3, h4]
     simp[←pow_mul, mul_comm]
@@ -1239,17 +1289,39 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
     exact matrix_uniformity
 
   have h_sum : (toFinset {G | Matrix.mulVec G x ∈ hamming_ball (d - 1) zero}).card / Fintype.card α ^ (n * k) = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => 1 / (Fintype.card α)^n
-  · sorry -- Use h_unif
+  · simp[Finset.sum_const]
+    have h_ball_eq_sum : (toFinset {G | Matrix.mulVec G x ∈ hamming_ball (d-1) zero}) = (Set.toFinset (⋃ (v : Fin n → α) (h_v : weight v ≤ d-1), {G : (Matrix (Fin n) (Fin k) α) | (Matrix.mulVec G x) = v}))
+    · simp
+      ext y
+      constructor
+      · intro h_ball
+        simp[h_ball]
+        sorry
+      · intro h_union
+        sorry
+    unfold hamming_ball at h_ball_eq_sum
+    rw[h_ball_eq_sum]
+
+    have h_card_eq_sum : (toFinset (⋃ v, ⋃ (_ : weight v ≤ d - 1), {G | Matrix.mulVec G x = v})).card = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => (toFinset {G | Matrix.mulVec G x = v}).card
+    · sorry -- Need to show disjointness
+
+    rw[h_card_eq_sum]
+    sorry
+
 
   have h_ball_size : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α)^n) = (hamming_ball (d-1) (zero : Codeword n α)).card / (Fintype.card α)^n
   · have h_sum_mult : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α)^n) = (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}).card * (1 / (Fintype.card α)^n)
-    · sorry -- Not sure how to do this but should be basic arithmetic manipulation
+    · simp[Finset.sum_const]
     rw[h_sum_mult]
     field_simp
     let a := (toFinset {v : Codeword n α | hamming_distance v zero ≤ d - 1}).card
     let b := (Fintype.card α)^n
     change a * (1/b) = a / b
-    sorry -- More arithmetic, might need hypothesis that b ≠ 0
+    have h_b : b > 0
+    · simp
+      exact pow_pos Fintype.card_pos n
+
+    sorry -- Proving a * (1/b) = a/b. This might be a bigger issue than it seems because a, b ∈ ℕ
 
   rw[h_sum, h_ball_size]
 }
@@ -1268,7 +1340,13 @@ theorem existence_bound (d: ℕ) :
       rw[Set.mem_toFinset, Set.mem_setOf] at h_S
       simp[h_S]
     · intro h_Su
-      sorry
+      have h_inone : ∃x, G ∈ {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}
+      · simp[mem_iUnion] at h_Su
+        exact h_Su
+      simp[h_inone]
+      rcases h_inone with ⟨x, h_xset⟩
+      rw[Set.mem_setOf] at h_xset
+      use x
 
   let card_sum := (Finset.sum Finset.univ fun (x : Codeword k α) => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card)
 
