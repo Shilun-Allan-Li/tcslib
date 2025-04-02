@@ -1125,7 +1125,7 @@ matrix_dist n k x = uniform_vector_dist n α := by {
       simp
 
       have h4₀ : (filter (fun g : Matrix (Fin 1) (Fin k) α => (fun x_1 => Finset.sum Finset.univ fun x_2 => g x_1 x_2 * x x_2) = fun x => v i) Finset.univ) =
-      Set.toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum (Finset.univ : Finset (Fin k)) fun a => (g 1 a) * (x a)) = v i}
+      Set.toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum (Finset.univ : Finset (Fin k)) fun a => (g 0 a) * (x a)) = v i}
       · ext x
         simp
         constructor
@@ -1140,7 +1140,7 @@ matrix_dist n k x = uniform_vector_dist n α := by {
           exact h_univ
 
       let c := v i
-      let S := (toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum Finset.univ fun a => g 1 a * x a) = c})
+      let S := (toFinset {g : Matrix (Fin 1) (Fin k) α | (Finset.sum Finset.univ fun a => g 0 a * x a) = c})
 
       have h4₁ : S.card = (Fintype.card α)^(k-1)
       · have h_nonzero_element : ∃ (j : Fin k), x j ≠ 0
@@ -1148,7 +1148,7 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
         rcases h_nonzero_element with ⟨j, h_j⟩
 
-        have h_rearrange : S = (toFinset {g : Matrix (Fin 1) (Fin k) α | (g 1 j) = (c - Finset.sum (Finset.univ.erase j) fun a => (g 1 a)*(x a)) / (x j)})
+        have h_rearrange : S = (toFinset {g : Matrix (Fin 1) (Fin k) α | (g 0 j) = (c - Finset.sum (Finset.univ.erase j) fun a => (g 0 a)*(x a)) / (x j)})
         · ext y
           simp
           constructor
@@ -1160,10 +1160,16 @@ matrix_dist n k x = uniform_vector_dist n α := by {
             simp_all[Finset.sum_sub_distrib, mul_sub]
 
         simp_rw[h_rearrange]
-        let S₂ := (toFinset {g : Matrix (Fin 1) (Fin k) α | g 1 j = (v i - Finset.sum (erase Finset.univ j) fun a => g 1 a * x a) / x j})
+        let S₂ := (toFinset {g : Matrix (Fin 1) (Fin k) α | g 0 j = (v i - Finset.sum (erase Finset.univ j) fun a => g 0 a * x a) / x j})
 
         have h_g_bijection : S₂.card = (Finset.univ : Finset (Codeword (k-1) α)).card
-        · let f : (g : Matrix (Fin 1) (Fin k) α) → g ∈ S₂ → (Codeword (k-1) α) := fun g h_g => (fun (l : Fin (k-1)) => if h_llt : l.val < j then (g 1 ⟨l.val, by sorry⟩) else (g 1 ⟨l.val + 1, by sorry⟩))
+        · have h_k1 (l : Fin (k-1)) : ↑l < k
+          · sorry -- simple
+
+          have h_k2 (l : Fin (k-1)) : ↑l + 1 < k
+          · sorry -- simple
+
+          let f : (g : Matrix (Fin 1) (Fin k) α) → g ∈ S₂ → (Codeword (k-1) α) := fun g h_g => (fun (l : Fin (k-1)) => if h_llt : l.val < j then (g 0 ⟨l.val, by exact h_k1 l⟩) else (g 0 ⟨l.val + 1, by exact h_k2 l⟩))
           apply Finset.card_congr f
 
           simp_all
@@ -1171,15 +1177,51 @@ matrix_dist n k x = uniform_vector_dist n α := by {
           have h_f_inj : ∀ (a b : Matrix (Fin 1) (Fin k) α) (ha : a ∈ S₂) (hb : b ∈ S₂), f a ha = f b hb → a = b
           · simp
             intro a b h_a h_b h_l
+
+            let φa := (fun (l : Fin (k-1)) => if (l : ℕ) < (j : ℕ) then a 0 { val := ↑l, isLt := h_k1 l } else a 0 { val := ↑l + 1, isLt := h_k2 l })
+            let φb := (fun (l : Fin (k-1)) => if (l : ℕ) < (j : ℕ) then b 0 { val := ↑l, isLt := h_k1 l } else b 0 { val := ↑l + 1, isLt := h_k2 l })
+            have hφ : φa = φb := by simp[h_l]
+
             ext i₁ iκ
             have h_i1 : i₁ = 0 := by fin_cases i₁; simp
             rw[h_i1]
             have h_cases : iκ.val < j.val ∨ iκ.val = j.val ∨ iκ.val > j.val
             · exact Nat.lt_trichotomy iκ.val j.val
             rcases h_cases with (h_lt | h_eq | h_gt)
-            · sorry -- Case 1: iκ > j
-            · sorry -- Case 2: iκ = j
-            · sorry -- Case 3: iκ < j
+            · have h_iκval : iκ < k-1
+              · sorry -- Use h_lt
+              have h_φeq : φa ⟨↑iκ, by exact h_iκval⟩ = φb ⟨↑iκ, by exact h_iκval⟩ := by exact congrFun hφ ⟨↑iκ, by exact h_iκval⟩
+              have h_φa : φa ⟨↑iκ, by exact h_iκval⟩ = a 0 ↑iκ
+              · simp[φa]
+                intro h_jleq
+                have h_notjleq : ¬(j ≤ iκ) := Nat.not_le_of_gt h_lt
+                contradiction
+              have h_φb : φb ⟨↑iκ, by exact h_iκval⟩ = b 0 ↑iκ
+              · simp[φb]
+                intro h_jleq
+                have h_notjleq : ¬(j ≤ iκ) := Nat.not_le_of_gt h_lt
+                contradiction
+              rw[h_φa, h_φb] at h_φeq
+              exact h_φeq
+            · have h_fineq : iκ = j := by exact Fin.eq_of_val_eq h_eq
+              rw[h_fineq, h_a, h_b]
+              field_simp
+              sorry -- Case 2: iκ = j. Probably need to use the other two cases here.
+            · have h_iκval : iκ - 1 < k - 1
+              · sorry -- Simple
+              have h_φeq : φa ⟨↑iκ - 1, by exact h_iκval⟩ = φb ⟨↑iκ - 1, by exact h_iκval⟩ := by exact congrFun hφ ⟨↑iκ - 1, by exact h_iκval⟩
+              have h_φa : φa ⟨↑iκ - 1, by exact h_iκval⟩ = a 0 ↑iκ
+              · simp[φa]
+                rw[if_neg]
+                sorry
+                sorry
+              have h_φb : φb ⟨↑iκ - 1, by exact h_iκval⟩ = b 0 ↑iκ
+              · simp[φb]
+                rw[if_neg]
+                sorry
+                sorry
+              rw[h_φa, h_φb] at h_φeq
+              exact h_φeq
 
           exact h_f_inj
 
@@ -1306,7 +1348,7 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
     · sorry -- Need to show disjointness
 
     rw[h_card_eq_sum]
-    sorry
+    sorry -- Uniformity lemma will need to be used here
 
 
   have h_ball_size : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α)^n) = (hamming_ball (d-1) (zero : Codeword n α)).card / (Fintype.card α)^n
