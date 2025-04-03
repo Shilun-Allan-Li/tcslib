@@ -1213,13 +1213,31 @@ matrix_dist n k x = uniform_vector_dist n α := by {
               have h_φa : φa ⟨↑iκ - 1, by exact h_iκval⟩ = a 0 ↑iκ
               · simp[φa]
                 rw[if_neg]
-                sorry
-                sorry
+
+                have h_iκ_pos : (iκ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
+                have h_iκ_ge_one : 1 ≤ (iκ : ℕ)
+                · rw [Nat.one_le_iff_ne_zero]
+                  intro h_zero
+                  exact Nat.ne_of_gt h_iκ_pos h_zero
+
+                have h_simplify : (iκ : ℕ) - 1 + 1 = ↑iκ := by exact Nat.sub_add_cancel h_iκ_ge_one
+                simp_rw[h_simplify]
+                omega
+
               have h_φb : φb ⟨↑iκ - 1, by exact h_iκval⟩ = b 0 ↑iκ
               · simp[φb]
                 rw[if_neg]
-                sorry
-                sorry
+
+                have h_iκ_pos : (iκ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
+                have h_iκ_ge_one : 1 ≤ (iκ : ℕ)
+                · rw [Nat.one_le_iff_ne_zero]
+                  intro h_zero
+                  exact Nat.ne_of_gt h_iκ_pos h_zero
+
+                have h_simplify : (iκ : ℕ) - 1 + 1 = ↑iκ := by exact Nat.sub_add_cancel h_iκ_ge_one
+                simp_rw[h_simplify]
+                omega
+                
               rw[h_φa, h_φb] at h_φeq
               exact h_φeq
 
