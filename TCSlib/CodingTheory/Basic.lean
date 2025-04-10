@@ -924,7 +924,7 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
   have h_SUcard : SU.card = C.card * (Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) (λ i=> Nat.choose n i * (Fintype.card α - 1)^i))
   · rw[Finset.card_disjiUnion]
     apply Finset.sum_eq_card_nsmul
-    exact fun a a_1 => hamming_ball_size n (Nat.floor (((d : ℝ)-1)/2)) a
+    exact fun a _ => hamming_ball_size n (Nat.floor (((d : ℝ)-1)/2)) a
 
   calc
     (C.card * Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) fun i => Nat.choose n i * (Fintype.card α - 1) ^ i) = SU.card := by exact h_SUcard.symm
@@ -1144,7 +1144,10 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
       have h4₁ : S.card = (Fintype.card α)^(k-1)
       · have h_nonzero_element : ∃ (j : Fin k), x j ≠ 0
-        · sorry -- Should be simple, use h_x
+        · by_contra h_zero
+          push_neg at h_zero
+          have h_x_eq_zero : x = zero := by ext l; exact h_zero l
+          exact h_x h_x_eq_zero
 
         rcases h_nonzero_element with ⟨j, h_j⟩
 
@@ -1164,10 +1167,12 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
         have h_g_bijection : S₂.card = (Finset.univ : Finset (Codeword (k-1) α)).card
         · have h_k1 (l : Fin (k-1)) : ↑l < k
-          · sorry -- simple
+          · have h_l2 : ↑l < k - 1 := l.2
+            omega
 
           have h_k2 (l : Fin (k-1)) : ↑l + 1 < k
-          · sorry -- simple
+          · have h_l2 : ↑l < k - 1 := l.2
+            omega
 
           let f : (g : Matrix (Fin 1) (Fin k) α) → g ∈ S₂ → (Codeword (k-1) α) := fun g h_g => (fun (l : Fin (k-1)) => if h_llt : l.val < j then (g 0 ⟨l.val, by exact h_k1 l⟩) else (g 0 ⟨l.val + 1, by exact h_k2 l⟩))
           apply Finset.card_congr f
@@ -1187,9 +1192,11 @@ matrix_dist n k x = uniform_vector_dist n α := by {
             rw[h_i1]
             have h_cases : iκ.val < j.val ∨ iκ.val = j.val ∨ iκ.val > j.val
             · exact Nat.lt_trichotomy iκ.val j.val
-            rcases h_cases with (h_lt | h_eq | h_gt)
+
+            have h_eq_if_lt (h_lt : ↑iκ < ↑j) : a 0 iκ = b 0 iκ
             · have h_iκval : iκ < k-1
-              · sorry -- Use h_lt
+              · have h_j_le : ↑j ≤ k-1 := Nat.le_pred_of_lt j.2
+                exact lt_of_lt_of_le h_lt h_j_le
               have h_φeq : φa ⟨↑iκ, by exact h_iκval⟩ = φb ⟨↑iκ, by exact h_iκval⟩ := by exact congrFun hφ ⟨↑iκ, by exact h_iκval⟩
               have h_φa : φa ⟨↑iκ, by exact h_iκval⟩ = a 0 ↑iκ
               · simp[φa]
@@ -1203,43 +1210,102 @@ matrix_dist n k x = uniform_vector_dist n α := by {
                 contradiction
               rw[h_φa, h_φb] at h_φeq
               exact h_φeq
-            · have h_fineq : iκ = j := by exact Fin.eq_of_val_eq h_eq
-              rw[h_fineq, h_a, h_b]
-              field_simp
-              sorry -- Case 2: iκ = j. Probably need to use the other two cases here.
+
+            have h_eq_if_gt (h_gt : (iκ : ℕ) > (j : ℕ)) : a 0 iκ = b 0 iκ
             · have h_iκval : iκ - 1 < k - 1
-              · sorry -- Simple
+              · have h_iκ_lt_k : ↑iκ < k := iκ.2
+                have h_iκ_gt_j : ↑iκ > ↑j := h_gt
+                omega
+
               have h_φeq : φa ⟨↑iκ - 1, by exact h_iκval⟩ = φb ⟨↑iκ - 1, by exact h_iκval⟩ := by exact congrFun hφ ⟨↑iκ - 1, by exact h_iκval⟩
               have h_φa : φa ⟨↑iκ - 1, by exact h_iκval⟩ = a 0 ↑iκ
               · simp[φa]
                 rw[if_neg]
-
                 have h_iκ_pos : (iκ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
                 have h_iκ_ge_one : 1 ≤ (iκ : ℕ)
                 · rw [Nat.one_le_iff_ne_zero]
                   intro h_zero
                   exact Nat.ne_of_gt h_iκ_pos h_zero
-
                 have h_simplify : (iκ : ℕ) - 1 + 1 = ↑iκ := by exact Nat.sub_add_cancel h_iκ_ge_one
                 simp_rw[h_simplify]
                 omega
-
               have h_φb : φb ⟨↑iκ - 1, by exact h_iκval⟩ = b 0 ↑iκ
               · simp[φb]
                 rw[if_neg]
-
                 have h_iκ_pos : (iκ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
                 have h_iκ_ge_one : 1 ≤ (iκ : ℕ)
                 · rw [Nat.one_le_iff_ne_zero]
                   intro h_zero
                   exact Nat.ne_of_gt h_iκ_pos h_zero
-
                 have h_simplify : (iκ : ℕ) - 1 + 1 = ↑iκ := by exact Nat.sub_add_cancel h_iκ_ge_one
                 simp_rw[h_simplify]
                 omega
-                
               rw[h_φa, h_φb] at h_φeq
               exact h_φeq
+
+
+            rcases h_cases with (h_lt | h_eq | h_gt)
+            · exact h_eq_if_lt h_lt
+            · have h_fineq : iκ = j := by exact Fin.eq_of_val_eq h_eq
+              rw[h_fineq, h_a, h_b]
+              field_simp
+
+              have h_a_sum_split : (Finset.sum (Finset.univ : Finset (Fin k)) fun a_1 => a 0 a_1 * x a_1) =
+              (Finset.sum (Finset.filter (fun i => i < j) Finset.univ) fun a_1 => a 0 a_1 * x a_1) + (Finset.sum (Finset.filter (fun i => i > j) Finset.univ) fun a_1 => a 0 a_1 * x a_1) + a 0 j * x j
+              · simp_rw[←Finset.sum_filter_add_sum_filter_not (Finset.univ : Finset (Fin k)) (fun i => i = j) (fun a_1 => a 0 a_1 * x a_1)]
+
+                have h_eq_j : Finset.filter (fun i => i = j) (Finset.univ : Finset (Fin k)) = {j} := by ext i; simp
+
+                have h_neq_split : Finset.filter (fun i => i ≠ j) (Finset.univ : Finset (Fin k)) = Finset.filter (fun i => i < j) (Finset.univ : Finset (Fin k)) ∪ Finset.filter (fun i => i > j) (Finset.univ : Finset (Fin k))
+                · ext i
+                  simp
+
+                have h_disjoint : Disjoint (Finset.filter (fun i => i < j) (Finset.univ : Finset (Fin k))) (Finset.filter (fun i => i > j) (Finset.univ : Finset (Fin k)))
+                · apply Finset.disjoint_filter.mpr
+                  intro i h1 h2
+                  exact lt_asymm h2
+
+                rw[h_eq_j, Finset.sum_singleton, h_neq_split, Finset.sum_union h_disjoint]
+                ring
+
+              have h_b_sum_split : (Finset.sum Finset.univ fun a_1 => b 0 a_1 * x a_1) =
+              (Finset.sum (Finset.filter (fun i => i < j) Finset.univ) fun a_1 => b 0 a_1 * x a_1) + (Finset.sum (Finset.filter (fun i => i > j) Finset.univ) fun a_1 => b 0 a_1 * x a_1) + b 0 j * x j
+              · simp_rw[←Finset.sum_filter_add_sum_filter_not (Finset.univ : Finset (Fin k)) (fun i => i = j) (fun a_1 => b 0 a_1 * x a_1)]
+
+                have h_eq_j : Finset.filter (fun i => i = j) (Finset.univ : Finset (Fin k)) = {j} := by ext i; simp
+
+                have h_neq_split : Finset.filter (fun i => i ≠ j) (Finset.univ : Finset (Fin k)) = Finset.filter (fun i => i < j) (Finset.univ : Finset (Fin k)) ∪ Finset.filter (fun i => i > j) (Finset.univ : Finset (Fin k))
+                · ext i
+                  simp
+
+                have h_disjoint : Disjoint (Finset.filter (fun i => i < j) (Finset.univ : Finset (Fin k))) (Finset.filter (fun i => i > j) (Finset.univ : Finset (Fin k)))
+                · apply Finset.disjoint_filter.mpr
+                  intro i h1 h2
+                  exact lt_asymm h2
+
+                rw[h_eq_j, Finset.sum_singleton, h_neq_split, Finset.sum_union h_disjoint]
+                ring
+
+              rw[h_a_sum_split, h_b_sum_split]
+
+              have h_lt_sum_eq : (Finset.sum (filter (fun i => i < j) Finset.univ) fun a_1 => a 0 a_1 * x a_1) = (Finset.sum (filter (fun i => i < j) Finset.univ) fun a_1 => b 0 a_1 * x a_1)
+              · apply Finset.sum_congr rfl
+                intro i hi
+                simp at hi
+                have h_eq : a 0 i = b 0 i := by sorry -- Use h_eq_if_lt
+                rw[h_eq]
+
+              have h_gt_sum_eq : (Finset.sum (filter (fun i => i > j) Finset.univ) fun a_1 => a 0 a_1 * x a_1) = (Finset.sum (filter (fun i => i > j) Finset.univ) fun a_1 => b 0 a_1 * x a_1)
+              · apply Finset.sum_congr rfl
+                intro i hi
+                simp at hi
+                have h_eq : a 0 i = b 0 i := by sorry -- Use h_eq_if_gt
+                rw[h_eq]
+
+              simp_rw[h_lt_sum_eq, h_gt_sum_eq]
+              ring
+
+            · exact h_eq_if_gt h_gt
 
           exact h_f_inj
 
