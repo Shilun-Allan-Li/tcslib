@@ -1193,51 +1193,51 @@ matrix_dist n k x = uniform_vector_dist n α := by {
             have h_cases : iκ.val < j.val ∨ iκ.val = j.val ∨ iκ.val > j.val
             · exact Nat.lt_trichotomy iκ.val j.val
 
-            have h_eq_if_lt (h_lt : ↑iκ < ↑j) : a 0 iκ = b 0 iκ
-            · have h_iκval : iκ < k-1
+            have h_eq_if_lt (i₀ : Fin k) (h_lt : ↑i₀ < ↑j) : a 0 i₀ = b 0 i₀
+            · have h_i₀val : i₀ < k-1
               · have h_j_le : ↑j ≤ k-1 := Nat.le_pred_of_lt j.2
                 exact lt_of_lt_of_le h_lt h_j_le
-              have h_φeq : φa ⟨↑iκ, by exact h_iκval⟩ = φb ⟨↑iκ, by exact h_iκval⟩ := by exact congrFun hφ ⟨↑iκ, by exact h_iκval⟩
-              have h_φa : φa ⟨↑iκ, by exact h_iκval⟩ = a 0 ↑iκ
+              have h_φeq : φa ⟨↑i₀, by exact h_i₀val⟩ = φb ⟨↑i₀, by exact h_i₀val⟩ := by exact congrFun hφ ⟨↑i₀, by exact h_i₀val⟩
+              have h_φa : φa ⟨↑i₀, by exact h_i₀val⟩ = a 0 ↑i₀
               · simp[φa]
                 intro h_jleq
-                have h_notjleq : ¬(j ≤ iκ) := Nat.not_le_of_gt h_lt
+                have h_notjleq : ¬(j ≤ i₀) := Nat.not_le_of_gt h_lt
                 contradiction
-              have h_φb : φb ⟨↑iκ, by exact h_iκval⟩ = b 0 ↑iκ
+              have h_φb : φb ⟨↑i₀, by exact h_i₀val⟩ = b 0 ↑i₀
               · simp[φb]
                 intro h_jleq
-                have h_notjleq : ¬(j ≤ iκ) := Nat.not_le_of_gt h_lt
+                have h_notjleq : ¬(j ≤ i₀) := Nat.not_le_of_gt h_lt
                 contradiction
               rw[h_φa, h_φb] at h_φeq
               exact h_φeq
 
-            have h_eq_if_gt (h_gt : (iκ : ℕ) > (j : ℕ)) : a 0 iκ = b 0 iκ
-            · have h_iκval : iκ - 1 < k - 1
-              · have h_iκ_lt_k : ↑iκ < k := iκ.2
-                have h_iκ_gt_j : ↑iκ > ↑j := h_gt
+            have h_eq_if_gt (i₀ : Fin k) (h_gt : (i₀ : ℕ) > (j : ℕ)) : a 0 i₀ = b 0 i₀
+            · have h_i₀val : i₀ - 1 < k - 1
+              · have h_i₀_lt_k : ↑i₀ < k := i₀.2
+                have h_i₀_gt_j : ↑i₀ > ↑j := h_gt
                 omega
 
-              have h_φeq : φa ⟨↑iκ - 1, by exact h_iκval⟩ = φb ⟨↑iκ - 1, by exact h_iκval⟩ := by exact congrFun hφ ⟨↑iκ - 1, by exact h_iκval⟩
-              have h_φa : φa ⟨↑iκ - 1, by exact h_iκval⟩ = a 0 ↑iκ
+              have h_φeq : φa ⟨↑i₀ - 1, by exact h_i₀val⟩ = φb ⟨↑i₀ - 1, by exact h_i₀val⟩ := by exact congrFun hφ ⟨↑i₀ - 1, by exact h_i₀val⟩
+              have h_φa : φa ⟨↑i₀ - 1, by exact h_i₀val⟩ = a 0 ↑i₀
               · simp[φa]
                 rw[if_neg]
-                have h_iκ_pos : (iκ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
-                have h_iκ_ge_one : 1 ≤ (iκ : ℕ)
+                have h_i₀_pos : (i₀ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
+                have h_i₀_ge_one : 1 ≤ (i₀ : ℕ)
                 · rw [Nat.one_le_iff_ne_zero]
                   intro h_zero
-                  exact Nat.ne_of_gt h_iκ_pos h_zero
-                have h_simplify : (iκ : ℕ) - 1 + 1 = ↑iκ := by exact Nat.sub_add_cancel h_iκ_ge_one
+                  exact Nat.ne_of_gt h_i₀_pos h_zero
+                have h_simplify : (i₀ : ℕ) - 1 + 1 = ↑i₀ := by exact Nat.sub_add_cancel h_i₀_ge_one
                 simp_rw[h_simplify]
                 omega
-              have h_φb : φb ⟨↑iκ - 1, by exact h_iκval⟩ = b 0 ↑iκ
+              have h_φb : φb ⟨↑i₀ - 1, by exact h_i₀val⟩ = b 0 ↑i₀
               · simp[φb]
                 rw[if_neg]
-                have h_iκ_pos : (iκ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
-                have h_iκ_ge_one : 1 ≤ (iκ : ℕ)
+                have h_i₀_pos : (i₀ : ℕ) > 0 := by exact Nat.lt_of_le_of_lt (Nat.zero_le j) h_gt
+                have h_i₀_ge_one : 1 ≤ (i₀ : ℕ)
                 · rw [Nat.one_le_iff_ne_zero]
                   intro h_zero
-                  exact Nat.ne_of_gt h_iκ_pos h_zero
-                have h_simplify : (iκ : ℕ) - 1 + 1 = ↑iκ := by exact Nat.sub_add_cancel h_iκ_ge_one
+                  exact Nat.ne_of_gt h_i₀_pos h_zero
+                have h_simplify : (i₀ : ℕ) - 1 + 1 = ↑i₀ := by exact Nat.sub_add_cancel h_i₀_ge_one
                 simp_rw[h_simplify]
                 omega
               rw[h_φa, h_φb] at h_φeq
@@ -1245,7 +1245,7 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 
 
             rcases h_cases with (h_lt | h_eq | h_gt)
-            · exact h_eq_if_lt h_lt
+            · exact h_eq_if_lt iκ h_lt
             · have h_fineq : iκ = j := by exact Fin.eq_of_val_eq h_eq
               rw[h_fineq, h_a, h_b]
               field_simp
@@ -1292,26 +1292,140 @@ matrix_dist n k x = uniform_vector_dist n α := by {
               · apply Finset.sum_congr rfl
                 intro i hi
                 simp at hi
-                have h_eq : a 0 i = b 0 i := by sorry -- Use h_eq_if_lt
+                have h_eq : a 0 i = b 0 i := by exact h_eq_if_lt i hi
                 rw[h_eq]
 
               have h_gt_sum_eq : (Finset.sum (filter (fun i => i > j) Finset.univ) fun a_1 => a 0 a_1 * x a_1) = (Finset.sum (filter (fun i => i > j) Finset.univ) fun a_1 => b 0 a_1 * x a_1)
               · apply Finset.sum_congr rfl
                 intro i hi
                 simp at hi
-                have h_eq : a 0 i = b 0 i := by sorry -- Use h_eq_if_gt
+                have h_eq : a 0 i = b 0 i := by exact h_eq_if_gt i hi
                 rw[h_eq]
 
               simp_rw[h_lt_sum_eq, h_gt_sum_eq]
               ring
 
-            · exact h_eq_if_gt h_gt
+            · exact h_eq_if_gt iκ h_gt
 
           exact h_f_inj
 
           have h_f_surj : ∀ b ∈ Finset.univ, ∃ a, ∃ (ha : a ∈ S₂), f a ha = b
           · intro b h_b
-            sorry
+
+            have h_l1 (l : Fin k) (h_lj : ↑l < j) : ↑l < k - 1
+            · have h_jk : ↑j < k := j.is_lt
+              exact Nat.lt_of_lt_of_le h_lj (Nat.le_pred_of_lt h_jk)
+
+            have h_l2 (l : Fin k) (h_lj : ¬(↑l < j)) (h_lj' : ¬(↑l = j)) : ↑l - 1 < k - 1
+            · have h_lk : l < k := l.is_lt
+
+              have h_cases : k < 1 ∨ k = 1 ∨ k > 1
+              · exact Nat.lt_trichotomy k 1
+
+              rcases h_cases with (h_klt | h_keq | h_kgt)
+              · omega
+              · have h_l0 : l = ⟨0, by exact Nat.lt_of_succ_le h_k⟩
+                · apply Fin.ext
+                  have h_l_lt_1 : l.val < 1
+                  · simp
+                    subst h_keq
+                    interval_cases (l : ℕ)
+                    rfl
+                  exact Nat.eq_zero_of_le_zero (Nat.le_of_lt_succ h_l_lt_1)
+                have h_j0 : j = ⟨0, by exact Nat.lt_of_succ_le h_k⟩
+                · apply Fin.ext
+                  have h_j_lt_1 : j.val < 1 := by subst h_keq; exact j.isLt
+                  exact Nat.eq_zero_of_le_zero (Nat.le_of_lt_succ h_j_lt_1)
+                push_neg at h_lj'
+                rw[h_l0, h_j0] at h_lj'
+                contradiction
+              · have h_l_geq_1 : 1 ≤ (l : ℕ)
+                · have h_j_geq_0 : (j : Nat) ≥ 0 := Nat.zero_le _
+                  have h_l_gt_j : (j : ℕ) < (l : ℕ)
+                  · contrapose! h_lj'
+                    have h_j_leq_l : (j : ℕ) ≤ (l : ℕ) := Nat.le_of_not_lt h_lj
+                    exact Fin.ext (Nat.le_antisymm h_lj' h_j_leq_l)
+                  have h_l_gt_0 : (0 : Nat) < (l : Nat) := Nat.lt_of_le_of_lt h_j_geq_0 h_l_gt_j
+                  exact Nat.succ_le_of_lt h_l_gt_0
+                omega
+
+
+            let p₀ : (Matrix (Fin 1) (Fin k) α) := fun _ l => if h_lj : l < j then b ⟨l.val, by exact h_l1 l h_lj⟩ else (if h_lj' : l = j then 0 else b ⟨l.val - 1, by exact h_l2 l h_lj h_lj'⟩)
+            let p : (Matrix (Fin 1) (Fin k) α) := fun _ l => if l ≠ j then (p₀ 0 l) else ((v i - Finset.sum (Finset.erase Finset.univ j) fun c => (p₀ 0 c) * x c) / x j)
+            use p
+
+            have h_p : p ∈ S₂
+            · let inS₂ (g : Matrix (Fin 1) (Fin k) α) : Prop := g 0 j = (v i - Finset.sum (erase Finset.univ j) fun c => g 0 c * x c) / x j
+              have hS₂_mem : S₂ = toFinset {g | inS₂ g} := by simp
+              rw[hS₂_mem, ←Finset.mem_coe]
+              have h_finseteq : ↑(toFinset {g | inS₂ g}) = {g | inS₂ g} := by simp
+              rw[h_finseteq, Set.mem_setOf_eq]
+              simp only[inS₂, p]
+              simp [Finset.sum_congr]
+              congr
+              field_simp[h_j]
+              let v_term := (v i - Finset.sum Finset.univ fun x_2 => (if h_lj : x_2 < j then b { val := ↑x_2, isLt := h_l1 x_2 h_lj } else if h_lj' : x_2 = j then 0 else b { val := ↑x_2 - 1, isLt := h_l2 x_2 h_lj h_lj' }) * x x_2)
+              have h_v_term : v_term = (v i - Finset.sum Finset.univ fun x_2 => (if h_lj : x_2 < j then b { val := ↑x_2, isLt := h_l1 x_2 h_lj } else if h_lj' : x_2 = j then 0 else b { val := ↑x_2 - 1, isLt := h_l2 x_2 h_lj h_lj' }) * x x_2) := by rfl
+              simp only [Finset.sum_ite, Finset.sum_sub_distrib, Finset.mem_univ, if_true]
+              rw[←h_v_term]
+
+              have h_j_sum : (Finset.sum (filter (fun x => x = j) Finset.univ) fun x_1 => v_term * x x_1 / x j) = v_term
+              · have h_filter_eq_singleton : (Finset.filter (fun x => x = j) (Finset.univ : Finset (Fin k))) = {j}
+                · ext x_1
+                  simp [Finset.mem_filter, Finset.mem_univ, Finset.mem_singleton]
+                rw[h_filter_eq_singleton]
+                simp[Finset.sum_singleton]
+                field_simp[h_j]
+
+              rw[h_j_sum]
+              ring_nf
+
+              let sum_fun := fun x_1 => (if h_lj : x_1 < j then b { val := ↑x_1, isLt := h_l1 x_1 h_lj } else if h_lj' : x_1 = j then 0 else b { val := ↑x_1 - 1, isLt := h_l2 x_1 h_lj h_lj' }) * x x_1
+
+              have h_sum_fun_zero : sum_fun j = 0 := by simp
+
+              rw[←Finset.sum_erase (Finset.univ : Finset (Fin k)) h_sum_fun_zero]
+              change (Finset.sum (erase Finset.univ j) fun x => sum_fun x) = (Finset.sum (filter (fun x => ¬x=j) Finset.univ) fun x => sum_fun x)
+
+              have h_erase_eq_filter_not : (erase Finset.univ j) = (filter (fun x => ¬x=j) Finset.univ)
+              · ext l
+                simp [Finset.mem_erase, Finset.mem_filter, Finset.mem_univ]
+
+              rw[h_erase_eq_filter_not]
+
+
+            use h_p
+            funext l
+            change (fun g h_g => (fun (l : Fin (k-1)) => if h_llt : l.val < j then (g 0 ⟨l.val, by exact h_k1 l⟩) else (g 0 ⟨l.val + 1, by exact h_k2 l⟩))) p h_p l = b l
+            change (if h_llt : (l : ℕ) < (j : ℕ) then p 0 ⟨l.val, by exact h_k1 l⟩ else p 0 ⟨l.val + 1, by exact h_k2 l⟩) = b l
+
+            split_ifs with h_if
+            · let l_cast : (Fin k) := { val := ↑l, isLt := h_k1 l }
+              change (fun _ l => if l ≠ j then (p₀ 0 l) else ((v i - Finset.sum (Finset.erase Finset.univ j) fun c => (p₀ 0 c) * x c) / x j)) 0 l_cast = b l
+              change (if l_cast ≠ j then (p₀ 0 l_cast) else ((v i - Finset.sum (Finset.erase Finset.univ j) fun c => (p₀ 0 c) * x c) / x j)) = b l
+              have h_l_neq_j : l_cast ≠ j
+              · have h_l_cast_lt : (l_cast : ℕ) < (j : ℕ) := by simp[h_if]
+                have h_l_cast_ne : (l_cast : ℕ) ≠ (j : ℕ) := by exact ne_of_lt h_l_cast_lt
+                rw [Fin.val_ne_iff] at h_l_cast_ne
+                exact h_l_cast_ne
+              rw [if_pos h_l_neq_j]
+              simp
+              intro h_j_leq
+              have h_jl_nat : (j : ℕ) ≤ (l : ℕ)
+              · rw[Fin.le_iff_val_le_val] at h_j_leq
+                have h_l_val : (l : ℕ) = (({ val := ↑l, isLt := h_k1 l } : (Fin k)) : ℕ) := by simp
+                rw[h_l_val]
+                exact h_j_leq
+              omega
+            · simp
+              split_ifs with h_if₂ h_if₃
+              · simp[Fin.ext_iff] at h_if₂
+                omega
+              · push_neg at h_if
+                have h_lj : (↑l + 1 : ℕ) < (↑j : ℕ) := h_if₃
+                omega
+              · rfl
+
 
           exact h_f_surj
 
