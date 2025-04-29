@@ -1458,8 +1458,8 @@ matrix_dist n k x = uniform_vector_dist n α := by {
 }
 
 theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : x ≠ 0) (h_d : d > 0) :
-(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card / (Fintype.card α)^(n*k) ≤
-(hamming_ball (d-1) (zero : Codeword n α)).card / (Fintype.card α)^n := by {
+((Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card : ℝ) / (Fintype.card α : ℝ)^(n*k) ≤
+((hamming_ball (d-1) (zero : Codeword n α)).card : ℝ) / (Fintype.card α : ℝ)^n := by {
 
   let S := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}
   let S' := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | (Matrix.mulVec G x) ∈ hamming_ball (d-1) zero}
@@ -1528,7 +1528,7 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
     rw_mod_cast[←h_inv]
     exact matrix_uniformity
 
-  have h_sum : (toFinset {G | Matrix.mulVec G x ∈ hamming_ball (d - 1) zero}).card / Fintype.card α ^ (n * k) = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => 1 / (Fintype.card α)^n
+  have h_sum : ((toFinset {G | Matrix.mulVec G x ∈ hamming_ball (d - 1) zero}).card : ℝ) / (Fintype.card α : ℝ) ^ (n * k) = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => 1 / (Fintype.card α : ℝ)^n
   · simp[Finset.sum_const]
     have h_ball_eq_sum : (toFinset {G | Matrix.mulVec G x ∈ hamming_ball (d-1) zero}) = (Set.toFinset (⋃ (v : Fin n → α) (h_v : weight v ≤ d-1), {G : (Matrix (Fin n) (Fin k) α) | (Matrix.mulVec G x) = v}))
     · simp
@@ -1549,19 +1549,11 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
     sorry -- Uniformity lemma will need to be used here
 
 
-  have h_ball_size : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α)^n) = (hamming_ball (d-1) (zero : Codeword n α)).card / (Fintype.card α)^n
-  · have h_sum_mult : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α)^n) = (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}).card * (1 / (Fintype.card α)^n)
+  have h_ball_size : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α : ℝ)^n) = ((hamming_ball (d-1) (zero : Codeword n α)).card : ℝ) / (Fintype.card α : ℝ)^n
+  · have h_sum_mult : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α : ℝ)^n) = (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}).card * (1 / (Fintype.card α : ℝ)^n)
     · simp[Finset.sum_const]
     rw[h_sum_mult]
     field_simp
-    let a := (toFinset {v : Codeword n α | hamming_distance v zero ≤ d - 1}).card
-    let b := (Fintype.card α)^n
-    change a * (1/b) = a / b
-    have h_b : b > 0
-    · simp
-      exact pow_pos Fintype.card_pos n
-
-    sorry -- Proving a * (1/b) = a/b. This might be a bigger issue than it seems because a, b ∈ ℕ
 
   rw[h_sum, h_ball_size]
 }
