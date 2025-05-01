@@ -26,6 +26,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.SetTheory.Ordinal.Arithmetic
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Algebra.Order.Ring.Abs
+import Mathlib.Order.Disjoint
 
 /-!
 # Code Definitions
@@ -81,7 +82,7 @@ def hamming_distance (c1 c2 : Codeword n α) : ℕ :=
 def distance (C : Code n α) (d : ℕ) : Prop :=
   (∃ x ∈ C, ∃ y ∈ C, x ≠ y ∧ hamming_distance x y = d)∧ (∀ z ∈ C, ∀ w ∈ C, z ≠ w → hamming_distance z w ≥ d)
 
-def weight (c: Codeword n α) : ℕ := hamming_distance c 0
+def weight (c: Codeword n α) : ℕ := hamming_distance c zero
 
 
 def max_size (n d A : ℕ) : Prop :=
@@ -1535,15 +1536,38 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
       ext y
       constructor
       · intro h_ball
+        simp
+        apply Set.mem_toFinset.mp at h_ball
+        apply Set.mem_toFinset.mp at h_ball
+        simp at h_ball
+        unfold weight
         simp[h_ball]
-        sorry
       · intro h_union
-        sorry
+        apply Set.mem_toFinset.mp at h_union
+        obtain ⟨v, hv⟩ := Set.mem_iUnion.mp h_union
+        obtain ⟨hwt, hG⟩ := Set.mem_iUnion.mp hv
+        have h_yxv : Matrix.mulVec y x = v := hG
+        have h_yx_hd : hamming_distance (Matrix.mulVec y x) 0 ≤ d - 1 := by rw[h_yxv]; exact hwt
+        have h_yx_set : Matrix.mulVec y x ∈ toFinset {c' | hamming_distance c' 0 ≤ d - 1} := Set.mem_toFinset.mpr h_yx_hd
+        exact Set.mem_toFinset.mpr h_yx_set
+
     unfold hamming_ball at h_ball_eq_sum
     rw[h_ball_eq_sum]
 
-    have h_card_eq_sum : (toFinset (⋃ v, ⋃ (_ : weight v ≤ d - 1), {G | Matrix.mulVec G x = v})).card = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => (toFinset {G | Matrix.mulVec G x = v}).card
-    · sorry -- Need to show disjointness
+    have h_card_eq_sum : (toFinset (⋃ (v : Codeword n α), ⋃ (_ : weight v ≤ d - 1), {G | Matrix.mulVec G x = v})).card = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => (toFinset {G | Matrix.mulVec G x = v}).card
+    · let hamming_set : Finset (Codeword n α) := toFinset {v | hamming_distance v zero ≤ d - 1}
+      let f : Codeword n α → Finset (Matrix (Fin n) (Fin k) α) := fun v => toFinset {G | Matrix.mulVec G x = v}
+      let G_union : Finset (Matrix (Fin n) (Fin k) α) := hamming_set.biUnion f
+
+      have h_G_union : G_union = toFinset (⋃ (v : Codeword n α), ⋃ (_ : weight v ≤ d - 1), {G | Matrix.mulVec G x = v})
+      · sorry
+      have h_disjoint : ∀ x ∈ hamming_set, ∀ y ∈ hamming_set, x ≠ y → Disjoint (f x) (f y)
+      · intro x h_x y h_y h_xy
+        simp
+        sorry
+
+      rw[←h_G_union]
+      apply Finset.card_biUnion h_disjoint
 
     rw[h_card_eq_sum]
     sorry -- Uniformity lemma will need to be used here
