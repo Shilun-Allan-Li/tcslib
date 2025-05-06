@@ -1560,17 +1560,67 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
       let G_union : Finset (Matrix (Fin n) (Fin k) α) := hamming_set.biUnion f
 
       have h_G_union : G_union = toFinset (⋃ (v : Codeword n α), ⋃ (_ : weight v ≤ d - 1), {G | Matrix.mulVec G x = v})
-      · sorry
+      · ext G
+        simp[Finset.mem_biUnion, Set.mem_toFinset, Set.mem_setOf_eq]
+        constructor
+        · intro h_a
+          let ⟨a, h_adist, h_Ga⟩ := h_a
+          rw[Set.mem_toFinset, Set.mem_setOf] at h_Ga
+          rw[←h_Ga] at h_adist
+          unfold weight
+          exact h_adist
+        · intro h_weight
+          let a := Matrix.mulVec G x
+          use a
+          apply And.intro
+          · exact h_weight
+          · rw[Set.mem_toFinset, Set.mem_setOf]
+
       have h_disjoint : ∀ x ∈ hamming_set, ∀ y ∈ hamming_set, x ≠ y → Disjoint (f x) (f y)
-      · intro x h_x y h_y h_xy
+      · intro a h_a b h_b h_ab
         simp
-        sorry
+        rw[Finset.disjoint_iff_ne]
+        intro G h_Ga H h_Ha
+        rw[Set.mem_toFinset, Set.mem_setOf] at h_Ga h_Ha
+        rw [←h_Ga, ←h_Ha] at h_ab
+        by_contra h_GHeq
+        have h_mul_eq : Matrix.mulVec G x = Matrix.mulVec H x := by simp[h_GHeq]
+        contradiction
 
       rw[←h_G_union]
       apply Finset.card_biUnion h_disjoint
 
     rw[h_card_eq_sum]
-    sorry -- Uniformity lemma will need to be used here
+    field_simp[matrix_uniformity]
+    have h_preimage_card : ∀ (v : Codeword n α), ((toFinset {G | Matrix.mulVec G x = v}).card : ℝ) = ↑(Fintype.card α) ^ (n * k - n)
+    · intro v₀
+      specialize h_unif v₀
+      field_simp at h_unif
+      have h_card_exp : ↑(toFinset {G | Matrix.mulVec G x = v₀}).card  = ((Fintype.card α : ℝ) ^ (n * k)) / ((Fintype.card α : ℝ) ^ n) := by field_simp[h_unif]
+      field_simp[h_card_exp]
+      norm_cast
+      simp_rw[←pow_add]
+      have h_pow_eq : (n * k) - n + n = n * k
+      · rw[Nat.sub_add_cancel]
+        have h_k' : k > 0 := Nat.pos_of_ne_zero (ne_of_gt h_k)
+        have h_symm : n * k = k * n := by simp[Nat.mul_comm]
+        rw[h_symm]
+        exact Nat.le_mul_of_pos_left n h_k' -- Proves n ≤ n*k using k > 0
+      rw[h_pow_eq]
+    simp_rw[h_preimage_card, Finset.sum_const, nsmul_eq_mul]
+
+    have h_exp : (Fintype.card α : ℝ)^(n * k - n) * (Fintype.card α : ℝ)^n = (Fintype.card α : ℝ)^(n * k)
+    · simp_rw[←pow_add]
+      have h_pow_eq : (n * k) - n + n = n * k
+      · rw[Nat.sub_add_cancel]
+        have h_k' : k > 0 := Nat.pos_of_ne_zero (ne_of_gt h_k)
+        have h_symm : n * k = k * n := by simp[Nat.mul_comm]
+        rw[h_symm]
+        exact Nat.le_mul_of_pos_left n h_k' -- Proves n ≤ n*k using k > 0
+      rw[h_pow_eq]
+
+    rw[←h_exp]
+    simp[mul_assoc]
 
 
   have h_ball_size : Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) (fun v => 1 / (Fintype.card α : ℝ)^n) = ((hamming_ball (d-1) (zero : Codeword n α)).card : ℝ) / (Fintype.card α : ℝ)^n
