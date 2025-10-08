@@ -1674,3 +1674,6 @@ theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - 
 (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∀ (x : Codeword k α), x ≠ 0 → weight (Matrix.mulVec G x) ≥ d}).card ≥ 1 := by {
   sorry -- The final result - should follow closely from the previous lemmas but may be worth reframing
 }
+
+def list_decodable (ρ : ℝ) (hρ₁: 0 ≤ ρ) (hρ₂: ρ ≤ 1) (n L : ℕ) (hL : L ≥ 1) (C : Code n α) : Prop :=
+  (∀ y : Codeword n α, (hamming_ball (Nat.floor ρ*n) y ∩ C).card ≤ L)
