@@ -26,6 +26,15 @@ import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.SetTheory.Ordinal.Arithmetic
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Algebra.Order.Ring.Abs
+import Mathlib.Analysis.Asymptotics.Asymptotics
+import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Order.Filter.Archimedean
+import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.SpecialFunctions.Stirling
+import Mathlib.Topology.Algebra.Order.Floor
+import Mathlib.Data.Nat.Choose.Cast
+import Mathlib.Order.Filter.Basic
 import Mathlib.Order.Disjoint
 
 /-!
@@ -555,7 +564,7 @@ theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α, (hamming_ball l c
     linarith
 }
 
-lemma hamming_ball_size_asymptotic (q n : ℕ) (p : ℝ) (hq : q = Fintype.card α) (hα : Nontrivial α) (hnp : (Nat.floor (n*p)) = n*p) (hp : 0 < p ∧ p ≤ 1 - 1/q):
+theorem hamming_ball_size_asymptotic_upper_bound (q n : ℕ) (p : ℝ) (hq : q = Fintype.card α) (hα : Nontrivial α) (hp : 0 < p ∧ p ≤ 1 - 1/q):
 ∀ c : Codeword n α, (hamming_ball (Nat.floor (n*p)) c).card ≤ Real.rpow q ((qaryEntropy q p) * n) := by {
   intro c
   rw[hamming_ball_size]
@@ -591,6 +600,7 @@ lemma hamming_ball_size_asymptotic (q n : ℕ) (p : ℝ) (hq : q = Fintype.card 
       p ≤ 1 - 1/↑q               := by exact hp.2
       _ = 1 - 1/(Fintype.card α) := by rw[hq]
       _ < 1                      := by exact sub_lt_self 1 (one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero Fintype.card_ne_zero)))
+
   have hp₂ : p < 1
   · linarith
 
@@ -787,6 +797,431 @@ lemma hamming_ball_size_asymptotic (q n : ℕ) (p : ℝ) (hq : q = Fintype.card 
   exact hq₁
   linarith[hq₁]
 }
+lemma q_pow_qary_entropy_simp {q : ℕ} {p : ℝ} (hq : 2 ≤ q) (hp : 0 < p ∧ p < 1): Real.rpow q (qaryEntropy q p) = (q - 1)^p * p ^ (-p) * (1 - p)^(-(1 - p)) := by{
+  simp
+  dsimp[qaryEntropy]
+  have : (p * Real.logb (↑q) (↑q - 1) - p * Real.logb (↑q) p - (1 - p) * Real.logb (↑q) (1 - p)) =
+          (Real.logb (↑q) (↑q - 1)) * (p) + (Real.logb (↑q) p) * -(p) + (Real.logb (↑q) (1 - p)) * -(1-p)
+  · linarith
+  rw[this]
+
+  have hq₂ : 0 < (q : ℝ)
+  · simp
+    linarith
+
+  have hq₃ : (q : ℝ) ≠ 1
+  · have :  1 < (q : ℝ)
+    · simp
+      linarith
+    linarith
+
+  have hq₄ : (0 : ℝ) < ↑q - 1
+  · simp
+    linarith
+
+  have hq₅ : q ≠ 0
+  · simp
+    linarith
+
+  have hp₂ : 0 < 1 - p
+  · suffices p < 1 by exact sub_pos.mpr this
+    exact hp.2
+
+
+  rw[Real.rpow_add hq₂, Real.rpow_add hq₂]
+  rw[Real.rpow_mul (le_of_lt hq₂), Real.rpow_mul (le_of_lt hq₂), Real.rpow_mul (le_of_lt hq₂)]
+  rw[Real.rpow_logb hq₂ hq₃ hq₄, Real.rpow_logb hq₂ hq₃ hp.1, Real.rpow_logb hq₂ hq₃ hp₂]
+
+  simp
+}
+
+lemma q_pow_qary_entropy_simp' {q : ℕ} {p : ℝ} (hq : 2 ≤ q) (hp : 0 < p ∧ p < 1): q ^ (qaryEntropy q p) = (q - 1)^p * p ^ (-p) * (1 - p)^(-(1 - p)) := by{
+  simp
+  dsimp[qaryEntropy]
+  have : (p * Real.logb (↑q) (↑q - 1) - p * Real.logb (↑q) p - (1 - p) * Real.logb (↑q) (1 - p)) =
+          (Real.logb (↑q) (↑q - 1)) * (p) + (Real.logb (↑q) p) * -(p) + (Real.logb (↑q) (1 - p)) * -(1-p)
+  · linarith
+  rw[this]
+
+  have hq₂ : 0 < (q : ℝ)
+  · simp
+    linarith
+
+  have hq₃ : (q : ℝ) ≠ 1
+  · have :  1 < (q : ℝ)
+    · simp
+      linarith
+    linarith
+
+  have hq₄ : (0 : ℝ) < ↑q - 1
+  · simp
+    linarith
+
+  have hq₅ : q ≠ 0
+  · simp
+    linarith
+
+  have hp₂ : 0 < 1 - p
+  · suffices p < 1 by exact sub_pos.mpr this
+    exact hp.2
+
+
+  rw[Real.rpow_add hq₂, Real.rpow_add hq₂]
+  rw[Real.rpow_mul (le_of_lt hq₂), Real.rpow_mul (le_of_lt hq₂), Real.rpow_mul (le_of_lt hq₂)]
+  rw[Real.rpow_logb hq₂ hq₃ hq₄, Real.rpow_logb hq₂ hq₃ hp.1, Real.rpow_logb hq₂ hq₃ hp₂]
+
+  simp
+}
+
+lemma sqrt_sub_sqrt_floor_le_one (hx : 0 ≤ x) : Real.sqrt x - Real.sqrt (Nat.floor x) ≤ 1 := by{
+  suffices ‖Real.sqrt x - Real.sqrt (Nat.floor x)‖ ≤ ‖(1 : ℝ)‖ by{
+    simp at this
+    rw[abs_of_nonneg] at this
+    exact this
+    simp
+    apply Real.sqrt_le_sqrt
+    exact Nat.floor_le hx
+  }
+  apply sq_le_sq.1
+  rw[sub_sq]
+  simp
+  rw[Real.sq_sqrt hx]
+  calc
+    x - 2 * Real.sqrt x * Real.sqrt ↑⌊x⌋₊ + ↑⌊x⌋₊ ≤ x - 2 * (Real.sqrt ↑⌊x⌋₊ * Real.sqrt ↑⌊x⌋₊) +  ↑⌊x⌋₊:= by {
+      suffices 2 * (Real.sqrt ↑⌊x⌋₊ * Real.sqrt ↑⌊x⌋₊) ≤ 2 * (Real.sqrt x * Real.sqrt ↑⌊x⌋₊)  by linarith
+      suffices Real.sqrt ↑⌊x⌋₊ ≤ Real.sqrt x by {
+        apply (mul_le_mul_left two_pos).2
+        by_cases h: ↑⌊x⌋₊ = 0
+        rw[h]
+        simp
+        have hx_pos : 0 < Real.sqrt ↑⌊x⌋₊ := by simp; exact Nat.pos_of_ne_zero h
+        apply (mul_le_mul_right hx_pos).2
+        exact this
+      }
+      exact Real.sqrt_le_sqrt (Nat.floor_le hx)
+    }
+    _ = x - 2 * ↑⌊x⌋₊ +  ↑⌊x⌋₊ := by simp
+    _ = x - ↑⌊x⌋₊             := by ring
+    _ ≤ 1                     := by linarith[Nat.sub_one_lt_floor x]
+
+}
+lemma hamming_volume_asymptotic_lower_bound (q n: ℕ) (p : ℝ) (hp : 0 < p ∧ p < 1) (hn : 0 < n) (hq : 2 ≤ q):
+∃ (ε : ℕ → ℝ), IsLittleO atTop ε (fun n ↦ (n: ℝ)) ∧ Nat.choose n (Nat.floor (n*p)) * (q - 1) ^ (p*n) ≥  Real.rpow q ((qaryEntropy q p) * n - ε n):= by{
+  -- Some trivial claims
+
+  -- Using the leftover coefficient and prove the asymptotic behavior
+  let ε : ℕ → ℝ := fun n ↦ Real.logb q (n ^ ((1 : ℝ)/2))
+  let ε' : ℕ → ℝ := fun n ↦  Real.logb q ((2 * Real.pi * (p * (1 - p))) ^ (1 / 2)) + (ε n)
+
+  -- Proving the Asymptotic Tightness of the Error term
+  use ε'
+  constructor
+  · apply Asymptotics.IsLittleO.add
+    · simp
+      right
+      have h1 : (norm ∘ (fun (n:ℕ) => (n:ℝ))) = (fun (n : ℕ) ↦ ‖(n: ℝ)‖)
+      · exact rfl
+      rw[h1]
+      simp
+      apply tendsto_nat_cast_atTop_iff.2
+      have h2 : (fun (n:ℕ) ↦ n) = id
+      · exact rfl
+      rw[h2]
+      exact Filter.tendsto_id
+    · dsimp
+      have h₁ : (fun (x:ℕ) => Real.logb (↑q) (↑x ^ ((1:ℝ) / 2))) = (fun (x:ℕ) => 1/2 * 1 / Real.log (↑q) * Real.log (↑x))
+      · ext x
+        by_cases hx : x = 0
+        rw[hx]
+        simp
+        apply Nat.pos_of_ne_zero at hx
+        rw [← Real.log_div_log, Real.log_rpow]
+        field_simp
+        exact Nat.cast_pos.mpr hx
+      rw[h₁]
+      apply Asymptotics.IsLittleO.const_mul_left
+      -- This composition theorem is really useful when dealing with f : ℕ → ℝ
+      exact IsLittleO.comp_tendsto Real.isLittleO_log_id_atTop tendsto_nat_cast_atTop_atTop
+
+  -- Using Stirling's Formula to "Derive" the Error term
+  · rw[Nat.choose_eq_factorial_div_factorial]
+    have h_stirling := Stirling.factorial_isEquivalent_stirling
+    -- have h_stirling_Big := Asymptotics.IsEquivalent.isBigO h_stirling
+    -- have h_stirling_Big' := Asymptotics.IsEquivalent.isBigO_symm h_stirling
+    have h_stirling₁ : (fun (n : ℕ) => ↑(Nat.factorial (Nat.floor (n*p)))) ~[atTop] fun n => Real.sqrt (2 * (Nat.floor (n*p)) * Real.pi) * ((Nat.floor (n*p)) / Real.exp 1) ^ (Nat.floor (n*p))
+    · sorry
+    have h_stirling₂ : (fun (n : ℕ) => ↑(Nat.factorial (n - (Nat.floor (n*p))))) ~[atTop] fun n => Real.sqrt (2 * (n - (Nat.floor (n*p))) * Real.pi) * ((n - (Nat.floor (n*p))) / Real.exp 1) ^ (n - (Nat.floor (n*p)))
+    · sorry
+    have h_stirling_choose := Asymptotics.IsEquivalent.mul h_stirling (Asymptotics.IsEquivalent.inv (Asymptotics.IsEquivalent.mul h_stirling₁ h_stirling₂))
+    rw[Pi.mul_def, Pi.mul_def, Pi.mul_def, Pi.mul_def] at h_stirling_choose
+    simp at h_stirling_choose
+    apply Asymptotics.IsEquivalent.isBigO_symm at h_stirling_choose
+    rw[Asymptotics.IsBigO_def] at h_stirling_choose
+    rcases h_stirling_choose with ⟨c, hc⟩
+    rw[Asymptotics.IsBigOWith_def] at hc
+    simp at hc
+    sorry
+    sorry
+    -- lift
+  -- · simp
+  --   have h₁ : (2 * Real.pi * (p * (1 - p)))^(1/2) ≠ 0
+  --   · simp
+  --     push_neg
+  --     exact ⟨(by linarith [Real.pi_pos]), ⟨(by linarith), (by linarith)⟩⟩
+  --   have h₂ : Real.sqrt n ≠ 0
+  --   · sorry
+  --   have : Real.logb (↑q) ((2 * Real.pi * (p * (1 - p))) ^ (1 / 2) * ↑n ^ (1 / 2))  =
+  --   Real.logb (↑q) ((2 * Real.pi * (p * (1 - p))) ^ (1 / 2)) + Real.logb (↑q) (↑n ^ (1 / 2))
+  --   · exact Real.logb_mul h₁ h₁
+
+  --   rw[this]
+
+}
+
+lemma binomial_coef_asymptotic_lower_bound (n: ℕ) (p : ℝ) (hp : 0 < p ∧ p < 1) (hn : 0 < n) :
+∃ (ε : ℕ → ℝ), IsLittleO atTop ε (fun n ↦ (n: ℝ)) ∧ Nat.choose n (Nat.floor (n*p)) ≥  Real.rpow 2 ((qaryEntropy 2 p) * n - ε n):= by{
+
+  have : ∃ (f : ℕ → ℝ), IsLittleO atTop f (fun n ↦ (n: ℝ)) ∧
+    ↑(Nat.choose n ⌊↑n * p⌋₊) * (↑2 - 1) ^ (p * ↑n) ≥ Real.rpow (↑2) (qaryEntropy 2 p * ↑n - f n)
+  · exact hamming_volume_asymptotic_lower_bound 2 n p hp hn (by norm_num)
+
+  norm_num at this
+  simp
+  exact this
+  -- -- Some trivial claims
+
+  -- -- Using the leftover coefficient and prove the asymptotic behavior
+  -- let f : ℕ → ℝ := fun n ↦ Real.sqrt n
+  -- let f' : ℕ → ℝ := fun n ↦  Real.logb 2 (Real.sqrt (2 * Real.pi * (p * (1 - p))) * f n)
+
+  -- use f'
+  -- constructor
+  -- -- · -- Showing Positivity
+  -- --   simp
+  -- --   apply Real.logb_pos
+  -- --   norm_num
+  -- --   apply one_lt_mul
+
+  -- -- · constructor
+  -- · -- Asymptotic
+  --   apply Asymptotics.IsLittleO.const_mul_left
+  --   simp
+  --   apply Asymptotics.isLittleO_pow_pow_atTop_of_lt
+  -- · -- Show Equality using Stirling's Formula
+  --   sorry
+}
+
+theorem hamming_ball_size_asymptotic_lower_bound (q n: ℕ) (p : ℝ) (hq : q = Fintype.card α) (hα : Nontrivial α) (hnp : (Nat.floor (n*p)) = n*p) (hp : 0 < p ∧ p ≤ 1 - 1/q) (hn : 0 < n):
+∀ c : Codeword n α, ∃ (ε : ℕ → ℝ), IsLittleO atTop ε (fun n ↦ (n: ℝ)) ∧ (hamming_ball (Nat.floor (n*p)) c).card ≥ Real.rpow q ((qaryEntropy q p) * n - ε n) := by {
+  intro C
+
+  have hα₂ : 2 ≤ q
+  · rw[hq]
+    linarith[Fintype.one_lt_card_iff_nontrivial.2 hα]
+
+  have hα₂' : 2 ≤ (q: ℝ)
+  · rw[hq]
+    apply Nat.cast_le.2
+    linarith[Fintype.one_lt_card_iff_nontrivial.2 hα]
+
+  have hp₂ : p < 1
+  · calc
+      p ≤ 1 - 1/↑q               := by exact hp.2
+      _ = 1 - 1/(Fintype.card α) := by rw[hq]
+      _ < 1                      := by exact sub_lt_self 1 (one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero Fintype.card_ne_zero)))
+
+  rw[hamming_ball_size n]
+
+  rcases hamming_volume_asymptotic_lower_bound q n p ⟨hp.1, hp₂⟩ hn hα₂ with ⟨f, ⟨hf_asymp, hf⟩⟩
+  use f
+  constructor
+  · exact hf_asymp
+  · simp at hf ⊢
+    apply le_trans hf
+    rw[← hq]
+    have : ∀ i ∈ (Finset.range (⌊↑n * p⌋₊ + 1)), 0 ≤ (Nat.choose n i * (Fintype.card α - 1) ^ i : ℝ)
+    · intros i hi
+      simp at hi
+      rw[← hq]
+      apply mul_nonneg
+      · simp
+      · apply pow_nonneg
+        linarith
+    have hnp_mem: ⌊↑n * p⌋₊ ∈ (Finset.range (⌊↑n * p⌋₊ + 1))
+    · simp
+    simp only [hq] at this ⊢
+
+    have h₁ : (((Fintype.card α) : ℝ) - 1) = ((Fintype.card α - 1) : ℕ)
+    · rw[← hq]
+      have : 1 ≤ q
+      · linarith
+      rw[Nat.cast_sub]
+      simp
+      exact this
+    rw[← h₁]
+    rw[mul_comm p ↑n]
+    rw[← hnp]
+    simp
+    exact Finset.single_le_sum this hnp_mem
+
+
+
+  -- -- Some trivial claims
+  -- have hα₂ : 2 ≤ (q: ℝ)
+  -- · rw[hq]
+  --   apply Nat.cast_le.2
+  --   linarith[Fintype.one_lt_card_iff_nontrivial.2 hα]
+
+  -- have hα₂' : 2 ≤ q
+  -- · rw[hq]
+  --   linarith[Fintype.one_lt_card_iff_nontrivial.2 hα]
+
+  -- have hα_pos : 0 < (q: ℝ)
+  -- · linarith
+
+  -- have hp₂ : p < 1
+  -- · calc
+  --     p ≤ 1 - 1/↑q               := by exact hp.2
+  --     _ = 1 - 1/(Fintype.card α) := by rw[hq]
+  --     _ < 1                      := by exact sub_lt_self 1 (one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero Fintype.card_ne_zero)))
+
+  -- -- Calling Binomial Coef Lemma
+  -- intro C
+  -- rcases binomial_coef_asymptotic_lower_bound n p ⟨hp.1, hp₂⟩ hn with ⟨f, ⟨hf_asymp, hf⟩⟩
+
+  -- have hfn : 0 ≤ f n
+  -- · by_contra hfn_neg
+  --   push_neg at hfn_neg
+  --   let c' : Codeword n (Fin 2) := 0
+  --   have h₁ : (hamming_ball (Nat.floor (n*p)) c').card = (Nat.choose n ⌊↑n * p⌋₊)
+  --   · sorry
+  --   rw[← h₁] at hf
+  --   have h₂: (hamming_ball ⌊↑n * p⌋₊ c').card > Real.rpow 2 (qaryEntropy 2 p * ↑n)
+  --   · calc
+  --      Real.rpow 2 (qaryEntropy 2 p * ↑n) < Real.rpow 2 (qaryEntropy 2 p * ↑n - f n) := by {
+  --       apply (Real.rpow_lt_rpow_left_iff _).2
+  --       linarith
+  --       norm_num
+  --     }
+  --     _ ≤ (hamming_ball ⌊↑n * p⌋₊ c').card := by exact hf
+  --   have h₃ : (hamming_ball ⌊↑n * p⌋₊ c').card ≤ Real.rpow 2 (qaryEntropy 2 p * ↑n)
+  --   · apply hamming_ball_size_asymptotic_upper_bound
+
+
+  -- -- Simlify binary entropy
+  -- rw[sub_eq_add_neg] at hf
+  -- simp at hf
+  -- rw[Real.rpow_add two_pos, Real.rpow_mul (le_of_lt two_pos)] at hf
+  -- have : Real.rpow (2 : ℕ) (qaryEntropy 2 p) = 2 ^ qaryEntropy 2 p
+  -- · simp
+  -- rw[← this] at hf
+  -- rw[q_pow_qary_entropy_simp 2 p] at hf
+
+
+
+  -- -- Doing All the Algebra
+  -- use f
+  -- constructor
+  -- · exact hf_asymp
+  -- · rw[hamming_ball_size n]
+  --   simp
+
+  --   calc
+  --     Real.rpow (↑q) (qaryEntropy q p * ↑n - f n) ≤ (Nat.choose n ⌊↑n * p⌋₊) * (q - 1)^⌊↑n * p⌋₊ := by{
+  --       simp at hf ⊢
+  --       rw[sub_eq_add_neg]
+  --       rw[Real.rpow_add hα_pos, Real.rpow_mul (le_of_lt hα_pos)]
+  --       rw[q_pow_qary_entropy_simp' q p hα₂' ⟨hp.1, hp₂⟩]
+  --       norm_num at hf
+  --       simp
+  --       have : 0 < ((q :ℝ) - 1)^(p*n)
+  --       · apply Real.rpow_pos_of_pos
+  --         linarith
+
+  --       apply (mul_le_mul_left this).2 at hf
+  --       calc
+  --        ((↑q - 1) ^ p * p ^ (-p) * (1 - p) ^ (p - 1)) ^ n * ↑q ^ (-f n) ≤
+  --         (↑q - 1) ^ (p * ↑n) * (p ^ (-p) * (1 - p) ^ (p - 1)) ^ n * 2 ^ (-f n) := by {
+  --           rw[Real.rpow_mul (by linarith)]
+  --           rw[← Real.rpow_nat_cast]
+  --           rw[← Real.rpow_nat_cast]
+  --           have h₁ : 0 ≤ ((q:ℝ) - 1) ^ p
+  --           · apply Real.rpow_nonneg
+  --             linarith
+  --           have h₂ : 0 ≤ p ^ (-p) * (1 - p) ^ (p - 1)
+  --           · apply mul_nonneg
+  --             apply Real.rpow_nonneg
+  --             linarith
+  --             apply Real.rpow_nonneg
+  --             linarith
+  --           rw[← Real.mul_rpow h₁ h₂]
+  --           rw[← mul_assoc]
+  --           apply (mul_le_mul_left _).2
+  --           apply Real.rpow_le_rpow_of_nonpos _ _ _
+  --           linarith
+  --           linarith
+  --           simp
+  --           · linarith
+  --           · apply Real.rpow_pos_of_pos
+  --             apply mul_pos
+  --             apply mul_pos
+  --             apply Real.rpow_pos_of_pos
+  --             linarith
+  --             apply Real.rpow_pos_of_pos
+  --             linarith
+  --             apply Real.rpow_pos_of_pos
+  --             linarith
+  --         }
+  --       _ ≤ (↑q - 1) ^ (p * ↑n) * ↑(Nat.choose n ⌊↑n * p⌋₊) := by {
+  --         linarith
+  --       }
+  --       _ ≤ ↑(Nat.choose n ⌊↑n * p⌋₊) * (↑q - 1) ^ ⌊↑n * p⌋₊ := by {
+  --         rw[mul_comm p ↑n]
+  --         rw[← hnp]
+  --         simp
+  --         linarith
+  --       }
+  --     }
+  --     _ ≤ ((Finset.sum (Finset.range (⌊↑n * p⌋₊ + 1)) fun i => Nat.choose n i * (Fintype.card α - 1) ^ i) : ℝ) := by{
+  --       have : ∀ i ∈ (Finset.range (⌊↑n * p⌋₊ + 1)), 0 ≤ (Nat.choose n i * (Fintype.card α - 1) ^ i : ℝ)
+  --       · intros i hi
+  --         simp at hi
+  --         rw[← hq]
+  --         apply mul_nonneg
+  --         · simp
+  --         · apply pow_nonneg
+  --           linarith
+  --       have hnp_mem: ⌊↑n * p⌋₊ ∈ (Finset.range (⌊↑n * p⌋₊ + 1))
+  --       · simp
+  --       simp only [hq] at this ⊢
+  --       exact Finset.single_le_sum this hnp_mem
+  --     }
+  --     _ ≤ Finset.sum (Finset.range (⌊↑n * p⌋₊ + 1)) fun x => ↑(Nat.choose n x) * ↑(Fintype.card α - 1) ^ x := by{
+  --       apply Finset.sum_le_sum
+  --       intros i hi
+  --       apply mul_le_mul
+  --       · linarith
+  --       · have h₁ : (((Fintype.card α) : ℝ) - 1) = ((Fintype.card α - 1) : ℕ)
+  --         · rw[← hq]
+  --           have : 1 ≤ q
+  --           · linarith
+  --           rw[Nat.cast_sub]
+  --           simp
+  --           exact this
+
+  --         rw[h₁]
+  --       rw[← Real.rpow_nat_cast]
+  --       apply Real.rpow_nonneg
+  --       rw[←hq]
+  --       linarith
+  --       simp
+  --     }
+
+  -- simp
+  -- exact ⟨hp.1, by linarith⟩
+}
+
+
 
 lemma hamming_ball_non_intersect (C : Code n α) (h : distance C d) (h' : 0 < d): ∀ c₁ c₂ : Codeword n α, (c₁ ∈ C ∧ c₂ ∈ C ∧ c₁ ≠ c₂) → ∀ c' : Codeword n α, c' ∈ (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₁) → c' ∉  (hamming_ball (Nat.floor (((d : ℝ)-1)/2)) c₂) := by {
   intros c₁ c₂ hc₁₂ c' hc'
@@ -868,7 +1303,7 @@ lemma hamming_ball'_disjoint (C : Code n α) (h : distance C d) (h' : 0 < d) : �
 }
 
 
-theorem hamming_bound (n d A : ℕ) (C : Code n α) (h : distance C d) (h' : Fintype.card α = q) (h'' : Fintype.card α >1)(hd : 0 < d):
+theorem hamming_bound (n d : ℕ) (C : Code n α) (h : distance C d) (h'' : Fintype.card α >1)(hd : 0 < d):
 C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) (λ i=> Nat.choose n i * (Fintype.card α - 1)^i)) := by {
   have h1 : 0 < Finset.sum (Finset.range ((Nat.floor (((d : ℝ)-1)/2)) + 1)) (λ i=> Nat.choose n i * (Fintype.card α - 1)^i)
   · apply Finset.sum_pos
@@ -941,6 +1376,7 @@ lemma Linear_Code_dist_eq_min_weight (C : Code n α) (h_linear : Linear_Code' C 
   constructor
   · intros c hc c_nzero
     simp [weight]
+
     apply h.2 c hc 0
     rcases hG with ⟨hG_image, _⟩
     specialize hG_image 0
