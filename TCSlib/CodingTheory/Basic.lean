@@ -2110,3 +2110,136 @@ theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - 
 (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∀ (x : Codeword k α), x ≠ 0 → weight (Matrix.mulVec G x) ≥ d}).card ≥ 1 := by {
   sorry -- The final result - should follow closely from the previous lemmas but may be worth reframing
 }
+
+def list_decodable (ρ : ℝ) (hρ₁: 0 ≤ ρ) (hρ₂: ρ ≤ 1) (n L : ℕ) (hL : L ≥ 1) (C : Code n α) : Prop :=
+  (∀ y : Codeword n α, (hamming_ball (Nat.floor (ρ*n)) y ∩ C).card ≤ L)
+
+theorem list_decoding_capacity
+  (p : ℝ) (hp₀ : 0 ≤ p) (hp₁ : p ≤ 1/2) (L : ℕ) (hL : 1 ≤ L):
+  let q := Fintype.card α;
+  let r := 1 - (qaryEntropy q p) - 1 / (L : ℝ);
+  let M := Nat.floor ((2 : ℝ) ^ (r * n));
+  ∃ C : Code n α,
+    (M ≤ C.card) ∧ (list_decodable p hp₀ (by linarith[hp₁]) n L hL C)
+:= by
+  classical
+  intro q r M
+  have hr : r ≤ 1 := by
+    sorry
+
+  let y := Classical.arbitrary (Codeword n α)
+
+  let radius : ℕ := Nat.floor (p * n)
+  let N : ℕ := q ^ n
+
+  let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
+  have hΩcard:
+    Ω.card = Nat.choose N M
+  := by
+    have h : (Finset.univ : Finset (Codeword n α)).card = q ^ n := by
+      simp [Finset.card_univ, Fintype.card_fun, Fintype.card_fin]
+    simp [h]
+  have hΩcardpos : (0 : ℝ) < (Ω.card : ℝ) := by
+    rw [hΩcard]
+    have m_le_n : M ≤ N := by
+      sorry
+    apply Nat.choose_pos at m_le_n
+    exact_mod_cast m_le_n
+
+  let bad_code_at (C : Code n α) (y : Codeword n α) := ((hamming_ball radius y) ∩ C).card ≥ L + 1
+  let bad_codes_at (y : Codeword n α) := {C : (Code n α) | bad_code_at C y}
+  let bad_codes := {C: (Code n α) | ∃ y : Codeword n α, bad_code_at C y}
+  let bad_in_Ω : Finset (Code n α) := Ω.filter (fun C => C ∈ bad_codes)
+
+  -- 1) one center
+  have one_center_bound :
+    ((Ω.filter (fun C => C ∈ bad_codes_at y)).card : ℝ) / (Ω.card : ℝ)
+    ≤ (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
+      * (Nat.choose M (L+1) : ℝ) / (Nat.choose N (L+1) : ℝ)
+  := by
+    sorry
+
+  -- 2) union bound over all centers
+  have union_bound :
+    (bad_in_Ω.card : ℝ) / (Ω.card : ℝ)
+    ≤ N * (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
+      * (Nat.choose M (L+1) : ℝ) / (Nat.choose N (L+1) : ℝ)
+  := by
+    sorry
+-- theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α,
+-- (hamming_ball l c).card = (Finset.sum (Finset.range (l + 1))
+-- (λ i=> Nat.choose n i * (Fintype.card α - 1)^i)) := by {
+
+  -- 3) |B| ≤ 2^{H(p) n}
+  have hamming_ball_vol_bound :
+    (((hamming_ball radius y).card : ℝ)) ≤ 2 ^ (qaryEntropy q p * n)
+  := by
+    rw [hamming_ball_size n radius y]
+    simp
+    sorry
+
+  -- 4) choose ≤ power/(L+1)!
+  have choose_bound :
+    (Nat.choose M (L+1) : ℝ) ≤ (M : ℝ)^(L+1) / (Nat.factorial (L+1))
+  := by
+    sorry
+
+  -- 5) substitute M=⌊2^{r n}⌋, r = 1 - H(p) - 1/L and simplify to < 1
+  have bad_frac_lt_one :
+    (bad_in_Ω.card : ℝ) / (Ω.card : ℝ) < 1
+  := by
+    -- combine union_bound, hamming_ball_vol_bound, choose_bound and r-definition
+    sorry
+
+  -- finish proof via contradiction
+  by_contra hcontra
+  have all_bad : bad_in_Ω.card = Ω.card := by
+    simp at hcontra
+    have hΩeq : bad_in_Ω = Ω := by
+      simp
+      ext C
+      constructor
+      · intro hC
+        simp at hC
+        specialize hcontra C
+        rw [hC.1] at hcontra
+        simp at hcontra
+        have hsub : C ⊆ (Finset.univ : Finset _) := by
+          intro x hx
+          simp
+        exact (mem_powersetCard.mpr ⟨hsub, by simp [hC.1]⟩)
+      · intro hC
+        have hbad : ∃ y, L + 1 ≤ (toFinset {c' | hamming_distance c' y ≤ ⌊p * ↑n⌋₊} ∩ C).card := by
+          classical
+          obtain ⟨-, hcard⟩ := Finset.mem_powersetCard.1 hC
+          have hM : M ≤ C.card := by simp [hcard]
+          simp [M, r, q] at hM
+          have : p ≤ (1 : ℝ) := le_trans hp₁ (by norm_num)
+          have : ¬ list_decodable p hp₀ this n L hL C := hcontra C hM
+          have : ∃ y, ¬ (hamming_ball radius y ∩ C).card ≤ L := by
+            unfold list_decodable at this
+            exact not_forall.1 this
+          rcases this with ⟨y', hy'⟩
+          have : L + 1 ≤ (hamming_ball radius y' ∩ C).card :=
+            Nat.succ_le_of_lt (Nat.lt_of_not_ge hy')
+          simpa [radius, hamming_ball] using ⟨y', this⟩
+        refine Finset.mem_filter.mpr ?_
+        exact ⟨hC, hbad⟩
+    rw [hΩeq]
+
+  have hΩnonzero :
+    (Ω.card : ℝ) ≠ 0
+  := by
+    rw [hΩcard]
+    rw [ne_iff_lt_or_gt]
+    right
+    rw [← hΩcard]
+    exact hΩcardpos
+
+  have frac_eq_one :
+    (bad_in_Ω.card : ℝ) / (Ω.card : ℝ) = 1
+  := by
+    rw [all_bad]
+    exact div_self hΩnonzero
+
+  exact (not_lt.mpr le_rfl) (frac_eq_one ▸ bad_frac_lt_one)
