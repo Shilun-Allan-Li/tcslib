@@ -2115,17 +2115,23 @@ def list_decodable (ρ : ℝ) (hρ₁: 0 ≤ ρ) (hρ₂: ρ ≤ 1) (n L : ℕ) 
   (∀ y : Codeword n α, (hamming_ball (Nat.floor (ρ*n)) y ∩ C).card ≤ L)
 
 theorem list_decoding_capacity
-  (p : ℝ) (hp₀ : 0 ≤ p) (hp₁ : p ≤ 1/2) (L : ℕ) (hL : 1 ≤ L):
-  let q := Fintype.card α;
+  (p : ℝ) (q : ℕ) (hq : q = (Fintype.card α)) (hp₀ : 0 ≤ p) (hp₁ : p ≤ 1 - 1/q) (L : ℕ) (hL : 1 ≤ L):
   let r := 1 - (qaryEntropy q p) - 1 / (L : ℝ);
   let M := Nat.floor ((2 : ℝ) ^ (r * n));
   ∃ C : Code n α,
-    (M ≤ C.card) ∧ (list_decodable p hp₀ (by linarith[hp₁]) n L hL C)
+    (M ≤ C.card) ∧ (list_decodable p hp₀ (by linarith [hp₁, one_div_nonneg.2 (show (0 : ℝ) ≤ (q : ℝ) from by exact_mod_cast (Nat.zero_le q))]) n L hL C)
 := by
   classical
-  intro q r M
+  intro r M
   have hr : r ≤ 1 := by
-    sorry
+    have hH : 0 ≤ qaryEntropy q p :=
+      sorry
+    have hL0 : 0 ≤ 1 / (L : ℝ) := by
+      have : (0 : ℝ) < (L : ℝ) := by
+        exact_mod_cast (lt_of_lt_of_le (Nat.succ_pos 0) hL)
+      exact one_div_nonneg.mpr (le_of_lt this)
+    dsimp [r]
+    linarith
 
   let y := Classical.arbitrary (Codeword n α)
 
@@ -2137,7 +2143,7 @@ theorem list_decoding_capacity
     Ω.card = Nat.choose N M
   := by
     have h : (Finset.univ : Finset (Codeword n α)).card = q ^ n := by
-      simp [Finset.card_univ, Fintype.card_fun, Fintype.card_fin]
+      simp [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, hq]
     simp [h]
   have hΩcardpos : (0 : ℝ) < (Ω.card : ℝ) := by
     rw [hΩcard]
@@ -2166,16 +2172,15 @@ theorem list_decoding_capacity
       * (Nat.choose M (L+1) : ℝ) / (Nat.choose N (L+1) : ℝ)
   := by
     sorry
--- theorem hamming_ball_size (n l : ℕ ): ∀ c : Codeword n α,
--- (hamming_ball l c).card = (Finset.sum (Finset.range (l + 1))
--- (λ i=> Nat.choose n i * (Fintype.card α - 1)^i)) := by {
+
+-- hamming_ball_size_asymptotic_upper_bound (q n : ℕ) (p : ℝ) (hq : q = Fintype.card α) (hα : Nontrivial α) (hp : 0 < p ∧ p ≤ 1 - 1/q):
+-- ∀ c : Codeword n α, (hamming_ball (Nat.floor (n*p)) c).card ≤ Real.rpow q ((qaryEntropy q p) * n) := by {
 
   -- 3) |B| ≤ 2^{H(p) n}
   have hamming_ball_vol_bound :
-    (((hamming_ball radius y).card : ℝ)) ≤ 2 ^ (qaryEntropy q p * n)
+    (hamming_ball radius y).card ≤ Real.rpow q (qaryEntropy q p * n)
   := by
-    rw [hamming_ball_size n radius y]
-    simp
+    -- not convinced this step is entirely necessary anymore given the hamming_ball_size_asymptotic_upper_bound theorem
     sorry
 
   -- 4) choose ≤ power/(L+1)!
@@ -2213,7 +2218,7 @@ theorem list_decoding_capacity
           classical
           obtain ⟨-, hcard⟩ := Finset.mem_powersetCard.1 hC
           have hM : M ≤ C.card := by simp [hcard]
-          simp [M, r, q] at hM
+          simp [M, r] at hM
           have : p ≤ (1 : ℝ) := le_trans hp₁ (by norm_num)
           have : ¬ list_decodable p hp₀ this n L hL C := hcontra C hM
           have : ∃ y, ¬ (hamming_ball radius y ∩ C).card ≤ L := by
