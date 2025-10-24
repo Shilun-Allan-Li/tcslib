@@ -2114,18 +2114,23 @@ theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - 
 def list_decodable (ρ : ℝ) (hρ₁: 0 ≤ ρ) (hρ₂: ρ ≤ 1) (n L : ℕ) (hL : L ≥ 1) (C : Code n α) : Prop :=
   (∀ y : Codeword n α, (hamming_ball (Nat.floor (ρ*n)) y ∩ C).card ≤ L)
 
+theorem qary_entropy_pos (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 0 < p ∧ p ≤ 1 - 1/q) : 0 < qaryEntropy q p := by
+  sorry
+
 theorem list_decoding_capacity
-  (p : ℝ) (q : ℕ) (hq : q = (Fintype.card α)) (hp₀ : 0 ≤ p) (hp₁ : p ≤ 1 - 1/q) (L : ℕ) (hL : 1 ≤ L):
+  (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 0 < p ∧ p ≤ 1 - 1/q) (L : ℕ) (hL : 1 ≤ L):
   let r := 1 - (qaryEntropy q p) - 1 / (L : ℝ);
-  let M := Nat.floor ((2 : ℝ) ^ (r * n));
+  let M := Nat.floor ((q : ℝ) ^ (r * n));
   ∃ C : Code n α,
-    (M ≤ C.card) ∧ (list_decodable p hp₀ (by linarith [hp₁, one_div_nonneg.2 (show (0 : ℝ) ≤ (q : ℝ) from by exact_mod_cast (Nat.zero_le q))]) n L hL C)
+    (M ≤ C.card) ∧ (list_decodable p (by linarith [hp]) (by linarith [hp, one_div_nonneg.2 (show (0 : ℝ) ≤ (q : ℝ) from by exact_mod_cast (Nat.zero_le q))]) n L hL C)
 := by
   classical
   intro r M
+  have hq_pos : (1 : ℝ) < (q : ℝ) := by
+    rw [hq]
+    exact_mod_cast Fintype.one_lt_card
   have hr : r ≤ 1 := by
-    have hH : 0 ≤ qaryEntropy q p :=
-      sorry
+    have hH : 0 < qaryEntropy q p := qary_entropy_pos q p hq hp
     have hL0 : 0 ≤ 1 / (L : ℝ) := by
       have : (0 : ℝ) < (L : ℝ) := by
         exact_mod_cast (lt_of_lt_of_le (Nat.succ_pos 0) hL)
@@ -2139,16 +2144,22 @@ theorem list_decoding_capacity
   let N : ℕ := q ^ n
 
   let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
-  have hΩcard:
-    Ω.card = Nat.choose N M
-  := by
+  have hΩcard : Ω.card = Nat.choose N M := by
     have h : (Finset.univ : Finset (Codeword n α)).card = q ^ n := by
       simp [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, hq]
     simp [h]
   have hΩcardpos : (0 : ℝ) < (Ω.card : ℝ) := by
     rw [hΩcard]
     have m_le_n : M ≤ N := by
-      sorry
+      show Nat.floor ((q : ℝ) ^ (r * n)) ≤ q ^ n
+      have hr : r * n ≤ n := by
+        exact mul_le_of_le_one_left (Nat.cast_nonneg n) hr
+      have : (q : ℝ) ^ (r * n) ≤ (q : ℝ) ^ (n : ℝ) := by
+        exact Real.rpow_le_rpow_of_exponent_le (by linarith [hq_pos]) hr
+      have : Nat.floor ((q : ℝ) ^ (r * n)) ≤ (q : ℝ) ^ (n : ℝ) := by
+        -- exact Nat.floor_le (Real.rpow_nonneg_of_nonneg (by linarith [hq_pos]) (r * n))
+        sorry
+      norm_cast at this
     apply Nat.choose_pos at m_le_n
     exact_mod_cast m_le_n
 
@@ -2173,15 +2184,14 @@ theorem list_decoding_capacity
   := by
     sorry
 
--- hamming_ball_size_asymptotic_upper_bound (q n : ℕ) (p : ℝ) (hq : q = Fintype.card α) (hα : Nontrivial α) (hp : 0 < p ∧ p ≤ 1 - 1/q):
--- ∀ c : Codeword n α, (hamming_ball (Nat.floor (n*p)) c).card ≤ Real.rpow q ((qaryEntropy q p) * n) := by {
-
   -- 3) |B| ≤ 2^{H(p) n}
   have hamming_ball_vol_bound :
     (hamming_ball radius y).card ≤ Real.rpow q (qaryEntropy q p * n)
   := by
-    -- not convinced this step is entirely necessary anymore given the hamming_ball_size_asymptotic_upper_bound theorem
-    sorry
+    have hα : Nontrivial α := inferInstance
+    have hr : radius = ⌊↑n * p⌋₊ := by rw [mul_comm]
+    rw [hr]
+    refine (hamming_ball_size_asymptotic_upper_bound q n p hq hα hp) y
 
   -- 4) choose ≤ power/(L+1)!
   have choose_bound :
@@ -2219,8 +2229,8 @@ theorem list_decoding_capacity
           obtain ⟨-, hcard⟩ := Finset.mem_powersetCard.1 hC
           have hM : M ≤ C.card := by simp [hcard]
           simp [M, r] at hM
-          have : p ≤ (1 : ℝ) := le_trans hp₁ (by norm_num)
-          have : ¬ list_decodable p hp₀ this n L hL C := hcontra C hM
+          have : p ≤ (1 : ℝ) := le_trans hp.2 (by norm_num)
+          have : ¬ list_decodable p (by linarith [hp.1]) this n L hL C := hcontra C hM
           have : ∃ y, ¬ (hamming_ball radius y ∩ C).card ≤ L := by
             unfold list_decodable at this
             exact not_forall.1 this
