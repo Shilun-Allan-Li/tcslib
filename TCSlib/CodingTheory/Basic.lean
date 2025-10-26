@@ -2114,8 +2114,87 @@ theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - 
 def list_decodable (ρ : ℝ) (hρ₁: 0 ≤ ρ) (hρ₂: ρ ≤ 1) (n L : ℕ) (hL : L ≥ 1) (C : Code n α) : Prop :=
   (∀ y : Codeword n α, (hamming_ball (Nat.floor (ρ*n)) y ∩ C).card ≤ L)
 
-theorem qary_entropy_pos (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 0 < p ∧ p ≤ 1 - 1/q) : 0 < qaryEntropy q p := by
-  sorry
+theorem qary_entropy_pos (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 0 < p ∧ p ≤ 1 - 1 / (q : ℝ)) :
+  0 < p * Real.logb (q : ℝ) ((q : ℝ) - 1) - p * Real.logb (q : ℝ) p - (1 - p) * Real.logb (q : ℝ) (1 - p):= by
+  have hq_1 : (1 : ℝ) < (q : ℝ) := by
+    rw [hq]
+    exact_mod_cast Fintype.one_lt_card
+  have : 0 < 1 - (1 : ℝ) / q := lt_of_lt_of_le hp.1 hp.2
+  have hqpos : (0 : ℝ) < (q : ℝ) := by
+    have : (1 : ℝ) / (q : ℝ) < 1 := by
+      have := this; linarith
+    exact lt_trans (by norm_num) hq_1
+
+  have hp_1 : p < 1 := by
+    have : p ≤ 1 - 1 / (q : ℝ) := hp.2
+    exact lt_of_le_of_lt this (by
+      have : (0 : ℝ) < 1 / (q : ℝ) := by
+        have : 0 < (q : ℝ) := hqpos; exact one_div_pos.mpr this
+      linarith)
+  have h1p_0 : 0 < 1 - p := by linarith
+  have h1p_1 : 1 - p < 1 := by linarith
+
+  have hlogq_pos : 0 < Real.log (q : ℝ) := by
+    apply (Real.log_pos_iff hqpos).2 hq_1
+
+  have := show
+      0 <
+        p * (Real.log ((q : ℝ) - 1) / Real.log (q : ℝ))
+        - p * (Real.log p / Real.log (q : ℝ))
+        - (1 - p) * (Real.log (1 - p) / Real.log (q : ℝ)) by
+    simpa [Real.logb] using
+      (show
+        0 <
+          p * Real.logb (q : ℝ) ((q : ℝ) - 1)
+          - p * Real.logb (q : ℝ) p
+          - (1 - p) * Real.logb (q : ℝ) (1 - p) from ?_)
+  suffices 0 < p * Real.log ((q : ℝ) - 1) - p * Real.log p - (1 - p) * Real.log (1 - p) by
+    have := (div_pos_iff.mpr (Or.inl ⟨this, hlogq_pos⟩))
+    simp only [Real.logb, div_eq_mul_inv]
+    simp only [div_eq_mul_inv] at this
+    have hdistrib : (p * Real.log (↑q - 1) - p * Real.log p - (1 - p) * Real.log (1 - p)) * (Real.log ↑q)⁻¹ = p * (Real.log (↑q - 1) * (Real.log ↑q)⁻¹) - p * (Real.log p * (Real.log ↑q)⁻¹) - (1 - p) * (Real.log (1 - p) * (Real.log ↑q)⁻¹) := by
+      simp [sub_eq_add_neg]
+      rw [distrib_three_right]
+      simp [mul_assoc]
+    rw [hdistrib] at this
+    exact this
+
+  have h_logp_neg : Real.log p < 0 :=
+    Real.log_neg hp.1 hp_1
+  have h_log1p_neg : Real.log (1 - p) < 0 :=
+    Real.log_neg h1p_0 h1p_1
+  have h_ent_pos :
+      0 < - p * Real.log p - (1 - p) * Real.log (1 - p) := by
+    have hp_neg: 0 < -p * Real.log p := by
+      have : Real.log p < 0 := h_logp_neg
+      have := (mul_neg_of_pos_of_neg hp.1 this)
+      simpa [neg_mul, neg_neg] using this
+    have h1p_neg: 0 < -(1 - p) * Real.log (1 - p) := by
+      have : Real.log (1 - p) < 0 := h_log1p_neg
+      have := (mul_neg_of_pos_of_neg h1p_0 this)
+      linarith
+    have := add_pos hp_neg h1p_neg
+    ring_nf
+    linarith [this]
+
+  have : 0 ≤ Real.log ((q : ℝ) - 1) := by
+    have : (q : ℝ) ≥ 2 := by
+      have : 1 < q := by
+        rw [hq]
+        exact_mod_cast Fintype.one_lt_card
+      exact_mod_cast (by linarith [this])
+    have : (q : ℝ) - 1 ≥ 1 := by linarith
+    exact Real.log_nonneg this
+  have : 0 ≤ p * Real.log ((q : ℝ) - 1) :=
+    mul_nonneg (le_of_lt hp.1) this
+  have : 0 < p * Real.log ((q : ℝ) - 1)
+                + (- p * Real.log p - (1 - p) * Real.log (1 - p)) := by
+    exact add_pos_of_nonneg_of_pos this h_ent_pos
+  ring_nf at this
+  ring_nf
+  exact this
+  simp [Real.logb]
+  linarith [this]
 
 theorem list_decoding_capacity
   (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 0 < p ∧ p ≤ 1 - 1/q) (L : ℕ) (hL : 1 ≤ L):
