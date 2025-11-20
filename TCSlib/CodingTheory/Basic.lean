@@ -1924,19 +1924,8 @@ theorem qary_entropy_pos (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 
   have h1p_1 : 1 - p < 1 := by linarith
 
   have hlogq_pos : 0 < Real.log (q : ℝ) := by
-    apply (Real.log_pos_iff hqpos).2 hq_1
+    apply (Real.log_pos_iff (by linarith [hqpos])).2 hq_1
 
-  have := show
-      0 <
-        p * (Real.log ((q : ℝ) - 1) / Real.log (q : ℝ))
-        - p * (Real.log p / Real.log (q : ℝ))
-        - (1 - p) * (Real.log (1 - p) / Real.log (q : ℝ)) by
-    simpa [Real.logb] using
-      (show
-        0 <
-          p * Real.logb (q : ℝ) ((q : ℝ) - 1)
-          - p * Real.logb (q : ℝ) p
-          - (1 - p) * Real.logb (q : ℝ) (1 - p) from ?_)
   suffices 0 < p * Real.log ((q : ℝ) - 1) - p * Real.log p - (1 - p) * Real.log (1 - p) by
     have := (div_pos_iff.mpr (Or.inl ⟨this, hlogq_pos⟩))
     simp only [Real.logb, div_eq_mul_inv]
@@ -1982,8 +1971,6 @@ theorem qary_entropy_pos (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 
   ring_nf at this
   ring_nf
   exact this
-  simp [Real.logb]
-  linarith [this]
 
 theorem list_decoding_capacity
   (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 0 < p ∧ p ≤ 1 - 1/q) (L : ℕ) (hL : 1 ≤ L):
@@ -2014,8 +2001,11 @@ theorem list_decoding_capacity
   let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
   have hΩcard : Ω.card = Nat.choose N M := by
     have h : (Finset.univ : Finset (Codeword n α)).card = q ^ n := by
-      simp [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, hq]
+      simp [Finset.card_univ, Fintype.card_fin, hq]
+    dsimp [Ω]
     simp [h]
+    unfold N
+    rfl
   have hΩcardpos : (0 : ℝ) < (Ω.card : ℝ) := by
     rw [hΩcard]
     have m_le_n : M ≤ N := by
@@ -2025,8 +2015,7 @@ theorem list_decoding_capacity
       have : (q : ℝ) ^ (r * n) ≤ (q : ℝ) ^ (n : ℝ) := by
         exact Real.rpow_le_rpow_of_exponent_le (by linarith [hq_pos]) hr
       have : Nat.floor ((q : ℝ) ^ (r * n)) ≤ (q : ℝ) ^ (n : ℝ) := by
-        -- exact Nat.floor_le (Real.rpow_nonneg_of_nonneg (by linarith [hq_pos]) (r * n))
-        sorry
+        linarith [Nat.floor_le (Real.rpow_nonneg (by exact Nat.cast_nonneg' q) (r * n))]
       norm_cast at this
     apply Nat.choose_pos at m_le_n
     exact_mod_cast m_le_n
@@ -2075,37 +2064,36 @@ theorem list_decoding_capacity
     sorry
 
   -- finish proof via contradiction
-  by_contra hcontra
+  by_contra! hcontra
   have all_bad : bad_in_Ω.card = Ω.card := by
-    simp at hcontra
     have hΩeq : bad_in_Ω = Ω := by
-      simp
       ext C
       constructor
       · intro hC
-        simp at hC
         specialize hcontra C
-        rw [hC.1] at hcontra
-        simp at hcontra
-        have hsub : C ⊆ (Finset.univ : Finset _) := by
-          intro x hx
-          simp
-        exact (mem_powersetCard.mpr ⟨hsub, by simp [hC.1]⟩)
+        sorry
+      --   rw [hC.1] at hcontra
+      --   simp at hcontra
+      --   have hsub : C ⊆ (Finset.univ : Finset _) := by
+      --     intro x hx
+      --     simp
+      --   exact (mem_powersetCard.mpr ⟨hsub, by simp [hC.1]⟩)
       · intro hC
         have hbad : ∃ y, L + 1 ≤ (toFinset {c' | hamming_distance c' y ≤ ⌊p * ↑n⌋₊} ∩ C).card := by
-          classical
-          obtain ⟨-, hcard⟩ := Finset.mem_powersetCard.1 hC
-          have hM : M ≤ C.card := by simp [hcard]
-          simp [M, r] at hM
-          have : p ≤ (1 : ℝ) := le_trans hp.2 (by norm_num)
-          have : ¬ list_decodable p (by linarith [hp.1]) this n L hL C := hcontra C hM
-          have : ∃ y, ¬ (hamming_ball radius y ∩ C).card ≤ L := by
-            unfold list_decodable at this
-            exact not_forall.1 this
-          rcases this with ⟨y', hy'⟩
-          have : L + 1 ≤ (hamming_ball radius y' ∩ C).card :=
-            Nat.succ_le_of_lt (Nat.lt_of_not_ge hy')
-          simpa [radius, hamming_ball] using ⟨y', this⟩
+          sorry
+          -- classical
+          -- obtain ⟨-, hcard⟩ := Finset.mem_powersetCard.1 hC
+          -- have hM : M ≤ C.card := by simp [hcard]
+          -- simp [M, r] at hM
+          -- have : p ≤ (1 : ℝ) := le_trans hp.2 (by norm_num)
+          -- have : ¬ list_decodable p (by linarith [hp.1]) this n L hL C := hcontra C hM
+          -- have : ∃ y, ¬ (hamming_ball radius y ∩ C).card ≤ L := by
+            -- unfold list_decodable at this
+            -- exact not_forall.1 this
+          -- rcases this with ⟨y', hy'⟩
+          -- have : L + 1 ≤ (hamming_ball radius y' ∩ C).card :=
+            -- Nat.succ_le_of_lt (Nat.lt_of_not_ge hy')
+          -- simpa [radius, hamming_ball] using ⟨y', this⟩
         refine Finset.mem_filter.mpr ?_
         exact ⟨hC, hbad⟩
     rw [hΩeq]
