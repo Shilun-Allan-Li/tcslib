@@ -1,7 +1,4 @@
-/-
-CSS stabilizer codes (q-ary) in a single file.
-This module reuses Codeword/Code and basic combinatorial style from CodingTheory.Basic.
--/
+
 
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
