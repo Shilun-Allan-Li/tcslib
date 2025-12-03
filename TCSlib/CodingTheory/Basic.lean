@@ -38,7 +38,7 @@ import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Order.Filter.Basic
 import Mathlib.Order.Disjoint
 -- import Mathlib
-
+set_option pp.showLetValues.threshold 0
 /-!
 # Code Definitions
 
@@ -1981,33 +1981,35 @@ theorem list_decoding_capacity
 := by
   classical
   intro r M
-  have hq_pos : (1 : ℝ) < (q : ℝ) := by
-    rw [hq]
-    exact_mod_cast Fintype.one_lt_card
-  have hr : r ≤ 1 := by
-    have hH : 0 < qaryEntropy q p := qary_entropy_pos q p hq hp
-    have hL0 : 0 ≤ 1 / (L : ℝ) := by
-      have : (0 : ℝ) < (L : ℝ) := by
-        exact_mod_cast (lt_of_lt_of_le (Nat.succ_pos 0) hL)
-      exact one_div_nonneg.mpr (le_of_lt this)
-    dsimp [r]
-    linarith
+  by_cases hLM : M ≤ L
+  · sorry
+  · rw [not_le] at hLM
+    have hq_pos : (1 : ℝ) < (q : ℝ) := by
+      rw [hq]
+      exact_mod_cast Fintype.one_lt_card
+    have hr : r ≤ 1 := by
+      have hH : 0 < qaryEntropy q p := qary_entropy_pos q p hq hp
+      have hL0 : 0 ≤ 1 / (L : ℝ) := by
+        have : (0 : ℝ) < (L : ℝ) := by
+          exact_mod_cast (lt_of_lt_of_le (Nat.succ_pos 0) hL)
+        exact one_div_nonneg.mpr (le_of_lt this)
+      dsimp [r]
+      linarith
 
-  let y := Classical.arbitrary (Codeword n α)
+    let y := Classical.arbitrary (Codeword n α)
 
-  let radius : ℕ := Nat.floor (p * n)
-  let N : ℕ := q ^ n
+    let radius : ℕ := Nat.floor (p * n)
+    let N : ℕ := q ^ n
 
-  let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
-  have hΩcard : Ω.card = Nat.choose N M := by
-    have h : (Finset.univ : Finset (Codeword n α)).card = q ^ n := by
-      simp [Finset.card_univ, Fintype.card_fin, hq]
-    dsimp [Ω]
-    simp [h]
-    unfold N
-    rfl
-  have hΩcardpos : (0 : ℝ) < (Ω.card : ℝ) := by
-    rw [hΩcard]
+    let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
+    have hΩcard : Ω.card = Nat.choose N M := by
+      have h : (Finset.univ : Finset (Codeword n α)).card = q ^ n := by
+        simp [Finset.card_univ, Fintype.card_fin, hq]
+      dsimp [Ω]
+      simp [h]
+      unfold N
+      rfl
+
     have m_le_n : M ≤ N := by
       show Nat.floor ((q : ℝ) ^ (r * n)) ≤ q ^ n
       have hr : r * n ≤ n := by
@@ -2017,100 +2019,186 @@ theorem list_decoding_capacity
       have : Nat.floor ((q : ℝ) ^ (r * n)) ≤ (q : ℝ) ^ (n : ℝ) := by
         linarith [Nat.floor_le (Real.rpow_nonneg (by exact Nat.cast_nonneg' q) (r * n))]
       norm_cast at this
-    apply Nat.choose_pos at m_le_n
-    exact_mod_cast m_le_n
 
-  let bad_code_at (C : Code n α) (y : Codeword n α) := ((hamming_ball radius y) ∩ C).card ≥ L + 1
-  let bad_codes_at (y : Codeword n α) := {C : (Code n α) | bad_code_at C y}
-  let bad_codes := {C: (Code n α) | ∃ y : Codeword n α, bad_code_at C y}
-  let bad_in_Ω : Finset (Code n α) := Ω.filter (fun C => C ∈ bad_codes)
+    have hΩcardpos : (0 : ℝ) < (Ω.card : ℝ) := by
+      rw [hΩcard]
+      have m_le_n : M ≤ N := by
+        linarith
+      apply Nat.choose_pos at m_le_n
+      exact_mod_cast m_le_n
 
-  -- 1) one center
-  have one_center_bound :
-    ((Ω.filter (fun C => C ∈ bad_codes_at y)).card : ℝ) / (Ω.card : ℝ)
-    ≤ (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
-      * (Nat.choose M (L+1) : ℝ) / (Nat.choose N (L+1) : ℝ)
-  := by
-    sorry
+    let bad_code_at (C : Code n α) (y : Codeword n α) := ((hamming_ball radius y) ∩ C).card ≥ L + 1
+    let bad_codes_at (y : Codeword n α) := {C : (Code n α) | bad_code_at C y}
+    let bad_codes := {C: (Code n α) | ∃ y : Codeword n α, bad_code_at C y}
+    let bad_in_Ω : Finset (Code n α) := Ω.filter (fun C => C ∈ bad_codes)
 
-  -- 2) union bound over all centers
-  have union_bound :
-    (bad_in_Ω.card : ℝ) / (Ω.card : ℝ)
-    ≤ N * (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
-      * (Nat.choose M (L+1) : ℝ) / (Nat.choose N (L+1) : ℝ)
-  := by
-    sorry
+    -- 1) one center
+    have one_center_bound :
+      ((Ω.filter (fun C => C ∈ bad_codes_at y)).card : ℝ) / (Ω.card : ℝ)
+      ≤ (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
+        * (Nat.choose M (L+1) : ℝ) / (Nat.choose N (L+1) : ℝ)
+    := by
+      simp only [hΩcard]
+      repeat rw [Nat.choose_eq_factorial_div_factorial, Nat.cast_div, Nat.cast_mul]
+      ring_nf
+      rw [inv_inv, inv_inv, inv_inv, inv_inv]
+      ring_nf
 
-  -- 3) |B| ≤ 2^{H(p) n}
-  have hamming_ball_vol_bound :
-    (hamming_ball radius y).card ≤ Real.rpow q (qaryEntropy q p * n)
-  := by
-    have hα : Nontrivial α := inferInstance
-    have hr : radius = ⌊↑n * p⌋₊ := by rw [mul_comm]
-    rw [hr]
-    refine (hamming_ball_size_asymptotic_upper_bound q n p hq hα hp) y
+      rw [pow_two]
+      have h1L_nonzero : (↑(1 + L).factorial : ℝ) ≠ 0 := by
+        exact_mod_cast (Nat.factorial_ne_zero (1 + L))
+      simp only[← mul_assoc]
+      simp [*, -hamming_ball]
 
-  -- 4) choose ≤ power/(L+1)!
-  have choose_bound :
-    (Nat.choose M (L+1) : ℝ) ≤ (M : ℝ)^(L+1) / (Nat.factorial (L+1))
-  := by
-    sorry
+      have hNM_nonneg : 0 < (N.factorial : ℝ)⁻¹ * (M.factorial : ℝ) := by
+        apply mul_pos_iff.2
+        left
+        constructor
+        · apply inv_pos.2
+          exact_mod_cast Nat.factorial_pos N
+        · exact_mod_cast Nat.factorial_pos M
+      have h_rotate :
+        (({C ∈ Ω | C ∈ bad_codes_at y}).card : ℝ) * (N.factorial : ℝ)⁻¹ * (M.factorial : ℝ) * ((N - M).factorial : ℝ) =
+          ((N.factorial : ℝ)⁻¹ * (M.factorial : ℝ)) *
+            ((({C ∈ Ω | C ∈ bad_codes_at y}).card : ℝ) * ((N - M).factorial : ℝ)) := by
+        ac_rfl
+      have h_group :
+        (N.factorial : ℝ)⁻¹ * (M.factorial : ℝ) *
+          (((hamming_ball radius y).card).factorial : ℝ) * ((1 + L).factorial : ℝ)⁻¹ *
+          (((hamming_ball radius y).card - (1 + L)).factorial : ℝ)⁻¹ *
+          ((M - (1 + L)).factorial : ℝ)⁻¹ *
+          ((N - (1 + L)).factorial : ℝ) =
+          ((N.factorial : ℝ)⁻¹ * (M.factorial : ℝ)) *
+          ((((hamming_ball radius y).card).factorial : ℝ) * ((1 + L).factorial : ℝ)⁻¹ *
+          (((hamming_ball radius y).card - (1 + L)).factorial : ℝ)⁻¹ *
+          ((M - (1 + L)).factorial : ℝ)⁻¹ *
+          ((N - (1 + L)).factorial : ℝ)) := by
+        ac_rfl
+      rw [h_rotate, h_group]
+      rw [mul_le_mul_iff_of_pos_left hNM_nonneg]
+      sorry
+      apply Nat.factorial_mul_factorial_dvd_factorial
+      linarith [hLM, m_le_n]
+      exact_mod_cast mul_ne_zero (Nat.factorial_ne_zero (L + 1)) (Nat.factorial_ne_zero (N - (L + 1)))
+      linarith [hLM, m_le_n]
+      apply Nat.factorial_mul_factorial_dvd_factorial
+      linarith [hLM]
+      exact_mod_cast mul_ne_zero (Nat.factorial_ne_zero (L + 1)) (Nat.factorial_ne_zero (M - (L + 1)))
+      linarith [hLM]
+      apply Nat.factorial_mul_factorial_dvd_factorial
+      sorry
+      exact_mod_cast mul_ne_zero (Nat.factorial_ne_zero (L + 1)) (Nat.factorial_ne_zero ((hamming_ball radius y).card - (L + 1)))
+      sorry
+      apply Nat.factorial_mul_factorial_dvd_factorial
+      exact m_le_n
+      exact_mod_cast mul_ne_zero (Nat.factorial_ne_zero M) (Nat.factorial_ne_zero (N - M))
+      exact m_le_n
 
-  -- 5) substitute M=⌊2^{r n}⌋, r = 1 - H(p) - 1/L and simplify to < 1
-  have bad_frac_lt_one :
-    (bad_in_Ω.card : ℝ) / (Ω.card : ℝ) < 1
-  := by
-    -- combine union_bound, hamming_ball_vol_bound, choose_bound and r-definition
-    sorry
+    have union_bound :
+      (bad_in_Ω.card : ℝ) / (Ω.card : ℝ)
+      ≤ N * (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
+        * (Nat.choose M (L+1) : ℝ) / (Nat.choose N (L+1) : ℝ)
+    := by
+      sorry
 
-  -- finish proof via contradiction
-  by_contra! hcontra
-  have all_bad : bad_in_Ω.card = Ω.card := by
-    have hΩeq : bad_in_Ω = Ω := by
-      ext C
-      constructor
-      · intro hC
-        specialize hcontra C
-        sorry
-      --   rw [hC.1] at hcontra
-      --   simp at hcontra
-      --   have hsub : C ⊆ (Finset.univ : Finset _) := by
-      --     intro x hx
-      --     simp
-      --   exact (mem_powersetCard.mpr ⟨hsub, by simp [hC.1]⟩)
-      · intro hC
-        have hbad : ∃ y, L + 1 ≤ (toFinset {c' | hamming_distance c' y ≤ ⌊p * ↑n⌋₊} ∩ C).card := by
-          sorry
-          -- classical
-          -- obtain ⟨-, hcard⟩ := Finset.mem_powersetCard.1 hC
-          -- have hM : M ≤ C.card := by simp [hcard]
-          -- simp [M, r] at hM
-          -- have : p ≤ (1 : ℝ) := le_trans hp.2 (by norm_num)
-          -- have : ¬ list_decodable p (by linarith [hp.1]) this n L hL C := hcontra C hM
-          -- have : ∃ y, ¬ (hamming_ball radius y ∩ C).card ≤ L := by
-            -- unfold list_decodable at this
-            -- exact not_forall.1 this
-          -- rcases this with ⟨y', hy'⟩
-          -- have : L + 1 ≤ (hamming_ball radius y' ∩ C).card :=
-            -- Nat.succ_le_of_lt (Nat.lt_of_not_ge hy')
-          -- simpa [radius, hamming_ball] using ⟨y', this⟩
-        refine Finset.mem_filter.mpr ?_
-        exact ⟨hC, hbad⟩
-    rw [hΩeq]
+    -- 3) |B| ≤ 2^{H(p) n}
+    have hamming_ball_vol_bound :
+      (hamming_ball radius y).card ≤ Real.rpow q (qaryEntropy q p * n)
+    := by
+      have hα : Nontrivial α := inferInstance
+      have hr : radius = ⌊↑n * p⌋₊ := by rw [mul_comm]
+      rw [hr]
+      refine (hamming_ball_size_asymptotic_upper_bound q n p hq hα hp) y
 
-  have hΩnonzero :
-    (Ω.card : ℝ) ≠ 0
-  := by
-    rw [hΩcard]
-    rw [ne_iff_lt_or_gt]
-    right
-    rw [← hΩcard]
-    exact hΩcardpos
+    -- 4) choose ≤ power/(L+1)!
+    have choose_bound :
+      (Nat.choose M (L+1) : ℝ) ≤ (M : ℝ)^(L + 1 : ℝ) / (Nat.factorial (L+1) : ℝ)
+    := by
+      rw [Nat.choose_eq_factorial_div_factorial, Nat.cast_div, Nat.cast_mul]
+      ring_nf
+      have h_rotate : (M.factorial : ℝ) * ((1 + L).factorial : ℝ)⁻¹ * ((M - (1 + L)).factorial : ℝ)⁻¹ = ((1 + L).factorial : ℝ)⁻¹ * (M.factorial : ℝ) * ((M - (1 + L)).factorial : ℝ)⁻¹ := by
+        ac_rfl
+      rw [h_rotate]
+      have hgroup : ((1 + L).factorial : ℝ)⁻¹ * (M.factorial : ℝ) * ((M - (1 + L)).factorial : ℝ)⁻¹ =
+        ((1 + L).factorial : ℝ)⁻¹ * ((M.factorial : ℝ) * ((M - (1 + L)).factorial : ℝ)⁻¹) := by ac_rfl
+      have hgroup' : ((1 + L).factorial : ℝ)⁻¹ * (M : ℝ) * (M : ℝ) ^ (L : ℝ) =
+        ((1 + L).factorial : ℝ)⁻¹ * ((M : ℝ) *  (M : ℝ) ^ (L : ℝ)) := by ac_rfl
+      have : 0 < ((1 + L).factorial : ℝ)⁻¹ := by
+        apply inv_pos.2
+        exact_mod_cast Nat.factorial_pos (1 + L)
+      rw [hgroup]
+      rw [mul_le_mul_iff_of_pos_left this]
+      rw [← div_eq_mul_inv]
+      have : (M.descFactorial (1 + L) : ℝ) ≤ (M : ℝ) ^ (1 + L : ℝ) := by exact_mod_cast Nat.descFactorial_le_pow M (1 + L)
+      rw [Nat.descFactorial_eq_div] at this
+      rw [← Nat.cast_div]
+      exact this
 
-  have frac_eq_one :
-    (bad_in_Ω.card : ℝ) / (Ω.card : ℝ) = 1
-  := by
-    rw [all_bad]
-    exact div_self hΩnonzero
+      apply Nat.factorial_dvd_factorial
+      simp
+      exact_mod_cast Nat.factorial_ne_zero (M - (1 + L))
+      linarith
+      apply Nat.factorial_mul_factorial_dvd_factorial
+      linarith
+      exact_mod_cast mul_ne_zero (Nat.factorial_ne_zero (L + 1)) (Nat.factorial_ne_zero (M - (L + 1)))
+      linarith
 
-  exact (not_lt.mpr le_rfl) (frac_eq_one ▸ bad_frac_lt_one)
+    -- 5) substitute M=⌊2^{r n}⌋, r = 1 - H(p) - 1/L and simplify to < 1
+    have bad_frac_lt_one :
+      (bad_in_Ω.card : ℝ) / (Ω.card : ℝ) < 1
+    := by
+      -- combine union_bound, hamming_ball_vol_bound, choose_bound and r-definition
+      sorry
+
+    -- finish proof via contradiction
+    by_contra hcontra
+    have all_bad : bad_in_Ω.card = Ω.card := by
+      have hΩeq : bad_in_Ω = Ω := by
+        ext C
+        constructor
+        · intro hC
+          unfold bad_in_Ω at hC
+          have hC' : C ∈ Ω ∧ C ∈ bad_codes := by
+            simpa using hC
+          exact hC'.1
+        · intro hC
+          rw [not_exists] at hcontra
+          have hbad : ∃ y, L + 1 ≤ (toFinset {c' | hamming_distance c' y ≤ ⌊p * ↑n⌋₊} ∩ C).card := by
+            classical
+            have hcard : C.card = M := by
+              simpa [Ω] using hC
+            have hM : M ≤ C.card := by simp [hcard]
+            have : p ≤ (1 : ℝ) := le_trans hp.2 (by norm_num)
+            have : ¬ list_decodable p (by linarith [hp.1]) this n L hL C := by
+              specialize hcontra C
+              rw [not_and] at hcontra
+              apply hcontra at hM
+              exact hM
+            have : ∃ y, ¬ (hamming_ball radius y ∩ C).card ≤ L := by
+              unfold list_decodable at this
+              exact not_forall.1 this
+            rcases this with ⟨y', hy'⟩
+            have : L + 1 ≤ (hamming_ball radius y' ∩ C).card :=
+              Nat.succ_le_of_lt (Nat.lt_of_not_ge hy')
+            simp only [radius, hamming_ball] at this
+            exact ⟨y', this⟩
+          refine Finset.mem_filter.mpr ?_
+          exact ⟨hC, hbad⟩
+      rw [hΩeq]
+
+    have hΩnonzero :
+      (Ω.card : ℝ) ≠ 0
+    := by
+      rw [hΩcard]
+      rw [ne_iff_lt_or_gt]
+      right
+      rw [← hΩcard]
+      exact hΩcardpos
+
+    have frac_eq_one :
+      (bad_in_Ω.card : ℝ) / (Ω.card : ℝ) = 1
+    := by
+      rw [all_bad]
+      exact div_self hΩnonzero
+
+    exact (not_lt.mpr le_rfl) (frac_eq_one ▸ bad_frac_lt_one)
