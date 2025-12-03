@@ -2032,6 +2032,15 @@ theorem list_decoding_capacity
     let bad_codes := {C: (Code n α) | ∃ y : Codeword n α, bad_code_at C y}
     let bad_in_Ω : Finset (Code n α) := Ω.filter (fun C => C ∈ bad_codes)
 
+
+    have hamming_ball_vol_bound :
+      (hamming_ball radius y).card ≤ Real.rpow q (qaryEntropy q p * n)
+    := by
+      have hα : Nontrivial α := inferInstance
+      have hr : radius = ⌊↑n * p⌋₊ := by rw [mul_comm]
+      rw [hr]
+      refine (hamming_ball_size_asymptotic_upper_bound q n p hq hα hp) y
+
     -- 1) one center
     have one_center_bound :
       ((Ω.filter (fun C => C ∈ bad_codes_at y)).card : ℝ) / (Ω.card : ℝ)
@@ -2101,16 +2110,6 @@ theorem list_decoding_capacity
     := by
       sorry
 
-    -- 3) |B| ≤ 2^{H(p) n}
-    have hamming_ball_vol_bound :
-      (hamming_ball radius y).card ≤ Real.rpow q (qaryEntropy q p * n)
-    := by
-      have hα : Nontrivial α := inferInstance
-      have hr : radius = ⌊↑n * p⌋₊ := by rw [mul_comm]
-      rw [hr]
-      refine (hamming_ball_size_asymptotic_upper_bound q n p hq hα hp) y
-
-    -- 4) choose ≤ power/(L+1)!
     have choose_bound :
       (Nat.choose M (L+1) : ℝ) ≤ (M : ℝ)^(L + 1 : ℝ) / (Nat.factorial (L+1) : ℝ)
     := by
@@ -2148,7 +2147,59 @@ theorem list_decoding_capacity
       (bad_in_Ω.card : ℝ) / (Ω.card : ℝ) < 1
     := by
       -- combine union_bound, hamming_ball_vol_bound, choose_bound and r-definition
+      have : (bad_in_Ω.card : ℝ) / (Ω.card : ℝ)
+        ≤ N * (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
+        * ((M : ℝ)^(L + 1 : ℝ) / (Nat.factorial (L+1) : ℝ))
+        / (Nat.choose N (L+1) : ℝ) := by
+        sorry
+      suffices
+        N * (Nat.choose ((hamming_ball radius y).card) (L+1) : ℝ)
+        * ((M : ℝ)^(L + 1 : ℝ) / (Nat.factorial (L+1) : ℝ))
+        / (Nat.choose N (L+1) : ℝ) < 1
+      by
+        linarith [this]
+      repeat rw [Nat.choose_eq_factorial_div_factorial, Nat.cast_div, Nat.cast_mul]
+      field_simp
+      have : 0 < (N.factorial : ℝ)⁻¹ := by positivity
+      apply mul_lt_mul_iff_left₀ at this
+      rw [← this]
+      conv =>
+        rhs
+        rw [mul_assoc]
+      have : (N.factorial : ℝ) ≠ 0 := by positivity
+      rw [mul_inv_cancel₀ this, mul_one]
+      rw [mul_assoc, ← inv_inv (((N - (L + 1)).factorial : ℝ) * (N.factorial : ℝ)⁻¹), mul_inv, inv_inv, mul_comm ((N - (L + 1)).factorial : ℝ)⁻¹ (N.factorial : ℝ), ← div_eq_mul_inv (N.factorial : ℝ) ((N - (L + 1)).factorial : ℝ), ← Nat.cast_div, ← Nat.descFactorial_eq_div]
+
+      have : (N : ℝ) * ((#(hamming_ball radius y)).factorial : ℝ) * (M : ℝ) ^ (L + 1 : ℝ) * ((N.descFactorial (L + 1)) : ℝ)⁻¹ = (N : ℝ) * (M : ℝ) ^ (L + 1 : ℝ) * ((N.descFactorial (L + 1)) : ℝ)⁻¹ * ((#(hamming_ball radius y)).factorial : ℝ) := by ac_rfl
+      rw [this]
+
+      have : 0 < ((#(hamming_ball radius y) - (L + 1)).factorial : ℝ)⁻¹ := by positivity
+      apply mul_lt_mul_iff_left₀ at this
+      rw [← this]
+      conv =>
+        rhs
+        rw [mul_assoc]
+      have : ((#(hamming_ball radius y) - (L + 1)).factorial : ℝ) ≠ 0 := by positivity
+      rw [mul_inv_cancel₀ this, mul_one]
+      rw [mul_assoc, ← div_eq_mul_inv ((#(hamming_ball radius y)).factorial : ℝ) ((#(hamming_ball radius y) - (L + 1)).factorial : ℝ), ← Nat.cast_div, ← Nat.descFactorial_eq_div]
+
       sorry
+
+      sorry
+      apply Nat.factorial_dvd_factorial
+      simp
+      positivity
+      linarith
+      apply Nat.factorial_dvd_factorial
+      simp
+      positivity
+      sorry
+      positivity
+      linarith
+      sorry
+      positivity
+      sorry
+
 
     -- finish proof via contradiction
     by_contra hcontra
