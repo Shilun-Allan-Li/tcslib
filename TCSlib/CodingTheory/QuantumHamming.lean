@@ -8,7 +8,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Algebra.Module.Basic
 import Mathlib.Algebra.Module.Submodule.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Basic
-import Mathlib.LinearAlgebra.Dual
+import Mathlib.LinearAlgebra.Dual.Defs
 import Mathlib.Data.Prod.Basic
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.Disjoint
