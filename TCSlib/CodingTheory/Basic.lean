@@ -1981,8 +1981,24 @@ theorem list_decoding_capacity
 := by
   classical
   intro r M
+  let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
+  have hΩ : Ω.Nonempty := by
+    sorry
   by_cases hLM : M ≤ L
-  · sorry
+  · rcases hΩ with ⟨C, hCΩ⟩
+    use C
+    have hCcard : #C = M := by
+      simpa [Ω] using hCΩ
+    constructor
+    · linarith [hCcard]
+    · unfold list_decodable
+      intro y
+      have : #(hamming_ball (Nat.floor (p * n)) y ∩ C) ≤ #C := by
+        have : (hamming_ball (Nat.floor (p * n)) y ∩ C) ⊆ C := by apply Finset.inter_subset_right
+        apply Finset.card_le_card
+        exact this
+      linarith
+
   · rw [not_le] at hLM
     have hq_pos : (1 : ℝ) < (q : ℝ) := by
       rw [hq]
@@ -2001,7 +2017,6 @@ theorem list_decoding_capacity
     let radius : ℕ := Nat.floor (p * n)
     let N : ℕ := q ^ n
 
-    let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
     have hΩcard : Ω.card = Nat.choose N M := by
       have h : (Finset.univ : Finset (Codeword n α)).card = q ^ n := by
         simp [Finset.card_univ, Fintype.card_fin, hq]
