@@ -2,7 +2,7 @@ import Mathlib.Computability.TMComputable
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.List.Defs
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.Asymptotics.Asymptotics
+import Mathlib.Analysis.Asymptotics.Defs
 import Mathlib.Computability.Language
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 
