@@ -135,7 +135,7 @@ For all $z,x$, $\langle(0,z),(x,0)\rangle = - (z\cdot x)$.
 \begin{lemma}[Validity implies isotropy]
 \lean{CodingTheory.css_isotropic_of_valid}
 \leanok
-\uses{\lean{CodingTheory.symplectic_inl_inl},\ \lean{CodingTheory.symplectic_inr_inr},\ \lean{CodingTheory.symplectic_inl_inr},\ \lean{CodingTheory.symplectic_inr_inl}}
+% \uses{\lean{CodingTheory.symplectic_inl_inl},\ \lean{CodingTheory.symplectic_inr_inr},\ \lean{CodingTheory.symplectic_inl_inr},\ \lean{CodingTheory.symplectic_inr_inl}}
 If $C_Z \perp C_X$ under the dot product (\lean{cssIsValid}), then the generated CSS stabilizer \lean{cssStabilizer Cz Cx} is isotropic.
 \end{lemma}
 
@@ -152,7 +152,7 @@ If \lean{cssStabilizer Cz Cx} is isotropic, then $C_Z \perp C_X$ (test isotropy 
 \begin{theorem}[Equivalence]
 \lean{CodingTheory.css_isotropic_iff_valid}
 \leanok
-\uses{\lean{CodingTheory.css_isotropic_of_valid},\ \lean{CodingTheory.css_valid_of_isotropic}}
+% \uses{\lean{CodingTheory.css_isotropic_of_valid},\ \lean{CodingTheory.css_valid_of_isotropic}}
 For all $C_Z,C_X$,
 \[
 \mathrm{IsIsotropic}(\mathrm{cssStabilizer}(C_Z,C_X))
@@ -176,7 +176,7 @@ The $X$-type image of $C_Z$ and the $Z$-type image of $C_X$ intersect only at $0
 \begin{theorem}[Finrank of CSS stabilizer is additive]
 \lean{CodingTheory.finrank_cssStabilizer}
 \leanok
-\uses{\lean{CodingTheory.css_images_disjoint}}
+% \uses{\lean{CodingTheory.css_images_disjoint}}
 Assuming finite-dimensionality of \lean{Vec n α}, the finrank satisfies
 \[
 \dim(\mathrm{cssStabilizer}(C_Z,C_X))
