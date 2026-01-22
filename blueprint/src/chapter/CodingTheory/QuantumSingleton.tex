@@ -112,7 +112,7 @@ There are also finite-sum versions:
 
 \begin{definition}[Symplectic dual]
 \lean{CodingTheory.symplecticDual}
-For a submodule $S \le \lean{SympVec n α}$, define
+For a submodule $S \le \SympVec n \alpha$, define
 \[
 S^{\perp_\omega} := \{v \mid \forall s\in S,\ \langle v,s\rangle = 0\},
 \]
@@ -148,7 +148,8 @@ stabilizer must already lie in the stabilizer.
 \begin{lemma}[Erasure correctability from quantum distance]
 \lean{CodingTheory.erasure_correctable_of_dist}
 \leanok
-Let $d = \lean{quantum_distance}\,(S)$.
+Let $d$ denote the quantum distance of $S$, written in Lean as
+\lean{quantum_distance}\,(S).
 If $|E| < d$, then $E$ is erasure-correctable.
 
 The proof uses:
@@ -259,7 +260,8 @@ For a stabilizer $S$,
 \[
 \dim(S^{\perp_\omega}) - \dim(S) = 2\,(n-\dim(S)) = 2k,
 \]
-where $k = \lean{quantum_code_dimension}\,(S.S)$.
+where $k$ denotes the quantum code dimension of $S.S$,
+written in Lean as \lean{quantum_code_dimension}\,(S.S).
 \end{lemma}
 
 \section{Symplectic bases}
@@ -309,7 +311,8 @@ k \le n - 2(d-1).
 \begin{lemma}[Rank lower bound from distance]
 \lean{CodingTheory.stabilizer_rank_ge_of_distance}
 \notready
-Let $d = \lean{quantum_distance}\,(S)$.
+Let $d$ denote the quantum distance of $S$, written in Lean as
+\lean{quantum_distance}\,(S).
 Assuming a hypothesis \lean{h_basis} producing symplectic pairs with controlled support,
 one shows
 \[
@@ -322,7 +325,8 @@ one shows
 \begin{theorem}[Quantum Singleton bound]
 \lean{CodingTheory.quantum_singleton_bound}
 \notready
-Let $d = \lean{quantum_distance}\,(S)$.
+Let $d$ denote the quantum distance of $S$, written in Lean as
+\lean{quantum_distance}\,(S).
 Under the standard parameter assumptions ($0<d\le n$)
 and the auxiliary basis-existence hypothesis \lean{h_basis}, the file concludes:
 \[
