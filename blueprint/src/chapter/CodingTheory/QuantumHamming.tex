@@ -1,0 +1,229 @@
+% chapter/CodingTheory/QuantumHamming.tex
+% Blueprint for TCSlib.CodingTheory.QuantumHamming
+%
+% Intended to be \input{}'d from your main.tex (book/report class recommended).
+
+\chapter{Quantum Hamming bound for stabilizer codes}
+
+\section{Overview}
+
+This chapter formalizes a $q$-ary version of the quantum Hamming bound for stabilizer codes
+in the symplectic formalism developed in \lean{TCSlib.CodingTheory.CSS}.
+The main ingredients are:
+\begin{itemize}
+  \item the logical dimension parameter $k$ computed from the stabilizer rank;
+  \item Pauli error balls in the symplectic space and their cardinalities;
+  \item a notion of quantum distance defined by minimizing Pauli weight among
+        operators commuting with the stabilizer but not contained in it;
+  \item disjointness of correctable error balls (under suitable distance hypotheses);
+  \item the final counting argument giving the Hamming bound (for a non-degenerate/pure code).
+\end{itemize}
+
+Throughout, $\alpha$ is a finite field with $q=\lvert \alpha\rvert$, and we work over the symplectic space
+\[
+(\alpha^n)\times(\alpha^n) = \lean{SympVec n α}.
+\]
+
+\section{Imports and dependencies}
+
+This file imports \lean{TCSlib.CodingTheory.Basic} (classical codewords/weights)
+and \lean{TCSlib.CodingTheory.CSS} (symplectic form, Pauli weight on \lean{SympVec}, stabilizers).
+
+\section{Quantum code dimension}
+
+\begin{definition}[Quantum code dimension]
+\lean{CodingTheory.quantum_code_dimension}
+Assuming \lean{FiniteDimensional α (SympVec n α)}, define
+\[
+k := n - \dim_\alpha(S),
+\]
+where $S \le \lean{SympVec n α}$ is the stabilizer submodule and $\dim_\alpha(S)$ is
+\lean{FiniteDimensional.finrank α S}.
+\end{definition}
+
+\begin{remark}
+This matches the usual $[[n,k,d]]$ stabilizer convention when the stabilizer has rank $r=\dim S$.
+\end{remark}
+
+\section{Pauli error balls}
+
+\subsection{Definition}
+
+\begin{definition}[Pauli error ball]
+\lean{CodingTheory.pauli_error_ball}
+For $t\in\mathbb{N}$ and center $p\in\lean{SympVec n α}$, the error ball is the finite set
+\[
+B_t(p)=\{p' : \mathrm{wt}(p'-p)\le t\},
+\]
+implemented as a \lean{Finset} via \lean{Set.toFinset}.
+\end{definition}
+
+\subsection{Size formula}
+
+\begin{definition}[Closed form for the size]
+\lean{CodingTheory.pauli_error_ball_size}
+The intended size for a $q$-ary symplectic alphabet is
+\[
+|B_t|=\sum_{i=0}^{t} \binom{n}{i}(q^2-1)^i.
+\]
+\end{definition}
+
+\subsection{Translation invariance}
+
+\begin{lemma}[Error-ball size is independent of the center]
+\lean{CodingTheory.pauli_error_ball_size_independent}
+\leanok
+For all $p,q$, one has $\lvert B_t(p)\rvert=\lvert B_t(q)\rvert$, via translation
+$p' \mapsto p' + (q-p)$.
+\end{lemma}
+
+\subsection{Cardinality agrees with the closed form}
+
+\begin{lemma}[Cardinality of the ball]
+\lean{CodingTheory.pauli_error_ball_card}
+\notready
+The file proves (or aims to prove) that for each $t$ and $p$,
+\[
+\lvert B_t(p)\rvert=\lean{pauli_error_ball_size}\ t
+=\sum_{i=0}^{t} \binom{n}{i}(q^2-1)^i.
+\]
+This is a counting argument by choosing the support set of size $i$ and
+assigning a nonzero element of $\alpha\times\alpha$ at each chosen coordinate.
+\end{lemma}
+
+\section{Quantum distance}
+
+\subsection{Definition}
+
+\begin{definition}[Quantum distance]
+\lean{CodingTheory.quantum_distance}
+Given a stabilizer \lean{S : Stabilizer n α}, define the candidate set of Pauli operators
+$p$ satisfying:
+\begin{itemize}
+  \item $p$ commutes with every stabilizer element (symplectic form equals $0$);
+  \item $p \notin S$ (not a stabilizer element);
+  \item $\mathrm{wt}(p)\neq 0$ (nontrivial).
+\end{itemize}
+Then \lean{quantum_distance S} is the minimum Pauli weight among candidates,
+or $0$ if there are no candidates.
+\end{definition}
+
+\subsection{Upper bounds from witnesses}
+
+\begin{lemma}[Distance is at most the weight of any valid witness]
+\lean{CodingTheory.quantum_distance_le_pauliWeight}
+\leanok
+If $p$ commutes with the stabilizer, $p\notin S$, and $\mathrm{wt}(p)\neq 0$, then
+\[
+\lean{quantum_distance S} \le \lean{pauliWeight}\ p.
+\]
+\end{lemma}
+
+\subsection{Commutation is stable under subtraction}
+
+\begin{lemma}[Symplectic form is additive in the left argument under subtraction]
+\lean{CodingTheory.symplecticForm_sub_left}
+\leanok
+\[
+\langle u-v, w\rangle = \langle u,w\rangle - \langle v,w\rangle.
+\]
+\end{lemma}
+
+\begin{lemma}[If two operators commute with the stabilizer, so does their difference]
+\lean{CodingTheory.commutesWithStabilizer_sub}
+\leanok
+If $p$ and $q$ commute with every $s\in S$, then $p-q$ also commutes with every $s\in S$.
+\end{lemma}
+
+\subsection{Distance bound for differences of commuting operators}
+
+\begin{lemma}[Distance is bounded by the weight of a difference]
+\lean{CodingTheory.quantum_distance_le_weight_sub}
+\leanok
+If $p,q$ commute with the stabilizer, and $p-q\notin S$ with nonzero weight, then
+\[
+\lean{quantum_distance S} \le \mathrm{wt}(p-q).
+\]
+\end{lemma}
+
+\begin{lemma}[Convenient inequality form]
+\lean{CodingTheory.pauliWeight_sub_ge_of_commuting}
+\leanok
+If $d \le \lean{quantum_distance S}$, then under the same hypotheses,
+\[
+d \le \mathrm{wt}(p-q).
+\]
+\end{lemma}
+
+\section{Disjointness of correctable error balls}
+
+\begin{lemma}[Disjointness of error balls]
+\lean{CodingTheory.pauli_error_ball_disjoint}
+\notready
+Given a distance parameter $d>0$ and two distinct stabilizer elements $p_1\neq p_2$,
+if $\mathrm{wt}(p_1-p_2)\ge d$, then the balls of radius
+\[
+t=\left\lfloor \frac{d-1}{2}\right\rfloor
+\]
+around $p_1$ and $p_2$ are disjoint:
+\[
+B_t(p_1)\cap B_t(p_2)=\varnothing.
+\]
+The proof follows the standard triangle-inequality argument: any common element would
+force $\mathrm{wt}(p_1-p_2)\le \mathrm{wt}(x-p_1)+\mathrm{wt}(x-p_2)\le 2t < d$.
+\end{lemma}
+
+\section{Auxiliary inequality: triangle inequality for Pauli weight}
+
+\begin{lemma}[Pauli-weight triangle inequality]
+\lean{CodingTheory.pauliWeight_triangle}
+\notready
+The development includes a lemma of the form
+\[
+\mathrm{wt}(p-q) \le \mathrm{wt}(p)+\mathrm{wt}(q),
+\]
+used to bound weights of differences in subsequent disjointness / packing arguments.
+\end{lemma}
+
+\section{Quantum Hamming bound}
+
+\subsection{Statement}
+
+\begin{theorem}[Quantum Hamming bound for stabilizer codes]
+\lean{CodingTheory.quantum_hamming_bound}
+\notready
+Let $S$ be a stabilizer code on $n$ qudits over $\alpha$ with $q=\lvert\alpha\rvert>1$.
+Assume:
+\begin{itemize}
+  \item $k = \lean{quantum_code_dimension}\ S.S$;
+  \item a distance parameter $d>0$ with $d\le n$ and $d\le \lean{quantum_distance S}$;
+  \item \emph{purity / non-degeneracy}:
+    for any $e\in S.S$ with $\mathrm{wt}(e)<d$, one has $e=0$.
+\end{itemize}
+Let $t=\left\lfloor \frac{d-1}{2}\right\rfloor$. Then
+\[
+q^k \cdot \sum_{i=0}^{t} \binom{n}{i}(q^2-1)^i \;\le\; q^n.
+\]
+\end{theorem}
+
+\subsection{Proof structure}
+
+The proof follows the standard sphere-packing / syndrome-counting argument:
+\begin{enumerate}
+  \item Compute the ball size \lean{pauli_error_ball_card} and rewrite it as the closed form sum.
+  \item Define the \emph{syndrome map} sending a Pauli operator $p$ to the linear functional
+        $s \mapsto \langle p, s\rangle$ on the stabilizer $S.S$.
+        This is implemented as a linear map into \lean{S.S →ₗ[α] α}.
+  \item Bound the size of the syndrome space using finite-dimensional linear algebra, yielding
+        $\lvert S.S \toₗ \alpha\rvert = q^{n-k}$ (the code constraints).
+  \item Prove injectivity of the syndrome map on the radius-$t$ ball centered at $0$,
+        using:
+        \begin{itemize}
+          \item if two errors have the same syndrome, their difference commutes with the stabilizer;
+          \item if the difference is not in the stabilizer, its weight is at least the distance;
+          \item but the triangle/ball radius bounds force its weight $<d$;
+          \item purity then forces the difference to be $0$.
+        \end{itemize}
+  \item Conclude $\lvert B_t\rvert \le q^{n-k}$, then multiply by $q^k$ to obtain the final inequality.
+\end{enumerate}
+

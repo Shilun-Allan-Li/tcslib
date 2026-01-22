@@ -1,0 +1,339 @@
+% chapter/CodingTheory/QuantumSingleton.tex
+% Blueprint for TCSlib.CodingTheory.QuantumSingleton
+%
+% Intended to be \input{}'d from your main.tex (book/report class recommended).
+
+\chapter{Quantum Singleton bound via symplectic methods}
+
+\section{Overview}
+
+This chapter develops a proof skeleton of the quantum Singleton bound for stabilizer codes:
+\[
+k \le n - 2(d-1),
+\]
+for a $[[n,k,d]]$ stabilizer code (over a finite field $\alpha$ with $q = |\alpha|$),
+using the symplectic formalism from \lean{TCSlib.CodingTheory.CSS} and the quantum-distance
+machinery from \lean{TCSlib.CodingTheory.QuantumHamming}.
+
+The Lean file focuses on:
+\begin{itemize}
+  \item bilinearity and nondegeneracy of the symplectic form;
+  \item defining the symplectic dual $S^{\perp_\omega}$ of a submodule $S$;
+  \item an ``erasure correctability from distance'' lemma;
+  \item a support-restriction submodule with an explicit dimension computation;
+  \item a rank bound extracted from commutator relations (a symplectic-pairing argument);
+  \item reducing Singleton to a stabilizer-rank lower bound of the form
+        $2(d-1)\le \mathrm{rank}(S)$, then translating to the usual inequality on $k$.
+\end{itemize}
+
+\section{Imports and dependencies}
+
+This file imports \lean{TCSlib.CodingTheory.QuantumHamming}, hence depends on:
+\lean{TCSlib.CodingTheory.CSS} (symplectic form, Pauli weight, stabilizers) and
+\lean{TCSlib.CodingTheory.Basic}.
+
+\section{Symplectic form bilinearity}
+
+\subsection{A bundled bilinear form}
+
+\begin{definition}[Bundled symplectic bilinear form]
+\lean{CodingTheory.symplecticBilin}
+The symplectic form \lean{symplecticForm} is packaged as a bilinear form
+\lean{LinearMap.BilinForm α (SympVec n α)} with the four linearity fields proven by
+expanding sums over coordinates and using ring normalization.
+\end{definition}
+
+\subsection{Convenience lemmas}
+
+The file records standard consequences of bilinearity:
+
+\begin{lemma}[Additivity in the left argument]
+\lean{CodingTheory.symplecticForm_add_left}
+\leanok
+\[
+\langle x+y, z\rangle = \langle x,z\rangle + \langle y,z\rangle.
+\]
+\end{lemma}
+
+\begin{lemma}[Additivity in the right argument]
+\lean{CodingTheory.symplecticForm_add_right}
+\leanok
+\[
+\langle x, y+z\rangle = \langle x,y\rangle + \langle x,z\rangle.
+\]
+\end{lemma}
+
+\begin{lemma}[Homogeneity in the left argument]
+\lean{CodingTheory.symplecticForm_smul_left}
+\leanok
+\[
+\langle c\cdot x, y\rangle = c\,\langle x,y\rangle.
+\]
+\end{lemma}
+
+\begin{lemma}[Homogeneity in the right argument]
+\lean{CodingTheory.symplecticForm_smul_right}
+\leanok
+\[
+\langle x, c\cdot y\rangle = c\,\langle x,y\rangle.
+\]
+\end{lemma}
+
+There are also finite-sum versions:
+
+\begin{lemma}[Sum in the left argument]
+\lean{CodingTheory.symplecticForm_sum_left}
+\leanok
+\[
+\left\langle \sum_{i\in s} f(i),\, y\right\rangle
+= \sum_{i\in s}\langle f(i),y\rangle.
+\]
+\end{lemma}
+
+\begin{lemma}[Sum in the right argument]
+\lean{CodingTheory.symplecticForm_sum_right}
+\leanok
+\[
+\left\langle x,\, \sum_{i\in s} f(i)\right\rangle
+= \sum_{i\in s}\langle x,f(i)\rangle.
+\]
+\end{lemma}
+
+\begin{lemma}[Weighted sum in the left argument]
+\lean{CodingTheory.symplecticForm_smul_sum_left}
+\leanok
+\[
+\left\langle \sum_{i\in s} \ell(i)\,f(i),\, y\right\rangle
+= \sum_{i\in s}\ell(i)\,\langle f(i),y\rangle.
+\]
+\end{lemma}
+
+\section{Symplectic dual}
+
+\begin{definition}[Symplectic dual]
+\lean{CodingTheory.symplecticDual}
+For a submodule $S \le \lean{SympVec n α}$, define
+\[
+S^{\perp_\omega} := \{v \mid \forall s\in S,\ \langle v,s\rangle = 0\},
+\]
+as a \lean{Submodule} with closure under $0$, addition, and scalar multiplication
+proved using bilinearity.
+\end{definition}
+
+\begin{lemma}[Stabilizer isotropy]
+\lean{CodingTheory.stabilizer_is_isotropic}
+\leanok
+Restates \lean{S.isIso} in a convenient $\forall s\in S, \forall t\in S$ form.
+\end{lemma}
+
+\begin{lemma}[Stabilizer is contained in its symplectic dual]
+\lean{CodingTheory.stabilizer_le_symplecticDual}
+\leanok
+If $S$ is a stabilizer (isotropic), then $S \le S^{\perp_\omega}$.
+\end{lemma}
+
+\section{Erasure correction from distance}
+
+\subsection{Correctability predicate}
+
+\begin{definition}[Erasure correctability]
+\lean{CodingTheory.ErasureCorrectable}
+Given an erased coordinate set $E\subseteq \{1,\dots,n\}$, we say $E$ is correctable for
+a stabilizer $S$ if every Pauli operator $p$ supported inside $E$ that commutes with the
+stabilizer must already lie in the stabilizer.
+\end{definition}
+
+\subsection{Distance implies erasure correctability}
+
+\begin{lemma}[Erasure correctability from quantum distance]
+\lean{CodingTheory.erasure_correctable_of_dist}
+\leanok
+If $|E| < \lean{quantum_distance S}$, then $E$ is erasure-correctable.
+The proof uses:
+\begin{itemize}
+  \item support $\Rightarrow$ weight bound $\mathrm{wt}(p)\le |E|$;
+  \item if $p\notin S$ and $p$ commutes with $S$, then $\lean{quantum_distance S}\le \mathrm{wt}(p)$
+        (via \lean{quantum_distance_le_pauliWeight});
+  \item contradiction with $|E|<\lean{quantum_distance S}$.
+\end{itemize}
+\end{lemma}
+
+\subsection{Restriction operators and cleaning}
+
+The file introduces:
+\begin{itemize}
+  \item \lean{restrictTo p erased}: zeroes out coordinates outside the erased set;
+  \item \lean{symplecticFormOn C p q}: symplectic form summed only over coordinates in $C$;
+  \item lemmas relating restriction to the restricted symplectic sum, and a
+        ``cleaning'' lemma producing a stabilizer element that cancels a logical operator on $E$.
+\end{itemize}
+
+\begin{lemma}[Restriction preserves the restricted form]
+\lean{CodingTheory.symplecticFormOn_restrict}
+\leanok
+\[
+\langle \mathrm{restrict}(p), q\rangle_{E} = \langle p,q\rangle_{E}.
+\]
+\end{lemma}
+
+\begin{lemma}[Restricted logical operator is a stabilizer]
+\lean{CodingTheory.restrict_logical_to_erased_in_stabilizer}
+\notready
+Assuming erasure correctability on $E$ and a commuting logical operator $L$,
+the restriction $\mathrm{restrictTo}(L,E)$ lies in the stabilizer.
+\end{lemma}
+
+\begin{lemma}[Cleaning lemma]
+\lean{CodingTheory.clean_logical_operator}
+\notready
+There exists $s\in S$ such that $L+s$ vanishes on the erased set $E$ coordinatewise.
+\end{lemma}
+
+\section{Support submodule and its dimension}
+
+\subsection{Submodule of vectors supported on a set}
+
+\begin{definition}[Support submodule]
+\lean{CodingTheory.supportSubmodule}
+For $C\subseteq \{1,\dots,n\}$, define the submodule consisting of symplectic vectors
+supported inside $C$:
+\[
+V_C := \{v \mid \forall j\notin C,\ v(j)=0\}.
+\]
+\end{definition}
+
+\subsection{Explicit linear equivalence to $(C\to \alpha)\times (C\to \alpha)$}
+
+The file constructs:
+\begin{itemize}
+  \item a restriction linear map \lean{restrictToC};
+  \item an extension linear map \lean{extendFromC};
+  \item inverse lemmas \lean{restrictToC_extendFromC} and \lean{extendFromC_restrictToC};
+  \item the resulting linear equivalence \lean{supportSubmoduleEquiv}.
+\end{itemize}
+
+\begin{lemma}[Dimension of the support submodule]
+\lean{CodingTheory.finrank_supportSubmodule}
+\leanok
+\[
+\dim_\alpha(V_C) = 2\,|C|.
+\]
+\end{lemma}
+
+\section{Decomposing the symplectic form and nondegeneracy}
+
+\begin{lemma}[Decomposition over a partition]
+\lean{CodingTheory.symplecticForm_decompose}
+\notready
+If $A,B,C$ are pairwise disjoint and $A\cup B\cup C = \mathrm{univ}$, then
+\[
+\langle p,q\rangle = \langle p,q\rangle_A + \langle p,q\rangle_B + \langle p,q\rangle_C.
+\]
+\end{lemma}
+
+\begin{lemma}[Nondegeneracy]
+\lean{CodingTheory.symplecticForm_nondegenerate}
+\leanok
+If $\forall v,\ \langle u,v\rangle=0$, then $u=0$.
+The proof uses special test vectors supported on a single coordinate to read off
+each component of $u$.
+\end{lemma}
+
+\section{Dimension of the symplectic dual and logical space}
+
+\begin{lemma}[Dimension of the symplectic dual]
+\lean{CodingTheory.finrank_symplecticDual}
+\notready
+For finite-dimensional ambient space,
+\[
+\dim(S^{\perp_\omega}) = 2n - \dim(S).
+\]
+The proof packages the bilinear form as a linear map into the dual space, uses
+nondegeneracy to show injectivity, and relates $S^{\perp_\omega}$ to a dual annihilator.
+\end{lemma}
+
+\begin{lemma}[Logical space dimension identity]
+\lean{CodingTheory.finrank_logical_space}
+\notready
+For a stabilizer $S$,
+\[
+\dim(S^{\perp_\omega}) - \dim(S) = 2\,(n-\dim(S)) = 2k,
+\]
+where $k=\lean{quantum_code_dimension S.S}$.
+\end{lemma}
+
+\section{Symplectic bases}
+
+\begin{definition}[Symplectic basis in a submodule]
+\lean{CodingTheory.SymplecticBasis}
+A structure packaging $k$ symplectic pairs $(X_i,Z_i)$ inside a submodule $V$
+such that:
+\[
+\langle X_i, Z_j\rangle = \delta_{ij},\quad
+\langle X_i,X_j\rangle=0,\quad
+\langle Z_i,Z_j\rangle=0.
+\]
+\end{definition}
+
+\section{A rank bound from commutator relations}
+
+\begin{lemma}[Rank bound from commutators (support version)]
+\lean{CodingTheory.rank_bound_from_commutators_simple}
+\notready
+Given $k$ symplectic pairs $(X_i,Z_i)$ supported inside a coordinate set $C$ and satisfying
+the canonical commutation relations, one proves:
+\[
+k \le |C|.
+\]
+The argument is: the $2k$ vectors are linearly independent inside the support submodule
+$V_C$, hence
+\[
+2k = \dim(\mathrm{span}\{X_i,Z_i\}) \le \dim(V_C) = 2|C|,
+\]
+so $k\le |C|$.
+\end{lemma}
+
+\section{From stabilizer rank to the Singleton bound}
+
+\subsection{Singleton from a stabilizer rank lower bound}
+
+\begin{lemma}[Singleton bound from rank inequality]
+\lean{CodingTheory.quantum_singleton_bound_of_rank}
+\leanok
+Assuming
+\[
+2(d-1) \le \dim(S),
+\]
+and $k=n-\dim(S)$, deduce
+\[
+k \le n - 2(d-1).
+\]
+\end{lemma}
+
+\subsection{Distance implies stabilizer rank lower bound}
+
+\begin{lemma}[Rank lower bound from distance]
+\lean{CodingTheory.stabilizer_rank_ge_of_distance}
+\notready
+Assuming $d\le \lean{quantum_distance S}$ and a hypothesis \lean{h_basis} that produces
+symplectic pairs $(X_i,Z_i)$ with controlled support after choosing disjoint sets
+$A,B$ of size $d-1$ and $C=(A\cup B)^c$, one shows
+\[
+2(d-1) \le \dim(S).
+\]
+This is the technical core reducing distance to a rank constraint using the
+commutator rank bound on the remaining coordinates.
+\end{lemma}
+
+\subsection{Main theorem}
+
+\begin{theorem}[Quantum Singleton bound]
+\lean{CodingTheory.quantum_singleton_bound}
+\notready
+Under the standard parameter assumptions ($0<d\le n$ and $d\le \lean{quantum_distance S}$)
+and the auxiliary basis-existence hypothesis \lean{h_basis}, the file concludes:
+\[
+k \le n - 2(d-1).
+\]
+\end{theorem}
+
