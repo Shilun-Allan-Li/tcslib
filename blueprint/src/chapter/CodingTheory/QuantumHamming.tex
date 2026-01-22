@@ -21,8 +21,9 @@ The main ingredients are:
 
 Throughout, $\alpha$ is a finite field with $q=\lvert \alpha\rvert$, and we work over the symplectic space
 \[
-(\alpha^n)\times(\alpha^n) = \lean{SympVec n α}.
+(\alpha^n)\times(\alpha^n),
 \]
+which is the Lean type \lean{SympVec n α}.
 
 \section{Imports and dependencies}
 
@@ -37,7 +38,7 @@ Assuming \lean{FiniteDimensional α (SympVec n α)}, define
 \[
 k := n - \dim_\alpha(S),
 \]
-where $S \le \lean{SympVec n α}$ is the stabilizer submodule and $\dim_\alpha(S)$ is
+where $S$ is the stabilizer submodule (a submodule of the symplectic space) and $\dim_\alpha(S)$ is
 \lean{FiniteDimensional.finrank α S}.
 \end{definition}
 
@@ -51,7 +52,7 @@ This matches the usual $[[n,k,d]]$ stabilizer convention when the stabilizer has
 
 \begin{definition}[Pauli error ball]
 \lean{CodingTheory.pauli_error_ball}
-For $t\in\mathbb{N}$ and center $p\in\lean{SympVec n α}$, the error ball is the finite set
+For $t\in\mathbb{N}$ and center $p$ in the symplectic space, the error ball is the finite set
 \[
 B_t(p)=\{p' : \mathrm{wt}(p'-p)\le t\},
 \]
@@ -84,7 +85,7 @@ $p' \mapsto p' + (q-p)$.
 \notready
 The file proves (or aims to prove) that for each $t$ and $p$,
 \[
-\lvert B_t(p)\rvert=\lean{pauli_error_ball_size}\ t
+\lvert B_t(p)\rvert = \text{\lean{pauli_error_ball_size}\,$t$}
 =\sum_{i=0}^{t} \binom{n}{i}(q^2-1)^i.
 \]
 This is a counting argument by choosing the support set of size $i$ and
@@ -115,7 +116,7 @@ or $0$ if there are no candidates.
 \leanok
 If $p$ commutes with the stabilizer, $p\notin S$, and $\mathrm{wt}(p)\neq 0$, then
 \[
-\lean{quantum_distance S} \le \lean{pauliWeight}\ p.
+\text{\lean{quantum_distance S}} \le \text{\lean{pauliWeight}\,p}.
 \]
 \end{lemma}
 
@@ -142,14 +143,14 @@ If $p$ and $q$ commute with every $s\in S$, then $p-q$ also commutes with every 
 \leanok
 If $p,q$ commute with the stabilizer, and $p-q\notin S$ with nonzero weight, then
 \[
-\lean{quantum_distance S} \le \mathrm{wt}(p-q).
+\text{\lean{quantum_distance S}} \le \mathrm{wt}(p-q).
 \]
 \end{lemma}
 
 \begin{lemma}[Convenient inequality form]
 \lean{CodingTheory.pauliWeight_sub_ge_of_commuting}
 \leanok
-If $d \le \lean{quantum_distance S}$, then under the same hypotheses,
+If $d \le \text{\lean{quantum_distance S}}$, then under the same hypotheses,
 \[
 d \le \mathrm{wt}(p-q).
 \]
@@ -173,7 +174,7 @@ The proof follows the standard triangle-inequality argument: any common element 
 force $\mathrm{wt}(p_1-p_2)\le \mathrm{wt}(x-p_1)+\mathrm{wt}(x-p_2)\le 2t < d$.
 \end{lemma}
 
-\section{Auxiliary inequality: triangle inequality for Pauli weight}
+\section{Auxiliary inequality for Pauli weight}
 
 \begin{lemma}[Pauli-weight triangle inequality]
 \lean{CodingTheory.pauliWeight_triangle}
@@ -195,8 +196,8 @@ used to bound weights of differences in subsequent disjointness / packing argume
 Let $S$ be a stabilizer code on $n$ qudits over $\alpha$ with $q=\lvert\alpha\rvert>1$.
 Assume:
 \begin{itemize}
-  \item $k = \lean{quantum_code_dimension}\ S.S$;
-  \item a distance parameter $d>0$ with $d\le n$ and $d\le \lean{quantum_distance S}$;
+  \item $k = \text{\lean{quantum_code_dimension}\,S.S}$;
+  \item a distance parameter $d>0$ with $d\le n$ and $d\le \text{\lean{quantum_distance S}}$;
   \item \emph{purity / non-degeneracy}:
     for any $e\in S.S$ with $\mathrm{wt}(e)<d$, one has $e=0$.
 \end{itemize}
@@ -210,7 +211,7 @@ q^k \cdot \sum_{i=0}^{t} \binom{n}{i}(q^2-1)^i \;\le\; q^n.
 
 The proof follows the standard sphere-packing / syndrome-counting argument:
 \begin{enumerate}
-  \item Compute the ball size \lean{pauli_error_ball_card} and rewrite it as the closed form sum.
+  \item Compute the ball size using \lean{pauli_error_ball_card} and rewrite it as the closed form sum.
   \item Define the \emph{syndrome map} sending a Pauli operator $p$ to the linear functional
         $s \mapsto \langle p, s\rangle$ on the stabilizer $S.S$.
         This is implemented as a linear map into \lean{S.S →ₗ[α] α}.
@@ -226,4 +227,3 @@ The proof follows the standard sphere-packing / syndrome-counting argument:
         \end{itemize}
   \item Conclude $\lvert B_t\rvert \le q^{n-k}$, then multiply by $q^k$ to obtain the final inequality.
 \end{enumerate}
-
