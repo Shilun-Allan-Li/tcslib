@@ -3,7 +3,13 @@
 % This file is not meant to be built. Build src/web.tex or src/print.text instead.
 
 
-\newcommand{\notready}{}
+\newcommand{\notready}{%
+  \marginpar{\footnotesize\textbf{Not ready}}%
+}
+
+\newcommand{\uses}[1]{%
+  \marginpar{\footnotesize Uses: #1}%
+}
 
 
 % \input{chapter/CodingTheory/Basic.tex}
