@@ -148,13 +148,15 @@ stabilizer must already lie in the stabilizer.
 \begin{lemma}[Erasure correctability from quantum distance]
 \lean{CodingTheory.erasure_correctable_of_dist}
 \leanok
-If $|E| < \lean{quantum_distance S}$, then $E$ is erasure-correctable.
+Let $d = \lean{quantum_distance}\,(S)$.
+If $|E| < d$, then $E$ is erasure-correctable.
+
 The proof uses:
 \begin{itemize}
   \item support $\Rightarrow$ weight bound $\mathrm{wt}(p)\le |E|$;
-  \item if $p\notin S$ and $p$ commutes with $S$, then $\lean{quantum_distance S}\le \mathrm{wt}(p)$
+  \item if $p\notin S$ and $p$ commutes with $S$, then $d \le \mathrm{wt}(p)$
         (via \lean{quantum_distance_le_pauliWeight});
-  \item contradiction with $|E|<\lean{quantum_distance S}$.
+  \item contradiction with $|E|<d$.
 \end{itemize}
 \end{lemma}
 
@@ -162,8 +164,8 @@ The proof uses:
 
 The file introduces:
 \begin{itemize}
-  \item \lean{restrictTo p erased}: zeroes out coordinates outside the erased set;
-  \item \lean{symplecticFormOn C p q}: symplectic form summed only over coordinates in $C$;
+  \item \lean{restrictTo}: zeroes out coordinates outside the erased set;
+  \item \lean{symplecticFormOn}: symplectic form summed only over coordinates in a set;
   \item lemmas relating restriction to the restricted symplectic sum, and a
         ``cleaning'' lemma producing a stabilizer element that cancels a logical operator on $E$.
 \end{itemize}
@@ -248,8 +250,6 @@ For finite-dimensional ambient space,
 \[
 \dim(S^{\perp_\omega}) = 2n - \dim(S).
 \]
-The proof packages the bilinear form as a linear map into the dual space, uses
-nondegeneracy to show injectivity, and relates $S^{\perp_\omega}$ to a dual annihilator.
 \end{lemma}
 
 \begin{lemma}[Logical space dimension identity]
@@ -259,7 +259,7 @@ For a stabilizer $S$,
 \[
 \dim(S^{\perp_\omega}) - \dim(S) = 2\,(n-\dim(S)) = 2k,
 \]
-where $k=\lean{quantum_code_dimension S.S}$.
+where $k = \lean{quantum_code_dimension}\,(S.S)$.
 \end{lemma}
 
 \section{Symplectic bases}
@@ -285,12 +285,6 @@ the canonical commutation relations, one proves:
 \[
 k \le |C|.
 \]
-The argument is: the $2k$ vectors are linearly independent inside the support submodule
-$V_C$, hence
-\[
-2k = \dim(\mathrm{span}\{X_i,Z_i\}) \le \dim(V_C) = 2|C|,
-\]
-so $k\le |C|$.
 \end{lemma}
 
 \section{From stabilizer rank to the Singleton bound}
@@ -315,14 +309,12 @@ k \le n - 2(d-1).
 \begin{lemma}[Rank lower bound from distance]
 \lean{CodingTheory.stabilizer_rank_ge_of_distance}
 \notready
-Assuming $d\le \lean{quantum_distance S}$ and a hypothesis \lean{h_basis} that produces
-symplectic pairs $(X_i,Z_i)$ with controlled support after choosing disjoint sets
-$A,B$ of size $d-1$ and $C=(A\cup B)^c$, one shows
+Let $d = \lean{quantum_distance}\,(S)$.
+Assuming a hypothesis \lean{h_basis} producing symplectic pairs with controlled support,
+one shows
 \[
 2(d-1) \le \dim(S).
 \]
-This is the technical core reducing distance to a rank constraint using the
-commutator rank bound on the remaining coordinates.
 \end{lemma}
 
 \subsection{Main theorem}
@@ -330,10 +322,10 @@ commutator rank bound on the remaining coordinates.
 \begin{theorem}[Quantum Singleton bound]
 \lean{CodingTheory.quantum_singleton_bound}
 \notready
-Under the standard parameter assumptions ($0<d\le n$ and $d\le \lean{quantum_distance S}$)
+Let $d = \lean{quantum_distance}\,(S)$.
+Under the standard parameter assumptions ($0<d\le n$)
 and the auxiliary basis-existence hypothesis \lean{h_basis}, the file concludes:
 \[
 k \le n - 2(d-1).
 \]
 \end{theorem}
-
