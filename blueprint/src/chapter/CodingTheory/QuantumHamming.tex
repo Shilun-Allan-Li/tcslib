@@ -85,9 +85,11 @@ $p' \mapsto p' + (q-p)$.
 \notready
 The file proves (or aims to prove) that for each $t$ and $p$,
 \[
-\lvert B_t(p)\rvert = \text{pauli_error_ball_size }t
-=\sum_{i=0}^{t} \binom{n}{i}(q^2-1)^i.
+\lvert B_t(p)\rvert
+= \sum_{i=0}^{t} \binom{n}{i}(q^2-1)^i.
 \]
+In Lean, the left-hand side is \lean{(pauli_error_ball t p).card} and the right-hand side is
+\lean{pauli_error_ball_size t}.
 This is a counting argument by choosing the support set of size $i$ and
 assigning a nonzero element of $\alpha\times\alpha$ at each chosen coordinate.
 \end{lemma}
@@ -116,7 +118,7 @@ or $0$ if there are no candidates.
 \leanok
 If $p$ commutes with the stabilizer, $p\notin S$, and $\mathrm{wt}(p)\neq 0$, then
 \[
-\text{quantum_distance S} \le \text{pauliWeight p}.
+\text{quantum distance S} \le \text{pauliWeight p}.
 \]
 \end{lemma}
 
@@ -143,14 +145,14 @@ If $p$ and $q$ commute with every $s\in S$, then $p-q$ also commutes with every 
 \leanok
 If $p,q$ commute with the stabilizer, and $p-q\notin S$ with nonzero weight, then
 \[
-\text{quantum_distance S} \le \mathrm{wt}(p-q).
+\text{quantum distance S} \le \mathrm{wt}(p-q).
 \]
 \end{lemma}
 
 \begin{lemma}[Convenient inequality form]
 \lean{CodingTheory.pauliWeight_sub_ge_of_commuting}
 \leanok
-If $d \le \text{quantum_distance S}$, then under the same hypotheses,
+If $d \le \text{quantum distance S}$, then under the same hypotheses,
 \[
 d \le \mathrm{wt}(p-q).
 \]
@@ -196,8 +198,8 @@ used to bound weights of differences in subsequent disjointness / packing argume
 Let $S$ be a stabilizer code on $n$ qudits over $\alpha$ with $q=\lvert\alpha\rvert>1$.
 Assume:
 \begin{itemize}
-  \item $k = \text{quantum_code_dimension,S.S}$;
-  \item a distance parameter $d>0$ with $d\le n$ and $d\le \text{quantum_distance S}$;
+  \item $k = \text{quantum code dimension,S.S}$;
+  \item a distance parameter $d>0$ with $d\le n$ and $d\le \text{quantum distance S}$;
   \item \emph{purity / non-degeneracy}:
     for any $e\in S.S$ with $\mathrm{wt}(e)<d$, one has $e=0$.
 \end{itemize}
