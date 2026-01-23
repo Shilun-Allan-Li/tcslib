@@ -37,7 +37,7 @@ This file imports \lean{TCSlib.CodingTheory.QuantumHamming}, hence depends on:
 \subsection{A bundled bilinear form}
 
 \begin{definition}[Bundled symplectic bilinear form]
-\lean{CodingTheory.symplecticBilin}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticBilin}
 The symplectic form \lean{symplecticForm} is packaged as a bilinear form
 \lean{LinearMap.BilinForm α (SympVec n α)} with the four linearity fields proven by
 expanding sums over coordinates and using ring normalization.
@@ -48,7 +48,7 @@ expanding sums over coordinates and using ring normalization.
 The file records standard consequences of bilinearity:
 
 \begin{lemma}[Additivity in the left argument]
-\lean{CodingTheory.symplecticForm_add_left}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_add_left}
 \leanok
 \[
 \langle x+y, z\rangle = \langle x,z\rangle + \langle y,z\rangle.
@@ -56,7 +56,7 @@ The file records standard consequences of bilinearity:
 \end{lemma}
 
 \begin{lemma}[Additivity in the right argument]
-\lean{CodingTheory.symplecticForm_add_right}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_add_right}
 \leanok
 \[
 \langle x, y+z\rangle = \langle x,y\rangle + \langle x,z\rangle.
@@ -64,7 +64,7 @@ The file records standard consequences of bilinearity:
 \end{lemma}
 
 \begin{lemma}[Homogeneity in the left argument]
-\lean{CodingTheory.symplecticForm_smul_left}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_smul_left}
 \leanok
 \[
 \langle c\cdot x, y\rangle = c\,\langle x,y\rangle.
@@ -72,7 +72,7 @@ The file records standard consequences of bilinearity:
 \end{lemma}
 
 \begin{lemma}[Homogeneity in the right argument]
-\lean{CodingTheory.symplecticForm_smul_right}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_smul_right}
 \leanok
 \[
 \langle x, c\cdot y\rangle = c\,\langle x,y\rangle.
@@ -82,7 +82,7 @@ The file records standard consequences of bilinearity:
 There are also finite-sum versions:
 
 \begin{lemma}[Sum in the left argument]
-\lean{CodingTheory.symplecticForm_sum_left}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_sum_left}
 \leanok
 \[
 \left\langle \sum_{i\in s} f(i),\, y\right\rangle
@@ -91,7 +91,7 @@ There are also finite-sum versions:
 \end{lemma}
 
 \begin{lemma}[Sum in the right argument]
-\lean{CodingTheory.symplecticForm_sum_right}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_sum_right}
 \leanok
 \[
 \left\langle x,\, \sum_{i\in s} f(i)\right\rangle
@@ -100,7 +100,7 @@ There are also finite-sum versions:
 \end{lemma}
 
 \begin{lemma}[Weighted sum in the left argument]
-\lean{CodingTheory.symplecticForm_smul_sum_left}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_smul_sum_left}
 \leanok
 \[
 \left\langle \sum_{i\in s} \ell(i)\,f(i),\, y\right\rangle
@@ -111,7 +111,7 @@ There are also finite-sum versions:
 \section{Symplectic dual}
 
 \begin{definition}[Symplectic dual]
-\lean{CodingTheory.symplecticDual}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticDual}
 For a submodule $S \le SympVec n \alpha$, define
 \[
 S^{\perp_\omega} := \{v \mid \forall s\in S,\ \langle v,s\rangle = 0\},
@@ -121,13 +121,13 @@ proved using bilinearity.
 \end{definition}
 
 \begin{lemma}[Stabilizer isotropy]
-\lean{CodingTheory.stabilizer_is_isotropic}
+\lean{TCSlib.CodingTheory.QuantumSingleton.stabilizer_is_isotropic}
 \leanok
 Restates \lean{S.isIso} in a convenient $\forall s\in S, \forall t\in S$ form.
 \end{lemma}
 
 \begin{lemma}[Stabilizer is contained in its symplectic dual]
-\lean{CodingTheory.stabilizer_le_symplecticDual}
+\lean{TCSlib.CodingTheory.QuantumSingleton.stabilizer_le_symplecticDual}
 \leanok
 If $S$ is a stabilizer (isotropic), then $S \le S^{\perp_\omega}$.
 \end{lemma}
@@ -137,7 +137,7 @@ If $S$ is a stabilizer (isotropic), then $S \le S^{\perp_\omega}$.
 \subsection{Correctability predicate}
 
 \begin{definition}[Erasure correctability]
-\lean{CodingTheory.ErasureCorrectable}
+\lean{TCSlib.CodingTheory.QuantumSingleton.ErasureCorrectable}
 Given an erased coordinate set $E\subseteq \{1,\dots,n\}$, we say $E$ is correctable for
 a stabilizer $S$ if every Pauli operator $p$ supported inside $E$ that commutes with the
 stabilizer must already lie in the stabilizer.
@@ -146,7 +146,7 @@ stabilizer must already lie in the stabilizer.
 \subsection{Distance implies erasure correctability}
 
 \begin{lemma}[Erasure correctability from quantum distance]
-\lean{CodingTheory.erasure_correctable_of_dist}
+\lean{TCSlib.CodingTheory.QuantumSingleton.erasure_correctable_of_dist}
 \leanok
 Let $d$ denote the quantum distance of $S$, written in Lean as
 \lean{quantum_distance}$\,(S)$.
@@ -172,7 +172,7 @@ The file introduces:
 \end{itemize}
 
 \begin{lemma}[Restriction preserves the restricted form]
-\lean{CodingTheory.symplecticFormOn_restrict}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticFormOn_restrict}
 \leanok
 \[
 \langle \mathrm{restrict}(p), q\rangle_{E} = \langle p,q\rangle_{E}.
@@ -180,14 +180,14 @@ The file introduces:
 \end{lemma}
 
 \begin{lemma}[Restricted logical operator is a stabilizer]
-\lean{CodingTheory.restrict_logical_to_erased_in_stabilizer}
+\lean{TCSlib.CodingTheory.QuantumSingleton.restrict_logical_to_erased_in_stabilizer}
 \notready
 Assuming erasure correctability on $E$ and a commuting logical operator $L$,
 the restriction $\mathrm{restrictTo}(L,E)$ lies in the stabilizer.
 \end{lemma}
 
 \begin{lemma}[Cleaning lemma]
-\lean{CodingTheory.clean_logical_operator}
+\lean{TCSlib.CodingTheory.QuantumSingleton.clean_logical_operator}
 \notready
 There exists $s\in S$ such that $L+s$ vanishes on the erased set $E$ coordinatewise.
 \end{lemma}
@@ -197,7 +197,7 @@ There exists $s\in S$ such that $L+s$ vanishes on the erased set $E$ coordinatew
 \subsection{Submodule of vectors supported on a set}
 
 \begin{definition}[Support submodule]
-\lean{CodingTheory.supportSubmodule}
+\lean{TCSlib.CodingTheory.QuantumSingleton.supportSubmodule}
 For $C\subseteq \{1,\dots,n\}$, define the submodule consisting of symplectic vectors
 supported inside $C$:
 \[
@@ -216,7 +216,7 @@ The file constructs:
 \end{itemize}
 
 \begin{lemma}[Dimension of the support submodule]
-\lean{CodingTheory.finrank_supportSubmodule}
+\lean{TCSlib.CodingTheory.QuantumSingleton.finrank_supportSubmodule}
 \leanok
 \[
 \dim_\alpha(V_C) = 2\,|C|.
@@ -226,7 +226,7 @@ The file constructs:
 \section{Decomposing the symplectic form and nondegeneracy}
 
 \begin{lemma}[Decomposition over a partition]
-\lean{CodingTheory.symplecticForm_decompose}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_decompose}
 \notready
 If $A,B,C$ are pairwise disjoint and $A\cup B\cup C = \mathrm{univ}$, then
 \[
@@ -235,7 +235,7 @@ If $A,B,C$ are pairwise disjoint and $A\cup B\cup C = \mathrm{univ}$, then
 \end{lemma}
 
 \begin{lemma}[Nondegeneracy]
-\lean{CodingTheory.symplecticForm_nondegenerate}
+\lean{TCSlib.CodingTheory.QuantumSingleton.symplecticForm_nondegenerate}
 \leanok
 If $\forall v,\ \langle u,v\rangle=0$, then $u=0$.
 The proof uses special test vectors supported on a single coordinate to read off
@@ -245,7 +245,7 @@ each component of $u$.
 \section{Dimension of the symplectic dual and logical space}
 
 \begin{lemma}[Dimension of the symplectic dual]
-\lean{CodingTheory.finrank_symplecticDual}
+\lean{TCSlib.CodingTheory.QuantumSingleton.finrank_symplecticDual}
 \notready
 For finite-dimensional ambient space,
 \[
@@ -254,7 +254,7 @@ For finite-dimensional ambient space,
 \end{lemma}
 
 \begin{lemma}[Logical space dimension identity]
-\lean{CodingTheory.finrank_logical_space}
+\lean{TCSlib.CodingTheory.QuantumSingleton.finrank_logical_space}
 \notready
 For a stabilizer $S$,
 \[
@@ -267,7 +267,7 @@ written in Lean as \lean{quantum_code_dimension}\,(S.S).
 \section{Symplectic bases}
 
 \begin{definition}[Symplectic basis in a submodule]
-\lean{CodingTheory.SymplecticBasis}
+\lean{TCSlib.CodingTheory.QuantumSingleton.SymplecticBasis}
 A structure packaging $k$ symplectic pairs $(X_i,Z_i)$ inside a submodule $V$
 such that:
 \[
@@ -280,7 +280,7 @@ such that:
 \section{A rank bound from commutator relations}
 
 \begin{lemma}[Rank bound from commutators (support version)]
-\lean{CodingTheory.rank_bound_from_commutators_simple}
+\lean{TCSlib.CodingTheory.QuantumSingleton.rank_bound_from_commutators_simple}
 \notready
 Given $k$ symplectic pairs $(X_i,Z_i)$ supported inside a coordinate set $C$ and satisfying
 the canonical commutation relations, one proves:
@@ -294,7 +294,7 @@ k \le |C|.
 \subsection{Singleton from a stabilizer rank lower bound}
 
 \begin{lemma}[Singleton bound from rank inequality]
-\lean{CodingTheory.quantum_singleton_bound_of_rank}
+\lean{TCSlib.CodingTheory.QuantumSingleton.quantum_singleton_bound_of_rank}
 \leanok
 Assuming
 \[
@@ -309,7 +309,7 @@ k \le n - 2(d-1).
 \subsection{Distance implies stabilizer rank lower bound}
 
 \begin{lemma}[Rank lower bound from distance]
-\lean{CodingTheory.stabilizer_rank_ge_of_distance}
+\lean{TCSlib.CodingTheory.QuantumSingleton.stabilizer_rank_ge_of_distance}
 \notready
 Let $d$ denote the quantum distance of $S$, written in Lean as
 \lean{quantum_distance}\,(S).
@@ -323,7 +323,7 @@ one shows
 \subsection{Main theorem}
 
 \begin{theorem}[Quantum Singleton bound]
-\lean{CodingTheory.quantum_singleton_bound}
+\lean{TCSlib.CodingTheory.QuantumSingleton.quantum_singleton_bound}
 \notready
 Let $d$ denote the quantum distance of $S$, written in Lean as
 \lean{quantum_distance}\,(S).
