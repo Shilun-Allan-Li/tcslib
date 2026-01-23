@@ -103,14 +103,14 @@ R(C) = \frac{\log |C|}{n \log |\alpha|}.
 \begin{lemma}[Distance is at most block length]
 \lean{CodingTheory.dist_le_length}
 \leanok
-\uses{\lean{CodingTheory.Codeword.distance}}
+% \uses{\lean{CodingTheory.Codeword.distance}}
 If a code $C$ has (achieved) minimum distance $d$, then $d \le n$.
 \end{lemma}
 
 \begin{theorem}[Singleton bound]
 \lean{CodingTheory.singleton_bound}
 \leanok
-\uses{\lean{CodingTheory.dist_le_length}}
+% \uses{\lean{CodingTheory.dist_le_length}}
 Assuming $\alpha$ is nontrivial, a code $C \subseteq \alpha^n$ with minimum distance $d$ satisfies
 \[
 |C| \le |\alpha|^{\,n-d+1}.
@@ -219,7 +219,7 @@ B_{\left\lfloor \frac{d-1}{2}\right\rfloor}(c_2)
 \]
 \end{lemma}
 
-\begin{lemma}[Disjointness packaged as \lean{Disjoint}]
+\begin{lemma}[Disjointness of hamming balls]
 \lean{CodingTheory.hamming_ball'_disjoint}
 \leanok
 A \lean{Finset.Disjoint} reformulation of the previous lemma.
@@ -228,7 +228,7 @@ A \lean{Finset.Disjoint} reformulation of the previous lemma.
 \begin{theorem}[Hamming (sphere-packing) bound]
 \lean{CodingTheory.hamming_bound}
 \leanok
-\uses{\lean{CodingTheory.hamming_ball_size}, \lean{CodingTheory.hamming_ball'_disjoint}}
+% \uses{\lean{CodingTheory.hamming_ball_size}, \lean{CodingTheory.hamming_ball'_disjoint}}
 Let $q=|\alpha|>1$. If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
 \[
 |C|
@@ -243,7 +243,7 @@ Let $q=|\alpha|>1$. If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
 \begin{theorem}[Distance equals minimum nonzero weight in linear codes]
 \lean{CodingTheory.Linear_Code_dist_eq_min_weight}
 \leanok
-\uses{\lean{CodingTheory.Codeword.Linear_Code'}, \lean{CodingTheory.Codeword.weight}, \lean{CodingTheory.Codeword.distance}}
+% \uses{\lean{CodingTheory.Codeword.Linear_Code'}, \lean{CodingTheory.Codeword.weight}, \lean{CodingTheory.Codeword.distance}}
 If $C$ is linear and has (achieved) minimum distance $d$, then:
 \begin{itemize}
   \item every nonzero codeword in $C$ has weight at least $d$;
