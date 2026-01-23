@@ -8,11 +8,11 @@ For a block length $n$, a \emph{codeword} is a function $\mathrm{Fin}\,n \to \al
 
 Main results in this file:
 \begin{itemize}
-  \item Singleton bound (\lean{TCSlib.CodingTheory.singleton_bound}).
-  \item Exact size of Hamming balls (\lean{TCSlib.CodingTheory.hamming_ball_size}).
-  \item Hamming (sphere-packing) bound (\lean{TCSlib.CodingTheory.hamming_bound}).
-  \item Linear-code distance/weight characterization (\lean{TCSlib.CodingTheory.Linear_Code_dist_eq_min_weight}).
-  \item Probabilistic distribution lemmas used toward GV-type bounds (\lean{TCSlib.CodingTheory.uniformity_lemma}, \lean{TCSlib.CodingTheory.prob_leq_ball_size}, \lean{TCSlib.CodingTheory.existence_bound}, \lean{TCSlib.CodingTheory.gv_bound}).
+  \item Singleton bound (\lean{TCSlib.CodingTheory.Basic.singleton_bound}).
+  \item Exact size of Hamming balls (\lean{TCSlib.CodingTheory.Basic.hamming_ball_size}).
+  \item Hamming (sphere-packing) bound (\lean{TCSlib.CodingTheory.Basic.hamming_bound}).
+  \item Linear-code distance/weight characterization (\lean{TCSlib.CodingTheory.Basic.Linear_Code_dist_eq_min_weight}).
+  \item Probabilistic distribution lemmas used toward GV-type bounds (\lean{TCSlib.CodingTheory.Basic.uniformity_lemma}, \lean{TCSlib.CodingTheory.Basic.prob_leq_ball_size}, \lean{TCSlib.CodingTheory.Basic.existence_bound}, \lean{TCSlib.CodingTheory.Basic.gv_bound}).
   \item List decoding definitions and a (planned) capacity-type existence statement.
 \end{itemize}
 
@@ -22,26 +22,26 @@ Main results in this file:
 \subsection{Codewords}
 
 \begin{definition}[Codeword]
-\lean{TCSlib.CodingTheory.Codeword}
+\lean{TCSlib.CodingTheory.Basic.Codeword}
 A codeword of length $n$ over alphabet $\alpha$ is a function $c : \mathrm{Fin}\,n \to \alpha$.
 \end{definition}
 
 \begin{definition}[Pointwise operations]
-\lean{TCSlib.CodingTheory.Codeword.add}
-\lean{TCSlib.CodingTheory.Codeword.sub}
-\lean{TCSlib.CodingTheory.Codeword.zero}
+\lean{TCSlib.CodingTheory.Basic.Codeword.add}
+\lean{TCSlib.CodingTheory.Basic.Codeword.sub}
+\lean{TCSlib.CodingTheory.Basic.Codeword.zero}
 We define pointwise addition/subtraction of codewords and the all-zero codeword.
 \end{definition}
 
 \subsection{Codes and linear codes}
 
 \begin{definition}[Code]
-\lean{TCSlib.CodingTheory.Codeword.Code}
+\lean{TCSlib.CodingTheory.Basic.Codeword.Code}
 A (block) code of length $n$ over $\alpha$ is a finite set (\lean{Finset}) of codewords.
 \end{definition}
 
 \begin{definition}[Linear code via generator matrix]
-\lean{TCSlib.CodingTheory.Codeword.Linear_Code}
+\lean{TCSlib.CodingTheory.Basic.Codeword.Linear_Code}
 A code $C$ is linear with generator matrix $G$ (shape $(n \times m)$) if:
 \begin{itemize}
   \item every message $c' : \mathrm{Fin}\,m \to \alpha$ maps to a codeword $G c' \in C$;
@@ -50,7 +50,7 @@ A code $C$ is linear with generator matrix $G$ (shape $(n \times m)$) if:
 \end{definition}
 
 \begin{definition}[Linear code, existential form]
-\lean{TCSlib.CodingTheory.Codeword.Linear_Code'}
+\lean{TCSlib.CodingTheory.Basic.Codeword.Linear_Code'}
 Existential version of linearity: there exists $m$ and a generator matrix $G$ witnessing linearity as above.
 \end{definition}
 
@@ -60,12 +60,12 @@ Existential version of linearity: there exists $m$ and a generator matrix $G$ wi
 \subsection{Hamming distance and minimum distance predicate}
 
 \begin{definition}[Hamming distance]
-\lean{TCSlib.CodingTheory.Codeword.hamming_distance}
+\lean{TCSlib.CodingTheory.Basic.Codeword.hamming_distance}
 Hamming distance between two codewords is the standard \lean{Mathlib.InformationTheory.Hamming.hammingDist}.
 \end{definition}
 
 \begin{definition}[Distance predicate for a code]
-\lean{TCSlib.CodingTheory.Codeword.distance}
+\lean{TCSlib.CodingTheory.Basic.Codeword.distance}
 \notready
 The predicate \lean{distance C d} asserts:
 \begin{itemize}
@@ -76,14 +76,14 @@ The predicate \lean{distance C d} asserts:
 \end{definition}
 
 \begin{definition}[Weight]
-\lean{TCSlib.CodingTheory.Codeword.weight}
+\lean{TCSlib.CodingTheory.Basic.Codeword.weight}
 Weight of a codeword is its Hamming distance to the all-zero codeword.
 \end{definition}
 
 \subsection{Rate and extremal size}
 
 \begin{definition}[Rate]
-\lean{TCSlib.CodingTheory.Codeword.rate}
+\lean{TCSlib.CodingTheory.Basic.Codeword.rate}
 \notready
 Rate is defined as
 \[
@@ -92,7 +92,7 @@ R(C) = \frac{\log |C|}{n \log |\alpha|}.
 \end{definition}
 
 \begin{definition}[Maximal size at distance]
-\lean{TCSlib.CodingTheory.Codeword.max_size}
+\lean{TCSlib.CodingTheory.Basic.Codeword.max_size}
 \notready
 \lean{max_size n d A} asserts existence of a code of size $A$ and minimum distance $d$ that is maximal among all such codes.
 \end{definition}
@@ -101,16 +101,16 @@ R(C) = \frac{\log |C|}{n \log |\alpha|}.
 \section{Singleton bound}
 
 \begin{lemma}[Distance is at most block length]
-\lean{TCSlib.CodingTheory.dist_le_length}
+\lean{TCSlib.CodingTheory.Basic.dist_le_length}
 \leanok
-% \uses{\lean{TCSlib.CodingTheory.Codeword.distance}}
+% \uses{\lean{TCSlib.CodingTheory.Basic.Codeword.distance}}
 If a code $C$ has (achieved) minimum distance $d$, then $d \le n$.
 \end{lemma}
 
 \begin{theorem}[Singleton bound]
-\lean{TCSlib.CodingTheory.singleton_bound}
+\lean{TCSlib.CodingTheory.Basic.singleton_bound}
 \leanok
-% \uses{\lean{TCSlib.CodingTheory.dist_le_length}}
+% \uses{\lean{TCSlib.CodingTheory.Basic.dist_le_length}}
 Assuming $\alpha$ is nontrivial, a code $C \subseteq \alpha^n$ with minimum distance $d$ satisfies
 \[
 |C| \le |\alpha|^{\,n-d+1}.
@@ -123,7 +123,7 @@ Assuming $\alpha$ is nontrivial, a code $C \subseteq \alpha^n$ with minimum dist
 \subsection{Hamming balls}
 
 \begin{definition}[Hamming ball]
-\lean{TCSlib.CodingTheory.hamming_ball}
+\lean{TCSlib.CodingTheory.Basic.hamming_ball}
 The Hamming ball of radius $l$ around $c$ is
 \[
 B_l(c) = \{c' : d(c',c) \le l\},
@@ -134,7 +134,7 @@ implemented as a \lean{Finset}.
 \subsection{Exact cardinality}
 
 \begin{theorem}[Cardinality of Hamming balls]
-\lean{TCSlib.CodingTheory.hamming_ball_size}
+\lean{TCSlib.CodingTheory.Basic.hamming_ball_size}
 \leanok
 For any center $c$,
 \[
@@ -146,7 +146,7 @@ For any center $c$,
 \subsection{Asymptotic upper bound via q-ary entropy}
 
 \begin{definition}[$q$-ary entropy]
-\lean{TCSlib.CodingTheory.Codeword.qaryEntropy}
+\lean{TCSlib.CodingTheory.Basic.Codeword.qaryEntropy}
 Define
 \[
 H_q(p) = p\log_q(q-1) - p\log_q(p) - (1-p)\log_q(1-p).
@@ -154,7 +154,7 @@ H_q(p) = p\log_q(q-1) - p\log_q(p) - (1-p)\log_q(1-p).
 \end{definition}
 
 \begin{theorem}[Entropy upper bound on Hamming balls]
-\lean{TCSlib.CodingTheory.hamming_ball_size_asymptotic_upper_bound}
+\lean{TCSlib.CodingTheory.Basic.hamming_ball_size_asymptotic_upper_bound}
 \notready
 Under the usual constraints on $p$ and $q=|\alpha|$, the Hamming ball of radius $\lfloor np\rfloor$ satisfies
 \[
@@ -166,7 +166,7 @@ Under the usual constraints on $p$ and $q=|\alpha|$, the Hamming ball of radius 
 \section{Entropy algebra lemmas}
 
 \begin{lemma}[Simplifying $q^{H_q(p)}$]
-\lean{TCSlib.CodingTheory.q_pow_qary_entropy_simp}
+\lean{TCSlib.CodingTheory.Basic.q_pow_qary_entropy_simp}
 \notready
 For $q\ge 2$ and $0<p<1$,
 \[
@@ -175,7 +175,7 @@ q^{H_q(p)} = (q-1)^p \, p^{-p}\, (1-p)^{-(1-p)}.
 \end{lemma}
 
 \begin{lemma}[Same identity, alternate exponentiation form]
-\lean{TCSlib.CodingTheory.q_pow_qary_entropy_simp'}
+\lean{TCSlib.CodingTheory.Basic.q_pow_qary_entropy_simp'}
 \notready
 Variant of the previous lemma using a different exponentiation operator in Lean.
 \end{lemma}
@@ -184,7 +184,7 @@ Variant of the previous lemma using a different exponentiation operator in Lean.
 \section{Analytic helpers (floors, square roots, Stirling)}
 
 \begin{lemma}[Square-root / floor inequality]
-\lean{TCSlib.CodingTheory.sqrt_sub_sqrt_floor_le_one}
+\lean{TCSlib.CodingTheory.Basic.sqrt_sub_sqrt_floor_le_one}
 \notready
 For $x\ge 0$,
 \[
@@ -193,7 +193,7 @@ For $x\ge 0$,
 \end{lemma}
 
 \begin{lemma}[Asymptotic lower bound on binomial term]
-\lean{TCSlib.CodingTheory.binomial_coef_asymptotic_lower_bound'}
+\lean{TCSlib.CodingTheory.Basic.binomial_coef_asymptotic_lower_bound'}
 \notready
 A Stirling-based statement giving (eventual) lower bounds of the form
 \[
@@ -208,7 +208,7 @@ q^{H_q(p)n - \varepsilon(n)}
 \section{Sphere packing: disjointness of balls and Hamming bound}
 
 \begin{lemma}[Different codewords have disjoint decoding balls]
-\lean{TCSlib.CodingTheory.hamming_ball_non_intersect}
+\lean{TCSlib.CodingTheory.Basic.hamming_ball_non_intersect}
 \leanok
 If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\in C$,
 \[
@@ -220,15 +220,15 @@ B_{\left\lfloor \frac{d-1}{2}\right\rfloor}(c_2)
 \end{lemma}
 
 \begin{lemma}[Disjointness of hamming balls]
-\lean{TCSlib.CodingTheory.hamming_ball'_disjoint}
+\lean{TCSlib.CodingTheory.Basic.hamming_ball'_disjoint}
 \leanok
 A \lean{Finset.Disjoint} reformulation of the previous lemma.
 \end{lemma}
 
 \begin{theorem}[Hamming (sphere-packing) bound]
-\lean{TCSlib.CodingTheory.hamming_bound}
+\lean{TCSlib.CodingTheory.Basic.hamming_bound}
 \leanok
-% \uses{\lean{TCSlib.CodingTheory.hamming_ball_size}, \lean{TCSlib.CodingTheory.hamming_ball'_disjoint}}
+% \uses{\lean{TCSlib.CodingTheory.Basic.hamming_ball_size}, \lean{TCSlib.CodingTheory.Basic.hamming_ball'_disjoint}}
 Let $q=|\alpha|>1$. If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
 \[
 |C|
@@ -241,9 +241,9 @@ Let $q=|\alpha|>1$. If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
 \section{Linear codes: distance equals minimum nonzero weight}
 
 \begin{theorem}[Distance equals minimum nonzero weight in linear codes]
-\lean{TCSlib.CodingTheory.Linear_Code_dist_eq_min_weight}
+\lean{TCSlib.CodingTheory.Basic.Linear_Code_dist_eq_min_weight}
 \leanok
-% \uses{\lean{TCSlib.CodingTheory.Codeword.Linear_Code'}, \lean{TCSlib.CodingTheory.Codeword.weight}, \lean{TCSlib.CodingTheory.Codeword.distance}}
+% \uses{\lean{TCSlib.CodingTheory.Basic.Codeword.Linear_Code'}, \lean{TCSlib.CodingTheory.Basic.Codeword.weight}, \lean{TCSlib.CodingTheory.Basic.Codeword.distance}}
 If $C$ is linear and has (achieved) minimum distance $d$, then:
 \begin{itemize}
   \item every nonzero codeword in $C$ has weight at least $d$;
@@ -257,30 +257,30 @@ If $C$ is linear and has (achieved) minimum distance $d$, then:
 \subsection{Uniform distributions (as functions)}
 
 \begin{definition}[Uniform distribution on vectors]
-\lean{TCSlib.CodingTheory.uniform_vector_dist}
+\lean{TCSlib.CodingTheory.Basic.uniform_vector_dist}
 \notready
 Uniform distribution on $\alpha^n$ encoded as a function $\alpha^n \to \mathbb{R}$.
 \end{definition}
 
 \begin{lemma}[Finiteness of constrained matrices]
-\lean{TCSlib.CodingTheory.finite_matrix_dist}
+\lean{TCSlib.CodingTheory.Basic.finite_matrix_dist}
 \leanok
 For fixed $x$ and $v$, the set of matrices $G$ with $Gx=v$ is finite.
 \end{lemma}
 
 \begin{definition}[Distribution induced by random matrices]
-\lean{TCSlib.CodingTheory.matrix_dist}
+\lean{TCSlib.CodingTheory.Basic.matrix_dist}
 \notready
 Define $\mu_x(v)$ as the fraction of $n\times k$ matrices $G$ satisfying $Gx=v$.
 \end{definition}
 
 \begin{definition}[Row extraction]
-\lean{TCSlib.CodingTheory.get_matrix_row}
+\lean{TCSlib.CodingTheory.Basic.get_matrix_row}
 Utility function returning the $i$-th row as a $1\times k$ matrix.
 \end{definition}
 
 \begin{theorem}[Uniformity of $Gx$ for nonzero $x$]
-\lean{TCSlib.CodingTheory.uniformity_lemma}
+\lean{TCSlib.CodingTheory.Basic.uniformity_lemma}
 \notready
 If $x\neq 0$ and $k\ge 1$, then for uniform random $G$, the product $Gx$ is uniformly distributed over $\alpha^n$.
 \end{theorem}
@@ -289,20 +289,20 @@ If $x\neq 0$ and $k\ge 1$, then for uniform random $G$, the product $Gx$ is unif
 \section{Toward Gilbert--Varshamov: probability and counting lemmas}
 
 \begin{theorem}[Bounding probability of small weight]
-\lean{TCSlib.CodingTheory.prob_leq_ball_size}
+\lean{TCSlib.CodingTheory.Basic.prob_leq_ball_size}
 \notready
 A bound comparing the fraction of matrices $G$ with $\mathrm{wt}(Gx)<d$
 to the relative size of a Hamming ball in $\alpha^n$.
 \end{theorem}
 
 \begin{theorem}[Existence bound via union bound]
-\lean{TCSlib.CodingTheory.existence_bound}
+\lean{TCSlib.CodingTheory.Basic.existence_bound}
 \notready
 Counts matrices that map \emph{some} nonzero message to a codeword of weight $<d$.
 \end{theorem}
 
 \begin{theorem}[Gilbert--Varshamov-style counting lower bound]
-\lean{TCSlib.CodingTheory.gv_bound}
+\lean{TCSlib.CodingTheory.Basic.gv_bound}
 \notready
 Under a condition relating $k$ to $n$ and the Hamming ball volume,
 there exists a generator matrix $G$ whose associated linear code has distance at least $d$.
@@ -312,19 +312,19 @@ there exists a generator matrix $G$ whose associated linear code has distance at
 \section{List decoding}
 
 \begin{definition}[List-decodable codes]
-\lean{TCSlib.CodingTheory.list_decodable}
+\lean{TCSlib.CodingTheory.Basic.list_decodable}
 A code $C$ is $(\rho,L)$-list-decodable if every Hamming ball of radius $\lfloor\rho n\rfloor$
 contains at most $L$ codewords from $C$.
 \end{definition}
 
 \begin{lemma}[Positivity of $q$-ary entropy expression]
-\lean{TCSlib.CodingTheory.qary_entropy_pos}
+\lean{TCSlib.CodingTheory.Basic.qary_entropy_pos}
 \leanok
 A positivity lemma for the entropy expression under the standard parameter range.
 \end{lemma}
 
 \begin{theorem}[List decoding capacity (existence)]
-\lean{TCSlib.CodingTheory.list_decoding_capacity}
+\lean{TCSlib.CodingTheory.Basic.list_decoding_capacity}
 \leanok
 A existence theorem producing codes of rate approximately
 $1 - H_q(p) - 1/L$ that are $p$-list-decodable with list size $L$.
