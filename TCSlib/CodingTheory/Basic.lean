@@ -1983,7 +1983,19 @@ theorem list_decoding_capacity
   intro r M
   let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
   have hΩ : Ω.Nonempty := by
-    sorry
+    apply Set.toFinset_nonempty.mpr
+    simp only [Set.nonempty_def, Set.mem_setOf_eq]
+    by_cases hM : M ≤ Fintype.card (Fin n → α)
+    · obtain ⟨C, hC⟩ := Finset.exists_subset_card_eq hM
+      use C
+      exact hC.2
+    · exfalso
+      push_neg at hM
+      have : Fintype.card (Fin n → α) = q ^ n := by
+        rw [Fintype.card_fun, ← hq]
+        simp
+      rw [this] at hM
+      sorry -- prove M ≤ q^n from the definition and r < 1
   by_cases hLM : M ≤ L
   · rcases hΩ with ⟨C, hCΩ⟩
     use C
