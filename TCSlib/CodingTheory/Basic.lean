@@ -1982,6 +1982,17 @@ theorem list_decoding_capacity
   classical
   intro r M
   let Ω : Finset (Code n α) := {C : Code n α | C.card = M}.toFinset
+  have hq_pos : (1 : ℝ) < (q : ℝ) := by
+    rw [hq]
+    exact_mod_cast Fintype.one_lt_card
+  have hr : r ≤ 1 := by
+    have hH : 0 < qaryEntropy q p := qary_entropy_pos q p hq hp
+    have hL0 : 0 ≤ 1 / (L : ℝ) := by
+      have : (0 : ℝ) < (L : ℝ) := by
+        exact_mod_cast (lt_of_lt_of_le (Nat.succ_pos 0) hL)
+      exact one_div_nonneg.mpr (le_of_lt this)
+    dsimp [r]
+    linarith
   have hΩ : Ω.Nonempty := by
     apply Set.toFinset_nonempty.mpr
     simp only [Set.nonempty_def, Set.mem_setOf_eq]
@@ -1995,7 +2006,13 @@ theorem list_decoding_capacity
         rw [Fintype.card_fun, ← hq]
         simp
       rw [this] at hM
-      sorry -- prove M ≤ q^n from the definition and r < 1
+      have : M ≤ q^n := by
+        have : M ≤ Nat.floor ((q : ℝ) ^ (r * n)) := by linarith
+        have : Nat.floor ((q : ℝ) ^ (r * n)) ≤ q ^ n := by
+          sorry
+        linarith
+      have : ¬ q^n < M := Nat.not_lt.2 this
+      contradiction
   by_cases hLM : M ≤ L
   · rcases hΩ with ⟨C, hCΩ⟩
     use C
@@ -2012,17 +2029,6 @@ theorem list_decoding_capacity
       linarith
 
   · rw [not_le] at hLM
-    have hq_pos : (1 : ℝ) < (q : ℝ) := by
-      rw [hq]
-      exact_mod_cast Fintype.one_lt_card
-    have hr : r ≤ 1 := by
-      have hH : 0 < qaryEntropy q p := qary_entropy_pos q p hq hp
-      have hL0 : 0 ≤ 1 / (L : ℝ) := by
-        have : (0 : ℝ) < (L : ℝ) := by
-          exact_mod_cast (lt_of_lt_of_le (Nat.succ_pos 0) hL)
-        exact one_div_nonneg.mpr (le_of_lt this)
-      dsimp [r]
-      linarith
 
     let y := Classical.arbitrary (Codeword n α)
 
