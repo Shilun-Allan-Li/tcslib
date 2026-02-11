@@ -1972,7 +1972,7 @@ theorem qary_entropy_pos (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 
   ring_nf
   exact this
 
-lemma random_coding_lemma (n L M : ℕ) (p : ℝ)
+lemma exists_listDecodable_code (n L M : ℕ) (p : ℝ)
   (hp1 : 0 ≤ p) (hp2 : p ≤ 1) (hL : 1 ≤ L)
   (V : ℕ)
   (hV : ∀ y : Codeword n α, (hamming_ball (Nat.floor (p*n)) y).card ≤ V)
@@ -2037,7 +2037,7 @@ lemma binom_ratio_bound (N M k : ℕ) (hM : M ≤ N) (hk : k ≤ M) :
       intro i hi; rw [ div_le_div_iff₀ ] <;> nlinarith only [ show ( i : ℝ ) + 1 ≤ M by norm_cast; linarith [ Finset.mem_range.mp hi ], show ( M : ℝ ) ≤ N by norm_cast ] ;
     simpa only [ h_prod, Finset.prod_const, Finset.card_range ] using Finset.prod_le_prod ( fun _ _ => div_nonneg ( sub_nonneg.2 <| Nat.cast_le.2 <| by linarith [ Finset.mem_range.1 ‹_› ] ) ( sub_nonneg.2 <| Nat.cast_le.2 <| by linarith [ Finset.mem_range.1 ‹_› ] ) ) h_le
 
-lemma list_decoding_inequality
+lemma listDecoding_counting_ineq
   (q : ℕ) (p : ℝ) (n L : ℕ)
   (hq : 2 ≤ q)
   (hL : 1 ≤ L)
@@ -2078,20 +2078,6 @@ lemma list_decoding_inequality
       convert mul_lt_mul_of_pos_right h_combined ( Nat.cast_pos.mpr <| Nat.choose_pos hM_le ) using 1 ; ring;
       ring;
     · exact Nat.cast_pos.mpr ( Nat.choose_pos hM_le )
-
-lemma list_decoding_inequality'
-  (q : ℕ) (p : ℝ) (n L : ℕ)
-  (hq : 2 ≤ q)
-  (hp : 0 < p ∧ p ≤ 1 - 1/q)
-  (hL : 1 ≤ L)
-  (r : ℝ) (hr : r = 1 - (qaryEntropy q p) - 1 / (L : ℝ))
-  (M : ℕ) (hM : M = Nat.floor ((q : ℝ) ^ (r * n)))
-  (V : ℕ) (hV : V = Nat.floor (Real.rpow q ((qaryEntropy q p) * n)))
-  (hM_pos : 0 < M)
-  (hM_le : M ≤ q^n)
-  (hL_lt_M : L < M) :
-  (q : ℝ)^n * (Nat.choose V (L+1)) * (Nat.choose (q^n - (L+1)) (M - (L+1))) < Nat.choose (q^n) M := by
-    convert list_decoding_inequality q p n L hq hL r hr M hM V hV hM_pos hM_le hL_lt_M using 1
 
 theorem list_decoding_capacity
   (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α)) (hp : 0 < p ∧ p ≤ 1 - 1/q)
@@ -2212,7 +2198,7 @@ theorem list_decoding_capacity
     have h_ineq :
       (q : ℝ)^n * (Nat.choose V (L+1)) * (Nat.choose (q^n - (L+1)) (M - (L+1)))
         < Nat.choose (q^n) M := by
-      refine list_decoding_inequality' q p n L hq2 hp hL r hr_def M hM_def V hV_def
+      refine listDecoding_counting_ineq q p n L hq2 hL r hr_def M hM_def V hV_def
         (by exact hM_pos)
         hM_le
         hL_lt_M
@@ -2237,7 +2223,7 @@ theorem list_decoding_capacity
 
 
     obtain ⟨C, hCcard, hCld⟩ :=
-        random_coding_lemma (n := n) (L := L) (M := M) (p := p)
+        exists_listDecodable_code (n := n) (L := L) (M := M) (p := p)
             hp1 hp2 hL
             V hV_ball
             h_ineq_nat
