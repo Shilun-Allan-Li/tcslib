@@ -22,6 +22,7 @@ open Finset Set
 namespace CodingTheory
 
 variable {α : Type*} [Field α] [Fintype α] [DecidableEq α]
+-- variable [FiniteDimensional α (SympVec n α)]
 variable {n : ℕ}
 
 /-! 1) Quantum code dimension -/

@@ -24,6 +24,7 @@ set_option synthInstance.maxSize 128
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
+set_option linter.unnecessarySimpa false
 
 noncomputable section
 
@@ -165,7 +166,7 @@ lemma sym_form_swap (u v : V n p) :
     sym_form u v = - sym_form v u := by
   unfold sym_form
   rw [← Finset.sum_neg_distrib]
-  congr with i hi
+  congr with i
   ring
 
 
