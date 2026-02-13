@@ -8,9 +8,9 @@ usemathjax: true
 
 {% include mathjax.html %}
 
-# Theoretical Computer Science Library
+# Error Correcting Codes Library
 
-The purpose of this repository is to hold a Lean4 formalization of coding theory and complexity theory.
+The purpose of this repository is to hold a Lean4 formalization of coding theory, which includes both classical and quantum error correcting codes.
 
 ## Build the Lean files
 

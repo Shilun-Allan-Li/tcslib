@@ -80,7 +80,7 @@ jobs:
             git config --global --add safe.directory $GITHUB_WORKSPACE
             git config --global --add safe.directory `pwd`
             python3 -m pip install --upgrade pip requests wheel
-            python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
+            CFLAGS="-I/usr/include/graphviz" LDFLAGS="-L/usr/lib/graphviz/ -R/usr/lib/graphviz/" python3 -m pip install pygraphviz
             pip install -r blueprint/requirements.txt
             python3 -m pip install invoke
             inv all
