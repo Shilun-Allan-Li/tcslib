@@ -2098,9 +2098,8 @@ theorem list_decoding_capacity
   have hq_pos : (1 : ℝ) < (q : ℝ) := by
     rw [hq]
     exact_mod_cast Fintype.one_lt_card
-
-  have hq0 : (0 : ℝ) ≤ (q : ℝ) := by exact_mod_cast (Nat.zero_le q)
-  have hq_pos0 : (0 : ℝ) < (q : ℝ) := lt_trans (by norm_num) hq_pos
+  have hq_ge_0 : (0 : ℝ) ≤ (q : ℝ) := by exact_mod_cast (Nat.zero_le q)
+  have hq_ge_1 : (1 : ℝ) ≤ (q : ℝ) := by linarith
 
   have hr : r ≤ 1 := by
     have hH : 0 < qaryEntropy q p := qary_entropy_pos q p hq hp
@@ -2128,11 +2127,10 @@ theorem list_decoding_capacity
         have h_rn : r * (n : ℝ) ≤ (n : ℝ) := by nlinarith [hr]
         have hpow :
           (q : ℝ) ^ (r * (n : ℝ)) ≤ (q : ℝ) ^ ((n : ℝ)) := by
-          sorry
-          -- exact Real.rpow_le_rpow_of_exponent_le hq0 h_rn
+            exact Real.rpow_le_rpow_of_exponent_le hq_ge_1 h_rn
         have hfloor_le :
           (M : ℝ) ≤ (q : ℝ) ^ (r * (n : ℝ)) := by
-          simpa using (Nat.floor_le (Real.rpow_nonneg hq0 (r * (n : ℝ))))
+          simpa using (Nat.floor_le (Real.rpow_nonneg hq_ge_0 (r * (n : ℝ))))
         have : (M : ℝ) ≤ (q : ℝ) ^ ((n : ℝ)) := le_trans hfloor_le hpow
         have : (M : ℝ) ≤ (q^n : ℝ) := by simpa [Real.rpow_natCast] using this
         exact_mod_cast this
@@ -2146,8 +2144,8 @@ theorem list_decoding_capacity
       have hleC : (hamming_ball (Nat.floor (p * n)) y ∩ C).card ≤ C.card := by
         exact Finset.card_le_card (Finset.inter_subset_right)
       have : (hamming_ball (Nat.floor (p * n)) y ∩ C).card ≤ L := by
-        -- simpa [hCcard] using le_trans hleC hML
-        sorry
+        rw [← hCcard] at hML
+        simpa [hCcard] using le_trans hleC hML
       exact this
 
   · have hL_lt_M : L < M := Nat.lt_of_not_ge hML
@@ -2166,18 +2164,16 @@ theorem list_decoding_capacity
       have h_rn : r * (n : ℝ) ≤ (n : ℝ) := by nlinarith [hr]
       have hpow :
         (q : ℝ) ^ (r * (n : ℝ)) ≤ (q : ℝ) ^ ((n : ℝ)) := by
-        -- exact Real.rpow_le_rpow_of_exponent_le hq0 h_rn
-        sorry
+        exact Real.rpow_le_rpow_of_exponent_le hq_ge_1 h_rn
       have hfloor_le :
         (M : ℝ) ≤ (q : ℝ) ^ (r * (n : ℝ)) := by
-        simpa using (Nat.floor_le (Real.rpow_nonneg hq0 (r * (n : ℝ))))
+        simpa using (Nat.floor_le (Real.rpow_nonneg hq_ge_0 (r * (n : ℝ))))
       have : (M : ℝ) ≤ (q : ℝ) ^ ((n : ℝ)) := le_trans hfloor_le hpow
       have : (M : ℝ) ≤ (q^n : ℝ) := by simpa [Real.rpow_natCast] using this
       exact_mod_cast this
 
     have hM_pos : 0 < M := by
-        -- lt_trans (Nat.succ_pos _) (Nat.succ_le_iff.mp (Nat.succ_le_of_lt hL_lt_M))
-        sorry
+        linarith
 
     have hV_ball :
     ∀ y : Codeword n α, (hamming_ball (Nat.floor (p * n)) y).card ≤ V := by
@@ -2218,9 +2214,9 @@ theorem list_decoding_capacity
 
     have hp1 : 0 ≤ p := le_of_lt hp.1
     have hp2 : p ≤ 1 := by
-      have : (1 - (1 : ℝ)/q) ≤ 1 := by sorry
+      have : (1 - (1 : ℝ)/q) ≤ 1 := by
+        simp
       exact le_trans hp.2 this
-
 
     obtain ⟨C, hCcard, hCld⟩ :=
         exists_listDecodable_code (n := n) (L := L) (M := M) (p := p)
