@@ -71,28 +71,20 @@ lemma sym_form_smul_left (c : F p) (x y : V n p) :
     sym_form (n:=n) (p:=p) (c • x) y = c * sym_form (n:=n) (p:=p) x y := by
   classical
   unfold sym_form
-  -- after unfolding  sym_form, your goal becomes a difference of two sums; don’t fight simp
-
-  -- Step 1: pull `c` out of the first sum
   have h1 :
       (∑ i : Fin n, c * x.1 i * y.2 i)
         = c * (∑ i : Fin n, x.1 i * y.2 i) := by
-    -- force both sides into Finset.univ.sum form
     change (Finset.univ.sum (fun i : Fin n => c * x.1 i * y.2 i))
         = c * (Finset.univ.sum (fun i : Fin n => x.1 i * y.2 i))
-    -- rewrite the summand so it matches `← Finset.mul_sum`
     have hs :
         (fun i : Fin n => c * x.1 i * y.2 i)
           = (fun i : Fin n => c * (x.1 i * y.2 i)) := by
       funext i
       simp [mul_assoc]
-    -- use it, then pull c out
     rw [hs]
-    -- now RHS is exactly `c * (∑ ...)`, rewrite it into `∑ c * ...`
     rw [← Finset.mul_sum]
 
 
-  -- Step 2: pull `c` out of the second sum
   have h2 :
       (∑ i : Fin n, c * x.2 i * y.1 i)
         = c * (∑ i : Fin n, x.2 i * y.1 i) := by
@@ -106,15 +98,6 @@ lemma sym_form_smul_left (c : F p) (x y : V n p) :
     rw [hs]
     rw [← Finset.mul_sum]
 
-  -- Step 3: use h1, h2 and factor `c` through subtraction
-  -- Your expression is literally `A - B = c * (A' - B')`
-  -- rewrite A and B using h1/h2, then use `mul_sub`.
-  -- (Depending on how `sym_form` is written, you may already have exactly the goal shown.)
-  -- If your unfolded goal is exactly the one you pasted:
-  --   (∑, c*... ) - (∑, c*...) = c * ((∑, ...) - (∑, ...))
-  -- this finishes it:
-  -- rewrite the two sums
-  -- (Lean might need `simp` instead of `rw` if there are definitional equalities)
   simp [h1, h2, mul_sub]
 
 
@@ -124,24 +107,20 @@ lemma sym_form_smul_right (c : F p) (x y : V n p) :
   classical
   unfold sym_form
 
-  -- First sum: rewrite inside to `c * (x.1 i * y.2 i)` then pull c out
   have h1 :
       (∑ i : Fin n, x.1 i * (c * y.2 i))
         = c * (∑ i : Fin n, x.1 i * y.2 i) := by
     change (Finset.univ.sum (fun i : Fin n => x.1 i * (c * y.2 i)))
         = c * (Finset.univ.sum (fun i : Fin n => x.1 i * y.2 i))
-    -- commutativity/associativity to move c to the front
     have hs :
         (fun i : Fin n => x.1 i * (c * y.2 i))
           = (fun i : Fin n => c * (x.1 i * y.2 i)) := by
       funext i
-      -- uses commutativity of multiplication in F p
       simp [mul_left_comm]
     rw [hs]
     rw [← Finset.mul_sum]
 
 
-  -- Second sum: same move
   have h2 :
       (∑ i : Fin n, x.2 i * (c * y.1 i))
         = c * (∑ i : Fin n, x.2 i * y.1 i) := by
@@ -156,7 +135,6 @@ lemma sym_form_smul_right (c : F p) (x y : V n p) :
     rw [← Finset.mul_sum]
 
 
-  -- Finish by rewriting and factoring through subtraction
   simp [h1, h2, mul_sub]
 
 
@@ -188,7 +166,6 @@ noncomputable def symB : LinearMap.BilinForm (F p) (V n p) :=
 
 
 lemma sym_form_nondegenerate (u : V n p) (h : ∀ v, sym_form u v = 0) : u = 0 := by
-  -- Fix an index $i$. We need to consider the following two cases.
   have h_cases : ∀ (i : Fin n), u.1 i = 0 ∧ u.2 i = 0 := by
     intro i
     have h1 : u.1 i = 0 := by
@@ -377,10 +354,8 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 lemma dist_implies_correctable (S : Submodule (F p) (V n p)) (E : Finset (Fin n))
     (h : E.card < code_dist S) : correctable S E := by
       intro v hv;
-      -- By definition of code distance, if $v \in S^\perp \cap V_E$ and $v \notin S$, then $wt(v) \geq code\_dist S$.
       have h_weight : ∀ v ∈ sym_orth S ⊓ V_sub E, v∉ S → code_dist S ≤ wt v := by
         exact fun v hv hv' => Nat.sInf_le ⟨ v, hv.1, hv', rfl ⟩;
-      -- By definition of code distance, if $v \in S^\perp \cap V_E$ and $v \notin S$, then $wt(v) \geq code\_dist S$. Since $E.card < code\_dist S$, we have $wt(v) \leq E.card$.
       have h_weight_le : ∀ v ∈ sym_orth S ⊓ V_sub E, v∉ S → wt v ≤ E.card := by
         intros v hv hv_not_in_S
         have h_support_subset : supp v ⊆ E := by
@@ -427,15 +402,12 @@ lemma ker_r_E (E : Finset (Fin n)) :
   ext x
   constructor
   · intro hx
-    -- hx : x ∈ ker (r_E E)  ==>  (r_E E) x = 0
     have hx0 : (r_E (p:=p) E) x = 0 := by
       simpa [LinearMap.mem_ker] using hx
 
-    -- peel off the subtype equality to an equality in V
     have hxval : ((r_E (p:=p) E) x : V n p) = 0 :=
       congrArg Subtype.val hx0
 
-    -- split into the two coordinate functions and record they are identically 0
     have hx1fun :
         (fun i : Fin n => if i ∈ E then x.1 i else 0) = 0 := by
       simpa [r_E] using congrArg Prod.fst hxval
@@ -443,10 +415,8 @@ lemma ker_r_E (E : Finset (Fin n)) :
         (fun i : Fin n => if i ∈ E then x.2 i else 0) = 0 := by
       simpa [r_E] using congrArg Prod.snd hxval
 
-    -- show x ∈ V_sub (univ \ E), i.e. x is zero on E
     intro i hi
     have hiE : i ∈ E := by
-      -- hi : i ∉ (univ \ E)  ↔  i ∈ E
       simpa [Finset.mem_sdiff, Finset.mem_univ] using hi
     constructor
     · have hx1i : (if i ∈ E then x.1 i else 0) = 0 :=
@@ -457,22 +427,21 @@ lemma ker_r_E (E : Finset (Fin n)) :
       simpa [hiE] using hx2i
 
   · intro hx
-    -- hx : x ∈ V_sub (univ \ E). Need x ∈ ker (r_E E), i.e. (r_E E) x = 0.
+
     have hfx : (r_E (p:=p) E) x = 0 := by
-      -- equality in the subtype; ext reduces to pointwise equality on coordinates
       ext i <;> by_cases hi : i ∈ E
-      · -- first coordinate, hi : i ∈ E
+      ·
         have hnot : i ∉ (Finset.univ \ E) := by
           simp [Finset.mem_sdiff, Finset.mem_univ, hi]
-        -- goal reduces to x.1 i = 0
+
         simpa [r_E, hi] using (hx i hnot).1
-      · -- first coordinate, hi : i ∉ E
+      ·
         simp [r_E, hi]
-      · -- second coordinate, hi : i ∈ E
+      ·
         have hnot : i ∉ (Finset.univ \ E) := by
           simp [Finset.mem_sdiff, Finset.mem_univ, hi]
         simpa [r_E, hi] using (hx i hnot).2
-      · -- second coordinate, hi : i ∉ E
+      ·
         simp [r_E, hi]
 
     simpa [LinearMap.mem_ker] using hfx
@@ -505,7 +474,6 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 /-- Rank-nullity for restriction of S to E -/
 lemma dim_map_r_E (S : Submodule (F p) (V n p)) (E : Finset (Fin n)) :
     Module.finrank (F p) ↥(S.map (r_E E)) = Module.finrank (F p) ↥S - Module.finrank (F p) ↥(S ⊓ V_sub (p:=p) (E_c E)) := by
-      -- By rank-nullity theorem, we know that the dimension of the image is equal to the dimension of the domain minus the dimension of the kernel.
       have h_rank_nullity : Module.finrank (F p) (↥(S.map (r_E E))) = Module.finrank (F p) S - Module.finrank (F p) (↥(S ⊓ LinearMap.ker (r_E E))) := by
         have h_rank_nullity : ∀ (f : (V n p) →ₗ[F p] V_sub (p:=p) E), Module.finrank (F p) (↥(Submodule.map f S)) = Module.finrank (F p) S - Module.finrank (F p) (↥(S ⊓ LinearMap.ker f)) := by
           intro f
@@ -559,12 +527,9 @@ lemma sym_form_r_E_left (M : Finset (Fin n)) (s v : V n p)
     (hv : v ∈ V_sub (p:=p) M) :
     sym_form (n:=n) (p:=p) ((r_E_V (n:=n) (p:=p) M) s) v
       = sym_form (n:=n) (p:=p) s v := by
-  -- use swap + the existing sym_form_r_E
   have h_right :
       sym_form (n:=n) (p:=p) v ((r_E_V (n:=n) (p:=p) M) s)
         = sym_form (n:=n) (p:=p) v s := by
-    -- sym_form_r_E gives: sym_form v s = sym_form v (r_E M s)
-    -- and (r_E M s : V n p) is definitionaly (r_E_V M) s
     simpa [r_E_V] using (sym_form_r_E (n:=n) (p:=p) M v hv s).symm
 
   calc
@@ -574,7 +539,6 @@ lemma sym_form_r_E_left (M : Finset (Fin n)) (s v : V n p)
               (u := (r_E_V (n:=n) (p:=p) M) s) (v := v))
     _ = - sym_form v s := by simp [h_right]
     _ = sym_form s v := by
-          -- negate the swap identity
           have := congrArg Neg.neg (sym_form_swap (n:=n) (p:=p) (u := v) (v := s))
           simpa using this
 
@@ -611,20 +575,13 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
     (hv : v ∈ V_sub (p:=p) M) :
     sym_form (n:=n) (p:=p) ((r_E_V (n:=n) (p:=p) M) s) v = sym_form (n:=n) (p:=p) s v := by
   classical
-  -- Expand definitions; r_E_V M s is s but zeroed outside M
   unfold r_E_V
-  -- r_E_V M = (V_sub M).subtype.comp (r_E M)
-  -- so ((r_E_V M) s) = ((r_E M) s : V_sub M) coerced back to V
-  -- Now expand sym_form and do pointwise by cases i ∈ M
   unfold sym_form r_E
-  -- After simp, the LHS has `if i ∈ M then s.? i else 0`
-  -- and RHS has just `s.? i`, but `v` is 0 outside M.
   refine Finset.sum_congr rfl ?_
   intro i hi
   by_cases hiM : i ∈ M
   · simp [hiM]
   · have hv0 := hv i hiM
-    -- hv0 : v.1 i = 0 ∧ v.2 i = 0
     simp [hiM, hv0.1, hv0.2]
 
 
@@ -638,16 +595,13 @@ lemma orth_inter_eq_orth_map (M : Finset (Fin n)) (S : Submodule (F p) (V n p)) 
   · rintro ⟨hvS, hvM⟩
     refine ⟨?_, hvM⟩
     rintro _ ⟨s, hs, rfl⟩
-    -- hvS already gives you the right orientation:
     have hs0 : sym_form (n:=n) (p:=p) s v = 0 := by
       simpa using hvS s hs
     have hpair :
         sym_form (n:=n) (p:=p) ((r_E_V (n:=n) (p:=p) M) s) v
           = sym_form (n:=n) (p:=p) s v :=
       sym_form_left_restrict (n:=n) (p:=p) M s v hvM
-    -- goal is sym_form ((r_E_V M) s) v = 0
-        -- goal: symB.IsOrtho ((r_E_V M) s) v
-    -- convert it to: sym_form ((r_E_V M) s) v = 0
+
     simp [LinearMap.BilinForm.IsOrtho, symB_apply, hpair]
     exact hs0
 
@@ -697,11 +651,9 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 /-- Non-degeneracy of restricted form -/
 lemma sym_form_sub_nondegenerate (M : Finset (Fin n)) :
     (sym_form_sub (p:=p) M).Nondegenerate := by
-      -- Apply the non-degeneracy of the symplectic form on V_sub M to any v in V_sub M.
       intro v hv
       apply Classical.byContradiction
       intro hv_nonzero;
-      -- By the properties of the symplectic form, if $v \neq 0$, then there exists some $w \in V_M$ such that $sym_form v w \neq 0$.
       obtain ⟨w, hw⟩ : ∃ w : V_sub (p:=p) M, sym_form v.1 w.1 ≠ 0 := by
         convert sym_form_nondegenerate_on_V_sub M v.1 v.2 using 1;
         simp +zetaDelta at *;
@@ -734,12 +686,10 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 lemma sym_form_sub_isRefl (M : Finset (Fin n)) :
     (sym_form_sub (n:=n) (p:=p) M).IsRefl := by
   intro v w h
-  -- rewrite the hypothesis into the ambient form
   have h' :
       sym_form (n:=n) (p:=p) (v : V n p) (w : V n p) = 0 := by
     simpa [sym_form_sub_apply] using h
 
-  -- use skew-symmetry: ⟪w,v⟫ = -⟪v,w⟫, so if ⟪v,w⟫=0 then ⟪w,v⟫=0
   have hwv :
       sym_form (n:=n) (p:=p) (w : V n p) (v : V n p) = 0 := by
     calc
@@ -761,10 +711,8 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 /-- Dimension of orthogonal intersection -/
 lemma dim_orth_inter (M : Finset (Fin n)) (S : Submodule (F p) (V n p)) :
     Module.finrank (F p) ↥(sym_orth S ⊓ V_sub (p:=p) M) = 2 * M.card - Module.finrank (F p) ↥(S.map (r_E M)) := by
-      -- By orth_inter_eq_orth_sub_image, we know that sym_orth S ∩ V_sub M is the image of (sym_form_sub M).orthogonal (S.map (r_E M)) under the subtype map.
       have h_image : sym_orth S ⊓ V_sub M = ((sym_form_sub M).orthogonal (S.map (r_E M))).map (V_sub M).subtype := by
         convert orth_inter_eq_orth_sub_image M S using 1;
-      -- By the properties of the orthogonal complement in a finite-dimensional vector space with a nondegenerate bilinear form, we have:
       have h_orthogonal_complement : ∀ (W : Submodule (F p) (V_sub (p:=p) M)), Module.finrank (F p) ((sym_form_sub M).orthogonal W) = Module.finrank (F p) (V_sub (p:=p) M) - Module.finrank (F p) W := by
         have h_orthogonal_complement : ∀ (W : Submodule (F p) (V_sub (p:=p) M)), (sym_form_sub (p:=p) M).IsRefl → (sym_form_sub (p:=p) M).Nondegenerate → Module.finrank (F p) ((sym_form_sub (p:=p) M).orthogonal W) = Module.finrank (F p) (V_sub (p:=p) M) - Module.finrank (F p) W := by
           exact fun W a a_1 => LinearMap.BilinForm.finrank_orthogonal a_1 a W;
@@ -780,7 +728,6 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 
 lemma g_expansion (S : Submodule (F p) (V n p)) (hS : IsIsotropic S) (M : Finset (Fin n)) :
     g S M = 2 * M.card + Module.finrank (F p) (S_M S (E_c M)) - Module.finrank (F p) S - Module.finrank (F p) (S_M S M) := by
-      -- By definition of $g$, we know that
       have h_g : g S M = 2 * M.card - Module.finrank (F p) (S.map (r_E M)) - Module.finrank (F p) (S_M S M) := by
         unfold g;
         rw [ show S_perp_M S M = sym_orth S ⊓ V_sub ( p := p ) M from rfl, dim_orth_inter ];
@@ -823,7 +770,6 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 lemma dim_S_M_add_dim_S_M_c_le_dim_S (S : Submodule (F p) (V n p)) (M : Finset (Fin n)) :
     Module.finrank (F p) (S_M S M) + Module.finrank (F p) (S_M S (E_c M)) ≤ Module.finrank (F p) S := by
       rw [ ← Submodule.finrank_sup_add_finrank_inf_eq ];
-      -- Since $S_M S M \subseteq S$ and $S_M S (E_c M) \subseteq S$, their sum is also a subspace of $S$.
       have h_sum_subset : S_M S M ⊔ S_M S (E_c M) ≤ S := by
         exact sup_le ( inf_le_left ) ( inf_le_left );
       refine' le_trans ( add_le_add_right ( Submodule.finrank_mono h_sum_subset ) _ ) _;
@@ -831,6 +777,7 @@ lemma dim_S_M_add_dim_S_M_c_le_dim_S (S : Submodule (F p) (V n p)) (M : Finset (
       simp +decide [ Submodule.eq_bot_iff, V_sub ];
       simp_all +decide [ E_c, funext_iff ];
       exact fun a b ha ha' ha'' => ⟨ fun i => if hi : i ∈ M then ha'' i hi |>.1 else ha' i hi |>.1, fun i => if hi : i ∈ M then ha'' i hi |>.2 else ha' i hi |>.2 ⟩
+
 
 /-
 Formula for g(M) in terms of dimensions.
@@ -882,7 +829,6 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 /-- Cleaning dimension identity -/
 lemma cleaning_dimension_identity (S : Submodule (F p) (V n p)) (hS : IsIsotropic S) (M : Finset (Fin n)) :
     g S M + g S (E_c M) = 2 * n - 2 * Module.finrank (F p) S := by
-      -- By definition of $g$, we know that $g(M) + \dim(S_M) + \dim(S) = 2|M| + \dim(S_{M^c})$ and $g(M^c) + \dim(S_{M^c}) + \dim(S) = 2|M^c| + \dim(S_M)$.
       have h1 : g S M + Module.finrank (F p) (S_M S M) + Module.finrank (F p) S = 2 * M.card + Module.finrank (F p) (S_M S (E_c M)) := by
           exact g_add_dims (n:=n) (p:=p) S hS M
       have h2 : g S (E_c M) + Module.finrank (F p) (S_M S (E_c M)) + Module.finrank (F p) S = 2 * (E_c M).card + Module.finrank (F p) (S_M S M) := by
@@ -907,7 +853,6 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 
 lemma correctable_implies_g_zero (S : Submodule (F p) (V n p)) (M : Finset (Fin n))
     (h : correctable S M) : g S M = 0 := by
-      -- By definition of $g(S, M)$, if $M$ is correctable, then $S^{\perp} \cap V_M \subseteq S \cap V_M$.
       have h_sub : sym_orth S ⊓ V_sub (p:=p) M ≤ S_M S M := by
         exact fun x hx => ⟨ h hx, hx.2 ⟩;
       refine' Nat.sub_eq_zero_of_le _;
@@ -935,7 +880,6 @@ lemma g_complement_correctable
   have h_sum :
       g S M + g S (E_c M) = 2 * n - 2 * Module.finrank (F p) S :=
     cleaning_dimension_identity (n:=n) (p:=p) S hS M
-  -- now substitute g S M = 0 into the sum identity
   simpa [h_g_M_zero] using h_sum
 
 
@@ -957,21 +901,17 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 lemma g_le_two_card_C (S : Submodule (F p) (V n p)) (B C : Finset (Fin n))
     (h_disjoint : Disjoint B C) (hB : correctable S B) :
     g S (B ∪ C) ≤ 2 * C.card := by
-      -- By definition of $g$, we know that $g(B \cup C) = \dim(S^\perp \cap V_{B \cup C}) - \dim(S \cap V_{B \cup C})$.
       have h_g_def : g S (B ∪ C) = Module.finrank (F p) (S_perp_M S (B ∪ C)) - Module.finrank (F p) (S_M S (B ∪ C)) := by
         rfl;
-      -- By definition of $S_perp_M$, we know that $S_perp_M S (B ∪ C) \subseteq V_{B ∪ C}$.
       have h_S_perp_M_subset : S_perp_M S (B ∪ C) ≤ V_sub (p:=p) (B ∪ C) := by
         exact inf_le_right;
-      -- Let $U = S_perp_M S (B ∪ C)$.
+
       set U : Submodule (F p) (V n p) := S_perp_M S (B ∪ C);
-      -- Consider the restriction map $r_C : U \to V_C$.
+
       set r_C : U →ₗ[F p] V_sub (p:=p) C := (r_E C).comp (Submodule.subtype U);
-      -- The kernel of $r_C$ is $U \cap V_B$.
       have h_kernel_r_C : LinearMap.ker r_C = Submodule.comap (Submodule.subtype U) (V_sub (p:=p) B) := by
         ext v
         simp [r_C, r_E];
-        -- If $r_C(v) = 0$, then for all $i \in C$, $v.1 i = 0$ and $v.2 i = 0$. Since $v \in V_{B \cup C}$, this implies $v \in V_B$.
         apply Iff.intro
         intro h_zero
         have h_support : ∀ i, i ∉ B → (v : V n p).1 i = 0 ∧ (v : V n p).2 i = 0 := by
@@ -988,21 +928,17 @@ lemma g_le_two_card_C (S : Submodule (F p) (V n p)) (B C : Finset (Fin n))
         ext i; simp_all only [ite_self, ZeroMemClass.coe_zero, Prod.fst_zero, Pi.zero_apply, U];
         by_cases hi : i ∈ C <;> simp +decide [ hi, h_zero ])
 
-      -- Since $B$ is correctable, $S^\perp \cap V_B \subseteq S$.
       have h_S_perp_B_subset_S : Submodule.comap (Submodule.subtype U) (V_sub (p:=p) B) ≤ Submodule.comap (Submodule.subtype U) S := by
         intro x hx; exact (by
         have := hB ( show x.1 ∈ sym_orth S ⊓ V_sub B from ?_ ) ; simp_all only [Submodule.mem_comap,
           Submodule.subtype_apply, U, r_C];
         exact ⟨ x.2.1, hx ⟩);
-      -- Therefore, $\dim(U) \leq \dim(r_C(U)) + \dim(S \cap V_{B \cup C})$.
       have h_dim_U_le : Module.finrank (F p) U ≤ Module.finrank (F p) (LinearMap.range r_C) + Module.finrank (F p) (Submodule.comap (Submodule.subtype U) S) := by
         have := LinearMap.finrank_range_add_finrank_ker r_C;
         rw [ ← this ];
         exact add_le_add_left ( Submodule.finrank_mono <| h_kernel_r_C ▸ h_S_perp_B_subset_S ) _;
-      -- Since $r_C$ is a linear map from $U$ to $V_C$, we have $\dim(r_C(U)) \leq \dim(V_C) = 2|C|$.
       have h_dim_r_C_U_le : Module.finrank (F p) (LinearMap.range r_C) ≤ 2 * C.card := by
         exact le_trans ( Submodule.finrank_le _ ) ( by erw [ dim_V_sub ] );
-      -- Since $S \cap V_{B \cup C}$ is a subspace of $U$, we have $\dim(S \cap V_{B \cup C}) \leq \dim(U)$.
       have h_dim_S_inter_V_B_union_C_le : Module.finrank (F p) (Submodule.comap (Submodule.subtype U) S) ≤ Module.finrank (F p) (S_M S (B ∪ C)) := by
         rw [ ← Submodule.finrank_map_subtype_eq ];
         refine' Submodule.finrank_mono _;
@@ -1028,16 +964,13 @@ lemma two_disjoint_correctable_sets_bound_logical_dimension (S : Submodule (F p)
     (A B : Finset (Fin n)) (h_disjoint : Disjoint A B)
     (hA : correctable S A) (hB : correctable S B) :
     code_k S ≤ (Finset.univ \ (A ∪ B)).card := by
-      -- By the cleaning dimension identity, we have $g(A^c) = 2k$.
       have h_g_Ac : g S (Finset.univ \ A) = 2 * (n - Module.finrank (F p) S) := by
         convert g_complement_correctable S hS A hA using 1;
         rw [ Nat.mul_sub_left_distrib ];
-      -- Since $B$ is correctable and disjoint from $C = \text{univ} \setminus (A \cup B)$, we have $g(B \cup C) \leq 2|C|$.
       have h_g_BC : g S (B ∪ (Finset.univ \ (A ∪ B))) ≤ 2 * (Finset.univ \ (A ∪ B)).card := by
         apply g_le_two_card_C;
         · exact Finset.disjoint_left.mpr fun x hx₁ hx₂ => Finset.mem_sdiff.mp hx₂ |>.2 ( Finset.mem_union_right _ hx₁ );
         · assumption;
-      -- Since $B$ is correctable and disjoint from $C = \text{univ} \setminus (A \cup B)$, we have $B \cup C = A^c$.
       have h_BC_eq_Ac : B ∪ (Finset.univ \ (A ∪ B)) = Finset.univ \ A := by
         ext x; by_cases hx : x ∈ A <;> by_cases hx' : x ∈ B <;> simp +decide [ hx, hx' ] ;
         exact Finset.disjoint_left.mp h_disjoint hx hx';
@@ -1056,7 +989,6 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
   constructor
   · intro _; trivial
   · intro _
-    -- membership in `V_sub univ` is vacuous
     intro i hi
     exact (False.elim (hi (Finset.mem_univ i)))
 
@@ -1064,20 +996,16 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 lemma finrank_V :
     Module.finrank (F p) (V n p) = 2 * n := by
   classical
-  -- `dim_V_sub` gives the dimension of the "supported-on-C" submodule.
   have h :=
     dim_V_sub (n:=n) (p:=p) (C := (Finset.univ : Finset (Fin n)))
-  -- rewrite `V_sub univ = ⊤`
+
   have h' :
       Module.finrank (F p)
           ((⊤ : Submodule (F p) (V n p)) : Type _)
         = 2 * n := by
-    -- Since V_sub (Finset.univ) is the entire space V, we can conclude that the finrank of the entire space is 2n.
     have h_top : V_sub (p:=p) (Finset.univ : Finset (Fin n)) = (⊤ : Submodule (F p) (V n p)) := by
       exact V_sub_univ_eq_top;
-    -- Since V_sub (Finset.univ) is the entire space, we can replace it with the entire space in the hypothesis h.
     rw [h_top] at h; exact h.trans (by simp)
-  -- relate `finrank ⊤` to `finrank V`
   have ht :
       Module.finrank (F p)
           ((⊤ : Submodule (F p) (V n p)) : Type _)
@@ -1092,7 +1020,6 @@ lemma finrank_V :
   lemma symB_nondegenerate :
     (symB (n:=n) (p:=p)).Nondegenerate := by
   intro u hu
-  -- use the already-proved nondegeneracy of `sym_form`
   apply sym_form_nondegenerate (n:=n) (p:=p) u
   intro v
   simpa [symB_apply] using hu v
@@ -1102,7 +1029,6 @@ lemma symB_isRefl :
   intro v w h
   have h' : sym_form (n:=n) (p:=p) v w = 0 := by
     simpa [symB_apply] using h
-  -- `sym_form w v = - sym_form v w`
   have : sym_form (n:=n) (p:=p) w v = 0 := by
     simpa [sym_form_swap (n:=n) (p:=p) w v, h']
   simpa [symB_apply] using this
@@ -1111,14 +1037,12 @@ lemma finrank_sym_orth (S : Submodule (F p) (V n p)) :
     Module.finrank (F p) (sym_orth (n:=n) (p:=p) S)
       = 2 * n - Module.finrank (F p) S := by
   classical
-  -- `finrank_orthogonal` for a reflexive, nondegenerate bilinear form
   have h :=
     LinearMap.BilinForm.finrank_orthogonal
       (B := symB (n:=n) (p:=p))
       (symB_nondegenerate (n:=n) (p:=p))
       (symB_isRefl (n:=n) (p:=p))
       S
-  -- rewrite definitions
   simpa [sym_orth, finrank_V (n:=n) (p:=p)] using h
 
 
@@ -1126,23 +1050,18 @@ lemma finrank_sym_orth (S : Submodule (F p) (V n p)) :
 lemma finrank_le_n_of_isotropic (S : Submodule (F p) (V n p)) (hS : IsIsotropic (n:=n) (p:=p) S) :
     Module.finrank (F p) S ≤ n := by
   classical
-  -- isotropic: `S ≤ Sᗮ`
   have hmono :
       Module.finrank (F p) S ≤ Module.finrank (F p) (sym_orth (n:=n) (p:=p) S) :=
     Submodule.finrank_mono hS
-  -- substitute `finrank(Sᗮ) = 2n - finrank(S)`
   have hineq :
       Module.finrank (F p) S ≤ 2 * n - Module.finrank (F p) S := by
     simpa [finrank_sym_orth (n:=n) (p:=p) S] using hmono
-  -- turn `a ≤ 2n - a` into `2a ≤ 2n`
   have a_le_2n :
       Module.finrank (F p) S ≤ 2 * n := by
-    -- general bound: `finrank S ≤ finrank V`
     have : Module.finrank (F p) S ≤ Module.finrank (F p) (V n p) := by
       simpa using (Submodule.finrank_le (R := F p) (M := V n p) S)
     simpa [finrank_V (n:=n) (p:=p)] using this
   have h2 : 2 * Module.finrank (F p) S ≤ 2 * n := by
-    -- `a ≤ 2n - a` ↔ `a + a ≤ 2n`
     have hadd :
         Module.finrank (F p) S + Module.finrank (F p) S ≤ 2 * n := by
       exact (Nat.le_sub_iff_add_le a_le_2n).1 hineq
@@ -1175,13 +1094,12 @@ lemma code_dist_le_n (S : Submodule (F p) (V n p)) :
   change sInf D ≤ n
 
   by_cases hD : D = ∅
-  · -- empty set
+  ·
     simpa [hD] using (Nat.zero_le n)
   ·
     have hDne : D.Nonempty := Set.nonempty_iff_ne_empty.2 hD
     rcases hDne with ⟨d0, hd0mem⟩
     rcases hd0mem with ⟨v, hvS, hvnotS, hwt⟩
-    -- rebuild membership proof (since `rcases` consumed the old one)
     have hd0 : d0 ∈ D := ⟨v, hvS, hvnotS, hwt⟩
 
     have hBdd : BddBelow D := ⟨0, by
@@ -1189,9 +1107,7 @@ lemma code_dist_le_n (S : Submodule (F p) (V n p)) :
       exact Nat.zero_le d⟩
 
     have hdist_le : sInf D ≤ d0 := by
-      -- argument order can vary by Mathlib version; try the other line if needed
       exact csInf_le hBdd hd0
-      -- exact csInf_le hd0 hBdd
 
     have hd0_le : d0 ≤ n := by
       have : wt (n:=n) (p:=p) v ≤ n := wt_le_n (n:=n) (p:=p) v
@@ -1208,7 +1124,6 @@ lemma code_dist_eq_zero_of_code_k_eq_zero
     (hk : code_k (n:=n) (p:=p) S = 0) :
     code_dist (n:=n) (p:=p) S = 0 := by
   classical
-  -- Extract `finrank S = n` from `code_k S = 0`.
   have hfin_le_n : Module.finrank (F p) S ≤ n :=
     finrank_le_n_of_isotropic (n:=n) (p:=p) S hS
   have hk' : n - Module.finrank (F p) S = 0 := by
@@ -1218,7 +1133,6 @@ lemma code_dist_eq_zero_of_code_k_eq_zero
   have hfin_eq : Module.finrank (F p) S = n :=
     Nat.le_antisymm hfin_le_n hn_le_fin
 
-  -- Compute `finrank (Sᗮ)` and conclude `finrank (Sᗮ) = finrank S`.
   have hfin_orth :
       Module.finrank (F p) (sym_orth (n:=n) (p:=p) S)
         = Module.finrank (F p) S := by
@@ -1231,14 +1145,12 @@ lemma code_dist_eq_zero_of_code_k_eq_zero
             simpa [two_mul] using (Nat.add_sub_cancel_left n n)
       _ = Module.finrank (F p) S := by simp [hfin_eq]
 
-  -- Now `S = Sᗮ` since `S ≤ Sᗮ` and finranks agree.
   have hEq : S = sym_orth (n:=n) (p:=p) S := by
     apply Submodule.eq_of_le_of_finrank_eq hS
     simpa using hfin_orth.symm
 
-  -- With `S = Sᗮ`, the defining set is empty, so `sInf = 0`.
   unfold code_dist
-  rw [← hEq]  -- rewrites `(sym_orth S)` to `S`
+  rw [← hEq]
 
   have hEmpty :
       {d : ℕ | ∃ v ∈ S, v ∉ S ∧ wt (n:=n) (p:=p) v = d} = (∅ : Set ℕ) := by
@@ -1278,7 +1190,6 @@ lemma exists_disjoint_finsets_card (t : ℕ) (h : 2 * t ≤ n) :
   obtain ⟨A, hA_sub, hA_card⟩ := Finset.exists_subset_card_eq htU
 
   have hcard_sdiff : (U \ A).card = U.card - A.card := by
-    -- NOTE: `card_sdiff` is for `(t \ s)`, so use (s := A) (t := U).
     have h' : (U \ A).card = U.card - (A ∩ U).card := by
       simpa using (Finset.card_sdiff (s := A) (t := U))
     simpa [Finset.inter_eq_left.2 hA_sub] using h'
@@ -1310,27 +1221,21 @@ theorem quantum_singleton_bound
   -- Case split on `code_dist S`.
   cases hcd : code_dist (n:=n) (p:=p) S with
   | zero =>
-      -- `code_dist S = 0` ⇒ `code_dist S - 1 = 0`, so goal reduces to `code_k S ≤ n`.
       have hk_le : code_k (n:=n) (p:=p) S ≤ n := by
-        -- `code_k S = n - finrank S`, and `n - m ≤ n`.
         simpa [code_k] using (Nat.sub_le n (Module.finrank (F p) S))
       simpa [hcd] using hk_le
 
   | succ d' =>
-      -- `code_dist S = succ d'` so `code_dist S - 1 = d'`.
       have hd_pred : code_dist (n:=n) (p:=p) S - 1 = d' := by
         simpa [hcd] using (Nat.succ_sub_one d')
 
-      -- Also `d' < code_dist S`.
       have hd'_lt : d' < code_dist (n:=n) (p:=p) S := by
         simpa [hcd] using (Nat.lt_succ_self d')
 
-      -- Show `2*d' ≤ n`, else force `k=0` and hence `code_dist=0`, contradicting `succ`.
       have h2t : 2 * d' ≤ n := by
         by_contra hnot
         have hn : n < 2 * d' := Nat.lt_of_not_ge hnot
 
-        -- From `code_dist ≤ n` and `code_dist = succ d'`, we get `d' ≤ n`.
         have hd_le_n : code_dist (n:=n) (p:=p) S ≤ n :=
           code_dist_le_n (n:=n) (p:=p) S
         have hsucc_le : Nat.succ d' ≤ n := by simpa [hcd] using hd_le_n
@@ -1342,7 +1247,6 @@ theorem quantum_singleton_bound
 
         let B : Finset (Fin n) := (Finset.univ : Finset (Fin n)) \ A
 
-        -- Disjointness of `A` and `B = univ \ A`.
         have hdisj : Disjoint A B := by
           refine Finset.disjoint_left.2 ?_
           intro x hxA hxB
@@ -1351,38 +1255,31 @@ theorem quantum_singleton_bound
 
         -- Compute `B.card = n - d'`.
         have hB_card : B.card = n - d' := by
-          -- Use your `card_sdiff` shape: `(t \ s).card = t.card - (s ∩ t).card`.
           have h' :
               ((Finset.univ : Finset (Fin n)) \ A).card
                 =
               (Finset.univ : Finset (Fin n)).card - (A ∩ (Finset.univ : Finset (Fin n))).card := by
             simpa using (Finset.card_sdiff (s := A) (t := (Finset.univ : Finset (Fin n))))
-          -- Simplify `A ∩ univ = A` using `hA_sub`.
           simpa [B, hA_card, Finset.card_univ, Finset.inter_eq_left.2 hA_sub] using h'
 
-        -- `A` is correctable since `A.card = d' < succ d' = code_dist S`.
         have hA_corr : correctable (n:=n) (p:=p) S A := by
           apply dist_implies_correctable (n:=n) (p:=p) S A
           simpa [hA_card] using hd'_lt
 
-        -- `B` is also correctable: from `n < 2*d'` we get `n - d' ≤ d'`, hence `B.card < succ d'`.
         have hB_corr : correctable (n:=n) (p:=p) S B := by
           apply dist_implies_correctable (n:=n) (p:=p) S B
           have hle : n - d' ≤ d' := by
-            -- `n - d' ≤ d'` ↔ `n ≤ d' + d'`
             apply (Nat.sub_le_iff_le_add).2
             exact Nat.le_of_lt (by simpa [two_mul] using hn)
           have hlt : n - d' < Nat.succ d' := Nat.lt_succ_of_le hle
           simpa [hB_card, hcd] using hlt
 
-        -- Apply Lemma 7 / bound: `k ≤ card(univ \ (A ∪ B))`.
         have hk_le :
             code_k (n:=n) (p:=p) S
               ≤ ((Finset.univ : Finset (Fin n)) \ (A ∪ B)).card :=
           two_disjoint_correctable_sets_bound_logical_dimension
             (n:=n) (p:=p) S hS A B hdisj hA_corr hB_corr
 
-        -- But `A ∪ (univ \ A) = univ`, so the complement is empty, hence `k = 0`.
         have hAU : A ∪ B = (Finset.univ : Finset (Fin n)) := by
           ext x
           simp [B]
@@ -1399,12 +1296,10 @@ theorem quantum_singleton_bound
         have hd0 : code_dist (n:=n) (p:=p) S = 0 :=
           code_dist_eq_zero_of_code_k_eq_zero (n:=n) (p:=p) S hS hk0
 
-        -- Contradiction to `code_dist S = succ d'`.
         have : Nat.succ d' = 0 := by
           simpa [hcd] using hd0
         exact (Nat.succ_ne_zero d') this
 
-      -- Now `2*d' ≤ n`, pick disjoint `A,B` with `|A|=|B|=d'`.
       obtain ⟨A, B, hdisj, hA_card, hB_card⟩ :=
         exists_disjoint_finsets_card (n:=n) d' h2t
 
@@ -1422,7 +1317,6 @@ theorem quantum_singleton_bound
         two_disjoint_correctable_sets_bound_logical_dimension
           (n:=n) (p:=p) S hS A B hdisj hA_corr hB_corr
 
-      -- Compute complement card as `n - 2*d'` using your `card_sdiff` shape.
       have hC :
           ((Finset.univ : Finset (Fin n)) \ (A ∪ B)).card = n - 2 * d' := by
         have hsdiff :
@@ -1461,7 +1355,6 @@ theorem quantum_singleton_bound
           _ = n := by
                   exact Nat.sub_add_cancel h2t
 
-      -- Rewrite `code_dist S - 1 = d'`.
       simpa [hd_pred] using hmain
 
 
