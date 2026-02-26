@@ -37,8 +37,7 @@ import Mathlib.Topology.Algebra.Order.Floor
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Order.Filter.Basic
 import Mathlib.Order.Disjoint
--- import Mathlib
-set_option pp.showLetValues.threshold 0
+
 /-!
 # Code Definitions
 
@@ -818,12 +817,12 @@ lemma sqrt_sub_sqrt_floor_le_one (hx : 0 ≤ x) : Real.sqrt x - Real.sqrt (Nat.f
     x - 2 * Real.sqrt x * Real.sqrt ↑⌊x⌋₊ + ↑⌊x⌋₊ ≤ x - 2 * (Real.sqrt ↑⌊x⌋₊ * Real.sqrt ↑⌊x⌋₊) +  ↑⌊x⌋₊:= by {
       suffices 2 * (Real.sqrt ↑⌊x⌋₊ * Real.sqrt ↑⌊x⌋₊) ≤ 2 * (Real.sqrt x * Real.sqrt ↑⌊x⌋₊)  by linarith
       suffices Real.sqrt ↑⌊x⌋₊ ≤ Real.sqrt x by {
-        apply (mul_le_mul_left two_pos).2
+        apply (mul_le_mul_iff_right₀ two_pos).2
         by_cases h: ↑⌊x⌋₊ = 0
         rw[h]
         simp
         have hx_pos : 0 < Real.sqrt ↑⌊x⌋₊ := by simp; exact Nat.pos_of_ne_zero h
-        apply (mul_le_mul_right hx_pos).2
+        apply (mul_le_mul_iff_left₀ hx_pos).2
         exact this
       }
       exact Real.sqrt_le_sqrt (Nat.floor_le hx)
@@ -871,14 +870,14 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
       refine monotone_nat_of_le_succ ?hk.hf.hf
       intro n
       apply Nat.floor_le_floor
-      apply (mul_le_mul_right hp.1).2
+      apply (mul_le_mul_iff_left₀ hp.1).2
       simp
       intro b
       use Nat.ceil (b/p)
       calc
         ⌊↑⌈↑b / p⌉₊ * p⌋₊ ≥ ⌊↑b / p * p⌋₊ := by {
           apply Nat.floor_le_floor
-          apply (mul_le_mul_right hp.1).2
+          apply (mul_le_mul_iff_left₀ hp.1).2
           exact Nat.le_ceil (b/p)
         }
         _                  ≥ ⌊b⌋₊ := by {
@@ -917,7 +916,7 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
         }
         _            = b * (1 - p) := by linarith
         _            ≥ ⌈↑a / (1 - p)⌉₊ * (1-p) := by rel[hb]
-        _            ≥ a / (1 - p) * (1 - p) := by exact (mul_le_mul_right h1p).2 (Nat.le_ceil (a/(1 -p)))
+        _            ≥ a / (1 - p) * (1 - p) := by exact (mul_le_mul_iff_left₀ h1p).2 (Nat.le_ceil (a/(1 -p)))
         _            = a                     := by exact div_mul_cancel₀ (a : ℝ) (by linarith)
 
     have h_tend := Asymptotics.IsLittleO.comp_tendsto h_stirling hk
@@ -931,11 +930,13 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
   rw[Asymptotics.IsBigOWith_def] at hc
   simp at hc
   rcases hc with ⟨N, hN⟩
+  -- ε'(n) absorbs: Stirling error (c_denom * sqrt(π/2)) and entropy difference ((q-1)*e²/p)
   let ε : ℕ → ℝ := fun n ↦ Real.logb q (n ^ ((1 : ℝ)/2))
-  let ε' : ℕ → ℝ := fun n ↦  Real.logb q ((2 * Real.pi * (p * (1 - p))) ^ ((1 : ℝ)/ 2) * c_denom) + (ε n)
+  let ε' : ℕ → ℝ := fun n ↦ Real.logb q (c_denom * ((q : ℝ) - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p) + (ε n)
   use ε'
   constructor
-  · simp [ε']
+  · -- ε' = o(n): constant term is o(n), and ε(n) = (1/2)*logb q n = o(n)
+    simp [ε']
     apply Asymptotics.IsLittleO.add
     · simp
       right
@@ -959,53 +960,518 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
       simp at h₁
       rw[h₁]
       apply Asymptotics.IsLittleO.const_mul_left
-      -- This composition theorem is really useful when dealing with f : ℕ → ℝ
       exact IsLittleO.comp_tendsto Real.isLittleO_log_id_atTop tendsto_natCast_atTop_atTop
+  -- Main inequality: for n ≥ max(N, N₂), C(n,⌊np⌋)*(q-1)^(pn) ≥ q^(H_q(p)*n - ε'(n))
   simp
-  use N
+  have h1p : 0 < 1 - p := by linarith [hp.2]
+  have hp1p : 0 < p * (1 - p) := mul_pos hp.1 h1p
+  -- N₂ ensures n*(1-p) ≥ 2 (needed for the entropy bound below)
+  let N₂ : ℕ := Nat.ceil (2 / (p * (1 - p))) + 1
+  use max N N₂
   intro n hn
-  -- by_cases h_n: n = 0
-  -- · rw[h_n]
-  --   simp[ε', ε]
-  --   refine (Real.rpow_le_one_iff_of_pos ?_).mpr ?_
-  --   exact Nat.cast_pos.mpr (by linarith)
-  --   left
-  --   constructor
-  --   · simp; linarith
-  --   · simp
+  have hn_N : N ≤ n := le_trans (le_max_left N N₂) hn
+  have hn_N2 : N₂ ≤ n := le_trans (le_max_right N N₂) hn
+  have hn_pos : 0 < n := Nat.lt_of_lt_of_le (Nat.succ_pos _) hn_N2
+  -- Basic setup
+  have h1p' : 0 < 1 - p := h1p
+  have hq' : 0 < (q : ℝ) := by positivity
+  have hq1 : (1 : ℝ) < q := by exact_mod_cast Nat.lt_of_lt_of_le one_lt_two hq
+  have hq_ge1 : (1 : ℝ) ≤ q - 1 := by
+    have : (2 : ℝ) ≤ q := by exact_mod_cast hq
+    linarith
+  have hq1_pos : 0 < (q : ℝ) - 1 := by linarith
+  have hq_ne1 : (q : ℝ) ≠ 1 := by linarith
+  have hn_real : (0 : ℝ) < n := by exact_mod_cast hn_pos
+  have hn_ne : (n : ℝ) ≠ 0 := ne_of_gt hn_real
+  -- a = ⌊np⌋, b = n - a
+  let a := ⌊(n : ℝ) * p⌋₊
+  let b := n - a
+  have ha_le : a ≤ n := self_ge_frac_floor n
+  have ha_real : (a : ℝ) ≤ n * p := Nat.floor_le (mul_nonneg (Nat.cast_nonneg n) (le_of_lt hp.1))
+  have ha_real' : (n : ℝ) * p - 1 < a := by
+    have := Nat.lt_floor_add_one ((n : ℝ) * p); push_cast at this ⊢; linarith
+  have hb_real : (b : ℝ) = n - a := by
+    simp only [b]; push_cast [Nat.cast_sub ha_le]; ring
+  -- δ = np - a ∈ [0, 1)
+  have hδ_nn : (0 : ℝ) ≤ n * p - a := by linarith [ha_real]
+  have hδ_lt1 : (n : ℝ) * p - a < 1 := by linarith [ha_real']
+  -- n*(1-p) ≥ 2 (from n ≥ N₂)
+  have h_n1p_ge2 : (2 : ℝ) ≤ n * (1 - p) := by
+    have hn_cast : (N₂ : ℝ) ≤ n := by exact_mod_cast hn_N2
+    have hN2_bound : (2 : ℝ) / (p * (1 - p)) ≤ (Nat.ceil (2 / (p * (1 - p))) : ℝ) :=
+      Nat.le_ceil _
+    have : N₂ = Nat.ceil (2 / (p * (1 - p))) + 1 := rfl
+    have hN2_val : (2 : ℝ) / (p * (1 - p)) + 1 ≤ N₂ := by
+      push_cast [this]; linarith
+    -- n ≥ 2/(p*(1-p)) + 1, so n*p*(1-p) ≥ 2 + p*(1-p) > 2
+    -- and n*(1-p) ≥ n*p*(1-p) since p ≤ 1, so n*(1-p) > 2
+    have h_n_lb : (2 : ℝ) / (p * (1 - p)) + 1 ≤ n := le_trans hN2_val hn_cast
+    have h_prod_lb : (2 : ℝ) + p * (1 - p) ≤ n * (p * (1 - p)) := by
+      have h1 := mul_le_mul_of_nonneg_right h_n_lb (le_of_lt hp1p)
+      have h2 : (2 / (p * (1 - p)) + 1) * (p * (1 - p)) = 2 + p * (1 - p) := by
+        have hp_ne : p ≠ 0 := ne_of_gt hp.1
+        have h1p_ne : (1 - p) ≠ 0 := ne_of_gt h1p
+        field_simp [hp_ne, h1p_ne]
+      linarith
+    nlinarith [mul_le_mul_of_nonneg_right (le_of_lt hp.2) (mul_nonneg (le_of_lt hn_real) (le_of_lt h1p))]
+  have hb_ge2 : (2 : ℝ) ≤ b := by
+    rw [hb_real]; linarith [ha_real]
+  have hb_pos : 0 < b := by
+    have : (0 : ℝ) < b := by linarith [hb_ge2]
+    exact_mod_cast this
+  have hb_real_pos : (0 : ℝ) < b := by exact_mod_cast hb_pos
+  -- The big expansion: b = n*(1-p) + δ
+  have hb_expand : (b : ℝ) = n * (1 - p) + (n * p - a) := by
+    rw [hb_real]; linarith [ha_real]
+  -- Factorials are positive
+  have h_a_fact_pos : (0 : ℝ) < a.factorial := Nat.cast_pos.mpr (Nat.factorial_pos a)
+  have h_b_fact_pos : (0 : ℝ) < b.factorial := Nat.cast_pos.mpr (Nat.factorial_pos b)
+  have h_n_fact_pos : (0 : ℝ) < n.factorial := Nat.cast_pos.mpr (Nat.factorial_pos n)
+  -- Specialize hN at n
+  have hN_n : (a.factorial : ℝ) * b.factorial ≤
+      c_denom * (|Real.sqrt 2| * |Real.sqrt ↑a| * |Real.sqrt Real.pi| * (↑a / Real.exp 1) ^ a *
+        (|Real.sqrt 2| * |Real.sqrt ↑b| * |Real.sqrt Real.pi| * (↑b / Real.exp 1) ^ b)) := by
+    have := hN n hn_N; simp only [b, a] at this ⊢; exact this
+  -- Strip absolute values (all are nonneg)
+  have h_abs_sqrt2 : |Real.sqrt 2| = Real.sqrt 2 := abs_of_nonneg (Real.sqrt_nonneg _)
+  have h_abs_sqrta : |Real.sqrt ↑a| = Real.sqrt ↑a := abs_of_nonneg (Real.sqrt_nonneg _)
+  have h_abs_sqrtb : |Real.sqrt ↑b| = Real.sqrt ↑b := abs_of_nonneg (Real.sqrt_nonneg _)
+  have h_abs_sqrtpi : |Real.sqrt Real.pi| = Real.sqrt Real.pi := abs_of_nonneg (Real.sqrt_nonneg _)
+  rw [h_abs_sqrt2, h_abs_sqrta, h_abs_sqrtb, h_abs_sqrtpi] at hN_n
+  -- c_denom is positive
+  have hc_pos : 0 < c_denom := by
+    have h_ab_pos : (0 : ℝ) < a.factorial * b.factorial := mul_pos h_a_fact_pos h_b_fact_pos
+    have h_rhs_pos : 0 < c_denom *
+        (Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (↑a / Real.exp 1) ^ a *
+         (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi * (↑b / Real.exp 1) ^ b)) :=
+      lt_of_lt_of_le h_ab_pos hN_n
+    rcases mul_pos_iff.mp h_rhs_pos with ⟨hc, _⟩ | ⟨_, hfact⟩
+    · exact hc
+    · exfalso
+      have hfact_nn : 0 ≤ Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (↑a / Real.exp 1) ^ a *
+          (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi * (↑b / Real.exp 1) ^ b) :=
+        mul_nonneg
+          (mul_nonneg (mul_nonneg (mul_nonneg (Real.sqrt_nonneg 2) (Real.sqrt_nonneg ↑a))
+            (Real.sqrt_nonneg Real.pi)) (by positivity))
+          (mul_nonneg (mul_nonneg (mul_nonneg (Real.sqrt_nonneg 2) (Real.sqrt_nonneg ↑b))
+            (Real.sqrt_nonneg Real.pi)) (by positivity))
+      linarith
+  -- q^(ε'(n)) > 0 for the rewriting
+  have hε'_const_pos : 0 < c_denom * ((q : ℝ) - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p := by
+    apply div_pos
+    · apply mul_pos; apply mul_pos; apply mul_pos
+      · exact hc_pos
+      · exact hq1_pos
+      · positivity
+      · exact Real.sqrt_pos_of_pos (by positivity)
+    · exact hp.1
+  have hε_pos : 0 < (n : ℝ) ^ ((1:ℝ)/2) := Real.rpow_pos_of_pos hn_real _
+  -- Rewrite the goal using rpow algebra
+  rw [Nat.cast_choose (K := ℝ) ha_le, Real.rpow_sub hq', Real.rpow_add hq',
+      Real.rpow_logb hq' hq_ne1 hε'_const_pos,
+      show ε n = Real.logb ↑q ((n : ℝ) ^ ((1:ℝ)/2)) from rfl,
+      Real.rpow_logb hq' hq_ne1 hε_pos,
+      Real.rpow_mul (le_of_lt hq')]
+  -- Goal: (q^(qaryEntropy q p))^n / (c_denom*(q-1)*e²*sqrt(π/2) * n^(1/2)) ≤ n!/(a!*b!)*(q-1)^(pn)
+  -- Suffices to show:
+  -- (q^(qaryEntropy q p))^n ≤ q^(H_q(a/n)*n) * (q-1)*e²
+  --   and q^(H_q(a/n)*n) / (c_denom*sqrt(π/2)*sqrt(n)) ≤ n!/(a!*b!) * (q-1)^(pn)
 
-  rw[Nat.cast_choose]
-  specialize hN n hn
-  have hq' : 0 < (q : ℝ) := by simp; linarith
-  rw[Real.rpow_sub hq', Real.rpow_add hq', Real.rpow_logb hq' (by simp; linarith), Real.rpow_logb hq' (by simp; linarith)]
-  rw[Real.rpow_mul (le_of_lt hq')]
-  rw[q_pow_qary_entropy_simp' hq hp]
-  simp [abs] at hN
-  have h_stirling_n := (Stirling.le_factorial_stirling n)
-  have h_n_nonneg : 0 ≤ (n.factorial : ℝ) := by exact Nat.cast_nonneg (Nat.factorial n)
-  have h_N_pos : 0 < (⌊↑n * p⌋₊.factorial : ℝ) * ((n - ⌊↑n * p⌋₊).factorial : ℝ) := by
-    apply mul_pos
-    apply Nat.cast_pos.mpr
-    exact Nat.pos_of_ne_zero (Nat.factorial_ne_zero (Nat.floor (n*p)))
-    apply Nat.cast_pos.mpr
-    exact Nat.pos_of_ne_zero (Nat.factorial_ne_zero (n - Nat.floor (n*p)))
-  have : 0 <((q : ℝ) - 1) ^ (p * (n : ℝ)) := by apply Real.rpow_pos_of_pos; simp; linarith
-  have h_stirling_coef := (mul_le_mul_iff_left₀ this).2 (div_le_div₀ h_n_nonneg h_stirling_n h_N_pos hN)
-  apply le_of_eq_of_le ?_ h_stirling_coef
+  -- Step 1: Entropy bound: (q^(qaryEntropy q p))^n ≤ q^(H_q(a/n)*n) * ((q-1)*e²/p)
+  have h_entropy_ineq :
+      (q : ℝ) ^ (qaryEntropy q p * n) ≤
+      (q : ℝ) ^ (qaryEntropy q (↑a / ↑n) * n) * (((q : ℝ) - 1) * Real.exp 1 ^ 2 / p) := by
+    have hqm1e2_pos : 0 < ((q : ℝ) - 1) * Real.exp 1 ^ 2 / p :=
+      div_pos (mul_pos hq1_pos (by positivity)) hp.1
+    rw [show ((q : ℝ) - 1) * Real.exp 1 ^ 2 / p =
+        (q : ℝ) ^ Real.logb q (((q : ℝ) - 1) * Real.exp 1 ^ 2 / p) from
+      (Real.rpow_logb hq' hq_ne1 hqm1e2_pos).symm,
+      ← Real.rpow_add hq']
+    apply Real.rpow_le_rpow_of_exponent_le (le_of_lt hq1)
+    -- Need: qaryEntropy q p * n ≤ qaryEntropy q (a/n) * n + logb q ((q-1)*e²/p)
+    rw [Real.logb_div (ne_of_gt (mul_pos hq1_pos (by positivity))) (ne_of_gt hp.1),
+        Real.logb_mul (ne_of_gt hq1_pos) (by positivity),
+        Real.logb_pow]
+    -- Need: n * (H_q(p) - H_q(a/n)) ≤ logb q (q-1) + 2*logb q (e) - logb q p
+    suffices h : (n : ℝ) * (qaryEntropy q p - qaryEntropy q (↑a / ↑n)) ≤
+        Real.logb q ((q : ℝ) - 1) + 2 * Real.logb q (Real.exp 1) - Real.logb q p by linarith
+    -- Algebraic bound on entropy difference
+    simp only [qaryEntropy]
+    -- Expand: n*(H_q(p) - H_q(a/n)) = δ*logb(q-1) + a*logb(a/(np)) + b*logb(b/(n(1-p))) + δ*(logb(1-p)-logb(p))
+    set δ := (n : ℝ) * p - a
+    have hδ_ge : 0 ≤ δ := hδ_nn
+    have hδ_lt : δ < 1 := hδ_lt1
+    -- a/n and b/n positivity
+    have hbn_pos : 0 < (b : ℝ) / n := div_pos hb_real_pos hn_real
+    -- First establish a > 0: from n*p ≥ n*p*(1-p) ≥ h_n1p_ge2/1 > 1
+    have ha_pos : 0 < a := by
+      suffices (1 : ℝ) < (n : ℝ) * p by
+        have h1 : 0 < ⌊(n : ℝ) * p⌋₊ := by
+          apply Nat.pos_of_ne_zero
+          intro h
+          have hnp_lt1 : (n : ℝ) * p < 1 := Nat.floor_eq_zero.mp h
+          linarith
+        exact_mod_cast h1
+      have hn_cast : (N₂ : ℝ) ≤ n := by exact_mod_cast hn_N2
+      have hN2_bound : (2 : ℝ) / (p * (1 - p)) ≤ (Nat.ceil (2 / (p * (1 - p))) : ℝ) :=
+        Nat.le_ceil _
+      have hN2_val : (2 : ℝ) / (p * (1 - p)) + 1 ≤ N₂ := by
+        have : N₂ = Nat.ceil (2 / (p * (1 - p))) + 1 := rfl
+        push_cast [this]; linarith
+      have h_n_lb : (2 : ℝ) / (p * (1 - p)) + 1 ≤ n := le_trans hN2_val hn_cast
+      have h_prod_lb : (2 : ℝ) + p * (1 - p) ≤ n * (p * (1 - p)) := by
+        have h1 := mul_le_mul_of_nonneg_right h_n_lb (le_of_lt hp1p)
+        have h2 : (2 / (p * (1 - p)) + 1) * (p * (1 - p)) = 2 + p * (1 - p) := by
+          have hp_ne : p ≠ 0 := ne_of_gt hp.1
+          have h1p_ne : (1 - p) ≠ 0 := ne_of_gt h1p
+          field_simp [hp_ne, h1p_ne]
+        linarith
+      have hn_real' : (0 : ℝ) < n := by exact_mod_cast hn_pos
+      have h_np_ge_np1p : n * (p * (1 - p)) ≤ n * p := by
+        have h1mp_le1 : (1 : ℝ) - p ≤ 1 := by linarith [hp.1]
+        have : n * p * (1 - p) ≤ n * p * 1 :=
+          mul_le_mul_of_nonneg_left h1mp_le1 (mul_nonneg hn_real'.le hp.1.le)
+        linarith [this]
+      linarith [mul_pos hp.1 h1p]
+    have ha_ne : (a : ℝ) ≠ 0 := ne_of_gt (by exact_mod_cast ha_pos)
+    have h_decomp : (n : ℝ) * (p * Real.logb ↑q (↑q - 1) - p * Real.logb ↑q p -
+        (1 - p) * Real.logb ↑q (1 - p) -
+        ((↑a / ↑n) * Real.logb ↑q (↑q - 1) - ↑a / ↑n * Real.logb ↑q (↑a / ↑n) -
+         (1 - ↑a / ↑n) * Real.logb ↑q (1 - ↑a / ↑n))) =
+        δ * Real.logb ↑q (↑q - 1) +
+        (a : ℝ) * Real.logb ↑q ((a : ℝ) / ((n : ℝ) * p)) +
+        (b : ℝ) * Real.logb ↑q ((b : ℝ) / ((n : ℝ) * (1 - p))) +
+        δ * (Real.logb ↑q (1 - p) - Real.logb ↑q p) := by
+      have hbn : (b : ℝ) = n - a := hb_real
+      have h1 : (1 : ℝ) - ↑a / ↑n = ↑b / ↑n := by rw [hbn]; field_simp
+      have h_logb_an : Real.logb ↑q (↑a / ↑n) = Real.logb ↑q ↑a - Real.logb ↑q ↑n :=
+        Real.logb_div ha_ne hn_ne
+      have h_logb_bn : Real.logb ↑q (↑b / ↑n) = Real.logb ↑q ↑b - Real.logb ↑q ↑n :=
+        Real.logb_div (ne_of_gt hb_real_pos) hn_ne
+      have h_logb_anp : Real.logb ↑q ((↑a : ℝ) / (↑n * p)) =
+          Real.logb ↑q ↑a - Real.logb ↑q ↑n - Real.logb ↑q p := by
+        rw [Real.logb_div ha_ne (mul_ne_zero hn_ne (ne_of_gt hp.1)),
+            Real.logb_mul hn_ne (ne_of_gt hp.1)]; ring
+      have h_logb_bn1p : Real.logb ↑q ((↑b : ℝ) / (↑n * (1 - p))) =
+          Real.logb ↑q ↑b - Real.logb ↑q ↑n - Real.logb ↑q (1 - p) := by
+        rw [Real.logb_div (ne_of_gt hb_real_pos) (mul_ne_zero hn_ne (ne_of_gt h1p')),
+            Real.logb_mul hn_ne (ne_of_gt h1p')]; ring
+      rw [h1, h_logb_an, h_logb_bn, h_logb_anp, h_logb_bn1p]
+      have ha_b_n : (a : ℝ) + b = n := by
+        have := hb_real; push_cast [Nat.cast_sub ha_le] at this ⊢; linarith
+      have hna_eq : (n : ℝ) * (↑a / ↑n) = ↑a := mul_div_cancel₀ ↑a hn_ne
+      have hnb_eq : (n : ℝ) * (↑b / ↑n) = ↑b := mul_div_cancel₀ ↑b hn_ne
+      linear_combination
+        (Real.logb ↑q ↑a - Real.logb ↑q (↑q - 1) - Real.logb ↑q ↑n) * hna_eq +
+        (Real.logb ↑q ↑b - Real.logb ↑q ↑n) * hnb_eq +
+        Real.logb ↑q (1 - p) * ha_b_n
+    rw [h_decomp]
+    -- Term 1: δ*logb(q-1) ≤ logb(q-1) since δ < 1 and logb(q-1) ≥ 0
+    have h_logq1_nn : 0 ≤ Real.logb ↑q (↑q - 1) :=
+      Real.logb_nonneg hq1 (by linarith)
+    have h_t1 : δ * Real.logb ↑q (↑q - 1) ≤ Real.logb ↑q (↑q - 1) := by
+      have hd_le1 : δ ≤ 1 := le_of_lt hδ_lt
+      calc δ * Real.logb ↑q (↑q - 1) ≤ 1 * Real.logb ↑q (↑q - 1) :=
+            mul_le_mul_of_nonneg_right hd_le1 h_logq1_nn
+        _ = Real.logb ↑q (↑q - 1) := one_mul _
+    -- Term 2: a*logb(a/(np)) ≤ 0 since a ≤ np
+    have h_t2 : (a : ℝ) * Real.logb ↑q ((a : ℝ) / ((n : ℝ) * p)) ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos (Nat.cast_nonneg a)
+        (Real.logb_nonpos hq1
+          (div_nonneg (Nat.cast_nonneg a) (mul_nonneg (le_of_lt hn_real) (le_of_lt hp.1)))
+          (by rwa [div_le_one (mul_pos hn_real hp.1)]))
+    -- Term 3: b*logb(b/(n(1-p))) ≤ 2*logb(e) using log(1+x) ≤ x and n(1-p) ≥ 2
+    have h_t3 : (b : ℝ) * Real.logb ↑q ((b : ℝ) / ((n : ℝ) * (1 - p))) ≤
+        2 * Real.logb ↑q (Real.exp 1) := by
+      have h_n1p_pos : 0 < (n : ℝ) * (1 - p) := by linarith [h_n1p_ge2]
+      have h_bdiv : (b : ℝ) / ((n : ℝ) * (1 - p)) = 1 + δ / ((n : ℝ) * (1 - p)) := by
+        rw [hb_expand, add_div, div_self (ne_of_gt h_n1p_pos)]
+      rw [h_bdiv]
+      have h1pos : 0 < 1 + δ / ((n : ℝ) * (1 - p)) := by positivity
+      -- logb q (1 + x) ≤ x / log q  (using log(1+x) ≤ x)
+      have hlog_le : Real.log (1 + δ / ((n : ℝ) * (1 - p))) ≤ δ / ((n : ℝ) * (1 - p)) := by
+        have := Real.log_le_sub_one_of_pos (show 0 < 1 + δ / (↑n * (1 - p)) from h1pos)
+        linarith
+      -- b * logb q (1 + x) ≤ 2 * logb q e
+      -- using: log(1+x) ≤ x, so b*log(1+x)/log q ≤ b*x/log q ≤ 2/log q = 2*logb q e
+      have hlogq_pos : 0 < Real.log ↑q := Real.log_pos hq1
+      have hδ_le1 : δ ≤ 1 := le_of_lt hδ_lt
+      have h_n1p_ge1 : (1 : ℝ) ≤ (n : ℝ) * (1 - p) := by linarith [h_n1p_ge2]
+      -- Step A: b * logb q (1+x) ≤ b * x / (n*(1-p) * log q)
+      -- Goal: ↑b * (log(1+x) / log q) ≤ ↑b * δ / (n*(1-p) * log q)
+      have hstepA : (b : ℝ) * Real.logb ↑q (1 + δ / ((n : ℝ) * (1 - p))) ≤
+          (b : ℝ) * δ / ((n : ℝ) * (1 - p)) / Real.log ↑q := by
+        rw [Real.logb]
+        have hgoal : (b : ℝ) * (Real.log (1 + δ / (↑n * (1 - p))) / Real.log ↑q) ≤
+            (b : ℝ) * δ / (↑n * (1 - p)) / Real.log ↑q := by
+          rw [show (b : ℝ) * (Real.log (1 + δ / (↑n * (1 - p))) / Real.log ↑q) =
+              (b : ℝ) * Real.log (1 + δ / (↑n * (1 - p))) / Real.log ↑q by ring,
+              show (b : ℝ) * δ / (↑n * (1 - p)) / Real.log ↑q =
+              (b : ℝ) * (δ / (↑n * (1 - p))) / Real.log ↑q by ring]
+          apply div_le_div_of_nonneg_right _ hlogq_pos.le
+          exact mul_le_mul_of_nonneg_left hlog_le (Nat.cast_nonneg b)
+        exact hgoal
+      -- Step B: b * δ / (n*(1-p)) ≤ 2
+      have hstepB : (b : ℝ) * δ / ((n : ℝ) * (1 - p)) ≤ 2 := by
+        rw [hb_expand, div_le_iff₀ h_n1p_pos]
+        have h_sum_nn : (0 : ℝ) ≤ (n : ℝ) * (1 - p) + δ := by linarith
+        calc ((n : ℝ) * (1 - p) + δ) * δ
+            ≤ (n * (1 - p) + δ) * 1 := mul_le_mul_of_nonneg_left hδ_le1 h_sum_nn
+          _ = n * (1 - p) + δ := mul_one _
+          _ ≤ n * (1 - p) + 1 := add_le_add_left hδ_le1 _
+          _ ≤ n * (1 - p) + n * (1 - p) := add_le_add_left h_n1p_ge1 _
+          _ = 2 * (n * (1 - p)) := by ring
+      -- 2 / log q = 2 * logb q e
+      have hstepC : (2 : ℝ) / Real.log ↑q = 2 * Real.logb ↑q (Real.exp 1) := by
+        rw [Real.logb, Real.log_exp]; ring
+      have hstepD : (b : ℝ) * δ / ((n : ℝ) * (1 - p)) / Real.log ↑q ≤ 2 / Real.log ↑q :=
+        div_le_div_of_nonneg_right hstepB hlogq_pos.le
+      linarith
+    -- Term 4: δ*(logb(1-p) - logb(p)) ≤ -logb(p)
+    -- Since logb(1-p) ≤ 0 and δ ≤ 1:
+    -- If logb(1-p) ≥ logb(p): δ*(logb(1-p)-logb(p)) ≤ 1*(logb(1-p)-logb(p)) ≤ 0 - logb(p) = -logb(p)
+    -- If logb(1-p) < logb(p): δ*(logb(1-p)-logb(p)) ≤ 0 ≤ -logb(p) (since logb(p) ≤ 0)
+    have h_logp_neg : Real.logb ↑q p ≤ 0 :=
+      Real.logb_nonpos hq1 hp.1.le hp.2.le
+    have h_log1p_neg : Real.logb ↑q (1 - p) ≤ 0 :=
+      Real.logb_nonpos hq1 h1p.le (by linarith)
+    have h_t4 : δ * (Real.logb ↑q (1 - p) - Real.logb ↑q p) ≤ -(Real.logb ↑q p) := by
+      rcases le_or_lt (Real.logb ↑q (1 - p)) (Real.logb ↑q p) with h_le | h_lt
+      · -- logb(1-p) ≤ logb(p), so logb(1-p) - logb(p) ≤ 0, and δ ≥ 0
+        have : δ * (Real.logb ↑q (1 - p) - Real.logb ↑q p) ≤ 0 :=
+          mul_nonpos_of_nonneg_of_nonpos hδ_ge (by linarith)
+        linarith
+      · -- logb(1-p) > logb(p), so the term is positive
+        -- δ ≤ 1, so δ*(logb(1-p) - logb(p)) ≤ logb(1-p) - logb(p) ≤ -logb(p)
+        calc δ * (Real.logb ↑q (1 - p) - Real.logb ↑q p)
+            ≤ 1 * (Real.logb ↑q (1 - p) - Real.logb ↑q p) :=
+              mul_le_mul_of_nonneg_right (le_of_lt hδ_lt) (by linarith)
+          _ = Real.logb ↑q (1 - p) - Real.logb ↑q p := one_mul _
+          _ ≤ -(Real.logb ↑q p) := by linarith
+    linarith
 
+  -- Step 2: Exact formula: q^(H_q(a/n)*n) = (q-1)^a * n^n / (a^a * b^b)
+  -- We prove: (q-1)^a * n^n / (a^a * b^b) ≤ n!/(a!*b!) * (q-1)^(pn)
+  -- combined with the Stirling bound.
+  -- We use: n! ≥ sqrt(2πn)*(n/e)^n and a!*b! ≤ hN bound,
+  -- and AM-GM: sqrt(a*b) ≤ n/2.
+  -- The combined bound gives:
+  -- n!/(a!*b!) ≥ sqrt(2πn)*(n/e)^n / (c_denom * 2π * sqrt(ab) * (a/e)^a * (b/e)^b)
+  --           = n^n / (c_denom * sqrt(2π) * sqrt(ab)/sqrt(n) * a^a * b^b)
+  -- Since sqrt(ab) ≤ n/2: sqrt(ab)/sqrt(n) ≤ n/(2*sqrt(n)) = sqrt(n)/2
+  -- So n!/(a!*b!) ≥ n^n / (c_denom * sqrt(2π) * sqrt(n)/2 * a^a * b^b)
+  --             = 2*n^n / (c_denom * sqrt(2πn) * a^a * b^b)
+  --             ≥ n^n / (c_denom * sqrt(π/2) * sqrt(n) * a^a * b^b)   [since 2/sqrt(2π) = sqrt(2/π) = 1/sqrt(π/2)]
+  -- Check: sqrt(π/2) * 2/sqrt(2π) = sqrt(π/2) * sqrt(2/π) = sqrt(π/2 * 2/π) = sqrt(1) = 1 ✓
+  -- So n^n / (a^a*b^b) / (c_denom*sqrt(π/2)*sqrt(n)) ≤ n!/(a!*b!) ≤ n!/(a!*b!)*(q-1)^(pn)
 
+  -- Key sub-lemma: n^n / (a^a*b^b) / (c_denom * sqrt(π/2) * sqrt(n)) ≤ n!/(a!*b!)
+  have h_comb_bound :
+      (n : ℝ) ^ n / ((a : ℝ) ^ a * (b : ℝ) ^ b) / (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt n) ≤
+      (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) := by
+    -- From Stirling lower on n! and upper on a!*b!:
+    -- n! ≥ sqrt(2πn)*(n/e)^n and a!*b! ≤ c_denom * (sqrt(2)*sqrt(a)*sqrt(π)*(a/e)^a)*(sqrt(2)*sqrt(b)*sqrt(π)*(b/e)^b)
+    -- = c_denom * 2π * sqrt(a*b) * a^a * b^b / e^(a+b)
+    -- So n! * (a^a*b^b) ≥ sqrt(2πn)*(n/e)^n * a^a * b^b
+    --                   = sqrt(2πn) * n^n / e^n * a^a * b^b
+    -- And n^n * (a!*b!) ≤ n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^(a+b)
+    --                   = n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^n  (since a+b=n)
+    -- So sufficient: n^n * c_denom * 2π * sqrt(ab) / e^n ≤ sqrt(2πn) * n^n / e^n * c_denom * sqrt(π/2) * sqrt(n)
+    -- i.e., 2π * sqrt(ab) ≤ sqrt(2πn) * sqrt(π/2) * sqrt(n)
+    -- = sqrt(2πn * π/2 * n) = sqrt(π²n²) = π*n
+    -- So need: 2π * sqrt(ab) ≤ π*n, i.e., 2*sqrt(ab) ≤ n ✓ by AM-GM
+    -- Let's prove this more directly using the chain:
+    -- n^n * (a!*b!) ≤ n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^n  [from hN_n with e^n factored]
+    -- n! * a^a * b^b * c_denom * sqrt(π/2) * sqrt(n) ≥ sqrt(2πn) * n^n * c_denom * sqrt(π/2) * sqrt(n) * a^a * b^b / e^n
+    -- So need: n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^n ≤ sqrt(2πn) * n^n * c_denom * sqrt(π/2) * sqrt(n) * a^a * b^b / e^n
+    -- i.e., 2π * sqrt(ab) ≤ sqrt(2πn) * sqrt(π/2) * sqrt(n) = π * n ✓ (by AM-GM: sqrt(ab) ≤ n/2)
+    have h_ab_AM_GM : Real.sqrt ((a : ℝ) * b) ≤ (n : ℝ) / 2 := by
+      rw [Real.sqrt_le_left.symm.trans_eq (by simp), ← Real.sqrt_sq (by linarith)]
+      apply Real.sqrt_le_sqrt
+      have hbn : (b : ℝ) = n - a := hb_real
+      nlinarith [sq_nonneg ((a : ℝ) - b), Nat.cast_nonneg a]
+    have h_e_pow : (n : ℝ) ^ n / Real.exp n = ((n : ℝ) / Real.exp 1) ^ n := by
+      rw [Real.exp_mul_comm, div_pow]
+    -- The e^n factor: (n/e)^n = n^n/e^n, similarly for a and b
+    have h_a_pow : ((a : ℝ) / Real.exp 1) ^ a = (a : ℝ) ^ a / Real.exp a := by
+      rw [div_pow, Real.exp_mul_comm]
+    have h_b_pow : ((b : ℝ) / Real.exp 1) ^ b = (b : ℝ) ^ b / Real.exp b := by
+      rw [div_pow, Real.exp_mul_comm]
+    have h_ab_sum : (a : ℝ) + b = n := by
+      have := hb_real; push_cast at this ⊢; linarith
+    have h_exp_sum : Real.exp ((a : ℝ) + b) = Real.exp n := by
+      congr 1; exact_mod_cast h_ab_sum
+    -- Stirling lower on n!
+    have h_stir_n : Real.sqrt (2 * Real.pi * n) * ((n : ℝ) / Real.exp 1) ^ n ≤ n.factorial := by
+      exact Stirling.le_factorial_stirling n
+    -- Rearranging: n! ≥ sqrt(2πn) * n^n / e^n
+    rw [h_e_pow] at h_stir_n
+    -- From hN_n: a!*b! ≤ c_denom * sqrt(2)*sqrt(a)*sqrt(π)*(a/e)^a * sqrt(2)*sqrt(b)*sqrt(π)*(b/e)^b
+    -- Simplify the Stirling upper bound on a!*b!
+    have h_stir_ab : (a.factorial : ℝ) * b.factorial ≤
+        c_denom * (2 * Real.pi * Real.sqrt ((a : ℝ) * b)) *
+        (((a : ℝ) / Real.exp 1) ^ a * ((b : ℝ) / Real.exp 1) ^ b) := by
+      have hsq_ab : Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi *
+          (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi) =
+          2 * Real.pi * Real.sqrt ((a : ℝ) * b) := by
+        rw [Real.sqrt_mul (Nat.cast_nonneg a)]
+        rw [show Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi) =
+            (Real.sqrt 2 * Real.sqrt 2) * (Real.sqrt ↑a * Real.sqrt ↑b) * (Real.sqrt Real.pi * Real.sqrt Real.pi) by ring]
+        rw [Real.mul_self_sqrt (by norm_num), Real.mul_self_sqrt Real.pi_pos.le,
+            ← Real.sqrt_mul (Nat.cast_nonneg a)]
+        ring
+      calc (a.factorial : ℝ) * b.factorial
+          ≤ c_denom * (Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (↑a / Real.exp 1) ^ a) *
+            (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi * (↑b / Real.exp 1) ^ b) := hN_n
+        _ = c_denom * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
+            ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b) := by
+            linear_combination c_denom * ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b) * hsq_ab
+    -- Now combine h_stir_n, h_stir_ab, h_ab_AM_GM to prove the main bound
+    -- We prove: n^n * (a!*b!) ≤ n! * (a^a*b^b) * (c_denom*sqrt(π/2)*sqrt(n))
+    -- Using: h_stir_n: √(2πn)*(n/e)^n ≤ n!
+    --        h_stir_ab: a!*b! ≤ c_denom*(2π*√(ab))*(a/e)^a*(b/e)^b
+    --        h_ab_AM_GM: √(ab) ≤ n/2
+    -- Key identity: n^n*(a/e)^a*(b/e)^b = (n/e)^n*(a^a*b^b)  [since a+b=n, (a/e)^a*(b/e)^b = a^a*b^b/e^n]
+    -- Key identity: √(2πn)*√(π/2)*√n = πn  [proved below]
+    have h_e_a : ((↑a / Real.exp 1) ^ a : ℝ) = (↑a) ^ a / Real.exp ↑a := by
+      rw [div_pow, ← Real.exp_nat_mul, mul_one]
+    have h_e_b : ((↑b / Real.exp 1) ^ b : ℝ) = (↑b) ^ b / Real.exp ↑b := by
+      rw [div_pow, ← Real.exp_nat_mul, mul_one]
+    have h_e_n : ((↑n / Real.exp 1) ^ n : ℝ) = (↑n) ^ n / Real.exp ↑n := by
+      rw [div_pow, ← Real.exp_nat_mul, mul_one]
+    have h_exp_sum : Real.exp (↑a : ℝ) * Real.exp (↑b : ℝ) = Real.exp (↑n : ℝ) := by
+      rw [← Real.exp_add]
+      congr 1
+      have := h_ab_sum
+      push_cast at this ⊢; linarith
+    have h_pi_ident : Real.sqrt (2 * Real.pi * ↑n) * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n =
+        Real.pi * ↑n := by
+      rw [← Real.sqrt_mul (by positivity), ← Real.sqrt_mul (by positivity)]
+      rw [show 2 * Real.pi * ↑n * (Real.pi / 2) * ↑n = (Real.pi * ↑n) ^ 2 by ring]
+      rw [Real.sqrt_sq (by positivity)]
+    -- The main inequality: n^n*(a!*b!) ≤ n!*(a^a*b^b)*(c_denom*√(π/2)*√n)
+    -- Prove via: LHS/RHS = n^n/(a^a*b^b)/(c_denom*sqrt(π/2)*sqrt(n)) ≤ 1
+    suffices h : (↑n) ^ n * (↑(a.factorial) * ↑(b.factorial)) ≤
+        (↑(n.factorial)) * ((↑a) ^ a * (↑b) ^ b) * (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) by
+      rw [div_div, div_le_div_iff₀
+            (mul_pos (mul_pos (mul_pos (by positivity) (Real.sqrt_pos_of_pos (by positivity)))
+                              (Real.sqrt_pos_of_pos hn_real))
+                     (mul_pos (by positivity) (by positivity)))
+            (mul_pos h_a_fact_pos h_b_fact_pos)]
+      linarith [h]
+    calc (↑n) ^ n * (↑(a.factorial) * ↑(b.factorial))
+        ≤ (↑n) ^ n * (c_denom * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
+              ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b)) :=
+              mul_le_mul_of_nonneg_left h_stir_ab (by positivity)
+      _ = c_denom * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
+              ((↑n / Real.exp 1) ^ n * ((↑a) ^ a * (↑b) ^ b)) := by
+              rw [h_e_a, h_e_b, h_e_n]
+              field_simp
+              rw [h_exp_sum]; ring
+      _ ≤ c_denom * (Real.pi * ↑n) *
+              ((↑n / Real.exp 1) ^ n * ((↑a) ^ a * (↑b) ^ b)) := by
+              apply mul_le_mul_of_nonneg_right _ (by positivity)
+              apply mul_le_mul_of_nonneg_left _ (by positivity)
+              -- 2π*√(ab) ≤ π*n, i.e., 2*√(ab) ≤ n
+              nlinarith [h_ab_AM_GM, Real.pi_pos]
+      _ = Real.sqrt (2 * Real.pi * ↑n) * (↑n / Real.exp 1) ^ n *
+              ((↑a) ^ a * (↑b) ^ b) * (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := by
+              rw [← h_pi_ident]; ring
+      _ ≤ ↑(n.factorial) * ((↑a) ^ a * (↑b) ^ b) *
+              (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := by
+              apply mul_le_mul_of_nonneg_right _ (by positivity)
+              apply mul_le_mul_of_nonneg_right h_stir_n (by positivity)
 
-
-
-
-
-
-
-
-  sorry
-  sorry
-  sorry
-  exact self_ge_frac_floor n
+  -- Step 3: Combine h_entropy_ineq and h_comb_bound to get the result
+  have h_rpow_mono : ((q : ℝ) - 1) ^ (a : ℝ) ≤ ((q : ℝ) - 1) ^ (p * (n : ℝ)) := by
+    have ha_pn : (a : ℝ) ≤ p * (n : ℝ) := mul_comm (n : ℝ) p ▸ ha_real
+    exact Real.rpow_le_rpow_of_exponent_le hq_ge1 ha_pn
+  -- Convert h_comb_bound to rpow form (x ^ (n:ℕ) = x ^ (n:ℝ) by rpow_natCast)
+  have h_comb_bound' : (n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ)) /
+      (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) ≤
+      (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) := by
+    have : (n : ℝ) ^ (n : ℝ) = (n : ℝ) ^ n := (Real.rpow_natCast _ _).symm
+    have ha' : (a : ℝ) ^ (a : ℝ) = (a : ℝ) ^ a := (Real.rpow_natCast _ _).symm
+    have hb' : (b : ℝ) ^ (b : ℝ) = (b : ℝ) ^ b := (Real.rpow_natCast _ _).symm
+    rw [this, ha', hb']; exact h_comb_bound
+  -- Rearrange: n^n/(a^a*b^b) ≤ n!/(a!*b!) * (c_denom*sqrt(π/2)*sqrt(n))
+  have hcb' : (n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ)) ≤
+      (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) *
+      (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := by
+    have hpos : 0 < c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n := by positivity
+    rwa [div_le_iff₀ hpos] at h_comb_bound'
+  -- h_exact: q^(H_q(a/n)*n) = (q-1)^a * n^n / (a^a * b^b)
+  have h_exact : (↑q : ℝ) ^ (qaryEntropy ↑q (↑a / ↑n) * ↑n) =
+      (↑q - 1) ^ (a : ℝ) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) := by
+    simp only [qaryEntropy]
+    have ha_ne : (a : ℝ) ≠ 0 := ne_of_gt (by exact_mod_cast ha_pos)
+    have h1 : (1 : ℝ) - ↑a / ↑n = ↑b / ↑n := by rw [hb_real]; field_simp
+    have h_logb_an : Real.logb ↑q (↑a / ↑n) = Real.logb ↑q ↑a - Real.logb ↑q ↑n :=
+      Real.logb_div ha_ne hn_ne
+    have h_logb_bn : Real.logb ↑q (↑b / ↑n) = Real.logb ↑q ↑b - Real.logb ↑q ↑n :=
+      Real.logb_div (ne_of_gt hb_real_pos) hn_ne
+    rw [h1, h_logb_an, h_logb_bn]
+    -- simplify the exponent: (a/n * logb(q-1) - a/n*(logb a - logb n) - b/n*(logb b - logb n)) * n
+    -- = a*logb(q-1) + n*logb(n) - a*logb(a) - b*logb(b)
+    have hexp_eq : (↑a / ↑n * Real.logb ↑q (↑q - 1) -
+        ↑a / ↑n * (Real.logb ↑q ↑a - Real.logb ↑q ↑n) -
+        ↑b / ↑n * (Real.logb ↑q ↑b - Real.logb ↑q ↑n)) * ↑n =
+        ↑a * Real.logb ↑q (↑q - 1) + ↑n * Real.logb ↑q ↑n
+          - ↑a * Real.logb ↑q ↑a - ↑b * Real.logb ↑q ↑b := by
+      field_simp [hn_ne]; ring
+    rw [hexp_eq]
+    -- Now prove q^(a*logb(q-1) + n*logb(n) - a*logb(a) - b*logb(b)) = (q-1)^a * n^n / (a^a * b^b)
+    rw [show ↑a * Real.logb ↑q (↑q - 1) + ↑n * Real.logb ↑q ↑n -
+        ↑a * Real.logb ↑q ↑a - ↑b * Real.logb ↑q ↑b =
+        Real.logb ↑q ((↑q - 1) ^ (↑a : ℝ) * (↑n : ℝ) ^ (↑n : ℝ) /
+          ((↑a : ℝ) ^ (↑a : ℝ) * (↑b : ℝ) ^ (↑b : ℝ))) by
+      rw [Real.logb_div (by positivity) (by positivity),
+          Real.logb_mul (by positivity) (by positivity),
+          Real.logb_rpow (ne_of_gt hq') hq_ne1,
+          Real.logb_rpow (ne_of_gt hq') hq_ne1,
+          Real.logb_rpow (ne_of_gt hq') hq_ne1,
+          Real.logb_rpow (ne_of_gt hq') hq_ne1]
+      ring]
+    exact Real.rpow_logb hq' hq_ne1 (by positivity)
+  -- Convert h_entropy_ineq to (q^H)^(n:ℝ) form with the correct constant (q-1)*e²/p
+  have h_entropy_ineq' : (↑q ^ qaryEntropy ↑q p) ^ (n : ℝ) ≤
+      ↑q ^ (qaryEntropy ↑q (↑a / ↑n) * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) := by
+    rw [← Real.rpow_natCast ↑q n, ← Real.rpow_mul (le_of_lt hq')]
+    exact h_entropy_ineq
+  have h_sqrt_n : Real.sqrt (n : ℝ) = (n : ℝ) ^ ((1 : ℝ) / 2) := Real.sqrt_eq_rpow _
+  have h_denom_pos : 0 < c_denom * ((q : ℝ) - 1) * Real.exp 1 ^ 2 *
+      Real.sqrt (Real.pi / 2) / p * (n : ℝ) ^ ((1 : ℝ) / 2) := mul_pos hε'_const_pos hε_pos
+  rw [div_le_iff₀ h_denom_pos]
+  have h1_pos : 0 < (↑q - 1) ^ (p * ↑n) := Real.rpow_pos_of_pos hq1_pos _
+  have h2_pos : 0 < ((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p :=
+    div_pos (mul_pos hq1_pos (by positivity)) hp.1
+  calc (↑q ^ qaryEntropy ↑q p) ^ (n : ℝ)
+      ≤ ↑q ^ (qaryEntropy ↑q (↑a / ↑n) * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) :=
+            h_entropy_ineq'
+    _ = (↑q - 1) ^ (a : ℝ) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
+            (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) := by rw [h_exact]
+    _ ≤ (↑q - 1) ^ (p * ↑n) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
+            (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) := by
+              apply mul_le_mul_of_nonneg_right _ (le_of_lt h2_pos)
+              exact mul_le_mul_of_nonneg_right h_rpow_mono (by positivity)
+    _ ≤ ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * (↑q - 1) ^ (p * ↑n) *
+            (c_denom * ((↑q - 1) * Real.exp 1 ^ 2) / p * Real.sqrt (Real.pi / 2) *
+              (n : ℝ) ^ ((1 : ℝ) / 2)) := by
+              rw [show (↑q - 1) ^ (p * ↑n) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
+                    (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) =
+                  ((↑q - 1) ^ (p * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p)) *
+                    ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) by ring]
+              rw [show ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * (↑q - 1) ^ (p * ↑n) *
+                    (c_denom * ((↑q - 1) * Real.exp 1 ^ 2) / p * Real.sqrt (Real.pi / 2) *
+                     (n : ℝ) ^ ((1 : ℝ) / 2)) =
+                  ((↑q - 1) ^ (p * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p)) *
+                    (↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) *
+                      (c_denom * Real.sqrt (Real.pi / 2) * (n : ℝ) ^ ((1 : ℝ) / 2))) by ring]
+              rw [← h_sqrt_n]
+              exact mul_le_mul_of_nonneg_left hcb' (mul_pos h1_pos h2_pos).le
+    _ = ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * (↑q - 1) ^ (p * ↑n) *
+            (c_denom * ((↑q - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p) *
+              (n : ℝ) ^ ((1 : ℝ) / 2)) := by ring
 }
 
 
@@ -1111,7 +1577,7 @@ C.card ≤ Fintype.card α ^ n / (Finset.sum (Finset.range ((Nat.floor (((d : �
         i ≤ ((Nat.floor (((d : ℝ)-1)/2)) + 1)  := by linarith [Finset.mem_range.1 hi]
         _ ≤ d  := by exact this
         _ ≤ n  := by exact dist_le_length C d h
-    · apply Nat.pos_pow_of_pos
+    · apply Nat.pow_pos
       simp
       exact h''
     simp
@@ -1233,11 +1699,7 @@ matrix_dist n k x = uniform_vector_dist n α := by {
         simp at h_g
         funext x₀
         have h_g' : (fun x_1 : Fin 1 => Finset.sum Finset.univ fun x_2 => G x₀ x_2 * x x_2) = fun x => v x₀ := by exact h_g x₀
-        sorry
-        -- TODO Solve this line
-        -- exact congrFun h_g' x₀
-
-
+        exact congrFun h_g' 1
     -- Says that the number of matrices G such that for each row G_i, G_ix = v_i is equal to the product
     -- over i of the number of row vectors g such that gx = v_i
     have h3 : (filter (fun G => ∀ (i : Fin n), Matrix.mulVec (get_matrix_row n k G i) x = fun _ => v i) Finset.univ).card
@@ -1318,9 +1780,10 @@ matrix_dist n k x = uniform_vector_dist n α := by {
           constructor
           · simp[S]
             unfold Matrix.mulVec dotProduct
-            sorry
-            -- TODO Resolve this line below
-            -- simp[h_eq]
+            intro a
+            funext x_1
+            simp[a₀]
+            exact h_eq a
           · funext i j
             simp[a₀]
 
@@ -1378,7 +1841,7 @@ matrix_dist n k x = uniform_vector_dist n α := by {
             field_simp at h_formula
             rw[eq_sub_iff_add_eq] at h_formula
             simp[S]
-            simp_all[Finset.sum_sub_distrib, mul_sub]
+            simp_all
 
         simp_rw[h_rearrange]
         let S₂ := (toFinset {g : Matrix (Fin 1) (Fin k) α | g 0 j = (v i - Finset.sum (erase Finset.univ j) fun a => g 0 a * x a) / x j})
@@ -1573,37 +2036,17 @@ matrix_dist n k x = uniform_vector_dist n α := by {
               rw[hS₂_mem, ←Finset.mem_coe]
               have h_finseteq : ↑(toFinset {g | inS₂ g}) = {g | inS₂ g} := by simp
               rw[h_finseteq, Set.mem_setOf_eq]
-              simp only[inS₂, p]
-              simp [p₀, Finset.sum_congr]
-              congr
-              field_simp[h_j]
-              let v_term := (v i - Finset.sum Finset.univ fun x_2 => if h_lj : x_2 < j then b { val := ↑x_2, isLt := h_l1 x_2 h_lj } else if h_lj' : x_2 = j then 0 else b { val := ↑x_2 - 1, isLt := h_l2 x_2 h_lj h_lj' } * x x_2)
-              have h_v_term : v_term = (v i - Finset.sum Finset.univ fun x_2 => if h_lj : x_2 < j then b { val := ↑x_2, isLt := h_l1 x_2 h_lj } else if h_lj' : x_2 = j then 0 else b { val := ↑x_2 - 1, isLt := h_l2 x_2 h_lj h_lj' } * x x_2) := by rfl
-              -- simp only [Finset.sum_ite, Finset.sum_sub_distrib, Finset.mem_univ, if_true]
-              -- simp at h_v_term
-              simp[Finset.sum_ite, Finset.sum_congr, Finset.sum_sub_distrib, Finset.mem_univ, if_true]
-              sorry
-              -- TODO Resolve the following code
-              -- rw[← h_v_term]
-              -- have h_j_sum : (Finset.sum (filter (fun x => x = j) Finset.univ) fun x_1 => v_term * x x_1 / x j) = v_term := by
-              --   have h_filter_eq_singleton : (Finset.filter (fun x => x = j) (Finset.univ : Finset (Fin k))) = {j} := by ext x_1; simp [Finset.mem_filter, Finset.mem_univ, Finset.mem_singleton]
-              --   rw[h_filter_eq_singleton]
-              --   simp[Finset.sum_singleton]
-              --   field_simp[h_j]
-
-              -- rw[h_j_sum]
-              -- ring_nf
-
-              -- let sum_fun := fun x_1 => (if h_lj : x_1 < j then b { val := ↑x_1, isLt := h_l1 x_1 h_lj } else if h_lj' : x_1 = j then 0 else b { val := ↑x_1 - 1, isLt := h_l2 x_1 h_lj h_lj' }) * x x_1
-
-              -- have h_sum_fun_zero : sum_fun j = 0 := by simp
-
-              -- rw[←Finset.sum_erase (Finset.univ : Finset (Fin k)) h_sum_fun_zero]
-              -- change (Finset.sum (erase Finset.univ j) fun x => sum_fun x) = (Finset.sum (filter (fun x => ¬x=j) Finset.univ) fun x => sum_fun x)
-
-              -- have h_erase_eq_filter_not : (erase Finset.univ j) = (filter (fun x => ¬x=j) Finset.univ) := by ext l; simp [Finset.mem_erase, Finset.mem_filter, Finset.mem_univ]
-              -- rw[h_erase_eq_filter_not]
-
+              -- Goal: inS₂ p, i.e., p 0 j = (vi - Σ_{c≠j} p 0 c * x c) / x j
+              -- By definition, p 0 j = (vi - Σ_{c≠j} p₀ 0 c * x c) / x j
+              -- and for c ≠ j, p 0 c = p₀ 0 c
+              simp only [inS₂, p]
+              simp only [ne_eq, not_true, ↓reduceIte]
+              congr 1
+              congr 1
+              apply Finset.sum_congr rfl
+              intro c hc
+              have hcj : c ≠ j := Finset.ne_of_mem_erase hc
+              simp [hcj]
 
             use h_p
             funext l
@@ -1857,47 +2300,146 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
   rw[h_sum, h_ball_size]
 }
 
-theorem existence_bound (d: ℕ) :
-(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), weight (Matrix.mulVec G x) < d}).card ≤
-(Fintype.card α)^k * ((hamming_ball (d-1) (zero : Codeword n α)).card) := by {
+theorem existence_bound (d: ℕ) (h_k : k ≥ 1) (h_d : d > 0) :
+(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), x ≠ 0 ∧ weight (Matrix.mulVec G x) < d}).card ≤
+((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) * ((hamming_ball (d-1) (zero : Codeword n α)).card) := by {
 
-  let S := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), weight (Matrix.mulVec G x) < d}
-  let S_u := Set.toFinset (⋃ (x : Codeword k α), {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d})
+  let nonzero : Finset (Codeword k α) := Finset.univ.filter (· ≠ 0)
+  let S := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), x ≠ 0 ∧ weight (Matrix.mulVec G x) < d}
 
-  have h_union_eq : S = S_u := by
+  -- S equals the biUnion over nonzero x
+  have h_union_eq : S = nonzero.biUnion (fun x => Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}) := by
     ext G
-    apply Iff.intro
-    · intro h_S
-      rw[Set.mem_toFinset, Set.mem_setOf] at h_S
-      simp[h_S, S_u]
-    · intro h_Su
-      have h_inone : ∃x, G ∈ {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d} := by
-        simp[mem_iUnion, S_u] at h_Su
-        exact h_Su
-      simp[h_inone, S]
-      rcases h_inone with ⟨x, h_xset⟩
-      rw[Set.mem_setOf] at h_xset
-      use x
+    simp [S, nonzero, Set.mem_toFinset, Set.mem_setOf]
 
-  let card_sum := (Finset.sum Finset.univ fun (x : Codeword k α) => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card)
+  -- Union bound
+  have h_union_bound : S.card ≤ Finset.sum nonzero (fun x => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card) := by
+    rw [h_union_eq]
+    exact Finset.card_biUnion_le
 
-  have h_union_bound : S_u.card ≤ card_sum := by
-    sorry -- Apply Finset.card_union_le. Might need induction.
+  -- For each nonzero x, bound the count using prob_leq_ball_size
+  have h_each_x : ∀ x ∈ nonzero, (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card ≤ (Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card := by
+    intro x hx
+    have h_x_ne : x ≠ 0 := by simp [nonzero] at hx; exact hx
+    have h_prob : ((Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card : ℝ) / (Fintype.card α : ℝ)^(n*k) ≤
+        ((hamming_ball (d-1) (zero : Codeword n α)).card : ℝ) / (Fintype.card α : ℝ)^n :=
+      prob_leq_ball_size x d h_k h_x_ne h_d
+    have hq_nk_pos : (0 : ℝ) < (Fintype.card α : ℝ)^(n*k) := by positivity
+    have hq_n_pos : (0 : ℝ) < (Fintype.card α : ℝ)^n := by positivity
+    have h_nk_ge_n : n ≤ n * k := Nat.le_mul_of_pos_right n (by omega)
+    rw [div_le_div_iff₀ hq_nk_pos hq_n_pos] at h_prob
+    -- h_prob : |S_x| * q^n ≤ |ball| * q^(nk)
+    -- Rewrite q^(nk) = q^n * q^(nk-n)
+    have h_qnk_split : (Fintype.card α : ℝ)^(n*k) = (Fintype.card α : ℝ)^n * (Fintype.card α : ℝ)^(n*k - n) := by
+      rw [← pow_add, Nat.add_sub_cancel' h_nk_ge_n]
+    rw [h_qnk_split, ← mul_assoc] at h_prob
+    -- h_prob : |S_x| * q^n ≤ |ball| * q^(nk-n) * q^n
+    have h_real : (↑(Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card : ℝ) ≤
+        ↑((Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card) := by
+      rw [Nat.cast_mul, Nat.cast_pow]
+      have h_rearrange : (↑(hamming_ball (d - 1) (zero : Codeword n α)).card : ℝ) *
+          (Fintype.card α : ℝ) ^ n * (Fintype.card α : ℝ) ^ (n * k - n) =
+          (Fintype.card α : ℝ) ^ (n * k - n) * ↑(hamming_ball (d - 1) (zero : Codeword n α)).card *
+          (Fintype.card α : ℝ) ^ n := by ring
+      rw [h_rearrange] at h_prob
+      exact le_of_mul_le_mul_right h_prob hq_n_pos
+    exact_mod_cast h_real
 
-  have h_sum_leq : card_sum ≤ (Fintype.card α)^k * ((hamming_ball (d-1) (zero : Codeword n α)).card) := by
-    sorry -- Use previous lemma prob_leq_ball_size
+  -- Sum the individual bounds
+  have h_sum_leq : Finset.sum nonzero (fun x => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card) ≤ ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card := by
+    calc Finset.sum nonzero (fun x => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card)
+        ≤ Finset.sum nonzero (fun _ => (Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card) :=
+          Finset.sum_le_sum h_each_x
+      _ = nonzero.card * ((Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card) := by
+          simp [Finset.sum_const, nsmul_eq_mul]
+      _ = ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card := by
+          have h_nonzero_card : nonzero.card = (Fintype.card α)^k - 1 := by
+            have h_nonzero_eq : nonzero = Finset.univ \ {(0 : Codeword k α)} := by
+              ext x; simp [nonzero]
+            rw [h_nonzero_eq, Finset.card_sdiff_of_subset (by simp)]
+            simp [Fintype.card_fun, Fintype.card_fin]
+          rw [h_nonzero_card]
+          ring
 
-  change S.card ≤ (Fintype.card α)^k * ((hamming_ball (d-1) (zero : Codeword n α)).card)
-  rw[h_union_eq]
-
-  trans card_sum
+  trans Finset.sum nonzero (fun x => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card)
   · exact h_union_bound
   · exact h_sum_leq
 }
 
 theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - ((Nat.clog q) (hamming_ball (d-1) (zero : Codeword n α)).card) - 1):
 (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∀ (x : Codeword k α), x ≠ 0 → weight (Matrix.mulVec G x) ≥ d}).card ≥ 1 := by {
-  sorry -- The final result - should follow closely from the previous lemmas but may be worth reframing
+  -- Use abbreviation to avoid let-binding opacity with omega
+  set bc := (hamming_ball (d-1) (zero : Codeword n α)).card with h_bc_def
+  let bad_G := Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∃ (x : Codeword k α), x ≠ 0 ∧ weight (Matrix.mulVec G x) < d}
+  -- The good set equals the complement of the bad set in all matrices
+  have h_good_eq : Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | ∀ (x : Codeword k α), x ≠ 0 → weight (Matrix.mulVec G x) ≥ d} =
+      Finset.univ \ bad_G := by
+    ext G
+    simp only [bad_G, Finset.mem_sdiff, Finset.mem_univ, true_and,
+               Set.mem_toFinset, Set.mem_setOf_eq]
+    constructor
+    · intro h ⟨x, hxne, hlt⟩; exact absurd (h x hxne) (Nat.not_le.mpr hlt)
+    · intro h x hxne; exact Nat.le_of_not_lt (fun hlt => h ⟨x, hxne, hlt⟩)
+  -- The cardinality of all matrices is q^(nk)
+  have h_all_card : Fintype.card (Matrix (Fin n) (Fin k) α) = (Fintype.card α)^(n*k) := by
+    simp only [Matrix, Fintype.card_fun, Fintype.card_fin]; ring
+  -- q > 1
+  have hq_gt1 : 1 < (Fintype.card α) := Fintype.one_lt_card
+  have hq_gt1' : 1 < q := h_q ▸ hq_gt1
+  have hq_pos : 0 < (Fintype.card α) := by omega
+  -- Helper: if clog q bc ≤ c then bc ≤ q^c
+  have h_ball_le_pow_of_clog_le : ∀ c : ℕ, Nat.clog q bc ≤ c → bc ≤ (Fintype.card α)^c := by
+    intro c hc
+    rw [h_bc_def, ← h_q] at *
+    exact (Nat.clog_le_iff_le_pow hq_gt1').mp hc
+  -- Compute good set cardinality = total - bad_G.card
+  rw [h_good_eq, Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, h_all_card]
+  suffices h : bad_G.card < (Fintype.card α)^(n*k) by omega
+  by_cases hk0 : k = 0
+  · -- k = 0: no nonzero codewords, bad_G = ∅
+    have h_bad_empty : bad_G = ∅ := by
+      apply Finset.eq_empty_of_forall_notMem
+      simp only [bad_G, Set.mem_toFinset, Set.mem_setOf_eq, not_exists, not_and]
+      intro G x hxne
+      have : x = 0 := by ext i; exact Fin.elim0 (hk0 ▸ i)
+      exact absurd this hxne
+    simp [h_bad_empty, hk0]
+  · have hk_pos : k ≥ 1 := Nat.one_le_iff_ne_zero.mpr hk0
+    -- Now that k ≥ 1, we know the Nat subtractions in h_k don't underflow
+    have h_clog_le : Nat.clog q bc + k + 1 ≤ n := by omega
+    have h_ball_le_pow : bc ≤ (Fintype.card α)^(n - k - 1) :=
+      h_ball_le_pow_of_clog_le _ (by omega)
+    by_cases hd0 : d = 0
+    · -- d = 0: weight ≥ 0 trivially, bad_G = ∅
+      have h_bad_empty : bad_G = ∅ := by
+        apply Finset.eq_empty_of_forall_notMem
+        simp only [bad_G, Set.mem_toFinset, Set.mem_setOf_eq, not_exists, not_and]
+        intro G x _; simp [hd0]
+      simp [h_bad_empty]; positivity
+    · have hd_pos : d > 0 := Nat.pos_of_ne_zero hd0
+      have h_exist : bad_G.card ≤
+          ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) * bc :=
+        existence_bound d hk_pos hd_pos
+      -- Key arithmetic facts (n*k is nonlinear, so we establish bounds explicitly)
+      have hn_pos : 1 ≤ n := by omega
+      have hnk_ge_n : n ≤ n * k := Nat.le_mul_of_pos_right n hk_pos
+      have hnk_ge_k : k ≤ n * k := Nat.le_mul_of_pos_left k hn_pos
+      have h_exp_combine : n*k - n + (n - k - 1) = n*k - k - 1 := by omega
+      have h_exp_merge : k + (n*k - k - 1) = n*k - 1 := by omega
+      have h_combine : ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) *
+          (Fintype.card α)^(n - k - 1) = ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - k - 1) := by
+        rw [mul_assoc, ← pow_add, h_exp_combine]
+      calc bad_G.card
+          ≤ ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) * bc := h_exist
+        _ ≤ ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) * (Fintype.card α)^(n - k - 1) :=
+            Nat.mul_le_mul_left _ h_ball_le_pow
+        _ = ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - k - 1) := h_combine
+        _ < (Fintype.card α)^k * (Fintype.card α)^(n*k - k - 1) :=
+            Nat.mul_lt_mul_of_pos_right
+              (Nat.sub_lt (Nat.pow_pos hq_pos) Nat.one_pos)
+              (Nat.pow_pos hq_pos)
+        _ = (Fintype.card α)^(n*k - 1) := by rw [← pow_add, h_exp_merge]
+        _ ≤ (Fintype.card α)^(n*k) := Nat.pow_le_pow_right hq_pos (by omega)
 }
 
 def list_decodable (ρ : ℝ) (hρ₁: 0 ≤ ρ) (hρ₂: ρ ≤ 1) (n L : ℕ) (hL : L ≥ 1) (C : Code n α) : Prop :=
