@@ -10,6 +10,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Sqrt
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.SymmDiff
+import TCSlib.BooleanAnalysis.Circuit
 
 /-!
 # Boolean Analysis
