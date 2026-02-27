@@ -1,13 +1,10 @@
-import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Data.Vector.Basic
-import Mathlib.Algebra.MvPolynomial.Basic
-import Mathlib.Algebra.MvPolynomial.Eval
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Fintype.Vector
 import Mathlib.Data.Real.Sqrt
-import Mathlib.Data.Fintype.Pi
+import Mathlib.Algebra.MvPolynomial.Eval
 import Mathlib.Algebra.MvPolynomial.Degrees
+import Mathlib.Data.ZMod.Basic
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Vector.Basic
 import TCSlib.BooleanAnalysis.Circuit
 
 /-
