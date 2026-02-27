@@ -1,8 +1,3 @@
-/-
-Copyright (c) 2024 Shilun Li. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Shilun Li
--/
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Data.Nat.Basic
@@ -835,6 +830,129 @@ lemma sqrt_sub_sqrt_floor_le_one (hx : 0 ≤ x) : Real.sqrt x - Real.sqrt (Nat.f
 
 
 
+
+
+/-- AM-GM: the geometric mean of two nonneg reals is at most their arithmetic mean. -/
+private lemma am_gm_sqrt_le_half_sum {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
+    Real.sqrt (a * b) ≤ (a + b) / 2 := by
+  have hab_sq : a * b ≤ ((a + b) / 2) ^ 2 := by nlinarith [sq_nonneg (a - b)]
+  calc Real.sqrt (a * b) ≤ Real.sqrt (((a + b) / 2) ^ 2) := Real.sqrt_le_sqrt hab_sq
+    _ = (a + b) / 2 := Real.sqrt_sq (by linarith)
+
+/-- √(2πn) · √(π/2) · √n = πn -/
+private lemma sqrt_two_pi_mul_sqrt_pi_half (n : ℝ) (hn : 0 ≤ n) :
+    Real.sqrt (2 * Real.pi * n) * Real.sqrt (Real.pi / 2) * Real.sqrt n = Real.pi * n := by
+  rw [← Real.sqrt_mul (by positivity), ← Real.sqrt_mul (by positivity)]
+  rw [show 2 * Real.pi * n * (Real.pi / 2) * n = (Real.pi * n) ^ 2 by ring]
+  exact Real.sqrt_sq (by positivity)
+
+/-- When n ≥ 2/(p(1-p)) + 1, we have n·p > 1, so ⌊n·p⌋₊ ≥ 1. -/
+private lemma floor_np_pos {p : ℝ} (hp : 0 < p) (h1p : 0 < 1 - p)
+    {n : ℕ} {N₂ : ℕ} (hN₂_def : N₂ = Nat.ceil (2 / (p * (1 - p))) + 1)
+    (hn_N2 : N₂ ≤ n) : 0 < ⌊(n : ℝ) * p⌋₊ := by
+  apply Nat.pos_of_ne_zero
+  intro heq
+  have hnp_lt1 : (n : ℝ) * p < 1 := Nat.floor_eq_zero.mp heq
+  have hp1p : 0 < p * (1 - p) := mul_pos hp h1p
+  have hn_cast : (N₂ : ℝ) ≤ n := by exact_mod_cast hn_N2
+  have hN2_val : (2 : ℝ) / (p * (1 - p)) + 1 ≤ N₂ := by
+    rw [hN₂_def]; push_cast; linarith [Nat.le_ceil (2 / (p * (1 - p)))]
+  have h_n_lb : (2 : ℝ) / (p * (1 - p)) + 1 ≤ n := le_trans hN2_val hn_cast
+  have h_prod_lb : (2 : ℝ) + p * (1 - p) ≤ n * (p * (1 - p)) := by
+    have h1 := mul_le_mul_of_nonneg_right h_n_lb hp1p.le
+    have h2 : (2 / (p * (1 - p)) + 1) * (p * (1 - p)) = 2 + p * (1 - p) := by
+      field_simp [ne_of_gt hp, ne_of_gt h1p]
+    linarith
+  nlinarith [mul_le_mul_of_nonneg_right (le_of_lt (show p < 1 by linarith))
+    (mul_nonneg (Nat.cast_nonneg n) h1p.le), mul_pos hp h1p]
+
+set_option maxHeartbeats 400000 in
+/-- Stirling-based ratio bound: n^n/(a^a·b^b) / (c·√(π/2)·√n) ≤ n!/(a!·b!)
+    when a!·b! ≤ c·√2·√a·√π·(a/e)^a·√2·√b·√π·(b/e)^b and a+b=n. -/
+private lemma stirling_comb_bound
+    {a b n : ℕ} {c : ℝ}
+    (ha_pos : 0 < (a : ℝ)) (hb_pos : 0 < (b : ℝ)) (hc_pos : 0 < c)
+    (hab : a + b = n)
+    (hN_n : (a.factorial : ℝ) * b.factorial ≤
+      c * (Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (↑a / Real.exp 1) ^ a *
+           (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi * (↑b / Real.exp 1) ^ b))) :
+    (n : ℝ) ^ n / ((a : ℝ) ^ a * (b : ℝ) ^ b) / (c * Real.sqrt (Real.pi / 2) * Real.sqrt n) ≤
+    (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) := by
+  have hn_pos : (0 : ℝ) < n := by
+    have : 0 < a + b := Nat.add_pos_left (by exact_mod_cast ha_pos) b
+    rw [← hab]; exact_mod_cast this
+  have hab_real : (a : ℝ) + b = n := by exact_mod_cast hab
+  -- Simplify hN_n: c * 2π√(ab) * (a/e)^a * (b/e)^b
+  have hsq_ab : Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi *
+      (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi) = 2 * Real.pi * Real.sqrt ((a : ℝ) * b) := by
+    rw [Real.sqrt_mul (Nat.cast_nonneg a)]
+    rw [show Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi) =
+        (Real.sqrt 2 * Real.sqrt 2) * (Real.sqrt ↑a * Real.sqrt ↑b) * (Real.sqrt Real.pi * Real.sqrt Real.pi) by ring]
+    rw [Real.mul_self_sqrt (by norm_num), Real.mul_self_sqrt Real.pi_pos.le,
+        ← Real.sqrt_mul (Nat.cast_nonneg a)]
+    ring
+  have h_stir_ab : (a.factorial : ℝ) * b.factorial ≤
+      c * (2 * Real.pi * Real.sqrt ((a : ℝ) * b)) *
+      (((a : ℝ) / Real.exp 1) ^ a * ((b : ℝ) / Real.exp 1) ^ b) := by
+    calc (a.factorial : ℝ) * b.factorial
+        ≤ c * (Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (↑a / Real.exp 1) ^ a *
+          (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi * (↑b / Real.exp 1) ^ b)) := hN_n
+      _ = c * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
+          ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b) := by
+          linear_combination c * ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b) * hsq_ab
+  -- AM-GM: √(ab) ≤ n/2
+  have h_ab_AM_GM : Real.sqrt ((a : ℝ) * b) ≤ (n : ℝ) / 2 := by
+    have : Real.sqrt ((a : ℝ) * b) ≤ ((a : ℝ) + b) / 2 :=
+      am_gm_sqrt_le_half_sum (Nat.cast_nonneg a) hb_pos.le
+    linarith [hab_real]
+  -- Stirling lower on n!
+  have h_stir_n : Real.sqrt (2 * Real.pi * n) * ((n : ℝ) / Real.exp 1) ^ n ≤ n.factorial :=
+    Stirling.le_factorial_stirling n
+  -- Key exp identities
+  have h_e_a : ((↑a / Real.exp 1) ^ a : ℝ) = (↑a) ^ a / Real.exp ↑a := by
+    rw [div_pow, ← Real.exp_nat_mul, mul_one]
+  have h_e_b : ((↑b / Real.exp 1) ^ b : ℝ) = (↑b) ^ b / Real.exp ↑b := by
+    rw [div_pow, ← Real.exp_nat_mul, mul_one]
+  have h_e_n : ((↑n / Real.exp 1) ^ n : ℝ) = (↑n) ^ n / Real.exp ↑n := by
+    rw [div_pow, ← Real.exp_nat_mul, mul_one]
+  have h_exp_sum : Real.exp (↑a : ℝ) * Real.exp (↑b : ℝ) = Real.exp (↑n : ℝ) := by
+    rw [← Real.exp_add, hab_real]
+  have h_pi_ident : Real.sqrt (2 * Real.pi * ↑n) * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n =
+      Real.pi * ↑n := sqrt_two_pi_mul_sqrt_pi_half _ hn_pos.le
+  -- Main chain
+  have h_denom_pos' : (0 : ℝ) < c * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n := by positivity
+  have h_ab_pos : (0 : ℝ) < (↑a : ℝ) ^ a * (↑b : ℝ) ^ b :=
+    mul_pos (pow_pos ha_pos _) (pow_pos hb_pos _)
+  suffices h : (↑n) ^ n * (↑(a.factorial) * ↑(b.factorial)) ≤
+      (↑(n.factorial)) * ((↑a) ^ a * (↑b) ^ b) * (c * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) by
+    rw [div_div, div_le_div_iff₀ (mul_pos h_ab_pos h_denom_pos') (by positivity)]
+    calc (↑n) ^ n * (↑(a.factorial) * ↑(b.factorial))
+        ≤ (↑(n.factorial)) * ((↑a) ^ a * (↑b) ^ b) * (c * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := h
+      _ = (↑(n.factorial)) * ((↑a) ^ a * (↑b) ^ b * (c * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n)) := by ring
+  calc (↑n) ^ n * (↑(a.factorial) * ↑(b.factorial))
+      ≤ (↑n) ^ n * (c * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
+            ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b)) :=
+            mul_le_mul_of_nonneg_left h_stir_ab (by positivity)
+    _ = c * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
+            ((↑n / Real.exp 1) ^ n * ((↑a) ^ a * (↑b) ^ b)) := by
+            rw [h_e_a, h_e_b, h_e_n]
+            rw [show Real.exp ↑n = Real.exp ↑a * Real.exp ↑b from h_exp_sum.symm]
+            ring
+    _ ≤ c * (Real.pi * ↑n) *
+            ((↑n / Real.exp 1) ^ n * ((↑a) ^ a * (↑b) ^ b)) := by
+            apply mul_le_mul_of_nonneg_right _ (by positivity)
+            apply mul_le_mul_of_nonneg_left _ (by positivity)
+            nlinarith [h_ab_AM_GM, Real.pi_pos]
+    _ = Real.sqrt (2 * Real.pi * ↑n) * (↑n / Real.exp 1) ^ n *
+            ((↑a) ^ a * (↑b) ^ b) * (c * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := by
+            rw [← h_pi_ident]; ring
+    _ ≤ ↑(n.factorial) * ((↑a) ^ a * (↑b) ^ b) *
+            (c * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := by
+            apply mul_le_mul_of_nonneg_right _ (by positivity)
+            exact mul_le_mul_of_nonneg_right h_stir_n (by positivity)
+
+
+set_option maxHeartbeats 800000 in
 lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p < 1) (hq : 2 ≤ q):
 ∃ (ε : ℕ → ℝ), Asymptotics.IsLittleO atTop ε (fun n ↦ (n: ℝ)) ∧  ∀ᶠ n in atTop, Nat.choose n (Nat.floor (n*p)) * (q - 1) ^ (p*n) ≥  Real.rpow q ((qaryEntropy q p) * n - ε n):= by{
   -- Helper Statement
@@ -1266,123 +1384,35 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
   -- So n^n / (a^a*b^b) / (c_denom*sqrt(π/2)*sqrt(n)) ≤ n!/(a!*b!) ≤ n!/(a!*b!)*(q-1)^(pn)
 
   -- Key sub-lemma: n^n / (a^a*b^b) / (c_denom * sqrt(π/2) * sqrt(n)) ≤ n!/(a!*b!)
+  have h_hab : a + b = n := Nat.add_sub_cancel' ha_le
+  have ha_pos_r : (0 : ℝ) < ↑a := by
+    exact_mod_cast floor_np_pos hp.1 h1p rfl hn_N2
   have h_comb_bound :
       (n : ℝ) ^ n / ((a : ℝ) ^ a * (b : ℝ) ^ b) / (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt n) ≤
-      (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) := by
-    -- From Stirling lower on n! and upper on a!*b!:
-    -- n! ≥ sqrt(2πn)*(n/e)^n and a!*b! ≤ c_denom * (sqrt(2)*sqrt(a)*sqrt(π)*(a/e)^a)*(sqrt(2)*sqrt(b)*sqrt(π)*(b/e)^b)
-    -- = c_denom * 2π * sqrt(a*b) * a^a * b^b / e^(a+b)
-    -- So n! * (a^a*b^b) ≥ sqrt(2πn)*(n/e)^n * a^a * b^b
-    --                   = sqrt(2πn) * n^n / e^n * a^a * b^b
-    -- And n^n * (a!*b!) ≤ n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^(a+b)
-    --                   = n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^n  (since a+b=n)
-    -- So sufficient: n^n * c_denom * 2π * sqrt(ab) / e^n ≤ sqrt(2πn) * n^n / e^n * c_denom * sqrt(π/2) * sqrt(n)
-    -- i.e., 2π * sqrt(ab) ≤ sqrt(2πn) * sqrt(π/2) * sqrt(n)
-    -- = sqrt(2πn * π/2 * n) = sqrt(π²n²) = π*n
-    -- So need: 2π * sqrt(ab) ≤ π*n, i.e., 2*sqrt(ab) ≤ n ✓ by AM-GM
-    -- Let's prove this more directly using the chain:
-    -- n^n * (a!*b!) ≤ n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^n  [from hN_n with e^n factored]
-    -- n! * a^a * b^b * c_denom * sqrt(π/2) * sqrt(n) ≥ sqrt(2πn) * n^n * c_denom * sqrt(π/2) * sqrt(n) * a^a * b^b / e^n
-    -- So need: n^n * c_denom * 2π * sqrt(ab) * a^a * b^b / e^n ≤ sqrt(2πn) * n^n * c_denom * sqrt(π/2) * sqrt(n) * a^a * b^b / e^n
-    -- i.e., 2π * sqrt(ab) ≤ sqrt(2πn) * sqrt(π/2) * sqrt(n) = π * n ✓ (by AM-GM: sqrt(ab) ≤ n/2)
-    have h_ab_AM_GM : Real.sqrt ((a : ℝ) * b) ≤ (n : ℝ) / 2 := by
-      rw [Real.sqrt_le_left.symm.trans_eq (by simp), ← Real.sqrt_sq (by linarith)]
-      apply Real.sqrt_le_sqrt
-      have hbn : (b : ℝ) = n - a := hb_real
-      nlinarith [sq_nonneg ((a : ℝ) - b), Nat.cast_nonneg a]
-    have h_e_pow : (n : ℝ) ^ n / Real.exp n = ((n : ℝ) / Real.exp 1) ^ n := by
-      rw [Real.exp_mul_comm, div_pow]
-    -- The e^n factor: (n/e)^n = n^n/e^n, similarly for a and b
-    have h_a_pow : ((a : ℝ) / Real.exp 1) ^ a = (a : ℝ) ^ a / Real.exp a := by
-      rw [div_pow, Real.exp_mul_comm]
-    have h_b_pow : ((b : ℝ) / Real.exp 1) ^ b = (b : ℝ) ^ b / Real.exp b := by
-      rw [div_pow, Real.exp_mul_comm]
-    have h_ab_sum : (a : ℝ) + b = n := by
-      have := hb_real; push_cast at this ⊢; linarith
-    have h_exp_sum : Real.exp ((a : ℝ) + b) = Real.exp n := by
-      congr 1; exact_mod_cast h_ab_sum
-    -- Stirling lower on n!
-    have h_stir_n : Real.sqrt (2 * Real.pi * n) * ((n : ℝ) / Real.exp 1) ^ n ≤ n.factorial := by
-      exact Stirling.le_factorial_stirling n
-    -- Rearranging: n! ≥ sqrt(2πn) * n^n / e^n
-    rw [h_e_pow] at h_stir_n
-    -- From hN_n: a!*b! ≤ c_denom * sqrt(2)*sqrt(a)*sqrt(π)*(a/e)^a * sqrt(2)*sqrt(b)*sqrt(π)*(b/e)^b
-    -- Simplify the Stirling upper bound on a!*b!
-    have h_stir_ab : (a.factorial : ℝ) * b.factorial ≤
-        c_denom * (2 * Real.pi * Real.sqrt ((a : ℝ) * b)) *
-        (((a : ℝ) / Real.exp 1) ^ a * ((b : ℝ) / Real.exp 1) ^ b) := by
-      have hsq_ab : Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi *
-          (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi) =
-          2 * Real.pi * Real.sqrt ((a : ℝ) * b) := by
-        rw [Real.sqrt_mul (Nat.cast_nonneg a)]
-        rw [show Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi) =
-            (Real.sqrt 2 * Real.sqrt 2) * (Real.sqrt ↑a * Real.sqrt ↑b) * (Real.sqrt Real.pi * Real.sqrt Real.pi) by ring]
-        rw [Real.mul_self_sqrt (by norm_num), Real.mul_self_sqrt Real.pi_pos.le,
-            ← Real.sqrt_mul (Nat.cast_nonneg a)]
-        ring
-      calc (a.factorial : ℝ) * b.factorial
-          ≤ c_denom * (Real.sqrt 2 * Real.sqrt ↑a * Real.sqrt Real.pi * (↑a / Real.exp 1) ^ a) *
-            (Real.sqrt 2 * Real.sqrt ↑b * Real.sqrt Real.pi * (↑b / Real.exp 1) ^ b) := hN_n
-        _ = c_denom * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
-            ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b) := by
-            linear_combination c_denom * ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b) * hsq_ab
-    -- Now combine h_stir_n, h_stir_ab, h_ab_AM_GM to prove the main bound
-    -- We prove: n^n * (a!*b!) ≤ n! * (a^a*b^b) * (c_denom*sqrt(π/2)*sqrt(n))
-    -- Using: h_stir_n: √(2πn)*(n/e)^n ≤ n!
-    --        h_stir_ab: a!*b! ≤ c_denom*(2π*√(ab))*(a/e)^a*(b/e)^b
-    --        h_ab_AM_GM: √(ab) ≤ n/2
-    -- Key identity: n^n*(a/e)^a*(b/e)^b = (n/e)^n*(a^a*b^b)  [since a+b=n, (a/e)^a*(b/e)^b = a^a*b^b/e^n]
-    -- Key identity: √(2πn)*√(π/2)*√n = πn  [proved below]
-    have h_e_a : ((↑a / Real.exp 1) ^ a : ℝ) = (↑a) ^ a / Real.exp ↑a := by
-      rw [div_pow, ← Real.exp_nat_mul, mul_one]
-    have h_e_b : ((↑b / Real.exp 1) ^ b : ℝ) = (↑b) ^ b / Real.exp ↑b := by
-      rw [div_pow, ← Real.exp_nat_mul, mul_one]
-    have h_e_n : ((↑n / Real.exp 1) ^ n : ℝ) = (↑n) ^ n / Real.exp ↑n := by
-      rw [div_pow, ← Real.exp_nat_mul, mul_one]
-    have h_exp_sum : Real.exp (↑a : ℝ) * Real.exp (↑b : ℝ) = Real.exp (↑n : ℝ) := by
-      rw [← Real.exp_add]
-      congr 1
-      have := h_ab_sum
-      push_cast at this ⊢; linarith
-    have h_pi_ident : Real.sqrt (2 * Real.pi * ↑n) * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n =
-        Real.pi * ↑n := by
-      rw [← Real.sqrt_mul (by positivity), ← Real.sqrt_mul (by positivity)]
-      rw [show 2 * Real.pi * ↑n * (Real.pi / 2) * ↑n = (Real.pi * ↑n) ^ 2 by ring]
-      rw [Real.sqrt_sq (by positivity)]
-    -- The main inequality: n^n*(a!*b!) ≤ n!*(a^a*b^b)*(c_denom*√(π/2)*√n)
-    -- Prove via: LHS/RHS = n^n/(a^a*b^b)/(c_denom*sqrt(π/2)*sqrt(n)) ≤ 1
-    suffices h : (↑n) ^ n * (↑(a.factorial) * ↑(b.factorial)) ≤
-        (↑(n.factorial)) * ((↑a) ^ a * (↑b) ^ b) * (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) by
-      rw [div_div, div_le_div_iff₀
-            (mul_pos (mul_pos (mul_pos (by positivity) (Real.sqrt_pos_of_pos (by positivity)))
-                              (Real.sqrt_pos_of_pos hn_real))
-                     (mul_pos (by positivity) (by positivity)))
-            (mul_pos h_a_fact_pos h_b_fact_pos)]
-      linarith [h]
-    calc (↑n) ^ n * (↑(a.factorial) * ↑(b.factorial))
-        ≤ (↑n) ^ n * (c_denom * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
-              ((↑a / Real.exp 1) ^ a * (↑b / Real.exp 1) ^ b)) :=
-              mul_le_mul_of_nonneg_left h_stir_ab (by positivity)
-      _ = c_denom * (2 * Real.pi * Real.sqrt (↑a * ↑b)) *
-              ((↑n / Real.exp 1) ^ n * ((↑a) ^ a * (↑b) ^ b)) := by
-              rw [h_e_a, h_e_b, h_e_n]
-              field_simp
-              rw [h_exp_sum]; ring
-      _ ≤ c_denom * (Real.pi * ↑n) *
-              ((↑n / Real.exp 1) ^ n * ((↑a) ^ a * (↑b) ^ b)) := by
-              apply mul_le_mul_of_nonneg_right _ (by positivity)
-              apply mul_le_mul_of_nonneg_left _ (by positivity)
-              -- 2π*√(ab) ≤ π*n, i.e., 2*√(ab) ≤ n
-              nlinarith [h_ab_AM_GM, Real.pi_pos]
-      _ = Real.sqrt (2 * Real.pi * ↑n) * (↑n / Real.exp 1) ^ n *
-              ((↑a) ^ a * (↑b) ^ b) * (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := by
-              rw [← h_pi_ident]; ring
-      _ ≤ ↑(n.factorial) * ((↑a) ^ a * (↑b) ^ b) *
-              (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) := by
-              apply mul_le_mul_of_nonneg_right _ (by positivity)
-              apply mul_le_mul_of_nonneg_right h_stir_n (by positivity)
+      (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) :=
+    stirling_comb_bound ha_pos_r hb_real_pos hc_pos h_hab hN_n
 
   -- Step 3: Combine h_entropy_ineq and h_comb_bound to get the result
+  have ha_pos : 0 < a := by
+    suffices (1 : ℝ) < (n : ℝ) * p by
+      have h1 : 0 < ⌊(n : ℝ) * p⌋₊ := by
+        apply Nat.pos_of_ne_zero
+        intro h
+        have hnp_lt1 : (n : ℝ) * p < 1 := Nat.floor_eq_zero.mp h
+        linarith
+      exact_mod_cast h1
+    have hn_cast : (N₂ : ℝ) ≤ n := by exact_mod_cast hn_N2
+    have hN2_val : (2 : ℝ) / (p * (1 - p)) + 1 ≤ N₂ := by
+      have : N₂ = Nat.ceil (2 / (p * (1 - p))) + 1 := rfl
+      push_cast [this]; linarith [Nat.le_ceil (2 / (p * (1 - p)))]
+    have h_n_lb : (2 : ℝ) / (p * (1 - p)) + 1 ≤ n := le_trans hN2_val hn_cast
+    have h_prod_lb : (2 : ℝ) + p * (1 - p) ≤ n * (p * (1 - p)) := by
+      have h1 := mul_le_mul_of_nonneg_right h_n_lb (le_of_lt hp1p)
+      have h2 : (2 / (p * (1 - p)) + 1) * (p * (1 - p)) = 2 + p * (1 - p) := by
+        field_simp [ne_of_gt hp.1, ne_of_gt h1p]
+      linarith
+    nlinarith [mul_le_mul_of_nonneg_right (le_of_lt hp.2)
+      (mul_nonneg (le_of_lt hn_real) (le_of_lt h1p)), mul_pos hp.1 h1p]
   have h_rpow_mono : ((q : ℝ) - 1) ^ (a : ℝ) ≤ ((q : ℝ) - 1) ^ (p * (n : ℝ)) := by
     have ha_pn : (a : ℝ) ≤ p * (n : ℝ) := mul_comm (n : ℝ) p ▸ ha_real
     exact Real.rpow_le_rpow_of_exponent_le hq_ge1 ha_pn
@@ -1390,10 +1420,10 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
   have h_comb_bound' : (n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ)) /
       (c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n) ≤
       (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) := by
-    have : (n : ℝ) ^ (n : ℝ) = (n : ℝ) ^ n := (Real.rpow_natCast _ _).symm
-    have ha' : (a : ℝ) ^ (a : ℝ) = (a : ℝ) ^ a := (Real.rpow_natCast _ _).symm
-    have hb' : (b : ℝ) ^ (b : ℝ) = (b : ℝ) ^ b := (Real.rpow_natCast _ _).symm
-    rw [this, ha', hb']; exact h_comb_bound
+    have hn_rw : (n : ℝ) ^ (n : ℝ) = (n : ℝ) ^ n := Real.rpow_natCast _ _
+    have ha_rw : (a : ℝ) ^ (a : ℝ) = (a : ℝ) ^ a := Real.rpow_natCast _ _
+    have hb_rw : (b : ℝ) ^ (b : ℝ) = (b : ℝ) ^ b := Real.rpow_natCast _ _
+    rw [hn_rw, ha_rw, hb_rw]; exact h_comb_bound
   -- Rearrange: n^n/(a^a*b^b) ≤ n!/(a!*b!) * (c_denom*sqrt(π/2)*sqrt(n))
   have hcb' : (n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ)) ≤
       (n.factorial : ℝ) / ((a.factorial : ℝ) * b.factorial) *
@@ -1401,48 +1431,66 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
     have hpos : 0 < c_denom * Real.sqrt (Real.pi / 2) * Real.sqrt ↑n := by positivity
     rwa [div_le_iff₀ hpos] at h_comb_bound'
   -- h_exact: q^(H_q(a/n)*n) = (q-1)^a * n^n / (a^a * b^b)
+  have ha_ne : (a : ℝ) ≠ 0 := ne_of_gt (by exact_mod_cast ha_pos)
   have h_exact : (↑q : ℝ) ^ (qaryEntropy ↑q (↑a / ↑n) * ↑n) =
       (↑q - 1) ^ (a : ℝ) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) := by
     simp only [qaryEntropy]
-    have ha_ne : (a : ℝ) ≠ 0 := ne_of_gt (by exact_mod_cast ha_pos)
     have h1 : (1 : ℝ) - ↑a / ↑n = ↑b / ↑n := by rw [hb_real]; field_simp
     have h_logb_an : Real.logb ↑q (↑a / ↑n) = Real.logb ↑q ↑a - Real.logb ↑q ↑n :=
       Real.logb_div ha_ne hn_ne
     have h_logb_bn : Real.logb ↑q (↑b / ↑n) = Real.logb ↑q ↑b - Real.logb ↑q ↑n :=
       Real.logb_div (ne_of_gt hb_real_pos) hn_ne
+    have h_ab_sum_r : (a : ℝ) + b = n := by exact_mod_cast h_hab
     rw [h1, h_logb_an, h_logb_bn]
-    -- simplify the exponent: (a/n * logb(q-1) - a/n*(logb a - logb n) - b/n*(logb b - logb n)) * n
-    -- = a*logb(q-1) + n*logb(n) - a*logb(a) - b*logb(b)
     have hexp_eq : (↑a / ↑n * Real.logb ↑q (↑q - 1) -
         ↑a / ↑n * (Real.logb ↑q ↑a - Real.logb ↑q ↑n) -
         ↑b / ↑n * (Real.logb ↑q ↑b - Real.logb ↑q ↑n)) * ↑n =
         ↑a * Real.logb ↑q (↑q - 1) + ↑n * Real.logb ↑q ↑n
           - ↑a * Real.logb ↑q ↑a - ↑b * Real.logb ↑q ↑b := by
-      field_simp [hn_ne]; ring
+      have : Real.logb ↑q ↑n * (↑a + ↑b) = Real.logb ↑q ↑n * ↑n := by
+        rw [h_ab_sum_r]
+      field_simp [hn_ne]; linarith
     rw [hexp_eq]
-    -- Now prove q^(a*logb(q-1) + n*logb(n) - a*logb(a) - b*logb(b)) = (q-1)^a * n^n / (a^a * b^b)
+    -- Rewrite as logb q of a product, then use rpow_logb
+    have hval_pos : 0 < (↑q - 1) ^ (↑a : ℝ) * (↑n : ℝ) ^ (↑n : ℝ) /
+        ((↑a : ℝ) ^ (↑a : ℝ) * (↑b : ℝ) ^ (↑b : ℝ)) := by positivity
     rw [show ↑a * Real.logb ↑q (↑q - 1) + ↑n * Real.logb ↑q ↑n -
         ↑a * Real.logb ↑q ↑a - ↑b * Real.logb ↑q ↑b =
         Real.logb ↑q ((↑q - 1) ^ (↑a : ℝ) * (↑n : ℝ) ^ (↑n : ℝ) /
-          ((↑a : ℝ) ^ (↑a : ℝ) * (↑b : ℝ) ^ (↑b : ℝ))) by
+          ((↑a : ℝ) ^ (↑a : ℝ) * (↑b : ℝ) ^ (↑b : ℝ))) from by
       rw [Real.logb_div (by positivity) (by positivity),
           Real.logb_mul (by positivity) (by positivity),
-          Real.logb_rpow (ne_of_gt hq') hq_ne1,
-          Real.logb_rpow (ne_of_gt hq') hq_ne1,
-          Real.logb_rpow (ne_of_gt hq') hq_ne1,
-          Real.logb_rpow (ne_of_gt hq') hq_ne1]
+          Real.logb_mul (by positivity) (by positivity),
+          Real.logb_rpow_eq_mul_logb_of_pos hq1_pos,
+          Real.logb_rpow_eq_mul_logb_of_pos hn_real,
+          Real.logb_rpow_eq_mul_logb_of_pos ha_pos_r,
+          Real.logb_rpow_eq_mul_logb_of_pos hb_real_pos]
       ring]
-    exact Real.rpow_logb hq' hq_ne1 (by positivity)
-  -- Convert h_entropy_ineq to (q^H)^(n:ℝ) form with the correct constant (q-1)*e²/p
+    rw [Real.rpow_logb hq' hq_ne1 hval_pos]
+    ring
+  -- Convert h_entropy_ineq to (q^H)^(n:ℝ) form
   have h_entropy_ineq' : (↑q ^ qaryEntropy ↑q p) ^ (n : ℝ) ≤
       ↑q ^ (qaryEntropy ↑q (↑a / ↑n) * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) := by
-    rw [← Real.rpow_natCast ↑q n, ← Real.rpow_mul (le_of_lt hq')]
+    rw [← Real.rpow_mul (le_of_lt hq')]
     exact h_entropy_ineq
   have h_sqrt_n : Real.sqrt (n : ℝ) = (n : ℝ) ^ ((1 : ℝ) / 2) := Real.sqrt_eq_rpow _
   have h_denom_pos : 0 < c_denom * ((q : ℝ) - 1) * Real.exp 1 ^ 2 *
       Real.sqrt (Real.pi / 2) / p * (n : ℝ) ^ ((1 : ℝ) / 2) := mul_pos hε'_const_pos hε_pos
   rw [div_le_iff₀ h_denom_pos]
-  have h1_pos : 0 < (↑q - 1) ^ (p * ↑n) := Real.rpow_pos_of_pos hq1_pos _
+  -- The goal has (n-a).factorial; convert to b.factorial and normalize RHS
+  suffices h : (↑q ^ qaryEntropy ↑q p) ^ (n : ℝ) ≤
+      ↑n.factorial / (↑a.factorial * (b.factorial : ℝ)) * ((q : ℝ) - 1) ^ (p * ↑n) *
+        (c_denom * ((↑q - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p) *
+          (n : ℝ) ^ ((1 : ℝ) / 2)) by
+    have hb_fact : (b.factorial : ℝ) = ((n - a).factorial : ℝ) := by norm_cast
+    calc (↑q ^ qaryEntropy ↑q p) ^ (n : ℝ)
+        ≤ ↑n.factorial / (↑a.factorial * (b.factorial : ℝ)) * ((q : ℝ) - 1) ^ (p * ↑n) *
+              (c_denom * ((↑q - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p) *
+                (n : ℝ) ^ ((1 : ℝ) / 2)) := h
+      _ = ↑n.factorial / (↑a.factorial * ↑(n - a).factorial) * ((q : ℝ) - 1) ^ (p * ↑n) *
+              (c_denom * (↑q - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p *
+                (n : ℝ) ^ ((1 : ℝ) / 2)) := by rw [← hb_fact]; ring
+  have h1_pos : 0 < ((q : ℝ) - 1) ^ (p * (n : ℝ)) := Real.rpow_pos_of_pos hq1_pos _
   have h2_pos : 0 < ((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p :=
     div_pos (mul_pos hq1_pos (by positivity)) hp.1
   calc (↑q ^ qaryEntropy ↑q p) ^ (n : ℝ)
@@ -1450,28 +1498,26 @@ lemma binomial_coef_asymptotic_lower_bound' {q: ℕ} {p : ℝ} (hp : 0 < p ∧ p
             h_entropy_ineq'
     _ = (↑q - 1) ^ (a : ℝ) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
             (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) := by rw [h_exact]
-    _ ≤ (↑q - 1) ^ (p * ↑n) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
+    _ ≤ ((q : ℝ) - 1) ^ (p * ↑n) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
             (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) := by
               apply mul_le_mul_of_nonneg_right _ (le_of_lt h2_pos)
               exact mul_le_mul_of_nonneg_right h_rpow_mono (by positivity)
-    _ ≤ ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * (↑q - 1) ^ (p * ↑n) *
-            (c_denom * ((↑q - 1) * Real.exp 1 ^ 2) / p * Real.sqrt (Real.pi / 2) *
+    _ ≤ ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * ((q : ℝ) - 1) ^ (p * ↑n) *
+            (c_denom * ((↑q - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p) *
               (n : ℝ) ^ ((1 : ℝ) / 2)) := by
-              rw [show (↑q - 1) ^ (p * ↑n) * ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
+              rw [show ((q : ℝ) - 1) ^ (p * ↑n) * ((n : ℝ) ^ (n : ℝ) /
+                    ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) *
                     (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p) =
-                  ((↑q - 1) ^ (p * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p)) *
+                  (((q : ℝ) - 1) ^ (p * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p)) *
                     ((n : ℝ) ^ (n : ℝ) / ((a : ℝ) ^ (a : ℝ) * (b : ℝ) ^ (b : ℝ))) by ring]
-              rw [show ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * (↑q - 1) ^ (p * ↑n) *
-                    (c_denom * ((↑q - 1) * Real.exp 1 ^ 2) / p * Real.sqrt (Real.pi / 2) *
+              rw [show ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * ((q : ℝ) - 1) ^ (p * ↑n) *
+                    (c_denom * ((↑q - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p) *
                      (n : ℝ) ^ ((1 : ℝ) / 2)) =
-                  ((↑q - 1) ^ (p * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p)) *
+                  (((q : ℝ) - 1) ^ (p * ↑n) * (((↑q : ℝ) - 1) * Real.exp 1 ^ 2 / p)) *
                     (↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) *
                       (c_denom * Real.sqrt (Real.pi / 2) * (n : ℝ) ^ ((1 : ℝ) / 2))) by ring]
               rw [← h_sqrt_n]
               exact mul_le_mul_of_nonneg_left hcb' (mul_pos h1_pos h2_pos).le
-    _ = ↑(n.factorial) / (↑(a.factorial) * ↑(b.factorial)) * (↑q - 1) ^ (p * ↑n) *
-            (c_denom * ((↑q - 1) * Real.exp 1 ^ 2 * Real.sqrt (Real.pi / 2) / p) *
-              (n : ℝ) ^ ((1 : ℝ) / 2)) := by ring
 }
 
 
@@ -2602,7 +2648,7 @@ lemma listDecoding_counting_ineq
         rw [ div_lt_iff₀ ] <;> norm_num [ Nat.factorial_pos ];
         exact lt_of_le_of_lt ( Real.rpow_le_rpow_of_exponent_le ( by norm_cast; linarith ) <| div_nonpos_of_nonpos_of_nonneg ( neg_nonpos.mpr <| Nat.cast_nonneg _ ) <| Nat.cast_nonneg _ ) <| by norm_num; linarith [ show ( L + 1 : ℝ ) ≥ 2 by norm_cast; linarith, show ( Nat.factorial ( L + 1 ) : ℝ ) ≥ L + 1 by exact_mod_cast Nat.self_le_factorial _ ] ;
       have h_subst : (q : ℝ) ^ n * ((q : ℝ) ^ (qaryEntropy q p * n)) ^ (L + 1) * ((q : ℝ) ^ (r * n) / (q ^ n)) ^ (L + 1) / (Nat.factorial (L + 1)) < 1 := by
-        convert h_simplified using 1 ; rw [ hr ] ; ring_nf ; norm_num [ ← Real.rpow_natCast, ← Real.rpow_mul ( Nat.cast_nonneg q ) ] ; ring;
+        convert h_simplified using 1 ; rw [ hr ] ; ring_nf ; norm_num [ ← Real.rpow_natCast, ← Real.rpow_mul ( Nat.cast_nonneg q ) ] ; ring_nf;
         norm_num [ Real.rpow_add ( by positivity : 0 < ( q : ℝ ) ), Real.rpow_sub ( by positivity : 0 < ( q : ℝ ) ), Real.rpow_neg ( by positivity : 0 ≤ ( q : ℝ ) ) ] ; ring_nf;
         field_simp
         ring_nf;
