@@ -211,7 +211,7 @@ private lemma sum_chiS_mul_eq (x y : BoolCube n) :
   rw [sum_prod_subset_eq_prod_one_add]
   split_ifs with hxy
   · subst hxy; simp only [boolToSign_mul_self]
-    simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin, Fintype.card_bool]
+    simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     norm_num
   · obtain ⟨i, hi⟩ := Function.ne_iff.mp hxy
     apply Finset.prod_eq_zero (Finset.mem_univ i)
