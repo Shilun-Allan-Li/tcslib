@@ -1,0 +1,163 @@
+\chapter{Johnson Bound}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter proves the \textbf{binary Johnson bound}: for a binary code $C$
+of length $n$ with minimum distance $d$, if every codeword has weight at most
+$w \le J_2(n,d)$ where
+\[
+J_2(n,d) = \frac{n}{2} - \sqrt{\frac{n(n-d)}{4}},
+\]
+then $|C| \le 2n$.
+
+The proof reduces to a \emph{Rankin bound} from geometry: a set of unit
+vectors in $\mathbb{R}^n$ with pairwise non-positive inner products has
+size at most $2n$.  Codewords are embedded via a shifted $\{\pm1\}$ map so
+that the distance and weight constraints force the inner-product condition.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Basic definitions}
+
+\begin{definition}[Binary codeword]
+\lean{CodingTheory.Johnson.BitVec}
+\leanok
+A binary codeword of length $n$ is a function $\mathrm{Fin}\,n \to \mathrm{Bool}$.
+\end{definition}
+
+\begin{definition}[Hamming weight and distance]
+\lean{CodingTheory.Johnson.wt}
+\lean{CodingTheory.Johnson.hdist}
+\leanok
+The Hamming weight $\mathrm{wt}(x) = |\{i : x_i = 1\}|$; the Hamming distance
+$\mathrm{hdist}(x,y) = \mathrm{wt}(x \oplus y)$.
+\end{definition}
+
+\begin{definition}[Admissible code]
+\lean{CodingTheory.Johnson.AdmissibleCode}
+\leanok
+\uses{CodingTheory.Johnson.wt, CodingTheory.Johnson.hdist}
+A code $C \subseteq \{0,1\}^n$ is $(n,d,w)$-admissible if every pair of distinct
+codewords has Hamming distance $\ge d$ and every codeword has weight $\le w$.
+\end{definition}
+
+\begin{definition}[Johnson radius and shift parameter]
+\lean{CodingTheory.Johnson.J2}
+\lean{CodingTheory.Johnson.alpha}
+\leanok
+\[
+J_2(n,d) = \frac{n}{2} - \sqrt{\frac{n(n-d)}{4}}, \qquad
+\alpha(n,d) = \frac{1}{\sqrt{n(n-d)^{-1}} + 1} - \frac{1}{\sqrt{n/d}+1}.
+\]
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Embedding and inner-product bounds}
+
+\begin{definition}[Shifted $\pm1$ embedding]
+\lean{CodingTheory.Johnson.pmOne}
+\lean{CodingTheory.Johnson.shifted}
+\leanok
+Map $x \in \{0,1\}^n$ to the vector $\hat{x}^\alpha_i = (-1)^{x_i} - \alpha$
+(with $\alpha \ge 0$), viewed in $\mathbb{R}^n$.
+\end{definition}
+
+\begin{lemma}[Inner product formula for $\pm1$ vectors]
+\lean{CodingTheory.Johnson.inner_pmOne_pmOne}
+\leanok
+\uses{CodingTheory.Johnson.pmOne, CodingTheory.Johnson.hdist}
+$\langle\hat{x},\hat{y}\rangle = n - 2\,\mathrm{hdist}(x,y)$.
+\end{lemma}
+
+\begin{lemma}[Inner product bound for shifted vectors]
+\lean{CodingTheory.Johnson.inner_shifted_le_expr}
+\leanok
+\uses{CodingTheory.Johnson.shifted, CodingTheory.Johnson.hdist, CodingTheory.Johnson.wt}
+For $\alpha \ge 0$, $\mathrm{hdist}(x,y) \ge d$, and $\mathrm{wt}(x),\mathrm{wt}(y) \le w$,
+\[
+\bigl\langle\hat{x}^\alpha,\hat{y}^\alpha\bigr\rangle
+\;\le\;
+(n - 2d) + \alpha^2 n + 2\alpha(2w - n).
+\]
+\end{lemma}
+
+\begin{lemma}[Johnson arithmetic]
+\lean{CodingTheory.Johnson.johnson_arith}
+\leanok
+\uses{CodingTheory.Johnson.J2, CodingTheory.Johnson.alpha}
+If $n > 0$, $1 \le d$, $2d \le n$, and $w \le J_2(n,d)$, then
+$(n - 2d) + \alpha^2 n + 2\alpha(2w - n) \le 0$ for the choice $\alpha = \alpha(n,d)$.
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Rankin bound}
+
+\begin{lemma}[Rankin reduction]
+\lean{CodingTheory.Johnson.rankin_reduction}
+\notready
+In a finite inner-product space, if a set $S$ of unit vectors has pairwise
+non-positive inner products, then one can project away one vector and
+reduce to a smaller set in the orthogonal complement with the same property.
+\end{lemma}
+
+\begin{theorem}[Rankin bound]
+\lean{CodingTheory.Johnson.rankin_bound_general}
+\notready
+\uses{CodingTheory.Johnson.rankin_reduction}
+A set of unit vectors in an $n$-dimensional real inner product space
+with pairwise non-positive inner products has size at most $2n$.
+\end{theorem}
+
+\begin{corollary}[Rankin bound for finite sets in $\mathbb{R}^n$]
+\lean{CodingTheory.Johnson.rankin_finset_bound}
+\leanok
+\uses{CodingTheory.Johnson.rankin_bound_general}
+A finite set of unit vectors in $\mathbb{R}^n$ with pairwise non-positive inner
+products has cardinality at most $2n$.
+\end{corollary}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Johnson bound}
+
+\begin{theorem}[Johnson bound, parametric form]
+\lean{CodingTheory.Johnson.binary_johnson_card_bound_parametric}
+\leanok
+\uses{CodingTheory.Johnson.rankin_finset_bound, CodingTheory.Johnson.inner_shifted_le_expr}
+Let $C \subseteq \{0,1\}^n$ be a code with minimum distance $\ge d$ and all
+weights $\le w$.  For any $\alpha \ge 0$ with
+$(n-2d) + \alpha^2 n + 2\alpha(2w-n) \le 0$,
+\[
+|C| \;\le\; 2n.
+\]
+\end{theorem}
+
+\begin{theorem}[Johnson bound]
+\lean{CodingTheory.Johnson.binary_johnson_card_bound}
+\leanok
+\uses{CodingTheory.Johnson.binary_johnson_card_bound_parametric, CodingTheory.Johnson.johnson_arith}
+If $n > 0$, $1 \le d$, $2d \le n$, and all codewords of $C$ have weight $\le w \le J_2(n,d)$
+and minimum distance $\ge d$, then $|C| \le 2n$.
+\end{theorem}
+
+\begin{theorem}[Johnson bound for admissible codes]
+\lean{CodingTheory.Johnson.binary_johnson_card_bound_of_admissible}
+\leanok
+\uses{CodingTheory.Johnson.binary_johnson_card_bound, CodingTheory.Johnson.AdmissibleCode}
+Every $(n,d,w)$-admissible code $C$ with $w \le J_2(n,d)$ satisfies $|C| \le 2n$.
+\end{theorem}
+
+\begin{definition}[Maximum admissible code size]
+\lean{A0}
+\leanok
+\uses{CodingTheory.Johnson.AdmissibleCode}
+$A_0(n,d,w)$ is the maximum size of an $(n,d,w)$-admissible code.
+\end{definition}
+
+\begin{theorem}[Johnson bound, radius form]
+\lean{binary_johnson_bound_radius}
+\leanok
+\uses{A0, CodingTheory.Johnson.binary_johnson_card_bound_of_admissible}
+If $n > 0$, $1 \le d$, $2d \le n$, and $w \le J_2(n,d)$, then
+\[
+A_0(n,d,w) \;\le\; 2n.
+\]
+\end{theorem}
