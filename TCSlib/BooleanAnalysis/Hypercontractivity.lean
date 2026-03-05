@@ -7,7 +7,7 @@ import Mathlib.Analysis.InnerProductSpace.Basic
 
 namespace Hypercontractivity
 
-
+section
 open MeasureTheory ProbabilityTheory
 
 def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=
@@ -76,6 +76,20 @@ lemma b_reasonable_tail_bound -- the extended non negative reals make this annoy
     _ = B / t^4 := by
       rw [mul_div_mul_right B (t ^ 4) (_)]
       · exact ne_of_gt (by positivity)
+end
+
+section
+open MeasureTheory ProbabilityTheory Filter
+open scoped ENNReal NNReal
+/- variable {Ω : Type*} [MeasureSpace Ω] [IsProbabilityMeasure (volume : Measure Ω)]
+theorem paley_zygmund
+  (Z : Ω → ℝ)
+  (h_nonneg : 0 ≤ Z) -- Z is non-negative
+  (h_int : Integrable Z) -- E[Z] is finite
+  (h_sq_int : Memℒp Z 2) -- E[Z^2] is finite
+  (θ : ℝ) (hθ_nonneg : 0 ≤ θ) (hθ_le_one : θ ≤ 1) :
+  (1 - θ)^2 * (∫ ω, Z ω)^2 ≤ (∫ ω, Z ω ^ 2) * (volume {ω | θ * (∫ x, Z x) < Z ω}).toReal := by
+  sorry -/
 
 lemma b_reasonable_anticoncentration_bound
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
@@ -113,7 +127,7 @@ lemma b_reasonable_anticoncentration_bound
   have h_split : (1 - t^2) * M2 ≤ ∫ ω in A, X ω ^ 2 ∂P := by
     have hA_meas : MeasurableSet A :=
       measurableSet_le measurable_const (hX_meas.pow_const 2)
-      -- 2. Split the total expected value (M2) into A and Aᶜ
+      -- 2. Split expected value into A and Aᶜ
     have h_split_eq : M2 = (∫ ω in A, X ω ^ 2 ∂P) + (∫ ω in Aᶜ, X ω ^ 2 ∂P) :=
       (integral_add_compl hA_meas hX_int2).symm
 
@@ -141,6 +155,6 @@ lemma b_reasonable_anticoncentration_bound
           exact ENNReal.toReal_mono ENNReal.one_ne_top prob_le_one
         _ = t^2 * M2 := one_mul _
 
-    -- 4. Use linear arithmetic to combine h_split_eq and h_compl_bound
     linarith [h_split_eq, h_compl_bound]
   sorry
+end
