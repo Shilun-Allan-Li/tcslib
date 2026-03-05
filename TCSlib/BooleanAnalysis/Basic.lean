@@ -763,8 +763,7 @@ lemma influence_le_one (i : Fin n) (f : BooleanFunc n) (hf : ∀ x, f x ∈ ({-1
         apply pow_nonneg; positivity
     _ = 1 := by rw [← mul_pow]; norm_num
 
-/-- **KKL-type bound**: For any Boolean function `f`,
-  the maximum individual influence is at least the average: `max_i Inf_i[f] ≥ I[f] / n`. -/
+/-- For any Boolean function `f`, the maximum individual influence is at least the average: `max_i Inf_i[f] ≥ I[f] / n`. -/
 lemma max_influence_lower_bound (f : BooleanFunc n) (hn : 0 < n) :
     ∃ i : Fin n, totalInfluence f / n ≤ influence i f := by
   by_contra h
@@ -781,5 +780,89 @@ lemma max_influence_lower_bound (f : BooleanFunc n) (hn : 0 < n) :
       _ = n * (totalInfluence f / n) := by simp [Finset.sum_const, nsmul_eq_mul]
       _ = totalInfluence f := by field_simp
   exact lt_irrefl _ this
+
+/-! ## Additional lemmas for Arrow's theorem -/
+
+/-- `boolToSign` negates under `Bool.not`. -/
+@[simp]
+lemma boolToSign_not (b : Bool) : boolToSign (!b) = -boolToSign b := by
+  cases b <;> simp [boolToSign]
+
+/-- Flipping all bits of `x` multiplies `χ_S(x)` by `(-1)^|S|`. -/
+lemma chiS_neg (S : Finset (Fin n)) (x : BoolCube n) :
+    chiS S (fun i => !x i) = (-1 : ℝ) ^ S.card * chiS S x := by
+  simp only [chiS]
+  simp_rw [boolToSign_not]
+  -- ∏_{i∈S} (-boolToSign (x i)) = (-1)^|S| * ∏_{i∈S} boolToSign (x i)
+  induction S using Finset.induction with
+  | empty => simp
+  | insert a s ha ih =>
+    rw [Finset.prod_insert ha, Finset.card_insert_of_notMem ha, Finset.prod_insert ha, ih]
+    ring
+
+/-- A Boolean function is **odd** if flipping all inputs negates the output.
+  Models the antisymmetry requirement in social choice. -/
+def isOddFunc (f : BooleanFunc n) : Prop :=
+  ∀ x : BoolCube n, f (fun i => !x i) = -f x
+
+/-- A Boolean function takes values in `{-1, 1}`. -/
+def isPmOne (f : BooleanFunc n) : Prop :=
+  ∀ x : BoolCube n, f x = 1 ∨ f x = -1
+
+/-- For an odd function, the Fourier coefficient at any even-cardinality set is zero. -/
+lemma fourierCoeff_odd_even (f : BooleanFunc n) (hodd : isOddFunc f)
+    (S : Finset (Fin n)) (heven : Even S.card) :
+    fourierCoeff f S = 0 := by
+  simp only [fourierCoeff, innerProduct, expect, uniformWeight]
+  suffices h : ∑ x : BoolCube n, f x * chiS S x = 0 by simp [h]
+  -- The bijection that flips all bits
+  let e : BoolCube n ≃ BoolCube n :=
+    { toFun    := fun x i => !x i
+      invFun   := fun x i => !x i
+      left_inv := fun x => by ext; simp
+      right_inv := fun x => by ext; simp }
+  -- Change of variables: ∑_x f(x) χ_S(x) = ∑_x f(¬x) χ_S(¬x)
+  -- Uses that x ↦ (¬x) is a bijection (involution)
+  have hcv : ∑ x : BoolCube n, f x * chiS S x =
+      ∑ x : BoolCube n, f (fun i => !x i) * chiS S (fun i => !x i) :=
+    (Fintype.sum_equiv e
+      (fun x => f (fun i => !x i) * chiS S (fun i => !x i))
+      (fun x => f x * chiS S x)
+      (fun _ => rfl)).symm
+  -- Apply oddness and chiS_neg
+  have hflip : ∑ x : BoolCube n, f (fun i => !x i) * chiS S (fun i => !x i) =
+      -(∑ x : BoolCube n, f x * chiS S x) := by
+    -- Expose the universal form so simp_rw can use hodd
+    have hodd' : ∀ x : BoolCube n, f (fun i => !x i) = -f x := hodd
+    -- (-1)^|S| = 1 when |S| is even
+    have hone : (-1 : ℝ) ^ S.card = 1 := by
+      obtain ⟨k, hk⟩ := heven
+      rw [hk, ← two_mul, pow_mul, show (-1 : ℝ) ^ 2 = 1 from by norm_num, one_pow]
+    simp_rw [hodd', chiS_neg, hone, one_mul, neg_mul]
+    simp [Finset.sum_neg_distrib]
+  linarith [hcv.trans hflip]
+
+/-- For a `±1`-valued function, the `L²` self-inner-product equals `1`. -/
+lemma innerProduct_self_pm_one (f : BooleanFunc n) (hf : isPmOne f) :
+    innerProduct f f = 1 := by
+  simp only [innerProduct, expect, uniformWeight]
+  have hsq : ∀ x : BoolCube n, f x * f x = 1 := fun x => by
+    rcases hf x with h | h <;> simp [h]
+  simp_rw [hsq]
+  simp only [Finset.sum_const, Finset.card_univ]
+  rw [Fintype.card_pi]
+  simp only [Fintype.card_bool, Finset.prod_const, Finset.card_fin]
+  rw [nsmul_eq_mul, mul_one]
+  push_cast
+  rw [← mul_pow, inv_mul_cancel₀ (by norm_num : (2 : ℝ) ≠ 0), one_pow]
+
+/-- **Parseval for `±1`-valued functions**: `∑_S f̂(S)² = 1`. -/
+lemma parseval_pm_one (f : BooleanFunc n) (hf : isPmOne f) :
+    ∑ S : Finset (Fin n), fourierCoeff f S ^ 2 = 1 := by
+  rw [← parseval, innerProduct_self_pm_one f hf]
+
+/-- Fourier weight concentrated on level `k`: `W_k[f] = ∑_{|S|=k} f̂(S)²`. -/
+noncomputable def weightLevel (k : ℕ) (f : BooleanFunc n) : ℝ :=
+  ∑ S : Finset (Fin n), if S.card = k then fourierCoeff f S ^ 2 else 0
 
 end BooleanAnalysis
