@@ -1,0 +1,64 @@
+\chapter{Linear Codes and the Uniformity Lemma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter develops the theory of linear codes and a key probabilistic tool:
+for a uniformly random $n\times k$ generator matrix $G$ and any nonzero message
+$x\in\alpha^k$, the output $Gx$ is uniformly distributed over $\alpha^n$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Distance equals minimum weight in linear codes}
+
+\begin{theorem}[Distance equals minimum nonzero weight]
+\lean{CodingTheory.Codeword.Linear_Code_dist_eq_min_weight}
+\leanok
+\uses{CodingTheory.Codeword.Linear_Code', CodingTheory.Codeword.weight, CodingTheory.Codeword.distance}
+If $C$ is linear (witnessed by some generator matrix) and has minimum distance $d$, then:
+\begin{itemize}
+  \item every nonzero codeword in $C$ has weight at least $d$;
+  \item some codeword in $C$ has weight exactly $d$.
+\end{itemize}
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Uniform distributions and random matrices}
+
+\begin{definition}[Uniform distribution on vectors]
+\lean{CodingTheory.Codeword.uniform_vector_dist}
+\leanok
+The uniform probability mass function on $\alpha^n$, encoded as a function
+$\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
+\end{definition}
+
+\begin{lemma}[Finiteness of constrained matrix set]
+\lean{CodingTheory.Codeword.finite_matrix_dist}
+\leanok
+For fixed $x\in\alpha^k$ and $v\in\alpha^n$, the set $\{G : Gx=v\}$ is finite.
+\end{lemma}
+
+\begin{definition}[Distribution induced by random matrices]
+\lean{CodingTheory.Codeword.matrix_dist}
+\leanok
+$\mu_x(v)$ is the fraction of $n\times k$ matrices $G$ satisfying $Gx=v$.
+\end{definition}
+
+\begin{definition}[Row extraction]
+\lean{CodingTheory.Codeword.get_matrix_row}
+\leanok
+Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Uniformity lemma}
+
+\begin{theorem}[Uniformity of $Gx$ for nonzero $x$]
+\lean{CodingTheory.Codeword.uniformity_lemma}
+\leanok
+\uses{CodingTheory.Codeword.matrix_dist, CodingTheory.Codeword.uniform_vector_dist, CodingTheory.Codeword.finite_matrix_dist}
+If $x\neq 0$ and $k\ge 1$, then for a uniformly random $n\times k$ matrix $G$ over $\alpha$,
+the product $Gx$ is uniformly distributed over $\alpha^n$:
+\[
+\Pr[Gx = v] = \frac{1}{|\alpha|^n}
+\quad\text{for all }v\in\alpha^n.
+\]
+\end{theorem}

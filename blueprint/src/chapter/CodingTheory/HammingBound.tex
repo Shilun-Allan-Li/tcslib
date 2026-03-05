@@ -1,0 +1,61 @@
+\chapter{Hamming Bound}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter establishes the \textbf{Hamming (sphere-packing) bound}: for a code $C$
+of block-length $n$ and minimum distance $d$ over a $q$-ary alphabet $\alpha$,
+\[
+|C| \;\cdot\; \mathrm{Vol}(n,\lfloor(d-1)/2\rfloor)
+\;\le\; q^n,
+\]
+where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Volume formula}
+
+\begin{theorem}[Cardinality of Hamming balls]
+\lean{CodingTheory.Codeword.hamming_ball_size}
+\leanok
+For any center $c$ and radius $l$,
+\[
+|B_l(c)| \;=\; \sum_{i=0}^{l} \binom{n}{i}\,(|\alpha|-1)^i.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Disjointness of decoding balls}
+
+\begin{lemma}[Decoding balls around distinct codewords are disjoint]
+\lean{CodingTheory.Codeword.hamming_ball_non_intersect}
+\leanok
+\uses{CodingTheory.Codeword.distance}
+If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\in C$,
+\[
+B_{\lfloor(d-1)/2\rfloor}(c_1)
+\;\cap\;
+B_{\lfloor(d-1)/2\rfloor}(c_2)
+\;=\;\varnothing.
+\]
+\end{lemma}
+
+\begin{lemma}[\lean{Finset.Disjoint} formulation]
+\lean{CodingTheory.Codeword.hamming_ball'_disjoint}
+\leanok
+\uses{CodingTheory.Codeword.hamming_ball_non_intersect}
+Reformulation of the previous lemma as \lean{Finset.Disjoint}.
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Hamming bound}
+
+\begin{theorem}[Hamming (sphere-packing) bound]
+\lean{CodingTheory.Codeword.hamming_bound}
+\leanok
+\uses{CodingTheory.Codeword.hamming_ball_size, CodingTheory.Codeword.hamming_ball'_disjoint}
+Let $q=|\alpha|>1$.  If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
+\[
+|C|
+\;\le\;
+\frac{q^n}{\displaystyle\sum_{i=0}^{\lfloor(d-1)/2\rfloor}\binom{n}{i}(q-1)^i}.
+\]
+\end{theorem}

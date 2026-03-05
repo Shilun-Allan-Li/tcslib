@@ -1,0 +1,24 @@
+\chapter{Singleton Bound}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter proves the \textbf{Singleton bound}: any code $C\subseteq\alpha^n$ with
+minimum distance $d$ has at most $|\alpha|^{n-d+1}$ codewords.
+
+The proof projects each codeword onto its first $n-d+1$ coordinates.  Two distinct
+codewords in $C$ must have distinct projections (otherwise their Hamming distance
+would be less than $d$), so $|C|$ is at most the number of possible projections.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Main result}
+
+\begin{theorem}[Singleton bound]
+\lean{CodingTheory.Codeword.singleton_bound}
+\leanok
+\uses{CodingTheory.Codeword.dist_le_length}
+Assuming $\alpha$ is nontrivial, a code $C\subseteq\alpha^n$ with minimum distance $d$
+satisfies
+\[
+|C| \;\le\; |\alpha|^{\,n-d+1}.
+\]
+\end{theorem}

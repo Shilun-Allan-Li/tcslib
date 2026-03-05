@@ -1,0 +1,54 @@
+\chapter{Gilbert--Varshamov Bound}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter proves the \textbf{Gilbert--Varshamov (GV) existence bound}:
+for any block-length $n$, dimension $k$, and distance $d$, if
+\[
+k \;\le\; n - \lceil\log_q \mathrm{Vol}(n,d-1)\rceil - 1,
+\]
+then there exists an $n\times k$ generator matrix whose associated linear code has
+minimum distance at least $d$.
+
+The proof is a probabilistic (union-bound) counting argument over random generator matrices.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Probabilistic bound on low-weight outputs}
+
+\begin{theorem}[Probability of low-weight codeword]
+\lean{CodingTheory.Codeword.prob_leq_ball_size}
+\leanok
+\uses{CodingTheory.Codeword.uniformity_lemma, CodingTheory.Codeword.weight, CodingTheory.Codeword.hamming_ball}
+For any nonzero $x\in\alpha^k$,
+\[
+\frac{|\{G : \mathrm{wt}(Gx) < d\}|}{|\alpha|^{nk}}
+\;\le\;
+\frac{|B_{d-1}(\mathbf{0})|}{|\alpha|^n}.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Union bound over bad matrices}
+
+\begin{theorem}[Existence bound via union bound]
+\lean{CodingTheory.Codeword.existence_bound}
+\leanok
+\uses{CodingTheory.Codeword.prob_leq_ball_size}
+The number of $n\times k$ matrices that send some nonzero message to a codeword of
+weight $<d$ is at most
+\[
+(|\alpha|^k-1)\cdot|\alpha|^{nk-n}\cdot|B_{d-1}(\mathbf{0})|.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Gilbert--Varshamov bound}
+
+\begin{theorem}[Gilbert--Varshamov bound]
+\lean{CodingTheory.Codeword.gv_bound}
+\leanok
+\uses{CodingTheory.Codeword.existence_bound}
+If $k \le n - \lceil\log_q|B_{d-1}(\mathbf{0})|\rceil - 1$, then there exists a
+generator matrix $G$ such that every nonzero message is mapped to a codeword of
+Hamming weight at least $d$.
+\end{theorem}

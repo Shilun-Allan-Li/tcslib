@@ -1,0 +1,70 @@
+\chapter{List Decoding}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter defines list-decodable codes and proves the
+\textbf{list-decoding capacity theorem}: for any $0<\rho\le 1-1/q$ and $L\ge 1$,
+there exist codes of rate
+\[
+r \;=\; 1 - H_q(\rho) - \tfrac{1}{L}
+\]
+that are $(\rho,L)$-list-decodable.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{List-decodable codes}
+
+\begin{definition}[List-decodable code]
+\lean{CodingTheory.Codeword.list_decodable}
+\leanok
+A code $C$ is $(\rho,L)$-list-decodable if every Hamming ball of radius
+$\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Counting lemmas}
+
+\begin{lemma}[Existence of list-decodable codes]
+\lean{CodingTheory.Codeword.exists_listDecodable_code}
+\leanok
+\uses{CodingTheory.Codeword.list_decodable, CodingTheory.Codeword.hamming_ball}
+If the ball volume $V$ and code size $M$ satisfy the counting inequality
+\[
+|\alpha|^n\cdot\tbinom{V}{L+1}\cdot\tbinom{|\alpha|^n-(L+1)}{M-(L+1)}
+\;<\;
+\tbinom{|\alpha|^n}{M},
+\]
+then there exists a code $C$ of size $M$ that is $(p,L)$-list-decodable.
+\end{lemma}
+
+\begin{lemma}[Binomial ratio bound]
+\lean{CodingTheory.Codeword.binom_ratio_bound}
+\leanok
+For $k\le M\le N$,
+\[
+\frac{\binom{N-k}{M-k}}{\binom{N}{M}} \;\le\; \Bigl(\frac{M}{N}\Bigr)^k.
+\]
+\end{lemma}
+
+\begin{lemma}[Counting inequality for list decoding]
+\lean{CodingTheory.Codeword.listDecoding_counting_ineq}
+\leanok
+\uses{CodingTheory.Codeword.binom_ratio_bound, CodingTheory.Codeword.qaryEntropy}
+For the choice $r = 1-H_q(\rho)-1/L$, $M=\lfloor q^{rn}\rfloor$, and
+$V=\lfloor q^{H_q(\rho)n}\rfloor$, whenever $L<M\le q^n$,
+\[
+q^n\cdot\tbinom{V}{L+1}\cdot\tbinom{q^n-(L+1)}{M-(L+1)}
+\;<\;
+\tbinom{q^n}{M}.
+\]
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{List-decoding capacity}
+
+\begin{theorem}[List-decoding capacity]
+\lean{CodingTheory.Codeword.list_decoding_capacity}
+\leanok
+\uses{CodingTheory.Codeword.exists_listDecodable_code, CodingTheory.Codeword.listDecoding_counting_ineq, CodingTheory.Codeword.qary_entropy_pos, CodingTheory.Codeword.hamming_ball_size_asymptotic_upper_bound}
+For any $q=|\alpha|$, $0<\rho\le 1-1/q$, and $L\ge 1$, there exist codes of rate
+$r = 1-H_q(\rho)-1/L$ that are $(\rho,L)$-list-decodable.
+\end{theorem}

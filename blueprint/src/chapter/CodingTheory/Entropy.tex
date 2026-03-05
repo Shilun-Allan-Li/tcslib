@@ -1,0 +1,81 @@
+\chapter{Entropy and Asymptotic Bounds}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter develops the asymptotic relationship between Hamming ball sizes and the
+$q$-ary entropy function $H_q$, and provides the key binomial lower bound used in the
+Gilbert--Varshamov argument.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Asymptotic upper bound on ball size}
+
+\begin{theorem}[Entropy upper bound on Hamming balls]
+\lean{CodingTheory.Codeword.hamming_ball_size_asymptotic_upper_bound}
+\leanok
+\uses{CodingTheory.Codeword.hamming_ball_size, CodingTheory.Codeword.qaryEntropy}
+For $0<p\le 1-1/q$ and $q=|\alpha|$,
+\[
+|B_{\lfloor np\rfloor}(c)| \;\le\; q^{H_q(p)\,n}.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Entropy algebra lemmas}
+
+\begin{lemma}[Simplifying $q^{H_q(p)}$]
+\lean{CodingTheory.Codeword.q_pow_qary_entropy_simp}
+\leanok
+\uses{CodingTheory.Codeword.qaryEntropy}
+For $q\ge 2$ and $0<p<1$,
+\[
+q^{H_q(p)} \;=\; (q-1)^p\,p^{-p}\,(1-p)^{-(1-p)}.
+\]
+\end{lemma}
+
+\begin{lemma}[Same identity, alternate exponentiation]
+\lean{CodingTheory.Codeword.q_pow_qary_entropy_simp'}
+\leanok
+\uses{CodingTheory.Codeword.q_pow_qary_entropy_simp}
+Variant using a different exponentiation operator.
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Analytic helpers}
+
+\begin{lemma}[Square-root/floor inequality]
+\lean{CodingTheory.Codeword.sqrt_sub_sqrt_floor_le_one}
+\leanok
+For $x\ge 0$,
+\[
+\sqrt{x} - \sqrt{\lfloor x\rfloor} \;\le\; 1.
+\]
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stirling-based binomial lower bound}
+
+\begin{lemma}[Asymptotic lower bound on binomial term]
+\lean{CodingTheory.Codeword.binomial_coef_asymptotic_lower_bound'}
+\leanok
+\uses{CodingTheory.Codeword.qaryEntropy}
+For $0<p<1$ and $q\ge 2$, eventually
+\[
+\tbinom{n}{\lfloor np\rfloor}(q-1)^{pn}
+\;\ge\;
+q^{H_q(p)\,n - \varepsilon(n)},
+\quad \varepsilon(n) = o(n).
+\]
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Positivity of $q$-ary entropy}
+
+\begin{theorem}[Positivity of $q$-ary entropy]
+\lean{CodingTheory.Codeword.qary_entropy_pos}
+\leanok
+\uses{CodingTheory.Codeword.qaryEntropy}
+For $q=|\alpha|$ and $0<p\le 1-1/q$,
+\[
+H_q(p) \;>\; 0.
+\]
+\end{theorem}
