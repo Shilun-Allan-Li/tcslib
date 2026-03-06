@@ -15,6 +15,25 @@ open scoped Pointwise
 
 set_option maxHeartbeats 0
 
+/-!
+# Quantum Hamming Bound
+
+This file proves the quantum Hamming bound for non-degenerate quantum error-correcting codes.
+It formalizes the n-qubit Pauli error model and the Knill–Laflamme error correction conditions.
+
+## Main results
+
+- `card_pauliErrorsLe`: The number of Pauli strings of weight ≤ t on n qubits equals
+  `∑ j ∈ Finset.range (t + 1), n.choose j * 3 ^ j`.
+- `quantum_hamming_bound_raw`: For an `[[n, k]]` non-degenerate quantum code correcting t errors,
+  `(∑ j, C(n,j) * 3^j) * 2^k ≤ 2^n`.
+- `quantum_hamming_bound`: The standard form `∑ j, C(n,j) * 3^j ≤ 2^(n-k)`.
+
+## References
+
+- Knill, Laflamme (1997): Theory of quantum error-correcting codes.
+-/
+
 set_option maxRecDepth 4000
 
 set_option synthInstance.maxHeartbeats 20000
@@ -29,21 +48,25 @@ noncomputable section
 
 open Complex Matrix
 
-/-
-Pauli basis {I,X,Y,Z} and concrete matrices.
--/
+/-- The four-element type indexing the single-qubit Pauli matrices:
+identity `I`, bit-flip `X`, bit-phase-flip `Y`, and phase-flip `Z`. -/
 inductive PauliBasis
 | I | X | Y | Z
 deriving DecidableEq, Fintype, Inhabited
 
+/-- The 2×2 identity matrix over ℂ (Pauli I). -/
 def sigmaI : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, 1]
 
+/-- The bit-flip Pauli matrix X = [[0,1],[1,0]] over ℂ. -/
 def sigmaX : Matrix (Fin 2) (Fin 2) ℂ := !![0, 1; 1, 0]
 
+/-- The bit-phase-flip Pauli matrix Y = [[0,−i],[i,0]] over ℂ. -/
 def sigmaY : Matrix (Fin 2) (Fin 2) ℂ := !![0, -I; I, 0]
 
+/-- The phase-flip Pauli matrix Z = [[1,0],[0,−1]] over ℂ. -/
 def sigmaZ : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, -1]
 
+/-- Maps each Pauli basis element to its corresponding 2×2 matrix. -/
 def PauliBasis.toMatrix : PauliBasis → Matrix (Fin 2) (Fin 2) ℂ
 | PauliBasis.I => sigmaI
 | PauliBasis.X => sigmaX
@@ -51,23 +74,26 @@ def PauliBasis.toMatrix : PauliBasis → Matrix (Fin 2) (Fin 2) ℂ
 | PauliBasis.Z => sigmaZ
 
 
+/-- An n-qubit Pauli string: a function assigning a Pauli basis element to each of the n qubits. -/
 def PauliString (n : ℕ) := Fin n → PauliBasis
 
 instance (n : ℕ) : Fintype (PauliString n) := inferInstanceAs (Fintype (Fin n → PauliBasis))
 
+/-- The support of a Pauli string: the set of qubit indices where the operator is not identity. -/
 def support {n : ℕ} (p : PauliString n) : Finset (Fin n) :=
   Finset.univ.filter (fun i => p i ≠ PauliBasis.I)
 
+/-- The weight of a Pauli string: the number of non-identity tensor factors. -/
 def weight {n : ℕ} (p : PauliString n) : ℕ :=
   (support p).card
 
+/-- The 2^n × 2^n matrix for an n-qubit Pauli string, given as a tensor product of single-qubit
+Pauli matrices. -/
 def pauliMatrix {n : ℕ} (p : PauliString n) :
     Matrix (Fin n → Fin 2) (Fin n → Fin 2) ℂ :=
   fun i j => ∏ k, (p k).toMatrix (i k) (j k)
 
-/-
-Pauli errors of weight ≤ t.
--/
+/-- The finset of all n-qubit Pauli strings of weight at most `t`. -/
 def PauliErrorsLe (n t : ℕ) : Finset (PauliString n) :=
   Finset.filter (fun p => weight p ≤ t) Finset.univ
 
@@ -75,9 +101,11 @@ def PauliErrorsLe (n t : ℕ) : Finset (PauliString n) :=
 Counting Paulis: canonical “choose support then assign X/Y/Z” approach.
 We introduce a 3-element type for non-identity Paulis.
 -/
+/-- A 3-element type for non-identity single-qubit Pauli operators, used in counting arguments. -/
 inductive PauliNZ | X | Y | Z
 deriving DecidableEq, Fintype, Inhabited
 
+/-- Embeds a non-identity Pauli into the full Pauli basis. -/
 def PauliNZ.toBasis : PauliNZ → PauliBasis
 | .X => .X
 | .Y => .Y
@@ -87,6 +115,7 @@ lemma PauliNZ.toBasis_ne_I : ∀ a : PauliNZ, a.toBasis ≠ PauliBasis.I := by
   intro a; cases a <;> simp [PauliNZ.toBasis]
 
 
+/-- Constructs a Pauli string with support exactly `S` and non-identity assignments given by `f`. -/
 def mkWithSupport {n : ℕ} (S : Finset (Fin n)) (f : S → PauliNZ) : PauliString n :=
   fun i => if h : i ∈ S then (f ⟨i, h⟩).toBasis else PauliBasis.I
 
@@ -97,6 +126,7 @@ lemma support_mkWithSupport {n : ℕ} (S : Finset (Fin n)) (f : S → PauliNZ) :
   simp [support, mkWithSupport, PauliNZ.toBasis_ne_I]
 
 
+/-- The finset of Pauli strings with support exactly equal to `S`. -/
 def pauliStringsExactSupport {n : ℕ} (S : Finset (Fin n)) : Finset (PauliString n) :=
   Finset.filter (fun p => support p = S) Finset.univ
 
@@ -168,13 +198,17 @@ theorem card_pauliErrorsLe (n t : ℕ) :
     simp_all only [not_true_eq_false];
 
 
+/-- The n-qubit Hilbert space ℂ^(2^n), realized as a Euclidean space indexed by `Fin n → Fin 2`. -/
 abbrev Hn (n : ℕ) := EuclideanSpace ℂ (Fin n → Fin 2)
 
+/-- An n-qubit quantum code: a subspace of the Hilbert space `Hn n`. -/
 def Code (n : ℕ) := Submodule ℂ (Hn n)
 
+/-- The linear operator on `Hn n` given by acting with the Pauli string `p`. -/
 noncomputable def pauliOp {n : ℕ} (p : PauliString n) : Hn n →ₗ[ℂ] Hn n :=
   Matrix.toLin' (pauliMatrix p)
 
+/-- The adjoint (Hermitian conjugate) of the Pauli operator for `p`. -/
 noncomputable def pauliOpAdjoint {n : ℕ} (p : PauliString n) : Hn n →ₗ[ℂ] Hn n :=
   Matrix.toLin' (pauliMatrix p).conjTranspose
 
@@ -182,6 +216,7 @@ noncomputable def pauliOpAdjoint {n : ℕ} (p : PauliString n) : Hn n →ₗ[ℂ
 instance (n : ℕ) (C : Submodule ℂ (Hn n)) : FiniteDimensional ℂ (↥C) :=
   FiniteDimensional.finiteDimensional_submodule C
 
+/-- The orthogonal projection from `Hn n` onto the code subspace `C`, viewed as an endomorphism. -/
 noncomputable def codeProj {n : ℕ} (C : Submodule ℂ (Hn n)) : Hn n →ₗ[ℂ] Hn n :=
   (C.subtypeL.comp (Submodule.orthogonalProjection C)).toLinearMap
 
@@ -207,20 +242,23 @@ lemma codeProj_idempotent {n : ℕ} (C : Submodule ℂ (Hn n)) (x : Hn n) :
   apply codeProj_eq_self_of_mem (C:=C)
   exact codeProj_mem C x
 
-/-
-Knill–Laflamme and (a strong) nondegeneracy condition.
--/
+/-- The Knill–Laflamme quantum error correction condition: for all Pauli errors `E`, `F` of weight
+≤ t, the code projection satisfies `Π_C ∘ E† ∘ F ∘ Π_C = α_{E,F} • Π_C` for some scalar. -/
 def KnillLaflamme (n : ℕ) (C : Submodule ℂ (Hn n)) (t : ℕ) : Prop :=
   ∀ E F : PauliString n, weight E ≤ t → weight F ≤ t →
     ∃ α : ℂ,
       (codeProj C).comp ((pauliOpAdjoint E).comp ((pauliOp F).comp (codeProj C))) =
       α • (codeProj C)
 
+/-- A code is non-degenerate if it satisfies the Knill–Laflamme condition with all off-diagonal
+terms zero: for distinct errors `E ≠ F` of weight ≤ t, `Π_C ∘ E† ∘ F ∘ Π_C = 0`. -/
 def IsNondegenerate (n : ℕ) (C : Submodule ℂ (Hn n)) (t : ℕ) : Prop :=
   KnillLaflamme n C t ∧
   ∀ E F : PauliString n, weight E ≤ t → weight F ≤ t → E ≠ F →
     (codeProj C).comp ((pauliOpAdjoint E).comp ((pauliOp F).comp (codeProj C))) = 0
 
+/-- The error sphere: the span of all images `E(C)` over Pauli strings `E` of weight ≤ t.
+This is the subspace that must fit inside `Hn n` to derive the Hamming bound. -/
 noncomputable def ErrorSphere (n t : ℕ) (C : Submodule ℂ (Hn n)) : Submodule ℂ (Hn n) :=
   (PauliErrorsLe n t).sup (fun E => C.map (pauliOp E))
 
@@ -404,13 +442,13 @@ lemma error_sphere_dimension {n t : ℕ} {C : Submodule ℂ (Hn n)}
 
   exact h_dim_sum _ (fun E hE => (Finset.mem_filter.mp hE).2)
 
-/-
-Ambient dimension finrank(Hn n) = 2^n.
--/
+/-- The n-qubit Hilbert space `Hn n` has complex dimension 2^n. -/
 lemma finrank_Hn (n : ℕ) : Module.finrank ℂ (Hn n) = 2^n := by
   classical
   simp [Hn, finrank_euclideanSpace, Fintype.card_fun, Fintype.card_fin]
 
+/-- Quantum Hamming bound (raw form): for a non-degenerate `[[n, k]]` quantum code correcting
+t errors, the total dimension of the error sphere does not exceed the ambient space. -/
 theorem quantum_hamming_bound_raw
     (n k t : ℕ) (C : Submodule ℂ (Hn n))
     (h_dim : Module.finrank ℂ C = 2^k)
@@ -432,6 +470,8 @@ theorem quantum_hamming_bound_raw
   simpa [h_sphere] using h_le
 
 
+/-- Quantum Hamming bound: a non-degenerate `[[n, k]]` quantum code correcting t errors satisfies
+`∑ j ∈ Finset.range (t + 1), C(n, j) * 3^j ≤ 2^(n - k)`. -/
 theorem quantum_hamming_bound
     (n k t : ℕ) (C : Submodule ℂ (Hn n))
     (h_dim : Module.finrank ℂ C = 2^k)

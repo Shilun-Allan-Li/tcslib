@@ -6,6 +6,7 @@ import TCSlib.CodingTheory.LinearCodes
 import TCSlib.CodingTheory.GilbertVarshamov
 import TCSlib.CodingTheory.ListDecoding
 import TCSlib.CodingTheory.QuantumSingleton
+import TCSlib.CodingTheory.QuantumHamming
 
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem

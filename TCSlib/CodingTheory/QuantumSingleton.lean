@@ -1,4 +1,3 @@
-
 import Mathlib
 import Mathlib.Data.Finset.Card
 
@@ -26,6 +25,32 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 set_option linter.unnecessarySimpa false
 
+/-!
+# Quantum Singleton Bound
+
+This file proves the quantum Singleton bound for stabilizer codes over a prime field GF(p).
+
+A stabilizer code is modeled as an isotropic subspace `S` of the symplectic vector space
+`V = GF(p)^n × GF(p)^n` with respect to the standard symplectic form.
+
+## Main definitions
+
+- `sym_form`: The standard symplectic form on `V = GF(p)^n × GF(p)^n`.
+- `IsIsotropic S`: Predicate asserting `S ≤ S^⊥` (S is self-orthogonal).
+- `code_dist S`: The minimum weight of a vector in `S^⊥ \ S` (the distance of the code).
+- `code_k S`: The number of logical qudits, defined as `n - dim(S)`.
+
+## Main results
+
+- `quantum_singleton_bound`: For an isotropic stabilizer code with distance d and k logical
+  qudits, `k + 2 * (d - 1) ≤ n`.
+
+## References
+
+- Knill, Laflamme, Viola (2000): Theory of quantum error correction for general noise.
+- Ashikhmin, Knill (2001): Nonbinary quantum stabilizer codes.
+-/
+
 noncomputable section
 
 /-
@@ -33,13 +58,13 @@ Definition of the symplectic vector space V and the standard symplectic form.
 -/
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 
+/-- The prime field `GF(p)`, realized as `ZMod p`. -/
 abbrev F (p : ℕ) [Fact p.Prime] := ZMod p
 
 /-- The symplectic vector space V := F^n × F^n -/
 abbrev V (n p : ℕ) [Fact p.Prime] := (Fin n → F p) × (Fin n → F p)
 
-/-- Standard symplectic form on V -/
-
+/-- Standard symplectic form on V: `sym_form (u, v) = ∑ i, u₁ᵢ v₂ᵢ - u₂ᵢ v₁ᵢ`. -/
 def sym_form (u v : V n p) : F p :=
   Finset.univ.sum (fun i : Fin n => (u.1 i * v.2 i - u.2 i * v.1 i))
 lemma sym_form_add_left (x y z : V n p) :
@@ -140,6 +165,7 @@ lemma sym_form_smul_right (c : F p) (x y : V n p) :
 
 
 
+/-- The symplectic form is antisymmetric: `sym_form u v = -sym_form v u`. -/
 lemma sym_form_swap (u v : V n p) :
     sym_form u v = - sym_form v u := by
   unfold sym_form
@@ -150,6 +176,7 @@ lemma sym_form_swap (u v : V n p) :
 
 
 
+/-- The standard symplectic form `sym_form` packaged as a `LinearMap.BilinForm`. -/
 noncomputable def symB : LinearMap.BilinForm (F p) (V n p) :=
   LinearMap.mk₂ (F p) (fun x y => sym_form (n:=n) (p:=p) x y)
     (by intro x y z; simpa using sym_form_add_left (n:=n) (p:=p) x y z)
@@ -165,6 +192,7 @@ noncomputable def symB : LinearMap.BilinForm (F p) (V n p) :=
 
 
 
+/-- The symplectic form is non-degenerate: if `sym_form u v = 0` for all `v`, then `u = 0`. -/
 lemma sym_form_nondegenerate (u : V n p) (h : ∀ v, sym_form u v = 0) : u = 0 := by
   have h_cases : ∀ (i : Fin n), u.1 i = 0 ∧ u.2 i = 0 := by
     intro i
@@ -351,6 +379,7 @@ Distance implies erasure correctability.
 -/
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 
+/-- An erasure set `E` is correctable whenever its size is strictly less than the code distance. -/
 lemma dist_implies_correctable (S : Submodule (F p) (V n p)) (E : Finset (Fin n))
     (h : E.card < code_dist S) : correctable S E := by
       intro v hv;
