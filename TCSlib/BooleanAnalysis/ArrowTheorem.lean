@@ -307,6 +307,26 @@ lemma corrFunc_eq_neg_third_of_weight_one {f : BooleanFunc n}
       · exact pow_eq_zero_iff (by norm_num) |>.mp h
       · linarith
 
+/-! ## Marginal sum lemmas -/
+
+/-- The sum of abPref signs over all 6 orderings is 0. -/
+private lemma sum_abPref_sign :
+    ∑ k : Fin 6, boolToSign (abPref k) = 0 := by
+  simp only [Fin.sum_univ_six, abPref, boolToSign]
+  norm_num
+
+/-- The sum of bcPref signs over all 6 orderings is 0. -/
+private lemma sum_bcPref_sign :
+    ∑ k : Fin 6, boolToSign (bcPref k) = 0 := by
+  simp only [Fin.sum_univ_six, bcPref, boolToSign]
+  norm_num
+
+/-- The sum of caPref signs over all 6 orderings is 0. -/
+private lemma sum_caPref_sign :
+    ∑ k : Fin 6, boolToSign (caPref k) = 0 := by
+  simp only [Fin.sum_univ_six, caPref, boolToSign]
+  norm_num
+
 /-! ## The main Fourier cycle formula (key lemma from Kalai)
 
 For voters with i.i.d. uniform orderings, the expected product
@@ -315,39 +335,215 @@ by (-1/3)^|S|. The acyclicity assumption forces this to equal -1/3,
 which by the lower bound forces W_1 = 1.
 -/
 
-/-- The expected value of f(ab-votes) · f(bc-votes) over all uniform profiles
-    equals the correlation function ∑_S f̂(S)² · (-1/3)^|S|.
+/-- Key helper: rewrite a product over a Finset as a product over Fin n with indicator. -/
+private lemma prod_finset_eq_prod_univ_ite {n : ℕ} (A : Finset (Fin n)) (g : Fin n → ℝ) :
+    ∏ j ∈ A, g j = ∏ j : Fin n, if j ∈ A then g j else 1 := by
+  rw [← Finset.prod_filter]; congr 1; simp
 
-    Proof sketch: Since voters are independent,
-      E[f(x^ab) · f(x^bc)] = ∑_{S,T} f̂(S) f̂(T) ∏_i E[s^ab_i^{1[i∈S]} · s^bc_i^{1[i∈T]}]
-    The per-voter factor is nonzero only when the voter is in both S and T or
-    neither (single indicators give E[s_ab] = 0). This forces S = T, and the
-    per-voter factor for i ∈ S is E[s_ab · s_bc] = -1/3.
-    Hence E[f(ab)·f(bc)] = ∑_S f̂(S)² · (-1/3)^|S|. -/
+/-- General kernel: any preference pair with zero marginals and cross-sum -2. -/
+private lemma profile_kernel_gen {xPref yPref : Fin 6 → Bool}
+    (hx : ∑ k : Fin 6, boolToSign (xPref k) = 0)
+    (hy : ∑ k : Fin 6, boolToSign (yPref k) = 0)
+    (hxy : ∑ k : Fin 6, boolToSign (xPref k) * boolToSign (yPref k) = -2)
+    (S T : Finset (Fin n)) :
+    (1/6 : ℝ)^n * ∑ p : Profile n,
+      chiS S (fun i => xPref (p i)) * chiS T (fun i => yPref (p i)) =
+    if S = T then (-1/3 : ℝ)^S.card else 0 := by
+  simp only [chiS]
+  simp_rw [prod_finset_eq_prod_univ_ite S, prod_finset_eq_prod_univ_ite T,
+           ← Finset.prod_mul_distrib]
+  rw [show ∑ p : Profile n, ∏ i : Fin n,
+        ((if i ∈ S then boolToSign (xPref (p i)) else 1) *
+         (if i ∈ T then boolToSign (yPref (p i)) else 1)) =
+        ∏ i : Fin n, ∑ k : Fin 6,
+        ((if i ∈ S then boolToSign (xPref k) else 1) *
+         (if i ∈ T then boolToSign (yPref k) else 1)) from
+    (Fintype.prod_sum (fun i (k : Fin 6) =>
+       (if i ∈ S then boolToSign (xPref k) else 1) *
+       (if i ∈ T then boolToSign (yPref k) else 1))).symm]
+  have per_voter : ∀ i : Fin n,
+      ∑ k : Fin 6, (if i ∈ S then boolToSign (xPref k) else 1) *
+                   (if i ∈ T then boolToSign (yPref k) else 1) =
+      if i ∈ S then (if i ∈ T then (-2 : ℝ) else 0) else (if i ∈ T then 0 else 6) := by
+    intro i
+    by_cases hiS : i ∈ S <;> by_cases hiT : i ∈ T
+    · simp only [if_pos hiS, if_pos hiT]; exact hxy
+    · simp only [if_pos hiS, if_neg hiT, mul_one]; simpa using hx
+    · simp only [if_neg hiS, if_pos hiT, one_mul]; simpa using hy
+    · simp only [if_neg hiS, if_neg hiT, mul_one]; norm_num [Fin.sum_univ_six]
+  simp_rw [per_voter]
+  by_cases hST : S = T
+  · subst hST
+    simp only [eq_self_iff_true, if_true]
+    simp_rw [show ∀ i : Fin n,
+        (if i ∈ S then (if i ∈ S then (-2:ℝ) else 0) else (if i ∈ S then 0 else 6)) =
+        if i ∈ S then (-2:ℝ) else 6 from fun i => by by_cases hi : i ∈ S <;> simp [hi]]
+    simp_rw [show ∀ i : Fin n,
+        (if i ∈ S then (-2:ℝ) else 6) = 6 * (if i ∈ S then (-1/3:ℝ) else 1) from
+      fun i => by by_cases hi : i ∈ S <;> simp [hi] <;> norm_num]
+    rw [Finset.prod_mul_distrib]
+    have h6 : ∏ _i : Fin n, (6 : ℝ) = 6 ^ n := by
+      simp [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+    have prod_ite : ∏ i : Fin n, (if i ∈ S then (-1/3 : ℝ) else 1) = (-1/3 : ℝ) ^ S.card := by
+      rw [← Finset.prod_filter, show Finset.univ.filter (· ∈ S) = S from by simp,
+          Finset.prod_const]
+    rw [h6, prod_ite]
+    rw [← mul_assoc, ← mul_pow, show (1/6 : ℝ) * 6 = 1 from by norm_num, one_pow, one_mul]
+  · simp only [if_neg hST]
+    have hne : symmDiff S T ≠ ∅ := by
+      intro h
+      apply hST
+      have : symmDiff S T = ⊥ := by rwa [Finset.bot_eq_empty]
+      exact symmDiff_eq_bot.mp this
+    obtain ⟨i, hi⟩ := Finset.nonempty_iff_ne_empty.mpr hne
+    rw [Finset.mem_symmDiff] at hi
+    rw [mul_eq_zero]
+    right
+    apply Finset.prod_eq_zero (Finset.mem_univ i)
+    rcases hi with ⟨hiS, hiT⟩ | ⟨hiT, hiS⟩
+    · simp only [if_pos hiS, if_neg hiT]
+    · simp only [if_neg hiS, if_pos hiT]
+
+/-- Kernel lemma for the ab–bc pair. -/
+private lemma profile_inner_product_kernel (S T : Finset (Fin n)) :
+    (1/6 : ℝ)^n * ∑ p : Profile n,
+      chiS S (abVotes p) * chiS T (bcVotes p) =
+    if S = T then (-1/3 : ℝ)^S.card else 0 :=
+  profile_kernel_gen sum_abPref_sign sum_bcPref_sign sum_abPref_bcPref S T
+
+/-- Kernel lemma for the bc–ca pair. -/
+private lemma profile_kernel_bcca (S T : Finset (Fin n)) :
+    (1/6 : ℝ)^n * ∑ p : Profile n,
+      chiS S (bcVotes p) * chiS T (caVotes p) =
+    if S = T then (-1/3 : ℝ)^S.card else 0 :=
+  profile_kernel_gen sum_bcPref_sign sum_caPref_sign sum_bcPref_caPref S T
+
+/-- Kernel lemma for the ab–ca pair. -/
+private lemma profile_kernel_abca (S T : Finset (Fin n)) :
+    (1/6 : ℝ)^n * ∑ p : Profile n,
+      chiS S (abVotes p) * chiS T (caVotes p) =
+    if S = T then (-1/3 : ℝ)^S.card else 0 :=
+  profile_kernel_gen sum_abPref_sign sum_caPref_sign sum_abPref_caPref S T
+
+/-- General helper: E[f(votes1) · f(votes2)] = corrFunc f, given a kernel. -/
+private lemma expected_product_helper (f : BooleanFunc n)
+    (votes1 votes2 : Profile n → BoolCube n)
+    (hkernel : ∀ S T : Finset (Fin n),
+      (1/6 : ℝ)^n * ∑ p : Profile n, chiS S (votes1 p) * chiS T (votes2 p) =
+      if S = T then (-1/3 : ℝ)^S.card else 0) :
+    (1/6 : ℝ)^n * ∑ p : Profile n, f (votes1 p) * f (votes2 p) = corrFunc f := by
+  simp only [corrFunc]
+  simp_rw [show ∀ p : Profile n, f (votes1 p) =
+      ∑ S : Finset (Fin n), fourierCoeff f S * chiS S (votes1 p) from
+    fun p => walsh_expansion f (votes1 p),
+    show ∀ p : Profile n, f (votes2 p) =
+      ∑ T : Finset (Fin n), fourierCoeff f T * chiS T (votes2 p) from
+    fun p => walsh_expansion f (votes2 p)]
+  -- Expand product of sums, keeping S as outer variable
+  simp_rw [show ∀ p : Profile n,
+      (∑ S : Finset (Fin n), fourierCoeff f S * chiS S (votes1 p)) *
+      (∑ T : Finset (Fin n), fourierCoeff f T * chiS T (votes2 p)) =
+      ∑ S : Finset (Fin n), ∑ T : Finset (Fin n),
+        (fourierCoeff f S * chiS S (votes1 p)) * (fourierCoeff f T * chiS T (votes2 p)) from
+    fun p => by
+      rw [Finset.sum_mul]
+      apply Finset.sum_congr rfl; intro S _
+      rw [Finset.mul_sum]]
+  -- Distribute (1/6)^n inside: ∑_p ∑_S ∑_T (fS*xS)*(fT*yT) → ∑_p ∑_S ∑_T (1/6)^n*(...)
+  rw [Finset.mul_sum]
+  simp_rw [Finset.mul_sum]
+  -- Swap ∑_p ↔ ∑_S
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl; intro S _
+  -- Swap ∑_p ↔ ∑_T
+  rw [Finset.sum_comm]
+  -- Convert each (S,T)-block using the kernel
+  trans (∑ T : Finset (Fin n), fourierCoeff f S * fourierCoeff f T *
+      ((1/6 : ℝ)^n * ∑ p : Profile n, chiS S (votes1 p) * chiS T (votes2 p)))
+  · apply Finset.sum_congr rfl; intro T _
+    rw [← Finset.mul_sum]
+    have hsumeq : ∑ p : Profile n,
+          (fourierCoeff f S * chiS S (votes1 p)) * (fourierCoeff f T * chiS T (votes2 p)) =
+        fourierCoeff f S * fourierCoeff f T *
+          ∑ p : Profile n, chiS S (votes1 p) * chiS T (votes2 p) := by
+      rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro p _; ring
+    rw [hsumeq]; ring
+  · -- Apply the kernel then collapse the diagonal sum
+    simp_rw [hkernel]
+    simp only [mul_ite, mul_zero]
+    rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+    ring
+
+/-- E[f(ab)·f(bc)] = corrFunc f. -/
 lemma expected_product_eq_corrFunc (f : BooleanFunc n) :
-    (1/6 : ℝ)^n * ∑ p : Profile n, f (abVotes p) * f (bcVotes p) = corrFunc f := by
-  simp only [corrFunc, fourierCoeff, innerProduct, expect, uniformWeight]
-  -- Expand both f(ab) and f(bc) using Walsh expansion
-  -- Then use independence of voters and the per-voter correlation E[s_ab·s_bc] = -1/3
-  sorry
+    (1/6 : ℝ)^n * ∑ p : Profile n, f (abVotes p) * f (bcVotes p) = corrFunc f :=
+  expected_product_helper f abVotes bcVotes profile_inner_product_kernel
+
+/-- E[f(bc)·f(ca)] = corrFunc f. -/
+private lemma expected_product_bcca (f : BooleanFunc n) :
+    (1/6 : ℝ)^n * ∑ p : Profile n, f (bcVotes p) * f (caVotes p) = corrFunc f :=
+  expected_product_helper f bcVotes caVotes profile_kernel_bcca
+
+/-- E[f(ab)·f(ca)] = corrFunc f. -/
+private lemma expected_product_abca (f : BooleanFunc n) :
+    (1/6 : ℝ)^n * ∑ p : Profile n, f (abVotes p) * f (caVotes p) = corrFunc f :=
+  expected_product_helper f abVotes caVotes profile_kernel_abca
 
 /-! ## Acyclicity implies degree-1 Fourier structure -/
 
 /-- Acyclicity of f implies that the Fourier correlation function equals -1/3.
 
     Key steps:
-    1. Acyclicity means no profile gives a cycle, so the cycle probability = 0.
-    2. Cycle probability = (1 + 3·corrFunc f) / 4 = 0 implies corrFunc f = -1/3.
+    1. For any ±1 triple (a,b,c) avoiding (1,1,1) and (-1,-1,-1), ab+bc+ac = -1.
+    2. Summing over all 6^n profiles: ∑_p (f(ab)f(bc)+f(bc)f(ca)+f(ab)f(ca)) = -6^n.
+    3. The three pairwise expectations each equal corrFunc f.
+    4. Combining: 3·corrFunc f = -1, so corrFunc f = -1/3.
 -/
 lemma acyclic_implies_corrFunc (f : BooleanFunc n) (hodd : isOddFunc f) (hpm : isPmOne f)
     (hacyc : acyclic f) : corrFunc f = -1/3 := by
-  -- The cycle probability computation
-  -- Pr[cycle] = (1 + E[f(ab)f(bc)] + E[f(bc)f(ca)] + E[f(ab)f(ca)] + E[f(ab)f(bc)f(ca)]) / 4
-  -- = (1 + 3·corrFunc(f) + 0) / 4
-  -- The triple expectation E[f(ab)f(bc)f(ca)] = 0 for odd f (since S△T has even card).
-  -- The three pairwise expectations are all equal to corrFunc f.
-  -- Acyclicity says Pr[cycle] = 0, so corrFunc f = -1/3.
-  sorry
+  -- Step 1: per-profile, the three products sum to -1
+  have hprod : ∀ p : Profile n,
+      f (abVotes p) * f (bcVotes p) +
+      f (bcVotes p) * f (caVotes p) +
+      f (abVotes p) * f (caVotes p) = -1 := by
+    intro p
+    obtain ⟨hcyc1, hcyc2⟩ := hacyc p
+    rcases hpm (abVotes p) with ha | ha <;>
+    rcases hpm (bcVotes p) with hb | hb <;>
+    rcases hpm (caVotes p) with hc | hc
+    · exact absurd ⟨ha, hb, hc⟩ hcyc1
+    · rw [ha, hb, hc]; norm_num
+    · rw [ha, hb, hc]; norm_num
+    · rw [ha, hb, hc]; norm_num
+    · rw [ha, hb, hc]; norm_num
+    · rw [ha, hb, hc]; norm_num
+    · rw [ha, hb, hc]; norm_num
+    · exact absurd ⟨ha, hb, hc⟩ hcyc2
+  -- Step 2: (1/6)^n * ∑_p (sum of products) = 3 * corrFunc f
+  have hkey : (1/6 : ℝ)^n * ∑ p : Profile n,
+      (f (abVotes p) * f (bcVotes p) +
+       f (bcVotes p) * f (caVotes p) +
+       f (abVotes p) * f (caVotes p)) = 3 * corrFunc f := by
+    simp_rw [Finset.sum_add_distrib]
+    rw [mul_add, mul_add,
+        expected_product_eq_corrFunc f,
+        expected_product_bcca f,
+        expected_product_abca f]
+    ring
+  -- Step 3: (1/6)^n * ∑_p (sum of products) = -1 (from hprod)
+  have hval : (1/6 : ℝ)^n * ∑ p : Profile n,
+      (f (abVotes p) * f (bcVotes p) +
+       f (bcVotes p) * f (caVotes p) +
+       f (abVotes p) * f (caVotes p)) = -1 := by
+    simp_rw [hprod]
+    have hn : Fintype.card (Profile n) = 6^n := by
+      simp [Fintype.card_pi, Fintype.card_fin, Finset.prod_const, Finset.card_univ]
+    rw [Finset.sum_const, Finset.card_univ, hn, nsmul_eq_mul]
+    push_cast
+    have h : (1 / 6 : ℝ) ^ n * (6 : ℝ) ^ n = 1 := by rw [← mul_pow]; norm_num
+    linarith [mul_neg ((1 / 6 : ℝ) ^ n) ((6 : ℝ) ^ n)]
+  -- Combine
+  linarith
 
 /-! ## Degree-1 implies dictator -/
 
