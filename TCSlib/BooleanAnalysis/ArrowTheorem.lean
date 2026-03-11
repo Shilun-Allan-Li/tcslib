@@ -374,13 +374,13 @@ private lemma profile_kernel_gen {xPref yPref : Fin 6 → Bool}
   simp_rw [per_voter]
   by_cases hST : S = T
   · subst hST
-    simp only [eq_self_iff_true, if_true]
+    simp only [if_true]
     simp_rw [show ∀ i : Fin n,
         (if i ∈ S then (if i ∈ S then (-2:ℝ) else 0) else (if i ∈ S then 0 else 6)) =
         if i ∈ S then (-2:ℝ) else 6 from fun i => by by_cases hi : i ∈ S <;> simp [hi]]
     simp_rw [show ∀ i : Fin n,
         (if i ∈ S then (-2:ℝ) else 6) = 6 * (if i ∈ S then (-1/3:ℝ) else 1) from
-      fun i => by by_cases hi : i ∈ S <;> simp [hi] <;> norm_num]
+      fun i => by by_cases hi : i ∈ S; simp [hi]; norm_num; simp [hi]]
     rw [Finset.prod_mul_distrib]
     have h6 : ∏ _i : Fin n, (6 : ℝ) = 6 ^ n := by
       simp [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
@@ -499,7 +499,7 @@ private lemma expected_product_abca (f : BooleanFunc n) :
     3. The three pairwise expectations each equal corrFunc f.
     4. Combining: 3·corrFunc f = -1, so corrFunc f = -1/3.
 -/
-lemma acyclic_implies_corrFunc (f : BooleanFunc n) (hodd : isOddFunc f) (hpm : isPmOne f)
+lemma acyclic_implies_corrFunc (f : BooleanFunc n) (_hodd : isOddFunc f) (hpm : isPmOne f)
     (hacyc : acyclic f) : corrFunc f = -1/3 := by
   -- Step 1: per-profile, the three products sum to -1
   have hprod : ∀ p : Profile n,
@@ -554,7 +554,7 @@ lemma acyclic_implies_corrFunc (f : BooleanFunc n) (hodd : isOddFunc f) (hpm : i
     - For each j: f(only-j-true) = 1 - 2·a_j ∈ {-1,1}, so a_j ∈ {0,1}.
     - From a_j ∈ {0,1} and ∑ a_j² = ∑ a_j = 1: exactly one a_{j₀} = 1.
     - Hence f = χ_{{j₀}} = dictator j₀. -/
-lemma degree_one_implies_dictator (f : BooleanFunc n) (hodd : isOddFunc f)
+lemma degree_one_implies_dictator (f : BooleanFunc n) (_hodd : isOddFunc f)
     (hpm : isPmOne f) (huniv : unanimity f)
     (hdeg1 : ∀ S : Finset (Fin n), S.card ≠ 1 → fourierCoeff f S = 0) :
     isDictator f := by
@@ -620,13 +620,13 @@ lemma degree_one_implies_dictator (f : BooleanFunc n) (hodd : isOddFunc f)
         rw [← Finset.add_sum_erase Finset.univ
             (fun j => fourierCoeff f {j} * boolToSign ((Function.update (fun _ => false) i true) j))
             (Finset.mem_univ i)]
-        simp only [Function.update_apply, eq_self_iff_true, ↓reduceIte,
+        simp only [Function.update_apply, ↓reduceIte,
                    boolToSign_true, mul_neg, mul_one]
         congr 1
         apply Finset.sum_congr rfl
         intro j hj
         have hjni : j ≠ i := (Finset.mem_erase.mp hj).1
-        simp only [Function.update_apply, if_neg hjni, boolToSign_false, mul_one]
+        simp only [if_neg hjni, boolToSign_false, mul_one]
       rw [key]
       have herase := Finset.add_sum_erase Finset.univ
           (fun j => fourierCoeff f {j}) (Finset.mem_univ i)
@@ -645,8 +645,7 @@ lemma degree_one_implies_dictator (f : BooleanFunc n) (hodd : isOddFunc f)
       have hcard_real : (J.card : ℝ) = 1 := by
         have h0 : ∀ i : Fin n, i ∉ J → fourierCoeff f {i} = 0 := by
           intro i hi
-          simp only [J, Finset.mem_filter, Finset.mem_univ, true_and, not_true,
-                     not_and, forall_true_left] at hi
+          simp only [J, Finset.mem_filter, Finset.mem_univ, true_and] at hi
           push_neg at hi
           rcases hai_range i with h | h
           · exact h
