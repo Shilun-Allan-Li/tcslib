@@ -3,13 +3,21 @@ import Mathlib.Probability.Moments.Basic
 import Mathlib.MeasureTheory.MeasurableSpace.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Probability.ProbabilityMassFunction.Basic
+import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.MeasureTheory.Integral.MeanInequalities
 
 namespace Hypercontractivity
 
 section
-open MeasureTheory ProbabilityTheory
-
+open MeasureTheory ProbabilityTheory Filter Finset
+open scoped ENNReal NNReal
 def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=
   moment X 4 P ≤ B * (moment X 2 P) ^ 2
 
@@ -68,7 +76,7 @@ lemma b_reasonable_tail_bound -- the extended non negative reals make this annoy
       · exact hX_int.aestronglyMeasurable
     -- unfold definitions
     _ = (moment X 4 P) / (t ^ 4 * (moment X 2 P) ^ 2) := by
-      simp [moment]
+      simp only [moment, Pi.pow_apply]
       rfl
     _ ≤ (B * (moment X 2 P) ^ 2) / (t ^ 4 * (moment X 2 P) ^ 2) := by
       gcongr
@@ -76,85 +84,244 @@ lemma b_reasonable_tail_bound -- the extended non negative reals make this annoy
     _ = B / t^4 := by
       rw [mul_div_mul_right B (t ^ 4) (_)]
       · exact ne_of_gt (by positivity)
+
+lemma min_prob_b_reasonable
+  {Ω : Type*} [MeasurableSpace Ω] [Fintype Ω] [DiscreteMeasurableSpace Ω]
+  {P : Measure Ω} [IsProbabilityMeasure P]
+  {X : Ω → ℝ} {π : PMF Ω} (hP : P = π.toMeasure)
+  {μ : ℝ} (hμ_pos : 0 < μ) (hμ_min : ∀ ω, μ ≤ (π ω).toReal) :
+  IsBReasonable X P (1 / μ) := by
+
+  -- Unfold the definition of IsBReasonable
+  rw [IsBReasonable]
+
+  -- Step 1: Establish that the integrals equal finite sums
+  -- (We state these as claims to be proven using Mathlib's integral_fintype)
+  have h_mom4 : moment X 4 P = ∑ ω, X ω ^ 4 * (π ω).toReal := by
+    rw [moment]
+    simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
+    rw [hP]
+    apply Finset.sum_congr rfl
+    intro ω _
+    dsimp only [Measure.real]
+    rw [PMF.toMeasure_apply_singleton]; ring
+    simp only [MeasurableSet.singleton]
+
+  have h_mom2 : moment X 2 P = ∑ ω, X ω ^ 2 * (π ω).toReal := by
+    rw [moment];
+    simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
+    rw [hP]
+    apply Finset.sum_congr rfl
+    intro ω _
+    dsimp only [Measure.real]
+    rw [PMF.toMeasure_apply_singleton]; ring; simp only [MeasurableSet.singleton]
+
+  rw [h_mom4, h_mom2]
+  -- Step 2: Set up the algebraic calculation
+  calc
+    ∑ ω, X ω ^ 4 * (π ω).toReal
+      = ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 / (π ω).toReal := by
+        apply Finset.sum_congr rfl
+        intro ω hω
+        have h_pi_pos : 0 < (π ω).toReal := lt_of_lt_of_le hμ_pos (hμ_min ω)
+        have h_pi_ne_zero : (π ω).toReal ≠ 0 := ne_of_gt h_pi_pos
+        -- Algebraic rearrangement: a^4 * p = (a^2 * p)^2 / p
+        ring_nf
+        calc
+          X ω ^ 4 * (π ω).toReal
+            = X ω ^ 4 * (π ω).toReal * 1 := by rw [mul_one]
+            _ = X ω ^ 4 * (π ω).toReal * ((π ω).toReal * (π ω).toReal⁻¹) := by rw [mul_inv_cancel₀ h_pi_ne_zero]
+            _ = X ω ^ 4 * (π ω).toReal ^ 2 * (π ω).toReal⁻¹ := by ring
+
+      _ ≤ ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 / μ := by
+        -- Use the fact that λ ≤ π ω, so 1 / π ω ≤ 1 / λ
+        apply Finset.sum_le_sum
+        intro ω hω
+        have h_pi_pos : 0 < (π ω).toReal := lt_of_lt_of_le hμ_pos (hμ_min ω)
+        -- 3. Use gcongr or direct multiplication to apply the inequality
+        rw [div_eq_mul_inv, div_eq_mul_inv]
+        gcongr
+        -- 4. Apply the reciprocal inequality: 1 / (π ω).toReal ≤ 1 / μ
+        simp only [hμ_min]
+
+      _ = (1 / μ) * ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 := by
+        -- Factor out the (1 / λ)
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro ω _
+        ring
+      _ ≤ (1 / μ) * (∑ ω, X ω ^ 2 * (π ω).toReal) ^ 2 := by
+        -- Apply the inequality: ∑ (y_i)^2 ≤ (∑ y_i)^2 for non-negative terms
+        gcongr
+        let y := fun ω => X ω ^ 2 * (π ω).toReal
+        -- Prove that y_i is non-negative for all ω
+        have hy_nonneg : ∀ ω, 0 ≤ y ω := by
+          intro ω
+          unfold y
+          positivity
+
+        -- Apply the sum-of-squares inequality
+        calc
+          ∑ ω, (y ω)^2 ≤ (∑ ω, y ω)^2 := by
+            apply Finset.sum_sq_le_sq_sum_of_nonneg
+            intro ω _
+            exact hy_nonneg ω
+
+         -- Prove `∑ (y_i)^2 ≤ (∑ y_i)^2` here
 end
 
-section
-open MeasureTheory ProbabilityTheory Filter
-open scoped ENNReal NNReal
-/- variable {Ω : Type*} [MeasureSpace Ω] [IsProbabilityMeasure (volume : Measure Ω)]
-theorem paley_zygmund
-  (Z : Ω → ℝ)
-  (h_nonneg : 0 ≤ Z) -- Z is non-negative
-  (h_int : Integrable Z) -- E[Z] is finite
-  (h_sq_int : Memℒp Z 2) -- E[Z^2] is finite
-  (θ : ℝ) (hθ_nonneg : 0 ≤ θ) (hθ_le_one : θ ≤ 1) :
-  (1 - θ)^2 * (∫ ω, Z ω)^2 ≤ (∫ ω, Z ω ^ 2) * (volume {ω | θ * (∫ x, Z x) < Z ω}).toReal := by
-  sorry -/
+open MeasureTheory Set Filter ProbabilityTheory
+open scoped Real
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+-- MeasureTheory.integral_mul_le_Lp_mul_Lq_of_nonneg is used for Cauchy-Schwarz
+lemma paley_zygmund_ineq
+  {Z : Ω → ℝ}
+  (h_meas : Measurable Z)
+  (h_nonneg : ∀ᵐ ω ∂μ, 0 ≤ Z ω)
+  (h_int : Integrable Z μ)
+  (h_int_sq : Integrable (fun ω ↦ Z ω ^ 2) μ)
+  {θ : ℝ} (hθ_pos : 0 ≤ θ) (hθ_le_one : θ ≤ 1)
+  (hZ_pos : 0 < moment Z 1 μ) :
+  (1 - θ)^2 * (moment Z 1 μ)^2 / moment Z 2 μ ≤ (μ {ω | θ * moment Z 1 μ < Z ω}).toReal := by
+  -- Step 1: Unfold the definition of `moment` and simplify `Z ω ^ 1` to `Z ω`
+  simp_rw [moment, pow_one] at hZ_pos ⊢
 
-lemma b_reasonable_anticoncentration_bound
-  {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+  -- Step 2: Define our set A and prove it is measurable
+  set A := {ω | θ * ∫ ω, Z ω ∂μ < Z ω}
+  have hA_meas : MeasurableSet A :=
+    measurableSet_lt measurable_const h_meas
+
+  -- Step 3: Split the expectation into A and Aᶜ
+  have h_split : ∫ ω, Z ω ∂μ = (∫ ω in A, Z ω ∂μ) + (∫ ω in Aᶜ, Z ω ∂μ) :=
+    (integral_add_compl hA_meas h_int).symm
+  -- Step 4: Bound the integral over Aᶜ
+  have h_Ac_bound : ∫ ω in Aᶜ, Z ω ∂μ ≤ θ * ∫ ω, Z ω ∂μ := by
+    calc ∫ ω in Aᶜ, Z ω ∂μ
+      _ ≤ ∫ ω in Aᶜ, (θ * ∫ x, Z x ∂μ) ∂μ := by
+        -- Use standard integral_mono_ae on the restricted measure
+        apply integral_mono_ae h_int.integrableOn
+        · -- The constant is integrable because the measure is finite
+          exact integrable_const _
+        · -- ae_restrict_iff' translates "almost everywhere on Aᶜ" to an implication
+          rw [EventuallyLE, ae_restrict_iff' hA_meas.compl]
+          -- Now we just provide the standard logical bound
+          exact Eventually.of_forall (fun ω hω ↦ not_lt.mp hω)
+
+      -- The integral of a constant gives the constant times the measure
+      _ = (θ * ∫ ω, Z ω ∂μ) * (μ Aᶜ).toReal := by
+        simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply, univ_inter,
+          smul_eq_mul, mul_comm, mul_eq_mul_left_iff, mul_eq_zero]
+        left
+        rfl
+
+      -- μ(Aᶜ) ≤ 1, so we can bound the product
+      _ ≤ (θ * ∫ ω, Z ω ∂μ) * 1 := by
+        apply mul_le_mul_of_nonneg_left
+        · -- Get the standard probability bound: μ(Aᶜ) ≤ 1
+          have h_prob : μ Aᶜ ≤ 1 := prob_le_one
+          -- Apply the monotonicity of .toReal (requires proving 1 ≠ ∞)
+          have h_mono := ENNReal.toReal_mono ENNReal.one_ne_top h_prob
+          -- Simplify (1 : ℝ≥0∞).toReal down to 1 and close the goal
+          rwa [ENNReal.toReal_one] at h_mono
+        · positivity
+
+      -- x * 1 = x
+      _ = θ * ∫ ω, Z ω ∂μ := mul_one _
+  -- Step 5: Isolate and bound the integral over A
+  have h_A_lower_bound : (1 - θ) * ∫ ω, Z ω ∂μ ≤ ∫ ω in A, Z ω ∂μ := by
+    calc (1 - θ) * ∫ ω, Z ω ∂μ
+      -- 5a: Expand the multiplication so linarith can read it
+      _ = ∫ ω, Z ω ∂μ - θ * ∫ ω, Z ω ∂μ := by ring
+
+      -- 5b: Now linarith can easily substitute h_Ac_bound into h_split
+      _ ≤ ∫ ω in A, Z ω ∂μ := by linarith [h_split, h_Ac_bound]
+ -- Step 6: Apply Hölder's Inequality for p=2, q=2 (Cauchy-Schwarz)
+  -- Step 6: Apply Hölder's Inequality for p=2, q=2 (Cauchy-Schwarz)
+  have h_CS : (∫ ω in A, Z ω ∂μ) ^ 2 ≤ (∫ ω in A, (Z ω) ^ 2 ∂μ) * (μ A).toReal := by
+    -- 6a: First, isolate the non-squared Hölder bound
+    have h_Holder : ∫ ω in A, Z ω * 1 ∂μ ≤
+        (∫ ω in A, (Z ω) ^ 2 ∂μ) ^ (1 / 2 : ℝ) * (∫ ω in A, (1 : ℝ) ^ 2 ∂μ) ^ (1 / 2 : ℝ) := by
+      -- Rewrite integer squares `^ 2` to real powers `^ (2 : ℝ)` to perfectly match the lemma
+      simp_rw [← Real.rpow_two]
+      have h_two : ENNReal.ofReal 2 = 2 := by norm_num
+      apply MeasureTheory.integral_mul_le_Lp_mul_Lq_of_nonneg ⟨by norm_num, by norm_num, by norm_num⟩                -- 1 is measurable
+      · exact ae_restrict_of_ae h_nonneg
+      · exact Filter.Eventually.of_forall (fun _ ↦ zero_le_one)
+      · apply MemLp.restrict
+        rw [h_two]
+        rw [memLp_two_iff_integrable_sq (h_int.aestronglyMeasurable)]
+        exact h_int_sq
+      rw [h_two]
+      exact memLp_const (1 : ℝ)
+
+    -- 6b: Square both sides and algebraically clean up the exponents
+    calc (∫ ω in A, Z ω ∂μ) ^ 2
+      _ = (∫ ω in A, Z ω * 1 ∂μ) ^ 2 := by
+        congr 2
+        ext ω
+        exact (mul_one (Z ω)).symm
+
+      _ ≤ ((∫ ω in A, (Z ω) ^ 2 ∂μ) ^ (1 / 2 : ℝ) * (∫ ω in A, (1 : ℝ) ^ 2 ∂μ) ^ (1 / 2 : ℝ)) ^ 2 := by
+        gcongr
+        · apply MeasureTheory.integral_nonneg_of_ae
+          filter_upwards [ae_restrict_of_ae h_nonneg] with ω hω
+          exact mul_nonneg hω zero_le_one
+
+      _ = (∫ ω in A, (Z ω) ^ 2 ∂μ) * (∫ ω in A, (1 : ℝ) ^ 2 ∂μ) := by
+        rw [mul_pow]
+        congr 1
+        · -- Cancel the exponent for Z^2: ((Z^2)^(1/2))^2 -> (Z^2)^((1/2)*2) -> Z^2
+          rw [← Real.rpow_two, ← Real.rpow_mul (MeasureTheory.integral_nonneg (fun ω ↦ sq_nonneg (Z ω)))]
+          have h_half_two : (1 / 2 : ℝ) * 2 = 1 := by norm_num
+          rw [h_half_two, Real.rpow_one]
+        · -- Cancel the exponent for 1^2 identically
+          simp_rw [one_pow]
+          rw [← Real.rpow_two]
+          rw [← Real.rpow_mul (MeasureTheory.integral_nonneg (fun _ ↦ zero_le_one))]
+          have h_half_two : (1 / 2 : ℝ) * 2 = 1 := by norm_num
+          rw [h_half_two, Real.rpow_one]
+
+      _ = (∫ ω in A, (Z ω) ^ 2 ∂μ) * (μ A).toReal := by
+        -- 1. Strip away the identical '(∫ Z^2)' from both sides
+        congr 1
+        simp_rw [one_pow]
+        simp [MeasureTheory.integral_const]
+        exact rfl
+-- 1. Split into two cases based on whether the denominator is zero
+  by_cases h_zero : ∫ (x : Ω), (Z ^ 2) x ∂μ = 0
+
+  · -- Case 1: The denominator is zero.
+    -- Lean evaluates X / 0 as 0, so the LHS is 0.
+    -- The RHS is a measure, which is always ≥ 0.
+    rw [h_zero, div_zero]
+    exact ENNReal.toReal_nonneg
+
+  · -- Case 2: The denominator is not zero.
+    -- Since integrals of squares are ≥ 0, it must be strictly positive.
+    have h_pos : 0 < ∫ (x : Ω), (Z ^ 2) x ∂μ :=
+      lt_of_le_of_ne (MeasureTheory.integral_nonneg (fun _ ↦ sq_nonneg _)) (Ne.symm h_zero)
+
+    -- Now Lean will allow us to multiply both sides by the denominator!
+    rw [div_le_iff₀ h_pos]
+    calc
+        (1 - θ) ^ 2 * (∫ x, Z x ∂μ) ^ 2
+          = ((1 - θ) * ∫ x, Z x ∂μ) ^ 2 := by
+            -- Step 1: Group the squares. `ring` handles this instantly.
+            ring
+
+        _ ≤ (∫ (ω : Ω) in A, Z ω ∂μ) ^ 2 := by
+            -- Step 2: Square both sides of your Markov inequality.
+            -- Now that the algebra is out of the way, nlinarith can easily
+            -- see that A ≤ B implies A^2 ≤ B^2 (as long as things are positive).
+            -- You may need to feed it the non-negativity of the integral here!
+            sorry
+
+        _ ≤ (μ A).toReal * ∫ x, (Z ^ 2) x ∂μ := by
+            -- Step 3: Plug in your Cauchy-Schwarz / Hölder block!
+            sorry
+  /- {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} (hB : IsBReasonable X P B)
   (t : ℝ) (htg : 0 ≤ t) (htl : t ≤ 1) (hX_pos : 0 < moment X 2 P)
   (hX_int2 : Integrable (fun ω ↦ X ω ^ 2) P)
   (hX_int4 : Integrable (fun ω ↦ X ω ^ 4) P) (hX_meas : Measurable X) :
-  (P {ω | |X ω| ≥ t * Real.sqrt (moment X 2 P)}).toReal ≥ ((1 - t ^ 2) ^ 2) / B := by
-  set M2 := moment X 2 P
-  have h_set_eq : {ω | |X ω| ≥ t * Real.sqrt M2} = {ω | X ω ^ 2 ≥ t^2 * M2} := by
-    ext ω
-    simp only [Set.mem_setOf_eq, ge_iff_le]
-    have hM2 : 0 ≤ M2 := le_of_lt hX_pos
-    -- Goal: t * Real.sqrt M2 ≤ |X ω| ↔ t^2 * M2 ≤ X ω ^ 2
-    constructor
-    · intro h
-      -- If t * ||X||_2 <= |X(ω)|, then square both sides
-      calc t^2 * M2 = t^2 * (Real.sqrt M2)^2 := by rw [Real.sq_sqrt hM2]
-        _ = (t * Real.sqrt M2)^2 := by rw [mul_pow]
-        _ ≤ |X ω|^2 := by gcongr
-        _ = X ω ^ 2 := by rw [sq_abs]
-    · intro h
-      -- If t^2 * M2 <= X(ω)^2, then take the square root of both sides
-      have h_sqrt : Real.sqrt (t^2 * M2) ≤ Real.sqrt (X ω ^ 2) := by gcongr
-      have h_left : Real.sqrt (t^2 * M2) = t * Real.sqrt M2 := by
-        rw [Real.sqrt_mul (by positivity), Real.sqrt_sq htg]
-      have h_right : Real.sqrt (X ω ^ 2) = |X ω| := by
-        exact Real.sqrt_sq_eq_abs (X ω)
-      rw [h_left, h_right] at h_sqrt
-      exact h_sqrt
-  rw [h_set_eq]
-
-  -- Give the "large" set a name to make our integrals cleaner
-  set A := {ω | X ω ^ 2 ≥ t^2 * M2}
-  have h_split : (1 - t^2) * M2 ≤ ∫ ω in A, X ω ^ 2 ∂P := by
-    have hA_meas : MeasurableSet A :=
-      measurableSet_le measurable_const (hX_meas.pow_const 2)
-      -- 2. Split expected value into A and Aᶜ
-    have h_split_eq : M2 = (∫ ω in A, X ω ^ 2 ∂P) + (∫ ω in Aᶜ, X ω ^ 2 ∂P) :=
-      (integral_add_compl hA_meas hX_int2).symm
-
-    -- 3. Bound the integral over the complement Aᶜ
-    have h_compl_bound : ∫ ω in Aᶜ, X ω ^ 2 ∂P ≤ t^2 * M2 := by
-      have h_le : ∫ ω in Aᶜ, X ω ^ 2 ∂P ≤ ∫ ω in Aᶜ, t^2 * M2 ∂P := by
-        apply integral_mono_ae hX_int2.restrict ((integrable_const _).restrict)
-        -- On Aᶜ, X^2 < t^2 * M2, so we can bound the function pointwise
-        filter_upwards [ae_restrict_mem hA_meas.compl] with ω hω
-        exact le_of_lt (not_le.mp hω)
-
-      -- Calculate the upper bound using the measure of Aᶜ
-      calc ∫ ω in Aᶜ, X ω ^ 2 ∂P
-        _ ≤ ∫ ω in Aᶜ, t^2 * M2 ∂P := h_le
-        _ = (P Aᶜ).toReal * (t^2 * M2) := by
-          rw [integral_const, smul_eq_mul]
-          congr 1
-          dsimp [Measure.real]
-          -- 2. Simplify (P.restrict Aᶜ Set.univ) into (P Aᶜ)
-          rw [Measure.restrict_apply_univ]
-        _ ≤ 1 * (t^2 * M2) := by
-          gcongr
-          -- The probability of any set is ≤ 1
-          rw [← ENNReal.toReal_one]
-          exact ENNReal.toReal_mono ENNReal.one_ne_top prob_le_one
-        _ = t^2 * M2 := one_mul _
-
-    linarith [h_split_eq, h_compl_bound]
-  sorry
-end
+  (P {ω | |X ω| ≥ t * Real.sqrt (moment X 2 P)}).toReal ≥ ((1 - t ^ 2) ^ 2) / B := by -/

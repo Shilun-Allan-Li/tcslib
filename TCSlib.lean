@@ -11,3 +11,4 @@ import TCSlib.CodingTheory.QuantumHamming
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
 import TCSlib.BooleanAnalysis.Circuit
+import TCSlib.BooleanAnalysis.Hypercontractivity
