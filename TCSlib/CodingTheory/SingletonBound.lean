@@ -76,7 +76,7 @@ theorem singleton_bound (C : Code n α) (d : ℕ) (h : distance C d) (hα : Nont
   }
 
   obtain ⟨_, h_hd_gt⟩ := h
-  simp [Code, Codeword] at C
+  change Finset (Codeword n α) at C
 
   let f : Codeword n α → Codeword (n-d+1) α := fun c ↦ (fun i ↦ c ((Fin.castLE hle) i))
 
@@ -84,12 +84,12 @@ theorem singleton_bound (C : Code n α) (d : ℕ) (h : distance C d) (hα : Nont
   have h_f_to_K : ∀ c ∈ C, f c ∈ K := by intros c _ ; exact Finset.mem_univ (f c)
 
   have h_Kcard: K.card = Fintype.card α ^ (n- d + 1) := by
-    rw[Finset.card_univ]
-    simp
+    rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin]
 
   rw[← h_Kcard] at h'
   rcases Finset.exists_ne_map_eq_of_card_lt_of_maps_to h' h_f_to_K with ⟨c₁, ⟨hc₁_mem, ⟨c₂,⟨hc₂_mem, ⟨hc₁₂_neq, hc₁₂feq⟩⟩⟩⟩⟩
-  simp [f] at hc₁₂feq
+  change (fun i => c₁ (Fin.castLE hle i)) = fun i => c₂ (Fin.castLE hle i) at hc₁₂feq
+  have hc₁₂feq' := funext_iff.mp hc₁₂feq
   specialize h_hd_gt c₁ hc₁_mem c₂ hc₂_mem hc₁₂_neq
 
   have h_card_complement : (filter (fun i => c₁ i = c₂ i) Finset.univ).card +
@@ -111,28 +111,27 @@ theorem singleton_bound (C : Code n α) (d : ℕ) (h : distance C d) (hα : Nont
       ext i
       constructor
       · exact fun a => mem_of_mem_filter i a
-      · simp
-        intro hi
+      · intro hi
+        refine Finset.mem_filter.mpr ?_
         constructor
         · exact hi
-        · apply funext_iff.1 at hc₁₂feq
-          simp[S₁] at hi
-          have h_cast_eq : i = Fin.castLE hle (i.castLT hi) := by
+        · have hi' : i < n - d + 1 := by
+            simpa [S₁] using hi
+          have h_cast_eq : i = Fin.castLE hle (i.castLT hi') := by
             ext
-            simp
-          specialize hc₁₂feq (Fin.castLT i hi)
-          rw[h_cast_eq]
-          exact hc₁₂feq
+            rfl
+          specialize hc₁₂feq' (Fin.castLT i hi')
+          rw [h_cast_eq]
+          exact hc₁₂feq'
 
     have h_Scard : S₁.card = n - d + 1 := by
       apply Finset.card_eq_of_equiv_fin
       apply Fintype.equivFinOfCardEq
-      simp[S₁]
-      exact Fintype.card_fin_lt_of_le hle
+      simpa [S₁] using Fintype.card_fin_lt_of_le hle
 
     rw[h_filter_eq_S₁]
     rw[h_Scard]
-    simp
+    exact Nat.le_add_right _ _
 
 
   have h_hd_lt_d : hamming_distance c₁ c₂ < d := by

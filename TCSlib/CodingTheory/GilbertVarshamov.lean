@@ -55,7 +55,7 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
     apply Finset.card_bij f
 
     have h_map : ∀ (G : Matrix (Fin n) (Fin k) α) (hG : G ∈ S), f G hG ∈ S' := by
-      simp[f, S]
+      simp only [toFinset_setOf, mem_filter, Finset.mem_univ, true_and, S, f]
       unfold weight
       intro G h_dist_le_d
       have h_dist_leq_dminus1 : hamming_distance (Matrix.mulVec G x) zero ≤ d - 1 := by
@@ -77,24 +77,26 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
     have h_surj : ∀ G' ∈ S', ∃ G, ∃ (hG : G ∈ S), f G hG = G' := by
       intro G' h_G'inS'
       use G'
-      simp[f, S]
-      simp[Set.mem_setOf] at h_G'inS'
+      simp only [toFinset_setOf, mem_filter, Finset.mem_univ, true_and, exists_prop, and_true, f, S]
+      simp at h_G'inS'
       rw[mem_toFinset] at h_G'inS'
-      simp[Set.mem_setOf] at h_G'inS'
+      simp only [hamming_ball, toFinset_setOf, mem_filter, Finset.mem_univ, true_and,
+        mem_setOf_eq] at h_G'inS'
       unfold weight
       apply Nat.lt_of_le_pred
-      simp[h_d]
+      simp only [h_d]
       exact h_G'inS'
     exact h_surj
 
-  simp[S, S'] at h_card_eq
-  simp
+  simp only [toFinset_setOf, hamming_ball, mem_filter, Finset.mem_univ, true_and, S,
+    S'] at h_card_eq
+  simp only [toFinset_setOf, hamming_ball, ge_iff_le]
   rw[h_card_eq]
 
   let matrix_uniformity := uniformity_lemma n k x h_x h_k
 
   unfold matrix_dist uniform_vector_dist at matrix_uniformity
-  simp at matrix_uniformity
+  simp only [Finite.toFinset_setOf, one_div] at matrix_uniformity
 
   have h_unif (v: Codeword n α) : (toFinset {G | Matrix.mulVec G x = v}).card / Fintype.card α ^ (n * k) = 1 / ((Fintype.card α : ℝ))^n := by
     apply congr_fun at matrix_uniformity
@@ -111,19 +113,21 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
         simp[h_finset]
 
     rw[←h_filter_eq]
-    have h_inv : ((Fintype.card α : ℝ) ^ n)⁻¹ = 1 / (Fintype.card α : ℕ) ^ n := by simp
+    have h_inv : ((Fintype.card α : ℝ) ^ n)⁻¹ = 1 / (Fintype.card α : ℕ) ^ n := by
+      rw [one_div]
     rw_mod_cast[←h_inv]
     exact matrix_uniformity
 
   have h_sum : ((toFinset {G : (Matrix (Fin n) (Fin k) α) | Matrix.mulVec G x ∈ hamming_ball (d - 1) zero}).card : ℝ) / (Fintype.card α : ℝ) ^ (n * k) = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => 1 / (Fintype.card α : ℝ)^n := by
-    simp[Finset.sum_const]
+    simp only [hamming_ball, toFinset_setOf, mem_filter, Finset.mem_univ, true_and, one_div,
+      sum_const, nsmul_eq_mul]
     have h_ball_eq_sum : (toFinset {G | Matrix.mulVec G x ∈ hamming_ball (d-1) zero}) = (Set.toFinset (⋃ (v : Fin n → α) (h_v : weight v ≤ d-1), {G : (Matrix (Fin n) (Fin k) α) | (Matrix.mulVec G x) = v})) := by
-      simp
+      simp only [hamming_ball, toFinset_setOf, mem_filter, Finset.mem_univ, true_and]
       ext y
       constructor
       · intro h_ball
-        simp
-        simp at h_ball
+        simp only [mem_toFinset, mem_iUnion, mem_setOf_eq, exists_prop, exists_eq_right']
+        simp only [mem_filter, Finset.mem_univ, true_and] at h_ball
         unfold weight
         simp[h_ball]
       · intro h_union
@@ -136,7 +140,7 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
         exact (mem_filter_univ y).mpr h_yx_hd
 
     unfold hamming_ball at h_ball_eq_sum
-    simp at h_ball_eq_sum
+    simp only [toFinset_setOf, mem_filter, Finset.mem_univ, true_and] at h_ball_eq_sum
     rw[h_ball_eq_sum]
 
     have h_card_eq_sum : (toFinset (⋃ (v : Codeword n α), ⋃ (_ : weight v ≤ d - 1), {G | Matrix.mulVec G x = v})).card = Finset.sum (Set.toFinset {v : Codeword n α | (hamming_distance v zero) ≤ d-1}) fun v => (toFinset {G | Matrix.mulVec G x = v}).card := by
@@ -146,7 +150,7 @@ theorem prob_leq_ball_size (x : Codeword k α) (d : ℕ) (h_k : k ≥ 1) (h_x : 
 
       have h_G_union : G_union = toFinset (⋃ (v : Codeword n α), ⋃ (_ : weight v ≤ d - 1), {G | Matrix.mulVec G x = v}) := by
         ext G
-        simp[Finset.mem_biUnion, Set.mem_toFinset, Set.mem_setOf_eq]
+        simp [Set.mem_toFinset, Set.mem_setOf_eq]
         constructor
         · intro h_a
           simp[G_union] at h_a
@@ -239,7 +243,7 @@ theorem existence_bound (d: ℕ) (h_k : k ≥ 1) (h_d : d > 0) :
 
   have h_union_eq : S = nonzero.biUnion (fun x => Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}) := by
     ext G
-    simp [S, nonzero, Set.mem_toFinset, Set.mem_setOf]
+    simp [S, nonzero]
 
   have h_union_bound : S.card ≤ Finset.sum nonzero (fun x => (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card) := by
     rw [h_union_eq]
@@ -247,7 +251,7 @@ theorem existence_bound (d: ℕ) (h_k : k ≥ 1) (h_d : d > 0) :
 
   have h_each_x : ∀ x ∈ nonzero, (Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card ≤ (Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card := by
     intro x hx
-    have h_x_ne : x ≠ 0 := by simp [nonzero] at hx; exact hx
+    have h_x_ne : x ≠ 0 := by simpa [nonzero] using hx
     have h_prob : ((Set.toFinset {G : (Matrix (Fin n) (Fin k) α) | weight (Matrix.mulVec G x) < d}).card : ℝ) / (Fintype.card α : ℝ)^(n*k) ≤
         ((hamming_ball (d-1) (zero : Codeword n α)).card : ℝ) / (Fintype.card α : ℝ)^n :=
       prob_leq_ball_size x d h_k h_x_ne h_d
@@ -274,13 +278,13 @@ theorem existence_bound (d: ℕ) (h_k : k ≥ 1) (h_d : d > 0) :
         ≤ Finset.sum nonzero (fun _ => (Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card) :=
           Finset.sum_le_sum h_each_x
       _ = nonzero.card * ((Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card) := by
-          simp [Finset.sum_const, nsmul_eq_mul]
+          simp [Finset.sum_const]
       _ = ((Fintype.card α)^k - 1) * (Fintype.card α)^(n*k - n) * (hamming_ball (d-1) (zero : Codeword n α)).card := by
           have h_nonzero_card : nonzero.card = (Fintype.card α)^k - 1 := by
             have h_nonzero_eq : nonzero = Finset.univ \ {(0 : Codeword k α)} := by
               ext x; simp [nonzero]
             rw [h_nonzero_eq, Finset.card_sdiff_of_subset (by simp)]
-            simp [Fintype.card_fun, Fintype.card_fin]
+            rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, Finset.card_singleton]
           rw [h_nonzero_card]
           ring
 

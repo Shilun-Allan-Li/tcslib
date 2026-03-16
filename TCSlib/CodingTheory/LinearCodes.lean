@@ -74,7 +74,9 @@ theorem finite_matrix_dist (n k : ℕ) (v : Codeword n α) (x : Codeword k α) :
     Set.Finite { G : Matrix (Fin n) (Fin k) α | Matrix.mulVec G x = v } := by {
   have dist_subset :
     { G : Matrix (Fin n) (Fin k) α | Matrix.mulVec G x = v } ⊆
-    (Set.univ : Set (Matrix (Fin n) (Fin k) α)) := by simp
+    (Set.univ : Set (Matrix (Fin n) (Fin k) α)) := by
+      intro G _
+      trivial
 
   have matrices_fintype : Finite ↑{G | Matrix.mulVec G x = v} := by
     exact Finite.Set.subset (Set.univ : Set (Matrix (Fin n) (Fin k) α)) dist_subset

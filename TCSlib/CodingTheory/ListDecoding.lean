@@ -179,9 +179,11 @@ theorem list_decoding_capacity
   classical
   intro r M
 
-  have hq_pos : (1 : ℝ) < (q : ℝ) := by
+  have hq2 : 2 ≤ q := by
     rw [hq]
-    exact_mod_cast Fintype.one_lt_card
+    exact Nat.succ_le_iff.mpr (by simpa using Fintype.one_lt_card)
+  have hq_pos : (1 : ℝ) < (q : ℝ) := by
+    exact natCast_one_lt_of_two_le hq2
   have hq_ge_0 : (0 : ℝ) ≤ (q : ℝ) := by exact_mod_cast (Nat.zero_le q)
   have hq_ge_1 : (1 : ℝ) ≤ (q : ℝ) := by linarith
 
@@ -233,11 +235,6 @@ theorem list_decoding_capacity
       exact this
 
   · have hL_lt_M : L < M := Nat.lt_of_not_ge hML
-
-    have hq2 : 2 ≤ q := by
-      have h1 : 1 < Fintype.card α := Fintype.one_lt_card
-      have : 2 ≤ Fintype.card α := (Nat.succ_le_iff).2 (by simpa using h1)
-      simpa [hq] using this
 
     let N : ℕ := q^n
     let V : ℕ := Nat.floor (Real.rpow q ((qaryEntropy q p) * n))
@@ -298,9 +295,7 @@ theorem list_decoding_capacity
 
     have hp1 : 0 ≤ p := le_of_lt hp.1
     have hp2 : p ≤ 1 := by
-      have : (1 - (1 : ℝ)/q) ≤ 1 := by
-        simp
-      exact le_trans hp.2 this
+      exact le_of_lt (lt_one_of_le_one_sub_inv (natCast_pos_of_two_le hq2) hp.2)
 
     obtain ⟨C, hCcard, hCld⟩ :=
         exists_listDecodable_code (n := n) (L := L) (M := M) (p := p)

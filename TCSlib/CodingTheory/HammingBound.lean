@@ -44,16 +44,19 @@ theorem hamming_ball_size (n l : ℕ) :
     dsimp [hamming_distance, zero]
 
     let d_comb : Finset (Finset (Fin n)) := Finset.powersetCard d Finset.univ
-    have h_card_d_comb : d_comb.card = Nat.choose n d := by simp[d_comb]
+    have h_card_d_comb : d_comb.card = Nat.choose n d := by
+      simp [d_comb]
 
     let α_nonzero := {x : α | x ≠ 0}.toFinset
-    have h_card_α_nonzero : α_nonzero.card = Fintype.card α - 1 := by rw[toFinset_card]; simp
+    have h_card_α_nonzero : α_nonzero.card = Fintype.card α - 1 := by
+      rw [toFinset_card]
+      simp
 
     have h_card_fun : ∀ s ∈ d_comb, Fintype.card (s → α_nonzero) = (Fintype.card α - 1)^d := by
       intro s hs
-      rw[Fintype.card_fun]
-      have : Fintype.card { x // x ∈ α_nonzero } = Fintype.card α - 1 := by simp; exact h_card_α_nonzero
-      rw[this]
+      rw [Fintype.card_fun]
+      rw [show Fintype.card { x // x ∈ α_nonzero } = Fintype.card α - 1 by
+        simpa using h_card_α_nonzero]
       dsimp[d_comb] at hs
       simp! at *
       rw[hs]
@@ -63,7 +66,10 @@ theorem hamming_ball_size (n l : ℕ) :
     have : ∀ s ∈ d_comb, (f s).card = (Fintype.card α - 1)^d := by intro s hs; exact h_card_fun s hs
 
     let S := d_comb.sigma f
-    have h_card_S : S.card = Nat.choose n d * (Fintype.card α - 1) ^ d := by simp[S]; rw[Finset.sum_eq_card_nsmul this, h_card_d_comb]; rfl
+    have h_card_S : S.card = Nat.choose n d * (Fintype.card α - 1) ^ d := by
+      simp [S]
+      rw [Finset.sum_eq_card_nsmul this, h_card_d_comb]
+      rfl
 
     rw[←h_card_S]
     let f' : (s : ((k : Finset (Fin n)) × ({ x // x ∈ k } → { x // x ∈ α_nonzero }))) → s ∈ S → Codeword n α := fun s _ ↦ (fun i ↦ if h : i ∈ s.1 then s.2 ⟨i, h⟩ else 0)
@@ -78,7 +84,8 @@ theorem hamming_ball_size (n l : ℕ) :
       apply Finset.mem_sigma.1 at ha
       rw[toFinset]
       simp [hammingDist]
-      have : (filter (fun i => i ∈ a.fst) Finset.univ).card = d := by simp[d_comb] at *; exact ha.1
+      have : (filter (fun i => i ∈ a.fst) Finset.univ).card = d := by
+        simpa [d_comb] using ha.1
       rw[← this]
       rw[← Fintype.card_subtype]
       apply Fintype.card_of_subtype
@@ -89,7 +96,8 @@ theorem hamming_ball_size (n l : ℕ) :
         push_neg
         refine dite_ne_right_iff.mpr ?_
         use hx
-        have : ↑(a.snd ⟨x, hx⟩) ∈  α_nonzero := by exact coe_mem (Sigma.snd a { val := x, property := hx })
+        have : ↑(a.snd ⟨x, hx⟩) ∈  α_nonzero := by
+          exact coe_mem (Sigma.snd a { val := x, property := hx })
         simp[α_nonzero] at this
         exact this
       · intros hx
@@ -147,7 +155,8 @@ theorem hamming_ball_size (n l : ℕ) :
         exact this
       }
 
-      have h₁' : f_a x = a.2 x := by simp[f_a, f']
+      have h₁' : f_a x = a.2 x := by
+        simp [f_a, f']
       have h₂ : (f_a x) = (f_b x) := by rw[fab_eq]
       have h₃ : (f_b x) = (b' x) := by
         dsimp[f_b, f']
@@ -179,7 +188,10 @@ theorem hamming_ball_size (n l : ℕ) :
       intro h_b
       let a₁ := toFinset { i | b i ≠ 0 }
 
-      have h_y : ∀ y ∈ a₁, (b ↑y) ∈ α_nonzero := by simp[α_nonzero, a₁]
+      have h_y : ∀ y ∈ a₁, (b ↑y) ∈ α_nonzero := by
+        intro y hy
+        simp [α_nonzero, a₁] at hy ⊢
+        exact hy
 
       let a₂ (y : { x // x ∈ a₁ }) : { x // x ∈ α_nonzero } := ⟨b y, by {
         apply h_y
