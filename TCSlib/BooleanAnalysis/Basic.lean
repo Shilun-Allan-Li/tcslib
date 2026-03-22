@@ -258,6 +258,10 @@ theorem walsh_expansion (f : BooleanFunc n) (x : BoolCube n) :
         rw [← mul_assoc, mul_comm ((2:ℝ)⁻¹^n) (f x), mul_assoc, ← mul_pow,
             inv_mul_cancel₀ (by norm_num : (2:ℝ) ≠ 0), one_pow, mul_one]
 
+/-`Maximum Degree of Boolean Function`-/
+def has_degree_at_most {n : ℕ} (f : (BooleanFunc n)) (k : ℕ) : Prop :=
+  ∀ S, f ̂( S ) ≠ 0 → S.card ≤ k
+
 /-! ## Parseval's identity -/
 
 -- Parseval is stated here but proved after fourier_coeff_chi (orthonormality)
@@ -550,6 +554,68 @@ theorem totalInfluence_eq_sum_sq_deg (f : BooleanFunc n) :
   rw [Finset.sum_comm]
   congr 1; ext S
   simp [Finset.sum_ite_mem, Finset.sum_const, nsmul_eq_mul]
+
+
+/-! ## Discrete Derivative Operator -/
+
+/-- The **derivative** of  a boolean func `f` at `i` is a function
+`f'(x) = (f(x⁺ⁱ) - f(x⁻ⁱ))/2`, where `x⁺ⁱ` denotes `x` being changed to `false` at the `i`th position
+`x⁻ⁱ` denotes `x` being changed to `true` at the `i`th position -/
+noncomputable def derivative {n : ℕ} (i : Fin n) (f : BooleanFunc n) : BooleanFunc n :=
+  fun x => (f (Function.update x i false) - f (Function.update x i true)) / 2
+
+lemma derivative_add {n : ℕ} (i : Fin n) (f g : BooleanFunc n) :
+    derivative i (f + g) = derivative i f + derivative i g := by
+  ext x
+  -- The proof will follow from the linearity of addition and division in ℝ
+  simp only [derivative, Pi.add_apply]
+  ring
+
+/-- The discrete derivative operator commutes with scalar multiplication. -/
+lemma derivative_smul {n : ℕ} (i : Fin n) (c : ℝ) (f : BooleanFunc n) :
+    derivative i (c • f) = c • derivative i f := by
+  ext x
+  -- The proof will follow from the distributivity of multiplication in ℝ
+  simp only [derivative, Pi.smul_apply, smul_eq_mul]
+  ring
+
+-- Derivative is a linear map
+noncomputable def derivativeLm {n : ℕ} (i : Fin n) :
+    BooleanFunc n →ₗ[ℝ] BooleanFunc n where
+  toFun := derivative i
+  map_add' := derivative_add i
+  map_smul' := derivative_smul i
+
+/-! ## Expectation Operator -/
+
+/-- The **expectation** of  a boolean func `f` at `i` is a function
+`f'(x) = (f(x⁺ⁱ) - f(x⁻ⁱ))/2`, where `x⁺ⁱ` denotes `x` being changed to `false` at the `i`th position
+`x⁻ⁱ` denotes `x` being changed to `true` at the `i`th position -/
+
+noncomputable def expectationOperator {n : ℕ} (i : Fin n) (f : BooleanFunc n) : BooleanFunc n :=
+  fun x => (f (Function.update x i false) + f (Function.update x i true)) / 2
+
+lemma expectation_add {n : ℕ} (i : Fin n) (f g : BooleanFunc n) :
+    expectationOperator i (f + g) = expectationOperator i f + expectationOperator i g := by
+  ext x
+  -- The proof will follow from the linearity of addition and division in ℝ
+  simp only [expectationOperator, Pi.add_apply]
+  ring
+
+/-- The discrete derivative operator commutes with scalar multiplication. -/
+lemma expectation_smul {n : ℕ} (i : Fin n) (c : ℝ) (f : BooleanFunc n) :
+    expectationOperator i (c • f) = c • expectationOperator i f := by
+  ext x
+  -- The proof will follow from the distributivity of multiplication in ℝ
+  simp only [expectationOperator, Pi.smul_apply, smul_eq_mul]
+  ring
+-- Expectation is a linear map
+noncomputable def expectationLm {n : ℕ} (i : Fin n) :
+    BooleanFunc n →ₗ[ℝ] BooleanFunc n where
+  toFun := expectationOperator i
+  map_add' := expectation_add i
+  map_smul' := expectation_smul i
+
 
 /-! ## Noise operator -/
 
