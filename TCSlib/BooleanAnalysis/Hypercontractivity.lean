@@ -1,4 +1,3 @@
-import TCSlib.BooleanAnalysis.Circuit
 import TCSlib.BooleanAnalysis.Basic
 import Mathlib.Probability.Moments.Basic
 import Mathlib.MeasureTheory.MeasurableSpace.Basic
@@ -13,22 +12,20 @@ import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.MeasureTheory.Integral.MeanInequalities
+import Mathlib.Probability.Distributions.Uniform
 
 namespace Hypercontractivity
 open BooleanAnalysis
--- definitions of operators necessary for bonami lemma proof; these can be brought into Basic.lean
-
-
 
 section
 open MeasureTheory ProbabilityTheory Filter
 
-/-! ## B-Reasonability Bounds-/
+/-! ## B-Reasonability Bounds -/
 
 def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=
   moment X 4 P ≤ B * (moment X 2 P) ^ 2
 
-/-- `If X not equivalent to 0 is B-reasonable, Pr[|X| ≥ t ||X||₂] ≤ B/t⁴ for all t > 0`-/
+/-- `If X not equivalent to 0 is B-reasonable, Pr[|X| ≥ t ||X||₂] ≤ B/t⁴ for all t > 0` -/
 lemma b_reasonable_tail_bound
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
@@ -36,6 +33,7 @@ lemma b_reasonable_tail_bound
   (hX_int : Integrable (fun ω ↦ X ω ^ 4) P) : -- probably don't need; target for rewrite
   -- Below I already applied the power of 4; might want to rewrite later
   (P {ω | X ω ^ 4 ≥ t ^ 4 * (moment X 2 P) ^ 2}).toReal ≤ B / t ^ 4 := by
+
   set c : ℝ := t ^ 4 * (moment X 2 P) ^ 2 -- define c to make it easier to write out
   have hc_pos : c > 0 := by positivity
   have h_set : {ω | c ≤ X ω ^ 4} = {ω | ENNReal.ofReal c ≤ ENNReal.ofReal (X ω ^ 4)} := by
@@ -44,6 +42,7 @@ lemma b_reasonable_tail_bound
     -- ENNReal.ofReal_le_ofReal_iff requires proof that 0 ≤ c
     rw [ENNReal.ofReal_le_ofReal_iff]
     positivity
+
   calc -- calc out the inequality
     (P {ω | X ω ^ 4 ≥ c}).toReal
     = (P {ω | ENNReal.ofReal c ≤ ENNReal.ofReal (X ω ^ 4)}).toReal := by -- turn real to ENNReal
@@ -116,8 +115,7 @@ lemma min_prob_b_reasonable
     simp only [MeasurableSet.singleton]
 
   have h_mom2 : moment X 2 P = ∑ ω, X ω ^ 2 * (π ω).toReal := by
-    rw [moment];
-    simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
+    rw [moment]; simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
     rw [hP]
     apply Finset.sum_congr rfl
     intro ω _
@@ -191,6 +189,7 @@ lemma paley_zygmund_ineq
   {θ : ℝ} (hθ_pos : 0 ≤ θ) (hθ_le_one : θ ≤ 1)
   (hZ_pos : 0 < moment Z 1 μ) :
   (1 - θ)^2 * (moment Z 1 μ)^2 / moment Z 2 μ ≤ (μ {ω | θ * moment Z 1 μ < Z ω}).toReal := by
+
   -- Unfold the definition of `moment` and simplify `Z ω ^ 1` to `Z ω`
   simp_rw [moment, pow_one] at hZ_pos ⊢
   -- Define our set A and prove it is measurable
@@ -215,7 +214,7 @@ lemma paley_zygmund_ineq
       -- The integral of a constant gives the constant times the measure
       _ = (θ * ∫ ω, Z ω ∂μ) * (μ Aᶜ).toReal := by
         simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply, univ_inter,
-          smul_eq_mul, mul_comm, mul_eq_mul_left_iff, mul_eq_zero]
+           smul_eq_mul, mul_comm, mul_eq_mul_left_iff, mul_eq_zero]
         left; rfl
 
       -- μ(Aᶜ) ≤ 1, so we can bound the product
@@ -228,6 +227,7 @@ lemma paley_zygmund_ineq
           rwa [ENNReal.toReal_one] at h_mono
         · positivity
       _ = θ * ∫ ω, Z ω ∂μ := mul_one _
+
   -- Isolate and bound the integral over A
   have h_A_lower_bound : (1 - θ) * ∫ ω, Z ω ∂μ ≤ ∫ ω in A, Z ω ∂μ := by
     calc (1 - θ) * ∫ ω, Z ω ∂μ
@@ -235,7 +235,8 @@ lemma paley_zygmund_ineq
       _ = ∫ ω, Z ω ∂μ - θ * ∫ ω, Z ω ∂μ := by ring
       -- Now linarith can easily substitute h_Ac_bound into h_split
       _ ≤ ∫ ω in A, Z ω ∂μ := by linarith [h_split, h_Ac_bound]
- -- Apply Hölder's Inequality for p=2, q=2 (Cauchy-Schwarz)
+
+  -- Apply Hölder's Inequality for p=2, q=2 (Cauchy-Schwarz)
   have h_CS : (∫ ω in A, Z ω ∂μ) ^ 2 ≤ (∫ ω in A, (Z ω) ^ 2 ∂μ) * (μ A).toReal := by
     -- 6a: First, isolate the non-squared Hölder bound
     have h_Holder : ∫ ω in A, Z ω * 1 ∂μ ≤
@@ -287,7 +288,8 @@ lemma paley_zygmund_ineq
         simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply, univ_inter,
           smul_eq_mul, mul_one]
         exact rfl
--- Split into two cases based on whether the denominator is zero
+
+  -- Split into two cases based on whether the denominator is zero
   by_cases h_zero : ∫ (x : Ω), (Z ^ 2) x ∂μ = 0
   · -- Case 1: The denominator is zero.
     rw [h_zero, div_zero]
@@ -327,7 +329,7 @@ lemma paley_zygmund_ineq
               · -- 2. Prove the function is integrable over the whole space
                 exact h_int_sq
             · -- Prove 0 ≤ P(A)
-              exact ENNReal.toReal_nonneg
+               exact ENNReal.toReal_nonneg
 
 /-`X not equivalent to 0 is B-reasonable. Then Pr[|X| > t||X||₂] ≥ (1 - t²)²/B for all t ∈ [0, 1]`-/
 lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; general result after
@@ -336,7 +338,7 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
   (hX_meas : Measurable X)
   (hX_int_sq : Integrable (fun ω ↦ X ω ^ 2) P)
   (hX_int_4 : Integrable (fun ω ↦ X ω ^ 4) P)
-  (hX_pos_2 : 0 < moment X 2 P)
+  (hX_pos_2 : 0 < moment X 2 P)/-  -/
   {t : ℝ} (ht_nonneg : 0 ≤ t) (ht_le_one : t ≤ 1) :
   (1 - t^2)^2 / B ≤ (P {ω | t^2 * moment X 2 P < X ω ^ 2}).toReal := by
 
@@ -440,7 +442,7 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
         exact hB
 
   -- 6. Conclude by transitivity
-  exact le_trans h_bound h_pz_mapped -- exact le_trans h_bound h_pz_mapped
+  exact le_trans h_bound h_pz_mapped
 
 /-! ## Helper definitions and lemmas for the Bonami lemma -/
 
@@ -513,7 +515,9 @@ lemma fourth_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
     convert expect_succ_eq ( fun x => f x ^ 4 ) using 1;
     unfold expect restrictLast avgLast diffLast; ring_nf;
     rfl;
-  rw [ h_decomp ] ; ring_nf ; norm_num [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul ] ; ring_nf; (
+  rw [ h_decomp ] ; ring_nf ;
+  norm_num [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul ] ; ring_nf;
+  (
   unfold expect; norm_num [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul ] ; ring_nf;
   simpa only [ mul_assoc, ← Finset.mul_sum _ _ _, ← Finset.sum_mul ] using by ring;);
 
@@ -522,7 +526,8 @@ lemma second_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
     expect (fun x => f x ^ 2) =
     expect (fun x => (avgLast f x) ^ 2) +
     expect (fun x => (diffLast f x) ^ 2) := by
-  unfold expect; ring_nf;
+  unfold expect;
+  ring_nf;
   -- By definition of $avgLast$ and $diffLast$, we can expand the sums.
   have h_expand : ∑ x : BoolCube (n + 1), f x ^ 2 = ∑ x : BoolCube n, (avgLast f x + diffLast f x) ^ 2 + ∑ x : BoolCube n, (avgLast f x - diffLast f x) ^ 2 := by
     convert sum_boolCube_succ ( fun x => f x ^ 2 ) using 1;
@@ -557,24 +562,10 @@ lemma expect_sq_nonneg_prod {n : ℕ} (g h : BooleanFunc n) :
 /- Non-negativity of expect of fourth powers -/
 lemma expect_fourth_nonneg {n : ℕ} (f : BooleanFunc n) :
     0 ≤ expect (fun x => f x ^ 4) := by
-  convert expect_sq_nonneg_prod ( fun x => f x ^ 2 ) ( fun x => 1 ) using 1 ; norm_num [ sq ] ; ring_nf;
+  convert expect_sq_nonneg_prod ( fun x => f x ^ 2 ) ( fun x => 1 ) using 1 ;
+  norm_num [ sq ] ; ring_nf;
 
-/-
-Degree bound for avgLast: if f has degree ≤ k, then avgLast f has degree ≤ k
-
-We need to show that for any S : Finset (Fin n), if (avgLast f)^(S) ≠ 0, then |S| ≤ k.
-
-The Fourier coefficient of avgLast f at S is:
-(avgLast f)^(S) = innerProduct (avgLast f) (chiS S) = expect(avgLast f · χ_S)
-= uniformWeight n * ∑_x avgLast f(x) * χ_S(x)
-= uniformWeight n * ∑_x [(f(snoc x false) + f(snoc x true))/2] * χ_S(x)
-
-Key insight: the Fourier coefficient (avgLast f)^(S) equals f^(S') where S' is S embedded into Fin(n+1) via Fin.castSucc (i.e., S' = S.map Fin.castSucc.toEmbedding, which does not contain Fin.last n).
-
-Since f has degree at most k: if f^(S') ≠ 0, then |S'| ≤ k. And |S'| = |S| (since the embedding is injective). So |S| ≤ k.
-
-To prove this formally: show (avgLast f)^(S) = f^(S.map Fin.castSuccEmb) by computing the inner product. Use the walsh_expansion of f, the orthogonality of characters, and the fact that averaging over the last coordinate kills the terms containing Fin.last n.
--/
+/- Degree bound for avgLast: if f has degree ≤ k, then avgLast f has degree ≤ k -/
 lemma degree_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     (hf : has_degree_at_most f k) :
     has_degree_at_most (avgLast f) k := by
@@ -590,9 +581,12 @@ lemma degree_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     simp_all +decide [ Finset.sum_add_distrib, add_mul, mul_add, div_mul_eq_mul_div, Finset.mul_sum _ _ _];
     rw [ ← Finset.sum_add_distrib ] ; refine' Finset.sum_congr rfl fun x hx => _ ; unfold uniformWeight ; ring_nf;
     unfold chiS; simp +decide [ Finset.prod_image] ; ring;
-  have := hf ( Finset.image Fin.castSucc S ) ; simp_all +decide [ Finset.card_image_of_injective, Function.Injective ] ;
+  have := hf ( Finset.image Fin.castSucc S ) ;
+  simp_all +decide [ Finset.card_image_of_injective, Function.Injective ] ;
 
-/- Degree bound for diffLast: if f has degree ≤ k, then diffLast f has degree ≤ k-1 -/
+/-
+Degree bound for diffLast: if f has degree ≤ k, then diffLast f has degree ≤ k-1
+-/
 lemma degree_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     (hf : has_degree_at_most f k) :
     has_degree_at_most (diffLast f) (k - 1) := by
@@ -601,15 +595,20 @@ lemma degree_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     unfold diffLast fourierCoeff innerProduct
     simp [chiS];
     unfold restrictLast expect;
-    rw [ show ( Finset.univ : Finset ( Fin ( n + 1 ) → Bool ) ) = Finset.image ( fun x : Fin n → Bool => Fin.snoc x false ) Finset.univ ∪ Finset.image ( fun x : Fin n → Bool => Fin.snoc x true ) Finset.univ from ?_, Finset.sum_union ] <;> norm_num [ Finset.sum_image, Finset.prod_mul_distrib ] ; ring_nf;
+    rw [ show ( Finset.univ : Finset ( Fin ( n + 1 ) → Bool ) ) = Finset.image ( fun x : Fin n → Bool => Fin.snoc x false ) Finset.univ ∪ Finset.image ( fun x : Fin n → Bool => Fin.snoc x true ) Finset.univ from ?_, Finset.sum_union ] <;> norm_num [ Finset.sum_image, Finset.prod_mul_distrib ] ;
+    ring_nf;
     · norm_num [ Fin.snoc ] ; ring_nf;
-      · norm_num [ Finset.sum_add_distrib, mul_add, add_mul, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _, uniformWeight ] ; ring_nf;
+      ·
+        norm_num [ Finset.sum_add_distrib, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ; ring_nf!;
+        · norm_num [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, mul_assoc, mul_comm, mul_left_comm, add_comm 1 n, uniformWeight_succ ];
+          ring;
     · norm_num [ Finset.disjoint_left ];
     · ext x; simp only [Finset.mem_univ, Finset.mem_union, Finset.mem_image, true_and, true_iff];
       by_cases hx : x (Fin.last n) = false <;> [left; right] <;> use fun i => x (Fin.castSucc i) <;> ext i <;> cases i using Fin.lastCases <;> aesop;
   intro S hS_nonzero
   have h_card : S.card + 1 ≤ k := by
-    have := hf ( Finset.image Fin.castSucc S ∪ { Fin.last n } ) ; simp_all +decide [ Finset.card_image_of_injective, Function.Injective ] ;
+    have := hf ( Finset.image Fin.castSucc S ∪ { Fin.last n } ) ;
+    simp_all +decide [ Finset.card_image_of_injective, Function.Injective ] ;
   exact Nat.le_sub_one_of_lt h_card
 
 /- A degree-0 function is constant -/
@@ -622,7 +621,8 @@ lemma degree_zero_const {n : ℕ} (f : BooleanFunc n) (hf : has_degree_at_most f
   rw [ h_fourier ];
   refine' Finset.sum_congr rfl fun S hS => _;
   by_cases h : fourierCoeff f S = 0 <;> simp +decide [ h ];
-  specialize hf S h; simp_all +singlePass [ Finset.card_eq_zero ] ;
+  specialize hf S h;
+  simp_all +singlePass [ Finset.card_eq_zero ] ;
 
 /- For a degree-0 (constant) function, E[f^4] = (E[f^2])^2 -/
 lemma degree_zero_fourth_moment {n : ℕ} (f : BooleanFunc n) (hf : has_degree_at_most f 0) :
@@ -636,10 +636,10 @@ lemma degree_zero_fourth_moment {n : ℕ} (f : BooleanFunc n) (hf : has_degree_a
 
 /-
   Key algebraic inequality for the Bonami lemma inductive step.
-    If A ≤ 9^(m+1) a², B ≤ 9^m b², C² ≤ A·B, and all are non-negative,
-    then A + 6C + B ≤ 9^(m+1) (a+b)² -/
+  If A ≤ 9^(m+1) a², B ≤ 9^m b², C² ≤ A·B, and all are non-negative,
+  then A + 6C + B ≤ 9^(m+1) (a+b)² -/
 lemma bonami_algebra {m : ℕ} {a b A B C : ℝ}
-    (ha : 0 ≤ a) (hb : 0 ≤ b) (hA : 0 ≤ A) (hB : 0 ≤ B) (hC : 0 ≤ C)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hB : 0 ≤ B) (hC : 0 ≤ C)
     (hA_bound : A ≤ 9 ^ (m + 1) * a ^ 2)
     (hB_bound : B ≤ 9 ^ m * b ^ 2)
     (hC_bound : C ^ 2 ≤ A * B) :
@@ -648,14 +648,15 @@ lemma bonami_algebra {m : ℕ} {a b A B C : ℝ}
   ring_nf at *;
   nlinarith [ show 0 ≤ 9 ^ m by positivity, show 0 ≤ a * b * 9 ^ m by positivity, sq_nonneg ( C - a * b * 9 ^ m * 3 ), mul_le_mul_of_nonneg_left hB_bound ( show 0 ≤ 9 ^ m by positivity ) ]
 
-/- The main Bonami lemma, proved without the k ≥ 1 assumption -/
-lemma bonami_lemma {n : ℕ} (k : ℕ) (f : BooleanFunc n)
+/- The main Bonami lemma, proved without the k ≥ 1 assumption, in terms of expectation -/
+lemma bonami_expect {n : ℕ} (k : ℕ) (f : BooleanFunc n)
     (hf : has_degree_at_most f k) :
     expect (fun x ↦ f x ^ 4) ≤ (9 : ℝ) ^ k * (expect (fun x ↦ f x ^ 2)) ^ 2 := by
   induction n generalizing k with
   | zero =>
     -- BoolCube 0 has one element, everything reduces to f(default)
-    unfold expect; norm_num [ Finset.card_univ ] ; ring_nf ; norm_cast; norm_num;
+    unfold expect;
+    norm_num [ Finset.card_univ ] ; ring_nf ; norm_cast; norm_num;
     unfold uniformWeight; norm_num; ring_nf; norm_cast; norm_num;
     exact le_mul_of_one_le_right ( by positivity ) ( one_le_pow₀ ( by norm_num ) )
   | succ n ih =>
@@ -694,5 +695,275 @@ lemma bonami_lemma {n : ℕ} (k : ℕ) (f : BooleanFunc n)
       set B := expect (fun x => hh x ^ 4)
       set C := expect (fun x => g x ^ 2 * hh x ^ 2)
       have hC_nn : 0 ≤ C := expect_sq_nonneg_prod g hh
-      exact bonami_algebra ha hb hA hB hC_nn hg_bound hh_bound hCS
+      exact bonami_algebra ha hb hB hC_nn hg_bound hh_bound hCS
+
+lemma moment_eq_expect {n : ℕ} (f : BooleanFunc n) (p : ℕ)
+    (P : Measure (BoolCube n)) [IsProbabilityMeasure P]
+    (hP_unif : ∀ x, (P {x}).toReal = uniformWeight n) :
+    moment f p P = expect (fun x ↦ f x ^ p) := by
+  -- Expand the definition of moment
+  rw [moment]
+
+  -- Convert the discrete integral to a finite sum.
+  -- With [IsProbabilityMeasure P] added, integral_fintype now perfectly matches!
+  simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
+
+  -- Expand expect and push the constant uniform weight into the sum
+  unfold expect
+  rw [Finset.mul_sum]
+
+  -- Show the inner terms are exactly equal
+  apply Finset.sum_congr rfl
+  intro x _
+  have h_meas_x : (P.real {x}) = uniformWeight n := hP_unif x
+
+  -- Substitute the uniform weight and rearrange
+  rw [h_meas_x]
+
+/-- The canonical uniform probability measure on the Boolean Hypercube. -/
+noncomputable def uniformMeasure (n : ℕ) : Measure (BoolCube n) :=
+  (PMF.uniformOfFintype (BoolCube n)).toMeasure
+
+instance (n : ℕ) : IsProbabilityMeasure (uniformMeasure n) := by
+  -- Unfold the definition so Lean sees the underlying `PMF.toMeasure`
+  unfold uniformMeasure
+  -- Now Lean can automatically find the PMF probability measure instance!
+  infer_instance
+
+/-- Prove that our canonical measure matches the combinatorial uniformWeight. -/
+lemma uniformMeasure_apply {n : ℕ} (x : BoolCube n) :
+    ((uniformMeasure n) {x}).toReal = uniformWeight n := by
+  -- Unfold the definitions
+  dsimp [uniformMeasure]
+  rw [PMF.toMeasure_apply_singleton]
+
+  -- Evaluate the PMF application.
+  -- This creates the `if` statement, which we immediately simplify
+  -- because `x ∈ Finset.univ` is always true.
+  simp only [PMF.uniformOfFintype_apply]
+
+  -- Now we have an inverse `⁻¹`, so we use `toReal_inv` instead of `toReal_div`
+  rw [ENNReal.toReal_inv]
+
+  -- Calculate the cardinality of `BoolCube n` (which is `Fin n → Bool`).
+  -- Fintype.card automatically turns this into 2^n.
+  simp only [Fintype.card_pi, Fintype.card_bool, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+
+  -- At this point, the goal is `( (2^n : ℕ) : ℝ )⁻¹ = uniformWeight n`.
+  -- We unfold uniformWeight and use basic algebra/simp to close the goal.
+  unfold uniformWeight
+  rw[ENNReal.toReal_natCast]
+  simp only [Nat.cast_pow, Nat.cast_ofNat, inv_pow]
+  exact MeasurableSet.singleton x
+
+/--
+`The Bonami Lemma:`
+`A Boolean function of degree at most k is 9^k-reasonable under the uniform measure.`
+-/
+lemma bonami_lemma {n : ℕ} (k : ℕ) (f : BooleanFunc n)
+    (hf : has_degree_at_most f k) :
+    IsBReasonable f (uniformMeasure n) ((9 : ℝ) ^ k) := by
+
+  -- 1. Unfold your B-reasonability definition
+  rw [IsBReasonable]
+
+  -- 2. Use the bridge lemma specifically on the uniformMeasure
+  rw [moment_eq_expect f 4 (uniformMeasure n) uniformMeasure_apply]
+  rw [moment_eq_expect f 2 (uniformMeasure n) uniformMeasure_apply]
+
+  -- 3. Apply the purely algebraic expectation bound
+  exact bonami_expect k f hf
+
+/-! ## (2,4)-Hypercontractivity Theorem -/
+
+/-
+Fourier coefficient of avgLast:
+  `(avgLast f)^(S) = f̂(S.image castSucc)`.
+-/
+lemma fourierCoeff_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
+    fourierCoeff (avgLast f) S = fourierCoeff f (S.image Fin.castSucc) := by
+  unfold avgLast; simp +decide only [fourierCoeff] ; ring_nf;
+  unfold innerProduct; simp +decide only [one_div, mul_comm] ; ring_nf;
+  unfold expect; simp +decide only [chiS, restrictLast, one_div, mul_comm, Finset.sum_add_distrib,
+    Fin.castSucc_inj, implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Finset.mul_sum _ _ _,
+    mul_left_comm] ; ring_nf;
+  rw [ add_comm 1 n, uniformWeight_succ ] ; rw [ ← mul_add ] ; rw [ sum_boolCube_succ ] ; ring_nf;
+  simp +decide [mul_comm, mul_left_comm, Finset.mul_sum _ _ _]
+
+/-
+Fourier coefficient of diffLast:
+  `(diffLast f)^(S) = f̂(S.image castSucc ∪ {last n})`.
+-/
+lemma fourierCoeff_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
+    fourierCoeff (diffLast f) S = fourierCoeff f (S.image Fin.castSucc ∪ {Fin.last n}) := by
+  -- By definition of `diffLast`, we have that `diffLast f(x) = (f(snoc x false) - f(snoc x true)) / 2`.
+  unfold diffLast;
+  unfold fourierCoeff innerProduct expect chiS;
+  rw [ show ( Finset.univ : Finset ( Fin ( n + 1 ) → Bool ) ) = Finset.image ( fun x : Fin n → Bool => Fin.snoc x false ) Finset.univ ∪ Finset.image ( fun x : Fin n → Bool => Fin.snoc x true ) Finset.univ from ?_, Finset.sum_union ] <;> norm_num;
+  ·
+    · norm_num [ Finset.sum_add_distrib, sub_mul, div_mul_eq_mul_div, Finset.mul_sum _ _ _, Finset.sum_div, uniformWeight_succ ] ; ring_nf;
+      norm_num [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _, mul_assoc, mul_comm, mul_left_comm, restrictLast ];
+  · norm_num [ Finset.disjoint_left ];
+  · ext x; simp only [Finset.mem_univ, Finset.mem_union, Finset.mem_image, true_and, true_iff];
+    by_cases hx : x ( Fin.last n ) = Bool.false <;> [ left; right ] <;> use fun i => x i.castSucc <;> ext i <;> cases i using Fin.lastCases <;> aesop
+
+/-
+`χ_{S.image castSucc}(Fin.snoc x b) = χ_S(x)`: the character of a "lifted" set
+  ignores the last coordinate.
+-/
+lemma chiS_snoc_castSucc {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bool) :
+    chiS (S.image Fin.castSucc) (Fin.snoc x b) = chiS S x := by
+  unfold chiS; aesop;
+
+/-
+`χ_{S.image castSucc ∪ {last n}}(Fin.snoc x b) = boolToSign b * χ_S(x)`.
+-/
+lemma chiS_snoc_with_last {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bool) :
+    chiS (S.image Fin.castSucc ∪ {Fin.last n}) (Fin.snoc x b) = boolToSign b * chiS S x := by
+  unfold chiS; simp +decide only [Finset.union_singleton, Finset.mem_image, Fin.castSucc_ne_last,
+    and_false, exists_false, not_false_eq_true, Finset.prod_insert, Fin.snoc_last, Fin.castSucc_inj,
+    implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Fin.snoc_castSucc] ;
+
+/-
+Partition of `∑ S : Finset (Fin (n+1))` by membership of `Fin.last n`:
+  every subset of `[n+1]` either avoids or contains the last element.
+-/
+lemma finset_fin_succ_sum_partition {n : ℕ} (φ : Finset (Fin (n + 1)) → ℝ) :
+    ∑ S : Finset (Fin (n + 1)), φ S =
+    ∑ T : Finset (Fin n), φ (T.image Fin.castSucc) +
+    ∑ T : Finset (Fin n), φ (T.image Fin.castSucc ∪ {Fin.last n}) := by
+  -- We partition Finset (Fin (n+1)) by whether Fin.last n is in the set.
+  have h_partition : Finset.univ = Finset.image (fun T : Finset (Fin n) => T.image Fin.castSucc) (Finset.univ : Finset (Finset (Fin n))) ∪ Finset.image (fun T : Finset (Fin n) => T.image Fin.castSucc ∪ {Fin.last n}) (Finset.univ : Finset (Finset (Fin n))) := by
+    ext S;
+    by_cases h : Fin.last n ∈ S <;> simp +decide only [Finset.mem_univ, Finset.union_singleton,
+      Finset.mem_union, Finset.mem_image, true_and, true_iff];
+    · refine Or.inr ⟨ Finset.univ.filter fun i => Fin.castSucc i ∈ S, ?_ ⟩;
+      ext i; simp [Finset.mem_insert, Finset.mem_image];
+      exact ⟨ fun hi => hi.elim ( fun hi => hi.symm ▸ h ) fun ⟨ a, ha₁, ha₂ ⟩ => ha₂ ▸ ha₁, fun hi => if hi' : i = Fin.last n then Or.inl hi' else Or.inr ⟨ ⟨ i.val, lt_of_le_of_ne ( Fin.le_last _ ) ( by simpa [ Fin.ext_iff ] using hi' ) ⟩, by simpa [ Fin.ext_iff ] using hi, rfl ⟩ ⟩;
+    · refine' Or.inl ⟨ Finset.univ.filter fun i => Fin.castSucc i ∈ S, _ ⟩;
+      ext i; simp [Finset.mem_image];
+      exact ⟨ fun ⟨ a, ha₁, ha₂ ⟩ => ha₂ ▸ ha₁, fun hi => by cases i using Fin.lastCases <;> aesop ⟩;
+  rw [ h_partition, Finset.sum_union ] <;> norm_num [ Finset.disjoint_right ];
+  · rw [ Finset.sum_image, Finset.sum_image ];
+    · intro T hT T' hT' h_eq; simp_all +decide [ Finset.ext_iff ] ;
+      intro a; specialize h_eq ( Fin.castSucc a ) ; aesop;
+    · intro T hT T' hT' h_eq; simp_all +decide [ Finset.ext_iff ] ;
+      intro a; specialize h_eq ( Fin.castSucc a ) ; aesop;
+  · intro a x H; replace H := Finset.ext_iff.mp H ( Fin.last n ) ; simp +decide at H;
+
+/-- Cardinality of a lifted set: `|S.image castSucc| = |S|`. -/
+lemma card_image_castSucc {n : ℕ} (S : Finset (Fin n)) :
+    (S.image Fin.castSucc).card = S.card := by
+  exact Finset.card_image_of_injective S (Fin.castSucc_injective n)
+
+/-
+Cardinality: `|S.image castSucc ∪ {last n}| = |S| + 1`.
+-/
+lemma card_image_castSucc_union_last {n : ℕ} (S : Finset (Fin n)) :
+    (S.image Fin.castSucc ∪ {Fin.last n}).card = S.card + 1 := by
+  rw [ Finset.card_union, Finset.card_image_of_injective ] <;> norm_num [ Function.Injective ]
+
+/-
+The noise operator decomposes along the last coordinate:
+  `T_ρ f(snoc x b) = T_ρ(avgLast f)(x) + boolToSign(b) · ρ · T_ρ(diffLast f)(x)`.
+-/
+lemma noiseOp_snoc {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) (x : BoolCube n) (b : Bool) :
+    noiseOp ρ f (Fin.snoc x b) =
+    noiseOp ρ (avgLast f) x + boolToSign b * ρ * noiseOp ρ (diffLast f) x := by
+  convert finset_fin_succ_sum_partition ( fun S ↦ ρ ^ S.card * fourierCoeff f S * chiS S ( Fin.snoc x b ) ) using 1;
+  congr! 1;
+  · refine' Finset.sum_congr rfl fun T _ => _;
+    rw [ ← fourierCoeff_avgLast ];
+    rw [ card_image_castSucc, chiS_snoc_castSucc ];
+  · rw [ show noiseOp ρ ( diffLast f ) x = ∑ T : Finset ( Fin n ), ρ ^ T.card * fourierCoeff ( diffLast f ) T * chiS T x from rfl ];
+    rw [ Finset.mul_sum _ _ _ ] ; refine' Finset.sum_congr rfl fun T hT => _ ; rw [ fourierCoeff_diffLast ] ; rw [ card_image_castSucc_union_last ] ; ring_nf;
+    rw [ chiS_snoc_with_last ] ; ring
+
+/-
+Fourth moment decomposition with the noise operator.
+-/
+lemma fourth_moment_noise_decomp {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) :
+    expect (fun x => (noiseOp ρ f x) ^ 4) =
+    expect (fun x => (noiseOp ρ (avgLast f) x) ^ 4) +
+    6 * ρ ^ 2 * expect (fun x => (noiseOp ρ (avgLast f) x) ^ 2 * (noiseOp ρ (diffLast f) x) ^ 2) +
+    ρ ^ 4 * expect (fun x => (noiseOp ρ (diffLast f) x) ^ 4) := by
+  field_simp;
+  convert fourth_moment_decomp ( fun x => noiseOp ρ f x ) using 2;
+  · unfold avgLast diffLast; ring_nf;
+    unfold restrictLast; norm_num [ noiseOp_snoc ] ; ring_nf;
+    unfold avgLast diffLast; norm_num [ mul_assoc ] ;
+    unfold restrictLast; norm_num [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ; ring_nf;
+    unfold expect; norm_num [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ;
+  · unfold diffLast;
+    unfold restrictLast; norm_num [ noiseOp_snoc ] ; ring_nf;
+    unfold diffLast; norm_num [ expect ] ; ring_nf;
+    unfold restrictLast; norm_num [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ;
+
+/-
+Helper: C² ≤ a²b² and C ≥ 0 implies C ≤ ab (for a,b ≥ 0).
+-/
+lemma sq_le_sq_mul_of_nonneg {C a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (h : C ^ 2 ≤ a ^ 2 * b ^ 2) : C ≤ a * b := by
+  nlinarith [ mul_nonneg ha hb ]
+
+/-
+Helper: a² + 6ρ²ab + ρ⁴b² ≤ (a+b)² when ρ² ≤ 1/3 and a,b ≥ 0.
+-/
+lemma hypercontractivity_algebra_simple {a b ρ : ℝ}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hρ : ρ ^ 2 ≤ 1 / 3) :
+    a ^ 2 + 6 * ρ ^ 2 * (a * b) + ρ ^ 4 * b ^ 2 ≤ (a + b) ^ 2 := by
+  nlinarith [ sq_nonneg ( a - b ), mul_nonneg ha hb, mul_le_mul_of_nonneg_left hρ ( sq_nonneg a ), mul_le_mul_of_nonneg_left hρ ( sq_nonneg b ) ]
+
+/-- Key algebraic inequality: under `ρ² ≤ 1/3`, the recurrence closes. -/
+lemma hypercontractivity_algebra' {a b A B C ρ : ℝ}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hA_nn : 0 ≤ A) (hB_nn : 0 ≤ B) (hC : 0 ≤ C)
+    (hA_bound : A ≤ a ^ 2) (hB_bound : B ≤ b ^ 2)
+    (hC_bound : C ^ 2 ≤ A * B) (hρ : ρ ^ 2 ≤ 1 / 3) :
+    A + 6 * ρ ^ 2 * C + ρ ^ 4 * B ≤ (a + b) ^ 2 := by
+  have hC_le : C ≤ a * b := by
+    apply sq_le_sq_mul_of_nonneg ha hb
+    calc C ^ 2 ≤ A * B := hC_bound
+      _ ≤ a ^ 2 * b ^ 2 := mul_le_mul hA_bound hB_bound hB_nn (sq_nonneg a)
+  calc A + 6 * ρ ^ 2 * C + ρ ^ 4 * B
+      ≤ a ^ 2 + 6 * ρ ^ 2 * (a * b) + ρ ^ 4 * b ^ 2 := by
+        have h2 : 6 * ρ ^ 2 * C ≤ 6 * ρ ^ 2 * (a * b) :=
+          mul_le_mul_of_nonneg_left hC_le (by positivity)
+        have h3 : ρ ^ 4 * B ≤ ρ ^ 4 * b ^ 2 :=
+          mul_le_mul_of_nonneg_left hB_bound (by positivity)
+        linarith
+    _ ≤ (a + b) ^ 2 := hypercontractivity_algebra_simple ha hb hρ
+
+/-
+**The (2,4)-Hypercontractivity Theorem** (Bonami–Beckner):
+For any Boolean function `f : {0,1}ⁿ → ℝ` and noise parameter `ρ` with `ρ² ≤ 1/3`
+(i.e., `|ρ| ≤ 1/√3`),
+  `𝔼[(T_ρ f)⁴] ≤ (𝔼[f²])²`,
+or equivalently `‖T_ρ f‖₄ ≤ ‖f‖₂`.
+-/
+theorem hypercontractivity_2_4 {n : ℕ} (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 3) (f : BooleanFunc n) :
+    expect (fun x => (noiseOp ρ f x) ^ 4) ≤ (expect (fun x => f x ^ 2)) ^ 2 := by
+  induction n with
+  | zero =>
+  unfold expect;
+  unfold uniformWeight; norm_num;
+  unfold noiseOp; ring_nf;
+  erw [ Finset.sum_eq_single ∅ ] <;> norm_num;
+  · unfold fourierCoeff;
+    unfold innerProduct expect; norm_num [ Fin.eq_zero ] ;
+    unfold uniformWeight; norm_num;
+  · exact fun h => False.elim <| h rfl;
+  · exact fun h => False.elim <| h rfl
+  | succ n ih =>
+    rw [fourth_moment_noise_decomp, second_moment_decomp]
+    exact hypercontractivity_algebra'
+      (expect_sq_nonneg (avgLast f))
+      (expect_sq_nonneg (diffLast f))
+      (expect_fourth_nonneg (noiseOp ρ (avgLast f)))
+      (expect_fourth_nonneg (noiseOp ρ (diffLast f)))
+      (expect_sq_nonneg_prod (noiseOp ρ (avgLast f)) (noiseOp ρ (diffLast f)))
+      (ih (avgLast f))
+      (ih (diffLast f))
+      (expect_cs_sq (noiseOp ρ (avgLast f)) (noiseOp ρ (diffLast f)))
+      hρ
+
 end
