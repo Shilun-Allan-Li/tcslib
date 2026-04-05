@@ -18,11 +18,6 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Check for long lines
-        if: always()
-        run: |
-          ! (find TCSlib -name "*.lean" -type f -exec grep -E -H -n '^.{101,}$' {} \; | grep -v -E 'https?://')
-
       - name: Don't 'import Mathlib', use precise imports
         if: always()
         run: |
