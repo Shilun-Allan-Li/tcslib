@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TCSlib — TCS Formalization in Lean 4</title><link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <base href="./"><style>:root {
+    /** Typography **/
+    /* The font family used for headers, ToC entries, etc */
+    --verso-structure-font-family: "Helvetica Neue", "Segoe UI", "Roboto", Arial, sans-serif;
+    /* The font family used for body text */
+    --verso-text-font-family: "Helvetica Neue", "Segoe UI", "Roboto", Arial, sans-serif;
+    /* The font family used for code */
+    --verso-code-font-family: monospace;
+
+    /** Text colors **/
+    --verso-text-color: black;
+    --verso-code-color: black;
+    --verso-structure-color: black;
+
+    /** Selected items (e.g. search results) */
+    --verso-selected-color: #def;
+
+    /** Message colors **/
+    /*
+    These colors are used to render Lean's feedback. They come in three severities and two
+    variants. The raw color itself is used for the text of a message of the indicated severity,
+    while the presence of such a message is indicated using the indicator color (e.g. via a
+    wavy underline or a bar in the margin).
+    */
+    --verso-info-color: black;
+    --verso-info-indicator-color: #4777ff;
+    --verso-warning-color: black;
+    --verso-warning-indicator-color: #e7a71d; /* 2.11 contrast ratio for white, 9.94 for black */
+    --verso-error-color: #cc0000;
+    --verso-error-indicator-color: #ff0000;
+
+    /** Code Highlighting **/
+    /*
+    These variables control the rendering of Lean code emitted by Verso. Each category that can be
+    highlighted supports the customization of color, weight, style, and family.
+    */
+    /* Constants (e.g. `List` or `id` or `none`) */
+    --verso-code-const-color: var(--verso-code-color);
+    --verso-code-const-weight: normal;
+    --verso-code-const-style: normal;
+    --verso-code-const-font-family: var(--verso-code-font-family);
+
+    /* Keywords/atoms (e.g. `for` or `def` or `induction`) */
+    --verso-code-keyword-color: var(--verso-code-color);
+    --verso-code-keyword-weight: bold;
+    --verso-code-keyword-style: normal;
+    --verso-code-keyword-font-family: var(--verso-code-font-family);
+
+    /* Local bindings (e.g. `x` in `let x := 5`) */
+    --verso-code-var-color: var(--verso-code-color);
+    --verso-code-var-weight: normal;
+    --verso-code-var-style: italic;
+    --verso-code-kw-font-family: var(--verso-code-font-family);
+}
+</style><script>
+      
+document.addEventListener("DOMContentLoaded", () => {
+    for (const m of document.querySelectorAll(".math.inline")) {
+        katex.render(m.textContent, m, {throwOnError: false, displayMode: false});
+    }
+    for (const m of document.querySelectorAll(".math.display")) {
+        katex.render(m.textContent, m, {throwOnError: false, displayMode: true});
+    }
+});
+</script>
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="nav-inner">
+          <a class="logo" href="/">TCSlib</a><div class="nav-links">
+            <a href="#boolean-analysis">Boolean Analysis</a><a href="#coding-theory">Coding Theory</a><a href="#get-started">Get Started</a><span class="divider"> | </span><a href="https://github.com/Shilun-Allan-Li/tcslib" aria-label="GitHub" target="_blank"><img src="/static/github.svg" alt="GitHub" width="22" height="22"></a></div>
+          </div>
+        </nav>
+      </header>
+    <main><article><h1>
+          TCSlib</h1>
+        <div class="hero">
+          <div class="hero-text">
+            <p>
+              TCSlib</p>
+            <p>
+              A Lean 4 Formalization of Theoretical Computer Science</p>
+            <p>
+              TCSlib is an open-source library formalizing results in Boolean Function Analysis
+and Coding Theory using <a href="https://lean-lang.org">Lean 4</a> and
+<a href="https://leanprover-community.github.io/mathlib4_docs/">Mathlib</a>.
+Every theorem is machine-checked.</p>
+            <a class="hero-btn primary" href="https://github.com/Shilun-Allan-Li/tcslib"><img src="/static/arrow.svg" alt="" width="20" height="20"><p>
+                View on GitHub</p>
+              </a><a class="hero-btn secondary" href="#get-started"><p>
+                Get Started</p>
+              </a></div>
+          </div>
+        <div class="pillars" id="boolean-analysis">
+          <p>
+            <strong>Boolean Function Analysis</strong></p>
+          <div class="pillar">
+            <p>
+              <strong>Fourier Analysis on the Hypercube</strong></p>
+            <p>
+              Foundations of Boolean function analysis over <code class="math inline">\{-1,1\}^n</code>,
+including the Fourier expansion, Parseval's identity, and spectral norms.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Arrow's Impossibility Theorem</strong></p>
+            <p>
+              A formal proof of Arrow's Theorem via Boolean function analysis:
+no ranked voting system satisfies independence of irrelevant alternatives,
+unanimity, and non-dictatorship simultaneously.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Hypercontractivity</strong></p>
+            <p>
+              The Bonami Lemma and $(2,4)$-Hypercontractivity inequality,
+with applications to the structure of Boolean functions with small Fourier support.</p>
+            </div>
+          </div>
+        <div class="pillars" id="coding-theory">
+          <p>
+            <strong>Coding Theory</strong></p>
+          <div class="pillar">
+            <p>
+              <strong>Classical Bounds</strong></p>
+            <p>
+              The Singleton, Hamming, Gilbert–Varshamov, and Johnson bounds
+on the parameters of error-correcting codes over arbitrary alphabets.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Linear Codes</strong></p>
+            <p>
+              Formal treatment of linear codes: generator and parity-check matrices,
+dual codes, and the MacWilliams identity.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Quantum Codes</strong></p>
+            <p>
+              Quantum Singleton and Quantum Hamming bounds,
+formalizing the fundamental limits of quantum error correction.</p>
+            </div>
+          </div>
+        <div id="get-started" class="get-started">
+          <p>
+            <strong>Get Started</strong></p>
+          <p>
+            TCSlib uses Lean 4 and Mathlib. Install Lean via
+<a href="https://github.com/leanprover/elan">elan</a>, then:</p>
+          <div class="cta-buttons">
+            <a class="cta-btn primary" href="https://github.com/Shilun-Allan-Li/tcslib"><img src="/static/arrow.svg" alt="" width="20" height="20"><p>
+                Clone on GitHub</p>
+              </a><a class="cta-btn secondary" href="https://leanprover-community.github.io/get_started.html"><p>
+                Install Lean</p>
+              </a></div>
+          </div>
+        </article></main><footer><div class="footer-inner">
+        <p class="footer-copy">
+          TCSlib · Lean 4 formalization of Theoretical Computer Science · <a href="https://github.com/Shilun-Allan-Li/tcslib">GitHub</a></p>
+        </div>
+      </footer></body>
+  </html>
+
