@@ -28,6 +28,8 @@ def theme : Theme := { Theme.default with
                   <a href="#coding-theory">"Coding Theory"</a>
                   <a href="#get-started">"Get Started"</a>
                   <span class="divider">" | "</span>
+                  <a href="/blueprint/">"Blueprint"</a>
+                  <a href="/docs/">"Docs"</a>
                   <a href="https://github.com/Shilun-Allan-Li/tcslib" aria-label="GitHub" target="_blank">
                     <img src="/static/github.svg" alt="GitHub" width="22" height="22"/>
                   </a>

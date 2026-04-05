@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - verso_webpage
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -14,6 +15,9 @@ jobs:
     name: Lint style
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
       - name: Check for long lines
         if: always()
         run: |
@@ -26,20 +30,12 @@ jobs:
 
   build_project:
     runs-on: ubuntu-latest
-    name: Build project
+    name: Build project and deploy
     steps:
       - name: Checkout project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      # - name: Print files to upstream
-      #   run: |
-      #     grep -r --files-without-match 'import TCSlib' TCSlib | sort > 1.txt
-      #     grep -r --files-with-match 'sorry' TCSlib | sort > 2.txt
-      #     mkdir -p docs/_includes
-      #     comm -23 1.txt 2.txt | sed -e 's/^\(.*\)$/- [`\1`](https:\/\/github.com\/Shilun-Allan-Li\/TCSlib\/blob\/master\/\1)/' > docs/_includes/files_to_upstream.md
-      #     rm 1.txt 2.txt
 
       - name: Install elan
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
@@ -51,7 +47,7 @@ jobs:
         run: ~/.elan/bin/lake -Kenv=dev build TCSlib
 
       - name: Cache mathlib docs
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .lake/build/doc/Init
@@ -68,7 +64,7 @@ jobs:
       - name: Build documentation
         run: ~/.elan/bin/lake -Kenv=dev build TCSlib:docs
 
-      - name: Build blueprint and copy to `docs/blueprint`
+      - name: Build blueprint
         uses: xu-cheng/texlive-action@v2
         with:
           docker_image: ghcr.io/xu-cheng/texlive-full:20231201
@@ -85,31 +81,30 @@ jobs:
             python3 -m pip install invoke
             inv all
 
-      - name: Copy documentation to `docs/docs`
+      - name: Build Verso website
         run: |
-          mv .lake/build/doc docs/docs
+          cd webpage
+          ~/.elan/bin/lake exe generate-site
 
-      - name: Bundle dependencies
-        uses: ruby/setup-ruby@v1
-        with:
-          working-directory: docs
-          ruby-version: "3.0" # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: Assemble site
+        run: |
+          # Verso output is the root
+          mv webpage/_site site_root
+          # Blueprint goes to /blueprint/
+          mkdir -p site_root/blueprint
+          cp -r docs/blueprint/. site_root/blueprint/
+          # doc-gen4 docs go to /docs/
+          mkdir -p site_root/docs
+          mv .lake/build/doc site_root/docs
 
-      - name: Bundle website
-        working-directory: docs
-        run: JEKYLL_ENV=production bundle exec jekyll build
-
-      - name: Upload docs & blueprint artifact
+      - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/_site
+          path: site_root
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Make sure the cache works
-        run: |
-          mv docs/docs .lake/build/doc
-#
+      - name: Restore docs cache location
+        run: mv site_root/docs .lake/build/doc
