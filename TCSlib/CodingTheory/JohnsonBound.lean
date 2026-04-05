@@ -1,6 +1,8 @@
 
 
-import Mathlib
+import Mathlib.Analysis.RCLike.Inner
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.Tactic
 
 
 noncomputable section
@@ -64,7 +66,7 @@ lemma inner_pmOne_pmOne {n : ℕ} (x y : BitVec n) :
   have h_pmOne : ∀ i, (pmOne x i) * (pmOne y i) = if x i = y i then 1 else -1 := by
     exact fun i => coord_mul_pmOne x y i;
   have h_hdist : (CodingTheory.Johnson.hdist x y : ℝ) = ∑ i, (if x i ≠ y i then 1 else 0) := by
-    simp +decide [ Finset.sum_ite, Finset.filter_congr, Finset.filter_ne ];
+    simp +decide [ Finset.sum_ite ];
     exact congr_arg Finset.card ( Finset.filter_congr fun _ _ => by aesop );
   simp_all +decide [ RCLike.wInner ];
   simp_all +decide [ mul_comm, Finset.sum_ite ];
@@ -92,8 +94,8 @@ lemma inner_shifted_expand {n : ℕ} (α : ℝ) (x y : BitVec n) :
         - α * ⟪pmOne y, ones (n := n)⟫_[ℝ]
         + α^2 * ⟪ones (n := n), ones (n := n)⟫_[ℝ] := by
   unfold shifted
-  simp [RCLike.wInner, inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right];
-  simp [mul_sub, sub_mul, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _, pow_two];
+  simp [RCLike.wInner];
+  simp [mul_sub, sub_mul, Finset.sum_sub_distrib, Finset.mul_sum _ _ _, pow_two];
   simp [mul_comm, mul_assoc, sub_eq_add_neg]
   ring
 
@@ -181,8 +183,8 @@ The squared norm of the projection of x onto the orthogonal complement of a unit
 lemma proj_norm_sq {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
     (u x : V) (hu : ‖u‖ = 1) :
     ‖x - (inner ℝ x u) • u‖^2 = ‖x‖^2 - (inner ℝ x u)^2 := by
-      rw [ @norm_sub_sq ℝ ] ; simp +decide [ hu, inner_smul_right ] ; ring;
-      simp +decide [ hu, norm_smul, mul_pow ] ; ring;
+      rw [ @norm_sub_sq ℝ ] ; simp +decide [ inner_smul_right ] ; ring;
+      simp +decide [ hu, norm_smul ] ; ring;
 
 /-
 The projection of a unit vector x onto the orthogonal complement of a unit vector u is non-zero, unless x is u or -u.
@@ -216,7 +218,7 @@ lemma proj_inj_on {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
       have h_norm_sq_x : ‖x‖^2 = ‖y + c • u‖^2 := by
         rw [ ← hxy_eq, add_sub_cancel ];
       have h_norm_sq_y : ‖y + c • u‖^2 = 1 + 2 * c * ⟪y, u⟫ + c^2 := by
-        rw [ @norm_add_sq ℝ ] ; simp +decide [ *, inner_smul_right, inner_smul_left ] ; ring;
+        rw [ @norm_add_sq ℝ ] ; simp +decide [ *, inner_smul_right ] ; ring;
         simp +decide [ norm_smul, hu ];
       have h_c_zero_or_neg_two_beta : c = 0 ∨ c = -2 * ⟪y, u⟫ := by
         exact Classical.or_iff_not_imp_left.2 fun h => mul_left_cancel₀ h <| by nlinarith [ hS_norm x hx, hS_norm y hy ] ;
@@ -284,7 +286,7 @@ lemma shifted_ne_zero_of_alpha_lt_one
 
 theorem binary_johnson_card_bound_parametric
     {n d w : ℕ}
-    (hn : 0 < n)
+    (_hn : 0 < n)
     (C : Finset (BitVec n))
     (hpair : ∀ x ∈ C, ∀ y ∈ C, x ≠ y → d ≤ hdist x y)
     (hwt : ∀ x ∈ C, wt x ≤ w)
@@ -340,7 +342,7 @@ theorem binary_johnson_card_bound_parametric
     intro z hz
     rcases Finset.mem_image.mp hz with ⟨x, hxC, rfl⟩
     have hx0 : u x ≠ 0 := hnonzero x hxC
-    simp [normalize, hx0];
+    simp [normalize];
     -- The norm of a scalar multiple of a vector is the absolute value of the scalar times the norm of the vector
     simp [norm_smul, hx0]
 
@@ -357,7 +359,7 @@ theorem binary_johnson_card_bound_parametric
     have hbase : ⟪u x, u y⟫_[ℝ] ≤ 0 := hpair_u x hxC y hyC hxy
     -- Since the norms are 1 the inner product simplifies to the inner product of the original vectors
     have h_inner_simplified : ⟪normalize (u x), normalize (u y)⟫_[ℝ] = (1 / (‖u x‖ * ‖u y‖)) * ⟪u x, u y⟫_[ℝ] := by
-      simp +decide [ normalize, hx0, hy0, RCLike.wInner ] ; ring;
+      simp +decide [ normalize, RCLike.wInner ] ; ring;
       simp +decide only [mul_assoc, mul_left_comm, Finset.mul_sum _ _ _];
     exact h_inner_simplified.symm ▸ mul_nonpos_of_nonneg_of_nonpos ( one_div_nonneg.mpr ( mul_nonneg ( norm_nonneg _ ) ( norm_nonneg _ ) ) ) hbase
 

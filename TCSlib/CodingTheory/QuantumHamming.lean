@@ -1,4 +1,9 @@
-import Mathlib
+import Mathlib.Analysis.CStarAlgebra.Classes
+import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.RingTheory.PicardGroup
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Tactic
 
 
 set_option linter.mathlibStandardSet false
@@ -142,7 +147,7 @@ lemma card_pauliStringsExactSupport {n : ℕ} (S : Finset (Fin n)) :
   -/
   rw [ show pauliStringsExactSupport S = Finset.image ( fun f : S → PauliNZ => mkWithSupport S f ) ( Finset.univ ) from by
   ext p
-  simp [pauliStringsExactSupport, mkWithSupport]
+  simp [pauliStringsExactSupport]
   constructor <;> intro hp
   · have h_non_id : ∀ i ∈ S, p i ≠ PauliBasis.I := by
       simp +decide [← hp, support]
@@ -227,7 +232,8 @@ noncomputable def codeProj {n : ℕ} (C : Submodule ℂ (Hn n)) : Hn n →ₗ[�
 lemma codeProj_mem {n : ℕ} (C : Submodule ℂ (Hn n)) (x : Hn n) :
     codeProj C x ∈ C := by
   -- `orthogonalProjection C x : C`
-  simpa [codeProj_apply] using (Submodule.coe_mem C (Submodule.orthogonalProjection C x))
+  simp only [codeProj_apply]
+  exact Submodule.coe_mem (Submodule.orthogonalProjection C x)
 
 lemma codeProj_eq_self_of_mem {n : ℕ} {C : Submodule ℂ (Hn n)} {x : Hn n} (hx : x ∈ C) :
     codeProj C x = x := by
@@ -269,7 +275,7 @@ lemma error_subspaces_orthogonal {n t : ℕ} {C : Submodule ℂ (Hn n)}
 
   have h_ortho : ∀ x y : Hn n, x ∈ C → y ∈ C → (pauliOp E x) ⬝ᵥ (star (pauliOp F y)) = 0 := by
     have := h_nondeg.2 E F hE hF h_neq;
-    intro x y hx hy; replace this := congr_arg ( fun f => f y ) this; simp_all +decide [ funext_iff, LinearMap.ext_iff ] ;
+    intro x y hx hy; replace this := congr_arg ( fun f => f y ) this; simp_all +decide ;
     have h_adj : (pauliOp E x) ⬝ᵥ (star (pauliOp F y)) = x ⬝ᵥ (star (pauliOpAdjoint E (pauliOp F y))) := by
       have h_adj : ∀ (A : Matrix (Fin n → Fin 2) (Fin n → Fin 2) ℂ) (x y : EuclideanSpace ℂ (Fin n → Fin 2)), (A.mulVec x) ⬝ᵥ (star y) = x ⬝ᵥ (star (A.conjTranspose.mulVec y)) := by
         simp +decide [ Matrix.mulVec, dotProduct, Finset.mul_sum _ _ _, mul_assoc, mul_comm, mul_left_comm ];
@@ -278,16 +284,16 @@ lemma error_subspaces_orthogonal {n t : ℕ} {C : Submodule ℂ (Hn n)}
     have h_adj_zero : (pauliOpAdjoint E (pauliOp F y)) = (pauliOpAdjoint E (pauliOp F (codeProj C y))) := by
       rw [ codeProj_eq_self_of_mem hy ];
     have h_adj_zero : ∀ x y : Hn n, x ∈ C → (x ⬝ᵥ (star (codeProj C y))) = (x ⬝ᵥ (star y)) := by
-      intro x y hx; rw [ codeProj_apply ] ; simp +decide [ hx, dotProduct ] ;
+      intro x y hx; rw [ codeProj_apply ] ; simp +decide [dotProduct] ;
       have h_adj_zero : ∀ x y : Hn n, x ∈ C → (x ⬝ᵥ (star (Submodule.starProjection C y))) = (x ⬝ᵥ (star y)) := by
         intro x y hx
         have h_ortho : ∀ z ∈ Cᗮ, (x ⬝ᵥ (star z)) = 0 := by
-          intro z hz; specialize hz x hx; simp_all +decide [ dotProduct, Finset.sum_eq_zero_iff_of_nonneg, sq_nonneg ] ;
+          intro z hz; specialize hz x hx; simp_all +decide [dotProduct] ;
           simpa [ mul_comm ] using congr_arg Star.star hz
         have h_ortho : (x ⬝ᵥ (star (Submodule.starProjection C y))) = (x ⬝ᵥ (star y)) - (x ⬝ᵥ (star (y - Submodule.starProjection C y))) := by
-          simp +decide [ mul_sub ];
+          simp +decide ;
         have h_ortho : y - Submodule.starProjection C y ∈ Cᗮ := by
-          exact Submodule.sub_orthogonalProjection_mem_orthogonal y;
+          exact Submodule.sub_starProjection_mem_orthogonal y;
         grind;
       exact h_adj_zero x y hx;
     specialize h_adj_zero x ( ( pauliOpAdjoint E ) ( ( pauliOp F ) ( codeProj C y ) ) ) hx; simp_all only [codeProj_apply,
@@ -329,7 +335,7 @@ lemma error_sphere_dimension {n t : ℕ} {C : Submodule ℂ (Hn n)}
             = Finset.card S * Module.finrank ℂ C := by
     intro S hS
     induction' S using Finset.induction with E S hES ih
-    · simp +decide [Submodule.eq_bot_iff]
+    · simp +decide
     · have h_orthogonal :
           Submodule.IsOrtho (C.map (pauliOp E))
             (Finset.sup S (fun E => C.map (pauliOp E))) := by
@@ -398,7 +404,7 @@ lemma error_sphere_dimension {n t : ℕ} {C : Submodule ℂ (Hn n)}
                   rcases i_k : i k with (_ | _ | i_k) <;>
                   rcases j_k : j k with (_ | _ | j_k) <;>
                   norm_num [Fin.ext_iff, sigmaZ] <;> tauto
-              simp +decide [← Finset.prod_mul_distrib, h_pauli_prod]
+              simp +decide [← Finset.prod_mul_distrib]
               rw [show
                 (∑ x : Fin n → Fin 2,
                   ∏ x_1 : Fin n,
@@ -445,7 +451,7 @@ lemma error_sphere_dimension {n t : ℕ} {C : Submodule ℂ (Hn n)}
 /-- The n-qubit Hilbert space `Hn n` has complex dimension 2^n. -/
 lemma finrank_Hn (n : ℕ) : Module.finrank ℂ (Hn n) = 2^n := by
   classical
-  simp [Hn, finrank_euclideanSpace, Fintype.card_fun, Fintype.card_fin]
+  simp [Hn, finrank_euclideanSpace, Fintype.card_fin]
 
 /-- Quantum Hamming bound (raw form): for a non-degenerate `[[n, k]]` quantum code correcting
 t errors, the total dimension of the error sphere does not exceed the ambient space. -/

@@ -1,4 +1,14 @@
-import Mathlib
+import Mathlib.Algebra.Field.ZMod
+import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.Algebra.NoZeroSMulDivisors.Prod
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Data.Int.Star
+import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.RingTheory.Finiteness.Prod
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.PicardGroup
 import Mathlib.Data.Finset.Card
 
 
@@ -1017,8 +1027,7 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
   ext v
   constructor
   · intro _; trivial
-  · intro _
-    intro i hi
+  · intro _ i hi
     exact (False.elim (hi (Finset.mem_univ i)))
 
 
