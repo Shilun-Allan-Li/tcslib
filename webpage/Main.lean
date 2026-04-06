@@ -14,6 +14,19 @@ def theme : Theme := { Theme.default with
           <meta charset="utf-8"/>
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <title>"TCSlib — TCS Formalization in Lean 4"</title>
+          <meta name="description" content="TCSlib is an open-source Lean 4 library formalizing results in Theoretical Computer Science, including Boolean Function Analysis and Error-Correcting Codes, verified with Mathlib."/>
+          <meta name="keywords" content="Lean 4, Lean theorem prover, formal verification, theoretical computer science, TCS, formalization, Mathlib, Boolean function analysis, Fourier analysis, error-correcting codes, coding theory, information theory, interactive theorem proving, proof assistant, verified mathematics, computer science proofs"/>
+          <meta name="author" content="TCSlib Contributors"/>
+          <meta property="og:type" content="website"/>
+          <meta property="og:title" content="TCSlib — TCS Formalization in Lean 4"/>
+          <meta property="og:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science: Boolean Function Analysis, Error-Correcting Codes, and more. Every theorem is machine-checked."/>
+          <meta property="og:url" content="https://shilun-allan-li.github.io/tcslib/"/>
+          <meta property="og:site_name" content="TCSlib"/>
+          <meta name="twitter:card" content="summary"/>
+          <meta name="twitter:title" content="TCSlib — TCS Formalization in Lean 4"/>
+          <meta name="twitter:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science. Every theorem is machine-checked."/>
+          <link rel="canonical" href="https://shilun-allan-li.github.io/tcslib/"/>
+          <link rel="sitemap" type="application/xml" href="/tcslib/static/sitemap.xml"/>
           <link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg"/>
           <link rel="icon" type="image/png" sizes="96x96" href="/tcslib/static/favicon-96x96.png"/>
           <link rel="shortcut icon" href="/tcslib/static/favicon.ico"/>
