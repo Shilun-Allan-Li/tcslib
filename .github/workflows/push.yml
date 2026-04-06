@@ -23,9 +23,9 @@ jobs:
         run: |
           ! (find TCSlib -name "*.lean" -type f -print0 | xargs -0 grep -E -n '^import Mathlib$')
 
-  build_project:
+  build_lean_docs:
     runs-on: ubuntu-latest
-    name: Build project and deploy
+    name: Build Lean project and docs
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -59,6 +59,19 @@ jobs:
       - name: Build documentation
         run: ~/.elan/bin/lake -Kenv=dev build TCSlib:docs
 
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-docs
+          path: .lake/build/doc
+
+  build_blueprint:
+    runs-on: ubuntu-latest
+    name: Build blueprint
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
       - name: Build blueprint
         uses: xu-cheng/texlive-action@v2
         with:
@@ -76,21 +89,58 @@ jobs:
             python3 -m pip install invoke
             inv all
 
+      - name: Upload blueprint artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blueprint
+          path: docs/blueprint
+
+  build_verso:
+    runs-on: ubuntu-latest
+    name: Build Verso website
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install elan
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
+
       - name: Build Verso website
         run: |
           cd webpage
           ~/.elan/bin/lake exe generate-site
 
-      - name: Assemble site
-        run: |
-          # Verso output is the root
-          mv webpage/_site site_root
-          # Blueprint goes to /blueprint/
-          mkdir -p site_root/blueprint
-          cp -r docs/blueprint/. site_root/blueprint/
-          # doc-gen4 docs go to /docs/
-          mkdir -p site_root/docs
-          mv .lake/build/doc site_root/docs
+      - name: Upload Verso artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verso-site
+          path: webpage/_site
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Assemble and deploy
+    needs: [build_lean_docs, build_blueprint, build_verso]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download Verso site
+        uses: actions/download-artifact@v4
+        with:
+          name: verso-site
+          path: site_root
+
+      - name: Download blueprint
+        uses: actions/download-artifact@v4
+        with:
+          name: blueprint
+          path: site_root/blueprint
+
+      - name: Download lean docs
+        uses: actions/download-artifact@v4
+        with:
+          name: lean-docs
+          path: site_root/docs
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -100,6 +150,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Restore docs cache location
-        run: mv site_root/docs .lake/build/doc
