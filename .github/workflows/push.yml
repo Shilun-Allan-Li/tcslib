@@ -143,8 +143,27 @@ jobs:
 
       - name: Inject favicon into blueprint and docs
         run: |
-          find site_root/blueprint site_root/docs -name "*.html" \
-            -exec sed -i 's|</head>|<link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg"/></head>|g' {} \;
+          python3 << 'EOF'
+          import glob, re
+          files = (
+            glob.glob('site_root/blueprint/**/*.html', recursive=True) +
+            glob.glob('site_root/docs/**/*.html', recursive=True)
+          )
+          links = (
+            '<link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg">'
+            '<link rel="icon" type="image/png" sizes="96x96" href="/tcslib/static/favicon-96x96.png">'
+            '<link rel="shortcut icon" href="/tcslib/static/favicon.ico">'
+            '<link rel="apple-touch-icon" sizes="180x180" href="/tcslib/static/apple-touch-icon.png">'
+          )
+          count = 0
+          for f in files:
+            content = open(f, encoding='utf-8', errors='ignore').read()
+            updated = re.sub(r'</head>', links + '</head>', content, count=1, flags=re.IGNORECASE)
+            if updated != content:
+              open(f, 'w', encoding='utf-8').write(updated)
+              count += 1
+          print(f'Injected favicon into {count}/{len(files)} files')
+          EOF
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
