@@ -10,9 +10,9 @@ Gilbert--Varshamov argument.
 \section{Asymptotic upper bound on ball size}
 
 \begin{theorem}[Entropy upper bound on Hamming balls]
-\lean{CodingTheory.Codeword.hamming_ball_size_asymptotic_upper_bound}
+\lean{ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
 \leanok
-\uses{CodingTheory.Codeword.hamming_ball_size, CodingTheory.Codeword.qaryEntropy}
+\uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.qaryEntropy}
 For $0<p\le 1-1/q$ and $q=|\alpha|$,
 \[
 |B_{\lfloor np\rfloor}(c)| \;\le\; q^{H_q(p)\,n}.
@@ -23,9 +23,9 @@ For $0<p\le 1-1/q$ and $q=|\alpha|$,
 \section{Entropy algebra lemmas}
 
 \begin{lemma}[Simplifying $q^{H_q(p)}$]
-\lean{CodingTheory.Codeword.q_pow_qary_entropy_simp}
+\lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \leanok
-\uses{CodingTheory.Codeword.qaryEntropy}
+\uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 For $q\ge 2$ and $0<p<1$,
 \[
 q^{H_q(p)} \;=\; (q-1)^p\,p^{-p}\,(1-p)^{-(1-p)}.
@@ -33,9 +33,9 @@ q^{H_q(p)} \;=\; (q-1)^p\,p^{-p}\,(1-p)^{-(1-p)}.
 \end{lemma}
 
 \begin{lemma}[Same identity, alternate exponentiation]
-\lean{CodingTheory.Codeword.q_pow_qary_entropy_simp'}
+\lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
 \leanok
-\uses{CodingTheory.Codeword.q_pow_qary_entropy_simp}
+\uses{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 Variant using a different exponentiation operator.
 \end{lemma}
 
@@ -43,7 +43,7 @@ Variant using a different exponentiation operator.
 \section{Analytic helpers}
 
 \begin{lemma}[Square-root/floor inequality]
-\lean{CodingTheory.Codeword.sqrt_sub_sqrt_floor_le_one}
+\lean{ErrorCorrectingCodes.Codeword.sqrt_sub_sqrt_floor_le_one}
 \leanok
 For $x\ge 0$,
 \[
@@ -55,9 +55,9 @@ For $x\ge 0$,
 \section{Stirling-based binomial lower bound}
 
 \begin{lemma}[Asymptotic lower bound on binomial term]
-\lean{CodingTheory.Codeword.binomial_coef_asymptotic_lower_bound'}
+\lean{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
 \leanok
-\uses{CodingTheory.Codeword.qaryEntropy}
+\uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 For $0<p<1$ and $q\ge 2$, eventually
 \[
 \tbinom{n}{\lfloor np\rfloor}(q-1)^{pn}
@@ -71,9 +71,9 @@ q^{H_q(p)\,n - \varepsilon(n)},
 \section{Positivity of $q$-ary entropy}
 
 \begin{theorem}[Positivity of $q$-ary entropy]
-\lean{CodingTheory.Codeword.qary_entropy_pos}
+\lean{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \leanok
-\uses{CodingTheory.Codeword.qaryEntropy}
+\uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 For $q=|\alpha|$ and $0<p\le 1-1/q$,
 \[
 H_q(p) \;>\; 0.

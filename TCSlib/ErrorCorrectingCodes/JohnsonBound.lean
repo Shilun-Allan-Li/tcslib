@@ -11,7 +11,7 @@ open scoped BigOperators RealInnerProductSpace
 
 open Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 
 namespace Johnson
 
@@ -65,7 +65,7 @@ lemma inner_pmOne_pmOne {n : ℕ} (x y : BitVec n) :
     ⟪pmOne x, pmOne y⟫_[ℝ] = (n : ℝ) - 2 * (hdist x y : ℝ) := by
   have h_pmOne : ∀ i, (pmOne x i) * (pmOne y i) = if x i = y i then 1 else -1 := by
     exact fun i => coord_mul_pmOne x y i;
-  have h_hdist : (CodingTheory.Johnson.hdist x y : ℝ) = ∑ i, (if x i ≠ y i then 1 else 0) := by
+  have h_hdist : (ErrorCorrectingCodes.Johnson.hdist x y : ℝ) = ∑ i, (if x i ≠ y i then 1 else 0) := by
     simp +decide [ Finset.sum_ite ];
     exact congr_arg Finset.card ( Finset.filter_congr fun _ _ => by aesop );
   simp_all +decide [ RCLike.wInner ];
@@ -75,10 +75,10 @@ lemma inner_pmOne_pmOne {n : ℕ} (x y : BitVec n) :
 
 lemma inner_pmOne_ones {n : ℕ} (x : BitVec n) :
     ⟪pmOne x, ones⟫_[ℝ] = (n : ℝ) - 2 * (wt x : ℝ) := by
-  have h_inner_expanded : RCLike.wInner 1 (CodingTheory.Johnson.pmOne x) CodingTheory.Johnson.ones = ∑ i, (pmOne x i) * (ones i) := by
+  have h_inner_expanded : RCLike.wInner 1 (ErrorCorrectingCodes.Johnson.pmOne x) ErrorCorrectingCodes.Johnson.ones = ∑ i, (pmOne x i) * (ones i) := by
     simp [RCLike.wInner];
   have h_sum_simplified : ∑ i, (pmOne x i) * (ones i) = ∑ i, (if x i then -1 else 1 : ℝ) := by
-    exact Finset.sum_congr rfl fun i _ => by unfold CodingTheory.Johnson.pmOne CodingTheory.Johnson.ones; aesop;
+    exact Finset.sum_congr rfl fun i _ => by unfold ErrorCorrectingCodes.Johnson.pmOne ErrorCorrectingCodes.Johnson.ones; aesop;
   simp_all +decide [ Finset.sum_ite ];
   rw [ show ( Finset.univ.filter fun i => x i = Bool.false ) = Finset.univ \ ( Finset.univ.filter fun i => x i = Bool.true ) by ext; aesop, Finset.card_sdiff ] ; norm_num ; ring!;
   rw [ Nat.cast_sub ( show _ ≤ _ from le_trans ( Finset.card_le_univ _ ) ( by norm_num ) ) ] ; ring;
@@ -109,11 +109,11 @@ lemma inner_shifted_le_expr
       ≤ ((n : ℝ) - 2 * (d : ℝ))
         + α^2 * (n : ℝ)
         + 2 * α * (2 * (w : ℝ) - (n : ℝ)) := by
-  have h_inner_bound : (RCLike.wInner 1 (CodingTheory.Johnson.shifted α x) (CodingTheory.Johnson.shifted α y)) = (n - 2 * (hdist x y : ℝ)) - α * (n - 2 * (wt x : ℝ)) - α * (n - 2 * (wt y : ℝ)) + α^2 * n := by
+  have h_inner_bound : (RCLike.wInner 1 (ErrorCorrectingCodes.Johnson.shifted α x) (ErrorCorrectingCodes.Johnson.shifted α y)) = (n - 2 * (hdist x y : ℝ)) - α * (n - 2 * (wt x : ℝ)) - α * (n - 2 * (wt y : ℝ)) + α^2 * n := by
     convert inner_shifted_expand α x y using 1;
     erw [ inner_pmOne_pmOne, inner_pmOne_ones, inner_ones_ones ] ; norm_num ; ring;
     erw [ inner_pmOne_ones ] ; norm_num ; ring ; aesop;
-  nlinarith [ ( by norm_cast : ( d : ℝ ) ≤ CodingTheory.Johnson.hdist x y ), ( by norm_cast : ( CodingTheory.Johnson.wt x : ℝ ) ≤ w ), ( by norm_cast : ( CodingTheory.Johnson.wt y : ℝ ) ≤ w ) ]
+  nlinarith [ ( by norm_cast : ( d : ℝ ) ≤ ErrorCorrectingCodes.Johnson.hdist x y ), ( by norm_cast : ( ErrorCorrectingCodes.Johnson.wt x : ℝ ) ≤ w ), ( by norm_cast : ( ErrorCorrectingCodes.Johnson.wt y : ℝ ) ≤ w ) ]
 
 lemma alpha_nonneg (n d : ℕ) : 0 ≤ alpha n d := by
   exact Real.sqrt_nonneg _
@@ -158,8 +158,8 @@ lemma johnson_arith
       + 2 * (alpha n d) * (2 * (w : ℝ) - (n : ℝ))
       ≤ 0 := by
   have h_subst : 2 * (w : ℝ) ≤ n - Real.sqrt (n * (n - 2 * d)) := by
-    unfold CodingTheory.Johnson.J2 at hw; linarith;
-  rw [ show ( CodingTheory.Johnson.alpha n d ) = Real.sqrt ( ( n - 2 * d ) / n ) by rfl, Real.sq_sqrt <| div_nonneg ( sub_nonneg.2 <| mod_cast hd ) <| Nat.cast_nonneg _ ];
+    unfold ErrorCorrectingCodes.Johnson.J2 at hw; linarith;
+  rw [ show ( ErrorCorrectingCodes.Johnson.alpha n d ) = Real.sqrt ( ( n - 2 * d ) / n ) by rfl, Real.sq_sqrt <| div_nonneg ( sub_nonneg.2 <| mod_cast hd ) <| Nat.cast_nonneg _ ];
   rw [ Real.sqrt_div ( by nlinarith [ ( by norm_cast : ( 2 * d :ℝ ) ≤ n ) ] ) ] at *;
   rw [ Real.sqrt_mul <| by positivity ] at h_subst;
   field_simp;
@@ -415,34 +415,34 @@ theorem binary_johnson_card_bound_of_admissible
 
 end Johnson
 
-end CodingTheory
+end ErrorCorrectingCodes
 
 end
 
 /-
 Definition of A0(n,d,w) as the maximum size of an admissible code.
 -/
-open CodingTheory.Johnson
+open ErrorCorrectingCodes.Johnson
 
 noncomputable def A0 (n d w : ℕ) : ℕ :=
   let _ : DecidablePred (AdmissibleCode n d w) := Classical.decPred _
-  ((Finset.univ : Finset (CodingTheory.Johnson.BitVec n)).powerset.filter (AdmissibleCode n d w)).sup Finset.card
+  ((Finset.univ : Finset (ErrorCorrectingCodes.Johnson.BitVec n)).powerset.filter (AdmissibleCode n d w)).sup Finset.card
 
 /-
 If every admissible code has size at most K, then A0(n,d,w) is at most K.
 -/
-open CodingTheory.Johnson
+open ErrorCorrectingCodes.Johnson
 
 lemma A0_le_of_forall_le
     {n d w K : ℕ}
-    (h : ∀ C : Finset (CodingTheory.Johnson.BitVec n), AdmissibleCode n d w C → C.card ≤ K) :
+    (h : ∀ C : Finset (ErrorCorrectingCodes.Johnson.BitVec n), AdmissibleCode n d w C → C.card ≤ K) :
     A0 n d w ≤ K := by
       exact Finset.sup_le fun C hC => by aesop;
 
 /-
 The binary Johnson bound (radius form): A0(n,d,w) <= 2n.
 -/
-open CodingTheory.Johnson
+open ErrorCorrectingCodes.Johnson
 
 theorem binary_johnson_bound_radius
     {n d w : ℕ}

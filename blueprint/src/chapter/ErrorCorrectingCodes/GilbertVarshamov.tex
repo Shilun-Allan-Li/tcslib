@@ -16,9 +16,9 @@ The proof is a probabilistic (union-bound) counting argument over random generat
 \section{Probabilistic bound on low-weight outputs}
 
 \begin{theorem}[Probability of low-weight codeword]
-\lean{CodingTheory.Codeword.prob_leq_ball_size}
+\lean{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \leanok
-\uses{CodingTheory.Codeword.uniformity_lemma, CodingTheory.Codeword.weight, CodingTheory.Codeword.hamming_ball}
+\uses{ErrorCorrectingCodes.Codeword.uniformity_lemma, ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.hamming_ball}
 For any nonzero $x\in\alpha^k$,
 \[
 \frac{|\{G : \mathrm{wt}(Gx) < d\}|}{|\alpha|^{nk}}
@@ -31,9 +31,9 @@ For any nonzero $x\in\alpha^k$,
 \section{Union bound over bad matrices}
 
 \begin{theorem}[Existence bound via union bound]
-\lean{CodingTheory.Codeword.existence_bound}
+\lean{ErrorCorrectingCodes.Codeword.existence_bound}
 \leanok
-\uses{CodingTheory.Codeword.prob_leq_ball_size}
+\uses{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 The number of $n\times k$ matrices that send some nonzero message to a codeword of
 weight $<d$ is at most
 \[
@@ -45,9 +45,9 @@ weight $<d$ is at most
 \section{Gilbert--Varshamov bound}
 
 \begin{theorem}[Gilbert--Varshamov bound]
-\lean{CodingTheory.Codeword.gv_bound}
+\lean{ErrorCorrectingCodes.Codeword.gv_bound}
 \leanok
-\uses{CodingTheory.Codeword.existence_bound}
+\uses{ErrorCorrectingCodes.Codeword.existence_bound}
 If $k \le n - \lceil\log_q|B_{d-1}(\mathbf{0})|\rceil - 1$, then there exists a
 generator matrix $G$ such that every nonzero message is mapped to a codeword of
 Hamming weight at least $d$.

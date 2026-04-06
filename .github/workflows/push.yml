@@ -141,6 +141,11 @@ jobs:
           name: lean-docs
           path: site_root/docs
 
+      - name: Inject favicon into blueprint and docs
+        run: |
+          find site_root/blueprint site_root/docs -name "*.html" \
+            -exec sed -i 's|</head>|<link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg"/></head>|g' {} \;
+
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

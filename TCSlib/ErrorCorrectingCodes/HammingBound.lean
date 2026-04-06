@@ -1,4 +1,4 @@
-import TCSlib.CodingTheory.Basic
+import TCSlib.ErrorCorrectingCodes.Basic
 
 set_option linter.unusedSectionVars false
 
@@ -24,7 +24,7 @@ radius `t`.
 
 open Set Filter Asymptotics Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 namespace Codeword
 
 variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]
@@ -461,4 +461,4 @@ theorem hamming_bound (n d : ℕ) (C : Code n α) (h : distance C d) (h'' : Fint
 }
 
 end Codeword
-end CodingTheory
+end ErrorCorrectingCodes

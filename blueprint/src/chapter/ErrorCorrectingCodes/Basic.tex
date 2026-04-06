@@ -1,4 +1,4 @@
-\chapter{Coding Theory — Core Definitions}
+\chapter{Error-Correcting Codes — Core Definitions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
@@ -12,15 +12,15 @@ alphabet $\alpha$.  Throughout, $\alpha$ is a type carrying instances
 \subsection{Codewords}
 
 \begin{definition}[Codeword]
-\lean{CodingTheory.Codeword}
+\lean{ErrorCorrectingCodes.Codeword}
 \leanok
 A codeword of length $n$ over alphabet $\alpha$ is a function $c : \mathrm{Fin}\,n \to \alpha$.
 \end{definition}
 
 \begin{definition}[Pointwise operations]
-\lean{CodingTheory.Codeword.add}
-\lean{CodingTheory.Codeword.sub}
-\lean{CodingTheory.Codeword.zero}
+\lean{ErrorCorrectingCodes.Codeword.add}
+\lean{ErrorCorrectingCodes.Codeword.sub}
+\lean{ErrorCorrectingCodes.Codeword.zero}
 \leanok
 Pointwise addition, subtraction, and the all-zero codeword.
 \end{definition}
@@ -28,13 +28,13 @@ Pointwise addition, subtraction, and the all-zero codeword.
 \subsection{Codes and linear codes}
 
 \begin{definition}[Code]
-\lean{CodingTheory.Codeword.Code}
+\lean{ErrorCorrectingCodes.Codeword.Code}
 \leanok
 A (block) code of length $n$ over $\alpha$ is a finite set (\lean{Finset}) of codewords.
 \end{definition}
 
 \begin{definition}[Linear code via generator matrix]
-\lean{CodingTheory.Codeword.Linear_Code}
+\lean{ErrorCorrectingCodes.Codeword.Linear_Code}
 \leanok
 A code $C$ is linear with generator matrix $G$ (shape $n\times m$) if every message
 $c':\mathrm{Fin}\,m\to\alpha$ maps to a codeword $Gc'\in C$, and every codeword in $C$
@@ -42,7 +42,7 @@ arises this way.
 \end{definition}
 
 \begin{definition}[Linear code, existential form]
-\lean{CodingTheory.Codeword.Linear_Code'}
+\lean{ErrorCorrectingCodes.Codeword.Linear_Code'}
 \leanok
 Existential version: there exists some $m$ and generator matrix $G$ witnessing linearity.
 \end{definition}
@@ -51,7 +51,7 @@ Existential version: there exists some $m$ and generator matrix $G$ witnessing l
 \section{Distance, weight, and rate}
 
 \begin{definition}[$q$-ary entropy]
-\lean{CodingTheory.Codeword.qaryEntropy}
+\lean{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \leanok
 \[
 H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
@@ -59,13 +59,13 @@ H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
 \end{definition}
 
 \begin{definition}[Hamming distance]
-\lean{CodingTheory.Codeword.hamming_distance}
+\lean{ErrorCorrectingCodes.Codeword.hamming_distance}
 \leanok
 Hamming distance between two codewords, wrapping Mathlib's \lean{hammingDist}.
 \end{definition}
 
 \begin{definition}[Distance predicate for a code]
-\lean{CodingTheory.Codeword.distance}
+\lean{ErrorCorrectingCodes.Codeword.distance}
 \leanok
 \lean{distance C d} holds when $d$ is the minimum Hamming distance of $C$: there
 exist distinct codewords at distance exactly $d$, and no two distinct codewords
@@ -73,7 +73,7 @@ are closer than $d$.
 \end{definition}
 
 \begin{definition}[Rate]
-\lean{CodingTheory.Codeword.rate}
+\lean{ErrorCorrectingCodes.Codeword.rate}
 \leanok
 \[
 R(C) = \frac{\log|C|}{n\log|\alpha|}.
@@ -81,20 +81,20 @@ R(C) = \frac{\log|C|}{n\log|\alpha|}.
 \end{definition}
 
 \begin{definition}[Weight]
-\lean{CodingTheory.Codeword.weight}
+\lean{ErrorCorrectingCodes.Codeword.weight}
 \leanok
 The Hamming weight of $c$ is $d(c, \mathbf{0})$.
 \end{definition}
 
 \begin{definition}[Maximal size at distance]
-\lean{CodingTheory.Codeword.max_size}
+\lean{ErrorCorrectingCodes.Codeword.max_size}
 \leanok
 \lean{max_size n d A} asserts existence of a code of size $A$ and minimum distance $d$
 that is maximal among all such codes.
 \end{definition}
 
 \begin{definition}[Hamming ball]
-\lean{CodingTheory.Codeword.hamming_ball}
+\lean{ErrorCorrectingCodes.Codeword.hamming_ball}
 \leanok
 The Hamming ball of radius $l$ around $c$:
 \[
@@ -107,7 +107,7 @@ implemented as a \lean{Finset}.
 \section{Basic lemma: distance vs.\ block length}
 
 \begin{lemma}[Distance is at most block length]
-\lean{CodingTheory.Codeword.dist_le_length}
+\lean{ErrorCorrectingCodes.Codeword.dist_le_length}
 \leanok
 If a code $C$ has minimum distance $d$, then $d \le n$.
 \end{lemma}

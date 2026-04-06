@@ -33,7 +33,7 @@ import Mathlib.Order.Filter.Basic
 import Mathlib.Order.Disjoint
 
 /-!
-# Coding Theory — Core Definitions
+# Error-Correcting Codes — Core Definitions
 
 This file provides the foundational definitions for coding theory over a finite
 alphabet `α`.
@@ -62,7 +62,7 @@ set_option linter.unusedSectionVars false
 
 open Set Filter Asymptotics Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 
 variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]
 variable {n k : ℕ}
@@ -188,4 +188,4 @@ def hamming_ball (l : ℕ) (c : Codeword n α) : Finset (Codeword n α) :=
 
 end Codeword
 
-end CodingTheory
+end ErrorCorrectingCodes

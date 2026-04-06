@@ -1,4 +1,4 @@
-import TCSlib.CodingTheory.Entropy
+import TCSlib.ErrorCorrectingCodes.Entropy
 
 set_option linter.unusedSectionVars false
 
@@ -33,7 +33,7 @@ that are list-decodable with radius `ρ` and list size `L`.
 
 open Set Filter Asymptotics Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 namespace Codeword
 
 variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]
@@ -309,4 +309,4 @@ theorem list_decoding_capacity
     simp [hCcard]
 
 end Codeword
-end CodingTheory
+end ErrorCorrectingCodes

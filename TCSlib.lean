@@ -1,12 +1,12 @@
-import TCSlib.CodingTheory.Basic
-import TCSlib.CodingTheory.SingletonBound
-import TCSlib.CodingTheory.HammingBound
-import TCSlib.CodingTheory.Entropy
-import TCSlib.CodingTheory.LinearCodes
-import TCSlib.CodingTheory.GilbertVarshamov
-import TCSlib.CodingTheory.ListDecoding
-import TCSlib.CodingTheory.QuantumSingleton
-import TCSlib.CodingTheory.QuantumHamming
+import TCSlib.ErrorCorrectingCodes.Basic
+import TCSlib.ErrorCorrectingCodes.SingletonBound
+import TCSlib.ErrorCorrectingCodes.HammingBound
+import TCSlib.ErrorCorrectingCodes.Entropy
+import TCSlib.ErrorCorrectingCodes.LinearCodes
+import TCSlib.ErrorCorrectingCodes.GilbertVarshamov
+import TCSlib.ErrorCorrectingCodes.ListDecoding
+import TCSlib.ErrorCorrectingCodes.QuantumSingleton
+import TCSlib.ErrorCorrectingCodes.QuantumHamming
 
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem

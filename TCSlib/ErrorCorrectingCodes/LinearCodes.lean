@@ -1,4 +1,4 @@
-import TCSlib.CodingTheory.Basic
+import TCSlib.ErrorCorrectingCodes.Basic
 
 set_option linter.unusedSectionVars false
 
@@ -27,7 +27,7 @@ Gilbert–Varshamov existence argument.
 
 open Set Filter Asymptotics Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 namespace Codeword
 
 variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]
@@ -532,4 +532,4 @@ theorem uniformity_lemma (n k : ℕ) (x : Codeword k α) (h_x : x ≠ zero) (h_k
 }
 
 end Codeword
-end CodingTheory
+end ErrorCorrectingCodes

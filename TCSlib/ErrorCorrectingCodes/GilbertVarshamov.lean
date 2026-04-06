@@ -1,4 +1,4 @@
-import TCSlib.CodingTheory.LinearCodes
+import TCSlib.ErrorCorrectingCodes.LinearCodes
 
 set_option linter.unusedSectionVars false
 
@@ -35,7 +35,7 @@ The proof proceeds via a probabilistic argument:
 
 open Set Filter Asymptotics Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 namespace Codeword
 
 variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]
@@ -363,4 +363,4 @@ theorem gv_bound (n k q d : ℕ) (h_q : q = (Fintype.card α)) (h_k : k ≤ n - 
 }
 
 end Codeword
-end CodingTheory
+end ErrorCorrectingCodes

@@ -14,7 +14,7 @@ where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
 \section{Volume formula}
 
 \begin{theorem}[Cardinality of Hamming balls]
-\lean{CodingTheory.Codeword.hamming_ball_size}
+\lean{ErrorCorrectingCodes.Codeword.hamming_ball_size}
 \leanok
 For any center $c$ and radius $l$,
 \[
@@ -26,9 +26,9 @@ For any center $c$ and radius $l$,
 \section{Disjointness of decoding balls}
 
 \begin{lemma}[Decoding balls around distinct codewords are disjoint]
-\lean{CodingTheory.Codeword.hamming_ball_non_intersect}
+\lean{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \leanok
-\uses{CodingTheory.Codeword.distance}
+\uses{ErrorCorrectingCodes.Codeword.distance}
 If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\in C$,
 \[
 B_{\lfloor(d-1)/2\rfloor}(c_1)
@@ -39,9 +39,9 @@ B_{\lfloor(d-1)/2\rfloor}(c_2)
 \end{lemma}
 
 \begin{lemma}[\lean{Finset.Disjoint} formulation]
-\lean{CodingTheory.Codeword.hamming_ball'_disjoint}
+\lean{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \leanok
-\uses{CodingTheory.Codeword.hamming_ball_non_intersect}
+\uses{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 Reformulation of the previous lemma as \lean{Finset.Disjoint}.
 \end{lemma}
 
@@ -49,9 +49,9 @@ Reformulation of the previous lemma as \lean{Finset.Disjoint}.
 \section{Hamming bound}
 
 \begin{theorem}[Hamming (sphere-packing) bound]
-\lean{CodingTheory.Codeword.hamming_bound}
+\lean{ErrorCorrectingCodes.Codeword.hamming_bound}
 \leanok
-\uses{CodingTheory.Codeword.hamming_ball_size, CodingTheory.Codeword.hamming_ball'_disjoint}
+\uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 Let $q=|\alpha|>1$.  If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
 \[
 |C|

@@ -1,4 +1,4 @@
-import TCSlib.CodingTheory.Basic
+import TCSlib.ErrorCorrectingCodes.Basic
 
 /-!
 # Singleton Bound
@@ -22,7 +22,7 @@ set_option linter.unusedVariables false
 
 open Set Filter Asymptotics Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 namespace Codeword
 
 variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]
@@ -151,4 +151,4 @@ theorem singleton_bound (C : Code n α) (d : ℕ) (h : distance C d) (hα : Nont
 }
 
 end Codeword
-end CodingTheory
+end ErrorCorrectingCodes

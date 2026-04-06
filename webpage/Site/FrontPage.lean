@@ -12,10 +12,12 @@ open Site
 
 TCSlib
 
-A Lean 4 Formalization of Theoretical Computer Science
+A Lean 4 Formalization of
+
+Theoretical Computer Science
 
 TCSlib is an open-source library formalizing results in Boolean Function Analysis
-and Coding Theory using [Lean 4](https://lean-lang.org) and
+and Error-Correcting Codes using [Lean 4](https://lean-lang.org) and
 [Mathlib](https://leanprover-community.github.io/mathlib4_docs/).
 Every theorem is machine-checked.
 
@@ -69,7 +71,7 @@ with applications to the structure of Boolean functions with small Fourier suppo
 
 ::::::html div (class := "pillars") (id := "coding-theory")
 
-*Coding Theory*
+*Error-Correcting Codes*
 
 ::::htmlDiv (class := "pillar")
 
@@ -105,7 +107,7 @@ formalizing the fundamental limits of quantum error correction.
 *Get Started*
 
 TCSlib uses Lean 4 and Mathlib. Install Lean via
-[elan](https://github.com/leanprover/elan), then:
+[lean-lang.org/install](https://lean-lang.org/install/), then:
 
 :::::htmlDiv (class := "cta-buttons")
 
@@ -115,7 +117,7 @@ TCSlib uses Lean 4 and Mathlib. Install Lean via
 Clone on GitHub
 ::::
 
-::::html a (class := "cta-btn secondary") (href := "https://leanprover-community.github.io/get_started.html")
+::::html a (class := "cta-btn secondary") (href := "https://lean-lang.org/install/")
 Install Lean
 ::::
 

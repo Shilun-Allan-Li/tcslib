@@ -1,5 +1,5 @@
-import TCSlib.CodingTheory.Basic
-import TCSlib.CodingTheory.HammingBound
+import TCSlib.ErrorCorrectingCodes.Basic
+import TCSlib.ErrorCorrectingCodes.HammingBound
 
 set_option linter.unusedSectionVars false
 
@@ -23,7 +23,7 @@ and provides the key binomial coefficient lower bound used in the Gilbert–Vars
 
 open Set Filter Asymptotics Finset
 
-namespace CodingTheory
+namespace ErrorCorrectingCodes
 namespace Codeword
 
 variable {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α] [Field α]
@@ -953,4 +953,4 @@ theorem qary_entropy_pos (q : ℕ) (p : ℝ) (hq : q = (Fintype.card α))
   exact this
 
 end Codeword
-end CodingTheory
+end ErrorCorrectingCodes
