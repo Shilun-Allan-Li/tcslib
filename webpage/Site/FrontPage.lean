@@ -20,7 +20,7 @@ and Coding Theory using [Lean 4](https://lean-lang.org) and
 Every theorem is machine-checked.
 
 ::::html a (class := "hero-btn primary") (href := "https://github.com/Shilun-Allan-Li/tcslib")
-:::html img (src := "/static/arrow.svg") (alt := "") (width := "20") (height := "20")
+:::html img (src := "/tcslib/static/arrow.svg") (alt := "") (width := "20") (height := "20")
 :::
 View on GitHub
 ::::
@@ -110,7 +110,7 @@ TCSlib uses Lean 4 and Mathlib. Install Lean via
 :::::htmlDiv (class := "cta-buttons")
 
 ::::html a (class := "cta-btn primary") (href := "https://github.com/Shilun-Allan-Li/tcslib")
-:::html img (src := "/static/arrow.svg") (alt := "") (width := "20") (height := "20")
+:::html img (src := "/tcslib/static/arrow.svg") (alt := "") (width := "20") (height := "20")
 :::
 Clone on GitHub
 ::::
