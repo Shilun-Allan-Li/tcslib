@@ -62,7 +62,7 @@ unanimity, and non-dictatorship simultaneously.
 
 *Hypercontractivity*
 
-The Bonami Lemma and $(2,4)$-Hypercontractivity inequality,
+The Bonami Lemma and $`(2,4)`-Hypercontractivity inequality,
 with applications to the structure of Boolean functions with small Fourier support.
 
 ::::
