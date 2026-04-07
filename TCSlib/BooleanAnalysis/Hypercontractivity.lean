@@ -4,7 +4,6 @@ import Mathlib.MeasureTheory.MeasurableSpace.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Data.Real.Basic
@@ -13,6 +12,7 @@ import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 import Mathlib.Probability.Distributions.Uniform
+import Mathlib.Analysis.MeanInequalities
 
 namespace Hypercontractivity
 open BooleanAnalysis
@@ -175,8 +175,7 @@ lemma min_prob_b_reasonable
 end
 
 section
-open MeasureTheory Set Filter ProbabilityTheory BooleanAnalysis
-open scoped Real
+open MeasureTheory Set Filter ProbabilityTheory BooleanAnalysis Real
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
 /- `Suppose finite variance. If Z ≥ 0 random, 0 ≤ θ ≤ 1, then P(Z > θE[Z]) ≥ (1 - θ)²(E[Z]²)/(E[Z²])` -/
@@ -933,7 +932,7 @@ lemma hypercontractivity_algebra' {a b A B C ρ : ℝ}
         linarith
     _ ≤ (a + b) ^ 2 := hypercontractivity_algebra_simple ha hb hρ
 
-/-
+/--
 **The (2,4)-Hypercontractivity Theorem** (Bonami–Beckner):
 For any Boolean function `f : {0,1}ⁿ → ℝ` and noise parameter `ρ` with `ρ² ≤ 1/3`
 (i.e., `|ρ| ≤ 1/√3`),
@@ -966,4 +965,205 @@ theorem hypercontractivity_2_4 {n : ℕ} (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 3) (f 
       (expect_cs_sq (noiseOp ρ (avgLast f)) (noiseOp ρ (diffLast f)))
       hρ
 
+/- **The (4 / 3, 2)-Hypercontractivity Theorem** :-/
+
+/-- Hölder's inequality for p = 4/3 and q = 4. -/
+lemma innerProduct_le_L43_L4 (f g : BooleanFunc n) :
+  innerProduct f g ≤
+  (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) *
+  (expect (fun x => |g x| ^ 4)) ^ (1/4 : ℝ) := by
+    -- Step 1: Expand definitions
+  unfold innerProduct expect uniformWeight
+
+  -- Step 2: Push the absolute value inside to bound the sum
+  -- f * g ≤ |f * g| = |f| * |g|
+  have h_abs : ∑ x : BoolCube n, f x * g x ≤ ∑ x : BoolCube n, |f x| * |g x| := by
+    apply Finset.sum_le_sum
+    intro x _
+    calc
+      f x * g x ≤ |f x * g x| := le_abs_self _
+      _ = |f x| * |g x| := abs_mul _ _
+
+  -- Step 3: Multiply by the uniform weight (2⁻ⁿ)
+  have h_weight_abs :
+      (2⁻¹ : ℝ) ^ n * ∑ x : BoolCube n, f x * g x ≤
+      (2⁻¹ : ℝ) ^ n * ∑ x : BoolCube n, |f x| * |g x| := by
+    apply mul_le_mul_of_nonneg_left h_abs
+    positivity
+
+  -- Step 4: Setup conjugate exponents for Hölder's inequality
+  let p : ℝ := 4/3
+  let q : ℝ := 4
+  have hpq : HolderConjugate p q := by
+    constructor
+    · norm_num -- Proves 1 < p (since 4/3 > 1)
+    · norm_num
+    · norm_num
+
+  -- Step 5: Apply Hölder's Inequality for sums
+  -- Mathlib has theorems like `Real.inner_le_Lp_Lq_of_nonneg` or `Real.sum_mul_le_rpow_mul_rpow`
+  -- We will bound the sum of |f| * |g|.
+  have holder_sum : ∑ x : BoolCube n, |f x| * |g x| ≤
+      (∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q) := by
+    -- You may need to adapt this exact lemma name depending on your Mathlib version.
+    -- If using NNReal, you would map `|f x|` to NNReal first.
+    refine inner_le_Lp_mul_Lq_of_nonneg Finset.univ hpq ?_ ?_
+    · exact fun i a => abs_nonneg (f i)
+    · exact fun i a => abs_nonneg (g i)
+
+  -- Step 6: Distribute the uniform weight into the powers
+  have weight_split : (2⁻¹ : ℝ) ^ n = ((2⁻¹ : ℝ) ^ n) ^ (1/p) * ((2⁻¹ : ℝ) ^ n) ^ (1/q) := by
+    have hpq_sum : (1/p : ℝ) + (1/q : ℝ) = 1 := by norm_num
+    rw [← Real.rpow_add (by positivity), hpq_sum, Real.rpow_one]
+
+  -- Now string it all together
+  calc
+    (2⁻¹ : ℝ) ^ n * ∑ x, f x * g x
+      ≤ (2⁻¹ : ℝ) ^ n * ∑ x, |f x| * |g x| := h_weight_abs
+    _ ≤ (2⁻¹ : ℝ) ^ n * ((∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q)) := by
+      apply mul_le_mul_of_nonneg_left holder_sum (by positivity)
+    _ = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * (∑ x, |f x| ^ p) ^ (1/p)) * (((2⁻¹ : ℝ) ^ n) ^ (1/q) * (∑ x, |g x| ^ q) ^ (1/q)) := by
+      -- Use nth_rw to ONLY rewrite the very first instance of 2⁻¹ ^ n
+      calc
+        (2⁻¹ : ℝ) ^ n * ((∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q))
+          = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * ((2⁻¹ : ℝ) ^ n) ^ (1/q)) * ((∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q)) := by nth_rw 1 [weight_split]
+        _ = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * (∑ x, |f x| ^ p) ^ (1/p)) * (((2⁻¹ : ℝ) ^ n) ^ (1/q) * (∑ x, |g x| ^ q) ^ (1/q)) := by ring
+        _ = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * (∑ x, |f x| ^ p) ^ (1/p)) * (((2⁻¹ : ℝ) ^ n) ^ (1/q) * (∑ x, |g x| ^ q) ^ (1/q)) := by ring
+    _ = ((2⁻¹ : ℝ) ^ n * ∑ x, |f x| ^ p) ^ (1/p) * ((2⁻¹ : ℝ) ^ n * ∑ x, |g x| ^ q) ^ (1/q) := by
+      -- Real.mul_rpow requires proofs that the inner sums are non-negative
+      have hfp : 0 ≤ ∑ x : BoolCube n, |f x| ^ p := Finset.sum_nonneg (fun x _ => by positivity)
+      have hgq : 0 ≤ ∑ x : BoolCube n, |g x| ^ q := Finset.sum_nonneg (fun x _ => by positivity)
+      rw [← Real.mul_rpow (by positivity) hfp]
+      rw [← Real.mul_rpow (by positivity) hgq]
+    _ = (2⁻¹ ^ n * ∑ x, (fun x => |f x| ^ (4 / 3 : ℝ)) x) ^ (3 / 4 : ℝ) * (2⁻¹ ^ n * ∑ x, (fun x => |g x| ^ 4) x) ^ (1 / 4 : ℝ) := by
+     -- 1. Prove the outer fraction arithmetic
+      have hp_exp : (1 / p : ℝ) = 3 / 4 := by norm_num
+      have hq_exp : (1 / q : ℝ) = 1 / 4 := by norm_num
+      rw [hp_exp, hq_exp]
+      -- 2. Fix the invisible rpow vs npow mismatch for q = 4
+      have hq_pow : ∀ x, |g x| ^ q = |g x| ^ 4 := by
+        intro x
+        -- Reveal that q is (4 : ℝ) and the target is (4 : ℕ)
+        change |g x| ^ (4 : ℝ) = |g x| ^ (4 : ℕ)
+        -- Apply the Mathlib lemma that links Real powers to Nat powers
+        exact Real.rpow_natCast (|g x|) 4
+      -- 3. Rewrite the power inside the sum
+      simp_rw [hq_pow]
+      -- 4. Now rfl perfectly matches everything structurally!
+      rfl
+
+/-**The (4 / 3, 2)-Hypercontractivity Theorem** :
+For any Boolean function `f : {0,1}ⁿ → ℝ` and noise parameter `ρ` with `ρ² ≤ 1/3`
+(i.e., `|ρ| ≤ 1/√3`),
+  `𝔼[(T_ρ f)⁴] ≤ (𝔼[f²])²`,
+or equivalently `‖T_ρ f‖₄ ≤ ‖f‖₂`. -/
+theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
+    (expect (fun x => (noiseOp (1 / Real.sqrt 3) f x) ^ 2)) ^ (1/2 : ℝ)
+    ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) := by
+
+  -- 1. Setup the constant ρ
+  set ρ := 1 / Real.sqrt 3
+  have hρ : ρ ^ 2 ≤ 1 / 3 := by
+    dsimp [ρ]
+    rw [one_div, inv_pow, Real.sq_sqrt (by positivity)]
+    simp only [one_div, le_refl]
+
+  -- 2. Define E_2 as the squared L2 norm for cleaner reading
+  set E_2 := expect (fun x => (noiseOp ρ f x) ^ 2)
+  have hE2_nonneg : 0 ≤ E_2 := by
+    unfold E_2 expect uniformWeight
+    apply mul_nonneg (by positivity)
+    apply Finset.sum_nonneg
+    intro x _
+    positivity
+
+  -- 3. Handle the trivial case where T_ρ f is 0 to avoid dividing by zero later
+  by_cases h_zero : E_2 = 0
+  · rw [h_zero]
+    have h_zero_pow : (0 : ℝ) ^ (1 / 2 : ℝ) = 0 := by norm_num
+    rw [h_zero_pow]
+    -- The right side is a non-negative expectation
+    apply Real.rpow_nonneg
+    unfold expect uniformWeight
+    apply mul_nonneg (by positivity)
+    apply Finset.sum_nonneg
+    intro x _
+    positivity
+
+  -- 4. Establish that E_2 is strictly positive for division later
+  have hE2_pos : 0 < E_2 := lt_of_le_of_ne hE2_nonneg (Ne.symm h_zero)
+
+  -- 5. Helper lemmas for the calc block
+  have h_inner_eq : innerProduct (noiseOp ρ f) (noiseOp ρ f) = E_2 := by
+    unfold innerProduct E_2 expect
+    simp_rw [sq]
+
+  have h_abs_four : expect (fun x => |noiseOp ρ (noiseOp ρ f) x| ^ 4) = expect (fun x => noiseOp ρ (noiseOp ρ f) x ^ 4) := by
+    apply congr_arg
+    ext x
+    -- Prove |y|^4 = y^4 using squares
+    calc |noiseOp ρ (noiseOp ρ f) x| ^ 4
+      _ = (|noiseOp ρ (noiseOp ρ f) x| ^ 2) ^ 2 := by ring
+      _ = (noiseOp ρ (noiseOp ρ f) x ^ 2) ^ 2 := by rw [sq_abs]
+      _ = noiseOp ρ (noiseOp ρ f) x ^ 4 := by ring
+
+  -- 6. Bring in the (2,4) hypercontractivity bound
+  have hc_2_4 := hypercontractivity_2_4 ρ hρ (noiseOp ρ f)
+
+-- 7. The Core Duality Argument
+
+  -- Helper 1: The L4/3 norm expectation is non-negative
+  have h_f_L43_nonneg : 0 ≤ expect (fun x => |f x| ^ (4 / 3 : ℝ)) := by
+    unfold expect uniformWeight
+    apply mul_nonneg (by positivity)
+    apply Finset.sum_nonneg
+    intro x _
+    positivity
+
+  -- Helper 2: The L4 norm expectation of the noiseOp is non-negative
+  have h_hc_lhs_nonneg : 0 ≤ expect (fun x => noiseOp ρ (noiseOp ρ f) x ^ 4) := by
+    unfold expect uniformWeight
+    apply mul_nonneg (by positivity)
+    apply Finset.sum_nonneg
+    intro x _
+    positivity
+
+  have main_bound : E_2 ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * E_2 ^ (1/2 : ℝ) := by
+    calc
+      E_2 = innerProduct (noiseOp ρ f) (noiseOp ρ f) := h_inner_eq.symm
+      _ = innerProduct f (noiseOp ρ (noiseOp ρ f)) := by
+        rw [noiseOp_self_adjoint]
+      _ ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * (expect (fun x => |noiseOp ρ (noiseOp ρ f) x| ^ 4)) ^ (1/4 : ℝ) := by
+        apply innerProduct_le_L43_L4
+      _ = (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * (expect (fun x => noiseOp ρ (noiseOp ρ f) x ^ 4)) ^ (1/4 : ℝ) := by
+        rw [h_abs_four]
+      _ ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * (E_2 ^ 2) ^ (1/4 : ℝ) := by
+        -- Use our explicit proofs instead of relying on `by positivity`
+        apply mul_le_mul_of_nonneg_left
+        · apply Real.rpow_le_rpow h_hc_lhs_nonneg hc_2_4 (by norm_num)
+        · exact Real.rpow_nonneg h_f_L43_nonneg (3 / 4 : ℝ)
+      _ = (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * E_2 ^ (1/2 : ℝ) := by
+        congr 1
+        -- Convert the inner Nat power to a Real power
+        have h_nat_real : E_2 ^ (2 : ℕ) = E_2 ^ (2 : ℝ) := (Real.rpow_natCast E_2 2).symm
+        rw [h_nat_real]
+        -- Now both powers are Real, so we can multiply them
+        rw [← Real.rpow_mul hE2_nonneg]
+        norm_num
+
+-- 8. Extract the final result by dividing out E_2^(1/2)
+  -- Prove that E_2^(1/2) * E_2^(1/2) = E_2
+  have h_split : E_2 ^ (1 / 2 : ℝ) * E_2 ^ (1 / 2 : ℝ) = E_2 := by
+    rw [← Real.rpow_add hE2_pos]
+    norm_num
+
+  -- Securely attach the split left side to our main bound without touching the right side
+  have main_bound_split : E_2 ^ (1 / 2 : ℝ) * E_2 ^ (1 / 2 : ℝ) ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * E_2 ^ (1 / 2 : ℝ) := by
+    calc
+      E_2 ^ (1 / 2 : ℝ) * E_2 ^ (1 / 2 : ℝ) = E_2 := h_split
+      _ ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * E_2 ^ (1 / 2 : ℝ) := main_bound
+
+  -- Since A * C ≤ B * C and C > 0, then A ≤ B
+  have hE2_half_pos : 0 < E_2 ^ (1 / 2 : ℝ) := Real.rpow_pos_of_pos hE2_pos (1 / 2 : ℝ)
+  exact le_of_mul_le_mul_right main_bound_split hE2_half_pos
 end

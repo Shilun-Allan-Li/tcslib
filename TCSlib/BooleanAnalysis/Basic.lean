@@ -382,6 +382,56 @@ theorem parseval (f : BooleanFunc n) :
   simp_rw [Finset.sum_ite_eq, Finset.mem_univ, if_true]
   apply Finset.sum_congr rfl; intro S _; ring
 
+/-- **Plancherel's Identity**: `⟪f, g⟫ = ∑_{S ⊆ [n]} f̂(S)ĝ(S)`
+  The sum of the products of Fourier coefficients equals the inner product -/
+theorem plancherel (f g : BooleanFunc n) :
+  innerProduct f g = ∑ S : Finset (Fin n), fourierCoeff f S * fourierCoeff g S := by
+  -- Expand f and g, and use bilinearity + orthonormality
+  have expand : innerProduct f g =
+      ∑ S : Finset (Fin n), ∑ T : Finset (Fin n),
+        fourierCoeff f S * fourierCoeff g T * innerProduct (chiS S) (chiS T) := by
+    -- The exact same expansion logic you used in Parseval, just with `f(x) * g(x)`
+    simp_rw [innerProduct, expect, uniformWeight]
+    simp_rw [show ∀ x : BoolCube n, f x * g x =
+        (∑ S : Finset (Fin n), fourierCoeff f S * chiS S x) *
+        (∑ T : Finset (Fin n), fourierCoeff g T * chiS T x) from fun x => by
+      rw [← walsh_expansion f x, ← walsh_expansion g x]]
+    -- ... (Proceed with the exact same Finset sum rearrangement steps from parseval) ...
+    rw [show (2:ℝ)⁻¹^n * ∑ x : BoolCube n,
+        (∑ S : Finset (Fin n), fourierCoeff f S * chiS S x) *
+        (∑ T : Finset (Fin n), fourierCoeff g T * chiS T x) =
+        ∑ S : Finset (Fin n), ∑ T : Finset (Fin n),
+          fourierCoeff f S * fourierCoeff g T * ((2:ℝ)⁻¹^n * ∑ x : BoolCube n, chiS S x * chiS T x) from by
+      -- Step 1: move 2⁻¹^n inside x-sum
+      rw [Finset.mul_sum]
+      rw [show ∑ x : BoolCube n, (2:ℝ)⁻¹^n *
+          ((∑ S : Finset (Fin n), fourierCoeff f S * chiS S x) *
+          (∑ T : Finset (Fin n), fourierCoeff g T * chiS T x)) =
+          ∑ x : BoolCube n, ∑ S : Finset (Fin n), ∑ T : Finset (Fin n),
+            (2:ℝ)⁻¹^n * (fourierCoeff f S * chiS S x * (fourierCoeff g T * chiS T x)) from by
+        apply Finset.sum_congr rfl; intro x _
+        rw [Finset.sum_mul, Finset.mul_sum]
+        apply Finset.sum_congr rfl; intro S _
+        rw [show (2:ℝ)⁻¹^n * (fourierCoeff f S * chiS S x * ∑ T, fourierCoeff g T * chiS T x) =
+            ∑ T, (2:ℝ)⁻¹^n * (fourierCoeff f S * chiS S x * (fourierCoeff g T * chiS T x)) from by
+          rw [show fourierCoeff f S * chiS S x * ∑ T, fourierCoeff g T * chiS T x =
+              ∑ T, fourierCoeff f S * chiS S x * (fourierCoeff g T * chiS T x) from Finset.mul_sum _ _ _]
+          rw [Finset.mul_sum]]]
+      rw [Finset.sum_comm]
+      apply Finset.sum_congr rfl; intro S _
+      -- Step 2c: swap x and T
+      rw [Finset.sum_comm]
+      apply Finset.sum_congr rfl; intro T _
+      rw [show ∑ x : BoolCube n, (2:ℝ)⁻¹^n * (fourierCoeff f S * chiS S x * (fourierCoeff g T * chiS T x)) =
+          fourierCoeff f S * fourierCoeff g T * ((2:ℝ)⁻¹^n * ∑ x : BoolCube n, chiS S x * chiS T x) from by
+        rw [show ∑ x : BoolCube n, (2:ℝ)⁻¹^n * (fourierCoeff f S * chiS S x * (fourierCoeff g T * chiS T x)) =
+            ∑ x : BoolCube n, (fourierCoeff f S * fourierCoeff g T) * ((2:ℝ)⁻¹^n * (chiS S x * chiS T x)) from by
+          apply Finset.sum_congr rfl; intro x _; ring]
+        rw [← Finset.mul_sum, ← Finset.mul_sum]]]
+  rw [expand]
+  simp_rw [fourier_coeff_chi, mul_ite, mul_one, mul_zero]
+  simp_rw [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+
 /-- Flip the `i`-th bit of `x : {0,1}ⁿ`. -/
 def flipBit (x : BoolCube n) (i : Fin n) : BoolCube n :=
   Function.update x i (!x i)
@@ -681,6 +731,36 @@ theorem noiseOp_fourier (ρ : ℝ) (f : BooleanFunc n) (S : Finset (Fin n)) :
         innerProduct (chiS T) (chiS S) from by simp [innerProduct, expect, uniformWeight]]
     exact fourier_coeff_chi T S]
   simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+
+/-- The noise operator is self-adjoint. -/
+lemma noiseOp_self_adjoint (ρ : ℝ) (f g : BooleanFunc n) :
+    innerProduct (noiseOp ρ f) g = innerProduct f (noiseOp ρ g) := by
+  calc
+    innerProduct (noiseOp ρ f) g
+      = ∑ S : Finset (Fin n), fourierCoeff (noiseOp ρ f) S * fourierCoeff g S := by
+        rw [plancherel]
+
+    _ = ∑ S : Finset (Fin n), (ρ ^ S.card * fourierCoeff f S) * fourierCoeff g S := by
+        -- Apply the multiplier property to every term in the sum
+        apply Finset.sum_congr rfl
+        intro S _
+        rw [noiseOp_fourier]
+
+    _ = ∑ S : Finset (Fin n), fourierCoeff f S * (ρ ^ S.card * fourierCoeff g S) := by
+        -- Rearrange the multiplication (associativity and commutativity)
+        apply Finset.sum_congr rfl
+        intro S _
+        ring
+
+    _ = ∑ S : Finset (Fin n), fourierCoeff f S * fourierCoeff (noiseOp ρ g) S := by
+        -- Fold the multiplier property back up for g
+        apply Finset.sum_congr rfl
+        intro S _
+        rw [noiseOp_fourier]
+
+    _ = innerProduct f (noiseOp ρ g) := by
+        -- Apply Plancherel in reverse
+        rw [← plancherel]
 
 /-- **Stability formula**: `⟪f, T_ρ f⟫ = ∑_S ρ^{|S|} · f̂(S)²`. -/
 theorem stability_formula (ρ : ℝ) (f : BooleanFunc n) :
