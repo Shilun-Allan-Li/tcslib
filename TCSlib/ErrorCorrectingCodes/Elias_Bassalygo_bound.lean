@@ -15,7 +15,7 @@ please submit the same prompt, and add this .lean file in "Optional: Attach a Le
 -/
 
 import Mathlib
-import TCSlib.CodingTheory.Basic
+import TCSlib.ErrorCorrectingCodes.Basic
 
 set_option linter.mathlibStandardSet false
 
@@ -24,7 +24,7 @@ open scoped Real
 open scoped Nat
 open scoped Classical
 open scoped Pointwise
-open CodingTheory
+open ErrorCorrectingCodes
 open InnerProductSpace
 open Codeword
 
