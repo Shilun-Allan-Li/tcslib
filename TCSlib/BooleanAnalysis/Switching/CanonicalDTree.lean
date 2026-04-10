@@ -352,6 +352,64 @@ lemma canonicalDTree_depth_ge {n : ℕ} (f : DNF n) (ρ : Restriction n) :
 lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → Bool)
     (ρ : Restriction n) :
     dtDepth (restrictFn f ρ) ≤ ρ.numFree := by
-  sorry
+  suffices h : ∀ k (ρ : Restriction n), ρ.numFree ≤ k →
+      ∃ T : DecisionTree n, T.depth ≤ k ∧ ∀ x, T.eval x = restrictFn f ρ x by
+    obtain ⟨T, hT, hev⟩ := h ρ.numFree ρ le_rfl
+    exact (depth_ge_dtDepth T hev).trans hT
+  intro k
+  induction k with
+  | zero =>
+    intro ρ hρ
+    have hempty : ρ.freeVars = ∅ := by
+      apply Finset.card_eq_zero.mp
+      show ρ.numFree = 0
+      omega
+    refine ⟨.leaf (f (ρ.extend (fun _ => false))), le_rfl, fun x => ?_⟩
+    simp only [DecisionTree.eval, restrictFn]
+    congr 1
+    funext i
+    have hi : ρ i ≠ none := by
+      intro hn
+      have hmem : i ∈ ρ.freeVars := by
+        simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
+                   Option.isNone_iff_eq_none]
+        exact hn
+      rw [hempty] at hmem
+      exact Finset.notMem_empty _ hmem
+    simp only [Restriction.extend]
+    cases hv : ρ i with
+    | none => exact absurd hv hi
+    | some b => rfl
+  | succ k ih =>
+    intro ρ hρ
+    by_cases hne : ρ.freeVars.Nonempty
+    · obtain ⟨v, hv⟩ := hne
+      have h0 : Restriction.numFree (Function.update ρ v (some false)) < ρ.numFree :=
+        numFree_update_lt ρ v false hv
+      have h1 : Restriction.numFree (Function.update ρ v (some true)) < ρ.numFree :=
+        numFree_update_lt ρ v true hv
+      obtain ⟨T0, hd0, hev0⟩ := ih (Function.update ρ v (some false)) (by omega)
+      obtain ⟨T1, hd1, hev1⟩ := ih (Function.update ρ v (some true)) (by omega)
+      refine ⟨.branch v T0 T1, ?_, fun x => ?_⟩
+      · simp only [DecisionTree.depth]; omega
+      · simp only [DecisionTree.eval]
+        cases hxv : x v with
+        | false =>
+          simp only [hxv, Bool.false_eq_true, if_false]
+          rw [hev0]
+          simp only [restrictFn]
+          rw [extend_update_self ρ v x false hv hxv]
+        | true =>
+          simp only [hxv, if_true]
+          rw [hev1]
+          simp only [restrictFn]
+          rw [extend_update_self ρ v x true hv hxv]
+    · have hempty : ρ.freeVars = ∅ := Finset.not_nonempty_iff_eq_empty.mp hne
+      have hρ0 : ρ.numFree ≤ k := by
+        have hz : ρ.numFree = 0 := by
+          simp [Restriction.numFree, hempty]
+        omega
+      obtain ⟨T, hT, hev⟩ := ih ρ hρ0
+      exact ⟨T, hT.trans (Nat.le_succ _), hev⟩
 
 end SwitchingLemma2

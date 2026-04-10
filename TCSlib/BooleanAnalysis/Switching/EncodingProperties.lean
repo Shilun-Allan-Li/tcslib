@@ -540,6 +540,26 @@ lemma processClauseLits_sigma_at_v {n : ℕ}
       simp only [Function.update_apply]
       split_ifs <;> [rfl; exact hv]
 
+/-
+If `ρ₀ v = none` and `processClauseLits` leaves `ρ₀` at `v` as `none`,
+    then `σ` at `v` is also unchanged. This holds because `processClauseLits`
+    updates `ρ₀` and `σ` at exactly the same variables in lockstep.
+-/
+lemma processClauseLits_sigma_none_of_rho_none {n : ℕ}
+    (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
+    (ρ₀ σ : Restriction n) (v : Fin n)
+    (hfree : ρ₀ v = none)
+    (h : (processClauseLits lits path ρ₀ σ).2.1 v = none) :
+    (processClauseLits lits path ρ₀ σ).2.2.1 v = σ v := by
+  induction' lits with hd tl ih generalizing path ρ₀ σ;
+  · cases path <;> aesop;
+  · rcases path with ( _ | ⟨ x, path ⟩ ) <;> simp +decide [ processClauseLits ] at h ⊢;
+    by_cases hvar : hd.1.var = v;
+    · exact absurd h ( by exact SwitchingLemma2.processClauseLits_rho_ne_none _ _ _ _ _ ( by aesop ) );
+    · convert ih path ( Function.update ρ₀ hd.1.var ( some x.2 ) ) ( Function.update σ hd.1.var ( some !hd.1.neg ) ) _ h using 1;
+      · rw [ Function.update_apply ] ; aesop;
+      · rw [ Function.update_apply ] ; aesop
+
 /-! ## Encoder σ-independence at free variables -/
 
 /-- The encoder's `.1` (γ) at a free variable `v` is independent of initial σ. -/
@@ -566,21 +586,12 @@ lemma encode_go_fst_sigma_indep_at_free {n : ℕ} (f : DNF n) (w fuel : ℕ)
           conv_rhs => rw [encode_go_fst_acc]
           rw [hpath, hrho]
           by_cases hv : (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₂).2.1 v = none
-          · have hne_v : ∀ p ∈ (fl :: fls), p.1.var ≠ v := by
-              intro p hp hpv
-              -- p.1.var = v and ρ₀ v = none. After processClauseLits processes p,
-              -- ρ₀ gets Function.update at v to some dir, so pcl.2.1 v ≠ none.
-              -- But hv says pcl₂.2.1 v = none. Contradiction.
-              have : ρ₀ p.1.var ≠ none → (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₂).2.1 p.1.var ≠ none :=
-                processClauseLits_rho_ne_none _ _ _ _ _
-              rw [hpv] at this
-              sorry
-            exact ih _ _
-              (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₁).2.2.1
-              (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₂).2.2.1
-              hv
-              (by rw [processClauseLits_sigma_stable _ _ _ _ _ hne_v]; exact h₁)
-              (by rw [processClauseLits_sigma_stable _ _ _ _ _ hne_v]; exact h₂)
+          · have hσ₁_eq : (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₁).2.2.1 v = none :=
+              (processClauseLits_sigma_none_of_rho_none _ _ _ _ _ hfree
+                (hrho ▸ hv)) ▸ h₁ ▸ rfl
+            have hσ₂_eq : (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₂).2.2.1 v = none :=
+              (processClauseLits_sigma_none_of_rho_none _ _ _ _ _ hfree hv) ▸ h₂ ▸ rfl
+            exact ih _ _ _ _ hv hσ₁_eq hσ₂_eq
           · rw [encode_go_fst_nonfree f w fuel _ _ _ [] v hv,
                 encode_go_fst_nonfree f w fuel _ _ _ [] v hv]
             exact processClauseLits_sigma_at_v _ _ _ _ _ v (by rw [h₁, h₂])
@@ -625,9 +636,81 @@ lemma processEntries_of_processClauseLits {n : ℕ}
       simp only [List.foldl_cons, hdrop]
       exact ih ps _ _ _ _ (fun q hq => hmem q (.tail _ hq))
 
+/-
+`processClauseLits` never sets σ at `l.var` to `some l.neg`,
+    provided no literal in the list has `var = l.var` with a different `neg`.
+-/
+private lemma processClauseLits_sigma_ne_neg {n : ℕ}
+    (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
+    (ρ₀ σ : Restriction n) (l : Literal n)
+    (hnd : ∀ m ∈ lits, m.1.var = l.var → m.1 = l)
+    (hσ : σ l.var ≠ some l.neg) :
+    (processClauseLits lits path ρ₀ σ).2.2.1 l.var ≠ some l.neg := by
+  induction lits generalizing path ρ₀ σ with
+  | nil => simpa [processClauseLits]
+  | cons hd tl ih =>
+    cases path with
+    | nil => simpa [processClauseLits]
+    | cons p ps =>
+      simp only [processClauseLits]
+      apply ih ps _ _ (fun m hm => hnd m (List.mem_cons_of_mem _ hm))
+      by_cases heq : hd.1.var = l.var
+      · have hd_eq : hd.1 = l := hnd hd List.mem_cons_self heq
+        rw [Function.update_apply, if_pos heq.symm, hd_eq]
+        intro h
+        injection h with h'
+        cases hb : l.neg <;> (rw [hb] at h'; simp at h')
+      · rw [Function.update_apply, if_neg (Ne.symm heq)]
+        exact hσ
+
+/-
+If `(l, idx) ∈ lits` with unique var (by `hnd`) and
+    `ρ₀ l.var = none` initially but `pcl.2.1 l.var = none` after,
+    then the remaining path `pcl.1` must be `[]`.
+    This is because `l` was not processed (path ran out before it).
+-/
+private lemma processClauseLits_path_nil_of_rho_none_and_mem {n : ℕ}
+    (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
+    (ρ₀ σ : Restriction n) (l : Literal n) (idx : ℕ)
+    (hl : (l, idx) ∈ lits)
+    (hnd : ∀ m ∈ lits, m.1.var = l.var → m.1 = l)
+    (hfree : ρ₀ l.var = none)
+    (h : (processClauseLits lits path ρ₀ σ).2.1 l.var = none) :
+    (processClauseLits lits path ρ₀ σ).1 = [] := by
+  induction lits generalizing path ρ₀ σ with
+  | nil => exact absurd hl (List.not_mem_nil)
+  | cons hd tl ih =>
+    cases path with
+    | nil => simp [processClauseLits]
+    | cons p ps =>
+      simp only [processClauseLits] at h ⊢
+      -- Reduce: in either case of membership, apply IH with updated ρ₀
+      rcases List.mem_cons.mp hl with hl_eq | hl_tl
+      · -- hl : (l, idx) = hd, so hd.1 = l and hd.1.var = l.var
+        -- After update, ρ₀ at l.var = some p.2 ≠ none, so PCL rho at l.var ≠ none
+        have hd_var : hd.1.var = l.var := by rw [← hl_eq]
+        exfalso
+        apply processClauseLits_rho_ne_none tl ps _ _ l.var _ h
+        rw [Function.update_apply, if_pos hd_var.symm]
+        exact Option.some_ne_none _
+      · -- hl : (l, idx) ∈ tl. Apply IH.
+        by_cases heq : hd.1.var = l.var
+        · -- hd.1.var = l.var, so after update ρ₀ l.var = some p.2 ≠ none. Contradicts h.
+          exfalso
+          apply processClauseLits_rho_ne_none tl ps _ _ l.var _ h
+          rw [Function.update_apply, if_pos heq.symm]
+          exact Option.some_ne_none _
+        · exact ih ps _ _ hl_tl
+            (fun m hm => hnd m (List.mem_cons_of_mem _ hm))
+            (by rw [Function.update_apply, if_neg (Ne.symm heq)]; exact hfree)
+            h
+
 /-! ## Encoder first-clause preservation -/
 
-/-- The encoder does not kill the first clause found by `find?`. -/
+/-
+The encoder does not kill the first clause found by `find?`.
+-/
+set_option maxHeartbeats 800000 in
 lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
     (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (enc_fuel : ℕ) (path : List (Fin n × Bool)) (ρ₀ σ : Restriction n)
@@ -636,7 +719,68 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
     (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
     (l : Literal n) (hl : l ∈ t) (hfree : ρ₀ l.var = none) :
     (razborovEncode.go f w enc_fuel path ρ₀ σ []).1 l.var ≠ some l.neg := by
-  sorry
+  induction' enc_fuel with enc_fuel ih generalizing path ρ₀ σ <;> simp_all +decide [ razborovEncode.go ];
+  · cases path <;> simp_all +decide [ SwitchingLemma2.razborovEncode.go ];
+  · rcases path with ( _ | ⟨ step, rest ⟩ );
+    · rw [ razborovEncode.go ] ; aesop;
+    · obtain ⟨fl, fls, hfl⟩ : ∃ fl fls, (t.zipIdx).filter (fun ⟨l, _⟩ => decide (l.var ∈ ρ₀.freeVars)) = fl :: fls := by
+        obtain ⟨k, hk⟩ : ∃ k, l = t.get k ∧ k.val < t.length := by
+          have := List.mem_iff_get.mp hl; aesop;
+        have h_mem : (l, k.val) ∈ (t.zipIdx).filter (fun ⟨l, _⟩ => decide (l.var ∈ ρ₀.freeVars)) := by
+          simp +decide [ hk, hfree, Restriction.freeVars ];
+          grind;
+        exact List.exists_cons_of_ne_nil ( by rintro h; simp +decide [ h ] at h_mem );
+      -- By definition of `processClauseLits`, we know that `pcl.2.1 l.var = none` or `pcl.2.1 l.var ≠ none`.
+      by_cases hpcl : (SwitchingLemma2.processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.1 l.var = none;
+      · have hpcl_path : (SwitchingLemma2.processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).1 = [] := by
+          apply SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem;
+          rotate_left;
+          rotate_left;
+          exact hfree;
+          exact hpcl;
+          exact ( List.idxOf l t );
+          · replace hfl := congr_arg List.toFinset hfl; rw [ Finset.ext_iff ] at hfl; specialize hfl ( l, List.idxOf l t ) ; simp_all +decide [ List.mem_iff_get ] ;
+            contrapose! hfl; simp_all +decide [ Fin.exists_iff ] ;
+            refine Or.inl ⟨ ⟨ ?_, ?_ ⟩, ?_, ?_ ⟩;
+            · grind;
+            · unfold Restriction.freeVars; aesop;
+            · exact fun h => hfl ⟨ 0, Nat.zero_lt_succ _ ⟩ ( by aesop );
+            · exact fun i => fun hi => hfl ⟨ i + 1, by linarith [ Fin.is_lt i ] ⟩ ( by simpa [ Fin.add_def, Nat.mod_eq_of_lt ] using hi );
+          · grind +splitImp;
+        rw [ SwitchingLemma2.razborovEncode.go ];
+        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f = some t from by simpa using hfind ];
+        simp +decide [ hpcl_path, hfl ];
+        rw [ SwitchingLemma2.razborovEncode.go ];
+        simp only []
+        have hnd_lits : ∀ m ∈ (fl :: fls), m.1.var = l.var → m.1 = l := by
+          intro m hm hmv
+          have hm' := hfl ▸ hm
+          have hmz := (List.mem_filter.mp hm').1
+          obtain ⟨_, hi, heq⟩ := List.mem_zipIdx hmz
+          simp at hi heq
+          have hmt : m.1 ∈ t := heq ▸ List.getElem_mem (by omega)
+          exact hnd t (List.mem_of_find?_eq_some hfind) m.1 hmt l hl hmv
+        exact processClauseLits_sigma_ne_neg _ _ _ _ _ hnd_lits (by rw [hE _ hfree]; simp)
+      · have hnd_lits : ∀ m ∈ (fl :: fls), m.1.var = l.var → m.1 = l := by
+          intro m hm hmv
+          have hm' := hfl ▸ hm
+          have hmz := (List.mem_filter.mp hm').1
+          obtain ⟨_, hi, heq⟩ := List.mem_zipIdx hmz
+          simp at hi heq
+          have hmt : m.1 ∈ t := heq ▸ List.getElem_mem (by omega)
+          exact hnd t (List.mem_of_find?_eq_some hfind) m.1 hmt l hl hmv
+        have hkey : (razborovEncode.go f w enc_fuel
+            (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).1
+            (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.1
+            (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.2.1
+            ((processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.2.2 ++ [(w, false)])).1 l.var
+            = (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.2.1 l.var := by
+          rw [encode_go_fst_acc]
+          exact encode_go_fst_nonfree f w enc_fuel _ _ _ [] l.var (by push_neg at hpcl; exact hpcl)
+        rw [ SwitchingLemma2.razborovEncode.go ];
+        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f = some t from by simpa using hfind ] ; simp +decide [ hfl ] ;
+        rw [hkey]
+        exact processClauseLits_sigma_ne_neg _ _ _ _ _ hnd_lits (by rw [hE _ hfree]; simp)
 
 /-! ## processClauseLits rho ne none of mem -/
 
