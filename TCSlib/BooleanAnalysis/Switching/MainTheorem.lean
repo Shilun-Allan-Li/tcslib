@@ -626,6 +626,155 @@ private lemma fiber_bound {n : ℕ} (f : DNF n) (w s d : ℕ)
   rw [← Finset.card_image_of_injOn hinj]
   exact aux_image_card_bound f w d hw γ
 
+/-- The number of restrictions with exactly `k` free variables equals
+    `n.choose k * 2 ^ (n - k)`. -/
+private lemma card_filter_numFree_eq (n k : ℕ) :
+    (Finset.univ.filter fun ρ : Restriction n => ρ.numFree = k).card =
+    n.choose k * 2 ^ (n - k) := by
+  -- Partition restrictions by their set of free variables.
+  classical
+  rw [show (Finset.univ.filter fun ρ : Restriction n => ρ.numFree = k) =
+      (Finset.univ.filter fun ρ : Restriction n => ρ.freeVars.card = k) from rfl]
+  -- Use bijection: ρ ↔ (ρ.freeVars, g) where g encodes the non-free values.
+  -- The cardinality is computed via a fiberwise sum over subsets of size k.
+  have hcard : ∀ S : Finset (Fin n),
+      (Finset.univ.filter fun ρ : Restriction n => ρ.freeVars = S).card = 2 ^ (n - S.card) := by
+    intro S
+    -- Bijection with functions (Fin n \ S) → Bool.
+    let φ : (Fin n → Bool) → Restriction n :=
+      fun g i => if i ∈ S then none else some (g i)
+    have hφinj : ∀ g₁ g₂ : Fin n → Bool, (∀ i ∈ S, g₁ i = false) →
+        (∀ i ∈ S, g₂ i = false) → φ g₁ = φ g₂ → g₁ = g₂ := by
+      intro g₁ g₂ hg₁ hg₂ heq
+      funext i
+      by_cases hi : i ∈ S
+      · rw [hg₁ i hi, hg₂ i hi]
+      · have := congrFun heq i
+        simp only [φ, hi, if_false] at this
+        exact Option.some.inj this
+    have himg : (Finset.univ.filter fun ρ : Restriction n => ρ.freeVars = S) =
+        ((Finset.univ.filter fun g : Fin n → Bool => ∀ i ∈ S, g i = false).image φ) := by
+      ext ρ
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image]
+      constructor
+      · intro hρ
+        refine ⟨fun i => (ρ i).getD false, ?_, ?_⟩
+        · intro i hi
+          have : ρ i = none := by
+            have : i ∈ ρ.freeVars := by rw [hρ]; exact hi
+            simp [Restriction.freeVars] at this
+            exact this
+          simp [this]
+        · funext i
+          simp only [φ]
+          by_cases hi : i ∈ S
+          · simp only [hi, if_true]
+            have : i ∈ ρ.freeVars := by rw [hρ]; exact hi
+            simp [Restriction.freeVars] at this
+            exact this.symm
+          · simp only [hi, if_false]
+            have hnf : i ∉ ρ.freeVars := by rw [hρ]; exact hi
+            simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ,
+                       true_and, Option.isNone_iff_eq_none] at hnf
+            cases h : ρ i with
+            | none => exact absurd h hnf
+            | some b => simp
+      · rintro ⟨g, hg, rfl⟩
+        ext i
+        simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and, φ]
+        constructor
+        · intro hi
+          by_cases h : i ∈ S
+          · exact h
+          · simp [h] at hi
+        · intro hi
+          simp [hi]
+    rw [himg, Finset.card_image_of_injOn]
+    · -- cardinality of {g : Fin n → Bool | ∀ i ∈ S, g i = false}
+      -- equals 2 ^ (n - S.card) since g is free on (Fin n \ S).
+      -- Use bijection with (Fin n \ S) → Bool... or just direct counting.
+      classical
+      let ψ : ((↥Sᶜ : Type) → Bool) → (Fin n → Bool) :=
+        fun h i => if hi : i ∈ S then false else h ⟨i, by
+          simp only [Finset.mem_compl]; exact hi⟩
+      have hψ_range : Set.range ψ =
+          {g : Fin n → Bool | ∀ i ∈ S, g i = false} := by
+        ext g
+        simp only [Set.mem_range, Set.mem_setOf_eq]
+        constructor
+        · rintro ⟨h, rfl⟩ i hi
+          simp [ψ, hi]
+        · intro hg
+          refine ⟨fun j => g j.val, ?_⟩
+          funext i
+          simp only [ψ]
+          by_cases hi : i ∈ S
+          · simp [hi, hg i hi]
+          · simp [hi]
+      have hψ_inj : Function.Injective ψ := by
+        intro h₁ h₂ heq
+        funext ⟨i, hi⟩
+        have := congrFun heq i
+        simp only [Finset.mem_compl] at hi
+        simp only [ψ, hi, dite_false] at this
+        exact this
+      have hcard_ψ : Fintype.card ((↥Sᶜ : Type) → Bool) = 2 ^ (n - S.card) := by
+        simp [Fintype.card_fun, Fintype.card_coe, Finset.card_compl]
+      have himg_ψ : (Finset.univ.image ψ :
+          Finset (Fin n → Bool)) = (Finset.univ.filter fun g => ∀ i ∈ S, g i = false) := by
+        ext g
+        simp only [Finset.mem_image, Finset.mem_univ, true_and,
+                   Finset.mem_filter]
+        rw [← Set.mem_range (f := ψ), hψ_range]
+        simp
+      rw [← himg_ψ, Finset.card_image_of_injective _ hψ_inj]
+      rw [Finset.card_univ]
+      exact hcard_ψ
+    · intro g₁ hg₁ g₂ hg₂ heq
+      simp only [Finset.coe_filter, Finset.mem_univ, true_and, Set.mem_setOf_eq] at hg₁ hg₂
+      exact hφinj g₁ g₂ hg₁ hg₂ heq
+  -- Now sum over S with |S| = k using powersetCard directly.
+  have hpart : (Finset.univ.filter fun ρ : Restriction n => ρ.freeVars.card = k) =
+      ((Finset.univ : Finset (Fin n)).powersetCard k).biUnion
+        (fun S => Finset.univ.filter fun ρ : Restriction n => ρ.freeVars = S) := by
+    ext ρ
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_biUnion,
+               Finset.mem_powersetCard, Finset.subset_univ, true_and]
+    constructor
+    · intro hρ; exact ⟨ρ.freeVars, hρ, rfl⟩
+    · rintro ⟨S, hS, hρ⟩; rw [hρ]; exact hS
+  rw [hpart, Finset.card_biUnion]
+  · -- Each fiber has size 2^(n - S.card), and |S| = k in powersetCard.
+    have hsum_eq : ∀ S ∈ (Finset.univ : Finset (Fin n)).powersetCard k,
+        (Finset.univ.filter fun ρ : Restriction n => ρ.freeVars = S).card =
+          2 ^ (n - k) := by
+      intro S hS
+      rw [hcard S]
+      rw [Finset.mem_powersetCard] at hS
+      rw [hS.2]
+    rw [Finset.sum_congr rfl hsum_eq]
+    rw [Finset.sum_const, smul_eq_mul, Finset.card_powersetCard]
+    simp
+  · -- Disjoint: different S give different ρ
+    intro S₁ _ S₂ _ hne
+    simp only [Function.onFun, Finset.disjoint_left]
+    intro ρ hρ₁ hρ₂
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hρ₁ hρ₂
+    exact hne (hρ₁.symm.trans hρ₂)
+
+/-- **Structural lemma**: for a bad `s`-restriction, the encoder's γ-output
+    (the σ component) is an `(s - d)`-restriction. The proof is deferred.
+
+    Intuition: for a bad restriction, the canonical DT has depth > d, so the
+    encoder's path has length exactly d. Each step in `processClauseLits`
+    consumes one path entry and fixes exactly one previously-free variable
+    in σ. Hence `γ.numFree = ρ.numFree - d = s - d`. -/
+private lemma razborovEncode_fst_numFree_eq {n : ℕ} (f : DNF n) (w d : ℕ)
+    (ρ : Restriction n) (s : ℕ) (hρ : IsRestriction s ρ)
+    (hbad : IsBadRestriction f.eval d ρ) (_hd : d ≤ s) :
+    IsRestriction (s - d) (razborovEncode f w d ρ).1 := by
+  sorry
+
 /-- **Razborov counting bound**. -/
 private lemma bad_count_bound {n : ℕ} (f : DNF n) (w s d : ℕ)
     (hw : f.width ≤ w) (hd : d ≤ s)
@@ -633,7 +782,38 @@ private lemma bad_count_bound {n : ℕ} (f : DNF n) (w s d : ℕ)
     (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧ IsBadRestriction f.eval d ρ).card ≤
     n.choose (s - d) * 2 ^ (n - (s - d)) * (4 * w) ^ d := by
-  sorry
+  classical
+  set S := (Finset.univ.filter fun ρ : Restriction n =>
+      IsRestriction s ρ ∧ IsBadRestriction f.eval d ρ) with hS_def
+  -- Partition S by the γ := (razborovEncode f w d ρ).1 image.
+  have hfgamma : ∀ ρ ∈ S, (razborovEncode f w d ρ).1 ∈
+      (Finset.univ.filter (fun γ : Restriction n => γ.numFree = s - d)) := by
+    intro ρ hρ
+    simp only [S, Finset.mem_filter, Finset.mem_univ, true_and] at hρ
+    obtain ⟨hsρ, hbadρ⟩ := hρ
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact razborovEncode_fst_numFree_eq f w d ρ s hsρ hbadρ hd
+  rw [Finset.card_eq_sum_card_fiberwise hfgamma]
+  -- Bound each fiber by (4 * w) ^ d using fiber_bound.
+  have hfiber_le : ∀ γ ∈ (Finset.univ.filter
+      (fun γ : Restriction n => γ.numFree = s - d)),
+      (S.filter fun ρ => (razborovEncode f w d ρ).1 = γ).card ≤ (4 * w) ^ d := by
+    intro γ _
+    have hfib := fiber_bound f w s d hw hd hnd γ
+    refine le_trans ?_ hfib
+    apply Finset.card_le_card
+    intro ρ hρ
+    simp only [S, Finset.mem_filter, Finset.mem_univ, true_and] at hρ
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact ⟨hρ.1.1, hρ.1.2, hρ.2⟩
+  calc ∑ γ ∈ (Finset.univ.filter (fun γ : Restriction n => γ.numFree = s - d)),
+          (S.filter fun ρ => (razborovEncode f w d ρ).1 = γ).card
+      ≤ ∑ _γ ∈ (Finset.univ.filter (fun γ : Restriction n => γ.numFree = s - d)),
+          (4 * w) ^ d := Finset.sum_le_sum hfiber_le
+    _ = (Finset.univ.filter (fun γ : Restriction n => γ.numFree = s - d)).card *
+          (4 * w) ^ d := by rw [Finset.sum_const]; ring
+    _ = n.choose (s - d) * 2 ^ (n - (s - d)) * (4 * w) ^ d := by
+        rw [card_filter_numFree_eq n (s - d)]
 
 /-! ## Combinatorial inequalities -/
 

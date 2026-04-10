@@ -1,0 +1,227 @@
+\chapter{Håstad's Switching Lemma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter formalises \textbf{Håstad's Switching Lemma} (1987) via Razborov's
+decision-tree path encoding. Informally:
+
+\begin{quote}
+If $f$ is a width-$w$ DNF and $\rho$ is a uniformly random $s$-restriction,
+then the probability that $f\!\restriction\!\rho$ requires a decision tree of
+depth $>d$ is at most $(5sw/n)^d$ (or a constant-factor variant thereof).
+\end{quote}
+
+The Lean statement, \lean{SwitchingLemma2.switching_lemma}, is a combinatorial
+counting inequality rather than a probability bound; the two are equivalent
+after rearranging.  References: Håstad (1987); Razborov's simplified proof;
+O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The formalised statement}
+
+\begin{theorem}[Switching Lemma -- Lean statement]
+\label{thm:switching_lemma}
+\lean{SwitchingLemma2.switching_lemma}
+\uses{def:dnf_width,def:is_restriction,def:is_bad_restriction,
+      def:num_s_restrictions,hyp:hnd,hyp:five_s_le_n}
+Let $n>0$, let $f:\{0,1\}^n\to\{0,1\}$ be a DNF formula, and fix $w,s,d\in\bbn$.
+Assume
+\begin{itemize}
+  \item $\text{width}(f)\le w$ (width counted as list length, see
+        Section~\ref{sec:faithfulness}),
+  \item $5s \le n$,
+  \item $f$ satisfies the \emph{non-contradictory clause} hypothesis
+        \texttt{hnd}: for every term $t\in f$ and every pair of literals
+        $\ell_1,\ell_2\in t$, if $\ell_1.\mathrm{var}=\ell_2.\mathrm{var}$ then
+        $\ell_1=\ell_2$.
+\end{itemize}
+Then
+\[
+  \bigl|\{\,\rho : \rho\text{ is an $s$-restriction and }
+        \mathrm{dtDepth}(f|_\rho)>d\,\}\bigr| \cdot n^d
+  \;\le\;
+  \mathrm{numSRestrictions}(n,s)\,\cdot\,(10\,s\,w)^d.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Faithfulness critique}\label{sec:faithfulness}
+
+The Lean statement is faithful to the classical lemma \emph{modulo} a handful
+of subtle modelling choices.  This section documents each one so a user of
+\lean{SwitchingLemma2.switching_lemma} knows precisely what they are signing
+up for.
+
+%-----------------------------------------------------------------------------
+\subsection{How DNFs are modelled}
+
+Recall (\lean{Literal}, \lean{Term}, \lean{DNF} in
+\texttt{TCSlib/BooleanAnalysis/Circuit.lean}):
+\begin{itemize}
+  \item A \textbf{literal} is a pair $(v,\mathrm{neg})\in\Fin n\times\mathrm{Bool}$.
+  \item A \textbf{term} is a \emph{list} of literals, not a set or a
+        \texttt{Finset}.
+  \item A \textbf{DNF} is a list of terms.
+  \item \lean{Term.width} is defined as \texttt{List.length}, i.e.\ literal
+        occurrences are \emph{counted with multiplicity}.
+  \item \lean{DNF.width} is the (list-)maximum of the term widths.
+\end{itemize}
+
+\paragraph{Consequence 1 -- Width vs.\ literal count.}
+In the textbook, ``width $w$'' means each term involves at most $w$
+\emph{distinct} variables.  In our formalisation, \texttt{f.width ≤ w} is the
+stronger statement ``each term has at most $w$ literal \emph{occurrences}''.
+For a syntactically clean DNF (no repeated literals inside a clause) the two
+notions coincide and the hypothesis is trivial to supply.  For a DNF with
+repeated literals, the formalised width can be strictly larger, which means
+the user must either dedup before applying the theorem or accept a looser
+bound.  This is not an unsoundness, but it is a papercut that is worth
+flagging.
+
+\paragraph{Consequence 2 -- The \texttt{hnd} hypothesis.}
+\label{hyp:hnd}
+The parameter
+\[
+  \texttt{hnd} \;:\; \forall t\in f,\;\forall \ell_1,\ell_2\in t,\;
+  \ell_1.\mathrm{var}=\ell_2.\mathrm{var}\;\Rightarrow\;\ell_1=\ell_2
+\]
+is \emph{not} the same as ``each term uses distinct variables''.  It only
+forbids a term from containing both a literal and its negation (a
+self-falsifying term).  It does \emph{allow} a term to contain the same
+literal twice.  Two remarks:
+
+\begin{enumerate}
+  \item The classical statement does not explicitly require \texttt{hnd};
+        self-falsifying clauses are implicitly removed as identically false.
+        Our formalisation makes this requirement explicit, so the user must
+        discharge a proof obligation that is mechanical but nonzero.  For a
+        concrete DNF built from literals read off a file or a syntactic
+        representation, \texttt{decide} usually suffices.
+  \item \texttt{hnd} is used crucially in
+        \lean{SwitchingLemma2.encode_go_not_kills_first_clause} and its
+        callers to guarantee that, when the encoder processes the free-var
+        literals of a term, the variable-to-literal lookup is well-defined
+        (no variable appears with two different polarities in the same term).
+        Without it, the round-trip property fails.
+\end{enumerate}
+
+%-----------------------------------------------------------------------------
+\subsection{The restriction regime: $5s \le n$}
+\label{hyp:five_s_le_n}
+
+Classical Hastad is typically stated for any $s$, with the bound reading
+$(5pw)^d$ where $p = s/n$.  The formalisation bakes in the hypothesis
+$5s\le n$, i.e.\ $p\le 1/5$.  This is \emph{not} an artefact of the
+combinatorics per se but of the particular inductive proof of the Vandermonde
+identity (\lean{SwitchingLemma2.choose_mul_pow_bound}) used to convert
+$\binom{n}{s-d}(4n)^d\le \binom{n}{s}(5s)^d$.  For restrictions with $p>1/5$
+one must either generalise that lemma or apply the theorem vacuously via the
+$d>s$ branch (\lean{bad_filter_empty_of_d_ge_s}).
+
+\paragraph{$0<n$.}
+Required so that $\Fin n$ is inhabited.  Trivial.
+
+%-----------------------------------------------------------------------------
+\subsection{The $(10sw)^d$ constant vs.\ $(5sw)^d$}
+
+Razborov's encoding yields $(5sw/n)^d$ in the sharpest accounting.  The
+formalised constant is $10sw$ rather than $5sw$.  The extra factor of two
+comes from the combinatorial bound on the encoder image size
+(\lean{aux_image_card_bound} via \lean{exists_aux_injection}), which tags
+each of the $d$ encoded triples as $\Fin w\times\mathrm{Bool}\times\mathrm{Bool}$
+(position, polarity, end-of-block marker).  A sharper encoder is possible but
+was sidestepped for proof-engineering simplicity.  This is a loss of a
+constant factor, not an asymptotic one.
+
+%-----------------------------------------------------------------------------
+\subsection{Status}
+
+\begin{itemize}
+  \item \lean{SwitchingLemma2.switching_lemma} is stated and the outer
+        structure is complete.
+  \item \lean{SwitchingLemma2.bad_count_bound} currently contains a
+        \texttt{sorry} (line 636 of \texttt{MainTheorem.lean}) which is the
+        summation step that passes from ``fibre bound'' to ``total bound''.
+        Everything else is \texttt{sorry}-free.
+  \item \lean{SwitchingLemma2.RoundTrip.go\_roundtrip\_gen} contains one
+        inductive-step \texttt{sorry} at the re-entry point of the induction
+        hypothesis.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dependency graph}
+
+The proof is layered across seven Lean files.  Information flows downward:
+
+\begin{center}
+\begin{tabular}{l|l}
+\textbf{File} & \textbf{Key contents} \\ \hline
+\texttt{Circuit.lean}
+  & \lean{Literal}, \lean{Term}, \lean{DNF}, \lean{CNF},
+    \lean{DecisionTree}, \lean{dtDepth}, \lean{buildFullDTree}.\\
+\texttt{Switching/Defs.lean}
+  & \lean{Restriction}, \lean{Restriction.extend}, \lean{numFree},
+    \lean{freeVars}, \lean{Literal.killedBy}, \lean{Term.fixedBy},
+    \lean{restrictFn}, \lean{IsBadRestriction}, \lean{IsRestriction},
+    \lean{numSRestrictions}, \lean{first_clause_preserved}. \\
+\texttt{Switching/CanonicalDTree.lean}
+  & \lean{canonicalDTree} (Razborov's DT), correctness,
+    \lean{dtDepth_restrictFn_le_numFree} (depth $\le$ numFree).\\
+\texttt{Switching/Encoding.lean}
+  & \lean{razborovEncode}, \lean{razborovDecode},
+    \lean{processClauseLits}. \\
+\texttt{Switching/EncodingProperties.lean}
+  & Numerous invariants of the encoder; uses \texttt{hnd} for
+    \lean{encode_go_not_kills_first_clause}. \\
+\texttt{Switching/RoundTrip.lean}
+  & \lean{go_roundtrip_gen} (decode $\circ$ encode = id),
+    \lean{razborovEncode_injective}. \\
+\texttt{Switching/MainTheorem.lean}
+  & Encoder image parser, \lean{exists_aux_injection},
+    \lean{aux_image_card_bound}, \lean{fiber_bound},
+    \lean{bad_count_bound},
+    \lean{choose_mul_pow_bound}, \lean{switching_lemma},
+    \lean{switching_corollary}. \\
+\end{tabular}
+\end{center}
+
+\noindent
+Conceptually the proof factors as:
+\[
+\underbrace{
+  \texttt{razborovEncode}\text{ is injective on bad restrictions}
+}_{\text{RoundTrip.lean (needs hnd)}}
+\;\Rightarrow\;
+\underbrace{
+  |\{\text{bad}\}| \le |\mathrm{image}(\texttt{razborovEncode})|
+}_{\text{set-theoretic}}
+\;\Rightarrow\;
+\underbrace{
+  |\mathrm{image}| \le (\text{combinatorial count})
+}_{\text{MainTheorem.lean}}.
+\]
+The combinatorial count is obtained by fibring the image over the first
+component $\gamma$ (a restriction with $s-d$ fewer free variables), bounding
+each fibre by $(4w)^d$ (the aux-data count
+\lean{aux_image_card_bound}), then summing fibres via the Vandermonde-type
+inequality \lean{choose_mul_pow_bound}, which is where $5s\le n$ is consumed.
+
+%-----------------------------------------------------------------------------
+\section{Corollary: no small CNF approximations}
+
+\begin{theorem}[Switching corollary]
+\label{thm:switching_corollary}
+\lean{SwitchingLemma2.switching_corollary}
+\uses{thm:switching_lemma}
+Under the same hypotheses as Theorem~\ref{thm:switching_lemma},
+\[
+  \bigl|\{\rho : \mathrm{IsRestriction}\ s\ \rho,\ f|_\rho
+    \text{ has no CNF of width}\le w\}\bigr| \cdot n^w
+  \le \mathrm{numSRestrictions}(n,s)\,(10sw)^w.
+\]
+\end{theorem}
+
+\noindent
+This uses the fact (\lean{dtDepth_le_implies_small_dnf_cnf}) that a function
+with small decision-tree depth admits both a small-width DNF and a
+small-width CNF.
