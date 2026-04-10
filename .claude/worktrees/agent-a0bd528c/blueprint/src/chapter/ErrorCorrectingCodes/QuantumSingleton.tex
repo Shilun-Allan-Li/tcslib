@@ -1,0 +1,178 @@
+\chapter{Quantum Singleton Bound}
+\label{chap:quantum-singleton}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter proves the \textbf{quantum Singleton bound}:
+for a stabilizer code with logical dimension $k$ and distance $d$
+on $n$ qudits over a prime field $\mathbb{F}_p$,
+\[
+k + 2(d-1) \;\le\; n.
+\]
+The proof uses the symplectic vector space $V = \mathbb{F}_p^n \times \mathbb{F}_p^n$
+with the standard symplectic form, and the key idea of erasure correctability.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Symplectic vector space}
+
+\begin{definition}[Symplectic form]
+\lean{sym_form}
+\leanok
+For $u = (x,z), v = (x',z') \in V = \mathbb{F}_p^n \times \mathbb{F}_p^n$,
+\[
+\omega(u,v) \;=\; \sum_{i=0}^{n-1}(x_i z'_i - z_i x'_i).
+\]
+\end{definition}
+
+\begin{lemma}[Bilinearity]
+\lean{sym_form_add_left}
+\lean{sym_form_add_right}
+\lean{sym_form_smul_left}
+\lean{sym_form_smul_right}
+\leanok
+\uses{sym_form}
+$\omega$ is bilinear: additive and scalar-homogeneous in each argument.
+\end{lemma}
+
+\begin{lemma}[Antisymmetry]
+\lean{sym_form_swap}
+\leanok
+\uses{sym_form}
+$\omega(u,v) = -\omega(v,u)$.
+\end{lemma}
+
+\begin{lemma}[Nondegeneracy]
+\lean{sym_form_nondegenerate}
+\leanok
+\uses{sym_form}
+If $\omega(u,v) = 0$ for all $v$, then $u = 0$.
+\end{lemma}
+
+\begin{definition}[Bundled bilinear form]
+\lean{symB}
+\leanok
+\uses{sym_form}
+$\omega$ packaged as a \lean{LinearMap.BilinForm}.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Support, weight, and isotropic subspaces}
+
+\begin{definition}[Support and weight]
+\lean{supp}
+\lean{wt}
+\leanok
+The \emph{support} $\mathrm{supp}(v) \subseteq \mathrm{Fin}\,n$ consists of
+coordinates where either component of $v$ is nonzero;
+the \emph{weight} is $\mathrm{wt}(v) = |\mathrm{supp}(v)|$.
+\end{definition}
+
+\begin{lemma}[Weight bound]
+\lean{wt_le_n}
+\leanok
+\uses{wt}
+$\mathrm{wt}(v) \le n$ for all $v \in V$.
+\end{lemma}
+
+\begin{definition}[Support submodule]
+\lean{V_sub}
+\leanok
+For $C \subseteq \mathrm{Fin}\,n$, the \emph{support submodule}
+$V_C = \{v \in V \mid \mathrm{supp}(v) \subseteq C\}$.
+\end{definition}
+
+\begin{lemma}[Dimension of support submodule]
+\lean{dim_V_sub}
+\leanok
+\uses{V_sub}
+$\dim_{\mathbb{F}_p}(V_C) = 2|C|$.
+\end{lemma}
+
+\begin{definition}[Symplectic orthogonal complement]
+\lean{sym_orth}
+\leanok
+\uses{sym_form}
+For a submodule $S \le V$,
+$S^{\perp_\omega} = \{v \in V \mid \forall s \in S,\; \omega(v,s) = 0\}$.
+\end{definition}
+
+\begin{lemma}[Dimension of the symplectic orthogonal]
+\lean{finrank_sym_orth}
+\leanok
+\uses{sym_orth, sym_form_nondegenerate}
+$\dim(S^{\perp_\omega}) = 2n - \dim(S)$.
+\end{lemma}
+
+\begin{definition}[Isotropic submodule]
+\lean{IsIsotropic}
+\leanok
+\uses{sym_form}
+$S$ is \emph{isotropic} if $S \le S^{\perp_\omega}$, i.e.\ $\omega(u,v) = 0$
+for all $u,v \in S$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Code parameters and erasure correctability}
+
+\begin{definition}[Quantum code distance]
+\lean{code_dist}
+\leanok
+\uses{wt, sym_orth, IsIsotropic}
+$d(S) = \min\{\mathrm{wt}(v) \mid v \in S^{\perp_\omega} \setminus S,\; \mathrm{wt}(v) \neq 0\}$
+(or $0$ if no such $v$ exists).
+\end{definition}
+
+\begin{lemma}[Distance is at most $n$]
+\lean{code_dist_le_n}
+\leanok
+\uses{code_dist, wt_le_n}
+$d(S) \le n$.
+\end{lemma}
+
+\begin{definition}[Erasure correctability]
+\lean{correctable}
+\leanok
+\uses{sym_orth}
+An erasure set $E \subseteq \mathrm{Fin}\,n$ is \emph{correctable} for $S$ if
+every $v \in V_E \cap S^{\perp_\omega}$ is already in $S$.
+\end{definition}
+
+\begin{lemma}[Distance implies correctability]
+\lean{dist_implies_correctable}
+\leanok
+\uses{correctable, code_dist}
+If $|E| < d(S)$, then $E$ is correctable.
+\end{lemma}
+
+\begin{definition}[Logical dimension]
+\lean{code_k}
+\leanok
+\uses{IsIsotropic}
+$k(S) = n - \dim(S)$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Key lemma: two disjoint correctable sets}
+
+\begin{lemma}[Two disjoint correctable sets bound $k$]
+\lean{two_disjoint_correctable_sets_bound_logical_dimension}
+\leanok
+\uses{correctable, code_k, dim_V_sub, finrank_sym_orth}
+Let $S$ be isotropic.  If $A,B \subseteq \mathrm{Fin}\,n$ are disjoint and both correctable, then
+\[
+k(S) \;\le\; n - |A| - |B|.
+\]
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Quantum Singleton bound}
+
+\begin{theorem}[Quantum Singleton bound]
+\lean{quantum_singleton_bound}
+\leanok
+\uses{two_disjoint_correctable_sets_bound_logical_dimension, dist_implies_correctable, code_dist_le_n}
+For any isotropic submodule $S \le V$,
+\[
+k(S) + 2(d(S) - 1) \;\le\; n.
+\]
+\end{theorem}

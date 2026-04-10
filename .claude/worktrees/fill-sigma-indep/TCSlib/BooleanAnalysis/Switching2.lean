@@ -397,57 +397,37 @@ private lemma termSubTree_foldl_numFree_lt {n : ℕ}
     (lits.foldl (fun (ρ' : Restriction n) (lit : Literal n) =>
       if lit.var ∈ Restriction.freeVars ρ' then Function.update ρ' lit.var (some (x lit.var))
       else ρ') ρ).numFree < ρ.numFree := by
-  -- Opaque iff: membership in freeVars iff the restriction is none at v
-  have fv_iff : ∀ (R : Restriction n) (w : Fin n), w ∈ R.freeVars ↔ R w = none := by
-    intro R w
-    unfold Restriction.freeVars
-    simp [Option.isNone_iff_eq_none]
-  -- Key: for any restriction R with l.var free, after the foldl, l.var is fixed
-  have key : ∀ (lits' : List (Literal n)) (R : Restriction n),
-      l ∈ lits' → R l.var = none →
-      (lits'.foldl (fun ρ' lit =>
-        if lit.var ∈ Restriction.freeVars ρ' then
-          Function.update ρ' lit.var (some (x lit.var))
-        else ρ') R) l.var ≠ none := by
-    intro lits'
-    induction lits' with
-    | nil => intro R hl' _; cases hl'
-    | cons hd tl ih =>
-      intro R hl' hfree'
-      simp only [List.foldl_cons]
-      rcases List.mem_cons.mp hl' with rfl | htl
-      · -- hd = l: fixes hd.var, preserved by tail
-        apply termSubTree_foldl_preserves_nonnone
-        rw [if_pos ((fv_iff R l.var).mpr hfree')]
-        simp [Function.update_apply]
-      · -- l ∈ tl: either hd.var is free in R (updated) or not
-        by_cases hd_free : hd.var ∈ R.freeVars
-        · rw [if_pos hd_free]
-          by_cases heq : l.var = hd.var
-          · -- l.var = hd.var: directly fixed
-            apply termSubTree_foldl_preserves_nonnone
-            rw [heq]; simp [Function.update_apply]
-          · -- l.var ≠ hd.var: still free in updated R
-            apply ih _ htl
-            rw [Function.update_apply, if_neg heq]; exact hfree'
-        · rw [if_neg hd_free]
-          exact ih _ htl hfree'
-  have hne_at_l : (lits.foldl (fun (ρ' : Restriction n) (lit : Literal n) =>
-      if lit.var ∈ Restriction.freeVars ρ' then Function.update ρ' lit.var (some (x lit.var))
-      else ρ') ρ) l.var ≠ none := key lits ρ hl ((fv_iff ρ l.var).mp hfree)
-  -- subset
-  have hsub : (lits.foldl (fun (ρ' : Restriction n) (lit : Literal n) =>
-      if lit.var ∈ Restriction.freeVars ρ' then Function.update ρ' lit.var (some (x lit.var))
-      else ρ') ρ).freeVars ⊆ ρ.freeVars := by
+  set ρ' := lits.foldl _ ρ
+  -- ρ'.freeVars ⊆ ρ.freeVars (foldl only adds fixings)
+  have hsub : ρ'.freeVars ⊆ ρ.freeVars := by
     intro v hv
-    rw [fv_iff] at hv ⊢
-    by_contra h
-    exact (termSubTree_foldl_preserves_nonnone lits ρ x v h) hv
-  have hne_mem : l.var ∉ (lits.foldl (fun (ρ' : Restriction n) (lit : Literal n) =>
-      if lit.var ∈ Restriction.freeVars ρ' then Function.update ρ' lit.var (some (x lit.var))
-      else ρ') ρ).freeVars := by
-    rw [fv_iff]; exact hne_at_l
-  exact Finset.card_lt_card (hsub.ssubset_of_ne (fun heq => hne_mem (heq ▸ hfree)))
+    simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
+      Option.isNone_iff_eq_none] at hv ⊢
+    by_contra h; push_neg at h
+    exact absurd hv (termSubTree_foldl_preserves_nonnone lits ρ x v h)
+  -- l.var ∈ ρ.freeVars but l.var ∉ ρ'.freeVars
+  have hne : l.var ∉ ρ'.freeVars := by
+    simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
+      Option.isNone_iff_eq_none]
+    show ¬(ρ' l.var = none)
+    induction lits generalizing ρ with
+    | nil => simp at hl
+    | cons hd tl ih =>
+      simp only [List.foldl_cons]
+      rcases List.mem_cons.mp hl with rfl | hl_tl
+      · apply termSubTree_foldl_preserves_nonnone
+        rw [show hd.var ∈ Restriction.freeVars ρ from hfree, if_pos rfl]
+        simp [Function.update]
+      · apply ih hl_tl; split
+        · by_cases heq : l.var = hd.var
+          · rw [heq]; simp [Restriction.freeVars, Finset.mem_filter,
+              Function.update_apply, Option.isNone]
+          · rw [Restriction.freeVars, Finset.mem_filter] at hfree ⊢
+            simp only [Finset.mem_univ, true_and, Function.update_apply,
+              Option.isNone_iff_eq_none, Ne.symm heq, ↓reduceIte] at hfree ⊢
+            exact hfree
+        · exact hfree
+  exact Finset.card_lt_card (hsub.ssubset_of_ne (fun heq => hne (heq ▸ hfree)))
 
 private lemma canonicalDTree_go_correct {n : ℕ} (f : DNF n) (fuel : ℕ) (ρ : Restriction n)
     (hfuel : ρ.numFree < fuel) :
@@ -480,31 +460,25 @@ private lemma canonicalDTree_go_correct {n : ℕ} (f : DNF n) (fuel : ℕ) (ρ :
           by_contra htk; rw [List.find?_eq_none] at hfind
           exact (hfind t ht) (by simp [htk])
         · rename_i t hfind
+          set ρ' := t.foldl (fun (ρ' : Restriction n) l =>
+            if l.var ∈ ρ'.freeVars then Function.update ρ' l.var (some (x l.var))
+            else ρ') ρ
           rw [termSubTree_eval]
-          -- Let ρ' be the foldl result, via a have (not set), to keep goal normal
-          have hext : (t.foldl (fun (ρ' : Restriction n) l =>
-              if l.var ∈ ρ'.freeVars then Function.update ρ' l.var (some (x l.var))
-              else ρ') ρ).extend x = ρ.extend x := termSubTree_extend_eq t ρ x
-          show (if decide (Term.fixedBy t (t.foldl _ ρ)) then DecisionTree.leaf true
-            else canonicalDTree.go f k (t.foldl _ ρ)).eval x = restrictFn f.eval ρ x
-          split
-          · -- t fixed under the foldl
+          have hext : ρ'.extend x = ρ.extend x := termSubTree_extend_eq t ρ x
+          simp only; split
+          · -- t fixed under ρ'
             rename_i ht_fixed
             simp only [DecisionTree.eval, restrictFn, DNF.eval]
             have ht_fixed' := of_decide_eq_true ht_fixed; symm; rw [List.any_eq_true]
             refine ⟨t, List.mem_of_find?_eq_some hfind, ?_⟩
             show t.eval (ρ.extend x) = true
             rw [← hext, Term.eval, List.all_eq_true]
-            exact fun l hl => Literal.fixedBy_eval_true l _ (ht_fixed' l hl) x
+            exact fun l hl => Literal.fixedBy_eval_true l ρ' ht_fixed' x
           · -- t not fixed: recurse
             rename_i ht_not_fixed
-            have hres : restrictFn f.eval (t.foldl (fun (ρ' : Restriction n) l =>
-                if l.var ∈ ρ'.freeVars then Function.update ρ' l.var (some (x l.var))
-                else ρ') ρ) x = restrictFn f.eval ρ x := by
+            have hres : restrictFn f.eval ρ' x = restrictFn f.eval ρ x := by
               simp only [restrictFn]; rw [hext]
-            have hρ'_lt : (t.foldl (fun (ρ' : Restriction n) l =>
-                if l.var ∈ ρ'.freeVars then Function.update ρ' l.var (some (x l.var))
-                else ρ') ρ).numFree < k := by
+            have hρ'_lt : ρ'.numFree < k := by
               have hle : ρ.numFree ≤ k := Nat.lt_succ_iff.mp hfuel
               have ht_nk : ¬Term.killedBy t ρ := by
                 have := List.find?_some hfind; simp at this; exact this
@@ -512,23 +486,18 @@ private lemma canonicalDTree_go_correct {n : ℕ} (f : DNF n) (fuel : ℕ) (ρ :
                 fun hf => h2 ⟨t, List.mem_of_find?_eq_some hfind, hf⟩
               have ⟨l, hl_mem, hl_free⟩ : ∃ l ∈ t, l.var ∈ ρ.freeVars := by
                 by_contra hall; push_neg at hall; apply ht_nf; intro l hl
-                have hnf : ¬(l.var ∈ ρ.freeVars) := hall l hl
-                have hne : ρ l.var ≠ none := by
-                  intro hn
-                  apply hnf
-                  simp [Restriction.freeVars, Option.isNone_iff_eq_none, hn]
-                have hnk_l : ρ l.var ≠ some l.neg := fun hk => ht_nk ⟨l, hl, hk⟩
-                show ρ l.var = some (!l.neg)
+                have : l.var ∉ ρ.freeVars := hall l hl
+                simp [Restriction.freeVars, Finset.mem_filter, Option.isNone_iff_eq_none] at this
                 cases hv : ρ l.var with
-                | none => exact absurd hv hne
+                | none => exact absurd hv this
                 | some b =>
-                  have hbne : b ≠ l.neg := by
-                    intro heq
-                    exact hnk_l (by rw [hv, heq])
-                  cases b <;> cases hln : l.neg <;> simp_all
+                  by_cases hbl : b = l.neg
+                  · exact absurd ⟨l, hl, by rw [Literal.killedBy, hv, hbl]⟩ ht_nk
+                  · show ρ l.var = some (!l.neg); rw [hv]; congr 1
+                    cases b <;> cases l.neg <;> simp_all
               exact lt_of_lt_of_le
                 (termSubTree_foldl_numFree_lt t ρ x l hl_mem hl_free) hle
-            rw [ih _ hρ'_lt, hres]
+            rw [ih hρ'_lt x, hres]
 
 lemma canonicalDTree_correct {n : ℕ} (f : DNF n) (ρ : Restriction n) :
     ∀ x, (canonicalDTree f ρ).eval x = restrictFn f.eval ρ x :=
@@ -551,82 +520,7 @@ lemma canonicalDTree_depth_ge {n : ℕ} (f : DNF n) (ρ : Restriction n) :
 private lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → Bool)
     (ρ : Restriction n) :
     dtDepth (restrictFn f ρ) ≤ ρ.numFree := by
-  -- Build a decision tree querying each free variable of ρ; its depth is ρ.numFree.
-  suffices h : ∀ (k : ℕ) (ρ : Restriction n), ρ.numFree = k →
-      ∃ T : DecisionTree n, T.depth ≤ k ∧ ∀ x, T.eval x = restrictFn f ρ x by
-    obtain ⟨T, hT_d, hT_e⟩ := h ρ.numFree ρ rfl
-    exact le_trans (depth_ge_dtDepth T hT_e) hT_d
-  intro k
-  induction k with
-  | zero =>
-    intro ρ hρ
-    -- No free variables: ρ.extend x is constant in x
-    refine ⟨.leaf (f (fun i => (ρ i).getD false)), by simp [DecisionTree.depth], ?_⟩
-    intro x
-    simp only [DecisionTree.eval, restrictFn]
-    congr 1
-    funext i
-    simp only [Restriction.extend]
-    have hemp : ρ.freeVars = ∅ := Finset.card_eq_zero.mp hρ
-    have hne : ρ i ≠ none := by
-      intro hn
-      have : i ∈ ρ.freeVars := by
-        simp [Restriction.freeVars, Option.isNone_iff_eq_none, hn]
-      rw [hemp] at this
-      exact absurd this (Finset.notMem_empty i)
-    cases h : ρ i with
-    | none => exact absurd h hne
-    | some _ => rfl
-  | succ k ih =>
-    intro ρ hρ
-    have hcard : ρ.freeVars.card = k + 1 := hρ
-    have hne : ρ.freeVars.Nonempty := Finset.card_pos.mp (by omega)
-    obtain ⟨v, hv⟩ := hne
-    have hv_none : ρ v = none := by
-      simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
-        Option.isNone_iff_eq_none] at hv
-      exact hv
-    -- Updating v preserves all other free variables; numFree decreases by 1
-    have hupd_numFree : ∀ b : Bool,
-        Restriction.numFree (Function.update ρ v (some b)) = k := by
-      intro b
-      have herase : Restriction.freeVars (Function.update ρ v (some b)) =
-          ρ.freeVars.erase v := by
-        ext i
-        simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
-          Finset.mem_erase, Option.isNone_iff_eq_none, Function.update_apply]
-        by_cases hi : i = v
-        · subst hi; simp
-        · simp [hi]
-      show (Restriction.freeVars (Function.update ρ v (some b))).card = k
-      rw [herase, Finset.card_erase_of_mem hv, hcard]
-      omega
-    obtain ⟨Tf, hTf_d, hTf_e⟩ := ih (Function.update ρ v (some false)) (hupd_numFree false)
-    obtain ⟨Tt, hTt_d, hTt_e⟩ := ih (Function.update ρ v (some true)) (hupd_numFree true)
-    refine ⟨.branch v Tf Tt, ?_, ?_⟩
-    · simp only [DecisionTree.depth]; omega
-    · intro x
-      -- Key: (Function.update ρ v (some b)).extend x = ρ.extend x when x v = b
-      have hext : ∀ (b : Bool), x v = b →
-          Restriction.extend (Function.update ρ v (some b)) x = ρ.extend x := by
-        intro b hxv
-        funext i
-        simp only [Restriction.extend, Function.update_apply]
-        by_cases hi : i = v
-        · subst hi; simp [hv_none, hxv]
-        · simp [hi]
-      simp only [DecisionTree.eval]
-      cases hxv : x v with
-      | false =>
-        rw [if_neg (by simp [hxv])]
-        rw [hTf_e x]
-        simp only [restrictFn]
-        rw [hext false hxv]
-      | true =>
-        rw [if_pos (by simp [hxv])]
-        rw [hTt_e x]
-        simp only [restrictFn]
-        rw [hext true hxv]
+  sorry
 
 /-! ========================================================================
     RAZBOROV ENCODING — Canonical Decision Tree Path
@@ -1753,11 +1647,68 @@ private lemma go_roundtrip_gen {n : ℕ} (f : DNF n) (w : ℕ) (hw : f.width ≤
               rw [foldl_rho_stable t_clause _ _ _ hne, hD v hv]
               exact (processClauseLits_rho_stable _ _ _ _ _
                 (fun p hp => by intro heq; exact hv (heq ▸ hfree_lits p hp))).symm
-          case hA' => sorry
-          case hB' => sorry
-          case hfuel' => sorry
+          case hA' => -- pcl.2.1 v = none → σ_fold v = (encode ... σ []).1 v
+            intro v hv'
+            simp only [σ_fold_def]
+            -- pcl.2.1 v = none → v not targeted by foldl → σ_fold v = σ_dec v
+            have hv_free : ρ₀ v = none := by
+              by_contra h; push_neg at h
+              exact absurd hv' (processClauseLits_rho_ne_none _ _ ρ₀ σ v h)
+            have hne_v : ∀ p ∈ (fl :: fls), p.1.var ≠ v := by
+              intro p hp heq; exact absurd (heq ▸ hv')
+                (processClauseLits_rho_ne_none_of_mem _ _ _ _ _ p hp heq)
+            rw [foldl_sigma_stable t_clause _ _ _ (processClauseLits_aux_ne_nonfree
+              t_clause _ _ ρ₀ σ v hmem_zip hne_v)]
+            -- σ_dec v = enc.1 v = rec_enc.1 v = (encode ... σ []).1 v
+            rw [hA v hv_free, hγ]
+            -- rec_enc.1 v = (encode ... σ []).1 v by σ-independence at free v
+            exact encode_go_fst_sigma_indep_at_free f w fuel pcl.1 pcl.2.1
+              pcl.2.2.1 σ v hv' (by
+                rw [processClauseLits_sigma_stable _ _ _ _ _ hne_v]; exact hE v hv_free)
+              (hE v hv_free)
+          case hB' => -- pcl.2.1 v = none → ρ₀_fold v = (encode ... σ []).1 v
+            intro v hv'
+            simp only [ρ₀_fold_def]
+            have hv_free : ρ₀ v = none := by
+              by_contra h; push_neg at h
+              exact absurd hv' (processClauseLits_rho_ne_none _ _ ρ₀ σ v h)
+            have hne_v : ∀ p ∈ (fl :: fls), p.1.var ≠ v := by
+              intro p hp heq; exact absurd (heq ▸ hv')
+                (processClauseLits_rho_ne_none_of_mem _ _ _ _ _ p hp heq)
+            rw [foldl_rho_stable t_clause _ _ _ (processClauseLits_aux_ne_nonfree
+              t_clause _ _ ρ₀ σ v hmem_zip hne_v)]
+            rw [hB v hv_free, hγ]
+            exact encode_go_fst_sigma_indep_at_free f w fuel pcl.1 pcl.2.1
+              pcl.2.2.1 σ v hv' (by
+                rw [processClauseLits_sigma_stable _ _ _ _ _ hne_v]; exact hE v hv_free)
+              (hE v hv_free)
+          case hfuel' => -- df ≥ (encode ... σ []).2.length + 1
+            rw [← encode_go_snd_sigma_indep f w fuel pcl.1 pcl.2.1 σ pcl.2.2.1,
+                ← hsigma_indep]
+            rw [haux] at hfuel; simp [hpcl_cons, List.length_append] at hfuel ⊢; omega
           case henc' => rfl
-          case hbase' => sorry
+          case hbase' => -- base case for recursive call
+            intro heq
+            rw [show (razborovEncode.go f w fuel pcl.1 pcl.2.1 σ []).2 = [] from by
+              rw [← encode_go_snd_sigma_indep, ← hsigma_indep]; rw [heq]]
+            have hA_rec : ∀ v, pcl.2.1 v = none → σ_fold v = σ v := by
+              intro v hv'
+              simp only [σ_fold_def]
+              have hv_free : ρ₀ v = none := by
+                by_contra h; push_neg at h
+                exact absurd hv' (processClauseLits_rho_ne_none _ _ ρ₀ σ v h)
+              have hne_v : ∀ p ∈ (fl :: fls), p.1.var ≠ v := by
+                intro p hp heq'; exact absurd (heq' ▸ hv')
+                  (processClauseLits_rho_ne_none_of_mem _ _ _ _ _ p hp heq')
+              rw [foldl_sigma_stable t_clause _ _ _ (processClauseLits_aux_ne_nonfree
+                t_clause _ _ ρ₀ σ v hmem_zip hne_v)]
+              rw [hA v hv_free]
+              -- enc.1 v = σ v since enc = (σ, []) in the base case... wait, that's the outer enc.
+              -- For the recursive call: heq says (encode ... σ []).1 = σ, so enc.1 should also.
+              rw [hγ, show rec_enc.1 v = σ v from by
+                rw [hrec_def]; rw [encode_go_fst_sigma_indep_at_fst_eq heq]; sorry]
+              sorry
+            sorry
 
 /-- Go-level round-trip: decoding the encoding of ρ (with σ = ρ₀ = ρ and
     empty accumulator) recovers ρ. Instantiates `go_roundtrip_gen` with

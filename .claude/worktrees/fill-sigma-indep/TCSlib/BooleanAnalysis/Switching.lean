@@ -579,27 +579,25 @@ private lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → 
     | some _ => rfl
   | succ k ih =>
     intro ρ hρ
-    have hcard : ρ.freeVars.card = k + 1 := hρ
-    have hne : ρ.freeVars.Nonempty := Finset.card_pos.mp (by omega)
+    have hne : ρ.freeVars.Nonempty := Finset.card_pos.mpr (by omega)
     obtain ⟨v, hv⟩ := hne
     have hv_none : ρ v = none := by
       simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
         Option.isNone_iff_eq_none] at hv
       exact hv
     -- Updating v preserves all other free variables; numFree decreases by 1
-    have hupd_numFree : ∀ b : Bool,
-        Restriction.numFree (Function.update ρ v (some b)) = k := by
+    have hupd_numFree : ∀ b : Bool, (Function.update ρ v (some b)).numFree = k := by
       intro b
-      have herase : Restriction.freeVars (Function.update ρ v (some b)) =
-          ρ.freeVars.erase v := by
+      have herase : (Function.update ρ v (some b)).freeVars = ρ.freeVars.erase v := by
         ext i
         simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
           Finset.mem_erase, Option.isNone_iff_eq_none, Function.update_apply]
         by_cases hi : i = v
         · subst hi; simp
         · simp [hi]
-      show (Restriction.freeVars (Function.update ρ v (some b))).card = k
-      rw [herase, Finset.card_erase_of_mem hv, hcard]
+      show (Function.update ρ v (some b)).freeVars.card = k
+      rw [herase, Finset.card_erase_of_mem hv]
+      show ρ.freeVars.card - 1 = k
       omega
     obtain ⟨Tf, hTf_d, hTf_e⟩ := ih (Function.update ρ v (some false)) (hupd_numFree false)
     obtain ⟨Tt, hTt_d, hTt_e⟩ := ih (Function.update ρ v (some true)) (hupd_numFree true)
@@ -608,7 +606,7 @@ private lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → 
     · intro x
       -- Key: (Function.update ρ v (some b)).extend x = ρ.extend x when x v = b
       have hext : ∀ (b : Bool), x v = b →
-          Restriction.extend (Function.update ρ v (some b)) x = ρ.extend x := by
+          (Function.update ρ v (some b)).extend x = ρ.extend x := by
         intro b hxv
         funext i
         simp only [Restriction.extend, Function.update_apply]
@@ -1530,24 +1528,31 @@ private lemma processClauseLits_sigma_at_v {n : ℕ}
       simp only [Function.update_apply]
       split_ifs <;> [rfl; exact hv]
 
-/-- The encoder's `.1` (γ) at a free variable `v` (where `ρ₀ v = none`) is
-    independent of the initial σ, provided both σ values agree at `v` (both `none`). -/
+/-- The encoder's `.1` (γ) at a variable `v` is determined by `σ v` alone:
+    if `σ₁ v = σ₂ v`, then the encoder outputs agree at `v`. The `ρ₀ v = none`
+    hypothesis is not actually needed, but is kept in the name for clarity. -/
 private lemma encode_go_fst_sigma_indep_at_free {n : ℕ} (f : DNF n) (w fuel : ℕ)
     (path : List (Fin n × Bool)) (ρ₀ σ₁ σ₂ : Restriction n) (v : Fin n)
     (hfree : ρ₀ v = none) (h₁ : σ₁ v = none) (h₂ : σ₂ v = none) :
     (razborovEncode.go f w fuel path ρ₀ σ₁ []).1 v =
     (razborovEncode.go f w fuel path ρ₀ σ₂ []).1 v := by
+  -- Strengthen to the hypothesis `σ₁ v = σ₂ v`. This form closes under
+  -- `processClauseLits_sigma_at_v`, avoiding any need to reason about whether
+  -- `v` is targeted by a literal.
+  clear hfree
+  have hv : σ₁ v = σ₂ v := h₁.trans h₂.symm
+  clear h₁ h₂
   induction fuel generalizing path ρ₀ σ₁ σ₂ with
-  | zero => cases path <;> simp [razborovEncode.go, h₁, h₂]
+  | zero => cases path <;> simp [razborovEncode.go, hv]
   | succ fuel ih =>
     cases path with
-    | nil => simp [razborovEncode.go, h₁, h₂]
+    | nil => simp [razborovEncode.go, hv]
     | cons step rest =>
       simp only [razborovEncode.go]
       split
-      · simp [h₁, h₂]  -- find? = none
+      · simpa using hv  -- find? = none
       · split
-        · simp [h₁, h₂]  -- freeLitsIdx = []
+        · simpa using hv  -- freeLitsIdx = []
         · -- fl :: fls case
           next fl fls _ =>
           obtain ⟨hpath, hrho, _⟩ :=
@@ -1556,37 +1561,10 @@ private lemma encode_go_fst_sigma_indep_at_free {n : ℕ} (f : DNF n) (w fuel : 
           conv_lhs => rw [encode_go_fst_acc]
           conv_rhs => rw [encode_go_fst_acc]
           rw [hpath, hrho]
-          -- Case split: did processClauseLits set v?
-          by_cases hv : (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₂).2.1 v = none
-          · -- v still free after pcl: no literal targeted v
-            -- pcl₂.2.1 v = none and ρ₀ v = none: if any p.1.var = v,
-            -- pcl would set ρ₀ at v via Function.update, giving pcl.2.1 v ≠ none
-            have hne_v : ∀ p ∈ (fl :: fls), p.1.var ≠ v := by
-              intro p hp hpv
-              -- p.1.var = v and ρ₀ v = none. After processClauseLits processes p,
-              -- ρ₀ gets Function.update at v to some dir, so pcl.2.1 v ≠ none.
-              -- But hv says pcl₂.2.1 v = none. Contradiction.
-              have : ρ₀ p.1.var ≠ none → (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₂).2.1 p.1.var ≠ none :=
-                processClauseLits_rho_ne_none _ _ _ _ _
-              rw [hpv] at this
-              -- this : ρ₀ v ≠ none → pcl₂.2.1 v ≠ none. But ρ₀ v = none (hfree).
-              -- We need: pcl₂.2.1 v ≠ none (to contradict hv).
-              -- processClauseLits_rho_ne_none gives the wrong direction here.
-              -- Instead use: if processClauseLits processes hd with hd.1.var = v,
-              -- then it does Function.update ρ₀ v (some dir). Then rho_ne_none
-              -- on the updated ρ₀ (which has v ≠ none) gives the result.
-              -- Simplify: just unfold one step of processClauseLits.
-              sorry
-            exact ih _ _
-              (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₁).2.2.1
-              (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ₂).2.2.1
-              hv
-              (by rw [processClauseLits_sigma_stable _ _ _ _ _ hne_v]; exact h₁)
-              (by rw [processClauseLits_sigma_stable _ _ _ _ _ hne_v]; exact h₂)
-          · -- v was set by pcl: use encode_go_fst_nonfree on both sides
-            rw [encode_go_fst_nonfree f w fuel _ _ _ [] v hv,
-                encode_go_fst_nonfree f w fuel _ _ _ [] v hv]
-            exact processClauseLits_sigma_at_v _ _ _ _ _ v (by rw [h₁, h₂])
+          -- After pcl, σ at v still agrees: either v was targeted (both get
+          -- `some (!l.neg)` for the same last literal), or v wasn't targeted
+          -- (both equal their original σ v, which agree).
+          exact ih _ _ _ (processClauseLits_sigma_at_v _ _ _ _ _ v hv)
 
 /-- Generalized round-trip: the decoder, starting from `(σ_dec, ρ₀_dec)` satisfying
     the compatibility invariant with encoder state `(ρ₀, σ)`, recovers `σ`.

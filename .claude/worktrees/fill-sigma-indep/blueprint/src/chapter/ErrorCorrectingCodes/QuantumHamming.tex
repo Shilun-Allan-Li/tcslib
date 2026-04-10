@@ -1,0 +1,145 @@
+\chapter{Quantum Hamming Bound}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter proves the \textbf{quantum Hamming bound} for non-degenerate
+qubit stabilizer codes.  Working in the Pauli-string formalism, it shows that
+if a quantum code $C \le \mathcal{H}_n$ satisfies the Knill--Laflamme
+conditions for $t$-error correction and is non-degenerate, then
+\[
+\left(\sum_{i=0}^{t}\binom{n}{i}3^i\right)\cdot\dim_{\mathbb{C}}(C) \;\le\; 2^n.
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Pauli strings}
+
+\begin{definition}[Pauli basis]
+\lean{PauliBasis}
+\leanok
+The four Pauli basis elements $\{I,X,Y,Z\}$, represented as an inductive type.
+\end{definition}
+
+\begin{definition}[Pauli string]
+\lean{PauliString}
+\leanok
+A \emph{Pauli string} of length $n$ is a function $p : \mathrm{Fin}\,n \to \mathrm{PauliBasis}$.
+\end{definition}
+
+\begin{definition}[Support and weight]
+\lean{support}
+\lean{weight}
+\leanok
+The \emph{support} $\mathrm{supp}(p) \subseteq \mathrm{Fin}\,n$ consists of coordinates
+where $p(i) \neq I$; the \emph{weight} is $\mathrm{wt}(p) = |\mathrm{supp}(p)|$.
+\end{definition}
+
+\begin{definition}[Pauli error set]
+\lean{PauliErrorsLe}
+\leanok
+\uses{PauliString, weight}
+The set of all Pauli strings of weight at most $t$:
+\[
+\mathcal{E}(n,t) = \bigl\{p : \mathrm{PauliString}\,n \;\big|\; \mathrm{wt}(p) \le t\bigr\}.
+\]
+\end{definition}
+
+\begin{theorem}[Cardinality of the Pauli error set]
+\lean{card_pauliErrorsLe}
+\leanok
+\uses{PauliErrorsLe, weight}
+\[
+|\mathcal{E}(n,t)| \;=\; \sum_{i=0}^{t}\binom{n}{i}\,3^i.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{$n$-qubit Hilbert space}
+
+\begin{definition}[$n$-qubit Hilbert space]
+\lean{Hn}
+\leanok
+The $n$-qubit Hilbert space
+$\mathcal{H}_n = \ell^2\!\bigl(\{0,1\}^n,\mathbb{C}\bigr)$,
+implemented as \lean{EuclideanSpace ℂ (Fin n → Fin 2)}.
+\end{definition}
+
+\begin{lemma}[Dimension of $\mathcal{H}_n$]
+\lean{finrank_Hn}
+\leanok
+\uses{Hn}
+$\dim_{\mathbb{C}}(\mathcal{H}_n) = 2^n$.
+\end{lemma}
+
+\begin{definition}[Pauli operator]
+\lean{pauliOp}
+\leanok
+\uses{PauliString, Hn}
+For $p \in \mathrm{PauliString}\,n$, the associated Pauli operator
+$\hat{p} : \mathcal{H}_n \to \mathcal{H}_n$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Knill--Laflamme conditions}
+
+\begin{definition}[Knill--Laflamme condition]
+\lean{KnillLaflamme}
+\leanok
+\uses{pauliOp}
+A subspace $C \le \mathcal{H}_n$ satisfies the \emph{Knill--Laflamme condition}
+for $t$-error correction if for all Pauli strings $E,F$ with $\mathrm{wt}(E),\mathrm{wt}(F) \le t$
+there exists $\lambda_{EF}\in\mathbb{C}$ such that
+$P_C\,E^\dagger F\,P_C = \lambda_{EF}\,P_C$,
+where $P_C$ is the orthogonal projection onto $C$.
+\end{definition}
+
+\begin{definition}[Non-degenerate code]
+\lean{IsNondegenerate}
+\leanok
+\uses{KnillLaflamme}
+A code is \emph{non-degenerate} if it satisfies the Knill--Laflamme condition
+and additionally $P_C E^\dagger F P_C = 0$ whenever $E \neq F$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Error sphere and sphere-packing}
+
+\begin{definition}[Error sphere]
+\lean{ErrorSphere}
+\leanok
+\uses{pauliOp}
+The \emph{error sphere} $\mathrm{ES}(C,t)$ is the subspace
+$\bigvee_{\mathrm{wt}(p)\le t} \hat{p}(C)$, i.e.\ the supremum of the
+Pauli images of $C$ over all $t$-errors.
+\end{definition}
+
+\begin{lemma}[Error subspaces are pairwise orthogonal]
+\lean{error_subspaces_orthogonal}
+\leanok
+\uses{IsNondegenerate, pauliOp}
+If $C$ is non-degenerate and $E \neq F$ both have weight $\le t$, then
+$\hat{E}(C) \perp \hat{F}(C)$.
+\end{lemma}
+
+\begin{lemma}[Dimension of the error sphere]
+\lean{error_sphere_dimension}
+\leanok
+\uses{ErrorSphere, error_subspaces_orthogonal, card_pauliErrorsLe}
+If $C$ is non-degenerate,
+\[
+\dim(\mathrm{ES}(C,t)) \;=\; |\mathcal{E}(n,t)|\cdot\dim(C).
+\]
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Quantum Hamming bound}
+
+\begin{theorem}[Quantum Hamming bound]
+\lean{quantum_hamming_bound}
+\leanok
+\uses{error_sphere_dimension, finrank_Hn}
+If $C \le \mathcal{H}_n$ is non-degenerate, then
+\[
+\left(\sum_{i=0}^{t}\binom{n}{i}\,3^i\right)\cdot\dim_{\mathbb{C}}(C)
+\;\le\; 2^n.
+\]
+\end{theorem}

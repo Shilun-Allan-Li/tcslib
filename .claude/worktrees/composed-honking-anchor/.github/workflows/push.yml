@@ -1,0 +1,180 @@
+on:
+  push:
+    branches:
+      - main
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  style_lint:
+    name: Lint style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Don't 'import Mathlib', use precise imports
+        if: always()
+        run: |
+          ! (find TCSlib -name "*.lean" -type f -print0 | xargs -0 grep -E -n '^import Mathlib$')
+
+  build_lean_docs:
+    runs-on: ubuntu-latest
+    name: Build Lean project and docs
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install elan
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
+
+      - name: Get cache
+        run: ~/.elan/bin/lake -Kenv=dev exe cache get || true
+
+      - name: Build project
+        run: ~/.elan/bin/lake -Kenv=dev build TCSlib
+
+      - name: Cache mathlib docs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake/build/doc/Init
+            .lake/build/doc/Lake
+            .lake/build/doc/Lean
+            .lake/build/doc/Std
+            .lake/build/doc/Mathlib
+            .lake/build/doc/declarations
+            !.lake/build/doc/declarations/declaration-data-TCSlib*
+          key: MathlibDoc-${{ hashFiles('lake-manifest.json') }}
+          restore-keys: |
+            MathlibDoc-
+
+      - name: Build documentation
+        run: ~/.elan/bin/lake -Kenv=dev build TCSlib:docs
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-docs
+          path: .lake/build/doc
+
+  build_blueprint:
+    runs-on: ubuntu-latest
+    name: Build blueprint
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Build blueprint
+        uses: xu-cheng/texlive-action@v2
+        with:
+          docker_image: ghcr.io/xu-cheng/texlive-full:20231201
+          run: |
+            export PIP_BREAK_SYSTEM_PACKAGES=1
+            apk update
+            apk add --update make py3-pip git
+            apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
+            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git config --global --add safe.directory `pwd`
+            python3 -m pip install --upgrade pip requests wheel
+            CFLAGS="-I/usr/include/graphviz" LDFLAGS="-L/usr/lib/graphviz/ -R/usr/lib/graphviz/" python3 -m pip install pygraphviz
+            pip install -r blueprint/requirements.txt
+            python3 -m pip install invoke
+            inv all
+
+      - name: Upload blueprint artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blueprint
+          path: docs/blueprint
+
+  build_verso:
+    runs-on: ubuntu-latest
+    name: Build Verso website
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install elan
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
+
+      - name: Build Verso website
+        run: |
+          cd webpage
+          ~/.elan/bin/lake exe generate-site
+
+      - name: Upload Verso artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verso-site
+          path: webpage/_site
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Assemble and deploy
+    needs: [build_lean_docs, build_blueprint, build_verso]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download Verso site
+        uses: actions/download-artifact@v4
+        with:
+          name: verso-site
+          path: site_root
+
+      - name: Download blueprint
+        uses: actions/download-artifact@v4
+        with:
+          name: blueprint
+          path: site_root/blueprint
+
+      - name: Download lean docs
+        uses: actions/download-artifact@v4
+        with:
+          name: lean-docs
+          path: site_root/docs
+
+      - name: Inject favicon into blueprint and docs
+        run: |
+          python3 << 'EOF'
+          import glob, re
+          files = (
+            glob.glob('site_root/blueprint/**/*.html', recursive=True) +
+            glob.glob('site_root/docs/**/*.html', recursive=True)
+          )
+          links = (
+            '<link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg">'
+            '<link rel="icon" type="image/png" sizes="96x96" href="/tcslib/static/favicon-96x96.png">'
+            '<link rel="shortcut icon" href="/tcslib/static/favicon.ico">'
+            '<link rel="apple-touch-icon" sizes="180x180" href="/tcslib/static/apple-touch-icon.png">'
+          )
+          count = 0
+          for f in files:
+            content = open(f, encoding='utf-8', errors='ignore').read()
+            updated = re.sub(r'</head>', links + '</head>', content, count=1, flags=re.IGNORECASE)
+            if updated != content:
+              open(f, 'w', encoding='utf-8').write(updated)
+              count += 1
+          print(f'Injected favicon into {count}/{len(files)} files')
+          EOF
+
+      - name: Copy robots.txt and sitemap to site root
+        run: |
+          cp site_root/static/robots.txt site_root/robots.txt
+          cp site_root/static/sitemap.xml site_root/sitemap.xml
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site_root
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

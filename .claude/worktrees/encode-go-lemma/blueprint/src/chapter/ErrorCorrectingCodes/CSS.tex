@@ -1,0 +1,70 @@
+\chapter{CSS Codes (Not Yet Formalized)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter describes the \textbf{Calderbank--Shor--Steane (CSS) construction},
+which builds a quantum stabilizer code from two classical linear codes
+$C_Z, C_X \subseteq \mathbb{F}_q^n$ satisfying the orthogonality condition
+$C_Z \subseteq C_X^\perp$.
+
+The CSS formalization is \emph{not yet present} in the Lean library.
+The symplectic-form machinery used in the quantum Singleton bound
+(see \Cref{chap:quantum-singleton}) provides the underlying linear-algebra
+foundation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Symplectic vector space}
+
+\begin{definition}[Symplectic vector space]
+\notready
+For a finite field $\mathbb{F}_q$ and $n \in \mathbb{N}$, the
+\emph{symplectic space} is the vector space
+$V = \mathbb{F}_q^n \times \mathbb{F}_q^n$,
+equipped with the symplectic form
+\[
+\omega((x,z),(x',z')) \;=\; \sum_{i=0}^{n-1}(x_i z'_i - z_i x'_i).
+\]
+\end{definition}
+
+\begin{definition}[Isotropic subspace]
+\notready
+A subspace $S \le V$ is \emph{isotropic} if $\omega(u,v)=0$ for all $u,v\in S$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{CSS construction}
+
+\begin{definition}[CSS validity]
+\notready
+Classical codes $C_Z, C_X \le \mathbb{F}_q^n$ satisfy the \emph{CSS condition} if
+\[
+\forall x \in C_Z,\ \forall z \in C_X,\quad x \cdot z = 0.
+\]
+\end{definition}
+
+\begin{definition}[CSS stabilizer]
+\notready
+Given $C_Z \perp C_X$, the \emph{CSS stabilizer} is the subspace of $V$ generated
+by the $X$-type vectors $(x,0)$ for $x \in C_Z$ and $Z$-type vectors $(0,z)$ for $z \in C_X$.
+\end{definition}
+
+\begin{theorem}[CSS validity iff isotropy]
+\notready
+The CSS stabilizer is isotropic if and only if the CSS condition holds.
+\end{theorem}
+
+\begin{theorem}[CSS dimension formula]
+\notready
+If $C_Z \perp C_X$, then $\dim(\mathrm{cssStabilizer}) = \dim(C_Z) + \dim(C_X)$.
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{CSS code parameters}
+
+\begin{definition}[CSS code]
+\notready
+The \emph{CSS code} $Q(C_Z, C_X)$ encodes
+$k = n - \dim(C_Z) - \dim(C_X)$ logical qudits, and has distance
+$d = \min(d_Z, d_X)$ where $d_Z$ (resp.\ $d_X$) is the minimum weight of a vector
+in $C_Z^\perp \setminus C_X$ (resp.\ $C_X^\perp \setminus C_Z$).
+\end{definition}

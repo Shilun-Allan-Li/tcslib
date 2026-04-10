@@ -1,0 +1,20 @@
+{
+  "name": "Claude & Lean 4 Sandbox",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code && curl https://elan.lean-lang.org/elan-init.sh -sSf | sh -s -- -y && $HOME/.elan/bin/lake exe cache get",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/node/.elan/bin",
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  },
+  "mounts": [
+    "source=claude-code-config,target=/home/node/.claude,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "leanprover.lean4",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}

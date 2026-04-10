@@ -579,27 +579,25 @@ private lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → 
     | some _ => rfl
   | succ k ih =>
     intro ρ hρ
-    have hcard : ρ.freeVars.card = k + 1 := hρ
-    have hne : ρ.freeVars.Nonempty := Finset.card_pos.mp (by omega)
+    have hne : ρ.freeVars.Nonempty := Finset.card_pos.mpr (by omega)
     obtain ⟨v, hv⟩ := hne
     have hv_none : ρ v = none := by
       simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
         Option.isNone_iff_eq_none] at hv
       exact hv
     -- Updating v preserves all other free variables; numFree decreases by 1
-    have hupd_numFree : ∀ b : Bool,
-        Restriction.numFree (Function.update ρ v (some b)) = k := by
+    have hupd_numFree : ∀ b : Bool, (Function.update ρ v (some b)).numFree = k := by
       intro b
-      have herase : Restriction.freeVars (Function.update ρ v (some b)) =
-          ρ.freeVars.erase v := by
+      have herase : (Function.update ρ v (some b)).freeVars = ρ.freeVars.erase v := by
         ext i
         simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
           Finset.mem_erase, Option.isNone_iff_eq_none, Function.update_apply]
         by_cases hi : i = v
         · subst hi; simp
         · simp [hi]
-      show (Restriction.freeVars (Function.update ρ v (some b))).card = k
-      rw [herase, Finset.card_erase_of_mem hv, hcard]
+      show (Function.update ρ v (some b)).freeVars.card = k
+      rw [herase, Finset.card_erase_of_mem hv]
+      show ρ.freeVars.card - 1 = k
       omega
     obtain ⟨Tf, hTf_d, hTf_e⟩ := ih (Function.update ρ v (some false)) (hupd_numFree false)
     obtain ⟨Tt, hTt_d, hTt_e⟩ := ih (Function.update ρ v (some true)) (hupd_numFree true)
@@ -608,7 +606,7 @@ private lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → 
     · intro x
       -- Key: (Function.update ρ v (some b)).extend x = ρ.extend x when x v = b
       have hext : ∀ (b : Bool), x v = b →
-          Restriction.extend (Function.update ρ v (some b)) x = ρ.extend x := by
+          (Function.update ρ v (some b)).extend x = ρ.extend x := by
         intro b hxv
         funext i
         simp only [Restriction.extend, Function.update_apply]

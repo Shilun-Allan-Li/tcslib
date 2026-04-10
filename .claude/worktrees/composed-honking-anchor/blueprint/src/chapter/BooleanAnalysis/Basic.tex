@@ -1,0 +1,479 @@
+\chapter{Boolean Analysis — Core Definitions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+This chapter develops the Fourier--Walsh theory of Boolean functions
+$f : \{0,1\}^n \to \bbr$.  The uniform probability measure on $\{0,1\}^n$
+endows the space of Boolean functions with an $L^2$ inner product
+$\langle f, g\rangle = \E[fg]$.  The Walsh characters
+$\chi_S(x) = \prod_{i\in S}(-1)^{x_i}$, indexed by subsets $S\subseteq[n]$,
+form an orthonormal basis for this space, yielding the \textbf{Walsh--Fourier
+expansion} $f = \sum_S \hat f(S)\,\chi_S$.
+
+The main results are:
+\begin{itemize}
+  \item Walsh expansion (Fourier inversion).
+  \item Parseval's identity: $\|f\|^2 = \sum_S \hat f(S)^2$.
+  \item Influence via Fourier: $\mathrm{Inf}_i[f] = \sum_{S\ni i}\hat f(S)^2$.
+  \item Total influence: $I[f] = \sum_S |S|\,\hat f(S)^2$.
+  \item Noise operator in the Fourier domain: $\widehat{T_\rho f}(S) = \rho^{|S|}\hat f(S)$.
+\end{itemize}
+
+\textbf{Reference:} Ryan O'Donnell, \emph{Analysis of Boolean Functions},
+Cambridge University Press, 2014.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Boolean hypercube and functions}
+
+\begin{definition}[Boolean hypercube]
+\lean{BooleanAnalysis.BoolCube}
+\leanok
+The \emph{Boolean hypercube} of dimension $n$ is $\{0,1\}^n$,
+represented as the function type $\mathrm{Fin}\,n \to \mathrm{Bool}$.
+\end{definition}
+
+\begin{definition}[Boolean function]
+\lean{BooleanAnalysis.BooleanFunc}
+\leanok
+\uses{BooleanAnalysis.BoolCube}
+A \emph{Boolean function} of arity $n$ is a function $f : \{0,1\}^n \to \bbr$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Uniform measure and expectation}
+
+\begin{definition}[Uniform weight]
+\lean{BooleanAnalysis.uniformWeight}
+\leanok
+The uniform probability measure on $\{0,1\}^n$ assigns weight
+$2^{-n}$ to each point.
+\end{definition}
+
+\begin{definition}[Expectation]
+\lean{BooleanAnalysis.expect}
+\leanok
+\uses{BooleanAnalysis.uniformWeight, BooleanAnalysis.BooleanFunc}
+The \emph{expectation} of $f$ under the uniform measure:
+\[
+  \E[f] \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} f(x).
+\]
+\end{definition}
+
+\begin{definition}[$L^2$ inner product]
+\lean{BooleanAnalysis.innerProduct}
+\leanok
+\uses{BooleanAnalysis.expect}
+The \emph{$L^2$ inner product} of two Boolean functions with respect to the
+uniform measure:
+\[
+  \langle f, g\rangle \;=\; \E[f\cdot g]
+  \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} f(x)\,g(x).
+\]
+\end{definition}
+
+\begin{definition}[$L^2$ norm]
+\lean{BooleanAnalysis.l2Norm}
+\leanok
+\uses{BooleanAnalysis.innerProduct}
+The \emph{$L^2$ norm} of $f$: $\|f\| = \sqrt{\langle f,f\rangle}$.
+\end{definition}
+
+\begin{lemma}[Inner product is symmetric]
+\lean{BooleanAnalysis.innerProduct_comm}
+\leanok
+\uses{BooleanAnalysis.innerProduct}
+$\langle f, g\rangle = \langle g, f\rangle$.
+\end{lemma}
+
+\begin{lemma}[Inner product is nonneg on the diagonal]
+\lean{BooleanAnalysis.innerProduct_self_nonneg}
+\leanok
+\uses{BooleanAnalysis.innerProduct}
+$\langle f, f\rangle \ge 0$.
+\end{lemma}
+
+\begin{lemma}[Inner product is linear in the first argument]
+\lean{BooleanAnalysis.innerProduct_add_left}
+\leanok
+\uses{BooleanAnalysis.innerProduct}
+$\langle f + g, h\rangle = \langle f, h\rangle + \langle g, h\rangle$.
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Walsh--Fourier characters}
+
+\begin{definition}[Sign encoding]
+\lean{BooleanAnalysis.boolToSign}
+\leanok
+The \emph{sign encoding} maps $\mathrm{Bool}$ to $\{-1,1\}\subset\bbr$:
+\[
+  \sigma(b) \;=\; \begin{cases} 1 & b = \texttt{false},\\
+                                -1 & b = \texttt{true}. \end{cases}
+\]
+\end{definition}
+
+\begin{lemma}[Basic sign identities]
+\lean{BooleanAnalysis.boolToSign_false}
+\lean{BooleanAnalysis.boolToSign_true}
+\lean{BooleanAnalysis.boolToSign_sq}
+\lean{BooleanAnalysis.boolToSign_mul_self}
+\lean{BooleanAnalysis.boolToSign_not}
+\leanok
+\uses{BooleanAnalysis.boolToSign}
+$\sigma(\texttt{false}) = 1$, $\sigma(\texttt{true}) = -1$,
+$\sigma(b)^2 = 1$, and $\sigma(\lnot b) = -\sigma(b)$.
+\end{lemma}
+
+\begin{definition}[Walsh character]
+\lean{BooleanAnalysis.chiS}
+\leanok
+\uses{BooleanAnalysis.boolToSign}
+The \emph{Walsh--Fourier character} associated to $S\subseteq[n]$ is
+\[
+  \chi_S(x) \;=\; \prod_{i\in S}(-1)^{x_i}
+  \;=\; \prod_{i\in S}\sigma(x_i).
+\]
+The family $\{\chi_S\}_{S\subseteq[n]}$ forms an orthonormal basis for
+$L^2(\{0,1\}^n,\mathrm{uniform})$.
+\end{definition}
+
+\begin{lemma}[Character of the empty set]
+\lean{BooleanAnalysis.chiS_empty}
+\leanok
+\uses{BooleanAnalysis.chiS}
+$\chi_\varnothing \equiv 1$.
+\end{lemma}
+
+\begin{lemma}[Character of a singleton]
+\lean{BooleanAnalysis.chiS_singleton}
+\leanok
+\uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign}
+$\chi_{\{i\}}(x) = \sigma(x_i)$.
+\end{lemma}
+
+\begin{lemma}[Characters take values in $\{-1,1\}$]
+\lean{BooleanAnalysis.chiS_sq_eq_one}
+\leanok
+\uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_sq}
+$\chi_S(x)^2 = 1$ for all $S$ and $x$.
+\end{lemma}
+
+\begin{lemma}[Characters are multiplicative on disjoint sets]
+\lean{BooleanAnalysis.chiS_mul_of_disjoint}
+\leanok
+\uses{BooleanAnalysis.chiS}
+If $S$ and $T$ are disjoint then $\chi_{S\cup T}(x) = \chi_S(x)\cdot\chi_T(x)$.
+\end{lemma}
+
+\begin{lemma}[Product of two characters]
+\lean{BooleanAnalysis.chiS_mul_chiS}
+\leanok
+\uses{BooleanAnalysis.chiS}
+$\chi_S(x)\cdot\chi_T(x) = \chi_{S\mathbin{\triangle} T}(x)$,
+where $\triangle$ denotes symmetric difference.
+\end{lemma}
+
+\begin{lemma}[Character under global bit flip]
+\lean{BooleanAnalysis.chiS_neg}
+\leanok
+\uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_not}
+Flipping all bits multiplies the character by $(-1)^{|S|}$:
+\[
+  \chi_S(\lnot x) \;=\; (-1)^{|S|}\,\chi_S(x).
+\]
+\end{lemma}
+
+\begin{lemma}[Count of Walsh characters]
+\lean{BooleanAnalysis.card_walsh_characters}
+\leanok
+\uses{BooleanAnalysis.chiS}
+There are exactly $2^n$ Walsh characters, matching the dimension of
+$L^2(\{0,1\}^n)$.
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Fourier coefficients}
+
+\begin{definition}[Fourier coefficient]
+\lean{BooleanAnalysis.fourierCoeff}
+\leanok
+\uses{BooleanAnalysis.innerProduct, BooleanAnalysis.chiS}
+The \emph{Fourier--Walsh coefficient} of $f$ at frequency $S$ is
+\[
+  \hat f(S) \;=\; \langle f, \chi_S\rangle
+  \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} f(x)\,\chi_S(x).
+\]
+\end{definition}
+
+\begin{lemma}[Fourier coefficient at $\varnothing$ equals expectation]
+\lean{BooleanAnalysis.fourierCoeff_empty}
+\leanok
+\uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.expect}
+$\hat f(\varnothing) = \E[f]$.
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Walsh expansion}
+
+\begin{theorem}[Walsh expansion]
+\lean{BooleanAnalysis.walsh_expansion}
+\leanok
+\uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS}
+Every Boolean function $f:\{0,1\}^n\to\bbr$ has the unique representation
+\[
+  f(x) \;=\; \sum_{S\subseteq[n]} \hat f(S)\,\chi_S(x).
+\]
+This is the Fourier inversion formula for the uniform measure on $\{0,1\}^n$.
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Orthonormality and Parseval's identity}
+
+\begin{theorem}[Orthonormality of Walsh characters]
+\lean{BooleanAnalysis.fourier_coeff_chi}
+\leanok
+\uses{BooleanAnalysis.innerProduct, BooleanAnalysis.chiS, BooleanAnalysis.chiS_mul_chiS}
+The Walsh characters form an orthonormal system:
+\[
+  \langle \chi_S, \chi_T\rangle \;=\; [S = T].
+\]
+\end{theorem}
+
+\begin{lemma}[Self inner product of a character is 1]
+\lean{BooleanAnalysis.innerProduct_chi_self}
+\leanok
+\uses{BooleanAnalysis.fourier_coeff_chi}
+$\langle \chi_S, \chi_S\rangle = 1$.
+\end{lemma}
+
+\begin{theorem}[Parseval's identity]
+\lean{BooleanAnalysis.parseval}
+\leanok
+\uses{BooleanAnalysis.innerProduct, BooleanAnalysis.fourierCoeff,
+      BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.walsh_expansion}
+The squared $L^2$ norm of $f$ equals the sum of squared Fourier coefficients:
+\[
+  \|f\|^2 \;=\; \langle f, f\rangle \;=\; \sum_{S\subseteq[n]} \hat f(S)^2.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Coordinate influence}
+
+\begin{definition}[Bit flip]
+\lean{BooleanAnalysis.flipBit}
+\leanok
+\uses{BooleanAnalysis.BoolCube}
+The point $x^i\in\{0,1\}^n$ obtained from $x$ by flipping the $i$-th coordinate.
+\end{definition}
+
+\begin{definition}[Influence]
+\lean{BooleanAnalysis.influence}
+\leanok
+\uses{BooleanAnalysis.expect, BooleanAnalysis.flipBit}
+The \emph{influence} of coordinate $i$ on $f$ measures how often flipping
+bit $i$ changes the output:
+\[
+  \mathrm{Inf}_i[f]
+  \;=\; \E\!\left[\frac{(f(x)-f(x^i))^2}{4}\right].
+\]
+For $\pm 1$-valued $f$ this equals $\Pr[f(x)\ne f(x^i)]$.
+\end{definition}
+
+\begin{definition}[Total influence]
+\lean{BooleanAnalysis.totalInfluence}
+\leanok
+\uses{BooleanAnalysis.influence}
+$I[f] = \sum_{i=1}^n \mathrm{Inf}_i[f]$.
+\end{definition}
+
+\begin{lemma}[Influence of a Walsh character]
+\lean{BooleanAnalysis.influence_chi}
+\leanok
+\uses{BooleanAnalysis.influence, BooleanAnalysis.chiS}
+$\mathrm{Inf}_i[\chi_S] = [i\in S]$.
+\end{lemma}
+
+\begin{theorem}[Influence via Fourier coefficients]
+\lean{BooleanAnalysis.influence_eq_sum_fourier}
+\leanok
+\uses{BooleanAnalysis.influence, BooleanAnalysis.fourierCoeff,
+      BooleanAnalysis.parseval, BooleanAnalysis.walsh_expansion,
+      BooleanAnalysis.fourier_coeff_chi}
+\[
+  \mathrm{Inf}_i[f] \;=\; \sum_{\substack{S\subseteq[n]\\ i\in S}} \hat f(S)^2.
+\]
+\end{theorem}
+
+\begin{theorem}[Total influence via Fourier coefficients]
+\lean{BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
+\leanok
+\uses{BooleanAnalysis.totalInfluence, BooleanAnalysis.influence_eq_sum_fourier}
+\[
+  I[f] \;=\; \sum_{S\subseteq[n]} |S|\,\hat f(S)^2.
+\]
+\end{theorem}
+
+\begin{lemma}[Influence is at most 1]
+\lean{BooleanAnalysis.influence_le_one}
+\leanok
+\uses{BooleanAnalysis.influence}
+For any $\pm 1$-valued function and any coordinate $i$,
+$\mathrm{Inf}_i[f] \le 1$.
+\end{lemma}
+
+\begin{lemma}[Average influence lower bound]
+\lean{BooleanAnalysis.max_influence_lower_bound}
+\leanok
+\uses{BooleanAnalysis.totalInfluence, BooleanAnalysis.influence}
+There exists a coordinate $i$ with $\mathrm{Inf}_i[f] \ge I[f]/n$.
+\end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Noise operator}
+
+\begin{definition}[Noise operator]
+\lean{BooleanAnalysis.noiseOp}
+\leanok
+\uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS}
+The \emph{noise operator} $T_\rho$ with parameter $\rho\in[-1,1]$, defined via
+the Fourier domain by
+\[
+  T_\rho f(x) \;=\; \sum_{S\subseteq[n]} \rho^{|S|}\,\hat f(S)\,\chi_S(x).
+\]
+Probabilistically, $T_\rho f(x) = \E_y[f(y)]$ where each bit of $y$ agrees
+with $x_i$ with probability $\tfrac{1+\rho}{2}$ and is flipped with probability
+$\tfrac{1-\rho}{2}$, independently.
+\end{definition}
+
+\begin{theorem}[Noise operator in the Fourier domain]
+\lean{BooleanAnalysis.noiseOp_fourier}
+\leanok
+\uses{BooleanAnalysis.noiseOp, BooleanAnalysis.fourierCoeff,
+      BooleanAnalysis.fourier_coeff_chi}
+\[
+  \widehat{T_\rho f}(S) \;=\; \rho^{|S|}\,\hat f(S).
+\]
+\end{theorem}
+
+\begin{theorem}[Stability formula]
+\lean{BooleanAnalysis.stability_formula}
+\leanok
+\uses{BooleanAnalysis.noiseOp, BooleanAnalysis.innerProduct,
+      BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi,
+      BooleanAnalysis.walsh_expansion}
+\[
+  \langle f, T_\rho f\rangle \;=\; \sum_{S\subseteq[n]} \rho^{|S|}\,\hat f(S)^2.
+\]
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Notable Boolean functions}
+
+\begin{definition}[Dictator]
+\lean{BooleanAnalysis.dictator}
+\leanok
+\uses{BooleanAnalysis.boolToSign}
+The \emph{dictator function} for coordinate $i$ outputs the sign of the $i$-th
+bit: $\mathrm{dict}_i(x) = (-1)^{x_i}$.  Its unique nonzero Fourier coefficient
+is $\widehat{\mathrm{dict}_i}(\{i\}) = 1$.
+\end{definition}
+
+\begin{lemma}[Dictator equals singleton character]
+\lean{BooleanAnalysis.dictator_eq_chi}
+\leanok
+\uses{BooleanAnalysis.dictator, BooleanAnalysis.chiS}
+$\mathrm{dict}_i = \chi_{\{i\}}$.
+\end{lemma}
+
+\begin{definition}[Parity]
+\lean{BooleanAnalysis.parity}
+\leanok
+\uses{BooleanAnalysis.boolToSign}
+The \emph{parity function} $f(x) = (-1)^{x_1+\cdots+x_n}$ satisfies
+$\hat f([n]) = 1$ and $\hat f(S) = 0$ for $S\ne[n]$.
+\end{definition}
+
+\begin{lemma}[Parity equals full character]
+\lean{BooleanAnalysis.parity_eq_chi_univ}
+\leanok
+\uses{BooleanAnalysis.parity, BooleanAnalysis.chiS}
+$\mathrm{parity}_n = \chi_{[n]}$.
+\end{lemma}
+
+\begin{definition}[Majority]
+\lean{BooleanAnalysis.majority}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc}
+The \emph{majority function} on $\{0,1\}^{2k+1}$ outputs $1$ if more than half
+the inputs are $\texttt{false}$, and $-1$ otherwise.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sensitivity}
+
+\begin{definition}[Sensitivity at a point]
+\lean{BooleanAnalysis.sensitivity}
+\leanok
+\uses{BooleanAnalysis.flipBit}
+The \emph{sensitivity} of $f$ at $x$ is the number of coordinates $i$ such
+that flipping bit $i$ changes $f(x)$.
+\end{definition}
+
+\begin{definition}[Maximum sensitivity]
+\lean{BooleanAnalysis.maxSensitivity}
+\leanok
+\uses{BooleanAnalysis.sensitivity}
+The maximum sensitivity of $f$ over all inputs.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Properties for Arrow's theorem}
+
+\begin{definition}[Odd function]
+\lean{BooleanAnalysis.isOddFunc}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc}
+A Boolean function $f$ is \emph{odd} if $f(\lnot x) = -f(x)$ for all $x$.
+This models antisymmetry of pairwise preferences in social choice.
+\end{definition}
+
+\begin{definition}[$\pm 1$-valued function]
+\lean{BooleanAnalysis.isPmOne}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc}
+$f$ is \emph{$\pm 1$-valued} if $f(x)\in\{-1,1\}$ for all $x$.
+\end{definition}
+
+\begin{lemma}[Odd functions have zero even-level Fourier coefficients]
+\lean{BooleanAnalysis.fourierCoeff_odd_even}
+\leanok
+\uses{BooleanAnalysis.isOddFunc, BooleanAnalysis.fourierCoeff,
+      BooleanAnalysis.chiS_neg}
+If $f$ is odd and $|S|$ is even, then $\hat f(S) = 0$.
+\end{lemma}
+
+\begin{lemma}[Self inner product of a $\pm 1$ function]
+\lean{BooleanAnalysis.innerProduct_self_pm_one}
+\leanok
+\uses{BooleanAnalysis.isPmOne, BooleanAnalysis.innerProduct}
+If $f$ is $\pm 1$-valued then $\langle f, f\rangle = 1$.
+\end{lemma}
+
+\begin{lemma}[Parseval for $\pm 1$-valued functions]
+\lean{BooleanAnalysis.parseval_pm_one}
+\leanok
+\uses{BooleanAnalysis.isPmOne, BooleanAnalysis.parseval,
+      BooleanAnalysis.innerProduct_self_pm_one}
+If $f$ is $\pm 1$-valued then $\sum_{S\subseteq[n]}\hat f(S)^2 = 1$.
+\end{lemma}
+
+\begin{definition}[Fourier weight at level $k$]
+\lean{BooleanAnalysis.weightLevel}
+\leanok
+\uses{BooleanAnalysis.fourierCoeff}
+The \emph{Fourier weight at level $k$} is
+\[
+  W_k[f] \;=\; \sum_{\substack{S\subseteq[n]\\ |S|=k}} \hat f(S)^2.
+\]
+\end{definition}
