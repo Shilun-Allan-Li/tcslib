@@ -12,3 +12,4 @@ import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
 import TCSlib.BooleanAnalysis.Circuit
 import TCSlib.BooleanAnalysis.Hypercontractivity
+import TCSlib.BooleanAnalysis.Switching
