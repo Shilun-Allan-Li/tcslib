@@ -1,4 +1,5 @@
-import TCSlib.BooleanAnalysis.Switching.Defs
+import TCSlib.BooleanAnalysis.Switching.Restriction
+import Mathlib.Tactic.Cases
 
 /-!
 # Canonical Decision Tree Construction

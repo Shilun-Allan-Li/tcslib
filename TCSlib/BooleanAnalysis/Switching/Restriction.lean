@@ -1,5 +1,7 @@
 import TCSlib.BooleanAnalysis.Circuit
-import Mathlib
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Data.Int.Star
 
 /-!
 # Switching Lemma — Basic Definitions
