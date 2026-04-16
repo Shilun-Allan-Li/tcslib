@@ -4,7 +4,7 @@ import TCSlib.BooleanAnalysis.Switching.Encoding
 import TCSlib.BooleanAnalysis.Switching.EncodingProperties
 import TCSlib.BooleanAnalysis.Switching.RoundTrip
 
-/- import TCSlib.BooleanAnalysis.Switching.Switching
+/- import TCSlib.BooleanAnalysis.Switching.Switching -/
 
 /-!
 # Håstad's Switching Lemma — Razborov's Decision-Tree Path Encoding
