@@ -71,13 +71,13 @@ private lemma encode_go_aux_length_bound {n : ℕ} (f : DNF n) (w : ℕ)
         · next fl fls _ =>
           apply le_trans (ih _ _ _ _)
           simp only [List.length_append, List.length_cons,
-                     List.length_nil, Nat.add_zero]
+                     List.length_nil]
           have := processClauseLits_tight fl fls step rest ρ₀ σ
           have : (step :: rest).length = rest.length + 1 := List.length_cons
           omega
 
 lemma razborovEncode_aux_length_le {n : ℕ} (f : DNF n) (w d : ℕ) (ρ : Restriction n)
-    (hbad : IsBadRestriction f.eval d ρ) :
+    (_hbad : IsBadRestriction f.eval d ρ) :
     (razborovEncode f w d ρ).2.length ≤ 2 * d := by
   show (razborovEncode.go f w _ _ ρ ρ []).2.length ≤ 2 * d
   calc (razborovEncode.go f w _ _ ρ ρ []).2.length
@@ -103,7 +103,7 @@ lemma processClauseLits_sigma_stable {n : ℕ}
       simp only [processClauseLits]
       have hne : hd.1.var ≠ v := hv hd (List.mem_cons_self)
       rw [ih _ _ _ (fun p hp => hv p (List.mem_cons_of_mem _ hp))]
-      simp only [Function.update_apply, ne_eq, hne.symm, not_false_eq_true, ite_false]
+      simp only [Function.update_apply, hne.symm, ite_false]
 
 /-- `processClauseLits` preserves ρ₀ at variables not in the literal list. -/
 lemma processClauseLits_rho_stable {n : ℕ}
@@ -119,7 +119,7 @@ lemma processClauseLits_rho_stable {n : ℕ}
       simp only [processClauseLits]
       have hne : hd.1.var ≠ v := hv hd (List.mem_cons_self)
       rw [ih _ _ _ (fun p hp => hv p (List.mem_cons_of_mem _ hp))]
-      simp only [Function.update_apply, ne_eq, hne.symm, not_false_eq_true, ite_false]
+      simp only [Function.update_apply, hne.symm, ite_false]
 
 /-- `processClauseLits` never makes ρ₀ become `none`. -/
 lemma processClauseLits_rho_ne_none {n : ℕ}
@@ -373,7 +373,7 @@ lemma foldl_sigma_stable {n : ℕ} (t : Term n)
     | [] => exact ih _ hne_es
     | l :: _ =>
       rw [ih _ hne_es]
-      simp only [Function.update_apply, ne_eq, (hne_e l _ h).symm, not_false_eq_true, ite_false]
+      simp only [Function.update_apply, (hne_e l _ h).symm, ite_false]
 
 /-- The ρ₀-foldl preserves `v` when no entry targets `v`. -/
 lemma foldl_rho_stable {n : ℕ} (t : Term n)
@@ -393,7 +393,7 @@ lemma foldl_rho_stable {n : ℕ} (t : Term n)
     | [] => exact ih _ hne_es
     | l :: _ =>
       rw [ih _ hne_es]
-      simp only [Function.update_apply, ne_eq, (hne_e l _ h).symm, not_false_eq_true, ite_false]
+      simp only [Function.update_apply, (hne_e l _ h).symm, ite_false]
 
 /-- The σ-foldl preserves `none`. -/
 lemma foldl_sigma_preserves_none {n : ℕ} (t : Term n)
@@ -406,7 +406,7 @@ lemma foldl_sigma_preserves_none {n : ℕ} (t : Term n)
     simp only [List.foldl_cons]
     apply ih
     match h : t.drop e.1 with
-    | [] => simp [h, hv]
+    | [] => simp [hv]
     | l :: _ =>
       simp only [Function.update_apply]
       split
@@ -616,12 +616,12 @@ lemma processEntries_of_processClauseLits {n : ℕ}
   induction lits generalizing path ρ₀_enc σ_enc σ_dec ρ₀_dec with
   | nil =>
     simp only [processClauseLits, List.nil_append, List.foldl_nil]
-    simp [razborovDecode.processEntries, show w ≥ w from le_refl w]
+    simp [razborovDecode.processEntries]
   | cons hd tl ih =>
     cases path with
     | nil =>
       simp only [processClauseLits, List.nil_append, List.foldl_nil]
-      simp [razborovDecode.processEntries, show w ≥ w from le_refl w]
+      simp [razborovDecode.processEntries]
     | cons p ps =>
       simp only [processClauseLits]
       have hmem_hd : hd ∈ t.zipIdx :=
@@ -719,7 +719,7 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
     (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
     (l : Literal n) (hl : l ∈ t) (hfree : ρ₀ l.var = none) :
     (razborovEncode.go f w enc_fuel path ρ₀ σ []).1 l.var ≠ some l.neg := by
-  induction' enc_fuel with enc_fuel ih generalizing path ρ₀ σ <;> simp_all +decide [ razborovEncode.go ];
+  induction' enc_fuel with enc_fuel ih generalizing path ρ₀ σ <;> simp_all +decide ;
   · cases path <;> simp_all +decide [ SwitchingLemma2.razborovEncode.go ];
   · rcases path with ( _ | ⟨ step, rest ⟩ );
     · rw [ razborovEncode.go ] ; aesop;
@@ -727,7 +727,7 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
         obtain ⟨k, hk⟩ : ∃ k, l = t.get k ∧ k.val < t.length := by
           have := List.mem_iff_get.mp hl; aesop;
         have h_mem : (l, k.val) ∈ (t.zipIdx).filter (fun ⟨l, _⟩ => decide (l.var ∈ ρ₀.freeVars)) := by
-          simp +decide [ hk, hfree, Restriction.freeVars ];
+          simp +decide [ hk, Restriction.freeVars ];
           grind;
         exact List.exists_cons_of_ne_nil ( by rintro h; simp +decide [ h ] at h_mem );
       -- By definition of `processClauseLits`, we know that `pcl.2.1 l.var = none` or `pcl.2.1 l.var ≠ none`.

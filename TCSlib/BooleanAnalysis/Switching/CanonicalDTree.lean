@@ -174,7 +174,7 @@ private lemma termSubTree_eval {n : ℕ} (lits : List (Literal n))
     · rename_i hfree
       simp only [DecisionTree.eval]
       cases hxv : x l.var <;> simp [hxv, ih] <;>
-        congr 1 <;> simp [List.foldl, hfree, hxv]
+        congr 1 <;> simp [hfree]
     · rename_i hnfree
       rw [ih]; congr 1; simp [List.foldl, hnfree]
 
@@ -326,7 +326,7 @@ private lemma canonicalDTree_go_correct {n : ℕ} (f : DNF n) (fuel : ℕ) (ρ :
                   by_cases hbl : b = l.neg
                   · exact absurd ⟨l, hl, by rw [Literal.killedBy, hv, hbl]⟩ ht_nk
                   · show ρ l.var = some (!l.neg); rw [hv]; congr 1
-                    cases b <;> cases hn : l.neg <;> simp_all [hn]
+                    cases b <;> cases hn : l.neg <;> simp_all
               exact lt_of_lt_of_le
                 (termSubTree_foldl_numFree_lt t ρ x l hl_mem hl_free) hle
             change (canonicalDTree.go f k ρ').eval x = _
@@ -462,7 +462,7 @@ lemma canonicalDTree_go_fuel_invariant {n : ℕ} (f : DNF n) :
           intro ρ' hρ'
           by_cases hfix : decide (Term.fixedBy t ρ')
           · simp only [hfix, ↓reduceIte]
-          · simp only [hfix, ↓reduceIte]
+          · simp only [hfix]
             have hρ'_lt_k : ρ'.numFree < k := hk ▸ hρ'
             exact ih ρ'.numFree hρ'_lt_k ρ' f₁ f₂ rfl
               (by omega) (by omega))
@@ -568,7 +568,7 @@ For termSubTree with distinct-variable literals, the k-th deepPath variable
 lemma termSubTree_deepPath_var_match {n : ℕ} :
     ∀ (lits : List (Literal n)) (ρ : Restriction n)
       (cont : Restriction n → DecisionTree n)
-      (hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var))
+      (_hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var))
       (k : ℕ)
       (hk : k < (lits.filter (fun l => decide (l.var ∈ ρ.freeVars))).length)
       (hk_path : k < (termSubTree lits ρ cont).deepPath.length),
@@ -599,7 +599,7 @@ The deepPath of `termSubTree` decomposes into entries for the free literals
 lemma termSubTree_deepPath_append {n : ℕ} :
     ∀ (lits : List (Literal n)) (ρ : Restriction n)
       (cont : Restriction n → DecisionTree n)
-      (hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var)),
+      (_hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var)),
       ∃ (ρ' : Restriction n),
         (∀ v, v ∉ (lits.map Literal.var).toFinset → (ρ' v = ρ v)) ∧
         (termSubTree lits ρ cont).deepPath.length =
@@ -612,11 +612,11 @@ lemma termSubTree_deepPath_append {n : ℕ} :
       have h_branch : ∃ b : Bool, (termSubTree (l :: lits) ρ cont).deepPath = (l.var, b) :: (termSubTree lits (Function.update ρ l.var (some b)) cont).deepPath := by
         convert termSubTree_deepPath_head_free l lits ρ cont hfree using 1;
       obtain ⟨ b, hb ⟩ := h_branch;
-      obtain ⟨ ρ', hρ', hρ'' ⟩ := ih ( Function.update ρ l.var ( some b ) ) cont ( List.Pairwise.tail hdistinct ) ; use ρ'; simp_all +decide [ List.filter_cons ] ;
+      obtain ⟨ ρ', hρ', hρ'' ⟩ := ih ( Function.update ρ l.var ( some b ) ) cont ( List.Pairwise.tail hdistinct ) ; use ρ'; simp_all +decide ;
       rw [ add_right_comm, filter_free_update_eq ];
       exact fun x hx => Ne.symm ( hdistinct.1 x hx );
     · rw [ termSubTree_cons_nonfree ];
-      · obtain ⟨ ρ', hρ₁, hρ₂ ⟩ := ih ρ cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use ρ'; simp_all +decide [ List.filter_cons ] ;
+      · obtain ⟨ ρ', hρ₁, hρ₂ ⟩ := ih ρ cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use ρ'; simp_all +decide ;
       · assumption
 
 /-
@@ -626,7 +626,7 @@ The deepPath of `termSubTree` splits into a prefix (for the free literals)
 lemma termSubTree_deepPath_split {n : ℕ} :
     ∀ (lits : List (Literal n)) (ρ : Restriction n)
       (cont : Restriction n → DecisionTree n)
-      (hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var)),
+      (_hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var)),
       ∃ (prefix_dp : List (Fin n × Bool)) (ρ' : Restriction n),
         (termSubTree lits ρ cont).deepPath = prefix_dp ++ (cont ρ').deepPath ∧
         prefix_dp.length = (lits.filter (fun l => decide (l.var ∈ ρ.freeVars))).length ∧
@@ -636,11 +636,11 @@ lemma termSubTree_deepPath_split {n : ℕ} :
   · exact ⟨ [ ], ρ, rfl, rfl, fun _ _ => rfl ⟩;
   · by_cases hfree : l.var ∈ ρ.freeVars;
     · obtain ⟨ b, hb ⟩ := termSubTree_deepPath_head_free l lits ρ cont hfree;
-      obtain ⟨ prefix_dp, ρ', h₁, h₂, h₃ ⟩ := ih ( Function.update ρ l.var ( some b ) ) cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use ( l.var, b ) :: prefix_dp, ρ'; simp_all +decide [ List.filter_cons ] ;
+      obtain ⟨ prefix_dp, ρ', h₁, h₂, h₃ ⟩ := ih ( Function.update ρ l.var ( some b ) ) cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use ( l.var, b ) :: prefix_dp, ρ'; simp_all +decide ;
       rw [ filter_free_update_eq ];
       exact fun x hx => Ne.symm ( hdistinct.1 x hx );
     · rw [ termSubTree_cons_nonfree ];
-      · obtain ⟨ prefix_dp, ρ', h₁, h₂, h₃ ⟩ := ih ρ cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use prefix_dp, ρ'; simp_all +decide [ List.filter_cons ] ;
+      · obtain ⟨ prefix_dp, ρ', h₁, h₂, h₃ ⟩ := ih ρ cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use prefix_dp, ρ'; simp_all +decide ;
       · assumption
 
 /-- **`canonicalDTree.go` in the alive branch delegates to `termSubTree`**.
@@ -705,7 +705,7 @@ private lemma termSubTree_skip_updated_head {n : ℕ}
   apply termSubTree_cons_nonfree
   rw [← hv_eq]
   simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
-             Option.isNone_iff_eq_none, Function.update_apply, ite_eq_left_iff]
+             Option.isNone_iff_eq_none, Function.update_apply]
   simp
 
 /-! ## Depth bounds -/
@@ -768,12 +768,12 @@ lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → Bool)
       · simp only [DecisionTree.eval]
         cases hxv : x v with
         | false =>
-          simp only [hxv, Bool.false_eq_true, if_false]
+          simp only [Bool.false_eq_true, if_false]
           rw [hev0]
           simp only [restrictFn]
           rw [extend_update_self ρ v x false hv hxv]
         | true =>
-          simp only [hxv, if_true]
+          simp only [if_true]
           rw [hev1]
           simp only [restrictFn]
           rw [extend_update_self ρ v x true hv hxv]

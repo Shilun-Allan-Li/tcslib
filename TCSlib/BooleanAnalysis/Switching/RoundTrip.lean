@@ -127,7 +127,7 @@ lemma roundtrip_inv_hC' {n : ℕ}
       (fun σ' (e : ℕ × Bool) =>
         match t_clause.drop e.1 with | [] => σ' | l :: _ => Function.update σ' l.var none)
       σ_dec v = σ v := by
-  by_cases hv' : ρ₀ v = none <;> simp_all +decide [ Function.update_apply ];
+  by_cases hv' : ρ₀ v = none <;> simp_all +decide ;
   · exact?;
   · convert foldl_sigma_stable t_clause ( processClauseLits lits path ρ₀ σ |> Prod.snd |> Prod.snd |> Prod.snd ) σ_dec v _ using 1;
     · rw [ hC v hv' ];
@@ -335,7 +335,7 @@ private lemma go_roundtrip {n : ℕ} (f : DNF n) (w : ℕ) (hw : f.width ≤ w)
 
 /-- The round-trip: decoding the encoding of ρ recovers ρ. -/
 lemma razborovDecode_encode {n : ℕ} (f : DNF n) (w d : ℕ) (ρ : Restriction n)
-    (hbad : IsBadRestriction f.eval d ρ) (hw : f.width ≤ w)
+    (_hbad : IsBadRestriction f.eval d ρ) (hw : f.width ≤ w)
     (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂) :
     razborovDecode f w (razborovEncode f w d ρ).1 (razborovEncode f w d ρ).2 = ρ := by
   unfold razborovDecode razborovEncode

@@ -286,7 +286,7 @@ private lemma processClauseLits_aux_idx_lt {n : ℕ} (t : Term n)
     `triplesToAux w ts` for some triple list `ts` whose length is bounded by
     the path length, and whose last element (if any) has `hasMarker = true`. -/
 private lemma encode_go_wellformed {n : ℕ} (f : DNF n) (w : ℕ)
-    (hw : f.width ≤ w) (hw_pos : 0 < w)
+    (hw : f.width ≤ w) (_hw_pos : 0 < w)
     (fuel : ℕ) (path : List (Fin n × Bool)) (ρ₀ σ : Restriction n) :
     ∃ ts : List (Fin w × Bool × Bool),
       (razborovEncode.go f w fuel path ρ₀ σ []).2 = triplesToAux w ts ∧
@@ -307,18 +307,18 @@ private lemma encode_go_wellformed {n : ℕ} (f : DNF n) (w : ℕ)
       cases hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
       | none =>
         refine ⟨[], ?_, by simp, by intro hne; exact absurd rfl hne⟩
-        simp [hfind, triplesToAux]
+        simp [triplesToAux]
       | some t_clause =>
-        simp only [hfind]
+        simp only []
         -- Filter free literals
         set fli := (t_clause.zipIdx).filter
           (fun ⟨l, _⟩ => decide (l.var ∈ ρ₀.freeVars)) with hfli_def
         cases hflicase : fli with
         | nil =>
           refine ⟨[], ?_, by simp, by intro hne; exact absurd rfl hne⟩
-          simp [hflicase, triplesToAux]
+          simp [triplesToAux]
         | cons fl fls =>
-          simp only [hflicase]
+          simp only []
           set pcl := processClauseLits (fl :: fls) (step :: rest) ρ₀ σ with hpcl_def
           -- Extract the "new block" of aux data from pcl
           have ht_mem : t_clause ∈ f := List.mem_of_find?_eq_some hfind
@@ -472,7 +472,7 @@ private lemma exists_aux_injection {n : ℕ} (f : DNF n) (w d : ℕ)
       rw [show (parseAux w hw_pos aux)[(parseAux w hw_pos aux).length - 1]'
               (Nat.sub_lt hlen_pos (by norm_num)) =
             ts[ts.length - 1]'(Nat.sub_lt (List.length_pos_iff.mpr hts_ne) (by norm_num))
-          from by congr 1 <;> rw [hparse]]
+          from by (congr 1; rw [hparse])]
     exact hlast_val
   have hparse_eq : parseAux w hw_pos aux₁ = parseAux w hw_pos aux₂ := by
     have h1 := hlen aux₁ haux₁
@@ -595,7 +595,7 @@ private lemma aux_image_card_bound {n : ℕ} (f : DNF n) (w d : ℕ)
     marker after each clause block). Thus each of the `d` path steps has
     `w · 2 · 2 = 4w` possibilities, giving `(4w)^d` fibers. -/
 private lemma fiber_bound {n : ℕ} (f : DNF n) (w s d : ℕ)
-    (hw : f.width ≤ w) (hd : d ≤ s)
+    (hw : f.width ≤ w) (_hd : d ≤ s)
     (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (γ : Restriction n) :
     (Finset.univ.filter fun ρ : Restriction n =>
@@ -720,7 +720,7 @@ private lemma card_filter_numFree_eq (n k : ℕ) :
         simp only [ψ, hi, dite_false] at this
         exact this
       have hcard_ψ : Fintype.card ((↥Sᶜ : Type) → Bool) = 2 ^ (n - S.card) := by
-        simp [Fintype.card_fun, Fintype.card_coe, Finset.card_compl]
+        simp [Fintype.card_coe]
       have himg_ψ : (Finset.univ.image ψ :
           Finset (Fin n → Bool)) = (Finset.univ.filter fun g => ∀ i ∈ S, g i = false) := by
         ext g
@@ -1058,7 +1058,7 @@ private lemma canonicalDTree_deepPath_match_freeLits {n : ℕ} (f : DNF n)
     refine' List.Pairwise.imp_of_mem _ hnodup;
     exact fun { a b } ha hb hab h => hab <| hnd a ha b hb h;
   have := canonicalDTree_alive_eq_termSubTree' f ρ halive.1 halive.2 t hfind;
-  have := termSubTree_deepPath_var_match t ρ (fun ρ' => if decide (Term.fixedBy t ρ') = true then DecisionTree.leaf true else SwitchingLemma2.canonicalDTree.go f ρ.numFree ρ') h_pairwise k ?_ ?_ <;> simp_all +decide [ List.getElem?_eq_getElem ];
+  have := termSubTree_deepPath_var_match t ρ (fun ρ' => if decide (Term.fixedBy t ρ') = true then DecisionTree.leaf true else SwitchingLemma2.canonicalDTree.go f ρ.numFree ρ') h_pairwise k ?_ ?_ <;> simp_all +decide ;
   any_goals rw [ ← zipIdx_filter_length ] ; simp +decide [ hk_flis ];
   rw [ ← zipIdx_filter_getElem_fst ]
 
@@ -1107,15 +1107,15 @@ The termSubTree deepPath, after dropping the free-literal prefix, equals
 private lemma processClauseLits_termSubTree_drop {n : ℕ} :
     ∀ (t : Term n) (ρ₀ σ : Restriction n)
       (cont : Restriction n → DecisionTree n)
-      (hdistinct : t.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var))
+      (_hdistinct : t.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var))
       (path : List (Fin n × Bool))
       (lits : List (Literal n × ℕ))
       (hlits_len : lits.length = (t.filter (fun l => decide (l.var ∈ ρ₀.freeVars))).length)
-      (hlits_match : ∀ k (hk : k < lits.length),
+      (_hlits_match : ∀ k (hk : k < lits.length),
         (lits[k]'hk).1 = (t.filter (fun l => decide (l.var ∈ ρ₀.freeVars)))[k]'(by omega))
-      (hpath_take : path = (termSubTree t ρ₀ cont).deepPath.take path.length)
-      (hfreeLen_le : lits.length ≤ path.length)
-      (hdp_len : path.length ≤ (termSubTree t ρ₀ cont).deepPath.length),
+      (_hpath_take : path = (termSubTree t ρ₀ cont).deepPath.take path.length)
+      (_hfreeLen_le : lits.length ≤ path.length)
+      (_hdp_len : path.length ≤ (termSubTree t ρ₀ cont).deepPath.length),
     (termSubTree t ρ₀ cont).deepPath.drop lits.length =
       (cont (processClauseLits lits path ρ₀ σ).2.1).deepPath := by
   intros t ρ₀ σ cont hdistinct path lits hlits_len hlits_match hpath hlits_le_path hpath_le_depth;
@@ -1137,7 +1137,7 @@ private lemma processClauseLits_termSubTree_drop {n : ℕ} :
         · grind;
       specialize ih ( Function.update ρ₀ l.var ( some b ) ) ( Function.update σ l.var ( some ( !l.neg ) ) ) cont ( by
         exact List.pairwise_cons.mp hdistinct |>.2 ) path_tl lits_tl ( by
-        simp +decide [ hlits, List.filter_cons, hfree ] at hlits_len ⊢;
+        simp +decide [ hlits, hfree ] at hlits_len ⊢;
         convert hlits_len using 2;
         apply filter_free_update_eq;
         exact fun x hx => by have := List.pairwise_cons.mp hdistinct; exact fun h => this.1 x hx <| by simp +decide [ h ] ; ) ( by
@@ -1148,10 +1148,10 @@ private lemma processClauseLits_termSubTree_drop {n : ℕ} :
         generalize_proofs at *;
         · simp +decide [ hlits ];
         · all_goals generalize_proofs at *;
-          simp +decide [ List.filter_cons, hfree ];
+          simp +decide [ hfree ];
           congr! 1;
           refine' List.filter_congr fun x hx => _;
-          by_cases h : x.var = l.var <;> simp +decide [ h, Function.update_apply ];
+          by_cases h : x.var = l.var <;> simp +decide [ h ];
           · exact absurd ( List.pairwise_cons.mp hdistinct |>.1 x hx ) ( by simp +decide [ h ] );
           · simp +decide [ Restriction.freeVars, Function.update_apply, h ] ) ( by
         grind +ring ) ( by
@@ -1169,7 +1169,7 @@ private lemma canonicalPath_preserve_processClauseLits {n : ℕ} (f : DNF n)
     (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
     (ρ₀ σ : Restriction n)
     (hcanon : IsCanonicalPath f ρ₀ path)
-    (hmatch : ∀ (k : ℕ) (hk : k < min lits.length path.length),
+    (_hmatch : ∀ (k : ℕ) (hk : k < min lits.length path.length),
       (lits[k]'(by omega)).1.var = (path[k]'(by omega)).1)
     -- Extra context for the proof:
     (t : Term n)
@@ -1388,13 +1388,13 @@ private lemma razborovEncode_go_numFree_invariant {n : ℕ}
         have hall : ∀ t ∈ f, Term.killedBy t ρ₀ := by
           intro t ht
           have hne := (List.find?_eq_none.mp hfind) t ht
-          simp only [decide_eq_true_eq, decide_not, Bool.not_eq_true', decide_eq_false_iff_not,
+          simp only [decide_not, Bool.not_eq_true', decide_eq_false_iff_not,
                      not_not] at hne
           exact hne
         have hdtd := canonicalDTree_depth_zero_of_killed f ρ₀ hall
         omega
       | some t_clause =>
-        simp only [hfind]
+        simp only []
         have ht_mem : t_clause ∈ f := List.mem_of_find?_eq_some hfind
         -- Build freeLitsIdx
         set fli := (t_clause.zipIdx).filter
@@ -1409,8 +1409,8 @@ private lemma razborovEncode_go_numFree_invariant {n : ℕ}
           have hnk : ¬ Term.killedBy t_clause ρ₀ := by
             have := List.find?_eq_some_iff_append.mp hfind
             obtain ⟨h1, _⟩ := this
-            simp only [decide_eq_true_eq, decide_not, Bool.not_eq_true',
-                       decide_eq_false_iff_not, not_not] at h1
+            simp only [decide_not, Bool.not_eq_true',
+                       decide_eq_false_iff_not] at h1
             exact h1
           have hall_ne_none : ∀ l ∈ t_clause, ρ₀ l.var ≠ none := by
             intro l hl hnone
@@ -1459,7 +1459,7 @@ private lemma razborovEncode_go_numFree_invariant {n : ℕ}
             canonicalDTree_depth_zero_of_fixed f ρ₀ ⟨t_clause, ht_mem, hfixed⟩
           omega
         | cons fl fls =>
-          simp only [hflicase]
+          simp only []
           set pcl := processClauseLits (fl :: fls) (step :: rest) ρ₀ σ with hpcl_def
           -- Apply accumulator lemma to strip the acc argument.
           simp only [List.nil_append]
@@ -1760,10 +1760,10 @@ lemma dtDepth_le_implies_small_dnf_cnf {n : ℕ} (f : (Fin n → Bool) → Bool)
         · rfl;
       · unfold DNF.eval at *; simp_all +decide [ DecisionTree.eval ] ;
         unfold toDNF; simp +decide [ *, List.any_append ] ;
-        split_ifs <;> simp_all +decide [ Function.comp, Term.eval ];
-        · simp_all +decide [ Function.comp, Literal.eval ];
-          simp_all +decide [ Function.comp, List.any_eq, List.all_eq ];
-        · simp_all +decide [ Function.comp, List.any_eq, Literal.eval ]
+        split_ifs <;> simp_all +decide [ Term.eval ];
+        · simp_all +decide [ Literal.eval ];
+          simp_all +decide [ List.any_eq, List.all_eq ];
+        · simp_all +decide [ List.any_eq, Literal.eval ]
   · use toCNF T;
     refine' ⟨ le_trans _ hTd', fun x => _ ⟩;
     · have h_clause_length : ∀ T : DecisionTree n, ∀ c ∈ toCNF T, c.length ≤ T.depth := by
@@ -1788,9 +1788,9 @@ lemma dtDepth_le_implies_small_dnf_cnf {n : ℕ} (f : (Fin n → Bool) → Bool)
         · simp +decide [ *, DecisionTree.eval, CNF.eval ];
           rw [ show toCNF ( DecisionTree.branch lo hi ih_lo ) = ( toCNF hi |> List.map fun c => ⟨ lo, false ⟩ :: c ) ++ ( toCNF ih_lo |> List.map fun c => ⟨ lo, true ⟩ :: c ) by rfl ];
           split_ifs <;> simp_all +decide [ CNF.evalClause ];
-          · simp +decide [ *, Function.comp, Literal.eval ];
+          · simp +decide [ *, Literal.eval ];
             grind +splitIndPred;
-          · simp +decide [ *, Function.comp, Literal.eval ];
+          · simp +decide [ *, Literal.eval ];
             grind;
       exact h_equiv T x
 
