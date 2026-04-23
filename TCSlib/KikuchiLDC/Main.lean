@@ -1,12 +1,4 @@
 /-
-  Main.lean
-  Entry point for the formalization of:
-    "A Near-Cubic Lower Bound for 3-Query Locally Decodable Codes
-     from Semirandom CSP Refutation"
-  Following Alrabiah–Guruswami–Kothari–Manohar (STOC 2023)
-
-  Blueprint: kikuchi_ldc_blueprint.tex
-
   Structure:
     §2–3  LDC/Defs.lean           — Core definitions (Hypergraphs, LDCs, XOR instances)
     §4    LDC/BackgroundFacts.lean — Matrix Khintchine, binomial ratio bound
