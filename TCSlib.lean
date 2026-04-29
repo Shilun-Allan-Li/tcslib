@@ -13,3 +13,5 @@ import TCSlib.BooleanAnalysis.ArrowTheorem
 import TCSlib.BooleanAnalysis.Circuit
 import TCSlib.BooleanAnalysis.Hypercontractivity
 import TCSlib.BooleanAnalysis.Switching
+import TCSlib.BooleanAnalysis.Bonami
+import TCSlib.BooleanAnalysis.OneBitHypercontractivity
