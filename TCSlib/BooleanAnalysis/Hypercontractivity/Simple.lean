@@ -1,60 +1,11 @@
-import TCSlib.BooleanAnalysis.Basic
-import TCSlib.BooleanAnalysis.Bonami
-import Mathlib.Probability.Moments.Basic
-import Mathlib.MeasureTheory.MeasurableSpace.Basic
-import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Probability.ProbabilityMassFunction.Basic
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import Mathlib.Data.Real.Basic
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.MeasureTheory.Integral.MeanInequalities
-import Mathlib.Probability.Distributions.Uniform
-import Mathlib.Analysis.MeanInequalities
-
-namespace Hypercontractivity
+import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
+namespace SimpleHypercontractivity
 open BooleanAnalysis
 
 section
 open MeasureTheory Set Filter BooleanAnalysis Real Bonami
 
 /-! ## (2,4)-Hypercontractivity Theorem -/
-/-
-Fourier coefficient of avgLast:
-  `(avgLast f)^(S) = f̂(S.image castSucc)`.
--/
-lemma fourierCoeff_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
-    fourierCoeff (avgLast f) S = fourierCoeff f (S.image Fin.castSucc) := by
-  unfold avgLast; simp +decide only [fourierCoeff] ; ring_nf;
-  unfold innerProduct; simp +decide only [one_div, mul_comm] ; ring_nf;
-  unfold expect; simp +decide only [chiS, restrictLast, one_div, mul_comm, Finset.sum_add_distrib,
-    Fin.castSucc_inj, implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Finset.mul_sum _ _ _,
-    mul_left_comm] ; ring_nf;
-  rw [ add_comm 1 n, uniformWeight_succ ] ; rw [ ← mul_add ] ; rw [ sum_boolCube_succ ] ; ring_nf;
-  simp +decide [mul_comm, mul_left_comm, Finset.mul_sum _ _ _]
-
-/-
-Fourier coefficient of diffLast:
-  `(diffLast f)^(S) = f̂(S.image castSucc ∪ {last n})`.
--/
-lemma fourierCoeff_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
-    fourierCoeff (diffLast f) S = fourierCoeff f (S.image Fin.castSucc ∪ {Fin.last n}) := by
-  -- By definition of `diffLast`, we have that `diffLast f(x) = (f(snoc x false) - f(snoc x true)) / 2`.
-  unfold diffLast fourierCoeff innerProduct expect chiS restrictLast
-  rw [ uniformWeight_succ ];
-  rw [ show ( Finset.univ : Finset ( Fin ( n + 1 ) → Bool ) ) = Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.false ) Finset.univ ∪ Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.true ) Finset.univ from ?_, Finset.sum_union ];
-  · rw [ Finset.sum_image, Finset.sum_image ] <;> norm_num [ Finset.prod_union, Finset.prod_image ] ; ring_nf;
-    · simp +decide only [mul_assoc, Finset.sum_add_distrib, Finset.sum_mul _ _ _];
-      rw [ mul_add ];
-  · norm_num [ Finset.disjoint_left ];
-  · ext x;
-    by_cases hx : x ( Fin.last n ) <;> simp +decide only [Finset.mem_univ, Finset.mem_union,
-      Finset.mem_image, true_and, true_iff];
-    · exact Or.inr ⟨ fun i => x i.castSucc, by ext i; cases i using Fin.lastCases <;> aesop ⟩;
-    · exact Or.inl ⟨ fun i => x i.castSucc, by ext i; cases i using Fin.lastCases <;> aesop ⟩
 
 /-
 `χ_{S.image castSucc}(Fin.snoc x b) = χ_S(x)`: the character of a "lifted" set
@@ -112,7 +63,7 @@ lemma card_image_castSucc_union_last {n : ℕ} (S : Finset (Fin n)) :
     (S.image Fin.castSucc ∪ {Fin.last n}).card = S.card + 1 := by
   rw [ Finset.card_union, Finset.card_image_of_injective ] <;> norm_num [ Function.Injective ]
 
-/-
+/--
 The noise operator decomposes along the last coordinate:
   `T_ρ f(snoc x b) = T_ρ(avgLast f)(x) + boolToSign(b) · ρ · T_ρ(diffLast f)(x)`.
 -/
@@ -128,7 +79,7 @@ lemma noiseOp_snoc {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) (x : BoolCube 
     rw [ Finset.mul_sum _ _ _ ] ; refine' Finset.sum_congr rfl fun T hT => _ ; rw [ fourierCoeff_diffLast ] ; rw [ card_image_castSucc_union_last ] ; ring_nf;
     rw [ chiS_snoc_with_last ] ; ring
 
-/-
+/--
 Fourth moment decomposition with the noise operator.
 -/
 lemma fourth_moment_noise_decomp {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) :
@@ -148,27 +99,22 @@ lemma fourth_moment_noise_decomp {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) 
     unfold diffLast; norm_num [ expect ] ; ring_nf;
     unfold restrictLast; norm_num [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ;
 
-/-
-Helper: C² ≤ a²b² and C ≥ 0 implies C ≤ ab (for a,b ≥ 0).
--/
-lemma sq_le_sq_mul_of_nonneg {C a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (h : C ^ 2 ≤ a ^ 2 * b ^ 2) : C ≤ a * b := by
-  nlinarith [ mul_nonneg ha hb ]
-
-/-
-Helper: a² + 6ρ²ab + ρ⁴b² ≤ (a+b)² when ρ² ≤ 1/3 and a,b ≥ 0.
--/
-lemma hypercontractivity_algebra_simple {a b ρ : ℝ}
-    (ha : 0 ≤ a) (hb : 0 ≤ b) (hρ : ρ ^ 2 ≤ 1 / 3) :
-    a ^ 2 + 6 * ρ ^ 2 * (a * b) + ρ ^ 4 * b ^ 2 ≤ (a + b) ^ 2 := by
-  nlinarith [ sq_nonneg ( a - b ), mul_nonneg ha hb, mul_le_mul_of_nonneg_left hρ ( sq_nonneg a ), mul_le_mul_of_nonneg_left hρ ( sq_nonneg b ) ]
-
 /-- Key algebraic inequality: under `ρ² ≤ 1/3`, the recurrence closes. -/
 lemma hypercontractivity_algebra' {a b A B C ρ : ℝ}
-    (ha : 0 ≤ a) (hb : 0 ≤ b) (hA_nn : 0 ≤ A) (hB_nn : 0 ≤ B) (hC : 0 ≤ C)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hB_nn : 0 ≤ B)
     (hA_bound : A ≤ a ^ 2) (hB_bound : B ≤ b ^ 2)
     (hC_bound : C ^ 2 ≤ A * B) (hρ : ρ ^ 2 ≤ 1 / 3) :
     A + 6 * ρ ^ 2 * C + ρ ^ 4 * B ≤ (a + b) ^ 2 := by
+    /- Helper: C² ≤ a²b² and C ≥ 0 implies C ≤ ab (for a,b ≥ 0). -/
+  have sq_le_sq_mul_of_nonneg {C a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (h : C ^ 2 ≤ a ^ 2 * b ^ 2) : C ≤ a * b := by
+    nlinarith [ mul_nonneg ha hb ]
+  /- Helper: a² + 6ρ²ab + ρ⁴b² ≤ (a+b)² when ρ² ≤ 1/3 and a,b ≥ 0. -/
+  have hypercontractivity_algebra_simple {a b ρ : ℝ}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hρ : ρ ^ 2 ≤ 1 / 3) :
+    a ^ 2 + 6 * ρ ^ 2 * (a * b) + ρ ^ 4 * b ^ 2 ≤ (a + b) ^ 2 := by
+    nlinarith [ sq_nonneg ( a - b ), mul_nonneg ha hb, mul_le_mul_of_nonneg_left hρ ( sq_nonneg a ), mul_le_mul_of_nonneg_left hρ ( sq_nonneg b ) ]
+
   have hC_le : C ≤ a * b := by
     apply sq_le_sq_mul_of_nonneg ha hb
     calc C ^ 2 ≤ A * B := hC_bound
@@ -207,9 +153,7 @@ theorem hypercontractivity_2_4 {n : ℕ} (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 3) (f 
     exact hypercontractivity_algebra'
       (expect_sq_nonneg (avgLast f))
       (expect_sq_nonneg (diffLast f))
-      (expect_fourth_nonneg (noiseOp ρ (avgLast f)))
       (expect_fourth_nonneg (noiseOp ρ (diffLast f)))
-      (expect_sq_nonneg_prod (noiseOp ρ (avgLast f)) (noiseOp ρ (diffLast f)))
       (ih (avgLast f))
       (ih (diffLast f))
       (expect_cs_sq (noiseOp ρ (avgLast f)) (noiseOp ρ (diffLast f)))
@@ -222,26 +166,18 @@ lemma innerProduct_le_L43_L4 (f g : BooleanFunc n) :
   innerProduct f g ≤
   (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) *
   (expect (fun x => |g x| ^ 4)) ^ (1/4 : ℝ) := by
-    -- Step 1: Expand definitions
   unfold innerProduct expect uniformWeight
-
-  -- Step 2: Push the absolute value inside to bound the sum
-  -- f * g ≤ |f * g| = |f| * |g|
   have h_abs : ∑ x : BoolCube n, f x * g x ≤ ∑ x : BoolCube n, |f x| * |g x| := by
     apply Finset.sum_le_sum
     intro x _
     calc
       f x * g x ≤ |f x * g x| := le_abs_self _
       _ = |f x| * |g x| := abs_mul _ _
-
-  -- Step 3: Multiply by the uniform weight (2⁻ⁿ)
   have h_weight_abs :
       (2⁻¹ : ℝ) ^ n * ∑ x : BoolCube n, f x * g x ≤
       (2⁻¹ : ℝ) ^ n * ∑ x : BoolCube n, |f x| * |g x| := by
     apply mul_le_mul_of_nonneg_left h_abs
     positivity
-
-  -- Step 4: Setup conjugate exponents for Hölder's inequality
   let p : ℝ := 4/3
   let q : ℝ := 4
   have hpq : HolderConjugate p q := by
@@ -249,70 +185,52 @@ lemma innerProduct_le_L43_L4 (f g : BooleanFunc n) :
     · norm_num -- Proves 1 < p (since 4/3 > 1)
     · norm_num
     · norm_num
-  -- Step 5: Apply Hölder's Inequality for sums
-  -- Mathlib has theorems like `Real.inner_le_Lp_Lq_of_nonneg` or `Real.sum_mul_le_rpow_mul_rpow`
-  -- We will bound the sum of |f| * |g|.
   have holder_sum : ∑ x : BoolCube n, |f x| * |g x| ≤
       (∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q) := by
-    -- You may need to adapt this exact lemma name depending on your Mathlib version.
-    -- If using NNReal, you would map `|f x|` to NNReal first.
     refine inner_le_Lp_mul_Lq_of_nonneg Finset.univ hpq ?_ ?_
     · exact fun i a => abs_nonneg (f i)
     · exact fun i a => abs_nonneg (g i)
-
-  -- Step 6: Distribute the uniform weight into the powers
   have weight_split : (2⁻¹ : ℝ) ^ n = ((2⁻¹ : ℝ) ^ n) ^ (1/p) * ((2⁻¹ : ℝ) ^ n) ^ (1/q) := by
     have hpq_sum : (1/p : ℝ) + (1/q : ℝ) = 1 := by norm_num
     rw [← Real.rpow_add (by positivity), hpq_sum, Real.rpow_one]
 
-  -- Now string it all together
   calc
     (2⁻¹ : ℝ) ^ n * ∑ x, f x * g x
       ≤ (2⁻¹ : ℝ) ^ n * ∑ x, |f x| * |g x| := h_weight_abs
     _ ≤ (2⁻¹ : ℝ) ^ n * ((∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q)) := by
       apply mul_le_mul_of_nonneg_left holder_sum (by positivity)
     _ = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * (∑ x, |f x| ^ p) ^ (1/p)) * (((2⁻¹ : ℝ) ^ n) ^ (1/q) * (∑ x, |g x| ^ q) ^ (1/q)) := by
-      -- Use nth_rw to ONLY rewrite the very first instance of 2⁻¹ ^ n
       calc
         (2⁻¹ : ℝ) ^ n * ((∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q))
           = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * ((2⁻¹ : ℝ) ^ n) ^ (1/q)) * ((∑ x, |f x| ^ p) ^ (1/p) * (∑ x, |g x| ^ q) ^ (1/q)) := by nth_rw 1 [weight_split]
         _ = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * (∑ x, |f x| ^ p) ^ (1/p)) * (((2⁻¹ : ℝ) ^ n) ^ (1/q) * (∑ x, |g x| ^ q) ^ (1/q)) := by ring
         _ = (((2⁻¹ : ℝ) ^ n) ^ (1/p) * (∑ x, |f x| ^ p) ^ (1/p)) * (((2⁻¹ : ℝ) ^ n) ^ (1/q) * (∑ x, |g x| ^ q) ^ (1/q)) := by ring
     _ = ((2⁻¹ : ℝ) ^ n * ∑ x, |f x| ^ p) ^ (1/p) * ((2⁻¹ : ℝ) ^ n * ∑ x, |g x| ^ q) ^ (1/q) := by
-      -- Real.mul_rpow requires proofs that the inner sums are non-negative
       have hfp : 0 ≤ ∑ x : BoolCube n, |f x| ^ p := Finset.sum_nonneg (fun x _ => by positivity)
       have hgq : 0 ≤ ∑ x : BoolCube n, |g x| ^ q := Finset.sum_nonneg (fun x _ => by positivity)
       rw [← Real.mul_rpow (by positivity) hfp]
       rw [← Real.mul_rpow (by positivity) hgq]
     _ = (2⁻¹ ^ n * ∑ x, (fun x => |f x| ^ (4 / 3 : ℝ)) x) ^ (3 / 4 : ℝ) * (2⁻¹ ^ n * ∑ x, (fun x => |g x| ^ 4) x) ^ (1 / 4 : ℝ) := by
-     -- 1. Prove the outer fraction arithmetic
       have hp_exp : (1 / p : ℝ) = 3 / 4 := by norm_num
       have hq_exp : (1 / q : ℝ) = 1 / 4 := by norm_num
       rw [hp_exp, hq_exp]
-      -- 2. Fix the invisible rpow vs npow mismatch for q = 4
       have hq_pow : ∀ x, |g x| ^ q = |g x| ^ 4 := by
         intro x
-        -- Reveal that q is (4 : ℝ) and the target is (4 : ℕ)
         change |g x| ^ (4 : ℝ) = |g x| ^ (4 : ℕ)
-        -- Apply the Mathlib lemma that links Real powers to Nat powers
         exact Real.rpow_natCast (|g x|) 4
-      -- 3. Rewrite the power inside the sum
       simp_rw [hq_pow]
-      -- 4. Now rfl perfectly matches everything structurally!
       rfl
-
+/-- Boolean functions are (4/3, 2)-hypercontractive with parameter 1/√3 -/
 theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
     (expect (fun x => (noiseOp (1 / Real.sqrt 3) f x) ^ 2)) ^ (1/2 : ℝ)
     ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) := by
 
-  -- 1. Setup the constant ρ
   set ρ := 1 / Real.sqrt 3
   have hρ : ρ ^ 2 ≤ 1 / 3 := by
     dsimp [ρ]
     rw [one_div, inv_pow, Real.sq_sqrt (by positivity)]
     simp only [one_div, le_refl]
 
-  -- 2. Define E_2 as the squared L2 norm for cleaner reading
   set E_2 := expect (fun x => (noiseOp ρ f x) ^ 2)
   have hE2_nonneg : 0 ≤ E_2 := by
     unfold E_2 expect uniformWeight
@@ -321,7 +239,6 @@ theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
     intro x _
     positivity
 
-  -- 3. Handle the trivial case where T_ρ f is 0 to avoid dividing by zero later
   by_cases h_zero : E_2 = 0
   · rw [h_zero]
     have h_zero_pow : (0 : ℝ) ^ (1 / 2 : ℝ) = 0 := by norm_num
@@ -334,37 +251,25 @@ theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
     intro x _
     positivity
 
-  -- 4. Establish that E_2 is strictly positive for division later
   have hE2_pos : 0 < E_2 := lt_of_le_of_ne hE2_nonneg (Ne.symm h_zero)
-
-  -- 5. Helper lemmas for the calc block
   have h_inner_eq : innerProduct (noiseOp ρ f) (noiseOp ρ f) = E_2 := by
     unfold innerProduct E_2 expect
     simp_rw [sq]
-
   have h_abs_four : expect (fun x => |noiseOp ρ (noiseOp ρ f) x| ^ 4) = expect (fun x => noiseOp ρ (noiseOp ρ f) x ^ 4) := by
     apply congr_arg
     ext x
-    -- Prove |y|^4 = y^4 using squares
     calc |noiseOp ρ (noiseOp ρ f) x| ^ 4
       _ = (|noiseOp ρ (noiseOp ρ f) x| ^ 2) ^ 2 := by ring
       _ = (noiseOp ρ (noiseOp ρ f) x ^ 2) ^ 2 := by rw [sq_abs]
       _ = noiseOp ρ (noiseOp ρ f) x ^ 4 := by ring
-
-  -- 6. Bring in the (2,4) hypercontractivity bound
   have hc_2_4 := hypercontractivity_2_4 ρ hρ (noiseOp ρ f)
 
--- 7. The Core Duality Argument
-
-  -- Helper 1: The L4/3 norm expectation is non-negative
   have h_f_L43_nonneg : 0 ≤ expect (fun x => |f x| ^ (4 / 3 : ℝ)) := by
     unfold expect uniformWeight
     apply mul_nonneg (by positivity)
     apply Finset.sum_nonneg
     intro x _
     positivity
-
-  -- Helper 2: The L4 norm expectation of the noiseOp is non-negative
   have h_hc_lhs_nonneg : 0 ≤ expect (fun x => noiseOp ρ (noiseOp ρ f) x ^ 4) := by
     unfold expect uniformWeight
     apply mul_nonneg (by positivity)
@@ -382,35 +287,25 @@ theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
       _ = (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * (expect (fun x => noiseOp ρ (noiseOp ρ f) x ^ 4)) ^ (1/4 : ℝ) := by
         rw [h_abs_four]
       _ ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * (E_2 ^ 2) ^ (1/4 : ℝ) := by
-        -- Use our explicit proofs instead of relying on `by positivity`
         apply mul_le_mul_of_nonneg_left
         · apply Real.rpow_le_rpow h_hc_lhs_nonneg hc_2_4 (by norm_num)
         · exact Real.rpow_nonneg h_f_L43_nonneg (3 / 4 : ℝ)
       _ = (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * E_2 ^ (1/2 : ℝ) := by
         congr 1
-        -- Convert the inner Nat power to a Real power
         have h_nat_real : E_2 ^ (2 : ℕ) = E_2 ^ (2 : ℝ) := (Real.rpow_natCast E_2 2).symm
         rw [h_nat_real]
-        -- Now both powers are Real, so we can multiply them
         rw [← Real.rpow_mul hE2_nonneg]
         norm_num
 
--- 8. Extract the final result by dividing out E_2^(1/2)
-  -- Prove that E_2^(1/2) * E_2^(1/2) = E_2
   have h_split : E_2 ^ (1 / 2 : ℝ) * E_2 ^ (1 / 2 : ℝ) = E_2 := by
     rw [← Real.rpow_add hE2_pos]
     norm_num
-
-  -- Securely attach the split left side to our main bound without touching the right side
   have main_bound_split : E_2 ^ (1 / 2 : ℝ) * E_2 ^ (1 / 2 : ℝ) ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * E_2 ^ (1 / 2 : ℝ) := by
     calc
       E_2 ^ (1 / 2 : ℝ) * E_2 ^ (1 / 2 : ℝ) = E_2 := h_split
       _ ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) * E_2 ^ (1 / 2 : ℝ) := main_bound
-
-  -- Since A * C ≤ B * C and C > 0, then A ≤ B
   have hE2_half_pos : 0 < E_2 ^ (1 / 2 : ℝ) := Real.rpow_pos_of_pos hE2_pos (1 / 2 : ℝ)
   exact le_of_mul_le_mul_right main_bound_split hE2_half_pos
-
 
 /-! ## Contractivity of the noise operator (q = 2 case) -/
 
@@ -442,7 +337,6 @@ theorem contractivity (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1) (f : BooleanFunc n) :
   apply mul_le_of_le_one_left (sq_nonneg _)
   exact pow_le_one₀ (sq_nonneg ρ) hρ
 
-/-! ## Combinatorial inequality -/
 /-
 **Key combinatorial bound**: `C(2k, 2j) ≤ C(k, j) · (2k - 1)^j`.
 
@@ -481,56 +375,6 @@ lemma binom_coeff_ineq (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤ k) :
     refine le_trans h_ind_step ?_;
     convert Nat.mul_le_mul_right ( ( 2 * k - 1 ) ^ j ) h_final using 1 <;> ring
 
-/-! ## Two-point inequality for even powers -/
-
-/-
-**Two-point inequality**: for `ρ² ≤ 1/(2k − 1)`:
-`(α + ρβ)^{2k} + (α − ρβ)^{2k} ≤ 2 · (α² + β²)^k`.
-
-The proof compares the binomial expansions term by term, using `binom_coeff_ineq`.
--/
-lemma two_point_ineq (k : ℕ) (hk : 1 ≤ k)
-    (α β ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / ((2 : ℝ) * k - 1)) :
-    (α + ρ * β) ^ (2 * k) + (α - ρ * β) ^ (2 * k) ≤
-    2 * (α ^ 2 + β ^ 2) ^ k := by
-  -- By the binomial theorem, we expand both sides.
-  have h_expand : (α + ρ * β) ^ (2 * k) + (α - ρ * β) ^ (2 * k) = 2 * ∑ j ∈ Finset.range (k + 1), Nat.choose (2 * k) (2 * j) * α ^ (2 * k - 2 * j) * (ρ ^ 2 * β ^ 2) ^ j := by
-    have h_expand : (α + ρ * β) ^ (2 * k) + (α - ρ * β) ^ (2 * k) = ∑ j ∈ Finset.range (2 * k + 1), Nat.choose (2 * k) j * α ^ (2 * k - j) * (ρ * β) ^ j + ∑ j ∈ Finset.range (2 * k + 1), Nat.choose (2 * k) j * α ^ (2 * k - j) * (-ρ * β) ^ j := by
-      exact congrArg₂ ( · + · ) ( by rw [ add_comm, add_pow ] ; congr; ext; ring ) ( by rw [ sub_eq_add_neg, add_comm, add_pow ] ; congr; ext; ring );
-    -- Combine like terms in the binomial expansion.
-    have h_combine : ∑ j ∈ Finset.range (2 * k + 1), Nat.choose (2 * k) j * α ^ (2 * k - j) * (ρ * β) ^ j + ∑ j ∈ Finset.range (2 * k + 1), Nat.choose (2 * k) j * α ^ (2 * k - j) * (-ρ * β) ^ j = ∑ j ∈ Finset.filter (fun j => j % 2 = 0) (Finset.range (2 * k + 1)), Nat.choose (2 * k) j * α ^ (2 * k - j) * (ρ ^ 2 * β ^ 2) ^ (j / 2) * 2 := by
-      rw [ ← Finset.sum_add_distrib ] ; rw [ Finset.sum_filter ] ; refine' Finset.sum_congr rfl fun x hx => _ ; rcases Nat.even_or_odd' x with ⟨ c, rfl | rfl ⟩ <;> norm_num [ pow_add, pow_mul ] ; ring;
-    -- Notice that Finset.filter (fun j => j % 2 = 0) (Finset.range (2 * k + 1)) is equivalent to Finset.image (fun j => 2 * j) (Finset.range (k + 1)).
-    have h_filter : Finset.filter (fun j => j % 2 = 0) (Finset.range (2 * k + 1)) = Finset.image (fun j => 2 * j) (Finset.range (k + 1)) := by
-      ext j
-      simp [Finset.mem_filter, Finset.mem_image];
-      exact ⟨ fun h => ⟨ j / 2, by linarith [ Nat.mod_add_div j 2 ], by linarith [ Nat.mod_add_div j 2 ] ⟩, by rintro ⟨ a, ha, rfl ⟩ ; exact ⟨ by linarith, by norm_num ⟩ ⟩;
-    simp_all +decide [ mul_assoc, mul_comm, Finset.mul_sum _ _ _ ];
-  have h_expand_rhs : (α ^ 2 + β ^ 2) ^ k = ∑ j ∈ Finset.range (k + 1), Nat.choose k j * α ^ (2 * k - 2 * j) * β ^ (2 * j) := by
-    rw [ add_comm, add_pow ] ; congr ; ext ; ring_nf;
-    rw [ tsub_mul ];
-  -- Apply the inequality term by term to the sums.
-  have h_term_by_term : ∀ j ∈ Finset.range (k + 1), Nat.choose (2 * k) (2 * j) * (ρ ^ 2) ^ j ≤ Nat.choose k j := by
-    intros j hj
-    have h_term : Nat.choose (2 * k) (2 * j) * (ρ ^ 2) ^ j ≤ Nat.choose k j * (2 * k - 1) ^ j * (ρ ^ 2) ^ j := by
-      have h_term : Nat.choose (2 * k) (2 * j) ≤ Nat.choose k j * (2 * k - 1) ^ j := by
-        convert binom_coeff_ineq k hk j ( Finset.mem_range_succ_iff.mp hj ) using 1;
-      exact mul_le_mul_of_nonneg_right ( by rw [ ← @Nat.cast_le ℝ ] at *; cases k <;> norm_num at * ; linarith ) ( by positivity );
-    refine le_trans h_term ?_;
-    rw [ mul_assoc ];
-    exact mul_le_of_le_one_right ( Nat.cast_nonneg _ ) ( by rw [ ← mul_pow ] ; exact pow_le_one₀ ( by exact mul_nonneg ( sub_nonneg_of_le ( by norm_cast; linarith ) ) ( sq_nonneg _ ) ) ( by rw [ le_div_iff₀ ] at * <;> nlinarith [ show ( k : ℝ ) ≥ 1 by norm_cast ] ) );
-  rw [ h_expand, h_expand_rhs ];
-  refine' mul_le_mul_of_nonneg_left ( Finset.sum_le_sum fun j hj => _ ) zero_le_two;
-  convert mul_le_mul_of_nonneg_right ( mul_le_mul_of_nonneg_right ( h_term_by_term j hj ) ( show 0 ≤ α ^ ( 2 * k - 2 * j ) by rw [ show α ^ ( 2 * k - 2 * j ) = ( α ^ 2 ) ^ ( k - j ) by rw [ ← pow_mul, Nat.mul_sub_left_distrib ] ] ; positivity ) ) ( show 0 ≤ β ^ ( 2 * j ) by rw [ pow_mul ] ; positivity ) using 1 ; ring
-
-/-- Two-point inequality, averaged form (dividing by 2). -/
-lemma two_point_ineq_avg (k : ℕ) (hk : 1 ≤ k)
-    (α β ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / ((2 : ℝ) * k - 1)) :
-    ((α + ρ * β) ^ (2 * k) + (α - ρ * β) ^ (2 * k)) / 2 ≤
-    (α ^ 2 + β ^ 2) ^ k := by
-  have h := two_point_ineq k hk α β ρ hρ
-  linarith
-
 /-! ## Moment decomposition for even powers -/
 
 /-- For even q, the q-th moment decomposes using avgLast and diffLast. -/
@@ -564,7 +408,7 @@ lemma noise_qth_moment_decomp (q : ℕ) (ρ : ℝ) (f : BooleanFunc (n + 1)) :
 
 /-! ## The main (2, 2k)-Hypercontractivity Theorem -/
 
-/-
+/--
 **The (2, 2k)-Hypercontractivity Theorem** (Bonami–Beckner):
 
 For any Boolean function `f : {0,1}ⁿ → ℝ`, integer `k ≥ 1`,
@@ -572,20 +416,7 @@ and noise parameter `ρ` with `ρ² ≤ 1/(2k − 1)`:
 
 `𝔼[(T_ρ f)^{2k}] ≤ (𝔼[f²])^k`.
 
-Equivalently, `‖T_ρ f‖_{2k} ≤ ‖f‖₂`.
-
-The proof is by induction on the dimension `n` of the Boolean cube.
-
-**Induction step** (sketch):
-1. Decompose using `noise_qth_moment_decomp` into terms involving `T_ρ(avgLast f)` and
-   `T_ρ(diffLast f)`.
-2. Apply the `two_point_ineq` pointwise: each summand is bounded by
-   `(T_ρg(x')² + T_ρh(x')²)^k`.
-3. Expand `(T_ρg² + T_ρh²)^k` via the binomial theorem.
-4. Bound each mixed moment `𝔼[T_ρg^{2i} · T_ρh^{2(k−i)}]` using
-   generalized Hölder + the induction hypothesis.
-5. Reassemble using `binom_coeff_ineq` and `second_moment_decomp`.
--/
+Equivalently, `‖T_ρ f‖_{2k} ≤ ‖f‖₂`. -/
 theorem hypercontractivity_2_2k (k : ℕ) (hk : 1 ≤ k)
     (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / ((2 : ℝ) * k - 1)) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ (2 * k)) ≤ (expect (fun x => f x ^ 2)) ^ k := by
@@ -719,20 +550,14 @@ theorem hypercontractivity_2_2 (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1) (f : BooleanFunc 
   rw [pow_one]
   exact contractivity ρ hρ f
 
-/-- The (2, 4)-hypercontractivity instantiation. -/
-theorem hypercontractivity_2_4_inst (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 3) (f : BooleanFunc n) :
-    expect (fun x => (noiseOp ρ f x) ^ 4) ≤ (expect (fun x => f x ^ 2)) ^ 2 :=
-  hypercontractivity_2_4 ρ hρ f
-
-/-- The (2, 6)-hypercontractivity. -/
+/-- (2, 6)-hypercontractivity. -/
 theorem hypercontractivity_2_6 (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 5) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ 6) ≤ (expect (fun x => f x ^ 2)) ^ 3 := by
   exact hypercontractivity_2_q 6 (by norm_num) ⟨3, by ring⟩ ρ (by linarith) f
 
 /-! ## Real-power formulation -/
-
-/-
-The (2, 2k)-hypercontractivity in `‖·‖_{2k} ≤ ‖·‖_2` form.
+/--
+(2, 2k)-hypercontractivity in `‖·‖_{2k} ≤ ‖·‖_2` form.
 -/
 theorem hypercontractivity_2_2k_rpow (k : ℕ) (hk : 1 ≤ k)
     (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / ((2 : ℝ) * k - 1)) (f : BooleanFunc n) :
@@ -768,6 +593,7 @@ lemma expect_rpow_abs_nonneg (p : ℝ) (f : BooleanFunc n) :
   apply Finset.sum_nonneg
   intro x _; positivity
 
+/-- Composing noise operators multiplies their parameter -/
 lemma noiseOp_compose (ρ σ : ℝ) (f : BooleanFunc n) :
     noiseOp ρ (noiseOp σ f) = noiseOp (ρ * σ) f := by
   ext x
@@ -778,14 +604,7 @@ lemma noiseOp_compose (ρ σ : ℝ) (f : BooleanFunc n) :
 /--
 **The (p, 2)-Hypercontractivity Theorem** (general duality framework):
 
-Given a (2, q)-hypercontractivity bound and Hölder's inequality for `(p, q)`,
-we conclude `(𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}`.
-
-The proof:
-1. `‖T_ρ f‖₂² = ⟨T_ρ f, T_ρ f⟩ = ⟨f, T_ρ(T_ρ f)⟩` by self-adjointness
-2. `⟨f, T_ρ(T_ρ f)⟩ ≤ ‖f‖_p · ‖T_ρ(T_ρ f)‖_q` by Hölder
-3. `‖T_ρ(T_ρ f)‖_q ≤ ‖T_ρ f‖₂` by (2,q)-hypercontractivity
-4. Divide both sides by `‖T_ρ f‖₂`. -/
+Given a (2, q)-hypercontractivity bound, we conclude `(𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}`-/
 theorem hypercontractivity_p_2_general
     {ρ : ℝ} {p q : ℝ}
     (hp : 1 < p) (hq : 2 ≤ q)
@@ -812,7 +631,7 @@ theorem hypercontractivity_p_2_general
   have h_self_adj : E₂ = innerProduct f (noiseOp ρ (noiseOp ρ f)) := by
     rw [← h_inner, noiseOp_self_adjoint]
   have h_holder := holder f (noiseOp ρ (noiseOp ρ f))
-  have hq_pos : 0 < q := by linarith
+  have hq_pos : 0 < q := by linarith [hpq, hp]
   have h_Lq_bound :
       (BooleanAnalysis.expect (fun x => |noiseOp ρ (noiseOp ρ f) x| ^ q)) ^ (1/q) ≤
       E₂ ^ (1/2 : ℝ) := by
@@ -844,11 +663,5 @@ theorem hypercontractivity_p_2_general
     rw [h_split]; exact main_bound
   exact le_of_mul_le_mul_right step3 h_half_pos
 
-/-- (4/3, 2)-hypercontractivity via the existing theorem. -/
-theorem hypercontractivity_p_2_at_4_div_3 (f : BooleanFunc n) :
-    (BooleanAnalysis.expect (fun x => (noiseOp (1 / Real.sqrt 3) f x) ^ 2)) ^ (1/2 : ℝ) ≤
-    (BooleanAnalysis.expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) :=
-  hypercontractivity_4_div_3_2 f
-
 end
-end Hypercontractivity
+end SimpleHypercontractivity

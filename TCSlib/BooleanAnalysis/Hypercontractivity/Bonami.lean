@@ -17,14 +17,14 @@ namespace Bonami
 open BooleanAnalysis
 
 section
-open MeasureTheory ProbabilityTheory Filter
+open MeasureTheory ProbabilityTheory Filter BooleanAnalysis
 
 /-! ## B-Reasonability Bounds -/
 
 def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=
   moment X 4 P ≤ B * (moment X 2 P) ^ 2
 
-/-- `If X not equivalent to 0 is B-reasonable, Pr[|X| ≥ t ||X||₂] ≤ B/t⁴ for all t > 0` -/
+/--If X not equivalent to 0 is B-reasonable, `Pr[|X| ≥ t ||X||₂] ≤ B/t⁴` for all t > 0 -/
 lemma b_reasonable_tail_bound
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
@@ -91,7 +91,7 @@ lemma b_reasonable_tail_bound
       rw [mul_div_mul_right B (t ^ 4) (_)]
       · exact ne_of_gt (by positivity)
 
-/- `Let X be discrete random variable with PMF π. For μ = min(π), X is (1/μ) reasonable`-/
+/-- Let X be discrete random variable with PMF π. For μ = min(π), X is (1/μ) reasonable-/
 lemma min_prob_b_reasonable
   {Ω : Type*} [MeasurableSpace Ω] [Fintype Ω] [DiscreteMeasurableSpace Ω]
   {P : Measure Ω} [IsProbabilityMeasure P]
@@ -177,7 +177,7 @@ section
 open MeasureTheory Set Filter ProbabilityTheory BooleanAnalysis Real
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
-/- `Suppose finite variance. If Z ≥ 0 random, 0 ≤ θ ≤ 1, then P(Z > θE[Z]) ≥ (1 - θ)²(E[Z]²)/(E[Z²])` -/
+/-- Suppose finite variance. If Z ≥ 0 random, 0 ≤ θ ≤ 1, then `P(Z > θE[Z]) ≥ (1 - θ)²(E[Z]²)/(E[Z²])` -/
 lemma paley_zygmund_ineq
   {Z : Ω → ℝ}
   (h_meas : Measurable Z)
@@ -187,10 +187,7 @@ lemma paley_zygmund_ineq
   {θ : ℝ} (hθ_pos : 0 ≤ θ) (hθ_le_one : θ ≤ 1)
   (hZ_pos : 0 < moment Z 1 μ) :
   (1 - θ)^2 * (moment Z 1 μ)^2 / moment Z 2 μ ≤ (μ {ω | θ * moment Z 1 μ < Z ω}).toReal := by
-
-  -- Unfold the definition of `moment` and simplify `Z ω ^ 1` to `Z ω`
   simp_rw [moment, pow_one] at hZ_pos ⊢
-  -- Define our set A and prove it is measurable
   set A := {ω | θ * ∫ ω, Z ω ∂μ < Z ω}
   have hA_meas : MeasurableSet A :=
     measurableSet_lt measurable_const h_meas
@@ -201,15 +198,10 @@ lemma paley_zygmund_ineq
   have h_Ac_bound : ∫ ω in Aᶜ, Z ω ∂μ ≤ θ * ∫ ω, Z ω ∂μ := by
     calc ∫ ω in Aᶜ, Z ω ∂μ
       _ ≤ ∫ ω in Aᶜ, (θ * ∫ x, Z x ∂μ) ∂μ := by
-        -- Use standard integral_mono_ae on the restricted measure
         apply integral_mono_ae h_int.integrableOn
-        · -- The constant is integrable because the measure is finite
-          exact integrable_const _
-        · -- ae_restrict_iff' translates "almost everywhere on Aᶜ" to an implication
-          rw [EventuallyLE, ae_restrict_iff' hA_meas.compl]
-          -- Now we just provide the standard logical bound
+        · exact integrable_const _
+        · rw [EventuallyLE, ae_restrict_iff' hA_meas.compl]
           exact Eventually.of_forall (fun ω hω ↦ not_lt.mp hω)
-      -- The integral of a constant gives the constant times the measure
       _ = (θ * ∫ ω, Z ω ∂μ) * (μ Aᶜ).toReal := by
         simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply, univ_inter,
            smul_eq_mul, mul_comm, mul_eq_mul_left_iff, mul_eq_zero]
@@ -251,20 +243,17 @@ lemma paley_zygmund_ineq
         exact h_int_sq
       rw [h_two]
       exact memLp_const (1 : ℝ)
-
     -- Square both sides and algebraically clean up the exponents
     calc (∫ ω in A, Z ω ∂μ) ^ 2
       _ = (∫ ω in A, Z ω * 1 ∂μ) ^ 2 := by
         congr 2
         ext ω
         exact (mul_one (Z ω)).symm
-
       _ ≤ ((∫ ω in A, (Z ω) ^ 2 ∂μ) ^ (1 / 2 : ℝ) * (∫ ω in A, (1 : ℝ) ^ 2 ∂μ) ^ (1 / 2 : ℝ)) ^ 2 := by
         gcongr -- Reduces to 0 ≤ ∫ (ω : Ω) in A, Z ω * 1 ∂μ
         · apply MeasureTheory.integral_nonneg_of_ae
           filter_upwards [ae_restrict_of_ae h_nonneg] with ω hω
           exact mul_nonneg hω zero_le_one
-
       _ = (∫ ω in A, (Z ω) ^ 2 ∂μ) * (∫ ω in A, (1 : ℝ) ^ 2 ∂μ) := by
         rw [mul_pow]
         congr 1
@@ -278,21 +267,17 @@ lemma paley_zygmund_ineq
           rw [← Real.rpow_mul (MeasureTheory.integral_nonneg (fun _ ↦ zero_le_one))]
           have h_half_two : (1 / 2 : ℝ) * 2 = 1 := by norm_num
           rw [h_half_two, Real.rpow_one]
-
       _ = (∫ ω in A, (Z ω) ^ 2 ∂μ) * (μ A).toReal := by
-        -- Strip away the identical '(∫ Z^2)' from both sides
         congr 1
         simp_rw [one_pow]
         simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply, univ_inter,
           smul_eq_mul, mul_one]
         exact rfl
-
   -- Split into two cases based on whether the denominator is zero
   by_cases h_zero : ∫ (x : Ω), (Z ^ 2) x ∂μ = 0
   · -- Case 1: The denominator is zero.
     rw [h_zero, div_zero]
     exact ENNReal.toReal_nonneg
-
   · -- Case 2: The denominator is not zero.
     have h_pos : 0 < ∫ (x : Ω), (Z ^ 2) x ∂μ :=
       lt_of_le_of_ne (MeasureTheory.integral_nonneg (fun _ ↦ sq_nonneg _)) (Ne.symm h_zero)
@@ -329,7 +314,7 @@ lemma paley_zygmund_ineq
             · -- Prove 0 ≤ P(A)
                exact ENNReal.toReal_nonneg
 
-/-`X not equivalent to 0 is B-reasonable. Then Pr[|X| > t||X||₂] ≥ (1 - t²)²/B for all t ∈ [0, 1]`-/
+/-- X not equivalent to 0 is B-reasonable. Then `Pr[|X| > t||X||₂] ≥ (1 - t²)²/B` for all t ∈ [0, 1]-/
 lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; general result after
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
@@ -339,38 +324,27 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
   (hX_pos_2 : 0 < moment X 2 P)/-  -/
   {t : ℝ} (ht_nonneg : 0 ≤ t) (ht_le_one : t ≤ 1) :
   (1 - t^2)^2 / B ≤ (P {ω | t^2 * moment X 2 P < X ω ^ 2}).toReal := by
-
-  -- 1. Define Z = X^2 and θ = t^2 to map to Paley-Zygmund
   let Z := fun ω ↦ X ω ^ 2
   let θ := t^2
-
-  -- 2. Verify hypotheses for paley_zygmund_ineq
+  -- Verify hypotheses for paley_zygmund_ineq
   have hZ_meas : Measurable Z := hX_meas.pow_const 2
-
   have hZ_nonneg : ∀ᵐ ω ∂P, 0 ≤ Z ω :=
     Filter.Eventually.of_forall (fun ω ↦ sq_nonneg (X ω))
-
   have hθ_pos : 0 ≤ θ := sq_nonneg t
-
   have hθ_le_one : θ ≤ 1 := by nlinarith [ht_nonneg, ht_le_one]
-
   have h_mom1 : moment Z 1 P = moment X 2 P := by
     simp_rw [moment, pow_one]
     rfl
-
   have h_mom2 : moment Z 2 P = moment X 4 P := by
     simp_rw [moment]
     congr 1
     ext ω
     show (X ω ^ 2) ^ 2 = X ω ^ 4
     ring
-
   have hZ_pos : 0 < moment Z 1 P := by
     rw [h_mom1]
     exact hX_pos_2
-
   have hZ_int : Integrable Z P := hX_int_sq
-
   have hZ_int_sq : Integrable (fun ω ↦ Z ω ^ 2) P := by
     have h_eq : (fun ω ↦ Z ω ^ 2) = (fun ω ↦ X ω ^ 4) := by
       ext ω
@@ -378,10 +352,8 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
       ring
     rw [h_eq]
     exact hX_int_4
-
-  -- 3. Apply Paley-Zygmund
   have h_pz := paley_zygmund_ineq hZ_meas hZ_nonneg hZ_int hZ_int_sq hθ_pos hθ_le_one hZ_pos
-
+  -- Moment is positive
   have hX_pos : 0 < moment X 4 P := by
     apply lt_of_le_of_ne
     · -- 1. Prove 0 ≤ moment X 4 P
@@ -392,17 +364,12 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
       exact MeasureTheory.integral_nonneg h_nonneg_4
     · -- 2. Prove moment X 4 P ≠ 0 by contradiction
       intro h_eq
-      -- If moment X 4 P = 0, then X^4 = 0 almost everywhere
       have h_ae_zero : (fun ω ↦ X ω ^ 4) =ᵐ[P] 0 := by
-        -- Change to strict pointwise non-negativity to match the lemma
         have h_nonneg : 0 ≤ fun ω ↦ X ω ^ 4 := by
           intro ω
           positivity
         have h_eq' : ∫ ω, X ω ^ 4 ∂P = 0 := h_eq.symm
-        -- Using hX_int_4.1 for AEStronglyMeasurable
         exact (MeasureTheory.integral_eq_zero_iff_of_nonneg h_nonneg hX_int_4).mp h_eq'
-
-      -- If X^4 = 0 a.e., then X^2 = 0 a.e.
       have h_ae_zero_sq : (fun ω ↦ X ω ^ 2) =ᵐ[P] 0 := by
         filter_upwards [h_ae_zero] with ω hω
         change X ω ^ 4 = 0 at hω
@@ -410,8 +377,6 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
           calc (X ω ^ 2) ^ 2 = X ω ^ 4 := by ring
             _ = 0 := hω
         exact sq_eq_zero_iff.mp h_sq
-
-      -- If X^2 = 0 a.e., then moment X 2 P = 0, which contradicts hX_pos
       have h_mom2_zero : moment X 2 P = 0 := by
         unfold moment
         simp_rw [Pi.pow_apply] -- Converts (X ^ 2) ω to X ω ^ 2
@@ -419,27 +384,19 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
         simp only [Pi.zero_apply, integral_zero]
       exact hX_pos_2.ne' h_mom2_zero
 
-  -- 4. Substitute the mapped moments into the Paley-Zygmund inequality
   have h_pz_mapped : (1 - t^2)^2 * (moment X 2 P)^2 / moment X 4 P ≤ (P {ω | t^2 * moment X 2 P < X ω ^ 2}).toReal := by
-    -- Replace Z and θ in the Paley-Zygmund result with their X and t equivalents
     have h_pz' := h_pz
     rw [h_mom1, h_mom2] at h_pz'
     exact h_pz'
-
-  -- 5. Apply the B-reasonableness bound (moment X 4 P ≤ B * (moment X 2 P)^2)
   have h_bound : (1 - t^2)^2 / B ≤ (1 - t^2)^2 * (moment X 2 P)^2 / moment X 4 P := by
     have h_mom2_sq_pos : 0 < (moment X 2 P)^2 := by
       simp only [hX_pos_2, pow_succ_pos]
     calc (1 - t^2)^2 / B
-      -- Multiply numerator and denominator by (moment X 2 P)^2
       _ = ((1 - t^2)^2 * (moment X 2 P)^2) / (B * (moment X 2 P)^2) := by
         rw [mul_div_mul_right _ _ h_mom2_sq_pos.ne']
-      -- Apply IsBReasonable: moment X 4 P ≤ B * (moment X 2 P)^2
       _ ≤ ((1 - t^2)^2 * (moment X 2 P)^2) / moment X 4 P := by
         gcongr
         exact hB
-
-  -- 6. Conclude by transitivity
   exact le_trans h_bound h_pz_mapped
 
 /-! ## Helper definitions and lemmas for the Bonami lemma -/
@@ -487,8 +444,41 @@ lemma uniformWeight_succ (n : ℕ) :
     uniformWeight (n + 1) = uniformWeight n / 2 := by
   simp [uniformWeight, pow_succ]
   ring
+/--
+Fourier coefficient of avgLast:
+  `(avgLast f)^(S) = f̂(S.image castSucc)`.
+-/
+lemma fourierCoeff_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
+    fourierCoeff (avgLast f) S = fourierCoeff f (S.image Fin.castSucc) := by
+  unfold avgLast; simp +decide only [fourierCoeff] ; ring_nf;
+  unfold innerProduct; simp +decide only [one_div, mul_comm] ; ring_nf;
+  unfold expect; simp +decide only [chiS, restrictLast, one_div, mul_comm, Finset.sum_add_distrib,
+    Fin.castSucc_inj, implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Finset.mul_sum _ _ _,
+    mul_left_comm] ; ring_nf;
+  rw [ add_comm 1 n, uniformWeight_succ ] ; rw [ ← mul_add ] ; rw [ sum_boolCube_succ ] ; ring_nf;
+  simp +decide [mul_comm, mul_left_comm, Finset.mul_sum _ _ _]
 
-/- Expectation on BoolCube (n+1) decomposes as average of expectations on the two restrictions. -/
+/--
+Fourier coefficient of diffLast:
+  `(diffLast f)^(S) = f̂(S.image castSucc ∪ {last n})`.
+-/
+lemma fourierCoeff_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
+    fourierCoeff (diffLast f) S = fourierCoeff f (S.image Fin.castSucc ∪ {Fin.last n}) := by
+  -- By definition of `diffLast`, we have that `diffLast f(x) = (f(snoc x false) - f(snoc x true)) / 2`.
+  unfold diffLast fourierCoeff innerProduct expect chiS restrictLast
+  rw [ uniformWeight_succ ];
+  rw [ show ( Finset.univ : Finset ( Fin ( n + 1 ) → Bool ) ) = Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.false ) Finset.univ ∪ Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.true ) Finset.univ from ?_, Finset.sum_union ];
+  · rw [ Finset.sum_image, Finset.sum_image ] <;> norm_num [ Finset.prod_union, Finset.prod_image ] ; ring_nf;
+    · simp +decide only [mul_assoc, Finset.sum_add_distrib, Finset.sum_mul _ _ _];
+      rw [ mul_add ];
+  · norm_num [ Finset.disjoint_left ];
+  · ext x;
+    by_cases hx : x ( Fin.last n ) <;> simp +decide only [Finset.mem_univ, Finset.mem_union,
+      Finset.mem_image, true_and, true_iff];
+    · exact Or.inr ⟨ fun i => x i.castSucc, by ext i; cases i using Fin.lastCases <;> aesop ⟩;
+    · exact Or.inl ⟨ fun i => x i.castSucc, by ext i; cases i using Fin.lastCases <;> aesop ⟩
+
+/-- Expectation on BoolCube (n+1) decomposes as average of expectations on the two restrictions. -/
 lemma expect_succ_eq {n : ℕ} (φ : BooleanFunc (n + 1)) :
     expect φ = (expect (restrictLast φ false) + expect (restrictLast φ true)) / 2 := by
   unfold expect restrictLast;
@@ -502,7 +492,7 @@ lemma fourth_pow_sum (a b : ℝ) :
 lemma second_pow_sum (a b : ℝ) :
     (a + b) ^ 2 + (a - b) ^ 2 = 2 * (a ^ 2 + b ^ 2) := by ring
 
-/- Fourth moment decomposition: E[f^4] = E[g^4] + 6*E[g²h²] + E[h^4] -/
+/-- Fourth moment decomposition: E[f^4] = E[g^4] + 6*E[g²h²] + E[h^4] -/
 lemma fourth_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
     expect (fun x => f x ^ 4) =
     expect (fun x => (avgLast f x) ^ 4) +
@@ -519,7 +509,7 @@ lemma fourth_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
   unfold expect; norm_num [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul ] ; ring_nf;
   simpa only [ mul_assoc, ← Finset.mul_sum _ _ _, ← Finset.sum_mul ] using by ring;);
 
-/- Second moment decomposition: E[f^2] = E[g^2] + E[h^2] -/
+/-- Second moment decomposition: E[f^2] = E[g^2] + E[h^2] -/
 lemma second_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
     expect (fun x => f x ^ 2) =
     expect (fun x => (avgLast f x) ^ 2) +
@@ -535,7 +525,7 @@ lemma second_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
   simp_all +decide [ add_sq, sub_sq, Finset.sum_add_distrib, Finset.mul_sum _ _ _ ]; ring_nf;
   norm_num [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, uniformWeight ] ; ring;
 
-/- Cauchy-Schwarz for expect: E[g²h²]² ≤ E[g⁴]·E[h⁴] -/
+/-- Cauchy-Schwarz for expect: E[g²h²]² ≤ E[g⁴]·E[h⁴] -/
 lemma expect_cs_sq {n : ℕ} (g h : BooleanFunc n) :
     expect (fun x => g x ^ 2 * h x ^ 2) ^ 2 ≤
     expect (fun x => g x ^ 4) * expect (fun x => h x ^ 4) := by
@@ -563,7 +553,7 @@ lemma expect_fourth_nonneg {n : ℕ} (f : BooleanFunc n) :
   convert expect_sq_nonneg_prod ( fun x => f x ^ 2 ) ( fun x => 1 ) using 1 ;
   norm_num [ sq ] ; ring_nf;
 
-/- Degree bound for avgLast: if f has degree ≤ k, then avgLast f has degree ≤ k -/
+/-- Degree bound for avgLast: if f has degree ≤ k, then avgLast f has degree ≤ k -/
 lemma degree_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     (hf : has_degree_at_most f k) :
     has_degree_at_most (avgLast f) k := by
@@ -582,7 +572,7 @@ lemma degree_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
   have := hf ( Finset.image Fin.castSucc S ) ;
   simp_all +decide [ Finset.card_image_of_injective, Function.Injective ] ;
 
-/-
+/--
 Degree bound for diffLast: if f has degree ≤ k, then diffLast f has degree ≤ k-1
 -/
 lemma degree_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
@@ -645,7 +635,7 @@ lemma bonami_algebra {m : ℕ} {a b A B C : ℝ}
   ring_nf at *;
   nlinarith [ show 0 ≤ 9 ^ m by positivity, show 0 ≤ a * b * 9 ^ m by positivity, sq_nonneg ( C - a * b * 9 ^ m * 3 ), mul_le_mul_of_nonneg_left hB_bound ( show 0 ≤ 9 ^ m by positivity ) ]
 
-/- The main Bonami lemma, proved without the k ≥ 1 assumption, in terms of expectation -/
+/-- The main Bonami lemma, proved without the k ≥ 1 assumption, in terms of expectation -/
 lemma bonami_expect {n : ℕ} (k : ℕ) (f : BooleanFunc n)
     (hf : has_degree_at_most f k) :
     expect (fun x ↦ f x ^ 4) ≤ (9 : ℝ) ^ k * (expect (fun x ↦ f x ^ 2)) ^ 2 := by
@@ -698,23 +688,13 @@ lemma moment_eq_expect {n : ℕ} (f : BooleanFunc n) (p : ℕ)
     (P : Measure (BoolCube n)) [IsProbabilityMeasure P]
     (hP_unif : ∀ x, (P {x}).toReal = uniformWeight n) :
     moment f p P = expect (fun x ↦ f x ^ p) := by
-  -- Expand the definition of moment
   rw [moment]
-
-  -- Convert the discrete integral to a finite sum.
-  -- With [IsProbabilityMeasure P] added, integral_fintype now perfectly matches!
   simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
-
-  -- Expand expect and push the constant uniform weight into the sum
   unfold expect
   rw [Finset.mul_sum]
-
-  -- Show the inner terms are exactly equal
   apply Finset.sum_congr rfl
   intro x _
   have h_meas_x : (P.real {x}) = uniformWeight n := hP_unif x
-
-  -- Substitute the uniform weight and rearrange
   rw [h_meas_x]
 
 /-- The canonical uniform probability measure on the Boolean Hypercube. -/
@@ -722,40 +702,25 @@ noncomputable def uniformMeasure (n : ℕ) : Measure (BoolCube n) :=
   (PMF.uniformOfFintype (BoolCube n)).toMeasure
 
 instance (n : ℕ) : IsProbabilityMeasure (uniformMeasure n) := by
-  -- Unfold the definition so Lean sees the underlying `PMF.toMeasure`
   unfold uniformMeasure
-  -- Now Lean can automatically find the PMF probability measure instance!
   infer_instance
 
 /-- Prove that our canonical measure matches the combinatorial uniformWeight. -/
 lemma uniformMeasure_apply {n : ℕ} (x : BoolCube n) :
     ((uniformMeasure n) {x}).toReal = uniformWeight n := by
-  -- Unfold the definitions
   dsimp [uniformMeasure]
   rw [PMF.toMeasure_apply_singleton]
-
-  -- Evaluate the PMF application.
-  -- This creates the `if` statement, which we immediately simplify
-  -- because `x ∈ Finset.univ` is always true.
   simp only [PMF.uniformOfFintype_apply]
-
-  -- Now we have an inverse `⁻¹`, so we use `toReal_inv` instead of `toReal_div`
   rw [ENNReal.toReal_inv]
-
-  -- Calculate the cardinality of `BoolCube n` (which is `Fin n → Bool`).
-  -- Fintype.card automatically turns this into 2^n.
   simp only [Fintype.card_pi, Fintype.card_bool, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
-
-  -- At this point, the goal is `( (2^n : ℕ) : ℝ )⁻¹ = uniformWeight n`.
-  -- We unfold uniformWeight and use basic algebra/simp to close the goal.
   unfold uniformWeight
   rw[ENNReal.toReal_natCast]
   simp only [Nat.cast_pow, Nat.cast_ofNat, inv_pow]
   exact MeasurableSet.singleton x
 
 /--
-`The Bonami Lemma:`
-`A Boolean function of degree at most k is 9^k-reasonable under the uniform measure.`
+The Bonami Lemma:
+A Boolean function of degree at most k is `9^k`-reasonable under the uniform measure.
 -/
 lemma bonami_lemma {n : ℕ} (k : ℕ) (f : BooleanFunc n)
     (hf : has_degree_at_most f k) :

@@ -1,27 +1,9 @@
-import TCSlib.BooleanAnalysis.Hypercontractivity
-import TCSlib.BooleanAnalysis.Basic
-import TCSlib.BooleanAnalysis.Bonami
-import Mathlib.Data.Real.Basic
-import Mathlib.Analysis.Calculus.Deriv.Basic
-import Mathlib.Analysis.Calculus.Deriv.Add
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Convex.SpecificFunctions.Pow
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
-import Mathlib.Analysis.Calculus.Deriv.Inv
-import Mathlib.Analysis.InnerProductSpace.Adjoint
-import Mathlib.MeasureTheory.Function.LpSpace.Basic
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
-import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
-import Mathlib.MeasureTheory.Integral.Lebesgue.Norm
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Analysis.MeanInequalities -- This imports the Real conjugate exponent API
 import Mathlib.Data.Real.Sign
+import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
+import TCSlib.BooleanAnalysis.Hypercontractivity.Simple
 /-
-# One-Bit (p, 2)-Hypercontractivity
-
-This file proves the (p, 2)-hypercontractivity theorem for functions on a single bit,
-following the proof in O'Donnell's *Analysis of Boolean Functions*.
-
 ## Main results
 - `(p, 2)-hypercontractivity on a single bit`:
   For f : BoolCube 1 → ℝ, 1 ≤ p ≤ 2, and 0 ≤ ρ with ρ² ≤ p − 1:
@@ -29,15 +11,17 @@ following the proof in O'Donnell's *Analysis of Boolean Functions*.
 - `(2, q)-hypercontractivity on a single bit`:
   For g : BoolCube 1 → ℝ and q ≥ 2:
   ‖T_{1 / √(q - 1)} g‖_q ≤ ‖g‖_2
-
-
+- `Weak (p, q) two-function hypercontractivity on a single bit`:
+  For f, g : BoolCube 1 → ℝ, 1 ≤ p ≤ 2 ≤ q and ρ = √((p − 1)(q − 1)):
+  ⟨f, T_ρ g⟩ ≤ (𝔼[|f|^p])^{1/p} · (𝔼[|g|^q])^{1/q}
+- `Hypercontractivity induction theorem`:
+  Hypercontractivity for n-bit functions follows from the one-bit case
 -/
-
 set_option maxHeartbeats 1600000
 
-namespace OneBitHypercontractivity
+namespace OneBit
 
-open BooleanAnalysis Real Bonami
+open BooleanAnalysis Real Bonami SimpleHypercontractivity
 
 /-! ## Enumeration helpers for BoolCube 1 and Finset (Fin 1) -/
 
@@ -100,8 +84,36 @@ lemma expect_abs_rpow_one_bit (p : ℝ) (f : BooleanFunc 1) :
   simp only [one_bit_val_false, one_bit_val_true]
   norm_num; ring
 
-/-! ## The two-point inequality -/
+/--
+**Lp norm monotonicity (power mean inequality)** on the Boolean cube:
+For `1 ≤ r ≤ s` and `f : BoolCube n → ℝ`,
+  `(𝔼[|f|^r])^{1/r} ≤ (𝔼[|f|^s])^{1/s}`
+This is the power mean inequality for probability measures.
+-/
+lemma lp_norm_mono {n : ℕ} (r s : ℝ) (hr : 1 ≤ r) (hrs : r ≤ s)
+    (f : BooleanFunc n) :
+    (expect (fun x => |f x| ^ r)) ^ (1/r) ≤
+    (expect (fun x => |f x| ^ s)) ^ (1/s) := by
+  -- The weights `uniformWeight n` satisfy `∑ x, uniformWeight n = 1`, since there are `2^n` elements each with weight `(1/2)^n`.
+  have h_weight_sum : ∑ x : BoolCube n, (uniformWeight n) = 1 := by
+    simp +decide [ uniformWeight, Finset.card_univ ];
+  have h_ineq : (∑ x : BoolCube n, (uniformWeight n) * |f x| ^ r) ≤ (∑ x : BoolCube n, (uniformWeight n) * |f x| ^ s) ^ (r / s) := by
+    -- Apply Jensen's inequality for the concave function $x^{r/s}$.
+    have h_jensen : (∑ x : BoolCube n, (uniformWeight n) * (|f x| ^ s) ^ (r / s)) ≤ ((∑ x : BoolCube n, (uniformWeight n) * |f x| ^ s)) ^ (r / s) := by
+      have h_jensen : ConcaveOn ℝ (Set.Ici 0) (fun x : ℝ => x ^ (r / s)) := by
+        exact ( Real.concaveOn_rpow ( by rw [ le_div_iff₀ ] <;> linarith ) ( by rw [ div_le_iff₀ ] <;> linarith ) );
+      apply_rules [ h_jensen.le_map_sum ];
+      · exact fun _ _ => by unfold uniformWeight; positivity;
+      · exact fun _ _ => Real.rpow_nonneg ( abs_nonneg _ ) _;
+    convert h_jensen using 3 ; rw [ ← Real.rpow_mul ( abs_nonneg _ ), mul_div_cancel₀ _ ( by linarith ) ];
+  convert Real.rpow_le_rpow ( ?_ ) h_ineq ( show 0 ≤ 1 / r by positivity ) using 1;
+  · unfold expect; norm_num [ mul_comm, Finset.mul_sum _ _ _ ] ;
+  · rw [ ← Real.rpow_mul ( Finset.sum_nonneg fun _ _ => mul_nonneg ( by exact pow_nonneg ( by norm_num ) _ ) ( Real.rpow_nonneg ( abs_nonneg _ ) _ ) ) ] ; ring_nf;
+    norm_num [ show r ≠ 0 by linarith, show s ≠ 0 by linarith, expect ];
+    rw [ Finset.mul_sum _ _ _ ];
+  · exact Finset.sum_nonneg fun _ _ => mul_nonneg ( by exact pow_nonneg ( by norm_num ) _ ) ( Real.rpow_nonneg ( abs_nonneg _ ) _ )
 
+/-! ## The two-point inequality -/
 /-
 **Two-Point Inequality** (core real inequality, restricted version).
 For 1 ≤ p ≤ 2, 0 ≤ b ≤ 1:
@@ -161,7 +173,7 @@ theorem two_point_ineq_unit (b p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
 
 /-
 **Two-Point Inequality** (core real inequality, a = 0 case).
-For 1 ≤ p ≤ 2: (p-1)^{p/2} ≤ 1, which gives the inequality when a = 0.
+For `1 ≤ p ≤ 2`: `(p-1)^{p/2} ≤ 1`, which gives the inequality when `a = 0`.
 -/
 lemma two_point_ineq_a_zero (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) :
     (p - 1) ^ (p / 2) ≤ 1 := by
@@ -179,10 +191,10 @@ lemma noise_l2_abs_mono (a b ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
     cases abs_cases ( a + b ) <;> cases abs_cases ( a - b ) <;> nlinarith;
   nlinarith [ show 0 ≤ 1 - ρ ^ 2 by nlinarith, abs_mul_abs_self ( a + b ), abs_mul_abs_self ( a - b ) ]
 
-/-
+/--
 **Two-Point Inequality** (full version).
-For 1 ≤ p ≤ 2 and all a, b ∈ ℝ, 0 ≤ ρ, ρ² ≤ p − 1:
-  (a² + ρ²b²)^{1/2} ≤ ((|a+b|^p + |a−b|^p) / 2)^{1/p}
+For `1 ≤ p ≤ 2` and all `a, b ∈ ℝ, 0 ≤ ρ, ρ² ≤ p − 1`:
+  `(a² + ρ²b²)^{1/2} ≤ ((|a+b|^p + |a−b|^p) / 2)^{1/p}`
 -/
 theorem two_point_ineq (a b p ρ : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
     (hρ0 : 0 ≤ ρ) (hρ : ρ ^ 2 ≤ p - 1) :
@@ -252,13 +264,11 @@ theorem two_point_ineq (a b p ρ : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
     · have := two_point_ineq_unit ( -b ) p hp1 hp2 ( by linarith [ abs_le.mp hb ] ) ( by linarith [ abs_le.mp hb ] ) ; ring_nf at *; aesop;
 
 /-! ## Main theorem -/
-
-set_option maxHeartbeats 4000000 in
 /--
 **One-Bit (p, 2)-Hypercontractivity Theorem**.
 
-For f : BoolCube 1 → ℝ, 1 ≤ p ≤ 2, and 0 ≤ ρ with ρ² ≤ p − 1:
-  (𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}
+For `f : BoolCube 1 → ℝ, 1 ≤ p ≤ 2`, and `0 ≤ ρ` with `ρ² ≤ p − 1`:
+  `(𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}`
 -/
 theorem one_bit_p2_hypercontractivity (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
     (ρ : ℝ) (hρ_nn : 0 ≤ ρ) (hρ : ρ ^ 2 ≤ p - 1)
@@ -276,35 +286,35 @@ theorem one_bit_p2_hypercontractivity (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
 
 /-! ## Hölder sharpness and noise operator duality -/
 
-/-- Helper: sign(x) * x = |x| -/
+/-- sign(x) * x = |x| -/
 private lemma sign_mul_self (x : ℝ) : Real.sign x * x = |x| := by
   rcases lt_trichotomy x 0 with hx | rfl | hx
   · rw [Real.sign_of_neg hx, abs_of_neg hx]; ring
   · simp [Real.sign_zero]
   · rw [Real.sign_of_pos hx, abs_of_pos hx, one_mul]
 
-/-- Helper: |sign(x)| = 1 when x ≠ 0 -/
+/-- |sign(x)| = 1 when x ≠ 0 -/
 private lemma abs_sign_eq_one (x : ℝ) (hx : x ≠ 0) : |Real.sign x| = 1 := by
   rcases lt_or_gt_of_ne hx with h | h
   · simp [Real.sign_of_neg h]
   · simp [Real.sign_of_pos h]
 
-/-- Helper: expect of pointwise nonneg function is nonneg -/
-private lemma expect_nonneg_of_nonneg {n : ℕ} {f : BooleanFunc n} (hf : ∀ x, 0 ≤ f x) :
+/-- Expectation of pointwise nonneg function is nonneg -/
+lemma expect_nonneg_of_nonneg {n : ℕ} {f : BooleanFunc n} (hf : ∀ x, 0 ≤ f x) :
     0 ≤ expect f := by
   unfold expect uniformWeight
   exact mul_nonneg (pow_nonneg (by positivity) _) (Finset.sum_nonneg (fun x _ => hf x))
 
-/-- Helper: expect of constant function -/
+/-- Expectation of constant function is the constant-/
 private lemma expect_const_eq {n : ℕ} (c : ℝ) :
     expect (fun (_ : BoolCube n) => c) = c := by
   unfold expect uniformWeight
   simp [Finset.sum_const, Finset.card_univ, Fintype.card_bool, Fintype.card_fin]
 
-/-
-Helper: Cauchy-Schwarz for the Boolean inner product
+/--
+Cauchy-Schwarz for the Boolean inner product
 -/
-private lemma cauchy_schwarz_bool {n : ℕ} (f g : BooleanFunc n) :
+lemma cauchy_schwarz_bool {n : ℕ} (f g : BooleanFunc n) :
     innerProduct f g ≤
     (expect (fun x => f x ^ 2)) ^ ((1:ℝ)/2) * (expect (fun x => g x ^ 2)) ^ ((1:ℝ)/2) := by
   norm_num [ ← Real.sqrt_eq_rpow ];
@@ -317,9 +327,9 @@ private lemma cauchy_schwarz_bool {n : ℕ} (f g : BooleanFunc n) :
     convert mul_le_mul_of_nonneg_left h_cauchy_schwarz ( sq_nonneg ( uniformWeight n ) ) using 1 <;> ring;
   · exact mul_nonneg ( by exact pow_nonneg ( by norm_num ) _ ) ( Finset.sum_nonneg fun _ _ => sq_nonneg _ )
 
-/-
-**Hölder sharpness**: For Hölder conjugate exponents (p, q), for any function u,
-there exists f with ‖f‖_p ≤ 1 and ‖u‖_q ≤ ⟨f, u⟩.
+/--
+**Hölder sharpness**: For Hölder conjugate exponents `(p, q)`, for any function `u`,
+there exists `f` with `‖f‖_p ≤ 1` and `‖u‖_q ≤ ⟨f, u⟩`.
 -/
 lemma holder_sharpness {n : ℕ} {p q : ℝ}
     (hpq : Real.HolderConjugate p q)
@@ -370,8 +380,8 @@ lemma holder_sharpness {n : ℕ} {p q : ℝ}
       rw [ show q⁻¹ = 1 - p⁻¹ by linarith [ hpq.symm.inv_add_inv_eq_one ] ]))
 
 /-
-**Noise operator duality**: (p, 2)-hypercontractivity implies (p', 2)-hypercontractivity
-in the reverse direction, where p' is the Hölder conjugate of p.
+**Noise operator duality**: (p, 2)-hypercontractivity implies (2, p')-hypercontractivity
+where p' is the Hölder conjugate of p.
 -/
 theorem noise_operator_duality
   {p p_conj : ℝ}
@@ -398,7 +408,7 @@ theorem noise_operator_duality
 /--
 **One-Bit (2, q)-Hypercontractivity Theorem**.
 For g : BoolCube 1 → ℝ and q ≥ 2:
-  ‖T_{1 / √(q - 1)} g‖_q ≤ ‖g‖_2
+  `‖T_{1 / √(q - 1)} g‖_q ≤ ‖g‖_2`
 -/
 theorem one_bit_2q_hypercontractivity (q : ℝ) (hq2 : 2 ≤ q) (g : BooleanFunc 1) :
     (expect (fun x => |noiseOp (1 / Real.sqrt (q - 1)) g x| ^ q)) ^ (1 / q) ≤
@@ -464,341 +474,4 @@ theorem one_bit_2q_hypercontractivity (q : ℝ) (hq2 : 2 ≤ q) (g : BooleanFunc
   have h_dual := noise_operator_duality hpq hp1 h_hyp g
   rwa [h_sqrt] at h_dual
 
-section
-open BooleanAnalysis Real Bonami Hypercontractivity
-
-variable {n : ℕ}
-
-/-! ## Noise Kernel -/
-
-/-- The noise kernel `K_ρ(x, y) = ∏_i (1 + ρ · sign(x_i) · sign(y_i)) / 2`.
-This is the transition probability from `x` to `y` under ρ-correlated noise. -/
-noncomputable def noiseKernel (ρ : ℝ) {n : ℕ} (x y : BoolCube n) : ℝ :=
-  ∏ i : Fin n, (1 + ρ * boolToSign (x i) * boolToSign (y i)) / 2
-
-lemma noiseKernel_nonneg {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
-    (x y : BoolCube n) : 0 ≤ noiseKernel ρ x y := by
-  refine Finset.prod_nonneg fun i _ ↦ ?_
-  cases x i <;> cases y i <;> norm_num [boolToSign] <;> nlinarith
-/-! ## Noise Operator as Kernel Sum -/
-
-lemma sum_fourier_kernel (ρ : ℝ) (x y : BoolCube n) :
-    ∑ S : Finset (Fin n), ρ ^ S.card * chiS S x * chiS S y =
-    ∏ i : Fin n, (1 + ρ * boolToSign (x i) * boolToSign (y i)) := by
-  have h_prod_sum : ∏ i : Fin n, (1 + ρ * boolToSign (x i) * boolToSign (y i)) =
-      ∑ S : Finset (Fin n), ∏ i ∈ S, (ρ * boolToSign (x i) * boolToSign (y i)) := by
-    simp +decide [add_comm, Finset.prod_add]
-  rw [h_prod_sum, Finset.sum_congr rfl]
-  intros; simp_all +decide [Finset.prod_mul_distrib, chiS]
-
-/-- The noise operator equals a kernel sum: `T_ρ g(x) = ∑_y K_ρ(x,y) · g(y)`. -/
-lemma noiseOp_eq_kernel_sum (ρ : ℝ) (g : BooleanFunc n) (x : BoolCube n) :
-    noiseOp ρ g x = ∑ y : BoolCube n, noiseKernel ρ x y * g y := by
-  unfold noiseOp noiseKernel BooleanAnalysis.fourierCoeff BooleanAnalysis.innerProduct
-  simp +decide [BooleanAnalysis.expect]
-  unfold uniformWeight
-  simp +decide [div_eq_inv_mul, Finset.mul_sum, mul_assoc, mul_comm, mul_left_comm]
-  rw [Finset.sum_comm, Finset.sum_congr rfl]; intros; ring_nf
-  rw [← sum_fourier_kernel]
-  simp +decide [mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum]
-
-/-! ## Inner Product as Kernel-Weighted Sum -/
-
-/-- `⟨f, T_ρ g⟩ = (1/2^n) ∑_{x,y} K_ρ(x,y) · f(x) · g(y)`. -/
-lemma innerProduct_noiseOp_eq_weighted_sum (ρ : ℝ) (f g : BooleanFunc n) :
-    innerProduct f (noiseOp ρ g) =
-    uniformWeight n * ∑ x : BoolCube n, ∑ y : BoolCube n,
-      noiseKernel ρ x y * f x * g y := by
-  unfold innerProduct
-  simp +decide [mul_assoc, Finset.mul_sum, expect]
-  rw [Finset.sum_congr rfl fun _ _ => ?_]
-  rw [noiseOp_eq_kernel_sum]
-  simp +decide [mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum]
-
-/-! ## Correlated Monotonicity -/
-
-/-- If `h(x,y) ≤ h'(x,y)` pointwise and `0 ≤ ρ ≤ 1`, then the kernel-weighted
-expectation of `h` is at most that of `h'`. -/
-lemma corrExpect_mono {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
-    {h h' : BoolCube n → BoolCube n → ℝ} (hle : ∀ x y, h x y ≤ h' x y) :
-    uniformWeight n * ∑ x : BoolCube n, ∑ y : BoolCube n,
-      noiseKernel ρ x y * h x y ≤
-    uniformWeight n * ∑ x : BoolCube n, ∑ y : BoolCube n,
-      noiseKernel ρ x y * h' x y := by
-  apply_rules [mul_le_mul_of_nonneg_left, Finset.sum_le_sum]
-  · exact fun x _ => Finset.sum_le_sum fun y _ =>
-      mul_le_mul_of_nonneg_left (hle x y) (noiseKernel_nonneg hρ0 hρ1 x y)
-  · exact pow_nonneg (by norm_num) _
-
-/-! ## Noise Kernel Factorization -/
-
-/-- The noise kernel on `BoolCube (n+1)` factors along the last coordinate. -/
-lemma noiseKernel_snoc (ρ : ℝ) (x' y' : BoolCube n) (b b' : Bool) :
-    noiseKernel ρ (Fin.snoc x' b) (Fin.snoc y' b') =
-    noiseKernel ρ x' y' * ((1 + ρ * boolToSign b * boolToSign b') / 2) := by
-  unfold noiseKernel; simp +decide [Fin.prod_univ_castSucc]; ring
-
-/-! ## Expectation Decomposition (Fubini for BoolCube) -/
-
-lemma expect_succ_eq_iterated (h : BooleanFunc (n + 1)) :
-    expect h = expect (fun x' =>
-      (1/2 : ℝ) * (h (Fin.snoc x' false) + h (Fin.snoc x' true))) := by
-  unfold expect
-  rw [sum_boolCube_succ]
-  norm_num [Finset.mul_sum, mul_add, mul_assoc, mul_left_comm,
-            Finset.sum_add_distrib, uniformWeight_succ]
-  ring_nf
-
-/-! ## Norm Collapse (Fubini) -/
-
-lemma norm_collapse_rpow (p : ℝ) (hp : 0 < p) (f : BooleanFunc (n + 1)) :
-    expect (fun x => |f x| ^ p) =
-    expect (fun x' => (1/2 : ℝ) *
-      (|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p)) := by
-  convert expect_succ_eq_iterated _ using 1
-
-/-! ## Decomposition of Weighted Sum at Dimension n+1 -/
-
-/-
-The kernel-weighted bilinear sum at dimension `n+1` decomposes by factoring the
-kernel along the last coordinate.
--/
-lemma weighted_sum_succ_decomp (ρ : ℝ) (F : BoolCube (n + 1) → BoolCube (n + 1) → ℝ) :
-    uniformWeight (n + 1) * ∑ x : BoolCube (n + 1), ∑ y : BoolCube (n + 1),
-      noiseKernel ρ x y * F x y =
-    uniformWeight n * ∑ x' : BoolCube n, ∑ y' : BoolCube n,
-      noiseKernel ρ x' y' *
-      ((1/2 : ℝ) * ∑ b : Bool, ∑ b' : Bool,
-        ((1 + ρ * boolToSign b * boolToSign b') / 2) *
-        F (Fin.snoc x' b) (Fin.snoc y' b')) := by
-  convert congr_arg _ ( sum_boolCube_succ fun y => ∑ x, noiseKernel ρ y x * F y x ) using 1 ; norm_num ; ring_nf!;
-  rw [ add_comm 1, uniformWeight_succ ] ; simp +decide [ Finset.sum_add_distrib, mul_assoc, mul_left_comm, mul_add, Finset.sum_add_distrib, mul_assoc, mul_left_comm,
-    mul_add, Finset.sum_add_distrib, mul_assoc, mul_left_comm, mul_add, Finset.sum_add_distrib, Finset.mul_sum _ _ _, mul_assoc, mul_left_comm, mul_add] ; ring_nf;
-  simp +decide only [← Finset.sum_add_distrib] ; ring_nf;
-  refine' Finset.sum_congr rfl fun x _ => _ ; rw [ sum_boolCube_succ ] ; ring_nf;
-  rw [ ← Finset.sum_add_distrib ] ; congr ; ext y ; rw [ noiseKernel_snoc, noiseKernel_snoc ] ; ring_nf;
-  rw [ noiseKernel_snoc, noiseKernel_snoc ] ; norm_num [ boolToSign ] ; ring;
-
-/-! ## One-Bit Correlated Expectation as Inner Product -/
-
-/-
-For fixed `x'` and `y'`, the one-bit kernel-weighted sum of the slices of `f` and `g`
-equals the one-bit inner product with noise operator.
--/
-lemma one_bit_slice_eq_innerProduct (ρ : ℝ) (f g : BooleanFunc (n + 1))
-    (x' y' : BoolCube n) :
-    (1/2 : ℝ) * ∑ b : Bool, ∑ b' : Bool,
-      ((1 + ρ * boolToSign b * boolToSign b') / 2) *
-      f (Fin.snoc x' b) * g (Fin.snoc y' b') =
-    innerProduct (fun t : BoolCube 1 => f (Fin.snoc x' (t 0)))
-                 (noiseOp ρ (fun t : BoolCube 1 => g (Fin.snoc y' (t 0)))) := by
-  unfold BooleanAnalysis.noiseOp;
-  unfold BooleanAnalysis.innerProduct BooleanAnalysis.fourierCoeff
-  simp;
-  rw [ show ( Finset.univ : Finset ( Finset ( Fin 1 ) ) ) = { ∅, { 0 } } by decide ] ; norm_num ; ring_nf;
-  unfold BooleanAnalysis.expect; norm_num [ Finset.sum_range_succ, Finset.sum_range_zero, BooleanAnalysis.innerProduct ] ; ring_nf;
-  unfold BooleanAnalysis.expect; norm_num [ Finset.sum_range_succ, Finset.sum_range_zero, BooleanAnalysis.uniformWeight ] ; ring_nf;
-  rw [ show ( Finset.univ : Finset ( BoolCube 1 ) ) = { fun _ => false, fun _ => true } by decide ] ; norm_num ; ring_nf;
-  rw [ Finset.sum_pair, Finset.sum_pair ] <;> norm_num [ boolToSign ] ; ring_nf;
-  · grind +splitImp;
-  · exact fun h => by have := congr_fun h 0; simp +decide at this;
-  · exact fun h => by have := congr_fun h 0; simp +decide at this;
-
-/-! ## One-bit Lp norm of slices -/
-
-/-
-The one-bit `L^p` norm of the slice `t ↦ f(snoc x' (t 0))`.
--/
-lemma one_bit_norm_slice (p : ℝ) (hp : 0 < p) (f : BooleanFunc (n + 1)) (x' : BoolCube n) :
-    (expect (fun t : BoolCube 1 => |f (Fin.snoc x' (t 0))| ^ p)) ^ (1/p) =
-    ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ^ (1/p) := by
-  unfold expect;
-  unfold uniformWeight; norm_num [ Finset.card_univ ] ; ring_nf;
-  rw [ show ( Finset.univ : Finset ( Fin 1 → Bool ) ) = { fun _ => Bool.false, fun _ => Bool.true } by decide, Finset.sum_pair ] <;> norm_num ; ring_nf;
-  decide +revert
-
-/-! ## Norm Collapse (clean form) -/
-
-/-
-The iterated norm collapses: `E_{x'}[F(x')^p] = E_x[|f(x)|^p]` where
-`F(x') = (E_t[|f(x',t)|^p])^{1/p}`.
--/
-lemma norm_collapse_clean (p : ℝ) (hp : 1 ≤ p) (f : BooleanFunc (n + 1)) :
-    expect (fun x' =>
-      ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ) =
-    expect (fun x => |f x| ^ p) := by
-  convert norm_collapse_rpow p ( by linarith ) f |> Eq.symm using 2;
-  exact funext fun x' => by ring;
-
-/-! ## Main Theorem: Two-Function Hypercontractivity by Induction -/
-
-/-
-Helper: the zero-dimensional case is trivial.
--/
-lemma two_func_hyp_zero
-    (p q : ℝ) (hp : 1 ≤ p) (hq : 1 ≤ q) (ρ : ℝ)
-    (f g : BooleanFunc 0) :
-    innerProduct f (noiseOp ρ g) ≤
-    (expect (fun x => |f x| ^ p)) ^ (1/p) *
-    (expect (fun x => |g x| ^ q)) ^ (1/q) := by
-  unfold innerProduct BooleanAnalysis.expect;
-  unfold uniformWeight;
-  -- By definition of noiseOp, we have noiseOp ρ g x = g x for any x.
-  have h_noiseOp : ∀ x, noiseOp ρ g x = g x := by
-    intro x;
-    unfold noiseOp;
-    rw [ show ( Finset.univ : Finset ( Finset ( Fin 0 ) ) ) = { ∅ } by decide, Finset.sum_singleton ] ; norm_num [ BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS ];
-    unfold innerProduct; norm_num [ BooleanAnalysis.expect ] ;
-    unfold uniformWeight; norm_num;
-    exact congr_arg g ( Subsingleton.elim _ _ );
-  simp_all +decide [ show ∀ x : Fin 0 → Bool, x = fun _ => Bool.true by intro x; ext i; exact Fin.elim0 i ];
-  rw [ ← Real.rpow_mul ( abs_nonneg _ ), ← Real.rpow_mul ( abs_nonneg _ ), mul_inv_cancel₀ ( by positivity ), mul_inv_cancel₀ ( by positivity ), Real.rpow_one, Real.rpow_one ];
-  cases abs_cases ( f fun _ => true ) <;> cases abs_cases ( g fun _ => true ) <;> nlinarith
-
-/-
-Helper: the inductive step. Given the result for dimension n,
-prove it for dimension n+1 using the one-bit base case.
--/
-lemma two_func_hyp_succ
-    (p q : ℝ) (hp : 1 ≤ p) (hq : 1 ≤ q)
-    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
-    (base_case : ∀ (f g : BooleanFunc 1),
-      innerProduct f (noiseOp ρ g) ≤
-      (expect (fun x => |f x| ^ p)) ^ (1/p) *
-      (expect (fun x => |g x| ^ q)) ^ (1/q))
-    (ih : ∀ (f g : BooleanFunc n),
-      innerProduct f (noiseOp ρ g) ≤
-      (expect (fun x => |f x| ^ p)) ^ (1/p) *
-      (expect (fun x => |g x| ^ q)) ^ (1/q))
-    (f g : BooleanFunc (n + 1)) :
-    innerProduct f (noiseOp ρ g) ≤
-    (expect (fun x => |f x| ^ p)) ^ (1/p) *
-    (expect (fun x => |g x| ^ q)) ^ (1/q) := by
-  nontriviality;
-  revert f g;
-  intro f g;
-  -- Apply the one-bit slice decomposition to rewrite the left-hand side.
-  have h_lhs : ⟪f, noiseOp ρ g⟫_𝔹 = uniformWeight n * ∑ x' : BoolCube n, ∑ y' : BoolCube n, noiseKernel ρ x' y' * ⟪fun t : BoolCube 1 => f (Fin.snoc x' (t 0)), noiseOp ρ (fun t : BoolCube 1 => g (Fin.snoc y' (t 0)))⟫_𝔹 := by
-    have h_lhs : ⟪f, noiseOp ρ g⟫_𝔹 = uniformWeight (n + 1) * ∑ x : BoolCube (n + 1), ∑ y : BoolCube (n + 1), noiseKernel ρ x y * f x * g y := by
-      convert innerProduct_noiseOp_eq_weighted_sum ρ f g using 1;
-    convert weighted_sum_succ_decomp ρ ( fun x y => f x * g y ) using 1;
-    · simpa only [ mul_assoc ] using h_lhs;
-    · congr! 3;
-      exact congrArg _ ( one_bit_slice_eq_innerProduct ρ f g _ _ ▸ by ac_rfl );
-  -- Apply the pointwise bound from `base_case` to each term in the sum.
-  have h_pointwise : ∀ x' y' : BoolCube n, ⟪fun t : BoolCube 1 => f (Fin.snoc x' (t 0)), noiseOp ρ (fun t : BoolCube 1 => g (Fin.snoc y' (t 0)))⟫_𝔹 ≤
-    ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ^ (1 / p) *
-    ((|g (Fin.snoc y' false)| ^ q + |g (Fin.snoc y' true)| ^ q) / 2) ^ (1 / q) := by
-      intro x' y';
-      convert base_case _ _ using 1;
-      unfold expect;
-      unfold uniformWeight;
-      erw [ show ( Finset.univ : Finset ( Fin 1 → Bool ) ) = { fun _ => Bool.false, fun _ => Bool.true } by decide ] ; simp +decide ; ring_nf;
-  -- Apply the pointwise bound from `h_pointwise` to each term in the sum.
-  have h_sum_bound : ⟪f, noiseOp ρ g⟫_𝔹 ≤ uniformWeight n * ∑ x' : BoolCube n, ∑ y' : BoolCube n, noiseKernel ρ x' y' *
-    ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ^ (1 / p) *
-    ((|g (Fin.snoc y' false)| ^ q + |g (Fin.snoc y' true)| ^ q) / 2) ^ (1 / q) := by
-      rw [h_lhs];
-      exact mul_le_mul_of_nonneg_left ( Finset.sum_le_sum fun x' _ => Finset.sum_le_sum fun y' _ => by simpa only [ mul_assoc ] using mul_le_mul_of_nonneg_left ( h_pointwise x' y' ) ( noiseKernel_nonneg hρ0 hρ1 x' y' ) ) ( by exact pow_nonneg ( by norm_num ) _ );
-  -- Apply the induction hypothesis to bound the sum.
-  have h_ind_bound : ⟪(fun x' => ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ^ (1 / p)), noiseOp ρ (fun y' => ((|g (Fin.snoc y' false)| ^ q + |g (Fin.snoc y' true)| ^ q) / 2) ^ (1 / q))⟫_𝔹 ≤
-    (expect (fun x' => ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2))) ^ (1 / p) *
-    (expect (fun y' => ((|g (Fin.snoc y' false)| ^ q + |g (Fin.snoc y' true)| ^ q) / 2))) ^ (1 / q) := by
-      convert ih _ _ using 3 <;> norm_num [ abs_of_nonneg, Real.rpow_nonneg, add_nonneg, div_nonneg, Real.rpow_nonneg, abs_nonneg ];
-      · exact congr_arg _ ( funext fun x => by rw [ ← Real.rpow_mul ( by positivity ), inv_mul_cancel₀ ( by positivity ), Real.rpow_one ] );
-      · exact congr_arg _ ( funext fun x => by rw [ ← Real.rpow_mul ( by positivity ), inv_mul_cancel₀ ( by positivity ), Real.rpow_one ] );
-  refine le_trans h_sum_bound ?_;
-  convert h_ind_bound using 1;
-  · rw [ innerProduct_noiseOp_eq_weighted_sum ];
-  · congr! 2;
-    · convert norm_collapse_clean p hp f |> Eq.symm using 1;
-    · convert norm_collapse_clean q ( by linarith ) g |> Eq.symm using 1
-
-theorem hypercontractivity_induction
-    (p q : ℝ) (hp : 1 ≤ p) (hq : 1 ≤ q)
-    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
-    (base_case : ∀ (f g : BooleanFunc 1),
-      innerProduct f (noiseOp ρ g) ≤
-      (expect (fun x => |f x| ^ p)) ^ (1/p) *
-      (expect (fun x => |g x| ^ q)) ^ (1/q))
-    {n : ℕ} (f g : BooleanFunc n) :
-    innerProduct f (noiseOp ρ g) ≤
-    (expect (fun x => |f x| ^ p)) ^ (1/p) *
-    (expect (fun x => |g x| ^ q)) ^ (1/q) := by
-  induction n with
-  | zero => exact two_func_hyp_zero p q hp hq ρ f g
-  | succ n ih =>
-    exact two_func_hyp_succ p q hp hq ρ hρ0 hρ1 base_case
-      (fun f' g' => ih f' g') f g
-
-/--
-**Weak Two-Function Hypercontractivity on a Single Bit.**
-For f, g : BoolCube 1 → ℝ, and exponents 1 ≤ p ≤ 2, 1 ≤ q ≤ 2, setting
-ρ = √((p − 1)(q − 1)):
-  ⟨f, T_ρ g⟩ ≤ (𝔼[|f|^p])^{1/p} · (𝔼[|g|^q])^{1/q}
-The proof factorizes ρ = √(p−1) · √(q−1), uses the semigroup property and
-self-adjointness of T, applies Cauchy–Schwarz, and then bounds each L² norm
-via one-bit (p, 2)-hypercontractivity.
--/
-theorem weak_two_function_hypercontractivity_one_bit
-    (p q : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)
-    (f g : BooleanFunc 1) :
-    innerProduct f (noiseOp (Real.sqrt ((p - 1) * (q - 1))) g) ≤
-    (expect (fun x => |f x| ^ p)) ^ (1 / p) *
-    (expect (fun x => |g x| ^ q)) ^ (1 / q) := by
-  -- Step 1: Factor the noise parameter √((p-1)(q-1)) = √(p-1) · √(q-1)
-  have hp_sub : 0 ≤ p - 1 := by linarith
-  have hq_sub : 0 ≤ q - 1 := by linarith
-  have h_sqrt_factor : Real.sqrt ((p - 1) * (q - 1)) = Real.sqrt (p - 1) * Real.sqrt (q - 1) := by
-    exact Real.sqrt_mul hp_sub (q - 1)
-  -- Step 2: Rewrite using semigroup property T_{ab} = T_a ∘ T_b
-  have h_compose : noiseOp (Real.sqrt ((p - 1) * (q - 1))) g =
-      noiseOp (Real.sqrt (p - 1)) (noiseOp (Real.sqrt (q - 1)) g) := by
-    rw [h_sqrt_factor, ← noiseOp_compose]
-  rw [h_compose]
-  -- Step 3: Use self-adjointness: ⟨f, T_{√(p-1)} h⟩ = ⟨T_{√(p-1)} f, h⟩
-  rw [← noiseOp_self_adjoint]
-  -- Step 4: Apply Cauchy-Schwarz
-  have h_cs := cauchy_schwarz_bool (noiseOp (Real.sqrt (p - 1)) f) (noiseOp (Real.sqrt (q - 1)) g)
-  -- Step 5: Apply one-bit (p,2)-hypercontractivity to each factor
-  have h_hyp_f : (expect (fun x => (noiseOp (Real.sqrt (p - 1)) f x) ^ 2)) ^ ((1 : ℝ) / 2) ≤
-      (expect (fun x => |f x| ^ p)) ^ (1 / p) := by
-    exact one_bit_p2_hypercontractivity p hp1 hp2 (Real.sqrt (p - 1))
-      (Real.sqrt_nonneg _)
-      (by rw [Real.sq_sqrt hp_sub])
-      f
-  have h_hyp_g : (expect (fun x => (noiseOp (Real.sqrt (q - 1)) g x) ^ 2)) ^ ((1 : ℝ) / 2) ≤
-      (expect (fun x => |g x| ^ q)) ^ (1 / q) := by
-    exact one_bit_p2_hypercontractivity q hq1 hq2 (Real.sqrt (q - 1))
-      (Real.sqrt_nonneg _)
-      (by rw [Real.sq_sqrt hq_sub])
-      g
-  -- Chain the inequalities
-  calc innerProduct (noiseOp (Real.sqrt (p - 1)) f) (noiseOp (Real.sqrt (q - 1)) g)
-      ≤ (expect (fun x => (noiseOp (Real.sqrt (p - 1)) f x) ^ 2)) ^ ((1 : ℝ) / 2) *
-        (expect (fun x => (noiseOp (Real.sqrt (q - 1)) g x) ^ 2)) ^ ((1 : ℝ) / 2) := h_cs
-    _ ≤ (expect (fun x => |f x| ^ p)) ^ (1 / p) *
-        (expect (fun x => |g x| ^ q)) ^ (1 / q) := by
-        apply mul_le_mul h_hyp_f h_hyp_g
-        · exact Real.rpow_nonneg (Hypercontractivity.expect_sq_noiseOp_nonneg _ _) _
-        · exact Real.rpow_nonneg (Hypercontractivity.expect_rpow_abs_nonneg _ _) _
-
-theorem weak_two_function_hypercontractivity
-    (p q : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)
-    {n : ℕ} (f g : BooleanFunc n) :
-    innerProduct f (noiseOp (Real.sqrt ((p - 1) * (q - 1))) g) ≤
-    (expect (fun x => |f x| ^ p)) ^ (1 / p) *
-    (expect (fun x => |g x| ^ q)) ^ (1 / q) := by
-  have ρ_nonneg : 0 ≤ Real.sqrt ((p - 1) * (q - 1)) := by
-    apply Real.sqrt_nonneg
-  have p_sub : 0 ≤ p - 1 := by linarith
-  have q_sub : 0 ≤ q - 1 := by linarith
-  have p_le_one : p - 1 ≤ 1 := by linarith
-  have q_le_one : q - 1 ≤ 1 := by linarith
-  have ρ_le_one : Real.sqrt ((p - 1) * (q - 1)) ≤ 1 := by
-    rw [Real.sqrt_le_one]
-    nlinarith
-  apply hypercontractivity_induction p q hp1 hq1 (Real.sqrt ((p - 1) * (q - 1))) (ρ_nonneg) (ρ_le_one) (weak_two_function_hypercontractivity_one_bit p q hp1 hp2 hq1 hq2) f g
-
-end
-end OneBitHypercontractivity
+end OneBit
