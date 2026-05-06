@@ -1815,4 +1815,224 @@ theorem switching_corollary {n : ℕ} (hn : 0 < n) (f : DNF n) (w s : ℕ)
 
 end SwitchingLemma2
 
+
+/-!
+# Håstad's Switching Lemma for CNFs
+
+The switching lemma for CNFs, derived from the DNF version via De Morgan duality.
+
+The key idea: negating a CNF produces a DNF of the same width, and decision tree depth
+is invariant under negation of the computed function. Therefore the DNF switching lemma
+immediately implies the CNF version.
+-/
+
+open Classical
+
+/-! ## Literal negation -/
+
+/-- Negate a literal by flipping its polarity. -/
+def Literal.flipNeg {n : ℕ} (l : Literal n) : Literal n :=
+  ⟨l.var, !l.neg⟩
+
+@[simp]
+lemma Literal.flipNeg_eval {n : ℕ} (l : Literal n) (x : Fin n → Bool) :
+    l.flipNeg.eval x = !(l.eval x) := by
+  simp only [Literal.flipNeg, Literal.eval]
+  cases l.neg <;> simp
+
+@[simp]
+lemma Literal.flipNeg_var {n : ℕ} (l : Literal n) :
+    l.flipNeg.var = l.var := rfl
+
+lemma Literal.flipNeg_injective {n : ℕ} : Function.Injective (Literal.flipNeg (n := n)) := by
+  intro l₁ l₂ h
+  cases l₁; cases l₂
+  simp [Literal.flipNeg] at h
+  exact Literal.mk.injEq .. ▸ h
+
+/-! ## De Morgan dual: CNF → DNF -/
+
+/-- Convert a CNF to its De Morgan dual DNF by negating every literal.
+    Each clause (disjunction) becomes a term (conjunction) with negated literals.
+    `¬(∧ᵢ (∨ⱼ lᵢⱼ)) = ∨ᵢ (∧ⱼ ¬lᵢⱼ)` -/
+def cnfToDualDNF {n : ℕ} (ψ : CNF n) : DNF n :=
+  ψ.map (fun clause => clause.map Literal.flipNeg)
+
+/-! ## Properties of the dual -/
+
+lemma cnfToDualDNF_width {n : ℕ} (ψ : CNF n) :
+    (cnfToDualDNF ψ).width = ψ.width := by
+  simp only [cnfToDualDNF, DNF.width, CNF.width, Term.width,
+    List.map_map, Function.comp_def, List.length_map]
+  congr 1
+
+lemma cnfToDualDNF_eval {n : ℕ} (ψ : CNF n) (x : Fin n → Bool) :
+    (cnfToDualDNF ψ).eval x = !(ψ.eval x) := by
+  simp only [cnfToDualDNF, DNF.eval, CNF.eval]
+  induction ψ with
+  | nil => simp
+  | cons hd tl ih =>
+    simp only [List.map_cons, List.any_cons, List.all_cons]
+    rw [ih, Bool.not_and]
+    congr 1
+    simp only [Term.eval, CNF.evalClause]
+    induction hd with
+    | nil => simp
+    | cons l tl' ih' =>
+      simp only [List.map_cons, List.all_cons, List.any_cons, Literal.flipNeg_eval]
+      rw [ih', Bool.not_or]
+
+/-! ## Decision tree depth is invariant under negation -/
+
+/-- Negate all leaves of a decision tree. -/
+def DecisionTree.negateLeaves {n : ℕ} : DecisionTree n → DecisionTree n
+  | .leaf b => .leaf (!b)
+  | .branch v lo hi => .branch v (negateLeaves lo) (negateLeaves hi)
+
+@[simp]
+lemma DecisionTree.negateLeaves_eval {n : ℕ} (T : DecisionTree n) (x : Fin n → Bool) :
+    T.negateLeaves.eval x = !(T.eval x) := by
+  induction T with
+  | leaf b => simp [negateLeaves, DecisionTree.eval]
+  | branch v lo hi ih_lo ih_hi =>
+    simp only [negateLeaves, DecisionTree.eval]
+    split <;> simp_all
+
+@[simp]
+lemma DecisionTree.negateLeaves_depth {n : ℕ} (T : DecisionTree n) :
+    T.negateLeaves.depth = T.depth := by
+  induction T with
+  | leaf _ => simp [negateLeaves, DecisionTree.depth]
+  | branch v lo hi ih_lo ih_hi =>
+    simp [negateLeaves, DecisionTree.depth, ih_lo, ih_hi]
+
+lemma dtDepth_neg {n : ℕ} (f : (Fin n → Bool) → Bool) :
+    dtDepth (fun x => !(f x)) = dtDepth f := by
+  apply le_antisymm
+  · -- dtDepth (¬f) ≤ dtDepth f
+    unfold dtDepth
+    apply Nat.find_le
+    have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
+      ⟨n, buildFullDTree f 0 (fun _ => false),
+       buildFullDTree_depth f 0 (Nat.zero_le n) _,
+       fun x => buildFullDTree_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+    obtain ⟨T, hTd, hTeval⟩ := h
+    exact ⟨T.negateLeaves, by simp [hTd], by intro x; simp [hTeval]⟩
+  · -- dtDepth f ≤ dtDepth (¬f)
+    unfold dtDepth
+    apply Nat.find_le
+    have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = (fun x => !(f x)) x)
+      ⟨n, buildFullDTree _ 0 (fun _ => false),
+       buildFullDTree_depth _ 0 (Nat.zero_le n) _,
+       fun x => buildFullDTree_eval _ 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+    obtain ⟨T, hTd, hTeval⟩ := h
+    exact ⟨T.negateLeaves, by simp [hTd], by intro x; simp [hTeval]⟩
+
+namespace SwitchingLemmaCNF
+
+open SwitchingLemma2
+
+variable {n : ℕ}
+
+/-! ## restrictFn commutes with negation -/
+
+lemma restrictFn_neg {n : ℕ} (f : (Fin n → Bool) → Bool) (ρ : Restriction n) :
+    restrictFn (fun x => !(f x)) ρ = fun x => !(restrictFn f ρ x) := by
+  ext x; simp [restrictFn]
+
+lemma IsBadRestriction_neg {n : ℕ} (f : (Fin n → Bool) → Bool) (d : ℕ) (ρ : Restriction n) :
+    IsBadRestriction (fun x => !(f x)) d ρ ↔ IsBadRestriction f d ρ := by
+  simp only [IsBadRestriction, restrictFn_neg, dtDepth_neg]
+
+/-! ## Nodup and injectivity conditions transfer through duality -/
+
+lemma cnfToDualDNF_nodup {n : ℕ} (ψ : CNF n)
+    (h : ∀ c ∈ ψ, c.Nodup) :
+    ∀ t ∈ cnfToDualDNF ψ, t.Nodup := by
+  intro t ht
+  simp only [cnfToDualDNF, List.mem_map] at ht
+  obtain ⟨c, hc_mem, rfl⟩ := ht
+  exact (h c hc_mem).map Literal.flipNeg_injective
+
+lemma cnfToDualDNF_inj {n : ℕ} (ψ : CNF n)
+    (h : ∀ c ∈ ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) :
+    ∀ t ∈ cnfToDualDNF ψ, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
+  intro t ht l₁ hl₁ l₂ hl₂ hvar
+  simp only [cnfToDualDNF, List.mem_map] at ht
+  obtain ⟨c, hc_mem, rfl⟩ := ht
+  simp only [List.mem_map] at hl₁ hl₂
+  obtain ⟨l₁', hl₁'_mem, rfl⟩ := hl₁
+  obtain ⟨l₂', hl₂'_mem, rfl⟩ := hl₂
+  simp only [Literal.flipNeg_var] at hvar
+  have := h c hc_mem l₁' hl₁'_mem l₂' hl₂'_mem hvar
+  rw [this]
+
+/-! ## Main theorem: Switching Lemma for CNFs -/
+
+/-- **Håstad's Switching Lemma for CNFs.**
+    For a CNF formula `ψ` of width at most `w` on `n` variables, the number of
+    `s`-restrictions under which the restricted function has decision tree depth > `d`
+    is bounded by `numSRestrictions n s * (10 * s * w)^d / n^d`. -/
+theorem switching_lemma_cnf {n : ℕ} (hn : 0 < n) (ψ : CNF n) (w s d : ℕ)
+    (hw : ψ.width ≤ w) (hs : 5 * s ≤ n)
+    (hnd : ∀ c ∈ ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ c ∈ ψ, c.Nodup) :
+    (Finset.univ.filter fun ρ : Restriction n =>
+        IsRestriction s ρ ∧ IsBadRestriction ψ.eval d ρ).card * n ^ d ≤
+    numSRestrictions n s * (10 * s * w) ^ d := by
+  -- Rewrite using the dual DNF
+  have hkey : ∀ ρ : Restriction n,
+      IsBadRestriction ψ.eval d ρ ↔
+      IsBadRestriction (cnfToDualDNF ψ).eval d ρ := by
+    intro ρ
+    constructor
+    · intro hbad
+      simp only [IsBadRestriction] at hbad ⊢
+      rw [show (cnfToDualDNF ψ).eval = fun x => !(ψ.eval x) from
+        funext (fun x => cnfToDualDNF_eval ψ x)]
+      rw [restrictFn_neg]
+      rw [dtDepth_neg]
+      exact hbad
+    · intro hbad
+      simp only [IsBadRestriction] at hbad ⊢
+      rw [show (cnfToDualDNF ψ).eval = fun x => !(ψ.eval x) from
+        funext (fun x => cnfToDualDNF_eval ψ x)] at hbad
+      rw [restrictFn_neg] at hbad
+      rw [dtDepth_neg] at hbad
+      exact hbad
+  have hfilter_eq : (Finset.univ.filter fun ρ : Restriction n =>
+        IsRestriction s ρ ∧ IsBadRestriction ψ.eval d ρ) =
+      (Finset.univ.filter fun ρ : Restriction n =>
+        IsRestriction s ρ ∧ IsBadRestriction (cnfToDualDNF ψ).eval d ρ) := by
+    ext ρ; simp [hkey]
+  rw [hfilter_eq]
+  have hw' : (cnfToDualDNF ψ).width ≤ w := by rw [cnfToDualDNF_width]; exact hw
+  exact switching_lemma hn (cnfToDualDNF ψ) w s d hw' hs
+    (cnfToDualDNF_inj ψ hnd) (cnfToDualDNF_nodup ψ hnodup)
+
+/-- **Switching Lemma Corollary for CNFs.**
+    For a CNF formula `ψ` of width at most `w`, the number of `s`-restrictions
+    under which the restricted function cannot be represented by a DNF of width ≤ `w`
+    is bounded. -/
+theorem switching_corollary_cnf {n : ℕ} (hn : 0 < n) (ψ : CNF n) (w s : ℕ)
+    (hw : ψ.width ≤ w) (hs : 5 * s ≤ n)
+    (hnd : ∀ c ∈ ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ c ∈ ψ, c.Nodup) :
+    (Finset.univ.filter fun ρ : Restriction n =>
+        IsRestriction s ρ ∧
+        ¬ ∃ φ : DNF n, φ.width ≤ w ∧
+          ∀ x, φ.eval x = restrictFn ψ.eval ρ x).card * n ^ w ≤
+    numSRestrictions n s * (10 * s * w) ^ w := by
+  apply le_trans _ (switching_lemma_cnf hn ψ w s w hw hs hnd hnodup)
+  apply Nat.mul_le_mul_right
+  apply Finset.card_le_card
+  intro ρ hρ
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hρ ⊢
+  refine ⟨hρ.1, ?_⟩
+  show dtDepth (restrictFn ψ.eval ρ) > w
+  by_contra hgood; push_neg at hgood
+  exact hρ.2 (dtDepth_le_implies_small_dnf_cnf _ w hgood).1
+
+end SwitchingLemmaCNF
+
 #min_imports
