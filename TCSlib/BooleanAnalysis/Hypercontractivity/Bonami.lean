@@ -19,6 +19,15 @@ open BooleanAnalysis
 section
 open MeasureTheory ProbabilityTheory Filter BooleanAnalysis
 
+/-
+## Main results
+Several results relating to the `B-reasonability` of Boolean functions
+- `b_reasonable_tail_bound`
+- `min_prob_b_reasonable`
+- `b_reasonable_anticon_zero`
+- `bonami_lemma`
+-/
+
 /-! ## B-Reasonability Bounds -/
 
 def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=

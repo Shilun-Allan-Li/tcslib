@@ -14,8 +14,6 @@ import TCSlib.BooleanAnalysis.Hypercontractivity.Simple
 - `Weak (p, q) two-function hypercontractivity on a single bit`:
   For f, g : BoolCube 1 → ℝ, 1 ≤ p ≤ 2 ≤ q and ρ = √((p − 1)(q − 1)):
   ⟨f, T_ρ g⟩ ≤ (𝔼[|f|^p])^{1/p} · (𝔼[|g|^q])^{1/q}
-- `Hypercontractivity induction theorem`:
-  Hypercontractivity for n-bit functions follows from the one-bit case
 -/
 set_option maxHeartbeats 1600000
 

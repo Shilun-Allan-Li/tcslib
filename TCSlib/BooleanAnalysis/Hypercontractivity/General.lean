@@ -4,6 +4,17 @@ open BooleanAnalysis OneBit Bonami SimpleHypercontractivity Real
 set_option maxHeartbeats 800000
 namespace GeneralHypercontractivity
 variable {n : ℕ}
+
+/- Note: there are some warnings regarding unnecessary hypotheses. These are
+  in general actually needed, as the noise operator is not defined for negative values of ρ
+  and we don't work with p ≤ 0 norms -/
+/-
+## Main results
+- `Hypercontractivity induction theorem`
+- `Equivalence of two-function and one-function hypercontractivity`
+- `General one-function hypercontractivity`
+- `General two-function hypercontractivity`
+-/
 /-! ## Noise Kernel -/
 
 /-- The noise kernel `K_ρ(x, y) = ∏_i (1 + ρ · sign(x_i) · sign(y_i)) / 2`.
@@ -831,7 +842,7 @@ theorem low_norms_one_bit (p q : ℝ) (hp : 1 < p) (hpq : p ≤ q) (hq : q ≤ 2
   have h_two_point : ((|a + ρ * b| ^ q + |a - ρ * b| ^ q) / 2) ^ (1 / q) ≤ ((|a + b| ^ p + |a - b| ^ p) / 2) ^ (1 / p) := by
     -- Without loss of generality, assume $b \geq 0$.
     suffices h_wlog : ∀ {a b : ℝ}, 0 ≤ b → ((|a + ρ * b| ^ q + |a - ρ * b| ^ q) / 2) ^ (1 / q) ≤ ((|a + b| ^ p + |a - b| ^ p) / 2) ^ (1 / p) by
-      cases le_total 0 b <;> simp_all +decide [ abs_sub_comm ];
+      cases le_total 0 b <;> simp_all +decide ;
       convert @h_wlog a ( -b ) ( by linarith ) using 1 <;> norm_num [ abs_sub_comm ];
       · ring_nf;
       · ring_nf;

@@ -5,6 +5,13 @@ open BooleanAnalysis
 section
 open MeasureTheory Set Filter BooleanAnalysis Real Bonami
 
+/- ## Main results
+This file contains simple hypercontractivity results that don't require the general theorem
+- `hypercontractivity_2_4`: the (2,4)-hypercontractivity theorem
+- `hypercontractivity_4_div_3_2`: the (4/3, 2)-hypercontractivity theorem
+- `hypercontractivity_2_q`: the q ≥ 2, q even case of hypercontractivity
+- `hypercontractivity_p_2_general`: the (p, 2)-hypercontractivity theorem following from (2, q)
+-/
 /-! ## (2,4)-Hypercontractivity Theorem -/
 
 /-
