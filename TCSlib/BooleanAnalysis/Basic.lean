@@ -8,8 +8,11 @@ import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Sqrt
+import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.SymmDiff
+import Mathlib.Probability.Moments.Basic
+import TCSlib.BooleanAnalysis.Circuit
 
 /-!
 # Boolean Analysis
@@ -84,6 +87,31 @@ scoped notation "⟪" f ", " g "⟫_𝔹" => innerProduct f g
 /-- The `L²` norm of a Boolean function: `‖f‖ = √(⟪f, f⟫)`. -/
 noncomputable def l2Norm (f : BooleanFunc n) : ℝ :=
   Real.sqrt (innerProduct f f)
+
+/-- The `p`-th moment of a Boolean function under the uniform measure is
+  the `p`-th power of the expectation. -/
+lemma moment_eq_expect {n : ℕ} (f : BooleanFunc n) (p : ℕ)
+    (P : MeasureTheory.Measure (BoolCube n)) [MeasureTheory.IsProbabilityMeasure P]
+    (hP_unif : ∀ x, (P {x}).toReal = uniformWeight n) :
+    ProbabilityTheory.moment f p P = expect (fun x ↦ f x ^ p) := by
+  -- Expand the definition of moment
+  rw [ProbabilityTheory.moment]
+
+  -- Convert the discrete integral to a finite sum.
+  -- With [IsProbabilityMeasure P] added, integral_fintype now perfectly matches!
+  simp only [Pi.pow_apply, MeasureTheory.Integrable.of_finite, MeasureTheory.integral_fintype, smul_eq_mul]
+
+  -- Expand expect and push the constant uniform weight into the sum
+  unfold expect
+  rw [Finset.mul_sum]
+
+  -- Show the inner terms are exactly equal
+  apply Finset.sum_congr rfl
+  intro x _
+  have h_meas_x : (P.real {x}) = uniformWeight n := hP_unif x
+
+  -- Substitute the uniform weight and rearrange
+  rw [h_meas_x]
 
 /-! ## Walsh–Fourier characters -/
 

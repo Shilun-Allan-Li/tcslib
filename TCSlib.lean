@@ -11,5 +11,8 @@ import TCSlib.ErrorCorrectingCodes.QuantumHamming
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
 import TCSlib.BooleanAnalysis.Circuit
-import TCSlib.BooleanAnalysis.Hypercontractivity
+import TCSlib.BooleanAnalysis.Hypercontractivity.Simple
 import TCSlib.BooleanAnalysis.Switching
+import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
+import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
+import TCSlib.BooleanAnalysis.Hypercontractivity.General
