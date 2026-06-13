@@ -12,7 +12,7 @@ import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.SymmDiff
 import Mathlib.Probability.Moments.Basic
-import TCSlib.BooleanAnalysis.Circuit
+import TCSlib.BooleanAnalysis.LMN
 
 /-!
 # Boolean Analysis
