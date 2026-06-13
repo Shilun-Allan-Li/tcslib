@@ -77,12 +77,12 @@ The noise operator decomposes along the last coordinate:
 lemma noiseOp_snoc {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) (x : BoolCube n) (b : Bool) :
     noiseOp ρ f (Fin.snoc x b) =
     noiseOp ρ (avgLast f) x + boolToSign b * ρ * noiseOp ρ (diffLast f) x := by
-  convert finset_fin_succ_sum_partition ( fun S ↦ ρ ^ S.card * fourierCoeff f S * chiS S ( Fin.snoc x b ) ) using 1;
+  convert finset_fin_succ_sum_partition ( fun S ↦ ρ ^ S.card * BooleanAnalysis.fourierCoeff f S * chiS S ( Fin.snoc x b ) ) using 1;
   congr! 1;
   · refine' Finset.sum_congr rfl fun T _ => _;
     rw [ ← fourierCoeff_avgLast ];
     rw [ card_image_castSucc, chiS_snoc_castSucc ];
-  · rw [ show noiseOp ρ ( diffLast f ) x = ∑ T : Finset ( Fin n ), ρ ^ T.card * fourierCoeff ( diffLast f ) T * chiS T x from rfl ];
+  · rw [ show noiseOp ρ ( diffLast f ) x = ∑ T : Finset ( Fin n ), ρ ^ T.card * BooleanAnalysis.fourierCoeff ( diffLast f ) T * chiS T x from rfl ];
     rw [ Finset.mul_sum _ _ _ ] ; refine' Finset.sum_congr rfl fun T hT => _ ; rw [ fourierCoeff_diffLast ] ; rw [ card_image_castSucc_union_last ] ; ring_nf;
     rw [ chiS_snoc_with_last ] ; ring
 
@@ -150,7 +150,7 @@ theorem hypercontractivity_2_4 {n : ℕ} (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 3) (f 
   unfold uniformWeight; norm_num;
   unfold noiseOp; ring_nf;
   erw [ Finset.sum_eq_single ∅ ] <;> norm_num;
-  · unfold fourierCoeff;
+  · unfold BooleanAnalysis.fourierCoeff;
     unfold innerProduct expect; norm_num [ Fin.eq_zero ] ;
     unfold uniformWeight; norm_num;
   · exact fun h => False.elim <| h rfl;
@@ -320,7 +320,7 @@ theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
 `𝔼[(T_ρ f)²] = ∑_S ρ^{2|S|} f̂(S)²`. -/
 lemma noise_l2_fourier (ρ : ℝ) (f : BooleanFunc n) :
     innerProduct (noiseOp ρ f) (noiseOp ρ f) =
-    ∑ S : Finset (Fin n), (ρ ^ S.card) ^ 2 * fourierCoeff f S ^ 2 := by
+    ∑ S : Finset (Fin n), (ρ ^ S.card) ^ 2 * BooleanAnalysis.fourierCoeff f S ^ 2 := by
   rw [parseval]
   apply Finset.sum_congr rfl
   intro S _
@@ -415,6 +415,7 @@ lemma noise_qth_moment_decomp (q : ℕ) (ρ : ℝ) (f : BooleanFunc (n + 1)) :
 
 /-! ## The main (2, 2k)-Hypercontractivity Theorem -/
 
+set_option maxHeartbeats 400000 in
 /--
 **The (2, 2k)-Hypercontractivity Theorem** (Bonami–Beckner):
 

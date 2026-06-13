@@ -458,8 +458,8 @@ Fourier coefficient of avgLast:
   `(avgLast f)^(S) = f̂(S.image castSucc)`.
 -/
 lemma fourierCoeff_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
-    fourierCoeff (avgLast f) S = fourierCoeff f (S.image Fin.castSucc) := by
-  unfold avgLast; simp +decide only [fourierCoeff] ; ring_nf;
+    BooleanAnalysis.fourierCoeff (avgLast f) S = BooleanAnalysis.fourierCoeff f (S.image Fin.castSucc) := by
+  unfold avgLast; simp +decide only [BooleanAnalysis.fourierCoeff] ; ring_nf;
   unfold innerProduct; simp +decide only [one_div, mul_comm] ; ring_nf;
   unfold expect; simp +decide only [chiS, restrictLast, one_div, mul_comm, Finset.sum_add_distrib,
     Fin.castSucc_inj, implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Finset.mul_sum _ _ _,
@@ -472,9 +472,9 @@ Fourier coefficient of diffLast:
   `(diffLast f)^(S) = f̂(S.image castSucc ∪ {last n})`.
 -/
 lemma fourierCoeff_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
-    fourierCoeff (diffLast f) S = fourierCoeff f (S.image Fin.castSucc ∪ {Fin.last n}) := by
+    BooleanAnalysis.fourierCoeff (diffLast f) S = BooleanAnalysis.fourierCoeff f (S.image Fin.castSucc ∪ {Fin.last n}) := by
   -- By definition of `diffLast`, we have that `diffLast f(x) = (f(snoc x false) - f(snoc x true)) / 2`.
-  unfold diffLast fourierCoeff innerProduct expect chiS restrictLast
+  unfold diffLast BooleanAnalysis.fourierCoeff innerProduct expect chiS restrictLast
   rw [ uniformWeight_succ ];
   rw [ show ( Finset.univ : Finset ( Fin ( n + 1 ) → Bool ) ) = Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.false ) Finset.univ ∪ Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.true ) Finset.univ from ?_, Finset.sum_union ];
   · rw [ Finset.sum_image, Finset.sum_image ] <;> norm_num [ Finset.prod_union, Finset.prod_image ] ; ring_nf;
@@ -567,8 +567,8 @@ lemma degree_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     (hf : has_degree_at_most f k) :
     has_degree_at_most (avgLast f) k := by
   intro S hS_nonzero
-  have h_fourier_coeff : fourierCoeff (avgLast f) S = fourierCoeff f (S.image Fin.castSucc) := by
-    unfold fourierCoeff avgLast;
+  have h_fourier_coeff : BooleanAnalysis.fourierCoeff (avgLast f) S = BooleanAnalysis.fourierCoeff f (S.image Fin.castSucc) := by
+    unfold BooleanAnalysis.fourierCoeff avgLast;
     unfold innerProduct restrictLast;
     unfold expect;
     -- By definition of $f$, we can expand the sum.
@@ -587,9 +587,9 @@ Degree bound for diffLast: if f has degree ≤ k, then diffLast f has degree ≤
 lemma degree_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     (hf : has_degree_at_most f k) :
     has_degree_at_most (diffLast f) (k - 1) := by
-  have h_fourier_coeff : ∀ S : Finset (Fin n), fourierCoeff (diffLast f) S = fourierCoeff f (Finset.image (Fin.castSucc) S ∪ {Fin.last n}) := by
+  have h_fourier_coeff : ∀ S : Finset (Fin n), BooleanAnalysis.fourierCoeff (diffLast f) S = BooleanAnalysis.fourierCoeff f (Finset.image (Fin.castSucc) S ∪ {Fin.last n}) := by
     intro S
-    unfold diffLast fourierCoeff innerProduct expect chiS restrictLast
+    unfold diffLast BooleanAnalysis.fourierCoeff innerProduct expect chiS restrictLast
     rw [ uniformWeight_succ ];
     rw [ show ( Finset.univ : Finset ( Fin ( n + 1 ) → Bool ) ) = Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.false ) Finset.univ ∪ Finset.image ( fun x : Fin n → Bool => Fin.snoc x Bool.true ) Finset.univ from ?_, Finset.sum_union ];
     · rw [ Finset.sum_image, Finset.sum_image ] <;> norm_num [ Finset.prod_union, Finset.prod_image ] ; ring_nf;
@@ -612,11 +612,11 @@ lemma degree_zero_const {n : ℕ} (f : BooleanFunc n) (hf : has_degree_at_most f
     ∀ x, f x = f default := by
   intro x;
   -- By definition of $f$, we can write it as a sum of its Fourier coefficients.
-  have h_fourier : f = fun x => ∑ S : Finset (Fin n), fourierCoeff f S * chiS S x := by
+  have h_fourier : f = fun x => ∑ S : Finset (Fin n), BooleanAnalysis.fourierCoeff f S * chiS S x := by
     exact funext fun x => walsh_expansion f x;
   rw [ h_fourier ];
   refine' Finset.sum_congr rfl fun S hS => _;
-  by_cases h : fourierCoeff f S = 0 <;> simp +decide [ h ];
+  by_cases h : BooleanAnalysis.fourierCoeff f S = 0 <;> simp +decide [ h ];
   specialize hf S h;
   simp_all +singlePass [ Finset.card_eq_zero ] ;
 
