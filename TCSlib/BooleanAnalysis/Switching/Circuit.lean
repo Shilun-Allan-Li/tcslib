@@ -1,4 +1,7 @@
-import Mathlib
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Data.Int.Star
+import Mathlib.Tactic
 
 /-!
 # Boolean Circuits, Literals, Terms, DNF/CNF, Decision Trees
@@ -98,6 +101,19 @@ def Circuit.depth : Circuit n → Nat
 def Circuit.size : Circuit n → Nat
   | .lit _ => 1
   | .node _ cs => 1 + cs.foldr (fun c acc => c.size + acc) 0
+
+/-- Maximum depth over a list of circuits (used in depth of a node). -/
+def Circuit.maxDepth {n : Nat} (cs : List (Circuit n)) : Nat :=
+  cs.foldr (fun c acc => max c.depth acc) 0
+
+/-- Sum of sizes over a list of circuits (used in size of a node). -/
+def Circuit.sumSize {n : Nat} (cs : List (Circuit n)) : Nat :=
+  cs.foldr (fun c acc => c.size + acc) 0
+
+/-- Maximum fanin of a circuit: maximum number of children of any gate, recursively. -/
+def Circuit.maxFanin : Circuit n → Nat
+  | .lit _ => 0
+  | .node _ cs => max cs.length (cs.foldr (fun c acc => max c.maxFanin acc) 0)
 
 -- ----------------------------------------------------------------
 -- Section 3: Normal-form circuit (alternating, nodup at base)
