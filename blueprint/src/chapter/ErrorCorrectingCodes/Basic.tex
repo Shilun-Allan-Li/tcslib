@@ -111,3 +111,71 @@ implemented as a \lean{Finset}.
 \leanok
 If a code $C$ has minimum distance $d$, then $d \le n$.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Alphabet size positive]
+\lean{ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le}
+\leanok
+If $q \ge 2$, then $q > 0$ as a real number.
+\end{lemma}
+
+\begin{lemma}[Alphabet size exceeds one]
+\lean{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+\leanok
+If $q \ge 2$, then $1 < q$ as a real number.
+\end{lemma}
+
+\begin{lemma}[$q-1$ nonnegative]
+\lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_nonneg_of_two_le}
+\leanok
+\uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+If $q \ge 2$, then $0 \le q - 1$ as a real number.
+\end{lemma}
+
+\begin{lemma}[$q-1$ positive]
+\lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
+\leanok
+\uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+If $q \ge 2$, then $0 < q - 1$ as a real number.
+\end{lemma}
+
+\begin{lemma}[Alphabet size differs from one]
+\lean{ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le}
+\leanok
+\uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+If $q \ge 2$, then $q \ne 1$ as a real number.
+\end{lemma}
+
+\begin{lemma}[$1-p$ positive when $p < 1$]
+\lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
+\leanok
+If $p < 1$, then $0 < 1 - p$.
+\end{lemma}
+
+\begin{lemma}[$1-p$ nonnegative when $p \le 1$]
+\lean{ErrorCorrectingCodes.Codeword.one_sub_nonneg_of_le_one}
+\leanok
+If $p \le 1$, then $0 \le 1 - p$.
+\end{lemma}
+
+\begin{lemma}[$p(1-p)$ positive]
+\lean{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
+\leanok
+\uses{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
+If $0 < p$ and $p < 1$, then $0 < p(1 - p)$.
+\end{lemma}
+
+\begin{lemma}[Below $1 - 1/q$ implies below one]
+\lean{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv}
+\leanok
+If $0 < q$ and $p \le 1 - 1/q$, then $p < 1$.
+\end{lemma}
+
+\begin{lemma}[$1-p$ positive below $1 - 1/q$]
+\lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_le_one_sub_inv}
+\leanok
+\uses{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
+If $0 < q$ and $p \le 1 - 1/q$, then $0 < 1 - p$.
+\end{lemma}

@@ -106,9 +106,20 @@ Rules:
 Match the surrounding style of the existing chapters (see
 `blueprint/src/chapter/ErrorCorrectingCodes/Basic.tex` for the house format).
 
+## Inline references vs. the binding label
+
+The project's house style uses `\lean{Name}` inline in prose to typeset a Lean name
+(e.g. "the width $\lean{Term.width}$ equals ..."). That is fine and encouraged. But
+exactly ONE `\lean{...}` per environment is the *binding* label — always place it on its
+own line immediately after `\begin{<env>}[...]`, before `\leanok`. Tools key the
+(informal ↔ formal) dataset pair off that first label line, so never put the binding name
+inline-only.
+
 ## Guardrails
 
 - One work unit = one `.tex` file. Never edit another module's chapter.
+- Use each declaration's `name` from the work unit verbatim as its binding label (the
+  planner already strips Lean's `_private` mangling and guarantees the name is unique).
 - Never edit any `.lean` file, `main.tex`, or the work unit JSON.
 - Never run `lake build` or any Lean build command.
 - Produce valid LaTeX: balanced environments, escape literal `_`, `%`, `&`, `#` in prose

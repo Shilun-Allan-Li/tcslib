@@ -143,3 +143,164 @@ If $C \le \mathcal{H}_n$ is non-degenerate, then
 \;\le\; 2^n.
 \]
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Pauli $I$ matrix]
+\lean{sigmaI}
+\leanok
+The $2\times 2$ identity matrix over $\mathbb{C}$, i.e.\ the Pauli operator $I$.
+\end{definition}
+
+\begin{definition}[Pauli $X$ matrix]
+\lean{sigmaX}
+\leanok
+The bit-flip Pauli matrix
+$X = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$
+over $\mathbb{C}$.
+\end{definition}
+
+\begin{definition}[Pauli $Y$ matrix]
+\lean{sigmaY}
+\leanok
+The bit-phase-flip Pauli matrix
+$Y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}$
+over $\mathbb{C}$.
+\end{definition}
+
+\begin{definition}[Pauli $Z$ matrix]
+\lean{sigmaZ}
+\leanok
+The phase-flip Pauli matrix
+$Z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$
+over $\mathbb{C}$.
+\end{definition}
+
+\begin{definition}[Matrix of a Pauli basis element]
+\lean{PauliBasis.toMatrix}
+\leanok
+\uses{sigmaI, sigmaX, sigmaY, sigmaZ}
+Maps each Pauli basis element $\{I,X,Y,Z\}$ to its corresponding $2\times 2$ matrix
+$\{\sigma_I,\sigma_X,\sigma_Y,\sigma_Z\}$.
+\end{definition}
+
+\begin{definition}[Matrix of a Pauli string]
+\lean{pauliMatrix}
+\leanok
+\uses{PauliBasis.toMatrix, PauliString}
+For a Pauli string $p$ on $n$ qubits, the $2^n\times 2^n$ matrix obtained as the
+tensor product of the single-qubit Pauli matrices $\sigma_{p(i)}$ over all coordinates~$i$.
+\end{definition}
+
+\begin{definition}[Embedding of a non-identity Pauli]
+\lean{PauliNZ.toBasis}
+\leanok
+Embeds a non-identity Pauli ($X$, $Y$, or $Z$) from the three-element type
+$\mathrm{PauliNZ}$ into the full Pauli basis $\{I,X,Y,Z\}$.
+\end{definition}
+
+\begin{lemma}[Embedded Paulis are non-identity]
+\lean{PauliNZ.toBasis_ne_I}
+\leanok
+\uses{PauliNZ.toBasis}
+For every $a \in \mathrm{PauliNZ}$, its image $a.\mathrm{toBasis}$ in the Pauli basis is not the
+identity element $I$.
+\end{lemma}
+
+\begin{definition}[Pauli string with prescribed support]
+\lean{mkWithSupport}
+\leanok
+\uses{PauliNZ.toBasis, PauliString}
+Given a finset $S \subseteq \mathrm{Fin}\,n$ and an assignment $f : S \to \mathrm{PauliNZ}$,
+constructs the Pauli string that equals $f(i).\mathrm{toBasis}$ on each $i \in S$ and equals $I$
+elsewhere.
+\end{definition}
+
+\begin{lemma}[Support of \texttt{mkWithSupport}]
+\lean{support_mkWithSupport}
+\leanok
+\uses{PauliNZ.toBasis_ne_I, mkWithSupport, support}
+The Pauli string $\mathrm{mkWithSupport}\,S\,f$ has support exactly $S$.
+\end{lemma}
+
+\begin{definition}[Pauli strings with exact support]
+\lean{pauliStringsExactSupport}
+\leanok
+\uses{PauliString, support}
+The finset of all Pauli strings on $n$ qubits whose support equals exactly the given
+finset $S$.
+\end{definition}
+
+\begin{lemma}[Count of Pauli strings with exact support]
+\lean{card_pauliStringsExactSupport}
+\leanok
+\uses{PauliNZ.toBasis, mkWithSupport, pauliStringsExactSupport, support, support_mkWithSupport}
+The number of Pauli strings with support exactly $S$ is $3^{|S|}$, since each coordinate in $S$
+is assigned one of the three non-identity Paulis.
+\end{lemma}
+
+\begin{definition}[Quantum code]
+\lean{Code}
+\leanok
+\uses{Hn}
+An $n$-qubit quantum code is a subspace of the $n$-qubit Hilbert space $\mathcal{H}_n$.
+\end{definition}
+
+\begin{definition}[Adjoint of a Pauli operator]
+\lean{pauliOpAdjoint}
+\leanok
+\uses{Hn, PauliString, pauliMatrix}
+The adjoint (Hermitian conjugate) $\hat{p}^\dagger : \mathcal{H}_n \to \mathcal{H}_n$ of the
+Pauli operator associated with a Pauli string $p$.
+\end{definition}
+
+\begin{definition}[Projection onto a code]
+\lean{codeProj}
+\leanok
+\uses{Hn}
+The orthogonal projection of $\mathcal{H}_n$ onto a subspace $C$, viewed as an endomorphism
+$P_C : \mathcal{H}_n \to \mathcal{H}_n$.
+\end{definition}
+
+\begin{lemma}[Action of the code projection]
+\lean{codeProj_apply}
+\leanok
+\uses{Hn, codeProj}
+For any $x \in \mathcal{H}_n$, the value $P_C\,x$ coincides with the orthogonal projection
+$\Pi_C(x)$ of $x$ onto $C$.
+\end{lemma}
+
+\begin{lemma}[Image of the code projection lies in $C$]
+\lean{codeProj_mem}
+\leanok
+\uses{Hn, codeProj, codeProj_apply}
+For any $x \in \mathcal{H}_n$, the projected vector $P_C\,x$ belongs to the code subspace $C$.
+\end{lemma}
+
+\begin{lemma}[Projection fixes code vectors]
+\lean{codeProj_eq_self_of_mem}
+\leanok
+\uses{Hn, codeProj}
+If $x \in C$, then $P_C\,x = x$.
+\end{lemma}
+
+\begin{lemma}[Idempotence of the code projection]
+\lean{codeProj_idempotent}
+\leanok
+\uses{Hn, codeProj, codeProj_eq_self_of_mem, codeProj_mem}
+The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathcal{H}_n$.
+\end{lemma}
+
+\begin{theorem}[Quantum Hamming bound, raw form]
+\lean{quantum_hamming_bound_raw}
+\leanok
+\uses{ErrorSphere, Hn, IsNondegenerate, card_pauliErrorsLe, error_sphere_dimension, finrank_Hn}
+For a non-degenerate $[[n,k]]$ quantum code $C \le \mathcal{H}_n$ correcting $t$ errors, with
+$\dim_{\mathbb{C}}(C) = 2^k$, the dimension of the error sphere does not exceed the ambient
+dimension:
+\[
+\left(\sum_{j=0}^{t}\binom{n}{j}\,3^j\right)\cdot 2^k \;\le\; 2^n.
+\]
+\end{theorem}

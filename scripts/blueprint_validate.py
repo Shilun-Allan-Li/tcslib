@@ -43,6 +43,14 @@ def module_to_lean_path(module: str) -> Path:
     return BASE / "TCSlib" / (rel.replace(".", "/") + ".lean")
 
 
+# Mirror of blueprint_enumerate.py: strip Lean's `_private.<module>.<n>.` mangling.
+PRIVATE_RE = re.compile(r"^_private\..*?\.\d+\.")
+
+
+def normalize_name(name: str) -> str:
+    return PRIVATE_RE.sub("", name)
+
+
 def documentable_decls(modules: dict) -> dict[str, str]:
     """name -> area, for every documentable declaration."""
     out: dict[str, str] = {}
@@ -62,7 +70,7 @@ def documentable_decls(modules: dict) -> dict[str, str]:
                     kind = m.group(1)
                     break
             if kind in KEEP_KINDS:
-                out[name] = area
+                out[normalize_name(name)] = area
     return out
 
 
@@ -90,7 +98,7 @@ def main():
 
     modules = load_modules()
     docs = documentable_decls(modules)
-    all_decl_names = {n for m in modules.values() for n in m["declarations"]}
+    all_decl_names = {normalize_name(n) for m in modules.values() for n in m["declarations"]}
     leans, uses = collect_labels()
 
     # \lean labels that look like Lean names (skip instance-arg blurbs like "[Field α]").

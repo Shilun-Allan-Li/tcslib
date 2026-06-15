@@ -176,3 +176,353 @@ For any isotropic submodule $S \le V$,
 k(S) + 2(d(S) - 1) \;\le\; n.
 \]
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Prime field $\mathbb{F}_p$]
+\lean{F}
+\leanok
+The prime field $\mathrm{GF}(p)$, realized as $\mathbb{Z}/p\mathbb{Z}$ via \lean{ZMod}.
+\end{definition}
+
+\begin{definition}[Symplectic vector space]
+\lean{V}
+\leanok
+\uses{F}
+The ambient space $V = \mathbb{F}_p^n \times \mathbb{F}_p^n$ of pairs of coordinate vectors.
+\end{definition}
+
+\begin{lemma}[Evaluation of the bundled form]
+\lean{symB_apply}
+\leanok
+\uses{V, symB, sym_form}
+The bundled bilinear form $\mathrm{symB}$ agrees with $\omega$:
+$\mathrm{symB}(x,y) = \omega(x,y)$ for all $x,y \in V$.
+\end{lemma}
+
+\begin{definition}[Restriction to coordinates in $C$]
+\lean{restrictToC}
+\leanok
+\uses{F, V_sub}
+For $C \subseteq \mathrm{Fin}\,n$, the linear map $V_C \to (C \to \mathbb{F}_p) \times (C \to \mathbb{F}_p)$
+sending a vector supported on $C$ to its two component functions restricted to $C$.
+\end{definition}
+
+\begin{definition}[Extension from coordinates in $C$]
+\lean{extendFromC}
+\leanok
+\uses{F, V_sub}
+The linear map $(C \to \mathbb{F}_p) \times (C \to \mathbb{F}_p) \to V_C$ that extends a pair of
+functions on $C$ to a vector of $V$ by setting all coordinates outside $C$ to zero.
+\end{definition}
+
+\begin{lemma}[$\mathrm{restrictToC}$ is a left inverse of $\mathrm{extendFromC}$]
+\lean{restrictToC_extendFromC}
+\leanok
+\uses{extendFromC, restrictToC}
+For every $x$, $\mathrm{restrictToC}_C(\mathrm{extendFromC}_C(x)) = x$.
+\end{lemma}
+
+\begin{lemma}[$\mathrm{extendFromC}$ is a left inverse of $\mathrm{restrictToC}$]
+\lean{extendFromC_restrictToC}
+\leanok
+\uses{V_sub, extendFromC, restrictToC}
+For every $x \in V_C$, $\mathrm{extendFromC}_C(\mathrm{restrictToC}_C(x)) = x$.
+\end{lemma}
+
+\begin{definition}[Isomorphism $V_C \cong (\mathbb{F}_p^C)^2$]
+\lean{V_sub_iso}
+\leanok
+\uses{F, V_sub, extendFromC, extendFromC_restrictToC, restrictToC, restrictToC_extendFromC}
+The linear equivalence $V_C \simeq (C \to \mathbb{F}_p) \times (C \to \mathbb{F}_p)$ built from
+$\mathrm{restrictToC}$ and $\mathrm{extendFromC}$ as mutually inverse maps.
+\end{definition}
+
+\begin{definition}[Restriction map $r_E$]
+\lean{r_E}
+\leanok
+\uses{F, V, V_sub}
+The linear map $r_E : V \to V_E$ that zeroes out the coordinates of a vector outside $E$,
+keeping those in $E$ unchanged.
+\end{definition}
+
+\begin{definition}[Intersection $S_M = S \cap V_M$]
+\lean{S_M}
+\leanok
+\uses{F, V, V_sub}
+For a submodule $S \le V$ and $M \subseteq \mathrm{Fin}\,n$, the submodule $S_M = S \cap V_M$.
+\end{definition}
+
+\begin{definition}[Intersection $S^{\perp}_M = S^{\perp_\omega} \cap V_M$]
+\lean{S_perp_M}
+\leanok
+\uses{F, V, V_sub, sym_orth}
+The submodule $S^{\perp}_M = S^{\perp_\omega} \cap V_M$.
+\end{definition}
+
+\begin{definition}[Supportable logical operators count $g(M)$]
+\lean{g}
+\leanok
+\uses{F, S_M, S_perp_M, V}
+$g(S,M) = \dim_{\mathbb{F}_p}(S^{\perp}_M) - \dim_{\mathbb{F}_p}(S_M)$.
+\end{definition}
+
+\begin{lemma}[Kernel of $r_E$]
+\lean{ker_r_E}
+\leanok
+\uses{V, V_sub, r_E}
+$\ker(r_E) = V_{\mathrm{univ} \setminus E}$, the subspace supported on the complement of $E$.
+\end{lemma}
+
+\begin{definition}[Complement of $E$]
+\lean{E_c}
+\leanok
+$E^c = \mathrm{Fin}\,n \setminus E$, the complement finset of $E$.
+\end{definition}
+
+\begin{lemma}[Complement as set difference]
+\lean{E_c_eq}
+\leanok
+\uses{E_c}
+$E^c = \mathrm{univ} \setminus E$.
+\end{lemma}
+
+\begin{lemma}[Rank-nullity for the restriction of $S$ to $E$]
+\lean{dim_map_r_E}
+\leanok
+\uses{E_c, F, V, V_sub, ker_r_E, r_E}
+$\dim_{\mathbb{F}_p}(r_E(S)) = \dim_{\mathbb{F}_p}(S) - \dim_{\mathbb{F}_p}(S \cap V_{E^c})$.
+\end{lemma}
+
+\begin{lemma}[Symplectic form respects restriction]
+\lean{sym_form_r_E}
+\leanok
+\uses{V, V_sub, r_E, sym_form}
+If $v \in V_M$, then $\omega(v,s) = \omega(v, r_M(s))$ for all $s \in V$.
+\end{lemma}
+
+\begin{definition}[Restriction as an endomorphism of $V$]
+\lean{r_E_V}
+\leanok
+\uses{F, V, V_sub, r_E}
+The composition $r_E^V : V \to V$ of $r_E$ with the inclusion $V_E \hookrightarrow V$.
+\end{definition}
+
+\begin{lemma}[Restriction on the left argument]
+\lean{sym_form_r_E_left}
+\leanok
+\uses{V, V_sub, r_E_V, sym_form, sym_form_r_E, sym_form_swap}
+If $v \in V_M$, then $\omega(r_M^V(s), v) = \omega(s, v)$ for all $s \in V$.
+\end{lemma}
+
+\begin{lemma}[Non-degeneracy on $V_M$]
+\lean{sym_form_nondegenerate_on_V_sub}
+\leanok
+\uses{V, V_sub, r_E, sym_form, sym_form_nondegenerate, sym_form_r_E}
+If $v \in V_M$ and $\omega(v,w) = 0$ for all $w \in V_M$, then $v = 0$.
+\end{lemma}
+
+\begin{lemma}[Restriction on the left argument, second form]
+\lean{sym_form_left_restrict}
+\leanok
+\uses{V, V_sub, r_E, r_E_V, sym_form}
+If $v \in V_M$, then $\omega(r_M^V(s), v) = \omega(s, v)$ for all $s \in V$.
+\end{lemma}
+
+\begin{lemma}[Orthogonal intersection equals orthogonal of restricted image]
+\lean{orth_inter_eq_orth_map}
+\leanok
+\uses{F, V, V_sub, r_E_V, symB_apply, sym_form, sym_form_left_restrict, sym_orth}
+$S^{\perp_\omega} \cap V_M = (r_M^V(S))^{\perp_\omega} \cap V_M$.
+\end{lemma}
+
+\begin{definition}[Restricted bundled form]
+\lean{symB_sub}
+\leanok
+\uses{F, V_sub, symB}
+The symplectic bilinear form $\mathrm{symB}$ restricted to the subspace $V_M$.
+\end{definition}
+
+\begin{definition}[Restricted symplectic form]
+\lean{sym_form_sub}
+\leanok
+\uses{F, V_sub, symB_sub}
+An abbreviation for $\mathrm{symB\_sub}$, the symplectic form viewed as a bilinear form on $V_M$.
+\end{definition}
+
+\begin{lemma}[Evaluation of the restricted form]
+\lean{sym_form_sub_apply}
+\leanok
+\uses{V, V_sub, sym_form, sym_form_sub}
+For $x,y \in V_M$, $\mathrm{sym\_form\_sub}_M(x,y) = \omega(x,y)$ computed on the underlying vectors.
+\end{lemma}
+
+\begin{lemma}[Non-degeneracy of the restricted form]
+\lean{sym_form_sub_nondegenerate}
+\leanok
+\uses{V_sub, sym_form, sym_form_nondegenerate_on_V_sub, sym_form_sub}
+The restricted symplectic form on $V_M$ is non-degenerate.
+\end{lemma}
+
+\begin{lemma}[Orthogonal intersection as an image]
+\lean{orth_inter_eq_orth_sub_image}
+\leanok
+\uses{F, V, V_sub, orth_inter_eq_orth_map, r_E, r_E_V, symB, sym_form_sub, sym_orth}
+$S^{\perp_\omega} \cap V_M$ is the image under $V_M \hookrightarrow V$ of the orthogonal complement
+of $r_M(S)$ with respect to the restricted form.
+\end{lemma}
+
+\begin{lemma}[Reflexivity of the restricted form]
+\lean{sym_form_sub_isRefl}
+\leanok
+\uses{V, sym_form, sym_form_sub, sym_form_sub_apply, sym_form_swap}
+The restricted symplectic form on $V_M$ is reflexive.
+\end{lemma}
+
+\begin{lemma}[Dimension of the orthogonal intersection]
+\lean{dim_orth_inter}
+\leanok
+\uses{F, V, V_sub, dim_V_sub, orth_inter_eq_orth_sub_image, r_E, sym_form_sub, sym_form_sub_isRefl, sym_form_sub_nondegenerate, sym_orth}
+$\dim_{\mathbb{F}_p}(S^{\perp_\omega} \cap V_M) = 2|M| - \dim_{\mathbb{F}_p}(r_M(S))$.
+\end{lemma}
+
+\begin{lemma}[Expansion of $g(M)$]
+\lean{g_expansion}
+\leanok
+\uses{E_c, F, IsIsotropic, S_M, S_perp_M, V, V_sub, dim_V_sub, dim_map_r_E, dim_orth_inter, g, r_E, sym_orth}
+For isotropic $S$,
+\[
+g(S,M) = 2|M| + \dim(S_{M^c}) - \dim(S) - \dim(S_M).
+\]
+\end{lemma}
+
+\begin{lemma}[Double complement]
+\lean{E_c_E_c}
+\leanok
+\uses{E_c}
+$(M^c)^c = M$.
+\end{lemma}
+
+\begin{lemma}[Sum of restricted dimensions is bounded]
+\lean{dim_S_M_add_dim_S_M_c_le_dim_S}
+\leanok
+\uses{E_c, F, S_M, V, V_sub}
+$\dim_{\mathbb{F}_p}(S_M) + \dim_{\mathbb{F}_p}(S_{M^c}) \le \dim_{\mathbb{F}_p}(S)$.
+\end{lemma}
+
+\begin{lemma}[Formula for $g(M)$]
+\lean{g_formula}
+\leanok
+\uses{E_c, F, IsIsotropic, S_M, V, g, g_expansion}
+For isotropic $S$,
+\[
+g(S,M) = \bigl(2|M| + \dim(S_{M^c})\bigr) - \bigl(\dim(S) + \dim(S_M)\bigr).
+\]
+\end{lemma}
+
+\begin{lemma}[Additive identity for $g(M)$]
+\lean{g_add_dims}
+\leanok
+\uses{E_c, F, IsIsotropic, S_M, V, V_sub, dim_S_M_add_dim_S_M_c_le_dim_S, dim_V_sub, dim_map_r_E, dim_orth_inter, g, g_formula, r_E, sym_orth}
+For isotropic $S$,
+\[
+g(S,M) + \dim(S_M) + \dim(S) = 2|M| + \dim(S_{M^c}).
+\]
+\end{lemma}
+
+\begin{lemma}[Dimension inequality]
+\lean{dim_ineq_aux}
+\leanok
+\uses{E_c, F, IsIsotropic, S_M, V, g_add_dims}
+For isotropic $S$, $\dim(S) + \dim(S_M) \le 2|M| + \dim(S_{M^c})$.
+\end{lemma}
+
+\begin{lemma}[Cleaning dimension identity]
+\lean{cleaning_dimension_identity}
+\leanok
+\uses{E_c, E_c_E_c, F, IsIsotropic, S_M, V, g, g_add_dims}
+For isotropic $S$,
+\[
+g(S,M) + g(S,M^c) = 2n - 2\dim_{\mathbb{F}_p}(S).
+\]
+\end{lemma}
+
+\begin{lemma}[Cardinalities of a set and its complement]
+\lean{card_add_compl}
+\leanok
+\uses{E_c}
+$|M| + |M^c| = n$.
+\end{lemma}
+
+\begin{lemma}[Correctable sets have $g = 0$]
+\lean{correctable_implies_g_zero}
+\leanok
+\uses{F, S_M, V, V_sub, correctable, g, sym_orth}
+If $M$ is correctable for $S$, then $g(S,M) = 0$.
+\end{lemma}
+
+\begin{lemma}[Correctable complement has $g(M^c) = 2k$]
+\lean{g_complement_correctable}
+\leanok
+\uses{E_c, F, IsIsotropic, V, cleaning_dimension_identity, correctable, correctable_implies_g_zero, g}
+If $S$ is isotropic and $M$ is correctable, then
+$g(S,M^c) = 2n - 2\dim_{\mathbb{F}_p}(S)$.
+\end{lemma}
+
+\begin{lemma}[Bound on $g$ for a correctable part plus a set]
+\lean{g_le_two_card_C}
+\leanok
+\uses{F, S_M, S_perp_M, V, V_sub, correctable, dim_V_sub, g, r_E, sym_orth}
+If $B$ and $C$ are disjoint and $B$ is correctable for $S$, then
+$g(S, B \cup C) \le 2|C|$.
+\end{lemma}
+
+\begin{lemma}[Full support is the whole space]
+\lean{V_sub_univ_eq_top}
+\leanok
+\uses{F, V, V_sub}
+$V_{\mathrm{univ}} = \top$, the entire space $V$.
+\end{lemma}
+
+\begin{lemma}[Dimension of $V$]
+\lean{finrank_V}
+\leanok
+\uses{F, V, V_sub, V_sub_univ_eq_top, dim_V_sub}
+$\dim_{\mathbb{F}_p}(V) = 2n$.
+\end{lemma}
+
+\begin{lemma}[Non-degeneracy of the bundled form]
+\lean{symB_nondegenerate}
+\leanok
+\uses{symB, symB_apply, sym_form_nondegenerate}
+The bundled symplectic form $\mathrm{symB}$ is non-degenerate.
+\end{lemma}
+
+\begin{lemma}[Reflexivity of the bundled form]
+\lean{symB_isRefl}
+\leanok
+\uses{symB, symB_apply, sym_form, sym_form_swap}
+The bundled symplectic form $\mathrm{symB}$ is reflexive.
+\end{lemma}
+
+\begin{lemma}[Isotropic dimension bound]
+\lean{finrank_le_n_of_isotropic}
+\leanok
+\uses{F, IsIsotropic, V, finrank_V, finrank_sym_orth, sym_orth}
+If $S$ is isotropic, then $\dim_{\mathbb{F}_p}(S) \le n$.
+\end{lemma}
+
+\begin{lemma}[Zero logical dimension forces zero distance]
+\lean{code_dist_eq_zero_of_code_k_eq_zero}
+\leanok
+\uses{F, IsIsotropic, V, code_dist, code_k, finrank_le_n_of_isotropic, finrank_sym_orth, sym_orth, wt}
+If $S$ is isotropic and $k(S) = 0$, then $d(S) = 0$.
+\end{lemma}
+
+\begin{lemma}[Existence of disjoint finsets of given size]
+\lean{exists_disjoint_finsets_card}
+\leanok
+Whenever $2t \le n$, there exist disjoint finsets $A, B \subseteq \mathrm{Fin}\,n$ with
+$|A| = |B| = t$.
+\end{lemma}

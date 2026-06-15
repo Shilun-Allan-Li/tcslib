@@ -79,3 +79,58 @@ For $q=|\alpha|$ and $0<p\le 1-1/q$,
 H_q(p) \;>\; 0.
 \]
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Expansion of the $q$-ary entropy exponent]
+\lean{ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}
+\leanok
+Algebraic rewrite of the $q$-ary entropy exponent: for $q\in\mathbb{N}$ and $p\in\mathbb{R}$,
+\[
+p\,\log_q(q-1) - p\,\log_q p - (1-p)\,\log_q(1-p)
+=
+\log_q(q-1)\,p + \log_q p\,(-p) + \log_q(1-p)\,(-(1-p)).
+\]
+\end{lemma}
+
+\begin{lemma}[AM--GM for two nonnegative reals]
+\lean{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum}
+\leanok
+For nonnegative reals $a,b\ge 0$, the geometric mean is at most the arithmetic mean:
+\[
+\sqrt{ab} \;\le\; \frac{a+b}{2}.
+\]
+\end{lemma}
+
+\begin{lemma}[A Stirling square-root identity]
+\lean{ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
+\leanok
+For $n\ge 0$,
+\[
+\sqrt{2\pi n}\,\cdot\,\sqrt{\pi/2}\,\cdot\,\sqrt{n} \;=\; \pi n.
+\]
+\end{lemma}
+
+\begin{lemma}[Positivity of $\lfloor np\rfloor$ for large $n$]
+\lean{ErrorCorrectingCodes.Codeword.floor_np_pos}
+\leanok
+Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le n$, then $\lfloor np\rfloor > 0$.
+\end{lemma}
+
+\begin{lemma}[Stirling-based ratio bound for the binomial term]
+\lean{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
+\leanok
+\uses{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum, ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
+Let $a,b,n\in\mathbb{N}$ with $a,b>0$, $a+b=n$, and let $c>0$. Suppose the Stirling-type bound
+\[
+a!\,\cdot\,b! \;\le\; c\cdot\Big(\sqrt{2}\sqrt{a}\sqrt{\pi}\,(a/e)^a\cdot\sqrt{2}\sqrt{b}\sqrt{\pi}\,(b/e)^b\Big)
+\]
+holds. Then
+\[
+\frac{n^n}{a^a\,b^b}\,\Big/\,\big(c\,\sqrt{\pi/2}\,\sqrt{n}\big)
+\;\le\;
+\frac{n!}{a!\,b!}.
+\]
+\end{lemma}

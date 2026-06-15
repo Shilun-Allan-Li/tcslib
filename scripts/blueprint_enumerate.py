@@ -91,6 +91,43 @@ def covered_lean_labels() -> set[str]:
     return covered
 
 
+def extract_docstring(lines: list[str], decl_idx: int, max_lines: int = 40):
+    """Return the `/-- ... -/` doc comment directly above the declaration, else None.
+
+    Only a *true* Lean doc comment counts: a `/-- ... -/` block whose closing `-/` sits
+    immediately above the declaration keyword (modulo `@[...]` attribute lines). Plain
+    `/- ... -/` block comments and `/-! ... -/` section comments are NOT docstrings and
+    must never be captured — and the search for the opener stops at the first comment
+    boundary so it can never run up into a neighbouring declaration's body.
+    """
+    j = decl_idx - 1
+    # Doc comments may be separated from the decl only by attribute lines.
+    while j >= 0 and lines[j].strip().startswith("@["):
+        j -= 1
+    if j < 0 or not lines[j].rstrip().endswith("-/"):
+        return None
+    stripped = lines[j].lstrip()
+    # Single-line docstring: `/-- ... -/` all on one line.
+    if stripped.startswith("/--"):
+        return stripped.replace("/--", "").replace("-/", "").strip()
+    # Reject a single-line non-doc comment `/- ... -/` (e.g. a section label).
+    if stripped.startswith("/-"):
+        return None
+    # Multi-line: walk up to the opener, which must be `/--`. Bail at any other comment
+    # boundary so we never absorb earlier declarations.
+    k = j
+    while k >= 0 and (j - k) <= max_lines:
+        s = lines[k].lstrip()
+        if s.startswith("/--"):
+            return "\n".join(lines[k:j + 1]).replace("/--", "").replace("-/", "").strip()
+        if s.startswith("/-"):
+            return None  # opener of a non-doc comment ( /- or /-! )
+        if k != j and lines[k].rstrip().endswith("-/"):
+            return None  # closing of a different, earlier comment
+        k -= 1
+    return None
+
+
 def detect_kind_and_doc(lines: list[str], start: int, end: int):
     """Return (kind, decl_line_index, doc_or_None) scanning the declaration window.
 
@@ -109,23 +146,7 @@ def detect_kind_and_doc(lines: list[str], start: int, end: int):
             break
     if decl_idx is None:
         return None, None, None
-    # Grab an immediately-preceding `/-- ... -/` docstring if present.
-    doc = None
-    j = decl_idx - 1
-    # skip attribute lines directly above the keyword
-    while j >= 0 and (lines[j].strip().startswith("@[") or lines[j].strip() == ""):
-        if lines[j].strip() == "":
-            break
-        j -= 1
-    if j >= 0 and lines[j].rstrip().endswith("-/"):
-        # walk up to the opening /--
-        k = j
-        while k >= 0 and "/--" not in lines[k]:
-            k -= 1
-        if k >= 0:
-            block = "\n".join(lines[k : j + 1])
-            doc = block.replace("/--", "").replace("-/", "").strip()
-    return kind, decl_idx, doc
+    return kind, decl_idx, extract_docstring(lines, decl_idx)
 
 
 def extract_signature(lines: list[str], decl_idx: int, end: int, cap: int = 25) -> str:
@@ -143,6 +164,16 @@ def extract_signature(lines: list[str], decl_idx: int, end: int, cap: int = 25) 
     return "\n".join(s.rstrip() for s in out).strip()
 
 
+# Lean mangles `private` declarations as `_private.<module>.<n>.<RealQualifiedName>`.
+# The blueprint must reference the clean qualified name (what source code and the
+# existing chapters use), so strip the mangling for every \lean/\uses label.
+PRIVATE_RE = re.compile(r"^_private\..*?\.\d+\.")
+
+
+def normalize_name(name: str) -> str:
+    return PRIVATE_RE.sub("", name)
+
+
 def build_kept_global(modules: dict) -> set[str]:
     """All declaration names (across TCSlib) whose kind is documentable.
 
@@ -158,12 +189,12 @@ def build_kept_global(modules: dict) -> set[str]:
         for name, dd in mdata["declarations"].items():
             kind, _, _ = detect_kind_and_doc(lines, dd["startLine"], dd["endLine"])
             if kind in KIND_ENV:
-                kept.add(name)
+                kept.add(normalize_name(name))
     return kept
 
 
 def build_work_unit(module: str, mdata: dict, kept_global: set[str],
-                    covered: set[str], include_covered: bool):
+                    covered: set[str], include_covered: bool, claimed: set[str]):
     lean_path = module_to_lean_path(module)
     if not lean_path.exists():
         return None
@@ -176,19 +207,27 @@ def build_work_unit(module: str, mdata: dict, kept_global: set[str],
     decls = []
     # Stable order: by source line.
     for name, dd in sorted(mdata["declarations"].items(), key=lambda kv: kv[1]["startLine"]):
-        if name in covered and not include_covered:
+        nname = normalize_name(name)
+        if nname in covered and not include_covered:
+            continue
+        # Two `private` decls in different modules can share a name once the
+        # `_private.<module>.<n>.` mangling is stripped. A blueprint label must be
+        # unique, so the first module (sorted order) claims the name; later ones skip
+        # it to avoid a duplicate \lean{...} binding.
+        if nname in claimed:
             continue
         kind, decl_idx, doc = detect_kind_and_doc(lines, dd["startLine"], dd["endLine"])
         if kind not in KIND_ENV:
             continue
+        claimed.add(nname)
         uses = sorted({
-            d["name"] for d in dd.get("deps", [])
+            nd for d in dd.get("deps", [])
             if d.get("module", "").startswith("TCSlib")
-            and d["name"] in kept_global
-            and d["name"] != name
+            for nd in [normalize_name(d["name"])]
+            if nd in kept_global and nd != nname
         })
         decls.append({
-            "name": name,
+            "name": nname,
             "kind": kind,
             "env": KIND_ENV[kind],
             "startLine": dd["startLine"],
@@ -258,8 +297,10 @@ def main():
 
     units = []
     total_uncovered = 0
+    claimed: set[str] = set()  # normalized names already assigned to a work unit
     for module in sorted(modules):
-        unit = build_work_unit(module, modules[module], kept_global, covered, args.include_covered)
+        unit = build_work_unit(module, modules[module], kept_global, covered,
+                               args.include_covered, claimed)
         if unit is None:
             continue
         safe = module.replace(".", "_")

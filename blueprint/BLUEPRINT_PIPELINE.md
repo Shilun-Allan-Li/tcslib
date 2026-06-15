@@ -82,15 +82,31 @@ python3 scripts/blueprint_assemble.py         # after .tex files are written
 python3 scripts/blueprint_validate.py         # coverage + integrity report
 ```
 
-## Building the dataset later
+## Building the dataset
 
-Each `\lean{NAME}` is the key. For every entry:
+`scripts/build_dataset.py` (no LLM) emits `dataset/tcslib_theorems.jsonl`, one record per
+theorem/lemma:
 
-- **informal statement** = the prose inside the environment.
-- **Lean statement** = `dep_graph.json[module].declarations[NAME]` line range, sliced
-  from the source file.
-- **upstream definitions** = `python3 scripts/query_deps.py upstream NAME --tcslib-only`
-  (transitive, project-only), each itself resolvable to source the same way.
+```bash
+python3 scripts/build_dataset.py            # -> dataset/tcslib_theorems.jsonl
+python3 scripts/build_dataset.py --limit 20 # quick sample
+python3 scripts/build_dataset.py --all-def-deps   # looser: seed from all def-deps
+```
+
+Each record has `id`, `informal_statement` (the blueprint prose for the matching
+`\lean{}`), and `formal_statement` — a self-contained Lean snippet:
+
+- `import Mathlib`, then the **upstream definitions** the statement depends on (full,
+  topologically ordered, each in its namespace), then the theorem **statement with its
+  proof replaced by `sorry`**.
+- The dependency walk takes the transitive closure, over **definition-kind nodes only**,
+  of the definitions that appear **in the statement text** — so proofs are dropped and
+  proof-only lemmas/definitions are excluded.
+
+It is a best-effort standalone file (exact dependency content; exotic `open`/notation/
+`variable` context may occasionally need a manual touch-up to fully compile). The
+underlying graph is also queryable directly via
+`python3 scripts/query_deps.py upstream NAME --tcslib-only`.
 
 ## Work-unit schema (`blueprint/.work/<Module>.json`)
 

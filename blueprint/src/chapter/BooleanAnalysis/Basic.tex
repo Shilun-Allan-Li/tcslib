@@ -477,3 +477,188 @@ The \emph{Fourier weight at level $k$} is
   W_k[f] \;=\; \sum_{\substack{S\subseteq[n]\\ |S|=k}} \hat f(S)^2.
 \]
 \end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Moment equals power of expectation]
+\lean{BooleanAnalysis.moment_eq_expect}
+\leanok
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
+Let $P$ be a probability measure on $\{0,1\}^n$ that assigns the uniform weight
+to each singleton.  Then for any Boolean function $f$ and $p\in\mathbb{N}$, the
+$p$-th moment of $f$ under $P$ equals the uniform expectation of $f^p$:
+\[
+  \mathbb{E}_P[f^p] \;=\; \E\!\left[f(x)^p\right].
+\]
+\end{lemma}
+
+\begin{lemma}[Sum over subsets as a product]
+\lean{BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+\leanok
+For any $c : \mathrm{Fin}\,n \to \bbr$,
+\[
+  \sum_{S\subseteq[n]} \prod_{i\in S} c_i \;=\; \prod_{i=1}^n (1 + c_i).
+\]
+\end{lemma}
+
+\begin{lemma}[Completeness kernel for the Walsh basis]
+\lean{BooleanAnalysis.sum_chiS_mul_eq}
+\leanok
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.boolToSign_mul_self, BooleanAnalysis.chiS, BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+For points $x, y\in\{0,1\}^n$,
+\[
+  \sum_{S\subseteq[n]} \chi_S(x)\,\chi_S(y) \;=\;
+  \begin{cases} 2^n & x = y,\\ 0 & x\ne y. \end{cases}
+\]
+This is the completeness kernel underlying Fourier inversion.
+\end{lemma}
+
+\begin{definition}[Degree at most $k$]
+\lean{BooleanAnalysis.has_degree_at_most}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc}
+A Boolean function $f$ \emph{has degree at most $k$} if every nonzero Fourier
+coefficient is supported on a set of size at most $k$: for all $S$, if
+$\hat f(S)\ne 0$ then $|S|\le k$.
+\end{definition}
+
+\begin{lemma}[Sum of sign encoding over a bit]
+\lean{BooleanAnalysis.sum_boolToSign}
+\leanok
+\uses{BooleanAnalysis.boolToSign}
+Summing the sign encoding over the two Boolean values gives zero:
+$\sum_{b\in\mathrm{Bool}} \sigma(b) = 0$.
+\end{lemma}
+
+\begin{lemma}[Sum of a character over the cube]
+\lean{BooleanAnalysis.sum_chiS}
+\leanok
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+Summing the character $\chi_S$ over the whole hypercube yields
+\[
+  \sum_{x\in\{0,1\}^n} \chi_S(x) \;=\;
+  \begin{cases} 2^n & S = \varnothing,\\ 0 & S\ne\varnothing. \end{cases}
+\]
+\end{lemma}
+
+\begin{theorem}[Plancherel's identity]
+\lean{BooleanAnalysis.plancherel}
+\leanok
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight, BooleanAnalysis.walsh_expansion}
+The inner product of two Boolean functions equals the sum of the products of
+their Fourier coefficients:
+\[
+  \langle f, g\rangle \;=\; \sum_{S\subseteq[n]} \hat f(S)\,\hat g(S).
+\]
+\end{theorem}
+
+\begin{lemma}[Flipping a bit twice is the identity]
+\lean{BooleanAnalysis.flipBit_flipBit}
+\leanok
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
+Flipping coordinate $i$ twice returns the original point:
+$(x^i)^i = x$.
+\end{lemma}
+
+\begin{lemma}[Flipping bit $i$ leaves other coordinates fixed]
+\lean{BooleanAnalysis.flipBit_ne}
+\leanok
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
+If $i\ne j$ then flipping coordinate $i$ does not change coordinate $j$:
+$(x^i)_j = x_j$.
+\end{lemma}
+
+\begin{lemma}[Character under a single bit flip]
+\lean{BooleanAnalysis.chiS_flipBit}
+\leanok
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.flipBit}
+Flipping coordinate $i$ negates $\chi_S$ when $i\in S$ and leaves it unchanged
+otherwise:
+\[
+  \chi_S(x^i) \;=\;
+  \begin{cases} -\chi_S(x) & i\in S,\\ \chi_S(x) & i\notin S. \end{cases}
+\]
+\end{lemma}
+
+\begin{definition}[Discrete derivative]
+\lean{BooleanAnalysis.derivative}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc}
+The \emph{discrete derivative} of $f$ in direction $i$ is the Boolean function
+\[
+  (D_i f)(x) \;=\; \frac{f(x^{i\mapsto 0}) - f(x^{i\mapsto 1})}{2},
+\]
+where $x^{i\mapsto b}$ sets coordinate $i$ of $x$ to $b$.
+\end{definition}
+
+\begin{lemma}[Derivative is additive]
+\lean{BooleanAnalysis.derivative_add}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
+The discrete derivative respects addition:
+$D_i(f + g) = D_i f + D_i g$.
+\end{lemma}
+
+\begin{lemma}[Derivative commutes with scalars]
+\lean{BooleanAnalysis.derivative_smul}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
+The discrete derivative commutes with scalar multiplication:
+$D_i(c\cdot f) = c\cdot D_i f$ for $c\in\bbr$.
+\end{lemma}
+
+\begin{definition}[Derivative as a linear map]
+\lean{BooleanAnalysis.derivativeLm}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative, BooleanAnalysis.derivative_add, BooleanAnalysis.derivative_smul}
+The discrete derivative $D_i$ packaged as an $\bbr$-linear map on the space of
+Boolean functions.
+\end{definition}
+
+\begin{definition}[Expectation operator]
+\lean{BooleanAnalysis.expectationOperator}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc}
+The \emph{expectation operator} in direction $i$ averages $f$ over the two
+values of coordinate $i$:
+\[
+  (E_i f)(x) \;=\; \frac{f(x^{i\mapsto 0}) + f(x^{i\mapsto 1})}{2}.
+\]
+\end{definition}
+
+\begin{lemma}[Expectation operator is additive]
+\lean{BooleanAnalysis.expectation_add}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
+The expectation operator respects addition:
+$E_i(f + g) = E_i f + E_i g$.
+\end{lemma}
+
+\begin{lemma}[Expectation operator commutes with scalars]
+\lean{BooleanAnalysis.expectation_smul}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
+The expectation operator commutes with scalar multiplication:
+$E_i(c\cdot f) = c\cdot E_i f$ for $c\in\bbr$.
+\end{lemma}
+
+\begin{definition}[Expectation operator as a linear map]
+\lean{BooleanAnalysis.expectationLm}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator, BooleanAnalysis.expectation_add, BooleanAnalysis.expectation_smul}
+The expectation operator $E_i$ packaged as an $\bbr$-linear map on the space of
+Boolean functions.
+\end{definition}
+
+\begin{lemma}[Noise operator is self-adjoint]
+\lean{BooleanAnalysis.noiseOp_self_adjoint}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.plancherel}
+The noise operator $T_\rho$ is self-adjoint with respect to the $L^2$ inner
+product:
+\[
+  \langle T_\rho f, g\rangle \;=\; \langle f, T_\rho g\rangle.
+\]
+\end{lemma}
