@@ -39,6 +39,7 @@ the indicator of $\mathrm{event}(\rho)$.
 \lean{SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{3}
 If $0 \le p \le 1$, then for every restriction $\rho$ the weight
 $\mathrm{bernoulliRestrWeight}(p,\rho)$ is nonnegative.
 \end{lemma}
@@ -47,6 +48,7 @@ $\mathrm{bernoulliRestrWeight}(p,\rho)$ is nonnegative.
 \lean{SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{6}
 If $0 \le p \le 1$, then the Bernoulli weights form a probability distribution: summing
 $\mathrm{bernoulliRestrWeight}(p,\rho)$ over all restrictions $\rho$ on $n$ variables
 yields $1$.
@@ -56,6 +58,7 @@ yields $1$.
 \lean{SwitchingLemma2.bernoulliRestrProb_le_one'}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\difficulty{4}
 If $0 \le p \le 1$, then for every (decidable) event the Bernoulli probability
 $\mathrm{bernoulliRestrProb}(p,\mathrm{event})$ is at most $1$.
 \end{lemma}

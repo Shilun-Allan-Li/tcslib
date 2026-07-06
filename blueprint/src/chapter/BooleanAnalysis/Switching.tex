@@ -35,6 +35,7 @@ marker flag is true.
 \lean{SwitchingLemma2.parseAux_cons_marker}
 \leanok
 \uses{SwitchingLemma2.parseAux}
+\difficulty{2}
 Equational lemma: if an entry $(idx, dir)$ with $idx < w$ is immediately
 followed by the marker $(w, \mathrm{false})$, then $\mathrm{parseAux}$ emits the
 triple $(\langle idx, h\rangle, dir, \mathrm{true})$ followed by the parse of the
@@ -45,6 +46,7 @@ rest.
 \lean{SwitchingLemma2.parseAux_cons_nonmarker}
 \leanok
 \uses{SwitchingLemma2.parseAux}
+\difficulty{3}
 Equational lemma: if an entry $(idx, dir)$ is immediately followed by another
 in-range entry $(idx', dir')$, then $\mathrm{parseAux}$ emits the triple
 $(\langle idx, h\rangle, dir, \mathrm{false})$ followed by the parse of the
@@ -55,6 +57,7 @@ remaining list starting at $(idx', dir')$.
 \lean{SwitchingLemma2.parseAux_singleton}
 \leanok
 \uses{SwitchingLemma2.parseAux}
+\difficulty{2}
 Equational lemma: a single in-range entry $(idx, dir)$ parses to the singleton
 $[(\langle idx, h\rangle, dir, \mathrm{false})]$.
 \end{lemma}
@@ -63,6 +66,7 @@ $[(\langle idx, h\rangle, dir, \mathrm{false})]$.
 \lean{SwitchingLemma2.parseAux_nil}
 \leanok
 \uses{SwitchingLemma2.parseAux}
+\difficulty{1}
 Equational lemma: $\mathrm{parseAux}$ of the empty list is the empty list.
 \end{lemma}
 
@@ -70,6 +74,7 @@ Equational lemma: $\mathrm{parseAux}$ of the empty list is the empty list.
 \lean{SwitchingLemma2.parseAux_triplesToAux}
 \leanok
 \uses{SwitchingLemma2.parseAux, SwitchingLemma2.parseAux_cons_marker, SwitchingLemma2.parseAux_cons_nonmarker, SwitchingLemma2.parseAux_nil, SwitchingLemma2.parseAux_singleton, SwitchingLemma2.triplesToAux}
+\difficulty{6}
 Round-trip identity: for every triple list $ts$, applying
 $\mathrm{triplesToAux}$ and then $\mathrm{parseAux}$ recovers $ts$.
 \end{lemma}
@@ -78,6 +83,7 @@ $\mathrm{triplesToAux}$ and then $\mathrm{parseAux}$ recovers $ts$.
 \lean{SwitchingLemma2.triplesToAux_append}
 \leanok
 \uses{SwitchingLemma2.triplesToAux}
+\difficulty{4}
 $\mathrm{triplesToAux}\,(ts_1 \mathbin{+\!\!+} ts_2) = \mathrm{triplesToAux}\,ts_1 \mathbin{+\!\!+} \mathrm{triplesToAux}\,ts_2$.
 \end{lemma}
 
@@ -85,6 +91,7 @@ $\mathrm{triplesToAux}\,(ts_1 \mathbin{+\!\!+} ts_2) = \mathrm{triplesToAux}\,ts
 \lean{SwitchingLemma2.processClauseLits_len_add}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 The aux output length of $\mathrm{processClauseLits}$ plus the remaining path
 length never exceeds the initial path length.
 \end{lemma}
@@ -101,6 +108,7 @@ others.
 \lean{SwitchingLemma2.triplesToAux_markLast}
 \leanok
 \uses{SwitchingLemma2.markLast, SwitchingLemma2.triplesToAux}
+\difficulty{5}
 On a nonempty block, $\mathrm{triplesToAux}(\mathrm{markLast}\,block)$ equals the
 block mapped into $\mathbb{N} \times \mathrm{Bool}$ followed by a single
 $(w, \mathrm{false})$ termination marker.
@@ -110,6 +118,7 @@ $(w, \mathrm{false})$ termination marker.
 \lean{SwitchingLemma2.markLast_ne_nil}
 \leanok
 \uses{SwitchingLemma2.markLast}
+\difficulty{2}
 If $block \neq []$ then $\mathrm{markLast}\,block \neq []$.
 \end{lemma}
 
@@ -117,6 +126,7 @@ If $block \neq []$ then $\mathrm{markLast}\,block \neq []$.
 \lean{SwitchingLemma2.markLast_length}
 \leanok
 \uses{SwitchingLemma2.markLast}
+\difficulty{3}
 $(\mathrm{markLast}\,block).\mathrm{length} = block.\mathrm{length}$.
 \end{lemma}
 
@@ -124,6 +134,7 @@ $(\mathrm{markLast}\,block).\mathrm{length} = block.\mathrm{length}$.
 \lean{SwitchingLemma2.markLast_getLast_true}
 \leanok
 \uses{SwitchingLemma2.markLast, SwitchingLemma2.markLast_ne_nil}
+\difficulty{4}
 On a nonempty block, the last element of $\mathrm{markLast}\,block$ has marker
 flag equal to true.
 \end{lemma}
@@ -139,6 +150,7 @@ coordinates are $< w$, into a list of $(\mathrm{Fin}\,w \times \mathrm{Bool})$.
 \lean{SwitchingLemma2.toFinBlock_length}
 \leanok
 \uses{SwitchingLemma2.toFinBlock}
+\difficulty{2}
 $(\mathrm{toFinBlock}\,w\,l\,h).\mathrm{length} = l.\mathrm{length}$.
 \end{lemma}
 
@@ -146,6 +158,7 @@ $(\mathrm{toFinBlock}\,w\,l\,h).\mathrm{length} = l.\mathrm{length}$.
 \lean{SwitchingLemma2.toFinBlock_map}
 \leanok
 \uses{SwitchingLemma2.toFinBlock}
+\difficulty{2}
 Mapping the $\mathrm{Fin}$ blocks back to $(\mathbb{N} \times \mathrm{Bool})$
 via $p \mapsto (p.1.\mathrm{val}, p.2)$ recovers the original list $l$.
 \end{lemma}
@@ -154,6 +167,7 @@ via $p \mapsto (p.1.\mathrm{val}, p.2)$ recovers the original list $l$.
 \lean{SwitchingLemma2.toFinBlock_ne_nil}
 \leanok
 \uses{SwitchingLemma2.toFinBlock}
+\difficulty{2}
 If $l \neq []$ then $\mathrm{toFinBlock}\,w\,l\,h \neq []$.
 \end{lemma}
 
@@ -170,6 +184,7 @@ $t.\mathrm{length}$.
 \lean{SwitchingLemma2.encode_go_wellformed}
 \leanok
 \uses{DNF, DNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_acc, SwitchingLemma2.markLast, SwitchingLemma2.markLast_getLast_true, SwitchingLemma2.markLast_length, SwitchingLemma2.markLast_ne_nil, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_idx_lt, SwitchingLemma2.processClauseLits_len_add, SwitchingLemma2.term_length_le_width, SwitchingLemma2.toFinBlock, SwitchingLemma2.toFinBlock_length, SwitchingLemma2.toFinBlock_map, SwitchingLemma2.toFinBlock_ne_nil, SwitchingLemma2.triplesToAux, SwitchingLemma2.triplesToAux_append, SwitchingLemma2.triplesToAux_markLast}
+\difficulty{6}
 The aux output of $\mathrm{razborovEncode.go}$ (started with empty accumulator)
 can be written as $\mathrm{triplesToAux}\,w\,ts$ for some triple list $ts$ whose
 length is bounded by the path length and whose last element, if any, has marker
@@ -191,6 +206,7 @@ path steps as a triple $(\mathrm{position}, \mathrm{direction}, \mathrm{hasMarke
 \lean{SwitchingLemma2.aux_image_card_bound}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.exists_aux_injection, SwitchingLemma2.fixedTerm_implies_dtDepth_zero, SwitchingLemma2.killedAll_implies_dtDepth_zero, SwitchingLemma2.razborovEncode, SwitchingLemma2.restrictFn, SwitchingLemma2.term_length_le_width, dtDepth}
+\difficulty{5}
 The number of distinct aux lists produced by the Razborov encoder on bad
 restrictions with a fixed first component $\gamma$ is at most $(4w)^d$.
 \end{lemma}
@@ -199,6 +215,7 @@ restrictions with a fixed first component $\gamma$ is at most $(4w)^d$.
 \lean{SwitchingLemma2.fiber_bound}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.aux_image_card_bound, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_injective}
+\difficulty{5}
 The number of bad $s$-restrictions $\rho$ mapping to a fixed $\gamma$ under the
 encoder is at most $(4w)^d$, since each of the $d$ path steps carries
 $w \cdot 2 \cdot 2 = 4w$ possibilities.
@@ -208,6 +225,7 @@ $w \cdot 2 \cdot 2 = 4w$ possibilities.
 \lean{SwitchingLemma2.card_filter_numFree_eq}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.processClauseLits_path_length_eq}
+\difficulty{7}
 The number of restrictions of $\{0,\dots,n-1\}$ with exactly $k$ free variables
 equals $\binom{n}{k} \cdot 2^{\,n-k}$.
 \end{lemma}
@@ -216,6 +234,7 @@ equals $\binom{n}{k} \cdot 2^{\,n-k}$.
 \lean{SwitchingLemma2.numFree_update_free}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree}
+\difficulty{4}
 If $\rho\,v = \mathrm{none}$, then updating $\rho$ at $v$ to $\mathrm{some}\,b$
 decreases $\mathrm{numFree}$ by exactly one:
 $\mathrm{numFree}(\rho[v \mapsto b]) + 1 = \rho.\mathrm{numFree}$.
@@ -225,6 +244,7 @@ $\mathrm{numFree}(\rho[v \mapsto b]) + 1 = \rho.\mathrm{numFree}$.
 \lean{SwitchingLemma2.processClauseLits_freeVars_agree}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 If $\rho_0$ and $\sigma$ have the same free variables, then after
 $\mathrm{processClauseLits}$ the updated $\rho_0$ and $\sigma$ components still
 agree on which variables are free.
@@ -244,6 +264,7 @@ $\min(\mathrm{lits.length}, \mathrm{path.length})$.
 \lean{SwitchingLemma2.canonicalDTree_deepPath_length_ge}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_depth_ge, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{3}
 If $\rho$ is a bad restriction (so $\mathrm{dtDepth}(f|_\rho) > d$), then the
 deepest path of the canonical decision tree $\mathrm{canonicalDTree}\,f\,\rho$
 has length strictly greater than $d$.
@@ -253,6 +274,7 @@ has length strictly greater than $d$.
 \lean{SwitchingLemma2.razborovEncode_path_length}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_deepPath_length_ge}
+\difficulty{2}
 When $\rho$ is bad, the prefix
 $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{deepPath}.\mathrm{take}\,d$ used by the
 encoder has length exactly $d$.
@@ -262,6 +284,7 @@ encoder has length exactly $d$.
 \lean{SwitchingLemma2.processClauseLits_path_length_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 $\mathrm{processClauseLits}$ consumes exactly
 $\min(\mathrm{lits.length}, \mathrm{path.length})$ path entries; the remaining
 path length plus this minimum equals the original path length.
@@ -271,6 +294,7 @@ path length plus this minimum equals the original path length.
 \lean{SwitchingLemma2.numFree_update_some_ge}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_free}
+\difficulty{5}
 Updating $\rho$ at $v$ to $\mathrm{some}\,b$ decreases $\mathrm{numFree}$ by at
 most one: $\mathrm{numFree}(\rho[v \mapsto b]) + 1 \geq \rho.\mathrm{numFree}$.
 \end{lemma}
@@ -279,6 +303,7 @@ most one: $\mathrm{numFree}(\rho[v \mapsto b]) + 1 \geq \rho.\mathrm{numFree}$.
 \lean{SwitchingLemma2.processClauseLits_remaining_le_numFree}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_some_ge, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 If the initial path length is at most $\rho_0.\mathrm{numFree}$, then after
 $\mathrm{processClauseLits}$ the remaining path length is at most the updated
 $\rho_0$'s $\mathrm{numFree}$.
@@ -288,6 +313,7 @@ $\rho_0$'s $\mathrm{numFree}$.
 \lean{SwitchingLemma2.canonicalDTree_depth_zero_of_killed}
 \leanok
 \uses{DNF, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree}
+\difficulty{3}
 If every clause of $f$ is killed by $\rho$, the canonical decision tree for
 $f|_\rho$ is the leaf $\mathrm{false}$ and hence has depth $0$.
 \end{lemma}
@@ -296,6 +322,7 @@ $f|_\rho$ is the leaf $\mathrm{false}$ and hence has depth $0$.
 \lean{SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
 \leanok
 \uses{DNF, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree}
+\difficulty{4}
 If some clause of $f$ is fixed (satisfied) by $\rho$, the canonical decision tree
 for $f|_\rho$ is the leaf $\mathrm{true}$ and hence has depth $0$.
 \end{lemma}
@@ -314,6 +341,7 @@ This is the invariant carried by the Razborov encoder.
 \lean{SwitchingLemma2.zipIdx_filter_length}
 \leanok
 \uses{Literal, Term}
+\difficulty{3}
 Filtering $t.\mathrm{zipIdx}$ by a predicate on the literal component has the same
 length as filtering the original term $t$ by the same predicate.
 \end{lemma}
@@ -322,6 +350,7 @@ length as filtering the original term $t$ by the same predicate.
 \lean{SwitchingLemma2.zipIdx_filter_getElem_fst}
 \leanok
 \uses{Literal, Term}
+\difficulty{4}
 The literal component of the $k$-th element of the filtered $t.\mathrm{zipIdx}$
 equals the $k$-th element of the filtered term $t$.
 \end{lemma}
@@ -330,6 +359,7 @@ equals the $k$-th element of the filtered term $t$.
 \lean{SwitchingLemma2.canonicalDTree_deepPath_match_freeLits}
 \leanok
 \uses{DNF, DecisionTree, DecisionTree.deepPath, DecisionTree.depth, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_alive_eq_termSubTree', SwitchingLemma2.canonicalDTree_depth_zero_of_fixed, SwitchingLemma2.termSubTree_deepPath_var_match, SwitchingLemma2.zipIdx_filter_getElem_fst, SwitchingLemma2.zipIdx_filter_length, Term}
+\difficulty{7}
 When $f.\mathrm{find?}$ returns an alive clause $t$ and $\mathrm{flis}$ is the
 filtered (zipIdx) list of $t$'s free literals under $\rho$, the variable at
 position $k$ of $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{deepPath}$ equals the
@@ -341,6 +371,7 @@ free literals of $t$ in clause order.
 \lean{SwitchingLemma2.processClauseLits_fst_eq_drop}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{3}
 The remaining path returned by $\mathrm{processClauseLits}$ equals
 $\mathrm{path}.\mathrm{drop}(\min(\mathrm{lits.length}, \mathrm{path.length}))$.
 \end{lemma}
@@ -358,6 +389,7 @@ exactly $\min(\mathrm{lits.length}, \mathrm{path.length})$ free variables.
 \lean{SwitchingLemma2.processClauseLits_termSubTree_drop}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.processClauseLits, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free, Term}
+\difficulty{7}
 Dropping the free-literal prefix from $(\mathrm{termSubTree}\,t\,\rho_0\,\mathrm{cont}).\mathrm{deepPath}$
 yields the deep path of the continuation evaluated at the
 $\mathrm{processClauseLits}$-updated restriction, connecting the canonical tree
@@ -368,6 +400,7 @@ structure to the encoder's restriction update.
 \lean{SwitchingLemma2.canonicalPath_preserve_processClauseLits}
 \leanok
 \uses{DNF, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, Literal, SwitchingLemma2.IsCanonicalPath, SwitchingLemma2.Literal.fixedBy, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_alive_eq_termSubTree', SwitchingLemma2.canonicalDTree_depth_zero_of_fixed, SwitchingLemma2.canonicalDTree_depth_zero_of_killed, SwitchingLemma2.cont_eq_canonicalDTree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_fst_eq_drop, SwitchingLemma2.processClauseLits_numFree_ρ_eq, SwitchingLemma2.processClauseLits_termSubTree_drop, SwitchingLemma2.termSubTree, SwitchingLemma2.zipIdx_filter_getElem_fst, SwitchingLemma2.zipIdx_filter_length, Term}
+\difficulty{7}
 When the literals are the free literals of the first alive clause and the input
 path is canonical, $\mathrm{IsCanonicalPath}$ is preserved by
 $\mathrm{processClauseLits}$: the remaining path is again a canonical path for the
@@ -379,6 +412,7 @@ tree.
 \lean{SwitchingLemma2.processClauseLits_freeLits_pairwise_var}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, Term}
+\difficulty{5}
 If $t$ has no duplicate literals and any two literals of $t$ with the same
 variable are equal, then the free-variable filter of $t.\mathrm{zipIdx}$ has
 pairwise distinct variables.
@@ -388,6 +422,7 @@ pairwise distinct variables.
 \lean{SwitchingLemma2.razborovEncode_go_numFree_invariant}
 \leanok
 \uses{DNF, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, Literal, SwitchingLemma2.IsCanonicalPath, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_deepPath_match_freeLits, SwitchingLemma2.canonicalDTree_depth_zero_of_fixed, SwitchingLemma2.canonicalDTree_depth_zero_of_killed, SwitchingLemma2.canonicalPath_preserve_processClauseLits, SwitchingLemma2.choose_mul_pow_bound, SwitchingLemma2.encode_go_acc, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_freeLits_pairwise_var, SwitchingLemma2.processClauseLits_freeVars_agree, SwitchingLemma2.processClauseLits_len_add, SwitchingLemma2.processClauseLits_numFree_σ, SwitchingLemma2.processClauseLits_path_le, SwitchingLemma2.processClauseLits_path_length_eq}
+\difficulty{7}
 When the canonical tree depth is at least the path length,
 $\mathrm{razborovEncode.go}$ fully consumes the path (never terminating early),
 and the resulting $\sigma$ has $\mathrm{numFree}$ decreased by exactly the initial
@@ -398,6 +433,7 @@ path length: $(\mathrm{go}\,\dots).1.\mathrm{numFree} + \mathrm{path.length} = \
 \lean{SwitchingLemma2.razborovEncode_fst_numFree_eq}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsCanonicalPath, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_depth_ge, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_go_numFree_invariant, SwitchingLemma2.razborovEncode_path_length, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{4}
 For a bad $s$-restriction $\rho$ with $d \leq s$, the first component
 (the $\gamma$-output) of $\mathrm{razborovEncode}\,f\,w\,d\,\rho$ is an
 $(s-d)$-restriction, since the encoder fixes exactly $d$ previously free
@@ -408,6 +444,7 @@ variables.
 \lean{SwitchingLemma2.bad_filter_empty_of_d_ge_s}
 \leanok
 \uses{DNF, DNF.eval, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_restrictFn_le_numFree}
+\difficulty{3}
 If $s \leq d$, the set of restrictions that are simultaneously $s$-restrictions
 and bad restrictions for depth $d$ is empty.
 \end{lemma}
@@ -432,6 +469,7 @@ literals along each root-to-leaf path ending in a $\mathrm{false}$ leaf.
 \lean{SwitchingLemma2.dtDepth_witness}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, buildFullDTree, buildFullDTree_depth, buildFullDTree_eval, dtDepth}
+\difficulty{4}
 For any Boolean function $f$ there exists a decision tree $T$ computing $f$ with
 depth at most $\mathrm{dtDepth}\,f$.
 \end{lemma}
@@ -440,6 +478,7 @@ depth at most $\mathrm{dtDepth}\,f$.
 \lean{SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.evalClause, CNF.width, DNF, DNF.eval, DNF.width, DecisionTree, DecisionTree.depth, DecisionTree.eval, Literal.eval, SwitchingLemma2.dtDepth_witness, SwitchingLemma2.toCNF, SwitchingLemma2.toDNF, Term.eval, dtDepth}
+\difficulty{7}
 If $\mathrm{dtDepth}\,f \leq d$, then $f$ is computed by a DNF of width at most
 $d$ and by a CNF of width at most $d$.
 \end{lemma}
@@ -455,6 +494,7 @@ Negates a literal by flipping its polarity bit while keeping its variable.
 \lean{Literal.flipNeg_eval}
 \leanok
 \uses{Literal, Literal.eval, Literal.flipNeg}
+\difficulty{2}
 $(l.\mathrm{flipNeg}).\mathrm{eval}\,x = \lnot\,(l.\mathrm{eval}\,x)$.
 \end{lemma}
 
@@ -462,6 +502,7 @@ $(l.\mathrm{flipNeg}).\mathrm{eval}\,x = \lnot\,(l.\mathrm{eval}\,x)$.
 \lean{Literal.flipNeg_var}
 \leanok
 \uses{Literal, Literal.flipNeg}
+\difficulty{1}
 $(l.\mathrm{flipNeg}).\mathrm{var} = l.\mathrm{var}$.
 \end{lemma}
 
@@ -469,6 +510,7 @@ $(l.\mathrm{flipNeg}).\mathrm{var} = l.\mathrm{var}$.
 \lean{Literal.flipNeg_injective}
 \leanok
 \uses{Literal.flipNeg}
+\difficulty{2}
 The map $\mathrm{Literal.flipNeg}$ is injective.
 \end{lemma}
 
@@ -485,6 +527,7 @@ $\lnot\bigl(\bigwedge_i \bigvee_j l_{ij}\bigr) = \bigvee_i \bigl(\bigwedge_j \ln
 \lean{cnfToDualDNF_width}
 \leanok
 \uses{CNF, CNF.width, DNF.width, Term.width, cnfToDualDNF}
+\difficulty{2}
 $(\mathrm{cnfToDualDNF}\,\psi).\mathrm{width} = \psi.\mathrm{width}$.
 \end{lemma}
 
@@ -492,6 +535,7 @@ $(\mathrm{cnfToDualDNF}\,\psi).\mathrm{width} = \psi.\mathrm{width}$.
 \lean{cnfToDualDNF_eval}
 \leanok
 \uses{CNF, CNF.eval, CNF.evalClause, DNF.eval, Literal.flipNeg_eval, Term.eval, cnfToDualDNF}
+\difficulty{5}
 $(\mathrm{cnfToDualDNF}\,\psi).\mathrm{eval}\,x = \lnot\,(\psi.\mathrm{eval}\,x)$.
 \end{lemma}
 
@@ -506,6 +550,7 @@ Negates every leaf of a decision tree, leaving its branching structure unchanged
 \lean{DecisionTree.negateLeaves_eval}
 \leanok
 \uses{DecisionTree, DecisionTree.eval, DecisionTree.negateLeaves}
+\difficulty{3}
 $T.\mathrm{negateLeaves}.\mathrm{eval}\,x = \lnot\,(T.\mathrm{eval}\,x)$.
 \end{lemma}
 
@@ -513,6 +558,7 @@ $T.\mathrm{negateLeaves}.\mathrm{eval}\,x = \lnot\,(T.\mathrm{eval}\,x)$.
 \lean{DecisionTree.negateLeaves_depth}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.negateLeaves}
+\difficulty{2}
 $T.\mathrm{negateLeaves}.\mathrm{depth} = T.\mathrm{depth}$.
 \end{lemma}
 
@@ -520,6 +566,7 @@ $T.\mathrm{negateLeaves}.\mathrm{depth} = T.\mathrm{depth}$.
 \lean{dtDepth_neg}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, DecisionTree.negateLeaves, buildFullDTree, buildFullDTree_depth, buildFullDTree_eval, dtDepth}
+\difficulty{4}
 $\mathrm{dtDepth}(\lnot f) = \mathrm{dtDepth}\,f$.
 \end{lemma}
 
@@ -527,6 +574,7 @@ $\mathrm{dtDepth}(\lnot f) = \mathrm{dtDepth}\,f$.
 \lean{SwitchingLemmaCNF.restrictFn_neg}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
+\difficulty{1}
 $\mathrm{restrictFn}(\lnot f)\,\rho = \lnot\,(\mathrm{restrictFn}\,f\,\rho)$,
 pointwise.
 \end{lemma}
@@ -535,6 +583,7 @@ pointwise.
 \lean{SwitchingLemmaCNF.IsBadRestriction_neg}
 \leanok
 \uses{SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemmaCNF.restrictFn_neg, dtDepth_neg}
+\difficulty{1}
 $\mathrm{IsBadRestriction}(\lnot f)\,d\,\rho \iff \mathrm{IsBadRestriction}\,f\,d\,\rho$.
 \end{lemma}
 
@@ -542,6 +591,7 @@ $\mathrm{IsBadRestriction}(\lnot f)\,d\,\rho \iff \mathrm{IsBadRestriction}\,f\,
 \lean{SwitchingLemmaCNF.cnfToDualDNF_nodup}
 \leanok
 \uses{CNF, Literal.flipNeg_injective, cnfToDualDNF}
+\difficulty{3}
 If every clause of $\psi$ has no duplicate literals, then every term of
 $\mathrm{cnfToDualDNF}\,\psi$ has no duplicate literals.
 \end{lemma}
@@ -550,6 +600,7 @@ $\mathrm{cnfToDualDNF}\,\psi$ has no duplicate literals.
 \lean{SwitchingLemmaCNF.cnfToDualDNF_inj}
 \leanok
 \uses{CNF, Literal.flipNeg_var, cnfToDualDNF}
+\difficulty{3}
 If within each clause of $\psi$ any two literals with the same variable are equal,
 then the same holds within every term of $\mathrm{cnfToDualDNF}\,\psi$.
 \end{lemma}
@@ -558,6 +609,7 @@ then the same holds within every term of $\mathrm{cnfToDualDNF}\,\psi$.
 \lean{SwitchingLemmaCNF.switching_lemma_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.numSRestrictions, SwitchingLemma2.switching_lemma, SwitchingLemmaCNF.cnfToDualDNF_inj, SwitchingLemmaCNF.cnfToDualDNF_nodup, SwitchingLemmaCNF.restrictFn_neg, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width, dtDepth_neg}
+\difficulty{5}
 For a CNF $\psi$ of width at most $w$ on $n$ variables with $5s \leq n$ and clauses
 free of duplicate or conflicting variables, the number of $s$-restrictions $\rho$
 under which $\psi|_\rho$ has decision-tree depth $> d$ satisfies
@@ -571,6 +623,7 @@ under which $\psi|_\rho$ has decision-tree depth $> d$ satisfies
 \lean{SwitchingLemmaCNF.switching_corollary_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.numSRestrictions, SwitchingLemma2.restrictFn, SwitchingLemmaCNF.switching_lemma_cnf, dtDepth}
+\difficulty{4}
 For a CNF $\psi$ of width at most $w$ with $5s \leq n$ and well-formed clauses, the
 number of $s$-restrictions $\rho$ for which $\psi|_\rho$ cannot be represented by a
 DNF of width $\leq w$ satisfies

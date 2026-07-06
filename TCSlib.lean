@@ -8,6 +8,7 @@ import TCSlib.ErrorCorrectingCodes.ListDecoding
 import TCSlib.ErrorCorrectingCodes.QuantumSingleton
 import TCSlib.ErrorCorrectingCodes.QuantumHamming
 
+import TCSlib.BooleanAnalysis.BLR
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
 import TCSlib.BooleanAnalysis.Hypercontractivity.Simple
@@ -15,3 +16,29 @@ import TCSlib.BooleanAnalysis.Switching
 import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
 import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
 import TCSlib.BooleanAnalysis.Hypercontractivity.General
+
+import TCSlib.CommunicationComplexity.DeterministicCC
+import TCSlib.CommunicationComplexity.NewmanTheorem
+
+import TCSlib.Complexity.NPReductions
+
+import TCSlib.Cryptography.SchnorrProtocol
+
+import TCSlib.GraphTheory.Kruskal
+
+import TCSlib.LearningTheory.Halving
+import TCSlib.LearningTheory.WeightedMajority
+import TCSlib.LearningTheory.JohnsonLindenstrauss.Bernstein
+import TCSlib.LearningTheory.JohnsonLindenstrauss.ConcentrationBound
+import TCSlib.LearningTheory.JohnsonLindenstrauss.Rademacher
+import TCSlib.LearningTheory.JohnsonLindenstrauss.Main
+
+import TCSlib.LearningTheory.Hedge
+import TCSlib.LearningTheory.Hedge.Episode
+import TCSlib.LearningTheory.Hedge.ConvexPrediction
+import TCSlib.LearningTheory.Minimax.FiniteMinimax
+import TCSlib.LearningTheory.Minimax.CCE
+import TCSlib.LearningTheory.Minimax.ConvexMinimaxCore
+import TCSlib.LearningTheory.Minimax.ConvexMinimaxSeparation
+import TCSlib.LearningTheory.Minimax.ConvexMinimaxNoRegret
+import TCSlib.LearningTheory.Minimax

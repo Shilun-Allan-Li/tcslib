@@ -14,6 +14,7 @@ the switched gates can be repackaged as clean, bounded-width DNFs.
 \lean{LMN.circuit_depth_zero_is_lit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
+\difficulty{4}
 If a circuit $c$ has depth $0$, then $c$ is a single literal: there exists a literal
 $l$ with $c = \mathrm{Circuit.lit}\,l$.
 \end{lemma}
@@ -22,6 +23,7 @@ $l$ with $c = \mathrm{Circuit.lit}\,l$.
 \lean{LMN.layer2_composed_bound_base}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.size, BoolCircuit.Lit, DNF.eval, LMN.Layer2Data, LMN.circuit_depth_zero_is_lit, LMN.composedDelta, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth, dtDepth_neg}
+\difficulty{6}
 Base case ($d_{\mathrm{inner}} = 2$) of the composed layer-2 bound. Here the top circuit
 $c_{\mathrm{top}}$ has depth $0$, hence is a single literal, so the composed function is one
 DNF gate or its negation. Under a Bernoulli random restriction with parameter
@@ -40,6 +42,7 @@ $0 < s_{\mathrm{rem}}$.
 \lean{LMN.switched_gates_give_new_dnfs}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{4}
 Suppose for each gate $i$ the restricted function $\mathrm{restrictFn}\,(\mathrm{gates}\,i).\mathrm{eval}\,\rho_1$
 has decision-tree depth at most $l$. Then there exist DNFs $\mathrm{gates}'$ such that each
 $(\mathrm{gates}'\,i)$ has width at most $l$, evaluates to the corresponding restricted gate

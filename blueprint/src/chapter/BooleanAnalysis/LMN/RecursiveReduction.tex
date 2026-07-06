@@ -18,6 +18,7 @@ depth of a node after a further random restriction.
 \lean{LMN.children_depth_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
+\difficulty{4}
 If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has depth at most $d$, then every child
 $c \in cs$ has depth at most $d - 1$.
 \end{lemma}
@@ -26,6 +27,7 @@ $c \in cs$ has depth at most $d - 1$.
 \lean{LMN.children_size_sum_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
+\difficulty{4}
 If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has size at most $s$, then the sum of
 the sizes of its children is at most $s - 1$.
 \end{lemma}
@@ -34,6 +36,7 @@ the sizes of its children is at most $s - 1$.
 \lean{LMN.children_maxFanin_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.maxFanin}
+\difficulty{4}
 If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has maximum fan-in at most $w$, then
 every child $c \in cs$ has maximum fan-in at most $w$.
 \end{lemma}
@@ -42,6 +45,7 @@ every child $c \in cs$ has maximum fan-in at most $w$.
 \lean{LMN.child_size_le_parent}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, LMN.children_size_sum_le}
+\difficulty{5}
 If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has size at most $s$, then every
 child $c \in cs$ has size at most $s - 1$.
 \end{lemma}
@@ -50,6 +54,7 @@ child $c \in cs$ has size at most $s - 1$.
 \lean{LMN.restrictFn_node_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
+\difficulty{4}
 The restriction of the evaluation of a node circuit equals the conjunction or disjunction,
 according to $\mathit{isAnd}$, of the restricted evaluations of its children. That is,
 $\mathrm{restrictFn}\,(\mathrm{eval}\,(\mathrm{node}\,\mathit{isAnd}\,cs))\,\rho$ sends $x$
@@ -61,6 +66,7 @@ $\mathit{isAnd}$ is true, and to the corresponding fold-$\mathrm{or}$ otherwise.
 \lean{LMN.and_children_have_cnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, LMN.compression_and_of_cnfs, LMN.restrictFn_node_eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{5}
 If every child $c \in cs$ satisfies $\mathrm{dtDepth}(\mathrm{restrictFn}\,c.\mathrm{eval}\,\rho) \le l$,
 then there is a CNF $\psi$ of width at most $l$ that computes the restriction of the AND node:
 $\mathrm{CNF.eval}\,\psi\,x = \mathrm{restrictFn}\,(\mathrm{eval}\,(\mathrm{node}\,\mathrm{true}\,cs))\,\rho\,x$
@@ -71,6 +77,7 @@ for all $x$.
 \lean{LMN.or_children_have_dnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, LMN.restrictFn_node_eval, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{5}
 If every child $c \in cs$ satisfies $\mathrm{dtDepth}(\mathrm{restrictFn}\,c.\mathrm{eval}\,\rho) \le l$,
 then there is a DNF $\varphi$ of width at most $l$ that computes the restriction of the OR node:
 $\mathrm{DNF.eval}\,\varphi\,x = \mathrm{restrictFn}\,(\mathrm{eval}\,(\mathrm{node}\,\mathrm{false}\,cs))\,\rho\,x$
@@ -81,6 +88,7 @@ for all $x$.
 \lean{LMN.compress_and_switch}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF.eval, DNF.eval, LMN.and_children_have_cnf, LMN.composeRestr, LMN.or_children_have_dnf, LMN.restrictFn_composeRestr, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{6}
 Suppose $0 < l$, $0 < n$, and every child $c \in cs$ satisfies
 $\mathrm{dtDepth}(\mathrm{restrictFn}\,c.\mathrm{eval}\,\rho_1) \le l$. Then under a further
 Bernoulli random restriction $\rho_2$ with parameter $1/(40 l)$, the probability that the

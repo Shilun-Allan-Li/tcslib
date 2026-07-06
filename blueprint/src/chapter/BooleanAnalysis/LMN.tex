@@ -16,6 +16,7 @@ decision-tree depth.
 \begin{lemma}[Lower bound on $\mathrm{logb}_2(2s/\varepsilon)$]
 \lean{LMN.logb_2s_div_eps_pos}
 \leanok
+\difficulty{4}
 For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon \le 1$,
 the quantity $l = \log_2(2s/\varepsilon)$ satisfies $1 \le l$.
 \end{lemma}
@@ -23,6 +24,7 @@ the quantity $l = \log_2(2s/\varepsilon)$ satisfies $1 \le l$.
 \begin{lemma}[Monotonicity of $\mathrm{logb}_2(2s/\varepsilon)$ in $s$]
 \lean{LMN.logb_2_div_eps_le_l}
 \leanok
+\difficulty{4}
 For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 we have $\log_2(2/\varepsilon) \le \log_2(2s/\varepsilon)$.
 \end{lemma}
@@ -30,6 +32,7 @@ we have $\log_2(2/\varepsilon) \le \log_2(2s/\varepsilon)$.
 \begin{lemma}[Bound $s \cdot 2^{-l} \le \varepsilon/2$]
 \lean{LMN.size_times_two_pow_neg_l_le}
 \leanok
+\difficulty{4}
 For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 taking $l = \log_2(2s/\varepsilon)$ gives
 \[
@@ -41,6 +44,7 @@ since $2^{-l} = \varepsilon/(2s)$.
 \begin{lemma}[Value of $2^{-\mathrm{logb}_2(2/\varepsilon)}$]
 \lean{LMN.two_pow_neg_logb_2_div_eps}
 \leanok
+\difficulty{3}
 For $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 \[
   2^{-\log_2(2/\varepsilon)} = \frac{\varepsilon}{2}.
@@ -51,6 +55,7 @@ For $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 \lean{LMN.iterative_reduction_bound}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_core, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{1}
 Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most
 $s$, and fan-in at most $w$, where $d \ge 2$ and $s, w, l > 0$. Under a Bernoulli($\delta$)
 random restriction $\rho$ with $\delta = \mathrm{composedDelta}\,w\,l\,d$, the probability
@@ -67,6 +72,7 @@ The exponential Chernoff tails vanish as $n \to \infty$.
 \lean{LMN.odonnell_lemma_4_28}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.composedDelta, LMN.iterative_reduction_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{3}
 Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most
 $s$, and fan-in at most $w$, where $d \ge 2$ and $s, w, l > 0$. Fix $\varepsilon > 0$ and
 naturals $l, t$ with $s \cdot \left(\tfrac{1}{2}\right)^l \le \varepsilon/2$ and

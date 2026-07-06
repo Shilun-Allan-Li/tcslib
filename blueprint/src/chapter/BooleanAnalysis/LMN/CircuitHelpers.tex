@@ -16,6 +16,7 @@ from shallow Boolean circuits into DNF/CNF formulas.
 \lean{LMN.restrictFn_ext'}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
+\difficulty{3}
 If $f,g:(\mathrm{Fin}\,n\to\{0,1\})\to\{0,1\}$ agree pointwise, i.e.\ $f(x)=g(x)$ for all $x$,
 then for every restriction $\rho$ the restricted functions coincide:
 $\mathrm{restrictFn}\,f\,\rho = \mathrm{restrictFn}\,g\,\rho$.
@@ -25,6 +26,7 @@ $\mathrm{restrictFn}\,f\,\rho = \mathrm{restrictFn}\,g\,\rho$.
 \lean{LMN.bernoulliRestrProb_congr_fn}
 \leanok
 \uses{LMN.dedupTermVar, LMN.restrictFn_ext', SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{3}
 If $f$ and $g$ agree pointwise, then for any $p\in\bbr$ and $t\in\bbn$ the Bernoulli
 restriction probabilities of the events $\{\rho : \mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\}$
 and $\{\rho : \mathrm{dtDepth}(\mathrm{restrictFn}\,g\,\rho) > t\}$ are equal.
@@ -67,6 +69,7 @@ and then de-duplicates the literals of each remaining clause via $\mathrm{dedupT
 \lean{LMN.dedupTermVar_nodup}
 \leanok
 \uses{LMN.dedupTermVar, Literal, Term}
+\difficulty{4}
 For every term $t$, the de-duplicated term $\mathrm{dedupTermVar}\,t$ has no repeated
 literals (it satisfies \texttt{Nodup}).
 \end{lemma}
@@ -75,6 +78,7 @@ literals (it satisfies \texttt{Nodup}).
 \lean{LMN.dedupTermVar_var_inj}
 \leanok
 \uses{LMN.dedupTermVar, Literal, Term}
+\difficulty{5}
 Within $\mathrm{dedupTermVar}\,t$ the variable of a literal determines the literal: any two
 literals $l_1,l_2\in\mathrm{dedupTermVar}\,t$ with $l_1.\mathrm{var}=l_2.\mathrm{var}$ are equal.
 \end{lemma}
@@ -83,6 +87,7 @@ literals $l_1,l_2\in\mathrm{dedupTermVar}\,t$ with $l_1.\mathrm{var}=l_2.\mathrm
 \lean{LMN.dedupTermVar_width_le}
 \leanok
 \uses{LMN.contradiction_term_eval_false, LMN.dedupTermVar, Term}
+\difficulty{4}
 The de-duplicated term is no longer than the original:
 $(\mathrm{dedupTermVar}\,t).\mathrm{length} \le t.\mathrm{length}$.
 \end{lemma}
@@ -91,6 +96,7 @@ $(\mathrm{dedupTermVar}\,t).\mathrm{length} \le t.\mathrm{length}$.
 \lean{LMN.contradiction_term_eval_false}
 \leanok
 \uses{LMN.termHasContradiction, Literal, Literal.eval, Term, Term.eval}
+\difficulty{4}
 If $\mathrm{termHasContradiction}\,t = \texttt{true}$, then for every input $x$ the term
 evaluates to false under conjunction: $\mathrm{Term.eval}\,t\,x = \texttt{false}$.
 \end{lemma}
@@ -99,6 +105,7 @@ evaluates to false under conjunction: $\mathrm{Term.eval}\,t\,x = \texttt{false}
 \lean{LMN.dedupTermVar_preserves_term_eval}
 \leanok
 \uses{LMN.dedupTermVar, LMN.termHasContradiction, Literal, Literal.eval, Term, Term.eval}
+\difficulty{6}
 For a non-contradictory term $t$ (i.e.\ $\mathrm{termHasContradiction}\,t = \texttt{false}$),
 de-duplication does not change the conjunction value:
 $\mathrm{Term.eval}\,(\mathrm{dedupTermVar}\,t)\,x = \mathrm{Term.eval}\,t\,x$ for all $x$.
@@ -108,6 +115,7 @@ $\mathrm{Term.eval}\,(\mathrm{dedupTermVar}\,t)\,x = \mathrm{Term.eval}\,t\,x$ f
 \lean{LMN.cleanDNF_eval}
 \leanok
 \uses{DNF, DNF.eval, LMN.cleanDNF, LMN.contradiction_term_eval_false, LMN.dedupTermVar_preserves_term_eval, LMN.termHasContradiction}
+\difficulty{4}
 For every DNF $d$ and input $x$, the cleaned formula computes the same Boolean function:
 $(\mathrm{cleanDNF}\,d).\mathrm{eval}\,x = d.\mathrm{eval}\,x$.
 \end{lemma}
@@ -116,6 +124,7 @@ $(\mathrm{cleanDNF}\,d).\mathrm{eval}\,x = d.\mathrm{eval}\,x$.
 \lean{LMN.contradiction_clause_eval_true}
 \leanok
 \uses{CNF.evalClause, LMN.termHasContradiction, Literal.eval, Term}
+\difficulty{3}
 If $\mathrm{termHasContradiction}\,t = \texttt{true}$, then viewed as a clause $t$ is a
 tautology: $\mathrm{CNF.evalClause}\,t\,x = \texttt{true}$ for every $x$.
 \end{lemma}
@@ -124,6 +133,7 @@ tautology: $\mathrm{CNF.evalClause}\,t\,x = \texttt{true}$ for every $x$.
 \lean{LMN.dedupTermVar_preserves_clause_eval}
 \leanok
 \uses{CNF.evalClause, LMN.cleanDNF_width_le, LMN.dedupTermVar, LMN.termHasContradiction, Literal, Literal.eval, Term}
+\difficulty{6}
 For a non-contradictory clause $t$, de-duplication preserves the disjunctive (clause)
 value: $\mathrm{CNF.evalClause}\,(\mathrm{dedupTermVar}\,t)\,x = \mathrm{CNF.evalClause}\,t\,x$.
 \end{lemma}
@@ -132,6 +142,7 @@ value: $\mathrm{CNF.evalClause}\,(\mathrm{dedupTermVar}\,t)\,x = \mathrm{CNF.eva
 \lean{LMN.cleanCNF_eval}
 \leanok
 \uses{CNF, CNF.eval, LMN.cleanCNF, LMN.contradiction_clause_eval_true, LMN.dedupTermVar_preserves_clause_eval, LMN.termHasContradiction}
+\difficulty{4}
 For every CNF $c$ and input $x$, cleaning preserves the computed function:
 $\mathrm{CNF.eval}\,(\mathrm{cleanCNF}\,c)\,x = \mathrm{CNF.eval}\,c\,x$.
 \end{lemma}
@@ -140,6 +151,7 @@ $\mathrm{CNF.eval}\,(\mathrm{cleanCNF}\,c)\,x = \mathrm{CNF.eval}\,c\,x$.
 \lean{LMN.cleanDNF_width_le}
 \leanok
 \uses{DNF, DNF.width, LMN.cleanDNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, Term.width}
+\difficulty{5}
 The cleaned DNF has width at most that of the original:
 $(\mathrm{cleanDNF}\,d).\mathrm{width} \le d.\mathrm{width}$.
 \end{lemma}
@@ -148,6 +160,7 @@ $(\mathrm{cleanDNF}\,d).\mathrm{width} \le d.\mathrm{width}$.
 \lean{LMN.cleanCNF_width_le}
 \leanok
 \uses{CNF, CNF.width, LMN.cleanCNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, Term, Term.width}
+\difficulty{6}
 The cleaned CNF has width at most that of the original:
 $\mathrm{CNF.width}\,(\mathrm{cleanCNF}\,c) \le \mathrm{CNF.width}\,c$.
 \end{lemma}
@@ -156,6 +169,7 @@ $\mathrm{CNF.width}\,(\mathrm{cleanCNF}\,c) \le \mathrm{CNF.width}\,c$.
 \lean{LMN.cleanDNF_var_inj}
 \leanok
 \uses{DNF, LMN.cleanDNF, LMN.dedupTermVar, LMN.dedupTermVar_var_inj}
+\difficulty{3}
 In every term of $\mathrm{cleanDNF}\,d$, the variable determines the literal: for each such
 term, any two of its literals with the same variable are equal.
 \end{lemma}
@@ -164,6 +178,7 @@ term, any two of its literals with the same variable are equal.
 \lean{LMN.cleanDNF_nodup}
 \leanok
 \uses{DNF, LMN.cleanDNF, LMN.dedupTermVar_nodup}
+\difficulty{3}
 Every term of $\mathrm{cleanDNF}\,d$ satisfies \texttt{Nodup}, i.e.\ contains no repeated literal.
 \end{lemma}
 
@@ -171,6 +186,7 @@ Every term of $\mathrm{cleanDNF}\,d$ satisfies \texttt{Nodup}, i.e.\ contains no
 \lean{LMN.cleanCNF_var_inj}
 \leanok
 \uses{CNF, LMN.cleanCNF, LMN.dedupTermVar_var_inj}
+\difficulty{3}
 In every clause of $\mathrm{cleanCNF}\,c$, the variable determines the literal: any two
 literals of the clause sharing a variable are equal.
 \end{lemma}
@@ -179,6 +195,7 @@ literals of the clause sharing a variable are equal.
 \lean{LMN.cleanCNF_nodup}
 \leanok
 \uses{CNF, LMN.cleanCNF, LMN.dedupTermVar_nodup}
+\difficulty{3}
 Every clause of $\mathrm{cleanCNF}\,c$ satisfies \texttt{Nodup}.
 \end{lemma}
 
@@ -186,6 +203,7 @@ Every clause of $\mathrm{cleanCNF}\,c$ satisfies \texttt{Nodup}.
 \lean{LMN.switching_bernoulli_dtDepth_dnf_general}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{3}
 Let $f$ be a DNF of width at most $w$ with $0<w$ and $0<n$, and let $p\in\bbr$ satisfy
 $0<p$, $p\le \tfrac{1}{40w}$ and $p\le 1$. Then for every $t\in\bbn$,
 \[
@@ -200,6 +218,7 @@ formula is first cleaned.
 \lean{LMN.switching_bernoulli_dtDepth_cnf_general}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF, LMN.cleanCNF_eval, LMN.cleanCNF_nodup, LMN.cleanCNF_var_inj, LMN.cleanCNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{3}
 Let $f$ be a CNF of width at most $w$ with $0<w$ and $0<n$, and let $p\in\bbr$ satisfy
 $0<p$, $p\le \tfrac{1}{40w}$ and $p\le 1$. Then for every $t\in\bbn$,
 \[
@@ -213,6 +232,7 @@ again without any non-duplication hypothesis on $f$.
 \lean{LMN.depth_le_one_children_are_lits}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
+\difficulty{4}
 If a gate node $\mathrm{node}\,\mathit{isAnd}\,cs$ has depth at most $1$, then every child
 $c\in cs$ is a literal, i.e.\ $c = \mathrm{lit}\,l$ for some literal $l$.
 \end{lemma}
@@ -221,6 +241,7 @@ $c\in cs$ is a literal, i.e.\ $c = \mathrm{lit}\,l$ for some literal $l$.
 \lean{LMN.depth_le_two_children_depth_le_one}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
+\difficulty{3}
 If a gate node $\mathrm{node}\,\mathit{isAnd}\,cs$ has depth at most $2$, then every child
 $c\in cs$ has depth at most $1$.
 \end{lemma}
@@ -256,6 +277,7 @@ AND child contributes the singleton clauses of its literals.
 \lean{LMN.depth2OrToDNF_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.eval_eq_toLiteral_eval, BoolCircuit.Lit.toLiteral, DNF.eval, LMN.depth2OrToDNF, LMN.depth_le_one_children_are_lits, LMN.depth_le_two_children_depth_le_one, Literal.eval, Term.eval}
+\difficulty{7}
 If the top OR node $\mathrm{node}\,\texttt{false}\,cs$ has depth at most $2$, then the DNF
 $\mathrm{depth2OrToDNF}\,cs$ computes the same Boolean function as the circuit:
 $(\mathrm{depth2OrToDNF}\,cs).\mathrm{eval}\,x = (\mathrm{node}\,\texttt{false}\,cs).\mathrm{eval}\,x$
@@ -266,6 +288,7 @@ for all $x$.
 \lean{LMN.depth2AndToCNF_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.toLiteral, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, CNF.evalClause, LMN.depth2AndToCNF, LMN.depth_le_two_children_depth_le_one, Literal.eval}
+\difficulty{7}
 If the top AND node $\mathrm{node}\,\texttt{true}\,cs$ has depth at most $2$, then the CNF
 $\mathrm{depth2AndToCNF}\,cs$ computes the same Boolean function as the circuit:
 $\mathrm{CNF.eval}\,(\mathrm{depth2AndToCNF}\,cs)\,x = (\mathrm{node}\,\texttt{true}\,cs).\mathrm{eval}\,x$
@@ -276,6 +299,7 @@ for all $x$.
 \lean{LMN.depth2OrToDNF_width_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.maxFanin, BoolCircuit.Lit.toLiteral, DNF.width, LMN.depth2OrToDNF}
+\difficulty{5}
 If the top OR node $\mathrm{node}\,\texttt{false}\,cs$ has depth at most $2$, the resulting DNF
 has width at most the maximum fan-in of the circuit:
 $(\mathrm{depth2OrToDNF}\,cs).\mathrm{width} \le (\mathrm{node}\,\texttt{false}\,cs).\mathrm{maxFanin}$.
@@ -285,6 +309,7 @@ $(\mathrm{depth2OrToDNF}\,cs).\mathrm{width} \le (\mathrm{node}\,\texttt{false}\
 \lean{LMN.depth2AndToCNF_width_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.maxFanin, BoolCircuit.Lit.toLiteral, CNF.width, LMN.depth2AndToCNF}
+\difficulty{5}
 If the top AND node $\mathrm{node}\,\texttt{true}\,cs$ has depth at most $2$, the resulting CNF
 has width at most the maximum fan-in of the circuit:
 $\mathrm{CNF.width}\,(\mathrm{depth2AndToCNF}\,cs) \le (\mathrm{node}\,\texttt{true}\,cs).\mathrm{maxFanin}$.

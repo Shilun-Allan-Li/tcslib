@@ -16,6 +16,7 @@ where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
 \begin{theorem}[Cardinality of Hamming balls]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size}
 \leanok
+\difficulty{7}
 For any center $c$ and radius $l$,
 \[
 |B_l(c)| \;=\; \sum_{i=0}^{l} \binom{n}{i}\,(|\alpha|-1)^i.
@@ -29,6 +30,7 @@ For any center $c$ and radius $l$,
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.distance}
+\difficulty{5}
 If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\in C$,
 \[
 B_{\lfloor(d-1)/2\rfloor}(c_1)
@@ -38,11 +40,12 @@ B_{\lfloor(d-1)/2\rfloor}(c_2)
 \]
 \end{lemma}
 
-\begin{lemma}[\lean{Finset.Disjoint} formulation]
+\begin{lemma}[\texttt{Finset.Disjoint} formulation]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
-Reformulation of the previous lemma as \lean{Finset.Disjoint}.
+\difficulty{3}
+Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,6 +55,7 @@ Reformulation of the previous lemma as \lean{Finset.Disjoint}.
 \lean{ErrorCorrectingCodes.Codeword.hamming_bound}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
+\difficulty{6}
 Let $q=|\alpha|>1$.  If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
 \[
 |C|

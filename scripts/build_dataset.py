@@ -71,8 +71,9 @@ LEAN_BIND_RE = re.compile(r"^\s*\\lean\{([^}]*)\}\s*$")
 INLINE_LEAN_RE = re.compile(r"\\lean\{([^}]*)\}")
 BEGIN_RE = re.compile(r"\\begin\{(theorem|lemma|definition|proposition|corollary|sublemma)\}(?:\[([^\]]*)\])?")
 END_ENV_RE = re.compile(r"\\end\{(theorem|lemma|definition|proposition|corollary|sublemma)\}")
-DROP_LINE_RE = re.compile(r"^\s*\\(leanok|label|uses|lean)\b")
+DROP_LINE_RE = re.compile(r"^\s*\\(leanok|label|uses|lean|difficulty)\b")
 USES_RE = re.compile(r"\\uses\{")
+DIFF_RE = re.compile(r"^\s*\\difficulty\{([^}]*)\}\s*$")
 
 _OPEN_DELIM = set("([{⟨")
 _CLOSE_DELIM = set(")]}⟩")
@@ -105,6 +106,7 @@ def parse_blueprint() -> dict[str, dict]:
             bindings = []
             body = []
             uses_raw = ""
+            difficulty = None        # \difficulty{N}: intrinsic, tactic-only proof rating
             skip_braces = 0   # >0 while inside a still-open dropped macro
             cap_uses = 0      # >0 while capturing a (possibly multi-line) \uses{...}
             i += 1
@@ -121,6 +123,7 @@ def parse_blueprint() -> dict[str, dict]:
                     continue
                 mbind = LEAN_BIND_RE.match(line)
                 mu = USES_RE.search(line)
+                mdiff = DIFF_RE.match(line)
                 if mbind:
                     # A standalone \lean{...} line binds the environment to a declaration.
                     # Environments may group several (e.g. boolToSign_{sq,not,true}); each
@@ -135,6 +138,12 @@ def parse_blueprint() -> dict[str, dict]:
                     rest = line[mu.end() - 1:]
                     uses_raw += rest
                     cap_uses = max(0, rest.count("{") - rest.count("}"))
+                elif mdiff:
+                    # Capture \difficulty{N} while dropping it from the prose.
+                    try:
+                        difficulty = int(mdiff.group(1).strip())
+                    except ValueError:
+                        difficulty = None
                 elif DROP_LINE_RE.match(line):
                     skip_braces = max(0, line.count("{") - line.count("}"))
                 else:
@@ -146,7 +155,8 @@ def parse_blueprint() -> dict[str, dict]:
                 informal = re.sub(r"\n{3,}", "\n\n", informal).strip()
                 uses = [u.strip() for u in re.sub(r"[{}]", " ", uses_raw).split(",") if u.strip()]
                 for b in bindings:
-                    out.setdefault(b, {"env": env, "informal": informal, "title": title, "uses": uses})
+                    out.setdefault(b, {"env": env, "informal": informal, "title": title,
+                                       "uses": uses, "difficulty": difficulty})
             i += 1
     return out
 
@@ -194,12 +204,21 @@ _BOUNDARY_KW_RE = re.compile(
 
 
 def _is_boundary(s: str) -> bool:
-    """True if `s` (a source line) starts a new top-level construct at column 0."""
-    if not s or s[0].isspace():
+    """True if `s` (a source line) starts a new top-level construct.
+
+    The declaration-keyword check tolerates leading whitespace (matching KIND_RE's own
+    `^\\s*` leniency elsewhere in this file) because Lean 4 never legitimately nests a
+    `theorem`/`lemma`/`def`/... keyword inside another declaration's body — a source file
+    can accidentally indent one (see e.g. QuantumSingleton.lean's `symB_nondegenerate`),
+    and treating it as "not a boundary" silently glues the next declaration's text onto
+    the previous one's slice. The comment/attribute check stays column-0-only, since
+    indented comments are common and legitimate inside a proof body.
+    """
+    if not s:
         return False
-    if s.startswith(("@[", "/--", "/-", "--")):
+    if not s[0].isspace() and s.startswith(("@[", "/--", "/-", "--")):
         return True
-    return bool(_BOUNDARY_KW_RE.match(s))
+    return bool(_BOUNDARY_KW_RE.match(s.lstrip()))
 
 
 def find_keyword_idx(lines: list[str], start: int):
@@ -472,6 +491,57 @@ def main():
             return u
         return def_short.get(u.split(".")[-1])
 
+    # Generic (any-kind) short-name resolver for the difficulty graph, which walks the
+    # blueprint's \uses edges regardless of whether they point at a definition or a
+    # theorem/lemma (unlike def_short/resolve_def, which are definition-only).
+    any_short = {}
+    dup_any = set()
+    for n in index:
+        s = n.split(".")[-1]
+        (dup_any.add(s) if s in any_short else None)
+        any_short[s] = n
+    for s in dup_any:
+        any_short.pop(s, None)
+
+    def resolve_any(u):
+        if u in index:
+            return u
+        return any_short.get(u.split(".")[-1])
+
+    diff_memo = {}
+
+    def final_difficulty(name, stack):
+        """Max-difficulty-path aggregation, starting from the leaves of the \\uses graph:
+        a node's final difficulty is its own intrinsic (tactic-only) \\difficulty plus the
+        largest final difficulty among its prerequisites. Definitions default to 0 (they
+        never carry their own \\difficulty); a theorem/lemma with no rating yet makes the
+        result unknown (None), and unknown propagates to anything depending on it."""
+        if name in diff_memo:
+            return diff_memo[name]
+        if name in stack:
+            return None  # dependency cycle guard
+        stack.add(name)
+        entry = lookup(name)
+        kind = index[name]["kind"] if name in index else None
+        own = entry.get("difficulty") if entry else None
+        if own is None and kind in DEF_KINDS:
+            own = 0
+        best = 0
+        unknown = own is None
+        for u in (entry.get("uses", []) if entry else []):
+            dep = resolve_any(u)
+            if not dep or dep == name:
+                continue
+            d = final_difficulty(dep, stack)
+            if d is None:
+                unknown = True
+            elif d > best:
+                best = d
+        stack.discard(name)
+        result = None if unknown else own + best
+        diff_memo[name] = result
+        return result
+
     def compose(entry):
         """Fold the [title] into the prose so the text reads as a statement."""
         t = (entry.get("title") or "").strip()
@@ -537,6 +607,7 @@ def main():
                 "kind": rec["kind"],
                 "upstream_defs": ordered,
                 "n_upstream_defs": len(ordered),
+                "difficulty": final_difficulty(name, set()),
             }
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             n_written += 1

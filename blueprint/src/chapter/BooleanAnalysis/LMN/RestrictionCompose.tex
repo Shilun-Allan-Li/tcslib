@@ -34,6 +34,7 @@ coordinate (value \texttt{none}) and $(1-p)/2$ to a fixed coordinate (value
 \lean{LMN.composeRestr_eq_iff}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction}
+\difficulty{3}
 The composition $\mathrm{composeRestr}\,\rho_1\,\rho_2$ equals $\sigma$ if and only if
 for every coordinate $i$ the value $(\rho_1\,i)$, falling back to $(\rho_2\,i)$,
 equals $\sigma\,i$.
@@ -43,6 +44,7 @@ equals $\sigma\,i$.
 \lean{LMN.composeRestr_id_right}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction}
+\difficulty{4}
 Composing a restriction $\rho$ with the all-free restriction (which fixes no
 variable) returns $\rho$ unchanged.
 \end{lemma}
@@ -51,6 +53,7 @@ variable) returns $\rho$ unchanged.
 \lean{LMN.bernoulliRestrWeight_eq_prod}
 \leanok
 \uses{LMN.varWeight, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{6}
 The Bernoulli restriction weight of $\rho$ at parameter $p$ equals the product over
 all coordinates $i$ of the per-variable weights:
 \[
@@ -62,6 +65,7 @@ all coordinates $i$ of the per-variable weights:
 \lean{LMN.varWeight_compose_sum}
 \leanok
 \uses{LMN.varWeight}
+\difficulty{4}
 For parameters $p, q \in \bbr$ and any outcome $c$, summing the products
 $\mathrm{varWeight}\,p\,a \cdot \mathrm{varWeight}\,q\,b$ over all pairs $(a,b)$ whose
 composition equals $c$ gives $\mathrm{varWeight}\,(pq)\,c$:
@@ -75,6 +79,7 @@ composition equals $c$ gives $\mathrm{varWeight}\,(pq)\,c$:
 \lean{LMN.compose_fiber_weight_eq}
 \leanok
 \uses{LMN.bernoulliRestrWeight_eq_prod, LMN.composeRestr, LMN.varWeight, LMN.varWeight_compose_sum, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{7}
 Summing the product $\mathrm{bernoulliRestrWeight}\,p\,\rho_1 \cdot
 \mathrm{bernoulliRestrWeight}\,q\,\rho_2$ over all pairs $(\rho_1, \rho_2)$ that
 compose to $\sigma$ equals the Bernoulli weight of $\sigma$ at parameter $pq$:
@@ -90,6 +95,7 @@ compose to $\sigma$ equals the Bernoulli weight of $\sigma$ at parameter $pq$:
 \lean{LMN.restriction_compose_eq}
 \leanok
 \uses{LMN.composeRestr, LMN.compose_fiber_weight_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{6}
 For $0 < p \le 1$, $0 < q \le 1$ and any event on restrictions, the Bernoulli($pq$)
 probability of the event equals the weighted average, over Bernoulli($p$)
 restrictions $\rho_1$, of the Bernoulli($q$) probability that the event holds after
@@ -108,6 +114,7 @@ restriction.
 \lean{LMN.restriction_compose_le}
 \leanok
 \uses{LMN.composeRestr, LMN.restriction_compose_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+\difficulty{6}
 For $0 < p \le 1$ and $0 < q \le 1$, the Bernoulli($pq$) probability of an event is
 at most the Bernoulli($p$) probability that some $\rho_2$ makes the event hold after
 composition:

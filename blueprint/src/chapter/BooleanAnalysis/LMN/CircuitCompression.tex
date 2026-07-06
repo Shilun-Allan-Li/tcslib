@@ -26,6 +26,7 @@ outer list. Used to merge the clause (or term) lists of several CNFs (or DNFs).
 \lean{LMN.width_le_iff_forall}
 \leanok
 \uses{Term, Term.width}
+\difficulty{4}
 For a list of terms $ts$, the folded maximum of their widths is at most $\ell$ if and
 only if every term $t \in ts$ satisfies $t.\mathrm{width} \le \ell$.
 \end{lemma}
@@ -34,6 +35,7 @@ only if every term $t \in ts$ satisfies $t.\mathrm{width} \le \ell$.
 \lean{LMN.cnf_concat_width_le}
 \leanok
 \uses{CNF, CNF.width, LMN.listConcat}
+\difficulty{5}
 If CNFs $\psi_1, \dots, \psi_s$ each have width at most $\ell$, then the CNF obtained by
 concatenating all their clause lists also has width at most $\ell$.
 \end{lemma}
@@ -42,6 +44,7 @@ concatenating all their clause lists also has width at most $\ell$.
 \lean{LMN.cnf_concat_eval}
 \leanok
 \uses{CNF, CNF.eval, LMN.listConcat}
+\difficulty{3}
 For any input $x$, the value of the concatenated CNF at $x$ equals the conjunction over
 all $\psi$ in the list of $\psi.\mathrm{eval}\,x$; that is, it holds iff every component
 CNF holds at $x$.
@@ -51,6 +54,7 @@ CNF holds at $x$.
 \lean{LMN.dnf_concat_width_le}
 \leanok
 \uses{CNF, CNF.width, DNF, DNF.width, LMN.cnf_concat_width_le, LMN.listConcat, Term.width, cnfToDualDNF_width}
+\difficulty{6}
 If DNFs $\varphi_1, \dots, \varphi_s$ each have width at most $\ell$, then the DNF
 obtained by concatenating all their term lists also has width at most $\ell$.
 \end{lemma}
@@ -59,6 +63,7 @@ obtained by concatenating all their term lists also has width at most $\ell$.
 \lean{LMN.dnf_concat_eval}
 \leanok
 \uses{DNF, DNF.eval, LMN.listConcat}
+\difficulty{4}
 For any input $x$, the value of the concatenated DNF at $x$ equals the disjunction over
 all $\varphi$ in the list of $\varphi.\mathrm{eval}\,x$; that is, it holds iff some
 component DNF holds at $x$.
@@ -68,6 +73,7 @@ component DNF holds at $x$.
 \lean{LMN.compression_and_of_cnfs}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, LMN.cnf_concat_eval, LMN.cnf_concat_width_le, LMN.listConcat}
+\difficulty{4}
 Let an AND gate have a list of children, each of which computes a function expressible
 by a CNF of width at most $\ell$. Then the AND of all children is itself computed by a
 single CNF of width at most $\ell$, namely the concatenation of the children's clause
@@ -78,6 +84,7 @@ lists. This collapses the AND layer and the CNF layer into one.
 \lean{LMN.compression_or_of_dnfs}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.dnf_concat_eval, LMN.dnf_concat_width_le, LMN.listConcat}
+\difficulty{4}
 Dual to the AND case: if an OR gate has children each expressible by a DNF of width at
 most $\ell$, then the OR of all children is computed by a single DNF of width at most
 $\ell$, obtained by concatenating the children's term lists.
@@ -87,6 +94,7 @@ $\ell$, obtained by concatenating the children's term lists.
 \lean{LMN.one_step_reduction_failure_bound}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.layer2_cnf_replaceability_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
+\difficulty{3}
 For $s_2$ layer-2 DNF gates of width at most $w$ (with the usual no-duplicate-variable
 and nodup hypotheses on terms) and a Bernoulli restriction with parameter
 $p \le 1/(40w)$, the probability that some gate fails to admit a width-$\ell$ CNF
@@ -98,6 +106,7 @@ $s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
 \lean{LMN.one_step_dtDepth_bound}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.switching_bernoulli_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{5}
 Under a Bernoulli restriction with $p \le 1/(40w)$ on $s_2$ width-$w$ DNF gates, the
 probability that every restricted gate has decision-tree depth at most $\ell$ is at
 least $1 - s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
@@ -107,6 +116,7 @@ least $1 - s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
 \lean{LMN.bernoulliRestrProb_complement}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\difficulty{4}
 For a Bernoulli restriction probability with parameter $0 \le p \le 1$ and a decidable
 predicate $A$ on restrictions, $\Pr[A] + \Pr[\lnot A] = 1$.
 \end{lemma}
@@ -115,6 +125,7 @@ predicate $A$ on restrictions, $\Pr[A] + \Pr[\lnot A] = 1$.
 \lean{LMN.one_step_reduction_with_compression}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
+\difficulty{2}
 Combining Steps 6 and 7: after a Bernoulli restriction with $p \le 1/(40w)$ on $s_2$
 width-$w$ DNF gates, the probability that every restricted gate admits a width-$\ell$
 CNF representation is at least $1 - s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$,

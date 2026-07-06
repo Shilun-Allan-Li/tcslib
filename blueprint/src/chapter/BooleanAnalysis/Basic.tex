@@ -82,6 +82,7 @@ The \emph{$L^2$ norm} of $f$: $\|f\| = \sqrt{\langle f,f\rangle}$.
 \lean{BooleanAnalysis.innerProduct_comm}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
+\difficulty{1}
 $\langle f, g\rangle = \langle g, f\rangle$.
 \end{lemma}
 
@@ -89,6 +90,7 @@ $\langle f, g\rangle = \langle g, f\rangle$.
 \lean{BooleanAnalysis.innerProduct_self_nonneg}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
+\difficulty{3}
 $\langle f, f\rangle \ge 0$.
 \end{lemma}
 
@@ -96,6 +98,7 @@ $\langle f, f\rangle \ge 0$.
 \lean{BooleanAnalysis.innerProduct_add_left}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
+\difficulty{3}
 $\langle f + g, h\rangle = \langle f, h\rangle + \langle g, h\rangle$.
 \end{lemma}
 
@@ -120,6 +123,7 @@ The \emph{sign encoding} maps $\mathrm{Bool}$ to $\{-1,1\}\subset\bbr$:
 \lean{BooleanAnalysis.boolToSign_not}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
+\difficulty{2}
 $\sigma(\texttt{false}) = 1$, $\sigma(\texttt{true}) = -1$,
 $\sigma(b)^2 = 1$, and $\sigma(\lnot b) = -\sigma(b)$.
 \end{lemma}
@@ -141,6 +145,7 @@ $L^2(\{0,1\}^n,\mathrm{uniform})$.
 \lean{BooleanAnalysis.chiS_empty}
 \leanok
 \uses{BooleanAnalysis.chiS}
+\difficulty{2}
 $\chi_\varnothing \equiv 1$.
 \end{lemma}
 
@@ -148,6 +153,7 @@ $\chi_\varnothing \equiv 1$.
 \lean{BooleanAnalysis.chiS_singleton}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign}
+\difficulty{1}
 $\chi_{\{i\}}(x) = \sigma(x_i)$.
 \end{lemma}
 
@@ -155,6 +161,7 @@ $\chi_{\{i\}}(x) = \sigma(x_i)$.
 \lean{BooleanAnalysis.chiS_sq_eq_one}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_sq}
+\difficulty{4}
 $\chi_S(x)^2 = 1$ for all $S$ and $x$.
 \end{lemma}
 
@@ -162,6 +169,7 @@ $\chi_S(x)^2 = 1$ for all $S$ and $x$.
 \lean{BooleanAnalysis.chiS_mul_of_disjoint}
 \leanok
 \uses{BooleanAnalysis.chiS}
+\difficulty{1}
 If $S$ and $T$ are disjoint then $\chi_{S\cup T}(x) = \chi_S(x)\cdot\chi_T(x)$.
 \end{lemma}
 
@@ -169,6 +177,7 @@ If $S$ and $T$ are disjoint then $\chi_{S\cup T}(x) = \chi_S(x)\cdot\chi_T(x)$.
 \lean{BooleanAnalysis.chiS_mul_chiS}
 \leanok
 \uses{BooleanAnalysis.chiS}
+\difficulty{5}
 $\chi_S(x)\cdot\chi_T(x) = \chi_{S\mathbin{\triangle} T}(x)$,
 where $\triangle$ denotes symmetric difference.
 \end{lemma}
@@ -177,6 +186,7 @@ where $\triangle$ denotes symmetric difference.
 \lean{BooleanAnalysis.chiS_neg}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_not}
+\difficulty{4}
 Flipping all bits multiplies the character by $(-1)^{|S|}$:
 \[
   \chi_S(\lnot x) \;=\; (-1)^{|S|}\,\chi_S(x).
@@ -187,6 +197,7 @@ Flipping all bits multiplies the character by $(-1)^{|S|}$:
 \lean{BooleanAnalysis.card_walsh_characters}
 \leanok
 \uses{BooleanAnalysis.chiS}
+\difficulty{2}
 There are exactly $2^n$ Walsh characters, matching the dimension of
 $L^2(\{0,1\}^n)$.
 \end{lemma}
@@ -209,6 +220,7 @@ The \emph{Fourier--Walsh coefficient} of $f$ at frequency $S$ is
 \lean{BooleanAnalysis.fourierCoeff_empty}
 \leanok
 \uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.expect}
+\difficulty{1}
 $\hat f(\varnothing) = \E[f]$.
 \end{lemma}
 
@@ -219,6 +231,7 @@ $\hat f(\varnothing) = \E[f]$.
 \lean{BooleanAnalysis.walsh_expansion}
 \leanok
 \uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS}
+\difficulty{6}
 Every Boolean function $f:\{0,1\}^n\to\bbr$ has the unique representation
 \[
   f(x) \;=\; \sum_{S\subseteq[n]} \hat f(S)\,\chi_S(x).
@@ -233,6 +246,7 @@ This is the Fourier inversion formula for the uniform measure on $\{0,1\}^n$.
 \lean{BooleanAnalysis.fourier_coeff_chi}
 \leanok
 \uses{BooleanAnalysis.innerProduct, BooleanAnalysis.chiS, BooleanAnalysis.chiS_mul_chiS}
+\difficulty{4}
 The Walsh characters form an orthonormal system:
 \[
   \langle \chi_S, \chi_T\rangle \;=\; [S = T].
@@ -243,6 +257,7 @@ The Walsh characters form an orthonormal system:
 \lean{BooleanAnalysis.innerProduct_chi_self}
 \leanok
 \uses{BooleanAnalysis.fourier_coeff_chi}
+\difficulty{1}
 $\langle \chi_S, \chi_S\rangle = 1$.
 \end{lemma}
 
@@ -251,6 +266,7 @@ $\langle \chi_S, \chi_S\rangle = 1$.
 \leanok
 \uses{BooleanAnalysis.innerProduct, BooleanAnalysis.fourierCoeff,
       BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.walsh_expansion}
+\difficulty{7}
 The squared $L^2$ norm of $f$ equals the sum of squared Fourier coefficients:
 \[
   \|f\|^2 \;=\; \langle f, f\rangle \;=\; \sum_{S\subseteq[n]} \hat f(S)^2.
@@ -291,6 +307,7 @@ $I[f] = \sum_{i=1}^n \mathrm{Inf}_i[f]$.
 \lean{BooleanAnalysis.influence_chi}
 \leanok
 \uses{BooleanAnalysis.influence, BooleanAnalysis.chiS}
+\difficulty{5}
 $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 \end{lemma}
 
@@ -300,6 +317,7 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 \uses{BooleanAnalysis.influence, BooleanAnalysis.fourierCoeff,
       BooleanAnalysis.parseval, BooleanAnalysis.walsh_expansion,
       BooleanAnalysis.fourier_coeff_chi}
+\difficulty{7}
 \[
   \mathrm{Inf}_i[f] \;=\; \sum_{\substack{S\subseteq[n]\\ i\in S}} \hat f(S)^2.
 \]
@@ -309,6 +327,7 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 \lean{BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 \leanok
 \uses{BooleanAnalysis.totalInfluence, BooleanAnalysis.influence_eq_sum_fourier}
+\difficulty{3}
 \[
   I[f] \;=\; \sum_{S\subseteq[n]} |S|\,\hat f(S)^2.
 \]
@@ -318,6 +337,7 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 \lean{BooleanAnalysis.influence_le_one}
 \leanok
 \uses{BooleanAnalysis.influence}
+\difficulty{4}
 For any $\pm 1$-valued function and any coordinate $i$,
 $\mathrm{Inf}_i[f] \le 1$.
 \end{lemma}
@@ -326,6 +346,7 @@ $\mathrm{Inf}_i[f] \le 1$.
 \lean{BooleanAnalysis.max_influence_lower_bound}
 \leanok
 \uses{BooleanAnalysis.totalInfluence, BooleanAnalysis.influence}
+\difficulty{5}
 There exists a coordinate $i$ with $\mathrm{Inf}_i[f] \ge I[f]/n$.
 \end{lemma}
 
@@ -351,6 +372,7 @@ $\tfrac{1-\rho}{2}$, independently.
 \leanok
 \uses{BooleanAnalysis.noiseOp, BooleanAnalysis.fourierCoeff,
       BooleanAnalysis.fourier_coeff_chi}
+\difficulty{7}
 \[
   \widehat{T_\rho f}(S) \;=\; \rho^{|S|}\,\hat f(S).
 \]
@@ -362,6 +384,7 @@ $\tfrac{1-\rho}{2}$, independently.
 \uses{BooleanAnalysis.noiseOp, BooleanAnalysis.innerProduct,
       BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi,
       BooleanAnalysis.walsh_expansion}
+\difficulty{7}
 \[
   \langle f, T_\rho f\rangle \;=\; \sum_{S\subseteq[n]} \rho^{|S|}\,\hat f(S)^2.
 \]
@@ -383,6 +406,7 @@ is $\widehat{\mathrm{dict}_i}(\{i\}) = 1$.
 \lean{BooleanAnalysis.dictator_eq_chi}
 \leanok
 \uses{BooleanAnalysis.dictator, BooleanAnalysis.chiS}
+\difficulty{1}
 $\mathrm{dict}_i = \chi_{\{i\}}$.
 \end{lemma}
 
@@ -398,6 +422,7 @@ $\hat f([n]) = 1$ and $\hat f(S) = 0$ for $S\ne[n]$.
 \lean{BooleanAnalysis.parity_eq_chi_univ}
 \leanok
 \uses{BooleanAnalysis.parity, BooleanAnalysis.chiS}
+\difficulty{1}
 $\mathrm{parity}_n = \chi_{[n]}$.
 \end{lemma}
 
@@ -450,6 +475,7 @@ $f$ is \emph{$\pm 1$-valued} if $f(x)\in\{-1,1\}$ for all $x$.
 \leanok
 \uses{BooleanAnalysis.isOddFunc, BooleanAnalysis.fourierCoeff,
       BooleanAnalysis.chiS_neg}
+\difficulty{6}
 If $f$ is odd and $|S|$ is even, then $\hat f(S) = 0$.
 \end{lemma}
 
@@ -457,6 +483,7 @@ If $f$ is odd and $|S|$ is even, then $\hat f(S) = 0$.
 \lean{BooleanAnalysis.innerProduct_self_pm_one}
 \leanok
 \uses{BooleanAnalysis.isPmOne, BooleanAnalysis.innerProduct}
+\difficulty{4}
 If $f$ is $\pm 1$-valued then $\langle f, f\rangle = 1$.
 \end{lemma}
 
@@ -465,6 +492,7 @@ If $f$ is $\pm 1$-valued then $\langle f, f\rangle = 1$.
 \leanok
 \uses{BooleanAnalysis.isPmOne, BooleanAnalysis.parseval,
       BooleanAnalysis.innerProduct_self_pm_one}
+\difficulty{1}
 If $f$ is $\pm 1$-valued then $\sum_{S\subseteq[n]}\hat f(S)^2 = 1$.
 \end{lemma}
 
@@ -486,6 +514,7 @@ The \emph{Fourier weight at level $k$} is
 \lean{BooleanAnalysis.moment_eq_expect}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
+\difficulty{4}
 Let $P$ be a probability measure on $\{0,1\}^n$ that assigns the uniform weight
 to each singleton.  Then for any Boolean function $f$ and $p\in\mathbb{N}$, the
 $p$-th moment of $f$ under $P$ equals the uniform expectation of $f^p$:
@@ -497,6 +526,7 @@ $p$-th moment of $f$ under $P$ equals the uniform expectation of $f^p$:
 \begin{lemma}[Sum over subsets as a product]
 \lean{BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
 \leanok
+\difficulty{4}
 For any $c : \mathrm{Fin}\,n \to \bbr$,
 \[
   \sum_{S\subseteq[n]} \prod_{i\in S} c_i \;=\; \prod_{i=1}^n (1 + c_i).
@@ -507,6 +537,7 @@ For any $c : \mathrm{Fin}\,n \to \bbr$,
 \lean{BooleanAnalysis.sum_chiS_mul_eq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.boolToSign_mul_self, BooleanAnalysis.chiS, BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+\difficulty{5}
 For points $x, y\in\{0,1\}^n$,
 \[
   \sum_{S\subseteq[n]} \chi_S(x)\,\chi_S(y) \;=\;
@@ -528,6 +559,7 @@ $\hat f(S)\ne 0$ then $|S|\le k$.
 \lean{BooleanAnalysis.sum_boolToSign}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
+\difficulty{1}
 Summing the sign encoding over the two Boolean values gives zero:
 $\sum_{b\in\mathrm{Bool}} \sigma(b) = 0$.
 \end{lemma}
@@ -536,6 +568,7 @@ $\sum_{b\in\mathrm{Bool}} \sigma(b) = 0$.
 \lean{BooleanAnalysis.sum_chiS}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\difficulty{6}
 Summing the character $\chi_S$ over the whole hypercube yields
 \[
   \sum_{x\in\{0,1\}^n} \chi_S(x) \;=\;
@@ -547,6 +580,7 @@ Summing the character $\chi_S$ over the whole hypercube yields
 \lean{BooleanAnalysis.plancherel}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight, BooleanAnalysis.walsh_expansion}
+\difficulty{6}
 The inner product of two Boolean functions equals the sum of the products of
 their Fourier coefficients:
 \[
@@ -558,6 +592,7 @@ their Fourier coefficients:
 \lean{BooleanAnalysis.flipBit_flipBit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
+\difficulty{3}
 Flipping coordinate $i$ twice returns the original point:
 $(x^i)^i = x$.
 \end{lemma}
@@ -566,6 +601,7 @@ $(x^i)^i = x$.
 \lean{BooleanAnalysis.flipBit_ne}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
+\difficulty{1}
 If $i\ne j$ then flipping coordinate $i$ does not change coordinate $j$:
 $(x^i)_j = x_j$.
 \end{lemma}
@@ -574,6 +610,7 @@ $(x^i)_j = x_j$.
 \lean{BooleanAnalysis.chiS_flipBit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.flipBit}
+\difficulty{5}
 Flipping coordinate $i$ negates $\chi_S$ when $i\in S$ and leaves it unchanged
 otherwise:
 \[
@@ -597,6 +634,7 @@ where $x^{i\mapsto b}$ sets coordinate $i$ of $x$ to $b$.
 \lean{BooleanAnalysis.derivative_add}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
+\difficulty{2}
 The discrete derivative respects addition:
 $D_i(f + g) = D_i f + D_i g$.
 \end{lemma}
@@ -605,6 +643,7 @@ $D_i(f + g) = D_i f + D_i g$.
 \lean{BooleanAnalysis.derivative_smul}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
+\difficulty{2}
 The discrete derivative commutes with scalar multiplication:
 $D_i(c\cdot f) = c\cdot D_i f$ for $c\in\bbr$.
 \end{lemma}
@@ -632,6 +671,7 @@ values of coordinate $i$:
 \lean{BooleanAnalysis.expectation_add}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
+\difficulty{2}
 The expectation operator respects addition:
 $E_i(f + g) = E_i f + E_i g$.
 \end{lemma}
@@ -640,6 +680,7 @@ $E_i(f + g) = E_i f + E_i g$.
 \lean{BooleanAnalysis.expectation_smul}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
+\difficulty{2}
 The expectation operator commutes with scalar multiplication:
 $E_i(c\cdot f) = c\cdot E_i f$ for $c\in\bbr$.
 \end{lemma}
@@ -656,6 +697,7 @@ Boolean functions.
 \lean{BooleanAnalysis.noiseOp_self_adjoint}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.plancherel}
+\difficulty{4}
 The noise operator $T_\rho$ is self-adjoint with respect to the $L^2$ inner
 product:
 \[

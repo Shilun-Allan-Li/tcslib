@@ -15,6 +15,7 @@ of $f|_\rho$.
 \lean{SwitchingLemma2.numFree_update_lt}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree}
+\difficulty{4}
 If $v$ is a free variable of a restriction $\rho$, then fixing $v$ to a value $b$
 strictly decreases the number of free variables: $\mathrm{numFree}(\rho[v \mapsto b]) < \mathrm{numFree}(\rho)$.
 \end{lemma}
@@ -23,6 +24,7 @@ strictly decreases the number of free variables: $\mathrm{numFree}(\rho[v \mapst
 \lean{SwitchingLemma2.exists_free_of_not_killed_not_fixed}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy}
+\difficulty{5}
 For a DNF $f$ and restriction $\rho$, if not every term is killed by $\rho$ and no term
 is fixed by $\rho$, then $\rho$ has at least one free variable $v \in \rho.\mathrm{freeVars}$.
 \end{lemma}
@@ -40,6 +42,7 @@ of the first term not killed by $\rho$.
 \lean{SwitchingLemma2.selectBranchVar_spec}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.selectBranchVar}
+\difficulty{6}
 When not every term of $f$ is killed by $\rho$ and no term is fixed by $\rho$, the function
 $\mathrm{selectBranchVar}\,f\,\rho$ returns some variable $v$, and that $v$ is free in $\rho$.
 \end{lemma}
@@ -68,6 +71,7 @@ expanding its free variables.
 \lean{SwitchingLemma2.extend_update_self}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
+\difficulty{3}
 If $v$ is free in $\rho$ and the input $x$ satisfies $x(v) = b$, then extending the updated
 restriction $\rho[v \mapsto b]$ by $x$ yields the same total assignment as extending $\rho$ by $x$.
 \end{lemma}
@@ -76,6 +80,7 @@ restriction $\rho[v \mapsto b]$ by $x$ yields the same total assignment as exten
 \lean{SwitchingLemma2.termSubTree_eval}
 \leanok
 \uses{DecisionTree, DecisionTree.eval, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
+\difficulty{4}
 Evaluating $\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ at $x$ equals evaluating the
 continuation at $x$, applied to the restriction obtained by folding $x$'s values into $\rho$ along
 the free literals of $\mathit{lits}$.
@@ -85,6 +90,7 @@ the free literals of $\mathit{lits}$.
 \lean{SwitchingLemma2.termSubTree_extend_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.extend_update_self}
+\difficulty{3}
 After $\mathrm{termSubTree}$ assigns all free variables of $\mathit{lits}$ from $x$, the resulting
 restriction extends by $x$ to the same total assignment as $\rho$ does: $(\mathrm{fold}\,\mathit{lits}\,\rho).\mathrm{extend}\,x = \rho.\mathrm{extend}\,x$.
 \end{lemma}
@@ -93,6 +99,7 @@ restriction extends by $x$ to the same total assignment as $\rho$ does: $(\mathr
 \lean{SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\difficulty{3}
 If $\rho(v) \neq \mathrm{none}$, then after the $\mathrm{termSubTree}$ fold over $\mathit{lits}$ the
 entry at $v$ remains non-\texttt{none}; that is, the fold never unsets an already-fixed variable.
 \end{lemma}
@@ -101,6 +108,7 @@ entry at $v$ remains non-\texttt{none}; that is, the fold never unsets an alread
 \lean{SwitchingLemma2.termSubTree_foldl_sets_member}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+\difficulty{5}
 If a literal $l \in \mathit{lits}$ has variable free in $\rho$, then after the $\mathrm{termSubTree}$
 fold the entry at $l.\mathrm{var}$ is no longer \texttt{none} (it has been set to some value).
 \end{lemma}
@@ -109,6 +117,7 @@ fold the entry at $l.\mathrm{var}$ is no longer \texttt{none} (it has been set t
 \lean{SwitchingLemma2.termSubTree_foldl_numFree_lt}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.termSubTree_foldl_preserves_nonnone, SwitchingLemma2.termSubTree_foldl_sets_member}
+\difficulty{4}
 When at least one literal of $\mathit{lits}$ has a variable free in $\rho$, the $\mathrm{termSubTree}$
 fold strictly decreases $\mathrm{numFree}$.
 \end{lemma}
@@ -117,6 +126,7 @@ fold strictly decreases $\mathrm{numFree}$.
 \lean{SwitchingLemma2.canonicalDTree_go_correct}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.fixedBy_eval_true, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Literal.killedBy_eval_false, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.list_all_eq_false_of_mem, SwitchingLemma2.list_any_eq_false, SwitchingLemma2.restrictFn, SwitchingLemma2.termSubTree_eval, SwitchingLemma2.termSubTree_extend_eq, SwitchingLemma2.termSubTree_foldl_numFree_lt, Term.eval}
+\difficulty{7}
 Provided the fuel exceeds $\rho.\mathrm{numFree}$, the tree $\mathrm{canonicalDTree.go}\,f\,\mathit{fuel}\,\rho$
 computes the restricted function: for all $x$, its evaluation equals $\mathrm{restrictFn}\,(f.\mathrm{eval})\,\rho\,x$.
 \end{lemma}
@@ -125,6 +135,7 @@ computes the restricted function: for all $x$, its evaluation equals $\mathrm{re
 \lean{SwitchingLemma2.canonicalDTree_correct}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_go_correct, SwitchingLemma2.restrictFn}
+\difficulty{1}
 For every $x$, the canonical decision tree evaluates correctly:
 $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{eval}\,x = \mathrm{restrictFn}\,(f.\mathrm{eval})\,\rho\,x$.
 \end{lemma}
@@ -133,6 +144,7 @@ $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{eval}\,x = \mathrm{restrictFn}\,(f.\
 \lean{SwitchingLemma2.numFree_update_le}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree}
+\difficulty{3}
 Fixing a variable $v$ to a value $b$ never increases the number of free variables:
 $\mathrm{numFree}(\rho[v \mapsto b]) \le \mathrm{numFree}(\rho)$.
 \end{lemma}
@@ -141,6 +153,7 @@ $\mathrm{numFree}(\rho[v \mapsto b]) \le \mathrm{numFree}(\rho)$.
 \lean{SwitchingLemma2.termSubTree_cont_congr}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_le, SwitchingLemma2.termSubTree}
+\difficulty{4}
 If two continuations $\mathrm{cont}_1, \mathrm{cont}_2$ agree on all restrictions $\rho'$ with
 $\rho'.\mathrm{numFree} \le \rho.\mathrm{numFree}$, then $\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}_1 = \mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}_2$.
 \end{lemma}
@@ -149,6 +162,7 @@ $\rho'.\mathrm{numFree} \le \rho.\mathrm{numFree}$, then $\mathrm{termSubTree}\,
 \lean{SwitchingLemma2.termSubTree_cont_congr_strict}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_lt, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cont_congr}
+\difficulty{5}
 If $\mathit{lits}$ contains at least one literal free in $\rho$, then the two continuations need
 only agree on restrictions $\rho'$ with $\rho'.\mathrm{numFree} < \rho.\mathrm{numFree}$ for the two
 $\mathrm{termSubTree}$ trees to be equal.
@@ -158,6 +172,7 @@ $\mathrm{termSubTree}$ trees to be equal.
 \lean{SwitchingLemma2.canonicalDTree_go_fuel_invariant}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.termSubTree_cont_congr_strict}
+\difficulty{6}
 Once the fuel exceeds $\rho.\mathrm{numFree}$, the resulting tree does not depend on the exact
 fuel: for any $\mathit{fuel}_1, \mathit{fuel}_2 > \rho.\mathrm{numFree}$, $\mathrm{canonicalDTree.go}\,f\,\mathit{fuel}_1\,\rho = \mathrm{canonicalDTree.go}\,f\,\mathit{fuel}_2\,\rho$.
 \end{lemma}
@@ -166,6 +181,7 @@ fuel: for any $\mathit{fuel}_1, \mathit{fuel}_2 > \rho.\mathrm{numFree}$, $\math
 \lean{SwitchingLemma2.cont_eq_canonicalDTree}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.fixedBy, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_go_fuel_invariant, Term}
+\difficulty{5}
 For $t \in f$ and a restriction $\rho'$ with $\rho_{\mathrm{orig}}.\mathrm{numFree} \ge \rho'.\mathrm{numFree} + 1$,
 the standard continuation $\bigl(\text{if } t \text{ fixed by } \rho' \text{ then } \mathrm{leaf}\ \mathrm{true}\ \text{else}\ \mathrm{canonicalDTree.go}\,f\,\rho_{\mathrm{orig}}.\mathrm{numFree}\,\rho'\bigr)$
 equals $\mathrm{canonicalDTree}\,f\,\rho'$.
@@ -175,6 +191,7 @@ equals $\mathrm{canonicalDTree}\,f\,\rho'$.
 \lean{SwitchingLemma2.termSubTree_cons_free}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
+\difficulty{1}
 When the head literal $l$ is free in $\rho$, $\mathrm{termSubTree}\,(l :: \mathit{rest})\,\rho\,\mathrm{cont}$
 is a branch on $l.\mathrm{var}$ whose two children are the recursive $\mathrm{termSubTree}$ calls on
 $\mathit{rest}$ with $\rho$ updated to $\mathrm{some}\ \mathrm{false}$ and $\mathrm{some}\ \mathrm{true}$.
@@ -184,6 +201,7 @@ $\mathit{rest}$ with $\rho$ updated to $\mathrm{some}\ \mathrm{false}$ and $\mat
 \lean{SwitchingLemma2.termSubTree_cons_nonfree}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
+\difficulty{1}
 When the head literal $l$ is not free in $\rho$, it is skipped:
 $\mathrm{termSubTree}\,(l :: \mathit{rest})\,\rho\,\mathrm{cont} = \mathrm{termSubTree}\,\mathit{rest}\,\rho\,\mathrm{cont}$.
 \end{lemma}
@@ -192,6 +210,7 @@ $\mathrm{termSubTree}\,(l :: \mathit{rest})\,\rho\,\mathrm{cont} = \mathrm{termS
 \lean{SwitchingLemma2.termSubTree_deepPath_head_free}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_free}
+\difficulty{3}
 When the head literal $l$ is free in $\rho$, the deepest root-to-leaf path of
 $\mathrm{termSubTree}\,(l :: \mathit{rest})\,\rho\,\mathrm{cont}$ begins with $(l.\mathrm{var}, b)$ for some
 $b$ (the direction of the deeper child), followed by the deep path of the recursive call on
@@ -202,6 +221,7 @@ $\rho[l.\mathrm{var} \mapsto b]$.
 \lean{SwitchingLemma2.filter_free_update_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\difficulty{2}
 If every literal of $\mathit{rest}$ has variable distinct from $v$, then filtering $\mathit{rest}$ by
 freeness under $\rho[v \mapsto b]$ gives the same list as filtering by freeness under $\rho$.
 \end{lemma}
@@ -210,6 +230,7 @@ freeness under $\rho[v \mapsto b]$ gives the same list as filtering by freeness 
 \lean{SwitchingLemma2.termSubTree_deepPath_var_match}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
+\difficulty{6}
 For $\mathit{lits}$ with pairwise distinct variables, the $k$-th variable of the deep path of
 $\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ equals the variable of the $k$-th literal in the
 free-filtered list of $\mathit{lits}$.
@@ -219,6 +240,7 @@ free-filtered list of $\mathit{lits}$.
 \lean{SwitchingLemma2.termSubTree_deepPath_append}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
+\difficulty{5}
 For $\mathit{lits}$ with pairwise distinct variables there is a restriction $\rho'$, agreeing with
 $\rho$ off the variables of $\mathit{lits}$, such that the deep-path length of
 $\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ equals the number of free literals of $\mathit{lits}$
@@ -229,6 +251,7 @@ plus the deep-path length of $\mathrm{cont}\,\rho'$.
 \lean{SwitchingLemma2.termSubTree_deepPath_split}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
+\difficulty{5}
 For $\mathit{lits}$ with pairwise distinct variables, the deep path of
 $\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ splits as a prefix (one entry per free literal of
 $\mathit{lits}$) appended with the deep path of $\mathrm{cont}\,\rho'$, where $\rho'$ agrees with $\rho$
@@ -239,6 +262,7 @@ off the variables of $\mathit{lits}$.
 \lean{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.termSubTree, Term}
+\difficulty{2}
 When not all terms are killed and none is fixed, and $t$ is the first non-killed clause,
 $\mathrm{canonicalDTree.go}\,f\,(\mathit{fuel}+1)\,\rho$ unfolds to $\mathrm{termSubTree}\,t\,\rho\,\mathrm{cont}$,
 where $\mathrm{cont}\,\rho'$ is $\mathrm{leaf}\ \mathrm{true}$ if $t$ is fixed by $\rho'$ and otherwise
@@ -249,6 +273,7 @@ $\mathrm{canonicalDTree.go}\,f\,\mathit{fuel}\,\rho'$.
 \lean{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_alive_eq_termSubTree, SwitchingLemma2.termSubTree, Term}
+\difficulty{1}
 The top-level analogue of the previous lemma for $\mathrm{canonicalDTree}$ itself:
 under the alive-branch hypotheses with first non-killed clause $t$, $\mathrm{canonicalDTree}\,f\,\rho$
 equals $\mathrm{termSubTree}\,t\,\rho\,\mathrm{cont}$ with the same fixed-or-recurse continuation
@@ -259,6 +284,7 @@ running at fuel $\rho.\mathrm{numFree}$.
 \lean{SwitchingLemma2.termSubTree_skip_nonfree_prefix'}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree}
+\difficulty{3}
 If every literal in $\mathit{prefix}$ has variable not free in $\rho$, then
 $\mathrm{termSubTree}\,(\mathit{prefix} \mathbin{+\!\!+} \mathit{rest})\,\rho\,\mathrm{cont} = \mathrm{termSubTree}\,\mathit{rest}\,\rho\,\mathrm{cont}$.
 \end{lemma}
@@ -267,6 +293,7 @@ $\mathrm{termSubTree}\,(\mathit{prefix} \mathbin{+\!\!+} \mathit{rest})\,\rho\,\
 \lean{SwitchingLemma2.termSubTree_skip_updated_head}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree}
+\difficulty{2}
 If $l.\mathrm{var} = v$, then $\mathrm{termSubTree}\,(l :: \mathit{rest})\,(\rho[v \mapsto b])\,\mathrm{cont} = \mathrm{termSubTree}\,\mathit{rest}\,(\rho[v \mapsto b])\,\mathrm{cont}$,
 since after the update $v$ is no longer free and $l$ is skipped.
 \end{lemma}
@@ -275,6 +302,7 @@ since after the update $v$ is no longer free and $l$ is skipped.
 \lean{SwitchingLemma2.depth_ge_dtDepth}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
+\difficulty{1}
 If a decision tree $T$ computes a function $f$ (i.e. $T.\mathrm{eval}\,x = f(x)$ for all $x$), then its
 depth is at least the decision-tree depth of $f$: $T.\mathrm{depth} \ge \mathrm{dtDepth}\,f$.
 \end{lemma}
@@ -283,6 +311,7 @@ depth is at least the decision-tree depth of $f$: $T.\mathrm{depth} \ge \mathrm{
 \lean{SwitchingLemma2.canonicalDTree_depth_ge}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_correct, SwitchingLemma2.depth_ge_dtDepth, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{1}
 The depth of the canonical decision tree for $f|_\rho$ is at least the decision-tree depth of the
 restricted function: $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{depth} \ge \mathrm{dtDepth}\,(\mathrm{restrictFn}\,(f.\mathrm{eval})\,\rho)$.
 \end{lemma}
@@ -291,6 +320,7 @@ restricted function: $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{depth} \ge \mat
 \lean{SwitchingLemma2.dtDepth_restrictFn_le_numFree}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.depth_ge_dtDepth, SwitchingLemma2.extend_update_self, SwitchingLemma2.numFree_update_lt, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{7}
 For any function $f$ and restriction $\rho$, the decision-tree depth of the restricted function is at
 most the number of free variables: $\mathrm{dtDepth}\,(\mathrm{restrictFn}\,f\,\rho) \le \rho.\mathrm{numFree}$.
 \end{lemma}

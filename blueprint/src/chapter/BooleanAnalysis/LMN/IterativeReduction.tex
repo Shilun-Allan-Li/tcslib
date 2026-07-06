@@ -16,6 +16,7 @@ at most $\varepsilon/2$.
 \lean{LMN.subsequent_step_reduction}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
+\difficulty{1}
 Let $g_1,\dots,g_{s_i}$ be width-$\le l$ DNFs on $n$ variables (with $0<l$,
 $0<n$), and let $0<p\le 1/(40l)$ with $p\le 1$. Under a Bernoulli$(p)$ random
 restriction $\rho$, the probability that some restricted gate fails to be
@@ -28,6 +29,7 @@ applied with width parameter $l$.
 \lean{LMN.subsequent_step_dtDepth}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.one_step_dtDepth_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{1}
 Under the same hypotheses, a Bernoulli$(p)$ restriction $\rho$ leaves every one of
 the $s_i$ width-$\le l$ gates with restricted function of decision-tree depth at
 most $l$, with probability at least
@@ -38,6 +40,7 @@ of the one-step bound applied with width $l$.
 \begin{theorem}[Multi-stage failure bound]
 \lean{LMN.multi_stage_failure_bound}
 \leanok
+\difficulty{3}
 If over $m$ stages each failure bound satisfies
 $\mathrm{failure\_bound}(i)\le (\mathrm{layer\_size}(i))\cdot\alpha$ with
 $\alpha\ge 0$, and $\sum_i \mathrm{layer\_size}(i)\le s$, then
@@ -48,6 +51,7 @@ $\sum_i \mathrm{failure\_bound}(i)\le s\cdot\alpha$.
 \lean{LMN.bernoulliRestrProb_union_bound_fin}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+\difficulty{5}
 For $0\le p\le 1$ and finitely many events $A_0,\dots,A_{m-1}$ on restrictions, the
 Bernoulli$(p)$ probability that some $A_i$ holds is at most the sum of the
 individual probabilities:
@@ -60,6 +64,7 @@ individual probabilities:
 \begin{theorem}[Iterative dominant-term bound]
 \lean{LMN.iterative_dominant_term_bound}
 \leanok
+\difficulty{4}
 For $\sum_i \mathrm{layer\_size}(i)\le s$ with $0<s$ and $0<\varepsilon$, setting
 $l=\log_2(2s/\varepsilon)$ gives
 \[
@@ -86,6 +91,7 @@ Bernoulli restriction by the sum of the two individual stage probabilities.
 \lean{LMN.abstract_iterative_reduction}
 \leanok
 \uses{LMN.iterative_dominant_term_bound}
+\difficulty{3}
 For $\sum_i \mathrm{layer\_size}(i)\le s$ with $0<s$ and $0<\varepsilon$, if each
 per-stage bound satisfies
 $\mathrm{per\_stage\_bound}(i)\le(\mathrm{layer\_size}(i))\cdot(1/2)^{\log_2(2s/\varepsilon)}$,

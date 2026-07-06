@@ -13,6 +13,7 @@ Gilbert--Varshamov argument.
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.qaryEntropy}
+\difficulty{5}
 For $0<p\le 1-1/q$ and $q=|\alpha|$,
 \[
 |B_{\lfloor np\rfloor}(c)| \;\le\; q^{H_q(p)\,n}.
@@ -26,6 +27,7 @@ For $0<p\le 1-1/q$ and $q=|\alpha|$,
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
+\difficulty{4}
 For $q\ge 2$ and $0<p<1$,
 \[
 q^{H_q(p)} \;=\; (q-1)^p\,p^{-p}\,(1-p)^{-(1-p)}.
@@ -36,6 +38,7 @@ q^{H_q(p)} \;=\; (q-1)^p\,p^{-p}\,(1-p)^{-(1-p)}.
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
+\difficulty{1}
 Variant using a different exponentiation operator.
 \end{lemma}
 
@@ -45,6 +48,7 @@ Variant using a different exponentiation operator.
 \begin{lemma}[Square-root/floor inequality]
 \lean{ErrorCorrectingCodes.Codeword.sqrt_sub_sqrt_floor_le_one}
 \leanok
+\difficulty{5}
 For $x\ge 0$,
 \[
 \sqrt{x} - \sqrt{\lfloor x\rfloor} \;\le\; 1.
@@ -58,6 +62,7 @@ For $x\ge 0$,
 \lean{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
+\difficulty{7}
 For $0<p<1$ and $q\ge 2$, eventually
 \[
 \tbinom{n}{\lfloor np\rfloor}(q-1)^{pn}
@@ -74,6 +79,7 @@ q^{H_q(p)\,n - \varepsilon(n)},
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
+\difficulty{4}
 For $q=|\alpha|$ and $0<p\le 1-1/q$,
 \[
 H_q(p) \;>\; 0.
@@ -87,6 +93,7 @@ H_q(p) \;>\; 0.
 \begin{lemma}[Expansion of the $q$-ary entropy exponent]
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}
 \leanok
+\difficulty{2}
 Algebraic rewrite of the $q$-ary entropy exponent: for $q\in\mathbb{N}$ and $p\in\mathbb{R}$,
 \[
 p\,\log_q(q-1) - p\,\log_q p - (1-p)\,\log_q(1-p)
@@ -98,6 +105,7 @@ p\,\log_q(q-1) - p\,\log_q p - (1-p)\,\log_q(1-p)
 \begin{lemma}[AM--GM for two nonnegative reals]
 \lean{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum}
 \leanok
+\difficulty{3}
 For nonnegative reals $a,b\ge 0$, the geometric mean is at most the arithmetic mean:
 \[
 \sqrt{ab} \;\le\; \frac{a+b}{2}.
@@ -107,6 +115,7 @@ For nonnegative reals $a,b\ge 0$, the geometric mean is at most the arithmetic m
 \begin{lemma}[A Stirling square-root identity]
 \lean{ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
 \leanok
+\difficulty{3}
 For $n\ge 0$,
 \[
 \sqrt{2\pi n}\,\cdot\,\sqrt{\pi/2}\,\cdot\,\sqrt{n} \;=\; \pi n.
@@ -116,6 +125,7 @@ For $n\ge 0$,
 \begin{lemma}[Positivity of $\lfloor np\rfloor$ for large $n$]
 \lean{ErrorCorrectingCodes.Codeword.floor_np_pos}
 \leanok
+\difficulty{4}
 Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le n$, then $\lfloor np\rfloor > 0$.
 \end{lemma}
 
@@ -123,6 +133,7 @@ Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le 
 \lean{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum, ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
+\difficulty{6}
 Let $a,b,n\in\mathbb{N}$ with $a,b>0$, $a+b=n$, and let $c>0$. Suppose the Stirling-type bound
 \[
 a!\,\cdot\,b! \;\le\; c\cdot\Big(\sqrt{2}\sqrt{a}\sqrt{\pi}\,(a/e)^a\cdot\sqrt{2}\sqrt{b}\sqrt{\pi}\,(b/e)^b\Big)

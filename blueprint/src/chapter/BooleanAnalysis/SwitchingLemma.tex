@@ -22,8 +22,9 @@ O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
 \begin{theorem}[Switching Lemma -- Lean statement]
 \label{thm:switching_lemma}
 \lean{SwitchingLemma2.switching_lemma}
-\uses{def:dnf_width,def:is_restriction,def:is_bad_restriction,
-      def:num_s_restrictions,hyp:hnd,hyp:five_s_le_n}
+\uses{DNF.width, SwitchingLemma2.IsRestriction, SwitchingLemma2.IsBadRestriction,
+      SwitchingLemma2.numSRestrictions}
+\difficulty{6}
 Let $n>0$, let $f:\{0,1\}^n\to\{0,1\}$ be a DNF formula, and fix $w,s,d\in\bbn$.
 Assume
 \begin{itemize}
@@ -116,7 +117,7 @@ combinatorics per se but of the particular inductive proof of the Vandermonde
 identity (\lean{SwitchingLemma2.choose_mul_pow_bound}) used to convert
 $\binom{n}{s-d}(4n)^d\le \binom{n}{s}(5s)^d$.  For restrictions with $p>1/5$
 one must either generalise that lemma or apply the theorem vacuously via the
-$d>s$ branch (\lean{bad_filter_empty_of_d_ge_s}).
+$d>s$ branch (\texttt{bad_filter_empty_of_d_ge_s}).
 
 \paragraph{$0<n$.}
 Required so that $\Fin n$ is inhabited.  Trivial.
@@ -127,7 +128,7 @@ Required so that $\Fin n$ is inhabited.  Trivial.
 Razborov's encoding yields $(5sw/n)^d$ in the sharpest accounting.  The
 formalised constant is $10sw$ rather than $5sw$.  The extra factor of two
 comes from the combinatorial bound on the encoder image size
-(\lean{aux_image_card_bound} via \lean{exists_aux_injection}), which tags
+(\texttt{aux_image_card_bound} via \texttt{exists_aux_injection}), which tags
 each of the $d$ encoded triples as $\Fin w\times\mathrm{Bool}\times\mathrm{Bool}$
 (position, polarity, end-of-block marker).  A sharper encoder is possible but
 was sidestepped for proof-engineering simplicity.  This is a loss of a
@@ -143,7 +144,7 @@ constant factor, not an asymptotic one.
         \texttt{sorry} (line 636 of \texttt{MainTheorem.lean}) which is the
         summation step that passes from ``fibre bound'' to ``total bound''.
         Everything else is \texttt{sorry}-free.
-  \item \lean{SwitchingLemma2.RoundTrip.go\_roundtrip\_gen} contains one
+  \item \texttt{SwitchingLemma2.RoundTrip.go\_roundtrip\_gen} contains one
         inductive-step \texttt{sorry} at the re-entry point of the induction
         hypothesis.
 \end{itemize}
@@ -160,28 +161,28 @@ The proof is layered across seven Lean files.  Information flows downward:
   & \lean{Literal}, \lean{Term}, \lean{DNF}, \lean{CNF},
     \lean{DecisionTree}, \lean{dtDepth}, \lean{buildFullDTree}.\\
 \texttt{Switching/Defs.lean}
-  & \lean{Restriction}, \lean{Restriction.extend}, \lean{numFree},
-    \lean{freeVars}, \lean{Literal.killedBy}, \lean{Term.fixedBy},
-    \lean{restrictFn}, \lean{IsBadRestriction}, \lean{IsRestriction},
-    \lean{numSRestrictions}, \lean{first_clause_preserved}. \\
+  & \texttt{Restriction}, \texttt{Restriction.extend}, \texttt{numFree},
+    \lean{SwitchingLemma2.Restriction.freeVars}, \lean{SwitchingLemma2.Literal.killedBy}, \lean{SwitchingLemma2.Term.fixedBy},
+    \lean{SwitchingLemma2.restrictFn}, \lean{SwitchingLemma2.IsBadRestriction}, \lean{SwitchingLemma2.IsRestriction},
+    \lean{SwitchingLemma2.numSRestrictions}, \lean{SwitchingLemma2.first_clause_preserved}. \\
 \texttt{Switching/CanonicalDTree.lean}
-  & \lean{canonicalDTree} (Razborov's DT), correctness,
-    \lean{dtDepth_restrictFn_le_numFree} (depth $\le$ numFree).\\
+  & \texttt{canonicalDTree} (Razborov's DT), correctness,
+    \lean{SwitchingLemma2.dtDepth_restrictFn_le_numFree} (depth $\le$ numFree).\\
 \texttt{Switching/Encoding.lean}
-  & \lean{razborovEncode}, \lean{razborovDecode},
-    \lean{processClauseLits}. \\
+  & \texttt{razborovEncode}, \texttt{razborovDecode},
+    \lean{SwitchingLemma2.processClauseLits}. \\
 \texttt{Switching/EncodingProperties.lean}
   & Numerous invariants of the encoder; uses \texttt{hnd} for
-    \lean{encode_go_not_kills_first_clause}. \\
+    \lean{SwitchingLemma2.encode_go_not_kills_first_clause}. \\
 \texttt{Switching/RoundTrip.lean}
-  & \lean{go_roundtrip_gen} (decode $\circ$ encode = id),
-    \lean{razborovEncode_injective}. \\
+  & \texttt{go_roundtrip_gen} (decode $\circ$ encode = id),
+    \lean{SwitchingLemma2.razborovEncode_injective}. \\
 \texttt{Switching/MainTheorem.lean}
-  & Encoder image parser, \lean{exists_aux_injection},
-    \lean{aux_image_card_bound}, \lean{fiber_bound},
-    \lean{bad_count_bound},
-    \lean{choose_mul_pow_bound}, \lean{switching_lemma},
-    \lean{switching_corollary}. \\
+  & Encoder image parser, \texttt{exists_aux_injection},
+    \lean{SwitchingLemma2.aux_image_card_bound}, \lean{SwitchingLemma2.fiber_bound},
+    \lean{SwitchingLemma2.bad_count_bound},
+    \lean{SwitchingLemma2.choose_mul_pow_bound}, \lean{SwitchingLemma2.switching_lemma},
+    \lean{SwitchingLemma2.switching_corollary}. \\
 \end{tabular}
 \end{center}
 
@@ -203,8 +204,8 @@ Conceptually the proof factors as:
 The combinatorial count is obtained by fibring the image over the first
 component $\gamma$ (a restriction with $s-d$ fewer free variables), bounding
 each fibre by $(4w)^d$ (the aux-data count
-\lean{aux_image_card_bound}), then summing fibres via the Vandermonde-type
-inequality \lean{choose_mul_pow_bound}, which is where $5s\le n$ is consumed.
+\lean{SwitchingLemma2.aux_image_card_bound}), then summing fibres via the Vandermonde-type
+inequality \texttt{choose_mul_pow_bound}, which is where $5s\le n$ is consumed.
 
 %-----------------------------------------------------------------------------
 \section{Corollary: no small CNF approximations}
@@ -212,7 +213,8 @@ inequality \lean{choose_mul_pow_bound}, which is where $5s\le n$ is consumed.
 \begin{theorem}[Switching corollary]
 \label{thm:switching_corollary}
 \lean{SwitchingLemma2.switching_corollary}
-\uses{thm:switching_lemma}
+\uses{SwitchingLemma2.switching_lemma}
+\difficulty{4}
 Under the same hypotheses as Theorem~\ref{thm:switching_lemma},
 \[
   \bigl|\{\rho : \mathrm{IsRestriction}\ s\ \rho,\ f|_\rho
@@ -222,6 +224,6 @@ Under the same hypotheses as Theorem~\ref{thm:switching_lemma},
 \end{theorem}
 
 \noindent
-This uses the fact (\lean{dtDepth_le_implies_small_dnf_cnf}) that a function
+This uses the fact (\texttt{dtDepth_le_implies_small_dnf_cnf}) that a function
 with small decision-tree depth admits both a small-width DNF and a
 small-width CNF.

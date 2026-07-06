@@ -16,6 +16,7 @@ circuit layer.
 \lean{LMN.bernoulliRestrProb_mono}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+\difficulty{4}
 Let $p\in[0,1]$ and let $A,B$ be predicates on restrictions. If $A(\rho)$ implies $B(\rho)$
 for every restriction $\rho$, then
 \[
@@ -27,6 +28,7 @@ for every restriction $\rho$, then
 \lean{LMN.switching_bernoulli_gate_to_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_mono, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn}
+\difficulty{3}
 Let $g$ be a $\mathrm{DNF}$ of width at most $w>0$ (with distinct variables per term and
 no duplicate literals), let $n>0$, and let $0<p\le \tfrac{1}{40w}$ with $p\le 1$. Then the
 probability under a Bernoulli$(p)$ restriction $\rho$ that $g|_\rho$ cannot be expressed as a
@@ -40,6 +42,7 @@ $\mathrm{CNF}$ of width at most $l$ is at most
 \lean{LMN.switching_bernoulli_gate_to_dnf_from_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_mono, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn}
+\difficulty{3}
 The dual statement. Let $g$ be a $\mathrm{CNF}$ of width at most $w>0$ (with distinct
 variables per clause and no duplicate literals), let $n>0$, and let $0<p\le \tfrac{1}{40w}$
 with $p\le 1$. Then the probability under a Bernoulli$(p)$ restriction $\rho$ that $g|_\rho$
@@ -53,6 +56,7 @@ cannot be expressed as a $\mathrm{DNF}$ of width at most $l$ is at most
 \lean{LMN.restricted_has_small_cnf_of_dtDepth_le}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{1}
 If the restricted function $f|_\rho$ has decision-tree depth at most $l$, then there exists a
 $\mathrm{CNF}$ $\psi$ of width at most $l$ that computes $f|_\rho$ on every input.
 \end{theorem}
@@ -61,6 +65,7 @@ $\mathrm{CNF}$ $\psi$ of width at most $l$ that computes $f|_\rho$ on every inpu
 \lean{LMN.restricted_has_small_dnf_of_dtDepth_le}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{1}
 If the restricted function $f|_\rho$ has decision-tree depth at most $l$, then there exists a
 $\mathrm{DNF}$ $\varphi$ of width at most $l$ that computes $f|_\rho$ on every input.
 \end{theorem}
@@ -69,6 +74,7 @@ $\mathrm{DNF}$ $\varphi$ of width at most $l$ that computes $f|_\rho$ on every i
 \lean{LMN.switching_bernoulli_union_bound}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{6}
 Let $\mathrm{gates}_0,\dots,\mathrm{gates}_{s-1}$ be $s$ many $\mathrm{DNF}$s, each of width at
 most $w>0$ (with distinct variables per term and no duplicate literals), let $n>0$, and let
 $0<p\le \tfrac{1}{40w}$ with $p\le 1$. Then the probability under a Bernoulli$(p)$ restriction
@@ -83,6 +89,7 @@ at most
 \lean{LMN.all_gates_have_small_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
+\difficulty{1}
 Given a family of $\mathrm{DNF}$ gates and a restriction $\rho$ under which every gate
 satisfies $\mathrm{dtDepth}(\mathrm{gates}_i|_\rho)\le l$, every gate can be replaced by a
 $\mathrm{CNF}$ of width at most $l$ computing $\mathrm{gates}_i|_\rho$ on all inputs.
@@ -92,6 +99,7 @@ $\mathrm{CNF}$ of width at most $l$ computing $\mathrm{gates}_i|_\rho$ on all in
 \lean{LMN.layer2_cnf_replaceability_union_bound}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_mono, LMN.restricted_has_small_cnf_of_dtDepth_le, LMN.switching_bernoulli_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
+\difficulty{5}
 Let $\mathrm{gates}_0,\dots,\mathrm{gates}_{s_2-1}$ be the layer-2 $\mathrm{DNF}$ gates, each of
 width at most $w>0$ (with distinct variables per term and no duplicate literals), let $n>0$,
 and let $0<p\le \tfrac{1}{40w}$ with $p\le 1$. Then the probability under a Bernoulli$(p)$
@@ -106,6 +114,7 @@ $\mathrm{gates}_i|_\rho$ is at most
 \lean{LMN.layer2_cnf_replaceability_simplified}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.layer2_cnf_replaceability_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
+\difficulty{4}
 Under the same hypotheses as the previous theorem, fix $\varepsilon>0$ and $s_2>0$, and suppose
 $n$ is large enough that $\exp\!\bigl(-\tfrac{np}{3}\bigr)\le \tfrac{\varepsilon}{s_2}$. Then the
 probability under a Bernoulli$(p)$ restriction $\rho$ that some layer-2 gate fails to admit a

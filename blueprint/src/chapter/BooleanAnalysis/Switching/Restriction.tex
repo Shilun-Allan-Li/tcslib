@@ -14,7 +14,7 @@ lemmas about list operations and decision-tree depth used in the main argument.
 \lean{SwitchingLemma2.Restriction}
 \leanok
 A restriction on $n$ variables is a map $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$,
-assigning each variable either a fixed Boolean value or leaving it free (\lean{none}).
+assigning each variable either a fixed Boolean value or leaving it free (\texttt{none}).
 \end{definition}
 
 \begin{definition}[Free variables of a restriction]
@@ -22,7 +22,7 @@ assigning each variable either a fixed Boolean value or leaving it free (\lean{n
 \leanok
 \uses{SwitchingLemma2.Restriction}
 The set of free variables of a restriction $\rho$ is the finite set of indices
-$i \in \mathrm{Fin}\,n$ for which $\rho(i)$ is unset (\lean{none}).
+$i \in \mathrm{Fin}\,n$ for which $\rho(i)$ is unset (\texttt{none}).
 \end{definition}
 
 \begin{definition}[Number of free variables]
@@ -55,7 +55,7 @@ that each listed variable is set to the corresponding fixed Boolean value.
 \leanok
 \uses{SwitchingLemma2.Restriction}
 Given a list of (variable, value) pairs, $\mathrm{unfixVars}$ resets each listed variable
-to \lean{none}, restoring it to a free variable.
+to \texttt{none}, restoring it to a free variable.
 \end{definition}
 
 \begin{definition}[Restriction with $s$ free variables]
@@ -133,6 +133,7 @@ $\binom{n}{s}\, 2^{\,n-s}$.
 \lean{SwitchingLemma2.Literal.killedBy_eval_false}
 \leanok
 \uses{Literal, Literal.eval, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
+\difficulty{2}
 If a literal $l$ is killed by $\rho$, then for every $x$ it evaluates to false on the
 extended point: $l.\mathrm{eval}(\rho.\mathrm{extend}\,x) = \mathrm{false}$.
 \end{lemma}
@@ -141,6 +142,7 @@ extended point: $l.\mathrm{eval}(\rho.\mathrm{extend}\,x) = \mathrm{false}$.
 \lean{SwitchingLemma2.Literal.fixedBy_eval_true}
 \leanok
 \uses{Literal, Literal.eval, SwitchingLemma2.Literal.fixedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
+\difficulty{2}
 If a literal $l$ is fixed by $\rho$, then for every $x$ it evaluates to true on the
 extended point: $l.\mathrm{eval}(\rho.\mathrm{extend}\,x) = \mathrm{true}$.
 \end{lemma}
@@ -149,6 +151,7 @@ extended point: $l.\mathrm{eval}(\rho.\mathrm{extend}\,x) = \mathrm{true}$.
 \lean{SwitchingLemma2.dtDepth_le_of_tree}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
+\difficulty{2}
 If a decision tree $T$ of depth at most $d$ computes $f$ (i.e.\ $T.\mathrm{eval}\,x = f(x)$
 for all $x$), then the decision-tree depth of $f$ is at most $d$.
 \end{lemma}
@@ -156,6 +159,7 @@ for all $x$), then the decision-tree depth of $f$ is at most $d$.
 \begin{lemma}[List \texttt{any} false from pointwise false]
 \lean{SwitchingLemma2.list_any_eq_false}
 \leanok
+\difficulty{4}
 If a Boolean predicate $p$ is false on every element of a list $l$, then $l.\mathrm{any}\,p$
 is false.
 \end{lemma}
@@ -163,6 +167,7 @@ is false.
 \begin{lemma}[List \texttt{all} false from a false member]
 \lean{SwitchingLemma2.list_all_eq_false_of_mem}
 \leanok
+\difficulty{5}
 If some element $a$ of a list $l$ satisfies $p(a) = \mathrm{false}$, then $l.\mathrm{all}\,p$
 is false.
 \end{lemma}
@@ -171,6 +176,7 @@ is false.
 \lean{SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.fixedBy_eval_true, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.dtDepth_le_of_tree, SwitchingLemma2.restrictFn, Term.eval, dtDepth}
+\difficulty{4}
 If some term of a DNF $f$ is fixed by $\rho$, then the restricted function
 $\mathrm{restrictFn}\,f.\mathrm{eval}\,\rho$ is identically true and hence has
 decision-tree depth $0$.
@@ -180,6 +186,7 @@ decision-tree depth $0$.
 \lean{SwitchingLemma2.killedAll_implies_dtDepth_zero}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.killedBy_eval_false, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Term.killedBy, SwitchingLemma2.dtDepth_le_of_tree, SwitchingLemma2.list_all_eq_false_of_mem, SwitchingLemma2.list_any_eq_false, SwitchingLemma2.restrictFn, Term.eval, dtDepth}
+\difficulty{4}
 If every term of a DNF $f$ is killed by $\rho$, then the restricted function
 $\mathrm{restrictFn}\,f.\mathrm{eval}\,\rho$ is identically false and hence has
 decision-tree depth $0$.
@@ -189,6 +196,7 @@ decision-tree depth $0$.
 \lean{SwitchingLemma2.killedBy_of_nonfree_agree}
 \leanok
 \uses{SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, Term}
+\difficulty{5}
 If a term $t$ is killed by $\rho$ and a restriction $\sigma$ agrees with $\rho$ on every
 non-free variable (i.e.\ $\sigma(v) = \rho(v)$ whenever $\rho(v) \neq \mathrm{none}$), then
 $t$ is also killed by $\sigma$.
@@ -198,6 +206,7 @@ $t$ is also killed by $\sigma$.
 \lean{SwitchingLemma2.first_clause_preserved}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.killedBy_of_nonfree_agree, Term}
+\difficulty{5}
 Suppose $t$ is the first term of $f$ not killed by $\rho$, that $\sigma$ agrees with
 $\rho$ on all non-free variables, and that $t$ is not killed by $\sigma$. Then $t$ is also
 the first term of $f$ not killed by $\sigma$.
@@ -207,12 +216,14 @@ the first term of $f$ not killed by $\sigma$.
 \lean{SwitchingLemma2.term_length_le_width}
 \leanok
 \uses{DNF, DNF.width, Term, Term.width}
+\difficulty{4}
 Every term $t$ belonging to a DNF $f$ has length at most the width of $f$.
 \end{lemma}
 
 \begin{lemma}[\texttt{zipIdx.find?} projects to \texttt{find?}]
 \lean{SwitchingLemma2.zipIdx_find_to_find}
 \leanok
+\difficulty{4}
 Searching the indexed list $l.\mathrm{zipIdx}$ with a predicate and projecting onto the
 first component agrees with the corresponding $\mathrm{find?}$ on $l$.
 \end{lemma}
@@ -220,6 +231,7 @@ first component agrees with the corresponding $\mathrm{find?}$ on $l$.
 \begin{lemma}[\texttt{zipIdx} membership locates a tail]
 \lean{SwitchingLemma2.zipIdx_drop_spec}
 \leanok
+\difficulty{3}
 If $(l, \mathit{idx}) \in t.\mathrm{zipIdx}$, then dropping $\mathit{idx}$ elements from $t$
 yields a list starting with $l$, i.e.\ $t.\mathrm{drop}\,\mathit{idx} = l :: \mathit{rest}$
 for some remaining tail.
@@ -228,6 +240,7 @@ for some remaining tail.
 \begin{lemma}[Filtered \texttt{zipIdx} index is below the length bound]
 \lean{SwitchingLemma2.zipIdx_filter_idx_lt}
 \leanok
+\difficulty{3}
 If $(l, \mathit{idx})$ arises from filtering $t.\mathrm{zipIdx}$ by a predicate and $t$ has
 length at most $w$, then $\mathit{idx} < w$.
 \end{lemma}

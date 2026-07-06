@@ -34,6 +34,7 @@ imposed.
 \lean{BoolCircuit.Circuit.ind}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval}
+\difficulty{4}
 An induction principle for \texttt{Circuit} stating that to prove a predicate
 $\mathrm{motive}$ holds for every circuit it suffices to prove it for every literal and,
 in the node case, to prove $\mathrm{motive}(\texttt{node}\,isAnd\,cs)$ assuming
@@ -180,6 +181,7 @@ plus the maximum depth among its child AND circuits.
 \lean{BoolCircuit.NAndCircuit.clause_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit}
+\difficulty{1}
 If a normal-form AND circuit $c$ equals a clause built from literals $lits$ with a
 duplication-free proof $h$, then the variable indices $lits.\mathrm{map}\;\mathrm{Lit.idx}$
 are pairwise distinct.
@@ -189,6 +191,7 @@ are pairwise distinct.
 \lean{BoolCircuit.NOrCircuit.clause_nodup}
 \leanok
 \uses{BoolCircuit.Lit}
+\difficulty{1}
 If a normal-form OR circuit $c$ equals a clause built from literals $lits$ with a
 duplication-free proof $h$, then the variable indices $lits.\mathrm{map}\;\mathrm{Lit.idx}$
 are pairwise distinct.
@@ -198,6 +201,7 @@ are pairwise distinct.
 \lean{BoolCircuit.Lit.eq_of_idx_eq_of_mem_nodup}
 \leanok
 \uses{BoolCircuit.Lit}
+\difficulty{4}
 In a clause whose variable indices are pairwise distinct, any two literals
 $l_1, l_2 \in lits$ that share the same index ($l_1.\mathrm{idx} = l_2.\mathrm{idx}$) are
 in fact equal, $l_1 = l_2$.
@@ -226,6 +230,7 @@ alternation.
 \begin{theorem}[Fold commutes with map (conjunction)]
 \lean{BoolCircuit.foldr_and_map}
 \leanok
+\difficulty{3}
 A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the conjunctive
 \texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ equals the conjunctive \texttt{foldr} of
 $f$ over $cs$.
@@ -234,6 +239,7 @@ $f$ over $cs$.
 \begin{theorem}[Fold commutes with map (disjunction)]
 \lean{BoolCircuit.foldr_or_map}
 \leanok
+\difficulty{3}
 A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the disjunctive
 \texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ equals the disjunctive \texttt{foldr} of
 $f$ over $cs$.
@@ -242,6 +248,7 @@ $f$ over $cs$.
 \begin{theorem}[Fold commutes with map (addition)]
 \lean{BoolCircuit.foldr_add_map}
 \leanok
+\difficulty{3}
 A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the additive
 \texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ equals the additive \texttt{foldr} of $f$
 over $cs$.
@@ -250,6 +257,7 @@ over $cs$.
 \begin{theorem}[Fold inequality under map (addition)]
 \lean{BoolCircuit.foldr_add_map_le}
 \leanok
+\difficulty{4}
 A technical lemma: if $g(h\,c) \le k \cdot f\,c$ for all $c \in cs$, then the additive
 \texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ is at most $k$ times the additive
 \texttt{foldr} of $f$ over $cs$.
@@ -259,6 +267,7 @@ A technical lemma: if $g(h\,c) \le k \cdot f\,c$ for all $c \in cs$, then the ad
 \lean{BoolCircuit.toNAnd_toNOr_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.eval, BoolCircuit.NOrCircuit.eval}
+\difficulty{5}
 For every circuit $c$ and assignment $x$, both normalizations agree with the original
 on values: $(c.\mathrm{toNAnd}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$ and
 $(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
@@ -268,6 +277,7 @@ $(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 \lean{BoolCircuit.toNAnd_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.eval, BoolCircuit.toNAnd_toNOr_eval}
+\difficulty{1}
 For every circuit $c$ and assignment $x$,
 $(c.\mathrm{toNAnd}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 \end{theorem}
@@ -276,6 +286,7 @@ $(c.\mathrm{toNAnd}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 \lean{BoolCircuit.toNOr_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.eval, BoolCircuit.toNAnd_toNOr_eval}
+\difficulty{1}
 For every circuit $c$ and assignment $x$,
 $(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 \end{theorem}
@@ -284,6 +295,7 @@ $(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 \lean{BoolCircuit.toNAnd_toNOr_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.litCount, BoolCircuit.NOrCircuit.litCount}
+\difficulty{5}
 For every circuit $c$, both normalizations preserve the literal count:
 $(c.\mathrm{toNAnd}).\mathrm{litCount} = c.\mathrm{litCount}$ and
 $(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
@@ -293,6 +305,7 @@ $(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
 \lean{BoolCircuit.toNAnd_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.litCount, BoolCircuit.toNAnd_toNOr_litCount}
+\difficulty{1}
 For every circuit $c$,
 $(c.\mathrm{toNAnd}).\mathrm{litCount} = c.\mathrm{litCount}$.
 \end{theorem}
@@ -301,6 +314,7 @@ $(c.\mathrm{toNAnd}).\mathrm{litCount} = c.\mathrm{litCount}$.
 \lean{BoolCircuit.toNOr_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.litCount, BoolCircuit.toNAnd_toNOr_litCount}
+\difficulty{1}
 For every circuit $c$,
 $(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
 \end{theorem}
@@ -309,6 +323,7 @@ $(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
 \lean{BoolCircuit.toNAnd_toNOr_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.size, BoolCircuit.NOrCircuit.size, BoolCircuit.foldr_add_map_le}
+\difficulty{7}
 For every circuit $c$, both normalizations have size at most twice the original:
 $(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$ and
 $(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
@@ -318,6 +333,7 @@ $(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 \lean{BoolCircuit.toNAnd_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.size, BoolCircuit.toNAnd_toNOr_size_le}
+\difficulty{1}
 For every circuit $c$,
 $(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 \end{theorem}
@@ -326,6 +342,7 @@ $(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 \lean{BoolCircuit.toNOr_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.size, BoolCircuit.toNAnd_toNOr_size_le}
+\difficulty{1}
 For every circuit $c$,
 $(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 \end{theorem}
@@ -421,6 +438,7 @@ $(\text{queried variable}, \text{branch direction})$ pairs along that path.
 \lean{DecisionTree.length_deepPath}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, DecisionTree.depth}
+\difficulty{4}
 For every decision tree $T$, the length of its deepest path equals its depth:
 $T.\mathrm{deepPath}.\mathrm{length} = T.\mathrm{depth}$.
 \end{lemma}
@@ -429,6 +447,7 @@ $T.\mathrm{deepPath}.\mathrm{length} = T.\mathrm{depth}$.
 \lean{buildFullDTree_depth}
 \leanok
 \uses{DecisionTree.depth, buildFullDTree}
+\difficulty{5}
 For a function $f$, an index $k \le n$, and an accumulator assignment $acc$, the complete
 decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ that queries variables
 $k, k+1, \dots, n-1$ in order has depth at most $n - k$.
@@ -438,6 +457,7 @@ $k, k+1, \dots, n-1$ in order has depth at most $n - k$.
 \lean{buildFullDTree_eval}
 \leanok
 \uses{DecisionTree.eval, buildFullDTree}
+\difficulty{6}
 For a function $f$, an index $k \le n$, and assignments $acc, x$ agreeing on all
 coordinates below $k$ (i.e. $acc\,i = x\,i$ whenever $i.\mathrm{val} < k$), the complete
 decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ evaluates to $f\,x$ on $x$.

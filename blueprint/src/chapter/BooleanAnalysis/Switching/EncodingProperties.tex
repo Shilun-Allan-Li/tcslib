@@ -16,6 +16,7 @@ in the technical facts needed for the encode/decode round-trip.
 \lean{SwitchingLemma2.processClauseLits_bound}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 For any literal/index list and any path, the combined output of
 \lean{SwitchingLemma2.processClauseLits} is bounded: the length of its auxiliary entry
 list plus twice the length of its remaining path is at most $2 \cdot |\mathrm{path}|$.
@@ -25,6 +26,7 @@ list plus twice the length of its remaining path is at most $2 \cdot |\mathrm{pa
 \lean{SwitchingLemma2.processClauseLits_tight}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_bound}
+\difficulty{3}
 On non-empty literal and path lists, \lean{SwitchingLemma2.processClauseLits} satisfies
 the strengthened bound: the auxiliary-entry length plus one, plus twice the remaining
 path length, is still at most twice the length of the input path.
@@ -52,6 +54,7 @@ For a bad restriction $\rho$ of a DNF $f$ with depth parameter $d$, the encoded 
 \lean{SwitchingLemma2.processClauseLits_sigma_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 If a variable $v$ is the variable of no literal in the input list, then
 \lean{SwitchingLemma2.processClauseLits} leaves the $\sigma$ restriction unchanged at
 $v$; that is, the resulting $\sigma$ agrees with the input $\sigma$ on $v$.
@@ -61,6 +64,7 @@ $v$; that is, the resulting $\sigma$ agrees with the input $\sigma$ on $v$.
 \lean{SwitchingLemma2.processClauseLits_rho_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 If a variable $v$ is the variable of no literal in the input list, then
 \lean{SwitchingLemma2.processClauseLits} leaves the $\rho_0$ restriction unchanged at
 $v$; the resulting $\rho_0$ agrees with the input $\rho_0$ on $v$.
@@ -70,6 +74,7 @@ $v$; the resulting $\rho_0$ agrees with the input $\rho_0$ on $v$.
 \lean{SwitchingLemma2.processClauseLits_rho_ne_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 If $\rho_0\,v \neq \mathrm{none}$, then after running
 \lean{SwitchingLemma2.processClauseLits} the resulting $\rho_0$ at $v$ is still not
 $\mathrm{none}$; the routine never turns a set value into an unset one.
@@ -79,6 +84,7 @@ $\mathrm{none}$; the routine never turns a set value into an unset one.
 \lean{SwitchingLemma2.encode_go_fst_nonfree}
 \leanok
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits_rho_ne_none, SwitchingLemma2.processClauseLits_sigma_stable}
+\difficulty{5}
 If $\rho_0\,v \neq \mathrm{none}$ (so $v$ is non-free), then the first component
 $\gamma$ of the encoder loop \lean{SwitchingLemma2.razborovEncode}'s \texttt{go}
 returns $\sigma\,v$ at $v$; the encoder does not alter $\sigma$ on non-free variables.
@@ -88,6 +94,7 @@ returns $\sigma\,v$ at $v$; the encoder does not alter $\sigma$ on non-free vari
 \lean{SwitchingLemma2.encode_go_acc}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc}
+\difficulty{4}
 The encoder loop \lean{SwitchingLemma2.razborovEncode}'s \texttt{go} run with an
 accumulator decomposes into a run on the empty accumulator: its result can be expressed
 in terms of the corresponding empty-accumulator computation together with the supplied
@@ -98,6 +105,7 @@ accumulator.
 \lean{SwitchingLemma2.encode_go_fst_acc}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_acc}
+\difficulty{3}
 The first component of the encoder loop \lean{SwitchingLemma2.razborovEncode}'s
 \texttt{go} does not depend on the accumulator: running with accumulator $\mathrm{acc}$
 yields the same first component as running with the empty accumulator.
@@ -107,6 +115,7 @@ yields the same first component as running with the empty accumulator.
 \lean{SwitchingLemma2.processEntries_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
+\difficulty{4}
 If $\sigma\,v = \mathrm{none}$, then the decoder's \texttt{processEntries} routine leaves
 $v$ unset; the resulting $\sigma$ is still $\mathrm{none}$ at $v$.
 \end{lemma}
@@ -115,6 +124,7 @@ $v$ unset; the resulting $\sigma$ is still $\mathrm{none}$ at $v$.
 \lean{SwitchingLemma2.decode_go_preserves_none}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.processEntries_preserves_none}
+\difficulty{4}
 If $\sigma\,v = \mathrm{none}$, then the decoder loop
 \lean{SwitchingLemma2.razborovDecode}'s \texttt{go} leaves $v$ unset; its resulting
 $\sigma$ is still $\mathrm{none}$ at $v$.
@@ -124,6 +134,7 @@ $\sigma$ is still $\mathrm{none}$ at $v$.
 \lean{SwitchingLemma2.processClauseLits_sigma_indep}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 The remaining path, the $\rho_0$ output, and the auxiliary entry list produced by
 \lean{SwitchingLemma2.processClauseLits} are all independent of the input $\sigma$: for
 any two starting restrictions $\sigma_1, \sigma_2$ these three components coincide.
@@ -133,6 +144,7 @@ any two starting restrictions $\sigma_1, \sigma_2$ these three components coinci
 \lean{SwitchingLemma2.encode_go_snd_sigma_indep}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_acc, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_sigma_indep}
+\difficulty{5}
 The second component (the emitted bit list) of the encoder loop
 \lean{SwitchingLemma2.razborovEncode}'s \texttt{go} does not depend on the $\sigma$
 argument: starting from $\sigma_1$ or $\sigma_2$ gives the same output.
@@ -171,6 +183,7 @@ variable that is free under $\rho_0$ (its $\rho_0$ value is $\mathrm{none}$).
 \lean{SwitchingLemma2.foldl_sigma_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, Term}
+\difficulty{4}
 Folding the decoder's $\sigma$-update over a list of entries leaves $v$ unchanged when
 no entry targets $v$; that is, if for every entry the literal at its position in $t$ does
 not have variable $v$, the folded $\sigma$ agrees with the initial $\sigma$ at $v$.
@@ -180,6 +193,7 @@ not have variable $v$, the folded $\sigma$ agrees with the initial $\sigma$ at $
 \lean{SwitchingLemma2.foldl_rho_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, Term}
+\difficulty{4}
 Folding the decoder's $\rho_0$-update over a list of entries leaves $v$ unchanged when
 no entry targets $v$; if for every entry the literal at its position in $t$ does not have
 variable $v$, the folded $\rho_0$ agrees with the initial $\rho_0$ at $v$.
@@ -189,6 +203,7 @@ variable $v$, the folded $\rho_0$ agrees with the initial $\rho_0$ at $v$.
 \lean{SwitchingLemma2.foldl_sigma_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
+\difficulty{4}
 If $\sigma\,v = \mathrm{none}$, then folding the decoder's $\sigma$-update over any list
 of entries still gives $\mathrm{none}$ at $v$; the fold never sets a previously unset
 variable to a value via the $\sigma$-update.
@@ -198,6 +213,7 @@ variable to a value via the $\sigma$-update.
 \lean{SwitchingLemma2.processClauseLits_foldl_sigma_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_sigma_preserves_none, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
+\difficulty{5}
 Suppose every input literal pair occurs in $t.\texttt{zipIdx}$, that $\rho_0\,v =
 \mathrm{none}$, and that \lean{SwitchingLemma2.processClauseLits} sets the $\rho_0$
 component at $v$. Then folding the decoder's $\sigma$-update over the auxiliary entries
@@ -208,6 +224,7 @@ yields $\mathrm{none}$ at $v$.
 \lean{SwitchingLemma2.processClauseLits_foldl_rho_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
+\difficulty{4}
 Suppose every input literal pair occurs in $t.\texttt{zipIdx}$ and the decoder's initial
 $\rho_0$ value agrees with the encoder's at $v$. Then folding the decoder's
 $\rho_0$-update over the auxiliary entries of
@@ -219,6 +236,7 @@ routine at $v$.
 \lean{SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_foldl_rho_eq, SwitchingLemma2.processClauseLits_no_target_of_rho_none, SwitchingLemma2.zipIdx_drop_spec, Term}
+\difficulty{5}
 A variant of the previous lemma allowing the decoder's initial $\rho_0$ to differ from
 the encoder's: provided $\rho_0\,v = \mathrm{none}$ and
 \lean{SwitchingLemma2.processClauseLits} sets the $\rho_0$ component at $v$, the
@@ -230,6 +248,7 @@ $v$.
 \lean{SwitchingLemma2.processClauseLits_no_target_of_rho_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
+\difficulty{5}
 Contrapositive of $\rho_0$-stability: if $\rho_0\,v = \mathrm{none}$, the
 \lean{SwitchingLemma2.processClauseLits} output keeps $\rho_0$ unset at $v$, and there
 are at least as many path entries as literals, then no input literal has variable $v$.
@@ -239,6 +258,7 @@ are at least as many path entries as literals, then no input literal has variabl
 \lean{SwitchingLemma2.processClauseLits_sigma_at_v}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{3}
 If two starting restrictions agree at $v$ ($\sigma_1\,v = \sigma_2\,v$), then the
 $\sigma$ output of \lean{SwitchingLemma2.processClauseLits} at $v$ is the same for both;
 the value at $v$ depends only on the initial $\sigma$ at $v$.
@@ -248,6 +268,7 @@ the value at $v$ depends only on the initial $\sigma$ at $v$.
 \lean{SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
+\difficulty{5}
 If $\rho_0\,v = \mathrm{none}$ and \lean{SwitchingLemma2.processClauseLits} leaves
 $\rho_0$ unset at $v$, then it also leaves $\sigma$ unchanged at $v$; the $\sigma$ output
 equals the input $\sigma$ at $v$, since $\rho_0$ and $\sigma$ are updated at the same
@@ -258,6 +279,7 @@ variables in lockstep.
 \lean{SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_sigma_at_v, SwitchingLemma2.processClauseLits_sigma_indep, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+\difficulty{6}
 At a variable $v$ that is free under $\rho_0$ and unset in both $\sigma_1$ and $\sigma_2$,
 the first component $\gamma$ of the encoder loop
 \lean{SwitchingLemma2.razborovEncode}'s \texttt{go} takes the same value at $v$ whether
@@ -268,6 +290,7 @@ started from $\sigma_1$ or $\sigma_2$.
 \lean{SwitchingLemma2.processEntries_of_processClauseLits}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
+\difficulty{5}
 Characterizes the decoder's \texttt{processEntries} when run on the auxiliary entries of
 \lean{SwitchingLemma2.processClauseLits} followed by a termination marker $(w,
 \mathrm{false})$ and a remainder: the result is given by folding the decoder's $\sigma$-
@@ -279,6 +302,7 @@ provided $t.\mathrm{length} \le w$ and every input literal occurs in $t.\texttt{
 \lean{SwitchingLemma2.processClauseLits_sigma_ne_neg}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 If no literal in the input list shares $l$'s variable except $l$ itself, and the initial
 $\sigma$ at $l.\mathrm{var}$ is not $\mathrm{some}\ l.\mathrm{neg}$, then after
 \lean{SwitchingLemma2.processClauseLits} the $\sigma$ output at $l.\mathrm{var}$ is still
@@ -289,6 +313,7 @@ not $\mathrm{some}\ l.\mathrm{neg}$.
 \lean{SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
+\difficulty{5}
 Suppose $(l, idx)$ is in the input list, no other input literal shares $l$'s variable,
 $\rho_0\,l.\mathrm{var} = \mathrm{none}$ initially, and
 \lean{SwitchingLemma2.processClauseLits} still leaves $\rho_0$ unset at
@@ -300,6 +325,7 @@ never processed because the path ran out first.
 \lean{SwitchingLemma2.processClauseLits_rho_ne_none_of_mem}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
+\difficulty{4}
 If some input pair $p$ has variable $v$ and there are at least as many path entries as
 literals, then the $\rho_0$ output of \lean{SwitchingLemma2.processClauseLits} at $v$ is
 not $\mathrm{none}$.
@@ -309,6 +335,7 @@ not $\mathrm{none}$.
 \lean{SwitchingLemma2.roundtrip_base}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction}
+\difficulty{4}
 When the encoder returns $(\sigma, [])$ (an empty emitted list), the decoder loop
 \lean{SwitchingLemma2.razborovDecode}'s \texttt{go} recovers $\sigma$ exactly, given
 that $\sigma$ and the decoder's starting restriction $\sigma_{\mathrm{dec}}$ agree with

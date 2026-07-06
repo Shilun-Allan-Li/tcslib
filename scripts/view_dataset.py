@@ -42,7 +42,10 @@ def load(path: Path, filt: str | None):
 def entry_lines(rec):
     """Return [(text, style)] for one record. style in {head, meta, sec, code, ''}."""
     out = [(rec.get("id", "<no id>"), "head")]
-    meta = f"{rec.get('kind','?')}  ·  {rec.get('source_module','?')}  ·  {rec.get('n_upstream_defs','?')} upstream defs"
+    diff = rec.get("difficulty")
+    meta = (f"{rec.get('kind','?')}  ·  {rec.get('source_module','?')}  ·  "
+            f"{rec.get('n_upstream_defs','?')} upstream defs  ·  "
+            f"difficulty: {diff if diff is not None else 'unrated'}")
     if rec.get("title"):
         meta += f"  ·  “{rec['title']}”"
     out.append((meta, "meta"))
@@ -182,9 +185,11 @@ def run(stdscr, recs, start_idx=0):
 
 
 def print_entry(rec):
+    diff = rec.get("difficulty")
     print(f"id: {rec.get('id')}")
     print(f"module: {rec.get('source_module')}  kind: {rec.get('kind')}  "
-          f"upstream_defs: {rec.get('n_upstream_defs')}")
+          f"upstream_defs: {rec.get('n_upstream_defs')}  "
+          f"difficulty: {diff if diff is not None else 'unrated'}")
     print("\n── INFORMAL ──\n" + (rec.get("informal_statement") or ""))
     print("\n── FORMAL ──\n" + (rec.get("formal_statement") or ""))
 

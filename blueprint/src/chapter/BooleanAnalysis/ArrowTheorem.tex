@@ -123,6 +123,7 @@ pairwise preference signs is $-1/3$.
 \leanok
 \uses{ArrowTheorem.abPref, ArrowTheorem.bcPref, ArrowTheorem.caPref,
       BooleanAnalysis.boolToSign}
+\difficulty{2}
 Summing pairwise sign products over all 6 orderings:
 \[
   \sum_{k=0}^{5} s_{ab}(k)\cdot s_{bc}(k)
@@ -153,6 +154,7 @@ For odd $f$, only odd-level terms contribute.
 \uses{ArrowTheorem.corrFunc, ArrowTheorem.abVotes, ArrowTheorem.bcVotes,
       BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS,
       ArrowTheorem.sum_abPref_bcPref}
+\difficulty{1}
 For voters with i.i.d.\ uniform orderings,
 \[
   \E_p\bigl[f(\mathrm{abVotes}(p))\cdot f(\mathrm{bcVotes}(p))\bigr]
@@ -166,6 +168,7 @@ The same identity holds for the $bc$--$ca$ and $ab$--$ca$ pairs.
 \leanok
 \uses{ArrowTheorem.corrFunc, BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne,
       BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
+\difficulty{5}
 For any odd $\pm 1$-valued function,
 \[
   \mathrm{corr}(f) \;\ge\; -1/3.
@@ -181,6 +184,7 @@ $\mathrm{corr}(f) \ge (-1/3)\sum_S \hat f(S)^2 = -1/3$.
 \uses{ArrowTheorem.corrFunc, ArrowTheorem.corrFunc_ge_neg_third,
       BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne,
       BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
+\difficulty{6}
 If $\mathrm{corr}(f) = -1/3$, then $\hat f(S) = 0$ for all $S$ with
 $|S| \ne 1$.  Combined with oddness ($\hat f(\varnothing) = 0$), all Fourier
 weight lies on level 1: $W_1[f] = 1$.
@@ -195,6 +199,7 @@ weight lies on level 1: $W_1[f] = 1$.
 \uses{ArrowTheorem.acyclic, ArrowTheorem.corrFunc,
       ArrowTheorem.expected_product_eq_corrFunc,
       BooleanAnalysis.isPmOne}
+\difficulty{5}
 If $f$ is $\pm 1$-valued and acyclic, then $\mathrm{corr}(f) = -1/3$.
 
 \emph{Proof sketch:}
@@ -218,6 +223,7 @@ If $f$ is $\pm 1$-valued and acyclic, then $\mathrm{corr}(f) = -1/3$.
       BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff,
       BooleanAnalysis.parseval_pm_one, BooleanAnalysis.walsh_expansion,
       BooleanAnalysis.dictator_eq_chi, BooleanAnalysis.chiS_singleton}
+\difficulty{7}
 Suppose $f$ is $\pm 1$-valued, unanimous, and $\hat f(S) = 0$ for all $|S|\ne 1$.
 Then $f$ is a dictator.
 
@@ -241,6 +247,7 @@ Then $f$ is a dictator.
 \uses{ArrowTheorem.acyclic_implies_corrFunc,
       ArrowTheorem.corrFunc_eq_neg_third_of_weight_one,
       ArrowTheorem.degree_one_implies_dictator}
+\difficulty{3}
 Let $f:\{0,1\}^n\to\bbr$ be a social welfare function that is odd
 (antisymmetric), $\pm 1$-valued, unanimous, and acyclic.  Then $f$ is a
 \emph{dictatorship}: there exists a voter $i_0$ such that
@@ -265,6 +272,7 @@ $f = \mathrm{dict}_{i_0}$.
 \lean{ArrowTheorem.sum_abPref_sign}
 \leanok
 \uses{ArrowTheorem.abPref, BooleanAnalysis.boolToSign}
+\difficulty{2}
 Summing the signed $a$-vs-$b$ preference over all six orderings gives
 $\sum_{k=0}^{5} s_{ab}(k) = 0$; the $ab$ marginal is balanced.
 \end{lemma}
@@ -273,6 +281,7 @@ $\sum_{k=0}^{5} s_{ab}(k) = 0$; the $ab$ marginal is balanced.
 \lean{ArrowTheorem.sum_bcPref_sign}
 \leanok
 \uses{ArrowTheorem.bcPref, BooleanAnalysis.boolToSign}
+\difficulty{2}
 Summing the signed $b$-vs-$c$ preference over all six orderings gives
 $\sum_{k=0}^{5} s_{bc}(k) = 0$; the $bc$ marginal is balanced.
 \end{lemma}
@@ -281,6 +290,7 @@ $\sum_{k=0}^{5} s_{bc}(k) = 0$; the $bc$ marginal is balanced.
 \lean{ArrowTheorem.sum_caPref_sign}
 \leanok
 \uses{ArrowTheorem.caPref, BooleanAnalysis.boolToSign}
+\difficulty{2}
 Summing the signed $c$-vs-$a$ preference over all six orderings gives
 $\sum_{k=0}^{5} s_{ca}(k) = 0$; the $ca$ marginal is balanced.
 \end{lemma}
@@ -288,6 +298,7 @@ $\sum_{k=0}^{5} s_{ca}(k) = 0$; the $ca$ marginal is balanced.
 \begin{lemma}[Product over a finset as an indicator product]
 \lean{ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \leanok
+\difficulty{3}
 For $A\subseteq\mathrm{Fin}\,n$ and $g:\mathrm{Fin}\,n\to\bbr$,
 \[
   \prod_{j\in A} g(j) \;=\; \prod_{j:\mathrm{Fin}\,n}
@@ -302,6 +313,7 @@ with an indicator.
 \leanok
 \uses{ArrowTheorem.Profile, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS,
       ArrowTheorem.prod_finset_eq_prod_univ_ite}
+\difficulty{7}
 Let $\mathrm{xPref},\mathrm{yPref}:\mathrm{Fin}\,6\to\mathrm{Bool}$ be two
 preference assignments with balanced marginals
 $\sum_k s(\mathrm{xPref}(k)) = \sum_k s(\mathrm{yPref}(k)) = 0$ and cross-sum
@@ -323,6 +335,7 @@ $S,T\subseteq[n]$,
       ArrowTheorem.profile_kernel_gen,
       ArrowTheorem.sum_abPref_sign,
       ArrowTheorem.sum_bcPref_sign}
+\difficulty{1}
 Specialization of the general kernel to the $ab$--$bc$ vote pair: for all
 $S,T\subseteq[n]$,
 \[
@@ -341,6 +354,7 @@ $S,T\subseteq[n]$,
       ArrowTheorem.profile_kernel_gen,
       ArrowTheorem.sum_bcPref_sign,
       ArrowTheorem.sum_caPref_sign}
+\difficulty{1}
 Specialization of the general kernel to the $bc$--$ca$ vote pair: for all
 $S,T\subseteq[n]$,
 \[
@@ -359,6 +373,7 @@ $S,T\subseteq[n]$,
       ArrowTheorem.profile_kernel_gen,
       ArrowTheorem.sum_abPref_sign,
       ArrowTheorem.sum_caPref_sign}
+\difficulty{1}
 Specialization of the general kernel to the $ab$--$ca$ vote pair: for all
 $S,T\subseteq[n]$,
 \[
@@ -375,6 +390,7 @@ $S,T\subseteq[n]$,
 \uses{ArrowTheorem.Profile, ArrowTheorem.corrFunc, BooleanAnalysis.BoolCube,
       BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS,
       BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion}
+\difficulty{6}
 Let $f:\{0,1\}^n\to\bbr$ and let $\mathrm{votes}_1,\mathrm{votes}_2$ map each
 profile to a Boolean cube point.  If the pair satisfies the kernel identity
 $\bigl(\tfrac16\bigr)^n\sum_p \chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}_2(p))
@@ -392,6 +408,7 @@ $\bigl(\tfrac16\bigr)^n\sum_p \chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}
       ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc,
       ArrowTheorem.expected_product_helper,
       ArrowTheorem.profile_kernel_bcca}
+\difficulty{1}
 For any $f:\{0,1\}^n\to\bbr$,
 $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{bcVotes}(p))\,f(\mathrm{caVotes}(p))
  = \mathrm{corr}(f)$.
@@ -404,6 +421,7 @@ $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{bcVotes}(p))\,f(\mathrm{caVotes}(p))
       ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc,
       ArrowTheorem.expected_product_helper,
       ArrowTheorem.profile_kernel_abca}
+\difficulty{1}
 For any $f:\{0,1\}^n\to\bbr$,
 $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{abVotes}(p))\,f(\mathrm{caVotes}(p))
  = \mathrm{corr}(f)$.

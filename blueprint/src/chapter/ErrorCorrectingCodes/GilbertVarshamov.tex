@@ -19,6 +19,7 @@ The proof is a probabilistic (union-bound) counting argument over random generat
 \lean{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.uniformity_lemma, ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.hamming_ball}
+\difficulty{7}
 For any nonzero $x\in\alpha^k$,
 \[
 \frac{|\{G : \mathrm{wt}(Gx) < d\}|}{|\alpha|^{nk}}
@@ -34,6 +35,7 @@ For any nonzero $x\in\alpha^k$,
 \lean{ErrorCorrectingCodes.Codeword.existence_bound}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
+\difficulty{5}
 The number of $n\times k$ matrices that send some nonzero message to a codeword of
 weight $<d$ is at most
 \[
@@ -48,6 +50,7 @@ weight $<d$ is at most
 \lean{ErrorCorrectingCodes.Codeword.gv_bound}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.existence_bound}
+\difficulty{5}
 If $k \le n - \lceil\log_q|B_{d-1}(\mathbf{0})|\rceil - 1$, then there exists a
 generator matrix $G$ such that every nonzero message is mapped to a codeword of
 Hamming weight at least $d$.

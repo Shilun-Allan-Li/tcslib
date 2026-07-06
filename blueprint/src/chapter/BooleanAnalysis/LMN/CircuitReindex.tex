@@ -24,6 +24,7 @@ $\mathrm{And}/\mathrm{Or}$ nodes.
 \lean{BoolCircuit.Circuit.reidx_depth}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx}
+\difficulty{4}
 For every circuit $c$ on $m$ variables and every $f : \mathrm{Fin}\,m \to \mathrm{Fin}\,m'$,
 the re-indexed circuit has the same depth as $c$, i.e. $\mathrm{depth}(\mathrm{reidx}(c, f)) = \mathrm{depth}(c)$.
 \end{theorem}
@@ -32,6 +33,7 @@ the re-indexed circuit has the same depth as $c$, i.e. $\mathrm{depth}(\mathrm{r
 \lean{BoolCircuit.Circuit.reidx_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx, BoolCircuit.Lit.eval}
+\difficulty{5}
 For every circuit $c$ on $m$ variables, every $f : \mathrm{Fin}\,m \to \mathrm{Fin}\,m'$,
 and every assignment $g : \mathrm{Fin}\,m' \to \mathrm{Bool}$, evaluating the re-indexed
 circuit under $g$ equals evaluating $c$ under the pulled-back assignment $g \circ f$, i.e.

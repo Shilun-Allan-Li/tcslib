@@ -13,6 +13,7 @@ $x\in\alpha^k$, the output $Gx$ is uniformly distributed over $\alpha^n$.
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.Linear_Code', ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.distance}
+\difficulty{4}
 If $C$ is linear (witnessed by some generator matrix) and has minimum distance $d$, then:
 \begin{itemize}
   \item every nonzero codeword in $C$ has weight at least $d$;
@@ -33,6 +34,7 @@ $\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
 \begin{lemma}[Finiteness of constrained matrix set]
 \lean{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \leanok
+\difficulty{3}
 For fixed $x\in\alpha^k$ and $v\in\alpha^n$, the set $\{G : Gx=v\}$ is finite.
 \end{lemma}
 
@@ -55,6 +57,7 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
 \lean{ErrorCorrectingCodes.Codeword.uniformity_lemma}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.matrix_dist, ErrorCorrectingCodes.Codeword.uniform_vector_dist, ErrorCorrectingCodes.Codeword.finite_matrix_dist}
+\difficulty{7}
 If $x\neq 0$ and $k\ge 1$, then for a uniformly random $n\times k$ matrix $G$ over $\alpha$,
 the product $Gx$ is uniformly distributed over $\alpha^n$:
 \[

@@ -6,7 +6,10 @@ package «tCSlib» {
 }
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git"
+  "https://github.com/leanprover-community/mathlib4.git" @ "029db123ddaa"
+
+require PFR from git
+  "https://github.com/teorth/pfr.git" @ "e1095d58"
 
 @[default_target]
 lean_lib «TCSlib» {

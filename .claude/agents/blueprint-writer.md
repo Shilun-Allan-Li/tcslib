@@ -54,6 +54,7 @@ One LaTeX environment, chosen by the entry's `env` field
 \lean{<name>}
 \leanok
 \uses{<comma-separated uses, omit this line entirely if uses is empty>}
+\difficulty{<1-7, theorem/lemma only — see rule 6>}
 <informal description>
 \end{<env>}
 ```
@@ -79,6 +80,38 @@ Rules:
    - Do not invent hypotheses or mathematical content that is not in the Lean. When the
      statement is a low-level technical/rewriting lemma, describe it plainly and briefly;
      it is fine for the prose to be terse.
+6. **`\difficulty{N}`** — **theorem/lemma entries only** (never on `definition`
+   environments, which have no proof to rate). Emit this line right after `\uses{...}`
+   (or right after `\leanok` if there is no `\uses`).
+   - **Always read the actual proof**: open `lean_file` and read lines
+     `startLine`–`endLine` in full — the `signature` field only gives you the statement,
+     not the tactic block, and you cannot rate difficulty from the statement alone.
+   - **Rate ONLY the tactics of this proof, in complete isolation from its
+     dependencies.** Do not let the number or difficulty of the names in `\uses{...}`
+     influence the score — a one-line proof that cites a very hard upstream theorem as a
+     black box is still difficulty 1. You are scoring "how nonobvious is this specific
+     tactic script," never "how much machinery does this concept stand on" (that
+     prerequisite depth is computed separately, downstream, from the `\uses` graph).
+   - Scale (1–7):
+     - `1` — a single closing tactic or trivial call (`rfl`, `simp`, `exact h`, `decide`,
+       direct unfolding), no case analysis.
+     - `2` — a short straight-line call to one automation tactic (`ring`, `linarith`,
+       `omega`, `norm_num`), no creative steps or branching.
+     - `3` — a short straight-line sequence of a few standard tactics (e.g.
+       `unfold` + `simp` + `ring`), still no branching or invented intermediate facts.
+     - `4` — a moderate proof: several `have`s, a `calc` chain, or a single case split
+       (`rcases`/`obtain`/`induction`), but every step is a standard technique applied in
+       the obvious way.
+     - `5` — a substantial proof: multiple case splits and/or intermediate `have`s whose
+       combination takes real thought to assemble, even though each individual step is a
+       known technique.
+     - `6` — a hard proof: a non-obvious combination or ordering of tactics, a custom
+       induction/generalization, or an intermediate lemma invented specifically to make
+       this proof go through.
+     - `7` — a very hard proof: long and intricate, requiring real mathematical insight,
+       a novel proof strategy, or many interacting steps that are individually hard.
+   - If the proof body is literally `sorry` (not yet proved), omit `\difficulty` entirely
+     — there is nothing to rate yet.
 
 ## Where to write
 
@@ -130,5 +163,6 @@ inline-only.
 End with a concise report:
 - the `.tex` file written and whether it was created or appended,
 - the count of entries added,
-- the list of `\lean{...}` labels you added,
+- the list of `\lean{...}` labels you added, each with its `\difficulty` rating (or
+  "sorry — unrated" / "definition — n/a"),
 - any declaration you could not describe confidently (name + reason).

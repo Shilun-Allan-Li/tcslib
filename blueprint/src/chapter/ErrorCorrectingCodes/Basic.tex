@@ -4,7 +4,7 @@
 
 This file documents the foundational definitions for $q$-ary block codes over a finite field
 alphabet $\alpha$.  Throughout, $\alpha$ is a type carrying instances
-\lean{[Fintype α]}, \lean{[Field α]}, \lean{[DecidableEq α]}, and \lean{[Nonempty α]}.
+\texttt{[Fintype α]}, \texttt{[Field α]}, \texttt{[DecidableEq α]}, and \texttt{[Nonempty α]}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Basic objects: codewords and codes}
@@ -30,7 +30,7 @@ Pointwise addition, subtraction, and the all-zero codeword.
 \begin{definition}[Code]
 \lean{ErrorCorrectingCodes.Codeword.Code}
 \leanok
-A (block) code of length $n$ over $\alpha$ is a finite set (\lean{Finset}) of codewords.
+A (block) code of length $n$ over $\alpha$ is a finite set (\texttt{Finset}) of codewords.
 \end{definition}
 
 \begin{definition}[Linear code via generator matrix]
@@ -61,13 +61,13 @@ H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
 \begin{definition}[Hamming distance]
 \lean{ErrorCorrectingCodes.Codeword.hamming_distance}
 \leanok
-Hamming distance between two codewords, wrapping Mathlib's \lean{hammingDist}.
+Hamming distance between two codewords, wrapping Mathlib's \texttt{hammingDist}.
 \end{definition}
 
 \begin{definition}[Distance predicate for a code]
 \lean{ErrorCorrectingCodes.Codeword.distance}
 \leanok
-\lean{distance C d} holds when $d$ is the minimum Hamming distance of $C$: there
+\texttt{distance C d} holds when $d$ is the minimum Hamming distance of $C$: there
 exist distinct codewords at distance exactly $d$, and no two distinct codewords
 are closer than $d$.
 \end{definition}
@@ -89,7 +89,7 @@ The Hamming weight of $c$ is $d(c, \mathbf{0})$.
 \begin{definition}[Maximal size at distance]
 \lean{ErrorCorrectingCodes.Codeword.max_size}
 \leanok
-\lean{max_size n d A} asserts existence of a code of size $A$ and minimum distance $d$
+\texttt{max_size n d A} asserts existence of a code of size $A$ and minimum distance $d$
 that is maximal among all such codes.
 \end{definition}
 
@@ -100,7 +100,7 @@ The Hamming ball of radius $l$ around $c$:
 \[
 B_l(c) = \{c' : d(c',c) \le l\},
 \]
-implemented as a \lean{Finset}.
+implemented as a \texttt{Finset}.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,6 +109,7 @@ implemented as a \lean{Finset}.
 \begin{lemma}[Distance is at most block length]
 \lean{ErrorCorrectingCodes.Codeword.dist_le_length}
 \leanok
+\difficulty{4}
 If a code $C$ has minimum distance $d$, then $d \le n$.
 \end{lemma}
 
@@ -118,12 +119,14 @@ If a code $C$ has minimum distance $d$, then $d \le n$.
 \begin{lemma}[Alphabet size positive]
 \lean{ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le}
 \leanok
+\difficulty{2}
 If $q \ge 2$, then $q > 0$ as a real number.
 \end{lemma}
 
 \begin{lemma}[Alphabet size exceeds one]
 \lean{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \leanok
+\difficulty{2}
 If $q \ge 2$, then $1 < q$ as a real number.
 \end{lemma}
 
@@ -131,6 +134,7 @@ If $q \ge 2$, then $1 < q$ as a real number.
 \lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_nonneg_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+\difficulty{2}
 If $q \ge 2$, then $0 \le q - 1$ as a real number.
 \end{lemma}
 
@@ -138,6 +142,7 @@ If $q \ge 2$, then $0 \le q - 1$ as a real number.
 \lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+\difficulty{2}
 If $q \ge 2$, then $0 < q - 1$ as a real number.
 \end{lemma}
 
@@ -145,18 +150,21 @@ If $q \ge 2$, then $0 < q - 1$ as a real number.
 \lean{ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+\difficulty{2}
 If $q \ge 2$, then $q \ne 1$ as a real number.
 \end{lemma}
 
 \begin{lemma}[$1-p$ positive when $p < 1$]
 \lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \leanok
+\difficulty{1}
 If $p < 1$, then $0 < 1 - p$.
 \end{lemma}
 
 \begin{lemma}[$1-p$ nonnegative when $p \le 1$]
 \lean{ErrorCorrectingCodes.Codeword.one_sub_nonneg_of_le_one}
 \leanok
+\difficulty{2}
 If $p \le 1$, then $0 \le 1 - p$.
 \end{lemma}
 
@@ -164,12 +172,14 @@ If $p \le 1$, then $0 \le 1 - p$.
 \lean{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
+\difficulty{1}
 If $0 < p$ and $p < 1$, then $0 < p(1 - p)$.
 \end{lemma}
 
 \begin{lemma}[Below $1 - 1/q$ implies below one]
 \lean{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv}
 \leanok
+\difficulty{3}
 If $0 < q$ and $p \le 1 - 1/q$, then $p < 1$.
 \end{lemma}
 
@@ -177,5 +187,6 @@ If $0 < q$ and $p \le 1 - 1/q$, then $p < 1$.
 \lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_le_one_sub_inv}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
+\difficulty{1}
 If $0 < q$ and $p \le 1 - 1/q$, then $0 < 1 - p$.
 \end{lemma}
