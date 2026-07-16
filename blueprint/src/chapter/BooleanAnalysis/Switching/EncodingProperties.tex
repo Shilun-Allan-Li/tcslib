@@ -36,6 +36,7 @@ path length, is still at most twice the length of the input path.
 \lean{SwitchingLemma2.encode_go_aux_length_bound}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits_tight}
+\difficulty{4}
 The output produced by the encoder loop \lean{SwitchingLemma2.razborovEncode}'s
 \texttt{go} grows in a controlled way: its second component has length at most
 $|\mathrm{acc}| + 2 \cdot |\mathrm{path}|$, where $\mathrm{acc}$ is the accumulator and
@@ -46,6 +47,7 @@ $\mathrm{path}$ the current path.
 \lean{SwitchingLemma2.razborovEncode_aux_length_le}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.encode_go_aux_length_bound, SwitchingLemma2.razborovEncode}
+\difficulty{2}
 For a bad restriction $\rho$ of a DNF $f$ with depth parameter $d$, the encoded output
 \lean{SwitchingLemma2.razborovEncode} has length at most $2d$.
 \end{lemma}
@@ -154,6 +156,7 @@ argument: starting from $\sigma_1$ or $\sigma_2$ gives the same output.
 \lean{SwitchingLemma2.processClauseLits_aux_entries_from_lits}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
+\difficulty{3}
 Every entry $e$ in the auxiliary list produced by
 \lean{SwitchingLemma2.processClauseLits} has its index $e.1$ equal to the index of some
 literal $li$ from the input list.
@@ -163,6 +166,7 @@ literal $li$ from the input list.
 \lean{SwitchingLemma2.processClauseLits_aux_ne_nonfree}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, SwitchingLemma2.zipIdx_drop_spec, Term}
+\difficulty{3}
 Suppose every input literal pair occurs in $t.\texttt{zipIdx}$ and no input literal has
 variable $v$. Then for every auxiliary entry $e$ of
 \lean{SwitchingLemma2.processClauseLits}, the literal at position $e.1$ in $t$ does not
@@ -173,6 +177,7 @@ have variable $v$.
 \lean{SwitchingLemma2.processClauseLits_aux_vars_free}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, SwitchingLemma2.zipIdx_drop_spec, Term}
+\difficulty{3}
 Suppose every input literal pair occurs in $t.\texttt{zipIdx}$ and all input literals are
 free under $\rho_0$. Then for every auxiliary entry $e$ of
 \lean{SwitchingLemma2.processClauseLits}, the literal at position $e.1$ in $t$ has a
@@ -341,4 +346,22 @@ When the encoder returns $(\sigma, [])$ (an empty emitted list), the decoder loo
 that $\sigma$ and the decoder's starting restriction $\sigma_{\mathrm{dec}}$ agree with
 $\sigma$ on both free and non-free variables and that $\sigma$ is unset wherever
 $\rho_0$ is unset.
+\end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Encoder does not kill the first surviving clause]
+\lean{SwitchingLemma2.encode_go_not_kills_first_clause}
+\leanok
+\uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem, SwitchingLemma2.processClauseLits_sigma_ne_neg, Term}
+\difficulty{6}
+Let $f$ be a DNF whose terms contain no two distinct literals on the same variable, and
+let $t$ be the first term of $f$ not killed by $\rho_0$ (as returned by
+\texttt{find?}). If $l \in t$ has $\rho_0\,l.\mathrm{var} = \mathrm{none}$ and $\sigma$
+is unset wherever $\rho_0$ is, then the first component of the encoder loop
+\lean{SwitchingLemma2.razborovEncode}'s \texttt{go} (for any fuel, path, and empty
+accumulator) at $l.\mathrm{var}$ is not $\mathrm{some}\ l.\mathrm{neg}$; the encoder
+never assigns the free literal $l$ its negating value, so it does not kill the first
+surviving clause.
 \end{lemma}

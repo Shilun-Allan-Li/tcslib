@@ -201,14 +201,6 @@ Embeds a non-identity Pauli ($X$, $Y$, or $Z$) from the three-element type
 $\mathrm{PauliNZ}$ into the full Pauli basis $\{I,X,Y,Z\}$.
 \end{definition}
 
-\begin{lemma}[Embedded Paulis are non-identity]
-\lean{PauliNZ.toBasis_ne_I}
-\leanok
-\uses{PauliNZ.toBasis}
-For every $a \in \mathrm{PauliNZ}$, its image $a.\mathrm{toBasis}$ in the Pauli basis is not the
-identity element $I$.
-\end{lemma}
-
 \begin{definition}[Pauli string with prescribed support]
 \lean{mkWithSupport}
 \leanok
@@ -221,7 +213,7 @@ elsewhere.
 \begin{lemma}[Support of \texttt{mkWithSupport}]
 \lean{support_mkWithSupport}
 \leanok
-\uses{PauliNZ.toBasis_ne_I, mkWithSupport, support}
+\uses{ mkWithSupport, support}
 The Pauli string $\mathrm{mkWithSupport}\,S\,f$ has support exactly $S$.
 \end{lemma}
 

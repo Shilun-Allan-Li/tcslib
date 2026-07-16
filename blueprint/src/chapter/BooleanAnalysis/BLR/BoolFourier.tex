@@ -187,6 +187,7 @@ For every $S \subseteq [n]$, $\chi_S(\mathbf{0}) = 1$.
 \lean{BoolFourier.char_S_sq}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
+\difficulty{1}
 For every $S \subseteq [n]$ and $x \in \{0,1\}^n$,
 $\chi_S(x)^2 = 1$.
 \end{lemma}
@@ -215,6 +216,7 @@ where $S \mathbin{\triangle} T$ denotes the symmetric difference.
 \lean{BoolFourier.sum_char_S_at_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.hypercube, BoolFourier.zero_vec}
+\difficulty{1}
 \[
   \sum_{S \subseteq [n]} \chi_S(\mathbf{0}) = 2^n.
 \]
@@ -224,6 +226,7 @@ where $S \mathbin{\triangle} T$ denotes the symmetric difference.
 \lean{BoolFourier.sum_char_S_ne_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\difficulty{2}
 For every $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$,
 \[
   \sum_{S \subseteq [n]} \chi_S(x) = 0.
@@ -242,6 +245,7 @@ $\mathbb{E}[\chi_\emptyset] = 1$.
 \lean{BoolFourier.expectation_char_nonempty}
 \leanok
 \uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
+\difficulty{1}
 If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
 \end{lemma}
 
@@ -249,6 +253,7 @@ If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
 \lean{BoolFourier.inner_product_char_self}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.expectation, BoolFourier.inner_product}
+\difficulty{2}
 For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
 \end{lemma}
 
@@ -274,6 +279,7 @@ The Fourier coefficient of $f : \{0,1\}^n \to \mathbb{R}$ at $S \subseteq [n]$ i
 \lean{BoolFourier.fourier_coeff_char_self}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_self}
+\difficulty{1}
 For every $S \subseteq [n]$, $\widehat{\chi_S}(S) = 1$.
 \end{lemma}
 
@@ -281,6 +287,7 @@ For every $S \subseteq [n]$, $\widehat{\chi_S}(S) = 1$.
 \lean{BoolFourier.fourier_coeff_char_of_ne}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_nonself}
+\difficulty{1}
 If $S \ne T$, then $\widehat{\chi_S}(T) = 0$.
 \end{lemma}
 
@@ -288,6 +295,7 @@ If $S \ne T$, then $\widehat{\chi_S}(T) = 0$.
 \lean{BoolFourier.expectation_eq_expect}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
+\difficulty{1}
 The locally-defined expectation \lean{BoolFourier.expectation} agrees with
 \lean{BooleanAnalysis.expect}: for every $f$, $\mathbb{E}[f] = \mathrm{expect}(f)$.
 \end{lemma}
@@ -296,6 +304,7 @@ The locally-defined expectation \lean{BoolFourier.expectation} agrees with
 \lean{BoolFourier.fourier_coeff_eq}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.inner_product, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
+\difficulty{1}
 For every $f$ and $S$,
 $\mathrm{fourier\_coeff}(f, S) = \mathrm{fourierCoeff}(f, S)$, bridging the
 local and upstream definitions.
@@ -305,6 +314,7 @@ local and upstream definitions.
 \lean{BoolFourier.fourier_expansion}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BoolFourier.hypercube, BooleanAnalysis.walsh_expansion}
+\difficulty{1}
 Every Boolean function $f : \{0,1\}^n \to \mathbb{R}$ expands in the
 Walsh--Fourier basis:
 \[
@@ -316,6 +326,7 @@ Walsh--Fourier basis:
 \lean{BoolFourier.parseval_identity}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
+\difficulty{1}
 For every $f : \{0,1\}^n \to \mathbb{R}$,
 \[
   \sum_{S \subseteq [n]} \hat f(S)^2 = \|f\|_2^2.
@@ -326,6 +337,7 @@ For every $f : \{0,1\}^n \to \mathbb{R}$,
 \lean{BoolFourier.fourier_coeff_convolution}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\difficulty{3}
 For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$,
 \[
   \widehat{f * g}(S) = \hat f(S) \cdot \hat g(S).

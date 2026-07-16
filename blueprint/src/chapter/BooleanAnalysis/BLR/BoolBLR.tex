@@ -61,6 +61,7 @@ $g : \{0,1\}^n \to \{0,1\}$ we have $\dist(f, g) \ge \varepsilon$.
 \lean{BoolBLR.linear_bool_iff_character}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\difficulty{5}
 A Boolean function $f : \{0,1\}^n \to \{0,1\}$ is linear if and only if
 there exists a set $S \subseteq [n]$ such that the $\pm 1$ lift
 $\lean{BoolBLR.lift\_pm1}\,f$ equals the Fourier character $\chi_S$.
@@ -88,6 +89,7 @@ where $x, y$ are drawn uniformly from $\{0,1\}^n$.
 \lean{BoolBLR.BLR_accept_prob_pm1}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.lift_pm1, BoolFourier.card_hypercube, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{2}
 For any $f : \{0,1\}^n \to \{0,1\}$,
 \[
   \Pr[\text{BLR accepts}]
@@ -104,6 +106,7 @@ For any $f : \{0,1\}^n \to \{0,1\}$,
 \lean{BoolBLR.triple_expectation_as_convolution}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.xor_vec}
+\difficulty{2}
 For any $f : \{0,1\}^n \to \mathbb{R}$,
 \[
   \E_x\!\left[\E_y\!\left[f(x)\,f(y)\,f(x \oplus y)\right]\right]
@@ -116,6 +119,7 @@ For any $f : \{0,1\}^n \to \mathbb{R}$,
 \lean{BoolBLR.triple_expectation_eq_cube_fourier}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{3}
 For any $f : \{0,1\}^n \to \{0,1\}$, letting $\hat{g}(S)$ denote the Fourier
 coefficient of $g = \lean{BoolBLR.lift\_pm1}\,f$,
 \[
@@ -129,6 +133,7 @@ coefficient of $g = \lean{BoolBLR.lift\_pm1}\,f$,
 \lean{BoolBLR.fourier_coeff_le_of_dist_ge}
 \leanok
 \uses{BoolBLR.bool_dist, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.card_hypercube, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product}
+\difficulty{3}
 Let $f, g : \{0,1\}^n \to \{0,1\}$, let $S \subseteq [n]$, and suppose
 $\lean{BoolBLR.lift\_pm1}\,g = \chi_S$ and $\dist(f, g) \ge \varepsilon$.
 Then the Fourier coefficient of $\lean{BoolBLR.lift\_pm1}\,f$ at $S$
@@ -139,6 +144,7 @@ satisfies $\widehat{\lean{BoolBLR.lift\_pm1}\,f}(S) \le 1 - 2\varepsilon$.
 \lean{BoolBLR.fourier_coeff_le_of_far_from_linear}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_dist_ge, BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolBLR.linear_bool_iff_character, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.chiS}
+\difficulty{4}
 If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then for
 every $S \subseteq [n]$,
 \[
@@ -150,6 +156,7 @@ every $S \subseteq [n]$,
 \lean{BoolBLR.BLR_soundness_via_fourier}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
+\difficulty{2}
 If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then the
 sum of cubed Fourier coefficients of $\lean{BoolBLR.lift\_pm1}\,f$ satisfies
 \[
@@ -164,6 +171,7 @@ with the Parseval identity $\sum_S \hat{f}(S)^2 = 1$.
 \lean{BoolBLR.BLR_completeness}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{1}
 If $f : \{0,1\}^n \to \{0,1\}$ is linear, then
 $\lean{BoolBLR.BLR\_accept\_prob}\,f = 1$; that is, the BLR test accepts
 every linear function with probability $1$.
@@ -173,6 +181,7 @@ every linear function with probability $1$.
 \lean{BoolBLR.BLR_soundness}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.BLR_accept_prob_pm1, BoolBLR.BLR_soundness_via_fourier, BoolBLR.epsilon_far_from_linear, BoolBLR.triple_expectation_eq_cube_fourier, BoolFourier.hypercube}
+\difficulty{1}
 If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then
 \[
   \lean{BoolBLR.BLR\_accept\_prob}\,f \;\le\; 1 - \varepsilon.

@@ -90,21 +90,10 @@ $h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
 \]
 \end{lemma}
 
-\begin{lemma}[Key algebraic recurrence inequality]
-\lean{SimpleHypercontractivity.hypercontractivity_algebra'}
-\leanok
-Suppose $a,b \ge 0$, $B \ge 0$, $A \le a^2$, $B \le b^2$, $C^2 \le AB$, and
-$\rho^2 \le 1/3$. Then
-\[
-  A + 6\rho^2 C + \rho^4 B \le (a+b)^2.
-\]
-This is the algebraic step that closes the induction in the $(2,4)$ theorem.
-\end{lemma}
-
 \begin{theorem}[$(2,4)$-Hypercontractivity (Bonami--Beckner)]
 \lean{SimpleHypercontractivity.hypercontractivity_2_4}
 \leanok
-\uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_cs_sq, Bonami.expect_fourth_nonneg, Bonami.expect_sq_nonneg, Bonami.second_moment_decomp, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.fourth_moment_noise_decomp, SimpleHypercontractivity.hypercontractivity_algebra'}
+\uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_cs_sq, Bonami.expect_fourth_nonneg, Bonami.expect_sq_nonneg, Bonami.second_moment_decomp, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.fourth_moment_noise_decomp}
 For any Boolean function $f : \{0,1\}^n \to \bbr$ and noise parameter $\rho$ with
 $\rho^2 \le 1/3$ (equivalently $\abs{\rho} \le 1/\sqrt3$),
 \[

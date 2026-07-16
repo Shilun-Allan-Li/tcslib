@@ -14,6 +14,10 @@ For every theorem / lemma in dep_graph.json this emits one record:
                              DEFINITIONS the statement depends on (full, in dependency
                              order), then the theorem statement with its proof replaced by
                              `sorry`>,
+      "proof":              <a self-contained Lean FILE that ends with the target theorem
+                             proved for real: the FULL dependency closure — upstream
+                             lemmas/theorems included, with their original proof bodies —
+                             flattened in compile order (see "proof-file assembly" below)>,
       ...metadata...
     }
 
@@ -53,20 +57,23 @@ DEP_GRAPH = BASE / "dep_graph.json"
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
 DEFAULT_OUT = BASE / "dataset" / "tcslib_theorems.jsonl"
 
-DEF_KINDS = {"def", "abbrev", "structure", "inductive", "class", "instance"}
+DEF_KINDS = {"def", "abbrev", "structure", "inductive", "class", "instance", "axiom", "opaque"}
 PROOF_KINDS = {"theorem", "lemma"}
 ALL_KINDS = DEF_KINDS | PROOF_KINDS
 
 _MODIFIERS = r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
-KIND_RE = re.compile(r"^\s*" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example)\b")
-DECL_COL0_RE = re.compile(r"^" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example)\b")
+KIND_RE = re.compile(r"^\s*" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example|axiom|opaque)\b")
+DECL_COL0_RE = re.compile(r"^" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example|axiom|opaque)\b")
 NS_RE = re.compile(r"^\s*namespace\s+([A-Za-z_][A-Za-z0-9_'.]*)")
 SECTION_RE = re.compile(r"^\s*section\b")
 END_RE = re.compile(r"^\s*end\b")
 VAR_RE = re.compile(r"^\s*variable\b")
 PREAMBLE_RE = re.compile(r"^\s*(open|notation|local\s+notation|scoped\s+notation|infix|infixl|infixr|prefix|postfix|set_option)\b")
 PRIVATE_RE = re.compile(r"^_private\..*?\.\d+\.")
-IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_'!?]*(?:\.[A-Za-z_][A-Za-z0-9_'!?]*)*")
+# Lean identifiers admit unicode letters (ρ, σ, ...) plus primes/sub-/superscripts; use
+# \w (unicode-aware) with the extra marks Lean allows so Greek-lettered names survive.
+_ID_EXTRA = "'!?₀-₉₊-ₜ′″ᵢ-ᵪ"
+IDENT_RE = re.compile(rf"[^\W\d][\w{_ID_EXTRA}]*(?:\.[^\W\d][\w{_ID_EXTRA}]*)*")
 LEAN_BIND_RE = re.compile(r"^\s*\\lean\{([^}]*)\}\s*$")
 INLINE_LEAN_RE = re.compile(r"\\lean\{([^}]*)\}")
 BEGIN_RE = re.compile(r"\\begin\{(theorem|lemma|definition|proposition|corollary|sublemma)\}(?:\[([^\]]*)\])?")
@@ -151,7 +158,9 @@ def parse_blueprint() -> dict[str, dict]:
                 i += 1
             if bindings:
                 informal = "\n".join(body)
-                informal = INLINE_LEAN_RE.sub(lambda m: m.group(1), informal)
+                # Keep a leading space: `\cdot\lean{BoolBLR.lift\_pm1}` must not splice
+                # into the undefined TeX control word `\cdotBoolBLR...`.
+                informal = INLINE_LEAN_RE.sub(lambda m: " " + m.group(1), informal)
                 informal = re.sub(r"\n{3,}", "\n\n", informal).strip()
                 uses = [u.strip() for u in re.sub(r"[{}]", " ", uses_raw).split(",") if u.strip()]
                 for b in bindings:
@@ -172,35 +181,54 @@ def parse_file_context(lines: list[str]):
     scopes = [{"kind": "sec", "name": None, "vars": []}]  # base file scope
     preamble: list[str] = []
     decl_ctx: dict[int, dict] = {}
-    for i, line in enumerate(lines):
+    i, n = 0, len(lines)
+    while i < n:
+        line = lines[i]
         if NS_RE.match(line):
             scopes.append({"kind": "ns", "name": NS_RE.match(line).group(1), "vars": []})
+            i += 1
             continue
         if SECTION_RE.match(line):
             scopes.append({"kind": "sec", "name": None, "vars": []})
+            i += 1
             continue
         if END_RE.match(line):
             if len(scopes) > 1:
                 scopes.pop()
+            i += 1
             continue
         if VAR_RE.match(line):
-            scopes[-1]["vars"].append(line.rstrip())
+            j = variable_span_end(lines, i)
+            scopes[-1]["vars"].append("\n".join(l.rstrip() for l in lines[i:j]))
+            i = j
             continue
         if PREAMBLE_RE.match(line):
             preamble.append(line.rstrip())
+            i += 1
             continue
         if DECL_COL0_RE.match(line):
             ns = ".".join(s["name"] for s in scopes if s["kind"] == "ns" and s["name"])
             vrs = [v for s in scopes for v in s["vars"]]
             decl_ctx[i] = {"namespace": ns, "variables": vrs}
+        i += 1
     return preamble, decl_ctx
+
+
+def variable_span_end(lines: list[str], i: int) -> int:
+    """Exclusive end of the `variable` command starting at line i: a `variable` command
+    continues over following indented, nonblank lines (binder lists wrap)."""
+    j = i + 1
+    while j < len(lines) and lines[j][:1].isspace() and lines[j].strip():
+        j += 1
+    return j
 
 
 _BOUNDARY_KW_RE = re.compile(
     r"^(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+)*"
-    r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example|namespace|"
+    r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example|axiom|opaque|namespace|"
     r"section|end|open|variable|universe|set_option|notation|infix|infixl|"
-    r"infixr|prefix|postfix|attribute)\b")
+    r"infixr|prefix|postfix|attribute|omit|include|mutual|macro|macro_rules|"
+    r"syntax|elab|elab_rules|declare_syntax_cat)\b")
 
 
 def _is_boundary(s: str) -> bool:
@@ -216,7 +244,7 @@ def _is_boundary(s: str) -> bool:
     """
     if not s:
         return False
-    if not s[0].isspace() and s.startswith(("@[", "/--", "/-", "--")):
+    if not s[0].isspace() and s.startswith(("@[", "/--", "/-", "--", "#")):
         return True
     return bool(_BOUNDARY_KW_RE.match(s.lstrip()))
 
@@ -237,7 +265,7 @@ def find_keyword_idx(lines: list[str], start: int):
 
 # Lean elaboration emits helper declarations (macro rules, match/proof terms) that are not
 # real statements and must never enter the dataset.
-_AUTO_NAME_RE = re.compile(r"(«|macroRules|_aux_|\.proof_|\.match_|\.eq_\d|\._)")
+_AUTO_NAME_RE = re.compile(r"(«|macroRules|_aux_\d|\.proof_|\.match_|\.eq_\d|\._)")
 
 
 def is_real_decl_name(name: str) -> bool:
@@ -246,8 +274,8 @@ def is_real_decl_name(name: str) -> bool:
 
 _DECL_NAME_RE = re.compile(
     r"^\s*" + _MODIFIERS +
-    r"(?:theorem|lemma|def|abbrev|structure|inductive|class|instance)\s+"
-    r"([A-Za-z_][A-Za-z0-9_'!?.]*)")
+    r"(?:theorem|lemma|def|abbrev|structure|inductive|class|instance|axiom|opaque)\s+"
+    r"([^\s\(\)\[\]\{\}⟨⟩:,;]+)")
 
 
 def declared_short_name(line: str):
@@ -316,13 +344,22 @@ def build_index(graph: dict):
             nname = normalize_name(name)
             if not is_real_decl_name(nname) or nname in raw:
                 continue  # skip elaborator-generated helpers; first name wins
-            # Verify the located keyword actually declares this name. `where`/`let rec`
-            # helpers (e.g. `foo.go`) have no keyword of their own, so the search lands on
-            # an unrelated later declaration — those are already inside their parent's
-            # slice and never referenced externally, so drop them.
+            # Verify the located keyword actually declares this name. Two mismatch cases:
+            # `mutual` members all share the block's start line, so the first keyword found
+            # belongs to another member — scan forward for the keyword that declares this
+            # name. `where`/`let rec` helpers (e.g. `foo.go`) have no keyword of their own
+            # and no such line exists — those stay inside their parent's slice, so drop.
             dshort = declared_short_name(lines[kidx])
             if kind != "instance" and dshort != nname.split(".")[-1]:
-                continue
+                found = None
+                for j in range(kidx + 1, min(kidx + 300, len(lines))):
+                    mj = KIND_RE.match(lines[j])
+                    if mj and declared_short_name(lines[j]) == nname.split(".")[-1]:
+                        found = (j, mj.group(1))
+                        break
+                if found is None:
+                    continue
+                kidx, kind = found
             ctx = decl_ctx.get(kidx)
             if ctx is None:  # nearest preceding keyword line
                 keys = [k for k in decl_ctx if k <= kidx]
@@ -332,6 +369,7 @@ def build_index(graph: dict):
                 "name": nname,
                 "module": module,
                 "kind": kind,
+                "kidx": kidx,
                 "namespace": ctx["namespace"],
                 "variables": ctx["variables"],
                 "preamble": preamble,
@@ -339,16 +377,34 @@ def build_index(graph: dict):
                 "raw_deps": dd.get("deps", []),
             }
 
-    # Second pass: resolve definition-kind dependencies (normalized, TCSlib, in-index).
+    # Second pass: resolve dependencies (normalized, TCSlib, in-index).
+    # def_deps keeps its original definition-kind-only semantics (formal_statement path);
+    # all_deps additionally includes theorem/lemma deps and falls back to the parent
+    # declaration for constructor/projection/where-helper names (Foo.mk, foo.go, ...),
+    # which never get an index entry of their own but live inside the parent's slice.
     for rec in raw.values():
         deps = set()
+        alldeps = set()
+        lost = set()
         for dep in rec["raw_deps"]:
             if not dep.get("module", "").startswith("TCSlib"):
                 continue
             dn = normalize_name(dep["name"])
-            if dn != rec["name"] and dn in raw and raw[dn]["kind"] in DEF_KINDS:
+            if dn == rec["name"]:
+                continue
+            if dn in raw and raw[dn]["kind"] in DEF_KINDS:
                 deps.add(dn)
+            an = dn
+            if an not in raw:
+                parent = an.rsplit(".", 1)[0] if "." in an else None
+                an = parent if parent in raw else None
+            if an and an != rec["name"]:
+                alldeps.add(an)
+            elif an is None and is_real_decl_name(dn):
+                lost.add(dn)
         rec["def_deps"] = sorted(deps)
+        rec["all_deps"] = sorted(alldeps)
+        rec["lost_deps"] = sorted(lost)
         del rec["raw_deps"]
     return raw
 
@@ -440,6 +496,575 @@ def build_formal(target, index, all_def_deps: bool):
     return "\n".join(parts).rstrip() + "\n", ordered
 
 
+# ---------------------------------------------------------- proof-file assembly
+#
+# The `proof` field is a self-contained Lean file whose LAST declaration is the target
+# theorem with its real proof. Unlike `formal_statement` (definitions only, `:= sorry`),
+# it flattens the FULL dependency closure: upstream lemmas/theorems included, with their
+# original proof bodies, so the final declaration elaborates.
+#
+# Assembly is position-aware rather than preamble-hoisting:
+#   * each contributing module is parsed once into an ordered list of ITEMS —
+#     declarations (with attached `@[...]` / `open ... in` / `set_option ... in` /
+#     `omit ... in` prefix lines), whole `mutual ... end` blocks, and context commands
+#     (universe / set_option / open / attribute / notation / macro / syntax);
+#   * contributing modules are ordered by the TCSlib import DAG and items within a
+#     module stay in source order — a linearization in which every reference points
+#     backward, because the original library compiled that way;
+#   * context commands that name TCSlib declarations are dropped unless everything they
+#     reference has already been emitted (e.g. `attribute [instance] Foo.bar` for a
+#     `Foo.bar` outside the closure);
+#   * items are re-wrapped in their original namespace / `variable` / noncomputable-
+#     section context, and namespace stubs up front make hoisted `open`s legal even
+#     when the first declaration of that namespace comes later.
+
+IMPORT_LINE_RE = re.compile(r"^import\s+([A-Za-z_][A-Za-z0-9_'.«»]*)")
+PREFIX_IN_RE = re.compile(r"^\s*(?:open|set_option|omit|include)\b.*\bin\s*$")
+ATTR_ONLY_RE = re.compile(r"^\s*@\[[^\]]*\]\s*$")
+MUTUAL_START_RE = re.compile(r"^\s*mutual\b")
+END_TOKEN_RE = re.compile(r"^\s*end\b")
+NONCOMP_SEC_RE = re.compile(r"^\s*noncomputable\s+section\b")
+CTX_KEEP_RE = re.compile(r"^\s*(universe|set_option|open)\b")
+CTX_FILTER_RE = re.compile(
+    r"^\s*(?:scoped\s+|local\s+)?(attribute|macro_rules|macro|syntax|elab_rules|elab|"
+    r"declare_syntax_cat|notation|infixl|infixr|infix|prefix|postfix)\b")
+SEARCH_TACTIC_RE = re.compile(r"(exact\?|apply\?|rw\?|simp\?|norm_num\?|polyrith|hint\b)")
+# Attributes that make a declaration usable IMPLICITLY (simp set, ext lemmas, aesop rule
+# sets, ...). Such uses never appear in the source text, so the .ilean-derived dep graph
+# cannot see them — these declarations are "ambient" and must ride along with any proof
+# file whose import closure contains them.
+AMBIENT_ATTR_RE = re.compile(
+    r"@\[[^\]]*\b(simp|ext|grind|aesop|norm_num|positivity|fun_prop|measurability|"
+    r"continuity|gcongr|mono|instance)\b")
+
+
+def parse_module_items(lines: list[str]):
+    """Ordered item model of one module: declarations, mutual blocks, context commands.
+
+    Returns (items, by_kidx, ext_imports) where by_kidx maps a declaration-keyword line
+    to its containing item (a mutual block is ONE item owning all its members' lines).
+    """
+    scopes = [{"kind": "sec", "name": None, "vars": [], "noncomp": False}]
+    items: list[dict] = []
+    by_kidx: dict[int, dict] = {}
+    ext_imports: list[str] = []
+    pending: list[str] = []      # @[...] / `... in` lines attached to the next item
+    i, n = 0, len(lines)
+
+    def ctx_base():
+        return {
+            "ns": ".".join(s["name"] for s in scopes if s["kind"] == "ns" and s["name"]),
+            "vars": [v for s in scopes for v in s["vars"]],
+            "noncomp": any(s["noncomp"] for s in scopes),
+            "prefix": pending,
+        }
+
+    while i < n:
+        line = lines[i]
+        stripped = line.strip()
+        if stripped.startswith(("/-", "/--")):        # skip (doc/block) comments wholesale
+            depth = 0
+            while i < n:
+                depth += lines[i].count("/-") - lines[i].count("-/")
+                i += 1
+                if depth <= 0:
+                    break
+            continue
+        if stripped == "" or stripped.startswith("--"):
+            i += 1
+            continue
+        m_imp = IMPORT_LINE_RE.match(line)
+        if m_imp:
+            if not m_imp.group(1).startswith("TCSlib"):
+                ext_imports.append(line.strip())
+            i += 1
+            continue
+        if NS_RE.match(line):
+            scopes.append({"kind": "ns", "name": NS_RE.match(line).group(1), "vars": [], "noncomp": False})
+            i += 1
+            continue
+        if NONCOMP_SEC_RE.match(line):
+            scopes.append({"kind": "sec", "name": None, "vars": [], "noncomp": True})
+            i += 1
+            continue
+        if SECTION_RE.match(line):
+            scopes.append({"kind": "sec", "name": None, "vars": [], "noncomp": False})
+            i += 1
+            continue
+        if END_TOKEN_RE.match(line):
+            if len(scopes) > 1:
+                scopes.pop()
+            i += 1
+            continue
+        if VAR_RE.match(line):
+            j = variable_span_end(lines, i)
+            scopes[-1]["vars"].append("\n".join(l.rstrip() for l in lines[i:j]))
+            i = j
+            continue
+        if PREFIX_IN_RE.match(line) or ATTR_ONLY_RE.match(line):
+            pending.append(line.rstrip())
+            i += 1
+            continue
+        if MUTUAL_START_RE.match(line):
+            j, depth = i + 1, 1
+            while j < n and depth > 0:
+                if MUTUAL_START_RE.match(lines[j]):
+                    depth += 1
+                elif END_TOKEN_RE.match(lines[j]):
+                    depth -= 1
+                j += 1
+            item = dict(ctx_base(), type="decl", start=i, end=j)
+            for k in range(i, j):
+                if KIND_RE.match(lines[k]):
+                    by_kidx[k] = item
+            items.append(item)
+            pending = []
+            i = j
+            continue
+        if KIND_RE.match(line):
+            j = decl_end(lines, i)
+            item = dict(ctx_base(), type="decl", start=i, end=j)
+            by_kidx[i] = item
+            items.append(item)
+            pending = []
+            i = j
+            continue
+        if CTX_KEEP_RE.match(line) or CTX_FILTER_RE.match(line):
+            j = decl_end(lines, i)
+            # `open Foo (bar baz)` pins specific names — treat like a filtered command.
+            filtered = bool(CTX_FILTER_RE.match(line)) or (
+                stripped.startswith("open") and "(" in stripped)
+            item = dict(ctx_base(), type="ctx_filter" if filtered else "ctx_keep",
+                        start=i, end=j)
+            items.append(item)
+            pending = []
+            i = j
+            continue
+        pending = []      # anything else invalidates a dangling prefix
+        i += 1
+    return items, by_kidx, ext_imports
+
+
+def build_module_imports(modules) -> dict[str, list[str]]:
+    """module -> its direct TCSlib imports."""
+    imp: dict[str, list[str]] = {}
+    for m in modules:
+        p = module_to_lean_path(m)
+        deps = []
+        if p.exists():
+            for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
+                mm = IMPORT_LINE_RE.match(line)
+                if mm and mm.group(1).startswith("TCSlib"):
+                    deps.append(mm.group(1))
+        imp[m] = deps
+    return imp
+
+
+def build_module_ranks(imp: dict[str, list[str]]) -> dict[str, int]:
+    """Postorder rank over the TCSlib import DAG: imported modules rank lower."""
+    rank: dict[str, int] = {}
+
+    def visit(m, stack):
+        if m in rank or m not in imp or m in stack:
+            return
+        stack.add(m)
+        for d in imp[m]:
+            visit(d, stack)
+        stack.discard(m)
+        rank[m] = len(rank)
+
+    for m in imp:
+        visit(m, set())
+    return rank
+
+
+def build_any_short_map(index) -> dict[str, str]:
+    """short name -> full name, for shorts that are unambiguous across the index."""
+    short, dup = {}, set()
+    for nm in index:
+        s = nm.split(".")[-1]
+        (dup.add(s) if s in short else None)
+        short[s] = nm
+    for s in dup:
+        short.pop(s, None)
+    return short
+
+
+def closure_all(seeds, index) -> set[str]:
+    """Transitive closure over all_deps (definitions AND theorems/lemmas)."""
+    seen: set[str] = set()
+    stack = list(seeds)
+    while stack:
+        nm = stack.pop()
+        if nm in seen:
+            continue
+        seen.add(nm)
+        for d in index[nm]["all_deps"]:
+            if d not in seen:
+                stack.append(d)
+    return seen
+
+
+def ctx_refs_ok(text: str, ns: str, index, short_map, emitted) -> bool:
+    """True if every TCSlib declaration this context command references is emitted."""
+    for tok in IDENT_RE.findall(text):
+        cand = None
+        if tok in index:
+            cand = tok
+        elif ns and f"{ns}.{tok}" in index:
+            cand = f"{ns}.{tok}"
+        elif "." in tok:
+            # Projection / constructor / field of an indexed parent (Foo.fintype), with
+            # or without the surrounding namespace prefix.
+            parent = tok.rsplit(".", 1)[0]
+            if parent in index:
+                cand = parent
+            elif ns and f"{ns}.{parent}" in index:
+                cand = f"{ns}.{parent}"
+        elif tok in short_map:
+            # Short-name fallback for dot-free tokens only: matching just the last
+            # component of a dotted name would misresolve Foo.fintype to any unique
+            # decl short-named `fintype`.
+            cand = short_map[tok]
+        if cand is not None and cand not in emitted:
+            return False
+    return True
+
+
+def render_item(item: dict, lines: list[str]) -> str:
+    """Render one item with its original context re-established.
+
+    Declarations are wrapped in their namespace with the in-scope `variable` commands.
+    ctx_keep commands (universe / set_option / open) are emitted UNWRAPPED so their
+    effect persists for the rest of the file, as it did for the rest of the original
+    module; an `open` that lived inside a namespace gets `open NS` prepended so names
+    that resolved relative to NS still resolve. ctx_filter commands (notation /
+    attribute / macro ...) keep the namespace wrapper — `scoped` declarations must sit
+    inside their namespace, and their effect re-activates whenever the namespace is
+    re-entered by later declarations.
+    """
+    body = item["prefix"] + [l.rstrip() for l in lines[item["start"]:item["end"]]]
+    if item["type"] == "decl":
+        block = "\n".join(item["vars"] + body)
+        if item["ns"]:
+            block = f"namespace {item['ns']}\n{block}\nend {item['ns']}"
+        if item["noncomp"]:
+            block = f"noncomputable section\n{block}\nend"
+        return block
+    if item["type"] == "ctx_keep":
+        block = "\n".join(body)
+        if item["ns"] and lines[item["start"]].lstrip().startswith("open"):
+            block = f"open {item['ns']}\n{block}"
+        return block
+    block = "\n".join(body)
+    if item["ns"]:
+        block = f"namespace {item['ns']}\n{block}\nend {item['ns']}"
+    return block
+
+
+def build_proof(target, index, get_items, mod_rank, mod_imports, short_map, by_mod_kidx,
+                by_module_names, resolve_lost, global_ns, ambient_by_module):
+    """Assemble the flattened proof file for `target`.
+
+    Returns (text, emitted_upstream_names_in_order, unresolved_dep_names).
+    """
+    needed = closure_all({target["name"]}, index)
+    # The target module's transitive TCSlib import closure — its original environment.
+    universe_mods: set[str] = set()
+    stack = [target["module"]]
+    while stack:
+        m = stack.pop()
+        if m in universe_mods:
+            continue
+        universe_mods.add(m)
+        stack.extend(mod_imports.get(m, []))
+    # Ambient declarations (implicitly usable via attributes — simp set etc.) from that
+    # environment must ride along: the dep graph cannot see attribute-driven uses.
+    ambient: set[str] = set()
+    for m in universe_mods:
+        ambient |= ambient_by_module.get(m, set())
+    needed |= closure_all(ambient, index)
+    lost: set[str] = set()
+    for _round in range(8):
+        grew = False
+        # Committed search tactics (`exact?` & friends) close goals with lemmas that
+        # never appear in the source text, so the reference-level dep graph cannot see
+        # them. Widen conservatively: such a declaration gets every earlier declaration
+        # of its own module plus everything in its module's direct TCSlib imports —
+        # the region where suggestion tactics overwhelmingly find their lemma.
+        widen = set()
+        for nm in needed:
+            rec = index[nm]
+            if not SEARCH_TACTIC_RE.search("\n".join(rec["slice"])):
+                continue
+            mod = rec["module"]
+            for n2 in by_module_names.get(mod, []):
+                if index[n2]["kidx"] < rec["kidx"]:
+                    widen.add(n2)
+            for im in mod_imports.get(mod, []):
+                widen.update(by_module_names.get(im, []))
+        if not widen <= needed:
+            needed |= closure_all(widen, index)
+            grew = True
+        # Deps the index could not resolve may still be reachable: `mutual` members the
+        # dep graph did not record resolve (via the alias map) to a sibling in the same
+        # block — pull that block in and re-close until stable.
+        extra = set()
+        lost = set()
+        for nm in needed:
+            for l in index[nm]["lost_deps"]:
+                rep = resolve_lost(l)
+                if rep is None:
+                    lost.add(l)
+                elif rep not in needed:
+                    extra.add(rep)
+        if extra:
+            needed |= closure_all(extra, index)
+            grew = True
+        if not grew:
+            break
+    mods = sorted({index[nm]["module"] for nm in needed},
+                  key=lambda m: (mod_rank.get(m, 10**9), m))
+
+    # External imports: union over the target module's TRANSITIVE TCSlib import closure
+    # (not just contributing modules). This reproduces byte-for-byte the environment the
+    # target theorem originally elaborated in — which matters because search tactics in
+    # committed proofs (`exact?`, `simp_all`) are environment-sensitive, and a blanket
+    # `import Mathlib` can change their behavior (or clash with PFR's ForMathlib files).
+    imports = []
+    seen_imp = set()
+    for m in sorted(universe_mods, key=lambda m: (mod_rank.get(m, 10**9), m)):
+        _lines, _items, _bk, ext = get_items(m)
+        for line in ext:
+            if line not in seen_imp:
+                seen_imp.add(line)
+                imports.append(line)
+    if not imports:
+        imports = ["import Mathlib"]
+
+    parts: list[str] = []
+    emitted: set[str] = set()
+    order: list[str] = []
+
+    for m in mods:
+        lines, items, by_kidx, _ext = get_items(m)
+        kn = by_mod_kidx.get(m, {})                    # kidx -> declaration name
+        needed_ids = set()
+        item_names: dict[int, list[str]] = {}
+        no_item: list[str] = []
+        for k, nm in kn.items():
+            it = by_kidx.get(k)
+            if it is not None:
+                item_names.setdefault(id(it), []).append(nm)
+                if nm in needed:
+                    needed_ids.add(id(it))
+            elif nm in needed:
+                no_item.append(nm)
+        for it in items:
+            if it["type"] == "decl":
+                if id(it) in needed_ids:
+                    parts.append(render_item(it, lines))
+                    parts.append("")
+                    for nm in item_names.get(id(it), []):
+                        emitted.add(nm)
+                        if nm in needed:
+                            order.append(nm)
+            elif it["type"] == "ctx_keep":
+                parts.append(render_item(it, lines))
+                parts.append("")
+            else:  # ctx_filter
+                text = "\n".join(lines[it["start"]:it["end"]])
+                if ctx_refs_ok(text, it["ns"], index, short_map, emitted):
+                    parts.append(render_item(it, lines))
+                    parts.append("")
+        for nm in no_item:                              # parser missed it — fall back
+            parts.append(emit_block(index[nm], body=True))
+            parts.append("")
+            emitted.add(nm)
+            order.append(nm)
+
+    # Namespace stubs: `open Foo` errors when namespace Foo is not registered yet, and
+    # an emitted open may fire before (or without) any declaration in that namespace.
+    # Scan the assembled body's open lines and pre-register every TCSlib namespace they
+    # mention. (Registering a namespace that later collides with a declaration name is
+    # legal Lean — cf. `List` the namespace vs `List` the inductive.)
+    body = "\n".join(parts)
+    stubs = []
+    seen_stub = set()
+    for mline in re.finditer(r"^\s*open\s+(.+)$", body, re.MULTILINE):
+        toks = mline.group(1).replace(" in", " ").split()
+        for tok in toks:
+            tok = tok.strip("()")
+            if tok in ("scoped", "in") or not tok:
+                continue
+            if tok in global_ns and tok not in seen_stub:
+                seen_stub.add(tok)
+                stubs.append(f"namespace {tok}\nend {tok}")
+
+    head = imports + [""] + (stubs + [""] if stubs else [])
+    text = "\n".join(head) + "\n" + body.rstrip() + "\n"
+    upstream = [nm for nm in order if nm != target["name"]]
+    return text, upstream, sorted(lost)
+
+
+def make_proof_builder(graph, index):
+    """Bind the per-run caches and return build_proof(target) -> (text, upstream, lost)."""
+    items_cache: dict[str, tuple] = {}
+
+    def get_items(module):
+        if module not in items_cache:
+            path = module_to_lean_path(module)
+            lines = (path.read_text(encoding="utf-8", errors="ignore").splitlines()
+                     if path.exists() else [])
+            items, by_kidx, ext = parse_module_items(lines)
+            items_cache[module] = (lines, items, by_kidx, ext)
+        return items_cache[module]
+
+    mod_imports = build_module_imports(list(graph.keys()))
+    mod_rank = build_module_ranks(mod_imports)
+
+    # The dep graph is built from .ilean reference indexes and misses some declarations
+    # entirely (e.g. an inductive no extended tuple ever named, or all-but-one member of
+    # a `mutual` block). Overlay SYNTHETIC index entries for every declaration the item
+    # parser can see that the graph didn't record, with token-scanned deps, so closures
+    # can reach them. The overlay is proof-path-private: formal_statement still sees the
+    # graph-derived index only.
+    pindex = dict(index)
+    known_kidx: dict[str, set[int]] = {}
+    for nm, rec in index.items():
+        known_kidx.setdefault(rec["module"], set()).add(rec["kidx"])
+    synth: list[str] = []
+    global_ns: set[str] = set()          # every namespace path any module ever enters
+    for module in graph:
+        lines, items, _bk, _ext = get_items(module)
+        known = known_kidx.get(module, set())
+        for it in items:
+            ns = it["ns"]
+            while ns:
+                global_ns.add(ns)
+                ns = ns.rpartition(".")[0]
+            if it["type"] != "decl":
+                continue
+            for k in range(it["start"], it["end"]):
+                mk = KIND_RE.match(lines[k])
+                if k in known or not mk:
+                    continue
+                short = declared_short_name(lines[k])
+                if not short:
+                    continue
+                full = f"{it['ns']}.{short}" if it["ns"] else short
+                if full in pindex:
+                    continue
+                pindex[full] = {
+                    "name": full, "module": module, "kind": mk.group(1), "kidx": k,
+                    "namespace": it["ns"], "variables": it["vars"], "preamble": [],
+                    "slice": lines[k:decl_end(lines, k)],
+                    "def_deps": [], "all_deps": [], "lost_deps": [],
+                }
+                synth.append(full)
+
+    short_map = build_any_short_map(pindex)
+
+    imp_closure_memo: dict[str, set] = {}
+
+    def import_closure(m):
+        if m not in imp_closure_memo:
+            seen: set[str] = set()
+            stack = [m]
+            while stack:
+                x = stack.pop()
+                if x in seen:
+                    continue
+                seen.add(x)
+                stack.extend(mod_imports.get(x, []))
+            imp_closure_memo[m] = seen
+        return imp_closure_memo[m]
+
+    for nm in synth:                     # token-scan bodies for TCSlib references
+        rec = pindex[nm]
+        deps = set()
+        visible = import_closure(rec["module"])   # a decl can only reference its imports
+        for tok in IDENT_RE.findall("\n".join(rec["slice"])):
+            cand = tok if tok in pindex else short_map.get(tok.split(".")[-1])
+            if cand and cand != nm and pindex[cand]["module"] in visible:
+                deps.add(cand)
+        rec["all_deps"] = sorted(deps)
+
+    by_mod_kidx: dict[str, dict[int, str]] = {}
+    by_module_names: dict[str, list[str]] = {}
+    for nm, rec in pindex.items():
+        by_mod_kidx.setdefault(rec["module"], {})[rec["kidx"]] = nm
+        by_module_names.setdefault(rec["module"], []).append(nm)
+
+    # Ambient declarations per module: instances, attribute-tagged decls (see
+    # AMBIENT_ATTR_RE), and decls named by standalone `attribute [simp/...]` commands.
+    # All of these are used IMPLICITLY (typeclass search, simp set, ...) so the
+    # reference-level dep graph never records their uses.
+    ambient_by_module: dict[str, set] = {}
+    for module in graph:
+        lines, items, _bk, _ext = get_items(module)
+        kn = by_mod_kidx.get(module, {})
+        amb: set[str] = set()
+        for it in items:
+            if it["type"] == "decl":
+                for k in range(it["start"], it["end"]):
+                    nm = kn.get(k)
+                    if nm is None:
+                        continue
+                    if pindex[nm]["kind"] == "instance":
+                        amb.add(nm)
+                        continue
+                    attr_text = "\n".join(it["prefix"] + [lines[k]])
+                    if AMBIENT_ATTR_RE.search(attr_text):
+                        amb.add(nm)
+            elif it["type"] == "ctx_filter":
+                text = "\n".join(lines[it["start"]:it["end"]])
+                if text.lstrip().startswith("attribute") and AMBIENT_ATTR_RE.search(text):
+                    for tok in IDENT_RE.findall(text):
+                        cand = tok if tok in pindex else short_map.get(tok.split(".")[-1])
+                        if cand:
+                            amb.add(cand)
+        if amb:
+            ambient_by_module[module] = amb
+
+    # Residual aliasing for declaration lines the synthetics could not name.
+    alias: dict[str, str] = {}
+    for module in graph:
+        lines, items, _bk, _ext = get_items(module)
+        kn = by_mod_kidx.get(module, {})
+        for it in items:
+            if it["type"] != "decl":
+                continue
+            reps = [kn[k] for k in range(it["start"], it["end"]) if k in kn]
+            if not reps:
+                continue
+            for k in range(it["start"], it["end"]):
+                if k in kn or not KIND_RE.match(lines[k]):
+                    continue
+                short = declared_short_name(lines[k])
+                if short:
+                    full = f"{it['ns']}.{short}" if it["ns"] else short
+                    alias.setdefault(full, reps[0])
+
+    def resolve_lost(name: str):
+        """Progressively strip trailing components: Foo.Bar.mk -> Foo.Bar -> Foo."""
+        parts = name.split(".")
+        for k in range(len(parts), 0, -1):
+            cand = ".".join(parts[:k])
+            if cand in alias:
+                return alias[cand]
+            if cand in pindex:
+                return cand
+        return None
+
+    def build(target):
+        return build_proof(target, pindex, get_items, mod_rank, mod_imports, short_map,
+                           by_mod_kidx, by_module_names, resolve_lost, global_ns,
+                           ambient_by_module)
+
+    return build
+
+
 # -------------------------------------------------------------------------- main
 
 def main():
@@ -448,6 +1073,12 @@ def main():
     ap.add_argument("--limit", type=int, default=None, help="Only emit the first N theorems.")
     ap.add_argument("--all-def-deps", action="store_true",
                     help="Seed from ALL definition deps, not just those in the statement text.")
+    ap.add_argument("--no-proof", action="store_true",
+                    help="Skip the flattened `proof` field (faster, smaller output).")
+    ap.add_argument("--proof-of", default=None, metavar="NAME",
+                    help="Debug: write the flattened proof file for one theorem and exit.")
+    ap.add_argument("--proof-out", default=None, metavar="FILE",
+                    help="Where --proof-of writes the .lean file (default: stdout).")
     args = ap.parse_args()
 
     if not DEP_GRAPH.exists():
@@ -459,6 +1090,25 @@ def main():
     index = build_index(graph)
     print(f"  {len(index)} declarations indexed "
           f"({sum(1 for r in index.values() if r['kind'] in PROOF_KINDS)} theorems/lemmas).")
+
+    proof_builder = None
+    if not args.no_proof or args.proof_of:
+        proof_builder = make_proof_builder(graph, index)
+
+    if args.proof_of:
+        if args.proof_of not in index:
+            print(f"ERROR: {args.proof_of} not in index.")
+            return 1
+        text, upstream, lost = proof_builder(index[args.proof_of])
+        if args.proof_out:
+            Path(args.proof_out).write_text(text, encoding="utf-8")
+            print(f"Wrote {args.proof_out} ({len(text.splitlines())} lines, "
+                  f"{len(upstream)} upstream decls)")
+        else:
+            print(text)
+        if lost:
+            print(f"WARNING: unresolved TCSlib deps: {lost}")
+        return 0
 
     print("Parsing blueprint ...")
     informal = parse_blueprint()
@@ -519,7 +1169,10 @@ def main():
         if name in diff_memo:
             return diff_memo[name]
         if name in stack:
-            return None  # dependency cycle guard
+            # Dependency-cycle back-edge: a cycle edge can never be a genuine
+            # prerequisite ordering (it is a blueprint \uses mistake), so contribute
+            # nothing rather than poisoning every downstream aggregate with unknown.
+            return 0
         stack.add(name)
         entry = lookup(name)
         kind = index[name]["kind"] if name in index else None
@@ -541,6 +1194,73 @@ def main():
         result = None if unknown else own + best
         diff_memo[name] = result
         return result
+
+    # ---- breadth-aware difficulty: discounted sum of vertex-disjoint heavy chains ----
+    # The plain `difficulty` is the heaviest path (critical path) through the \uses
+    # graph. That ignores breadth: a theorem resting on several INDEPENDENT hard chains
+    # is harder than one resting on a single chain of the same height. Here we greedily
+    # peel vertex-disjoint heavy chains (Menger-style: peeling stops by itself once the
+    # residual graph has no positive-weight leaf→target path, i.e. at the min cut) and
+    # combine them with a geometric discount so breadth is sublinear, never additive:
+    #     D = own + w1 + α·w2 + α²·w3 + ...        (α = 0.5, at most 8 chains)
+    # Chains must be disjoint only on POSITIVELY-weighted nodes — zero-weight
+    # definitions are plumbing shared by every chain and must not cap parallelism.
+    BREADTH_ALPHA = 0.5
+    BREADTH_MAX_CHAINS = 8
+
+    def intrinsic(name):
+        e = lookup(name)
+        own = e.get("difficulty") if e else None
+        if own is None and (index[name]["kind"] if name in index else None) in DEF_KINDS:
+            own = 0
+        return own
+
+    def uses_deps(name):
+        e = lookup(name)
+        out = []
+        for u in (e.get("uses", []) if e else []):
+            dep = resolve_any(u)
+            if dep and dep != name:
+                out.append(dep)
+        return out
+
+    def breadth_difficulty(name):
+        base = final_difficulty(name, set())
+        if base is None:
+            return None                     # unknown somewhere upstream: stay unknown
+        removed: set[str] = set()
+        total = float(intrinsic(name) or 0)
+        disc = 1.0
+        for _ in range(BREADTH_MAX_CHAINS):
+            memo_p: dict[str, tuple] = {}
+
+            def best(n, stack):
+                if n in memo_p:
+                    return memo_p[n]
+                if n in stack:
+                    return (0.0, ())        # cycle back-edge: contributes nothing
+                stack.add(n)
+                bw, bp = 0.0, ()
+                for d in uses_deps(n):
+                    if d in removed:
+                        continue
+                    w, p = best(d, stack)
+                    w2 = w + (intrinsic(d) or 0)
+                    if w2 > bw:
+                        bw, bp = w2, p + (d,)
+                stack.discard(n)
+                memo_p[n] = (bw, bp)
+                return memo_p[n]
+
+            w, path = best(name, set())
+            if w <= 0:
+                break
+            total += disc * w
+            disc *= BREADTH_ALPHA
+            for d in path:
+                if (intrinsic(d) or 0) > 0:
+                    removed.add(d)
+        return round(total, 1)
 
     def compose(entry):
         """Fold the [title] into the prose so the text reads as a statement."""
@@ -570,6 +1290,7 @@ def main():
 
     n_written = n_missing = 0
     total_defs = 0
+    proof_lines_total = proof_lines_max = n_proof_unresolved = 0
     with open(out_path, "w", encoding="utf-8") as f:
         for name in targets:
             rec = index[name]
@@ -579,6 +1300,14 @@ def main():
                 continue
             formal, ordered = build_formal(rec, index, args.all_def_deps)
             total_defs += len(ordered)
+
+            proof_text = proof_upstream = proof_lost = None
+            if proof_builder is not None:
+                proof_text, proof_upstream, proof_lost = proof_builder(rec)
+                nl = proof_text.count("\n")
+                proof_lines_total += nl
+                proof_lines_max = max(proof_lines_max, nl)
+                n_proof_unresolved += bool(proof_lost)
 
             # Self-contained informal statement: define each term it uses (from the same
             # blueprint), then state the (title-folded) claim.
@@ -607,8 +1336,24 @@ def main():
                 "kind": rec["kind"],
                 "upstream_defs": ordered,
                 "n_upstream_defs": len(ordered),
-                "difficulty": final_difficulty(name, set()),
+                # A difficulty rating only makes sense for a finished proof: null it
+                # when the flattened proof (target or any upstream) still has `sorry`.
+                "difficulty": (None if proof_text is not None and "sorry" in proof_text
+                               else final_difficulty(name, set())),
+                # Breadth-aware variant: discounted sum of vertex-disjoint heavy chains
+                # (first chain = the critical path above, extra parallel chains at
+                # α, α², ... — see breadth_difficulty).
+                "difficulty_breadth": (None if proof_text is not None and "sorry" in proof_text
+                                       else breadth_difficulty(name)),
             }
+            if proof_builder is not None:
+                record["proof"] = proof_text
+                record["proof_upstream_decls"] = proof_upstream
+                record["n_proof_upstream_decls"] = len(proof_upstream)
+                record["proof_unresolved_deps"] = proof_lost
+                # False when the flattened file still contains `sorry` — i.e. the
+                # library itself has not finished this proof (or an upstream one).
+                record["proof_complete"] = "sorry" not in proof_text
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             n_written += 1
 
@@ -617,6 +1362,10 @@ def main():
     print(f"Theorems without a blueprint informal statement (skipped): {n_missing}")
     if n_written:
         print(f"Avg upstream definitions per theorem: {total_defs / n_written:.1f}")
+    if n_written and proof_builder is not None:
+        print(f"Proof files: avg {proof_lines_total / n_written:.0f} lines, "
+              f"max {proof_lines_max} lines; "
+              f"{n_proof_unresolved} records with unresolved deps")
     return 0
 
 

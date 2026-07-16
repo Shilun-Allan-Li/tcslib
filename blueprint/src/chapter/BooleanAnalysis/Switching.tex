@@ -175,6 +175,7 @@ If $l \neq []$ then $\mathrm{toFinBlock}\,w\,l\,h \neq []$.
 \lean{SwitchingLemma2.processClauseLits_aux_idx_lt}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, Term}
+\difficulty{2}
 When the processed literals come from $t.\mathrm{zipIdx}$, every entry of the aux
 output of $\mathrm{processClauseLits}$ has first coordinate strictly less than
 $t.\mathrm{length}$.
@@ -195,6 +196,7 @@ flag true. This is the main structural invariant of the encoder.
 \lean{SwitchingLemma2.exists_aux_injection}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.encode_go_wellformed, SwitchingLemma2.parseAux, SwitchingLemma2.parseAux_triplesToAux, SwitchingLemma2.razborovEncode, SwitchingLemma2.triplesToAux}
+\difficulty{7}
 There exists a function $g$ from aux lists into
 $\mathrm{Fin}\,d \to \mathrm{Fin}\,w \times \mathrm{Bool} \times \mathrm{Bool}$
 that is injective on the image of the Razborov encoder over bad $s$-restrictions
@@ -254,6 +256,7 @@ agree on which variables are free.
 \lean{SwitchingLemma2.processClauseLits_numFree_σ}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_free, SwitchingLemma2.processClauseLits}
+\difficulty{5}
 Under the invariants that $\rho_0$ and $\sigma$ share free variables and each
 processed literal's variable is free in $\rho_0$, the $\sigma$-component of
 $\mathrm{processClauseLits}$ has $\mathrm{numFree}$ decreased by exactly
@@ -380,6 +383,7 @@ $\mathrm{path}.\mathrm{drop}(\min(\mathrm{lits.length}, \mathrm{path.length}))$.
 \lean{SwitchingLemma2.processClauseLits_numFree_ρ_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_free, SwitchingLemma2.processClauseLits}
+\difficulty{4}
 Provided each literal's variable is free in $\rho_0$ and the variables are
 pairwise distinct, the $\rho_0$-component of $\mathrm{processClauseLits}$ loses
 exactly $\min(\mathrm{lits.length}, \mathrm{path.length})$ free variables.
@@ -632,3 +636,18 @@ DNF of width $\leq w$ satisfies
   \;\leq\; \mathrm{numSRestrictions}\,n\,s \cdot (10\,s\,w)^w .
 \]
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Binomial-times-power counting inequality]
+\lean{SwitchingLemma2.choose_mul_pow_bound}
+\leanok
+\difficulty{4}
+For natural numbers $n, s, d$ with $5s \leq n$ and $d \leq s$,
+\[
+  \binom{n}{s-d} \cdot (4n)^d \;\leq\; \binom{n}{s} \cdot (5s)^d .
+\]
+This is the purely combinatorial inequality used to convert the bad-restriction count
+into the final $(10\,s\,w)^d$ form of the switching lemma.
+\end{lemma}

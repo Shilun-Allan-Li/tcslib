@@ -6,11 +6,14 @@ Flip through the theorem dataset in the terminal.
     python3 scripts/view_dataset.py --filter switching     # only ids containing "switching"
     python3 scripts/view_dataset.py --index 42             # start on entry 42
     python3 scripts/view_dataset.py --print 42             # just print entry 42 and exit (no TUI)
+    python3 scripts/view_dataset.py --print 42 --proof     # include the flattened proof file
+    python3 scripts/view_dataset.py --dump-proof 42 F.lean # write entry 42's proof file to F.lean
 
 Keys:
     →  l  n  space     next entry          ←  h  p           previous entry
     ↓  j               scroll down         ↑  k              scroll up
     PgDn ^D            page down           PgUp ^U           page up
+    f                  toggle PROOF section (flattened Lean file — often 1000+ lines)
     g                  go to entry number  /                 search id substring (n/N to repeat)
     home 0             jump to top         q  esc            quit
 """
@@ -39,16 +42,34 @@ def load(path: Path, filt: str | None):
     return recs
 
 
-def entry_lines(rec):
+def proof_meta(rec) -> str:
+    """One-line summary of the flattened proof file, or '' if the record has none."""
+    proof = rec.get("proof")
+    if not proof:
+        return ""
+    nl = proof.count("\n")
+    nup = rec.get("n_proof_upstream_decls")
+    status = "sorry-free" if rec.get("proof_complete", True) else "⚠ contains sorry"
+    return (f"{nl} lines" + (f" · {nup} upstream decls" if nup is not None else "")
+            + f" · {status}")
+
+
+def entry_lines(rec, show_proof=False):
     """Return [(text, style)] for one record. style in {head, meta, sec, code, ''}."""
     out = [(rec.get("id", "<no id>"), "head")]
     diff = rec.get("difficulty")
     meta = (f"{rec.get('kind','?')}  ·  {rec.get('source_module','?')}  ·  "
             f"{rec.get('n_upstream_defs','?')} upstream defs  ·  "
             f"difficulty: {diff if diff is not None else 'unrated'}")
+    db = rec.get("difficulty_breadth")
+    if db is not None and db != diff:
+        meta += f"  ·  breadth-adj: {db}"
     if rec.get("title"):
         meta += f"  ·  “{rec['title']}”"
     out.append((meta, "meta"))
+    pm = proof_meta(rec)
+    if pm:
+        out.append((f"proof file: {pm}", "meta"))
     out.append(("", ""))
     out.append(("── INFORMAL ──────────────────────────────────", "sec"))
     for ln in (rec.get("informal_statement") or "").splitlines() or [""]:
@@ -59,6 +80,16 @@ def entry_lines(rec):
     out.append((label + "─" * max(0, 46 - len(label)), "sec"))
     for ln in (rec.get("formal_statement") or "").splitlines():
         out.append((ln, "code"))
+    if pm:
+        out.append(("", ""))
+        if show_proof:
+            label = f"── PROOF  ({pm}) "
+            out.append((label + "─" * max(0, 46 - len(label)), "sec"))
+            for ln in rec["proof"].splitlines():
+                out.append((ln, "code"))
+        else:
+            label = f"── PROOF  ({pm} — press f to show) "
+            out.append((label + "─" * max(0, 46 - len(label)), "sec"))
     return out
 
 
@@ -116,11 +147,12 @@ def run(stdscr, recs, start_idx=0):
     top = 0
     last_search = ""
     status = ""
+    show_proof = False
 
     while True:
         h, w = stdscr.getmaxyx()
         body_h = max(1, h - 2)
-        lines = wrap_lines(entry_lines(recs[idx]), w - 1)
+        lines = wrap_lines(entry_lines(recs[idx], show_proof), w - 1)
         max_top = max(0, len(lines) - body_h)
         top = max(0, min(top, max_top))
 
@@ -140,7 +172,7 @@ def run(stdscr, recs, start_idx=0):
                 pass
         # footer
         more = "" if max_top == 0 else f"  ▲▼ {int(100 * top / max_top) if max_top else 0}%"
-        foot = status or "n/p next/prev · j/k scroll · g goto · / search · q quit"
+        foot = status or "n/p next/prev · j/k scroll · f proof · g goto · / search · q quit"
         stdscr.addstr(h - 1, 0, (foot + more + " " * w)[: w - 1], curses.A_REVERSE)
         stdscr.refresh()
         status = ""
@@ -166,6 +198,12 @@ def run(stdscr, recs, start_idx=0):
             top = 0
         elif c == curses.KEY_END:
             top = max_top
+        elif c == ord("f"):
+            show_proof = not show_proof
+            if not recs[idx].get("proof"):
+                status = "no proof field in this record"
+            elif not show_proof:
+                top = 0
         elif c == ord("g"):
             s = prompt(stdscr, "Go to entry #: ")
             if s.isdigit():
@@ -184,14 +222,22 @@ def run(stdscr, recs, start_idx=0):
                     status = f"no match for '{last_search}'"
 
 
-def print_entry(rec):
+def print_entry(rec, show_proof=False):
     diff = rec.get("difficulty")
     print(f"id: {rec.get('id')}")
     print(f"module: {rec.get('source_module')}  kind: {rec.get('kind')}  "
           f"upstream_defs: {rec.get('n_upstream_defs')}  "
           f"difficulty: {diff if diff is not None else 'unrated'}")
+    pm = proof_meta(rec)
+    if pm:
+        print(f"proof file: {pm}")
     print("\n── INFORMAL ──\n" + (rec.get("informal_statement") or ""))
     print("\n── FORMAL ──\n" + (rec.get("formal_statement") or ""))
+    if show_proof:
+        if rec.get("proof"):
+            print(f"\n── PROOF ({pm}) ──\n" + rec["proof"])
+        else:
+            print("\n── PROOF ──\n<no proof field in this record>")
 
 
 def main():
@@ -200,6 +246,10 @@ def main():
     ap.add_argument("--filter", help="Only entries whose id contains this substring.")
     ap.add_argument("--index", type=int, default=1, help="1-based entry to start on.")
     ap.add_argument("--print", type=int, metavar="N", help="Print entry N and exit (no TUI).")
+    ap.add_argument("--proof", action="store_true",
+                    help="With --print: also print the flattened proof file.")
+    ap.add_argument("--dump-proof", nargs=2, metavar=("N", "FILE"),
+                    help="Write entry N's proof field to FILE (a ready-to-check .lean) and exit.")
     args = ap.parse_args()
 
     path = Path(args.path)
@@ -211,9 +261,22 @@ def main():
         print("No entries to show" + (f" (filter={args.filter!r})" if args.filter else "") + ".")
         return 1
 
+    if args.dump_proof is not None:
+        n_str, out_file = args.dump_proof
+        if not n_str.isdigit() or not (1 <= int(n_str) <= len(recs)):
+            print(f"Index out of range 1..{len(recs)}.")
+            return 1
+        rec = recs[int(n_str) - 1]
+        if not rec.get("proof"):
+            print(f"Entry {n_str} ({rec.get('id')}) has no proof field.")
+            return 1
+        Path(out_file).write_text(rec["proof"], encoding="utf-8")
+        print(f"Wrote {rec.get('id')} proof -> {out_file}  ({proof_meta(rec)})")
+        return 0
+
     if args.print is not None:
         if 1 <= args.print <= len(recs):
-            print_entry(recs[args.print - 1])
+            print_entry(recs[args.print - 1], show_proof=args.proof)
             return 0
         print(f"Index out of range 1..{len(recs)}.")
         return 1

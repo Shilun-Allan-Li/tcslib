@@ -2,6 +2,7 @@ import TCSlib.Complexity.NPReductions.SATTo3SAT
 import TCSlib.Complexity.NPReductions.ThreeSATToClique
 import TCSlib.Complexity.NPReductions.NAESATToColoring
 import TCSlib.Complexity.NPReductions.ThreeSATToColoring
+import TCSlib.Complexity.NPReductions.SubsetSumToPartition
 
 /-
 Copyright (c) 2026 Yangshuo Zou. All rights reserved.
@@ -21,4 +22,5 @@ formalised in Lean 4 using Mathlib.
 - `NPReductions.ThreeSATToClique`: 3-SAT → Clique (conflict graph construction)
 - `NPReductions.NAESATToColoring`: NAE-SAT → 3-Coloring (variable/clause gadget)
 - `NPReductions.ThreeSATToColoring`: 3-SAT → 3-Coloring (palette + clause gadget)
+- `NPReductions.SubsetSumToPartition`: Subset Sum → Partition (two dummy-element gadget)
 -/
