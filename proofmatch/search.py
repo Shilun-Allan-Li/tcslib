@@ -136,7 +136,13 @@ def search_candidates(
         candidates.sort(key=lambda candidate: (-candidate.score, candidate.lean_name))
     selected: list[Candidate] = []
     seen: set[str] = set()
-    primary_quota = min(len(scored_by_segment[0]), max(1, (2 * limit + 2) // 3))
+    if len(scored_by_segment) == 1:
+        primary_quota = min(len(scored_by_segment[0]), limit)
+    else:
+        primary_quota = min(
+            len(scored_by_segment[0]),
+            max(1, (2 * limit + 2) // 3),
+        )
     for candidate in scored_by_segment[0][:primary_quota]:
         selected.append(candidate)
         seen.add(candidate.lean_name)

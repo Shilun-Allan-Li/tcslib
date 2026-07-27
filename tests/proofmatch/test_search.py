@@ -8,6 +8,38 @@ from proofmatch.search import prepare_rerank_payload, search_candidates
 
 
 class SearchTests(unittest.TestCase):
+    def test_single_document_segment_fills_requested_candidate_limit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset = Path(tmp) / "data.jsonl"
+            dataset.write_text(
+                "".join(
+                    '{"id":"T.%d","title":"Switching candidate %d",'
+                    '"statement_informal":"DNF restriction decision tree",'
+                    '"formal_statement":"","proof":""}\n' % (index, index)
+                    for index in range(12)
+                ),
+                encoding="utf-8",
+            )
+            index = DocumentIndex(
+                "abcdef1234567890",
+                (
+                    DocumentBlock(
+                        "pdf-abcdef123456-p001-b001",
+                        1,
+                        1,
+                        "heading",
+                        "Switching Lemma",
+                        "DNF restriction decision tree",
+                        1.0,
+                    ),
+                ),
+                (),
+            )
+
+            candidates = search_candidates(index, dataset, limit=12)
+
+            self.assertEqual(len(candidates), 12)
+
     def test_live_lecture_fixture_retrieves_main_switching_lemma(self):
         fixture = Path("blueprint/src/references/switching-lemma.md")
         if not fixture.exists():
