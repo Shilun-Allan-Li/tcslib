@@ -9,7 +9,7 @@
 - Confidence: `0.98`
 - Estimated OpenAI spend: `$0.199915`
 - Budget cap: `$1.00`
-- Blueprint status: awaiting human approval
+- Blueprint status: approved and linked
 
 ## Conversion evaluation
 
@@ -40,5 +40,5 @@ the `(4w)^d` fiber bound, and the final restriction count yielding
 `(10σw)^d`. Lean makes the construction, invariants, and arithmetic lemmas
 explicit, but no mathematical discrepancy was found.
 
-No proof-source annotation has been written to the blueprint. The approval
-command is intentionally a separate human action.
+The proof-source annotation was written to the corresponding blueprint theorem
+after explicit human approval.
