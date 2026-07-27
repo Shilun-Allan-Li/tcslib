@@ -78,9 +78,10 @@ LEAN_BIND_RE = re.compile(r"^\s*\\lean\{([^}]*)\}\s*$")
 INLINE_LEAN_RE = re.compile(r"\\lean\{([^}]*)\}")
 BEGIN_RE = re.compile(r"\\begin\{(theorem|lemma|definition|proposition|corollary|sublemma)\}(?:\[([^\]]*)\])?")
 END_ENV_RE = re.compile(r"\\end\{(theorem|lemma|definition|proposition|corollary|sublemma)\}")
-DROP_LINE_RE = re.compile(r"^\s*\\(leanok|label|uses|lean|difficulty)\b")
+DROP_LINE_RE = re.compile(r"^\s*\\(leanok|label|uses|lean|difficulty|proofsource)\b")
 USES_RE = re.compile(r"\\uses\{")
 DIFF_RE = re.compile(r"^\s*\\difficulty\{([^}]*)\}\s*$")
+PROOF_SOURCE_RE = re.compile(r"\\proofsource\{([^}]*)\}\{([^}]*)\}", re.DOTALL)
 
 _OPEN_DELIM = set("([{⟨")
 _CLOSE_DELIM = set(")]}⟩")
@@ -93,6 +94,14 @@ def normalize_name(name: str) -> str:
 def module_to_lean_path(module: str) -> Path:
     rel = module[len("TCSlib."):] if module.startswith("TCSlib.") else module
     return BASE / "TCSlib" / (rel.replace(".", "/") + ".lean")
+
+
+def display_output_path(path: Path, base: Path = BASE) -> str:
+    """Prefer a repository-relative path, but support explicit external outputs."""
+    try:
+        return str(path.relative_to(base))
+    except ValueError:
+        return str(path)
 
 
 # --------------------------------------------------------------------- blueprint
@@ -114,11 +123,13 @@ def parse_blueprint() -> dict[str, dict]:
             body = []
             uses_raw = ""
             difficulty = None        # \difficulty{N}: intrinsic, tactic-only proof rating
+            metadata_lines = []
             skip_braces = 0   # >0 while inside a still-open dropped macro
             cap_uses = 0      # >0 while capturing a (possibly multi-line) \uses{...}
             i += 1
             while i < len(lines) and not END_ENV_RE.search(lines[i]):
                 line = lines[i]
+                metadata_lines.append(line)
                 if cap_uses > 0:
                     uses_raw += " " + line
                     cap_uses += line.count("{") - line.count("}")
@@ -163,9 +174,21 @@ def parse_blueprint() -> dict[str, dict]:
                 informal = INLINE_LEAN_RE.sub(lambda m: " " + m.group(1), informal)
                 informal = re.sub(r"\n{3,}", "\n\n", informal).strip()
                 uses = [u.strip() for u in re.sub(r"[{}]", " ", uses_raw).split(",") if u.strip()]
+                proof_sources = [
+                    {
+                        "document": match.group(1).strip(),
+                        "blocks": [
+                            block.strip()
+                            for block in match.group(2).split(",")
+                            if block.strip()
+                        ],
+                    }
+                    for match in PROOF_SOURCE_RE.finditer("\n".join(metadata_lines))
+                ]
                 for b in bindings:
                     out.setdefault(b, {"env": env, "informal": informal, "title": title,
-                                       "uses": uses, "difficulty": difficulty})
+                                       "uses": uses, "difficulty": difficulty,
+                                       "proof_sources": proof_sources})
             i += 1
     return out
 
@@ -1345,6 +1368,7 @@ def main():
                 # α, α², ... — see breadth_difficulty).
                 "difficulty_breadth": (None if proof_text is not None and "sorry" in proof_text
                                        else breadth_difficulty(name)),
+                "proof_sources": info.get("proof_sources", []),
             }
             if proof_builder is not None:
                 record["proof"] = proof_text
@@ -1358,7 +1382,7 @@ def main():
             n_written += 1
 
     print()
-    print(f"Wrote {n_written} records -> {out_path.relative_to(BASE)}")
+    print(f"Wrote {n_written} records -> {display_output_path(out_path)}")
     print(f"Theorems without a blueprint informal statement (skipped): {n_missing}")
     if n_written:
         print(f"Avg upstream definitions per theorem: {total_defs / n_written:.1f}")
