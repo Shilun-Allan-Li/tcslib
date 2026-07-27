@@ -7,10 +7,12 @@ from proofmatch.budget import Budget
 from proofmatch.catalog import BlueprintBinding
 from proofmatch.chapter import (
     _upstream_inputs,
+    apply_theorem_proposals,
     compare_relevant_candidates,
     expand_seed_blueprint_files,
     preflight_chapter,
 )
+from proofmatch.blueprint import SourceProposal
 from proofmatch.models import (
     Candidate,
     ComparisonVerdict,
@@ -22,6 +24,39 @@ from proofmatch.models import (
 
 
 class ChapterTests(unittest.TestCase):
+    def test_blueprint_failure_does_not_block_other_theorems(self):
+        good = SourceProposal(
+            Path("good.tex"),
+            "T.good",
+            object(),
+        )
+        bad = SourceProposal(
+            Path("bad.tex"),
+            "T.bad",
+            object(),
+        )
+        applied = []
+
+        def fake_plan(proposals):
+            if proposals[0].lean_name == "T.bad":
+                raise ValueError("broken environment")
+            return (f"mutation:{proposals[0].lean_name}",)
+
+        with (
+            patch("proofmatch.chapter.plan_blueprint_mutations", fake_plan),
+            patch(
+                "proofmatch.chapter.apply_blueprint_mutations",
+                side_effect=lambda mutations: applied.extend(mutations),
+            ),
+        ):
+            mutations, failures = apply_theorem_proposals(
+                {"T.bad": [bad], "T.good": [good]}
+            )
+
+        self.assertEqual(mutations, ("mutation:T.good",))
+        self.assertEqual(failures[0]["lean_name"], "T.bad")
+        self.assertEqual(applied, ["mutation:T.good"])
+
     def test_seed_expansion_includes_every_theorem_in_selected_blueprint_file(self):
         block = DocumentBlock(
             "pdf-abcdef123456-p001-b001",

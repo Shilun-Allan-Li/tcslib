@@ -4,7 +4,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, replace
 from pathlib import Path
 
-from proofmatch.agents import CodexAgent
+from proofmatch.agents import AgentOutputError, CodexAgent
 from proofmatch.blueprint import (
     ProofSource,
     ProofStep,
@@ -13,7 +13,7 @@ from proofmatch.blueprint import (
     apply_blueprint_mutations,
     plan_blueprint_mutations,
 )
-from proofmatch.budget import Budget
+from proofmatch.budget import Budget, BudgetExceeded
 from proofmatch.catalog import (
     BlueprintBinding,
     load_blueprint_bindings,
@@ -150,6 +150,29 @@ def preflight_chapter(
     return tuple(estimates)
 
 
+def apply_theorem_proposals(
+    proposal_groups: Mapping[str, Sequence[object]],
+) -> tuple[tuple[object, ...], tuple[dict[str, str], ...]]:
+    applied = []
+    failures = []
+    for lean_name in sorted(proposal_groups):
+        try:
+            mutations = plan_blueprint_mutations(
+                tuple(proposal_groups[lean_name])
+            )
+            apply_blueprint_mutations(mutations)
+            applied.extend(mutations)
+        except Exception as error:
+            failures.append(
+                {
+                    "lean_name": lean_name,
+                    "stage": "blueprint",
+                    "error": str(error),
+                }
+            )
+    return tuple(applied), tuple(failures)
+
+
 def run_chapter_match(
     source: Path,
     index: DocumentIndex,
@@ -209,9 +232,9 @@ def run_chapter_match(
         budget,
     )
     by_candidate = {item.lean_name: item for item in candidates}
-    by_id = {block.block_id: block for block in index.blocks}
     document = source.name.removesuffix(".md")
-    proposals = []
+    proposal_groups: dict[str, list[object]] = {}
+    propagation_failures = []
     manifests = []
     same_candidates = []
     for verdict in verdicts:
@@ -225,15 +248,28 @@ def run_chapter_match(
     upstream_inputs = {}
     upstream_shadow = Budget(budget.cap_usd, budget.spent_usd)
     for candidate in same_candidates:
-        inputs = _upstream_inputs(
-            candidate, index, dataset, dependency_graph
-        )
+        try:
+            inputs = _upstream_inputs(
+                candidate, index, dataset, dependency_graph
+            )
+        except ValueError as error:
+            propagation_failures.append(
+                {
+                    "lean_name": candidate.lean_name,
+                    "stage": "upstream-preflight",
+                    "error": str(error),
+                }
+            )
+            inputs = ((), (), ())
         upstream_inputs[candidate.lean_name] = inputs
         for estimate in inputs[2]:
             upstream_shadow.require(estimate)
     for candidate in same_candidates:
         binding = bindings[candidate.lean_name]
-        proposals.append(
+        theorem_proposals = proposal_groups.setdefault(
+            candidate.lean_name, []
+        )
+        theorem_proposals.append(
             SourceProposal(
                 binding.tex_path,
                 candidate.lean_name,
@@ -242,29 +278,41 @@ def run_chapter_match(
         )
         declarations, blocks, _ = upstream_inputs[candidate.lean_name]
         if declarations:
-            assignments = map_upstream_batches(
-                declarations,
-                blocks,
-                CodexAgent(model="gpt-5.6-luna"),
-                budget,
-            )
-            manifest = build_manifest(
-                candidate.lean_name,
-                document,
-                index,
-                candidate.proof,
-                declarations,
-                assignments,
-            )
-            validate_manifest(
-                manifest,
-                index,
-                candidate.proof,
-                declarations,
-                {block.block_id for block in index.blocks},
-            )
+            try:
+                assignments = map_upstream_batches(
+                    declarations,
+                    blocks,
+                    CodexAgent(model="gpt-5.6-luna"),
+                    budget,
+                )
+                manifest = build_manifest(
+                    candidate.lean_name,
+                    document,
+                    index,
+                    candidate.proof,
+                    declarations,
+                    assignments,
+                )
+                validate_manifest(
+                    manifest,
+                    index,
+                    candidate.proof,
+                    declarations,
+                    {block.block_id for block in index.blocks},
+                )
+            except BudgetExceeded:
+                raise
+            except (AgentOutputError, ValueError) as error:
+                propagation_failures.append(
+                    {
+                        "lean_name": candidate.lean_name,
+                        "stage": "upstream",
+                        "error": str(error),
+                    }
+                )
+                continue
             manifests.append(manifest)
-            proposals.append(
+            theorem_proposals.append(
                 StepProposal(
                     binding.tex_path,
                     candidate.lean_name,
@@ -279,8 +327,10 @@ def run_chapter_match(
                     ),
                 )
             )
-    mutations = plan_blueprint_mutations(tuple(proposals))
-    apply_blueprint_mutations(mutations)
+    mutations, blueprint_failures = apply_theorem_proposals(
+        proposal_groups
+    )
+    propagation_failures.extend(blueprint_failures)
     return {
         "source_markdown": str(source.resolve()),
         "source_fingerprint": index.source_fingerprint,
@@ -288,7 +338,10 @@ def run_chapter_match(
         "relevance": [asdict(item) for item in decisions],
         "verdicts": [asdict(item) for item in verdicts],
         "upstream_manifests": [asdict(item) for item in manifests],
+        "propagation_failures": propagation_failures,
         "estimated_spend_usd": str(budget.spent_usd),
-        "propagation_status": "applied",
+        "propagation_status": (
+            "partial" if propagation_failures else "applied"
+        ),
         "mutated_files": [str(item.tex_path) for item in mutations],
     }

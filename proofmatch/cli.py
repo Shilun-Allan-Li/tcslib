@@ -259,6 +259,12 @@ def _match(
         f"Chapter run {run_id}: {len(verdicts)} compared; "
         f"{same} same and propagated"
     )
+    failures = result.get("propagation_failures", [])
+    if failures:
+        print(
+            f"Propagation failures: {len(failures)} "
+            "(recorded in chapter_review.json)"
+        )
     return run_id
 
 
