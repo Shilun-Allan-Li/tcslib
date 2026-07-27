@@ -204,30 +204,51 @@ def map_upstream_batches(
     proof_blocks: Iterable[DocumentBlock],
     agent,
     budget,
+    *,
+    max_characters: int = 48_000,
+    load_batch=None,
+    save_batch=None,
 ) -> tuple[ProofStepAssignment, ...]:
     ordered = tuple(declarations)
     blocks = tuple(proof_blocks)
     allowed_blocks = {block.block_id for block in blocks}
-    batches = batch_declarations(ordered)
+    batches = batch_declarations(ordered, max_characters=max_characters)
     estimates = estimate_upstream_batches(batches, blocks)
     assignments = []
-    for batch, estimate in zip(batches, estimates, strict=True):
-        budget.require(estimate)
-        output = agent.run(
-            "map_upstream",
-            {
-                "declarations": [asdict(item) for item in batch],
-                "proof_blocks": [
-                    {
-                        "block_id": block.block_id,
-                        "page": block.page,
-                        "title": block.title,
-                        "markdown": block.markdown,
-                    }
-                    for block in blocks
-                ],
-            },
+    for position, (batch, estimate) in enumerate(
+        zip(batches, estimates, strict=True),
+        start=1,
+    ):
+        payload = {
+            "declarations": [asdict(item) for item in batch],
+            "proof_blocks": [
+                {
+                    "block_id": block.block_id,
+                    "page": block.page,
+                    "title": block.title,
+                    "markdown": block.markdown,
+                }
+                for block in blocks
+            ],
+        }
+        fingerprint = _sha256_text(
+            json.dumps(
+                payload,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
         )
+        output = (
+            load_batch(position, fingerprint)
+            if load_batch is not None
+            else None
+        )
+        if output is None:
+            budget.require(estimate)
+            output = agent.run("map_upstream", payload)
+            if save_batch is not None:
+                save_batch(position, fingerprint, output)
         rows = output.get("assignments")
         if not isinstance(rows, list):
             raise ValueError("agent output must contain an assignments array")

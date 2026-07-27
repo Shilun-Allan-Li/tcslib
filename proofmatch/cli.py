@@ -8,17 +8,32 @@ from pathlib import Path
 
 from proofmatch.agents import CodexAgent
 from proofmatch.artifacts import RunStore, sha256_file
-from proofmatch.blueprint import ProofSource, insert_approved_source
+from proofmatch.blueprint import (
+    ProofSource,
+    ProofStep,
+    insert_approved_source,
+    insert_approved_steps,
+)
 from proofmatch.budget import Budget, StageEstimate, estimate_cleanup, token_cost
 from proofmatch.compare import compare_candidate, render_difference_report
 from proofmatch.document import parse_validated_markdown, repair_document
 from proofmatch.extraction import extract_pdf
-from proofmatch.models import Candidate
+from proofmatch.models import Candidate, ProofStepManifest, load_typed
 from proofmatch.search import prepare_rerank_payload, search_candidates
+from proofmatch.upstream import (
+    batch_declarations,
+    build_manifest,
+    estimate_upstream_batches,
+    load_upstream_declarations,
+    map_upstream_batches,
+    render_upstream_review,
+    validate_manifest,
+)
 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
 DEFAULT_DATASET = REPOSITORY / "dataset" / "tcslib_theorems.jsonl"
+DEFAULT_DEPENDENCY_GRAPH = REPOSITORY / "dep_graph.json"
 WORK_ROOT = REPOSITORY / ".proofmatch-work"
 FIXTURE_NAME = "switching-lemma.pdf"
 
@@ -68,6 +83,25 @@ def build_parser() -> argparse.ArgumentParser:
     review = subcommands.add_parser("review")
     review.add_argument("run_id")
     review.add_argument(
+        "decision",
+        choices=("approve", "reject", "defer"),
+        nargs="?",
+    )
+
+    map_upstream = subcommands.add_parser("map-upstream")
+    map_upstream.add_argument("run_id")
+    map_upstream.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
+    map_upstream.add_argument(
+        "--dependency-graph",
+        type=Path,
+        default=DEFAULT_DEPENDENCY_GRAPH,
+    )
+    map_upstream.add_argument("--dry-run", action="store_true")
+    _add_budget(map_upstream)
+
+    review_upstream = subcommands.add_parser("review-upstream")
+    review_upstream.add_argument("run_id")
+    review_upstream.add_argument(
         "decision",
         choices=("approve", "reject", "defer"),
         nargs="?",
@@ -274,10 +308,223 @@ def _review(run_id: str, decision: str | None) -> int:
     return 0
 
 
+def _approved_same_review(store: RunStore) -> dict[str, object]:
+    review = store.read_json("review")
+    decision = store.read_json("decision")
+    if review is None:
+        raise ValueError("upstream mapping requires a theorem-level review")
+    verdict = review.get("verdict")
+    if not isinstance(verdict, dict) or verdict.get("verdict") != "same":
+        raise ValueError("upstream mapping requires a same theorem verdict")
+    if decision is None or decision.get("decision") != "approve":
+        raise ValueError("upstream mapping requires theorem-level approval")
+    return review
+
+
+def _proof_context(index, verdict: dict[str, object]):
+    raw_blocks = verdict.get("document_blocks")
+    if not isinstance(raw_blocks, list):
+        raise ValueError("theorem review has no document block list")
+    requested = [str(item) for item in raw_blocks]
+    by_id = {block.block_id: block for block in index.blocks}
+    missing = [block for block in requested if block not in by_id]
+    if missing:
+        raise ValueError(
+            "theorem review cites stale Markdown blocks: "
+            + ", ".join(missing)
+        )
+    return tuple(by_id[block] for block in requested)
+
+
+def _map_upstream(
+    run_id: str,
+    dataset: Path,
+    dependency_graph: Path,
+    max_cost: Decimal | None,
+    *,
+    dry_run: bool,
+) -> int:
+    if max_cost is None:
+        raise ValueError("--max-cost is required for upstream mapping")
+    store = RunStore(WORK_ROOT, run_id)
+    review = _approved_same_review(store)
+    candidate = review.get("candidate")
+    verdict = review.get("verdict")
+    if not isinstance(candidate, dict) or not isinstance(verdict, dict):
+        raise ValueError("theorem review artifact is malformed")
+    theorem = str(candidate.get("lean_name") or "")
+    proof_text = str(candidate.get("proof") or "")
+    source = Path(str(review.get("source_markdown") or ""))
+    if not theorem or not proof_text or not source.is_file():
+        raise ValueError("theorem review lacks proof or source Markdown")
+    index = parse_validated_markdown(source)
+    proof_blocks = _proof_context(index, verdict)
+    declarations = load_upstream_declarations(
+        dataset,
+        dependency_graph,
+        theorem,
+    )
+    batches = batch_declarations(declarations)
+    estimates = estimate_upstream_batches(batches, proof_blocks)
+    prior_spend = Decimal(str(review.get("estimated_spend_usd") or "0"))
+    estimate_budget = Budget(max_cost, prior_spend)
+    for estimate in estimates:
+        estimate_budget.require(estimate)
+    mapping_estimate = estimate_budget.spent_usd - prior_spend
+    print(
+        f"Upstream mapping: {len(declarations)} declarations in "
+        f"{len(batches)} batches; estimated additional ${mapping_estimate:.6f}; "
+        f"estimated total ${estimate_budget.spent_usd:.6f}/{max_cost:.2f}"
+    )
+    if dry_run:
+        return 0
+
+    budget = Budget(max_cost, prior_spend)
+
+    def load_batch(position: int, fingerprint: str):
+        cached = store.read_json(f"upstream_batch_{position:03d}")
+        if cached is None or cached.get("fingerprint") != fingerprint:
+            return None
+        output = cached.get("output")
+        return output if isinstance(output, dict) else None
+
+    def save_batch(
+        position: int,
+        fingerprint: str,
+        output: dict[str, object],
+    ) -> None:
+        store.write_json(
+            f"upstream_batch_{position:03d}",
+            {"fingerprint": fingerprint, "output": output},
+        )
+
+    assignments = map_upstream_batches(
+        declarations,
+        proof_blocks,
+        CodexAgent(model="gpt-5.6-luna"),
+        budget,
+        load_batch=load_batch,
+        save_batch=save_batch,
+    )
+    manifest = build_manifest(
+        theorem,
+        str(review.get("document") or source.stem),
+        index,
+        proof_text,
+        declarations,
+        assignments,
+    )
+    allowed_blocks = {block.block_id for block in proof_blocks}
+    validate_manifest(
+        manifest,
+        index,
+        proof_text,
+        declarations,
+        allowed_blocks,
+    )
+    store.write_json(
+        "upstream_input",
+        {
+            "dataset": str(dataset.resolve()),
+            "dependency_graph": str(dependency_graph.resolve()),
+            "source_markdown": str(source.resolve()),
+            "estimated_prior_spend_usd": str(prior_spend),
+            "estimated_mapping_spend_usd": str(mapping_estimate),
+            "estimated_total_spend_usd": str(estimate_budget.spent_usd),
+            "allowed_blocks": sorted(allowed_blocks),
+        },
+    )
+    store.write_json("proof_steps", asdict(manifest))
+    review_path = store.stage_path("proof_steps_review", ".md")
+    review_path.parent.mkdir(parents=True, exist_ok=True)
+    review_path.write_text(
+        render_upstream_review(
+            manifest,
+            {block.block_id: block for block in proof_blocks},
+        ),
+        encoding="utf-8",
+    )
+    print(f"Upstream review: {review_path}")
+    print(f"Next: python3 scripts/proofmatch.py review-upstream {run_id}")
+    return 0
+
+
+def _review_upstream(run_id: str, decision: str | None) -> int:
+    store = RunStore(WORK_ROOT, run_id)
+    manifest_path = store.stage_path("proof_steps")
+    review_path = store.stage_path("proof_steps_review", ".md")
+    if not manifest_path.exists() or not review_path.exists():
+        raise ValueError(f"upstream mapping for {run_id} is incomplete")
+    print(review_path.read_text(encoding="utf-8"))
+    if decision is None:
+        decision = input("Decision [approve/reject/defer]: ").strip().casefold()
+    if decision not in {"approve", "reject", "defer"}:
+        raise ValueError("decision must be approve, reject, or defer")
+    if decision == "approve":
+        review = _approved_same_review(store)
+        candidate = review["candidate"]
+        verdict = review["verdict"]
+        if not isinstance(candidate, dict) or not isinstance(verdict, dict):
+            raise ValueError("theorem review artifact is malformed")
+        upstream_input = store.read_json("upstream_input")
+        if upstream_input is None:
+            raise ValueError("upstream input artifact is missing")
+        source = Path(str(upstream_input["source_markdown"]))
+        dataset = Path(str(upstream_input["dataset"]))
+        dependency_graph = Path(str(upstream_input["dependency_graph"]))
+        index = parse_validated_markdown(source)
+        proof_blocks = _proof_context(index, verdict)
+        theorem = str(candidate["lean_name"])
+        proof_text = str(candidate["proof"])
+        declarations = load_upstream_declarations(
+            dataset,
+            dependency_graph,
+            theorem,
+        )
+        manifest = load_typed(manifest_path, ProofStepManifest)
+        validate_manifest(
+            manifest,
+            index,
+            proof_text,
+            declarations,
+            {block.block_id for block in proof_blocks},
+        )
+        steps = tuple(
+            ProofStep(
+                assignment.lean_name,
+                assignment.relation,
+                manifest.document,
+                assignment.document_blocks,
+            )
+            for assignment in manifest.assignments
+        )
+        insert_approved_steps(
+            _find_blueprint(theorem),
+            theorem,
+            steps,
+            approved=True,
+        )
+        print("Approved upstream proof steps written to blueprint.")
+    else:
+        print(f"Upstream decision recorded as {decision}; blueprint unchanged.")
+    store.write_json("upstream_decision", {"decision": decision})
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "review":
         return _review(args.run_id, args.decision)
+    if args.command == "map-upstream":
+        return _map_upstream(
+            args.run_id,
+            args.dataset,
+            args.dependency_graph,
+            args.max_cost,
+            dry_run=args.dry_run,
+        )
+    if args.command == "review-upstream":
+        return _review_upstream(args.run_id, args.decision)
     if args.command == "estimate":
         estimate = _estimate_source(args.source)
         print(

@@ -97,6 +97,46 @@ class UpstreamTests(unittest.TestCase):
                 Budget(Decimal("1.00")),
             )
 
+    def test_mapping_resumes_from_validated_batch_artifacts(self):
+        declarations = (declaration("T.first"), declaration("T.second"))
+        cached = {
+            1: {
+                "assignments": [
+                    {
+                        "lean_name": "T.first",
+                        "relation": "context",
+                        "document_blocks": [BLOCK_1],
+                        "rationale": "First proof step.",
+                    }
+                ]
+            },
+            2: {
+                "assignments": [
+                    {
+                        "lean_name": "T.second",
+                        "relation": "context",
+                        "document_blocks": [BLOCK_1],
+                        "rationale": "Second proof step.",
+                    }
+                ]
+            },
+        }
+        agent = FakeAgent([])
+
+        result = map_upstream_batches(
+            declarations,
+            (block(),),
+            agent,
+            Budget(Decimal("1.00")),
+            max_characters=1,
+            load_batch=lambda position, _fingerprint: cached.get(position),
+        )
+
+        self.assertEqual(
+            [item.lean_name for item in result],
+            ["T.first", "T.second"],
+        )
+
     def test_manifest_rejects_changed_markdown_proof_or_dependency_order(self):
         declarations = (declaration("T.first"), declaration("T.second"))
         assignments = (

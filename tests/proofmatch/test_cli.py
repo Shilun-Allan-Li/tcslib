@@ -4,6 +4,7 @@ import unittest
 from contextlib import redirect_stdout
 from decimal import Decimal
 from pathlib import Path
+from unittest.mock import patch
 
 from proofmatch.artifacts import RunStore
 from proofmatch.cli import (
@@ -27,6 +28,93 @@ A width-w DNF under a random restriction has a shallow decision tree.
 
 
 class CliTests(unittest.TestCase):
+    def test_parser_exposes_upstream_mapping_commands(self):
+        mapping = build_parser().parse_args(
+            ["map-upstream", "abcdef123456", "--max-cost", "1.00", "--dry-run"]
+        )
+        review = build_parser().parse_args(
+            ["review-upstream", "abcdef123456", "approve"]
+        )
+
+        self.assertEqual(mapping.command, "map-upstream")
+        self.assertTrue(mapping.dry_run)
+        self.assertEqual(review.command, "review-upstream")
+        self.assertEqual(review.decision, "approve")
+
+    def test_map_upstream_requires_theorem_level_approval(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            store = RunStore(root, "abcdef123456")
+            store.write_json(
+                "review",
+                {
+                    "verdict": {"verdict": "same"},
+                    "candidate": {"lean_name": "SwitchingLemma2.switching_lemma"},
+                },
+            )
+            store.write_json("decision", {"decision": "defer"})
+
+            with patch("proofmatch.cli.WORK_ROOT", root):
+                with self.assertRaisesRegex(ValueError, "theorem-level approval"):
+                    main(
+                        [
+                            "map-upstream",
+                            "abcdef123456",
+                            "--max-cost",
+                            "1.00",
+                            "--dry-run",
+                        ]
+                    )
+
+    def test_map_upstream_dry_run_writes_no_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            store = RunStore(root, "abcdef123456")
+            store.write_json(
+                "review",
+                {
+                    "source_markdown": str(
+                        Path(
+                            "blueprint/src/references/switching-lemma.md"
+                        ).resolve()
+                    ),
+                    "document": "switching-lemma",
+                    "candidate": {
+                        "lean_name": "SwitchingLemma2.switching_lemma",
+                        "proof": "by exact True.intro",
+                    },
+                    "verdict": {
+                        "verdict": "same",
+                        "document_blocks": [
+                            "pdf-b5e074215b9e-p001-b008",
+                            "pdf-b5e074215b9e-p002-b001",
+                            "pdf-b5e074215b9e-p002-b002",
+                            "pdf-b5e074215b9e-p002-b003",
+                            "pdf-b5e074215b9e-p002-b004",
+                        ],
+                    },
+                    "estimated_spend_usd": "0.199915",
+                },
+            )
+            store.write_json("decision", {"decision": "approve"})
+
+            with patch("proofmatch.cli.WORK_ROOT", root):
+                result = main(
+                    [
+                        "map-upstream",
+                        "abcdef123456",
+                        "--max-cost",
+                        "1.00",
+                        "--dry-run",
+                    ]
+                )
+
+            self.assertEqual(result, 0)
+            self.assertFalse(store.stage_path("proof_steps").exists())
+            self.assertFalse(
+                store.stage_path("proof_steps_review", ".md").exists()
+            )
+
     def test_same_rerun_removes_stale_difference_report(self):
         with tempfile.TemporaryDirectory() as tmp:
             store = RunStore(Path(tmp), "abcdef123456")
