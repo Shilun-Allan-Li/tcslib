@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decisions"],
+  "properties": {
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["lean_name", "status", "document_blocks", "rationale"],
+        "properties": {
+          "lean_name": {"type": "string"},
+          "status": {"enum": ["relevant", "irrelevant", "uncertain"]},
+          "document_blocks": {"type": "array", "items": {"type": "string"}},
+          "rationale": {"type": "string"}
+        }
+      }
+    }
+  }
+}

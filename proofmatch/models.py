@@ -61,6 +61,14 @@ class Candidate:
 
 
 @dataclass(frozen=True)
+class RelevanceDecision:
+    lean_name: str
+    status: Literal["relevant", "irrelevant", "uncertain"]
+    document_blocks: tuple[str, ...]
+    rationale: str
+
+
+@dataclass(frozen=True)
 class UpstreamDeclaration:
     lean_name: str
     kind: str

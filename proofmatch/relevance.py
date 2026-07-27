@@ -1,0 +1,123 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
+
+from proofmatch.budget import Budget, StageEstimate, token_cost
+from proofmatch.models import (
+    Candidate,
+    DocumentIndex,
+    RelevanceDecision,
+)
+
+
+def prepare_relevance_payload(
+    candidates: Sequence[Candidate],
+    index: DocumentIndex,
+) -> dict[str, object]:
+    by_id = {block.block_id: block for block in index.blocks}
+    return {
+        "candidates": [
+            {
+                "lean_name": item.lean_name,
+                "title": item.title,
+                "statement": item.statement,
+                "formal_statement": item.formal_statement,
+                "document_blocks": [
+                    {
+                        "block_id": block_id,
+                        "kind": by_id[block_id].kind,
+                        "title": by_id[block_id].title,
+                        "markdown": by_id[block_id].markdown,
+                    }
+                    for block_id in item.document_blocks
+                ],
+            }
+            for item in candidates
+        ]
+    }
+
+
+def estimate_relevance(
+    candidates: Sequence[Candidate],
+    index: DocumentIndex,
+) -> StageEstimate:
+    payload = prepare_relevance_payload(candidates, index)
+    input_tokens = (len(str(payload)) + 3) // 4 + 1_000
+    output_tokens = 250 * len(candidates) + 500
+    return StageEstimate(
+        "chapter relevance",
+        input_tokens,
+        output_tokens,
+        token_cost("gpt-5.6-luna", input_tokens, output_tokens),
+    )
+
+
+def decisions_from_agent(
+    value: dict[str, object],
+    candidates: Sequence[Candidate],
+    index: DocumentIndex,
+) -> tuple[RelevanceDecision, ...]:
+    rows = value.get("decisions")
+    if not isinstance(rows, list):
+        raise ValueError("relevance output must contain decisions")
+    candidate_by_name = {item.lean_name: item for item in candidates}
+    known_blocks = {block.block_id for block in index.blocks}
+    decisions = []
+    seen = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError("relevance decision must be an object")
+        name = str(row.get("lean_name") or "")
+        if name not in candidate_by_name or name in seen:
+            raise ValueError(f"invalid or duplicate relevance candidate: {name}")
+        seen.add(name)
+        status = str(row.get("status") or "")
+        if status not in {"relevant", "irrelevant", "uncertain"}:
+            raise ValueError(f"invalid relevance status: {status}")
+        raw_blocks = row.get("document_blocks")
+        if not isinstance(raw_blocks, list) or not all(
+            isinstance(item, str) for item in raw_blocks
+        ):
+            raise ValueError("relevance document_blocks must be strings")
+        blocks = tuple(raw_blocks)
+        if any(block not in known_blocks for block in blocks):
+            raise ValueError("relevance decision cites unknown source block")
+        allowed = set(candidate_by_name[name].document_blocks)
+        if any(block not in allowed for block in blocks):
+            raise ValueError("relevance decision cites unproposed source block")
+        if status == "irrelevant" and blocks:
+            raise ValueError("irrelevant candidate must cite no blocks")
+        if status != "irrelevant" and not blocks:
+            raise ValueError("relevant candidate must cite source blocks")
+        decisions.append(
+            RelevanceDecision(
+                name,
+                status,  # type: ignore[arg-type]
+                blocks,
+                str(row.get("rationale") or ""),
+            )
+        )
+    missing = set(candidate_by_name) - seen
+    if missing:
+        raise ValueError(
+            "relevance output omitted candidates: " + ", ".join(sorted(missing))
+        )
+    order = {item.lean_name: position for position, item in enumerate(candidates)}
+    return tuple(sorted(decisions, key=lambda item: order[item.lean_name]))
+
+
+def requires_comparison(decision: RelevanceDecision) -> bool:
+    return decision.status in {"relevant", "uncertain"}
+
+
+def classify_relevance(
+    candidates: Sequence[Candidate],
+    index: DocumentIndex,
+    agent,
+    budget: Budget,
+) -> tuple[RelevanceDecision, ...]:
+    budget.require(estimate_relevance(candidates, index))
+    output = agent.run(
+        "relevance", prepare_relevance_payload(candidates, index)
+    )
+    return decisions_from_agent(output, candidates, index)
