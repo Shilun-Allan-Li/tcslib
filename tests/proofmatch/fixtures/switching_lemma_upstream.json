@@ -1,0 +1,1400 @@
+{
+  "assignments": [
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "BoolCircuit.Lit",
+      "rationale": "Literal representation supports the DNF literals used in the proof.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "BoolCircuit.Lit.eval",
+      "rationale": "Evaluation of a literal supports term evaluation under restrictions.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "Literal",
+      "rationale": "The proof explicitly reasons about literals in each term.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "Literal.eval",
+      "rationale": "Literal evaluation formalizes whether a restriction kills or fixes a literal.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "Term",
+      "rationale": "The proof explicitly represents the DNF as terms containing literals.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "Term.width",
+      "rationale": "Term width supports the bound on the number of variables processed per term.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "Term.eval",
+      "rationale": "Term evaluation supports the killed and fixed term semantics.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "DNF",
+      "rationale": "The proof explicitly writes the formula as a disjunction of terms.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "DNF.width",
+      "rationale": "DNF width formalizes the hypothesis that every term has width at most w.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "DNF.eval",
+      "rationale": "DNF evaluation formalizes the disjunction semantics used throughout.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "CNF",
+      "rationale": "This unused alternate formula representation is implementation context for the circuit module.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "DecisionTree",
+      "rationale": "The proof explicitly constructs a canonical decision tree.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "DecisionTree.eval",
+      "rationale": "Tree evaluation formalizes the function computed by the canonical tree.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "DecisionTree.depth",
+      "rationale": "The proof measures canonical-tree depth and compares it with d.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "DecisionTree.deepPath",
+      "rationale": "The proof selects a path longer than d and records its first d steps.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "DecisionTree.length_deepPath",
+      "rationale": "This bookkeeping lemma relates the selected path representation to tree depth.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "buildFullDTree",
+      "rationale": "It supplies a general decision-tree construction underlying the depth formalization.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "buildFullDTree_depth",
+      "rationale": "It bounds the auxiliary full-tree depth used to establish decision-tree existence.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "buildFullDTree_eval",
+      "rationale": "It establishes correctness of the auxiliary full decision tree.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p001-b008"
+      ],
+      "lean_name": "dtDepth",
+      "rationale": "The theorem explicitly uses decision-tree depth of the restricted function.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Restriction",
+      "rationale": "The proof explicitly uses random s-restrictions and their extensions.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Restriction.freeVars",
+      "rationale": "The canonical tree branches on variables remaining free under a restriction.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Restriction.numFree",
+      "rationale": "The count of free variables supports the canonical construction's termination and depth bookkeeping.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Restriction.extend",
+      "rationale": "It formalizes evaluating the restricted function on assignments to free variables.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.instFintypeRestriction",
+      "rationale": "The finite restriction-space instance supports counting restrictions.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b001"
+      ],
+      "lean_name": "SwitchingLemma2.IsRestriction",
+      "rationale": "The proof works with s-restrictions as the domain of bad restrictions.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Literal.killedBy",
+      "rationale": "The proof explicitly defines killing a term by setting one literal to 0.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Literal.fixedBy",
+      "rationale": "The proof explicitly defines fixing a term by setting all literals to 1.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Term.killedBy",
+      "rationale": "The proof states that a term is killed when one of its literals is killed.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Term.fixedBy",
+      "rationale": "The proof states that a term is fixed when all its literals are fixed.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.restrictFn",
+      "rationale": "The proof repeatedly refers to the restricted function f|\u03b2.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b001"
+      ],
+      "lean_name": "SwitchingLemma2.IsBadRestriction",
+      "rationale": "The proof explicitly defines bad restrictions by restricted decision-tree depth exceeding d.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.numSRestrictions",
+      "rationale": "The counting argument uses the number of s-restrictions represented by binomial and power factors.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Literal.killedBy_eval_false",
+      "rationale": "It formalizes the stated consequence that a killed literal evaluates to 0.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.Literal.fixedBy_eval_true",
+      "rationale": "It formalizes the stated consequence that a fixed literal evaluates to 1.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.dtDepth_le_of_tree",
+      "rationale": "It transfers correctness and depth of a constructed tree to the restricted depth measure.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.list_any_eq_false",
+      "rationale": "It is list-level bookkeeping for proving that all terms are killed.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.list_all_eq_false_of_mem",
+      "rationale": "It is list-level bookkeeping for propagating one killed literal to a killed term.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.fixedTerm_implies_dtDepth_zero",
+      "rationale": "The proof explicitly says fixing any term makes the whole formula constant 1.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.killedAll_implies_dtDepth_zero",
+      "rationale": "The proof explicitly says killing all terms makes the restricted formula constant.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.killedBy_of_nonfree_agree",
+      "rationale": "It supports recovering the first clause by preserving killed clauses under restriction agreement.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.first_clause_preserved",
+      "rationale": "The encoding recovery explicitly identifies and preserves the first clause fixed under \u03b3.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.term_length_le_width",
+      "rationale": "The proof explicitly bounds each term's literals by the formula width w.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.zipIdx_drop_spec",
+      "rationale": "It supports encoding and recovering positions of variables within a term.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.numFree_update_lt",
+      "rationale": "It proves that branching on a free variable reduces the remaining free-variable count.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree",
+      "rationale": "It implements the complete decision subtree over the free variables of a selected term.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree",
+      "rationale": "It is the formal canonical decision tree described in the proof.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.extend_update_self",
+      "rationale": "It establishes that fixing a branch variable consistently preserves the represented assignment.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_eval",
+      "rationale": "It proves evaluation correctness for the term subtree used in the canonical construction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_extend_eq",
+      "rationale": "It shows subtree restriction updates preserve the extended assignment.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_foldl_preserves_nonnone",
+      "rationale": "It supports the auxiliary restriction encoding by tracking already fixed variables.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_foldl_sets_member",
+      "rationale": "It tracks which term variables are set while forming the encoded restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_foldl_numFree_lt",
+      "rationale": "It provides the strict free-variable decrease needed for recursive canonical-tree correctness.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_go_correct",
+      "rationale": "It proves the recursive canonical tree computes the restricted DNF.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_correct",
+      "rationale": "It proves the complete canonical decision tree computes f restricted by \u03c1.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.numFree_update_le",
+      "rationale": "It supplies monotonicity of free-variable count across subtree updates.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_cont_congr",
+      "rationale": "It supports substituting equivalent continuation trees in the canonical construction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_cont_congr_strict",
+      "rationale": "It supports continuation equivalence after a strict free-variable decrease.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_go_fuel_invariant",
+      "rationale": "It establishes that sufficient recursion fuel does not affect the canonical tree.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.cont_eq_canonicalDTree",
+      "rationale": "It identifies recursive continuation trees with the canonical tree for the updated restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_cons_free",
+      "rationale": "It formalizes branching on each free variable of the selected term.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_cons_nonfree",
+      "rationale": "It formalizes skipping variables already fixed by the restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_deepPath_head_free",
+      "rationale": "It formalizes that a canonical term subtree path begins with a free variable and its branch value.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.filter_free_update_eq",
+      "rationale": "Supports the canonical-tree step that updates a restriction along distinct free variables without changing freeness of the remaining literals.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.termSubTree_deepPath_var_match",
+      "rationale": "Formalizes that canonical-tree path variables are exactly the successive free variables of the selected term.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_alive_eq_termSubTree",
+      "rationale": "States the canonical tree is formed by expanding the first term not killed, with its fixing leaf and recursive continuation.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'",
+      "rationale": "The wrapper gives the same canonical-tree expansion at the current restriction depth.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.depth_ge_dtDepth",
+      "rationale": "Provides the generic decision-tree depth lower bound used to relate the constructed tree to decision-tree depth.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_depth_ge",
+      "rationale": "Transfers the canonical tree's correctness into a lower bound involving the restricted function's decision-tree depth.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.dtDepth_restrictFn_le_numFree",
+      "rationale": "Formalizes that a restriction with at most k free variables admits a decision tree of depth at most k, matching the recursive tree construction.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits",
+      "rationale": "Implements recording each term literal's path-fixed variable and value during encoding.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.razborovEncode",
+      "rationale": "Implements the auxiliary encoding by processing successive non-killed terms along a canonical-tree path.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.razborovDecode",
+      "rationale": "Implements recovery of the original restriction from the encoded restriction and auxiliary entries.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_path_le",
+      "rationale": "Bounds processed literals by available path steps, supporting the per-term encoding-size analysis.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_bound",
+      "rationale": "Proves the auxiliary entries plus path information use at most twice the path length.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_tight",
+      "rationale": "Adds the termination marker to the per-clause bound, matching the recorded termination character in the proof.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_aux_length_bound",
+      "rationale": "Bounds the complete auxiliary output by twice the canonical path length.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.razborovEncode_aux_length_le",
+      "rationale": "Derives the global auxiliary-length bound of 2d for the first d path steps.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_sigma_stable",
+      "rationale": "Shows encoding-side restriction updates do not alter variables absent from the processed literals, supporting reconstruction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_rho_stable",
+      "rationale": "Shows the clause-processing restriction remains unchanged outside processed variables, supporting decoding invariants.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_rho_ne_none",
+      "rationale": "Preserves already-fixed variables during encoding, an invariant needed to recover the restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_fst_nonfree",
+      "rationale": "Establishes that encoding preserves nonfree coordinates, supporting the claim that the recovered restriction has the intended fixed variables.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_acc",
+      "rationale": "Tracks accumulated auxiliary data through recursive encoding without changing the encoded restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_fst_acc",
+      "rationale": "Extracts the restriction component's independence from the accumulated auxiliary list.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processEntries_preserves_none",
+      "rationale": "Maintains unset coordinates while decoding auxiliary entries.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.decode_go_preserves_none",
+      "rationale": "Lifts preservation of unset coordinates from one decoded clause to the complete decoding loop.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_sigma_indep",
+      "rationale": "Shows the path and encoding restriction outputs do not depend on the initial auxiliary restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_snd_sigma_indep",
+      "rationale": "Shows the auxiliary encoding is independent of the initial auxiliary restriction, supporting a well-defined encoding.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_aux_entries_from_lits",
+      "rationale": "Proves every emitted auxiliary index comes from a literal of the processed term, matching the recorded positions.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_aux_ne_nonfree",
+      "rationale": "Ensures decoded auxiliary entries refer only to variables distinct from a protected nonfree target.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_aux_vars_free",
+      "rationale": "Ensures emitted auxiliary entries correspond to variables free in the encoding restriction, matching the proof's recorded fixed variables.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.foldl_sigma_stable",
+      "rationale": "Formalizes that decoding updates do not change an unrelated auxiliary restriction coordinate.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.foldl_rho_stable",
+      "rationale": "Formalizes preservation of unrelated coordinates in the decoded main restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.foldl_sigma_preserves_none",
+      "rationale": "Preserves unset coordinates through the fold that reconstructs the auxiliary restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_foldl_sigma_none",
+      "rationale": "Connects emitted entries with preservation of an unset decoded auxiliary coordinate.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_foldl_rho_eq",
+      "rationale": "Formalizes that folding the recorded entries reconstructs the corresponding clause-processing restriction.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set",
+      "rationale": "Handles the reconstruction equality when the target coordinate is set, supporting the decoding correctness argument.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_no_target_of_rho_none",
+      "rationale": "Shows that if a target remains unset after processing, no processed literal used that target variable.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_sigma_at_v",
+      "rationale": "Tracks equality of the auxiliary restriction at a coordinate through clause processing.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_sigma_none_of_rho_none",
+      "rationale": "Shows an unset processed restriction coordinate leaves the auxiliary restriction coordinate unchanged.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_fst_sigma_indep_at_free",
+      "rationale": "Shows encoding's final restriction agrees at free coordinates despite different auxiliary inputs.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.processEntries_of_processClauseLits",
+      "rationale": "Formalizes the central decoding step: auxiliary entries reproduce the restriction updates made during clause processing.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_sigma_ne_neg",
+      "rationale": "Supports preservation of a literal\u2019s non-negated setting while recording path information for each term.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem",
+      "rationale": "Formal bookkeeping showing when processing a term consumes no path entries under a free-variable condition.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002",
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_not_kills_first_clause",
+      "rationale": "Proves that the first non-killed clause remains non-killed during encoding, matching the canonical-tree construction.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_rho_ne_none_of_mem",
+      "rationale": "Tracks that variables represented by processed literals become fixed in the evolving restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.roundtrip_base",
+      "rationale": "Base case for decoding an empty auxiliary encoding back to the original restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.pcl_none_implies_rho_free",
+      "rationale": "Formal invariant relating an unprocessed clause position to a variable still free in the restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.find_clause_preserved_in_encode",
+      "rationale": "Establishes that the clause selected as first fixed/non-killed remains the selected clause after encoding.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.mem_filter_freeVars_zipIdx",
+      "rationale": "Identifies the recorded positions as term variables that are free, supporting auxiliary-information extraction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none",
+      "rationale": "Ensures auxiliary entries cannot refer to the currently unprocessed variable, a decoding invariant.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_fst_eq_rec",
+      "rationale": "Relates one encoding recursion step to the recursive encoding after processing a clause.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.roundtrip_inv_hC'",
+      "rationale": "Formalizes recovery of the original auxiliary restriction on variables already fixed by the base restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.roundtrip_inv_hD'",
+      "rationale": "Formalizes recovery of the encoded restriction values during the inverse fold.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.go_roundtrip_gen",
+      "rationale": "Proves the central encode/decode round-trip, matching recovery of the original restriction from the encoding.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.go_roundtrip",
+      "rationale": "Specializes the round-trip argument to equal encoding and decoding restrictions.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.razborovDecode_encode",
+      "rationale": "States that decoding the encoding recovers the original restriction, exactly the recovery claim in the proof.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.razborovEncode_injective",
+      "rationale": "Derives injectivity from recoverability, matching the proof\u2019s assertion that the encoding recovers the bad restriction.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003",
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.parseAux",
+      "rationale": "Implementation of parsing positional records and termination markers used in the auxiliary encoding.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003",
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.triplesToAux",
+      "rationale": "Implementation converting marked term-position records into the auxiliary bit/list representation.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.parseAux_cons_marker",
+      "rationale": "Bookkeeping lemma for parsing a marked block containing the termination character.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.parseAux_cons_nonmarker",
+      "rationale": "Bookkeeping lemma for parsing consecutive ordinary positions without a termination marker.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.parseAux_singleton",
+      "rationale": "Handles the singleton positional record in the auxiliary parser.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.parseAux_nil",
+      "rationale": "Empty auxiliary input case for the parser.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.parseAux_triplesToAux",
+      "rationale": "Shows the parser inverts the marked auxiliary representation used to recover recorded variables.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.triplesToAux_append",
+      "rationale": "Supports concatenating auxiliary records from successive terms.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_len_add",
+      "rationale": "Bounds recorded entries plus remaining literals by path length, supporting the encoding-size accounting.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003",
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.markLast",
+      "rationale": "Marks the last record of each auxiliary block with the termination flag.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.triplesToAux_markLast",
+      "rationale": "Relates a marked block to its positional encoding followed by the termination character.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.markLast_ne_nil",
+      "rationale": "Maintains nonemptiness of a recorded block after adding its termination marker.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.markLast_length",
+      "rationale": "Preserves the number of recorded variables while marking the final entry.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.markLast_getLast_true",
+      "rationale": "Ensures every nonempty auxiliary block has an explicit termination marker.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.toFinBlock",
+      "rationale": "Converts valid natural-number positions into bounded variable positions for formal encoding.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.toFinBlock_length",
+      "rationale": "Preserves block length during conversion to bounded positions.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.toFinBlock_map",
+      "rationale": "Shows conversion preserves the recorded position/direction data.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.toFinBlock_ne_nil",
+      "rationale": "Preserves nonemptiness of recorded blocks under bounded-position conversion.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_aux_idx_lt",
+      "rationale": "Bounds auxiliary indices by term length, supporting the positional alphabet size.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003",
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.encode_go_wellformed",
+      "rationale": "Packages the structural invariants that the encoding consists of marked blocks with controlled length and termination.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003",
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.exists_aux_injection",
+      "rationale": "Formalizes injective auxiliary encoding and recovery of a bad restriction.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.aux_image_card_bound",
+      "rationale": "Bounds auxiliary encodings by the factor $(4w)^d$.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.fiber_bound",
+      "rationale": "Bounds each fixed-$\\gamma$ fiber of bad restrictions by the auxiliary-code count.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.card_filter_numFree_eq",
+      "rationale": "Bookkeeping count for restrictions with a prescribed number of free variables.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.numFree_update_free",
+      "rationale": "Tracks the free-variable count when a path variable is fixed.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_freeVars_agree",
+      "rationale": "Maintains agreement of free-variable sets while processing a term.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_numFree_\u03c3",
+      "rationale": "Tracks restriction size through iterative clause processing.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_deepPath_length_ge",
+      "rationale": "Expresses that a bad restriction has a canonical-tree path longer than $d$.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.razborovEncode_path_length",
+      "rationale": "Shows the selected canonical path prefix has exactly length $d$.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_path_length_eq",
+      "rationale": "Bookkeeping identity for consumed path entries during encoding.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_depth_zero_of_killed",
+      "rationale": "Formalizes that killing every term makes the restricted function constant.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_depth_zero_of_fixed",
+      "rationale": "Formalizes that fixing one term makes the formula constant $1$.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.IsCanonicalPath",
+      "rationale": "Defines the formal invariant that a path is a canonical-tree prefix.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.zipIdx_filter_length",
+      "rationale": "Supports indexing the recorded free variables of each term.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.zipIdx_filter_getElem_fst",
+      "rationale": "Relates recorded indexed literals to the original filtered term literals.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalDTree_deepPath_match_freeLits",
+      "rationale": "Connects canonical-tree path variables with the free literals being encoded.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_fst_eq_drop",
+      "rationale": "Tracks the unconsumed suffix of the canonical path.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_numFree_\u03c1_eq",
+      "rationale": "Tracks the free-variable count of the evolving base restriction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_termSubTree_drop",
+      "rationale": "Relates processed term subtrees to the remaining canonical path.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.canonicalPath_preserve_processClauseLits",
+      "rationale": "Preserves the canonical-path invariant through an encoding step.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.processClauseLits_freeLits_pairwise_var",
+      "rationale": "Supplies distinct-variable bookkeeping needed to process each term.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003",
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.razborovEncode_go_numFree_invariant",
+      "rationale": "Maintains the restriction/free-variable invariant throughout recursive encoding.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemma2.razborovEncode_fst_numFree_eq",
+      "rationale": "Establishes that encoding a bad restriction yields an (s-d)-restriction, matching the encoded restriction \u03b3.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.bad_count_bound",
+      "rationale": "Proves the counting bound on bad restrictions via fibers of the encoding.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "SwitchingLemma2.bad_filter_empty_of_d_ge_s",
+      "rationale": "Formalizes the vacuous/constant-depth case when the requested path length is no shorter than the restriction parameter.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b004"
+      ],
+      "lean_name": "SwitchingLemma2.choose_mul_pow_bound",
+      "rationale": "Supplies the binomial-and-power inequality used to simplify the bad-restriction count to the theorem\u2019s probability bound.",
+      "relation": "direct"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "Literal.flipNeg",
+      "rationale": "Implements flipping literal signs when recording how traversed variables are set.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "Literal.flipNeg_eval",
+      "rationale": "Supports the correspondence between flipped literals and the recorded path assignments.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "Literal.flipNeg_var",
+      "rationale": "Preserves the variable position while changing a literal\u2019s sign, as required by the auxiliary encoding.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "Literal.flipNeg_injective",
+      "rationale": "Ensures literal-position information remains uniquely recoverable in the encoding.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "cnfToDualDNF",
+      "rationale": "Provides the formal conversion from clauses to DNF terms used by the switching argument.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "DecisionTree.negateLeaves",
+      "rationale": "Formal tree transformation supporting leaf-value manipulation in the canonical decision-tree construction.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b002"
+      ],
+      "lean_name": "DecisionTree.negateLeaves_eval",
+      "rationale": "Maintains the semantic relationship between a transformed decision tree and its evaluated function.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "DecisionTree.negateLeaves_depth",
+      "rationale": "Preserves decision-tree depth under leaf negation, supporting the depth-based badness argument.",
+      "relation": "context"
+    },
+    {
+      "document_blocks": [
+        "pdf-b5e074215b9e-p002-b003"
+      ],
+      "lean_name": "SwitchingLemmaCNF.cnfToDualDNF_nodup",
+      "rationale": "Preserves term non-duplication needed for the encoding\u2019s per-term variable-position bookkeeping.",
+      "relation": "context"
+    }
+  ],
+  "dependency_fingerprint": "f0d1d7a7b6487f3a9d8afb072e8f582375f77c69c67bf779dd9a0222d0945501",
+  "document": "switching-lemma",
+  "proof_fingerprint": "74f2c81c74c35cc1c280150f3574165b832e0482de236e9f49e6b1df957d4236",
+  "source_fingerprint": "b5e074215b9e0121d54f205bd83f4ab4e47b00b42a5b8d7e2691117e5b3b7ec3",
+  "theorem": "SwitchingLemma2.switching_lemma"
+}

@@ -10,6 +10,7 @@
 - Estimated OpenAI spend: `$0.199915`
 - Budget cap: `$1.00`
 - Blueprint status: approved and linked
+- Upstream mapping status: awaiting separate human approval
 
 ## Conversion evaluation
 
@@ -42,3 +43,19 @@ explicit, but no mathematical discrepancy was found.
 
 The proof-source annotation was written to the corresponding blueprint theorem
 after explicit human approval.
+
+## Upstream declaration mapping
+
+The dependency-level stage mapped all 173 declarations in the flattened Lean
+proof closure to the approved Markdown proof context:
+
+- 57 declarations were classified as `direct`.
+- 116 declarations were classified as `context`.
+- Every declaration cites at least one validated block.
+- No declaration name or block ID is duplicated or omitted.
+- The estimated additional mapping spend was `$0.222141`, for an estimated
+  fixture total of `$0.422056` under the `$1.00` cap.
+
+The generated manifest and grouped review passed deterministic fingerprint,
+closure, relation, and block validation. No `\proofstep` entries have been
+written pending a separate human approval of this dependency-level review.

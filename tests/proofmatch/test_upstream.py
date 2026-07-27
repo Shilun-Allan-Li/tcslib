@@ -8,6 +8,7 @@ from proofmatch.models import (
     ProofStepAssignment,
     ProofStepManifest,
     UpstreamDeclaration,
+    load_typed,
 )
 from proofmatch.upstream import (
     batch_declarations,
@@ -73,6 +74,38 @@ def block(block_id: str = BLOCK_1, markdown: str = "Proof step.") -> DocumentBlo
 
 
 class UpstreamTests(unittest.TestCase):
+    def test_switching_lemma_fixture_has_total_coverage(self):
+        manifest = load_typed(
+            Path(
+                "tests/proofmatch/fixtures/"
+                "switching_lemma_upstream.json"
+            ),
+            ProofStepManifest,
+        )
+        declarations = load_upstream_declarations(
+            Path("dataset/tcslib_theorems.jsonl"),
+            Path("dep_graph.json"),
+            "SwitchingLemma2.switching_lemma",
+        )
+
+        self.assertEqual(
+            manifest.theorem,
+            "SwitchingLemma2.switching_lemma",
+        )
+        self.assertEqual(
+            [item.lean_name for item in manifest.assignments],
+            [item.lean_name for item in declarations],
+        )
+        self.assertTrue(
+            all(item.document_blocks for item in manifest.assignments)
+        )
+        self.assertTrue(
+            all(
+                item.relation in {"direct", "context"}
+                for item in manifest.assignments
+            )
+        )
+
     def test_agent_must_return_exact_batch_names(self):
         agent = FakeAgent(
             [
@@ -340,6 +373,19 @@ class UpstreamTests(unittest.TestCase):
             validate_assignments(
                 (declaration("T.first"),),
                 (assignment("T.first", blocks=()),),
+                {BLOCK_1},
+            )
+
+    def test_validation_rejects_duplicate_block_ids(self):
+        with self.assertRaisesRegex(ValueError, r"T\.first.*duplicate"):
+            validate_assignments(
+                (declaration("T.first"),),
+                (
+                    assignment(
+                        "T.first",
+                        blocks=(BLOCK_1, BLOCK_1),
+                    ),
+                ),
                 {BLOCK_1},
             )
 

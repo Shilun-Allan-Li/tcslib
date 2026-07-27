@@ -416,6 +416,10 @@ def validate_assignments(
             )
         if not assignment.document_blocks:
             raise ValueError(f"{name} must cite at least one document block")
+        if len(set(assignment.document_blocks)) != len(
+            assignment.document_blocks
+        ):
+            raise ValueError(f"{name} cites duplicate document block IDs")
         invalid = [
             block
             for block in assignment.document_blocks

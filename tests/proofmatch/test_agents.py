@@ -9,10 +9,21 @@ from proofmatch.agents import (
     CodexAgent,
     build_codex_command,
     parse_agent_output,
+    validate_codex_schema,
 )
 
 
 class CodexAgentTests(unittest.TestCase):
+    def test_schema_validation_rejects_unsupported_unique_items(self):
+        with self.assertRaisesRegex(AgentOutputError, "uniqueItems"):
+            validate_codex_schema(
+                {
+                    "type": "array",
+                    "uniqueItems": True,
+                    "items": {"type": "string"},
+                }
+            )
+
     def test_command_is_ephemeral_read_only_and_schema_constrained(self):
         command = build_codex_command(
             schema=Path("compare.json"),
