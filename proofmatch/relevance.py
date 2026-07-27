@@ -14,23 +14,23 @@ def prepare_relevance_payload(
     candidates: Sequence[Candidate],
     index: DocumentIndex,
 ) -> dict[str, object]:
-    by_id = {block.block_id: block for block in index.blocks}
     return {
+        "document_blocks": [
+            {
+                "block_id": block.block_id,
+                "kind": block.kind,
+                "title": block.title,
+                "markdown": block.markdown,
+            }
+            for block in index.blocks
+        ],
         "candidates": [
             {
                 "lean_name": item.lean_name,
                 "title": item.title,
                 "statement": item.statement,
                 "formal_statement": item.formal_statement,
-                "document_blocks": [
-                    {
-                        "block_id": block_id,
-                        "kind": by_id[block_id].kind,
-                        "title": by_id[block_id].title,
-                        "markdown": by_id[block_id].markdown,
-                    }
-                    for block_id in item.document_blocks
-                ],
+                "suggested_document_blocks": list(item.document_blocks),
             }
             for item in candidates
         ]
@@ -82,9 +82,6 @@ def decisions_from_agent(
         blocks = tuple(raw_blocks)
         if any(block not in known_blocks for block in blocks):
             raise ValueError("relevance decision cites unknown source block")
-        allowed = set(candidate_by_name[name].document_blocks)
-        if any(block not in allowed for block in blocks):
-            raise ValueError("relevance decision cites unproposed source block")
         if status == "irrelevant" and blocks:
             raise ValueError("irrelevant candidate must cite no blocks")
         if status != "irrelevant" and not blocks:

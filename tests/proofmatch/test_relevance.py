@@ -45,6 +45,33 @@ class RelevanceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown source block"):
             decisions_from_agent(output, (self.candidate,), self.index)
 
+    def test_candidate_may_select_another_valid_chapter_block(self):
+        other = DocumentBlock(
+            "pdf-abcdef123456-p002-b001", 2, 1, "prose", "Two", "context", 2
+        )
+        index = DocumentIndex("abcdef123456", (self.block, other), ())
+        output = {"decisions": [{
+            "lean_name": "T.one", "status": "relevant",
+            "document_blocks": [other.block_id],
+            "rationale": "the retrieval seed was narrower than the match",
+        }]}
+
+        decision = decisions_from_agent(
+            output, (self.candidate,), index
+        )[0]
+
+        self.assertEqual(decision.document_blocks, (other.block_id,))
+
+    def test_payload_includes_chapter_blocks_once(self):
+        payload = prepare_relevance_payload((self.candidate,), self.index)
+
+        self.assertEqual(len(payload["document_blocks"]), 1)
+        self.assertEqual(
+            payload["candidates"][0]["suggested_document_blocks"],
+            [self.block.block_id],
+        )
+        self.assertNotIn("document_blocks", payload["candidates"][0])
+
     def test_uncertain_advances_to_comparison(self):
         output = {"decisions": [{
             "lean_name": "T.one", "status": "uncertain",
