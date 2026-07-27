@@ -63,6 +63,7 @@ def compare_candidate(
     agent: CodexAgent,
     budget: Budget,
 ) -> ComparisonVerdict:
+    budget.require(estimate_comparison(candidate, document))
     selected = [
         block
         for block in document.blocks
@@ -70,16 +71,6 @@ def compare_candidate(
     ]
     pdf_tokens = sum((len(block.markdown) + 3) // 4 for block in selected)
     lean_tokens = candidate.proof_tokens + (len(candidate.formal_statement) + 3) // 4
-    input_tokens = pdf_tokens + lean_tokens + 2_000
-    output_tokens = 4_000
-    budget.require(
-        StageEstimate(
-            "proof comparison",
-            input_tokens,
-            output_tokens,
-            token_cost("gpt-5.6-terra", input_tokens, output_tokens),
-        )
-    )
     result = agent.run(
         "compare",
         {
@@ -102,6 +93,27 @@ def compare_candidate(
         },
     )
     return verdict_from_agent(result)
+
+
+def estimate_comparison(
+    candidate: Candidate,
+    document: DocumentIndex,
+) -> StageEstimate:
+    selected = [
+        block
+        for block in document.blocks
+        if not candidate.document_blocks or block.block_id in candidate.document_blocks
+    ]
+    pdf_tokens = sum((len(block.markdown) + 3) // 4 for block in selected)
+    lean_tokens = candidate.proof_tokens + (len(candidate.formal_statement) + 3) // 4
+    input_tokens = pdf_tokens + lean_tokens + 2_000
+    output_tokens = 4_000
+    return StageEstimate(
+        f"proof comparison {candidate.lean_name}",
+        input_tokens,
+        output_tokens,
+        token_cost("gpt-5.6-terra", input_tokens, output_tokens),
+    )
 
 
 def render_difference_report(

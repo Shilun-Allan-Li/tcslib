@@ -41,6 +41,17 @@ def _query(blocks) -> tuple[Counter[str], set[str]]:
 
 
 def document_segments(index: DocumentIndex) -> tuple[tuple, ...]:
+    if not any(
+        block.kind in {"theorem", "definition"} for block in index.blocks
+    ):
+        segments = []
+        context = ()
+        for block in index.blocks:
+            if block.kind == "heading":
+                context = (block,)
+            elif block.markdown.strip():
+                segments.append((*context, block))
+        return tuple(segments) or (tuple(index.blocks),)
     segments: list[list] = []
     current: list = []
     context: list = []
@@ -81,19 +92,14 @@ def _merge_candidate(
 ) -> Candidate:
     if prior is None:
         return candidate
-    blocks = tuple(dict.fromkeys((*prior.document_blocks, *candidate.document_blocks)))
-    return replace(
-        prior if prior.score >= candidate.score else candidate,
-        score=max(prior.score, candidate.score),
-        document_blocks=blocks,
-    )
+    return prior if prior.score >= candidate.score else candidate
 
 
 def discover_candidates(
     index: DocumentIndex,
     catalog: Sequence[Candidate],
-    per_segment_limit: int = 8,
-    reverse_min_score: float = 25.0,
+    per_segment_limit: int = 1,
+    reverse_min_score: float = 100.0,
 ) -> tuple[Candidate, ...]:
     if per_segment_limit < 1:
         raise ValueError("per_segment_limit must be positive")

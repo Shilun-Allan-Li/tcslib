@@ -16,9 +16,10 @@ from proofmatch.blueprint import (
 )
 from proofmatch.budget import Budget, StageEstimate, estimate_cleanup, token_cost
 from proofmatch.compare import compare_candidate, render_difference_report
+from proofmatch.chapter import run_chapter_match
 from proofmatch.document import parse_validated_markdown, repair_document
 from proofmatch.extraction import extract_pdf
-from proofmatch.models import Candidate, ProofStepManifest
+from proofmatch.models import Candidate, ComparisonVerdict, ProofStepManifest
 from proofmatch.search import prepare_rerank_payload, search_candidates
 from proofmatch.upstream import (
     batch_declarations,
@@ -34,6 +35,7 @@ from proofmatch.upstream import (
 REPOSITORY = Path(__file__).resolve().parent.parent
 DEFAULT_DATASET = REPOSITORY / "dataset" / "tcslib_theorems.jsonl"
 DEFAULT_DEPENDENCY_GRAPH = REPOSITORY / "dep_graph.json"
+DEFAULT_BLUEPRINT_ROOT = REPOSITORY / "blueprint" / "src" / "chapter"
 WORK_ROOT = REPOSITORY / ".proofmatch-work"
 FIXTURE_NAME = "switching-lemma.pdf"
 
@@ -209,55 +211,54 @@ def _match(
     dry_run: bool,
 ) -> str:
     index = parse_validated_markdown(source)
-    candidates = list(search_candidates(index, dataset, limit=12))
-    if not candidates:
-        raise ValueError("candidate retrieval returned no TCSlib theorems")
-    if dry_run:
-        print("Top deterministic candidates:")
-        for candidate in candidates:
-            print(f"{candidate.score:8.2f}  {candidate.lean_name}")
-        return index.source_fingerprint[:12]
-
-    rerank_input = sum(
-        len(str(item))
-        for item in prepare_rerank_payload(candidates, index)["candidates"]
-    ) // 4 + 2_000
-    rerank_estimate = StageEstimate(
-        "candidate reranking",
-        rerank_input,
-        2_000,
-        token_cost("gpt-5.6-luna", rerank_input, 2_000),
-    )
-    budget.require(rerank_estimate)
-    reranked = CodexAgent(model="gpt-5.6-luna").run(
-        "rerank",
-        prepare_rerank_payload(candidates, index),
-    )
-    selected = select_primary_candidate(candidates, reranked, index)
-    verdict = compare_candidate(
-        selected,
+    result = run_chapter_match(
+        source,
         index,
-        CodexAgent(model="gpt-5.6-terra"),
+        dataset,
+        DEFAULT_DEPENDENCY_GRAPH,
+        DEFAULT_BLUEPRINT_ROOT,
         budget,
+        dry_run=dry_run,
     )
-
     run_id = index.source_fingerprint[:12]
+    if dry_run:
+        print("Blueprint-scoped chapter candidates:")
+        for name in result["candidates"]:
+            print(f"  {name}")
+        print(
+            "Relevance pass estimate: "
+            f"${Decimal(str(result['estimated_relevance_spend_usd'])):.4f}"
+        )
+        print(
+            "Worst-case total estimate (if every candidate is compared): "
+            f"${Decimal(str(result['estimated_total_spend_usd'])):.4f}"
+        )
+        return run_id
     store = RunStore(WORK_ROOT, run_id)
-    store.write_json(
-        "review",
-        {
-            "source_markdown": str(source.resolve()),
-            "document": source.name.removesuffix(".md"),
-            "candidate": _candidate_dict(selected),
-            "verdict": asdict(verdict),
-            "estimated_spend_usd": str(budget.spent_usd),
-        },
+    store.write_json("chapter_review", result)
+    verdicts = [
+        ComparisonVerdict(
+            lean_name=str(row["lean_name"]),
+            document_blocks=tuple(row["document_blocks"]),
+            verdict=str(row["verdict"]),
+            confidence=float(row["confidence"]),
+            differences=tuple(row["differences"]),
+            evidence=tuple(row["evidence"]),
+            pdf_outline=tuple(row.get("pdf_outline", ())),
+            lean_outline=tuple(row.get("lean_outline", ())),
+        )
+        for row in result["verdicts"]
+    ]
+    report_path = write_difference_report(
+        store, render_difference_report(verdicts)
     )
-    report_path = write_difference_report(store, render_difference_report([verdict]))
     if report_path is not None:
         print(f"Differences or uncertainties: {report_path}")
-    print(f"Review run {run_id}: {verdict.lean_name} -> {verdict.verdict}")
-    print(f"Next: python3 scripts/proofmatch.py review {run_id}")
+    same = sum(item.verdict == "same" for item in verdicts)
+    print(
+        f"Chapter run {run_id}: {len(verdicts)} compared; "
+        f"{same} same and propagated"
+    )
     return run_id
 
 
