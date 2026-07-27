@@ -94,6 +94,49 @@ class RelevanceTests(unittest.TestCase):
         self.assertEqual(result[0].lean_name, "T.one")
         self.assertIsNotNone(agent.payload)
 
+    def test_classification_batches_large_candidate_sets(self):
+        candidates = tuple(
+            Candidate(
+                f"T.{index}",
+                f"T {index}",
+                "M",
+                "one",
+                "True",
+                "",
+                0,
+                1,
+                (self.block.block_id,),
+            )
+            for index in range(21)
+        )
+
+        class BatchAgent:
+            def __init__(self):
+                self.calls = 0
+
+            def run(self, name, payload):
+                self.calls += 1
+                return {
+                    "decisions": [
+                        {
+                            "lean_name": item["lean_name"],
+                            "status": "relevant",
+                            "document_blocks": [self_block.block_id],
+                            "rationale": "match",
+                        }
+                        for item in payload["candidates"]
+                    ]
+                }
+
+        self_block = self.block
+        agent = BatchAgent()
+        result = classify_relevance(
+            candidates, self.index, agent, Budget(Decimal("1"))
+        )
+
+        self.assertEqual(agent.calls, 2)
+        self.assertEqual(len(result), 21)
+
 
 if __name__ == "__main__":
     unittest.main()

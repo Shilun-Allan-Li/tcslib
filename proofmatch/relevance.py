@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from decimal import Decimal
 
 from proofmatch.budget import Budget, StageEstimate, token_cost
 from proofmatch.models import (
@@ -8,6 +9,8 @@ from proofmatch.models import (
     DocumentIndex,
     RelevanceDecision,
 )
+
+RELEVANCE_BATCH_SIZE = 20
 
 
 def prepare_relevance_payload(
@@ -37,7 +40,7 @@ def prepare_relevance_payload(
     }
 
 
-def estimate_relevance(
+def _estimate_relevance_batch(
     candidates: Sequence[Candidate],
     index: DocumentIndex,
 ) -> StageEstimate:
@@ -49,6 +52,31 @@ def estimate_relevance(
         input_tokens,
         output_tokens,
         token_cost("gpt-5.6-luna", input_tokens, output_tokens),
+    )
+
+
+def _candidate_batches(
+    candidates: Sequence[Candidate],
+) -> tuple[Sequence[Candidate], ...]:
+    return tuple(
+        candidates[start : start + RELEVANCE_BATCH_SIZE]
+        for start in range(0, len(candidates), RELEVANCE_BATCH_SIZE)
+    )
+
+
+def estimate_relevance(
+    candidates: Sequence[Candidate],
+    index: DocumentIndex,
+) -> StageEstimate:
+    estimates = tuple(
+        _estimate_relevance_batch(batch, index)
+        for batch in _candidate_batches(candidates)
+    )
+    return StageEstimate(
+        "chapter relevance",
+        sum(item.input_tokens for item in estimates),
+        sum(item.output_tokens for item in estimates),
+        sum((item.usd for item in estimates), start=Decimal("0")),
     )
 
 
@@ -113,8 +141,11 @@ def classify_relevance(
     agent,
     budget: Budget,
 ) -> tuple[RelevanceDecision, ...]:
-    budget.require(estimate_relevance(candidates, index))
-    output = agent.run(
-        "relevance", prepare_relevance_payload(candidates, index)
-    )
-    return decisions_from_agent(output, candidates, index)
+    decisions = []
+    for batch in _candidate_batches(candidates):
+        budget.require(_estimate_relevance_batch(batch, index))
+        output = agent.run(
+            "relevance", prepare_relevance_payload(batch, index)
+        )
+        decisions.extend(decisions_from_agent(output, batch, index))
+    return tuple(decisions)
