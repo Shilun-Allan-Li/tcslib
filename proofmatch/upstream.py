@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from collections import Counter
 from collections.abc import Iterable
 from dataclasses import asdict
@@ -9,7 +10,9 @@ from pathlib import Path
 from proofmatch.budget import StageEstimate, token_cost
 from proofmatch.models import (
     DocumentBlock,
+    DocumentIndex,
     ProofStepAssignment,
+    ProofStepManifest,
     UpstreamDeclaration,
 )
 
@@ -160,6 +163,201 @@ def estimate_upstream_batches(
             )
         )
     return tuple(estimates)
+
+
+def _assignment_from_json(value: object) -> ProofStepAssignment:
+    if not isinstance(value, dict):
+        raise ValueError("upstream assignment must be an object")
+    expected = {
+        "lean_name",
+        "relation",
+        "document_blocks",
+        "rationale",
+    }
+    unknown = sorted(set(value) - expected)
+    missing = sorted(expected - set(value))
+    if unknown or missing:
+        details = []
+        if unknown:
+            details.append(f"unexpected fields: {', '.join(unknown)}")
+        if missing:
+            details.append(f"missing fields: {', '.join(missing)}")
+        raise ValueError("; ".join(details))
+    blocks = value["document_blocks"]
+    if not isinstance(blocks, list) or not all(
+        isinstance(item, str) for item in blocks
+    ):
+        raise ValueError("document_blocks must be an array of strings")
+    relation = value["relation"]
+    if relation not in {"direct", "context"}:
+        raise ValueError("relation must be direct or context")
+    return ProofStepAssignment(
+        lean_name=str(value["lean_name"]),
+        relation=relation,
+        document_blocks=tuple(blocks),
+        rationale=str(value["rationale"]),
+    )
+
+
+def map_upstream_batches(
+    declarations: Iterable[UpstreamDeclaration],
+    proof_blocks: Iterable[DocumentBlock],
+    agent,
+    budget,
+) -> tuple[ProofStepAssignment, ...]:
+    ordered = tuple(declarations)
+    blocks = tuple(proof_blocks)
+    allowed_blocks = {block.block_id for block in blocks}
+    batches = batch_declarations(ordered)
+    estimates = estimate_upstream_batches(batches, blocks)
+    assignments = []
+    for batch, estimate in zip(batches, estimates, strict=True):
+        budget.require(estimate)
+        output = agent.run(
+            "map_upstream",
+            {
+                "declarations": [asdict(item) for item in batch],
+                "proof_blocks": [
+                    {
+                        "block_id": block.block_id,
+                        "page": block.page,
+                        "title": block.title,
+                        "markdown": block.markdown,
+                    }
+                    for block in blocks
+                ],
+            },
+        )
+        rows = output.get("assignments")
+        if not isinstance(rows, list):
+            raise ValueError("agent output must contain an assignments array")
+        batch_assignments = tuple(_assignment_from_json(row) for row in rows)
+        assignments.extend(
+            validate_assignments(batch, batch_assignments, allowed_blocks)
+        )
+    return validate_assignments(ordered, assignments, allowed_blocks)
+
+
+def _sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _dependency_fingerprint(
+    declarations: Iterable[UpstreamDeclaration],
+) -> str:
+    value = [
+        {
+            "lean_name": declaration.lean_name,
+            "kind": declaration.kind,
+            "statement": declaration.statement,
+            "source_module": declaration.source_module,
+            "direct_dependencies": list(declaration.direct_dependencies),
+            "proof_excerpt": declaration.proof_excerpt,
+        }
+        for declaration in declarations
+    ]
+    return _sha256_text(
+        json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+
+
+def build_manifest(
+    theorem: str,
+    document: str,
+    index: DocumentIndex,
+    proof_text: str,
+    declarations: Iterable[UpstreamDeclaration],
+    assignments: Iterable[ProofStepAssignment],
+) -> ProofStepManifest:
+    ordered_declarations = tuple(declarations)
+    return ProofStepManifest(
+        theorem=theorem,
+        document=document,
+        source_fingerprint=index.source_fingerprint,
+        proof_fingerprint=_sha256_text(proof_text),
+        dependency_fingerprint=_dependency_fingerprint(ordered_declarations),
+        assignments=tuple(assignments),
+    )
+
+
+def validate_manifest(
+    manifest: ProofStepManifest,
+    index: DocumentIndex,
+    proof_text: str,
+    declarations: Iterable[UpstreamDeclaration],
+    allowed_blocks: set[str],
+) -> None:
+    ordered_declarations = tuple(declarations)
+    if manifest.source_fingerprint != index.source_fingerprint:
+        raise ValueError("validated Markdown fingerprint changed")
+    if manifest.proof_fingerprint != _sha256_text(proof_text):
+        raise ValueError("Lean proof fingerprint changed")
+    if manifest.dependency_fingerprint != _dependency_fingerprint(
+        ordered_declarations
+    ):
+        raise ValueError("Lean dependency fingerprint changed")
+    validate_assignments(
+        ordered_declarations,
+        manifest.assignments,
+        allowed_blocks,
+    )
+
+
+def render_upstream_review(
+    manifest: ProofStepManifest,
+    blocks_by_id: dict[str, DocumentBlock],
+) -> str:
+    total = len(manifest.assignments)
+    direct = sum(item.relation == "direct" for item in manifest.assignments)
+    contextual = total - direct
+    lines = [
+        f"# Upstream proof-step review: `{manifest.theorem}`",
+        "",
+        f"- Coverage: {total}/{total} (100%)",
+        f"- Direct declarations: {direct}",
+        f"- Contextual declarations: {contextual}",
+        f"- Document: `{manifest.document}`",
+        "",
+    ]
+    groups: list[list[ProofStepAssignment]] = []
+    for assignment in manifest.assignments:
+        if (
+            groups
+            and groups[-1][0].relation == assignment.relation
+            and groups[-1][0].document_blocks == assignment.document_blocks
+        ):
+            groups[-1].append(assignment)
+        else:
+            groups.append([assignment])
+    for group in groups:
+        first = group[0]
+        label = "direct" if first.relation == "direct" else "contextual"
+        lines.extend(
+            [
+                f"## {len(group)} {label} declarations",
+                "",
+                "Blocks: "
+                + ", ".join(f"`{block}`" for block in first.document_blocks),
+                "",
+            ]
+        )
+        for block_id in first.document_blocks:
+            block = blocks_by_id.get(block_id)
+            if block is not None:
+                summary = " ".join(block.markdown.split())
+                lines.append(f"> {summary[:240]}")
+                lines.append("")
+        for assignment in group:
+            lines.append(
+                f"- `{assignment.lean_name}` — {assignment.rationale}"
+            )
+        lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
 
 
 def validate_assignments(

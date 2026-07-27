@@ -4,15 +4,22 @@ from pathlib import Path
 
 from proofmatch.models import (
     DocumentBlock,
+    DocumentIndex,
     ProofStepAssignment,
+    ProofStepManifest,
     UpstreamDeclaration,
 )
 from proofmatch.upstream import (
     batch_declarations,
+    build_manifest,
     estimate_upstream_batches,
     load_upstream_declarations,
+    map_upstream_batches,
+    render_upstream_review,
     validate_assignments,
+    validate_manifest,
 )
+from proofmatch.budget import Budget
 
 
 BLOCK_1 = "pdf-abcdef123456-p002-b001"
@@ -43,7 +50,137 @@ def assignment(
     )
 
 
+class FakeAgent:
+    def __init__(self, outputs):
+        self.outputs = list(outputs)
+
+    def run(self, prompt_name, payload):
+        if prompt_name != "map_upstream":
+            raise AssertionError(prompt_name)
+        return self.outputs.pop(0)
+
+
+def block(block_id: str = BLOCK_1, markdown: str = "Proof step.") -> DocumentBlock:
+    return DocumentBlock(
+        block_id,
+        2,
+        1,
+        "proof",
+        "Proof",
+        markdown,
+        0.99,
+    )
+
+
 class UpstreamTests(unittest.TestCase):
+    def test_agent_must_return_exact_batch_names(self):
+        agent = FakeAgent(
+            [
+                {
+                    "assignments": [
+                        {
+                            "lean_name": "T.first",
+                            "relation": "context",
+                            "document_blocks": [BLOCK_1],
+                            "rationale": "Supports the canonical-tree construction.",
+                        }
+                    ]
+                }
+            ]
+        )
+
+        with self.assertRaisesRegex(ValueError, r"missing.*T\.second"):
+            map_upstream_batches(
+                (declaration("T.first"), declaration("T.second")),
+                (block(),),
+                agent,
+                Budget(Decimal("1.00")),
+            )
+
+    def test_manifest_rejects_changed_markdown_proof_or_dependency_order(self):
+        declarations = (declaration("T.first"), declaration("T.second"))
+        assignments = (
+            assignment("T.first", relation="direct"),
+            assignment("T.second"),
+        )
+        index = DocumentIndex(
+            "abcdef1234567890",
+            (block(),),
+            (),
+        )
+        manifest = build_manifest(
+            "T.target",
+            "notes",
+            index,
+            "by exact T.second",
+            declarations,
+            assignments,
+        )
+
+        validate_manifest(
+            manifest,
+            index,
+            "by exact T.second",
+            declarations,
+            {BLOCK_1},
+        )
+        with self.subTest("markdown"):
+            changed_index = DocumentIndex("changed", index.blocks, ())
+            with self.assertRaisesRegex(ValueError, "Markdown"):
+                validate_manifest(
+                    manifest,
+                    changed_index,
+                    "by exact T.second",
+                    declarations,
+                    {BLOCK_1},
+                )
+        with self.subTest("proof"):
+            with self.assertRaisesRegex(ValueError, "proof"):
+                validate_manifest(
+                    manifest,
+                    index,
+                    "by exact T.first",
+                    declarations,
+                    {BLOCK_1},
+                )
+        with self.subTest("dependencies"):
+            with self.assertRaisesRegex(ValueError, "dependency"):
+                validate_manifest(
+                    manifest,
+                    index,
+                    "by exact T.second",
+                    tuple(reversed(declarations)),
+                    {BLOCK_1},
+                )
+
+    def test_review_groups_adjacent_equal_mappings_without_losing_names(self):
+        manifest = ProofStepManifest(
+            theorem="T.target",
+            document="notes",
+            source_fingerprint="abcdef1234567890",
+            proof_fingerprint="proof",
+            dependency_fingerprint="deps",
+            assignments=(
+                assignment("T.first"),
+                assignment("T.second"),
+                assignment("T.third", relation="direct", blocks=(BLOCK_2,)),
+            ),
+        )
+
+        review = render_upstream_review(
+            manifest,
+            {
+                BLOCK_1: block(BLOCK_1, "Canonical tree."),
+                BLOCK_2: block(BLOCK_2, "Counting."),
+            },
+        )
+
+        self.assertIn("3/3 (100%)", review)
+        self.assertIn("2 contextual declarations", review)
+        self.assertIn("T.first", review)
+        self.assertIn("T.second", review)
+        self.assertIn("T.third", review)
+
     def test_loader_preserves_live_proof_upstream_order_and_excludes_target(self):
         result = load_upstream_declarations(
             Path("dataset/tcslib_theorems.jsonl"),
