@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suggestions"],
+  "properties": {
+    "suggestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url", "reason", "verified"],
+        "properties": {
+          "title": {"type": "string"},
+          "url": {"type": ["string", "null"]},
+          "reason": {"type": "string"},
+          "verified": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

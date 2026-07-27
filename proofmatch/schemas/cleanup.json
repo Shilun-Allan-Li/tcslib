@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["blocks", "ambiguities"],
+  "properties": {
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page", "sequence", "kind", "title", "markdown", "confidence"],
+        "properties": {
+          "page": {"type": "integer", "minimum": 1},
+          "sequence": {"type": "integer", "minimum": 1},
+          "kind": {"enum": ["heading", "definition", "theorem", "proof", "proof_step", "prose"]},
+          "title": {"type": "string"},
+          "markdown": {"type": "string"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page", "sequence", "reason"],
+        "properties": {
+          "page": {"type": "integer", "minimum": 1},
+          "sequence": {"type": "integer", "minimum": 1},
+          "reason": {"type": "string"}
+        }
+      }
+    }
+  }
+}
+

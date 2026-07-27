@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["lean_name", "document_blocks", "verdict", "confidence", "differences", "evidence", "pdf_outline", "lean_outline"],
+  "properties": {
+    "lean_name": {"type": "string"},
+    "document_blocks": {"type": "array", "items": {"type": "string"}},
+    "verdict": {"enum": ["same", "different", "uncertain"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "differences": {"type": "array", "items": {"type": "string"}},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "pdf_outline": {"type": "array", "items": {"type": "string"}},
+    "lean_outline": {"type": "array", "items": {"type": "string"}}
+  }
+}
+
