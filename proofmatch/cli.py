@@ -100,6 +100,52 @@ def _candidate_dict(candidate: Candidate) -> dict[str, object]:
     return value
 
 
+def write_difference_report(store: RunStore, report: str | None) -> Path | None:
+    report_path = store.stage_path("differences", ".md")
+    if report is None:
+        if report_path.exists():
+            report_path.unlink()
+        return None
+
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(report, encoding="utf-8")
+    return report_path
+
+
+def select_primary_candidate(
+    candidates: list[Candidate],
+    reranked: dict[str, object],
+    index,
+) -> Candidate:
+    by_name = {candidate.lean_name: candidate for candidate in candidates}
+    block_order = {
+        block.block_id: position for position, block in enumerate(index.blocks)
+    }
+    ranked_rows = reranked.get("candidates")
+    if not isinstance(ranked_rows, list):
+        return candidates[0]
+    choices = []
+    for rerank_position, row in enumerate(ranked_rows):
+        if not isinstance(row, dict):
+            continue
+        candidate = by_name.get(str(row.get("lean_name") or ""))
+        if candidate is None:
+            continue
+        source_position = min(
+            (
+                block_order[block]
+                for block in candidate.document_blocks
+                if block in block_order
+            ),
+            default=len(block_order),
+        )
+        choices.append((source_position, rerank_position, candidate))
+    if not choices:
+        return candidates[0]
+    choices.sort(key=lambda item: (item[0], item[1]))
+    return choices[0][2]
+
+
 def _extract(
     source: Path,
     budget: Budget,
@@ -158,13 +204,7 @@ def _match(
         "rerank",
         prepare_rerank_payload(candidates, index),
     )
-    order = [
-        item.get("lean_name")
-        for item in reranked.get("candidates", [])
-        if isinstance(item, dict)
-    ]
-    by_name = {candidate.lean_name: candidate for candidate in candidates}
-    selected = next((by_name[name] for name in order if name in by_name), candidates[0])
+    selected = select_primary_candidate(candidates, reranked, index)
     verdict = compare_candidate(
         selected,
         index,
@@ -184,11 +224,8 @@ def _match(
             "estimated_spend_usd": str(budget.spent_usd),
         },
     )
-    report = render_difference_report([verdict])
-    if report is not None:
-        report_path = store.stage_path("differences", ".md")
-        report_path.parent.mkdir(parents=True, exist_ok=True)
-        report_path.write_text(report, encoding="utf-8")
+    report_path = write_difference_report(store, render_difference_report([verdict]))
+    if report_path is not None:
         print(f"Differences or uncertainties: {report_path}")
     print(f"Review run {run_id}: {verdict.lean_name} -> {verdict.verdict}")
     print(f"Next: python3 scripts/proofmatch.py review {run_id}")

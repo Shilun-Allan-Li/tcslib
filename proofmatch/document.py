@@ -152,13 +152,21 @@ def parse_validated_markdown(path: Path) -> DocumentIndex:
             raise ValueError(f"{anchor.group(1)} has inconsistent provenance")
         markdown = PROVENANCE_RE.sub("", body, count=1).strip()
         first_line = markdown.splitlines()[0] if markdown else ""
-        title = first_line.lstrip("# ").strip() if first_line.startswith("#") else ""
-        kind = "prose"
-        lowered = title.casefold()
-        for named_kind in ("definition", "theorem", "lemma", "proof"):
-            if named_kind in lowered:
-                kind = "theorem" if named_kind == "lemma" else named_kind
-                break
+        if first_line.startswith("#"):
+            title = first_line.lstrip("# ").strip()
+        elif first_line.startswith("**") and "**" in first_line[2:]:
+            title = first_line[2 : first_line.index("**", 2)].strip(" .")
+        else:
+            title = ""
+        if first_line.startswith("#"):
+            kind = "heading"
+        else:
+            kind = "prose"
+            lowered = title.casefold()
+            for named_kind in ("definition", "theorem", "lemma", "proof"):
+                if named_kind in lowered:
+                    kind = "theorem" if named_kind == "lemma" else named_kind
+                    break
         blocks.append(
             DocumentBlock(
                 anchor.group(1),

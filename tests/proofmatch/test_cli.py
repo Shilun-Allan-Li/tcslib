@@ -5,7 +5,14 @@ from contextlib import redirect_stdout
 from decimal import Decimal
 from pathlib import Path
 
-from proofmatch.cli import build_parser, main
+from proofmatch.artifacts import RunStore
+from proofmatch.cli import (
+    build_parser,
+    main,
+    select_primary_candidate,
+    write_difference_report,
+)
+from proofmatch.models import Candidate, DocumentBlock, DocumentIndex
 
 
 VALIDATED = """
@@ -20,6 +27,45 @@ A width-w DNF under a random restriction has a shallow decision tree.
 
 
 class CliTests(unittest.TestCase):
+    def test_same_rerun_removes_stale_difference_report(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = RunStore(Path(tmp), "abcdef123456")
+            stale = store.stage_path("differences", ".md")
+            stale.parent.mkdir(parents=True)
+            stale.write_text("old uncertainty", encoding="utf-8")
+
+            result = write_difference_report(store, None)
+
+            self.assertIsNone(result)
+            self.assertFalse(stale.exists())
+
+    def test_primary_match_follows_document_order_not_reranker_confidence(self):
+        def candidate(name, blocks):
+            return Candidate(name, name, "M", "", "", "", 1, 1.0, blocks)
+
+        early = candidate("T.switching_lemma", ("pdf-abcdef123456-p001-b002",))
+        later = candidate("T.helper", ("pdf-abcdef123456-p003-b002",))
+        index = DocumentIndex(
+            "abcdef123456",
+            (
+                DocumentBlock("pdf-abcdef123456-p001-b002", 1, 2, "theorem", "", "", 1),
+                DocumentBlock("pdf-abcdef123456-p003-b002", 3, 2, "theorem", "", "", 1),
+            ),
+            (),
+        )
+        reranked = {
+            "candidates": [
+                # Agent-cited blocks are evidence, not authority for deterministic
+                # source ordering; they may be overly broad or mistaken.
+                {"lean_name": "T.helper", "block_ids": ["pdf-abcdef123456-p001-b002"]},
+                {"lean_name": "T.switching_lemma", "block_ids": ["pdf-abcdef123456-p003-b002"]},
+            ]
+        }
+
+        selected = select_primary_candidate([early, later], reranked, index)
+
+        self.assertEqual(selected.lean_name, "T.switching_lemma")
+
     def test_fixture_run_defaults_to_one_dollar(self):
         args = build_parser().parse_args(
             ["run", "blueprint/src/references/switching-lemma.pdf"]

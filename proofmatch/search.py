@@ -27,15 +27,38 @@ def _tokens(text: str) -> list[str]:
     ]
 
 
-def _query(index: DocumentIndex) -> tuple[Counter[str], set[str]]:
-    body = "\n".join(f"{block.title}\n{block.markdown}" for block in index.blocks)
+def _query(blocks) -> tuple[Counter[str], set[str]]:
+    body = "\n".join(f"{block.title}\n{block.markdown}" for block in blocks)
     terms = Counter(_tokens(body))
     title_terms = {
         token
-        for block in index.blocks
+        for block in blocks
         for token in _tokens(block.title)
     }
     return terms, title_terms
+
+
+def _segments(index: DocumentIndex) -> list[tuple]:
+    segments: list[list] = []
+    current: list = []
+    context: list = []
+    for block in index.blocks:
+        if block.kind == "heading":
+            if current:
+                segments.append(current)
+                current = []
+            context = [block]
+        elif block.kind in {"theorem", "definition"}:
+            if current:
+                segments.append(current)
+            current = [*context, block]
+        elif current:
+            current.append(block)
+    if current:
+        segments.append(current)
+    if not segments:
+        return [tuple(index.blocks)]
+    return [tuple(segment) for segment in segments]
 
 
 def _score(
@@ -63,6 +86,9 @@ def _score(
         )
         if term in title_terms and (name_counts[term] or title_counts[term]):
             score += 3.0
+    title_overlap = title_terms.intersection(title_counts)
+    if len(title_overlap) >= 2:
+        score += 80.0 * len(title_overlap)
     candidate_length = sum(body_counts.values())
     if candidate_length:
         score /= 1.0 + 0.05 * math.log1p(candidate_length)
@@ -76,36 +102,63 @@ def search_candidates(
 ) -> tuple[Candidate, ...]:
     if limit < 1:
         raise ValueError("limit must be positive")
-    query_terms, title_terms = _query(index)
-    candidates: list[Candidate] = []
+    segments = _segments(index)
+    scored_by_segment: list[list[Candidate]] = [[] for _ in segments]
     with dataset.open(encoding="utf-8") as source:
         for line_number, line in enumerate(source, start=1):
             try:
                 record = json.loads(line)
             except json.JSONDecodeError as error:
                 raise ValueError(f"invalid JSONL record at line {line_number}") from error
-            score = _score(query_terms, title_terms, record)
             proof = str(record.get("proof") or "")
             statement = str(
                 record.get("statement_informal")
                 or record.get("informal_statement")
                 or ""
             )
-            candidates.append(
-                Candidate(
-                    lean_name=str(record.get("lean_name") or record.get("id") or ""),
-                    title=str(record.get("title") or ""),
-                    source_module=str(record.get("source_module") or ""),
-                    statement=statement,
-                    formal_statement=str(record.get("formal_statement") or ""),
-                    proof=proof,
-                    proof_tokens=(len(proof) + 3) // 4,
-                    score=score,
-                    document_blocks=tuple(block.block_id for block in index.blocks),
+            for segment_index, segment in enumerate(segments):
+                query_terms, title_terms = _query(segment)
+                score = _score(query_terms, title_terms, record)
+                scored_by_segment[segment_index].append(
+                    Candidate(
+                        lean_name=str(record.get("lean_name") or record.get("id") or ""),
+                        title=str(record.get("title") or ""),
+                        source_module=str(record.get("source_module") or ""),
+                        statement=statement,
+                        formal_statement=str(record.get("formal_statement") or ""),
+                        proof=proof,
+                        proof_tokens=(len(proof) + 3) // 4,
+                        score=score,
+                        document_blocks=tuple(block.block_id for block in segment),
+                    )
                 )
-            )
-    candidates.sort(key=lambda candidate: (-candidate.score, candidate.lean_name))
-    return tuple(candidates[:limit])
+    for candidates in scored_by_segment:
+        candidates.sort(key=lambda candidate: (-candidate.score, candidate.lean_name))
+    selected: list[Candidate] = []
+    seen: set[str] = set()
+    primary_quota = min(len(scored_by_segment[0]), max(1, (2 * limit + 2) // 3))
+    for candidate in scored_by_segment[0][:primary_quota]:
+        selected.append(candidate)
+        seen.add(candidate.lean_name)
+        if len(selected) == limit:
+            return tuple(selected)
+    rank = 0
+    while len(selected) < limit:
+        added = False
+        for candidates in scored_by_segment[1:]:
+            if rank >= len(candidates):
+                continue
+            candidate = candidates[rank]
+            if candidate.lean_name not in seen:
+                selected.append(candidate)
+                seen.add(candidate.lean_name)
+                added = True
+                if len(selected) == limit:
+                    break
+        if not added and all(rank >= len(items) - 1 for items in scored_by_segment):
+            break
+        rank += 1
+    return tuple(selected)
 
 
 def prepare_rerank_payload(

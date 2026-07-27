@@ -4,7 +4,11 @@ from decimal import Decimal
 from pathlib import Path
 
 from proofmatch.budget import Budget
-from proofmatch.document import repair_document, stable_block_id
+from proofmatch.document import (
+    parse_validated_markdown,
+    repair_document,
+    stable_block_id,
+)
 
 
 class FakeAgent:
@@ -51,6 +55,39 @@ class FakeAgent:
 
 
 class DocumentTests(unittest.TestCase):
+    def test_parser_recovers_bold_theorem_and_proof_kinds(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "notes.md"
+            path.write_text(
+                "<!-- source-pdf-sha256: abcdef1234567890 -->\n"
+                '<a id="pdf-abcdef123456-p001-b001"></a>\n'
+                "<!-- pdf-source: page=1; block=1; confidence=0.99 -->\n"
+                "**Theorem 1.** Switching bound.\n"
+                '<a id="pdf-abcdef123456-p001-b002"></a>\n'
+                "<!-- pdf-source: page=1; block=2; confidence=0.98 -->\n"
+                "**Proof.** Encode bad restrictions.\n",
+                encoding="utf-8",
+            )
+
+            index = parse_validated_markdown(path)
+
+            self.assertEqual([block.kind for block in index.blocks], ["theorem", "proof"])
+
+    def test_switching_lemma_section_heading_stays_a_heading(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "notes.md"
+            path.write_text(
+                "<!-- source-pdf-sha256: abcdef1234567890 -->\n"
+                '<a id="pdf-abcdef123456-p001-b001"></a>\n'
+                "<!-- pdf-source: page=1; block=1; confidence=0.99 -->\n"
+                "## 2. The Switching Lemma\n",
+                encoding="utf-8",
+            )
+
+            index = parse_validated_markdown(path)
+
+            self.assertEqual(index.blocks[0].kind, "heading")
+
     def test_block_id_is_stable_and_heading_independent(self):
         self.assertEqual(
             stable_block_id("abcdef1234567890", 2, 3),
