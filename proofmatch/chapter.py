@@ -127,8 +127,9 @@ def _upstream_inputs(
         if "has no proof_upstream_decls" in str(error):
             return (), (), ()
         raise
-    by_id = {block.block_id: block for block in index.blocks}
-    blocks = tuple(by_id[item] for item in candidate.document_blocks)
+    # Upstream helpers may be introduced or used outside the narrow segment
+    # selected for the top-level theorem, so map them against the whole chapter.
+    blocks = tuple(index.blocks)
     batches = batch_declarations(declarations)
     estimates = estimate_upstream_batches(batches, blocks)
     return declarations, blocks, estimates
@@ -260,7 +261,7 @@ def run_chapter_match(
                 index,
                 candidate.proof,
                 declarations,
-                set(candidate.document_blocks),
+                {block.block_id for block in index.blocks},
             )
             manifests.append(manifest)
             proposals.append(

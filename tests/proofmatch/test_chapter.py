@@ -6,6 +6,7 @@ from unittest.mock import patch
 from proofmatch.budget import Budget
 from proofmatch.catalog import BlueprintBinding
 from proofmatch.chapter import (
+    _upstream_inputs,
     compare_relevant_candidates,
     expand_seed_blueprint_files,
     preflight_chapter,
@@ -16,6 +17,7 @@ from proofmatch.models import (
     DocumentBlock,
     DocumentIndex,
     RelevanceDecision,
+    UpstreamDeclaration,
 )
 
 
@@ -86,6 +88,40 @@ class ChapterTests(unittest.TestCase):
                 (candidate,), index, None, None, Budget(Decimal("10"))
             )
         self.assertGreaterEqual(len(estimates), 2)
+
+    def test_upstream_mapping_uses_the_entire_chapter_context(self):
+        first = DocumentBlock(
+            "pdf-abcdef123456-p001-b001", 1, 1, "theorem", "T", "top", 1
+        )
+        later = DocumentBlock(
+            "pdf-abcdef123456-p003-b002", 3, 2, "prose", "Helper", "used here", 1
+        )
+        index = DocumentIndex("abcdef123456", (first, later), ())
+        candidate = Candidate(
+            "T.one", "T", "M", "top", "True", "by trivial", 2, 1,
+            (first.block_id,),
+        )
+        declaration = UpstreamDeclaration(
+            "T.helper", "lemma", "helper", "M", (), "by trivial"
+        )
+        with (
+            patch(
+                "proofmatch.chapter.load_upstream_declarations",
+                return_value=(declaration,),
+            ),
+            patch(
+                "proofmatch.chapter.estimate_upstream_batches",
+                return_value=(),
+            ),
+        ):
+            _, blocks, _ = _upstream_inputs(
+                candidate, index, Path("dataset"), Path("graph")
+            )
+
+        self.assertEqual(
+            tuple(block.block_id for block in blocks),
+            (first.block_id, later.block_id),
+        )
 
     def test_every_relevant_or_uncertain_candidate_is_compared(self):
         block = DocumentBlock(
