@@ -60,6 +60,34 @@ class Candidate:
     document_blocks: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class UpstreamDeclaration:
+    lean_name: str
+    kind: str
+    statement: str
+    source_module: str
+    direct_dependencies: tuple[str, ...]
+    proof_excerpt: str
+
+
+@dataclass(frozen=True)
+class ProofStepAssignment:
+    lean_name: str
+    relation: Literal["direct", "context"]
+    document_blocks: tuple[str, ...]
+    rationale: str
+
+
+@dataclass(frozen=True)
+class ProofStepManifest:
+    theorem: str
+    document: str
+    source_fingerprint: str
+    proof_fingerprint: str
+    dependency_fingerprint: str
+    assignments: tuple[ProofStepAssignment, ...]
+
+
 def _convert(value: Any, expected: Any, location: str) -> Any:
     origin = get_origin(expected)
     args = get_args(expected)
