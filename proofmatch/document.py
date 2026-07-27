@@ -14,6 +14,10 @@ from proofmatch.models import DocumentAmbiguity, DocumentBlock, DocumentIndex
 
 FINGERPRINT_RE = re.compile(r"<!-- source-pdf-sha256: ([0-9a-f]{12,64}) -->")
 PAGE_RE = re.compile(r"<!-- pdf-page: (\d+) -->")
+ANCHOR_RE = re.compile(r'<a id="(pdf-[0-9a-f]{12}-p(\d{3})-b(\d{3}))"></a>')
+PROVENANCE_RE = re.compile(
+    r"<!-- pdf-source: page=(\d+); block=(\d+); confidence=([0-9.]+) -->"
+)
 
 
 def stable_block_id(source_fingerprint: str, page: int, sequence: int) -> str:
@@ -126,6 +130,47 @@ def _render_markdown(index: DocumentIndex) -> str:
             ]
         )
     return "\n".join(lines).rstrip() + "\n"
+
+
+def parse_validated_markdown(path: Path) -> DocumentIndex:
+    text = path.read_text(encoding="utf-8")
+    fingerprint_match = FINGERPRINT_RE.search(text)
+    if not fingerprint_match:
+        raise ValueError("validated Markdown lacks source PDF fingerprint")
+    anchors = list(ANCHOR_RE.finditer(text))
+    if not anchors:
+        raise ValueError("validated Markdown contains no proofmatch block anchors")
+    blocks = []
+    for index, anchor in enumerate(anchors):
+        end = anchors[index + 1].start() if index + 1 < len(anchors) else len(text)
+        body = text[anchor.end() : end].strip()
+        provenance = PROVENANCE_RE.search(body)
+        if not provenance:
+            raise ValueError(f"{anchor.group(1)} lacks PDF provenance")
+        page, sequence = int(provenance.group(1)), int(provenance.group(2))
+        if page != int(anchor.group(2)) or sequence != int(anchor.group(3)):
+            raise ValueError(f"{anchor.group(1)} has inconsistent provenance")
+        markdown = PROVENANCE_RE.sub("", body, count=1).strip()
+        first_line = markdown.splitlines()[0] if markdown else ""
+        title = first_line.lstrip("# ").strip() if first_line.startswith("#") else ""
+        kind = "prose"
+        lowered = title.casefold()
+        for named_kind in ("definition", "theorem", "lemma", "proof"):
+            if named_kind in lowered:
+                kind = "theorem" if named_kind == "lemma" else named_kind
+                break
+        blocks.append(
+            DocumentBlock(
+                anchor.group(1),
+                page,
+                sequence,
+                kind,
+                title,
+                markdown,
+                float(provenance.group(3)),
+            )
+        )
+    return DocumentIndex(fingerprint_match.group(1), tuple(blocks), ())
 
 
 def repair_document(
