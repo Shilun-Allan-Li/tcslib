@@ -6,7 +6,9 @@ identities or inequalities, and final assembly. Ignore Lean-only coercions,
 typeclasses, decidability instances, finite-set plumbing, normalization tactics, and
 helper lemmas that merely satisfy elaboration.
 
-Use `same` only when essential strategy and mathematical steps correspond. Use
+Use `same` when essential strategy and mathematical steps correspond. A Lean
+theorem may be a clearly identifiable projection of a stronger source theorem;
+when Lean follows precisely that component of the stronger proof, omitted
+conclusions are not differences. Use
 `different` for a material mathematical mismatch and `uncertain` when evidence is
 insufficient. Return only schema-conforming JSON with exact evidence.
-
