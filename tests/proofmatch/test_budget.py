@@ -36,12 +36,12 @@ class BudgetTests(unittest.TestCase):
 
         self.assertEqual(estimate.input_tokens, 5_001)
         self.assertEqual(estimate.output_tokens, 5_001)
-        self.assertEqual(estimate.usd, Decimal("0.035007"))
+        self.assertEqual(estimate.usd, Decimal("0.15003"))
 
     def test_token_cost_uses_separate_input_and_output_rates(self):
         self.assertEqual(
-            token_cost("gpt-5.6-terra", input_tokens=1_000_000, output_tokens=100_000),
-            Decimal("4.00"),
+            token_cost("claude-opus-4-8", input_tokens=1_000_000, output_tokens=100_000),
+            Decimal("7.50"),
         )
 
     def test_unknown_model_is_rejected(self):

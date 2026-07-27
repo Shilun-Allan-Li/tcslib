@@ -7,6 +7,7 @@ from collections.abc import Iterable
 from dataclasses import asdict
 from pathlib import Path
 
+from proofmatch.agents import DEFAULT_MODEL
 from proofmatch.budget import StageEstimate, token_cost
 from proofmatch.models import (
     DocumentBlock,
@@ -133,7 +134,7 @@ def batch_declarations(
 def estimate_upstream_batches(
     batches: Iterable[tuple[UpstreamDeclaration, ...]],
     proof_blocks: Iterable[DocumentBlock],
-    model: str = "gpt-5.6-luna",
+    model: str = DEFAULT_MODEL,
 ) -> tuple[StageEstimate, ...]:
     block_payload = [
         {

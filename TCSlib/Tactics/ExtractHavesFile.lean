@@ -102,6 +102,26 @@ private def splitAtTopLevelAssign (s : String) : Option (String × String) := Id
     i := i + 1
   return none
 
+/-- Split `s` at the first `→` at top-level bracket depth — used to peel one
+    arrow antecedent off a captured telescope (`T₁ → rest`); nested arrows
+    inside parenthesized antecedents don't count. Returns
+    `some (antecedent, rest)` with the arrow dropped. -/
+private def splitAtTopLevelArrow (s : String) : Option (String × String) := Id.run do
+  let chars := s.toList.toArray
+  let n := chars.size
+  let mut depth := 0
+  let mut i := 0
+  while i < n do
+    let c := chars[i]!
+    if c == '(' || c == '[' || c == '{' || c == '⟨' || c == '⦃' then depth := depth + 1
+    else if c == ')' || c == ']' || c == '}' || c == '⟩' || c == '⦄' then
+      if depth > 0 then depth := depth - 1
+    else if c == '→' && depth == 0 then
+      return some (String.mk ((chars.extract 0 i).toList),
+                   String.mk ((chars.extract (i + 1) n).toList))
+    i := i + 1
+  return none
+
 /-- A copy of `lines` with comment-interior lines blanked, for SCOPE SCANNERS
     only (`enclosingOpensFor`/`...SetOptionsFor`/`...VariablesFor`,
     `setBoundNamesInPrefix`) — never for content that gets replayed or
@@ -127,15 +147,39 @@ private def maskCommentLines (lines : Array String) : Array String := Id.run do
       out := out.push l
   return out
 
-/-- Inline let-replay is DISABLED pending an out-of-band per-declaration
-    driver: even with once-per-have limiting and 200K-heartbeat caps on both
-    gates, the retries pushed full Entropy.lean runs past 116 CPU-minutes
-    (baseline ~60) across four attempts. The mechanism itself is sound (see
-    `letDefsInPrefix`) — the COST STRUCTURE is wrong for the inline path,
-    where every retry re-elaborates a heavyweight measure-theory theorem
-    inside the one long-running driver command. The right home is a separate
-    driver that processes one declaration per invocation on a fresh server. -/
-private def letReplayEnabled : Bool := false
+/-- Let-replay is DISABLED for whole-file runs: even with once-per-have
+    limiting and 200K-heartbeat caps on both gates, the retries pushed full
+    Entropy.lean runs past 116 CPU-minutes (baseline ~60) across four
+    attempts. The mechanism itself is sound (see `letDefsInPrefix`) — the
+    COST STRUCTURE is wrong for the inline path, where every retry
+    re-elaborates a heavyweight theorem inside the one long-running driver
+    command. Its home is `#extract_haves_iter_decl`: one declaration per
+    invocation on a fresh server, which SETS this ref; the whole-file
+    command clears it defensively. -/
+initialize letReplayEnabledRef : IO.Ref Bool ← IO.mkRef false
+
+/-- Probe `autoImplicit` mode MUST follow the SOURCE file's own setting
+    (check-context = write-context, both directions). The probes historically
+    forced `autoImplicit false` unconditionally — right for the common file
+    that sets it false itself (without forcing, a genuinely-missing
+    identifier silently auto-generalizes and the check falsely passes), but
+    WRONG for a file that RELIES on autoImplicit (Circuit.lean: no
+    `variable`, `theorem toNAnd_toNOr_size_le (c : Circuit n)` auto-binds
+    `n`) — there every probe dies with "Unknown identifier `n`" while the
+    written output (which inherits the source's settings) compiles fine.
+    Drivers set this per source file: true ⟺ the file does NOT set
+    `set_option autoImplicit false` at file level. Default false = the
+    historical safe behavior. -/
+initialize probeAutoImplicitRef : IO.Ref Bool ← IO.mkRef false
+
+/-- Probe/rejection logs normally publish only when the whole driver command
+    COMPLETES — on a disk-tight machine whose auto-stop kills the server
+    mid-decl (CircuitTreeManip, twice), that loses the exact rejection dumps
+    needed to diagnose the failing class. When set (by the per-decl driver, to
+    `<output>.probelog`), every probe log line is ALSO appended here, so a
+    killed run still leaves the diagnosis material on disk. The `--cleanup`
+    scanner deletes it with the other `_iter_output` scratch. -/
+initialize probeLogPathRef : IO.Ref (Option String) ← IO.mkRef none
 
 /-- `(name, rhs)` pairs for `set NAME (: T)? := RHS (with h)?` and tactic
     `let NAME (: T)? := RHS` lines in a replayed prefix at indent ≤
@@ -222,6 +266,22 @@ private def setBoundNamesInPrefix (prefixText : String) (maxIndent : Nat) : List
                              c == ')' || c == ',') then
           acc ++ [nm]
         else acc
+      | [nameOnly] =>
+        -- match-lambda ldecl: `let NAME : TYPE` with `| pat => ...` arms on
+        -- the FOLLOWING lines — no ` := ` on the let line, but the ldecl is
+        -- just as real, and just as capture-defeating (SATTo3SAT's
+        -- `let ml : Literal V → ...`: everything after it in context printed
+        -- as an anonymous let-telescope, 0/4). Require the ` : ` ascription
+        -- so `let` continuation text never matches.
+        match nameOnly.splitOn " : " with
+        | nm0 :: _ :: _ =>
+          let nm := nm0.trim
+          if nm.length > 0 &&
+             !nm.any (fun c => c == ' ' || c == '⟨' || c == '⟩' || c == '(' ||
+                               c == ')' || c == ',') then
+            acc ++ [nm]
+          else acc
+        | _ => acc
       | _ => acc
   names.eraseDups.reverse
 
@@ -1833,14 +1893,24 @@ private def elabCheckFirstError (src : String) : CommandElabM (Option String) :=
   | .error e => return some s!"PARSE: {e}"
   | .ok stx =>
     let before := (← get).messages.reportedPlusUnreported.toList.length
+    let aiOn ← probeAutoImplicitRef.get
     let setOpts (o : Options) : Options :=
-      o.setBool `Elab.async false |>.setBool `autoImplicit false |>.setBool `relaxedAutoImplicit false
+      o.setBool `Elab.async false |>.setBool `autoImplicit aiOn |>.setBool `relaxedAutoImplicit aiOn
     withoutModifyingEnv (withScope (fun sc => { sc with opts := setOpts sc.opts }) (elabCommand stx))
     let afterList := (← get).messages.reportedPlusUnreported.toList
     let newMsgs := afterList.drop before
     match newMsgs.find? (fun m => m.severity == .error) with
     | none => return none
     | some m => return some (← m.toString)
+
+/-- `logInfo` + crash-surviving append to the probe-log sidecar (see
+    `probeLogPathRef`). Used for every probe/rejection line so a mid-decl
+    kill (disk auto-stop) still leaves the diagnosis material on disk. -/
+private def plogInfo (msg : String) : CommandElabM Unit := do
+  logInfo msg
+  if let some p ← probeLogPathRef.get then
+    try IO.FS.withFile p .append fun h => h.putStrLn msg
+    catch _ => pure ()
 
 private def elabCheckOk (src : String) : CommandElabM Bool := do
   return (← elabCheckFirstError src).isNone
@@ -1867,8 +1937,9 @@ private def elabCheckFirstErrorSeq (srcs : List String) : CommandElabM (Option S
     | .error e => return some s!"PARSE: {e}"
     | .ok stx => stxs := stxs.push stx
   let before := (← get).messages.reportedPlusUnreported.toList.length
+  let aiOn ← probeAutoImplicitRef.get
   let setOpts (o : Options) : Options :=
-    o.setBool `Elab.async false |>.setBool `autoImplicit false |>.setBool `relaxedAutoImplicit false
+    o.setBool `Elab.async false |>.setBool `autoImplicit aiOn |>.setBool `relaxedAutoImplicit aiOn
   withoutModifyingEnv (withScope (fun sc => { sc with opts := setOpts sc.opts }) do
     for stx in stxs do
       elabCommand stx)
@@ -1890,8 +1961,9 @@ private def elabGetDeclInfo (src : String) (declName : Name) : CommandElabM (Opt
   match Lean.Parser.runParserCategory env `command src with
   | .error _ => return none
   | .ok stx =>
+    let aiOn ← probeAutoImplicitRef.get
     let setOpts (o : Options) : Options :=
-      o.setBool `Elab.async false |>.setBool `autoImplicit false |>.setBool `relaxedAutoImplicit false
+      o.setBool `Elab.async false |>.setBool `autoImplicit aiOn |>.setBool `relaxedAutoImplicit aiOn
     withoutModifyingEnv do
       withScope (fun sc => { sc with opts := setOpts sc.opts }) (elabCommand stx)
       return (← getEnv).find? declName
@@ -2195,10 +2267,65 @@ private def findAllHaveHeaders (lines : Array String) (from_ to_ : Nat) : Array 
         let afterHave := tCore.drop "have ".length
         let nameStop := afterHave.find (fun c => c == ' ' || c == ':' || c == '=')
         let name := String.Pos.Raw.extract afterHave ⟨0⟩ nameStop
-        if !name.isEmpty then
+        -- destructuring `have ⟨...⟩` has no NAME — the raw `⟨l,` token leaked
+        -- into a lemma name once ("PARSE: expected ':'"); the pre-pass
+        -- `destructuringHavesToObtain` converts the convertible ones, and any
+        -- leftover (e.g. bullet-attached) must simply never be attempted.
+        if !name.isEmpty && !name.startsWith "⟨" then
           result := result.push (i, name)
       i := i + 1
     return result
+
+/-- DESTRUCTURING HAVES (#57): `have ⟨l, hl⟩ : T := proof` binds PATTERN
+    components — there is no have-name for the extractor to target, and the
+    raw text `⟨l,` leaked into a lemma name (CanonicalDTree 8/9, "PARSE:
+    expected ':'" on every variant). Rewrite each into the equivalent
+    named-have + obtain pair the pipeline already handles:
+      have __destr_K : T := proof     ← extracts like any named have
+      obtain ⟨l, hl⟩ := __destr_K     ← stays behind as the consumer
+    Runs inside the pre-pass REVERT-GATE (a rewrite that breaks the decl is
+    rolled back wholesale). Bullet-attached (`· have ⟨...⟩`) forms are left
+    alone — the obtain insertion point would be inside the bullet block —
+    and `findAllHaveHeaders` skips `⟨`-named haves so they stay unconverted
+    rather than producing garbage-name attempts. Bottom-up so insertions
+    never shift the indices still to be visited. -/
+private def destructuringHavesToObtain (lines : Array String) (span : ThmSpan) :
+    Array String := Id.run do
+  let mut out := lines
+  for off in List.range (span.bodyEnd - span.bodyStart) do
+    let i := span.bodyEnd - 1 - off
+    if i >= out.size then continue
+    let l := out[i]!
+    let t := l.trimLeft
+    if t.startsWith "have ⟨" then
+      let indent := String.mk (List.replicate (lineIndent l) ' ')
+      let afterHave := t.drop "have ".length
+      -- matching top-level `⟩` (patterns nest: ⟨a, ⟨b, c⟩⟩)
+      let mut depth := 0
+      let mut cut : Option Nat := none
+      let mut j := 0
+      for c in afterHave.toList do
+        if cut.isNone then
+          if c == '⟨' then depth := depth + 1
+          else if c == '⟩' then
+            depth := depth - 1
+            if depth == 0 then cut := some (j + 1)
+        j := j + 1
+      match cut with
+      | none => pure ()
+      | some cutN =>
+        let pat := String.mk (afterHave.toList.take cutN)
+        let rest := String.mk (afterHave.toList.drop cutN)
+        -- `⟩ : T := ...` (typed) or `⟩ := ...` (untyped) — both keep working
+        -- as `have __destr_K<rest>`; anything else (e.g. pattern spans
+        -- multiple lines) is left alone.
+        if rest.trimLeft.startsWith ":" then
+          let nm := s!"__destr_{i}"
+          let (_, relEnd) := extractHaveBody out i
+          out := out.set! i (indent ++ "have " ++ nm ++ rest)
+          out := out.extract 0 relEnd ++ #[indent ++ "obtain " ++ pat ++ " := " ++ nm] ++
+                 out.extract relEnd out.size
+  return out
 
 /-- Among `headers` (found via `findAllHaveHeaders`), return the first one whose
     own extracted span (via `extractHaveBody`, bullet-aware) contains no OTHER
@@ -2555,7 +2682,14 @@ private def enclosingOpensFor (lines : Array String) (bStart : Nat) : List Strin
       if nsStack.getLast? == some nm then
         nsStack := nsStack.dropLast
     else if t.startsWith "open " then
-      let names := (t.drop "open ".length).trim.splitOn " " |>.filter (·.length > 0)
+      -- drop the literal `scoped` keyword: `open scoped BigOperators` would
+      -- otherwise contribute "scoped" as a NAMESPACE NAME to the merged
+      -- probe prefix (`open ... scoped BigOperators ... in` — resolution
+      -- garbage, a 0/85 wipeout on SmolenskyAlgebra.lean); a PLAIN open of
+      -- the namespace is a strict superset (names + scoped notation), so
+      -- probes stay faithful
+      let names := (t.drop "open ".length).trim.splitOn " "
+        |>.filter (fun s => s.length > 0 && s != "scoped")
       if names.getLast? == some "in" then
         pendingInOpen := pendingInOpen ++ names.dropLast
       else
@@ -2563,8 +2697,68 @@ private def enclosingOpensFor (lines : Array String) (bStart : Nat) : List Strin
     else if declKws.any t.startsWith then
       lastDeclPending := pendingInOpen
       pendingInOpen := []
-  return (if nsStack.isEmpty then [] else [".".intercalate nsStack]) ++ opens ++
-    lastDeclPending ++ pendingInOpen
+  -- Open EVERY cumulative prefix of the namespace path, not just the full
+  -- path: inside `namespace A.B.C`, a reference to a SIBLING name (`Protocol`
+  -- = A.B.Protocol from within `namespace A.B.Protocol`, Subprotocol.lean)
+  -- resolves via the enclosing-prefix walk — which `open A.B.C in` does NOT
+  -- replicate (it only exposes members OF A.B.C). Opening A, A.B, and A.B.C
+  -- together reproduces in-namespace resolution for probes. Entries may
+  -- themselves be dotted (`namespace Deterministic.Protocol`), so flatten
+  -- components first. Never bit before because every prior campaign file
+  -- used a single-level namespace, where full path = only prefix.
+  let nsComponents := nsStack.foldl (fun acc s => acc ++ (s.splitOn ".")) ([] : List String)
+  let nsPrefixes := (List.range nsComponents.length).map (fun i =>
+    ".".intercalate (nsComponents.take (i+1)))
+  return nsPrefixes ++ opens ++ lastDeclPending ++ pendingInOpen
+
+/-- The enclosing namespace path ("A.B.C", or "" at top level) for the line at
+    `bStart`. OPEN-COLLISION class (#58, Derandomization): emulating namespace
+    nesting with `open A A.B A.B.C in` puts the enclosing namespaces at the
+    SAME priority as the file's explicit `open`s — `Protocol` became ambiguous
+    (`FiniteMessage.Protocol` vs `PublicCoin.Protocol`) in probes while the
+    real in-file decl resolves it via nesting PRIORITY. Lean gives the body of
+    a DOTTED-NAME declaration (`lemma A.B.C.probe : ...`) true
+    current-namespace resolution priority — so probe headers qualify their
+    throwaway names with this path, which beats the flattened opens exactly
+    like real nesting does. -/
+private def enclosingNamespacePathFor (lines : Array String) (bStart : Nat) : String := Id.run do
+  let mlines := maskCommentLines lines
+  let mut nsStack : List String := []
+  for i in List.range bStart do
+    let t := mlines[i]!.trim
+    if t.startsWith "namespace " then
+      nsStack := nsStack ++ [(t.drop "namespace ".length).trim]
+    else if t.startsWith "end " then
+      if nsStack.getLast? == some ((t.drop "end ".length).trim) then
+        nsStack := nsStack.dropLast
+  return ".".intercalate (nsStack.foldl (fun acc s => acc ++ (s.splitOn ".")) [])
+
+/-- DECL-SCOPED opens (`open Classical in` on the line(s) before the decl at
+    `bStart`) — the CLASSICAL-INSTANCE-LOSS class (Derandomization, 16 errors
+    twice): probes carry these via `enclosingOpensFor`'s pending tracking, so
+    they pass, but written aux lemmas are SPLICED ABOVE the `open ... in`
+    line, outside its single-command scope — Decidable instances that the
+    decl gets from `open Classical in` fail to synthesize in the written
+    file (error-recovery renders the failed subterms as `sorry`, which
+    misled the first diagnosis). Bake these into the WRITTEN lemma text,
+    like `classicalPrefix` (#36: check-context = write-context). -/
+private def declScopedOpensFor (lines : Array String) (bStart : Nat) : List String := Id.run do
+  let mlines := maskCommentLines lines
+  let declKws : List String := ["theorem ", "lemma ", "def ", "abbrev ", "instance ",
+    "example ", "private ", "noncomputable ", "structure ", "inductive ", "have ", "@["]
+  let mut pendingInOpen : List String := []
+  let mut lastDeclPending : List String := []
+  for i in List.range bStart do
+    let t := mlines[i]!.trim
+    if t.startsWith "open " then
+      let names := (t.drop "open ".length).trim.splitOn " "
+        |>.filter (fun s => s.length > 0 && s != "scoped")
+      if names.getLast? == some "in" then
+        pendingInOpen := pendingInOpen ++ names.dropLast
+    else if declKws.any t.startsWith then
+      lastDeclPending := pendingInOpen
+      pendingInOpen := []
+  return (lastDeclPending ++ pendingInOpen).eraseDups
 
 /-- Top-level `set_option NAME VALUE` lines appearing before `bStart` in the
     file being assembled. The verification probes below elaborate a candidate
@@ -2591,7 +2785,32 @@ private def enclosingSetOptionsFor (lines : Array String) (bStart : Nat) : List 
         match (t.drop "set_option ".length).trim.splitOn " " |>.filter (·.length > 0) with
         | nm :: v :: _ => result := result ++ [(nm, v)]
         | _ => pure ()
-    return result
+    -- DEDUPE exact (name, value) repeats, keeping the LAST occurrence (so an
+    -- intervening different-value override of the same option still wins per
+    -- innermost-`in` semantics). Without this, the scanner re-collects the
+    -- `set_option ... in` prefix lines of every previously WRITTEN aux lemma
+    -- as ambient context, so each new lemma's prefix gains one more copy per
+    -- prior lemma — quadratic text growth on files with header-wide options
+    -- (observed on Entropy.lean: 4× duplicated prefixes by the fourth decl).
+    let mut seen : List (String × String) := []
+    let mut dedup : List (String × String) := []
+    for p in result.reverse do
+      if !seen.contains p then
+        seen := p :: seen
+        dedup := p :: dedup
+    -- CLAMP an unbounded `maxHeartbeats 0` to a large finite budget. This is
+    -- the #40 cost-structure lesson applied at the source: one heartbeats-0
+    -- probe on a heavy measure-theory candidate can spin for HOURS (observed:
+    -- Entropy's boolVector.hsplit pinned a core for 2h with no verdict),
+    -- wedging the whole campaign. Because this function feeds probes, commit
+    -- gates, AND the written lemma prefixes alike, the clamp preserves
+    -- check-context = write-context exactly; and it is safe-direction — a
+    -- candidate that passes at the clamped budget passes a fortiori under the
+    -- real file's unbounded header, while a slow-but-valid conversion is
+    -- merely LOST (rejected), never shipped broken. Bounded values (400000,
+    -- 1000000, ...) pass through untouched.
+    return dedup.map (fun (nm, v) =>
+      if nm == "maxHeartbeats" && v == "0" then (nm, "2000000") else (nm, v))
 
 /-- The `variable ...` commands in scope at line `bStart` — a third kind of
     ambient context the verification probes must replay, alongside `open`s
@@ -2631,6 +2850,47 @@ private def enclosingVariablesFor (lines : Array String) (bStart : Nat) : List S
       | [] => stack := [[cmd]]
     i := i + 1
   return stack.reverse.foldl (· ++ ·) []
+
+/-- The line at which to SPLICE an aux lemma above a declaration header. Naive
+    insertion at `headerStart` lands BETWEEN the declaration's doc comment (or
+    `@[...]` attributes / `set_option ... in` prefix lines) and the declaration
+    itself — and a doc comment must be immediately followed by a declaration,
+    so the WRITTEN file breaks with "unexpected token 'set_option'; expected
+    'lemma'" while every probe gate stays green (probes never include the
+    docstring — the check-context ≠ write-context class yet again; observed
+    as 6 shipped parse errors on Entropy.lean). Back up over any contiguous
+    attached block: in-scoped prefix lines, attribute lines, and a doc comment
+    block (a comment-closing line directly above, with its doc-comment opener
+    found within a bounded upward scan). -/
+private def spliceLineAbove (lines : Array String) (headerStart : Nat) : Nat := Id.run do
+  let mut i := headerStart
+  let mut changed := true
+  while changed do
+    changed := false
+    while i > 0 &&
+        (let t := lines[i-1]!.trim
+         t.startsWith "@[" ||
+         (t.endsWith " in" &&
+          (t.startsWith "set_option " || t.startsWith "open " || t.startsWith "omit "))) do
+      i := i - 1
+      changed := true
+    if i > 0 && lines[i-1]!.trim.endsWith "-/" then
+      let mut j := i - 1
+      let mut found := false
+      let mut fuel := 60
+      while fuel > 0 && !found do
+        fuel := fuel - 1
+        let t := lines[j]!.trimLeft
+        if t.startsWith "/--" || t.startsWith "/-!" then
+          found := true
+        else if j == 0 then
+          fuel := 0
+        else
+          j := j - 1
+      if found then
+        i := j
+        changed := true
+  return i
 
 /-- Process ONE leaf `have` (absolute line `haveIdx`, name `haveName`) belonging
     to theorem `span`: build a synthetic probe theorem (original signature,
@@ -2686,8 +2946,19 @@ private def extractOneHaveViaGoal
         | some (_, cont) => cont.trim
         | none => ""
       | none => ""
-  let tempThmName := s!"__extract_probe_{counter}__"
+  -- dotted probe name = true current-namespace resolution priority
+  -- (see enclosingNamespacePathFor — the open-collision class)
+  let nsPath := enclosingNamespacePathFor lines span.headerStart
+  let tempThmName := (if nsPath.isEmpty then "" else nsPath ++ ".") ++ s!"__extract_probe_{counter}__"
   let headerText := "\n".intercalate (lines.extract span.headerStart span.bodyStart).toList
+  -- A `private `-headed declaration MUST have the modifier stripped before the
+  -- keyword/name arithmetic: the old `kw := ... else "lemma "` default made
+  -- `afterKw.drop span.name.length` drop from the WRONG offset, shipping
+  -- mangled probe headers like `lemma __extract_probe_1__lesToAux` — a
+  -- whole-decl probe wipeout on privacy-heavy files (Switching.lean, 51
+  -- private decls; every prior campaign target happened to be public).
+  let headerText :=
+    if headerText.startsWith "private " then headerText.drop "private ".length else headerText
   let kw := if headerText.startsWith "theorem " then "theorem " else "lemma "
   let afterKw := headerText.drop kw.length
   let afterName := afterKw.drop span.name.length
@@ -2731,7 +3002,22 @@ private def extractOneHaveViaGoal
   -- own `u_1`-style levels, colliding with the lemma's explicit `.{u_1, ...}`
   -- ("a universe level named `u_5` has already been declared" ×106 on
   -- Entropy.lean). Probes and the rewritten-theorem gate still need it.
-  let lemmaPrefix := setOptPrefix ++ openPrefix
+  -- A source proof running under the `classical` tactic has
+  -- `Classical.propDecidable` installed as a proof-wide LOCAL instance; a
+  -- captured type whose `Finset.filter`s relied on it fails to re-elaborate
+  -- standalone ("failed to synthesize DecidablePred ...", the
+  -- counting_obstruction bottom layer). Elaborate such lemmas under the
+  -- scoped classical instances.
+  let classicalPrefix :=
+    -- decl-scoped `open ... in` names must be BAKED into written lemmas
+    -- (splices land above the `open ... in` line — see declScopedOpensFor)
+    (let dOpens := declScopedOpensFor lines span.headerStart
+     if dOpens.isEmpty then "" else "open " ++ " ".intercalate dOpens ++ " in\n") ++
+    (if (maskCommentLines (lines.extract span.bodyStart span.bodyEnd)).toList.any
+        (fun l => l.trim == "classical") then
+      "open scoped Classical in\n"
+    else "")
+  let lemmaPrefix := setOptPrefix ++ openPrefix ++ classicalPrefix
   let externalName := span.name ++ "_aux_" ++ haveName
   if originalTypeText.isEmpty then
     -- Anonymous/untyped have: `extract_goal` can't be handed the have's own type
@@ -2803,10 +3089,21 @@ private def extractOneHaveViaGoal
         -- indistinguishable from "genuinely unextractable" (the inert-verifier
         -- lesson) — surface the probe's actual first error.
         match msgs.find? (fun m => (m.splitOn "error").length ≥ 2) with
-        | some e => logInfo s!"[extract-probe] '{haveName}' capture failed: {e.take 300}"
-        | none => logInfo s!"[extract-probe] '{haveName}' capture failed with no error message ({msgs.size} msgs)"
+        | some e => plogInfo s!"[extract-probe] '{haveName}' capture failed: {e.take 300}"
+        | none => plogInfo s!"[extract-probe] '{haveName}' capture failed with no error message ({msgs.size} msgs)"
       | some capturedSigText0 =>
         let capturedSigText := capturedSigText0.replace "ℕ" "Nat"
+        -- DAGGERED SIG PARAMS (#57): `extract_goal` prints INACCESSIBLE
+        -- context hyps as literal `{m✝ : Nat} (gates✝ : ...)` groups — `✝`
+        -- is not valid syntax, so every variant died at PARSE ("expected
+        -- token" exactly at the dagger; CircuitTreeManip h_elem_le_foldr).
+        -- Binder names of a standalone lemma are arbitrary: rename them to
+        -- fresh accessible names (longest marker first so `✝¹` never leaves
+        -- a stray `¹`). The source-replayed proof body cannot reference
+        -- them (they were inaccessible), and the CALLSITE side is covered
+        -- by the inacc-args retry (type-directed `apply <;> assumption`).
+        let capturedSigText := (((((capturedSigText.replace "✝⁴" "_inacc4").replace
+          "✝³" "_inacc3").replace "✝²" "_inacc2").replace "✝¹" "_inacc1").replace "✝" "_inacc")
         -- extract_goal renders universe-polymorphic captures with a UNIVERSE
         -- SPEC after the name (`__sig__.{u_2, u_1} ...`) — the group parsers
         -- would read `{u_2, u_1}` as a (comma-broken) binder group, failing
@@ -2845,7 +3142,7 @@ private def extractOneHaveViaGoal
           univNamesSorted.foldl (fun acc n =>
             (acc.replace ("Type " ++ n) "Type _").replace ("Sort " ++ n) "Sort _") s
         match parseRevertedSignature capturedSigText haveName with
-        | none => logInfo s!"[extract-probe] '{haveName}' captured sig unparseable: {capturedSigText.take 500}"
+        | none => plogInfo s!"[extract-probe] '{haveName}' captured sig unparseable: {capturedSigText.take 500}"
         | some (ty, callArgNames, paramsText0) =>
           -- Bug #24's parameter-ascription fix, PORTED to this branch: a
           -- reverted-context parameter (e.g. an earlier have, now a one-liner
@@ -2857,6 +3154,13 @@ private def extractOneHaveViaGoal
           -- the captured type is LONGER (= legitimately mutated in place by an
           -- intervening tactic; see the typed branch's note).
           let (pGroups, _) := scanBinderGroups paramsText0
+          -- forward-reference guard — see the typed branch
+          let ownBinderNames : List String := pGroups.toList.foldl (fun acc g =>
+            if !g.startsWith "(" then acc else
+            let inner := collapseToOneLine ((g.drop 1).dropRight 1)
+            match inner.splitOn " : " with
+            | nm :: _ :: _ => acc ++ (nm.trim.splitOn " " |>.filter (·.length > 0))
+            | _ => acc) []
           let paramsText := pGroups.foldl (init := "") fun acc g =>
             let fixed :=
               if !g.startsWith "(" then g
@@ -2867,13 +3171,29 @@ private def extractOneHaveViaGoal
                   let capturedTy := " : ".intercalate rest
                   match findPriorOneLinerType lines span.bodyStart haveIdx name.trim with
                   | some fixedTy =>
-                    if fixedTy.length > capturedTy.length then
+                    let introducesForwardRef := ownBinderNames.any (fun nm =>
+                      nm != name.trim && containsWord fixedTy nm && !containsWord capturedTy nm)
+                    if fixedTy.length > capturedTy.length && !introducesForwardRef then
                       "(" ++ name.trim ++ " : " ++ fixedTy ++ ")"
                     else g
                   | none => g
                 | _ => g
             acc ++ " " ++ fixed
           let finalSigLine := externalName ++ univSpec ++ paramsText ++ " : " ++ ty
+          -- SHIPPED-ERROR GATES (#51) — see the typed branch: sorry/match-aux
+          -- in a captured sig is probe-green but write-broken.
+          if containsWord finalSigLine "sorry" || (finalSigLine.splitOn ".match_").length ≥ 2 ||
+             (finalSigLine.splitOn "._simp_").length ≥ 2 || (finalSigLine.splitOn "._proof_").length ≥ 2 || (finalSigLine.splitOn "._eq_").length ≥ 2 then
+            plogInfo s!"[extract-probe] '{haveName}' variant rejected: captured sig carries sorry/match-aux"
+          -- SELF-RECURSION GATE (#56): a have inside a `termination_by`
+          -- decl whose proof CALLS THE DECL ITSELF (buildFullDTree_depth's
+          -- h1/h2) cannot be extracted — the aux lemma is spliced ABOVE the
+          -- decl, a forward reference. The gate can't see it: in the probe
+          -- env the module is IMPORTED, so the self-call resolves against
+          -- the imported copy (probe-green/write-broken, recursion edition).
+          else if containsWord proofBody span.name || containsWord finalSigLine span.name then
+            plogInfo s!"[extract-probe] '{haveName}' variant rejected: self-recursive (references enclosing decl '{span.name}')"
+          else
           let lemmaText := renameUnivs <|
             if isTacticHave then
               let proofLines := proofBody.splitOn "\n" |>.map (fun l => "  " ++ l)
@@ -2894,8 +3214,9 @@ private def extractOneHaveViaGoal
           -- `findAllHaveHeaders`, ...) treats this whole declaration as a single
           -- (degenerate, 1-line) array slot, silently never looking inside it again.
           let lemmaLines := (lemmaText.splitOn "\n").toArray
-          let finalLines := newLines.extract 0 span.headerStart ++ lemmaLines ++ #[""] ++
-                             newLines.extract span.headerStart newLines.size
+          let insAt := spliceLineAbove newLines span.headerStart
+          let finalLines := newLines.extract 0 insAt ++ lemmaLines ++ #[""] ++
+                             newLines.extract insAt newLines.size
           -- Bug #11's lesson, ENFORCED at the source and extended to the
           -- DECLARATION level: verify the assembled lemma AND the rewritten
           -- theorem together (the callsite one-liner can break downstream
@@ -2916,10 +3237,44 @@ private def extractOneHaveViaGoal
             elabPersistCommand (lemmaPrefix ++ lemmaText)
             return some finalLines
           | some err =>
-            logInfo s!"[extract-probe] '{haveName}' assembled lemma rejected: {err.take 300}"
-            if err.startsWith "PARSE" then
-              logInfo s!"[extract-probe] '{haveName}' lemma text: {(collapseToOneLine lemmaText).take 300}"
-              logInfo s!"[extract-probe] '{haveName}' decl text: {(collapseToOneLine gateDecl).take 300}"
+            plogInfo s!"[extract-probe] '{haveName}' assembled lemma rejected: {err.take 300}"
+            if err.startsWith "PARSE" || (err.splitOn "unknownIdentifier").length ≥ 2 then
+              plogInfo s!"[extract-probe] '{haveName}' lemma text: {(collapseToOneLine lemmaText).take 2500}"
+              plogInfo s!"[extract-probe] '{haveName}' decl text: {(collapseToOneLine gateDecl).take 2500}"
+            -- INACC-ARGS retry (untyped-have twin of the typed branch's):
+            -- `extract_goal` prints inaccessible split/cases-arm hypotheses
+            -- (`t✝`, `heq✝` under a `next fl fls _ =>` arm) with clean
+            -- accessible-LOOKING names — the assembled lemma binds them
+            -- fine, but the positional callsite passes identifiers that do
+            -- not exist in the tactic context ("Unknown identifier `t`",
+            -- EncodingProperties 0/3). Fire only when the unknown name is
+            -- one WE passed; retry the SAME lemma with the type-directed
+            -- callsite (`apply` unifies data args from the stated type,
+            -- `assumption` matches hypothesis args by type — inaccessible
+            -- hyps included).
+            let unkName := match err.splitOn "identifier `" with
+              | _ :: rest :: _ => (rest.splitOn "`").headD ""
+              | _ => ""
+            if !unkName.isEmpty && callArgNames.contains unkName then
+              let call2 := "by apply " ++ externalName ++ " <;> assumption"
+              let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call2
+              let replacement2 : Array String :=
+                (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
+                (if termContinuation.isEmpty then #[oneLiner2] else #[oneLiner2, oneLinerIndent ++ termContinuation])
+              let newLines2 := lines.extract 0 haveIdx ++ replacement2 ++ lines.extract relEnd lines.size
+              let insAt2 := spliceLineAbove newLines2 span.headerStart
+              let finalLines2 := newLines2.extract 0 insAt2 ++ lemmaLines ++ #[""] ++
+                                 newLines2.extract insAt2 newLines2.size
+              let newBodyEnd2 := span.bodyEnd - (relEnd - haveIdx) + replacement2.size
+              let gateDecl2 := ambientPrefix ++ renamedHeader ++ "\n" ++
+                "\n".intercalate ((newLines2.extract span.bodyStart newBodyEnd2).toList)
+              match ← elabCheckFirstErrorSeq [lemmaPrefix ++ lemmaText, gateDecl2] with
+              | none =>
+                elabPersistCommand (lemmaPrefix ++ lemmaText)
+                plogInfo s!"[extract-probe] '{haveName}' INACC-ARGS retry committed (type-directed callsite)"
+                return some finalLines2
+              | some err2 =>
+                plogInfo s!"[extract-probe] '{haveName}' inacc-args retry rejected: {err2.take 240}"
     return none
   else
     -- `set`-bound ldecls in the replayed prefix defeat the capture (see
@@ -2934,17 +3289,138 @@ private def extractOneHaveViaGoal
     -- source-level type text is stale (it still says `a`), so the captured
     -- return type must be preferred (tracked via `wonUnfold`).
     let unfoldMarker := tacticIndentStr ++ "try simp only ["
+    -- Per-name `try` lines (see the anonymous branch): atomic calls fail
+    -- wholesale on any non-ldecl name; `wonUnfold`'s startsWith check
+    -- still holds — the unfold variant begins with `unfoldMarker`.
+    -- (Hoisted out of the if so the REVERT grid below can reuse them.)
+    let cvClearLine := clearNames.foldl
+      (fun acc n => acc ++ tacticIndentStr ++ "try clear_value " ++ n ++ "\n") ""
+    let cvUnfoldLine := clearNames.foldl
+      (fun acc n => acc ++ unfoldMarker ++ n ++ "]\n") ""
     let cvVariants : List String :=
       if clearNames.isEmpty then [""]
-      else
-        -- Per-name `try` lines (see the anonymous branch): atomic calls fail
-        -- wholesale on any non-ldecl name; `wonUnfold`'s startsWith check
-        -- still holds — the unfold variant begins with `unfoldMarker`.
-        let cvLine := clearNames.foldl
-          (fun acc n => acc ++ tacticIndentStr ++ "try clear_value " ++ n ++ "\n") ""
-        let unfoldLine := clearNames.foldl
-          (fun acc n => acc ++ unfoldMarker ++ n ++ "]\n") ""
-        ["", cvLine, unfoldLine ++ cvLine]
+      else ["", cvClearLine, cvUnfoldLine ++ cvClearLine]
+    -- REVERT-PRIORS variant: `extract_goal`'s cleanup keeps only hypotheses
+    -- the GOAL type depends on — but this have's PROOF may use sibling haves
+    -- its type never mentions, so the assembled lemma references them
+    -- unbound ("Unknown identifier `hx1_of_ne_ω`", the dominant class on
+    -- SmolenskyAlgebra: 57 rejections). Reverting the proof-referenced
+    -- priors in the probe folds their types into the captured signature (as
+    -- arrows in the RETURN — extract_goal cannot re-bind a pre-reverted
+    -- hypothesis as a named group), and the callsite passes them as extra
+    -- arguments; the one-liner keeps the have's ORIGINAL stated type since
+    -- the application peels the arrows back off.
+    -- IN-SCOPE priors only: `findAllHaveHeaders` lists every have textually
+    -- before the target, including ones inside CLOSED bullet branches and
+    -- inside earlier haves' own proof blocks — reverting an out-of-scope
+    -- name aborts the tactic block and the capture dies ("unsolved goals",
+    -- the run-4 no-op). A prior have is still in scope iff no line between
+    -- it and the target dedents below its own indent.
+    let priorHeaders := (findAllHaveHeaders lines span.bodyStart haveIdx).toList
+    let inScopeAt (j : Nat) : Bool := Id.run do
+      let jInd := lineIndent lines[j]!
+      -- a bullet-attached introduction (`· have hall := ...`) is scoped to
+      -- ITS branch: the next SIBLING bullet at EQUAL indent closes it, so
+      -- the dedent test must be ≤ there, not <
+      let isBullet := lines[j]!.trim.startsWith "·"
+      for k in [j+1:haveIdx+1] do
+        if !lines[k]!.trim.isEmpty then
+          let kInd := lineIndent lines[k]!
+          if kInd < jInd || (isBullet && kInd ≤ jInd) then
+            return false
+      return true
+    let priorRefPairs := (priorHeaders.filter (fun (j, nm) =>
+      nm != haveName && containsWord proofBody nm && inScopeAt j)).map (fun (j, nm) => (j, nm))
+    -- LOCAL binders too: `by_cases hxi : ...`, `intro x y`, `funext i` names
+    -- are textually visible in the prefix — when the have's type or proof
+    -- references one, revert it like a prior. Data vars come back as NAMED
+    -- ∀-groups in the telescope (revert preserves user names); Prop hyps
+    -- come back as anonymous arrows, resolved type-directedly at the
+    -- callsite (`assumption`) and pp-directedly in the lemma's intro line.
+    let refText := proofBody ++ " " ++ originalTypeText
+    let localRefPairs : List (Nat × String) := Id.run do
+      let mut res : List (Nat × String) := []
+      for j in [span.bodyStart:haveIdx] do
+        if inScopeAt j then
+          for seg in (lines[j]!.trim.splitOn ";") do
+            let s := seg.trim
+            if s.startsWith "by_cases " then
+              match (s.drop "by_cases ".length).splitOn " : " with
+              | nm :: _ :: _ => res := res ++ [(j, nm.trim)]
+              | _ => pure ()
+            else if s.startsWith "intro " then
+              res := res ++ (((s.drop "intro ".length).splitOn " "
+                |>.filter (fun x => x.length > 0 && x != "_" && x.all (fun c => c.isAlphanum || c == '_' || c == '\'' || c.val ≥ 0x80))).map ((j, ·)))
+            else if s.startsWith "funext " then
+              res := res ++ (((s.drop "funext ".length).splitOn " " |>.filter (·.length > 0)).map ((j, ·)))
+            else if s.startsWith "obtain " || s.startsWith "rcases " then
+              -- DESTRUCTURING binders: `obtain ⟨c, hc⟩ := e` (pattern before
+              -- `:=`) / `rcases e with ⟨c, hc⟩` (pattern after ` with `).
+              -- Unharvested, they surface as unbound identifiers in the
+              -- assembled lemma (`hc`, the counting_obstruction last layer).
+              let pat :=
+                if s.startsWith "obtain " then
+                  (((s.drop "obtain ".length).splitOn " := ").head!)
+                else match s.splitOn " with " with
+                  | _ :: p :: _ => p
+                  | _ => ""
+              let names := ((pat.toList.map (fun ch =>
+                  if ch == '⟨' || ch == '⟩' || ch == ',' || ch == '|' ||
+                     ch == '(' || ch == ')' || ch == ':' || ch == '=' then ' ' else ch)).asString.splitOn " ")
+                |>.filter (fun x => x.length > 0 && x != "_" &&
+                  (x.data.head!.isAlpha || x.data.head!.val ≥ 0x80))
+              res := res ++ (names.map ((j, ·)))
+      return res.filter (fun (_, nm) => containsWord refText nm)
+    -- SOURCE-LINE order: `revert` reorders to context order, which is the
+    -- order of introduction — i.e. line order. The intro-line assignment
+    -- of arrow slots below depends on this ordering.
+    let revertRefs : List String :=
+      (((priorRefPairs ++ localRefPairs).toArray.qsort (fun a b => a.1 < b.1)).toList.map (·.2)).eraseDups
+    plogInfo s!"[extract-probe] '{haveName}' revertRefs: [{" ".intercalate revertRefs}] (priors {priorRefPairs.length}, locals {localRefPairs.length})"
+    -- Variant grid entries are (cvLine, revertNames, renderPrefix):
+    -- 1. the cv ladder (no revert, default rendering)
+    -- 2. plain revert — locals/priors folded into the captured telescope
+    -- 3. clear_value + revert — opaque ldecl params + bound locals (aims
+    --    the gate's first error at the LET-REPLAY trigger)
+    -- 4. LET-TELESCOPE: revert + `pp.proofs true` rendering — the ldecls
+    --    stay in the captured RETURN as a `let`-chain, but with their
+    --    values printed IN FULL (no `⋯` proof elision). The lemma keeps
+    --    the chain verbatim; `intro` re-introduces the ldecls with their
+    --    TRANSPARENCY intact (so `simp [code]`-style delta use needs no
+    --    replay), and the callsite's own identical ldecls make the
+    --    type-directed application definitional (zeta).
+    -- Rendering 1 adds `pp.notation false`: notation like the Finset
+    -- set-builder (`{i | ↑x i = ω}` for `Finset.univ.filter ...`) does NOT
+    -- round-trip without a known expected type ("invalid coercion notation",
+    -- 17 gate rejections in one run) — explicit applications do. Rendering 2
+    -- is the maximally explicit fallback (rung E's 4th rendering).
+    -- pp.letVarTypes: anonymous instance ldecls print as
+    -- `let this := inferInstance;` WITHOUT the ascription — re-elaborating
+    -- bare `inferInstance` mints a stuck `?m` ("type class instance
+    -- expected", the whole counting_obstruction class); with the option the
+    -- binder round-trips as `let this : DecidablePred ... := inferInstance;`.
+    let ppLetTele1 := "set_option pp.letVarTypes true in\nset_option pp.fullNames true in\nset_option pp.notation false in\nset_option pp.funBinderTypes true in\nset_option pp.proofs true in\nset_option pp.deepTerms true in\n"
+    -- pp.explicit does NOT expand notation: the Finset set-builder
+    -- `{s | ...}` survives it and re-elaborates as `Set` ("Application
+    -- type mismatch ... Finset.sum low"), while rendering 1's
+    -- pp.notation-false output dies on `↑x` coercions instead (which
+    -- pp.explicit DOES expand, to `@Subtype.val ...`). Both options
+    -- together cover both failure halves.
+    let ppLetTele2 := "set_option pp.letVarTypes true in\nset_option pp.explicit true in\nset_option pp.notation false in\nset_option pp.proofs true in\nset_option pp.deepTerms true in\nset_option pp.universes true in\n"
+    let cvVariantsR : List (String × List String × String) :=
+      (cvVariants.map (fun cv => (cv, ([] : List String), ""))) ++
+      (if revertRefs.isEmpty then [] else
+        [("", revertRefs, "")] ++
+        (if clearNames.isEmpty then [] else [(cvClearLine, revertRefs, "")]) ++
+        [("", revertRefs, ppLetTele1), ("", revertRefs, ppLetTele2)]) ++
+      -- no-revert rendering fallbacks — UNCONDITIONAL, two reasons:
+      -- (1) goal-referenced ldecls put a `let x := ...;` prefix in the
+      -- capture even when nothing needs reverting (wonTele handles it);
+      -- (2) default pp DROPS context-inferable implicit args (`modQTarget
+      -- p` loses its {q}) — re-elaboration hits a stuck
+      -- `Fact (Nat.Prime ?m)` instance; only the explicit rendering
+      -- round-trips those, and the class occurs with NO ldecls in sight.
+      [("", ([] : List String), ppLetTele1), ("", ([] : List String), ppLetTele2)]
     -- FULL retry loop — capture, parse, assembly and verification all live
     -- INSIDE the variant loop: a variant that captures cleanly can still fail
     -- at the ASSEMBLY gate for a reason only the NEXT variant fixes
@@ -2956,35 +3432,89 @@ private def extractOneHaveViaGoal
     -- the let-replay retry is EXPENSIVE (two capped-but-heavy gates) — fire
     -- it at most once per have, not once per rendering variant
     let mut letReplayTried := false
-    for cvLine in cvVariants do
-      let syntheticSrc :=
+    -- same once-per-have budget for the inaccessible-args callsite retry
+    let mut inaccRetried := false
+    for (cvLine, revertNames, renderPrefix) in cvVariantsR do
+      let revertLine := if revertNames.isEmpty then "" else
+        tacticIndentStr ++ "revert " ++ " ".intercalate revertNames ++ "\n"
+      -- keepTail: append the theorem's ORIGINAL remaining proof after the
+      -- probed have instead of truncating. Used as a RETRY when the capture
+      -- contains unassigned metavariables (`?m.NN` in the printed sig):
+      -- extract_goal's message is FORMATTED LAZILY, so assignments made by
+      -- the LATER tactics (deferred unification, postponed instances —
+      -- `DecidablePred fun x => (MvPolynomial.eval ?m.137) ... ` on
+      -- rootCube_counting_obstruction) exist by pretty-print time and the
+      -- retried capture round-trips.
+      let mkSrc (keepTail : Bool) : String :=
+        renderPrefix ++
         ambientPrefix ++
         renamedHeader ++ "\n" ++ prefixText ++
         headerBeforeAssign ++ " := by\n" ++
         cvLine ++
+        revertLine ++
         tacticIndentStr ++ "extract_goal using __sig__\n" ++
         tacticIndentStr ++ "sorry\n" ++
+        (if keepTail then
+          "\n".intercalate ((lines.extract relEnd span.bodyEnd).toList) ++ "\n"
+         else "") ++
         baseIndentStr ++ "all_goals sorry\n"
-      let msgs ← captureWithDependencyRetry lines ambientPrefix syntheticSrc
+      let msgs ← captureWithDependencyRetry lines ambientPrefix (mkSrc false)
       lastMsgs := msgs
-      let captured? : Option String := match findExtractedSignature msgs with
+      let captured? : Option String ← do
+        match findExtractedSignature msgs with
         | some s =>
           -- A `let x := ...;` in the captured signature is a replayed ldecl
           -- the cleanup did NOT prune — unbindable as a parameter, so don't
           -- accept it while the clear_value variants are still untried.
-          if cvLine.isEmpty && !clearNames.isEmpty && (s.splitOn "let ").length ≥ 2 then none
-          else some s
-        | none => none
+          -- EXCEPT under the let-telescope rendering variant, which WANTS
+          -- the chain (fully printed) in the return.
+          if renderPrefix.isEmpty && cvLine.isEmpty && !clearNames.isEmpty &&
+             (s.splitOn "let ").length ≥ 2 then pure none
+          else if (s.splitOn "?m.").length ≥ 2 then do
+            -- metavar-carrying capture — retry with the tail kept
+            let msgs2 ← captureWithDependencyRetry lines ambientPrefix (mkSrc true)
+            match findExtractedSignature msgs2 with
+            | some s2 =>
+              if (s2.splitOn "?m.").length ≥ 2 then
+                plogInfo s!"[extract-probe] '{haveName}' capture still metavar-carrying after keep-tail retry"
+                pure none
+              else pure (some s2)
+            | none => pure none
+          else pure (some s)
+        | none =>
+          if !revertNames.isEmpty then
+            let e := (msgs.find? (fun mg => (mg.splitOn "error").length ≥ 2)).getD s!"({msgs.size} msgs)"
+            plogInfo s!"[extract-probe] '{haveName}' revert-priors [{" ".intercalate revertNames}] capture failed: {e.take 240}"
+          pure none
       match captured? with
       | none => continue
       | some capturedSigText0 =>
         let wonUnfold := cvLine.startsWith unfoldMarker
+        let wonRevert := !revertNames.isEmpty
+        -- telescope handling (verbatim return, intro line, type-directed
+        -- callsite) applies to BOTH the revert variants and the no-revert
+        -- let-telescope renderings: a goal-referenced ldecl produces a
+        -- `let x := ...;` capture prefix even with nothing to revert
+        -- (observed: hchoose's chooseC — revertRefs empty, telescope rung
+        -- never fired, capture kept a `Classical.choose ⋯` elision)
+        let wonTele := wonRevert || !renderPrefix.isEmpty
         -- `extract_goal` pretty-prints in whatever environment THIS PROBE runs in, which
         -- always has Mathlib loaded (needed for `extract_goal` itself) — so it renders
         -- `Nat` as `ℕ` regardless of how the ORIGINAL source wrote it. If the target file
         -- doesn't import Mathlib (as plain files may not), `ℕ` would be unresolvable in
         -- the written-out output. For now, normalize back to `Nat` unconditionally.
         let capturedSigText := capturedSigText0.replace "ℕ" "Nat"
+        -- DAGGERED SIG PARAMS (#57): `extract_goal` prints INACCESSIBLE
+        -- context hyps as literal `{m✝ : Nat} (gates✝ : ...)` groups — `✝`
+        -- is not valid syntax, so every variant died at PARSE ("expected
+        -- token" exactly at the dagger; CircuitTreeManip h_elem_le_foldr).
+        -- Binder names of a standalone lemma are arbitrary: rename them to
+        -- fresh accessible names (longest marker first so `✝¹` never leaves
+        -- a stray `¹`). The source-replayed proof body cannot reference
+        -- them (they were inaccessible), and the CALLSITE side is covered
+        -- by the inacc-args retry (type-directed `apply <;> assumption`).
+        let capturedSigText := (((((capturedSigText.replace "✝⁴" "_inacc4").replace
+          "✝³" "_inacc3").replace "✝²" "_inacc2").replace "✝¹" "_inacc1").replace "✝" "_inacc")
         -- extract_goal renders universe-polymorphic captures with a UNIVERSE
         -- SPEC after the name (`__sig__.{u_2, u_1} ...`) — the group parsers
         -- would read `{u_2, u_1}` as a (comma-broken) binder group, failing
@@ -3024,7 +3554,7 @@ private def extractOneHaveViaGoal
             (acc.replace ("Type " ++ n) "Type _").replace ("Sort " ++ n) "Sort _") s
         match parseExtractedSignature capturedSigText with
         | none =>
-          logInfo s!"[extract-probe] '{haveName}' captured sig unparseable: {capturedSigText.take 500}"
+          plogInfo s!"[extract-probe] '{haveName}' captured sig unparseable: {capturedSigText.take 500}"
           continue
         | some (_capturedName, argNames, _restAfterName, retType, _paramsOnlyText, groups) =>
           -- Source-level type text is preferred (bug #17: captured types drop
@@ -3032,7 +3562,9 @@ private def extractOneHaveViaGoal
           -- the source text still mentions the now-cleared ldecl (`0 < a`),
           -- which the lemma doesn't bind; the captured type is the unfolded,
           -- definition-free one, and the real callsite accepts it by defeq.
-          let effectiveType := if originalTypeText.isEmpty || wonUnfold then retType else originalTypeText
+          -- under the revert-priors variant the captured RETURN carries the
+          -- reverted hypotheses as leading arrows — it must be used verbatim
+          let effectiveType := if originalTypeText.isEmpty || wonUnfold || wonTele then retType else originalTypeText
           -- `extract_goal`'s `revert` prenexes the have's OWN leading `∀`-binders together
           -- with genuine reverted context hypotheses (both just look like parameter groups
           -- in the captured signature) — so any names bound by a leading `∀` in the have's
@@ -3040,8 +3572,148 @@ private def extractOneHaveViaGoal
           -- wrong (they aren't in scope where the have appears) and unnecessary (leaving
           -- them off keeps the call's result correctly `∀`-quantified, matching the have's
           -- original type exactly).
-          let leadingNames := leadingForallBoundNames effectiveType
+          -- Under the revert-closure variant the captured RETURN is the whole
+          -- telescope (closure → original type) and its leading ∀-binders are
+          -- NOT parameter groups — they must stay in the return verbatim, so
+          -- the leading-∀-as-params machinery is disabled for it.
+          let leadingNames := if wonTele then [] else leadingForallBoundNames effectiveType
+          -- Revert-closure application is TYPE-DIRECTED at the callsite (see
+          -- the `call` construction below): no textual chain-parsing — data
+          -- vars are recovered by unifying the lemma's conclusion with the
+          -- have's stated type, hypothesis antecedents (named OR anonymous)
+          -- by `assumption` matching the local context by type.
           let callArgNames := argNames.filter (fun n => !leadingNames.contains n)
+          -- Lemma-side of the revert-closure variant: the proof must first
+          -- re-introduce the telescope under the NAMES the copied proof body
+          -- uses. Assignment is pp-directed: named ∀-groups keep their pp
+          -- names (revert preserves user names); anonymous arrow slots take
+          -- the reverted Prop refs not matched by any named group, in
+          -- source-line order; parsing stops once every reverted ref is
+          -- covered (T's own structure is never introduced). A wrong
+          -- assignment cannot commit — the declaration gate rejects it.
+          -- TYPE-KNOWN prop refs skip slot assignment entirely: after the
+          -- intros, `have R : <source type> := by assumption` re-binds them
+          -- type-directedly (defeq match — immune to pp variance and to the
+          -- telescope's context-order interleaving that defeats positional
+          -- alignment; observed both ways: hc needed back-align, hall broke
+          -- under it). Sources of known types: prior have one-liners and
+          -- `by_cases R : TYPE` lines.
+          let refTypeOf (nm : String) : Option String := Id.run do
+            match findPriorOneLinerType lines span.bodyStart haveIdx nm with
+            | some t => return some t
+            | none =>
+              for j in [span.bodyStart:haveIdx] do
+                for seg in (lines[j]!.trim.splitOn ";") do
+                  let s := seg.trim
+                  if s.startsWith ("by_cases " ++ nm ++ " : ") then
+                    return some (s.drop ("by_cases " ++ nm ++ " : ").length)
+              return none
+          let (revertIntroNames, recoveryLines) : List String × List String := Id.run do
+            if !wonTele then return ([], [])
+            -- pre-parse the leading telescope into slots (over-parsing into
+            -- T's own structure is harmless: the cut rule below discards it)
+            -- slot = (payload, isLet): payload some = named group/let name,
+            -- none = anonymous arrow
+            let mut slots : List (Option (List String) × Bool) := []
+            let mut namedSeen : List String := []
+            let mut restTy := effectiveType.trimLeft
+            let mut fuel := 60
+            while fuel > 0 do
+              fuel := fuel - 1
+              if restTy.startsWith "∀ (" || restTy.startsWith "∀ {" then
+                let (nms, rest) := dropOneLeadingForallLevel restTy
+                if nms.isEmpty then fuel := 0
+                else
+                  slots := slots ++ [(some nms, false)]
+                  namedSeen := namedSeen ++ nms
+                  restTy := rest.trimLeft
+              else if restTy.startsWith "let " then
+                -- let-telescope slot: `let NAME := value;` (or `let NAME :
+                -- T := value;`) — `intro NAME` re-introduces the ldecl with
+                -- its transparency intact. The value can contain brackets;
+                -- the binder ends at the first `;` at bracket depth 0.
+                let afterLet := restTy.drop "let ".length
+                let nm := ((afterLet.splitOn " ").head!.splitOn " :").head!
+                let mut depth : Int := 0
+                let mut cut : Option Nat := none
+                let mut idx := 0
+                for c in afterLet.toList do
+                  if cut.isNone then
+                    if c == '(' || c == '{' || c == '[' || c == '⟨' then depth := depth + 1
+                    else if c == ')' || c == '}' || c == ']' || c == '⟩' then depth := depth - 1
+                    else if c == ';' && depth == 0 then cut := some idx
+                  idx := idx + 1
+                match cut with
+                | none => fuel := 0
+                | some cutIdx =>
+                  if nm.isEmpty then fuel := 0
+                  else
+                    slots := slots ++ [(some [nm], true)]
+                    namedSeen := namedSeen ++ [nm]
+                    restTy := (afterLet.drop (cutIdx + 1)).trimLeft
+              else
+                match splitAtTopLevelArrow restTy with
+                | some (_, rest) =>
+                  slots := slots ++ [(none, false)]
+                  restTy := rest.trimLeft
+                | none => fuel := 0
+            -- only refs WITHOUT a known source type go through slot
+            -- assignment; the rest are recovered by type after the intros
+            let recov := revertNames.filter (fun nm => (refTypeOf nm).isSome && !namedSeen.contains nm)
+            let walkRefs := revertNames.filter (fun nm => !recov.contains nm)
+            let arrowRefs := walkRefs.filter (fun nm => !namedSeen.contains nm)
+            -- BACK-ALIGN the arrow refs: `revert` pulls each ref's
+            -- dependency closure, and pulled deps land BEFORE the refs in
+            -- the telescope (context order) — front-aligned assignment gave
+            -- hc to the FIRST arrow while its true slot was the last
+            -- (observed: hbad_eq, `intro ... hc hpulled_1 ... hpulled_4`).
+            -- Pad the front with fresh names instead.
+            let arrowSlotCount := slots.foldl (fun acc (sl, _) => if sl.isNone then acc + 1 else acc) 0
+            let frontPad := arrowSlotCount - arrowRefs.length
+            let mut arrowQueue := arrowRefs
+            let mut arrowsSeen := 0
+            let mut remaining := walkRefs
+            let mut out : List String := []
+            let mut freshIdx := 0
+            -- Stop rule: with all refs covered, LET slots are still consumed
+            -- (the chain must be re-introduced for the body to see the
+            -- ldecls); ∀/arrow slots stop the walk only when the body's own
+            -- leading `intro` will handle them — otherwise they belong to
+            -- the captured closure and must be introduced here too (e.g.
+            -- `∀ (enc ...) (henc_inj ...)` bound AFTER a let they depend
+            -- on, with a calc-led body). Wrong choices can't commit — the
+            -- declaration gate rejects them.
+            let bodyLeadsIntro :=
+              (((proofBody.splitOn "\n").head!).trim.startsWith "intro")
+            for (slot, isLet) in slots do
+              -- with pending type-recovered refs, keep consuming: their
+              -- arrow-hypotheses must be introduced (as fresh names) for
+              -- the recovery `by assumption` to find them
+              if remaining.isEmpty && !isLet && bodyLeadsIntro && recov.isEmpty then break
+              match slot with
+              | some nms =>
+                out := out ++ nms
+                remaining := remaining.filter (fun nm => !nms.contains nm)
+              | none =>
+                arrowsSeen := arrowsSeen + 1
+                if arrowsSeen ≤ frontPad then
+                  -- an unlisted pulled Prop (dependency closure) — fresh
+                  -- inaccessible-safe name, unreferenced by the body
+                  freshIdx := freshIdx + 1
+                  out := out ++ [s!"hpulled_{freshIdx}"]
+                else
+                  match arrowQueue with
+                  | nm :: rest =>
+                    out := out ++ [nm]
+                    arrowQueue := rest
+                    remaining := remaining.filter (· != nm)
+                  | [] =>
+                    freshIdx := freshIdx + 1
+                    out := out ++ [s!"hpulled_{freshIdx}"]
+            let recovLines := recov.filterMap (fun nm =>
+              (refTypeOf nm).map (fun t =>
+                "have " ++ nm ++ " : " ++ collapseToOneLine t ++ " := by assumption"))
+            return (out, recovLines)
           -- A reverted-context PARAMETER (e.g. `h_gowers_norm_pow`, a prior have now in
           -- scope) has the exact same ascription-dropping problem as the return type, but
           -- `extract_goal` gives us no "source text" for it. Its true, correctly-ascribed
@@ -3055,6 +3727,17 @@ private def extractOneHaveViaGoal
           -- one-liner's declared-at-extraction-time type would be STALE here, not more
           -- complete, and overriding with it would reintroduce the very mismatch this
           -- substitution exists to prevent.
+          -- FORWARD-REFERENCE guard: a substituted one-liner type that
+          -- mentions one of THIS signature's own binder names — where the
+          -- captured type didn't — can place a reference BEFORE its binder
+          -- ("Unknown identifier `x`" at an early column; the dominant
+          -- SmolenskyAlgebra rejection class). Skip such substitutions.
+          let ownBinderNames : List String := groups.toList.foldl (fun acc g =>
+            if !g.startsWith "(" then acc else
+            let inner := collapseToOneLine ((g.drop 1).dropRight 1)
+            match inner.splitOn " : " with
+            | nm :: _ :: _ => acc ++ (nm.trim.splitOn " " |>.filter (·.length > 0))
+            | _ => acc) []
           let fixedGroups := groups.map fun g =>
             if !g.startsWith "(" then g
             else
@@ -3064,7 +3747,9 @@ private def extractOneHaveViaGoal
                 let capturedTy := " : ".intercalate rest
                 match findPriorOneLinerType lines span.bodyStart haveIdx name.trim with
                 | some fixedTy =>
-                  if fixedTy.length > capturedTy.length then
+                  let introducesForwardRef := ownBinderNames.any (fun nm =>
+                    nm != name.trim && containsWord fixedTy nm && !containsWord capturedTy nm)
+                  if fixedTy.length > capturedTy.length && !introducesForwardRef then
                     "(" ++ name.trim ++ " : " ++ fixedTy ++ ")"
                   else g
                 | none => g
@@ -3176,7 +3861,10 @@ private def extractOneHaveViaGoal
                       | none => rawProofLines
                   | [] => rawProofLines
                 else rawProofLines
-              let proofLines := strippedProofLines.map (fun l => "  " ++ l)
+              let withRevertIntro :=
+                if revertIntroNames.isEmpty then strippedProofLines
+                else ("intro " ++ " ".intercalate revertIntroNames) :: (recoveryLines ++ strippedProofLines)
+              let proofLines := withRevertIntro.map (fun l => "  " ++ l)
               " := by\n" ++ "\n".intercalate proofLines
             else
               -- Term-mode has the SAME leading-binder redundancy as tactic-mode
@@ -3209,7 +3897,14 @@ private def extractOneHaveViaGoal
                     | _ => none
               match strippedTerm with
               | some s => " :=\n  " ++ s
-              | none => " :=\n  " ++ proofBody
+              | none =>
+                if revertIntroNames.isEmpty then " :=\n  " ++ proofBody
+                else
+                  -- telescope return needs the closure introduced first; the
+                  -- term body becomes an `exact` under it
+                  " := by\n  intro " ++ " ".intercalate revertIntroNames ++ "\n" ++
+                  (recoveryLines.foldl (fun acc l => acc ++ "  " ++ l ++ "\n") "") ++
+                  "  exact " ++ proofBody
           -- `extract_goal`'s captured context can include a parameter this have's
           -- OWN proof never actually needs (`MVarId.cleanup` erring conservative) —
           -- and if some UNRELATED sibling extraction later mutates its own copy of
@@ -3311,16 +4006,58 @@ private def extractOneHaveViaGoal
           let callArgNames := callArgNames.filter (fun n => finalKeptNames.contains n)
           let paramsOnlyText := finalGroups.toList.foldl (fun acc g => acc ++ " " ++ collapseToOneLine g) ""
           let finalSigLine := externalName ++ univSpec ++ paramsOnlyText ++ " : " ++ collapseToOneLine returnTypeText
-          let lemmaText := renameUnivs ("private lemma " ++ finalSigLine ++ proofPart)
-          let call := if callArgNames.isEmpty then externalName
-                      else "(" ++ externalName ++ " " ++ " ".intercalate callArgNames ++ ")"
+          -- SHIPPED-ERROR GATES (#51, mirrored in rung T): a captured
+          -- signature carrying a pp-elided proof rendered as `sorry`, or a
+          -- match-compiler auxiliary reference (`<thm>.match_N`), elaborates
+          -- green in probes (sorry is a valid term; the aux constant resolves
+          -- via the IMPORTED compiled module) but ships breakage in the
+          -- standalone written file. Reject the variant — safe-direction.
+          if containsWord finalSigLine "sorry" || (finalSigLine.splitOn ".match_").length ≥ 2 ||
+             (finalSigLine.splitOn "._simp_").length ≥ 2 || (finalSigLine.splitOn "._proof_").length ≥ 2 || (finalSigLine.splitOn "._eq_").length ≥ 2 then
+            plogInfo s!"[extract-probe] '{haveName}' variant rejected: captured sig carries sorry/match-aux"
+            continue
+          -- SELF-RECURSION GATE (#56): see the anonymous branch — a
+          -- self-call in the have's proof forward-references the decl from
+          -- the spliced aux lemma; probe-green via the imported module.
+          if containsWord proofPart span.name || containsWord finalSigLine span.name then
+            plogInfo s!"[extract-probe] '{haveName}' variant rejected: self-recursive (references enclosing decl '{span.name}')"
+            continue
+          -- CHECK-CONTEXT = WRITE-CONTEXT (the #36 lesson, once more): the
+          -- gate elaborates under lemmaPrefix (set_options + opens +
+          -- classicalPrefix), but the WRITTEN file only has file-level
+          -- opens — a lemma that gate-passed via scoped-classical instances
+          -- or a raised heartbeat cap then FAILS in the output (observed:
+          -- Fintype Kˣ synthesize failures + whnf timeout shipping 12
+          -- in-file errors). Bake both into the written text.
+          let lemmaText := renameUnivs (setOptPrefix ++ classicalPrefix ++ "private lemma " ++ finalSigLine ++ proofPart)
+          -- Revert-closure callsite is TYPE-DIRECTED: `apply` unifies the
+          -- lemma's conclusion with the have's stated type (recovering pulled
+          -- DATA vars — x, i, … — from their occurrences in it), and
+          -- `assumption` discharges every hypothesis antecedent by matching
+          -- the local context BY TYPE — recovering names (`by_cases`/`intro`
+          -- locals, pulled priors) that no textual chain-parse can, with no
+          -- boundary ambiguity between pulled arrows and the type's own.
+          let call :=
+            if wonTele then
+              -- ZERO explicit args: positional captured-param names can be
+              -- out of scope at the callsite (branch-scoped props like
+              -- `hall` captured as PARAM groups — observed unknown-id at
+              -- the gate); unification recovers data params from the stated
+              -- type, `assumption` closes hypothesis goals, instances
+              -- synthesize.
+              "by apply " ++ externalName ++ " <;> assumption"
+            else if callArgNames.isEmpty then externalName
+            else "(" ++ externalName ++ " " ++ " ".intercalate callArgNames ++ ")"
           let oneLinerIndent := bulletIndentStr ++ (if isBulletAttached then "  " else "")
           -- Include the TYPE annotation (not just `have NAME := call`): otherwise this
           -- one-liner is itself indistinguishable from an un-extracted `have` on the
           -- NEXT scan of this theorem (it still starts with `have NAME`), and worse,
           -- lacks an explicit type — so if it WERE picked up again, `extract_goal`
           -- would see the have's type as an unresolved metavariable, not the real type.
-          let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine effectiveType) ++ " := " ++ call
+          -- the one-liner states the have's ORIGINAL type: the type-directed
+          -- `apply … <;> assumption` peels the lemma's closure telescope off
+          let oneLinerTy := if wonTele && !originalTypeText.isEmpty then originalTypeText else effectiveType
+          let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call
           let replacementLines : Array String :=
             (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
             (if termContinuation.isEmpty then #[oneLiner] else #[oneLiner, oneLinerIndent ++ termContinuation])
@@ -3331,8 +4068,9 @@ private def extractOneHaveViaGoal
           -- `findAllHaveHeaders`, ...) treats this whole declaration as a single
           -- (degenerate, 1-line) array slot, silently never looking inside it again.
           let lemmaLines := (lemmaText.splitOn "\n").toArray
-          let finalLines := newLines.extract 0 span.headerStart ++ lemmaLines ++ #[""] ++
-                             newLines.extract span.headerStart newLines.size
+          let insAt := spliceLineAbove newLines span.headerStart
+          let finalLines := newLines.extract 0 insAt ++ lemmaLines ++ #[""] ++
+                             newLines.extract insAt newLines.size
           -- Verify the ASSEMBLED lemma AND the REWRITTEN THEOREM before
           -- committing (bug #11's lesson, extended to the declaration level —
           -- see `elabCheckFirstErrorSeq`); reject to the next variant on
@@ -3342,11 +4080,52 @@ private def extractOneHaveViaGoal
             "\n".intercalate (newLines.extract span.bodyStart newBodyEnd).toList
           match ← elabCheckFirstErrorSeq [lemmaPrefix ++ lemmaText, gateDecl] with
           | some err =>
-            logInfo s!"[extract-probe] '{haveName}' assembled lemma or rewritten decl rejected: {err.take 300}"
-            if err.startsWith "PARSE" then
-              -- a parse failure names no useful context — dump the texts
-              logInfo s!"[extract-probe] '{haveName}' lemma text: {(collapseToOneLine lemmaText).take 300}"
-              logInfo s!"[extract-probe] '{haveName}' decl text: {(collapseToOneLine gateDecl).take 300}"
+            plogInfo s!"[extract-probe] '{haveName}' assembled lemma or rewritten decl rejected: {err.take 300}"
+            if true then
+              -- dump on EVERY rejection during the per-decl campaign — the
+              -- synthesize/coercion/mismatch classes carried the decisive
+              -- evidence three separate times while the narrow condition
+              -- (PARSE/unknownIdentifier) hid them
+              plogInfo s!"[extract-probe] '{haveName}' lemma text: {(collapseToOneLine lemmaText).take 2500}"
+              plogInfo s!"[extract-probe] '{haveName}' decl text: {(collapseToOneLine gateDecl).take 2500}"
+            -- INACCESSIBLE-ARGS retry: `extract_goal` prints inaccessible
+            -- hypotheses (split/cases-arm scrutinees and their equations —
+            -- `t✝`, `heq✝` in a `next fl fls _ =>` arm) under clean
+            -- accessible-LOOKING names, so the positional callsite passes
+            -- identifiers that do not exist in the tactic context ("Unknown
+            -- identifier `t`" — EncodingProperties 0/3). Undetectable from
+            -- the sig (the names look ordinary), so detect from the GATE
+            -- error and retry the SAME lemma with the type-directed
+            -- callsite: `apply` unifies data args from the have's stated
+            -- type, `assumption` discharges hypothesis args by type —
+            -- inaccessible hyps included.
+            let unkName := match err.splitOn "identifier `" with
+              | _ :: rest :: _ => (rest.splitOn "`").headD ""
+              | _ => ""
+            if !wonTele && !inaccRetried && !unkName.isEmpty && callArgNames.contains unkName then
+              inaccRetried := true
+              let call2 := "by apply " ++ externalName ++ " <;> assumption"
+              let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+                scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call2
+              let replacement2 : Array String :=
+                (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
+                (if termContinuation.isEmpty then #[oneLiner2]
+                 else #[oneLiner2, oneLinerIndent ++ termContinuation])
+              let newLines2 := lines.extract 0 haveIdx ++ replacement2 ++ lines.extract relEnd lines.size
+              let lemmaLines2 := (lemmaText.splitOn "\n").toArray
+              let insAt2 := spliceLineAbove newLines2 span.headerStart
+              let finalLines2 := newLines2.extract 0 insAt2 ++ lemmaLines2 ++ #[""] ++
+                                 newLines2.extract insAt2 newLines2.size
+              let newBodyEnd2 := span.bodyEnd - (relEnd - haveIdx) + replacement2.size
+              let gateDecl2 := ambientPrefix ++ renamedHeader ++ "\n" ++
+                "\n".intercalate ((newLines2.extract span.bodyStart newBodyEnd2).toList)
+              match ← elabCheckFirstErrorSeq [lemmaPrefix ++ lemmaText, gateDecl2] with
+              | none =>
+                elabPersistCommand (lemmaPrefix ++ lemmaText)
+                plogInfo s!"[extract-probe] '{haveName}' INACC-ARGS retry committed (type-directed callsite)"
+                return some finalLines2
+              | some err2 =>
+                plogInfo s!"[extract-probe] '{haveName}' inacc-args retry rejected: {err2.take 240}"
             -- LET-REPLAY retry (see `letDefsInPrefix`): the lemma's proof
             -- references let/set-bound names it can only use via delta
             -- unfolding, which an opaque parameter cannot provide — re-
@@ -3354,7 +4133,7 @@ private def extractOneHaveViaGoal
             -- simp/rw bracket references rewritten to them (same rewrite
             -- direction as the delta), and `rfl` at the callsite, where the
             -- ldecl IS transparent.
-            if letReplayEnabled && !letReplayTried &&
+            if (← letReplayEnabledRef.get) && !letReplayTried &&
                (err.splitOn "is not a proposition or let-declaration").length ≥ 2 then
               letReplayTried := true
               let replayDefs := (letDefsInPrefix prefixText contentIndentN).filter
@@ -3373,21 +4152,30 @@ private def extractOneHaveViaGoal
                 let proofPart2 := "\n".intercalate ((proofPart.splitOn "\n").map rewriteBrackets)
                 let sigLine2 := externalName ++ univSpec ++ paramsOnlyText ++ eqParams ++
                   " : " ++ collapseToOneLine returnTypeText
-                let lemmaText2 := "private lemma " ++ sigLine2 ++ proofPart2
+                let lemmaText2 := setOptPrefix ++ classicalPrefix ++ "private lemma " ++ sigLine2 ++ proofPart2
                 let rfls := String.join (replayDefs.map (fun _ => " rfl"))
-                let call2 := "(" ++ externalName ++
-                  (if callArgNames.isEmpty then "" else " " ++ " ".intercalate callArgNames) ++
-                  rfls ++ ")"
+                -- under the revert-closure variant the callsite is TYPE-
+                -- DIRECTED (see the main `call`): telescope hyps close by
+                -- `assumption`, the replay's equation params by `rfl` (the
+                -- ldecl IS transparent at the callsite)
+                let call2 :=
+                  if wonTele then
+                    "by apply " ++ externalName ++ " <;> first | assumption | rfl"
+                  else
+                    "(" ++ externalName ++
+                    (if callArgNames.isEmpty then "" else " " ++ " ".intercalate callArgNames) ++
+                    rfls ++ ")"
                 let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
-                  scrubUnivs (collapseToOneLine effectiveType) ++ " := " ++ call2
+                  scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call2
                 let replacement2 : Array String :=
                   (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
                   (if termContinuation.isEmpty then #[oneLiner2]
                    else #[oneLiner2, oneLinerIndent ++ termContinuation])
                 let newLines2 := lines.extract 0 haveIdx ++ replacement2 ++ lines.extract relEnd lines.size
                 let lemmaLines2 := (lemmaText2.splitOn "\n").toArray
-                let finalLines2 := newLines2.extract 0 span.headerStart ++ lemmaLines2 ++ #[""] ++
-                                   newLines2.extract span.headerStart newLines2.size
+                let insAt2 := spliceLineAbove newLines2 span.headerStart
+                let finalLines2 := newLines2.extract 0 insAt2 ++ lemmaLines2 ++ #[""] ++
+                                   newLines2.extract insAt2 newLines2.size
                 let newBodyEnd2 := span.bodyEnd - (relEnd - haveIdx) + replacement2.size
                 -- the retry's THEOREM gate is capped too: caps on gates are
                 -- safe-direction (a heavy-but-valid rewrite times out and gets
@@ -3408,10 +4196,10 @@ private def extractOneHaveViaGoal
                 match ← elabCheckFirstErrorSeq [cappedLemma, gateDecl2] with
                 | none =>
                   elabPersistCommand (lemmaPrefix ++ lemmaText2)
-                  logInfo s!"[extract-probe] '{haveName}' LET-REPLAY committed ({replayDefs.length} defs)"
+                  plogInfo s!"[extract-probe] '{haveName}' LET-REPLAY committed ({replayDefs.length} defs)"
                   return some finalLines2
                 | some err2 =>
-                  logInfo s!"[extract-probe] '{haveName}' let-replay rejected: {err2.take 240}"
+                  plogInfo s!"[extract-probe] '{haveName}' let-replay rejected: {err2.take 240}"
             continue
           | none => pure ()
           -- Persist the REAL lemma (not a `:= sorry` stub) so LATER probes (for
@@ -3431,9 +4219,481 @@ private def extractOneHaveViaGoal
     -- per variant above; this covers the pure capture-failure case, which
     -- has no per-variant log — the rejection-reasons rule.
     match lastMsgs.find? (fun m => (m.splitOn "error").length ≥ 2) with
-    | some e => logInfo s!"[extract-probe] '{haveName}' all variants exhausted; last probe error: {e.take 300}"
-    | none => logInfo s!"[extract-probe] '{haveName}' all variants exhausted ({lastMsgs.size} msgs in last probe)"
+    | some e => plogInfo s!"[extract-probe] '{haveName}' all variants exhausted; last probe error: {e.take 300}"
+    | none => plogInfo s!"[extract-probe] '{haveName}' all variants exhausted ({lastMsgs.size} msgs in last probe)"
     return none
+
+-- ══ PROOF-TERM-BASED EXTRACTION (rung T) ═══════════════════════════════════
+--
+-- The residual class that defeats every text-replay mechanism (SmolenskyAlgebra's
+-- rootCube/split lattices: interleaved by_cases/∑-binder structure under five
+-- tactic-`let`s) fails at exactly one point: reconstructing the have's CONTEXT
+-- by replaying source-prefix text into an `extract_goal` probe. This rung skips
+-- prefix replay entirely. The WHOLE declaration — the current working-file text,
+-- known to compile — is elaborated ONCE (rolled back); the stored proof term is
+-- walked to the have's own redex (`(fun h : T => rest) v`, `letFun v (fun h =>
+-- rest)`, or `.letE`); and the lemma signature is assembled from the TERM: the
+-- have's type `T` and proof `v` instantiated in the exact local context of the
+-- enclosing binders on the redex path, with the parameter list computed as the
+-- transitive fvar closure of `T` and `v` (the AXLE insight: an elaborated proof
+-- references exactly the hypotheses it consumed — even for context-sweeping
+-- tactics like `simp_all` whose syntax names none of them). Tactic-`let`s stay
+-- in the signature as a let-telescope with values printed IN FULL
+-- (pp.proofs/pp.deepTerms — no `⋯`), so the proof-body TEXT, replayed verbatim
+-- under an `intro` of the closure, keeps ldecl transparency, and the callsite
+-- closes definitionally against the theorem's own identical lets. Gating and
+-- writing follow the established discipline exactly: assembled lemma AND
+-- rewritten declaration through `elabCheckFirstErrorSeq` before committing,
+-- `set_option`/classical prefixes baked into the WRITTEN text
+-- (check-context = write-context, the #36/#48 lesson).
+
+/-- One enclosing binder on the path from a declaration's proof-term root to a
+    target have-redex. `ty`/`val?` are still in loose-bvar (de Bruijn) form
+    relative to the binders BEFORE this one in the stack. -/
+private structure TBinder where
+  name : Name
+  ty   : Expr
+  val? : Option Expr
+  bi   : BinderInfo
+  deriving Inhabited
+
+/-- Pure syntactic search for the have-redex bound as `target`, accumulating the
+    enclosing binder stack. Returns `(stack, T, v)` with `T`/`v` in loose-bvar
+    form relative to `stack`. Mirrors `collectHaveRedexUsage`'s shape coverage:
+    beta-redex tactic haves, `letFun` term haves, and `.letE` lets. -/
+private partial def findHaveRedexStack (target : String) (e : Expr)
+    (stack : Array TBinder) : Option (Array TBinder × Expr × Expr) :=
+  let matchesName (n : Name) : Bool := n.eraseMacroScopes.toString == target
+  if e.isAppOfArity ``letFun 4 then
+    let args := e.getAppArgs
+    let v := args[2]!
+    match args[3]!.consumeMData with
+    | .lam n ty b bi =>
+      if matchesName n then some (stack, ty, v)
+      else
+        findHaveRedexStack target v stack <|>
+        findHaveRedexStack target b (stack.push ⟨n, ty, none, bi⟩)
+    | f =>
+      findHaveRedexStack target v stack <|> findHaveRedexStack target f stack
+  else
+    match e with
+    | .app f v =>
+      match f.consumeMData with
+      | .lam n ty b bi =>
+        if matchesName n then some (stack, ty, v)
+        else
+          findHaveRedexStack target v stack <|>
+          findHaveRedexStack target b (stack.push ⟨n, ty, none, bi⟩)
+      | f' =>
+        findHaveRedexStack target f' stack <|> findHaveRedexStack target v stack
+    | .letE n ty v b _ =>
+      if matchesName n then some (stack, ty, v)
+      else
+        findHaveRedexStack target v stack <|>
+        findHaveRedexStack target b (stack.push ⟨n, ty, some v, .default⟩)
+    | .lam n ty b bi => findHaveRedexStack target b (stack.push ⟨n, ty, none, bi⟩)
+    | .forallE n ty b bi => findHaveRedexStack target b (stack.push ⟨n, ty, none, bi⟩)
+    | .mdata _ b => findHaveRedexStack target b stack
+    | .proj _ _ b => findHaveRedexStack target b stack
+    | _ => none
+
+/-- Rename every binder in `e` that would pretty-print unusably (macro-scoped/
+    inaccessible names, `✝`, `this`, `_`-prefixed, compound) or that collides
+    with an already-used name — pp's shadow-disambiguation would otherwise stamp
+    `✝` marks that don't re-parse, and duplicate names re-parse with WRONG
+    capture — to fresh `np_K` names. The first `spine` binders along the leading
+    forall/let chain (the closure telescope, whose names the `intro` line and
+    callsite must match) are kept verbatim; the caller pre-seeds the used-set
+    with them. Binder names are display-only (bvars carry the semantics), so
+    this is always sound. -/
+private partial def renameNestedBindersGo (spine : Nat) (e : Expr) :
+    StateM (Nat × List String) Expr := do
+  let freshFor (n : Name) : StateM (Nat × List String) Name := do
+    let (k, used) ← get
+    let raw := n.eraseMacroScopes.toString
+    let isSimpleOk := !n.hasMacroScopes &&
+      (match n.eraseMacroScopes with | .str .anonymous _ => true | _ => false) &&
+      raw.length > 0 && !raw.startsWith "_" && !(raw.toList.any (· == '✝')) &&
+      raw != "this" && !used.contains raw
+    if isSimpleOk then
+      set (k, raw :: used)
+      return n.eraseMacroScopes
+    else
+      let mut k' := k
+      let mut nm := s!"np_{k'}"
+      while used.contains nm do
+        k' := k' + 1
+        nm := s!"np_{k'}"
+      set (k' + 1, nm :: used)
+      return Name.mkSimple nm
+  match e with
+  | .forallE n ty b bi =>
+    if spine > 0 then
+      let ty' ← renameNestedBindersGo 0 ty
+      let b' ← renameNestedBindersGo (spine - 1) b
+      return .forallE n ty' b' bi
+    else
+      let n' ← freshFor n
+      let ty' ← renameNestedBindersGo 0 ty
+      let b' ← renameNestedBindersGo 0 b
+      return .forallE n' ty' b' bi
+  | .letE n ty v b nd =>
+    if spine > 0 then
+      let ty' ← renameNestedBindersGo 0 ty
+      let v' ← renameNestedBindersGo 0 v
+      let b' ← renameNestedBindersGo (spine - 1) b
+      return .letE n ty' v' b' nd
+    else
+      let n' ← freshFor n
+      let ty' ← renameNestedBindersGo 0 ty
+      let v' ← renameNestedBindersGo 0 v
+      let b' ← renameNestedBindersGo 0 b
+      return .letE n' ty' v' b' nd
+  | .lam n ty b bi =>
+    let n' ← freshFor n
+    let ty' ← renameNestedBindersGo 0 ty
+    let b' ← renameNestedBindersGo 0 b
+    return .lam n' ty' b' bi
+  | .app f a => return .app (← renameNestedBindersGo 0 f) (← renameNestedBindersGo 0 a)
+  | .mdata d b => return .mdata d (← renameNestedBindersGo spine b)
+  | .proj t i b => return .proj t i (← renameNestedBindersGo 0 b)
+  | _ => return e
+
+/-- The term-derived signature data for one have: the printed closed statement
+    under each rendering, the `intro` slot names (closure binders in order),
+    the positional callsite argument names, and universe params. -/
+private structure TermSigResult where
+  sigTexts   : Array (String × String)
+  introNames : Array String
+  argNames   : Array String
+  argsUsable : Bool
+  univNames  : List String
+
+/-- Rebuild the redex's binder stack as real fvars and run `k`. Prop-valued
+    `.letE` binders are DEMOTED to plain hypotheses (value dropped): by
+    definitional proof irrelevance nothing can depend on a prop-let's VALUE,
+    and dropping it keeps giant proof terms (e.g. a converted one-liner's
+    `by apply aux <;> assumption` elaboration) out of the printed signature.
+    Data lets keep their values — the whole point of the let-telescope form. -/
+private partial def withStackFVarsAux (stack : Array TBinder) (finalNames : Array Name)
+    (i : Nat) (fvars : Array Expr) (isLets : Array Bool)
+    (k : Array Expr → Array Bool → MetaM (Option TermSigResult)) :
+    MetaM (Option TermSigResult) := do
+  if i < stack.size then
+    let b := stack[i]!
+    let nm := finalNames[i]!
+    let ty := b.ty.instantiateRev fvars
+    match b.val? with
+    | some v =>
+      if ← Meta.isProp ty then
+        Meta.withLocalDecl nm .default ty fun x =>
+          withStackFVarsAux stack finalNames (i+1) (fvars.push x) (isLets.push false) k
+      else
+        Meta.withLetDecl nm ty (v.instantiateRev fvars) fun x =>
+          withStackFVarsAux stack finalNames (i+1) (fvars.push x) (isLets.push true) k
+    | none =>
+      Meta.withLocalDecl nm b.bi ty fun x =>
+        withStackFVarsAux stack finalNames (i+1) (fvars.push x) (isLets.push false) k
+  else
+    k fvars isLets
+
+/-- From a redex's binder stack and its (loose-bvar) type/value, compute the
+    closed lemma statement and its printable renderings. `proofText`/`typeText`
+    are the have's SOURCE proof body and declared type, used to WIDEN the
+    term-derived closure: a proof that unfolds an ldecl via `simp [x]` can
+    leave no fvar trace of `x` in the term (zeta reduction) while the replayed
+    TEXT still needs `x` bound — any binder whose (kept) name the source text
+    mentions joins the closure. -/
+private def buildTermClosure (stack : Array TBinder) (tyL vL : Expr)
+    (proofText typeText : String) : MetaM (Option TermSigResult) := do
+  let n := stack.size
+  -- Final binder names: unique + accessible. The LAST occurrence of a
+  -- duplicated source name keeps it (shadowing semantics — that's what the
+  -- proof text's references resolve to); earlier duplicates and inaccessible
+  -- names get fresh `tp_K` names.
+  let rawName (b : TBinder) : Option String :=
+    -- an anonymous-have binder is `this` WITH hygiene macro scopes — it must
+    -- still be kept as the literal name `this` (the replayed proof text
+    -- references it that way), so test the erased name BEFORE the
+    -- hasMacroScopes exclusion
+    if b.name.eraseMacroScopes.toString == "this" then some "this"
+    else if b.name.hasMacroScopes then none
+    else match b.name.eraseMacroScopes with
+      | .str .anonymous s =>
+        -- `this` is KEPT: `∀ (this : T), ...` parses and `intro this` works
+        -- (verified by hand-probe), and the have's replayed proof TEXT may
+        -- reference an enclosing anonymous hypothesis by exactly that name —
+        -- renaming it to `tp_K` shipped "Unknown identifier `this`" across
+        -- every rendering on Switching.lean's card_filter_numFree_eq. The
+        -- last-occurrence dedup already ensures only the innermost (textually
+        -- referencable) `this` keeps the name.
+        if s.length > 0 && !s.startsWith "_" && !(s.toList.any (· == '✝')) then
+          some s
+        else none
+      | _ => none
+  let raws := stack.map rawName
+  let mut keep : Array (Option String) := #[]
+  for i in [0:n] do
+    match raws[i]! with
+    | some s =>
+      let mut laterDup := false
+      for j in [i+1:n] do
+        if raws[j]! == some s then laterDup := true
+      keep := keep.push (if laterDup then none else some s)
+    | none => keep := keep.push none
+  let keptSet : List String := keep.toList.filterMap id
+  let mut finalNames : Array Name := #[]
+  let mut origKept : Array Bool := #[]
+  let mut ctr := 1
+  for i in [0:n] do
+    match keep[i]! with
+    | some s =>
+      finalNames := finalNames.push (Name.mkSimple s)
+      origKept := origKept.push true
+    | none =>
+      let mut nm := s!"tp_{ctr}"
+      while keptSet.contains nm do
+        ctr := ctr + 1
+        nm := s!"tp_{ctr}"
+      ctr := ctr + 1
+      finalNames := finalNames.push (Name.mkSimple nm)
+      origKept := origKept.push false
+  withStackFVarsAux stack finalNames 0 #[] #[] fun fvars isLets => do
+    let T := tyL.instantiateRev fvars
+    let V := vL.instantiateRev fvars
+    let st := Lean.collectFVars (Lean.collectFVars {} T) V
+    let mut needed : FVarIdSet := st.fvarSet
+    -- text-referenced widening (see docstring)
+    for i in [0:n] do
+      if origKept[i]! then
+        let s := finalNames[i]!.toString
+        if containsWord proofText s || containsWord typeText s then
+          needed := needed.insert fvars[i]!.fvarId!
+    -- transitive dependency closure — ONE reverse pass suffices: an fvar's
+    -- type/value only references EARLIER fvars (lctx well-formedness)
+    for ri in [0:n] do
+      let i := n - 1 - ri
+      let id := fvars[i]!.fvarId!
+      if needed.contains id then
+        let d ← id.getDecl
+        let mut s2 := Lean.collectFVars {} d.type
+        if d.isLet then
+          s2 := Lean.collectFVars s2 d.value
+        for dep in s2.fvarIds do
+          needed := needed.insert dep
+    let closureIdx := (Array.range n).filter (fun i => needed.contains fvars[i]!.fvarId!)
+    let closureFVars := closureIdx.map (fvars[·]!)
+    let stmt0 ← Meta.mkForallFVars closureFVars T (usedLetOnly := false)
+    if stmt0.hasFVar then
+      logInfo "[term-extract] closure incomplete: statement still has free variables"
+      return none
+    let spineNames := (closureIdx.map (fun i => finalNames[i]!.toString)).toList
+    let stmt := (renameNestedBindersGo closureIdx.size stmt0).run' (1, spineNames)
+    let univNames := ((Lean.collectLevelParams {} stmt).params.toList.map (·.toString))
+    let baseOpts (o : Options) : Options :=
+      o.setBool `pp.proofs true |>.setBool `pp.deepTerms true
+        |>.setBool `pp.letVarTypes true |>.setNat `pp.maxSteps 5000000
+    let renderers : List (String × (Options → Options)) :=
+      [("plain", baseOpts),
+       ("funBinderTypes", fun o => (baseOpts o).setBool `pp.funBinderTypes true),
+       ("explicit", fun o =>
+         ((((baseOpts o).setBool `pp.explicit true).setBool `pp.notation false)
+           |>.setBool `pp.universes true).setBool `pp.fullNames true)]
+    let mut sigTexts : Array (String × String) := #[]
+    for (label, f) in renderers do
+      let fmt ← withOptions f (Meta.ppExpr stmt)
+      sigTexts := sigTexts.push (label, collapseToOneLine (fmt.pretty 100000))
+    let introNames := closureIdx.map (fun i => finalNames[i]!.toString)
+    let mut argNames : Array String := #[]
+    let mut argsUsable := true
+    for i in closureIdx do
+      if !(isLets[i]!) && stack[i]!.bi.isExplicit then
+        argNames := argNames.push (finalNames[i]!.toString)
+        if !origKept[i]! then argsUsable := false
+    return some { sigTexts, introNames, argNames, argsUsable, univNames }
+
+/-- Rung T driver: proof-term-based extraction of ONE have (see the block
+    comment above). Tried by `#extract_haves_iter_decl` when
+    `extractOneHaveViaGoal`'s probe-replay variants are all exhausted.
+    Returns the updated lines on commit, `none` (with logged reasons) otherwise. -/
+private def extractOneHaveViaTerm
+    (lines : Array String) (span : ThmSpan) (haveIdx : Nat) (haveName : String)
+    (counter : Nat) : CommandElabM (Option (Array String)) := do
+  let (proofBody, relEnd) := extractHaveBody lines haveIdx
+  let haveLineText := lines[haveIdx]!
+  let isBulletAttached := haveLineText.trimLeft.startsWith "· "
+  let bulletIndentStr := String.mk (List.replicate (lineIndent haveLineText) ' ')
+  let haveBlockText := "\n".intercalate (lines.extract haveIdx relEnd).toList
+  let topSplit := splitAtTopLevelAssign haveBlockText
+  let isTacticHave := match topSplit with
+    | some (_, body) =>
+      let b := body.trimLeft
+      b == "by" || b.startsWith "by " || b.startsWith "by\n"
+    | none => false
+  let headerBeforeAssign := match topSplit with
+    | some (h, _) => h.trimRight
+    | none        => haveLineText.trimRight
+  let originalTypeText : String :=
+    match (collapseToOneLine headerBeforeAssign).splitOn " : " with
+    | _ :: rest => (" : ".intercalate rest).trim
+    | []        => ""
+  if originalTypeText.isEmpty then
+    plogInfo s!"[term-extract] '{haveName}' skipped: no source type annotation"
+    return none
+  let termContinuation : String :=
+    if isTacticHave then ""
+    else
+      match splitAtTopLevelAssign haveLineText.trimLeft with
+      | some (_, body) =>
+        match splitAtOuterSemi body.trimLeft with
+        | some (_, cont) => cont.trim
+        | none => ""
+      | none => ""
+  let nsPathT := enclosingNamespacePathFor lines span.headerStart
+  let tempThmName := (if nsPathT.isEmpty then "" else nsPathT ++ ".") ++ s!"__term_probe_{counter}__"
+  let headerText := "\n".intercalate (lines.extract span.headerStart span.bodyStart).toList
+  let headerNoPriv :=
+    if headerText.startsWith "private " then headerText.drop "private ".length else headerText
+  let kw := if headerNoPriv.startsWith "theorem " then "theorem " else "lemma "
+  let afterKw := headerNoPriv.drop kw.length
+  let afterName := afterKw.drop span.name.length
+  let renamedHeader := kw ++ tempThmName ++ afterName
+  let opens := enclosingOpensFor lines span.headerStart
+  let openPrefix := if opens.isEmpty then "" else "open " ++ " ".intercalate opens ++ " in\n"
+  let setOptPrefix :=
+    (enclosingSetOptionsFor lines span.headerStart).foldl
+      (fun acc (nm, v) => acc ++ "set_option " ++ nm ++ " " ++ v ++ " in\n") ""
+  let ambientPrefix := setOptPrefix ++ openPrefix ++
+    (enclosingVariablesFor lines span.headerStart).foldl (fun acc v => acc ++ v ++ " in\n") ""
+  let classicalPrefix :=
+    -- decl-scoped `open ... in` names must be BAKED into written lemmas
+    -- (splices land above the `open ... in` line — see declScopedOpensFor)
+    (let dOpens := declScopedOpensFor lines span.headerStart
+     if dOpens.isEmpty then "" else "open " ++ " ".intercalate dOpens ++ " in\n") ++
+    (if (maskCommentLines (lines.extract span.bodyStart span.bodyEnd)).toList.any
+        (fun l => l.trim == "classical") then
+      "open scoped Classical in\n"
+    else "")
+  let lemmaPrefix := setOptPrefix ++ openPrefix ++ classicalPrefix
+  let externalName := span.name ++ "_aux_" ++ haveName
+  -- ── the one full-declaration elaboration ──
+  let bodyText := "\n".intercalate (lines.extract span.bodyStart span.bodyEnd).toList
+  let probeSrc := ambientPrefix ++ renamedHeader ++ "\n" ++ bodyText
+  let info? ← elabGetDeclInfo probeSrc tempThmName.toName
+  match info? with
+  | none =>
+    -- diagnose only on failure (a second elaboration, but the failure path
+    -- is where the evidence matters — the rejection-reasons rule)
+    let err? ← elabCheckFirstError probeSrc
+    plogInfo s!"[term-extract] '{haveName}' decl probe yielded no info: {((err?.getD "no error message").take 300)}"
+    return none
+  | some info =>
+    match info.value? with
+    | none =>
+      plogInfo s!"[term-extract] '{haveName}' decl probe has no stored value"
+      return none
+    | some val =>
+      match findHaveRedexStack haveName val #[] with
+      | none =>
+        plogInfo s!"[term-extract] '{haveName}' redex not found in the stored proof term"
+        return none
+      | some (stack, tyL, vL) =>
+        let res? ← liftTermElabM (buildTermClosure stack tyL vL proofBody originalTypeText)
+        match res? with
+        | none =>
+          plogInfo s!"[term-extract] '{haveName}' closure construction failed"
+          return none
+        | some r =>
+          -- collision-proof universe names for the WRITTEN lemma (the #36
+          -- class-7 lesson): rename after assembly so gate and file see
+          -- identical text; longest-first so `u_1` never clobbers `u_10`
+          let univSorted := (r.univNames.toArray.qsort (fun a b => a.length > b.length)).toList
+          let renU (s : String) : String :=
+            univSorted.foldl (fun acc nm => acc.replace nm ("ul" ++ nm.drop 1)) s
+          let univSpecRaw :=
+            if r.univNames.isEmpty then ""
+            else ".{" ++ ", ".intercalate r.univNames ++ "}"
+          let introLine :=
+            if r.introNames.isEmpty then ""
+            else "  intro " ++ " ".intercalate r.introNames.toList ++ "\n"
+          let proofPart :=
+            if isTacticHave then
+              " := by\n" ++ introLine ++
+              "\n".intercalate ((proofBody.splitOn "\n").map (fun l => "  " ++ l))
+            else
+              " := by\n" ++ introLine ++ "  exact (" ++ collapseToOneLine proofBody ++ ")"
+          -- callsite variants: positional-by-name first (every closure binder
+          -- is, by construction, a source binder in scope at the callsite),
+          -- then the type-directed zero-args form
+          let callV1? : Option String :=
+            if r.argsUsable then
+              some (if r.argNames.isEmpty then "(" ++ externalName ++ ")"
+                    else "(" ++ externalName ++ " " ++ " ".intercalate r.argNames.toList ++ ")")
+            else none
+          let callV2 := "by apply " ++ externalName ++ " <;> assumption"
+          let calls : List String :=
+            (match callV1? with | some c => [c] | none => []) ++ [callV2]
+          let oneLinerIndent := bulletIndentStr ++ (if isBulletAttached then "  " else "")
+          let mut declDumped := false
+          for (label, sigText) in r.sigTexts do
+            -- SHIPPED-ERROR GATES (the Switching.lean lesson, #51): a printed
+            -- signature can (a) reference a MATCH-COMPILER AUXILIARY
+            -- (`<thm>.match_N`) — resolvable in the probe env via the IMPORTED
+            -- compiled module, but a forward/unstable reference in the
+            -- standalone written file (probes are blind to the difference:
+            -- imported-env vs in-file-env); or (b) contain a pp-elided proof
+            -- rendered as `sorry` inside a let-value — the lemma ELABORATES
+            -- (sorry is a valid term) so every gate passes, while the written
+            -- callsite becomes unsatisfiable. Both are text-detectable and
+            -- both rejections are safe-direction (a lost conversion, never
+            -- shipped breakage).
+            if containsWord sigText "sorry" || (sigText.splitOn ".match_").length ≥ 2 ||
+               (sigText.splitOn "._simp_").length ≥ 2 || (sigText.splitOn "._proof_").length ≥ 2 || (sigText.splitOn "._eq_").length ≥ 2 then
+              plogInfo s!"[term-extract] '{haveName}' rendering {label} rejected: printed sig carries sorry/match-aux"
+            -- SORRY-IN-PROOF GATE (#58, Derandomization checkpoint, 16
+            -- shipped errors): rung T's PRINTED PROOF can carry pp-elided
+            -- instance terms rendered as `sorry` (`fun ω => sorry`,
+            -- `∑ i, sorry` — Decidable instances) — the sig-only sorry
+            -- gate is blind to them and sorry elaborates green in probes.
+            else if containsWord proofPart "sorry" then
+              plogInfo s!"[term-extract] '{haveName}' rendering {label} rejected: printed PROOF carries sorry"
+            -- SELF-RECURSION GATE (#56): the printed term of a
+            -- `termination_by` decl's recursive have carries the decl's own
+            -- (qualified) name — forward reference once spliced above it.
+            else if containsWord proofPart span.name || containsWord sigText span.name then
+              plogInfo s!"[term-extract] '{haveName}' rendering {label} rejected: self-recursive (references enclosing decl '{span.name}')"
+            else
+            for call in calls do
+              let lemmaText := renU (setOptPrefix ++ classicalPrefix ++
+                "private lemma " ++ externalName ++ univSpecRaw ++ " : " ++ sigText ++ proofPart)
+              let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+                collapseToOneLine originalTypeText ++ " := " ++ call
+              let replacementLines : Array String :=
+                (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
+                (if termContinuation.isEmpty then #[oneLiner]
+                 else #[oneLiner, oneLinerIndent ++ termContinuation])
+              let newLines := lines.extract 0 haveIdx ++ replacementLines ++
+                lines.extract relEnd lines.size
+              let lemmaLines := (lemmaText.splitOn "\n").toArray
+              let insAt := spliceLineAbove newLines span.headerStart
+              let finalLines := newLines.extract 0 insAt ++ lemmaLines ++ #[""] ++
+                newLines.extract insAt newLines.size
+              let newBodyEnd := span.bodyEnd - (relEnd - haveIdx) + replacementLines.size
+              let gateDecl := ambientPrefix ++ renamedHeader ++ "\n" ++
+                "\n".intercalate (newLines.extract span.bodyStart newBodyEnd).toList
+              match ← elabCheckFirstErrorSeq [lemmaPrefix ++ lemmaText, gateDecl] with
+              | none =>
+                elabPersistCommand (lemmaPrefix ++ lemmaText)
+                plogInfo s!"[term-extract] '{haveName}' COMMITTED (render {label}, call {if callV1?.isSome && call != callV2 then "positional" else "apply-assumption"})"
+                return some finalLines
+              | some err =>
+                plogInfo s!"[term-extract] '{haveName}' rejected (render {label}): {err.take 300}"
+                plogInfo s!"[term-extract] '{haveName}' lemma text: {(collapseToOneLine lemmaText).take 2500}"
+                if !declDumped then
+                  declDumped := true
+                  plogInfo s!"[term-extract] '{haveName}' decl text: {(collapseToOneLine gateDecl).take 2500}"
+          plogInfo s!"[term-extract] '{haveName}' all renderings/callsites exhausted"
+          return none
 
 /-- Inject `term` into bare `linarith`/`nlinarith` calls in `line` (only ones
     with no explicit `[...]`/`only` list already — naive appending onto those
@@ -3689,7 +4949,7 @@ private def verifyAndConvertBlockedHaves
           let trialDeclText := headerText ++ "\n".intercalate (cand.extract bStart bEnd).toList
           match ← elabCheckFirstError (prefixText ++ trialDeclText) with
           | none =>
-            logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {tag} COMMITTED"
+            plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {tag} COMMITTED"
             lines := cand
             committed := true
           | some err =>
@@ -3697,7 +4957,7 @@ private def verifyAndConvertBlockedHaves
             -- elaborator rejects is INFORMATION — seeing the real reason is how
             -- probe-context mismatches (heartbeats, autoImplicit, opens, ...)
             -- get caught instead of silently masquerading as "genuinely unsafe".
-            logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {tag} rejected: {err.take 240}"
+            plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {tag} rejected: {err.take 240}"
       -- Rung E — TAIL LIFTING (λ-lift the binder into a lemma PARAMETER).
       -- `have h : T := v; ⟨tail⟩` is the SAME PROOF as `exact (aux_tail args
       -- v)` where aux_tail binds `h` as a real parameter and its body is the
@@ -3732,7 +4992,7 @@ private def verifyAndConvertBlockedHaves
           match findExtractedSignature msgs with
           | none =>
             match msgs.find? (fun mg => (mg.splitOn "error").length ≥ 2) with
-            | some e => logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E capture failed: {e.take 240}"
+            | some e => plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E capture failed: {e.take 240}"
             | none =>
               -- 0 msgs = the synthetic PARSE-failed (elabCaptureMessages
               -- returns #[] on parse errors) — show the cut window, since a
@@ -3742,7 +5002,7 @@ private def verifyAndConvertBlockedHaves
                   "\n".intercalate ((lines.extract bStart (i+1)).toList)
                 let s := upto.takeRight 200
                 return s.replace "\n" " ⏎ "
-              logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E capture failed ({msgs.size} msgs); cut window: ...{cutWindow}"
+              plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E capture failed ({msgs.size} msgs); cut window: ...{cutWindow}"
           | some sig0 =>
             let sig := sig0.replace "ℕ" "Nat"
             let (univSpecE, sig) :=
@@ -3761,7 +5021,7 @@ private def verifyAndConvertBlockedHaves
                  g.startsWith "(" &&
                  ((((collapseToOneLine ((g.drop 1).dropRight 1)).splitOn " : ").headD
                    "").trim.splitOn " ").contains hName)) then
-              logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E sig unparseable"
+              plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E sig unparseable"
             else
               let fixedGroupsE := groups.map fun g =>
                 if !g.startsWith "(" then g
@@ -3858,12 +5118,12 @@ private def verifyAndConvertBlockedHaves
               match ← elabCheckFirstErrorSeq [lemmaPfxE ++ auxTailText, prefixText ++ trialDeclTextE] with
               | none =>
                 elabPersistCommand (lemmaPfxE ++ auxTailText)
-                logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E COMMITTED"
+                plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E COMMITTED"
                 lines := newLinesE
                 pendingLemmas := pendingLemmas ++ (auxTailText.splitOn "\n").toArray ++ #[""]
                 committedE := true
               | some err =>
-                logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E rejected: {err.take 240}"
+                plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand E rejected: {err.take 240}"
         if committedE then
           committed := true
       -- Rung D — POST-MUTATION RE-EXTRACTION. A TARGET-role have (mutated in
@@ -3910,8 +5170,8 @@ private def verifyAndConvertBlockedHaves
             match findExtractedSignature msgs with
             | none =>
               match msgs.find? (fun mg => (mg.splitOn "error").length ≥ 2) with
-              | some e => logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand D capture failed: {e.take 240}"
-              | none => logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand D capture failed ({msgs.size} msgs)"
+              | some e => plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand D capture failed: {e.take 240}"
+              | none => plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand D capture failed ({msgs.size} msgs)"
             | some sig0 =>
               let sig := sig0.replace "ℕ" "Nat"
               let (univSpec, sig) :=
@@ -3931,7 +5191,7 @@ private def verifyAndConvertBlockedHaves
                   (acc.replace ("Type " ++ n) "Type _").replace ("Sort " ++ n) "Sort _") s
               match parseRevertedSignature sig hName with
               | none =>
-                logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand D sig unparseable"
+                plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand D sig unparseable"
               | some (ty', callArgNames, paramsText0) =>
                 -- bug #24's parameter-ascription substitution (span-bounded,
                 -- see the extraction branches): a reverted-context param that
@@ -4033,12 +5293,12 @@ private def verifyAndConvertBlockedHaves
                   match ← elabCheckFirstErrorSeq [lemmaPfx ++ aux2Text, prefixText ++ trialDeclText] with
                   | none =>
                     elabPersistCommand (lemmaPfx ++ aux2Text)
-                    logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {dTag} COMMITTED"
+                    plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {dTag} COMMITTED"
                     lines := cand
                     pendingLemmas := pendingLemmas ++ (aux2Text.splitOn "\n").toArray ++ #[""]
                     committedD := true
                   | some err =>
-                    logInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {dTag} rejected: {err.take 240}"
+                    plogInfo s!"[have-ladder] '{hName}' line {i+1} usage={usage} cand {dTag} rejected: {err.take 240}"
   if pendingLemmas.isEmpty then
     return lines
   else
@@ -4056,6 +5316,69 @@ private def verifyAndConvertBlockedHaves
     return lines.extract 0 headerStart ++ pendingLemmas ++ lines.extract headerStart lines.size
 
 /--
+One declaration's final-cleanup pass (heuristic inlining + verified ladder),
+shared by the whole-file (`#extract_haves_iter_to`) and per-declaration
+(`#extract_haves_iter_decl`) commands. Returns the updated lines and whether
+the ladder SPLICED lemmas above the declaration — the caller must then
+reprocess the same index (whole-file) or requeue by name (per-decl), since
+the splice now occupies the declaration's old position.
+-/
+private def finalPassOneDecl (lines0 : Array String) (bStart bEnd : Nat) :
+    CommandElabM (Array String × Bool) := do
+  let mut lines := lines0
+  let bodyLines := lines.extract bStart bEnd
+  let processed := convertHavesToLet (inlineOneLiners bodyLines)
+  -- `inlineOneLiners`/`convertHavesToLet` are the OLD pipeline's
+  -- HEURISTIC passes — they commit textual transformations with NO
+  -- verification, which was survivable while their inputs were the narrow
+  -- shapes they were tuned on, but the newly-extracted typed one-liner
+  -- calls (e.g. from anonymous-have extraction) can match their Case-A/E
+  -- patterns and get inlined into `simp_all` argument lists in ways that
+  -- break the proof (observed for real: an equation-typed `have h_anon_1
+  -- : ... = 1 := (aux ...)` inlined into `simp_all [..., (aux ...)]` +
+  -- `convert (aux ...)` produced "simp_all made no progress" in the
+  -- written file). Gate them like everything else: verify the processed
+  -- declaration; on failure, revert to the unprocessed body (the
+  -- extraction output, which is verified at extraction time) and let the
+  -- verified ladder below take its shot instead.
+  let processed ←
+    if processed == bodyLines then pure processed
+    else
+      match declProbeParts lines bStart with
+      | none => pure processed
+      | some (prefixText, headerText, _) => do
+        let trial := prefixText ++ headerText ++ "\n".intercalate processed.toList
+        if ← elabCheckOk trial then pure processed
+        else do
+          logInfo s!"[final-pass] heuristic inlining rejected for decl at line {bStart+1}; reverted to unprocessed body"
+          pure bodyLines
+  lines := lines.extract 0 bStart ++ processed ++ lines.extract bEnd lines.size
+  -- `convertHavesToLet` only rewrites existing lines' text (never inserts/
+  -- removes one), but `inlineOneLiners` (run first, above) CAN shrink the
+  -- declaration via its full-elimination case — so the true end boundary
+  -- after splicing is `bStart + processed.size`, NOT the original (now
+  -- possibly-stale) `bEnd`. Using the stale `bEnd` here indexes past the
+  -- array's new end for the LAST declaration in the file whenever this
+  -- iteration shrank it — confirmed as a real crash ("index out of
+  -- bounds"), not a hypothetical: this was live-tested on
+  -- `ReproNestedHaveDirectTest.lean` and panicked the Lean interpreter.
+  let newBEnd := bStart + processed.size
+  let beforeLadder := lines
+  lines ← verifyAndConvertBlockedHaves lines bStart newBEnd
+  -- Rung D NORMALIZES a target-role have (post-mutation one-liner) rather
+  -- than eliminating it — the normalized form may now be eliminable by
+  -- the A0-C rungs, but this pass already moved past it. One re-run of
+  -- the ladder when anything changed gives those a second look (committed
+  -- lets/deletions from the first pass no longer match `have `, so the
+  -- re-run only re-probes still-blocked haves). Rung D's aux2 splice
+  -- inserts ABOVE the declaration header, shifting the body by the size
+  -- delta — adjust both bounds for the second call.
+  if lines != beforeLadder then
+    let delta := lines.size - beforeLadder.size
+    lines ← verifyAndConvertBlockedHaves lines (bStart + delta) (newBEnd + delta)
+  return (lines, lines.size != beforeLadder.size)
+
+/--
 `#extract_haves_iter_to "src/File.lean" "dst/Output.lean"`
 
 Like `#extract_haves_file_to`, but extracts `have`s one at a time (innermost
@@ -4065,7 +5388,19 @@ up-front MetaM walk. See the section comment above for the rationale.
 elab "#extract_haves_iter_to " srcLit:str dstLit:str : command => do
   let inputPath  := srcLit.getString
   let outputPath := dstLit.getString
+  letReplayEnabledRef.set false  -- whole-file runs can't afford it (see the ref's docstring)
   let src ← IO.FS.readFile inputPath
+  probeAutoImplicitRef.set (!(((src.splitOn "\n").map String.trim).contains "set_option autoImplicit false"))
+  -- LIVE PROGRESS: the InfoView only shows this command's messages when the
+  -- WHOLE command finishes (one elaboration snapshot), so stream progress to
+  -- a sidecar file (`tail -f <output>.progress`) and to the server's stderr
+  -- (visible in VS Code's Lean output channel) instead.
+  let progressPath := outputPath ++ ".progress"
+  IO.FS.writeFile progressPath ""
+  let progress (msg : String) : CommandElabM Unit := do
+    IO.eprintln s!"[extract-haves] {msg}"
+    IO.FS.withFile progressPath .append fun h => h.putStrLn msg
+  progress s!"START {inputPath}"
   let mut lines := src.splitOn "\n" |>.toArray
   let mut counter := 0
   let mut succeeded := 0
@@ -4104,16 +5439,33 @@ elab "#extract_haves_iter_to " srcLit:str dstLit:str : command => do
           match findLeafHave lines headers doneNames with
           | none => pure ()
           | some (haveIdx, haveName) =>
+            -- A have whose body already CALLS its own aux lemma is a
+            -- previously-converted one-liner (`:= by apply *_aux_NAME ...`)
+            -- re-read from the output file: re-extracting it would redeclare
+            -- the same aux name ("has already been declared" — a permanent
+            -- FAILED loop). Skip it as done.
+            let marker := "_aux_" ++ haveName
+            let alreadyConverted :=
+              match lines[haveIdx]!.splitOn marker with
+              | _ :: rest :: _ => rest.isEmpty || !isIdentChar (rest.get! 0)
+              | _ => false
+            if alreadyConverted then
+              doneNames := haveName :: doneNames
+              keepGoing := true
+            else
             counter := counter + 1
+            progress s!"attempt {counter}: {thmName}.{haveName} ..."
             match ← extractOneHaveViaGoal lines span haveIdx haveName counter with
             | none =>
               doneNames := haveName :: doneNames
               debugLog := debugLog.push s!"{thmName}:{haveName}:PROBE_FAILED"
+              progress s!"attempt {counter}: {thmName}.{haveName} FAILED"
               keepGoing := true
             | some newLines =>
               lines := newLines
               doneNames := haveName :: doneNames
               succeeded := succeeded + 1
+              progress s!"attempt {counter}: {thmName}.{haveName} EXTRACTED ({succeeded}/{counter})"
               keepGoing := true
   -- Extraction leaves a `have NAME : TYPE := (call)` one-liner in place for every
   -- SUCCESSFUL extraction — it pulls the PROOF out, but never eliminates the have
@@ -4133,56 +5485,9 @@ elab "#extract_haves_iter_to " srcLit:str dstLit:str : command => do
     let declSpans := findAllDeclSpans lines
     if declIdx < declSpans.size then
       let (bStart, bEnd) := declSpans[declIdx]!
-      let bodyLines := lines.extract bStart bEnd
-      let processed := convertHavesToLet (inlineOneLiners bodyLines)
-      -- `inlineOneLiners`/`convertHavesToLet` are the OLD pipeline's
-      -- HEURISTIC passes — they commit textual transformations with NO
-      -- verification, which was survivable while their inputs were the narrow
-      -- shapes they were tuned on, but the newly-extracted typed one-liner
-      -- calls (e.g. from anonymous-have extraction) can match their Case-A/E
-      -- patterns and get inlined into `simp_all` argument lists in ways that
-      -- break the proof (observed for real: an equation-typed `have h_anon_1
-      -- : ... = 1 := (aux ...)` inlined into `simp_all [..., (aux ...)]` +
-      -- `convert (aux ...)` produced "simp_all made no progress" in the
-      -- written file). Gate them like everything else: verify the processed
-      -- declaration; on failure, revert to the unprocessed body (the
-      -- extraction output, which is verified at extraction time) and let the
-      -- verified ladder below take its shot instead.
-      let processed ←
-        if processed == bodyLines then pure processed
-        else
-          match declProbeParts lines bStart with
-          | none => pure processed
-          | some (prefixText, headerText, _) => do
-            let trial := prefixText ++ headerText ++ "\n".intercalate processed.toList
-            if ← elabCheckOk trial then pure processed
-            else do
-              logInfo s!"[final-pass] heuristic inlining rejected for decl at line {bStart+1}; reverted to unprocessed body"
-              pure bodyLines
-      lines := lines.extract 0 bStart ++ processed ++ lines.extract bEnd lines.size
-      -- `convertHavesToLet` only rewrites existing lines' text (never inserts/
-      -- removes one), but `inlineOneLiners` (run first, above) CAN shrink the
-      -- declaration via its full-elimination case — so the true end boundary
-      -- after splicing is `bStart + processed.size`, NOT the original (now
-      -- possibly-stale) `bEnd`. Using the stale `bEnd` here indexes past the
-      -- array's new end for the LAST declaration in the file whenever this
-      -- iteration shrank it — confirmed as a real crash ("index out of
-      -- bounds"), not a hypothetical: this was live-tested on
-      -- `ReproNestedHaveDirectTest.lean` and panicked the Lean interpreter.
-      let newBEnd := bStart + processed.size
-      let beforeLadder := lines
-      lines ← verifyAndConvertBlockedHaves lines bStart newBEnd
-      -- Rung D NORMALIZES a target-role have (post-mutation one-liner) rather
-      -- than eliminating it — the normalized form may now be eliminable by
-      -- the A0-C rungs, but this pass already moved past it. One re-run of
-      -- the ladder when anything changed gives those a second look (committed
-      -- lets/deletions from the first pass no longer match `have `, so the
-      -- re-run only re-probes still-blocked haves). Rung D's aux2 splice
-      -- inserts ABOVE the declaration header, shifting the body by the size
-      -- delta — adjust both bounds for the second call.
-      if lines != beforeLadder then
-        let delta := lines.size - beforeLadder.size
-        lines ← verifyAndConvertBlockedHaves lines (bStart + delta) (newBEnd + delta)
+      progress s!"final pass: decl {declIdx + 1}/{declSpans.size}"
+      let (newLines, spliced) ← finalPassOneDecl lines bStart bEnd
+      lines := newLines
       -- Spliced aux lemmas (rung E tails, rung D aux2s) occupy the CURRENT
       -- span index after insertion — hold declIdx so the next iteration
       -- processes THEM (their bodies carry the relocated haves; E can lift
@@ -4190,11 +5495,458 @@ elab "#extract_haves_iter_to " srcLit:str dstLit:str : command => do
       -- strictly reduces the have count). Without this, an E-lifted tail
       -- lemma's internal one-liners were never ladder-processed (observed:
       -- ZkFourier's parseval tail kept h_substitute/h_inner_sum).
-      if lines.size == beforeLadder.size then
+      if !spliced then
         declIdx := declIdx + 1
     else
       moreDecls := false
+  progress s!"DONE attempts={counter} succeeded={succeeded} — writing {outputPath}"
   IO.FS.writeFile outputPath ("\n".intercalate lines.toList)
   logInfo s!"#extract_haves_iter_to: written to {outputPath} | attempts={counter} succeeded={succeeded} | {" ".intercalate debugLog.toList}"
+
+/-- Persist every `private lemma`/`private theorem` present as TEXT in the
+working file into the session env — a fresh server has no declarations for
+aux lemmas committed by PREVIOUS invocations, and probes/gates that reference
+them die at capture ("Unknown identifier `..._aux_...`").
+Scans header LINES directly — NOT via `findAllDeclSpans`, which only records
+`:= by` (tactic-mode) declarations and silently skips term-mode lemmas
+(`... := term`); the very aux the probes kept dying on (`aux_hωm1`, 383
+unknown-identifier errors in one run) was term-mode. And NOT via
+`declProbeParts`'s headerText, which is RENAMED (`NAME__vtrial`, `private `
+stripped) for probe use. Prefix is opens+set_options ONLY: ambient `Type*`
+variable lines auto-declare `u_k` universes that COLLIDE with the aux
+lemmas' explicit `.{ul_k}` specs (the same lemma-vs-probe distinction as
+`lemmaPrefix`). The env canary checks `mkPrivateName` — private declarations
+land MANGLED (`_private.<module>.0.name`). -/
+private def persistFileAuxLemmas (lines : Array String)
+    (progress : String → CommandElabM Unit) : CommandElabM Unit := do
+  let mut persisted := 0
+  let mut pi := 0
+  -- ALSO persist private DEFS/ABBREVS: a privacy-heavy source file
+  -- (Switching.lean: 51 private decls, with `private def parseAux` etc.
+  -- referenced by nearly every theorem) makes EVERY probe and gate fail with
+  -- "Unknown identifier" — Lean privacy is per-module, so the driver can
+  -- never resolve them without a local copy. File order is dependency order
+  -- for defs, so persisting in one forward sweep resolves chains (the same
+  -- reason the private-LEMMA persists used to fail here: their bodies
+  -- reference the defs, which were never persisted first).
+  let kws : List String := ["private lemma ", "private theorem ", "private def ",
+    "private noncomputable def ", "private abbrev "]
+  -- Namespace tracking: a source file can reference its own private decls by
+  -- FULLY-QUALIFIED name (`SwitchingLemma2.canonicalDTree_depth_zero_of_fixed`
+  -- in Switching.lean line 1046) — an unqualified top-level copy can never
+  -- satisfy that reference, wiping every probe of the containing decl. So
+  -- copies of decls that live inside namespaces are persisted PUBLIC under
+  -- their QUALIFIED name (privacy of a probe-session copy protects nothing,
+  -- a public dotted name never collides with the imported module's mangled
+  -- private original, and the probes' `open NS in` prefix still resolves the
+  -- unqualified references exactly as before).
+  let mlines := maskCommentLines lines
+  let mut nsStack : List String := []
+  while pi < lines.size do
+    let l := lines[pi]!
+    let t := mlines[pi]!.trim
+    if t.startsWith "namespace " then
+      nsStack := nsStack ++ [(t.drop "namespace ".length).trim]
+      pi := pi + 1
+    else if t.startsWith "end " && nsStack.getLast? == some ((t.drop "end ".length).trim) then
+      nsStack := nsStack.dropLast
+      pi := pi + 1
+    else
+    match kws.find? l.startsWith with
+    | none => pi := pi + 1
+    | some kw =>
+      let mut pj := pi + 1
+      while pj < lines.size && (lines[pj]!.startsWith "  " || lines[pj]!.trim.isEmpty) do
+        pj := pj + 1
+      let openPrefix :=
+        match enclosingOpensFor lines pi with
+        | [] => ""
+        | opens => "open " ++ " ".intercalate opens ++ " in\n"
+      let setOptPrefix := (enclosingSetOptionsFor lines pi).foldl
+        (fun acc (nm, v) => acc ++ "set_option " ++ nm ++ " " ++ v ++ " in\n") ""
+      let afterKw := l.drop kw.length
+      let nameTok := (((afterKw.splitOn " ").head!).splitOn ".{").head!
+      -- Source-authored private decls can use ambient `variable`s (Trees.lean:
+      -- `variable {X Y α : Type*}` — persists died with "Unknown identifier
+      -- `α`"); replay them — but ONLY for spec-free decls: tool-authored aux
+      -- lemmas carry explicit `.{ul_k}` specs that collide with variable-in
+      -- auto-bound levels (the #36 class-6 hazard).
+      let varPrefix :=
+        if (((afterKw.splitOn " ").head!).splitOn ".{").length ≥ 2 then ""
+        else (enclosingVariablesFor lines pi).foldl (fun acc v => acc ++ v ++ " in\n") ""
+      let declText := "\n".intercalate ((lines.extract pi pj).toList)
+      let (persistText, canaryName) :=
+        if nsStack.isEmpty then
+          (declText, nameTok)
+        else
+          let qual := ".".intercalate nsStack ++ "." ++ nameTok
+          let kwPublic := kw.drop "private ".length
+          let restAfterName := l.drop (kw.length + nameTok.length)
+          let header := kwPublic ++ qual ++ restAfterName
+          (header ++ (if pj > pi + 1 then "\n" ++
+            "\n".intercalate ((lines.extract (pi+1) pj).toList) else ""), qual)
+      elabPersistCommand (setOptPrefix ++ openPrefix ++ varPrefix ++ persistText)
+      let nm := canaryName.toName
+      let envNow ← getEnv
+      if envNow.contains nm || envNow.contains (mkPrivateName envNow nm) then
+        persisted := persisted + 1
+      else
+        progress s!"persist FAILED for {nm}"
+      pi := pj
+  if persisted > 0 then
+    progress s!"persisted {persisted} pre-existing aux lemmas into the session env"
+
+/--
+`#extract_haves_iter_decl "src/File.lean" "dst/Output.lean" "declName"`
+
+Per-DECLARATION variant of `#extract_haves_iter_to`, for out-of-band
+driving: each invocation processes ONE declaration (matched by name) and
+writes the whole file back to the output path. When the output file already
+exists it is the INPUT — progress accumulates across invocations (the
+source path is only read the first time). Restart the server between
+invocations: that resets elaboration memory, which is what makes the
+LET-REPLAY machinery affordable — it is enabled for this command only.
+The progress sidecar is opened in APPEND mode (never truncated) so a
+multi-declaration campaign keeps one continuous log.
+-/
+elab "#extract_haves_iter_decl " srcLit:str dstLit:str declLit:str : command => do
+  let inputPath  := srcLit.getString
+  let outputPath := dstLit.getString
+  let declName   := declLit.getString
+  letReplayEnabledRef.set true
+  let outExists ← System.FilePath.pathExists outputPath
+  let readPath := if outExists then outputPath else inputPath
+  let src ← IO.FS.readFile readPath
+  let progressPath := outputPath ++ ".progress"
+  probeLogPathRef.set (some (outputPath ++ ".probelog"))
+  let progress (msg : String) : CommandElabM Unit := do
+    IO.eprintln s!"[extract-haves] {msg}"
+    IO.FS.withFile progressPath .append fun h => h.putStrLn msg
+  progress s!"START-DECL {declName} (input: {readPath})"
+  let mut lines := src.splitOn "\n" |>.toArray
+  -- probe autoImplicit mode follows the SOURCE file (see the ref's docstring):
+  -- forced OFF only when the file turns it off itself; ON for files that rely
+  -- on auto-binding (Circuit.lean's `(c : Circuit n)` with no `variable`).
+  probeAutoImplicitRef.set (!(lines.any (fun l => l.trim == "set_option autoImplicit false")))
+  -- PRIVATE DEPS FROM IMPORTED MODULES (#52 follow-up): a decl can reference
+  -- a private lemma of an IMPORTED file (dtDepth_le_implies_small_dnf_cnf →
+  -- `canonicalDTree_depth_zero_of_fixed`, private in
+  -- Switching/CanonicalDTree.lean) — per-module privacy makes it
+  -- unresolvable in every probe AND gate, wiping the decl. Persist private
+  -- decls from directly imported TCSlib modules first (one level, file
+  -- order = dependency order within each module; best-effort).
+  for l in lines do
+    if l.startsWith "import TCSlib." then
+      let modPath := ((l.drop "import ".length).trim.replace "." "/") ++ ".lean"
+      if ← System.FilePath.pathExists modPath then
+        let msrc ← IO.FS.readFile modPath
+        persistFileAuxLemmas (msrc.splitOn "\n").toArray progress
+  -- Aux lemmas committed by PREVIOUS invocations exist only as TEXT in the
+  -- working file — this fresh server has no declarations for them, and the
+  -- target's prefix references them via one-liner calls, so every probe
+  -- dies at capture ("Unknown identifier `..._aux_...`", observed on the
+  -- second per-decl run). Persist each into the session env up front,
+  -- exactly as extraction-time commits do.
+  persistFileAuxLemmas lines progress
+  let mut counter := 0
+  let mut succeeded := 0
+  -- Target lookup that ALSO accepts `private` declarations: `findTheorems`
+  -- skips them by design (whole-file iteration), but per-decl campaigns must
+  -- reach the haves living inside SPLICED aux lemmas (rung E tails, rung D
+  -- aux2s) — extraction never targeted those otherwise.
+  let findAnySpan (lns : Array String) (nm : String) : Option ThmSpan := Id.run do
+    match (findTheorems lns).find? (fun s => s.name == nm) with
+    | some s => return some s
+    | none =>
+      let mut i := 0
+      while i < lns.size do
+        let l := lns[i]!
+        if l.startsWith "private lemma " || l.startsWith "private theorem " then
+          let rest :=
+            if l.startsWith "private lemma " then l.drop "private lemma ".length
+            else l.drop "private theorem ".length
+          let nameEnd := rest.find (fun c => c == ' ' || c == '{' || c == '(' || c == ':' || c == '.')
+          let name := String.Pos.Raw.extract rest ⟨0⟩ nameEnd
+          if name == nm then
+            let mut j := i
+            let mut found := false
+            while j < lns.size && !found do
+              if (lns[j]!.splitOn ":= by").length ≥ 2 then found := true
+              else
+                j := j + 1
+                if j < lns.size && !isBlankLine lns[j]! && lineIndent lns[j]! == 0 && j > i then
+                  j := lns.size
+            if found then
+              let bodyStart := j + 1
+              return some { name := nm, fullName := nm, headerStart := i,
+                            bodyStart, bodyEnd := blockEnd lns bodyStart 0 }
+            else
+              return none
+        i := i + 1
+      return none
+  -- ── extraction loop, restricted to the one named declaration ──
+  let mut doneNames : List String := []
+  let mut keepGoing := true
+  -- BASELINE PROBE (#56): elaborate the UNMODIFIED decl in the gate context
+  -- once, before any attempt. SATTo3SAT's transformClause_soundness fails
+  -- this: a `let`-match inside the theorem REUSES an earlier in-file
+  -- definition's matcher constant when elaborated in-file, but mints a
+  -- FRESH matcher in the probe env (module imported) — leaving `X = X`
+  -- goals between pp-identical-but-DISTINCT matcher constants that `simp`'s
+  -- rfl-closing cannot equate. Such a decl is in-file-only elaborable:
+  -- every gate falsely rejects (safe direction, nothing ships), so burn
+  -- zero attempts and report the real reason instead of N misleading
+  -- per-have errors (and instead of blaming the pre-pass renames, whose
+  -- revert-gate probe fails for the same baseline reason).
+  match findAnySpan lines declName with
+  | none => pure ()
+  | some span =>
+    let headerText0 := "\n".intercalate (lines.extract span.headerStart span.bodyStart).toList
+    let headerText :=
+      if headerText0.startsWith "private " then headerText0.drop "private ".length else headerText0
+    let kw := if headerText.startsWith "theorem " then "theorem " else "lemma "
+    let nsPathB := enclosingNamespacePathFor lines span.headerStart
+    let renHdr := kw ++ (if nsPathB.isEmpty then "" else nsPathB ++ ".") ++ "__baseline_check__" ++ ((headerText.drop kw.length).drop span.name.length)
+    let opens := enclosingOpensFor lines span.headerStart
+    let openPfx := if opens.isEmpty then "" else "open " ++ " ".intercalate opens ++ " in\n"
+    let setPfx := (enclosingSetOptionsFor lines span.headerStart).foldl
+      (fun acc (nm, v) => acc ++ "set_option " ++ nm ++ " " ++ v ++ " in\n") ""
+    let varPfx := (enclosingVariablesFor lines span.headerStart).foldl
+      (fun acc v => acc ++ v ++ " in\n") ""
+    let probeSrc := setPfx ++ openPfx ++ varPfx ++ renHdr ++ "\n" ++
+      "\n".intercalate (lines.extract span.bodyStart span.bodyEnd).toList
+    match ← elabCheckFirstError probeSrc with
+    | some err =>
+      keepGoing := false
+      progress s!"DECL BASELINE FAILED — '{declName}' does not re-elaborate in the probe env (in-file-only elaboration, e.g. matcher-constant reuse); skipping extraction (err: {err.take 160})"
+    | none => pure ()
+  while keepGoing do
+    keepGoing := false
+    match findAnySpan lines declName with
+    | none => pure ()
+    | some span =>
+      let preLines := lines
+      lines := renameShadowedHaveNames lines span
+      lines := nameAnonymousHaves lines span
+      lines := destructuringHavesToObtain lines span
+      -- GATE THE PRE-PASS RENAMES (#51): `nameAnonymousHaves`' scoped
+      -- `this`-rename can lose references in deep bullet/case lattices
+      -- (canonicalPath_preserve: the renamed body itself failed with
+      -- "Unknown identifier `this`", so EVERY candidate gate on that body
+      -- rejected — a 0/36 wipeout that looked like 36 verdicts). The renames
+      -- were the only ungated text mutation left. Re-elaborate the renamed
+      -- decl once; on error, revert to the untouched text — named haves
+      -- still extract (their gates then replay the ORIGINAL body, whose
+      -- `this` references are intact), only anonymous ones stay invisible.
+      if !(lines == preLines) then
+        -- pre-pass mutations can CHANGE LINE COUNT (destructuringHavesToObtain
+        -- inserts an `obtain` line) — the pre-mutation span's bodyEnd would
+        -- silently truncate the probe body. Re-derive; unresolvable ⇒ revert.
+        match findAnySpan lines declName with
+        | none =>
+          progress "pre-pass mutations lost the decl span — REVERTED"
+          lines := preLines
+        | some spanM =>
+          let headerText0 := "\n".intercalate (lines.extract spanM.headerStart spanM.bodyStart).toList
+          let headerText :=
+            if headerText0.startsWith "private " then headerText0.drop "private ".length else headerText0
+          let kw := if headerText.startsWith "theorem " then "theorem " else "lemma "
+          let nsPathP := enclosingNamespacePathFor lines spanM.headerStart
+          let renHdr := kw ++ (if nsPathP.isEmpty then "" else nsPathP ++ ".") ++ "__prepass_check__" ++ ((headerText.drop kw.length).drop spanM.name.length)
+          let opens := enclosingOpensFor lines spanM.headerStart
+          let openPfx := if opens.isEmpty then "" else "open " ++ " ".intercalate opens ++ " in\n"
+          let setPfx := (enclosingSetOptionsFor lines spanM.headerStart).foldl
+            (fun acc (nm, v) => acc ++ "set_option " ++ nm ++ " " ++ v ++ " in\n") ""
+          let varPfx := (enclosingVariablesFor lines spanM.headerStart).foldl
+            (fun acc v => acc ++ v ++ " in\n") ""
+          let probeSrc := setPfx ++ openPfx ++ varPfx ++ renHdr ++ "\n" ++
+            "\n".intercalate (lines.extract spanM.bodyStart spanM.bodyEnd).toList
+          match ← elabCheckFirstError probeSrc with
+          | some err =>
+            progress s!"pre-pass renames broke the decl — REVERTED (err: {err.take 120})"
+            lines := preLines
+          | none => pure ()
+      -- span may be stale after a line-count-changing pre-pass — refresh
+      let span := (findAnySpan lines declName).getD span
+      let (splitLines, didSplit) := splitMidLineHavesInSpan lines span
+      if didSplit then
+        lines := splitLines
+        keepGoing := true
+      else
+        let headers := (findAllHaveHeaders lines span.bodyStart span.bodyEnd).filter
+          (fun (_, n) => !doneNames.contains n)
+        match findLeafHave lines headers doneNames with
+        | none => pure ()
+        | some (haveIdx, haveName) =>
+          -- see the whole-file loop: previously-converted one-liners call
+          -- their own aux lemma — re-extraction would redeclare it
+          let marker := "_aux_" ++ haveName
+          let alreadyConverted :=
+            match lines[haveIdx]!.splitOn marker with
+            | _ :: rest :: _ => rest.isEmpty || !isIdentChar (rest.get! 0)
+            | _ => false
+          if alreadyConverted then
+            doneNames := haveName :: doneNames
+            keepGoing := true
+          else
+          -- STRUCT-FIELD HAVE (#58): a have inside a structure-literal
+          -- field's by-block (`invFun := fun x => ⟨_, by have hfst := ...⟩`
+          -- under `:= { toFun := ..., ... }`) sits inside an UNCLOSED `{`
+          -- or `⟨` at its own line — prefix replay cannot reconstruct a
+          -- tactic context there (nine 0-message captures observed, ~10 min
+          -- wasted). Detect by brace/angle imbalance over the body prefix
+          -- and skip honestly with one log line.
+          let pref := lines.extract span.bodyStart haveIdx
+          let cnt (c : Char) : Nat := pref.foldl (fun acc l => acc + (l.toList.filter (· == c)).length) 0
+          if cnt '{' > cnt '}' || cnt '⟨' > cnt '⟩' then
+            -- STRUCT-FIELD HAVE, ROUTED (#59): prefix replay can't reach a
+            -- have inside an unclosed {/⟨ block, but rung T doesn't replay —
+            -- it elaborates the WHOLE decl and walks the stored term, so
+            -- struct-literal-field haves are perfectly reachable there. Go
+            -- straight to rung T (skipping only the 9 doomed goal-route
+            -- probes this used to burn, and the outright skip it briefly
+            -- became).
+            counter := counter + 1
+            progress s!"attempt {counter}: {declName}.{haveName} (struct-field → rung T) ..."
+            match ← extractOneHaveViaTerm lines span haveIdx haveName counter with
+            | none =>
+              doneNames := haveName :: doneNames
+              progress s!"attempt {counter}: {declName}.{haveName} FAILED (struct-field, rung-T only)"
+              keepGoing := true
+            | some newLines =>
+              lines := newLines
+              doneNames := haveName :: doneNames
+              succeeded := succeeded + 1
+              progress s!"attempt {counter}: {declName}.{haveName} TERM-EXTRACTED (struct-field) ({succeeded}/{counter})"
+              IO.FS.writeFile outputPath ("\n".intercalate lines.toList)
+              progress s!"checkpoint written ({succeeded} commits)"
+              keepGoing := true
+          else
+          counter := counter + 1
+          progress s!"attempt {counter}: {declName}.{haveName} ..."
+          match ← extractOneHaveViaGoal lines span haveIdx haveName counter with
+          | none =>
+            -- rung T fallback: proof-term-based extraction (no prefix replay)
+            match ← extractOneHaveViaTerm lines span haveIdx haveName counter with
+            | none =>
+              doneNames := haveName :: doneNames
+              progress s!"attempt {counter}: {declName}.{haveName} FAILED"
+              keepGoing := true
+            | some newLines =>
+              lines := newLines
+              doneNames := haveName :: doneNames
+              succeeded := succeeded + 1
+              progress s!"attempt {counter}: {declName}.{haveName} TERM-EXTRACTED ({succeeded}/{counter})"
+              -- CHECKPOINT (#58): write the working text after EVERY commit,
+              -- not only at DONE-DECL — a disk auto-stop mid-decl then loses
+              -- only the in-flight attempt; the next run's output-as-input
+              -- resumes from here (committed one-liners skip re-extraction,
+              -- persistFileAuxLemmas re-persists their aux lemmas).
+              IO.FS.writeFile outputPath ("\n".intercalate lines.toList)
+              progress s!"checkpoint written ({succeeded} commits)"
+              keepGoing := true
+          | some newLines =>
+            lines := newLines
+            doneNames := haveName :: doneNames
+            succeeded := succeeded + 1
+            progress s!"attempt {counter}: {declName}.{haveName} EXTRACTED ({succeeded}/{counter})"
+            IO.FS.writeFile outputPath ("\n".intercalate lines.toList)
+            progress s!"checkpoint written ({succeeded} commits)"
+            keepGoing := true
+  -- ── final cleanup, queue-based: the target decl plus every lemma the
+  -- ladder splices during THIS invocation (identified by header-name diff;
+  -- splices from other invocations are their own targets) ──
+  -- RAW header names — NOT via declProbeParts, whose headerText is RENAMED
+  -- to `NAME__vtrial` for probe use: matching against it made this whole
+  -- queue loop a silent no-op (the target name never matched, so the
+  -- per-decl final pass — heuristic inlining AND the ladder — never ran;
+  -- zero "final pass (decl-mode)" lines across the entire campaign).
+  let headersOf (lns : Array String) : Array String :=
+    (findAllDeclSpans lns).map (fun (bs, _) => Id.run do
+      let kws : List String := ["private theorem ", "private lemma ", "theorem ", "lemma "]
+      let mut k := bs
+      while k > 0 do
+        k := k - 1
+        let l := lns[k]!
+        if !l.startsWith "  " then
+          match kws.find? l.startsWith with
+          | some kw =>
+            let rest := l.drop kw.length
+            return (((rest.splitOn " ").head!).splitOn ".{").head!
+          | none => pure ()
+      return "")
+  let mut queue : List String := [declName]
+  let mut fuel := 200
+  while !queue.isEmpty && fuel > 0 do
+    fuel := fuel - 1
+    let target := queue.head!
+    queue := queue.tail!
+    let mut processing := true
+    while processing && fuel > 0 do
+      fuel := fuel - 1
+      let declSpans := findAllDeclSpans lines
+      let names := headersOf lines
+      let mut foundIdx : Option Nat := none
+      for i in [0:names.size] do
+        if foundIdx.isNone && names[i]! == target then
+          foundIdx := some i
+      match foundIdx with
+      | none => processing := false
+      | some i =>
+        let (bStart, bEnd) := declSpans[i]!
+        progress s!"final pass (decl-mode): {target}"
+        let namesBefore := names
+        let (newLines, spliced) ← finalPassOneDecl lines bStart bEnd
+        lines := newLines
+        -- requeue anything the ladder spliced (they carry relocated haves)
+        for h in headersOf lines do
+          if h.length > 0 && !namesBefore.contains h && !queue.contains h && h != target then
+            queue := queue ++ [h]
+        -- reprocessing the (name-relocated) target after a splice mirrors
+        -- the whole-file hold-index rule; no splice → this target is done
+        if !spliced then
+          processing := false
+  progress s!"DONE-DECL {declName} attempts={counter} succeeded={succeeded} — writing {outputPath}"
+  IO.FS.writeFile outputPath ("\n".intercalate lines.toList)
+  logInfo s!"#extract_haves_iter_decl {declName}: written to {outputPath} | attempts={counter} succeeded={succeeded}"
+
+/--
+`#extract_haves_final_pass "dst/Output.lean"`
+
+Final-cleanup-ONLY pass over EVERY declaration of an existing output file:
+heuristic inlining + the verified ladder (rungs A0-E), no extraction. Use
+after a per-decl campaign — `#extract_haves_iter_decl`'s queue-based final
+pass only covers its target declaration, so committed one-liners in other
+declarations (e.g. `:= by apply *_aux_* <;> assumption` callsites) never
+get laddered into `let`s/inlined otherwise.
+-/
+elab "#extract_haves_final_pass " dstLit:str : command => do
+  let outputPath := dstLit.getString
+  letReplayEnabledRef.set false
+  let src ← IO.FS.readFile outputPath
+  probeAutoImplicitRef.set (!(((src.splitOn "\n").map String.trim).contains "set_option autoImplicit false"))
+  let progressPath := outputPath ++ ".progress"
+  let progress (msg : String) : CommandElabM Unit := do
+    IO.eprintln s!"[extract-haves] {msg}"
+    IO.FS.withFile progressPath .append fun h => h.putStrLn msg
+  progress s!"START-FINALPASS {outputPath}"
+  let mut lines := src.splitOn "\n" |>.toArray
+  persistFileAuxLemmas lines progress
+  let mut declIdx := 0
+  let mut moreDecls := true
+  while moreDecls do
+    let declSpans := findAllDeclSpans lines
+    if declIdx < declSpans.size then
+      let (bStart, bEnd) := declSpans[declIdx]!
+      progress s!"final pass (file-mode): decl {declIdx + 1}/{declSpans.size}"
+      let (newLines, spliced) ← finalPassOneDecl lines bStart bEnd
+      lines := newLines
+      if !spliced then
+        declIdx := declIdx + 1
+    else
+      moreDecls := false
+  progress s!"DONE-FINALPASS — writing {outputPath}"
+  IO.FS.writeFile outputPath ("\n".intercalate lines.toList)
+  logInfo s!"#extract_haves_final_pass: written to {outputPath}"
 
 end ExtractHavesFile

@@ -1215,37 +1215,31 @@ def main():
             return u
         return def_short.get(u.split(".")[-1])
 
-    # Generic (any-kind) short-name resolver for the difficulty graph, which walks the
-    # blueprint's \uses edges regardless of whether they point at a definition or a
-    # theorem/lemma (unlike def_short/resolve_def, which are definition-only).
-    any_short = {}
-    dup_any = set()
-    for n in index:
-        s = n.split(".")[-1]
-        (dup_any.add(s) if s in any_short else None)
-        any_short[s] = n
-    for s in dup_any:
-        any_short.pop(s, None)
-
-    def resolve_any(u):
-        if u in index:
-            return u
-        return any_short.get(u.split(".")[-1])
+    # Difficulty edges come from the Lean proof dependency graph (`all_deps` in the
+    # index: every TCSlib declaration the elaborated proof term references), NOT from
+    # the blueprint's \uses lines. \uses is prose metadata and routinely omits proof
+    # dependencies (hand-written chapters tend to list only statement-level defs),
+    # which silently under-reports difficulty; the dep graph is ground truth.
+    def proof_deps(name):
+        rec = index.get(name)
+        return rec["all_deps"] if rec else []
 
     diff_memo = {}
 
     def final_difficulty(name, stack):
-        """Max-difficulty-path aggregation, starting from the leaves of the \\uses graph:
+        """Max-difficulty-path aggregation over the Lean proof dependency graph:
         a node's final difficulty is its own intrinsic (tactic-only) \\difficulty plus the
-        largest final difficulty among its prerequisites. Definitions default to 0 (they
-        never carry their own \\difficulty); a theorem/lemma with no rating yet makes the
-        result unknown (None), and unknown propagates to anything depending on it."""
+        largest final difficulty among the declarations its proof references. Definitions
+        default to 0 (they never carry their own \\difficulty); a theorem/lemma with no
+        rating yet makes the result unknown (None), and unknown propagates to anything
+        depending on it."""
         if name in diff_memo:
             return diff_memo[name]
         if name in stack:
-            # Dependency-cycle back-edge: a cycle edge can never be a genuine
-            # prerequisite ordering (it is a blueprint \uses mistake), so contribute
-            # nothing rather than poisoning every downstream aggregate with unknown.
+            # Cycle back-edge (possible via the constructor/where-helper → parent
+            # fallback in all_deps, e.g. mutual blocks): a cycle edge can never be a
+            # genuine prerequisite ordering, so contribute nothing rather than
+            # poisoning every downstream aggregate with unknown.
             return 0
         stack.add(name)
         entry = lookup(name)
@@ -1255,10 +1249,7 @@ def main():
             own = 0
         best = 0
         unknown = own is None
-        for u in (entry.get("uses", []) if entry else []):
-            dep = resolve_any(u)
-            if not dep or dep == name:
-                continue
+        for dep in proof_deps(name):
             d = final_difficulty(dep, stack)
             if d is None:
                 unknown = True
@@ -1270,8 +1261,8 @@ def main():
         return result
 
     # ---- breadth-aware difficulty: discounted sum of vertex-disjoint heavy chains ----
-    # The plain `difficulty` is the heaviest path (critical path) through the \uses
-    # graph. That ignores breadth: a theorem resting on several INDEPENDENT hard chains
+    # The plain `difficulty` is the heaviest path (critical path) through the proof
+    # dep graph. That ignores breadth: a theorem resting on several INDEPENDENT hard chains
     # is harder than one resting on a single chain of the same height. Here we greedily
     # peel vertex-disjoint heavy chains (Menger-style: peeling stops by itself once the
     # residual graph has no positive-weight leaf→target path, i.e. at the min cut) and
@@ -1288,15 +1279,6 @@ def main():
         if own is None and (index[name]["kind"] if name in index else None) in DEF_KINDS:
             own = 0
         return own
-
-    def uses_deps(name):
-        e = lookup(name)
-        out = []
-        for u in (e.get("uses", []) if e else []):
-            dep = resolve_any(u)
-            if dep and dep != name:
-                out.append(dep)
-        return out
 
     def breadth_difficulty(name):
         base = final_difficulty(name, set())
@@ -1315,7 +1297,7 @@ def main():
                     return (0.0, ())        # cycle back-edge: contributes nothing
                 stack.add(n)
                 bw, bp = 0.0, ()
-                for d in uses_deps(n):
+                for d in proof_deps(n):
                     if d in removed:
                         continue
                     w, p = best(d, stack)
@@ -1359,7 +1341,7 @@ def main():
     if args.limit:
         targets = targets[: args.limit]
 
-    out_path = Path(args.out)
+    out_path = Path(args.out).resolve()
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     n_written = n_missing = 0

@@ -1,78 +1,178 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import tempfile
 from collections.abc import Mapping, Sequence
+from decimal import Decimal
 from pathlib import Path
 from typing import Callable
 
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
 
+# Model tiers for the pipeline. DEFAULT_MODEL runs the high-volume stages
+# (cleanup, relevance, upstream mapping); COMPARE_MODEL runs the heavier
+# proof-structure comparison. Set DEFAULT_MODEL to "claude-sonnet-5" to get a
+# cheap-tier/expensive-tier cost split; MODEL_PRICES in budget.py must have an
+# entry for whatever is configured here.
+DEFAULT_MODEL = "claude-opus-4-8"
+COMPARE_MODEL = "claude-opus-4-8"
+
+# Claude Code has no --sandbox flag; read-only execution is enforced by
+# disallowing every mutating or network-reaching tool. Read stays available so
+# the visual-validation stage can open rendered page images.
+READ_ONLY_DISALLOWED_TOOLS = (
+    "Bash",
+    "Edit",
+    "Write",
+    "NotebookEdit",
+    "WebFetch",
+    "WebSearch",
+    "Task",
+)
+
 
 class AgentOutputError(RuntimeError):
     pass
 
 
-def validate_codex_schema(value: object, location: str = "$") -> None:
+def validate_output_schema(value: object, location: str = "$") -> None:
     if isinstance(value, dict):
         if "uniqueItems" in value:
             raise AgentOutputError(
-                f"{location}.uniqueItems is unsupported by Codex structured output"
+                f"{location}.uniqueItems is unsupported by structured output"
             )
         for key, item in value.items():
-            validate_codex_schema(item, f"{location}.{key}")
+            validate_output_schema(item, f"{location}.{key}")
     elif isinstance(value, list):
         for index, item in enumerate(value):
-            validate_codex_schema(item, f"{location}[{index}]")
+            validate_output_schema(item, f"{location}[{index}]")
 
 
-def build_codex_command(
-    schema: Path,
-    output: Path,
+_TYPE_CHECKS: dict[str, Callable[[object], bool]] = {
+    "object": lambda v: isinstance(v, dict),
+    "array": lambda v: isinstance(v, list),
+    "string": lambda v: isinstance(v, str),
+    "integer": lambda v: isinstance(v, int) and not isinstance(v, bool),
+    "number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
+    "boolean": lambda v: isinstance(v, bool),
+    "null": lambda v: v is None,
+}
+
+
+def validate_against_schema(
+    value: object,
+    schema: Mapping[str, object],
+    location: str = "$",
+) -> None:
+    """Check the agent's answer against the full schema.
+
+    Claude Code strips constraint keywords the structured-output API does not
+    enforce (minimum, maximum, minItems, pattern), so those are re-checked here.
+    """
+    type_name = schema.get("type")
+    if type_name is not None:
+        names = type_name if isinstance(type_name, list) else [type_name]
+        if not any(_TYPE_CHECKS[name](value) for name in names):
+            raise AgentOutputError(f"{location} is not of type {type_name}")
+    if "enum" in schema and value not in schema["enum"]:
+        raise AgentOutputError(f"{location} is not one of {schema['enum']}")
+    if "const" in schema and value != schema["const"]:
+        raise AgentOutputError(f"{location} is not the constant {schema['const']}")
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        minimum = schema.get("minimum")
+        if isinstance(minimum, (int, float)) and value < minimum:
+            raise AgentOutputError(f"{location} is below the minimum {minimum}")
+        maximum = schema.get("maximum")
+        if isinstance(maximum, (int, float)) and value > maximum:
+            raise AgentOutputError(f"{location} is above the maximum {maximum}")
+    if isinstance(value, str):
+        pattern = schema.get("pattern")
+        if isinstance(pattern, str) and re.search(pattern, value) is None:
+            raise AgentOutputError(f"{location} does not match pattern {pattern!r}")
+    if isinstance(value, dict):
+        properties = schema.get("properties")
+        properties = properties if isinstance(properties, dict) else {}
+        required = schema.get("required")
+        if isinstance(required, list):
+            for name in required:
+                if name not in value:
+                    raise AgentOutputError(f"{location}.{name} is required but missing")
+        if schema.get("additionalProperties") is False:
+            unknown = sorted(set(value) - set(properties))
+            if unknown:
+                raise AgentOutputError(
+                    f"{location} has unexpected properties: {', '.join(unknown)}"
+                )
+        for name, item in value.items():
+            subschema = properties.get(name)
+            if isinstance(subschema, Mapping):
+                validate_against_schema(item, subschema, f"{location}.{name}")
+    if isinstance(value, list):
+        min_items = schema.get("minItems")
+        if isinstance(min_items, int) and len(value) < min_items:
+            raise AgentOutputError(f"{location} has fewer than {min_items} items")
+        items = schema.get("items")
+        if isinstance(items, Mapping):
+            for index, item in enumerate(value):
+                validate_against_schema(item, items, f"{location}[{index}]")
+
+
+def build_claude_command(
+    schema_json: str,
     images: Sequence[Path] = (),
-    model: str = "gpt-5.6-luna",
+    model: str = DEFAULT_MODEL,
 ) -> list[str]:
     command = [
-        "codex",
-        "exec",
-        "--ephemeral",
-        "--sandbox",
-        "read-only",
+        "claude",
+        "-p",
         "--model",
         model,
-        "--output-schema",
-        str(schema),
-        "--output-last-message",
-        str(output),
+        "--output-format",
+        "json",
+        "--json-schema",
+        schema_json,
+        "--no-session-persistence",
+        "--disallowedTools",
+        *READ_ONLY_DISALLOWED_TOOLS,
     ]
-    for image in images:
-        command.extend(["--image", str(image)])
-    command.append("-")
+    if images:
+        command.extend(["--allowedTools", "Read"])
+        for directory in sorted({str(image.parent) for image in images}):
+            command.extend(["--add-dir", directory])
     return command
 
 
 def parse_agent_output(text: str) -> dict[str, object]:
     try:
-        value = json.loads(text)
+        envelope = json.loads(text)
     except json.JSONDecodeError as error:
-        raise AgentOutputError(f"Codex final message was not valid JSON: {error}") from error
-    if not isinstance(value, dict):
-        raise AgentOutputError("Codex final message must be a JSON object")
-    return value
+        raise AgentOutputError(f"claude output was not valid JSON: {error}") from error
+    if not isinstance(envelope, dict):
+        raise AgentOutputError("claude output must be a JSON object")
+    if envelope.get("is_error"):
+        raise AgentOutputError(f"claude reported an error: {envelope.get('result')!r}")
+    if not isinstance(envelope.get("structured_output"), dict):
+        raise AgentOutputError(
+            "claude output lacks a structured_output object; "
+            f"subtype={envelope.get('subtype')!r}"
+        )
+    return envelope
 
 
-class CodexAgent:
+class ClaudeAgent:
     def __init__(
         self,
         resource_root: Path | None = None,
         runner: Runner = subprocess.run,
-        model: str = "gpt-5.6-luna",
+        model: str = DEFAULT_MODEL,
     ):
         self.resource_root = resource_root or Path(__file__).parent
         self.runner = runner
         self.model = model
+        self.spent_usd = Decimal("0")
 
     def run(
         self,
@@ -89,21 +189,35 @@ class CodexAgent:
             schema_value = json.loads(schema_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as error:
             raise AgentOutputError(f"{schema_path} is not valid JSON: {error}") from error
-        validate_codex_schema(schema_value)
-        envelope = (
-            f"{prompt.rstrip()}\n\n"
+        validate_output_schema(schema_value)
+        sections = [prompt.rstrip()]
+        if images:
+            listing = "\n".join(f"- {image}" for image in images)
+            sections.append(
+                "Rendered PDF page images (open each with the Read tool before "
+                f"answering):\n{listing}"
+            )
+        sections.append(
             "<untrusted-payload>\n"
             f"{json.dumps(payload, ensure_ascii=False, indent=2)}\n"
-            "</untrusted-payload>\n"
+            "</untrusted-payload>"
         )
+        envelope = "\n\n".join(sections) + "\n"
+        # Claude Code's schema validator cannot resolve external meta-schema
+        # references, so metadata keys are dropped from the CLI copy.
+        cli_schema = {
+            key: value
+            for key, value in schema_value.items()
+            if key not in ("$schema", "$id")
+        }
+        command = build_claude_command(
+            json.dumps(cli_schema, ensure_ascii=False, separators=(",", ":")),
+            images,
+            self.model,
+        )
+        # cwd is a fresh temp dir so the invocation picks up no project
+        # CLAUDE.md or settings from wherever the pipeline happens to run.
         with tempfile.TemporaryDirectory(prefix="proofmatch-agent-") as tmp:
-            output_path = Path(tmp) / "answer.json"
-            command = build_codex_command(
-                schema_path,
-                output_path,
-                images,
-                self.model,
-            )
             try:
                 result = self.runner(
                     command,
@@ -112,12 +226,18 @@ class CodexAgent:
                     capture_output=True,
                     text=True,
                     encoding="utf-8",
+                    cwd=tmp,
                 )
             except (OSError, subprocess.CalledProcessError) as error:
                 stderr = getattr(error, "stderr", "") or ""
-                raise AgentOutputError(f"Codex invocation failed: {stderr.strip()}") from error
-            if not output_path.exists():
                 raise AgentOutputError(
-                    f"Codex produced no final-message file; stdout={result.stdout!r}"
-                )
-            return parse_agent_output(output_path.read_text(encoding="utf-8"))
+                    f"claude invocation failed: {stderr.strip()}"
+                ) from error
+        output = parse_agent_output(result.stdout)
+        structured = output["structured_output"]
+        assert isinstance(structured, dict)
+        validate_against_schema(structured, schema_value)
+        cost = output.get("total_cost_usd")
+        if isinstance(cost, (int, float)):
+            self.spent_usd += Decimal(str(cost))
+        return structured

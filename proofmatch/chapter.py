@@ -4,7 +4,12 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, replace
 from pathlib import Path
 
-from proofmatch.agents import AgentOutputError, CodexAgent
+from proofmatch.agents import (
+    COMPARE_MODEL,
+    DEFAULT_MODEL,
+    AgentOutputError,
+    ClaudeAgent,
+)
 from proofmatch.blueprint import (
     ProofSource,
     ProofStep,
@@ -226,7 +231,7 @@ def run_chapter_match(
     decisions = classify_relevance(
         candidates,
         index,
-        CodexAgent(model="gpt-5.6-luna"),
+        ClaudeAgent(model=DEFAULT_MODEL),
         budget,
     )
     selected_names = {
@@ -242,7 +247,7 @@ def run_chapter_match(
         candidates,
         decisions,
         index,
-        lambda: CodexAgent(model="gpt-5.6-terra"),
+        lambda: ClaudeAgent(model=COMPARE_MODEL),
         budget,
     )
     by_candidate = {item.lean_name: item for item in candidates}
@@ -307,7 +312,7 @@ def run_chapter_match(
                 assignments = map_upstream_batches(
                     declarations,
                     blocks,
-                    CodexAgent(model="gpt-5.6-luna"),
+                    ClaudeAgent(model=DEFAULT_MODEL),
                     budget,
                 )
                 manifest = build_manifest(

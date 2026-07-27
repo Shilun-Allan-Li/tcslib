@@ -6,7 +6,7 @@ from collections.abc import Callable
 from decimal import Decimal
 from pathlib import Path
 
-from proofmatch.agents import CodexAgent
+from proofmatch.agents import DEFAULT_MODEL, ClaudeAgent
 from proofmatch.budget import Budget, StageEstimate, estimate_cleanup, token_cost
 from proofmatch.extraction import render_page
 from proofmatch.models import DocumentAmbiguity, DocumentBlock, DocumentIndex
@@ -113,7 +113,7 @@ def _ambiguities_from_output(
 
 def _render_markdown(index: DocumentIndex) -> str:
     lines = [
-        "<!-- generated-by: proofmatch Codex repair -->",
+        "<!-- generated-by: proofmatch Claude repair -->",
         f"<!-- source-pdf-sha256: {index.source_fingerprint} -->",
         "",
     ]
@@ -184,7 +184,7 @@ def parse_validated_markdown(path: Path) -> DocumentIndex:
 def repair_document(
     raw_md: Path,
     output_md: Path,
-    agent: CodexAgent,
+    agent: ClaudeAgent,
     budget: Budget,
     *,
     pdf_path: Path | None = None,
@@ -203,7 +203,7 @@ def repair_document(
             raise ValueError("PDF path is required to validate ambiguous blocks")
         ambiguous_pages = sorted({page for _, page, _ in ambiguity_rows})
         visual_cost = token_cost(
-            "gpt-5.6-luna",
+            DEFAULT_MODEL,
             input_tokens=5_000 * len(ambiguous_pages),
             output_tokens=1_000 * len(ambiguous_pages),
         )

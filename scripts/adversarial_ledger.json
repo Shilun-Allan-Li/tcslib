@@ -1,0 +1,134 @@
+{
+ "tested": {
+  "TCSlib/Cryptography/RSA.lean::rsa_crt_pow": {
+   "date": "2026-07-20",
+   "result": "pass 3/3",
+   "note": ""
+  },
+  "TCSlib/GraphTheory/KargerMinCutTrace.lean::survivalProb_ge_factor": {
+   "date": "2026-07-20",
+   "result": "pass 7/7",
+   "note": ""
+  },
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::encode_go_snd_sigma_indep": {
+   "date": "2026-07-20",
+   "result": "pass 3/3",
+   "note": "after inacc-args retry fix"
+  },
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::encode_go_not_kills_first_clause": {
+   "date": "2026-07-20",
+   "result": "pass 12/12",
+   "note": ""
+  },
+  "TCSlib/Complexity/NPReductions/SATTo3SAT.lean::transformClause_soundness": {
+   "date": "2026-07-20",
+   "result": "skip-baseline",
+   "note": "matcher-constant reuse is in-file-only; un-probeable in import context"
+  },
+  "TCSlib/BooleanAnalysis/Switching/Circuit.lean::toNAnd_toNOr_size_le": {
+   "date": "2026-07-20",
+   "result": "partial 2/5",
+   "note": "residual: merged (ih h_ind) alias group + daggered cs✝ sig param"
+  },
+  "TCSlib/BooleanAnalysis/Switching/Circuit.lean::buildFullDTree_depth": {
+   "date": "2026-07-20",
+   "result": "partial 1/3",
+   "note": "h1/h2 self-recursive, correctly gate-rejected"
+  },
+  "TCSlib/BooleanAnalysis/Switching.lean::*": {
+   "date": "2026-07-20",
+   "result": "campaign-complete",
+   "note": "128->0 haves, 0 errors (#54)"
+  },
+  "TCSlib/CommunicationComplexity/DeterministicCC/Subprotocol.lean::*": {
+   "date": "2026-07-20",
+   "result": "campaign-complete",
+   "note": "89/89, 0 errors (#55)"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy.lean::*": {
+   "date": "2026-07-20",
+   "result": "campaign-complete",
+   "note": "77->0 (#50)"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/SmolenskyAlgebra.lean::*": {
+   "date": "2026-07-20",
+   "result": "campaign-complete",
+   "note": "85->0 (#49)"
+  },
+  "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean::canonicalDTree_go_correct": {
+   "date": "2026-07-20",
+   "result": "pass 9/9",
+   "note": "destr-have converted via destructuringHavesToObtain pre-pass; output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/LMN/CircuitTreeManip.lean::exists_circuit_depth_reduction": {
+   "date": "2026-07-20",
+   "result": "partial 5/10 residuals",
+   "note": "dagger-parse class FIXED (sigs sanitize ✝→_inacc); residuals: data-typed inaccessible callsite args (apply/assumption can't supply gates✝ function args; rung T skips untyped haves) + pp field-notation infidelity (Eq.isLt) on deep-shadowed induction' captures"
+  },
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::encode_go_fst_nonfree": {
+   "date": "2026-07-20",
+   "result": "pass 3/3",
+   "note": "output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean::dtDepth_restrictFn_le_numFree": {
+   "date": "2026-07-20",
+   "result": "pass 8/8",
+   "note": "output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/CircuitDegree.lean::pi_coordinate_bad_mul_le": {
+   "date": "2026-07-20",
+   "result": "partial 2/3 struct-field-have",
+   "note": "hfst lives in a structure-literal field by-block (invFun := fun x => ⟨_, by have hfst⟩) — probe replay yields 0 msgs; NEW residual class; output 0 errors"
+  },
+  "TCSlib/Complexity/NPReductions/SATTo3SAT.lean::buildChain_all_satisfied": {
+   "date": "2026-07-20",
+   "result": "pass 12/12",
+   "note": "baseline probe per-decl granularity validated (sibling decl is baseline-skipped); output 0 errors"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Derandomization.lean::exists_good_randomness": {
+   "date": "2026-07-24",
+   "result": "pass 19/24",
+   "note": "classical-instance-loss FIXED: declScopedOpensFor bakes decl-scoped 'open X in' into written lemma prefixes; output 0 errors; 5 failures = known safe-reject classes"
+  },
+  "TCSlib/BooleanAnalysis/Switching/RoundTrip.lean::go_roundtrip_gen": {
+   "date": "2026-07-21",
+   "result": "partial 18/23",
+   "note": "checkpointed grind; output 0 errors; failures = match-aux sigs + callsite type-mismatch (data-inacc family); final pass wedged idle, checkpoint is the output"
+  },
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::encode_go_aux_length_bound": {
+   "date": "2026-07-24",
+   "result": "pass 2/2",
+   "note": "both via INACC-ARGS retry; output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean::selectBranchVar_spec": {
+   "date": "2026-07-24",
+   "result": "pass 6/6",
+   "note": "output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction.lean::function_hammingBall_card_le_binomial": {
+   "date": "2026-07-26",
+   "result": "pass 9/11+3skip",
+   "note": "3 struct-field haves skipped cleanly (heuristic validated); 2 safe-reject failures; final pass converged; output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/KKL.lean::friedgut_junta": {
+   "date": "2026-07-26",
+   "result": "blocked-upstream",
+   "note": "dependency Hypercontractivity/Bonami.lean fails to build (pre-existing: unsolved Function.Injective (Fin.snoc · b) goals at 480/595) — not a pipeline class; retry after library fix"
+  },
+  "TCSlib/GraphTheory/KargerMinCut.lean::mincut_preserved_of_non_crossing": {
+   "date": "2026-07-26",
+   "result": "pass 20/27",
+   "note": "STRUCT-FIELD→RUNG-T ROUTING (#59): all 9 former struct-field skips TERM-EXTRACTED 9/9; 7 remaining failures = hu/hvLift family (data-inacc, safe-reject); output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean::canonicalDTree_go_fuel_invariant": {
+   "date": "2026-07-26",
+   "result": "pass 6/6",
+   "note": "output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::encode_go_fst_sigma_indep_at_free": {
+   "date": "2026-07-26",
+   "result": "pass 2/2",
+   "note": "both via inacc-args retry; output 0 errors"
+  }
+ }
+}

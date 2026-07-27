@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from proofmatch.agents import CodexAgent
+from proofmatch.agents import COMPARE_MODEL, ClaudeAgent
 from proofmatch.budget import Budget, StageEstimate, token_cost
 from proofmatch.models import Candidate, ComparisonVerdict, DocumentIndex
 
@@ -60,7 +60,7 @@ def verdict_from_agent(value: dict[str, object]) -> ComparisonVerdict:
 def compare_candidate(
     candidate: Candidate,
     document: DocumentIndex,
-    agent: CodexAgent,
+    agent: ClaudeAgent,
     budget: Budget,
 ) -> ComparisonVerdict:
     budget.require(estimate_comparison(candidate, document))
@@ -130,7 +130,7 @@ def estimate_comparison(
         f"proof comparison {candidate.lean_name}",
         input_tokens,
         output_tokens,
-        token_cost("gpt-5.6-terra", input_tokens, output_tokens),
+        token_cost(COMPARE_MODEL, input_tokens, output_tokens),
     )
 
 

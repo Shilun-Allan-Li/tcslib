@@ -21,6 +21,7 @@ Usage:
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -38,7 +39,12 @@ RATEABLE_ENVS = {"theorem", "lemma", "sublemma", "proposition", "corollary"}
 def is_bare_sorry(rec) -> bool:
     full = "\n".join(rec["slice"])
     sig = bd.split_signature(full)
-    body = full[len(sig):].replace(":=", "").strip()
+    body = full[len(sig):].replace(":=", "")
+    body = re.sub(r"/-[\s\S]*?-/", "", body)   # block comments
+    body = re.sub(r"--.*", "", body)           # line comments (e.g. `sorry -- TODO: ...`)
+    body = body.strip()
+    if body.startswith("by"):
+        body = body[len("by"):].strip()
     return body == "sorry"
 
 
@@ -113,7 +119,7 @@ def main():
             units.append({"target_tex": unit["target_tex"], "work_file": str(out_path.relative_to(BASE)),
                           "n_entries": len(entries), "n_sorry_skipped": n_sorry})
             total_entries += len(entries)
-            total_sorry += n_sorry
+        total_sorry += n_sorry
 
     manifest = {"units": units, "total_files_with_work": len(units),
                 "total_entries_to_rate": total_entries, "total_sorry_skipped": total_sorry}

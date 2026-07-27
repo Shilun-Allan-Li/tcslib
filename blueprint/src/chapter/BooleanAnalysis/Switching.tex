@@ -444,6 +444,18 @@ $(s-d)$-restriction, since the encoder fixes exactly $d$ previously free
 variables.
 \end{lemma}
 
+\begin{lemma}[Bad-restriction counting bound]
+\lean{SwitchingLemma2.bad_count_bound}
+\leanok
+\uses{DNF, DNF.eval, DNF.width, Literal.var, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.card_filter_numFree_eq, SwitchingLemma2.fiber_bound, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_fst_numFree_eq}
+\difficulty{4}
+For $d \leq s$, the number of bad $s$-restrictions is at most
+$\binom{n}{s-d}\,2^{\,n-(s-d)}\,(4w)^d$: every bad $s$-restriction is mapped by
+$\mathrm{razborovEncode}$ to a $\gamma$ with exactly $s-d$ free variables, each
+fiber of this map has size at most $(4w)^d$, and there are
+$\binom{n}{s-d}\,2^{\,n-(s-d)}$ possible values of $\gamma$.
+\end{lemma}
+
 \begin{lemma}[No bad restrictions when $s \leq d$]
 \lean{SwitchingLemma2.bad_filter_empty_of_d_ge_s}
 \leanok
@@ -481,6 +493,10 @@ depth at most $\mathrm{dtDepth}\,f$.
 \begin{lemma}[Small decision-tree depth yields small DNF and CNF]
 \lean{SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p002-b006,
+  pdf-fc447f326910-p002-b007
+}
 \uses{CNF, CNF.eval, CNF.evalClause, CNF.width, DNF, DNF.eval, DNF.width, DecisionTree, DecisionTree.depth, DecisionTree.eval, Literal.eval, SwitchingLemma2.dtDepth_witness, SwitchingLemma2.toCNF, SwitchingLemma2.toDNF, Term.eval, dtDepth}
 \difficulty{7}
 If $\mathrm{dtDepth}\,f \leq d$, then $f$ is computed by a DNF of width at most

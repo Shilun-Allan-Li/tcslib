@@ -23,8 +23,12 @@ require TCSlib from git "https://github.com/Shilun-Allan-Li/tcslib" @ "main"
 
 ## Matching PDF proofs to TCSlib
 
-The repository includes an auditable Codex workflow for comparing a local PDF or
-validated Markdown reference with TCSlib proofs:
+The repository includes an auditable Claude Code workflow for comparing a local
+PDF or validated Markdown reference with TCSlib proofs. Agent stages run through
+headless `claude -p` with `--json-schema` structured output (the `claude` CLI
+must be installed and authenticated); model tiers are configured in
+`proofmatch/agents.py` (`DEFAULT_MODEL` / `COMPARE_MODEL`, default
+`claude-opus-4-8`) with matching prices in `proofmatch/budget.py`:
 
 ```bash
 # Free local extraction only

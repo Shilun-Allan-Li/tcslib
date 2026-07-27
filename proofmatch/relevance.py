@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from decimal import Decimal
 
+from proofmatch.agents import DEFAULT_MODEL
 from proofmatch.budget import Budget, StageEstimate, token_cost
 from proofmatch.models import (
     Candidate,
@@ -51,7 +52,7 @@ def _estimate_relevance_batch(
         "chapter relevance",
         input_tokens,
         output_tokens,
-        token_cost("gpt-5.6-luna", input_tokens, output_tokens),
+        token_cost(DEFAULT_MODEL, input_tokens, output_tokens),
     )
 
 

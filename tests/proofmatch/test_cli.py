@@ -152,7 +152,7 @@ class CliTests(unittest.TestCase):
                         "map-upstream",
                         "abcdef123456",
                         "--max-cost",
-                        "1.00",
+                        "5.00",
                         "--dry-run",
                     ]
                 )

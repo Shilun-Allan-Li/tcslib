@@ -3,10 +3,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 
+from proofmatch.agents import DEFAULT_MODEL
 
+
+# Anthropic list prices in USD per million input/output tokens.
 MODEL_PRICES: dict[str, tuple[Decimal, Decimal]] = {
-    "gpt-5.6-luna": (Decimal("1.00"), Decimal("6.00")),
-    "gpt-5.6-terra": (Decimal("2.50"), Decimal("15.00")),
+    "claude-opus-4-8": (Decimal("5.00"), Decimal("25.00")),
+    "claude-sonnet-5": (Decimal("3.00"), Decimal("15.00")),
+    "claude-haiku-4-5": (Decimal("1.00"), Decimal("5.00")),
 }
 
 
@@ -59,7 +63,7 @@ def token_cost(
 
 def estimate_cleanup(
     raw_characters: int,
-    model: str = "gpt-5.6-luna",
+    model: str = DEFAULT_MODEL,
 ) -> StageEstimate:
     if raw_characters < 0:
         raise ValueError("raw_characters cannot be negative")

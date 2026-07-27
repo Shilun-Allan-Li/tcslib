@@ -6,7 +6,7 @@ from dataclasses import asdict
 from decimal import Decimal
 from pathlib import Path
 
-from proofmatch.agents import CodexAgent
+from proofmatch.agents import DEFAULT_MODEL, ClaudeAgent
 from proofmatch.artifacts import RunStore, sha256_file
 from proofmatch.blueprint import (
     ProofSource,
@@ -195,7 +195,7 @@ def _extract(
     repair_document(
         raw,
         output,
-        CodexAgent(model="gpt-5.6-luna"),
+        ClaudeAgent(model=DEFAULT_MODEL),
         budget,
         pdf_path=source,
     )
@@ -424,7 +424,7 @@ def _map_upstream(
     assignments = map_upstream_batches(
         declarations,
         proof_blocks,
-        CodexAgent(model="gpt-5.6-luna"),
+        ClaudeAgent(model=DEFAULT_MODEL),
         budget,
         load_batch=load_batch,
         save_batch=save_batch,
