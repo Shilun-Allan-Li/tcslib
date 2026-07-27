@@ -1,0 +1,44 @@
+# Switching Lemma fixture evaluation
+
+- Source: `blueprint/src/references/switching-lemma.pdf`
+- Local extraction: `blueprint/src/references/switching-lemma.raw.md`
+- Validated Markdown: `blueprint/src/references/switching-lemma.md`
+- PDF SHA-256: `b5e074215b9e0121d54f205bd83f4ab4e47b00b42a5b8d7e2691117e5b3b7ec3`
+- TCSlib theorem: `SwitchingLemma2.switching_lemma`
+- Automated verdict: `same`
+- Confidence: `0.98`
+- Estimated OpenAI spend: `$0.199915`
+- Budget cap: `$1.00`
+- Blueprint status: awaiting human approval
+
+## Conversion evaluation
+
+The local extractor recovered all four pages but exposed the expected failure modes:
+fragmented reading order, detached overbars, split inequalities and exponents,
+broken function/set notation, display equations emitted out of order, ligature
+substitutions, and repeated page furniture. Codex repaired those passages while
+preserving page provenance. The validated document has stable block anchors and
+retains the full lecture notes rather than only the target proof.
+
+## Matched proof source
+
+The theorem statement is:
+
+- `pdf-b5e074215b9e-p001-b008`
+
+The proof is:
+
+- `pdf-b5e074215b9e-p002-b001`
+- `pdf-b5e074215b9e-p002-b002`
+- `pdf-b5e074215b9e-p002-b003`
+- `pdf-b5e074215b9e-p002-b004`
+
+The automated comparison found the same mathematical structure: canonical
+decision-tree construction, extraction of a length-`d` path from badness,
+encoding into a shorter restriction with auxiliary data, decoding/injectivity,
+the `(4w)^d` fiber bound, and the final restriction count yielding
+`(10σw)^d`. Lean makes the construction, invariants, and arithmetic lemmas
+explicit, but no mathematical discrepancy was found.
+
+No proof-source annotation has been written to the blueprint. The approval
+command is intentionally a separate human action.
