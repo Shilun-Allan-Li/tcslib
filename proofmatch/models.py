@@ -45,6 +45,19 @@ class DocumentIndex:
     ambiguities: tuple[DocumentAmbiguity, ...]
 
 
+@dataclass(frozen=True)
+class Candidate:
+    lean_name: str
+    title: str
+    source_module: str
+    statement: str
+    formal_statement: str
+    proof: str
+    proof_tokens: int
+    score: float
+    document_blocks: tuple[str, ...]
+
+
 def _convert(value: Any, expected: Any, location: str) -> Any:
     origin = get_origin(expected)
     args = get_args(expected)
