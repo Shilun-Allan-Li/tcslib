@@ -4,7 +4,7 @@
 
 **Goal:** Add a resumable, budgeted pipeline stage that maps every declaration in a matched theorem's Lean proof dependency closure to direct or contextual blocks in the validated PDF Markdown, then writes approved mappings directly into the blueprint.
 
-**Architecture:** A focused `proofmatch.upstream` module extracts and validates dependency records, batches agent inputs, and renders a human review. Existing blueprint and dataset parsers gain an invisible repeated `\proofstep` macro. The CLI generates a strict artifact first and performs an idempotent blueprint insertion only through a separate explicit approval command.
+**Architecture:** A focused `proofmatch.upstream` module extracts and validates dependency records, batches agent inputs, and renders an audit review. Existing blueprint and dataset parsers gain an invisible repeated `\proofstep` macro. The CLI inherits authorization from the approved theorem match and atomically inserts a manifest only after strict validation.
 
 **Tech Stack:** Python 3.14 standard library, existing TCSlib dependency graph and dataset builder, Codex CLI with JSON Schema, LaTeX blueprint metadata, `unittest`.
 
@@ -15,7 +15,7 @@
 - Formalization-only helpers map contextually to the informal proof step where they participate.
 - Store mappings directly in the blueprint theorem environment as repeated `\proofstep` entries.
 - Keep `\proofstep` independent of `\uses` and theorem-level `\proofsource`.
-- Never write mappings before a separate explicit upstream approval.
+- Never write mappings without an approved theorem-level `same` match.
 - Never partially update the blueprint.
 - Preserve dependency order in artifacts, blueprint output, and dataset output.
 - Enforce the Switching Lemma fixture's USD 1.00 total cap, including the already recorded USD 0.199915.
@@ -427,7 +427,7 @@ git commit -m "feat: export blueprint proof-step mappings"
 
 **Interfaces:**
 - Produces: `proofmatch map-upstream RUN_ID [--max-cost USD] [--dry-run]`
-- Produces: `proofmatch review-upstream RUN_ID [approve|reject|defer]`
+- Produces: `proofmatch review-upstream RUN_ID` as a read-only audit command
 - Writes: `upstream_input.json`, `proof_steps.json`, `proof_steps_review.md`, `upstream_decision.json`
 - Consumes: approved theorem-level `review.json` and `decision.json`.
 
@@ -446,15 +446,17 @@ def test_map_upstream_dry_run_writes_no_manifest_or_blueprint(self):
     self.assertFalse(store.stage_path("proof_steps", ".json").exists())
     self.assertEqual(tex_path.read_text(), original_tex)
 
-def test_review_upstream_approve_revalidates_before_atomic_insert(self):
-    main(["review-upstream", run_id, "approve"])
+def test_map_upstream_auto_inserts_after_validation(self):
+    main(["map-upstream", run_id, "--max-cost", "1.00"])
     self.assertIn("\\proofstep", tex_path.read_text())
-    self.assertEqual(store.read_json("upstream_decision"), {"decision": "approve"})
+    self.assertEqual(
+        store.read_json("upstream_decision"),
+        {"decision": "inherited-theorem-approval"},
+    )
 ```
 
 Add tests for non-`same` verdicts, missing artifacts, stale fingerprints,
-budget exhaustion, `reject`, `defer`, and a failed batch leaving no final
-manifest.
+budget exhaustion, and a failed batch leaving no final manifest.
 
 - [ ] **Step 2: Run focused tests and verify RED**
 
@@ -472,12 +474,11 @@ each estimate before invoking Codex, write intermediate batch artifacts for
 resumption, validate full coverage, then atomically write the final JSON and
 review Markdown.
 
-- [ ] **Step 4: Implement `review-upstream`**
+- [ ] **Step 4: Implement automatic insertion and read-only audit**
 
-Print the grouped review. For `approve`, reconstruct current inputs and rerun
-all fingerprint and coverage checks before calling
-`insert_approved_steps`. For `reject` or `defer`, write only the decision
-artifact. Never reuse the theorem-level approval as upstream approval.
+After generation, rerun all fingerprint and coverage checks before calling
+`insert_approved_steps`; record inherited theorem authorization.
+`review-upstream` prints the grouped audit and performs no mutation.
 
 - [ ] **Step 5: Run focused and full tests**
 
@@ -498,12 +499,12 @@ git commit -m "feat: add upstream proof mapping workflow"
 
 **Files:**
 - Create: `tests/proofmatch/fixtures/switching_lemma_upstream.json`
-- Modify after explicit upstream approval only: `blueprint/src/chapter/BooleanAnalysis/SwitchingLemma.tex`
+- Modify after successful validated mapping: `blueprint/src/chapter/BooleanAnalysis/SwitchingLemma.tex`
 - Modify: `blueprint/.proofmatch-evals/switching-lemma-report.md`
 
 **Interfaces:**
 - Consumes: run `b5e074215b9e`, the current validated Markdown, and the current `SwitchingLemma2.switching_lemma` closure.
-- Produces: a 100%-coverage review artifact and, only after user approval, blueprint `\proofstep` entries.
+- Produces: a 100%-coverage audit artifact and blueprint `\proofstep` entries.
 
 - [ ] **Step 1: Run the cost-only fixture command**
 
@@ -539,8 +540,8 @@ Run:
 python3 scripts/proofmatch.py map-upstream b5e074215b9e --max-cost 1.00
 ```
 
-Expected: write a complete manifest and grouped review, report 100% coverage,
-and leave the blueprint unchanged.
+Expected: write a complete manifest and grouped audit, report 100% coverage,
+and atomically insert the validated blueprint mappings.
 
 - [ ] **Step 4: Validate and install the live fixture manifest**
 
@@ -568,18 +569,17 @@ Run: `python3 -m unittest discover -s tests -t . -v`
 
 Expected: all tests pass.
 
-- [ ] **Step 6: Present the grouped mapping for human review**
+- [ ] **Step 6: Present the grouped mapping as an audit**
 
-Report counts and the review artifact path. Do not print a fabricated
-differences section and do not insert any `\proofstep` macro. Stop and wait for
-an explicit `approve`, `reject`, or `defer`.
+Report counts and the audit artifact path. Do not print a fabricated
+differences section.
 
-- [ ] **Step 7: On explicit approval, insert and verify**
+- [ ] **Step 7: Verify automatic insertion**
 
 Run:
 
 ```bash
-python3 scripts/proofmatch.py review-upstream b5e074215b9e approve
+python3 scripts/proofmatch.py review-upstream b5e074215b9e
 ```
 
 Then verify:

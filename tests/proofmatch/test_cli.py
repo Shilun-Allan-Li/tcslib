@@ -8,12 +8,19 @@ from unittest.mock import patch
 
 from proofmatch.artifacts import RunStore
 from proofmatch.cli import (
+    apply_upstream_manifest,
     build_parser,
     main,
     select_primary_candidate,
     write_difference_report,
 )
-from proofmatch.models import Candidate, DocumentBlock, DocumentIndex
+from proofmatch.models import (
+    Candidate,
+    DocumentBlock,
+    DocumentIndex,
+    ProofStepAssignment,
+    ProofStepManifest,
+)
 
 
 VALIDATED = """
@@ -33,13 +40,54 @@ class CliTests(unittest.TestCase):
             ["map-upstream", "abcdef123456", "--max-cost", "1.00", "--dry-run"]
         )
         review = build_parser().parse_args(
-            ["review-upstream", "abcdef123456", "approve"]
+            ["review-upstream", "abcdef123456"]
         )
 
         self.assertEqual(mapping.command, "map-upstream")
         self.assertTrue(mapping.dry_run)
         self.assertEqual(review.command, "review-upstream")
-        self.assertEqual(review.decision, "approve")
+
+        with self.assertRaises(SystemExit):
+            build_parser().parse_args(
+                ["review-upstream", "abcdef123456", "approve"]
+            )
+
+    def test_validated_manifest_writes_steps_without_second_approval(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "entry.tex"
+            path.write_text(
+                "\\begin{theorem}\n"
+                "\\lean{T.target}\n"
+                "Claim.\n"
+                "\\end{theorem}\n",
+                encoding="utf-8",
+            )
+            manifest = ProofStepManifest(
+                theorem="T.target",
+                document="notes",
+                source_fingerprint="source",
+                proof_fingerprint="proof",
+                dependency_fingerprint="dependencies",
+                assignments=(
+                    ProofStepAssignment(
+                        "T.helper",
+                        "context",
+                        ("pdf-abcdef123456-p002-b001",),
+                        "Supports this proof step.",
+                    ),
+                ),
+            )
+
+            apply_upstream_manifest(path, manifest)
+
+            self.assertIn(
+                "\\proofstep\n"
+                "  {T.helper}\n"
+                "  {context}\n"
+                "  {notes}\n"
+                "  {pdf-abcdef123456-p002-b001}",
+                path.read_text(encoding="utf-8"),
+            )
 
     def test_map_upstream_requires_theorem_level_approval(self):
         with tempfile.TemporaryDirectory() as tmp:

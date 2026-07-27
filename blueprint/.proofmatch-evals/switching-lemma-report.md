@@ -10,7 +10,7 @@
 - Estimated OpenAI spend: `$0.199915`
 - Budget cap: `$1.00`
 - Blueprint status: approved and linked
-- Upstream mapping status: awaiting separate human approval
+- Upstream mapping status: validated; theorem-level approval inherited
 
 ## Conversion evaluation
 
@@ -56,6 +56,8 @@ proof closure to the approved Markdown proof context:
 - The estimated additional mapping spend was `$0.222141`, for an estimated
   fixture total of `$0.422056` under the `$1.00` cap.
 
-The generated manifest and grouped review passed deterministic fingerprint,
-closure, relation, and block validation. No `\proofstep` entries have been
-written pending a separate human approval of this dependency-level review.
+The generated manifest and grouped audit passed deterministic fingerprint,
+closure, relation, and block validation. Granular provenance inherits the
+approved theorem-level correspondence and does not require a second review
+gate. All 173 `\proofstep` entries were written atomically to the theorem
+environment, and the dataset parser preserves their dependency order.

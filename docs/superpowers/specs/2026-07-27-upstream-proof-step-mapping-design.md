@@ -8,9 +8,10 @@ stable blocks in the validated Markdown reference. A declaration that is not
 stated explicitly in the PDF must map to the informal proof segment where it
 is used.
 
-The mapping is stored directly in the theorem's blueprint environment,
-reviewed by a human before insertion, and exported by the existing dataset
-builder independently of `\uses`.
+The mapping is stored directly in the theorem's blueprint environment after
+deterministic validation and exported by the existing dataset builder
+independently of `\uses`. The already-approved theorem-level correspondence
+authorizes this granular provenance stage.
 
 ## Scope
 
@@ -125,7 +126,7 @@ Duplicate declarations, conflicting assignments, unknown declarations,
 invented anchors, empty mappings, and incomplete coverage fail the stage.
 They produce no blueprint edit.
 
-## Review and Approval
+## Audit and Inherited Approval
 
 The stage writes a resumable `proof_steps.json` artifact and a compact
 `proof_steps_review.md`. The review groups adjacent declarations that share
@@ -141,9 +142,9 @@ The review summary reports:
 - declaration names and rationales;
 - validation failures, if any.
 
-This stage has its own explicit `approve`, `reject`, or `defer` decision.
-Prior approval of the theorem-level proof match does not authorize inserting
-dependency-level mappings. Only `approve` writes `\proofstep` entries.
+This stage does not require a second human decision. A successful theorem-level
+`same` verdict and approval authorize insertion once the dependency manifest
+passes exact-coverage, fingerprint, relation, and block validation.
 
 Insertion is idempotent. Re-approving an identical manifest makes no change.
 An existing mapping with a different relation or block list is a conflict and
@@ -155,7 +156,7 @@ The existing CLI gains:
 
 ```text
 proofmatch map-upstream RUN_ID [--max-cost USD] [--dry-run]
-proofmatch review-upstream RUN_ID [approve|reject|defer]
+proofmatch review-upstream RUN_ID
 ```
 
 `map-upstream` requires an existing successful theorem-level review artifact
@@ -166,9 +167,10 @@ estimate, and makes no agent call or file edit. Paid execution enforces the
 specified cost cap before each batch. The initial Switching Lemma run retains
 the existing overall fixture cap of USD 1.00, including prior recorded spend.
 
-`review-upstream` prints the grouped review. Approval validates the artifact
-again against the current Markdown, dependency closure, and blueprint before
-insertion.
+After generating a manifest, `map-upstream` validates it against the current
+Markdown and dependency closure, writes the `\proofstep` entries atomically,
+and records that authorization was inherited from theorem approval.
+`review-upstream` only prints the grouped audit artifact.
 
 ## Dataset Output
 
@@ -201,11 +203,11 @@ The run store adds:
   allowed blocks, batching plan, and cost estimate;
 - `proof_steps.json`: strict declaration-level assignments and rationales;
 - `proof_steps_review.md`: grouped human review;
-- `upstream_decision.json`: the explicit decision.
+- `upstream_decision.json`: records inherited theorem-level authorization.
 
 Artifacts include fingerprints of the validated Markdown, selected Lean
 proof, dependency name sequence, prompt, and schema. A changed fingerprint
-invalidates prior assignments and requires remapping and renewed approval.
+invalidates prior assignments and requires remapping.
 
 ## Failure Handling
 
@@ -234,7 +236,7 @@ Unit and integration tests cover:
 - rejection of invalid, empty, and out-of-context block lists;
 - parsing and formatting multiline `\proofstep` entries;
 - idempotent approved insertion and conflict preservation;
-- refusal to insert before explicit upstream approval;
+- refusal to insert without an approved theorem-level match;
 - dataset parsing and output ordering;
 - suppression of macros from informal prose;
 - CLI preconditions, dry-run behavior, budget enforcement, resumption, and

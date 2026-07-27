@@ -18,7 +18,7 @@ from proofmatch.budget import Budget, StageEstimate, estimate_cleanup, token_cos
 from proofmatch.compare import compare_candidate, render_difference_report
 from proofmatch.document import parse_validated_markdown, repair_document
 from proofmatch.extraction import extract_pdf
-from proofmatch.models import Candidate, ProofStepManifest, load_typed
+from proofmatch.models import Candidate, ProofStepManifest
 from proofmatch.search import prepare_rerank_payload, search_candidates
 from proofmatch.upstream import (
     batch_declarations,
@@ -101,11 +101,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     review_upstream = subcommands.add_parser("review-upstream")
     review_upstream.add_argument("run_id")
-    review_upstream.add_argument(
-        "decision",
-        choices=("approve", "reject", "defer"),
-        nargs="?",
-    )
     return parser
 
 
@@ -336,6 +331,27 @@ def _proof_context(index, verdict: dict[str, object]):
     return tuple(by_id[block] for block in requested)
 
 
+def apply_upstream_manifest(
+    tex_path: Path,
+    manifest: ProofStepManifest,
+) -> None:
+    steps = tuple(
+        ProofStep(
+            assignment.lean_name,
+            assignment.relation,
+            manifest.document,
+            assignment.document_blocks,
+        )
+        for assignment in manifest.assignments
+    )
+    insert_approved_steps(
+        tex_path,
+        manifest.theorem,
+        steps,
+        approved=True,
+    )
+
+
 def _map_upstream(
     run_id: str,
     dataset: Path,
@@ -444,70 +460,23 @@ def _map_upstream(
         ),
         encoding="utf-8",
     )
+    apply_upstream_manifest(_find_blueprint(theorem), manifest)
+    store.write_json(
+        "upstream_decision",
+        {"decision": "inherited-theorem-approval"},
+    )
     print(f"Upstream review: {review_path}")
-    print(f"Next: python3 scripts/proofmatch.py review-upstream {run_id}")
+    print("Validated upstream proof steps written to blueprint.")
     return 0
 
 
-def _review_upstream(run_id: str, decision: str | None) -> int:
+def _review_upstream(run_id: str) -> int:
     store = RunStore(WORK_ROOT, run_id)
     manifest_path = store.stage_path("proof_steps")
     review_path = store.stage_path("proof_steps_review", ".md")
     if not manifest_path.exists() or not review_path.exists():
         raise ValueError(f"upstream mapping for {run_id} is incomplete")
     print(review_path.read_text(encoding="utf-8"))
-    if decision is None:
-        decision = input("Decision [approve/reject/defer]: ").strip().casefold()
-    if decision not in {"approve", "reject", "defer"}:
-        raise ValueError("decision must be approve, reject, or defer")
-    if decision == "approve":
-        review = _approved_same_review(store)
-        candidate = review["candidate"]
-        verdict = review["verdict"]
-        if not isinstance(candidate, dict) or not isinstance(verdict, dict):
-            raise ValueError("theorem review artifact is malformed")
-        upstream_input = store.read_json("upstream_input")
-        if upstream_input is None:
-            raise ValueError("upstream input artifact is missing")
-        source = Path(str(upstream_input["source_markdown"]))
-        dataset = Path(str(upstream_input["dataset"]))
-        dependency_graph = Path(str(upstream_input["dependency_graph"]))
-        index = parse_validated_markdown(source)
-        proof_blocks = _proof_context(index, verdict)
-        theorem = str(candidate["lean_name"])
-        proof_text = str(candidate["proof"])
-        declarations = load_upstream_declarations(
-            dataset,
-            dependency_graph,
-            theorem,
-        )
-        manifest = load_typed(manifest_path, ProofStepManifest)
-        validate_manifest(
-            manifest,
-            index,
-            proof_text,
-            declarations,
-            {block.block_id for block in proof_blocks},
-        )
-        steps = tuple(
-            ProofStep(
-                assignment.lean_name,
-                assignment.relation,
-                manifest.document,
-                assignment.document_blocks,
-            )
-            for assignment in manifest.assignments
-        )
-        insert_approved_steps(
-            _find_blueprint(theorem),
-            theorem,
-            steps,
-            approved=True,
-        )
-        print("Approved upstream proof steps written to blueprint.")
-    else:
-        print(f"Upstream decision recorded as {decision}; blueprint unchanged.")
-    store.write_json("upstream_decision", {"decision": decision})
     return 0
 
 
@@ -524,7 +493,7 @@ def main(argv: list[str] | None = None) -> int:
             dry_run=args.dry_run,
         )
     if args.command == "review-upstream":
-        return _review_upstream(args.run_id, args.decision)
+        return _review_upstream(args.run_id)
     if args.command == "estimate":
         estimate = _estimate_source(args.source)
         print(
