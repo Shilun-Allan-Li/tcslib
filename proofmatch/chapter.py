@@ -67,9 +67,23 @@ def compare_relevant_candidates(
                 f"relevance decision has no candidate: {decision.lean_name}"
             )
         scoped = replace(candidate, document_blocks=decision.document_blocks)
-        verdicts.append(
-            compare_candidate(scoped, index, agent_factory(), budget)
-        )
+        try:
+            verdicts.append(
+                compare_candidate(scoped, index, agent_factory(), budget)
+            )
+        except BudgetExceeded:
+            raise
+        except (AgentOutputError, ValueError) as error:
+            verdicts.append(
+                ComparisonVerdict(
+                    candidate.lean_name,
+                    scoped.document_blocks,
+                    "uncertain",
+                    0,
+                    (f"Comparison output was invalid: {error}",),
+                    (),
+                )
+            )
     return tuple(verdicts)
 
 
@@ -269,13 +283,24 @@ def run_chapter_match(
         theorem_proposals = proposal_groups.setdefault(
             candidate.lean_name, []
         )
-        theorem_proposals.append(
-            SourceProposal(
-                binding.tex_path,
-                candidate.lean_name,
-                ProofSource(document, candidate.document_blocks),
+        try:
+            theorem_proposals.append(
+                SourceProposal(
+                    binding.tex_path,
+                    candidate.lean_name,
+                    ProofSource(document, candidate.document_blocks),
+                )
             )
-        )
+        except ValueError as error:
+            propagation_failures.append(
+                {
+                    "lean_name": candidate.lean_name,
+                    "stage": "source-link",
+                    "error": str(error),
+                }
+            )
+            proposal_groups.pop(candidate.lean_name, None)
+            continue
         declarations, blocks, _ = upstream_inputs[candidate.lean_name]
         if declarations:
             try:

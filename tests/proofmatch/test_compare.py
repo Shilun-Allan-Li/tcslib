@@ -1,13 +1,47 @@
 import unittest
+from decimal import Decimal
 
+from proofmatch.budget import Budget
 from proofmatch.compare import (
+    compare_candidate,
     choose_comparison_direction,
     render_difference_report,
     verdict_from_agent,
 )
+from proofmatch.models import Candidate, DocumentBlock, DocumentIndex
 
 
 class CompareTests(unittest.TestCase):
+    def test_comparison_rejects_prose_in_place_of_block_id(self):
+        block = DocumentBlock(
+            "pdf-a-p001-b001", 1, 1, "prose", "T", "text", 1
+        )
+        candidate = Candidate(
+            "T.foo", "T", "M", "text", "True", "by trivial", 2, 1,
+            (block.block_id,),
+        )
+
+        class Agent:
+            def run(self, name, payload):
+                return {
+                    "lean_name": "T.foo",
+                    "document_blocks": ["For f, the derivative is linear."],
+                    "verdict": "same",
+                    "confidence": 0.9,
+                    "differences": [],
+                    "evidence": [],
+                    "pdf_outline": [],
+                    "lean_outline": [],
+                }
+
+        with self.assertRaisesRegex(ValueError, "unavailable document blocks"):
+            compare_candidate(
+                candidate,
+                DocumentIndex("abcdef123456", (block,), ()),
+                Agent(),
+                Budget(Decimal("1")),
+            )
+
     def test_searches_from_shorter_side(self):
         self.assertEqual(
             choose_comparison_direction(pdf_tokens=2_000, lean_tokens=20_000),

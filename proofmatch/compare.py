@@ -92,7 +92,25 @@ def compare_candidate(
             },
         },
     )
-    return verdict_from_agent(result)
+    verdict = verdict_from_agent(result)
+    if verdict.lean_name != candidate.lean_name:
+        raise ValueError(
+            f"comparison returned {verdict.lean_name} for {candidate.lean_name}"
+        )
+    allowed_blocks = {block.block_id for block in selected}
+    invalid = [
+        block
+        for block in verdict.document_blocks
+        if block not in allowed_blocks
+    ]
+    if invalid:
+        raise ValueError(
+            "comparison cites unavailable document blocks: "
+            + ", ".join(invalid)
+        )
+    if not verdict.document_blocks:
+        raise ValueError("comparison must cite at least one document block")
+    return verdict
 
 
 def estimate_comparison(
