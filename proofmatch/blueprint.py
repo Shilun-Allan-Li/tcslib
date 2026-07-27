@@ -59,6 +59,27 @@ class ProofStep:
         ProofSource(self.document, self.blocks)
 
 
+@dataclass(frozen=True)
+class SourceProposal:
+    tex_path: Path
+    lean_name: str
+    source: ProofSource
+
+
+@dataclass(frozen=True)
+class StepProposal:
+    tex_path: Path
+    theorem_name: str
+    steps: tuple[ProofStep, ...]
+
+
+@dataclass(frozen=True)
+class BlueprintMutation:
+    tex_path: Path
+    original: str
+    updated: str
+
+
 def parse_proof_sources(tex: str) -> dict[str, tuple[ProofSource, ...]]:
     result: dict[str, list[ProofSource]] = {}
     for environment in ENV_RE.findall(tex):
@@ -128,16 +149,11 @@ def _format_step(step: ProofStep) -> str:
     )
 
 
-def insert_approved_source(
-    tex_path: Path,
+def plan_source_insert(
+    tex: str,
     lean_name: str,
     source: ProofSource,
-    *,
-    approved: bool,
-) -> None:
-    if not approved:
-        raise PermissionError("proof-source insertion requires explicit approval")
-    tex = tex_path.read_text(encoding="utf-8")
+) -> str:
     target_match = None
     for match in ENV_RE.finditer(tex):
         bindings = [
@@ -151,8 +167,11 @@ def insert_approved_source(
     if target_match is None:
         raise ValueError(f"no blueprint environment binds {lean_name}")
     environment = target_match.group(0)
-    if source in parse_proof_sources(environment).get(lean_name, ()):
-        return
+    existing = parse_proof_sources(environment).get(lean_name, ())
+    if source in existing:
+        return tex
+    if any(prior.document == source.document for prior in existing):
+        raise ValueError(f"proof-source conflict for {lean_name}")
     lean_match = next(
         match
         for match in LEAN_RE.finditer(environment)
@@ -167,23 +186,14 @@ def insert_approved_source(
     updated_environment = (
         environment[:insertion_at] + annotation + environment[insertion_at:]
     )
-    updated = (
+    return (
         tex[: target_match.start()]
         + updated_environment
         + tex[target_match.end() :]
     )
-    tex_path.write_text(updated, encoding="utf-8")
 
 
-def insert_approved_steps(
-    tex_path: Path,
-    theorem_name: str,
-    steps,
-    *,
-    approved: bool,
-) -> None:
-    if not approved:
-        raise PermissionError("proof-step insertion requires explicit approval")
+def plan_step_insert(tex: str, theorem_name: str, steps) -> str:
     incoming = tuple(steps)
     incoming_names = [step.lean_name for step in incoming]
     duplicates = sorted(
@@ -193,7 +203,6 @@ def insert_approved_steps(
         raise ValueError(
             f"duplicate incoming proof steps: {', '.join(duplicates)}"
         )
-    tex = tex_path.read_text(encoding="utf-8")
     target_match = None
     for match in ENV_RE.finditer(tex):
         bindings = [
@@ -221,8 +230,7 @@ def insert_approved_steps(
         elif prior != step:
             raise ValueError(f"proof-step conflict for {step.lean_name}")
     if not missing:
-        return
-
+        return tex
     uses_match = re.search(r"^[ \t]*\\uses\b", environment, re.MULTILINE)
     if uses_match:
         insertion_at = uses_match.start()
@@ -238,21 +246,92 @@ def insert_approved_steps(
                 in [name.strip() for name in match.group(1).split(",")]
             ]
             insertion_at = lean_matches[0].end()
-    annotation = (
-        "\n"
-        + "\n".join(_format_step(step) for step in missing)
-        + "\n"
-    )
+    annotation = "\n" + "\n".join(
+        _format_step(step) for step in missing
+    ) + "\n"
     updated_environment = (
-        environment[:insertion_at]
-        + annotation
-        + environment[insertion_at:]
+        environment[:insertion_at] + annotation + environment[insertion_at:]
     )
-    updated = (
+    return (
         tex[: target_match.start()]
         + updated_environment
         + tex[target_match.end() :]
     )
-    temporary = tex_path.with_suffix(tex_path.suffix + ".proofstep.tmp")
-    temporary.write_text(updated, encoding="utf-8")
-    temporary.replace(tex_path)
+
+
+def plan_blueprint_mutations(
+    proposals,
+) -> tuple[BlueprintMutation, ...]:
+    originals: dict[Path, str] = {}
+    updates: dict[Path, str] = {}
+    for proposal in proposals:
+        path = proposal.tex_path
+        if path not in originals:
+            originals[path] = path.read_text(encoding="utf-8")
+            updates[path] = originals[path]
+        if isinstance(proposal, SourceProposal):
+            updates[path] = plan_source_insert(
+                updates[path], proposal.lean_name, proposal.source
+            )
+        elif isinstance(proposal, StepProposal):
+            updates[path] = plan_step_insert(
+                updates[path], proposal.theorem_name, proposal.steps
+            )
+        else:
+            raise TypeError(f"unknown blueprint proposal: {type(proposal)}")
+    return tuple(
+        BlueprintMutation(path, originals[path], updates[path])
+        for path in sorted(originals)
+        if originals[path] != updates[path]
+    )
+
+
+def apply_blueprint_mutations(
+    mutations: tuple[BlueprintMutation, ...],
+) -> None:
+    temporary = []
+    try:
+        for mutation in mutations:
+            path = mutation.tex_path.with_suffix(
+                mutation.tex_path.suffix + ".proofmatch.tmp"
+            )
+            path.write_text(mutation.updated, encoding="utf-8")
+            temporary.append((path, mutation.tex_path))
+        for path, target in temporary:
+            path.replace(target)
+    finally:
+        for path, _ in temporary:
+            if path.exists():
+                path.unlink()
+
+
+def insert_approved_source(
+    tex_path: Path,
+    lean_name: str,
+    source: ProofSource,
+    *,
+    approved: bool,
+) -> None:
+    if not approved:
+        raise PermissionError("proof-source insertion requires explicit approval")
+    tex = tex_path.read_text(encoding="utf-8")
+    updated = plan_source_insert(tex, lean_name, source)
+    if updated != tex:
+        tex_path.write_text(updated, encoding="utf-8")
+
+
+def insert_approved_steps(
+    tex_path: Path,
+    theorem_name: str,
+    steps,
+    *,
+    approved: bool,
+) -> None:
+    if not approved:
+        raise PermissionError("proof-step insertion requires explicit approval")
+    tex = tex_path.read_text(encoding="utf-8")
+    updated = plan_step_insert(tex, theorem_name, steps)
+    if updated != tex:
+        temporary = tex_path.with_suffix(tex_path.suffix + ".proofstep.tmp")
+        temporary.write_text(updated, encoding="utf-8")
+        temporary.replace(tex_path)

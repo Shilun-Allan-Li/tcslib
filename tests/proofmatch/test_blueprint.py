@@ -3,12 +3,16 @@ import unittest
 from pathlib import Path
 
 from proofmatch.blueprint import (
+    SourceProposal,
+    StepProposal,
+    apply_blueprint_mutations,
     ProofSource,
     ProofStep,
     insert_approved_steps,
     insert_approved_source,
     parse_proof_steps,
     parse_proof_sources,
+    plan_blueprint_mutations,
 )
 from scripts.build_dataset import (
     display_output_path,
@@ -45,6 +49,66 @@ Statement.
 
 
 class BlueprintTests(unittest.TestCase):
+    def test_batch_source_planning_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "A.tex"
+            path.write_text(
+                "\\begin{theorem}\n\\lean{T.one}\nClaim.\n\\end{theorem}\n",
+                encoding="utf-8",
+            )
+            proposal = SourceProposal(
+                path, "T.one",
+                ProofSource("notes", ("pdf-abcdef123456-p001-b001",)),
+            )
+            apply_blueprint_mutations(plan_blueprint_mutations((proposal,)))
+            self.assertEqual(plan_blueprint_mutations((proposal,)), ())
+
+    def test_batch_plans_proof_steps(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "A.tex"
+            path.write_text(
+                "\\begin{theorem}\n\\lean{T.one}\nClaim.\n\\end{theorem}\n",
+                encoding="utf-8",
+            )
+            proposal = StepProposal(
+                path,
+                "T.one",
+                (ProofStep(
+                    "T.helper", "context", "notes",
+                    ("pdf-abcdef123456-p001-b001",),
+                ),),
+            )
+            mutations = plan_blueprint_mutations((proposal,))
+            self.assertIn("\\proofstep", mutations[0].updated)
+
+    def test_conflict_in_batch_writes_no_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a, b = root / "A.tex", root / "B.tex"
+            a.write_text(
+                "\\begin{theorem}\n\\lean{T.a}\nA.\n\\end{theorem}\n",
+                encoding="utf-8",
+            )
+            b.write_text(
+                "\\begin{theorem}\n\\lean{T.b}\n"
+                "\\proofsource{notes}{pdf-abcdef123456-p001-b001}\n"
+                "B.\n\\end{theorem}\n",
+                encoding="utf-8",
+            )
+            before_a, before_b = a.read_text(), b.read_text()
+            proposals = (
+                SourceProposal(a, "T.a", ProofSource(
+                    "notes", ("pdf-abcdef123456-p001-b001",)
+                )),
+                SourceProposal(b, "T.b", ProofSource(
+                    "notes", ("pdf-abcdef123456-p002-b001",)
+                )),
+            )
+            with self.assertRaisesRegex(ValueError, "proof-source conflict"):
+                plan_blueprint_mutations(proposals)
+            self.assertEqual(a.read_text(), before_a)
+            self.assertEqual(b.read_text(), before_b)
+
     def test_dataset_parser_emits_steps_without_leaking_macros_into_prose(self):
         with tempfile.TemporaryDirectory() as tmp:
             chapter = Path(tmp)
