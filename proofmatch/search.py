@@ -4,7 +4,9 @@ import json
 import math
 import re
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
+from collections.abc import Sequence
 
 from proofmatch.models import Candidate, DocumentIndex
 
@@ -38,7 +40,7 @@ def _query(blocks) -> tuple[Counter[str], set[str]]:
     return terms, title_terms
 
 
-def _segments(index: DocumentIndex) -> list[tuple]:
+def document_segments(index: DocumentIndex) -> tuple[tuple, ...]:
     segments: list[list] = []
     current: list = []
     context: list = []
@@ -57,8 +59,80 @@ def _segments(index: DocumentIndex) -> list[tuple]:
     if current:
         segments.append(current)
     if not segments:
-        return [tuple(index.blocks)]
-    return [tuple(segment) for segment in segments]
+        return (tuple(index.blocks),)
+    return tuple(tuple(segment) for segment in segments)
+
+
+def _segments(index: DocumentIndex) -> list[tuple]:
+    return list(document_segments(index))
+
+
+def _candidate_record(candidate: Candidate) -> dict[str, object]:
+    return {
+        "lean_name": candidate.lean_name,
+        "title": candidate.title,
+        "statement_informal": candidate.statement,
+    }
+
+
+def _merge_candidate(
+    prior: Candidate | None,
+    candidate: Candidate,
+) -> Candidate:
+    if prior is None:
+        return candidate
+    blocks = tuple(dict.fromkeys((*prior.document_blocks, *candidate.document_blocks)))
+    return replace(
+        prior if prior.score >= candidate.score else candidate,
+        score=max(prior.score, candidate.score),
+        document_blocks=blocks,
+    )
+
+
+def discover_candidates(
+    index: DocumentIndex,
+    catalog: Sequence[Candidate],
+    per_segment_limit: int = 8,
+    reverse_min_score: float = 25.0,
+) -> tuple[Candidate, ...]:
+    if per_segment_limit < 1:
+        raise ValueError("per_segment_limit must be positive")
+    segments = document_segments(index)
+    merged: dict[str, Candidate] = {}
+    best_by_theorem: dict[str, Candidate] = {}
+    for segment in segments:
+        query_terms, title_terms = _query(segment)
+        ranked = sorted(
+            (
+                replace(
+                    candidate,
+                    score=_score(
+                        query_terms,
+                        title_terms,
+                        _candidate_record(candidate),
+                    ),
+                    document_blocks=tuple(block.block_id for block in segment),
+                )
+                for candidate in catalog
+            ),
+            key=lambda item: (-item.score, item.lean_name),
+        )
+        for candidate in ranked[:per_segment_limit]:
+            merged[candidate.lean_name] = _merge_candidate(
+                merged.get(candidate.lean_name), candidate
+            )
+        for candidate in ranked:
+            prior = best_by_theorem.get(candidate.lean_name)
+            if prior is None or candidate.score > prior.score:
+                best_by_theorem[candidate.lean_name] = candidate
+    for candidate in best_by_theorem.values():
+        if candidate.score >= reverse_min_score:
+            merged[candidate.lean_name] = _merge_candidate(
+                merged.get(candidate.lean_name), candidate
+            )
+    return tuple(
+        sorted(merged.values(), key=lambda item: (-item.score, item.lean_name))
+    )
 
 
 def _score(

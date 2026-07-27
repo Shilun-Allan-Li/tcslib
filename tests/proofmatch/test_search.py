@@ -3,11 +3,56 @@ import unittest
 from pathlib import Path
 
 from proofmatch.document import parse_validated_markdown
-from proofmatch.models import DocumentBlock, DocumentIndex
-from proofmatch.search import prepare_rerank_payload, search_candidates
+from proofmatch.models import Candidate, DocumentBlock, DocumentIndex
+from proofmatch.search import (
+    discover_candidates,
+    prepare_rerank_payload,
+    search_candidates,
+)
 
 
 class SearchTests(unittest.TestCase):
+    def test_discovery_keeps_top_candidate_from_each_segment(self):
+        index = DocumentIndex(
+            "abcdef123456",
+            (
+                DocumentBlock("pdf-abcdef123456-p001-b001", 1, 1, "heading", "Alpha", "Alpha", 1),
+                DocumentBlock("pdf-abcdef123456-p001-b002", 1, 2, "theorem", "Alpha theorem", "alpha unique", 1),
+                DocumentBlock("pdf-abcdef123456-p002-b001", 2, 1, "heading", "Beta", "Beta", 1),
+                DocumentBlock("pdf-abcdef123456-p002-b002", 2, 2, "theorem", "Beta theorem", "beta unique", 1),
+            ),
+            (),
+        )
+        catalog = (
+            Candidate("T.alpha", "Alpha theorem", "M", "alpha unique", "", "", 0, 0, ()),
+            Candidate("T.beta", "Beta theorem", "M", "beta unique", "", "", 0, 0, ()),
+        )
+        discovered = discover_candidates(
+            index, catalog, per_segment_limit=1, reverse_min_score=10_000
+        )
+        self.assertEqual(
+            {item.lean_name for item in discovered}, {"T.alpha", "T.beta"}
+        )
+
+    def test_reverse_discovery_retains_best_overlapping_segment(self):
+        index = DocumentIndex(
+            "abcdef123456",
+            (
+                DocumentBlock("pdf-abcdef123456-p001-b001", 1, 1, "theorem", "Alpha", "alpha shared", 1),
+            ),
+            (),
+        )
+        catalog = (
+            Candidate("T.alpha", "Alpha", "M", "alpha shared", "", "", 0, 0, ()),
+            Candidate("T.shared", "Shared", "M", "shared", "", "", 0, 0, ()),
+        )
+        discovered = discover_candidates(
+            index, catalog, per_segment_limit=1, reverse_min_score=1
+        )
+        self.assertEqual(
+            {item.lean_name for item in discovered}, {"T.alpha", "T.shared"}
+        )
+
     def test_single_document_segment_fills_requested_candidate_limit(self):
         with tempfile.TemporaryDirectory() as tmp:
             dataset = Path(tmp) / "data.jsonl"
