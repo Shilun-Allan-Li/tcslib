@@ -18,6 +18,8 @@ class ComparisonVerdict:
     confidence: float
     differences: tuple[str, ...]
     evidence: tuple[str, ...]
+    pdf_outline: tuple[str, ...] = ()
+    lean_outline: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
