@@ -20,6 +20,31 @@ class ComparisonVerdict:
     evidence: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class DocumentBlock:
+    block_id: str
+    page: int
+    sequence: int
+    kind: str
+    title: str
+    markdown: str
+    confidence: float
+
+
+@dataclass(frozen=True)
+class DocumentAmbiguity:
+    block_id: str
+    reason: str
+    resolved: bool
+
+
+@dataclass(frozen=True)
+class DocumentIndex:
+    source_fingerprint: str
+    blocks: tuple[DocumentBlock, ...]
+    ambiguities: tuple[DocumentAmbiguity, ...]
+
+
 def _convert(value: Any, expected: Any, location: str) -> Any:
     origin = get_origin(expected)
     args = get_args(expected)
@@ -84,4 +109,3 @@ def load_typed(path: Path, cls: type[T]) -> T:
     except (OSError, json.JSONDecodeError) as error:
         raise ValueError(f"could not read valid JSON from {path}: {error}") from error
     return _from_mapping(value, cls, cls.__name__)
-
