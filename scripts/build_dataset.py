@@ -78,10 +78,18 @@ LEAN_BIND_RE = re.compile(r"^\s*\\lean\{([^}]*)\}\s*$")
 INLINE_LEAN_RE = re.compile(r"\\lean\{([^}]*)\}")
 BEGIN_RE = re.compile(r"\\begin\{(theorem|lemma|definition|proposition|corollary|sublemma)\}(?:\[([^\]]*)\])?")
 END_ENV_RE = re.compile(r"\\end\{(theorem|lemma|definition|proposition|corollary|sublemma)\}")
-DROP_LINE_RE = re.compile(r"^\s*\\(leanok|label|uses|lean|difficulty|proofsource)\b")
+DROP_LINE_RE = re.compile(r"^\s*\\(leanok|label|uses|lean|difficulty|proofsource|proofstep)\b")
 USES_RE = re.compile(r"\\uses\{")
 DIFF_RE = re.compile(r"^\s*\\difficulty\{([^}]*)\}\s*$")
 PROOF_SOURCE_RE = re.compile(r"\\proofsource\{([^}]*)\}\{([^}]*)\}", re.DOTALL)
+PROOF_STEP_RE = re.compile(
+    r"\\proofstep\s*"
+    r"\{([^}]*)\}\s*"
+    r"\{([^}]*)\}\s*"
+    r"\{([^}]*)\}\s*"
+    r"\{([^}]*)\}",
+    re.DOTALL,
+)
 
 _OPEN_DELIM = set("([{⟨")
 _CLOSE_DELIM = set(")]}⟩")
@@ -106,10 +114,10 @@ def display_output_path(path: Path, base: Path = BASE) -> str:
 
 # --------------------------------------------------------------------- blueprint
 
-def parse_blueprint() -> dict[str, dict]:
+def parse_blueprint(chapter_dir: Path = CHAPTER_DIR) -> dict[str, dict]:
     """binding \\lean name -> {informal, title} for every blueprint environment."""
     out: dict[str, dict] = {}
-    for tex in sorted(CHAPTER_DIR.rglob("*.tex")):
+    for tex in sorted(chapter_dir.rglob("*.tex")):
         lines = tex.read_text(encoding="utf-8", errors="ignore").splitlines()
         i = 0
         while i < len(lines):
@@ -185,12 +193,55 @@ def parse_blueprint() -> dict[str, dict]:
                     }
                     for match in PROOF_SOURCE_RE.finditer("\n".join(metadata_lines))
                 ]
+                proof_steps = [
+                    {
+                        "lean_name": match.group(1).strip(),
+                        "relation": match.group(2).strip(),
+                        "document": match.group(3).strip(),
+                        "blocks": [
+                            block.strip()
+                            for block in match.group(4).split(",")
+                            if block.strip()
+                        ],
+                    }
+                    for match in PROOF_STEP_RE.finditer(
+                        "\n".join(metadata_lines)
+                    )
+                ]
                 for b in bindings:
                     out.setdefault(b, {"env": env, "informal": informal, "title": title,
                                        "uses": uses, "difficulty": difficulty,
-                                       "proof_sources": proof_sources})
+                                       "proof_sources": proof_sources,
+                                       "proof_steps": proof_steps})
             i += 1
     return out
+
+
+def order_proof_steps(
+    steps: list[dict[str, object]],
+    proof_upstream_decls: list[str],
+) -> list[dict[str, object]]:
+    if not steps:
+        return []
+    names = [str(step.get("lean_name") or "") for step in steps]
+    duplicates = sorted(name for name in set(names) if names.count(name) > 1)
+    if duplicates:
+        raise ValueError(
+            f"duplicate proof-step declarations: {', '.join(duplicates)}"
+        )
+    expected = set(proof_upstream_decls)
+    actual = set(names)
+    missing = sorted(expected - actual)
+    extra = sorted(actual - expected)
+    if missing or extra:
+        failures = []
+        if missing:
+            failures.append(f"missing proof steps: {', '.join(missing)}")
+        if extra:
+            failures.append(f"unknown proof steps: {', '.join(extra)}")
+        raise ValueError("; ".join(failures))
+    by_name = {str(step["lean_name"]): step for step in steps}
+    return [by_name[name] for name in proof_upstream_decls]
 
 
 # ------------------------------------------------------------------ source model
@@ -1347,6 +1398,10 @@ def main():
             else:
                 informal_statement = stmt
 
+            proof_steps = list(info.get("proof_steps", []))
+            if proof_steps and proof_upstream is not None:
+                proof_steps = order_proof_steps(proof_steps, proof_upstream)
+
             record = {
                 "id": name,
                 "informal_statement": informal_statement,
@@ -1369,6 +1424,7 @@ def main():
                 "difficulty_breadth": (None if proof_text is not None and "sorry" in proof_text
                                        else breadth_difficulty(name)),
                 "proof_sources": info.get("proof_sources", []),
+                "proof_steps": proof_steps,
             }
             if proof_builder is not None:
                 record["proof"] = proof_text

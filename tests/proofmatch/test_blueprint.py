@@ -10,7 +10,11 @@ from proofmatch.blueprint import (
     parse_proof_steps,
     parse_proof_sources,
 )
-from scripts.build_dataset import display_output_path
+from scripts.build_dataset import (
+    display_output_path,
+    order_proof_steps,
+    parse_blueprint,
+)
 
 
 FIXTURE = r"""
@@ -41,6 +45,68 @@ Statement.
 
 
 class BlueprintTests(unittest.TestCase):
+    def test_dataset_parser_emits_steps_without_leaking_macros_into_prose(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            chapter = Path(tmp)
+            (chapter / "entry.tex").write_text(
+                PROOF_STEP_FIXTURE,
+                encoding="utf-8",
+            )
+
+            record = parse_blueprint(chapter)[
+                "SwitchingLemma2.switching_lemma"
+            ]
+
+            self.assertEqual(
+                record["proof_steps"],
+                [
+                    {
+                        "lean_name": "SwitchingLemma2.canonicalDTree_correct",
+                        "relation": "context",
+                        "document": "switching-lemma",
+                        "blocks": ["pdf-abcdef123456-p002-b001"],
+                    }
+                ],
+            )
+            self.assertNotIn("\\proofstep", record["informal"])
+
+    def test_dataset_orders_steps_by_proof_dependency_sequence(self):
+        steps = [
+            {
+                "lean_name": "T.second",
+                "relation": "context",
+                "document": "notes",
+                "blocks": ["pdf-abcdef123456-p002-b002"],
+            },
+            {
+                "lean_name": "T.first",
+                "relation": "direct",
+                "document": "notes",
+                "blocks": ["pdf-abcdef123456-p002-b001"],
+            },
+        ]
+
+        ordered = order_proof_steps(steps, ["T.first", "T.second"])
+
+        self.assertEqual(
+            [step["lean_name"] for step in ordered],
+            ["T.first", "T.second"],
+        )
+
+    def test_dataset_rejects_duplicate_step_declarations(self):
+        duplicate = {
+            "lean_name": "T.first",
+            "relation": "context",
+            "document": "notes",
+            "blocks": ["pdf-abcdef123456-p002-b001"],
+        }
+
+        with self.assertRaisesRegex(ValueError, r"duplicate.*T\.first"):
+            order_proof_steps(
+                [duplicate, dict(duplicate)],
+                ["T.first"],
+            )
+
     def test_parses_multiline_proof_steps_in_theorem_environment(self):
         parsed = parse_proof_steps(PROOF_STEP_FIXTURE)
 
