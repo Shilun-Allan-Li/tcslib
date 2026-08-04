@@ -1,4 +1,4 @@
-import Mathlib
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # Metaprogram detection of haves consumed by a later `simp_all`

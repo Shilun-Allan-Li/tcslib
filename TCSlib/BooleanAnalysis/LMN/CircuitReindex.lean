@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.Switching.Circuit
-import Mathlib
 
 /-!
 # Circuit Re-indexing

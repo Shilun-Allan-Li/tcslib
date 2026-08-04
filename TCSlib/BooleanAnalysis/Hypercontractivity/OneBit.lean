@@ -195,7 +195,7 @@ For `1 ≤ p ≤ 2` and all `a, b ∈ ℝ, 0 ≤ ρ, ρ² ≤ p − 1`:
   `(a² + ρ²b²)^{1/2} ≤ ((|a+b|^p + |a−b|^p) / 2)^{1/p}`
 -/
 theorem two_point_ineq (a b p ρ : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
-    (hρ0 : 0 ≤ ρ) (hρ : ρ ^ 2 ≤ p - 1) :
+    (_hρ0 : 0 ≤ ρ) (hρ : ρ ^ 2 ≤ p - 1) :
     (a ^ 2 + ρ ^ 2 * b ^ 2) ^ ((1 : ℝ) / 2) ≤
     ((|a + b| ^ p + |a - b| ^ p) / 2) ^ ((1 : ℝ) / p) := by
   -- By symmetry and homogeneity, we can assume without loss of generality that $a \geq |b|$.
@@ -384,7 +384,7 @@ where p' is the Hölder conjugate of p.
 theorem noise_operator_duality
   {p p_conj : ℝ}
   (hp_conj : Real.HolderConjugate p p_conj)
-  (h_p1 : 1 ≤ p)
+  (_h_p1 : 1 ≤ p)
   (h_hyp : ∀ f : BooleanFunc 1,
     (expect (fun x => |noiseOp (Real.sqrt (p - 1)) f x| ^ (2 : ℝ))) ^ (1 / 2 : ℝ) ≤
     (expect (fun x => |f x| ^ p)) ^ (1 / p)) :

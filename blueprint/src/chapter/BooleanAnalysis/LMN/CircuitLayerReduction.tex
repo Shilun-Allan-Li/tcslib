@@ -14,6 +14,10 @@ two-stage argument to the children of the root gate.
 \begin{definition}[Composed restriction parameter]
 \lean{LMN.composedDelta}
 \leanok
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003
+}
 For a fan-in bound $w$, a width parameter $l$, and a depth $d$, the composed Bernoulli
 restriction parameter is
 \[
@@ -64,6 +68,7 @@ For $d\ge 3$ and $l>0$, the composed parameter factors as the $(d-1)$ case times
 \begin{definition}[Layer-2 data]
 \lean{LMN.Layer2Data}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p004-b002}
 \uses{DNF, DNF.width}
 A bundle describing the second layer of a circuit over $n$ variables: a number of gates,
 a family of DNF formulas indexed by the gates, a common width bound $\mathrm{width}>0$ such
@@ -155,6 +160,13 @@ depth $t$ equals the corresponding probability for $g$.
 \begin{lemma}[Switching bound for depth-2 circuits]
 \lean{LMN.depth2_circuit_switching_bound}
 \leanok
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p001-b008,
+  pdf-b5e074215b9e-p002-b001,
+  pdf-b5e074215b9e-p002-b002,
+  pdf-b5e074215b9e-p002-b003,
+  pdf-b5e074215b9e-p002-b004
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, CNF.eval, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_congr_fn', LMN.depth2AndToCNF, LMN.depth2AndToCNF_eval, LMN.depth2AndToCNF_width_le, LMN.depth2OrToDNF, LMN.depth2OrToDNF_eval, LMN.depth2OrToDNF_width_le, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, Literal.eval, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, Term.eval, Term.width, dtDepth}
 \difficulty{5}
 If $f$ is computed by a circuit of depth at most $2$, size at most $s$, and fan-in at most $w$,

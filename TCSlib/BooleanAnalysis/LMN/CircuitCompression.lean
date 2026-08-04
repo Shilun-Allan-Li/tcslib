@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.LMN.GateSwitching
-import Mathlib
 
 /-!
 # Circuit Compression and One-Step Reduction (Steps 6–7 of LMN)
@@ -144,7 +143,7 @@ theorem compression_and_of_cnfs
   refine' ⟨ LMN.listConcat ( List.map ψ children ), _, _ ⟩;
   · exact cnf_concat_width_le _ _ fun ψ' hψ' => by aesop;
   · convert cnf_concat_eval ( List.map ψ children ) using 1;
-    simp +decide [ List.all_map, hψ₂ ];
+    simp +decide [ List.all_map ];
     grind
 
 /-
@@ -231,7 +230,7 @@ Complement probability: Pr[A] + Pr[¬A] = 1.
 lemma bernoulliRestrProb_complement (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
     (A : Restriction n → Prop) [DecidablePred A] :
     bernoulliRestrProb p A + bernoulliRestrProb p (fun ρ => ¬ A ρ) = 1 := by
-  unfold bernoulliRestrProb; simp +decide [ bernoulliRestrWeight_sum_one p hp hp1 ] ;
+  unfold bernoulliRestrProb; simp +decide ;
   rw [ ← Finset.sum_add_distrib, Finset.sum_congr rfl fun _ _ => by aesop, bernoulliRestrWeight_sum_one p hp hp1 ]
 
 /-

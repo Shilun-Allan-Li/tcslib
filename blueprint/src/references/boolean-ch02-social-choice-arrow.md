@@ -466,7 +466,7 @@ Suppose $f:\{-1,1\}^n\to\{-1,1\}$ is unanimous and used in a three-candidate Con
 <!-- pdf-source: page=17; block=1; confidence=0.98 -->
 Under the impartial culture assumption, for a three-candidate Condorcet election using $f$,
 \[
-\Pr[\exists\text{ Condorcet winner}]=\frac34-\frac34\operatorname{Stab}_{1/3}[f].
+\Pr[\exists\text{ Condorcet winner}]=\frac34-\frac34\operatorname{Stab}_{-1/3}[f].
 \]
 
 <a id="pdf-352ab7ff3113-p017-b002"></a>
@@ -475,7 +475,7 @@ The six possible voter triples are exactly the inputs satisfying $\operatorname{
 \[
 \operatorname{NAE}_3(w_1,w_2,w_3)=\frac34-\frac14w_1w_2-\frac14w_1w_3-\frac14w_2w_3.
 \]
-For the jointly distributed strings, the coordinate pairs are independent and have correlation $1/3$, so each pairwise expectation equals $\operatorname{Stab}_{1/3}[f]$. Substitution gives the formula.
+For the jointly distributed strings, the coordinate pairs are independent and have correlation $-1/3$, so each pairwise expectation equals $\operatorname{Stab}_{-1/3}[f]$. Substitution gives the formula.
 
 <a id="pdf-352ab7ff3113-p017-b003"></a>
 <!-- pdf-source: page=17; block=3; confidence=0.99 -->

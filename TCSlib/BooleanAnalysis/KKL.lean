@@ -156,7 +156,9 @@ lemma fourierCoeff_lowDegreePart (f : BooleanFunc n) (k : ℕ) (S : Finset (Fin 
   -- = ∑ T, if |T|≤k then fhat(T) * (if T=S then 1 else 0) else 0
   -- = if |S|≤k then fhat(S) else 0
   show fourierCoeff (lowDegreePart f k) S = if S.card ≤ k then fourierCoeff f S else 0
-  simp only [fourierCoeff, innerProduct, expect, lowDegreePart]
+  unfold lowDegreePart
+  unfold BooleanAnalysis.fourierCoeff innerProduct expect
+  beta_reduce
   -- After unfolding: LHS = uniformWeight n * ∑ x, (∑ T, if T.card ≤ k then fhat_unfolded(T) * χ_T(x) else 0) * χ_S(x)
   -- where fhat_unfolded(T) = uniformWeight n * ∑ y, f y * χ_T y
   -- RHS = if S.card ≤ k then uniformWeight n * ∑ x, f x * χ_S x else 0
@@ -220,7 +222,7 @@ lemma lowDegree_l2_error (f : BooleanFunc n) (k : ℕ) :
     have hdef : highDegreePart f k = fun x => f x - lowDegreePart f k x :=
       funext (fun x => (hfg x).symm)
     rw [hdef]
-    simp only [fourierCoeff, innerProduct, expect]
+    unfold BooleanAnalysis.fourierCoeff innerProduct expect
     rw [show uniformWeight n * ∑ x, (f x - lowDegreePart f k x) * chiS S x =
         uniformWeight n * ∑ x, f x * chiS S x -
         uniformWeight n * ∑ x, lowDegreePart f k x * chiS S x from by
@@ -353,7 +355,9 @@ lemma lowDegreePart_depends_on_influential (f : BooleanFunc n) (k : ℕ) (τ : �
       have hcoeff : ∀ T : Finset (Fin n),
           fourierCoeff h T = if T.card ≤ k ∧ ¬T ⊆ J then fourierCoeff f T else 0 := by
         intro T
-        simp only [fourierCoeff, innerProduct, expect, h]
+        simp only [h]
+        unfold BooleanAnalysis.fourierCoeff innerProduct expect
+        beta_reduce
         set w := uniformWeight n
         set fhat : Finset (Fin n) → ℝ := fun S => w * ∑ y, f y * chiS S y
         -- Rearrange: w * ∑ x, (∑ S, if ... then fhat S * χ_S x else 0) * χ_T x

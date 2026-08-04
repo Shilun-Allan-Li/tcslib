@@ -6,7 +6,11 @@
     • XOR instances and their value (Definition 3.6–3.7)
     • Double-copy notation (Notation 2.2)
 -/
-import Mathlib
+import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Finset.Union
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Real.Archimedean
 
 open Finset BigOperators
 

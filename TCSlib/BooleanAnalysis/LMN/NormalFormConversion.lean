@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.Switching.Circuit
-import Mathlib
 
 /-!
 # Conversions between Normal-Form Circuits and DNF/CNF
@@ -78,7 +77,7 @@ theorem foldr_or_lits_eq_clause_eval (lits : List (Lit n)) (x : Fin n → Bool) 
     lits.foldr (fun l acc => l.eval x || acc) false =
     CNF.evalClause (lits.map Lit.toLiteral) x := by
   unfold CNF.evalClause;
-  induction lits <;> simp +decide [ *, List.any ];
+  induction lits <;> simp +decide [*];
   unfold BoolCircuit.Lit.toLiteral; aesop;
 
 /-
@@ -105,8 +104,8 @@ theorem NAndCircuit.node_eval_eq_toCNF_eval
     (h_clauses : ∀ c ∈ cs, ∃ lits h, c = NOrCircuit.clause lits h) :
     (NAndCircuit.node cs).eval x = CNF.eval (NAndCircuit.node cs).toCNF x := by
   induction cs <;> simp_all +decide [ NAndCircuit.eval ];
-  · exact?;
-  · rename_i k hk ih; rcases h_clauses.1 with ⟨ lits, h, rfl ⟩ ; simp_all +decide [ NOrCircuit.eval, NAndCircuit.toCNF, Term.eval ] ;
+  · exact rfl;
+  · rename_i k hk ih; rcases h_clauses.1 with ⟨ lits, h, rfl ⟩ ; simp_all +decide [NOrCircuit.eval, NAndCircuit.toCNF] ;
     simp +decide [ CNF.eval, NOrCircuit.clauseToTerm ];
     convert congr_arg ( fun y => y && hk.all ( ( fun t => CNF.evalClause t x ) ∘ NOrCircuit.clauseToTerm ) ) ( foldr_or_lits_eq_clause_eval lits x ) using 1
 
@@ -124,7 +123,7 @@ theorem NAndCircuit.clauseToTerm_nodup (lits : List (Lit n))
   · grind;
   · intro i j hij; have := @h ⟨ i, by
       exact i.2.trans_le ( by simp ) ⟩ ⟨ j, by
-      exact j.2.trans_le ( by simp ) ⟩ ; simp_all +decide [ Function.Injective.eq_iff h ] ;
+      exact j.2.trans_le ( by simp ) ⟩ ; simp_all +decide ;
     exact Fin.ext ( this ( by injection hij ) )
 
 /-
@@ -200,7 +199,7 @@ theorem NAndCircuit.toCNF_width_bounded (cs : List (NOrCircuit n)) (w : ℕ)
     simp_all +decide [ NAndCircuit.toCNF ];
     unfold CNF.width; simp +decide [ *, NOrCircuit.clauseToTerm_width ] ;
     convert ih w h_clauses using 1;
-    unfold CNF.width; simp +decide [ Function.comp ] ;
+    unfold CNF.width; simp +decide ;
 
 /-! ## DNF properties for depth-2 NOrCircuit -/
 

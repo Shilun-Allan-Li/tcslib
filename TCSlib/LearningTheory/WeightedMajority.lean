@@ -1,4 +1,10 @@
-import Mathlib
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.GCongr
+import Mathlib.Tactic.Cases
 
 open Finset BigOperators Real
 
@@ -37,10 +43,10 @@ When the algorithm makes a mistake, at least half the total weight is on wrong e
     we have W_M ≤ W₀ · ((1 + β)/2)^M.
 -/
 theorem wm_weight_shrinkage
-    (β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1)
+    (β : ℝ) (hβ0 : 0 < β) (_hβ1 : β < 1)
     (M : ℕ)
     (W : ℕ → ℝ)
-    (hW_pos : ∀ k, 0 < W k)
+    (_hW_pos : ∀ k, 0 < W k)
     (hW_step : ∀ k, k < M → W (k + 1) ≤ W k * ((1 + β) / 2)) :
     W M ≤ W 0 * ((1 + β) / 2) ^ M := by
   induction' M with M ih;
@@ -52,7 +58,7 @@ After M algorithm mistakes starting with n experts of weight 1 each (total weigh
     the total weight is at most n · ((1+β)/2)^M.
 -/
 theorem wm_weight_upper_bound
-    (n : ℕ) (hn : 0 < n)
+    (n : ℕ) (_hn : 0 < n)
     (β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1)
     (M : ℕ)
     (W : ℕ → ℝ)
@@ -73,8 +79,8 @@ The core potential function inequality for Weighted Majority:
     Combined with the upper bound W_T ≤ n · ((1+β)/2)^{M_WM}.
 -/
 theorem wm_combined_potential_bound
-    (n : ℕ) (hn : 0 < n)
-    (β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1)
+    (n : ℕ) (_hn : 0 < n)
+    (β : ℝ) (hβ0 : 0 < β) (_hβ1 : β < 1)
     (M_star M_WM : ℕ)
     -- Lower bound: best expert's weight
     (h_lower : β ^ M_star ≤ (n : ℝ) * ((1 + β) / 2) ^ M_WM)
@@ -93,7 +99,7 @@ The logarithmic form of the Weighted Majority mistake bound:
 -/
 theorem wm_mistake_bound_log
     (n : ℕ) (hn : 1 < n)
-    (β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1)
+    (β : ℝ) (hβ0 : 0 < β) (_hβ1 : β < 1)
     (M_star M_WM : ℕ)
     (h : β ^ M_star ≤ (n : ℝ) * ((1 + β) / 2) ^ M_WM) :
     (M_WM : ℝ) * Real.log (2 / (1 + β)) ≤

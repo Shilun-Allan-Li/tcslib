@@ -202,20 +202,25 @@ class CliTests(unittest.TestCase):
 
         self.assertEqual(selected.lean_name, "T.switching_lemma")
 
-    def test_fixture_run_defaults_to_one_dollar(self):
-        args = build_parser().parse_args(
-            ["run", "blueprint/src/references/switching-lemma.pdf"]
-        )
+    def test_no_source_carries_an_implicit_cap(self):
+        for source in (
+            "blueprint/src/references/switching-lemma.pdf",
+            "notes.pdf",
+        ):
+            args = build_parser().parse_args(["run", source])
 
-        self.assertEqual(args.max_cost, Decimal("1.00"))
+            self.assertIsNone(args.max_cost)
 
-    def test_nonfixture_run_requires_explicit_budget(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            pdf = Path(tmp) / "other.pdf"
-            pdf.write_bytes(b"%PDF")
+    def test_omitted_budget_means_uncapped_run(self):
+        from decimal import Decimal as D
 
-            with self.assertRaisesRegex(ValueError, "--max-cost"):
-                main(["run", str(pdf), "--dry-run"])
+        from proofmatch.budget import Budget, StageEstimate
+
+        budget = Budget(None)
+        budget.require(StageEstimate("anything", 1, 1, D("1000000")))
+
+        self.assertIsNone(budget.remaining_usd)
+        self.assertEqual(budget.spent_usd, D("1000000"))
 
     def test_match_starts_from_validated_markdown_without_pdf_extraction(self):
         with tempfile.TemporaryDirectory() as tmp:

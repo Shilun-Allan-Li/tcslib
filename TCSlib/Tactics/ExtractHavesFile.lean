@@ -191,7 +191,36 @@ initialize probeLogPathRef : IO.Ref (Option String) ← IO.mkRef none
     (same rewrite direction as the delta-unfold), and passes `rfl` at the
     callsite, where the ldecl IS transparent. -/
 private def letDefsInPrefix (prefixText : String) (maxIndent : Nat) : List (String × String) :=
-  let masked := (maskCommentLines (prefixText.splitOn "\n").toArray).toList
+  let masked0 := (maskCommentLines (prefixText.splitOn "\n").toArray).toList
+  -- MULTI-LINE RHS (#60, hu/hvLift): `let D' : MulCut G :=` with a 35-line
+  -- struct-literal RHS was invisible here (single-line parse), so the
+  -- LET-REPLAY rung never fired for proofs that simpa-unfold D'. JOIN a
+  -- let/set line whose ` := ` ends the line with its following
+  -- deeper-indented lines (collapsed) so the existing parse sees one line.
+  let masked := Id.run do
+    let arr := masked0.toArray
+    let mut out : List String := []
+    let mut i := 0
+    while h : i < arr.size do
+      let l := arr[i]
+      let t := l.trim
+      if (t.startsWith "let " || t.startsWith "set ") && t.endsWith ":=" then
+        let base := lineIndent l
+        let mut j := i + 1
+        let mut joined := l
+        while j < arr.size &&
+              (arr[j]!.trim.isEmpty || lineIndent arr[j]! > base) do
+          -- newline-preserving join: struct-literal fields carry `by`-tactic
+          -- proofs whose parsing NEEDS line structure (space-joining gave
+          -- "PARSE: expected '}'" in the equation param)
+          joined := joined ++ "\n" ++ arr[j]!
+          j := j + 1
+        out := out ++ [joined]
+        i := j
+      else
+        out := out ++ [l]
+        i := i + 1
+    return out
   masked.foldl (init := []) fun acc l =>
     if !l.trim.isEmpty && lineIndent l > maxIndent then acc else
     let t := l.trim
@@ -3275,6 +3304,28 @@ private def extractOneHaveViaGoal
                 return some finalLines2
               | some err2 =>
                 plogInfo s!"[extract-probe] '{haveName}' inacc-args retry rejected: {err2.take 240}"
+                -- DATA-TYPED INACCESSIBLE ARGS (#60): `apply <;> assumption`
+                -- can't backtrack across candidate hyps for data metavars —
+                -- `solve_by_elim` chains backward WITH backtracking.
+                let call3 := "by solve_by_elim [" ++ externalName ++ "]"
+                let oneLiner3 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call3
+                let replacement3 : Array String :=
+                  (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
+                  (if termContinuation.isEmpty then #[oneLiner3] else #[oneLiner3, oneLinerIndent ++ termContinuation])
+                let newLines3 := lines.extract 0 haveIdx ++ replacement3 ++ lines.extract relEnd lines.size
+                let insAt3 := spliceLineAbove newLines3 span.headerStart
+                let finalLines3 := newLines3.extract 0 insAt3 ++ lemmaLines ++ #[""] ++
+                                   newLines3.extract insAt3 newLines3.size
+                let newBodyEnd3 := span.bodyEnd - (relEnd - haveIdx) + replacement3.size
+                let gateDecl3 := ambientPrefix ++ renamedHeader ++ "\n" ++
+                  "\n".intercalate ((newLines3.extract span.bodyStart newBodyEnd3).toList)
+                match ← elabCheckFirstErrorSeq [lemmaPrefix ++ lemmaText, gateDecl3] with
+                | none =>
+                  elabPersistCommand (lemmaPrefix ++ lemmaText)
+                  plogInfo s!"[extract-probe] '{haveName}' INACC-ARGS retry committed (solve_by_elim callsite)"
+                  return some finalLines3
+                | some err3 =>
+                  plogInfo s!"[extract-probe] '{haveName}' solve_by_elim retry rejected: {err3.take 240}"
     return none
   else
     -- `set`-bound ldecls in the replayed prefix defeat the capture (see
@@ -4126,6 +4177,30 @@ private def extractOneHaveViaGoal
                 return some finalLines2
               | some err2 =>
                 plogInfo s!"[extract-probe] '{haveName}' inacc-args retry rejected: {err2.take 240}"
+                -- DATA-TYPED INACCESSIBLE ARGS (#60): solve_by_elim backtracks
+                -- where `apply <;> assumption` cannot (see untyped branch).
+                let call3 := "by solve_by_elim [" ++ externalName ++ "]"
+                let oneLiner3 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+                  scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call3
+                let replacement3 : Array String :=
+                  (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
+                  (if termContinuation.isEmpty then #[oneLiner3]
+                   else #[oneLiner3, oneLinerIndent ++ termContinuation])
+                let newLines3 := lines.extract 0 haveIdx ++ replacement3 ++ lines.extract relEnd lines.size
+                let lemmaLines3 := (lemmaText.splitOn "\n").toArray
+                let insAt3 := spliceLineAbove newLines3 span.headerStart
+                let finalLines3 := newLines3.extract 0 insAt3 ++ lemmaLines3 ++ #[""] ++
+                                   newLines3.extract insAt3 newLines3.size
+                let newBodyEnd3 := span.bodyEnd - (relEnd - haveIdx) + replacement3.size
+                let gateDecl3 := ambientPrefix ++ renamedHeader ++ "\n" ++
+                  "\n".intercalate ((newLines3.extract span.bodyStart newBodyEnd3).toList)
+                match ← elabCheckFirstErrorSeq [lemmaPrefix ++ lemmaText, gateDecl3] with
+                | none =>
+                  elabPersistCommand (lemmaPrefix ++ lemmaText)
+                  plogInfo s!"[extract-probe] '{haveName}' INACC-ARGS retry committed (solve_by_elim callsite)"
+                  return some finalLines3
+                | some err3 =>
+                  plogInfo s!"[extract-probe] '{haveName}' solve_by_elim retry rejected: {err3.take 240}"
             -- LET-REPLAY retry (see `letDefsInPrefix`): the lemma's proof
             -- references let/set-bound names it can only use via delta
             -- unfolding, which an opaque parameter cannot provide — re-
@@ -4134,13 +4209,22 @@ private def extractOneHaveViaGoal
             -- direction as the delta), and `rfl` at the callsite, where the
             -- ldecl IS transparent.
             if (← letReplayEnabledRef.get) && !letReplayTried &&
-               (err.splitOn "is not a proposition or let-declaration").length ≥ 2 then
+               ((err.splitOn "is not a proposition or let-declaration").length ≥ 2 ||
+                -- #60: gate failures from delta-unfolding proofs surface as
+                -- type-mismatch/unsolved too — fire whenever the proof
+                -- brackets a known let/set name (huLift's simpa [D', ...])
+                !((letDefsInPrefix prefixText contentIndentN).filter
+                    (fun (x, _) => containsWord proofBody x)).isEmpty) then
               letReplayTried := true
               let replayDefs := (letDefsInPrefix prefixText contentIndentN).filter
                 (fun (x, _) => containsWord proofBody x)
               if !replayDefs.isEmpty then
                 let eqParams := replayDefs.foldl (fun acc (x, rhs) =>
-                  acc ++ " (h" ++ x ++ "def : " ++ x ++ " = " ++ collapseToOneLine rhs ++ ")") ""
+                  acc ++ (if (rhs.splitOn "\n").length ≥ 2 then
+                    -- multi-line RHS (struct literal): own-line paren at col 0
+                    -- so the verbatim source lines are always indented deeper
+                    "\n(h" ++ x ++ "def :\n  " ++ x ++ " =" ++ rhs ++ "\n)"
+                  else " (h" ++ x ++ "def : " ++ x ++ " = " ++ rhs ++ ")")) ""
                 let rewriteBrackets (l : String) : String :=
                   if (l.splitOn "simp").length ≥ 2 || (l.splitOn "rw [").length ≥ 2 then
                     replayDefs.foldl (fun acc (x, _) =>
@@ -4537,9 +4621,10 @@ private def extractOneHaveViaTerm
     match (collapseToOneLine headerBeforeAssign).splitOn " : " with
     | _ :: rest => (" : ".intercalate rest).trim
     | []        => ""
-  if originalTypeText.isEmpty then
-    plogInfo s!"[term-extract] '{haveName}' skipped: no source type annotation"
-    return none
+  -- UNTYPED HAVES (#61, KKL hlow1/hlow_k): no source annotation, but the
+  -- have's TYPE is in the elaborated term (the redex binder) — each
+  -- rendering's sig CONCLUSION is exactly that type, so the one-liner
+  -- ascription is derived per-rendering below instead of skipping here.
   let termContinuation : String :=
     if isTacticHave then ""
     else
@@ -4631,8 +4716,15 @@ private def extractOneHaveViaTerm
                     else "(" ++ externalName ++ " " ++ " ".intercalate r.argNames.toList ++ ")")
             else none
           let callV2 := "by apply " ++ externalName ++ " <;> assumption"
+          -- DATA-TYPED INACCESSIBLE ARGS (#60, hu/hvLift class): `apply <;>
+          -- assumption` attempts goals in order — a data-typed metavar goal
+          -- comes first and `assumption` cannot backtrack across candidate
+          -- hyps (wrong pick dooms later goals). `solve_by_elim` chains
+          -- backward WITH backtracking, so ambiguous data args resolve when
+          -- some consistent assignment exists.
+          let callV3 := "by solve_by_elim [" ++ externalName ++ "]"
           let calls : List String :=
-            (match callV1? with | some c => [c] | none => []) ++ [callV2]
+            (match callV1? with | some c => [c] | none => []) ++ [callV2, callV3]
           let oneLinerIndent := bulletIndentStr ++ (if isBulletAttached then "  " else "")
           let mut declDumped := false
           for (label, sigText) in r.sigTexts do
@@ -4666,8 +4758,19 @@ private def extractOneHaveViaTerm
             for call in calls do
               let lemmaText := renU (setOptPrefix ++ classicalPrefix ++
                 "private lemma " ++ externalName ++ univSpecRaw ++ " : " ++ sigText ++ proofPart)
-              let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
-                collapseToOneLine originalTypeText ++ " := " ++ call
+              -- UNTYPED HAVES (#61): no textual type exists and deriving one
+              -- from the sig is unsound (∀-telescope sigs contain depth-0
+              -- `let k : ℕ := ...;` colons — the colon-scan attempt shipped a
+              -- malformed ascription, PARSE 75:68). Emit an UNTYPED
+              -- one-liner instead: `have h := (aux ...)` — safe because the
+              -- driver's alreadyConverted guard keys on `_aux_<name>` in the
+              -- have's own line, which covers untyped call forms too.
+              let oneLiner :=
+                if originalTypeText.isEmpty then
+                  oneLinerIndent ++ "have " ++ haveName ++ " := " ++ call
+                else
+                  oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+                    collapseToOneLine originalTypeText ++ " := " ++ call
               let replacementLines : Array String :=
                 (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
                 (if termContinuation.isEmpty then #[oneLiner]
@@ -4688,6 +4791,8 @@ private def extractOneHaveViaTerm
                 return some finalLines
               | some err =>
                 plogInfo s!"[term-extract] '{haveName}' rejected (render {label}): {err.take 300}"
+                plogInfo s!"[term-extract] '{haveName}' lemma text: {(collapseToOneLine lemmaText).take 2000}"
+                plogInfo s!"[term-extract] '{haveName}' decl text: {(collapseToOneLine gateDecl).take 2500}"
                 plogInfo s!"[term-extract] '{haveName}' lemma text: {(collapseToOneLine lemmaText).take 2500}"
                 if !declDumped then
                   declDumped := true
@@ -5829,9 +5934,57 @@ elab "#extract_haves_iter_decl " srcLit:str dstLit:str declLit:str : command => 
             -- rung T fallback: proof-term-based extraction (no prefix replay)
             match ← extractOneHaveViaTerm lines span haveIdx haveName counter with
             | none =>
-              doneNames := haveName :: doneNames
-              progress s!"attempt {counter}: {declName}.{haveName} FAILED"
-              keepGoing := true
+              -- RUNG L (#61, last resort): GATED have→let swap. Prop-valued
+              -- lets are proof-irrelevant, so consumers are unchanged — the
+              -- ladder has always done this for single-line forms (cand
+              -- A0/B); this admits MULTI-LINE by-blocks that every
+              -- extraction route rejected (KKL hlow_bound: let-k
+              -- transparency in term-mode args + printed-name collision).
+              let hl := lines[haveIdx]!
+              plogInfo s!"[let-swap] trying '{haveName}' on line: {hl.trim.take 80}"
+              let trimmed := hl.trimLeft
+              let indentStr := String.mk (List.replicate (lineIndent hl) ' ')
+              let swapped? : Option String :=
+                if trimmed.startsWith "have " then
+                  some (indentStr ++ "let " ++ trimmed.drop "have ".length)
+                else if trimmed.startsWith "· have " then
+                  some (indentStr ++ "· let " ++ trimmed.drop "· have ".length)
+                else none
+              match swapped? with
+              | some swappedLine =>
+                let newLines := lines.set! haveIdx swappedLine
+                let headerText0 := "\n".intercalate (newLines.extract span.headerStart span.bodyStart).toList
+                let headerText :=
+                  if headerText0.startsWith "private " then headerText0.drop "private ".length else headerText0
+                let kw := if headerText.startsWith "theorem " then "theorem " else "lemma "
+                let renHdr := kw ++ "__letswap_check__" ++ ((headerText.drop kw.length).drop span.name.length)
+                let opens := enclosingOpensFor newLines span.headerStart
+                let openPfx := if opens.isEmpty then "" else "open " ++ " ".intercalate opens ++ " in\n"
+                let setPfx := (enclosingSetOptionsFor newLines span.headerStart).foldl
+                  (fun acc (nm, v) => acc ++ "set_option " ++ nm ++ " " ++ v ++ " in\n") ""
+                let varPfx := (enclosingVariablesFor newLines span.headerStart).foldl
+                  (fun acc v => acc ++ v ++ " in\n") ""
+                let probeSrc := setPfx ++ openPfx ++ varPfx ++ renHdr ++ "\n" ++
+                  "\n".intercalate (newLines.extract span.bodyStart span.bodyEnd).toList
+                plogInfo s!"[let-swap] '{haveName}' gate probe launching ({probeSrc.length} chars)"
+                match ← elabCheckFirstError probeSrc with
+                | none =>
+                  lines := newLines
+                  doneNames := haveName :: doneNames
+                  succeeded := succeeded + 1
+                  progress s!"attempt {counter}: {declName}.{haveName} LET-SWAPPED ({succeeded}/{counter})"
+                  IO.FS.writeFile outputPath ("\n".intercalate lines.toList)
+                  progress s!"checkpoint written ({succeeded} commits)"
+                  keepGoing := true
+                | some err =>
+                  plogInfo s!"[let-swap] '{haveName}' rejected: {err.take 240}"
+                  doneNames := haveName :: doneNames
+                  progress s!"attempt {counter}: {declName}.{haveName} FAILED"
+                  keepGoing := true
+              | none =>
+                doneNames := haveName :: doneNames
+                progress s!"attempt {counter}: {declName}.{haveName} FAILED"
+                keepGoing := true
             | some newLines =>
               lines := newLines
               doneNames := haveName :: doneNames

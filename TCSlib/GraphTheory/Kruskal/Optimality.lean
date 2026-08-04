@@ -177,7 +177,7 @@ theorem kruskal_optimal {n : ℕ} (E S : List (WEdge n))
     rw [mergeAll_init_iff, mergeAll_init_iff]
     refine ⟨fun h => reach_mono h fun e he => List.mem_mergeSort.mpr (hSsub e he),
       fun h => hSspan a b <| reach_mono h fun e he => List.mem_mergeSort.mp he⟩
-  · have h := List.pairwise_mergeSort
+  · have h := List.sorted_mergeSort
       (le := fun e₁ e₂ : WEdge n => decide (e₁.weight ≤ e₂.weight))
       (by intro a b c; simp; exact le_trans) (by intro a b; simp; exact le_total _ _) E
     exact h.imp (by intro a b h; simpa using h)

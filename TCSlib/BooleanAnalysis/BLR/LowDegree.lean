@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Prastik Mohanraj
 -/
 
-import Mathlib
 import TCSlib.BooleanAnalysis.BLR.BoolFourier
 import TCSlib.BooleanAnalysis.BLR.BoolBLR
 

@@ -1,4 +1,18 @@
-import Mathlib
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.RCLike.Inner
+import Mathlib.Data.Int.Star
+import Mathlib.Data.Real.CompleteField
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.LinearAlgebra.Dual.Lemmas
+import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.SplitIfs
+import Mathlib.Tactic.Cases
 
 noncomputable section
 
@@ -61,11 +75,11 @@ lemma inner_pmOne_pmOne {n : ℕ} (x y : BitVec n) :
   have h_pmOne : ∀ i, (pmOne x i) * (pmOne y i) = if x i = y i then 1 else -1 := by
     exact fun i => coord_mul_pmOne x y i;
   have h_hdist : (CodingTheory.Johnson.hdist x y : ℝ) = ∑ i, (if x i ≠ y i then 1 else 0) := by
-    simp +decide [ Finset.sum_ite, Finset.filter_congr, Finset.filter_ne ];
+    simp +decide [ Finset.sum_ite ];
     exact congr_arg Finset.card ( Finset.filter_congr fun _ _ => by aesop );
   simp_all +decide [ RCLike.wInner ];
   simp_all +decide [ mul_comm, Finset.sum_ite ];
-  rw [ Finset.filter_not, Finset.card_sdiff ] ; norm_num ; ring;
+  rw [ Finset.filter_not, Finset.card_sdiff ] ; norm_num ; ring_nf;
   rw [ Nat.cast_sub ( le_trans ( Finset.card_le_univ _ ) ( by norm_num ) ) ] ; ring
 
 lemma inner_pmOne_ones {n : ℕ} (x : BitVec n) :
@@ -75,7 +89,7 @@ lemma inner_pmOne_ones {n : ℕ} (x : BitVec n) :
   have h_sum_simplified : ∑ i, (pmOne x i) * (ones i) = ∑ i, (if x i then -1 else 1 : ℝ) := by
     exact Finset.sum_congr rfl fun i _ => by unfold CodingTheory.Johnson.pmOne CodingTheory.Johnson.ones; aesop;
   simp_all +decide [ Finset.sum_ite ];
-  rw [ show ( Finset.univ.filter fun i => x i = Bool.false ) = Finset.univ \ ( Finset.univ.filter fun i => x i = Bool.true ) by ext; aesop, Finset.card_sdiff ] ; norm_num ; ring!;
+  rw [ show ( Finset.univ.filter fun i => x i = Bool.false ) = Finset.univ \ ( Finset.univ.filter fun i => x i = Bool.true ) by ext; aesop, Finset.card_sdiff ] ; norm_num ; ring_nf!;
   rw [ Nat.cast_sub ( show _ ≤ _ from le_trans ( Finset.card_le_univ _ ) ( by norm_num ) ) ] ; ring;
 
 lemma inner_ones_ones {n : ℕ} :
@@ -89,8 +103,8 @@ lemma inner_shifted_expand {n : ℕ} (α : ℝ) (x y : BitVec n) :
         - α * ⟪pmOne y, ones (n := n)⟫_[ℝ]
         + α^2 * ⟪ones (n := n), ones (n := n)⟫_[ℝ] := by
   unfold shifted
-  simp [RCLike.wInner, inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right];
-  simp [mul_sub, sub_mul, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _, pow_two];
+  simp [RCLike.wInner];
+  simp [mul_sub, sub_mul, Finset.sum_sub_distrib, Finset.mul_sum _ _ _, pow_two];
   simp [mul_comm, mul_assoc, sub_eq_add_neg]
   ring
 
@@ -106,8 +120,8 @@ lemma inner_shifted_le_expr
         + 2 * α * (2 * (w : ℝ) - (n : ℝ)) := by
   have h_inner_bound : (RCLike.wInner 1 (CodingTheory.Johnson.shifted α x) (CodingTheory.Johnson.shifted α y)) = (n - 2 * (hdist x y : ℝ)) - α * (n - 2 * (wt x : ℝ)) - α * (n - 2 * (wt y : ℝ)) + α^2 * n := by
     convert inner_shifted_expand α x y using 1;
-    erw [ inner_pmOne_pmOne, inner_pmOne_ones, inner_ones_ones ] ; norm_num ; ring;
-    erw [ inner_pmOne_ones ] ; norm_num ; ring ; aesop;
+    erw [ inner_pmOne_pmOne, inner_pmOne_ones, inner_ones_ones ] ; norm_num ; ring_nf;
+    erw [ inner_pmOne_ones ] ; norm_num ; ring_nf ; aesop;
   nlinarith [ ( by norm_cast : ( d : ℝ ) ≤ CodingTheory.Johnson.hdist x y ), ( by norm_cast : ( CodingTheory.Johnson.wt x : ℝ ) ≤ w ), ( by norm_cast : ( CodingTheory.Johnson.wt y : ℝ ) ≤ w ) ]
 
 lemma alpha_nonneg (n d : ℕ) : 0 ≤ alpha n d := by
@@ -178,8 +192,8 @@ The squared norm of the projection of x onto the orthogonal complement of a unit
 lemma proj_norm_sq {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
     (u x : V) (hu : ‖u‖ = 1) :
     ‖x - (inner ℝ x u) • u‖^2 = ‖x‖^2 - (inner ℝ x u)^2 := by
-      rw [ @norm_sub_sq ℝ ] ; simp +decide [ hu, inner_smul_right ] ; ring;
-      simp +decide [ hu, norm_smul, mul_pow ] ; ring;
+      rw [ @norm_sub_sq ℝ ] ; simp +decide [ inner_smul_right ] ; ring_nf;
+      simp +decide [ hu, norm_smul ] ; ring;
 
 /-
 The projection of a unit vector x onto the orthogonal complement of a unit vector u is non-zero, unless x is u or -u.
@@ -213,7 +227,7 @@ lemma proj_inj_on {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
       have h_norm_sq_x : ‖x‖^2 = ‖y + c • u‖^2 := by
         rw [ ← hxy_eq, add_sub_cancel ];
       have h_norm_sq_y : ‖y + c • u‖^2 = 1 + 2 * c * ⟪y, u⟫ + c^2 := by
-        rw [ @norm_add_sq ℝ ] ; simp +decide [ *, inner_smul_right, inner_smul_left ] ; ring;
+        rw [ @norm_add_sq ℝ ] ; simp +decide [ *, inner_smul_right ] ; ring_nf;
         simp +decide [ norm_smul, hu ];
       have h_c_zero_or_neg_two_beta : c = 0 ∨ c = -2 * ⟪y, u⟫ := by
         exact Classical.or_iff_not_imp_left.2 fun h => mul_left_cancel₀ h <| by nlinarith [ hS_norm x hx, hS_norm y hy ] ;
@@ -242,8 +256,8 @@ lemma orthProj_mem_orthogonal {V : Type*} [NormedAddCommGroup V] [InnerProductSp
       obtain ⟨k, rfl⟩ : ∃ k : ℝ, x = k • u := by
         exact Submodule.mem_span_singleton.mp hx |> Exists.imp fun k hk => hk.symm
       simp [orthProj] at *;
-      simp +decide [ inner_sub_right, inner_smul_left, inner_smul_right, hu ];
-      ring
+      simp +decide [ inner_sub_right, inner_smul_left, inner_smul_right ];
+      rw [real_inner_self_eq_norm_sq, hu]; ring
 /-
 PROVIDED SOLUTION
 If v - ⟪u,v⟫•u = 0, then v = ⟪u,v⟫•u. Taking norms: 1 = |⟪u,v⟫|·1, so |⟪u,v⟫| = 1, meaning v = u or v = -u, contradiction.
@@ -267,15 +281,16 @@ lemma orthProj_inner_nonpos {V : Type*} [NormedAddCommGroup V] [InnerProductSpac
     (u v w : V) (hu : ‖u‖ = 1)
     (hvw : inner ℝ v w ≤ 0) (hvu : inner ℝ v u ≤ 0) (hwu : inner ℝ w u ≤ 0) :
     inner ℝ (orthProj u v) (orthProj u w) ≤ 0 := by
+      have huu : ⟪u, u⟫_ℝ = 1 := by rw [real_inner_self_eq_norm_sq, hu]; norm_num
       unfold orthProj; simp +decide [ *, inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right ] ; ring_nf; (
-      nlinarith [ real_inner_comm u w, real_inner_comm v u ]);
+      nlinarith [ real_inner_comm u w, real_inner_comm v u, huu ]);
 
 lemma normalized_orthProj_injective {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
     (u v w : V) (hu : ‖u‖ = 1) (hv : ‖v‖ = 1) (hw : ‖w‖ = 1)
     (hvu : inner ℝ v u ≤ 0) (hwu : inner ℝ w u ≤ 0)
     (hvw_ip : inner ℝ v w ≤ 0)
     (hv1 : v ≠ u) (hv2 : v ≠ -u) (hw1 : w ≠ u) (hw2 : w ≠ -u)
-    (hvw : v ≠ w)
+    (_hvw : v ≠ w)
     (h_eq : (‖orthProj u v‖⁻¹ • orthProj u v : V) =
             (‖orthProj u w‖⁻¹ • orthProj u w : V)) :
     False := by
@@ -284,15 +299,15 @@ lemma normalized_orthProj_injective {V : Type*} [NormedAddCommGroup V] [InnerPro
         refine' ⟨ ‖orthProj u v‖ / ‖orthProj u w‖, div_pos ( norm_pos_iff.mpr ( orthProj_ne_zero u v hu hv hv1 hv2 ) ) ( norm_pos_iff.mpr ( orthProj_ne_zero u w hu hw hw1 hw2 ) ), _ ⟩;
         convert congr_arg ( fun x => ‖orthProj u v‖ • x ) h_eq using 1 <;> norm_num [ div_eq_mul_inv, smul_smul ];
         rw [ mul_inv_cancel₀ ] <;> norm_num;
-        exact?;
+        exact orthProj_ne_zero u v hu hv hv1 hv2;
       -- Compute ⟪v,w⟫ = c(1 - ⟪u,w⟫²) + ⟪u,v⟫⟪u,w⟫.
       have h_inner : ⟪v, w⟫_ℝ = c * (1 - ⟪u, w⟫_ℝ ^ 2) + ⟪u, v⟫_ℝ * ⟪u, w⟫_ℝ := by
         have h_sub : v - ⟪u, v⟫_ℝ • u = c • (w - ⟪u, w⟫_ℝ • u) := hc.2
         -- Substitute h_sub into the inner product expression.
         have h_inner : ⟪v, w⟫_ℝ = ⟪c • (w - ⟪u, w⟫_ℝ • u) + ⟪u, v⟫_ℝ • u, w⟫_ℝ := by
           rw [ ← h_sub, sub_add_cancel ];
-        rw [ h_inner, inner_add_left, inner_smul_left, inner_sub_left, inner_smul_left ] ; ring;
-        simp +decide [ mul_assoc, mul_comm, mul_left_comm, inner_smul_left, inner_smul_right, hu, hv, hw ] ; ring
+        rw [ h_inner, inner_add_left, inner_smul_left, inner_sub_left, inner_smul_left ] ; ring_nf;
+        simp +decide [ mul_comm, mul_left_comm, inner_smul_left ] ; rw [real_inner_self_eq_norm_sq, hw]; ring
       -- Since $w \neq \pm u$, we have $|⟪u, w⟫| < 1$.
       have h_abs : |⟪u, w⟫_ℝ| < 1 := by
         have h_abs : ‖w - u‖ > 0 ∧ ‖w + u‖ > 0 := by
@@ -329,7 +344,7 @@ lemma card_filter_add_two {V : Type*} [AddGroup V]
     S.card ≤ (S.filter (fun v => v ≠ u ∧ v ≠ -u)).card + 2 := by
   classical
   suffices (S.filter (fun v => ¬(v ≠ u ∧ v ≠ -u))).card ≤ 2 by
-    have := Finset.card_filter_add_card_filter_not (s := S) (fun v => v ≠ u ∧ v ≠ -u)
+    have := Finset.filter_card_add_filter_neg_card_eq_card (s := S) (p := fun v => v ≠ u ∧ v ≠ -u)
     omega
   have hsub : S.filter (fun v => ¬(v ≠ u ∧ v ≠ -u)) ⊆ {u, -u} := by
     intro v hv
@@ -455,7 +470,7 @@ lemma shifted_ne_zero_of_alpha_lt_one
 
 theorem binary_johnson_card_bound_parametric
     {n d w : ℕ}
-    (hn : 0 < n)
+    (_hn : 0 < n)
     (C : Finset (BitVec n))
     (hpair : ∀ x ∈ C, ∀ y ∈ C, x ≠ y → d ≤ hdist x y)
     (hwt : ∀ x ∈ C, wt x ≤ w)
@@ -511,7 +526,7 @@ theorem binary_johnson_card_bound_parametric
     intro z hz
     rcases Finset.mem_image.mp hz with ⟨x, hxC, rfl⟩
     have hx0 : u x ≠ 0 := hnonzero x hxC
-    simp [normalize, hx0];
+    simp [normalize];
     -- The norm of a scalar multiple of a vector is the absolute value of the scalar times the norm of the vector
     simp [norm_smul, hx0]
 
@@ -528,7 +543,7 @@ theorem binary_johnson_card_bound_parametric
     have hbase : ⟪u x, u y⟫_[ℝ] ≤ 0 := hpair_u x hxC y hyC hxy
     -- Since the norms are 1 the inner product simplifies to the inner product of the original vectors
     have h_inner_simplified : ⟪normalize (u x), normalize (u y)⟫_[ℝ] = (1 / (‖u x‖ * ‖u y‖)) * ⟪u x, u y⟫_[ℝ] := by
-      simp +decide [ normalize, hx0, hy0, RCLike.wInner ] ; ring;
+      simp +decide [ normalize, RCLike.wInner ] ; ring_nf;
       simp +decide only [mul_assoc, mul_left_comm, Finset.mul_sum _ _ _];
     exact h_inner_simplified.symm ▸ mul_nonpos_of_nonneg_of_nonpos ( one_div_nonneg.mpr ( mul_nonneg ( norm_nonneg _ ) ( norm_nonneg _ ) ) ) hbase
 

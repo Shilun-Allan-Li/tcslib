@@ -2,7 +2,6 @@ import TCSlib.BooleanAnalysis.LMN.CircuitCompression
 import TCSlib.BooleanAnalysis.LMN.CompressionStep
 import TCSlib.BooleanAnalysis.LMN.CircuitReindex
 import TCSlib.BooleanAnalysis.LMN.GateMerge
-import Mathlib
 
 /-!
 # Circuit Tree Manipulation for LMN Layer Reduction
@@ -152,7 +151,7 @@ lemma or_of_lit_children_dnf
   -- By definition of `Circuit.eval`, we know that `Circuit.node false cs` evaluates to the OR of the children's functions.
   have h_eval_or : ∀ x, (Circuit.node false cs).eval (fun i => gates i x) = (cs.any (fun c => f c x)) := by
     intro x
-    simp [Circuit.eval, hf₂];
+    simp [Circuit.eval];
     induction cs <;> aesop;
   obtain ⟨ φ, hφ₁, hφ₂ ⟩ := compression_or_of_dnfs ( cs.map f ) l ( by aesop );
   use φ; aesop;
@@ -203,7 +202,7 @@ lemma absorbOneLevel_depth1
             c_top'.eval (fun j => (data'.gates j).eval x)) := by
   -- Extract the node using Circuit.exists_node_of_depth_ge_one.
   obtain ⟨isAnd, cs, hc⟩ : ∃ isAnd cs, c_top = Circuit.node isAnd cs := Circuit.exists_node_of_depth_ge_one c_top h_depth_ge;
-  by_cases h : isAnd <;> simp_all +decide only [Circuit.node];
+  by_cases h : isAnd <;> simp_all +decide only;
   · obtain ⟨ ψ, hψ₁, hψ₂ ⟩ := and_of_lit_children_cnf cs ( fun i => ( data.gates i ).eval ) l ( Circuit.depth1_all_lits true cs h_depth_le ) ( fun i => by obtain ⟨ φ, hφ₁, hφ₂, hφ₃, hφ₄ ⟩ := hDNF_fn i; exact ⟨ φ, hφ₁, hφ₂ ⟩ ) ( fun i => by obtain ⟨ ψ, hψ₁, hψ₂ ⟩ := hCNF_fn i; exact ⟨ ψ, hψ₁, hψ₂ ⟩ );
     -- Use the CNF ψ to construct the new Layer2Data and Circuit.
     use ⟨1, fun _ => cleanDNF (cnfToDualDNF ψ), l, by
@@ -212,7 +211,7 @@ lemma absorbOneLevel_depth1
       exact fun i t ht l₁ hl₁ l₂ hl₂ h => cleanDNF_var_inj _ _ ht _ hl₁ _ hl₂ h, by
       exact fun _ _ ht => cleanDNF_nodup _ _ ht⟩, Circuit.lit ⟨0, false⟩
     generalize_proofs at *;
-    simp +decide [ Circuit.eval, hψ₂ ];
+    simp +decide [ Circuit.eval ];
     simp +decide [ Circuit.depth, cleanDNF_eval ];
     simp +decide [ Circuit.eval, cnfToDualDNF_eval ] at hψ₂ ⊢;
     exact fun x => hψ₂ x ▸ rfl;
@@ -247,7 +246,7 @@ lemma child_depth_le1_has_signed_dnf
       (∀ t ∈ φ, t.Nodup) := by
   by_cases h : c_j.depth = 0;
   · obtain ⟨lr, hr⟩ : ∃ lr : Lit m, c_j = Circuit.lit lr := by
-      exact?;
+      exact Circuit.depth0_is_lit c_j h;
     by_cases h : lr.sign <;> simp_all +decide [ Circuit.eval ];
     · obtain ⟨ φ, hφ₁, hφ₂ ⟩ := hDNF lr.idx;
       use cleanDNF φ;
@@ -361,7 +360,7 @@ lemma exists_circuit_depth_reduction_depth2
       intro l; induction l <;> simp +decide [ * ] ;
     convert h_foldr_eq ( List.finRange cs.length ) using 1;
     · refine' List.recOn cs _ _ <;> simp +decide [ List.finRange_succ ];
-      intro head tail ih; rw [ List.foldr_map ] ; simp +decide [ List.finRange_succ ] ;
+      intro head tail ih; rw [ List.foldr_map ] ; simp +decide ;
       rw [ ih ];
     · induction ( List.finRange cs.length ) <;> simp +decide [ * ];
       simp +decide [ Circuit.eval, h_eval ];
@@ -412,7 +411,7 @@ lemma node_eval_eq_of_finRange_map {m M : ℕ}
     (Circuit.node isAnd cs).eval g =
     (Circuit.node isAnd ((List.finRange cs.length).map new_cs)).eval g' := by
   unfold Circuit.eval;
-  cases isAnd <;> simp_all +decide [ List.finRange, List.map ];
+  cases isAnd <;> simp_all +decide [ List.finRange ];
   · have h_foldr_eq : ∀ (l : List (Fin cs.length)), List.foldr (fun c acc => c.eval g || acc) false (List.map (fun j => cs[j]) l) = List.foldr (fun c acc => c.eval g' || acc) false (List.map (fun j => new_cs j) l) := by
       intro l; induction l <;> aesop;
     convert h_foldr_eq ( List.finRange cs.length ) using 1;
@@ -423,7 +422,7 @@ lemma node_eval_eq_of_finRange_map {m M : ℕ}
 
 lemma exists_circuit_depth_reduction
     {m : ℕ} (c : Circuit m) (gates : Fin m → (Fin n → Bool) → Bool)
-    (l : ℕ) (hl : 0 < l) (h_depth : 1 ≤ c.depth)
+    (l : ℕ) (_hl : 0 < l) (h_depth : 1 ≤ c.depth)
     (hDNF : ∀ i, ∃ φ : DNF n, φ.width ≤ l ∧
       (∀ x, φ.eval x = gates i x) ∧
       (∀ t ∈ φ, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂) ∧

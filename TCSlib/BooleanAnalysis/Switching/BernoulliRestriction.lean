@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.Switching.Restriction
-import Mathlib
 
 /-!
 # Bernoulli Random Restriction Model
@@ -55,7 +54,7 @@ lemma bernoulliRestrWeight_nonneg' (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
 The Bernoulli restriction weights sum to 1. This follows from the multinomial
     theorem: `(p + (1-p)/2 + (1-p)/2)^n = 1^n = 1`.
 -/
-lemma bernoulliRestrWeight_sum_one (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1) :
+lemma bernoulliRestrWeight_sum_one (p : ℝ) (_hp : 0 ≤ p) (_hp1 : p ≤ 1) :
     ∑ ρ : Restriction n, bernoulliRestrWeight p ρ = 1 := by
   -- We can rewrite the sum as a product of sums over each variable.
   have h_prod_sum : ∑ ρ : Fin n → Option Bool, p ^ (Finset.univ.filter (fun i => ρ i = none)).card * ((1 - p) / 2) ^ (n - (Finset.univ.filter (fun i => ρ i = none)).card) = ∏ i : Fin n, (∑ ρ_i : Option Bool, (if ρ_i = none then p else (1 - p) / 2)) := by

@@ -128,7 +128,7 @@ lemma roundtrip_inv_hC' {n : ℕ}
         match t_clause.drop e.1 with | [] => σ' | l :: _ => Function.update σ' l.var none)
       σ_dec v = σ v := by
   by_cases hv' : ρ₀ v = none <;> simp_all +decide ;
-  · exact?;
+  · exact processClauseLits_foldl_sigma_none t_clause lits path ρ₀ σ σ_dec v (fun p => hmem_zip p.1 p.2) hv' hv;
   · convert foldl_sigma_stable t_clause ( processClauseLits lits path ρ₀ σ |> Prod.snd |> Prod.snd |> Prod.snd ) σ_dec v _ using 1;
     · rw [ hC v hv' ];
     · apply_rules [ SwitchingLemma2.processClauseLits_aux_ne_nonfree ];
@@ -158,7 +158,8 @@ lemma roundtrip_inv_hD' {n : ℕ}
       grind +ring;
     convert foldl_rho_stable t_clause ( processClauseLits lits path ρ₀ σ |>.2.2.2 ) ρ₀_dec v _ using 1;
     · rw [ hD v hfree, processClauseLits_rho_stable lits path ρ₀ σ v hnone ];
-    · exact?
+    · exact fun e a l rest a_1 =>
+        processClauseLits_aux_ne_nonfree t_clause lits path ρ₀ σ v hmem_zip hnone e a l rest a_1
 
 /-! ## Main round-trip theorem -/
 

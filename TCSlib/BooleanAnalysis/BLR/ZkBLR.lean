@@ -4,7 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Prastik Mohanraj
 -/
 
-import Mathlib
+import Mathlib.Algebra.Field.ZMod
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.GCongr
+import Mathlib.Tactic.SplitIfs
 import TCSlib.BooleanAnalysis.BLR.ZkFourier
 
 set_option maxHeartbeats 0

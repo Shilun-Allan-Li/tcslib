@@ -8,9 +8,11 @@
     • Lemma 8.10: Spectral Norm Bound
     • Lemma 8.1: 3-XOR Refutation (combining the above)
 -/
-import Mathlib
-import RequestProject.LDC.Defs
-import RequestProject.LDC.BackgroundFacts
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import TCSlib.KikuchiLDC.LDC.Defs
+import TCSlib.KikuchiLDC.LDC.BackgroundFacts
 
 open Finset BigOperators
 
@@ -30,7 +32,7 @@ noncomputable section
     satisfying the structural relationship, the bound holds. -/
 theorem cauchy_schwarz_trick
     (n m : ℕ) (val_f val_fLR : ℝ)
-    (hn : 0 < n) (hm : 0 < m)
+    (_hn : 0 < n) (_hm : 0 < m)
     (h : 9 * val_f ^ 2 ≤ 3 * (n : ℝ) * m + 4 * n * val_fLR) :
     val_f ^ 2 ≤ (n : ℝ) * m / 3 + 4 * n * val_fLR / 9 := by
   linarith
@@ -48,9 +50,9 @@ theorem cauchy_schwarz_trick
     The fraction of bad Q's is bounded by O(nk·ℓ²/n² + k·ℓ/n) ≤ 1/2
     when ℓ ≤ √(n/k)/c. -/
 theorem nonzero_entry_count
-    (n k ell : ℕ) (hn : 4 ≤ n) (hk : 0 < k) (hell : 2 ≤ ell)
-    (hln : 2 * ell ≤ 2 * n)
-    (hsmall : ell ^ 2 * k ≤ n)  -- ensures ℓ ≤ √(n/k)
+    (n k ell : ℕ) (_hn : 4 ≤ n) (_hk : 0 < k) (_hell : 2 ≤ ell)
+    (_hln : 2 * ell ≤ 2 * n)
+    (_hsmall : ell ^ 2 * k ≤ n)  -- ensures ℓ ≤ √(n/k)
     :
     -- The number of good pairs is at least 2 · C(2n-4, ℓ-2)
     -- We state: 2 · C(2n-4, ℓ-2) ≤ 4 · C(2n-4, ℓ-2)
@@ -83,7 +85,7 @@ theorem row_bound_le_two_d (d : ℕ) (row_nnz : ℕ)
     where N = C(2n,ℓ) and D = 2·C(2n-4,ℓ-2). -/
 theorem spectral_certificate_bound
     (val_fLR N D spectral_norm_A : ℝ)
-    (hD : 0 < D) (hN : 0 < N)
+    (_hD : 0 < D) (_hN : 0 < N)
     (h : val_fLR ≤ N / D * spectral_norm_A) :
     val_fLR ≤ N / D * spectral_norm_A := h
 
@@ -118,8 +120,8 @@ theorem spectral_norm_bound
     - Spectral norm (Lemma 8.10): 𝔼[‖A‖₂] ≤ d·O(√(k·ℓ·log n))
     - Choosing ℓ = Θ(√(n/k)) and combining. -/
 theorem three_xor_refutation
-    (k n d : ℕ) (hk : 0 < k) (hn : 2 ≤ n) (hd : 0 < d)
-    (m : ℕ) (hm : m ≤ n * k) :
+    (k n d : ℕ) (_hk : 0 < k) (_hn : 2 ≤ n) (_hd : 0 < d)
+    (m : ℕ) (_hm : m ≤ n * k) :
     ∃ (C₂ : ℝ), C₂ > 0 ∧
     -- The bound: 𝔼_b[val(f_b)] ≤ C₂ · n · √k · d · (n·k)^(1/8) · log^(1/4)(n)
     ∀ (val_f_expected : ℝ),

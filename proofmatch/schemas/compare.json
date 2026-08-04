@@ -6,7 +6,7 @@
   "properties": {
     "lean_name": {"type": "string"},
     "document_blocks": {"type": "array", "items": {"type": "string"}},
-    "verdict": {"enum": ["same", "different", "uncertain"]},
+    "verdict": {"enum": ["same", "method_divergence", "not_in_text", "different", "uncertain"]},
     "confidence": {"type": "number", "minimum": 0, "maximum": 1},
     "differences": {"type": "array", "items": {"type": "string"}},
     "evidence": {"type": "array", "items": {"type": "string"}},

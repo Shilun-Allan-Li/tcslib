@@ -5,6 +5,7 @@ Authors: Harsha Polavaram
 -/
 
 import TCSlib.GraphTheory.Kruskal.UnionFind
+import Mathlib.Tactic.Linarith
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -143,7 +144,7 @@ lemma uf_exchange {n : ℕ} (uf : UF n) (base S : List (WEdge n)) (e : WEdge n)
       · exact reach_mono (.single ⟨g, hg2, hg'⟩) (fun x hx => List.mem_append_left _ hx)
       · exact reach_mono (.single ⟨g, List.mem_of_mem_erase hg2, hg'⟩)
               (fun x hx => List.mem_append_right _ hx)
-    · have hge : g = e := List.mem_singleton.mp hg1
+    · have hge : e = g := (List.mem_singleton.mp hg1).symm
       subst hge
       have hreach_e : Reach (base ++ S) e.u e.v :=
         (mergeAll_iff_reach uf base S huf e.u e.v).mp hconn

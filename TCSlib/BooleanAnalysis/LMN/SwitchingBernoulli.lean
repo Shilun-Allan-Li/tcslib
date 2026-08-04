@@ -1,6 +1,5 @@
 import TCSlib.BooleanAnalysis.Switching
 import TCSlib.BooleanAnalysis.LMN.BernoulliCost
-import Mathlib
 
 /-!
 # Bernoulli Switching Lemma (Step 3 of LMN)
@@ -62,7 +61,7 @@ lemma fixedSizeRestrs_card (k : ℕ) (hk : k ≤ n) :
           cases h' : ρ i <;> aesop)
           generalize_proofs at *;
           grind;
-        · obtain ⟨ a, ha, b, rfl ⟩ := h; simp +decide [ Finset.filter_congr, ha ] ;
+        · obtain ⟨ a, ha, b, rfl ⟩ := h; simp +decide [ha] ;
       rw [ h_count, Finset.card_biUnion ];
       · refine' Finset.sum_congr rfl fun s hs => _;
         rw [ Finset.card_image_of_injective ];

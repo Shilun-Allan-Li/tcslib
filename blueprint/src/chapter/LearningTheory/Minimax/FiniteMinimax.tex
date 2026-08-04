@@ -6,7 +6,7 @@ This module develops finite two-player zero-sum games and proves an approximate
 minimax theorem via the Hedge (multiplicative weights) algorithm.  The main
 results are weak duality---showing that the row player's mixed-strategy minimum
 payoff never exceeds the column player's mixed-strategy maximum payoff---and
-\lean{approx\_minimax}, which constructs an $\varepsilon$-approximate saddle
+\lean{approx_minimax}, which constructs an $\varepsilon$-approximate saddle
 point for any $\varepsilon > 0$ by running Hedge for sufficiently many rounds
 against column best responses.
 
@@ -392,6 +392,6 @@ $i, j$,
   \;\ge\;
   \mathrm{pureVsPayoff}(G, i, q).
 \]
-This is the same guarantee as \lean{approx\_minimax}, stated in the
+This is the same guarantee as \lean{approx_minimax}, stated in the
 $\forall \varepsilon > 0, \exists p, q$ form.
 \end{theorem}

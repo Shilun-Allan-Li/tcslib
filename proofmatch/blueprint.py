@@ -16,6 +16,14 @@ PROOF_SOURCE_RE = re.compile(
     r"\\proofsource\{([^}]*)\}\{([^}]*)\}",
     re.DOTALL,
 )
+STATEMENT_SOURCE_RE = re.compile(
+    r"\\statementsource\{([^}]*)\}\{([^}]*)\}",
+    re.DOTALL,
+)
+SOURCE_MACROS = {
+    "proofsource": PROOF_SOURCE_RE,
+    "statementsource": STATEMENT_SOURCE_RE,
+}
 PROOF_STEP_RE = re.compile(
     r"\\proofstep\s*"
     r"\{([^}]*)\}\s*"
@@ -64,6 +72,11 @@ class SourceProposal:
     tex_path: Path
     lean_name: str
     source: ProofSource
+    macro: str = "proofsource"
+
+    def __post_init__(self):
+        if self.macro not in SOURCE_MACROS:
+            raise ValueError(f"unknown source macro: {self.macro}")
 
 
 @dataclass(frozen=True)
@@ -80,7 +93,11 @@ class BlueprintMutation:
     updated: str
 
 
-def parse_proof_sources(tex: str) -> dict[str, tuple[ProofSource, ...]]:
+def parse_proof_sources(
+    tex: str,
+    macro: str = "proofsource",
+) -> dict[str, tuple[ProofSource, ...]]:
+    source_re = SOURCE_MACROS[macro]
     result: dict[str, list[ProofSource]] = {}
     for environment in ENV_RE.findall(tex):
         bindings = [
@@ -90,7 +107,7 @@ def parse_proof_sources(tex: str) -> dict[str, tuple[ProofSource, ...]]:
             if name.strip() and not name.strip().startswith("[")
         ]
         sources = []
-        for match in PROOF_SOURCE_RE.finditer(environment):
+        for match in source_re.finditer(environment):
             blocks = tuple(
                 block.strip()
                 for block in match.group(2).split(",")
@@ -131,11 +148,11 @@ def parse_proof_steps(tex: str) -> dict[str, tuple[ProofStep, ...]]:
     return {name: tuple(steps) for name, steps in result.items()}
 
 
-def _format_source(source: ProofSource) -> str:
+def _format_source(source: ProofSource, macro: str = "proofsource") -> str:
     if len(source.blocks) == 1:
-        return f"\\proofsource{{{source.document}}}{{{source.blocks[0]}}}"
+        return f"\\{macro}{{{source.document}}}{{{source.blocks[0]}}}"
     body = ",\n  ".join(source.blocks)
-    return f"\\proofsource{{{source.document}}}{{\n  {body}\n}}"
+    return f"\\{macro}{{{source.document}}}{{\n  {body}\n}}"
 
 
 def _format_step(step: ProofStep) -> str:
@@ -153,6 +170,7 @@ def plan_source_insert(
     tex: str,
     lean_name: str,
     source: ProofSource,
+    macro: str = "proofsource",
 ) -> str:
     target_match = None
     for match in ENV_RE.finditer(tex):
@@ -167,11 +185,21 @@ def plan_source_insert(
     if target_match is None:
         raise ValueError(f"no blueprint environment binds {lean_name}")
     environment = target_match.group(0)
-    existing = parse_proof_sources(environment).get(lean_name, ())
-    if source in existing:
-        return tex
-    if any(prior.document == source.document for prior in existing):
-        raise ValueError(f"proof-source conflict for {lean_name}")
+    existing = parse_proof_sources(environment, macro).get(lean_name, ())
+    prior_blocks = {
+        block
+        for prior in existing
+        if prior.document == source.document
+        for block in prior.blocks
+    }
+    if prior_blocks:
+        # Block order is not meaningful, so a re-run that cites the same blocks
+        # in a different order — or a narrower rerun that cites a subset of them
+        # — has nothing to add. Only genuinely new blocks are a real conflict.
+        if set(source.blocks) <= prior_blocks:
+            return tex
+        label = "proof-source" if macro == "proofsource" else "statement-source"
+        raise ValueError(f"{label} conflict for {lean_name}")
     lean_match = next(
         match
         for match in LEAN_RE.finditer(environment)
@@ -182,7 +210,7 @@ def plan_source_insert(
     leanok = re.match(r"\n[ \t]*\\leanok[ \t]*", after_lean)
     if leanok:
         insertion_at += leanok.end()
-    annotation = "\n" + _format_source(source)
+    annotation = "\n" + _format_source(source, macro)
     updated_environment = (
         environment[:insertion_at] + annotation + environment[insertion_at:]
     )
@@ -271,7 +299,7 @@ def plan_blueprint_mutations(
             updates[path] = originals[path]
         if isinstance(proposal, SourceProposal):
             updates[path] = plan_source_insert(
-                updates[path], proposal.lean_name, proposal.source
+                updates[path], proposal.lean_name, proposal.source, proposal.macro
             )
         elif isinstance(proposal, StepProposal):
             updates[path] = plan_step_insert(

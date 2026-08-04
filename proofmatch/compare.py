@@ -37,7 +37,13 @@ def verdict_from_agent(value: dict[str, object]) -> ComparisonVerdict:
     if missing:
         raise ValueError(f"comparison output missing: {', '.join(missing)}")
     verdict = str(value["verdict"])
-    if verdict not in {"same", "different", "uncertain"}:
+    if verdict not in {
+        "same",
+        "method_divergence",
+        "not_in_text",
+        "different",
+        "uncertain",
+    }:
         raise ValueError(f"invalid comparison verdict: {verdict}")
     differences = _string_tuple(value["differences"], "differences")
     if verdict == "same" and differences:
@@ -108,7 +114,7 @@ def compare_candidate(
             "comparison cites unavailable document blocks: "
             + ", ".join(invalid)
         )
-    if not verdict.document_blocks:
+    if not verdict.document_blocks and verdict.verdict != "not_in_text":
         raise ValueError("comparison must cite at least one document block")
     return verdict
 
@@ -138,7 +144,10 @@ def render_difference_report(
     verdicts: Sequence[ComparisonVerdict],
 ) -> str | None:
     reportable = [
-        verdict for verdict in verdicts if verdict.verdict in {"different", "uncertain"}
+        verdict
+        for verdict in verdicts
+        if verdict.verdict
+        in {"method_divergence", "not_in_text", "different", "uncertain"}
     ]
     if not reportable:
         return None

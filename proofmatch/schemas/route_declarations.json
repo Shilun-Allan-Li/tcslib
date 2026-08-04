@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["declarations"],
+  "properties": {
+    "declarations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["lean_name", "tier", "document_blocks", "rationale"],
+        "properties": {
+          "lean_name": {"type": "string"},
+          "tier": {"enum": ["proves", "states", "background", "unrelated"]},
+          "document_blocks": {"type": "array", "items": {"type": "string"}},
+          "rationale": {"type": "string"}
+        }
+      }
+    }
+  }
+}

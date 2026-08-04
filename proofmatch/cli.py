@@ -37,20 +37,6 @@ DEFAULT_DATASET = REPOSITORY / "dataset" / "tcslib_theorems.jsonl"
 DEFAULT_DEPENDENCY_GRAPH = REPOSITORY / "dep_graph.json"
 DEFAULT_BLUEPRINT_ROOT = REPOSITORY / "blueprint" / "src" / "chapter"
 WORK_ROOT = REPOSITORY / ".proofmatch-work"
-FIXTURE_NAME = "switching-lemma.pdf"
-
-
-class ProofmatchParser(argparse.ArgumentParser):
-    def parse_args(self, args=None, namespace=None):
-        parsed = super().parse_args(args, namespace)
-        source = getattr(parsed, "source", None)
-        if (
-            getattr(parsed, "max_cost", None) is None
-            and source is not None
-            and Path(source).name == FIXTURE_NAME
-        ):
-            parsed.max_cost = Decimal("1.00")
-        return parsed
 
 
 def _add_budget(parser: argparse.ArgumentParser) -> None:
@@ -58,7 +44,7 @@ def _add_budget(parser: argparse.ArgumentParser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = ProofmatchParser(prog="proofmatch")
+    parser = argparse.ArgumentParser(prog="proofmatch")
     subcommands = parser.add_subparsers(dest="command", required=True)
 
     estimate = subcommands.add_parser("estimate")
@@ -107,8 +93,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _budget(args: argparse.Namespace) -> Budget:
-    if args.max_cost is None:
-        raise ValueError("--max-cost is required for non-fixture paid runs")
+    # No --max-cost means an uncapped run; spend is still tracked.
     return Budget(args.max_cost)
 
 
@@ -254,10 +239,29 @@ def _match(
     )
     if report_path is not None:
         print(f"Differences or uncertainties: {report_path}")
+    informalize = result.get("informalize") or []
+    if informalize:
+        queue_path = store.stage_path("informalize_queue", ".md")
+        lines = [
+            "# Lean proofs to informalize into .md",
+            "",
+            "These statements are too granular for the source document (or are",
+            "bare exercises with no attempted proof there). An LLM pass should",
+            "informalize each Lean proof into Markdown.",
+            "",
+        ]
+        for item in informalize:
+            nearest = ", ".join(item.get("nearest_blocks") or []) or "none"
+            lines.append(f"- `{item['lean_name']}` — {item['note']}")
+            lines.append(f"  (nearest blocks: {nearest})")
+        queue_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(f"Informalization queue ({len(informalize)}): {queue_path}")
     same = sum(item.verdict == "same" for item in verdicts)
+    divergent = sum(item.verdict == "method_divergence" for item in verdicts)
     print(
         f"Chapter run {run_id}: {len(verdicts)} compared; "
-        f"{same} same and propagated"
+        f"{same} same and propagated; {divergent} method-divergent "
+        "(statement-cited)"
     )
     failures = result.get("propagation_failures", [])
     if failures:
@@ -367,8 +371,6 @@ def _map_upstream(
     *,
     dry_run: bool,
 ) -> int:
-    if max_cost is None:
-        raise ValueError("--max-cost is required for upstream mapping")
     store = RunStore(WORK_ROOT, run_id)
     review = _approved_same_review(store)
     candidate = review.get("candidate")
@@ -394,10 +396,11 @@ def _map_upstream(
     for estimate in estimates:
         estimate_budget.require(estimate)
     mapping_estimate = estimate_budget.spent_usd - prior_spend
+    cap_text = f"{max_cost:.2f}" if max_cost is not None else "uncapped"
     print(
         f"Upstream mapping: {len(declarations)} declarations in "
         f"{len(batches)} batches; estimated additional ${mapping_estimate:.6f}; "
-        f"estimated total ${estimate_budget.spent_usd:.6f}/{max_cost:.2f}"
+        f"estimated total ${estimate_budget.spent_usd:.6f}/{cap_text}"
     )
     if dry_run:
         return 0

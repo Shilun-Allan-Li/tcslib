@@ -38,6 +38,11 @@ class AgentOutputError(RuntimeError):
     pass
 
 
+class AgentInvocationError(AgentOutputError):
+    """The claude CLI itself failed (outage, usage limit, auth) — distinct from
+    a successful invocation returning malformed output."""
+
+
 def validate_output_schema(value: object, location: str = "$") -> None:
     if isinstance(value, dict):
         if "uniqueItems" in value:
@@ -230,8 +235,20 @@ class ClaudeAgent:
                 )
             except (OSError, subprocess.CalledProcessError) as error:
                 stderr = getattr(error, "stderr", "") or ""
-                raise AgentOutputError(
-                    f"claude invocation failed: {stderr.strip()}"
+                stdout = getattr(error, "stdout", "") or ""
+                # The CLI reports API failures as a JSON envelope on stdout;
+                # surface its result message (e.g. content-filter blocks)
+                # instead of a truncated envelope prefix.
+                detail = ""
+                try:
+                    envelope_value = json.loads(stdout)
+                    if isinstance(envelope_value, dict):
+                        detail = str(envelope_value.get("result") or "")
+                except json.JSONDecodeError:
+                    pass
+                detail = detail or stderr.strip() or stdout.strip()[:300]
+                raise AgentInvocationError(
+                    f"claude invocation failed: {detail}"
                 ) from error
         output = parse_agent_output(result.stdout)
         structured = output["structured_output"]

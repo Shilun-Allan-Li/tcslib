@@ -97,7 +97,7 @@ lemma expect_succ_eq_iterated (h : BooleanFunc (n + 1)) :
 
 /-! ## Norm Collapse (Fubini) -/
 
-lemma norm_collapse_rpow (p : ℝ) (hp : 0 < p) (f : BooleanFunc (n + 1)) :
+lemma norm_collapse_rpow (p : ℝ) (_hp : 0 < p) (f : BooleanFunc (n + 1)) :
     expect (fun x => |f x| ^ p) =
     expect (fun x' => (1/2 : ℝ) *
       (|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p)) := by
@@ -154,7 +154,7 @@ lemma one_bit_slice_eq_innerProduct (ρ : ℝ) (f g : BooleanFunc (n + 1))
 /-
 The one-bit `L^p` norm of the slice `t ↦ f(snoc x' (t 0))`.
 -/
-lemma one_bit_norm_slice (p : ℝ) (hp : 0 < p) (f : BooleanFunc (n + 1)) (x' : BoolCube n) :
+lemma one_bit_norm_slice (p : ℝ) (_hp : 0 < p) (f : BooleanFunc (n + 1)) (x' : BoolCube n) :
     (expect (fun t : BoolCube 1 => |f (Fin.snoc x' (t 0))| ^ p)) ^ (1/p) =
     ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ^ (1/p) := by
   unfold expect;
@@ -389,7 +389,7 @@ prove the remaining one-function cases to obtain the general one function result
 One function (p, q) hypercontractivity iff two-function (p, q') hypercontractivity -/
 theorem one_function_iff_two_function_hypercontractivity {n : ℕ} (p q : ℝ)
     (hp1 : 1 ≤ p) (hpq : p ≤ q) (hq : 2 ≤ q)
-    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
+    (ρ : ℝ) (_hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1)
     (hρ_bound : ρ ≤ Real.sqrt ((p - 1) / (q - 1))) :
     -- One-function hypercontractivity
     (∀ f : BooleanFunc n,
@@ -445,7 +445,7 @@ theorem weak_two_function_hypercontractivity
 /-
 The noise kernel sums to 1 over the second argument.
 -/
-lemma noiseKernel_sum_right {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
+lemma noiseKernel_sum_right {ρ : ℝ} (_hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1)
     (x : BoolCube n) : ∑ y : BoolCube n, noiseKernel ρ x y = 1 := by
   unfold noiseKernel;
   -- The sum over y factorizes as a product of independent sums over each bit.
@@ -499,7 +499,7 @@ lemma trivial_contractivity {n : ℕ} (s : ℝ) (hs : 1 ≤ s)
 Duality / Adjointness of operator norms
 -/
 lemma noise_op_norm_dual {n : ℕ} (p q : ℝ) (hp : 1 < p) (hq : 1 < q)
-    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
+    (ρ : ℝ) (_hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1) :
     (∀ f : BooleanFunc n,
       (expect (fun x => |noiseOp ρ f x| ^ q)) ^ (1 / q) ≤
       (expect (fun x => |f x| ^ p)) ^ (1 / p))
@@ -647,7 +647,7 @@ lemma convex_sym_sum_mono {f : ℝ → ℝ} (hf : ConvexOn ℝ (Set.Ici 0) f)
 For 0 < b < 1, the function α ↦ b^α is convex (exponential with base < 1).
 -/
 lemma rpow_sum_antitone_exponent {p q : ℝ} {x : ℝ}
-    (hx0 : 0 < x) (hx1 : x < 1) (hp0 : p ≤ 0) (hpq : p ≤ q) (hq0 : q ≤ 0) :
+    (hx0 : 0 < x) (hx1 : x < 1) (_hp0 : p ≤ 0) (hpq : p ≤ q) (hq0 : q ≤ 0) :
     (1 + x) ^ p + (1 - x) ^ p ≥ (1 + x) ^ q + (1 - x) ^ q := by
   by_contra! h_contra;
   -- Let's define the function \( f(t) = (1 + x)^t + (1 - x)^t \) and show that its derivative is non-positive on \((-\infty, 0]\).
@@ -994,7 +994,7 @@ and applying the low-norms case.
 -/
 theorem high_norms_hypercontractivity {n : ℕ}
     (p u : ℝ) (hp : 2 ≤ p) (hpu : p ≤ u)
-    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
+    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1)
     (hρ_bound : ρ ≤ Real.sqrt ((p - 1) / (u - 1)))
     (f : BooleanFunc n) :
     (expect (fun x => |noiseOp ρ f x| ^ u)) ^ (1 / u) ≤

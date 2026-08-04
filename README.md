@@ -32,17 +32,25 @@ must be installed and authenticated); model tiers are configured in
 
 ```bash
 # Free local extraction only
-python3 scripts/proofmatch.py extract notes.pdf --local-only --max-cost 1.00
+python3 scripts/proofmatch.py extract notes.pdf --local-only
 
 # Estimate before paid agent stages
 python3 scripts/proofmatch.py estimate notes.pdf
 
 # Full extraction, selective visual repair, search, and comparison
-python3 scripts/proofmatch.py run notes.pdf --max-cost 1.00
+python3 scripts/proofmatch.py run notes.pdf
 
 # Start downstream matching from existing validated Markdown
-python3 scripts/proofmatch.py match notes.md --max-cost 1.00
+python3 scripts/proofmatch.py match notes.md
 ```
+
+Runs are uncapped by default, so no stage is skipped for want of budget; spend
+is still tracked and reported. `--max-cost N` optionally caps estimated spend
+(capped runs degrade gracefully and persist partial reviews). Verdicts: `same` (proof matches →
+`\proofsource` + `\proofstep`), `method_divergence` (statement in the text,
+different proof → `\statementsource`), `not_in_text` (too granular for the text
+or a bare exercise → queued in `informalize_queue.md` for a later LLM pass that
+informalizes the Lean proof), `different`, `uncertain`.
 
 The workflow stores both `notes.raw.md` and `notes.md`. It writes no blueprint
 proof-source metadata until the user explicitly approves a generated review with

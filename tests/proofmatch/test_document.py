@@ -165,6 +165,42 @@ Proof x ? 1
                     Budget(Decimal("1.00")),
                 )
 
+    def test_ambiguity_for_an_unemitted_block_is_reported_not_fatal(self):
+        agent = FakeAgent()
+        original = agent.run
+
+        def phantom(prompt_name, payload, schema_name=None, images=()):
+            value = original(prompt_name, payload, schema_name, images)
+            if prompt_name == "cleanup":
+                value["ambiguities"] = [
+                    {"page": 30, "sequence": 1, "reason": "unparsable page"}
+                ]
+            return value
+
+        agent.run = phantom
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            raw = root / "notes.raw.md"
+            raw.write_text(
+                "<!-- source-pdf-sha256: abcdef1234567890 -->\n"
+                "<!-- pdf-page: 1 -->\ntext\n"
+                "<!-- pdf-page: 2 -->\nmore text\n",
+                encoding="utf-8",
+            )
+            output = root / "notes.md"
+            index = repair_document(
+                raw, output, agent, Budget(Decimal("1.00"))
+            )
+
+            # The surviving blocks are still written rather than discarded, and
+            # no page is rendered for visual validation of a phantom block.
+            self.assertTrue(output.exists())
+            self.assertEqual(len(index.blocks), 2)
+            self.assertFalse(
+                [call for call in agent.calls if call[2]],
+                "no visual validation should be requested",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

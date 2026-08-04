@@ -3,8 +3,12 @@ from __future__ import annotations
 from collections.abc import Sequence
 from decimal import Decimal
 
-from proofmatch.agents import DEFAULT_MODEL
-from proofmatch.budget import Budget, StageEstimate, token_cost
+from proofmatch.agents import (
+    DEFAULT_MODEL,
+    AgentInvocationError,
+    AgentOutputError,
+)
+from proofmatch.budget import Budget, BudgetExceeded, StageEstimate, token_cost
 from proofmatch.models import (
     Candidate,
     DocumentIndex,
@@ -143,10 +147,51 @@ def classify_relevance(
     budget: Budget,
 ) -> tuple[RelevanceDecision, ...]:
     decisions = []
-    for batch in _candidate_batches(candidates):
-        budget.require(_estimate_relevance_batch(batch, index))
-        output = agent.run(
-            "relevance", prepare_relevance_payload(batch, index)
-        )
-        decisions.extend(decisions_from_agent(output, batch, index))
+    batches = list(_candidate_batches(candidates))
+    for position, batch in enumerate(batches):
+        try:
+            budget.require(_estimate_relevance_batch(batch, index))
+        except BudgetExceeded:
+            # Cap gracefully: unclassified candidates are marked irrelevant so
+            # they are excluded from comparison rather than crashing the run.
+            for candidate in batch:
+                decisions.append(
+                    RelevanceDecision(
+                        candidate.lean_name,
+                        "irrelevant",
+                        (),
+                        "unclassified: relevance budget exhausted",
+                    )
+                )
+            continue
+        try:
+            output = agent.run(
+                "relevance", prepare_relevance_payload(batch, index)
+            )
+            decisions.extend(decisions_from_agent(output, batch, index))
+        except AgentInvocationError as error:
+            # The CLI itself is down (outage, usage limit): stop hammering it
+            # and mark everything left so the review shows a degraded run.
+            for remaining in batches[position:]:
+                for candidate in remaining:
+                    decisions.append(
+                        RelevanceDecision(
+                            candidate.lean_name,
+                            "irrelevant",
+                            (),
+                            f"unclassified: agent unavailable: {error}",
+                        )
+                    )
+            break
+        except (AgentOutputError, ValueError) as error:
+            # A malformed batch answer costs one batch, not the whole run.
+            for candidate in batch:
+                decisions.append(
+                    RelevanceDecision(
+                        candidate.lean_name,
+                        "irrelevant",
+                        (),
+                        f"unclassified: relevance output invalid: {error}",
+                    )
+                )
     return tuple(decisions)

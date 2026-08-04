@@ -2,9 +2,15 @@
   LDC/TwoXOR.lean
   §7: Refuting the 2-XOR Instance (Lemma 7.1)
 -/
-import Mathlib
-import RequestProject.LDC.Defs
-import RequestProject.LDC.BackgroundFacts
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Int.Star
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import TCSlib.KikuchiLDC.LDC.Defs
+import TCSlib.KikuchiLDC.LDC.BackgroundFacts
 
 open Finset BigOperators
 
@@ -19,8 +25,8 @@ noncomputable section
 /-- Definition 7.1 (2-XOR value bound):
     The value `val(g_b)` for the 2-XOR polynomial from the decomposition.
     We model this as just a real number depending on b. -/
-def twoXORVal (k n : ℕ) (nEdges : ℕ) (d : ℕ)
-    (b : Fin k → ℤ) : ℝ :=
+def twoXORVal (k n : ℕ) (_nEdges : ℕ) (d : ℕ)
+    (_b : Fin k → ℤ) : ℝ :=
   (n : ℝ) * k * Real.sqrt (Real.log n / d)
 
 /-

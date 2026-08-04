@@ -1,4 +1,15 @@
-import Mathlib
+import Mathlib.Algebra.EuclideanDomain.Basic
+import Mathlib.Algebra.EuclideanDomain.Field
+import Mathlib.Analysis.Convex.Deriv
+import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.Topology.Algebra.Module.ModuleTopology
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -59,7 +70,7 @@ theorem weighted_exp_le_affine
   -- Apply the convexity bound to each term in the sum.
   have h_term_bound : ∀ i, p i * Real.exp (-η * ℓ i) ≤ p i * (1 - ℓ i + ℓ i * Real.exp (-η)) := by
     exact fun i => mul_le_mul_of_nonneg_left ( exp_convexity_bound' η ( ℓ i ) ( hℓ_nonneg i ) ( hℓ_le i ) ) ( hp_nonneg i );
-  convert Finset.sum_le_sum fun i _ => h_term_bound i using 1 ; ring;
+  convert Finset.sum_le_sum fun i _ => h_term_bound i using 1 ; ring_nf;
   simpa [ Finset.sum_add_distrib, mul_assoc, ← Finset.mul_sum _ _ _, ← Finset.sum_mul, hp_sum ] using by ring;
 
 /-- For u > -1, ln(1+u) ≤ u. -/
@@ -97,7 +108,7 @@ The log-MGF bound with η²/2 constant (weaker than tight η²/8):
     ln(Σ p_i · exp(-η · ℓ_i)) ≤ -η · L + η²/2
 -/
 theorem hoeffding_log_mgf_weak
-    {n : ℕ} (hn : 0 < n)
+    {n : ℕ} (_hn : 0 < n)
     (p : Fin n → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i, p i = 1)
     (ℓ : Fin n → ℝ) (hℓ_nonneg : ∀ i, 0 ≤ ℓ i) (hℓ_le : ∀ i, ℓ i ≤ 1)
     (η : ℝ) (hη : 0 < η) :
@@ -105,7 +116,7 @@ theorem hoeffding_log_mgf_weak
       -η * (∑ i, p i * ℓ i) + η ^ 2 / 2 := by
   -- By weighted_exp_le_affine, Σ p_i · exp(-η·ℓ_i) ≤ 1 - (1-exp(-η))·L.
   have h_affine : ∑ i, p i * Real.exp (-η * ℓ i) ≤ 1 - (1 - Real.exp (-η)) * (∑ i, p i * ℓ i) := by
-    exact?;
+    exact weighted_exp_le_affine p hp_nonneg hp_sum ℓ hℓ_nonneg hℓ_le η;
   nontriviality;
   refine' le_trans ( Real.log_le_log ( _ ) h_affine ) _;
   · by_contra h_neg;
@@ -146,21 +157,21 @@ theorem bernoulli_mgf_bound (L η : ℝ) (hL0 : 0 ≤ L) (hL1 : L ≤ 1) :
       · -- Let's calculate the first derivative of $f$.
         have h_deriv : ∀ η, deriv f η = -L + η / 4 + L * Real.exp (-η) / (1 - L + L * Real.exp (-η)) := by
           intro η; erw [ deriv_sub ] <;> norm_num [ Real.exp_ne_zero, Real.exp_neg, Real.differentiableAt_exp, mul_comm L ];
-          · norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - L + ( Real.exp η ) ⁻¹ * L from by cases lt_or_gt_of_ne hL <;> cases lt_or_gt_of_ne hL' <;> nlinarith [ inv_pos.mpr ( Real.exp_pos η ) ] ) ] ; ring;
+          · norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - L + ( Real.exp η ) ⁻¹ * L from by cases lt_or_gt_of_ne hL <;> cases lt_or_gt_of_ne hL' <;> nlinarith [ inv_pos.mpr ( Real.exp_pos η ) ] ) ] ; ring_nf;
             norm_num [ sq, mul_assoc, Real.exp_ne_zero ];
           · exact DifferentiableAt.log ( by norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp ] ) ( by cases lt_or_gt_of_ne hL <;> cases lt_or_gt_of_ne hL' <;> nlinarith [ Real.exp_pos η, inv_pos.mpr ( Real.exp_pos η ), mul_inv_cancel₀ ( ne_of_gt ( Real.exp_pos η ) ) ] );
         exact fun x hx => DifferentiableAt.differentiableWithinAt ( by rw [ show deriv f = _ from funext h_deriv ] ; exact DifferentiableAt.add ( DifferentiableAt.add ( differentiableAt_const _ ) ( differentiableAt_id.div_const _ ) ) ( DifferentiableAt.div ( DifferentiableAt.mul ( differentiableAt_const _ ) ( Real.differentiableAt_exp.comp _ ( differentiableAt_id.neg ) ) ) ( by exact DifferentiableAt.add ( differentiableAt_const _ ) ( DifferentiableAt.mul ( differentiableAt_const _ ) ( Real.differentiableAt_exp.comp _ ( differentiableAt_id.neg ) ) ) ) ( by nlinarith [ Real.exp_pos ( -x ), mul_self_pos.mpr hL, mul_self_pos.mpr ( sub_ne_zero.mpr hL' ) ] ) ) );
       · -- Let's calculate the first derivative of $f$.
         have h_deriv : ∀ η, deriv f η = -L + η / 4 + L * Real.exp (-η) / (1 - L + L * Real.exp (-η)) := by
           intro η; erw [ deriv_sub ] <;> norm_num [ Real.exp_ne_zero, Real.exp_neg, Real.differentiableAt_exp, mul_comm L ];
-          · norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - L + ( Real.exp η ) ⁻¹ * L from by cases lt_or_gt_of_ne hL <;> cases lt_or_gt_of_ne hL' <;> nlinarith [ inv_pos.mpr ( Real.exp_pos η ) ] ) ] ; ring;
+          · norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - L + ( Real.exp η ) ⁻¹ * L from by cases lt_or_gt_of_ne hL <;> cases lt_or_gt_of_ne hL' <;> nlinarith [ inv_pos.mpr ( Real.exp_pos η ) ] ) ] ; ring_nf;
             norm_num [ sq, mul_assoc, Real.exp_ne_zero ];
           · exact DifferentiableAt.log ( by norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp ] ) ( by cases lt_or_gt_of_ne hL <;> cases lt_or_gt_of_ne hL' <;> nlinarith [ Real.exp_pos η, inv_pos.mpr ( Real.exp_pos η ), mul_inv_cancel₀ ( ne_of_gt ( Real.exp_pos η ) ) ] );
         -- Let's calculate the second derivative of $f$.
         have h_deriv2 : ∀ η, deriv^[2] f η = 1 / 4 - L * (1 - L) * Real.exp (-η) / (1 - L + L * Real.exp (-η))^2 := by
           norm_num [ funext h_deriv ];
-          intro η; norm_num [ Real.exp_ne_zero, Real.exp_neg, Real.differentiableAt_exp, mul_comm L, ne_of_gt ( show 0 < 1 - L + L * Real.exp ( -η ) from by nlinarith [ Real.exp_pos ( -η ), mul_self_pos.mpr hL, mul_self_pos.mpr ( sub_ne_zero.mpr hL' ) ] ) ] ; ring;
-          norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - L + L * ( Real.exp η ) ⁻¹ from by nlinarith [ Real.exp_pos η, mul_inv_cancel₀ ( ne_of_gt ( Real.exp_pos η ) ), mul_self_pos.mpr hL, mul_self_pos.mpr ( sub_ne_zero.mpr hL' ) ] ) ] ; ring;
+          intro η; norm_num [ Real.exp_ne_zero, Real.exp_neg, Real.differentiableAt_exp, mul_comm L, ne_of_gt ( show 0 < 1 - L + L * Real.exp ( -η ) from by nlinarith [ Real.exp_pos ( -η ), mul_self_pos.mpr hL, mul_self_pos.mpr ( sub_ne_zero.mpr hL' ) ] ) ] ; ring_nf;
+          norm_num [ Real.exp_ne_zero, Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - L + L * ( Real.exp η ) ⁻¹ from by nlinarith [ Real.exp_pos η, mul_inv_cancel₀ ( ne_of_gt ( Real.exp_pos η ) ), mul_self_pos.mpr hL, mul_self_pos.mpr ( sub_ne_zero.mpr hL' ) ] ) ] ; ring_nf;
           grind;
         simp +zetaDelta at *;
         intro η; rw [ h_deriv2 ] ; norm_num;
@@ -188,10 +199,10 @@ The tight Hoeffding log-MGF bound:
     (where L = Σ p_i · ℓ_i), then apply bernoulli_mgf_bound.
 -/
 theorem hoeffding_log_mgf_tight
-    {n : ℕ} (hn : 0 < n)
+    {n : ℕ} (_hn : 0 < n)
     (p : Fin n → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i, p i = 1)
     (ℓ : Fin n → ℝ) (hℓ_nonneg : ∀ i, 0 ≤ ℓ i) (hℓ_le : ∀ i, ℓ i ≤ 1)
-    (η : ℝ) (hη : 0 < η) :
+    (η : ℝ) (_hη : 0 < η) :
     Real.log (∑ i, p i * Real.exp (-η * ℓ i)) ≤
       -η * (∑ i, p i * ℓ i) + η ^ 2 / 8 := by
   -- By weighted_exp_le_affine, Σ p_i · exp(-η·ℓ_i) ≤ 1 - L + L·exp(-η) where L = Σ p_i·ℓ_i.
@@ -202,7 +213,7 @@ theorem hoeffding_log_mgf_tight
     obtain ⟨i, hi⟩ : ∃ i, 0 < p i := by
       exact not_forall_not.mp fun h => by have := hp_sum ▸ Finset.sum_nonpos fun i _ => le_of_not_gt fun hi => h i hi; norm_num at this;
     exact lt_of_lt_of_le ( mul_pos hi ( Real.exp_pos _ ) ) ( Finset.single_le_sum ( fun i _ => mul_nonneg ( hp_nonneg i ) ( Real.exp_nonneg _ ) ) ( Finset.mem_univ i ) );
-  · convert bernoulli_mgf_bound ( ∑ i, p i * ℓ i ) η _ _ using 1 <;> ring;
+  · convert bernoulli_mgf_bound ( ∑ i, p i * ℓ i ) η _ _ using 1 <;> ring_nf;
     · exact Finset.sum_nonneg fun _ _ => mul_nonneg ( hp_nonneg _ ) ( hℓ_nonneg _ );
     · exact hp_sum ▸ Finset.sum_le_sum fun i _ => mul_le_of_le_one_right ( hp_nonneg i ) ( hℓ_le i )
 

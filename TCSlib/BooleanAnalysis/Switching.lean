@@ -2034,5 +2034,3 @@ theorem switching_corollary_cnf {n : ℕ} (hn : 0 < n) (ψ : CNF n) (w s : ℕ)
   exact hρ.2 (dtDepth_le_implies_small_dnf_cnf _ w hgood).1
 
 end SwitchingLemmaCNF
-
-#min_imports

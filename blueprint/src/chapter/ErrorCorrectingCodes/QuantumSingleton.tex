@@ -18,6 +18,20 @@ with the standard symplectic form, and the key idea of erasure correctability.
 \begin{definition}[Symplectic form]
 \lean{sym_form}
 \leanok
+\statementsource{quant-ph.9705052}{
+  pdf-e658890bd7ef-p007-b004,
+  pdf-e658890bd7ef-p009-b007
+}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b007}
+\statementsource{quant-ph.9608006}{
+  pdf-4fa1f624d1c5-p002-b005,
+  pdf-4fa1f624d1c5-p003-b003
+}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p005-b004}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p003-b003,
+  pdf-1ac7bb3b99cc-p004-b002
+}
 For $u = (x,z), v = (x',z') \in V = \mathbb{F}_p^n \times \mathbb{F}_p^n$,
 \[
 \omega(u,v) \;=\; \sum_{i=0}^{n-1}(x_i z'_i - z_i x'_i).
@@ -26,6 +40,7 @@ For $u = (x,z), v = (x',z') \in V = \mathbb{F}_p^n \times \mathbb{F}_p^n$,
 
 \begin{lemma}[Bilinearity]
 \lean{sym_form_add_left}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b007}
 \lean{sym_form_add_right}
 \lean{sym_form_smul_left}
 \lean{sym_form_smul_right}
@@ -38,6 +53,7 @@ $\omega$ is bilinear: additive and scalar-homogeneous in each argument.
 \begin{lemma}[Antisymmetry]
 \lean{sym_form_swap}
 \leanok
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b007}
 \uses{sym_form}
 \difficulty{3}
 $\omega(u,v) = -\omega(v,u)$.
@@ -46,6 +62,10 @@ $\omega(u,v) = -\omega(v,u)$.
 \begin{lemma}[Nondegeneracy]
 \lean{sym_form_nondegenerate}
 \leanok
+\proofsource{arXiv.2602.20186}{
+  pdf-585ff62e2309-p003-b001,
+  pdf-585ff62e2309-p003-b002
+}
 \uses{sym_form}
 \difficulty{4}
 If $\omega(u,v) = 0$ for all $v$, then $u = 0$.
@@ -54,6 +74,7 @@ If $\omega(u,v) = 0$ for all $v$, then $u = 0$.
 \begin{definition}[Bundled bilinear form]
 \lean{symB}
 \leanok
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b007}
 \uses{sym_form}
 $\omega$ packaged as a \texttt{LinearMap.BilinForm}.
 \end{definition}
@@ -63,6 +84,11 @@ $\omega$ packaged as a \texttt{LinearMap.BilinForm}.
 
 \begin{definition}[Support and weight]
 \lean{supp}
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p002-b002}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b005}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b005}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p003-b007}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p004-b003}
 \lean{wt}
 \leanok
 The \emph{support} $\mathrm{supp}(v) \subseteq \mathrm{Fin}\,n$ consists of
@@ -81,6 +107,7 @@ $\mathrm{wt}(v) \le n$ for all $v \in V$.
 \begin{definition}[Support submodule]
 \lean{V_sub}
 \leanok
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b006}
 For $C \subseteq \mathrm{Fin}\,n$, the \emph{support submodule}
 $V_C = \{v \in V \mid \mathrm{supp}(v) \subseteq C\}$.
 \end{definition}
@@ -88,6 +115,10 @@ $V_C = \{v \in V \mid \mathrm{supp}(v) \subseteq C\}$.
 \begin{lemma}[Dimension of support submodule]
 \lean{dim_V_sub}
 \leanok
+\proofsource{arXiv.2602.20186}{
+  pdf-585ff62e2309-p003-b007,
+  pdf-585ff62e2309-p003-b008
+}
 \uses{V_sub}
 \difficulty{2}
 $\dim_{\mathbb{F}_p}(V_C) = 2|C|$.
@@ -96,6 +127,10 @@ $\dim_{\mathbb{F}_p}(V_C) = 2|C|$.
 \begin{definition}[Symplectic orthogonal complement]
 \lean{sym_orth}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p005-b003}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p003-b004}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p005-b004}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b001}
 \uses{sym_form}
 For a submodule $S \le V$,
 $S^{\perp_\omega} = \{v \in V \mid \forall s \in S,\; \omega(v,s) = 0\}$.
@@ -112,6 +147,17 @@ $\dim(S^{\perp_\omega}) = 2n - \dim(S)$.
 \begin{definition}[Isotropic submodule]
 \lean{IsIsotropic}
 \leanok
+\statementsource{quant-ph.9705052}{
+  pdf-e658890bd7ef-p004-b008,
+  pdf-e658890bd7ef-p007-b004
+}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b010}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p003-b004}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p005-b005}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p001-b007,
+  pdf-1ac7bb3b99cc-p004-b002
+}
 \uses{sym_form}
 $S$ is \emph{isotropic} if $S \le S^{\perp_\omega}$, i.e.\ $\omega(u,v) = 0$
 for all $u,v \in S$.
@@ -123,6 +169,21 @@ for all $u,v \in S$.
 \begin{definition}[Quantum code distance]
 \lean{code_dist}
 \leanok
+\statementsource{quant-ph.9705052}{
+  pdf-e658890bd7ef-p005-b005,
+  pdf-e658890bd7ef-p002-b006
+}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b010}
+\statementsource{quant-ph.9608006}{
+  pdf-4fa1f624d1c5-p004-b001,
+  pdf-4fa1f624d1c5-p002-b006
+}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p005-b005}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p004-b003,
+  pdf-1ac7bb3b99cc-p005-b002
+}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p008-b003}
 \uses{wt, sym_orth, IsIsotropic}
 $d(S) = \min\{\mathrm{wt}(v) \mid v \in S^{\perp_\omega} \setminus S,\; \mathrm{wt}(v) \neq 0\}$
 (or $0$ if no such $v$ exists).
@@ -139,6 +200,8 @@ $d(S) \le n$.
 \begin{definition}[Erasure correctability]
 \lean{correctable}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p003-b001}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b014}
 \uses{sym_orth}
 An erasure set $E \subseteq \mathrm{Fin}\,n$ is \emph{correctable} for $S$ if
 every $v \in V_E \cap S^{\perp_\omega}$ is already in $S$.
@@ -147,14 +210,41 @@ every $v \in V_E \cap S^{\perp_\omega}$ is already in $S$.
 \begin{lemma}[Distance implies correctability]
 \lean{dist_implies_correctable}
 \leanok
+\proofsource{arXiv.2602.20186}{
+  pdf-585ff62e2309-p003-b015,
+  pdf-585ff62e2309-p003-b016
+}
 \uses{correctable, code_dist}
 \difficulty{5}
 If $|E| < d(S)$, then $E$ is correctable.
 \end{lemma}
 
+\begin{proof}
+\leanok
+Any $v \in S^{\perp_\omega} \cap V_E$ outside $S$ witnesses
+$d(S) \le \mathrm{wt}(v)$, while $v \in V_E$ forces
+$\mathrm{supp}(v) \subseteq E$, so $\mathrm{wt}(v) \le |E| < d(S)$ --- a
+contradiction.  Used in the Singleton bound to turn the distance hypothesis
+into two disjoint correctable erasure sets of size $d(S)-1$.  Not proved in
+Knill--Laflamme (Phys.\ Rev.\ A \textbf{55}, 900); full note:
+\texttt{references/informalized/QuantumSingleton.dist\_implies\_correctable.md}.
+\end{proof}
+
 \begin{definition}[Logical dimension]
 \lean{code_k}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p004-b008}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b010}
+\statementsource{quant-ph.9608006}{
+  pdf-4fa1f624d1c5-p002-b006,
+  pdf-4fa1f624d1c5-p002-b007
+}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p005-b005}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p004-b005,
+  pdf-1ac7bb3b99cc-p005-b002
+}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p004-b002}
 \uses{IsIsotropic}
 $k(S) = n - \dim(S)$.
 \end{definition}
@@ -165,6 +255,12 @@ $k(S) = n - \dim(S)$.
 \begin{lemma}[Two disjoint correctable sets bound $k$]
 \lean{two_disjoint_correctable_sets_bound_logical_dimension}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p011-b001}
+\proofsource{arXiv.2602.20186}{
+  pdf-585ff62e2309-p004-b004,
+  pdf-585ff62e2309-p004-b005
+}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p010-b001}
 \uses{correctable, code_k, dim_V_sub, finrank_sym_orth}
 \difficulty{5}
 Let $S$ be isotropic.  If $A,B \subseteq \mathrm{Fin}\,n$ are disjoint and both correctable, then
@@ -173,12 +269,39 @@ k(S) \;\le\; n - |A| - |B|.
 \]
 \end{lemma}
 
+\begin{proof}
+\leanok
+By the cleaning identity, $g(S, \mathrm{univ} \setminus A) = 2(n - \dim S)$
+(\texttt{g\_complement\_correctable}), while
+$g(S, B \cup (\mathrm{univ}\setminus(A \cup B))) \le
+2\,|\mathrm{univ}\setminus(A \cup B)|$ (\texttt{g\_le\_two\_card\_C}); the two
+argument sets coincide, giving the bound.  This is the engine behind
+Theorem~V.1 of Knill--Laflamme (Phys.\ Rev.\ A \textbf{55}, 900), which
+states the corresponding bound $n \ge 4e + k$ with proof deferred; the Lean
+route is a symplectic dimension count with no density matrices.
+\end{proof}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Quantum Singleton bound}
 
 \begin{theorem}[Quantum Singleton bound]
 \lean{quantum_singleton_bound}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p011-b001}
+\proofsource{arXiv.2602.20186}{
+  pdf-585ff62e2309-p004-b007,
+  pdf-585ff62e2309-p004-b008
+}
+\statementsource{quant-ph.9608006}{
+  pdf-4fa1f624d1c5-p012-b005,
+  pdf-4fa1f624d1c5-p011-b008
+}
+\statementsource{quant-ph.0508070}{
+  pdf-4bcdc0ee9c86-p008-b009,
+  pdf-4bcdc0ee9c86-p008-b010,
+  pdf-4bcdc0ee9c86-p009-b001
+}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p010-b001}
 \uses{two_disjoint_correctable_sets_bound_logical_dimension, dist_implies_correctable, code_dist_le_n}
 \difficulty{7}
 For any isotropic submodule $S \le V$,
@@ -187,18 +310,37 @@ k(S) + 2(d(S) - 1) \;\le\; n.
 \]
 \end{theorem}
 
+\begin{proof}
+\leanok
+Choose disjoint erasure sets $A, B$ of size $d(S)-1$
+(\texttt{exists\_disjoint\_finsets\_card}); both are correctable by
+\texttt{dist\_implies\_correctable}, so the two-disjoint-correctable-sets
+lemma yields $k(S) \le n - 2(d(S)-1)$.  The statement is Theorem~V.1 of
+Knill--Laflamme (Phys.\ Rev.\ A \textbf{55}, 900): an $(n,k)$
+$e$-error-correcting code satisfies $n \ge 4e + k$, which with $d = 2e+1$ is
+exactly this bound; the paper defers the proof, and the Lean supplies it via
+the erasure/cleaning argument.
+\end{proof}
+
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
 \begin{definition}[Prime field $\mathbb{F}_p$]
 \lean{F}
 \leanok
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b006}
 The prime field $\mathrm{GF}(p)$, realized as $\mathbb{Z}/p\mathbb{Z}$ via \texttt{ZMod}.
 \end{definition}
 
 \begin{definition}[Symplectic vector space]
 \lean{V}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p007-b003}
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b006}
+\statementsource{quant-ph.9608006}{
+  pdf-4fa1f624d1c5-p002-b005,
+  pdf-4fa1f624d1c5-p003-b002
+}
 \uses{F}
 The ambient space $V = \mathbb{F}_p^n \times \mathbb{F}_p^n$ of pairs of coordinate vectors.
 \end{definition}
@@ -255,6 +397,7 @@ $\mathrm{restrictToC}$ and $\mathrm{extendFromC}$ as mutually inverse maps.
 \begin{definition}[Restriction map $r_E$]
 \lean{r_E}
 \leanok
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b009}
 \uses{F, V, V_sub}
 The linear map $r_E : V \to V_E$ that zeroes out the coordinates of a vector outside $E$,
 keeping those in $E$ unchanged.
@@ -277,6 +420,7 @@ The submodule $S^{\perp}_M = S^{\perp_\omega} \cap V_M$.
 \begin{definition}[Supportable logical operators count $g(M)$]
 \lean{g}
 \leanok
+\statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p003-b018}
 \uses{F, S_M, S_perp_M, V}
 $g(S,M) = \dim_{\mathbb{F}_p}(S^{\perp}_M) - \dim_{\mathbb{F}_p}(S_M)$.
 \end{definition}
@@ -473,6 +617,10 @@ For isotropic $S$, $\dim(S) + \dim(S_M) \le 2|M| + \dim(S_{M^c})$.
 \begin{lemma}[Cleaning dimension identity]
 \lean{cleaning_dimension_identity}
 \leanok
+\proofsource{arXiv.2602.20186}{
+  pdf-585ff62e2309-p003-b019,
+  pdf-585ff62e2309-p003-b020
+}
 \uses{E_c, E_c_E_c, F, IsIsotropic, S_M, V, g, g_add_dims}
 \difficulty{5}
 For isotropic $S$,
@@ -492,6 +640,7 @@ $|M| + |M^c| = n$.
 \begin{lemma}[Correctable sets have $g = 0$]
 \lean{correctable_implies_g_zero}
 \leanok
+\proofsource{arXiv.2602.20186}{pdf-585ff62e2309-p004-b002}
 \uses{F, S_M, V, V_sub, correctable, g, sym_orth}
 \difficulty{3}
 If $M$ is correctable for $S$, then $g(S,M) = 0$.
@@ -500,6 +649,7 @@ If $M$ is correctable for $S$, then $g(S,M) = 0$.
 \begin{lemma}[Correctable complement has $g(M^c) = 2k$]
 \lean{g_complement_correctable}
 \leanok
+\proofsource{arXiv.2602.20186}{pdf-585ff62e2309-p004-b002}
 \uses{E_c, F, IsIsotropic, V, cleaning_dimension_identity, correctable, correctable_implies_g_zero, g}
 \difficulty{3}
 If $S$ is isotropic and $M$ is correctable, then
@@ -509,11 +659,24 @@ $g(S,M^c) = 2n - 2\dim_{\mathbb{F}_p}(S)$.
 \begin{lemma}[Bound on $g$ for a correctable part plus a set]
 \lean{g_le_two_card_C}
 \leanok
+\proofsource{arXiv.2602.20186}{pdf-585ff62e2309-p004-b005}
 \uses{F, S_M, S_perp_M, V, V_sub, correctable, dim_V_sub, g, r_E, sym_orth}
 \difficulty{7}
 If $B$ and $C$ are disjoint and $B$ is correctable for $S$, then
 $g(S, B \cup C) \le 2|C|$.
 \end{lemma}
+
+\begin{proof}
+\leanok
+Rank--nullity for the restriction map
+$r_C : S^{\perp_\omega} \cap V_{B \cup C} \to V_C$: its kernel consists of
+vectors supported on $B$, which correctability of $B$ absorbs into $S$, and
+its range has dimension at most $\dim V_C = 2|C|$.  This is the counting half
+of the cleaning argument, consumed by the two-disjoint-correctable-sets
+lemma.  Not present in Knill--Laflamme (Phys.\ Rev.\ A \textbf{55}, 900);
+full note:
+\texttt{references/informalized/QuantumSingleton.g\_le\_two\_card\_C.md}.
+\end{proof}
 
 \begin{lemma}[Full support is the whole space]
 \lean{V_sub_univ_eq_top}
@@ -534,6 +697,10 @@ $\dim_{\mathbb{F}_p}(V) = 2n$.
 \begin{lemma}[Non-degeneracy of the bundled form]
 \lean{symB_nondegenerate}
 \leanok
+\proofsource{arXiv.2602.20186}{
+  pdf-585ff62e2309-p003-b001,
+  pdf-585ff62e2309-p003-b002
+}
 \uses{symB, symB_apply, sym_form_nondegenerate}
 \difficulty{3}
 The bundled symplectic form $\mathrm{symB}$ is non-degenerate.
@@ -550,6 +717,7 @@ The bundled symplectic form $\mathrm{symB}$ is reflexive.
 \begin{lemma}[Isotropic dimension bound]
 \lean{finrank_le_n_of_isotropic}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p003-b004}
 \uses{F, IsIsotropic, V, finrank_V, finrank_sym_orth, sym_orth}
 \difficulty{4}
 If $S$ is isotropic, then $\dim_{\mathbb{F}_p}(S) \le n$.

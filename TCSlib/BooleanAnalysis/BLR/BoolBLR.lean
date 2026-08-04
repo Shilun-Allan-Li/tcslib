@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Prastik Mohanraj
 -/
 
-import Mathlib
 import TCSlib.BooleanAnalysis.BLR.BoolFourier
 open Finset BoolFourier
 
@@ -122,12 +121,12 @@ lemma linear_bool_iff_character {n : ℕ} (f : hypercube n → Bool) :
     unfold lift_pm1 char_S; simp +decide [ h_fx ] ; simp only [BooleanAnalysis.chiS] ;
     rw [ Finset.prod_congr rfl fun i hi => show BoolToPM1 ( x i ) = if x i = true then -1 else 1 from by cases x i <;> rfl ] ; simp +decide [ Finset.prod_ite ] ; ring_nf;
     -- Two cases on parity, both check by hand.
-    cases Nat.mod_two_eq_zero_or_one ( Finset.card ( Finset.filter ( fun i => ( f fun j => decide ( j = i ) ) = true ) ( Finset.filter ( fun i => x i = true ) Finset.univ ) ) ) <;> simp +decide [ *, h_fx];
-    · simp_all +decide [h_fx, Finset.filter_filter];
-      simp_all +decide [ and_comm , h_fx];
+    cases Nat.mod_two_eq_zero_or_one ( Finset.card ( Finset.filter ( fun i => ( f fun j => decide ( j = i ) ) = true ) ( Finset.filter ( fun i => x i = true ) Finset.univ ) ) ) <;> simp +decide [*];
+    · simp_all +decide [Finset.filter_filter];
+      simp_all +decide [and_comm];
       rw [ ← Nat.mod_add_div ( Finset.card _ ) 2, ‹Finset.card _ % 2 = 0› ] ; norm_num [ pow_add, pow_mul ];
-    · simp_all +decide [h_fx, Finset.filter_filter];
-      simp_all +decide [ and_comm , h_fx];
+    · simp_all +decide [Finset.filter_filter];
+      simp_all +decide [and_comm];
       rw [ ← Nat.mod_add_div ( Finset.card _ ) 2, ‹Finset.card _ % 2 = 1› ] ; norm_num [ pow_add, pow_mul, BoolToPM1 ];
   -- (<=) If lift_pm1 f = χ_S, then f is linear via the multiplicativity of χ_S.
   · rintro ⟨ S, hS ⟩ x y;
@@ -137,7 +136,7 @@ lemma linear_bool_iff_character {n : ℕ} (f : hypercube n → Bool) :
     let h_eq : BoolToPM1 (f (xor_vec x y)) = BoolToPM1 (Bool.xor (f x) (f y)) := (linear_bool_iff_character_aux_h_eq_h f S hS x y)
 
     cases h1 : f (xor_vec x y) <;> cases h2 : f x <;> cases h3 : f y <;>
-      simp_all [Bool.xor, (linear_bool_iff_character_aux_h_char S x y)] <;> (simp only [*] at h_eq; norm_num at h_eq)
+      simp_all [Bool.xor] <;> (simp only [*] at h_eq; norm_num at h_eq)
 
 end LINEAR_FUNCTIONS
 

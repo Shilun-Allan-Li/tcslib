@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.LMN.SwitchingBernoulli
-import Mathlib
 
 /-!
 # Gate Switching under Bernoulli Restrictions (Step 4 of LMN)

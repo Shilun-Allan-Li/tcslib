@@ -4,7 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Prastik Mohanraj
 -/
 
-import Mathlib
+import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.Analysis.CStarAlgebra.Classes
+import Mathlib.RingTheory.RootsOfUnity.Complex
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.SplitIfs
+import Mathlib.Tactic.Cases
 open Finset Complex
 
 set_option maxHeartbeats 0

@@ -1,4 +1,7 @@
-import Mathlib
+import Mathlib.Data.Nat.Notation
+import Mathlib.Tactic.Lemma
+
+set_option linter.unusedVariables false
 
 /-!
 # AXLE `have2lemma` output for `Have2LemmaSimpOnlyTest.lean`

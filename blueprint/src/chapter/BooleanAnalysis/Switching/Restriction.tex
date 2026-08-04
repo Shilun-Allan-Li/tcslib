@@ -13,6 +13,7 @@ lemmas about list operations and decision-tree depth used in the main argument.
 \begin{definition}[Restriction]
 \lean{SwitchingLemma2.Restriction}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 A restriction on $n$ variables is a map $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$,
 assigning each variable either a fixed Boolean value or leaving it free (\texttt{none}).
 \end{definition}
@@ -61,6 +62,7 @@ to \texttt{none}, restoring it to a free variable.
 \begin{definition}[Restriction with $s$ free variables]
 \lean{SwitchingLemma2.IsRestriction}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree}
 The predicate $\mathrm{IsRestriction}\,s\,\rho$ holds when the restriction $\rho$ has
 exactly $s$ free variables.
@@ -69,6 +71,7 @@ exactly $s$ free variables.
 \begin{definition}[Literal killed by a restriction]
 \lean{SwitchingLemma2.Literal.killedBy}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{Literal, SwitchingLemma2.Restriction}
 A literal $l$ is killed by $\rho$ when $\rho$ fixes its variable to the value that makes
 $l$ false; concretely $\rho(l.\mathrm{var}) = \mathrm{some}\,l.\mathrm{neg}$.
@@ -77,6 +80,7 @@ $l$ false; concretely $\rho(l.\mathrm{var}) = \mathrm{some}\,l.\mathrm{neg}$.
 \begin{definition}[Literal fixed by a restriction]
 \lean{SwitchingLemma2.Literal.fixedBy}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{Literal, SwitchingLemma2.Restriction}
 A literal $l$ is fixed by $\rho$ when $\rho$ fixes its variable to the value that makes
 $l$ true; concretely $\rho(l.\mathrm{var}) = \mathrm{some}\,(\lnot\, l.\mathrm{neg})$.
@@ -85,6 +89,7 @@ $l$ true; concretely $\rho(l.\mathrm{var}) = \mathrm{some}\,(\lnot\, l.\mathrm{n
 \begin{definition}[Term killed by a restriction]
 \lean{SwitchingLemma2.Term.killedBy}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, Term}
 A term (conjunction of literals) is killed by $\rho$ when at least one of its literals is
 killed by $\rho$, forcing the whole term to evaluate to false.
@@ -93,6 +98,7 @@ killed by $\rho$, forcing the whole term to evaluate to false.
 \begin{definition}[Term fixed by a restriction]
 \lean{SwitchingLemma2.Term.fixedBy}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{SwitchingLemma2.Literal.fixedBy, SwitchingLemma2.Restriction, Term}
 A term is fixed by $\rho$ when every one of its literals is fixed by $\rho$, forcing the
 whole term to evaluate to true.
@@ -101,6 +107,7 @@ whole term to evaluate to true.
 \begin{definition}[Alive term]
 \lean{SwitchingLemma2.isAlive}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, Term}
 A term $t$ is alive under $\rho$ when it is neither killed nor fixed by $\rho$.
 \end{definition}
@@ -108,6 +115,7 @@ A term $t$ is alive under $\rho$ when it is neither killed nor fixed by $\rho$.
 \begin{definition}[Restricted Boolean function]
 \lean{SwitchingLemma2.restrictFn}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
 Given $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ and a restriction
 $\rho$, the restricted function maps $x$ to $f(\rho.\mathrm{extend}\,x)$, i.e.\ $f$
@@ -117,6 +125,7 @@ evaluated on the free coordinates with the fixed coordinates set by $\rho$.
 \begin{definition}[Bad restriction]
 \lean{SwitchingLemma2.IsBadRestriction}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b001}
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
 A restriction $\rho$ is bad for $f$ at depth $d$ when the restricted function
 $\mathrm{restrictFn}\,f\,\rho$ has decision-tree depth strictly greater than $d$.

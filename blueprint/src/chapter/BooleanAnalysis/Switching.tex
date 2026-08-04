@@ -333,6 +333,10 @@ for $f|_\rho$ is the leaf $\mathrm{true}$ and hence has depth $0$.
 \begin{definition}[Canonical path predicate]
 \lean{SwitchingLemma2.IsCanonicalPath}
 \leanok
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b002,
+  pdf-b5e074215b9e-p002-b003
+}
 \uses{DNF, DecisionTree.deepPath, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree}
 $\mathrm{IsCanonicalPath}\,f\,\rho\,\mathrm{path}$ holds when $\mathrm{path}$ is an
 initial segment of the canonical decision tree's deepest root-to-leaf path for
@@ -447,6 +451,7 @@ variables.
 \begin{lemma}[Bad-restriction counting bound]
 \lean{SwitchingLemma2.bad_count_bound}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{DNF, DNF.eval, DNF.width, Literal.var, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.card_filter_numFree_eq, SwitchingLemma2.fiber_bound, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_fst_numFree_eq}
 \difficulty{4}
 For $d \leq s$, the number of bad $s$-restrictions is at most
@@ -468,6 +473,7 @@ and bad restrictions for depth $d$ is empty.
 \begin{definition}[Decision tree to DNF]
 \lean{SwitchingLemma2.toDNF}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DecisionTree}
 Converts a decision tree into a DNF whose terms are the conjunctions of literals
 along each root-to-leaf path ending in a $\mathrm{true}$ leaf.
@@ -476,6 +482,7 @@ along each root-to-leaf path ending in a $\mathrm{true}$ leaf.
 \begin{definition}[Decision tree to CNF]
 \lean{SwitchingLemma2.toCNF}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b003}
 \uses{CNF, DecisionTree}
 Converts a decision tree into a CNF whose clauses are the disjunctions of negated
 literals along each root-to-leaf path ending in a $\mathrm{false}$ leaf.
@@ -554,6 +561,7 @@ $(\mathrm{cnfToDualDNF}\,\psi).\mathrm{width} = \psi.\mathrm{width}$.
 \begin{lemma}[cnfToDualDNF negates the value]
 \lean{cnfToDualDNF_eval}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b005}
 \uses{CNF, CNF.eval, CNF.evalClause, DNF.eval, Literal.flipNeg_eval, Term.eval, cnfToDualDNF}
 \difficulty{5}
 $(\mathrm{cnfToDualDNF}\,\psi).\mathrm{eval}\,x = \lnot\,(\psi.\mathrm{eval}\,x)$.
@@ -628,6 +636,7 @@ then the same holds within every term of $\mathrm{cnfToDualDNF}\,\psi$.
 \begin{theorem}[Håstad's Switching Lemma for CNFs]
 \lean{SwitchingLemmaCNF.switching_lemma_cnf}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.numSRestrictions, SwitchingLemma2.switching_lemma, SwitchingLemmaCNF.cnfToDualDNF_inj, SwitchingLemmaCNF.cnfToDualDNF_nodup, SwitchingLemmaCNF.restrictFn_neg, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width, dtDepth_neg}
 \difficulty{5}
 For a CNF $\psi$ of width at most $w$ on $n$ variables with $5s \leq n$ and clauses
@@ -642,6 +651,7 @@ under which $\psi|_\rho$ has decision-tree depth $> d$ satisfies
 \begin{theorem}[Switching Lemma Corollary for CNFs]
 \lean{SwitchingLemmaCNF.switching_corollary_cnf}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.numSRestrictions, SwitchingLemma2.restrictFn, SwitchingLemmaCNF.switching_lemma_cnf, dtDepth}
 \difficulty{4}
 For a CNF $\psi$ of width at most $w$ with $5s \leq n$ and well-formed clauses, the

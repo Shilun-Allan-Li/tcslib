@@ -32,6 +32,7 @@ is fixed by $\rho$, then $\rho$ has at least one free variable $v \in \rho.\math
 \begin{definition}[Branch variable selection]
 \lean{SwitchingLemma2.selectBranchVar}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy}
 Given a DNF $f$ and restriction $\rho$, returns an optional variable in $\mathrm{Fin}\,n$:
 the variable on which the canonical tree should next branch, drawn from the free variables
@@ -50,6 +51,10 @@ $\mathrm{selectBranchVar}\,f\,\rho$ returns some variable $v$, and that $v$ is f
 \begin{definition}[Sub-tree for a term]
 \lean{SwitchingLemma2.termSubTree}
 \leanok
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b002,
+  pdf-b5e074215b9e-p002-b003
+}
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 Builds a complete sub-tree for a term, queried as a list of literals: it branches on each
 free variable of the term in order, and at every leaf invokes a continuation
@@ -60,6 +65,10 @@ along that root-to-leaf path. Non-free literals are skipped.
 \begin{definition}[Canonical decision tree]
 \lean{SwitchingLemma2.canonicalDTree}
 \leanok
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b002,
+  pdf-b5e074215b9e-p002-b003
+}
 \uses{DNF, DecisionTree, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree}
 The canonical decision tree for $f|_\rho$, following Razborov's construction. It is defined
 through a fuel-driven helper $\mathrm{canonicalDTree.go}$ initialized with fuel

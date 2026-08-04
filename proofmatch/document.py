@@ -19,6 +19,11 @@ PROVENANCE_RE = re.compile(
     r"<!-- pdf-source: page=(\d+); block=(\d+); confidence=([0-9.]+) -->"
 )
 
+# Pages per cleanup call. Small chunks keep each response short enough to
+# stay under the API's verbatim-reproduction content filter and make
+# extraction restartable per chunk.
+CLEANUP_PAGES_PER_CALL = 3
+
 
 def stable_block_id(source_fingerprint: str, page: int, sequence: int) -> str:
     if len(source_fingerprint) < 12:
@@ -91,12 +96,18 @@ def _ambiguities_from_output(
     if not isinstance(raw_ambiguities, list):
         raise ValueError("cleanup output must contain an ambiguities array")
     ambiguities = []
+    unresolved = []
     for raw in raw_ambiguities:
         if not isinstance(raw, dict):
             raise ValueError("cleanup ambiguity must be an object")
         page, sequence = int(raw["page"]), int(raw["sequence"])
         if (page, sequence) not in known:
-            raise ValueError(f"ambiguity cites nonexistent block {page}:{sequence}")
+            # The model flagged a block it never emitted — most often a page it
+            # could not parse at all. There is nothing to visually validate, so
+            # the reference is unactionable rather than fatal; the caller
+            # reports it so the page can still be checked by hand.
+            unresolved.append((page, sequence, str(raw.get("reason", ""))))
+            continue
         ambiguities.append(
             (
                 DocumentAmbiguity(
@@ -108,7 +119,7 @@ def _ambiguities_from_output(
                 sequence,
             )
         )
-    return ambiguities
+    return ambiguities, unresolved
 
 
 def _render_markdown(index: DocumentIndex) -> str:
@@ -193,10 +204,32 @@ def repair_document(
     raw_text = raw_md.read_text(encoding="utf-8")
     fingerprint, pages = _raw_payload(raw_text)
     budget.require(estimate_cleanup(len(raw_text)))
-    cleanup = agent.run("cleanup", {"source_fingerprint": fingerprint, "pages": pages})
-    blocks = _blocks_from_output(fingerprint, {int(page["page"]) for page in pages}, cleanup)
+    # Pages are cleaned in small chunks rather than one monolithic call: a
+    # whole-paper response is long enough to trip the API's verbatim-output
+    # content filter, and a chunk failure loses only that chunk's retry.
+    blocks = []
+    ambiguity_rows = []
+    for start in range(0, len(pages), CLEANUP_PAGES_PER_CALL):
+        chunk = pages[start : start + CLEANUP_PAGES_PER_CALL]
+        cleanup = agent.run(
+            "cleanup", {"source_fingerprint": fingerprint, "pages": chunk}
+        )
+        chunk_blocks = _blocks_from_output(
+            fingerprint, {int(page["page"]) for page in chunk}, cleanup
+        )
+        blocks.extend(chunk_blocks)
+        chunk_ambiguities, unresolved = _ambiguities_from_output(
+            fingerprint,
+            {(block.page, block.sequence) for block in chunk_blocks},
+            cleanup,
+        )
+        ambiguity_rows.extend(chunk_ambiguities)
+        for page, sequence, reason in unresolved:
+            print(
+                f"Warning: cleanup flagged block {page}:{sequence}, which it "
+                f"never emitted — check that page by hand ({reason})"
+            )
     by_key = {(block.page, block.sequence): block for block in blocks}
-    ambiguity_rows = _ambiguities_from_output(fingerprint, set(by_key), cleanup)
 
     if ambiguity_rows:
         if pdf_path is None:

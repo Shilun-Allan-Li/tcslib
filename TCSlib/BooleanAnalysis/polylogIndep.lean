@@ -18,7 +18,17 @@ Specifically, for any depth d and size m, and any ε ≤ 1, there exists k = O(l
 For ε > 1, the result holds trivially with k=0.
 -/
 
-import Mathlib
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.Probability.Distributions.Uniform
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.GCongr
+import Mathlib.Tactic.SplitIfs
+import Mathlib.Tactic.Cases
+import Mathlib.CategoryTheory.Category.Basic
 
 set_option linter.mathlibStandardSet false
 
@@ -60,10 +70,10 @@ def Circuit.size {n : ℕ} : Circuit n → ℕ
 decreasing_by
 simp +zetaDelta at *; (
 rename_i c hc;
-induction' cs with cs ih generalizing c <;> simp_all +decide [ List.length ];
+induction' cs with cs ih generalizing c <;> simp_all +decide ;
 grind); (
 rename_i c hc;
-induction' cs with cs ih generalizing c <;> simp_all +decide [ List.length ];
+induction' cs with cs ih generalizing c <;> simp_all +decide ;
 grind)
 
 /-
@@ -81,10 +91,10 @@ aesop; (
 have h_ind : ∀ {l : List (Circuit n)}, ‹Circuit n› ∈ l → (SizeOf.sizeOf ‹Circuit n›) < (SizeOf.sizeOf (Circuit.and l)) := by
   -- By definition of on毛泽społec, we have$stmt.SIZE.Carry marginBottom</think>
   intros l hl
-  induction l <;> simp_all +decide [ Circuit.size ];
+  induction l <;> simp_all +decide ;
   grind;
 exact h_ind ‹_›); (
-induction cs <;> simp_all +arith +decide [ Circuit.rec ];
+induction cs <;> simp_all +arith +decide ;
 grind)
 
 /-
@@ -128,18 +138,18 @@ theorem KWise_Fools_Monomial {n k : ℕ} {μ : PMF (Fin n → Bool)} (hμ : IsKW
     (S : Finset (Fin n)) (hS : S.card ≤ k) :
     ∑ x, Monomial S x * (μ x).toReal = ∑ x, Monomial S x * (PMF.uniformOfFintype _ x).toReal := by
       have := hμ S hS; simp_all +decide [ PMF.uniformOfFintype_apply ] ; (
-      convert congr_arg ( fun p : PMF ( S → Bool ) => ∑ x : S → Bool, if x = ( fun _ => Bool.true ) then ( p x |> ENNReal.toReal ) else 0 ) this using 1 <;> norm_num [ Monomial ] ; ring;
+      convert congr_arg ( fun p : PMF ( S → Bool ) => ∑ x : S → Bool, if x = ( fun _ => Bool.true ) then ( p x |> ENNReal.toReal ) else 0 ) this using 1 <;> norm_num [ Monomial ] ; ring_nf;
       · rw [ tsum_eq_sum ];
         any_goals exact Finset.univ.filter fun x => ∀ i ∈ S, x i = Bool.true;
-        · rw [ Finset.sum_filter ] ; ring;
+        · rw [ Finset.sum_filter ] ; ring_nf;
           rw [ ENNReal.toReal_sum ];
           · congr! 1;
-            split_ifs <;> simp_all +decide [ funext_iff ];
-            exact Or.inl <| Finset.prod_eq_zero ( Classical.choose_spec ‹∃ x ∈ S, _› |>.1 ) <| if_neg <| by simpa [ Classical.choose_spec ‹∃ x ∈ S, _› |>.2 ] ;
+            split_ifs <;> simp_all +decide ;
+            exact Or.inl <| Finset.prod_eq_zero ( Classical.choose_spec ‹∃ x ∈ S, _› |>.1 ) <| if_neg <| by simp [ Classical.choose_spec ‹∃ x ∈ S, _› |>.2 ] ;
           · exact fun _ _ => by split_ifs <;> simp +decide [ PMF.apply_ne_top ] ;
         · simp +contextual [ funext_iff ];
       · field_simp;
-        rw [ ← Finset.sum_div _ _ _, div_mul_eq_mul_div, div_eq_iff ] <;> norm_cast <;> norm_num [ Finset.card_univ ] ; ring;
+        rw [ ← Finset.sum_div _ _ _, div_mul_eq_mul_div, div_eq_iff ] <;> norm_cast <;> norm_num [ Finset.card_univ ] ; ring_nf;
         -- The sum $\sum_{x : \text{Fin } n \to \text{Bool}} \prod_{i \in S} \mathbf{1}_{x_i = \text{true}}$ counts the number of functions $x$ such that $x_i = \text{true}$ for all $i \in S$.
         have h_count : ∑ x : Fin n → Bool, (∏ i ∈ S, if x i then 1 else 0) = 2^(n - S.card) := by
           have h_sum_indicator : ∑ x : Fin n → Bool, (∏ i ∈ S, if x i = Bool.true then 1 else 0) = ∑ x : Finset (Fin n), if S ⊆ x then 1 else 0 := by
@@ -249,9 +259,9 @@ lemma Fools_zero_of_eps_gt_one {n : ℕ} {ε : ℝ} (hε : ε > 1) (S : Set (Cir
     intro μ hμ C hC;
     refine' le_trans ( abs_sub_le_iff.mpr ⟨ _, _ ⟩ ) hε.le;
     · refine' le_trans ( sub_le_self _ ( _ ) ) _;
-      · exact?;
-      · exact?;
-    · exact sub_le_iff_le_add'.mpr ( le_trans ( Circuit.prob_le_one _ _ ) ( by linarith [ show 0 ≤ C.prob μ from by exact? ] ) )
+      · exact Circuit.prob_nonneg C (PMF.uniformOfFintype (Fin n → Bool));
+      · exact Circuit.prob_le_one C μ;
+    · exact sub_le_iff_le_add'.mpr ( le_trans ( Circuit.prob_le_one _ _ ) ( by linarith [ show 0 ≤ C.prob μ from by exact Circuit.prob_nonneg C μ ] ) )
 
 /-
 Lemma: Circuit probability is equal to the sum of the indicator function times the probability mass.

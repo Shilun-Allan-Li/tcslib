@@ -149,7 +149,7 @@ lemma char_S_times_char_T {n : ℕ} (S T : Finset (Fin n)) (x : hypercube n) :
   chiS_mul_chiS S T x
 
 -- ∑_S χ_S(0,...,0) = 2^n
-private lemma sum_char_S_at_zero_aux_h {n : Nat} : (fun S => char_S S (zero_vec n)) = fun x => 1 :=
+private lemma sum_char_S_at_zero_aux_h {n : Nat} : (fun S => char_S S (zero_vec n)) = fun _ => 1 :=
   funext fun S => char_S_of_zero n S
 
 lemma sum_char_S_at_zero {n : ℕ} :
@@ -182,8 +182,8 @@ lemma expectation_char_empty (n : ℕ) :
   simp [expectation]
 
 -- E[χ_S] = 0 for S ≠ ∅
-private lemma expectation_char_nonempty_aux_h_exp {n : Nat} {S : Finset (Fin n)} (hS : S.Nonempty) :
-  expectation (char_S S) = ∏ j ∈ S, (BoolToPM1 false + BoolToPM1 true) / 2 := by
+private lemma expectation_char_nonempty_aux_h_exp {n : Nat} {S : Finset (Fin n)} (_hS : S.Nonempty) :
+  expectation (char_S S) = ∏ _j ∈ S, (BoolToPM1 false + BoolToPM1 true) / 2 := by
   convert expectation_factorizes _ using 1
   any_goals exact fun i b => if i ∈ S then BoolToPM1 b else 1
   · exact congr_arg _ (funext fun x => by rw [← Finset.prod_filter]; congr; ext; aesop)
@@ -261,7 +261,7 @@ private lemma fourier_coeff_convolution_aux_h_fubini {n : Nat} (f g : BoolFun n)
   simpa only [Finset.mul_sum _ _ _, mul_assoc, Finset.sum_mul] using Finset.sum_comm
 
 private lemma fourier_coeff_convolution_aux_h_split {n : Nat} (f g : BoolFun n) (S : Finset (Fin n))
-  (h_fubini : ∑ x, (∑ y, f y * g (xor_vec x y)) * char_S S x = ∑ y, f y * ∑ x, g (xor_vec x y) * char_S S x)
+  (_h_fubini : ∑ x, (∑ y, f y * g (xor_vec x y)) * char_S S x = ∑ y, f y * ∑ x, g (xor_vec x y) * char_S S x)
   (y x : hypercube n) : char_S S x = char_S S (xor_vec x y) * char_S S y := by
   simp [chiS, ← Finset.prod_mul_distrib]
   congr 1; ext i; simp [xor_vec, boolToSign, Bool.xor]
@@ -286,7 +286,7 @@ lemma fourier_coeff_convolution {n : ℕ} (f g : BoolFun n) (S : Finset (Fin n))
   classical
   let h_char : ∀ y : hypercube n, ∑ x : hypercube n, g (xor_vec x y) * char_S S x = char_S S y * ∑ x : hypercube n, g x * char_S S x := (fourier_coeff_convolution_aux_h_char f g S (fourier_coeff_convolution_aux_h_fubini f g S))
   unfold convolution fourier_coeff inner_product expectation
-  simp_all +decide [div_mul_eq_mul_div, ← Finset.sum_div, (fourier_coeff_convolution_aux_h_fubini f g S), h_char]
+  simp_all +decide [div_mul_eq_mul_div, ← Finset.sum_div, (fourier_coeff_convolution_aux_h_fubini f g S)]
   simp +decide only [← mul_assoc, ← Finset.sum_mul]; ring
 
 end FOURIER_COEFFICIENTS

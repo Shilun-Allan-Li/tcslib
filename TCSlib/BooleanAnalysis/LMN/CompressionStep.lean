@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.LMN.CircuitLayerReduction
-import Mathlib
 
 /-!
 # Compression Step for Layer Reduction
@@ -33,7 +32,7 @@ lemma circuit_depth_zero_is_lit (c : Circuit m) (h : c.depth = 0) :
 lemma layer2_composed_bound_base (data : Layer2Data n) (c_top : Circuit data.numGates)
     (s_rem l t : ℕ) (hl_pos : 0 < l) (hn : 0 < n)
     (hd_depth : c_top.depth + 2 ≤ 2)
-    (hs : c_top.size ≤ s_rem) (hwl : data.width ≤ l) (hs_pos : 0 < s_rem) :
+    (_hs : c_top.size ≤ s_rem) (hwl : data.width ≤ l) (hs_pos : 0 < s_rem) :
     bernoulliRestrProb (composedDelta l (↑l) 2)
       (fun ρ => dtDepth (restrictFn (fun x => c_top.eval (fun i => (data.gates i).eval x)) ρ) > t) ≤
     ↑s_rem * (1 / 2 : ℝ) ^ l + (1 / 2 : ℝ) ^ t +
@@ -43,7 +42,7 @@ lemma layer2_composed_bound_base (data : Layer2Data n) (c_top : Circuit data.num
   -- Apply the switching lemma to the DNF gate.
   have h_switching : bernoulliRestrProb (1 / (40 * l : ℝ)) (fun ρ => dtDepth (restrictFn (fun x => (data.gates l'.idx).eval x) ρ) > t) ≤ (1 / 2 : ℝ) ^ t + Real.exp (-(n / (120 * l))) := by
     have := @switching_bernoulli_dtDepth_dnf_general n ( data.gates l'.idx ) l;
-    convert this ( data.widthBound _ |> le_trans <| hwl ) hl_pos hn ( 1 / ( 40 * l : ℝ ) ) ( by positivity ) ( by norm_num ) ( by rw [ div_le_iff₀ ] <;> norm_cast <;> linarith ) t using 1 ; ring;
+    convert this ( data.widthBound _ |> le_trans <| hwl ) hl_pos hn ( 1 / ( 40 * l : ℝ ) ) ( by positivity ) ( by norm_num ) ( by rw [ div_le_iff₀ ] <;> norm_cast <;> linarith ) t using 1 ; ring_nf;
   by_cases h : l'.sign <;> simp_all +decide [ Circuit.eval ];
   · unfold composedDelta; norm_num; linarith [ show ( 0 : ℝ ) ≤ s_rem * ( 2 ^ l ) ⁻¹ by positivity, show ( 0 : ℝ ) ≤ s_rem * Real.exp ( - ( n / ( 120 * l ) ) ) by positivity ] ;
   · refine le_trans ?_ ( le_trans h_switching ?_ );

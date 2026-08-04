@@ -14,6 +14,7 @@ alphabet $\alpha$.  Throughout, $\alpha$ is a type carrying instances
 \begin{definition}[Codeword]
 \lean{ErrorCorrectingCodes.Codeword}
 \leanok
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 A codeword of length $n$ over alphabet $\alpha$ is a function $c : \mathrm{Fin}\,n \to \alpha$.
 \end{definition}
 
@@ -30,6 +31,7 @@ Pointwise addition, subtraction, and the all-zero codeword.
 \begin{definition}[Code]
 \lean{ErrorCorrectingCodes.Codeword.Code}
 \leanok
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 A (block) code of length $n$ over $\alpha$ is a finite set (\texttt{Finset}) of codewords.
 \end{definition}
 
@@ -53,6 +55,7 @@ Existential version: there exists some $m$ and generator matrix $G$ witnessing l
 \begin{definition}[$q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \leanok
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b005}
 \[
 H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
 \]
@@ -61,12 +64,14 @@ H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
 \begin{definition}[Hamming distance]
 \lean{ErrorCorrectingCodes.Codeword.hamming_distance}
 \leanok
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 Hamming distance between two codewords, wrapping Mathlib's \texttt{hammingDist}.
 \end{definition}
 
 \begin{definition}[Distance predicate for a code]
 \lean{ErrorCorrectingCodes.Codeword.distance}
 \leanok
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 \texttt{distance C d} holds when $d$ is the minimum Hamming distance of $C$: there
 exist distinct codewords at distance exactly $d$, and no two distinct codewords
 are closer than $d$.
@@ -75,6 +80,7 @@ are closer than $d$.
 \begin{definition}[Rate]
 \lean{ErrorCorrectingCodes.Codeword.rate}
 \leanok
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 \[
 R(C) = \frac{\log|C|}{n\log|\alpha|}.
 \]
@@ -83,13 +89,15 @@ R(C) = \frac{\log|C|}{n\log|\alpha|}.
 \begin{definition}[Weight]
 \lean{ErrorCorrectingCodes.Codeword.weight}
 \leanok
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 The Hamming weight of $c$ is $d(c, \mathbf{0})$.
 \end{definition}
 
 \begin{definition}[Maximal size at distance]
 \lean{ErrorCorrectingCodes.Codeword.max_size}
 \leanok
-\texttt{max_size n d A} asserts existence of a code of size $A$ and minimum distance $d$
+\statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
+\texttt{max\_size n d A} asserts existence of a code of size $A$ and minimum distance $d$
 that is maximal among all such codes.
 \end{definition}
 

@@ -35,6 +35,7 @@ $|\mathbb{Z}_k^n| = k^n$ elements.
 \begin{definition}[Primitive $k$-th root of unity]
 \lean{ZkFourier.rootOfUnity}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
 $\lean{ZkFourier.rootOfUnity}\ k$ is the complex number
 $\omega_k = e^{2\pi i / k}$, the primitive $k$-th root of unity used as the
 base of the Fourier characters on $\mathbb{Z}_k^n$.
@@ -43,6 +44,7 @@ base of the Fourier characters on $\mathbb{Z}_k^n$.
 \begin{definition}[Embedding of $\mathbb{Z}/k\mathbb{Z}$ into $\mathbb{C}^\times$]
 \lean{ZkFourier.toOmega}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
 \uses{ZkFourier.rootOfUnity}
 For $a : \mathbb{Z}/k\mathbb{Z}$, $\lean{ZkFourier.toOmega}\ a = \omega_k^{a}$,
 where $a$ is lifted to its canonical representative in
@@ -131,6 +133,7 @@ This is the fundamental character-orthogonality identity for $\mathbb{Z}/k\mathb
 \begin{definition}[Functions on $\mathbb{Z}_k^n$]
 \lean{ZkFourier.ZkFun}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 \uses{ZkFourier.ZkVec}
 $\lean{ZkFourier.ZkFun}\ k\ n$ is the type of complex-valued functions on
 $\mathbb{Z}_k^n$, defined as $\mathbb{Z}_k^n \to \mathbb{C}$.  These are the
@@ -150,6 +153,7 @@ The expectation of $f : \mathbb{Z}_k^n \to \mathbb{C}$ is the uniform average
 \begin{definition}[Hermitian inner product]
 \lean{ZkFourier.inner_product}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 \uses{ZkFourier.ZkFun, ZkFourier.expectation}
 The Hermitian inner product of $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ is
 \[
@@ -171,6 +175,7 @@ real-valued quantity
 \begin{definition}[Convolution]
 \lean{ZkFourier.convolution}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 \uses{ZkFourier.ZkFun, ZkFourier.expectation}
 The convolution of $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ is
 \[
@@ -190,6 +195,10 @@ computed componentwise modulo $k$.
 \begin{definition}[Fourier character]
 \lean{ZkFourier.char_s}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b007,
+  pdf-50833afe7403-p022-b009
+}
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.toOmega, ZkFourier.zkDot}
 For $s \in \mathbb{Z}_k^n$, the Fourier character indexed by $s$ is
 $\chi_s : \mathbb{Z}_k^n \to \mathbb{C}$ defined by
@@ -340,13 +349,14 @@ Every character is a unit-norm vector in $L^2(\mathbb{Z}_k^n)$.
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.char_s_mul, ZkFourier.expectation_char_nontrivial, ZkFourier.inner_product}
 \difficulty{3}
 If $s \neq t$, then $\langle \chi_s, \chi_t \rangle = 0$.
-Together with $\lean{ZkFourier.inner_product\_char\_self}$, this shows that the
+Together with $\lean{ZkFourier.inner_product_char_self}$, this shows that the
 characters form an orthonormal system.
 \end{lemma}
 
 \begin{definition}[Fourier coefficient]
 \lean{ZkFourier.fourier_coeff}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.inner_product}
 The Fourier coefficient of $f : \mathbb{Z}_k^n \to \mathbb{C}$ at frequency
 $s$ is
@@ -376,6 +386,10 @@ If $s \neq t$, then $\widehat{\chi_s}(t) = \langle \chi_s, \chi_t \rangle = 0$.
 \begin{lemma}[Fourier expansion]
 \lean{ZkFourier.fourier_expansion}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p005-b001,
+  pdf-50833afe7403-p022-b009
+}
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.zkDot}
 \difficulty{7}
 Every function $f : \mathbb{Z}_k^n \to \mathbb{C}$ admits the Fourier expansion

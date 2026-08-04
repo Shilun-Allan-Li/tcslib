@@ -106,19 +106,19 @@
    "note": "output 0 errors"
   },
   "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction.lean::function_hammingBall_card_le_binomial": {
-   "date": "2026-07-26",
-   "result": "pass 9/11+3skip",
-   "note": "3 struct-field haves skipped cleanly (heuristic validated); 2 safe-reject failures; final pass converged; output 0 errors"
+   "date": "2026-07-28",
+   "result": "pass 12/14",
+   "note": "re-grind under #59 routing: all 3 former struct-field skips TERM-EXTRACTED; 2 safe-reject failures (hdecode_surj, hcard_le); 2 checkpointed windows; output 0 errors"
   },
   "TCSlib/BooleanAnalysis/KKL.lean::friedgut_junta": {
-   "date": "2026-07-26",
-   "result": "blocked-upstream",
-   "note": "dependency Hypercontractivity/Bonami.lean fails to build (pre-existing: unsolved Function.Injective (Fin.snoc · b) goals at 480/595) — not a pipeline class; retry after library fix"
+   "date": "2026-08-02",
+   "result": "pass 28/28",
+   "note": "FULLY DEALT WITH by metaprogram: 26 extracted (incl 3 rung-T, hlow1/hlow_k untyped support) + 1 final-pass inlined (hlow_k) + 1 RUNG-L let-swapped (hlow_bound); output verified 0 errors, decl span have-free; rung L (gated have-to-let) + untyped rung-T one-liner landed in #61"
   },
   "TCSlib/GraphTheory/KargerMinCut.lean::mincut_preserved_of_non_crossing": {
-   "date": "2026-07-26",
-   "result": "pass 20/27",
-   "note": "STRUCT-FIELD→RUNG-T ROUTING (#59): all 9 former struct-field skips TERM-EXTRACTED 9/9; 7 remaining failures = hu/hvLift family (data-inacc, safe-reject); output 0 errors"
+   "date": "2026-07-31",
+   "result": "pass 20/27 (final)",
+   "note": "hu/hvLift = multi-line struct-literal let-replay; 3 textual eq-param placements all parse-fail (struct-instance + by-block whitespace rules resist binder-position embedding); NEEDS AST-level eq-param construction (elaborate D' once, print with pp to a fresh named def, use hD'def : D' = thatDef) — future arc; 20/27 verified stands"
   },
   "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean::canonicalDTree_go_fuel_invariant": {
    "date": "2026-07-26",

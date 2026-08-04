@@ -1,4 +1,4 @@
-import Mathlib
+import Mathlib.Data.Nat.Notation
 
 /-!
 # Test: AXLE `have2lemma` when a `have` feeds a later `simp only`

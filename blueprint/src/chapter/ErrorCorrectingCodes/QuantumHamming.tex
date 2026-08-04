@@ -16,19 +16,28 @@ conditions for $t$-error correction and is non-degenerate, then
 \begin{definition}[Pauli basis]
 \lean{PauliBasis}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 The four Pauli basis elements $\{I,X,Y,Z\}$, represented as an inductive type.
 \end{definition}
 
 \begin{definition}[Pauli string]
 \lean{PauliString}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 A \emph{Pauli string} of length $n$ is a function $p : \mathrm{Fin}\,n \to \mathrm{PauliBasis}$.
 \end{definition}
 
 \begin{definition}[Support and weight]
 \lean{support}
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p002-b002}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b005}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p002-b004,
+  pdf-1ac7bb3b99cc-p004-b003
+}
 \lean{weight}
 \leanok
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p003-b007}
 The \emph{support} $\mathrm{supp}(p) \subseteq \mathrm{Fin}\,n$ consists of coordinates
 where $p(i) \neq I$; the \emph{weight} is $\mathrm{wt}(p) = |\mathrm{supp}(p)|$.
 \end{definition}
@@ -36,6 +45,12 @@ where $p(i) \neq I$; the \emph{weight} is $\mathrm{wt}(p) = |\mathrm{supp}(p)|$.
 \begin{definition}[Pauli error set]
 \lean{PauliErrorsLe}
 \leanok
+\statementsource{PhysRevLett.77.2585}{
+  pdf-9634739c3de9-p003-b003,
+  pdf-9634739c3de9-p002-b004
+}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p011-b008}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p008-b003}
 \uses{PauliString, weight}
 The set of all Pauli strings of weight at most $t$:
 \[
@@ -52,12 +67,30 @@ The set of all Pauli strings of weight at most $t$:
 \]
 \end{theorem}
 
+\begin{proof}
+\leanok
+Partition by weight $j$ and exact support $S$: each of the $\binom{n}{j}$
+supports of size $j$ carries $3^{j}$ strings
+(\texttt{card\_pauliStringsExactSupport}, via the \texttt{mkWithSupport}
+bijection), and the cells are disjoint.  This volume-of-ball count is used
+implicitly by the sphere-packing arguments of the source papers
+(Calderbank--Rains--Shor--Sloane cite it as a black box attributed to
+Gottesman; Ekert--Macchiavello and Knill--Laflamme use it implicitly) but is
+stated in none of them; full note:
+\texttt{references/informalized/QuantumHamming.card\_pauliErrorsLe.md}.
+\end{proof}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{$n$-qubit Hilbert space}
 
 \begin{definition}[$n$-qubit Hilbert space]
 \lean{Hn}
 \leanok
+\statementsource{quant-ph.9608006}{
+  pdf-4fa1f624d1c5-p002-b002,
+  pdf-4fa1f624d1c5-p003-b002
+}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b002}
 The $n$-qubit Hilbert space
 $\mathcal{H}_n = \ell^2\!\bigl(\{0,1\}^n,\mathbb{C}\bigr)$,
 implemented as \texttt{EuclideanSpace ℂ (Fin n → Fin 2)}.
@@ -73,6 +106,10 @@ $\dim_{\mathbb{C}}(\mathcal{H}_n) = 2^n$.
 \begin{definition}[Pauli operator]
 \lean{pauliOp}
 \leanok
+\statementsource{quant-ph.9608006}{
+  pdf-4fa1f624d1c5-p002-b003,
+  pdf-4fa1f624d1c5-p003-b002
+}
 \uses{PauliString, Hn}
 For $p \in \mathrm{PauliString}\,n$, the associated Pauli operator
 $\hat{p} : \mathcal{H}_n \to \mathcal{H}_n$.
@@ -84,6 +121,17 @@ $\hat{p} : \mathcal{H}_n \to \mathcal{H}_n$.
 \begin{definition}[Knill--Laflamme condition]
 \lean{KnillLaflamme}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p002-b003}
+\statementsource{PhysRevA.54.3824}{
+  pdf-c11491661f48-p023-b003,
+  pdf-c11491661f48-p023-b004
+}
+\statementsource{PhysRevLett.77.2585}{
+  pdf-9634739c3de9-p002-b004,
+  pdf-9634739c3de9-p002-b003
+}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b005}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p005-b003}
 \uses{pauliOp}
 A subspace $C \le \mathcal{H}_n$ satisfies the \emph{Knill--Laflamme condition}
 for $t$-error correction if for all Pauli strings $E,F$ with $\mathrm{wt}(E),\mathrm{wt}(F) \le t$
@@ -95,6 +143,17 @@ where $P_C$ is the orthogonal projection onto $C$.
 \begin{definition}[Non-degenerate code]
 \lean{IsNondegenerate}
 \leanok
+\statementsource{quant-ph.9705052}{
+  pdf-e658890bd7ef-p002-b005,
+  pdf-e658890bd7ef-p005-b005
+}
+\statementsource{PhysRevA.54.3824}{pdf-c11491661f48-p021-b003}
+\statementsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p002-b004}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p004-b008}
+\statementsource{PhysRevA.55.900}{
+  pdf-bbdd8e5c3949-p003-b002,
+  pdf-bbdd8e5c3949-p009-b002
+}
 \uses{KnillLaflamme}
 A code is \emph{non-degenerate} if it satisfies the Knill--Laflamme condition
 and additionally $P_C E^\dagger F P_C = 0$ whenever $E \neq F$.
@@ -106,6 +165,12 @@ and additionally $P_C E^\dagger F P_C = 0$ whenever $E \neq F$.
 \begin{definition}[Error sphere]
 \lean{ErrorSphere}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
+\statementsource{PhysRevLett.77.2585}{
+  pdf-9634739c3de9-p003-b003,
+  pdf-9634739c3de9-p003-b001
+}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
 \uses{pauliOp}
 The \emph{error sphere} $\mathrm{ES}(C,t)$ is the subspace
 $\bigvee_{\mathrm{wt}(p)\le t} \hat{p}(C)$, i.e.\ the supremum of the
@@ -115,6 +180,15 @@ Pauli images of $C$ over all $t$-errors.
 \begin{lemma}[Error subspaces are pairwise orthogonal]
 \lean{error_subspaces_orthogonal}
 \leanok
+\statementsource{PhysRevLett.77.2585}{
+  pdf-9634739c3de9-p003-b003,
+  pdf-9634739c3de9-p002-b004
+}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p004-b008}
+\statementsource{PhysRevA.55.900}{
+  pdf-bbdd8e5c3949-p003-b002,
+  pdf-bbdd8e5c3949-p009-b002
+}
 \uses{IsNondegenerate, pauliOp}
 If $C$ is non-degenerate and $E \neq F$ both have weight $\le t$, then
 $\hat{E}(C) \perp \hat{F}(C)$.
@@ -123,6 +197,7 @@ $\hat{E}(C) \perp \hat{F}(C)$.
 \begin{lemma}[Dimension of the error sphere]
 \lean{error_sphere_dimension}
 \leanok
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
 \uses{ErrorSphere, error_subspaces_orthogonal, card_pauliErrorsLe}
 If $C$ is non-degenerate,
 \[
@@ -136,6 +211,12 @@ If $C$ is non-degenerate,
 \begin{theorem}[Quantum Hamming bound]
 \lean{quantum_hamming_bound}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p011-b008}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p009-b002}
+\statementsource{PhysRevA.55.900}{
+  pdf-bbdd8e5c3949-p009-b002,
+  pdf-bbdd8e5c3949-p009-b003
+}
 \uses{error_sphere_dimension, finrank_Hn}
 If $C \le \mathcal{H}_n$ is non-degenerate, then
 \[
@@ -151,12 +232,14 @@ If $C \le \mathcal{H}_n$ is non-degenerate, then
 \begin{definition}[Pauli $I$ matrix]
 \lean{sigmaI}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 The $2\times 2$ identity matrix over $\mathbb{C}$, i.e.\ the Pauli operator $I$.
 \end{definition}
 
 \begin{definition}[Pauli $X$ matrix]
 \lean{sigmaX}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 The bit-flip Pauli matrix
 $X = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$
 over $\mathbb{C}$.
@@ -165,6 +248,7 @@ over $\mathbb{C}$.
 \begin{definition}[Pauli $Y$ matrix]
 \lean{sigmaY}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 The bit-phase-flip Pauli matrix
 $Y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}$
 over $\mathbb{C}$.
@@ -173,6 +257,7 @@ over $\mathbb{C}$.
 \begin{definition}[Pauli $Z$ matrix]
 \lean{sigmaZ}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 The phase-flip Pauli matrix
 $Z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$
 over $\mathbb{C}$.
@@ -181,6 +266,7 @@ over $\mathbb{C}$.
 \begin{definition}[Matrix of a Pauli basis element]
 \lean{PauliBasis.toMatrix}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 \uses{sigmaI, sigmaX, sigmaY, sigmaZ}
 Maps each Pauli basis element $\{I,X,Y,Z\}$ to its corresponding $2\times 2$ matrix
 $\{\sigma_I,\sigma_X,\sigma_Y,\sigma_Z\}$.
@@ -189,6 +275,7 @@ $\{\sigma_I,\sigma_X,\sigma_Y,\sigma_Z\}$.
 \begin{definition}[Matrix of a Pauli string]
 \lean{pauliMatrix}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 \uses{PauliBasis.toMatrix, PauliString}
 For a Pauli string $p$ on $n$ qubits, the $2^n\times 2^n$ matrix obtained as the
 tensor product of the single-qubit Pauli matrices $\sigma_{p(i)}$ over all coordinates~$i$.
@@ -236,6 +323,10 @@ is assigned one of the three non-identity Paulis.
 \begin{definition}[Quantum code]
 \lean{Code}
 \leanok
+\statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p002-b002}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b002}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b002}
+\statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p004-b002}
 \uses{Hn}
 An $n$-qubit quantum code is a subspace of the $n$-qubit Hilbert space $\mathcal{H}_n$.
 \end{definition}
@@ -288,6 +379,12 @@ The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathca
 \begin{theorem}[Quantum Hamming bound, raw form]
 \lean{quantum_hamming_bound_raw}
 \leanok
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p011-b008}
+\statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p009-b002}
+\statementsource{PhysRevA.55.900}{
+  pdf-bbdd8e5c3949-p009-b002,
+  pdf-bbdd8e5c3949-p009-b003
+}
 \uses{ErrorSphere, Hn, IsNondegenerate, card_pauliErrorsLe, error_sphere_dimension, finrank_Hn}
 For a non-degenerate $[[n,k]]$ quantum code $C \le \mathcal{H}_n$ correcting $t$ errors, with
 $\dim_{\mathbb{C}}(C) = 2^k$, the dimension of the error sphere does not exceed the ambient
@@ -296,3 +393,11 @@ dimension:
 \left(\sum_{j=0}^{t}\binom{n}{j}\,3^j\right)\cdot 2^k \;\le\; 2^n.
 \]
 \end{theorem}
+
+\begin{lemma}[Embedded non-identity Paulis are not $I$]
+\lean{PauliNZ.toBasis_ne_I}
+\leanok
+\uses{PauliNZ.toBasis}
+For every $a \in \mathrm{PauliNZ}$, its image $a.\mathrm{toBasis}$ in the Pauli basis
+differs from $I$; that is, the embedding of $\{X,Y,Z\}$ never hits the identity element.
+\end{lemma}

@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.LMN.CircuitReindex
-import Mathlib
 
 /-!
 # Gate Set Merging

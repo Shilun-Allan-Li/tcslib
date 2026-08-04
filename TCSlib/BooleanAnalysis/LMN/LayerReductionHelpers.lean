@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.LMN.CircuitLayerReduction
-import Mathlib
 
 /-!
 # Helper lemmas for the one-step layer reduction
@@ -84,7 +83,7 @@ lemma layer2_gates_switchable_to_cnf
           ∀ x, CNF.eval ψ x = restrictFn (data.gates i).eval ρ x) ≤
     ↑data.numGates * ((1 / 2 : ℝ) ^ l + Real.exp (-(↑n / (120 * ↑l)))) := by
   convert normalform_one_step_cnf_replaceability data l hn ( 1 / ( 40 * l : ℝ ) ) ( by positivity ) _ _ using 2;
-  · ring;
+  · ring_nf;
   · gcongr;
     exact mul_pos ( by norm_num ) ( Nat.cast_pos.mpr data.widthPos );
   · exact div_le_self zero_le_one ( by norm_cast; linarith )

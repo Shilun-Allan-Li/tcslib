@@ -1,6 +1,5 @@
 import TCSlib.BooleanAnalysis.LMN.NormalFormConversion
 import TCSlib.BooleanAnalysis.LMN.SwitchingBernoulli
-import Mathlib
 
 /-!
 # Circuit Helper Lemmas for LMN
@@ -66,7 +65,7 @@ lemma dedupTermVar_var_inj (t : Term n) :
         induction' t with l t ih generalizing acc;
         · exact hvar_inj;
         · grind;
-      exact h_ind _ _ ( by simp +decide [ List.nodup_nil ] ) ( by simp +decide [ List.nodup_nil ] )
+      exact h_ind _ _ ( by simp +decide ) ( by simp +decide )
 
 lemma dedupTermVar_width_le (t : Term n) :
     (dedupTermVar t).length ≤ t.length := by
@@ -155,7 +154,7 @@ lemma dedupTermVar_preserves_clause_eval (t : Term n) (x : Fin n → Bool)
           · grind;
           · unfold termHasContradiction at *; simp_all +decide [ List.any_cons ] ;
             exact fun x hx y hy hxy => hnc.2 x hx |>.2 y hy hxy;
-        · simp_all +decide [ termHasContradiction, List.foldr ];
+        · simp_all +decide [termHasContradiction];
           split_ifs <;> simp_all +decide [ CNF.evalClause ];
           · tauto;
           · rw [ ih x fun x hx y hy hxy => hnc.2 x hx |>.2 y hy hxy ]
@@ -346,18 +345,18 @@ lemma depth2OrToDNF_eval (cs : List (Circuit n))
       -- - c = node true cs': children of cs' are all lits (by depth_le_one_children_are_lits). subcircuitToDNFContrib returns [cs'.filterMap ...]. Since all children are lits, filterMap returns all their toLiterals. This term's eval = all literals evaluate to true = AND of lits = c.eval x.
       have h_child_eval (c : Circuit n) (hc : c ∈ cs) : (depth2OrToDNF [c]).eval x = c.eval x := by
         rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ );
-        · unfold depth2OrToDNF; simp +decide [ BoolCircuit.Lit.eval_eq_toLiteral_eval ] ;
+        · unfold depth2OrToDNF; simp +decide ;
           unfold DNF.eval; simp +decide [ Circuit.eval ] ;
           unfold Term.eval; simp +decide [ Lit.toLiteral ] ;
           unfold Literal.eval; aesop;
         · have h_lits : ∀ c' ∈ ‹List (Circuit n)›, ∃ l : Lit n, c' = .lit l := by
             apply depth_le_one_children_are_lits;
             exact depth_le_two_children_depth_le_one cs false hd _ hc;
-          unfold depth2OrToDNF Circuit.eval; simp +decide [ h_lits ] ;
+          unfold depth2OrToDNF Circuit.eval; simp +decide ;
           have h_lits : ∀ {l : List (Circuit n)}, (∀ c' ∈ l, ∃ l : Lit n, c' = .lit l) → DNF.eval (List.filterMap (fun c' => match c' with | .lit l => some [l.toLiteral] | _ => none) l) x = List.foldr (fun c acc => c.eval x || acc) false l := by
             intro l hl; induction l <;> simp_all +decide [ DNF.eval ] ;
             rcases hl.1 with ⟨ l, rfl ⟩ ; simp +decide [ Circuit.eval ] ;
-            unfold Term.eval; simp +decide [ Lit.eval ] ;
+            unfold Term.eval; simp +decide ;
             unfold Literal.eval; simp +decide [ Lit.toLiteral ] ;
             cases l.sign <;> simp +decide [ * ];
           exact h_lits ‹_›;
@@ -405,7 +404,7 @@ lemma depth2AndToCNF_eval (cs : List (Circuit n))
               intro c hc; specialize h_children_literals c hc; rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ Circuit.depth ] ;
             obtain ⟨lits, hlits⟩ : ∃ lits : List (Lit n), ‹List (Circuit n)› = lits.map (fun l => .lit l) := by
               have h_children_literals : ∀ {l : List (Circuit n)}, (∀ c ∈ l, ∃ l' : Lit n, c = .lit l') → ∃ lits : List (Lit n), l = lits.map (fun l => .lit l) := by
-                intros l hl; induction' l with c l ih <;> simp_all +decide [ List.map ] ;
+                intros l hl; induction' l with c l ih <;> simp_all +decide ;
                 rcases hl.1 with ⟨ l', rfl ⟩ ; obtain ⟨ lits, rfl ⟩ := ih; exact ⟨ l' :: lits, by simp +decide ⟩ ;
               exact h_children_literals ‹_›;
             simp_all +decide [ depth2AndToCNF ];
@@ -436,7 +435,7 @@ lemma depth2AndToCNF_eval (cs : List (Circuit n))
               intro l hl; induction l <;> simp_all +decide [ CNF.eval ] ;
               rcases hl.1 with ⟨ l, rfl ⟩ ; simp +decide [ Circuit.eval ] ;
               unfold CNF.evalClause; simp +decide [ Lit.toLiteral ] ;
-              unfold Literal.eval; simp +decide [ Lit.toLiteral ] ;
+              unfold Literal.eval; simp +decide ;
               cases l.sign <;> simp +decide [ * ];
             exact h_foldr k h_children;
       -- By definition of `depth2AndToCNF`, we can rewrite the left-hand side as the flatMap of the translaton of each child.
@@ -480,7 +479,7 @@ lemma depth2OrToDNF_width_le (cs : List (Circuit n))
             exact le_trans ( h_max_fanin hc ) ( by cases cs <;> simp +decide [ Circuit.maxFanin ] );
           cases c <;> simp_all +decide [ Circuit.maxFanin ];
           · exact Or.inl ( List.length_pos_iff.mpr ( by aesop_cat ) );
-          · cases ‹Bool› <;> simp_all +decide [ Circuit.maxFanin ]; all_goals grind;
+          · cases ‹Bool› <;> simp_all +decide; all_goals grind;
       have h_term_width : ∀ t ∈ List.flatMap (fun c => match c with
         | Circuit.lit l => [[l.toLiteral]]
         | Circuit.node true cs' => [List.filterMap (fun c' => match c' with | Circuit.lit l => some l.toLiteral | _ => none) cs']

@@ -1,5 +1,4 @@
 import TCSlib.BooleanAnalysis.LMN.CircuitLayerReduction
-import Mathlib
 
 /-!
 # Depth-3 Circuit Switching and Compression
@@ -181,7 +180,7 @@ lemma dedupClauseVars_length_le (c : List (Literal n)) :
     (dedupClauseVars c).length ≤ c.length := by
   have h_sublist : dedupClauseVars c ∈ c.sublists := by
     simp +decide [ dedupClauseVars ];
-    exact?;
+    exact List.pwFilter_sublist c;
   exact List.mem_sublists.mp h_sublist |> fun h => List.Sublist.length_le h
 
 /-
@@ -205,7 +204,7 @@ lemma cleanCNF_D3_eval (ψ : CNF n) (x : Fin n → Bool) :
   unfold CNF.eval; simp +decide [ List.all_map ] ;
   congr! 2 with t ht ; by_cases h : clauseIsTaut t <;> simp +decide [ h, CNF.evalClause ];
   · have := clauseIsTaut_eval_true t h x; aesop;
-  · exact?
+  · exact dedupClauseVars_eval_of_not_taut t h x
 
 /-
 Cleaning doesn't increase width.
@@ -331,7 +330,7 @@ theorem two_stage_bound
     rw [ restriction_compose_eq ];
     · grind;
     · linarith;
-    · exact?;
+    · exact hp₂;
     · linarith;
   -- Apply the linearity of summation and the bounds from h_bound.
   have h_sum_bound : ∑ ρ₁, bernoulliRestrWeight p₁ ρ₁ * bernoulliRestrProb p₂ (fun ρ₂ => E (composeRestr ρ₁ ρ₂)) ≤ ∑ ρ₁, bernoulliRestrWeight p₁ ρ₁ * (if A ρ₁ then 1 else β) := by
@@ -360,7 +359,7 @@ lemma and_of_gates_has_cnf
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : CNF n, CNF.width Ψ ≤ l ∧ (∀ x, CNF.eval Ψ x = List.all (Finset.univ.val.toList.map (fun i => restrictFn (gates i).eval ρ₁)) (fun f => f x)) := by
     apply compression_and_of_cnfs;
     simp +zetaDelta at *;
-    exact?;
+    exact fun a => all_gates_have_small_cnf gates l ρ₁ h_gates a;
   -- Convert the CNF representation into a nice CNF representation using exists_nice �_c�nf_of_cnf.
   obtain ⟨Ψ', hΨ'⟩ : ∃ Ψ' : CNF n, CNF.width Ψ' ≤ CNF.width Ψ ∧ (∀ x, CNF.eval Ψ' x = CNF.eval Ψ x) ∧ (∀ c ∈ Ψ', c.Nodup) ∧ (∀ c ∈ Ψ', ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) := by
     apply exists_nice_cnf_of_cnf;
@@ -382,10 +381,10 @@ lemma depth3_restricted_has_nice_cnf
   -- Use the existence of from `and_of_g �ates�_has_cnf` and show that it satisfies the required properties.
   obtain ⟨Ψ, hΨ⟩ := and_of_gates_has_cnf s₂ gates l ρ₁ h_gates;
   use Ψ;
-  simp_all +decide [ Finset.ext_iff ];
+  simp_all +decide ;
   refine' ⟨ hΨ.2.2.1, fun x => _ ⟩;
-  simp +decide [ restrictFn, h_f ];
-  cases h : f ( ρ₁.extend x ) <;> simp_all +decide [ Finset.ext_iff ];
+  simp +decide [ restrictFn ];
+  cases h : f ( ρ₁.extend x ) <;> simp_all +decide ;
   grind
 
 /-
@@ -420,7 +419,7 @@ lemma depth3_second_stage_bound
       congr! 3;
       exact dtDepth_congr _ _ fun x => by rw [ restrictFn_composeRestr, restrictFn_congr _ _ _ h_eq ] ;
   · refine' le_trans _ ( Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |>.1 );
-    exact?;
+    exact cleanCNF_D3_width_le (Classical.choose (depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates));
   · exact Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |> fun h => cleanCNF_D3_var_inj _;
   · exact fun c hc => cleanCNF_D3_nodup _ _ hc
 

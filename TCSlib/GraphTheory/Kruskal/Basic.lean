@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Harsha Polavaram
 -/
 
-import Mathlib
+import Mathlib.Tactic.SplitIfs
+import Mathlib.Tactic.Lemma
+import Mathlib.Data.List.Sort
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

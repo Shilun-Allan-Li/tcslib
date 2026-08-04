@@ -1,4 +1,22 @@
-import Mathlib
+import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Algebra.Polynomial.Eval.SMul
+import Mathlib.Algebra.Polynomial.Roots
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Data.Int.Star
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.SplitIfs
+import Mathlib.Tactic.Cases
 
 /-!
 # Formalization of the Binary First MRRW Bound
@@ -109,7 +127,7 @@ theorem krawtchouk_zero (n x : ℕ) : krawtchouk n 0 x = 1 := by
 For every `0 ≤ j ≤ n`, `K_j(0) = C(n,j)`. When `x = 0`, only the `i = 0` term
 survives because `C(0, i) = 0` for `i > 0`.
 -/
-theorem krawtchouk_eval_zero (n j : ℕ) (hj : j ≤ n) :
+theorem krawtchouk_eval_zero (n j : ℕ) (_hj : j ≤ n) :
     krawtchouk n j 0 = (Nat.choose n j : ℝ) := by
   unfold krawtchouk;
   simp +decide [ Finset.sum_range_succ', Nat.choose ]
@@ -140,15 +158,19 @@ theorem krawtchouk_generating_function (n x : ℕ) (hx : x ≤ n) (z : ℝ) :
         rw [ Finset.range_eq_Ico, Finset.sum_Ico_Ico_comm ];
       rw [ hFubini, ← Finset.sum_subset ( Finset.range_mono ( Nat.succ_le_succ hx ) ) ];
       · simp +decide only [mul_assoc, Finset.mul_sum _ _ _];
-      · simp +contextual [ Nat.choose_eq_zero_of_lt ];
+      · intro k hk hxk
+        have hzero : x.choose k = 0 :=
+          Nat.choose_eq_zero_of_lt
+            (Nat.not_le.mp (by simpa [Finset.mem_range, Nat.lt_succ_iff] using hxk))
+        simp [hzero];
     -- Let's simplify the inner sum $\sum_{j=i}^{n} \binom{n-x}{j-i} z^j$.
     have hInner : ∀ i ∈ Finset.range (x + 1), ∑ j ∈ Finset.Ico i (n + 1), Nat.choose (n - x) (j - i) * z ^ j = z ^ i * (1 + z) ^ (n - x) := by
-      intro i hi; rw [ add_comm 1 z, add_pow ] ; simp +decide [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _, Finset.sum_Ico_eq_sum_range ] ;
-      rw [ ← Finset.sum_subset ( Finset.range_mono ( show n - x + 1 ≤ n + 1 - i from by rw [ Nat.le_sub_iff_add_le ] <;> linarith [ Finset.mem_range.mp hi, Nat.sub_add_cancel hx ] ) ) ] <;> simp +decide [ pow_add, mul_assoc, mul_comm, mul_left_comm ];
+      intro i hi; rw [ add_comm 1 z, add_pow ] ; simp +decide [ mul_comm, Finset.mul_sum _ _ _, Finset.sum_Ico_eq_sum_range ] ;
+      rw [ ← Finset.sum_subset ( Finset.range_mono ( show n - x + 1 ≤ n + 1 - i from by rw [ Nat.le_sub_iff_add_le ] <;> linarith [ Finset.mem_range.mp hi, Nat.sub_add_cancel hx ] ) ) ] <;> simp +decide [ pow_add, mul_assoc ];
       exact fun j hj₁ hj₂ => Or.inr <| Or.inr <| Nat.choose_eq_zero_of_lt hj₂;
     rw [ hFubini, Finset.sum_congr rfl fun i hi => by rw [ hInner i hi ] ];
     rw [ show ( 1 - z ) ^ x = ∑ i ∈ Finset.range ( x + 1 ), ( -1 : ℝ ) ^ i * Nat.choose x i * z ^ i by rw [ sub_eq_neg_add, add_pow ] ; congr ; ext ; ring ] ; simp +decide [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ];
-  simp_all +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, krawtchouk ]
+  simp_all +decide [ ← Finset.sum_mul, krawtchouk ]
 
 /-
 **Lemma 3 (orthogonality)** from the source file.
@@ -161,7 +183,7 @@ theorem krawtchouk_orthogonality (n r s : ℕ) (hr : r ≤ n) (hs : s ≤ n) :
       if r = s then 2 ^ n * (Nat.choose n r : ℝ) else 0 := by
   -- Consider the generating function $\sum_{x=0}^n \binom{n}{x} [(1-z)^x(1+z)^{n-x}] [(1-w)^x(1+w)^{n-x}]$.
   have h_gen_fun : ∀ z w : ℝ, ∑ x ∈ Finset.range (n + 1), (Nat.choose n x : ℝ) * ((1 - z) ^ x) * ((1 + z) ^ (n - x)) * ((1 - w) ^ x) * ((1 + w) ^ (n - x)) = ((1 + z) * (1 + w) + (1 - z) * (1 - w)) ^ n := by
-    intro z w; rw [ add_comm, add_pow ] ; simp +decide [ mul_pow, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ;
+    intro z w; rw [ add_comm, add_pow ] ; simp +decide [ mul_pow, mul_assoc, mul_comm, mul_left_comm ] ;
     rw [ add_comm, ← Finset.sum_flip ];
     exact Finset.sum_congr rfl fun x hx => by rw [ Nat.choose_symm ( Finset.mem_range_succ_iff.mp hx ), tsub_tsub_cancel_of_le ( Finset.mem_range_succ_iff.mp hx ) ] ;
   -- By equating the coefficients of $z^r w^s$ on both sides of the generating function equation, we obtain the desired orthogonality relation.
@@ -173,8 +195,8 @@ theorem krawtchouk_orthogonality (n r s : ℕ) (hr : r ≤ n) (hs : s ≤ n) :
     intros z w
     have h_eq : ∑ x ∈ Finset.range (n + 1), (Nat.choose n x : ℝ) * ((1 - z) ^ x) * ((1 + z) ^ (n - x)) * ((1 - w) ^ x) * ((1 + w) ^ (n - x)) = ∑ j ∈ Finset.range (n + 1), ∑ k ∈ Finset.range (n + 1), (if j = k then 2 ^ n * (Nat.choose n j : ℝ) else 0) * z ^ j * w ^ k := by
       rw [ h_gen_fun ];
-      rw [ show ( 1 + z ) * ( 1 + w ) + ( 1 - z ) * ( 1 - w ) = 2 * ( 1 + z * w ) by ring ] ; rw [ mul_pow ] ; simp +decide [ add_comm, add_pow, mul_pow, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _, Finset.sum_mul ] ;
-      exact Finset.sum_congr rfl fun x hx => by rw [ if_pos ( Finset.mem_range_succ_iff.mp hx ) ] ;
+      rw [ show ( 1 + z ) * ( 1 + w ) + ( 1 - z ) * ( 1 - w ) = 2 * ( 1 + z * w ) by ring ] ; rw [ mul_pow ] ; simp +decide [ add_comm, add_pow, mul_pow, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ;
+      exact Finset.sum_congr rfl fun x hx => by rw [ if_pos ( Finset.mem_range.mp hx ) ] ;
     rw [ ← h_coeff z w, ← h_eq ];
     refine' Finset.sum_congr rfl fun x hx => _;
     rw [ krawtchouk_generating_function n x ( Finset.mem_range_succ_iff.mp hx ) z, krawtchouk_generating_function n x ( Finset.mem_range_succ_iff.mp hx ) w ] ; ring;
@@ -189,6 +211,7 @@ theorem krawtchouk_orthogonality (n r s : ℕ) (hr : r ≤ n) (hs : s ≤ n) :
       have h_poly_zero : ∀ p : Polynomial ℝ, (∀ z : ℝ, p.eval z = 0) → ∀ j : ℕ, p.coeff j = 0 := by
         exact fun p hp j => by rw [ show p = 0 from Polynomial.funext fun x => by simpa using hp x ] ; norm_num;
       specialize h_poly_zero ( ∑ j ∈ Finset.range ( n + 1 ), ( ∑ k ∈ Finset.range ( n + 1 ), p j k * w ^ k ) • Polynomial.X ^ j ) ; simp_all +decide [ Polynomial.eval_finset_sum ];
+      exact h_poly_zero j (Nat.lt_succ_of_le hj)
     -- Fix $w$ and consider the polynomial in $z$. Since this polynomial is zero for all $w$, its coefficients must be zero.
     have h_poly_z_coeff : ∀ j : ℕ, j ≤ n → ∀ k : ℕ, k ≤ n → p j k = 0 := by
       intros j hj k hk;
@@ -199,6 +222,7 @@ theorem krawtchouk_orthogonality (n r s : ℕ) (hr : r ≤ n) (hs : s ≤ n) :
         simp +zetaDelta at *;
         exact Polynomial.funext fun x => by simpa [ Polynomial.eval_finset_sum ] using h_poly_z x j hj;
       replace hP_zero := congr_arg ( fun q => Polynomial.coeff q k ) hP_zero ; aesop;
+      exact hP_zero (Nat.lt_succ_of_le hk)
     exact h_poly_z_coeff j hj k hk;
   specialize h_coeff_eq ( fun j k => ∑ x ∈ Finset.range ( n + 1 ), ( n.choose x : ℝ ) * krawtchouk n j x * krawtchouk n k x - if j = k then 2 ^ n * ( n.choose j : ℝ ) else 0 );
   simp_all +decide [ sub_mul ];
@@ -221,8 +245,8 @@ theorem krawtchouk_recurrence (n j x : ℕ) (hj1 : 1 ≤ j) (hj2 : j + 1 ≤ n)
     have h_poly : (1 - z ^ 2) * deriv (fun z => (1 - z) ^ x * (1 + z) ^ (n - x)) z = ((n - 2 * x) - n * z) * ((1 - z) ^ x * (1 + z) ^ (n - x)) := by
       erw [ deriv_mul ] <;> norm_num [ add_comm, sub_eq_add_neg ];
       · erw [ deriv_comp ] <;> norm_num [ neg_add_eq_sub ];
-        · erw [ deriv_pow, deriv_sub ] <;> norm_num ; ring;
-          cases le_iff_exists_add'.mp hx ; simp_all +decide [ Nat.succ_eq_add_one, pow_add ] ; ring;
+        · erw [ deriv_pow, deriv_sub ] <;> norm_num ; ring_nf;
+          cases le_iff_exists_add'.mp hx ; simp_all +decide ; ring_nf;
           cases ‹ℕ› <;> cases x <;> norm_num [ pow_succ' ] ; ring;
           · ring;
           · ring;
@@ -233,8 +257,8 @@ theorem krawtchouk_recurrence (n j x : ℕ) (hj1 : 1 ≤ j) (hj2 : j + 1 ≤ n)
     · rw [ ← h_deriv, show ( fun z => ( 1 - z ) ^ x * ( 1 + z ) ^ ( n - x ) ) = fun z => ∑ j ∈ Finset.range ( n + 1 ), krawtchouk n j x * z ^ j from funext fun z => krawtchouk_generating_function n x hx z ▸ rfl ];
     · rw [ ← krawtchouk_generating_function n x hx z ];
   have h_coeff_eq : ∀ z : ℝ, ∑ j ∈ Finset.range (n + 1), (krawtchouk n j x : ℝ) * j * z ^ (j - 1) - ∑ j ∈ Finset.range (n + 1), (krawtchouk n j x : ℝ) * j * z ^ (j + 1) = (n - 2 * x) * ∑ j ∈ Finset.range (n + 1), (krawtchouk n j x : ℝ) * z ^ j - n * ∑ j ∈ Finset.range (n + 1), (krawtchouk n j x : ℝ) * z ^ (j + 1) := by
-    convert h_coeff using 2 <;> ring;
-    · norm_num [ Finset.mul_sum _ _ _, mul_assoc, mul_comm, mul_left_comm, pow_succ' ] ; ring;
+    convert h_coeff using 2 <;> ring_nf;
+    · norm_num [ Finset.mul_sum _ _ _, mul_assoc, mul_comm, mul_left_comm, pow_succ' ] ; ring_nf;
       rw [ ← Finset.sum_neg_distrib ] ; rw [ ← Finset.sum_sub_distrib ] ; rw [ ← Finset.sum_add_distrib ] ; congr ; ext ; cases ‹ℕ› <;> norm_num [ pow_succ' ] ; ring;
     · simpa only [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] using by ring;
   have h_coeff_eq_poly : ∑ j ∈ Finset.range (n + 1), (Polynomial.C (krawtchouk n j x * j : ℝ) * Polynomial.X ^ (j - 1)) - ∑ j ∈ Finset.range (n + 1), (Polynomial.C (krawtchouk n j x * j : ℝ) * Polynomial.X ^ (j + 1)) = (Polynomial.C (n - 2 * x : ℝ) * ∑ j ∈ Finset.range (n + 1), (Polynomial.C (krawtchouk n j x : ℝ) * Polynomial.X ^ j)) - (Polynomial.C (n : ℝ) * ∑ j ∈ Finset.range (n + 1), (Polynomial.C (krawtchouk n j x : ℝ) * Polynomial.X ^ (j + 1))) := by
@@ -256,6 +280,7 @@ theorem krawtchoukPoly_eval_nat (n j x : ℕ) (hj : j ≤ n) (hx : x ≤ n) :
   · exact (krawtchouk_zero n x).symm;
   · exact (krawtchouk_one n x hx).symm;
   · have := krawtchouk_recurrence n ( j + 1 ) x ( by linarith ) ( by linarith ) hx;
+    have hj2 : (0:ℝ) < (j:ℝ) + 2 := by positivity
     grind
 
 /-! ## Section 3: Delsarte's LP theorem
@@ -319,7 +344,7 @@ theorem cd_identity (n t : ℕ) (ht : t + 1 ≤ n) (a x : ℝ) (hax : a ≠ x) :
     rw [ eq_div_iff ( sub_ne_zero_of_ne hax ) ] ; ring;
   · rw [ show cdKernel n ( t + 1 ) a x = cdKernel n t a x + ( krawtchoukPoly n ( t + 1 ) |> Polynomial.eval a ) * ( krawtchoukPoly n ( t + 1 ) |> Polynomial.eval x ) / ( Nat.choose n ( t + 1 ) : ℝ ) from ?_ ];
     · rw [ ih ( by linarith ) ];
-      rw [ show krawtchoukPoly n ( t + 2 ) = ( ( Polynomial.C ( n : ℝ ) - 2 * Polynomial.X ) * krawtchoukPoly n ( t + 1 ) - Polynomial.C ( ( n : ℝ ) - ↑t ) * krawtchoukPoly n t ) * Polynomial.C ( ( ( t + 2 : ℕ ) : ℝ ) ⁻¹ ) from rfl ] ; norm_num ; ring;
+      rw [ show krawtchoukPoly n ( t + 2 ) = ( ( Polynomial.C ( n : ℝ ) - 2 * Polynomial.X ) * krawtchoukPoly n ( t + 1 ) - Polynomial.C ( ( n : ℝ ) - ↑t ) * krawtchoukPoly n t ) * Polynomial.C ( ( ( t + 2 : ℕ ) : ℝ ) ⁻¹ ) from rfl ] ; norm_num ; ring_nf;
       rw [ show ( n.choose ( 1 + t ) : ℝ ) = ( n.choose t : ℝ ) * ( n - t ) / ( 1 + t ) from ?_ ];
       · field_simp;
         rw [ div_add_div, div_mul_eq_mul_div, div_div ];
@@ -380,18 +405,23 @@ theorem finite_n_mrrw_bound (n t d : ℕ) (ht : t + 1 ≤ n) (a : ℝ)
   convert delsarte_lp_bound n d ( fun j => if j ≤ t then ( krawtchoukPoly n j |> Polynomial.eval a ) / ( Nat.choose n j : ℝ ) else 0 ) _ _ _ using 1 <;> norm_num;
   · rw [ Finset.sum_ite ] ; norm_num [ Finset.sum_range_succ', krawtchoukPoly ];
     refine' Finset.sum_bij ( fun x hx => x ) _ _ _ _ <;> simp_all +decide [ Finset.mem_range, Finset.mem_filter ];
-    · exact fun x hx => le_trans hx ht.le;
-    · intro j hj; rw [ mul_div_right_comm ] ; rw [ ← krawtchoukPoly_eval_nat ] ;
-      · norm_num;
-      · linarith;
-      · grind +qlia;
+    · exact fun x hx => ⟨by omega, by omega⟩
+    · exact fun j _ hj => Nat.lt_succ_of_le hj
+    · intro j hj
+      rw [ mul_div_right_comm ]
+      congr 1
+      rw [ ← krawtchoukPoly_eval_nat n j 0 (by omega) (Nat.zero_le n) ]
+      norm_num
   · erw [ Polynomial.eval_one ] ; norm_num;
   · intro j hj₁ hj₂; split_ifs <;> norm_num;
     exact div_nonneg ( le_of_lt ( krawtchouk_positive_below_smallest_zero n t ht a ha j ‹_› ) ) ( Nat.cast_nonneg _ );
   · intro x hx₁ hx₂; convert hd x hx₁ hx₂ using 1; simp +decide [ Finset.sum_ite, cdKernel ] ;
     refine' Finset.sum_bij ( fun j hj => j ) _ _ _ _ <;> simp_all +decide [ div_mul_eq_mul_div ];
-    · exact fun b hb => le_trans hb ht.le;
-    · intro j hj₁ hj₂; rw [ krawtchoukPoly_eval_nat n j x hj₁ ( by linarith ) ] ;
+    · exact fun b _ hb => Nat.lt_succ_of_le hb
+    · intro j hj₁
+      exact ⟨by omega, by omega⟩
+    · intro j hj₁ hj₂
+      rw [ krawtchoukPoly_eval_nat n j x (by omega) hx₂ ]
 
 /-! ## Section 5: Asymptotic choice of parameters
 

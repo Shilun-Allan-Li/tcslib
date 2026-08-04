@@ -14,7 +14,9 @@ T = TypeVar("T")
 class ComparisonVerdict:
     lean_name: str
     document_blocks: tuple[str, ...]
-    verdict: Literal["same", "different", "uncertain"]
+    verdict: Literal[
+        "same", "method_divergence", "not_in_text", "different", "uncertain"
+    ]
     confidence: float
     differences: tuple[str, ...]
     evidence: tuple[str, ...]

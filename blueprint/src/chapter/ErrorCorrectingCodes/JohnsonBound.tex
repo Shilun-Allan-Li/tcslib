@@ -153,3 +153,388 @@ If $n > 0$, $1 \le d$, $2d \le n$, and $w \le J_2(n,d)$, then
 A_0(n,d,w) \;\le\; 2n.
 \]
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Binary vector type]
+\lean{CodingTheory.Johnson.BitVec}
+\leanok
+The type of binary words of length $n$, namely functions $\mathrm{Fin}\,n \to \mathrm{Bool}$.
+\end{definition}
+
+\begin{definition}[Euclidean coordinate space]
+\lean{CodingTheory.Johnson.Euc}
+\leanok
+Abbreviation for the $n$-dimensional real Euclidean space $\mathbb{R}^n$ with the
+$\ell^2$ inner product, i.e.\ \texttt{EuclideanSpace} $\mathbb{R}$ $(\mathrm{Fin}\,n)$.
+\end{definition}
+
+\begin{definition}[Hamming weight]
+\lean{CodingTheory.Johnson.wt}
+\leanok
+\uses{CodingTheory.Johnson.BitVec}
+For a binary word $x$ of length $n$, its weight is the number of coordinates where
+$x$ takes the value \texttt{true}:
+$\mathrm{wt}(x) = \abs{\{\, i : x_i = \texttt{true} \,\}}$.
+\end{definition}
+
+\begin{definition}[Hamming distance]
+\lean{CodingTheory.Johnson.hdist}
+\leanok
+\uses{CodingTheory.Johnson.BitVec}
+For binary words $x,y$ of length $n$, the Hamming distance is the number of
+coordinates on which they differ:
+$\mathrm{hdist}(x,y) = \abs{\{\, i : x_i \neq y_i \,\}}$.
+\end{definition}
+
+\begin{definition}[$\pm 1$ embedding]
+\lean{CodingTheory.Johnson.pmOne}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.Euc}
+The map sending a binary word $x$ to the real vector in $\mathbb{R}^n$ whose $i$-th
+coordinate is $-1$ if $x_i = \texttt{true}$ and $+1$ otherwise.
+\end{definition}
+
+\begin{definition}[All-ones vector]
+\lean{CodingTheory.Johnson.ones}
+\leanok
+\uses{CodingTheory.Johnson.Euc}
+The vector in $\mathbb{R}^n$ all of whose coordinates equal $1$.
+\end{definition}
+
+\begin{definition}[Shifted $\pm 1$ vector]
+\lean{CodingTheory.Johnson.shifted}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.Euc, CodingTheory.Johnson.ones, CodingTheory.Johnson.pmOne}
+For a real parameter $\alpha$ and a binary word $x$, the vector
+$\hat{x}^\alpha = \mathrm{pmOne}(x) - \alpha \cdot \mathbf{1} \in \mathbb{R}^n$.
+\end{definition}
+
+\begin{definition}[Normalization]
+\lean{CodingTheory.Johnson.normalize}
+\leanok
+\uses{CodingTheory.Johnson.Euc}
+The rescaling $u \mapsto \norm{u}^{-1} \cdot u$ of a vector of $\mathbb{R}^n$.
+\end{definition}
+
+\begin{lemma}[Coordinates of the all-ones vector]
+\lean{CodingTheory.Johnson.ones_apply}
+\leanok
+\uses{CodingTheory.Johnson.ones}
+Every coordinate of $\mathbf{1} \in \mathbb{R}^n$ equals $1$: for each $i$,
+$\mathbf{1}_i = 1$.
+\end{lemma}
+
+\begin{lemma}[$\pm 1$ embedding at a false coordinate]
+\lean{CodingTheory.Johnson.pmOne_apply_false}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.pmOne}
+If $x_i = \texttt{false}$ then $\mathrm{pmOne}(x)_i = 1$.
+\end{lemma}
+
+\begin{lemma}[$\pm 1$ embedding at a true coordinate]
+\lean{CodingTheory.Johnson.pmOne_apply_true}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.pmOne}
+If $x_i = \texttt{true}$ then $\mathrm{pmOne}(x)_i = -1$.
+\end{lemma}
+
+\begin{definition}[Binary Johnson radius]
+\lean{CodingTheory.Johnson.J2}
+\leanok
+The real quantity
+\[
+J_2(n,d) \;=\; \frac{n - \sqrt{n\,(n - 2d)}}{2}.
+\]
+\end{definition}
+
+\begin{definition}[Shift parameter $\alpha$]
+\lean{CodingTheory.Johnson.alpha}
+\leanok
+The real quantity
+\[
+\alpha(n,d) \;=\; \sqrt{\frac{n - 2d}{n}}.
+\]
+\end{definition}
+
+\begin{definition}[Admissible code]
+\lean{CodingTheory.Johnson.AdmissibleCode}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.hdist, CodingTheory.Johnson.wt}
+A finite set $C$ of binary words of length $n$ is $(n,d,w)$-admissible when any two
+distinct elements of $C$ are at Hamming distance at least $d$ and every element of
+$C$ has weight at most $w$.
+\end{definition}
+
+\begin{lemma}[Coordinatewise product of $\pm 1$ embeddings]
+\lean{CodingTheory.Johnson.coord_mul_pmOne}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.pmOne}
+For all binary words $x,y$ and every coordinate $i$,
+$\mathrm{pmOne}(x)_i \cdot \mathrm{pmOne}(y)_i$ equals $1$ if $x_i = y_i$ and $-1$ otherwise.
+\end{lemma}
+
+\begin{lemma}[Inner product of two $\pm 1$ embeddings]
+\lean{CodingTheory.Johnson.inner_pmOne_pmOne}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.coord_mul_pmOne, CodingTheory.Johnson.hdist, CodingTheory.Johnson.pmOne}
+For all binary words $x,y$ of length $n$,
+\[
+\langle \mathrm{pmOne}(x), \mathrm{pmOne}(y)\rangle \;=\; n - 2\,\mathrm{hdist}(x,y).
+\]
+\end{lemma}
+
+\begin{lemma}[Inner product with the all-ones vector]
+\lean{CodingTheory.Johnson.inner_pmOne_ones}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.ones, CodingTheory.Johnson.pmOne, CodingTheory.Johnson.wt}
+For every binary word $x$ of length $n$,
+\[
+\langle \mathrm{pmOne}(x), \mathbf{1}\rangle \;=\; n - 2\,\mathrm{wt}(x).
+\]
+\end{lemma}
+
+\begin{lemma}[Squared norm of the all-ones vector]
+\lean{CodingTheory.Johnson.inner_ones_ones}
+\leanok
+\uses{CodingTheory.Johnson.ones}
+$\langle \mathbf{1}, \mathbf{1}\rangle = n$ in $\mathbb{R}^n$.
+\end{lemma}
+
+\begin{lemma}[Bilinear expansion of the shifted inner product]
+\lean{CodingTheory.Johnson.inner_shifted_expand}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.ones, CodingTheory.Johnson.pmOne, CodingTheory.Johnson.shifted}
+For all $\alpha \in \mathbb{R}$ and binary words $x,y$,
+\[
+\langle \hat{x}^\alpha, \hat{y}^\alpha \rangle
+= \langle \mathrm{pmOne}(x), \mathrm{pmOne}(y)\rangle
+ - \alpha\langle \mathrm{pmOne}(x), \mathbf{1}\rangle
+ - \alpha\langle \mathrm{pmOne}(y), \mathbf{1}\rangle
+ + \alpha^2 \langle \mathbf{1}, \mathbf{1}\rangle.
+\]
+\end{lemma}
+
+\begin{lemma}[Upper bound on the shifted inner product]
+\lean{CodingTheory.Johnson.inner_shifted_le_expr}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.hdist, CodingTheory.Johnson.inner_ones_ones, CodingTheory.Johnson.inner_pmOne_ones, CodingTheory.Johnson.inner_pmOne_pmOne, CodingTheory.Johnson.inner_shifted_expand, CodingTheory.Johnson.shifted, CodingTheory.Johnson.wt}
+If $\alpha \ge 0$, $\mathrm{hdist}(x,y) \ge d$, and $\mathrm{wt}(x), \mathrm{wt}(y) \le w$, then
+\[
+\langle \hat{x}^\alpha, \hat{y}^\alpha \rangle
+\;\le\; (n - 2d) + \alpha^2 n + 2\alpha\,(2w - n).
+\]
+\end{lemma}
+
+\begin{lemma}[Nonnegativity of $\alpha$]
+\lean{CodingTheory.Johnson.alpha_nonneg}
+\leanok
+\uses{CodingTheory.Johnson.alpha}
+For all $n,d$ one has $0 \le \alpha(n,d)$.
+\end{lemma}
+
+\begin{lemma}[Square of $\alpha$]
+\lean{CodingTheory.Johnson.alpha_sq}
+\leanok
+\uses{CodingTheory.Johnson.alpha}
+If $n > 0$ and $2d \le n$ then $\alpha(n,d)^2 = (n - 2d)/n$.
+\end{lemma}
+
+\begin{lemma}[$\alpha$ is less than one]
+\lean{CodingTheory.Johnson.alpha_lt_one_of_hd1}
+\leanok
+\uses{CodingTheory.Johnson.alpha}
+If $n > 0$, $d \ge 1$, and $2d \le n$, then $\alpha(n,d) < 1$.
+\end{lemma}
+
+\begin{lemma}[Johnson arithmetic inequality]
+\lean{CodingTheory.Johnson.johnson_arith}
+\leanok
+\uses{CodingTheory.Johnson.J2, CodingTheory.Johnson.alpha}
+If $n > 0$, $2d \le n$, and $w \le J_2(n,d)$, then for $\alpha = \alpha(n,d)$
+\[
+(n - 2d) + \alpha^2 n + 2\alpha\,(2w - n) \;\le\; 0.
+\]
+\end{lemma}
+
+\begin{lemma}[Projections keep non-positive inner products]
+\lean{CodingTheory.Johnson.inner_proj_le_zero}
+\leanok
+Let $V$ be a real inner product space, $u \in V$ a unit vector, and $x,y \in V$ with
+$\langle x,u\rangle \le 0$, $\langle y,u\rangle \le 0$ and $\langle x,y\rangle \le 0$.
+Then the components of $x$ and $y$ orthogonal to $u$ satisfy
+$\langle x - \langle x,u\rangle u,\ y - \langle y,u\rangle u\rangle \le 0$.
+\end{lemma}
+
+\begin{lemma}[Squared norm of an orthogonal component]
+\lean{CodingTheory.Johnson.proj_norm_sq}
+\leanok
+For a unit vector $u$ and any $x$ in a real inner product space,
+$\norm{x - \langle x,u\rangle u}^2 = \norm{x}^2 - \langle x,u\rangle^2$.
+\end{lemma}
+
+\begin{lemma}[Nonvanishing of the orthogonal component]
+\lean{CodingTheory.Johnson.proj_nonzero}
+\leanok
+If $u$ and $x$ are unit vectors with $\langle x,u\rangle \le 0$ and $x \neq u$,
+$x \neq -u$, then $x - \langle x,u\rangle u \neq 0$.
+\end{lemma}
+
+\begin{lemma}[Injectivity of the projection on a set of unit vectors]
+\lean{CodingTheory.Johnson.proj_inj_on}
+\leanok
+Let $u$ be a unit vector and $S$ a set of unit vectors each having non-positive
+inner product with $u$. Then $x \mapsto x - \langle x,u\rangle u$ is injective on $S$.
+\end{lemma}
+
+\begin{definition}[Orthogonal projection off a unit vector]
+\lean{CodingTheory.Johnson.orthProj}
+\leanok
+For $u,v$ in a real inner product space, $\mathrm{orthProj}(u,v) = v - \langle u,v\rangle u$,
+the projection of $v$ onto the orthogonal complement of $\mathrm{span}\{u\}$.
+\end{definition}
+
+\begin{lemma}[The projection lies in the orthogonal complement]
+\lean{CodingTheory.Johnson.orthProj_mem_orthogonal}
+\leanok
+\uses{CodingTheory.Johnson.orthProj}
+If $\norm{u} = 1$ then $\mathrm{orthProj}(u,v) \in (\mathrm{span}_{\mathbb{R}}\{u\})^{\perp}$
+for every $v$.
+\end{lemma}
+
+\begin{lemma}[The projection of a unit vector is nonzero]
+\lean{CodingTheory.Johnson.orthProj_ne_zero}
+\leanok
+\uses{CodingTheory.Johnson.orthProj}
+If $u$ and $v$ are unit vectors with $v \neq u$ and $v \neq -u$, then
+$\mathrm{orthProj}(u,v) \neq 0$.
+\end{lemma}
+
+\begin{lemma}[Projections preserve non-positive inner products]
+\lean{CodingTheory.Johnson.orthProj_inner_nonpos}
+\leanok
+\uses{CodingTheory.Johnson.orthProj}
+Let $\norm{u} = 1$ and let $v,w$ satisfy $\langle v,w\rangle \le 0$,
+$\langle v,u\rangle \le 0$ and $\langle w,u\rangle \le 0$. Then
+$\langle \mathrm{orthProj}(u,v), \mathrm{orthProj}(u,w)\rangle \le 0$.
+\end{lemma}
+
+\begin{lemma}[Normalized projections of distinct vectors differ]
+\lean{CodingTheory.Johnson.normalized_orthProj_injective}
+\leanok
+\uses{CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_ne_zero}
+Let $u,v,w$ be unit vectors with $\langle v,u\rangle \le 0$, $\langle w,u\rangle \le 0$,
+$\langle v,w\rangle \le 0$, with $v,w \notin \{u,-u\}$ and $v \neq w$. Then the
+normalized projections $\norm{\mathrm{orthProj}(u,v)}^{-1}\mathrm{orthProj}(u,v)$ and
+$\norm{\mathrm{orthProj}(u,w)}^{-1}\mathrm{orthProj}(u,w)$ cannot be equal
+(the statement derives a contradiction from their equality).
+\end{lemma}
+
+\begin{lemma}[Normalized projection is a unit vector]
+\lean{CodingTheory.Johnson.norm_normalized_orthProj}
+\leanok
+\uses{CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_ne_zero}
+If $u,v$ are unit vectors with $v \neq u$ and $v \neq -u$, then
+$\norm{\ \norm{\mathrm{orthProj}(u,v)}^{-1}\,\mathrm{orthProj}(u,v)\ } = 1$.
+\end{lemma}
+
+\begin{lemma}[Non-positive inner product of normalized projections]
+\lean{CodingTheory.Johnson.normalized_orthProj_inner_nonpos}
+\leanok
+\uses{CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_inner_nonpos}
+Under $\norm{u} = 1$, $\langle v,w\rangle \le 0$, $\langle v,u\rangle \le 0$ and
+$\langle w,u\rangle \le 0$ (with both projections nonzero), the normalized projections
+of $v$ and $w$ also have non-positive inner product.
+\end{lemma}
+
+\begin{lemma}[Rank of the orthogonal complement of a line]
+\lean{CodingTheory.Johnson.finrank_orthogonal_span_singleton}
+\leanok
+For a unit vector $u$ in a finite-dimensional real inner product space $V$,
+$\dim_{\mathbb{R}} (\mathrm{span}_{\mathbb{R}}\{u\})^{\perp} = \dim_{\mathbb{R}} V - 1$.
+\end{lemma}
+
+\begin{lemma}[Discarding $u$ and $-u$ costs at most two elements]
+\lean{CodingTheory.Johnson.card_filter_add_two}
+\leanok
+For a finite subset $S$ of an additive group and $u \in S$,
+$\abs{S} \le \abs{\{\, v \in S : v \neq u \text{ and } v \neq -u \,\}} + 2$.
+\end{lemma}
+
+\begin{definition}[Normalized projection as an element of the complement]
+\lean{CodingTheory.Johnson.mkProj}
+\leanok
+\uses{CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_mem_orthogonal}
+Given a unit vector $u$, this packages the normalized projection
+$\norm{\mathrm{orthProj}(u,v)}^{-1}\mathrm{orthProj}(u,v)$ together with its membership
+proof as an element of the subspace $(\mathrm{span}_{\mathbb{R}}\{u\})^{\perp}$.
+\end{definition}
+
+\begin{lemma}[Underlying vector of \texttt{mkProj}]
+\lean{CodingTheory.Johnson.mkProj_val}
+\leanok
+\uses{CodingTheory.Johnson.mkProj, CodingTheory.Johnson.orthProj}
+The value in $V$ underlying $\mathrm{mkProj}(u,v)$ is
+$\norm{\mathrm{orthProj}(u,v)}^{-1}\,\mathrm{orthProj}(u,v)$.
+\end{lemma}
+
+\begin{theorem}[Rankin bound in a finite-dimensional space]
+\lean{CodingTheory.Johnson.rankin_bound_general}
+\leanok
+\uses{CodingTheory.Johnson.binary_johnson_card_bound_of_admissible, CodingTheory.Johnson.card_filter_add_two, CodingTheory.Johnson.finrank_orthogonal_span_singleton, CodingTheory.Johnson.mkProj, CodingTheory.Johnson.mkProj_val, CodingTheory.Johnson.norm_normalized_orthProj, CodingTheory.Johnson.normalized_orthProj_injective, CodingTheory.Johnson.normalized_orthProj_inner_nonpos, CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_ne_zero}
+Let $V$ be a finite-dimensional real inner product space and $S \subseteq V$ a finite
+set of unit vectors whose pairwise inner products are non-positive. Then
+$\abs{S} \le 2 \dim_{\mathbb{R}} V$.
+\end{theorem}
+
+\begin{theorem}[Rankin bound in $\mathbb{R}^n$]
+\lean{CodingTheory.Johnson.rankin_finset_bound}
+\leanok
+\uses{CodingTheory.Johnson.Euc, CodingTheory.Johnson.rankin_bound_general}
+A finite set $S$ of unit vectors in $\mathbb{R}^n$ with pairwise non-positive inner
+products satisfies $\abs{S} \le 2n$.
+\end{theorem}
+
+\begin{lemma}[Shifted vectors are nonzero for $\alpha < 1$]
+\lean{CodingTheory.Johnson.shifted_ne_zero_of_alpha_lt_one}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.Euc, CodingTheory.Johnson.ones, CodingTheory.Johnson.pmOne, CodingTheory.Johnson.shifted}
+If $n > 0$ and $0 \le \alpha < 1$, then $\hat{x}^\alpha \neq 0$ for every binary word
+$x$ of length $n$.
+\end{lemma}
+
+\begin{theorem}[Johnson cardinality bound, parametric form]
+\lean{CodingTheory.Johnson.binary_johnson_card_bound_parametric}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.Euc, CodingTheory.Johnson.hdist, CodingTheory.Johnson.inner_shifted_le_expr, CodingTheory.Johnson.normalize, CodingTheory.Johnson.rankin_finset_bound, CodingTheory.Johnson.shifted, CodingTheory.Johnson.wt}
+Let $n > 0$ and let $C$ be a finite set of binary words of length $n$ with pairwise
+Hamming distance at least $d$ and all weights at most $w$. If $\alpha \ge 0$ is such
+that $\hat{x}^\alpha \neq 0$ for all $x \in C$ and
+$(n - 2d) + \alpha^2 n + 2\alpha(2w - n) \le 0$, then $\abs{C} \le 2n$.
+\end{theorem}
+
+\begin{theorem}[Binary Johnson cardinality bound]
+\lean{CodingTheory.Johnson.binary_johnson_card_bound}
+\leanok
+\uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.J2, CodingTheory.Johnson.alpha, CodingTheory.Johnson.alpha_lt_one_of_hd1, CodingTheory.Johnson.alpha_nonneg, CodingTheory.Johnson.binary_johnson_card_bound_parametric, CodingTheory.Johnson.hdist, CodingTheory.Johnson.johnson_arith, CodingTheory.Johnson.shifted, CodingTheory.Johnson.shifted_ne_zero_of_alpha_lt_one, CodingTheory.Johnson.wt}
+Assume $n > 0$, $1 \le d$ and $2d \le n$. If $C$ is a finite set of binary words of
+length $n$ whose distinct elements are at Hamming distance at least $d$, whose weights
+are all at most $w$, and if $w \le J_2(n,d)$, then $\abs{C} \le 2n$.
+\end{theorem}
+
+\begin{theorem}[Johnson bound for admissible codes]
+\lean{CodingTheory.Johnson.binary_johnson_card_bound_of_admissible}
+\leanok
+\uses{CodingTheory.Johnson.AdmissibleCode, CodingTheory.Johnson.BitVec, CodingTheory.Johnson.J2, CodingTheory.Johnson.binary_johnson_card_bound}
+Assume $n > 0$, $1 \le d$ and $2d \le n$. Every $(n,d,w)$-admissible code $C$ with
+$w \le J_2(n,d)$ satisfies $\abs{C} \le 2n$.
+\end{theorem}
+
+\begin{lemma}[Uniform bound transfers to $A_0$]
+\lean{A0_le_of_forall_le}
+\leanok
+\uses{A0, CodingTheory.Johnson.AdmissibleCode, CodingTheory.Johnson.BitVec}
+If every $(n,d,w)$-admissible code $C$ has $\abs{C} \le K$, then $A_0(n,d,w) \le K$.
+\end{lemma}

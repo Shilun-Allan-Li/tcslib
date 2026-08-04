@@ -156,6 +156,7 @@ The squared $L^2$ norm of $f : \{0,1\}^n \to \mathbb{R}$ is
 \begin{definition}[Convolution on the hypercube]
 \lean{BoolFourier.convolution}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.xor_vec}
 The convolution of $f, g : \{0,1\}^n \to \mathbb{R}$ is the function
 \[
@@ -166,6 +167,7 @@ The convolution of $f, g : \{0,1\}^n \to \mathbb{R}$ is the function
 \begin{definition}[Walsh--Fourier character]
 \lean{BoolFourier.char_S}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p002-b007}
 \uses{BoolFourier.BoolFun, BooleanAnalysis.chiS}
 For a set $S \subseteq [n]$, the Walsh character
 $\chi_S : \{0,1\}^n \to \mathbb{R}$ is
@@ -268,6 +270,7 @@ If $S \ne T$, then $\langle \chi_S, \chi_T \rangle = 0$.
 \begin{definition}[Fourier coefficient]
 \lean{BoolFourier.fourier_coeff}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.inner_product}
 The Fourier coefficient of $f : \{0,1\}^n \to \mathbb{R}$ at $S \subseteq [n]$ is
 \[
@@ -313,6 +316,7 @@ local and upstream definitions.
 \begin{lemma}[Fourier--Walsh expansion]
 \lean{BoolFourier.fourier_expansion}
 \leanok
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BoolFourier.hypercube, BooleanAnalysis.walsh_expansion}
 \difficulty{1}
 Every Boolean function $f : \{0,1\}^n \to \mathbb{R}$ expands in the
@@ -341,5 +345,101 @@ For every $f : \{0,1\}^n \to \mathbb{R}$,
 For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$,
 \[
   \widehat{f * g}(S) = \hat f(S) \cdot \hat g(S).
+\]
+\end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Character squared equals one, powered form]
+\lean{BoolFourier.char_S_sq_aux_h}
+\leanok
+\uses{BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
+For every $S \subseteq [n]$ and every $x \in \{0,1\}^n$,
+$\chi_S(x)^2 = 1$.  This is the squaring form (with exponent $2$ rather than an explicit
+product) of the fact that Walsh characters take values in $\{\pm 1\}$.
+\end{lemma}
+
+\begin{lemma}[Characters at the origin form the constant function one]
+\lean{BoolFourier.sum_char_S_at_zero_aux_h}
+\leanok
+\uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.zero_vec}
+As functions of $S$, the evaluation of characters at the all-zeros vector is constant:
+\[
+  \bigl(S \mapsto \chi_S(\mathbf{0})\bigr) = \bigl(S \mapsto 1\bigr).
+\]
+\end{lemma}
+
+\begin{lemma}[Sign-flip pairing of characters at a non-zero point]
+\lean{BoolFourier.sum_char_S_ne_zero_aux_h_pair}
+\leanok
+\uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+Let $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$ and let $i$ be a coordinate with
+$x_i = \mathtt{true}$.  Then the sum of all characters at $x$ equals the sum of their
+negations:
+\[
+  \sum_{S \subseteq [n]} \chi_S(x) \;=\; \sum_{S \subseteq [n]} -\chi_S(x).
+\]
+\end{lemma}
+
+\begin{lemma}[Expectation of a character as a coordinate product]
+\lean{BoolFourier.expectation_char_nonempty_aux_h_exp}
+\leanok
+\uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
+For a non-empty $S \subseteq [n]$, the uniform expectation of the character $\chi_S$
+factorises over the coordinates of $S$:
+\[
+  \mathbb{E}[\chi_S]
+  \;=\; \prod_{j \in S}
+        \frac{\mathrm{BoolToPM1}(\mathtt{false}) + \mathrm{BoolToPM1}(\mathtt{true})}{2}.
+\]
+\end{lemma}
+
+\begin{lemma}[$L^2$ norm as a self inner product]
+\lean{BoolFourier.parseval_identity_aux_hL2}
+\leanok
+\uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BooleanAnalysis.innerProduct}
+For every $f : \{0,1\}^n \to \mathbb{R}$, the locally-defined squared $L^2$ norm agrees
+with the upstream inner product of $f$ with itself:
+\[
+  \|f\|_2^2 \;=\; \langle f, f \rangle_{\mathbb{B}}.
+\]
+\end{lemma}
+
+\begin{lemma}[Interchange of summation in the convolution coefficient]
+\lean{BoolFourier.fourier_coeff_convolution_aux_h_fubini}
+\leanok
+\uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.xor_vec}
+For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$, the double sum defining
+the unnormalised convolution coefficient may be reordered:
+\[
+  \sum_{x} \Bigl(\sum_{y} f(y)\,g(x \oplus y)\Bigr) \chi_S(x)
+  \;=\; \sum_{y} f(y) \sum_{x} g(x \oplus y)\,\chi_S(x).
+\]
+\end{lemma}
+
+\begin{lemma}[Multiplicative splitting of a character along XOR]
+\lean{BoolFourier.fourier_coeff_convolution_aux_h_split}
+\leanok
+\uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+For all $x, y \in \{0,1\}^n$ and $S \subseteq [n]$,
+\[
+  \chi_S(x) \;=\; \chi_S(x \oplus y)\,\chi_S(y),
+\]
+expressing that $\chi_S$ is a character of the group $(\mathbb{F}_2)^n$.  The statement
+also carries the (unused) Fubini hypothesis of the enclosing proof.
+\end{lemma}
+
+\begin{lemma}[Shift rule for character-weighted sums]
+\lean{BoolFourier.fourier_coeff_convolution_aux_h_char}
+\leanok
+\uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff_convolution_aux_h_split, BoolFourier.hypercube, BoolFourier.xor_vec}
+Let $f, g : \{0,1\}^n \to \mathbb{R}$, let $S \subseteq [n]$, assume the Fubini
+interchange for the convolution coefficient, and let $y \in \{0,1\}^n$.  Then
+translating the argument of $g$ by $y$ only multiplies the character-weighted sum by
+$\chi_S(y)$:
+\[
+  \sum_{x} g(x \oplus y)\,\chi_S(x)
+  \;=\; \chi_S(y) \sum_{x} g(x)\,\chi_S(x).
 \]
 \end{lemma}

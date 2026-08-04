@@ -1,5 +1,13 @@
 import TCSlib.BooleanAnalysis.Switching.BernoulliRestriction
-import Mathlib
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.GCongr
+import Mathlib.Tactic.Push
 
 /-!
 # Bernoulli Restriction Cost
@@ -71,7 +79,7 @@ lemma binomialPMF_nonneg (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1) (k : ℕ) :
 /-
 Binomial PMF sums to 1 (the binomial theorem: `(p + (1-p))^n = 1`).
 -/
-lemma binomialPMF_sum_one (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1) :
+lemma binomialPMF_sum_one (p : ℝ) (_hp : 0 ≤ p) (_hp1 : p ≤ 1) :
     ∑ k ∈ Finset.range (n + 1), binomialPMF n p k = 1 := by
   unfold binomialPMF;
   have := add_pow p ( 1 - p ) n;
@@ -86,7 +94,7 @@ The Bernoulli(`p`) restriction probability decomposes as
 because conditioning `R_p` on `|ρ⁻¹(⋆)| = k` yields exactly `R_k`.
 -/
 set_option maxHeartbeats 800000 in
-lemma bernoulli_decompose (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
+lemma bernoulli_decompose (p : ℝ) (_hp : 0 ≤ p) (_hp1 : p ≤ 1)
     (event : Restriction n → Prop) [DecidablePred event] :
     bernoulliRestrProb p event =
     ∑ k ∈ Finset.range (n + 1),
@@ -167,8 +175,8 @@ lemma chernoff_binomial_upper_tail (nn : ℕ) (p : ℝ) (hp : 0 < p) (hp1 : p �
           exact Finset.sum_congr rfl fun x hx => by rw [ mul_pow, ← Real.exp_nat_mul ] ; ring;
         rw [ h_chernoff, ← Real.rpow_natCast, Real.rpow_def_of_pos ( by nlinarith [ Real.add_one_le_exp ( Real.log 2 ), Real.log_pos one_lt_two ] ) ] ; ring_nf ; norm_num;
         exact le_trans ( mul_le_mul_of_nonneg_right ( Real.log_le_sub_one_of_pos ( by nlinarith [ Real.add_one_le_exp ( Real.log 2 ), Real.log_pos one_lt_two ] ) ) ( Nat.cast_nonneg _ ) ) ( by nlinarith [ Real.add_one_le_exp ( Real.log 2 ), Real.log_pos one_lt_two ] );
-      convert mul_le_mul_of_nonneg_right h_chernoff ( Real.exp_nonneg ( -2 * nn * p * Real.log 2 ) ) using 1 <;> norm_num [ sub_mul, Real.exp_add, Real.exp_sub ] ; ring;
-      · rw [ Finset.sum_mul _ _ _ ] ; congr ; ext ; rw [ ← Real.exp_neg ] ; ring;
+      convert mul_le_mul_of_nonneg_right h_chernoff ( Real.exp_nonneg ( -2 * nn * p * Real.log 2 ) ) using 1 <;> norm_num [ sub_mul, Real.exp_add, Real.exp_sub ] ; ring_nf;
+      · rw [ Finset.sum_mul _ _ _ ] ; congr ; ext ; rw [ ← Real.exp_neg ] ; ring_nf;
       · rw [ div_eq_mul_inv, Real.exp_neg ];
     -- Simplify the exponent in the Chernoff bound.
     have h_exp_simplified : Real.exp (nn * p * (Real.exp (Real.log 2) - 1) - 2 * nn * p * Real.log 2) ≤ Real.exp (-nn * p / 3) := by
@@ -186,7 +194,7 @@ lemma chernoff_binomial_upper_tail (nn : ℕ) (p : ℝ) (hp : 0 < p) (hp1 : p �
     · norm_num [ Finset.sum_filter ];
     · have hempty : (Finset.range (nn + 1)).filter (fun k : ℕ => (↑k : ℝ) > 2 * ↑nn * p) = ∅ := by
         ext k
-        simp only [Finset.mem_filter, Finset.mem_range, Finset.not_mem_empty, iff_false, not_and]
+        simp only [Finset.mem_filter, Finset.mem_range, Finset.notMem_empty, iff_false, not_and]
         intro hk
         push_neg
         have hk_le : (k : ℝ) ≤ ↑nn := by exact_mod_cast Nat.lt_succ_iff.mp hk
@@ -217,7 +225,7 @@ theorem bernoulli_restriction_cost
   have h_split : bernoulliRestrProb p event ≤ (∑ k ∈ Finset.range (n + 1), if (k : ℝ) ≤ 2 * (n : ℝ) * p then binomialPMF n p k * ((10 * p * w) ^ s) else 0) + (∑ k ∈ Finset.range (n + 1), if (k : ℝ) > 2 * (n : ℝ) * p then binomialPMF n p k else 0) := by
     rw [ ← Finset.sum_add_distrib, bernoulli_decompose p hp.le hp1 event ];
     gcongr;
-    split_ifs <;> simp_all +decide [ mul_assoc, mul_comm, mul_left_comm ];
+    split_ifs <;> simp_all +decide [mul_comm, mul_left_comm];
     · linarith;
     · refine' mul_le_mul_of_nonneg_left _ ( binomialPMF_nonneg p hp.le hp1 _ );
       refine le_trans ( h_fixed _ (by omega) ) ?_;
@@ -227,7 +235,7 @@ theorem bernoulli_restriction_cost
   refine' add_le_add _ _;
   · -- Factor out $(10 * p * w) ^ s$ from the sum.
     suffices h_factor : (∑ k ∈ Finset.range (n + 1), if (k : ℝ) ≤ 2 * (n : ℝ) * p then binomialPMF n p k else 0) ≤ 1 by
-      convert mul_le_mul_of_nonneg_right h_factor ( pow_nonneg ( show 0 ≤ 10 * p * w by positivity ) s ) using 1 <;> norm_num [ Finset.sum_ite ] ; ring;
+      convert mul_le_mul_of_nonneg_right h_factor ( pow_nonneg ( show 0 ≤ 10 * p * w by positivity ) s ) using 1 <;> norm_num [ Finset.sum_ite ] ; ring_nf;
       simp +decide only [mul_comm, mul_assoc, Finset.mul_sum _ _ _];
     refine' le_trans ( Finset.sum_le_sum fun _ _ => _ ) ( binomialPMF_sum_one p hp.le hp1 |> le_of_eq );
     split_ifs <;> norm_num [ binomialPMF_nonneg p hp.le hp1 ];

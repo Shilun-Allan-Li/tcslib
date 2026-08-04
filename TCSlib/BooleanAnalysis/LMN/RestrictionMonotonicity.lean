@@ -1,6 +1,5 @@
 import TCSlib.BooleanAnalysis.LMN.RestrictionCompose
 import TCSlib.BooleanAnalysis.LMN.SwitchingBernoulli
-import Mathlib
 
 /-!
 # Restriction Monotonicity for Decision-Tree Depth

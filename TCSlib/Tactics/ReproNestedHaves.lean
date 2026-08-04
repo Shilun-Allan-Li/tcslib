@@ -9,7 +9,7 @@
   the extractor.
 -/
 
-import Mathlib
+import Mathlib.Data.Nat.Notation
 import TCSlib.Tactics.ExtractHaves
 
 open ExtractHaves

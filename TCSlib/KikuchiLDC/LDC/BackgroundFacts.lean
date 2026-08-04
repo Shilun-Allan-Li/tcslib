@@ -5,9 +5,24 @@
     • Fact 4.2: Binomial coefficient ratio bound
     • Fact 3.6: Reduction to Normal Form
 -/
-import Mathlib
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Data.Int.Star
+import Mathlib.Data.Real.StarOrdered
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.GCongr
+import Mathlib.Tactic.Cases
 
 open Finset BigOperators Nat
+
+-- Raised from the 200000 default: the `norm_num`/`ring_nf` chains in the
+-- Khintchine-bound proofs exceed it under the current Mathlib.
+set_option maxHeartbeats 800000
 
 noncomputable section
 
@@ -25,7 +40,7 @@ Fact 3.6 (Reduction to Normal Form):
 -/
 theorem normal_form_reduction
     (q k n : ℕ) (delta epsilon : ℝ)
-    (hq : 2 ≤ q) (hk : 0 < k) (hn : 0 < n)
+    (hq : 2 ≤ q) (_hk : 0 < k) (hn : 0 < n)
     (hdelta : 0 < delta) (heps : 0 < epsilon) :
     ∃ (n' : ℕ) (delta' epsilon' : ℝ),
       n' ≤ 6 * n ∧
@@ -51,7 +66,7 @@ Fact 4.1 (Matrix Khintchine Inequality):
 -/
 theorem matrix_khintchine
     (k : ℕ) (sigma_sq : ℝ) (d1 d2 : ℕ)
-    (hk : 0 < k) (hsigma : 0 < sigma_sq)
+    (_hk : 0 < k) (hsigma : 0 < sigma_sq)
     (hd1 : 0 < d1) (hd2 : 0 < d2) :
     ∃ C_MK : ℝ, C_MK > 0 ∧
       C_MK ≤ Real.sqrt (2 * sigma_sq * Real.log (d1 + d2)) := by
@@ -103,7 +118,7 @@ theorem binomial_ratio_upper (n ell q : ℕ)
             rw [ one_mul, NormedSpace.exp_eq_tsum_div ];
             exact Summable.le_tsum ( show Summable _ from Real.summable_pow_div_factorial _ ) r ( fun _ _ => by positivity );
           refine le_trans h_binom_bound ?_;
-          convert div_le_div_of_nonneg_left _ _ h_denom_bound using 1 <;> ring <;> norm_num [ hr.ne', Real.exp_ne_zero ];
+          convert div_le_div_of_nonneg_left _ _ h_denom_bound using 1 <;> ring_nf <;> norm_num [ hr.ne', Real.exp_ne_zero ];
           · ring;
           · positivity;
         convert h_num_bound ( n - ell ) q hq ( Nat.le_sub_of_add_le ( by omega ) ) using 1 ; rw [ Nat.cast_sub ( by omega ) ];
@@ -123,7 +138,7 @@ theorem binomial_ratio_upper (n ell q : ℕ)
             rw [ one_mul, NormedSpace.exp_eq_tsum_div ];
             exact Summable.le_tsum ( show Summable _ from Real.summable_pow_div_factorial _ ) r ( fun _ _ => by positivity );
           refine le_trans h_binom_bound ?_;
-          convert div_le_div_of_nonneg_left _ _ h_denom_bound using 1 <;> ring <;> norm_num [ hr.ne', Real.exp_ne_zero ];
+          convert div_le_div_of_nonneg_left _ _ h_denom_bound using 1 <;> ring_nf <;> norm_num [ hr.ne', Real.exp_ne_zero ];
           · ring;
           · positivity;
         exact h_bound_num _ _ hq hql;
@@ -162,8 +177,8 @@ theorem binomial_ratio_upper (n ell q : ℕ)
       · exact Nat.cast_nonneg _;
     -- Simplify the right-hand side of the inequality.
     have h_simplify : ((Real.exp 1 * (n - ell) / q) ^ q * (Real.exp 1 * ell / q) ^ q) / ((2 * q / q) ^ q * (n / (2 * q)) ^ (2 * q)) = (Real.exp 2) ^ q * ((n - ell) * ell) ^ q / (n ^ (2 * q)) * 2 ^ q := by
-      norm_num [ mul_pow, mul_assoc, mul_comm, mul_left_comm, div_eq_mul_inv, hq.ne' ] ; ring;
-      norm_num [ pow_mul', ← Real.exp_nat_mul ] ; ring ; norm_num [ hq.ne' ];
+      norm_num [ mul_pow, mul_assoc, mul_comm, mul_left_comm, div_eq_mul_inv, hq.ne' ] ; ring_nf;
+      norm_num [ pow_mul', ← Real.exp_nat_mul ] ; ring_nf ; norm_num [ hq.ne' ];
       norm_num [ mul_assoc, ← mul_pow ];
     -- Using the inequality $(n - \ell) \ell \leq n \ell$, we can further simplify the right-hand side.
     have h_final : (Real.exp 2) ^ q * ((n - ell) * ell) ^ q / (n ^ (2 * q)) * 2 ^ q ≤ (Real.exp 2) ^ q * (n * ell) ^ q / (n ^ (2 * q)) * 2 ^ q := by
@@ -237,7 +252,7 @@ theorem binomial_ratio_lower (n ell q : ℕ)
         have h_binom : ∀ k n : ℕ, 0 < k → k ≤ n → (Nat.choose n k : ℝ) ≤ (Real.exp 1 * n / k) ^ k := by
           -- Using the inequality $\binom{n}{k} \leq \frac{n^k}{k!}$, we get:
           have h_binom : ∀ k n : ℕ, 0 < k → k ≤ n → (Nat.choose n k : ℝ) ≤ (n ^ k) / (Nat.factorial k) := by
-            exact?;
+            exact fun k n a a_1 => choose_le_pow_div k n;
           -- Using the inequality $k! \geq \left(\frac{k}{e}\right)^k$, we get:
           have h_factorial : ∀ k : ℕ, 0 < k → (Nat.factorial k : ℝ) ≥ (k / Real.exp 1) ^ k := by
             intro k hk; rw [ div_pow ] ; rw [ ge_iff_le ] ; rw [ div_le_iff₀ ( by positivity ) ] ; have := Real.exp_one_lt_d9.le; norm_num at *;
@@ -261,7 +276,7 @@ theorem binomial_ratio_lower (n ell q : ℕ)
     field_simp;
     exact pow_le_pow_left₀ ( by positivity ) ( by nlinarith only [ show ( ell : ℝ ) * q * n ≥ 0 by positivity, show ( ell : ℝ ) * q ≥ 0 by positivity, show ( n : ℝ ) ≥ 2 * ell by norm_cast, show ( ell : ℝ ) ≥ q by norm_cast ] ) _;
   convert h_bounds.le using 1;
-  · ring;
+  · ring_nf;
   · unfold chooseR; rw [ Nat.cast_choose, Nat.cast_choose, Nat.cast_choose, Nat.cast_choose ] <;> try omega;
     rw [ Nat.cast_choose, Nat.cast_choose ] <;> try omega;
     field_simp;

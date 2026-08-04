@@ -28,18 +28,21 @@ class StageEstimate:
 
 @dataclass
 class Budget:
-    cap_usd: Decimal
+    cap_usd: Decimal | None = None
     spent_usd: Decimal = Decimal("0")
 
     @property
-    def remaining_usd(self) -> Decimal:
+    def remaining_usd(self) -> Decimal | None:
+        if self.cap_usd is None:
+            return None
         return max(Decimal("0"), self.cap_usd - self.spent_usd)
 
     def require(self, estimate: StageEstimate) -> None:
-        if estimate.usd > self.remaining_usd:
+        remaining = self.remaining_usd
+        if remaining is not None and estimate.usd > remaining:
             raise BudgetExceeded(
                 f"{estimate.name} is estimated at ${estimate.usd:.2f}, "
-                f"but the run has only remaining ${self.remaining_usd:.2f}"
+                f"but the run has only remaining ${remaining:.2f}"
             )
         self.spent_usd += estimate.usd
 

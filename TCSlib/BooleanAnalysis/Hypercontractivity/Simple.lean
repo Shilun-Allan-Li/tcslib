@@ -615,8 +615,8 @@ lemma noiseOp_compose (ρ σ : ℝ) (f : BooleanFunc n) :
 Given a (2, q)-hypercontractivity bound, we conclude `(𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}`-/
 theorem hypercontractivity_p_2_general
     {ρ : ℝ} {p q : ℝ}
-    (hp : 1 < p) (hq : 2 ≤ q)
-    (hpq : 1/p + 1/q = 1)
+    (_hp : 1 < p) (hq : 2 ≤ q)
+    (_hpq : 1/p + 1/q = 1)
     (f : BooleanFunc n)
     (holder : ∀ (u v : BooleanFunc n),
       innerProduct u v ≤
@@ -639,7 +639,7 @@ theorem hypercontractivity_p_2_general
   have h_self_adj : E₂ = innerProduct f (noiseOp ρ (noiseOp ρ f)) := by
     rw [← h_inner, noiseOp_self_adjoint]
   have h_holder := holder f (noiseOp ρ (noiseOp ρ f))
-  have hq_pos : 0 < q := by linarith [hpq, hp]
+  have hq_pos : 0 < q := by linarith
   have h_Lq_bound :
       (BooleanAnalysis.expect (fun x => |noiseOp ρ (noiseOp ρ f) x| ^ q)) ^ (1/q) ≤
       E₂ ^ (1/2 : ℝ) := by

@@ -940,7 +940,7 @@ up for.
 Recall (\lean{Literal}, \lean{Term}, \lean{DNF} in
 \texttt{TCSlib/BooleanAnalysis/Circuit.lean}):
 \begin{itemize}
-  \item A \textbf{literal} is a pair $(v,\mathrm{neg})\in\Fin n\times\mathrm{Bool}$.
+  \item A \textbf{literal} is a pair $(v,\mathrm{neg})\in\mathrm{Fin}\,n\times\mathrm{Bool}$.
   \item A \textbf{term} is a \emph{list} of literals, not a set or a
         \texttt{Finset}.
   \item A \textbf{DNF} is a list of terms.
@@ -998,10 +998,10 @@ combinatorics per se but of the particular inductive proof of the Vandermonde
 identity (\lean{SwitchingLemma2.choose_mul_pow_bound}) used to convert
 $\binom{n}{s-d}(4n)^d\le \binom{n}{s}(5s)^d$.  For restrictions with $p>1/5$
 one must either generalise that lemma or apply the theorem vacuously via the
-$d>s$ branch (\texttt{bad_filter_empty_of_d_ge_s}).
+$d>s$ branch (\texttt{bad\_filter\_empty\_of\_d\_ge\_s}).
 
 \paragraph{$0<n$.}
-Required so that $\Fin n$ is inhabited.  Trivial.
+Required so that $\mathrm{Fin}\,n$ is inhabited.  Trivial.
 
 %-----------------------------------------------------------------------------
 \subsection{The $(10sw)^d$ constant vs.\ $(5sw)^d$}
@@ -1009,8 +1009,8 @@ Required so that $\Fin n$ is inhabited.  Trivial.
 Razborov's encoding yields $(5sw/n)^d$ in the sharpest accounting.  The
 formalised constant is $10sw$ rather than $5sw$.  The extra factor of two
 comes from the combinatorial bound on the encoder image size
-(\texttt{aux_image_card_bound} via \texttt{exists_aux_injection}), which tags
-each of the $d$ encoded triples as $\Fin w\times\mathrm{Bool}\times\mathrm{Bool}$
+(\texttt{aux\_image\_card\_bound} via \texttt{exists\_aux\_injection}), which tags
+each of the $d$ encoded triples as $\mathrm{Fin}\,w\times\mathrm{Bool}\times\mathrm{Bool}$
 (position, polarity, end-of-block marker).  A sharper encoder is possible but
 was sidestepped for proof-engineering simplicity.  This is a loss of a
 constant factor, not an asymptotic one.
@@ -1056,10 +1056,10 @@ The proof is layered across seven Lean files.  Information flows downward:
   & Numerous invariants of the encoder; uses \texttt{hnd} for
     \lean{SwitchingLemma2.encode_go_not_kills_first_clause}. \\
 \texttt{Switching/RoundTrip.lean}
-  & \texttt{go_roundtrip_gen} (decode $\circ$ encode = id),
+  & \texttt{go\_roundtrip\_gen} (decode $\circ$ encode = id),
     \lean{SwitchingLemma2.razborovEncode_injective}. \\
 \texttt{Switching/MainTheorem.lean}
-  & Encoder image parser, \texttt{exists_aux_injection},
+  & Encoder image parser, \texttt{exists\_aux\_injection},
     \lean{SwitchingLemma2.aux_image_card_bound}, \lean{SwitchingLemma2.fiber_bound},
     \lean{SwitchingLemma2.bad_count_bound},
     \lean{SwitchingLemma2.choose_mul_pow_bound}, \lean{SwitchingLemma2.switching_lemma},
@@ -1086,7 +1086,7 @@ The combinatorial count is obtained by fibring the image over the first
 component $\gamma$ (a restriction with $s-d$ fewer free variables), bounding
 each fibre by $(4w)^d$ (the aux-data count
 \lean{SwitchingLemma2.aux_image_card_bound}), then summing fibres via the Vandermonde-type
-inequality \texttt{choose_mul_pow_bound}, which is where $5s\le n$ is consumed.
+inequality \texttt{choose\_mul\_pow\_bound}, which is where $5s\le n$ is consumed.
 
 %-----------------------------------------------------------------------------
 \section{Corollary: no small CNF approximations}
@@ -1105,6 +1105,6 @@ Under the same hypotheses as Theorem~\ref{thm:switching_lemma},
 \end{theorem}
 
 \noindent
-This uses the fact (\texttt{dtDepth_le_implies_small_dnf_cnf}) that a function
+This uses the fact (\texttt{dtDepth\_le\_implies\_small\_dnf\_cnf}) that a function
 with small decision-tree depth admits both a small-width DNF and a
 small-width CNF.

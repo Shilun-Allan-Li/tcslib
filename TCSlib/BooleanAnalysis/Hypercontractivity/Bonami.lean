@@ -480,6 +480,8 @@ lemma fourierCoeff_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin
   · rw [ Finset.sum_image, Finset.sum_image ] <;> norm_num [ Finset.prod_union, Finset.prod_image ] ; ring_nf;
     · simp +decide only [mul_assoc, Finset.sum_add_distrib, Finset.sum_mul _ _ _];
       rw [ mul_add ];
+    · exact fun x y h => by simpa using congrArg Fin.init h
+    · exact fun x y h => by simpa using congrArg Fin.init h
   · norm_num [ Finset.disjoint_left ];
   · ext x;
     by_cases hx : x ( Fin.last n ) <;> simp +decide only [Finset.mem_univ, Finset.mem_union,
@@ -595,6 +597,8 @@ lemma degree_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     · rw [ Finset.sum_image, Finset.sum_image ] <;> norm_num [ Finset.prod_union, Finset.prod_image ] ; ring_nf;
       · simp +decide only [mul_assoc, Finset.sum_add_distrib, Finset.sum_mul _ _ _];
         rw [ mul_add ];
+      · exact fun x y h => by simpa using congrArg Fin.init h
+      · exact fun x y h => by simpa using congrArg Fin.init h
     · norm_num [ Finset.disjoint_left ];
     · ext x;
       by_cases hx : x ( Fin.last n ) <;> simp +decide only [Finset.mem_univ, Finset.mem_union,

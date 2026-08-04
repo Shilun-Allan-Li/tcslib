@@ -5,6 +5,8 @@ Authors: [Your Name], [Partner's Name (if applicable)]
 -/
 
 import TCSlib.GraphTheory.Kruskal.Basic
+import Mathlib.Tactic.Cases
+import Mathlib.Algebra.BigOperators.Group.List.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -124,6 +126,6 @@ lemma totalWeight_erase {n : ℕ} (edges : List (WEdge n)) (e : WEdge n)
     (he : e ∈ edges) :
     totalWeight edges = e.weight + totalWeight (edges.erase e) := by
   unfold totalWeight
-  exact Eq.symm (List.sum_map_erase WEdge.weight he)
+  simpa using ((List.perm_cons_erase he).map WEdge.weight).sum_eq
 
 end Kruskal

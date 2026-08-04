@@ -5,7 +5,7 @@ Authors: Karim Abdel Sadek, Mark Bedaywi
 -/
 
 import TCSlib.LearningTheory.Minimax.ConvexMinimaxCore
-import Mathlib.Analysis.NormedSpace.HahnBanach.Separation
+import Mathlib.Analysis.LocallyConvex.Separation
 import Mathlib.Topology.Algebra.Module.LinearMapPiProd
 
 set_option maxHeartbeats 0

@@ -9,10 +9,10 @@
     §9–10 LDC/MainTheorem.lean    — Main theorem (Theorem 9.1) and even-q bound (Theorem 10.1)
 -/
 
-import RequestProject.LDC.Defs
-import RequestProject.LDC.BackgroundFacts
-import RequestProject.LDC.HighValue
-import RequestProject.LDC.Decomposition
-import RequestProject.LDC.TwoXOR
-import RequestProject.LDC.ThreeXOR
-import RequestProject.LDC.MainTheorem
+import TCSlib.KikuchiLDC.LDC.Defs
+import TCSlib.KikuchiLDC.LDC.BackgroundFacts
+import TCSlib.KikuchiLDC.LDC.HighValue
+import TCSlib.KikuchiLDC.LDC.Decomposition
+import TCSlib.KikuchiLDC.LDC.TwoXOR
+import TCSlib.KikuchiLDC.LDC.ThreeXOR
+import TCSlib.KikuchiLDC.LDC.MainTheorem

@@ -63,6 +63,44 @@ class BlueprintTests(unittest.TestCase):
             apply_blueprint_mutations(plan_blueprint_mutations((proposal,)))
             self.assertEqual(plan_blueprint_mutations((proposal,)), ())
 
+    def test_reordered_and_narrowed_reruns_add_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "A.tex"
+            path.write_text(
+                "\\begin{theorem}\n\\lean{T.one}\nClaim.\n\\end{theorem}\n",
+                encoding="utf-8",
+            )
+            blocks = ("pdf-abcdef123456-p003-b002", "pdf-abcdef123456-p009-b002")
+            apply_blueprint_mutations(plan_blueprint_mutations((
+                SourceProposal(path, "T.one", ProofSource("notes", blocks)),
+            ),))
+            settled = path.read_text(encoding="utf-8")
+            for rerun in (tuple(reversed(blocks)), blocks[1:]):
+                proposal = SourceProposal(
+                    path, "T.one", ProofSource("notes", rerun)
+                )
+                self.assertEqual(plan_blueprint_mutations((proposal,)), ())
+            self.assertEqual(path.read_text(encoding="utf-8"), settled)
+
+    def test_rerun_citing_a_new_block_is_still_a_conflict(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "A.tex"
+            path.write_text(
+                "\\begin{theorem}\n\\lean{T.one}\n"
+                "\\proofsource{notes}{pdf-abcdef123456-p001-b001}\n"
+                "Claim.\n\\end{theorem}\n",
+                encoding="utf-8",
+            )
+            proposal = SourceProposal(
+                path, "T.one",
+                ProofSource("notes", (
+                    "pdf-abcdef123456-p001-b001",
+                    "pdf-abcdef123456-p007-b004",
+                )),
+            )
+            with self.assertRaisesRegex(ValueError, "proof-source conflict"):
+                plan_blueprint_mutations((proposal,))
+
     def test_batch_plans_proof_steps(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "A.tex"

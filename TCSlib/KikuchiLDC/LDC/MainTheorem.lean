@@ -3,13 +3,19 @@
   §9: Main Theorem (Theorem 9.1)
   §10: Even-q LDC Lower Bound (Theorem 10.1)
 -/
-import Mathlib
-import RequestProject.LDC.Defs
-import RequestProject.LDC.BackgroundFacts
-import RequestProject.LDC.HighValue
-import RequestProject.LDC.Decomposition
-import RequestProject.LDC.TwoXOR
-import RequestProject.LDC.ThreeXOR
+import Mathlib.Algebra.EuclideanDomain.Basic
+import Mathlib.Algebra.EuclideanDomain.Field
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import TCSlib.KikuchiLDC.LDC.Defs
+import TCSlib.KikuchiLDC.LDC.BackgroundFacts
+import TCSlib.KikuchiLDC.LDC.HighValue
+import TCSlib.KikuchiLDC.LDC.Decomposition
+import TCSlib.KikuchiLDC.LDC.TwoXOR
+import TCSlib.KikuchiLDC.LDC.ThreeXOR
 
 open Finset BigOperators
 
@@ -43,12 +49,12 @@ Theorem 9.1 (Main Theorem — Formal):
 theorem main_theorem_ldc_lower_bound
     (k n : ℕ) (delta epsilon : ℝ)
     (hk : 0 < k) (hn : 2 ≤ n)
-    (hdelta : 0 < delta) (hdelta1 : delta ≤ 1)
-    (heps : 0 < epsilon) (heps1 : epsilon ≤ 1)
+    (hdelta : 0 < delta) (_hdelta1 : delta ≤ 1)
+    (heps : 0 < epsilon) (_heps1 : epsilon ≤ 1)
     -- Assumption: C is a (3,δ,ε)-normally decodable code with the given parameters.
     -- By the normal form reduction (Fact 3.6), this is WLOG.
     (L : NormalLDC k n)
-    (hL_delta : L.delta = delta) (hL_eps : L.epsilon = epsilon) :
+    (_hL_delta : L.delta = delta) (_hL_eps : L.epsilon = epsilon) :
     ∃ (C_abs : ℝ), C_abs > 0 ∧
       (k : ℝ) ^ 3 ≤ (n : ℝ) * C_abs * (Real.log n) ^ 6 /
         (epsilon ^ 16 * delta ^ 16) := by
@@ -74,7 +80,7 @@ Theorem 10.1 (Even-q LDC Lower Bound):
 -/
 theorem even_q_ldc_lower_bound
     (q k n : ℕ) (delta epsilon : ℝ)
-    (hq_even : 2 ∣ q) (hq : 2 ≤ q)
+    (_hq_even : 2 ∣ q) (hq : 2 ≤ q)
     (hk : 0 < k) (hn : 2 ≤ n)
     (hdelta : 0 < delta) (heps : 0 < epsilon) :
     ∃ (C_abs : ℝ), C_abs > 0 ∧

@@ -7,6 +7,8 @@ import TCSlib.ErrorCorrectingCodes.GilbertVarshamov
 import TCSlib.ErrorCorrectingCodes.ListDecoding
 import TCSlib.ErrorCorrectingCodes.QuantumSingleton
 import TCSlib.ErrorCorrectingCodes.QuantumHamming
+import TCSlib.ErrorCorrectingCodes.JohnsonBound
+import TCSlib.ErrorCorrectingCodes.MRRW
 
 import TCSlib.BooleanAnalysis.BLR
 import TCSlib.BooleanAnalysis.Basic
@@ -16,6 +18,7 @@ import TCSlib.BooleanAnalysis.Switching
 import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
 import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
 import TCSlib.BooleanAnalysis.Hypercontractivity.General
+import TCSlib.BooleanAnalysis.KKL
 
 import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem
@@ -25,6 +28,8 @@ import TCSlib.Complexity.NPReductions
 import TCSlib.Cryptography.SchnorrProtocol
 
 import TCSlib.GraphTheory.Kruskal
+
+import TCSlib.KikuchiLDC.Main
 
 import TCSlib.LearningTheory.Halving
 import TCSlib.LearningTheory.WeightedMajority

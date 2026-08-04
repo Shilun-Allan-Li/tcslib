@@ -58,6 +58,7 @@ $(x \oplus y) \oplus z = x \oplus (y \oplus z)$.
 \begin{definition}[Multiplicative derivative]
 \lean{LowDegreeTest.mult_deriv}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p019-b005}
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, BoolFourier.xor_vec}
 For a function $f : \{0,1\}^n \to \bbr$ and a direction vector $h \in \{0,1\}^n$,
 the multiplicative derivative is defined by
@@ -67,6 +68,7 @@ $(\Delta_h f)(x) = f(x) \cdot f(x \oplus h)$.
 \begin{definition}[Gowers product]
 \lean{LowDegreeTest.gowers_product}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p026-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, BoolFourier.xor_vec}
 For $f : \{0,1\}^n \to \bbr$, base point $x \in \{0,1\}^n$, and direction
 vectors $h_1, \ldots, h_k \in \{0,1\}^n$, the order-$k$ Gowers product is defined
@@ -163,6 +165,7 @@ $\E_{h_1,\ldots,h_k}[c] = c$.
 \begin{definition}[Degree $\le d$ for $\pm 1$ functions]
 \lean{LowDegreeTest.is_degree_le_pm1}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p007-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.gowers_product}
 A function $f : \{0,1\}^n \to \bbr$ has degree $\le d$ if all its $(d{+}1)$-fold
 multiplicative derivatives vanish: for every $x$ and every $h_1,\ldots,h_{d+1}$,
@@ -172,6 +175,7 @@ $\mathrm{GP}(f, d{+}1, x, h_1,\ldots,h_{d+1}) = 1$.
 \begin{definition}[Degree $\le d$ for Boolean functions]
 \lean{LowDegreeTest.is_degree_le_bool}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p007-b004}
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.is_degree_le_pm1}
 A Boolean function $f : \{0,1\}^n \to \{0,1\}$ has degree $\le d$ if its $\pm 1$
 lift $(-1)^f$ has degree $\le d$ in the sense of \lean{LowDegreeTest.is_degree_le_pm1}.
@@ -209,6 +213,7 @@ $f(x \oplus y) = f(x) \oplus f(y)$ for all $x,y$), then $f$ has degree $\le 1$.
 \begin{lemma}[Degree $\le 1$ implies affine]
 \lean{LowDegreeTest.degree_le_one_implies_affine}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \uses{BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1,
       BoolFourier.hypercube, BoolFourier.xor_vec, BoolFourier.zero_vec,
       LowDegreeTest.gowers_product_succ, LowDegreeTest.is_degree_le_bool}
@@ -260,6 +265,7 @@ $\mathrm{RM}(d, n)$ for every $d$.
 \begin{lemma}[Linear functions in $\mathrm{RM}(1,n)$]
 \lean{LowDegreeTest.linear_mem_ReedMuller_one}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, LowDegreeTest.ReedMuller,
       LowDegreeTest.linear_is_degree_le_one}
 \difficulty{1}
@@ -270,6 +276,7 @@ $\mathrm{RM}(1, n)$.
 \begin{lemma}[$\mathrm{RM}(1,n)$ consists of affine functions]
 \lean{LowDegreeTest.ReedMuller_one_is_affine}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, LowDegreeTest.ReedMuller,
       LowDegreeTest.degree_le_one_implies_affine}
 \difficulty{1}
@@ -282,6 +289,7 @@ $\lnot f$ is $\mathbb{F}_2$-linear.
 \begin{definition}[Gowers norm (power form)]
 \lean{LowDegreeTest.gowers_norm_pow}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p026-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.hypercube,
       LowDegreeTest.gowers_product, LowDegreeTest.multi_expectation}
 The $k$-th Gowers uniformity norm to the $2^k$-th power is
@@ -326,6 +334,7 @@ where $f * f$ denotes the convolution of $f$ with itself.
 \begin{lemma}[$U^2$ norm in terms of Fourier coefficients]
 \lean{LowDegreeTest.gowers_U2_fourier}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p003-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.fourier_coeff,
       BoolFourier.fourier_coeff_convolution, BoolFourier.parseval_identity,
       LowDegreeTest.gowers_U2_eq_L2_conv, LowDegreeTest.gowers_norm_pow}
@@ -459,6 +468,7 @@ less than $1$.
 \begin{lemma}[Fourier characters have degree $\le 1$]
 \lean{LowDegreeTest.char_is_degree_le_one}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.hypercube,
       BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS,
       LowDegreeTest.gowers_product, LowDegreeTest.is_degree_le_pm1}
@@ -469,6 +479,7 @@ For every $S \subseteq [n]$, the Fourier character $\chi_S$ has degree $\le 1$.
 \begin{lemma}[Negated character has degree $\le 1$]
 \lean{LowDegreeTest.neg_char_is_degree_le_one}
 \leanok
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, LowDegreeTest.char_is_degree_le_one,
       LowDegreeTest.is_degree_le_pm1}
 \difficulty{3}
@@ -554,6 +565,10 @@ acceptance probability \lean{LowDegreeTest.degree_test_accept_prob}.
 \begin{lemma}[Parseval for $\pm 1$ functions]
 \lean{LowDegreeTest.parseval_pm1}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{
+  pdf-20e15a3d3d5e-p004-b001,
+  pdf-20e15a3d3d5e-p001-b003
+}
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_sq,
       BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff,
       BoolFourier.hypercube, BoolFourier.parseval_identity}

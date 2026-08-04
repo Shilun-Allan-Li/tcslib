@@ -5,7 +5,6 @@ import TCSlib.BooleanAnalysis.LMN.NormalFormConversion
 import TCSlib.BooleanAnalysis.LMN.CircuitHelpers
 import TCSlib.BooleanAnalysis.LMN.RestrictionMonotonicity
 import TCSlib.BooleanAnalysis.LMN.RecursiveReduction
-import Mathlib
 
 /-!
 # Iterative Circuit Layer Reduction
@@ -62,7 +61,7 @@ def composedDelta (w : ℕ) (l : ℝ) (d : ℕ) : ℝ :=
 lemma composedDelta_pos (w : ℕ) (l : ℝ) (d : ℕ) (hw : 0 < w) (hl : 0 < l) :
     0 < composedDelta w l d := by unfold composedDelta; positivity
 
-lemma composedDelta_le_one (w : ℕ) (l : ℝ) (d : ℕ) (hw : 1 ≤ w) (hl : 1 ≤ l) (hd : 2 ≤ d) :
+lemma composedDelta_le_one (w : ℕ) (l : ℝ) (d : ℕ) (hw : 1 ≤ w) (hl : 1 ≤ l) (_hd : 2 ≤ d) :
     composedDelta w l d ≤ 1 := by
   exact mul_le_one₀ (by rw [div_le_iff₀] <;> norm_cast <;> linarith) (by positivity)
     (pow_le_one₀ (by positivity) (by rw [div_le_iff₀] <;> linarith))
@@ -73,10 +72,10 @@ lemma composedDelta_step (w l : ℕ) (d : ℕ) (hd : 3 ≤ d) :
   cases d <;> simp_all +decide [ pow_succ' ]
 
 /-- Factor composedDelta as the (d-1) case times 1/(40l). -/
-lemma composedDelta_step_right (w : ℕ) (l : ℝ) (d : ℕ) (hd : 3 ≤ d) (hl : 0 < l) :
+lemma composedDelta_step_right (w : ℕ) (l : ℝ) (d : ℕ) (hd : 3 ≤ d) (_hl : 0 < l) :
     composedDelta w l d = composedDelta w l (d - 1) * (1 / (40 * l)) := by
   rcases d with ( _ | _ | d ) <;> norm_num [ composedDelta ] at *
-  cases d <;> simp_all +decide [ pow_succ' ] <;> ring
+  cases d <;> simp_all +decide [ pow_succ' ] ; ring
 
 /-! ## Infrastructure -/
 
@@ -139,7 +138,7 @@ theorem two_stage_bound'
     exact mul_le_of_le_one_left hβ ( le_trans ( Finset.sum_le_sum_of_subset_of_nonneg ( Finset.subset_univ _ ) fun _ _ _ => bernoulliRestrWeight_nonneg' _ hp₁.le hp₁_1 _ ) ( by simp +decide [ bernoulliRestrWeight_sum_one _ hp₁.le hp₁_1 ] ) );
   · grind;
   · linarith;
-  · exact?;
+  · exact hp₂;
   · linarith
 
 /-! ## Base Case: Depth-2 Circuits -/
@@ -283,7 +282,7 @@ lemma circuit_reduction_ind_base
       · cases ‹Circuit n› <;> simp_all +decide [ Circuit.size ];
   · -- For s ≥ 2, use depth2_circuit_switching_bound and nlinarith to close.
     have h_bound : bernoulliRestrProb (1 / (40 * w : ℝ)) (fun ρ => dtDepth (restrictFn f ρ) > t) ≤ (1 / 2 : ℝ) ^ t + Real.exp (-(n / (120 * w))) := by
-      convert depth2_circuit_switching_bound f s w hw_pos hn ⟨ c, hc.1, hc.2.1, hc.2.2.1, hc.2.2.2 ⟩ ( 1 / ( 40 * w : ℝ ) ) ( by positivity ) ( by rw [ div_le_div_iff₀ ] <;> norm_cast <;> nlinarith ) ( by rw [ div_le_iff₀ ] <;> norm_cast <;> nlinarith ) t using 1 ; ring;
+      convert depth2_circuit_switching_bound f s w hw_pos hn ⟨ c, hc.1, hc.2.1, hc.2.2.1, hc.2.2.2 ⟩ ( 1 / ( 40 * w : ℝ ) ) ( by positivity ) ( by rw [ div_le_div_iff₀ ] <;> norm_cast <;> nlinarith ) ( by rw [ div_le_iff₀ ] <;> norm_cast <;> nlinarith ) t using 1 ; ring_nf;
     refine le_trans ?_ ( h_bound.trans ?_ );
     · unfold composedDelta; norm_num;
     · nlinarith only [ show ( s : ℝ ) ≥ 2 by norm_cast; exact Nat.lt_of_le_of_ne hs_pos ( Ne.symm hs ), show ( 1 / 2 : ℝ ) ^ l ≥ 0 by positivity, show ( Real.exp ( - ( n / ( 120 * w ) ) ) ) ≥ 0 by positivity, show ( Real.exp ( - ( n / ( 120 * l ) ) ) ) ≥ 0 by positivity ]
@@ -335,10 +334,10 @@ lemma circuit_reduction_ind_step
       generalize_proofs at *; (
       refine le_trans h_depth ?_;
       unfold dtDepth; simp +decide [ Circuit.eval ] ;
-      use 1, by norm_num, .branch a.idx (.leaf false) (.leaf true) |> fun T => if a.sign then T else .branch a.idx (.leaf true) (.leaf false) ; simp +decide [ DecisionTree.eval ] ;
+      use 1, by norm_num, .branch a.idx (.leaf false) (.leaf true) |> fun T => if a.sign then T else .branch a.idx (.leaf true) (.leaf false) ; simp +decide ;
       split_ifs <;> simp +decide [ DecisionTree.depth, DecisionTree.eval ])
     generalize_proofs at *; (
-    by_cases ht : t ≥ 1 <;> simp +decide [ ← hc.2.2.2, ht ] at h_depth ⊢
+    by_cases ht : t ≥ 1 <;> simp +decide at h_depth ⊢
     generalize_proofs at *; (
     rw [ show f = Circuit.eval ( Circuit.lit a ) from funext fun x => hc.2.2.2 x ▸ rfl ] ; simp +decide [ show ∀ ρ : Restriction n, ¬ ( dtDepth ( restrictFn ( Circuit.eval ( Circuit.lit a ) ) ρ ) > t ) from fun ρ => not_lt_of_ge ( le_trans ( h_depth ρ ) ( by linarith ) ) ] ; ring_nf ; norm_num [ hs_pos, hw_pos, hl_pos, hn ] ;
     unfold bernoulliRestrProb; norm_num; ring_nf; norm_num [ hs_pos, hw_pos, hl_pos, hn ] ;
@@ -380,10 +379,10 @@ lemma circuit_reduction_ind_step
       (c₀.size : ℝ) * (1 / 2 : ℝ) ^ l + (c₀.size - 1) * Real.exp (-(n / (120 * w))) + c₀.size * Real.exp (-(n / (120 * l))) := by
         intros c₀ hc₀
         have h_circuit : ∃ c' : Circuit n, c'.depth ≤ d - 1 ∧ c'.size ≤ c₀.size ∧ c'.maxFanin ≤ w ∧ ∀ x, c'.eval x = c₀.eval x := by
-          use c₀; simp_all +decide [ children_depth_le, child_size_le_parent, children_maxFanin_le ] ;
+          use c₀; simp_all +decide ;
           exact ⟨ children_depth_le isAnd cs c₀ hc₀ ( by tauto ), children_maxFanin_le isAnd cs c₀ hc₀ ( by tauto ) ⟩
         generalize_proofs at *; (
-        by_cases hc₀_pos : 0 < c₀.size <;> simp_all +decide [ Nat.AtLeastTwo ];
+        by_cases hc₀_pos : 0 < c₀.size <;> simp_all +decide;
         · obtain ⟨ c', hc'₁, hc'₂, hc'₃, hc'₄ ⟩ := h_circuit; specialize ih c₀.eval c₀.size hc₀_pos c' hc'₁ hc'₂ hc'₃ hc'₄; ring_nf at *; linarith;
         · obtain ⟨ c', hc'₁, hc'₂, hc'₃, hc'₄ ⟩ := h_circuit; simp_all +decide [ Circuit.size ] ;
           cases c' <;> simp_all +decide [ Circuit.size ])
@@ -410,7 +409,7 @@ lemma circuit_reduction_ind_step
       List.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 cs := by
         have h_final_bound : ∀ (cs : List (Circuit n)), (∀ c₀ ∈ cs, bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c₀.eval ρ) > l) ≤ (c₀.size : ℝ) * (1 / 2 : ℝ) ^ l + (c₀.size - 1) * Real.exp (-(n / (120 * w))) + c₀.size * Real.exp (-(n / (120 * l)))) → List.foldr (fun c acc => bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c.eval ρ) > l) + acc) 0 cs ≤ List.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 cs := by
           intro cs hcs; induction cs <;> simp +decide [ * ] ;
-          rename_i k hk ihk; specialize ihk ( fun c₀ hc₀ => hcs c₀ ( List.mem_cons_of_mem _ hc₀ ) ) ; simp_all +decide [ List.foldr ] ;
+          rename_i k hk ihk; specialize ihk ( fun c₀ hc₀ => hcs c₀ ( List.mem_cons_of_mem _ hc₀ ) ) ; simp_all +decide ;
           exact add_le_add hcs.1 ihk
         generalize_proofs at *; (
         exact h_final_bound cs h_induction)

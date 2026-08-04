@@ -1,5 +1,6 @@
 import TCSlib.BooleanAnalysis.Switching.BernoulliRestriction
-import Mathlib
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # Composition of Random Restrictions
@@ -64,9 +65,9 @@ lemma bernoulliRestrWeight_eq_prod (p : ℝ) (ρ : Restriction n) :
     refine' congrArg₂ _ (Finset.prod_congr rfl fun x hx => _) (Finset.prod_congr rfl fun x hx => _) <;> simp_all +decide [Restriction.freeVars]
     · rfl
     · cases h : ρ x <;> aesop
-  simp_all +decide [Finset.card_sdiff, Finset.card_singleton]
-  unfold bernoulliRestrWeight; ring
-  rw [show (1 / 2 + p * (-1 / 2)) = (1 - p) / 2 by ring]; rw [div_pow]; ring!
+  simp_all +decide [Finset.card_sdiff]
+  unfold bernoulliRestrWeight; ring_nf
+  rw [show (1 / 2 + p * (-1 / 2)) = (1 - p) / 2 by ring]; rw [div_pow]; ring_nf!
   norm_num
 
 /--
@@ -106,14 +107,14 @@ lemma compose_fiber_weight_eq (p q : ℝ) (σ : Restriction n) :
       simp +contextual [funext_iff, Prod.ext_iff]
   have h_per_variable : ∀ i : Fin n, ∑ g : Option Bool × Option Bool, varWeight p g.1 * varWeight q g.2 * (if g.1.orElse (fun _ => g.2) = σ i then (1 : ℝ) else 0) = varWeight (p * q) (σ i) := by
     intro i
-    apply varWeight_compose_sum p q (σ i) |> Eq.trans (by exact?)
+    apply varWeight_compose_sum p q (σ i) |> Eq.trans (by exact Fintype.sum_prod_type fun x => varWeight p x.1 * varWeight q x.2 * if (x.1.orElse fun x_1 => x.2) = σ i then 1 else 0)
   convert Finset.prod_congr rfl fun i _ => h_per_variable i using 1
   any_goals exact Finset.univ
   · rw [h_double_sum, Finset.prod_sum]
     refine' Finset.sum_bij (fun g _ => fun i _ => g i) _ _ _ _ <;> simp +decide
     · simp +decide [funext_iff]
     · exact fun b => ⟨fun i => b i (Finset.mem_univ i), funext fun i => funext fun _ => rfl⟩
-  · exact?
+  · exact bernoulliRestrWeight_eq_prod (p * q) σ
 
 /-! ## Main composition theorem -/
 
@@ -124,8 +125,8 @@ A Bernoulli(`p`) restriction followed by a Bernoulli(`q`) restriction on the
 remaining free variables has the same distribution as a single Bernoulli(`p*q`)
 restriction.
 -/
-theorem restriction_compose_eq (p q : ℝ) (hp : 0 < p) (hp1 : p ≤ 1)
-    (hq : 0 < q) (hq1 : q ≤ 1)
+theorem restriction_compose_eq (p q : ℝ) (_hp : 0 < p) (_hp1 : p ≤ 1)
+    (_hq : 0 < q) (_hq1 : q ≤ 1)
     (event : Restriction n → Prop) [DecidablePred event] :
     bernoulliRestrProb (p * q) event =
     ∑ ρ₁ : Restriction n, bernoulliRestrWeight p ρ₁ *

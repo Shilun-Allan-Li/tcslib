@@ -2,8 +2,12 @@
   LDC/HighValue.lean
   §5: High-Value Observation (Lemma 5.1)
 -/
-import Mathlib
-import RequestProject.LDC.Defs
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.RCLike.Basic
+import Mathlib.Data.Int.Star
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import TCSlib.KikuchiLDC.LDC.Defs
 
 open Finset BigOperators
 
@@ -27,7 +31,7 @@ Lemma 5.1 (High expected value — existential form):
 -/
 theorem high_value_observation
     (k n : ℕ) (L : NormalLDC k n)
-    (hk : 0 < k) (hn : 0 < n)
+    (_hk : 0 < k) (_hn : 0 < n)
     (hm : 0 < L.totalConstraints)
     (heps_le : L.epsilon ≤ 1/2) :
     ∃ (b : Fin k → ℤ) (x : Fin n → ℤ),

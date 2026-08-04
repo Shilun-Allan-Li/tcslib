@@ -60,7 +60,7 @@ lemma mergeAll_iff_reach {n : ℕ} (uf : UF n) (base edges : List (WEdge n))
     · intro a b; constructor <;> intro h <;> simp_all +decide [UF.merge]
       · split_ifs at h <;> simp_all +decide
         · have h_reach_base : Reach base a b :=
-            (‹Reach base a e.u›).trans (reach_symm ‹Reach base b e.u›)
+            (‹Reach base a e.v›).trans (reach_symm ‹Reach base b e.v›)
           exact reach_mono h_reach_base fun x hx => by aesop
         · have h_reach : Reach (base ++ [e]) a e.v ∧ Reach (base ++ [e]) e.u b :=
             ⟨reach_mono ‹_› fun x hx => List.mem_append_left _ hx,

@@ -24,6 +24,7 @@ sublist of $t$ obtained by keeping those literals $l$ with $l.\mathrm{var} \in \
 \begin{definition}[Process one clause's free literals against the path]
 \lean{SwitchingLemma2.processClauseLits}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
 \uses{Literal, SwitchingLemma2.Restriction}
 Consumes the free literals of a single clause (each paired with its position index)
 against the canonical decision-tree path, one path entry per literal. For each free
@@ -37,6 +38,11 @@ $\sigma$, and the accumulated clause auxiliary data.
 \begin{definition}[Razborov encoding]
 \lean{SwitchingLemma2.razborovEncode}
 \leanok
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b002,
+  pdf-b5e074215b9e-p002-b003,
+  pdf-b5e074215b9e-p002-b004
+}
 \uses{DNF, DecisionTree.deepPath, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree}
 The Razborov encoding of a DNF $f$ and a restriction $\rho$ with parameters $w, d$.
 It takes the first $d$ steps of the deepest path of the canonical decision tree for
@@ -50,6 +56,7 @@ and $\mathrm{aux}$ consists of per-clause blocks separated by the termination ma
 \begin{definition}[Razborov decoding]
 \lean{SwitchingLemma2.razborovDecode}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \uses{DNF, SwitchingLemma2.Restriction}
 The inverse of the Razborov encoding: given the DNF $f$, parameter $w$, and a pair
 $(\gamma, \mathrm{aux})$ produced by the encoder, it recovers the original restriction

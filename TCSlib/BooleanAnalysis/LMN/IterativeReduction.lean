@@ -1,6 +1,5 @@
 import TCSlib.BooleanAnalysis.LMN.CircuitCompression
 import TCSlib.BooleanAnalysis.LMN.RestrictionCompose
-import Mathlib
 
 /-!
 # Iterative Circuit Reduction (Steps 8–9 of LMN)

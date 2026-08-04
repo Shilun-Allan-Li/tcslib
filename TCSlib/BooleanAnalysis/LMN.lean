@@ -7,7 +7,6 @@ import TCSlib.BooleanAnalysis.LMN.CircuitLayerReduction
 import TCSlib.BooleanAnalysis.LMN.Depth3Switching
 import TCSlib.BooleanAnalysis.LMN.CircuitTreeManip
 import TCSlib.BooleanAnalysis.LMN.RestrictionMonotonicity
-import Mathlib
 
 /-!
 # LMN Theorem Infrastructure
@@ -122,7 +121,7 @@ lemma iterative_reduction_bound (c : Circuit n)
     ↑s * Real.exp (-(↑n / (120 * ↑w))) +
     ↑s * Real.exp (-(↑n / (120 * ↑l))) :=
   circuit_reduction_core (c.eval) d s w l t hd2 hs_pos hw_pos hl_pos hn
-    ⟨c, hd, hs, hw, fun x => rfl⟩
+    ⟨c, hd, hs, hw, fun _ => rfl⟩
 
 /-! ## Main theorem -/
 

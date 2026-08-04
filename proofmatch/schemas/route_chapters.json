@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapters"],
+  "properties": {
+    "chapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["chapter_key", "selected", "confidence", "rationale"],
+        "properties": {
+          "chapter_key": {"type": "string"},
+          "selected": {"type": "boolean"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "rationale": {"type": "string"}
+        }
+      }
+    }
+  }
+}

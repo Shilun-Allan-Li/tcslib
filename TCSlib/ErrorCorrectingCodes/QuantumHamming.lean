@@ -211,11 +211,11 @@ def Code (n : ℕ) := Submodule ℂ (Hn n)
 
 /-- The linear operator on `Hn n` given by acting with the Pauli string `p`. -/
 noncomputable def pauliOp {n : ℕ} (p : PauliString n) : Hn n →ₗ[ℂ] Hn n :=
-  Matrix.toLin' (pauliMatrix p)
+  Matrix.toEuclideanLin (pauliMatrix p)
 
 /-- The adjoint (Hermitian conjugate) of the Pauli operator for `p`. -/
 noncomputable def pauliOpAdjoint {n : ℕ} (p : PauliString n) : Hn n →ₗ[ℂ] Hn n :=
-  Matrix.toLin' (pauliMatrix p).conjTranspose
+  Matrix.toEuclideanLin (pauliMatrix p).conjTranspose
 
 
 instance (n : ℕ) (C : Submodule ℂ (Hn n)) : FiniteDimensional ℂ (↥C) :=
@@ -287,17 +287,19 @@ lemma error_subspaces_orthogonal {n t : ℕ} {C : Submodule ℂ (Hn n)}
       intro x y hx; rw [ codeProj_apply ] ; simp +decide [dotProduct] ;
       have h_adj_zero : ∀ x y : Hn n, x ∈ C → (x ⬝ᵥ (star (Submodule.starProjection C y))) = (x ⬝ᵥ (star y)) := by
         intro x y hx
-        have h_ortho : ∀ z ∈ Cᗮ, (x ⬝ᵥ (star z)) = 0 := by
+        have h_perp : ∀ z ∈ Cᗮ, (x ⬝ᵥ (star z)) = 0 := by
           intro z hz; specialize hz x hx; simp_all +decide [dotProduct] ;
           simpa [ mul_comm ] using congr_arg Star.star hz
-        have h_ortho : (x ⬝ᵥ (star (Submodule.starProjection C y))) = (x ⬝ᵥ (star y)) - (x ⬝ᵥ (star (y - Submodule.starProjection C y))) := by
+        have h_split : (x ⬝ᵥ (star (Submodule.starProjection C y))) = (x ⬝ᵥ (star y)) - (x ⬝ᵥ (star (y - Submodule.starProjection C y))) := by
           simp +decide ;
-        have h_ortho : y - Submodule.starProjection C y ∈ Cᗮ := by
-          exact Submodule.sub_starProjection_mem_orthogonal y;
-        grind;
+        have h_mem : y - Submodule.starProjection C y ∈ Cᗮ :=
+          Submodule.sub_starProjection_mem_orthogonal y
+        have h_zero := h_perp _ h_mem
+        simp only [WithLp.ofLp_sub] at h_zero
+        rw [h_split, h_zero, sub_zero]
       exact h_adj_zero x y hx;
     specialize h_adj_zero x ( ( pauliOpAdjoint E ) ( ( pauliOp F ) ( codeProj C y ) ) ) hx; simp_all only [codeProj_apply,
-      Submodule.coe_orthogonalProjection_apply, star_zero, dotProduct_zero];
+      Submodule.coe_orthogonalProjection_apply, WithLp.ofLp_zero, star_zero, dotProduct_zero];
   intro x hx y hy;
   simp_all only [ne_eq, Submodule.mem_map]
   obtain ⟨w, h⟩ := hx
@@ -357,7 +359,7 @@ lemma error_sphere_dimension {n t : ℕ} {C : Submodule ℂ (Hn n)}
               Submodule.IsOrtho (C.map (pauliOp E))
                 (Finset.sup T (fun F => C.map (pauliOp F))) := by
           intro T hT
-          induction T using Finset.induction <;> aesop?
+          induction T using Finset.induction <;> aesop
         exact h_orthogonal_sup S h_orthogonal
 
       have h_dim_sum :
@@ -426,9 +428,11 @@ lemma error_sphere_dimension {n t : ℕ} {C : Submodule ℂ (Hn n)}
                 exact Function.ne_iff.mp hij
             exact Matrix.invertibleOfLeftInverse _ _ h_inv
           intro x y hxy
-          have h_eq : (pauliMatrix E).mulVec x = (pauliMatrix E).mulVec y := by
-            exact hxy
-          simpa using congr_arg (fun z => ((pauliMatrix E)⁻¹).mulVec z) h_eq
+          have h_eq : (pauliMatrix E).mulVec x.ofLp = (pauliMatrix E).mulVec y.ofLp := by
+            simpa [pauliOp] using congrArg WithLp.ofLp hxy
+          have h_of : x.ofLp = y.ofLp := by
+            simpa using congr_arg (fun z => ((pauliMatrix E)⁻¹).mulVec z) h_eq
+          exact WithLp.ofLp_injective _ h_of
 
         have h_dim_map :
             ∀ (f : Hn n →ₗ[ℂ] Hn n), Function.Injective f →
