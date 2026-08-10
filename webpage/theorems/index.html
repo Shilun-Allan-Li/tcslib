@@ -1,0 +1,1523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>TCSlib Theorems Viewer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      packages: {'[+]': ['ams', 'newcommand', 'configmacros']},
+      macros: {
+        bbr: '{\\mathbb{R}}',
+        bbn: '{\\mathbb{N}}',
+        bbz: '{\\mathbb{Z}}',
+        bbq: '{\\mathbb{Q}}',
+        bbc: '{\\mathbb{C}}',
+        E: '{\\mathbb{E}}',
+        Pr: '{\\mathbb{P}}'
+      }
+    },
+    svg: { fontCache: 'global' },
+    startup: { typeset: false }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js" defer></script>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1c212c;
+    --border: #2a313f;
+    --text: #e6e8ee;
+    --muted: #8b93a5;
+    --accent: #7aa2f7;
+    --accent-2: #9ece6a;
+    --danger: #f7768e;
+    --code-bg: #0b0d12;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --panel-2: #f0f2f7;
+      --border: #d7dbe4;
+      --text: #1b1f27;
+      --muted: #5e6675;
+      --accent: #2d5fe0;
+      --accent-2: #2f8a4b;
+      --danger: #c5384f;
+      --code-bg: #0f1218;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "header header" "sidebar main";
+    height: 100vh;
+  }
+  header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  header .status { color: var(--muted); font-size: 12px; }
+  header .spacer { flex: 1; }
+  header input[type="file"] { color: var(--muted); font-size: 12px; }
+  header button {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  header button:hover { border-color: var(--accent); }
+
+  aside {
+    grid-area: sidebar;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .search {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .search input {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+  }
+  .search input:focus { border-color: var(--accent); }
+  .search .count { color: var(--muted); font-size: 12px; }
+
+  .list {
+    overflow-y: auto;
+    flex: 1;
+  }
+  .item {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .item:hover { background: var(--panel-2); }
+  .item.active { background: var(--panel-2); border-left: 3px solid var(--accent); padding-left: 9px; }
+  .item { position: relative; }
+  .item .id { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: var(--accent); word-break: break-all; padding-right: 34px; }
+  .item .title { font-size: 12.5px; color: var(--muted); }
+  .item .diff-chip {
+    position: absolute; top: 9px; right: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10.5px; padding: 1px 5px; border-radius: 8px; border: 1px solid;
+  }
+  .meta-row { color: var(--muted); font-size: 12.5px; margin: -6px 0 12px 0; }
+  .meta-row .diff { font-weight: 600; }
+
+  main {
+    grid-area: main;
+    overflow-y: auto;
+    padding: 20px 26px;
+    min-width: 0;
+  }
+  main .empty {
+    color: var(--muted);
+    padding: 40px;
+    text-align: center;
+  }
+  main h2 { margin: 0 0 4px 0; font-size: 20px; }
+  main h3 { margin: 22px 0 8px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); font-weight: 600; }
+  .lean-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    word-break: break-all;
+  }
+  .section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 6px;
+  }
+  .informal { white-space: normal; overflow-wrap: anywhere; }
+  .informal p { margin: 0.5em 0; }
+  .informal ol, .informal ul { padding-left: 1.4em; margin: 0.6em 0; }
+  .informal li { margin: 0.25em 0; }
+  .informal code { background: var(--panel-2); padding: 1px 5px; border-radius: 4px; font-size: 92%; }
+  .informal blockquote { border-left: 3px solid var(--border); margin: 0.6em 0; padding: 0.2em 0.8em; color: var(--muted); }
+  .def-body ol, .def-body ul { padding-left: 1.4em; margin: 0.5em 0; }
+  .def-body code { background: var(--bg); padding: 1px 5px; border-radius: 4px; font-size: 92%; }
+
+  pre.code {
+    background: var(--code-bg);
+    color: #e6e8ee;
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.55;
+    border: 1px solid var(--border);
+    max-height: 640px;
+  }
+
+  .def {
+    border-left: 3px solid var(--accent-2);
+    padding: 8px 12px;
+    margin: 8px 0;
+    background: var(--panel-2);
+    border-radius: 0 6px 6px 0;
+  }
+  .def .def-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 13.5px;
+  }
+  .def .def-id {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    word-break: break-all;
+  }
+  .def .def-body { font-size: 13px; }
+
+  .error {
+    color: var(--danger);
+    padding: 20px;
+    background: var(--panel);
+    border: 1px solid var(--danger);
+    border-radius: 8px;
+    margin: 20px;
+  }
+  .error code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; }
+
+  /* Proof file (collapsible — these run to thousands of lines) */
+  details.proof-details { padding: 0; overflow: hidden; }
+  details.proof-details > summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--muted);
+    user-select: none;
+    list-style: revert;
+  }
+  details.proof-details > summary:hover { color: var(--text); }
+  details.proof-details > summary .ok { color: var(--accent-2); }
+  details.proof-details > summary .warn { color: var(--danger); }
+  details.proof-details[open] > summary { border-bottom: 1px solid var(--border); }
+  details.proof-details pre.code { border: none; border-radius: 0 0 8px 8px; margin: 0; max-height: 75vh; }
+  .item .badge-sorry { color: var(--danger); font-size: 11px; }
+
+  /* Dependency DAG overlay */
+  #dag-overlay { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: none; flex-direction: column; }
+  #dag-overlay.open { display: flex; }
+  .dag-bar {
+    display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+  }
+  .dag-bar .seg { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .dag-bar .seg button { border: none; border-radius: 0; }
+  .dag-bar .seg button.on { background: var(--accent); color: #fff; }
+  .dag-bar button {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12px;
+  }
+  .dag-bar button:hover { border-color: var(--accent); }
+  .dag-bar button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .dag-bar .hint { color: var(--muted); font-size: 11.5px; }
+  .dag-bar .spacer { flex: 1; }
+  #dag-status {
+    /* Flexible element of the bar: absorbs all free space so its (constantly
+       changing) text never shifts the controls around it. */
+    flex: 1 1 0; min-width: 0; text-align: right;
+    color: var(--muted); font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #dag-canvas { flex: 1; display: block; cursor: grab; }
+  #dag-canvas.dragging { cursor: grabbing; }
+  /* Compact controls help, top-right; click toggles to a "?" chip. */
+  #dag-help {
+    position: absolute; top: 56px; right: 14px; z-index: 5;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; font-size: 11.5px; color: var(--muted); line-height: 1.75;
+    cursor: pointer; user-select: none;
+  }
+  #dag-help b { color: var(--text); }
+  #dag-help.collapsed {
+    width: 30px; height: 30px; padding: 0; border-radius: 50%;
+    text-align: center; line-height: 30px; font-weight: 700; font-size: 14px;
+    color: var(--text);
+  }
+
+  /* Bottom sheet: the theorem detail pane, pulled up inside the DAG view. */
+  #dag-detail {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 42vh; z-index: 6;
+    background: var(--panel); border-top: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    box-shadow: 0 -6px 24px rgba(0,0,0,0.25);
+  }
+  /* The explicit display:flex above would otherwise defeat the hidden attribute. */
+  #dag-detail[hidden] { display: none; }
+  .dag-detail-grip { flex: 0 0 6px; cursor: ns-resize; margin-top: -3px; }
+  .dag-detail-grip:hover, .dag-detail-grip.active { background: var(--accent); opacity: 0.5; }
+  .dag-detail-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 14px; border-bottom: 1px solid var(--border);
+  }
+  .dag-detail-bar span {
+    flex: 1; min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px; color: var(--accent);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .dag-detail-bar button {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 9px; cursor: pointer; font-size: 12px;
+  }
+  #dag-detail-body { overflow-y: auto; padding: 10px 18px; min-height: 0; }
+  #dag-detail-body h2 { font-size: 16px; margin: 4px 0; }
+  #dag-detail-body pre.code { max-height: 30vh; }
+
+  .dag-legend {
+    position: absolute; bottom: 14px; left: 14px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; font-size: 12px; color: var(--muted); line-height: 1.7;
+  }
+  .dag-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: baseline; }
+
+  /* Basic Lean-ish syntax coloring */
+  .lean-kw   { color: #bb9af7; }
+  .lean-name-c { color: #7aa2f7; }
+  .lean-str  { color: #9ece6a; }
+  .lean-com  { color: #6b7280; font-style: italic; }
+  .lean-num  { color: #ff9e64; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>TCSlib Theorems Viewer</h1>
+    <span class="status" id="status">loading…</span>
+    <span class="spacer"></span>
+    <label style="font-size:12px;color:var(--muted);" title="Select a theorems .jsonl in the TCSlib dataset format">Load file:
+      <input type="file" id="file-picker" accept=".jsonl,.json,.txt" />
+    </label>
+    <button id="copy-lean" title="Copy Lean formal statement">Copy Lean</button>
+    <button id="copy-proof" title="Copy the flattened proof file">Copy Proof</button>
+    <button id="dl-proof" title="Download the flattened proof file as .lean">Download .lean</button>
+    <button id="open-dag" title="Interactive dependency graph (statement / proof)">Dep DAG</button>
+  </header>
+
+  <aside>
+    <div class="search">
+      <input id="q" placeholder="Search id, title, statement…" autocomplete="off" spellcheck="false" />
+      <div class="count" id="count"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </aside>
+
+  <main id="main">
+    <div class="empty">Select a theorem from the sidebar.</div>
+  </main>
+
+  <div id="dag-overlay" aria-hidden="true">
+    <div class="dag-bar">
+      <strong style="font-size:13px;">Dependency DAG</strong>
+      <div class="seg">
+        <button id="dag-mode-stmt" class="on" title="Each theorem linked to the definitions its statement needs">Statement</button>
+        <button id="dag-mode-proof" title="Each theorem linked to every declaration its flattened proof needs">Proof</button>
+      </div>
+      <button id="dag-fit" title="Reset zoom to fit the whole graph">Fit</button>
+      <button id="dag-heat" title="Color theorem boxes by proof difficulty (green = easy, red = hard, plain = unrated)">Difficulty</button>
+      <button id="dag-prev" title="Previous tree (←)">◀</button>
+      <span id="dag-slab" class="hint" style="min-width:170px;text-align:center;font-weight:600;">all trees</span>
+      <button id="dag-next" title="Next tree (→)">▶</button>
+      <span id="dag-status"></span>
+      <button id="dag-close">✕ Close</button>
+    </div>
+    <canvas id="dag-canvas"></canvas>
+    <div id="dag-help" title="click to collapse"></div>
+    <div id="dag-detail" hidden>
+      <div class="dag-detail-grip" title="drag to resize"></div>
+      <div class="dag-detail-bar">
+        <span id="dag-detail-name"></span>
+        <button id="dag-detail-close" title="close panel (esc)">✕</button>
+      </div>
+      <div id="dag-detail-body"></div>
+    </div>
+    <div class="dag-legend">
+      <span class="sw" style="background:var(--accent)"></span>theorem / lemma<br>
+      <span class="sw" style="background:var(--accent-2)"></span>definition / other decl<br>
+      <span class="sw" style="background:var(--danger)"></span>focused node<br>
+      <span id="dag-legend-heat" style="display:none"><span class="sw" style="width:24px;border-radius:3px;background:linear-gradient(90deg,hsl(120,70%,45%),hsl(55,80%,50%),hsl(0,70%,50%))"></span>difficulty: easy → hard</span>
+    </div>
+  </div>
+
+<script>
+"use strict";
+
+// Candidate locations, tried in order: the gzipped copy hosted next to this page
+// (the website deployment), then uncompressed copies for local serving from the
+// repo root or dataset/ dir. Browsers without DecompressionStream skip the .gz.
+const DATA_URLS = [
+  "tcslib_theorems.jsonl.gz",
+  "../../dataset/tcslib_theorems.jsonl.gz",
+  "tcslib_theorems.jsonl",
+  "../../dataset/tcslib_theorems.jsonl"
+].filter(u => typeof DecompressionStream !== "undefined" || !u.endsWith(".gz"));
+const state = {
+  items: [],
+  filtered: [],
+  selectedIdx: -1,
+  query: ""
+};
+
+const $ = (sel) => document.querySelector(sel);
+const listEl = $("#list");
+const mainEl = $("#main");
+const countEl = $("#count");
+const statusEl = $("#status");
+const qEl = $("#q");
+const fileEl = $("#file-picker");
+
+function parseJsonl(text) {
+  const out = [];
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    try { out.push(JSON.parse(line)); }
+    catch (e) { console.warn("Skipping malformed line", i + 1, e); }
+  }
+  return out;
+}
+
+async function fetchFirst(urls) {
+  for (const u of urls) {
+    try {
+      const res = await fetch(u);
+      if (res.ok) return res;
+    } catch (err) { /* try next */ }
+  }
+  throw new Error("none of " + urls.join(", ") + " could be fetched");
+}
+
+async function loadFromUrl(urls) {
+  const res = await fetchFirst(urls);
+  const buf = await res.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  // GitHub Pages serves .gz files as raw bytes (no Content-Encoding), so sniff
+  // the gzip magic number rather than trusting the URL or headers.
+  if (bytes.length > 2 && bytes[0] === 0x1f && bytes[1] === 0x8b) {
+    const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return parseJsonl(await new Response(stream).text());
+  }
+  return parseJsonl(new TextDecoder().decode(buf));
+}
+
+function ingest(items) {
+  state.items = items;
+  state.maxDiff = items.reduce((m, it) => Math.max(m, it.difficulty || 0), 0);
+  applyFilter();
+  statusEl.textContent = items.length + " theorems loaded";
+  dagInvalidate();
+}
+
+function applyFilter() {
+  const q = state.query.trim().toLowerCase();
+  if (!q) {
+    state.filtered = state.items.map((_, i) => i);
+  } else {
+    state.filtered = [];
+    for (let i = 0; i < state.items.length; i++) {
+      const it = state.items[i];
+      const hay = ((it.id || "") + " " + (it.title || "") + " " + (it.lean_name || "") + " " + (it.statement_informal || "") + " " + (it.informal_statement || "")).toLowerCase();
+      if (hay.includes(q)) state.filtered.push(i);
+    }
+  }
+  renderList();
+  countEl.textContent = state.filtered.length + " / " + state.items.length;
+}
+
+function renderList() {
+  const frag = document.createDocumentFragment();
+  const max = Math.min(state.filtered.length, 2000);
+  for (let k = 0; k < max; k++) {
+    const idx = state.filtered[k];
+    const it = state.items[idx];
+    const row = document.createElement("div");
+    row.className = "item" + (idx === state.selectedIdx ? " active" : "");
+    row.dataset.idx = idx;
+
+    const idDiv = document.createElement("div");
+    idDiv.className = "id";
+    idDiv.textContent = it.id || it.lean_name || ("#" + idx);
+    row.appendChild(idDiv);
+
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "title";
+    titleDiv.textContent = plainTitle(it.title || "");
+    if (it.proof_complete === false) {
+      const badge = document.createElement("span");
+      badge.className = "badge-sorry";
+      badge.title = "The library's proof of this theorem still contains sorry";
+      badge.textContent = " ⚠ sorry";
+      titleDiv.appendChild(badge);
+    }
+    row.appendChild(titleDiv);
+
+    if (it.difficulty != null) {
+      const chip = document.createElement("span");
+      chip.className = "diff-chip";
+      chip.textContent = "d" + it.difficulty;
+      chip.title = "difficulty " + it.difficulty;
+      chip.style.color = chip.style.borderColor = diffColor(it.difficulty);
+      row.appendChild(chip);
+    }
+
+    row.addEventListener("click", () => select(idx));
+    frag.appendChild(row);
+  }
+  listEl.replaceChildren(frag);
+  if (state.filtered.length > max) {
+    const more = document.createElement("div");
+    more.className = "item";
+    more.style.color = "var(--muted)";
+    more.textContent = "…and " + (state.filtered.length - max) + " more (narrow your search)";
+    listEl.appendChild(more);
+  }
+}
+
+function plainTitle(s) {
+  // Keep the CONTENT of $...$ math (deleting it turned e.g.
+  // "Expected product for the $bc$--$ca$ pair" into "… the -- pair",
+  // making distinct theorems indistinguishable in the sidebar).
+  return String(s)
+    .replace(/\$([^$]*)\$/g, "$1")
+    .replace(/\\_/g, "_")
+    .replace(/\\[a-zA-Z]+/g, " ")
+    .replace(/[{}]/g, "")
+    .replace(/---/g, "—")
+    .replace(/--/g, "–")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+// Convert text-mode LaTeX (\emph, \textbf, enumerate, itemize, \item, ...)
+// into HTML, while leaving math segments ($...$, $$...$$, \(...\), \[...\])
+// intact so MathJax can handle them.
+function latexTextToHtml(src) {
+  if (!src) return "";
+  const math = [];
+  const stash = (m) => { const i = math.length; math.push(m); return " MATH" + i + " "; };
+  // Order matters: longest / most specific delimiters first.
+  let s = String(src)
+    .replace(/\$\$[\s\S]*?\$\$/g, stash)
+    .replace(/\\\[[\s\S]*?\\\]/g, stash)
+    .replace(/\\\([\s\S]*?\\\)/g, stash)
+    // Inline math may wrap across newlines in the blueprint prose; [^$] (rather than
+    // [^\n$]) keeps such segments intact so MathJax sees them whole.
+    .replace(/\$[^$]*?\$/g, stash);
+
+  // Now escape HTML in the remaining text.
+  s = escapeHtml(s);
+
+  // Environments.
+  s = s.replace(/\\begin\{enumerate\}([\s\S]*?)\\end\{enumerate\}/g, (_, body) => "<ol>" + itemize(body) + "</ol>");
+  s = s.replace(/\\begin\{itemize\}([\s\S]*?)\\end\{itemize\}/g, (_, body) => "<ul>" + itemize(body) + "</ul>");
+  s = s.replace(/\\begin\{description\}([\s\S]*?)\\end\{description\}/g, (_, body) => "<dl>" + body + "</dl>");
+  s = s.replace(/\\begin\{quote\}([\s\S]*?)\\end\{quote\}/g, (_, body) => "<blockquote>" + body + "</blockquote>");
+  // Fallback: strip any remaining \begin{X}...\end{X} but keep contents.
+  s = s.replace(/\\begin\{[^}]+\}([\s\S]*?)\\end\{[^}]+\}/g, "$1");
+
+  // Text commands (repeat a couple of times to handle simple nesting).
+  for (let pass = 0; pass < 2; pass++) {
+    s = s
+      .replace(/\\emph\{([^{}]*)\}/g, "<em>$1</em>")
+      .replace(/\\textbf\{([^{}]*)\}/g, "<strong>$1</strong>")
+      .replace(/\\textit\{([^{}]*)\}/g, "<em>$1</em>")
+      .replace(/\\texttt\{([^{}]*)\}/g, "<code>$1</code>")
+      .replace(/\\textsc\{([^{}]*)\}/g, "<span style=\"font-variant:small-caps\">$1</span>")
+      .replace(/\\underline\{([^{}]*)\}/g, "<u>$1</u>");
+  }
+
+  // A few standalone commands and escapes.
+  s = s
+    .replace(/\\%/g, "%")
+    .replace(/\\&/g, "&amp;")
+    .replace(/\\#/g, "#")
+    .replace(/\\_/g, "_")
+    .replace(/~/g, "&nbsp;")
+    .replace(/\\\\/g, "<br>")
+    .replace(/\\par\b/g, "<br><br>")
+    .replace(/\\noindent\b/g, "")
+    .replace(/\\smallskip\b|\\medskip\b|\\bigskip\b/g, "<br>")
+    .replace(/---/g, "&mdash;")
+    .replace(/--/g, "&ndash;");
+
+  // Paragraphs: blank line -> <br><br>
+  s = s.replace(/\n\s*\n/g, "<br><br>").replace(/\n/g, " ");
+
+  // Restore math placeholders.
+  s = s.replace(/ MATH(\d+) /g, (_, i) => math[+i]);
+  return s;
+}
+
+// Convert a raw enumerate/itemize body into <li>…</li> chunks.
+function itemize(body) {
+  const parts = body.split(/\\item\b/).map(p => p.trim()).filter(Boolean);
+  return parts.map(p => "<li>" + p + "</li>").join("");
+}
+
+// Very light Lean 4 highlighter — safe on already-escaped HTML.
+function highlightLean(escaped) {
+  const kw = ["import","open","namespace","end","variable","def","noncomputable","abbrev","scoped","notation","lemma","theorem","by","fun","if","then","else","match","with","let","in","set_option","structure","instance","class","where","do","return","for","axiom","example","private","protected","universe","section","attribute","macro","syntax","elab","mutual","inductive","coinductive","deriving"];
+  const kwRe = new RegExp("\\b(" + kw.join("|") + ")\\b", "g");
+  return escaped
+    .replace(/--.*$/gm, m => '<span class="lean-com">' + m + '</span>')
+    .replace(/&quot;[^&]*?&quot;/g, m => '<span class="lean-str">' + m + '</span>')
+    .replace(kwRe, '<span class="lean-kw">$1</span>')
+    .replace(/\b\d+\b/g, m => '<span class="lean-num">' + m + '</span>');
+}
+
+function detailHtml(it) {
+  const informal = it.statement_informal || it.informal_statement || "";
+  const formal = it.formal_statement || "";
+  const proof = it.proof || "";
+  const defs = Array.isArray(it.definitions) ? it.definitions : [];
+
+  let proofHtml = "";
+  if (proof) {
+    const nLines = (proof.match(/\n/g) || []).length + 1;
+    const nUp = it.n_proof_upstream_decls;
+    const status = it.proof_complete === false
+      ? '<span class="warn">⚠ contains sorry (unfinished in library)</span>'
+      : '<span class="ok">sorry-free</span>';
+    proofHtml =
+      '<h3>Proof file (flattened Lean)</h3>' +
+      '<details class="section proof-details">' +
+        '<summary>' + nLines + ' lines' +
+          (nUp != null ? ' · ' + nUp + ' upstream decls' : '') +
+          ' · ' + status + ' — click to expand</summary>' +
+        '<pre class="code proof-body"></pre>' +
+      '</details>';
+  }
+
+  const defsHtml = defs.map(d => (
+    '<div class="def">' +
+      '<div class="def-title">' + escapeHtml(d.title || "") + '</div>' +
+      '<div class="def-id">' + escapeHtml(d.id || "") + '</div>' +
+      '<div class="def-body">' + latexTextToHtml(d.informal || "") + '</div>' +
+    '</div>'
+  )).join("");
+
+  return (
+    '<h2>' + escapeHtml(plainTitle(it.title || it.id || "")) + '</h2>' +
+    '<div class="lean-name">' + escapeHtml(it.lean_name || it.id || "") + '</div>' +
+    '<div class="meta-row">' +
+      escapeHtml(it.kind || "?") + ' · ' + escapeHtml(it.source_module || "") +
+      ' · <span class="diff" style="color:' +
+        (it.difficulty != null ? diffColor(it.difficulty) : "var(--muted)") + '">difficulty: ' +
+        (it.difficulty != null ? it.difficulty : "unrated") + '</span>' +
+      (it.difficulty_breadth != null && it.difficulty_breadth !== it.difficulty
+        ? ' · breadth-adj: ' + it.difficulty_breadth : '') +
+      (it.n_upstream_defs != null ? ' · ' + it.n_upstream_defs + ' statement defs' : '') +
+      (it.n_proof_upstream_decls != null ? ' · ' + it.n_proof_upstream_decls + ' proof decls' : '') +
+    '</div>' +
+
+    '<h3>Informal statement</h3>' +
+    '<div class="section informal">' + latexTextToHtml(informal) + '</div>' +
+
+    (defs.length ? '<h3>Definitions (' + defs.length + ')</h3>' + defsHtml : '') +
+
+    '<h3>Formal (Lean) statement</h3>' +
+    '<pre class="code">' + highlightLean(escapeHtml(formal)) + '</pre>' +
+
+    proofHtml
+  );
+}
+
+// Render one theorem's detail into any container (the main pane, or the DAG's
+// bottom sheet). Proof text fills lazily on first expand — proof files run to
+// thousands of lines, and highlighting them eagerly would make switching sluggish.
+function renderDetail(container, it) {
+  container.innerHTML = detailHtml(it);
+  const det = container.querySelector(".proof-details");
+  if (det) {
+    det.addEventListener("toggle", () => {
+      const pre = det.querySelector(".proof-body");
+      if (det.open && pre && !pre.dataset.filled) {
+        pre.dataset.filled = "1";
+        pre.innerHTML = highlightLean(escapeHtml(it.proof || ""));
+      }
+    });
+  }
+  typesetMath([...container.querySelectorAll(".informal, .def-body")]);
+}
+
+// Typeset via MathJax, retrying while the (deferred) MathJax script is still loading —
+// otherwise an entry opened early stays plaintext forever.
+function typesetMath(els, attempt = 0) {
+  if (!els.length) return;
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise(els).catch(err => console.warn(err));
+  } else if (attempt < 40) {
+    setTimeout(() => typesetMath(els, attempt + 1), 250);
+  }
+}
+
+function select(idx) {
+  state.selectedIdx = idx;
+  renderList();
+  const it = state.items[idx];
+  if (!it) return;
+  renderDetail(mainEl, it);
+  // Keep the DAG focus in sync with the viewed theorem.
+  if (dag.open) { dag.pin = it.id || it.lean_name; dagRender(); }
+}
+
+qEl.addEventListener("input", () => { state.query = qEl.value; applyFilter(); });
+
+fileEl.addEventListener("change", async (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  statusEl.textContent = "reading " + f.name + "…";
+  const text = await f.text();
+  ingest(parseJsonl(text));
+});
+
+function flashStatus(msg) {
+  statusEl.textContent = msg;
+  setTimeout(() => statusEl.textContent = state.items.length + " theorems loaded", 1500);
+}
+
+$("#copy-lean").addEventListener("click", () => {
+  const it = state.items[state.selectedIdx];
+  if (!it) return;
+  navigator.clipboard.writeText(it.formal_statement || "").then(
+    () => flashStatus("Lean statement copied"),
+    () => { statusEl.textContent = "clipboard failed"; }
+  );
+});
+
+$("#copy-proof").addEventListener("click", () => {
+  const it = state.items[state.selectedIdx];
+  if (!it) return;
+  if (!it.proof) { flashStatus("no proof field on this entry"); return; }
+  navigator.clipboard.writeText(it.proof).then(
+    () => flashStatus("proof file copied"),
+    () => { statusEl.textContent = "clipboard failed"; }
+  );
+});
+
+$("#dl-proof").addEventListener("click", () => {
+  const it = state.items[state.selectedIdx];
+  if (!it) return;
+  if (!it.proof) { flashStatus("no proof field on this entry"); return; }
+  const name = ((it.id || it.lean_name || "proof").replace(/[^\w.]+/g, "_")) + ".lean";
+  const blob = new Blob([it.proof], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  flashStatus("downloaded " + name);
+});
+
+// ───────────────────────── Dependency DAG overlay ─────────────────────────
+//
+// The dataset stores, per theorem, its TRANSITIVE upstream closure
+// (`upstream_defs` for the statement, `proof_upstream_decls` for the proof).
+// Direct edges are recovered by transitive reduction: dep d of theorem R is
+// direct iff no other member m of R's closure has d in ITS closure. Nodes are
+// then layered by longest path and ordered with barycenter passes.
+
+const dag = {
+  open: false, mode: "stmt", heat: false,
+  slabIdx: -1,               // -1 = all trees, otherwise index into g.slabs
+  cache: {},                 // mode -> built graph
+  g: null,
+  k: 1, tx: 0, ty: 0,        // view transform (screen = graph*k + t)
+  hover: null, pin: null,
+  dragging: false, moved: false, lastX: 0, lastY: 0
+};
+
+const dagOverlay = $("#dag-overlay");
+const dagCanvas = $("#dag-canvas");
+const dagStatus = $("#dag-status");
+const DAG_FONT = "11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+
+function dagInvalidate() { dag.cache = {}; dag.g = null; }
+
+function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function dagBuild(mode) {
+  if (dag.cache[mode]) return dag.cache[mode];
+  const items = state.items;
+  const field = mode === "stmt" ? "upstream_defs" : "proof_upstream_decls";
+  const nodes = new Map();     // name -> node
+  const closure = new Map();   // record name -> Set of upstream names
+
+  const mkNode = (name, it) => {
+    let n = nodes.get(name);
+    if (!n) {
+      n = { name, isRec: !!it, kind: it ? (it.kind || "thm") : "def",
+            idx: it ? state.items.indexOf(it) : -1,
+            diff: it ? (it.difficulty ?? null) : null,
+            group: it ? ((it.source_module || "").split(".")[1] || "Other") : null,
+            out: [], inn: [], layer: 0, x: 0, y: 0 };
+      nodes.set(name, n);
+    }
+    return n;
+  };
+
+  const byId = new Map();
+  for (const it of items) byId.set(it.id || it.lean_name, it);
+  for (const it of items) {
+    const name = it.id || it.lean_name;
+    mkNode(name, it);
+    closure.set(name, new Set(it[field] || []));
+  }
+  for (const it of items)                       // materialize all upstream nodes
+    for (const d of (it[field] || [])) mkNode(d, byId.get(d));
+
+  // Upstream sets for NON-record nodes, computed on the fly so the page needs only
+  // the JSONL: each record's closure list is TOPOLOGICALLY SORTED (dependencies come
+  // before dependents), so a declaration's upstream set is approximated by the
+  // intersection of the prefixes that precede it in every list it appears in.
+  for (const it of items) {
+    const list = it[field] || [];
+    const pos = new Map();
+    for (let i = 0; i < list.length; i++) pos.set(list[i], i);
+    for (let i = 0; i < list.length; i++) {
+      const d = list[i];
+      if (byId.has(d)) continue;               // records already have exact closures
+      const C = closure.get(d);
+      if (!C) closure.set(d, new Set(list.slice(0, i)));
+      else for (const e of C) { const pe = pos.get(e); if (pe === undefined || pe >= i) C.delete(e); }
+    }
+  }
+
+  // Direct edges = transitive reduction: keep n→d only when no other member of n's
+  // upstream set already reaches d.
+  const edges = [];
+  const addEdge = (a, b) => { a.out.push(b); b.inn.push(a); edges.push([a, b]); };
+  for (const n of nodes.values()) {
+    const C = closure.get(n.name);
+    if (!C || !C.size) continue;
+    const covered = new Set();
+    for (const m of C) {
+      const c = closure.get(m);
+      if (c) for (const x of c) covered.add(x);
+    }
+    for (const d of C) {
+      if (covered.has(d)) continue;
+      const t = nodes.get(d);
+      if (t && t !== n) addEdge(n, t);
+    }
+  }
+
+  // Longest-path layering: layer 0 = declarations with NO dependencies, drawn at
+  // the TOP; the more a declaration depends on, the further down it sits.
+  const memo = new Map();
+  const layerOf = (n) => {
+    if (memo.has(n.name)) return memo.get(n.name);
+    memo.set(n.name, 0);                     // cycle guard (shouldn't happen)
+    let l = 0;
+    for (const d of n.out) l = Math.max(l, layerOf(d) + 1);
+    memo.set(n.name, l);
+    return l;
+  };
+  for (const n of nodes.values()) n.layer = layerOf(n);
+
+  // Box geometry: the minimum size that fits the short name.
+  const meas = document.createElement("canvas").getContext("2d");
+  meas.font = DAG_FONT;
+  for (const n of nodes.values()) {
+    n.label = n.name.split(".").pop();
+    if (n.label.length > 30) n.label = n.label.slice(0, 29) + "…";
+    n.w = Math.ceil(meas.measureText(n.label).width) + 14;
+    n.h = 20;
+  }
+
+  const layers = [];
+  for (const n of nodes.values()) (layers[n.layer] ||= []).push(n);
+  const GAPY = 130, GAPX = 12;
+  const place = (L) => {
+    const total = L.reduce((s, n) => s + n.w, 0) + GAPX * Math.max(0, L.length - 1);
+    let x = -total / 2;
+    for (const n of L) { n.x = x + n.w / 2; x += n.w + GAPX; }
+  };
+  layers.forEach((L, li) => {
+    L.sort((a, b) => a.name.localeCompare(b.name));
+    L.forEach(n => { n.y = li * GAPY; });
+    place(L);
+  });
+  // Barycenter passes to reduce crossings.
+  const reorder = (L, nb) => {
+    L.forEach(n => { const ns = nb(n); n._b = ns.length ? ns.reduce((s, m) => s + m.x, 0) / ns.length : n.x; });
+    L.sort((a, b) => a._b - b._b);
+    place(L);
+  };
+  for (let pass = 0; pass < 2; pass++) {
+    for (let li = 1; li < layers.length; li++) reorder(layers[li], n => n.out);
+    for (let li = layers.length - 2; li >= 0; li--) reorder(layers[li], n => n.inn);
+  }
+
+  // Group every node by the TOP-LEVEL FOLDER its declaration lives in. Theorems know
+  // their module. Definitions are resolved in three steps:
+  //  1. namespace prefix — the theorems tell us where each namespace lives (records
+  //     named `LMN.*` are in BooleanAnalysis, so a def named `LMN.*` is too);
+  //  2. majority folder of dependents, iterated to fixpoint (deep def→def chains);
+  //  3. majority folder of the node's own dependencies (reduction orphans).
+  const folders = new Set();
+  const nsCount = new Map();               // first name component -> folder -> count
+  for (const it of items) {
+    const nm = it.id || it.lean_name;
+    const folder = (it.source_module || "").split(".")[1];
+    if (!folder) continue;
+    folders.add(folder);
+    const head = nm.split(".")[0];
+    let m = nsCount.get(head);
+    if (!m) { m = new Map(); nsCount.set(head, m); }
+    m.set(folder, (m.get(folder) || 0) + 1);
+  }
+  const majority = (cnt) => {
+    let best = null, bc = 0;
+    for (const [k, c] of cnt) if (c > bc) { bc = c; best = k; }
+    return best;
+  };
+  const nsBest = new Map();
+  for (const [head, m] of nsCount) nsBest.set(head, majority(m));
+  for (const n of nodes.values()) {
+    if (n.group) continue;
+    const head = n.name.split(".")[0];
+    n.group = nsBest.get(head) || (folders.has(head) ? head : null);
+  }
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const n of nodes.values()) {
+      if (n.group) continue;
+      const cnt = new Map();
+      for (const m of n.inn) if (m.group) cnt.set(m.group, (cnt.get(m.group) || 0) + 1);
+      const best = majority(cnt);
+      if (best) { n.group = best; changed = true; }
+    }
+  }
+  for (const n of nodes.values()) {
+    if (n.group) continue;
+    const cnt = new Map();
+    for (const m of n.out) if (m.group) cnt.set(m.group, (cnt.get(m.group) || 0) + 1);
+    n.group = majority(cnt) || "Other";
+  }
+
+  // Layout: one SLAB per top-level folder, side by side left→right; within a slab,
+  // each layer wraps into rows at the slab's own width. Layer bands are aligned
+  // ACROSS slabs (band height = max rows any slab needs), so "higher = fewer
+  // dependencies" keeps reading globally.
+  const ROWP = 26, BANDGAP = 80, SLABGAP = 400;
+  const groupKeys = [...new Set([...nodes.values()].map(n => n.group))].sort();
+  const slabs = new Map(groupKeys.map(k => [k, { key: k, totalW: 0 }]));
+  for (const n of nodes.values()) slabs.get(n.group).totalW += n.w + GAPX;
+  let xCur = 0;
+  for (const k of groupKeys) {
+    const s = slabs.get(k);
+    s.wrap = Math.max(600, Math.sqrt(s.totalW * ROWP * 2.2));
+    s.x0 = xCur;
+    xCur += s.wrap + SLABGAP;
+  }
+  let yCur = 0;
+  for (const L of layers) {
+    if (!L || !L.length) continue;
+    const byG = new Map();
+    for (const n of L) {
+      let lst = byG.get(n.group);
+      if (!lst) { lst = []; byG.set(n.group, lst); }
+      lst.push(n);
+    }
+    let bandRows = 1;
+    for (const [k, list] of byG) {
+      list.sort((a, b) => a.x - b.x);          // keep barycenter order within the slab
+      const s = slabs.get(k);
+      const rows = [];
+      let row = [], rw = 0;
+      for (const n of list) {
+        if (rw + n.w > s.wrap && row.length) { rows.push([row, rw]); row = []; rw = 0; }
+        row.push(n); rw += n.w + GAPX;
+      }
+      if (row.length) rows.push([row, rw]);
+      rows.forEach(([r, w2], ri) => {
+        let x = s.x0 + (s.wrap - (w2 - GAPX)) / 2;
+        for (const n of r) { n.x = x + n.w / 2; n.y = yCur + ri * ROWP; x += n.w + GAPX; }
+      });
+      bandRows = Math.max(bandRows, rows.length);
+    }
+    yCur += bandRows * ROWP + (BANDGAP - ROWP);
+  }
+  const gSlabs = groupKeys.map(k => {
+    const s = slabs.get(k);
+    return { key: k, x0: s.x0, x1: s.x0 + s.wrap };
+  });
+  const gHeight = yCur;
+
+  // Per-slab node/edge lists: when one tree is being viewed, the painter iterates
+  // ONLY that tree — it never touches (or thinks about) the other slabs.
+  const slabIndex = new Map(groupKeys.map((k, i) => [k, i]));
+  for (const n of nodes.values()) n.si = slabIndex.get(n.group);
+  const slabNodes = groupKeys.map(() => []);
+  for (const n of nodes.values()) slabNodes[n.si].push(n);
+  const slabEdges = groupKeys.map(() => []);
+  for (const e of edges) if (e[0].si === e[1].si) slabEdges[e[0].si].push(e);
+
+  const g = { nodes: [...nodes.values()], byName: nodes, edges, closure,
+              nRecs: items.length, mode, slabs: gSlabs, height: gHeight,
+              slabNodes, slabEdges };
+  dag.cache[mode] = g;
+  return g;
+}
+
+// Full upstream set (transitive) of a node, self included.
+function dagUpSet(n) {
+  const g = dag.g;
+  const set = new Set([n.name]);
+  const c = g.closure.get(n.name);
+  if (c) for (const d of c) set.add(d);
+  else {                                   // non-record: walk reduced edges
+    const stack = [...n.out];
+    while (stack.length) {
+      const m = stack.pop();
+      if (set.has(m.name)) continue;
+      set.add(m.name);
+      for (const d of m.out) stack.push(d);
+      const mc = g.closure.get(m.name);
+      if (mc) for (const d of mc) set.add(d);
+    }
+  }
+  return set;
+}
+
+function bboxParams(nodes, headerRoom) {
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  for (const n of nodes) {
+    x0 = Math.min(x0, n.x - n.w / 2); x1 = Math.max(x1, n.x + n.w / 2);
+    y0 = Math.min(y0, n.y - n.h / 2); y1 = Math.max(y1, n.y + n.h / 2);
+  }
+  if (headerRoom) y0 = Math.min(y0, -110);       // room for the slab headers
+  const w = dagCanvas.clientWidth, h = dagCanvas.clientHeight;
+  const k = Math.min(2, 0.92 * Math.min(w / Math.max(1, x1 - x0 + 60), h / Math.max(1, y1 - y0 + 60)));
+  return { k, tx: w / 2 - k * (x0 + x1) / 2, ty: h / 2 - k * (y0 + y1) / 2 };
+}
+
+function dagFitParams() {
+  const g = dag.g;
+  return bboxParams(g.nodes, g.slabs && g.slabs.length > 1);
+}
+
+function dagSlabParams(si) {
+  const g = dag.g;
+  return bboxParams(g.slabNodes[si], true);
+}
+
+function dagFit() {
+  const g = dag.g;
+  if (!g || !g.nodes.length) return;
+  const p = dagFitParams();
+  dag.k = p.k; dag.tx = p.tx; dag.ty = p.ty;
+}
+
+// Smooth camera flight between views: geometric interpolation on zoom, linear on the
+// world point under the screen center, ease-in-out timing. During a slab-to-slab
+// flight the painter draws only the two slabs involved.
+function dagCancelAnim() {
+  if (dag.animRaf) cancelAnimationFrame(dag.animRaf);
+  dag.animRaf = 0;
+  dag.anim = null;
+}
+
+function dagAnimateTo(k1, tx1, ty1, siFrom, siTo) {
+  dagCancelAnim();
+  const w = dagCanvas.clientWidth, h = dagCanvas.clientHeight;
+  const from = { k: dag.k, cx: (w / 2 - dag.tx) / dag.k, cy: (h / 2 - dag.ty) / dag.k };
+  const to = { k: k1, cx: (w / 2 - tx1) / k1, cy: (h / 2 - ty1) / k1 };
+  const t0 = performance.now(), dur = 450;
+  dag.anim = { siFrom, siTo };
+  const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const step = (now) => {
+    const t = Math.min(1, (now - t0) / dur), e = ease(t);
+    const k = from.k * Math.pow(to.k / from.k, e);
+    const cx = from.cx + (to.cx - from.cx) * e, cy = from.cy + (to.cy - from.cy) * e;
+    dag.k = k; dag.tx = w / 2 - k * cx; dag.ty = h / 2 - k * cy;
+    dagPaint();
+    if (t < 1) {
+      dag.animRaf = requestAnimationFrame(step);
+    } else {
+      dag.animRaf = 0;
+      dag.anim = null;
+      dagPaint();
+    }
+  };
+  dag.animRaf = requestAnimationFrame(step);
+}
+
+// Cap the backing-store resolution: at devicePixelRatio 2 a full-screen canvas is
+// 4x the pixels to clear and stroke every frame, for no benefit at graph scale.
+function dagDpr() { return Math.min(window.devicePixelRatio || 1, 1.5); }
+
+function dagResize() {
+  const dpr = dagDpr();
+  dagCanvas.width = dagCanvas.clientWidth * dpr;
+  dagCanvas.height = dagCanvas.clientHeight * dpr;
+}
+
+function diffColor(d) {
+  const max = state.maxDiff || 1;
+  const t = Math.sqrt(Math.min(1, d / max));   // sqrt: the rating scale is long-tailed
+  return "hsl(" + Math.round(120 * (1 - t)) + ",70%,48%)";
+}
+
+// Renders are coalesced onto animation frames: wheel/mousemove events fire far more
+// often than the display refreshes, and painting on every event is what kills the
+// framerate on a 2000-node graph.
+let dagRafId = 0;
+function dagRender() {
+  if (dagRafId) return;
+  dagRafId = requestAnimationFrame(() => { dagRafId = 0; dagPaint(); });
+}
+
+function dagPaint() {
+  const g = dag.g;
+  if (!g) return;
+  const ctx = dagCanvas.getContext("2d");
+  const dpr = dagDpr();
+  const w = dagCanvas.clientWidth, h = dagCanvas.clientHeight;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  const cAccent = cssVar("--accent"), cGreen = cssVar("--accent-2"),
+        cMuted = cssVar("--muted"), cDanger = cssVar("--danger"),
+        cText = cssVar("--text"), cPanel = cssVar("--panel-2");
+  const focusName = dag.hover ? dag.hover.name : dag.pin;
+  const focus = focusName ? g.byName.get(focusName) : null;
+  const hi = focus ? dagUpSet(focus) : null;
+
+  // Draw in graph coordinates: boxes and their text scale together with zoom.
+  ctx.setTransform(dpr * dag.k, 0, 0, dpr * dag.k, dpr * dag.tx, dpr * dag.ty);
+  const gx0 = -dag.tx / dag.k, gy0 = -dag.ty / dag.k;
+  const gx1 = gx0 + w / dag.k, gy1 = gy0 + h / dag.k;
+
+  // Single-tree view: iterate only the active slab's nodes/edges (during a slab-to-
+  // slab transition, both endpoints; touching the whole graph only in the all view).
+  let drawNodes = g.nodes, drawEdges = g.edges;
+  const active = new Set();
+  if (dag.anim) {
+    if (dag.anim.siFrom >= 0 && dag.anim.siTo >= 0) { active.add(dag.anim.siFrom); active.add(dag.anim.siTo); }
+  } else if (dag.slabIdx >= 0) {
+    active.add(dag.slabIdx);
+  }
+  if (active.size && g.slabNodes) {
+    drawNodes = []; drawEdges = [];
+    for (const si of active) {
+      drawNodes = drawNodes.concat(g.slabNodes[si]);
+      drawEdges = drawEdges.concat(g.slabEdges[si]);
+    }
+  }
+
+  // Level of detail: far out, boxes are borderless colored fills and edges are
+  // straight lines; zoomed in, rounded borders and bezier edges.
+  const tiny = dag.k * 20 < 3;                 // box height under ~3px on screen
+  const curves = dag.k >= 0.8;                 // beziers only when few edges are visible
+
+  // ---- Slab headers and separators (one slab per top-level folder). ----
+  if (g.slabs && g.slabs.length > 1) {
+    ctx.font = "600 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = cMuted;
+    ctx.globalAlpha = 0.9;
+    for (const s of g.slabs) ctx.fillText(s.key, (s.x0 + s.x1) / 2, -60);
+    ctx.strokeStyle = cMuted;
+    ctx.globalAlpha = 0.15;
+    ctx.lineWidth = 2 / dag.k;
+    ctx.beginPath();
+    for (let i = 1; i < g.slabs.length; i++) {
+      const x = (g.slabs[i - 1].x1 + g.slabs[i].x0) / 2;
+      ctx.moveTo(x, -90);
+      ctx.lineTo(x, g.height + 30);
+    }
+    ctx.stroke();
+  }
+
+  // ---- Edges: two batched paths (dim, lit) instead of one stroke per edge. ----
+  const visE = (a, b) =>
+    !(Math.max(a.x, b.x) < gx0 - 80 || Math.min(a.x, b.x) > gx1 + 80 ||
+      Math.max(a.y, b.y) < gy0 - 80 || Math.min(a.y, b.y) > gy1 + 80);
+  const strokeEdges = (list, color, alpha) => {
+    if (!list.length) return;
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    for (const [a, b] of list) {
+      const ax = a.x, ay = a.y - a.h / 2, bx = b.x, by = b.y + b.h / 2;
+      ctx.moveTo(ax, ay);
+      if (curves) ctx.bezierCurveTo(ax, ay - 45, bx, by + 45, bx, by);
+      else ctx.lineTo(bx, by);
+    }
+    ctx.stroke();
+  };
+  ctx.lineWidth = 1 / dag.k;
+  const dimE = [], litE = [];
+  for (const e of drawEdges) {
+    if (!visE(e[0], e[1])) continue;
+    (hi && hi.has(e[0].name) && hi.has(e[1].name) ? litE : dimE).push(e);
+  }
+  strokeEdges(dimE, cMuted, hi ? 0.03 : 0.12);
+  strokeEdges(litE, cAccent, 0.7);
+
+  // ---- Node boxes, batched by (fill/border style, dim/lit). ----
+  const borderOf = (n) =>
+    dag.heat && n.isRec ? (n.diff != null ? diffColor(n.diff) : cMuted)
+                        : (n.isRec ? cAccent : cGreen);
+  const vis = [];
+  for (const n of drawNodes) {
+    if (n.x + n.w / 2 < gx0 || n.x - n.w / 2 > gx1 || n.y + n.h < gy0 || n.y - n.h > gy1) continue;
+    vis.push(n);
+  }
+  const rectPath = (batch) => {
+    ctx.beginPath();
+    for (const n of batch) {
+      const x = n.x - n.w / 2, y = n.y - n.h / 2;
+      if (!tiny && ctx.roundRect) ctx.roundRect(x, y, n.w, n.h, 4); else ctx.rect(x, y, n.w, n.h);
+    }
+  };
+  const groups = new Map();                    // styleKey -> {color, dim, nodes[]}
+  for (const n of vis) {
+    if (focus && n.name === focus.name) continue;   // focus drawn last, on top
+    const dim = hi ? !hi.has(n.name) : false;
+    const color = borderOf(n);
+    const key = color + (dim ? "|d" : "|l");
+    let grp = groups.get(key);
+    if (!grp) { grp = { color, dim, nodes: [] }; groups.set(key, grp); }
+    grp.nodes.push(n);
+  }
+  ctx.lineWidth = 1.2 / dag.k;
+  for (const grp of groups.values()) {
+    ctx.globalAlpha = grp.dim ? 0.08 : 1;
+    rectPath(grp.nodes);
+    if (tiny) {                                // far out: solid colored pixels
+      ctx.fillStyle = grp.color;
+      ctx.fill();
+    } else {
+      ctx.fillStyle = cPanel;
+      ctx.fill();
+      ctx.strokeStyle = grp.color;
+      ctx.stroke();
+    }
+  }
+  if (focus) {
+    const n = focus;
+    ctx.globalAlpha = 1;
+    rectPath([n]);
+    ctx.fillStyle = tiny ? cDanger : cPanel;
+    ctx.fill();
+    if (!tiny) { ctx.strokeStyle = cDanger; ctx.lineWidth = 2.5 / dag.k; ctx.stroke(); }
+  }
+
+  // ---- Text: only when legible (~5px+) — 2000 sub-pixel fillText calls per frame
+  // is exactly what tanks the framerate at full view. ----
+  if (11 * dag.k >= 5) {
+    ctx.font = DAG_FONT;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.globalAlpha = 1;
+    for (const n of vis) {
+      const inSet = hi && hi.has(n.name);
+      ctx.fillStyle = (!hi || inSet) ? cText : cMuted;
+      ctx.globalAlpha = hi && !inSet ? 0.15 : 1;
+      ctx.fillText(n.label, n.x, n.y + 0.5);
+    }
+  }
+  ctx.globalAlpha = 1;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const modeTxt = g.mode === "stmt" ? "statement" : "proof";
+  dagStatus.textContent =
+    (focus
+      ? focus.name + "  ·  " + (hi.size - 1) + " upstream" +
+        (focus.isRec ? "  ·  difficulty " + (focus.diff != null ? focus.diff : "unrated") : "")
+      : g.nodes.length + " nodes · " + g.edges.length + " edges") +
+    "  ·  " + modeTxt + " DAG";
+}
+
+function dagShow(mode) {
+  dag.mode = mode;
+  $("#dag-mode-stmt").classList.toggle("on", mode === "stmt");
+  $("#dag-mode-proof").classList.toggle("on", mode === "proof");
+  dagStatus.textContent = "building " + (mode === "stmt" ? "statement" : "proof") + " DAG…";
+  setTimeout(() => {                        // let the status paint before the build
+    dag.g = dagBuild(mode);
+    // Default view: the BooleanAnalysis tree (fall back to the overview).
+    const bi = dag.g.slabs.findIndex(s => s.key === "BooleanAnalysis");
+    if (bi >= 0) {
+      dag.slabIdx = bi;
+      $("#dag-slab").textContent = dag.g.slabs[bi].key + " (" + (bi + 1) + "/" + dag.g.slabs.length + ")";
+      const p = dagSlabParams(bi);
+      dag.k = p.k; dag.tx = p.tx; dag.ty = p.ty;
+    } else {
+      dag.slabIdx = -1;
+      $("#dag-slab").textContent = "all trees";
+      dagFit();
+    }
+    dagRender();
+  }, 20);
+}
+
+function dagOpen() {
+  if (!state.items.length) { flashStatus("load a dataset first"); return; }
+  dag.open = true;
+  dagOverlay.classList.add("open");
+  dagResize();
+  const it = state.items[state.selectedIdx];
+  dag.pin = it ? (it.id || it.lean_name) : null;
+  dagShow(dag.mode);
+}
+
+function dagClose() {
+  dagCancelAnim();
+  dag.open = false;
+  dag.hover = null;
+  dagHideDetail();
+  dagOverlay.classList.remove("open");
+}
+
+function dagHit(mx, my) {
+  const g = dag.g;
+  if (!g) return null;
+  const gx = (mx - dag.tx) / dag.k, gy = (my - dag.ty) / dag.k;
+  const pad = 2 / dag.k;
+  const pool = (dag.slabIdx >= 0 && !dag.anim && g.slabNodes) ? g.slabNodes[dag.slabIdx] : g.nodes;
+  for (const n of pool) {
+    if (Math.abs(gx - n.x) <= n.w / 2 + pad && Math.abs(gy - n.y) <= n.h / 2 + pad) return n;
+  }
+  return null;
+}
+
+// Controls help card (top right): click toggles between the card and a "?" chip.
+const DAG_HELP_HTML =
+  "<b>Controls</b><br>" +
+  "scroll = zoom · drag = pan<br>" +
+  "◀ ▶ / arrow keys = step trees<br>" +
+  "hover = highlight upstream<br>" +
+  "click node = details below<br>" +
+  "double-click = zoom to upstream<br>" +
+  "esc = close";
+const dagHelpEl = $("#dag-help");
+dagHelpEl.innerHTML = DAG_HELP_HTML;
+dagHelpEl.addEventListener("click", () => {
+  dagHelpEl.classList.toggle("collapsed");
+  dagHelpEl.innerHTML = dagHelpEl.classList.contains("collapsed") ? "?" : DAG_HELP_HTML;
+});
+
+// Bottom sheet: pull up the theorem detail pane inside the DAG view.
+const dagDetailEl = $("#dag-detail");
+function dagShowDetail(it) {
+  $("#dag-detail-name").textContent = it.id || it.lean_name || "";
+  dagDetailEl.hidden = false;
+  renderDetail($("#dag-detail-body"), it);
+}
+function dagHideDetail() { dagDetailEl.hidden = true; }
+$("#dag-detail-close").addEventListener("click", dagHideDetail);
+
+// Drag the grip on the sheet's top edge to resize it.
+const dagGrip = dagDetailEl.querySelector(".dag-detail-grip");
+let dagResizing = false;
+dagGrip.addEventListener("mousedown", (e) => {
+  dagResizing = true;
+  dagGrip.classList.add("active");
+  e.preventDefault();
+});
+window.addEventListener("mousemove", (e) => {
+  if (!dagResizing) return;
+  const h = window.innerHeight - e.clientY;
+  dagDetailEl.style.height = Math.max(120, Math.min(window.innerHeight * 0.85, h)) + "px";
+});
+window.addEventListener("mouseup", () => {
+  dagResizing = false;
+  dagGrip.classList.remove("active");
+});
+
+// Step through the per-folder trees one at a time: fitting the view to a single
+// slab keeps the number of drawn boxes/edges small (everything else is culled).
+function dagGotoSlab(idx) {
+  const g = dag.g;
+  if (!g || !g.slabs || !g.slabs.length) return;
+  const prev = dag.slabIdx;
+  dag.slabIdx = Math.max(-1, Math.min(g.slabs.length - 1, idx));
+  const label = $("#dag-slab");
+  let target;
+  if (dag.slabIdx < 0) {
+    label.textContent = "all trees";
+    target = dagFitParams();
+  } else {
+    const s = g.slabs[dag.slabIdx];
+    label.textContent = s.key + " (" + (dag.slabIdx + 1) + "/" + g.slabs.length + ")";
+    target = dagSlabParams(dag.slabIdx);
+  }
+  dagAnimateTo(target.k, target.tx, target.ty, prev, dag.slabIdx);
+}
+
+$("#open-dag").addEventListener("click", dagOpen);
+$("#dag-close").addEventListener("click", dagClose);
+$("#dag-fit").addEventListener("click", () => dagGotoSlab(-1));
+$("#dag-prev").addEventListener("click", () => dagGotoSlab(dag.slabIdx - 1));
+$("#dag-next").addEventListener("click", () => dagGotoSlab(dag.slabIdx + 1));
+$("#dag-mode-stmt").addEventListener("click", () => dagShow("stmt"));
+$("#dag-mode-proof").addEventListener("click", () => dagShow("proof"));
+$("#dag-heat").addEventListener("click", () => {
+  dag.heat = !dag.heat;
+  $("#dag-heat").classList.toggle("on", dag.heat);
+  $("#dag-legend-heat").style.display = dag.heat ? "" : "none";
+  dagRender();
+});
+document.addEventListener("keydown", (e) => {
+  if (!dag.open) return;
+  if (e.key === "Escape") {
+    if (!dagDetailEl.hidden) dagHideDetail();   // first esc: close the bottom sheet
+    else dagClose();
+  }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); dagGotoSlab(dag.slabIdx - 1); }
+  else if (e.key === "ArrowRight") { e.preventDefault(); dagGotoSlab(dag.slabIdx + 1); }
+});
+window.addEventListener("resize", () => { if (dag.open) { dagResize(); dagRender(); } });
+
+dagCanvas.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  dagCancelAnim();
+  const rect = dagCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const f = Math.exp(-e.deltaY * 0.0015);
+  const k2 = Math.min(8, Math.max(0.005, dag.k * f));
+  dag.tx = mx - (mx - dag.tx) * (k2 / dag.k);
+  dag.ty = my - (my - dag.ty) * (k2 / dag.k);
+  dag.k = k2;
+  dagRender();
+}, { passive: false });
+
+dagCanvas.addEventListener("mousedown", (e) => {
+  dagCancelAnim();
+  dag.dragging = true; dag.moved = false;
+  dag.lastX = e.clientX; dag.lastY = e.clientY;
+  dagCanvas.classList.add("dragging");
+});
+window.addEventListener("mouseup", () => { dag.dragging = false; dagCanvas.classList.remove("dragging"); });
+dagCanvas.addEventListener("mousemove", (e) => {
+  if (dag.dragging) {
+    const dx = e.clientX - dag.lastX, dy = e.clientY - dag.lastY;
+    if (Math.abs(dx) + Math.abs(dy) > 2) dag.moved = true;
+    dag.tx += dx; dag.ty += dy;
+    dag.lastX = e.clientX; dag.lastY = e.clientY;
+    dagRender();
+    return;
+  }
+  const rect = dagCanvas.getBoundingClientRect();
+  const n = dagHit(e.clientX - rect.left, e.clientY - rect.top);
+  if (n !== dag.hover) { dag.hover = n; dagRender(); }
+  dagCanvas.style.cursor = n ? "pointer" : (dag.dragging ? "grabbing" : "grab");
+});
+dagCanvas.addEventListener("mouseleave", () => { if (dag.hover) { dag.hover = null; dagRender(); } });
+dagCanvas.addEventListener("dblclick", (e) => {
+  const rect = dagCanvas.getBoundingClientRect();
+  const n = dagHit(e.clientX - rect.left, e.clientY - rect.top);
+  if (!n) return;
+  const set = dagUpSet(n);
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  for (const m of dag.g.nodes) {
+    if (!set.has(m.name)) continue;
+    x0 = Math.min(x0, m.x - m.w / 2); x1 = Math.max(x1, m.x + m.w / 2);
+    y0 = Math.min(y0, m.y - m.h / 2); y1 = Math.max(y1, m.y + m.h / 2);
+  }
+  const w = dagCanvas.clientWidth, h = dagCanvas.clientHeight;
+  dag.k = Math.min(4, 0.9 * Math.min(w / Math.max(1, x1 - x0 + 60), h / Math.max(1, y1 - y0 + 60)));
+  dag.tx = w / 2 - dag.k * (x0 + x1) / 2;
+  dag.ty = h / 2 - dag.k * (y0 + y1) / 2;
+  dag.pin = n.name;
+  dagRender();
+});
+
+dagCanvas.addEventListener("click", (e) => {
+  if (dag.moved) return;                    // this was a drag, not a click
+  const rect = dagCanvas.getBoundingClientRect();
+  const n = dagHit(e.clientX - rect.left, e.clientY - rect.top);
+  if (n) {
+    dag.pin = n.name;
+    if (n.isRec && n.idx >= 0) {
+      select(n.idx);                        // keeps the main pane behind in sync
+      dagShowDetail(state.items[n.idx]);    // and pulls it up as the bottom sheet
+    }
+    dagRender();
+  }
+});
+
+// Try auto-load. If the page is opened via file://, fetch may fail; user can then use the picker.
+(async () => {
+  try {
+    statusEl.textContent = "fetching dataset…";
+    const items = await loadFromUrl(DATA_URLS);
+    ingest(items);
+  } catch (err) {
+    console.warn(err);
+    statusEl.textContent = "auto-load failed — use the file picker";
+    mainEl.innerHTML = '<div class="error">' +
+      '<b>Could not auto-load the dataset.</b><br><br>' +
+      'This usually happens when you open the HTML with a <code>file://</code> URL (browsers block fetch). ' +
+      'Either:<ul>' +
+      '<li>Pick <code>tcslib_theorems.jsonl</code> with the <b>Load file</b> input in the header, or</li>' +
+      '<li>Serve the repo root with <code>python3 -m http.server</code> and open <code>http://localhost:8000/webpage/theorems/index.html</code>.</li>' +
+      '</ul><br>Original error: <code>' + escapeHtml(String(err)) + '</code></div>';
+  }
+})();
+</script>
+</body>
+</html>

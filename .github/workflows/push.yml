@@ -112,6 +112,9 @@ jobs:
         run: |
           cd webpage
           ~/.elan/bin/lake exe generate-site
+          mkdir -p _site/theorems
+          cp ../dataset/tcslib_theorems.jsonl.gz _site/theorems/
+          test -f _site/theorems/index.html || { echo "::error::theorems viewer missing from generated site"; exit 1; }
 
       - name: Upload Verso artifact
         uses: actions/upload-artifact@v4

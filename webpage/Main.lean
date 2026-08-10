@@ -42,9 +42,7 @@ def theme : Theme := { Theme.default with
               <div class="nav-inner">
                 <a class="logo" href="/tcslib/">"TCSlib"</a>
                 <div class="nav-links">
-                  <a href="#boolean-analysis">"Boolean Analysis"</a>
-                  <a href="#coding-theory">"Error-Correcting Codes"</a>
-                  <a href="#get-started">"Get Started"</a>
+                  <a href="/tcslib/theorems/">"Theorems"</a>
                   <span class="divider">" | "</span>
                   <a href="/tcslib/blueprint/">"Blueprint"</a>
                   <a href="/tcslib/docs/">"Docs"</a>
@@ -79,6 +77,7 @@ def theme : Theme := { Theme.default with
 
 def tcsSite : Site := site Site.FrontPage /
   static "static" ← "static_files"
+  static "theorems" ← "theorems"
 
 def main (args : List String) : IO UInt32 :=
   blogMain theme tcsSite (linkTargets := {}) args
