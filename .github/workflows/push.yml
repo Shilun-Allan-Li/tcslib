@@ -74,7 +74,7 @@ jobs:
       - name: Build blueprint
         uses: xu-cheng/texlive-action@v2
         with:
-          docker_image: ghcr.io/xu-cheng/texlive-full:20231201
+          docker_image: ghcr.io/xu-cheng/texlive-full:20260101
           run: |
             export PIP_BREAK_SYSTEM_PACKAGES=1
             apk update
@@ -86,7 +86,11 @@ jobs:
             CFLAGS="-I/usr/include/graphviz" LDFLAGS="-L/usr/lib/graphviz/ -R/usr/lib/graphviz/" python3 -m pip install pygraphviz
             pip install -r blueprint/requirements.txt
             python3 -m pip install invoke
+            # plasTeX silently skips plugins that fail to import, which deploys a
+            # degraded site (raw \lean/\uses text, no dep graph). Fail loudly instead.
+            python3 -c "import leanblueprint, plastexdepgraph, plastexshowmore" || { echo "::error::blueprint plugins failed to import - the web build would silently fall back to the base plasTeX theme"; exit 1; }
             inv all
+            test -f docs/blueprint/dep_graph_document.html || { echo "::error::dep_graph_document.html missing - the leanblueprint plugin was not active during the web build"; exit 1; }
 
       - name: Upload blueprint artifact
         uses: actions/upload-artifact@v4
