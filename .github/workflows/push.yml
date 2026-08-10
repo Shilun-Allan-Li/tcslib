@@ -83,7 +83,7 @@ jobs:
             git config --global --add safe.directory $GITHUB_WORKSPACE
             git config --global --add safe.directory `pwd`
             python3 -m pip install --upgrade pip requests wheel
-            CFLAGS="-I/usr/include/graphviz" LDFLAGS="-L/usr/lib/graphviz/ -R/usr/lib/graphviz/" python3 -m pip install pygraphviz
+            CFLAGS="-I/usr/include/graphviz" LDFLAGS="-L/usr/lib/graphviz/ -Wl,-rpath,/usr/lib/graphviz/" python3 -m pip install pygraphviz
             pip install -r blueprint/requirements.txt
             python3 -m pip install invoke
             # plasTeX silently skips plugins that fail to import, which deploys a
