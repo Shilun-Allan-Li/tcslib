@@ -54,6 +54,11 @@ For $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 \begin{lemma}[Iterative circuit reduction bound with Chernoff tails]
 \lean{LMN.iterative_reduction_bound}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002,
+  pdf-fc447f326910-p014-b001
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_core, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
 Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most
@@ -71,6 +76,12 @@ The exponential Chernoff tails vanish as $n \to \infty$.
 \begin{theorem}[O'Donnell Lemma 4.28, with tails]
 \lean{LMN.odonnell_lemma_4_28}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b003,
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002,
+  pdf-fc447f326910-p014-b001
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.composedDelta, LMN.iterative_reduction_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
 Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most

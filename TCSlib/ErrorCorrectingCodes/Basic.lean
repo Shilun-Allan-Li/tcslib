@@ -72,14 +72,6 @@ abbrev Codeword (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := (i : Fin
 
 namespace Codeword
 
-/-- Pointwise addition of two codewords. -/
-@[simp]
-def add (c₁ c₂ : Codeword n α) : Codeword n α := fun i ↦ (c₁ i + c₂ i)
-
-/-- Pointwise subtraction of two codewords. -/
-@[simp]
-def sub (c₁ c₂ : Codeword n α) : Codeword n α := fun i ↦ (c₁ i - c₂ i)
-
 /-- The all-zeros codeword. -/
 @[simp]
 def zero : Codeword n α := fun (_ : Fin n) ↦ 0
@@ -111,10 +103,6 @@ lemma natCast_pos_of_two_le {q : ℕ} (hq : 2 ≤ q) : (0 : ℝ) < q := by
 lemma natCast_one_lt_of_two_le {q : ℕ} (hq : 2 ≤ q) : (1 : ℝ) < q := by
   exact_mod_cast Nat.lt_of_lt_of_le one_lt_two hq
 
-/-- If `q ≥ 2`, then `q - 1` is nonnegative as a real number. -/
-lemma natCast_sub_one_nonneg_of_two_le {q : ℕ} (hq : 2 ≤ q) : (0 : ℝ) ≤ q - 1 := by
-  linarith [show (1 : ℝ) < q from natCast_one_lt_of_two_le hq]
-
 /-- If `q ≥ 2`, then `q - 1` is positive as a real number. -/
 lemma natCast_sub_one_pos_of_two_le {q : ℕ} (hq : 2 ≤ q) : (0 : ℝ) < q - 1 := by
   linarith [show (1 : ℝ) < q from natCast_one_lt_of_two_le hq]
@@ -127,10 +115,6 @@ lemma natCast_ne_one_of_two_le {q : ℕ} (hq : 2 ≤ q) : (q : ℝ) ≠ 1 := by
 lemma one_sub_pos_of_lt_one {p : ℝ} (hp : p < 1) : 0 < 1 - p := by
   exact sub_pos.mpr hp
 
-/-- If `p ≤ 1`, then `1 - p` is nonnegative. -/
-lemma one_sub_nonneg_of_le_one {p : ℝ} (hp : p ≤ 1) : 0 ≤ 1 - p := by
-  linarith
-
 /-- If `0 < p < 1`, then `p (1 - p)` is positive. -/
 lemma mul_one_sub_pos {p : ℝ} (hp : 0 < p) (hp' : p < 1) : 0 < p * (1 - p) := by
   exact mul_pos hp (one_sub_pos_of_lt_one hp')
@@ -139,11 +123,6 @@ lemma mul_one_sub_pos {p : ℝ} (hp : 0 < p) (hp' : p < 1) : 0 < p * (1 - p) := 
 lemma lt_one_of_le_one_sub_inv {q : ℝ} {p : ℝ} (hq : 0 < q) (hp : p ≤ 1 - 1 / q) : p < 1 := by
   have h_inv_pos : 0 < 1 / q := one_div_pos.mpr hq
   linarith
-
-/-- If `q > 0` and `p ≤ 1 - 1/q`, then `1 - p` is positive. -/
-lemma one_sub_pos_of_le_one_sub_inv {q : ℝ} {p : ℝ} (hq : 0 < q) (hp : p ≤ 1 - 1 / q) :
-    0 < 1 - p := by
-  exact one_sub_pos_of_lt_one (lt_one_of_le_one_sub_inv hq hp)
 
 /-- The Hamming distance between two codewords. -/
 def hamming_distance (c1 c2 : Codeword n α) : ℕ :=

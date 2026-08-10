@@ -207,7 +207,7 @@ The proof combines the Gaussian quadratic MGF closed form
 \difficulty{3}
 Under the same hypotheses as \lean{centered_chi_squared_step}, the
 centered summand $Y^2 - 1/k$ satisfies
-$\lean{HasBernsteinMGF}\bigl(2/k^2,\;k/4\bigr)$ under $\mu$.
+$\text{\texttt{ProbabilityTheory.HasBernsteinMGF}}\bigl(2/k^2,\;k/4\bigr)$ under $\mu$.
 This packages the chi-squared MGF bound into the abstract Bernstein form, so
 that the i.i.d.-sum tail-bound machinery of \texttt{bernstein.lean} can be
 applied uniformly to Gaussian and other sub-Gaussian matrix families.
@@ -258,7 +258,7 @@ Let $A:\Omega\to\mathbb{R}^{k\times d}$ be a random matrix whose row
 projections $(A\,\omega).\texttt{toEuclideanLin}\,x\,i$ are measurable,
 independent across $i$, and such that each centered squared summand
 $((A\,\omega).\texttt{toEuclideanLin}\,x\,i)^2 - \|x\|^2/k$ satisfies
-$\lean{HasBernsteinMGF}(c, t_{\max})$ for some $c>0$.  For any
+$\text{\texttt{ProbabilityTheory.HasBernsteinMGF}}(c, t_{\max})$ for some $c>0$.  For any
 $s\ge 0$ with $s\le 2k\,c\,t_{\max}$,
 \[
   \mu\!\left\{\omega \;\middle|\;

@@ -38,6 +38,12 @@ DECLARATIONS_PER_CALL = 120
 # How much of a chapter's prose is shown to the chapter-level router.
 CHAPTER_OVERVIEW_CHARS = 700
 
+# Router tiers that can carry a citation. `background` means the document relies
+# on the result at the cited block without originating it — still a real link to
+# the text — so it is compared like the others; `unrelated` asserts the
+# declaration is off-topic and is the only tier dropped outright.
+CITABLE_TIERS = frozenset({"proves", "states", "background"})
+
 
 @dataclass(frozen=True)
 class ChapterNode:
@@ -385,7 +391,13 @@ def route_declarations(
             # A citable tier with no usable block citation cannot be compared;
             # keep it on the rejected list so it is diagnosable rather than
             # vanishing.
-            if tier in {"proves", "states"} and blocks:
+            #
+            # `background` counts as citable: the document relies on the result
+            # at the cited block even though it does not originate it, which is
+            # a real relationship worth recording. Excluding it here made the
+            # tier unreachable and silently lost 85 of 86 uncited
+            # Hypercontractivity declarations. Only `unrelated` is dropped.
+            if tier in CITABLE_TIERS and blocks:
                 routed.append(declaration)
             else:
                 rejected.append(declaration)

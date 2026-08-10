@@ -14,6 +14,7 @@ two-stage argument to the children of the root gate.
 \begin{definition}[Composed restriction parameter]
 \lean{LMN.composedDelta}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b003}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
   pdf-b5e074215b9e-p004-b003
@@ -79,6 +80,16 @@ each term of each gate distinct literals have distinct variables.
 \begin{theorem}[One-step switching for layer-2 data]
 \lean{LMN.normalform_one_step_switching}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p001-b008,
+  pdf-b5e074215b9e-p002-b003,
+  pdf-b5e074215b9e-p002-b004
+}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p008-b005
+}
 \uses{DNF.eval, LMN.Layer2Data, LMN.switching_bernoulli_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
 For layer-2 data and a Bernoulli parameter $p$ with $0<p\le 1/(40\cdot\mathrm{width})$ and
@@ -92,6 +103,14 @@ than $l$ is at most
 \begin{theorem}[One-step CNF replaceability for layer-2 data]
 \lean{LMN.normalform_one_step_cnf_replaceability}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p003-b004
+}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p008-b005
+}
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, LMN.Layer2Data, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{1}
 For layer-2 data and a Bernoulli parameter $p$ with $0<p\le 1/(40\cdot\mathrm{width})$ and
@@ -160,6 +179,7 @@ depth $t$ equals the corresponding probability for $g$.
 \begin{lemma}[Switching bound for depth-2 circuits]
 \lean{LMN.depth2_circuit_switching_bound}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p001-b008,
   pdf-b5e074215b9e-p002-b001,
@@ -180,6 +200,14 @@ then for a Bernoulli parameter $p$ with $0<p\le 1/(40w)$ and $p\le 1$,
 \begin{lemma}[Inductive base case: depth-2 bound]
 \lean{LMN.circuit_reduction_ind_base}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b003,
+  pdf-fc447f326910-p012-b004
+}
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p003-b004,
+  pdf-b5e074215b9e-p004-b002
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, DecisionTree.eval, LMN.composedDelta, LMN.composedDelta_le_one, LMN.depth2_circuit_switching_bound, LMN.dtDepth_restrictFn_le', SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_sum_one, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{7}
 The base case ($d=2$) of the inductive bound: if $f$ is computed by a depth-$2$ circuit of
@@ -205,6 +233,15 @@ folded sum of the per-circuit probabilities $\sum_{c\in \mathit{cs}}\Pr_{p}[\mat
 \begin{lemma}[Inductive step: depth $d\ge 3$]
 \lean{LMN.circuit_reduction_ind_step}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003
+}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p012-b003,
+  pdf-fc447f326910-p013-b002
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, DecisionTree.depth, DecisionTree.eval, LMN.bernoulliRestrProb_list_union_bound, LMN.child_size_le_parent, LMN.children_depth_le, LMN.children_maxFanin_le, LMN.children_size_sum_le, LMN.composedDelta, LMN.composedDelta_le_one, LMN.composedDelta_pos, LMN.composedDelta_step_right, LMN.compress_and_switch, LMN.dtDepth_restrictFn_le', LMN.two_stage_bound', SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{7}
 The inductive step: for depth $d\ge 3$, assuming the bound holds for depth $d-1$ (the
@@ -220,6 +257,16 @@ size at most $s$, and fan-in at most $w$ satisfies, under $\mathrm{composedDelta
 \begin{theorem}[Iterative reduction bound (tight form)]
 \lean{LMN.circuit_reduction_ind}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003
+}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b003,
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002,
+  pdf-fc447f326910-p014-b001
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_ind_base, LMN.circuit_reduction_ind_step, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{6}
 By strong induction on the depth $d\ge 2$: if $f$ is computed by a circuit of depth at most
@@ -235,6 +282,16 @@ $\mathrm{composedDelta}(w,l,d)$,
 \begin{theorem}[Iterative reduction bound (relaxed form)]
 \lean{LMN.circuit_reduction_aux}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003
+}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b003,
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002,
+  pdf-fc447f326910-p014-b001
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_ind, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
 Replacing the coefficient $s-1$ by $s$ in the previous bound: under the same hypotheses and
@@ -249,6 +306,16 @@ the parameter $\mathrm{composedDelta}(w,l,d)$,
 \begin{theorem}[Circuit reduction core bound]
 \lean{LMN.circuit_reduction_core}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003
+}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b003,
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002,
+  pdf-fc447f326910-p014-b001
+}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_aux, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
 The user-facing form of the iterative reduction: for $f$ computed by a circuit of depth at

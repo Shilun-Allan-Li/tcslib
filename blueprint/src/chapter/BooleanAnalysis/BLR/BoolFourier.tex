@@ -246,6 +246,10 @@ $\mathbb{E}[\chi_\emptyset] = 1$.
 \begin{lemma}[Expectation of non-empty character is zero]
 \lean{BoolFourier.expectation_char_nonempty}
 \leanok
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p004-b006,
+  pdf-50833afe7403-p003-b003
+}
 \uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
 \difficulty{1}
 If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
@@ -254,6 +258,10 @@ If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
 \begin{lemma}[Orthonormality: self inner product]
 \lean{BoolFourier.inner_product_char_self}
 \leanok
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p004-b006,
+  pdf-50833afe7403-p004-b005
+}
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.expectation, BoolFourier.inner_product}
 \difficulty{2}
 For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
@@ -262,6 +270,10 @@ For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
 \begin{lemma}[Orthonormality: distinct characters are orthogonal]
 \lean{BoolFourier.inner_product_char_nonself}
 \leanok
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p004-b006,
+  pdf-50833afe7403-p004-b005
+}
 \uses{BoolFourier.char_S, BoolFourier.char_S_times_char_T, BoolFourier.expectation_char_nonempty, BoolFourier.inner_product}
 \difficulty{4}
 If $S \ne T$, then $\langle \chi_S, \chi_T \rangle = 0$.
@@ -281,6 +293,7 @@ The Fourier coefficient of $f : \{0,1\}^n \to \mathbb{R}$ at $S \subseteq [n]$ i
 \begin{lemma}[Fourier coefficient of a character at itself]
 \lean{BoolFourier.fourier_coeff_char_self}
 \leanok
+\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_self}
 \difficulty{1}
 For every $S \subseteq [n]$, $\widehat{\chi_S}(S) = 1$.
@@ -289,6 +302,7 @@ For every $S \subseteq [n]$, $\widehat{\chi_S}(S) = 1$.
 \begin{lemma}[Fourier coefficient of a character at a different set]
 \lean{BoolFourier.fourier_coeff_char_of_ne}
 \leanok
+\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_nonself}
 \difficulty{1}
 If $S \ne T$, then $\widehat{\chi_S}(T) = 0$.
@@ -329,6 +343,10 @@ Walsh--Fourier basis:
 \begin{lemma}[Parseval's identity]
 \lean{BoolFourier.parseval_identity}
 \leanok
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p005-b006,
+  pdf-50833afe7403-p006-b001
+}
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
 \difficulty{1}
 For every $f : \{0,1\}^n \to \mathbb{R}$,

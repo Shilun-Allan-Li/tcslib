@@ -218,7 +218,63 @@ def apply_theorem_proposals(
 #: Routing tiers map onto the relevance statuses the comparison stage already
 #: understands: a document that argues the result deserves a full proof
 #: comparison, one that merely states it is compared as a statement match.
-_TIER_STATUS = {"proves": "relevant", "states": "uncertain"}
+#:
+#: `background` is included deliberately. It used to be absent, which made the
+#: tier a dead end *by construction*: any declaration the router judged as
+#: relied-upon-but-not-originated was dropped before comparison and could never
+#: receive a citation, no matter what the text said. That single gap accounted
+#: for 85 of the 86 uncited Hypercontractivity declarations — with rationales
+#: like "the Paley-Zygmund inequality is standard probability the document
+#: invokes but does not originate" and "avgLast is the operator E_n f whose
+#: definition comes from Chapter 2". Those are real, citable relationships to
+#: the text. Routing them as `uncertain` sends them to the comparer, which then
+#: decides honestly: `method_divergence` gives a `\statementsource`,
+#: `not_in_text` queues an informalization. Only `unrelated` stays dropped,
+#: since that tier asserts the declaration is off-topic.
+#:
+#: This widens the comparison set substantially, so a `background`-heavy
+#: document costs materially more to match than it did before.
+_TIER_STATUS = {
+    "proves": "relevant",
+    "states": "uncertain",
+    "background": "uncertain",
+}
+
+# Verdicts that earn a `\proofsource`.
+#
+# `same` alone is far too strict in practice. Over 270 comparisons the comparer
+# returned `same` exactly zero times, while emitting `uncertain` at 0.90+ for
+# proofs whose only recorded difference was cosmetic — a generalised constant
+# ("Lean generalises rho = 1/sqrt 3 to any rho^2 <= 1/3; method is unchanged"),
+# or renamed variables (`Dn`/`En` versus `diffLast`/`avgLast`). The prompt already
+# tells the comparer to call those `same`, and it still does not, so the bar is
+# relaxed here rather than by asking the prompt again.
+#
+# A comparer that cannot distinguish "renamed" from "different" is not a reliable
+# discriminator, so we do not treat its hedging as evidence against a match.
+# Excluded are only the verdicts that assert a *specific* negative finding:
+# `different` (wrong anchor), `not_in_text` (absent from the document), and
+# `method_divergence` (the method genuinely differs — that is a statement-level
+# citation, handled separately below).
+PROOF_CITATION_VERDICTS = frozenset({"same", "uncertain"})
+# A floor of 0.0 was tried and audited: it admitted 45 citations at confidence
+# *exactly* zero, 31 of which anchored k-ary (ZMod k) statements to boolean-only
+# sources — e.g. `ZkBLR.re_fourier_coeff_upper_bound`, whose (1 - cos(2*pi/k))
+# factor appears nowhere in the cited boolean BLR block. Zero confidence is the
+# comparer declining to judge at all, which is different from hedging over
+# packaging, so it must not clear the bar.
+PROOF_CITATION_MIN_CONFIDENCE = 0.5
+
+
+def accepts_proof_citation(
+    verdict,
+    *,
+    min_confidence: float = PROOF_CITATION_MIN_CONFIDENCE,
+) -> bool:
+    """Whether a comparison verdict is strong enough for a `\\proofsource`."""
+    if verdict.verdict not in PROOF_CITATION_VERDICTS:
+        return False
+    return (verdict.confidence or 0.0) >= min_confidence
 
 
 def routed_candidates(
@@ -436,14 +492,29 @@ def _compare_and_propagate(
     propagation_failures = []
     manifests = []
     same_candidates = []
+    relaxed_accepted = []
     for verdict in verdicts:
-        if verdict.verdict != "same":
+        if not accepts_proof_citation(verdict):
             continue
+        if verdict.verdict != "same":
+            relaxed_accepted.append(
+                {
+                    "lean_name": verdict.lean_name,
+                    "verdict": verdict.verdict,
+                    "confidence": verdict.confidence,
+                    "differences": list(verdict.differences),
+                }
+            )
         candidate = replace(
             by_candidate[verdict.lean_name],
             document_blocks=verdict.document_blocks,
         )
         same_candidates.append(candidate)
+    if relaxed_accepted:
+        print(
+            f"Accepted {len(relaxed_accepted)} proof citation(s) under the relaxed "
+            f"rule (verdict != 'same'); listed in chapter_review.relaxed_proof_sources"
+        )
     # Statement-level citations: the document states the result but the Lean
     # proof takes a different route (or fills in a cited black box).
     statement_verdicts = [
@@ -638,6 +709,9 @@ def _compare_and_propagate(
         "candidates": [asdict(item) for item in candidates],
         "relevance": [asdict(item) for item in decisions],
         "verdicts": [asdict(item) for item in verdicts],
+        # Proof citations admitted by the relaxed rule rather than a `same`
+        # verdict, kept separately so they can be audited or reverted.
+        "relaxed_proof_sources": relaxed_accepted,
         "informalize": informalize,
         "upstream_manifests": [asdict(item) for item in manifests],
         "propagation_failures": propagation_failures,

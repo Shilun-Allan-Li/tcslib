@@ -50,6 +50,7 @@ SKIP_KINDS = {"instance", "example"}
 _MODIFIERS = r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
 DECL_RE = re.compile(
     r"^\s*" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example)\b"
+    r"(?:\s+(?P<ident>[^\s({\[:⦃⟨]+))?"
 )
 LEAN_LABEL_RE = re.compile(r"\\lean\{([^}]*)\}")
 
@@ -128,25 +129,54 @@ def extract_docstring(lines: list[str], decl_idx: int, max_lines: int = 40):
     return None
 
 
-def detect_kind_and_doc(lines: list[str], start: int, end: int):
+def _ident_matches(expected: str, ident: str | None) -> bool:
+    """Does a source-line identifier denote the qualified declaration `expected`?
+
+    Source writes the name relative to the enclosing `namespace`, so only the tail
+    is available to compare (`RestrictionFourier.foo` is declared as `lemma foo`).
+    """
+    if not ident:
+        return False
+    ident = ident.rstrip(":")
+    return (
+        ident == expected
+        or expected.endswith("." + ident)
+        or ident.endswith("." + expected.rsplit(".", 1)[-1])
+    )
+
+
+def detect_kind_and_doc(lines: list[str], start: int, end: int, expected: str | None = None):
     """Return (kind, decl_line_index, doc_or_None) scanning the declaration window.
 
     `lines` is 0-indexed; `start`/`end` are 1-indexed inclusive (dep_graph convention).
+
+    The window is only approximate — dep_graph's `startLine` can sit a line or two
+    before the keyword, inside the preceding declaration. Taking the first keyword
+    found there would attach a neighbour's docstring and signature to this entry, so
+    when the declaration's name is known we match on it and only fall back to
+    "first keyword in the window" if nothing matches.
     """
     lo = max(0, start - 1)
     hi = min(len(lines), end)
-    kind = None
-    decl_idx = None
-    # Find the first real declaration keyword in the window.
+    first = None
     for i in range(lo, min(hi + 1, len(lines))):
         m = DECL_RE.match(lines[i])
-        if m:
-            kind = m.group(1)
-            decl_idx = i
-            break
-    if decl_idx is None:
+        if not m:
+            continue
+        if first is None:
+            first = (m.group(1), i)
+        if expected and _ident_matches(expected, m.group("ident")):
+            return m.group(1), i, extract_docstring(lines, i)
+    if expected:
+        # `startLine` can also point *past* the keyword; sweep a small neighbourhood
+        # before giving up and accepting the window's first declaration.
+        for i in range(max(0, lo - 8), min(len(lines), hi + 8)):
+            m = DECL_RE.match(lines[i])
+            if m and _ident_matches(expected, m.group("ident")):
+                return m.group(1), i, extract_docstring(lines, i)
+    if first is None:
         return None, None, None
-    return kind, decl_idx, extract_docstring(lines, decl_idx)
+    return first[0], first[1], extract_docstring(lines, first[1])
 
 
 def extract_signature(lines: list[str], decl_idx: int, end: int, cap: int = 25) -> str:
@@ -187,9 +217,12 @@ def build_kept_global(modules: dict) -> set[str]:
             continue
         lines = lean_path.read_text(encoding="utf-8", errors="ignore").splitlines()
         for name, dd in mdata["declarations"].items():
-            kind, _, _ = detect_kind_and_doc(lines, dd["startLine"], dd["endLine"])
+            nname = normalize_name(name)
+            kind, _, _ = detect_kind_and_doc(
+                lines, dd["startLine"], dd["endLine"], nname
+            )
             if kind in KIND_ENV:
-                kept.add(normalize_name(name))
+                kept.add(nname)
     return kept
 
 
@@ -216,7 +249,9 @@ def build_work_unit(module: str, mdata: dict, kept_global: set[str],
         # it to avoid a duplicate \lean{...} binding.
         if nname in claimed:
             continue
-        kind, decl_idx, doc = detect_kind_and_doc(lines, dd["startLine"], dd["endLine"])
+        kind, decl_idx, doc = detect_kind_and_doc(
+            lines, dd["startLine"], dd["endLine"], nname
+        )
         if kind not in KIND_ENV:
             continue
         claimed.add(nname)
@@ -230,8 +265,11 @@ def build_work_unit(module: str, mdata: dict, kept_global: set[str],
             "name": nname,
             "kind": kind,
             "env": KIND_ENV[kind],
-            "startLine": dd["startLine"],
-            "endLine": dd["endLine"],
+            # The keyword line we actually matched, not dep_graph's approximate
+            # start — the latter can sit a line early, which sent readers of this
+            # work unit to the wrong declaration.
+            "startLine": decl_idx + 1,
+            "endLine": max(dd["endLine"], decl_idx + 1),
             "uses": uses,
             "doc": doc,
             "signature": extract_signature(lines, decl_idx, dd["endLine"]),

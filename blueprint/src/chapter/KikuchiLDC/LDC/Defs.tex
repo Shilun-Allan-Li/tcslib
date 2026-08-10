@@ -119,6 +119,7 @@ $C \subseteq \mathrm{Fin}\,n$, the product
 \begin{definition}[XOR polynomial of a message]
 \lean{NormalLDC.xorPoly}
 \leanok
+\statementsource{arXiv.2109.04415}{pdf-9c5df3bb4a04-p026-b001}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b009}
 \uses{NormalLDC, NormalLDC.totalConstraints, assignment_prod}
 For a normal form code $L$, a message $b : \mathrm{Fin}\,k \to \mathbb{Z}$ and an
@@ -133,6 +134,10 @@ where $m$ is the total number of constraints of $L$.
 \begin{definition}[Value of the XOR instance]
 \lean{NormalLDC.xorVal}
 \leanok
+\statementsource{arXiv.2109.04415}{
+  pdf-9c5df3bb4a04-p026-b001,
+  pdf-9c5df3bb4a04-p007-b001
+}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b009}
 \uses{IsPMOne, NormalLDC, NormalLDC.xorPoly}
 The value $\mathrm{val}(\psi_b)$ of the XOR instance associated with a message $b$,
@@ -143,6 +148,10 @@ $x : \mathrm{Fin}\,n \to \mathbb{Z}$ taking values in $\{-1,1\}$.
 \begin{definition}[Double-copy ground set]
 \lean{DoubleCopy}
 \leanok
+\statementsource{arXiv.2109.04415}{
+  pdf-9c5df3bb4a04-p017-b003,
+  pdf-9c5df3bb4a04-p029-b005
+}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p007-b009}
 The doubled vertex set $\mathrm{Fin}\,n \times \mathrm{Fin}\,2$, carrying two labelled
 copies of each vertex of $\mathrm{Fin}\,n$.
@@ -151,6 +160,7 @@ copies of each vertex of $\mathrm{Fin}\,n$.
 \begin{definition}[First copy of a vertex]
 \lean{copy1}
 \leanok
+\statementsource{arXiv.2109.04415}{pdf-9c5df3bb4a04-p017-b003}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p007-b009}
 \uses{DoubleCopy}
 The map sending a vertex $u : \mathrm{Fin}\,n$ to its first copy
@@ -160,6 +170,7 @@ $u^{(1)} = (u,0)$ in the double-copy ground set.
 \begin{definition}[Second copy of a vertex]
 \lean{copy2}
 \leanok
+\statementsource{arXiv.2109.04415}{pdf-9c5df3bb4a04-p017-b003}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p007-b009}
 \uses{DoubleCopy}
 The map sending a vertex $u : \mathrm{Fin}\,n$ to its second copy
@@ -169,6 +180,10 @@ $u^{(2)} = (u,1)$ in the double-copy ground set.
 \begin{definition}[First-copy embedding of a set]
 \lean{liftCopy1}
 \leanok
+\statementsource{arXiv.2109.04415}{
+  pdf-9c5df3bb4a04-p017-b003,
+  pdf-9c5df3bb4a04-p029-b005
+}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p007-b009}
 \uses{DoubleCopy, copy1}
 The image $C^{(1)}$ of a set $C \subseteq \mathrm{Fin}\,n$ under the injection
@@ -178,6 +193,10 @@ $u \mapsto u^{(1)}$, a subset of the double-copy ground set.
 \begin{definition}[Second-copy embedding of a set]
 \lean{liftCopy2}
 \leanok
+\statementsource{arXiv.2109.04415}{
+  pdf-9c5df3bb4a04-p017-b003,
+  pdf-9c5df3bb4a04-p029-b005
+}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p007-b009}
 \uses{DoubleCopy, copy2}
 The image $C^{(2)}$ of a set $C \subseteq \mathrm{Fin}\,n$ under the injection

@@ -12,6 +12,7 @@ $x\in\alpha^k$, the output $Gx$ is uniformly distributed over $\alpha^n$.
 \begin{theorem}[Distance equals minimum nonzero weight]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
 \leanok
+\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p047-b004}
 \uses{ErrorCorrectingCodes.Codeword.Linear_Code', ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.distance}
 \difficulty{4}
 If $C$ is linear (witnessed by some generator matrix) and has minimum distance $d$, then:
@@ -27,6 +28,7 @@ If $C$ is linear (witnessed by some generator matrix) and has minimum distance $
 \begin{definition}[Uniform distribution on vectors]
 \lean{ErrorCorrectingCodes.Codeword.uniform_vector_dist}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p062-b003}
 The uniform probability mass function on $\alpha^n$, encoded as a function
 $\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
 \end{definition}
@@ -56,6 +58,10 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
 \begin{theorem}[Uniformity of $Gx$ for nonzero $x$]
 \lean{ErrorCorrectingCodes.Codeword.uniformity_lemma}
 \leanok
+\proofsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p068-b001,
+  pdf-7251cb8e4bc5-p068-b002
+}
 \uses{ErrorCorrectingCodes.Codeword.matrix_dist, ErrorCorrectingCodes.Codeword.uniform_vector_dist, ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \difficulty{7}
 If $x\neq 0$ and $k\ge 1$, then for a uniformly random $n\times k$ matrix $G$ over $\alpha$,

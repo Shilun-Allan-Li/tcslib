@@ -75,6 +75,26 @@ def build_parser() -> argparse.ArgumentParser:
         choices=("approve", "reject", "defer"),
         nargs="?",
     )
+    # Chapter runs hold many comparisons, so a review selects among declarations.
+    review.add_argument(
+        "--lean-name",
+        help="Review only this declaration (chapter runs).",
+    )
+    review.add_argument(
+        "--min-confidence",
+        type=float,
+        default=0.0,
+        help="Only offer verdicts at or above this confidence (chapter runs).",
+    )
+    review.add_argument(
+        "--verdict",
+        action="append",
+        dest="verdicts",
+        help=(
+            "Restrict to this verdict; repeatable "
+            "(e.g. --verdict same --verdict uncertain)."
+        ),
+    )
 
     map_upstream = subcommands.add_parser("map-upstream")
     map_upstream.add_argument("run_id")
@@ -284,12 +304,158 @@ def _find_blueprint(lean_name: str) -> Path:
     return matches[0]
 
 
-def _review(run_id: str, decision: str | None) -> int:
+def _chapter_review_rows(review: dict) -> list[dict]:
+    """Comparison verdicts of a chapter run, richest first."""
+    document = Path(str(review.get("source_markdown", ""))).name.removesuffix(".md")
+    rows = []
+    for verdict in review.get("verdicts") or []:
+        if not isinstance(verdict, dict):
+            continue
+        rows.append(
+            {
+                "lean_name": str(verdict.get("lean_name") or ""),
+                "verdict": str(verdict.get("verdict") or ""),
+                "confidence": float(verdict.get("confidence") or 0.0),
+                "document": document,
+                "document_blocks": [
+                    str(item) for item in (verdict.get("document_blocks") or [])
+                ],
+                "differences": [
+                    str(item) for item in (verdict.get("differences") or [])
+                ],
+            }
+        )
+    rows.sort(key=lambda row: -row["confidence"])
+    return rows
+
+
+def _review_chapter(
+    store: "RunStore",
+    review: dict,
+    decision: str | None,
+    *,
+    lean_name: str | None,
+    min_confidence: float,
+    verdicts: set[str] | None,
+) -> int:
+    """Approve `\\proofsource` citations per declaration for a chapter run.
+
+    The chapter pipeline records every comparison in one artifact, so a review is
+    a selection over declarations rather than a single yes/no.
+    """
+    rows = _chapter_review_rows(review)
+    if not rows:
+        raise ValueError("chapter run recorded no comparison verdicts to review")
+    selected = [
+        row
+        for row in rows
+        if (lean_name is None or row["lean_name"] == lean_name)
+        and row["confidence"] >= min_confidence
+        and (verdicts is None or row["verdict"] in verdicts)
+        and row["document_blocks"]
+    ]
+    if lean_name is not None and not selected:
+        raise ValueError(
+            f"{lean_name} has no reviewable verdict in this run "
+            f"(matching confidence >= {min_confidence})"
+        )
+    print(f"{len(rows)} comparison(s) in run; {len(selected)} match the filters:\n")
+    for row in selected:
+        note = row["differences"][0] if row["differences"] else ""
+        print(
+            f"  {row['confidence']:.2f}  {row['verdict']:18s} {row['lean_name']}"
+            + (f"\n        {note[:150]}" if note else "")
+        )
+    if decision is None:
+        decision = input("\nDecision [approve/reject/defer]: ").strip().casefold()
+    if decision not in {"approve", "reject", "defer"}:
+        raise ValueError("decision must be approve, reject, or defer")
+    if decision != "approve":
+        print(f"Decision recorded as {decision}; blueprint unchanged.")
+        store.write_json(
+            "decision", {"decision": decision, "lean_names": [r["lean_name"] for r in selected]}
+        )
+        return 0
+    written, failed = [], []
+    for row in selected:
+        try:
+            tex_path = _find_blueprint(row["lean_name"])
+            insert_approved_source(
+                tex_path,
+                row["lean_name"],
+                ProofSource(row["document"], tuple(row["document_blocks"])),
+                approved=True,
+            )
+        except (ValueError, PermissionError) as error:
+            failed.append((row["lean_name"], str(error)))
+            continue
+        written.append((row["lean_name"], tex_path))
+    for name, path in written:
+        print(f"  approved {name} -> {path}")
+    for name, error in failed:
+        print(f"  SKIPPED  {name}: {error}")
+    print(f"\n{len(written)} proof source(s) written, {len(failed)} skipped.")
+    store.write_json(
+        "decision",
+        {
+            "decision": decision,
+            "approved": [name for name, _ in written],
+            "skipped": [{"lean_name": n, "error": e} for n, e in failed],
+        },
+    )
+    return 0
+
+
+def _review(
+    run_id: str,
+    decision: str | None,
+    *,
+    lean_name: str | None = None,
+    min_confidence: float = 0.0,
+    verdicts: set[str] | None = None,
+) -> int:
     store = RunStore(WORK_ROOT, run_id)
+    # Chapter-pipeline runs record every comparison in `chapter_review`; the
+    # legacy `review` artifact holds a single candidate. A run re-matched by the
+    # chapter pipeline has both, and the chapter artifact is the richer record,
+    # so it wins whenever it actually carries verdicts.
+    chapter = store.read_json("chapter_review")
+    if chapter is not None and (chapter.get("verdicts") or []):
+        return _review_chapter(
+            store,
+            chapter,
+            decision,
+            lean_name=lean_name,
+            min_confidence=min_confidence,
+            verdicts=verdicts,
+        )
     review = store.read_json("review")
     if review is None:
-        raise ValueError(f"unknown review run: {run_id}")
+        if chapter is None:
+            raise ValueError(f"unknown review run: {run_id}")
+        raise ValueError("chapter run recorded no comparison verdicts to review")
     verdict = review["verdict"]
+    # The legacy artifact holds a single candidate, but the caller's filters still
+    # apply — silently ignoring them once approved two `different` verdicts (a
+    # verdict that explicitly means "wrong anchor, no citation is appropriate").
+    if isinstance(verdict, dict):
+        legacy_verdict = str(verdict.get("verdict") or "")
+        legacy_confidence = float(verdict.get("confidence") or 0.0)
+        if verdicts is not None and legacy_verdict not in verdicts:
+            print(
+                f"{run_id}: verdict {legacy_verdict!r} is excluded by --verdict; "
+                "nothing to review."
+            )
+            return 0
+        if legacy_confidence < min_confidence:
+            print(
+                f"{run_id}: confidence {legacy_confidence} is below "
+                f"--min-confidence {min_confidence}; nothing to review."
+            )
+            return 0
+        if lean_name is not None and str(verdict.get("lean_name")) != lean_name:
+            print(f"{run_id}: does not concern {lean_name}; nothing to review.")
+            return 0
     print(json.dumps(verdict, ensure_ascii=False, indent=2))
     if decision is None:
         decision = input("Decision [approve/reject/defer]: ").strip().casefold()
@@ -493,7 +659,13 @@ def _review_upstream(run_id: str) -> int:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "review":
-        return _review(args.run_id, args.decision)
+        return _review(
+            args.run_id,
+            args.decision,
+            lean_name=args.lean_name,
+            min_confidence=args.min_confidence,
+            verdicts=set(args.verdicts) if args.verdicts else None,
+        )
     if args.command == "map-upstream":
         return _map_upstream(
             args.run_id,

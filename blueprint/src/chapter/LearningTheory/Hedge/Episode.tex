@@ -23,7 +23,7 @@ recording all loss vectors that have been revealed in the past $t$ rounds.
 \lean{LossHistory.toLossSeq}
 \leanok
 \uses{LossHistory, LossSeq}
-Given a history $h : \lean{LossHistory}\ N\ t$, $\lean{toLossSeq}\ h$ coerces it
+Given a history $h : \lean{LossHistory}\ N\ t$, $\text{\texttt{LossHistory.toLossSeq}}\ h$ coerces it
 to a $\lean{LossSeq}\ N\ t$, enabling the reuse of definitions and theorems from
 the pathwise Hedge formalization that are stated over finite loss sequences.
 \end{definition}
@@ -57,7 +57,7 @@ that every coordinate of the chosen loss vector lies in $[0, 1]$.
 \uses{LearnerPolicy, LossHistory.toLossSeq, hedgeDist, hedgeDist_nonneg, hedgeDist_sum}
 $\lean{hedgePolicy}\ N\ \eta$ is the $\lean{LearnerPolicy}$ that implements the
 Hedge algorithm with learning rate $\eta > 0$: at each round $t$ and for each
-loss history $h$, the weights are given by $\lean{hedgeDist}\ \eta\ (\lean{toLossSeq}\ h)\ t$,
+loss history $h$, the weights are given by $\lean{hedgeDist}\ \eta\ (\text{\texttt{LossHistory.toLossSeq}}\ h)\ t$,
 the exponential-weights distribution derived from the past realized losses.
 \end{definition}
 

@@ -21,6 +21,7 @@ length-$n$ codewords used throughout this module.
 \begin{definition}[Hamming ball]
 \lean{CommunicationComplexity.hammingBall}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p029-b006}
 \uses{CommunicationComplexity.Word}
 The \emph{Hamming ball} of radius $r$ centred at $u \in \alpha^n$ is the finset
 \[
@@ -41,6 +42,7 @@ The \emph{Hamming sphere} of radius $r$ centred at $u \in \alpha^n$ is the finse
 \begin{definition}[Ball volume]
 \lean{CommunicationComplexity.ballVol}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p070-b003}
 For a length-$n$ code over an alphabet of size $q$, the \emph{ball volume} at radius $t$ is
 \[
   \mathrm{ballVol}(n,t,q) = \sum_{i=0}^{t} \binom{n}{i}(q-1)^i \in \mathbb{N}.
@@ -168,6 +170,7 @@ has the same cardinality as $\mathrm{supportFiber}(u,S)$.
 \begin{lemma}[Support fiber cardinality]
 \lean{CommunicationComplexity.card_supportFiber}
 \leanok
+\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices_card, CommunicationComplexity.choices_partition_supportFiber, CommunicationComplexity.piece_card, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{5}
 For any word $u$ and finset $S \subseteq \mathrm{Fin}\,n$,
@@ -179,6 +182,7 @@ For any word $u$ and finset $S \subseteq \mathrm{Fin}\,n$,
 \begin{lemma}[Hamming sphere cardinality]
 \lean{CommunicationComplexity.hammingSphere_card}
 \leanok
+\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.card_supportFiber, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_eq_biUnion, CommunicationComplexity.supportFiber_disjoint}
 \difficulty{4}
 For any centre $u \in \alpha^n$ and radius $k$,
@@ -190,6 +194,10 @@ For any centre $u \in \alpha^n$ and radius $k$,
 \begin{lemma}[Hamming ball cardinality]
 \lean{CommunicationComplexity.hammingBall_card}
 \leanok
+\proofsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p032-b001,
+  pdf-7251cb8e4bc5-p070-b003
+}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.ballVol, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_card}
 \difficulty{5}
 For any centre $u \in \alpha^n$ and radius $r$,

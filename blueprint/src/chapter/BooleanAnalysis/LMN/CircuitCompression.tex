@@ -72,6 +72,10 @@ component DNF holds at $x$.
 \begin{theorem}[Circuit compression for CNFs under AND]
 \lean{LMN.compression_and_of_cnfs}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
 \uses{CNF, CNF.eval, CNF.width, LMN.cnf_concat_eval, LMN.cnf_concat_width_le, LMN.listConcat}
 \difficulty{4}
 Let an AND gate have a list of children, each of which computes a function expressible
@@ -83,6 +87,10 @@ lists. This collapses the AND layer and the CNF layer into one.
 \begin{theorem}[Circuit compression for DNFs under OR]
 \lean{LMN.compression_or_of_dnfs}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
 \uses{DNF, DNF.eval, DNF.width, LMN.dnf_concat_eval, LMN.dnf_concat_width_le, LMN.listConcat}
 \difficulty{4}
 Dual to the AND case: if an OR gate has children each expressible by a DNF of width at
@@ -93,6 +101,10 @@ $\ell$, obtained by concatenating the children's term lists.
 \begin{theorem}[One-step reduction failure bound]
 \lean{LMN.one_step_reduction_failure_bound}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p008-b005
+}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.layer2_cnf_replaceability_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{3}
 For $s_2$ layer-2 DNF gates of width at most $w$ (with the usual no-duplicate-variable
@@ -105,6 +117,10 @@ $s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
 \begin{theorem}[One-step decision-tree depth bound]
 \lean{LMN.one_step_dtDepth_bound}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p008-b005
+}
 \uses{DNF, DNF.eval, DNF.width, LMN.switching_bernoulli_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
 Under a Bernoulli restriction with $p \le 1/(40w)$ on $s_2$ width-$w$ DNF gates, the
@@ -124,6 +140,10 @@ predicate $A$ on restrictions, $\Pr[A] + \Pr[\lnot A] = 1$.
 \begin{theorem}[One-step reduction with compression]
 \lean{LMN.one_step_reduction_with_compression}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{2}
 Combining Steps 6 and 7: after a Bernoulli restriction with $p \le 1/(40w)$ on $s_2$

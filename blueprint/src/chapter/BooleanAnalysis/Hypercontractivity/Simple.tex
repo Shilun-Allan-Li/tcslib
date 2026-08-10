@@ -81,6 +81,7 @@ $f$ over the last bit.
 \begin{lemma}[Fourth moment decomposition with the noise operator]
 \lean{SimpleHypercontractivity.fourth_moment_noise_decomp}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p007-b004}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.fourth_moment_decomp, Bonami.restrictLast, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.noiseOp_snoc}
 For $f : \{0,1\}^{n+1} \to \bbr$, writing $g = \mathrm{avgLast}\,f$ and
 $h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
@@ -93,6 +94,10 @@ $h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
 \begin{theorem}[$(2,4)$-Hypercontractivity (Bonami--Beckner)]
 \lean{SimpleHypercontractivity.hypercontractivity_2_4}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p007-b002,
+  pdf-4ba63c9394e5-p007-b004
+}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_cs_sq, Bonami.expect_fourth_nonneg, Bonami.expect_sq_nonneg, Bonami.second_moment_decomp, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.fourth_moment_noise_decomp}
 For any Boolean function $f : \{0,1\}^n \to \bbr$ and noise parameter $\rho$ with
 $\rho^2 \le 1/3$ (equivalently $\abs{\rho} \le 1/\sqrt3$),
@@ -116,6 +121,10 @@ For Boolean functions $f, g$,
 \begin{theorem}[$(4/3,2)$-Hypercontractivity with $\rho = 1/\sqrt3$]
 \lean{SimpleHypercontractivity.hypercontractivity_4_div_3_2}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p008-b002,
+  pdf-4ba63c9394e5-p008-b001
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.hypercontractivity_2_4, SimpleHypercontractivity.innerProduct_le_L43_L4}
 Boolean functions are $(4/3, 2)$-hypercontractive with parameter $1/\sqrt3$: for any
 $f : \{0,1\}^n \to \bbr$,
@@ -224,6 +233,11 @@ the $q = 2$ instance, which is just contractivity.
 \begin{theorem}[$(2,6)$-Hypercontractivity]
 \lean{SimpleHypercontractivity.hypercontractivity_2_6}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p011-b004,
+  pdf-4ba63c9394e5-p011-b005,
+  pdf-4ba63c9394e5-p015-b003
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.hypercontractivity_2_q}
 For $\rho^2 \le 1/5$ and any Boolean function $f$,
 \[
@@ -279,6 +293,10 @@ $T_\rho(T_\sigma f) = T_{\rho\sigma} f$.
 \begin{theorem}[$(p,2)$-Hypercontractivity via duality]
 \lean{SimpleHypercontractivity.hypercontractivity_p_2_general}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p013-b002,
+  pdf-4ba63c9394e5-p013-b003
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, SimpleHypercontractivity.expect_rpow_abs_nonneg, SimpleHypercontractivity.expect_sq_noiseOp_nonneg, SimpleHypercontractivity.innerProduct_eq_expect_sq}
 Let $1 < p$, $q \ge 2$ with $1/p + 1/q = 1$. Given a Hölder inequality for the pair
 $(p,q)$ and a $(2,q)$-hypercontractivity bound for $T_\rho$, one concludes the dual
@@ -294,6 +312,10 @@ $(p,2)$ bound:
 \begin{lemma}[Key algebraic inequality closing the recurrence]
 \lean{SimpleHypercontractivity.hypercontractivity_algebra'}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p007-b004,
+  pdf-4ba63c9394e5-p005-b001
+}
 Let $a, b, A, B, C, \rho$ be reals with $a \ge 0$, $b \ge 0$, $B \ge 0$, and suppose
 $A \le a^2$, $B \le b^2$, $C^2 \le AB$, and $\rho^2 \le 1/3$. Then
 \[

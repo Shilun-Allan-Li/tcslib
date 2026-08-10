@@ -19,6 +19,11 @@ balanced $\pm 1$-valued functions, and Friedgut's junta theorem.
 \begin{definition}[Noisy influence]
 \lean{KKL.noisyInfluence}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p009-b004,
+  pdf-4ba63c9394e5-p018-b003,
+  pdf-4ba63c9394e5-p023-b001
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff}
 The \emph{noisy influence} of coordinate $i$ on $f$ at noise rate $\rho$ is
 \[
@@ -52,6 +57,7 @@ of degree strictly greater than $k$:
 \begin{definition}[Influential coordinates]
 \lean{KKL.influentialCoords}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p022-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence}
 The set of $\tau$-\emph{influential} coordinates of $f$ is the finite set
 \[
@@ -148,6 +154,10 @@ above level $k$:
 \begin{lemma}[Fourier tail weight bound]
 \lean{KKL.tail_fourier_weight_bound}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{
+  pdf-20e15a3d3d5e-p001-b005,
+  pdf-20e15a3d3d5e-p002-b001
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 For $k > 0$ the Fourier weight of $f$ above level $k$ is controlled by the total
 influence:
@@ -159,6 +169,10 @@ influence:
 \begin{lemma}[Low-degree approximation]
 \lean{KKL.lowDegree_approx}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{
+  pdf-20e15a3d3d5e-p001-b005,
+  pdf-20e15a3d3d5e-p002-b001
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.totalInfluence, KKL.l2DistSq, KKL.lowDegreePart, KKL.lowDegree_l2_error, KKL.tail_fourier_weight_bound}
 For $k > 0$, the degree-$k$ truncation approximates $f$ with squared $L^2$ error at
 most $I[f]/k$.
@@ -239,6 +253,18 @@ The \emph{noisy total influence} at rate $\rho$ is
 \begin{theorem}[KKL theorem for balanced functions]
 \lean{KKL.KKL_balanced}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p012-b002,
+  pdf-9d1751394783-p012-b003
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p019-b004,
+  pdf-4ba63c9394e5-p021-b001,
+  pdf-4ba63c9394e5-p021-b002,
+  pdf-4ba63c9394e5-p021-b004,
+  pdf-4ba63c9394e5-p022-b001,
+  pdf-4ba63c9394e5-p022-b002
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourierCoeff_empty, BooleanAnalysis.influence, BooleanAnalysis.isPmOne, BooleanAnalysis.max_influence_lower_bound, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg, KKL.noisyInfluence, KKL.noisyInfluence_le_influence, KKL.sum_noisyInfluence}
 (Kahn--Kalai--Linial, 1988.) Let $f : \{0,1\}^n \to \{-1,1\}$ be balanced,
 i.e.\ $\E[f] = 0$, with $n \ge 2$. Then some coordinate $i$ has
@@ -250,6 +276,13 @@ i.e.\ $\E[f] = 0$, with $n \ge 2$. Then some coordinate $i$ has
 \begin{theorem}[Friedgut's junta theorem]
 \lean{KKL.friedgut_junta}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p013-b001}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p023-b003,
+  pdf-4ba63c9394e5-p022-b003,
+  pdf-4ba63c9394e5-p022-b004,
+  pdf-4ba63c9394e5-p023-b001
+}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.isPmOne, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg, BooleanAnalysis.uniformWeight, KKL.IsJunta, KKL.influentialCoords, KKL.influential_coords_card, KKL.l2DistSq, KKL.lowDegreePart, KKL.lowDegreePart_depends_on_influential, KKL.lowDegree_approx}
 (Friedgut, 1998.) Let $f : \{0,1\}^n \to \{-1,1\}$ and let $\varepsilon > 0$.
 Then there are a coordinate set $J$ and a function $g$ such that

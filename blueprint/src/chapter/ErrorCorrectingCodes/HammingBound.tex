@@ -16,6 +16,14 @@ where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
 \begin{theorem}[Cardinality of Hamming balls]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size}
 \leanok
+\proofsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p032-b001,
+  pdf-7251cb8e4bc5-p070-b003
+}
+\proofsource{philips}{
+  pdf-24e94ad30862-p024-b003,
+  pdf-24e94ad30862-p020-b001
+}
 \difficulty{7}
 For any center $c$ and radius $l$,
 \[
@@ -29,6 +37,7 @@ For any center $c$ and radius $l$,
 \begin{lemma}[Decoding balls around distinct codewords are disjoint]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \leanok
+\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.distance}
 \difficulty{5}
 If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\in C$,
@@ -43,6 +52,7 @@ B_{\lfloor(d-1)/2\rfloor}(c_2)
 \begin{lemma}[\texttt{Finset.Disjoint} formulation]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \leanok
+\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \difficulty{3}
 Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
@@ -54,6 +64,14 @@ Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
 \begin{theorem}[Hamming (sphere-packing) bound]
 \lean{ErrorCorrectingCodes.Codeword.hamming_bound}
 \leanok
+\proofsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p031-b004,
+  pdf-7251cb8e4bc5-p032-b001
+}
+\statementsource{philips}{
+  pdf-24e94ad30862-p021-b003,
+  pdf-24e94ad30862-p021-b001
+}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \difficulty{6}
 Let $q=|\alpha|>1$.  If $C\subseteq\alpha^n$ has minimum distance $d>0$, then

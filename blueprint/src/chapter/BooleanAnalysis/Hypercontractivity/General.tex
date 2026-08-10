@@ -18,6 +18,11 @@ two-function hypercontractivity theorems.
 \begin{definition}[Noise kernel of $\rho$-correlated pairs]
 \lean{GeneralHypercontractivity.noiseKernel}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p008-b007,
+  pdf-4ba63c9394e5-p009-b001,
+  pdf-4ba63c9394e5-p009-b002
+}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign}
 For $\rho \in \bbr$ and $x, y$ in the cube $\mathrm{BoolCube}\,n$, the noise kernel is
 \[
@@ -209,6 +214,10 @@ For $p, q \ge 1$, any $\rho \in \bbr$, and $f, g : \mathrm{BoolCube}\,0 \to \bbr
 \begin{lemma}[Inductive step for two-function hypercontractivity]
 \lean{GeneralHypercontractivity.two_func_hyp_succ}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p015-b002,
+  pdf-4ba63c9394e5-p015-b003
+}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_nonneg, GeneralHypercontractivity.norm_collapse_clean, GeneralHypercontractivity.one_bit_slice_eq_innerProduct, GeneralHypercontractivity.weighted_sum_succ_decomp}
 Let $p, q \ge 1$ and $0 \le \rho \le 1$. If the bound
 $\inn{f, T_\rho g} \le (\E[\abs{f}^p])^{1/p}(\E[\abs{g}^q])^{1/q}$ holds for all pairs of
@@ -219,6 +228,11 @@ $f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$.
 \begin{theorem}[Two-function hypercontractivity induction theorem]
 \lean{GeneralHypercontractivity.hypercontractivity_induction}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p004-b003}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p015-b002,
+  pdf-4ba63c9394e5-p015-b003
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.two_func_hyp_succ, GeneralHypercontractivity.two_func_hyp_zero}
 Let $p, q \ge 1$ and $0 \le \rho \le 1$. If
 $\inn{f, T_\rho g} \le (\E[\abs{f}^p])^{1/p}(\E[\abs{g}^q])^{1/q}$ holds for all
@@ -231,6 +245,11 @@ $f, g : \mathrm{BoolCube}\,n \to \bbr$.
 \begin{theorem}[Weak two-function hypercontractivity on a single bit]
 \lean{GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p002-b002}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p014-b003,
+  pdf-4ba63c9394e5-p014-b004
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, OneBit.cauchy_schwarz_bool, OneBit.one_bit_p2_hypercontractivity, SimpleHypercontractivity.expect_rpow_abs_nonneg, SimpleHypercontractivity.expect_sq_noiseOp_nonneg, SimpleHypercontractivity.noiseOp_compose}
 For $1 \le p \le 2$, $1 \le q \le 2$ and $f, g : \mathrm{BoolCube}\,1 \to \bbr$, with
 $\rho = \sqrt{(p-1)(q-1)}$,
@@ -242,6 +261,14 @@ $\rho = \sqrt{(p-1)(q-1)}$,
 \begin{theorem}[Equivalence of one- and two-function hypercontractivity]
 \lean{GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p003-b007,
+  pdf-9d1751394783-p004-b001
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p013-b002,
+  pdf-4ba63c9394e5-p013-b003
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.holder_ineq_bool, OneBit.expect_nonneg_of_nonneg, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
 Let $1 \le p \le q$ with $q \ge 2$, and let $0 \le \rho \le 1$ satisfy
 $\rho \le \sqrt{(p-1)/(q-1)}$. Then the one-function bound
@@ -260,6 +287,12 @@ holds.
 \begin{theorem}[Weak two-function hypercontractivity]
 \lean{GeneralHypercontractivity.weak_two_function_hypercontractivity}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p002-b002}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p014-b004,
+  pdf-4ba63c9394e5-p015-b003,
+  pdf-4ba63c9394e5-p015-b005
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.hypercontractivity_induction, GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
 For $1 \le p \le 2$, $1 \le q \le 2$, any $n$, and $f, g : \mathrm{BoolCube}\,n \to \bbr$, with
 $\rho = \sqrt{(p-1)(q-1)}$,
@@ -309,6 +342,10 @@ For $s \ge 1$, $0 \le \rho \le 1$ and $f : \mathrm{BoolCube}\,n \to \bbr$,
 \begin{lemma}[Duality of noise-operator norm bounds]
 \lean{GeneralHypercontractivity.noise_op_norm_dual}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p013-b002,
+  pdf-4ba63c9394e5-p013-b003
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, GeneralHypercontractivity.holder_ineq_bool, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
 For $p, q > 1$ and $0 \le \rho \le 1$, the $(p \to q)$ bound
 \[
@@ -343,6 +380,14 @@ If $u - 1 > 0$, then
 \begin{theorem}[Bridging case of one-function hypercontractivity]
 \lean{GeneralHypercontractivity.bridging_hypercontractivity}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p002-b001,
+  pdf-9d1751394783-p004-b007
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p001-b002,
+  pdf-4ba63c9394e5-p027-b004
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.noise_param_eq, GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.weak_two_function_hypercontractivity}
 For $1 \le p \le 2 \le u$, $f : \mathrm{BoolCube}\,n \to \bbr$, and
 $\rho = \sqrt{(p-1)/(u-1)}$,
@@ -423,6 +468,11 @@ For $x \ge 0$ and $r \ge 1$, $x^r \ge 1 + r(x-1)$.
 \begin{theorem}[General two-point inequality, unit case]
 \lean{GeneralHypercontractivity.two_point_ineq_general_unit}
 \leanok
+\statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p005-b001,
+  pdf-9d1751394783-p005-b002
+}
 \uses{GeneralHypercontractivity.integrated_h_alpha_ineq, GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
 Let $1 \le p \le q \le 2$, $b \in [0,1]$ and $\rho = \sqrt{(p-1)/(q-1)}$. Then
 \[
@@ -437,6 +487,13 @@ Let $1 \le p \le q \le 2$, $b \in [0,1]$ and $\rho = \sqrt{(p-1)/(q-1)}$. Then
 \begin{theorem}[One-bit low-norms hypercontractivity]
 \lean{GeneralHypercontractivity.low_norms_one_bit}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p004-b006,
+  pdf-9d1751394783-p004-b007,
+  pdf-9d1751394783-p005-b001,
+  pdf-9d1751394783-p005-b002
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.two_point_ineq_general_unit, OneBit.expect_abs_rpow_one_bit}
 For $1 < p \le q \le 2$, $f : \mathrm{BoolCube}\,1 \to \bbr$ and
 $\rho = \sqrt{(p-1)/(q-1)}$,
@@ -448,6 +505,13 @@ $\rho = \sqrt{(p-1)/(q-1)}$,
 \begin{theorem}[Low-norms hypercontractivity]
 \lean{GeneralHypercontractivity.low_norms_hypercontractivity}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p002-b001,
+  pdf-9d1751394783-p004-b003,
+  pdf-9d1751394783-p005-b001,
+  pdf-9d1751394783-p005-b002
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.bridging_hypercontractivity, GeneralHypercontractivity.holder_ineq_bool, GeneralHypercontractivity.hypercontractivity_induction, GeneralHypercontractivity.low_norms_one_bit, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.trivial_contractivity, OneBit.expect_nonneg_of_nonneg, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
 For $1 < p \le u \le 2$, any $n$, $f : \mathrm{BoolCube}\,n \to \bbr$ and
 $\rho = \sqrt{(p-1)/(u-1)}$,
@@ -459,6 +523,11 @@ $\rho = \sqrt{(p-1)/(u-1)}$,
 \begin{theorem}[High-norms hypercontractivity]
 \lean{GeneralHypercontractivity.high_norms_hypercontractivity}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p002-b001,
+  pdf-9d1751394783-p004-b007
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, GeneralHypercontractivity.low_norms_hypercontractivity, GeneralHypercontractivity.noise_op_norm_dual, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.trivial_contractivity, SimpleHypercontractivity.noiseOp_compose}
 For $2 \le p \le u$, any $\rho$ with $0 \le \rho \le 1$ and
 $\rho \le \sqrt{(p-1)/(u-1)}$, and $f : \mathrm{BoolCube}\,n \to \bbr$,
@@ -470,6 +539,12 @@ $\rho \le \sqrt{(p-1)/(u-1)}$, and $f : \mathrm{BoolCube}\,n \to \bbr$,
 \begin{theorem}[General one-function hypercontractivity]
 \lean{GeneralHypercontractivity.general_one_function_hypercontractivity}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p002-b001,
+  pdf-9d1751394783-p004-b003,
+  pdf-9d1751394783-p004-b007
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.bridging_hypercontractivity, GeneralHypercontractivity.high_norms_hypercontractivity, GeneralHypercontractivity.low_norms_hypercontractivity, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.trivial_contractivity, SimpleHypercontractivity.noiseOp_compose}
 Let $1 \le p \le u$ with $u > 1$, and let $0 \le \rho \le 1$ satisfy
 $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr$,
@@ -481,6 +556,15 @@ $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr
 \begin{theorem}[General two-function hypercontractivity]
 \lean{GeneralHypercontractivity.general_two_function_hypercontractivity}
 \leanok
+\statementsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p002-b002,
+  pdf-9d1751394783-p003-b007,
+  pdf-9d1751394783-p004-b002
+}
+\statementsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p001-b002,
+  pdf-4ba63c9394e5-p013-b002
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.general_one_function_hypercontractivity, GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
 Let $1 \le p \le u$ with $u \ge 2$, and let $0 \le \rho \le 1$ satisfy
 $\rho \le \sqrt{(p-1)/(u-1)}$. Then for all $f, g : \mathrm{BoolCube}\,n \to \bbr$,

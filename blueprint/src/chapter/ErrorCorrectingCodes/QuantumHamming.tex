@@ -61,6 +61,12 @@ The set of all Pauli strings of weight at most $t$:
 \begin{theorem}[Cardinality of the Pauli error set]
 \lean{card_pauliErrorsLe}
 \leanok
+\proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
+\proofsource{PhysRevA.54.3824}{
+  pdf-c11491661f48-p020-b001,
+  pdf-c11491661f48-p021-b003
+}
+\proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \uses{PauliErrorsLe, weight}
 \[
 |\mathcal{E}(n,t)| \;=\; \sum_{i=0}^{t}\binom{n}{i}\,3^i.
@@ -180,6 +186,14 @@ Pauli images of $C$ over all $t$-errors.
 \begin{lemma}[Error subspaces are pairwise orthogonal]
 \lean{error_subspaces_orthogonal}
 \leanok
+\proofsource{quant-ph.9705052}{
+  pdf-e658890bd7ef-p005-b005,
+  pdf-e658890bd7ef-p010-b003
+}
+\proofsource{PhysRevA.55.900}{
+  pdf-bbdd8e5c3949-p003-b002,
+  pdf-bbdd8e5c3949-p009-b002
+}
 \statementsource{PhysRevLett.77.2585}{
   pdf-9634739c3de9-p003-b003,
   pdf-9634739c3de9-p002-b004
@@ -197,6 +211,9 @@ $\hat{E}(C) \perp \hat{F}(C)$.
 \begin{lemma}[Dimension of the error sphere]
 \lean{error_sphere_dimension}
 \leanok
+\proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
+\proofsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
+\proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
 \uses{ErrorSphere, error_subspaces_orthogonal, card_pauliErrorsLe}
 If $C$ is non-degenerate,
@@ -211,6 +228,13 @@ If $C$ is non-degenerate,
 \begin{theorem}[Quantum Hamming bound]
 \lean{quantum_hamming_bound}
 \leanok
+\proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
+\proofsource{PhysRevA.54.3824}{pdf-c11491661f48-p021-b003}
+\proofsource{PhysRevA.55.900}{
+  pdf-bbdd8e5c3949-p009-b002,
+  pdf-bbdd8e5c3949-p009-b003
+}
+\proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p011-b008}
 \statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p009-b002}
 \statementsource{PhysRevA.55.900}{
@@ -315,6 +339,7 @@ finset $S$.
 \begin{lemma}[Count of Pauli strings with exact support]
 \lean{card_pauliStringsExactSupport}
 \leanok
+\proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \uses{PauliNZ.toBasis, mkWithSupport, pauliStringsExactSupport, support, support_mkWithSupport}
 The number of Pauli strings with support exactly $S$ is $3^{|S|}$, since each coordinate in $S$
 is assigned one of the three non-identity Paulis.
@@ -379,6 +404,13 @@ The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathca
 \begin{theorem}[Quantum Hamming bound, raw form]
 \lean{quantum_hamming_bound_raw}
 \leanok
+\proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
+\proofsource{PhysRevA.54.3824}{pdf-c11491661f48-p021-b003}
+\proofsource{PhysRevA.55.900}{
+  pdf-bbdd8e5c3949-p009-b002,
+  pdf-bbdd8e5c3949-p009-b003
+}
+\proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p011-b008}
 \statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p009-b002}
 \statementsource{PhysRevA.55.900}{

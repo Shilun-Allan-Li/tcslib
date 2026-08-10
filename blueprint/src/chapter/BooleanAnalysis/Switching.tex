@@ -195,6 +195,7 @@ flag true. This is the main structural invariant of the encoder.
 \begin{lemma}[Injection from encoder aux images]
 \lean{SwitchingLemma2.exists_aux_injection}
 \leanok
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \uses{DNF, DNF.eval, DNF.width, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.encode_go_wellformed, SwitchingLemma2.parseAux, SwitchingLemma2.parseAux_triplesToAux, SwitchingLemma2.razborovEncode, SwitchingLemma2.triplesToAux}
 \difficulty{7}
 There exists a function $g$ from aux lists into
@@ -266,6 +267,7 @@ $\min(\mathrm{lits.length}, \mathrm{path.length})$.
 \begin{lemma}[Canonical deep path length lower bound]
 \lean{SwitchingLemma2.canonicalDTree_deepPath_length_ge}
 \leanok
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_depth_ge, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
 If $\rho$ is a bad restriction (so $\mathrm{dtDepth}(f|_\rho) > d$), then the
@@ -276,6 +278,7 @@ has length strictly greater than $d$.
 \begin{lemma}[Encoder path length equals $d$ on bad restrictions]
 \lean{SwitchingLemma2.razborovEncode_path_length}
 \leanok
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_deepPath_length_ge}
 \difficulty{2}
 When $\rho$ is bad, the prefix
@@ -315,6 +318,7 @@ $\rho_0$'s $\mathrm{numFree}$.
 \begin{lemma}[Canonical tree has depth zero when all clauses killed]
 \lean{SwitchingLemma2.canonicalDTree_depth_zero_of_killed}
 \leanok
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{DNF, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree}
 \difficulty{3}
 If every clause of $f$ is killed by $\rho$, the canonical decision tree for
@@ -324,6 +328,7 @@ $f|_\rho$ is the leaf $\mathrm{false}$ and hence has depth $0$.
 \begin{lemma}[Canonical tree has depth zero when a clause is fixed]
 \lean{SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
 \leanok
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{DNF, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree}
 \difficulty{4}
 If some clause of $f$ is fixed (satisfied) by $\rho$, the canonical decision tree
@@ -440,6 +445,7 @@ path length: $(\mathrm{go}\,\dots).1.\mathrm{numFree} + \mathrm{path.length} = \
 \begin{lemma}[Encoder output is an $(s-d)$-restriction]
 \lean{SwitchingLemma2.razborovEncode_fst_numFree_eq}
 \leanok
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsCanonicalPath, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_depth_ge, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_go_numFree_invariant, SwitchingLemma2.razborovEncode_path_length, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
 For a bad $s$-restriction $\rho$ with $d \leq s$, the first component
@@ -452,7 +458,7 @@ variables.
 \lean{SwitchingLemma2.bad_count_bound}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
-\uses{DNF, DNF.eval, DNF.width, Literal.var, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.card_filter_numFree_eq, SwitchingLemma2.fiber_bound, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_fst_numFree_eq}
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.card_filter_numFree_eq, SwitchingLemma2.fiber_bound, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_fst_numFree_eq}
 \difficulty{4}
 For $d \leq s$, the number of bad $s$-restrictions is at most
 $\binom{n}{s-d}\,2^{\,n-(s-d)}\,(4w)^d$: every bad $s$-restriction is mapped by
@@ -500,6 +506,10 @@ depth at most $\mathrm{dtDepth}\,f$.
 \begin{lemma}[Small decision-tree depth yields small DNF and CNF]
 \lean{SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p003-b002,
+  pdf-b5e074215b9e-p003-b003
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p002-b006,
   pdf-fc447f326910-p002-b007
@@ -636,6 +646,14 @@ then the same holds within every term of $\mathrm{cnfToDualDNF}\,\psi$.
 \begin{theorem}[Håstad's Switching Lemma for CNFs]
 \lean{SwitchingLemmaCNF.switching_lemma_cnf}
 \leanok
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p001-b008,
+  pdf-b5e074215b9e-p002-b001,
+  pdf-b5e074215b9e-p002-b002,
+  pdf-b5e074215b9e-p002-b003,
+  pdf-b5e074215b9e-p002-b004,
+  pdf-b5e074215b9e-p003-b001
+}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.numSRestrictions, SwitchingLemma2.switching_lemma, SwitchingLemmaCNF.cnfToDualDNF_inj, SwitchingLemmaCNF.cnfToDualDNF_nodup, SwitchingLemmaCNF.restrictFn_neg, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width, dtDepth_neg}
 \difficulty{5}
@@ -651,6 +669,7 @@ under which $\psi|_\rho$ has decision-tree depth $> d$ satisfies
 \begin{theorem}[Switching Lemma Corollary for CNFs]
 \lean{SwitchingLemmaCNF.switching_corollary_cnf}
 \leanok
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.numSRestrictions, SwitchingLemma2.restrictFn, SwitchingLemmaCNF.switching_lemma_cnf, dtDepth}
 \difficulty{4}

@@ -18,6 +18,7 @@ LMN pipeline.
 \begin{definition}[Size of a decision tree]
 \lean{DecisionTree.size}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b001}
 \uses{DecisionTree}
 The size of a decision tree, defined as its number of leaves: a leaf has size $1$, and a
 branch has size equal to the sum of the sizes of its two subtrees.
@@ -26,6 +27,7 @@ branch has size equal to the sum of the sizes of its two subtrees.
 \begin{definition}[Sign-encoded tree function]
 \lean{DecisionTree.signEval}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p005-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.eval}
 The $\pm 1$-valued function computed by a decision tree $T$, namely
 $x \mapsto \mathrm{boolToSign}(T.\mathrm{eval}\,x)$, where $\mathrm{false} \mapsto 1$ and
@@ -154,6 +156,7 @@ coefficients are exactly the Fourier coefficients.
 \begin{theorem}[Degree bounded by depth (Proposition 3.16)]
 \lean{DecisionTree.degree_le_depth}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.has_degree_at_most, DecisionTree, DecisionTree.coeffs_eq_zero_of_depth_lt, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
 The function computed by a decision tree of depth $k$ has Fourier degree at most $k$:
 $T.\mathrm{signEval}$ has degree at most $T.\mathrm{depth}$.
@@ -162,6 +165,7 @@ $T.\mathrm{signEval}$ has degree at most $T.\mathrm{depth}$.
 \begin{theorem}[Spectral $1$-norm bounded by size (Proposition 3.16)]
 \lean{DecisionTree.spectral_one_norm_le}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval, DecisionTree.size, DecisionTree.sum_abs_coeffs_le}
 For every decision tree $T$,
 \[
@@ -173,6 +177,7 @@ i.e.\ $\norm{\widehat{f}}_1 \le s$ for the tree size $s$.
 \begin{theorem}[Granularity of the Fourier coefficients (Proposition 3.16)]
 \lean{DecisionTree.fourierCoeff_granular}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs_granular, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
 For every $S$ there is an integer $m$ with
 $\widehat{T.\mathrm{signEval}}(S) = m / 2^{T.\mathrm{depth}}$: every Fourier coefficient is
@@ -182,6 +187,7 @@ an integer multiple of $2^{-k}$, where $k$ is the tree depth.
 \begin{theorem}[Sparsity bound (Proposition 3.16)]
 \lean{DecisionTree.sparsity_le}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.fourierCoeff_granular, DecisionTree.signEval, DecisionTree.size, DecisionTree.spectral_one_norm_le}
 The Fourier support of $T.\mathrm{signEval}$, i.e.\ the set of frequencies $S$ with
 $\widehat{T.\mathrm{signEval}}(S) \ne 0$, has cardinality at most
@@ -191,6 +197,7 @@ $T.\mathrm{size}\cdot 2^{T.\mathrm{depth}}$.
 \begin{theorem}[Sparsity, absolute form]
 \lean{DecisionTree.sparsity_le_four_pow}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.signEval, DecisionTree.size, DecisionTree.size_le_two_pow_depth, DecisionTree.sparsity_le}
 The Fourier support of $T.\mathrm{signEval}$ has cardinality at most
 $4^{T.\mathrm{depth}}$.
@@ -199,6 +206,7 @@ $4^{T.\mathrm{depth}}$.
 \begin{lemma}[Specification of the minimum decision-tree depth]
 \lean{DecisionTree.exists_dtree_of_dtDepth}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b001}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
 For every Boolean function $f : \{0,1\}^n \to \{0,1\}$ there exists a decision tree $T$
 with $T.\mathrm{depth} \le \mathrm{dtDepth}\,f$ that computes $f$, i.e.\
@@ -208,6 +216,7 @@ $T.\mathrm{eval}\,x = f(x)$ for all $x$.
 \begin{theorem}[Degree bounded by decision-tree depth (Proposition 3.16)]
 \lean{DecisionTree.degree_le_dtDepth}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.boolToSign, BooleanAnalysis.has_degree_at_most, DecisionTree.degree_le_depth, DecisionTree.exists_dtree_of_dtDepth, DecisionTree.signEval, dtDepth}
 For every Boolean function $f$, the $\pm 1$-encoding
 $x \mapsto \mathrm{boolToSign}(f(x))$ has Fourier degree at most $\mathrm{dtDepth}\,f$,

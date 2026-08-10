@@ -53,6 +53,10 @@ coming from the fixed coordinates.
 \begin{theorem}[Closed form for restricted Fourier coefficients]
 \lean{RestrictionFourier.fourierCoeff_restrictBF}
 \leanok
+\statementsource{boolean-ch03-spectral-learning-restrictions}{
+  pdf-20e15a3d3d5e-p008-b002,
+  pdf-20e15a3d3d5e-p008-b003
+}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, DecisionTree.fourierCoeff_sum_chiS, RestrictionFourier.chiS_extend, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
 For $f : \{0,1\}^n \to \bbr$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
 and $S \subseteq [n]$,
@@ -151,6 +155,11 @@ For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 \begin{theorem}[Proposition 4.17, first identity]
 \lean{RestrictionFourier.expectation_fourierCoeff_restrictBF}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p006-b005,
+  pdf-fc447f326910-p007-b001
+}
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 Under a Bernoulli($p$)-random restriction $\rho$, the expected Fourier coefficient of the
 restricted function at $S$ is
@@ -164,6 +173,11 @@ restrictions.
 \begin{theorem}[Proposition 4.17, second identity]
 \lean{RestrictionFourier.expectation_fourierCoeff_sq_restrictBF}
 \leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p006-b005,
+  pdf-fc447f326910-p007-b001
+}
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.localFactor, RestrictionFourier.prod_if_subset, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor_mul, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 Under a Bernoulli($p$)-random restriction $\rho$, the expected squared Fourier
 coefficient at $S$ is
@@ -196,3 +210,36 @@ and sets $U, S \subseteq [n]$,
 Combined with the second identity this yields O'Donnell's form
 $\E_\rho[\widehat{f_\rho}(S)^2] = \sum_U \Pr[U \cap J = S]\cdot \widehat{f}(U)^2$.
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Restriction of a real-valued Boolean function]
+\lean{RestrictionFourier.restrictBF}
+\leanok
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b004}
+\uses{BooleanAnalysis.BooleanFunc, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
+Given $f : \{0,1\}^n \to \bbr$ and a restriction $\rho$, the restricted function
+$f_\rho = \mathrm{restrictBF}\,f\,\rho$ is defined by
+\[
+  (\mathrm{restrictBF}\,f\,\rho)(x) \;=\; f(\rho.\mathrm{extend}\,x),
+\]
+so free coordinates are read from the input $x$ and fixed coordinates from $\rho$. It is
+the real-valued analogue of $\mathrm{restrictFn}$.
+\end{definition}
+
+\begin{definition}[Sign product of the fixed bits]
+\lean{RestrictionFourier.signProd}
+\leanok
+\uses{BooleanAnalysis.boolToSign, SwitchingLemma2.Restriction}
+For a restriction $\rho$ and a set $T \subseteq [n]$,
+\[
+  \mathrm{signProd}\,\rho\,T \;=\; \prod_{i \in T} \mathrm{boolToSign}\bigl((\rho\,i).\mathrm{getD}\ \mathtt{false}\bigr)
+  \;\in\; \bbr,
+\]
+the product of the $\pm1$-encodings of the bits that $\rho$ fixes on $T$. On coordinates
+where $\rho$ is free the default value $\mathtt{false}$ is used; this junk value is
+harmless because the definition is only ever paired with indicators forcing $T$ to consist
+of fixed coordinates.
+\end{definition}

@@ -14,6 +14,10 @@ alphabet $\alpha$.  Throughout, $\alpha$ is a type carrying instances
 \begin{definition}[Codeword]
 \lean{ErrorCorrectingCodes.Codeword}
 \leanok
+\statementsource{philips}{
+  pdf-24e94ad30862-p023-b007,
+  pdf-24e94ad30862-p025-b003
+}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 A codeword of length $n$ over alphabet $\alpha$ is a function $c : \mathrm{Fin}\,n \to \alpha$.
 \end{definition}
@@ -31,6 +35,8 @@ Pointwise addition, subtraction, and the all-zero codeword.
 \begin{definition}[Code]
 \lean{ErrorCorrectingCodes.Codeword.Code}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p015-b006}
+\statementsource{philips}{pdf-24e94ad30862-p025-b003}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 A (block) code of length $n$ over $\alpha$ is a finite set (\texttt{Finset}) of codewords.
 \end{definition}
@@ -38,6 +44,10 @@ A (block) code of length $n$ over $\alpha$ is a finite set (\texttt{Finset}) of 
 \begin{definition}[Linear code via generator matrix]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code}
 \leanok
+\statementsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p045-b006,
+  pdf-7251cb8e4bc5-p028-b003
+}
 A code $C$ is linear with generator matrix $G$ (shape $n\times m$) if every message
 $c':\mathrm{Fin}\,m\to\alpha$ maps to a codeword $Gc'\in C$, and every codeword in $C$
 arises this way.
@@ -46,6 +56,10 @@ arises this way.
 \begin{definition}[Linear code, existential form]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code'}
 \leanok
+\statementsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p045-b006,
+  pdf-7251cb8e4bc5-p028-b003
+}
 Existential version: there exists some $m$ and generator matrix $G$ witnessing linearity.
 \end{definition}
 
@@ -55,6 +69,7 @@ Existential version: there exists some $m$ and generator matrix $G$ witnessing l
 \begin{definition}[$q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p069-b005}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b005}
 \[
 H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
@@ -64,6 +79,8 @@ H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
 \begin{definition}[Hamming distance]
 \lean{ErrorCorrectingCodes.Codeword.hamming_distance}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p018-b002}
+\statementsource{philips}{pdf-24e94ad30862-p023-b007}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 Hamming distance between two codewords, wrapping Mathlib's \texttt{hammingDist}.
 \end{definition}
@@ -71,6 +88,8 @@ Hamming distance between two codewords, wrapping Mathlib's \texttt{hammingDist}.
 \begin{definition}[Distance predicate for a code]
 \lean{ErrorCorrectingCodes.Codeword.distance}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p022-b008}
+\statementsource{philips}{pdf-24e94ad30862-p025-b003}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 \texttt{distance C d} holds when $d$ is the minimum Hamming distance of $C$: there
 exist distinct codewords at distance exactly $d$, and no two distinct codewords
@@ -80,6 +99,10 @@ are closer than $d$.
 \begin{definition}[Rate]
 \lean{ErrorCorrectingCodes.Codeword.rate}
 \leanok
+\statementsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p016-b003,
+  pdf-7251cb8e4bc5-p017-b002
+}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 \[
 R(C) = \frac{\log|C|}{n\log|\alpha|}.
@@ -89,6 +112,8 @@ R(C) = \frac{\log|C|}{n\log|\alpha|}.
 \begin{definition}[Weight]
 \lean{ErrorCorrectingCodes.Codeword.weight}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p027-b002}
+\statementsource{philips}{pdf-24e94ad30862-p023-b009}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 The Hamming weight of $c$ is $d(c, \mathbf{0})$.
 \end{definition}
@@ -96,6 +121,7 @@ The Hamming weight of $c$ is $d(c, \mathbf{0})$.
 \begin{definition}[Maximal size at distance]
 \lean{ErrorCorrectingCodes.Codeword.max_size}
 \leanok
+\statementsource{philips}{pdf-24e94ad30862-p025-b004}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 \texttt{max\_size n d A} asserts existence of a code of size $A$ and minimum distance $d$
 that is maximal among all such codes.
@@ -104,6 +130,7 @@ that is maximal among all such codes.
 \begin{definition}[Hamming ball]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball}
 \leanok
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p029-b006}
 The Hamming ball of radius $l$ around $c$:
 \[
 B_l(c) = \{c' : d(c',c) \le l\},

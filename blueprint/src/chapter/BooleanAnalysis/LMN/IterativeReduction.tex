@@ -15,6 +15,11 @@ at most $\varepsilon/2$.
 \begin{theorem}[Reduction at subsequent layers]
 \lean{LMN.subsequent_step_reduction}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{1}
 Let $g_1,\dots,g_{s_i}$ be width-$\le l$ DNFs on $n$ variables (with $0<l$,
@@ -28,6 +33,10 @@ applied with width parameter $l$.
 \begin{theorem}[Decision-tree depth at subsequent layers]
 \lean{LMN.subsequent_step_dtDepth}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
 \uses{DNF, DNF.eval, DNF.width, LMN.one_step_dtDepth_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
 Under the same hypotheses, a Bernoulli$(p)$ restriction $\rho$ leaves every one of
@@ -64,6 +73,10 @@ individual probabilities:
 \begin{theorem}[Iterative dominant-term bound]
 \lean{LMN.iterative_dominant_term_bound}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p012-b003
+}
 \difficulty{4}
 For $\sum_i \mathrm{layer\_size}(i)\le s$ with $0<s$ and $0<\varepsilon$, setting
 $l=\log_2(2s/\varepsilon)$ gives
@@ -90,6 +103,10 @@ Bernoulli restriction by the sum of the two individual stage probabilities.
 \begin{theorem}[Abstract iterative reduction]
 \lean{LMN.abstract_iterative_reduction}
 \leanok
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
 \uses{LMN.iterative_dominant_term_bound}
 \difficulty{3}
 For $\sum_i \mathrm{layer\_size}(i)\le s$ with $0<s$ and $0<\varepsilon$, if each

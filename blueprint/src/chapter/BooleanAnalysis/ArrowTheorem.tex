@@ -120,6 +120,10 @@ pairwise preference signs is $-1/3$.
 \lean{ArrowTheorem.sum_abPref_bcPref}
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \lean{ArrowTheorem.sum_bcPref_caPref}
+\proofsource{boolean-ch02-social-choice-arrow}{
+  pdf-352ab7ff3113-p017-b002,
+  pdf-352ab7ff3113-p016-b001
+}
 \lean{ArrowTheorem.sum_abPref_caPref}
 \leanok
 \uses{ArrowTheorem.abPref, ArrowTheorem.bcPref, ArrowTheorem.caPref,
@@ -152,6 +156,7 @@ For odd $f$, only odd-level terms contribute.
 \begin{lemma}[Expected pairwise product equals correlation function]
 \lean{ArrowTheorem.expected_product_eq_corrFunc}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.corrFunc, ArrowTheorem.abVotes, ArrowTheorem.bcVotes,
       BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS,
       ArrowTheorem.sum_abPref_bcPref}
@@ -167,6 +172,7 @@ The same identity holds for the $bc$--$ca$ and $ab$--$ca$ pairs.
 \begin{lemma}[Correlation function lower bound]
 \lean{ArrowTheorem.corrFunc_ge_neg_third}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
 \uses{ArrowTheorem.corrFunc, BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne,
       BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
 \difficulty{5}
@@ -182,6 +188,7 @@ $\mathrm{corr}(f) \ge (-1/3)\sum_S \hat f(S)^2 = -1/3$.
 \begin{lemma}[Equality forces all weight on level 1]
 \lean{ArrowTheorem.corrFunc_eq_neg_third_of_weight_one}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
 \uses{ArrowTheorem.corrFunc, ArrowTheorem.corrFunc_ge_neg_third,
       BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne,
       BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
@@ -197,6 +204,10 @@ weight lies on level 1: $W_1[f] = 1$.
 \begin{lemma}[Acyclicity implies $\mathrm{corr}(f) = -1/3$]
 \lean{ArrowTheorem.acyclic_implies_corrFunc}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{
+  pdf-352ab7ff3113-p017-b002,
+  pdf-352ab7ff3113-p017-b003
+}
 \uses{ArrowTheorem.acyclic, ArrowTheorem.corrFunc,
       ArrowTheorem.expected_product_eq_corrFunc,
       BooleanAnalysis.isPmOne}
@@ -246,6 +257,10 @@ Then $f$ is a dictator.
 \begin{theorem}[Arrow's Impossibility Theorem]
 \lean{ArrowTheorem.arrow_theorem}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{
+  pdf-352ab7ff3113-p016-b004,
+  pdf-352ab7ff3113-p017-b003
+}
 \uses{ArrowTheorem.acyclic_implies_corrFunc,
       ArrowTheorem.corrFunc_eq_neg_third_of_weight_one,
       ArrowTheorem.degree_one_implies_dictator}
@@ -313,6 +328,7 @@ with an indicator.
 \begin{lemma}[General profile kernel]
 \lean{ArrowTheorem.profile_kernel_gen}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS,
       ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \difficulty{7}
@@ -332,6 +348,10 @@ $S,T\subseteq[n]$,
 \begin{lemma}[$ab$--$bc$ kernel]
 \lean{ArrowTheorem.profile_inner_product_kernel}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{
+  pdf-352ab7ff3113-p017-b002,
+  pdf-352ab7ff3113-p016-b001
+}
 \uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.bcVotes,
       ArrowTheorem.sum_abPref_bcPref, BooleanAnalysis.chiS,
       ArrowTheorem.profile_kernel_gen,
@@ -351,6 +371,10 @@ $S,T\subseteq[n]$,
 \begin{lemma}[$bc$--$ca$ kernel]
 \lean{ArrowTheorem.profile_kernel_bcca}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{
+  pdf-352ab7ff3113-p016-b001,
+  pdf-352ab7ff3113-p017-b002
+}
 \uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes,
       ArrowTheorem.sum_bcPref_caPref, BooleanAnalysis.chiS,
       ArrowTheorem.profile_kernel_gen,
@@ -370,6 +394,7 @@ $S,T\subseteq[n]$,
 \begin{lemma}[$ab$--$ca$ kernel]
 \lean{ArrowTheorem.profile_kernel_abca}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes,
       ArrowTheorem.sum_abPref_caPref, BooleanAnalysis.chiS,
       ArrowTheorem.profile_kernel_gen,
@@ -389,6 +414,7 @@ $S,T\subseteq[n]$,
 \begin{lemma}[Expected product from a kernel]
 \lean{ArrowTheorem.expected_product_helper}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, ArrowTheorem.corrFunc, BooleanAnalysis.BoolCube,
       BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS,
       BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion}
@@ -406,6 +432,10 @@ $\bigl(\tfrac16\bigr)^n\sum_p \chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}
 \begin{lemma}[Expected product for the $bc$--$ca$ pair]
 \lean{ArrowTheorem.expected_product_bcca}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{
+  pdf-352ab7ff3113-p017-b002,
+  pdf-352ab7ff3113-p016-b001
+}
 \uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes,
       ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc,
       ArrowTheorem.expected_product_helper,
@@ -419,6 +449,10 @@ $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{bcVotes}(p))\,f(\mathrm{caVotes}(p))
 \begin{lemma}[Expected product for the $ab$--$ca$ pair]
 \lean{ArrowTheorem.expected_product_abca}
 \leanok
+\proofsource{boolean-ch02-social-choice-arrow}{
+  pdf-352ab7ff3113-p017-b002,
+  pdf-352ab7ff3113-p016-b001
+}
 \uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes,
       ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc,
       ArrowTheorem.expected_product_helper,

@@ -26,6 +26,10 @@ A real random variable $X$ on a measurable space $\Omega$ with measure $P$ is
 \begin{lemma}[Tail bound for $B$-reasonable variables]
 \lean{Bonami.b_reasonable_tail_bound}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p003-b001,
+  pdf-4ba63c9394e5-p003-b002
+}
 \uses{Bonami.IsBReasonable}
 If $X$ is $B$-reasonable and not equivalent to $0$ (its second moment is positive), then for
 every $t > 0$,
@@ -61,6 +65,10 @@ positive mean. For every $\theta$ with $0 \le \theta \le 1$,
 \begin{lemma}[Anti-concentration for $B$-reasonable variables]
 \lean{Bonami.b_reasonable_anticon_zero}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p003-b003,
+  pdf-4ba63c9394e5-p003-b004
+}
 \uses{Bonami.IsBReasonable, Bonami.paley_zygmund_ineq}
 If $X$ is $B$-reasonable and not equivalent to $0$, then for every $t \in [0,1]$,
 \[
@@ -171,6 +179,10 @@ For all real $a, b$, $(a+b)^2 + (a-b)^2 = 2\,(a^2 + b^2)$.
 \begin{lemma}[Fourth-moment decomposition]
 \lean{Bonami.fourth_moment_decomp}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p005-b001,
+  pdf-4ba63c9394e5-p004-b004
+}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_succ_eq, Bonami.restrictLast, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 Writing $g = \mathrm{avgLast}\,f$ and $h = \mathrm{diffLast}\,f$, the fourth moment of $f$
 decomposes as
@@ -182,6 +194,7 @@ decomposes as
 \begin{lemma}[Second-moment decomposition]
 \lean{Bonami.second_moment_decomp}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p005-b001}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, Bonami.restrictLast_true_eq, Bonami.sum_boolCube_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 Writing $g = \mathrm{avgLast}\,f$ and $h = \mathrm{diffLast}\,f$, the second moment of $f$
 decomposes as $\E[f^2] = \E[g^2] + \E[h^2]$.
@@ -250,6 +263,7 @@ $\E[f^4] = \bigl(\E[f^2]\bigr)^2$.
 \begin{lemma}[Algebraic inductive step for Bonami]
 \lean{Bonami.bonami_algebra}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p005-b001}
 The key algebraic inequality driving the inductive step of the Bonami lemma: for
 $a, b, A, B, C \ge 0$ (with $a, b, B, C$ nonnegative) satisfying
 $A \le 9^{m+1} a^2$, $B \le 9^m b^2$, and $C^2 \le A\cdot B$, one has
@@ -261,6 +275,11 @@ A + 6C + B \le 9^{m+1}\,(a+b)^2.
 \begin{lemma}[Bonami inequality in expectation form]
 \lean{Bonami.bonami_expect}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p004-b002,
+  pdf-4ba63c9394e5-p004-b004,
+  pdf-4ba63c9394e5-p005-b001
+}
 \uses{Bonami.avgLast, Bonami.bonami_algebra, Bonami.degree_avgLast, Bonami.degree_diffLast, Bonami.degree_zero_fourth_moment, Bonami.diffLast, Bonami.expect_cs_sq, Bonami.expect_fourth_nonneg, Bonami.expect_sq_nonneg, Bonami.expect_sq_nonneg_prod, Bonami.fourth_moment_decomp, Bonami.second_moment_decomp, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.uniformWeight}
 The main Bonami inequality stated through the expectation operator: if a Boolean function $f$
 has degree at most $k$, then
@@ -295,6 +314,11 @@ $(\mathrm{uniformMeasure}\,n)(\{x\}) = \mathrm{uniformWeight}\,n$.
 \begin{lemma}[Bonami lemma]
 \lean{Bonami.bonami_lemma}
 \leanok
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p004-b002,
+  pdf-4ba63c9394e5-p004-b004,
+  pdf-4ba63c9394e5-p005-b001
+}
 \uses{Bonami.IsBReasonable, Bonami.bonami_expect, Bonami.moment_eq_expect, Bonami.uniformMeasure, Bonami.uniformMeasure_apply, BooleanAnalysis.BooleanFunc, BooleanAnalysis.has_degree_at_most}
 A Boolean function $f$ of degree at most $k$ is $9^{k}$-reasonable under the uniform measure on
 the hypercube.
