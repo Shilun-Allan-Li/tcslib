@@ -61,9 +61,6 @@ def entry_lines(rec, show_proof=False):
     meta = (f"{rec.get('kind','?')}  ·  {rec.get('source_module','?')}  ·  "
             f"{rec.get('n_upstream_defs','?')} upstream defs  ·  "
             f"difficulty: {diff if diff is not None else 'unrated'}")
-    db = rec.get("difficulty_breadth")
-    if db is not None and db != diff:
-        meta += f"  ·  breadth-adj: {db}"
     if rec.get("title"):
         meta += f"  ·  “{rec['title']}”"
     out.append((meta, "meta"))

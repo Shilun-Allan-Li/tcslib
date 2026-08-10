@@ -48,8 +48,10 @@ Usage:
 """
 
 import argparse
+import gzip
 import json
 import re
+import shutil
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
@@ -215,6 +217,11 @@ def parse_blueprint(chapter_dir: Path = CHAPTER_DIR) -> dict[str, dict]:
                                        "proof_steps": proof_steps})
             i += 1
     return out
+
+
+#: (lean_name, reason) for entries whose `\proofstep` metadata does not match the
+#: proof's actual upstream set. Reported at the end of a run; never silently dropped.
+PROOF_STEP_MISMATCHES: list[tuple[str, str]] = []
 
 
 def order_proof_steps(
@@ -1215,108 +1222,12 @@ def main():
             return u
         return def_short.get(u.split(".")[-1])
 
-    # Difficulty edges come from the Lean proof dependency graph (`all_deps` in the
-    # index: every TCSlib declaration the elaborated proof term references), NOT from
-    # the blueprint's \uses lines. \uses is prose metadata and routinely omits proof
-    # dependencies (hand-written chapters tend to list only statement-level defs),
-    # which silently under-reports difficulty; the dep graph is ground truth.
-    def proof_deps(name):
-        rec = index.get(name)
-        return rec["all_deps"] if rec else []
-
-    diff_memo = {}
-
-    def final_difficulty(name, stack):
-        """Max-difficulty-path aggregation over the Lean proof dependency graph:
-        a node's final difficulty is its own intrinsic (tactic-only) \\difficulty plus the
-        largest final difficulty among the declarations its proof references. Definitions
-        default to 0 (they never carry their own \\difficulty); a theorem/lemma with no
-        rating yet makes the result unknown (None), and unknown propagates to anything
-        depending on it."""
-        if name in diff_memo:
-            return diff_memo[name]
-        if name in stack:
-            # Cycle back-edge (possible via the constructor/where-helper → parent
-            # fallback in all_deps, e.g. mutual blocks): a cycle edge can never be a
-            # genuine prerequisite ordering, so contribute nothing rather than
-            # poisoning every downstream aggregate with unknown.
-            return 0
-        stack.add(name)
-        entry = lookup(name)
-        kind = index[name]["kind"] if name in index else None
-        own = entry.get("difficulty") if entry else None
-        if own is None and kind in DEF_KINDS:
-            own = 0
-        best = 0
-        unknown = own is None
-        for dep in proof_deps(name):
-            d = final_difficulty(dep, stack)
-            if d is None:
-                unknown = True
-            elif d > best:
-                best = d
-        stack.discard(name)
-        result = None if unknown else own + best
-        diff_memo[name] = result
-        return result
-
-    # ---- breadth-aware difficulty: discounted sum of vertex-disjoint heavy chains ----
-    # The plain `difficulty` is the heaviest path (critical path) through the proof
-    # dep graph. That ignores breadth: a theorem resting on several INDEPENDENT hard chains
-    # is harder than one resting on a single chain of the same height. Here we greedily
-    # peel vertex-disjoint heavy chains (Menger-style: peeling stops by itself once the
-    # residual graph has no positive-weight leaf→target path, i.e. at the min cut) and
-    # combine them with a geometric discount so breadth is sublinear, never additive:
-    #     D = own + w1 + α·w2 + α²·w3 + ...        (α = 0.5, at most 8 chains)
-    # Chains must be disjoint only on POSITIVELY-weighted nodes — zero-weight
-    # definitions are plumbing shared by every chain and must not cap parallelism.
-    BREADTH_ALPHA = 0.5
-    BREADTH_MAX_CHAINS = 8
-
+    # Difficulty is the blueprint's intrinsic, tactic-only \difficulty rating (0–7):
+    # how nonobvious this declaration's own tactic script is, rated in isolation from
+    # its dependencies. No upstream aggregation over the proof dep graph.
     def intrinsic(name):
         e = lookup(name)
-        own = e.get("difficulty") if e else None
-        if own is None and (index[name]["kind"] if name in index else None) in DEF_KINDS:
-            own = 0
-        return own
-
-    def breadth_difficulty(name):
-        base = final_difficulty(name, set())
-        if base is None:
-            return None                     # unknown somewhere upstream: stay unknown
-        removed: set[str] = set()
-        total = float(intrinsic(name) or 0)
-        disc = 1.0
-        for _ in range(BREADTH_MAX_CHAINS):
-            memo_p: dict[str, tuple] = {}
-
-            def best(n, stack):
-                if n in memo_p:
-                    return memo_p[n]
-                if n in stack:
-                    return (0.0, ())        # cycle back-edge: contributes nothing
-                stack.add(n)
-                bw, bp = 0.0, ()
-                for d in proof_deps(n):
-                    if d in removed:
-                        continue
-                    w, p = best(d, stack)
-                    w2 = w + (intrinsic(d) or 0)
-                    if w2 > bw:
-                        bw, bp = w2, p + (d,)
-                stack.discard(n)
-                memo_p[n] = (bw, bp)
-                return memo_p[n]
-
-            w, path = best(name, set())
-            if w <= 0:
-                break
-            total += disc * w
-            disc *= BREADTH_ALPHA
-            for d in path:
-                if (intrinsic(d) or 0) > 0:
-                    removed.add(d)
-        return round(total, 1)
+        return e.get("difficulty") if e else None
 
     def compose(entry):
         """Fold the [title] into the prose so the text reads as a statement."""
@@ -1382,7 +1293,16 @@ def main():
 
             proof_steps = list(info.get("proof_steps", []))
             if proof_steps and proof_upstream is not None:
-                proof_steps = order_proof_steps(proof_steps, proof_upstream)
+                # `\proofstep` metadata is human-approved and can fall out of sync
+                # with the proof's real upstream set (a rebuilt dep_graph changes
+                # `proof_upstream_decls`). That is a fault in one entry's metadata,
+                # not a reason to abandon the whole dataset, so drop this record's
+                # steps and record the mismatch for the run summary.
+                try:
+                    proof_steps = order_proof_steps(proof_steps, proof_upstream)
+                except ValueError as error:
+                    PROOF_STEP_MISMATCHES.append((name, str(error)))
+                    proof_steps = []
 
             record = {
                 "id": name,
@@ -1396,15 +1316,11 @@ def main():
                 "kind": rec["kind"],
                 "upstream_defs": ordered,
                 "n_upstream_defs": len(ordered),
-                # A difficulty rating only makes sense for a finished proof: null it
-                # when the flattened proof (target or any upstream) still has `sorry`.
-                "difficulty": (None if proof_text is not None and "sorry" in proof_text
-                               else final_difficulty(name, set())),
-                # Breadth-aware variant: discounted sum of vertex-disjoint heavy chains
-                # (first chain = the critical path above, extra parallel chains at
-                # α, α², ... — see breadth_difficulty).
-                "difficulty_breadth": (None if proof_text is not None and "sorry" in proof_text
-                                       else breadth_difficulty(name)),
+                # Intrinsic 0–7 rating of this proof's own tactic script; null only
+                # when unrated (bare-sorry proofs are never rated, so they stay null).
+                # An upstream sorry does NOT null the rating — it rates this proof's
+                # own tactics, and `proof_complete` already flags incomplete closures.
+                "difficulty": intrinsic(name),
                 "proof_sources": info.get("proof_sources", []),
                 "proof_steps": proof_steps,
             }
@@ -1419,8 +1335,19 @@ def main():
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             n_written += 1
 
+    # The theorems web viewer (webpage/theorems/index.html) fetches the gzipped
+    # copy in preference to the .jsonl, so the .gz must be refreshed in the same
+    # run or the viewer silently serves a stale dataset. Written via a temp file
+    # so an interrupted run can't leave a truncated .gz behind.
+    gz_path = out_path.with_suffix(out_path.suffix + ".gz")
+    gz_tmp = gz_path.with_suffix(gz_path.suffix + ".tmp")
+    with open(out_path, "rb") as src, gzip.open(gz_tmp, "wb", compresslevel=9) as dst:
+        shutil.copyfileobj(src, dst)
+    gz_tmp.replace(gz_path)
+
     print()
     print(f"Wrote {n_written} records -> {display_output_path(out_path)}")
+    print(f"Refreshed gzip copy -> {display_output_path(gz_path)}")
     print(f"Theorems without a blueprint informal statement (skipped): {n_missing}")
     if n_written:
         print(f"Avg upstream definitions per theorem: {total_defs / n_written:.1f}")
@@ -1428,6 +1355,11 @@ def main():
         print(f"Proof files: avg {proof_lines_total / n_written:.0f} lines, "
               f"max {proof_lines_max} lines; "
               f"{n_proof_unresolved} records with unresolved deps")
+    if PROOF_STEP_MISMATCHES:
+        print(f"\\proofstep metadata out of sync (steps dropped for these records): "
+              f"{len(PROOF_STEP_MISMATCHES)}")
+        for name, reason in PROOF_STEP_MISMATCHES:
+            print(f"  {name}: {reason}")
     return 0
 
 

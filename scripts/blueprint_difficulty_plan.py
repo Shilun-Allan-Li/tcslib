@@ -52,6 +52,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--file", action="append", default=None,
                      help="Restrict to this chapter .tex (relative to BASE or absolute). Repeatable.")
+    ap.add_argument("--rerate", action="store_true",
+                     help="Full re-rating sweep: include entries that already have a "
+                          "\\difficulty rating. The existing rating is deliberately NOT "
+                          "copied into the work unit, so the rating agent starts fresh "
+                          "instead of anchoring on the old value.")
     args = ap.parse_args()
 
     if not DEP_GRAPH.exists():
@@ -93,13 +98,17 @@ def main():
         n_sorry = 0
         for name in names_here:
             entry = informal.get(name)
-            if entry is None or entry.get("env") not in RATEABLE_ENVS:
+            if entry is None:
                 continue
-            if entry.get("difficulty") is not None:
-                continue  # already rated
             rec = index.get(name)
             if rec is None:
                 continue  # not in dep_graph (e.g. non-compiling / stray file) — skip
+            # Rateable if the blueprint environment is theorem-kind, OR the Lean decl
+            # itself is a proof (catches lemmas mis-filed under `definition` envs).
+            if entry.get("env") not in RATEABLE_ENVS and rec["kind"] not in bd.PROOF_KINDS:
+                continue
+            if not args.rerate and entry.get("difficulty") is not None:
+                continue  # already rated
             if is_bare_sorry(rec):
                 n_sorry += 1
                 continue
