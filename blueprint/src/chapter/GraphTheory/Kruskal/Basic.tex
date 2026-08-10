@@ -14,6 +14,7 @@ every edge returned by the algorithm was present in the original input list.
 
 \begin{definition}[Weighted edge]
 \lean{Kruskal.WEdge}
+\label{Kruskal.WEdge}
 \leanok
 A \emph{weighted edge} over $n$ vertices is a structure with two endpoints
 $u, v : \mathrm{Fin}\,n$ and a natural-number weight $w : \mathbb{N}$.
@@ -21,6 +22,7 @@ $u, v : \mathrm{Fin}\,n$ and a natural-number weight $w : \mathbb{N}$.
 
 \begin{definition}[Union-find type]
 \lean{Kruskal.UF}
+\label{Kruskal.UF}
 \leanok
 The union-find state for $n$ nodes is defined as a function
 $\mathrm{Fin}\,n \to \mathbb{N}$ mapping each node to its current
@@ -29,6 +31,7 @@ representative (component label).
 
 \begin{definition}[Initial union-find]
 \lean{Kruskal.UF.init}
+\label{Kruskal.UF.init}
 \leanok
 \uses{Kruskal.UF}
 $\mathtt{init}\,n$ constructs the identity union-find on $n$ nodes: every node
@@ -37,6 +40,7 @@ $i$ is its own representative, i.e.\ $\mathtt{init}\,n\,(i) = i$.
 
 \begin{definition}[Find representative]
 \lean{Kruskal.UF.find}
+\label{Kruskal.UF.find}
 \leanok
 \uses{Kruskal.UF}
 $\mathtt{find}\,\mathit{uf}\,i$ returns the representative of node $i$ in
@@ -45,6 +49,7 @@ the union-find state $\mathit{uf}$, defined simply as $\mathit{uf}(i)$.
 
 \begin{definition}[Merge two components]
 \lean{Kruskal.UF.merge}
+\label{Kruskal.UF.merge}
 \leanok
 \uses{Kruskal.UF}
 $\mathtt{merge}\,\mathit{uf}\,i\,j$ unifies the components of nodes $i$ and
@@ -54,6 +59,7 @@ instead carry the representative $\mathit{uf}(i)$.
 
 \begin{lemma}[Initial find is identity]
 \lean{Kruskal.UF.init_find}
+\label{Kruskal.UF.init_find}
 \leanok
 \uses{Kruskal.UF.find, Kruskal.UF.init}
 \difficulty{1}
@@ -63,6 +69,7 @@ union-find returns $i$'s numeric value: $(\mathtt{init}\,n).\mathtt{find}\,i = i
 
 \begin{lemma}[Find unfolds to array lookup]
 \lean{Kruskal.UF.find_def}
+\label{Kruskal.UF.find_def}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.find}
 \difficulty{1}
@@ -73,6 +80,7 @@ simp-lemma for \texttt{find}.
 
 \begin{definition}[Merge all edges into union-find]
 \lean{Kruskal.UF.mergeAll}
+\label{Kruskal.UF.mergeAll}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.WEdge}
 $\mathtt{mergeAll}\,\mathit{uf}\,\mathit{es}$ folds a list of weighted edges
@@ -82,6 +90,7 @@ each edge's endpoints in sequence.
 
 \begin{definition}[Same partition predicate]
 \lean{Kruskal.UF.SamePartition}
+\label{Kruskal.UF.SamePartition}
 \leanok
 \uses{Kruskal.UF}
 $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_2$ holds when two
@@ -92,6 +101,7 @@ only if $\mathit{uf}_2(i) = \mathit{uf}_2(j)$.
 
 \begin{definition}[Edge-selection sweep]
 \lean{Kruskal.processEdges}
+\label{Kruskal.processEdges}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.find, Kruskal.UF.merge, Kruskal.WEdge}
 $\mathtt{processEdges}\,\mathit{es}\,\mathit{uf}\,\mathit{acc}$ scans the
@@ -104,6 +114,7 @@ list is exhausted.
 
 \begin{definition}[Kruskal's algorithm]
 \lean{Kruskal.kruskal}
+\label{Kruskal.kruskal}
 \leanok
 \uses{Kruskal.UF.init, Kruskal.WEdge, Kruskal.processEdges}
 $\mathtt{kruskal}\,n\,\mathit{edges}$ sorts the edge list by weight and then
@@ -113,6 +124,7 @@ union-find, returning the selected spanning-tree edges.
 
 \begin{lemma}[Output of processEdges comes from input or accumulator]
 \lean{Kruskal.processEdges_mem}
+\label{Kruskal.processEdges_mem}
 \leanok
 \uses{Kruskal.UF, Kruskal.WEdge, Kruskal.processEdges}
 \difficulty{4}
@@ -124,6 +136,7 @@ $e \in \mathit{acc}$ or $e \in \mathit{es}$.
 
 \begin{lemma}[Kruskal output is a subset of the input]
 \lean{Kruskal.kruskal_subset}
+\label{Kruskal.kruskal_subset}
 \leanok
 \uses{Kruskal.WEdge, Kruskal.kruskal, Kruskal.processEdges_mem}
 \difficulty{3}

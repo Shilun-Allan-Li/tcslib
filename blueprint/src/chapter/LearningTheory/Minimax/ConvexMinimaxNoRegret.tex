@@ -14,6 +14,7 @@ under convexity, concavity, and compactness hypotheses.
 
 \begin{definition}[Finite row sample lower value]
 \lean{OnlineLearning.finiteRowSampleLowerValue}
+\label{OnlineLearning.finiteRowSampleLowerValue}
 \leanok
 Given a payoff $f : \mathbb{R} \to \mathbb{R} \to \mathbb{R}$ and a finite subset
 $u \subseteq X$, the \emph{finite row sample lower value} is
@@ -26,6 +27,7 @@ while the column player still ranges over all of $Y$.
 
 \begin{definition}[Finite no-regret bound predicate]
 \lean{OnlineLearning.Theorem71FiniteNoRegretBound}
+\label{OnlineLearning.Theorem71FiniteNoRegretBound}
 \leanok
 \uses{OnlineLearning.finiteRowSampleLowerValue}
 $\texttt{OnlineLearning.Theorem71FiniteNoRegretBound}$ is the proposition asserting that
@@ -40,6 +42,7 @@ This is the finite-game no-regret ingredient in the Theorem~7.1 proof route.
 
 \begin{definition}[Compact approximation predicate]
 \lean{OnlineLearning.Theorem71CompactApproximation}
+\label{OnlineLearning.Theorem71CompactApproximation}
 \leanok
 \uses{OnlineLearning.finiteRowSampleLowerValue}
 $\texttt{OnlineLearning.Theorem71CompactApproximation}$ is the proposition asserting that
@@ -55,6 +58,7 @@ This encodes the ``let the net size go to zero'' compactness step of the textboo
 
 \begin{definition}[Uniform equicontinuity in the row variable]
 \lean{OnlineLearning.Theorem71UniformEquicontinuity}
+\label{OnlineLearning.Theorem71UniformEquicontinuity}
 \leanok
 $\texttt{OnlineLearning.Theorem71UniformEquicontinuity}$ holds for $X$, $Y$, $f$ when $f$
 is uniformly equicontinuous in its first argument uniformly over all columns: for every
@@ -66,6 +70,7 @@ $\varepsilon > 0$ there exists $\rho > 0$ such that for all $x, x' \in X$ and $y
 
 \begin{definition}[Finite indexed row sample lower value]
 \lean{OnlineLearning.finiteIndexedRowSampleLowerValue}
+\label{OnlineLearning.finiteIndexedRowSampleLowerValue}
 \leanok
 For a row sample indexed by $\mathrm{Fin}\,M$, the \emph{finite indexed row sample lower
 value} is
@@ -78,6 +83,7 @@ $\texttt{OnlineLearning.finiteRowSampleLowerValue}$ used in intermediate results
 
 \begin{theorem}[Minimax from the Theorem 7.1 proof route]
 \lean{OnlineLearning.convex_compact_minimax_of_theorem71_route}
+\label{OnlineLearning.convex_compact_minimax_of_theorem71_route}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.Theorem71CompactApproximation, OnlineLearning.Theorem71FiniteNoRegretBound, OnlineLearning.weak_convex_compact_minimax}
 \difficulty{4}
@@ -94,6 +100,7 @@ holds.
 
 \begin{theorem}[Compact approximation from uniform equicontinuity]
 \lean{OnlineLearning.theorem71_compactApproximation_of_uniformEquicontinuity}
+\label{OnlineLearning.theorem71_compactApproximation_of_uniformEquicontinuity}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71CompactApproximation, OnlineLearning.Theorem71UniformEquicontinuity, OnlineLearning.finiteRowSampleLowerValue}
 \difficulty{6}
@@ -106,6 +113,7 @@ approximates the full lower value to within any $\varepsilon > 0$.
 
 \begin{theorem}[Uniform equicontinuity from joint continuity on compact $X \times Y$]
 \lean{OnlineLearning.theorem71_uniformEquicontinuity_of_jointContinuous_compact}
+\label{OnlineLearning.theorem71_uniformEquicontinuity_of_jointContinuous_compact}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71UniformEquicontinuity}
 \difficulty{4}
@@ -118,6 +126,7 @@ uniform continuity, then restricts variation to the first coordinate.
 
 \begin{theorem}[Compact approximation from joint continuity on compact $X \times Y$]
 \lean{OnlineLearning.theorem71_compactApproximation_of_jointContinuous_compact}
+\label{OnlineLearning.theorem71_compactApproximation_of_jointContinuous_compact}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71CompactApproximation, OnlineLearning.theorem71_compactApproximation_of_uniformEquicontinuity, OnlineLearning.theorem71_uniformEquicontinuity_of_jointContinuous_compact}
 \difficulty{1}
@@ -130,6 +139,7 @@ $\texttt{OnlineLearning.theorem71\_compactApproximation\_of\_uniformEquicontinui
 
 \begin{theorem}[Finite indexed no-regret bound (normalized)]
 \lean{OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
+\label{OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.exists_forall_le_of_finite_sublevel_intersections, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.minimaxSublevel, OnlineLearning.payoffVsPure_nonneg, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, payoffVsPure, pureVsPayoff}
 \difficulty{7}
@@ -147,6 +157,7 @@ uses compactness of $X$ to pass to all columns.
 
 \begin{theorem}[Finite no-regret bound (normalized, Finset version)]
 \lean{OnlineLearning.theorem71_finiteNoRegretBound_normalized}
+\label{OnlineLearning.theorem71_finiteNoRegretBound_normalized}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71FiniteNoRegretBound, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteRowSampleLowerValue, OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \difficulty{6}
@@ -160,6 +171,7 @@ actions.
 
 \begin{theorem}[No-regret minimax equality (normalized, joint-compact)]
 \lean{OnlineLearning.convex_compact_minimax_noRegret_jointCompact_normalized}
+\label{OnlineLearning.convex_compact_minimax_noRegret_jointCompact_normalized}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.convex_compact_minimax_of_theorem71_route, OnlineLearning.theorem71_compactApproximation_of_jointContinuous_compact, OnlineLearning.theorem71_finiteNoRegretBound_normalized}
 \difficulty{1}

@@ -15,6 +15,7 @@ that are $(\rho,L)$-list-decodable.
 
 \begin{definition}[List-decodable code]
 \lean{ErrorCorrectingCodes.Codeword.list_decodable}
+\label{ErrorCorrectingCodes.Codeword.list_decodable}
 \leanok
 A code $C$ is $(\rho,L)$-list-decodable if every Hamming ball of radius
 $\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
@@ -25,6 +26,7 @@ $\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
 
 \begin{lemma}[Existence of list-decodable codes]
 \lean{ErrorCorrectingCodes.Codeword.exists_listDecodable_code}
+\label{ErrorCorrectingCodes.Codeword.exists_listDecodable_code}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.list_decodable, ErrorCorrectingCodes.Codeword.hamming_ball}
 \difficulty{7}
@@ -39,6 +41,7 @@ then there exists a code $C$ of size $M$ that is $(p,L)$-list-decodable.
 
 \begin{lemma}[Binomial ratio bound]
 \lean{ErrorCorrectingCodes.Codeword.binom_ratio_bound}
+\label{ErrorCorrectingCodes.Codeword.binom_ratio_bound}
 \leanok
 \difficulty{6}
 For $k\le M\le N$,
@@ -49,6 +52,7 @@ For $k\le M\le N$,
 
 \begin{lemma}[Counting inequality for list decoding]
 \lean{ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq}
+\label{ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.binom_ratio_bound, ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{6}
@@ -66,6 +70,7 @@ q^n\cdot\tbinom{V}{L+1}\cdot\tbinom{q^n-(L+1)}{M-(L+1)}
 
 \begin{theorem}[List-decoding capacity]
 \lean{ErrorCorrectingCodes.Codeword.list_decoding_capacity}
+\label{ErrorCorrectingCodes.Codeword.list_decoding_capacity}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.exists_listDecodable_code, ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq, ErrorCorrectingCodes.Codeword.qary_entropy_pos, ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
 \difficulty{5}

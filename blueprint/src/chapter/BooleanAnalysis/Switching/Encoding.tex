@@ -14,6 +14,7 @@ to invert the process; the decoder recovers $\rho$ from $(\gamma, \mathrm{aux})$
 
 \begin{definition}[Free literals of a term under a restriction]
 \lean{SwitchingLemma2.Term.freeLiterals}
+\label{SwitchingLemma2.Term.freeLiterals}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, Term}
 Given a term $t$ (a conjunction of literals) and a restriction $\rho$, this is the list
@@ -23,6 +24,7 @@ sublist of $t$ obtained by keeping those literals $l$ with $l.\mathrm{var} \in \
 
 \begin{definition}[Process one clause's free literals against the path]
 \lean{SwitchingLemma2.processClauseLits}
+\label{SwitchingLemma2.processClauseLits}
 \leanok
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b003,
@@ -40,6 +42,7 @@ $\sigma$, and the accumulated clause auxiliary data.
 
 \begin{definition}[Razborov encoding]
 \lean{SwitchingLemma2.razborovEncode}
+\label{SwitchingLemma2.razborovEncode}
 \leanok
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b002,
@@ -58,6 +61,7 @@ and $\mathrm{aux}$ consists of per-clause blocks separated by the termination ma
 
 \begin{definition}[Razborov decoding]
 \lean{SwitchingLemma2.razborovDecode}
+\label{SwitchingLemma2.razborovDecode}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \uses{DNF, SwitchingLemma2.Restriction}
@@ -71,6 +75,7 @@ and returns the resulting restriction.
 
 \begin{lemma}[Processing does not lengthen the path]
 \lean{SwitchingLemma2.processClauseLits_path_le}
+\label{SwitchingLemma2.processClauseLits_path_le}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}

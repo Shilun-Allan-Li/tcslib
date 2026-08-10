@@ -15,6 +15,7 @@ $\inf_{x} \sup_{y} f(x,y) = \sup_{y} \inf_{x} f(x,y)$.
 
 \begin{definition}[Finite upper image of the payoff]
 \lean{OnlineLearning.finiteUpperImage}
+\label{OnlineLearning.finiteUpperImage}
 \leanok
 For sets $X, Y \subseteq \bbr$, a payoff $f : \bbr \to \bbr \to \bbr$, and a finite
 sample $u$ of columns from $Y$, the finite upper image is the set
@@ -27,6 +28,7 @@ This set is written $\texttt{OnlineLearning.finiteUpperImage}$ in Lean.
 
 \begin{lemma}[Upper image is nonempty]
 \lean{OnlineLearning.finiteUpperImage_nonempty}
+\label{OnlineLearning.finiteUpperImage_nonempty}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 If $X$ is nonempty, then for every finite column sample $u$ the upper image
@@ -35,6 +37,7 @@ $U(X,f,u)$ is nonempty.
 
 \begin{lemma}[Upper image is convex]
 \lean{OnlineLearning.finiteUpperImage_convex}
+\label{OnlineLearning.finiteUpperImage_convex}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 If $X$ is convex and $x \mapsto f(x,y)$ is convex on $X$ for every $y \in Y$, then
@@ -43,6 +46,7 @@ $U(X,f,u)$ is a convex subset of $u \to \bbr$ for every finite column sample $u$
 
 \begin{lemma}[Upper image is upward closed]
 \lean{OnlineLearning.finiteUpperImage_upper}
+\label{OnlineLearning.finiteUpperImage_upper}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 If $z \in U(X,f,u)$ and $z_y \le z'_y$ for all $y \in u$, then $z' \in U(X,f,u)$ as
@@ -51,6 +55,7 @@ well; that is, the upper image is closed under coordinatewise increase.
 
 \begin{lemma}[Upper image is open]
 \lean{OnlineLearning.finiteUpperImage_isOpen}
+\label{OnlineLearning.finiteUpperImage_isOpen}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 For every finite column sample $u$, the upper image $U(X,f,u)$ is an open subset
@@ -59,6 +64,7 @@ of $u \to \bbr$.
 
 \begin{lemma}[Coordinate expansion of a continuous linear functional]
 \lean{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single}
+\label{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single}
 \leanok
 Let $\iota$ be a finite type and $L$ a continuous linear functional on $\iota \to \bbr$. Then for every $z : \iota \to \bbr$,
 \[
@@ -69,6 +75,7 @@ where $e_i$ is the standard basis vector $\mathrm{Pi.single}\,i\,1$.
 
 \begin{lemma}[Separating functional has nonpositive coordinates]
 \lean{OnlineLearning.separating_coordinate_nonpos}
+\label{OnlineLearning.separating_coordinate_nonpos}
 \leanok
 \uses{OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_nonempty, OnlineLearning.finiteUpperImage_upper}
 Assume $X$ is nonempty and $L$ is a continuous linear functional on $u \to \bbr$
@@ -78,6 +85,7 @@ $L(e_y) \le 0$ for every coordinate $y \in u$.
 
 \begin{lemma}[Separating functional is nonzero]
 \lean{OnlineLearning.separating_functional_ne_zero}
+\label{OnlineLearning.separating_functional_ne_zero}
 \leanok
 \uses{OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_nonempty}
 Under the same separation hypothesis $L(z) < L(c)$ for all $z$ in the upper image,
@@ -86,6 +94,7 @@ with $X$ nonempty, the functional $L$ is not the zero functional.
 
 \begin{lemma}[Positive total weight of the separator]
 \lean{OnlineLearning.separating_weight_sum_pos}
+\label{OnlineLearning.separating_weight_sum_pos}
 \leanok
 \uses{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_functional_ne_zero}
 Under the same separation hypothesis, with $X$ nonempty,
@@ -98,6 +107,7 @@ the sampled columns.
 
 \begin{lemma}[Finite sublevel intersections via separation]
 \lean{OnlineLearning.finite_sublevel_intersections_by_separation}
+\label{OnlineLearning.finite_sublevel_intersections_by_separation}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_convex, OnlineLearning.finiteUpperImage_isOpen, OnlineLearning.minimaxSublevel, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_weight_sum_pos}
 Assume the convex-compact minimax hypotheses
@@ -114,6 +124,7 @@ $f(x,y) \le v + \varepsilon$ simultaneously for all sampled columns $y \in u$.
 
 \begin{theorem}[Minimax identity from finite sublevel intersections]
 \lean{OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections}
+\label{OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.exists_forall_le_of_finite_sublevel_intersections, OnlineLearning.minimaxSublevel, OnlineLearning.weak_convex_compact_minimax}
 Assume the hypotheses $\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for
@@ -129,6 +140,7 @@ $\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds for $X$, $Y$, $f$,
 
 \begin{theorem}[Convex-compact minimax theorem by separation]
 \lean{OnlineLearning.convex_compact_minimax_by_separation}
+\label{OnlineLearning.convex_compact_minimax_by_separation}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections, OnlineLearning.finite_sublevel_intersections_by_separation}
 Under the convex-compact minimax hypotheses

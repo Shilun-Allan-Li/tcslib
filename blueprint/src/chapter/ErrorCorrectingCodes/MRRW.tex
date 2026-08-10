@@ -23,6 +23,7 @@ main theorem.
 
 \begin{definition}[Maximum size of a binary code with given distance]
 \lean{codeA}
+\label{codeA}
 \leanok
 \statementsource{philips}{
   pdf-24e94ad30862-p025-b003,
@@ -37,6 +38,7 @@ coordinates.
 
 \begin{definition}[Binary entropy in base $2$]
 \lean{binaryEntropy}
+\label{binaryEntropy}
 \leanok
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b005}
 The binary entropy function
@@ -49,6 +51,7 @@ $\log_2 0 = 0$.
 
 \begin{definition}[Asymptotic binary code rate]
 \lean{rate}
+\label{rate}
 \leanok
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 \uses{codeA}
@@ -62,6 +65,7 @@ For $\delta \in [0,1]$, the asymptotic rate is
 
 \begin{definition}[Binary Krawtchouk polynomial at integer arguments]
 \lean{krawtchouk}
+\label{krawtchouk}
 \leanok
 \statementsource{philips}{pdf-24e94ad30862-p024-b003}
 \statementsource{arXiv.1812.04992}{
@@ -79,6 +83,7 @@ intended values for $x \le n$.
 
 \begin{definition}[Krawtchouk polynomials over $\mathbb{R}$]
 \lean{krawtchoukPoly}
+\label{krawtchoukPoly}
 \leanok
 \statementsource{philips}{
   pdf-24e94ad30862-p024-b003,
@@ -102,6 +107,7 @@ extending the integer-argument definition to real arguments.
 
 \begin{theorem}[Value of the zeroth Krawtchouk polynomial]
 \lean{krawtchouk_zero}
+\label{krawtchouk_zero}
 \leanok
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \uses{krawtchouk}
@@ -110,6 +116,7 @@ For all $n$ and $x$, $K_0^{(n)}(x) = 1$.
 
 \begin{theorem}[Krawtchouk polynomial at $x = 0$]
 \lean{krawtchouk_eval_zero}
+\label{krawtchouk_eval_zero}
 \leanok
 \statementsource{philips}{
   pdf-24e94ad30862-p024-b003,
@@ -122,6 +129,7 @@ For $j \le n$, $K_j^{(n)}(0) = \binom{n}{j}$.
 
 \begin{theorem}[First Krawtchouk polynomial]
 \lean{krawtchouk_one}
+\label{krawtchouk_one}
 \leanok
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b006}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
@@ -131,6 +139,7 @@ For $x \le n$, $K_1^{(n)}(x) = n - 2x$.
 
 \begin{theorem}[Krawtchouk generating function]
 \lean{krawtchouk_generating_function}
+\label{krawtchouk_generating_function}
 \leanok
 \statementsource{arXiv.1812.04992}{
   pdf-f300deb505d8-p002-b005,
@@ -146,6 +155,7 @@ For $x \le n$ and every real $z$,
 
 \begin{theorem}[Orthogonality of Krawtchouk polynomials]
 \lean{krawtchouk_orthogonality}
+\label{krawtchouk_orthogonality}
 \leanok
 \statementsource{philips}{pdf-24e94ad30862-p025-b002}
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b005}
@@ -164,6 +174,7 @@ For $r \le n$ and $s \le n$,
 
 \begin{theorem}[Three-term recurrence for Krawtchouk polynomials]
 \lean{krawtchouk_recurrence}
+\label{krawtchouk_recurrence}
 \leanok
 \statementsource{philips}{pdf-24e94ad30862-p025-b002}
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b005}
@@ -177,6 +188,7 @@ For $1 \le j$, $j + 1 \le n$ and $x \le n$,
 
 \begin{theorem}[Agreement of the sum formula and the polynomial form]
 \lean{krawtchoukPoly_eval_nat}
+\label{krawtchoukPoly_eval_nat}
 \leanok
 \uses{krawtchouk, krawtchoukPoly, krawtchouk_zero, krawtchouk_one, krawtchouk_recurrence}
 For $j \le n$ and $x \le n$, evaluating the polynomial $K_j^{(n)}$ at the real number
@@ -187,6 +199,7 @@ $x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
 
 \begin{theorem}[Delsarte LP inequality]
 \lean{delsarte_lp_bound}
+\label{delsarte_lp_bound}
 \statementsource{philips}{
   pdf-24e94ad30862-p018-b006,
   pdf-24e94ad30862-p019-b002,
@@ -212,6 +225,7 @@ integer $x$ with $d \le x \le n$, then
 
 \begin{definition}[Truncated Christoffel--Darboux kernel]
 \lean{cdKernel}
+\label{cdKernel}
 \leanok
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p005-b004}
 \uses{krawtchoukPoly}
@@ -223,6 +237,7 @@ For $t \le n$ and real $a, x$, the truncated reproducing kernel is
 
 \begin{theorem}[Christoffel--Darboux identity for Krawtchouk polynomials]
 \lean{cd_identity}
+\label{cd_identity}
 \leanok
 \statementsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p008-b002,
@@ -238,6 +253,7 @@ For $t + 1 \le n$ and real $a \ne x$ there is a scalar $c > 0$ with
 
 \begin{theorem}[Positivity of Krawtchouk values below all zeros]
 \lean{krawtchouk_positive_below_smallest_zero}
+\label{krawtchouk_positive_below_smallest_zero}
 \statementsource{arXiv.1812.04992}{
   pdf-f300deb505d8-p003-b005,
   pdf-f300deb505d8-p003-b007
@@ -253,6 +269,7 @@ $\xi$ of $K_t^{(n)}$. Then $K_j^{(n)}(a) > 0$ for every $j \le t$.
 
 \begin{theorem}[Nonpositivity of the kernel beyond a threshold]
 \lean{cdKernel_nonpos_beyond_threshold}
+\label{cdKernel_nonpos_beyond_threshold}
 \statementsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p005-b004,
   pdf-abed77da6b7a-p005-b005
@@ -265,6 +282,7 @@ every integer $x$ with $\eta \le x \le n$.
 
 \begin{theorem}[Finite-$n$ MRRW bound]
 \lean{finite_n_mrrw_bound}
+\label{finite_n_mrrw_bound}
 \leanok
 \statementsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p005-b004,
@@ -282,6 +300,7 @@ suppose $\Phi_{n,t}(a,x) \le 0$ for every integer $x$ with $d \le x \le n$. Then
 
 \begin{theorem}[Asymptotics of the smallest Krawtchouk zero]
 \lean{smallest_zero_asymptotic}
+\label{smallest_zero_asymptotic}
 \statementsource{arXiv.1812.04992}{
   pdf-f300deb505d8-p004-b007,
   pdf-f300deb505d8-p005-b001
@@ -301,6 +320,7 @@ $\lfloor (\tfrac12 - \sqrt{\tau(1-\tau)})n \rfloor \le x \le n$.
 
 \begin{theorem}[Entropy growth rate of the objective]
 \lean{entropy_growth_of_objective}
+\label{entropy_growth_of_objective}
 \statementsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p006-b001,
   pdf-abed77da6b7a-p006-b002
@@ -315,6 +335,7 @@ below every real zero of $K_{t_n}^{(n)}$. Then
 
 \begin{theorem}[Entropy asymptotics for binomial tails]
 \lean{binomial_tail_entropy_asymptotic}
+\label{binomial_tail_entropy_asymptotic}
 \uses{binaryEntropy}
 For $0 \le \tau \le 1/2$,
 \[
@@ -328,6 +349,7 @@ For $0 \le \tau \le 1/2$,
 
 \begin{theorem}[Involution between $\delta$ and $\tau$]
 \lean{delta_tau_involution}
+\label{delta_tau_involution}
 \leanok
 For $0 \le \delta \le 1/2$, setting $\tau = \tfrac12 - \sqrt{\delta(1-\delta)}$ gives
 back $\delta = \tfrac12 - \sqrt{\tau(1-\tau)}$; that is, the map is an involution on
@@ -336,6 +358,7 @@ $[0,1/2]$.
 
 \begin{theorem}[Binary entropy at $0$]
 \lean{binaryEntropy_zero}
+\label{binaryEntropy_zero}
 \leanok
 \uses{binaryEntropy}
 $H(0) = 0$.
@@ -343,6 +366,7 @@ $H(0) = 0$.
 
 \begin{theorem}[Binary entropy at $1/2$]
 \lean{binaryEntropy_half}
+\label{binaryEntropy_half}
 \leanok
 \uses{binaryEntropy}
 $H(1/2) = 1$.
@@ -350,6 +374,7 @@ $H(1/2) = 1$.
 
 \begin{theorem}[Binary first MRRW bound]
 \lean{mrrw_bound}
+\label{mrrw_bound}
 \statementsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p001-b006,
   pdf-abed77da6b7a-p003-b003,

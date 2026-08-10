@@ -14,6 +14,7 @@ Walsh expansion, Parseval's identity, and the convolution theorem.
 
 \begin{definition}[Hypercube]
 \lean{BoolFourier.hypercube}
+\label{BoolFourier.hypercube}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 The Boolean hypercube of dimension $n$ is the type $\{0,1\}^n$, defined as an
@@ -22,6 +23,7 @@ abbreviation for \texttt{BooleanAnalysis.BoolCube} $n$.
 
 \begin{definition}[Boolean function type]
 \lean{BoolFourier.BoolFun}
+\label{BoolFourier.BoolFun}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
 A Boolean function of arity $n$ is an element of type $\{0,1\}^n \to \mathbb{R}$,
@@ -30,6 +32,7 @@ defined as an abbreviation for \texttt{BooleanAnalysis.BooleanFunc} $n$.
 
 \begin{definition}[Bool-to-$\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1}
+\label{BoolFourier.BoolToPM1}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 The map $\mathrm{BoolToPM1} : \mathrm{Bool} \to \mathbb{R}$ sends $\mathtt{false}$
@@ -39,6 +42,7 @@ $\{0,1\} \cong \{\pm 1\}$.
 
 \begin{definition}[Partial inverse of $\pm 1$ embedding]
 \lean{BoolFourier.PM1ToBool?}
+\label{BoolFourier.PM1ToBool?}
 \leanok
 The partial inverse $\mathrm{PM1ToBool?} : \mathbb{R} \to \mathrm{Option}\,\mathrm{Bool}$
 returns $\mathtt{some}\,\mathtt{true}$ on $-1$, $\mathtt{some}\,\mathtt{false}$ on $1$,
@@ -47,6 +51,7 @@ and $\mathtt{none}$ on all other real numbers.
 
 \begin{definition}[All-zeros vector]
 \lean{BoolFourier.zero_vec}
+\label{BoolFourier.zero_vec}
 \leanok
 \uses{BoolFourier.hypercube}
 $\mathrm{zero\_vec}(n) : \{0,1\}^n$ is the constant-$\mathtt{false}$ function, serving
@@ -55,6 +60,7 @@ as the additive identity of the group $(\mathbb{F}_2)^n$.
 
 \begin{definition}[Componentwise XOR]
 \lean{BoolFourier.xor_vec}
+\label{BoolFourier.xor_vec}
 \leanok
 \uses{BoolFourier.hypercube}
 For $x, y \in \{0,1\}^n$, the vector $\mathrm{xor\_vec}(x,y)_i = x_i \oplus y_i$ is
@@ -63,6 +69,7 @@ the componentwise XOR, giving the group operation on $(\mathbb{F}_2)^n$.
 
 \begin{lemma}[Cardinality of the hypercube]
 \lean{BoolFourier.card_hypercube}
+\label{BoolFourier.card_hypercube}
 \leanok
 \uses{BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 \difficulty{1}
@@ -72,6 +79,7 @@ $|\{0,1\}^n| = 2^n$.
 
 \begin{lemma}[Average of $\pm 1$ values is zero]
 \lean{BoolFourier.avg_BoolToPM1}
+\label{BoolFourier.avg_BoolToPM1}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign}
 \difficulty{1}
@@ -83,6 +91,7 @@ The average of the two values of the $\pm 1$ embedding is zero:
 
 \begin{lemma}[$\pm 1$ values square to one]
 \lean{BoolFourier.BoolToPM1_sq}
+\label{BoolFourier.BoolToPM1_sq}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign_mul_self}
 \difficulty{1}
@@ -91,6 +100,7 @@ For every $b : \mathrm{Bool}$, $\mathrm{BoolToPM1}(b)^2 = 1$.
 
 \begin{lemma}[Negation under $\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1_not}
+\label{BoolFourier.BoolToPM1_not}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign_not}
 \difficulty{1}
@@ -100,6 +110,7 @@ $\mathrm{BoolToPM1}(\lnot b) = -\mathrm{BoolToPM1}(b)$.
 
 \begin{lemma}[XOR under $\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1_xor}
+\label{BoolFourier.BoolToPM1_xor}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign}
 \difficulty{3}
@@ -110,6 +121,7 @@ that is, XOR corresponds to multiplication in $\{\pm 1\} \subset \mathbb{R}$.
 
 \begin{definition}[Uniform expectation]
 \lean{BoolFourier.expectation}
+\label{BoolFourier.expectation}
 \leanok
 \uses{BoolFourier.BoolFun}
 For $f : \{0,1\}^n \to \mathbb{R}$, the uniform expectation is
@@ -120,6 +132,7 @@ For $f : \{0,1\}^n \to \mathbb{R}$, the uniform expectation is
 
 \begin{lemma}[Factorisation of expectation over product functions]
 \lean{BoolFourier.expectation_factorizes}
+\label{BoolFourier.expectation_factorizes}
 \leanok
 \uses{BoolFourier.expectation, BoolFourier.hypercube}
 \difficulty{6}
@@ -133,6 +146,7 @@ $f(x) = \prod_{i} g_i(x_i)$, then
 
 \begin{definition}[Inner product of Boolean functions]
 \lean{BoolFourier.inner_product}
+\label{BoolFourier.inner_product}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation}
 The inner product of $f, g : \{0,1\}^n \to \mathbb{R}$ is
@@ -144,6 +158,7 @@ The inner product of $f, g : \{0,1\}^n \to \mathbb{R}$ is
 
 \begin{definition}[$L^2$ norm squared]
 \lean{BoolFourier.L2_norm_sq}
+\label{BoolFourier.L2_norm_sq}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation}
 The squared $L^2$ norm of $f : \{0,1\}^n \to \mathbb{R}$ is
@@ -155,6 +170,7 @@ The squared $L^2$ norm of $f : \{0,1\}^n \to \mathbb{R}$ is
 
 \begin{definition}[Convolution on the hypercube]
 \lean{BoolFourier.convolution}
+\label{BoolFourier.convolution}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.xor_vec}
@@ -166,6 +182,7 @@ The convolution of $f, g : \{0,1\}^n \to \mathbb{R}$ is the function
 
 \begin{definition}[Walsh--Fourier character]
 \lean{BoolFourier.char_S}
+\label{BoolFourier.char_S}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p002-b007}
 \uses{BoolFourier.BoolFun, BooleanAnalysis.chiS}
@@ -179,6 +196,7 @@ defined as an alias for \texttt{BooleanAnalysis.chiS}.
 
 \begin{lemma}[Character evaluated at zero]
 \lean{BoolFourier.char_S_of_zero}
+\label{BoolFourier.char_S_of_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{1}
@@ -187,6 +205,7 @@ For every $S \subseteq [n]$, $\chi_S(\mathbf{0}) = 1$.
 
 \begin{lemma}[Character squared equals one]
 \lean{BoolFourier.char_S_sq}
+\label{BoolFourier.char_S_sq}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
 \difficulty{1}
@@ -196,6 +215,7 @@ $\chi_S(x)^2 = 1$.
 
 \begin{lemma}[Empty character is constant one]
 \lean{BoolFourier.char_S_empty}
+\label{BoolFourier.char_S_empty}
 \leanok
 \uses{BoolFourier.char_S, BooleanAnalysis.chiS_empty}
 \difficulty{1}
@@ -204,6 +224,7 @@ $\chi_\emptyset = \mathbf{1}$, the constant function equal to $1$.
 
 \begin{lemma}[Product of characters]
 \lean{BoolFourier.char_S_times_char_T}
+\label{BoolFourier.char_S_times_char_T}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_mul_chiS}
 \difficulty{1}
@@ -216,6 +237,7 @@ where $S \mathbin{\triangle} T$ denotes the symmetric difference.
 
 \begin{lemma}[Sum of characters at zero equals $2^n$]
 \lean{BoolFourier.sum_char_S_at_zero}
+\label{BoolFourier.sum_char_S_at_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.hypercube, BoolFourier.zero_vec}
 \difficulty{1}
@@ -226,6 +248,7 @@ where $S \mathbin{\triangle} T$ denotes the symmetric difference.
 
 \begin{lemma}[Sum of characters at non-zero point is zero]
 \lean{BoolFourier.sum_char_S_ne_zero}
+\label{BoolFourier.sum_char_S_ne_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{2}
@@ -237,6 +260,7 @@ For every $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$,
 
 \begin{lemma}[Expectation of empty character is one]
 \lean{BoolFourier.expectation_char_empty}
+\label{BoolFourier.expectation_char_empty}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.expectation}
 \difficulty{1}
@@ -245,6 +269,7 @@ $\mathbb{E}[\chi_\emptyset] = 1$.
 
 \begin{lemma}[Expectation of non-empty character is zero]
 \lean{BoolFourier.expectation_char_nonempty}
+\label{BoolFourier.expectation_char_nonempty}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
@@ -257,6 +282,7 @@ If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
 
 \begin{lemma}[Orthonormality: self inner product]
 \lean{BoolFourier.inner_product_char_self}
+\label{BoolFourier.inner_product_char_self}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
@@ -269,6 +295,7 @@ For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
 
 \begin{lemma}[Orthonormality: distinct characters are orthogonal]
 \lean{BoolFourier.inner_product_char_nonself}
+\label{BoolFourier.inner_product_char_nonself}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
@@ -281,6 +308,7 @@ If $S \ne T$, then $\langle \chi_S, \chi_T \rangle = 0$.
 
 \begin{definition}[Fourier coefficient]
 \lean{BoolFourier.fourier_coeff}
+\label{BoolFourier.fourier_coeff}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.inner_product}
@@ -292,6 +320,7 @@ The Fourier coefficient of $f : \{0,1\}^n \to \mathbb{R}$ at $S \subseteq [n]$ i
 
 \begin{lemma}[Fourier coefficient of a character at itself]
 \lean{BoolFourier.fourier_coeff_char_self}
+\label{BoolFourier.fourier_coeff_char_self}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_self}
@@ -301,6 +330,7 @@ For every $S \subseteq [n]$, $\widehat{\chi_S}(S) = 1$.
 
 \begin{lemma}[Fourier coefficient of a character at a different set]
 \lean{BoolFourier.fourier_coeff_char_of_ne}
+\label{BoolFourier.fourier_coeff_char_of_ne}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_nonself}
@@ -310,6 +340,7 @@ If $S \ne T$, then $\widehat{\chi_S}(T) = 0$.
 
 \begin{lemma}[Expectation equals uniform-weight expectation]
 \lean{BoolFourier.expectation_eq_expect}
+\label{BoolFourier.expectation_eq_expect}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{1}
@@ -319,6 +350,7 @@ The locally-defined expectation \texttt{BoolFourier.expectation} agrees with
 
 \begin{lemma}[Fourier coefficient agrees with upstream definition]
 \lean{BoolFourier.fourier_coeff_eq}
+\label{BoolFourier.fourier_coeff_eq}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.inner_product, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 \difficulty{1}
@@ -329,6 +361,7 @@ local and upstream definitions.
 
 \begin{lemma}[Fourier--Walsh expansion]
 \lean{BoolFourier.fourier_expansion}
+\label{BoolFourier.fourier_expansion}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BoolFourier.hypercube, BooleanAnalysis.walsh_expansion}
@@ -342,6 +375,7 @@ Walsh--Fourier basis:
 
 \begin{lemma}[Parseval's identity]
 \lean{BoolFourier.parseval_identity}
+\label{BoolFourier.parseval_identity}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p005-b006,
@@ -357,6 +391,7 @@ For every $f : \{0,1\}^n \to \mathbb{R}$,
 
 \begin{lemma}[Convolution theorem]
 \lean{BoolFourier.fourier_coeff_convolution}
+\label{BoolFourier.fourier_coeff_convolution}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{3}
@@ -371,6 +406,7 @@ For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$,
 
 \begin{lemma}[Character squared equals one, powered form]
 \lean{BoolFourier.char_S_sq_aux_h}
+\label{BoolFourier.char_S_sq_aux_h}
 \leanok
 \uses{BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
 For every $S \subseteq [n]$ and every $x \in \{0,1\}^n$,
@@ -380,6 +416,7 @@ product) of the fact that Walsh characters take values in $\{\pm 1\}$.
 
 \begin{lemma}[Characters at the origin form the constant function one]
 \lean{BoolFourier.sum_char_S_at_zero_aux_h}
+\label{BoolFourier.sum_char_S_at_zero_aux_h}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.zero_vec}
 As functions of $S$, the evaluation of characters at the all-zeros vector is constant:
@@ -390,6 +427,7 @@ As functions of $S$, the evaluation of characters at the all-zeros vector is con
 
 \begin{lemma}[Sign-flip pairing of characters at a non-zero point]
 \lean{BoolFourier.sum_char_S_ne_zero_aux_h_pair}
+\label{BoolFourier.sum_char_S_ne_zero_aux_h_pair}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 Let $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$ and let $i$ be a coordinate with
@@ -402,6 +440,7 @@ negations:
 
 \begin{lemma}[Expectation of a character as a coordinate product]
 \lean{BoolFourier.expectation_char_nonempty_aux_h_exp}
+\label{BoolFourier.expectation_char_nonempty_aux_h_exp}
 \leanok
 \uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
 For a non-empty $S \subseteq [n]$, the uniform expectation of the character $\chi_S$
@@ -415,6 +454,7 @@ factorises over the coordinates of $S$:
 
 \begin{lemma}[$L^2$ norm as a self inner product]
 \lean{BoolFourier.parseval_identity_aux_hL2}
+\label{BoolFourier.parseval_identity_aux_hL2}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BooleanAnalysis.innerProduct}
 For every $f : \{0,1\}^n \to \mathbb{R}$, the locally-defined squared $L^2$ norm agrees
@@ -426,6 +466,7 @@ with the upstream inner product of $f$ with itself:
 
 \begin{lemma}[Interchange of summation in the convolution coefficient]
 \lean{BoolFourier.fourier_coeff_convolution_aux_h_fubini}
+\label{BoolFourier.fourier_coeff_convolution_aux_h_fubini}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.xor_vec}
 For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$, the double sum defining
@@ -438,6 +479,7 @@ the unnormalised convolution coefficient may be reordered:
 
 \begin{lemma}[Multiplicative splitting of a character along XOR]
 \lean{BoolFourier.fourier_coeff_convolution_aux_h_split}
+\label{BoolFourier.fourier_coeff_convolution_aux_h_split}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 For all $x, y \in \{0,1\}^n$ and $S \subseteq [n]$,
@@ -450,6 +492,7 @@ also carries the (unused) Fubini hypothesis of the enclosing proof.
 
 \begin{lemma}[Shift rule for character-weighted sums]
 \lean{BoolFourier.fourier_coeff_convolution_aux_h_char}
+\label{BoolFourier.fourier_coeff_convolution_aux_h_char}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff_convolution_aux_h_split, BoolFourier.hypercube, BoolFourier.xor_vec}
 Let $f, g : \{0,1\}^n \to \mathbb{R}$, let $S \subseteq [n]$, assume the Fubini

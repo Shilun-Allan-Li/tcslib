@@ -14,9 +14,9 @@ of its parts.
 
 \begin{definition}[Map over protocol output]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given a function $g : \alpha \to \beta$ and a public-coin protocol
 $p : \mathrm{Protocol}\;\Omega\;X\;Y\;\alpha$, the protocol $p.\mathrm{map}\;g$
 is a $\mathrm{Protocol}\;\Omega\;X\;Y\;\beta$ that applies $g$ to the output of $p$
@@ -25,11 +25,9 @@ after every run, without changing the communication structure.
 
 \begin{theorem}[Map commutes with running]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For any $g : \alpha \to \beta$, protocol $p$, inputs $x \in X$, $y \in Y$, and randomness
 $\omega \in \Omega$, running the mapped protocol satisfies
@@ -38,11 +36,9 @@ $(p.\mathrm{map}\;g).\mathrm{rrun}\;x\;y\;\omega = g\,(p.\mathrm{rrun}\;x\;y\;\o
 
 \begin{theorem}[Map preserves complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map}
 \difficulty{1}
 For any $g : \alpha \to \beta$ and protocol $p$, the communication complexity of
 $p.\mathrm{map}\;g$ equals that of $p$:
@@ -51,9 +47,9 @@ $(p.\mathrm{map}\;g).\mathrm{complexity} = p.\mathrm{complexity}$.
 
 \begin{definition}[Bind on protocols]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given a protocol $p : \mathrm{Protocol}\;\Omega\;X\;Y\;\alpha$ and a family
 $q : \alpha \to \mathrm{Protocol}\;\Omega\;X\;Y\;\beta$, the protocol $p.\mathrm{bind}\;q$
 replaces each output $a$ of $p$ with the protocol $q\;a$, both sharing the same randomness
@@ -62,11 +58,9 @@ $\Omega$.
 
 \begin{theorem}[Bind commutes with running]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For any $p$, $q$, inputs $x \in X$, $y \in Y$, and shared randomness $\omega \in \Omega$,
 running the bound protocol satisfies
@@ -76,9 +70,9 @@ $(p.\mathrm{bind}\;q).\mathrm{rrun}\;x\;y\;\omega =
 
 \begin{definition}[Randomness reindexing]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given $h : \Omega' \to \Omega$ and a protocol $p : \mathrm{Protocol}\;\Omega\;X\;Y\;\alpha$,
 the protocol $\mathrm{comapRandomness}\;h\;p$ is a
 $\mathrm{Protocol}\;\Omega'\;X\;Y\;\alpha$ that runs $p$ after pre-composing the shared
@@ -87,11 +81,9 @@ randomness with $h$.
 
 \begin{theorem}[Randomness reindexing commutes with running]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For any $h : \Omega' \to \Omega$, protocol $p$, inputs $x \in X$, $y \in Y$, and
 $\omega \in \Omega'$, running the reindexed protocol satisfies
@@ -101,10 +93,9 @@ $(\mathrm{comapRandomness}\;h\;p).\mathrm{rrun}\;x\;y\;\omega =
 
 \begin{theorem}[Randomness reindexing preserves complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness}
 \difficulty{1}
 For any $h : \Omega' \to \Omega$ and protocol $p$, reindexing the randomness does not
 change the complexity:
@@ -113,10 +104,9 @@ $(\mathrm{comapRandomness}\;h\;p).\mathrm{complexity} = p.\mathrm{complexity}$.
 
 \begin{definition}[Product of two protocols]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given protocols $p_1 : \mathrm{Protocol}\;\Omega_1\;X\;Y\;\alpha_1$ and
 $p_2 : \mathrm{Protocol}\;\Omega_2\;X\;Y\;\alpha_2$, the product protocol
 $\mathrm{prod}\;p_1\;p_2$ is a $\mathrm{Protocol}\;(\Omega_1 \times \Omega_2)\;X\;Y\;(\alpha_1 \times \alpha_2)$
@@ -126,12 +116,9 @@ components of the shared randomness pair respectively.
 
 \begin{theorem}[Product runs component-wise]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For protocols $p_1$, $p_2$, inputs $x \in X$, $y \in Y$, and randomness
 $\omega \in \Omega_1 \times \Omega_2$, running the product satisfies
@@ -141,11 +128,9 @@ $(\mathrm{prod}\;p_1\;p_2).\mathrm{rrun}\;x\;y\;\omega =
 
 \begin{theorem}[Product complexity is the sum]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod}
 \difficulty{1}
 The communication complexity of $\mathrm{prod}\;p_1\;p_2$ equals the sum of the
 complexities of $p_1$ and $p_2$:
@@ -155,10 +140,9 @@ $(\mathrm{prod}\;p_1\;p_2).\mathrm{complexity} =
 
 \begin{definition}[$k$-fold product of protocols]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given a family of protocols $p : (i : \mathrm{Fin}\;k) \to \mathrm{Protocol}\;(\Omega_i)\;X\;Y\;(\alpha_i)$
 with heterogeneous randomness and output types, the $\pi$-protocol
 $\mathrm{pi}\;p$ is a $\mathrm{Protocol}\;(\prod_i \Omega_i)\;X\;Y\;(\prod_i \alpha_i)$
@@ -167,12 +151,9 @@ that runs each $p_i$ independently using its own component of the shared randomn
 
 \begin{theorem}[$k$-fold product runs component-wise]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For a family $p$, inputs $x \in X$, $y \in Y$, and randomness tuple
 $\omega : (i : \mathrm{Fin}\;k) \to \Omega_i$, running the $\pi$-protocol satisfies
@@ -181,11 +162,9 @@ $(\mathrm{pi}\;p).\mathrm{rrun}\;x\;y\;\omega = \lambda i,\; (p\;i).\mathrm{rrun
 
 \begin{theorem}[$k$-fold product complexity is the sum]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi}
 \difficulty{1}
 The complexity of $\mathrm{pi}\;p$ equals the sum of the complexities of all components:
 $(\mathrm{pi}\;p).\mathrm{complexity} = \sum_{i} (p\;i).\mathrm{complexity}$.
@@ -193,10 +172,9 @@ $(\mathrm{pi}\;p).\mathrm{complexity} = \sum_{i} (p\;i).\mathrm{complexity}$.
 
 \begin{definition}[Bind with fresh randomness]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given $p : \mathrm{Protocol}\;\Omega\;X\;Y\;\alpha$ and
 $q : \alpha \to \mathrm{Protocol}\;\Omega'\;X\;Y\;\beta$, the protocol
 $\mathrm{rbind}\;p\;q$ is a $\mathrm{Protocol}\;(\Omega \times \Omega')\;X\;Y\;\beta$
@@ -206,12 +184,9 @@ $q$ on the result using the independent $\Omega'$-component.
 
 \begin{theorem}[Fresh-randomness bind commutes with running]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For any $p$, $q$, inputs $x \in X$, $y \in Y$, and randomness pair
 $\omega \in \Omega \times \Omega'$, running the fresh-randomness bound protocol satisfies
@@ -221,11 +196,9 @@ $(\mathrm{rbind}\;p\;q).\mathrm{rrun}\;x\;y\;\omega =
 
 \begin{theorem}[Fresh-randomness bind complexity with constant continuation]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_complexity_const}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_complexity_const}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind}
 \difficulty{4}
 If every branch $q\;a$ has the same complexity $c \in \mathbb{N}$, then
 $(\mathrm{rbind}\;p\;q).\mathrm{complexity} = p.\mathrm{complexity} + c$.
@@ -233,12 +206,9 @@ $(\mathrm{rbind}\;p\;q).\mathrm{complexity} = p.\mathrm{complexity} + c$.
 
 \begin{definition}[Product with a deterministic protocol]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind}
 Given a public-coin protocol $p_1 : \mathrm{Protocol}\;\Omega\;X\;Y\;\alpha_1$ and a
 deterministic protocol $p_2 : \mathrm{Deterministic.FiniteMessage.Protocol}\;X\;Y\;\alpha_2$,
 the protocol $\mathrm{prodDet}\;p_1\;p_2$ is a $\mathrm{Protocol}\;\Omega\;X\;Y\;(\alpha_1 \times \alpha_2)$
@@ -248,15 +218,9 @@ reusing the same randomness $\Omega$.
 
 \begin{theorem}[Mixed product runs component-wise]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For any $p_1$, $p_2$, inputs $x \in X$, $y \in Y$, and randomness $\omega \in \Omega$,
 running the mixed product satisfies
@@ -266,12 +230,9 @@ $(\mathrm{prodDet}\;p_1\;p_2).\mathrm{rrun}\;x\;y\;\omega =
 
 \begin{theorem}[Mixed product complexity is the sum]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet}
 \difficulty{3}
 The complexity of $\mathrm{prodDet}\;p_1\;p_2$ equals the sum of the complexity of $p_1$
 and the complexity of $p_2$:

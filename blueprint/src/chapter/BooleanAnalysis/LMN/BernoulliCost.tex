@@ -11,6 +11,7 @@ most $(10pw)^s$ plus an exponentially small tail $e^{-np/3}$ that vanishes as $n
 
 \begin{definition}[Restrictions with a fixed number of free variables]
 \lean{BernoulliCost.fixedSizeRestrs}
+\label{BernoulliCost.fixedSizeRestrs}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 For natural numbers $n$ and $k$, this is the finite set of restrictions on $n$ variables
@@ -19,6 +20,7 @@ whose set of free variables has cardinality exactly $k$.
 
 \begin{definition}[Fixed-size restriction probability $R_k$]
 \lean{BernoulliCost.fixedSizeRestrProb}
+\label{BernoulliCost.fixedSizeRestrProb}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction}
 The probability of an event under the fixed-size restriction model $R_k$, which is uniform
@@ -28,12 +30,14 @@ restrictions with exactly $k$ free variables that satisfy the event.
 
 \begin{definition}[Binomial probability mass function]
 \lean{BernoulliCost.binomialPMF}
+\label{BernoulliCost.binomialPMF}
 \leanok
 The binomial probability mass function, $\Pr[\mathrm{Bin}(n,p) = k] = \binom{n}{k}\, p^k\, (1-p)^{n-k}$.
 \end{definition}
 
 \begin{lemma}[Fixed-size restriction probability is nonnegative]
 \lean{BernoulliCost.fixedSizeRestrProb_nonneg}
+\label{BernoulliCost.fixedSizeRestrProb_nonneg}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrProb, SwitchingLemma2.Restriction}
 \difficulty{2}
@@ -43,6 +47,7 @@ $0 \le \mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k$.
 
 \begin{lemma}[Fixed-size restriction probability is at most one]
 \lean{BernoulliCost.fixedSizeRestrProb_le_one}
+\label{BernoulliCost.fixedSizeRestrProb_le_one}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction}
 \difficulty{4}
@@ -52,6 +57,7 @@ $\mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k \le 1$.
 
 \begin{lemma}[Binomial PMF is nonnegative]
 \lean{BernoulliCost.binomialPMF_nonneg}
+\label{BernoulliCost.binomialPMF_nonneg}
 \leanok
 \uses{BernoulliCost.binomialPMF}
 \difficulty{3}
@@ -60,6 +66,7 @@ If $0 \le p \le 1$, then $0 \le \mathrm{binomialPMF}\,n\,p\,k$ for every $k$.
 
 \begin{lemma}[Binomial PMF sums to one]
 \lean{BernoulliCost.binomialPMF_sum_one}
+\label{BernoulliCost.binomialPMF_sum_one}
 \leanok
 \uses{BernoulliCost.binomialPMF}
 \difficulty{3}
@@ -70,6 +77,7 @@ applied to $(p + (1-p))^n = 1$.
 
 \begin{lemma}[Decomposition of Bernoulli probability by free-variable count]
 \lean{BernoulliCost.bernoulli_decompose}
+\label{BernoulliCost.bernoulli_decompose}
 \leanok
 \uses{BernoulliCost.binomialPMF, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{7}
@@ -83,6 +91,7 @@ because conditioning $R_p$ on having exactly $k$ free variables yields exactly t
 
 \begin{lemma}[Chernoff upper-tail bound for the binomial distribution]
 \lean{BernoulliCost.chernoff_binomial_upper_tail}
+\label{BernoulliCost.chernoff_binomial_upper_tail}
 \leanok
 \uses{BernoulliCost.binomialPMF}
 \difficulty{7}
@@ -93,6 +102,7 @@ is at most $e^{-np/3}$.
 
 \begin{theorem}[Bernoulli restriction cost, exact version]
 \lean{BernoulliCost.bernoulli_restriction_cost}
+\label{BernoulliCost.bernoulli_restriction_cost}
 \leanok
 \uses{BernoulliCost.bernoulli_decompose, BernoulliCost.binomialPMF, BernoulliCost.binomialPMF_nonneg, BernoulliCost.binomialPMF_sum_one, BernoulliCost.chernoff_binomial_upper_tail, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
 \difficulty{6}
@@ -106,6 +116,7 @@ the Bernoulli model,
 
 \begin{lemma}[Eventual smallness of the exponential tail]
 \lean{BernoulliCost.exp_neg_eventually_small}
+\label{BernoulliCost.exp_neg_eventually_small}
 \leanok
 \difficulty{6}
 For any $p > 0$ and any $\varepsilon > 0$, there exists $N$ such that for all $m \ge N$ one has
@@ -114,6 +125,7 @@ $e^{-mp/3} < \varepsilon$; that is, the tail term decays to $0$.
 
 \begin{theorem}[Bernoulli restriction cost, asymptotic version]
 \lean{BernoulliCost.bernoulli_restriction_asymptotic}
+\label{BernoulliCost.bernoulli_restriction_asymptotic}
 \leanok
 \uses{BernoulliCost.bernoulli_restriction_cost, BernoulliCost.exp_neg_eventually_small, BernoulliCost.fixedSizeRestrProb, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
 \difficulty{4}

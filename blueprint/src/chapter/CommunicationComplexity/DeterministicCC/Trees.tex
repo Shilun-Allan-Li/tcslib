@@ -13,6 +13,7 @@ subtree holding between one third and two thirds of all leaves.
 
 \begin{definition}[Protocol tree shape]
 \lean{CommunicationComplexity.Deterministic.Protocol.shape}
+\label{CommunicationComplexity.Deterministic.Protocol.shape}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 Given a deterministic communication protocol $p$ over input types $X$ and $Y$ with output
@@ -25,6 +26,7 @@ $\mathtt{true}$, respectively.
 
 \begin{definition}[Number of protocol leaves]
 \lean{CommunicationComplexity.Deterministic.Protocol.numLeaves}
+\label{CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.shape}
 The number of leaves (output nodes) of a protocol $p$ is defined as
@@ -34,6 +36,7 @@ $\texttt{numLeaves}(p) = \texttt{shape}(p).\texttt{numLeaves}$, i.e.\ the count 
 
 \begin{definition}[Subtree relation on binary trees]
 \lean{CommunicationComplexity.TreeIsSubtree}
+\label{CommunicationComplexity.TreeIsSubtree}
 \leanok
 \texttt{TreeIsSubtree s t} is an inductively defined proposition asserting that $s$ is a
 subtree of $t$.  It has two constructors: reflexivity ($s$ is a subtree of itself) and a
@@ -44,6 +47,7 @@ implementation).
 
 \begin{lemma}[Transitivity of the subtree relation]
 \lean{CommunicationComplexity.TreeIsSubtree.trans}
+\label{CommunicationComplexity.TreeIsSubtree.trans}
 \leanok
 \uses{CommunicationComplexity.TreeIsSubtree}
 \difficulty{3}
@@ -53,6 +57,7 @@ That is, \texttt{TreeIsSubtree} is transitive.
 
 \begin{lemma}[Balanced subtree — auxiliary]
 \lean{CommunicationComplexity.tree_balanced_subtree_aux}
+\label{CommunicationComplexity.tree_balanced_subtree_aux}
 \leanok
 \uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.TreeIsSubtree.trans}
 \difficulty{5}
@@ -64,6 +69,7 @@ $n \le 3\lvert s \rvert < 2n$.
 
 \begin{theorem}[Balanced subtree]
 \lean{CommunicationComplexity.tree_balanced_subtree}
+\label{CommunicationComplexity.tree_balanced_subtree}
 \leanok
 \uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.TreeIsSubtree.trans, CommunicationComplexity.tree_balanced_subtree_aux}
 \difficulty{5}

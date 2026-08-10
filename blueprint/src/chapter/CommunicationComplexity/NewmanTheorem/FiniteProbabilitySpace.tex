@@ -15,6 +15,7 @@ arguments.
 
 \begin{definition}[Finite measurable space]
 \lean{CommunicationComplexity.FiniteMeasureSpace}
+\label{CommunicationComplexity.FiniteMeasureSpace}
 \leanok
 A typeclass for a measurable space $\Omega$ that is simultaneously finite (carries a
 \texttt{Fintype} instance) and discrete (every subset is measurable).  It deliberately
@@ -24,6 +25,7 @@ measures.
 
 \begin{definition}[Constructor for \texttt{FiniteMeasureSpace}]
 \lean{CommunicationComplexity.FiniteMeasureSpace.of}
+\label{CommunicationComplexity.FiniteMeasureSpace.of}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 Given a type $\Omega$ that already carries \texttt{Fintype} and
@@ -33,6 +35,7 @@ into a \texttt{FiniteMeasureSpace} record without requiring any additional data.
 
 \begin{definition}[Finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace}
+\label{CommunicationComplexity.FiniteProbabilitySpace}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 A typeclass bundling a \texttt{MeasureSpace} structure on $\Omega$ together with a
@@ -43,6 +46,7 @@ measurable space and a probability space.
 
 \begin{definition}[Constructor from existing instances]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.of}
+\label{CommunicationComplexity.FiniteProbabilitySpace.of}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.of, CommunicationComplexity.FiniteProbabilitySpace}
 Given a type $\Omega$ already equipped with a \texttt{MeasureSpace}, \texttt{Fintype},
@@ -53,6 +57,7 @@ record.
 
 \begin{definition}[Constructor from an explicit measure]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.ofMeasure}
+\label{CommunicationComplexity.FiniteProbabilitySpace.ofMeasure}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteProbabilitySpace}
 Given a finite measurable space $\Omega$ and an unbundled probability measure $\mu$ on
@@ -62,6 +67,7 @@ returns a \texttt{FiniteProbabilitySpace} instance.
 
 \begin{theorem}[Singleton decomposition of a finite measure]
 \lean{CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
+\label{CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{3}
@@ -77,6 +83,7 @@ recovers as a finite sum over its singleton masses.
 
 \begin{theorem}[Measure of a preimage via fibers]
 \lean{CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers}
+\label{CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
 \difficulty{5}
@@ -90,6 +97,7 @@ type, $\mu$ a finite measure on $\Omega$, and $P$ a predicate on $\alpha$.  Then
 
 \begin{theorem}[Absolute continuity via singletons]
 \lean{CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons}
+\label{CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{4}
@@ -99,6 +107,7 @@ every $\omega \in \Omega$, $\nu(\{\omega\}) = 0$ implies $\mu(\{\omega\}) = 0$.
 
 \begin{theorem}[Jensen's inequality: square of expectation]
 \lean{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
+\label{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{4}
@@ -111,6 +120,7 @@ For any probability measure $\mu$ on a finite measurable space and any function 
 
 \begin{theorem}[Integral as a sum over fibers]
 \lean{CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers}
+\label{CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{3}
@@ -125,6 +135,7 @@ finite discrete type, $\mu$ a finite measure on $\Omega$, and $f : \alpha \to
 
 \begin{theorem}[Law of total probability over fibers]
 \lean{CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real}
+\label{CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{4}
@@ -140,6 +151,7 @@ This is the law of total probability expressed in real-valued measure notation.
 
 \begin{theorem}[Uniform measure of a set is its relative cardinality]
 \lean{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
+\label{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \leanok
 \difficulty{3}
 Let $\Omega$ be a nonempty finite discrete type and let $S \subseteq \Omega$.  Under
@@ -152,6 +164,7 @@ the uniform probability measure on $\Omega$,
 
 \begin{theorem}[Uniform measure equals subtype cardinality ratio]
 \lean{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
+\label{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
 \leanok
 \uses{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \difficulty{3}
@@ -162,6 +175,7 @@ the cardinality of the subtype $\{\omega : \Omega \mid \omega \in S\}$.
 
 \begin{theorem}[A finite probability space is nonempty]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+\label{CommunicationComplexity.FiniteProbabilitySpace.nonempty}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{2}
@@ -170,6 +184,7 @@ Any type carrying a \texttt{FiniteProbabilitySpace} instance is nonempty.
 
 \begin{definition}[Probability mass function of a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.toPMF}
+\label{CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 For a finite probability space $\Omega$, \texttt{toPMF} converts the canonical volume
@@ -179,6 +194,7 @@ $\omega$ the real weight $\mu(\{\omega\})$.
 
 \begin{theorem}[Measure of a set as a PMF sum]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measure_eq}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measure_eq}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
@@ -188,6 +204,7 @@ $\mathrm{volume}(S) = \sum_{\omega \in S} \mathrm{toPMF}(\Omega)(\omega)$.
 
 \begin{theorem}[Singleton masses sum to one]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.hasSum_measure_singletons}
+\label{CommunicationComplexity.FiniteProbabilitySpace.hasSum_measure_singletons}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
@@ -198,6 +215,7 @@ statement.
 
 \begin{theorem}[PMF of a product space factors]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.pmf_prod}
+\label{CommunicationComplexity.FiniteProbabilitySpace.pmf_prod}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
@@ -211,6 +229,7 @@ For finite probability spaces $\Omega_1$ and $\Omega_2$ and any $(x, y) \in \Ome
 
 \begin{theorem}[Product measure of a rectangle]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
@@ -224,6 +243,7 @@ $B \subseteq \Omega_2$,
 
 \begin{theorem}[Measure of a finite disjoint union]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
@@ -237,6 +257,7 @@ type $\iota$ in a finite probability space $\Omega$, then
 
 \begin{theorem}[Measure of a preimage of a finite set]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{4}
@@ -250,6 +271,7 @@ $T \subseteq \Omega$,
 
 \begin{theorem}[Measure of a finite set as a sum of singletons]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_finset}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_finset}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset}
 \difficulty{1}
@@ -262,6 +284,7 @@ For a finite probability space $\Omega$ and a finset $T \subseteq \Omega$,
 
 \begin{theorem}[Integral as a PMF-weighted sum]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
+\label{CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{2}
@@ -274,6 +297,7 @@ For a finite probability space $\Omega$ and any $f : \Omega \to \mathbb{R}$,
 
 \begin{theorem}[Jensen's inequality on a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
+\label{CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq, CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{1}
@@ -285,6 +309,7 @@ For a finite probability space $\Omega$ and any $f : \Omega \to \mathbb{R}$,
 
 \begin{theorem}[Integral over a coordinate of a product space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval}
+\label{CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{4}
@@ -296,6 +321,7 @@ measure) equals $\int_\Omega f$.
 
 \begin{theorem}[Measure of a cylinder set in a product space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
@@ -309,6 +335,7 @@ and sets $s_i \subseteq \Omega_i$,
 
 \begin{theorem}[Measure equals integral of indicator (one-valued)]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{1}
@@ -319,6 +346,7 @@ where $\mathbf{1}_S$ denotes the indicator of $S$ as an element of $\Omega \to \
 
 \begin{theorem}[Measure equals integral of $0/1$ indicator]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
 \difficulty{3}
@@ -331,6 +359,7 @@ For a finite probability space $\Omega$ and $S \subseteq \Omega$,
 
 \begin{theorem}[PMF weights sum to one]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one}
+\label{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
@@ -340,6 +369,7 @@ $\sum_{\omega \in \Omega} \mathrm{toPMF}(\Omega)(\omega)_{\mathbb{R}} = 1$.
 
 \begin{theorem}[PMF weights are nonneg]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg}
+\label{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{1}
@@ -349,6 +379,7 @@ $0 \le \mathrm{toPMF}(\Omega)(\omega)_{\mathbb{R}}$.
 
 \begin{theorem}[Some point has positive mass]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos}
+\label{CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
@@ -358,6 +389,7 @@ $\mathrm{toPMF}(\Omega)(\omega)_{\mathbb{R}} > 0$.
 
 \begin{theorem}[Integral is bounded by a pointwise bound]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le}
+\label{CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
@@ -367,6 +399,7 @@ finite probability space, then $\int_\Omega f \le c$.
 
 \begin{theorem}[Markov's inequality]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
+\label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
@@ -380,6 +413,7 @@ $\varepsilon > 0$,
 
 \begin{theorem}[Integral exceeds a pointwise lower bound]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
+\label{CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos, CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{4}

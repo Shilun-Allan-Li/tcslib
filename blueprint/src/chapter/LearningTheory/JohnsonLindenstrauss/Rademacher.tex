@@ -15,6 +15,7 @@ concrete bound $\Pr[\varepsilon\norm{x}^2 < \abs{\norm{Ax}^2 - \norm{x}^2}] \leq
 
 \begin{theorem}[Distribution-agnostic JL single-vector concentration]
 \lean{jl_concentration_single_subgaussian}
+\label{jl_concentration_single_subgaussian}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, jl_concentration_single_via_bernstein}
 \difficulty{5}
@@ -32,6 +33,7 @@ $\int (Ax)_i^2 \, d\mu = \norm{x}^2/k$.  Then for every $0 < \varepsilon < 1$,
 
 \begin{definition}[Rademacher distribution on $\mathbb{R}$]
 \lean{rademacherReal}
+\label{rademacherReal}
 \leanok
 The Rademacher distribution $\mathrm{Rad}$ on $\mathbb{R}$ is the measure
 $\tfrac{1}{2}\delta_{-1} + \tfrac{1}{2}\delta_{+1}$, placing equal mass $1/2$
@@ -40,6 +42,7 @@ at $-1$ and at $+1$.
 
 \begin{lemma}[$1/2$ is finite as an extended non-negative real]
 \lean{rad_half_ne_top}
+\label{rad_half_ne_top}
 \leanok
 \difficulty{3}
 The value $1/2$, viewed as an element of $\mathbb{R}_{\geq 0}^\infty$, is not
@@ -48,6 +51,7 @@ equal to $\top$.
 
 \begin{lemma}[{Rademacher support in $[-1,1]$}]
 \lean{rademacherReal_mem_Icc}
+\label{rademacherReal_mem_Icc}
 \leanok
 \uses{rademacherReal}
 \difficulty{3}
@@ -57,6 +61,7 @@ $[-1, 1]$: $\mathrm{Rad}$-a.e.\ $y \in [-1, 1]$.
 
 \begin{lemma}[Integrability under a scaled Dirac measure]
 \lean{integrable_smul_dirac}
+\label{integrable_smul_dirac}
 \leanok
 \uses{rad_half_ne_top}
 \difficulty{1}
@@ -67,6 +72,7 @@ $\tfrac{1}{2}\,\delta_a$.
 
 \begin{lemma}[Every function is integrable under the Rademacher measure]
 \lean{integrable_rademacherReal}
+\label{integrable_rademacherReal}
 \leanok
 \uses{integrable_smul_dirac, rademacherReal}
 \difficulty{1}
@@ -76,6 +82,7 @@ respect to the Rademacher measure $\mathrm{Rad}$.
 
 \begin{lemma}[Mean of the Rademacher distribution is zero]
 \lean{integral_id_rademacherReal}
+\label{integral_id_rademacherReal}
 \leanok
 \uses{integrable_smul_dirac, rademacherReal}
 \difficulty{3}
@@ -85,6 +92,7 @@ $\int y \, d\mathrm{Rad}(y) = 0$.
 
 \begin{lemma}[Second moment of the Rademacher distribution is one]
 \lean{integral_sq_rademacherReal}
+\label{integral_sq_rademacherReal}
 \leanok
 \uses{integrable_smul_dirac, rademacherReal}
 \difficulty{3}
@@ -94,6 +102,7 @@ $\int y^2 \, d\mathrm{Rad}(y) = 1$.
 
 \begin{lemma}[Identity is sub-Gaussian with parameter $1$ under $\mathrm{Rad}$]
 \lean{hasSubgaussianMGF_id_rademacherReal}
+\label{hasSubgaussianMGF_id_rademacherReal}
 \leanok
 \uses{integral_id_rademacherReal, rademacherReal, rademacherReal_mem_Icc}
 \difficulty{4}
@@ -106,6 +115,7 @@ whose sub-Gaussian parameter is $\bigl((1-(-1))/2\bigr)^2 = 1$.
 
 \begin{definition}[Rademacher matrix sample space]
 \lean{RadΩ}
+\label{RadΩ}
 \leanok
 The sample space for the Rademacher matrix is $\mathrm{Fin}\,k \to
 \mathrm{Fin}\,d \to \mathbb{R}$, i.e.\ the type of $k \times d$ arrays of
@@ -114,6 +124,7 @@ real numbers, indexed by $(i,j) \in \mathrm{Fin}\,k \times \mathrm{Fin}\,d$.
 
 \begin{definition}[Joint Rademacher product measure]
 \lean{radJointMeasure}
+\label{radJointMeasure}
 \leanok
 \uses{RadΩ, rademacherReal}
 The joint measure on $\mathrm{Rad\Omega}(k,d)$ is the product measure
@@ -123,6 +134,7 @@ Rademacher.
 
 \begin{definition}[Rademacher matrix]
 \lean{radMatrix}
+\label{radMatrix}
 \leanok
 \uses{RadΩ}
 The Rademacher matrix $A : \mathrm{Rad\Omega}(k,d) \to \mathbb{R}^{k\times d}$
@@ -133,6 +145,7 @@ $1/\sqrt{k}$.
 
 \begin{lemma}[Measurability of the Rademacher matrix]
 \lean{measurable_radMatrix}
+\label{measurable_radMatrix}
 \leanok
 \uses{radMatrix}
 \difficulty{2}
@@ -142,6 +155,7 @@ respect to the product $\sigma$-algebra on $\mathrm{Rad\Omega}(k,d)$.
 
 \begin{lemma}[Row marginal of the joint measure]
 \lean{radJointMeasure_row_marginal}
+\label{radJointMeasure_row_marginal}
 \leanok
 \uses{RadΩ, radJointMeasure, rademacherReal}
 \difficulty{1}
@@ -152,6 +166,7 @@ $\bigotimes_{j \in \mathrm{Fin}\,d} \mathrm{Rad}$.
 
 \begin{lemma}[Entry marginal of the joint measure]
 \lean{radJointMeasure_entry_marginal}
+\label{radJointMeasure_entry_marginal}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_row_marginal, rademacherReal}
 \difficulty{4}
@@ -161,6 +176,7 @@ $\omega \mapsto \omega_{ij}$ equals $\mathrm{Rad}$.
 
 \begin{lemma}[Within-row entries are i.i.d.\ Rademacher]
 \lean{radJointMeasure_row_iid}
+\label{radJointMeasure_row_iid}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_entry_marginal, radJointMeasure_row_marginal, rademacherReal}
 \difficulty{4}
@@ -170,6 +186,7 @@ $j \mapsto \omega_{ij}$ are mutually independent under the joint measure.
 
 \begin{lemma}[Rows are mutually independent]
 \lean{radJointMeasure_rows_iid}
+\label{radJointMeasure_rows_iid}
 \leanok
 \uses{RadΩ, radJointMeasure}
 \difficulty{1}
@@ -180,6 +197,7 @@ independent under the joint measure.
 
 \begin{lemma}[Each entry is sub-Gaussian with parameter $1$]
 \lean{hasSubgaussianMGF_entry}
+\label{hasSubgaussianMGF_entry}
 \leanok
 \uses{RadΩ, hasSubgaussianMGF_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal}
 \difficulty{3}
@@ -191,6 +209,7 @@ joint product measure.
 
 \begin{lemma}[Scaled entry is sub-Gaussian with parameter $x_j^2/k$]
 \lean{hasSubgaussianMGF_scaled_entry}
+\label{hasSubgaussianMGF_scaled_entry}
 \leanok
 \uses{RadΩ, integral_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal, rademacherReal_mem_Icc}
 \difficulty{6}
@@ -201,6 +220,7 @@ $\mathrm{HasSubgaussianMGF}(\cdot, x_j^2/k, \mathrm{radJointMeasure})$.
 
 \begin{lemma}[Row projection is sub-Gaussian with parameter $\norm{x}^2/k$]
 \lean{hasSubgaussianMGF_row_proj}
+\label{hasSubgaussianMGF_row_proj}
 \leanok
 \uses{RadΩ, hasSubgaussianMGF_scaled_entry, radJointMeasure, radJointMeasure_row_iid, radMatrix}
 \difficulty{5}
@@ -213,6 +233,7 @@ bounds with independence of the within-row entries.
 
 \begin{lemma}[Variance of $\mathrm{id}$ under $\mathrm{Rad}$ is $1$]
 \lean{variance_id_rademacherReal}
+\label{variance_id_rademacherReal}
 \leanok
 \uses{integral_id_rademacherReal, integral_sq_rademacherReal, rademacherReal, rademacherReal_mem_Icc}
 \difficulty{4}
@@ -222,6 +243,7 @@ $\mathrm{Var}[\mathrm{id}; \mathrm{Rad}] = 1$.
 
 \begin{lemma}[Variance of a single entry is $1$]
 \lean{variance_entry}
+\label{variance_entry}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_entry_marginal, variance_id_rademacherReal}
 \difficulty{3}
@@ -232,6 +254,7 @@ $\mathrm{Var}[\omega \mapsto \omega_{ij}; \mathrm{radJointMeasure}] = 1$.
 
 \begin{lemma}[Mean of a single entry is $0$]
 \lean{integral_entry}
+\label{integral_entry}
 \leanok
 \uses{RadΩ, integral_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal}
 \difficulty{4}
@@ -241,6 +264,7 @@ $0$: $\int \omega_{ij} \, d\mathrm{radJointMeasure} = 0$.
 
 \begin{lemma}[Scaled entry belongs to $L^2$]
 \lean{memLp_scaled_entry}
+\label{memLp_scaled_entry}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal_mem_Icc}
 \difficulty{5}
@@ -250,6 +274,7 @@ $\omega \mapsto (x_j/\sqrt{k})\,\omega_{ij}$ belongs to $L^2(\mathrm{radJointMea
 
 \begin{lemma}[Variance of a scaled entry is $x_j^2/k$]
 \lean{variance_scaled_entry}
+\label{variance_scaled_entry}
 \leanok
 \uses{RadΩ, radJointMeasure, variance_entry}
 \difficulty{4}
@@ -260,6 +285,7 @@ $\mathrm{Var}[\omega \mapsto (x_j/\sqrt{k})\,\omega_{ij}; \mathrm{radJointMeasur
 
 \begin{lemma}[Variance of the row projection is $\norm{x}^2/k$]
 \lean{variance_row_proj}
+\label{variance_row_proj}
 \leanok
 \uses{RadΩ, memLp_scaled_entry, radJointMeasure, radJointMeasure_row_iid, radMatrix, variance_scaled_entry}
 \difficulty{5}
@@ -274,6 +300,7 @@ within-row independence.
 
 \begin{lemma}[Mean of the row projection is $0$]
 \lean{integral_row_proj}
+\label{integral_row_proj}
 \leanok
 \uses{RadΩ, integral_entry, memLp_scaled_entry, radJointMeasure, radMatrix}
 \difficulty{4}
@@ -283,6 +310,7 @@ $\int (A(\omega)\,x)_i \, d\mathrm{radJointMeasure} = 0$.
 
 \begin{lemma}[Second moment of the row projection equals $\norm{x}^2/k$]
 \lean{integral_sq_row_proj}
+\label{integral_sq_row_proj}
 \leanok
 \uses{RadΩ, hasSubgaussianMGF_row_proj, integral_row_proj, memLp_scaled_entry, radJointMeasure, radMatrix, variance_row_proj}
 \difficulty{5}
@@ -296,6 +324,7 @@ This follows from $\int Y^2 = \mathrm{Var}[Y] + (\int Y)^2 = \norm{x}^2/k + 0$.
 
 \begin{lemma}[Row projections are mutually independent]
 \lean{radMatrix_proj_indep}
+\label{radMatrix_proj_indep}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_rows_iid, radMatrix}
 \difficulty{3}
@@ -306,6 +335,7 @@ the joint Rademacher measure.
 
 \begin{lemma}[Row projections are measurable]
 \lean{radMatrix_proj_meas}
+\label{radMatrix_proj_meas}
 \leanok
 \uses{RadΩ, radMatrix}
 \difficulty{2}
@@ -315,6 +345,7 @@ $\omega \mapsto (A(\omega)\,x)_i$ is measurable.
 
 \begin{theorem}[JL concentration for the Rademacher matrix]
 \lean{jl_concentration_single_rademacher}
+\label{jl_concentration_single_rademacher}
 \leanok
 \uses{hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_concentration_single_subgaussian, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
 \difficulty{4}

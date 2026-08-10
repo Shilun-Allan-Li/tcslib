@@ -12,6 +12,7 @@ algebraic identities.
 
 \begin{definition}[$n$-bit Boolean input type]
 \lean{CommunicationComplexity.BoolInput}
+\label{CommunicationComplexity.BoolInput}
 \leanok
 $\texttt{BoolInput}(n)$ is the type of $n$-bit Boolean inputs, defined as the function
 type $\mathrm{Fin}\,n \to \mathrm{Bool}$.
@@ -19,6 +20,7 @@ type $\mathrm{Fin}\,n \to \mathrm{Bool}$.
 
 \begin{definition}[All-zero Boolean input]
 \lean{CommunicationComplexity.zeroInput}
+\label{CommunicationComplexity.zeroInput}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 $\texttt{zeroInput}(n) : \texttt{BoolInput}(n)$ is the constant $\mathrm{false}$ function,
@@ -27,6 +29,7 @@ i.e.\ the $n$-bit string consisting entirely of zeros.
 
 \begin{lemma}[Nonzero input has a true coordinate]
 \lean{CommunicationComplexity.exists_true_of_ne_zeroInput}
+\label{CommunicationComplexity.exists_true_of_ne_zeroInput}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.boolSign, CommunicationComplexity.zeroInput}
 \difficulty{4}
@@ -36,6 +39,7 @@ some index $i \in \mathrm{Fin}\,n$ such that $x\,i = \mathrm{true}$.
 
 \begin{definition}[Boolean sign]
 \lean{CommunicationComplexity.boolSign}
+\label{CommunicationComplexity.boolSign}
 \leanok
 $\texttt{boolSign} : \mathrm{Bool} \to \mathbb{R}$ assigns the real value $1$ to
 $\mathrm{false}$ and $-1$ to $\mathrm{true}$, embedding Boolean values into the
@@ -44,6 +48,7 @@ multiplicative group $\{\pm 1\} \subset \mathbb{R}$.
 
 \begin{lemma}[Boolean sign converts xor to multiplication]
 \lean{CommunicationComplexity.boolSign_xor}
+\label{CommunicationComplexity.boolSign_xor}
 \leanok
 \uses{CommunicationComplexity.boolSign}
 \difficulty{2}
@@ -57,6 +62,7 @@ $(\{\pm 1\}, \cdot)$.
 
 \begin{lemma}[Boolean sign of a finite sum]
 \lean{CommunicationComplexity.boolSign_sum}
+\label{CommunicationComplexity.boolSign_sum}
 \leanok
 \uses{CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_xor}
 \difficulty{4}
@@ -70,6 +76,7 @@ $f : \alpha \to \mathrm{Bool}$,
 
 \begin{lemma}[Product of two Boolean signs]
 \lean{CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator}
+\label{CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator}
 \leanok
 \uses{CommunicationComplexity.boolSign}
 \difficulty{2}
@@ -84,6 +91,7 @@ $-1$ when they disagree.
 
 \begin{definition}[Single-coordinate flip]
 \lean{CommunicationComplexity.flipAt}
+\label{CommunicationComplexity.flipAt}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 Given $i : \mathrm{Fin}\,n$ and $x : \texttt{BoolInput}(n)$, $\texttt{flipAt}\,i\,x$ is
@@ -93,6 +101,7 @@ other coordinates unchanged.
 
 \begin{lemma}[Flip applies at the flipped coordinate]
 \lean{CommunicationComplexity.flipAt_apply_same}
+\label{CommunicationComplexity.flipAt_apply_same}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt}
 \difficulty{1}
@@ -102,6 +111,7 @@ $(\texttt{flipAt}\,i\,x)\,i = \neg(x\,i)$.
 
 \begin{lemma}[Flip leaves other coordinates unchanged]
 \lean{CommunicationComplexity.flipAt_apply_ne}
+\label{CommunicationComplexity.flipAt_apply_ne}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt}
 \difficulty{1}
@@ -111,6 +121,7 @@ $(\texttt{flipAt}\,i\,x)\,j = x\,j$.
 
 \begin{lemma}[Flip is an involution]
 \lean{CommunicationComplexity.flipAt_flipAt}
+\label{CommunicationComplexity.flipAt_flipAt}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt}
 \difficulty{4}
@@ -121,6 +132,7 @@ That is, applying $\texttt{flipAt}\,i$ twice recovers the original input.
 
 \begin{lemma}[Flip is bijective]
 \lean{CommunicationComplexity.flipAt_bijective}
+\label{CommunicationComplexity.flipAt_bijective}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt, CommunicationComplexity.flipAt_flipAt}
 \difficulty{3}

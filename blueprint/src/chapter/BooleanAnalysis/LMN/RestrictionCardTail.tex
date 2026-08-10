@@ -13,6 +13,7 @@ together with the complement rule for Bernoulli-restriction probabilities.
 
 \begin{lemma}[Subset-of-free-variables indicator factors per coordinate]
 \lean{RestrictionFourier.indicator_subset_eq_prod}
+\label{RestrictionFourier.indicator_subset_eq_prod}
 \leanok
 \uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 For a set $T \subseteq \{0,\dots,n-1\}$ and a restriction $\rho$, the indicator of the event
@@ -22,6 +23,7 @@ that is the indicator of $\rho(i) = \star$ when $i \in T$, and $1$ otherwise.
 
 \begin{theorem}[{Free-set marginal $\Pr[T \subseteq J] = p^{\abs{T}}$}]
 \lean{RestrictionFourier.bernoulliRestrProb_subset_freeVars}
+\label{RestrictionFourier.bernoulliRestrProb_subset_freeVars}
 \leanok
 \uses{LMN.varWeight, RestrictionFourier.indicator_subset_eq_prod, RestrictionFourier.sum_bernoulli_prod, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
 Under a Bernoulli($p$)-random restriction with free-coordinate set $J$, the probability that a
@@ -34,6 +36,7 @@ This is the first-moment half of O'Donnell Proposition 4.17.
 
 \begin{lemma}[Free-coordinate count as a sum of indicators]
 \lean{RestrictionFourier.card_inter_eq_sum}
+\label{RestrictionFourier.card_inter_eq_sum}
 \leanok
 \uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 For a set $U$ and a restriction $\rho$ with free-coordinate set $J$, the real number
@@ -42,6 +45,7 @@ $\abs{U \cap J}$ equals $\sum_{i \in U} \mathbf{1}[\rho(i) = \star]$.
 
 \begin{lemma}[Expectation of one free-coordinate indicator]
 \lean{RestrictionFourier.expectation_free_indicator}
+\label{RestrictionFourier.expectation_free_indicator}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
 For each coordinate $i$, the Bernoulli($p$)-weighted sum over all restrictions of the indicator
@@ -50,6 +54,7 @@ that $i$ is free equals $p$; that is, $\E[\mathbf{1}[i \in J]] = p$.
 
 \begin{lemma}[Expectation of a product of two free-coordinate indicators]
 \lean{RestrictionFourier.expectation_free_indicator_pair}
+\label{RestrictionFourier.expectation_free_indicator_pair}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
 For distinct coordinates $i \ne j$, the Bernoulli($p$)-weighted sum over all restrictions of the
@@ -59,6 +64,7 @@ $\E[\mathbf{1}[i \in J]\,\mathbf{1}[j \in J]] = p^2$.
 
 \begin{lemma}[First moment of the free-coordinate count]
 \lean{RestrictionFourier.expectation_card_inter}
+\label{RestrictionFourier.expectation_card_inter}
 \leanok
 \uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
@@ -69,6 +75,7 @@ Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 
 \begin{lemma}[Second moment of the free-coordinate count]
 \lean{RestrictionFourier.expectation_card_inter_sq}
+\label{RestrictionFourier.expectation_card_inter_sq}
 \leanok
 \uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, RestrictionFourier.expectation_free_indicator_pair, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
@@ -79,6 +86,7 @@ Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 
 \begin{lemma}[Variance of the free-coordinate count]
 \lean{RestrictionFourier.variance_card_inter}
+\label{RestrictionFourier.variance_card_inter}
 \leanok
 \uses{RestrictionFourier.expectation_card_inter, RestrictionFourier.expectation_card_inter_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_sum_one}
 For $0 \le p \le 1$ and every set $U$, the Bernoulli($p$)-weighted mean squared deviation of
@@ -90,6 +98,7 @@ $\abs{U \cap J}$ from $p\abs{U}$ is
 
 \begin{theorem}[Chebyshev lower tail for the free-coordinate count]
 \lean{RestrictionFourier.bernoulliRestrProb_card_inter_lt}
+\label{RestrictionFourier.bernoulliRestrProb_card_inter_lt}
 \leanok
 \uses{RestrictionFourier.variance_card_inter, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 Let $0 \le p \le 1$, let $U$ be a set of coordinates and let $k \ge 1$ satisfy
@@ -103,6 +112,7 @@ Lemma 4.21, with the textbook bound $e^{-2k/3}$ replaced by the elementary $3/(4
 
 \begin{lemma}[Complement rule for Bernoulli-restriction probability]
 \lean{RestrictionFourier.bernoulliRestrProb_not}
+\label{RestrictionFourier.bernoulliRestrProb_not}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one}
 For $0 \le p \le 1$ and any decidable event $E$ on restrictions,
@@ -111,6 +121,7 @@ $\Pr[\neg E] = 1 - \Pr[E]$ under the Bernoulli($p$)-restriction measure.
 
 \begin{theorem}[Lower bound on the probability of many free coordinates]
 \lean{RestrictionFourier.bernoulliRestrProb_card_inter_ge}
+\label{RestrictionFourier.bernoulliRestrProb_card_inter_ge}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_card_inter_lt, RestrictionFourier.bernoulliRestrProb_not, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
 Let $0 \le p \le 1$, let $U$ be a set of coordinates and let $k \ge 1$ satisfy

@@ -12,6 +12,7 @@ a weak bound with constant $\eta^2/2$ and a tight bound with constant $\eta^2/8$
 
 \begin{lemma}[$x(1-x) \le 1/4$]
 \lean{mul_one_sub_le_quarter}
+\label{mul_one_sub_le_quarter}
 \leanok
 \difficulty{2}
 For any $x \in [0,1]$, the product $x(1-x) \le \tfrac{1}{4}$.
@@ -19,6 +20,7 @@ For any $x \in [0,1]$, the product $x(1-x) \le \tfrac{1}{4}$.
 
 \begin{theorem}[Convexity bound for the exponential]
 \lean{exp_convexity_bound'}
+\label{exp_convexity_bound'}
 \leanok
 \difficulty{4}
 For any $\eta, x \in \bbr$ with $x \in [0,1]$, convexity of $\exp$ gives
@@ -29,6 +31,7 @@ For any $\eta, x \in \bbr$ with $x \in [0,1]$, convexity of $\exp$ gives
 
 \begin{theorem}[Weighted exponential sum vs.\ affine upper bound]
 \lean{weighted_exp_le_affine}
+\label{weighted_exp_le_affine}
 \leanok
 \uses{exp_convexity_bound'}
 \difficulty{4}
@@ -44,6 +47,7 @@ for all $i$.  For any $\eta \in \bbr$,
 
 \begin{theorem}[$\ln(1+u) \le u$]
 \lean{log_one_add_le}
+\label{log_one_add_le}
 \leanok
 \difficulty{2}
 For any $u > -1$, $\ln(1+u) \le u$.
@@ -51,6 +55,7 @@ For any $u > -1$, $\ln(1+u) \le u$.
 
 \begin{theorem}[$\eta - 1 + e^{-\eta} \le \eta^2/2$]
 \lean{eta_exp_bound}
+\label{eta_exp_bound}
 \leanok
 \difficulty{6}
 For any $\eta \ge 0$,
@@ -61,6 +66,7 @@ For any $\eta \ge 0$,
 
 \begin{theorem}[Weak Hoeffding log-MGF bound]
 \lean{hoeffding_log_mgf_weak}
+\label{hoeffding_log_mgf_weak}
 \leanok
 \uses{eta_exp_bound}
 \difficulty{5}
@@ -75,6 +81,7 @@ $i$.  For $\eta > 0$, setting $L = \sum_i p_i \ell_i$,
 
 \begin{theorem}[Bernoulli MGF bound (Hoeffding's lemma)]
 \lean{bernoulli_mgf_bound}
+\label{bernoulli_mgf_bound}
 \leanok
 \difficulty{7}
 For $L \in [0,1]$ and any $\eta \in \bbr$,
@@ -90,6 +97,7 @@ $\varphi(0) = 0$ and $\varphi'(0) = 0$.
 
 \begin{theorem}[Tight Hoeffding log-MGF bound]
 \lean{hoeffding_log_mgf_tight}
+\label{hoeffding_log_mgf_tight}
 \leanok
 \uses{bernoulli_mgf_bound, weighted_exp_le_affine}
 \difficulty{5}

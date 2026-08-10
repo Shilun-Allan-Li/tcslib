@@ -15,6 +15,7 @@ bijective reindexing of the randomness).
 
 \begin{definition}[Schnorr transcript]
 \lean{Schnorr.Transcript}
+\label{Schnorr.Transcript}
 \leanok
 A Schnorr transcript is a triple $(a, c, s) \in G \times \mathbb{Z}_q \times
 \mathbb{Z}_q$, where $a$ is the prover's commitment (an element of the group
@@ -24,6 +25,7 @@ is the prover's response.
 
 \begin{definition}[Prover commitment]
 \lean{Schnorr.commit}
+\label{Schnorr.commit}
 \leanok
 Given randomness $r \in \mathbb{Z}_q$ and a generator $g \in G$, the commitment
 is $a := g^{r}$, where the exponent is taken via the canonical lift
@@ -32,6 +34,7 @@ $r.\mathrm{val} \in \mathbb{N}$.
 
 \begin{definition}[Prover response]
 \lean{Schnorr.respond}
+\label{Schnorr.respond}
 \leanok
 Given witness $w$, randomness $r$, and challenge $c$ in $\mathbb{Z}_q$, the
 response is $s := r + c \cdot w \in \mathbb{Z}_q$.
@@ -39,6 +42,7 @@ response is $s := r + c \cdot w \in \mathbb{Z}_q$.
 
 \begin{definition}[Verifier predicate]
 \lean{Schnorr.Verify}
+\label{Schnorr.Verify}
 \leanok
 The verifier accepts a transcript $(a, c, s)$ with respect to public key
 $\mathit{pk} \in G$ when $g^s = a \cdot \mathit{pk}^{c}$, where the
@@ -47,6 +51,7 @@ exponents are taken via the canonical lifts to $\mathbb{N}$.
 
 \begin{definition}[Honest transcript]
 \lean{Schnorr.honest}
+\label{Schnorr.honest}
 \leanok
 \uses{Schnorr.Transcript, Schnorr.commit, Schnorr.respond}
 The honest prover's full transcript for witness $w$, randomness $r$, and
@@ -56,6 +61,7 @@ i.e.\ $(g^r,\, c,\, r + c \cdot w)$.
 
 \begin{definition}[Simulator transcript]
 \lean{Schnorr.simulate}
+\label{Schnorr.simulate}
 \leanok
 \uses{Schnorr.Transcript}
 The zero-knowledge simulator, given public key $\mathit{pk}$, challenge $c$,
@@ -67,6 +73,7 @@ witness.
 
 \begin{definition}[Witness extractor]
 \lean{Schnorr.extract}
+\label{Schnorr.extract}
 \leanok
 Given two challenges $c_1, c_2$ and corresponding responses $s_1, s_2$ in
 $\mathbb{Z}_q$, the extractor returns
@@ -77,6 +84,7 @@ $\mathbb{Z}_q$, the extractor returns
 
 \begin{theorem}[Completeness]
 \lean{Schnorr.schnorr_completeness}
+\label{Schnorr.schnorr_completeness}
 \leanok
 \uses{Schnorr.Verify, Schnorr.commit, Schnorr.respond}
 \difficulty{4}
@@ -90,6 +98,7 @@ equation with respect to the public key $\mathit{pk} = g^w$:
 
 \begin{theorem}[Special soundness]
 \lean{Schnorr.schnorr_soundness}
+\label{Schnorr.schnorr_soundness}
 \leanok
 \uses{Schnorr.Verify, Schnorr.extract}
 \difficulty{5}
@@ -104,6 +113,7 @@ $\mathit{pk} = g^w$.  Then the extractor recovers the witness:
 
 \begin{definition}[Randomness reindexing]
 \lean{Schnorr.reindex}
+\label{Schnorr.reindex}
 \leanok
 For fixed $w, c \in \mathbb{Z}_q$, define the bijection
 $\sigma_{w,c} : \mathbb{Z}_q \xrightarrow{\;\sim\;} \mathbb{Z}_q$ by
@@ -112,6 +122,7 @@ $r \mapsto r + c \cdot w$, with inverse $s \mapsto s - c \cdot w$.
 
 \begin{theorem}[Honest-verifier zero knowledge]
 \lean{Schnorr.schnorr_hvzk}
+\label{Schnorr.schnorr_hvzk}
 \leanok
 \uses{Schnorr.commit, Schnorr.honest, Schnorr.reindex, Schnorr.respond, Schnorr.schnorr_completeness, Schnorr.simulate}
 \difficulty{3}

@@ -15,6 +15,7 @@ finite-intersection property) needed for the infinite-dimensional direction.
 
 \begin{definition}[Arbitrary mixed strategy]
 \lean{OnlineLearning.arbitraryMixedStrategy}
+\label{OnlineLearning.arbitraryMixedStrategy}
 \leanok
 \uses{MixedStrategy}
 Given $n \geq 1$, \texttt{OnlineLearning.arbitraryMixedStrategy} is a concrete
@@ -25,6 +26,7 @@ of mixed strategies is nonempty.
 
 \begin{definition}[Lower value of a finite game]
 \lean{OnlineLearning.finiteLowerValue}
+\label{OnlineLearning.finiteLowerValue}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
 For a finite zero-sum game $G$ with $M$ row actions and $N$ column actions,
@@ -38,6 +40,7 @@ minimises over pure responses.
 
 \begin{definition}[Upper value of a finite game]
 \lean{OnlineLearning.finiteUpperValue}
+\label{OnlineLearning.finiteUpperValue}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
 The \emph{upper value} of $G$ is
@@ -50,6 +53,7 @@ maximises over pure responses.
 
 \begin{lemma}[Payoff vs.\ pure column is nonnegative]
 \lean{OnlineLearning.payoffVsPure_nonneg}
+\label{OnlineLearning.payoffVsPure_nonneg}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
 \difficulty{2}
@@ -60,6 +64,7 @@ of $G$ is nonnegative and the mixing weights are nonnegative.
 
 \begin{lemma}[Payoff vs.\ pure column is at most one]
 \lean{OnlineLearning.payoffVsPure_le_one}
+\label{OnlineLearning.payoffVsPure_le_one}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
 \difficulty{3}
@@ -70,6 +75,7 @@ of $G$ is at most one and the mixing weights sum to one.
 
 \begin{lemma}[Pure row payoff vs.\ mixed column is nonnegative]
 \lean{OnlineLearning.pureVsPayoff_nonneg}
+\label{OnlineLearning.pureVsPayoff_nonneg}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
 \difficulty{2}
@@ -79,6 +85,7 @@ $\mathrm{pureVsPayoff}(G,i,q) \geq 0$.
 
 \begin{lemma}[Pure row payoff vs.\ mixed column is at most one]
 \lean{OnlineLearning.pureVsPayoff_le_one}
+\label{OnlineLearning.pureVsPayoff_le_one}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
 \difficulty{3}
@@ -88,6 +95,7 @@ $\mathrm{pureVsPayoff}(G,i,q) \leq 1$.
 
 \begin{lemma}[Row-guaranteed payoffs bounded above]
 \lean{OnlineLearning.finiteLowerValue_bddAbove}
+\label{OnlineLearning.finiteLowerValue_bddAbove}
 \leanok
 \uses{MixedStrategy, OnlineLearning.payoffVsPure_le_one, OnlineLearning.payoffVsPure_nonneg, ZeroSumGame, payoffVsPure}
 \difficulty{4}
@@ -98,6 +106,7 @@ is bounded above by~$1$.
 
 \begin{lemma}[Column-induced upper values bounded below]
 \lean{OnlineLearning.finiteUpperValue_bddBelow}
+\label{OnlineLearning.finiteUpperValue_bddBelow}
 \leanok
 \uses{MixedStrategy, OnlineLearning.pureVsPayoff_le_one, OnlineLearning.pureVsPayoff_nonneg, ZeroSumGame, pureVsPayoff}
 \difficulty{4}
@@ -108,6 +117,7 @@ is bounded below by~$0$.
 
 \begin{lemma}[Weak duality for finite games]
 \lean{OnlineLearning.finiteLowerValue_le_upperValue}
+\label{OnlineLearning.finiteLowerValue_le_upperValue}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, ZeroSumGame, weak_duality}
 \difficulty{3}
@@ -117,6 +127,7 @@ $v^-(G) \leq v^+(G)$.
 
 \begin{theorem}[Exact finite minimax value]
 \lean{OnlineLearning.finite_minimax_value}
+\label{OnlineLearning.finite_minimax_value}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteLowerValue_bddAbove, OnlineLearning.finiteLowerValue_le_upperValue, OnlineLearning.finiteUpperValue, OnlineLearning.finiteUpperValue_bddBelow, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, approx_minimax, payoffVsPure, pureVsPayoff}
 \difficulty{5}
@@ -131,6 +142,7 @@ algorithm, then passes to the limit in~$\varepsilon$.
 
 \begin{definition}[Convex-compact minimax statement]
 \lean{OnlineLearning.ConvexCompactMinimaxStatement}
+\label{OnlineLearning.ConvexCompactMinimaxStatement}
 \leanok
 For sets $X, Y \subseteq \bbr$ and a payoff function $f : \bbr \to \bbr \to \bbr$,
 \texttt{OnlineLearning.ConvexCompactMinimaxStatement} is the proposition
@@ -145,6 +157,7 @@ to it while the proof is built up incrementally.
 
 \begin{definition}[Convex-compact minimax hypotheses]
 \lean{OnlineLearning.ConvexCompactMinimaxHypotheses}
+\label{OnlineLearning.ConvexCompactMinimaxHypotheses}
 \leanok
 A structure bundling the assumptions of Cesa-Bianchi--Lugosi Theorem~7.1
 for $f : \bbr \to \bbr \to \bbr$ on sets $X, Y \subseteq \bbr$: both sets
@@ -155,6 +168,7 @@ $Y$ for every $x \in X$, and $f$ is bounded above and below on $X \times Y$.
 
 \begin{lemma}[Mixed-strategy convex combination stays in convex set]
 \lean{OnlineLearning.mixed_sum_mem_convex}
+\label{OnlineLearning.mixed_sum_mem_convex}
 \leanok
 \uses{MixedStrategy}
 \difficulty{2}
@@ -165,6 +179,7 @@ $\sum_{i} p_i\, x_i \in S$.
 
 \begin{lemma}[Jensen's inequality for mixed-strategy combinations (convex)]
 \lean{OnlineLearning.convexOn_mixed_sum_le}
+\label{OnlineLearning.convexOn_mixed_sum_le}
 \leanok
 \uses{MixedStrategy}
 \difficulty{2}
@@ -179,6 +194,7 @@ then
 
 \begin{lemma}[Jensen's inequality for mixed-strategy combinations (concave)]
 \lean{OnlineLearning.concaveOn_le_mixed_sum}
+\label{OnlineLearning.concaveOn_le_mixed_sum}
 \leanok
 \uses{MixedStrategy}
 \difficulty{2}
@@ -193,6 +209,7 @@ then
 
 \begin{definition}[Sampled finite game]
 \lean{OnlineLearning.sampledGame}
+\label{OnlineLearning.sampledGame}
 \leanok
 \uses{ZeroSumGame}
 Given a payoff function $f : \bbr \to \bbr \to \bbr$ with values in $[0,1]$,
@@ -203,6 +220,7 @@ whose $(i,j)$ entry is $f(x_i, y_j)$.
 
 \begin{theorem}[Finite minimax for sampled games]
 \lean{OnlineLearning.finite_sampled_minimax_value}
+\label{OnlineLearning.finite_sampled_minimax_value}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.sampledGame}
 \difficulty{1}
@@ -212,6 +230,7 @@ the sampled game satisfies $v^-(\mathrm{sampledGame}) = v^+(\mathrm{sampledGame}
 
 \begin{lemma}[Convexity gives lower bound on sampled payoff vs.\ pure column]
 \lean{OnlineLearning.sampled_payoffVsPure_ge_convex_combo}
+\label{OnlineLearning.sampled_payoffVsPure_ge_convex_combo}
 \leanok
 \uses{MixedStrategy, OnlineLearning.convexOn_mixed_sum_le, OnlineLearning.sampledGame, payoffVsPure}
 \difficulty{2}
@@ -228,6 +247,7 @@ is at most the finite-game expected payoff.
 
 \begin{lemma}[Concavity gives upper bound on sampled payoff vs.\ mixed column]
 \lean{OnlineLearning.sampled_pureVsPayoff_le_concave_combo}
+\label{OnlineLearning.sampled_pureVsPayoff_le_concave_combo}
 \leanok
 \uses{MixedStrategy, OnlineLearning.concaveOn_le_mixed_sum, OnlineLearning.sampledGame, pureVsPayoff}
 \difficulty{2}
@@ -242,6 +262,7 @@ column strategy $q \in \Delta_N$,
 
 \begin{lemma}[Weak minimax inequality for convex-compact games]
 \lean{OnlineLearning.weak_convex_compact_minimax}
+\label{OnlineLearning.weak_convex_compact_minimax}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses}
 \difficulty{5}
@@ -258,6 +279,7 @@ is preserved when taking $\sup$ then $\inf$.
 
 \begin{definition}[Minimax sublevel set]
 \lean{OnlineLearning.minimaxSublevel}
+\label{OnlineLearning.minimaxSublevel}
 \leanok
 For a set $X \subseteq \bbr$, a payoff function $f$, a column point $y$, and
 a threshold $c \in \bbr$, the \emph{minimax sublevel set} is
@@ -268,6 +290,7 @@ a threshold $c \in \bbr$, the \emph{minimax sublevel set} is
 
 \begin{lemma}[Sublevel set contained in row set]
 \lean{OnlineLearning.minimaxSublevel_subset}
+\label{OnlineLearning.minimaxSublevel_subset}
 \leanok
 \uses{OnlineLearning.minimaxSublevel}
 \difficulty{1}
@@ -276,6 +299,7 @@ $\mathrm{sublevel}(X,f,y,c) \subseteq X$ for all $f$, $y$, $c$.
 
 \begin{lemma}[Sublevel set is closed]
 \lean{OnlineLearning.minimaxSublevel_isClosed}
+\label{OnlineLearning.minimaxSublevel_isClosed}
 \leanok
 \uses{OnlineLearning.minimaxSublevel}
 \difficulty{2}
@@ -285,6 +309,7 @@ $\mathrm{sublevel}(X,f,y,c)$ is closed.
 
 \begin{lemma}[Sublevel set is compact]
 \lean{OnlineLearning.minimaxSublevel_isCompact}
+\label{OnlineLearning.minimaxSublevel_isCompact}
 \leanok
 \uses{OnlineLearning.minimaxSublevel, OnlineLearning.minimaxSublevel_isClosed, OnlineLearning.minimaxSublevel_subset}
 \difficulty{2}
@@ -294,6 +319,7 @@ $\mathrm{sublevel}(X,f,y,c)$ is compact (as a closed subset of a compact set).
 
 \begin{lemma}[Finite-intersection gives global row minimiser]
 \lean{OnlineLearning.exists_forall_le_of_finite_sublevel_intersections}
+\label{OnlineLearning.exists_forall_le_of_finite_sublevel_intersections}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.minimaxSublevel, OnlineLearning.minimaxSublevel_isClosed}
 \difficulty{4}

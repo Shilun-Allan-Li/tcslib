@@ -17,6 +17,7 @@ LMN pipeline.
 
 \begin{definition}[Size of a decision tree]
 \lean{DecisionTree.size}
+\label{DecisionTree.size}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b001}
 \uses{DecisionTree}
@@ -26,6 +27,7 @@ branch has size equal to the sum of the sizes of its two subtrees.
 
 \begin{definition}[Sign-encoded tree function]
 \lean{DecisionTree.signEval}
+\label{DecisionTree.signEval}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p005-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.eval}
@@ -36,6 +38,7 @@ $\mathrm{true} \mapsto -1$.
 
 \begin{definition}[Recursive Fourier coefficients of a tree]
 \lean{DecisionTree.coeffs}
+\label{DecisionTree.coeffs}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree}
 The coefficient function $\mathrm{coeffs}\,T : \mathcal{P}(\mathrm{Fin}\,n) \to \bbr$
@@ -51,6 +54,7 @@ variable $i$ with subtrees $\mathrm{lo}, \mathrm{hi}$ assigns to $S$ the value
 
 \begin{lemma}[Symmetric difference with a singleton is an involution]
 \lean{DecisionTree.symmDiff_singleton_invol}
+\label{DecisionTree.symmDiff_singleton_invol}
 \leanok
 For a fixed $i$, the map $S \mapsto S \triangle \{i\}$ on subsets of
 $\mathrm{Fin}\,n$ is involutive.
@@ -58,6 +62,7 @@ $\mathrm{Fin}\,n$ is involutive.
 
 \begin{lemma}[Reindexing a frequency sum by $S \mapsto S \triangle \{i\}$]
 \lean{DecisionTree.sum_symmDiff_reindex}
+\label{DecisionTree.sum_symmDiff_reindex}
 \leanok
 \uses{DecisionTree.symmDiff_singleton_invol}
 For any $g : \mathcal{P}(\mathrm{Fin}\,n) \to \bbr$ and any $i$,
@@ -69,6 +74,7 @@ the sums ranging over all subsets $S$ of $\mathrm{Fin}\,n$.
 
 \begin{lemma}[Character of a singleton-shifted frequency]
 \lean{DecisionTree.chiS_symmDiff_singleton}
+\label{DecisionTree.chiS_symmDiff_singleton}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.chiS_mul_chiS, BooleanAnalysis.chiS_singleton}
 For all $S$, $i$, and $x$ in the Boolean cube,
@@ -77,6 +83,7 @@ $\chi_{S \triangle \{i\}}(x) = \chi_S(x)\cdot \mathrm{boolToSign}(x_i)$.
 
 \begin{lemma}[Cardinality under singleton symmetric difference]
 \lean{DecisionTree.card_symmDiff_singleton}
+\label{DecisionTree.card_symmDiff_singleton}
 \leanok
 For all $S$ and $i$, $\abs{S} - 1 \le \abs{S \triangle \{i\}}$, the subtraction being
 truncated subtraction on $\bbn$.
@@ -84,6 +91,7 @@ truncated subtraction on $\bbn$.
 
 \begin{lemma}[Character expansion of the tree function]
 \lean{DecisionTree.signEval_eq_sum_coeffs}
+\label{DecisionTree.signEval_eq_sum_coeffs}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.chiS_empty, DecisionTree, DecisionTree.chiS_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.eval, DecisionTree.signEval, DecisionTree.sum_symmDiff_reindex}
 For every decision tree $T$ and every point $x$ of the Boolean cube,
@@ -94,6 +102,7 @@ T.\mathrm{signEval}(x) = \sum_{S} \mathrm{coeffs}\,T\,S \cdot \chi_S(x).
 
 \begin{lemma}[Coefficients vanish above the depth]
 \lean{DecisionTree.coeffs_eq_zero_of_depth_lt}
+\label{DecisionTree.coeffs_eq_zero_of_depth_lt}
 \leanok
 \uses{DecisionTree, DecisionTree.card_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.depth}
 If $T.\mathrm{depth} < \abs{S}$, then $\mathrm{coeffs}\,T\,S = 0$: frequencies of
@@ -102,6 +111,7 @@ cardinality exceeding the tree depth carry no weight.
 
 \begin{lemma}[Coefficient $1$-norm bounded by tree size]
 \lean{DecisionTree.sum_abs_coeffs_le}
+\label{DecisionTree.sum_abs_coeffs_le}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.size, DecisionTree.sum_symmDiff_reindex}
 For every decision tree $T$,
@@ -113,6 +123,7 @@ i.e.\ the spectral $1$-norm of the coefficients is at most the number of leaves.
 
 \begin{lemma}[Granularity, multiplicative form]
 \lean{DecisionTree.coeffs_mul_two_pow_int}
+\label{DecisionTree.coeffs_mul_two_pow_int}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.depth}
 If $T.\mathrm{depth} \le k$, then for every $S$ there is an integer $m$ with
@@ -121,6 +132,7 @@ $\mathrm{coeffs}\,T\,S \cdot 2^k = m$.
 
 \begin{lemma}[Granularity of the coefficients]
 \lean{DecisionTree.coeffs_granular}
+\label{DecisionTree.coeffs_granular}
 \leanok
 \uses{DecisionTree, DecisionTree.coeffs, DecisionTree.coeffs_mul_two_pow_int, DecisionTree.depth}
 For every $S$ there is an integer $m$ with
@@ -130,6 +142,7 @@ integer multiple of $2^{-T.\mathrm{depth}}$.
 
 \begin{lemma}[Size bounded by $2^{\mathrm{depth}}$]
 \lean{DecisionTree.size_le_two_pow_depth}
+\label{DecisionTree.size_le_two_pow_depth}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.size}
 Every decision tree satisfies $T.\mathrm{size} \le 2^{T.\mathrm{depth}}$: a tree of depth
@@ -138,6 +151,7 @@ $k$ has at most $2^k$ leaves.
 
 \begin{lemma}[Uniqueness of the character expansion]
 \lean{DecisionTree.fourierCoeff_sum_chiS}
+\label{DecisionTree.fourierCoeff_sum_chiS}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 For any coefficient family $c$ and any frequency $T$, the Fourier coefficient of the
@@ -146,6 +160,7 @@ explicit combination $x \mapsto \sum_{S} c(S)\,\chi_S(x)$ at $T$ equals $c(T)$.
 
 \begin{theorem}[Fourier coefficients of a tree function]
 \lean{DecisionTree.fourierCoeff_signEval}
+\label{DecisionTree.fourierCoeff_signEval}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs, DecisionTree.fourierCoeff_sum_chiS, DecisionTree.signEval, DecisionTree.signEval_eq_sum_coeffs}
 For every decision tree $T$ and every $S$, the Fourier coefficient
@@ -155,6 +170,7 @@ coefficients are exactly the Fourier coefficients.
 
 \begin{theorem}[Degree bounded by depth (Proposition 3.16)]
 \lean{DecisionTree.degree_le_depth}
+\label{DecisionTree.degree_le_depth}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.has_degree_at_most, DecisionTree, DecisionTree.coeffs_eq_zero_of_depth_lt, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
@@ -164,6 +180,7 @@ $T.\mathrm{signEval}$ has degree at most $T.\mathrm{depth}$.
 
 \begin{theorem}[Spectral $1$-norm bounded by size (Proposition 3.16)]
 \lean{DecisionTree.spectral_one_norm_le}
+\label{DecisionTree.spectral_one_norm_le}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval, DecisionTree.size, DecisionTree.sum_abs_coeffs_le}
@@ -176,6 +193,7 @@ i.e.\ $\norm{\widehat{f}}_1 \le s$ for the tree size $s$.
 
 \begin{theorem}[Granularity of the Fourier coefficients (Proposition 3.16)]
 \lean{DecisionTree.fourierCoeff_granular}
+\label{DecisionTree.fourierCoeff_granular}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs_granular, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
@@ -186,6 +204,7 @@ an integer multiple of $2^{-k}$, where $k$ is the tree depth.
 
 \begin{theorem}[Sparsity bound (Proposition 3.16)]
 \lean{DecisionTree.sparsity_le}
+\label{DecisionTree.sparsity_le}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.fourierCoeff_granular, DecisionTree.signEval, DecisionTree.size, DecisionTree.spectral_one_norm_le}
@@ -196,6 +215,7 @@ $T.\mathrm{size}\cdot 2^{T.\mathrm{depth}}$.
 
 \begin{theorem}[Sparsity, absolute form]
 \lean{DecisionTree.sparsity_le_four_pow}
+\label{DecisionTree.sparsity_le_four_pow}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.signEval, DecisionTree.size, DecisionTree.size_le_two_pow_depth, DecisionTree.sparsity_le}
@@ -205,6 +225,7 @@ $4^{T.\mathrm{depth}}$.
 
 \begin{lemma}[Specification of the minimum decision-tree depth]
 \lean{DecisionTree.exists_dtree_of_dtDepth}
+\label{DecisionTree.exists_dtree_of_dtDepth}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b001}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
@@ -215,6 +236,7 @@ $T.\mathrm{eval}\,x = f(x)$ for all $x$.
 
 \begin{theorem}[Degree bounded by decision-tree depth (Proposition 3.16)]
 \lean{DecisionTree.degree_le_dtDepth}
+\label{DecisionTree.degree_le_dtDepth}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.boolToSign, BooleanAnalysis.has_degree_at_most, DecisionTree.degree_le_depth, DecisionTree.exists_dtree_of_dtDepth, DecisionTree.signEval, dtDepth}

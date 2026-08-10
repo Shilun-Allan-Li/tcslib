@@ -15,6 +15,7 @@ the circuit at any fixed input except on a small fraction of seeds.
 
 \begin{definition}[Boolean input cast to the prime field]
 \lean{ACP.boolInput}
+\label{ACP.boolInput}
 \leanok
 For a Boolean input $x : \mathrm{Fin}\,n \to \mathrm{Fin}\,2$, the map
 $\mathrm{boolInput}_p(x)$ sends each coordinate $i$ to the image of the natural number $x_i$ in
@@ -23,6 +24,7 @@ $\bbz/p$.
 
 \begin{definition}[Field value of a bit]
 \lean{ACP.boolVal}
+\label{ACP.boolVal}
 \leanok
 The value in $\bbz/p$ represented by a bit $b : \mathrm{Fin}\,2$, namely the image of the natural
 number $b$ under the canonical map $\N \to \bbz/p$.
@@ -30,6 +32,7 @@ number $b$ under the canonical map $\N \to \bbz/p$.
 
 \begin{lemma}[Bit values are $0$ or $1$]
 \lean{ACP.boolVal_mem}
+\label{ACP.boolVal_mem}
 \leanok
 \uses{ACP.boolVal}
 For every bit $b : \mathrm{Fin}\,2$ the element $\mathrm{boolVal}_p(b)$ lies in the subset
@@ -38,6 +41,7 @@ $\{0,1\}$ of $\bbz/p$.
 
 \begin{lemma}[Bitification inverts \texttt{boolVal}]
 \lean{ACP.bitify_boolVal}
+\label{ACP.bitify_boolVal}
 \leanok
 \uses{ACP.bitify, ACP.boolVal}
 Applying $\mathrm{bitify}_p$ to $\mathrm{boolVal}_p(b)$ returns the original bit $b$, for every
@@ -46,6 +50,7 @@ $b : \mathrm{Fin}\,2$.
 
 \begin{lemma}[One-step unfolding of node evaluation]
 \lean{ACP.evalNode_succ_eq}
+\label{ACP.evalNode_succ_eq}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.evalNode}
 For a feed-forward circuit $F$, a layer index $d$, a node $u$ at layer $d+1$ and an input $x$, the
@@ -55,6 +60,7 @@ nodes at layer $d$.
 
 \begin{definition}[Degree target after $d$ layers]
 \lean{ACP.circuitDegreeBound}
+\label{ACP.circuitDegreeBound}
 \leanok
 The degree budget for the approximating polynomials after $d$ layers, defined as
 \[
@@ -64,6 +70,7 @@ The degree budget for the approximating polynomials after $d$ layers, defined as
 
 \begin{definition}[Gate count in the first $d$ layers]
 \lean{ACP.gateCountBefore}
+\label{ACP.gateCountBefore}
 \leanok
 \uses{ACP.FeedForward}
 For a circuit $F$ with finite node sets, $\mathrm{gateCountBefore}\,F\,d$ counts the non-input gates
@@ -73,6 +80,7 @@ nodes at layer $d+1$.
 
 \begin{lemma}[Gate count at layer zero]
 \lean{ACP.gateCountBefore_zero}
+\label{ACP.gateCountBefore_zero}
 \leanok
 \uses{ACP.FeedForward, ACP.gateCountBefore}
 $\mathrm{gateCountBefore}\,F\,0 = 0$: the input layer contributes no gates.
@@ -80,6 +88,7 @@ $\mathrm{gateCountBefore}\,F\,0 = 0$: the input layer contributes no gates.
 
 \begin{lemma}[Gate count recursion]
 \lean{ACP.gateCountBefore_succ}
+\label{ACP.gateCountBefore_succ}
 \leanok
 \uses{ACP.FeedForward, ACP.gateCountBefore}
 $\mathrm{gateCountBefore}\,F\,(d+1)$ equals $\mathrm{gateCountBefore}\,F\,d$ plus the cardinality of
@@ -88,6 +97,7 @@ the node set at layer $d+1$.
 
 \begin{lemma}[Cardinality of a product filtered on the left factor]
 \lean{ACP.prod_left_filter_card}
+\label{ACP.prod_left_filter_card}
 \leanok
 For finite types $\alpha,\beta$ and a decidable predicate $P$ on $\alpha$, the number of pairs
 $z \in \alpha \times \beta$ with $P(z_1)$ equals $\abs{\{a : P(a)\}} \cdot \abs{\beta}$.
@@ -95,6 +105,7 @@ $z \in \alpha \times \beta$ with $P(z_1)$ equals $\abs{\{a : P(a)\}} \cdot \abs{
 
 \begin{lemma}[Fiberwise product counting]
 \lean{ACP.prod_filter_fiber_mul_le}
+\label{ACP.prod_filter_fiber_mul_le}
 \leanok
 Let $P$ be a predicate on $\alpha$, $Q$ a predicate on $\alpha \times \beta$, and $C, B$ natural
 numbers such that for every $a$ with $P(a)$ the fiber count satisfies
@@ -107,6 +118,7 @@ $\abs{\{b : Q(a,b)\}} \cdot C \le B$.  Then
 
 \begin{definition}[Splitting off one coordinate of a dependent product]
 \lean{ACP.piEquivAt}
+\label{ACP.piEquivAt}
 \leanok
 For an index $i$ with decidable equality on the index type, the equivalence
 \[
@@ -118,6 +130,7 @@ coordinates.
 
 \begin{lemma}[Counting functions bad at one coordinate]
 \lean{ACP.pi_coordinate_bad_mul_le}
+\label{ACP.pi_coordinate_bad_mul_le}
 \leanok
 \uses{ACP.piEquivAt}
 Fix a coordinate $i$ and a decidable predicate $\mathrm{Bad}$ on $\beta_i$, and suppose
@@ -130,6 +143,7 @@ $f$ with $\mathrm{Bad}(f_i)$ satisfies
 
 \begin{lemma}[Union bound over coordinates of a dependent product]
 \lean{ACP.pi_exists_bad_card_mul_le}
+\label{ACP.pi_exists_bad_card_mul_le}
 \leanok
 \uses{ACP.pi_coordinate_bad_mul_le}
 Given for each coordinate $i$ a decidable predicate $\mathrm{Bad}_i$ on $\beta_i$ with
@@ -142,6 +156,7 @@ at some coordinate obeys
 
 \begin{lemma}[Filtering commutes with mapping, on lengths]
 \lean{ACP.list_filter_map_length}
+\label{ACP.list_filter_map_length}
 \leanok
 For a list $l$, a map $f$ and a decidable predicate $P$, the length of the filter of $l.\mathrm{map}\,f$
 by $P$ equals the length of the filter of $l$ by the pulled-back predicate $a \mapsto P(f(a))$.
@@ -149,6 +164,7 @@ by $P$ equals the length of the filter of $l$ by the pulled-back predicate $a \m
 
 \begin{lemma}[Finset list preserves filtered cardinality]
 \lean{ACP.finset_toList_filter_length_eq_card}
+\label{ACP.finset_toList_filter_length_eq_card}
 \leanok
 For a finset $s$ and a decidable predicate $q$, the length of the filtered list
 $s.\mathrm{toList}$ by $q$ equals the cardinality of the filtered finset $s$ by $q$.
@@ -156,6 +172,7 @@ $s.\mathrm{toList}$ by $q$ equals the cardinality of the filtered finset $s$ by 
 
 \begin{definition}[Gate approximator family]
 \lean{ACP.GatePolyFamily}
+\label{ACP.GatePolyFamily}
 \leanok
 \uses{ACP.bitify, ACP.boolInput}
 A \texttt{GatePolyFamily} for a gate operation $\mathrm{op}$ packages a nonempty finite seed type
@@ -169,6 +186,7 @@ type depends only on the gate, not on the incoming polynomials.
 
 \begin{lemma}[Existence of a gate approximator family]
 \lean{ACP.exists_gate_poly_family}
+\label{ACP.exists_gate_poly_family}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.GatePolyFamily, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.boolInput, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
 For every $n$, every error parameter $\ell$, and every gate operation $\mathrm{op}$ belonging to the
@@ -177,6 +195,7 @@ $\mathrm{AC}^0[p]$ gate set, there exists a \texttt{GatePolyFamily} $p\,n\,\ell\
 
 \begin{definition}[Chosen gate approximator family]
 \lean{ACP.gatePolyFamily}
+\label{ACP.gatePolyFamily}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.GatePolyFamily, ACP.exists_gate_poly_family}
 A choice of \texttt{GatePolyFamily} for each $\mathrm{AC}^0[p]$ gate operation, obtained from the
@@ -185,6 +204,7 @@ preceding existence statement.
 
 \begin{definition}[Layer polynomial family]
 \lean{ACP.LayerPolyFamily}
+\label{ACP.LayerPolyFamily}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.evalNode, ACP.boolInput, ACP.circuitDegreeBound, ACP.gateCountBefore}
 A \texttt{LayerPolyFamily} for a circuit $F$ at layer $d$ consists of a nonempty finite seed type and,
@@ -196,6 +216,7 @@ $\mathrm{gateCountBefore}\,F\,d$ times the number of seeds.
 
 \begin{definition}[Input layer family]
 \lean{ACP.inputLayerFamily}
+\label{ACP.inputLayerFamily}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.evalNode, ACP.LayerPolyFamily, ACP.boolInput, ACP.circuitDegreeBound, ACP.gateCountBefore}
 The \texttt{LayerPolyFamily} at layer $0$: a single seed, with each input node represented exactly by
@@ -204,6 +225,7 @@ the corresponding variable $X_i$, so that no seed is ever bad.
 
 \begin{definition}[Inductive layer step]
 \lean{ACP.stepLayerFamily}
+\label{ACP.stepLayerFamily}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.evalNode, ACP.FeedForward.onlyUsesGates, ACP.GatePolyFamily, ACP.LayerPolyFamily, ACP.bitify, ACP.bitify_boolVal, ACP.boolInput, ACP.boolVal_mem, ACP.circuitDegreeBound, ACP.evalNode_succ_eq, ACP.gateCountBefore, ACP.gatePolyFamily, ACP.pi_exists_bad_card_mul_le, ACP.prod_filter_fiber_mul_le, ACP.prod_left_filter_card}
 Given a circuit $F$ using only $\mathrm{AC}^0[p]$ gates and a \texttt{LayerPolyFamily} at layer $d$,
@@ -214,6 +236,7 @@ approximator applied to the layer-$d$ polynomials of its inputs.
 
 \begin{definition}[Layer family built by recursion on depth]
 \lean{ACP.buildLayerFamily}
+\label{ACP.buildLayerFamily}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.onlyUsesGates, ACP.LayerPolyFamily, ACP.inputLayerFamily, ACP.stepLayerFamily}
 For a circuit using only $\mathrm{AC}^0[p]$ gates, the \texttt{LayerPolyFamily} at any layer
@@ -223,6 +246,7 @@ step $d$ times.
 
 \begin{theorem}[Polynomial distribution for all output nodes]
 \lean{ACP.exists_poly_distribution_for_circuit_outputs}
+\label{ACP.exists_poly_distribution_for_circuit_outputs}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.evalNode, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.buildLayerFamily, ACP.circuitDegreeBound, ACP.gateCountBefore}
 Let $F$ be a feed-forward circuit over $\mathrm{Fin}\,2$ with finite node sets, finite output type
@@ -238,6 +262,7 @@ Boolean input $x$,
 
 \begin{theorem}[Polynomial distribution for a single-output circuit]
 \lean{ACP.exists_poly_distribution_for_circuit_one}
+\label{ACP.exists_poly_distribution_for_circuit_one}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.evalNode, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.buildLayerFamily, ACP.circuitDegreeBound, ACP.gateCountBefore}
 The same statement for a circuit with a unique output node: there is a nonempty finite seed type and
@@ -251,6 +276,7 @@ that for every Boolean input $x$,
 
 \begin{theorem}[List form of the single-output distribution]
 \lean{ACP.exists_poly_list_for_circuit_one}
+\label{ACP.exists_poly_list_for_circuit_one}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one, ACP.finset_toList_filter_length_eq_card, ACP.gateCountBefore, ACP.list_filter_map_length}
 The single-output theorem restated with the seed distribution presented as a nonempty list $Ps$ of

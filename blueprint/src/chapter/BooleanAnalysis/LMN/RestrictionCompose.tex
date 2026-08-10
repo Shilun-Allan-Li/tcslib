@@ -14,6 +14,7 @@ equality and its probabilistic inequality corollary.
 
 \begin{definition}[Composition of two restrictions]
 \lean{LMN.composeRestr}
+\label{LMN.composeRestr}
 \leanok
 \uses{SwitchingLemma2.Restriction}
 Given two restrictions $\rho_1, \rho_2$ on $n$ variables, their composition is the
@@ -24,6 +25,7 @@ and then $\rho_2$ on the variables left free by $\rho_1$.
 
 \begin{definition}[Per-variable Bernoulli weight]
 \lean{LMN.varWeight}
+\label{LMN.varWeight}
 \leanok
 For a parameter $p \in \bbr$, the per-variable weight assigns $p$ to a free
 coordinate (value \texttt{none}) and $(1-p)/2$ to a fixed coordinate (value
@@ -32,6 +34,7 @@ coordinate (value \texttt{none}) and $(1-p)/2$ to a fixed coordinate (value
 
 \begin{lemma}[Pointwise characterization of composition]
 \lean{LMN.composeRestr_eq_iff}
+\label{LMN.composeRestr_eq_iff}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction}
 \difficulty{3}
@@ -42,6 +45,7 @@ equals $\sigma\,i$.
 
 \begin{lemma}[Right identity for composition]
 \lean{LMN.composeRestr_id_right}
+\label{LMN.composeRestr_id_right}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction}
 \difficulty{4}
@@ -51,6 +55,7 @@ variable) returns $\rho$ unchanged.
 
 \begin{lemma}[Bernoulli weight factors as a product]
 \lean{LMN.bernoulliRestrWeight_eq_prod}
+\label{LMN.bernoulliRestrWeight_eq_prod}
 \leanok
 \uses{LMN.varWeight, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{6}
@@ -63,6 +68,7 @@ all coordinates $i$ of the per-variable weights:
 
 \begin{lemma}[Per-variable composition identity]
 \lean{LMN.varWeight_compose_sum}
+\label{LMN.varWeight_compose_sum}
 \leanok
 \uses{LMN.varWeight}
 \difficulty{4}
@@ -77,6 +83,7 @@ composition equals $c$ gives $\mathrm{varWeight}\,(pq)\,c$:
 
 \begin{lemma}[Fiber weight identity]
 \lean{LMN.compose_fiber_weight_eq}
+\label{LMN.compose_fiber_weight_eq}
 \leanok
 \uses{LMN.bernoulliRestrWeight_eq_prod, LMN.composeRestr, LMN.varWeight, LMN.varWeight_compose_sum, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{7}
@@ -93,6 +100,7 @@ compose to $\sigma$ equals the Bernoulli weight of $\sigma$ at parameter $pq$:
 
 \begin{theorem}[Composition of Bernoulli random restrictions, equality]
 \lean{LMN.restriction_compose_eq}
+\label{LMN.restriction_compose_eq}
 \leanok
 \uses{LMN.composeRestr, LMN.compose_fiber_weight_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{6}
@@ -112,6 +120,7 @@ restriction.
 
 \begin{theorem}[Composition inequality]
 \lean{LMN.restriction_compose_le}
+\label{LMN.restriction_compose_le}
 \leanok
 \uses{LMN.composeRestr, LMN.restriction_compose_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 \difficulty{6}

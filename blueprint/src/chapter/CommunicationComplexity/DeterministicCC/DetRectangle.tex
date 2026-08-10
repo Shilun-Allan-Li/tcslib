@@ -13,6 +13,7 @@ fooling set bounds $\mathrm{CC}(g)$ from below via $\lceil \log_2 |S| \rceil \le
 
 \begin{definition}[Swap of a protocol input set]
 \lean{CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+\label{CommunicationComplexity.Deterministic.Protocol.swapInputSet}
 \leanok
 Given a set $R \subseteq X \times Y$, $\texttt{swapInputSet}(R)$ is the set
 $\{(y, x) \mid (x, y) \in R\} \subseteq Y \times X$ obtained by swapping the two
@@ -21,6 +22,7 @@ coordinates of every element.
 
 \begin{theorem}[Membership in swapped set]
 \lean{CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+\label{CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.swapInputSet}
 \difficulty{1}
@@ -30,6 +32,7 @@ $(y, x) \in \texttt{swapInputSet}(R)$ if and only if $(x, y) \in R$.
 
 \begin{theorem}[Swap is an involution]
 \lean{CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+\label{CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.swapInputSet}
 \difficulty{3}
@@ -39,6 +42,7 @@ $R$: $\texttt{swapInputSet}(\texttt{swapInputSet}(R)) = R$.
 
 \begin{definition}[Preimage of a protocol input set]
 \lean{CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+\label{CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
 \leanok
 Given maps $f_X : X' \to X$ and $f_Y : Y' \to Y$ and a set $R \subseteq X \times Y$,
 $\texttt{preimageInputSet}(f_X, f_Y, R)$ is the set
@@ -48,6 +52,7 @@ the product map $f_X \times f_Y$.
 
 \begin{theorem}[Membership in preimage input set]
 \lean{CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+\label{CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
 \difficulty{1}
@@ -58,6 +63,7 @@ if and only if $(f_X(x'), f_Y(y')) \in R$.
 
 \begin{definition}[Auxiliary leaf rectangles relative to a constraint]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 For a protocol $p$ and sets $A \subseteq X$, $B \subseteq Y$, $\texttt{leafRectanglesAux}(p, A, B)$
@@ -69,6 +75,7 @@ branching function and recurse.
 
 \begin{definition}[Protocol leaf rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 The \emph{leaf rectangles} of a protocol $p : \texttt{Protocol}\,X\,Y\,\alpha$ form the
@@ -78,6 +85,7 @@ of input rectangles induced by the leaves of $p$ over the full input space $X \t
 
 \begin{theorem}[Swap sends leaf rectangles to leaf rectangles (auxiliary)]
 \lean{CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectanglesAux_swap}
+\label{CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectanglesAux_swap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swapInputSet}
 \difficulty{4}
@@ -88,6 +96,7 @@ This is an internal auxiliary result proved by structural induction on the proto
 
 \begin{theorem}[Swap sends leaf rectangles to leaf rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectangles_swap}
+\label{CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectangles_swap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swapInputSet, CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectanglesAux_swap}
 \difficulty{1}
@@ -97,6 +106,7 @@ $p.\texttt{swap}$, the protocol with Alice and Bob's roles exchanged.
 
 \begin{theorem}[Preimage sends leaf rectangles to leaf rectangles (auxiliary)]
 \lean{CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectanglesAux_comap}
+\label{CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectanglesAux_comap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
 \difficulty{4}
@@ -107,6 +117,7 @@ This is an internal auxiliary result proved by structural induction.
 
 \begin{theorem}[Preimage sends leaf rectangles to leaf rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectangles_comap}
+\label{CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectangles_comap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.preimageInputSet, CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectanglesAux_comap}
 \difficulty{2}
@@ -116,6 +127,7 @@ $\texttt{preimageInputSet}(f_X, f_Y, R)$ is a leaf rectangle of $p.\texttt{comap
 
 \begin{lemma}[Auxiliary leaf rectangles are rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
@@ -125,6 +137,7 @@ a set of the form $A' \times B'$ for some $A' \subseteq X$, $B' \subseteq Y$.
 
 \begin{lemma}[Every protocol leaf rectangle is a rectangle]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_isRectangle, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{1}
@@ -134,6 +147,7 @@ combinatorial rectangle, i.e.\ $\texttt{Rectangle.IsRectangle}(R)$ holds.
 
 \begin{lemma}[Auxiliary leaf rectangles are subsets of the constraint]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_subset}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_subset}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \difficulty{4}
@@ -142,6 +156,7 @@ Every element $R$ of $\texttt{leafRectanglesAux}(p, A, B)$ satisfies $R \subsete
 
 \begin{lemma}[Auxiliary leaf rectangles cover the constraint]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_cover}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_cover}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \difficulty{5}
@@ -151,6 +166,7 @@ $A \times B \subseteq \bigcup \texttt{leafRectanglesAux}(p, A, B)$.
 
 \begin{lemma}[Distinct auxiliary leaf rectangles are disjoint]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
 \difficulty{6}
@@ -160,6 +176,7 @@ disjoint subsets of $X \times Y$.
 
 \begin{lemma}[Leaf rectangles cover the input space]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \difficulty{2}
@@ -169,6 +186,7 @@ $\bigcup \texttt{leafRectangles}(p) = X \times Y$.
 
 \begin{lemma}[Distinct leaf rectangles are disjoint]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_disjoint, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \difficulty{1}
@@ -178,8 +196,9 @@ $S$ are disjoint.
 
 \begin{lemma}[Auxiliary leaf rectangles are monochromatic (auxiliary)]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_mono}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_mono}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.Protocol.run}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{4}
 If $R \in \texttt{leafRectanglesAux}(p, A, B)$ and both $(x, y) \in R$ and $(x', y') \in R$,
 then $p.\texttt{run}(x, y) = p.\texttt{run}(x', y')$: the protocol outputs the same value at
@@ -188,6 +207,7 @@ every input in $R$.
 
 \begin{lemma}[Leaf rectangles are monochromatic]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.aux_mono, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Rectangle.IsMonochromatic}
 \difficulty{3}
@@ -197,6 +217,7 @@ $g$-monochromatic: all inputs in $R$ receive the same value of $g$.
 
 \begin{lemma}[Auxiliary leaf rectangles are bounded in count]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_card}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_card}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \difficulty{5}
@@ -206,6 +227,7 @@ $\texttt{leafRectanglesAux}(p, A, B)$ is at most $2^{p.\texttt{complexity}}$.
 
 \begin{lemma}[Auxiliary leaf rectangles are a finite collection]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_finite}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_finite}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \difficulty{3}
@@ -215,6 +237,7 @@ is a finite set.
 
 \begin{lemma}[Number of leaf rectangles is at most $2^c$]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles_card}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_card}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_card, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \difficulty{1}
@@ -224,6 +247,7 @@ leaf rectangles satisfies $|\texttt{leafRectangles}(p)| \leq 2^c$.
 
 \begin{lemma}[Leaf rectangles are finite]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles_finite}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_finite}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_finite, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \difficulty{1}
@@ -232,6 +256,7 @@ For any protocol $p$, the set $\texttt{leafRectangles}(p)$ is finite.
 
 \begin{theorem}[Leaf rectangles form a monochromatic partition]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle, CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{3}
@@ -243,6 +268,7 @@ and each element is $g$-monochromatic.
 
 \begin{theorem}[Rectangle partition theorem (Theorem 1.6)]
 \lean{CommunicationComplexity.Deterministic.Protocol.rectangle_partition}
+\label{CommunicationComplexity.Deterministic.Protocol.rectangle_partition}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{2}
@@ -253,6 +279,7 @@ respect to $g$ and has at most $2^c$ parts.
 
 \begin{theorem}[Input pairs reaching a subprotocol path form a rectangle]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle}
+\label{CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{3}
@@ -263,6 +290,7 @@ $\texttt{reachXPath}(\texttt{hsp}) \times \texttt{reachYPath}(\texttt{hsp})$.
 
 \begin{theorem}[Input pairs reaching a subprotocol witness form a rectangle]
 \lean{CommunicationComplexity.Deterministic.Protocol.reaches_isRectangle}
+\label{CommunicationComplexity.Deterministic.Protocol.reaches_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{2}
@@ -273,6 +301,7 @@ combinatorial rectangle.
 
 \begin{theorem}[Low complexity implies monochromatic partition with few parts]
 \lean{CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
+\label{CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{3}
@@ -282,6 +311,7 @@ $X \times Y$ with respect to $g$ having at most $2^n$ parts.
 
 \begin{theorem}[Rectangle partition lower bound]
 \lean{CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard}
+\label{CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Deterministic.le_communicationComplexity_iff, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{5}
@@ -292,6 +322,7 @@ satisfies $2^n < |P|$, then $(n+1) \leq \mathrm{CC}(g)$.
 
 \begin{theorem}[Fooling set size bounded by $2^n$ when $\mathrm{CC}(g) \leq n$]
 \lean{CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le}
+\label{CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_finite, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
 \difficulty{4}
@@ -301,6 +332,7 @@ $|S| \leq 2^n$.
 
 \begin{theorem}[Fooling-set lower bound]
 \lean{CommunicationComplexity.Deterministic.clog_ncard_le_communicationComplexity}
+\label{CommunicationComplexity.Deterministic.clog_ncard_le_communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsFoolingSet}
 \difficulty{4}

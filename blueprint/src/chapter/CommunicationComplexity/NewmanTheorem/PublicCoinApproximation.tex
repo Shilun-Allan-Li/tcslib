@@ -13,12 +13,9 @@ degrading by at most the chosen slack $\delta > 0$.
 
 \begin{definition}[Conversion of a public-coin protocol to CoinTape]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
 \leanok
-\uses{CommunicationComplexity.CoinTape,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.FiniteProbabilitySpace,
-      CommunicationComplexity.Internal.single_coin_approx,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Internal.single_coin_approx, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given a public-coin finite-message protocol $p$ over an arbitrary finite probability
 space $\Omega$ and a slack $\delta > 0$, this definition produces a natural number $n$
 together with a finite-message protocol over $\mathrm{CoinTape}(n)$ that approximates
@@ -29,11 +26,9 @@ $\varphi : \mathrm{CoinTape}(n) \to \Omega$ provided by
 
 \begin{theorem}[CoinTape approximation preserves complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.FiniteProbabilitySpace,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
 \difficulty{2}
 For any finite-message protocol $p$ over a finite probability space $\Omega$ and any
 $\delta > 0$, the complexity of the \texttt{CoinTape} approximation
@@ -42,16 +37,9 @@ $(p.\mathrm{toCoinTape}\;\delta).2$ equals the complexity of the original protoc
 
 \begin{theorem}[CoinTape approximation preserves ApproxSatisfies]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
 \leanok
-\uses{CommunicationComplexity.CoinTape,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.FiniteProbabilitySpace,
-      CommunicationComplexity.Internal.single_coin_approx,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun,
-      CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
+\uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Internal.single_coin_approx, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
 \difficulty{4}
 Let $p$ be a public-coin finite-message protocol over a finite probability space
 $\Omega$, let $Q : X \to Y \to \alpha \to \mathrm{Prop}$ be a correctness predicate,

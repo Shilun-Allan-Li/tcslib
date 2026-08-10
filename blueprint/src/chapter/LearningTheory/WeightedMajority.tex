@@ -14,6 +14,7 @@ shows the analysis is essentially tight for deterministic learners.
 
 \begin{theorem}[Weight shrinkage after $M$ mistakes]
 \lean{wm_weight_shrinkage}
+\label{wm_weight_shrinkage}
 \leanok
 \difficulty{4}
 Let $\beta \in (0,1)$, let $W : \mathbb{N} \to \mathbb{R}$ be a sequence of positive
@@ -26,6 +27,7 @@ Then
 
 \begin{theorem}[Total weight upper bound]
 \lean{wm_weight_upper_bound}
+\label{wm_weight_upper_bound}
 \leanok
 \uses{wm_weight_shrinkage}
 \difficulty{2}
@@ -38,6 +40,7 @@ $n \ge 1$ and the initial total weight satisfies $W(0) = n$, then
 
 \begin{theorem}[Combined potential bound]
 \lean{wm_combined_potential_bound}
+\label{wm_combined_potential_bound}
 \leanok
 \difficulty{1}
 Let $\beta \in (0,1)$, $n \ge 1$, and suppose
@@ -53,6 +56,7 @@ This packages the potential inequality into logarithmic form by monotonicity of 
 
 \begin{theorem}[Logarithmic mistake bound]
 \lean{wm_mistake_bound_log}
+\label{wm_mistake_bound_log}
 \leanok
 \difficulty{5}
 Let $n \ge 2$, $\beta \in (0,1)$, and suppose
@@ -69,6 +73,7 @@ giving the standard Weighted Majority mistake bound.
 
 \begin{theorem}[Factor-2 lower bound for deterministic algorithms]
 \lean{deterministic_factor2_lower_bound}
+\label{deterministic_factor2_lower_bound}
 \leanok
 \difficulty{1}
 For any $T \in \mathbb{N}$, there exist $M_{\mathrm{alg}}, M^* \in \mathbb{N}$ with

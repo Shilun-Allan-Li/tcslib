@@ -11,6 +11,7 @@ together with their correctness and complexity accounting theorems.
 
 \begin{definition}[Map over protocol output]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 Given a function $g : \alpha \to \beta$ and a protocol $p : \mathrm{Protocol}\,X\,Y\,\alpha$,
@@ -21,10 +22,9 @@ structure as $p$.
 
 \begin{theorem}[Map commutes with run]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
 \difficulty{2}
 For any function $g : \alpha \to \beta$, protocol $p$, and inputs $x \in X$, $y \in Y$,
 \[
@@ -34,10 +34,9 @@ For any function $g : \alpha \to \beta$, protocol $p$, and inputs $x \in X$, $y 
 
 \begin{theorem}[Map preserves complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
 \difficulty{2}
 For any function $g : \alpha \to \beta$ and protocol $p$,
 $(\texttt{map}\;g\;p).\texttt{complexity} = p.\texttt{complexity}$.
@@ -47,6 +46,7 @@ communicated.
 
 \begin{definition}[Monadic bind of protocols]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 Given a protocol $p : \mathrm{Protocol}\,X\,Y\,\alpha$ and a continuation
@@ -57,10 +57,9 @@ giving a protocol of type $\mathrm{Protocol}\,X\,Y\,\beta$.
 
 \begin{theorem}[Bind commutes with run]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
 \difficulty{2}
 For any protocol $p$, continuation $q$, and inputs $x \in X$, $y \in Y$,
 \[
@@ -71,6 +70,7 @@ For any protocol $p$, continuation $q$, and inputs $x \in X$, $y \in Y$,
 
 \begin{theorem}[Supremum distributes over adding a constant]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.finset_sup_add_const}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.finset_sup_add_const}
 \leanok
 \difficulty{4}
 For any finite nonempty type $\iota$, function $f : \iota \to \mathbb{N}$, and constant
@@ -83,11 +83,9 @@ This is a technical arithmetic lemma used in complexity calculations.
 
 \begin{theorem}[Bind complexity when continuation is constant]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.finset_sup_add_const}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.finset_sup_add_const}
 \difficulty{4}
 If $q\,a$ has the same complexity $c$ for every output $a$ of $p$, then
 \[
@@ -97,10 +95,9 @@ If $q\,a$ has the same complexity $c$ for every output $a$ of $p$, then
 
 \begin{definition}[Product of two protocols]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
 Given $p_1 : \mathrm{Protocol}\,X_1\,Y_1\,\alpha_1$ and
 $p_2 : \mathrm{Protocol}\,X_2\,Y_2\,\alpha_2$, their product
 $p_1.\texttt{prod}\;p_2 : \mathrm{Protocol}\,(X_1 \times X_2)\,(Y_1 \times Y_2)\,(\alpha_1 \times \alpha_2)$
@@ -109,10 +106,9 @@ runs $p_1$ on the first components and $p_2$ on the second components, pairing t
 
 \begin{theorem}[Product run]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
 \difficulty{2}
 For protocols $p_1$, $p_2$ and inputs $x = (x_1, x_2)$, $y = (y_1, y_2)$,
 \[
@@ -123,11 +119,9 @@ For protocols $p_1$, $p_2$ and inputs $x = (x_1, x_2)$, $y = (y_1, y_2)$,
 
 \begin{theorem}[Product complexity is additive]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.finset_sup_add_const,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.finset_sup_add_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}
 \difficulty{4}
 The complexity of the product protocol satisfies
 \[
@@ -138,11 +132,9 @@ The complexity of the product protocol satisfies
 
 \begin{definition}[$k$-fold product of protocols]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
 Given a family of protocols $p_i : \mathrm{Protocol}\,X_i\,Y_i\,\alpha_i$ for
 $i \in \mathrm{Fin}\,k$, \texttt{pi}~$p$ is the protocol of type
 $\mathrm{Protocol}\,(\Pi_i\,X_i)\,(\Pi_i\,Y_i)\,(\Pi_i\,\alpha_i)$ that runs each $p_i$
@@ -152,13 +144,9 @@ It is defined by induction on $k$, using \texttt{bind}, \texttt{comap}, and \tex
 
 \begin{theorem}[$k$-fold product run]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
 \difficulty{5}
 For a family $p$ and input tuples $x$, $y$,
 \[
@@ -168,13 +156,9 @@ For a family $p$ and input tuples $x$, $y$,
 
 \begin{theorem}[$k$-fold product complexity is sum]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}
 \difficulty{6}
 The complexity of the $k$-fold product satisfies
 \[

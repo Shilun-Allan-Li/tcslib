@@ -14,6 +14,7 @@ subprotocols, culminating in the two-bit \texttt{testSubprotocol} construction.
 
 \begin{definition}[Subprotocol predicate]
 \lean{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+\label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 The inductive proposition $\texttt{IsSubprotocol}\; s\; p$ asserts that protocol $s$ is a
@@ -24,6 +25,7 @@ an Alice-node or the false-child of a Bob-node, and hence a subtree of the paren
 
 \begin{lemma}[Transitivity of subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
+\label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
 \difficulty{4}
@@ -33,6 +35,7 @@ of $u$.  That is, the subprotocol relation is transitive.
 
 \begin{lemma}[Balanced subprotocol auxiliary]
 \lean{CommunicationComplexity.Deterministic.Protocol.balanced_aux}
+\label{CommunicationComplexity.Deterministic.Protocol.balanced_aux}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{6}
@@ -43,6 +46,7 @@ inductive step used to prove the balanced subprotocol theorem.
 
 \begin{theorem}[Balanced subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol}
+\label{CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.balanced_aux, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{6}
@@ -56,6 +60,7 @@ In other words, $s$ contains between one-third and two-thirds of $p$'s leaves.
 
 \begin{definition}[Subprotocol path witness]
 \lean{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+\label{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 The inductive type $\texttt{SubprotocolPath}\; s\; p$ is a data-carrying witness that $s$ is a
@@ -66,6 +71,7 @@ in \texttt{Type} rather than \texttt{Prop}, enabling structural recursion over t
 
 \begin{definition}[Path to subprotocol proof]
 \lean{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.toIsSubprotocol}
+\label{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.toIsSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
 Every \texttt{SubprotocolPath} $s\; p$ can be mapped to a proof that $s$ is a subprotocol of
@@ -75,6 +81,7 @@ structural recursion on the path.
 
 \begin{theorem}[Existence of a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+\label{CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath}
 \difficulty{3}
@@ -85,6 +92,7 @@ embedding has at least one data-carrying path witness.
 
 \begin{definition}[Classical choice of a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.choosePath}
+\label{CommunicationComplexity.Deterministic.Protocol.choosePath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
 Given a proof that $s$ is a subprotocol of $p$, \texttt{choosePath} uses classical choice to
@@ -94,6 +102,7 @@ noncomputable.
 
 \begin{lemma}[Subprotocol has at most as many leaves]
 \lean{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le}
+\label{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{3}
@@ -104,6 +113,7 @@ its parent.
 
 \begin{definition}[Reachable Alice inputs along a path]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachXPath}
+\label{CommunicationComplexity.Deterministic.Protocol.reachXPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
 Given a subprotocol path \texttt{hsp} from $s$ to $p$, \texttt{reachXPath hsp} is the set of
@@ -113,6 +123,7 @@ the root of $p$ to the root of $s$.
 
 \begin{definition}[Reachable Bob inputs along a path]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachYPath}
+\label{CommunicationComplexity.Deterministic.Protocol.reachYPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
 Given a subprotocol path \texttt{hsp} from $s$ to $p$, \texttt{reachYPath hsp} is the set of
@@ -122,6 +133,7 @@ root of $p$ to the root of $s$.
 
 \begin{definition}[Inputs that reach a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachesPath}
+\label{CommunicationComplexity.Deterministic.Protocol.reachesPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath}
 $\texttt{reachesPath}\;\texttt{hsp}\;x\;y$ is the proposition that the input pair $(x, y)$
@@ -131,6 +143,7 @@ $x \in \texttt{reachXPath}\;\texttt{hsp}$ and $y \in \texttt{reachYPath}\;\textt
 
 \begin{definition}[Alice's reach set for a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachX}
+\label{CommunicationComplexity.Deterministic.Protocol.reachX}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachXPath}
 Given a proof \texttt{hsp} that $s$ is a subprotocol of $p$, \texttt{reachX hsp} is the set of
@@ -140,6 +153,7 @@ classically chosen path.
 
 \begin{definition}[Bob's reach set for a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachY}
+\label{CommunicationComplexity.Deterministic.Protocol.reachY}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachYPath}
 Given a proof \texttt{hsp} that $s$ is a subprotocol of $p$, \texttt{reachY hsp} is the set of
@@ -149,6 +163,7 @@ classically chosen path.
 
 \begin{definition}[Inputs that reach a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.reaches}
+\label{CommunicationComplexity.Deterministic.Protocol.reaches}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY}
 $\texttt{reaches}\;\texttt{hsp}\;x\;y$ is the proposition that input $(x, y)$ causes $p$ to
@@ -158,8 +173,9 @@ $y \in \texttt{reachY}\;\texttt{hsp}$.
 
 \begin{lemma}[Subprotocol and parent agree on reached inputs (path version)]
 \lean{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
+\label{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{4}
 If the input pair $(x, y)$ reaches the subprotocol $s$ of $p$ via path \texttt{hsp}, then
 running $p$ and running $s$ on $(x, y)$ produce the same output: $p.\texttt{run}\;x\;y =
@@ -168,6 +184,7 @@ s.\texttt{run}\;x\;y$.
 
 \begin{lemma}[Subprotocol and parent agree on reached inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches}
+\label{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
 \difficulty{2}
@@ -177,6 +194,7 @@ $p.\texttt{run}\;x\;y = s.\texttt{run}\;x\;y$.
 
 \begin{definition}[Canonical output of a protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.chooseOutput}
+\label{CommunicationComplexity.Deterministic.Protocol.chooseOutput}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 \texttt{chooseOutput p} returns a canonical output value from protocol $p$ by always following
@@ -185,6 +203,7 @@ the false (left) branch at every Alice-node; it yields the value at the leftmost
 
 \begin{definition}[Erase a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath}
+\label{CommunicationComplexity.Deterministic.Protocol.erasePath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.chooseOutput}
 Given a subprotocol path \texttt{hsp} from $s$ to $p$, \texttt{erasePath hsp} produces a new
@@ -194,6 +213,7 @@ $\texttt{chooseOutput}\;s$ (the leftmost leaf of $s$).
 
 \begin{lemma}[Leaf count after erasing a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves}
+\label{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{6}
@@ -203,6 +223,7 @@ $p.\mathrm{numLeaves} - s.\mathrm{numLeaves} + 1$ leaves.
 
 \begin{lemma}[Erased protocol agrees on non-reaching inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside}
+\label{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{5}
@@ -212,6 +233,7 @@ protocol \texttt{erasePath hsp} on $(x, y)$ gives the same output as running $p$
 
 \begin{definition}[Erase a subprotocol (propositional version)]
 \lean{CommunicationComplexity.Deterministic.Protocol.erase}
+\label{CommunicationComplexity.Deterministic.Protocol.erase}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.erasePath}
 The noncomputable variant of \texttt{erasePath} that takes an \texttt{IsSubprotocol} proof
@@ -221,6 +243,7 @@ for \texttt{hsp}.
 
 \begin{lemma}[Leaf count after erasing a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.erase_numLeaves}
+\label{CommunicationComplexity.Deterministic.Protocol.erase_numLeaves}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.erase, CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \difficulty{2}
@@ -230,6 +253,7 @@ $(\texttt{erase}\;\texttt{hsp}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\m
 
 \begin{lemma}[Erased protocol agrees on non-reaching inputs (propositional version)]
 \lean{CommunicationComplexity.Deterministic.Protocol.erase_run_outside}
+\label{CommunicationComplexity.Deterministic.Protocol.erase_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.erase, CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{2}
@@ -239,6 +263,7 @@ $(\texttt{erase}\;\texttt{hsp}).\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
 
 \begin{definition}[Delete a subprotocol path by splicing]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath}
+\label{CommunicationComplexity.Deterministic.Protocol.deletePath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
 \texttt{deletePath hsp} removes the subtree $s$ from $p$ by splicing out the branch leading to
@@ -248,8 +273,9 @@ $q$ is $p$ with the branch to $s$ deleted.
 
 \begin{lemma}[Delete is non-none when subprotocol is proper]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt}
+\label{CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \difficulty{3}
 If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$ (i.e.\ $s$ is a proper subtree), then
 $\texttt{deletePath}\;\texttt{hsp} \ne \texttt{none}$.
@@ -257,8 +283,9 @@ $\texttt{deletePath}\;\texttt{hsp} \ne \texttt{none}$.
 
 \begin{lemma}[Delete yields a protocol when subprotocol is proper]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt}
+\label{CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \difficulty{3}
 If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, then there exists a protocol $q$ such
 that $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$.
@@ -266,6 +293,7 @@ that $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$.
 
 \begin{definition}[Prune a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath}
+\label{CommunicationComplexity.Deterministic.Protocol.prunePath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 Given a path \texttt{hsp} from $s$ to $p$ with $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$,
@@ -275,6 +303,7 @@ value from \texttt{deletePath hsp}.
 
 \begin{lemma}[Prune path satisfies delete specification]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
+\label{CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath}
 \difficulty{1}
@@ -284,6 +313,7 @@ $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;(\texttt{prunePath}\;\texttt
 
 \begin{lemma}[Delete none implies subprotocol equals parent]
 \lean{CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none}
+\label{CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath}
 \difficulty{3}
@@ -293,6 +323,7 @@ returns \texttt{none} only when $s$ is the entire protocol $p$.
 
 \begin{lemma}[Leaf count of the result of a delete]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
+\label{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{6}
@@ -302,6 +333,7 @@ $q.\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
 
 \begin{lemma}[Leaf count after pruning a path]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
+\label{CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath, CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
 \difficulty{2}
@@ -311,6 +343,7 @@ $(\texttt{prunePath}\;\texttt{hsp}\;\texttt{hlt}).\mathrm{numLeaves} = p.\mathrm
 
 \begin{lemma}[All inputs reach when delete is none]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none}
+\label{CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath}
 \difficulty{3}
@@ -320,6 +353,7 @@ $(x, y)$ satisfies $\texttt{reachesPath}\;\texttt{hsp}\;x\;y$.
 
 \begin{lemma}[Deleted protocol agrees on non-reaching inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
+\label{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{7}
@@ -329,6 +363,7 @@ subprotocol path, then $q.\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
 
 \begin{lemma}[Pruned path protocol agrees on non-reaching inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt}
+\label{CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath, CommunicationComplexity.Deterministic.Protocol.prunePath_spec, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
@@ -338,6 +373,7 @@ $(\texttt{prunePath}\;\texttt{hsp}\;\texttt{hlt}).\texttt{run}\;x\;y = p.\texttt
 
 \begin{definition}[Prune a subprotocol (propositional version)]
 \lean{CommunicationComplexity.Deterministic.Protocol.prune}
+\label{CommunicationComplexity.Deterministic.Protocol.prune}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath}
 The noncomputable variant of \texttt{prunePath} taking an \texttt{IsSubprotocol} proof:
@@ -347,6 +383,7 @@ The noncomputable variant of \texttt{prunePath} taking an \texttt{IsSubprotocol}
 
 \begin{lemma}[Leaf count after pruning a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt}
+\label{CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \difficulty{2}
@@ -356,6 +393,7 @@ $(\texttt{prune}\;\texttt{hsp}\;\texttt{hlt}).\mathrm{numLeaves} = p.\mathrm{num
 
 \begin{lemma}[Pruned protocol agrees on non-reaching inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
+\label{CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{2}
@@ -365,6 +403,7 @@ $(\texttt{prune}\;\texttt{hsp}\;\texttt{hlt}).\texttt{run}\;x\;y = p.\texttt{run
 
 \begin{definition}[Test subprotocol construction]
 \lean{CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+\label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY}
 Given that $s$ is a subprotocol of $p$ and two protocols \texttt{qIn} and \texttt{qOut},
@@ -375,6 +414,7 @@ does and to \texttt{qOut} otherwise.
 
 \begin{lemma}[Complexity of the test subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+\label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \difficulty{3}
@@ -384,6 +424,7 @@ $2 + \max(\texttt{qIn}.\texttt{complexity},\; \texttt{qOut}.\texttt{complexity})
 
 \begin{lemma}[Test subprotocol runs qIn on inside inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside}
+\label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \difficulty{3}
@@ -393,6 +434,7 @@ $(\texttt{testSubprotocol}\;\texttt{hsp}\;\texttt{qIn}\;\texttt{qOut}).\texttt{r
 
 \begin{lemma}[Test subprotocol runs qOut on outside inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
+\label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \difficulty{4}

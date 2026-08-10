@@ -32,6 +32,7 @@ The proof proceeds in three steps:
 
 \begin{definition}[Unanimity]
 \lean{ArrowTheorem.unanimity}
+\label{ArrowTheorem.unanimity}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
 A social welfare function $f:\{0,1\}^n\to\bbr$ is \emph{unanimous} if
@@ -41,6 +42,7 @@ alternative $a$ over $b$, so does society.
 
 \begin{definition}[Dictatorship]
 \lean{ArrowTheorem.isDictator}
+\label{ArrowTheorem.isDictator}
 \leanok
 \uses{BooleanAnalysis.dictator}
 $f$ is a \emph{dictatorship} if there exists a voter $i$ such that
@@ -70,8 +72,11 @@ Index & Ordering & $s_{ab}$ & $s_{bc}$ & $s_{ca}$ \\\hline
 
 \begin{definition}[Pairwise preference functions]
 \lean{ArrowTheorem.abPref}
+\label{ArrowTheorem.abPref}
 \lean{ArrowTheorem.bcPref}
+\label{ArrowTheorem.bcPref}
 \lean{ArrowTheorem.caPref}
+\label{ArrowTheorem.caPref}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 $\mathrm{abPref}(k)$, $\mathrm{bcPref}(k)$, $\mathrm{caPref}(k)$ give the
@@ -81,6 +86,7 @@ $b$-vs-$c$, and $c$-vs-$a$ comparisons, respectively.
 
 \begin{definition}[Profile]
 \lean{ArrowTheorem.Profile}
+\label{ArrowTheorem.Profile}
 \leanok
 A \emph{profile} assigns each of the $n$ voters one of the 6 orderings:
 $p : \mathrm{Fin}\,n \to \mathrm{Fin}\,6$.
@@ -88,11 +94,13 @@ $p : \mathrm{Fin}\,n \to \mathrm{Fin}\,6$.
 
 \begin{definition}[Vote vectors]
 \lean{ArrowTheorem.abVotes}
+\label{ArrowTheorem.abVotes}
 \lean{ArrowTheorem.bcVotes}
+\label{ArrowTheorem.bcVotes}
 \lean{ArrowTheorem.caVotes}
+\label{ArrowTheorem.caVotes}
 \leanok
-\uses{ArrowTheorem.Profile, ArrowTheorem.abPref,
-      ArrowTheorem.bcPref, ArrowTheorem.caPref}
+\uses{ArrowTheorem.Profile, ArrowTheorem.abPref, ArrowTheorem.bcPref, ArrowTheorem.caPref}
 Given a profile $p$, the vote vectors $\mathrm{abVotes}(p)$,
 $\mathrm{bcVotes}(p)$, $\mathrm{caVotes}(p) \in \{0,1\}^n$ record each
 voter's pairwise preference.
@@ -100,6 +108,7 @@ voter's pairwise preference.
 
 \begin{definition}[Acyclicity]
 \lean{ArrowTheorem.acyclic}
+\label{ArrowTheorem.acyclic}
 \leanok
 \uses{ArrowTheorem.abVotes, ArrowTheorem.bcVotes, ArrowTheorem.caVotes}
 A social welfare function $f$ is \emph{acyclic} if no profile of transitive
@@ -118,16 +127,18 @@ pairwise preference signs is $-1/3$.
 
 \begin{lemma}[Pairwise sign sums]
 \lean{ArrowTheorem.sum_abPref_bcPref}
+\label{ArrowTheorem.sum_abPref_bcPref}
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \lean{ArrowTheorem.sum_bcPref_caPref}
+\label{ArrowTheorem.sum_bcPref_caPref}
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p017-b002,
   pdf-352ab7ff3113-p016-b001
 }
 \lean{ArrowTheorem.sum_abPref_caPref}
+\label{ArrowTheorem.sum_abPref_caPref}
 \leanok
-\uses{ArrowTheorem.abPref, ArrowTheorem.bcPref, ArrowTheorem.caPref,
-      BooleanAnalysis.boolToSign}
+\uses{ArrowTheorem.abPref, ArrowTheorem.bcPref, ArrowTheorem.caPref, BooleanAnalysis.boolToSign}
 \difficulty{2}
 Summing pairwise sign products over all 6 orderings:
 \[
@@ -144,6 +155,7 @@ Hence $\E[s_{ab}\cdot s_{bc}] = -2/6 = -1/3$.
 
 \begin{definition}[Correlation function]
 \lean{ArrowTheorem.corrFunc}
+\label{ArrowTheorem.corrFunc}
 \leanok
 \uses{BooleanAnalysis.fourierCoeff}
 The \emph{Fourier correlation function} of $f$ is
@@ -155,11 +167,10 @@ For odd $f$, only odd-level terms contribute.
 
 \begin{lemma}[Expected pairwise product equals correlation function]
 \lean{ArrowTheorem.expected_product_eq_corrFunc}
+\label{ArrowTheorem.expected_product_eq_corrFunc}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
-\uses{ArrowTheorem.corrFunc, ArrowTheorem.abVotes, ArrowTheorem.bcVotes,
-      BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS,
-      ArrowTheorem.sum_abPref_bcPref}
+\uses{ArrowTheorem.corrFunc, ArrowTheorem.abVotes, ArrowTheorem.bcVotes, BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS, ArrowTheorem.sum_abPref_bcPref}
 \difficulty{1}
 For voters with i.i.d.\ uniform orderings,
 \[
@@ -171,10 +182,10 @@ The same identity holds for the $bc$--$ca$ and $ab$--$ca$ pairs.
 
 \begin{lemma}[Correlation function lower bound]
 \lean{ArrowTheorem.corrFunc_ge_neg_third}
+\label{ArrowTheorem.corrFunc_ge_neg_third}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
-\uses{ArrowTheorem.corrFunc, BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne,
-      BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
+\uses{ArrowTheorem.corrFunc, BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
 \difficulty{5}
 For any odd $\pm 1$-valued function,
 \[
@@ -187,11 +198,10 @@ $\mathrm{corr}(f) \ge (-1/3)\sum_S \hat f(S)^2 = -1/3$.
 
 \begin{lemma}[Equality forces all weight on level 1]
 \lean{ArrowTheorem.corrFunc_eq_neg_third_of_weight_one}
+\label{ArrowTheorem.corrFunc_eq_neg_third_of_weight_one}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
-\uses{ArrowTheorem.corrFunc, ArrowTheorem.corrFunc_ge_neg_third,
-      BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne,
-      BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
+\uses{ArrowTheorem.corrFunc, ArrowTheorem.corrFunc_ge_neg_third, BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
 \difficulty{6}
 If $\mathrm{corr}(f) = -1/3$, then $\hat f(S) = 0$ for all $S$ with
 $|S| \ne 1$.  Combined with oddness ($\hat f(\varnothing) = 0$), all Fourier
@@ -203,14 +213,13 @@ weight lies on level 1: $W_1[f] = 1$.
 
 \begin{lemma}[Acyclicity implies $\mathrm{corr}(f) = -1/3$]
 \lean{ArrowTheorem.acyclic_implies_corrFunc}
+\label{ArrowTheorem.acyclic_implies_corrFunc}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p017-b002,
   pdf-352ab7ff3113-p017-b003
 }
-\uses{ArrowTheorem.acyclic, ArrowTheorem.corrFunc,
-      ArrowTheorem.expected_product_eq_corrFunc,
-      BooleanAnalysis.isPmOne}
+\uses{ArrowTheorem.acyclic, ArrowTheorem.corrFunc, ArrowTheorem.expected_product_eq_corrFunc, BooleanAnalysis.isPmOne}
 \difficulty{5}
 If $f$ is $\pm 1$-valued and acyclic, then $\mathrm{corr}(f) = -1/3$.
 
@@ -230,12 +239,10 @@ If $f$ is $\pm 1$-valued and acyclic, then $\mathrm{corr}(f) = -1/3$.
 
 \begin{lemma}[Degree-1 unanimous $\pm 1$ function is a dictator]
 \lean{ArrowTheorem.degree_one_implies_dictator}
+\label{ArrowTheorem.degree_one_implies_dictator}
 \leanok
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
-\uses{ArrowTheorem.isDictator, ArrowTheorem.unanimity,
-      BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff,
-      BooleanAnalysis.parseval_pm_one, BooleanAnalysis.walsh_expansion,
-      BooleanAnalysis.dictator_eq_chi, BooleanAnalysis.chiS_singleton}
+\uses{ArrowTheorem.isDictator, ArrowTheorem.unanimity, BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.walsh_expansion, BooleanAnalysis.dictator_eq_chi, BooleanAnalysis.chiS_singleton}
 \difficulty{7}
 Suppose $f$ is $\pm 1$-valued, unanimous, and $\hat f(S) = 0$ for all $|S|\ne 1$.
 Then $f$ is a dictator.
@@ -256,14 +263,13 @@ Then $f$ is a dictator.
 
 \begin{theorem}[Arrow's Impossibility Theorem]
 \lean{ArrowTheorem.arrow_theorem}
+\label{ArrowTheorem.arrow_theorem}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p016-b004,
   pdf-352ab7ff3113-p017-b003
 }
-\uses{ArrowTheorem.acyclic_implies_corrFunc,
-      ArrowTheorem.corrFunc_eq_neg_third_of_weight_one,
-      ArrowTheorem.degree_one_implies_dictator}
+\uses{ArrowTheorem.acyclic_implies_corrFunc, ArrowTheorem.corrFunc_eq_neg_third_of_weight_one, ArrowTheorem.degree_one_implies_dictator}
 \difficulty{3}
 Let $f:\{0,1\}^n\to\bbr$ be a social welfare function that is odd
 (antisymmetric), $\pm 1$-valued, unanimous, and acyclic.  Then $f$ is a
@@ -287,6 +293,7 @@ $f = \mathrm{dict}_{i_0}$.
 
 \begin{lemma}[Sum of $ab$ preference signs vanishes]
 \lean{ArrowTheorem.sum_abPref_sign}
+\label{ArrowTheorem.sum_abPref_sign}
 \leanok
 \uses{ArrowTheorem.abPref, BooleanAnalysis.boolToSign}
 \difficulty{2}
@@ -296,6 +303,7 @@ $\sum_{k=0}^{5} s_{ab}(k) = 0$; the $ab$ marginal is balanced.
 
 \begin{lemma}[Sum of $bc$ preference signs vanishes]
 \lean{ArrowTheorem.sum_bcPref_sign}
+\label{ArrowTheorem.sum_bcPref_sign}
 \leanok
 \uses{ArrowTheorem.bcPref, BooleanAnalysis.boolToSign}
 \difficulty{2}
@@ -305,6 +313,7 @@ $\sum_{k=0}^{5} s_{bc}(k) = 0$; the $bc$ marginal is balanced.
 
 \begin{lemma}[Sum of $ca$ preference signs vanishes]
 \lean{ArrowTheorem.sum_caPref_sign}
+\label{ArrowTheorem.sum_caPref_sign}
 \leanok
 \uses{ArrowTheorem.caPref, BooleanAnalysis.boolToSign}
 \difficulty{2}
@@ -314,6 +323,7 @@ $\sum_{k=0}^{5} s_{ca}(k) = 0$; the $ca$ marginal is balanced.
 
 \begin{lemma}[Product over a finset as an indicator product]
 \lean{ArrowTheorem.prod_finset_eq_prod_univ_ite}
+\label{ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \leanok
 \difficulty{3}
 For $A\subseteq\mathrm{Fin}\,n$ and $g:\mathrm{Fin}\,n\to\bbr$,
@@ -327,10 +337,10 @@ with an indicator.
 
 \begin{lemma}[General profile kernel]
 \lean{ArrowTheorem.profile_kernel_gen}
+\label{ArrowTheorem.profile_kernel_gen}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
-\uses{ArrowTheorem.Profile, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS,
-      ArrowTheorem.prod_finset_eq_prod_univ_ite}
+\uses{ArrowTheorem.Profile, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \difficulty{7}
 Let $\mathrm{xPref},\mathrm{yPref}:\mathrm{Fin}\,6\to\mathrm{Bool}$ be two
 preference assignments with balanced marginals
@@ -347,16 +357,13 @@ $S,T\subseteq[n]$,
 
 \begin{lemma}[$ab$--$bc$ kernel]
 \lean{ArrowTheorem.profile_inner_product_kernel}
+\label{ArrowTheorem.profile_inner_product_kernel}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p017-b002,
   pdf-352ab7ff3113-p016-b001
 }
-\uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.bcVotes,
-      ArrowTheorem.sum_abPref_bcPref, BooleanAnalysis.chiS,
-      ArrowTheorem.profile_kernel_gen,
-      ArrowTheorem.sum_abPref_sign,
-      ArrowTheorem.sum_bcPref_sign}
+\uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.bcVotes, ArrowTheorem.sum_abPref_bcPref, BooleanAnalysis.chiS, ArrowTheorem.profile_kernel_gen, ArrowTheorem.sum_abPref_sign, ArrowTheorem.sum_bcPref_sign}
 \difficulty{1}
 Specialization of the general kernel to the $ab$--$bc$ vote pair: for all
 $S,T\subseteq[n]$,
@@ -370,16 +377,13 @@ $S,T\subseteq[n]$,
 
 \begin{lemma}[$bc$--$ca$ kernel]
 \lean{ArrowTheorem.profile_kernel_bcca}
+\label{ArrowTheorem.profile_kernel_bcca}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p016-b001,
   pdf-352ab7ff3113-p017-b002
 }
-\uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes,
-      ArrowTheorem.sum_bcPref_caPref, BooleanAnalysis.chiS,
-      ArrowTheorem.profile_kernel_gen,
-      ArrowTheorem.sum_bcPref_sign,
-      ArrowTheorem.sum_caPref_sign}
+\uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes, ArrowTheorem.sum_bcPref_caPref, BooleanAnalysis.chiS, ArrowTheorem.profile_kernel_gen, ArrowTheorem.sum_bcPref_sign, ArrowTheorem.sum_caPref_sign}
 \difficulty{1}
 Specialization of the general kernel to the $bc$--$ca$ vote pair: for all
 $S,T\subseteq[n]$,
@@ -393,13 +397,10 @@ $S,T\subseteq[n]$,
 
 \begin{lemma}[$ab$--$ca$ kernel]
 \lean{ArrowTheorem.profile_kernel_abca}
+\label{ArrowTheorem.profile_kernel_abca}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
-\uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes,
-      ArrowTheorem.sum_abPref_caPref, BooleanAnalysis.chiS,
-      ArrowTheorem.profile_kernel_gen,
-      ArrowTheorem.sum_abPref_sign,
-      ArrowTheorem.sum_caPref_sign}
+\uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes, ArrowTheorem.sum_abPref_caPref, BooleanAnalysis.chiS, ArrowTheorem.profile_kernel_gen, ArrowTheorem.sum_abPref_sign, ArrowTheorem.sum_caPref_sign}
 \difficulty{1}
 Specialization of the general kernel to the $ab$--$ca$ vote pair: for all
 $S,T\subseteq[n]$,
@@ -413,11 +414,10 @@ $S,T\subseteq[n]$,
 
 \begin{lemma}[Expected product from a kernel]
 \lean{ArrowTheorem.expected_product_helper}
+\label{ArrowTheorem.expected_product_helper}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
-\uses{ArrowTheorem.Profile, ArrowTheorem.corrFunc, BooleanAnalysis.BoolCube,
-      BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS,
-      BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion}
+\uses{ArrowTheorem.Profile, ArrowTheorem.corrFunc, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion}
 \difficulty{6}
 Let $f:\{0,1\}^n\to\bbr$ and let $\mathrm{votes}_1,\mathrm{votes}_2$ map each
 profile to a Boolean cube point.  If the pair satisfies the kernel identity
@@ -431,15 +431,13 @@ $\bigl(\tfrac16\bigr)^n\sum_p \chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}
 
 \begin{lemma}[Expected product for the $bc$--$ca$ pair]
 \lean{ArrowTheorem.expected_product_bcca}
+\label{ArrowTheorem.expected_product_bcca}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p017-b002,
   pdf-352ab7ff3113-p016-b001
 }
-\uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes,
-      ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc,
-      ArrowTheorem.expected_product_helper,
-      ArrowTheorem.profile_kernel_bcca}
+\uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes, ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc, ArrowTheorem.expected_product_helper, ArrowTheorem.profile_kernel_bcca}
 \difficulty{1}
 For any $f:\{0,1\}^n\to\bbr$,
 $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{bcVotes}(p))\,f(\mathrm{caVotes}(p))
@@ -448,15 +446,13 @@ $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{bcVotes}(p))\,f(\mathrm{caVotes}(p))
 
 \begin{lemma}[Expected product for the $ab$--$ca$ pair]
 \lean{ArrowTheorem.expected_product_abca}
+\label{ArrowTheorem.expected_product_abca}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p017-b002,
   pdf-352ab7ff3113-p016-b001
 }
-\uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes,
-      ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc,
-      ArrowTheorem.expected_product_helper,
-      ArrowTheorem.profile_kernel_abca}
+\uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes, ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc, ArrowTheorem.expected_product_helper, ArrowTheorem.profile_kernel_abca}
 \difficulty{1}
 For any $f:\{0,1\}^n\to\bbr$,
 $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{abVotes}(p))\,f(\mathrm{caVotes}(p))

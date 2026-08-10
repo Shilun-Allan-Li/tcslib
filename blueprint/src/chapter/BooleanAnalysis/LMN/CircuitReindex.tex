@@ -12,6 +12,7 @@ preserves circuit depth and commutes with evaluation.
 
 \begin{definition}[Re-indexing a circuit]
 \lean{BoolCircuit.Circuit.reidx}
+\label{BoolCircuit.Circuit.reidx}
 \leanok
 \uses{BoolCircuit.Circuit}
 Given a circuit $c$ on $m$ variables and a function $f : \mathrm{Fin}\,m \to \mathrm{Fin}\,m'$,
@@ -22,6 +23,7 @@ $\mathrm{And}/\mathrm{Or}$ nodes.
 
 \begin{theorem}[Re-indexing preserves depth]
 \lean{BoolCircuit.Circuit.reidx_depth}
+\label{BoolCircuit.Circuit.reidx_depth}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx}
 \difficulty{4}
@@ -31,6 +33,7 @@ the re-indexed circuit has the same depth as $c$, i.e. $\mathrm{depth}(\mathrm{r
 
 \begin{theorem}[Re-indexing commutes with evaluation]
 \lean{BoolCircuit.Circuit.reidx_eval}
+\label{BoolCircuit.Circuit.reidx_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx, BoolCircuit.Lit.eval}
 \difficulty{5}

@@ -14,6 +14,7 @@ of the seeds cause an incorrect output.
 
 \begin{theorem}[Hoeffding tail bound for many events]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prob_many_events_le}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prob_many_events_le}
 \leanok
 \difficulty{5}
 Let $(\Omega', \mu)$ be a probability space and let $Y_0, \dots, Y_{t-1} : \Omega' \to
@@ -29,6 +30,7 @@ Then
 
 \begin{definition}[Derandomization sample count]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}
 \leanok
 Given finite types $X$ and $Y$ and real parameters $\varepsilon, c$, the number of random
 samples required for derandomization via Chernoff and union bound is
@@ -43,17 +45,9 @@ where $\lceil\cdot\rceil_{+}$ denotes the natural-number ceiling.
 
 \begin{theorem}[Existence of good randomness]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-CommunicationComplexity.FiniteProbabilitySpace,
-CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval,
-CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prob_many_events_le,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun_eq}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prob_many_events_le, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun_eq}
 \difficulty{7}
 Let $\Omega$ be a finite probability space, let $p$ be a public-coin protocol on $X
 \times Y$ with output type $\alpha$, and let $f : X \to Y \to \alpha$.  Suppose $c > 1$

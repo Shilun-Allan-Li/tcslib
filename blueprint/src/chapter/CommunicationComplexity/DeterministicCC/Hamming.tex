@@ -12,6 +12,7 @@ radius $r$ has size $\mathrm{ballVol}(n,r,q) = \sum_{i=0}^{r}\binom{n}{i}(q-1)^i
 
 \begin{definition}[Word]
 \lean{CommunicationComplexity.Word}
+\label{CommunicationComplexity.Word}
 \leanok
 A \emph{word} of length $n$ over alphabet $\alpha$ is a function
 $\mathrm{Fin}\,n \to \alpha$; it is an abbreviation for the type of
@@ -20,6 +21,7 @@ length-$n$ codewords used throughout this module.
 
 \begin{definition}[Hamming ball]
 \lean{CommunicationComplexity.hammingBall}
+\label{CommunicationComplexity.hammingBall}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p029-b006}
 \uses{CommunicationComplexity.Word}
@@ -31,6 +33,7 @@ The \emph{Hamming ball} of radius $r$ centred at $u \in \alpha^n$ is the finset
 
 \begin{definition}[Hamming sphere]
 \lean{CommunicationComplexity.hammingSphere}
+\label{CommunicationComplexity.hammingSphere}
 \leanok
 \uses{CommunicationComplexity.Word}
 The \emph{Hamming sphere} of radius $r$ centred at $u \in \alpha^n$ is the finset
@@ -41,6 +44,7 @@ The \emph{Hamming sphere} of radius $r$ centred at $u \in \alpha^n$ is the finse
 
 \begin{definition}[Ball volume]
 \lean{CommunicationComplexity.ballVol}
+\label{CommunicationComplexity.ballVol}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p070-b003}
 For a length-$n$ code over an alphabet of size $q$, the \emph{ball volume} at radius $t$ is
@@ -51,6 +55,7 @@ For a length-$n$ code over an alphabet of size $q$, the \emph{ball volume} at ra
 
 \begin{lemma}[Spheres of different radii are disjoint]
 \lean{CommunicationComplexity.hammingSpheres_disjoint}
+\label{CommunicationComplexity.hammingSpheres_disjoint}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingSphere}
 \difficulty{2}
@@ -60,6 +65,7 @@ $S_r(u)$ and $S_t(u)$ are disjoint finsets.
 
 \begin{lemma}[Spheres are pairwise disjoint]
 \lean{CommunicationComplexity.hammingSpheres_pairwise_disjoint}
+\label{CommunicationComplexity.hammingSpheres_pairwise_disjoint}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSpheres_disjoint}
 \difficulty{1}
@@ -69,6 +75,7 @@ as a family of finsets indexed by $\{0,\ldots,r-1\}$.
 
 \begin{lemma}[Ball equals disjoint union of spheres]
 \lean{CommunicationComplexity.hammingBall_eq_hammingSpheres}
+\label{CommunicationComplexity.hammingBall_eq_hammingSpheres}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSpheres_pairwise_disjoint}
 \difficulty{4}
@@ -80,6 +87,7 @@ The Hamming ball of radius $r$ decomposes as the disjoint union
 
 \begin{definition}[Support of a pair of words]
 \lean{CommunicationComplexity.support}
+\label{CommunicationComplexity.support}
 \leanok
 \uses{CommunicationComplexity.Word}
 The \emph{support} of $v$ relative to $u$ is the finset of coordinate positions
@@ -89,6 +97,7 @@ $\mathrm{support}(u,v) = \{i \in \mathrm{Fin}\,n : u_i \ne v_i\}$.
 
 \begin{lemma}[Support card equals Hamming distance]
 \lean{CommunicationComplexity.support_dist}
+\label{CommunicationComplexity.support_dist}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.support}
 \difficulty{1}
@@ -98,6 +107,7 @@ $\mathrm{hammingDist}(u,v) = |\mathrm{support}(u,v)|$.
 
 \begin{definition}[Support fiber]
 \lean{CommunicationComplexity.supportFiber}
+\label{CommunicationComplexity.supportFiber}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.support}
 For a word $u$ and a finset $S \subseteq \mathrm{Fin}\,n$, the \emph{support fiber}
@@ -107,6 +117,7 @@ $\mathrm{supportFiber}(u,S) = \{v : \mathrm{support}(u,v) = S\}$.
 
 \begin{lemma}[Support fibers over distinct sets are disjoint]
 \lean{CommunicationComplexity.supportFiber_disjoint}
+\label{CommunicationComplexity.supportFiber_disjoint}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{2}
@@ -116,6 +127,7 @@ $\mathrm{supportFiber}(u,S)$ and $\mathrm{supportFiber}(u,T)$ are disjoint finse
 
 \begin{lemma}[Sphere as union of support fibers]
 \lean{CommunicationComplexity.hammingSphere_eq_biUnion}
+\label{CommunicationComplexity.hammingSphere_eq_biUnion}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingSphere, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{2}
@@ -128,6 +140,7 @@ all size-$r$ subsets of $\mathrm{Fin}\,n$:
 
 \begin{definition}[Alternative symbol choices]
 \lean{CommunicationComplexity.choices}
+\label{CommunicationComplexity.choices}
 \leanok
 \uses{CommunicationComplexity.Word}
 For a word $u$ and position $i$, the \emph{choices} at $i$ is the finset of symbols
@@ -136,6 +149,7 @@ $a \in \alpha$ with $a \ne u_i$, i.e.\ the non-trivial alternatives for position
 
 \begin{lemma}[Choices cardinality]
 \lean{CommunicationComplexity.choices_card}
+\label{CommunicationComplexity.choices_card}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices}
 \difficulty{3}
@@ -145,6 +159,7 @@ $|\mathrm{choices}(u,i)| = |\alpha| - 1$.
 
 \begin{lemma}[Choices partition a support fiber]
 \lean{CommunicationComplexity.choices_partition_supportFiber}
+\label{CommunicationComplexity.choices_partition_supportFiber}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{4}
@@ -159,6 +174,7 @@ $\{i\} \cup S$ is partitioned by the value chosen at position $i$:
 
 \begin{lemma}[Each piece has the same cardinality]
 \lean{CommunicationComplexity.piece_card}
+\label{CommunicationComplexity.piece_card}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{6}
@@ -169,6 +185,7 @@ has the same cardinality as $\mathrm{supportFiber}(u,S)$.
 
 \begin{lemma}[Support fiber cardinality]
 \lean{CommunicationComplexity.card_supportFiber}
+\label{CommunicationComplexity.card_supportFiber}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices_card, CommunicationComplexity.choices_partition_supportFiber, CommunicationComplexity.piece_card, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
@@ -181,6 +198,7 @@ For any word $u$ and finset $S \subseteq \mathrm{Fin}\,n$,
 
 \begin{lemma}[Hamming sphere cardinality]
 \lean{CommunicationComplexity.hammingSphere_card}
+\label{CommunicationComplexity.hammingSphere_card}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.card_supportFiber, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_eq_biUnion, CommunicationComplexity.supportFiber_disjoint}
@@ -193,6 +211,7 @@ For any centre $u \in \alpha^n$ and radius $k$,
 
 \begin{lemma}[Hamming ball cardinality]
 \lean{CommunicationComplexity.hammingBall_card}
+\label{CommunicationComplexity.hammingBall_card}
 \leanok
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p032-b001,
@@ -208,6 +227,7 @@ For any centre $u \in \alpha^n$ and radius $r$,
 
 \begin{lemma}[Binary ball volume]
 \lean{CommunicationComplexity.ballVol_binary}
+\label{CommunicationComplexity.ballVol_binary}
 \leanok
 \uses{CommunicationComplexity.ballVol}
 \difficulty{1}

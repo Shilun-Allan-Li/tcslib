@@ -13,11 +13,9 @@ of the relevant cardinality.
 
 \begin{theorem}[Complexity bounded by $\lceil\log|X|\rceil + \lceil\log|Y|\rceil$]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card}
+\label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-      CommunicationComplexity.Deterministic.communicationComplexity,
-      CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
 For finite, nonempty types $X$ and $Y$ and any function $f : X \to Y \to \alpha$,
 the deterministic communication complexity satisfies
@@ -30,11 +28,9 @@ and Bob then sends his entire input to Alice.
 
 \begin{theorem}[Complexity bounded by $\lceil\log|X|\rceil + \lceil\log|\alpha|\rceil$]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
+\label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-      CommunicationComplexity.Deterministic.communicationComplexity,
-      CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
 For finite, nonempty types $X$ and $\alpha$ and any function $f : X \to Y \to \alpha$,
 the deterministic communication complexity satisfies
@@ -47,11 +43,9 @@ and Bob computes and sends back the output $f(x, y)$.
 
 \begin{theorem}[Complexity bounded by $\lceil\log|Y|\rceil + \lceil\log|\alpha|\rceil$]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_Y_alpha}
+\label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_Y_alpha}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-      CommunicationComplexity.Deterministic.communicationComplexity,
-      CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
 For finite, nonempty types $Y$ and $\alpha$ and any function $f : X \to Y \to \alpha$,
 the deterministic communication complexity satisfies

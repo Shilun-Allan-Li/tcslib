@@ -17,6 +17,7 @@ distance-form corollaries together with explicit logarithmic dimension bounds.
 
 \begin{definition}[Single-pair distortion bound]
 \lean{JLDistortion}
+\label{JLDistortion}
 \leanok
 For $\varepsilon \in \mathbb{R}$, vectors $u, v \in \mathbb{R}^d$, and their
 images $u', v' \in \mathbb{R}^k$, \texttt{JLDistortion} asserts the two-sided
@@ -29,6 +30,7 @@ squared-distance inequality
 
 \begin{definition}[$\varepsilon$-JL embedding]
 \lean{IsJLEmbedding}
+\label{IsJLEmbedding}
 \leanok
 \uses{JLDistortion}
 A linear map $f : \mathbb{R}^d \to_L[\mathbb{R}] \mathbb{R}^k$ is an
@@ -39,6 +41,7 @@ pair $(u, v) \in V \times V$, the pair $(f(u), f(v))$ satisfies
 
 \begin{definition}[Bad-pair event]
 \lean{BadPair}
+\label{BadPair}
 \leanok
 \uses{JLDistortion}
 Given a $k \times d$ matrix $A$ and a finite set
@@ -50,6 +53,7 @@ more than a factor of $\varepsilon$.
 
 \begin{theorem}[JL concentration --- single vector]
 \lean{jl_concentration_single}
+\label{jl_concentration_single}
 \leanok
 \uses{BadSingle, jl_concentration_single_via_chi_squared}
 \difficulty{1}
@@ -64,6 +68,7 @@ each row).  For any fixed $x \in \mathbb{R}^d$ and any $0 < \varepsilon < 1$,
 
 \begin{lemma}[Distortion from non-bad single]
 \lean{JLDistortion.of_not_bad}
+\label{JLDistortion.of_not_bad}
 \leanok
 \uses{BadSingle, JLDistortion}
 \difficulty{3}
@@ -76,6 +81,7 @@ of the squared-distance of the originals.
 
 \begin{theorem}[JL union bound]
 \lean{jl_union_bound}
+\label{jl_union_bound}
 \leanok
 \uses{BadPair, BadSingle, JLDistortion.of_not_bad}
 \difficulty{5}
@@ -90,6 +96,7 @@ distorted is at most
 
 \begin{theorem}[Structural JL --- Gaussian probabilistic method]
 \lean{johnson_lindenstrauss_of_gaussian}
+\label{johnson_lindenstrauss_of_gaussian}
 \leanok
 \uses{BadPair, BadSingle, IsJLEmbedding, jl_concentration_single, jl_union_bound}
 \difficulty{4}
@@ -103,6 +110,7 @@ event.
 
 \begin{theorem}[Structural JL --- sub-Gaussian probabilistic method]
 \lean{johnson_lindenstrauss_of_subgaussian}
+\label{johnson_lindenstrauss_of_subgaussian}
 \leanok
 \uses{BadPair, BadSingle, IsJLEmbedding, concentration_zero, jl_concentration_single_subgaussian, jl_union_bound}
 \difficulty{5}
@@ -117,6 +125,7 @@ matrices.
 
 \begin{lemma}[Measurability of bad-single event]
 \lean{measurableSet_badSingle}
+\label{measurableSet_badSingle}
 \leanok
 \uses{BadSingle}
 \difficulty{4}
@@ -130,6 +139,7 @@ so is the squared norm.
 
 \begin{lemma}[Existence of i.i.d.\ Gaussian matrix]
 \lean{exists_iid_gaussian_matrix}
+\label{exists_iid_gaussian_matrix}
 \leanok
 \difficulty{6}
 For any $k > 0$ and $d \ge 0$, there exists a probability space
@@ -141,6 +151,7 @@ and entries within each row jointly independent.
 
 \begin{lemma}[Numerical failure-probability bound]
 \lean{jl_failure_bound_of_dim}
+\label{jl_failure_bound_of_dim}
 \leanok
 \difficulty{5}
 Given $0 < \varepsilon$, $n \ge 2$, $k \ge 32 \log n / \varepsilon^2$, and
@@ -152,6 +163,7 @@ consumed by both \texttt{johnson\_lindenstrauss\_of\_gaussian} and
 
 \begin{theorem}[Johnson--Lindenstrauss flattening lemma (Gaussian)]
 \lean{johnson_lindenstrauss}
+\label{johnson_lindenstrauss}
 \leanok
 \uses{BadSingle, IsJLEmbedding, exists_iid_gaussian_matrix, jl_failure_bound_of_dim, johnson_lindenstrauss_of_gaussian, measurableSet_badSingle}
 \difficulty{3}
@@ -165,6 +177,7 @@ for all $u, v \in V$.
 
 \begin{theorem}[Johnson--Lindenstrauss flattening lemma (sub-Gaussian)]
 \lean{johnson_lindenstrauss_subgaussian}
+\label{johnson_lindenstrauss_subgaussian}
 \leanok
 \uses{BadSingle, IsJLEmbedding, hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_failure_bound_of_dim, johnson_lindenstrauss_of_subgaussian, measurableSet_badSingle, measurable_radMatrix, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
 \difficulty{4}
@@ -178,6 +191,7 @@ axiom) and the identical union-bound argument.
 
 \begin{lemma}[Distance form of embedding]
 \lean{jl_dist_of_embedding}
+\label{jl_dist_of_embedding}
 \leanok
 \uses{IsJLEmbedding, JLDistortion}
 \difficulty{4}
@@ -192,6 +206,7 @@ obtained by taking square roots of the \texttt{JLDistortion} bounds.
 
 \begin{theorem}[JL flattening --- distance form (Gaussian)]
 \lean{johnson_lindenstrauss_dist}
+\label{johnson_lindenstrauss_dist}
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss}
 \difficulty{1}
@@ -205,6 +220,7 @@ map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ such that for all $u, v \in V$,
 
 \begin{theorem}[JL flattening --- distance form (sub-Gaussian)]
 \lean{johnson_lindenstrauss_subgaussian_dist}
+\label{johnson_lindenstrauss_subgaussian_dist}
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss_subgaussian}
 \difficulty{1}
@@ -216,6 +232,7 @@ realized by a Rademacher random matrix.
 
 \begin{theorem}[Logarithmic dimension bound (Gaussian)]
 \lean{johnson_lindenstrauss_dim_bound}
+\label{johnson_lindenstrauss_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss}
 \difficulty{3}
@@ -228,6 +245,7 @@ exists.  In particular the target dimension is $O(\log n / \varepsilon^2)$.
 
 \begin{theorem}[Logarithmic dimension bound (sub-Gaussian)]
 \lean{johnson_lindenstrauss_subgaussian_dim_bound}
+\label{johnson_lindenstrauss_subgaussian_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss_subgaussian}
 \difficulty{3}

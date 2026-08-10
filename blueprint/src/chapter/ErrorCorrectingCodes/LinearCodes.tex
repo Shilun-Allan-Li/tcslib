@@ -11,6 +11,7 @@ $x\in\alpha^k$, the output $Gx$ is uniformly distributed over $\alpha^n$.
 
 \begin{theorem}[Distance equals minimum nonzero weight]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
+\label{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p047-b004}
 \uses{ErrorCorrectingCodes.Codeword.Linear_Code', ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.distance}
@@ -27,6 +28,7 @@ If $C$ is linear (witnessed by some generator matrix) and has minimum distance $
 
 \begin{definition}[Uniform distribution on vectors]
 \lean{ErrorCorrectingCodes.Codeword.uniform_vector_dist}
+\label{ErrorCorrectingCodes.Codeword.uniform_vector_dist}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p062-b003}
 The uniform probability mass function on $\alpha^n$, encoded as a function
@@ -35,6 +37,7 @@ $\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
 
 \begin{lemma}[Finiteness of constrained matrix set]
 \lean{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
+\label{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \leanok
 \difficulty{3}
 For fixed $x\in\alpha^k$ and $v\in\alpha^n$, the set $\{G : Gx=v\}$ is finite.
@@ -42,12 +45,14 @@ For fixed $x\in\alpha^k$ and $v\in\alpha^n$, the set $\{G : Gx=v\}$ is finite.
 
 \begin{definition}[Distribution induced by random matrices]
 \lean{ErrorCorrectingCodes.Codeword.matrix_dist}
+\label{ErrorCorrectingCodes.Codeword.matrix_dist}
 \leanok
 $\mu_x(v)$ is the fraction of $n\times k$ matrices $G$ satisfying $Gx=v$.
 \end{definition}
 
 \begin{definition}[Row extraction]
 \lean{ErrorCorrectingCodes.Codeword.get_matrix_row}
+\label{ErrorCorrectingCodes.Codeword.get_matrix_row}
 \leanok
 Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
 \end{definition}
@@ -57,6 +62,7 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
 
 \begin{theorem}[Uniformity of $Gx$ for nonzero $x$]
 \lean{ErrorCorrectingCodes.Codeword.uniformity_lemma}
+\label{ErrorCorrectingCodes.Codeword.uniformity_lemma}
 \leanok
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p068-b001,

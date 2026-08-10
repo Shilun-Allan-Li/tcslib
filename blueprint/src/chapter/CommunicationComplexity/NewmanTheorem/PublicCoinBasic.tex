@@ -13,6 +13,7 @@ correctness: $\varepsilon$-satisfying a predicate and $\varepsilon$-computing a 
 
 \begin{definition}[Public-coin protocol]
 \lean{CommunicationComplexity.PublicCoin.Protocol}
+\label{CommunicationComplexity.PublicCoin.Protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 A public-coin protocol over shared randomness $\Omega$, with Alice's private input
@@ -24,6 +25,7 @@ alongside their private inputs.
 
 \begin{definition}[Output node]
 \lean{CommunicationComplexity.PublicCoin.Protocol.output}
+\label{CommunicationComplexity.PublicCoin.Protocol.output}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol}
 The leaf node of a public-coin protocol that returns the constant value $a \in \alpha$,
@@ -32,6 +34,7 @@ constructed by lifting the corresponding deterministic output node.
 
 \begin{definition}[Alice's move]
 \lean{CommunicationComplexity.PublicCoin.Protocol.alice}
+\label{CommunicationComplexity.PublicCoin.Protocol.alice}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol}
 Constructs a public-coin protocol node at which Alice sends a single bit: given a
@@ -41,6 +44,7 @@ the protocol continues according to $P : \mathrm{Bool} \to \mathrm{Protocol}$.
 
 \begin{definition}[Bob's move]
 \lean{CommunicationComplexity.PublicCoin.Protocol.bob}
+\label{CommunicationComplexity.PublicCoin.Protocol.bob}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol}
 Constructs a public-coin protocol node at which Bob sends a single bit: given a
@@ -50,6 +54,7 @@ the protocol continues according to $P : \mathrm{Bool} \to \mathrm{Protocol}$.
 
 \begin{definition}[Randomized execution]
 \lean{CommunicationComplexity.PublicCoin.Protocol.rrun}
+\label{CommunicationComplexity.PublicCoin.Protocol.rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PublicCoin.Protocol}
 Given a public-coin protocol $p$, private inputs $x \in X$, $y \in Y$, and a shared
@@ -60,6 +65,7 @@ and returns the resulting output.
 
 \begin{theorem}[\texttt{rrun} unfolding]
 \lean{CommunicationComplexity.PublicCoin.Protocol.rrun_eq}
+\label{CommunicationComplexity.PublicCoin.Protocol.rrun_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 \difficulty{1}
@@ -70,6 +76,7 @@ This is a definitional unfolding used as a \texttt{simp} lemma.
 
 \begin{definition}[$\varepsilon$-satisfies a predicate]
 \lean{CommunicationComplexity.PublicCoin.Protocol.ApproxSatisfies}
+\label{CommunicationComplexity.PublicCoin.Protocol.ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 A public-coin protocol $p$ \emph{$\varepsilon$-satisfies} a predicate
@@ -81,6 +88,7 @@ $Q : X \to Y \to \alpha \to \mathrm{Prop}$ if for every input pair $(x, y)$,
 
 \begin{definition}[$\varepsilon$-computes a function]
 \lean{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes}
+\label{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 A public-coin protocol $p$ \emph{$\varepsilon$-computes} a function
@@ -94,6 +102,7 @@ Here the volume is taken with respect to the measure on $\Omega$ given by the
 
 \begin{theorem}[\texttt{ApproxComputes} equals \texttt{ApproxSatisfies} at equality]
 \lean{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
+\label{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.Protocol.ApproxSatisfies}
 \difficulty{1}

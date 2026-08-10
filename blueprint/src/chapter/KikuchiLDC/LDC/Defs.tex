@@ -14,6 +14,7 @@ its value over $\pm 1$ assignments; and the double-copy notation on $\mathrm{Fin
 
 \begin{definition}[Hypergraph on $\mathrm{Fin}\,n$]
 \lean{Hypergraph}
+\label{Hypergraph}
 \leanok
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p004-b008}
 A hypergraph on the vertex set $\mathrm{Fin}\,n$ is a finite collection of subsets of
@@ -23,6 +24,7 @@ Its elements are called edges (or constraints).
 
 \begin{definition}[$q$-uniform hypergraph]
 \lean{Hypergraph.IsUniform}
+\label{Hypergraph.IsUniform}
 \leanok
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p004-b008}
 \uses{Hypergraph}
@@ -32,6 +34,7 @@ exactly $q$ vertices, i.e.\ $\abs{C} = q$.
 
 \begin{definition}[Matching]
 \lean{Hypergraph.IsMatching}
+\label{Hypergraph.IsMatching}
 \leanok
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p004-b008}
 \uses{Hypergraph}
@@ -41,6 +44,7 @@ $C, C' \in H$ with $C \neq C'$, the sets $C$ and $C'$ are disjoint.
 
 \begin{definition}[Degree of a set in a hypergraph]
 \lean{Hypergraph.degree}
+\label{Hypergraph.degree}
 \leanok
 \statementsource{arXiv.2308.15403}{
   pdf-b372a20892ce-p004-b008,
@@ -56,6 +60,7 @@ number of edges of $H$ containing $Q$:
 
 \begin{definition}[Pair-degree bound]
 \lean{Hypergraph.pairDegreeBound}
+\label{Hypergraph.pairDegreeBound}
 \leanok
 \statementsource{arXiv.2308.15403}{
   pdf-b372a20892ce-p006-b005,
@@ -68,6 +73,7 @@ vertices $u \neq v$ lies in at most $d$ edges, i.e.\ $\deg_H(\{u,v\}) \le d$.
 
 \begin{definition}[Sign values $\pm 1$]
 \lean{IsPMOne}
+\label{IsPMOne}
 \leanok
 The predicate on an integer $x$ stating that $x$ is a sign value, i.e.\ $x = 1$ or
 $x = -1$. Assignments used below take values in this set.
@@ -75,6 +81,7 @@ $x = -1$. Assignments used below take values in this set.
 
 \begin{definition}[Normal form locally decodable code]
 \lean{NormalLDC}
+\label{NormalLDC}
 \leanok
 \statementsource{LDC_now}{pdf-4377a4b7ed99-p075-b002}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b002}
@@ -88,6 +95,7 @@ $\delta n \le \abs{H_i}$ for every $i$.
 
 \begin{definition}[Combined hypergraph of an LDC]
 \lean{NormalLDC.combined}
+\label{NormalLDC.combined}
 \leanok
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b008}
 \uses{Hypergraph, NormalLDC}
@@ -97,6 +105,7 @@ $\bigcup_{i : \mathrm{Fin}\,k} H_i$, viewed as a hypergraph on $\mathrm{Fin}\,n$
 
 \begin{definition}[Total number of constraints]
 \lean{NormalLDC.totalConstraints}
+\label{NormalLDC.totalConstraints}
 \leanok
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b008}
 \uses{NormalLDC}
@@ -108,6 +117,7 @@ For a normal form code $L$, the total number of constraints
 
 \begin{definition}[Monomial of an assignment on a set]
 \lean{assignment_prod}
+\label{assignment_prod}
 \leanok
 For an assignment $x : \mathrm{Fin}\,n \to \mathbb{Z}$ and a set
 $C \subseteq \mathrm{Fin}\,n$, the product
@@ -118,6 +128,7 @@ $C \subseteq \mathrm{Fin}\,n$, the product
 
 \begin{definition}[XOR polynomial of a message]
 \lean{NormalLDC.xorPoly}
+\label{NormalLDC.xorPoly}
 \leanok
 \statementsource{arXiv.2109.04415}{pdf-9c5df3bb4a04-p026-b001}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b009}
@@ -133,6 +144,7 @@ where $m$ is the total number of constraints of $L$.
 
 \begin{definition}[Value of the XOR instance]
 \lean{NormalLDC.xorVal}
+\label{NormalLDC.xorVal}
 \leanok
 \statementsource{arXiv.2109.04415}{
   pdf-9c5df3bb4a04-p026-b001,
@@ -147,6 +159,7 @@ $x : \mathrm{Fin}\,n \to \mathbb{Z}$ taking values in $\{-1,1\}$.
 
 \begin{definition}[Double-copy ground set]
 \lean{DoubleCopy}
+\label{DoubleCopy}
 \leanok
 \statementsource{arXiv.2109.04415}{
   pdf-9c5df3bb4a04-p017-b003,
@@ -159,6 +172,7 @@ copies of each vertex of $\mathrm{Fin}\,n$.
 
 \begin{definition}[First copy of a vertex]
 \lean{copy1}
+\label{copy1}
 \leanok
 \statementsource{arXiv.2109.04415}{pdf-9c5df3bb4a04-p017-b003}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p007-b009}
@@ -169,6 +183,7 @@ $u^{(1)} = (u,0)$ in the double-copy ground set.
 
 \begin{definition}[Second copy of a vertex]
 \lean{copy2}
+\label{copy2}
 \leanok
 \statementsource{arXiv.2109.04415}{pdf-9c5df3bb4a04-p017-b003}
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p007-b009}
@@ -179,6 +194,7 @@ $u^{(2)} = (u,1)$ in the double-copy ground set.
 
 \begin{definition}[First-copy embedding of a set]
 \lean{liftCopy1}
+\label{liftCopy1}
 \leanok
 \statementsource{arXiv.2109.04415}{
   pdf-9c5df3bb4a04-p017-b003,
@@ -192,6 +208,7 @@ $u \mapsto u^{(1)}$, a subset of the double-copy ground set.
 
 \begin{definition}[Second-copy embedding of a set]
 \lean{liftCopy2}
+\label{liftCopy2}
 \leanok
 \statementsource{arXiv.2109.04415}{
   pdf-9c5df3bb4a04-p017-b003,

@@ -13,9 +13,9 @@ simulation lemmas (\texttt{rrun}) and complexity-preservation theorems.
 
 \begin{definition}[Output map of a private-coin protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a function $g : \alpha \to \beta$ and a private-coin protocol $p$ over randomness
 spaces $\Omega_X, \Omega_Y$ with output type $\alpha$, \texttt{map}~$g$~$p$ is the
 protocol that runs $p$ and then applies $g$ to its output, yielding a protocol with
@@ -24,11 +24,9 @@ output type $\beta$ and the same communication tree.
 
 \begin{theorem}[Simulation of mapped protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For any inputs $x : X$, $y : Y$ and random coins $\omega_x : \Omega_X$,
 $\omega_y : \Omega_Y$, the randomised run of the mapped protocol satisfies
@@ -40,11 +38,9 @@ $\omega_y : \Omega_Y$, the randomised run of the mapped protocol satisfies
 
 \begin{theorem}[Complexity of mapped protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_complexity}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map}
 \difficulty{1}
 Mapping a function over the output of a protocol does not change its communication
 complexity: $(p.\mathrm{map}\;g).\mathrm{complexity} = p.\mathrm{complexity}$.
@@ -52,9 +48,9 @@ complexity: $(p.\mathrm{map}\;g).\mathrm{complexity} = p.\mathrm{complexity}$.
 
 \begin{definition}[Monadic bind of private-coin protocols]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a protocol $p$ with output type $\alpha$ and a family $q : \alpha \to \mathrm{Protocol}\;\Omega_X\;\Omega_Y\;X\;Y\;\beta$,
 \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}~$p$~$q$ is the protocol that runs $p$, observes its output $a$, and then
 executes $q\,a$ on the same inputs using the same randomness spaces.
@@ -62,11 +58,9 @@ executes $q\,a$ on the same inputs using the same randomness spaces.
 
 \begin{theorem}[Simulation of bound protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For all $x, y, \omega_x, \omega_y$, the randomised run of the bound protocol satisfies
 \[
@@ -77,9 +71,9 @@ For all $x, y, \omega_x, \omega_y$, the randomised run of the bound protocol sat
 
 \begin{definition}[Randomness reindexing]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given functions $hX : \Omega_X' \to \Omega_X$ and $hY : \Omega_Y' \to \Omega_Y$,
 \texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}~$hX$~$hY$~$p$ reindexes the randomness spaces of $p$, yielding
 a protocol over $\Omega_X'$ and $\Omega_Y'$ that maps coins through $hX$ and $hY$
@@ -88,11 +82,9 @@ before passing them to $p$.
 
 \begin{theorem}[Simulation after randomness reindexing]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For all $x, y, \omega_x' : \Omega_X', \omega_y' : \Omega_Y'$,
 \[
@@ -103,10 +95,9 @@ For all $x, y, \omega_x' : \Omega_X', \omega_y' : \Omega_Y'$,
 
 \begin{theorem}[Complexity after randomness reindexing]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_complexity}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}
 \difficulty{1}
 Reindexing the randomness spaces of a protocol does not change its communication
 complexity: $(\mathrm{comapRandomness}\;hX\;hY\;p).\mathrm{complexity} = p.\mathrm{complexity}$.
@@ -114,10 +105,9 @@ complexity: $(\mathrm{comapRandomness}\;hX\;hY\;p).\mathrm{complexity} = p.\math
 
 \begin{definition}[Product of two private-coin protocols]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given protocols $p_1$ and $p_2$ with potentially distinct randomness spaces
 $(\Omega_{X_1}, \Omega_{Y_1})$ and $(\Omega_{X_2}, \Omega_{Y_2})$,
 \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}~$p_1$~$p_2$ runs them in parallel on the same inputs using independent
@@ -127,12 +117,9 @@ returning the pair of their outputs in $\alpha_1 \times \alpha_2$.
 
 \begin{theorem}[Simulation of product protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For all $x, y, \omega_x : \Omega_{X_1} \times \Omega_{X_2},
 \omega_y : \Omega_{Y_1} \times \Omega_{Y_2}$,
@@ -145,11 +132,9 @@ For all $x, y, \omega_x : \Omega_{X_1} \times \Omega_{X_2},
 
 \begin{theorem}[Complexity of product protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_complexity}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod}
 \difficulty{1}
 The communication complexity of the product protocol is the sum of the individual
 complexities: $(\mathrm{prod}\;p_1\;p_2).\mathrm{complexity} = p_1.\mathrm{complexity} + p_2.\mathrm{complexity}$.
@@ -157,10 +142,9 @@ complexities: $(\mathrm{prod}\;p_1\;p_2).\mathrm{complexity} = p_1.\mathrm{compl
 
 \begin{definition}[$k$-fold product of private-coin protocols]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a family of protocols $p : (i : \mathrm{Fin}\,k) \to \mathrm{Protocol}\;(\Omega_{Xf}\,i)\;(\Omega_{Yf}\,i)\;X\;Y\;(\alpha_f\,i)$
 with heterogeneous randomness and output types, \texttt{pi}~$p$ runs all $k$ protocols
 in parallel on the same inputs using independent randomness from the product spaces
@@ -170,12 +154,9 @@ $(i : \mathrm{Fin}\,k) \to \alpha_f\,i$.
 
 \begin{theorem}[Simulation of $k$-fold product]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For all $x, y, \omega_x, \omega_y$,
 \[
@@ -186,11 +167,9 @@ For all $x, y, \omega_x, \omega_y$,
 
 \begin{theorem}[Complexity of $k$-fold product]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_complexity}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi}
 \difficulty{1}
 The communication complexity of the $k$-fold product equals the sum of individual
 complexities: $(\mathrm{pi}\;p).\mathrm{complexity} = \sum_{i} (p\,i).\mathrm{complexity}$.
@@ -198,10 +177,9 @@ complexities: $(\mathrm{pi}\;p).\mathrm{complexity} = \sum_{i} (p\,i).\mathrm{co
 
 \begin{definition}[Bind with fresh independent randomness]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a protocol $p$ over randomness $(\Omega_X, \Omega_Y)$ and a family
 $q : \alpha \to \mathrm{Protocol}\;\Omega_X'\;\Omega_Y'\;X\;Y\;\beta$,
 \texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}~$p$~$q$ runs $p$ with the first component of the coin pair,
@@ -211,12 +189,9 @@ yielding a protocol over $(\Omega_X \times \Omega_X', \Omega_Y \times \Omega_Y')
 
 \begin{theorem}[Simulation of bind with fresh randomness]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For all $x, y, \omega_x : \Omega_X \times \Omega_X', \omega_y : \Omega_Y \times \Omega_Y'$,
 \[
@@ -227,11 +202,9 @@ For all $x, y, \omega_x : \Omega_X \times \Omega_X', \omega_y : \Omega_Y \times 
 
 \begin{theorem}[Complexity of bind with fresh randomness (constant continuation)]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_complexity_const}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_complexity_const}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}
 \difficulty{3}
 If the continuation $q\,a$ has the same complexity $c$ for every output $a$ of $p$,
 then
@@ -242,12 +215,9 @@ then
 
 \begin{definition}[Product of private-coin and deterministic protocols]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind}
 Given a private-coin protocol $p_1$ and a deterministic protocol $p_2$,
 \texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}~$p_1$~$p_2$ runs both on the same inputs and pairs their outputs
 in $\alpha_1 \times \alpha_2$, with $p_2$ contributing no additional randomness.
@@ -255,15 +225,9 @@ in $\alpha_1 \times \alpha_2$, with $p_2$ contributing no additional randomness.
 
 \begin{theorem}[Simulation of private-coin times deterministic]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For all $x, y, \omega_x, \omega_y$,
 \[
@@ -274,12 +238,9 @@ For all $x, y, \omega_x, \omega_y$,
 
 \begin{theorem}[Complexity of private-coin times deterministic]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_complexity}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}
 \difficulty{3}
 The communication complexity of \texttt{prodDet}~$p_1$~$p_2$ equals the sum of both
 complexities: $(\mathrm{prodDet}\;p_1\;p_2).\mathrm{complexity} = p_1.\mathrm{complexity} + p_2.\mathrm{complexity}$.

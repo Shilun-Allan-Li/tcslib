@@ -13,6 +13,7 @@ specialize to the Boolean ($\mathrm{Bool}$) case.
 
 \begin{theorem}[KL divergence as log-likelihood ratio sum (absolutely continuous case)]
 \lean{CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
+\label{CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{3}
@@ -32,6 +33,7 @@ log-likelihood ratio at $\omega$.
 
 \begin{theorem}[KL divergence as log-likelihood ratio sum]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
+\label{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons, CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
 \difficulty{4}
@@ -51,6 +53,7 @@ Then
 
 \begin{theorem}[KL divergence between PMFs as log-likelihood ratio sum]
 \lean{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr}
+\label{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
 \difficulty{4}
@@ -68,6 +71,7 @@ Let $\Omega$ be a finite measurable space and let $p, q$ be PMFs on $\Omega$.  T
 
 \begin{theorem}[Radon--Nikodym derivative equals singleton mass ratio]
 \lean{CommunicationComplexity.rnDeriv_toReal_eq_singleton_ratio}
+\label{CommunicationComplexity.rnDeriv_toReal_eq_singleton_ratio}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{4}
@@ -81,6 +85,7 @@ with $\nu\{\omega\} \neq 0$.  Then the real-valued Radon--Nikodym derivative sat
 
 \begin{theorem}[Singleton mass times log-likelihood ratio equals log of mass ratio]
 \lean{CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio}
+\label{CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.rnDeriv_toReal_eq_singleton_ratio}
 \difficulty{4}
@@ -97,6 +102,7 @@ Then
 
 \begin{theorem}[KL divergence as logarithmic mass ratio sum]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
+\label{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr, CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio}
 \difficulty{4}
@@ -118,6 +124,7 @@ Then
 
 \begin{theorem}[KL divergence is finite to full-support probability measure]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_ne_top_of_forall_toPMF_ne_zero}
+\label{CommunicationComplexity.FiniteMeasureSpace.klDiv_ne_top_of_forall_toPMF_ne_zero}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \difficulty{3}
@@ -128,6 +135,7 @@ $D_{\mathrm{KL}}(\mu \,\|\, \nu) \neq \infty$.
 
 \begin{theorem}[KL divergence between PMFs as logarithmic mass ratio sum]
 \lean{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_log}
+\label{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_log}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \difficulty{4}
@@ -147,6 +155,7 @@ Let $\Omega$ be a finite measurable space and let $p, q$ be PMFs on $\Omega$.  T
 
 \begin{theorem}[Boolean KL divergence matches PFR \texttt{KLDiv}]
 \lean{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
+\label{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \difficulty{5}
@@ -160,6 +169,7 @@ where the right-hand side is the PFR real-valued KL divergence of the identity r
 
 \begin{theorem}[KL divergence of pushed-forward Boolean variable matches PFR \texttt{KLDiv}]
 \lean{ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero}
+\label{ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero}
 \leanok
 \uses{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
 \difficulty{3}

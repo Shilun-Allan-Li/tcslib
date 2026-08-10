@@ -15,6 +15,7 @@ binary private-coin protocol type.
 
 \begin{definition}[Private-coin finite-message protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 A private-coin finite-message protocol over input types $X$, $Y$ with private
@@ -25,6 +26,7 @@ $\Omega_X \times X$ and for Bob is $\Omega_Y \times Y$.
 
 \begin{definition}[Output node]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.output}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.output}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 The leaf node of a private-coin finite-message protocol that produces the constant
@@ -34,6 +36,7 @@ of the underlying deterministic finite-message protocol.
 
 \begin{definition}[Alice's sending step]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a function $f : X \to \Omega_X \to \beta$ (Alice's message function depending on
@@ -44,6 +47,7 @@ message and execution branches on it.
 
 \begin{definition}[Bob's sending step]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bob}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bob}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a function $f : Y \to \Omega_Y \to \beta$ (Bob's message function depending on
@@ -54,9 +58,9 @@ message and execution branches on it.
 
 \begin{definition}[Protocol execution with explicit coins]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 $\texttt{rrun}\,p\,x\,y\,\omega_x\,\omega_y$ executes the protocol $p$ on public inputs
 $x : X$, $y : Y$ with Alice's private coin $\omega_x : \Omega_X$ and Bob's private coin
 $\omega_y : \Omega_Y$, returning an element of $\alpha$.  It is defined by running the
@@ -66,10 +70,9 @@ $(\omega_y, y)$.
 
 \begin{theorem}[\texttt{rrun} unfolding]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun_eq}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun_eq}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
 For any protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$, we have
 $p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y = p.\texttt{run}\,(\omega_x, x)\,(\omega_y, y)$.
@@ -78,9 +81,9 @@ This is a definitional equality exposed as a \texttt{simp} lemma.
 
 \begin{definition}[Approximate satisfaction of a predicate]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
 \leanok
-\uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 A protocol $p$ \emph{$\varepsilon$-satisfies} a predicate $Q : X \to Y \to \alpha \to
 \mathrm{Prop}$ if for every input pair $(x, y)$,
 \[
@@ -90,9 +93,9 @@ A protocol $p$ \emph{$\varepsilon$-satisfies} a predicate $Q : X \to Y \to \alph
 
 \begin{definition}[Approximate computation of a function]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes}
 \leanok
-\uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+\uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 A protocol $p$ \emph{$\varepsilon$-computes} a function $f : X \to Y \to \alpha$ if
 for every input pair $(x, y)$,
 \[
@@ -102,10 +105,9 @@ for every input pair $(x, y)$,
 
 \begin{theorem}[\texttt{ApproxComputes} equals \texttt{ApproxSatisfies} for equality]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \leanok
-\uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
+\uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
 \difficulty{2}
 For any protocol $p$, function $f$, and $\varepsilon \in \mathbb{R}$,
 $p.\texttt{ApproxComputes}\,f\,\varepsilon = p.\texttt{ApproxSatisfies}\,(\lambda\,x\,y\,a \Rightarrow a = f\,x\,y)\,\varepsilon$.
@@ -115,10 +117,9 @@ equality predicate.
 
 \begin{definition}[Conversion to binary private-coin protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.Protocol}
 Converts a private-coin finite-message protocol into a binary-tree private-coin
 protocol by delegating to
 \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}.
@@ -126,12 +127,9 @@ protocol by delegating to
 
 \begin{theorem}[\texttt{toProtocol} preserves execution]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol,
-      CommunicationComplexity.PrivateCoin.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{2}
 For any protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$,
 $(p.\texttt{toProtocol}).\texttt{rrun}\,x\,y\,\omega_x\,\omega_y =
@@ -140,34 +138,27 @@ p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$.
 
 \begin{theorem}[\texttt{toProtocol} preserves complexity]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity,
-      CommunicationComplexity.Deterministic.Protocol.complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
 \difficulty{1}
 For any protocol $p$, $(p.\texttt{toProtocol}).\texttt{complexity} = p.\texttt{complexity}$.
 \end{theorem}
 
 \begin{definition}[Embedding of binary private-coin protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.Protocol}
 Embeds a binary private-coin protocol into a private-coin finite-message protocol by
 delegating to \texttt{Deterministic.FiniteMessage.Protocol.ofProtocol}.
 \end{definition}
 
 \begin{theorem}[\texttt{ofProtocol} preserves execution]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun,
-      CommunicationComplexity.PrivateCoin.Protocol,
-      CommunicationComplexity.PrivateCoin.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{2}
 For any binary private-coin protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$,
 $(\texttt{ofProtocol}\,p).\texttt{rrun}\,x\,y\,\omega_x\,\omega_y =
@@ -176,12 +167,9 @@ p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$.
 
 \begin{theorem}[\texttt{ofProtocol} preserves complexity]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity,
-      CommunicationComplexity.Deterministic.Protocol.complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol,
-      CommunicationComplexity.PrivateCoin.Protocol}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.Protocol}
 \difficulty{1}
 For any binary private-coin protocol $p$,
 $(\texttt{ofProtocol}\,p).\texttt{complexity} = p.\texttt{complexity}$.
@@ -189,16 +177,9 @@ $(\texttt{ofProtocol}\,p).\texttt{complexity} = p.\texttt{complexity}$.
 
 \begin{theorem}[Equivalence via finite-message embedding]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv}
+\label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-      CommunicationComplexity.Deterministic.Protocol.complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun,
-      CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun,
-      CommunicationComplexity.PrivateCoin.Protocol,
-      CommunicationComplexity.PrivateCoin.Protocol.rrun}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{3}
 For every binary private-coin protocol $p$, there exists a finite-message protocol $P$
 such that $P.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y = p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$

@@ -16,6 +16,7 @@ for the set $J$ of free coordinates.
 
 \begin{definition}[Restriction commutes with the $\pm 1$-encoding]
 \lean{RestrictionFourier.restrictBF_boolToSign}
+\label{RestrictionFourier.restrictBF_boolToSign}
 \leanok
 \uses{BooleanAnalysis.boolToSign, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 The restriction $\mathrm{restrictBF}$ of a real-valued Boolean function reads free
@@ -28,6 +29,7 @@ agrees with encoding the restricted function: $\mathrm{restrictBF}\,(\mathrm{boo
 
 \begin{definition}[Membership in the free variables]
 \lean{RestrictionFourier.mem_freeVars}
+\label{RestrictionFourier.mem_freeVars}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 For a restriction $\rho$ and a coordinate $i$, we have $i \in \rho.\mathrm{freeVars}$ if
@@ -39,6 +41,7 @@ the bits $\rho$ fixes on a set $T$.
 
 \begin{lemma}[Character through a restriction splits]
 \lean{RestrictionFourier.chiS_extend}
+\label{RestrictionFourier.chiS_extend}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
 For a set $U \subseteq [n]$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
@@ -52,6 +55,7 @@ coming from the fixed coordinates.
 
 \begin{theorem}[Closed form for restricted Fourier coefficients]
 \lean{RestrictionFourier.fourierCoeff_restrictBF}
+\label{RestrictionFourier.fourierCoeff_restrictBF}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p008-b002,
@@ -70,6 +74,7 @@ Corollary 3.22.
 
 \begin{lemma}[Sums over restrictions of per-coordinate products factor]
 \lean{RestrictionFourier.sum_restriction_prod}
+\label{RestrictionFourier.sum_restriction_prod}
 \leanok
 \uses{SwitchingLemma2.Restriction}
 For any family $h : [n] \to \mathrm{Option}\ \mathrm{Bool} \to \bbr$,
@@ -82,6 +87,7 @@ possible per-coordinate values.
 
 \begin{lemma}[Bernoulli-weighted products factor]
 \lean{RestrictionFourier.sum_bernoulli_prod}
+\label{RestrictionFourier.sum_bernoulli_prod}
 \leanok
 \uses{LMN.bernoulliRestrWeight_eq_prod, LMN.varWeight, RestrictionFourier.sum_restriction_prod, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
 For $p \in \bbr$ and any family $h : [n] \to \mathrm{Option}\ \mathrm{Bool} \to \bbr$,
@@ -95,6 +101,7 @@ $\mathrm{varWeight}$.
 
 \begin{definition}[Per-coordinate local factor]
 \lean{RestrictionFourier.localFactor}
+\label{RestrictionFourier.localFactor}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 Given sets $U, S \subseteq [n]$, a coordinate $i$ and a per-coordinate value $v$, the
@@ -107,6 +114,7 @@ the sign contributed on $U \setminus S$.
 
 \begin{lemma}[Indicator times sign factors into local factors]
 \lean{RestrictionFourier.indicator_signProd_eq_prod}
+\label{RestrictionFourier.indicator_signProd_eq_prod}
 \leanok
 \uses{BooleanAnalysis.boolToSign, RestrictionFourier.localFactor, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 If $S \subseteq U$ then for every restriction $\rho$ with free set $J$,
@@ -119,6 +127,7 @@ where the left-hand side is understood as $0$ when the indicator fails.
 
 \begin{lemma}[Average of one local factor]
 \lean{RestrictionFourier.sum_varWeight_localFactor}
+\label{RestrictionFourier.sum_varWeight_localFactor}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
 For $p \in \bbr$, sets $U, S$ and a coordinate $i$,
@@ -130,6 +139,7 @@ For $p \in \bbr$, sets $U, S$ and a coordinate $i$,
 
 \begin{lemma}[Average of a product of two local factors]
 \lean{RestrictionFourier.sum_varWeight_localFactor_mul}
+\label{RestrictionFourier.sum_varWeight_localFactor_mul}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
 For $p \in \bbr$, sets $U, V, S$ and a coordinate $i$,
@@ -144,6 +154,7 @@ which is the per-coordinate average needed for the squared coefficient.
 
 \begin{lemma}[Product of a three-case indicator weight]
 \lean{RestrictionFourier.prod_if_subset}
+\label{RestrictionFourier.prod_if_subset}
 \leanok
 For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 \[
@@ -154,6 +165,7 @@ For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 
 \begin{theorem}[Proposition 4.17, first identity]
 \lean{RestrictionFourier.expectation_fourierCoeff_restrictBF}
+\label{RestrictionFourier.expectation_fourierCoeff_restrictBF}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p006-b005,
@@ -172,6 +184,7 @@ restrictions.
 
 \begin{theorem}[Proposition 4.17, second identity]
 \lean{RestrictionFourier.expectation_fourierCoeff_sq_restrictBF}
+\label{RestrictionFourier.expectation_fourierCoeff_sq_restrictBF}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p006-b005,
@@ -191,6 +204,7 @@ vanish.
 
 \begin{lemma}[The squared sign product is one]
 \lean{RestrictionFourier.signProd_sq}
+\label{RestrictionFourier.signProd_sq}
 \leanok
 \uses{BooleanAnalysis.boolToSign_sq, SwitchingLemma2.Restriction}
 For every restriction $\rho$ and every set $T \subseteq [n]$, $(\mathrm{signProd}\,\rho\,T)^2 = 1$.
@@ -198,6 +212,7 @@ For every restriction $\rho$ and every set $T \subseteq [n]$, $(\mathrm{signProd
 
 \begin{theorem}[Proposition 4.17, probability form]
 \lean{RestrictionFourier.bernoulliRestrProb_inter_freeVars}
+\label{RestrictionFourier.bernoulliRestrProb_inter_freeVars}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, RestrictionFourier.expectation_fourierCoeff_sq_restrictBF, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.signProd_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
 For a Bernoulli($p$)-random restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$
@@ -217,6 +232,7 @@ $\E_\rho[\widehat{f_\rho}(S)^2] = \sum_U \Pr[U \cap J = S]\cdot \widehat{f}(U)^2
 
 \begin{definition}[Restriction of a real-valued Boolean function]
 \lean{RestrictionFourier.restrictBF}
+\label{RestrictionFourier.restrictBF}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b004}
 \uses{BooleanAnalysis.BooleanFunc, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
@@ -231,6 +247,7 @@ the real-valued analogue of $\mathrm{restrictFn}$.
 
 \begin{definition}[Sign product of the fixed bits]
 \lean{RestrictionFourier.signProd}
+\label{RestrictionFourier.signProd}
 \leanok
 \uses{BooleanAnalysis.boolToSign, SwitchingLemma2.Restriction}
 For a restriction $\rho$ and a set $T \subseteq [n]$,

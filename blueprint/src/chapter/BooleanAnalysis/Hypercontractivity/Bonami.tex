@@ -14,6 +14,7 @@ Boolean function over its last coordinate, and the associated moment and Fourier
 
 \begin{definition}[$B$-reasonable random variable]
 \lean{Bonami.IsBReasonable}
+\label{Bonami.IsBReasonable}
 \leanok
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p002-b003}
 A real random variable $X$ on a measurable space $\Omega$ with measure $P$ is
@@ -25,6 +26,7 @@ A real random variable $X$ on a measurable space $\Omega$ with measure $P$ is
 
 \begin{lemma}[Tail bound for $B$-reasonable variables]
 \lean{Bonami.b_reasonable_tail_bound}
+\label{Bonami.b_reasonable_tail_bound}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p003-b001,
@@ -40,6 +42,7 @@ every $t > 0$,
 
 \begin{lemma}[$B$-reasonability from minimal probability]
 \lean{Bonami.min_prob_b_reasonable}
+\label{Bonami.min_prob_b_reasonable}
 \leanok
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p003-b005,
@@ -53,6 +56,7 @@ $(1/\mu)$-reasonable.
 
 \begin{lemma}[Paley--Zygmund inequality]
 \lean{Bonami.paley_zygmund_ineq}
+\label{Bonami.paley_zygmund_ineq}
 \leanok
 \uses{Bonami.degree_zero_fourth_moment}
 Let $Z \ge 0$ be a nonnegative random variable with finite first and second moments and
@@ -64,6 +68,7 @@ positive mean. For every $\theta$ with $0 \le \theta \le 1$,
 
 \begin{lemma}[Anti-concentration for $B$-reasonable variables]
 \lean{Bonami.b_reasonable_anticon_zero}
+\label{Bonami.b_reasonable_anticon_zero}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p003-b003,
@@ -78,6 +83,7 @@ If $X$ is $B$-reasonable and not equivalent to $0$, then for every $t \in [0,1]$
 
 \begin{definition}[Restriction of the last coordinate]
 \lean{Bonami.restrictLast}
+\label{Bonami.restrictLast}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
 Given a Boolean function $f$ on $n+1$ variables and a bit $b$, the restriction
@@ -87,6 +93,7 @@ coordinate to $b$, i.e.\ $x \mapsto f(x, b)$.
 
 \begin{definition}[Average over the last coordinate]
 \lean{Bonami.avgLast}
+\label{Bonami.avgLast}
 \leanok
 \uses{Bonami.restrictLast, BooleanAnalysis.BooleanFunc}
 The average $\mathrm{avgLast}\,f$ of $f$ over its last coordinate is the function on $n$
@@ -95,6 +102,7 @@ variables given by $\tfrac12\bigl(\mathrm{restrictLast}\,f\,\mathrm{false} + \ma
 
 \begin{definition}[Half-difference over the last coordinate]
 \lean{Bonami.diffLast}
+\label{Bonami.diffLast}
 \leanok
 \uses{Bonami.restrictLast, BooleanAnalysis.BooleanFunc}
 The half-difference $\mathrm{diffLast}\,f$ of $f$ over its last coordinate is the function on
@@ -103,6 +111,7 @@ $n$ variables given by $\tfrac12\bigl(\mathrm{restrictLast}\,f\,\mathrm{false} -
 
 \begin{lemma}[Restriction at false]
 \lean{Bonami.restrictLast_false_eq}
+\label{Bonami.restrictLast_false_eq}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc}
 For every $x$, the restriction of $f$ fixing the last coordinate to false equals the sum of
@@ -111,6 +120,7 @@ the average and the half-difference: $\mathrm{restrictLast}\,f\,\mathrm{false}\,
 
 \begin{lemma}[Restriction at true]
 \lean{Bonami.restrictLast_true_eq}
+\label{Bonami.restrictLast_true_eq}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc}
 For every $x$, the restriction of $f$ fixing the last coordinate to true equals the difference
@@ -119,6 +129,7 @@ of the average and the half-difference: $\mathrm{restrictLast}\,f\,\mathrm{true}
 
 \begin{lemma}[Sum over the hypercube splits on the last bit]
 \lean{Bonami.sum_boolCube_succ}
+\label{Bonami.sum_boolCube_succ}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 For any $\varphi$ on the cube of dimension $n+1$, the total sum decomposes according to the
@@ -130,6 +141,7 @@ value of the last coordinate:
 
 \begin{lemma}[Uniform weight halves under one extra variable]
 \lean{Bonami.uniformWeight_succ}
+\label{Bonami.uniformWeight_succ}
 \leanok
 \uses{BooleanAnalysis.uniformWeight}
 The uniform point weight satisfies $\mathrm{uniformWeight}(n+1) = \mathrm{uniformWeight}(n)/2$.
@@ -137,6 +149,7 @@ The uniform point weight satisfies $\mathrm{uniformWeight}(n+1) = \mathrm{unifor
 
 \begin{lemma}[Fourier coefficient of the average]
 \lean{Bonami.fourierCoeff_avgLast}
+\label{Bonami.fourierCoeff_avgLast}
 \leanok
 \uses{Bonami.avgLast, Bonami.restrictLast, Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 For each $S \subseteq \mathrm{Fin}\,n$, the Fourier coefficient of $\mathrm{avgLast}\,f$ at $S$
@@ -146,6 +159,7 @@ $\widehat{\mathrm{avgLast}\,f}(S) = \widehat{f}(\mathrm{castSucc}(S))$.
 
 \begin{lemma}[Fourier coefficient of the half-difference]
 \lean{Bonami.fourierCoeff_diffLast}
+\label{Bonami.fourierCoeff_diffLast}
 \leanok
 \uses{Bonami.diffLast, Bonami.restrictLast, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 For each $S \subseteq \mathrm{Fin}\,n$, the Fourier coefficient of $\mathrm{diffLast}\,f$ at $S$
@@ -155,6 +169,7 @@ the last index: $\widehat{\mathrm{diffLast}\,f}(S) = \widehat{f}\bigl(\mathrm{ca
 
 \begin{lemma}[Expectation splits over the last coordinate]
 \lean{Bonami.expect_succ_eq}
+\label{Bonami.expect_succ_eq}
 \leanok
 \uses{Bonami.restrictLast, Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 The expectation of $\varphi$ on the cube of dimension $n+1$ is the average of the expectations
@@ -166,18 +181,21 @@ of its two restrictions:
 
 \begin{lemma}[Fourth-power algebraic identity]
 \lean{Bonami.fourth_pow_sum}
+\label{Bonami.fourth_pow_sum}
 \leanok
 For all real $a, b$, $(a+b)^4 + (a-b)^4 = 2\,(a^4 + 6\,a^2 b^2 + b^4)$.
 \end{lemma}
 
 \begin{lemma}[Second-power algebraic identity]
 \lean{Bonami.second_pow_sum}
+\label{Bonami.second_pow_sum}
 \leanok
 For all real $a, b$, $(a+b)^2 + (a-b)^2 = 2\,(a^2 + b^2)$.
 \end{lemma}
 
 \begin{lemma}[Fourth-moment decomposition]
 \lean{Bonami.fourth_moment_decomp}
+\label{Bonami.fourth_moment_decomp}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p005-b001,
@@ -193,6 +211,7 @@ decomposes as
 
 \begin{lemma}[Second-moment decomposition]
 \lean{Bonami.second_moment_decomp}
+\label{Bonami.second_moment_decomp}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p005-b001}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, Bonami.restrictLast_true_eq, Bonami.sum_boolCube_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
@@ -202,6 +221,7 @@ decomposes as $\E[f^2] = \E[g^2] + \E[h^2]$.
 
 \begin{lemma}[Cauchy--Schwarz for the expectation]
 \lean{Bonami.expect_cs_sq}
+\label{Bonami.expect_cs_sq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 For Boolean functions $g, h$ on the cube, $\bigl(\E[g^2 h^2]\bigr)^2 \le \E[g^4]\cdot\E[h^4]$.
@@ -209,6 +229,7 @@ For Boolean functions $g, h$ on the cube, $\bigl(\E[g^2 h^2]\bigr)^2 \le \E[g^4]
 
 \begin{lemma}[{Nonnegativity of $\E[f^2]$}]
 \lean{Bonami.expect_sq_nonneg}
+\label{Bonami.expect_sq_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 For every Boolean function $f$, $0 \le \E[f^2]$.
@@ -216,6 +237,7 @@ For every Boolean function $f$, $0 \le \E[f^2]$.
 
 \begin{lemma}[{Nonnegativity of $\E[g^2 h^2]$}]
 \lean{Bonami.expect_sq_nonneg_prod}
+\label{Bonami.expect_sq_nonneg_prod}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 For Boolean functions $g, h$, $0 \le \E[g^2 h^2]$.
@@ -223,6 +245,7 @@ For Boolean functions $g, h$, $0 \le \E[g^2 h^2]$.
 
 \begin{lemma}[{Nonnegativity of $\E[f^4]$}]
 \lean{Bonami.expect_fourth_nonneg}
+\label{Bonami.expect_fourth_nonneg}
 \leanok
 \uses{Bonami.expect_sq_nonneg_prod, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 For every Boolean function $f$, $0 \le \E[f^4]$.
@@ -230,6 +253,7 @@ For every Boolean function $f$, $0 \le \E[f^4]$.
 
 \begin{lemma}[Degree bound for the average]
 \lean{Bonami.degree_avgLast}
+\label{Bonami.degree_avgLast}
 \leanok
 \uses{Bonami.avgLast, Bonami.restrictLast, Bonami.sum_boolCube_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 If $f$ has degree at most $k$, then its average over the last coordinate $\mathrm{avgLast}\,f$
@@ -238,6 +262,7 @@ also has degree at most $k$.
 
 \begin{lemma}[Degree bound for the half-difference]
 \lean{Bonami.degree_diffLast}
+\label{Bonami.degree_diffLast}
 \leanok
 \uses{Bonami.diffLast, Bonami.restrictLast, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.innerProduct}
 If $f$ has degree at most $k$, then its half-difference over the last coordinate
@@ -246,6 +271,7 @@ $\mathrm{diffLast}\,f$ has degree at most $k-1$.
 
 \begin{lemma}[Degree-zero functions are constant]
 \lean{Bonami.degree_zero_const}
+\label{Bonami.degree_zero_const}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.walsh_expansion}
 A Boolean function $f$ of degree at most $0$ is constant: $f(x) = f(\mathrm{default})$ for all
@@ -254,6 +280,7 @@ $x$.
 
 \begin{lemma}[Fourth moment of a constant function]
 \lean{Bonami.degree_zero_fourth_moment}
+\label{Bonami.degree_zero_fourth_moment}
 \leanok
 \uses{Bonami.degree_zero_const, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.uniformWeight}
 For a Boolean function $f$ of degree at most $0$ (hence constant),
@@ -262,6 +289,7 @@ $\E[f^4] = \bigl(\E[f^2]\bigr)^2$.
 
 \begin{lemma}[Algebraic inductive step for Bonami]
 \lean{Bonami.bonami_algebra}
+\label{Bonami.bonami_algebra}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p005-b001}
 The key algebraic inequality driving the inductive step of the Bonami lemma: for
@@ -274,6 +302,7 @@ A + 6C + B \le 9^{m+1}\,(a+b)^2.
 
 \begin{lemma}[Bonami inequality in expectation form]
 \lean{Bonami.bonami_expect}
+\label{Bonami.bonami_expect}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p004-b002,
@@ -290,6 +319,7 @@ has degree at most $k$, then
 
 \begin{lemma}[Moments equal expectations under the uniform law]
 \lean{Bonami.moment_eq_expect}
+\label{Bonami.moment_eq_expect}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 If $P$ is a probability measure on the cube assigning each point the uniform weight, then the
@@ -298,6 +328,7 @@ $p$-th moment of $f$ under $P$ coincides with the expectation $\E[f^p]$.
 
 \begin{definition}[Uniform measure on the hypercube]
 \lean{Bonami.uniformMeasure}
+\label{Bonami.uniformMeasure}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 The canonical uniform probability measure on the Boolean hypercube $\{0,1\}^n$.
@@ -305,6 +336,7 @@ The canonical uniform probability measure on the Boolean hypercube $\{0,1\}^n$.
 
 \begin{lemma}[Uniform measure of a point]
 \lean{Bonami.uniformMeasure_apply}
+\label{Bonami.uniformMeasure_apply}
 \leanok
 \uses{Bonami.uniformMeasure, BooleanAnalysis.BoolCube, BooleanAnalysis.uniformWeight}
 The uniform measure assigns each point $x$ of the cube the combinatorial uniform weight:
@@ -313,6 +345,7 @@ $(\mathrm{uniformMeasure}\,n)(\{x\}) = \mathrm{uniformWeight}\,n$.
 
 \begin{lemma}[Bonami lemma]
 \lean{Bonami.bonami_lemma}
+\label{Bonami.bonami_lemma}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p004-b002,

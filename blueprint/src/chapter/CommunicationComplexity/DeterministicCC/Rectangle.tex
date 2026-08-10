@@ -13,6 +13,7 @@ monochromatic rectangle partition is at least the size of any fooling set.
 
 \begin{definition}[Rectangle]
 \lean{CommunicationComplexity.Rectangle.IsRectangle}
+\label{CommunicationComplexity.Rectangle.IsRectangle}
 \leanok
 A subset $S \subseteq X \times Y$ is a \emph{rectangle} if it factors as a
 product $A \times B$ for some $A \subseteq X$ and $B \subseteq Y$.
@@ -20,6 +21,7 @@ product $A \times B$ for some $A \subseteq X$ and $B \subseteq Y$.
 
 \begin{theorem}[Cross-product characterization of rectangles]
 \lean{CommunicationComplexity.Rectangle.IsRectangle_iff}
+\label{CommunicationComplexity.Rectangle.IsRectangle_iff}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
@@ -30,6 +32,7 @@ pairs $(x', y)$ and $(x, y')$ also belong to $R$.
 
 \begin{definition}[Monochromatic set]
 \lean{CommunicationComplexity.Rectangle.IsMonochromatic}
+\label{CommunicationComplexity.Rectangle.IsMonochromatic}
 \leanok
 A set $S \subseteq X \times Y$ is \emph{monochromatic} for a function
 $g : X \to Y \to \alpha$ if $g$ is constant on $S$, i.e., $g\,x\,y = g\,x'\,y'$
@@ -38,6 +41,7 @@ for all $(x,y), (x',y') \in S$.
 
 \begin{definition}[Fooling set]
 \lean{CommunicationComplexity.Rectangle.IsFoolingSet}
+\label{CommunicationComplexity.Rectangle.IsFoolingSet}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonochromatic, CommunicationComplexity.Rectangle.IsRectangle}
 A set $S \subseteq X \times Y$ is a \emph{fooling set} for $g : X \to Y \to \alpha$
@@ -48,6 +52,7 @@ monochromatic for $g$.
 
 \begin{definition}[Monochromatic rectangle partition]
 \lean{CommunicationComplexity.Rectangle.IsMonoPartition}
+\label{CommunicationComplexity.Rectangle.IsMonoPartition}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonochromatic, CommunicationComplexity.Rectangle.IsRectangle}
 A collection $\mathcal{P}$ of subsets of $X \times Y$ is a \emph{monochromatic
@@ -58,6 +63,7 @@ cover all of $X \times Y$, and distinct members are disjoint.
 
 \begin{theorem}[Every point lies in some part]
 \lean{CommunicationComplexity.Rectangle.monoPartition_point_mem}
+\label{CommunicationComplexity.Rectangle.monoPartition_point_mem}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{3}
@@ -67,6 +73,7 @@ point $p \in X \times Y$ there exists some $R \in \mathcal{P}$ with $p \in R$.
 
 \begin{theorem}[Uniqueness of part containing a point]
 \lean{CommunicationComplexity.Rectangle.monoPartition_part_unique}
+\label{CommunicationComplexity.Rectangle.monoPartition_part_unique}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{3}
@@ -76,6 +83,7 @@ $p \in X \times Y$ belongs to two parts $R, S \in \mathcal{P}$, then $R = S$.
 
 \begin{theorem}[Cross closure within a part]
 \lean{CommunicationComplexity.Rectangle.monoPartition_cross_mem}
+\label{CommunicationComplexity.Rectangle.monoPartition_cross_mem}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.IsRectangle_iff}
 \difficulty{2}
@@ -86,6 +94,7 @@ belong to $R$.
 
 \begin{theorem}[Equal values within a part]
 \lean{CommunicationComplexity.Rectangle.monoPartition_values_eq}
+\label{CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{1}
@@ -95,6 +104,7 @@ and $(x,y), (x',y') \in R$, then $g\,x\,y = g\,x'\,y'$.
 
 \begin{theorem}[Fooling set bound — extended cardinality]
 \lean{CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
+\label{CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_point_mem}
 \difficulty{5}
@@ -105,6 +115,7 @@ number cardinality (\texttt{Set.encard}).
 
 \begin{theorem}[Fooling set bound — finite cardinality]
 \lean{CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
+\label{CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
 \difficulty{3}

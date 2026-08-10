@@ -13,6 +13,7 @@ is additive under concatenation and multiplicative under repetition.
 
 \begin{definition}[Bit string]
 \lean{CommunicationComplexity.BitString}
+\label{CommunicationComplexity.BitString}
 \leanok
 An $n$-bit string is a function $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
 The type $\texttt{CommunicationComplexity.BitString}\,n$ is an abbreviation for
@@ -21,6 +22,7 @@ $\mathrm{Fin}\,n \to \mathrm{Bool}$.
 
 \begin{definition}[Signed inner product]
 \lean{CommunicationComplexity.BitString.signedInner}
+\label{CommunicationComplexity.BitString.signedInner}
 \leanok
 \uses{CommunicationComplexity.BitString}
 Given two $n$-bit strings $x, y : \mathrm{Fin}\,n \to \mathrm{Bool}$, their
@@ -35,6 +37,7 @@ coordinate contributes $-1$.
 
 \begin{definition}[Agreement count]
 \lean{CommunicationComplexity.BitString.agreementCount}
+\label{CommunicationComplexity.BitString.agreementCount}
 \leanok
 \uses{CommunicationComplexity.BitString}
 The \emph{agreement count} of two $n$-bit strings $x$ and $y$ is the number of
@@ -44,6 +47,7 @@ $\#\{i : x_i = y_i\}$ as a natural number.
 
 \begin{theorem}[Agreement count plus Hamming distance equals length]
 \lean{CommunicationComplexity.BitString.agreementCount_add_hammingDist_eq_length}
+\label{CommunicationComplexity.BitString.agreementCount_add_hammingDist_eq_length}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.agreementCount}
 \difficulty{2}
@@ -56,6 +60,7 @@ The agreeing and disagreeing coordinates partition $\{0, \ldots, n-1\}$.
 
 \begin{theorem}[Agreement count as complement of Hamming distance]
 \lean{CommunicationComplexity.BitString.agreementCount_eq_length_sub_hammingDist}
+\label{CommunicationComplexity.BitString.agreementCount_eq_length_sub_hammingDist}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.agreementCount, CommunicationComplexity.BitString.agreementCount_add_hammingDist_eq_length}
 \difficulty{3}
@@ -68,6 +73,7 @@ as an equality of integers (after casting the natural numbers to $\mathbb{Z}$).
 
 \begin{theorem}[Signed inner product via Hamming distance]
 \lean{CommunicationComplexity.BitString.signedInner_eq_length_sub_twice_hammingDist}
+\label{CommunicationComplexity.BitString.signedInner_eq_length_sub_twice_hammingDist}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_append}
 \difficulty{5}
@@ -79,6 +85,7 @@ For any two $n$-bit strings $x$ and $y$,
 
 \begin{theorem}[Signed inner product via agreement and disagreement counts]
 \lean{CommunicationComplexity.BitString.signedInner_eq_agreementCount_sub_hammingDist}
+\label{CommunicationComplexity.BitString.signedInner_eq_agreementCount_sub_hammingDist}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.agreementCount, CommunicationComplexity.BitString.agreementCount_eq_length_sub_hammingDist, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_eq_length_sub_twice_hammingDist}
 \difficulty{2}
@@ -92,6 +99,7 @@ the number of disagreeing coordinates.
 
 \begin{theorem}[Signed inner product is additive under concatenation]
 \lean{CommunicationComplexity.BitString.signedInner_append}
+\label{CommunicationComplexity.BitString.signedInner_append}
 \leanok
 \uses{CommunicationComplexity.BitString.signedInner}
 \difficulty{4}
@@ -106,6 +114,7 @@ Concatenating both pairs of bit strings adds their signed inner products.
 
 \begin{theorem}[Signed inner product is invariant under index recast]
 \lean{CommunicationComplexity.BitString.signedInner_comp_cast}
+\label{CommunicationComplexity.BitString.signedInner_comp_cast}
 \leanok
 \uses{CommunicationComplexity.BitString.signedInner}
 \difficulty{2}
@@ -119,6 +128,7 @@ Reindexing both inputs along a $\mathrm{Fin.cast}$ does not change the signed in
 
 \begin{theorem}[Signed inner product scales under repetition]
 \lean{CommunicationComplexity.BitString.signedInner_amplify}
+\label{CommunicationComplexity.BitString.signedInner_amplify}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_append, CommunicationComplexity.BitString.signedInner_comp_cast}
 \difficulty{5}

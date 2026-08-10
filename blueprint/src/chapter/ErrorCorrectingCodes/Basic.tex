@@ -13,6 +13,7 @@ alphabet $\alpha$.  Throughout, $\alpha$ is a type carrying instances
 
 \begin{definition}[Codeword]
 \lean{ErrorCorrectingCodes.Codeword}
+\label{ErrorCorrectingCodes.Codeword}
 \leanok
 \statementsource{philips}{
   pdf-24e94ad30862-p023-b007,
@@ -24,8 +25,11 @@ A codeword of length $n$ over alphabet $\alpha$ is a function $c : \mathrm{Fin}\
 
 \begin{definition}[Pointwise operations]
 \lean{ErrorCorrectingCodes.Codeword.add}
+\label{ErrorCorrectingCodes.Codeword.add}
 \lean{ErrorCorrectingCodes.Codeword.sub}
+\label{ErrorCorrectingCodes.Codeword.sub}
 \lean{ErrorCorrectingCodes.Codeword.zero}
+\label{ErrorCorrectingCodes.Codeword.zero}
 \leanok
 Pointwise addition, subtraction, and the all-zero codeword.
 \end{definition}
@@ -34,6 +38,7 @@ Pointwise addition, subtraction, and the all-zero codeword.
 
 \begin{definition}[Code]
 \lean{ErrorCorrectingCodes.Codeword.Code}
+\label{ErrorCorrectingCodes.Codeword.Code}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p015-b006}
 \statementsource{philips}{pdf-24e94ad30862-p025-b003}
@@ -43,6 +48,7 @@ A (block) code of length $n$ over $\alpha$ is a finite set (\texttt{Finset}) of 
 
 \begin{definition}[Linear code via generator matrix]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code}
+\label{ErrorCorrectingCodes.Codeword.Linear_Code}
 \leanok
 \statementsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p045-b006,
@@ -55,6 +61,7 @@ arises this way.
 
 \begin{definition}[Linear code, existential form]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code'}
+\label{ErrorCorrectingCodes.Codeword.Linear_Code'}
 \leanok
 \statementsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p045-b006,
@@ -68,6 +75,7 @@ Existential version: there exists some $m$ and generator matrix $G$ witnessing l
 
 \begin{definition}[$q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qaryEntropy}
+\label{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p069-b005}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b005}
@@ -78,6 +86,7 @@ H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
 
 \begin{definition}[Hamming distance]
 \lean{ErrorCorrectingCodes.Codeword.hamming_distance}
+\label{ErrorCorrectingCodes.Codeword.hamming_distance}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p018-b002}
 \statementsource{philips}{pdf-24e94ad30862-p023-b007}
@@ -87,6 +96,7 @@ Hamming distance between two codewords, wrapping Mathlib's \texttt{hammingDist}.
 
 \begin{definition}[Distance predicate for a code]
 \lean{ErrorCorrectingCodes.Codeword.distance}
+\label{ErrorCorrectingCodes.Codeword.distance}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p022-b008}
 \statementsource{philips}{pdf-24e94ad30862-p025-b003}
@@ -98,6 +108,7 @@ are closer than $d$.
 
 \begin{definition}[Rate]
 \lean{ErrorCorrectingCodes.Codeword.rate}
+\label{ErrorCorrectingCodes.Codeword.rate}
 \leanok
 \statementsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p016-b003,
@@ -111,6 +122,7 @@ R(C) = \frac{\log|C|}{n\log|\alpha|}.
 
 \begin{definition}[Weight]
 \lean{ErrorCorrectingCodes.Codeword.weight}
+\label{ErrorCorrectingCodes.Codeword.weight}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p027-b002}
 \statementsource{philips}{pdf-24e94ad30862-p023-b009}
@@ -120,6 +132,7 @@ The Hamming weight of $c$ is $d(c, \mathbf{0})$.
 
 \begin{definition}[Maximal size at distance]
 \lean{ErrorCorrectingCodes.Codeword.max_size}
+\label{ErrorCorrectingCodes.Codeword.max_size}
 \leanok
 \statementsource{philips}{pdf-24e94ad30862-p025-b004}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
@@ -129,6 +142,7 @@ that is maximal among all such codes.
 
 \begin{definition}[Hamming ball]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball}
+\label{ErrorCorrectingCodes.Codeword.hamming_ball}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p029-b006}
 The Hamming ball of radius $l$ around $c$:
@@ -143,6 +157,7 @@ implemented as a \texttt{Finset}.
 
 \begin{lemma}[Distance is at most block length]
 \lean{ErrorCorrectingCodes.Codeword.dist_le_length}
+\label{ErrorCorrectingCodes.Codeword.dist_le_length}
 \leanok
 \difficulty{4}
 If a code $C$ has minimum distance $d$, then $d \le n$.
@@ -153,6 +168,7 @@ If a code $C$ has minimum distance $d$, then $d \le n$.
 
 \begin{lemma}[Alphabet size positive]
 \lean{ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le}
+\label{ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le}
 \leanok
 \difficulty{2}
 If $q \ge 2$, then $q > 0$ as a real number.
@@ -160,6 +176,7 @@ If $q \ge 2$, then $q > 0$ as a real number.
 
 \begin{lemma}[Alphabet size exceeds one]
 \lean{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
+\label{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \leanok
 \difficulty{2}
 If $q \ge 2$, then $1 < q$ as a real number.
@@ -167,6 +184,7 @@ If $q \ge 2$, then $1 < q$ as a real number.
 
 \begin{lemma}[$q-1$ nonnegative]
 \lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_nonneg_of_two_le}
+\label{ErrorCorrectingCodes.Codeword.natCast_sub_one_nonneg_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \difficulty{2}
@@ -175,6 +193,7 @@ If $q \ge 2$, then $0 \le q - 1$ as a real number.
 
 \begin{lemma}[$q-1$ positive]
 \lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
+\label{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \difficulty{2}
@@ -183,6 +202,7 @@ If $q \ge 2$, then $0 < q - 1$ as a real number.
 
 \begin{lemma}[Alphabet size differs from one]
 \lean{ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le}
+\label{ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \difficulty{2}
@@ -191,6 +211,7 @@ If $q \ge 2$, then $q \ne 1$ as a real number.
 
 \begin{lemma}[$1-p$ positive when $p < 1$]
 \lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
+\label{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \leanok
 \difficulty{1}
 If $p < 1$, then $0 < 1 - p$.
@@ -198,6 +219,7 @@ If $p < 1$, then $0 < 1 - p$.
 
 \begin{lemma}[$1-p$ nonnegative when $p \le 1$]
 \lean{ErrorCorrectingCodes.Codeword.one_sub_nonneg_of_le_one}
+\label{ErrorCorrectingCodes.Codeword.one_sub_nonneg_of_le_one}
 \leanok
 \difficulty{2}
 If $p \le 1$, then $0 \le 1 - p$.
@@ -205,6 +227,7 @@ If $p \le 1$, then $0 \le 1 - p$.
 
 \begin{lemma}[$p(1-p)$ positive]
 \lean{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
+\label{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \difficulty{1}
@@ -213,6 +236,7 @@ If $0 < p$ and $p < 1$, then $0 < p(1 - p)$.
 
 \begin{lemma}[Below $1 - 1/q$ implies below one]
 \lean{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv}
+\label{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv}
 \leanok
 \difficulty{3}
 If $0 < q$ and $p \le 1 - 1/q$, then $p < 1$.
@@ -220,6 +244,7 @@ If $0 < q$ and $p \le 1 - 1/q$, then $p < 1$.
 
 \begin{lemma}[$1-p$ positive below $1 - 1/q$]
 \lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_le_one_sub_inv}
+\label{ErrorCorrectingCodes.Codeword.one_sub_pos_of_le_one_sub_inv}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \difficulty{1}

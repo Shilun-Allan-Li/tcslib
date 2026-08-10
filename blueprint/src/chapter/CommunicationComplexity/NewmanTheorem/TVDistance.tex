@@ -14,6 +14,7 @@ product distributions.
 
 \begin{definition}[Signed measure difference]
 \lean{CommunicationComplexity.signedMeasureDiff}
+\label{CommunicationComplexity.signedMeasureDiff}
 \leanok
 Given two probability measures $\mu$ and $\nu$ on a measurable space $\Omega$, the
 \emph{signed measure difference} $\mu - \nu$ is the signed measure on $\Omega$ obtained
@@ -22,6 +23,7 @@ by taking the difference of $\mu$ and $\nu$ as measures.
 
 \begin{definition}[Total variation distance]
 \lean{CommunicationComplexity.tvDistance}
+\label{CommunicationComplexity.tvDistance}
 \leanok
 \uses{CommunicationComplexity.signedMeasureDiff}
 The \emph{total variation distance} between two probability measures $\mu$ and $\nu$ on
@@ -32,6 +34,7 @@ $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\|\mu - \nu\|_{\mathrm{TV}}$.
 
 \begin{definition}[Total variation distance via event supremum]
 \lean{CommunicationComplexity.tvDistanceSup}
+\label{CommunicationComplexity.tvDistanceSup}
 \leanok
 The \emph{supremum definition} of total variation distance between $\mu$ and $\nu$ is
 \[
@@ -42,6 +45,7 @@ The \emph{supremum definition} of total variation distance between $\mu$ and $\n
 
 \begin{lemma}[Signed measure via Jordan decomposition]
 \lean{CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart}
+\label{CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart}
 \leanok
 \difficulty{2}
 For any signed measure $s$ on $\Omega$ and any measurable set $S$, the value $s(S)$
@@ -51,6 +55,7 @@ $s(S) = s^+(S) - s^-(S)$.
 
 \begin{lemma}[Signed difference vanishes on the whole space]
 \lean{CommunicationComplexity.TVDistance.signedMeasureDiff_univ}
+\label{CommunicationComplexity.TVDistance.signedMeasureDiff_univ}
 \leanok
 \uses{CommunicationComplexity.signedMeasureDiff}
 \difficulty{2}
@@ -60,6 +65,7 @@ $(\mu - \nu)(\Omega) = 0$.
 
 \begin{lemma}[Jordan parts agree on the whole space]
 \lean{CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ}
+\label{CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ}
 \leanok
 \uses{CommunicationComplexity.TVDistance.signedMeasureDiff_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
 \difficulty{3}
@@ -70,6 +76,7 @@ $((\mu-\nu)^+)(\Omega) = ((\mu-\nu)^-)(\Omega)$.
 
 \begin{lemma}[Total variation mass of the whole space]
 \lean{CommunicationComplexity.TVDistance.totalVariation_real_univ}
+\label{CommunicationComplexity.TVDistance.totalVariation_real_univ}
 \leanok
 \difficulty{1}
 For any signed measure $s$, the real-valued total variation mass of $\Omega$ equals the
@@ -79,6 +86,7 @@ $\|s\|_{\mathrm{TV}}(\Omega) = s^+(\Omega) + s^-(\Omega)$.
 
 \begin{lemma}[Half total variation equals positive Jordan part]
 \lean{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ}
+\label{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ}
 \leanok
 \uses{CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ, CommunicationComplexity.TVDistance.totalVariation_real_univ, CommunicationComplexity.signedMeasureDiff}
 \difficulty{3}
@@ -88,6 +96,7 @@ $\tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega) = ((\mu-\nu)^+)(\Omega)$.
 
 \begin{lemma}[Event gap bounded by half total variation]
 \lean{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
+\label{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ, CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
 \difficulty{5}
@@ -97,6 +106,7 @@ $|(\mu-\nu)(S)| \le \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
 
 \begin{lemma}[Probability gap bounded by half total variation]
 \lean{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation}
+\label{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation, CommunicationComplexity.signedMeasureDiff}
 \difficulty{2}
@@ -106,6 +116,7 @@ $|\mu(S) - \nu(S)| \le \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
 
 \begin{lemma}[Attainment of the signed measure bound]
 \lean{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation}
+\label{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
 \difficulty{5}
@@ -115,6 +126,7 @@ $|(\mu-\nu)(S)| = \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
 
 \begin{lemma}[Attainment of the probability gap bound]
 \lean{CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation}
+\label{CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation, CommunicationComplexity.signedMeasureDiff}
 \difficulty{3}
@@ -124,6 +136,7 @@ $|\mu(S) - \nu(S)| = \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
 
 \begin{theorem}[Equivalence of the two TV distance definitions]
 \lean{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup}
+\label{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation, CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation, CommunicationComplexity.signedMeasureDiff, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistanceSup}
 \difficulty{6}
@@ -133,6 +146,7 @@ $\mathrm{TV}(\mu,\nu) = \mathrm{TV}_{\sup}(\mu,\nu)$.
 
 \begin{theorem}[TV distance bounds event probability gaps]
 \lean{CommunicationComplexity.TVDistance.abs_measureReal_sub_le_tvDistance}
+\label{CommunicationComplexity.TVDistance.abs_measureReal_sub_le_tvDistance}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation, CommunicationComplexity.tvDistance}
 \difficulty{1}
@@ -142,6 +156,7 @@ $|\mu(S) - \nu(S)| \le \mathrm{TV}(\mu,\nu)$.
 
 \begin{theorem}[TV distance is nonneg]
 \lean{CommunicationComplexity.TVDistance.tvDistance_nonneg}
+\label{CommunicationComplexity.TVDistance.tvDistance_nonneg}
 \leanok
 \uses{CommunicationComplexity.tvDistance}
 \difficulty{2}
@@ -150,6 +165,7 @@ For any two probability measures $\mu$ and $\nu$, $\mathrm{TV}(\mu,\nu) \ge 0$.
 
 \begin{lemma}[Indicator sum bounded by positive part sum]
 \lean{CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart}
+\label{CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart}
 \leanok
 \difficulty{4}
 For any function $a : \alpha \to \mathbb{R}$ on a finite type $\alpha$ and any set $S
@@ -159,6 +175,7 @@ $\sum_{x \in S} a(x) \le \sum_{x : \alpha} \max(a(x), 0)$.
 
 \begin{lemma}[Positive part sum equals half the $\ell^1$ sum]
 \lean{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+\label{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \leanok
 \difficulty{5}
 Let $a : \alpha \to \mathbb{R}$ be a function on a finite type with $\sum_x a(x) = 0$.
@@ -167,6 +184,7 @@ Then $\sum_x \max(a(x), 0) = \tfrac{1}{2}\sum_x |a(x)|$.
 
 \begin{lemma}[Indicator sum absolutely bounded by half $\ell^1$ sum]
 \lean{CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
+\label{CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
 \leanok
 \uses{CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart, CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \difficulty{5}
@@ -177,6 +195,7 @@ $\bigl|\sum_{x \in S} a(x)\bigr| \le \tfrac{1}{2}\sum_x |a(x)|$.
 
 \begin{lemma}[Positive-part indicator sum equals half $\ell^1$ sum]
 \lean{CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
+\label{CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
 \leanok
 \uses{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \difficulty{4}
@@ -186,6 +205,7 @@ $\bigl|\sum_x \max(a(x),0)\bigr| = \tfrac{1}{2}\sum_x |a(x)|$.
 
 \begin{definition}[Singleton mass difference]
 \lean{CommunicationComplexity.TVDistance.singletonMassDiff}
+\label{CommunicationComplexity.TVDistance.singletonMassDiff}
 \leanok
 For probability measures $\mu$ and $\nu$ on $\Omega$ and a point $\omega \in \Omega$,
 the \emph{singleton mass difference} is $\mu(\{\omega\}) - \nu(\{\omega\}) \in \mathbb{R}$.
@@ -193,6 +213,7 @@ the \emph{singleton mass difference} is $\mu(\{\omega\}) - \nu(\{\omega\}) \in \
 
 \begin{lemma}[Probability gap as sum of singleton mass differences]
 \lean{CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff}
+\label{CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons, CommunicationComplexity.TVDistance.singletonMassDiff}
 \difficulty{4}
@@ -202,6 +223,7 @@ $\mu(S) - \nu(S) = \sum_{\omega \in S} (\mu(\{\omega\}) - \nu(\{\omega\}))$.
 
 \begin{lemma}[Singleton mass differences sum to zero]
 \lean{CommunicationComplexity.TVDistance.sum_singletonMassDiff_eq_zero}
+\label{CommunicationComplexity.TVDistance.sum_singletonMassDiff_eq_zero}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons, CommunicationComplexity.TVDistance.singletonMassDiff}
 \difficulty{4}
@@ -211,6 +233,7 @@ $\sum_{\omega : \Omega} (\mu(\{\omega\}) - \nu(\{\omega\})) = 0$.
 
 \begin{theorem}[TV distance as half $\ell^1$ distance on finite spaces (supremum form)]
 \lean{CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum}
+\label{CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs, CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs, CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff, CommunicationComplexity.TVDistance.singletonMassDiff, CommunicationComplexity.TVDistance.sum_singletonMassDiff_eq_zero, CommunicationComplexity.tvDistanceSup}
 \difficulty{6}
@@ -224,6 +247,7 @@ satisfies
 
 \begin{theorem}[TV distance as half $\ell^1$ distance on finite spaces]
 \lean{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum}
+\label{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum, CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup, CommunicationComplexity.tvDistance}
 \difficulty{1}
@@ -236,6 +260,7 @@ On a finite measurable space $\Omega$,
 
 \begin{theorem}[TV distance on Bool equals gap at true]
 \lean{CommunicationComplexity.TVDistance.tvDistance_bool_eq_abs_true}
+\label{CommunicationComplexity.TVDistance.tvDistance_bool_eq_abs_true}
 \leanok
 \uses{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
 \difficulty{4}
@@ -245,6 +270,7 @@ $\mathrm{TV}(\mu,\nu) = |\mu(\{\mathrm{true}\}) - \nu(\{\mathrm{true}\})|$.
 
 \begin{theorem}[TV distance sub-additivity for product measures]
 \lean{CommunicationComplexity.TVDistance.tvDistance_prod_le}
+\label{CommunicationComplexity.TVDistance.tvDistance_prod_le}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
 \difficulty{7}

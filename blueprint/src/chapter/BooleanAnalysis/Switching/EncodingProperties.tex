@@ -14,6 +14,7 @@ in the technical facts needed for the encode/decode round-trip.
 
 \begin{lemma}[Output bound for processClauseLits]
 \lean{SwitchingLemma2.processClauseLits_bound}
+\label{SwitchingLemma2.processClauseLits_bound}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
@@ -24,6 +25,7 @@ list plus twice the length of its remaining path is at most $2 \cdot |\mathrm{pa
 
 \begin{lemma}[Tight bound for non-empty inputs]
 \lean{SwitchingLemma2.processClauseLits_tight}
+\label{SwitchingLemma2.processClauseLits_tight}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_bound}
 \difficulty{3}
@@ -34,6 +36,7 @@ path length, is still at most twice the length of the input path.
 
 \begin{lemma}[Length bound for the encoder loop]
 \lean{SwitchingLemma2.encode_go_aux_length_bound}
+\label{SwitchingLemma2.encode_go_aux_length_bound}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits_tight}
 \difficulty{4}
@@ -45,6 +48,7 @@ $\mathrm{path}$ the current path.
 
 \begin{lemma}[Encoding length is at most $2d$]
 \lean{SwitchingLemma2.razborovEncode_aux_length_le}
+\label{SwitchingLemma2.razborovEncode_aux_length_le}
 \leanok
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b003,
@@ -58,6 +62,7 @@ For a bad restriction $\rho$ of a DNF $f$ with depth parameter $d$, the encoded 
 
 \begin{lemma}[processClauseLits preserves $\sigma$ off the literal list]
 \lean{SwitchingLemma2.processClauseLits_sigma_stable}
+\label{SwitchingLemma2.processClauseLits_sigma_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
@@ -68,6 +73,7 @@ $v$; that is, the resulting $\sigma$ agrees with the input $\sigma$ on $v$.
 
 \begin{lemma}[processClauseLits preserves $\rho_0$ off the literal list]
 \lean{SwitchingLemma2.processClauseLits_rho_stable}
+\label{SwitchingLemma2.processClauseLits_rho_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
@@ -78,6 +84,7 @@ $v$; the resulting $\rho_0$ agrees with the input $\rho_0$ on $v$.
 
 \begin{lemma}[processClauseLits never frees $\rho_0$]
 \lean{SwitchingLemma2.processClauseLits_rho_ne_none}
+\label{SwitchingLemma2.processClauseLits_rho_ne_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits}
 \difficulty{4}
@@ -88,6 +95,7 @@ $\mathrm{none}$; the routine never turns a set value into an unset one.
 
 \begin{lemma}[Encoder $\gamma$ preserves $\sigma$ at non-free variables]
 \lean{SwitchingLemma2.encode_go_fst_nonfree}
+\label{SwitchingLemma2.encode_go_fst_nonfree}
 \leanok
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits_rho_ne_none, SwitchingLemma2.processClauseLits_sigma_stable}
 \difficulty{5}
@@ -98,8 +106,9 @@ returns $\sigma\,v$ at $v$; the encoder does not alter $\sigma$ on non-free vari
 
 \begin{lemma}[Accumulator decomposition for the encoder loop]
 \lean{SwitchingLemma2.encode_go_acc}
+\label{SwitchingLemma2.encode_go_acc}
 \leanok
-\uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc}
+\uses{DNF, SwitchingLemma2.Restriction}
 \difficulty{4}
 The encoder loop \texttt{SwitchingLemma2.razborovEncode}'s \texttt{go} run with an
 accumulator decomposes into a run on the empty accumulator: its result can be expressed
@@ -109,6 +118,7 @@ accumulator.
 
 \begin{lemma}[Encoder $\gamma$ independent of the accumulator]
 \lean{SwitchingLemma2.encode_go_fst_acc}
+\label{SwitchingLemma2.encode_go_fst_acc}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_acc}
 \difficulty{3}
@@ -119,6 +129,7 @@ yields the same first component as running with the empty accumulator.
 
 \begin{lemma}[processEntries preserves none]
 \lean{SwitchingLemma2.processEntries_preserves_none}
+\label{SwitchingLemma2.processEntries_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
 \difficulty{4}
@@ -128,6 +139,7 @@ $v$ unset; the resulting $\sigma$ is still $\mathrm{none}$ at $v$.
 
 \begin{lemma}[Decoder loop preserves none]
 \lean{SwitchingLemma2.decode_go_preserves_none}
+\label{SwitchingLemma2.decode_go_preserves_none}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.processEntries_preserves_none}
 \difficulty{4}
@@ -138,6 +150,7 @@ $\sigma$ is still $\mathrm{none}$ at $v$.
 
 \begin{lemma}[processClauseLits components independent of $\sigma$]
 \lean{SwitchingLemma2.processClauseLits_sigma_indep}
+\label{SwitchingLemma2.processClauseLits_sigma_indep}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
@@ -148,6 +161,7 @@ any two starting restrictions $\sigma_1, \sigma_2$ these three components coinci
 
 \begin{lemma}[Encoder output independent of $\sigma$]
 \lean{SwitchingLemma2.encode_go_snd_sigma_indep}
+\label{SwitchingLemma2.encode_go_snd_sigma_indep}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_acc, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_sigma_indep}
 \difficulty{5}
@@ -158,6 +172,7 @@ argument: starting from $\sigma_1$ or $\sigma_2$ gives the same output.
 
 \begin{lemma}[Auxiliary entries come from input literals]
 \lean{SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+\label{SwitchingLemma2.processClauseLits_aux_entries_from_lits}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{3}
@@ -168,6 +183,7 @@ literal $li$ from the input list.
 
 \begin{lemma}[No auxiliary entry targets a non-free variable]
 \lean{SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+\label{SwitchingLemma2.processClauseLits_aux_ne_nonfree}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{3}
@@ -179,6 +195,7 @@ have variable $v$.
 
 \begin{lemma}[Auxiliary entries reference free variables]
 \lean{SwitchingLemma2.processClauseLits_aux_vars_free}
+\label{SwitchingLemma2.processClauseLits_aux_vars_free}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{3}
@@ -190,6 +207,7 @@ variable that is free under $\rho_0$ (its $\rho_0$ value is $\mathrm{none}$).
 
 \begin{lemma}[$\sigma$-foldl stable off targeted variables]
 \lean{SwitchingLemma2.foldl_sigma_stable}
+\label{SwitchingLemma2.foldl_sigma_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, Term}
 \difficulty{4}
@@ -200,6 +218,7 @@ not have variable $v$, the folded $\sigma$ agrees with the initial $\sigma$ at $
 
 \begin{lemma}[$\rho_0$-foldl stable off targeted variables]
 \lean{SwitchingLemma2.foldl_rho_stable}
+\label{SwitchingLemma2.foldl_rho_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, Term}
 \difficulty{4}
@@ -210,6 +229,7 @@ variable $v$, the folded $\rho_0$ agrees with the initial $\rho_0$ at $v$.
 
 \begin{lemma}[$\sigma$-foldl preserves none]
 \lean{SwitchingLemma2.foldl_sigma_preserves_none}
+\label{SwitchingLemma2.foldl_sigma_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
 \difficulty{4}
@@ -220,6 +240,7 @@ variable to a value via the $\sigma$-update.
 
 \begin{lemma}[$\sigma$-foldl produces none at a newly set free variable]
 \lean{SwitchingLemma2.processClauseLits_foldl_sigma_none}
+\label{SwitchingLemma2.processClauseLits_foldl_sigma_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_sigma_preserves_none, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
@@ -231,6 +252,7 @@ yields $\mathrm{none}$ at $v$.
 
 \begin{lemma}[$\rho_0$-foldl agrees with processClauseLits output]
 \lean{SwitchingLemma2.processClauseLits_foldl_rho_eq}
+\label{SwitchingLemma2.processClauseLits_foldl_rho_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{4}
@@ -243,6 +265,7 @@ routine at $v$.
 
 \begin{lemma}[$\rho_0$-foldl agrees when $v$ is newly set]
 \lean{SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+\label{SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_foldl_rho_eq, SwitchingLemma2.processClauseLits_no_target_of_rho_none, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
@@ -255,6 +278,7 @@ $v$.
 
 \begin{lemma}[No auxiliary entry targets a still-free variable]
 \lean{SwitchingLemma2.processClauseLits_no_target_of_rho_none}
+\label{SwitchingLemma2.processClauseLits_no_target_of_rho_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{5}
@@ -265,6 +289,7 @@ are at least as many path entries as literals, then no input literal has variabl
 
 \begin{lemma}[processClauseLits $\sigma$ output depends only on $\sigma\,v$]
 \lean{SwitchingLemma2.processClauseLits_sigma_at_v}
+\label{SwitchingLemma2.processClauseLits_sigma_at_v}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{3}
@@ -275,6 +300,7 @@ the value at $v$ depends only on the initial $\sigma$ at $v$.
 
 \begin{lemma}[$\sigma$ stays none when $\rho_0$ stays free]
 \lean{SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+\label{SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{5}
@@ -286,6 +312,7 @@ variables in lockstep.
 
 \begin{lemma}[Encoder $\gamma$ at a free variable independent of initial $\sigma$]
 \lean{SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+\label{SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_sigma_at_v, SwitchingLemma2.processClauseLits_sigma_indep, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
 \difficulty{6}
@@ -297,6 +324,7 @@ started from $\sigma_1$ or $\sigma_2$.
 
 \begin{lemma}[processEntries on processClauseLits data]
 \lean{SwitchingLemma2.processEntries_of_processClauseLits}
+\label{SwitchingLemma2.processEntries_of_processClauseLits}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
@@ -309,6 +337,7 @@ provided $t.\mathrm{length} \le w$ and every input literal occurs in $t.\texttt{
 
 \begin{lemma}[processClauseLits never sets $\sigma$ to the negating value]
 \lean{SwitchingLemma2.processClauseLits_sigma_ne_neg}
+\label{SwitchingLemma2.processClauseLits_sigma_ne_neg}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
@@ -320,6 +349,7 @@ not $\mathrm{some}\ l.\mathrm{neg}$.
 
 \begin{lemma}[Path is exhausted when a member variable stays free]
 \lean{SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+\label{SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{5}
@@ -332,6 +362,7 @@ never processed because the path ran out first.
 
 \begin{lemma}[A member literal forces $\rho_0$ to be set]
 \lean{SwitchingLemma2.processClauseLits_rho_ne_none_of_mem}
+\label{SwitchingLemma2.processClauseLits_rho_ne_none_of_mem}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{4}
@@ -342,6 +373,7 @@ not $\mathrm{none}$.
 
 \begin{lemma}[Round-trip base case]
 \lean{SwitchingLemma2.roundtrip_base}
+\label{SwitchingLemma2.roundtrip_base}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction}
 \difficulty{4}
@@ -357,6 +389,7 @@ $\rho_0$ is unset.
 
 \begin{lemma}[Encoder does not kill the first surviving clause]
 \lean{SwitchingLemma2.encode_go_not_kills_first_clause}
+\label{SwitchingLemma2.encode_go_not_kills_first_clause}
 \leanok
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem, SwitchingLemma2.processClauseLits_sigma_ne_neg, Term}
 \difficulty{6}

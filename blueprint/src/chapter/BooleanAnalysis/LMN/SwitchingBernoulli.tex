@@ -13,6 +13,7 @@ fixed-size counting switching lemma to the Bernoulli restriction model.
 
 \begin{lemma}[Cardinality of fixed-size restrictions]
 \lean{SwitchingBernoulli.fixedSizeRestrs_card}
+\label{SwitchingBernoulli.fixedSizeRestrs_card}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.numSRestrictions}
 \difficulty{7}
@@ -23,6 +24,7 @@ $\mathrm{numSRestrictions}\,n\,k$.
 
 \begin{lemma}[Bad fixed-size restrictions match the counting filter]
 \lean{SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq}
+\label{SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
@@ -34,6 +36,7 @@ switching-lemma sense.
 
 \begin{lemma}[Fixed-size switching bound for small $k$]
 \lean{SwitchingBernoulli.switching_fixedSize_bound_small}
+\label{SwitchingBernoulli.switching_fixedSize_bound_small}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, DNF, DNF.eval, DNF.width, SwitchingBernoulli.fixedSizeRestrs_card, SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.restrictFn, SwitchingLemma2.switching_lemma, dtDepth}
@@ -46,6 +49,7 @@ $\left(10kw/n\right)^d$.
 
 \begin{lemma}[Fixed-size switching bound]
 \lean{SwitchingBernoulli.switching_fixedSize_bound}
+\label{SwitchingBernoulli.switching_fixedSize_bound}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound_small, SwitchingLemma2.restrictFn, dtDepth}
@@ -58,6 +62,7 @@ trivial bound when $5k > n$.
 
 \begin{lemma}[Rescaled fixed-size switching bound]
 \lean{SwitchingBernoulli.switching_fixedSize_bound_rescaled}
+\label{SwitchingBernoulli.switching_fixedSize_bound_rescaled}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{BernoulliCost.fixedSizeRestrProb, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound, SwitchingLemma2.restrictFn, dtDepth}
@@ -69,6 +74,7 @@ $\left(5k\cdot(2w)/n\right)^d$, using $10kw/n = 5k\cdot(2w)/n$.
 
 \begin{theorem}[Bernoulli switching lemma for DNFs]
 \lean{SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
+\label{SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{BernoulliCost.bernoulli_restriction_cost, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound_rescaled, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.restrictFn, dtDepth}
@@ -87,6 +93,7 @@ variables.
 
 \begin{theorem}[Bernoulli switching lemma for CNFs]
 \lean{SwitchingBernoulli.switching_bernoulli_dtDepth_cnf}
+\label{SwitchingBernoulli.switching_bernoulli_dtDepth_cnf}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, SwitchingLemmaCNF.cnfToDualDNF_inj, SwitchingLemmaCNF.cnfToDualDNF_nodup, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width, dtDepth, dtDepth_neg}

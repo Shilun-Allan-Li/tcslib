@@ -17,6 +17,7 @@ specialising for prime $p$ to $1 - \tfrac{p-1}{p}(1-\cos(2\pi/p))\varepsilon$.
 
 \begin{definition}[Linearity predicate]
 \lean{ZkBLR.is_linear}
+\label{ZkBLR.is_linear}
 \leanok
 \uses{ZkFourier.ZkVec}
 A function $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is \emph{linear} if
@@ -25,6 +26,7 @@ $f(x+y) = f(x)+f(y)$ for all $x, y \in \mathbb{Z}_k^n$.
 
 \begin{definition}[Lift to roots of unity]
 \lean{ZkBLR.lift_omega}
+\label{ZkBLR.lift_omega}
 \leanok
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.toOmega}
 Given $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$, the lifted function
@@ -34,6 +36,7 @@ $\widetilde{f}(x) = \omega_k^{f(x)}$, where $\omega_k = e^{2\pi i/k}$.
 
 \begin{definition}[Hamming distance between functions]
 \lean{ZkBLR.zk_dist}
+\label{ZkBLR.zk_dist}
 \leanok
 \uses{ZkFourier.ZkVec}
 The distance between $f, g : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is the
@@ -46,6 +49,7 @@ fraction of inputs on which they disagree:
 
 \begin{definition}[$\varepsilon$-far from linear]
 \lean{ZkBLR.epsilon_far_from_linear}
+\label{ZkBLR.epsilon_far_from_linear}
 \leanok
 \uses{ZkBLR.is_linear, ZkBLR.zk_dist, ZkFourier.ZkVec}
 A function $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is
@@ -56,6 +60,7 @@ $g : \mathbb{Z}_k^n \to \mathbb{Z}_k$.
 
 \begin{lemma}[Linear iff dot-product character]
 \lean{ZkBLR.linear_iff_character}
+\label{ZkBLR.linear_iff_character}
 \leanok
 \uses{ZkBLR.is_linear, ZkFourier.ZkVec, ZkFourier.zkDot, ZkFourier.zkDot_add_right}
 \difficulty{6}
@@ -66,6 +71,7 @@ where $s \cdot x = \sum_i s_i x_i$ denotes the dot product in $\mathbb{Z}_k$.
 
 \begin{definition}[Canonical linear character]
 \lean{ZkBLR.linear_character}
+\label{ZkBLR.linear_character}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 For $s \in \mathbb{Z}_k^n$, the \emph{linear character} $\chi_s :
@@ -75,6 +81,7 @@ $\chi_s(x) = s \cdot x$.
 
 \begin{definition}[Normalized function]
 \lean{ZkBLR.normalized}
+\label{ZkBLR.normalized}
 \leanok
 \uses{ZkFourier.ZkVec}
 A function $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is \emph{normalized} if
@@ -83,6 +90,7 @@ $f(0) = 0$.  Every linear function is automatically normalized.
 
 \begin{definition}[Normalization operator]
 \lean{ZkBLR.normalize}
+\label{ZkBLR.normalize}
 \leanok
 \uses{ZkFourier.ZkVec}
 The \emph{normalization} of $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is the
@@ -92,6 +100,7 @@ $(\mathrm{normalize}\,f)(0) = 0$.
 
 \begin{lemma}[Normalization vanishes at origin]
 \lean{ZkBLR.normalize_zero}
+\label{ZkBLR.normalize_zero}
 \leanok
 \uses{ZkBLR.normalize, ZkFourier.ZkVec}
 \difficulty{1}
@@ -101,6 +110,7 @@ $(\mathrm{normalize}\,f)(0) = 0$.
 
 \begin{lemma}[Linear functions are normalized]
 \lean{ZkBLR.linear_normalized}
+\label{ZkBLR.linear_normalized}
 \leanok
 \uses{ZkBLR.is_linear, ZkBLR.normalized, ZkFourier.ZkVec}
 \difficulty{2}
@@ -110,6 +120,7 @@ $f$ is normalized.
 
 \begin{definition}[$\varepsilon$-far from linear, normalized version]
 \lean{ZkBLR.epsilon_far_from_linear_normalized}
+\label{ZkBLR.epsilon_far_from_linear_normalized}
 \leanok
 \uses{ZkBLR.is_linear, ZkBLR.normalized, ZkBLR.zk_dist, ZkFourier.ZkVec}
 A function $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ satisfies
@@ -120,6 +131,7 @@ $\mathrm{dist}(f,g)\ge\varepsilon$ for every linear $g$.
 
 \begin{lemma}[Real part of root of unity bounded by $\cos(2\pi/k)$]
 \lean{ZkBLR.re_toOmega_le_re_rootOfUnity}
+\label{ZkBLR.re_toOmega_le_re_rootOfUnity}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
 \difficulty{6}
@@ -129,6 +141,7 @@ $\operatorname{Re}(\omega_k^a) \le \cos(2\pi/k)$.
 
 \begin{lemma}[Upper bound on real part of Fourier coefficient]
 \lean{ZkBLR.re_fourier_coeff_upper_bound}
+\label{ZkBLR.re_fourier_coeff_upper_bound}
 \leanok
 \uses{ZkBLR.lift_omega, ZkBLR.linear_character, ZkBLR.re_toOmega_le_re_rootOfUnity, ZkBLR.zk_dist, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.rootOfUnity, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.toOmega_neg, ZkFourier.zkDot}
 \difficulty{6}
@@ -143,6 +156,7 @@ the $s$-th Fourier coefficient of the lifted function $\widetilde{f}$ satisfies
 
 \begin{lemma}[Fourier bound from $\varepsilon$-far hypothesis]
 \lean{ZkBLR.re_epsilon_far_bounds_fourier}
+\label{ZkBLR.re_epsilon_far_bounds_fourier}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.is_linear, ZkBLR.lift_omega, ZkBLR.linear_character, ZkBLR.re_fourier_coeff_upper_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff, ZkFourier.zkDot_add_right}
 \difficulty{4}
@@ -156,6 +170,7 @@ then for every $s \in \mathbb{Z}_k^n$,
 
 \begin{definition}[$j$-twisted lift to roots of unity]
 \lean{ZkBLR.lift_omega_j}
+\label{ZkBLR.lift_omega_j}
 \leanok
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.toOmega}
 For $j \in \mathbb{Z}_k$, the $j$-twisted lift of
@@ -167,6 +182,7 @@ constant function $1$.
 
 \begin{definition}[BLR acceptance probability]
 \lean{ZkBLR.BLR_accept_prob}
+\label{ZkBLR.BLR_accept_prob}
 \leanok
 \uses{ZkFourier.ZkVec}
 The BLR acceptance probability of $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is
@@ -180,6 +196,7 @@ The BLR acceptance probability of $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is
 
 \begin{lemma}[BLR completeness]
 \lean{ZkBLR.BLR_completeness}
+\label{ZkBLR.BLR_completeness}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.is_linear, ZkFourier.ZkVec, ZkFourier.card_ZkVec}
 \difficulty{4}
@@ -189,6 +206,7 @@ $\Pr[{\rm BLR\ accepts}\ f] = 1$.
 
 \begin{lemma}[Geometric sum of twisted roots of unity]
 \lean{ZkBLR.geom_sum_toOmega_dual}
+\label{ZkBLR.geom_sum_toOmega_dual}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b005}
 \uses{ZkFourier.geom_sum_toOmega, ZkFourier.toOmega}
@@ -202,6 +220,7 @@ For any $a \in \mathbb{Z}_k$,
 
 \begin{lemma}[Indicator as character sum]
 \lean{ZkBLR.indicator_eq_char_sum_re}
+\label{ZkBLR.indicator_eq_char_sum_re}
 \leanok
 \uses{ZkBLR.geom_sum_toOmega_dual, ZkFourier.toOmega}
 \difficulty{3}
@@ -214,6 +233,7 @@ For any $a \in \mathbb{Z}_k$,
 
 \begin{lemma}[Parseval identity for $j$-twisted lift]
 \lean{ZkBLR.parseval_lift_omega_j}
+\label{ZkBLR.parseval_lift_omega_j}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.L2_norm_sq, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.fourier_coeff, ZkFourier.norm_toOmega, ZkFourier.parseval_identity, ZkFourier.toOmega}
 \difficulty{3}
@@ -226,6 +246,7 @@ For any $j \in \mathbb{Z}_k$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
 
 \begin{lemma}[Triple-product Fourier expansion]
 \lean{ZkBLR.triple_product_fourier}
+\label{ZkBLR.triple_product_fourier}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion, ZkFourier.inner_product}
 \difficulty{7}
@@ -242,6 +263,7 @@ expectation satisfies
 
 \begin{lemma}[BLR probability as Fourier sum]
 \lean{ZkBLR.BLR_accept_prob_eq_fourier_sum}
+\label{ZkBLR.BLR_accept_prob_eq_fourier_sum}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.indicator_eq_char_sum_re, ZkBLR.lift_omega_j, ZkBLR.triple_product_fourier, ZkFourier.ZkVec, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.toOmega_neg}
 \difficulty{7}
@@ -258,6 +280,7 @@ The BLR acceptance probability admits the Fourier representation
 
 \begin{lemma}[Zero-index contribution equals one]
 \lean{ZkBLR.lift_omega_j_zero_contribution}
+\label{ZkBLR.lift_omega_j_zero_contribution}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.toOmega_zero}
 \difficulty{5}
@@ -272,6 +295,7 @@ sum evaluates to $1$:
 
 \begin{lemma}[Weighted Fourier sum at most one]
 \lean{ZkBLR.weighted_fourier_sum_le_one}
+\label{ZkBLR.weighted_fourier_sum_le_one}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{5}
@@ -285,6 +309,7 @@ For any $j \in \mathbb{Z}_k$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
 
 \begin{lemma}[Cube-sum bounded by max times square-sum]
 \lean{ZkBLR.cube_sum_bound_by_max}
+\label{ZkBLR.cube_sum_bound_by_max}
 \leanok
 \uses{ZkBLR.lift_omega, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{4}
@@ -300,6 +325,7 @@ If $\|\widehat{\widetilde{f}}(s)\| \le A$ for all $s \in \mathbb{Z}_p^n$, then
 
 \begin{lemma}[Parseval identity for lift\_omega]
 \lean{ZkBLR.parseval_lift_omega}
+\label{ZkBLR.parseval_lift_omega}
 \leanok
 \uses{ZkBLR.lift_omega, ZkFourier.L2_norm_sq, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.fourier_coeff, ZkFourier.norm_toOmega, ZkFourier.parseval_identity}
 \difficulty{3}
@@ -312,6 +338,7 @@ For $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$,
 
 \begin{lemma}[Weighted Fourier sum bounded by $\varepsilon$-far condition]
 \lean{ZkBLR.weighted_fourier_sum_bound}
+\label{ZkBLR.weighted_fourier_sum_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega, ZkBLR.parseval_lift_omega, ZkBLR.re_epsilon_far_bounds_fourier, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{4}
@@ -327,6 +354,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 
 \begin{lemma}[Fourier coefficient real-part bound for $j$-twisted lift]
 \lean{ZkBLR.re_fourier_coeff_lift_omega_j_bound}
+\label{ZkBLR.re_fourier_coeff_lift_omega_j_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.re_epsilon_far_bounds_fourier, ZkBLR.zk_dist, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{5}
@@ -340,6 +368,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 
 \begin{lemma}[Weighted sum bound for $j$-twisted lift]
 \lean{ZkBLR.weighted_sum_lift_omega_j_bound}
+\label{ZkBLR.weighted_sum_lift_omega_j_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkBLR.re_fourier_coeff_lift_omega_j_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{4}
@@ -355,6 +384,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 
 \begin{lemma}[BLR soundness for prime fields]
 \lean{ZkBLR.BLR_soundness}
+\label{ZkBLR.BLR_soundness}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_accept_prob_eq_fourier_sum, ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j_zero_contribution, ZkBLR.weighted_sum_lift_omega_j_bound, ZkFourier.ZkVec}
 \difficulty{5}
@@ -368,6 +398,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 
 \begin{lemma}[$\varepsilon$-farness preserved under unit scaling]
 \lean{ZkBLR.unit_mul_epsilon_far}
+\label{ZkBLR.unit_mul_epsilon_far}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.zk_dist, ZkFourier.ZkVec}
 \difficulty{5}
@@ -379,6 +410,7 @@ function $x \mapsto j \cdot f(x)$ is also $\varepsilon$-far from linear
 
 \begin{lemma}[Real-part bound for unit-twisted lift]
 \lean{ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound}
+\label{ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.re_epsilon_far_bounds_fourier, ZkBLR.unit_mul_epsilon_far, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{3}
@@ -392,6 +424,7 @@ If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), $j \in
 
 \begin{lemma}[Weighted sum bound for unit-twisted lift]
 \lean{ZkBLR.weighted_sum_unit_bound}
+\label{ZkBLR.weighted_sum_unit_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{4}
@@ -407,6 +440,7 @@ If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), and $j \in
 
 \begin{lemma}[BLR soundness for general $k$]
 \lean{ZkBLR.BLR_soundness_general}
+\label{ZkBLR.BLR_soundness_general}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_accept_prob_eq_fourier_sum, ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.weighted_fourier_sum_le_one, ZkBLR.weighted_sum_unit_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{7}
@@ -421,6 +455,7 @@ where $\varphi(k)$ denotes Euler's totient function.
 
 \begin{lemma}[BLR soundness for prime modulus]
 \lean{ZkBLR.BLR_soundness_prime}
+\label{ZkBLR.BLR_soundness_prime}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_soundness_general, ZkBLR.epsilon_far_from_linear_normalized, ZkFourier.ZkVec}
 \difficulty{3}

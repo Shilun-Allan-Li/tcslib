@@ -14,6 +14,7 @@ an $m$-clique.
 
 \begin{definition}[Clause]
 \lean{ThreeSATToClique.Clause}
+\label{ThreeSATToClique.Clause}
 \leanok
 A clause is a list of literals over a variable type $V$; it represents a
 disjunction of those literals.
@@ -21,6 +22,7 @@ disjunction of those literals.
 
 \begin{definition}[CNF formula]
 \lean{ThreeSATToClique.CNFFormula}
+\label{ThreeSATToClique.CNFFormula}
 \leanok
 \uses{ThreeSATToClique.Clause}
 A CNF formula over $V$ is a list of clauses, representing the conjunction of those
@@ -29,6 +31,7 @@ clauses.
 
 \begin{definition}[Literal evaluation]
 \lean{ThreeSATToClique.evalLiteral}
+\label{ThreeSATToClique.evalLiteral}
 \leanok
 Given a truth assignment $\alpha : V \to \mathrm{Prop}$, the evaluation of a
 literal $\ell$ under $\alpha$ is $\alpha(v)$ when $\ell = \texttt{pos}\,v$ and
@@ -37,6 +40,7 @@ $\neg\,\alpha(v)$ when $\ell = \texttt{neg}\,v$.
 
 \begin{definition}[Clause satisfaction]
 \lean{ThreeSATToClique.clauseSatisfied}
+\label{ThreeSATToClique.clauseSatisfied}
 \leanok
 \uses{ThreeSATToClique.Clause, ThreeSATToClique.evalLiteral}
 A clause $c$ is \emph{satisfied} by assignment $\alpha$ if at least one literal
@@ -45,6 +49,7 @@ $\ell \in c$ satisfies $\mathtt{evalLiteral}\,\alpha\,\ell$.
 
 \begin{definition}[CNF formula satisfaction]
 \lean{ThreeSATToClique.formulaSatisfied}
+\label{ThreeSATToClique.formulaSatisfied}
 \leanok
 \uses{ThreeSATToClique.CNFFormula, ThreeSATToClique.clauseSatisfied}
 A CNF formula $f$ is \emph{satisfied} by $\alpha$ if every clause $c \in f$ is
@@ -53,6 +58,7 @@ satisfied by $\alpha$.
 
 \begin{definition}[CNF satisfiability]
 \lean{ThreeSATToClique.isSatisfiable}
+\label{ThreeSATToClique.isSatisfiable}
 \leanok
 \uses{ThreeSATToClique.CNFFormula, ThreeSATToClique.formulaSatisfied}
 A CNF formula $f$ is \emph{satisfiable} if there exists an assignment $\alpha$
@@ -61,6 +67,7 @@ that satisfies $f$.
 
 \begin{definition}[3-clause]
 \lean{ThreeSATToClique.Clause3}
+\label{ThreeSATToClique.Clause3}
 \leanok
 A 3-clause over $V$ is a structure with exactly three literals $l_1, l_2, l_3 :
 \mathtt{Literal}\,V$, representing a disjunction of precisely three literals.
@@ -68,6 +75,7 @@ A 3-clause over $V$ is a structure with exactly three literals $l_1, l_2, l_3 :
 
 \begin{definition}[3-CNF formula]
 \lean{ThreeSATToClique.Formula3}
+\label{ThreeSATToClique.Formula3}
 \leanok
 \uses{ThreeSATToClique.Clause3}
 A 3-CNF formula over $V$ is a list of 3-clauses, representing their conjunction.
@@ -75,6 +83,7 @@ A 3-CNF formula over $V$ is a list of 3-clauses, representing their conjunction.
 
 \begin{definition}[3-clause satisfaction]
 \lean{ThreeSATToClique.clause3Satisfied}
+\label{ThreeSATToClique.clause3Satisfied}
 \leanok
 \uses{ThreeSATToClique.Clause3, ThreeSATToClique.evalLiteral}
 A 3-clause $c$ is satisfied by $\alpha$ if at least one of its three literals
@@ -83,6 +92,7 @@ $c.l_1$, $c.l_2$, $c.l_3$ evaluates to true under $\alpha$.
 
 \begin{definition}[3-CNF formula satisfaction]
 \lean{ThreeSATToClique.formula3Satisfied}
+\label{ThreeSATToClique.formula3Satisfied}
 \leanok
 \uses{ThreeSATToClique.Formula3, ThreeSATToClique.clause3Satisfied}
 A 3-CNF formula $f$ is satisfied by $\alpha$ if every 3-clause $c \in f$ is
@@ -91,6 +101,7 @@ satisfied by $\alpha$.
 
 \begin{definition}[3-CNF satisfiability]
 \lean{ThreeSATToClique.is3Satisfiable}
+\label{ThreeSATToClique.is3Satisfiable}
 \leanok
 \uses{ThreeSATToClique.Formula3, ThreeSATToClique.formula3Satisfied}
 A 3-CNF formula $f$ is satisfiable if there exists an assignment $\alpha$ such
@@ -99,6 +110,7 @@ that $\alpha$ satisfies $f$.
 
 \begin{definition}[Clique vertex]
 \lean{ThreeSATToClique.CliqueVertex}
+\label{ThreeSATToClique.CliqueVertex}
 \leanok
 A vertex of the conflict graph for a formula with $m$ clauses is a pair
 $\langle c\_idx, l\_idx \rangle$ where $c\_idx : \mathrm{Fin}\,m$ is a clause index
@@ -107,6 +119,7 @@ and $l\_idx : \mathrm{Fin}\,3$ is a literal position within that clause.
 
 \begin{definition}[Literal extraction from a 3-clause]
 \lean{ThreeSATToClique.getLitInClause}
+\label{ThreeSATToClique.getLitInClause}
 \leanok
 \uses{ThreeSATToClique.Clause3}
 Given a 3-clause $c$ and a position $p : \mathrm{Fin}\,3$, returns the $p$-th
@@ -116,6 +129,7 @@ position $2$.
 
 \begin{definition}[Literal named by a vertex]
 \lean{ThreeSATToClique.getLitAt}
+\label{ThreeSATToClique.getLitAt}
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.getLitInClause}
 Given a 3-CNF formula $f$ and a vertex $v : \mathtt{CliqueVertex}\,f.\mathtt{length}$,
@@ -125,6 +139,7 @@ $v$ guarantees the index is always in bounds.
 
 \begin{definition}[Literal conflict]
 \lean{ThreeSATToClique.literalsConflict}
+\label{ThreeSATToClique.literalsConflict}
 \leanok
 Two literals $l_1$ and $l_2$ \emph{conflict} if one is the positive and the other
 the negative occurrence of the same variable, i.e.\ $l_1 = \texttt{pos}\,v$ and
@@ -133,6 +148,7 @@ $l_2 = \texttt{neg}\,v$ (or vice versa) for some $v$.
 
 \begin{theorem}[Symmetry of literal conflict]
 \lean{ThreeSATToClique.literalsConflict_symm}
+\label{ThreeSATToClique.literalsConflict_symm}
 \leanok
 \uses{ThreeSATToClique.literalsConflict}
 \difficulty{4}
@@ -142,6 +158,7 @@ For any two literals $l_1$ and $l_2$, $\mathtt{literalsConflict}\,l_1\,l_2 \iff
 
 \begin{definition}[Conflict graph]
 \lean{ThreeSATToClique.toCliqueGraph}
+\label{ThreeSATToClique.toCliqueGraph}
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.getLitAt, ThreeSATToClique.literalsConflict, ThreeSATToClique.literalsConflict_symm}
 The conflict graph of a 3-CNF formula $f$ is the simple graph on vertex set
@@ -152,6 +169,7 @@ v.c\_idx$) and their respective literals do not conflict.
 
 \begin{definition}[$k$-clique existence]
 \lean{ThreeSATToClique.hasClique}
+\label{ThreeSATToClique.hasClique}
 \leanok
 A graph $G$ on vertex type $V$ \emph{has a $k$-clique} if there exists a finite set
 $s \subseteq V$ of $k$ vertices that are pairwise adjacent in $G$.
@@ -159,6 +177,7 @@ $s \subseteq V$ of $k$ vertices that are pairwise adjacent in $G$.
 
 \begin{lemma}[Simultaneously true literals do not conflict]
 \lean{ThreeSATToClique.no_conflict_of_true}
+\label{ThreeSATToClique.no_conflict_of_true}
 \leanok
 \uses{ThreeSATToClique.evalLiteral, ThreeSATToClique.literalsConflict}
 \difficulty{4}
@@ -169,6 +188,7 @@ do not conflict: $\mathtt{evalLiteral}\,\alpha\,l_1 \to \mathtt{evalLiteral}\,\a
 
 \begin{lemma}[Clique vertices represent one literal per clause]
 \lean{ThreeSATToClique.clique_vertices_choose_one_per_clause}
+\label{ThreeSATToClique.clique_vertices_choose_one_per_clause}
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.toCliqueGraph}
 \difficulty{5}
@@ -179,6 +199,7 @@ exactly one vertex $u \in s$ with $u.c\_idx = i$.
 
 \begin{lemma}[Vertex literal belongs to its clause]
 \lean{ThreeSATToClique.getLitAt_mem_clause}
+\label{ThreeSATToClique.getLitAt_mem_clause}
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.getLitAt, ThreeSATToClique.getLitInClause}
 \difficulty{4}
@@ -189,6 +210,7 @@ clause $f[i]$.
 
 \begin{theorem}[Completeness of the reduction]
 \lean{ThreeSATToClique.ThreeSAT_to_Clique_completeness}
+\label{ThreeSATToClique.ThreeSAT_to_Clique_completeness}
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.evalLiteral, ThreeSATToClique.getLitAt, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.no_conflict_of_true, ThreeSATToClique.toCliqueGraph}
 \difficulty{5}
@@ -199,6 +221,7 @@ $\mathtt{toCliqueGraph}\,f$ contains an $m$-clique: $\mathtt{is3Satisfiable}\,f 
 
 \begin{theorem}[Soundness of the reduction]
 \lean{ThreeSATToClique.ThreeSAT_to_Clique_soundness}
+\label{ThreeSATToClique.ThreeSAT_to_Clique_soundness}
 \leanok
 \uses{ThreeSATToClique.Formula3, ThreeSATToClique.clique_vertices_choose_one_per_clause, ThreeSATToClique.evalLiteral, ThreeSATToClique.getLitAt, ThreeSATToClique.getLitAt_mem_clause, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.toCliqueGraph}
 \difficulty{6}
@@ -210,6 +233,7 @@ $\mathtt{hasClique}\,(\mathtt{toCliqueGraph}\,f)\,f.\mathtt{length} \to
 
 \begin{theorem}[3-SAT $\Leftrightarrow$ Clique equivalence]
 \lean{ThreeSATToClique.ThreeSAT_to_Clique_equivalence}
+\label{ThreeSATToClique.ThreeSAT_to_Clique_equivalence}
 \leanok
 \uses{ThreeSATToClique.Formula3, ThreeSATToClique.ThreeSAT_to_Clique_completeness, ThreeSATToClique.ThreeSAT_to_Clique_soundness, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.toCliqueGraph}
 \difficulty{1}

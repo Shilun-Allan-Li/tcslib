@@ -13,6 +13,7 @@ distributions.
 
 \begin{theorem}[Entropy bounded by log of alphabet size]
 \lean{ProbabilityTheory.entropy_le_log_of_card_le}
+\label{ProbabilityTheory.entropy_le_log_of_card_le}
 \leanok
 \difficulty{3}
 If the alphabet type $S$ has $\mathrm{card}(S) \le N$, then for any random variable
@@ -24,6 +25,7 @@ $X : \Omega \to S$ and measure $\mu$,
 
 \begin{theorem}[Entropy bounded by $c \log 2$ when alphabet fits in $c$ bits]
 \lean{ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow}
+\label{ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow}
 \leanok
 \uses{ProbabilityTheory.entropy_le_log_of_card_le}
 \difficulty{2}
@@ -35,6 +37,7 @@ If $\mathrm{card}(S) \le 2^c$ for some $c : \mathbb{N}$, then
 
 \begin{theorem}[Mutual information bounded by left entropy]
 \lean{ProbabilityTheory.mutualInfo_le_entropy_left}
+\label{ProbabilityTheory.mutualInfo_le_entropy_left}
 \leanok
 \difficulty{2}
 For measurable $X$ and $Y$ under a zero-or-probability measure $\mu$ with finite ranges,
@@ -45,6 +48,7 @@ For measurable $X$ and $Y$ under a zero-or-probability measure $\mu$ with finite
 
 \begin{theorem}[Mutual information bounded by right entropy]
 \lean{ProbabilityTheory.mutualInfo_le_entropy_right}
+\label{ProbabilityTheory.mutualInfo_le_entropy_right}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_le_entropy_left}
 \difficulty{2}
@@ -56,6 +60,7 @@ For measurable $X$ and $Y$ under a zero-or-probability measure $\mu$ with finite
 
 \begin{theorem}[Mutual information invariant under a.e.\ substitution]
 \lean{ProbabilityTheory.mutualInfo_congr_ae}
+\label{ProbabilityTheory.mutualInfo_congr_ae}
 \leanok
 \difficulty{3}
 If $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$, then
@@ -64,6 +69,7 @@ $I[X : Y;\mu] = I[X' : Y';\mu]$.
 
 \begin{theorem}[Mutual information invariant under injective recoding of right variable]
 \lean{ProbabilityTheory.mutualInfo_comp_right_of_injective}
+\label{ProbabilityTheory.mutualInfo_comp_right_of_injective}
 \leanok
 \difficulty{3}
 If $f : T \to V$ is measurable and injective, then
@@ -72,6 +78,7 @@ $I[X : f \circ Y;\mu] = I[X : Y;\mu]$.
 
 \begin{theorem}[Mutual information zero when left variable is a.e.\ constant]
 \lean{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
+\label{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
 \leanok
 \difficulty{3}
 If $X =^{\mu\text{-a.e.}} c$ for some constant $c : S$, then $I[X : Y;\mu] = 0$.
@@ -79,6 +86,7 @@ If $X =^{\mu\text{-a.e.}} c$ for some constant $c : S$, then $I[X : Y;\mu] = 0$.
 
 \begin{theorem}[Mutual information zero when right variable is a.e.\ constant]
 \lean{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_right}
+\label{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_right}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
 \difficulty{2}
@@ -87,6 +95,7 @@ If $Y =^{\mu\text{-a.e.}} c$ for some constant $c : T$, then $I[X : Y;\mu] = 0$.
 
 \begin{theorem}[Conditional mutual information zero when left variable is a.e.\ constant]
 \lean{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
+\label{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \leanok
 \difficulty{4}
 If $X =^{\mu\text{-a.e.}} c$ for some constant $c : S$, then $I[X : Y \mid Z;\mu] = 0$.
@@ -94,6 +103,7 @@ If $X =^{\mu\text{-a.e.}} c$ for some constant $c : S$, then $I[X : Y \mid Z;\mu
 
 \begin{theorem}[Conditional mutual information zero when right variable is a.e.\ constant]
 \lean{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_right}
+\label{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_right}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \difficulty{2}
@@ -102,6 +112,7 @@ If $Y =^{\mu\text{-a.e.}} c$ for some constant $c : T$, then $I[X : Y \mid Z;\mu
 
 \begin{theorem}[Independence from singleton-fiber factorization]
 \lean{ProbabilityTheory.indepFun_of_measureReal_inter_preimage_singleton_eq_mul}
+\label{ProbabilityTheory.indepFun_of_measureReal_inter_preimage_singleton_eq_mul}
 \leanok
 \difficulty{5}
 For measurable $X : \Omega \to S$ and $Y : \Omega \to T$ with finite $S$ and $T$, if
@@ -113,6 +124,7 @@ holds for all $x, y$, then $X$ and $Y$ are independent under $\mu$.
 
 \begin{theorem}[Conditional mutual information bounded by left conditional entropy]
 \lean{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
+\label{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
 \leanok
 \difficulty{2}
 For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ranges,
@@ -123,6 +135,7 @@ For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ran
 
 \begin{theorem}[Conditional mutual information bounded by right conditional entropy]
 \lean{ProbabilityTheory.condMutualInfo_le_condEntropy_right}
+\label{ProbabilityTheory.condMutualInfo_le_condEntropy_right}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
 \difficulty{2}
@@ -134,6 +147,7 @@ For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ran
 
 \begin{theorem}[Conditional mutual information bounded by left entropy]
 \lean{ProbabilityTheory.condMutualInfo_le_entropy_left}
+\label{ProbabilityTheory.condMutualInfo_le_entropy_left}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
 \difficulty{2}
@@ -145,6 +159,7 @@ For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ran
 
 \begin{theorem}[Conditional mutual information bounded by right entropy]
 \lean{ProbabilityTheory.condMutualInfo_le_entropy_right}
+\label{ProbabilityTheory.condMutualInfo_le_entropy_right}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_right}
 \difficulty{2}
@@ -156,6 +171,7 @@ For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ran
 
 \begin{theorem}[Conditional data processing: postprocessing depending on conditioning value]
 \lean{ProbabilityTheory.condMutualInfo_comp_left_le_of_comp_conditioning}
+\label{ProbabilityTheory.condMutualInfo_comp_left_le_of_comp_conditioning}
 \leanok
 \difficulty{4}
 If $f : U \to S \to V$ is any function (where $Z : \Omega \to U$ is the conditioning
@@ -169,6 +185,7 @@ cannot increase it:
 
 \begin{theorem}[Conditional data processing on the right depending on conditioning value]
 \lean{ProbabilityTheory.condMutualInfo_comp_right_le_of_comp_conditioning}
+\label{ProbabilityTheory.condMutualInfo_comp_right_le_of_comp_conditioning}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_comp_left_le_of_comp_conditioning}
 \difficulty{3}
@@ -182,6 +199,7 @@ variable), applying $f(Z(\omega))$ to $Y(\omega)$ cannot increase conditional mu
 
 \begin{theorem}[Conditioning on $(Z, f(Z))$ equals conditioning on $Z$]
 \lean{ProbabilityTheory.condMutualInfo_conditioning_prod_function_eq}
+\label{ProbabilityTheory.condMutualInfo_conditioning_prod_function_eq}
 \leanok
 \difficulty{2}
 Adding a deterministic function of the conditioning variable to the conditioning variable does
@@ -194,6 +212,7 @@ not change conditional mutual information:
 
 \begin{theorem}[Extra left-side conditioning cannot increase conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
+\label{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
 \leanok
 \difficulty{6}
 For a measurable $f : U \to S \to V$, conditioning additionally on a deterministic function
@@ -206,6 +225,7 @@ of $X$ and $Z$ cannot increase conditional mutual information:
 
 \begin{theorem}[Extra right-side conditioning cannot increase conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_conditioning_prod_right_function_le}
+\label{ProbabilityTheory.condMutualInfo_conditioning_prod_right_function_le}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
 \difficulty{2}
@@ -219,6 +239,7 @@ of $Y$ and $Z$ cannot increase conditional mutual information:
 
 \begin{theorem}[Finer conditioning increases conditional mutual information when coarse carries no extra info]
 \lean{ProbabilityTheory.condMutualInfo_comp_conditioning_le_of_condMutualInfo_eq_zero}
+\label{ProbabilityTheory.condMutualInfo_comp_conditioning_le_of_condMutualInfo_eq_zero}
 \leanok
 \difficulty{6}
 Let $W : \Omega \to V$ and $f : V \to U$.  If $I[X : W \mid f \circ W;\mu] = 0$ (i.e., the
@@ -230,6 +251,7 @@ coarse variable $f \circ W$ carries all the information about $X$ that $W$ does)
 
 \begin{theorem}[Chain rule: splitting a left-side pair]
 \lean{ProbabilityTheory.condMutualInfo_prod_left_eq_add}
+\label{ProbabilityTheory.condMutualInfo_prod_left_eq_add}
 \leanok
 \difficulty{5}
 For measurable $X$, $W$, $Y$, $Z$ with finite ranges under a zero-or-probability measure,
@@ -241,6 +263,7 @@ For measurable $X$, $W$, $Y$, $Z$ with finite ranges under a zero-or-probability
 
 \begin{theorem}[Chain rule: splitting a right-side pair]
 \lean{ProbabilityTheory.condMutualInfo_prod_right_eq_add}
+\label{ProbabilityTheory.condMutualInfo_prod_right_eq_add}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_prod_left_eq_add}
 \difficulty{3}
@@ -253,6 +276,7 @@ For measurable $X$, $Y$, $W$, $Z$ with finite ranges under a zero-or-probability
 
 \begin{theorem}[Pairing the right variable cannot decrease conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_le_prod_right_snd}
+\label{ProbabilityTheory.condMutualInfo_le_prod_right_snd}
 \leanok
 \difficulty{2}
 For measurable $X$, $Y$, $W$, $Z$ with finite ranges under a probability measure,
@@ -263,6 +287,7 @@ For measurable $X$, $Y$, $W$, $Z$ with finite ranges under a probability measure
 
 \begin{definition}[Strict prefix of a boolean vector]
 \lean{ProbabilityTheory.boolVectorStrictPrefix}
+\label{ProbabilityTheory.boolVectorStrictPrefix}
 \leanok
 For a boolean-vector-valued random variable $X : \Omega \to (\mathrm{Fin}\,m \to \mathrm{Bool})$
 and an index $i : \mathrm{Fin}\,m$, the \emph{strict prefix} $\mathrm{boolVectorStrictPrefix}\,X\,i\,\omega$
@@ -271,6 +296,7 @@ is the restriction of $X(\omega)$ to coordinates $0, 1, \ldots, i-1$.
 
 \begin{theorem}[Chain rule for conditional mutual information against a boolean vector]
 \lean{ProbabilityTheory.condMutualInfo_boolVector_eq_sum_strictPrefix}
+\label{ProbabilityTheory.condMutualInfo_boolVector_eq_sum_strictPrefix}
 \leanok
 \uses{ProbabilityTheory.boolVectorStrictPrefix, ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left, ProbabilityTheory.condMutualInfo_prod_left_eq_add}
 \difficulty{7}
@@ -285,6 +311,7 @@ where $X_i(\omega) = X(\omega)(i)$.
 
 \begin{theorem}[Iterated conditioning on a subset]
 \lean{ProbabilityTheory.cond_cond_eq_cond_of_subset}
+\label{ProbabilityTheory.cond_cond_eq_cond_of_subset}
 \leanok
 \difficulty{2}
 For a finite measure $\mu$ and measurable sets $F \subseteq A$,
@@ -295,6 +322,7 @@ For a finite measure $\mu$ and measurable sets $F \subseteq A$,
 
 \begin{theorem}[Real-mass reweighting for nested conditioning events]
 \lean{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
+\label{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \leanok
 \difficulty{4}
 For a finite measure $\mu$ and measurable sets $F \subseteq A$,
@@ -305,6 +333,7 @@ For a finite measure $\mu$ and measurable sets $F \subseteq A$,
 
 \begin{theorem}[Conditional mutual information as an average over a finite partition]
 \lean{ProbabilityTheory.condMutualInfo_prod_conditioning_eq_sum}
+\label{ProbabilityTheory.condMutualInfo_prod_conditioning_eq_sum}
 \leanok
 \uses{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \difficulty{6}
@@ -318,6 +347,7 @@ then
 
 \begin{theorem}[Conditional mutual information on an event is bounded by the unconditional value]
 \lean{ProbabilityTheory.measureReal_mul_cond_condMutualInfo_le_condMutualInfo_of_event_eq_preimage}
+\label{ProbabilityTheory.measureReal_mul_cond_condMutualInfo_le_condMutualInfo_of_event_eq_preimage}
 \leanok
 \uses{ProbabilityTheory.cond_cond_eq_cond_of_subset, ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \difficulty{7}
@@ -330,6 +360,7 @@ Let $A = Z^{-1}(B)$ for some measurable $B$.  Then, under a probability measure 
 
 \begin{theorem}[Chain rule for mutual information: splitting a right-side pair]
 \lean{ProbabilityTheory.mutualInfo_prod_right_eq_add}
+\label{ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \leanok
 \difficulty{5}
 For measurable $X$, $Y$, $W$ with finite ranges under a zero-or-probability measure,
@@ -340,6 +371,7 @@ For measurable $X$, $Y$, $W$ with finite ranges under a zero-or-probability meas
 
 \begin{theorem}[Conditional mutual information bounded by unconditioned mutual information]
 \lean{ProbabilityTheory.condMutualInfo_le_mutualInfo_of_condDependence_le}
+\label{ProbabilityTheory.condMutualInfo_le_mutualInfo_of_condDependence_le}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_comp_right_of_injective, ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \difficulty{5}
@@ -351,6 +383,7 @@ If $I[X : W \mid Y;\mu] \le I[X : W;\mu]$, then
 
 \begin{theorem}[Conditional entropy invariant under a.e.\ substitution]
 \lean{ProbabilityTheory.condEntropy_congr_ae}
+\label{ProbabilityTheory.condEntropy_congr_ae}
 \leanok
 \difficulty{3}
 Under a probability measure, if $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$
@@ -360,6 +393,7 @@ $H[X \mid Y;\mu] = H[X' \mid Y';\mu]$.
 
 \begin{theorem}[Conditional mutual information invariant under a.e.\ substitution of both variables]
 \lean{ProbabilityTheory.condMutualInfo_congr_ae_left_right}
+\label{ProbabilityTheory.condMutualInfo_congr_ae_left_right}
 \leanok
 \uses{ProbabilityTheory.condEntropy_congr_ae}
 \difficulty{4}
@@ -370,6 +404,7 @@ unchanged).
 
 \begin{theorem}[Conditional mutual information invariant under a.e.\ substitution of all three variables]
 \lean{ProbabilityTheory.condMutualInfo_congr_ae}
+\label{ProbabilityTheory.condMutualInfo_congr_ae}
 \leanok
 \uses{ProbabilityTheory.condEntropy_congr_ae}
 \difficulty{4}
@@ -379,6 +414,7 @@ and $Z =^{\mu\text{-a.e.}} Z'$, then $I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z';\m
 
 \begin{theorem}[Finite-space a.e.\ congruence for conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_congr_ae_finite}
+\label{ProbabilityTheory.condMutualInfo_congr_ae_finite}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, ProbabilityTheory.condMutualInfo_congr_ae}
 \difficulty{2}
@@ -390,6 +426,7 @@ the a.e.\ equality hypotheses need to be supplied.
 
 \begin{theorem}[Conditional mutual information determined by the joint law]
 \lean{ProbabilityTheory.IdentDistrib.condMutualInfo_eq}
+\label{ProbabilityTheory.IdentDistrib.condMutualInfo_eq}
 \leanok
 \difficulty{4}
 If $(X, Y, Z)$ and $(X', Y', Z')$ have the same joint distribution (i.e., are identically
@@ -398,6 +435,7 @@ distributed), then $I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z';\mu']$.
 
 \begin{theorem}[Finite-space version: conditional mutual information determined by the joint law]
 \lean{ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite}
+\label{ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, ProbabilityTheory.IdentDistrib.condMutualInfo_eq}
 \difficulty{2}
@@ -408,6 +446,7 @@ and \texttt{Finite} instances.
 
 \begin{theorem}[Conditional mutual information invariant under injective recodings of right and conditioning variables]
 \lean{ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
+\label{ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
 \leanok
 \difficulty{5}
 If $f : T \to V$ and $g : U \to W$ are measurable injections, then
@@ -418,6 +457,7 @@ If $f : T \to V$ and $g : U \to W$ are measurable injections, then
 
 \begin{theorem}[Identical distribution of pairs preserved under conditioning on the same set]
 \lean{ProbabilityTheory.IdentDistrib.cond_of_pair}
+\label{ProbabilityTheory.IdentDistrib.cond_of_pair}
 \leanok
 \difficulty{6}
 If $(X, Y)$ and $(X', Y')$ have the same joint law and $s \subseteq B$ is measurable, then

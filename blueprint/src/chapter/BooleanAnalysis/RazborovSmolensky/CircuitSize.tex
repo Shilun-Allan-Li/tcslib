@@ -14,6 +14,7 @@ previous chapter with their error bounds phrased directly in terms of the number
 
 \begin{definition}[Index of a non-input layer]
 \lean{ACP.gateLayerIdx}
+\label{ACP.gateLayerIdx}
 \leanok
 \uses{ACP.FeedForward}
 For a feed-forward circuit $F$, a bound $d \le F.\mathrm{depth}$ and an index
@@ -24,6 +25,7 @@ non-input layers $1, \dots, d$ as indices into $F.\mathrm{nodes}$ so that they c
 
 \begin{lemma}[Partial gate count as a sum of layer cardinalities]
 \lean{ACP.gateCountBefore_eq_sum_cards}
+\label{ACP.gateCountBefore_eq_sum_cards}
 \leanok
 \uses{ACP.FeedForward, ACP.gateCountBefore, ACP.gateCountBefore_succ, ACP.gateLayerIdx}
 Let $F$ be a feed-forward circuit with all node layers finite.  Then for every $d$ with
@@ -38,6 +40,7 @@ those layers.
 
 \begin{lemma}[Circuit size as a sum of layer cardinalities]
 \lean{ACP.size_eq_sum_cards}
+\label{ACP.size_eq_sum_cards}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.size}
 For a feed-forward circuit $F$ with all node layers finite,
@@ -49,6 +52,7 @@ so the total number of non-input gates equals the sum of the cardinalities of al
 
 \begin{lemma}[Full-depth gate count is the circuit size]
 \lean{ACP.gateCountBefore_depth_eq_size}
+\label{ACP.gateCountBefore_depth_eq_size}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.size, ACP.gateCountBefore, ACP.gateCountBefore_eq_sum_cards, ACP.gateLayerIdx, ACP.size_eq_sum_cards}
 For a feed-forward circuit $F$ with all node layers finite, taking $d = F.\mathrm{depth}$ gives
@@ -59,6 +63,7 @@ For a feed-forward circuit $F$ with all node layers finite, taking $d = F.\mathr
 
 \begin{theorem}[Polynomial distribution for all outputs, size form]
 \lean{ACP.exists_poly_distribution_for_circuit_outputs_size}
+\label{ACP.exists_poly_distribution_for_circuit_outputs_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_outputs, ACP.gateCountBefore_depth_eq_size}
 Let $p$ be prime and let $F$ be a feed-forward circuit with finite node layers and a finite output
@@ -76,6 +81,7 @@ $P_{s,o}(\mathrm{boolInput}_p(x)) \ne F.\mathrm{eval}(x)(o)$ for some $o$, satis
 
 \begin{theorem}[Polynomial distribution for a single output, size form]
 \lean{ACP.exists_poly_distribution_for_circuit_one_size}
+\label{ACP.exists_poly_distribution_for_circuit_one_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one, ACP.gateCountBefore_depth_eq_size}
 Same statement for a circuit with a unique output node: there exist a finite nonempty seed type
@@ -91,6 +97,7 @@ $P_s(\mathrm{boolInput}_p(x)) \ne F.\mathrm{eval}_1(x)$ obeys
 
 \begin{theorem}[Polynomial list for a single output, size form]
 \lean{ACP.exists_poly_list_for_circuit_one_size}
+\label{ACP.exists_poly_list_for_circuit_one_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_list_for_circuit_one, ACP.gateCountBefore_depth_eq_size}
 The list formulation of the previous theorem: for a circuit $F$ with a unique output node whose

@@ -14,6 +14,7 @@ no-duplication properties are preserved under merging.
 
 \begin{definition}[Merge of two gate arrays]
 \lean{LMN.mergeGates}
+\label{LMN.mergeGates}
 \leanok
 Given gate arrays $g_1 : \mathrm{Fin}\,m_1 \to \alpha$ and
 $g_2 : \mathrm{Fin}\,m_2 \to \alpha$, the merged array
@@ -24,6 +25,7 @@ $m_1,\dots,m_1+m_2-1$.
 
 \begin{lemma}[Left projection of merge]
 \lean{LMN.mergeGates_castAdd}
+\label{LMN.mergeGates_castAdd}
 \leanok
 \uses{LMN.mergeGates}
 \difficulty{2}
@@ -34,6 +36,7 @@ $\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{castAdd}\,m_2\,i) = g_1\,i$.
 
 \begin{lemma}[Right projection of merge]
 \lean{LMN.mergeGates_natAdd}
+\label{LMN.mergeGates_natAdd}
 \leanok
 \uses{LMN.mergeGates}
 \difficulty{3}
@@ -44,6 +47,7 @@ $\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i) = g_2\,i$.
 
 \begin{lemma}[Reindex into left half evaluates the original]
 \lean{LMN.reidx_eval_mergeGates_left}
+\label{LMN.reidx_eval_mergeGates_left}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.reidx, BoolCircuit.Circuit.reidx_eval, LMN.mergeGates}
 \difficulty{3}
@@ -54,6 +58,7 @@ the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{castAdd}\,m_2)).\mathrm{e
 
 \begin{lemma}[Reindex into right half evaluates the original]
 \lean{LMN.reidx_eval_mergeGates_right}
+\label{LMN.reidx_eval_mergeGates_right}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.reidx, BoolCircuit.Circuit.reidx_eval, LMN.mergeGates}
 \difficulty{3}
@@ -64,6 +69,7 @@ the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{natAdd}\,m_1)).\mathrm{ev
 
 \begin{lemma}[Width bound on the left part of a merge]
 \lean{LMN.mergeGates_width_left}
+\label{LMN.mergeGates_width_left}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
 \difficulty{2}
@@ -74,6 +80,7 @@ $(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{castAdd}\,m_2\,i)).\mathrm{width} \le 
 
 \begin{lemma}[Width bound on the right part of a merge]
 \lean{LMN.mergeGates_width_right}
+\label{LMN.mergeGates_width_right}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
 \difficulty{2}
@@ -84,6 +91,7 @@ $(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i)).\mathrm{width} \le l
 
 \begin{lemma}[Width bound preserved under merging]
 \lean{LMN.mergeGates_width}
+\label{LMN.mergeGates_width}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
 \difficulty{4}
@@ -93,6 +101,7 @@ the merged array $\mathrm{mergeGates}\,g_1\,g_2$ has width at most $l$.
 
 \begin{lemma}[Variable injectivity preserved under merging]
 \lean{LMN.mergeGates_varInj}
+\label{LMN.mergeGates_varInj}
 \leanok
 \uses{DNF, LMN.mergeGates}
 \difficulty{4}
@@ -103,6 +112,7 @@ $\mathrm{mergeGates}\,g_1\,g_2$.
 
 \begin{lemma}[No-duplication preserved under merging]
 \lean{LMN.mergeGates_nodup}
+\label{LMN.mergeGates_nodup}
 \leanok
 \uses{DNF, LMN.mergeGates}
 \difficulty{4}

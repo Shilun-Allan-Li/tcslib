@@ -14,6 +14,7 @@ redundant edge from a candidate set without increasing its total weight.
 
 \begin{lemma}[Exchanging the head edge for a new edge]
 \lean{Kruskal.exchange_take_head}
+\label{Kruskal.exchange_take_head}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.reach_lift, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
 Let $\mathit{base}, \mathit{rest}$ be edge lists on $n$ vertices and let $g, e$ be edges.
@@ -26,6 +27,7 @@ replaced by $e$ without losing connectivity.
 
 \begin{lemma}[Exchanging the head edge, reversed orientation]
 \lean{Kruskal.exchange_take_head'}
+\label{Kruskal.exchange_take_head'}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.WEdge, Kruskal.exchange_take_head, Kruskal.reach_lift}
 The same exchange statement with the endpoints of $g$ taken in the opposite order:
@@ -37,6 +39,7 @@ $\mathit{base} \mathbin{+\!\!+} \mathit{rest} \mathbin{+\!\!+} [e]$.
 
 \begin{lemma}[Exchange argument over a base edge list]
 \lean{Kruskal.exchange_with_base}
+\label{Kruskal.exchange_with_base}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.exchange_take_head, Kruskal.exchange_take_head', Kruskal.reach_cons_iff, Kruskal.reach_lift, Kruskal.reach_mem_iff, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
 Let $\mathit{base}, S$ be edge lists and let $e$ be an edge with $e.u \neq e.v$ whose
@@ -49,6 +52,7 @@ $S \setminus \{f\}$ denotes $\mathtt{S.erase}\,f$.
 
 \begin{lemma}[Union--find form of the exchange argument]
 \lean{Kruskal.uf_exchange}
+\label{Kruskal.uf_exchange}
 \leanok
 \uses{Kruskal.Reach, Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.exchange_with_base, Kruskal.mergeAll_iff_reach, Kruskal.reach_lift, Kruskal.reach_mem_iff, Kruskal.reach_mono, Kruskal.reach_symm}
 Let $\mathit{uf}$ be a union--find state whose classes are exactly the reachability
@@ -62,6 +66,7 @@ induces the same partition as $\mathit{uf}.\mathtt{mergeAll}\,S$.
 
 \begin{lemma}[Removing a redundant edge from a candidate set]
 \lean{Kruskal.reduce_to_rest}
+\label{Kruskal.reduce_to_rest}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.rfl, Kruskal.UF.SamePartition.trans, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.merge_noop, Kruskal.totalWeight}
 Let $\mathit{uf}$ be a union--find state, $e$ an edge, and $\mathit{rest}, S$ edge lists

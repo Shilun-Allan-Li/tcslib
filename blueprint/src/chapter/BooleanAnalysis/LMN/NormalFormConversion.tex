@@ -14,6 +14,7 @@ hypotheses (no repeated indices, variable-injectivity) required downstream.
 
 \begin{definition}[Convert a circuit literal to a switching-lemma literal]
 \lean{BoolCircuit.Lit.toLiteral}
+\label{BoolCircuit.Lit.toLiteral}
 \leanok
 \uses{BoolCircuit.Lit, Literal}
 Maps a Boolean-circuit literal $l : \texttt{BoolCircuit.Lit}\,n$ to the corresponding
@@ -22,6 +23,7 @@ switching-lemma $\texttt{Literal}\,n$, recording the same variable index and pol
 
 \begin{theorem}[Conversion preserves literal evaluation]
 \lean{BoolCircuit.Lit.eval_eq_toLiteral_eval}
+\label{BoolCircuit.Lit.eval_eq_toLiteral_eval}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, Literal.eval}
 \difficulty{3}
@@ -32,6 +34,7 @@ $l.\mathrm{toLiteral}.\mathrm{eval}\,x$.
 
 \begin{definition}[AND-clause to a term]
 \lean{BoolCircuit.NAndCircuit.clauseToTerm}
+\label{BoolCircuit.NAndCircuit.clauseToTerm}
 \leanok
 \uses{BoolCircuit.Lit.toLiteral, BoolCircuit.NAndCircuit, Term}
 Sends an AND-clause $\texttt{NAndCircuit}.\mathrm{clause}\,lits$ to the
@@ -41,6 +44,7 @@ through \texttt{Lit.toLiteral}.
 
 \begin{definition}[OR-clause to a term]
 \lean{BoolCircuit.NOrCircuit.clauseToTerm}
+\label{BoolCircuit.NOrCircuit.clauseToTerm}
 \leanok
 \uses{BoolCircuit.Lit.toLiteral, Term}
 Sends an OR-clause $\texttt{NOrCircuit}.\mathrm{clause}\,lits$ to the $\texttt{Term}$
@@ -50,6 +54,7 @@ the role of one CNF clause (a disjunction of literals).
 
 \begin{definition}[Depth-2 OR-circuit to a DNF]
 \lean{BoolCircuit.NOrCircuit.toDNF}
+\label{BoolCircuit.NOrCircuit.toDNF}
 \leanok
 \uses{BoolCircuit.NAndCircuit.clauseToTerm, DNF}
 Converts a depth-2 $\texttt{NOrCircuit}$ (an OR of AND-clauses) into a $\texttt{DNF}$, the
@@ -59,6 +64,7 @@ a bare clause maps to the empty DNF.
 
 \begin{definition}[Depth-2 AND-circuit to a CNF]
 \lean{BoolCircuit.NAndCircuit.toCNF}
+\label{BoolCircuit.NAndCircuit.toCNF}
 \leanok
 \uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.clauseToTerm, CNF}
 Converts a depth-2 $\texttt{NAndCircuit}$ (an AND of OR-clauses) into a $\texttt{CNF}$, the
@@ -68,6 +74,7 @@ a bare clause maps to the empty CNF.
 
 \begin{theorem}[Conjunction of literals evaluates as a term]
 \lean{BoolCircuit.foldr_and_lits_eq_term_eval}
+\label{BoolCircuit.foldr_and_lits_eq_term_eval}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, Term.eval}
 \difficulty{4}
@@ -78,6 +85,7 @@ $\texttt{Term.eval}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 
 \begin{theorem}[Disjunction of literals evaluates as a CNF clause]
 \lean{BoolCircuit.foldr_or_lits_eq_clause_eval}
+\label{BoolCircuit.foldr_or_lits_eq_clause_eval}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, CNF.evalClause}
 \difficulty{4}
@@ -88,6 +96,7 @@ $\texttt{CNF.evalClause}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 
 \begin{theorem}[Depth-2 OR-circuit evaluates as its DNF]
 \lean{BoolCircuit.NOrCircuit.node_eval_eq_toDNF_eval}
+\label{BoolCircuit.NOrCircuit.node_eval_eq_toDNF_eval}
 \leanok
 \uses{BoolCircuit.NAndCircuit, BoolCircuit.NAndCircuit.clauseToTerm, BoolCircuit.NAndCircuit.eval, BoolCircuit.NOrCircuit.eval, BoolCircuit.NOrCircuit.toDNF, BoolCircuit.foldr_and_lits_eq_term_eval, DNF.eval}
 \difficulty{5}
@@ -98,6 +107,7 @@ equals the DNF evaluation $\texttt{DNF.eval}\,((\texttt{NOrCircuit}.\mathrm{node
 
 \begin{theorem}[Depth-2 AND-circuit evaluates as its CNF]
 \lean{BoolCircuit.NAndCircuit.node_eval_eq_toCNF_eval}
+\label{BoolCircuit.NAndCircuit.node_eval_eq_toCNF_eval}
 \leanok
 \uses{BoolCircuit.NAndCircuit.eval, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm, BoolCircuit.NOrCircuit.eval, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, CNF.evalClause, Term.eval}
 \difficulty{6}
@@ -108,6 +118,7 @@ equals the CNF evaluation $\texttt{CNF.eval}\,((\texttt{NAndCircuit}.\mathrm{nod
 
 \begin{theorem}[Converted AND-clause has no repeated indices]
 \lean{BoolCircuit.NAndCircuit.clauseToTerm_nodup}
+\label{BoolCircuit.NAndCircuit.clauseToTerm_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm}
 \difficulty{5}
@@ -118,6 +129,7 @@ converted term $(\texttt{NAndCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clauseTo
 
 \begin{theorem}[Variable-injectivity of a converted AND-clause]
 \lean{BoolCircuit.NAndCircuit.clauseToTerm_var_inj}
+\label{BoolCircuit.NAndCircuit.clauseToTerm_var_inj}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.Lit.toLiteral, BoolCircuit.NAndCircuit.clauseToTerm}
 \difficulty{4}
@@ -127,6 +139,7 @@ two literals sharing the same variable are equal.
 
 \begin{theorem}[Converted OR-clause has no repeated indices]
 \lean{BoolCircuit.NOrCircuit.clauseToTerm_nodup}
+\label{BoolCircuit.NOrCircuit.clauseToTerm_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm_nodup, BoolCircuit.NOrCircuit.clauseToTerm}
 \difficulty{1}
@@ -137,6 +150,7 @@ converted term $(\texttt{NOrCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clauseToT
 
 \begin{theorem}[Variable-injectivity of a converted OR-clause]
 \lean{BoolCircuit.NOrCircuit.clauseToTerm_var_inj}
+\label{BoolCircuit.NOrCircuit.clauseToTerm_var_inj}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm_var_inj, BoolCircuit.NOrCircuit.clauseToTerm}
 \difficulty{1}
@@ -146,6 +160,7 @@ two literals sharing the same variable are equal.
 
 \begin{theorem}[Width of a converted AND-clause]
 \lean{BoolCircuit.NAndCircuit.clauseToTerm_width}
+\label{BoolCircuit.NAndCircuit.clauseToTerm_width}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm, Term.width}
 \difficulty{1}
@@ -155,6 +170,7 @@ $\texttt{Term.width}\,(\texttt{NAndCircuit}.\mathrm{clause}\,lits\,h).\mathrm{cl
 
 \begin{theorem}[Width of a converted OR-clause]
 \lean{BoolCircuit.NOrCircuit.clauseToTerm_width}
+\label{BoolCircuit.NOrCircuit.clauseToTerm_width}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NOrCircuit.clauseToTerm, Term.width}
 \difficulty{1}
@@ -164,6 +180,7 @@ $\texttt{Term.width}\,(\texttt{NOrCircuit}.\mathrm{clause}\,lits\,h).\mathrm{cla
 
 \begin{theorem}[Width bound for the DNF of a depth-2 OR-circuit]
 \lean{BoolCircuit.NOrCircuit.toDNF_width_bounded}
+\label{BoolCircuit.NOrCircuit.toDNF_width_bounded}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit, BoolCircuit.NAndCircuit.clauseToTerm_width, BoolCircuit.NOrCircuit.toDNF, DNF.width}
 \difficulty{4}
@@ -173,6 +190,7 @@ $(\texttt{NOrCircuit}.\mathrm{node}\,cs).\mathrm{toDNF}$ has width at most $w$.
 
 \begin{theorem}[Width bound for the CNF of a depth-2 AND-circuit]
 \lean{BoolCircuit.NAndCircuit.toCNF_width_bounded}
+\label{BoolCircuit.NAndCircuit.toCNF_width_bounded}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm_width, CNF.width}
 \difficulty{5}
@@ -182,6 +200,7 @@ $(\texttt{NAndCircuit}.\mathrm{node}\,cs).\mathrm{toCNF}$ has width at most $w$.
 
 \begin{theorem}[DNF terms of a depth-2 OR-circuit have no repeated indices]
 \lean{BoolCircuit.NOrCircuit.toDNF_terms_nodup}
+\label{BoolCircuit.NOrCircuit.toDNF_terms_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit, BoolCircuit.NAndCircuit.clauseToTerm_nodup, BoolCircuit.NOrCircuit.toDNF}
 \difficulty{3}
@@ -191,6 +210,7 @@ literal indices, then every term in the resulting DNF has the \texttt{Nodup} pro
 
 \begin{theorem}[Variable-injectivity of the DNF of a depth-2 OR-circuit]
 \lean{BoolCircuit.NOrCircuit.toDNF_var_inj}
+\label{BoolCircuit.NOrCircuit.toDNF_var_inj}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit, BoolCircuit.NAndCircuit.clauseToTerm, BoolCircuit.NAndCircuit.clauseToTerm_var_inj, BoolCircuit.NOrCircuit.toDNF}
 \difficulty{3}
@@ -201,6 +221,7 @@ variable are equal.
 
 \begin{theorem}[CNF clauses of a depth-2 AND-circuit have no repeated indices]
 \lean{BoolCircuit.NAndCircuit.toCNF_terms_nodup}
+\label{BoolCircuit.NAndCircuit.toCNF_terms_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm_nodup}
 \difficulty{3}
@@ -210,6 +231,7 @@ literal indices, then every clause in the resulting CNF has the \texttt{Nodup} p
 
 \begin{theorem}[Variable-injectivity of the CNF of a depth-2 AND-circuit]
 \lean{BoolCircuit.NAndCircuit.toCNF_var_inj}
+\label{BoolCircuit.NAndCircuit.toCNF_var_inj}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm, BoolCircuit.NOrCircuit.clauseToTerm_var_inj}
 \difficulty{3}

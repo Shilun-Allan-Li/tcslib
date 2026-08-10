@@ -27,6 +27,7 @@ Cambridge University Press, 2014.
 
 \begin{definition}[Boolean hypercube]
 \lean{BooleanAnalysis.BoolCube}
+\label{BooleanAnalysis.BoolCube}
 \leanok
 The \emph{Boolean hypercube} of dimension $n$ is $\{0,1\}^n$,
 represented as the function type $\mathrm{Fin}\,n \to \mathrm{Bool}$.
@@ -34,6 +35,7 @@ represented as the function type $\mathrm{Fin}\,n \to \mathrm{Bool}$.
 
 \begin{definition}[Boolean function]
 \lean{BooleanAnalysis.BooleanFunc}
+\label{BooleanAnalysis.BooleanFunc}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 A \emph{Boolean function} of arity $n$ is a function $f : \{0,1\}^n \to \bbr$.
@@ -44,6 +46,7 @@ A \emph{Boolean function} of arity $n$ is a function $f : \{0,1\}^n \to \bbr$.
 
 \begin{definition}[Uniform weight]
 \lean{BooleanAnalysis.uniformWeight}
+\label{BooleanAnalysis.uniformWeight}
 \leanok
 The uniform probability measure on $\{0,1\}^n$ assigns weight
 $2^{-n}$ to each point.
@@ -51,6 +54,7 @@ $2^{-n}$ to each point.
 
 \begin{definition}[Expectation]
 \lean{BooleanAnalysis.expect}
+\label{BooleanAnalysis.expect}
 \leanok
 \uses{BooleanAnalysis.uniformWeight, BooleanAnalysis.BooleanFunc}
 The \emph{expectation} of $f$ under the uniform measure:
@@ -61,6 +65,7 @@ The \emph{expectation} of $f$ under the uniform measure:
 
 \begin{definition}[$L^2$ inner product]
 \lean{BooleanAnalysis.innerProduct}
+\label{BooleanAnalysis.innerProduct}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p001-b004}
 \uses{BooleanAnalysis.expect}
@@ -74,6 +79,7 @@ uniform measure:
 
 \begin{definition}[$L^2$ norm]
 \lean{BooleanAnalysis.l2Norm}
+\label{BooleanAnalysis.l2Norm}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
 The \emph{$L^2$ norm} of $f$: $\|f\| = \sqrt{\langle f,f\rangle}$.
@@ -81,6 +87,7 @@ The \emph{$L^2$ norm} of $f$: $\|f\| = \sqrt{\langle f,f\rangle}$.
 
 \begin{lemma}[Inner product is symmetric]
 \lean{BooleanAnalysis.innerProduct_comm}
+\label{BooleanAnalysis.innerProduct_comm}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
 \difficulty{1}
@@ -89,6 +96,7 @@ $\langle f, g\rangle = \langle g, f\rangle$.
 
 \begin{lemma}[Inner product is nonneg on the diagonal]
 \lean{BooleanAnalysis.innerProduct_self_nonneg}
+\label{BooleanAnalysis.innerProduct_self_nonneg}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
 \difficulty{3}
@@ -97,6 +105,7 @@ $\langle f, f\rangle \ge 0$.
 
 \begin{lemma}[Inner product is linear in the first argument]
 \lean{BooleanAnalysis.innerProduct_add_left}
+\label{BooleanAnalysis.innerProduct_add_left}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
 \difficulty{3}
@@ -108,6 +117,7 @@ $\langle f + g, h\rangle = \langle f, h\rangle + \langle g, h\rangle$.
 
 \begin{definition}[Sign encoding]
 \lean{BooleanAnalysis.boolToSign}
+\label{BooleanAnalysis.boolToSign}
 \leanok
 The \emph{sign encoding} maps $\mathrm{Bool}$ to $\{-1,1\}\subset\bbr$:
 \[
@@ -118,12 +128,17 @@ The \emph{sign encoding} maps $\mathrm{Bool}$ to $\{-1,1\}\subset\bbr$:
 
 \begin{lemma}[Basic sign identities]
 \lean{BooleanAnalysis.boolToSign_false}
+\label{BooleanAnalysis.boolToSign_false}
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p002-b001}
 \lean{BooleanAnalysis.boolToSign_true}
+\label{BooleanAnalysis.boolToSign_true}
 \proofsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p004-b004}
 \lean{BooleanAnalysis.boolToSign_sq}
+\label{BooleanAnalysis.boolToSign_sq}
 \lean{BooleanAnalysis.boolToSign_mul_self}
+\label{BooleanAnalysis.boolToSign_mul_self}
 \lean{BooleanAnalysis.boolToSign_not}
+\label{BooleanAnalysis.boolToSign_not}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 \difficulty{2}
@@ -133,6 +148,7 @@ $\sigma(b)^2 = 1$, and $\sigma(\lnot b) = -\sigma(b)$.
 
 \begin{definition}[Walsh character]
 \lean{BooleanAnalysis.chiS}
+\label{BooleanAnalysis.chiS}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p002-b007,
@@ -150,6 +166,7 @@ $L^2(\{0,1\}^n,\mathrm{uniform})$.
 
 \begin{lemma}[Character of the empty set]
 \lean{BooleanAnalysis.chiS_empty}
+\label{BooleanAnalysis.chiS_empty}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p004-b001}
 \uses{BooleanAnalysis.chiS}
@@ -159,6 +176,7 @@ $\chi_\varnothing \equiv 1$.
 
 \begin{lemma}[Character of a singleton]
 \lean{BooleanAnalysis.chiS_singleton}
+\label{BooleanAnalysis.chiS_singleton}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign}
 \difficulty{1}
@@ -167,6 +185,7 @@ $\chi_{\{i\}}(x) = \sigma(x_i)$.
 
 \begin{lemma}[Characters take values in $\{-1,1\}$]
 \lean{BooleanAnalysis.chiS_sq_eq_one}
+\label{BooleanAnalysis.chiS_sq_eq_one}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_sq}
 \difficulty{4}
@@ -175,6 +194,7 @@ $\chi_S(x)^2 = 1$ for all $S$ and $x$.
 
 \begin{lemma}[Characters are multiplicative on disjoint sets]
 \lean{BooleanAnalysis.chiS_mul_of_disjoint}
+\label{BooleanAnalysis.chiS_mul_of_disjoint}
 \leanok
 \proofsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b004}
 \uses{BooleanAnalysis.chiS}
@@ -184,6 +204,7 @@ If $S$ and $T$ are disjoint then $\chi_{S\cup T}(x) = \chi_S(x)\cdot\chi_T(x)$.
 
 \begin{lemma}[Product of two characters]
 \lean{BooleanAnalysis.chiS_mul_chiS}
+\label{BooleanAnalysis.chiS_mul_chiS}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b004}
 \uses{BooleanAnalysis.chiS}
@@ -194,6 +215,7 @@ where $\triangle$ denotes symmetric difference.
 
 \begin{lemma}[Character under global bit flip]
 \lean{BooleanAnalysis.chiS_neg}
+\label{BooleanAnalysis.chiS_neg}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_not}
 \difficulty{4}
@@ -205,6 +227,7 @@ Flipping all bits multiplies the character by $(-1)^{|S|}$:
 
 \begin{lemma}[Count of Walsh characters]
 \lean{BooleanAnalysis.card_walsh_characters}
+\label{BooleanAnalysis.card_walsh_characters}
 \leanok
 \proofsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p005-b003}
 \proofsource{boolean-ch08-generalized-domains}{
@@ -222,6 +245,7 @@ $L^2(\{0,1\}^n)$.
 
 \begin{definition}[Fourier coefficient]
 \lean{BooleanAnalysis.fourierCoeff}
+\label{BooleanAnalysis.fourierCoeff}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BooleanAnalysis.innerProduct, BooleanAnalysis.chiS}
@@ -234,6 +258,7 @@ The \emph{Fourier--Walsh coefficient} of $f$ at frequency $S$ is
 
 \begin{lemma}[Fourier coefficient at $\varnothing$ equals expectation]
 \lean{BooleanAnalysis.fourierCoeff_empty}
+\label{BooleanAnalysis.fourierCoeff_empty}
 \leanok
 \uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.expect}
 \difficulty{1}
@@ -245,6 +270,7 @@ $\hat f(\varnothing) = \E[f]$.
 
 \begin{theorem}[Walsh expansion]
 \lean{BooleanAnalysis.walsh_expansion}
+\label{BooleanAnalysis.walsh_expansion}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p005-b001,
@@ -269,6 +295,7 @@ This is the Fourier inversion formula for the uniform measure on $\{0,1\}^n$.
 
 \begin{theorem}[Orthonormality of Walsh characters]
 \lean{BooleanAnalysis.fourier_coeff_chi}
+\label{BooleanAnalysis.fourier_coeff_chi}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b005,
@@ -285,6 +312,7 @@ The Walsh characters form an orthonormal system:
 
 \begin{lemma}[Self inner product of a character is 1]
 \lean{BooleanAnalysis.innerProduct_chi_self}
+\label{BooleanAnalysis.innerProduct_chi_self}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b005,
@@ -298,6 +326,7 @@ $\langle \chi_S, \chi_S\rangle = 1$.
 
 \begin{theorem}[Parseval's identity]
 \lean{BooleanAnalysis.parseval}
+\label{BooleanAnalysis.parseval}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p005-b006,
@@ -305,8 +334,7 @@ $\langle \chi_S, \chi_S\rangle = 1$.
 }
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p007-b004}
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p006-b003}
-\uses{BooleanAnalysis.innerProduct, BooleanAnalysis.fourierCoeff,
-      BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.walsh_expansion}
+\uses{BooleanAnalysis.innerProduct, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.walsh_expansion}
 \difficulty{7}
 The squared $L^2$ norm of $f$ equals the sum of squared Fourier coefficients:
 \[
@@ -319,6 +347,7 @@ The squared $L^2$ norm of $f$ equals the sum of squared Fourier coefficients:
 
 \begin{definition}[Bit flip]
 \lean{BooleanAnalysis.flipBit}
+\label{BooleanAnalysis.flipBit}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 The point $x^i\in\{0,1\}^n$ obtained from $x$ by flipping the $i$-th coordinate.
@@ -326,6 +355,7 @@ The point $x^i\in\{0,1\}^n$ obtained from $x$ by flipping the $i$-th coordinate.
 
 \begin{definition}[Influence]
 \lean{BooleanAnalysis.influence}
+\label{BooleanAnalysis.influence}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p007-b006,
@@ -343,6 +373,7 @@ For $\pm 1$-valued $f$ this equals $\Pr[f(x)\ne f(x^i)]$.
 
 \begin{definition}[Total influence]
 \lean{BooleanAnalysis.totalInfluence}
+\label{BooleanAnalysis.totalInfluence}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p007-b006}
 \uses{BooleanAnalysis.influence}
@@ -351,6 +382,7 @@ $I[f] = \sum_{i=1}^n \mathrm{Inf}_i[f]$.
 
 \begin{lemma}[Influence of a Walsh character]
 \lean{BooleanAnalysis.influence_chi}
+\label{BooleanAnalysis.influence_chi}
 \leanok
 \uses{BooleanAnalysis.influence, BooleanAnalysis.chiS}
 \difficulty{5}
@@ -359,11 +391,10 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 
 \begin{theorem}[Influence via Fourier coefficients]
 \lean{BooleanAnalysis.influence_eq_sum_fourier}
+\label{BooleanAnalysis.influence_eq_sum_fourier}
 \leanok
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p006-b001}
-\uses{BooleanAnalysis.influence, BooleanAnalysis.fourierCoeff,
-      BooleanAnalysis.parseval, BooleanAnalysis.walsh_expansion,
-      BooleanAnalysis.fourier_coeff_chi}
+\uses{BooleanAnalysis.influence, BooleanAnalysis.fourierCoeff, BooleanAnalysis.parseval, BooleanAnalysis.walsh_expansion, BooleanAnalysis.fourier_coeff_chi}
 \difficulty{7}
 \[
   \mathrm{Inf}_i[f] \;=\; \sum_{\substack{S\subseteq[n]\\ i\in S}} \hat f(S)^2.
@@ -372,6 +403,7 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 
 \begin{theorem}[Total influence via Fourier coefficients]
 \lean{BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
+\label{BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p010-b001}
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p010-b001}
@@ -384,6 +416,7 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 
 \begin{lemma}[Influence is at most 1]
 \lean{BooleanAnalysis.influence_le_one}
+\label{BooleanAnalysis.influence_le_one}
 \leanok
 \uses{BooleanAnalysis.influence}
 \difficulty{4}
@@ -393,6 +426,7 @@ $\mathrm{Inf}_i[f] \le 1$.
 
 \begin{lemma}[Average influence lower bound]
 \lean{BooleanAnalysis.max_influence_lower_bound}
+\label{BooleanAnalysis.max_influence_lower_bound}
 \leanok
 \uses{BooleanAnalysis.totalInfluence, BooleanAnalysis.influence}
 \difficulty{5}
@@ -404,6 +438,7 @@ There exists a coordinate $i$ with $\mathrm{Inf}_i[f] \ge I[f]/n$.
 
 \begin{definition}[Noise operator]
 \lean{BooleanAnalysis.noiseOp}
+\label{BooleanAnalysis.noiseOp}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p008-b003,
@@ -423,10 +458,10 @@ $\tfrac{1-\rho}{2}$, independently.
 
 \begin{theorem}[Noise operator in the Fourier domain]
 \lean{BooleanAnalysis.noiseOp_fourier}
+\label{BooleanAnalysis.noiseOp_fourier}
 \leanok
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p013-b003}
-\uses{BooleanAnalysis.noiseOp, BooleanAnalysis.fourierCoeff,
-      BooleanAnalysis.fourier_coeff_chi}
+\uses{BooleanAnalysis.noiseOp, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi}
 \difficulty{7}
 \[
   \widehat{T_\rho f}(S) \;=\; \rho^{|S|}\,\hat f(S).
@@ -435,14 +470,13 @@ $\tfrac{1-\rho}{2}$, independently.
 
 \begin{theorem}[Stability formula]
 \lean{BooleanAnalysis.stability_formula}
+\label{BooleanAnalysis.stability_formula}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{
   pdf-352ab7ff3113-p013-b004,
   pdf-352ab7ff3113-p014-b001
 }
-\uses{BooleanAnalysis.noiseOp, BooleanAnalysis.innerProduct,
-      BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi,
-      BooleanAnalysis.walsh_expansion}
+\uses{BooleanAnalysis.noiseOp, BooleanAnalysis.innerProduct, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.walsh_expansion}
 \difficulty{7}
 \[
   \langle f, T_\rho f\rangle \;=\; \sum_{S\subseteq[n]} \rho^{|S|}\,\hat f(S)^2.
@@ -454,6 +488,7 @@ $\tfrac{1-\rho}{2}$, independently.
 
 \begin{definition}[Dictator]
 \lean{BooleanAnalysis.dictator}
+\label{BooleanAnalysis.dictator}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p015-b003}
 \uses{BooleanAnalysis.boolToSign}
@@ -464,6 +499,7 @@ is $\widehat{\mathrm{dict}_i}(\{i\}) = 1$.
 
 \begin{lemma}[Dictator equals singleton character]
 \lean{BooleanAnalysis.dictator_eq_chi}
+\label{BooleanAnalysis.dictator_eq_chi}
 \leanok
 \uses{BooleanAnalysis.dictator, BooleanAnalysis.chiS}
 \difficulty{1}
@@ -472,6 +508,7 @@ $\mathrm{dict}_i = \chi_{\{i\}}$.
 
 \begin{definition}[Parity]
 \lean{BooleanAnalysis.parity}
+\label{BooleanAnalysis.parity}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p002-b007}
 \uses{BooleanAnalysis.boolToSign}
@@ -481,6 +518,7 @@ $\hat f([n]) = 1$ and $\hat f(S) = 0$ for $S\ne[n]$.
 
 \begin{lemma}[Parity equals full character]
 \lean{BooleanAnalysis.parity_eq_chi_univ}
+\label{BooleanAnalysis.parity_eq_chi_univ}
 \leanok
 \proofsource{boolean-ch01-fourier-blr}{
   pdf-cdca27e1b5fd-p005-b002,
@@ -494,6 +532,7 @@ $\mathrm{parity}_n = \chi_{[n]}$.
 
 \begin{definition}[Majority]
 \lean{BooleanAnalysis.majority}
+\label{BooleanAnalysis.majority}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
 The \emph{majority function} on $\{0,1\}^{2k+1}$ outputs $1$ if more than half
@@ -505,6 +544,7 @@ the inputs are $\texttt{false}$, and $-1$ otherwise.
 
 \begin{definition}[Sensitivity at a point]
 \lean{BooleanAnalysis.sensitivity}
+\label{BooleanAnalysis.sensitivity}
 \leanok
 \uses{BooleanAnalysis.flipBit}
 The \emph{sensitivity} of $f$ at $x$ is the number of coordinates $i$ such
@@ -513,6 +553,7 @@ that flipping bit $i$ changes $f(x)$.
 
 \begin{definition}[Maximum sensitivity]
 \lean{BooleanAnalysis.maxSensitivity}
+\label{BooleanAnalysis.maxSensitivity}
 \leanok
 \uses{BooleanAnalysis.sensitivity}
 The maximum sensitivity of $f$ over all inputs.
@@ -523,6 +564,7 @@ The maximum sensitivity of $f$ over all inputs.
 
 \begin{definition}[Odd function]
 \lean{BooleanAnalysis.isOddFunc}
+\label{BooleanAnalysis.isOddFunc}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
 A Boolean function $f$ is \emph{odd} if $f(\lnot x) = -f(x)$ for all $x$.
@@ -531,6 +573,7 @@ This models antisymmetry of pairwise preferences in social choice.
 
 \begin{definition}[$\pm 1$-valued function]
 \lean{BooleanAnalysis.isPmOne}
+\label{BooleanAnalysis.isPmOne}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
 $f$ is \emph{$\pm 1$-valued} if $f(x)\in\{-1,1\}$ for all $x$.
@@ -538,15 +581,16 @@ $f$ is \emph{$\pm 1$-valued} if $f(x)\in\{-1,1\}$ for all $x$.
 
 \begin{lemma}[Odd functions have zero even-level Fourier coefficients]
 \lean{BooleanAnalysis.fourierCoeff_odd_even}
+\label{BooleanAnalysis.fourierCoeff_odd_even}
 \leanok
-\uses{BooleanAnalysis.isOddFunc, BooleanAnalysis.fourierCoeff,
-      BooleanAnalysis.chiS_neg}
+\uses{BooleanAnalysis.isOddFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS_neg}
 \difficulty{6}
 If $f$ is odd and $|S|$ is even, then $\hat f(S) = 0$.
 \end{lemma}
 
 \begin{lemma}[Self inner product of a $\pm 1$ function]
 \lean{BooleanAnalysis.innerProduct_self_pm_one}
+\label{BooleanAnalysis.innerProduct_self_pm_one}
 \leanok
 \proofsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p007-b004}
 \uses{BooleanAnalysis.isPmOne, BooleanAnalysis.innerProduct}
@@ -556,17 +600,18 @@ If $f$ is $\pm 1$-valued then $\langle f, f\rangle = 1$.
 
 \begin{lemma}[Parseval for $\pm 1$-valued functions]
 \lean{BooleanAnalysis.parseval_pm_one}
+\label{BooleanAnalysis.parseval_pm_one}
 \leanok
 \proofsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p007-b004}
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p006-b003}
-\uses{BooleanAnalysis.isPmOne, BooleanAnalysis.parseval,
-      BooleanAnalysis.innerProduct_self_pm_one}
+\uses{BooleanAnalysis.isPmOne, BooleanAnalysis.parseval, BooleanAnalysis.innerProduct_self_pm_one}
 \difficulty{1}
 If $f$ is $\pm 1$-valued then $\sum_{S\subseteq[n]}\hat f(S)^2 = 1$.
 \end{lemma}
 
 \begin{definition}[Fourier weight at level $k$]
 \lean{BooleanAnalysis.weightLevel}
+\label{BooleanAnalysis.weightLevel}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p014-b001}
 \uses{BooleanAnalysis.fourierCoeff}
@@ -582,6 +627,7 @@ The \emph{Fourier weight at level $k$} is
 
 \begin{lemma}[Moment equals power of expectation]
 \lean{BooleanAnalysis.moment_eq_expect}
+\label{BooleanAnalysis.moment_eq_expect}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{
   pdf-cdca27e1b5fd-p006-b001,
@@ -599,6 +645,7 @@ $p$-th moment of $f$ under $P$ equals the uniform expectation of $f^p$:
 
 \begin{lemma}[Sum over subsets as a product]
 \lean{BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+\label{BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
 \leanok
 \difficulty{4}
 For any $c : \mathrm{Fin}\,n \to \bbr$,
@@ -609,6 +656,7 @@ For any $c : \mathrm{Fin}\,n \to \bbr$,
 
 \begin{lemma}[Completeness kernel for the Walsh basis]
 \lean{BooleanAnalysis.sum_chiS_mul_eq}
+\label{BooleanAnalysis.sum_chiS_mul_eq}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{
   pdf-cdca27e1b5fd-p011-b004,
@@ -627,6 +675,7 @@ This is the completeness kernel underlying Fourier inversion.
 
 \begin{definition}[Degree at most $k$]
 \lean{BooleanAnalysis.has_degree_at_most}
+\label{BooleanAnalysis.has_degree_at_most}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p009-b005,
@@ -640,6 +689,7 @@ $\hat f(S)\ne 0$ then $|S|\le k$.
 
 \begin{lemma}[Sum of sign encoding over a bit]
 \lean{BooleanAnalysis.sum_boolToSign}
+\label{BooleanAnalysis.sum_boolToSign}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 \difficulty{1}
@@ -649,6 +699,7 @@ $\sum_{b\in\mathrm{Bool}} \sigma(b) = 0$.
 
 \begin{lemma}[Sum of a character over the cube]
 \lean{BooleanAnalysis.sum_chiS}
+\label{BooleanAnalysis.sum_chiS}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b005}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
@@ -662,6 +713,7 @@ Summing the character $\chi_S$ over the whole hypercube yields
 
 \begin{theorem}[Plancherel's identity]
 \lean{BooleanAnalysis.plancherel}
+\label{BooleanAnalysis.plancherel}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight, BooleanAnalysis.walsh_expansion}
 \difficulty{6}
@@ -674,6 +726,7 @@ their Fourier coefficients:
 
 \begin{lemma}[Flipping a bit twice is the identity]
 \lean{BooleanAnalysis.flipBit_flipBit}
+\label{BooleanAnalysis.flipBit_flipBit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
 \difficulty{3}
@@ -683,6 +736,7 @@ $(x^i)^i = x$.
 
 \begin{lemma}[Flipping bit $i$ leaves other coordinates fixed]
 \lean{BooleanAnalysis.flipBit_ne}
+\label{BooleanAnalysis.flipBit_ne}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
 \difficulty{1}
@@ -692,6 +746,7 @@ $(x^i)_j = x_j$.
 
 \begin{lemma}[Character under a single bit flip]
 \lean{BooleanAnalysis.chiS_flipBit}
+\label{BooleanAnalysis.chiS_flipBit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.flipBit}
 \difficulty{5}
@@ -705,6 +760,7 @@ otherwise:
 
 \begin{definition}[Discrete derivative]
 \lean{BooleanAnalysis.derivative}
+\label{BooleanAnalysis.derivative}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p016-b004}
 \uses{BooleanAnalysis.BooleanFunc}
@@ -717,6 +773,7 @@ where $x^{i\mapsto b}$ sets coordinate $i$ of $x$ to $b$.
 
 \begin{lemma}[Derivative is additive]
 \lean{BooleanAnalysis.derivative_add}
+\label{BooleanAnalysis.derivative_add}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p005-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
@@ -727,6 +784,7 @@ $D_i(f + g) = D_i f + D_i g$.
 
 \begin{lemma}[Derivative commutes with scalars]
 \lean{BooleanAnalysis.derivative_smul}
+\label{BooleanAnalysis.derivative_smul}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p005-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
@@ -737,6 +795,7 @@ $D_i(c\cdot f) = c\cdot D_i f$ for $c\in\bbr$.
 
 \begin{definition}[Derivative as a linear map]
 \lean{BooleanAnalysis.derivativeLm}
+\label{BooleanAnalysis.derivativeLm}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative, BooleanAnalysis.derivative_add, BooleanAnalysis.derivative_smul}
 The discrete derivative $D_i$ packaged as an $\bbr$-linear map on the space of
@@ -745,6 +804,7 @@ Boolean functions.
 
 \begin{definition}[Expectation operator]
 \lean{BooleanAnalysis.expectationOperator}
+\label{BooleanAnalysis.expectationOperator}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p006-b003,
@@ -760,6 +820,7 @@ values of coordinate $i$:
 
 \begin{lemma}[Expectation operator is additive]
 \lean{BooleanAnalysis.expectation_add}
+\label{BooleanAnalysis.expectation_add}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
 \difficulty{2}
@@ -769,6 +830,7 @@ $E_i(f + g) = E_i f + E_i g$.
 
 \begin{lemma}[Expectation operator commutes with scalars]
 \lean{BooleanAnalysis.expectation_smul}
+\label{BooleanAnalysis.expectation_smul}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
 \difficulty{2}
@@ -778,6 +840,7 @@ $E_i(c\cdot f) = c\cdot E_i f$ for $c\in\bbr$.
 
 \begin{definition}[Expectation operator as a linear map]
 \lean{BooleanAnalysis.expectationLm}
+\label{BooleanAnalysis.expectationLm}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator, BooleanAnalysis.expectation_add, BooleanAnalysis.expectation_smul}
 The expectation operator $E_i$ packaged as an $\bbr$-linear map on the space of
@@ -786,6 +849,7 @@ Boolean functions.
 
 \begin{lemma}[Noise operator is self-adjoint]
 \lean{BooleanAnalysis.noiseOp_self_adjoint}
+\label{BooleanAnalysis.noiseOp_self_adjoint}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.plancherel}
 \difficulty{4}

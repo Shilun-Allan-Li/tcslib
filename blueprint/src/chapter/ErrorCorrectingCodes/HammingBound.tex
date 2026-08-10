@@ -15,6 +15,7 @@ where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
 
 \begin{theorem}[Cardinality of Hamming balls]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size}
+\label{ErrorCorrectingCodes.Codeword.hamming_ball_size}
 \leanok
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p032-b001,
@@ -36,6 +37,7 @@ For any center $c$ and radius $l$,
 
 \begin{lemma}[Decoding balls around distinct codewords are disjoint]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
+\label{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.distance}
@@ -51,6 +53,7 @@ B_{\lfloor(d-1)/2\rfloor}(c_2)
 
 \begin{lemma}[\texttt{Finset.Disjoint} formulation]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
+\label{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
@@ -63,6 +66,7 @@ Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
 
 \begin{theorem}[Hamming (sphere-packing) bound]
 \lean{ErrorCorrectingCodes.Codeword.hamming_bound}
+\label{ErrorCorrectingCodes.Codeword.hamming_bound}
 \leanok
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p031-b004,

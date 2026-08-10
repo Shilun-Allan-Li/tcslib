@@ -12,6 +12,7 @@ the number of heavy pairs satisfies $\abs{P} \le nk/d$.
 
 \begin{definition}[Value of the 2-XOR polynomial]
 \lean{twoXORVal}
+\label{twoXORVal}
 \leanok
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p006-b004}
 For parameters $k, n, d$ and a message $b : \mathrm{Fin}\,k \to \mathbb{Z}$, the modelled
@@ -26,6 +27,7 @@ and is constant in the edge count and in $b$.
 
 \begin{theorem}[2-XOR refutation bound]
 \lean{two_xor_refutation}
+\label{two_xor_refutation}
 \leanok
 \statementsource{arXiv.2308.15403}{
   pdf-b372a20892ce-p006-b004,
@@ -41,7 +43,6 @@ $n_P \cdot d \le n k$ one has
 In other words, the bound coming from the spectral estimate
 $\sqrt{n \abs{P}} \cdot \norm{A}_2$ together with $\abs{P} \le nk/d$ is
 $O\!\left(n k \sqrt{\log n / d}\right)$.
-
 
 \emph{Placeholder.}  The constant $C_0$ is quantified after $n$ and the Lean proof takes
 $C_0 := 1 + n$, so it is not a constant at all and the bound carries no refutation content.

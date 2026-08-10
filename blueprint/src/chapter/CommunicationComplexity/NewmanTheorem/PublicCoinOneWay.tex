@@ -13,6 +13,7 @@ that the protocol's output disagrees with the target function.
 
 \begin{definition}[One-way public-coin protocol]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol}
+\label{CommunicationComplexity.PublicCoin.OneWay.Protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol}
 A one-way public-coin protocol over shared randomness type $\Omega$ and
@@ -24,6 +25,7 @@ a component of both players' inputs.
 
 \begin{definition}[Protocol execution with shared randomness]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
+\label{CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.OneWay.Protocol}
 Given a protocol $p$, inputs $x \in X$, $y \in Y$, and a shared random string
@@ -34,9 +36,9 @@ the decoded output $p.\mathrm{decode}(p.\mathrm{send}(\omega, x),\,(\omega, y))$
 
 \begin{definition}[$\varepsilon$-approximate computation]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
+\label{CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
 \leanok
-\uses{CommunicationComplexity.PublicCoin.OneWay.Protocol,
-      CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
+\uses{CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
 A protocol $p$ $\varepsilon$-computes a function $f : X \to Y \to \alpha$ if
 for every input pair $(x, y)$ the measure of the set of shared strings on which
 $p$ errs is at most $\varepsilon$:
@@ -48,11 +50,9 @@ $p$ errs is at most $\varepsilon$:
 
 \begin{definition}[$\varepsilon$-error one-way public-coin communication complexity]
 \lean{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
+\label{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
 \leanok
-\uses{CommunicationComplexity.CoinTape,
-      CommunicationComplexity.Deterministic.OneWay.Protocol.cost,
-      CommunicationComplexity.PublicCoin.OneWay.Protocol,
-      CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
+\uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
 The $\varepsilon$-error one-way public-coin communication complexity of
 $f : X \to Y \to \alpha$ is the infimum (in $\mathbb{N}_\infty$) of the
 one-way message cost $p.\mathrm{cost}$ over all $n \in \mathbb{N}$ and all
@@ -62,13 +62,9 @@ $\varepsilon$-compute $f$.
 
 \begin{theorem}[Upper bound characterisation]
 \lean{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
+\label{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
 \leanok
-\uses{CommunicationComplexity.CoinTape,
-      CommunicationComplexity.Deterministic.OneWay.Protocol.cost,
-      CommunicationComplexity.Internal.enat_iInf_le_coe_iff,
-      CommunicationComplexity.PublicCoin.OneWay.Protocol,
-      CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes,
-      CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
+\uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Internal.enat_iInf_le_coe_iff, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
 \difficulty{3}
 For $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $m \in \mathbb{N}$,
 the complexity satisfies $\mathrm{CC}(f,\varepsilon) \le m$ if and only if there
@@ -78,12 +74,9 @@ $p$ $\varepsilon$-computes $f$ and $p.\mathrm{cost} \le m$.
 
 \begin{theorem}[Lower bound characterisation]
 \lean{CommunicationComplexity.PublicCoin.OneWay.le_communicationComplexity_iff}
+\label{CommunicationComplexity.PublicCoin.OneWay.le_communicationComplexity_iff}
 \leanok
-\uses{CommunicationComplexity.CoinTape,
-      CommunicationComplexity.Deterministic.OneWay.Protocol.cost,
-      CommunicationComplexity.PublicCoin.OneWay.Protocol,
-      CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes,
-      CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
+\uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
 \difficulty{3}
 For $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $m \in \mathbb{N}$,
 the complexity satisfies $m \le \mathrm{CC}(f,\varepsilon)$ (as extended naturals)
@@ -93,9 +86,9 @@ $\varepsilon$-computes $f$ has $p.\mathrm{cost} \ge m$.
 
 \begin{theorem}[Monotonicity in error]
 \lean{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_mono}
+\label{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_mono}
 \leanok
-\uses{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity,
-      CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
+\uses{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
 \difficulty{4}
 The $\varepsilon$-error one-way public-coin communication complexity of $f$ is
 monotone non-increasing in $\varepsilon$: if $\varepsilon' \le \varepsilon$ then

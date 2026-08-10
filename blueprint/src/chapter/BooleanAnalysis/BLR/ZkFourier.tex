@@ -16,6 +16,7 @@ theorem.
 
 \begin{definition}[Vectors over $\mathbb{Z}/k\mathbb{Z}$]
 \lean{ZkFourier.ZkVec}
+\label{ZkFourier.ZkVec}
 \leanok
 $\texttt{ZkFourier.ZkVec}\ k\ n$ is the $n$-dimensional vector space over
 $\mathbb{Z}/k\mathbb{Z}$, defined as the function type
@@ -25,6 +26,7 @@ additive group structure of $(\mathbb{Z}/k\mathbb{Z})^n$.
 
 \begin{lemma}[Cardinality of $\mathbb{Z}_k^n$]
 \lean{ZkFourier.card_ZkVec}
+\label{ZkFourier.card_ZkVec}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.rootOfUnity}
 \difficulty{2}
@@ -34,6 +36,7 @@ $|\mathbb{Z}_k^n| = k^n$ elements.
 
 \begin{definition}[Primitive $k$-th root of unity]
 \lean{ZkFourier.rootOfUnity}
+\label{ZkFourier.rootOfUnity}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
 $\texttt{ZkFourier.rootOfUnity}\ k$ is the complex number
@@ -43,6 +46,7 @@ base of the Fourier characters on $\mathbb{Z}_k^n$.
 
 \begin{definition}[Embedding of $\mathbb{Z}/k\mathbb{Z}$ into $\mathbb{C}^\times$]
 \lean{ZkFourier.toOmega}
+\label{ZkFourier.toOmega}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
 \uses{ZkFourier.rootOfUnity}
@@ -54,6 +58,7 @@ $(\mathbb{Z}/k\mathbb{Z}, +) \to (\mathbb{C}^\times, \cdot)$.
 
 \begin{lemma}[$\omega_k$ is a primitive $k$-th root]
 \lean{ZkFourier.isPrimitiveRoot_rootOfUnity}
+\label{ZkFourier.isPrimitiveRoot_rootOfUnity}
 \leanok
 \uses{ZkFourier.rootOfUnity}
 \difficulty{1}
@@ -63,6 +68,7 @@ i.e.\ $\omega_k^k = 1$ and $\omega_k^j \neq 1$ for $0 < j < k$.
 
 \begin{lemma}[$\omega_k^k = 1$]
 \lean{ZkFourier.rootOfUnity_pow_k}
+\label{ZkFourier.rootOfUnity_pow_k}
 \leanok
 \uses{ZkFourier.isPrimitiveRoot_rootOfUnity, ZkFourier.rootOfUnity}
 \difficulty{1}
@@ -71,6 +77,7 @@ The $k$-th power of the root of unity satisfies $\omega_k^k = 1$.
 
 \begin{lemma}[$\omega_k^0 = 1$]
 \lean{ZkFourier.toOmega_zero}
+\label{ZkFourier.toOmega_zero}
 \leanok
 \uses{ZkFourier.toOmega}
 \difficulty{2}
@@ -79,6 +86,7 @@ The embedding sends zero to one: $\texttt{ZkFourier.toOmega}\ (0 : \mathbb{Z}/k\
 
 \begin{lemma}[Additivity of the embedding]
 \lean{ZkFourier.toOmega_add}
+\label{ZkFourier.toOmega_add}
 \leanok
 \uses{ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega}
 \difficulty{4}
@@ -90,6 +98,7 @@ $(\mathbb{Z}/k\mathbb{Z}, +)$ to $(\mathbb{C}^\times, \cdot)$.
 
 \begin{lemma}[Negation and complex conjugation]
 \lean{ZkFourier.toOmega_neg}
+\label{ZkFourier.toOmega_neg}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
 \difficulty{5}
@@ -100,6 +109,7 @@ i.e.\ $\texttt{ZkFourier.toOmega}\ (-a) = \overline{\texttt{ZkFourier.toOmega}\ 
 
 \begin{lemma}[Unit norm of the embedding]
 \lean{ZkFourier.norm_toOmega}
+\label{ZkFourier.norm_toOmega}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
 \difficulty{2}
@@ -109,6 +119,7 @@ $\texttt{ZkFourier.toOmega}$ lies on the complex unit circle.
 
 \begin{lemma}[Multiplicativity of the embedding]
 \lean{ZkFourier.toOmega_mul}
+\label{ZkFourier.toOmega_mul}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega}
 \difficulty{3}
@@ -119,6 +130,7 @@ $\texttt{ZkFourier.toOmega}\ (j \cdot a) = (\omega_k^{j.\mathrm{val}})^{a.\mathr
 
 \begin{lemma}[Geometric sum orthogonality]
 \lean{ZkFourier.geom_sum_toOmega}
+\label{ZkFourier.geom_sum_toOmega}
 \leanok
 \uses{ZkFourier.isPrimitiveRoot_rootOfUnity, ZkFourier.rootOfUnity, ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega, ZkFourier.toOmega_mul}
 \difficulty{6}
@@ -132,6 +144,7 @@ This is the fundamental character-orthogonality identity for $\mathbb{Z}/k\mathb
 
 \begin{definition}[Functions on $\mathbb{Z}_k^n$]
 \lean{ZkFourier.ZkFun}
+\label{ZkFourier.ZkFun}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 \uses{ZkFourier.ZkVec}
@@ -142,6 +155,7 @@ objects whose Fourier transforms are studied.
 
 \begin{definition}[Expectation]
 \lean{ZkFourier.expectation}
+\label{ZkFourier.expectation}
 \leanok
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec}
 The expectation of $f : \mathbb{Z}_k^n \to \mathbb{C}$ is the uniform average
@@ -152,6 +166,7 @@ The expectation of $f : \mathbb{Z}_k^n \to \mathbb{C}$ is the uniform average
 
 \begin{definition}[Hermitian inner product]
 \lean{ZkFourier.inner_product}
+\label{ZkFourier.inner_product}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 \uses{ZkFourier.ZkFun, ZkFourier.expectation}
@@ -163,6 +178,7 @@ The Hermitian inner product of $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ is
 
 \begin{definition}[Squared $L^2$ norm]
 \lean{ZkFourier.L2_norm_sq}
+\label{ZkFourier.L2_norm_sq}
 \leanok
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec}
 The squared $L^2$ norm of $f : \mathbb{Z}_k^n \to \mathbb{C}$ is the
@@ -174,6 +190,7 @@ real-valued quantity
 
 \begin{definition}[Convolution]
 \lean{ZkFourier.convolution}
+\label{ZkFourier.convolution}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 \uses{ZkFourier.ZkFun, ZkFourier.expectation}
@@ -185,6 +202,7 @@ The convolution of $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ is
 
 \begin{definition}[Dot product on $\mathbb{Z}_k^n$]
 \lean{ZkFourier.zkDot}
+\label{ZkFourier.zkDot}
 \leanok
 \uses{ZkFourier.ZkVec}
 For $s, x \in \mathbb{Z}_k^n$, the dot product is
@@ -194,6 +212,7 @@ computed componentwise modulo $k$.
 
 \begin{definition}[Fourier character]
 \lean{ZkFourier.char_s}
+\label{ZkFourier.char_s}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b007,
@@ -209,6 +228,7 @@ basis of $L^2(\mathbb{Z}_k^n)$.
 
 \begin{lemma}[Dot product is additive in the right argument]
 \lean{ZkFourier.zkDot_add_right}
+\label{ZkFourier.zkDot_add_right}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{3}
@@ -218,6 +238,7 @@ $s \cdot (x + y) = s \cdot x + s \cdot y$.
 
 \begin{lemma}[Zero vector on the left]
 \lean{ZkFourier.zkDot_zero_left}
+\label{ZkFourier.zkDot_zero_left}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{1}
@@ -226,6 +247,7 @@ For any $x \in \mathbb{Z}_k^n$, $0 \cdot x = 0$.
 
 \begin{lemma}[Zero vector on the right]
 \lean{ZkFourier.zkDot_zero_right}
+\label{ZkFourier.zkDot_zero_right}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{1}
@@ -234,6 +256,7 @@ For any $s \in \mathbb{Z}_k^n$, $s \cdot 0 = 0$.
 
 \begin{lemma}[Negation on the left argument of the dot product]
 \lean{ZkFourier.zkDot_neg_left}
+\label{ZkFourier.zkDot_neg_left}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{3}
@@ -243,6 +266,7 @@ $(-s) \cdot x = -(s \cdot x)$.
 
 \begin{lemma}[Subtraction on the left argument of the dot product]
 \lean{ZkFourier.zkDot_sub}
+\label{ZkFourier.zkDot_sub}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{3}
@@ -252,6 +276,7 @@ $(s - t) \cdot x = s \cdot x - t \cdot x$.
 
 \begin{lemma}[Characters are multiplicative in the input]
 \lean{ZkFourier.char_s_add}
+\label{ZkFourier.char_s_add}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_add, ZkFourier.zkDot_add_right}
 \difficulty{2}
@@ -263,6 +288,7 @@ $(\mathbb{C}^\times, \cdot)$.
 
 \begin{lemma}[Character at zero input]
 \lean{ZkFourier.char_s_zero_vec}
+\label{ZkFourier.char_s_zero_vec}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_zero, ZkFourier.zkDot_zero_right}
 \difficulty{2}
@@ -271,6 +297,7 @@ For any $s \in \mathbb{Z}_k^n$, $\chi_s(0) = 1$.
 
 \begin{lemma}[Trivial character equals one]
 \lean{ZkFourier.char_s_zero_index}
+\label{ZkFourier.char_s_zero_index}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_zero, ZkFourier.zkDot_zero_left}
 \difficulty{2}
@@ -280,6 +307,7 @@ the zero frequency is identically one.
 
 \begin{lemma}[Characters have unit norm]
 \lean{ZkFourier.norm_char_s}
+\label{ZkFourier.norm_char_s}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.norm_toOmega}
 \difficulty{1}
@@ -288,6 +316,7 @@ For all $s, x \in \mathbb{Z}_k^n$, $\|\chi_s(x)\| = 1$.
 
 \begin{lemma}[Characters are nonzero]
 \lean{ZkFourier.char_s_ne_zero}
+\label{ZkFourier.char_s_ne_zero}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.norm_char_s}
 \difficulty{3}
@@ -296,6 +325,7 @@ For all $s, x \in \mathbb{Z}_k^n$, $\chi_s(x) \neq 0$.
 
 \begin{lemma}[Conjugate of a character]
 \lean{ZkFourier.char_s_conj}
+\label{ZkFourier.char_s_conj}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_neg, ZkFourier.zkDot_neg_left}
 \difficulty{2}
@@ -306,6 +336,7 @@ Complex conjugation of a character corresponds to negating its index.
 
 \begin{lemma}[Product of two characters]
 \lean{ZkFourier.char_s_mul}
+\label{ZkFourier.char_s_mul}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
 \difficulty{4}
@@ -317,6 +348,7 @@ frequency indices.
 
 \begin{lemma}[Expectation of a nontrivial character is zero]
 \lean{ZkFourier.expectation_char_nontrivial}
+\label{ZkFourier.expectation_char_nontrivial}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.geom_sum_toOmega, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
 \difficulty{6}
@@ -327,6 +359,7 @@ the sum over that coordinate vanishes.
 
 \begin{lemma}[Expectation of the trivial character is one]
 \lean{ZkFourier.expectation_char_trivial}
+\label{ZkFourier.expectation_char_trivial}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation}
 \difficulty{3}
@@ -336,6 +369,7 @@ divided by $k^n$ equals one.
 
 \begin{lemma}[Self-inner-product of a character]
 \lean{ZkFourier.inner_product_char_self}
+\label{ZkFourier.inner_product_char_self}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.inner_product, ZkFourier.norm_char_s}
 \difficulty{3}
@@ -345,6 +379,7 @@ Every character is a unit-norm vector in $L^2(\mathbb{Z}_k^n)$.
 
 \begin{lemma}[Orthogonality of distinct characters]
 \lean{ZkFourier.inner_product_char_nonself}
+\label{ZkFourier.inner_product_char_nonself}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.char_s_mul, ZkFourier.expectation_char_nontrivial, ZkFourier.inner_product}
 \difficulty{3}
@@ -355,6 +390,7 @@ characters form an orthonormal system.
 
 \begin{definition}[Fourier coefficient]
 \lean{ZkFourier.fourier_coeff}
+\label{ZkFourier.fourier_coeff}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.inner_product}
@@ -368,6 +404,7 @@ $s$ is
 
 \begin{lemma}[Fourier coefficient of a character at its own frequency]
 \lean{ZkFourier.fourier_coeff_char_self}
+\label{ZkFourier.fourier_coeff_char_self}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_self}
 \difficulty{1}
@@ -377,6 +414,7 @@ $\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
 
 \begin{lemma}[Fourier coefficient of a character at a different frequency]
 \lean{ZkFourier.fourier_coeff_char_of_ne}
+\label{ZkFourier.fourier_coeff_char_of_ne}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_nonself}
 \difficulty{1}
@@ -385,6 +423,7 @@ If $s \neq t$, then $\widehat{\chi_s}(t) = \langle \chi_s, \chi_t \rangle = 0$.
 
 \begin{lemma}[Fourier expansion]
 \lean{ZkFourier.fourier_expansion}
+\label{ZkFourier.fourier_expansion}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p005-b001,
@@ -401,6 +440,7 @@ The characters form a complete orthonormal basis of $L^2(\mathbb{Z}_k^n)$.
 
 \begin{lemma}[Parseval's identity]
 \lean{ZkFourier.parseval_identity}
+\label{ZkFourier.parseval_identity}
 \leanok
 \uses{ZkFourier.L2_norm_sq, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion}
 \difficulty{6}
@@ -414,6 +454,7 @@ Fourier transform.
 
 \begin{lemma}[Convolution theorem]
 \lean{ZkFourier.fourier_coeff_convolution}
+\label{ZkFourier.fourier_coeff_convolution}
 \leanok
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s_add, ZkFourier.convolution, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.inner_product}
 \difficulty{5}

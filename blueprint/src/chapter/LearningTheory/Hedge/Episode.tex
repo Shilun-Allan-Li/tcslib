@@ -13,6 +13,7 @@ to every such adaptive episode.
 
 \begin{definition}[Loss history]
 \lean{LossHistory}
+\label{LossHistory}
 \leanok
 $\texttt{LossHistory}\ N\ t$ is the type of length-$t$ histories of loss vectors
 for $N$ experts: it is the function type $\mathrm{Fin}\,t \to \mathrm{Fin}\,N \to \mathbb{R}$,
@@ -21,6 +22,7 @@ recording all loss vectors that have been revealed in the past $t$ rounds.
 
 \begin{definition}[History to loss sequence]
 \lean{LossHistory.toLossSeq}
+\label{LossHistory.toLossSeq}
 \leanok
 \uses{LossHistory, LossSeq}
 Given a history $h : \texttt{LossHistory}\ N\ t$, $\text{\texttt{LossHistory.toLossSeq}}\ h$ coerces it
@@ -30,6 +32,7 @@ the pathwise Hedge formalization that are stated over finite loss sequences.
 
 \begin{definition}[Learner policy]
 \lean{LearnerPolicy}
+\label{LearnerPolicy}
 \leanok
 \uses{LossHistory}
 A $\texttt{LearnerPolicy}\ N$ is a deterministic online strategy for a learner
@@ -41,6 +44,7 @@ so that the weight vector at each round forms a valid mixed strategy.
 
 \begin{definition}[Adaptive adversary]
 \lean{AdaptiveAdversary}
+\label{AdaptiveAdversary}
 \leanok
 \uses{LossHistory}
 An $\texttt{AdaptiveAdversary}\ N$ is an online strategy for the adversary:
@@ -53,6 +57,7 @@ that every coordinate of the chosen loss vector lies in $[0, 1]$.
 
 \begin{definition}[Hedge learner policy]
 \lean{hedgePolicy}
+\label{hedgePolicy}
 \leanok
 \uses{LearnerPolicy, LossHistory.toLossSeq, hedgeDist, hedgeDist_nonneg, hedgeDist_sum}
 $\texttt{hedgePolicy}\ N\ \eta$ is the $\texttt{LearnerPolicy}$ that implements the
@@ -63,6 +68,7 @@ the exponential-weights distribution derived from the past realized losses.
 
 \begin{definition}[Episode loss at natural time]
 \lean{episodeLossNat}
+\label{episodeLossNat}
 \leanok
 \uses{AdaptiveAdversary, LearnerPolicy}
 $\texttt{episodeLossNat}\ \mathrm{learner}\ \mathrm{adversary}\ t : \mathrm{Fin}\,N \to \mathbb{R}$
@@ -75,6 +81,7 @@ strictly earlier rounds.
 
 \begin{definition}[Episode loss sequence]
 \lean{episodeLossSeq}
+\label{episodeLossSeq}
 \leanok
 \uses{AdaptiveAdversary, LearnerPolicy, LossSeq, episodeLossNat}
 $\texttt{episodeLossSeq}\ T\ \mathrm{learner}\ \mathrm{adversary} : \texttt{LossSeq}\ N\ T$
@@ -85,6 +92,7 @@ to the first $T$ rounds.
 
 \begin{definition}[Episode]
 \lean{Episode}
+\label{Episode}
 \leanok
 \uses{AdaptiveAdversary, LearnerPolicy, LossSeq, episodeLossSeq}
 An $\texttt{Episode}\ N\ T$ packages a learner policy, an adaptive adversary, and
@@ -95,6 +103,7 @@ $\texttt{episodeLossSeq}\ T\ \mathrm{learner}\ \mathrm{adversary}$.
 
 \begin{definition}[Generated episode]
 \lean{Episode.generated}
+\label{Episode.generated}
 \leanok
 \uses{AdaptiveAdversary, Episode, LearnerPolicy, episodeLossSeq}
 $\texttt{Episode.generated}\ \mathrm{learner}\ \mathrm{adversary}$ is the canonical
@@ -105,6 +114,7 @@ condition is satisfied by reflexivity.
 
 \begin{theorem}[Validity of generated episode loss sequence]
 \lean{episodeLossSeq_valid}
+\label{episodeLossSeq_valid}
 \leanok
 \uses{AdaptiveAdversary, LearnerPolicy, LossSeq.Valid, episodeLossNat, episodeLossSeq}
 \difficulty{3}
@@ -116,6 +126,7 @@ adversary's range condition.
 
 \begin{theorem}[Episode losses are valid]
 \lean{Episode.losses_valid}
+\label{Episode.losses_valid}
 \leanok
 \uses{Episode, LossSeq.Valid, episodeLossSeq_valid}
 \difficulty{2}
@@ -125,6 +136,7 @@ is valid, i.e., every loss coordinate lies in $[0, 1]$.
 
 \begin{theorem}[Hedge regret bound for adaptive episodes]
 \lean{hedge_regret_bound_tight_episode}
+\label{hedge_regret_bound_tight_episode}
 \leanok
 \uses{AdaptiveAdversary, episodeLossSeq, episodeLossSeq_valid, hedgePolicy, hedge_regret_bound_tight, regret}
 \difficulty{1}
@@ -139,6 +151,7 @@ satisfies
 
 \begin{theorem}[Hedge regret bound from a packaged episode]
 \lean{hedge_regret_bound_tight_of_episode}
+\label{hedge_regret_bound_tight_of_episode}
 \leanok
 \uses{Episode, hedgePolicy, hedge_regret_bound_tight_episode, regret}
 \difficulty{2}

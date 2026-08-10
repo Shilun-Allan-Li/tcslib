@@ -13,6 +13,7 @@ its 3-CNF encoding is satisfiable.
 
 \begin{definition}[Clause]
 \lean{SATTo3SAT.Clause}
+\label{SATTo3SAT.Clause}
 \leanok
 A clause over variable type $V$ is a disjunction represented as a list of literals,
 i.e.\ $\mathtt{Clause}\,V = \mathtt{List}\,(\mathtt{Literal}\,V)$.
@@ -20,6 +21,7 @@ i.e.\ $\mathtt{Clause}\,V = \mathtt{List}\,(\mathtt{Literal}\,V)$.
 
 \begin{definition}[CNF formula]
 \lean{SATTo3SAT.CNFFormula}
+\label{SATTo3SAT.CNFFormula}
 \leanok
 \uses{SATTo3SAT.Clause}
 A CNF formula over $V$ is a conjunction of clauses, represented as a list of clauses:
@@ -28,6 +30,7 @@ $\mathtt{CNFFormula}\,V = \mathtt{List}\,(\mathtt{Clause}\,V)$.
 
 \begin{definition}[Literal evaluation]
 \lean{SATTo3SAT.evalLiteral}
+\label{SATTo3SAT.evalLiteral}
 \leanok
 Given an assignment $\alpha : V \to \mathrm{Prop}$, \texttt{SATTo3SAT.evalLiteral} maps
 a literal to its truth value: a positive literal $\mathtt{pos}\,v$ is true iff $\alpha(v)$
@@ -36,6 +39,7 @@ holds, and a negative literal $\mathtt{neg}\,v$ is true iff $\alpha(v)$ does not
 
 \begin{definition}[Clause satisfaction]
 \lean{SATTo3SAT.clauseSatisfied}
+\label{SATTo3SAT.clauseSatisfied}
 \leanok
 \uses{SATTo3SAT.Clause, SATTo3SAT.evalLiteral}
 A clause $c$ is satisfied by assignment $\alpha$ if at least one literal in $c$ evaluates
@@ -44,6 +48,7 @@ to true under $\alpha$, i.e.\ $\exists\, l \in c,\; \texttt{SATTo3SAT.evalLitera
 
 \begin{definition}[Formula satisfaction]
 \lean{SATTo3SAT.formulaSatisfied}
+\label{SATTo3SAT.formulaSatisfied}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.clauseSatisfied}
 A CNF formula $f$ is satisfied by assignment $\alpha$ if every clause in $f$ is satisfied
@@ -52,6 +57,7 @@ by $\alpha$.
 
 \begin{definition}[Satisfiability of a CNF formula]
 \lean{SATTo3SAT.isSatisfiable}
+\label{SATTo3SAT.isSatisfiable}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.formulaSatisfied}
 A CNF formula $f$ is satisfiable if there exists an assignment $\alpha$ such that
@@ -60,6 +66,7 @@ $\texttt{SATTo3SAT.formulaSatisfied}\,\alpha\,f$ holds.
 
 \begin{definition}[3-clause]
 \lean{SATTo3SAT.Clause3}
+\label{SATTo3SAT.Clause3}
 \leanok
 A 3-clause over $V$ is a structure carrying exactly three literals $l_1, l_2, l_3 :
 \mathtt{Literal}\,V$; a 3-clause is satisfied when at least one of the three literals is true.
@@ -67,6 +74,7 @@ A 3-clause over $V$ is a structure carrying exactly three literals $l_1, l_2, l_
 
 \begin{definition}[3-CNF formula]
 \lean{SATTo3SAT.Formula3}
+\label{SATTo3SAT.Formula3}
 \leanok
 \uses{SATTo3SAT.Clause3}
 A 3-CNF formula over $V$ is a list of 3-clauses:
@@ -75,6 +83,7 @@ $\mathtt{Formula3}\,V = \mathtt{List}\,(\mathtt{Clause3}\,V)$.
 
 \begin{definition}[3-clause satisfaction]
 \lean{SATTo3SAT.clause3Satisfied}
+\label{SATTo3SAT.clause3Satisfied}
 \leanok
 \uses{SATTo3SAT.Clause3, SATTo3SAT.evalLiteral}
 A 3-clause $c$ is satisfied by assignment $\alpha$ if at least one of its three literals
@@ -83,6 +92,7 @@ $c.l_1$, $c.l_2$, $c.l_3$ evaluates to true under $\alpha$.
 
 \begin{definition}[3-CNF formula satisfaction]
 \lean{SATTo3SAT.formula3Satisfied}
+\label{SATTo3SAT.formula3Satisfied}
 \leanok
 \uses{SATTo3SAT.Formula3, SATTo3SAT.clause3Satisfied}
 A 3-CNF formula $f$ is satisfied by assignment $\alpha$ if every 3-clause in $f$ is
@@ -91,6 +101,7 @@ satisfied by $\alpha$.
 
 \begin{definition}[3-SAT satisfiability]
 \lean{SATTo3SAT.is3Satisfiable}
+\label{SATTo3SAT.is3Satisfiable}
 \leanok
 \uses{SATTo3SAT.Formula3, SATTo3SAT.formula3Satisfied}
 A 3-CNF formula $f$ is 3-satisfiable if there exists an assignment $\alpha$ such that
@@ -99,6 +110,7 @@ $\texttt{SATTo3SAT.formula3Satisfied}\,\alpha\,f$ holds.
 
 \begin{definition}[Auxiliary variable type]
 \lean{SATTo3SAT.AuxVar}
+\label{SATTo3SAT.AuxVar}
 \leanok
 The inductive type $\mathtt{AuxVar}\,V$ extends a variable type $V$ with two constructors:
 $\mathtt{orig}\,v$ wraps an original variable $v : V$, and $\mathtt{extra}\,i\,j$
@@ -108,6 +120,7 @@ $i$ of length greater than three.
 
 \begin{definition}[Lift a literal to the extended type]
 \lean{SATTo3SAT.liftLit}
+\label{SATTo3SAT.liftLit}
 \leanok
 \uses{SATTo3SAT.AuxVar}
 \texttt{SATTo3SAT.liftLit} maps a literal over $V$ to the corresponding literal over
@@ -116,6 +129,7 @@ $\mathtt{AuxVar}\,V$ by wrapping each variable with $\mathtt{orig}$, preserving 
 
 \begin{definition}[Build chain clauses]
 \lean{SATTo3SAT.buildChain}
+\label{SATTo3SAT.buildChain}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3}
 Given a clause index $c\_idx$, a lifting map $ml$, a suffix list of literals $\mathit{lits}$,
@@ -126,6 +140,7 @@ the final step emits $\langle \lnot y_{j-1},\, l_{n-1},\, l_n\rangle$ when only 
 
 \begin{definition}[Encode a single clause as 3-clauses]
 \lean{SATTo3SAT.transformClause}
+\label{SATTo3SAT.transformClause}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.buildChain}
 \texttt{SATTo3SAT.transformClause} maps a single clause (at index $c\_idx$) to a list of
@@ -138,6 +153,7 @@ $\texttt{SATTo3SAT.buildChain}$ on $\mathit{rest}$.
 
 \begin{definition}[Recursive SAT-to-3SAT worker]
 \lean{SATTo3SAT.to3SATAux}
+\label{SATTo3SAT.to3SATAux}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.transformClause}
 The auxiliary recursive function \texttt{SATTo3SAT.to3SATAux} iterates
@@ -147,6 +163,7 @@ counter to ensure each clause uses distinct auxiliary variables.
 
 \begin{definition}[SAT to 3-SAT encoding]
 \lean{SATTo3SAT.to3SAT}
+\label{SATTo3SAT.to3SAT}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Formula3, SATTo3SAT.to3SATAux}
 \texttt{SATTo3SAT.to3SAT} converts a CNF formula $f$ over $V$ into a 3-CNF formula over
@@ -155,6 +172,7 @@ $\mathtt{AuxVar}\,V$ by calling \texttt{SATTo3SAT.to3SATAux} starting at index $
 
 \begin{definition}[Auxiliary variable valuation]
 \lean{SATTo3SAT.extraVal}
+\label{SATTo3SAT.extraVal}
 \leanok
 \uses{SATTo3SAT.evalLiteral}
 For a list of literals $\mathit{lits}$ and index $j$, $\texttt{SATTo3SAT.extraVal}\,\alpha\,\mathit{lits}\,j$
@@ -165,6 +183,7 @@ of $\mathit{lits}$.
 
 \begin{lemma}[extraVal as prefix-all-false]
 \lean{SATTo3SAT.extraVal_iff_prefix_all_false}
+\label{SATTo3SAT.extraVal_iff_prefix_all_false}
 \leanok
 \uses{SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
 \difficulty{1}
@@ -175,6 +194,7 @@ is false under $\alpha$.
 
 \begin{definition}[Global assignment lift]
 \lean{SATTo3SAT.globalAssignment}
+\label{SATTo3SAT.globalAssignment}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.extraVal}
 Given $\alpha : \mathtt{Assignment}\,V$ and a formula $f$, \texttt{SATTo3SAT.globalAssignment}
@@ -186,6 +206,7 @@ $\texttt{SATTo3SAT.extraVal}\,\alpha\,(f.\mathtt{get}\,i)\,j$, i.e.\ the chain i
 
 \begin{lemma}[Membership in to3SATAux]
 \lean{SATTo3SAT.mem_to3SATAux_iff}
+\label{SATTo3SAT.mem_to3SATAux_iff}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.to3SATAux, SATTo3SAT.transformClause}
 \difficulty{4}
@@ -196,6 +217,7 @@ $\texttt{SATTo3SAT.transformClause}\,(\mathit{idx} + i)\,(\mathit{cs}_i)$.
 
 \begin{lemma}[Membership in to3SAT]
 \lean{SATTo3SAT.mem_to3SAT_iff}
+\label{SATTo3SAT.mem_to3SAT_iff}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause3, SATTo3SAT.mem_to3SATAux_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause}
 \difficulty{3}
@@ -205,6 +227,7 @@ $i < |f|$ such that $c_3$ belongs to $\texttt{SATTo3SAT.transformClause}\,i\,(f_
 
 \begin{lemma}[List take after drop-cons]
 \lean{SATTo3SAT.List.take_succ_of_drop_cons}
+\label{SATTo3SAT.List.take_succ_of_drop_cons}
 \leanok
 \difficulty{4}
 If $l.\mathtt{drop}\,n = a :: \mathit{rest}$, then $l.\mathtt{take}\,(n+1) = l.\mathtt{take}\,n \mathbin{+\!\!+} [a]$.
@@ -212,6 +235,7 @@ If $l.\mathtt{drop}\,n = a :: \mathit{rest}$, then $l.\mathtt{take}\,(n+1) = l.\
 
 \begin{lemma}[Chain clauses all satisfied under completeness]
 \lean{SATTo3SAT.buildChain_all_satisfied}
+\label{SATTo3SAT.buildChain_all_satisfied}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.List.take_succ_of_drop_cons, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
 \difficulty{7}
@@ -224,6 +248,7 @@ $\mathit{lits} = \mathit{clause}.\mathtt{drop}(j+1)$) is satisfied by $\alpha_3$
 
 \begin{definition}[Local literal predicate]
 \lean{SATTo3SAT.IsLocalVar}
+\label{SATTo3SAT.IsLocalVar}
 \leanok
 \uses{SATTo3SAT.AuxVar}
 A literal $l$ in $\mathtt{Literal}\,(\mathtt{AuxVar}\,V)$ is \emph{local to index $i$} if
@@ -233,6 +258,7 @@ variables are always local.
 
 \begin{lemma}[Global and local assignments agree on local literals]
 \lean{SATTo3SAT.eval_local_eq_global}
+\label{SATTo3SAT.eval_local_eq_global}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.IsLocalVar, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment}
 \difficulty{4}
@@ -243,6 +269,7 @@ assignment that maps $\mathtt{extra}\,i\,j \mapsto \texttt{SATTo3SAT.extraVal}\,
 
 \begin{lemma}[buildChain produces local literals]
 \lean{SATTo3SAT.buildChain_isLocal}
+\label{SATTo3SAT.buildChain_isLocal}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.buildChain}
 \difficulty{5}
@@ -253,6 +280,7 @@ to $i$.
 
 \begin{lemma}[transformClause produces local literals]
 \lean{SATTo3SAT.transformClause_isLocal}
+\label{SATTo3SAT.transformClause_isLocal}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.buildChain_isLocal, SATTo3SAT.transformClause}
 \difficulty{5}
@@ -262,6 +290,7 @@ is local to index $i$.
 
 \begin{lemma}[Global matches local for transformClause]
 \lean{SATTo3SAT.global_matches_local}
+\label{SATTo3SAT.global_matches_local}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.clause3Satisfied, SATTo3SAT.eval_local_eq_global, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment, SATTo3SAT.transformClause, SATTo3SAT.transformClause_isLocal}
 \difficulty{3}
@@ -273,8 +302,9 @@ local assignment $\mathtt{extra}\,i\,j \mapsto \texttt{SATTo3SAT.extraVal}\,\alp
 
 \begin{lemma}[Satisfied clause yields satisfied 3-clause encoding]
 \lean{SATTo3SAT.transformClause_satisfied}
+\label{SATTo3SAT.transformClause_satisfied}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.SAT_to_3SAT_completeness, SATTo3SAT.buildChain_all_satisfied, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.transformClause}
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.buildChain_all_satisfied, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.transformClause}
 \difficulty{6}
 If a clause has at least one true literal under $\alpha$, then every 3-clause in its
 encoding $\texttt{SATTo3SAT.transformClause}\,c\_idx\,\mathit{clause}$ is satisfied by
@@ -283,6 +313,7 @@ the local assignment $\mathtt{extra}\,c\_idx\,j \mapsto \texttt{SATTo3SAT.extraV
 
 \begin{theorem}[SAT to 3-SAT completeness]
 \lean{SATTo3SAT.SAT_to_3SAT_completeness}
+\label{SATTo3SAT.SAT_to_3SAT_completeness}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.clauseSatisfied, SATTo3SAT.globalAssignment, SATTo3SAT.global_matches_local, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.mem_to3SAT_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause_satisfied}
 \difficulty{4}
@@ -293,6 +324,7 @@ $\alpha$ is the original satisfying assignment.
 
 \begin{lemma}[Chain contradiction under all-false literals]
 \lean{SATTo3SAT.buildChain_forced_false}
+\label{SATTo3SAT.buildChain_forced_false}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral}
 \difficulty{6}
@@ -305,6 +337,7 @@ three disjuncts false.
 
 \begin{lemma}[Satisfied 3-clause encoding yields satisfied clause]
 \lean{SATTo3SAT.transformClause_soundness}
+\label{SATTo3SAT.transformClause_soundness}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.buildChain_forced_false, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.transformClause}
 \difficulty{6}
@@ -315,6 +348,7 @@ the restriction $v \mapsto \alpha_3(\mathtt{orig}\,v)$.
 
 \begin{theorem}[SAT to 3-SAT soundness]
 \lean{SATTo3SAT.SAT_to_3SAT_soundness}
+\label{SATTo3SAT.SAT_to_3SAT_soundness}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.mem_to3SAT_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause_soundness}
 \difficulty{3}
@@ -325,6 +359,7 @@ satisfying assignment $\alpha_3$ to original variables, $v \mapsto \alpha_3(\mat
 
 \begin{theorem}[SAT to 3-SAT equivalence]
 \lean{SATTo3SAT.SAT_to_3SAT_equivalence}
+\label{SATTo3SAT.SAT_to_3SAT_equivalence}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.SAT_to_3SAT_completeness, SATTo3SAT.SAT_to_3SAT_soundness, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.to3SAT}
 \difficulty{1}

@@ -13,6 +13,7 @@ $2 \cdot \mathrm{TV}(\mu,\nu)^2 \le \mathrm{KL}(\mu \| \nu)$.
 
 \begin{definition}[Radon-Nikodym density]
 \lean{CommunicationComplexity.rnDensity}
+\label{CommunicationComplexity.rnDensity}
 \leanok
 For two probability measures $\mu$ and $\nu$ on a measurable space $\Omega$, the
 \emph{Radon-Nikodym density} $\mathrm{rnDensity}(\mu,\nu)(x) \in \mathbb{R}$ is
@@ -23,6 +24,7 @@ to a real number via \texttt{ENNReal.toReal}.
 
 \begin{theorem}[Radon-Nikodym density is nonnegative]
 \lean{CommunicationComplexity.rnDensity_nonneg}
+\label{CommunicationComplexity.rnDensity_nonneg}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{1}
@@ -31,6 +33,7 @@ For all $x \in \Omega$, $\mathrm{rnDensity}(\mu,\nu)(x) \ge 0$.
 
 \begin{theorem}[Radon-Nikodym density is measurable]
 \lean{CommunicationComplexity.measurable_rnDensity}
+\label{CommunicationComplexity.measurable_rnDensity}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{2}
@@ -39,6 +42,7 @@ The function $x \mapsto \mathrm{rnDensity}(\mu,\nu)(x)$ is measurable.
 
 \begin{theorem}[Radon-Nikodym density is $\nu$-integrable]
 \lean{CommunicationComplexity.integrable_rnDensity}
+\label{CommunicationComplexity.integrable_rnDensity}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{1}
@@ -47,6 +51,7 @@ The function $\mathrm{rnDensity}(\mu,\nu)$ is integrable with respect to $\nu$.
 
 \begin{theorem}[Integral of density equals one under absolute continuity]
 \lean{CommunicationComplexity.integral_rnDensity_eq_one_of_ac}
+\label{CommunicationComplexity.integral_rnDensity_eq_one_of_ac}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{2}
@@ -55,6 +60,7 @@ If $\mu \ll \nu$, then $\int \mathrm{rnDensity}(\mu,\nu)(x)\,d\nu = 1$.
 
 \begin{theorem}[$\mathrm{rnDensity} - 1$ is integrable]
 \lean{CommunicationComplexity.integrable_rnDensity_sub_one}
+\label{CommunicationComplexity.integrable_rnDensity_sub_one}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.rnDensity}
 \difficulty{1}
@@ -64,6 +70,7 @@ respect to $\nu$.
 
 \begin{theorem}[$|\mathrm{rnDensity} - 1|$ is integrable]
 \lean{CommunicationComplexity.integrable_abs_rnDensity_sub_one}
+\label{CommunicationComplexity.integrable_abs_rnDensity_sub_one}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity_sub_one, CommunicationComplexity.rnDensity}
 \difficulty{1}
@@ -73,6 +80,7 @@ respect to $\nu$.
 
 \begin{theorem}[Integral of $\mathrm{rnDensity} - 1$ is zero under absolute continuity]
 \lean{CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac}
+\label{CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.integral_rnDensity_eq_one_of_ac, CommunicationComplexity.rnDensity}
 \difficulty{2}
@@ -81,6 +89,7 @@ If $\mu \ll \nu$, then $\int (\mathrm{rnDensity}(\mu,\nu)(x) - 1)\,d\nu = 0$.
 
 \begin{theorem}[Measure difference as set integral of density shift]
 \lean{CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one}
+\label{CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.rnDensity}
 \difficulty{4}
@@ -92,6 +101,7 @@ If $\mu \ll \nu$ and $S \subseteq \Omega$ is measurable, then
 
 \begin{theorem}[Nonneg-part integral equals half the $L^1$ norm when mean is zero]
 \lean{CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero}
+\label{CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero}
 \leanok
 \difficulty{5}
 Let $\mu$ be a finite measure and $g : \Omega \to \mathbb{R}$ measurable, integrable,
@@ -103,6 +113,7 @@ and mean-zero ($\int g\,d\mu = 0$).  Then
 
 \begin{theorem}[Supremum of absolute set-integrals equals nonneg part when mean is zero]
 \lean{CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero}
+\label{CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero}
 \leanok
 \difficulty{6}
 Let $\mu$ be a finite measure and $g$ measurable, integrable, and mean-zero.  Then
@@ -114,6 +125,7 @@ Let $\mu$ be a finite measure and $g$ measurable, integrable, and mean-zero.  Th
 
 \begin{definition}[Density absolute integral]
 \lean{CommunicationComplexity.densityAbsIntegral}
+\label{CommunicationComplexity.densityAbsIntegral}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 The quantity $\mathrm{densityAbsIntegral}(\mu,\nu) := \int |\mathrm{rnDensity}(\mu,\nu)(x) - 1|\,d\nu$ is the $L^1(\nu)$-distance of the Radon-Nikodym density from $1$.
@@ -121,6 +133,7 @@ The quantity $\mathrm{densityAbsIntegral}(\mu,\nu) := \int |\mathrm{rnDensity}(\
 
 \begin{definition}[Density positive set]
 \lean{CommunicationComplexity.densityPositiveSet}
+\label{CommunicationComplexity.densityPositiveSet}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 The \emph{density positive set} is $\{x \in \Omega : \mathrm{rnDensity}(\mu,\nu)(x) \ge 1\}$,
@@ -129,6 +142,7 @@ the region where $\mu$ locally dominates $\nu$.
 
 \begin{theorem}[Density positive set is measurable]
 \lean{CommunicationComplexity.measurableSet_densityPositiveSet}
+\label{CommunicationComplexity.measurableSet_densityPositiveSet}
 \leanok
 \uses{CommunicationComplexity.densityPositiveSet, CommunicationComplexity.measurable_rnDensity}
 \difficulty{1}
@@ -137,6 +151,7 @@ The density positive set $\{x : \mathrm{rnDensity}(\mu,\nu)(x) \ge 1\}$ is a mea
 
 \begin{definition}[Density positive integral]
 \lean{CommunicationComplexity.densityPositiveIntegral}
+\label{CommunicationComplexity.densityPositiveIntegral}
 \leanok
 \uses{CommunicationComplexity.densityPositiveSet, CommunicationComplexity.rnDensity}
 The \emph{density positive integral} is
@@ -146,6 +161,7 @@ the excess mass of $\mu$ over $\nu$ on the region where $\mu$ dominates.
 
 \begin{theorem}[TV distance supremum equals density positive integral under absolute continuity]
 \lean{CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac}
+\label{CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.densityPositiveIntegral, CommunicationComplexity.densityPositiveSet, CommunicationComplexity.integrable_rnDensity_sub_one, CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one, CommunicationComplexity.rnDensity, CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero, CommunicationComplexity.tvDistanceSup}
 \difficulty{4}
@@ -155,6 +171,7 @@ $\mathrm{tvDistanceSup}(\mu,\nu) = \mathrm{densityPositiveIntegral}(\mu,\nu)$.
 
 \begin{theorem}[TV distance equals density positive integral under absolute continuity]
 \lean{CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
+\label{CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup, CommunicationComplexity.densityPositiveIntegral, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac}
 \difficulty{2}
@@ -163,6 +180,7 @@ If $\mu \ll \nu$, then $\mathrm{TV}(\mu,\nu) = \mathrm{densityPositiveIntegral}(
 
 \begin{theorem}[Density positive integral equals half the density absolute integral]
 \lean{CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac}
+\label{CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.densityPositiveIntegral, CommunicationComplexity.densityPositiveSet, CommunicationComplexity.integrable_rnDensity_sub_one, CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero, CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.rnDensity}
 \difficulty{2}
@@ -172,6 +190,7 @@ $\mathrm{densityPositiveIntegral}(\mu,\nu) = \tfrac{1}{2}\,\mathrm{densityAbsInt
 
 \begin{theorem}[Pointwise KL inequality: $u y \le \mathrm{klFun}(u) + e^y - 1$]
 \lean{CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
+\label{CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
 \leanok
 \difficulty{5}
 For real numbers $u \ge 0$ and $y$, one has $u \cdot y \le \mathrm{klFun}(u) + e^y - 1$,
@@ -180,6 +199,7 @@ where $\mathrm{klFun}(u) = u \ln u - u + 1$.
 
 \begin{theorem}[Integral of $e^{tX - \Lambda(t)}$ equals one]
 \lean{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
+\label{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
 \leanok
 \difficulty{4}
 Let $\mu$ be a probability measure, $X : \Omega \to \mathbb{R}$ and $t \in \mathbb{R}$.
@@ -190,6 +210,7 @@ where $\Lambda_\mu(t) = \log\int e^{tX}\,d\mu$ is the cumulant generating functi
 
 \begin{theorem}[$e^{tX - \Lambda(t)}$ is integrable]
 \lean{CommunicationComplexity.integrable_exp_sub_cgf}
+\label{CommunicationComplexity.integrable_exp_sub_cgf}
 \leanok
 \difficulty{3}
 If $e^{tX}$ is $\mu$-integrable, then so is $x \mapsto e^{t X(x) - \Lambda_\mu(t)}$.
@@ -197,6 +218,7 @@ If $e^{tX}$ is $\mu$-integrable, then so is $x \mapsto e^{t X(x) - \Lambda_\mu(t
 
 \begin{theorem}[Variational bound: $t \int f X\,d\mu \le \int \mathrm{klFun}(f)\,d\mu + \Lambda_\mu(t)$]
 \lean{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
+\label{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
 \leanok
 \uses{CommunicationComplexity.integrable_exp_sub_cgf, CommunicationComplexity.integral_exp_sub_cgf_eq_one, CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
 \difficulty{6}
@@ -209,6 +231,7 @@ integrability conditions on $f$, $X$, and $e^{tX}$,
 
 \begin{theorem}[$\tfrac{1}{2}(\int|f-1|)^2 \le \int \mathrm{klFun}(f)$]
 \lean{CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun}
+\label{CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun}
 \leanok
 \uses{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
 \difficulty{7}
@@ -221,6 +244,7 @@ and $\mathrm{klFun}(f)$ integrable.  Then
 
 \begin{theorem}[TV distance equals half density absolute integral under absolute continuity]
 \lean{CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
+\label{CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
 \difficulty{2}
@@ -230,6 +254,7 @@ $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\,\mathrm{densityAbsIntegral}(\mu,\nu)$.
 
 \begin{theorem}[$\tfrac{1}{2}(\mathrm{densityAbsIntegral})^2 \le \int\mathrm{klFun}(\mathrm{rnDensity})$]
 \lean{CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity}
+\label{CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun, CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.integral_rnDensity_eq_one_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.rnDensity, CommunicationComplexity.rnDensity_nonneg}
 \difficulty{3}
@@ -244,6 +269,7 @@ then
 
 \begin{theorem}[KL-function integral equals log-likelihood integral]
 \lean{CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral}
+\label{CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{2}
@@ -257,6 +283,7 @@ If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 
 \begin{theorem}[Density $L^1$ Pinsker bound via KL integral]
 \lean{CommunicationComplexity.density_l1_pinsker_le_kl_integral}
+\label{CommunicationComplexity.density_l1_pinsker_le_kl_integral}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity, CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral, CommunicationComplexity.rnDensity}
 \difficulty{2}
@@ -269,6 +296,7 @@ If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 
 \begin{theorem}[Real Pinsker inequality under absolute continuity and integrability]
 \lean{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable}
+\label{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.density_l1_pinsker_le_kl_integral, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
 \difficulty{3}
@@ -280,6 +308,7 @@ If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 
 \begin{theorem}[Pinsker inequality ($\mathbb{R}_{\ge 0}^\infty$ form) under absolute continuity and integrability]
 \lean{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable}
+\label{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
 \difficulty{3}
@@ -292,6 +321,7 @@ in $\mathbb{R}_{\ge 0}^\infty$.
 
 \begin{theorem}[Pinsker inequality under absolute continuity]
 \lean{CommunicationComplexity.pinsker_inequality_of_ac}
+\label{CommunicationComplexity.pinsker_inequality_of_ac}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
 \difficulty{4}
@@ -301,6 +331,7 @@ $\mathrm{ofReal}(2\,\mathrm{TV}(\mu,\nu)^2) \le \mathrm{KL}(\mu \| \nu)$ in $\ma
 
 \begin{theorem}[Pinsker's inequality]
 \lean{CommunicationComplexity.pinsker_inequality}
+\label{CommunicationComplexity.pinsker_inequality}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac, CommunicationComplexity.tvDistance}
 \difficulty{4}
@@ -313,6 +344,7 @@ where the inequality is in $\mathbb{R}_{\ge 0}^\infty$ and KL divergence uses na
 
 \begin{theorem}[Real-valued Pinsker corollary for finite KL divergence]
 \lean{CommunicationComplexity.two_mul_tvDistance_sq_le_toReal_klDiv}
+\label{CommunicationComplexity.two_mul_tvDistance_sq_le_toReal_klDiv}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality, CommunicationComplexity.tvDistance}
 \difficulty{3}

@@ -11,6 +11,7 @@ collision event into $k$ pairwise-disjoint pieces, measuring each piece, and sum
 
 \begin{definition}[Hash function space]
 \lean{CommunicationComplexity.Functions.Hash.HashSpace}
+\label{CommunicationComplexity.Functions.Hash.HashSpace}
 \leanok
 $\texttt{HashSpace}\,\alpha\,k$ is the type of all functions $\alpha \to \mathrm{Fin}\,k$,
 i.e.\ the space of hash functions on $\alpha$ with output range $\{0,\dots,k-1\}$.
@@ -20,6 +21,7 @@ as the ambient probability space for the random-hash argument.
 
 \begin{definition}[Collision piece]
 \lean{CommunicationComplexity.Functions.Hash.collisionPiece}
+\label{CommunicationComplexity.Functions.Hash.collisionPiece}
 \leanok
 \uses{CommunicationComplexity.Functions.Hash.HashSpace}
 For $x, y : \alpha$ and $a : \mathrm{Fin}\,k$, $\texttt{collisionPiece}\,k\,x\,y\,a$ is
@@ -30,6 +32,7 @@ the fixed value $a$.  These pieces partition the collision event $\{h \mid h(x) 
 
 \begin{lemma}[Collision event as union of pieces]
 \lean{CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
+\label{CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
 \leanok
 \uses{CommunicationComplexity.Functions.Hash.HashSpace, CommunicationComplexity.Functions.Hash.collisionPiece}
 \difficulty{4}
@@ -42,6 +45,7 @@ For any $x, y : \alpha$ and any $k$,
 
 \begin{lemma}[Collision pieces are pairwise disjoint]
 \lean{CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint}
+\label{CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint}
 \leanok
 \uses{CommunicationComplexity.Functions.Hash.collisionPiece}
 \difficulty{3}
@@ -52,6 +56,7 @@ $\texttt{collisionPiece}\,k\,x\,y\,a \cap \texttt{collisionPiece}\,k\,x\,y\,b = 
 
 \begin{lemma}[Singleton measure in hash range]
 \lean{CommunicationComplexity.Functions.Hash.hashRange_singleton_measure}
+\label{CommunicationComplexity.Functions.Hash.hashRange_singleton_measure}
 \leanok
 \difficulty{3}
 For $k \ge 1$ and any $a : \mathrm{Fin}\,k$, the uniform measure of the singleton
@@ -61,6 +66,7 @@ $\mu(\{a\}) = 1/k \in \mathbb{R}_{\ge 0}^\infty$.
 
 \begin{lemma}[Singleton measure in hash range (real-valued)]
 \lean{CommunicationComplexity.Functions.Hash.hashRange_singleton_measureReal}
+\label{CommunicationComplexity.Functions.Hash.hashRange_singleton_measureReal}
 \leanok
 \uses{CommunicationComplexity.Functions.Hash.hashRange_singleton_measure}
 \difficulty{3}
@@ -70,6 +76,7 @@ in $\mathrm{Fin}\,k$ equals $1/k \in \mathbb{R}$, i.e.\ $\mu_{\mathbb{R}}(\{a\})
 
 \begin{lemma}[Measure of a collision piece]
 \lean{CommunicationComplexity.Functions.Hash.collisionPiece_measureReal}
+\label{CommunicationComplexity.Functions.Hash.collisionPiece_measureReal}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ, CommunicationComplexity.Functions.Hash.collisionPiece, CommunicationComplexity.Functions.Hash.hashRange_singleton_measureReal}
 \difficulty{6}
@@ -82,6 +89,7 @@ Under the product measure on $\texttt{HashSpace}\,\alpha\,k$,
 
 \begin{theorem}[Collision probability bound]
 \lean{CommunicationComplexity.Functions.Hash.collision_prob_le}
+\label{CommunicationComplexity.Functions.Hash.collision_prob_le}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype, CommunicationComplexity.Functions.Hash.HashSpace, CommunicationComplexity.Functions.Hash.collisionPiece_measureReal, CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint, CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
 \difficulty{4}

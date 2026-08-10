@@ -13,6 +13,7 @@ worst-case bit complexity, equivalence and correctness predicates, and structura
 
 \begin{definition}[Deterministic communication protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol}
+\label{CommunicationComplexity.Deterministic.Protocol}
 \leanok
 A deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob)
 producing a value of type $\alpha$ is an inductive type with three constructors: an
@@ -23,6 +24,7 @@ function $f : X \to \mathrm{Bool}$ to her input and branches on the resulting bi
 
 \begin{definition}[Protocol execution]
 \lean{CommunicationComplexity.Deterministic.Protocol.run}
+\label{CommunicationComplexity.Deterministic.Protocol.run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 Given a protocol $p$, \texttt{run} evaluates $p$ on inputs $x : X$ and $y : Y$ by
@@ -32,6 +34,7 @@ returning the stored value of type $\alpha$.
 
 \begin{definition}[Communication complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.complexity}
+\label{CommunicationComplexity.Deterministic.Protocol.complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 The communication complexity of a protocol $p$ is the worst-case total number of bits
@@ -42,6 +45,7 @@ bit $\mathtt{true}$.
 
 \begin{definition}[Protocol equivalence]
 \lean{CommunicationComplexity.Deterministic.Protocol.Equiv}
+\label{CommunicationComplexity.Deterministic.Protocol.Equiv}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
 Two protocols $p$ and $q$ over the same input and output types are \emph{equivalent} if
@@ -51,6 +55,7 @@ inputs $(x, y)$.
 
 \begin{definition}[Protocol computes a function]
 \lean{CommunicationComplexity.Deterministic.Protocol.Computes}
+\label{CommunicationComplexity.Deterministic.Protocol.Computes}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
 A protocol $p$ \emph{computes} a two-argument function $f : X \to Y \to \alpha$ if
@@ -59,6 +64,7 @@ $p.\texttt{run}\,x\,y = f\,x\,y$ for all inputs $x : X$ and $y : Y$.
 
 \begin{definition}[Role swap]
 \lean{CommunicationComplexity.Deterministic.Protocol.swap}
+\label{CommunicationComplexity.Deterministic.Protocol.swap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 Given a protocol $p$ over $X \times Y$, \texttt{swap} produces a protocol over $Y \times X$
@@ -68,6 +74,7 @@ and vice versa, while output nodes are left unchanged.
 
 \begin{theorem}[Swap preserves run]
 \lean{CommunicationComplexity.Deterministic.Protocol.swap_run}
+\label{CommunicationComplexity.Deterministic.Protocol.swap_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap}
 \difficulty{2}
@@ -79,6 +86,7 @@ For any protocol $p$ over $X \times Y$ and any inputs $x : X$, $y : Y$,
 
 \begin{theorem}[Swap preserves complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+\label{CommunicationComplexity.Deterministic.Protocol.swap_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.swap}
 \difficulty{2}
@@ -90,6 +98,7 @@ For any protocol $p$ over $X \times Y$,
 
 \begin{theorem}[Swap is an involution]
 \lean{CommunicationComplexity.Deterministic.Protocol.swap_swap}
+\label{CommunicationComplexity.Deterministic.Protocol.swap_swap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.swap}
 \difficulty{2}
@@ -99,6 +108,7 @@ $p.\texttt{swap}.\texttt{swap} = p$.
 
 \begin{theorem}[Alice node to Bob node]
 \lean{CommunicationComplexity.Deterministic.Protocol.alice_to_bob}
+\label{CommunicationComplexity.Deterministic.Protocol.alice_to_bob}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
 \difficulty{2}
@@ -110,6 +120,7 @@ This allows reducing the bob case to the alice case in inductive arguments.
 
 \begin{theorem}[Bob node to Alice node]
 \lean{CommunicationComplexity.Deterministic.Protocol.bob_to_alice}
+\label{CommunicationComplexity.Deterministic.Protocol.bob_to_alice}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
 \difficulty{2}
@@ -121,6 +132,7 @@ This allows reducing the alice case to the bob case in inductive arguments.
 
 \begin{definition}[Input pull-back]
 \lean{CommunicationComplexity.Deterministic.Protocol.comap}
+\label{CommunicationComplexity.Deterministic.Protocol.comap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 Given functions $f_X : X' \to X$ and $f_Y : Y' \to Y$, \texttt{comap} pulls back a protocol
@@ -130,6 +142,7 @@ function with $f_X$ or $f_Y$ as appropriate, leaving output nodes unchanged.
 
 \begin{theorem}[Comap run]
 \lean{CommunicationComplexity.Deterministic.Protocol.comap_run}
+\label{CommunicationComplexity.Deterministic.Protocol.comap_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{2}
@@ -142,6 +155,7 @@ and inputs $x' : X'$, $y' : Y'$,
 
 \begin{theorem}[Comap preserves complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+\label{CommunicationComplexity.Deterministic.Protocol.comap_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{2}

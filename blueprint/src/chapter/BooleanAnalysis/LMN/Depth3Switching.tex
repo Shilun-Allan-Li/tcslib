@@ -13,6 +13,7 @@ variable deduplication) needed to put restricted gates into normal form.
 
 \begin{theorem}[Restriction of a function by a composed restriction]
 \lean{LMN.restrictFn_composeRestr}
+\label{LMN.restrictFn_composeRestr}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn}
 \difficulty{3}
@@ -23,6 +24,7 @@ $\rho_2$: $\mathrm{restrictFn}\, f\,(\mathrm{composeRestr}\,\rho_1\,\rho_2) = \m
 
 \begin{lemma}[Decision-tree depth respects pointwise equality]
 \lean{LMN.dtDepth_congr}
+\label{LMN.dtDepth_congr}
 \leanok
 \uses{dtDepth}
 \difficulty{3}
@@ -32,6 +34,7 @@ decision-tree depth: $\mathrm{dtDepth}\,f = \mathrm{dtDepth}\,g$.
 
 \begin{lemma}[Restriction respects pointwise equality]
 \lean{LMN.restrictFn_congr}
+\label{LMN.restrictFn_congr}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{2}
@@ -42,6 +45,7 @@ for all $x$.
 
 \begin{definition}[Pointwise AND of a list of functions]
 \lean{LMN.listAnd}
+\label{LMN.listAnd}
 \leanok
 The pointwise conjunction of a list of Boolean functions: the empty list yields the
 constant $\mathrm{true}$ function, and $f :: fs$ evaluates at $x$ to $f(x)$ AND the
@@ -50,6 +54,7 @@ value of the list $fs$ at $x$.
 
 \begin{lemma}[Restriction distributes over list AND]
 \lean{LMN.restrictFn_listAnd}
+\label{LMN.restrictFn_listAnd}
 \leanok
 \uses{LMN.listAnd, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{4}
@@ -60,6 +65,7 @@ restricted functions: for all $x$, $\mathrm{restrictFn}\,(\mathrm{listAnd}\,fs)\
 
 \begin{theorem}[Depth-3 one-step compression]
 \lean{LMN.depth3_compression}
+\label{LMN.depth3_compression}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_and_of_cnfs, LMN.listAnd, LMN.one_step_reduction_with_compression, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{6}
@@ -73,6 +79,7 @@ to depth-2 compression step.
 
 \begin{definition}[Tautological clause]
 \lean{LMN.clauseIsTaut}
+\label{LMN.clauseIsTaut}
 \leanok
 \uses{Literal}
 A clause (a list of literals interpreted as their disjunction) is tautological if it
@@ -81,6 +88,7 @@ contains two literals on the same variable with opposite signs.
 
 \begin{lemma}[A tautological clause evaluates to true]
 \lean{LMN.clauseIsTaut_eval_true}
+\label{LMN.clauseIsTaut_eval_true}
 \leanok
 \uses{LMN.clauseIsTaut, Literal, Literal.eval}
 \difficulty{4}
@@ -90,6 +98,7 @@ literals evaluates to $\mathrm{true}$.
 
 \begin{definition}[Deduplicate clause variables]
 \lean{LMN.dedupClauseVars}
+\label{LMN.dedupClauseVars}
 \leanok
 \uses{Literal}
 Removes duplicate variables from a clause, keeping the first occurrence of each
@@ -98,6 +107,7 @@ variable.
 
 \begin{lemma}[Deduplication yields variable-injective clause]
 \lean{LMN.dedupClauseVars_var_inj}
+\label{LMN.dedupClauseVars_var_inj}
 \leanok
 \uses{LMN.dedupClauseVars, Literal}
 \difficulty{4}
@@ -107,6 +117,7 @@ that is, the resulting clause has pairwise distinct variable indices.
 
 \begin{lemma}[Deduplication yields nodup clause]
 \lean{LMN.dedupClauseVars_nodup}
+\label{LMN.dedupClauseVars_nodup}
 \leanok
 \uses{LMN.dedupClauseVars, Literal}
 \difficulty{3}
@@ -115,6 +126,7 @@ The list $\mathrm{dedupClauseVars}\,c$ has no duplicate literals.
 
 \begin{lemma}[Deduplication does not increase length]
 \lean{LMN.dedupClauseVars_length_le}
+\label{LMN.dedupClauseVars_length_le}
 \leanok
 \uses{LMN.dedupClauseVars, Literal}
 \difficulty{3}
@@ -123,6 +135,7 @@ The length of $\mathrm{dedupClauseVars}\,c$ is at most the length of $c$.
 
 \begin{lemma}[Deduplication preserves evaluation of non-tautological clauses]
 \lean{LMN.dedupClauseVars_eval_of_not_taut}
+\label{LMN.dedupClauseVars_eval_of_not_taut}
 \leanok
 \uses{LMN.clauseIsTaut, LMN.dedupClauseVars, Literal, Literal.eval}
 If a clause $c$ is not tautological, then for every assignment $x$ the disjunction of
@@ -132,6 +145,7 @@ the literals of $c$.
 
 \begin{definition}[Clean a CNF]
 \lean{LMN.cleanCNF_D3}
+\label{LMN.cleanCNF_D3}
 \leanok
 \uses{CNF, LMN.clauseIsTaut, LMN.dedupClauseVars}
 Cleans a CNF by removing all tautological clauses and then deduplicating the variables
@@ -140,6 +154,7 @@ within each remaining clause.
 
 \begin{lemma}[Cleaning preserves CNF evaluation]
 \lean{LMN.cleanCNF_D3_eval}
+\label{LMN.cleanCNF_D3_eval}
 \leanok
 \uses{CNF, CNF.eval, CNF.evalClause, LMN.clauseIsTaut, LMN.clauseIsTaut_eval_true, LMN.cleanCNF_D3}
 \difficulty{4}
@@ -149,6 +164,7 @@ same value as $\psi$.
 
 \begin{lemma}[Cleaning does not increase width]
 \lean{LMN.cleanCNF_D3_width_le}
+\label{LMN.cleanCNF_D3_width_le}
 \leanok
 \uses{CNF, CNF.width, LMN.cleanCNF_D3, LMN.dedupClauseVars_length_le, Term, Term.width}
 \difficulty{6}
@@ -157,6 +173,7 @@ The width of $\mathrm{cleanCNF\_D3}\,\psi$ is at most the width of $\psi$.
 
 \begin{lemma}[Cleaned CNF has nodup clauses]
 \lean{LMN.cleanCNF_D3_nodup}
+\label{LMN.cleanCNF_D3_nodup}
 \leanok
 \uses{CNF, LMN.cleanCNF_D3, LMN.dedupClauseVars_nodup}
 \difficulty{2}
@@ -165,6 +182,7 @@ Every clause of $\mathrm{cleanCNF\_D3}\,\psi$ has no duplicate literals.
 
 \begin{lemma}[Cleaned CNF has variable-injective clauses]
 \lean{LMN.cleanCNF_D3_var_inj}
+\label{LMN.cleanCNF_D3_var_inj}
 \leanok
 \uses{CNF, LMN.cleanCNF_D3, LMN.dedupClauseVars, LMN.dedupClauseVars_var_inj}
 \difficulty{4}
@@ -174,6 +192,7 @@ variable are equal.
 
 \begin{theorem}[Every CNF has an equivalent nice CNF]
 \lean{LMN.exists_nice_cnf_of_cnf}
+\label{LMN.exists_nice_cnf_of_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF_D3, LMN.cleanCNF_D3_eval, LMN.cleanCNF_D3_nodup, LMN.cleanCNF_D3_var_inj, LMN.cleanCNF_D3_width_le}
 \difficulty{1}
@@ -185,6 +204,7 @@ lemma hypotheses.
 
 \begin{theorem}[Bounded decision-tree depth gives a nice CNF]
 \lean{LMN.dtDepth_le_implies_nice_cnf}
+\label{LMN.dtDepth_le_implies_nice_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, LMN.exists_nice_cnf_of_cnf, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, dtDepth}
 \difficulty{3}
@@ -194,6 +214,7 @@ width $\le d$ that computes $f$, with all clauses nodup and variable-injective.
 
 \begin{theorem}[Bounded decision-tree depth gives a nice DNF]
 \lean{LMN.dtDepth_le_implies_nice_dnf}
+\label{LMN.dtDepth_le_implies_nice_dnf}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, dtDepth}
 If a Boolean function $f$ has decision-tree depth $\le d$, then there is a DNF $\varphi$
@@ -202,6 +223,7 @@ of width $\le d$ that computes $f$, with all terms nodup and variable-injective.
 
 \begin{theorem}[Functional switching lemma for CNFs]
 \lean{LMN.switching_bernoulli_dtDepth_function}
+\label{LMN.switching_bernoulli_dtDepth_function}
 \leanok
 \uses{CNF.eval, LMN.dtDepth_congr, LMN.dtDepth_le_implies_nice_cnf, LMN.restrictFn_congr, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
@@ -213,6 +235,7 @@ This is the switching lemma stated at the level of functions rather than formula
 
 \begin{theorem}[General two-stage bound]
 \lean{LMN.two_stage_bound}
+\label{LMN.two_stage_bound}
 \leanok
 \uses{LMN.composeRestr, LMN.restriction_compose_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{6}
@@ -224,6 +247,7 @@ $\Pr_{p_1 p_2}[E] \le \Pr_{p_1}[A] + \beta$.
 
 \begin{lemma}[AND of switched gates has a nice CNF]
 \lean{LMN.and_of_gates_has_cnf}
+\label{LMN.and_of_gates_has_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.compression_and_of_cnfs, LMN.exists_nice_cnf_of_cnf, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
@@ -235,6 +259,7 @@ restricted evaluations.
 
 \begin{lemma}[Restricted depth-3 circuit has a nice CNF]
 \lean{LMN.depth3_restricted_has_nice_cnf}
+\label{LMN.depth3_restricted_has_nice_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.and_of_gates_has_cnf, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
@@ -246,6 +271,7 @@ equals $\mathrm{restrictFn}\, f\,\rho_1$.
 
 \begin{lemma}[Second-stage switching bound]
 \lean{LMN.depth3_second_stage_bound}
+\label{LMN.depth3_second_stage_bound}
 \leanok
 \uses{CNF.eval, DNF, DNF.eval, LMN.cleanCNF_D3, LMN.cleanCNF_D3_eval, LMN.cleanCNF_D3_nodup, LMN.cleanCNF_D3_var_inj, LMN.cleanCNF_D3_width_le, LMN.composeRestr, LMN.depth3_restricted_has_nice_cnf, LMN.dtDepth_congr, LMN.restrictFn_composeRestr, LMN.restrictFn_congr, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{7}
@@ -258,6 +284,7 @@ $\Pr_{\rho_2}[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,(\mathrm{composeRestr}\,
 
 \begin{theorem}[Depth-3 two-stage switching bound]
 \lean{LMN.depth3_switching_bound}
+\label{LMN.depth3_switching_bound}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.depth3_second_stage_bound, LMN.switching_bernoulli_union_bound, LMN.two_stage_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
@@ -272,6 +299,7 @@ $0 < p_2 \le 1/(40l)$, the composed Bernoulli$(p_1 p_2)$ restriction satisfies
 
 \begin{lemma}[Depth-3 circuit reduction bound]
 \lean{LMN.circuit_reduction_depth3}
+\label{LMN.circuit_reduction_depth3}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.composedDelta, LMN.depth3_switching_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
@@ -287,6 +315,7 @@ $p_2 = 1/(40l)$,
 
 \begin{theorem}[Depth-3 switching lemma, $\le \varepsilon$ version]
 \lean{LMN.circuit_reduction_depth3_le_eps}
+\label{LMN.circuit_reduction_depth3_le_eps}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.circuit_reduction_depth3, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{2}

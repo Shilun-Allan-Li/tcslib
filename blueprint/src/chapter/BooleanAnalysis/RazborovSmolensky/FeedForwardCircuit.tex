@@ -16,6 +16,7 @@ feedforward circuit padded with identity wires.
 
 \begin{definition}[Gate with input wiring]
 \lean{ACP.Gate}
+\label{ACP.Gate}
 \leanok
 A gate over alphabet $\alpha$ with input domain \texttt{domain} consists of a gate
 operation \texttt{op} (an arity type $\iota$ together with a function
@@ -25,6 +26,7 @@ assigns to each input slot the node it reads from.
 
 \begin{definition}[Layered feedforward circuit]
 \lean{ACP.FeedForward}
+\label{ACP.FeedForward}
 \leanok
 \uses{ACP.Gate}
 A feedforward circuit from \texttt{inp} to \texttt{out} over $\alpha$ consists of a
@@ -36,6 +38,7 @@ input type \texttt{inp} and the last layer the output type \texttt{out}.
 
 \begin{definition}[Identity gate operation]
 \lean{ACP.FeedForward.GateOp.id}
+\label{ACP.FeedForward.GateOp.id}
 \leanok
 The gate operation of arity $\mathrm{PUnit}$ that returns its single input
 unchanged.
@@ -43,6 +46,7 @@ unchanged.
 
 \begin{definition}[Evaluation of a single gate]
 \lean{ACP.FeedForward.Gate.eval}
+\label{ACP.FeedForward.Gate.eval}
 \leanok
 \uses{ACP.Gate}
 Given a gate $g$ and an assignment $xs$ of values to the nodes of its input domain,
@@ -52,6 +56,7 @@ the gate operation applied to the values read along the input wires.
 
 \begin{definition}[Evaluation of a node]
 \lean{ACP.FeedForward.evalNode}
+\label{ACP.FeedForward.evalNode}
 \leanok
 \uses{ACP.FeedForward.Gate.eval}
 For an input assignment $xs : \texttt{inp} \to \alpha$, the value of a node at layer
@@ -61,6 +66,7 @@ and a node at layer $n+1$ evaluates its gate on the values of the layer-$n$ node
 
 \begin{definition}[Evaluation of a circuit]
 \lean{ACP.FeedForward.eval}
+\label{ACP.FeedForward.eval}
 \leanok
 \uses{ACP.FeedForward.evalNode}
 The function $\texttt{out} \to \alpha$ sending each output node to its value in the
@@ -69,6 +75,7 @@ last layer under the input assignment $xs$.
 
 \begin{definition}[Evaluation with a unique output]
 \lean{ACP.FeedForward.eval₁}
+\label{ACP.FeedForward.eval₁}
 \leanok
 \uses{ACP.FeedForward.eval}
 When the output type is a \texttt{Unique} type, the single value
@@ -77,6 +84,7 @@ $F.\texttt{eval}\,xs\,\texttt{default} \in \alpha$ computed by the circuit.
 
 \begin{definition}[Size of a feedforward circuit]
 \lean{ACP.FeedForward.size}
+\label{ACP.FeedForward.size}
 \leanok
 The size of $F$ is the cardinality $\mathrm{Nat.card}$ of the sigma type of all
 non-input nodes, i.e.\ the total number of nodes lying in layers $1,\dots,\texttt{depth}$.
@@ -84,12 +92,14 @@ non-input nodes, i.e.\ the total number of nodes lying in layers $1,\dots,\textt
 
 \begin{definition}[Finiteness of all layers]
 \lean{ACP.FeedForward.Finite}
+\label{ACP.FeedForward.Finite}
 \leanok
 The proposition that the node type of every layer $i$ is finite.
 \end{definition}
 
 \begin{definition}[Restriction to a gate set]
 \lean{ACP.FeedForward.onlyUsesGates}
+\label{ACP.FeedForward.onlyUsesGates}
 \leanok
 For a set $S$ of gate operations, $\texttt{onlyUsesGates}\ S$ asserts that the
 operation of every gate of the circuit belongs to $S$.
@@ -97,6 +107,7 @@ operation of every gate of the circuit belongs to $S$.
 
 \begin{theorem}[Every circuit has at least one node]
 \lean{BoolCircuit.Circuit.one_le_size}
+\label{BoolCircuit.Circuit.one_le_size}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
 For every Boolean circuit $C$ on $n$ inputs, $1 \le C.\texttt{size}$.
@@ -104,6 +115,7 @@ For every Boolean circuit $C$ on $n$ inputs, $1 \le C.\texttt{size}$.
 
 \begin{definition}[AND/OR gate restriction]
 \lean{ACP.FeedForward.IsAndOrGate}
+\label{ACP.FeedForward.IsAndOrGate}
 \leanok
 \uses{ACP.FeedForward}
 Given a Boolean feedforward circuit $F$, a flag $\texttt{isAnd}$ on each non-input
@@ -116,6 +128,7 @@ which $F$ can be converted into a \texttt{BoolCircuit.Circuit}.
 
 \begin{definition}[Tree-unrolling of a node]
 \lean{ACP.nodeToCircuit}
+\label{ACP.nodeToCircuit}
 \leanok
 \uses{ACP.FeedForward, BoolCircuit.Circuit}
 Recursively expands a node $v$ of layer $m$ of a Boolean feedforward circuit into a
@@ -127,6 +140,7 @@ several downstream gates are duplicated.
 
 \begin{theorem}[Tree-unrolling preserves the value of a node]
 \lean{ACP.nodeToCircuit_eval}
+\label{ACP.nodeToCircuit_eval}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.Gate.eval, ACP.FeedForward.IsAndOrGate, ACP.FeedForward.evalNode, ACP.nodeToCircuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit.eval}
 If every gate of $F$ is an AND or OR gate as recorded by $\texttt{isAnd}$ and
@@ -140,6 +154,7 @@ $x : \mathrm{Fin}\,n \to \{0,1\}$,
 
 \begin{theorem}[Size bound for tree-unrolling]
 \lean{ACP.nodeToCircuit_size_le}
+\label{ACP.nodeToCircuit_size_le}
 \leanok
 \uses{ACP.FeedForward, ACP.nodeToCircuit, BoolCircuit.Circuit.size}
 If every gate of $F$ has at most $k$ input wires, i.e.\
@@ -149,6 +164,7 @@ then the unrolling of any node at layer $m$ has size at most $(k+1)^m$.
 
 \begin{definition}[Conversion to a Boolean circuit]
 \lean{ACP.FeedForward.toCircuit}
+\label{ACP.FeedForward.toCircuit}
 \leanok
 \uses{ACP.FeedForward, ACP.nodeToCircuit, BoolCircuit.Circuit}
 For an AND/OR feedforward circuit $F$ and a chosen output node $o : \texttt{out}$,
@@ -158,6 +174,7 @@ layer down to the inputs.
 
 \begin{theorem}[Conversion preserves evaluation]
 \lean{ACP.FeedForward.toCircuit_eval}
+\label{ACP.FeedForward.toCircuit_eval}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.IsAndOrGate, ACP.FeedForward.eval, ACP.FeedForward.toCircuit, ACP.nodeToCircuit_eval, BoolCircuit.Circuit.eval}
 If every gate of $F$ is an AND or OR gate, then for every output node $o$ and every
@@ -170,6 +187,7 @@ input $x$,
 
 \begin{theorem}[Size bound for the converted circuit]
 \lean{ACP.FeedForward.toCircuit_size_le}
+\label{ACP.FeedForward.toCircuit_size_le}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.toCircuit, ACP.nodeToCircuit_size_le, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toFeedForward}
 If every gate of $F$ has at most $k$ input wires, then for every output node $o$ the
@@ -179,6 +197,7 @@ $(F.\texttt{toCircuit}\ \texttt{isAnd}\ \texttt{gfin}\ o).\texttt{size} \le (k+1
 
 \begin{definition}[Embedding a Boolean circuit as a feedforward circuit]
 \lean{BoolCircuit.Circuit.toFeedForward}
+\label{BoolCircuit.Circuit.toFeedForward}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.GateOp.id, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval}
 Turns a circuit $C$ on $n$ inputs into a feedforward circuit
@@ -191,6 +210,7 @@ that pass the single Boolean value upward.
 
 \begin{theorem}[Non-input nodes of the embedding are constant]
 \lean{ACP.Circuit.toFeedForward_evalNode_const}
+\label{ACP.Circuit.toFeedForward_evalNode_const}
 \leanok
 \uses{ACP.FeedForward.evalNode, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toFeedForward}
 For every input $x$, every layer index $m$ with $0 < m$ and every node $v$ of layer
@@ -200,6 +220,7 @@ $C.\texttt{toFeedForward}.\texttt{evalNode}\ v\ x = C.\texttt{eval}\ x$.
 
 \begin{theorem}[The embedding computes the same function]
 \lean{ACP.Circuit.toFeedForward_eval}
+\label{ACP.Circuit.toFeedForward_eval}
 \leanok
 \uses{ACP.Circuit.toFeedForward_evalNode_const, ACP.FeedForward.eval₁, BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toFeedForward}
 For every circuit $C$ on $n$ inputs and every input $x$,
@@ -208,6 +229,7 @@ $C.\texttt{toFeedForward}.\texttt{eval}_1\ x = C.\texttt{eval}\ x$.
 
 \begin{theorem}[Depth of the embedding]
 \lean{ACP.Circuit.toFeedForward_depth}
+\label{ACP.Circuit.toFeedForward_depth}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.toFeedForward}
 The embedding uses one extra layer for the inputs:
@@ -216,6 +238,7 @@ $C.\texttt{toFeedForward}.\texttt{depth} = C.\texttt{depth} + 1$.
 
 \begin{theorem}[Size bound for the embedding]
 \lean{ACP.Circuit.toFeedForward_size_le}
+\label{ACP.Circuit.toFeedForward_size_le}
 \leanok
 \uses{ACP.FeedForward.size, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.one_le_size, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toFeedForward}
 For every circuit $C$ on $n$ inputs,

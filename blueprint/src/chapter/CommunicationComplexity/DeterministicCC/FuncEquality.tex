@@ -14,6 +14,7 @@ error tolerance $\varepsilon > 0$.
 
 \begin{definition}[Equality function on $n$-bit strings]
 \lean{CommunicationComplexity.Functions.Equality.equality}
+\label{CommunicationComplexity.Functions.Equality.equality}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 For a natural number $n$, \texttt{CommunicationComplexity.Functions.Equality.equality}
@@ -24,6 +25,7 @@ that returns \texttt{true} if and only if Alice's input $x$ equals Bob's input $
 
 \begin{definition}[Hash space for the equality protocol]
 \lean{CommunicationComplexity.Functions.Equality.HashSpace}
+\label{CommunicationComplexity.Functions.Equality.HashSpace}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.Hash.HashSpace}
 $\mathrm{HashSpace}(n, k)$ is the type of all hash functions from $n$-bit strings
@@ -33,6 +35,7 @@ hashing-based equality protocol.
 
 \begin{theorem}[Deterministic complexity upper bound for equality]
 \lean{CommunicationComplexity.Functions.Equality.communicationComplexity_le}
+\label{CommunicationComplexity.Functions.Equality.communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha, CommunicationComplexity.Functions.Equality.equality}
 \difficulty{4}
@@ -46,6 +49,7 @@ input and Bob sends back the single comparison bit.
 
 \begin{theorem}[Deterministic complexity of equality at $n = 0$]
 \lean{CommunicationComplexity.Functions.Equality.communicationComplexity_zero}
+\label{CommunicationComplexity.Functions.Equality.communicationComplexity_zero}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Functions.Equality.equality}
 \difficulty{4}
@@ -58,6 +62,7 @@ is constantly \texttt{true} and requires zero communication:
 
 \begin{theorem}[Deterministic complexity lower bound for equality]
 \lean{CommunicationComplexity.Functions.Equality.le_communicationComplexity}
+\label{CommunicationComplexity.Functions.Equality.le_communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Rectangle.monoPartition_cross_mem, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \difficulty{6}
@@ -73,6 +78,7 @@ pieces, requiring $n + 1$ bits to index.
 
 \begin{theorem}[Exact deterministic complexity of equality]
 \lean{CommunicationComplexity.Functions.Equality.communicationComplexity_eq}
+\label{CommunicationComplexity.Functions.Equality.communicationComplexity_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Functions.Equality.communicationComplexity_le, CommunicationComplexity.Functions.Equality.communicationComplexity_zero, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.le_communicationComplexity}
 \difficulty{4}
@@ -85,6 +91,7 @@ strings is
 
 \begin{definition}[Equality hashing protocol]
 \lean{CommunicationComplexity.Functions.Equality.equalityHashProtocol}
+\label{CommunicationComplexity.Functions.Equality.equalityHashProtocol}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.Equality.HashSpace, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bob, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.output}
 $\mathrm{equalityHashProtocol}(n, k)$ is the standard public-coin protocol for
@@ -95,6 +102,7 @@ $\mathtt{decide}(h(y) = h(x))$.
 
 \begin{theorem}[Run semantics of the equality hashing protocol]
 \lean{CommunicationComplexity.Functions.Equality.equalityHashProtocol_rrun}
+\label{CommunicationComplexity.Functions.Equality.equalityHashProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.Equality.HashSpace, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{3}
@@ -107,6 +115,7 @@ For all $x, y : \mathrm{BoolInput}\,n$ and $h : \mathrm{HashSpace}(n,k)$,
 
 \begin{theorem}[Complexity of the equality hashing protocol]
 \lean{CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity}
+\label{CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bob, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.output}
 \difficulty{4}
@@ -116,6 +125,7 @@ exactly $k + 1$ bits.
 
 \begin{theorem}[Public-coin upper bound for equality via hash parameter]
 \lean{CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le_of_hε}
+\label{CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le_of_hε}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Functions.Equality.HashSpace, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity, CommunicationComplexity.Functions.Equality.equalityHashProtocol_rrun, CommunicationComplexity.Functions.Hash.collision_prob_le, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_of_finiteMessage}
 \difficulty{4}
@@ -130,6 +140,7 @@ The error bound follows from the collision probability of the random hash family
 
 \begin{theorem}[Public-coin upper bound for equality via $\varepsilon$]
 \lean{CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le}
+\label{CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le_of_hε, CommunicationComplexity.PublicCoin.communicationComplexity}
 \difficulty{5}

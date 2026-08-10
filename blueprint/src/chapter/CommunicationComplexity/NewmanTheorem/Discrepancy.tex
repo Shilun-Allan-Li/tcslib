@@ -14,6 +14,7 @@ complexity of $g$ must be large.
 
 \begin{definition}[Discrepancy of a Boolean function]
 \lean{CommunicationComplexity.discrepancy}
+\label{CommunicationComplexity.discrepancy}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.boolSign}
 Let $\mu$ be a finite probability space on $X \times Y$, let $g : X \to Y \to
@@ -29,6 +30,7 @@ where $\sigma : \mathrm{Bool} \to \{-1,1\}$ is the sign map \texttt{Communicatio
 
 \begin{lemma}[Discrepancy integrand decomposition]
 \lean{CommunicationComplexity.discrepancy_integrand_eq}
+\label{CommunicationComplexity.discrepancy_integrand_eq}
 \leanok
 \uses{CommunicationComplexity.boolSign}
 \difficulty{4}
@@ -41,6 +43,7 @@ indicator of $\{(x,y)\in S \mid g(x,y)=\mathrm{true}\}$ evaluated at $(x,y)$.
 
 \begin{theorem}[Discrepancy as probability difference]
 \lean{CommunicationComplexity.discrepancy_eq_prob_false_sub_prob_true}
+\label{CommunicationComplexity.discrepancy_eq_prob_false_sub_prob_true}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy, CommunicationComplexity.discrepancy_integrand_eq}
 \difficulty{4}
@@ -58,6 +61,7 @@ outputs $\mathrm{true}$ inside $S$:
 
 \begin{lemma}[Discrepancy bound implies $\gamma \ge 0$]
 \lean{CommunicationComplexity.Deterministic.Protocol.nonneg_of_discrepancy_bound}
+\label{CommunicationComplexity.Deterministic.Protocol.nonneg_of_discrepancy_bound}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \difficulty{3}
@@ -67,6 +71,7 @@ $|\mathrm{disc}_\mu(g,R)| \le \gamma$, then $\gamma \ge 0$.
 
 \begin{definition}[Rectangle sign]
 \lean{CommunicationComplexity.Deterministic.Protocol.rectangleSign}
+\label{CommunicationComplexity.Deterministic.Protocol.rectangleSign}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
 For a deterministic Boolean protocol $p$ and a set $R \subseteq X \times Y$, the
@@ -76,6 +81,7 @@ $R$, and $-1$ otherwise.
 
 \begin{lemma}[Rectangle sign has absolute value one]
 \lean{CommunicationComplexity.Deterministic.Protocol.rectangleSign_abs}
+\label{CommunicationComplexity.Deterministic.Protocol.rectangleSign_abs}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.rectangleSign}
 \difficulty{4}
@@ -84,6 +90,7 @@ For any protocol $p$ and any set $R$, $|\mathrm{rectangleSign}(p,R)| = 1$.
 
 \begin{lemma}[Rectangle sign agrees with Bool sign on leaf rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.rectangleSign_eq_boolSign}
+\label{CommunicationComplexity.Deterministic.Protocol.rectangleSign_eq_boolSign}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.boolSign}
 \difficulty{5}
@@ -94,6 +101,7 @@ map \texttt{CommunicationComplexity.boolSign}.
 
 \begin{definition}[Finite set of leaf rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset}
+\label{CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.FiniteProbabilitySpace}
 Given a finite probability space $\mu$ on $X \times Y$ and a deterministic protocol $p$,
@@ -103,6 +111,7 @@ $p$.
 
 \begin{lemma}[Membership in leaf rectangle finset]
 \lean{CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset}
+\label{CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{2}
@@ -112,6 +121,7 @@ leaf rectangle of $p$.
 
 \begin{lemma}[Indicator sum over leaf rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq}
+\label{CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.rectangleSign_eq_boolSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.monoPartition_part_unique, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.boolSign}
 \difficulty{4}
@@ -122,6 +132,7 @@ This uses the fact that the leaf rectangles form a partition of $X \times Y$.
 
 \begin{lemma}[Signed bias equals one minus twice distributional error]
 \lean{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError}
+\label{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator}
 \difficulty{5}
@@ -135,6 +146,7 @@ For a deterministic protocol $p$ and Boolean function $g$,
 
 \begin{lemma}[Signed bias as sum over rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles}
+\label{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
 \difficulty{6}
@@ -145,6 +157,7 @@ $\mathrm{rectangleSign}(p,R)\cdot\mathrm{disc}_\mu(g,R)$.
 
 \begin{theorem}[Core discrepancy lower bound]
 \lean{CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul}
+\label{CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle, CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.nonneg_of_discrepancy_bound, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.rectangleSign_abs, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError, CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
 \difficulty{5}
@@ -159,6 +172,7 @@ then for any deterministic protocol $p$,
 
 \begin{theorem}[Logarithmic discrepancy lower bound]
 \lean{CommunicationComplexity.Deterministic.Protocol.logb_le_complexity_of_distributionalError}
+\label{CommunicationComplexity.Deterministic.Protocol.logb_le_complexity_of_distributionalError}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \difficulty{4}
@@ -173,6 +187,7 @@ every rectangle has discrepancy at most $\gamma$ then
 
 \begin{theorem}[Discrepancy method for public-coin complexity]
 \lean{CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_discrepancy_bound}
+\label{CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_discrepancy_bound}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \difficulty{5}

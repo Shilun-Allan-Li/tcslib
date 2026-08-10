@@ -16,6 +16,7 @@ depth of a node after a further random restriction.
 
 \begin{lemma}[Child depth bound]
 \lean{LMN.children_depth_le}
+\label{LMN.children_depth_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
 \difficulty{4}
@@ -25,6 +26,7 @@ $c \in cs$ has depth at most $d - 1$.
 
 \begin{lemma}[Sum of child sizes bound]
 \lean{LMN.children_size_sum_le}
+\label{LMN.children_size_sum_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
 \difficulty{4}
@@ -34,6 +36,7 @@ the sizes of its children is at most $s - 1$.
 
 \begin{lemma}[Child fan-in bound]
 \lean{LMN.children_maxFanin_le}
+\label{LMN.children_maxFanin_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.maxFanin}
 \difficulty{4}
@@ -43,6 +46,7 @@ every child $c \in cs$ has maximum fan-in at most $w$.
 
 \begin{lemma}[Child size bounded by parent]
 \lean{LMN.child_size_le_parent}
+\label{LMN.child_size_le_parent}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, LMN.children_size_sum_le}
 \difficulty{5}
@@ -52,6 +56,7 @@ child $c \in cs$ has size at most $s - 1$.
 
 \begin{lemma}[Restricted evaluation of a node]
 \lean{LMN.restrictFn_node_eval}
+\label{LMN.restrictFn_node_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{4}
@@ -64,6 +69,7 @@ $\mathit{isAnd}$ is true, and to the corresponding fold-$\mathrm{or}$ otherwise.
 
 \begin{lemma}[AND of children has a small CNF]
 \lean{LMN.and_children_have_cnf}
+\label{LMN.and_children_have_cnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, LMN.compression_and_of_cnfs, LMN.restrictFn_node_eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
@@ -75,6 +81,7 @@ for all $x$.
 
 \begin{lemma}[OR of children has a small DNF]
 \lean{LMN.or_children_have_dnf}
+\label{LMN.or_children_have_dnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, LMN.restrictFn_node_eval, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
@@ -86,6 +93,7 @@ for all $x$.
 
 \begin{lemma}[Compression and switching for a node]
 \lean{LMN.compress_and_switch}
+\label{LMN.compress_and_switch}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF.eval, DNF.eval, LMN.and_children_have_cnf, LMN.composeRestr, LMN.or_children_have_dnf, LMN.restrictFn_composeRestr, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{6}

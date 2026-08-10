@@ -15,6 +15,7 @@ $ed = 1 + k(p-1)(q-1)$, decryption inverts encryption modulo $n = pq$.
 
 \begin{definition}[Pure computation in the time monad]
 \lean{TimeM.pure}
+\label{TimeM.pure}
 \leanok
 Lifts a value $a : \alpha$ into the computation $\langle a, 0\rangle$ of type \texttt{TimeM T α},
 i.e.\ the computation that returns $a$ at zero time cost.
@@ -22,6 +23,7 @@ i.e.\ the computation that returns $a$ at zero time cost.
 
 \begin{definition}[Sequential composition in the time monad]
 \lean{TimeM.bind}
+\label{TimeM.bind}
 \leanok
 Given $m : \texttt{TimeM T α}$ and $f : \alpha \to \texttt{TimeM T β}$, the bind of $m$ and $f$
 runs $f$ on the value returned by $m$ and returns $\langle (f\,m.\mathrm{ret}).\mathrm{ret},\;
@@ -30,18 +32,21 @@ m.\mathrm{time} + (f\,m.\mathrm{ret}).\mathrm{time}\rangle$: the two time costs 
 
 \begin{theorem}[Return value of \texttt{pure}]
 \lean{TimeM.ret_pure}
+\label{TimeM.ret_pure}
 \leanok
 The value returned by $\mathrm{pure}\,a$ is $a$.
 \end{theorem}
 
 \begin{theorem}[Return value of a bind]
 \lean{TimeM.ret_bind}
+\label{TimeM.ret_bind}
 \leanok
 The value returned by the bind of $m$ with $f$ is the value returned by $f\,m.\mathrm{ret}$.
 \end{theorem}
 
 \begin{theorem}[Return value of a map]
 \lean{TimeM.ret_map}
+\label{TimeM.ret_map}
 \leanok
 For $f : \alpha \to \beta$ and $x : \texttt{TimeM T α}$, the value returned by the mapped
 computation is $f(x.\mathrm{ret})$.
@@ -49,18 +54,21 @@ computation is $f(x.\mathrm{ret})$.
 
 \begin{theorem}[Return value of \texttt{seqRight}]
 \lean{TimeM.ret_seqRight}
+\label{TimeM.ret_seqRight}
 \leanok
 The right-sequencing of $x$ and $y$ returns the value returned by $y\,()$.
 \end{theorem}
 
 \begin{theorem}[Return value of \texttt{seqLeft}]
 \lean{TimeM.ret_seqLeft}
+\label{TimeM.ret_seqLeft}
 \leanok
 The left-sequencing of $x$ and $y$ returns $x.\mathrm{ret}$.
 \end{theorem}
 
 \begin{theorem}[Return value of \texttt{seq}]
 \lean{TimeM.ret_seq}
+\label{TimeM.ret_seq}
 \leanok
 For $f : \texttt{TimeM T (α → β)}$ and $x : \texttt{Unit → TimeM T α}$, the application
 $\mathrm{seq}\,f\,x$ returns $f.\mathrm{ret}\bigl((x\,()).\mathrm{ret}\bigr)$.
@@ -68,42 +76,49 @@ $\mathrm{seq}\,f\,x$ returns $f.\mathrm{ret}\bigl((x\,()).\mathrm{ret}\bigr)$.
 
 \begin{theorem}[Time cost of a bind]
 \lean{TimeM.time_bind}
+\label{TimeM.time_bind}
 \leanok
 The time cost of the bind of $m$ with $f$ is $m.\mathrm{time} + (f\,m.\mathrm{ret}).\mathrm{time}$.
 \end{theorem}
 
 \begin{theorem}[Time cost of \texttt{pure}]
 \lean{TimeM.time_pure}
+\label{TimeM.time_pure}
 \leanok
 The time cost of $\mathrm{pure}\,a$ is $0$.
 \end{theorem}
 
 \begin{theorem}[Time cost of a map]
 \lean{TimeM.time_map}
+\label{TimeM.time_map}
 \leanok
 Mapping a function over a computation does not change its time cost: it is $x.\mathrm{time}$.
 \end{theorem}
 
 \begin{theorem}[Time cost of \texttt{seqRight}]
 \lean{TimeM.time_seqRight}
+\label{TimeM.time_seqRight}
 \leanok
 The time cost of the right-sequencing of $x$ and $y$ is $x.\mathrm{time} + (y\,()).\mathrm{time}$.
 \end{theorem}
 
 \begin{theorem}[Time cost of \texttt{seqLeft}]
 \lean{TimeM.time_seqLeft}
+\label{TimeM.time_seqLeft}
 \leanok
 The time cost of the left-sequencing of $x$ and $y$ is $x.\mathrm{time} + (y\,()).\mathrm{time}$.
 \end{theorem}
 
 \begin{theorem}[Time cost of \texttt{seq}]
 \lean{TimeM.time_seq}
+\label{TimeM.time_seq}
 \leanok
 The time cost of $\mathrm{seq}\,f\,x$ is $f.\mathrm{time} + (x\,()).\mathrm{time}$.
 \end{theorem}
 
 \begin{definition}[Tick]
 \lean{TimeM.tick}
+\label{TimeM.tick}
 \leanok
 The computation $\mathrm{tick}\,c$ returns the trivial value and records time cost $c$; it is the
 basic way of charging $c$ units of time.
@@ -111,6 +126,7 @@ basic way of charging $c$ units of time.
 
 \begin{theorem}[Return value of a tick]
 \lean{TimeM.ret_tick}
+\label{TimeM.ret_tick}
 \leanok
 \uses{TimeM.tick}
 The value returned by $\mathrm{tick}\,c$ is the unit value.
@@ -118,6 +134,7 @@ The value returned by $\mathrm{tick}\,c$ is the unit value.
 
 \begin{theorem}[Time cost of a tick]
 \lean{TimeM.time_tick}
+\label{TimeM.time_tick}
 \leanok
 \uses{TimeM.tick}
 The time cost of $\mathrm{tick}\,c$ is $c$.
@@ -125,6 +142,7 @@ The time cost of $\mathrm{tick}\,c$ is $c$.
 
 \begin{definition}[Maximum of two naturals, timed]
 \lean{max2}
+\label{max2}
 \leanok
 The timed computation returning the larger of two natural numbers $x,y$, charging one unit of
 time for the single comparison $x \le y$.
@@ -132,6 +150,7 @@ time for the single comparison $x \le y$.
 
 \begin{definition}[Median of three, timed]
 \lean{median3}
+\label{median3}
 \leanok
 For $a,b,c$ in a linear order, the timed computation returning a median of $a,b,c$ by a nested
 sequence of comparisons, charging one unit of time per comparison performed.
@@ -139,6 +158,7 @@ sequence of comparisons, charging one unit of time per comparison performed.
 
 \begin{theorem}[Correctness of the timed median]
 \lean{median3_correct}
+\label{median3_correct}
 \leanok
 \uses{median3}
 The value returned by $\mathrm{median3}\,a\,b\,c$ is a median of $a$, $b$, $c$, in the sense that
@@ -147,6 +167,7 @@ it lies between at least one of the pairs drawn from $\{a,b,c\}$.
 
 \begin{theorem}[Comparison count of the timed median]
 \lean{median3_time}
+\label{median3_time}
 \leanok
 \uses{median3}
 The computation $\mathrm{median3}\,a\,b\,c$ records a time cost of at most $3$, i.e.\ it performs
@@ -155,6 +176,7 @@ at most three comparisons.
 
 \begin{definition}[Timed ordered insertion]
 \lean{insert}
+\label{insert}
 \leanok
 Inserts $x$ into a list, walking the list until the first element $y$ with $x \le y$ and charging
 one unit of time per comparison. On a sorted input it produces the sorted list containing $x$.
@@ -162,6 +184,7 @@ one unit of time per comparison. On a sorted input it produces the sorted list c
 
 \begin{definition}[Timed insertion sort]
 \lean{insertionSort}
+\label{insertionSort}
 \leanok
 \uses{insert}
 Insertion sort in the time monad: recursively sort the tail and then insert the head using the
@@ -170,6 +193,7 @@ timed insertion, accumulating the comparisons performed by every insertion step.
 
 \begin{definition}[Sortedness by adjacent pairs]
 \lean{IsSorted}
+\label{IsSorted}
 \leanok
 The predicate on lists defined recursively: the empty list and singletons are sorted, and
 $x :: y :: \mathit{rest}$ is sorted when $x \le y$ and $y :: \mathit{rest}$ is sorted.
@@ -177,6 +201,7 @@ $x :: y :: \mathit{rest}$ is sorted when $x \le y$ and $y :: \mathit{rest}$ is s
 
 \begin{theorem}[Adjacent sortedness is a chain]
 \lean{isSorted_iff_isChain}
+\label{isSorted_iff_isChain}
 \leanok
 \uses{IsSorted}
 For any list $\mathit{xs}$, the predicate \texttt{IsSorted} holds of $\mathit{xs}$ if and only if
@@ -185,6 +210,7 @@ $\mathit{xs}$ is a chain for $\le$.
 
 \begin{theorem}[Adjacent sortedness equals pairwise sortedness]
 \lean{isSorted_iff_sorted}
+\label{isSorted_iff_sorted}
 \leanok
 \uses{IsSorted, isSorted_iff_isChain}
 For any list $\mathit{xs}$, the predicate \texttt{IsSorted} holds of $\mathit{xs}$ if and only if
@@ -193,6 +219,7 @@ $\mathit{xs}$ is sorted in the usual pairwise sense with respect to $\le$.
 
 \begin{theorem}[Value returned by the timed insertion]
 \lean{ret_insert}
+\label{ret_insert}
 \leanok
 \uses{insert}
 The value returned by the timed insertion of $x$ into $\mathit{xs}$ is the ordinary ordered
@@ -201,6 +228,7 @@ insertion of $x$ into $\mathit{xs}$ for the relation $\le$.
 
 \begin{theorem}[Value returned by the timed insertion sort]
 \lean{ret_insertionSort}
+\label{ret_insertionSort}
 \leanok
 \uses{insertionSort, ret_insert}
 The value returned by the timed insertion sort of $\mathit{xs}$ is the ordinary insertion sort of
@@ -209,6 +237,7 @@ $\mathit{xs}$ for the relation $\le$.
 
 \begin{theorem}[Length after a timed insertion]
 \lean{length_ret_insert}
+\label{length_ret_insert}
 \leanok
 \uses{insert, ret_insert}
 The list returned by inserting $x$ into $\mathit{xs}$ has length $\abs{\mathit{xs}} + 1$.
@@ -216,6 +245,7 @@ The list returned by inserting $x$ into $\mathit{xs}$ has length $\abs{\mathit{x
 
 \begin{theorem}[Length after a timed insertion sort]
 \lean{length_ret_insertionSort}
+\label{length_ret_insertionSort}
 \leanok
 \uses{insertionSort, ret_insertionSort}
 The list returned by the timed insertion sort of $\mathit{xs}$ has the same length as
@@ -224,6 +254,7 @@ $\mathit{xs}$.
 
 \begin{theorem}[Timed insertion is a permutation]
 \lean{insert_perm}
+\label{insert_perm}
 \leanok
 \uses{insert, ret_insert}
 The list returned by inserting $x$ into $\mathit{xs}$ is a permutation of $x :: \mathit{xs}$.
@@ -231,6 +262,7 @@ The list returned by inserting $x$ into $\mathit{xs}$ is a permutation of $x :: 
 
 \begin{theorem}[Timed insertion preserves sortedness]
 \lean{insert_sorted}
+\label{insert_sorted}
 \leanok
 \uses{IsSorted, insert, isSorted_iff_sorted, ret_insert}
 If $\mathit{xs}$ is sorted, then the list returned by inserting $x$ into $\mathit{xs}$ is sorted.
@@ -238,6 +270,7 @@ If $\mathit{xs}$ is sorted, then the list returned by inserting $x$ into $\mathi
 
 \begin{theorem}[Timed insertion sort is a permutation]
 \lean{insertionSort_perm}
+\label{insertionSort_perm}
 \leanok
 \uses{insertionSort, ret_insertionSort}
 The list returned by the timed insertion sort of $\mathit{xs}$ is a permutation of $\mathit{xs}$.
@@ -245,6 +278,7 @@ The list returned by the timed insertion sort of $\mathit{xs}$ is a permutation 
 
 \begin{theorem}[Timed insertion sort returns a sorted list]
 \lean{insertionSort_sorted}
+\label{insertionSort_sorted}
 \leanok
 \uses{IsSorted, insertionSort, isSorted_iff_sorted, ret_insertionSort}
 For every list $\mathit{xs}$, the list returned by the timed insertion sort is sorted.
@@ -252,6 +286,7 @@ For every list $\mathit{xs}$, the list returned by the timed insertion sort is s
 
 \begin{theorem}[Functional correctness of insertion sort]
 \lean{insertionSort_correct}
+\label{insertionSort_correct}
 \leanok
 \uses{IsSorted, insertionSort, insertionSort_perm, insertionSort_sorted}
 For every list $\mathit{xs}$, the output of the timed insertion sort is both sorted and a
@@ -260,12 +295,14 @@ permutation of $\mathit{xs}$.
 
 \begin{definition}[Insertion sort recurrence]
 \lean{timeInsertionSortRec}
+\label{timeInsertionSortRec}
 \leanok
 The worst-case comparison recurrence $T(0) = 0$ and $T(n+1) = T(n) + n$.
 \end{definition}
 
 \begin{theorem}[Cost of one insertion]
 \lean{time_insert_le}
+\label{time_insert_le}
 \leanok
 \uses{insert}
 Inserting $x$ into a list $\mathit{xs}$ costs at most $\abs{\mathit{xs}}$ comparisons.
@@ -273,6 +310,7 @@ Inserting $x$ into a list $\mathit{xs}$ costs at most $\abs{\mathit{xs}}$ compar
 
 \begin{theorem}[Insertion sort meets its recurrence]
 \lean{time_insertionSort_le_rec}
+\label{time_insertionSort_le_rec}
 \leanok
 \uses{insert, insertionSort, ret_insertionSort, timeInsertionSortRec, time_insert_le}
 The time cost recorded by the timed insertion sort of $\mathit{xs}$ is at most
@@ -281,6 +319,7 @@ $T(\abs{\mathit{xs}})$, where $T$ is the insertion sort recurrence.
 
 \begin{theorem}[Quadratic bound for the recurrence]
 \lean{timeInsertionSortRec_le_sq}
+\label{timeInsertionSortRec_le_sq}
 \leanok
 \uses{timeInsertionSortRec}
 For every $n$, the recurrence satisfies $T(n) \le n^2$.
@@ -288,6 +327,7 @@ For every $n$, the recurrence satisfies $T(n) \le n^2$.
 
 \begin{theorem}[Insertion sort performs at most $n^2$ comparisons]
 \lean{time_insertionSort_le_sq}
+\label{time_insertionSort_le_sq}
 \leanok
 \uses{insertionSort, timeInsertionSortRec_le_sq, time_insertionSort_le_rec}
 The time cost recorded by the timed insertion sort of a list $\mathit{xs}$ of length $n$ is at
@@ -296,6 +336,7 @@ most $n^2$.
 
 \begin{lemma}[Core RSA exponent identity]
 \lean{RSA.rsa_core}
+\label{RSA.rsa_core}
 \leanok
 Let $p$ be prime. For every $c \in \bbn$ and every $x \in \bbz/p\bbz$,
 \[
@@ -306,6 +347,7 @@ This is the form of Fermat's little theorem needed for RSA, valid also at $x = 0
 
 \begin{lemma}[RSA identity from an exponent factorization]
 \lean{RSA.rsa_zmod_of_factor}
+\label{RSA.rsa_zmod_of_factor}
 \leanok
 \uses{RSA.rsa_core}
 Let $p$ be prime and $m, ed, c \in \bbn$ with $ed = 1 + c(p-1)$. Then $m^{ed} \equiv m$ in
@@ -314,6 +356,7 @@ $\bbz/p\bbz$, where both sides are the images of natural numbers.
 
 \begin{lemma}[RSA identity modulo $p$]
 \lean{RSA.rsa_zmod_p}
+\label{RSA.rsa_zmod_p}
 \leanok
 \uses{RSA.rsa_zmod_of_factor}
 If $p$ is prime and $ed = 1 + k(p-1)(q-1)$, then $m^{ed} \equiv m$ in $\bbz/p\bbz$ for every
@@ -322,6 +365,7 @@ $m \in \bbn$.
 
 \begin{lemma}[RSA identity modulo $q$]
 \lean{RSA.rsa_zmod_q}
+\label{RSA.rsa_zmod_q}
 \leanok
 \uses{RSA.PublicKey, RSA.rsa_zmod_of_factor}
 If $q$ is prime and $ed = 1 + k(p-1)(q-1)$, then $m^{ed} \equiv m$ in $\bbz/q\bbz$ for every
@@ -330,6 +374,7 @@ $m \in \bbn$.
 
 \begin{lemma}[Combining the two factors by CRT]
 \lean{RSA.rsa_crt}
+\label{RSA.rsa_crt}
 \leanok
 \uses{RSA.PublicKey}
 Let $p$ and $q$ be coprime and suppose $m^{ed} \equiv m$ both in $\bbz/p\bbz$ and in
@@ -338,6 +383,7 @@ $\bbz/q\bbz$. Then $m^{ed} \equiv m$ in $\bbz/pq\bbz$.
 
 \begin{lemma}[CRT combination in power form]
 \lean{RSA.rsa_crt_pow}
+\label{RSA.rsa_crt_pow}
 \leanok
 \uses{RSA.PublicKey, RSA.rsa_crt}
 The same statement written with the power taken inside the quotient ring: if $p$ and $q$ are
@@ -347,12 +393,14 @@ $\bar m^{\,ed} = \bar m$ in $\bbz/pq\bbz$.
 
 \begin{definition}[RSA public key]
 \lean{RSA.PublicKey}
+\label{RSA.PublicKey}
 \leanok
 A public key consists of a modulus $n \in \bbn$ and a public exponent $e \in \bbn$.
 \end{definition}
 
 \begin{definition}[RSA secret key]
 \lean{RSA.SecretKey}
+\label{RSA.SecretKey}
 \leanok
 \uses{RSA.PublicKey}
 A secret key consists of a public key together with naturals $p, q, d, k$ and proofs that $p$ and
@@ -362,6 +410,7 @@ satisfy $e d = 1 + k(p-1)(q-1)$.
 
 \begin{definition}[RSA encryption]
 \lean{RSA.encrypt}
+\label{RSA.encrypt}
 \leanok
 \uses{RSA.PublicKey}
 Encryption of a message $m \in \bbn$ under a public key is $\bar m^{\,e} \in \bbz/n\bbz$, using
@@ -370,6 +419,7 @@ only the public data.
 
 \begin{definition}[RSA decryption]
 \lean{RSA.decrypt}
+\label{RSA.decrypt}
 \leanok
 \uses{RSA.SecretKey}
 Decryption of a ciphertext $c \in \bbz/n\bbz$ under a secret key is $c^{\,d}$, where $d$ is the
@@ -378,6 +428,7 @@ private exponent.
 
 \begin{theorem}[Correctness of RSA]
 \lean{RSA.rsa_correctness}
+\label{RSA.rsa_correctness}
 \leanok
 \uses{RSA.SecretKey, RSA.decrypt, RSA.encrypt, RSA.rsa_crt_pow, RSA.rsa_zmod_p, RSA.rsa_zmod_q}
 For any secret key and any message $m \in \bbn$, decrypting the encryption of $m$ recovers $m$:

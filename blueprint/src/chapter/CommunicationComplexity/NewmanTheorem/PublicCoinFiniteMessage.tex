@@ -12,6 +12,7 @@ binary public-coin protocol representations, preserving both run behavior and co
 
 \begin{definition}[Public-coin finite-message protocol]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 A public-coin finite-message protocol over shared-randomness space $\Omega$, private input
@@ -22,6 +23,7 @@ $\Omega \times Y$.
 
 \begin{definition}[Output node]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.output}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.output}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 The terminal (output) node of a public-coin finite-message protocol returning the
@@ -30,6 +32,7 @@ constant value $a : \alpha$.
 
 \begin{definition}[Alice's send step]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.alice}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.alice}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given a message function $f : X \to \Omega \to \beta$ and a continuation
@@ -40,6 +43,7 @@ $\omega$, then continues with $P$.
 
 \begin{definition}[Bob's send step]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bob}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bob}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 Given a message function $f : Y \to \Omega \to \beta$ and a continuation
@@ -50,6 +54,7 @@ $\omega$, then continues with $P$.
 
 \begin{definition}[Randomized execution]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
 $\mathrm{rrun}(p, x, y, \omega)$ executes the protocol $p$ on private inputs $x$ and $y$
@@ -58,6 +63,7 @@ with shared randomness $\omega$, defined as $p.\mathrm{run}(\omega, x)\,(\omega,
 
 \begin{theorem}[Randomized run equals underlying run]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun_eq}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
@@ -68,6 +74,7 @@ This is a definitional unfolding used as a simp lemma.
 
 \begin{definition}[Approximate satisfaction of a predicate]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 A protocol $p$ $\varepsilon$-satisfies a predicate $Q : X \to Y \to \alpha \to \mathrm{Prop}$
@@ -79,6 +86,7 @@ if for every input pair $(x, y)$,
 
 \begin{definition}[Approximate computation of a function]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
 A protocol $p$ $\varepsilon$-computes a function $f : X \to Y \to \alpha$ if for every
@@ -90,6 +98,7 @@ input pair $(x, y)$,
 
 \begin{theorem}[Approximate computation equals approximate satisfaction]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies}
 \difficulty{2}
@@ -100,6 +109,7 @@ Thus approximate computation is a special case of approximate predicate satisfac
 
 \begin{definition}[Conversion to binary public-coin protocol]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.Protocol}
 Converts a public-coin finite-message protocol to a binary public-coin protocol by
@@ -108,6 +118,7 @@ delegating to \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protoc
 
 \begin{theorem}[Conversion preserves run behavior]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 \difficulty{2}
@@ -117,6 +128,7 @@ $(p.\mathrm{toProtocol}).\mathrm{rrun}\,x\,y\,\omega = p.\mathrm{rrun}\,x\,y\,\o
 
 \begin{theorem}[Conversion preserves complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol}
 \difficulty{1}
@@ -125,6 +137,7 @@ For any protocol $p$, $(p.\mathrm{toProtocol}).\mathrm{complexity} = p.\mathrm{c
 
 \begin{definition}[Embedding of binary public-coin protocol]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.Protocol}
 Embeds a binary public-coin protocol into a finite-message protocol by delegating to
@@ -133,6 +146,7 @@ Embeds a binary public-coin protocol into a finite-message protocol by delegatin
 
 \begin{theorem}[Embedding preserves run behavior]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_rrun}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 \difficulty{2}
@@ -142,6 +156,7 @@ $(\mathrm{ofProtocol}\,p).\mathrm{rrun}\,x\,y\,\omega = p.\mathrm{rrun}\,x\,y\,\
 
 \begin{theorem}[Embedding preserves complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PublicCoin.Protocol}
 \difficulty{1}
@@ -151,6 +166,7 @@ $(\mathrm{ofProtocol}\,p).\mathrm{complexity} = p.\mathrm{complexity}$.
 
 \begin{theorem}[Finite-message equivalence of binary public-coin protocols]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_equiv}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_equiv}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 \difficulty{3}

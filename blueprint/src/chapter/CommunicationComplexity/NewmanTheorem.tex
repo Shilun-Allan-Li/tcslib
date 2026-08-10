@@ -14,6 +14,7 @@ original public-coin protocol deterministically.
 
 \begin{definition}[Newman index space]
 \lean{CommunicationComplexity.PublicCoin.newmanIndexSpace}
+\label{CommunicationComplexity.PublicCoin.newmanIndexSpace}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}
 Given finite input types $X$ and $Y$ and parameters $\varepsilon, c \in \mathbb{R}$,
@@ -24,16 +25,9 @@ reduction.
 
 \begin{definition}[Newman protocol]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin,
-CommunicationComplexity.FiniteProbabilitySpace,
-CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
-CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic,
-CommunicationComplexity.PublicCoin.newmanIndexSpace}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic, CommunicationComplexity.PublicCoin.newmanIndexSpace}
 Given a public-coin finite-message protocol $p$ over a probability space $\Omega$ that
 $\varepsilon$-computes $f : X \to Y \to \alpha$, and a constant $c > 1$, the Newman protocol
 is a private-coin finite-message protocol in which Alice draws a random index $i$ from
@@ -44,20 +38,9 @@ and union-bound argument) through the original public-coin protocol deterministi
 
 \begin{theorem}[Newman protocol approximately computes $f$]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run,
-CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run,
-CommunicationComplexity.FiniteProbabilitySpace,
-CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod,
-CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes,
-CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice,
-CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol,
-CommunicationComplexity.PublicCoin.newmanIndexSpace,
-CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol, CommunicationComplexity.PublicCoin.newmanIndexSpace, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \difficulty{5}
 If $p$ is a public-coin finite-message protocol that $\varepsilon$-computes $f$, and $c > 1$,
 then the Newman protocol $(p.\mathtt{newmanProtocol}\;f\;\varepsilon\;c)$
@@ -68,17 +51,9 @@ differs from $f(x, y)$ is at most $c \cdot \varepsilon$.
 
 \begin{theorem}[Newman protocol complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity}
+\label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity,
-CommunicationComplexity.FiniteProbabilitySpace,
-CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity,
-CommunicationComplexity.PublicCoin.newmanIndexSpace}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity, CommunicationComplexity.PublicCoin.newmanIndexSpace}
 \difficulty{3}
 If $p$ is a public-coin finite-message protocol that $\varepsilon$-computes $f$, and $c > 1$,
 then the communication complexity of the Newman protocol equals
@@ -88,22 +63,9 @@ i.e.\ the original complexity plus the number of bits needed to index the seed t
 
 \begin{theorem}[Newman's theorem]
 \lean{CommunicationComplexity.PublicCoin.newman}
+\label{CommunicationComplexity.PublicCoin.newman}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity,
-CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity,
-CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run,
-CommunicationComplexity.Deterministic.Protocol.complexity,
-CommunicationComplexity.PrivateCoin.communicationComplexity,
-CommunicationComplexity.PrivateCoin.communicationComplexity_le_of_finiteMessage,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol,
-CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun,
-CommunicationComplexity.PublicCoin.communicationComplexity,
-CommunicationComplexity.PublicCoin.communicationComplexity_le_iff}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.communicationComplexity, CommunicationComplexity.PrivateCoin.communicationComplexity_le_of_finiteMessage, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_iff}
 \difficulty{6}
 Let $f : X \to Y \to \alpha$ with $X, Y$ finite, let $\varepsilon, \varepsilon' \in \mathbb{R}$
 and $c > 1$ satisfy $c \cdot \varepsilon < \varepsilon'$.

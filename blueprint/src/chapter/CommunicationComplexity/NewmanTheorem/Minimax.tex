@@ -14,10 +14,9 @@ exceeds $n$.
 
 \begin{definition}[Distributional error of a deterministic protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.distributionalError}
+\label{CommunicationComplexity.Deterministic.Protocol.distributionalError}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol,
-      CommunicationComplexity.Deterministic.Protocol.run,
-      CommunicationComplexity.FiniteProbabilitySpace}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace}
 Given a deterministic protocol $p : \mathrm{Protocol}\,X\,Y\,\alpha$, a finite
 probability space $\mu$ on $X \times Y$, and a target function $f : X \to Y \to \alpha$,
 the \emph{distributional error} $p.\mathrm{distributionalError}(\mu, f) \in \mathbb{R}$
@@ -27,12 +26,9 @@ $\mu\bigl(\{(x,y) \mid p.\mathrm{run}(x,y) \ne f(x,y)\}\bigr)$.
 
 \begin{lemma}[Failure integral swap]
 \lean{CommunicationComplexity.PublicCoin.failureIntegral_swap}
+\label{CommunicationComplexity.PublicCoin.failureIntegral_swap}
 \leanok
-\uses{CommunicationComplexity.CoinTape,
-      CommunicationComplexity.FiniteProbabilitySpace,
-      CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one,
-      CommunicationComplexity.PublicCoin.Protocol,
-      CommunicationComplexity.PublicCoin.Protocol.rrun}
+\uses{CommunicationComplexity.CoinTape, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 \difficulty{4}
 Let $\mu$ be a finite probability space on $X \times Y$, let $m \in \mathbb{N}$, and let
 $p$ be a public-coin protocol with coin tape of length $m$.  For any $f : X \to Y \to \alpha$,
@@ -48,20 +44,9 @@ failure-indicator function.
 
 \begin{theorem}[Yao's minimax principle]
 \lean{CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt}
+\label{CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt}
 \leanok
-\uses{CommunicationComplexity.CoinTape,
-      CommunicationComplexity.Deterministic.Protocol,
-      CommunicationComplexity.Deterministic.Protocol.complexity,
-      CommunicationComplexity.Deterministic.Protocol.distributionalError,
-      CommunicationComplexity.FiniteProbabilitySpace,
-      CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le,
-      CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt,
-      CommunicationComplexity.PublicCoin.Protocol.rrun,
-      CommunicationComplexity.PublicCoin.Protocol.toDeterministic,
-      CommunicationComplexity.PublicCoin.Protocol.toDeterministic_run,
-      CommunicationComplexity.PublicCoin.communicationComplexity,
-      CommunicationComplexity.PublicCoin.communicationComplexity_le_iff,
-      CommunicationComplexity.PublicCoin.failureIntegral_swap}
+\uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le, CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt, CommunicationComplexity.PublicCoin.Protocol.rrun, CommunicationComplexity.PublicCoin.Protocol.toDeterministic, CommunicationComplexity.PublicCoin.Protocol.toDeterministic_run, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_iff, CommunicationComplexity.PublicCoin.failureIntegral_swap}
 \difficulty{5}
 Let $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, $n \in \mathbb{N}$, and let
 $\mu$ be a finite probability distribution on $X \times Y$.  If every deterministic

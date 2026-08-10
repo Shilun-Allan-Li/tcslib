@@ -13,6 +13,7 @@ via the discrepancy method.
 
 \begin{definition}[Overlap of two bit-vectors]
 \lean{CommunicationComplexity.Functions.InnerProduct.overlap}
+\label{CommunicationComplexity.Functions.InnerProduct.overlap}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 Given two $n$-bit inputs $x, y : \mathrm{BoolInput}\,n$, $\mathrm{overlap}(x, y)$ is
@@ -22,6 +23,7 @@ are \texttt{true}.
 
 \begin{definition}[Mod-2 inner product]
 \lean{CommunicationComplexity.Functions.InnerProduct.innerProduct}
+\label{CommunicationComplexity.Functions.InnerProduct.innerProduct}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 $\mathrm{innerProduct}(n, x, y) : \mathrm{Bool}$ is the mod-2 inner product of two
@@ -32,6 +34,7 @@ $\bigoplus_{i=1}^{n} (x_i \wedge y_i) = 1$.
 
 \begin{lemma}[Inner product with the zero vector is false]
 \lean{CommunicationComplexity.Functions.InnerProduct.innerProduct_zero_right}
+\label{CommunicationComplexity.Functions.InnerProduct.innerProduct_zero_right}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.zeroInput}
 \difficulty{3}
@@ -41,6 +44,7 @@ input is \texttt{false}: $\mathrm{innerProduct}(n, x, \mathbf{0}) = \mathtt{fals
 
 \begin{lemma}[Uniform weight of each Boolean input]
 \lean{CommunicationComplexity.Functions.InnerProduct.pmf_toReal_eq_two_pow_inv}
+\label{CommunicationComplexity.Functions.InnerProduct.pmf_toReal_eq_two_pow_inv}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{4}
@@ -50,6 +54,7 @@ distribution: $\mathrm{toPMF}(\mathrm{BoolInput}\,n,\, x) = 2^{-n}$.
 
 \begin{lemma}[Integral as arithmetic average]
 \lean{CommunicationComplexity.Functions.InnerProduct.integral_eq_average_sum}
+\label{CommunicationComplexity.Functions.InnerProduct.integral_eq_average_sum}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum, CommunicationComplexity.Functions.InnerProduct.pmf_toReal_eq_two_pow_inv}
 \difficulty{3}
@@ -62,6 +67,7 @@ distribution satisfies
 
 \begin{lemma}[Flipping a set coordinate toggles the inner product]
 \lean{CommunicationComplexity.Functions.InnerProduct.innerProduct_flipAt_eq_xor}
+\label{CommunicationComplexity.Functions.InnerProduct.innerProduct_flipAt_eq_xor}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.flipAt}
 \difficulty{5}
@@ -72,6 +78,7 @@ product: $\mathrm{innerProduct}(n, \mathrm{flipAt}(i, x), y) =
 
 \begin{lemma}[Walsh character sums to zero when $z \ne \mathbf{0}$]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zero_of_exists_true}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zero_of_exists_true}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.innerProduct_flipAt_eq_xor, CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_xor, CommunicationComplexity.flipAt, CommunicationComplexity.flipAt_bijective}
 \difficulty{6}
@@ -84,6 +91,7 @@ This is the orthogonality of Walsh characters for the inner product function.
 
 \begin{lemma}[Walsh character sum is an indicator at the zero vector]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zeroInput_indicator}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zeroInput_indicator}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.innerProduct_zero_right, CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zero_of_exists_true, CommunicationComplexity.boolSign, CommunicationComplexity.exists_true_of_ne_zeroInput, CommunicationComplexity.zeroInput}
 \difficulty{4}
@@ -96,6 +104,7 @@ For every $z : \mathrm{BoolInput}\,n$,
 
 \begin{definition}[Coordinatewise xor of Boolean inputs]
 \lean{CommunicationComplexity.Functions.InnerProduct.xorInput}
+\label{CommunicationComplexity.Functions.InnerProduct.xorInput}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 $\mathrm{xorInput}(y, z) : \mathrm{BoolInput}\,n$ is the coordinatewise XOR of $y$
@@ -104,6 +113,7 @@ and $z$: $(\mathrm{xorInput}(y, z))_i = y_i \oplus z_i$.
 
 \begin{lemma}[Pointwise evaluation of xorInput]
 \lean{CommunicationComplexity.Functions.InnerProduct.xorInput_apply}
+\label{CommunicationComplexity.Functions.InnerProduct.xorInput_apply}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.xorInput}
 \difficulty{1}
@@ -113,6 +123,7 @@ $\mathrm{xorInput}(y, z)(i) = y_i \oplus z_i$.
 
 \begin{lemma}[xorInput equals zero iff inputs are equal]
 \lean{CommunicationComplexity.Functions.InnerProduct.xorInput_eq_zeroInput_iff}
+\label{CommunicationComplexity.Functions.InnerProduct.xorInput_eq_zeroInput_iff}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.xorInput, CommunicationComplexity.zeroInput}
 \difficulty{4}
@@ -121,6 +132,7 @@ $\mathrm{xorInput}(y, z) = \mathbf{0}$ if and only if $y = z$.
 
 \begin{lemma}[Walsh character multiplicativity under xor]
 \lean{CommunicationComplexity.Functions.InnerProduct.boolSign_innerProduct_mul_eq_xorInput}
+\label{CommunicationComplexity.Functions.InnerProduct.boolSign_innerProduct_mul_eq_xorInput}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.xorInput, CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_sum}
 \difficulty{4}
@@ -135,6 +147,7 @@ under coordinatewise XOR.
 
 \begin{lemma}[Summed Walsh orthogonality for inner product]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_mul_eq_indicator}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_mul_eq_indicator}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.boolSign_innerProduct_mul_eq_xorInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zeroInput_indicator, CommunicationComplexity.Functions.InnerProduct.xorInput_eq_zeroInput_iff, CommunicationComplexity.boolSign}
 \difficulty{3}
@@ -148,6 +161,7 @@ For all $y, z : \mathrm{BoolInput}\,n$,
 
 \begin{lemma}[Indicator function squared equals itself]
 \lean{CommunicationComplexity.Functions.InnerProduct.indicatorOne_sq}
+\label{CommunicationComplexity.Functions.InnerProduct.indicatorOne_sq}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 \difficulty{2}
@@ -157,6 +171,7 @@ indicator function satisfies $(\mathbf{1}_B(y))^2 = \mathbf{1}_B(y)$.
 
 \begin{lemma}[Indicator function is at most one]
 \lean{CommunicationComplexity.Functions.InnerProduct.indicatorOne_le_one}
+\label{CommunicationComplexity.Functions.InnerProduct.indicatorOne_le_one}
 \leanok
 \uses{CommunicationComplexity.BoolInput}
 \difficulty{2}
@@ -166,6 +181,7 @@ $\mathbf{1}_B(y) \le 1$.
 
 \begin{lemma}[Sum of squares equals sum over pairs]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_sq_eq_sum_prod}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_sq_eq_sum_prod}
 \leanok
 \difficulty{4}
 For finite types $\alpha$ and $\beta$ and $f : \alpha \to \beta \to \mathbb{R}$,
@@ -177,6 +193,7 @@ For finite types $\alpha$ and $\beta$ and $f : \alpha \to \beta \to \mathbb{R}$,
 
 \begin{lemma}[Scalar factoring in a double sum]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_mul_mul}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_mul_mul}
 \leanok
 \difficulty{3}
 For a finite type $\alpha$ and constants $a, b \in \mathbb{R}$ and functions
@@ -189,6 +206,7 @@ $f, g : \alpha \to \mathbb{R}$,
 
 \begin{lemma}[Diagonal reduction for ite sums]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_mul_ite_eq_diag}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_mul_ite_eq_diag}
 \leanok
 \difficulty{3}
 For a finite type $\alpha$ with decidable equality, a function $h : \alpha \to \alpha
@@ -203,6 +221,7 @@ where $[\![\cdot]\!]$ denotes the indicator of the condition.
 
 \begin{lemma}[Weighted orthogonality identity]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_of_orthogonal}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_of_orthogonal}
 \leanok
 \uses{CommunicationComplexity.Functions.InnerProduct.sum_mul_ite_eq_diag, CommunicationComplexity.Functions.InnerProduct.sum_mul_mul, CommunicationComplexity.Functions.InnerProduct.sum_sq_eq_sum_prod}
 \difficulty{4}
@@ -217,6 +236,7 @@ for a constant $c$.  Then for any weights $b : \beta \to \mathbb{R}$,
 
 \begin{lemma}[Parseval identity for inner product Walsh characters]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_boolSign_innerProduct}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_boolSign_innerProduct}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_mul_eq_indicator, CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_of_orthogonal, CommunicationComplexity.boolSign}
 \difficulty{3}
@@ -230,6 +250,7 @@ For any $b : \mathrm{BoolInput}\,n \to \mathbb{R}$,
 
 \begin{lemma}[Second moment of indicator-weighted Walsh sum is bounded]
 \lean{CommunicationComplexity.Functions.InnerProduct.sum_sq_indicator_mul_boolSign_innerProduct_le}
+\label{CommunicationComplexity.Functions.InnerProduct.sum_sq_indicator_mul_boolSign_innerProduct_le}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.indicatorOne_le_one, CommunicationComplexity.Functions.InnerProduct.indicatorOne_sq, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_boolSign_innerProduct, CommunicationComplexity.boolSign}
 \difficulty{4}
@@ -244,6 +265,7 @@ For any set $B \subseteq \mathrm{BoolInput}\,n$,
 
 \begin{lemma}[Integral second moment bound for discrepancy computation]
 \lean{CommunicationComplexity.Functions.InnerProduct.integral_sq_indicator_mul_boolSign_innerProduct_le}
+\label{CommunicationComplexity.Functions.InnerProduct.integral_sq_indicator_mul_boolSign_innerProduct_le}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.integral_eq_average_sum, CommunicationComplexity.Functions.InnerProduct.sum_sq_indicator_mul_boolSign_innerProduct_le, CommunicationComplexity.boolSign}
 \difficulty{4}
@@ -258,6 +280,7 @@ This is the key second-moment estimate used in the discrepancy bound.
 
 \begin{lemma}[Discrepancy of a rectangle as a product integral]
 \lean{CommunicationComplexity.Functions.InnerProduct.discrepancy_prod_eq_integral}
+\label{CommunicationComplexity.Functions.InnerProduct.discrepancy_prod_eq_integral}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
 \difficulty{5}
@@ -272,6 +295,7 @@ $A \times B$ for the inner product function equals
 
 \begin{lemma}[Squared discrepancy of a rectangle is at most $2^{-n}$]
 \lean{CommunicationComplexity.Functions.InnerProduct.sq_discrepancy_prod_le}
+\label{CommunicationComplexity.Functions.InnerProduct.sq_discrepancy_prod_le}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq, CommunicationComplexity.Functions.InnerProduct.discrepancy_prod_eq_integral, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.integral_sq_indicator_mul_boolSign_innerProduct_le, CommunicationComplexity.discrepancy}
 \difficulty{5}
@@ -283,6 +307,7 @@ For all $A, B \subseteq \mathrm{BoolInput}\,n$,
 
 \begin{theorem}[Rectangle discrepancy bound for inner product]
 \lean{CommunicationComplexity.Functions.InnerProduct.abs_discrepancy_le_of_isRectangle}
+\label{CommunicationComplexity.Functions.InnerProduct.abs_discrepancy_le_of_isRectangle}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.sq_discrepancy_prod_le, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \difficulty{3}
@@ -297,6 +322,7 @@ uniform distribution:
 
 \begin{theorem}[Public-coin lower bound for inner product]
 \lean{CommunicationComplexity.Functions.InnerProduct.publicCoin_le_communicationComplexity_of_hbound}
+\label{CommunicationComplexity.Functions.InnerProduct.publicCoin_le_communicationComplexity_of_hbound}
 \leanok
 \uses{CommunicationComplexity.Functions.InnerProduct.abs_discrepancy_le_of_isRectangle, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_discrepancy_bound}
 \difficulty{3}

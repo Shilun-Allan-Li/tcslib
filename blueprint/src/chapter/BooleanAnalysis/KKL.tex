@@ -18,6 +18,7 @@ balanced $\pm 1$-valued functions, and Friedgut's junta theorem.
 
 \begin{definition}[Noisy influence]
 \lean{KKL.noisyInfluence}
+\label{KKL.noisyInfluence}
 \leanok
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p009-b004,
@@ -34,6 +35,7 @@ the sum being taken over all $S \subseteq [n]$ containing $i$.
 
 \begin{definition}[Low-degree truncation]
 \lean{KKL.lowDegreePart}
+\label{KKL.lowDegreePart}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff}
 The \emph{low-degree part} of $f$ at level $k$ keeps only the Fourier coefficients
@@ -45,6 +47,7 @@ of degree at most $k$:
 
 \begin{definition}[High-degree part]
 \lean{KKL.highDegreePart}
+\label{KKL.highDegreePart}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff}
 The \emph{high-degree part} of $f$ at level $k$ keeps only the Fourier coefficients
@@ -56,6 +59,7 @@ of degree strictly greater than $k$:
 
 \begin{definition}[Influential coordinates]
 \lean{KKL.influentialCoords}
+\label{KKL.influentialCoords}
 \leanok
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p022-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence}
@@ -67,6 +71,7 @@ The set of $\tau$-\emph{influential} coordinates of $f$ is the finite set
 
 \begin{definition}[Junta]
 \lean{KKL.IsJunta}
+\label{KKL.IsJunta}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc}
 A function $g$ is a \emph{$J$-junta} if it depends only on the coordinates in $J$:
@@ -75,6 +80,7 @@ whenever $x$ and $y$ agree on every $i \in J$, we have $g(x) = g(y)$.
 
 \begin{definition}[Squared $L^2$ distance]
 \lean{KKL.l2DistSq}
+\label{KKL.l2DistSq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 The squared $L^2$ distance between two Boolean functions is
@@ -83,6 +89,7 @@ $\E\big[(f(x) - g(x))^2\big]$ under the uniform measure on the cube.
 
 \begin{lemma}[Noisy influence at $\rho = 1$]
 \lean{KKL.noisyInfluence_one}
+\label{KKL.noisyInfluence_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, KKL.noisyInfluence}
 At noise rate $\rho = 1$ the noisy influence coincides with the ordinary influence:
@@ -91,6 +98,7 @@ $\mathrm{Inf}_i^{1}[f] = \mathrm{Inf}_i[f]$.
 
 \begin{lemma}[Sum of noisy influences]
 \lean{KKL.sum_noisyInfluence}
+\label{KKL.sum_noisyInfluence}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, KKL.noisyInfluence}
 For every $\rho$,
@@ -102,6 +110,7 @@ For every $\rho$,
 
 \begin{lemma}[Total influence as a sum of influences]
 \lean{KKL.totalInfluence_eq_sum_influences}
+\label{KKL.totalInfluence_eq_sum_influences}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.totalInfluence}
 The total influence is the sum of the coordinate influences:
@@ -110,6 +119,7 @@ $I[f] = \sum_{i} \mathrm{Inf}_i[f]$.
 
 \begin{lemma}[Second moment of a $\pm 1$-valued function]
 \lean{KKL.expect_sq_pm_one}
+\label{KKL.expect_sq_pm_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.innerProduct_self_pm_one, BooleanAnalysis.isPmOne}
 If $f$ takes values in $\{-1, 1\}$, then $\E[f^2] = 1$.
@@ -117,6 +127,7 @@ If $f$ takes values in $\{-1, 1\}$, then $\E[f^2] = 1$.
 
 \begin{lemma}[Parseval in second-moment form]
 \lean{KKL.sum_fourier_sq_eq_expect_sq}
+\label{KKL.sum_fourier_sq_eq_expect_sq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
 For every Boolean function $f$,
@@ -125,6 +136,7 @@ $\sum_{S \subseteq [n]} \hat f(S)^2 = \E[f^2]$.
 
 \begin{lemma}[Low and high parts recombine]
 \lean{KKL.low_plus_high_eq}
+\label{KKL.low_plus_high_eq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, KKL.highDegreePart, KKL.lowDegreePart}
 For every $f$, every level $k$ and every point $x$ of the cube,
@@ -133,6 +145,7 @@ $f_{\le k}(x) + f_{>k}(x) = f(x)$.
 
 \begin{lemma}[Fourier coefficients of the low-degree part]
 \lean{KKL.fourierCoeff_lowDegreePart}
+\label{KKL.fourierCoeff_lowDegreePart}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight, KKL.lowDegreePart}
 The truncation acts as a projection on the Fourier side: for every $S$,
@@ -142,6 +155,7 @@ $\widehat{f_{\le k}}(S) = 0$ otherwise.
 
 \begin{lemma}[$L^2$ error of low-degree truncation]
 \lean{KKL.lowDegree_l2_error}
+\label{KKL.lowDegree_l2_error}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval, BooleanAnalysis.uniformWeight, KKL.fourierCoeff_lowDegreePart, KKL.highDegreePart, KKL.l2DistSq, KKL.lowDegreePart, KKL.low_plus_high_eq}
 The squared $L^2$ error of the degree-$k$ truncation is exactly the Fourier weight
@@ -153,6 +167,7 @@ above level $k$:
 
 \begin{lemma}[Fourier tail weight bound]
 \lean{KKL.tail_fourier_weight_bound}
+\label{KKL.tail_fourier_weight_bound}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p001-b005,
@@ -168,6 +183,7 @@ influence:
 
 \begin{lemma}[Low-degree approximation]
 \lean{KKL.lowDegree_approx}
+\label{KKL.lowDegree_approx}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p001-b005,
@@ -180,6 +196,7 @@ most $I[f]/k$.
 
 \begin{lemma}[Few influential coordinates]
 \lean{KKL.influential_coords_card}
+\label{KKL.influential_coords_card}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence, KKL.influentialCoords}
 For $\tau > 0$ the number of $\tau$-influential coordinates satisfies
@@ -188,6 +205,7 @@ $\abs{J_\tau(f)} \le I[f]/\tau$.
 
 \begin{lemma}[Low-degree part is close to a junta on the influential coordinates]
 \lean{KKL.lowDegreePart_depends_on_influential}
+\label{KKL.lowDegreePart_depends_on_influential}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval, BooleanAnalysis.uniformWeight, KKL.IsJunta, KKL.influentialCoords, KKL.l2DistSq, KKL.lowDegreePart}
 For every $f$, every level $k$ and every $\tau > 0$ there is a function $g$ that is a
@@ -197,6 +215,7 @@ $\E\big[(f_{\le k} - g)^2\big] \le n\tau$.
 
 \begin{lemma}[Noisy influence is dominated by influence]
 \lean{KKL.noisyInfluence_le_influence}
+\label{KKL.noisyInfluence_le_influence}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, KKL.noisyInfluence}
 For $0 \le \rho \le 1$ we have
@@ -205,6 +224,7 @@ $\mathrm{Inf}_i^{\rho}[f] \le \mathrm{Inf}_i[f]$ for every coordinate $i$.
 
 \begin{lemma}[Noisy influence bound for $\pm 1$-valued functions]
 \lean{KKL.noisyInfluence_power_bound}
+\label{KKL.noisyInfluence_power_bound}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.isPmOne, KKL.noisyInfluence, KKL.noisyInfluence_le_influence}
 For a $\pm 1$-valued $f$ and $0 < \rho \le 1$, the noisy influence of any coordinate
@@ -214,6 +234,7 @@ $\mathrm{Inf}_i^{\rho}[f] \le \mathrm{Inf}_i[f]$.
 
 \begin{lemma}[Cauchy--Schwarz for influences]
 \lean{KKL.cauchy_schwarz_influences}
+\label{KKL.cauchy_schwarz_influences}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.totalInfluence}
 The total influence obeys
@@ -224,6 +245,7 @@ The total influence obeys
 
 \begin{lemma}[Maximum influence from the sum of squares]
 \lean{KKL.max_influence_from_sum_sq}
+\label{KKL.max_influence_from_sum_sq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence}
 If $I[f] > 0$, then some coordinate $i$ satisfies
@@ -234,6 +256,7 @@ If $I[f] > 0$, then some coordinate $i$ satisfies
 
 \begin{theorem}[Averaging form of KKL]
 \lean{KKL.KKL_trivial}
+\label{KKL.KKL_trivial}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.max_influence_lower_bound, BooleanAnalysis.totalInfluence}
 For $n > 0$ there exists a coordinate $i$ with
@@ -242,6 +265,7 @@ $\mathrm{Inf}_i[f] \ge I[f]/n$, the trivial averaging bound.
 
 \begin{definition}[Noisy total influence]
 \lean{KKL.noisyTotalInfluence}
+\label{KKL.noisyTotalInfluence}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff}
 The \emph{noisy total influence} at rate $\rho$ is
@@ -252,6 +276,7 @@ The \emph{noisy total influence} at rate $\rho$ is
 
 \begin{theorem}[KKL theorem for balanced functions]
 \lean{KKL.KKL_balanced}
+\label{KKL.KKL_balanced}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p012-b002,
@@ -275,6 +300,7 @@ i.e.\ $\E[f] = 0$, with $n \ge 2$. Then some coordinate $i$ has
 
 \begin{theorem}[Friedgut's junta theorem]
 \lean{KKL.friedgut_junta}
+\label{KKL.friedgut_junta}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p013-b001}
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
@@ -292,6 +318,7 @@ $\E\big[(f - g)^2\big] \le \varepsilon$.
 
 \begin{lemma}[Balanced $\pm 1$-valued functions have total influence at least one]
 \lean{KKL.balanced_totalInfluence_ge_one}
+\label{KKL.balanced_totalInfluence_ge_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourierCoeff_empty, BooleanAnalysis.isPmOne, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 If $f$ takes values in $\{-1,1\}$, $\E[f] = 0$ and $n > 0$, then $I[f] \ge 1$.
@@ -299,6 +326,7 @@ If $f$ takes values in $\{-1,1\}$, $\E[f] = 0$ and $n > 0$, then $I[f] \ge 1$.
 
 \begin{lemma}[Nonnegativity of the influence entropy]
 \lean{KKL.influence_entropy_nonneg}
+\label{KKL.influence_entropy_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence}
 If $I[f] > 0$, then the entropy-like quantity attached to the influence distribution

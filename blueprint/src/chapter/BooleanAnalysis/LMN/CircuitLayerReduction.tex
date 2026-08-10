@@ -13,6 +13,7 @@ two-stage argument to the children of the root gate.
 
 \begin{definition}[Composed restriction parameter]
 \lean{LMN.composedDelta}
+\label{LMN.composedDelta}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b003}
 \statementsource{switching-lemma}{
@@ -28,6 +29,7 @@ restriction parameter is
 
 \begin{lemma}[Positivity of the composed parameter]
 \lean{LMN.composedDelta_pos}
+\label{LMN.composedDelta_pos}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{2}
@@ -37,6 +39,7 @@ positive.
 
 \begin{lemma}[The composed parameter is at most one]
 \lean{LMN.composedDelta_le_one}
+\label{LMN.composedDelta_le_one}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{3}
@@ -46,6 +49,7 @@ $\mathrm{composedDelta}(w,l,d)\le 1$.
 
 \begin{lemma}[Recursive step factorization (left)]
 \lean{LMN.composedDelta_step}
+\label{LMN.composedDelta_step}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{4}
@@ -57,6 +61,7 @@ For natural numbers $w,l$ and depth $d\ge 3$,
 
 \begin{lemma}[Recursive step factorization (right)]
 \lean{LMN.composedDelta_step_right}
+\label{LMN.composedDelta_step_right}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{4}
@@ -68,6 +73,7 @@ For $d\ge 3$ and $l>0$, the composed parameter factors as the $(d-1)$ case times
 
 \begin{definition}[Layer-2 data]
 \lean{LMN.Layer2Data}
+\label{LMN.Layer2Data}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p004-b002}
 \uses{DNF, DNF.width}
@@ -79,6 +85,7 @@ each term of each gate distinct literals have distinct variables.
 
 \begin{theorem}[One-step switching for layer-2 data]
 \lean{LMN.normalform_one_step_switching}
+\label{LMN.normalform_one_step_switching}
 \leanok
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -102,6 +109,7 @@ than $l$ is at most
 
 \begin{theorem}[One-step CNF replaceability for layer-2 data]
 \lean{LMN.normalform_one_step_cnf_replaceability}
+\label{LMN.normalform_one_step_cnf_replaceability}
 \leanok
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -123,6 +131,7 @@ some width-$l$ CNF is at most
 
 \begin{theorem}[Aggregating per-layer bounds]
 \lean{LMN.full_iterative_bound}
+\label{LMN.full_iterative_bound}
 \leanok
 \uses{LMN.multi_stage_failure_bound}
 \difficulty{1}
@@ -133,6 +142,7 @@ then the total $\sum_i \mathrm{per\_layer}(i) + \mathrm{final}$ is at most $s\cd
 
 \begin{lemma}[Restriction commutes with restriction composition]
 \lean{LMN.restrictFn_composeRestr'}
+\label{LMN.restrictFn_composeRestr'}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn}
 \difficulty{2}
@@ -146,6 +156,7 @@ restriction equals restricting by $\rho_1$ and then by $\rho_2$:
 
 \begin{theorem}[Two-stage probability bound]
 \lean{LMN.two_stage_bound'}
+\label{LMN.two_stage_bound'}
 \leanok
 \uses{LMN.composeRestr, LMN.restriction_compose_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{6}
@@ -159,6 +170,7 @@ $\Pr_{p_2}[E(\mathrm{composeRestr}\,\rho_1\,\rho_2)]\le\beta$, then
 
 \begin{lemma}[Monotonicity in the depth threshold]
 \lean{LMN.bernoulliRestrProb_dtDepth_mono}
+\label{LMN.bernoulliRestrProb_dtDepth_mono}
 \leanok
 \uses{LMN.bernoulliRestrProb_mono, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
@@ -169,6 +181,7 @@ $l_1$.
 
 \begin{lemma}[Congruence under pointwise-equal functions]
 \lean{LMN.bernoulliRestrProb_congr_fn'}
+\label{LMN.bernoulliRestrProb_congr_fn'}
 \leanok
 \uses{SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
@@ -178,6 +191,7 @@ depth $t$ equals the corresponding probability for $g$.
 
 \begin{lemma}[Switching bound for depth-2 circuits]
 \lean{LMN.depth2_circuit_switching_bound}
+\label{LMN.depth2_circuit_switching_bound}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \statementsource{switching-lemma}{
@@ -199,6 +213,7 @@ then for a Bernoulli parameter $p$ with $0<p\le 1/(40w)$ and $p\le 1$,
 
 \begin{lemma}[Inductive base case: depth-2 bound]
 \lean{LMN.circuit_reduction_ind_base}
+\label{LMN.circuit_reduction_ind_base}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b003,
@@ -222,6 +237,7 @@ restriction parameter $\mathrm{composedDelta}(w,l,2)$,
 
 \begin{lemma}[Union bound over a list of circuits]
 \lean{LMN.bernoulliRestrProb_list_union_bound}
+\label{LMN.bernoulliRestrProb_list_union_bound}
 \leanok
 \uses{BoolCircuit.Circuit, LMN.bernoulliRestrProb_union_bound_fin, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
 \difficulty{4}
@@ -232,6 +248,7 @@ folded sum of the per-circuit probabilities $\sum_{c\in \mathit{cs}}\Pr_{p}[\mat
 
 \begin{lemma}[Inductive step: depth $d\ge 3$]
 \lean{LMN.circuit_reduction_ind_step}
+\label{LMN.circuit_reduction_ind_step}
 \leanok
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -256,6 +273,7 @@ size at most $s$, and fan-in at most $w$ satisfies, under $\mathrm{composedDelta
 
 \begin{theorem}[Iterative reduction bound (tight form)]
 \lean{LMN.circuit_reduction_ind}
+\label{LMN.circuit_reduction_ind}
 \leanok
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -281,6 +299,7 @@ $\mathrm{composedDelta}(w,l,d)$,
 
 \begin{theorem}[Iterative reduction bound (relaxed form)]
 \lean{LMN.circuit_reduction_aux}
+\label{LMN.circuit_reduction_aux}
 \leanok
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -305,6 +324,7 @@ the parameter $\mathrm{composedDelta}(w,l,d)$,
 
 \begin{theorem}[Circuit reduction core bound]
 \lean{LMN.circuit_reduction_core}
+\label{LMN.circuit_reduction_core}
 \leanok
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,

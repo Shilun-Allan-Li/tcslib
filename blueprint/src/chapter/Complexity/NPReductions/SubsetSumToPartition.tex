@@ -15,6 +15,7 @@ subtraction on $\mathbb{N}$ truncates at $0$.
 
 \begin{definition}[Subset Sum problem]
 \lean{SubsetSumToPartition.SubsetSum}
+\label{SubsetSumToPartition.SubsetSum}
 \leanok
 Given a weight function $w : U \to \mathbb{N}$ on a finite type $U$ and a target
 $T \in \mathbb{N}$, the predicate asserts that some subset $S \subseteq U$ has total weight
@@ -23,6 +24,7 @@ exactly $T$, i.e.\ $\exists S,\ \sum_{a \in S} w(a) = T$.
 
 \begin{definition}[Partition problem]
 \lean{SubsetSumToPartition.Partition}
+\label{SubsetSumToPartition.Partition}
 \leanok
 Given a weight function $v : U \to \mathbb{N}$ on a finite type $U$, the predicate asserts
 that some subset $S \subseteq U$ has the same total weight as its complement, i.e.\
@@ -31,6 +33,7 @@ $\exists S,\ \sum_{b \in S} v(b) = \sum_{b \in S^{c}} v(b)$.
 
 \begin{definition}[Reduction weight function]
 \lean{SubsetSumToPartition.partitionWeight}
+\label{SubsetSumToPartition.partitionWeight}
 \leanok
 The weight function on the augmented universe $U \oplus \mathrm{Bool}$ built from a Subset
 Sum instance $(w, T)$. Writing $W = \sum_{a} w(a)$, it sends the original item
@@ -40,6 +43,7 @@ $2W - T$, and the second dummy item $\mathrm{inr}\,\mathsf{false}$ to $W + T$.
 
 \begin{theorem}[Completeness of the reduction]
 \lean{SubsetSumToPartition.SubsetSumToPartitionCompleteness}
+\label{SubsetSumToPartition.SubsetSumToPartitionCompleteness}
 \leanok
 \uses{SubsetSumToPartition.Partition, SubsetSumToPartition.SubsetSum, SubsetSumToPartition.partitionWeight}
 Let $w : U \to \mathbb{N}$ and $T \in \mathbb{N}$ satisfy $T \le \sum_{a} w(a)$. If the
@@ -50,6 +54,7 @@ has a solution.
 
 \begin{theorem}[Soundness of the reduction]
 \lean{SubsetSumToPartition.SubsetSumToPartitionSoundness}
+\label{SubsetSumToPartition.SubsetSumToPartitionSoundness}
 \leanok
 \uses{SubsetSumToPartition.Partition, SubsetSumToPartition.SubsetSum, SubsetSumToPartition.partitionWeight}
 Let $w : U \to \mathbb{N}$ and $T \in \mathbb{N}$ satisfy $T \le \sum_{a} w(a)$. If the
@@ -60,6 +65,7 @@ solution, then the original Subset Sum instance $(w, T)$ has a solution.
 
 \begin{theorem}[Subset Sum reduces to Partition]
 \lean{SubsetSumToPartition.SubsetSumToPartitionReduction}
+\label{SubsetSumToPartition.SubsetSumToPartitionReduction}
 \leanok
 \uses{SubsetSumToPartition.Partition, SubsetSumToPartition.SubsetSum, SubsetSumToPartition.SubsetSumToPartitionCompleteness, SubsetSumToPartition.SubsetSumToPartitionSoundness, SubsetSumToPartition.partitionWeight}
 For $w : U \to \mathbb{N}$ and $T \in \mathbb{N}$ with $T \le \sum_{a} w(a)$, the Subset

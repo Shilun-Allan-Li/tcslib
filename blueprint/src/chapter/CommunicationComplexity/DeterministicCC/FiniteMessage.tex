@@ -14,6 +14,7 @@ bits.
 
 \begin{definition}[Finite-message protocol]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 \leanok
 A generalized deterministic two-party communication protocol over input types $X$, $Y$ and
 output type $\alpha$.  At each step a player sends an element of an arbitrary finite nonempty
@@ -26,6 +27,7 @@ where a $\beta$-valued message costs $\lceil \log_2 |\beta| \rceil$ bits.
 
 \begin{definition}[Protocol execution]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 Given a finite-message protocol $p$ and inputs $x : X$, $y : Y$, \texttt{run} executes $p$
@@ -36,6 +38,7 @@ returns the stored value.
 
 \begin{definition}[Communication complexity of a finite-message protocol]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 The worst-case communication cost of a finite-message protocol, measured in bits.  An
@@ -46,6 +49,7 @@ i.e.\ $\lceil \log_2 |\beta| \rceil + \sup_{b \in \beta} \mathrm{complexity}(P\,
 
 \begin{definition}[Complete binary tree for Alice queries]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
 An auxiliary construction: given $d$ binary query functions $\mathrm{query}_i : X \to
@@ -56,6 +60,7 @@ from Alice in sequence and then runs $Q$ on the collected bit pattern.
 
 \begin{theorem}[Run of complete Alice tree]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{4}
@@ -67,6 +72,7 @@ $(\mathrm{completeTreeAlice}\,d\,\mathrm{query}\,Q).\mathrm{run}\,x\,y =
 
 \begin{theorem}[Complexity of complete Alice tree]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{6}
@@ -77,6 +83,7 @@ of all leaf protocols: $(\mathrm{completeTreeAlice}\,d\,\mathrm{query}\,Q).\math
 
 \begin{theorem}[Binary encoding of Alice's finite-type message]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{7}
@@ -90,6 +97,7 @@ encoding of $\beta$.
 
 \begin{theorem}[Existence of binary simulation]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
 \difficulty{5}
@@ -100,6 +108,7 @@ This is the key existence result underlying \texttt{toProtocol}.
 
 \begin{definition}[Conversion to binary protocol]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol}
 A noncomputable function that converts a finite-message protocol $p$ into a binary protocol
@@ -109,6 +118,7 @@ encoding each $\beta$-valued message as $\lceil \log_2 |\beta| \rceil$ bits.
 
 \begin{theorem}[Conversion preserves run behavior]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
@@ -118,6 +128,7 @@ $(\texttt{toProtocol}\,p).\mathrm{run} = p.\mathrm{run}$ as functions $X \to Y \
 
 \begin{theorem}[Conversion preserves complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{1}
@@ -127,6 +138,7 @@ $(\texttt{toProtocol}\,p).\mathrm{complexity} = p.\mathrm{complexity}$.
 
 \begin{definition}[Embedding binary protocols as finite-message protocols]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.Protocol}
 Embeds a binary protocol into the generalized finite-message framework by treating each
@@ -136,6 +148,7 @@ Boolean message as an element of $\beta = \mathrm{Bool}$, giving a
 
 \begin{theorem}[Embedding preserves run behavior]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{2}
@@ -145,6 +158,7 @@ $(\texttt{ofProtocol}\,p).\mathrm{run}\,x\,y = p.\mathrm{run}\,x\,y$.
 
 \begin{theorem}[Embedding preserves complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{3}
@@ -155,6 +169,7 @@ $\lceil \log_2 |\mathrm{Bool}| \rceil = 1$.
 
 \begin{theorem}[Every binary protocol embeds into the generalized model]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
@@ -166,6 +181,7 @@ complexity.
 
 \begin{definition}[Pullback along input maps]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 Given maps $f_X : X' \to X$ and $f_Y : Y' \to Y$, the pullback
@@ -176,6 +192,7 @@ tree structure unchanged.
 
 \begin{theorem}[Pullback run behavior]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
 \difficulty{2}
@@ -185,6 +202,7 @@ $(p.\mathrm{comap}\,f_X\,f_Y).\mathrm{run}\,x'\,y' = p.\mathrm{run}\,(f_X\,x')\,
 
 \begin{theorem}[Pullback preserves complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
 \difficulty{2}

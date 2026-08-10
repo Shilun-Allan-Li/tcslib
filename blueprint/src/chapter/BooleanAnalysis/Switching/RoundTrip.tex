@@ -13,6 +13,7 @@ restrictions. The intermediate lemmas track invariants on the encoder/decoder st
 
 \begin{lemma}[Free variable preserved by clause processing]
 \lean{SwitchingLemma2.pcl_none_implies_rho_free}
+\label{SwitchingLemma2.pcl_none_implies_rho_free}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{3}
@@ -23,6 +24,7 @@ i.e.\ $\rho_0\,v = \texttt{none}$.
 
 \begin{lemma}[First non-killed clause preserved under encoding]
 \lean{SwitchingLemma2.find_clause_preserved_in_encode}
+\label{SwitchingLemma2.find_clause_preserved_in_encode}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_not_kills_first_clause, SwitchingLemma2.first_clause_preserved, Term}
 \difficulty{4}
@@ -35,6 +37,7 @@ the decoder restriction also finds $t_{\mathrm{clause}}$ as its first non-killed
 
 \begin{lemma}[Filtered free-variable literals stay in the index list]
 \lean{SwitchingLemma2.mem_filter_freeVars_zipIdx}
+\label{SwitchingLemma2.mem_filter_freeVars_zipIdx}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{3}
@@ -46,6 +49,7 @@ i.e.\ $\rho_0\,(p.1.\mathrm{var}) = \texttt{none}$.
 
 \begin{lemma}[No aux entry targets a still-free variable]
 \lean{SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+\label{SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{4}
@@ -57,6 +61,7 @@ entry $e$, dropping $e.1$ literals of $t$ to a head literal $l$ gives $l.\mathrm
 
 \begin{lemma}[Encoder first component agrees with recursive step]
 \lean{SwitchingLemma2.encode_go_fst_eq_rec}
+\label{SwitchingLemma2.encode_go_fst_eq_rec}
 \leanok
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits, Term}
 \difficulty{4}
@@ -69,6 +74,7 @@ processed state $\mathrm{pcl} = \mathrm{processClauseLits}\,(\mathit{fl}::\mathi
 
 \begin{lemma}[Round-trip invariant for $\sigma$]
 \lean{SwitchingLemma2.roundtrip_inv_hC'}
+\label{SwitchingLemma2.roundtrip_inv_hC'}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_sigma_stable, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_ne_nonfree, Term}
 \difficulty{5}
@@ -82,6 +88,7 @@ is set.
 
 \begin{lemma}[Round-trip invariant for $\rho_0$]
 \lean{SwitchingLemma2.roundtrip_inv_hD'}
+\label{SwitchingLemma2.roundtrip_inv_hD'}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_rho_stable, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set, SwitchingLemma2.processClauseLits_rho_stable, Term}
 \difficulty{5}
@@ -95,8 +102,9 @@ variable $v$ where that restriction is set.
 
 \begin{lemma}[Generalized go-level round-trip]
 \lean{SwitchingLemma2.go_roundtrip_gen}
+\label{SwitchingLemma2.go_roundtrip_gen}
 \leanok
-\uses{DNF, DNF.width, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_acc, SwitchingLemma2.encode_go_fst_sigma_indep_at_free, SwitchingLemma2.encode_go_snd_sigma_indep, SwitchingLemma2.find_clause_preserved_in_encode, SwitchingLemma2.foldl_rho_stable, SwitchingLemma2.foldl_sigma_stable, SwitchingLemma2.go_roundtrip, SwitchingLemma2.mem_filter_freeVars_zipIdx, SwitchingLemma2.pcl_none_implies_rho_free, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none, SwitchingLemma2.processEntries_of_processClauseLits, SwitchingLemma2.roundtrip_base, SwitchingLemma2.roundtrip_inv_hC', SwitchingLemma2.roundtrip_inv_hD', SwitchingLemma2.term_length_le_width}
+\uses{DNF, DNF.width, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_acc, SwitchingLemma2.encode_go_fst_sigma_indep_at_free, SwitchingLemma2.encode_go_snd_sigma_indep, SwitchingLemma2.find_clause_preserved_in_encode, SwitchingLemma2.foldl_rho_stable, SwitchingLemma2.foldl_sigma_stable, SwitchingLemma2.mem_filter_freeVars_zipIdx, SwitchingLemma2.pcl_none_implies_rho_free, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none, SwitchingLemma2.processEntries_of_processClauseLits, SwitchingLemma2.roundtrip_base, SwitchingLemma2.roundtrip_inv_hC', SwitchingLemma2.roundtrip_inv_hD', SwitchingLemma2.term_length_le_width}
 \difficulty{7}
 The generalized round-trip statement: for a DNF $f$ of width at most $w$ with distinct
 variables per term, given decoder states $\sigma_{\mathrm{dec}}$ and $\rho_{0,\mathrm{dec}}$
@@ -107,6 +115,7 @@ original $\sigma$. This is the inductive core from which the closed round trip f
 
 \begin{lemma}[Go-level round-trip]
 \lean{SwitchingLemma2.go_roundtrip}
+\label{SwitchingLemma2.go_roundtrip}
 \leanok
 \uses{DNF, DNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.go_roundtrip_gen}
 \difficulty{2}
@@ -118,6 +127,7 @@ $\rho$.
 
 \begin{lemma}[Decode of encode recovers the restriction]
 \lean{SwitchingLemma2.razborovDecode_encode}
+\label{SwitchingLemma2.razborovDecode_encode}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.go_roundtrip, SwitchingLemma2.razborovDecode, SwitchingLemma2.razborovEncode}
 \difficulty{2}
@@ -128,6 +138,7 @@ $\mathrm{razborovDecode}\ f\ w\ (\mathrm{razborovEncode}\ f\ w\ d\ \rho) = \rho$
 
 \begin{theorem}[Injectivity of the Razborov encoding]
 \lean{SwitchingLemma2.razborovEncode_injective}
+\label{SwitchingLemma2.razborovEncode_injective}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.razborovDecode_encode, SwitchingLemma2.razborovEncode}
 \difficulty{2}

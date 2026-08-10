@@ -13,6 +13,7 @@ and assignment on which the XOR polynomial already reaches $2\varepsilon$.
 
 \begin{theorem}[High-value observation for a normal form LDC]
 \lean{high_value_observation}
+\label{high_value_observation}
 \leanok
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b010}
 \uses{IsPMOne, NormalLDC, NormalLDC.totalConstraints, NormalLDC.xorPoly, assignment_prod}
@@ -25,7 +26,6 @@ polynomial of $L$ satisfies
 \[
   \psi_b(x) \;\ge\; 2\varepsilon .
 \]
-
 
 \emph{Placeholder.}  The paper's Lemma 5.1 bounds the \emph{expectation}
 $\E_b[\mathrm{val}(\psi_b)] \ge 2\varepsilon$; the Lean statement asserts only that \emph{some}

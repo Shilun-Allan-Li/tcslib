@@ -12,6 +12,7 @@ complexity of $f$ is at least $\lceil \log_2 \mathrm{rank}(M_f) \rceil$.
 
 \begin{definition}[Boolean function matrix]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
+\label{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
 \leanok
 Given a Boolean function $f : X \to Y \to \mathrm{Bool}$, the matrix
 $M_f \in \mathbb{R}^{X \times Y}$ is defined by $(M_f)_{x,y} = 1$ if
@@ -20,6 +21,7 @@ $f\,x\,y = \mathrm{true}$ and $(M_f)_{x,y} = 0$ otherwise.
 
 \begin{definition}[Rank of a Boolean function]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionRank}
+\label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
 The rank of a Boolean function $f : X \to Y \to \mathrm{Bool}$ is the
@@ -29,6 +31,7 @@ $\mathrm{rank}(f) = \mathrm{rank}_{\mathbb{R}}(M_f) \in \mathbb{N}$.
 
 \begin{definition}[Rectangle indicator matrix]
 \lean{CommunicationComplexity.Deterministic.Rank.rectMatrix}
+\label{CommunicationComplexity.Deterministic.Rank.rectMatrix}
 \leanok
 For a subset $R \subseteq X \times Y$, the matrix $M_R \in \mathbb{R}^{X \times Y}$
 is defined by $(M_R)_{x,y} = 1$ if $(x,y) \in R$ and $(M_R)_{x,y} = 0$ otherwise.
@@ -36,6 +39,7 @@ is defined by $(M_R)_{x,y} = 1$ if $(x,y) \in R$ and $(M_R)_{x,y} = 0$ otherwise
 
 \begin{theorem}[Rectangle matrix has rank at most one]
 \lean{CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
+\label{CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
@@ -46,6 +50,7 @@ This follows because $M_R$ is an outer product of the indicator vectors of $A$ a
 
 \begin{theorem}[Rank is subadditive for two matrices]
 \lean{Matrix.rank_add_le}
+\label{Matrix.rank_add_le}
 \leanok
 \difficulty{3}
 For any two matrices $A, B \in \mathbb{R}^{X \times Y}$,
@@ -56,6 +61,7 @@ For any two matrices $A, B \in \mathbb{R}^{X \times Y}$,
 
 \begin{theorem}[Rank is subadditive over finite sums]
 \lean{Matrix.rank_sum_le}
+\label{Matrix.rank_sum_le}
 \leanok
 \uses{Matrix.rank_add_le}
 \difficulty{4}
@@ -68,6 +74,7 @@ of matrices $A : \iota \to \mathbb{R}^{X \times Y}$,
 
 \begin{theorem}[Rank bounded by partition size]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard}
+\label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix, CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one, CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_part_unique, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq, Matrix.rank_sum_le}
 \difficulty{6}
@@ -81,6 +88,7 @@ with the fact that each such rectangle matrix has rank at most $1$.
 
 \begin{theorem}[Rank bounded by $2^n$ when complexity is at most $n$]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le}
+\label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
 \difficulty{3}
@@ -90,6 +98,7 @@ is at most $n \in \mathbb{N}$, then $\mathrm{rank}(f) \le 2^n$.
 
 \begin{theorem}[Log-rank lower bound]
 \lean{CommunicationComplexity.Deterministic.Rank.clog_boolFunctionRank_le_communicationComplexity}
+\label{CommunicationComplexity.Deterministic.Rank.clog_boolFunctionRank_le_communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le, CommunicationComplexity.Deterministic.communicationComplexity}
 \difficulty{4}

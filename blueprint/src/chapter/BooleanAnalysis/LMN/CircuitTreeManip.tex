@@ -14,6 +14,7 @@ representable by a width-$l$ DNF and CNF.
 
 \begin{definition}[DNF to dual CNF]
 \lean{LMN.dnfToDualCNF}
+\label{LMN.dnfToDualCNF}
 \leanok
 \uses{CNF, DNF, Literal.flipNeg}
 The De~Morgan dual of a DNF $\varphi$ on $n$ variables, obtained by negating every
@@ -23,6 +24,7 @@ $\neg\big(\bigvee_i \bigwedge_j \ell_{ij}\big) = \bigwedge_i \bigvee_j \neg\ell_
 
 \begin{lemma}[Dual CNF preserves width]
 \lean{LMN.dnfToDualCNF_width}
+\label{LMN.dnfToDualCNF_width}
 \leanok
 \uses{CNF.width, DNF, DNF.width, LMN.dnfToDualCNF, Term.width}
 \difficulty{3}
@@ -33,6 +35,7 @@ per clause) unchanged.
 
 \begin{lemma}[Dual CNF negates the evaluation]
 \lean{LMN.dnfToDualCNF_eval}
+\label{LMN.dnfToDualCNF_eval}
 \leanok
 \uses{CNF.eval, CNF.evalClause, DNF, DNF.eval, LMN.dnfToDualCNF, Literal.flipNeg_eval, Term.eval}
 \difficulty{5}
@@ -43,6 +46,7 @@ negation of the original DNF: $\mathrm{CNF.eval}\,(\mathrm{dnfToDualCNF}\,\varph
 
 \begin{lemma}[Depth $\geq 1$ forces a node]
 \lean{LMN.Circuit.exists_node_of_depth_ge_one}
+\label{LMN.Circuit.exists_node_of_depth_ge_one}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
 \difficulty{4}
@@ -52,6 +56,7 @@ flag $\mathit{isAnd}$ and a child list $cs$ with $c = \mathrm{Circuit.node}\,\ma
 
 \begin{lemma}[Depth-1 node has depth-0 children]
 \lean{LMN.Circuit.depth1_children_are_lits}
+\label{LMN.Circuit.depth1_children_are_lits}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
 \difficulty{5}
@@ -61,6 +66,7 @@ child $c \in cs$ has depth $0$.
 
 \begin{lemma}[Depth-0 circuit is a literal]
 \lean{LMN.Circuit.depth0_is_lit}
+\label{LMN.Circuit.depth0_is_lit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
 \difficulty{4}
@@ -70,6 +76,7 @@ with $c = \mathrm{Circuit.lit}\,lr$.
 
 \begin{lemma}[Depth-1 node has literal children]
 \lean{LMN.Circuit.depth1_all_lits}
+\label{LMN.Circuit.depth1_all_lits}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit, LMN.Circuit.depth0_is_lit, LMN.Circuit.depth1_children_are_lits}
 \difficulty{2}
@@ -79,6 +86,7 @@ child $c \in cs$ is a literal, i.e.\ $c = \mathrm{Circuit.lit}\,lr$ for some $lr
 
 \begin{definition}[Child function under gate substitution]
 \lean{LMN.childFunction}
+\label{LMN.childFunction}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval}
 The Boolean function on $\mathrm{Fin}\,n \to \mathrm{Bool}$ computed by a subcircuit
@@ -88,6 +96,7 @@ $\mathrm{gates}\,i$, namely $x \mapsto c_{\mathrm{sub}}.\mathrm{eval}\,(\lambda 
 
 \begin{lemma}[Switched gates have DNF and CNF]
 \lean{LMN.switched_gates_have_dnf_cnf}
+\label{LMN.switched_gates_have_dnf_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
@@ -100,6 +109,7 @@ representation, each computing the same function.
 
 \begin{lemma}[OR of literal children has a width-$l$ DNF]
 \lean{LMN.or_of_lit_children_dnf}
+\label{LMN.or_of_lit_children_dnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width}
 \difficulty{6}
@@ -111,6 +121,7 @@ $\varphi$ with $\varphi.\mathrm{eval}\,x = (\mathrm{Circuit.node}\,\mathrm{false
 
 \begin{lemma}[AND of literal children has a width-$l$ CNF]
 \lean{LMN.and_of_lit_children_cnf}
+\label{LMN.and_of_lit_children_cnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_and_of_cnfs, LMN.dnfToDualCNF, LMN.dnfToDualCNF_eval, LMN.dnfToDualCNF_width}
 \difficulty{6}
@@ -122,6 +133,7 @@ $\mathrm{CNF.eval}\,\psi\,x = (\mathrm{Circuit.node}\,\mathrm{true}\,cs).\mathrm
 
 \begin{lemma}[Absorb a depth-1 top circuit]
 \lean{LMN.absorbOneLevel_depth1}
+\label{LMN.absorbOneLevel_depth1}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.depth1_all_lits, LMN.Circuit.exists_node_of_depth_ge_one, LMN.Layer2Data, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width}
 \difficulty{7}
@@ -133,6 +145,7 @@ $0$ over it computing the same function as $c_{\mathrm{top}}$ over the original 
 
 \begin{lemma}[Depth-$\leq 1$ child has a signed width-$l$ DNF]
 \lean{LMN.child_depth_le1_has_signed_dnf}
+\label{LMN.child_depth_le1_has_signed_dnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.depth1_all_lits, LMN.Circuit.exists_node_of_depth_ge_one, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width}
 \difficulty{6}
@@ -146,6 +159,7 @@ are duplicate-free with no repeated variable.
 
 \begin{lemma}[Signed DNFs for a list of children]
 \lean{LMN.list_child_signed_dnfs}
+\label{LMN.list_child_signed_dnfs}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.child_depth_le1_has_signed_dnf}
 \difficulty{4}
@@ -158,6 +172,7 @@ $(cs.\mathrm{get}\,j).\mathrm{eval}\,(\lambda i,\ \mathrm{gates}\,i\,x)$ on ever
 
 \begin{lemma}[Build a node of signed literals]
 \lean{LMN.build_literal_circuit}
+\label{LMN.build_literal_circuit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval}
 \difficulty{5}
@@ -169,6 +184,7 @@ $\mathrm{Circuit.node}\,\mathit{isAnd}$ over the literals $\mathrm{Circuit.lit}\
 
 \begin{lemma}[Depth reduction for depth-1 circuits]
 \lean{LMN.exists_circuit_depth_reduction_depth1}
+\label{LMN.exists_circuit_depth_reduction_depth1}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.child_depth_le1_has_signed_dnf}
 \difficulty{2}
@@ -180,6 +196,7 @@ equals $c.\mathrm{eval}\,(\lambda i,\ \mathrm{gates}\,i\,x)$ for all $x$.
 
 \begin{lemma}[Depth reduction for depth-2 circuits]
 \lean{LMN.exists_circuit_depth_reduction_depth2}
+\label{LMN.exists_circuit_depth_reduction_depth2}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.exists_node_of_depth_ge_one, LMN.build_literal_circuit, LMN.list_child_signed_dnfs}
 \difficulty{7}
@@ -191,6 +208,7 @@ $c'$ compute the same function on every $x$.
 
 \begin{lemma}[Merge child reduction results]
 \lean{LMN.reduce_children}
+\label{LMN.reduce_children}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, DNF, DNF.eval, DNF.width}
 \difficulty{4}
@@ -203,6 +221,7 @@ of depth at most $\mathrm{bound}\,j$ that reproduce each child's function.
 
 \begin{lemma}[Node evaluation under finRange re-indexing]
 \lean{LMN.node_eval_eq_of_finRange_map}
+\label{LMN.node_eval_eq_of_finRange_map}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval}
 \difficulty{6}
@@ -214,6 +233,7 @@ for the same flag $\mathit{isAnd}$.
 
 \begin{lemma}[General circuit depth reduction]
 \lean{LMN.exists_circuit_depth_reduction}
+\label{LMN.exists_circuit_depth_reduction}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.exists_node_of_depth_ge_one, LMN.child_depth_le1_has_signed_dnf, LMN.exists_circuit_depth_reduction_depth1, LMN.exists_circuit_depth_reduction_depth2, LMN.node_eval_eq_of_finRange_map, LMN.reduce_children}
 \difficulty{7}
@@ -225,6 +245,7 @@ a circuit $c'$ of depth at most $\mathrm{depth}\,c - 1$ computing the same funct
 
 \begin{lemma}[Absorb a general top circuit (depth $\geq 2$)]
 \lean{LMN.absorbOneLevel_general}
+\label{LMN.absorbOneLevel_general}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.exists_circuit_depth_reduction}
 \difficulty{2}
@@ -236,6 +257,7 @@ of depth at most $\mathrm{depth}\,c_{\mathrm{top}} - 1$ computing the same funct
 
 \begin{lemma}[Absorb one level of the top circuit]
 \lean{LMN.absorbOneLevel}
+\label{LMN.absorbOneLevel}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.absorbOneLevel_depth1, LMN.absorbOneLevel_general}
 \difficulty{4}

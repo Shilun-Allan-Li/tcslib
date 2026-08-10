@@ -13,6 +13,7 @@ and derives the key Bernoulli monotonicity $\Pr_{p\cdot q}[\mathrm{dtDepth} > t]
 
 \begin{definition}[Restriction of a decision tree]
 \lean{LMN.dtRestrict}
+\label{LMN.dtRestrict}
 \leanok
 \uses{DecisionTree, SwitchingLemma2.Restriction}
 Given a decision tree $T$ and a partial assignment $\rho$, the restricted tree
@@ -22,6 +23,7 @@ is fixed by $\rho$ into the corresponding subtree, and keeping unrestricted bran
 
 \begin{theorem}[Restriction does not increase depth]
 \lean{LMN.dtRestrict_depth_le}
+\label{LMN.dtRestrict_depth_le}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, LMN.dtRestrict, SwitchingLemma2.Restriction}
 \difficulty{5}
@@ -31,6 +33,7 @@ satisfies $\mathrm{depth}(\mathrm{dtRestrict}\,T\,\rho) \le \mathrm{depth}(T)$.
 
 \begin{theorem}[Evaluation of a restricted tree]
 \lean{LMN.dtRestrict_eval}
+\label{LMN.dtRestrict_eval}
 \leanok
 \uses{DecisionTree, DecisionTree.eval, LMN.dtRestrict, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
 \difficulty{4}
@@ -41,6 +44,7 @@ where $\mathrm{extend}\,\rho\,x$ fills in the unset coordinates of $\rho$ using 
 
 \begin{theorem}[Decision-tree depth is monotone under restriction]
 \lean{LMN.dtDepth_restrictFn_le'}
+\label{LMN.dtDepth_restrictFn_le'}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, LMN.dtRestrict, LMN.dtRestrict_depth_le, LMN.dtRestrict_eval, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, buildFullDTree, buildFullDTree_depth, buildFullDTree_eval, dtDepth}
 \difficulty{5}
@@ -50,6 +54,7 @@ restricted function satisfies $\mathrm{dtDepth}(f|_\rho) \le \mathrm{dtDepth}(f)
 
 \begin{theorem}[Composing restrictions further decreases depth]
 \lean{LMN.dtDepth_composeRestr_le}
+\label{LMN.dtDepth_composeRestr_le}
 \leanok
 \uses{LMN.composeRestr, LMN.dtDepth_restrictFn_le', SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
@@ -60,6 +65,7 @@ $\mathrm{dtDepth}(f|_{\rho_1 \circ \rho_2}) \le \mathrm{dtDepth}(f|_{\rho_1})$.
 
 \begin{theorem}[Bernoulli depth-tail probability monotonicity]
 \lean{LMN.bernoulliRestrProb_dtDepth_compose_le}
+\label{LMN.bernoulliRestrProb_dtDepth_compose_le}
 \leanok
 \uses{LMN.composeRestr, LMN.dtDepth_composeRestr_le, LMN.restriction_compose_eq, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{6}

@@ -13,6 +13,7 @@ vanishes as $T \to \infty$ when $\eta = \sqrt{2 \ln N / T}$.
 
 \begin{definition}[Loss sequence]
 \lean{LossSeq}
+\label{LossSeq}
 \leanok
 A \emph{loss sequence} $\ell$ for $N$ experts over $T$ rounds is a function
 $\ell : \mathrm{Fin}\,T \to \mathrm{Fin}\,N \to \mathbb{R}$, i.e., at each round
@@ -22,6 +23,7 @@ whose values are intended to lie in $[0,1]$.
 
 \begin{definition}[Valid loss sequence]
 \lean{LossSeq.Valid}
+\label{LossSeq.Valid}
 \leanok
 \uses{LossSeq}
 A loss sequence $\ell$ is \emph{valid} if all individual losses are in $[0,1]$:
@@ -30,6 +32,7 @@ $\forall t\,i,\; 0 \le \ell_t(i) \le 1$.
 
 \begin{definition}[Cumulative loss]
 \lean{cumLoss}
+\label{cumLoss}
 \leanok
 \uses{LossSeq}
 The \emph{cumulative loss} of expert $i$ through the first $t$ rounds is
@@ -41,6 +44,7 @@ where the sum ranges over all rounds $s \in \mathrm{Fin}\,T$ with $s < t$.
 
 \begin{definition}[Hedge weight]
 \lean{hedgeWeight}
+\label{hedgeWeight}
 \leanok
 \uses{LossSeq, cumLoss}
 The \emph{unnormalized Hedge weight} of expert $i$ at time $t$ with learning
@@ -53,6 +57,7 @@ Experts with smaller cumulative loss receive larger weight.
 
 \begin{definition}[Potential]
 \lean{potential}
+\label{potential}
 \leanok
 \uses{LossSeq, hedgeWeight}
 The \emph{potential} (sum of unnormalized weights) at time $t$ is
@@ -65,6 +70,7 @@ expert's loss.
 
 \begin{definition}[Hedge distribution]
 \lean{hedgeDist}
+\label{hedgeDist}
 \leanok
 \uses{LossSeq, hedgeWeight, potential}
 The \emph{Hedge distribution} at round $t$ is the normalization of the weight
@@ -76,6 +82,7 @@ vector:
 
 \begin{definition}[Expected loss of Hedge]
 \lean{hedgeLoss}
+\label{hedgeLoss}
 \leanok
 \uses{LossSeq, hedgeDist}
 The \emph{expected loss} of the learner at round $t$ under the Hedge
@@ -87,6 +94,7 @@ distribution is
 
 \begin{definition}[Cumulative loss of Hedge]
 \lean{hedgeCumLoss}
+\label{hedgeCumLoss}
 \leanok
 \uses{LossSeq, hedgeLoss}
 The \emph{cumulative loss} of the Hedge algorithm over all $T$ rounds is
@@ -97,6 +105,7 @@ The \emph{cumulative loss} of the Hedge algorithm over all $T$ rounds is
 
 \begin{definition}[Best expert loss]
 \lean{bestExpertLoss}
+\label{bestExpertLoss}
 \leanok
 \uses{LossSeq, cumLoss}
 The \emph{best expert loss in hindsight} is the minimum cumulative loss
@@ -108,6 +117,7 @@ achieved by any single expert:
 
 \begin{definition}[Regret]
 \lean{regret}
+\label{regret}
 \leanok
 \uses{LossSeq, bestExpertLoss, hedgeCumLoss}
 The \emph{regret} of the Hedge algorithm is the excess cumulative loss over the
@@ -119,6 +129,7 @@ best expert in hindsight:
 
 \begin{lemma}[Potential at time zero]
 \lean{potential_zero}
+\label{potential_zero}
 \leanok
 \uses{LossSeq, cumLoss, hedgeWeight, potential}
 \difficulty{3}
@@ -128,6 +139,7 @@ the potential equals the number of experts: $W_0 = N$.
 
 \begin{lemma}[Positivity of weights]
 \lean{hedgeWeight_pos}
+\label{hedgeWeight_pos}
 \leanok
 \uses{LossSeq, hedgeWeight}
 \difficulty{1}
@@ -137,6 +149,7 @@ $w_t(i) = \exp(-\eta \cdot L_t(i))$ is strictly positive.
 
 \begin{lemma}[Positivity of the potential]
 \lean{potential_pos}
+\label{potential_pos}
 \leanok
 \uses{LossSeq, hedgeWeight_pos, potential}
 \difficulty{3}
@@ -147,6 +160,7 @@ set of $N \ge 1$ experts.
 
 \begin{lemma}[Exponential convexity bound]
 \lean{exp_neg_le_linear}
+\label{exp_neg_le_linear}
 \leanok
 \difficulty{4}
 For $\eta > 0$ and $x \in [0,1]$,
@@ -159,6 +173,7 @@ x\,e^{-\eta} + (1-x)\,e^{0}$.
 
 \begin{lemma}[Cumulative loss successor step]
 \lean{cumLoss_succ}
+\label{cumLoss_succ}
 \leanok
 \uses{LossSeq, cumLoss}
 \difficulty{4}
@@ -171,6 +186,7 @@ for every $t < T$ and expert $i$.
 
 \begin{lemma}[Cumulative loss at the horizon]
 \lean{cumLoss_horizon}
+\label{cumLoss_horizon}
 \leanok
 \uses{LossSeq, cumLoss}
 \difficulty{3}
@@ -180,6 +196,7 @@ the cumulative loss through $T$ equals the full sum over all rounds.
 
 \begin{lemma}[Weight successor factorization]
 \lean{hedgeWeight_succ}
+\label{hedgeWeight_succ}
 \leanok
 \uses{LossSeq, cumLoss_succ, hedgeWeight}
 \difficulty{3}
@@ -191,6 +208,7 @@ The weight factorizes across rounds:
 
 \begin{lemma}[Hedge distribution sums to one]
 \lean{hedgeDist_sum}
+\label{hedgeDist_sum}
 \leanok
 \uses{LossSeq, hedgeDist, potential_pos}
 \difficulty{3}
@@ -201,6 +219,7 @@ distribution.
 
 \begin{lemma}[Potential ratio bound]
 \lean{potential_ratio_le}
+\label{potential_ratio_le}
 \leanok
 \uses{LossSeq, LossSeq.Valid, exp_neg_le_linear, hedgeDist, hedgeLoss, hedgeWeight, hedgeWeight_pos, hedgeWeight_succ, potential, potential_pos}
 \difficulty{6}
@@ -215,6 +234,7 @@ round $t$.  This is the key potential-ratio lemma of Cesa-Bianchi and Lugosi.
 
 \begin{lemma}[Logarithmic potential step bound]
 \lean{log_potential_step}
+\label{log_potential_step}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeLoss, potential, potential_pos, potential_ratio_le}
 \difficulty{4}
@@ -227,6 +247,7 @@ which follows from $\ln(1-x) \le -x$ applied to the potential ratio bound.
 
 \begin{lemma}[Quadratic upper bound on $e^{-t}$]
 \lean{exp_neg_le_quadratic}
+\label{exp_neg_le_quadratic}
 \leanok
 \difficulty{6}
 For $t \ge 0$,
@@ -237,6 +258,7 @@ For $t \ge 0$,
 
 \begin{lemma}[Lower bound on $1 - e^{-\eta}$]
 \lean{one_sub_exp_neg_ge}
+\label{one_sub_exp_neg_ge}
 \leanok
 \uses{exp_neg_le_quadratic}
 \difficulty{2}
@@ -249,6 +271,7 @@ This follows directly from the quadratic bound $e^{-\eta} \le 1 - \eta + \eta^2/
 
 \begin{lemma}[Lower bound on potential via best expert]
 \lean{potential_ge_best_expert}
+\label{potential_ge_best_expert}
 \leanok
 \uses{LossSeq, bestExpertLoss, cumLoss, hedgeWeight, potential}
 \difficulty{5}
@@ -261,6 +284,7 @@ where $L^* = \min_i L_T(i)$ is the best expert's cumulative loss.
 
 \begin{lemma}[Hedge distribution is nonnegative]
 \lean{hedgeDist_nonneg}
+\label{hedgeDist_nonneg}
 \leanok
 \uses{LossSeq, hedgeDist, hedgeWeight_pos, potential_pos}
 \difficulty{1}
@@ -270,6 +294,7 @@ distribution satisfies $p_t(i) \ge 0$.
 
 \begin{lemma}[Expected loss at most one]
 \lean{hedgeLoss_le_one}
+\label{hedgeLoss_le_one}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss}
 \difficulty{3}
@@ -280,6 +305,7 @@ Hedge distribution is a probability measure.
 
 \begin{lemma}[Expected loss nonnegative]
 \lean{hedgeLoss_nonneg}
+\label{hedgeLoss_nonneg}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeDist_nonneg, hedgeLoss}
 \difficulty{2}
@@ -290,6 +316,7 @@ Hedge distribution is nonnegative.
 
 \begin{theorem}[Hedge regret bound]
 \lean{hedge_regret_bound}
+\label{hedge_regret_bound}
 \leanok
 \uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, hedgeLoss_le_one, hedgeLoss_nonneg, log_potential_step, one_sub_exp_neg_ge, potential, potential_ge_best_expert, potential_zero, regret}
 \difficulty{6}
@@ -302,6 +329,7 @@ For any valid loss sequence with $N$ experts, $T$ rounds, and $\eta \in (0,1]$,
 
 \begin{definition}[Optimal learning rate]
 \lean{optimalEta}
+\label{optimalEta}
 \leanok
 The \emph{optimal learning rate} balancing the two terms of the Hedge regret
 bound is
@@ -312,6 +340,7 @@ bound is
 
 \begin{theorem}[Hedge with optimal learning rate]
 \lean{hedge_regret_optimal}
+\label{hedge_regret_optimal}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_bound, optimalEta, regret}
 \difficulty{6}
@@ -323,6 +352,7 @@ If $T \ge 2\ln N$ (so that $\eta^* \le 1$), then for any valid loss sequence,
 
 \begin{theorem}[Hedge is no-regret]
 \lean{hedge_no_regret}
+\label{hedge_no_regret}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_optimal, optimalEta, regret}
 \difficulty{5}
@@ -337,6 +367,7 @@ a no-regret algorithm.
 
 \begin{lemma}[Hoeffding's lemma]
 \lean{hoeffding_lemma}
+\label{hoeffding_lemma}
 \leanok
 \uses{bernoulli_mgf_bound}
 \difficulty{3}
@@ -350,6 +381,7 @@ This specializes the Bernoulli moment-generating-function bound from
 
 \begin{lemma}[Tight per-step logarithmic potential bound]
 \lean{log_potential_step_tight}
+\label{log_potential_step_tight}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeLoss, hedgeLoss_le_one, hedgeLoss_nonneg, hoeffding_lemma, potential, potential_pos, potential_ratio_le}
 \difficulty{4}
@@ -362,6 +394,7 @@ tighter per-step bound
 
 \begin{theorem}[Tight Hedge regret bound]
 \lean{hedge_regret_bound_tight}
+\label{hedge_regret_bound_tight}
 \leanok
 \uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, log_potential_step_tight, potential, potential_ge_best_expert, potential_zero, regret}
 \difficulty{6}
@@ -374,6 +407,7 @@ For any valid loss sequence with $N$ experts, $T$ rounds, and $\eta > 0$,
 
 \begin{definition}[Tight optimal learning rate]
 \lean{optimalEtaTight}
+\label{optimalEtaTight}
 \leanok
 The learning rate that optimizes the tight Hedge bound is
 \[
@@ -383,6 +417,7 @@ The learning rate that optimizes the tight Hedge bound is
 
 \begin{theorem}[Tight Hedge with optimal learning rate]
 \lean{hedge_regret_tight_optimal}
+\label{hedge_regret_tight_optimal}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_bound_tight, optimalEtaTight, regret}
 \difficulty{6}

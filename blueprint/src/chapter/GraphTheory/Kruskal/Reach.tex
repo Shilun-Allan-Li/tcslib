@@ -12,6 +12,7 @@ cons-decomposition lemma, and lemmas relating total weight to list membership.
 
 \begin{definition}[Symmetric adjacency]
 \lean{Kruskal.SymAdj}
+\label{Kruskal.SymAdj}
 \leanok
 \uses{Kruskal.WEdge}
 Given a list of weighted edges $\mathit{edges}$ on $n$ vertices, $\mathtt{SymAdj}\,\mathit{edges}\,u\,v$
@@ -21,6 +22,7 @@ holds when there exists an edge $e \in \mathit{edges}$ whose endpoints are $\{u,
 
 \begin{definition}[Reachability]
 \lean{Kruskal.Reach}
+\label{Kruskal.Reach}
 \leanok
 \uses{Kruskal.SymAdj, Kruskal.WEdge}
 $\mathtt{Reach}\,\mathit{edges}$ is the reflexive--transitive closure of
@@ -30,6 +32,7 @@ holds when $u$ and $v$ are connected by a path through edges in $\mathit{edges}$
 
 \begin{definition}[Total weight]
 \lean{Kruskal.totalWeight}
+\label{Kruskal.totalWeight}
 \leanok
 \uses{Kruskal.WEdge}
 The total weight of an edge list is the sum of the weights of all its edges:
@@ -38,6 +41,7 @@ $\mathtt{totalWeight}\,\mathit{edges} = \sum_{e \in \mathit{edges}} e.\mathit{we
 
 \begin{definition}[Spanning like]
 \lean{Kruskal.SpansLike}
+\label{Kruskal.SpansLike}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge}
 $\mathtt{SpansLike}\,F\,E$ holds when the edge list $F$ is at least as connected as $E$:
@@ -47,6 +51,7 @@ also reachable in $F$.
 
 \begin{lemma}[Symmetry of symmetric adjacency]
 \lean{Kruskal.symAdj_symm}
+\label{Kruskal.symAdj_symm}
 \leanok
 \uses{Kruskal.SymAdj, Kruskal.WEdge}
 \difficulty{1}
@@ -55,6 +60,7 @@ If $\mathtt{SymAdj}\,\mathit{edges}\,u\,v$ then $\mathtt{SymAdj}\,\mathit{edges}
 
 \begin{lemma}[Monotonicity of symmetric adjacency]
 \lean{Kruskal.symAdj_mono}
+\label{Kruskal.symAdj_mono}
 \leanok
 \uses{Kruskal.SymAdj, Kruskal.WEdge}
 \difficulty{1}
@@ -64,6 +70,7 @@ $\mathtt{SymAdj}\,e_2\,u\,v$.
 
 \begin{lemma}[Symmetry of reachability]
 \lean{Kruskal.reach_symm}
+\label{Kruskal.reach_symm}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.symAdj_symm}
 \difficulty{4}
@@ -72,6 +79,7 @@ If $\mathtt{Reach}\,\mathit{edges}\,u\,v$ then $\mathtt{Reach}\,\mathit{edges}\,
 
 \begin{lemma}[Monotonicity of reachability]
 \lean{Kruskal.reach_mono}
+\label{Kruskal.reach_mono}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.symAdj_mono}
 \difficulty{4}
@@ -81,6 +89,7 @@ $\mathtt{Reach}\,e_2\,u\,v$.
 
 \begin{lemma}[Reachability from a membership witness]
 \lean{Kruskal.reach_of_mem}
+\label{Kruskal.reach_of_mem}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge}
 \difficulty{1}
@@ -90,6 +99,7 @@ the two endpoints of any listed edge are immediately reachable from each other.
 
 \begin{lemma}[Reachability lifting]
 \lean{Kruskal.reach_lift}
+\label{Kruskal.reach_lift}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.WEdge, Kruskal.reach_mem_iff}
 \difficulty{4}
@@ -100,6 +110,7 @@ $\mathtt{Reach}\,\mathit{edges}'\,u\,v$.
 
 \begin{lemma}[Cons decomposition of reachability]
 \lean{Kruskal.reach_cons_iff}
+\label{Kruskal.reach_cons_iff}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
 \difficulty{7}
@@ -111,6 +122,7 @@ or (3) $\mathtt{Reach}\,\mathit{rest}\,a\,g.v$ and $\mathtt{Reach}\,\mathit{rest
 
 \begin{lemma}[Reachability depends only on membership]
 \lean{Kruskal.reach_mem_iff}
+\label{Kruskal.reach_mem_iff}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.reach_mono}
 \difficulty{1}
@@ -121,6 +133,7 @@ $\mathtt{Reach}\,l_1\,a\,b \leftrightarrow \mathtt{Reach}\,l_2\,a\,b$.
 
 \begin{lemma}[Total weight of empty list]
 \lean{Kruskal.totalWeight_nil}
+\label{Kruskal.totalWeight_nil}
 \leanok
 \uses{Kruskal.WEdge, Kruskal.totalWeight}
 \difficulty{1}
@@ -129,6 +142,7 @@ $\mathtt{totalWeight}\,([] : \mathtt{List}\,(\mathtt{WEdge}\,n)) = 0$.
 
 \begin{lemma}[Total weight after erasing an edge]
 \lean{Kruskal.totalWeight_erase}
+\label{Kruskal.totalWeight_erase}
 \leanok
 \uses{Kruskal.WEdge, Kruskal.totalWeight}
 \difficulty{3}

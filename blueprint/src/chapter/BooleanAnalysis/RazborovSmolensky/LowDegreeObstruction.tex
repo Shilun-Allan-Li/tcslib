@@ -15,6 +15,7 @@ obstruction to low-degree approximation of the product $\prod_i x_i$.
 
 \begin{definition}[Low-degree squarefree supports]
 \lean{ACP.LowDegreeSupport}
+\label{ACP.LowDegreeSupport}
 \leanok
 For $n, D \in \mathbb{N}$, the type of supports of squarefree monomials of degree at most
 $D$: the subtype of finsets $s \subseteq \mathrm{Fin}\,n$ with $\abs{s} \le D$.  In the
@@ -23,6 +24,7 @@ displays below this type is written $\mathcal{S}_{n,D}$.
 
 \begin{definition}[Low-degree squarefree polynomial from coefficients]
 \lean{ACP.lowDegreeSquarefreePolynomial}
+\label{ACP.lowDegreeSquarefreePolynomial}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.squarefreeMonomial}
 Given coefficients $c$ indexed by $\texttt{ACP.LowDegreeSupport}\ n\ D$, the multivariate
@@ -36,6 +38,7 @@ $c$, with the terms of support size $> D$ set to $0$.
 
 \begin{theorem}[Squarefree representative on the root cube]
 \lean{ACP.exists_squarefree_representative_on_rootCube}
+\label{ACP.exists_squarefree_representative_on_rootCube}
 \leanok
 \uses{ACP.rootCube, ACP.squarefreeMonomial, ACP.squarefreePolynomial}
 Every function $f : \{1,\omega\}^n \to K$ on the root cube is represented by a squarefree
@@ -46,6 +49,7 @@ $x$ in the root cube.
 
 \begin{theorem}[Monomial-level degree-preserving multilinearization]
 \lean{ACP.monomial_lowDegree_squarefree_complete_on_rootCube}
+\label{ACP.monomial_lowDegree_squarefree_complete_on_rootCube}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.rootCube, ACP.squarefreeMonomial}
 Assume $\omega \ne 1$.  If a monomial $a\,X^m$ has total exponent sum
@@ -57,6 +61,7 @@ $(\texttt{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = (a\,X^m)(x)$ for every $x$
 
 \begin{lemma}[Additivity in the coefficient function]
 \lean{ACP.lowDegreeSquarefreePolynomial_add}
+\label{ACP.lowDegreeSquarefreePolynomial_add}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
 The constructor $\texttt{ACP.lowDegreeSquarefreePolynomial}$ is additive in its coefficient
@@ -66,6 +71,7 @@ to $c_1$ and to $c_2$.
 
 \begin{lemma}[Zero coefficients give the zero polynomial]
 \lean{ACP.lowDegreeSquarefreePolynomial_zero}
+\label{ACP.lowDegreeSquarefreePolynomial_zero}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
 The constructor $\texttt{ACP.lowDegreeSquarefreePolynomial}$ sends the identically zero
@@ -74,6 +80,7 @@ coefficient function to the zero polynomial.
 
 \begin{lemma}[Finite-sum linearity in the coefficients]
 \lean{ACP.lowDegreeSquarefreePolynomial_sum}
+\label{ACP.lowDegreeSquarefreePolynomial_sum}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_add, ACP.lowDegreeSquarefreePolynomial_zero}
 For a finite index set $S$ and coefficient functions $c_i$, the polynomial attached to
@@ -83,6 +90,7 @@ to the individual $c_i$.
 
 \begin{theorem}[Completeness of low-degree squarefree polynomials on the root cube]
 \lean{ACP.lowDegree_squarefree_complete_on_rootCube}
+\label{ACP.lowDegree_squarefree_complete_on_rootCube}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_sum, ACP.monomial_lowDegree_squarefree_complete_on_rootCube, ACP.rootCube}
 Assume $\omega \ne 1$.  Every polynomial $Q$ with $\deg Q \le D$ agrees on the root cube
@@ -93,6 +101,7 @@ $(\texttt{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = Q(x)$ for all $x$ in the c
 
 \begin{lemma}[Degree bound for the constructed polynomial]
 \lean{ACP.lowDegreeSquarefreePolynomial_totalDegree_le}
+\label{ACP.lowDegreeSquarefreePolynomial_totalDegree_le}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card}
 For any coefficient function $c$ on $\texttt{ACP.LowDegreeSupport}\ n\ D$, the polynomial
@@ -101,6 +110,7 @@ $\texttt{ACP.lowDegreeSquarefreePolynomial}\ c$ has total degree at most $D$.
 
 \begin{definition}[Support-to-sigma injection]
 \lean{ACP.lowDegreeSupportSigmaMap}
+\label{ACP.lowDegreeSupportSigmaMap}
 \leanok
 \uses{ACP.LowDegreeSupport}
 The map sending a low-degree support $s$ to the pair consisting of its exact cardinality
@@ -111,6 +121,7 @@ injection for the binomial-sum bound rather than as a full equivalence.
 
 \begin{theorem}[Binomial bound on the number of low-degree supports]
 \lean{ACP.lowDegreeSupport_card_le_binomial_sum}
+\label{ACP.lowDegreeSupport_card_le_binomial_sum}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeCoeff_card, ACP.lowDegreeSupportSigmaMap}
 The number of low-degree squarefree supports satisfies
@@ -121,6 +132,7 @@ The number of low-degree squarefree supports satisfies
 
 \begin{lemma}[Size of the coefficient family]
 \lean{ACP.lowDegreeCoeff_card}
+\label{ACP.lowDegreeCoeff_card}
 \leanok
 \uses{ACP.LowDegreeSupport}
 For a finite type $K_0$, the number of coefficient functions on low-degree supports is
@@ -132,6 +144,7 @@ For a finite type $K_0$, the number of coefficient functions on low-degree suppo
 
 \begin{definition}[Root cube as Boolean strings]
 \lean{ACP.rootCubeEquivFinTwo}
+\label{ACP.rootCubeEquivFinTwo}
 \leanok
 \uses{ACP.rootCube}
 If $\omega \ne 1$, the explicit equivalence $\{1,\omega\}^n \simeq (\mathrm{Fin}\,n \to
@@ -140,6 +153,7 @@ If $\omega \ne 1$, the explicit equivalence $\{1,\omega\}^n \simeq (\mathrm{Fin}
 
 \begin{lemma}[Cardinality of the root cube]
 \lean{ACP.rootCube_card_of_ne_one}
+\label{ACP.rootCube_card_of_ne_one}
 \leanok
 \uses{ACP.rootCube, ACP.rootCubeEquivFinTwo}
 If $\omega \ne 1$ and $K$ is finite, then the root cube has exactly $2^n$ points:
@@ -148,6 +162,7 @@ $\abs{\{1,\omega\}^n} = 2^n$.
 
 \begin{lemma}[Number of functions on the root cube]
 \lean{ACP.rootCube_function_card_of_ne_one}
+\label{ACP.rootCube_function_card_of_ne_one}
 \leanok
 \uses{ACP.rootCube, ACP.rootCube_card_of_ne_one}
 If $\omega \ne 1$ and $K$ is finite, the number of functions $\{1,\omega\}^n \to K$ is
@@ -156,6 +171,7 @@ $\abs{K}^{2^n}$.
 
 \begin{theorem}[Hamming-ball bound for function spaces]
 \lean{ACP.function_hammingBall_card_le_binomial}
+\label{ACP.function_hammingBall_card_le_binomial}
 \leanok
 For finite types $\alpha, \beta$, a center function $\mathrm{center} : \alpha \to \beta$
 and a radius $e$, the number of functions $f : \alpha \to \beta$ that differ from the
@@ -169,6 +185,7 @@ $(\abs{\beta}-1)^t$ in place of $\abs{\beta}^t$.
 
 \begin{theorem}[Hamming-ball bound on the root cube]
 \lean{ACP.rootCubeBall_card_le_binomial}
+\label{ACP.rootCubeBall_card_le_binomial}
 \leanok
 \uses{ACP.function_hammingBall_card_le_binomial, ACP.rootCube, ACP.rootCubeBall, ACP.rootCubeFunctionBadCount}
 For any center function on the root cube and any radius $e$, the Hamming ball
@@ -181,6 +198,7 @@ $\texttt{ACP.rootCubeBall}$ of radius $e$ around it satisfies
 
 \begin{theorem}[Counting obstruction for low-degree squarefree candidates]
 \lean{ACP.rootCube_counting_obstruction_lowDegreeSquarefree}
+\label{ACP.rootCube_counting_obstruction_lowDegreeSquarefree}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegree_squarefree_complete_on_rootCube, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCubeBall_card_le_binomial, ACP.rootCube_card_of_ne_one, ACP.rootCube_counting_obstruction, ACP.rootCube_function_card_of_ne_one}
 Let $K$ be finite and $\omega \ne 1$.  Suppose the ball bound
@@ -194,6 +212,7 @@ polynomial $Q$ with $\deg Q \le D$ and $\texttt{ACP.rootCubeBadCount}\ f\ Q \le 
 
 \begin{theorem}[Concrete root-product lower bound]
 \lean{ACP.no_low_degree_rootProd_approx_concrete}
+\label{ACP.no_low_degree_rootProd_approx_concrete}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.exists_squarefree_representative_on_rootCube, ACP.no_low_degree_rootProd_approx, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCube_counting_obstruction_lowDegreeSquarefree, ACP.squarefreePolynomial}
 Let $K$ be finite, $\omega \ne 0$, $\omega \ne 1$.  Suppose

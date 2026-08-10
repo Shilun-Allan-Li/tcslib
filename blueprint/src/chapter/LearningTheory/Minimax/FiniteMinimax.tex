@@ -15,6 +15,7 @@ against column best responses.
 
 \begin{definition}[Finite zero-sum game]
 \lean{ZeroSumGame}
+\label{ZeroSumGame}
 \leanok
 A \emph{finite two-player zero-sum game} with $M$ row actions and $N$ column
 actions is a record consisting of a payoff matrix $A : \mathrm{Fin}\,M \to
@@ -25,6 +26,7 @@ player seeks to minimise it.
 
 \begin{definition}[Mixed strategy]
 \lean{MixedStrategy}
+\label{MixedStrategy}
 \leanok
 A \emph{mixed strategy} over $n$ actions is a record consisting of a weight
 function $w : \mathrm{Fin}\,n \to \mathbb{R}$ together with proofs that every
@@ -34,6 +36,7 @@ probability distribution over $\mathrm{Fin}\,n$.
 
 \begin{definition}[Row mixed payoff against a pure column]
 \lean{payoffVsPure}
+\label{payoffVsPure}
 \leanok
 \uses{MixedStrategy, ZeroSumGame}
 Given a game $G$, a mixed row strategy $p$, and a pure column $j$, the
@@ -45,6 +48,7 @@ Given a game $G$, a mixed row strategy $p$, and a pure column $j$, the
 
 \begin{definition}[Pure row payoff against a mixed column]
 \lean{pureVsPayoff}
+\label{pureVsPayoff}
 \leanok
 \uses{MixedStrategy, ZeroSumGame}
 Given a game $G$, a pure row $i$, and a mixed column strategy $q$, the
@@ -56,6 +60,7 @@ Given a game $G$, a pure row $i$, and a mixed column strategy $q$, the
 
 \begin{definition}[Column best response]
 \lean{bestColumn}
+\label{bestColumn}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
 Given a game $G$ and a mixed row strategy $p$, \texttt{bestColumn} is the pure
@@ -65,6 +70,7 @@ column $j^* \in \mathrm{Fin}\,N$ that minimises $\mathrm{payoffVsPure}(G, p,
 
 \begin{lemma}[Best-column minimality]
 \lean{bestColumn_spec}
+\label{bestColumn_spec}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, bestColumn, payoffVsPure}
 \difficulty{1}
@@ -79,6 +85,7 @@ That is, the chosen column is indeed a minimiser.
 
 \begin{definition}[Row best response]
 \lean{bestRow}
+\label{bestRow}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
 Given a game $G$ and a mixed column strategy $q$, \texttt{bestRow} is the pure
@@ -88,6 +95,7 @@ q)$, chosen classically from the finite maximiser.
 
 \begin{lemma}[Best-row maximality]
 \lean{bestRow_spec}
+\label{bestRow_spec}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, bestRow, pureVsPayoff}
 \difficulty{1}
@@ -101,6 +109,7 @@ For any game $G$, mixed column strategy $q$, and pure row $i$,
 
 \begin{theorem}[Weak duality]
 \lean{weak_duality}
+\label{weak_duality}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, ZeroSumGame.toLossSeq, payoffVsPure, pureVsPayoff}
 \difficulty{5}
@@ -116,6 +125,7 @@ best-case mixed payoff.
 
 \begin{definition}[Loss sequence induced by a game]
 \lean{ZeroSumGame.toLossSeq}
+\label{ZeroSumGame.toLossSeq}
 \leanok
 \uses{LossSeq, ZeroSumGame}
 Given a game $G$ and a sequence of column responses $j_0, \dots, j_{T-1}$, the
@@ -126,6 +136,7 @@ framework used by Hedge.
 
 \begin{lemma}[Induced loss sequence is valid]
 \lean{ZeroSumGame.toLossSeq_valid}
+\label{ZeroSumGame.toLossSeq_valid}
 \leanok
 \uses{LossSeq.Valid, ZeroSumGame, ZeroSumGame.toLossSeq}
 \difficulty{2}
@@ -135,6 +146,7 @@ every loss lies in $[0, 1]$, because the payoffs satisfy $0 \le A_{ij} \le 1$.
 
 \begin{definition}[Average strategy]
 \lean{averageStrategy}
+\label{averageStrategy}
 \leanok
 \uses{MixedStrategy}
 Given $T$ distributions $p_0, \dots, p_{T-1}$ over $\mathrm{Fin}\,n$ (each
@@ -147,6 +159,7 @@ presented as non-negative weights summing to $1$) and $T > 0$, the
 
 \begin{definition}[Hedge mixed strategy]
 \lean{hedgeMixedStrategy}
+\label{hedgeMixedStrategy}
 \leanok
 \uses{LossSeq, MixedStrategy, hedgeDist, hedgeDist_nonneg, hedgeDist_sum}
 The Hedge distribution at round $t$ for learning rate $\eta$ and loss sequence
@@ -156,6 +169,7 @@ sum-one proofs from \texttt{hedgeDist}.
 
 \begin{definition}[Empirical strategy]
 \lean{empiricalStrategy}
+\label{empiricalStrategy}
 \leanok
 \uses{MixedStrategy}
 Given $T > 0$ pure actions $a_0, \dots, a_{T-1} \in \mathrm{Fin}\,n$, the
@@ -168,6 +182,7 @@ fraction of rounds on which action $i$ was played:
 
 \begin{lemma}[Payoff under average strategy]
 \lean{payoffVsPure_averageStrategy}
+\label{payoffVsPure_averageStrategy}
 \leanok
 \uses{ZeroSumGame, averageStrategy, payoffVsPure}
 \difficulty{3}
@@ -183,6 +198,7 @@ where $\bar{p}$ is the average strategy.
 
 \begin{lemma}[Payoff of pure row under empirical column]
 \lean{pureVsPayoff_empiricalStrategy}
+\label{pureVsPayoff_empiricalStrategy}
 \leanok
 \uses{ZeroSumGame, empiricalStrategy, pureVsPayoff}
 \difficulty{4}
@@ -198,6 +214,7 @@ where $\hat{q}$ is the empirical column strategy.
 
 \begin{definition}[Prefix cumulative game loss]
 \lean{prefixGameLoss}
+\label{prefixGameLoss}
 \leanok
 \uses{ZeroSumGame}
 Given a game $G$, a prefix of $t$ column actions, and a row $i$, the
@@ -211,6 +228,7 @@ directly in terms of game payoffs.
 
 \begin{definition}[Prefix Hedge weight]
 \lean{prefixHedgeWeight}
+\label{prefixHedgeWeight}
 \leanok
 \uses{ZeroSumGame, prefixGameLoss}
 The unnormalised Hedge weight of row $i$ after seeing a prefix of column
@@ -223,6 +241,7 @@ where $L_t(i)$ is the prefix cumulative loss.
 
 \begin{definition}[Prefix potential]
 \lean{prefixPotential}
+\label{prefixPotential}
 \leanok
 \uses{ZeroSumGame, prefixHedgeWeight}
 The \emph{prefix potential} is the sum of prefix Hedge weights over all rows:
@@ -233,6 +252,7 @@ The \emph{prefix potential} is the sum of prefix Hedge weights over all rows:
 
 \begin{lemma}[Prefix Hedge weight is positive]
 \lean{prefixHedgeWeight_pos}
+\label{prefixHedgeWeight_pos}
 \leanok
 \uses{ZeroSumGame, prefixHedgeWeight}
 \difficulty{1}
@@ -242,6 +262,7 @@ the prefix Hedge weight $w_t(i) = \exp(-\eta L_t(i)) > 0$.
 
 \begin{lemma}[Prefix potential is positive]
 \lean{prefixPotential_pos}
+\label{prefixPotential_pos}
 \leanok
 \uses{ZeroSumGame, prefixHedgeWeight_pos, prefixPotential}
 \difficulty{2}
@@ -251,6 +272,7 @@ of positive terms.
 
 \begin{definition}[Prefix Hedge mixed strategy]
 \lean{prefixHedgeMixedStrategy}
+\label{prefixHedgeMixedStrategy}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, prefixHedgeWeight, prefixHedgeWeight_pos, prefixPotential, prefixPotential_pos}
 The normalised Hedge distribution after a prefix of $t$ column actions is the
@@ -263,6 +285,7 @@ where $w_t(i)$ is the prefix Hedge weight and $\Phi_t$ the prefix potential.
 
 \begin{definition}[Online column best responses to Hedge]
 \lean{hedgeResponseNat}
+\label{hedgeResponseNat}
 \leanok
 \uses{ZeroSumGame, bestColumn, prefixHedgeMixedStrategy}
 The sequence of column best responses generated online against Hedge: at time
@@ -274,6 +297,7 @@ on $t$.
 
 \begin{lemma}[Prefix loss equals cumulative loss]
 \lean{prefixGameLoss_eq_cumLoss}
+\label{prefixGameLoss_eq_cumLoss}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, cumLoss, prefixGameLoss}
 \difficulty{4}
@@ -285,6 +309,7 @@ sequence: $\mathrm{prefixGameLoss}(\dots) = \mathrm{cumLoss}(G.\mathrm{toLossSeq
 
 \begin{lemma}[Prefix weight equals Hedge weight]
 \lean{prefixHedgeWeight_eq_hedgeWeight}
+\label{prefixHedgeWeight_eq_hedgeWeight}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, hedgeWeight, prefixGameLoss_eq_cumLoss, prefixHedgeWeight}
 \difficulty{2}
@@ -295,6 +320,7 @@ induced loss sequence.
 
 \begin{lemma}[Prefix potential equals Hedge potential]
 \lean{prefixPotential_eq_potential}
+\label{prefixPotential_eq_potential}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, potential, prefixHedgeWeight_eq_hedgeWeight, prefixPotential}
 \difficulty{2}
@@ -305,6 +331,7 @@ sequence.
 
 \begin{lemma}[Prefix strategy weight equals Hedge distribution]
 \lean{prefixHedgeMixedStrategy_weight_eq_hedgeDist}
+\label{prefixHedgeMixedStrategy_weight_eq_hedgeDist}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, hedgeDist, prefixHedgeMixedStrategy, prefixHedgeWeight_eq_hedgeWeight, prefixPotential_eq_potential}
 \difficulty{2}
@@ -314,6 +341,7 @@ the abstract Hedge distribution $\mathrm{hedgeDist}(\eta, G.\mathrm{toLossSeq}(a
 
 \begin{lemma}[Regret-to-payoff bridge]
 \lean{regret_to_payoff}
+\label{regret_to_payoff}
 \leanok
 \uses{ZeroSumGame}
 \difficulty{6}
@@ -334,6 +362,7 @@ Then the total payoff satisfies
 
 \begin{lemma}[Average of per-round minima is at most minimum of averages]
 \lean{avg_min_le_min_avg}
+\label{avg_min_le_min_avg}
 \leanok
 \difficulty{4}
 For any $f : \mathrm{Fin}\,T \to \mathrm{Fin}\,N \to \mathbb{R}$ and $T > 0$,
@@ -346,6 +375,7 @@ For any $f : \mathrm{Fin}\,T \to \mathrm{Fin}\,N \to \mathbb{R}$ and $T > 0$,
 
 \begin{lemma}[Hedge construction]
 \lean{hedge_construction}
+\label{hedge_construction}
 \leanok
 \uses{LossSeq, LossSeq.Valid, MixedStrategy, ZeroSumGame, ZeroSumGame.toLossSeq, ZeroSumGame.toLossSeq_valid, averageStrategy, bestColumn, bestColumn_spec, bestExpertLoss, cumLoss_horizon, empiricalStrategy, hedgeCumLoss, hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss, hedgeResponseNat, hedge_regret_bound_tight, payoffVsPure, payoffVsPure_averageStrategy, prefixHedgeMixedStrategy, prefixHedgeMixedStrategy_weight_eq_hedgeDist, pureVsPayoff, pureVsPayoff_empiricalStrategy, regret, regret_to_payoff}
 \difficulty{7}
@@ -365,6 +395,7 @@ column player taking pure best responses, and then averaging.
 
 \begin{theorem}[Approximate minimax]
 \lean{approx_minimax}
+\label{approx_minimax}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, hedge_construction, payoffVsPure, pureVsPayoff}
 \difficulty{6}
@@ -381,6 +412,7 @@ and $j \in \mathrm{Fin}\,N$,
 
 \begin{theorem}[Approximate minimax theorem]
 \lean{minimax_approx_theorem}
+\label{minimax_approx_theorem}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, approx_minimax, payoffVsPure, pureVsPayoff}
 \difficulty{1}

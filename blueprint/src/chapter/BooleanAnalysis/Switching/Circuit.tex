@@ -12,6 +12,7 @@ decision trees) needed elsewhere in the switching-lemma proof.
 
 \begin{definition}[Evaluation of a literal]
 \lean{BoolCircuit.Lit.eval}
+\label{BoolCircuit.Lit.eval}
 \leanok
 \uses{BoolCircuit.Lit}
 For a literal $l$ on $n$ variables and an assignment $x : \mathrm{Fin}\,n \to \bbf_2$,
@@ -21,6 +22,7 @@ the value $l.\mathrm{eval}\,x$ is $x_{l.\mathrm{idx}}$ when $l$ is positive
 
 \begin{definition}[Boolean circuit tree]
 \lean{BoolCircuit.Circuit}
+\label{BoolCircuit.Circuit}
 \leanok
 \uses{BoolCircuit.Lit}
 A Boolean circuit on $n$ variables is a tree whose leaves are literals
@@ -32,6 +34,7 @@ imposed.
 
 \begin{theorem}[Custom induction principle for circuits]
 \lean{BoolCircuit.Circuit.ind}
+\label{BoolCircuit.Circuit.ind}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval}
 \difficulty{4}
@@ -44,6 +47,7 @@ support for nested inductives.
 
 \begin{definition}[Evaluation of a circuit]
 \lean{BoolCircuit.Circuit.eval}
+\label{BoolCircuit.Circuit.eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Lit.eval}
 Evaluates a circuit under an assignment $x$: a literal evaluates via
@@ -54,6 +58,7 @@ unit \texttt{true}) of its children's values, and an OR node is the disjunction
 
 \begin{definition}[Literal count of a circuit]
 \lean{BoolCircuit.Circuit.litCount}
+\label{BoolCircuit.Circuit.litCount}
 \leanok
 \uses{BoolCircuit.Circuit}
 The number of literal occurrences in a circuit: a literal contributes $1$ and a node
@@ -62,6 +67,7 @@ contributes the sum of the literal counts of its children.
 
 \begin{definition}[Depth of a circuit]
 \lean{BoolCircuit.Circuit.depth}
+\label{BoolCircuit.Circuit.depth}
 \leanok
 \uses{BoolCircuit.Circuit}
 The depth of a circuit (longest root-to-leaf path): a literal has depth $0$ and a node
@@ -70,6 +76,7 @@ has depth $1$ plus the maximum depth among its children.
 
 \begin{definition}[Size of a circuit]
 \lean{BoolCircuit.Circuit.size}
+\label{BoolCircuit.Circuit.size}
 \leanok
 \uses{BoolCircuit.Circuit}
 The total number of nodes of a circuit (internal gates plus literal leaves): a literal
@@ -78,6 +85,7 @@ has size $1$ and a node has size $1$ plus the sum of the sizes of its children.
 
 \begin{definition}[Maximum depth over a list of circuits]
 \lean{BoolCircuit.Circuit.maxDepth}
+\label{BoolCircuit.Circuit.maxDepth}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
 The maximum depth over a list $cs$ of circuits (with $0$ for the empty list), used to
@@ -86,6 +94,7 @@ compute the depth at a node.
 
 \begin{definition}[Sum of sizes over a list of circuits]
 \lean{BoolCircuit.Circuit.sumSize}
+\label{BoolCircuit.Circuit.sumSize}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
 The sum of the sizes over a list $cs$ of circuits, used to compute the size at a node.
@@ -93,6 +102,7 @@ The sum of the sizes over a list $cs$ of circuits, used to compute the size at a
 
 \begin{definition}[Maximum fanin of a circuit]
 \lean{BoolCircuit.Circuit.maxFanin}
+\label{BoolCircuit.Circuit.maxFanin}
 \leanok
 \uses{BoolCircuit.Circuit}
 The maximum fanin of a circuit: a literal has fanin $0$, and a node's value is the
@@ -102,6 +112,7 @@ its children.
 
 \begin{definition}[Normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit}
+\label{BoolCircuit.NAndCircuit}
 \leanok
 \uses{BoolCircuit.Lit}
 A normal-form AND circuit on $n$ variables: either a base \texttt{clause} given by a list
@@ -113,8 +124,9 @@ alternating AND/OR normal form.
 
 \begin{definition}[Evaluation of a normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit.eval}
+\label{BoolCircuit.NAndCircuit.eval}
 \leanok
-\uses{BoolCircuit.Lit.eval, BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.eval}
+\uses{BoolCircuit.Lit.eval, BoolCircuit.NAndCircuit}
 Evaluates a normal-form AND circuit under an assignment $x$: a clause is the conjunction
 of its literals' values (unit \texttt{true}), and a node is the conjunction of its child
 OR circuits' values.
@@ -122,6 +134,7 @@ OR circuits' values.
 
 \begin{definition}[Evaluation of a normal-form OR circuit]
 \lean{BoolCircuit.NOrCircuit.eval}
+\label{BoolCircuit.NOrCircuit.eval}
 \leanok
 \uses{BoolCircuit.Lit.eval, BoolCircuit.NAndCircuit.eval}
 Evaluates a normal-form OR circuit under an assignment $x$: a clause is the disjunction
@@ -131,14 +144,16 @@ AND circuits' values.
 
 \begin{definition}[Literal count of a normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit.litCount}
+\label{BoolCircuit.NAndCircuit.litCount}
 \leanok
-\uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.litCount}
+\uses{BoolCircuit.NAndCircuit}
 The number of literal occurrences in a normal-form AND circuit: a clause contributes the
 length of its literal list, and a node contributes the sum over its child OR circuits.
 \end{definition}
 
 \begin{definition}[Literal count of a normal-form OR circuit]
 \lean{BoolCircuit.NOrCircuit.litCount}
+\label{BoolCircuit.NOrCircuit.litCount}
 \leanok
 \uses{BoolCircuit.NAndCircuit.litCount}
 The number of literal occurrences in a normal-form OR circuit: a clause contributes the
@@ -147,14 +162,16 @@ length of its literal list, and a node contributes the sum over its child AND ci
 
 \begin{definition}[Size of a normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit.size}
+\label{BoolCircuit.NAndCircuit.size}
 \leanok
-\uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.size}
+\uses{BoolCircuit.NAndCircuit}
 The total node count of a normal-form AND circuit: a clause has size $1$, and a node has
 size $1$ plus the sum of the sizes of its child OR circuits.
 \end{definition}
 
 \begin{definition}[Size of a normal-form OR circuit]
 \lean{BoolCircuit.NOrCircuit.size}
+\label{BoolCircuit.NOrCircuit.size}
 \leanok
 \uses{BoolCircuit.NAndCircuit.size}
 The total node count of a normal-form OR circuit: a clause has size $1$, and a node has
@@ -163,14 +180,16 @@ size $1$ plus the sum of the sizes of its child AND circuits.
 
 \begin{definition}[Depth of a normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit.depth}
+\label{BoolCircuit.NAndCircuit.depth}
 \leanok
-\uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.depth}
+\uses{BoolCircuit.NAndCircuit}
 The depth of a normal-form AND circuit: a clause has depth $0$, and a node has depth $1$
 plus the maximum depth among its child OR circuits.
 \end{definition}
 
 \begin{definition}[Depth of a normal-form OR circuit]
 \lean{BoolCircuit.NOrCircuit.depth}
+\label{BoolCircuit.NOrCircuit.depth}
 \leanok
 \uses{BoolCircuit.NAndCircuit.depth}
 The depth of a normal-form OR circuit: a clause has depth $0$, and a node has depth $1$
@@ -179,6 +198,7 @@ plus the maximum depth among its child AND circuits.
 
 \begin{theorem}[Clause indices are nodup (AND)]
 \lean{BoolCircuit.NAndCircuit.clause_nodup}
+\label{BoolCircuit.NAndCircuit.clause_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit}
 \difficulty{1}
@@ -189,6 +209,7 @@ are pairwise distinct.
 
 \begin{theorem}[Clause indices are nodup (OR)]
 \lean{BoolCircuit.NOrCircuit.clause_nodup}
+\label{BoolCircuit.NOrCircuit.clause_nodup}
 \leanok
 \uses{BoolCircuit.Lit}
 \difficulty{1}
@@ -199,6 +220,7 @@ are pairwise distinct.
 
 \begin{theorem}[Equal indices imply equal literals in a nodup clause]
 \lean{BoolCircuit.Lit.eq_of_idx_eq_of_mem_nodup}
+\label{BoolCircuit.Lit.eq_of_idx_eq_of_mem_nodup}
 \leanok
 \uses{BoolCircuit.Lit}
 \difficulty{4}
@@ -209,8 +231,9 @@ in fact equal, $l_1 = l_2$.
 
 \begin{definition}[Normalize a circuit to AND-normal form]
 \lean{BoolCircuit.Circuit.toNAnd}
+\label{BoolCircuit.Circuit.toNAnd}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit}
+\uses{BoolCircuit.Circuit, BoolCircuit.NAndCircuit}
 Converts a general circuit into a normal-form AND circuit: a literal becomes a singleton
 clause; an AND node maps its children through $\mathrm{toNOr}$; and an OR node is wrapped
 as a single OR node built from the children's $\mathrm{toNAnd}$ images, enforcing
@@ -219,6 +242,7 @@ alternation.
 
 \begin{definition}[Normalize a circuit to OR-normal form]
 \lean{BoolCircuit.Circuit.toNOr}
+\label{BoolCircuit.Circuit.toNOr}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.toNAnd}
 Converts a general circuit into a normal-form OR circuit: a literal becomes a singleton
@@ -229,6 +253,7 @@ alternation.
 
 \begin{theorem}[Fold commutes with map (conjunction)]
 \lean{BoolCircuit.foldr_and_map}
+\label{BoolCircuit.foldr_and_map}
 \leanok
 \difficulty{3}
 A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the conjunctive
@@ -238,6 +263,7 @@ $f$ over $cs$.
 
 \begin{theorem}[Fold commutes with map (disjunction)]
 \lean{BoolCircuit.foldr_or_map}
+\label{BoolCircuit.foldr_or_map}
 \leanok
 \difficulty{3}
 A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the disjunctive
@@ -247,6 +273,7 @@ $f$ over $cs$.
 
 \begin{theorem}[Fold commutes with map (addition)]
 \lean{BoolCircuit.foldr_add_map}
+\label{BoolCircuit.foldr_add_map}
 \leanok
 \difficulty{3}
 A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the additive
@@ -256,6 +283,7 @@ over $cs$.
 
 \begin{theorem}[Fold inequality under map (addition)]
 \lean{BoolCircuit.foldr_add_map_le}
+\label{BoolCircuit.foldr_add_map_le}
 \leanok
 \difficulty{4}
 A technical lemma: if $g(h\,c) \le k \cdot f\,c$ for all $c \in cs$, then the additive
@@ -265,6 +293,7 @@ A technical lemma: if $g(h\,c) \le k \cdot f\,c$ for all $c \in cs$, then the ad
 
 \begin{theorem}[Normalization preserves semantics]
 \lean{BoolCircuit.toNAnd_toNOr_eval}
+\label{BoolCircuit.toNAnd_toNOr_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.eval, BoolCircuit.NOrCircuit.eval}
 \difficulty{5}
@@ -275,6 +304,7 @@ $(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 
 \begin{theorem}[AND-normalization preserves semantics]
 \lean{BoolCircuit.toNAnd_eval}
+\label{BoolCircuit.toNAnd_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.eval, BoolCircuit.toNAnd_toNOr_eval}
 \difficulty{1}
@@ -284,6 +314,7 @@ $(c.\mathrm{toNAnd}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 
 \begin{theorem}[OR-normalization preserves semantics]
 \lean{BoolCircuit.toNOr_eval}
+\label{BoolCircuit.toNOr_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.eval, BoolCircuit.toNAnd_toNOr_eval}
 \difficulty{1}
@@ -293,6 +324,7 @@ $(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 
 \begin{theorem}[Normalization preserves literal count]
 \lean{BoolCircuit.toNAnd_toNOr_litCount}
+\label{BoolCircuit.toNAnd_toNOr_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.litCount, BoolCircuit.NOrCircuit.litCount}
 \difficulty{5}
@@ -303,6 +335,7 @@ $(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
 
 \begin{theorem}[AND-normalization preserves literal count]
 \lean{BoolCircuit.toNAnd_litCount}
+\label{BoolCircuit.toNAnd_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.litCount, BoolCircuit.toNAnd_toNOr_litCount}
 \difficulty{1}
@@ -312,6 +345,7 @@ $(c.\mathrm{toNAnd}).\mathrm{litCount} = c.\mathrm{litCount}$.
 
 \begin{theorem}[OR-normalization preserves literal count]
 \lean{BoolCircuit.toNOr_litCount}
+\label{BoolCircuit.toNOr_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.litCount, BoolCircuit.toNAnd_toNOr_litCount}
 \difficulty{1}
@@ -321,6 +355,7 @@ $(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
 
 \begin{theorem}[Normalization at most doubles size]
 \lean{BoolCircuit.toNAnd_toNOr_size_le}
+\label{BoolCircuit.toNAnd_toNOr_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.size, BoolCircuit.NOrCircuit.size, BoolCircuit.foldr_add_map_le}
 \difficulty{7}
@@ -331,6 +366,7 @@ $(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 
 \begin{theorem}[AND-normalization at most doubles size]
 \lean{BoolCircuit.toNAnd_size_le}
+\label{BoolCircuit.toNAnd_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.size, BoolCircuit.toNAnd_toNOr_size_le}
 \difficulty{1}
@@ -340,6 +376,7 @@ $(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 
 \begin{theorem}[OR-normalization at most doubles size]
 \lean{BoolCircuit.toNOr_size_le}
+\label{BoolCircuit.toNOr_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.size, BoolCircuit.toNAnd_toNOr_size_le}
 \difficulty{1}
@@ -349,8 +386,9 @@ $(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 
 \begin{definition}[Forget AND-normal form back to a circuit]
 \lean{BoolCircuit.NAndCircuit.toCircuit}
+\label{BoolCircuit.NAndCircuit.toCircuit}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.toCircuit}
+\uses{BoolCircuit.Circuit, BoolCircuit.NAndCircuit}
 The forgetful map turning a normal-form AND circuit into a general circuit: a clause
 becomes an AND node over its literals, and a node becomes an AND node over the
 circuit images of its child OR circuits.
@@ -358,6 +396,7 @@ circuit images of its child OR circuits.
 
 \begin{definition}[Forget OR-normal form back to a circuit]
 \lean{BoolCircuit.NOrCircuit.toCircuit}
+\label{BoolCircuit.NOrCircuit.toCircuit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.NAndCircuit.toCircuit}
 The forgetful map turning a normal-form OR circuit into a general circuit: a clause
@@ -367,6 +406,7 @@ images of its child AND circuits.
 
 \begin{definition}[Single-variable AND circuit]
 \lean{BoolCircuit.NAndCircuit.ofVar}
+\label{BoolCircuit.NAndCircuit.ofVar}
 \leanok
 \uses{BoolCircuit.NAndCircuit}
 The normal-form AND circuit consisting of the single positive literal on variable $i$.
@@ -374,12 +414,14 @@ The normal-form AND circuit consisting of the single positive literal on variabl
 
 \begin{definition}[Single-variable OR circuit]
 \lean{BoolCircuit.NOrCircuit.ofVar}
+\label{BoolCircuit.NOrCircuit.ofVar}
 \leanok
 The normal-form OR circuit consisting of the single positive literal on variable $i$.
 \end{definition}
 
 \begin{definition}[Constant-true AND circuit]
 \lean{BoolCircuit.NAndCircuit.constTrue}
+\label{BoolCircuit.NAndCircuit.constTrue}
 \leanok
 \uses{BoolCircuit.NAndCircuit}
 The constant-true AND circuit, given by the empty clause (an empty conjunction).
@@ -387,12 +429,14 @@ The constant-true AND circuit, given by the empty clause (an empty conjunction).
 
 \begin{definition}[Constant-false OR circuit]
 \lean{BoolCircuit.NOrCircuit.constFalse}
+\label{BoolCircuit.NOrCircuit.constFalse}
 \leanok
 The constant-false OR circuit, given by the empty clause (an empty disjunction).
 \end{definition}
 
 \begin{definition}[Evaluation of a literal]
 \lean{Literal.eval}
+\label{Literal.eval}
 \leanok
 \uses{Literal}
 For a literal $l$ with variable $l.\mathrm{var}$ and polarity $l.\mathrm{neg}$ and an
@@ -402,6 +446,7 @@ $\lnot x_{l.\mathrm{var}}$ for a negated one.
 
 \begin{definition}[Width of a CNF formula]
 \lean{CNF.width}
+\label{CNF.width}
 \leanok
 \uses{CNF, Term.width}
 The width of a CNF formula $c$, defined as the maximum width over its clauses (and $0$
@@ -410,6 +455,7 @@ for the empty formula).
 
 \begin{definition}[Evaluation of a decision tree]
 \lean{DecisionTree.eval}
+\label{DecisionTree.eval}
 \leanok
 \uses{DecisionTree}
 Evaluates a decision tree on an input $x$: a leaf returns its stored bit, and a branch
@@ -419,6 +465,7 @@ otherwise.
 
 \begin{definition}[Depth of a decision tree]
 \lean{DecisionTree.depth}
+\label{DecisionTree.depth}
 \leanok
 \uses{DecisionTree}
 The depth of a decision tree (maximum path length to a leaf): a leaf has depth $0$ and a
@@ -427,6 +474,7 @@ branch has depth $1$ plus the maximum of its two subtrees' depths.
 
 \begin{definition}[Deepest path of a decision tree]
 \lean{DecisionTree.deepPath}
+\label{DecisionTree.deepPath}
 \leanok
 \uses{DecisionTree, DecisionTree.depth}
 Extracts a deepest root-to-leaf path from a decision tree, at each branch descending into
@@ -436,6 +484,7 @@ $(\text{queried variable}, \text{branch direction})$ pairs along that path.
 
 \begin{lemma}[Deep path length equals depth]
 \lean{DecisionTree.length_deepPath}
+\label{DecisionTree.length_deepPath}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, DecisionTree.depth}
 \difficulty{4}
@@ -445,6 +494,7 @@ $T.\mathrm{deepPath}.\mathrm{length} = T.\mathrm{depth}$.
 
 \begin{lemma}[Depth bound for the full decision tree]
 \lean{buildFullDTree_depth}
+\label{buildFullDTree_depth}
 \leanok
 \uses{DecisionTree.depth, buildFullDTree}
 \difficulty{5}
@@ -455,6 +505,7 @@ $k, k+1, \dots, n-1$ in order has depth at most $n - k$.
 
 \begin{lemma}[Correctness of the full decision tree]
 \lean{buildFullDTree_eval}
+\label{buildFullDTree_eval}
 \leanok
 \uses{DecisionTree.eval, buildFullDTree}
 \difficulty{6}
@@ -462,3 +513,131 @@ For a function $f$, an index $k \le n$, and assignments $acc, x$ agreeing on all
 coordinates below $k$ (i.e. $acc\,i = x\,i$ whenever $i.\mathrm{val} < k$), the complete
 decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ evaluates to $f\,x$ on $x$.
 \end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Base literal, formula, and decision-tree definitions}
+
+\begin{definition}[Circuit literal]
+\lean{BoolCircuit.Lit}
+\label{BoolCircuit.Lit}
+\leanok
+A literal for Boolean circuits: a variable index $\mathtt{idx} : \mathrm{Fin}\,n$
+together with a polarity $\mathtt{sign} : \mathrm{Bool}$ (true = positive occurrence).
+\end{definition}
+
+\begin{definition}[Literal]
+\lean{Literal}
+\label{Literal}
+\leanok
+A literal for switching-lemma formulas: a variable $\mathtt{var} : \mathrm{Fin}\,n$
+with a negation flag $\mathtt{neg} : \mathrm{Bool}$ (true = negated literal).
+\end{definition}
+
+\begin{definition}[Term]
+\lean{Term}
+\label{Term}
+\leanok
+\uses{Literal}
+A term is a conjunction of literals, represented as a list:
+$\mathtt{Term}\,n = \mathtt{List}\,(\mathtt{Literal}\,n)$.
+\end{definition}
+
+\begin{definition}[Term width]
+\lean{Term.width}
+\label{Term.width}
+\leanok
+\uses{Term}
+The width of a term is its number of literals (the list length).
+\end{definition}
+
+\begin{definition}[Term evaluation]
+\lean{Term.eval}
+\label{Term.eval}
+\leanok
+\uses{Term}
+A term evaluates to true on input $x$ iff every literal in it holds under $x$
+(conjunction semantics).
+\end{definition}
+
+\begin{definition}[DNF formula]
+\lean{DNF}
+\label{DNF}
+\leanok
+\uses{Term}
+A DNF formula is a disjunction of terms, represented as a list:
+$\mathtt{DNF}\,n = \mathtt{List}\,(\mathtt{Term}\,n)$.
+\end{definition}
+
+\begin{definition}[DNF width]
+\lean{DNF.width}
+\label{DNF.width}
+\leanok
+\uses{DNF, Term.width}
+The width of a DNF formula is the maximum width of its terms ($0$ for the empty
+formula).
+\end{definition}
+
+\begin{definition}[DNF evaluation]
+\lean{DNF.eval}
+\label{DNF.eval}
+\leanok
+\uses{DNF, Term.eval}
+A DNF formula evaluates to true on input $x$ iff at least one of its terms holds
+under $x$ (disjunction of conjunctions).
+\end{definition}
+
+\begin{definition}[CNF formula]
+\lean{CNF}
+\label{CNF}
+\leanok
+\uses{Term}
+A CNF formula is a conjunction of clauses, each clause a disjunction of literals;
+it is represented as $\mathtt{CNF}\,n = \mathtt{List}\,(\mathtt{Term}\,n)$ with
+dual evaluation semantics.
+\end{definition}
+
+\begin{definition}[Clause evaluation]
+\lean{CNF.evalClause}
+\label{CNF.evalClause}
+\leanok
+\uses{CNF, Term}
+A single CNF clause evaluates to true on input $x$ iff some literal in it holds
+under $x$ (disjunction semantics).
+\end{definition}
+
+\begin{definition}[CNF evaluation]
+\lean{CNF.eval}
+\label{CNF.eval}
+\leanok
+\uses{CNF, CNF.evalClause}
+A CNF formula evaluates to true on input $x$ iff every clause holds under $x$.
+\end{definition}
+
+\begin{definition}[Decision tree]
+\lean{DecisionTree}
+\label{DecisionTree}
+\leanok
+A decision tree on $n$ Boolean variables: a leaf $\mathtt{leaf}\,b$ outputs $b$,
+and a branch $\mathtt{branch}\,i\,lo\,hi$ queries variable $i$, following $lo$ on
+false and $hi$ on true.
+\end{definition}
+
+\begin{definition}[Full decision tree]
+\lean{buildFullDTree}
+\label{buildFullDTree}
+\leanok
+\uses{DecisionTree}
+The complete decision tree for a function $f$ that queries variables
+$k, k+1, \dots, n-1$ in order, starting from accumulator assignment $acc$, and
+outputs $f$ applied to the completed assignment at each leaf.
+\end{definition}
+
+\begin{definition}[Decision-tree depth of a function]
+\lean{dtDepth}
+\label{dtDepth}
+\leanok
+\uses{DecisionTree, buildFullDTree}
+The decision-tree depth of $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to
+\mathrm{Bool}$ is the least $d$ such that some decision tree of depth at most $d$
+computes $f$; it is well defined since the full tree computes $f$ at depth $n$.
+\end{definition}

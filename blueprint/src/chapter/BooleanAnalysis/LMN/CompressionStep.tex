@@ -12,6 +12,7 @@ the switched gates can be repackaged as clean, bounded-width DNFs.
 
 \begin{lemma}[Depth-zero circuit is a literal]
 \lean{LMN.circuit_depth_zero_is_lit}
+\label{LMN.circuit_depth_zero_is_lit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
 \difficulty{4}
@@ -21,6 +22,7 @@ $l$ with $c = \mathrm{Circuit.lit}\,l$.
 
 \begin{lemma}[Layer-2 composed bound, base case]
 \lean{LMN.layer2_composed_bound_base}
+\label{LMN.layer2_composed_bound_base}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.size, BoolCircuit.Lit, DNF.eval, LMN.Layer2Data, LMN.circuit_depth_zero_is_lit, LMN.composedDelta, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth, dtDepth_neg}
 \difficulty{6}
@@ -40,6 +42,7 @@ $0 < s_{\mathrm{rem}}$.
 
 \begin{lemma}[Switched gates yield new bounded-width DNFs]
 \lean{LMN.switched_gates_give_new_dnfs}
+\label{LMN.switched_gates_give_new_dnfs}
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}

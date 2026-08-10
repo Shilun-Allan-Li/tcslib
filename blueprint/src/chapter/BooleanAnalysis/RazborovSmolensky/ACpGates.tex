@@ -16,6 +16,7 @@ fraction of the random seeds produce a wrong value.
 
 \begin{definition}[The $\mathrm{AC}^0$ gate set]
 \lean{ACP.AC_GateOps}
+\label{ACP.AC_GateOps}
 \leanok
 \uses{ACP.FeedForward.GateOp.id}
 The set of plain $\mathrm{AC}^0$ gate operations on the alphabet $\mathrm{Fin}\,2$: the
@@ -25,6 +26,7 @@ fan-in AND gate $x \mapsto \prod_{i} x_i$.
 
 \begin{lemma}[Counting tuples satisfying a pointwise predicate]
 \lean{ACP.tuple_fail_count}
+\label{ACP.tuple_fail_count}
 \leanok
 For a finite index type $\iota$, a finite type $\beta$ and a decidable predicate $P$ on
 $\beta$, the number of functions $f : \iota \to \beta$ with $P(f(i))$ for all $i$ equals
@@ -33,6 +35,7 @@ $\abs{\{b : P(b)\}}^{\abs{\iota}}$.
 
 \begin{lemma}[Averaging for the probabilistic method]
 \lean{ACP.prob_method_averaging}
+\label{ACP.prob_method_averaging}
 \leanok
 Let $\mathrm{Bad}$ be a finite set of elements of $\alpha$, let $\mathrm{Fail} : \alpha \to
 \beta \to \mathrm{Prop}$ be decidable with $\beta$ finite and nonempty, and let $C$ be a
@@ -44,6 +47,7 @@ $b \in \beta$ with $\abs{\{a \in \mathrm{Bad} : \mathrm{Fail}(a,b)\}} \cdot C \l
 
 \begin{definition}[Booleanization of a field element]
 \lean{ACP.bitify}
+\label{ACP.bitify}
 \leanok
 The map $\mathbb{Z}/p \to \mathrm{Fin}\,2$ sending $a$ to $1$ if $a = 1$ and to $0$
 otherwise. It is intended to be applied only to values lying in $\{0,1\}$.
@@ -51,6 +55,7 @@ otherwise. It is intended to be applied only to values lying in $\{0,1\}$.
 
 \begin{lemma}[Booleanization is a section on $\{0,1\}$]
 \lean{ACP.cast_bitify_eq}
+\label{ACP.cast_bitify_eq}
 \leanok
 \uses{ACP.bitify}
 If $a \in \{0,1\} \subseteq \mathbb{Z}/p$, then casting $\texttt{ACP.bitify}\,(a)$ back into
@@ -59,6 +64,7 @@ $\mathbb{Z}/p$ through $\mathbb{N}$ recovers $a$.
 
 \begin{lemma}[Fermat indicator of zero]
 \lean{ACP.one_sub_pow_card_sub_one}
+\label{ACP.one_sub_pow_card_sub_one}
 \leanok
 For every $a \in \mathbb{Z}/p$ with $p$ prime,
 \[
@@ -68,6 +74,7 @@ For every $a \in \mathbb{Z}/p$ with $p$ prime,
 
 \begin{lemma}[Bit indicator agrees with booleanization]
 \lean{ACP.bit_indicator_eq_bitify}
+\label{ACP.bit_indicator_eq_bitify}
 \leanok
 \uses{ACP.bitify}
 If $a \in \{0,1\} \subseteq \mathbb{Z}/p$, then $1 - (1-a)^{p-1}$ equals the cast of
@@ -76,6 +83,7 @@ $\texttt{ACP.bitify}\,(a)$ into $\mathbb{Z}/p$.
 
 \begin{definition}[Unbounded $\mathrm{MOD}_p$ gate]
 \lean{ACP.modGateOp}
+\label{ACP.modGateOp}
 \leanok
 The gate operation of arity \texttt{width} on Boolean inputs that outputs $1$ when the sum
 of its inputs, cast into $\mathbb{Z}/p$, is $0$, and outputs $0$ otherwise.
@@ -83,6 +91,7 @@ of its inputs, cast into $\mathbb{Z}/p$, is $0$, and outputs $0$ otherwise.
 
 \begin{definition}[{The $\mathrm{AC}^0[p]$ gate set}]
 \lean{ACP.ACp_GateOps}
+\label{ACP.ACp_GateOps}
 \leanok
 \uses{ACP.AC_GateOps, ACP.modGateOp}
 The $\mathrm{AC}^0[p]$ gate set: the $\mathrm{AC}^0$ gates (identity, NOT, unbounded AND)
@@ -91,6 +100,7 @@ together with the unbounded $\mathrm{MOD}_p$ gate of every arity.
 
 \begin{definition}[Randomized OR-approximating polynomial]
 \lean{ACP.approxOr}
+\label{ACP.approxOr}
 \leanok
 Given polynomials $P_1,\dots,P_{\mathrm{width}}$ over $\mathbb{Z}/p$ and a random seed
 consisting of $\ell$ subsets $S_1,\dots,S_\ell$ of the input positions, the approximator is
@@ -101,6 +111,7 @@ consisting of $\ell$ subsets $S_1,\dots,S_\ell$ of the input positions, the appr
 
 \begin{definition}[Exact $\mathrm{MOD}_p$ polynomial]
 \lean{ACP.exactMod}
+\label{ACP.exactMod}
 \leanok
 The polynomial $1 - \bigl(\sum_i P_i\bigr)^{p-1}$ over $\mathbb{Z}/p$, which computes the
 $\mathrm{MOD}_p$ predicate exactly on Boolean values.
@@ -108,6 +119,7 @@ $\mathrm{MOD}_p$ predicate exactly on Boolean values.
 
 \begin{definition}[Value-level OR approximator]
 \lean{ACP.approxOr_val}
+\label{ACP.approxOr_val}
 \leanok
 The value-level analogue of the randomized OR approximator: for $v : \mathrm{Fin}\,
 \mathrm{width} \to \mathbb{Z}/p$ and subsets $S_1,\dots,S_\ell$,
@@ -118,6 +130,7 @@ The value-level analogue of the randomized OR approximator: for $v : \mathrm{Fin
 
 \begin{definition}[Value-level OR detector]
 \lean{ACP.OR_val}
+\label{ACP.OR_val}
 \leanok
 For $v : \mathrm{Fin}\,\mathrm{width} \to \mathbb{Z}/p$, the quantity
 $1 - \prod_{k}\bigl(1 - v_k^{\,p-1}\bigr)$, which detects whether some coordinate of $v$ is
@@ -126,6 +139,7 @@ nonzero.
 
 \begin{theorem}[Degree bound for the OR approximator]
 \lean{ACP.approxOr_totalDegree}
+\label{ACP.approxOr_totalDegree}
 \leanok
 \uses{ACP.approxOr}
 The total degree of $\texttt{ACP.approxOr}$ applied to $P_1,\dots,P_{\mathrm{width}}$ and a
@@ -134,6 +148,7 @@ seed $S$ is at most $(p-1)\,\ell \cdot \sup_i \deg(P_i)$.
 
 \begin{theorem}[Degree bound for the exact $\mathrm{MOD}_p$ polynomial]
 \lean{ACP.exactMod_totalDegree}
+\label{ACP.exactMod_totalDegree}
 \leanok
 \uses{ACP.exactMod}
 The total degree of $\texttt{ACP.exactMod}$ applied to $P_1,\dots,P_{\mathrm{width}}$ is at
@@ -142,6 +157,7 @@ most $(p-1)\cdot \sup_i \deg(P_i)$.
 
 \begin{lemma}[Half the subsets miss a nonzero vector]
 \lean{ACP.subset_sum_zero_bound}
+\label{ACP.subset_sum_zero_bound}
 \leanok
 For a nonzero vector $v : \mathrm{Fin}\,n \to \mathbb{Z}/p$, the number of subsets
 $s \subseteq \mathrm{Fin}\,n$ with $\sum_{i \in s} v_i = 0$ is at most half of all $2^n$
@@ -150,6 +166,7 @@ subsets; formally, twice that count is at most the total number of subsets.
 
 \begin{lemma}[Evaluation commutes with the OR approximator]
 \lean{ACP.approxOr_eval_eq}
+\label{ACP.approxOr_eval_eq}
 \leanok
 \uses{ACP.approxOr, ACP.approxOr_val}
 Evaluating $\texttt{ACP.approxOr}\,(P, S)$ at a point $y$ gives the same result as applying
@@ -159,6 +176,7 @@ $i \mapsto P_i(y)$ with the same seed $S$.
 
 \begin{lemma}[Characterization of approximator failure]
 \lean{ACP.approxOr_failure_iff}
+\label{ACP.approxOr_failure_iff}
 \leanok
 \uses{ACP.OR_val, ACP.approxOr_val, ACP.one_sub_pow_card_sub_one}
 For $v : \mathrm{Fin}\,\mathrm{width} \to \mathbb{Z}/p$ and a seed $S$, the value-level
@@ -168,6 +186,7 @@ vanishing sum, i.e.\ $\sum_{i \in S_k} v_i = 0$ for all $k$.
 
 \begin{lemma}[Bad-seed count for a nonzero input]
 \lean{ACP.count_bad_S}
+\label{ACP.count_bad_S}
 \leanok
 \uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val}
 For a nonzero $v$, the number of seeds $S : \mathrm{Fin}\,\ell \to \mathrm{Finset}
@@ -177,6 +196,7 @@ detector, multiplied by $2^\ell$, is at most the total number of seeds.
 
 \begin{lemma}[Number of random seeds]
 \lean{ACP.approxSeed_card}
+\label{ACP.approxSeed_card}
 \leanok
 The type of seeds $\mathrm{Fin}\,\ell \to \mathrm{Finset}(\mathrm{Fin}\,\mathrm{width})$,
 i.e.\ $\ell$ independent subset choices, has cardinality $2^{\mathrm{width}\cdot \ell}$.
@@ -184,6 +204,7 @@ i.e.\ $\ell$ independent subset choices, has cardinality $2^{\mathrm{width}\cdot
 
 \begin{lemma}[Bad-seed bound for every input]
 \lean{ACP.count_bad_S_or}
+\label{ACP.count_bad_S_or}
 \leanok
 \uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val, ACP.count_bad_S}
 Without any nonvanishing hypothesis on $v$: the number of seeds on which the value-level
@@ -193,6 +214,7 @@ number of seeds.
 
 \begin{definition}[List of OR-approximating polynomials]
 \lean{ACP.approxOrPolyList}
+\label{ACP.approxOrPolyList}
 \leanok
 \uses{ACP.approxOr}
 The list of all polynomials $\texttt{ACP.approxOr}\,(P,S)$, one entry per random seed $S$. It
@@ -202,6 +224,7 @@ corresponding multiplicity.
 
 \begin{lemma}[Length of the OR polynomial list]
 \lean{ACP.approxOrPolyList_length}
+\label{ACP.approxOrPolyList_length}
 \leanok
 \uses{ACP.approxOrPolyList, ACP.approxSeed_card}
 The list $\texttt{ACP.approxOrPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
@@ -209,6 +232,7 @@ The list $\texttt{ACP.approxOrPolyList}$ has length $2^{\mathrm{width}\cdot\ell}
 
 \begin{theorem}[Pointwise bad-seed count for OR]
 \lean{ACP.approxOr_pointwise_bad_count}
+\label{ACP.approxOr_pointwise_bad_count}
 \leanok
 \uses{ACP.OR_val, ACP.approxOr, ACP.approxOr_eval_eq, ACP.approxSeed_card, ACP.count_bad_S_or}
 Fix an evaluation point $y$. The number of seeds $S$ for which
@@ -219,6 +243,7 @@ $2^{\mathrm{width}\cdot\ell}$; that is, at most a $2^{-\ell}$ fraction of seeds 
 
 \begin{theorem}[Good OR approximators exist as a distribution]
 \lean{ACP.exists_good_approxOr}
+\label{ACP.exists_good_approxOr}
 \leanok
 \uses{ACP.approxOr, ACP.approxOrPolyList, ACP.approxOrPolyList_length, ACP.approxOr_pointwise_bad_count, ACP.approxOr_totalDegree}
 There is a list $Ps$ of polynomials, namely $\texttt{ACP.approxOrPolyList}\,(P)$, of length
@@ -229,6 +254,7 @@ seeds failing to compute the OR value at $y$, times $2^\ell$, is at most the len
 
 \begin{definition}[Randomized AND-approximating polynomial]
 \lean{ACP.approxAnd}
+\label{ACP.approxAnd}
 \leanok
 \uses{ACP.approxOr}
 The De Morgan dual of the OR approximator: $1 - \texttt{ACP.approxOr}\,(1 - P, S)$, where the
@@ -237,6 +263,7 @@ approximator is applied to the negated inputs $i \mapsto 1 - P_i$.
 
 \begin{theorem}[Degree bound for the AND approximator]
 \lean{ACP.approxAnd_totalDegree}
+\label{ACP.approxAnd_totalDegree}
 \leanok
 \uses{ACP.approxAnd, ACP.approxOr_totalDegree}
 The total degree of $\texttt{ACP.approxAnd}\,(P,S)$ is at most
@@ -245,6 +272,7 @@ $(p-1)\,\ell\cdot\sup_i \deg(P_i)$, the same bound as for the OR approximator.
 
 \begin{definition}[List of AND-approximating polynomials]
 \lean{ACP.approxAndPolyList}
+\label{ACP.approxAndPolyList}
 \leanok
 \uses{ACP.approxAnd}
 The list of all polynomials $\texttt{ACP.approxAnd}\,(P,S)$, one entry per random seed $S$.
@@ -252,6 +280,7 @@ The list of all polynomials $\texttt{ACP.approxAnd}\,(P,S)$, one entry per rando
 
 \begin{lemma}[Length of the AND polynomial list]
 \lean{ACP.approxAndPolyList_length}
+\label{ACP.approxAndPolyList_length}
 \leanok
 \uses{ACP.approxAndPolyList, ACP.approxSeed_card}
 The list $\texttt{ACP.approxAndPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
@@ -259,6 +288,7 @@ The list $\texttt{ACP.approxAndPolyList}$ has length $2^{\mathrm{width}\cdot\ell
 
 \begin{theorem}[Pointwise bad-seed count for AND]
 \lean{ACP.approxAnd_pointwise_bad_count}
+\label{ACP.approxAnd_pointwise_bad_count}
 \leanok
 \uses{ACP.approxAnd, ACP.approxOr, ACP.approxOr_pointwise_bad_count}
 Fix an evaluation point $y$. The number of seeds $S$ for which
@@ -269,6 +299,7 @@ $2^{\mathrm{width}\cdot\ell}$.
 
 \begin{theorem}[Good AND approximators exist as a distribution]
 \lean{ACP.exists_good_approxAnd}
+\label{ACP.exists_good_approxAnd}
 \leanok
 \uses{ACP.approxAnd, ACP.approxAndPolyList, ACP.approxAndPolyList_length, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree}
 There is a list $Ps$ of polynomials, namely $\texttt{ACP.approxAndPolyList}\,(P)$, of length
@@ -280,6 +311,7 @@ $Ps$.
 
 \begin{lemma}[{Case analysis on $\mathrm{AC}^0[p]$ gates}]
 \lean{ACP.ACp_GateOps_cases}
+\label{ACP.ACp_GateOps_cases}
 \leanok
 \uses{ACP.AC_GateOps, ACP.ACp_GateOps, ACP.FeedForward.GateOp.id, ACP.modGateOp}
 Every gate operation in $\texttt{ACP.ACp\_GateOps}$ is one of the following: the identity gate
@@ -289,6 +321,7 @@ $x \mapsto \prod_i x_i$ of some arity $n$, or a $\texttt{ACP.modGateOp}$ of some
 
 \begin{lemma}[Exact $\mathrm{MOD}_p$ on Boolean inputs]
 \lean{ACP.exactMod_on_bits}
+\label{ACP.exactMod_on_bits}
 \leanok
 \uses{ACP.bitify, ACP.cast_bitify_eq, ACP.modGateOp, ACP.one_sub_pow_card_sub_one}
 If all values $\mathrm{inputs}_i$ lie in $\{0,1\} \subseteq \mathbb{Z}/p$, then
@@ -299,6 +332,7 @@ $i \mapsto \texttt{ACP.bitify}\,(\mathrm{inputs}_i)$.
 
 \begin{lemma}[Exact AND on Boolean inputs]
 \lean{ACP.exactAnd_on_bits}
+\label{ACP.exactAnd_on_bits}
 \leanok
 \uses{ACP.bitify}
 If all values $\mathrm{inputs}_i$ lie in $\{0,1\} \subseteq \mathbb{Z}/p$, then
@@ -309,6 +343,7 @@ inputs.
 
 \begin{lemma}[Approximating polynomial family for a single gate]
 \lean{ACP.exists_poly_for_gate}
+\label{ACP.exists_poly_for_gate}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
 Let $\mathrm{op}$ be a gate in $\texttt{ACP.ACp\_GateOps}$ and let $P_i$ be polynomials over

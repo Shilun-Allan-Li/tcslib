@@ -16,6 +16,7 @@ derived via a Fourier-analytic argument using Parseval's identity.
 
 \begin{definition}[Linearity of a Boolean function]
 \lean{BoolBLR.is_linear_bool}
+\label{BoolBLR.is_linear_bool}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec}
 A function $f : \{0,1\}^n \to \{0,1\}$ is \emph{linear} if for all
@@ -28,6 +29,7 @@ where $\oplus$ denotes bitwise XOR (i.e.\ \texttt{Bool.xor}).
 
 \begin{definition}[$\pm 1$ lift of a Boolean function]
 \lean{BoolBLR.lift_pm1}
+\label{BoolBLR.lift_pm1}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.BoolToPM1, BoolFourier.hypercube}
 Given $f : \{0,1\}^n \to \{0,1\}$, its \emph{$\pm 1$ lift}
@@ -38,6 +40,7 @@ $x \mapsto (-1)^{f(x)}$, converting each Boolean output to a real sign via
 
 \begin{definition}[Boolean distance]
 \lean{BoolBLR.bool_dist}
+\label{BoolBLR.bool_dist}
 \leanok
 \uses{BoolFourier.expectation, BoolFourier.hypercube}
 The \emph{distance} between two Boolean functions
@@ -50,6 +53,7 @@ computed as the uniform expectation of the indicator $\mathbf{1}[f(x) \ne g(x)]$
 
 \begin{definition}[$\varepsilon$-far from linear]
 \lean{BoolBLR.epsilon_far_from_linear}
+\label{BoolBLR.epsilon_far_from_linear}
 \leanok
 \uses{BoolBLR.bool_dist, BoolBLR.is_linear_bool, BoolFourier.hypercube}
 A function $f : \{0,1\}^n \to \{0,1\}$ is \emph{$\varepsilon$-far from linear}
@@ -59,6 +63,7 @@ $g : \{0,1\}^n \to \{0,1\}$ we have $\dist(f, g) \ge \varepsilon$.
 
 \begin{lemma}[Linear iff equal to a Fourier character]
 \lean{BoolBLR.linear_bool_iff_character}
+\label{BoolBLR.linear_bool_iff_character}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{5}
@@ -69,6 +74,7 @@ $\texttt{BoolBLR.lift\_pm1}\,f$ equals the Fourier character $\chi_S$.
 
 \begin{definition}[BLR acceptance probability]
 \lean{BoolBLR.BLR_accept_prob}
+\label{BoolBLR.BLR_accept_prob}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
 The \emph{BLR acceptance probability} of $f : \{0,1\}^n \to \{0,1\}$ is
@@ -87,6 +93,7 @@ where $x, y$ are drawn uniformly from $\{0,1\}^n$.
 
 \begin{lemma}[BLR acceptance in $\pm 1$ form]
 \lean{BoolBLR.BLR_accept_prob_pm1}
+\label{BoolBLR.BLR_accept_prob_pm1}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.lift_pm1, BoolFourier.card_hypercube, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{2}
@@ -104,6 +111,7 @@ For any $f : \{0,1\}^n \to \{0,1\}$,
 
 \begin{lemma}[Triple expectation as convolution]
 \lean{BoolBLR.triple_expectation_as_convolution}
+\label{BoolBLR.triple_expectation_as_convolution}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.xor_vec}
 \difficulty{2}
@@ -117,6 +125,7 @@ For any $f : \{0,1\}^n \to \mathbb{R}$,
 
 \begin{lemma}[Triple expectation equals sum of cubed Fourier coefficients]
 \lean{BoolBLR.triple_expectation_eq_cube_fourier}
+\label{BoolBLR.triple_expectation_eq_cube_fourier}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{3}
@@ -131,6 +140,7 @@ coefficient of $g = \texttt{BoolBLR.lift\_pm1}\,f$,
 
 \begin{lemma}[Fourier coefficient bound from distance]
 \lean{BoolBLR.fourier_coeff_le_of_dist_ge}
+\label{BoolBLR.fourier_coeff_le_of_dist_ge}
 \leanok
 \uses{BoolBLR.bool_dist, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.card_hypercube, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product}
 \difficulty{3}
@@ -142,6 +152,7 @@ satisfies $\widehat{\texttt{BoolBLR.lift\_pm1}\,f}(S) \le 1 - 2\varepsilon$.
 
 \begin{lemma}[Fourier coefficient bound when $\varepsilon$-far from linear]
 \lean{BoolBLR.fourier_coeff_le_of_far_from_linear}
+\label{BoolBLR.fourier_coeff_le_of_far_from_linear}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_dist_ge, BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolBLR.linear_bool_iff_character, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.chiS}
 \difficulty{4}
@@ -154,6 +165,7 @@ every $S \subseteq [n]$,
 
 \begin{lemma}[Soundness bound via Fourier analysis]
 \lean{BoolBLR.BLR_soundness_via_fourier}
+\label{BoolBLR.BLR_soundness_via_fourier}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 \difficulty{2}
@@ -169,6 +181,7 @@ with the Parseval identity $\sum_S \hat{f}(S)^2 = 1$.
 
 \begin{lemma}[BLR completeness]
 \lean{BoolBLR.BLR_completeness}
+\label{BoolBLR.BLR_completeness}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{1}
@@ -179,6 +192,7 @@ every linear function with probability $1$.
 
 \begin{lemma}[BLR soundness]
 \lean{BoolBLR.BLR_soundness}
+\label{BoolBLR.BLR_soundness}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.BLR_accept_prob_pm1, BoolBLR.BLR_soundness_via_fourier, BoolBLR.epsilon_far_from_linear, BoolBLR.triple_expectation_eq_cube_fourier, BoolFourier.hypercube}
 \difficulty{1}
@@ -196,6 +210,7 @@ causes the BLR test to reject with probability at least $\varepsilon$.
 
 \begin{lemma}[Value of a linear function on an indicator vector]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_fx_1}
+\label{BoolBLR.linear_bool_iff_character_aux_h_fx_1}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, BoolFourier.xor_vec}
 Let $f : \{0,1\}^n \to \{0,1\}$ be linear.  Then for every
@@ -211,6 +226,7 @@ number of $i \in s$ with $f(e_i) = \texttt{true}$.
 
 \begin{lemma}[Value of a linear function via its support]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_fx_2}
+\label{BoolBLR.linear_bool_iff_character_aux_h_fx_2}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.linear_bool_iff_character_aux_h_fx_1, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 Specialization of the previous lemma to the support of an arbitrary point:
@@ -221,6 +237,7 @@ $x_i = \texttt{true}$ and $f(e_i) = \texttt{true}$.
 
 \begin{lemma}[Multiplicativity of the Fourier characters]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_char}
+\label{BoolBLR.linear_bool_iff_character_aux_h_char}
 \leanok
 \uses{BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.chiS}
 For every $S \subseteq [n]$ and all $x, y \in \{0,1\}^n$,
@@ -231,6 +248,7 @@ For every $S \subseteq [n]$ and all $x, y \in \{0,1\}^n$,
 
 \begin{lemma}[$\pm 1$ lift of a character is XOR-additive]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_eq}
+\label{BoolBLR.linear_bool_iff_character_aux_h_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
 Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$
@@ -243,6 +261,7 @@ multiplicativity identity $\chi_S(x \oplus y) = \chi_S(x)\chi_S(y)$, one has
 
 \begin{lemma}[Value of a linear function via its support, restated]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_fx}
+\label{BoolBLR.linear_bool_iff_character_aux_h_fx}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.linear_bool_iff_character_aux_h_fx_2, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 Restatement of the support formula in the exact form used inside the proof of
@@ -253,6 +272,7 @@ $f(e_i) = \texttt{true}$.
 
 \begin{lemma}[XOR-additivity of a function whose lift is a character]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_eq_h}
+\label{BoolBLR.linear_bool_iff_character_aux_h_eq_h}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolBLR.linear_bool_iff_character_aux_h_char, BoolBLR.linear_bool_iff_character_aux_h_eq, BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
 If $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$ for some $S \subseteq [n]$, then for
@@ -265,6 +285,7 @@ This is the previous lemma with the multiplicativity hypothesis discharged.
 
 \begin{lemma}[Pointwise $\pm 1$ form of the BLR indicator]
 \lean{BoolBLR.BLR_accept_prob_pm1_aux_h_eq}
+\label{BoolBLR.BLR_accept_prob_pm1_aux_h_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, BoolFourier.xor_vec}
 Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
@@ -277,6 +298,7 @@ Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
 
 \begin{lemma}[Fourier expansion of the self-convolution]
 \lean{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_convolution}
+\label{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_convolution}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For every $x \in \{0,1\}^n$,
@@ -288,6 +310,7 @@ i.e.\ the self-convolution of $g$ has Fourier coefficients $\hat{g}(S)^2$.
 
 \begin{lemma}[Substituting the convolution expansion into the expectation]
 \lean{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_substitute}
+\label{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_substitute}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 Write $g = \texttt{BoolBLR.lift\_pm1}\,f$ and assume
@@ -301,6 +324,7 @@ $(g * g)(x) = \sum_S \hat{g}(S)^2 \chi_S(x)$ for all $x$.  Then
 
 \begin{lemma}[Product of $\pm 1$ lifts as a disagreement indicator]
 \lean{BoolBLR.fourier_coeff_le_of_dist_ge_aux_h_lift_pm1}
+\label{BoolBLR.fourier_coeff_le_of_dist_ge_aux_h_lift_pm1}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 For all $f, g : \{0,1\}^n \to \{0,1\}$ and every $x \in \{0,1\}^n$,
@@ -311,6 +335,7 @@ For all $f, g : \{0,1\}^n \to \{0,1\}$ and every $x \in \{0,1\}^n$,
 
 \begin{lemma}[Parseval for a $\pm 1$ lift]
 \lean{BoolBLR.BLR_soundness_via_fourier_aux_hparseval}
+\label{BoolBLR.BLR_soundness_via_fourier_aux_hparseval}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 For every $f : \{0,1\}^n \to \{0,1\}$, the $\pm 1$ lift
@@ -322,6 +347,7 @@ $g = \texttt{BoolBLR.lift\_pm1}\,f$ has unit Fourier mass:
 
 \begin{lemma}[Per-coefficient cube bound for $\varepsilon$-far functions]
 \lean{BoolBLR.BLR_soundness_via_fourier_aux_h_bound}
+\label{BoolBLR.BLR_soundness_via_fourier_aux_h_bound}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube}
 Let $f : \{0,1\}^n \to \{0,1\}$ be $\varepsilon$-far from linear and write
@@ -333,6 +359,7 @@ $g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then for every $S \subseteq [n]$,
 
 \begin{lemma}[Unfolded form of Boolean linearity]
 \lean{BoolBLR.BLR_completeness_aux_h_linear}
+\label{BoolBLR.BLR_completeness_aux_h_linear}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, BoolFourier.xor_vec}
 If $f : \{0,1\}^n \to \{0,1\}$ is linear, then
@@ -341,6 +368,7 @@ $f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$.
 
 \begin{lemma}[Multiplicativity of the lift of a linear function]
 \lean{BoolBLR.BLR_completeness_aux_h_lift_linear}
+\label{BoolBLR.BLR_completeness_aux_h_lift_linear}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.hypercube, BoolFourier.xor_vec}
 Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $f(x \oplus y) = f(x) \oplus f(y)$ for

@@ -11,6 +11,7 @@ Gilbert--Varshamov argument.
 
 \begin{theorem}[Entropy upper bound on Hamming balls]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
+\label{ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p071-b001}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.qaryEntropy}
@@ -26,6 +27,7 @@ For $0<p\le 1-1/q$ and $q=|\alpha|$,
 
 \begin{lemma}[Simplifying $q^{H_q(p)}$]
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
+\label{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{4}
@@ -37,6 +39,7 @@ q^{H_q(p)} \;=\; (q-1)^p\,p^{-p}\,(1-p)^{-(1-p)}.
 
 \begin{lemma}[Same identity, alternate exponentiation]
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
+\label{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \difficulty{1}
@@ -48,6 +51,7 @@ Variant using a different exponentiation operator.
 
 \begin{lemma}[Square-root/floor inequality]
 \lean{ErrorCorrectingCodes.Codeword.sqrt_sub_sqrt_floor_le_one}
+\label{ErrorCorrectingCodes.Codeword.sqrt_sub_sqrt_floor_le_one}
 \leanok
 \difficulty{5}
 For $x\ge 0$,
@@ -61,6 +65,7 @@ For $x\ge 0$,
 
 \begin{lemma}[Asymptotic lower bound on binomial term]
 \lean{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
+\label{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p072-b001}
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
@@ -79,6 +84,7 @@ q^{H_q(p)\,n - \varepsilon(n)},
 
 \begin{theorem}[Positivity of $q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
+\label{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{4}
@@ -94,6 +100,7 @@ H_q(p) \;>\; 0.
 
 \begin{lemma}[Expansion of the $q$-ary entropy exponent]
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}
+\label{ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}
 \leanok
 \difficulty{2}
 Algebraic rewrite of the $q$-ary entropy exponent: for $q\in\mathbb{N}$ and $p\in\mathbb{R}$,
@@ -106,6 +113,7 @@ p\,\log_q(q-1) - p\,\log_q p - (1-p)\,\log_q(1-p)
 
 \begin{lemma}[AM--GM for two nonnegative reals]
 \lean{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum}
+\label{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum}
 \leanok
 \difficulty{3}
 For nonnegative reals $a,b\ge 0$, the geometric mean is at most the arithmetic mean:
@@ -116,6 +124,7 @@ For nonnegative reals $a,b\ge 0$, the geometric mean is at most the arithmetic m
 
 \begin{lemma}[A Stirling square-root identity]
 \lean{ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
+\label{ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
 \leanok
 \difficulty{3}
 For $n\ge 0$,
@@ -126,6 +135,7 @@ For $n\ge 0$,
 
 \begin{lemma}[Positivity of $\lfloor np\rfloor$ for large $n$]
 \lean{ErrorCorrectingCodes.Codeword.floor_np_pos}
+\label{ErrorCorrectingCodes.Codeword.floor_np_pos}
 \leanok
 \difficulty{4}
 Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le n$, then $\lfloor np\rfloor > 0$.
@@ -133,6 +143,7 @@ Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le 
 
 \begin{lemma}[Stirling-based ratio bound for the binomial term]
 \lean{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
+\label{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum, ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
 \difficulty{6}

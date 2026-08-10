@@ -14,6 +14,7 @@ at most $\varepsilon/2$.
 
 \begin{theorem}[Reduction at subsequent layers]
 \lean{LMN.subsequent_step_reduction}
+\label{LMN.subsequent_step_reduction}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -32,6 +33,7 @@ applied with width parameter $l$.
 
 \begin{theorem}[Decision-tree depth at subsequent layers]
 \lean{LMN.subsequent_step_dtDepth}
+\label{LMN.subsequent_step_dtDepth}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -48,6 +50,7 @@ of the one-step bound applied with width $l$.
 
 \begin{theorem}[Multi-stage failure bound]
 \lean{LMN.multi_stage_failure_bound}
+\label{LMN.multi_stage_failure_bound}
 \leanok
 \difficulty{3}
 If over $m$ stages each failure bound satisfies
@@ -58,6 +61,7 @@ $\sum_i \mathrm{failure\_bound}(i)\le s\cdot\alpha$.
 
 \begin{theorem}[Union bound for restriction probabilities]
 \lean{LMN.bernoulliRestrProb_union_bound_fin}
+\label{LMN.bernoulliRestrProb_union_bound_fin}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 \difficulty{5}
@@ -72,6 +76,7 @@ individual probabilities:
 
 \begin{theorem}[Iterative dominant-term bound]
 \lean{LMN.iterative_dominant_term_bound}
+\label{LMN.iterative_dominant_term_bound}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -87,6 +92,7 @@ $l=\log_2(2s/\varepsilon)$ gives
 
 \begin{theorem}[Two-stage composed union bound]
 \lean{LMN.two_stage_composed_union_bound}
+\label{LMN.two_stage_composed_union_bound}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
 For $0\le p\le 1$ and $0\le q\le 1$, and decidable events $A,B$ on restrictions,
@@ -102,6 +108,7 @@ Bernoulli restriction by the sum of the two individual stage probabilities.
 
 \begin{theorem}[Abstract iterative reduction]
 \lean{LMN.abstract_iterative_reduction}
+\label{LMN.abstract_iterative_reduction}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,

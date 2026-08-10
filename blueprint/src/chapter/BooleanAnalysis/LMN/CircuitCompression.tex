@@ -16,6 +16,7 @@ restriction.
 
 \begin{definition}[Concatenation of a list of lists]
 \lean{LMN.listConcat}
+\label{LMN.listConcat}
 \leanok
 Flattens a list of lists $[\,\ell_1, \ell_2, \dots\,]$ into the single list
 $\ell_1 \mathbin{+\!\!+} \ell_2 \mathbin{+\!\!+} \cdots$, defined by recursion on the
@@ -24,6 +25,7 @@ outer list. Used to merge the clause (or term) lists of several CNFs (or DNFs).
 
 \begin{lemma}[Bounded width iff all terms bounded]
 \lean{LMN.width_le_iff_forall}
+\label{LMN.width_le_iff_forall}
 \leanok
 \uses{Term, Term.width}
 \difficulty{4}
@@ -33,6 +35,7 @@ only if every term $t \in ts$ satisfies $t.\mathrm{width} \le \ell$.
 
 \begin{lemma}[CNF concatenation preserves width]
 \lean{LMN.cnf_concat_width_le}
+\label{LMN.cnf_concat_width_le}
 \leanok
 \uses{CNF, CNF.width, LMN.listConcat}
 \difficulty{5}
@@ -42,6 +45,7 @@ concatenating all their clause lists also has width at most $\ell$.
 
 \begin{lemma}[CNF concatenation evaluates as conjunction]
 \lean{LMN.cnf_concat_eval}
+\label{LMN.cnf_concat_eval}
 \leanok
 \uses{CNF, CNF.eval, LMN.listConcat}
 \difficulty{3}
@@ -52,6 +56,7 @@ CNF holds at $x$.
 
 \begin{lemma}[DNF concatenation preserves width]
 \lean{LMN.dnf_concat_width_le}
+\label{LMN.dnf_concat_width_le}
 \leanok
 \uses{CNF, CNF.width, DNF, DNF.width, LMN.cnf_concat_width_le, LMN.listConcat, Term.width, cnfToDualDNF_width}
 \difficulty{6}
@@ -61,6 +66,7 @@ obtained by concatenating all their term lists also has width at most $\ell$.
 
 \begin{lemma}[DNF concatenation evaluates as disjunction]
 \lean{LMN.dnf_concat_eval}
+\label{LMN.dnf_concat_eval}
 \leanok
 \uses{DNF, DNF.eval, LMN.listConcat}
 \difficulty{4}
@@ -71,6 +77,7 @@ component DNF holds at $x$.
 
 \begin{theorem}[Circuit compression for CNFs under AND]
 \lean{LMN.compression_and_of_cnfs}
+\label{LMN.compression_and_of_cnfs}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -86,6 +93,7 @@ lists. This collapses the AND layer and the CNF layer into one.
 
 \begin{theorem}[Circuit compression for DNFs under OR]
 \lean{LMN.compression_or_of_dnfs}
+\label{LMN.compression_or_of_dnfs}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -100,6 +108,7 @@ $\ell$, obtained by concatenating the children's term lists.
 
 \begin{theorem}[One-step reduction failure bound]
 \lean{LMN.one_step_reduction_failure_bound}
+\label{LMN.one_step_reduction_failure_bound}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -116,6 +125,7 @@ $s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
 
 \begin{theorem}[One-step decision-tree depth bound]
 \lean{LMN.one_step_dtDepth_bound}
+\label{LMN.one_step_dtDepth_bound}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -130,6 +140,7 @@ least $1 - s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
 
 \begin{lemma}[Complement probability sums to one]
 \lean{LMN.bernoulliRestrProb_complement}
+\label{LMN.bernoulliRestrProb_complement}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{4}
@@ -139,6 +150,7 @@ predicate $A$ on restrictions, $\Pr[A] + \Pr[\lnot A] = 1$.
 
 \begin{theorem}[One-step reduction with compression]
 \lean{LMN.one_step_reduction_with_compression}
+\label{LMN.one_step_reduction_with_compression}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,

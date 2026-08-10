@@ -15,6 +15,7 @@ tool for Johnson--Lindenstrauss-style concentration arguments.
 
 \begin{definition}[Bernstein MGF condition]
 \lean{ProbabilityTheory.HasBernsteinMGF}
+\label{ProbabilityTheory.HasBernsteinMGF}
 \leanok
 $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$ is a
 predicate on a random variable $X : \Omega \to \mathbb{R}$, a measure
@@ -29,6 +30,7 @@ radius of validity.
 
 \begin{lemma}[iid closure of the Bernstein MGF condition]
 \lean{ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
+\label{ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{4}
@@ -42,6 +44,7 @@ $\texttt{ProbabilityTheory.HasBernsteinMGF}\ (\sum_{i\in s} X_i)\ \mu\ (\sum_{i\
 
 \begin{lemma}[Upper-tail Bernstein bound]
 \lean{ProbabilityTheory.HasBernsteinMGF.measure_ge_le}
+\label{ProbabilityTheory.HasBernsteinMGF.measure_ge_le}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{5}
@@ -57,6 +60,7 @@ parameter $t = s/(2c)$ lies in the validity region $|t| \le t_{\max}$.
 
 \begin{lemma}[Lower-tail Bernstein bound]
 \lean{ProbabilityTheory.HasBernsteinMGF.measure_le_le}
+\label{ProbabilityTheory.HasBernsteinMGF.measure_le_le}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{5}
@@ -73,6 +77,7 @@ obtained by applying the upper-tail bound to $-X$.
 
 \begin{lemma}[Two-sided Bernstein bound]
 \lean{ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
+\label{ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_ge_le, ProbabilityTheory.HasBernsteinMGF.measure_le_le}
 \difficulty{5}
@@ -88,6 +93,7 @@ union bound.
 
 \begin{lemma}[Centered squared iid Bernstein tail bound]
 \lean{ProbabilityTheory.centered_squared_iid_tail}
+\label{ProbabilityTheory.centered_squared_iid_tail}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le, ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
 \difficulty{6}

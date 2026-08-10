@@ -14,6 +14,7 @@ regret bounds for the real prediction-space problem.
 
 \begin{definition}[Induced loss sequence]
 \lean{inducedLoss}
+\label{inducedLoss}
 \leanok
 \uses{LossSeq}
 Given a loss function $\ell : \mathbb{R} \to \Omega \to \mathbb{R}$, expert predictions
@@ -26,6 +27,7 @@ realized outcome.
 
 \begin{definition}[Hedge weighted-average prediction]
 \lean{hedgePrediction}
+\label{hedgePrediction}
 \leanok
 \uses{hedgeDist, inducedLoss}
 At each round $t \in \mathrm{Fin}\,T$, Hedge's \emph{prediction in the original
@@ -40,6 +42,7 @@ and $p_t(i)$ is expert $i$'s prediction at round $t$.
 
 \begin{definition}[Cumulative loss of Hedge's predictions]
 \lean{hedgePredictionCumLoss}
+\label{hedgePredictionCumLoss}
 \leanok
 \uses{hedgePrediction}
 The \emph{actual cumulative prediction loss} of Hedge is
@@ -53,6 +56,7 @@ prediction, not to a weighted average of expert losses.
 
 \begin{lemma}[Weighted average stays in convex set]
 \lean{hedgePrediction_mem}
+\label{hedgePrediction_mem}
 \leanok
 \uses{hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgePrediction, inducedLoss}
 \difficulty{3}
@@ -65,6 +69,7 @@ convex combination of points in $S$.
 
 \begin{lemma}[Jensen bridge: prediction loss bounded by Hedge loss]
 \lean{hedgePrediction_loss_le_hedgeLoss}
+\label{hedgePrediction_loss_le_hedgeLoss}
 \leanok
 \uses{hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss, hedgePrediction, hedgePrediction_mem, inducedLoss}
 \difficulty{4}
@@ -84,6 +89,7 @@ the individual expert losses.
 
 \begin{lemma}[Cumulative Jensen inequality]
 \lean{hedgePredictionCumLoss_le_hedgeCumLoss}
+\label{hedgePredictionCumLoss_le_hedgeCumLoss}
 \leanok
 \uses{hedgeCumLoss, hedgePredictionCumLoss, hedgePrediction_loss_le_hedgeLoss, inducedLoss}
 \difficulty{2}
@@ -99,6 +105,7 @@ the abstract cumulative Hedge loss on the induced expert loss table.
 
 \begin{theorem}[Tight regret bound for convex prediction]
 \lean{hedgePrediction_regret_bound_tight}
+\label{hedgePrediction_regret_bound_tight}
 \leanok
 \uses{LossSeq.Valid, bestExpertLoss, hedgePredictionCumLoss, hedgePredictionCumLoss_le_hedgeCumLoss, hedge_regret_bound_tight, inducedLoss, regret}
 \difficulty{4}
@@ -117,6 +124,7 @@ theorem \texttt{hedge\_regret\_bound\_tight}.
 
 \begin{theorem}[Optimal-rate regret bound for convex prediction]
 \lean{hedgePrediction_regret_tight_optimal}
+\label{hedgePrediction_regret_tight_optimal}
 \leanok
 \uses{LossSeq.Valid, bestExpertLoss, hedgePredictionCumLoss, hedgePredictionCumLoss_le_hedgeCumLoss, hedge_regret_tight_optimal, inducedLoss, optimalEtaTight, regret}
 \difficulty{4}

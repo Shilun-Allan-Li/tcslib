@@ -14,6 +14,7 @@ at most one.
 
 \begin{definition}[Bernoulli weight of a restriction]
 \lean{SwitchingLemma2.bernoulliRestrWeight}
+\label{SwitchingLemma2.bernoulliRestrWeight}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 For a parameter $p \in \bbr$ and a restriction $\rho$ on $n$ variables, the Bernoulli
@@ -27,6 +28,7 @@ $(1-p)/2$.
 
 \begin{definition}[Bernoulli event probability]
 \lean{SwitchingLemma2.bernoulliRestrProb}
+\label{SwitchingLemma2.bernoulliRestrProb}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
 For a parameter $p$ and a (decidable) predicate $\mathrm{event}$ on restrictions, the
@@ -37,6 +39,7 @@ the indicator of $\mathrm{event}(\rho)$.
 
 \begin{lemma}[Nonnegativity of Bernoulli weights]
 \lean{SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+\label{SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{3}
@@ -46,6 +49,7 @@ $\mathrm{bernoulliRestrWeight}(p,\rho)$ is nonnegative.
 
 \begin{lemma}[Bernoulli weights sum to one]
 \lean{SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\label{SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{6}
@@ -56,6 +60,7 @@ yields $1$.
 
 \begin{lemma}[Bernoulli event probability is at most one]
 \lean{SwitchingLemma2.bernoulliRestrProb_le_one'}
+\label{SwitchingLemma2.bernoulliRestrProb_le_one'}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{4}

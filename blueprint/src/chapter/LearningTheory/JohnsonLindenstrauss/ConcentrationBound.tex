@@ -17,6 +17,7 @@ families.
 
 \begin{definition}[Bad distortion event for a single vector]
 \lean{BadSingle}
+\label{BadSingle}
 \leanok
 For a parameter $\varepsilon\in\mathbb{R}$, a matrix $A$, and a vector
 $x\in\mathbb{R}^d$, the predicate $\texttt{BadSingle}\,\varepsilon\,A\,x$ holds when
@@ -30,6 +31,7 @@ concentration argument.
 
 \begin{lemma}[Zero vector has probability zero of being bad]
 \lean{concentration_zero}
+\label{concentration_zero}
 \leanok
 \uses{BadSingle}
 \difficulty{3}
@@ -45,6 +47,7 @@ simplifies to $0 < 0$, which is false.
 
 \begin{lemma}[Scalar multiple of a centered Gaussian]
 \lean{map_const_mul_gaussian}
+\label{map_const_mul_gaussian}
 \leanok
 \difficulty{3}
 Let $X : \Omega \to \mathbb{R}$ be measurable with $X_*\mu = N(0,\sigma_0)$.
@@ -59,6 +62,7 @@ phrased for easy application in the inductive step of
 
 \begin{lemma}[Row-projection of i.i.d.\ Gaussians is Gaussian]
 \lean{sum_scaled_iid_gaussian_map}
+\label{sum_scaled_iid_gaussian_map}
 \leanok
 \uses{map_const_mul_gaussian}
 \difficulty{6}
@@ -75,6 +79,7 @@ The proof proceeds by induction on the finset $s$, using independence and
 
 \begin{lemma}[Row projections are independent]
 \lean{rows_indep}
+\label{rows_indep}
 \leanok
 \difficulty{3}
 If the row vectors of $A$ (as $(\mathrm{Fin}\,d\to\mathbb{R})$-valued random
@@ -87,6 +92,7 @@ function of a distinct row of $A$.
 
 \begin{lemma}[Coordinate-sum form of a row projection]
 \lean{toEuclideanLin_apply_eq_sum}
+\label{toEuclideanLin_apply_eq_sum}
 \leanok
 \difficulty{1}
 For a matrix $A\in\mathbb{R}^{k\times d}$, a vector
@@ -99,6 +105,7 @@ This definitional equality unfolds the linear map into its explicit sum form.
 
 \begin{lemma}[Squared norm as sum of squared row projections]
 \lean{norm_sq_toEuclideanLin}
+\label{norm_sq_toEuclideanLin}
 \leanok
 \difficulty{3}
 For a matrix $A$ and vector $x$,
@@ -112,6 +119,7 @@ its coordinates.
 
 \begin{lemma}[Derivative of Taylor auxiliary function]
 \lean{taylorAux_hasDerivAt}
+\label{taylorAux_hasDerivAt}
 \leanok
 \difficulty{4}
 The function $h(u) = u^2 + u + \log(1-u)$ has derivative
@@ -122,6 +130,7 @@ used to bound the centered chi-squared log-MGF.
 
 \begin{lemma}[Taylor auxiliary function vanishes at zero]
 \lean{taylorAux_zero}
+\label{taylorAux_zero}
 \leanok
 \difficulty{1}
 The evaluation $0^2 + 0 + \log(1-0) = 0$ establishes the base case for the
@@ -131,6 +140,7 @@ Taylor bound, confirming that $h(0)=0$ in the derivative argument for
 
 \begin{lemma}[Taylor bound for the centered chi-squared log-MGF]
 \lean{neg_log_one_sub_two_mul_le_two_sq}
+\label{neg_log_one_sub_two_mul_le_two_sq}
 \leanok
 \uses{taylorAux_hasDerivAt, taylorAux_zero}
 \difficulty{6}
@@ -146,6 +156,7 @@ on $[0,1/2]$ and non-positive derivative on $[-1/2,0]$.
 
 \begin{lemma}[Quadratic MGF of the standard Gaussian]
 \lean{integral_exp_mul_sq_standardGaussian}
+\label{integral_exp_mul_sq_standardGaussian}
 \leanok
 \difficulty{5}
 For $Z\sim N(0,1)$ and $2s<1$,
@@ -159,6 +170,7 @@ distribution.
 
 \begin{lemma}[Quadratic MGF of a general centered Gaussian]
 \lean{integral_exp_mul_sq_gaussianReal_zero}
+\label{integral_exp_mul_sq_gaussianReal_zero}
 \leanok
 \uses{integral_exp_mul_sq_standardGaussian}
 \difficulty{5}
@@ -173,6 +185,7 @@ variance to an arbitrary non-zero NNReal variance $v$.
 
 \begin{lemma}[Integrability of $e^{ty^2}$ under $N(0,v)$]
 \lean{integrable_exp_mul_sq_gaussianReal_zero}
+\label{integrable_exp_mul_sq_gaussianReal_zero}
 \leanok
 \difficulty{5}
 For $v\ne 0$ and $2tv < 1$, the function $y\mapsto e^{t y^2}$ is integrable
@@ -184,6 +197,7 @@ the Fubini and interchange-of-expectation arguments in
 
 \begin{theorem}[Centered chi-squared MGF bound]
 \lean{centered_chi_squared_step}
+\label{centered_chi_squared_step}
 \leanok
 \uses{integrable_exp_mul_sq_gaussianReal_zero, integral_exp_mul_sq_gaussianReal_zero, neg_log_one_sub_two_mul_le_two_sq}
 \difficulty{6}
@@ -202,6 +216,7 @@ The proof combines the Gaussian quadratic MGF closed form
 
 \begin{theorem}[Bernstein MGF instance for centered chi-squared]
 \lean{hasBernsteinMGF_centered_chi_squared}
+\label{hasBernsteinMGF_centered_chi_squared}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, centered_chi_squared_step}
 \difficulty{3}
@@ -215,6 +230,7 @@ applied uniformly to Gaussian and other sub-Gaussian matrix families.
 
 \begin{lemma}[Chi-squared tail bound for i.i.d.\ $N(0,1/k)$ variables]
 \lean{chi_squared_tail}
+\label{chi_squared_tail}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le, ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun, hasBernsteinMGF_centered_chi_squared}
 \difficulty{5}
@@ -232,6 +248,7 @@ the generic sum and tail-bound lemmas from the Bernstein framework.
 
 \begin{theorem}[JL single-vector concentration via chi-squared reduction]
 \lean{jl_concentration_single_via_chi_squared}
+\label{jl_concentration_single_via_chi_squared}
 \leanok
 \uses{BadSingle, chi_squared_tail, concentration_zero, map_const_mul_gaussian, norm_sq_toEuclideanLin, rows_indep, sum_scaled_iid_gaussian_map, toEuclideanLin_apply_eq_sum}
 \difficulty{6}
@@ -251,6 +268,7 @@ $\|x\|^2/k$, establishing independence of row projections via
 
 \begin{theorem}[Distribution-agnostic JL concentration via Bernstein tails]
 \lean{jl_concentration_single_via_bernstein}
+\label{jl_concentration_single_via_bernstein}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.centered_squared_iid_tail, norm_sq_toEuclideanLin}
 \difficulty{4}
