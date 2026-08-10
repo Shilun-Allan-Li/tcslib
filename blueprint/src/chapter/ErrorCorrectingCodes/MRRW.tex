@@ -111,6 +111,7 @@ extending the integer-argument definition to real arguments.
 \leanok
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \uses{krawtchouk}
+\difficulty{1}
 For all $n$ and $x$, $K_0^{(n)}(x) = 1$.
 \end{theorem}
 
@@ -124,6 +125,7 @@ For all $n$ and $x$, $K_0^{(n)}(x) = 1$.
 }
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \uses{krawtchouk}
+\difficulty{2}
 For $j \le n$, $K_j^{(n)}(0) = \binom{n}{j}$.
 \end{theorem}
 
@@ -134,6 +136,7 @@ For $j \le n$, $K_j^{(n)}(0) = \binom{n}{j}$.
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b006}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \uses{krawtchouk}
+\difficulty{3}
 For $x \le n$, $K_1^{(n)}(x) = n - 2x$.
 \end{theorem}
 
@@ -147,6 +150,7 @@ For $x \le n$, $K_1^{(n)}(x) = n - 2x$.
 }
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b008}
 \uses{krawtchouk}
+\difficulty{6}
 For $x \le n$ and every real $z$,
 \[
   \sum_{j=0}^{n} K_j^{(n)}(x)\, z^{j} \;=\; (1-z)^{x}(1+z)^{\,n-x}.
@@ -161,6 +165,7 @@ For $x \le n$ and every real $z$,
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b005}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b012}
 \uses{krawtchouk, krawtchouk_generating_function}
+\difficulty{7}
 For $r \le n$ and $s \le n$,
 \[
   \sum_{x=0}^{n} \binom{n}{x} K_r^{(n)}(x)\,K_s^{(n)}(x)
@@ -180,6 +185,7 @@ For $r \le n$ and $s \le n$,
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b005}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b013}
 \uses{krawtchouk, krawtchouk_generating_function}
+\difficulty{7}
 For $1 \le j$, $j + 1 \le n$ and $x \le n$,
 \[
   (j+1)\,K_{j+1}^{(n)}(x) \;=\; (n - 2x)\,K_j^{(n)}(x) - (n - j + 1)\,K_{j-1}^{(n)}(x).
@@ -191,6 +197,7 @@ For $1 \le j$, $j + 1 \le n$ and $x \le n$,
 \label{krawtchoukPoly_eval_nat}
 \leanok
 \uses{krawtchouk, krawtchoukPoly, krawtchouk_zero, krawtchouk_one, krawtchouk_recurrence}
+\difficulty{5}
 For $j \le n$ and $x \le n$, evaluating the polynomial $K_j^{(n)}$ at the real number
 $x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
 \end{theorem}
@@ -245,6 +252,7 @@ For $t \le n$ and real $a, x$, the truncated reproducing kernel is
   pdf-abed77da6b7a-p005-b004
 }
 \uses{cdKernel, krawtchoukPoly}
+\difficulty{6}
 For $t + 1 \le n$ and real $a \ne x$ there is a scalar $c > 0$ with
 \[
   \Phi_{n,t}(a,x) \;=\; c\,\frac{K_t^{(n)}(a)K_{t+1}^{(n)}(x) - K_{t+1}^{(n)}(a)K_t^{(n)}(x)}{a - x}.
@@ -289,6 +297,7 @@ every integer $x$ with $\eta \le x \le n$.
   pdf-abed77da6b7a-p005-b005
 }
 \uses{cdKernel, codeA, delsarte_lp_bound, krawtchoukPoly, krawtchoukPoly_eval_nat, krawtchouk_positive_below_smallest_zero}
+\difficulty{6}
 Let $t + 1 \le n$, let $a$ be strictly below every real zero of $K_t^{(n)}$, and
 suppose $\Phi_{n,t}(a,x) \le 0$ for every integer $x$ with $d \le x \le n$. Then
 \[
@@ -351,6 +360,7 @@ For $0 \le \tau \le 1/2$,
 \lean{delta_tau_involution}
 \label{delta_tau_involution}
 \leanok
+\difficulty{4}
 For $0 \le \delta \le 1/2$, setting $\tau = \tfrac12 - \sqrt{\delta(1-\delta)}$ gives
 back $\delta = \tfrac12 - \sqrt{\tau(1-\tau)}$; that is, the map is an involution on
 $[0,1/2]$.
@@ -361,6 +371,7 @@ $[0,1/2]$.
 \label{binaryEntropy_zero}
 \leanok
 \uses{binaryEntropy}
+\difficulty{1}
 $H(0) = 0$.
 \end{theorem}
 
@@ -369,6 +380,7 @@ $H(0) = 0$.
 \label{binaryEntropy_half}
 \leanok
 \uses{binaryEntropy}
+\difficulty{2}
 $H(1/2) = 1$.
 \end{theorem}
 

@@ -16,6 +16,7 @@ together with the complement rule for Bernoulli-restriction probabilities.
 \label{RestrictionFourier.indicator_subset_eq_prod}
 \leanok
 \uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\difficulty{4}
 For a set $T \subseteq \{0,\dots,n-1\}$ and a restriction $\rho$, the indicator of the event
 $T \subseteq \mathrm{freeVars}(\rho)$ equals the product over all coordinates $i$ of the factor
 that is the indicator of $\rho(i) = \star$ when $i \in T$, and $1$ otherwise.
@@ -26,6 +27,7 @@ that is the indicator of $\rho(i) = \star$ when $i \in T$, and $1$ otherwise.
 \label{RestrictionFourier.bernoulliRestrProb_subset_freeVars}
 \leanok
 \uses{LMN.varWeight, RestrictionFourier.indicator_subset_eq_prod, RestrictionFourier.sum_bernoulli_prod, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
+\difficulty{4}
 Under a Bernoulli($p$)-random restriction with free-coordinate set $J$, the probability that a
 fixed set $T$ is contained in $J$ is
 \[
@@ -39,6 +41,7 @@ This is the first-moment half of O'Donnell Proposition 4.17.
 \label{RestrictionFourier.card_inter_eq_sum}
 \leanok
 \uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\difficulty{3}
 For a set $U$ and a restriction $\rho$ with free-coordinate set $J$, the real number
 $\abs{U \cap J}$ equals $\sum_{i \in U} \mathbf{1}[\rho(i) = \star]$.
 \end{lemma}
@@ -48,6 +51,7 @@ $\abs{U \cap J}$ equals $\sum_{i \in U} \mathbf{1}[\rho(i) = \star]$.
 \label{RestrictionFourier.expectation_free_indicator}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{4}
 For each coordinate $i$, the Bernoulli($p$)-weighted sum over all restrictions of the indicator
 that $i$ is free equals $p$; that is, $\E[\mathbf{1}[i \in J]] = p$.
 \end{lemma}
@@ -57,6 +61,7 @@ that $i$ is free equals $p$; that is, $\E[\mathbf{1}[i \in J]] = p$.
 \label{RestrictionFourier.expectation_free_indicator_pair}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{4}
 For distinct coordinates $i \ne j$, the Bernoulli($p$)-weighted sum over all restrictions of the
 product of the two indicators that $i$ and $j$ are free equals $p^2$; that is,
 $\E[\mathbf{1}[i \in J]\,\mathbf{1}[j \in J]] = p^2$.
@@ -67,6 +72,7 @@ $\E[\mathbf{1}[i \in J]\,\mathbf{1}[j \in J]] = p^2$.
 \label{RestrictionFourier.expectation_card_inter}
 \leanok
 \uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{3}
 Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 \[
   \E\bigl[\abs{U \cap J}\bigr] \;=\; p \cdot \abs{U} .
@@ -78,6 +84,7 @@ Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 \label{RestrictionFourier.expectation_card_inter_sq}
 \leanok
 \uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, RestrictionFourier.expectation_free_indicator_pair, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{6}
 Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 \[
   \E\bigl[\abs{U \cap J}^2\bigr] \;=\; p \cdot \abs{U} \;+\; p^2\bigl(\abs{U}^2 - \abs{U}\bigr).
@@ -89,6 +96,7 @@ Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 \label{RestrictionFourier.variance_card_inter}
 \leanok
 \uses{RestrictionFourier.expectation_card_inter, RestrictionFourier.expectation_card_inter_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\difficulty{5}
 For $0 \le p \le 1$ and every set $U$, the Bernoulli($p$)-weighted mean squared deviation of
 $\abs{U \cap J}$ from $p\abs{U}$ is
 \[
@@ -101,6 +109,7 @@ $\abs{U \cap J}$ from $p\abs{U}$ is
 \label{RestrictionFourier.bernoulliRestrProb_card_inter_lt}
 \leanok
 \uses{RestrictionFourier.variance_card_inter, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+\difficulty{6}
 Let $0 \le p \le 1$, let $U$ be a set of coordinates and let $k \ge 1$ satisfy
 $3k \le p\abs{U}$. Then, under a Bernoulli($p$)-random restriction with free set $J$,
 \[
@@ -115,6 +124,7 @@ Lemma 4.21, with the textbook bound $e^{-2k/3}$ replaced by the elementary $3/(4
 \label{RestrictionFourier.bernoulliRestrProb_not}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\difficulty{3}
 For $0 \le p \le 1$ and any decidable event $E$ on restrictions,
 $\Pr[\neg E] = 1 - \Pr[E]$ under the Bernoulli($p$)-restriction measure.
 \end{lemma}
@@ -124,6 +134,7 @@ $\Pr[\neg E] = 1 - \Pr[E]$ under the Bernoulli($p$)-restriction measure.
 \label{RestrictionFourier.bernoulliRestrProb_card_inter_ge}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_card_inter_lt, RestrictionFourier.bernoulliRestrProb_not, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
+\difficulty{5}
 Let $0 \le p \le 1$, let $U$ be a set of coordinates and let $k \ge 1$ satisfy
 $3k \le p\abs{U}$. Then, under a Bernoulli($p$)-random restriction with free set $J$,
 \[

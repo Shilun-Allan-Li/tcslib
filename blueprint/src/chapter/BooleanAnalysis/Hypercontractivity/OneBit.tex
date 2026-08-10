@@ -16,6 +16,7 @@ power-mean, Cauchy--Schwarz, and H\"older-sharpness lemmas).
 \label{OneBit.boolCube1_univ}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
+\difficulty{1}
 The universal finite set of points of $\mathrm{BoolCube}\,1$ equals the two-element set
 $\{(\_ \mapsto \mathit{false}),\ (\_ \mapsto \mathit{true})\}$.
 \end{lemma}
@@ -24,6 +25,7 @@ $\{(\_ \mapsto \mathit{false}),\ (\_ \mapsto \mathit{true})\}$.
 \lean{OneBit.finsetFin1_univ}
 \label{OneBit.finsetFin1_univ}
 \leanok
+\difficulty{1}
 The universal finite set of subsets of $\mathrm{Fin}\,1$ equals $\{\emptyset,\ \{0\}\}$.
 \end{lemma}
 
@@ -31,6 +33,7 @@ The universal finite set of subsets of $\mathrm{Fin}\,1$ equals $\{\emptyset,\ \
 \lean{OneBit.boolCube1_ne}
 \label{OneBit.boolCube1_ne}
 \leanok
+\difficulty{1}
 The constant-$\mathit{false}$ and constant-$\mathit{true}$ inputs on $\mathrm{Fin}\,1$ are
 distinct.
 \end{lemma}
@@ -39,6 +42,7 @@ distinct.
 \lean{OneBit.finsetFin1_ne}
 \label{OneBit.finsetFin1_ne}
 \leanok
+\difficulty{1}
 The empty subset of $\mathrm{Fin}\,1$ is not equal to $\{0\}$.
 \end{lemma}
 
@@ -47,6 +51,7 @@ The empty subset of $\mathrm{Fin}\,1$ is not equal to $\{0\}$.
 \label{OneBit.one_bit_val_false}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, OneBit.finsetFin1_ne, OneBit.finsetFin1_univ}
+\difficulty{3}
 For a one-bit function $f$, its value on the all-$\mathit{false}$ input is the sum of its
 two Fourier coefficients: $f(\mathit{false}) = \widehat{f}(\emptyset) + \widehat{f}(\{0\})$.
 \end{lemma}
@@ -56,6 +61,7 @@ two Fourier coefficients: $f(\mathit{false}) = \widehat{f}(\emptyset) + \widehat
 \label{OneBit.one_bit_val_true}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, OneBit.finsetFin1_ne, OneBit.finsetFin1_univ}
+\difficulty{3}
 For a one-bit function $f$, its value on the all-$\mathit{true}$ input is the difference of
 its two Fourier coefficients:
 $f(\mathit{true}) = \widehat{f}(\emptyset) - \widehat{f}(\{0\})$.
@@ -66,6 +72,7 @@ $f(\mathit{true}) = \widehat{f}(\emptyset) - \widehat{f}(\{0\})$.
 \label{OneBit.expect_noiseOp_sq_one_bit}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.parseval, OneBit.finsetFin1_ne, OneBit.finsetFin1_univ}
+\difficulty{4}
 For a one-bit function $f$ and noise rate $\rho$,
 \[
   \E\big[(T_\rho f)^2\big] = \widehat{f}(\emptyset)^2 + \rho^2\,\widehat{f}(\{0\})^2 .
@@ -77,6 +84,7 @@ For a one-bit function $f$ and noise rate $\rho$,
 \label{OneBit.expect_abs_rpow_one_bit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.uniformWeight, OneBit.one_bit_val_false, OneBit.one_bit_val_true, OneBit.boolCube1_ne, OneBit.boolCube1_univ}
+\difficulty{3}
 For a one-bit function $f$, writing $a = \widehat{f}(\emptyset)$ and $b = \widehat{f}(\{0\})$,
 \[
   \E\big[|f|^p\big] = \frac{|a+b|^p + |a-b|^p}{2}.
@@ -88,6 +96,7 @@ For a one-bit function $f$, writing $a = \widehat{f}(\emptyset)$ and $b = \wideh
 \label{OneBit.lp_norm_mono}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
+\difficulty{6}
 For $1 \le r \le s$ and any $f : \mathrm{BoolCube}\,n \to \bbr$,
 \[
   \big(\E[|f|^r]\big)^{1/r} \le \big(\E[|f|^s]\big)^{1/s}.
@@ -99,6 +108,7 @@ This is the power-mean inequality for the uniform probability measure on the cub
 \lean{OneBit.two_point_ineq_unit}
 \label{OneBit.two_point_ineq_unit}
 \leanok
+\difficulty{7}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p004-b006,
   pdf-9d1751394783-p004-b007,
@@ -116,6 +126,7 @@ For $1 \le p \le 2$ and $0 \le b \le 1$,
 \lean{OneBit.two_point_ineq_a_zero}
 \label{OneBit.two_point_ineq_a_zero}
 \leanok
+\difficulty{1}
 For $1 \le p \le 2$ one has $(p-1)^{p/2} \le 1$, which yields the two-point inequality in the
 case $a = 0$.
 \end{lemma}
@@ -124,6 +135,7 @@ case $a = 0$.
 \lean{OneBit.noise_l2_abs_mono}
 \label{OneBit.noise_l2_abs_mono}
 \leanok
+\difficulty{4}
 For real $a, b$ and $0 \le \rho \le 1$, writing $u = a+b$ and $v = a-b$,
 \[
   a^2 + \rho^2 b^2 \le \Big(\tfrac{|u| + |v|}{2}\Big)^2 + \rho^2 \Big(\tfrac{|u| - |v|}{2}\Big)^2 .
@@ -144,6 +156,7 @@ For real $a, b$ and $0 \le \rho \le 1$, writing $u = a+b$ and $v = a-b$,
   pdf-4ba63c9394e5-p012-b003
 }
 \uses{OneBit.two_point_ineq_unit}
+\difficulty{7}
 For $1 \le p \le 2$, all $a, b \in \bbr$, and $\rho \ge 0$ with $\rho^2 \le p-1$,
 \[
   \big(a^2 + \rho^2 b^2\big)^{1/2} \le \Big(\frac{|a+b|^p + |a-b|^p}{2}\Big)^{1/p}.
@@ -165,6 +178,7 @@ For $1 \le p \le 2$, all $a, b \in \bbr$, and $\rho \ge 0$ with $\rho^2 \le p-1$
   pdf-4ba63c9394e5-p012-b003
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.noiseOp, OneBit.expect_abs_rpow_one_bit, OneBit.expect_noiseOp_sq_one_bit, OneBit.two_point_ineq}
+\difficulty{3}
 For $f : \mathrm{BoolCube}\,1 \to \bbr$, $1 \le p \le 2$, and $\rho \ge 0$ with
 $\rho^2 \le p-1$,
 \[
@@ -176,6 +190,7 @@ $\rho^2 \le p-1$,
 \lean{OneBit.sign_mul_self}
 \label{OneBit.sign_mul_self}
 \leanok
+\difficulty{3}
 For all real $x$, $\operatorname{sign}(x)\cdot x = |x|$.
 \end{lemma}
 
@@ -183,6 +198,7 @@ For all real $x$, $\operatorname{sign}(x)\cdot x = |x|$.
 \lean{OneBit.abs_sign_eq_one}
 \label{OneBit.abs_sign_eq_one}
 \leanok
+\difficulty{2}
 For $x \neq 0$, $|\operatorname{sign}(x)| = 1$.
 \end{lemma}
 
@@ -191,6 +207,7 @@ For $x \neq 0$, $|\operatorname{sign}(x)| = 1$.
 \label{OneBit.expect_nonneg_of_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
+\difficulty{2}
 If $f \ge 0$ pointwise, then $\E[f] \ge 0$.
 \end{lemma}
 
@@ -199,6 +216,7 @@ If $f \ge 0$ pointwise, then $\E[f] \ge 0$.
 \label{OneBit.expect_const_eq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
+\difficulty{1}
 The expectation over the cube of the constant function with value $c$ equals $c$.
 \end{lemma}
 
@@ -207,6 +225,7 @@ The expectation over the cube of the constant function with value $c$ equals $c$
 \label{OneBit.cauchy_schwarz_bool}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
+\difficulty{4}
 For $f, g : \mathrm{BoolCube}\,n \to \bbr$,
 \[
   \langle f, g\rangle \le \big(\E[f^2]\big)^{1/2}\,\big(\E[g^2]\big)^{1/2}.
@@ -218,6 +237,7 @@ For $f, g : \mathrm{BoolCube}\,n \to \bbr$,
 \label{OneBit.holder_sharpness}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, OneBit.expect_nonneg_of_nonneg, OneBit.expect_const_eq}
+\difficulty{7}
 For H\"older conjugate exponents $(p, q)$ and any function $u$, there exists a function $f$ with
 $\norm{f}_p \le 1$ and $\norm{u}_q \le \langle f, u\rangle$.
 \end{lemma}
@@ -235,6 +255,7 @@ $\norm{f}_p \le 1$ and $\norm{u}_q \le \langle f, u\rangle$.
   pdf-4ba63c9394e5-p013-b003
 }
 \uses{Bonami.expect_sq_nonneg, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, OneBit.cauchy_schwarz_bool, OneBit.holder_sharpness}
+\difficulty{5}
 If, for H\"older conjugate exponents $p$ and $p'$ with $1 \le p$, the noise operator with rate
 $\sqrt{p-1}$ satisfies the $(p,2)$-hypercontractive bound for every one-bit function, then it also
 satisfies the dual $(2,p')$-hypercontractive bound: for every $g$,
@@ -253,6 +274,7 @@ satisfies the dual $(2,p')$-hypercontractive bound: for every $g$,
   pdf-4ba63c9394e5-p013-b001
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, OneBit.noise_operator_duality, OneBit.one_bit_p2_hypercontractivity}
+\difficulty{5}
 For $g : \mathrm{BoolCube}\,1 \to \bbr$ and $q \ge 2$,
 \[
   \norm{T_{1/\sqrt{q-1}}\, g}_q \le \norm{g}_2 .

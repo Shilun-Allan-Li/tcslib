@@ -16,6 +16,7 @@ path in the corresponding edge set.
 \label{Kruskal.UF.SamePartition.rfl}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition}
+\difficulty{1}
 Every union--find state $\mathit{uf} : \mathtt{UF}\,n$ induces the same partition as
 itself: $\mathtt{SamePartition}\,\mathit{uf}\,\mathit{uf}$.
 \end{lemma}
@@ -25,6 +26,7 @@ itself: $\mathtt{SamePartition}\,\mathit{uf}\,\mathit{uf}$.
 \label{Kruskal.UF.SamePartition.symm}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition}
+\difficulty{1}
 If $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_2$ then
 $\mathtt{SamePartition}\,\mathit{uf}_2\,\mathit{uf}_1$.
 \end{lemma}
@@ -34,6 +36,7 @@ $\mathtt{SamePartition}\,\mathit{uf}_2\,\mathit{uf}_1$.
 \label{Kruskal.UF.SamePartition.trans}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition}
+\difficulty{1}
 If $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_2$ and
 $\mathtt{SamePartition}\,\mathit{uf}_2\,\mathit{uf}_3$, then
 $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_3$. Together with reflexivity and
@@ -45,6 +48,7 @@ symmetry, $\mathtt{SamePartition}$ is an equivalence relation on union--find sta
 \label{Kruskal.merge_noop}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge}
+\difficulty{3}
 If two vertices $i, j$ already carry the same representative,
 $\mathit{uf}\,i = \mathit{uf}\,j$, then merging them leaves the state unchanged:
 $\mathit{uf}.\mathtt{merge}\,i\,j = \mathit{uf}$.
@@ -55,6 +59,7 @@ $\mathit{uf}.\mathtt{merge}\,i\,j = \mathit{uf}$.
 \label{Kruskal.mergeAll_preserves}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
+\difficulty{4}
 If $\mathit{uf}\,a = \mathit{uf}\,b$, then for any list of weighted edges
 $\mathit{edges}$ we still have
 $(\mathit{uf}.\mathtt{mergeAll}\,\mathit{edges})\,a = (\mathit{uf}.\mathtt{mergeAll}\,\mathit{edges})\,b$;
@@ -66,6 +71,7 @@ that is, merging never splits vertices that are already in the same component.
 \label{Kruskal.mergeAll_iff_reach}
 \leanok
 \uses{Kruskal.Reach, Kruskal.UF, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.reach_cons_iff, Kruskal.reach_mono, Kruskal.reach_symm}
+\difficulty{7}
 Suppose the union--find state $\mathit{uf}$ represents reachability in a base edge list,
 i.e.\ $\mathit{uf}\,a = \mathit{uf}\,b \leftrightarrow \mathtt{Reach}\,\mathit{base}\,a\,b$
 for all $a, b$. Then after merging along $\mathit{edges}$,
@@ -82,6 +88,7 @@ for all $a, b$. Then after merging along $\mathit{edges}$,
 \label{Kruskal.mergeAll_init_iff}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.UF.init, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.mergeAll_iff_reach}
+\difficulty{4}
 Starting from the initial union--find state $\mathtt{UF.init}\,n$, in which every vertex
 is its own component, two vertices $a, b$ end up with the same representative after
 merging along $\mathit{edges}$ if and only if $\mathtt{Reach}\,\mathit{edges}\,a\,b$.
@@ -92,6 +99,7 @@ merging along $\mathit{edges}$ if and only if $\mathtt{Reach}\,\mathit{edges}\,a
 \label{Kruskal.mergeAll_congr}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
+\difficulty{4}
 If $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_2$, then merging both states along
 the same edge list preserves this:
 $\mathtt{SamePartition}\,(\mathit{uf}_1.\mathtt{mergeAll}\,\mathit{edges})\,(\mathit{uf}_2.\mathtt{mergeAll}\,\mathit{edges})$.
@@ -102,6 +110,7 @@ $\mathtt{SamePartition}\,(\mathit{uf}_1.\mathtt{mergeAll}\,\mathit{edges})\,(\ma
 \label{Kruskal.merge_swap_partition}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.WEdge}
+\difficulty{4}
 For any state $\mathit{uf}$ and edges $a, b$, merging the endpoints of $a$ and then those
 of $b$ yields the same partition as merging them in the opposite order:
 $\mathtt{SamePartition}\,((\mathit{uf}.\mathtt{merge}\,a.u\,a.v).\mathtt{merge}\,b.u\,b.v)\,((\mathit{uf}.\mathtt{merge}\,b.u\,b.v).\mathtt{merge}\,a.u\,a.v)$.
@@ -112,6 +121,7 @@ $\mathtt{SamePartition}\,((\mathit{uf}.\mathtt{merge}\,a.u\,a.v).\mathtt{merge}\
 \label{Kruskal.mergeAll_perm}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.trans, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.erase_append_perm, Kruskal.mergeAll_congr, Kruskal.merge_swap_partition}
+\difficulty{5}
 If the edge lists $l_1$ and $l_2$ are permutations of each other, then merging along them
 gives the same partition:
 $\mathtt{SamePartition}\,(\mathit{uf}.\mathtt{mergeAll}\,l_1)\,(\mathit{uf}.\mathtt{mergeAll}\,l_2)$.
@@ -122,6 +132,7 @@ $\mathtt{SamePartition}\,(\mathit{uf}.\mathtt{mergeAll}\,l_1)\,(\mathit{uf}.\mat
 \label{Kruskal.mergeAll_append_single}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
+\difficulty{3}
 Merging along $l \mathbin{+\!\!+} [e]$ equals first merging along $l$ and then merging the
 endpoints of $e$:
 $\mathit{uf}.\mathtt{mergeAll}\,(l \mathbin{+\!\!+} [e]) = (\mathit{uf}.\mathtt{mergeAll}\,l).\mathtt{merge}\,e.u\,e.v$.
@@ -132,6 +143,7 @@ $\mathit{uf}.\mathtt{mergeAll}\,(l \mathbin{+\!\!+} [e]) = (\mathit{uf}.\mathtt{
 \label{Kruskal.mergeAll_cons_eq}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.rfl, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
+\difficulty{1}
 Merging along $e :: S$ gives the same partition as first merging the endpoints of $e$ and
 then merging along $S$:
 $\mathtt{SamePartition}\,(\mathit{uf}.\mathtt{mergeAll}\,(e :: S))\,((\mathit{uf}.\mathtt{merge}\,e.u\,e.v).\mathtt{mergeAll}\,S)$.
@@ -142,6 +154,7 @@ $\mathtt{SamePartition}\,(\mathit{uf}.\mathtt{mergeAll}\,(e :: S))\,((\mathit{uf
 \label{Kruskal.erase_append_perm}
 \leanok
 \uses{Kruskal.WEdge}
+\difficulty{1}
 If $e \in l$ for an edge list $l$, then $l$ is a permutation of
 $l.\mathtt{erase}\,e \mathbin{+\!\!+} [e]$.
 \end{lemma}

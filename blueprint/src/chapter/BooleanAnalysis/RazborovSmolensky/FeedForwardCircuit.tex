@@ -110,6 +110,7 @@ operation of every gate of the circuit belongs to $S$.
 \label{BoolCircuit.Circuit.one_le_size}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
+\difficulty{2}
 For every Boolean circuit $C$ on $n$ inputs, $1 \le C.\texttt{size}$.
 \end{theorem}
 
@@ -143,6 +144,7 @@ several downstream gates are duplicated.
 \label{ACP.nodeToCircuit_eval}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.Gate.eval, ACP.FeedForward.IsAndOrGate, ACP.FeedForward.evalNode, ACP.nodeToCircuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit.eval}
+\difficulty{6}
 If every gate of $F$ is an AND or OR gate as recorded by $\texttt{isAnd}$ and
 $\texttt{gfin}$, then for every node $v$ at layer $m$ and every input
 $x : \mathrm{Fin}\,n \to \{0,1\}$,
@@ -157,6 +159,7 @@ $x : \mathrm{Fin}\,n \to \{0,1\}$,
 \label{ACP.nodeToCircuit_size_le}
 \leanok
 \uses{ACP.FeedForward, ACP.nodeToCircuit, BoolCircuit.Circuit.size}
+\difficulty{6}
 If every gate of $F$ has at most $k$ input wires, i.e.\
 $\mathrm{card}\,(F.\texttt{gates}\ d\ v).\texttt{op}.\iota \le k$ for all $d$ and $v$,
 then the unrolling of any node at layer $m$ has size at most $(k+1)^m$.
@@ -177,6 +180,7 @@ layer down to the inputs.
 \label{ACP.FeedForward.toCircuit_eval}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.IsAndOrGate, ACP.FeedForward.eval, ACP.FeedForward.toCircuit, ACP.nodeToCircuit_eval, BoolCircuit.Circuit.eval}
+\difficulty{1}
 If every gate of $F$ is an AND or OR gate, then for every output node $o$ and every
 input $x$,
 \[
@@ -190,6 +194,7 @@ input $x$,
 \label{ACP.FeedForward.toCircuit_size_le}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.toCircuit, ACP.nodeToCircuit_size_le, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toFeedForward}
+\difficulty{1}
 If every gate of $F$ has at most $k$ input wires, then for every output node $o$ the
 tree-unrolled circuit satisfies
 $(F.\texttt{toCircuit}\ \texttt{isAnd}\ \texttt{gfin}\ o).\texttt{size} \le (k+1)^{F.\texttt{depth}}$.
@@ -213,6 +218,7 @@ that pass the single Boolean value upward.
 \label{ACP.Circuit.toFeedForward_evalNode_const}
 \leanok
 \uses{ACP.FeedForward.evalNode, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toFeedForward}
+\difficulty{4}
 For every input $x$, every layer index $m$ with $0 < m$ and every node $v$ of layer
 $m$ of $C.\texttt{toFeedForward}$, the value of $v$ is
 $C.\texttt{toFeedForward}.\texttt{evalNode}\ v\ x = C.\texttt{eval}\ x$.
@@ -223,6 +229,7 @@ $C.\texttt{toFeedForward}.\texttt{evalNode}\ v\ x = C.\texttt{eval}\ x$.
 \label{ACP.Circuit.toFeedForward_eval}
 \leanok
 \uses{ACP.Circuit.toFeedForward_evalNode_const, ACP.FeedForward.eval₁, BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toFeedForward}
+\difficulty{2}
 For every circuit $C$ on $n$ inputs and every input $x$,
 $C.\texttt{toFeedForward}.\texttt{eval}_1\ x = C.\texttt{eval}\ x$.
 \end{theorem}
@@ -232,6 +239,7 @@ $C.\texttt{toFeedForward}.\texttt{eval}_1\ x = C.\texttt{eval}\ x$.
 \label{ACP.Circuit.toFeedForward_depth}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.toFeedForward}
+\difficulty{1}
 The embedding uses one extra layer for the inputs:
 $C.\texttt{toFeedForward}.\texttt{depth} = C.\texttt{depth} + 1$.
 \end{theorem}
@@ -241,6 +249,7 @@ $C.\texttt{toFeedForward}.\texttt{depth} = C.\texttt{depth} + 1$.
 \label{ACP.Circuit.toFeedForward_size_le}
 \leanok
 \uses{ACP.FeedForward.size, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.one_le_size, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toFeedForward}
+\difficulty{4}
 For every circuit $C$ on $n$ inputs,
 $C.\texttt{toFeedForward}.\texttt{size} \le C.\texttt{size} \cdot (C.\texttt{depth} + 1)$.
 \end{theorem}

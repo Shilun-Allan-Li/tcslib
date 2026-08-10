@@ -28,6 +28,7 @@ non-input layers $1, \dots, d$ as indices into $F.\mathrm{nodes}$ so that they c
 \label{ACP.gateCountBefore_eq_sum_cards}
 \leanok
 \uses{ACP.FeedForward, ACP.gateCountBefore, ACP.gateCountBefore_succ, ACP.gateLayerIdx}
+\difficulty{5}
 Let $F$ be a feed-forward circuit with all node layers finite.  Then for every $d$ with
 $d \le F.\mathrm{depth}$,
 \[
@@ -43,6 +44,7 @@ those layers.
 \label{ACP.size_eq_sum_cards}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.size}
+\difficulty{3}
 For a feed-forward circuit $F$ with all node layers finite,
 \[
 F.\mathrm{size} \;=\; \sum_{d : \mathrm{Fin}\,F.\mathrm{depth}} \abs{F.\mathrm{nodes}(d+1)},
@@ -55,6 +57,7 @@ so the total number of non-input gates equals the sum of the cardinalities of al
 \label{ACP.gateCountBefore_depth_eq_size}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.size, ACP.gateCountBefore, ACP.gateCountBefore_eq_sum_cards, ACP.gateLayerIdx, ACP.size_eq_sum_cards}
+\difficulty{4}
 For a feed-forward circuit $F$ with all node layers finite, taking $d = F.\mathrm{depth}$ gives
 \[
 \mathrm{gateCountBefore}\,F\,F.\mathrm{depth} \;=\; F.\mathrm{size}.
@@ -66,6 +69,7 @@ For a feed-forward circuit $F$ with all node layers finite, taking $d = F.\mathr
 \label{ACP.exists_poly_distribution_for_circuit_outputs_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_outputs, ACP.gateCountBefore_depth_eq_size}
+\difficulty{3}
 Let $p$ be prime and let $F$ be a feed-forward circuit with finite node layers and a finite output
 type, all of whose gates lie in the $\mathrm{AC}^0[p]$ gate set.  For every $\ell$ there exist a
 finite nonempty seed type $\mathrm{Seed}$ and polynomials
@@ -84,6 +88,7 @@ $P_{s,o}(\mathrm{boolInput}_p(x)) \ne F.\mathrm{eval}(x)(o)$ for some $o$, satis
 \label{ACP.exists_poly_distribution_for_circuit_one_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one, ACP.gateCountBefore_depth_eq_size}
+\difficulty{3}
 Same statement for a circuit with a unique output node: there exist a finite nonempty seed type
 $\mathrm{Seed}$ and polynomials $P : \mathrm{Seed} \to \bbz/p[X_1,\dots,X_n]$, each of total degree
 at most $\mathrm{circuitDegreeBound}\,p\,\ell\,F.\mathrm{depth}$, such that for every Boolean input
@@ -100,6 +105,7 @@ $P_s(\mathrm{boolInput}_p(x)) \ne F.\mathrm{eval}_1(x)$ obeys
 \label{ACP.exists_poly_list_for_circuit_one_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_list_for_circuit_one, ACP.gateCountBefore_depth_eq_size}
+\difficulty{3}
 The list formulation of the previous theorem: for a circuit $F$ with a unique output node whose
 gates all lie in the $\mathrm{AC}^0[p]$ gate set, there is a nonempty list $Ps$ of polynomials in
 $\bbz/p[X_1,\dots,X_n]$, each of total degree at most

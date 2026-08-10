@@ -17,6 +17,7 @@ Fourier, and combinatorial lemmas used along the way.
 \label{SimpleHypercontractivity.chiS_snoc_castSucc}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS}
+\difficulty{2}
 For a subset $S \subseteq \mathrm{Fin}\,n$, a point $x \in \{0,1\}^n$, and a bit $b$,
 the parity character of the lifted set equals the character of $S$ on $x$:
 \[
@@ -31,6 +32,7 @@ character unchanged.
 \label{SimpleHypercontractivity.chiS_snoc_with_last}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\difficulty{3}
 For $S \subseteq \mathrm{Fin}\,n$, a point $x$, and a bit $b$, adjoining the last
 coordinate to the lifted set multiplies the character by the sign of $b$:
 \[
@@ -44,6 +46,7 @@ where $(-1)^b$ denotes \texttt{boolToSign}\,$b$.
 \lean{SimpleHypercontractivity.finset_fin_succ_sum_partition}
 \label{SimpleHypercontractivity.finset_fin_succ_sum_partition}
 \leanok
+\difficulty{6}
 For any $\varphi$ on subsets of $\mathrm{Fin}(n+1)$, the total sum splits according to
 whether the last coordinate belongs to the subset:
 \[
@@ -57,6 +60,7 @@ whether the last coordinate belongs to the subset:
 \lean{SimpleHypercontractivity.card_image_castSucc}
 \label{SimpleHypercontractivity.card_image_castSucc}
 \leanok
+\difficulty{1}
 Lifting a set along $\mathrm{castSucc}$ preserves its cardinality:
 $|\mathrm{castSucc}(S)| = |S|$.
 \end{lemma}
@@ -65,6 +69,7 @@ $|\mathrm{castSucc}(S)| = |S|$.
 \lean{SimpleHypercontractivity.card_image_castSucc_union_last}
 \label{SimpleHypercontractivity.card_image_castSucc_union_last}
 \leanok
+\difficulty{2}
 Adjoining the (necessarily new) last coordinate to a lifted set increases its
 cardinality by one:
 $|\mathrm{castSucc}(S)\cup\{\mathrm{last}\,n\}| = |S| + 1$.
@@ -75,6 +80,7 @@ $|\mathrm{castSucc}(S)\cup\{\mathrm{last}\,n\}| = |S| + 1$.
 \label{SimpleHypercontractivity.noiseOp_snoc}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.fourierCoeff_avgLast, Bonami.fourierCoeff_diffLast, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.noiseOp, SimpleHypercontractivity.card_image_castSucc, SimpleHypercontractivity.card_image_castSucc_union_last, SimpleHypercontractivity.chiS_snoc_castSucc, SimpleHypercontractivity.chiS_snoc_with_last, SimpleHypercontractivity.finset_fin_succ_sum_partition}
+\difficulty{5}
 For $f : \{0,1\}^{n+1} \to \bbr$ the noise operator splits over the last coordinate:
 \[
   T_\rho f(\mathrm{snoc}\,x\,b)
@@ -90,6 +96,7 @@ $f$ over the last bit.
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p007-b004}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.fourth_moment_decomp, Bonami.restrictLast, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.noiseOp_snoc}
+\difficulty{5}
 For $f : \{0,1\}^{n+1} \to \bbr$, writing $g = \mathrm{avgLast}\,f$ and
 $h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
 \[
@@ -107,6 +114,7 @@ $h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
   pdf-4ba63c9394e5-p007-b004
 }
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_cs_sq, Bonami.expect_fourth_nonneg, Bonami.expect_sq_nonneg, Bonami.second_moment_decomp, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.fourth_moment_noise_decomp}
+\difficulty{5}
 For any Boolean function $f : \{0,1\}^n \to \bbr$ and noise parameter $\rho$ with
 $\rho^2 \le 1/3$ (equivalently $\abs{\rho} \le 1/\sqrt3$),
 \[
@@ -120,6 +128,7 @@ that is $\norm{T_\rho f}_4 \le \norm{f}_2$.
 \label{SimpleHypercontractivity.innerProduct_le_L43_L4}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
+\difficulty{6}
 For Boolean functions $f, g$,
 \[
   \langle f, g \rangle
@@ -136,6 +145,7 @@ For Boolean functions $f, g$,
   pdf-4ba63c9394e5-p008-b001
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.hypercontractivity_2_4, SimpleHypercontractivity.innerProduct_le_L43_L4}
+\difficulty{7}
 Boolean functions are $(4/3, 2)$-hypercontractive with parameter $1/\sqrt3$: for any
 $f : \{0,1\}^n \to \bbr$,
 \[
@@ -149,6 +159,7 @@ $f : \{0,1\}^n \to \bbr$,
 \label{SimpleHypercontractivity.noise_l2_fourier}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.parseval}
+\difficulty{3}
 The squared $L^2$ norm of $T_\rho f$ expands over the Fourier spectrum:
 \[
   \langle T_\rho f, T_\rho f \rangle
@@ -161,6 +172,7 @@ The squared $L^2$ norm of $T_\rho f$ expands over the Fourier spectrum:
 \label{SimpleHypercontractivity.contractivity}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.parseval, SimpleHypercontractivity.noise_l2_fourier}
+\difficulty{4}
 For $\rho^2 \le 1$ and any Boolean function $f$,
 \[
   \E[(T_\rho f)^2] \le \E[f^2].
@@ -172,6 +184,7 @@ This is the $q = 2$ case of hypercontractivity.
 \lean{SimpleHypercontractivity.binom_coeff_ineq}
 \label{SimpleHypercontractivity.binom_coeff_ineq}
 \leanok
+\difficulty{6}
 For natural numbers $k \ge 1$ and $j \le k$,
 \[
   \binom{2k}{2j} \le \binom{k}{j}\,(2k-1)^j.
@@ -183,6 +196,7 @@ For natural numbers $k \ge 1$ and $j \le k$,
 \label{SimpleHypercontractivity.qth_moment_decomp}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
+\difficulty{4}
 For $f : \{0,1\}^{n+1} \to \bbr$, writing $g = \mathrm{avgLast}\,f$ and
 $h = \mathrm{diffLast}\,f$, the $q$-th moment decomposes as
 \[
@@ -195,6 +209,7 @@ $h = \mathrm{diffLast}\,f$, the $q$-th moment decomposes as
 \label{SimpleHypercontractivity.noise_qth_moment_decomp}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.noiseOp_snoc, SimpleHypercontractivity.qth_moment_decomp}
+\difficulty{6}
 For $f : \{0,1\}^{n+1} \to \bbr$, writing $g = T_\rho(\mathrm{avgLast}\,f)$ and
 $h = T_\rho(\mathrm{diffLast}\,f)$, the $q$-th moment of $T_\rho f$ decomposes as
 \[
@@ -212,6 +227,7 @@ $h = T_\rho(\mathrm{diffLast}\,f)$, the $q$-th moment of $T_\rho f$ decomposes a
   pdf-4ba63c9394e5-p011-b007
 }
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_sq_nonneg, Bonami.second_moment_decomp, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, BooleanAnalysis.walsh_expansion, SimpleHypercontractivity.binom_coeff_ineq, SimpleHypercontractivity.noise_qth_moment_decomp}
+\difficulty{7}
 For any Boolean function $f : \{0,1\}^n \to \bbr$, integer $k \ge 1$, and noise
 parameter $\rho$ with $\rho^2 \le 1/(2k-1)$,
 \[
@@ -229,6 +245,7 @@ equivalently $\norm{T_\rho f}_{2k} \le \norm{f}_2$.
   pdf-4ba63c9394e5-p011-b007
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.hypercontractivity_2_2k}
+\difficulty{3}
 For an even integer $q \ge 2$ and noise parameter $\rho$ with $\rho^2 \le 1/(q-1)$,
 \[
   \E[(T_\rho f)^q] \le \bigl(\E[f^2]\bigr)^{q/2}.
@@ -241,6 +258,7 @@ This is the $(2,2k)$ theorem restated in terms of an even exponent $q = 2k$.
 \label{SimpleHypercontractivity.hypercontractivity_2_2}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.contractivity}
+\difficulty{1}
 For $\rho^2 \le 1$ and any Boolean function $f$,
 \[
   \E[(T_\rho f)^2] \le \bigl(\E[f^2]\bigr)^1,
@@ -258,6 +276,7 @@ the $q = 2$ instance, which is just contractivity.
   pdf-4ba63c9394e5-p015-b003
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.hypercontractivity_2_q}
+\difficulty{2}
 For $\rho^2 \le 1/5$ and any Boolean function $f$,
 \[
   \E[(T_\rho f)^6] \le \bigl(\E[f^2]\bigr)^3.
@@ -273,6 +292,7 @@ For $\rho^2 \le 1/5$ and any Boolean function $f$,
   pdf-4ba63c9394e5-p011-b007
 }
 \uses{Bonami.expect_sq_nonneg, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.hypercontractivity_2_2k}
+\difficulty{5}
 For $k \ge 1$ and noise parameter $\rho$ with $\rho^2 \le 1/(2k-1)$, the $(2,2k)$
 bound in the form $\norm{T_\rho f}_{2k} \le \norm{f}_2$:
 \[
@@ -285,6 +305,7 @@ bound in the form $\norm{T_\rho f}_{2k} \le \norm{f}_2$:
 \label{SimpleHypercontractivity.innerProduct_eq_expect_sq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
+\difficulty{3}
 The self inner product of a Boolean function equals the expectation of its square:
 $\langle f, f \rangle = \E[f^2]$.
 \end{lemma}
@@ -294,6 +315,7 @@ $\langle f, f \rangle = \E[f^2]$.
 \label{SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
+\difficulty{2}
 For any $\rho$ and Boolean function $f$, $\E[(T_\rho f)^2] \ge 0$.
 \end{lemma}
 
@@ -302,6 +324,7 @@ For any $\rho$ and Boolean function $f$, $\E[(T_\rho f)^2] \ge 0$.
 \label{SimpleHypercontractivity.expect_rpow_abs_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
+\difficulty{2}
 For any real exponent $p$ and Boolean function $f$, $\E[\,\abs{f}^p\,] \ge 0$.
 \end{lemma}
 
@@ -310,6 +333,7 @@ For any real exponent $p$ and Boolean function $f$, $\E[\,\abs{f}^p\,] \ge 0$.
 \label{SimpleHypercontractivity.noiseOp_compose}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier}
+\difficulty{3}
 Composing two noise operators multiplies their parameters:
 $T_\rho(T_\sigma f) = T_{\rho\sigma} f$.
 \end{lemma}
@@ -323,6 +347,7 @@ $T_\rho(T_\sigma f) = T_{\rho\sigma} f$.
   pdf-4ba63c9394e5-p013-b003
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, SimpleHypercontractivity.expect_rpow_abs_nonneg, SimpleHypercontractivity.expect_sq_noiseOp_nonneg, SimpleHypercontractivity.innerProduct_eq_expect_sq}
+\difficulty{6}
 Let $1 < p$, $q \ge 2$ with $1/p + 1/q = 1$. Given a Hölder inequality for the pair
 $(p,q)$ and a $(2,q)$-hypercontractivity bound for $T_\rho$, one concludes the dual
 $(p,2)$ bound:
@@ -338,6 +363,7 @@ $(p,2)$ bound:
 \lean{SimpleHypercontractivity.hypercontractivity_algebra'}
 \label{SimpleHypercontractivity.hypercontractivity_algebra'}
 \leanok
+\difficulty{5}
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p007-b004,
   pdf-4ba63c9394e5-p005-b001

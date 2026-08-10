@@ -74,6 +74,7 @@ The set of all Pauli strings of weight at most $t$:
 }
 \proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \uses{PauliErrorsLe, weight}
+\difficulty{6}
 \[
 |\mathcal{E}(n,t)| \;=\; \sum_{i=0}^{t}\binom{n}{i}\,3^i.
 \]
@@ -114,6 +115,7 @@ implemented as \texttt{EuclideanSpace ℂ (Fin n → Fin 2)}.
 \label{finrank_Hn}
 \leanok
 \uses{Hn}
+\difficulty{1}
 $\dim_{\mathbb{C}}(\mathcal{H}_n) = 2^n$.
 \end{lemma}
 
@@ -217,6 +219,7 @@ Pauli images of $C$ over all $t$-errors.
   pdf-bbdd8e5c3949-p009-b002
 }
 \uses{IsNondegenerate, pauliOp}
+\difficulty{7}
 If $C$ is non-degenerate and $E \neq F$ both have weight $\le t$, then
 $\hat{E}(C) \perp \hat{F}(C)$.
 \end{lemma}
@@ -230,6 +233,7 @@ $\hat{E}(C) \perp \hat{F}(C)$.
 \proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
 \uses{ErrorSphere, error_subspaces_orthogonal, card_pauliErrorsLe}
+\difficulty{7}
 If $C$ is non-degenerate,
 \[
 \dim(\mathrm{ES}(C,t)) \;=\; |\mathcal{E}(n,t)|\cdot\dim(C).
@@ -257,6 +261,7 @@ If $C$ is non-degenerate,
   pdf-bbdd8e5c3949-p009-b003
 }
 \uses{error_sphere_dimension, finrank_Hn}
+\difficulty{4}
 If $C \le \mathcal{H}_n$ is non-degenerate, then
 \[
 \left(\sum_{i=0}^{t}\binom{n}{i}\,3^i\right)\cdot\dim_{\mathbb{C}}(C)
@@ -349,6 +354,7 @@ elsewhere.
 \label{support_mkWithSupport}
 \leanok
 \uses{mkWithSupport, support}
+\difficulty{1}
 The Pauli string $\mathrm{mkWithSupport}\,S\,f$ has support exactly $S$.
 \end{lemma}
 
@@ -367,6 +373,7 @@ finset $S$.
 \leanok
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \uses{PauliNZ.toBasis, mkWithSupport, pauliStringsExactSupport, support, support_mkWithSupport}
+\difficulty{6}
 The number of Pauli strings with support exactly $S$ is $3^{|S|}$, since each coordinate in $S$
 is assigned one of the three non-identity Paulis.
 \end{lemma}
@@ -406,6 +413,7 @@ $P_C : \mathcal{H}_n \to \mathcal{H}_n$.
 \label{codeProj_apply}
 \leanok
 \uses{Hn, codeProj}
+\difficulty{1}
 For any $x \in \mathcal{H}_n$, the value $P_C\,x$ coincides with the orthogonal projection
 $\Pi_C(x)$ of $x$ onto $C$.
 \end{lemma}
@@ -415,6 +423,7 @@ $\Pi_C(x)$ of $x$ onto $C$.
 \label{codeProj_mem}
 \leanok
 \uses{Hn, codeProj, codeProj_apply}
+\difficulty{2}
 For any $x \in \mathcal{H}_n$, the projected vector $P_C\,x$ belongs to the code subspace $C$.
 \end{lemma}
 
@@ -423,6 +432,7 @@ For any $x \in \mathcal{H}_n$, the projected vector $P_C\,x$ belongs to the code
 \label{codeProj_eq_self_of_mem}
 \leanok
 \uses{Hn, codeProj}
+\difficulty{2}
 If $x \in C$, then $P_C\,x = x$.
 \end{lemma}
 
@@ -431,6 +441,7 @@ If $x \in C$, then $P_C\,x = x$.
 \label{codeProj_idempotent}
 \leanok
 \uses{Hn, codeProj, codeProj_eq_self_of_mem, codeProj_mem}
+\difficulty{2}
 The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathcal{H}_n$.
 \end{lemma}
 
@@ -452,6 +463,7 @@ The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathca
   pdf-bbdd8e5c3949-p009-b003
 }
 \uses{ErrorSphere, Hn, IsNondegenerate, card_pauliErrorsLe, error_sphere_dimension, finrank_Hn}
+\difficulty{4}
 For a non-degenerate $[[n,k]]$ quantum code $C \le \mathcal{H}_n$ correcting $t$ errors, with
 $\dim_{\mathbb{C}}(C) = 2^k$, the dimension of the error sphere does not exceed the ambient
 dimension:
@@ -465,6 +477,7 @@ dimension:
 \label{PauliNZ.toBasis_ne_I}
 \leanok
 \uses{PauliNZ.toBasis}
+\difficulty{2}
 For every $a \in \mathrm{PauliNZ}$, its image $a.\mathrm{toBasis}$ in the Pauli basis
 differs from $I$; that is, the embedding of $\{X,Y,Z\}$ never hits the identity element.
 \end{lemma}

@@ -213,6 +213,7 @@ causes the BLR test to reject with probability at least $\varepsilon$.
 \label{BoolBLR.linear_bool_iff_character_aux_h_fx_1}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{6}
 Let $f : \{0,1\}^n \to \{0,1\}$ be linear.  Then for every
 $s \subseteq [n]$, writing $\mathbf{1}_s$ for the indicator vector of $s$ and
 $e_i$ for the $i$-th basis vector, the value $f(\mathbf{1}_s)$ is
@@ -229,6 +230,7 @@ number of $i \in s$ with $f(e_i) = \texttt{true}$.
 \label{BoolBLR.linear_bool_iff_character_aux_h_fx_2}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.linear_bool_iff_character_aux_h_fx_1, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
+\difficulty{2}
 Specialization of the previous lemma to the support of an arbitrary point:
 if $f : \{0,1\}^n \to \{0,1\}$ is linear, then for every $x \in \{0,1\}^n$
 the value $f(x)$ is the parity of the number of coordinates $i$ with
@@ -240,6 +242,7 @@ $x_i = \texttt{true}$ and $f(e_i) = \texttt{true}$.
 \label{BoolBLR.linear_bool_iff_character_aux_h_char}
 \leanok
 \uses{BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.chiS}
+\difficulty{3}
 For every $S \subseteq [n]$ and all $x, y \in \{0,1\}^n$,
 \[
   \chi_S(x \oplus y) \;=\; \chi_S(x)\,\chi_S(y).
@@ -251,6 +254,7 @@ For every $S \subseteq [n]$ and all $x, y \in \{0,1\}^n$,
 \label{BoolBLR.linear_bool_iff_character_aux_h_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{3}
 Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$
 for some $S \subseteq [n]$, and let $x, y \in \{0,1\}^n$.  Assuming the
 multiplicativity identity $\chi_S(x \oplus y) = \chi_S(x)\chi_S(y)$, one has
@@ -264,6 +268,7 @@ multiplicativity identity $\chi_S(x \oplus y) = \chi_S(x)\chi_S(y)$, one has
 \label{BoolBLR.linear_bool_iff_character_aux_h_fx}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.linear_bool_iff_character_aux_h_fx_2, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
+\difficulty{1}
 Restatement of the support formula in the exact form used inside the proof of
 the character criterion: for linear $f$ and any $x \in \{0,1\}^n$, $f(x)$ is
 the parity of the number of coordinates $i$ with $x_i = \texttt{true}$ and
@@ -275,6 +280,7 @@ $f(e_i) = \texttt{true}$.
 \label{BoolBLR.linear_bool_iff_character_aux_h_eq_h}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolBLR.linear_bool_iff_character_aux_h_char, BoolBLR.linear_bool_iff_character_aux_h_eq, BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{1}
 If $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$ for some $S \subseteq [n]$, then for
 all $x, y \in \{0,1\}^n$,
 \[
@@ -288,6 +294,7 @@ This is the previous lemma with the multiplicativity hypothesis discharged.
 \label{BoolBLR.BLR_accept_prob_pm1_aux_h_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{4}
 Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
 \[
   \mathbf{1}\!\left[g(x \oplus y) = g(x)\,g(y)\right]
@@ -301,6 +308,7 @@ Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
 \label{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_convolution}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
+\difficulty{3}
 Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For every $x \in \{0,1\}^n$,
 \[
   (g * g)(x) \;=\; \sum_{S \subseteq [n]} \hat{g}(S)^2\,\chi_S(x),
@@ -313,6 +321,7 @@ i.e.\ the self-convolution of $g$ has Fourier coefficients $\hat{g}(S)^2$.
 \label{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_substitute}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
+\difficulty{3}
 Write $g = \texttt{BoolBLR.lift\_pm1}\,f$ and assume
 $(g * g)(x) = \sum_S \hat{g}(S)^2 \chi_S(x)$ for all $x$.  Then
 \[
@@ -327,6 +336,7 @@ $(g * g)(x) = \sum_S \hat{g}(S)^2 \chi_S(x)$ for all $x$.  Then
 \label{BoolBLR.fourier_coeff_le_of_dist_ge_aux_h_lift_pm1}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
+\difficulty{3}
 For all $f, g : \{0,1\}^n \to \{0,1\}$ and every $x \in \{0,1\}^n$,
 \[
   (-1)^{f(x)}\,(-1)^{g(x)} \;=\; 1 - 2\cdot\mathbf{1}\!\left[f(x) \ne g(x)\right].
@@ -338,6 +348,7 @@ For all $f, g : \{0,1\}^n \to \{0,1\}$ and every $x \in \{0,1\}^n$,
 \label{BoolBLR.BLR_soundness_via_fourier_aux_hparseval}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
+\difficulty{3}
 For every $f : \{0,1\}^n \to \{0,1\}$, the $\pm 1$ lift
 $g = \texttt{BoolBLR.lift\_pm1}\,f$ has unit Fourier mass:
 \[
@@ -350,6 +361,7 @@ $g = \texttt{BoolBLR.lift\_pm1}\,f$ has unit Fourier mass:
 \label{BoolBLR.BLR_soundness_via_fourier_aux_h_bound}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube}
+\difficulty{2}
 Let $f : \{0,1\}^n \to \{0,1\}$ be $\varepsilon$-far from linear and write
 $g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then for every $S \subseteq [n]$,
 \[
@@ -362,6 +374,7 @@ $g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then for every $S \subseteq [n]$,
 \label{BoolBLR.BLR_completeness_aux_h_linear}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{1}
 If $f : \{0,1\}^n \to \{0,1\}$ is linear, then
 $f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$.
 \end{lemma}
@@ -371,6 +384,7 @@ $f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$.
 \label{BoolBLR.BLR_completeness_aux_h_lift_linear}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{3}
 Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $f(x \oplus y) = f(x) \oplus f(y)$ for
 all $x, y$, and write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then $g$ is
 multiplicative on XOR:

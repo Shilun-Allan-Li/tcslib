@@ -409,6 +409,7 @@ For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$,
 \label{BoolFourier.char_S_sq_aux_h}
 \leanok
 \uses{BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
+\difficulty{1}
 For every $S \subseteq [n]$ and every $x \in \{0,1\}^n$,
 $\chi_S(x)^2 = 1$.  This is the squaring form (with exponent $2$ rather than an explicit
 product) of the fact that Walsh characters take values in $\{\pm 1\}$.
@@ -419,6 +420,7 @@ product) of the fact that Walsh characters take values in $\{\pm 1\}$.
 \label{BoolFourier.sum_char_S_at_zero_aux_h}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.zero_vec}
+\difficulty{1}
 As functions of $S$, the evaluation of characters at the all-zeros vector is constant:
 \[
   \bigl(S \mapsto \chi_S(\mathbf{0})\bigr) = \bigl(S \mapsto 1\bigr).
@@ -430,6 +432,7 @@ As functions of $S$, the evaluation of characters at the all-zeros vector is con
 \label{BoolFourier.sum_char_S_ne_zero_aux_h_pair}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\difficulty{6}
 Let $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$ and let $i$ be a coordinate with
 $x_i = \mathtt{true}$.  Then the sum of all characters at $x$ equals the sum of their
 negations:
@@ -443,6 +446,7 @@ negations:
 \label{BoolFourier.expectation_char_nonempty_aux_h_exp}
 \leanok
 \uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
+\difficulty{5}
 For a non-empty $S \subseteq [n]$, the uniform expectation of the character $\chi_S$
 factorises over the coordinates of $S$:
 \[
@@ -457,6 +461,7 @@ factorises over the coordinates of $S$:
 \label{BoolFourier.parseval_identity_aux_hL2}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BooleanAnalysis.innerProduct}
+\difficulty{3}
 For every $f : \{0,1\}^n \to \mathbb{R}$, the locally-defined squared $L^2$ norm agrees
 with the upstream inner product of $f$ with itself:
 \[
@@ -469,6 +474,7 @@ with the upstream inner product of $f$ with itself:
 \label{BoolFourier.fourier_coeff_convolution_aux_h_fubini}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.xor_vec}
+\difficulty{2}
 For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$, the double sum defining
 the unnormalised convolution coefficient may be reordered:
 \[
@@ -482,6 +488,7 @@ the unnormalised convolution coefficient may be reordered:
 \label{BoolFourier.fourier_coeff_convolution_aux_h_split}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\difficulty{4}
 For all $x, y \in \{0,1\}^n$ and $S \subseteq [n]$,
 \[
   \chi_S(x) \;=\; \chi_S(x \oplus y)\,\chi_S(y),
@@ -495,6 +502,7 @@ also carries the (unused) Fubini hypothesis of the enclosing proof.
 \label{BoolFourier.fourier_coeff_convolution_aux_h_char}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff_convolution_aux_h_split, BoolFourier.hypercube, BoolFourier.xor_vec}
+\difficulty{5}
 Let $f, g : \{0,1\}^n \to \mathbb{R}$, let $S \subseteq [n]$, assume the Fubini
 interchange for the convolution coefficient, and let $y \in \{0,1\}^n$.  Then
 translating the argument of $g$ by $y$ only multiplies the character-weighted sum by

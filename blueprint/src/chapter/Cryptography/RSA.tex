@@ -34,6 +34,7 @@ m.\mathrm{time} + (f\,m.\mathrm{ret}).\mathrm{time}\rangle$: the two time costs 
 \lean{TimeM.ret_pure}
 \label{TimeM.ret_pure}
 \leanok
+\difficulty{1}
 The value returned by $\mathrm{pure}\,a$ is $a$.
 \end{theorem}
 
@@ -41,6 +42,7 @@ The value returned by $\mathrm{pure}\,a$ is $a$.
 \lean{TimeM.ret_bind}
 \label{TimeM.ret_bind}
 \leanok
+\difficulty{1}
 The value returned by the bind of $m$ with $f$ is the value returned by $f\,m.\mathrm{ret}$.
 \end{theorem}
 
@@ -48,6 +50,7 @@ The value returned by the bind of $m$ with $f$ is the value returned by $f\,m.\m
 \lean{TimeM.ret_map}
 \label{TimeM.ret_map}
 \leanok
+\difficulty{1}
 For $f : \alpha \to \beta$ and $x : \texttt{TimeM T α}$, the value returned by the mapped
 computation is $f(x.\mathrm{ret})$.
 \end{theorem}
@@ -56,6 +59,7 @@ computation is $f(x.\mathrm{ret})$.
 \lean{TimeM.ret_seqRight}
 \label{TimeM.ret_seqRight}
 \leanok
+\difficulty{1}
 The right-sequencing of $x$ and $y$ returns the value returned by $y\,()$.
 \end{theorem}
 
@@ -63,6 +67,7 @@ The right-sequencing of $x$ and $y$ returns the value returned by $y\,()$.
 \lean{TimeM.ret_seqLeft}
 \label{TimeM.ret_seqLeft}
 \leanok
+\difficulty{1}
 The left-sequencing of $x$ and $y$ returns $x.\mathrm{ret}$.
 \end{theorem}
 
@@ -70,6 +75,7 @@ The left-sequencing of $x$ and $y$ returns $x.\mathrm{ret}$.
 \lean{TimeM.ret_seq}
 \label{TimeM.ret_seq}
 \leanok
+\difficulty{1}
 For $f : \texttt{TimeM T (α → β)}$ and $x : \texttt{Unit → TimeM T α}$, the application
 $\mathrm{seq}\,f\,x$ returns $f.\mathrm{ret}\bigl((x\,()).\mathrm{ret}\bigr)$.
 \end{theorem}
@@ -78,6 +84,7 @@ $\mathrm{seq}\,f\,x$ returns $f.\mathrm{ret}\bigl((x\,()).\mathrm{ret}\bigr)$.
 \lean{TimeM.time_bind}
 \label{TimeM.time_bind}
 \leanok
+\difficulty{1}
 The time cost of the bind of $m$ with $f$ is $m.\mathrm{time} + (f\,m.\mathrm{ret}).\mathrm{time}$.
 \end{theorem}
 
@@ -85,6 +92,7 @@ The time cost of the bind of $m$ with $f$ is $m.\mathrm{time} + (f\,m.\mathrm{re
 \lean{TimeM.time_pure}
 \label{TimeM.time_pure}
 \leanok
+\difficulty{1}
 The time cost of $\mathrm{pure}\,a$ is $0$.
 \end{theorem}
 
@@ -92,6 +100,7 @@ The time cost of $\mathrm{pure}\,a$ is $0$.
 \lean{TimeM.time_map}
 \label{TimeM.time_map}
 \leanok
+\difficulty{1}
 Mapping a function over a computation does not change its time cost: it is $x.\mathrm{time}$.
 \end{theorem}
 
@@ -99,6 +108,7 @@ Mapping a function over a computation does not change its time cost: it is $x.\m
 \lean{TimeM.time_seqRight}
 \label{TimeM.time_seqRight}
 \leanok
+\difficulty{1}
 The time cost of the right-sequencing of $x$ and $y$ is $x.\mathrm{time} + (y\,()).\mathrm{time}$.
 \end{theorem}
 
@@ -106,6 +116,7 @@ The time cost of the right-sequencing of $x$ and $y$ is $x.\mathrm{time} + (y\,(
 \lean{TimeM.time_seqLeft}
 \label{TimeM.time_seqLeft}
 \leanok
+\difficulty{1}
 The time cost of the left-sequencing of $x$ and $y$ is $x.\mathrm{time} + (y\,()).\mathrm{time}$.
 \end{theorem}
 
@@ -113,6 +124,7 @@ The time cost of the left-sequencing of $x$ and $y$ is $x.\mathrm{time} + (y\,()
 \lean{TimeM.time_seq}
 \label{TimeM.time_seq}
 \leanok
+\difficulty{1}
 The time cost of $\mathrm{seq}\,f\,x$ is $f.\mathrm{time} + (x\,()).\mathrm{time}$.
 \end{theorem}
 
@@ -129,6 +141,7 @@ basic way of charging $c$ units of time.
 \label{TimeM.ret_tick}
 \leanok
 \uses{TimeM.tick}
+\difficulty{1}
 The value returned by $\mathrm{tick}\,c$ is the unit value.
 \end{theorem}
 
@@ -137,6 +150,7 @@ The value returned by $\mathrm{tick}\,c$ is the unit value.
 \label{TimeM.time_tick}
 \leanok
 \uses{TimeM.tick}
+\difficulty{1}
 The time cost of $\mathrm{tick}\,c$ is $c$.
 \end{theorem}
 
@@ -161,6 +175,7 @@ sequence of comparisons, charging one unit of time per comparison performed.
 \label{median3_correct}
 \leanok
 \uses{median3}
+\difficulty{5}
 The value returned by $\mathrm{median3}\,a\,b\,c$ is a median of $a$, $b$, $c$, in the sense that
 it lies between at least one of the pairs drawn from $\{a,b,c\}$.
 \end{theorem}
@@ -170,6 +185,7 @@ it lies between at least one of the pairs drawn from $\{a,b,c\}$.
 \label{median3_time}
 \leanok
 \uses{median3}
+\difficulty{4}
 The computation $\mathrm{median3}\,a\,b\,c$ records a time cost of at most $3$, i.e.\ it performs
 at most three comparisons.
 \end{theorem}
@@ -204,6 +220,7 @@ $x :: y :: \mathit{rest}$ is sorted when $x \le y$ and $y :: \mathit{rest}$ is s
 \label{isSorted_iff_isChain}
 \leanok
 \uses{IsSorted}
+\difficulty{5}
 For any list $\mathit{xs}$, the predicate \texttt{IsSorted} holds of $\mathit{xs}$ if and only if
 $\mathit{xs}$ is a chain for $\le$.
 \end{theorem}
@@ -213,6 +230,7 @@ $\mathit{xs}$ is a chain for $\le$.
 \label{isSorted_iff_sorted}
 \leanok
 \uses{IsSorted, isSorted_iff_isChain}
+\difficulty{1}
 For any list $\mathit{xs}$, the predicate \texttt{IsSorted} holds of $\mathit{xs}$ if and only if
 $\mathit{xs}$ is sorted in the usual pairwise sense with respect to $\le$.
 \end{theorem}
@@ -222,6 +240,7 @@ $\mathit{xs}$ is sorted in the usual pairwise sense with respect to $\le$.
 \label{ret_insert}
 \leanok
 \uses{insert}
+\difficulty{4}
 The value returned by the timed insertion of $x$ into $\mathit{xs}$ is the ordinary ordered
 insertion of $x$ into $\mathit{xs}$ for the relation $\le$.
 \end{theorem}
@@ -231,6 +250,7 @@ insertion of $x$ into $\mathit{xs}$ for the relation $\le$.
 \label{ret_insertionSort}
 \leanok
 \uses{insertionSort, ret_insert}
+\difficulty{3}
 The value returned by the timed insertion sort of $\mathit{xs}$ is the ordinary insertion sort of
 $\mathit{xs}$ for the relation $\le$.
 \end{theorem}
@@ -240,6 +260,7 @@ $\mathit{xs}$ for the relation $\le$.
 \label{length_ret_insert}
 \leanok
 \uses{insert, ret_insert}
+\difficulty{2}
 The list returned by inserting $x$ into $\mathit{xs}$ has length $\abs{\mathit{xs}} + 1$.
 \end{theorem}
 
@@ -248,6 +269,7 @@ The list returned by inserting $x$ into $\mathit{xs}$ has length $\abs{\mathit{x
 \label{length_ret_insertionSort}
 \leanok
 \uses{insertionSort, ret_insertionSort}
+\difficulty{1}
 The list returned by the timed insertion sort of $\mathit{xs}$ has the same length as
 $\mathit{xs}$.
 \end{theorem}
@@ -257,6 +279,7 @@ $\mathit{xs}$.
 \label{insert_perm}
 \leanok
 \uses{insert, ret_insert}
+\difficulty{2}
 The list returned by inserting $x$ into $\mathit{xs}$ is a permutation of $x :: \mathit{xs}$.
 \end{theorem}
 
@@ -265,6 +288,7 @@ The list returned by inserting $x$ into $\mathit{xs}$ is a permutation of $x :: 
 \label{insert_sorted}
 \leanok
 \uses{IsSorted, insert, isSorted_iff_sorted, ret_insert}
+\difficulty{3}
 If $\mathit{xs}$ is sorted, then the list returned by inserting $x$ into $\mathit{xs}$ is sorted.
 \end{theorem}
 
@@ -273,6 +297,7 @@ If $\mathit{xs}$ is sorted, then the list returned by inserting $x$ into $\mathi
 \label{insertionSort_perm}
 \leanok
 \uses{insertionSort, ret_insertionSort}
+\difficulty{2}
 The list returned by the timed insertion sort of $\mathit{xs}$ is a permutation of $\mathit{xs}$.
 \end{theorem}
 
@@ -281,6 +306,7 @@ The list returned by the timed insertion sort of $\mathit{xs}$ is a permutation 
 \label{insertionSort_sorted}
 \leanok
 \uses{IsSorted, insertionSort, isSorted_iff_sorted, ret_insertionSort}
+\difficulty{3}
 For every list $\mathit{xs}$, the list returned by the timed insertion sort is sorted.
 \end{theorem}
 
@@ -289,6 +315,7 @@ For every list $\mathit{xs}$, the list returned by the timed insertion sort is s
 \label{insertionSort_correct}
 \leanok
 \uses{IsSorted, insertionSort, insertionSort_perm, insertionSort_sorted}
+\difficulty{1}
 For every list $\mathit{xs}$, the output of the timed insertion sort is both sorted and a
 permutation of $\mathit{xs}$.
 \end{theorem}
@@ -305,6 +332,7 @@ The worst-case comparison recurrence $T(0) = 0$ and $T(n+1) = T(n) + n$.
 \label{time_insert_le}
 \leanok
 \uses{insert}
+\difficulty{4}
 Inserting $x$ into a list $\mathit{xs}$ costs at most $\abs{\mathit{xs}}$ comparisons.
 \end{theorem}
 
@@ -313,6 +341,7 @@ Inserting $x$ into a list $\mathit{xs}$ costs at most $\abs{\mathit{xs}}$ compar
 \label{time_insertionSort_le_rec}
 \leanok
 \uses{insert, insertionSort, ret_insertionSort, timeInsertionSortRec, time_insert_le}
+\difficulty{5}
 The time cost recorded by the timed insertion sort of $\mathit{xs}$ is at most
 $T(\abs{\mathit{xs}})$, where $T$ is the insertion sort recurrence.
 \end{theorem}
@@ -322,6 +351,7 @@ $T(\abs{\mathit{xs}})$, where $T$ is the insertion sort recurrence.
 \label{timeInsertionSortRec_le_sq}
 \leanok
 \uses{timeInsertionSortRec}
+\difficulty{3}
 For every $n$, the recurrence satisfies $T(n) \le n^2$.
 \end{theorem}
 
@@ -330,6 +360,7 @@ For every $n$, the recurrence satisfies $T(n) \le n^2$.
 \label{time_insertionSort_le_sq}
 \leanok
 \uses{insertionSort, timeInsertionSortRec_le_sq, time_insertionSort_le_rec}
+\difficulty{1}
 The time cost recorded by the timed insertion sort of a list $\mathit{xs}$ of length $n$ is at
 most $n^2$.
 \end{theorem}
@@ -338,6 +369,7 @@ most $n^2$.
 \lean{RSA.rsa_core}
 \label{RSA.rsa_core}
 \leanok
+\difficulty{5}
 Let $p$ be prime. For every $c \in \bbn$ and every $x \in \bbz/p\bbz$,
 \[
 x^{\,1 + c(p-1)} = x .
@@ -350,6 +382,7 @@ This is the form of Fermat's little theorem needed for RSA, valid also at $x = 0
 \label{RSA.rsa_zmod_of_factor}
 \leanok
 \uses{RSA.rsa_core}
+\difficulty{3}
 Let $p$ be prime and $m, ed, c \in \bbn$ with $ed = 1 + c(p-1)$. Then $m^{ed} \equiv m$ in
 $\bbz/p\bbz$, where both sides are the images of natural numbers.
 \end{lemma}
@@ -359,6 +392,7 @@ $\bbz/p\bbz$, where both sides are the images of natural numbers.
 \label{RSA.rsa_zmod_p}
 \leanok
 \uses{RSA.rsa_zmod_of_factor}
+\difficulty{4}
 If $p$ is prime and $ed = 1 + k(p-1)(q-1)$, then $m^{ed} \equiv m$ in $\bbz/p\bbz$ for every
 $m \in \bbn$.
 \end{lemma}
@@ -368,6 +402,7 @@ $m \in \bbn$.
 \label{RSA.rsa_zmod_q}
 \leanok
 \uses{RSA.PublicKey, RSA.rsa_zmod_of_factor}
+\difficulty{1}
 If $q$ is prime and $ed = 1 + k(p-1)(q-1)$, then $m^{ed} \equiv m$ in $\bbz/q\bbz$ for every
 $m \in \bbn$.
 \end{lemma}
@@ -377,6 +412,7 @@ $m \in \bbn$.
 \label{RSA.rsa_crt}
 \leanok
 \uses{RSA.PublicKey}
+\difficulty{4}
 Let $p$ and $q$ be coprime and suppose $m^{ed} \equiv m$ both in $\bbz/p\bbz$ and in
 $\bbz/q\bbz$. Then $m^{ed} \equiv m$ in $\bbz/pq\bbz$.
 \end{lemma}
@@ -386,6 +422,7 @@ $\bbz/q\bbz$. Then $m^{ed} \equiv m$ in $\bbz/pq\bbz$.
 \label{RSA.rsa_crt_pow}
 \leanok
 \uses{RSA.PublicKey, RSA.rsa_crt}
+\difficulty{4}
 The same statement written with the power taken inside the quotient ring: if $p$ and $q$ are
 coprime and $\bar m^{\,ed} = \bar m$ in $\bbz/p\bbz$ and in $\bbz/q\bbz$, then
 $\bar m^{\,ed} = \bar m$ in $\bbz/pq\bbz$.
@@ -431,6 +468,7 @@ private exponent.
 \label{RSA.rsa_correctness}
 \leanok
 \uses{RSA.SecretKey, RSA.decrypt, RSA.encrypt, RSA.rsa_crt_pow, RSA.rsa_zmod_p, RSA.rsa_zmod_q}
+\difficulty{6}
 For any secret key and any message $m \in \bbn$, decrypting the encryption of $m$ recovers $m$:
 \[
 \bigl(\bar m^{\,e}\bigr)^{d} = \bar m \quad \text{in } \bbz/n\bbz .

@@ -29,6 +29,7 @@ list of accepted edges.
 \label{Kruskal.ufAfterProcessEdges_partition}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.merge_noop, Kruskal.ufAfterProcessEdges}
+\difficulty{4}
 For every edge list and every initial state $uf$, the state
 $\texttt{Kruskal.ufAfterProcessEdges}$ produces induces the same partition of the vertices
 as merging all the edges unconditionally, i.e.\ it has the same partition as
@@ -40,6 +41,7 @@ $uf.\mathrm{mergeAll}$ applied to the whole list.
 \label{Kruskal.processEdges_acc}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.WEdge, Kruskal.processEdges}
+\difficulty{4}
 Running $\texttt{Kruskal.processEdges}$ with an accumulator $acc$ yields
 $acc^{\mathrm{rev}}$ followed by the output of the same run started from the empty
 accumulator; the accumulator only contributes a reversed prefix.
@@ -50,6 +52,7 @@ accumulator; the accumulator only contributes a reversed prefix.
 \label{Kruskal.processEdges_same_partition}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.find, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.processEdges, Kruskal.processEdges_acc, Kruskal.ufAfterProcessEdges, Kruskal.ufAfterProcessEdges_partition}
+\difficulty{5}
 Merging the edges selected by the greedy loop into $uf$ gives the same partition as
 merging all the input edges into $uf$: the discarded edges never change connectivity.
 \end{lemma}
@@ -59,6 +62,7 @@ merging all the input edges into $uf$: the discarded edges never change connecti
 \label{Kruskal.processEdges_skip}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.find, Kruskal.WEdge, Kruskal.processEdges}
+\difficulty{1}
 If the endpoints of $e$ already have the same union--find representative, then the
 greedy loop on $e :: rest$ from state $uf$ returns exactly the output of the loop on
 $rest$ from the same state.
@@ -69,6 +73,7 @@ $rest$ from the same state.
 \label{Kruskal.processEdges_take_weight}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.find, Kruskal.UF.merge, Kruskal.WEdge, Kruskal.processEdges, Kruskal.processEdges_acc, Kruskal.totalWeight}
+\difficulty{3}
 If the endpoints of $e$ lie in different components of $uf$, then the total weight of the
 greedy output on $e :: rest$ equals $e.\mathrm{weight}$ plus the total weight of the
 greedy output on $rest$ started from the merged state $uf.\mathrm{merge}\,e.u\,e.v$.
@@ -79,6 +84,7 @@ greedy output on $rest$ started from the merged state $uf.\mathrm{merge}\,e.u\,e
 \label{Kruskal.processEdges_optimal}
 \leanok
 \uses{Kruskal.Reach, Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.symm, Kruskal.UF.SamePartition.trans, Kruskal.UF.find, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.erase_append_perm, Kruskal.mergeAll_cons_eq, Kruskal.mergeAll_iff_reach, Kruskal.mergeAll_perm, Kruskal.merge_noop, Kruskal.processEdges, Kruskal.processEdges_skip, Kruskal.processEdges_take_weight, Kruskal.reduce_to_rest, Kruskal.totalWeight, Kruskal.totalWeight_erase, Kruskal.uf_exchange}
+\difficulty{7}
 Let $uf$ be a union--find state whose classes are exactly the reachability classes of a
 base edge list, and let the input list $edges$ be sorted by nondecreasing weight. Then
 for any competing sublist $S \subseteq edges$ that induces the same partition as $edges$
@@ -94,6 +100,7 @@ does over $uf$, the greedy output satisfies
 \label{Kruskal.kruskal_spans}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SpansLike, Kruskal.UF.init, Kruskal.WEdge, Kruskal.kruskal, Kruskal.mergeAll_init_iff, Kruskal.processEdges_same_partition, Kruskal.reach_mono}
+\difficulty{4}
 For every weighted edge list $E$ over $\mathrm{Fin}\,n$, the output $\mathrm{kruskal}\,n\,E$
 spans like $E$: any two vertices reachable in $E$ are reachable using only the selected
 edges.
@@ -104,6 +111,7 @@ edges.
 \label{Kruskal.kruskal_optimal}
 \leanok
 \uses{Kruskal.SpansLike, Kruskal.WEdge, Kruskal.kruskal, Kruskal.mergeAll_init_iff, Kruskal.processEdges_optimal, Kruskal.reach_mono, Kruskal.totalWeight}
+\difficulty{5}
 If $S$ is a sublist of $E$ that spans like $E$, then
 \[
   \mathrm{totalWeight}\bigl(\mathrm{kruskal}\;n\;E\bigr) \;\le\; \mathrm{totalWeight}(S),

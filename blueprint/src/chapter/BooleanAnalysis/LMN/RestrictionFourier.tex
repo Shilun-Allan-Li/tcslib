@@ -44,6 +44,7 @@ the bits $\rho$ fixes on a set $T$.
 \label{RestrictionFourier.chiS_extend}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
+\difficulty{4}
 For a set $U \subseteq [n]$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
 and an input $x$,
 \[
@@ -62,6 +63,7 @@ coming from the fixed coordinates.
   pdf-20e15a3d3d5e-p008-b003
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, DecisionTree.fourierCoeff_sum_chiS, RestrictionFourier.chiS_extend, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
+\difficulty{6}
 For $f : \{0,1\}^n \to \bbr$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
 and $S \subseteq [n]$,
 \[
@@ -77,6 +79,7 @@ Corollary 3.22.
 \label{RestrictionFourier.sum_restriction_prod}
 \leanok
 \uses{SwitchingLemma2.Restriction}
+\difficulty{2}
 For any family $h : [n] \to \mathrm{Option}\ \mathrm{Bool} \to \bbr$,
 \[
   \sum_{\rho} \prod_{i} h\,i\,(\rho\,i) \;=\; \prod_{i} \sum_{v} h\,i\,v,
@@ -90,6 +93,7 @@ possible per-coordinate values.
 \label{RestrictionFourier.sum_bernoulli_prod}
 \leanok
 \uses{LMN.bernoulliRestrWeight_eq_prod, LMN.varWeight, RestrictionFourier.sum_restriction_prod, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{3}
 For $p \in \bbr$ and any family $h : [n] \to \mathrm{Option}\ \mathrm{Bool} \to \bbr$,
 \[
   \sum_{\rho} \mathrm{bernoulliRestrWeight}\,p\,\rho \cdot \prod_{i} h\,i\,(\rho\,i)
@@ -117,6 +121,7 @@ the sign contributed on $U \setminus S$.
 \label{RestrictionFourier.indicator_signProd_eq_prod}
 \leanok
 \uses{BooleanAnalysis.boolToSign, RestrictionFourier.localFactor, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\difficulty{6}
 If $S \subseteq U$ then for every restriction $\rho$ with free set $J$,
 \[
   \mathbf{1}[U \cap J = S]\cdot \mathrm{signProd}\,\rho\,(U \setminus J)
@@ -130,6 +135,7 @@ where the left-hand side is understood as $0$ when the indicator fails.
 \label{RestrictionFourier.sum_varWeight_localFactor}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
+\difficulty{3}
 For $p \in \bbr$, sets $U, S$ and a coordinate $i$,
 \[
   \sum_{v} \mathrm{varWeight}\,p\,v \cdot \mathrm{localFactor}\,U\,S\,i\,v
@@ -142,6 +148,7 @@ For $p \in \bbr$, sets $U, S$ and a coordinate $i$,
 \label{RestrictionFourier.sum_varWeight_localFactor_mul}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
+\difficulty{3}
 For $p \in \bbr$, sets $U, V, S$ and a coordinate $i$,
 \[
   \sum_{v} \mathrm{varWeight}\,p\,v \cdot \bigl(\mathrm{localFactor}\,U\,S\,i\,v\cdot
@@ -156,6 +163,7 @@ which is the per-coordinate average needed for the squared coefficient.
 \lean{RestrictionFourier.prod_if_subset}
 \label{RestrictionFourier.prod_if_subset}
 \leanok
+\difficulty{5}
 For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 \[
   \prod_{i} \bigl(p \text{ if } i \in S,\ (1-p) \text{ if } i \in U \setminus S,\ 1
@@ -173,6 +181,7 @@ For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 }
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{6}
 Under a Bernoulli($p$)-random restriction $\rho$, the expected Fourier coefficient of the
 restricted function at $S$ is
 \[
@@ -192,6 +201,7 @@ restrictions.
 }
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.localFactor, RestrictionFourier.prod_if_subset, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor_mul, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\difficulty{7}
 Under a Bernoulli($p$)-random restriction $\rho$, the expected squared Fourier
 coefficient at $S$ is
 \[
@@ -207,6 +217,7 @@ vanish.
 \label{RestrictionFourier.signProd_sq}
 \leanok
 \uses{BooleanAnalysis.boolToSign_sq, SwitchingLemma2.Restriction}
+\difficulty{2}
 For every restriction $\rho$ and every set $T \subseteq [n]$, $(\mathrm{signProd}\,\rho\,T)^2 = 1$.
 \end{lemma}
 
@@ -215,6 +226,7 @@ For every restriction $\rho$ and every set $T \subseteq [n]$, $(\mathrm{signProd
 \label{RestrictionFourier.bernoulliRestrProb_inter_freeVars}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, RestrictionFourier.expectation_fourierCoeff_sq_restrictBF, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.signProd_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
+\difficulty{5}
 For a Bernoulli($p$)-random restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$
 and sets $U, S \subseteq [n]$,
 \[

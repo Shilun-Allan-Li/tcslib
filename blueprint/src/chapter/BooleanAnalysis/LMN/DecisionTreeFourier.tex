@@ -56,6 +56,7 @@ variable $i$ with subtrees $\mathrm{lo}, \mathrm{hi}$ assigns to $S$ the value
 \lean{DecisionTree.symmDiff_singleton_invol}
 \label{DecisionTree.symmDiff_singleton_invol}
 \leanok
+\difficulty{1}
 For a fixed $i$, the map $S \mapsto S \triangle \{i\}$ on subsets of
 $\mathrm{Fin}\,n$ is involutive.
 \end{lemma}
@@ -65,6 +66,7 @@ $\mathrm{Fin}\,n$ is involutive.
 \label{DecisionTree.sum_symmDiff_reindex}
 \leanok
 \uses{DecisionTree.symmDiff_singleton_invol}
+\difficulty{2}
 For any $g : \mathcal{P}(\mathrm{Fin}\,n) \to \bbr$ and any $i$,
 \[
 \sum_{S} g(S \triangle \{i\}) = \sum_{S} g(S),
@@ -77,6 +79,7 @@ the sums ranging over all subsets $S$ of $\mathrm{Fin}\,n$.
 \label{DecisionTree.chiS_symmDiff_singleton}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.chiS_mul_chiS, BooleanAnalysis.chiS_singleton}
+\difficulty{1}
 For all $S$, $i$, and $x$ in the Boolean cube,
 $\chi_{S \triangle \{i\}}(x) = \chi_S(x)\cdot \mathrm{boolToSign}(x_i)$.
 \end{lemma}
@@ -85,6 +88,7 @@ $\chi_{S \triangle \{i\}}(x) = \chi_S(x)\cdot \mathrm{boolToSign}(x_i)$.
 \lean{DecisionTree.card_symmDiff_singleton}
 \label{DecisionTree.card_symmDiff_singleton}
 \leanok
+\difficulty{4}
 For all $S$ and $i$, $\abs{S} - 1 \le \abs{S \triangle \{i\}}$, the subtraction being
 truncated subtraction on $\bbn$.
 \end{lemma}
@@ -94,6 +98,7 @@ truncated subtraction on $\bbn$.
 \label{DecisionTree.signEval_eq_sum_coeffs}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.chiS_empty, DecisionTree, DecisionTree.chiS_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.eval, DecisionTree.signEval, DecisionTree.sum_symmDiff_reindex}
+\difficulty{7}
 For every decision tree $T$ and every point $x$ of the Boolean cube,
 \[
 T.\mathrm{signEval}(x) = \sum_{S} \mathrm{coeffs}\,T\,S \cdot \chi_S(x).
@@ -105,6 +110,7 @@ T.\mathrm{signEval}(x) = \sum_{S} \mathrm{coeffs}\,T\,S \cdot \chi_S(x).
 \label{DecisionTree.coeffs_eq_zero_of_depth_lt}
 \leanok
 \uses{DecisionTree, DecisionTree.card_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.depth}
+\difficulty{4}
 If $T.\mathrm{depth} < \abs{S}$, then $\mathrm{coeffs}\,T\,S = 0$: frequencies of
 cardinality exceeding the tree depth carry no weight.
 \end{lemma}
@@ -114,6 +120,7 @@ cardinality exceeding the tree depth carry no weight.
 \label{DecisionTree.sum_abs_coeffs_le}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.size, DecisionTree.sum_symmDiff_reindex}
+\difficulty{6}
 For every decision tree $T$,
 \[
 \sum_{S} \abs{\mathrm{coeffs}\,T\,S} \le T.\mathrm{size},
@@ -126,6 +133,7 @@ i.e.\ the spectral $1$-norm of the coefficients is at most the number of leaves.
 \label{DecisionTree.coeffs_mul_two_pow_int}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.depth}
+\difficulty{5}
 If $T.\mathrm{depth} \le k$, then for every $S$ there is an integer $m$ with
 $\mathrm{coeffs}\,T\,S \cdot 2^k = m$.
 \end{lemma}
@@ -135,6 +143,7 @@ $\mathrm{coeffs}\,T\,S \cdot 2^k = m$.
 \label{DecisionTree.coeffs_granular}
 \leanok
 \uses{DecisionTree, DecisionTree.coeffs, DecisionTree.coeffs_mul_two_pow_int, DecisionTree.depth}
+\difficulty{2}
 For every $S$ there is an integer $m$ with
 $\mathrm{coeffs}\,T\,S = m / 2^{T.\mathrm{depth}}$; that is, every coefficient is an
 integer multiple of $2^{-T.\mathrm{depth}}$.
@@ -145,6 +154,7 @@ integer multiple of $2^{-T.\mathrm{depth}}$.
 \label{DecisionTree.size_le_two_pow_depth}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.size}
+\difficulty{4}
 Every decision tree satisfies $T.\mathrm{size} \le 2^{T.\mathrm{depth}}$: a tree of depth
 $k$ has at most $2^k$ leaves.
 \end{lemma}
@@ -154,6 +164,7 @@ $k$ has at most $2^k$ leaves.
 \label{DecisionTree.fourierCoeff_sum_chiS}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
+\difficulty{5}
 For any coefficient family $c$ and any frequency $T$, the Fourier coefficient of the
 explicit combination $x \mapsto \sum_{S} c(S)\,\chi_S(x)$ at $T$ equals $c(T)$.
 \end{lemma}
@@ -163,6 +174,7 @@ explicit combination $x \mapsto \sum_{S} c(S)\,\chi_S(x)$ at $T$ equals $c(T)$.
 \label{DecisionTree.fourierCoeff_signEval}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs, DecisionTree.fourierCoeff_sum_chiS, DecisionTree.signEval, DecisionTree.signEval_eq_sum_coeffs}
+\difficulty{2}
 For every decision tree $T$ and every $S$, the Fourier coefficient
 $\widehat{T.\mathrm{signEval}}(S)$ equals $\mathrm{coeffs}\,T\,S$; the recursively defined
 coefficients are exactly the Fourier coefficients.
@@ -174,6 +186,7 @@ coefficients are exactly the Fourier coefficients.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.has_degree_at_most, DecisionTree, DecisionTree.coeffs_eq_zero_of_depth_lt, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
+\difficulty{3}
 The function computed by a decision tree of depth $k$ has Fourier degree at most $k$:
 $T.\mathrm{signEval}$ has degree at most $T.\mathrm{depth}$.
 \end{theorem}
@@ -184,6 +197,7 @@ $T.\mathrm{signEval}$ has degree at most $T.\mathrm{depth}$.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval, DecisionTree.size, DecisionTree.sum_abs_coeffs_le}
+\difficulty{2}
 For every decision tree $T$,
 \[
 \sum_{S} \bigl| \widehat{T.\mathrm{signEval}}(S) \bigr| \le T.\mathrm{size},
@@ -197,6 +211,7 @@ i.e.\ $\norm{\widehat{f}}_1 \le s$ for the tree size $s$.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs_granular, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
+\difficulty{1}
 For every $S$ there is an integer $m$ with
 $\widehat{T.\mathrm{signEval}}(S) = m / 2^{T.\mathrm{depth}}$: every Fourier coefficient is
 an integer multiple of $2^{-k}$, where $k$ is the tree depth.
@@ -208,6 +223,7 @@ an integer multiple of $2^{-k}$, where $k$ is the tree depth.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.fourierCoeff_granular, DecisionTree.signEval, DecisionTree.size, DecisionTree.spectral_one_norm_le}
+\difficulty{6}
 The Fourier support of $T.\mathrm{signEval}$, i.e.\ the set of frequencies $S$ with
 $\widehat{T.\mathrm{signEval}}(S) \ne 0$, has cardinality at most
 $T.\mathrm{size}\cdot 2^{T.\mathrm{depth}}$.
@@ -219,6 +235,7 @@ $T.\mathrm{size}\cdot 2^{T.\mathrm{depth}}$.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.signEval, DecisionTree.size, DecisionTree.size_le_two_pow_depth, DecisionTree.sparsity_le}
+\difficulty{3}
 The Fourier support of $T.\mathrm{signEval}$ has cardinality at most
 $4^{T.\mathrm{depth}}$.
 \end{theorem}
@@ -229,6 +246,7 @@ $4^{T.\mathrm{depth}}$.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b001}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
+\difficulty{2}
 For every Boolean function $f : \{0,1\}^n \to \{0,1\}$ there exists a decision tree $T$
 with $T.\mathrm{depth} \le \mathrm{dtDepth}\,f$ that computes $f$, i.e.\
 $T.\mathrm{eval}\,x = f(x)$ for all $x$.
@@ -240,6 +258,7 @@ $T.\mathrm{eval}\,x = f(x)$ for all $x$.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.boolToSign, BooleanAnalysis.has_degree_at_most, DecisionTree.degree_le_depth, DecisionTree.exists_dtree_of_dtDepth, DecisionTree.signEval, dtDepth}
+\difficulty{3}
 For every Boolean function $f$, the $\pm 1$-encoding
 $x \mapsto \mathrm{boolToSign}(f(x))$ has Fourier degree at most $\mathrm{dtDepth}\,f$,
 the minimum depth of a decision tree computing $f$. This is the implication

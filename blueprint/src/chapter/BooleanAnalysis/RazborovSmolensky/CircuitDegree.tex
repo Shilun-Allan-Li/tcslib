@@ -35,6 +35,7 @@ number $b$ under the canonical map $\N \to \bbz/p$.
 \label{ACP.boolVal_mem}
 \leanok
 \uses{ACP.boolVal}
+\difficulty{1}
 For every bit $b : \mathrm{Fin}\,2$ the element $\mathrm{boolVal}_p(b)$ lies in the subset
 $\{0,1\}$ of $\bbz/p$.
 \end{lemma}
@@ -44,6 +45,7 @@ $\{0,1\}$ of $\bbz/p$.
 \label{ACP.bitify_boolVal}
 \leanok
 \uses{ACP.bitify, ACP.boolVal}
+\difficulty{1}
 Applying $\mathrm{bitify}_p$ to $\mathrm{boolVal}_p(b)$ returns the original bit $b$, for every
 $b : \mathrm{Fin}\,2$.
 \end{lemma}
@@ -53,6 +55,7 @@ $b : \mathrm{Fin}\,2$.
 \label{ACP.evalNode_succ_eq}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.evalNode}
+\difficulty{1}
 For a feed-forward circuit $F$, a layer index $d$, a node $u$ at layer $d+1$ and an input $x$, the
 value of $u$ is obtained by applying the gate operation attached to $u$ to the values of its input
 nodes at layer $d$.
@@ -83,6 +86,7 @@ nodes at layer $d+1$.
 \label{ACP.gateCountBefore_zero}
 \leanok
 \uses{ACP.FeedForward, ACP.gateCountBefore}
+\difficulty{1}
 $\mathrm{gateCountBefore}\,F\,0 = 0$: the input layer contributes no gates.
 \end{lemma}
 
@@ -91,6 +95,7 @@ $\mathrm{gateCountBefore}\,F\,0 = 0$: the input layer contributes no gates.
 \label{ACP.gateCountBefore_succ}
 \leanok
 \uses{ACP.FeedForward, ACP.gateCountBefore}
+\difficulty{1}
 $\mathrm{gateCountBefore}\,F\,(d+1)$ equals $\mathrm{gateCountBefore}\,F\,d$ plus the cardinality of
 the node set at layer $d+1$.
 \end{lemma}
@@ -99,6 +104,7 @@ the node set at layer $d+1$.
 \lean{ACP.prod_left_filter_card}
 \label{ACP.prod_left_filter_card}
 \leanok
+\difficulty{5}
 For finite types $\alpha,\beta$ and a decidable predicate $P$ on $\alpha$, the number of pairs
 $z \in \alpha \times \beta$ with $P(z_1)$ equals $\abs{\{a : P(a)\}} \cdot \abs{\beta}$.
 \end{lemma}
@@ -107,6 +113,7 @@ $z \in \alpha \times \beta$ with $P(z_1)$ equals $\abs{\{a : P(a)\}} \cdot \abs{
 \lean{ACP.prod_filter_fiber_mul_le}
 \label{ACP.prod_filter_fiber_mul_le}
 \leanok
+\difficulty{6}
 Let $P$ be a predicate on $\alpha$, $Q$ a predicate on $\alpha \times \beta$, and $C, B$ natural
 numbers such that for every $a$ with $P(a)$ the fiber count satisfies
 $\abs{\{b : Q(a,b)\}} \cdot C \le B$.  Then
@@ -133,6 +140,7 @@ coordinates.
 \label{ACP.pi_coordinate_bad_mul_le}
 \leanok
 \uses{ACP.piEquivAt}
+\difficulty{6}
 Fix a coordinate $i$ and a decidable predicate $\mathrm{Bad}$ on $\beta_i$, and suppose
 $\abs{\{b : \mathrm{Bad}(b)\}} \cdot C \le \abs{\beta_i}$.  Then the number of dependent functions
 $f$ with $\mathrm{Bad}(f_i)$ satisfies
@@ -146,6 +154,7 @@ $f$ with $\mathrm{Bad}(f_i)$ satisfies
 \label{ACP.pi_exists_bad_card_mul_le}
 \leanok
 \uses{ACP.pi_coordinate_bad_mul_le}
+\difficulty{5}
 Given for each coordinate $i$ a decidable predicate $\mathrm{Bad}_i$ on $\beta_i$ with
 $\abs{\{b : \mathrm{Bad}_i(b)\}} \cdot C \le \abs{\beta_i}$, the number of dependent functions bad
 at some coordinate obeys
@@ -158,6 +167,7 @@ at some coordinate obeys
 \lean{ACP.list_filter_map_length}
 \label{ACP.list_filter_map_length}
 \leanok
+\difficulty{3}
 For a list $l$, a map $f$ and a decidable predicate $P$, the length of the filter of $l.\mathrm{map}\,f$
 by $P$ equals the length of the filter of $l$ by the pulled-back predicate $a \mapsto P(f(a))$.
 \end{lemma}
@@ -166,6 +176,7 @@ by $P$ equals the length of the filter of $l$ by the pulled-back predicate $a \m
 \lean{ACP.finset_toList_filter_length_eq_card}
 \label{ACP.finset_toList_filter_length_eq_card}
 \leanok
+\difficulty{3}
 For a finset $s$ and a decidable predicate $q$, the length of the filtered list
 $s.\mathrm{toList}$ by $q$ equals the cardinality of the filtered finset $s$ by $q$.
 \end{lemma}
@@ -189,6 +200,7 @@ type depends only on the gate, not on the incoming polynomials.
 \label{ACP.exists_gate_poly_family}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.GatePolyFamily, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.boolInput, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
+\difficulty{7}
 For every $n$, every error parameter $\ell$, and every gate operation $\mathrm{op}$ belonging to the
 $\mathrm{AC}^0[p]$ gate set, there exists a \texttt{GatePolyFamily} $p\,n\,\ell\,\mathrm{op}$.
 \end{lemma}
@@ -249,6 +261,7 @@ step $d$ times.
 \label{ACP.exists_poly_distribution_for_circuit_outputs}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.evalNode, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.buildLayerFamily, ACP.circuitDegreeBound, ACP.gateCountBefore}
+\difficulty{5}
 Let $F$ be a feed-forward circuit over $\mathrm{Fin}\,2$ with finite node sets, finite output type
 $\mathrm{out}$, using only $\mathrm{AC}^0[p]$ gates, and let $\ell$ be an error parameter.  Then there
 is a nonempty finite seed type and a family $P$ of polynomials $P(s,o)$ over $\bbz/p$ such that every
@@ -265,6 +278,7 @@ Boolean input $x$,
 \label{ACP.exists_poly_distribution_for_circuit_one}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.evalNode, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.buildLayerFamily, ACP.circuitDegreeBound, ACP.gateCountBefore}
+\difficulty{4}
 The same statement for a circuit with a unique output node: there is a nonempty finite seed type and
 polynomials $P(s)$ of total degree at most $\mathrm{circuitDegreeBound}(p,\ell,F.\mathrm{depth})$ such
 that for every Boolean input $x$,
@@ -279,6 +293,7 @@ that for every Boolean input $x$,
 \label{ACP.exists_poly_list_for_circuit_one}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one, ACP.finset_toList_filter_length_eq_card, ACP.gateCountBefore, ACP.list_filter_map_length}
+\difficulty{5}
 The single-output theorem restated with the seed distribution presented as a nonempty list $Ps$ of
 polynomials with multiplicity, one entry per seed: every $P \in Ps$ has total degree at most
 $\mathrm{circuitDegreeBound}(p,\ell,F.\mathrm{depth})$, and for every Boolean input $x$ the number of
