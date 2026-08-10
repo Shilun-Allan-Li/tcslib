@@ -230,24 +230,6 @@ lemma processEntries_preserves_none {n : ℕ}
         · rfl
         · exact hv
 
-lemma decode_go_preserves_none {n : ℕ} (f : DNF n) (w : ℕ)
-    (fuel : ℕ) (σ ρ₀ : Restriction n) (aux : List (ℕ × Bool))
-    (v : Fin n) (hv : σ v = none) :
-    (razborovDecode.go f w fuel σ ρ₀ aux).1 v = none := by
-  induction fuel generalizing σ ρ₀ aux with
-  | zero =>
-    cases aux <;> simp [razborovDecode.go, hv]
-  | succ fuel ih =>
-    cases aux with
-    | nil => simp [razborovDecode.go, hv]
-    | cons entry restAux =>
-      simp only [razborovDecode.go]
-      split
-      · exact hv
-      · next t _ =>
-        apply ih
-        exact processEntries_preserves_none t w σ ρ₀ _ v hv
-
 /-! ## processClauseLits σ-independence -/
 
 /-- `processClauseLits` outputs `.1`, `.2.1`, `.2.2.2` are independent of σ. -/
@@ -336,22 +318,6 @@ lemma processClauseLits_aux_ne_nonfree {n : ℕ}
   have : l = li.1 := (List.cons.inj hdrop |>.1).symm
   rw [this]
   exact hne_var li hli
-
-/-- All entries reference free literal variables. -/
-lemma processClauseLits_aux_vars_free {n : ℕ}
-    (t : Term n) (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
-    (ρ₀ σ : Restriction n) (e : ℕ × Bool)
-    (he : e ∈ (processClauseLits lits path ρ₀ σ).2.2.2)
-    (hmem : ∀ p ∈ lits, p ∈ t.zipIdx)
-    (hfree : ∀ p ∈ lits, ρ₀ p.1.var = none) :
-    ∀ (l : Literal n) (rest : List (Literal n)),
-      t.drop e.1 = l :: rest → ρ₀ l.var = none := by
-  obtain ⟨li, hli, hidx⟩ := processClauseLits_aux_entries_from_lits lits path ρ₀ σ e he
-  obtain ⟨rest', hdrop'⟩ := zipIdx_drop_spec t li.1 li.2 (hmem li hli)
-  intro l rest hdrop
-  rw [hidx] at hdrop; rw [hdrop'] at hdrop
-  have : l = li.1 := (List.cons.inj hdrop |>.1).symm
-  rw [this]; exact hfree li hli
 
 /-! ## Foldl stability lemmas -/
 
@@ -492,34 +458,6 @@ lemma processClauseLits_foldl_rho_eq_of_set {n : ℕ} (t : Term n)
           (fun q hq => hmem q (.tail _ hq))
           (by rwa [Function.update_apply, if_neg (Ne.symm heq)])
           (by simp only [processClauseLits] at hset; exact hset)
-
-/-- Contrapositive of rho_stable. -/
-lemma processClauseLits_no_target_of_rho_none {n : ℕ}
-    (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
-    (ρ₀ σ : Restriction n) (v : Fin n)
-    (hfree : ρ₀ v = none)
-    (hnone : (processClauseLits lits path ρ₀ σ).2.1 v = none)
-    (hlen : lits.length ≤ path.length) :
-    ∀ p ∈ lits, p.1.var ≠ v := by
-  induction lits generalizing path ρ₀ σ with
-  | nil => intro p hp; simp at hp
-  | cons hd tl ih =>
-    cases path with
-    | nil => simp at hlen
-    | cons step rest =>
-      simp only [processClauseLits] at hnone
-      intro p hp
-      rcases List.mem_cons.mp hp with rfl | hp_tl
-      · intro hpv
-        have hne : (Function.update ρ₀ p.1.var (some step.2)) v ≠ none := by
-          rw [Function.update_apply, if_pos hpv.symm]; exact Option.some_ne_none _
-        exact absurd hnone (processClauseLits_rho_ne_none tl rest _ _ _ hne)
-      · by_cases heq : hd.1.var = v
-        · have hne : (Function.update ρ₀ hd.1.var (some step.2)) v ≠ none := by
-            rw [Function.update_apply, if_pos heq.symm]; exact Option.some_ne_none _
-          exact absurd hnone (processClauseLits_rho_ne_none tl rest _ _ _ hne)
-        · exact ih rest _ _ (by rwa [Function.update_apply, if_neg (Ne.symm heq)]) hnone
-            (by simp [List.length_cons] at hlen ⊢; omega) p hp_tl
 
 /-! ## processClauseLits σ at v -/
 
@@ -783,28 +721,6 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
         exact processClauseLits_sigma_ne_neg _ _ _ _ _ hnd_lits (by rw [hE _ hfree]; simp)
 
 /-! ## processClauseLits rho ne none of mem -/
-
-/-- If `p ∈ lits` and `p.1.var = v`, then `pcl.2.1 v ≠ none`
-    (provided there are enough path entries). -/
-lemma processClauseLits_rho_ne_none_of_mem {n : ℕ}
-    (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
-    (ρ₀ σ : Restriction n) (v : Fin n)
-    (p : Literal n × ℕ) (hp : p ∈ lits) (hpv : p.1.var = v)
-    (hlen : lits.length ≤ path.length) :
-    (processClauseLits lits path ρ₀ σ).2.1 v ≠ none := by
-  induction lits generalizing path ρ₀ σ with
-  | nil => simp at hp
-  | cons hd tl ih =>
-    cases path with
-    | nil => simp at hlen
-    | cons step rest =>
-      simp only [processClauseLits]
-      rcases List.mem_cons.mp hp with rfl | hp_tl
-      · -- p = hd, so hd.1.var = v, Function.update sets ρ₀ at v to some
-        apply processClauseLits_rho_ne_none
-        rw [Function.update_apply, if_pos hpv.symm]
-        exact Option.some_ne_none _
-      · exact ih rest _ _ hp_tl (by simp [List.length_cons] at hlen ⊢; omega)
 
 /-! ## Round-trip base case -/
 

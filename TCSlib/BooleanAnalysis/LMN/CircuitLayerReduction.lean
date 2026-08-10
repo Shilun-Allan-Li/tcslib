@@ -105,13 +105,6 @@ theorem normalform_one_step_cnf_replaceability (data : Layer2Data n) (l : ℕ) (
   one_step_reduction_failure_bound data.gates data.width l
     data.widthBound data.widthPos data.varInj data.nodup hn p hp_pos hp_le hp1
 
-theorem full_iterative_bound (m : ℕ) (layerSize : Fin m → ℕ) (s : ℕ)
-    (h_sum : ∑ i, layerSize i ≤ s) (α β : ℝ) (hα : 0 ≤ α)
-    (per_layer : Fin m → ℝ) (h_per : ∀ i, per_layer i ≤ ↑(layerSize i) * α)
-    (final : ℝ) (h_final : final ≤ β) :
-    (∑ i, per_layer i) + final ≤ ↑s * α + β :=
-  add_le_add (multi_stage_failure_bound m layerSize s h_sum α hα per_layer h_per) h_final
-
 /-! ## Restriction Composition and Two-Stage Bound -/
 
 lemma restrictFn_composeRestr' (f : (Fin n → Bool) → Bool) (ρ₁ ρ₂ : Restriction n) :
@@ -142,12 +135,6 @@ theorem two_stage_bound'
   · linarith
 
 /-! ## Base Case: Depth-2 Circuits -/
-
-lemma bernoulliRestrProb_dtDepth_mono (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
-    (f : (Fin n → Bool) → Bool) (l₁ l₂ : ℕ) (h : l₁ ≤ l₂) :
-    bernoulliRestrProb p (fun ρ => dtDepth (restrictFn f ρ) > l₂) ≤
-    bernoulliRestrProb p (fun ρ => dtDepth (restrictFn f ρ) > l₁) :=
-  bernoulliRestrProb_mono p hp hp1 _ _ (fun _ hgt => by omega)
 
 lemma bernoulliRestrProb_congr_fn' {f g : (Fin n → Bool) → Bool}
     (h : ∀ x, f x = g x) :

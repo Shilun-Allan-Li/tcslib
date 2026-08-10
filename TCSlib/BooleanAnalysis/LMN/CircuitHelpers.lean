@@ -24,12 +24,6 @@ lemma restrictFn_ext' {f g : (Fin n → Bool) → Bool} (h : ∀ x, f x = g x)
     (ρ : Restriction n) : restrictFn f ρ = restrictFn g ρ := by
   ext x; simp [restrictFn]; exact h _
 
-lemma bernoulliRestrProb_congr_fn {f g : (Fin n → Bool) → Bool}
-    (h : ∀ x, f x = g x) (p : ℝ) (t : ℕ) :
-    bernoulliRestrProb p (fun ρ => dtDepth (restrictFn f ρ) > t) =
-    bernoulliRestrProb p (fun ρ => dtDepth (restrictFn g ρ) > t) := by
-  congr 1; ext ρ; rw [restrictFn_ext' h]
-
 /-! ## De-duplication of terms by variable -/
 
 /-- Remove literals whose variable already appeared earlier. -/
@@ -295,15 +289,6 @@ lemma depth_le_two_children_depth_le_one (cs : List (Circuit n)) (isAnd : Bool)
       induction' cs with c cs ih <;> simp_all +arith +decide [ Circuit.depth ]
 
 /-! ## Depth-2 circuit to DNF/CNF -/
-
-/-- Convert a depth-≤-1 AND-subcircuit to a term: AND of its literal children. -/
-def depth1AndToTerm (c : Circuit n) : Term n :=
-  match c with
-  | .lit l => [l.toLiteral]
-  | .node _ cs => cs.filterMap (fun c' =>
-      match c' with
-      | .lit l => some l.toLiteral
-      | _ => none)
 
 /-- Convert a depth-≤-2 OR-top circuit to a DNF. -/
 def depth2OrToDNF (cs : List (Circuit n)) : DNF n :=

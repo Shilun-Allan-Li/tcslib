@@ -51,15 +51,6 @@ When layer-2 DNF gates are replaced by width-l CNFs, the layer-3 AND gate
 AND-of-ANDs identity collapses layers 2 and 3 into a single CNF layer. -/
 
 /-
-Width of a term list is bounded iff all terms have bounded width.
--/
-private lemma width_le_iff_forall {ts : List (Term n)} {l : ℕ} :
-    (ts.map Term.width).foldr max 0 ≤ l ↔ ∀ t ∈ ts, t.width ≤ l := by
-  induction' ts with t ts ihizing l;
-  · norm_num +zetaDelta at *;
-  · grind +splitImp
-
-/-
 **CNF concatenation preserves width.**
 
     If CNFs ψ₁, …, ψₛ each have width ≤ l, then their concatenation
@@ -223,15 +214,6 @@ theorem one_step_dtDepth_bound
     · linarith;
     · by_cases h : ∀ i : Fin s₂, dtDepth ( restrictFn ( gates i ).eval x ) ≤ l <;> simp +decide [ h ];
   linarith
-
-/-
-Complement probability: Pr[A] + Pr[¬A] = 1.
--/
-lemma bernoulliRestrProb_complement (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
-    (A : Restriction n → Prop) [DecidablePred A] :
-    bernoulliRestrProb p A + bernoulliRestrProb p (fun ρ => ¬ A ρ) = 1 := by
-  unfold bernoulliRestrProb; simp +decide ;
-  rw [ ← Finset.sum_add_distrib, Finset.sum_congr rfl fun _ _ => by aesop, bernoulliRestrWeight_sum_one p hp hp1 ]
 
 /-
 **One-step reduction with compression (Steps 6+7 combined).**

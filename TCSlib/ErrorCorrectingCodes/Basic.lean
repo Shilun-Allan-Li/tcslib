@@ -72,6 +72,14 @@ abbrev Codeword (n : ℕ) (α : Type*) [Fintype α] [DecidableEq α] := (i : Fin
 
 namespace Codeword
 
+/-- Pointwise addition of two codewords. -/
+@[simp]
+def add (c₁ c₂ : Codeword n α) : Codeword n α := fun i ↦ (c₁ i + c₂ i)
+
+/-- Pointwise subtraction of two codewords. -/
+@[simp]
+def sub (c₁ c₂ : Codeword n α) : Codeword n α := fun i ↦ (c₁ i - c₂ i)
+
 /-- The all-zeros codeword. -/
 @[simp]
 def zero : Codeword n α := fun (_ : Fin n) ↦ 0

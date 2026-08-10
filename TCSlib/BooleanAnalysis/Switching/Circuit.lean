@@ -102,14 +102,6 @@ def Circuit.size : Circuit n → Nat
   | .lit _ => 1
   | .node _ cs => 1 + cs.foldr (fun c acc => c.size + acc) 0
 
-/-- Maximum depth over a list of circuits (used in depth of a node). -/
-def Circuit.maxDepth {n : Nat} (cs : List (Circuit n)) : Nat :=
-  cs.foldr (fun c acc => max c.depth acc) 0
-
-/-- Sum of sizes over a list of circuits (used in size of a node). -/
-def Circuit.sumSize {n : Nat} (cs : List (Circuit n)) : Nat :=
-  cs.foldr (fun c acc => c.size + acc) 0
-
 /-- Maximum fanin of a circuit: maximum number of children of any gate, recursively. -/
 def Circuit.maxFanin : Circuit n → Nat
   | .lit _ => 0
@@ -213,27 +205,6 @@ def Circuit.toNOr : Circuit n → NOrCircuit n
   | .node false cs  => .node (cs.map Circuit.toNAnd)
   | .node true  cs  => .node [NAndCircuit.node (cs.map Circuit.toNOr)]
 end
-
-private theorem foldr_and_map {f : α → Bool} {g : β → Bool} {h : α → β}
-    {cs : List α}
-    (heq : ∀ c ∈ cs, g (h c) = f c) :
-    (cs.map h).foldr (fun c acc => g c && acc) true =
-    cs.foldr (fun c acc => f c && acc) true := by
-      induction cs <;> aesop
-
-private theorem foldr_or_map {f : α → Bool} {g : β → Bool} {h : α → β}
-    {cs : List α}
-    (heq : ∀ c ∈ cs, g (h c) = f c) :
-    (cs.map h).foldr (fun c acc => g c || acc) false =
-    cs.foldr (fun c acc => f c || acc) false := by
-      induction cs <;> aesop
-
-private theorem foldr_add_map {f : α → Nat} {g : β → Nat} {h : α → β}
-    {cs : List α}
-    (heq : ∀ c ∈ cs, g (h c) = f c) :
-    (cs.map h).foldr (fun c acc => g c + acc) 0 =
-    cs.foldr (fun c acc => f c + acc) 0 := by
-      induction cs <;> aesop
 
 private theorem foldr_add_map_le {f : α → Nat} {g : β → Nat} {h : α → β}
     {cs : List α} {k : Nat}
@@ -378,22 +349,6 @@ end
 -- ----------------------------------------------------------------
 -- Section 7: Useful derived API
 -- ----------------------------------------------------------------
-
-/-- Build a single-variable AND-circuit. -/
-def NAndCircuit.ofVar (i : Fin n) : NAndCircuit n :=
-  .clause [⟨i, true⟩] (List.nodup_singleton _)
-
-/-- Build a single-variable OR-circuit. -/
-def NOrCircuit.ofVar (i : Fin n) : NOrCircuit n :=
-  .clause [⟨i, true⟩] (List.nodup_singleton _)
-
-/-- The constant-true AND-circuit (empty conjunction). -/
-def NAndCircuit.constTrue : NAndCircuit n :=
-  .clause [] List.nodup_nil
-
-/-- The constant-false OR-circuit (empty disjunction). -/
-def NOrCircuit.constFalse : NOrCircuit n :=
-  .clause [] List.nodup_nil
 
 end BoolCircuit
 
