@@ -103,7 +103,7 @@ This is the key existence result underlying \texttt{toProtocol}.
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol}
 A noncomputable function that converts a finite-message protocol $p$ into a binary protocol
-\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol} $p$ with the same run behavior and the same communication complexity,
+\texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol} $p$ with the same run behavior and the same communication complexity,
 encoding each $\beta$-valued message as $\lceil \log_2 |\beta| \rceil$ bits.
 \end{definition}
 
@@ -131,7 +131,7 @@ $(\texttt{toProtocol}\,p).\mathrm{complexity} = p.\mathrm{complexity}$.
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.Protocol}
 Embeds a binary protocol into the generalized finite-message framework by treating each
 Boolean message as an element of $\beta = \mathrm{Bool}$, giving a
-\lean{CommunicationComplexity.Deterministic.Protocol} $X\,Y\,\alpha$ with the same tree structure.
+\texttt{CommunicationComplexity.Deterministic.Protocol} $X\,Y\,\alpha$ with the same tree structure.
 \end{definition}
 
 \begin{theorem}[Embedding preserves run behavior]

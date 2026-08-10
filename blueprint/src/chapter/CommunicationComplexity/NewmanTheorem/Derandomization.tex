@@ -59,7 +59,7 @@ Let $\Omega$ be a finite probability space, let $p$ be a public-coin protocol on
 \times Y$ with output type $\alpha$, and let $f : X \to Y \to \alpha$.  Suppose $c > 1$
 and $p$ $\varepsilon$-computes $f$ (i.e.\ for every $(x, y)$, the probability that $p$
 produces an incorrect output is at most $\varepsilon$).  Then there exist
-$t = \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}(X, Y, \varepsilon, c)$
+$t = \texttt{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}(X, Y, \varepsilon, c)$
 random seeds $\omega_0, \dots, \omega_{t-1} \in \Omega$ such that for every $(x, y)$,
 \[
   \frac{\#\{\,i \mid p.\text{rrun}(x, y, \omega_i) \ne f(x, y)\,\}}{t}

@@ -24,7 +24,7 @@ with respect to $\mu$ is
   \;=\;
   \mathbb{E}_{(x,y)\sim\mu}\bigl[\mathbf{1}_{S}(x,y)\cdot\sigma(g(x,y))\bigr],
 \]
-where $\sigma : \mathrm{Bool} \to \{-1,1\}$ is the sign map \lean{CommunicationComplexity.boolSign}.
+where $\sigma : \mathrm{Bool} \to \{-1,1\}$ is the sign map \texttt{CommunicationComplexity.boolSign}.
 \end{definition}
 
 \begin{lemma}[Discrepancy integrand decomposition]
@@ -89,7 +89,7 @@ For any protocol $p$ and any set $R$, $|\mathrm{rectangleSign}(p,R)| = 1$.
 \difficulty{5}
 If $R$ is a leaf rectangle of protocol $p$ and $(x,y) \in R$, then
 $\mathrm{rectangleSign}(p,R) = \sigma(p.\mathrm{run}(x,y))$, where $\sigma$ is the sign
-map \lean{CommunicationComplexity.boolSign}.
+map \texttt{CommunicationComplexity.boolSign}.
 \end{lemma}
 
 \begin{definition}[Finite set of leaf rectangles]
@@ -106,7 +106,7 @@ $p$.
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{2}
-A set $R$ belongs to \lean{CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset} $p$ if and only if it is a
+A set $R$ belongs to \texttt{CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset} $p$ if and only if it is a
 leaf rectangle of $p$.
 \end{lemma}
 

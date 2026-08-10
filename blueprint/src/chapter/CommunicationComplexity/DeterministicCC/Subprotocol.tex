@@ -79,7 +79,7 @@ structural recursion on the path.
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath}
 \difficulty{3}
 If $s$ is a subprotocol of $p$ (i.e.\ \texttt{IsSubprotocol} $s\; p$ holds), then the type
-\lean{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath} $s\; p$ is nonempty.  That is, every propositional subprotocol
+\texttt{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath} $s\; p$ is nonempty.  That is, every propositional subprotocol
 embedding has at least one data-carrying path witness.
 \end{theorem}
 
@@ -341,7 +341,7 @@ $(\texttt{prunePath}\;\texttt{hsp}\;\texttt{hlt}).\texttt{run}\;x\;y = p.\texttt
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath}
 The noncomputable variant of \texttt{prunePath} taking an \texttt{IsSubprotocol} proof:
-\texttt{prune hsp hlt} applies \lean{CommunicationComplexity.Deterministic.Protocol.prunePath} to the classically chosen path for
+\texttt{prune hsp hlt} applies \texttt{CommunicationComplexity.Deterministic.Protocol.prunePath} to the classically chosen path for
 \texttt{hsp}, given the strictness condition $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$.
 \end{definition}
 

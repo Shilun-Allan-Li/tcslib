@@ -53,7 +53,7 @@ otherwise. It is intended to be applied only to values lying in $\{0,1\}$.
 \lean{ACP.cast_bitify_eq}
 \leanok
 \uses{ACP.bitify}
-If $a \in \{0,1\} \subseteq \mathbb{Z}/p$, then casting $\lean{ACP.bitify}\,(a)$ back into
+If $a \in \{0,1\} \subseteq \mathbb{Z}/p$, then casting $\texttt{ACP.bitify}\,(a)$ back into
 $\mathbb{Z}/p$ through $\mathbb{N}$ recovers $a$.
 \end{lemma}
 
@@ -71,7 +71,7 @@ For every $a \in \mathbb{Z}/p$ with $p$ prime,
 \leanok
 \uses{ACP.bitify}
 If $a \in \{0,1\} \subseteq \mathbb{Z}/p$, then $1 - (1-a)^{p-1}$ equals the cast of
-$\lean{ACP.bitify}\,(a)$ into $\mathbb{Z}/p$.
+$\texttt{ACP.bitify}\,(a)$ into $\mathbb{Z}/p$.
 \end{lemma}
 
 \begin{definition}[Unbounded $\mathrm{MOD}_p$ gate]
@@ -128,7 +128,7 @@ nonzero.
 \lean{ACP.approxOr_totalDegree}
 \leanok
 \uses{ACP.approxOr}
-The total degree of $\lean{ACP.approxOr}$ applied to $P_1,\dots,P_{\mathrm{width}}$ and a
+The total degree of $\texttt{ACP.approxOr}$ applied to $P_1,\dots,P_{\mathrm{width}}$ and a
 seed $S$ is at most $(p-1)\,\ell \cdot \sup_i \deg(P_i)$.
 \end{theorem}
 
@@ -136,7 +136,7 @@ seed $S$ is at most $(p-1)\,\ell \cdot \sup_i \deg(P_i)$.
 \lean{ACP.exactMod_totalDegree}
 \leanok
 \uses{ACP.exactMod}
-The total degree of $\lean{ACP.exactMod}$ applied to $P_1,\dots,P_{\mathrm{width}}$ is at
+The total degree of $\texttt{ACP.exactMod}$ applied to $P_1,\dots,P_{\mathrm{width}}$ is at
 most $(p-1)\cdot \sup_i \deg(P_i)$.
 \end{theorem}
 
@@ -152,8 +152,8 @@ subsets; formally, twice that count is at most the total number of subsets.
 \lean{ACP.approxOr_eval_eq}
 \leanok
 \uses{ACP.approxOr, ACP.approxOr_val}
-Evaluating $\lean{ACP.approxOr}\,(P, S)$ at a point $y$ gives the same result as applying
-the value-level approximator $\lean{ACP.approxOr_val}$ to the evaluated inputs
+Evaluating $\texttt{ACP.approxOr}\,(P, S)$ at a point $y$ gives the same result as applying
+the value-level approximator $\texttt{ACP.approxOr\_val}$ to the evaluated inputs
 $i \mapsto P_i(y)$ with the same seed $S$.
 \end{lemma}
 
@@ -195,7 +195,7 @@ number of seeds.
 \lean{ACP.approxOrPolyList}
 \leanok
 \uses{ACP.approxOr}
-The list of all polynomials $\lean{ACP.approxOr}\,(P,S)$, one entry per random seed $S$. It
+The list of all polynomials $\texttt{ACP.approxOr}\,(P,S)$, one entry per random seed $S$. It
 is a list rather than a set, so a polynomial arising from several seeds appears with the
 corresponding multiplicity.
 \end{definition}
@@ -204,7 +204,7 @@ corresponding multiplicity.
 \lean{ACP.approxOrPolyList_length}
 \leanok
 \uses{ACP.approxOrPolyList, ACP.approxSeed_card}
-The list $\lean{ACP.approxOrPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
+The list $\texttt{ACP.approxOrPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
 \end{lemma}
 
 \begin{theorem}[Pointwise bad-seed count for OR]
@@ -212,7 +212,7 @@ The list $\lean{ACP.approxOrPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
 \leanok
 \uses{ACP.OR_val, ACP.approxOr, ACP.approxOr_eval_eq, ACP.approxSeed_card, ACP.count_bad_S_or}
 Fix an evaluation point $y$. The number of seeds $S$ for which
-$\lean{ACP.approxOr}\,(P,S)$ evaluated at $y$ differs from
+$\texttt{ACP.approxOr}\,(P,S)$ evaluated at $y$ differs from
 $1 - \prod_k \bigl(1 - P_k(y)^{p-1}\bigr)$, multiplied by $2^\ell$, is at most
 $2^{\mathrm{width}\cdot\ell}$; that is, at most a $2^{-\ell}$ fraction of seeds fail at $y$.
 \end{theorem}
@@ -221,7 +221,7 @@ $2^{\mathrm{width}\cdot\ell}$; that is, at most a $2^{-\ell}$ fraction of seeds 
 \lean{ACP.exists_good_approxOr}
 \leanok
 \uses{ACP.approxOr, ACP.approxOrPolyList, ACP.approxOrPolyList_length, ACP.approxOr_pointwise_bad_count, ACP.approxOr_totalDegree}
-There is a list $Ps$ of polynomials, namely $\lean{ACP.approxOrPolyList}\,(P)$, of length
+There is a list $Ps$ of polynomials, namely $\texttt{ACP.approxOrPolyList}\,(P)$, of length
 $2^{\mathrm{width}\cdot\ell}$, every entry of which has total degree at most
 $(p-1)\ell\cdot\sup_i \deg(P_i)$, and such that for every evaluation point $y$ the number of
 seeds failing to compute the OR value at $y$, times $2^\ell$, is at most the length of $Ps$.
@@ -231,7 +231,7 @@ seeds failing to compute the OR value at $y$, times $2^\ell$, is at most the len
 \lean{ACP.approxAnd}
 \leanok
 \uses{ACP.approxOr}
-The De Morgan dual of the OR approximator: $1 - \lean{ACP.approxOr}\,(1 - P, S)$, where the
+The De Morgan dual of the OR approximator: $1 - \texttt{ACP.approxOr}\,(1 - P, S)$, where the
 approximator is applied to the negated inputs $i \mapsto 1 - P_i$.
 \end{definition}
 
@@ -239,7 +239,7 @@ approximator is applied to the negated inputs $i \mapsto 1 - P_i$.
 \lean{ACP.approxAnd_totalDegree}
 \leanok
 \uses{ACP.approxAnd, ACP.approxOr_totalDegree}
-The total degree of $\lean{ACP.approxAnd}\,(P,S)$ is at most
+The total degree of $\texttt{ACP.approxAnd}\,(P,S)$ is at most
 $(p-1)\,\ell\cdot\sup_i \deg(P_i)$, the same bound as for the OR approximator.
 \end{theorem}
 
@@ -247,14 +247,14 @@ $(p-1)\,\ell\cdot\sup_i \deg(P_i)$, the same bound as for the OR approximator.
 \lean{ACP.approxAndPolyList}
 \leanok
 \uses{ACP.approxAnd}
-The list of all polynomials $\lean{ACP.approxAnd}\,(P,S)$, one entry per random seed $S$.
+The list of all polynomials $\texttt{ACP.approxAnd}\,(P,S)$, one entry per random seed $S$.
 \end{definition}
 
 \begin{lemma}[Length of the AND polynomial list]
 \lean{ACP.approxAndPolyList_length}
 \leanok
 \uses{ACP.approxAndPolyList, ACP.approxSeed_card}
-The list $\lean{ACP.approxAndPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
+The list $\texttt{ACP.approxAndPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
 \end{lemma}
 
 \begin{theorem}[Pointwise bad-seed count for AND]
@@ -262,7 +262,7 @@ The list $\lean{ACP.approxAndPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$
 \leanok
 \uses{ACP.approxAnd, ACP.approxOr, ACP.approxOr_pointwise_bad_count}
 Fix an evaluation point $y$. The number of seeds $S$ for which
-$\lean{ACP.approxAnd}\,(P,S)$ evaluated at $y$ differs from
+$\texttt{ACP.approxAnd}\,(P,S)$ evaluated at $y$ differs from
 $\prod_k \bigl(1 - (1 - P_k(y))^{p-1}\bigr)$, multiplied by $2^\ell$, is at most
 $2^{\mathrm{width}\cdot\ell}$.
 \end{theorem}
@@ -271,7 +271,7 @@ $2^{\mathrm{width}\cdot\ell}$.
 \lean{ACP.exists_good_approxAnd}
 \leanok
 \uses{ACP.approxAnd, ACP.approxAndPolyList, ACP.approxAndPolyList_length, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree}
-There is a list $Ps$ of polynomials, namely $\lean{ACP.approxAndPolyList}\,(P)$, of length
+There is a list $Ps$ of polynomials, namely $\texttt{ACP.approxAndPolyList}\,(P)$, of length
 $2^{\mathrm{width}\cdot\ell}$, every entry of which has total degree at most
 $(p-1)\ell\cdot\sup_i \deg(P_i)$, and such that for every evaluation point $y$ the number of
 seeds failing to compute the AND value at $y$, times $2^\ell$, is at most the length of
@@ -282,9 +282,9 @@ $Ps$.
 \lean{ACP.ACp_GateOps_cases}
 \leanok
 \uses{ACP.AC_GateOps, ACP.ACp_GateOps, ACP.FeedForward.GateOp.id, ACP.modGateOp}
-Every gate operation in $\lean{ACP.ACp_GateOps}$ is one of the following: the identity gate
+Every gate operation in $\texttt{ACP.ACp\_GateOps}$ is one of the following: the identity gate
 on a single input, the NOT gate $x \mapsto 1 - x_0$, an unbounded AND gate
-$x \mapsto \prod_i x_i$ of some arity $n$, or a $\lean{ACP.modGateOp}$ of some arity $n$.
+$x \mapsto \prod_i x_i$ of some arity $n$, or a $\texttt{ACP.modGateOp}$ of some arity $n$.
 \end{lemma}
 
 \begin{lemma}[Exact $\mathrm{MOD}_p$ on Boolean inputs]
@@ -294,7 +294,7 @@ $x \mapsto \prod_i x_i$ of some arity $n$, or a $\lean{ACP.modGateOp}$ of some a
 If all values $\mathrm{inputs}_i$ lie in $\{0,1\} \subseteq \mathbb{Z}/p$, then
 $1 - \bigl(\sum_i \mathrm{inputs}_i\bigr)^{p-1}$ equals the cast into $\mathbb{Z}/p$ of the
 output of the $\mathrm{MOD}_p$ gate applied to the booleanized inputs
-$i \mapsto \lean{ACP.bitify}\,(\mathrm{inputs}_i)$.
+$i \mapsto \texttt{ACP.bitify}\,(\mathrm{inputs}_i)$.
 \end{lemma}
 
 \begin{lemma}[Exact AND on Boolean inputs]
@@ -303,7 +303,7 @@ $i \mapsto \lean{ACP.bitify}\,(\mathrm{inputs}_i)$.
 \uses{ACP.bitify}
 If all values $\mathrm{inputs}_i$ lie in $\{0,1\} \subseteq \mathbb{Z}/p$, then
 $\prod_i \bigl(1 - (1 - \mathrm{inputs}_i)^{p-1}\bigr)$ equals the cast into $\mathbb{Z}/p$
-of $\prod_i \lean{ACP.bitify}\,(\mathrm{inputs}_i)$, the Boolean AND of the booleanized
+of $\prod_i \texttt{ACP.bitify}\,(\mathrm{inputs}_i)$, the Boolean AND of the booleanized
 inputs.
 \end{lemma}
 
@@ -311,7 +311,7 @@ inputs.
 \lean{ACP.exists_poly_for_gate}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
-Let $\mathrm{op}$ be a gate in $\lean{ACP.ACp_GateOps}$ and let $P_i$ be polynomials over
+Let $\mathrm{op}$ be a gate in $\texttt{ACP.ACp\_GateOps}$ and let $P_i$ be polynomials over
 $\mathbb{Z}/p$ computing its inputs. Then there exist a nonempty finite seed type
 $\mathrm{Seed}$ with decidable equality and a family $P : \mathrm{Seed} \to
 \mathrm{MvPolynomial}(\mathrm{Fin}\,n, \mathbb{Z}/p)$ such that every $P(s)$ has total degree
@@ -319,6 +319,6 @@ at most $(p-1)\ell\cdot\sup_i \deg(P_i)$, and for every Boolean input $x$, writi
 $y_j = x_j$ cast into $\mathbb{Z}/p$ and $\mathrm{inputs}_i = P_i(y)$, if all
 $\mathrm{inputs}_i$ lie in $\{0,1\}$ then the number of seeds $s$ with
 $P(s)(y)$ different from the gate value
-$\mathrm{op}.\mathrm{func}(i \mapsto \lean{ACP.bitify}(\mathrm{inputs}_i))$, multiplied by
+$\mathrm{op}.\mathrm{func}(i \mapsto \texttt{ACP.bitify}(\mathrm{inputs}_i))$, multiplied by
 $2^\ell$, is at most $\abs{\mathrm{Seed}}$.
 \end{lemma}

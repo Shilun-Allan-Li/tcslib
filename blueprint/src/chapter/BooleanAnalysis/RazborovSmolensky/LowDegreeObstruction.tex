@@ -25,12 +25,12 @@ displays below this type is written $\mathcal{S}_{n,D}$.
 \lean{ACP.lowDegreeSquarefreePolynomial}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.squarefreeMonomial}
-Given coefficients $c$ indexed by $\lean{ACP.LowDegreeSupport}\ n\ D$, the multivariate
+Given coefficients $c$ indexed by $\texttt{ACP.LowDegreeSupport}\ n\ D$, the multivariate
 polynomial
 \[
 \sum_{\substack{s \subseteq \mathrm{Fin}\,n \\ \abs{s} \le D}} c(s)\, \prod_{i \in s} X_i ,
 \]
-i.e. the sum of the squarefree monomials $\lean{ACP.squarefreeMonomial}\ s$ weighted by
+i.e. the sum of the squarefree monomials $\texttt{ACP.squarefreeMonomial}\ s$ weighted by
 $c$, with the terms of support size $> D$ set to $0$.
 \end{definition}
 
@@ -40,7 +40,7 @@ $c$, with the terms of support size $> D$ set to $0$.
 \uses{ACP.rootCube, ACP.squarefreeMonomial, ACP.squarefreePolynomial}
 Every function $f : \{1,\omega\}^n \to K$ on the root cube is represented by a squarefree
 (multilinear) polynomial: there are coefficients $c$ indexed by finsets of
-$\mathrm{Fin}\,n$ such that $(\lean{ACP.squarefreePolynomial}\ c)(x) = f(x)$ for all
+$\mathrm{Fin}\,n$ such that $(\texttt{ACP.squarefreePolynomial}\ c)(x) = f(x)$ for all
 $x$ in the root cube.
 \end{theorem}
 
@@ -51,15 +51,15 @@ $x$ in the root cube.
 Assume $\omega \ne 1$.  If a monomial $a\,X^m$ has total exponent sum
 $\sum_i m_i \le D$, then it agrees on the root cube $\{1,\omega\}^n$ with a squarefree
 polynomial built only from supports of size at most $D$: there exist coefficients
-$c$ on $\lean{ACP.LowDegreeSupport}\ n\ D$ with
-$(\lean{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = (a\,X^m)(x)$ for every $x$ in the cube.
+$c$ on $\texttt{ACP.LowDegreeSupport}\ n\ D$ with
+$(\texttt{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = (a\,X^m)(x)$ for every $x$ in the cube.
 \end{theorem}
 
 \begin{lemma}[Additivity in the coefficient function]
 \lean{ACP.lowDegreeSquarefreePolynomial_add}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
-The constructor $\lean{ACP.lowDegreeSquarefreePolynomial}$ is additive in its coefficient
+The constructor $\texttt{ACP.lowDegreeSquarefreePolynomial}$ is additive in its coefficient
 argument: the polynomial attached to $c_1 + c_2$ is the sum of the polynomials attached
 to $c_1$ and to $c_2$.
 \end{lemma}
@@ -68,7 +68,7 @@ to $c_1$ and to $c_2$.
 \lean{ACP.lowDegreeSquarefreePolynomial_zero}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
-The constructor $\lean{ACP.lowDegreeSquarefreePolynomial}$ sends the identically zero
+The constructor $\texttt{ACP.lowDegreeSquarefreePolynomial}$ sends the identically zero
 coefficient function to the zero polynomial.
 \end{lemma}
 
@@ -87,16 +87,16 @@ to the individual $c_i$.
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_sum, ACP.monomial_lowDegree_squarefree_complete_on_rootCube, ACP.rootCube}
 Assume $\omega \ne 1$.  Every polynomial $Q$ with $\deg Q \le D$ agrees on the root cube
 $\{1,\omega\}^n$ with a low-degree squarefree polynomial: there are coefficients $c$ on
-$\lean{ACP.LowDegreeSupport}\ n\ D$ such that
-$(\lean{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = Q(x)$ for all $x$ in the cube.
+$\texttt{ACP.LowDegreeSupport}\ n\ D$ such that
+$(\texttt{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = Q(x)$ for all $x$ in the cube.
 \end{theorem}
 
 \begin{lemma}[Degree bound for the constructed polynomial]
 \lean{ACP.lowDegreeSquarefreePolynomial_totalDegree_le}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card}
-For any coefficient function $c$ on $\lean{ACP.LowDegreeSupport}\ n\ D$, the polynomial
-$\lean{ACP.lowDegreeSquarefreePolynomial}\ c$ has total degree at most $D$.
+For any coefficient function $c$ on $\texttt{ACP.LowDegreeSupport}\ n\ D$, the polynomial
+$\texttt{ACP.lowDegreeSquarefreePolynomial}\ c$ has total degree at most $D$.
 \end{lemma}
 
 \begin{definition}[Support-to-sigma injection]
@@ -172,7 +172,7 @@ $(\abs{\beta}-1)^t$ in place of $\abs{\beta}^t$.
 \leanok
 \uses{ACP.function_hammingBall_card_le_binomial, ACP.rootCube, ACP.rootCubeBall, ACP.rootCubeFunctionBadCount}
 For any center function on the root cube and any radius $e$, the Hamming ball
-$\lean{ACP.rootCubeBall}$ of radius $e$ around it satisfies
+$\texttt{ACP.rootCubeBall}$ of radius $e$ around it satisfies
 \[
 \abs{B_e(\mathrm{center})}
   \;\le\; \sum_{t=0}^{e} \binom{\abs{\{1,\omega\}^n}}{t}\,\abs{K}^{\,t}.
@@ -189,7 +189,7 @@ $\sum_{t=0}^{e} \binom{2^n}{t}\,\abs{K}^{\,t} \le B$ holds and the counting is s
 \abs{K}^{2^n} \;>\; \abs{\mathcal{S}_{n,D} \to K}\cdot B .
 \]
 Then it is \emph{not} the case that every function $f : \{1,\omega\}^n \to K$ admits a
-polynomial $Q$ with $\deg Q \le D$ and $\lean{ACP.rootCubeBadCount}\ f\ Q \le e$.
+polynomial $Q$ with $\deg Q \le D$ and $\texttt{ACP.rootCubeBadCount}\ f\ Q \le e$.
 \end{theorem}
 
 \begin{theorem}[Concrete root-product lower bound]
@@ -203,5 +203,5 @@ $\sum_{t=0}^{e} \binom{2^n}{t}\,\abs{K}^{\,t} \le B$ and
 \]
 Then no polynomial $P$ with $\deg P \le d$ approximates the product
 $x \mapsto \prod_i x_i$ on the root cube with at most $e$ errors, i.e. there is no such
-$P$ with $\lean{ACP.rootCubeBadCount}\ (\prod_i x_i)\ P \le e$.
+$P$ with $\texttt{ACP.rootCubeBadCount}\ (\prod_i x_i)\ P \le e$.
 \end{theorem}

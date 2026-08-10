@@ -22,7 +22,7 @@ sample $u$ of columns from $Y$, the finite upper image is the set
   U(X,f,u) \;=\; \{\, z : u \to \bbr \;\mid\; \exists\, x \in X,\ \forall y \in u,\ f(x,y) < z_y \,\}
 \]
 of vectors that strictly dominate the payoff vector of some row on the sample $u$.
-This set is written $\lean{OnlineLearning.finiteUpperImage}$ in Lean.
+This set is written $\texttt{OnlineLearning.finiteUpperImage}$ in Lean.
 \end{definition}
 
 \begin{lemma}[Upper image is nonempty]
@@ -101,14 +101,14 @@ the sampled columns.
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_convex, OnlineLearning.finiteUpperImage_isOpen, OnlineLearning.minimaxSublevel, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_weight_sum_pos}
 Assume the convex-compact minimax hypotheses
-$\lean{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$. Then for every
+$\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$. Then for every
 $\varepsilon > 0$ and every finite column sample $u \subseteq Y$, the set
 \[
   X \cap \bigcap_{y \in u} \bigl(X \cap \{x \mid f(x,y) \le v + \varepsilon\}\bigr),
   \qquad v = \sup_{y \in Y} \inf_{x \in X} f(x,y),
 \]
 is nonempty, the inner sets being the sublevel sets
-$\lean{OnlineLearning.minimaxSublevel}$; i.e.\ some row $x \in X$ satisfies
+$\texttt{OnlineLearning.minimaxSublevel}$; i.e.\ some row $x \in X$ satisfies
 $f(x,y) \le v + \varepsilon$ simultaneously for all sampled columns $y \in u$.
 \end{lemma}
 
@@ -116,12 +116,12 @@ $f(x,y) \le v + \varepsilon$ simultaneously for all sampled columns $y \in u$.
 \lean{OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.exists_forall_le_of_finite_sublevel_intersections, OnlineLearning.minimaxSublevel, OnlineLearning.weak_convex_compact_minimax}
-Assume the hypotheses $\lean{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for
+Assume the hypotheses $\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for
 $X$, $Y$, $f$, and suppose that for every $\varepsilon > 0$ and every finite
 $u \subseteq Y$ the intersection of $X$ with the sublevel sets
-$\lean{OnlineLearning.minimaxSublevel}$ at level $v + \varepsilon$ over $y \in u$ is
+$\texttt{OnlineLearning.minimaxSublevel}$ at level $v + \varepsilon$ over $y \in u$ is
 nonempty, where $v = \sup_{y \in Y} \inf_{x \in X} f(x,y)$. Then the minimax identity
-$\lean{OnlineLearning.ConvexCompactMinimaxStatement}$ holds for $X$, $Y$, $f$, i.e.
+$\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds for $X$, $Y$, $f$, i.e.
 \[
   \inf_{x \in X} \sup_{y \in Y} f(x,y) \;=\; \sup_{y \in Y} \inf_{x \in X} f(x,y).
 \]
@@ -132,8 +132,8 @@ $\lean{OnlineLearning.ConvexCompactMinimaxStatement}$ holds for $X$, $Y$, $f$, i
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections, OnlineLearning.finite_sublevel_intersections_by_separation}
 Under the convex-compact minimax hypotheses
-$\lean{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$, the minimax
-identity $\lean{OnlineLearning.ConvexCompactMinimaxStatement}$ holds:
+$\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$, the minimax
+identity $\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds:
 \[
   \inf_{x \in X} \sup_{y \in Y} f(x,y) \;=\; \sup_{y \in Y} \inf_{x \in X} f(x,y).
 \]

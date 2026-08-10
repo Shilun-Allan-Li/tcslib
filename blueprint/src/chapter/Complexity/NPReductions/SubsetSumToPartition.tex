@@ -44,7 +44,7 @@ $2W - T$, and the second dummy item $\mathrm{inr}\,\mathsf{false}$ to $W + T$.
 \uses{SubsetSumToPartition.Partition, SubsetSumToPartition.SubsetSum, SubsetSumToPartition.partitionWeight}
 Let $w : U \to \mathbb{N}$ and $T \in \mathbb{N}$ satisfy $T \le \sum_{a} w(a)$. If the
 Subset Sum instance $(w, T)$ has a solution, then the Partition instance with weight
-function $\lean{SubsetSumToPartition.partitionWeight}\ w\ T$ on $U \oplus \mathrm{Bool}$
+function $\texttt{SubsetSumToPartition.partitionWeight}\ w\ T$ on $U \oplus \mathrm{Bool}$
 has a solution.
 \end{theorem}
 
@@ -54,7 +54,7 @@ has a solution.
 \uses{SubsetSumToPartition.Partition, SubsetSumToPartition.SubsetSum, SubsetSumToPartition.partitionWeight}
 Let $w : U \to \mathbb{N}$ and $T \in \mathbb{N}$ satisfy $T \le \sum_{a} w(a)$. If the
 Partition instance with weight function
-$\lean{SubsetSumToPartition.partitionWeight}\ w\ T$ on $U \oplus \mathrm{Bool}$ has a
+$\texttt{SubsetSumToPartition.partitionWeight}\ w\ T$ on $U \oplus \mathrm{Bool}$ has a
 solution, then the original Subset Sum instance $(w, T)$ has a solution.
 \end{theorem}
 
@@ -64,6 +64,6 @@ solution, then the original Subset Sum instance $(w, T)$ has a solution.
 \uses{SubsetSumToPartition.Partition, SubsetSumToPartition.SubsetSum, SubsetSumToPartition.SubsetSumToPartitionCompleteness, SubsetSumToPartition.SubsetSumToPartitionSoundness, SubsetSumToPartition.partitionWeight}
 For $w : U \to \mathbb{N}$ and $T \in \mathbb{N}$ with $T \le \sum_{a} w(a)$, the Subset
 Sum instance $(w, T)$ is solvable if and only if the Partition instance with weight
-function $\lean{SubsetSumToPartition.partitionWeight}\ w\ T$ on $U \oplus \mathrm{Bool}$
+function $\texttt{SubsetSumToPartition.partitionWeight}\ w\ T$ on $U \oplus \mathrm{Bool}$
 is solvable.
 \end{theorem}

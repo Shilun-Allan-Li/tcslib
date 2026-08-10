@@ -91,6 +91,22 @@ lemma processClauseLits_aux_ne_of_pcl_none {n : ℕ}
 
 /-! ## Encoder first-component connection -/
 
+/-- The encoder's .1 computed with (fuel+1) and step::rest equals
+    the recursive encoder's .1 (when the clause is found). -/
+lemma encode_go_fst_eq_rec {n : ℕ} (f : DNF n) (w fuel : ℕ)
+    (step : Fin n × Bool) (rest : List (Fin n × Bool))
+    (ρ₀ σ : Restriction n)
+    (t_clause : Term n)
+    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t_clause)
+    (fl : Literal n × ℕ) (fls : List (Literal n × ℕ))
+    (hfli_eq : List.filter (fun (x : Literal n × ℕ) => decide (x.1.var ∈ Restriction.freeVars ρ₀))
+      (List.zipIdx t_clause) = fl :: fls) :
+    let pcl := processClauseLits (fl :: fls) (step :: rest) ρ₀ σ
+    (razborovEncode.go f w (fuel + 1) (step :: rest) ρ₀ σ []).1 =
+    (razborovEncode.go f w fuel pcl.1 pcl.2.1 pcl.2.2.1 []).1 := by
+  cases' h : List.find? ( fun t => !Term.killedBy t ρ₀ ) f with t <;> simp_all +decide [ SwitchingLemma2.razborovEncode.go ];
+  rw [ SwitchingLemma2.encode_go_fst_acc ]
+
 /-! ## Round-trip invariant lemmas -/
 
 /-

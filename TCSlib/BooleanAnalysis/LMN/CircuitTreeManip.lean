@@ -102,7 +102,32 @@ lemma Circuit.depth1_all_lits {m : ℕ} (isAnd : Bool) (cs : List (Circuit m))
 
 /-! ## Child function -/
 
+/-- The function computed by a subcircuit when gates are substituted. -/
+def childFunction {m : ℕ} (c_sub : Circuit m) (gates : Fin m → (Fin n → Bool) → Bool) :
+    (Fin n → Bool) → Bool :=
+  fun x => c_sub.eval (fun i => gates i x)
+
 /-! ## Switched gates give DNF and CNF -/
+
+/-- After switching (dtDepth ≤ l for all gates), each gate has both
+    a clean width-l DNF and a width-l CNF representation. -/
+lemma switched_gates_have_dnf_cnf
+    (m : ℕ) (gates : Fin m → DNF n) (ρ : Restriction n) (l : ℕ)
+    (h_switch : ∀ i, dtDepth (restrictFn (gates i).eval ρ) ≤ l) :
+    (∀ i, ∃ φ : DNF n, φ.width ≤ l ∧
+      (∀ x, φ.eval x = restrictFn (gates i).eval ρ x) ∧
+      (∀ t ∈ φ, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂) ∧
+      (∀ t ∈ φ, t.Nodup)) ∧
+    (∀ i, ∃ ψ : CNF n, ψ.width ≤ l ∧
+      ∀ x, CNF.eval ψ x = restrictFn (gates i).eval ρ x) := by
+  exact ⟨fun i => by
+    obtain ⟨⟨φ₀, hw₀, he₀⟩, _⟩ := dtDepth_le_implies_small_dnf_cnf _ l (h_switch i)
+    exact ⟨cleanDNF φ₀, le_trans (cleanDNF_width_le φ₀) hw₀,
+      fun x => by rw [cleanDNF_eval]; exact he₀ x,
+      cleanDNF_var_inj φ₀, cleanDNF_nodup φ₀⟩,
+   fun i => by
+    obtain ⟨_, ⟨ψ₀, hw₀, he₀⟩⟩ := dtDepth_le_implies_small_dnf_cnf _ l (h_switch i)
+    exact ⟨ψ₀, hw₀, he₀⟩⟩
 
 /-! ## OR-of-literal-children → width-l DNF -/
 

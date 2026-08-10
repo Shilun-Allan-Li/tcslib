@@ -55,6 +55,15 @@ lemma logb_2s_div_eps_pos (s : ℕ) (hs : 0 < s) (ε : ℝ) (hε_pos : 0 < ε) (
   exact (Real.logb_le_logb h2 (by norm_num : (0:ℝ) < 2) (by positivity)).mpr
     (by rw [le_div_iff₀ hε_pos]; nlinarith)
 
+/-- `logb 2 (2/ε) ≤ logb 2 (2s/ε)` when `s ≥ 1`. -/
+lemma logb_2_div_eps_le_l (s : ℕ) (hs : 0 < s)
+    (ε : ℝ) (hε_pos : 0 < ε) :
+    Real.logb 2 (2 / ε) ≤ Real.logb 2 (2 * ↑s / ε) := by
+  have h2 : (1:ℝ) < 2 := by norm_num
+  have hs' : (1:ℝ) ≤ ↑s := Nat.one_le_cast.mpr hs
+  exact (Real.logb_le_logb h2 (by positivity) (by positivity)).mpr
+    (by rw [div_le_div_iff_of_pos_right hε_pos]; nlinarith)
+
 /-- `s * 2^{-l} ≤ ε/2` when `l = logb 2 (2s/ε)`, since `2^{-l} = ε/(2s)`. -/
 lemma size_times_two_pow_neg_l_le (s : ℕ) (hs : 0 < s)
     (ε : ℝ) (hε_pos : 0 < ε) :

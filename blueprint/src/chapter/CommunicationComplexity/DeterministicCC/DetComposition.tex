@@ -3,7 +3,7 @@
 \section{Overview}
 
 This module develops the monadic structure of finite-message deterministic protocols:
-\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}, \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}, binary \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}, and $k$-fold \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi} constructors,
+\texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}, \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}, binary \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}, and $k$-fold \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi} constructors,
 together with their correctness and complexity accounting theorems.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,7 +14,7 @@ together with their correctness and complexity accounting theorems.
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
 Given a function $g : \alpha \to \beta$ and a protocol $p : \mathrm{Protocol}\,X\,Y\,\alpha$,
-\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}~$g$~$p$ is the protocol that runs $p$ and then applies $g$ to the output,
+\texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}~$g$~$p$ is the protocol that runs $p$ and then applies $g$ to the output,
 yielding a protocol of type $\mathrm{Protocol}\,X\,Y\,\beta$ with the same communication
 structure as $p$.
 \end{definition}

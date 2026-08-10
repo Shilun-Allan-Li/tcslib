@@ -17,7 +17,7 @@ theorem.
 \begin{definition}[Vectors over $\mathbb{Z}/k\mathbb{Z}$]
 \lean{ZkFourier.ZkVec}
 \leanok
-$\lean{ZkFourier.ZkVec}\ k\ n$ is the $n$-dimensional vector space over
+$\texttt{ZkFourier.ZkVec}\ k\ n$ is the $n$-dimensional vector space over
 $\mathbb{Z}/k\mathbb{Z}$, defined as the function type
 $\mathrm{Fin}\,n \to \mathbb{Z}/k\mathbb{Z}$.  It carries the pointwise
 additive group structure of $(\mathbb{Z}/k\mathbb{Z})^n$.
@@ -28,7 +28,7 @@ additive group structure of $(\mathbb{Z}/k\mathbb{Z})^n$.
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.rootOfUnity}
 \difficulty{2}
-For $k \geq 1$, the finite type $\lean{ZkFourier.ZkVec}\ k\ n$ has
+For $k \geq 1$, the finite type $\texttt{ZkFourier.ZkVec}\ k\ n$ has
 $|\mathbb{Z}_k^n| = k^n$ elements.
 \end{lemma}
 
@@ -36,7 +36,7 @@ $|\mathbb{Z}_k^n| = k^n$ elements.
 \lean{ZkFourier.rootOfUnity}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
-$\lean{ZkFourier.rootOfUnity}\ k$ is the complex number
+$\texttt{ZkFourier.rootOfUnity}\ k$ is the complex number
 $\omega_k = e^{2\pi i / k}$, the primitive $k$-th root of unity used as the
 base of the Fourier characters on $\mathbb{Z}_k^n$.
 \end{definition}
@@ -46,7 +46,7 @@ base of the Fourier characters on $\mathbb{Z}_k^n$.
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
 \uses{ZkFourier.rootOfUnity}
-For $a : \mathbb{Z}/k\mathbb{Z}$, $\lean{ZkFourier.toOmega}\ a = \omega_k^{a}$,
+For $a : \mathbb{Z}/k\mathbb{Z}$, $\texttt{ZkFourier.toOmega}\ a = \omega_k^{a}$,
 where $a$ is lifted to its canonical representative in
 $\{0, \ldots, k-1\} \subset \mathbb{N}$.  This is the group homomorphism
 $(\mathbb{Z}/k\mathbb{Z}, +) \to (\mathbb{C}^\times, \cdot)$.
@@ -74,7 +74,7 @@ The $k$-th power of the root of unity satisfies $\omega_k^k = 1$.
 \leanok
 \uses{ZkFourier.toOmega}
 \difficulty{2}
-The embedding sends zero to one: $\lean{ZkFourier.toOmega}\ (0 : \mathbb{Z}/k\mathbb{Z}) = 1$.
+The embedding sends zero to one: $\texttt{ZkFourier.toOmega}\ (0 : \mathbb{Z}/k\mathbb{Z}) = 1$.
 \end{lemma}
 
 \begin{lemma}[Additivity of the embedding]
@@ -84,7 +84,7 @@ The embedding sends zero to one: $\lean{ZkFourier.toOmega}\ (0 : \mathbb{Z}/k\ma
 \difficulty{4}
 For $a, b : \mathbb{Z}/k\mathbb{Z}$,
 $\omega_k^{a+b} = \omega_k^a \cdot \omega_k^b$.
-That is, $\lean{ZkFourier.toOmega}$ is a group homomorphism from
+That is, $\texttt{ZkFourier.toOmega}$ is a group homomorphism from
 $(\mathbb{Z}/k\mathbb{Z}, +)$ to $(\mathbb{C}^\times, \cdot)$.
 \end{lemma}
 
@@ -95,7 +95,7 @@ $(\mathbb{Z}/k\mathbb{Z}, +)$ to $(\mathbb{C}^\times, \cdot)$.
 \difficulty{5}
 For $a : \mathbb{Z}/k\mathbb{Z}$,
 $\omega_k^{-a} = \overline{\omega_k^a}$,
-i.e.\ $\lean{ZkFourier.toOmega}\ (-a) = \overline{\lean{ZkFourier.toOmega}\ a}$.
+i.e.\ $\texttt{ZkFourier.toOmega}\ (-a) = \overline{\texttt{ZkFourier.toOmega}\ a}$.
 \end{lemma}
 
 \begin{lemma}[Unit norm of the embedding]
@@ -104,7 +104,7 @@ i.e.\ $\lean{ZkFourier.toOmega}\ (-a) = \overline{\lean{ZkFourier.toOmega}\ a}$.
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
 \difficulty{2}
 For every $a : \mathbb{Z}/k\mathbb{Z}$, $\|\omega_k^a\| = 1$; the image of
-$\lean{ZkFourier.toOmega}$ lies on the complex unit circle.
+$\texttt{ZkFourier.toOmega}$ lies on the complex unit circle.
 \end{lemma}
 
 \begin{lemma}[Multiplicativity of the embedding]
@@ -114,7 +114,7 @@ $\lean{ZkFourier.toOmega}$ lies on the complex unit circle.
 \difficulty{3}
 For $j, a : \mathbb{Z}/k\mathbb{Z}$,
 $\omega_k^{j \cdot a} = (\omega_k^j)^a$, i.e.\
-$\lean{ZkFourier.toOmega}\ (j \cdot a) = (\omega_k^{j.\mathrm{val}})^{a.\mathrm{val}}$.
+$\texttt{ZkFourier.toOmega}\ (j \cdot a) = (\omega_k^{j.\mathrm{val}})^{a.\mathrm{val}}$.
 \end{lemma}
 
 \begin{lemma}[Geometric sum orthogonality]
@@ -135,7 +135,7 @@ This is the fundamental character-orthogonality identity for $\mathbb{Z}/k\mathb
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 \uses{ZkFourier.ZkVec}
-$\lean{ZkFourier.ZkFun}\ k\ n$ is the type of complex-valued functions on
+$\texttt{ZkFourier.ZkFun}\ k\ n$ is the type of complex-valued functions on
 $\mathbb{Z}_k^n$, defined as $\mathbb{Z}_k^n \to \mathbb{C}$.  These are the
 objects whose Fourier transforms are studied.
 \end{definition}
@@ -349,7 +349,7 @@ Every character is a unit-norm vector in $L^2(\mathbb{Z}_k^n)$.
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.char_s_mul, ZkFourier.expectation_char_nontrivial, ZkFourier.inner_product}
 \difficulty{3}
 If $s \neq t$, then $\langle \chi_s, \chi_t \rangle = 0$.
-Together with $\lean{ZkFourier.inner_product_char_self}$, this shows that the
+Together with $\texttt{ZkFourier.inner\_product\_char\_self}$, this shows that the
 characters form an orthonormal system.
 \end{lemma}
 

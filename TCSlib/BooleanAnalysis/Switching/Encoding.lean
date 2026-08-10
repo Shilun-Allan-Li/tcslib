@@ -22,6 +22,11 @@ namespace SwitchingLemma2
 
 variable {n : ℕ}
 
+/-- Find the free literals in a term under restriction ρ. -/
+noncomputable def Term.freeLiterals {n : ℕ} (t : Term n) (ρ : Restriction n) :
+    List (Literal n) :=
+  t.filter (fun l => decide (l.var ∈ ρ.freeVars))
+
 /-! ## processClauseLits -/
 
 /-- Process one clause's free literals against the canonical DT path.

@@ -5,7 +5,7 @@
 This module provides the bridge between public-coin protocols over arbitrary finite
 probability spaces and those using the canonical \texttt{CoinTape} randomness source.
 The key result is that any finite-message public-coin protocol can be approximated by a
-\lean{CommunicationComplexity.CoinTape}-based protocol of equal complexity, with the approximation error
+\texttt{CommunicationComplexity.CoinTape}-based protocol of equal complexity, with the approximation error
 degrading by at most the chosen slack $\delta > 0$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,7 +24,7 @@ space $\Omega$ and a slack $\delta > 0$, this definition produces a natural numb
 together with a finite-message protocol over $\mathrm{CoinTape}(n)$ that approximates
 $p$. The construction works by pulling back $p$ along a measure-approximating map
 $\varphi : \mathrm{CoinTape}(n) \to \Omega$ provided by
-\lean{CommunicationComplexity.Internal.single_coin_approx}.
+\texttt{CommunicationComplexity.Internal.single\_coin\_approx}.
 \end{definition}
 
 \begin{theorem}[CoinTape approximation preserves complexity]

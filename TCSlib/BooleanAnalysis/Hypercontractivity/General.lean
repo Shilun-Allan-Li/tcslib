@@ -63,6 +63,19 @@ lemma innerProduct_noiseOp_eq_weighted_sum (ρ : ℝ) (f g : BooleanFunc n) :
 
 /-! ## Correlated Monotonicity -/
 
+/-- If `h(x,y) ≤ h'(x,y)` pointwise and `0 ≤ ρ ≤ 1`, then the kernel-weighted
+expectation of `h` is at most that of `h'`. -/
+lemma corrExpect_mono {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
+    {h h' : BoolCube n → BoolCube n → ℝ} (hle : ∀ x y, h x y ≤ h' x y) :
+    uniformWeight n * ∑ x : BoolCube n, ∑ y : BoolCube n,
+      noiseKernel ρ x y * h x y ≤
+    uniformWeight n * ∑ x : BoolCube n, ∑ y : BoolCube n,
+      noiseKernel ρ x y * h' x y := by
+  apply_rules [mul_le_mul_of_nonneg_left, Finset.sum_le_sum]
+  · exact fun x _ => Finset.sum_le_sum fun y _ =>
+      mul_le_mul_of_nonneg_left (hle x y) (noiseKernel_nonneg hρ0 hρ1 x y)
+  · exact pow_nonneg (by norm_num) _
+
 /-! ## Noise Kernel Factorization -/
 
 /-- The noise kernel on `BoolCube (n+1)` factors along the last coordinate. -/
@@ -138,6 +151,16 @@ lemma one_bit_slice_eq_innerProduct (ρ : ℝ) (f g : BooleanFunc (n + 1))
   · exact fun h => by have := congr_fun h 0; simp +decide at this;
 
 /-! ## One-bit Lp norm of slices -/
+/-
+The one-bit `L^p` norm of the slice `t ↦ f(snoc x' (t 0))`.
+-/
+lemma one_bit_norm_slice (p : ℝ) (_hp : 0 < p) (f : BooleanFunc (n + 1)) (x' : BoolCube n) :
+    (expect (fun t : BoolCube 1 => |f (Fin.snoc x' (t 0))| ^ p)) ^ (1/p) =
+    ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ^ (1/p) := by
+  unfold expect;
+  unfold uniformWeight; norm_num [ Finset.card_univ ] ; ring_nf;
+  rw [ show ( Finset.univ : Finset ( Fin 1 → Bool ) ) = { fun _ => Bool.false, fun _ => Bool.true } by decide, Finset.sum_pair ] <;> norm_num ; ring_nf;
+  decide +revert
 
 /-! ## Norm Collapse (clean form) -/
 /-
@@ -171,6 +194,36 @@ lemma holder_ineq_bool {n : ℕ} (p : ℝ) (hp : 1 < p) (f h : BooleanFunc n) :
     rw [ show p * p⁻¹ = 1 by rw [ mul_inv_cancel₀ ( by positivity ) ] ] ; rw [ show uniformWeight n = ( 2 : ℝ ) ⁻¹ ^ n by rfl ] ; rw [ Real.rpow_sub ( by positivity ), Real.rpow_one ] ; ring_nf;
     field_simp;
   · exact mul_le_mul_of_nonneg_left ( Finset.sum_le_sum fun _ _ => by rw [ ← abs_mul ] ; exact le_abs_self _ ) ( by exact pow_nonneg ( by norm_num ) _ )
+/--
+**Lp contractivity of the noise operator on one bit.**
+For 0 ≤ ρ ≤ 1 and q ≥ 1:
+  `‖T_ρ g‖_q ≤ ‖g‖_q`
+-/
+lemma noise_Lp_contraction_one_bit
+    (q : ℝ) (hq1 : 1 ≤ q)
+    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
+    (g : BooleanFunc 1) :
+    (expect (fun x => |noiseOp ρ g x| ^ q)) ^ (1 / q) ≤
+    (expect (fun x => |g x| ^ q)) ^ (1 / q) := by
+  unfold noiseOp; norm_num;
+  unfold expect;
+  unfold uniformWeight; norm_num [ Fin.sum_univ_succ ] ;
+  rw [ show ( Finset.univ : Finset ( BoolCube 1 ) ) = { fun _ => false, fun _ => true } by decide ];
+  rw [ Finset.sum_pair, Finset.sum_pair ] <;> norm_num [ funext_iff, Fin.forall_fin_one ];
+  rw [ show ( Finset.univ : Finset ( Finset ( Fin 1 ) ) ) = { ∅, { 0 } } by decide ] ; norm_num [ Finset.sum_pair ] ; ring_nf ; norm_num [ show q ≠ 0 by linarith ] ;
+  -- By the properties of the absolute value and the fact that $q \geq 1$, we can apply Jensen's inequality.
+  have h_jensen : ∀ a b : ℝ, |a + ρ * b| ^ q + |a - ρ * b| ^ q ≤ |a + b| ^ q + |a - b| ^ q := by
+    intros a b
+    have h_abs : |a + ρ * b| ≤ (1 + ρ) / 2 * |a + b| + (1 - ρ) / 2 * |a - b| ∧ |a - ρ * b| ≤ (1 + ρ) / 2 * |a - b| + (1 - ρ) / 2 * |a + b| := by
+      constructor <;> rw [ abs_le ] <;> constructor <;> cases abs_cases ( a + b ) <;> cases abs_cases ( a - b ) <;> nlinarith;
+    have h_jensen : ∀ x y : ℝ, 0 ≤ x → 0 ≤ y → ((1 + ρ) / 2 * x + (1 - ρ) / 2 * y) ^ q ≤ (1 + ρ) / 2 * x ^ q + (1 - ρ) / 2 * y ^ q := by
+      have h_jensen : ConvexOn ℝ (Set.Ici 0) (fun x : ℝ => x ^ q) := by
+        exact ( convexOn_rpow ( by linarith ) );
+      exact fun x y hx hy => h_jensen.2 hx hy ( by linarith ) ( by linarith ) ( by linarith );
+    refine le_trans ( add_le_add ( Real.rpow_le_rpow ( abs_nonneg _ ) h_abs.1 ( by positivity ) ) ( Real.rpow_le_rpow ( abs_nonneg _ ) h_abs.2 ( by positivity ) ) ) ?_;
+    convert add_le_add ( h_jensen |a + b| |a - b| ( abs_nonneg _ ) ( abs_nonneg _ ) ) ( h_jensen |a - b| |a + b| ( abs_nonneg _ ) ( abs_nonneg _ ) ) using 1 ; ring;
+  have := h_jensen ( fourierCoeff g ∅ ) ( fourierCoeff g { 0 } ) ; norm_num [ one_bit_val_false, one_bit_val_true ] at *;
+  exact Real.rpow_le_rpow ( by positivity ) ( by linarith ) ( by positivity )
 
 /-! ## Main Theorem: Two-Function Hypercontractivity by Induction -/
 
@@ -562,6 +615,33 @@ private lemma low_norms_interpolation_params (p u ρ : ℝ) (hp : 1 < p) (hpu : 
 /-! ## General Two-Point Inequality (Unit Case)
 The key real-analysis inequality needed for the (p, q) one-bit hypercontractivity.
 -/
+/-- The average M(b) = ((1+b)^p + (1-b)^p)/2 is at least 1 for b ∈ [0,1] and p ≥ 1. -/
+lemma avg_rpow_ge_one {p b : ℝ} (hp : 1 ≤ p) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) :
+    1 ≤ ((1 + b) ^ p + (1 - b) ^ p) / 2 := by
+  have h_jensen : ConvexOn ℝ (Set.Ici 0) (fun x : ℝ => x ^ p) := convexOn_rpow (by linarith)
+  have := h_jensen.2 (show 0 ≤ 1 + b by linarith) (show 0 ≤ 1 - b by linarith)
+  convert @this (1 / 2) (1 / 2) (by norm_num) (by norm_num) (by norm_num) using 1 <;>
+    norm_num <;> ring_nf
+  norm_num
+
+/-
+For a convex function f on [0, ∞) and 0 ≤ x ≤ y with 1+x, 1-x, 1+y, 1-y ≥ 0:
+    f(1+y) + f(1-y) ≥ f(1+x) + f(1-x).
+-/
+lemma convex_sym_sum_mono {f : ℝ → ℝ} (hf : ConvexOn ℝ (Set.Ici 0) f)
+    {x y : ℝ} (hx0 : 0 ≤ x) (hxy : x ≤ y) (hy1 : y ≤ 1) :
+    f (1 + x) + f (1 - x) ≤ f (1 + y) + f (1 - y) := by
+  by_cases hxy' : x < y;
+  · -- For 0 ≤ x < y ≤ 1, apply the secant_mono lemma with a = 1-y, x = 1-x, y = 1+y.
+    have h1 : (f (1 - x) - f (1 - y)) / (y - x) ≤ (f (1 + y) - f (1 - y)) / (2 * y) := by
+      convert hf.secant_mono _ _ _ _ _ using 1 <;> norm_num;
+      rotate_left;
+      exact 1 - y;
+      exact 1 - x;
+      exact 1 + y;
+      exacts [ by linarith, by linarith, by linarith, by linarith, by linarith, by rw [ show 1 - x - ( 1 - y ) = y - x by ring, show 1 + y - ( 1 - y ) = 2 * y by ring ] ; exact ⟨ fun h => fun _ => h, fun h => h ( by linarith ) ⟩ ];
+    have := hf.slope_mono_adjacent ( show 0 ≤ 1 - y by linarith ) ( show 0 ≤ 1 + y by linarith ) ( show 1 - y < 1 + x by linarith ) ( show 1 + x < 1 + y by linarith ) ; norm_num at * ; rw [ div_le_div_iff₀ ] at * <;> nlinarith;
+  · rw [ le_antisymm hxy ( not_lt.mp hxy' ) ]
 
 /-
 For 0 < b < 1, the function α ↦ b^α is convex (exponential with base < 1).

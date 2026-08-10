@@ -11,7 +11,7 @@ then the probability that $f\!\restriction\!\rho$ requires a decision tree of
 depth $>d$ is at most $(5sw/n)^d$ (or a constant-factor variant thereof).
 \end{quote}
 
-The Lean statement, \lean{SwitchingLemma2.switching_lemma}, is a combinatorial
+The Lean statement, \texttt{SwitchingLemma2.switching\_lemma}, is a combinatorial
 counting inequality rather than a probability bound; the two are equivalent
 after rearranging.  References: Håstad (1987); Razborov's simplified proof;
 O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
@@ -932,22 +932,22 @@ Then
 
 The Lean statement is faithful to the classical lemma \emph{modulo} a handful
 of subtle modelling choices.  This section documents each one so a user of
-\lean{SwitchingLemma2.switching_lemma} knows precisely what they are signing
+\texttt{SwitchingLemma2.switching\_lemma} knows precisely what they are signing
 up for.
 
 %-----------------------------------------------------------------------------
 \subsection{How DNFs are modelled}
 
-Recall (\lean{Literal}, \lean{Term}, \lean{DNF} in
+Recall (\texttt{Literal}, \texttt{Term}, \texttt{DNF} in
 \texttt{TCSlib/BooleanAnalysis/Circuit.lean}):
 \begin{itemize}
   \item A \textbf{literal} is a pair $(v,\mathrm{neg})\in\mathrm{Fin}\,n\times\mathrm{Bool}$.
   \item A \textbf{term} is a \emph{list} of literals, not a set or a
         \texttt{Finset}.
   \item A \textbf{DNF} is a list of terms.
-  \item \lean{Term.width} is defined as \texttt{List.length}, i.e.\ literal
+  \item \texttt{Term.width} is defined as \texttt{List.length}, i.e.\ literal
         occurrences are \emph{counted with multiplicity}.
-  \item \lean{DNF.width} is the (list-)maximum of the term widths.
+  \item \texttt{DNF.width} is the (list-)maximum of the term widths.
 \end{itemize}
 
 \paragraph{Consequence 1 -- Width vs.\ literal count.}
@@ -981,7 +981,7 @@ literal twice.  Two remarks:
         concrete DNF built from literals read off a file or a syntactic
         representation, \texttt{decide} usually suffices.
   \item \texttt{hnd} is used crucially in
-        \lean{SwitchingLemma2.encode_go_not_kills_first_clause} and its
+        \texttt{SwitchingLemma2.encode\_go\_not\_kills\_first\_clause} and its
         callers to guarantee that, when the encoder processes the free-var
         literals of a term, the variable-to-literal lookup is well-defined
         (no variable appears with two different polarities in the same term).
@@ -996,7 +996,7 @@ Classical Hastad is typically stated for any $s$, with the bound reading
 $(5pw)^d$ where $p = s/n$.  The formalisation bakes in the hypothesis
 $5s\le n$, i.e.\ $p\le 1/5$.  This is \emph{not} an artefact of the
 combinatorics per se but of the particular inductive proof of the Vandermonde
-identity (\lean{SwitchingLemma2.choose_mul_pow_bound}) used to convert
+identity (\texttt{SwitchingLemma2.choose\_mul\_pow\_bound}) used to convert
 $\binom{n}{s-d}(4n)^d\le \binom{n}{s}(5s)^d$.  For restrictions with $p>1/5$
 one must either generalise that lemma or apply the theorem vacuously via the
 $d>s$ branch (\texttt{bad\_filter\_empty\_of\_d\_ge\_s}).
@@ -1020,9 +1020,9 @@ constant factor, not an asymptotic one.
 \subsection{Status}
 
 \begin{itemize}
-  \item \lean{SwitchingLemma2.switching_lemma} is stated and the outer
+  \item \texttt{SwitchingLemma2.switching\_lemma} is stated and the outer
         structure is complete.
-  \item \lean{SwitchingLemma2.bad_count_bound} currently contains a
+  \item \texttt{SwitchingLemma2.bad\_count\_bound} currently contains a
         \texttt{sorry} (line 636 of \texttt{MainTheorem.lean}) which is the
         summation step that passes from ``fibre bound'' to ``total bound''.
         Everything else is \texttt{sorry}-free.
@@ -1040,31 +1040,31 @@ The proof is layered across seven Lean files.  Information flows downward:
 \begin{tabular}{l|l}
 \textbf{File} & \textbf{Key contents} \\ \hline
 \texttt{Circuit.lean}
-  & \lean{Literal}, \lean{Term}, \lean{DNF}, \lean{CNF},
-    \lean{DecisionTree}, \lean{dtDepth}, \lean{buildFullDTree}.\\
+  & \texttt{Literal}, \texttt{Term}, \texttt{DNF}, \texttt{CNF},
+    \texttt{DecisionTree}, \texttt{dtDepth}, \texttt{buildFullDTree}.\\
 \texttt{Switching/Defs.lean}
   & \texttt{Restriction}, \texttt{Restriction.extend}, \texttt{numFree},
-    \lean{SwitchingLemma2.Restriction.freeVars}, \lean{SwitchingLemma2.Literal.killedBy}, \lean{SwitchingLemma2.Term.fixedBy},
-    \lean{SwitchingLemma2.restrictFn}, \lean{SwitchingLemma2.IsBadRestriction}, \lean{SwitchingLemma2.IsRestriction},
-    \lean{SwitchingLemma2.numSRestrictions}, \lean{SwitchingLemma2.first_clause_preserved}. \\
+    \texttt{SwitchingLemma2.Restriction.freeVars}, \texttt{SwitchingLemma2.Literal.killedBy}, \texttt{SwitchingLemma2.Term.fixedBy},
+    \texttt{SwitchingLemma2.restrictFn}, \texttt{SwitchingLemma2.IsBadRestriction}, \texttt{SwitchingLemma2.IsRestriction},
+    \texttt{SwitchingLemma2.numSRestrictions}, \texttt{SwitchingLemma2.first\_clause\_preserved}. \\
 \texttt{Switching/CanonicalDTree.lean}
   & \texttt{canonicalDTree} (Razborov's DT), correctness,
-    \lean{SwitchingLemma2.dtDepth_restrictFn_le_numFree} (depth $\le$ numFree).\\
+    \texttt{SwitchingLemma2.dtDepth\_restrictFn\_le\_numFree} (depth $\le$ numFree).\\
 \texttt{Switching/Encoding.lean}
   & \texttt{razborovEncode}, \texttt{razborovDecode},
-    \lean{SwitchingLemma2.processClauseLits}. \\
+    \texttt{SwitchingLemma2.processClauseLits}. \\
 \texttt{Switching/EncodingProperties.lean}
   & Numerous invariants of the encoder; uses \texttt{hnd} for
-    \lean{SwitchingLemma2.encode_go_not_kills_first_clause}. \\
+    \texttt{SwitchingLemma2.encode\_go\_not\_kills\_first\_clause}. \\
 \texttt{Switching/RoundTrip.lean}
   & \texttt{go\_roundtrip\_gen} (decode $\circ$ encode = id),
-    \lean{SwitchingLemma2.razborovEncode_injective}. \\
+    \texttt{SwitchingLemma2.razborovEncode\_injective}. \\
 \texttt{Switching/MainTheorem.lean}
   & Encoder image parser, \texttt{exists\_aux\_injection},
-    \lean{SwitchingLemma2.aux_image_card_bound}, \lean{SwitchingLemma2.fiber_bound},
-    \lean{SwitchingLemma2.bad_count_bound},
-    \lean{SwitchingLemma2.choose_mul_pow_bound}, \lean{SwitchingLemma2.switching_lemma},
-    \lean{SwitchingLemma2.switching_corollary}. \\
+    \texttt{SwitchingLemma2.aux\_image\_card\_bound}, \texttt{SwitchingLemma2.fiber\_bound},
+    \texttt{SwitchingLemma2.bad\_count\_bound},
+    \texttt{SwitchingLemma2.choose\_mul\_pow\_bound}, \texttt{SwitchingLemma2.switching\_lemma},
+    \texttt{SwitchingLemma2.switching\_corollary}. \\
 \end{tabular}
 \end{center}
 
@@ -1086,7 +1086,7 @@ Conceptually the proof factors as:
 The combinatorial count is obtained by fibring the image over the first
 component $\gamma$ (a restriction with $s-d$ fewer free variables), bounding
 each fibre by $(4w)^d$ (the aux-data count
-\lean{SwitchingLemma2.aux_image_card_bound}), then summing fibres via the Vandermonde-type
+\texttt{SwitchingLemma2.aux\_image\_card\_bound}), then summing fibres via the Vandermonde-type
 inequality \texttt{choose\_mul\_pow\_bound}, which is where $5s\le n$ is consumed.
 
 %-----------------------------------------------------------------------------

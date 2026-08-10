@@ -3,7 +3,7 @@
 \section{Overview}
 
 This module develops a two-parameter sub-exponential MGF condition,
-\lean{ProbabilityTheory.HasBernsteinMGF}, and derives from it
+\texttt{ProbabilityTheory.HasBernsteinMGF}, and derives from it
 one-sided, other-sided, and two-sided Bernstein-type concentration
 inequalities.  The main application is a tail bound for the deviation
 of $\sum_i Y_i^2$ from its mean $n\sigma^2$ for an independent
@@ -16,7 +16,7 @@ tool for Johnson--Lindenstrauss-style concentration arguments.
 \begin{definition}[Bernstein MGF condition]
 \lean{ProbabilityTheory.HasBernsteinMGF}
 \leanok
-$\lean{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$ is a
+$\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$ is a
 predicate on a random variable $X : \Omega \to \mathbb{R}$, a measure
 $\mu$, and real parameters $c, t_{\max} \ge 0$.  It asserts that for
 every $t$ with $|t| \le t_{\max}$, the exponential moment
@@ -34,10 +34,10 @@ radius of validity.
 \difficulty{4}
 Let $\{X_i\}_{i \in s}$ be a mutually independent family of measurable
 real random variables on a probability space, each satisfying
-$\lean{ProbabilityTheory.HasBernsteinMGF}\ (X_i)\ \mu\ c_i\ t_{\max}$ for
+$\texttt{ProbabilityTheory.HasBernsteinMGF}\ (X_i)\ \mu\ c_i\ t_{\max}$ for
 a common radius $t_{\max}$.  Then the finite sum
 $\sum_{i \in s} X_i$ satisfies
-$\lean{ProbabilityTheory.HasBernsteinMGF}\ (\sum_{i\in s} X_i)\ \mu\ (\sum_{i\in s} c_i)\ t_{\max}$.
+$\texttt{ProbabilityTheory.HasBernsteinMGF}\ (\sum_{i\in s} X_i)\ \mu\ (\sum_{i\in s} c_i)\ t_{\max}$.
 \end{lemma}
 
 \begin{lemma}[Upper-tail Bernstein bound]
@@ -45,7 +45,7 @@ $\lean{ProbabilityTheory.HasBernsteinMGF}\ (\sum_{i\in s} X_i)\ \mu\ (\sum_{i\in
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{5}
-Let $X$ satisfy $\lean{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
+Let $X$ satisfy $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
 with $c > 0$.  For every $s$ with $0 \le s \le 2c\,t_{\max}$,
 \[
   \mu\bigl(\{\omega \mid s \le X(\omega)\}\bigr) \;\le\;
@@ -60,14 +60,14 @@ parameter $t = s/(2c)$ lies in the validity region $|t| \le t_{\max}$.
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{5}
-Let $X$ satisfy $\lean{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
+Let $X$ satisfy $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
 with $c > 0$.  For every $s$ with $0 \le s \le 2c\,t_{\max}$,
 \[
   \mu\bigl(\{\omega \mid X(\omega) \le -s\}\bigr) \;\le\;
   \exp\!\Bigl(-\tfrac{s^2}{4c}\Bigr).
 \]
 This is the symmetric lower-tail analogue of
-$\lean{ProbabilityTheory.HasBernsteinMGF.measure_ge_le}$,
+$\texttt{ProbabilityTheory.HasBernsteinMGF.measure\_ge\_le}$,
 obtained by applying the upper-tail bound to $-X$.
 \end{lemma}
 
@@ -76,7 +76,7 @@ obtained by applying the upper-tail bound to $-X$.
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_ge_le, ProbabilityTheory.HasBernsteinMGF.measure_le_le}
 \difficulty{5}
-Let $X$ satisfy $\lean{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
+Let $X$ satisfy $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
 with $c > 0$.  For every $s$ with $0 \le s \le 2c\,t_{\max}$,
 \[
   \mu\bigl(\{\omega \mid s < |X(\omega)|\}\bigr) \;\le\;
@@ -95,7 +95,7 @@ Let $\{Y_i\}_{i \in \iota}$ be a mutually independent, identically
 distributed family of measurable real random variables on a probability
 space $(\Omega, \mu)$, where $|\iota| = n$.  Suppose that for each $i$
 the centered square $Y_i^2 - \sigma^2$ satisfies
-$\lean{ProbabilityTheory.HasBernsteinMGF}\ (Y_i^2 - \sigma^2)\ \mu\ c\ t_{\max}$
+$\texttt{ProbabilityTheory.HasBernsteinMGF}\ (Y_i^2 - \sigma^2)\ \mu\ c\ t_{\max}$
 with $c > 0$.  Then for every $s$ with
 $0 \le s \le 2n c\, t_{\max}$,
 \[

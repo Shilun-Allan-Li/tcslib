@@ -7,7 +7,7 @@ deterministic finite-message protocols, where Alice's input type is augmented wi
 private randomness space $\Omega_X$ and Bob's with $\Omega_Y$.  It provides
 constructors for Alice and Bob sending steps, an execution function \texttt{rrun} that
 separates public inputs from private coins, approximate-correctness predicates
-\lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies} and \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes}, and conversions to and from the
+\texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies} and \texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes}, and conversions to and from the
 binary private-coin protocol type.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,7 +121,7 @@ equality predicate.
       CommunicationComplexity.PrivateCoin.Protocol}
 Converts a private-coin finite-message protocol into a binary-tree private-coin
 protocol by delegating to
-\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}.
+\texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}.
 \end{definition}
 
 \begin{theorem}[\texttt{toProtocol} preserves execution]

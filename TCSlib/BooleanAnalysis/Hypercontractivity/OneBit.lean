@@ -82,6 +82,35 @@ lemma expect_abs_rpow_one_bit (p : ℝ) (f : BooleanFunc 1) :
   simp only [one_bit_val_false, one_bit_val_true]
   norm_num; ring
 
+/--
+**Lp norm monotonicity (power mean inequality)** on the Boolean cube:
+For `1 ≤ r ≤ s` and `f : BoolCube n → ℝ`,
+  `(𝔼[|f|^r])^{1/r} ≤ (𝔼[|f|^s])^{1/s}`
+This is the power mean inequality for probability measures.
+-/
+lemma lp_norm_mono {n : ℕ} (r s : ℝ) (hr : 1 ≤ r) (hrs : r ≤ s)
+    (f : BooleanFunc n) :
+    (expect (fun x => |f x| ^ r)) ^ (1/r) ≤
+    (expect (fun x => |f x| ^ s)) ^ (1/s) := by
+  -- The weights `uniformWeight n` satisfy `∑ x, uniformWeight n = 1`, since there are `2^n` elements each with weight `(1/2)^n`.
+  have h_weight_sum : ∑ x : BoolCube n, (uniformWeight n) = 1 := by
+    simp +decide [ uniformWeight, Finset.card_univ ];
+  have h_ineq : (∑ x : BoolCube n, (uniformWeight n) * |f x| ^ r) ≤ (∑ x : BoolCube n, (uniformWeight n) * |f x| ^ s) ^ (r / s) := by
+    -- Apply Jensen's inequality for the concave function $x^{r/s}$.
+    have h_jensen : (∑ x : BoolCube n, (uniformWeight n) * (|f x| ^ s) ^ (r / s)) ≤ ((∑ x : BoolCube n, (uniformWeight n) * |f x| ^ s)) ^ (r / s) := by
+      have h_jensen : ConcaveOn ℝ (Set.Ici 0) (fun x : ℝ => x ^ (r / s)) := by
+        exact ( Real.concaveOn_rpow ( by rw [ le_div_iff₀ ] <;> linarith ) ( by rw [ div_le_iff₀ ] <;> linarith ) );
+      apply_rules [ h_jensen.le_map_sum ];
+      · exact fun _ _ => by unfold uniformWeight; positivity;
+      · exact fun _ _ => Real.rpow_nonneg ( abs_nonneg _ ) _;
+    convert h_jensen using 3 ; rw [ ← Real.rpow_mul ( abs_nonneg _ ), mul_div_cancel₀ _ ( by linarith ) ];
+  convert Real.rpow_le_rpow ( ?_ ) h_ineq ( show 0 ≤ 1 / r by positivity ) using 1;
+  · unfold expect; norm_num [ mul_comm, Finset.mul_sum _ _ _ ] ;
+  · rw [ ← Real.rpow_mul ( Finset.sum_nonneg fun _ _ => mul_nonneg ( by exact pow_nonneg ( by norm_num ) _ ) ( Real.rpow_nonneg ( abs_nonneg _ ) _ ) ) ] ; ring_nf;
+    norm_num [ show r ≠ 0 by linarith, show s ≠ 0 by linarith, expect ];
+    rw [ Finset.mul_sum _ _ _ ];
+  · exact Finset.sum_nonneg fun _ _ => mul_nonneg ( by exact pow_nonneg ( by norm_num ) _ ) ( Real.rpow_nonneg ( abs_nonneg _ ) _ )
+
 /-! ## The two-point inequality -/
 /-
 **Two-Point Inequality** (core real inequality, restricted version).
@@ -139,6 +168,26 @@ theorem two_point_ineq_unit (b p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
       norm_num +zetaDelta at *;
       have := h_f_deriv_nonneg c hc.1.1 ( by linarith ) ; rw [ hc.2, le_div_iff₀ ( by linarith ) ] at this; linarith;
   exact sub_nonneg.mp (h_f_nonneg b ⟨hb0, hb1⟩)
+
+/-
+**Two-Point Inequality** (core real inequality, a = 0 case).
+For `1 ≤ p ≤ 2`: `(p-1)^{p/2} ≤ 1`, which gives the inequality when `a = 0`.
+-/
+lemma two_point_ineq_a_zero (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) :
+    (p - 1) ^ (p / 2) ≤ 1 := by
+  exact Real.rpow_le_one ( by linarith ) ( by linarith ) ( by linarith )
+
+/-
+Noise operator doesn't increase L2 norm when we take absolute values.
+For 0 ≤ ρ ≤ 1: a² + ρ²b² ≤ ((|u|+|v|)/2)² + ρ²((|u|-|v|)/2)² where u=a+b, v=a-b.
+-/
+lemma noise_l2_abs_mono (a b ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
+    a ^ 2 + ρ ^ 2 * b ^ 2 ≤
+    ((|a + b| + |a - b|) / 2) ^ 2 + ρ ^ 2 * ((|a + b| - |a - b|) / 2) ^ 2 := by
+  -- By simplifying, we can see that the inequality holds because the left-hand side is less than or equal to the right-hand side.
+  have h_simp : (a + b) * (a - b) ≤ |a + b| * |a - b| := by
+    cases abs_cases ( a + b ) <;> cases abs_cases ( a - b ) <;> nlinarith;
+  nlinarith [ show 0 ≤ 1 - ρ ^ 2 by nlinarith, abs_mul_abs_self ( a + b ), abs_mul_abs_self ( a - b ) ]
 
 /--
 **Two-Point Inequality** (full version).
@@ -234,6 +283,19 @@ theorem one_bit_p2_hypercontractivity (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
   exact two_point_ineq a b p ρ hp1 hp2 hρ_nn hρ
 
 /-! ## Hölder sharpness and noise operator duality -/
+
+/-- sign(x) * x = |x| -/
+private lemma sign_mul_self (x : ℝ) : Real.sign x * x = |x| := by
+  rcases lt_trichotomy x 0 with hx | rfl | hx
+  · rw [Real.sign_of_neg hx, abs_of_neg hx]; ring
+  · simp [Real.sign_zero]
+  · rw [Real.sign_of_pos hx, abs_of_pos hx, one_mul]
+
+/-- |sign(x)| = 1 when x ≠ 0 -/
+private lemma abs_sign_eq_one (x : ℝ) (hx : x ≠ 0) : |Real.sign x| = 1 := by
+  rcases lt_or_gt_of_ne hx with h | h
+  · simp [Real.sign_of_neg h]
+  · simp [Real.sign_of_pos h]
 
 /-- Expectation of pointwise nonneg function is nonneg -/
 lemma expect_nonneg_of_nonneg {n : ℕ} {f : BooleanFunc n} (hf : ∀ x, 0 ≤ f x) :

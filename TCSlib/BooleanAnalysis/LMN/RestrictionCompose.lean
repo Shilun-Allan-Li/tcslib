@@ -42,6 +42,18 @@ def varWeight (p : ℝ) : Option Bool → ℝ
 
 /-! ## Helper lemmas -/
 
+/-- `composeRestr` is pointwise: `composeRestr ρ₁ ρ₂ = σ` iff every coordinate matches. -/
+lemma composeRestr_eq_iff (ρ₁ ρ₂ σ : Restriction n) :
+    composeRestr ρ₁ ρ₂ = σ ↔ ∀ i, (ρ₁ i).orElse (fun _ => ρ₂ i) = σ i := by
+  constructor
+  · intro h i; exact congr_fun h i
+  · intro h; funext i; exact h i
+
+/-- Basic property: composing with the identity restriction (all free) gives back the original. -/
+lemma composeRestr_id_right (ρ : Restriction n) :
+    composeRestr ρ (fun _ => none) = ρ := by
+  funext i; simp [composeRestr, Option.orElse]; cases ρ i <;> simp
+
 /--
 The Bernoulli restriction weight factors as a product of per-variable weights.
 -/
@@ -128,6 +140,24 @@ theorem restriction_compose_eq (p q : ℝ) (_hp : 0 < p) (_hp1 : p ≤ 1)
   simp +decide only [h_sum, Finset.mul_sum _ _ _]
   rw [Finset.sum_comm, Finset.sum_congr rfl]
   intro ρ₁ hρ₁; rw [Finset.sum_comm]; simp +decide
+
+/--
+**Composition inequality**: a Bernoulli(`p*q`) event probability is at most
+    the Bernoulli(`p`) probability that any `ρ₂` makes the event hold.
+-/
+theorem restriction_compose_le (p q : ℝ) (hp : 0 < p) (hp1 : p ≤ 1)
+    (hq : 0 < q) (hq1 : q ≤ 1)
+    (event : Restriction n → Prop) [DecidablePred event] :
+    bernoulliRestrProb (p * q) event ≤
+    bernoulliRestrProb p
+      (fun ρ₁ => ∃ ρ₂ : Restriction n, event (composeRestr ρ₁ ρ₂)) := by
+  rw [restriction_compose_eq p q hp hp1 hq hq1 event]
+  refine' le_trans (Finset.sum_le_sum fun ρ₁ _ => mul_le_mul_of_nonneg_left _ (bernoulliRestrWeight_nonneg' p hp.le hp1 ρ₁)) _
+  any_goals exact fun ρ₁ => if ∃ ρ₂, event (composeRestr ρ₁ ρ₂) then 1 else 0
+  · split_ifs <;> simp_all +decide [bernoulliRestrProb]
+    convert bernoulliRestrProb_le_one' q hq.le hq1 (fun ρ₂ => event (composeRestr ρ₁ ρ₂)) using 1
+    exact Finset.sum_congr rfl fun _ _ => by aesop
+  · unfold bernoulliRestrProb; aesop
 
 end LMN
 end

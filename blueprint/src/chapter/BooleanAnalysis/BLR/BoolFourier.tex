@@ -17,7 +17,7 @@ Walsh expansion, Parseval's identity, and the convolution theorem.
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 The Boolean hypercube of dimension $n$ is the type $\{0,1\}^n$, defined as an
-abbreviation for \lean{BooleanAnalysis.BoolCube} $n$.
+abbreviation for \texttt{BooleanAnalysis.BoolCube} $n$.
 \end{definition}
 
 \begin{definition}[Boolean function type]
@@ -25,7 +25,7 @@ abbreviation for \lean{BooleanAnalysis.BoolCube} $n$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
 A Boolean function of arity $n$ is an element of type $\{0,1\}^n \to \mathbb{R}$,
-defined as an abbreviation for \lean{BooleanAnalysis.BooleanFunc} $n$.
+defined as an abbreviation for \texttt{BooleanAnalysis.BooleanFunc} $n$.
 \end{definition}
 
 \begin{definition}[Bool-to-$\pm 1$ embedding]
@@ -174,7 +174,7 @@ $\chi_S : \{0,1\}^n \to \mathbb{R}$ is
 \[
   \chi_S(x) = \prod_{i \in S} (-1)^{x_i},
 \]
-defined as an alias for \lean{BooleanAnalysis.chiS}.
+defined as an alias for \texttt{BooleanAnalysis.chiS}.
 \end{definition}
 
 \begin{lemma}[Character evaluated at zero]
@@ -313,8 +313,8 @@ If $S \ne T$, then $\widehat{\chi_S}(T) = 0$.
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{1}
-The locally-defined expectation \lean{BoolFourier.expectation} agrees with
-\lean{BooleanAnalysis.expect}: for every $f$, $\mathbb{E}[f] = \mathrm{expect}(f)$.
+The locally-defined expectation \texttt{BoolFourier.expectation} agrees with
+\texttt{BooleanAnalysis.expect}: for every $f$, $\mathbb{E}[f] = \mathrm{expect}(f)$.
 \end{lemma}
 
 \begin{lemma}[Fourier coefficient agrees with upstream definition]

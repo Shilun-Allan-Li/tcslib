@@ -178,7 +178,7 @@ $\mathrm{GP}(f, d{+}1, x, h_1,\ldots,h_{d+1}) = 1$.
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p007-b004}
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.is_degree_le_pm1}
 A Boolean function $f : \{0,1\}^n \to \{0,1\}$ has degree $\le d$ if its $\pm 1$
-lift $(-1)^f$ has degree $\le d$ in the sense of \lean{LowDegreeTest.is_degree_le_pm1}.
+lift $(-1)^f$ has degree $\le d$ in the sense of \texttt{LowDegreeTest.is\_degree\_le\_pm1}.
 \end{definition}
 
 \begin{lemma}[Degree monotone in $d$]
@@ -551,7 +551,7 @@ $S \subseteq [n]$, $|\hat{f}(S)| \le 1 - 2\varepsilon$.
 \uses{BoolFourier.hypercube, LowDegreeTest.epsilon_far_from_degree}
 A function $f$ is $\varepsilon$-far from $\mathrm{RM}(d, n)$ if it is $\varepsilon$-far
 from degree $\le d$ in the sense of
-\lean{LowDegreeTest.epsilon_far_from_degree}.
+\texttt{LowDegreeTest.epsilon\_far\_from\_degree}.
 \end{definition}
 
 \begin{definition}[Reed--Muller test acceptance probability]
@@ -559,7 +559,7 @@ from degree $\le d$ in the sense of
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.degree_test_accept_prob}
 The acceptance probability of the Reed--Muller test, defined as the degree-test
-acceptance probability \lean{LowDegreeTest.degree_test_accept_prob}.
+acceptance probability \texttt{LowDegreeTest.degree\_test\_accept\_prob}.
 \end{definition}
 
 \begin{lemma}[Parseval for $\pm 1$ functions]

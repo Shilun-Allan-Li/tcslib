@@ -79,7 +79,7 @@ a formalisation of that inequality.
 \begin{definition}[Real-valued binomial coefficient]
 \lean{chooseR}
 \leanok
-For naturals $n$ and $k$, $\lean{chooseR}\,n\,k$ is the binomial coefficient $\binom{n}{k}$
+For naturals $n$ and $k$, $\texttt{chooseR}\,n\,k$ is the binomial coefficient $\binom{n}{k}$
 cast into $\bbr$.
 \end{definition}
 
@@ -96,7 +96,7 @@ $2\ell \le n$ and $2q \le n$.  Then
 \[
   \frac{\binom{n-2q}{\ell-q}}{\binom{n}{\ell}} \ \le\ e^{3q}\left(\frac{\ell}{n}\right)^{q},
 \]
-where both binomial coefficients are taken in $\bbr$ via $\lean{chooseR}$.
+where both binomial coefficients are taken in $\bbr$ via $\texttt{chooseR}$.
 \end{theorem}
 
 \begin{theorem}[Binomial ratio bound, lower]
@@ -112,5 +112,5 @@ $2\ell \le n$ and $2q \le n$,
 \[
   e^{-3q}\left(\frac{\ell}{n}\right)^{q} \ \le\ \frac{\binom{n-2q}{\ell-q}}{\binom{n}{\ell}},
 \]
-with the binomial coefficients again read in $\bbr$ via $\lean{chooseR}$.
+with the binomial coefficients again read in $\bbr$ via $\texttt{chooseR}$.
 \end{theorem}

@@ -5,8 +5,8 @@
 
 This chapter establishes the correctness and optimality of Kruskal's algorithm on a
 weighted edge list over the vertex set $\mathrm{Fin}\,n$: the greedy loop
-$\lean{Kruskal.processEdges}$ preserves the connectivity partition of its input, and the
-resulting edge set $\lean{Kruskal.kruskal}$ spans exactly what the input spans while
+$\texttt{Kruskal.processEdges}$ preserves the connectivity partition of its input, and the
+resulting edge set $\texttt{Kruskal.kruskal}$ spans exactly what the input spans while
 having minimum total weight among all spanning subsets of the input.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,7 +19,7 @@ having minimum total weight among all spanning subsets of the input.
 The union--find structure obtained by running the greedy loop over a list of weighted
 edges: starting from a state $uf$, each edge $e$ is merged into the state when its
 endpoints $e.u$ and $e.v$ currently lie in different components, and is ignored
-otherwise. Unlike $\lean{Kruskal.processEdges}$ it returns only the final state, not the
+otherwise. Unlike $\texttt{Kruskal.processEdges}$ it returns only the final state, not the
 list of accepted edges.
 \end{definition}
 
@@ -28,7 +28,7 @@ list of accepted edges.
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.merge_noop, Kruskal.processEdges_same_partition, Kruskal.ufAfterProcessEdges}
 For every edge list and every initial state $uf$, the state
-$\lean{Kruskal.ufAfterProcessEdges}$ produces induces the same partition of the vertices
+$\texttt{Kruskal.ufAfterProcessEdges}$ produces induces the same partition of the vertices
 as merging all the edges unconditionally, i.e.\ it has the same partition as
 $uf.\mathrm{mergeAll}$ applied to the whole list.
 \end{lemma}
@@ -37,7 +37,7 @@ $uf.\mathrm{mergeAll}$ applied to the whole list.
 \lean{Kruskal.processEdges_acc}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.WEdge, Kruskal.processEdges, Kruskal.processEdges_same_partition}
-Running $\lean{Kruskal.processEdges}$ with an accumulator $acc$ yields
+Running $\texttt{Kruskal.processEdges}$ with an accumulator $acc$ yields
 $acc^{\mathrm{rev}}$ followed by the output of the same run started from the empty
 accumulator; the accumulator only contributes a reversed prefix.
 \end{lemma}

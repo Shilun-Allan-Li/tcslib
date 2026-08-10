@@ -19,7 +19,7 @@ distance-form corollaries together with explicit logarithmic dimension bounds.
 \lean{JLDistortion}
 \leanok
 For $\varepsilon \in \mathbb{R}$, vectors $u, v \in \mathbb{R}^d$, and their
-images $u', v' \in \mathbb{R}^k$, \lean{JLDistortion} asserts the two-sided
+images $u', v' \in \mathbb{R}^k$, \texttt{JLDistortion} asserts the two-sided
 squared-distance inequality
 \[
   (1 - \varepsilon)\,\|u - v\|^2 \;\le\; \|u' - v'\|^2 \;\le\;
@@ -34,7 +34,7 @@ squared-distance inequality
 A linear map $f : \mathbb{R}^d \to_L[\mathbb{R}] \mathbb{R}^k$ is an
 \emph{$\varepsilon$-JL embedding} of a finite set $V$ if, for every ordered
 pair $(u, v) \in V \times V$, the pair $(f(u), f(v))$ satisfies
-\lean{JLDistortion} $\varepsilon\; u\; v$.
+\texttt{JLDistortion} $\varepsilon\; u\; v$.
 \end{definition}
 
 \begin{definition}[Bad-pair event]
@@ -42,7 +42,7 @@ pair $(u, v) \in V \times V$, the pair $(f(u), f(v))$ satisfies
 \leanok
 \uses{JLDistortion}
 Given a $k \times d$ matrix $A$ and a finite set
-$V \subseteq \mathbb{R}^d$, \lean{BadPair} $\varepsilon\; V\; A$ holds when
+$V \subseteq \mathbb{R}^d$, \texttt{BadPair} $\varepsilon\; V\; A$ holds when
 there exists some ordered pair $(u, v) \in V \times V$ whose images under $A$
 fail the distortion predicate, i.e.\ the projection distorts that pair by
 more than a factor of $\varepsilon$.
@@ -68,7 +68,7 @@ each row).  For any fixed $x \in \mathbb{R}^d$ and any $0 < \varepsilon < 1$,
 \uses{BadSingle, JLDistortion}
 \difficulty{3}
 If the matrix $A$ does \emph{not} trigger the bad-single event for the
-difference $u - v$, then \lean{JLDistortion} $\varepsilon\; u\; v\;
+difference $u - v$, then \texttt{JLDistortion} $\varepsilon\; u\; v\;
 (A.toEuclideanLin\; u)\; (A.toEuclideanLin\; v)$ holds; that is, the
 squared-distance of the images is within a factor of $(1 \pm \varepsilon)$
 of the squared-distance of the originals.
@@ -106,7 +106,7 @@ event.
 \leanok
 \uses{BadPair, BadSingle, IsJLEmbedding, concentration_zero, jl_concentration_single_subgaussian, jl_union_bound}
 \difficulty{5}
-Sub-Gaussian analogue of \lean{johnson_lindenstrauss_of_gaussian}: the Gaussian
+Sub-Gaussian analogue of \texttt{johnson\_lindenstrauss\_of\_gaussian}: the Gaussian
 entry hypotheses are replaced by the assumptions that each row projection
 $(Ax)_i$ is sub-Gaussian with parameter $\|x\|^2/k$ and has variance exactly
 $\|x\|^2/k$.  Under the same failure-probability bound
@@ -146,8 +146,8 @@ and entries within each row jointly independent.
 Given $0 < \varepsilon$, $n \ge 2$, $k \ge 32 \log n / \varepsilon^2$, and
 $|V| \le n$, this lemma derives (i) $k > 0$ and (ii)
 $|V|^2 \cdot 2\exp(-k\varepsilon^2/8) < 1$, the numerical precondition
-consumed by both \lean{johnson_lindenstrauss_of_gaussian} and
-\lean{johnson_lindenstrauss_of_subgaussian}.
+consumed by both \texttt{johnson\_lindenstrauss\_of\_gaussian} and
+\texttt{johnson\_lindenstrauss\_of\_subgaussian}.
 \end{lemma}
 
 \begin{theorem}[Johnson--Lindenstrauss flattening lemma (Gaussian)]
@@ -168,11 +168,11 @@ for all $u, v \in V$.
 \leanok
 \uses{BadSingle, IsJLEmbedding, hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_failure_bound_of_dim, johnson_lindenstrauss_of_subgaussian, measurableSet_badSingle, measurable_radMatrix, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
 \difficulty{4}
-Rademacher ($\pm 1/\sqrt{k}$ entries) analogue of \lean{johnson_lindenstrauss}:
+Rademacher ($\pm 1/\sqrt{k}$ entries) analogue of \texttt{johnson\_lindenstrauss}:
 same hypotheses on $\varepsilon$, $n$, $k$, and $V$, same conclusion---an
 $\varepsilon$-JL embedding of $V$ exists---but now realized by a Rademacher
 matrix.  The proof uses the sub-Gaussian concentration bound
-\lean{jl_concentration_single_subgaussian} (which inherits the Hanson-Wright
+\texttt{jl\_concentration\_single\_subgaussian} (which inherits the Hanson-Wright
 axiom) and the identical union-bound argument.
 \end{theorem}
 
@@ -187,7 +187,7 @@ then for all $u, v \in V$,
   \sqrt{1-\varepsilon}\,\|u - v\| \;\le\; \|f(u) - f(v)\| \;\le\;
   \sqrt{1+\varepsilon}\,\|u - v\|,
 \]
-obtained by taking square roots of the \lean{JLDistortion} bounds.
+obtained by taking square roots of the \texttt{JLDistortion} bounds.
 \end{lemma}
 
 \begin{theorem}[JL flattening --- distance form (Gaussian)]
@@ -195,7 +195,7 @@ obtained by taking square roots of the \lean{JLDistortion} bounds.
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss}
 \difficulty{1}
-Under the same hypotheses as \lean{johnson_lindenstrauss}, there exists a linear
+Under the same hypotheses as \texttt{johnson\_lindenstrauss}, there exists a linear
 map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ such that for all $u, v \in V$,
 \[
   \sqrt{1-\varepsilon}\,\|u - v\| \;\le\; \|f(u) - f(v)\| \;\le\;
@@ -208,9 +208,9 @@ map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ such that for all $u, v \in V$,
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss_subgaussian}
 \difficulty{1}
-Under the same hypotheses as \lean{johnson_lindenstrauss_subgaussian}, there
+Under the same hypotheses as \texttt{johnson\_lindenstrauss\_subgaussian}, there
 exists a linear map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ satisfying the same
-two-sided distance-ratio bounds as \lean{johnson_lindenstrauss_dist}, now
+two-sided distance-ratio bounds as \texttt{johnson\_lindenstrauss\_dist}, now
 realized by a Rademacher random matrix.
 \end{theorem}
 
@@ -231,7 +231,7 @@ exists.  In particular the target dimension is $O(\log n / \varepsilon^2)$.
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss_subgaussian}
 \difficulty{3}
-Sub-Gaussian (Rademacher) analogue of \lean{johnson_lindenstrauss_dim_bound}:
+Sub-Gaussian (Rademacher) analogue of \texttt{johnson\_lindenstrauss\_dim\_bound}:
 same threshold $k_0 = O(\log n / \varepsilon^2)$, same universal conclusion for
 all $k \ge k_0$, $d$, and $V$ of size at most $n$, but inheriting the
 Hanson-Wright axiom from the sub-Gaussian concentration chain.

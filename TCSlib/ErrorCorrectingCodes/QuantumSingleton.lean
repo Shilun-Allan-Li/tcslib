@@ -11,9 +11,14 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PicardGroup
 import Mathlib.Data.Finset.Card
 
+
 open scoped BigOperators
 
+
+
 set_option linter.mathlibStandardSet false
+
+
 
 open scoped BigOperators
 open scoped Real
@@ -96,6 +101,7 @@ lemma sym_form_add_right (x y z : V n p) :
   rw [h]
   exact Finset.sum_add_distrib
 
+
 lemma sym_form_smul_left (c : F p) (x y : V n p) :
     sym_form (n:=n) (p:=p) (c • x) y = c * sym_form (n:=n) (p:=p) x y := by
   classical
@@ -113,6 +119,7 @@ lemma sym_form_smul_left (c : F p) (x y : V n p) :
     rw [hs]
     rw [← Finset.mul_sum]
 
+
   have h2 :
       (∑ i : Fin n, c * x.2 i * y.1 i)
         = c * (∑ i : Fin n, x.2 i * y.1 i) := by
@@ -127,6 +134,8 @@ lemma sym_form_smul_left (c : F p) (x y : V n p) :
     rw [← Finset.mul_sum]
 
   simp [h1, h2, mul_sub]
+
+
 
 lemma sym_form_smul_right (c : F p) (x y : V n p) :
     sym_form (n:=n) (p:=p) x (c • y) = c * sym_form (n:=n) (p:=p) x y := by
@@ -146,6 +155,7 @@ lemma sym_form_smul_right (c : F p) (x y : V n p) :
     rw [hs]
     rw [← Finset.mul_sum]
 
+
   have h2 :
       (∑ i : Fin n, x.2 i * (c * y.1 i))
         = c * (∑ i : Fin n, x.2 i * y.1 i) := by
@@ -159,7 +169,11 @@ lemma sym_form_smul_right (c : F p) (x y : V n p) :
     rw [hs]
     rw [← Finset.mul_sum]
 
+
   simp [h1, h2, mul_sub]
+
+
+
 
 /-- The symplectic form is antisymmetric: `sym_form u v = -sym_form v u`. -/
 lemma sym_form_swap (u v : V n p) :
@@ -168,6 +182,9 @@ lemma sym_form_swap (u v : V n p) :
   rw [← Finset.sum_neg_distrib]
   congr with i
   ring
+
+
+
 
 /-- The standard symplectic form `sym_form` packaged as a `LinearMap.BilinForm`. -/
 noncomputable def symB : LinearMap.BilinForm (F p) (V n p) :=
@@ -179,6 +196,11 @@ noncomputable def symB : LinearMap.BilinForm (F p) (V n p) :=
 
 @[simp] lemma symB_apply (x y : V n p) :
     symB (n:=n) (p:=p) x y = sym_form (n:=n) (p:=p) x y := rfl
+
+
+
+
+
 
 /-- The symplectic form is non-degenerate: if `sym_form u v = 0` for all `v`, then `u = 0`. -/
 lemma sym_form_nondegenerate (u : V n p) (h : ∀ v, sym_form u v = 0) : u = 0 := by
@@ -285,6 +307,7 @@ noncomputable def V_sub_iso (C : Finset (Fin n)) :
   map_add' := (restrictToC (p:=p) C).map_add'
   map_smul' := (restrictToC (p:=p) C).map_smul'
 
+
 /-
 Dimension of a support subspace V_C is 2|C|.
 -/
@@ -295,6 +318,7 @@ lemma dim_V_sub (C : Finset (Fin n)) : Module.finrank (F p) (V_sub (p:=p) C) = 2
   -- finrank preserved by linear equivalence
   simpa [Module.finrank_prod, two_mul] using
     (LinearEquiv.finrank_eq (V_sub_iso (n:=n) (p:=p) C))
+
 
 /-
 Definition of restriction map r_E.
@@ -341,6 +365,7 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 /-- Orthogonal complement with respect to the symplectic bilinear form. -/
 abbrev sym_orth (S : Submodule (F p) (V n p)) : Submodule (F p) (V n p) :=
   (symB (n:=n) (p:=p)).orthogonal S
+
 
 /-- Isotropic subspace -/
 def IsIsotropic (S : Submodule (F p) (V n p)) : Prop :=
@@ -460,6 +485,7 @@ lemma ker_r_E (E : Finset (Fin n)) :
 
     simpa [LinearMap.mem_ker] using hfx
 
+
 /-
 Defining complement of E.
 -/
@@ -474,6 +500,10 @@ def E_c (E : Finset (Fin n)) : Finset (Fin n) := Eᶜ
 E_c E is the set difference of univ and E.
 -/
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
+
+lemma E_c_eq (E : Finset (Fin n)) : E_c E = Finset.univ \ E := by
+  ext
+  simp [E_c]
 
 /-
 Dimension of projection of S onto E is dim(S) - dim(S ∩ V_{E^c}).
@@ -527,8 +557,29 @@ lemma sym_form_r_E (M : Finset (Fin n)) (v : V n p) (hv : v ∈ V_sub (p:=p) M) 
       by_cases hi' : i ∈ M <;> simp_all +decide [ r_E ];
       cases hv i hi' ; simp_all only [zero_mul, sub_self]
 
+
+
 def r_E_V (E : Finset (Fin n)) : V n p →ₗ[F p] V n p :=
   (V_sub (p:=p) E).subtype.comp (r_E E)
+
+lemma sym_form_r_E_left (M : Finset (Fin n)) (s v : V n p)
+    (hv : v ∈ V_sub (p:=p) M) :
+    sym_form (n:=n) (p:=p) ((r_E_V (n:=n) (p:=p) M) s) v
+      = sym_form (n:=n) (p:=p) s v := by
+  have h_right :
+      sym_form (n:=n) (p:=p) v ((r_E_V (n:=n) (p:=p) M) s)
+        = sym_form (n:=n) (p:=p) v s := by
+    simpa [r_E_V] using (sym_form_r_E (n:=n) (p:=p) M v hv s).symm
+
+  calc
+    sym_form ((r_E_V (n:=n) (p:=p) M) s) v
+        = - sym_form v ((r_E_V (n:=n) (p:=p) M) s) := by
+            simpa using (sym_form_swap (n:=n) (p:=p)
+              (u := (r_E_V (n:=n) (p:=p) M) s) (v := v))
+    _ = - sym_form v s := by simp [h_right]
+    _ = sym_form s v := by
+          have := congrArg Neg.neg (sym_form_swap (n:=n) (p:=p) (u := v) (v := s))
+          simpa using this
 
 /-
 The symplectic form restricted to V_sub M is non-degenerate.
@@ -548,12 +599,16 @@ lemma sym_form_nondegenerate_on_V_sub (M : Finset (Fin n)) (v : V n p)
       (by simpa using (r_E (n:=n) (p:=p) M w).property)
   simpa [sym_form_r_E (n:=n) (p:=p) M v hv w] using hw0
 
+
 /-
 Intersection of S^\perp with V_M is the same as intersection of (r_M(S))^\perp with V_M.
 -/
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 
 /-- Restriction map as an endomorphism of V -/
+
+
+
 
   lemma sym_form_left_restrict (M : Finset (Fin n)) (s v : V n p)
     (hv : v ∈ V_sub (p:=p) M) :
@@ -567,6 +622,7 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
   · simp [hiM]
   · have hv0 := hv i hiM
     simp [hiM, hv0.1, hv0.2]
+
 
 /-- Orthogonal intersection lemma -/
 lemma orth_inter_eq_orth_map (M : Finset (Fin n)) (S : Submodule (F p) (V n p)) :
@@ -658,6 +714,7 @@ lemma orth_inter_eq_orth_sub_image (M : Finset (Fin n)) (S : Submodule (F p) (V 
   simp +decide [ symB, LinearMap.BilinForm.IsOrtho ];
   simp +decide [ r_E_V, Subtype.ext_iff ];
   grind
+
 
 /-
 The restricted symplectic form is reflexive.
@@ -760,6 +817,7 @@ lemma dim_S_M_add_dim_S_M_c_le_dim_S (S : Submodule (F p) (V n p)) (M : Finset (
       simp_all +decide [ E_c, funext_iff ];
       exact fun a b ha ha' ha'' => ⟨ fun i => if hi : i ∈ M then ha'' i hi |>.1 else ha' i hi |>.1, fun i => if hi : i ∈ M then ha'' i hi |>.2 else ha' i hi |>.2 ⟩
 
+
 /-
 Formula for g(M) in terms of dimensions.
 -/
@@ -798,6 +856,10 @@ Inequality relating dimensions of S, S_M, and S_Mc.
 -/
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 
+lemma dim_ineq_aux (S : Submodule (F p) (V n p)) (hS : IsIsotropic S) (M : Finset (Fin n)) :
+    Module.finrank (F p) S + Module.finrank (F p) (S_M S M) ≤ 2 * M.card + Module.finrank (F p) (S_M S (E_c M)) := by
+      linarith [ g_add_dims S hS M ]
+
 /-
 The sum of g(M) and g(M^c) is 2n - 2dim(S).
 -/
@@ -818,6 +880,10 @@ lemma cleaning_dimension_identity (S : Submodule (F p) (V n p)) (hS : IsIsotropi
 Cardinality of M plus cardinality of M^c is n.
 -/
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
+
+lemma card_add_compl (M : Finset (Fin n)) : M.card + (E_c M).card = n := by
+  unfold E_c; simp +decide [ Finset.card_compl ] ;
+  exact Nat.add_sub_of_le ( le_trans ( Finset.card_le_univ _ ) ( by norm_num ) )
 
 /-
 If M is correctable, g(M) = 0.
@@ -855,6 +921,8 @@ lemma g_complement_correctable
     cleaning_dimension_identity (n:=n) (p:=p) S hS M
   simpa [h_g_M_zero] using h_sum
 
+
+
 /-
 Checking if g_complement_correctable is defined.
 -/
@@ -866,6 +934,8 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
 If B is correctable and disjoint from C, then g(B ∪ C) <= 2|C|.
 -/
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
+
+
 
 lemma g_le_two_card_C (S : Submodule (F p) (V n p)) (B C : Finset (Fin n))
     (h_disjoint : Disjoint B C) (hB : correctable S B) :
@@ -945,6 +1015,7 @@ lemma two_disjoint_correctable_sets_bound_logical_dimension (S : Submodule (F p)
         exact Finset.disjoint_left.mp h_disjoint hx hx';
       unfold code_k; simp_all only [Nat.ofNat_pos, mul_le_mul_iff_right₀, tsub_le_iff_right];
 
+
 section SingletonHelpers
 
 variable {n : ℕ} {p : ℕ} [Fact p.Prime]
@@ -958,6 +1029,7 @@ variable {n : ℕ} {p : ℕ} [Fact p.Prime]
   · intro _; trivial
   · intro _ i hi
     exact (False.elim (hi (Finset.mem_univ i)))
+
 
 lemma finrank_V :
     Module.finrank (F p) (V n p) = 2 * n := by
@@ -981,6 +1053,7 @@ lemma finrank_V :
           ((⊤ : Submodule (F p) (V n p)) : Type _)
         = Module.finrank (F p) (V n p))
   exact ht.symm.trans h'
+
 
   lemma symB_nondegenerate :
     (symB (n:=n) (p:=p)).Nondegenerate := by
@@ -1010,6 +1083,8 @@ lemma finrank_sym_orth (S : Submodule (F p) (V n p)) :
       S
   simpa [sym_orth, finrank_V (n:=n) (p:=p)] using h
 
+
+
 lemma finrank_le_n_of_isotropic (S : Submodule (F p) (V n p)) (hS : IsIsotropic (n:=n) (p:=p) S) :
     Module.finrank (F p) S ≤ n := by
   classical
@@ -1031,6 +1106,8 @@ lemma finrank_le_n_of_isotropic (S : Submodule (F p) (V n p)) (hS : IsIsotropic 
     simpa [two_mul] using hadd
   exact Nat.le_of_mul_le_mul_left h2 (by decide : 0 < 2)
 
+
+
 /-- Any vector in `V n p` has weight at most `n`. -/
 lemma wt_le_n (v : V n p) : wt (n:=n) (p:=p) v ≤ n := by
   classical
@@ -1042,6 +1119,7 @@ lemma wt_le_n (v : V n p) : wt (n:=n) (p:=p) v ≤ n := by
       (supp (n:=n) (p:=p) v).card ≤ (Finset.univ : Finset (Fin n)).card :=
     Finset.card_mono hs
   simpa [Finset.card_univ] using hcard
+
 
 /-- `code_dist S ≤ n` since all weights are bounded by `n`. -/
 lemma code_dist_le_n (S : Submodule (F p) (V n p)) :
@@ -1074,6 +1152,9 @@ lemma code_dist_le_n (S : Submodule (F p) (V n p)) :
       simpa [hwt] using this
 
     exact le_trans hdist_le hd0_le
+
+
+
 
 lemma code_dist_eq_zero_of_code_k_eq_zero
     (S : Submodule (F p) (V n p))
@@ -1121,7 +1202,13 @@ lemma code_dist_eq_zero_of_code_k_eq_zero
   rw [hEmpty]
   simp
 
+
+
+
 end SingletonHelpers
+
+
+
 
 section QuantumSingleton
 
@@ -1159,6 +1246,8 @@ lemma exists_disjoint_finsets_card (t : ℕ) (h : 2 * t ≤ n) :
     exact (Finset.mem_sdiff.1 hxBUA).2 hxA
 
   exact ⟨A, B, hdisj, hA_card, hB_card⟩
+
+
 
 /-- Quantum Singleton bound: `code_k S + 2*(code_dist S - 1) ≤ n`. -/
 theorem quantum_singleton_bound
@@ -1305,5 +1394,6 @@ theorem quantum_singleton_bound
                   exact Nat.sub_add_cancel h2t
 
       simpa [hd_pred] using hmain
+
 
 end QuantumSingleton

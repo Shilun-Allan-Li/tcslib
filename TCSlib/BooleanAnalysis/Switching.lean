@@ -896,6 +896,7 @@ private lemma processClauseLits_path_length_eq {n : ℕ}
                        (Function.update σ hd.1.var (some (!hd.1.neg)))
       omega
 
+
 /-- Updating a variable to `some b` decreases `numFree` by at most 1. -/
 private lemma numFree_update_some_ge {n : ℕ} (ρ : Restriction n) (v : Fin n) (b : Bool) :
     Restriction.numFree (Function.update ρ v (some b)) + 1 ≥ ρ.numFree := by
@@ -917,6 +918,35 @@ private lemma numFree_update_some_ge {n : ℕ} (ρ : Restriction n) (v : Fin n) 
     have : Restriction.numFree (Function.update ρ v (some b)) = ρ.numFree := by
       unfold Restriction.numFree; rw [heq]
     omega
+
+/-- **Key path-length bound**: if the initial path length is at most `ρ₀.numFree`,
+    then after `processClauseLits`, the remaining path length is at most the
+    updated `ρ₀`'s `numFree`. This uses the fact that each recursive step
+    decreases both the path length and `numFree` by at most 1 (path by
+    exactly 1, numFree by 0 or 1). -/
+private lemma processClauseLits_remaining_le_numFree {n : ℕ}
+    (lits : List (Literal n × ℕ)) (path : List (Fin n × Bool))
+    (ρ₀ σ : Restriction n)
+    (h0 : path.length ≤ ρ₀.numFree) :
+    (processClauseLits lits path ρ₀ σ).1.length ≤
+      (processClauseLits lits path ρ₀ σ).2.1.numFree := by
+  induction lits generalizing path ρ₀ σ with
+  | nil => simpa [processClauseLits] using h0
+  | cons hd tl ih =>
+    cases path with
+    | nil =>
+      simp [processClauseLits]
+    | cons p ps =>
+      simp only [processClauseLits]
+      -- Remaining path length ≤ ρ₀'.numFree where ρ₀' = update ρ₀ hd.1.var (some p.2)
+      have hupd : Restriction.numFree
+          (Function.update ρ₀ hd.1.var (some p.2)) + 1 ≥ ρ₀.numFree :=
+        numFree_update_some_ge ρ₀ hd.1.var p.2
+      have hps_len : ps.length ≤
+          Restriction.numFree (Function.update ρ₀ hd.1.var (some p.2)) := by
+        have : (p :: ps).length = ps.length + 1 := rfl
+        omega
+      exact ih ps _ _ hps_len
 
 /-- If every clause of `f` is killed by `ρ`, the canonical decision tree for
     `f|ρ` is `.leaf false` and hence has depth 0. -/
@@ -1784,6 +1814,7 @@ theorem switching_corollary {n : ℕ} (hn : 0 < n) (f : DNF n) (w s : ℕ)
   exact hρ.2 (dtDepth_le_implies_small_dnf_cnf _ w hgood).2
 
 end SwitchingLemma2
+
 
 /-!
 # Håstad's Switching Lemma for CNFs

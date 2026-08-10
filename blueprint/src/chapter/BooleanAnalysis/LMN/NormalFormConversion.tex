@@ -3,7 +3,7 @@
 \section{Overview}
 
 This module bridges the depth-2 Boolean circuit representation
-(\texttt{NAndCircuit} / \texttt{NOrCircuit} built from literals \lean{BoolCircuit.Lit})
+(\texttt{NAndCircuit} / \texttt{NOrCircuit} built from literals \texttt{BoolCircuit.Lit})
 and the DNF/CNF normal forms used by the switching lemma. It defines the
 conversion of circuit literals and clauses into switching-lemma terms, and proves
 that these conversions preserve evaluation, term width, and the structural
@@ -16,8 +16,8 @@ hypotheses (no repeated indices, variable-injectivity) required downstream.
 \lean{BoolCircuit.Lit.toLiteral}
 \leanok
 \uses{BoolCircuit.Lit, Literal}
-Maps a Boolean-circuit literal $l : \lean{BoolCircuit.Lit}\,n$ to the corresponding
-switching-lemma $\lean{Literal}\,n$, recording the same variable index and polarity.
+Maps a Boolean-circuit literal $l : \texttt{BoolCircuit.Lit}\,n$ to the corresponding
+switching-lemma $\texttt{Literal}\,n$, recording the same variable index and polarity.
 \end{definition}
 
 \begin{theorem}[Conversion preserves literal evaluation]
@@ -35,7 +35,7 @@ $l.\mathrm{toLiteral}.\mathrm{eval}\,x$.
 \leanok
 \uses{BoolCircuit.Lit.toLiteral, BoolCircuit.NAndCircuit, Term}
 Sends an AND-clause $\texttt{NAndCircuit}.\mathrm{clause}\,lits$ to the
-$\lean{Term}$ (a conjunction of literals) obtained by mapping each circuit literal
+$\texttt{Term}$ (a conjunction of literals) obtained by mapping each circuit literal
 through \texttt{Lit.toLiteral}.
 \end{definition}
 
@@ -43,7 +43,7 @@ through \texttt{Lit.toLiteral}.
 \lean{BoolCircuit.NOrCircuit.clauseToTerm}
 \leanok
 \uses{BoolCircuit.Lit.toLiteral, Term}
-Sends an OR-clause $\texttt{NOrCircuit}.\mathrm{clause}\,lits$ to the $\lean{Term}$
+Sends an OR-clause $\texttt{NOrCircuit}.\mathrm{clause}\,lits$ to the $\texttt{Term}$
 obtained by mapping each circuit literal through \texttt{Lit.toLiteral}; this term plays
 the role of one CNF clause (a disjunction of literals).
 \end{definition}
@@ -52,7 +52,7 @@ the role of one CNF clause (a disjunction of literals).
 \lean{BoolCircuit.NOrCircuit.toDNF}
 \leanok
 \uses{BoolCircuit.NAndCircuit.clauseToTerm, DNF}
-Converts a depth-2 $\texttt{NOrCircuit}$ (an OR of AND-clauses) into a $\lean{DNF}$, the
+Converts a depth-2 $\texttt{NOrCircuit}$ (an OR of AND-clauses) into a $\texttt{DNF}$, the
 list of terms obtained by converting each AND-clause via \texttt{NAndCircuit.clauseToTerm};
 a bare clause maps to the empty DNF.
 \end{definition}
@@ -61,7 +61,7 @@ a bare clause maps to the empty DNF.
 \lean{BoolCircuit.NAndCircuit.toCNF}
 \leanok
 \uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.clauseToTerm, CNF}
-Converts a depth-2 $\texttt{NAndCircuit}$ (an AND of OR-clauses) into a $\lean{CNF}$, the
+Converts a depth-2 $\texttt{NAndCircuit}$ (an AND of OR-clauses) into a $\texttt{CNF}$, the
 list of clauses obtained by converting each OR-clause via \texttt{NOrCircuit.clauseToTerm};
 a bare clause maps to the empty CNF.
 \end{definition}
@@ -73,7 +73,7 @@ a bare clause maps to the empty CNF.
 \difficulty{4}
 For any list of literals $lits$ and input $x$, the right fold of $\&\&$ over the literal
 evaluations (starting from $\mathrm{true}$) equals the term evaluation
-$\lean{Term.eval}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
+$\texttt{Term.eval}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 \end{theorem}
 
 \begin{theorem}[Disjunction of literals evaluates as a CNF clause]
@@ -83,7 +83,7 @@ $\lean{Term.eval}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 \difficulty{4}
 For any list of literals $lits$ and input $x$, the right fold of $||$ over the literal
 evaluations (starting from $\mathrm{false}$) equals the CNF clause evaluation
-$\lean{CNF.evalClause}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
+$\texttt{CNF.evalClause}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 \end{theorem}
 
 \begin{theorem}[Depth-2 OR-circuit evaluates as its DNF]
@@ -93,7 +93,7 @@ $\lean{CNF.evalClause}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 \difficulty{5}
 If every child $c$ of an $\texttt{NOrCircuit}.\mathrm{node}\,cs$ is an AND-clause, then for
 all $x$ the circuit evaluation $(\texttt{NOrCircuit}.\mathrm{node}\,cs).\mathrm{eval}\,x$
-equals the DNF evaluation $\lean{DNF.eval}\,((\texttt{NOrCircuit}.\mathrm{node}\,cs).\mathrm{toDNF})\,x$.
+equals the DNF evaluation $\texttt{DNF.eval}\,((\texttt{NOrCircuit}.\mathrm{node}\,cs).\mathrm{toDNF})\,x$.
 \end{theorem}
 
 \begin{theorem}[Depth-2 AND-circuit evaluates as its CNF]
@@ -103,7 +103,7 @@ equals the DNF evaluation $\lean{DNF.eval}\,((\texttt{NOrCircuit}.\mathrm{node}\
 \difficulty{6}
 If every child $c$ of an $\texttt{NAndCircuit}.\mathrm{node}\,cs$ is an OR-clause, then for
 all $x$ the circuit evaluation $(\texttt{NAndCircuit}.\mathrm{node}\,cs).\mathrm{eval}\,x$
-equals the CNF evaluation $\lean{CNF.eval}\,((\texttt{NAndCircuit}.\mathrm{node}\,cs).\mathrm{toCNF})\,x$.
+equals the CNF evaluation $\texttt{CNF.eval}\,((\texttt{NAndCircuit}.\mathrm{node}\,cs).\mathrm{toCNF})\,x$.
 \end{theorem}
 
 \begin{theorem}[Converted AND-clause has no repeated indices]
@@ -150,7 +150,7 @@ two literals sharing the same variable are equal.
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm, Term.width}
 \difficulty{1}
 The width of the term obtained from an AND-clause equals the number of its literals:
-$\lean{Term.width}\,(\texttt{NAndCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clauseToTerm} = lits.\mathrm{length}$.
+$\texttt{Term.width}\,(\texttt{NAndCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clauseToTerm} = lits.\mathrm{length}$.
 \end{theorem}
 
 \begin{theorem}[Width of a converted OR-clause]
@@ -159,7 +159,7 @@ $\lean{Term.width}\,(\texttt{NAndCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clau
 \uses{BoolCircuit.Lit, BoolCircuit.NOrCircuit.clauseToTerm, Term.width}
 \difficulty{1}
 The width of the term obtained from an OR-clause equals the number of its literals:
-$\lean{Term.width}\,(\texttt{NOrCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clauseToTerm} = lits.\mathrm{length}$.
+$\texttt{Term.width}\,(\texttt{NOrCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clauseToTerm} = lits.\mathrm{length}$.
 \end{theorem}
 
 \begin{theorem}[Width bound for the DNF of a depth-2 OR-circuit]

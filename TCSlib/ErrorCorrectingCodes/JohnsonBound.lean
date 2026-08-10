@@ -174,6 +174,66 @@ lemma johnson_arith
   field_simp;
   nlinarith [ show 0 ≤ Real.sqrt n * Real.sqrt ( n - 2 * d ) by positivity, show 0 ≤ Real.sqrt n by positivity, show 0 ≤ Real.sqrt ( n - 2 * d ) by positivity, Real.mul_self_sqrt ( show ( n : ℝ ) ≥ 0 by positivity ), Real.mul_self_sqrt ( show ( n - 2 * d : ℝ ) ≥ 0 by exact sub_nonneg_of_le ( mod_cast hd ) ) ]
 
+
+
+
+/-
+The inner product of the projections of two vectors x and y onto the orthogonal complement of u is non-positive, provided x and y have non-positive inner products with each other and with u.
+-/
+lemma inner_proj_le_zero {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+    (u x y : V) (hu : ‖u‖ = 1) (hxu : inner ℝ x u ≤ 0) (hyu : inner ℝ y u ≤ 0) (hxy : inner ℝ x y ≤ 0) :
+    inner ℝ (x - (inner ℝ x u) • u) (y - (inner ℝ y u) • u) ≤ 0 := by
+      simp_all +decide [ inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right ];
+      simp_all +decide [ real_inner_comm, inner_self_eq_norm_sq_to_K ] ; nlinarith;
+
+/-
+The squared norm of the projection of x onto the orthogonal complement of a unit vector u is ‖x‖² - ⟨x, u⟩².
+-/
+lemma proj_norm_sq {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+    (u x : V) (hu : ‖u‖ = 1) :
+    ‖x - (inner ℝ x u) • u‖^2 = ‖x‖^2 - (inner ℝ x u)^2 := by
+      rw [ @norm_sub_sq ℝ ] ; simp +decide [ inner_smul_right ] ; ring_nf;
+      simp +decide [ hu, norm_smul ] ; ring;
+
+/-
+The projection of a unit vector x onto the orthogonal complement of a unit vector u is non-zero, unless x is u or -u.
+-/
+lemma proj_nonzero {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+    (u x : V) (hu : ‖u‖ = 1) (hx : ‖x‖ = 1) (hxu : inner ℝ x u ≤ 0) (hne : x ≠ -u) (hne' : x ≠ u) :
+    x - (inner ℝ x u) • u ≠ 0 := by
+      contrapose! hne';
+      -- If $x - \alpha u = 0$, then $x = \alpha u$.
+      obtain ⟨α, hα⟩ : ∃ α : ℝ, x = α • u := by
+        exact ⟨ _, sub_eq_zero.mp hne' ⟩;
+      simp_all +decide [ norm_smul, inner_smul_left ];
+      rw [ abs_eq ] at hx <;> aesop
+
+/-
+The projection onto the orthogonal complement of u is injective on a set of unit vectors that all have non-positive inner product with u.
+-/
+lemma proj_inj_on {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+    (u : V) (S : Set V) (hu : ‖u‖ = 1)
+    (hS_norm : ∀ x ∈ S, ‖x‖ = 1) (hS_inner : ∀ x ∈ S, inner ℝ x u ≤ 0) :
+    Set.InjOn (fun x => x - (inner ℝ x u) • u) S := by
+      intro x hx y hy hxy;
+      set c := inner ℝ x u - inner ℝ y u
+      have hxy_eq : x - y = c • u := by
+        simp +zetaDelta at *;
+        rw [ sub_smul, ← sub_eq_zero ] ; rw [ ← sub_eq_zero_of_eq hxy ] ; abel_nf;
+      have h_norm_sq : ‖x - y‖^2 = 2 - 2 * ⟪x, y⟫ := by
+        rw [ @norm_sub_sq ℝ ] ; norm_num [ hS_norm x hx, hS_norm y hy ] ; ring;
+      have h_norm_sq_c : ‖x - y‖^2 = c^2 := by
+        rw [ hxy_eq, norm_smul, hu, Real.norm_eq_abs, abs_eq_max_neg, max_def ] ; split_ifs <;> ring;
+      have h_norm_sq_x : ‖x‖^2 = ‖y + c • u‖^2 := by
+        rw [ ← hxy_eq, add_sub_cancel ];
+      have h_norm_sq_y : ‖y + c • u‖^2 = 1 + 2 * c * ⟪y, u⟫ + c^2 := by
+        rw [ @norm_add_sq ℝ ] ; simp +decide [ *, inner_smul_right ] ; ring_nf;
+        simp +decide [ norm_smul, hu ];
+      have h_c_zero_or_neg_two_beta : c = 0 ∨ c = -2 * ⟪y, u⟫ := by
+        exact Classical.or_iff_not_imp_left.2 fun h => mul_left_cancel₀ h <| by nlinarith [ hS_norm x hx, hS_norm y hy ] ;
+      grind
+
+
 open Classical
 open scoped RealInnerProductSpace
 open scoped InnerProductSpace
@@ -385,6 +445,12 @@ theorem rankin_finset_bound
   · assumption;
   · norm_num [ RCLike.wInner ] at * ; aesop;
 
+
+
+
+
+
+
 lemma shifted_ne_zero_of_alpha_lt_one
     {n : ℕ} (hn : 0 < n) {α : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1) (x : BitVec n) :
     shifted α x ≠ 0 := by
@@ -400,6 +466,7 @@ lemma shifted_ne_zero_of_alpha_lt_one
   · have hform : shifted α x i = (1 : ℝ) - α := by
       simp [shifted, pmOne, ones, hx]
     linarith
+
 
 theorem binary_johnson_card_bound_parametric
     {n d w : ℕ}
@@ -479,6 +546,7 @@ theorem binary_johnson_card_bound_parametric
       simp +decide [ normalize, RCLike.wInner ] ; ring_nf;
       simp +decide only [mul_assoc, mul_left_comm, Finset.mul_sum _ _ _];
     exact h_inner_simplified.symm ▸ mul_nonpos_of_nonneg_of_nonpos ( one_div_nonneg.mpr ( mul_nonneg ( norm_nonneg _ ) ( norm_nonneg _ ) ) ) hbase
+
 
   have h_rankin : U.card ≤ 2 * n := rankin_finset_bound (n := n) U hunitU hpairU
   simpa [hcardU] using h_rankin

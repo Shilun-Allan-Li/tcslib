@@ -5,7 +5,7 @@
 This module formalises the classical polynomial-time reduction from 3-SAT to
 3-Coloring.  Given a 3-SAT instance over Boolean variables, a gadget graph is
 constructed whose vertices are palette nodes, literal nodes, and six-node clause
-gadgets; the main result (\lean{SATtoColor.SATtoColorReduction}) states that the
+gadgets; the main result (\texttt{SATtoColor.SATtoColorReduction}) states that the
 formula is satisfiable if and only if the reduction graph admits a proper
 3-coloring.
 
@@ -24,7 +24,7 @@ either a positive or a negative occurrence of some variable.
 \lean{SATtoColor.SatisfiesLiteral}
 \leanok
 Given a Boolean assignment $\mathrm{assign} : V \to \mathrm{Bool}$, the
-function $\lean{SATtoColor.SatisfiesLiteral}$ evaluates a literal: a positive
+function $\texttt{SATtoColor.SatisfiesLiteral}$ evaluates a literal: a positive
 literal $\mathrm{pos}(v)$ evaluates to $\mathrm{assign}(v)$, and a negative
 literal $\mathrm{neg}(v)$ evaluates to $\neg\,\mathrm{assign}(v)$.
 \end{definition}
@@ -93,7 +93,7 @@ $(\neg x_0 \vee \neg x_1 \vee \neg x_3)$.
 \lean{SATtoColor.SAT3_Example.ex_assign_1}
 \leanok
 A concrete Boolean assignment for the example instance
-$\lean{SATtoColor.SAT3_Example.sat3_inst}$, defined as the vector
+$\texttt{SATtoColor.SAT3\_Example.sat3\_inst}$, defined as the vector
 $[{\tt true},\,{\tt true},\,{\tt false},\,{\tt false}]$ indexed by
 $\mathrm{Fin}\,4$.
 \end{definition}

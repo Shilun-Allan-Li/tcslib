@@ -93,12 +93,12 @@ $\varphi(0) = 0$ and $\varphi'(0) = 0$.
 \leanok
 \uses{bernoulli_mgf_bound, weighted_exp_le_affine}
 \difficulty{5}
-Under the same hypotheses as \lean{hoeffding_log_mgf_weak}, the tighter bound holds:
+Under the same hypotheses as \texttt{hoeffding\_log\_mgf\_weak}, the tighter bound holds:
 \[
   \ln\!\Bigl(\sum_{i} p_i\,e^{-\eta\,\ell_i}\Bigr)
   \;\le\;
   -\eta L + \frac{\eta^2}{8}.
 \]
-This follows by first applying \lean{weighted_exp_le_affine} and then
-\lean{bernoulli_mgf_bound}.
+This follows by first applying \texttt{weighted\_exp\_le\_affine} and then
+\texttt{bernoulli\_mgf\_bound}.
 \end{theorem}

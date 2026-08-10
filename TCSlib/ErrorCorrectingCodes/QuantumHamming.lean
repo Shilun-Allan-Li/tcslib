@@ -5,6 +5,7 @@ import Mathlib.RingTheory.PicardGroup
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic
 
+
 set_option linter.mathlibStandardSet false
 
 open scoped BigOperators
@@ -77,6 +78,7 @@ def PauliBasis.toMatrix : PauliBasis → Matrix (Fin 2) (Fin 2) ℂ
 | PauliBasis.Y => sigmaY
 | PauliBasis.Z => sigmaZ
 
+
 /-- An n-qubit Pauli string: a function assigning a Pauli basis element to each of the n qubits. -/
 def PauliString (n : ℕ) := Fin n → PauliBasis
 
@@ -117,6 +119,7 @@ def PauliNZ.toBasis : PauliNZ → PauliBasis
 lemma PauliNZ.toBasis_ne_I : ∀ a : PauliNZ, a.toBasis ≠ PauliBasis.I := by
   intro a; cases a <;> simp [PauliNZ.toBasis]
 
+
 /-- Constructs a Pauli string with support exactly `S` and non-identity assignments given by `f`. -/
 def mkWithSupport {n : ℕ} (S : Finset (Fin n)) (f : S → PauliNZ) : PauliString n :=
   fun i => if h : i ∈ S then (f ⟨i, h⟩).toBasis else PauliBasis.I
@@ -127,9 +130,11 @@ lemma support_mkWithSupport {n : ℕ} (S : Finset (Fin n)) (f : S → PauliNZ) :
   ext i
   simp [support, mkWithSupport, PauliNZ.toBasis_ne_I]
 
+
 /-- The finset of Pauli strings with support exactly equal to `S`. -/
 def pauliStringsExactSupport {n : ℕ} (S : Finset (Fin n)) : Finset (PauliString n) :=
   Finset.filter (fun p => support p = S) Finset.univ
+
 
 lemma card_pauliStringsExactSupport {n : ℕ} (S : Finset (Fin n)) :
     (pauliStringsExactSupport (n:=n) S).card = 3 ^ S.card := by
@@ -166,6 +171,7 @@ lemma card_pauliStringsExactSupport {n : ℕ} (S : Finset (Fin n)) :
       rcases f_i : f i with ( _ | _ | _ ) <;> rcases g_i : g i with ( _ | _ | _ ) <;> simp_all +decide [ PauliNZ.toBasis ]
     exact funext h_eq;
 
+
 /-- Clean Quantum Hamming counting identity. -/
 theorem card_pauliErrorsLe (n t : ℕ) :
     (PauliErrorsLe n t).card = ∑ j ∈ Finset.range (t + 1), n.choose j * 3 ^ j := by
@@ -196,6 +202,7 @@ theorem card_pauliErrorsLe (n t : ℕ) :
     subst a_1
     simp_all only [not_true_eq_false];
 
+
 /-- The n-qubit Hilbert space ℂ^(2^n), realized as a Euclidean space indexed by `Fin n → Fin 2`. -/
 abbrev Hn (n : ℕ) := EuclideanSpace ℂ (Fin n → Fin 2)
 
@@ -209,6 +216,7 @@ noncomputable def pauliOp {n : ℕ} (p : PauliString n) : Hn n →ₗ[ℂ] Hn n 
 /-- The adjoint (Hermitian conjugate) of the Pauli operator for `p`. -/
 noncomputable def pauliOpAdjoint {n : ℕ} (p : PauliString n) : Hn n →ₗ[ℂ] Hn n :=
   Matrix.toEuclideanLin (pauliMatrix p).conjTranspose
+
 
 instance (n : ℕ) (C : Submodule ℂ (Hn n)) : FiniteDimensional ℂ (↥C) :=
   FiniteDimensional.finiteDimensional_submodule C
@@ -234,6 +242,11 @@ lemma codeProj_eq_self_of_mem {n : ℕ} {C : Submodule ℂ (Hn n)} {x : Hn n} (h
     intros x hx
     apply Submodule.starProjection_eq_self_iff.mpr hx;
   apply h_proj; assumption
+
+lemma codeProj_idempotent {n : ℕ} (C : Submodule ℂ (Hn n)) (x : Hn n) :
+    codeProj C (codeProj C x) = codeProj C x := by
+  apply codeProj_eq_self_of_mem (C:=C)
+  exact codeProj_mem C x
 
 /-- The Knill–Laflamme quantum error correction condition: for all Pauli errors `E`, `F` of weight
 ≤ t, the code projection satisfies `Π_C ∘ E† ∘ F ∘ Π_C = α_{E,F} • Π_C` for some scalar. -/
@@ -297,6 +310,7 @@ lemma error_subspaces_orthogonal {n t : ℕ} {C : Submodule ℂ (Hn n)}
   apply h_ortho
   · simp_all only
   · simp_all only;
+
 
   /-
    proof in hsort:
@@ -464,6 +478,7 @@ theorem quantum_hamming_bound_raw
     simpa [finrank_Hn n] using this
 
   simpa [h_sphere] using h_le
+
 
 /-- Quantum Hamming bound: a non-degenerate `[[n, k]]` quantum code correcting t errors satisfies
 `∑ j ∈ Finset.range (t + 1), C(n, j) * 3^j ≤ 2^(n - k)`. -/

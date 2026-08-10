@@ -49,7 +49,7 @@ multiplicative group $\{\pm 1\} \subset \mathbb{R}$.
 \difficulty{2}
 For all $a, b : \mathrm{Bool}$,
 \[
-  \lean{CommunicationComplexity.boolSign}(a \oplus b) \;=\; \lean{CommunicationComplexity.boolSign}(a) \cdot \lean{CommunicationComplexity.boolSign}(b).
+  \texttt{CommunicationComplexity.boolSign}(a \oplus b) \;=\; \texttt{CommunicationComplexity.boolSign}(a) \cdot \texttt{CommunicationComplexity.boolSign}(b).
 \]
 That is, $\texttt{boolSign}$ is a group homomorphism from $(\mathrm{Bool}, \oplus)$ to
 $(\{\pm 1\}, \cdot)$.
@@ -63,7 +63,7 @@ $(\{\pm 1\}, \cdot)$.
 For a finite type $\alpha$, a finite set $s : \mathrm{Finset}\,\alpha$, and a function
 $f : \alpha \to \mathrm{Bool}$,
 \[
-  \lean{CommunicationComplexity.boolSign}\!\left(\sum_{i \in s} f(i)\right)
+  \texttt{CommunicationComplexity.boolSign}\!\left(\sum_{i \in s} f(i)\right)
   \;=\; \prod_{i \in s} \texttt{boolSign}(f(i)).
 \]
 \end{lemma}
@@ -75,7 +75,7 @@ $f : \alpha \to \mathrm{Bool}$,
 \difficulty{2}
 For all $a, b : \mathrm{Bool}$,
 \[
-  \lean{CommunicationComplexity.boolSign}(a) \cdot \lean{CommunicationComplexity.boolSign}(b)
+  \texttt{CommunicationComplexity.boolSign}(a) \cdot \texttt{CommunicationComplexity.boolSign}(b)
   \;=\; 1 - 2 \cdot \mathbf{1}[a \ne b].
 \]
 In other words, the product of two $\pm 1$ signs equals $1$ when the bits agree and

@@ -17,7 +17,7 @@ and proves both completeness and soundness of that correspondence.
 \leanok
 Given a Boolean assignment $\mathit{assign} : V \to \mathtt{Bool}$ and a
 Not-All-Equal clause $c$ with three variables $c.v_0, c.v_1, c.v_2$,
-$\lean{NAEtoColor.SatisfiesClause}$ returns $\mathtt{true}$ if and only if
+$\texttt{NAEtoColor.SatisfiesClause}$ returns $\mathtt{true}$ if and only if
 the three assigned values are \emph{not} all equal, i.e.\ at least two of
 $\mathit{assign}(c.v_0)$, $\mathit{assign}(c.v_1)$, $\mathit{assign}(c.v_2)$
 differ.
@@ -27,7 +27,7 @@ differ.
 \lean{NAEtoColor.NAESat3}
 \leanok
 A NAE-SAT instance over variable type $V$ is defined as a list of NAE clauses,
-i.e.\ $\lean{NAEtoColor.NAESat3}\;V = \mathtt{List}\;(\mathtt{NAEclause}\;V)$.
+i.e.\ $\texttt{NAEtoColor.NAESat3}\;V = \mathtt{List}\;(\mathtt{NAEclause}\;V)$.
 \end{definition}
 
 \begin{definition}[Global NAE-SAT satisfaction]
@@ -35,9 +35,9 @@ i.e.\ $\lean{NAEtoColor.NAESat3}\;V = \mathtt{List}\;(\mathtt{NAEclause}\;V)$.
 \leanok
 \uses{NAEtoColor.NAESat3, NAEtoColor.SatisfiesClause}
 Given an assignment $\mathit{assign} : V \to \mathtt{Bool}$ and a NAE-SAT
-instance $f$, $\lean{NAEtoColor.SatisfiesNAE3}$ returns $\mathtt{true}$ if
+instance $f$, $\texttt{NAEtoColor.SatisfiesNAE3}$ returns $\mathtt{true}$ if
 and only if every clause in $f$ is satisfied by $\mathit{assign}$
-(i.e.\ $\lean{NAEtoColor.SatisfiesClause}$ holds for each clause).
+(i.e.\ $\texttt{NAEtoColor.SatisfiesClause}$ holds for each clause).
 \end{definition}
 
 \begin{definition}[NAE-SAT satisfiability]
@@ -46,7 +46,7 @@ and only if every clause in $f$ is satisfied by $\mathit{assign}$
 \uses{NAEtoColor.NAESat3, NAEtoColor.SatisfiesNAE3}
 A NAE-SAT instance $f$ over variable type $V$ is \emph{satisfiable} if there
 exists a Boolean assignment $\mathit{assign} : V \to \mathtt{Bool}$ such that
-$\lean{NAEtoColor.SatisfiesNAE3}\;\mathit{assign}\;f = \mathtt{true}$.
+$\texttt{NAEtoColor.SatisfiesNAE3}\;\mathit{assign}\;f = \mathtt{true}$.
 \end{definition}
 
 \begin{definition}[Example NAE-SAT instance]
@@ -62,7 +62,7 @@ $\langle 0,1,2\rangle$, $\langle 0,1,3\rangle$, $\langle 0,2,4\rangle$.
 \leanok
 A concrete Boolean assignment for $\mathrm{Fin}\,5$ given by
 $\![{\mathtt{true}},{\mathtt{true}},{\mathtt{false}},{\mathtt{false}},{\mathtt{false}}]$,
-which witnesses satisfiability of \lean{NAEtoColor.NAE_SAT_Example.nae_sat_eg}.
+which witnesses satisfiability of \texttt{NAEtoColor.NAE\_SAT\_Example.nae\_sat\_eg}.
 \end{definition}
 
 \begin{definition}[3-colorability]
@@ -92,7 +92,7 @@ constructors:
 \leanok
 \uses{NAEtoColor.NAESat3, NAEtoColor.OutputVertex}
 Given a NAE-SAT instance $\mathit{clauses}$, the directed edge relation on
-$\lean{NAEtoColor.OutputVertex}\;V$ is defined by:
+$\texttt{NAEtoColor.OutputVertex}\;V$ is defined by:
 (1) $\mathtt{groundNode}$ is adjacent to every $\mathtt{varNode}$;
 (2) $\mathtt{varNode}\;v$ is adjacent to $\mathtt{clauseNode}\;c\;i$ when $v$
 is the $i$-th variable of clause $c$;
@@ -106,9 +106,9 @@ All other pairs are non-adjacent.
 \lean{NAEtoColor.ReductionGraph}
 \leanok
 \uses{NAEtoColor.EdgeRelation, NAEtoColor.NAESat3, NAEtoColor.OutputVertex}
-Given a NAE-SAT instance $f$, $\lean{NAEtoColor.ReductionGraph}\;f$ is the
-simple graph on $\lean{NAEtoColor.OutputVertex}\;V$ whose adjacency is the
-symmetrization of $\lean{NAEtoColor.EdgeRelation}\;f$ restricted to distinct
+Given a NAE-SAT instance $f$, $\texttt{NAEtoColor.ReductionGraph}\;f$ is the
+simple graph on $\texttt{NAEtoColor.OutputVertex}\;V$ whose adjacency is the
+symmetrization of $\texttt{NAEtoColor.EdgeRelation}\;f$ restricted to distinct
 pairs (no self-loops).
 \end{definition}
 
@@ -132,7 +132,7 @@ coloring of all vertices of the reduction graph by:
 $\mathtt{groundNode} \mapsto 0$;
 $\mathtt{varNode}\;v \mapsto 1$ if $\mathit{assign}(v) = \mathtt{true}$, else $2$;
 $\mathtt{clauseNode}\;c\;k \mapsto
-\lean{NAEtoColor.clauseNodeColor}\;(\mathit{assign}(c.v_0))\;(\mathit{assign}(c.v_1))\;(\mathit{assign}(c.v_2))\;k$.
+\texttt{NAEtoColor.clauseNodeColor}\;(\mathit{assign}(c.v_0))\;(\mathit{assign}(c.v_1))\;(\mathit{assign}(c.v_2))\;k$.
 \end{definition}
 
 \begin{lemma}[Completeness of reduction]
@@ -141,9 +141,9 @@ $\mathtt{clauseNode}\;c\;k \mapsto
 \uses{NAEtoColor.EdgeRelation, NAEtoColor.Is3Colorable, NAEtoColor.IsSatisfiable, NAEtoColor.NAESat3, NAEtoColor.OutputVertex, NAEtoColor.ReductionGraph, NAEtoColor.SatisfiesClause, NAEtoColor.clauseNodeColor, NAEtoColor.naeColoring}
 \difficulty{5}
 If a NAE-SAT instance $f$ over variable type $V$ is satisfiable, then the
-reduction graph $\lean{NAEtoColor.ReductionGraph}\;f$ is 3-colorable.
+reduction graph $\texttt{NAEtoColor.ReductionGraph}\;f$ is 3-colorable.
 Concretely, any satisfying assignment yields the proper coloring
-$\lean{NAEtoColor.naeColoring}$.
+$\texttt{NAEtoColor.naeColoring}$.
 \end{lemma}
 
 \begin{lemma}[Soundness of reduction]
@@ -151,7 +151,7 @@ $\lean{NAEtoColor.naeColoring}$.
 \leanok
 \uses{NAEtoColor.EdgeRelation, NAEtoColor.Is3Colorable, NAEtoColor.IsSatisfiable, NAEtoColor.NAESat3, NAEtoColor.OutputVertex, NAEtoColor.ReductionGraph, NAEtoColor.SatisfiesClause, NAEtoColor.SatisfiesNAE3}
 \difficulty{6}
-If the reduction graph $\lean{NAEtoColor.ReductionGraph}\;f$ is 3-colorable,
+If the reduction graph $\texttt{NAEtoColor.ReductionGraph}\;f$ is 3-colorable,
 then the NAE-SAT instance $f$ is satisfiable.
 The assignment is recovered by comparing each variable-node color to the
 ``true'' color (ground color $+1 \pmod{3}$); the triangle gadgets within each
@@ -166,9 +166,9 @@ NAE-satisfying assignment.
 \difficulty{1}
 For any NAE-SAT instance $f$ over variable type $V$,
 \[
-  \lean{NAEtoColor.IsSatisfiable}\;f
+  \texttt{NAEtoColor.IsSatisfiable}\;f
   \;\iff\;
-  \lean{NAEtoColor.Is3Colorable}\;(\lean{NAEtoColor.ReductionGraph}\;f).
+  \texttt{NAEtoColor.Is3Colorable}\;(\texttt{NAEtoColor.ReductionGraph}\;f).
 \]
 This is the main reduction theorem, combining completeness and soundness.
 \end{theorem}

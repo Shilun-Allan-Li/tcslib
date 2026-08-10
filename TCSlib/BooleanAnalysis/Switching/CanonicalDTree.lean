@@ -37,6 +37,30 @@ lemma numFree_update_lt {n : ℕ} (ρ : Restriction n) (v : Fin n) (b : Bool)
     rw [← heq] at hv
     exact hv_not hv
 
+private lemma exists_free_of_not_killed_not_fixed {n : ℕ} (f : DNF n) (ρ : Restriction n)
+    (h1 : ¬∀ t ∈ f, Term.killedBy t ρ) (h2 : ¬∃ t ∈ f, Term.fixedBy t ρ) :
+    ∃ v : Fin n, v ∈ ρ.freeVars := by
+  by_contra hall
+  push_neg at hall
+  apply h1; intro t ht
+  by_contra ht_nk
+  apply h2; refine ⟨t, ht, fun l hl => ?_⟩
+  have hass : l.var ∉ ρ.freeVars := hall l.var
+  simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and] at hass
+  simp only [Option.isNone_iff_eq_none] at hass
+  cases hv : ρ l.var with
+  | none => exact absurd hv hass
+  | some b =>
+    show ρ l.var = some (!l.neg)
+    by_cases hbl : b = l.neg
+    · exfalso; exact ht_nk ⟨l, hl, by simp only [Literal.killedBy]; rw [hv, hbl]⟩
+    · rw [hv]; congr 1
+      cases b <;> cases hln : l.neg
+      · exfalso; rw [hln] at hbl; exact hbl rfl
+      · rfl
+      · rfl
+      · exfalso; rw [hln] at hbl; exact hbl rfl
+
 noncomputable def selectBranchVar {n : ℕ} (f : DNF n) (ρ : Restriction n) :
     Option (Fin n) :=
   match f.find? (fun t => decide (¬Term.killedBy t ρ)) with
@@ -568,6 +592,57 @@ lemma termSubTree_deepPath_var_match {n : ℕ} :
       simp only [heq] at hk_path ⊢
       exact ih ρ cont (List.pairwise_cons.mp hdistinct).2 k hk hk_path
 
+/-
+The deepPath of `termSubTree` decomposes into entries for the free literals
+    followed by the continuation's deepPath at the resulting restriction.
+-/
+lemma termSubTree_deepPath_append {n : ℕ} :
+    ∀ (lits : List (Literal n)) (ρ : Restriction n)
+      (cont : Restriction n → DecisionTree n)
+      (_hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var)),
+      ∃ (ρ' : Restriction n),
+        (∀ v, v ∉ (lits.map Literal.var).toFinset → (ρ' v = ρ v)) ∧
+        (termSubTree lits ρ cont).deepPath.length =
+          (lits.filter (fun l => decide (l.var ∈ ρ.freeVars))).length +
+          (cont ρ').deepPath.length := by
+  intro lits ρ cont hdistinct; induction' lits with l lits ih generalizing ρ cont; simp_all +decide ;
+  · exact ⟨ ρ, fun _ => rfl, rfl ⟩;
+  · by_cases hfree : l.var ∈ ρ.freeVars;
+    · -- The deepPath of the branch is the deepPath of the chosen branch plus one.
+      have h_branch : ∃ b : Bool, (termSubTree (l :: lits) ρ cont).deepPath = (l.var, b) :: (termSubTree lits (Function.update ρ l.var (some b)) cont).deepPath := by
+        convert termSubTree_deepPath_head_free l lits ρ cont hfree using 1;
+      obtain ⟨ b, hb ⟩ := h_branch;
+      obtain ⟨ ρ', hρ', hρ'' ⟩ := ih ( Function.update ρ l.var ( some b ) ) cont ( List.Pairwise.tail hdistinct ) ; use ρ'; simp_all +decide ;
+      rw [ add_right_comm, filter_free_update_eq ];
+      exact fun x hx => Ne.symm ( hdistinct.1 x hx );
+    · rw [ termSubTree_cons_nonfree ];
+      · obtain ⟨ ρ', hρ₁, hρ₂ ⟩ := ih ρ cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use ρ'; simp_all +decide ;
+      · assumption
+
+/-
+The deepPath of `termSubTree` splits into a prefix (for the free literals)
+    appended with the continuation's deepPath.
+-/
+lemma termSubTree_deepPath_split {n : ℕ} :
+    ∀ (lits : List (Literal n)) (ρ : Restriction n)
+      (cont : Restriction n → DecisionTree n)
+      (_hdistinct : lits.Pairwise (fun l₁ l₂ => l₁.var ≠ l₂.var)),
+      ∃ (prefix_dp : List (Fin n × Bool)) (ρ' : Restriction n),
+        (termSubTree lits ρ cont).deepPath = prefix_dp ++ (cont ρ').deepPath ∧
+        prefix_dp.length = (lits.filter (fun l => decide (l.var ∈ ρ.freeVars))).length ∧
+        (∀ v, v ∉ (lits.map Literal.var).toFinset → ρ' v = ρ v) := by
+  intro lits ρ cont hdistinct
+  induction' lits with l lits ih generalizing ρ cont;
+  · exact ⟨ [ ], ρ, rfl, rfl, fun _ _ => rfl ⟩;
+  · by_cases hfree : l.var ∈ ρ.freeVars;
+    · obtain ⟨ b, hb ⟩ := termSubTree_deepPath_head_free l lits ρ cont hfree;
+      obtain ⟨ prefix_dp, ρ', h₁, h₂, h₃ ⟩ := ih ( Function.update ρ l.var ( some b ) ) cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use ( l.var, b ) :: prefix_dp, ρ'; simp_all +decide ;
+      rw [ filter_free_update_eq ];
+      exact fun x hx => Ne.symm ( hdistinct.1 x hx );
+    · rw [ termSubTree_cons_nonfree ];
+      · obtain ⟨ prefix_dp, ρ', h₁, h₂, h₃ ⟩ := ih ρ cont ( List.pairwise_cons.mp hdistinct |>.2 ) ; use prefix_dp, ρ'; simp_all +decide ;
+      · assumption
+
 /-- **`canonicalDTree.go` in the alive branch delegates to `termSubTree`**.
     When the three guards (killed/fixed/find?) take us to the alive branch
     and the first non-killed clause is `t`, `canonicalDTree.go f (fuel+1) ρ`
@@ -601,6 +676,37 @@ lemma canonicalDTree_alive_eq_termSubTree' {n : ℕ} (f : DNF n) (ρ : Restricti
         else canonicalDTree.go f ρ.numFree ρ') := by
   show canonicalDTree.go f (ρ.numFree + 1) ρ = _
   exact canonicalDTree_alive_eq_termSubTree f ρ ρ.numFree h1 h2 t hfind
+
+/-- Skipping a non-free prefix in `termSubTree`. -/
+private lemma termSubTree_skip_nonfree_prefix' {n : ℕ}
+    (prefix_lits : List (Literal n)) (rest : List (Literal n))
+    (ρ : Restriction n) (cont : Restriction n → DecisionTree n)
+    (hnonfree : ∀ l ∈ prefix_lits, l.var ∉ Restriction.freeVars ρ) :
+    termSubTree (prefix_lits ++ rest) ρ cont = termSubTree rest ρ cont := by
+  induction prefix_lits with
+  | nil => simp
+  | cons l rest' ih =>
+    rw [List.cons_append]
+    rw [termSubTree_cons_nonfree l _ ρ cont (hnonfree l List.mem_cons_self)]
+    exact ih (fun l' hl' => hnonfree l' (List.mem_cons_of_mem _ hl'))
+
+/-- **Auxiliary (ii)**: `termSubTree t (update ρ l.var (some b))` skips the
+    now-fixed `l.var` and proceeds through the remaining literals. Specifically,
+    `termSubTree (l :: rest_lits) (update ρ l.var (some b)) cont` equals
+    `termSubTree rest_lits (update ρ l.var (some b)) cont` because after the
+    update, `l.var ∉ (update ρ l.var (some b)).freeVars`, so `termSubTree`
+    takes the non-free branch at `l`. -/
+private lemma termSubTree_skip_updated_head {n : ℕ}
+    (l : Literal n) (rest_lits : List (Literal n))
+    (ρ : Restriction n) (cont : Restriction n → DecisionTree n)
+    (v : Fin n) (b : Bool) (hv_eq : l.var = v) :
+    termSubTree (l :: rest_lits) (Function.update ρ v (some b)) cont =
+    termSubTree rest_lits (Function.update ρ v (some b)) cont := by
+  apply termSubTree_cons_nonfree
+  rw [← hv_eq]
+  simp only [Restriction.freeVars, Finset.mem_filter, Finset.mem_univ, true_and,
+             Option.isNone_iff_eq_none, Function.update_apply]
+  simp
 
 /-! ## Depth bounds -/
 

@@ -30,6 +30,16 @@ def numFree {n : ℕ} (ρ : Restriction n) : ℕ := ρ.freeVars.card
 def extend {n : ℕ} (ρ : Restriction n) (x : Fin n → Bool) : Fin n → Bool :=
   fun i => (ρ i).getD (x i)
 
+/-- Fix a list of (variable, value) pairs in a restriction. -/
+def fixVars {n : ℕ} : Restriction n → List (Fin n × Bool) → Restriction n
+  | ρ, [] => ρ
+  | ρ, (v, b) :: rest => fixVars (Function.update ρ v (some b)) rest
+
+/-- Un-fix a list of variables (set to `none`), restoring them to free. -/
+def unfixVars {n : ℕ} : Restriction n → List (Fin n × Bool) → Restriction n
+  | ρ, [] => ρ
+  | ρ, (v, _) :: rest => unfixVars (Function.update ρ v none) rest
+
 end Restriction
 
 private instance (n : ℕ) : Fintype (Restriction n) :=
@@ -181,6 +191,19 @@ lemma term_length_le_width {n : ℕ} (f : DNF n) (t : Term n) (ht : t ∈ f) :
     · exact le_max_left _ _
     · exact le_trans (ih h) (le_max_right _ _)
 
+/-- `zipIdx.find?` projecting to the first component agrees with `find?`. -/
+lemma zipIdx_find_to_find {α : Type*} (l : List α) (p : α → Bool)
+    (x : α) (idx : ℕ) (start : ℕ := 0)
+    (h : (l.zipIdx start).find? (fun ⟨a, _⟩ => p a) = some ⟨x, idx⟩) :
+    l.find? p = some x := by
+  induction l generalizing idx start with
+  | nil => simp [List.zipIdx] at h
+  | cons hd tl ih =>
+    simp only [List.zipIdx_cons, List.find?_cons] at h ⊢
+    by_cases hp : p hd
+    · simp [hp] at h ⊢; exact h.1
+    · simp [hp] at h ⊢; exact ih _ _ h
+
 /-- If `(l, idx) ∈ t.zipIdx`, then `t.drop idx` starts with `l`. -/
 lemma zipIdx_drop_spec {α : Type*} (t : List α) (l : α) (idx : ℕ)
     (h : (l, idx) ∈ t.zipIdx) : ∃ rest, t.drop idx = l :: rest := by
@@ -189,5 +212,14 @@ lemma zipIdx_drop_spec {α : Type*} (t : List α) (l : α) (idx : ℕ)
   have hlt : idx < t.length := by omega
   rw [heq]
   exact ⟨List.drop (idx + 1) t, List.drop_eq_getElem_cons hlt⟩
+
+/-- If `(l, idx)` comes from `t.zipIdx` filtered by a predicate, and `t` has
+    length ≤ w, then `idx < w`. -/
+lemma zipIdx_filter_idx_lt {α : Type*} (t : List α) (p : α × ℕ → Bool)
+    (l : α) (idx : ℕ) (w : ℕ) (hw : t.length ≤ w)
+    (h : (l, idx) ∈ (t.zipIdx).filter p) : idx < w := by
+  have hmem := (List.mem_filter.mp h).1
+  obtain ⟨_, hidx, _⟩ := List.mem_zipIdx hmem
+  simp at hidx; omega
 
 end SwitchingLemma2

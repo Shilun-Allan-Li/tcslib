@@ -51,6 +51,16 @@ lemma children_maxFanin_le (isAnd : Bool) (cs : List (Circuit n)) (c : Circuit n
     intros l hl; induction l <;> aesop;
   exact le_trans (h_foldr hc) (le_trans (le_max_right _ _) hw)
 
+lemma child_size_le_parent (isAnd : Bool) (cs : List (Circuit n)) (c : Circuit n) (hc : c ∈ cs)
+    {s : ℕ} (hs : (Circuit.node isAnd cs).size ≤ s) :
+    c.size ≤ s - 1 := by
+  -- Since $c$ is in $cs$, its size is included in the sum of the sizes of the children.
+  have h_c_in_cs : c.size ≤ cs.foldr (fun c acc => c.size + acc) 0 := by
+    induction cs <;> simp_all +arith +decide;
+    cases hc <;> simp_all +arith +decide [ Circuit.size ];
+    grind;
+  exact h_c_in_cs.trans ( children_size_sum_le isAnd cs hs )
+
 /-! ## Restriction and circuit evaluation -/
 
 lemma restrictFn_node_eval (isAnd : Bool) (cs : List (Circuit n)) (ρ : Restriction n) :

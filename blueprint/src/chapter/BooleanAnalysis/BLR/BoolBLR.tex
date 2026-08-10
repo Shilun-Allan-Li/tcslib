@@ -31,7 +31,7 @@ where $\oplus$ denotes bitwise XOR (i.e.\ \texttt{Bool.xor}).
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.BoolToPM1, BoolFourier.hypercube}
 Given $f : \{0,1\}^n \to \{0,1\}$, its \emph{$\pm 1$ lift}
-$\lean{BoolBLR.lift_pm1}\,f : \{0,1\}^n \to \mathbb{R}$ is defined by
+$\texttt{BoolBLR.lift\_pm1}\,f : \{0,1\}^n \to \mathbb{R}$ is defined by
 $x \mapsto (-1)^{f(x)}$, converting each Boolean output to a real sign via
 \texttt{BoolToPM1}.
 \end{definition}
@@ -64,7 +64,7 @@ $g : \{0,1\}^n \to \{0,1\}$ we have $\dist(f, g) \ge \varepsilon$.
 \difficulty{5}
 A Boolean function $f : \{0,1\}^n \to \{0,1\}$ is linear if and only if
 there exists a set $S \subseteq [n]$ such that the $\pm 1$ lift
-$\lean{BoolBLR.lift_pm1}\,f$ equals the Fourier character $\chi_S$.
+$\texttt{BoolBLR.lift\_pm1}\,f$ equals the Fourier character $\chi_S$.
 \end{lemma}
 
 \begin{definition}[BLR acceptance probability]
@@ -77,8 +77,8 @@ The \emph{BLR acceptance probability} of $f : \{0,1\}^n \to \{0,1\}$ is
   \;=\;
   \E_{x}\!\left[\E_{y}\!\left[
     \mathbf{1}\!\left[
-      \lean{BoolBLR.lift_pm1}\,f(x \oplus y)
-      = \lean{BoolBLR.lift_pm1}\,f(x)\cdot\lean{BoolBLR.lift_pm1}\,f(y)
+      \texttt{BoolBLR.lift\_pm1}\,f(x \oplus y)
+      = \texttt{BoolBLR.lift\_pm1}\,f(x)\cdot\texttt{BoolBLR.lift\_pm1}\,f(y)
     \right]
   \right]\right],
 \]
@@ -95,9 +95,9 @@ For any $f : \{0,1\}^n \to \{0,1\}$,
   \Pr[\text{BLR accepts}]
   \;=\;
   \frac{1 + \E_x\!\left[\E_y\!\left[
-    \lean{BoolBLR.lift_pm1}\,f(x)\cdot
-    \lean{BoolBLR.lift_pm1}\,f(y)\cdot
-    \lean{BoolBLR.lift_pm1}\,f(x \oplus y)
+    \texttt{BoolBLR.lift\_pm1}\,f(x)\cdot
+    \texttt{BoolBLR.lift\_pm1}\,f(y)\cdot
+    \texttt{BoolBLR.lift\_pm1}\,f(x \oplus y)
   \right]\right]}{2}.
 \]
 \end{lemma}
@@ -121,7 +121,7 @@ For any $f : \{0,1\}^n \to \mathbb{R}$,
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{3}
 For any $f : \{0,1\}^n \to \{0,1\}$, letting $\hat{g}(S)$ denote the Fourier
-coefficient of $g = \lean{BoolBLR.lift_pm1}\,f$,
+coefficient of $g = \texttt{BoolBLR.lift\_pm1}\,f$,
 \[
   \E_x\!\left[\E_y\!\left[g(x)\,g(y)\,g(x \oplus y)\right]\right]
   \;=\;
@@ -135,9 +135,9 @@ coefficient of $g = \lean{BoolBLR.lift_pm1}\,f$,
 \uses{BoolBLR.bool_dist, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.card_hypercube, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product}
 \difficulty{3}
 Let $f, g : \{0,1\}^n \to \{0,1\}$, let $S \subseteq [n]$, and suppose
-$\lean{BoolBLR.lift_pm1}\,g = \chi_S$ and $\dist(f, g) \ge \varepsilon$.
-Then the Fourier coefficient of $\lean{BoolBLR.lift_pm1}\,f$ at $S$
-satisfies $\widehat{\lean{BoolBLR.lift_pm1}\,f}(S) \le 1 - 2\varepsilon$.
+$\texttt{BoolBLR.lift\_pm1}\,g = \chi_S$ and $\dist(f, g) \ge \varepsilon$.
+Then the Fourier coefficient of $\texttt{BoolBLR.lift\_pm1}\,f$ at $S$
+satisfies $\widehat{\texttt{BoolBLR.lift\_pm1}\,f}(S) \le 1 - 2\varepsilon$.
 \end{lemma}
 
 \begin{lemma}[Fourier coefficient bound when $\varepsilon$-far from linear]
@@ -148,7 +148,7 @@ satisfies $\widehat{\lean{BoolBLR.lift_pm1}\,f}(S) \le 1 - 2\varepsilon$.
 If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then for
 every $S \subseteq [n]$,
 \[
-  \widehat{\lean{BoolBLR.lift_pm1}\,f}(S) \;\le\; 1 - 2\varepsilon.
+  \widehat{\texttt{BoolBLR.lift\_pm1}\,f}(S) \;\le\; 1 - 2\varepsilon.
 \]
 \end{lemma}
 
@@ -158,9 +158,9 @@ every $S \subseteq [n]$,
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 \difficulty{2}
 If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then the
-sum of cubed Fourier coefficients of $\lean{BoolBLR.lift_pm1}\,f$ satisfies
+sum of cubed Fourier coefficients of $\texttt{BoolBLR.lift\_pm1}\,f$ satisfies
 \[
-  \sum_{S \subseteq [n]} \widehat{\lean{BoolBLR.lift_pm1}\,f}(S)^3
+  \sum_{S \subseteq [n]} \widehat{\texttt{BoolBLR.lift\_pm1}\,f}(S)^3
   \;\le\; 1 - 2\varepsilon.
 \]
 This follows by combining the per-coefficient bound $\hat{f}(S) \le 1-2\varepsilon$
@@ -173,7 +173,7 @@ with the Parseval identity $\sum_S \hat{f}(S)^2 = 1$.
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{1}
 If $f : \{0,1\}^n \to \{0,1\}$ is linear, then
-$\lean{BoolBLR.BLR_accept_prob}\,f = 1$; that is, the BLR test accepts
+$\texttt{BoolBLR.BLR\_accept\_prob}\,f = 1$; that is, the BLR test accepts
 every linear function with probability $1$.
 \end{lemma}
 
@@ -184,7 +184,7 @@ every linear function with probability $1$.
 \difficulty{1}
 If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then
 \[
-  \lean{BoolBLR.BLR_accept_prob}\,f \;\le\; 1 - \varepsilon.
+  \texttt{BoolBLR.BLR\_accept\_prob}\,f \;\le\; 1 - \varepsilon.
 \]
 That is, a function that is $\varepsilon$-far from every linear function
 causes the BLR test to reject with probability at least $\varepsilon$.
@@ -233,7 +233,7 @@ For every $S \subseteq [n]$ and all $x, y \in \{0,1\}^n$,
 \lean{BoolBLR.linear_bool_iff_character_aux_h_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
-Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $\lean{BoolBLR.lift_pm1}\,f = \chi_S$
+Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$
 for some $S \subseteq [n]$, and let $x, y \in \{0,1\}^n$.  Assuming the
 multiplicativity identity $\chi_S(x \oplus y) = \chi_S(x)\chi_S(y)$, one has
 \[
@@ -255,7 +255,7 @@ $f(e_i) = \texttt{true}$.
 \lean{BoolBLR.linear_bool_iff_character_aux_h_eq_h}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolBLR.linear_bool_iff_character_aux_h_char, BoolBLR.linear_bool_iff_character_aux_h_eq, BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
-If $\lean{BoolBLR.lift_pm1}\,f = \chi_S$ for some $S \subseteq [n]$, then for
+If $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$ for some $S \subseteq [n]$, then for
 all $x, y \in \{0,1\}^n$,
 \[
   (-1)^{f(x \oplus y)} \;=\; (-1)^{f(x) \oplus f(y)}.
@@ -267,7 +267,7 @@ This is the previous lemma with the multiplicativity hypothesis discharged.
 \lean{BoolBLR.BLR_accept_prob_pm1_aux_h_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, BoolFourier.xor_vec}
-Write $g = \lean{BoolBLR.lift_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
+Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
 \[
   \mathbf{1}\!\left[g(x \oplus y) = g(x)\,g(y)\right]
   \;=\;
@@ -279,7 +279,7 @@ Write $g = \lean{BoolBLR.lift_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
 \lean{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_convolution}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
-Write $g = \lean{BoolBLR.lift_pm1}\,f$.  For every $x \in \{0,1\}^n$,
+Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For every $x \in \{0,1\}^n$,
 \[
   (g * g)(x) \;=\; \sum_{S \subseteq [n]} \hat{g}(S)^2\,\chi_S(x),
 \]
@@ -290,7 +290,7 @@ i.e.\ the self-convolution of $g$ has Fourier coefficients $\hat{g}(S)^2$.
 \lean{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_substitute}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
-Write $g = \lean{BoolBLR.lift_pm1}\,f$ and assume
+Write $g = \texttt{BoolBLR.lift\_pm1}\,f$ and assume
 $(g * g)(x) = \sum_S \hat{g}(S)^2 \chi_S(x)$ for all $x$.  Then
 \[
   \E_x\!\left[g(x)\,(g * g)(x)\right]
@@ -314,7 +314,7 @@ For all $f, g : \{0,1\}^n \to \{0,1\}$ and every $x \in \{0,1\}^n$,
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 For every $f : \{0,1\}^n \to \{0,1\}$, the $\pm 1$ lift
-$g = \lean{BoolBLR.lift_pm1}\,f$ has unit Fourier mass:
+$g = \texttt{BoolBLR.lift\_pm1}\,f$ has unit Fourier mass:
 \[
   \sum_{S \subseteq [n]} \hat{g}(S)^2 \;=\; 1.
 \]
@@ -325,7 +325,7 @@ $g = \lean{BoolBLR.lift_pm1}\,f$ has unit Fourier mass:
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube}
 Let $f : \{0,1\}^n \to \{0,1\}$ be $\varepsilon$-far from linear and write
-$g = \lean{BoolBLR.lift_pm1}\,f$.  Then for every $S \subseteq [n]$,
+$g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then for every $S \subseteq [n]$,
 \[
   \hat{g}(S)^3 \;\le\; \hat{g}(S)^2\,(1 - 2\varepsilon).
 \]
@@ -344,7 +344,7 @@ $f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$.
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.hypercube, BoolFourier.xor_vec}
 Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $f(x \oplus y) = f(x) \oplus f(y)$ for
-all $x, y$, and write $g = \lean{BoolBLR.lift_pm1}\,f$.  Then $g$ is
+all $x, y$, and write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then $g$ is
 multiplicative on XOR:
 \[
   g(x \oplus y) \;=\; g(x)\,g(y) \qquad \text{for all } x, y \in \{0,1\}^n.

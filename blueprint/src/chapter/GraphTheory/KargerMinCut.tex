@@ -92,7 +92,7 @@ in $S$.
 \begin{definition}[Crossing predicate for an unordered edge]
 \lean{Crosses}
 \leanok
-For a finite set $S$ and an unordered pair $e$, the predicate $\lean{Crosses}\;S\;e$
+For a finite set $S$ and an unordered pair $e$, the predicate $\texttt{Crosses}\;S\;e$
 holds when some element of $e$ lies in $S$ and some element of $e$ lies outside $S$.
 This is a membership-based formulation independent of a choice of representative.
 \end{definition}
@@ -101,7 +101,7 @@ This is a membership-based formulation independent of a choice of representative
 \lean{crosses_iff_out}
 \leanok
 \uses{Crosses}
-For every finite set $S$ and unordered pair $e$, the predicate $\lean{Crosses}\;S\;e$
+For every finite set $S$ and unordered pair $e$, the predicate $\texttt{Crosses}\;S\;e$
 holds if and only if, writing $(x, y)$ for the chosen representative of $e$, either
 $x \in S$ and $y \notin S$, or $x \notin S$ and $y \in S$.
 \end{lemma}
@@ -111,7 +111,7 @@ $x \in S$ and $y \notin S$, or $x \notin S$ and $y \in S$.
 \leanok
 \uses{Crosses, MulCut, MulCut.crossingEdges, Multigraph, crosses_iff_out}
 For every cut $C$ of $G$, the multiset of crossing edges equals the edge multiset of
-$G$ filtered by the predicate $\lean{Crosses}\;S$.
+$G$ filtered by the predicate $\texttt{Crosses}\;S$.
 \end{lemma}
 
 \begin{definition}[Size of a cut]

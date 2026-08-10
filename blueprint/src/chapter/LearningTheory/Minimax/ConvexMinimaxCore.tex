@@ -17,7 +17,7 @@ finite-intersection property) needed for the infinite-dimensional direction.
 \lean{OnlineLearning.arbitraryMixedStrategy}
 \leanok
 \uses{MixedStrategy}
-Given $n \geq 1$, \lean{OnlineLearning.arbitraryMixedStrategy} is a concrete
+Given $n \geq 1$, \texttt{OnlineLearning.arbitraryMixedStrategy} is a concrete
 element of $\mathrm{MixedStrategy}(n)$ that places all probability mass on a
 single arbitrarily chosen action. It is used solely to witness that the type
 of mixed strategies is nonempty.
@@ -133,7 +133,7 @@ algorithm, then passes to the limit in~$\varepsilon$.
 \lean{OnlineLearning.ConvexCompactMinimaxStatement}
 \leanok
 For sets $X, Y \subseteq \bbr$ and a payoff function $f : \bbr \to \bbr \to \bbr$,
-\lean{OnlineLearning.ConvexCompactMinimaxStatement} is the proposition
+\texttt{OnlineLearning.ConvexCompactMinimaxStatement} is the proposition
 \[
   \inf_{x \in X}\,\sup_{y \in Y}\,f(x,y)
   \;=\;
@@ -206,7 +206,7 @@ whose $(i,j)$ entry is $f(x_i, y_j)$.
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.sampledGame}
 \difficulty{1}
-Under the same size hypotheses as \lean{OnlineLearning.finite_minimax_value},
+Under the same size hypotheses as \texttt{OnlineLearning.finite\_minimax\_value},
 the sampled game satisfies $v^-(\mathrm{sampledGame}) = v^+(\mathrm{sampledGame})$.
 \end{theorem}
 
@@ -245,7 +245,7 @@ column strategy $q \in \Delta_N$,
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses}
 \difficulty{5}
-Under the hypotheses \lean{OnlineLearning.ConvexCompactMinimaxHypotheses},
+Under the hypotheses \texttt{OnlineLearning.ConvexCompactMinimaxHypotheses},
 \[
   \sup_{y \in Y}\,\inf_{x \in X}\,f(x,y)
   \;\leq\;
@@ -297,7 +297,7 @@ $\mathrm{sublevel}(X,f,y,c)$ is compact (as a closed subset of a compact set).
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.minimaxSublevel, OnlineLearning.minimaxSublevel_isClosed}
 \difficulty{4}
-Under \lean{OnlineLearning.ConvexCompactMinimaxHypotheses}, let $c \in \bbr$.
+Under \texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}, let $c \in \bbr$.
 If for every finite subset $u \subseteq Y$ there exists $x \in X$ with
 $f(x,y) \leq c$ for all $y \in u$, then there exists $x \in X$ with
 $f(x,y) \leq c$ for \emph{all} $y \in Y$. The proof applies the

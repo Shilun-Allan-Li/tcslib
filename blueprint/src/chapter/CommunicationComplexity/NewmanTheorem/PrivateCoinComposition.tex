@@ -4,7 +4,7 @@
 
 This module develops composition operations for private-coin communication protocols
 with finite message sets.  Starting from their deterministic counterparts, it lifts
-\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}, \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}, \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}, \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}, \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}, \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind},
+\texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}, \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}, \texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}, \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}, \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}, \texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind},
 and \texttt{prodDet} to the private-coin setting, together with the corresponding
 simulation lemmas (\texttt{rrun}) and complexity-preservation theorems.
 
@@ -56,7 +56,7 @@ complexity: $(p.\mathrm{map}\;g).\mathrm{complexity} = p.\mathrm{complexity}$.
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind,
       CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a protocol $p$ with output type $\alpha$ and a family $q : \alpha \to \mathrm{Protocol}\;\Omega_X\;\Omega_Y\;X\;Y\;\beta$,
-\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}~$p$~$q$ is the protocol that runs $p$, observes its output $a$, and then
+\texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}~$p$~$q$ is the protocol that runs $p$, observes its output $a$, and then
 executes $q\,a$ on the same inputs using the same randomness spaces.
 \end{definition}
 
@@ -81,7 +81,7 @@ For all $x, y, \omega_x, \omega_y$, the randomised run of the bound protocol sat
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap,
       CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given functions $hX : \Omega_X' \to \Omega_X$ and $hY : \Omega_Y' \to \Omega_Y$,
-\lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}~$hX$~$hY$~$p$ reindexes the randomness spaces of $p$, yielding
+\texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}~$hX$~$hY$~$p$ reindexes the randomness spaces of $p$, yielding
 a protocol over $\Omega_X'$ and $\Omega_Y'$ that maps coins through $hX$ and $hY$
 before passing them to $p$.
 \end{definition}
@@ -120,7 +120,7 @@ complexity: $(\mathrm{comapRandomness}\;hX\;hY\;p).\mathrm{complexity} = p.\math
       CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given protocols $p_1$ and $p_2$ with potentially distinct randomness spaces
 $(\Omega_{X_1}, \Omega_{Y_1})$ and $(\Omega_{X_2}, \Omega_{Y_2})$,
-\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}~$p_1$~$p_2$ runs them in parallel on the same inputs using independent
+\texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}~$p_1$~$p_2$ runs them in parallel on the same inputs using independent
 randomness drawn from $\Omega_{X_1} \times \Omega_{X_2}$ and $\Omega_{Y_1} \times \Omega_{Y_2}$,
 returning the pair of their outputs in $\alpha_1 \times \alpha_2$.
 \end{definition}
@@ -204,7 +204,7 @@ complexities: $(\mathrm{pi}\;p).\mathrm{complexity} = \sum_{i} (p\,i).\mathrm{co
       CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
 Given a protocol $p$ over randomness $(\Omega_X, \Omega_Y)$ and a family
 $q : \alpha \to \mathrm{Protocol}\;\Omega_X'\;\Omega_Y'\;X\;Y\;\beta$,
-\lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}~$p$~$q$ runs $p$ with the first component of the coin pair,
+\texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}~$p$~$q$ runs $p$ with the first component of the coin pair,
 obtains its output $a$, then runs $q\,a$ using a fresh, independent second component,
 yielding a protocol over $(\Omega_X \times \Omega_X', \Omega_Y \times \Omega_Y')$.
 \end{definition}
@@ -249,7 +249,7 @@ then
       CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol,
       CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind}
 Given a private-coin protocol $p_1$ and a deterministic protocol $p_2$,
-\lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}~$p_1$~$p_2$ runs both on the same inputs and pairs their outputs
+\texttt{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}~$p_1$~$p_2$ runs both on the same inputs and pairs their outputs
 in $\alpha_1 \times \alpha_2$, with $p_2$ contributing no additional randomness.
 \end{definition}
 

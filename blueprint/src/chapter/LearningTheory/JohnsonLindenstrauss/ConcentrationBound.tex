@@ -19,7 +19,7 @@ families.
 \lean{BadSingle}
 \leanok
 For a parameter $\varepsilon\in\mathbb{R}$, a matrix $A$, and a vector
-$x\in\mathbb{R}^d$, the predicate $\lean{BadSingle}\,\varepsilon\,A\,x$ holds when
+$x\in\mathbb{R}^d$, the predicate $\texttt{BadSingle}\,\varepsilon\,A\,x$ holds when
 the squared-norm distortion is strictly too large:
 \[
   \varepsilon \|x\|^2 < \bigl|\,\|Ax\|^2 - \|x\|^2\,\bigr|.
@@ -36,7 +36,7 @@ concentration argument.
 For any probability measure $\mu$ on $\Omega$, any random matrix $A$, and any
 $\varepsilon\in\mathbb{R}$,
 \[
-  \mu\bigl\{\omega \mid \lean{BadSingle}\,\varepsilon\,(A\,\omega)\,0\bigr\} = 0
+  \mu\bigl\{\omega \mid \texttt{BadSingle}\,\varepsilon\,(A\,\omega)\,0\bigr\} = 0
   \;\le\; 2\exp\!\Bigl(-\frac{k\,\varepsilon^2}{8}\Bigr).
 \]
 The bad event at $x=0$ is always empty because $\varepsilon\cdot 0 < |0-0|$
@@ -54,7 +54,7 @@ Then for any constant $c\in\mathbb{R}$,
 \]
 This is an auxiliary restatement of \texttt{gaussianReal\_map\_const\_mul}
 phrased for easy application in the inductive step of
-\lean{sum_scaled_iid_gaussian_map}.
+\texttt{sum\_scaled\_iid\_gaussian\_map}.
 \end{lemma}
 
 \begin{lemma}[Row-projection of i.i.d.\ Gaussians is Gaussian]
@@ -70,7 +70,7 @@ set $s$,
   \;=\; N\!\Bigl(0,\;\sigma_0 \cdot \textstyle\sum_{j\in s} x_j^2\Bigr).
 \]
 The proof proceeds by induction on the finset $s$, using independence and
-\lean{map_const_mul_gaussian} at each step.
+\texttt{map\_const\_mul\_gaussian} at each step.
 \end{lemma}
 
 \begin{lemma}[Row projections are independent]
@@ -126,7 +126,7 @@ used to bound the centered chi-squared log-MGF.
 \difficulty{1}
 The evaluation $0^2 + 0 + \log(1-0) = 0$ establishes the base case for the
 Taylor bound, confirming that $h(0)=0$ in the derivative argument for
-\lean{neg_log_one_sub_two_mul_le_two_sq}.
+\texttt{neg\_log\_one\_sub\_two\_mul\_le\_two\_sq}.
 \end{lemma}
 
 \begin{lemma}[Taylor bound for the centered chi-squared log-MGF]
@@ -167,7 +167,7 @@ For $Y\sim N(0,v)$ with $v\ne 0$ and $2tv < 1$,
   \int y.\, e^{t y^2}\,\mathrm{d}(N(0,v))
   \;=\; \frac{1}{\sqrt{1-2tv}}.
 \]
-This generalizes \lean{integral_exp_mul_sq_standardGaussian} from unit
+This generalizes \texttt{integral\_exp\_mul\_sq\_standardGaussian} from unit
 variance to an arbitrary non-zero NNReal variance $v$.
 \end{lemma}
 
@@ -177,9 +177,9 @@ variance to an arbitrary non-zero NNReal variance $v$.
 \difficulty{5}
 For $v\ne 0$ and $2tv < 1$, the function $y\mapsto e^{t y^2}$ is integrable
 with respect to $N(0,v)$.  This integrability statement accompanies
-\lean{integral_exp_mul_sq_gaussianReal_zero} and is a prerequisite for
+\texttt{integral\_exp\_mul\_sq\_gaussianReal\_zero} and is a prerequisite for
 the Fubini and interchange-of-expectation arguments in
-\lean{centered_chi_squared_step}.
+\texttt{centered\_chi\_squared\_step}.
 \end{lemma}
 
 \begin{theorem}[Centered chi-squared MGF bound]
@@ -196,8 +196,8 @@ $\mu$-integrable and
   \;\le\; \exp\!\Bigl(\frac{2t^2}{k^2}\Bigr).
 \]
 The proof combines the Gaussian quadratic MGF closed form
-(\lean{integral_exp_mul_sq_gaussianReal_zero}) with the Taylor inequality
-(\lean{neg_log_one_sub_two_mul_le_two_sq}) applied at $s := t/k$.
+(\texttt{integral\_exp\_mul\_sq\_gaussianReal\_zero}) with the Taylor inequality
+(\texttt{neg\_log\_one\_sub\_two\_mul\_le\_two\_sq}) applied at $s := t/k$.
 \end{theorem}
 
 \begin{theorem}[Bernstein MGF instance for centered chi-squared]
@@ -205,7 +205,7 @@ The proof combines the Gaussian quadratic MGF closed form
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, centered_chi_squared_step}
 \difficulty{3}
-Under the same hypotheses as \lean{centered_chi_squared_step}, the
+Under the same hypotheses as \texttt{centered\_chi\_squared\_step}, the
 centered summand $Y^2 - 1/k$ satisfies
 $\text{\texttt{ProbabilityTheory.HasBernsteinMGF}}\bigl(2/k^2,\;k/4\bigr)$ under $\mu$.
 This packages the chi-squared MGF bound into the abstract Bernstein form, so
@@ -226,7 +226,7 @@ a probability measure $\mu$, and let $0<\varepsilon<1$.  Then
   \;\le\; 2\exp\!\Bigl(-\frac{k\,\varepsilon^2}{8}\Bigr).
 \]
 The proof applies the Bernstein tail bound to the i.i.d.\ sum of centered
-chi-squared summands, using \lean{hasBernsteinMGF_centered_chi_squared} and
+chi-squared summands, using \texttt{hasBernsteinMGF\_centered\_chi\_squared} and
 the generic sum and tail-bound lemmas from the Bernstein framework.
 \end{lemma}
 
@@ -240,13 +240,13 @@ measure $\mu$ whose entries $A_{ij}$ are each $N(0,1/k)$ and are jointly
 independent (row entries and row vectors alike).  For any fixed
 $x\in\mathbb{R}^d$ and $0<\varepsilon<1$,
 \[
-  \mu\bigl\{\omega \mid \lean{BadSingle}\,\varepsilon\,(A\,\omega)\,x\bigr\}
+  \mu\bigl\{\omega \mid \texttt{BadSingle}\,\varepsilon\,(A\,\omega)\,x\bigr\}
   \;\le\; 2\exp\!\Bigl(-\frac{k\,\varepsilon^2}{8}\Bigr).
 \]
-The proof handles $x=0$ via \lean{concentration_zero} and the general case by
+The proof handles $x=0$ via \texttt{concentration\_zero} and the general case by
 showing each row projection $\sum_j A_{ij}\,x_j$ is Gaussian with variance
 $\|x\|^2/k$, establishing independence of row projections via
-\lean{rows_indep}, and then applying \lean{chi_squared_tail}.
+\texttt{rows\_indep}, and then applying \texttt{chi\_squared\_tail}.
 \end{theorem}
 
 \begin{theorem}[Distribution-agnostic JL concentration via Bernstein tails]

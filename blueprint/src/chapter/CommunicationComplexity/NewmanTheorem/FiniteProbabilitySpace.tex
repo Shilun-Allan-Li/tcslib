@@ -4,8 +4,8 @@
 
 This module develops the foundational infrastructure for finite probability spaces used
 in the proof of Newman's theorem. It introduces the typeclasses
-\lean{CommunicationComplexity.FiniteMeasureSpace} and
-\lean{CommunicationComplexity.FiniteProbabilitySpace}, and establishes a library of
+\texttt{CommunicationComplexity.FiniteMeasureSpace} and
+\texttt{CommunicationComplexity.FiniteProbabilitySpace}, and establishes a library of
 measure-real and integral lemmas (singleton decompositions, Cauchy--Schwarz, Markov's
 inequality, product-space factorisation) that are used throughout the complexity-theoretic
 arguments.
@@ -27,7 +27,7 @@ measures.
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 Given a type $\Omega$ that already carries \texttt{Fintype} and
-\texttt{DiscreteMeasurableSpace} instances, \lean{CommunicationComplexity.FiniteMeasureSpace.of} bundles them
+\texttt{DiscreteMeasurableSpace} instances, \texttt{CommunicationComplexity.FiniteMeasureSpace.of} bundles them
 into a \texttt{FiniteMeasureSpace} record without requiring any additional data.
 \end{definition}
 
@@ -36,7 +36,7 @@ into a \texttt{FiniteMeasureSpace} record without requiring any additional data.
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 A typeclass bundling a \texttt{MeasureSpace} structure on $\Omega$ together with a
-\lean{CommunicationComplexity.FiniteMeasureSpace} witness and an \texttt{IsProbabilityMeasure} instance for the
+\texttt{CommunicationComplexity.FiniteMeasureSpace} witness and an \texttt{IsProbabilityMeasure} instance for the
 canonical volume measure.  This makes $\Omega$ simultaneously a finite discrete
 measurable space and a probability space.
 \end{definition}
@@ -47,7 +47,7 @@ measurable space and a probability space.
 \uses{CommunicationComplexity.FiniteMeasureSpace.of, CommunicationComplexity.FiniteProbabilitySpace}
 Given a type $\Omega$ already equipped with a \texttt{MeasureSpace}, \texttt{Fintype},
 \texttt{DiscreteMeasurableSpace}, and \texttt{IsProbabilityMeasure} instance for
-\texttt{volume}, this helper packages all of those into a \lean{CommunicationComplexity.FiniteProbabilitySpace}
+\texttt{volume}, this helper packages all of those into a \texttt{CommunicationComplexity.FiniteProbabilitySpace}
 record.
 \end{definition}
 
