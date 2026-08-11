@@ -131,6 +131,15 @@ def note_for(lean_name: str, notes: dict[str, tuple[Path, str]]):
     for key in (lean_name.casefold(), lean_name.rsplit(".", 1)[-1].casefold()):
         if key in notes:
             return notes[key]
+    # The earliest notes were filed under a *module*-qualified name
+    # (`QuantumSingleton.dist_implies_correctable.md`) while the Lean declaration is
+    # root-namespaced (`dist_implies_correctable`), so neither key above matches. Fall
+    # back to a note whose stem ends with `.<lean_name>`, which recovers those without
+    # letting a bare suffix collide with an unrelated declaration.
+    suffix = "." + lean_name.casefold()
+    matches = [value for key, value in notes.items() if key.endswith(suffix)]
+    if len(matches) == 1:
+        return matches[0]
     return None
 
 
