@@ -29,7 +29,7 @@ $\varphi : \mathrm{CoinTape}(n) \to \Omega$ provided by
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
-\difficulty{2}
+\difficulty{1}
 For any finite-message protocol $p$ over a finite probability space $\Omega$ and any
 $\delta > 0$, the complexity of the \texttt{CoinTape} approximation
 $(p.\mathrm{toCoinTape}\;\delta).2$ equals the complexity of the original protocol $p$.
@@ -40,7 +40,7 @@ $(p.\mathrm{toCoinTape}\;\delta).2$ equals the complexity of the original protoc
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Internal.single_coin_approx, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
-\difficulty{4}
+\difficulty{5}
 Let $p$ be a public-coin finite-message protocol over a finite probability space
 $\Omega$, let $Q : X \to Y \to \alpha \to \mathrm{Prop}$ be a correctness predicate,
 and let $\varepsilon, \delta > 0$. If $p$ approximately satisfies $Q$ with error at

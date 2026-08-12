@@ -78,7 +78,7 @@ as a family of finsets indexed by $\{0,\ldots,r-1\}$.
 \label{CommunicationComplexity.hammingBall_eq_hammingSpheres}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSpheres_pairwise_disjoint}
-\difficulty{4}
+\difficulty{3}
 The Hamming ball of radius $r$ decomposes as the disjoint union
 \[
   B_r(u) = \bigsqcup_{k=0}^{r} S_k(u).
@@ -201,8 +201,65 @@ For any word $u$ and finset $S \subseteq \mathrm{Fin}\,n$,
 \label{CommunicationComplexity.hammingSphere_card}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
+
+\proofstep
+  {CommunicationComplexity.Word}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001}
+\proofstep
+  {CommunicationComplexity.hammingSphere}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001,
+    pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {CommunicationComplexity.support}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {CommunicationComplexity.supportFiber}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.supportFiber_disjoint}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.hammingSphere_eq_biUnion}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.choices}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.choices_card}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.choices_partition_supportFiber}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.piece_card}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.card_supportFiber}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.card_supportFiber, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_eq_biUnion, CommunicationComplexity.supportFiber_disjoint}
-\difficulty{4}
+\difficulty{3}
 For any centre $u \in \alpha^n$ and radius $k$,
 \[
   |S_k(u)| = \binom{n}{k}(|\alpha|-1)^k.
@@ -217,6 +274,79 @@ For any centre $u \in \alpha^n$ and radius $k$,
   pdf-7251cb8e4bc5-p032-b001,
   pdf-7251cb8e4bc5-p070-b003
 }
+
+\proofstep
+  {CommunicationComplexity.Word}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001,
+    pdf-7251cb8e4bc5-p015-b006}
+\proofstep
+  {CommunicationComplexity.hammingBall}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b006}
+\proofstep
+  {CommunicationComplexity.hammingSphere}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.ballVol}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p070-b003,
+    pdf-7251cb8e4bc5-p031-b004}
+\proofstep
+  {CommunicationComplexity.support}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {CommunicationComplexity.supportFiber}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.supportFiber_disjoint}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.hammingSphere_eq_biUnion}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.choices}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.choices_card}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.choices_partition_supportFiber}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.piece_card}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.card_supportFiber}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
+\proofstep
+  {CommunicationComplexity.hammingSphere_card}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.ballVol, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_card}
 \difficulty{5}
 For any centre $u \in \alpha^n$ and radius $r$,

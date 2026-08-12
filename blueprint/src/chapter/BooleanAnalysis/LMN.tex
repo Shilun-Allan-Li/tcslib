@@ -17,7 +17,7 @@ decision-tree depth.
 \lean{LMN.logb_2s_div_eps_pos}
 \label{LMN.logb_2s_div_eps_pos}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon \le 1$,
 the quantity $l = \log_2(2s/\varepsilon)$ satisfies $1 \le l$.
 \end{lemma}
@@ -26,7 +26,7 @@ the quantity $l = \log_2(2s/\varepsilon)$ satisfies $1 \le l$.
 \lean{LMN.logb_2_div_eps_le_l}
 \label{LMN.logb_2_div_eps_le_l}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 we have $\log_2(2/\varepsilon) \le \log_2(2s/\varepsilon)$.
 \end{lemma}
@@ -35,7 +35,7 @@ we have $\log_2(2/\varepsilon) \le \log_2(2s/\varepsilon)$.
 \lean{LMN.size_times_two_pow_neg_l_le}
 \label{LMN.size_times_two_pow_neg_l_le}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 taking $l = \log_2(2s/\varepsilon)$ gives
 \[
@@ -48,7 +48,7 @@ since $2^{-l} = \varepsilon/(2s)$.
 \lean{LMN.two_pow_neg_logb_2_div_eps}
 \label{LMN.two_pow_neg_logb_2_div_eps}
 \leanok
-\difficulty{3}
+\difficulty{2}
 For $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 \[
   2^{-\log_2(2/\varepsilon)} = \frac{\varepsilon}{2}.
@@ -57,6 +57,12 @@ For $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 
 \begin{lemma}[Iterative circuit reduction bound with Chernoff tails]
 \lean{LMN.iterative_reduction_bound}
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003,
+  pdf-b5e074215b9e-p004-b001,
+  pdf-b5e074215b9e-p003-b004
+}
 \label{LMN.iterative_reduction_bound}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
@@ -80,6 +86,11 @@ The exponential Chernoff tails vanish as $n \to \infty$.
 
 \begin{theorem}[O'Donnell Lemma 4.28, with tails]
 \lean{LMN.odonnell_lemma_4_28}
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003,
+  pdf-b5e074215b9e-p003-b004
+}
 \label{LMN.odonnell_lemma_4_28}
 \leanok
 \proofsource{boolean-ch04-dnf-switching-lmn}{
@@ -88,8 +99,1404 @@ The exponential Chernoff tails vanish as $n \to \infty$.
   pdf-fc447f326910-p013-b002,
   pdf-fc447f326910-p014-b001
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {BoolCircuit.Circuit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {BoolCircuit.Circuit.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {BoolCircuit.Circuit.depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {BoolCircuit.Circuit.size}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {BoolCircuit.Circuit.maxFanin}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {CNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {CNF.evalClause}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.IsRestriction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b004}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.numSRestrictions}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p007-b005}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_of_tree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.killedAll_implies_dtDepth_zero}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.first_clause_preserved}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.term_length_le_width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b002}
+\proofstep
+  {SwitchingLemma2.zipIdx_drop_spec}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.bernoulliRestrWeight}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.bernoulliRestrProb}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.bernoulliRestrWeight_sum_one}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.bernoulliRestrProb_le_one'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {LMN.composeRestr}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.varWeight}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {LMN.bernoulliRestrWeight_eq_prod}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {LMN.varWeight_compose_sum}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.compose_fiber_weight_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.restriction_compose_eq}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {SwitchingLemma2.numFree_update_lt}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.selectBranchVar}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.extend_update_self}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_extend_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_sets_member}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_numFree_lt}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_correct}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_correct}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.numFree_update_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr_strict}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_fuel_invariant}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.cont_eq_canonicalDTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_free}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_nonfree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_head_free}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.filter_free_update_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_var_match}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.depth_ge_dtDepth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_ge}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p006-b004}
+\proofstep
+  {SwitchingLemma2.dtDepth_restrictFn_le_numFree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p006-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.razborovDecode}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_stable}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_nonfree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.encode_go_acc}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_acc}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_stable}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.foldl_rho_stable}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.roundtrip_base}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hC'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hD'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.go_roundtrip_gen}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.go_roundtrip}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.razborovDecode_encode}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.razborovEncode_injective}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.parseAux}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.triplesToAux}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_marker}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_nonmarker}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.parseAux_singleton}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.parseAux_nil}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.parseAux_triplesToAux}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.triplesToAux_append}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_len_add}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.markLast}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.triplesToAux_markLast}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.markLast_ne_nil}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.markLast_length}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.markLast_getLast_true}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.toFinBlock}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.toFinBlock_length}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.toFinBlock_map}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.toFinBlock_ne_nil}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_idx_lt}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.encode_go_wellformed}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.exists_aux_injection}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p018-b002}
+\proofstep
+  {SwitchingLemma2.aux_image_card_bound}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p018-b002}
+\proofstep
+  {SwitchingLemma2.fiber_bound}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p018-b002}
+\proofstep
+  {SwitchingLemma2.card_filter_numFree_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.numFree_update_free}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeVars_agree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_σ}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_length_ge}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.razborovEncode_path_length}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_length_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_killed}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b003}
+\proofstep
+  {SwitchingLemma2.IsCanonicalPath}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_length}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_getElem_fst}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_match_freeLits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.processClauseLits_fst_eq_drop}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_ρ_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_termSubTree_drop}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.canonicalPath_preserve_processClauseLits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeLits_pairwise_var}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.razborovEncode_go_numFree_invariant}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b001,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.razborovEncode_fst_numFree_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p009-b001}
+\proofstep
+  {SwitchingLemma2.bad_count_bound}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.bad_filter_empty_of_d_ge_s}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.choose_mul_pow_bound}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.switching_lemma}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingLemma2.toDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b007}
+\proofstep
+  {SwitchingLemma2.toCNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b007}
+\proofstep
+  {SwitchingLemma2.dtDepth_witness}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006,
+    pdf-fc447f326910-p002-b007}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {Literal.flipNeg_injective}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF_width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {dtDepth_neg}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {BernoulliCost.fixedSizeRestrs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {BernoulliCost.fixedSizeRestrProb}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {BernoulliCost.binomialPMF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {BernoulliCost.fixedSizeRestrProb_le_one}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {BernoulliCost.binomialPMF_nonneg}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {BernoulliCost.binomialPMF_sum_one}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {BernoulliCost.bernoulli_decompose}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {BernoulliCost.chernoff_binomial_upper_tail}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p009-b003}
+\proofstep
+  {BernoulliCost.bernoulli_restriction_cost}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingBernoulli.fixedSizeRestrs_card}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound_small}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound_rescaled}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {SwitchingBernoulli.switching_bernoulli_dtDepth_cnf}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {LMN.restricted_has_small_cnf_of_dtDepth_le}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006,
+    pdf-fc447f326910-p002-b007}
+\proofstep
+  {LMN.listConcat}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.cnf_concat_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.cnf_concat_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.dnf_concat_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p002-b002}
+\proofstep
+  {LMN.dnf_concat_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.compression_and_of_cnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.compression_or_of_dnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.bernoulliRestrProb_union_bound_fin}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {BoolCircuit.Lit.toLiteral}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004,
+    pdf-fc447f326910-p001-b004}
+\proofstep
+  {BoolCircuit.foldr_or_lits_eq_clause_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {LMN.dedupTermVar}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.termHasContradiction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanCNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {LMN.dedupTermVar_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_var_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b002}
+\proofstep
+  {LMN.contradiction_term_eval_false}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_preserves_term_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.contradiction_clause_eval_true}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {LMN.dedupTermVar_preserves_clause_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {LMN.cleanCNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {LMN.cleanDNF_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b002}
+\proofstep
+  {LMN.cleanCNF_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004,
+    pdf-fc447f326910-p002-b002}
+\proofstep
+  {LMN.cleanDNF_var_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanCNF_var_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {LMN.cleanCNF_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {LMN.switching_bernoulli_dtDepth_dnf_general}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {LMN.switching_bernoulli_dtDepth_cnf_general}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {LMN.depth_le_one_children_are_lits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.depth_le_two_children_depth_le_one}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.depth2OrToDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.depth2AndToCNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.depth2OrToDNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.depth2AndToCNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.depth2OrToDNF_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.depth2AndToCNF_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.dtRestrict}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b004}
+\proofstep
+  {LMN.dtRestrict_depth_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b004}
+\proofstep
+  {LMN.dtRestrict_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b004}
+\proofstep
+  {LMN.dtDepth_restrictFn_le'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b004,
+    pdf-fc447f326910-p008-b005}
+\proofstep
+  {LMN.children_depth_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.children_size_sum_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.children_maxFanin_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.restrictFn_node_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.and_children_have_cnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.or_children_have_dnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.compress_and_switch}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.composedDelta}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003}
+\proofstep
+  {LMN.composedDelta_pos}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003}
+\proofstep
+  {LMN.composedDelta_le_one}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003}
+\proofstep
+  {LMN.composedDelta_step_right}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003,
+    pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.two_stage_bound'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.bernoulliRestrProb_congr_fn'}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005}
+\proofstep
+  {LMN.depth2_circuit_switching_bound}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p008-b005,
+    pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.circuit_reduction_ind_base}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.bernoulliRestrProb_list_union_bound}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.circuit_reduction_ind_step}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.circuit_reduction_ind}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003,
+    pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.circuit_reduction_aux}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003}
+\proofstep
+  {LMN.circuit_reduction_core}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003}
+\proofstep
+  {LMN.restrictFn_composeRestr}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.iterative_reduction_bound}
+  {direct}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.composedDelta, LMN.iterative_reduction_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
-\difficulty{3}
+\difficulty{2}
 Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most
 $s$, and fan-in at most $w$, where $d \ge 2$ and $s, w, l > 0$. Fix $\varepsilon > 0$ and
 naturals $l, t$ with $s \cdot \left(\tfrac{1}{2}\right)^l \le \varepsilon/2$ and

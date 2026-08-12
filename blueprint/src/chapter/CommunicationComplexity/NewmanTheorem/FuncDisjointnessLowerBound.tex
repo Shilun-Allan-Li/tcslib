@@ -55,7 +55,7 @@ Swap Alice's and Bob's sides in a disjoint coordinate.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.swap_swap}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.swap}
-\difficulty{1}
+\difficulty{2}
 Swapping sides twice recovers the original disjoint coordinate.
 \end{theorem}
 
@@ -64,7 +64,7 @@ Swapping sides twice recovers the original disjoint coordinate.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.xBit_swap}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.swap, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.xBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.yBit}
-\difficulty{1}
+\difficulty{2}
 After swapping a disjoint coordinate, Alice sees Bob's original bit.
 \end{theorem}
 
@@ -88,7 +88,7 @@ Technical auxiliary result for \texttt{equivProd}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.card}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.card, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.equivProd}
-\difficulty{4}
+\difficulty{3}
 Cardinality of the explicit hard-distribution sample space.
 \end{theorem}
 
@@ -104,7 +104,7 @@ Uniform law on the special coordinate.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin}
-\difficulty{3}
+\difficulty{2}
 Each coordinate has mass $1 / n$ under the uniform law on \texttt{Fin n}.
 \end{theorem}
 
@@ -113,7 +113,7 @@ Each coordinate has mass $1 / n$ under the uniform law on \texttt{Fin n}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_real}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{3}
+\difficulty{2}
 The uniform law on \texttt{Fin n} assigns mass by normalized cardinality.
 \end{theorem}
 
@@ -138,7 +138,7 @@ Uniform law on one bit.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool}
-\difficulty{3}
+\difficulty{2}
 Each bit has mass $1 / 2$ under the uniform law on one bit.
 \end{theorem}
 
@@ -147,7 +147,7 @@ Each bit has mass $1 / 2$ under the uniform law on one bit.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_real}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{3}
+\difficulty{2}
 The uniform law on \texttt{Bool} assigns mass by normalized cardinality.
 \end{theorem}
 
@@ -179,7 +179,7 @@ The uniform law on one disjoint coordinate.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.card, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{5}
+\difficulty{4}
 Each generated disjoint coordinate vector has mass $3^{-n}$ under the uniform law.
 \end{theorem}
 
@@ -188,7 +188,7 @@ Each generated disjoint coordinate vector has mass $3^{-n}$ under the uniform la
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_real}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.card, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{3}
+\difficulty{2}
 The uniform law on disjoint-coordinate vectors assigns mass by normalized cardinality.
 \end{theorem}
 
@@ -206,7 +206,7 @@ The uniform law on disjoint-coordinate vectors has total mass $1$.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinate_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.card, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinate, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{5}
+\difficulty{4}
 Each disjoint coordinate has mass $1 / 3$ under the one-coordinate uniform law.
 \end{theorem}
 
@@ -512,7 +512,7 @@ Recode $(X_{<i}, Y)$ as $(Y_{<i}, X_{<i}, Y_{≥i})$, the conditioning variable 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceChainConditioningValue_injective}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceChainConditioningValue}
-\difficulty{5}
+\difficulty{4}
 The chain-rule conditioning $(Y_{<i}, X_{<i}, Y_{≥i})$ is an injective recoding of $(X_{<i}, Y)$.
 \end{theorem}
 
@@ -687,7 +687,7 @@ The achievability proof carried by a \texttt{ZType} value.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.ext}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType.ext, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.transcript, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.xBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.yAfter}
-\difficulty{2}
+\difficulty{1}
 Technical auxiliary result for \texttt{ext}.
 \end{theorem}
 
@@ -729,7 +729,7 @@ Technical auxiliary result for \texttt{run\_eq\_zOutput\_of\_zVariable\_eq}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_zFiber_ne_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.achievable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.raw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{5}
+\difficulty{4}
 Every achievable $Z$ fiber has positive ambient hard-distribution mass.
 \end{theorem}
 
@@ -770,7 +770,7 @@ The transcript-level map induced by protocol duality.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap_injective}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.transcriptComap_injective, CommunicationComplexity.Deterministic.Protocol.transcriptSwap_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.reverseSet}
-\difficulty{2}
+\difficulty{1}
 The transcript-level map induced by protocol duality is injective.
 \end{theorem}
 
@@ -813,7 +813,7 @@ The disjoint coordinate with the given bits. On the invalid $(true, true)$ input
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_xBit}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.xBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits}
-\difficulty{3}
+\difficulty{2}
 \texttt{coordinateOfBits} preserves Alice's bit when the requested pair is disjoint.
 \end{theorem}
 
@@ -822,7 +822,7 @@ The disjoint coordinate with the given bits. On the invalid $(true, true)$ input
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_yBit}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.yBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits}
-\difficulty{3}
+\difficulty{2}
 \texttt{coordinateOfBits} preserves Bob's bit when the requested pair is disjoint.
 \end{theorem}
 
@@ -848,7 +848,7 @@ Mix Alice's input from $ωX$ with Bob's input from $ωY$. This is only intended 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjoint_X_Y_iff}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.not_xBit_and_yBit_of_ne_special, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit}
-\difficulty{5}
+\difficulty{4}
 The generated sets are disjoint exactly when the two special-coordinate bits are not both \texttt{true}.
 \end{theorem}
 
@@ -915,7 +915,7 @@ Technical auxiliary result for \texttt{disjointEventInterDisjointModelEquiv}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.card_disjointEvent_inter_disjointModel_fiber}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventInterDisjointModelEquiv, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointModel}
-\difficulty{3}
+\difficulty{2}
 Technical auxiliary result for \texttt{card\_disjointEvent\_inter\_disjointModel\_fiber}.
 \end{theorem}
 
@@ -924,7 +924,7 @@ Technical auxiliary result for \texttt{card\_disjointEvent\_inter\_disjointModel
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent_inter_disjointModel_fiber}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.card, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.card_disjointEvent_inter_disjointModel_fiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointModel, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{4}
+\difficulty{3}
 Under the hard distribution, a singleton fiber of the disjoint model together with $D$ has one ambient sample's worth of mass.
 \end{theorem}
 
@@ -986,7 +986,7 @@ Dual hard samples swap Bob's input with Alice's input and reverse coordinates.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.reverseSet}
-\difficulty{2}
+\difficulty{1}
 The generated input of a dual hard sample is the reversed, swapped original input.
 \end{theorem}
 
@@ -1004,7 +1004,7 @@ Hard-sample duality preserves the disjoint-input event.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY}
-\difficulty{2}
+\difficulty{1}
 Alice's special bit in the dual hard sample is Bob's original special bit.
 \end{theorem}
 
@@ -1013,7 +1013,7 @@ Alice's special bit in the dual hard sample is Bob's original special bit.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY}
-\difficulty{2}
+\difficulty{1}
 Bob's special bit in the dual hard sample is Alice's original special bit.
 \end{theorem}
 
@@ -1022,7 +1022,7 @@ Bob's special bit in the dual hard sample is Alice's original special bit.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero}
-\difficulty{2}
+\difficulty{1}
 The $X_{T}=Y_{T}=false$ slice is invariant under hard-sample duality.
 \end{theorem}
 
@@ -1085,7 +1085,7 @@ Bob's $Y_{≥T}$ vector in the dual is Alice's $X_{≤T}$ vector in reverse orde
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yGeSpecial_dualHardSample}
-\difficulty{3}
+\difficulty{2}
 Alice's corrected conditioning in the dual is Bob's corrected conditioning in recoded form.
 \end{theorem}
 
@@ -1094,7 +1094,7 @@ Alice's corrected conditioning in the dual is Bob's corrected conditioning in re
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobClaimConditioning_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xLeSpecial_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial_dualHardSample}
-\difficulty{3}
+\difficulty{2}
 Bob's corrected conditioning in the dual is Alice's corrected conditioning in recoded form.
 \end{theorem}
 
@@ -1148,7 +1148,7 @@ The mixed sample has Bob's full input from the second sample.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input_mix}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial}
-\difficulty{2}
+\difficulty{1}
 The mixed sample's generated input is the mixed input pair.
 \end{theorem}
 
@@ -1193,7 +1193,7 @@ The mixed sample has Bob's special bit from the second sample.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mix_swap}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_xBit_yBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit_of_ne_special, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit_of_ne_special}
-\difficulty{6}
+\difficulty{5}
 Swapping twice recovers the first sample. This is the involution behind the rectangle-counting argument for conditional independence on $Z$ fibers.
 \end{theorem}
 
@@ -1202,7 +1202,7 @@ Swapping twice recovers the first sample. This is the involution behind the rect
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.card, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_real, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_real, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_real, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{7}
+\difficulty{5}
 The hard sample distribution is the product distribution on the independent fields $T$, $X_{T}$, $Y_{T}$, and \texttt{other}.  This rectangle form is the most convenient way to compute probabilities of events depending separately on the four fields.
 \end{theorem}
 
@@ -1211,7 +1211,7 @@ The hard sample distribution is the product distribution on the independent fiel
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialIntersect}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialIntersect, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_univ}
-\difficulty{4}
+\difficulty{3}
 The hard distribution creates an intersection with probability $1 / 4$.
 \end{theorem}
 
@@ -1220,7 +1220,7 @@ The hard distribution creates an intersection with probability $1 / 4$.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialBitsEvent}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_univ}
-\difficulty{4}
+\difficulty{3}
 Each prescribed pair of special-coordinate bits has probability $1 / 4$.
 \end{theorem}
 
@@ -1229,7 +1229,7 @@ Each prescribed pair of special-coordinate bits has probability $1 / 4$.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialCoordinateEvent}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_singleton}
-\difficulty{4}
+\difficulty{3}
 Under the hard distribution, the special coordinate is uniform.
 \end{theorem}
 
@@ -1238,7 +1238,7 @@ Under the hard distribution, the special coordinate is uniform.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialCoordinateEvent_inter_specialIntersect}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialIntersect, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_singleton}
-\difficulty{4}
+\difficulty{3}
 Under the hard distribution, $T=i$ and the special bits intersect with probability $1/(4n)$.
 \end{theorem}
 
@@ -1256,7 +1256,7 @@ The event $(X_{T}, Y_{T}) = (0, 0)$ has probability $1 / 4$.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialY_false}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_univ}
-\difficulty{4}
+\difficulty{3}
 The event $Y_{T} = false$ has probability $1 / 2$.
 \end{theorem}
 
@@ -1283,7 +1283,7 @@ The hard distribution generates disjoint inputs with probability $3 / 4$.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialCoordinateEvent_inter_disjointEvent}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent_eq_compl_specialIntersect, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialCoordinateEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialCoordinateEvent_inter_specialIntersect, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialIntersect}
-\difficulty{5}
+\difficulty{4}
 Under the hard distribution, $T=i$ and disjointness have probability $3/(4n)$.
 \end{theorem}
 
@@ -1292,7 +1292,7 @@ Under the hard distribution, $T=i$ and disjointness have probability $3/(4n)$.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measure_disjointEvent_ne_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent}
-\difficulty{3}
+\difficulty{2}
 The disjoint event has positive measure under the hard distribution.
 \end{theorem}
 
@@ -1309,7 +1309,7 @@ The hard distribution conditioned on the generated input being disjoint.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialCoordinateEvent}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialCoordinateEvent_inter_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEvent}
-\difficulty{4}
+\difficulty{3}
 Under the disjoint-conditioned hard distribution, the special coordinate remains uniform.
 \end{theorem}
 
@@ -1336,7 +1336,7 @@ Under the disjoint-conditioned distribution, preimages of special-coordinate sin
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_ae_disjointEvent}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent}
-\difficulty{2}
+\difficulty{1}
 Under the measure conditioned on disjointness, the disjointness event holds almost surely.
 \end{theorem}
 
@@ -1372,7 +1372,7 @@ The $(X_{T},Y_{T})=(0,0)$ slice is contained in the disjoint event.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialZeroZero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero_subset_disjointEvent}
-\difficulty{4}
+\difficulty{3}
 Under the disjoint-conditioned hard distribution, $(X_{T},Y_{T})=(0,0)$ has mass $1 / 3$.
 \end{theorem}
 
@@ -1416,7 +1416,7 @@ Conditioning the disjoint law on $Y_{T} = false$ gives a probability measure.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_specialX_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialBitsEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialY_false, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero}
-\difficulty{5}
+\difficulty{4}
 Under $D ∧ Y_{T}=false$, Alice's special bit is uniform.
 \end{theorem}
 
@@ -1425,7 +1425,7 @@ Under $D ∧ Y_{T}=false$, Alice's special bit is uniform.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_disjointModel_fiber}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointModel, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent_inter_disjointModel_fiber}
-\difficulty{4}
+\difficulty{3}
 Under the disjoint-conditioned distribution, the disjoint model is uniform.
 \end{theorem}
 
@@ -1441,7 +1441,7 @@ Technical auxiliary result for \texttt{disjointModelFiberForSpecialCoordinateCoo
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.card_disjointModel_fiber_for_specialCoordinate_coordinateVector}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.card, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointModelFiberForSpecialCoordinateCoordinateVectorEquiv}
-\difficulty{2}
+\difficulty{1}
 Technical auxiliary result for \texttt{card\_disjointModel\_fiber\_for\_specialCoordinate\_coordinateVector}.
 \end{theorem}
 
@@ -1450,7 +1450,7 @@ Technical auxiliary result for \texttt{card\_disjointModel\_fiber\_for\_specialC
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialCoordinate_disjointCoordinateVector_fiber}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.card_disjointModel_fiber_for_specialCoordinate_coordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_disjointModel_fiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointModel, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate}
-\difficulty{5}
+\difficulty{4}
 Under the disjoint-conditioned distribution, the pair of the special coordinate and the generated disjoint coordinate vector is uniform on $Fin n × \{0,1\}^{n}_{disj}$.
 \end{theorem}
 
@@ -1631,7 +1631,7 @@ Technical auxiliary result for \texttt{coordinateWithCondBit\_spec}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_measure_condBit_ne_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceCondBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateWithCondBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateWithCondBit_spec, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_singleton}
-\difficulty{5}
+\difficulty{4}
 Each single-coordinate conditioning bit has positive mass under the uniform disjoint-vector law.
 \end{theorem}
 
@@ -1640,7 +1640,7 @@ Each single-coordinate conditioning bit has positive mass under the uniform disj
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_residual_cond_iIndepFun}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.xBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.yBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceCondBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceResidualBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_iIndepFun}
-\difficulty{4}
+\difficulty{3}
 The per-coordinate residual/conditioning pairs are independent under the product-uniform disjoint-coordinate law.
 \end{theorem}
 
@@ -1658,7 +1658,7 @@ After fixing Alice's one-bit-per-coordinate conditioning, the current Alice bit 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_crossInfo_condBits_eq_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceCondBits, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_indep_coordinateXBit_coordinateYBefore_condBits}
-\difficulty{4}
+\difficulty{3}
 Product-coordinate form of the fixed-coordinate independence input: $I(X_{i} : Y_{<i} | X_{<i},Y_{≥i})=0$, first with the one-bit-per-coordinate conditioning.
 \end{theorem}
 
@@ -1667,7 +1667,7 @@ Product-coordinate form of the fixed-coordinate independence input: $I(X_{i} : Y
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_crossInfo_eq_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceCondBits, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioningOfCondBits, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioningOfCondBits_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioning_eq_recode_condBits, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_crossInfo_condBits_eq_zero}
-\difficulty{4}
+\difficulty{2}
 Product-coordinate form of the fixed-coordinate independence input, using the padded-pair conditioning variable.
 \end{theorem}
 
@@ -1694,7 +1694,7 @@ Under $D$, Bob's fixed prefix is the corresponding coordinate-vector projection.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning_ae_eq_coordinateAliceConditioning}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYGe, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_ae_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector_xBit_of_mem_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector_yBit_of_mem_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedYGe}
-\difficulty{4}
+\difficulty{3}
 Under $D$, Alice's fixed conditioning is the corresponding coordinate-vector projection.
 \end{theorem}
 
@@ -1703,7 +1703,7 @@ Under $D$, Alice's fixed conditioning is the corresponding coordinate-vector pro
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_specialCoordinate_disjointCoordinateVector_uniform_prod}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialCoordinate_disjointCoordinateVector_fiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_singleton}
-\difficulty{6}
+\difficulty{5}
 Under $D$, the special coordinate and generated disjoint coordinate vector have the product law: $T$ is uniform and independent of the disjoint coordinate vector.
 \end{theorem}
 
@@ -1721,7 +1721,7 @@ The second marginal of the product law for $(T, coordinates)$ is the uniform dis
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_disjointCoordinateVector_uniform}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_specialCoordinate_disjointCoordinateVector_uniform_prod, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_uniformProd_snd_uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin}
-\difficulty{4}
+\difficulty{3}
 The generated disjoint coordinate vector under $D$ has the uniform disjoint-vector law.
 \end{theorem}
 
@@ -1730,7 +1730,7 @@ The generated disjoint coordinate vector under $D$ has the uniform disjoint-vect
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_uniformProd_snd_uniformDisjointCoordinateVector_cond_fst}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_singleton}
-\difficulty{6}
+\difficulty{5}
 Conditioning the product law for $(T, coordinates)$ on $T=i$ leaves the second coordinate uniform.
 \end{theorem}
 
@@ -1756,7 +1756,7 @@ Even after conditioning on $T=i$, the generated disjoint coordinate vector has t
 \lean{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_self_comp_measurePreserving}
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_self_comp_measurePreserving}
 \leanok
-\difficulty{2}
+\difficulty{3}
 A measure-preserving self-map leaves every random variable identically distributed with its pullback along that map.
 \end{theorem}
 
@@ -1765,7 +1765,7 @@ A measure-preserving self-map leaves every random variable identically distribut
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample_preimage_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample_dualHardSample}
-\difficulty{4}
+\difficulty{3}
 The preimage of a singleton under hard-sample duality is the dual singleton.
 \end{theorem}
 
@@ -1774,7 +1774,7 @@ The preimage of a singleton under hard-sample duality is the dual singleton.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measureReal_singleton_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{3}
+\difficulty{2}
 The uniform hard-sample measure gives the same mass to a sample and its dual.
 \end{theorem}
 
@@ -1792,7 +1792,7 @@ Hard-sample duality preserves the uniform hard-sample measure.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_singleton_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measureReal_singleton_dualHardSample}
-\difficulty{5}
+\difficulty{4}
 The disjoint-conditioned hard-sample measure gives the same mass to a sample and its dual.
 \end{theorem}
 
@@ -1819,7 +1819,7 @@ Conditioning on a subevent of disjointness is the same under the ambient hard di
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_cond_specialZeroZero_measureReal_le_two_mul_disjointSpecialYFalseMeasure}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialY_false, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero_subset_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_cond_eq_disjointCondMeasure_cond_of_subset_disjointEvent}
-\difficulty{6}
+\difficulty{5}
 Conditioning on $(X_{T},Y_{T})=(0,0)$ costs at most a factor $2$ relative to conditioning only on $Y_{T}=false$ under the disjoint distribution. This is the reweighting step before Markov's inequality.
 \end{theorem}
 
@@ -1836,7 +1836,7 @@ The transcript random variable induced by a deterministic protocol on the hard s
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message_ae_eq_coordinateMessage}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateInput, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateMessage, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXSet, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYSet, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_ae_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector_xBit_of_mem_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector_yBit_of_mem_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message}
-\difficulty{4}
+\difficulty{3}
 Under $D$, the transcript is a function of the generated disjoint coordinate vector.
 \end{theorem}
 
@@ -1897,7 +1897,7 @@ Raw $Z$ dualization is injective.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualZValue_injective}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualRawZValue_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualZValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable_dualProtocol_dualHardSample}
-\difficulty{2}
+\difficulty{1}
 The $Z$-value recoding induced by protocol and hard-sample duality is injective.
 \end{theorem}
 
@@ -1906,7 +1906,7 @@ The $Z$-value recoding induced by protocol and hard-sample duality is injective.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable_dualProtocol_dualHardSample}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocol, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualZValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZVariable_dualProtocol_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{2}
+\difficulty{1}
 The $Z$ variable for the dual protocol and hard sample is the recoded original $Z$.
 \end{theorem}
 
@@ -1924,7 +1924,7 @@ Pulling a recoded dual $Z$ fiber back along hard-sample duality gives the origin
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_zVariable_dualProtocol_dualZValue}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocol, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualZValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measurePreserving_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable_dualProtocol_preimage_dualZValue}
-\difficulty{4}
+\difficulty{3}
 The ambient hard-sample measure gives corresponding original and dual $Z$ fibers the same mass.
 \end{theorem}
 
@@ -1942,7 +1942,7 @@ Real-valued version of \texttt{volume\_zVariable\_dualProtocol\_dualZValue}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputDist_measureReal_eq_preimage}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputDist, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputMeasure}
-\difficulty{3}
+\difficulty{2}
 Probabilities under the hard input distribution can be computed on the explicit hard sample space by taking preimages under \texttt{input}.
 \end{theorem}
 
@@ -1976,7 +1976,7 @@ The special-coordinate bit-pair.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_specialX_law_eq_uniformBool}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_isProbabilityMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_specialX_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton}
-\difficulty{4}
+\difficulty{3}
 The law of $X_{T}$ under $D ∧ Y_{T}=false$ is the uniform bit law.
 \end{theorem}
 
@@ -1985,7 +1985,7 @@ The law of $X_{T}$ under $D ∧ Y_{T}=false$ is the uniform bit law.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_toPMF_ne_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton}
-\difficulty{3}
+\difficulty{2}
 The uniform law on one bit has full support.
 \end{theorem}
 
@@ -2001,7 +2001,7 @@ Uniform law on a bit-pair.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBoolPair_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBoolPair}
-\difficulty{3}
+\difficulty{2}
 Each bit-pair has mass $1 / 4$ under the uniform law on two bits.
 \end{theorem}
 
@@ -2036,7 +2036,7 @@ Conditional probabilities under a $Z=z$ fiber are computed by intersecting with 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_zVariable}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialY_false, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber}
-\difficulty{3}
+\difficulty{2}
 The mass of a $Z$ fiber under the Alice-side conditioned measure, with the $3/2$ scaling from $Pr_{D}[Y_{T}=false]=2/3$ made explicit.
 \end{theorem}
 
@@ -2063,7 +2063,7 @@ Conditioning a $Z=z$ fiber further on a special Bob-bit value is the same as con
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_cond_specialYFalse_eq_disjointSpecialYFalseMeasure_cond_zVariable}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_cond_zVariable_eq_cond_inter, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mem_disjointEvent_of_specialY_eq_false, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_cond_eq_disjointCondMeasure_cond_of_subset_disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_cond_specialY_eq_volume_cond_inter, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{4}
+\difficulty{3}
 Conditioning a $Z=z$ fiber further on $Y_{T}=false$ agrees with conditioning the $D ∧ Y_{T}=false$ measure on the same $Z$ fiber.
 \end{theorem}
 
@@ -2072,7 +2072,7 @@ Conditioning a $Z=z$ fiber further on $Y_{T}=false$ agrees with conditioning the
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_specialYFalse_ne_zero_of_disjointSpecialYFalseMeasure_ne_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_zVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_zFiber_ne_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
-\difficulty{5}
+\difficulty{4}
 A positive $Z=z$ fiber under $D ∧ Y_{T}=false$ makes the $Y_{T}=false$ branch of the ambient $Z=z$ fiber positive.
 \end{theorem}
 
@@ -2089,7 +2089,7 @@ The conditional law of the special bit-pair on a positive-mass $Z=z$ fiber.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
-\difficulty{3}
+\difficulty{2}
 On a positive-mass $Z=z$ fiber, the conditional \texttt{specialPair} singleton mass is the corresponding preimage probability under the fiber measure.
 \end{theorem}
 
@@ -2114,7 +2114,7 @@ The conditional law of Bob's special bit on a positive-mass $Z=z$ fiber.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
-\difficulty{3}
+\difficulty{2}
 On a positive-mass $Z=z$ fiber, Alice's conditional special-bit singleton mass is the corresponding preimage probability under the fiber measure.
 \end{theorem}
 
@@ -2123,7 +2123,7 @@ On a positive-mass $Z=z$ fiber, Alice's conditional special-bit singleton mass i
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
-\difficulty{3}
+\difficulty{2}
 On a positive-mass $Z=z$ fiber, Bob's conditional special-bit singleton mass is the corresponding preimage probability under the fiber measure.
 \end{theorem}
 
@@ -2201,7 +2201,7 @@ The Alice one-bit law on the dual protocol's recoded $Z$ fiber is Bob's one-bit 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance_dualProtocol_dualZValue_eq_yDistance}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_dualProtocol_dualZValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocol, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualZValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yDistance}
-\difficulty{2}
+\difficulty{1}
 The Alice one-bit distance for the dual protocol at the recoded $Z$ value is the original Bob one-bit distance.
 \end{theorem}
 
@@ -2236,7 +2236,7 @@ Alice's one-bit fiber KL cost on a $Z=z$ fiber.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_mul_xDistance_sq_le_xFiberKL}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_mul_xDistance_sq_le_toReal_klDiv_uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL}
-\difficulty{2}
+\difficulty{1}
 Pointwise Pinsker for Alice.
 \end{theorem}
 
@@ -2245,7 +2245,7 @@ Pointwise Pinsker for Alice.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_mul_integral_xDistance_sq_le_integral_xFiberKL_disjointSpecialYFalse}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_isProbabilityMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_mul_xDistance_sq_le_xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{4}
+\difficulty{3}
 Integrated Alice Pinsker bound over the $D ∧ Y_{T}=false$ conditioned measure.
 \end{theorem}
 
@@ -2297,7 +2297,7 @@ The generated input follows the transcript of any deterministic protocol.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input_mem_transcript_of_zVariable_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.transcript, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input_mem_transcript, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{3}
+\difficulty{2}
 If a sample has $Z=z$, its generated input follows the transcript component of $z$.
 \end{theorem}
 
@@ -2333,7 +2333,7 @@ Equal $Z$ value fixes Bob's bits after the special coordinate.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mixed_inputs_mem_transcript_of_zVariable_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet_isRectangle, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.transcript, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input_mem_transcript_of_zVariable_eq, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.Rectangle.IsRectangle_iff}
-\difficulty{4}
+\difficulty{3}
 The transcript component of $Z$ is a rectangle: two samples in the same $Z$ fiber also contain the two mixed input pairs in that transcript rectangle.
 \end{theorem}
 
@@ -2342,7 +2342,7 @@ The transcript component of $Z$ is a rectangle: two samples in the same $Z$ fibe
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate_eq_of_same_zVariable}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate_eq_of_zVariable_eq, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{3}
+\difficulty{2}
 Two samples in the same $Z$ fiber have the same special coordinate.
 \end{theorem}
 
@@ -2351,7 +2351,7 @@ Two samples in the same $Z$ fiber have the same special coordinate.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_eq_of_same_zVariable}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_eq_of_zVariable_eq, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{3}
+\difficulty{2}
 Two samples in the same $Z$ fiber have the same $X_{<T}$ conditioning data.
 \end{theorem}
 
@@ -2360,7 +2360,7 @@ Two samples in the same $Z$ fiber have the same $X_{<T}$ conditioning data.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial_eq_of_same_zVariable}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial_eq_of_zVariable_eq, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{3}
+\difficulty{2}
 Two samples in the same $Z$ fiber have the same $Y_{>T}$ conditioning data.
 \end{theorem}
 
@@ -2378,7 +2378,7 @@ The mixed sample of two samples in the same $Z$ fiber remains in that $Z$ fiber.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialPair_of_mem_specialX_specialY}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable_mix_eq_of_same_zVariable}
-\difficulty{4}
+\difficulty{3}
 If two samples are in a $Z=z$ fiber, and the first has Alice special bit \texttt{bX} while the second has Bob special bit \texttt{bY}, then their mix is in the same fiber with special pair $(bX, bY)$.
 \end{theorem}
 
@@ -2396,7 +2396,7 @@ The swapped mix of two samples in a $Z=z$ fiber remains in that fiber.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialX_of_mem_specialPair_fiber}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable_mix_eq_of_same_zVariable}
-\difficulty{4}
+\difficulty{3}
 If one sample in a fiber has special pair $b$ and the other is just in the fiber, mixing with the special-pair sample on Alice's side lands in the fiber with Alice special bit \texttt{b.1}.
 \end{theorem}
 
@@ -2405,7 +2405,7 @@ If one sample in a fiber has special pair $b$ and the other is just in the fiber
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialY_of_mem_fiber_specialPair}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY_mix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable_mix_eq_of_same_zVariable}
-\difficulty{4}
+\difficulty{3}
 If one sample in a fiber has special pair $b$ and the other is just in the fiber, mixing with the special-pair sample on Bob's side lands in the fiber with Bob special bit \texttt{b.2}.
 \end{theorem}
 
@@ -2423,7 +2423,7 @@ The switching map $(ωX, ωY) ↦ (mix ωX ωY, mix ωY ωX)$ gives the cardinal
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_eq_card_subtype_div}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
-\difficulty{3}
+\difficulty{2}
 Under the uniform hard-distribution measure, real measure is cardinality divided by the size of the sample space.
 \end{theorem}
 
@@ -2432,7 +2432,7 @@ Under the uniform hard-distribution measure, real measure is cardinality divided
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fiber_volume_factorization}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.card_fiber_inter_specialX_mul_card_fiber_inter_specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_eq_card_subtype_div, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber}
-\difficulty{5}
+\difficulty{4}
 The rectangle switching identity, translated from cardinalities to the uniform hard-distribution measure.
 \end{theorem}
 
@@ -2441,7 +2441,7 @@ The rectangle switching identity, translated from cardinalities to the uniform h
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_singleton_factorization}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw}
-\difficulty{4}
+\difficulty{3}
 To prove the conditional special-pair law factors, it suffices to prove singleton factorization for the four bit-pairs.
 \end{theorem}
 
@@ -2450,7 +2450,7 @@ To prove the conditional special-pair law factors, it suffices to prove singleto
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_zFiberMeasure_factorization}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_singleton_factorization, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
-\difficulty{3}
+\difficulty{2}
 Singleton factorization can be proved directly on the underlying $Z=z$ fiber measure.
 \end{theorem}
 
@@ -2459,7 +2459,7 @@ Singleton factorization can be proved directly on the underlying $Z=z$ fiber mea
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_fiber_volume_factorization}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_zFiberMeasure_factorization, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_zFiber_ne_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_real_apply}
-\difficulty{4}
+\difficulty{3}
 A cross-multiplied version of singleton factorization, phrased using the original hard distribution instead of conditional fiber probabilities.
 \end{theorem}
 
@@ -2477,7 +2477,7 @@ The protocol transcript is a rectangle on each coarse fiber, so conditioned on a
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_singleton_factorization_of_eq_prod}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw}
-\difficulty{4}
+\difficulty{3}
 A product special-pair law gives singleton factorization of the conditional bit laws on the same $Z$ fiber.
 \end{theorem}
 
@@ -2504,7 +2504,7 @@ Rectangle switching implies the fiber identity $p(X_{T} | Z=z) = p(X_{T} | Z=z, 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL_eq_cond_specialYFalse_klDiv}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_eq_cond_specialYFalse, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
-\difficulty{2}
+\difficulty{1}
 After rectangle switching, Alice's \texttt{xFiberKL} can be computed by first conditioning on $Y_{T}=false$ inside the $Z=z$ fiber.
 \end{theorem}
 
@@ -2591,7 +2591,7 @@ Alice's information term is bounded by the total corrected information.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_dualProtocol_eq_bobInfoTerm}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measurePreserving_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocol, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_self_comp_measurePreserving, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message_dualProtocol_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite, ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
-\difficulty{6}
+\difficulty{5}
 Alice's corrected information term for the dual protocol is Bob's corrected information term for the original protocol.
 \end{theorem}
 
@@ -2600,7 +2600,7 @@ Alice's corrected information term for the dual protocol is Bob's corrected info
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm_dualProtocol_eq_aliceInfoTerm}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobClaimConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobClaimConditioning_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measurePreserving_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocol, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_self_comp_measurePreserving, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message_dualProtocol_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY_dualHardSample, ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite, ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
-\difficulty{6}
+\difficulty{5}
 Bob's corrected information term for the dual protocol is Alice's corrected information term for the original protocol.
 \end{theorem}
 
@@ -2609,7 +2609,7 @@ Bob's corrected information term for the dual protocol is Alice's corrected info
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xVector_message_info_dualProtocol_eq_yVector_message_info}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measurePreserving_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocol, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_self_comp_measurePreserving, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message_dualProtocol_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.reverseBoolVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.reverseBoolVector_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xVector_dualHardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yVector_dualHardSample, ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite}
-\difficulty{6}
+\difficulty{5}
 Full-vector information for the dual protocol is the swapped full-vector information for the original protocol.
 \end{theorem}
 
@@ -2651,7 +2651,7 @@ The zero cross-information term $I(X_{i} : Y_{<i} | X_{<i}, Y_{≥i})$.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceCrossInfoTerm_eq_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateYBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceCrossInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedYBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_fixedAliceCrossInfoTriple_uniform, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_crossInfo_eq_zero, ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite}
-\difficulty{4}
+\difficulty{3}
 Fixed-coordinate independence input for the hard distribution conditioned on $D$: $I(X_{i} : Y_{<i} | X_{<i}, Y_{≥i}, D) = 0$.
 \end{theorem}
 
@@ -2660,7 +2660,7 @@ Fixed-coordinate independence input for the hard distribution conditioned on $D$
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceInfoTerm_le_fixedAliceFullYInfoTerm}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.TranscriptType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceChainConditioningValue_fixedAliceFullYConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceChainConditioningValue_injective, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceCrossInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceCrossInfoTerm_eq_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceFullYConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceFullYInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedYBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, ProbabilityTheory.condMutualInfo_le_prod_right_snd, ProbabilityTheory.condMutualInfo_prod_right_eq_add}
-\difficulty{6}
+\difficulty{5}
 Fixed-coordinate chain-rule inequality: $I(X_{i} : M | X_{<i},Y_{≥i}) ≤ I(X_{i} : M | X_{<i},Y)$.
 \end{theorem}
 
@@ -2678,7 +2678,7 @@ Summing the fixed-coordinate inequalities.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.sum_fixedAliceFullYInfoTerm_eq_xVector_info}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceFullYConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceFullYInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXStrictPrefix, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yVector, ProbabilityTheory.boolVectorStrictPrefix, ProbabilityTheory.condMutualInfo_boolVector_eq_sum_strictPrefix}
-\difficulty{4}
+\difficulty{3}
 Chain rule for the full Alice vector: $∑_{i} I(X_{i} : M | X_{<i},Y,D) = I(X : M | Y,D)$.
 \end{theorem}
 
@@ -2687,7 +2687,7 @@ Chain rule for the full Alice vector: $∑_{i} I(X_{i} : M | X_{<i},Y,D) = I(X :
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.sum_fixedAliceInfoTerm_le_xVector_info}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceFullYInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.sum_fixedAliceFullYInfoTerm_eq_xVector_info, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.sum_fixedAliceInfoTerm_le_sum_fixedAliceFullYInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yVector}
-\difficulty{3}
+\difficulty{2}
 Chain-rule step for the Alice summands: $∑_{i} I(X_{i} : M | X_{<i}, Y_{≥i}, D) ≤ I(X : M | Y, D)$.  Its only probabilistic input is \texttt{fixedAliceCrossInfoTerm\_eq\_zero}.
 \end{theorem}
 
@@ -2705,7 +2705,7 @@ Expanding Alice's random-coordinate information term by the special coordinate $
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceDynamicConditioning_fiber_info_eq_fixedAliceInfoTerm}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceDynamicConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateMessage, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialCoordinate_preimage_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning_ae_eq_coordinateAliceConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBit_ae_eq_coordinateXBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedYGe, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_disjointCoordinateVector_uniform, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_disjointCoordinateVector_uniform_cond_specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message_ae_eq_coordinateMessage, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yGeSpecial, ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite, ProbabilityTheory.condMutualInfo_congr_ae_finite}
-\difficulty{7}
+\difficulty{6}
 Uniformity/independence step for the special coordinate: after conditioning on $T=i$, the random-coordinate Alice information term is the fixed-coordinate summand.
 \end{theorem}
 
@@ -2714,7 +2714,7 @@ Uniformity/independence step for the special coordinate: after conditioning on $
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_eq_average_fixedAliceInfoTerm}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceDynamicConditioning_fiber_info_eq_fixedAliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_eq_sum_specialCoordinate_fiber_info, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceInfoTerm}
-\difficulty{3}
+\difficulty{2}
 Averaging over the special coordinate: conditioned on $D$, $T$ is uniform and independent of $(X,Y,M)$, so the Alice term is the average of the fixed-coordinate summands.
 \end{theorem}
 
@@ -2777,7 +2777,7 @@ Bob's averaged fixed-coordinate information plus the entropy bound $H(M) ≤ ℓ
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo_le_average_info_upper}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_le_average_entropy_bound, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm_le_average_entropy_bound, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo}
-\difficulty{4}
+\difficulty{3}
 The corrected claim information is at most the averaged full-vector transcript information coming from the entropy bound $H(M) ≤ ℓ$.
 \end{theorem}
 
@@ -2786,7 +2786,7 @@ The corrected claim information is at most the averaged full-vector transcript i
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yGeSpecial_eq_yAfterSpecial_of_specialY_false}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yGeSpecial}
-\difficulty{5}
+\difficulty{4}
 On the branch $Y_{T}=false$, the corrected Alice suffix $Y_{≥T}$ is the same information as the coarse suffix $Y_{>T}$, since the missing coordinate is fixed to \texttt{false}.
 \end{theorem}
 
@@ -2804,7 +2804,7 @@ On the branch $Y_{T}=false$, Alice's corrected conditioning is exactly the coars
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_ae_specialY_false}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY}
-\difficulty{3}
+\difficulty{2}
 Under $D ∧ Y_{T}=false$, Bob's special bit is almost surely \texttt{false}.
 \end{theorem}
 
@@ -2838,7 +2838,7 @@ The same Alice $Y_{T}=false$ information term using the coarse conditioning $T, 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.condKLDiv_specialX_zVariable_eq_mutualInfo_zVariable}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_isProbabilityMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_specialX_law_eq_uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_toPMF_ne_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{5}
+\difficulty{4}
 Since $X_{T}$ is uniform under $D ∧ Y_{T}=false$, the conditional KL average to the uniform bit law is the mutual information between $X_{T}$ and the full $Z=(M,T,X_{<T},Y_{>T})$ variable.
 \end{theorem}
 
@@ -2865,7 +2865,7 @@ The averaged Alice fiber KL cost under $D ∧ Y_{T}=false$, as a finite sum over
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_sum_zVariable_klDiv}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_sum_zVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL_eq_disjointSpecialYFalseMeasure_cond_zVariable_klDiv_of_ne_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{4}
+\difficulty{3}
 The averaged Alice fiber KL cost under $D ∧ Y_{T}=false$ as a finite sum of actual KL divergences for the conditional $Z=z$ laws.
 \end{theorem}
 
@@ -2874,7 +2874,7 @@ The averaged Alice fiber KL cost under $D ∧ Y_{T}=false$ as a finite sum of ac
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_condKLDiv_zVariable}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_isProbabilityMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_sum_zVariable_klDiv, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_toPMF_ne_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable, ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero}
-\difficulty{5}
+\difficulty{4}
 The averaged Alice fiber KL under $D ∧ Y_{T}=false$, rewritten as the PFR real conditional KL used by the entropy API.
 \end{theorem}
 
@@ -2891,7 +2891,7 @@ Flip only Alice's special-coordinate bit.  This preserves the coarse conditionin
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX_flipSpecialX}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX}
-\difficulty{3}
+\difficulty{2}
 Technical auxiliary result for \texttt{flipSpecialX\_flipSpecialX}.
 \end{theorem}
 
@@ -2900,7 +2900,7 @@ Technical auxiliary result for \texttt{flipSpecialX\_flipSpecialX}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX_preimage_singleton}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX_flipSpecialX}
-\difficulty{4}
+\difficulty{3}
 Technical auxiliary result for \texttt{flipSpecialX\_preimage\_singleton}.
 \end{theorem}
 
@@ -2909,7 +2909,7 @@ Technical auxiliary result for \texttt{flipSpecialX\_preimage\_singleton}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measureReal_singleton_flipSpecialX}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
-\difficulty{3}
+\difficulty{2}
 Technical auxiliary result for \texttt{volume\_measureReal\_singleton\_flipSpecialX}.
 \end{theorem}
 
@@ -2945,7 +2945,7 @@ Technical auxiliary result for \texttt{specialY\_flipSpecialX}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_flipSpecialX}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit}
-\difficulty{4}
+\difficulty{3}
 Technical auxiliary result for \texttt{xBeforeSpecial\_flipSpecialX}.
 \end{theorem}
 
@@ -2963,7 +2963,7 @@ Technical auxiliary result for \texttt{yAfterSpecial\_flipSpecialX}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning_flipSpecialX}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial_flipSpecialX}
-\difficulty{3}
+\difficulty{2}
 Technical auxiliary result for \texttt{coarseConditioning\_flipSpecialX}.
 \end{theorem}
 
@@ -2972,7 +2972,7 @@ Technical auxiliary result for \texttt{coarseConditioning\_flipSpecialX}.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measureReal_specialYFalse_inter_coarseConditioning_inter_specialX}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning_flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX_flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY_flipSpecialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measurePreserving_flipSpecialX}
-\difficulty{6}
+\difficulty{5}
 In every $Y_{T}=false, coarse=c$ fiber of the ambient hard distribution, each value of $X_{T}$ has half the mass.
 \end{theorem}
 
@@ -2981,7 +2981,7 @@ In every $Y_{T}=false, coarse=c$ fiber of the ambient hard distribution, each va
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_specialX_inter_coarseConditioning}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mem_disjointEvent_of_specialY_eq_false, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measureReal_specialYFalse_inter_coarseConditioning_inter_specialX}
-\difficulty{6}
+\difficulty{4}
 The preceding ambient counting identity remains true after conditioning on $Y_{T}=false$.
 \end{theorem}
 
@@ -2990,7 +2990,7 @@ The preceding ambient counting identity remains true after conditioning on $Y_{T
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mutualInfo_specialX_coarseConditioning_disjointSpecialYFalse_eq_zero}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_isProbabilityMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_specialX_inter_coarseConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_specialX_singleton, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, ProbabilityTheory.indepFun_of_measureReal_inter_preimage_singleton_eq_mul}
-\difficulty{4}
+\difficulty{3}
 Under $D ∧ Y_{T}=false$, the coarse data $T, X_{<T}, Y_{>T}$ is independent of $X_{T}$. This is the sampling independence used before adding the transcript rectangle.
 \end{theorem}
 
@@ -2999,7 +2999,7 @@ Under $D ∧ Y_{T}=false$, the coarse data $T, X_{<T}, Y_{>T}$ is independent of
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mutualInfo_specialX_zVariable_eq_aliceCoarseInfoTermSpecialYFalse}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.TranscriptType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.ext, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.specialCoordinate, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.transcript, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.xBefore, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.yAfter, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceCoarseInfoTermSpecialYFalse, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_isProbabilityMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mutualInfo_specialX_coarseConditioning_disjointSpecialYFalse_eq_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable, ProbabilityTheory.mutualInfo_comp_right_of_injective, ProbabilityTheory.mutualInfo_prod_right_eq_add}
-\difficulty{6}
+\difficulty{5}
 The full $Z=(M,coarse)$ mutual information is the coarse information term, because the coarse part alone is independent of $X_{T}$ under $D ∧ Y_{T}=false$.
 \end{theorem}
 
@@ -3017,7 +3017,7 @@ KL identification with the coarse $Z$ conditioning: the average Alice one-bit fi
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_aliceInfoTermSpecialYFalse}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTermSpecialYFalse, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTermSpecialYFalse_eq_aliceCoarseInfoTermSpecialYFalse, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_aliceCoarseInfoTermSpecialYFalse, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{1}
+\difficulty{2}
 Identification of the average Alice one-bit fiber KL with the conditional mutual information under $Y_{T}=false$.  This packages the step $p(x_{t} | z) = p(x_{t} | z, y_{t}=0) = p(x_{t} | z, y_{t}=0, D)$ coming from independence and the rectangle property of the transcript.
 \end{theorem}
 
@@ -3062,7 +3062,7 @@ Alice Pinsker/information step under $D ∧ Y_{T}=false$: the squared one-bit ma
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero_inter_xDistance_bad_le}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_integral_xDistance_le_of_integral_sq_le, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_xDistance_bad_le_of_integral_le, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xDistance_sq_disjointSpecialYFalse_le_gamma_pow_four, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_cond_specialZeroZero_measureReal_le_two_mul_disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{6}
+\difficulty{5}
 Alice marginal estimate: under the $(X_{T},Y_{T})=(0,0)$ slice, the set of $Z$ fibers whose Alice special-bit marginal is farther than $γ$ from uniform has mass at most $γ / 2$.
 \end{theorem}
 
@@ -3080,7 +3080,7 @@ Bob marginal estimate, symmetric to the Alice marginal estimate.
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.one_div_four_mul_one_sub_four_mul_le_measureReal_goodZEvent}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero_inter_xDistance_bad_le, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero_inter_yDistance_bad_le, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mem_goodZEvent_of_xDistance_yDistance_le, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yDistance, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{6}
+\difficulty{5}
 If the corrected special-coordinate information is $≤ 2γ^{4} / 3$, then the set of $Z$ fibers where the conditional law of $(X_{T}, Y_{T})$ is within $2γ$ of uniform has hard-distribution mass at least $(1 - 4γ) / 4$.
 \end{theorem}
 
@@ -3116,7 +3116,7 @@ A good $z$ gives a lower bound on each singleton mass of the conditional special
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber_inter_diag_specialPair_subset_protocolErrorEvent}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjoint_X_Y_iff, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.protocolErrorEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.run_eq_zOutput_of_zVariable_eq, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zOutput, CommunicationComplexity.Functions.Disjointness.disjointness}
-\difficulty{5}
+\difficulty{4}
 On a fixed $Z=z$ fiber, inputs whose special pair equals the $Z$-determined protocol output on both sides are protocol errors.
 \end{theorem}
 
@@ -3134,7 +3134,7 @@ On a good $Z$ fiber, the conditional protocol-error probability is at least $1 /
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent_mul_quarter_sub_two_mul_le_protocolErrorEvent}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real, CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZ, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.protocolErrorEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.quarter_sub_two_mul_le_zFiberMeasure_protocolErrorEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
-\difficulty{5}
+\difficulty{4}
 Averaging the good-fiber error lower bound over all good $Z$ fibers gives an unconditional error lower bound.
 \end{theorem}
 
@@ -3143,7 +3143,7 @@ Averaging the good-fiber error lower bound over all good $Z$ fibers gives an unc
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent_mul_quarter_sub_two_mul_le_distributionalError}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.distributionalError_inputDist_eq_protocolErrorEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent_mul_quarter_sub_two_mul_le_protocolErrorEvent, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputDist, CommunicationComplexity.Functions.Disjointness.disjointness}
-\difficulty{1}
+\difficulty{2}
 The final good-fiber error calculation, phrased using distributional error.
 \end{theorem}
 
@@ -3170,7 +3170,7 @@ Deterministic fixed-error disjointness lower bound from the information estimate
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.lt_publicCoin_communicationComplexity_disjointness_of_lt_const_mul_n}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.const_mul_n_le_complexity_of_distributionalError_le, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputDist, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt}
-\difficulty{4}
+\difficulty{3}
 Public-coin fixed-error lower bound from the deterministic distributional lower bound via minimax.
 \end{theorem}
 
@@ -3179,6 +3179,6 @@ Public-coin fixed-error lower bound from the deterministic distributional lower 
 \label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.floor_div_pow_lt_publicCoin_communicationComplexity_disjointness}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.lt_publicCoin_communicationComplexity_disjointness_of_lt_const_mul_n, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.PublicCoin.communicationComplexity}
-\difficulty{4}
+\difficulty{3}
 Headline theorem: public-coin randomized communication complexity of disjointness is linear at fixed error $1 / 32$, with a concrete conservative constant. The cutoff is the floor of the real number $n / 2^{32}$, so the asymptotic constant is stated over the reals.
 \end{theorem}

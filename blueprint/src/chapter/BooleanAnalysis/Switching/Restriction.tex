@@ -12,6 +12,7 @@ lemmas about list operations and decision-tree depth used in the main argument.
 
 \begin{definition}[Restriction]
 \lean{SwitchingLemma2.Restriction}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b003}
 \label{SwitchingLemma2.Restriction}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
@@ -21,6 +22,7 @@ assigning each variable either a fixed Boolean value or leaving it free (\texttt
 
 \begin{definition}[Free variables of a restriction]
 \lean{SwitchingLemma2.Restriction.freeVars}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b003}
 \label{SwitchingLemma2.Restriction.freeVars}
 \leanok
 \uses{SwitchingLemma2.Restriction}
@@ -126,6 +128,7 @@ A term $t$ is alive under $\rho$ when it is neither killed nor fixed by $\rho$.
 
 \begin{definition}[Restricted Boolean function]
 \lean{SwitchingLemma2.restrictFn}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b004}
 \label{SwitchingLemma2.restrictFn}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
@@ -137,6 +140,10 @@ evaluated on the free coordinates with the fixed coordinates set by $\rho$.
 
 \begin{definition}[Bad restriction]
 \lean{SwitchingLemma2.IsBadRestriction}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p008-b005,
+  pdf-fc447f326910-p018-b002
+}
 \label{SwitchingLemma2.IsBadRestriction}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b001}
@@ -187,7 +194,7 @@ for all $x$), then the decision-tree depth of $f$ is at most $d$.
 \lean{SwitchingLemma2.list_any_eq_false}
 \label{SwitchingLemma2.list_any_eq_false}
 \leanok
-\difficulty{4}
+\difficulty{3}
 If a Boolean predicate $p$ is false on every element of a list $l$, then $l.\mathrm{any}\,p$
 is false.
 \end{lemma}
@@ -196,7 +203,7 @@ is false.
 \lean{SwitchingLemma2.list_all_eq_false_of_mem}
 \label{SwitchingLemma2.list_all_eq_false_of_mem}
 \leanok
-\difficulty{5}
+\difficulty{4}
 If some element $a$ of a list $l$ satisfies $p(a) = \mathrm{false}$, then $l.\mathrm{all}\,p$
 is false.
 \end{lemma}
@@ -206,6 +213,102 @@ is false.
 \label{SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_of_tree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.fixedBy_eval_true, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.dtDepth_le_of_tree, SwitchingLemma2.restrictFn, Term.eval, dtDepth}
 \difficulty{4}
 If some term of a DNF $f$ is fixed by $\rho$, then the restricted function
@@ -218,6 +321,112 @@ decision-tree depth $0$.
 \label{SwitchingLemma2.killedAll_implies_dtDepth_zero}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_of_tree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.killedBy_eval_false, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Term.killedBy, SwitchingLemma2.dtDepth_le_of_tree, SwitchingLemma2.list_all_eq_false_of_mem, SwitchingLemma2.list_any_eq_false, SwitchingLemma2.restrictFn, Term.eval, dtDepth}
 \difficulty{4}
 If every term of a DNF $f$ is killed by $\rho$, then the restricted function
@@ -230,7 +439,7 @@ decision-tree depth $0$.
 \label{SwitchingLemma2.killedBy_of_nonfree_agree}
 \leanok
 \uses{SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, Term}
-\difficulty{5}
+\difficulty{3}
 If a term $t$ is killed by $\rho$ and a restriction $\sigma$ agrees with $\rho$ on every
 non-free variable (i.e.\ $\sigma(v) = \rho(v)$ whenever $\rho(v) \neq \mathrm{none}$), then
 $t$ is also killed by $\sigma$.
@@ -241,7 +450,7 @@ $t$ is also killed by $\sigma$.
 \label{SwitchingLemma2.first_clause_preserved}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.killedBy_of_nonfree_agree, Term}
-\difficulty{5}
+\difficulty{4}
 Suppose $t$ is the first term of $f$ not killed by $\rho$, that $\sigma$ agrees with
 $\rho$ on all non-free variables, and that $t$ is not killed by $\sigma$. Then $t$ is also
 the first term of $f$ not killed by $\sigma$.
@@ -252,7 +461,7 @@ the first term of $f$ not killed by $\sigma$.
 \label{SwitchingLemma2.term_length_le_width}
 \leanok
 \uses{DNF, DNF.width, Term, Term.width}
-\difficulty{4}
+\difficulty{3}
 Every term $t$ belonging to a DNF $f$ has length at most the width of $f$.
 \end{lemma}
 

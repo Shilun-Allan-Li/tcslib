@@ -28,7 +28,7 @@ an Alice-node or the false-child of a Bob-node, and hence a subtree of the paren
 \label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
-\difficulty{4}
+\difficulty{3}
 If $s$ is a subprotocol of $t$ and $t$ is a subprotocol of $u$, then $s$ is a subprotocol
 of $u$.  That is, the subprotocol relation is transitive.
 \end{lemma}
@@ -38,7 +38,7 @@ of $u$.  That is, the subprotocol relation is transitive.
 \label{CommunicationComplexity.Deterministic.Protocol.balanced_aux}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
-\difficulty{6}
+\difficulty{5}
 Given a protocol $p$ with $3 \cdot p.\mathrm{numLeaves} \ge 2n$ and $n > 1$, there exists a
 subprotocol $s$ of $p$ satisfying $n \le 3 \cdot s.\mathrm{numLeaves} < 2n$.  This is the
 inductive step used to prove the balanced subprotocol theorem.
@@ -49,7 +49,7 @@ inductive step used to prove the balanced subprotocol theorem.
 \label{CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.balanced_aux, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
-\difficulty{6}
+\difficulty{5}
 If a protocol $p$ has more than one leaf (i.e.\ $p.\mathrm{numLeaves} > 1$), then there
 exists a subprotocol $s$ of $p$ satisfying
 \[
@@ -105,7 +105,7 @@ noncomputable.
 \label{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
-\difficulty{3}
+\difficulty{4}
 If \texttt{hsp} is a \texttt{SubprotocolPath} from $s$ to $p$, then
 $s.\mathrm{numLeaves} \le p.\mathrm{numLeaves}$.  A subtree cannot have more leaves than
 its parent.
@@ -187,7 +187,7 @@ s.\texttt{run}\;x\;y$.
 \label{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
-\difficulty{2}
+\difficulty{1}
 If \texttt{hsp} witnesses that $s$ is a subprotocol of $p$ and $(x, y)$ reaches $s$, then
 $p.\texttt{run}\;x\;y = s.\texttt{run}\;x\;y$.
 \end{lemma}
@@ -216,7 +216,7 @@ $\texttt{chooseOutput}\;s$ (the leftmost leaf of $s$).
 \label{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
-\difficulty{6}
+\difficulty{5}
 After erasing subprotocol $s$ from $p$ via path \texttt{hsp}, the resulting protocol has
 $p.\mathrm{numLeaves} - s.\mathrm{numLeaves} + 1$ leaves.
 \end{lemma}
@@ -246,7 +246,7 @@ for \texttt{hsp}.
 \label{CommunicationComplexity.Deterministic.Protocol.erase_numLeaves}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.erase, CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves, CommunicationComplexity.Deterministic.Protocol.numLeaves}
-\difficulty{2}
+\difficulty{1}
 If \texttt{hsp} witnesses that $s$ is a subprotocol of $p$, then
 $(\texttt{erase}\;\texttt{hsp}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves} + 1$.
 \end{lemma}
@@ -256,7 +256,7 @@ $(\texttt{erase}\;\texttt{hsp}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\m
 \label{CommunicationComplexity.Deterministic.Protocol.erase_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.erase, CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run}
-\difficulty{2}
+\difficulty{1}
 If $(x, y)$ does not reach the subprotocol $s$ of $p$, then
 $(\texttt{erase}\;\texttt{hsp}).\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
 \end{lemma}
@@ -286,7 +286,7 @@ $\texttt{deletePath}\;\texttt{hsp} \ne \texttt{none}$.
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt, CommunicationComplexity.Deterministic.Protocol.numLeaves}
-\difficulty{3}
+\difficulty{2}
 If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, then there exists a protocol $q$ such
 that $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$.
 \end{lemma}
@@ -326,7 +326,7 @@ returns \texttt{none} only when $s$ is the entire protocol $p$.
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
-\difficulty{6}
+\difficulty{5}
 If $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$, then
 $q.\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
 \end{lemma}
@@ -336,7 +336,7 @@ $q.\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
 \label{CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath, CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
-\difficulty{2}
+\difficulty{1}
 If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, then
 $(\texttt{prunePath}\;\texttt{hsp}\;\texttt{hlt}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
 \end{lemma}
@@ -356,7 +356,7 @@ $(x, y)$ satisfies $\texttt{reachesPath}\;\texttt{hsp}\;x\;y$.
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.run}
-\difficulty{7}
+\difficulty{5}
 If $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$ and $(x, y)$ does not reach the
 subprotocol path, then $q.\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
 \end{lemma}
@@ -386,7 +386,7 @@ The noncomputable variant of \texttt{prunePath} taking an \texttt{IsSubprotocol}
 \label{CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
-\difficulty{2}
+\difficulty{1}
 If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, then
 $(\texttt{prune}\;\texttt{hsp}\;\texttt{hlt}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
 \end{lemma}
@@ -396,7 +396,7 @@ $(\texttt{prune}\;\texttt{hsp}\;\texttt{hlt}).\mathrm{numLeaves} = p.\mathrm{num
 \label{CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run}
-\difficulty{2}
+\difficulty{1}
 If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$ and $(x, y)$ does not reach $s$, then
 $(\texttt{prune}\;\texttt{hsp}\;\texttt{hlt}).\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
 \end{lemma}
@@ -417,7 +417,7 @@ does and to \texttt{qOut} otherwise.
 \label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
-\difficulty{3}
+\difficulty{2}
 The communication complexity of \texttt{testSubprotocol hsp qIn qOut} equals
 $2 + \max(\texttt{qIn}.\texttt{complexity},\; \texttt{qOut}.\texttt{complexity})$.
 \end{lemma}
@@ -427,7 +427,7 @@ $2 + \max(\texttt{qIn}.\texttt{complexity},\; \texttt{qOut}.\texttt{complexity})
 \label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
-\difficulty{3}
+\difficulty{2}
 If $(x, y)$ reaches the subprotocol $s$ of $p$, then
 $(\texttt{testSubprotocol}\;\texttt{hsp}\;\texttt{qIn}\;\texttt{qOut}).\texttt{run}\;x\;y = \texttt{qIn}.\texttt{run}\;x\;y$.
 \end{lemma}
@@ -437,7 +437,7 @@ $(\texttt{testSubprotocol}\;\texttt{hsp}\;\texttt{qIn}\;\texttt{qOut}).\texttt{r
 \label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
-\difficulty{4}
+\difficulty{3}
 If $(x, y)$ does not reach the subprotocol $s$ of $p$, then
 $(\texttt{testSubprotocol}\;\texttt{hsp}\;\texttt{qIn}\;\texttt{qOut}).\texttt{run}\;x\;y = \texttt{qOut}.\texttt{run}\;x\;y$.
 \end{lemma}

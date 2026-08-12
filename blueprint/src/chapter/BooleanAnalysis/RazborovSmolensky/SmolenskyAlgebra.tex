@@ -61,7 +61,7 @@ $b$ with $\abs{\{a : \mathrm{Fail}\,a\,b\}}\cdot C \le B\cdot\abs{\alpha}$.
 \label{ACP.exists_single_polynomial_from_pointwise_distribution}
 \leanok
 \uses{ACP.badInputCount, ACP.boolInput, ACP.exists_good_parameter_of_pointwise_bound}
-\difficulty{3}
+\difficulty{2}
 Let $P$ be a family of polynomials over $\mathbb{Z}/p$ indexed by a nonempty finite seed
 type. If for every Boolean input $x$ the number of seeds $s$ with
 $(P_s)(\mathrm{boolInput}(x)) \neq f(x)$, times $2^{\ell}$, is at most
@@ -74,7 +74,7 @@ $\mathrm{badInputCount}(f, P_s)\cdot 2^{\ell} \le B\cdot 2^{n}$.
 \label{ACP.exists_single_poly_for_circuit_one_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.badInputCount, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one_size, ACP.exists_single_polynomial_from_pointwise_distribution}
-\difficulty{3}
+\difficulty{2}
 Let $F$ be a feed-forward circuit with a unique output that only uses $\mathrm{AC}^0[p]$
 gate operations. Then there exists a polynomial $P$ over $\mathbb{Z}/p$ with
 $\deg P \le \mathrm{circuitDegreeBound}\,p\,\ell\,(\mathrm{depth}\,F)$ whose bad-input
@@ -138,7 +138,7 @@ For primes $p$ and $q$, the field $\mathrm{ModqField}\,q$ has exactly $p^{q-1}$ 
 \label{ACP.exists_unit_of_order_q_modqField}
 \leanok
 \uses{ACP.ModqField, ACP.natCard_modqField}
-\difficulty{6}
+\difficulty{5}
 If $p \neq q$ are primes, then the unit group of $\mathbb{F}_{p^{q-1}}$ contains an
 element $u$ with $\mathrm{ord}(u) = q$.
 \end{theorem}
@@ -148,7 +148,7 @@ element $u$ with $\mathrm{ord}(u) = q$.
 \label{ACP.exists_nontrivial_qth_root_modqField}
 \leanok
 \uses{ACP.ModqField, ACP.exists_unit_of_order_q_modqField}
-\difficulty{4}
+\difficulty{3}
 If $p \neq q$ are primes, then there is $\omega \in \mathbb{F}_{p^{q-1}}$ with
 $\omega^{q} = 1$ and $\omega \neq 1$.
 \end{theorem}
@@ -166,7 +166,7 @@ $x_i = 1$ or $x_i = \omega$.
 \label{ACP.exists_multilinear_representative_on_rootCube}
 \leanok
 \uses{ACP.rootCube}
-\difficulty{7}
+\difficulty{6}
 Every function $f : \{1,\omega\}^n \to K$ agrees on the cube with the evaluation of some
 polynomial $P \in K[X_1,\dots,X_n]$, i.e.\ $P(x) = f(x)$ for all $x$ in the cube.
 \end{theorem}
@@ -216,7 +216,7 @@ If $\omega \neq 0$ and $x$ lies in $\{1,\omega\}^n$, then for every coordinate $
 \label{ACP.squarefreeMonomial_totalDegree_le_card}
 \leanok
 \uses{ACP.squarefreeMonomial}
-\difficulty{3}
+\difficulty{2}
 The total degree of $\prod_{i \in s} X_i$ is at most $\abs{s}$.
 \end{theorem}
 
@@ -279,7 +279,7 @@ evaluates to $1 + \omega^{-1} - \omega^{-1} x_i$.
 \label{ACP.affineInvPoly_totalDegree_le_one}
 \leanok
 \uses{ACP.affineInvPoly}
-\difficulty{4}
+\difficulty{3}
 The total degree of $\mathrm{affineInvPoly}\,\omega\,i$ is at most $1$.
 \end{theorem}
 
@@ -307,7 +307,7 @@ evaluates to $\prod_{i \in s} (1 + \omega^{-1} - \omega^{-1} x_i)$.
 \label{ACP.affineSquarefreeMonomial_totalDegree_le_card}
 \leanok
 \uses{ACP.affineInvPoly, ACP.affineInvPoly_totalDegree_le_one, ACP.affineSquarefreeMonomial}
-\difficulty{3}
+\difficulty{2}
 The total degree of $\mathrm{affineSquarefreeMonomial}\,\omega\,s$ is at most $\abs{s}$.
 \end{theorem}
 
@@ -357,7 +357,7 @@ function on at most $e$ points of the cube.
 \lean{ACP.finite_cover_by_hamming_balls_card_bound}
 \label{ACP.finite_cover_by_hamming_balls_card_bound}
 \leanok
-\difficulty{6}
+\difficulty{5}
 Let $\alpha, \beta, \mathrm{Cand}$ be finite and let $\mathrm{center} : \mathrm{Cand}
 \to (\alpha \to \beta)$. If every ball $\{f : \abs{\{a : \mathrm{center}\,c\,a \neq f(a)\}}
 \le e\}$ has at most $B$ elements, and every $f : \alpha \to \beta$ lies in one of these
@@ -369,7 +369,7 @@ balls, then $\abs{\alpha \to \beta} \le \abs{\mathrm{Cand}} \cdot B$.
 \label{ACP.rootCube_counting_obstruction}
 \leanok
 \uses{ACP.finite_cover_by_hamming_balls_card_bound, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCubeFunctionBadCount}
-\difficulty{5}
+\difficulty{4}
 Suppose a finite family $(\mathrm{poly}\,c)_{c \in \mathrm{Cand}}$ represents, on the cube,
 every polynomial of total degree at most $D$; suppose each Hamming ball of radius $e$
 around such a candidate has at most $B$ elements; and suppose
@@ -382,7 +382,7 @@ every function on the cube has a degree-$\le D$ approximant with at most $e$ bad
 \label{ACP.rootProd_approx_implies_all_functions_approx}
 \leanok
 \uses{ACP.rootCube, ACP.rootCubeBadCount, ACP.split_multilinear_at_half_degree_direct, ACP.squarefreePolynomial}
-\difficulty{5}
+\difficulty{4}
 Assume $\omega \neq 0$ and that every function on $\{1,\omega\}^n$ is represented on the
 cube by a squarefree polynomial. If $P$ has total degree at most $d$ and approximates the
 top monomial $x \mapsto \prod_i x_i$ with at most $e$ bad points, then every function

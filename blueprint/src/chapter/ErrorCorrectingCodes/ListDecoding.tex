@@ -29,7 +29,7 @@ $\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
 \label{ErrorCorrectingCodes.Codeword.exists_listDecodable_code}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.list_decodable, ErrorCorrectingCodes.Codeword.hamming_ball}
-\difficulty{7}
+\difficulty{6}
 If the ball volume $V$ and code size $M$ satisfy the counting inequality
 \[
 |\alpha|^n\cdot\tbinom{V}{L+1}\cdot\tbinom{|\alpha|^n-(L+1)}{M-(L+1)}
@@ -43,7 +43,7 @@ then there exists a code $C$ of size $M$ that is $(p,L)$-list-decodable.
 \lean{ErrorCorrectingCodes.Codeword.binom_ratio_bound}
 \label{ErrorCorrectingCodes.Codeword.binom_ratio_bound}
 \leanok
-\difficulty{6}
+\difficulty{5}
 For $k\le M\le N$,
 \[
 \frac{\binom{N-k}{M-k}}{\binom{N}{M}} \;\le\; \Bigl(\frac{M}{N}\Bigr)^k.
@@ -55,7 +55,7 @@ For $k\le M\le N$,
 \label{ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.binom_ratio_bound, ErrorCorrectingCodes.Codeword.qaryEntropy}
-\difficulty{6}
+\difficulty{5}
 For the choice $r = 1-H_q(\rho)-1/L$, $M=\lfloor q^{rn}\rfloor$, and
 $V=\lfloor q^{H_q(\rho)n}\rfloor$, whenever $L<M\le q^n$,
 \[

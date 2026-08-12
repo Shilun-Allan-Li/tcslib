@@ -39,7 +39,7 @@ $\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{castAdd}\,m_2\,i) = g_1\,i$.
 \label{LMN.mergeGates_natAdd}
 \leanok
 \uses{LMN.mergeGates}
-\difficulty{3}
+\difficulty{2}
 For every $i : \mathrm{Fin}\,m_2$, evaluating the merged array at the right-embedded index
 $\mathrm{natAdd}\,m_1\,i$ recovers $g_2\,i$, i.e.
 $\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i) = g_2\,i$.
@@ -50,7 +50,7 @@ $\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i) = g_2\,i$.
 \label{LMN.reidx_eval_mergeGates_left}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.reidx, BoolCircuit.Circuit.reidx_eval, LMN.mergeGates}
-\difficulty{3}
+\difficulty{2}
 For a circuit $c$ on $m_1$ gates and Boolean gate values $g_1, g_2$, reindexing $c$ along
 the left embedding $\mathrm{castAdd}\,m_2$ and evaluating against the merged array yields
 the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{castAdd}\,m_2)).\mathrm{eval}\,(\mathrm{mergeGates}\,g_1\,g_2) = c.\mathrm{eval}\,g_1$.
@@ -61,7 +61,7 @@ the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{castAdd}\,m_2)).\mathrm{e
 \label{LMN.reidx_eval_mergeGates_right}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.reidx, BoolCircuit.Circuit.reidx_eval, LMN.mergeGates}
-\difficulty{3}
+\difficulty{2}
 For a circuit $c$ on $m_2$ gates and Boolean gate values $g_1, g_2$, reindexing $c$ along
 the right embedding $\mathrm{natAdd}\,m_1$ and evaluating against the merged array yields
 the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{natAdd}\,m_1)).\mathrm{eval}\,(\mathrm{mergeGates}\,g_1\,g_2) = c.\mathrm{eval}\,g_2$.
@@ -72,7 +72,7 @@ the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{natAdd}\,m_1)).\mathrm{ev
 \label{LMN.mergeGates_width_left}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
-\difficulty{2}
+\difficulty{1}
 If every $g_1\,k$ has width at most $l$, then for each $i : \mathrm{Fin}\,m_1$ the merged
 gate at the left-embedded index satisfies
 $(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{castAdd}\,m_2\,i)).\mathrm{width} \le l$.
@@ -83,7 +83,7 @@ $(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{castAdd}\,m_2\,i)).\mathrm{width} \le 
 \label{LMN.mergeGates_width_right}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
-\difficulty{2}
+\difficulty{1}
 If every $g_2\,k$ has width at most $l$, then for each $i : \mathrm{Fin}\,m_2$ the merged
 gate at the right-embedded index satisfies
 $(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i)).\mathrm{width} \le l$.
@@ -94,7 +94,7 @@ $(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i)).\mathrm{width} \le l
 \label{LMN.mergeGates_width}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
-\difficulty{4}
+\difficulty{2}
 If every gate of $g_1$ and every gate of $g_2$ has width at most $l$, then every gate of
 the merged array $\mathrm{mergeGates}\,g_1\,g_2$ has width at most $l$.
 \end{lemma}
@@ -104,7 +104,7 @@ the merged array $\mathrm{mergeGates}\,g_1\,g_2$ has width at most $l$.
 \label{LMN.mergeGates_varInj}
 \leanok
 \uses{DNF, LMN.mergeGates}
-\difficulty{4}
+\difficulty{2}
 If, in each DNF gate of $g_1$ and of $g_2$, any two literals of a common term that share
 the same variable are equal, then the same holds for every gate of the merged array
 $\mathrm{mergeGates}\,g_1\,g_2$.
@@ -115,7 +115,7 @@ $\mathrm{mergeGates}\,g_1\,g_2$.
 \label{LMN.mergeGates_nodup}
 \leanok
 \uses{DNF, LMN.mergeGates}
-\difficulty{4}
+\difficulty{2}
 If every term of every DNF gate of $g_1$ and of $g_2$ has no duplicate literals
 ($\mathrm{Nodup}$), then every term of every gate of the merged array
 $\mathrm{mergeGates}\,g_1\,g_2$ likewise has no duplicate literals.

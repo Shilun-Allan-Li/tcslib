@@ -107,9 +107,17 @@ extending the integer-argument definition to real arguments.
 
 \begin{theorem}[Value of the zeroth Krawtchouk polynomial]
 \lean{krawtchouk_zero}
+\proofsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \label{krawtchouk_zero}
 \leanok
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
+
+\proofstep
+  {krawtchouk}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p007-b009,
+    pdf-abed77da6b7a-p007-b008}
 \uses{krawtchouk}
 \difficulty{1}
 For all $n$ and $x$, $K_0^{(n)}(x) = 1$.
@@ -117,6 +125,7 @@ For all $n$ and $x$, $K_0^{(n)}(x) = 1$.
 
 \begin{theorem}[Krawtchouk polynomial at $x = 0$]
 \lean{krawtchouk_eval_zero}
+\statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p003-b007}
 \label{krawtchouk_eval_zero}
 \leanok
 \statementsource{philips}{
@@ -131,10 +140,17 @@ For $j \le n$, $K_j^{(n)}(0) = \binom{n}{j}$.
 
 \begin{theorem}[First Krawtchouk polynomial]
 \lean{krawtchouk_one}
+\proofsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \label{krawtchouk_one}
 \leanok
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b006}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
+
+\proofstep
+  {krawtchouk}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p007-b009}
 \uses{krawtchouk}
 \difficulty{3}
 For $x \le n$, $K_1^{(n)}(x) = n - 2x$.
@@ -197,7 +213,7 @@ For $1 \le j$, $j + 1 \le n$ and $x \le n$,
 \label{krawtchoukPoly_eval_nat}
 \leanok
 \uses{krawtchouk, krawtchoukPoly, krawtchouk_zero, krawtchouk_one, krawtchouk_recurrence}
-\difficulty{5}
+\difficulty{4}
 For $j \le n$ and $x \le n$, evaluating the polynomial $K_j^{(n)}$ at the real number
 $x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
 \end{theorem}
@@ -206,6 +222,10 @@ $x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
 
 \begin{theorem}[Delsarte LP inequality]
 \lean{delsarte_lp_bound}
+\proofsource{IEEE-TIT.23.157}{
+  pdf-abed77da6b7a-p005-b002,
+  pdf-abed77da6b7a-p005-b003
+}
 \label{delsarte_lp_bound}
 \statementsource{philips}{
   pdf-24e94ad30862-p018-b006,
@@ -219,6 +239,18 @@ $x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
   pdf-abed77da6b7a-p005-b002,
   pdf-abed77da6b7a-p005-b003
 }
+
+\proofstep
+  {codeA}
+  {context}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p001-b004}
+\proofstep
+  {krawtchouk}
+  {context}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p007-b009,
+    pdf-abed77da6b7a-p007-b008}
 \uses{codeA, krawtchouk}
 Let $F(x) = \sum_{j=0}^{n} F_j K_j^{(n)}(x)$ for real coefficients $F_j$. If
 $F_0 > 0$, if $F_j \ge 0$ for all $1 \le j \le n$, and if $F(x) \le 0$ for every
@@ -261,6 +293,10 @@ For $t + 1 \le n$ and real $a \ne x$ there is a scalar $c > 0$ with
 
 \begin{theorem}[Positivity of Krawtchouk values below all zeros]
 \lean{krawtchouk_positive_below_smallest_zero}
+\proofsource{IEEE-TIT.23.157}{
+  pdf-abed77da6b7a-p005-b005,
+  pdf-abed77da6b7a-p008-b004
+}
 \label{krawtchouk_positive_below_smallest_zero}
 \statementsource{arXiv.1812.04992}{
   pdf-f300deb505d8-p003-b005,
@@ -270,6 +306,14 @@ For $t + 1 \le n$ and real $a \ne x$ there is a scalar $c > 0$ with
   pdf-abed77da6b7a-p005-b005,
   pdf-abed77da6b7a-p008-b004
 }
+
+\proofstep
+  {krawtchoukPoly}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p007-b013,
+    pdf-abed77da6b7a-p007-b010,
+    pdf-abed77da6b7a-p007-b008}
 \uses{krawtchoukPoly}
 Fix $t + 1 \le n$ and a real $a$ that is strictly smaller than every real zero
 $\xi$ of $K_t^{(n)}$. Then $K_j^{(n)}(a) > 0$ for every $j \le t$.
@@ -309,6 +353,10 @@ suppose $\Phi_{n,t}(a,x) \le 0$ for every integer $x$ with $d \le x \le n$. Then
 
 \begin{theorem}[Asymptotics of the smallest Krawtchouk zero]
 \lean{smallest_zero_asymptotic}
+\proofsource{IEEE-TIT.23.157}{
+  pdf-abed77da6b7a-p008-b007,
+  pdf-abed77da6b7a-p008-b008
+}
 \label{smallest_zero_asymptotic}
 \statementsource{arXiv.1812.04992}{
   pdf-f300deb505d8-p004-b007,
@@ -319,6 +367,22 @@ suppose $\Phi_{n,t}(a,x) \le 0$ for every integer $x$ with $d \le x \le n$. Then
   pdf-abed77da6b7a-p008-b008,
   pdf-abed77da6b7a-p006-b002
 }
+
+\proofstep
+  {krawtchoukPoly}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p007-b013,
+    pdf-abed77da6b7a-p007-b010,
+    pdf-abed77da6b7a-p007-b008,
+    pdf-abed77da6b7a-p007-b007}
+\proofstep
+  {cdKernel}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p005-b004,
+    pdf-abed77da6b7a-p008-b003,
+    pdf-abed77da6b7a-p008-b002}
 \uses{cdKernel, krawtchoukPoly}
 Let $0 < \tau < 1/2$ and let $t_n$ satisfy $t_n / n \to \tau$. Then there is a
 sequence $a_n$ such that, eventually in $n$, $a_n$ lies strictly below every real
@@ -329,11 +393,35 @@ $\lfloor (\tfrac12 - \sqrt{\tau(1-\tau)})n \rfloor \le x \le n$.
 
 \begin{theorem}[Entropy growth rate of the objective]
 \lean{entropy_growth_of_objective}
+\proofsource{IEEE-TIT.23.157}{
+  pdf-abed77da6b7a-p006-b002,
+  pdf-abed77da6b7a-p006-b001
+}
 \label{entropy_growth_of_objective}
 \statementsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p006-b001,
   pdf-abed77da6b7a-p006-b002
 }
+
+\proofstep
+  {binaryEntropy}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p001-b005}
+\proofstep
+  {krawtchoukPoly}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p007-b013,
+    pdf-abed77da6b7a-p007-b008,
+    pdf-abed77da6b7a-p007-b010}
+\proofstep
+  {cdKernel}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p008-b002,
+    pdf-abed77da6b7a-p008-b003,
+    pdf-abed77da6b7a-p005-b004}
 \uses{binaryEntropy, cdKernel, krawtchoukPoly}
 Let $0 < \tau < 1/2$, let $t_n/n \to \tau$, and let $a_n$ eventually lie strictly
 below every real zero of $K_{t_n}^{(n)}$. Then
@@ -360,7 +448,7 @@ For $0 \le \tau \le 1/2$,
 \lean{delta_tau_involution}
 \label{delta_tau_involution}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For $0 \le \delta \le 1/2$, setting $\tau = \tfrac12 - \sqrt{\delta(1-\delta)}$ gives
 back $\delta = \tfrac12 - \sqrt{\tau(1-\tau)}$; that is, the map is an involution on
 $[0,1/2]$.
@@ -386,12 +474,32 @@ $H(1/2) = 1$.
 
 \begin{theorem}[Binary first MRRW bound]
 \lean{mrrw_bound}
+\proofsource{IEEE-TIT.23.157}{
+  pdf-abed77da6b7a-p003-b003,
+  pdf-abed77da6b7a-p006-b002
+}
 \label{mrrw_bound}
 \statementsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p001-b006,
   pdf-abed77da6b7a-p003-b003,
   pdf-abed77da6b7a-p006-b002
 }
+
+\proofstep
+  {codeA}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p001-b004}
+\proofstep
+  {binaryEntropy}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p001-b005}
+\proofstep
+  {rate}
+  {direct}
+  {IEEE-TIT.23.157}
+  {pdf-abed77da6b7a-p001-b004}
 \uses{binaryEntropy, rate}
 For every $\delta$ with $0 \le \delta \le 1/2$,
 \[

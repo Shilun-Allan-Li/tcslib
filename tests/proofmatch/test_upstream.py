@@ -1,3 +1,4 @@
+import json
 import unittest
 from decimal import Decimal
 from pathlib import Path
@@ -21,6 +22,7 @@ from proofmatch.upstream import (
     validate_manifest,
 )
 from proofmatch.budget import Budget
+from proofmatch.dataset_io import read_dataset_text
 
 
 BLOCK_1 = "pdf-abcdef123456-p002-b001"
@@ -255,25 +257,36 @@ class UpstreamTests(unittest.TestCase):
         self.assertIn("T.third", review)
 
     def test_loader_preserves_live_proof_upstream_order_and_excludes_target(self):
+        target = "SwitchingLemma2.switching_lemma"
+        dataset = Path("dataset/tcslib_theorems.jsonl")
         result = load_upstream_declarations(
-            Path("dataset/tcslib_theorems.jsonl"),
-            Path("dep_graph.json"),
-            "SwitchingLemma2.switching_lemma",
+            dataset, Path("dep_graph.json"), target
         )
 
-        self.assertEqual(len(result), 173)
-        self.assertEqual(
-            [item.lean_name for item in result[:3]],
-            ["BoolCircuit.Lit", "BoolCircuit.Lit.eval", "Literal"],
-        )
-        self.assertNotIn(
-            "SwitchingLemma2.switching_lemma",
-            [item.lean_name for item in result],
-        )
-        self.assertEqual(
-            result[0].source_module,
-            "TCSlib.BooleanAnalysis.Switching.Circuit",
-        )
+        # The expectation is derived from the dataset rather than frozen as a count.
+        # This assertion used to read `len(result) == 173` plus the first three names;
+        # `proof_upstream_decls` is a transitive closure recomputed from the Lean on
+        # every dep_graph rebuild, so any edit anywhere in that cone changed the number
+        # and the test failed without anything being wrong with the loader.
+        expected = None
+        for line in read_dataset_text(dataset).splitlines():
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            if record.get("lean_name") == target:
+                expected = [
+                    name
+                    for name in (record.get("proof_upstream_decls") or [])
+                    if name != target
+                ]
+                break
+        self.assertIsNotNone(expected, f"{target} is absent from the dataset")
+        self.assertTrue(expected, f"{target} has no proof_upstream_decls")
+
+        # The loader's contract: same declarations, same order, target excluded.
+        self.assertEqual([item.lean_name for item in result], expected)
+        self.assertNotIn(target, [item.lean_name for item in result])
+        self.assertTrue(all(item.source_module for item in result))
 
     def test_batching_is_deterministic_and_never_splits_a_record(self):
         first = declaration("T.first")

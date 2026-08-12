@@ -175,7 +175,7 @@ sequence of comparisons, charging one unit of time per comparison performed.
 \label{median3_correct}
 \leanok
 \uses{median3}
-\difficulty{5}
+\difficulty{4}
 The value returned by $\mathrm{median3}\,a\,b\,c$ is a median of $a$, $b$, $c$, in the sense that
 it lies between at least one of the pairs drawn from $\{a,b,c\}$.
 \end{theorem}
@@ -220,7 +220,7 @@ $x :: y :: \mathit{rest}$ is sorted when $x \le y$ and $y :: \mathit{rest}$ is s
 \label{isSorted_iff_isChain}
 \leanok
 \uses{IsSorted}
-\difficulty{5}
+\difficulty{4}
 For any list $\mathit{xs}$, the predicate \texttt{IsSorted} holds of $\mathit{xs}$ if and only if
 $\mathit{xs}$ is a chain for $\le$.
 \end{theorem}
@@ -240,7 +240,7 @@ $\mathit{xs}$ is sorted in the usual pairwise sense with respect to $\le$.
 \label{ret_insert}
 \leanok
 \uses{insert}
-\difficulty{4}
+\difficulty{3}
 The value returned by the timed insertion of $x$ into $\mathit{xs}$ is the ordinary ordered
 insertion of $x$ into $\mathit{xs}$ for the relation $\le$.
 \end{theorem}
@@ -260,7 +260,7 @@ $\mathit{xs}$ for the relation $\le$.
 \label{length_ret_insert}
 \leanok
 \uses{insert, ret_insert}
-\difficulty{2}
+\difficulty{1}
 The list returned by inserting $x$ into $\mathit{xs}$ has length $\abs{\mathit{xs}} + 1$.
 \end{theorem}
 
@@ -279,7 +279,7 @@ $\mathit{xs}$.
 \label{insert_perm}
 \leanok
 \uses{insert, ret_insert}
-\difficulty{2}
+\difficulty{1}
 The list returned by inserting $x$ into $\mathit{xs}$ is a permutation of $x :: \mathit{xs}$.
 \end{theorem}
 
@@ -288,7 +288,7 @@ The list returned by inserting $x$ into $\mathit{xs}$ is a permutation of $x :: 
 \label{insert_sorted}
 \leanok
 \uses{IsSorted, insert, isSorted_iff_sorted, ret_insert}
-\difficulty{3}
+\difficulty{2}
 If $\mathit{xs}$ is sorted, then the list returned by inserting $x$ into $\mathit{xs}$ is sorted.
 \end{theorem}
 
@@ -297,7 +297,7 @@ If $\mathit{xs}$ is sorted, then the list returned by inserting $x$ into $\mathi
 \label{insertionSort_perm}
 \leanok
 \uses{insertionSort, ret_insertionSort}
-\difficulty{2}
+\difficulty{1}
 The list returned by the timed insertion sort of $\mathit{xs}$ is a permutation of $\mathit{xs}$.
 \end{theorem}
 
@@ -306,7 +306,7 @@ The list returned by the timed insertion sort of $\mathit{xs}$ is a permutation 
 \label{insertionSort_sorted}
 \leanok
 \uses{IsSorted, insertionSort, isSorted_iff_sorted, ret_insertionSort}
-\difficulty{3}
+\difficulty{2}
 For every list $\mathit{xs}$, the list returned by the timed insertion sort is sorted.
 \end{theorem}
 
@@ -332,7 +332,7 @@ The worst-case comparison recurrence $T(0) = 0$ and $T(n+1) = T(n) + n$.
 \label{time_insert_le}
 \leanok
 \uses{insert}
-\difficulty{4}
+\difficulty{3}
 Inserting $x$ into a list $\mathit{xs}$ costs at most $\abs{\mathit{xs}}$ comparisons.
 \end{theorem}
 
@@ -341,7 +341,7 @@ Inserting $x$ into a list $\mathit{xs}$ costs at most $\abs{\mathit{xs}}$ compar
 \label{time_insertionSort_le_rec}
 \leanok
 \uses{insert, insertionSort, ret_insertionSort, timeInsertionSortRec, time_insert_le}
-\difficulty{5}
+\difficulty{4}
 The time cost recorded by the timed insertion sort of $\mathit{xs}$ is at most
 $T(\abs{\mathit{xs}})$, where $T$ is the insertion sort recurrence.
 \end{theorem}
@@ -369,7 +369,7 @@ most $n^2$.
 \lean{RSA.rsa_core}
 \label{RSA.rsa_core}
 \leanok
-\difficulty{5}
+\difficulty{4}
 Let $p$ be prime. For every $c \in \bbn$ and every $x \in \bbz/p\bbz$,
 \[
 x^{\,1 + c(p-1)} = x .
@@ -382,7 +382,7 @@ This is the form of Fermat's little theorem needed for RSA, valid also at $x = 0
 \label{RSA.rsa_zmod_of_factor}
 \leanok
 \uses{RSA.rsa_core}
-\difficulty{3}
+\difficulty{2}
 Let $p$ be prime and $m, ed, c \in \bbn$ with $ed = 1 + c(p-1)$. Then $m^{ed} \equiv m$ in
 $\bbz/p\bbz$, where both sides are the images of natural numbers.
 \end{lemma}
@@ -392,7 +392,7 @@ $\bbz/p\bbz$, where both sides are the images of natural numbers.
 \label{RSA.rsa_zmod_p}
 \leanok
 \uses{RSA.rsa_zmod_of_factor}
-\difficulty{4}
+\difficulty{3}
 If $p$ is prime and $ed = 1 + k(p-1)(q-1)$, then $m^{ed} \equiv m$ in $\bbz/p\bbz$ for every
 $m \in \bbn$.
 \end{lemma}
@@ -412,7 +412,7 @@ $m \in \bbn$.
 \label{RSA.rsa_crt}
 \leanok
 \uses{RSA.PublicKey}
-\difficulty{4}
+\difficulty{3}
 Let $p$ and $q$ be coprime and suppose $m^{ed} \equiv m$ both in $\bbz/p\bbz$ and in
 $\bbz/q\bbz$. Then $m^{ed} \equiv m$ in $\bbz/pq\bbz$.
 \end{lemma}
@@ -422,7 +422,7 @@ $\bbz/q\bbz$. Then $m^{ed} \equiv m$ in $\bbz/pq\bbz$.
 \label{RSA.rsa_crt_pow}
 \leanok
 \uses{RSA.PublicKey, RSA.rsa_crt}
-\difficulty{4}
+\difficulty{3}
 The same statement written with the power taken inside the quotient ring: if $p$ and $q$ are
 coprime and $\bar m^{\,ed} = \bar m$ in $\bbz/p\bbz$ and in $\bbz/q\bbz$, then
 $\bar m^{\,ed} = \bar m$ in $\bbz/pq\bbz$.
@@ -468,7 +468,7 @@ private exponent.
 \label{RSA.rsa_correctness}
 \leanok
 \uses{RSA.SecretKey, RSA.decrypt, RSA.encrypt, RSA.rsa_crt_pow, RSA.rsa_zmod_p, RSA.rsa_zmod_q}
-\difficulty{6}
+\difficulty{4}
 For any secret key and any message $m \in \bbn$, decrypting the encryption of $m$ recovers $m$:
 \[
 \bigl(\bar m^{\,e}\bigr)^{d} = \bar m \quad \text{in } \bbz/n\bbz .

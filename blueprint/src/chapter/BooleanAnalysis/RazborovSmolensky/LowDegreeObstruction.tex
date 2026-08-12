@@ -53,7 +53,7 @@ $x$ in the root cube.
 \label{ACP.monomial_lowDegree_squarefree_complete_on_rootCube}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.rootCube, ACP.squarefreeMonomial}
-\difficulty{7}
+\difficulty{6}
 Assume $\omega \ne 1$.  If a monomial $a\,X^m$ has total exponent sum
 $\sum_i m_i \le D$, then it agrees on the root cube $\{1,\omega\}^n$ with a squarefree
 polynomial built only from supports of size at most $D$: there exist coefficients
@@ -77,7 +77,7 @@ to $c_1$ and to $c_2$.
 \label{ACP.lowDegreeSquarefreePolynomial_zero}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
-\difficulty{3}
+\difficulty{2}
 The constructor $\texttt{ACP.lowDegreeSquarefreePolynomial}$ sends the identically zero
 coefficient function to the zero polynomial.
 \end{lemma}
@@ -98,7 +98,7 @@ to the individual $c_i$.
 \label{ACP.lowDegree_squarefree_complete_on_rootCube}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_sum, ACP.monomial_lowDegree_squarefree_complete_on_rootCube, ACP.rootCube}
-\difficulty{6}
+\difficulty{5}
 Assume $\omega \ne 1$.  Every polynomial $Q$ with $\deg Q \le D$ agrees on the root cube
 $\{1,\omega\}^n$ with a low-degree squarefree polynomial: there are coefficients $c$ on
 $\texttt{ACP.LowDegreeSupport}\ n\ D$ such that
@@ -131,7 +131,7 @@ injection for the binomial-sum bound rather than as a full equivalence.
 \label{ACP.lowDegreeSupport_card_le_binomial_sum}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeCoeff_card, ACP.lowDegreeSupportSigmaMap}
-\difficulty{5}
+\difficulty{4}
 The number of low-degree squarefree supports satisfies
 \[
 \abs{\mathcal{S}_{n,D}} \;\le\; \sum_{t=0}^{D} \binom{n}{t}.
@@ -175,7 +175,7 @@ $\abs{\{1,\omega\}^n} = 2^n$.
 \label{ACP.rootCube_function_card_of_ne_one}
 \leanok
 \uses{ACP.rootCube, ACP.rootCube_card_of_ne_one}
-\difficulty{3}
+\difficulty{2}
 If $\omega \ne 1$ and $K$ is finite, the number of functions $\{1,\omega\}^n \to K$ is
 $\abs{K}^{2^n}$.
 \end{lemma}
@@ -184,7 +184,7 @@ $\abs{K}^{2^n}$.
 \lean{ACP.function_hammingBall_card_le_binomial}
 \label{ACP.function_hammingBall_card_le_binomial}
 \leanok
-\difficulty{7}
+\difficulty{6}
 For finite types $\alpha, \beta$, a center function $\mathrm{center} : \alpha \to \beta$
 and a radius $e$, the number of functions $f : \alpha \to \beta$ that differ from the
 center on at most $e$ coordinates is bounded by
@@ -214,7 +214,7 @@ $\texttt{ACP.rootCubeBall}$ of radius $e$ around it satisfies
 \label{ACP.rootCube_counting_obstruction_lowDegreeSquarefree}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegree_squarefree_complete_on_rootCube, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCubeBall_card_le_binomial, ACP.rootCube_card_of_ne_one, ACP.rootCube_counting_obstruction, ACP.rootCube_function_card_of_ne_one}
-\difficulty{5}
+\difficulty{4}
 Let $K$ be finite and $\omega \ne 1$.  Suppose the ball bound
 $\sum_{t=0}^{e} \binom{2^n}{t}\,\abs{K}^{\,t} \le B$ holds and the counting is strict,
 \[
@@ -229,7 +229,7 @@ polynomial $Q$ with $\deg Q \le D$ and $\texttt{ACP.rootCubeBadCount}\ f\ Q \le 
 \label{ACP.no_low_degree_rootProd_approx_concrete}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.exists_squarefree_representative_on_rootCube, ACP.no_low_degree_rootProd_approx, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCube_counting_obstruction_lowDegreeSquarefree, ACP.squarefreePolynomial}
-\difficulty{3}
+\difficulty{2}
 Let $K$ be finite, $\omega \ne 0$, $\omega \ne 1$.  Suppose
 $\sum_{t=0}^{e} \binom{2^n}{t}\,\abs{K}^{\,t} \le B$ and
 \[

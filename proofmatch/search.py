@@ -9,6 +9,7 @@ from pathlib import Path
 from collections.abc import Sequence
 
 from proofmatch.models import Candidate, DocumentIndex
+from proofmatch.dataset_io import open_dataset
 
 
 TOKEN_RE = re.compile(r"[^\W_]+", re.UNICODE)
@@ -184,7 +185,7 @@ def search_candidates(
         raise ValueError("limit must be positive")
     segments = _segments(index)
     scored_by_segment: list[list[Candidate]] = [[] for _ in segments]
-    with dataset.open(encoding="utf-8") as source:
+    with open_dataset(dataset) as source:
         for line_number, line in enumerate(source, start=1):
             try:
                 record = json.loads(line)

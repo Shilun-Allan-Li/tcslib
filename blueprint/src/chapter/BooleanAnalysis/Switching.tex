@@ -50,7 +50,7 @@ rest.
 \label{SwitchingLemma2.parseAux_cons_nonmarker}
 \leanok
 \uses{SwitchingLemma2.parseAux}
-\difficulty{3}
+\difficulty{2}
 Equational lemma: if an entry $(idx, dir)$ is immediately followed by another
 in-range entry $(idx', dir')$, then $\mathrm{parseAux}$ emits the triple
 $(\langle idx, h\rangle, dir, \mathrm{false})$ followed by the parse of the
@@ -81,7 +81,7 @@ Equational lemma: $\mathrm{parseAux}$ of the empty list is the empty list.
 \label{SwitchingLemma2.parseAux_triplesToAux}
 \leanok
 \uses{SwitchingLemma2.parseAux, SwitchingLemma2.parseAux_cons_marker, SwitchingLemma2.parseAux_cons_nonmarker, SwitchingLemma2.parseAux_nil, SwitchingLemma2.parseAux_singleton, SwitchingLemma2.triplesToAux}
-\difficulty{6}
+\difficulty{5}
 Round-trip identity: for every triple list $ts$, applying
 $\mathrm{triplesToAux}$ and then $\mathrm{parseAux}$ recovers $ts$.
 \end{lemma}
@@ -91,7 +91,7 @@ $\mathrm{triplesToAux}$ and then $\mathrm{parseAux}$ recovers $ts$.
 \label{SwitchingLemma2.triplesToAux_append}
 \leanok
 \uses{SwitchingLemma2.triplesToAux}
-\difficulty{4}
+\difficulty{3}
 $\mathrm{triplesToAux}\,(ts_1 \mathbin{+\!\!+} ts_2) = \mathrm{triplesToAux}\,ts_1 \mathbin{+\!\!+} \mathrm{triplesToAux}\,ts_2$.
 \end{lemma}
 
@@ -119,7 +119,7 @@ others.
 \label{SwitchingLemma2.triplesToAux_markLast}
 \leanok
 \uses{SwitchingLemma2.markLast, SwitchingLemma2.triplesToAux}
-\difficulty{5}
+\difficulty{4}
 On a nonempty block, $\mathrm{triplesToAux}(\mathrm{markLast}\,block)$ equals the
 block mapped into $\mathbb{N} \times \mathrm{Bool}$ followed by a single
 $(w, \mathrm{false})$ termination marker.
@@ -148,7 +148,7 @@ $(\mathrm{markLast}\,block).\mathrm{length} = block.\mathrm{length}$.
 \label{SwitchingLemma2.markLast_getLast_true}
 \leanok
 \uses{SwitchingLemma2.markLast, SwitchingLemma2.markLast_ne_nil}
-\difficulty{4}
+\difficulty{3}
 On a nonempty block, the last element of $\mathrm{markLast}\,block$ has marker
 flag equal to true.
 \end{lemma}
@@ -194,7 +194,7 @@ If $l \neq []$ then $\mathrm{toFinBlock}\,w\,l\,h \neq []$.
 \label{SwitchingLemma2.processClauseLits_aux_idx_lt}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, Term}
-\difficulty{2}
+\difficulty{3}
 When the processed literals come from $t.\mathrm{zipIdx}$, every entry of the aux
 output of $\mathrm{processClauseLits}$ has first coordinate strictly less than
 $t.\mathrm{length}$.
@@ -228,8 +228,331 @@ path steps as a triple $(\mathrm{position}, \mathrm{direction}, \mathrm{hasMarke
 
 \begin{lemma}[Cardinality bound on the aux image]
 \lean{SwitchingLemma2.aux_image_card_bound}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma2.aux_image_card_bound}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_of_tree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.killedAll_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.term_length_le_width}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_marker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_nonmarker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.parseAux_singleton}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.parseAux_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.parseAux_triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.triplesToAux_append}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_len_add}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux_markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_getLast_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.toFinBlock_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.toFinBlock_map}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.toFinBlock_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_idx_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.encode_go_wellformed}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.exists_aux_injection}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003,
+    pdf-b5e074215b9e-p001-b005}
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.exists_aux_injection, SwitchingLemma2.fixedTerm_implies_dtDepth_zero, SwitchingLemma2.killedAll_implies_dtDepth_zero, SwitchingLemma2.razborovEncode, SwitchingLemma2.restrictFn, SwitchingLemma2.term_length_le_width, dtDepth}
 \difficulty{5}
 The number of distinct aux lists produced by the Razborov encoder on bad
@@ -238,10 +561,523 @@ restrictions with a fixed first component $\gamma$ is at most $(4w)^d$.
 
 \begin{lemma}[Fiber bound for the encoder]
 \lean{SwitchingLemma2.fiber_bound}
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b004,
+  pdf-b5e074215b9e-p002-b003
+}
 \label{SwitchingLemma2.fiber_bound}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.IsRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_of_tree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.killedAll_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.first_clause_preserved}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.term_length_le_width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {SwitchingLemma2.zipIdx_drop_spec}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovDecode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_rho_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.roundtrip_base}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hC'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hD'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.go_roundtrip_gen}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.go_roundtrip}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovDecode_encode}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovEncode_injective}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004,
+    pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.parseAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_marker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_nonmarker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_singleton}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux_append}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_len_add}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux_markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_getLast_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_map}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_idx_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_wellformed}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.exists_aux_injection}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003,
+    pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.aux_image_card_bound}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004,
+    pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.aux_image_card_bound, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_injective}
-\difficulty{5}
+\difficulty{4}
 The number of bad $s$-restrictions $\rho$ mapping to a fixed $\gamma$ under the
 encoder is at most $(4w)^d$, since each of the $d$ path steps carries
 $w \cdot 2 \cdot 2 = 4w$ possibilities.
@@ -252,7 +1088,7 @@ $w \cdot 2 \cdot 2 = 4w$ possibilities.
 \label{SwitchingLemma2.card_filter_numFree_eq}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.processClauseLits_path_length_eq}
-\difficulty{7}
+\difficulty{6}
 The number of restrictions of $\{0,\dots,n-1\}$ with exactly $k$ free variables
 equals $\binom{n}{k} \cdot 2^{\,n-k}$.
 \end{lemma}
@@ -296,8 +1132,234 @@ $\min(\mathrm{lits.length}, \mathrm{path.length})$.
 \label{SwitchingLemma2.canonicalDTree_deepPath_length_ge}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.extend_update_self}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_extend_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_sets_member}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_numFree_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_correct}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_correct}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.depth_ge_dtDepth}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_ge}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_depth_ge, SwitchingLemma2.restrictFn, dtDepth}
-\difficulty{3}
+\difficulty{2}
 If $\rho$ is a bad restriction (so $\mathrm{dtDepth}(f|_\rho) > d$), then the
 deepest path of the canonical decision tree $\mathrm{canonicalDTree}\,f\,\rho$
 has length strictly greater than $d$.
@@ -308,6 +1370,237 @@ has length strictly greater than $d$.
 \label{SwitchingLemma2.razborovEncode_path_length}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.extend_update_self}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_extend_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_sets_member}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_numFree_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_correct}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_correct}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.depth_ge_dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_ge}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_length_ge}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_deepPath_length_ge}
 \difficulty{2}
 When $\rho$ is bad, the prefix
@@ -320,7 +1613,7 @@ encoder has length exactly $d$.
 \label{SwitchingLemma2.processClauseLits_path_length_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
-\difficulty{4}
+\difficulty{3}
 $\mathrm{processClauseLits}$ consumes exactly
 $\min(\mathrm{lits.length}, \mathrm{path.length})$ path entries; the remaining
 path length plus this minimum equals the original path length.
@@ -331,7 +1624,7 @@ path length plus this minimum equals the original path length.
 \label{SwitchingLemma2.numFree_update_some_ge}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_free}
-\difficulty{5}
+\difficulty{4}
 Updating $\rho$ at $v$ to $\mathrm{some}\,b$ decreases $\mathrm{numFree}$ by at
 most one: $\mathrm{numFree}(\rho[v \mapsto b]) + 1 \geq \rho.\mathrm{numFree}$.
 \end{lemma}
@@ -352,6 +1645,107 @@ $\rho_0$'s $\mathrm{numFree}$.
 \label{SwitchingLemma2.canonicalDTree_depth_zero_of_killed}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree}
 \difficulty{3}
 If every clause of $f$ is killed by $\rho$, the canonical decision tree for
@@ -363,8 +1757,114 @@ $f|_\rho$ is the leaf $\mathrm{false}$ and hence has depth $0$.
 \label{SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree}
-\difficulty{4}
+\difficulty{3}
 If some clause of $f$ is fixed (satisfied) by $\rho$, the canonical decision tree
 for $f|_\rho$ is the leaf $\mathrm{true}$ and hence has depth $0$.
 \end{lemma}
@@ -389,7 +1889,7 @@ This is the invariant carried by the Razborov encoder.
 \label{SwitchingLemma2.zipIdx_filter_length}
 \leanok
 \uses{Literal, Term}
-\difficulty{3}
+\difficulty{2}
 Filtering $t.\mathrm{zipIdx}$ by a predicate on the literal component has the same
 length as filtering the original term $t$ by the same predicate.
 \end{lemma}
@@ -399,17 +1899,184 @@ length as filtering the original term $t$ by the same predicate.
 \label{SwitchingLemma2.zipIdx_filter_getElem_fst}
 \leanok
 \uses{Literal, Term}
-\difficulty{4}
+\difficulty{3}
 The literal component of the $k$-th element of the filtered $t.\mathrm{zipIdx}$
 equals the $k$-th element of the filtered term $t$.
 \end{lemma}
 
 \begin{lemma}[Deep path matches free literals of the first alive clause]
 \lean{SwitchingLemma2.canonicalDTree_deepPath_match_freeLits}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \label{SwitchingLemma2.canonicalDTree_deepPath_match_freeLits}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_head_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.filter_free_update_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_var_match}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_getElem_fst}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DecisionTree, DecisionTree.deepPath, DecisionTree.depth, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_alive_eq_termSubTree', SwitchingLemma2.canonicalDTree_depth_zero_of_fixed, SwitchingLemma2.termSubTree_deepPath_var_match, SwitchingLemma2.zipIdx_filter_getElem_fst, SwitchingLemma2.zipIdx_filter_length, Term}
-\difficulty{7}
+\difficulty{5}
 When $f.\mathrm{find?}$ returns an alive clause $t$ and $\mathrm{flis}$ is the
 filtered (zipIdx) list of $t$'s free literals under $\rho$, the variable at
 position $k$ of $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{deepPath}$ equals the
@@ -443,7 +2110,7 @@ exactly $\min(\mathrm{lits.length}, \mathrm{path.length})$ free variables.
 \label{SwitchingLemma2.processClauseLits_termSubTree_drop}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.processClauseLits, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free, Term}
-\difficulty{7}
+\difficulty{6}
 Dropping the free-literal prefix from $(\mathrm{termSubTree}\,t\,\rho_0\,\mathrm{cont}).\mathrm{deepPath}$
 yields the deep path of the continuation evaluated at the
 $\mathrm{processClauseLits}$-updated restriction, connecting the canonical tree
@@ -468,7 +2135,7 @@ tree.
 \label{SwitchingLemma2.processClauseLits_freeLits_pairwise_var}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, Term}
-\difficulty{5}
+\difficulty{4}
 If $t$ has no duplicate literals and any two literals of $t$ with the same
 variable are equal, then the free-variable filter of $t.\mathrm{zipIdx}$ has
 pairwise distinct variables.
@@ -491,6 +2158,430 @@ path length: $(\mathrm{go}\,\dots).1.\mathrm{numFree} + \mathrm{path.length} = \
 \label{SwitchingLemma2.razborovEncode_fst_numFree_eq}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.numFree_update_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.selectBranchVar}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.extend_update_self}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_extend_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_sets_member}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_numFree_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_correct}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_correct}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.numFree_update_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr_strict}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_fuel_invariant}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.cont_eq_canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_head_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.filter_free_update_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_var_match}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.depth_ge_dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_ge}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003,
+    pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003,
+    pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_len_add}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.numFree_update_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeVars_agree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_σ}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_length_ge}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode_path_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_length_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_killed}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.IsCanonicalPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_getElem_fst}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_match_freeLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits_fst_eq_drop}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_ρ_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_termSubTree_drop}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalPath_preserve_processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002,
+    pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeLits_pairwise_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode_go_numFree_invariant}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsCanonicalPath, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_depth_ge, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_go_numFree_invariant, SwitchingLemma2.razborovEncode_path_length, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
 For a bad $s$-restriction $\rho$ with $d \leq s$, the first component
@@ -501,11 +2592,763 @@ variables.
 
 \begin{lemma}[Bad-restriction counting bound]
 \lean{SwitchingLemma2.bad_count_bound}
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b001,
+  pdf-b5e074215b9e-p002-b002,
+  pdf-b5e074215b9e-p002-b003,
+  pdf-b5e074215b9e-p002-b004
+}
 \label{SwitchingLemma2.bad_count_bound}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.IsRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_of_tree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.killedAll_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.first_clause_preserved}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.term_length_le_width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {SwitchingLemma2.zipIdx_drop_spec}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.numFree_update_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.selectBranchVar}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.extend_update_self}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_extend_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_sets_member}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_numFree_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_correct}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_correct}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.numFree_update_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr_strict}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_fuel_invariant}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.cont_eq_canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_head_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.filter_free_update_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_var_match}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.depth_ge_dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_ge}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovDecode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_rho_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.roundtrip_base}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hC'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hD'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.go_roundtrip_gen}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.go_roundtrip}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovDecode_encode}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovEncode_injective}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.parseAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_marker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_nonmarker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_singleton}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.triplesToAux_append}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_len_add}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux_markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_getLast_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_map}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_idx_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_wellformed}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.exists_aux_injection}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.aux_image_card_bound}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.fiber_bound}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.card_filter_numFree_eq}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.numFree_update_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeVars_agree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_σ}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_length_ge}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode_path_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_length_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_killed}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.IsCanonicalPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_getElem_fst}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_match_freeLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits_fst_eq_drop}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_ρ_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_termSubTree_drop}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalPath_preserve_processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeLits_pairwise_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.razborovEncode_go_numFree_invariant}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovEncode_fst_numFree_eq}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.card_filter_numFree_eq, SwitchingLemma2.fiber_bound, SwitchingLemma2.razborovEncode, SwitchingLemma2.razborovEncode_fst_numFree_eq}
-\difficulty{4}
+\difficulty{5}
 For $d \leq s$, the number of bad $s$-restrictions is at most
 $\binom{n}{s-d}\,2^{\,n-(s-d)}\,(4w)^d$: every bad $s$-restriction is mapped by
 $\mathrm{razborovEncode}$ to a $\gamma$ with exactly $s-d$ free variables, each
@@ -518,13 +3361,17 @@ $\binom{n}{s-d}\,2^{\,n-(s-d)}$ possible values of $\gamma$.
 \label{SwitchingLemma2.bad_filter_empty_of_d_ge_s}
 \leanok
 \uses{DNF, DNF.eval, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_restrictFn_le_numFree}
-\difficulty{3}
+\difficulty{2}
 If $s \leq d$, the set of restrictions that are simultaneously $s$-restrictions
 and bad restrictions for depth $d$ is empty.
 \end{lemma}
 
 \begin{definition}[Decision tree to DNF]
 \lean{SwitchingLemma2.toDNF}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p002-b006,
+  pdf-fc447f326910-p002-b007
+}
 \label{SwitchingLemma2.toDNF}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b003}
@@ -535,6 +3382,10 @@ along each root-to-leaf path ending in a $\mathrm{true}$ leaf.
 
 \begin{definition}[Decision tree to CNF]
 \lean{SwitchingLemma2.toCNF}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p002-b006,
+  pdf-fc447f326910-p002-b007
+}
 \label{SwitchingLemma2.toCNF}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b003}
@@ -548,7 +3399,7 @@ literals along each root-to-leaf path ending in a $\mathrm{false}$ leaf.
 \label{SwitchingLemma2.dtDepth_witness}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, buildFullDTree, buildFullDTree_depth, buildFullDTree_eval, dtDepth}
-\difficulty{4}
+\difficulty{3}
 For any Boolean function $f$ there exists a decision tree $T$ computing $f$ with
 depth at most $\mathrm{dtDepth}\,f$.
 \end{lemma}
@@ -565,8 +3416,139 @@ depth at most $\mathrm{dtDepth}\,f$.
   pdf-fc447f326910-p002-b006,
   pdf-fc447f326910-p002-b007
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {CNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {CNF.evalClause}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.toDNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {SwitchingLemma2.toCNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {SwitchingLemma2.dtDepth_witness}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{CNF, CNF.eval, CNF.evalClause, CNF.width, DNF, DNF.eval, DNF.width, DecisionTree, DecisionTree.depth, DecisionTree.eval, Literal.eval, SwitchingLemma2.dtDepth_witness, SwitchingLemma2.toCNF, SwitchingLemma2.toDNF, Term.eval, dtDepth}
-\difficulty{7}
+\difficulty{6}
 If $\mathrm{dtDepth}\,f \leq d$, then $f$ is computed by a DNF of width at most
 $d$ and by a CNF of width at most $d$.
 \end{lemma}
@@ -631,7 +3613,7 @@ $(\mathrm{cnfToDualDNF}\,\psi).\mathrm{width} = \psi.\mathrm{width}$.
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b005}
 \uses{CNF, CNF.eval, CNF.evalClause, DNF.eval, Literal.flipNeg_eval, Term.eval, cnfToDualDNF}
-\difficulty{5}
+\difficulty{4}
 $(\mathrm{cnfToDualDNF}\,\psi).\mathrm{eval}\,x = \lnot\,(\psi.\mathrm{eval}\,x)$.
 \end{lemma}
 
@@ -694,7 +3676,7 @@ $\mathrm{IsBadRestriction}(\lnot f)\,d\,\rho \iff \mathrm{IsBadRestriction}\,f\,
 \label{SwitchingLemmaCNF.cnfToDualDNF_nodup}
 \leanok
 \uses{CNF, Literal.flipNeg_injective, cnfToDualDNF}
-\difficulty{3}
+\difficulty{2}
 If every clause of $\psi$ has no duplicate literals, then every term of
 $\mathrm{cnfToDualDNF}\,\psi$ has no duplicate literals.
 \end{lemma}
@@ -722,8 +3704,836 @@ then the same holds within every term of $\mathrm{cnfToDualDNF}\,\psi$.
   pdf-b5e074215b9e-p003-b001
 }
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {CNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {CNF.evalClause}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.IsRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Term.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.numSRestrictions}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_of_tree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.list_any_eq_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.killedAll_implies_dtDepth_zero}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.first_clause_preserved}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.term_length_le_width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {SwitchingLemma2.zipIdx_drop_spec}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.numFree_update_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.selectBranchVar}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.extend_update_self}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_extend_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_sets_member}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_foldl_numFree_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_correct}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_correct}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.numFree_update_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cont_congr_strict}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_go_fuel_invariant}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.cont_eq_canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_cons_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_head_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.filter_free_update_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.termSubTree_deepPath_var_match}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.depth_ge_dtDepth}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_ge}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.dtDepth_restrictFn_le_numFree}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovDecode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_rho_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.roundtrip_base}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004,
+    pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hC'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.roundtrip_inv_hD'}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.go_roundtrip_gen}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.go_roundtrip}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovDecode_encode}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovEncode_injective}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004,
+    pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.parseAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_marker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_cons_nonmarker}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_singleton}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.parseAux_triplesToAux}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux_append}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_len_add}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.triplesToAux_markLast}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.markLast_getLast_true}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_map}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.toFinBlock_ne_nil}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_aux_idx_lt}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_wellformed}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.exists_aux_injection}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.aux_image_card_bound}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.fiber_bound}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.card_filter_numFree_eq}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.numFree_update_free}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeVars_agree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_σ}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_length_ge}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode_path_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_length_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_killed}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_depth_zero_of_fixed}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.IsCanonicalPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_length}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.zipIdx_filter_getElem_fst}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.canonicalDTree_deepPath_match_freeLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits_fst_eq_drop}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_numFree_ρ_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_termSubTree_drop}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalPath_preserve_processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_freeLits_pairwise_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode_go_numFree_invariant}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.razborovEncode_fst_numFree_eq}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.bad_count_bound}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.bad_filter_empty_of_d_ge_s}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.choose_mul_pow_bound}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.switching_lemma}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b008}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_injective}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {cnfToDualDNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b001}
+\proofstep
+  {cnfToDualDNF_width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b004}
+\proofstep
+  {cnfToDualDNF_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {dtDepth_neg}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {SwitchingLemmaCNF.restrictFn_neg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.numSRestrictions, SwitchingLemma2.switching_lemma, SwitchingLemmaCNF.cnfToDualDNF_inj, SwitchingLemmaCNF.cnfToDualDNF_nodup, SwitchingLemmaCNF.restrictFn_neg, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width, dtDepth_neg}
-\difficulty{5}
+\difficulty{4}
 For a CNF $\psi$ of width at most $w$ on $n$ variables with $5s \leq n$ and clauses
 free of duplicate or conflicting variables, the number of $s$-restrictions $\rho$
 under which $\psi|_\rho$ has decision-tree depth $> d$ satisfies
@@ -735,6 +4545,7 @@ under which $\psi|_\rho$ has decision-tree depth $> d$ satisfies
 
 \begin{theorem}[Switching Lemma Corollary for CNFs]
 \lean{SwitchingLemmaCNF.switching_corollary_cnf}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
 \label{SwitchingLemmaCNF.switching_corollary_cnf}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
@@ -757,7 +4568,7 @@ DNF of width $\leq w$ satisfies
 \lean{SwitchingLemma2.choose_mul_pow_bound}
 \label{SwitchingLemma2.choose_mul_pow_bound}
 \leanok
-\difficulty{4}
+\difficulty{5}
 For natural numbers $n, s, d$ with $5s \leq n$ and $d \leq s$,
 \[
   \binom{n}{s-d} \cdot (4n)^d \;\leq\; \binom{n}{s} \cdot (5s)^d .

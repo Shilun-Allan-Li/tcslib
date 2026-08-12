@@ -139,7 +139,7 @@ pairwise preference signs is $-1/3$.
 \label{ArrowTheorem.sum_abPref_caPref}
 \leanok
 \uses{ArrowTheorem.abPref, ArrowTheorem.bcPref, ArrowTheorem.caPref, BooleanAnalysis.boolToSign}
-\difficulty{2}
+\difficulty{1}
 Summing pairwise sign products over all 6 orderings:
 \[
   \sum_{k=0}^{5} s_{ab}(k)\cdot s_{bc}(k)
@@ -243,7 +243,7 @@ If $f$ is $\pm 1$-valued and acyclic, then $\mathrm{corr}(f) = -1/3$.
 \leanok
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
 \uses{ArrowTheorem.isDictator, ArrowTheorem.unanimity, BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.walsh_expansion, BooleanAnalysis.dictator_eq_chi, BooleanAnalysis.chiS_singleton}
-\difficulty{7}
+\difficulty{6}
 Suppose $f$ is $\pm 1$-valued, unanimous, and $\hat f(S) = 0$ for all $|S|\ne 1$.
 Then $f$ is a dictator.
 
@@ -270,7 +270,7 @@ Then $f$ is a dictator.
   pdf-352ab7ff3113-p017-b003
 }
 \uses{ArrowTheorem.acyclic_implies_corrFunc, ArrowTheorem.corrFunc_eq_neg_third_of_weight_one, ArrowTheorem.degree_one_implies_dictator}
-\difficulty{3}
+\difficulty{2}
 Let $f:\{0,1\}^n\to\bbr$ be a social welfare function that is odd
 (antisymmetric), $\pm 1$-valued, unanimous, and acyclic.  Then $f$ is a
 \emph{dictatorship}: there exists a voter $i_0$ such that
@@ -296,7 +296,7 @@ $f = \mathrm{dict}_{i_0}$.
 \label{ArrowTheorem.sum_abPref_sign}
 \leanok
 \uses{ArrowTheorem.abPref, BooleanAnalysis.boolToSign}
-\difficulty{2}
+\difficulty{1}
 Summing the signed $a$-vs-$b$ preference over all six orderings gives
 $\sum_{k=0}^{5} s_{ab}(k) = 0$; the $ab$ marginal is balanced.
 \end{lemma}
@@ -306,7 +306,7 @@ $\sum_{k=0}^{5} s_{ab}(k) = 0$; the $ab$ marginal is balanced.
 \label{ArrowTheorem.sum_bcPref_sign}
 \leanok
 \uses{ArrowTheorem.bcPref, BooleanAnalysis.boolToSign}
-\difficulty{2}
+\difficulty{1}
 Summing the signed $b$-vs-$c$ preference over all six orderings gives
 $\sum_{k=0}^{5} s_{bc}(k) = 0$; the $bc$ marginal is balanced.
 \end{lemma}
@@ -316,7 +316,7 @@ $\sum_{k=0}^{5} s_{bc}(k) = 0$; the $bc$ marginal is balanced.
 \label{ArrowTheorem.sum_caPref_sign}
 \leanok
 \uses{ArrowTheorem.caPref, BooleanAnalysis.boolToSign}
-\difficulty{2}
+\difficulty{1}
 Summing the signed $c$-vs-$a$ preference over all six orderings gives
 $\sum_{k=0}^{5} s_{ca}(k) = 0$; the $ca$ marginal is balanced.
 \end{lemma}
@@ -325,7 +325,7 @@ $\sum_{k=0}^{5} s_{ca}(k) = 0$; the $ca$ marginal is balanced.
 \lean{ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \label{ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \leanok
-\difficulty{3}
+\difficulty{2}
 For $A\subseteq\mathrm{Fin}\,n$ and $g:\mathrm{Fin}\,n\to\bbr$,
 \[
   \prod_{j\in A} g(j) \;=\; \prod_{j:\mathrm{Fin}\,n}
@@ -341,7 +341,7 @@ with an indicator.
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, ArrowTheorem.prod_finset_eq_prod_univ_ite}
-\difficulty{7}
+\difficulty{6}
 Let $\mathrm{xPref},\mathrm{yPref}:\mathrm{Fin}\,6\to\mathrm{Bool}$ be two
 preference assignments with balanced marginals
 $\sum_k s(\mathrm{xPref}(k)) = \sum_k s(\mathrm{yPref}(k)) = 0$ and cross-sum
@@ -418,7 +418,7 @@ $S,T\subseteq[n]$,
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, ArrowTheorem.corrFunc, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion}
-\difficulty{6}
+\difficulty{5}
 Let $f:\{0,1\}^n\to\bbr$ and let $\mathrm{votes}_1,\mathrm{votes}_2$ map each
 profile to a Boolean cube point.  If the pair satisfies the kernel identity
 $\bigl(\tfrac16\bigr)^n\sum_p \chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}_2(p))

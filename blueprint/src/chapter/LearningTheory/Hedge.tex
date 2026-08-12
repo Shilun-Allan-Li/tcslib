@@ -152,7 +152,7 @@ $w_t(i) = \exp(-\eta \cdot L_t(i))$ is strictly positive.
 \label{potential_pos}
 \leanok
 \uses{LossSeq, hedgeWeight_pos, potential}
-\difficulty{3}
+\difficulty{2}
 For any $\eta$, loss sequence $\ell$, and time $t$, the potential $W_t > 0$.
 This follows because $W_t$ is a finite sum of positive terms over the nonempty
 set of $N \ge 1$ experts.
@@ -189,7 +189,7 @@ for every $t < T$ and expert $i$.
 \label{cumLoss_horizon}
 \leanok
 \uses{LossSeq, cumLoss}
-\difficulty{3}
+\difficulty{2}
 At the final horizon, $L_T(i) = \sum_{t : \mathrm{Fin}\,T} \ell_t(i)$, i.e.,
 the cumulative loss through $T$ equals the full sum over all rounds.
 \end{lemma}
@@ -199,7 +199,7 @@ the cumulative loss through $T$ equals the full sum over all rounds.
 \label{hedgeWeight_succ}
 \leanok
 \uses{LossSeq, cumLoss_succ, hedgeWeight}
-\difficulty{3}
+\difficulty{2}
 The weight factorizes across rounds:
 \[
   w_{t+1}(i) \;=\; w_t(i) \cdot \exp\!\bigl(-\eta\,\ell_t(i)\bigr).
@@ -211,7 +211,7 @@ The weight factorizes across rounds:
 \label{hedgeDist_sum}
 \leanok
 \uses{LossSeq, hedgeDist, potential_pos}
-\difficulty{3}
+\difficulty{2}
 For any $\eta$, valid loss sequence $\ell$, and time $t$,
 $\sum_{i=1}^{N} p_t(i) = 1$, so the Hedge distribution is a proper probability
 distribution.
@@ -222,7 +222,7 @@ distribution.
 \label{potential_ratio_le}
 \leanok
 \uses{LossSeq, LossSeq.Valid, exp_neg_le_linear, hedgeDist, hedgeLoss, hedgeWeight, hedgeWeight_pos, hedgeWeight_succ, potential, potential_pos}
-\difficulty{6}
+\difficulty{5}
 For a valid loss sequence and $\eta > 0$, the ratio of consecutive potentials
 satisfies
 \[
@@ -249,7 +249,7 @@ which follows from $\ln(1-x) \le -x$ applied to the potential ratio bound.
 \lean{exp_neg_le_quadratic}
 \label{exp_neg_le_quadratic}
 \leanok
-\difficulty{6}
+\difficulty{4}
 For $t \ge 0$,
 \[
   e^{-t} \;\le\; 1 - t + \frac{t^2}{2}.
@@ -274,7 +274,7 @@ This follows directly from the quadratic bound $e^{-\eta} \le 1 - \eta + \eta^2/
 \label{potential_ge_best_expert}
 \leanok
 \uses{LossSeq, bestExpertLoss, cumLoss, hedgeWeight, potential}
-\difficulty{5}
+\difficulty{4}
 The final potential is at least the weight of the best expert:
 \[
   W_T \;\ge\; \exp\!\bigl(-\eta \cdot L^*\bigr),
@@ -319,7 +319,7 @@ Hedge distribution is nonnegative.
 \label{hedge_regret_bound}
 \leanok
 \uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, hedgeLoss_le_one, hedgeLoss_nonneg, log_potential_step, one_sub_exp_neg_ge, potential, potential_ge_best_expert, potential_zero, regret}
-\difficulty{6}
+\difficulty{5}
 \textbf{Hedge Regret Bound} (Cesa-Bianchi \& Lugosi, Theorem 2.2).
 For any valid loss sequence with $N$ experts, $T$ rounds, and $\eta \in (0,1]$,
 \[
@@ -343,7 +343,7 @@ bound is
 \label{hedge_regret_optimal}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_bound, optimalEta, regret}
-\difficulty{6}
+\difficulty{5}
 If $T \ge 2\ln N$ (so that $\eta^* \le 1$), then for any valid loss sequence,
 \[
   R_T(\eta^*) \;\le\; \sqrt{2\,T\ln N}.
@@ -355,7 +355,7 @@ If $T \ge 2\ln N$ (so that $\eta^* \le 1$), then for any valid loss sequence,
 \label{hedge_no_regret}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_optimal, optimalEta, regret}
-\difficulty{5}
+\difficulty{4}
 If $T \ge 2\ln N$, then for any valid loss sequence the \emph{average regret}
 satisfies
 \[
@@ -370,7 +370,7 @@ a no-regret algorithm.
 \label{hoeffding_lemma}
 \leanok
 \uses{bernoulli_mgf_bound}
-\difficulty{3}
+\difficulty{2}
 For $p \in [0,1]$ and any $h \in \mathbb{R}$,
 \[
   \ln\!\bigl((1-p) + p\,e^h\bigr) \;\le\; p\,h + \frac{h^2}{8}.
@@ -397,7 +397,7 @@ tighter per-step bound
 \label{hedge_regret_bound_tight}
 \leanok
 \uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, log_potential_step_tight, potential, potential_ge_best_expert, potential_zero, regret}
-\difficulty{6}
+\difficulty{5}
 \textbf{Tight Hedge Regret Bound} (Cesa-Bianchi \& Lugosi).
 For any valid loss sequence with $N$ experts, $T$ rounds, and $\eta > 0$,
 \[
@@ -420,7 +420,7 @@ The learning rate that optimizes the tight Hedge bound is
 \label{hedge_regret_tight_optimal}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_bound_tight, optimalEtaTight, regret}
-\difficulty{6}
+\difficulty{4}
 For any valid loss sequence with $N > 1$ experts, $T \ge 1$ rounds, using
 $\eta_{\mathrm{tight}} = \sqrt{8\ln N / T}$,
 \[

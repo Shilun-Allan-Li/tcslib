@@ -19,6 +19,7 @@ for the set $J$ of free coordinates.
 \label{RestrictionFourier.restrictBF_boolToSign}
 \leanok
 \uses{BooleanAnalysis.boolToSign, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
+\difficulty{1}
 The restriction $\mathrm{restrictBF}$ of a real-valued Boolean function reads free
 coordinates from the input and fixed coordinates from the restriction $\rho$, i.e.
 $(\mathrm{restrictBF}\,f\,\rho)(x) = f(\rho.\mathrm{extend}\,x)$. This statement says
@@ -32,6 +33,7 @@ agrees with encoding the restricted function: $\mathrm{restrictBF}\,(\mathrm{boo
 \label{RestrictionFourier.mem_freeVars}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\difficulty{1}
 For a restriction $\rho$ and a coordinate $i$, we have $i \in \rho.\mathrm{freeVars}$ if
 and only if $\rho\,i = \mathtt{none}$, i.e. exactly when $\rho$ leaves the coordinate $i$
 unfixed. The companion definition $\mathrm{signProd}\,\rho\,T = \prod_{i \in T}
@@ -44,7 +46,7 @@ the bits $\rho$ fixes on a set $T$.
 \label{RestrictionFourier.chiS_extend}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
-\difficulty{4}
+\difficulty{3}
 For a set $U \subseteq [n]$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
 and an input $x$,
 \[
@@ -56,14 +58,285 @@ coming from the fixed coordinates.
 
 \begin{theorem}[Closed form for restricted Fourier coefficients]
 \lean{RestrictionFourier.fourierCoeff_restrictBF}
+\proofsource{boolean-ch03-spectral-learning-restrictions}{
+  pdf-20e15a3d3d5e-p008-b002,
+  pdf-20e15a3d3d5e-p008-b003
+}
 \label{RestrictionFourier.fourierCoeff_restrictBF}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p008-b002,
   pdf-20e15a3d3d5e-p008-b003
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001,
+    pdf-20e15a3d3d5e-p006-b005}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {RestrictionFourier.restrictBF}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {RestrictionFourier.signProd}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p008-b002}
+\proofstep
+  {RestrictionFourier.mem_freeVars}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {RestrictionFourier.chiS_extend}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p008-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, DecisionTree.fourierCoeff_sum_chiS, RestrictionFourier.chiS_extend, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
-\difficulty{6}
+\difficulty{5}
 For $f : \{0,1\}^n \to \bbr$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
 and $S \subseteq [n]$,
 \[
@@ -121,7 +394,7 @@ the sign contributed on $U \setminus S$.
 \label{RestrictionFourier.indicator_signProd_eq_prod}
 \leanok
 \uses{BooleanAnalysis.boolToSign, RestrictionFourier.localFactor, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
-\difficulty{6}
+\difficulty{5}
 If $S \subseteq U$ then for every restriction $\rho$ with free set $J$,
 \[
   \mathbf{1}[U \cap J = S]\cdot \mathrm{signProd}\,\rho\,(U \setminus J)
@@ -135,7 +408,7 @@ where the left-hand side is understood as $0$ when the indicator fails.
 \label{RestrictionFourier.sum_varWeight_localFactor}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
-\difficulty{3}
+\difficulty{2}
 For $p \in \bbr$, sets $U, S$ and a coordinate $i$,
 \[
   \sum_{v} \mathrm{varWeight}\,p\,v \cdot \mathrm{localFactor}\,U\,S\,i\,v
@@ -148,7 +421,7 @@ For $p \in \bbr$, sets $U, S$ and a coordinate $i$,
 \label{RestrictionFourier.sum_varWeight_localFactor_mul}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
-\difficulty{3}
+\difficulty{2}
 For $p \in \bbr$, sets $U, V, S$ and a coordinate $i$,
 \[
   \sum_{v} \mathrm{varWeight}\,p\,v \cdot \bigl(\mathrm{localFactor}\,U\,S\,i\,v\cdot
@@ -163,7 +436,7 @@ which is the per-coordinate average needed for the squared coefficient.
 \lean{RestrictionFourier.prod_if_subset}
 \label{RestrictionFourier.prod_if_subset}
 \leanok
-\difficulty{5}
+\difficulty{4}
 For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 \[
   \prod_{i} \bigl(p \text{ if } i \in S,\ (1-p) \text{ if } i \in U \setminus S,\ 1
@@ -181,7 +454,7 @@ For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 }
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
-\difficulty{6}
+\difficulty{5}
 Under a Bernoulli($p$)-random restriction $\rho$, the expected Fourier coefficient of the
 restricted function at $S$ is
 \[
@@ -201,7 +474,7 @@ restrictions.
 }
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.localFactor, RestrictionFourier.prod_if_subset, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor_mul, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
-\difficulty{7}
+\difficulty{6}
 Under a Bernoulli($p$)-random restriction $\rho$, the expected squared Fourier
 coefficient at $S$ is
 \[
@@ -244,6 +517,7 @@ $\E_\rho[\widehat{f_\rho}(S)^2] = \sum_U \Pr[U \cap J = S]\cdot \widehat{f}(U)^2
 
 \begin{definition}[Restriction of a real-valued Boolean function]
 \lean{RestrictionFourier.restrictBF}
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p007-b001}
 \label{RestrictionFourier.restrictBF}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b004}

@@ -87,7 +87,7 @@ q^{H_q(p)\,n - \varepsilon(n)},
 \label{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
-\difficulty{4}
+\difficulty{5}
 For $q=|\alpha|$ and $0<p\le 1-1/q$,
 \[
 H_q(p) \;>\; 0.
@@ -143,10 +143,56 @@ Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le 
 
 \begin{lemma}[Stirling-based ratio bound for the binomial term]
 \lean{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
+\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p072-b001}
 \label{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
 \leanok
+
+\proofstep
+  {ErrorCorrectingCodes.Codeword}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001,
+    pdf-7251cb8e4bc5-p015-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.add}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p042-b003,
+    pdf-7251cb8e4bc5-p028-b004}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.sub}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p047-b004}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.zero}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p042-b005,
+    pdf-7251cb8e4bc5-p029-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_distance}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p166-b003}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p072-b001,
+    pdf-7251cb8e4bc5-p201-b005}
 \uses{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum, ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
-\difficulty{6}
+\difficulty{5}
 Let $a,b,n\in\mathbb{N}$ with $a,b>0$, $a+b=n$, and let $c>0$. Suppose the Stirling-type bound
 \[
 a!\,\cdot\,b! \;\le\; c\cdot\Big(\sqrt{2}\sqrt{a}\sqrt{\pi}\,(a/e)^a\cdot\sqrt{2}\sqrt{b}\sqrt{\pi}\,(b/e)^b\Big)

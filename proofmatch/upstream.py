@@ -9,6 +9,7 @@ from pathlib import Path
 
 from proofmatch.agents import DEFAULT_MODEL
 from proofmatch.budget import StageEstimate, token_cost
+from proofmatch.dataset_io import open_dataset
 from proofmatch.models import (
     DocumentBlock,
     DocumentIndex,
@@ -19,7 +20,7 @@ from proofmatch.models import (
 
 
 def _target_record(dataset: Path, lean_name: str) -> dict[str, object]:
-    with dataset.open(encoding="utf-8") as source:
+    with open_dataset(dataset) as source:
         for line_number, line in enumerate(source, start=1):
             try:
                 record = json.loads(line)

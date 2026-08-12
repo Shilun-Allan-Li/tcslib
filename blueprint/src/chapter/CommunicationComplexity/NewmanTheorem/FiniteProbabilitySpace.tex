@@ -86,7 +86,7 @@ recovers as a finite sum over its singleton masses.
 \label{CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
-\difficulty{5}
+\difficulty{4}
 Let $Z : \Omega \to \alpha$ be a function from a finite measurable space to a finite
 type, $\mu$ a finite measure on $\Omega$, and $P$ a predicate on $\alpha$.  Then
 \[
@@ -110,7 +110,7 @@ every $\omega \in \Omega$, $\nu(\{\omega\}) = 0$ implies $\mu(\{\omega\}) = 0$.
 \label{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
-\difficulty{4}
+\difficulty{3}
 For any probability measure $\mu$ on a finite measurable space and any function $f :
 \Omega \to \mathbb{R}$,
 \[
@@ -153,7 +153,7 @@ This is the law of total probability expressed in real-valued measure notation.
 \lean{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \label{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \leanok
-\difficulty{3}
+\difficulty{2}
 Let $\Omega$ be a nonempty finite discrete type and let $S \subseteq \Omega$.  Under
 the uniform probability measure on $\Omega$,
 \[
@@ -167,7 +167,7 @@ the uniform probability measure on $\Omega$,
 \label{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
 \leanok
 \uses{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
-\difficulty{3}
+\difficulty{2}
 Under the uniform measure on a nonempty finite discrete type $\Omega$, the
 real-valued measure of a set $S$ equals $|\{S\}| / |\Omega|$ where $|\{S\}|$ denotes
 the cardinality of the subtype $\{\omega : \Omega \mid \omega \in S\}$.
@@ -178,7 +178,7 @@ the cardinality of the subtype $\{\omega : \Omega \mid \omega \in S\}$.
 \label{CommunicationComplexity.FiniteProbabilitySpace.nonempty}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
-\difficulty{2}
+\difficulty{1}
 Any type carrying a \texttt{FiniteProbabilitySpace} instance is nonempty.
 \end{theorem}
 
@@ -232,7 +232,7 @@ For finite probability spaces $\Omega_1$ and $\Omega_2$ and any $(x, y) \in \Ome
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
-\difficulty{3}
+\difficulty{2}
 For finite probability spaces $\Omega_1$ and $\Omega_2$ and sets $A \subseteq \Omega_1$,
 $B \subseteq \Omega_2$,
 \[
@@ -246,7 +246,7 @@ $B \subseteq \Omega_2$,
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
-\difficulty{3}
+\difficulty{2}
 If $(A_i)_{i \in \iota}$ is a pairwise-disjoint family of sets indexed by a finite
 type $\iota$ in a finite probability space $\Omega$, then
 \[
@@ -260,7 +260,7 @@ type $\iota$ in a finite probability space $\Omega$, then
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
-\difficulty{4}
+\difficulty{3}
 For a map $\varphi : \Xi \to \Omega$ from a finite probability space and a finite set
 $T \subseteq \Omega$,
 \[
@@ -287,7 +287,7 @@ For a finite probability space $\Omega$ and a finset $T \subseteq \Omega$,
 \label{CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
-\difficulty{2}
+\difficulty{1}
 For a finite probability space $\Omega$ and any $f : \Omega \to \mathbb{R}$,
 \[
   \int_\Omega f(\omega)\,d\omega
@@ -312,7 +312,7 @@ For a finite probability space $\Omega$ and any $f : \Omega \to \mathbb{R}$,
 \label{CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
-\difficulty{4}
+\difficulty{3}
 Let $\Omega$ be a finite probability space, $\iota$ a finite index type, and $f :
 \Omega \to \mathbb{R}$.  For any coordinate $i \in \iota$, integrating $\omega_{\bullet}
 \mapsto f(\omega_i)$ over the product space $(j : \iota) \to \Omega$ (with the product
@@ -324,7 +324,7 @@ measure) equals $\int_\Omega f$.
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
-\difficulty{3}
+\difficulty{2}
 For a finite index type $\iota$, finite probability spaces $\Omega_i$ for each $i$,
 and sets $s_i \subseteq \Omega_i$,
 \[
@@ -349,7 +349,7 @@ where $\mathbf{1}_S$ denotes the indicator of $S$ as an element of $\Omega \to \
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
-\difficulty{3}
+\difficulty{2}
 For a finite probability space $\Omega$ and $S \subseteq \Omega$,
 \[
   \mathrm{volume}^{\mathbb{R}}(S) \;=\;
@@ -416,7 +416,7 @@ $\varepsilon > 0$,
 \label{CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos, CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
-\difficulty{4}
+\difficulty{3}
 If $f : \Omega \to \mathbb{R}$ satisfies $c < f(\omega)$ for every $\omega$ in a
 finite probability space, then $c < \int_\Omega f$.
 \end{theorem}

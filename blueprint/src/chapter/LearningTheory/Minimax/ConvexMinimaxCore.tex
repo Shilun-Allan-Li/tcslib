@@ -56,7 +56,7 @@ maximises over pure responses.
 \label{OnlineLearning.payoffVsPure_nonneg}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
-\difficulty{2}
+\difficulty{1}
 For any game $G$, mixed row strategy $p$, and pure column action $j$,
 $\mathrm{payoffVsPure}(G,p,j) \geq 0$. This follows because every entry
 of $G$ is nonnegative and the mixing weights are nonnegative.
@@ -78,7 +78,7 @@ of $G$ is at most one and the mixing weights sum to one.
 \label{OnlineLearning.pureVsPayoff_nonneg}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
-\difficulty{2}
+\difficulty{1}
 For any game $G$, pure row action $i$, and mixed column strategy $q$,
 $\mathrm{pureVsPayoff}(G,i,q) \geq 0$.
 \end{lemma}
@@ -98,7 +98,7 @@ $\mathrm{pureVsPayoff}(G,i,q) \leq 1$.
 \label{OnlineLearning.finiteLowerValue_bddAbove}
 \leanok
 \uses{MixedStrategy, OnlineLearning.payoffVsPure_le_one, OnlineLearning.payoffVsPure_nonneg, ZeroSumGame, payoffVsPure}
-\difficulty{4}
+\difficulty{3}
 When $N \geq 1$, the set
 $\bigl\{\inf_{j}\,\mathrm{payoffVsPure}(G,p,j) : p \in \Delta_M\bigr\}$
 is bounded above by~$1$.
@@ -109,7 +109,7 @@ is bounded above by~$1$.
 \label{OnlineLearning.finiteUpperValue_bddBelow}
 \leanok
 \uses{MixedStrategy, OnlineLearning.pureVsPayoff_le_one, OnlineLearning.pureVsPayoff_nonneg, ZeroSumGame, pureVsPayoff}
-\difficulty{4}
+\difficulty{3}
 When $M \geq 1$, the set
 $\bigl\{\sup_{i}\,\mathrm{pureVsPayoff}(G,i,q) : q \in \Delta_N\bigr\}$
 is bounded below by~$0$.
@@ -120,7 +120,7 @@ is bounded below by~$0$.
 \label{OnlineLearning.finiteLowerValue_le_upperValue}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, ZeroSumGame, weak_duality}
-\difficulty{3}
+\difficulty{2}
 For any finite zero-sum game $G$ (with $M,N \geq 1$),
 $v^-(G) \leq v^+(G)$.
 \end{lemma}
@@ -265,7 +265,7 @@ column strategy $q \in \Delta_N$,
 \label{OnlineLearning.weak_convex_compact_minimax}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses}
-\difficulty{5}
+\difficulty{4}
 Under the hypotheses \texttt{OnlineLearning.ConvexCompactMinimaxHypotheses},
 \[
   \sup_{y \in Y}\,\inf_{x \in X}\,f(x,y)
@@ -312,7 +312,7 @@ $\mathrm{sublevel}(X,f,y,c)$ is closed.
 \label{OnlineLearning.minimaxSublevel_isCompact}
 \leanok
 \uses{OnlineLearning.minimaxSublevel, OnlineLearning.minimaxSublevel_isClosed, OnlineLearning.minimaxSublevel_subset}
-\difficulty{2}
+\difficulty{1}
 If $X$ is compact and $f(\cdot,y)$ is continuous on $X$, then
 $\mathrm{sublevel}(X,f,y,c)$ is compact (as a closed subset of a compact set).
 \end{lemma}

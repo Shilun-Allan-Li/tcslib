@@ -34,7 +34,7 @@ For any $\eta, x \in \bbr$ with $x \in [0,1]$, convexity of $\exp$ gives
 \label{weighted_exp_le_affine}
 \leanok
 \uses{exp_convexity_bound'}
-\difficulty{4}
+\difficulty{3}
 Let $p : \mathrm{Fin}\,n \to \bbr$ be a probability vector ($p_i \ge 0$,
 $\sum_i p_i = 1$) and let $\ell : \mathrm{Fin}\,n \to \bbr$ satisfy $0 \le \ell_i \le 1$
 for all $i$.  For any $\eta \in \bbr$,
@@ -57,7 +57,7 @@ For any $u > -1$, $\ln(1+u) \le u$.
 \lean{eta_exp_bound}
 \label{eta_exp_bound}
 \leanok
-\difficulty{6}
+\difficulty{5}
 For any $\eta \ge 0$,
 \[
   \eta - 1 + e^{-\eta} \;\le\; \frac{\eta^2}{2}.
@@ -100,7 +100,7 @@ $\varphi(0) = 0$ and $\varphi'(0) = 0$.
 \label{hoeffding_log_mgf_tight}
 \leanok
 \uses{bernoulli_mgf_bound, weighted_exp_le_affine}
-\difficulty{5}
+\difficulty{4}
 Under the same hypotheses as \texttt{hoeffding\_log\_mgf\_weak}, the tighter bound holds:
 \[
   \ln\!\Bigl(\sum_{i} p_i\,e^{-\eta\,\ell_i}\Bigr)

@@ -13,6 +13,7 @@ from proofmatch.agents import (
 )
 from proofmatch.blueprint import (
     ProofSource,
+    blueprint_write_lock,
     ProofStep,
     SourceProposal,
     StepProposal,
@@ -199,10 +200,13 @@ def apply_theorem_proposals(
     failures = []
     for lean_name in sorted(proposal_groups):
         try:
-            mutations = plan_blueprint_mutations(
-                tuple(proposal_groups[lean_name])
-            )
-            apply_blueprint_mutations(mutations)
+            # plan reads the .tex and apply writes it back, so concurrent matches on
+            # documents citing the same chapter must not interleave here.
+            with blueprint_write_lock():
+                mutations = plan_blueprint_mutations(
+                    tuple(proposal_groups[lean_name])
+                )
+                apply_blueprint_mutations(mutations)
             applied.extend(mutations)
         except Exception as error:
             failures.append(
@@ -283,7 +287,7 @@ def routed_candidates(
     blueprint_root: Path,
     budget: Budget,
     *,
-    max_chapters: int = 8,
+    max_chapters: int | None = None,
 ) -> tuple[
     tuple[Candidate, ...],
     tuple[RelevanceDecision, ...],

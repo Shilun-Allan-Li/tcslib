@@ -21,16 +21,21 @@ Keys:
 import argparse
 import curses
 import json
+import sys
 import textwrap
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE))
+
+from proofmatch.dataset_io import open_dataset  # noqa: E402
+
 DEFAULT = BASE / "dataset" / "tcslib_theorems.jsonl"
 
 
 def load(path: Path, filt: str | None):
     recs = []
-    with open(path, encoding="utf-8") as f:
+    with open_dataset(path) as f:
         for line in f:
             line = line.strip()
             if not line:

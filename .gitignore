@@ -11,5 +11,7 @@ __pycache__/
 *.bak*
 blueprint/src/*.log
 blueprint/src/*.aux
-# 96MB raw dataset exceeds GitHub's file limit - only the .gz copy is committed
+# The raw dataset passed GitHub's 100MB file limit (100.84MB) and is byte-identical
+# to its own gzip, so only the ~14MB .gz copy is committed. Readers go through
+# proofmatch/dataset_io.py, which falls back to the .gz when the .jsonl is absent.
 dataset/tcslib_theorems.jsonl

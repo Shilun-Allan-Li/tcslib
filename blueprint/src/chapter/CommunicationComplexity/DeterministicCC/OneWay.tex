@@ -65,7 +65,7 @@ encode the decoded output as an index in $\{0,\ldots,|\alpha|-1\}$ and transmit 
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage}
-\difficulty{2}
+\difficulty{1}
 For any one-way protocol $p$ and inputs $(x, y)$, running $p$'s embedding in the
 finite-message model yields the same output as running $p$ directly:
 $\mathtt{FiniteMessage.Protocol.run}(p.\mathtt{toFiniteMessage},\, x,\, y) = p.\mathtt{run}(x, y)$.
@@ -76,7 +76,7 @@ $\mathtt{FiniteMessage.Protocol.run}(p.\mathtt{toFiniteMessage},\, x,\, y) = p.\
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage}
-\difficulty{2}
+\difficulty{1}
 The interactive complexity of the embedding equals the one-way cost plus the cost for
 Bob to transmit the decoded output:
 $(p.\mathtt{toFiniteMessage}).\mathtt{complexity} = p.\mathtt{cost} + \lceil \log_2 |\alpha| \rceil$.
@@ -97,7 +97,7 @@ protocols $p$ that compute $f$.
 \label{CommunicationComplexity.Deterministic.OneWay.communicationComplexity_le_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.Computes, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.communicationComplexity, CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
-\difficulty{2}
+\difficulty{1}
 For a function $f$ and $n \in \mathbb{N}$, the one-way complexity of $f$ is at most $n$
 if and only if there exists a one-way protocol $p$ that computes $f$ with
 $p.\mathtt{cost} \le n$.
@@ -108,7 +108,7 @@ $p.\mathtt{cost} \le n$.
 \label{CommunicationComplexity.Deterministic.OneWay.le_communicationComplexity_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.Computes, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.communicationComplexity}
-\difficulty{2}
+\difficulty{1}
 For a function $f$ and $k \in \mathbb{N}$, $k$ is at most the one-way complexity of $f$
 if and only if every one-way protocol $p$ computing $f$ satisfies
 $k \le p.\mathtt{cost}$.
@@ -119,7 +119,7 @@ $k \le p.\mathtt{cost}$.
 \label{CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol.Computes, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage, CommunicationComplexity.Deterministic.OneWay.communicationComplexity, CommunicationComplexity.Deterministic.OneWay.communicationComplexity_le_iff, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
-\difficulty{5}
+\difficulty{4}
 If the one-way communication complexity of $f : X \to Y \to \alpha$ is at most $n$, then
 the (interactive) deterministic communication complexity of $f$ is at most
 $n + \lceil \log_2 |\alpha| \rceil$, with the additive term accounting for Bob's cost

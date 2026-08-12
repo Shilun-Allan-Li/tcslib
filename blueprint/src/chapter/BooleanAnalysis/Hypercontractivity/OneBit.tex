@@ -72,7 +72,7 @@ $f(\mathit{true}) = \widehat{f}(\emptyset) - \widehat{f}(\{0\})$.
 \label{OneBit.expect_noiseOp_sq_one_bit}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.parseval, OneBit.finsetFin1_ne, OneBit.finsetFin1_univ}
-\difficulty{4}
+\difficulty{3}
 For a one-bit function $f$ and noise rate $\rho$,
 \[
   \E\big[(T_\rho f)^2\big] = \widehat{f}(\emptyset)^2 + \rho^2\,\widehat{f}(\{0\})^2 .
@@ -96,7 +96,7 @@ For a one-bit function $f$, writing $a = \widehat{f}(\emptyset)$ and $b = \wideh
 \label{OneBit.lp_norm_mono}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
-\difficulty{6}
+\difficulty{5}
 For $1 \le r \le s$ and any $f : \mathrm{BoolCube}\,n \to \bbr$,
 \[
   \big(\E[|f|^r]\big)^{1/r} \le \big(\E[|f|^s]\big)^{1/s}.
@@ -135,7 +135,7 @@ case $a = 0$.
 \lean{OneBit.noise_l2_abs_mono}
 \label{OneBit.noise_l2_abs_mono}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For real $a, b$ and $0 \le \rho \le 1$, writing $u = a+b$ and $v = a-b$,
 \[
   a^2 + \rho^2 b^2 \le \Big(\tfrac{|u| + |v|}{2}\Big)^2 + \rho^2 \Big(\tfrac{|u| - |v|}{2}\Big)^2 .
@@ -156,7 +156,7 @@ For real $a, b$ and $0 \le \rho \le 1$, writing $u = a+b$ and $v = a-b$,
   pdf-4ba63c9394e5-p012-b003
 }
 \uses{OneBit.two_point_ineq_unit}
-\difficulty{7}
+\difficulty{6}
 For $1 \le p \le 2$, all $a, b \in \bbr$, and $\rho \ge 0$ with $\rho^2 \le p-1$,
 \[
   \big(a^2 + \rho^2 b^2\big)^{1/2} \le \Big(\frac{|a+b|^p + |a-b|^p}{2}\Big)^{1/p}.
@@ -178,7 +178,7 @@ For $1 \le p \le 2$, all $a, b \in \bbr$, and $\rho \ge 0$ with $\rho^2 \le p-1$
   pdf-4ba63c9394e5-p012-b003
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.noiseOp, OneBit.expect_abs_rpow_one_bit, OneBit.expect_noiseOp_sq_one_bit, OneBit.two_point_ineq}
-\difficulty{3}
+\difficulty{2}
 For $f : \mathrm{BoolCube}\,1 \to \bbr$, $1 \le p \le 2$, and $\rho \ge 0$ with
 $\rho^2 \le p-1$,
 \[
@@ -237,13 +237,17 @@ For $f, g : \mathrm{BoolCube}\,n \to \bbr$,
 \label{OneBit.holder_sharpness}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, OneBit.expect_nonneg_of_nonneg, OneBit.expect_const_eq}
-\difficulty{7}
+\difficulty{6}
 For H\"older conjugate exponents $(p, q)$ and any function $u$, there exists a function $f$ with
 $\norm{f}_p \le 1$ and $\norm{u}_q \le \langle f, u\rangle$.
 \end{lemma}
 
 \begin{theorem}[Noise operator duality]
 \lean{OneBit.noise_operator_duality}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p013-b002,
+  pdf-4ba63c9394e5-p013-b003
+}
 \label{OneBit.noise_operator_duality}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
@@ -254,6 +258,295 @@ $\norm{f}_p \le 1$ and $\norm{u}_q \le \langle f, u\rangle$.
   pdf-4ba63c9394e5-p013-b002,
   pdf-4ba63c9394e5-p013-b003
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p031-b004}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002,
+    pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003,
+    pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {Bonami.expect_sq_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p005-b001}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {OneBit.expect_nonneg_of_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.expect_const_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {OneBit.cauchy_schwarz_bool}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p005-b001,
+    pdf-4ba63c9394e5-p014-b003}
+\proofstep
+  {OneBit.holder_sharpness}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
 \uses{Bonami.expect_sq_nonneg, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, OneBit.cauchy_schwarz_bool, OneBit.holder_sharpness}
 \difficulty{5}
 If, for H\"older conjugate exponents $p$ and $p'$ with $1 \le p$, the noise operator with rate
@@ -266,6 +559,10 @@ satisfies the dual $(2,p')$-hypercontractive bound: for every $g$,
 
 \begin{theorem}[One-bit $(2,q)$-hypercontractivity]
 \lean{OneBit.one_bit_2q_hypercontractivity}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p011-b007,
+  pdf-4ba63c9394e5-p013-b001
+}
 \label{OneBit.one_bit_2q_hypercontractivity}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p004-b006}
@@ -273,8 +570,383 @@ satisfies the dual $(2,p')$-hypercontractive bound: for every $g$,
   pdf-4ba63c9394e5-p011-b007,
   pdf-4ba63c9394e5-p013-b001
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p005-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p032-b003}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p020-b003}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p020-b003}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005,
+    pdf-4ba63c9394e5-p013-b001}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {Bonami.expect_sq_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p005-b001}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b002}
+\proofstep
+  {OneBit.boolCube1_univ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.finsetFin1_univ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.boolCube1_ne}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.finsetFin1_ne}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.one_bit_val_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.one_bit_val_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.expect_noiseOp_sq_one_bit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.expect_abs_rpow_one_bit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.two_point_ineq_unit}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003,
+    pdf-4ba63c9394e5-p012-b002}
+\proofstep
+  {OneBit.two_point_ineq}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b002,
+    pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.one_bit_p2_hypercontractivity}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b002}
+\proofstep
+  {OneBit.expect_nonneg_of_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {OneBit.expect_const_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {OneBit.cauchy_schwarz_bool}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {OneBit.holder_sharpness}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {OneBit.noise_operator_duality}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002,
+    pdf-4ba63c9394e5-p013-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, OneBit.noise_operator_duality, OneBit.one_bit_p2_hypercontractivity}
-\difficulty{5}
+\difficulty{4}
 For $g : \mathrm{BoolCube}\,1 \to \bbr$ and $q \ge 2$,
 \[
   \norm{T_{1/\sqrt{q-1}}\, g}_q \le \norm{g}_2 .

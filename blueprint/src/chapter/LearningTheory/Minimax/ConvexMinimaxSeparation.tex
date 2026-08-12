@@ -31,7 +31,7 @@ This set is written $\texttt{OnlineLearning.finiteUpperImage}$ in Lean.
 \label{OnlineLearning.finiteUpperImage_nonempty}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
-\difficulty{3}
+\difficulty{2}
 If $X$ is nonempty, then for every finite column sample $u$ the upper image
 $U(X,f,u)$ is nonempty.
 \end{lemma}
@@ -41,7 +41,7 @@ $U(X,f,u)$ is nonempty.
 \label{OnlineLearning.finiteUpperImage_convex}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
-\difficulty{6}
+\difficulty{5}
 If $X$ is convex and $x \mapsto f(x,y)$ is convex on $X$ for every $y \in Y$, then
 $U(X,f,u)$ is a convex subset of $u \to \bbr$ for every finite column sample $u$.
 \end{lemma}
@@ -83,7 +83,7 @@ where $e_i$ is the standard basis vector $\mathrm{Pi.single}\,i\,1$.
 \label{OnlineLearning.separating_coordinate_nonpos}
 \leanok
 \uses{OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_nonempty, OnlineLearning.finiteUpperImage_upper}
-\difficulty{6}
+\difficulty{5}
 Assume $X$ is nonempty and $L$ is a continuous linear functional on $u \to \bbr$
 with $L(z) < L(c)$ for every $z \in U(X,f,u)$, where $c$ is a fixed vector. Then
 $L(e_y) \le 0$ for every coordinate $y \in u$.
@@ -94,7 +94,7 @@ $L(e_y) \le 0$ for every coordinate $y \in u$.
 \label{OnlineLearning.separating_functional_ne_zero}
 \leanok
 \uses{OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_nonempty}
-\difficulty{1}
+\difficulty{2}
 Under the same separation hypothesis $L(z) < L(c)$ for all $z$ in the upper image,
 with $X$ nonempty, the functional $L$ is not the zero functional.
 \end{lemma}
@@ -104,7 +104,7 @@ with $X$ nonempty, the functional $L$ is not the zero functional.
 \label{OnlineLearning.separating_weight_sum_pos}
 \leanok
 \uses{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_functional_ne_zero}
-\difficulty{5}
+\difficulty{4}
 Under the same separation hypothesis, with $X$ nonempty,
 \[
   0 \;<\; \sum_{y \in u} \bigl(-L(e_y)\bigr).

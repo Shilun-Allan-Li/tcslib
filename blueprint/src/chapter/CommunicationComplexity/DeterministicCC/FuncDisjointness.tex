@@ -23,7 +23,7 @@ disjoint, i.e.\ $X \cap Y = \emptyset$.
 \label{CommunicationComplexity.Functions.Disjointness.disjointness_comm}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.disjointness}
-\difficulty{2}
+\difficulty{1}
 The disjointness function is symmetric in its two set arguments: for all
 $X, Y \subseteq [n]$, $\mathrm{disjointness}(n, X, Y) = \mathrm{disjointness}(n, Y, X)$.
 \end{theorem}
@@ -74,7 +74,7 @@ which Bob sends a single bit for the answer.
 \label{CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.foolingSet, CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
-\difficulty{6}
+\difficulty{5}
 For $n \ge 1$, the deterministic communication complexity of $\mathrm{disjointness}(n)$
 is at least $n + 1$.  The proof uses the fooling set of size $2^n$ together with an
 additional input $(x_0, y_0)$ with $x_0 \cap y_0 \ne \emptyset$ to show that any

@@ -111,7 +111,7 @@ $p.\texttt{swap}.\texttt{swap} = p$.
 \label{CommunicationComplexity.Deterministic.Protocol.alice_to_bob}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
-\difficulty{2}
+\difficulty{1}
 For any alice-rooted protocol $\texttt{alice}\;f\;P$ over $X \times Y$, there exists a
 protocol $q$ over $Y \times X$ such that $q.\texttt{run}\;y\;x = (\texttt{alice}\;f\;P).\texttt{run}\;x\;y$
 for all $x, y$, and $q.\texttt{complexity} = (\texttt{alice}\;f\;P).\texttt{complexity}$.
@@ -123,7 +123,7 @@ This allows reducing the bob case to the alice case in inductive arguments.
 \label{CommunicationComplexity.Deterministic.Protocol.bob_to_alice}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
-\difficulty{2}
+\difficulty{1}
 For any bob-rooted protocol $\texttt{bob}\;g\;P$ over $X \times Y$, there exists a protocol
 $q$ over $Y \times X$ such that $q.\texttt{run}\;y\;x = (\texttt{bob}\;g\;P).\texttt{run}\;x\;y$
 for all $x, y$, and $q.\texttt{complexity} = (\texttt{bob}\;g\;P).\texttt{complexity}$.

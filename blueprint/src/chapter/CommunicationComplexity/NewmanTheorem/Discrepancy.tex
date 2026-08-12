@@ -33,7 +33,7 @@ where $\sigma : \mathrm{Bool} \to \{-1,1\}$ is the sign map \texttt{Communicatio
 \label{CommunicationComplexity.discrepancy_integrand_eq}
 \leanok
 \uses{CommunicationComplexity.boolSign}
-\difficulty{4}
+\difficulty{2}
 For any $g : X \to Y \to \mathrm{Bool}$, $S \subseteq X \times Y$, and point
 $(x,y) \in X \times Y$, the pointwise integrand
 $\mathbf{1}_{S}(x,y)\cdot\sigma(g(x,y))$
@@ -64,7 +64,7 @@ outputs $\mathrm{true}$ inside $S$:
 \label{CommunicationComplexity.Deterministic.Protocol.nonneg_of_discrepancy_bound}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
-\difficulty{3}
+\difficulty{2}
 If every combinatorial rectangle $R \subseteq X \times Y$ satisfies
 $|\mathrm{disc}_\mu(g,R)| \le \gamma$, then $\gamma \ge 0$.
 \end{lemma}
@@ -84,7 +84,7 @@ $R$, and $-1$ otherwise.
 \label{CommunicationComplexity.Deterministic.Protocol.rectangleSign_abs}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.rectangleSign}
-\difficulty{4}
+\difficulty{2}
 For any protocol $p$ and any set $R$, $|\mathrm{rectangleSign}(p,R)| = 1$.
 \end{lemma}
 
@@ -93,7 +93,7 @@ For any protocol $p$ and any set $R$, $|\mathrm{rectangleSign}(p,R)| = 1$.
 \label{CommunicationComplexity.Deterministic.Protocol.rectangleSign_eq_boolSign}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.boolSign}
-\difficulty{5}
+\difficulty{4}
 If $R$ is a leaf rectangle of protocol $p$ and $(x,y) \in R$, then
 $\mathrm{rectangleSign}(p,R) = \sigma(p.\mathrm{run}(x,y))$, where $\sigma$ is the sign
 map \texttt{CommunicationComplexity.boolSign}.
@@ -114,7 +114,7 @@ $p$.
 \label{CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.FiniteProbabilitySpace}
-\difficulty{2}
+\difficulty{1}
 A set $R$ belongs to \texttt{CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset} $p$ if and only if it is a
 leaf rectangle of $p$.
 \end{lemma}
@@ -135,7 +135,7 @@ This uses the fact that the leaf rectangles form a partition of $X \times Y$.
 \label{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator}
-\difficulty{5}
+\difficulty{4}
 For a deterministic protocol $p$ and Boolean function $g$,
 \[
   \mathbb{E}_{(x,y)\sim\mu}\bigl[\sigma(p.\mathrm{run}(x,y))\cdot\sigma(g(x,y))\bigr]
@@ -149,7 +149,7 @@ For a deterministic protocol $p$ and Boolean function $g$,
 \label{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
-\difficulty{6}
+\difficulty{5}
 The signed bias $\mathbb{E}_{(x,y)}\bigl[\sigma(p.\mathrm{run}(x,y))\cdot\sigma(g(x,y))\bigr]$
 equals the sum over all leaf rectangles $R$ of
 $\mathrm{rectangleSign}(p,R)\cdot\mathrm{disc}_\mu(g,R)$.
@@ -175,7 +175,7 @@ then for any deterministic protocol $p$,
 \label{CommunicationComplexity.Deterministic.Protocol.logb_le_complexity_of_distributionalError}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
-\difficulty{4}
+\difficulty{3}
 Assuming $\gamma > 0$ and $1 - 2 \cdot p.\mathrm{distributionalError}_\mu(g) > 0$, if
 every rectangle has discrepancy at most $\gamma$ then
 \[
@@ -190,7 +190,7 @@ every rectangle has discrepancy at most $\gamma$ then
 \label{CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_discrepancy_bound}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
-\difficulty{5}
+\difficulty{4}
 Let $\mu$ be a distribution on $X \times Y$, let $g : X \to Y \to \mathrm{Bool}$, and
 let $\varepsilon, \gamma \in \mathbb{R}$ and $n \in \mathbb{N}$.  If every combinatorial
 rectangle $R$ satisfies $|\mathrm{disc}_\mu(g,R)| \le \gamma$, and if

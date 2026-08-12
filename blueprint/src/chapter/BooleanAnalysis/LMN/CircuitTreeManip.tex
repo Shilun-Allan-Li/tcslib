@@ -27,7 +27,7 @@ $\neg\big(\bigvee_i \bigwedge_j \ell_{ij}\big) = \bigwedge_i \bigvee_j \neg\ell_
 \label{LMN.dnfToDualCNF_width}
 \leanok
 \uses{CNF.width, DNF, DNF.width, LMN.dnfToDualCNF, Term.width}
-\difficulty{3}
+\difficulty{2}
 The dual CNF $\mathrm{dnfToDualCNF}\,\varphi$ has the same width as $\varphi$, since
 flipping the sign of each literal leaves the number of literals per term (and hence
 per clause) unchanged.
@@ -38,7 +38,7 @@ per clause) unchanged.
 \label{LMN.dnfToDualCNF_eval}
 \leanok
 \uses{CNF.eval, CNF.evalClause, DNF, DNF.eval, LMN.dnfToDualCNF, Literal.flipNeg_eval, Term.eval}
-\difficulty{5}
+\difficulty{4}
 For every input $x : \mathrm{Fin}\,n \to \mathrm{Bool}$, the dual CNF evaluates to the
 negation of the original DNF: $\mathrm{CNF.eval}\,(\mathrm{dnfToDualCNF}\,\varphi)\,x
 = \neg(\mathrm{DNF.eval}\,\varphi\,x)$.
@@ -49,7 +49,7 @@ negation of the original DNF: $\mathrm{CNF.eval}\,(\mathrm{dnfToDualCNF}\,\varph
 \label{LMN.Circuit.exists_node_of_depth_ge_one}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
-\difficulty{4}
+\difficulty{2}
 A circuit $c$ with $\mathrm{depth}\,c \geq 1$ is not a literal: there exist a Boolean
 flag $\mathit{isAnd}$ and a child list $cs$ with $c = \mathrm{Circuit.node}\,\mathit{isAnd}\,cs$.
 \end{lemma}
@@ -59,7 +59,7 @@ flag $\mathit{isAnd}$ and a child list $cs$ with $c = \mathrm{Circuit.node}\,\ma
 \label{LMN.Circuit.depth1_children_are_lits}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
-\difficulty{5}
+\difficulty{4}
 If a node $\mathrm{Circuit.node}\,\mathit{isAnd}\,cs$ has depth at most $1$, then every
 child $c \in cs$ has depth $0$.
 \end{lemma}
@@ -69,7 +69,7 @@ child $c \in cs$ has depth $0$.
 \label{LMN.Circuit.depth0_is_lit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
-\difficulty{4}
+\difficulty{2}
 A circuit $c$ with $\mathrm{depth}\,c = 0$ is a literal: there exists $lr : \mathrm{Lit}\,m$
 with $c = \mathrm{Circuit.lit}\,lr$.
 \end{lemma}
@@ -79,7 +79,7 @@ with $c = \mathrm{Circuit.lit}\,lr$.
 \label{LMN.Circuit.depth1_all_lits}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit, LMN.Circuit.depth0_is_lit, LMN.Circuit.depth1_children_are_lits}
-\difficulty{2}
+\difficulty{1}
 If a node $\mathrm{Circuit.node}\,\mathit{isAnd}\,cs$ has depth at most $1$, then every
 child $c \in cs$ is a literal, i.e.\ $c = \mathrm{Circuit.lit}\,lr$ for some $lr$.
 \end{lemma}
@@ -96,10 +96,236 @@ $\mathrm{gates}\,i$, namely $x \mapsto c_{\mathrm{sub}}.\mathrm{eval}\,(\lambda 
 
 \begin{lemma}[Switched gates have DNF and CNF]
 \lean{LMN.switched_gates_have_dnf_cnf}
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p003-b002,
+  pdf-b5e074215b9e-p003-b003
+}
 \label{LMN.switched_gates_have_dnf_cnf}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {CNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {CNF.evalClause}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.toDNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {SwitchingLemma2.toCNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {SwitchingLemma2.dtDepth_witness}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf}
+  {direct}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b002,
+    pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b003}
+\proofstep
+  {LMN.dedupTermVar}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.termHasContradiction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {LMN.cleanDNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_nodup}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_var_inj}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_width_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b002}
+\proofstep
+  {LMN.contradiction_term_eval_false}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {LMN.dedupTermVar_preserves_term_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.cleanDNF_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.cleanDNF_width_le}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p003-b002}
+\proofstep
+  {LMN.cleanDNF_var_inj}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.cleanDNF_nodup}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p004-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p004-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p004-b002}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
-\difficulty{4}
+\difficulty{3}
 If, after applying a restriction $\rho$, every gate function
 $\mathrm{restrictFn}\,(\mathrm{gates}\,i).\mathrm{eval}\,\rho$ has decision-tree depth at
 most $l$, then each gate admits both a width-$l$ DNF representation (whose terms are
@@ -112,7 +338,7 @@ representation, each computing the same function.
 \label{LMN.or_of_lit_children_dnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width}
-\difficulty{6}
+\difficulty{5}
 Consider an OR node $\mathrm{Circuit.node}\,\mathrm{false}\,cs$ whose children are all
 literals, where each gate function has a width-$l$ DNF and a width-$l$ CNF
 representation. Then the function computed by the node also has a width-$l$ DNF
@@ -124,7 +350,7 @@ $\varphi$ with $\varphi.\mathrm{eval}\,x = (\mathrm{Circuit.node}\,\mathrm{false
 \label{LMN.and_of_lit_children_cnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_and_of_cnfs, LMN.dnfToDualCNF, LMN.dnfToDualCNF_eval, LMN.dnfToDualCNF_width}
-\difficulty{6}
+\difficulty{5}
 Consider an AND node $\mathrm{Circuit.node}\,\mathrm{true}\,cs$ whose children are all
 literals, where each gate function has a width-$l$ DNF and a width-$l$ CNF
 representation. Then the function computed by the node has a width-$l$ CNF $\psi$ with
@@ -136,7 +362,7 @@ $\mathrm{CNF.eval}\,\psi\,x = (\mathrm{Circuit.node}\,\mathrm{true}\,cs).\mathrm
 \label{LMN.absorbOneLevel_depth1}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.depth1_all_lits, LMN.Circuit.exists_node_of_depth_ge_one, LMN.Layer2Data, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width}
-\difficulty{7}
+\difficulty{5}
 Let $c_{\mathrm{top}}$ have depth exactly $1$ over the gates of some $\mathrm{Layer2Data}$,
 where (with $0 < l$) each gate has a width-$l$ DNF and CNF representation. Then there is a
 new $\mathrm{Layer2Data}'$ of width at most $l$ and a circuit $c_{\mathrm{top}}'$ of depth
@@ -148,7 +374,7 @@ $0$ over it computing the same function as $c_{\mathrm{top}}$ over the original 
 \label{LMN.child_depth_le1_has_signed_dnf}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.depth1_all_lits, LMN.Circuit.exists_node_of_depth_ge_one, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width}
-\difficulty{6}
+\difficulty{5}
 A circuit $c_j$ of depth at most $1$ over gates that each have a width-$l$ DNF and CNF
 representation admits a width-$l$ DNF $\varphi$ together with a sign bit such that, for
 all $x$, the signed evaluation $\big(\mathrm{if}\ \mathit{sign}\ \mathrm{then}\
@@ -162,7 +388,7 @@ are duplicate-free with no repeated variable.
 \label{LMN.list_child_signed_dnfs}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.child_depth_le1_has_signed_dnf}
-\difficulty{4}
+\difficulty{3}
 Given a list $cs$ of circuits each of depth at most $1$, over gates with width-$l$ DNF and
 CNF representations, there are families $\varphi_s$ of width-$l$ DNFs (with duplicate-free,
 non-repeating-variable terms) and signs indexed by $\mathrm{Fin}\,cs.\mathrm{length}$ such
@@ -175,7 +401,7 @@ $(cs.\mathrm{get}\,j).\mathrm{eval}\,(\lambda i,\ \mathrm{gates}\,i\,x)$ on ever
 \label{LMN.build_literal_circuit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval}
-\difficulty{5}
+\difficulty{3}
 For any flag $\mathit{isAnd}$, arity $k$, and sign family $\mathit{signs} : \mathrm{Fin}\,k
 \to \mathrm{Bool}$, there is a circuit $c'$ of depth at most $1$ that equals the node
 $\mathrm{Circuit.node}\,\mathit{isAnd}$ over the literals $\mathrm{Circuit.lit}\,\langle j,
@@ -196,10 +422,15 @@ equals $c.\mathrm{eval}\,(\lambda i,\ \mathrm{gates}\,i\,x)$ for all $x$.
 
 \begin{lemma}[Depth reduction for depth-2 circuits]
 \lean{LMN.exists_circuit_depth_reduction_depth2}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p004-b002}
 \label{LMN.exists_circuit_depth_reduction_depth2}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.exists_node_of_depth_ge_one, LMN.build_literal_circuit, LMN.list_child_signed_dnfs}
-\difficulty{7}
+\difficulty{6}
 A circuit $c$ of depth exactly $2$ over gates with width-$l$ DNF and CNF representations
 reduces to a circuit $c'$ of depth at most $1$ over a fresh gate family $\mathrm{gates}'$
 of width-$l$ DNFs (with duplicate-free, non-repeating-variable terms), so that $c$ and
@@ -211,7 +442,7 @@ $c'$ compute the same function on every $x$.
 \label{LMN.reduce_children}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, DNF, DNF.eval, DNF.width}
-\difficulty{4}
+\difficulty{3}
 Given a list $cs$ of circuits where each child $cs.\mathrm{get}\,j$ has been reduced to a
 circuit $c_j$ of depth at most $\mathrm{bound}\,j$ over its own width-$l$ DNF gate family,
 this combines all the per-child gate families into a single merged family
@@ -224,7 +455,7 @@ of depth at most $\mathrm{bound}\,j$ that reproduce each child's function.
 \label{LMN.node_eval_eq_of_finRange_map}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval}
-\difficulty{6}
+\difficulty{5}
 If each re-indexed child $\mathrm{new\_cs}\,j$ evaluated at $g'$ agrees with the original
 child $cs.\mathrm{get}\,j$ evaluated at $g$, then the node over $cs$ at $g$ equals the node
 over $(\mathrm{List.finRange}\,cs.\mathrm{length}).\mathrm{map}\,\mathrm{new\_cs}$ at $g'$,
@@ -233,10 +464,18 @@ for the same flag $\mathit{isAnd}$.
 
 \begin{lemma}[General circuit depth reduction]
 \lean{LMN.exists_circuit_depth_reduction}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
+\statementsource{switching-lemma}{
+  pdf-b5e074215b9e-p004-b002,
+  pdf-b5e074215b9e-p004-b003
+}
 \label{LMN.exists_circuit_depth_reduction}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Circuit.exists_node_of_depth_ge_one, LMN.child_depth_le1_has_signed_dnf, LMN.exists_circuit_depth_reduction_depth1, LMN.exists_circuit_depth_reduction_depth2, LMN.node_eval_eq_of_finRange_map, LMN.reduce_children}
-\difficulty{7}
+\difficulty{6}
 For a circuit $c$ of depth at least $1$ (with $0 < l$) over gates that each have a width-$l$
 DNF representation with duplicate-free, non-repeating-variable terms and a width-$l$ CNF
 representation, there exist a fresh gate family $\mathrm{gates}'$ of such width-$l$ DNFs and
@@ -245,8 +484,340 @@ a circuit $c'$ of depth at most $\mathrm{depth}\,c - 1$ computing the same funct
 
 \begin{lemma}[Absorb a general top circuit (depth $\geq 2$)]
 \lean{LMN.absorbOneLevel_general}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p004-b002}
 \label{LMN.absorbOneLevel_general}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {BoolCircuit.Circuit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {BoolCircuit.Circuit.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {BoolCircuit.Circuit.depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {CNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {CNF.evalClause}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF_width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b007}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b007}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b007}
+\proofstep
+  {LMN.listConcat}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.cnf_concat_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.cnf_concat_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.dnf_concat_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.dnf_concat_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.compression_and_of_cnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.compression_or_of_dnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.dedupTermVar}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.termHasContradiction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.dedupTermVar_var_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.dedupTermVar_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.contradiction_term_eval_false}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_preserves_term_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF_var_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.cleanDNF_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.Layer2Data}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.dnfToDualCNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {LMN.dnfToDualCNF_width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {LMN.dnfToDualCNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {LMN.Circuit.exists_node_of_depth_ge_one}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.Circuit.depth1_children_are_lits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.Circuit.depth0_is_lit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.Circuit.depth1_all_lits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.or_of_lit_children_dnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.and_of_lit_children_cnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.child_depth_le1_has_signed_dnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.list_child_signed_dnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.build_literal_circuit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.exists_circuit_depth_reduction_depth1}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.exists_circuit_depth_reduction_depth2}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.reduce_children}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.node_eval_eq_of_finRange_map}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.exists_circuit_depth_reduction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.exists_circuit_depth_reduction}
 \difficulty{2}
 The $\mathrm{Layer2Data}$ wrapper of the general depth reduction: for $c_{\mathrm{top}}$ of
@@ -257,10 +828,357 @@ of depth at most $\mathrm{depth}\,c_{\mathrm{top}} - 1$ computing the same funct
 
 \begin{lemma}[Absorb one level of the top circuit]
 \lean{LMN.absorbOneLevel}
+\proofsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p012-b004,
+  pdf-fc447f326910-p013-b002
+}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p004-b002}
 \label{LMN.absorbOneLevel}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {BoolCircuit.Circuit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {BoolCircuit.Circuit.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {BoolCircuit.Circuit.depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {Term.width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {CNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {CNF.evalClause}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b006}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p006-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF_width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {cnfToDualDNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {LMN.listConcat}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.cnf_concat_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.cnf_concat_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.dnf_concat_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.dnf_concat_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.compression_and_of_cnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.compression_or_of_dnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.dedupTermVar}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.termHasContradiction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.dedupTermVar_var_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.dedupTermVar_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.contradiction_term_eval_false}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.dedupTermVar_preserves_term_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p001-b004}
+\proofstep
+  {LMN.cleanDNF_width_le}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.cleanDNF_var_inj}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.cleanDNF_nodup}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b001}
+\proofstep
+  {LMN.Layer2Data}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.dnfToDualCNF}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {LMN.dnfToDualCNF_width}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {LMN.dnfToDualCNF_eval}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p002-b005}
+\proofstep
+  {LMN.Circuit.exists_node_of_depth_ge_one}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.Circuit.depth1_children_are_lits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.Circuit.depth0_is_lit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.Circuit.depth1_all_lits}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.or_of_lit_children_dnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.and_of_lit_children_cnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.absorbOneLevel_depth1}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.child_depth_le1_has_signed_dnf}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.list_child_signed_dnfs}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.build_literal_circuit}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004}
+\proofstep
+  {LMN.exists_circuit_depth_reduction_depth1}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.exists_circuit_depth_reduction_depth2}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b004}
+\proofstep
+  {LMN.reduce_children}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.node_eval_eq_of_finRange_map}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p011-b004,
+    pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.exists_circuit_depth_reduction}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003,
+    pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
+\proofstep
+  {LMN.absorbOneLevel_general}
+  {context}
+  {boolean-ch04-dnf-switching-lmn}
+  {pdf-fc447f326910-p012-b003,
+    pdf-fc447f326910-p012-b004,
+    pdf-fc447f326910-p013-b002}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.absorbOneLevel_depth1, LMN.absorbOneLevel_general}
-\difficulty{4}
+\difficulty{3}
 The combined absorption step: for $c_{\mathrm{top}}$ of depth at least $1$ (with $0 < l$)
 over $\mathrm{Layer2Data}$ gates having width-$l$ DNF and CNF representations, there are a
 new $\mathrm{Layer2Data}'$ of width at most $l$ and a circuit $c_{\mathrm{top}}'$ of depth

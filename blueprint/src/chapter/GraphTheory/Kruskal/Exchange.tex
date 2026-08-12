@@ -31,7 +31,7 @@ replaced by $e$ without losing connectivity.
 \label{Kruskal.exchange_take_head'}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.WEdge, Kruskal.exchange_take_head, Kruskal.reach_lift}
-\difficulty{4}
+\difficulty{3}
 The same exchange statement with the endpoints of $g$ taken in the opposite order:
 if in $\mathit{base} \mathbin{+\!\!+} \mathit{rest}$ the vertex $e.u$ reaches $g.v$ and
 $g.u$ reaches $e.v$, then every pair reachable in
@@ -44,7 +44,7 @@ $\mathit{base} \mathbin{+\!\!+} \mathit{rest} \mathbin{+\!\!+} [e]$.
 \label{Kruskal.exchange_with_base}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.exchange_take_head, Kruskal.exchange_take_head', Kruskal.reach_cons_iff, Kruskal.reach_lift, Kruskal.reach_mem_iff, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
-\difficulty{7}
+\difficulty{6}
 Let $\mathit{base}, S$ be edge lists and let $e$ be an edge with $e.u \neq e.v$ whose
 endpoints are connected in $\mathit{base} \mathbin{+\!\!+} S$ but not in $\mathit{base}$
 alone. Then there exists an edge $f \in S$ such that every pair $a, b$ reachable in
@@ -58,7 +58,7 @@ $S \setminus \{f\}$ denotes $\mathtt{S.erase}\,f$.
 \label{Kruskal.uf_exchange}
 \leanok
 \uses{Kruskal.Reach, Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.exchange_with_base, Kruskal.mergeAll_iff_reach, Kruskal.reach_lift, Kruskal.reach_mem_iff, Kruskal.reach_mono, Kruskal.reach_symm}
-\difficulty{6}
+\difficulty{5}
 Let $\mathit{uf}$ be a union--find state whose classes are exactly the reachability
 classes of an edge list $\mathit{base}$, i.e.\ $\mathit{uf}\,a = \mathit{uf}\,b$ iff
 $a$ and $b$ are reachable in $\mathit{base}$. If merging all edges of $S$ into
@@ -73,7 +73,7 @@ induces the same partition as $\mathit{uf}.\mathtt{mergeAll}\,S$.
 \label{Kruskal.reduce_to_rest}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.rfl, Kruskal.UF.SamePartition.trans, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.merge_noop, Kruskal.totalWeight}
-\difficulty{6}
+\difficulty{5}
 Let $\mathit{uf}$ be a union--find state, $e$ an edge, and $\mathit{rest}, S$ edge lists
 with every element of $S$ lying in $e :: \mathit{rest}$, such that
 $\mathit{uf}.\mathtt{mergeAll}\,S$ and $\mathit{uf}.\mathtt{mergeAll}\,\mathit{rest}$

@@ -151,7 +151,7 @@ $l_2 = \texttt{neg}\,v$ (or vice versa) for some $v$.
 \label{ThreeSATToClique.literalsConflict_symm}
 \leanok
 \uses{ThreeSATToClique.literalsConflict}
-\difficulty{4}
+\difficulty{3}
 For any two literals $l_1$ and $l_2$, $\mathtt{literalsConflict}\,l_1\,l_2 \iff
 \mathtt{literalsConflict}\,l_2\,l_1$.
 \end{theorem}
@@ -180,7 +180,7 @@ $s \subseteq V$ of $k$ vertices that are pairwise adjacent in $G$.
 \label{ThreeSATToClique.no_conflict_of_true}
 \leanok
 \uses{ThreeSATToClique.evalLiteral, ThreeSATToClique.literalsConflict}
-\difficulty{4}
+\difficulty{3}
 If an assignment $\alpha$ makes both $l_1$ and $l_2$ true, then $l_1$ and $l_2$
 do not conflict: $\mathtt{evalLiteral}\,\alpha\,l_1 \to \mathtt{evalLiteral}\,\alpha\,l_2
 \to \neg\,\mathtt{literalsConflict}\,l_1\,l_2$.
@@ -191,7 +191,7 @@ do not conflict: $\mathtt{evalLiteral}\,\alpha\,l_1 \to \mathtt{evalLiteral}\,\a
 \label{ThreeSATToClique.clique_vertices_choose_one_per_clause}
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.toCliqueGraph}
-\difficulty{5}
+\difficulty{4}
 If $s$ is a set of $m$ vertices forming a clique in the conflict graph of a formula
 $f$ with $m$ clauses, then for every clause index $i : \mathrm{Fin}\,m$ there is
 exactly one vertex $u \in s$ with $u.c\_idx = i$.
@@ -202,7 +202,7 @@ exactly one vertex $u \in s$ with $u.c\_idx = i$.
 \label{ThreeSATToClique.getLitAt_mem_clause}
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.getLitAt, ThreeSATToClique.getLitInClause}
-\difficulty{4}
+\difficulty{3}
 If $v$ is a clique vertex with $v.c\_idx = i$, then the literal
 $\mathtt{getLitAt}\,f\,v$ is one of the three literals $l_1$, $l_2$, $l_3$ of
 clause $f[i]$.
@@ -224,7 +224,7 @@ $\mathtt{toCliqueGraph}\,f$ contains an $m$-clique: $\mathtt{is3Satisfiable}\,f 
 \label{ThreeSATToClique.ThreeSAT_to_Clique_soundness}
 \leanok
 \uses{ThreeSATToClique.Formula3, ThreeSATToClique.clique_vertices_choose_one_per_clause, ThreeSATToClique.evalLiteral, ThreeSATToClique.getLitAt, ThreeSATToClique.getLitAt_mem_clause, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.toCliqueGraph}
-\difficulty{6}
+\difficulty{5}
 If the conflict graph of a 3-CNF formula $f$ with $m$ clauses contains an
 $m$-clique, then $f$ is satisfiable:
 $\mathtt{hasClique}\,(\mathtt{toCliqueGraph}\,f)\,f.\mathtt{length} \to

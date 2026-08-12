@@ -108,7 +108,7 @@ for every input pair $(x, y)$,
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
-\difficulty{2}
+\difficulty{1}
 For any protocol $p$, function $f$, and $\varepsilon \in \mathbb{R}$,
 $p.\texttt{ApproxComputes}\,f\,\varepsilon = p.\texttt{ApproxSatisfies}\,(\lambda\,x\,y\,a \Rightarrow a = f\,x\,y)\,\varepsilon$.
 That is, $\varepsilon$-computing $f$ is exactly $\varepsilon$-satisfying the pointwise
@@ -130,7 +130,7 @@ protocol by delegating to
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
-\difficulty{2}
+\difficulty{1}
 For any protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$,
 $(p.\texttt{toProtocol}).\texttt{rrun}\,x\,y\,\omega_x\,\omega_y =
 p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$.
@@ -159,7 +159,7 @@ delegating to \texttt{Deterministic.FiniteMessage.Protocol.ofProtocol}.
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
-\difficulty{2}
+\difficulty{1}
 For any binary private-coin protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$,
 $(\texttt{ofProtocol}\,p).\texttt{rrun}\,x\,y\,\omega_x\,\omega_y =
 p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$.
@@ -180,7 +180,7 @@ $(\texttt{ofProtocol}\,p).\texttt{complexity} = p.\texttt{complexity}$.
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
-\difficulty{3}
+\difficulty{1}
 For every binary private-coin protocol $p$, there exists a finite-message protocol $P$
 such that $P.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y = p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$
 for all inputs and coins, and $P.\texttt{complexity} = p.\texttt{complexity}$.  The witness

@@ -22,7 +22,7 @@ probability at least $\varepsilon$.
 \label{LowDegreeTest.xor_vec_comm}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec}
-\difficulty{2}
+\difficulty{1}
 For all $x, y \in \{0,1\}^n$, coordinate-wise XOR satisfies
 $x \oplus y = y \oplus x$.
 \end{lemma}
@@ -32,7 +32,7 @@ $x \oplus y = y \oplus x$.
 \label{LowDegreeTest.xor_vec_zero}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec, BoolFourier.zero_vec}
-\difficulty{2}
+\difficulty{1}
 For all $x \in \{0,1\}^n$, we have $x \oplus \mathbf{0} = x$, where
 $\mathbf{0}$ denotes the all-zero vector.
 \end{lemma}
@@ -52,7 +52,7 @@ is its own inverse under XOR.
 \label{LowDegreeTest.xor_vec_assoc}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec}
-\difficulty{2}
+\difficulty{1}
 For all $x, y, z \in \{0,1\}^n$, coordinate-wise XOR is associative:
 $(x \oplus y) \oplus z = x \oplus (y \oplus z)$.
 \end{lemma}
@@ -119,7 +119,7 @@ Gowers product unfolds as
 \label{LowDegreeTest.mult_deriv_eq_gowers_one}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.gowers_product, LowDegreeTest.mult_deriv}
-\difficulty{3}
+\difficulty{1}
 For $f : \{0,1\}^n \to \bbr$, $x, h \in \{0,1\}^n$,
 $(\Delta_h f)(x) = \mathrm{GP}(f, 1, x, h)$.
 \end{lemma}
@@ -129,7 +129,7 @@ $(\Delta_h f)(x) = \mathrm{GP}(f, 1, x, h)$.
 \label{LowDegreeTest.gowers_product_pm1}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.gowers_product, LowDegreeTest.gowers_product_succ}
-\difficulty{5}
+\difficulty{4}
 If $f : \{0,1\}^n \to \{0,1\}$ and $F = (-1)^f$ is its $\pm 1$ lift, then for
 every $k$, $x$, and $h_1,\ldots,h_k$,
 $\mathrm{GP}(F, k, x, h_1,\ldots,h_k) \in \{1, -1\}$.
@@ -154,7 +154,7 @@ For $g : (\{0,1\}^n)^k \to \bbr$, the multi-expectation is the uniform average
 \label{LowDegreeTest.card_multi_hypercube}
 \leanok
 \uses{BoolFourier.card_hypercube, BoolFourier.hypercube}
-\difficulty{3}
+\difficulty{2}
 The number of $k$-tuples of vectors in $\{0,1\}^n$ is
 $|(\{0,1\}^n)^k| = 2^{nk}$.
 \end{lemma}
@@ -260,7 +260,7 @@ $\mathrm{RM}(d, n) \subseteq \mathrm{RM}(d+1, n)$ for every $d$ and $n$.
 \label{LowDegreeTest.zero_mem_ReedMuller}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.ReedMuller}
-\difficulty{4}
+\difficulty{3}
 The constant-false function $\mathbf{0} : \{0,1\}^n \to \{0,1\}$ belongs to
 $\mathrm{RM}(d, n)$ for every $d$.
 \end{lemma}
@@ -270,7 +270,7 @@ $\mathrm{RM}(d, n)$ for every $d$.
 \label{LowDegreeTest.one_mem_ReedMuller}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.ReedMuller, LowDegreeTest.gowers_product}
-\difficulty{4}
+\difficulty{3}
 The constant-true function $\mathbf{1} : \{0,1\}^n \to \{0,1\}$ belongs to
 $\mathrm{RM}(d, n)$ for every $d$.
 \end{lemma}
@@ -332,7 +332,7 @@ For a Boolean function $f : \{0,1\}^n \to \{0,1\}$ and $d \ge 0$,
 \label{LowDegreeTest.gowers_U2_eq_L2_conv}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product, LowDegreeTest.multi_expectation, LowDegreeTest.xor_vec_comm}
-\difficulty{7}
+\difficulty{6}
 For $f : \{0,1\}^n \to \bbr$,
 $\|f\|_{U^2}^4 = \|f * f\|_2^2$,
 where $f * f$ denotes the convolution of $f$ with itself.
@@ -344,7 +344,7 @@ where $f * f$ denotes the convolution of $f$ with itself.
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p003-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.parseval_identity, LowDegreeTest.gowers_U2_eq_L2_conv, LowDegreeTest.gowers_norm_pow}
-\difficulty{3}
+\difficulty{2}
 For $f : \{0,1\}^n \to \bbr$,
 \[
   \|f\|_{U^2}^4 = \sum_{S \subseteq [n]} \hat{f}(S)^4.
@@ -377,7 +377,7 @@ $(f \cdot g)(x) = f(x) \cdot g(x)$.
 \label{LowDegreeTest.gowers_product_mul}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.boolFun_mul, LowDegreeTest.gowers_product}
-\difficulty{4}
+\difficulty{3}
 For $f, g : \{0,1\}^n \to \bbr$,
 $\mathrm{GP}(f \cdot g, k, x, h_1,\ldots,h_k)
  = \mathrm{GP}(f, k, x, h_1,\ldots,h_k) \cdot \mathrm{GP}(g, k, x, h_1,\ldots,h_k)$.
@@ -388,7 +388,7 @@ $\mathrm{GP}(f \cdot g, k, x, h_1,\ldots,h_k)
 \label{LowDegreeTest.gowers_product_mul_degree_le}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.boolFun_mul, LowDegreeTest.gowers_product, LowDegreeTest.gowers_product_mul, LowDegreeTest.is_degree_le_pm1}
-\difficulty{3}
+\difficulty{1}
 If $g$ has degree $\le d$, then for any $f$,
 $\mathrm{GP}(f \cdot g, d{+}1, x, h_1,\ldots,h_{d+1})
  = \mathrm{GP}(f, d{+}1, x, h_1,\ldots,h_{d+1})$:
@@ -401,7 +401,7 @@ product.
 \label{LowDegreeTest.gowers_norm_mul_degree_le}
 \leanok
 \uses{BoolFourier.BoolFun, LowDegreeTest.boolFun_mul, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product_mul_degree_le, LowDegreeTest.is_degree_le_pm1}
-\difficulty{3}
+\difficulty{2}
 If $g$ has degree $\le d$, then
 $\|f \cdot g\|_{U^{d+1}}^{2^{d+1}} = \|f\|_{U^{d+1}}^{2^{d+1}}$.
 \end{lemma}
@@ -448,7 +448,7 @@ For every Boolean function $f : \{0,1\}^n \to \{0,1\}$,
 \label{LowDegreeTest.degree_test_completeness}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.degree_test_accept_prob_eq, LowDegreeTest.gowers_norm_eq_one_iff, LowDegreeTest.is_degree_le_bool}
-\difficulty{3}
+\difficulty{2}
 If $\deg(f) \le d$, then the degree-$d$ test accepts $f$ with probability $1$.
 \end{lemma}
 
@@ -470,7 +470,7 @@ less than $1$.
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, LowDegreeTest.gowers_product, LowDegreeTest.is_degree_le_pm1}
-\difficulty{5}
+\difficulty{4}
 For every $S \subseteq [n]$, the Fourier character $\chi_S$ has degree $\le 1$.
 \end{lemma}
 
@@ -480,7 +480,7 @@ For every $S \subseteq [n]$, the Fourier character $\chi_S$ has degree $\le 1$.
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.is_degree_le_pm1}
-\difficulty{3}
+\difficulty{2}
 For every $S \subseteq [n]$, the function $-\chi_S$ has degree $\le 1$.
 \end{lemma}
 
@@ -489,7 +489,7 @@ For every $S \subseteq [n]$, the function $-\chi_S$ has degree $\le 1$.
 \label{LowDegreeTest.char_is_degree_le}
 \leanok
 \uses{BoolFourier.char_S, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.degree_le_succ, LowDegreeTest.is_degree_le_pm1}
-\difficulty{4}
+\difficulty{3}
 For every $S \subseteq [n]$ and $d \ge 1$, the character $\chi_S$ has degree $\le d$.
 \end{lemma}
 
@@ -498,7 +498,7 @@ For every $S \subseteq [n]$ and $d \ge 1$, the character $\chi_S$ has degree $\l
 \label{LowDegreeTest.neg_char_is_degree_le}
 \leanok
 \uses{BoolFourier.char_S, LowDegreeTest.degree_le_succ, LowDegreeTest.is_degree_le_pm1, LowDegreeTest.neg_char_is_degree_le_one}
-\difficulty{4}
+\difficulty{3}
 For every $S \subseteq [n]$ and $d \ge 1$, the function $-\chi_S$ has degree $\le d$.
 \end{lemma}
 
@@ -507,7 +507,7 @@ For every $S \subseteq [n]$ and $d \ge 1$, the function $-\chi_S$ has degree $\l
 \label{LowDegreeTest.fourier_coeff_le_of_far_from_degree}
 \leanok
 \uses{BoolBLR.fourier_coeff_le_of_dist_ge, BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.chiS, LowDegreeTest.char_is_degree_le, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_bool}
-\difficulty{6}
+\difficulty{5}
 If $d \ge 1$ and $f$ is $\varepsilon$-far from every degree-$\le d$ Boolean function,
 then for every $S \subseteq [n]$,
 $\hat{f}(S) \le 1 - 2\varepsilon$.
@@ -518,7 +518,7 @@ $\hat{f}(S) \le 1 - 2\varepsilon$.
 \label{LowDegreeTest.neg_fourier_coeff_le_of_far_from_degree}
 \leanok
 \uses{BoolBLR.bool_dist, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.PM1ToBool?, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_bool, LowDegreeTest.is_degree_le_pm1, LowDegreeTest.neg_char_is_degree_le}
-\difficulty{7}
+\difficulty{6}
 If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then for every
 $S \subseteq [n]$, $-\hat{f}(S) \le 1 - 2\varepsilon$
 (equivalently, $\hat{f}(S) \ge -(1-2\varepsilon)$).
@@ -564,7 +564,7 @@ acceptance probability \texttt{LowDegreeTest.degree\_test\_accept\_prob}.
   pdf-20e15a3d3d5e-p001-b003
 }
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
-\difficulty{3}
+\difficulty{2}
 For every Boolean function $f : \{0,1\}^n \to \{0,1\}$,
 $\sum_{S \subseteq [n]} \hat{f}(S)^2 = 1$.
 \end{lemma}
@@ -613,7 +613,7 @@ $\|(-1)^f\|_{U^2}^4 \le 1 - 2\varepsilon$.
 \label{LowDegreeTest.epsilon_far_monotone}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.degree_le_succ, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_pm1}
-\difficulty{4}
+\difficulty{3}
 If $d' \le d$ and $f$ is $\varepsilon$-far from degree $\le d$, then $f$ is also
 $\varepsilon$-far from degree $\le d'$.
 \end{lemma}
@@ -637,7 +637,7 @@ $\le d{-}1$.
 \label{LowDegreeTest.gowers_norm_le_of_far}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.gowers_norm_le_of_far_d1, LowDegreeTest.gowers_norm_pow}
-\difficulty{4}
+\difficulty{3}
 If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then there exists
 a constant $c > 0$ such that
 $\|(-1)^f\|_{U^{d+1}}^{2^{d+1}} \le 1 - c\varepsilon$.

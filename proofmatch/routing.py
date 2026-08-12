@@ -134,7 +134,7 @@ def build_blueprint_tree(blueprint_root: Path) -> tuple[ChapterNode, ...]:
 def document_profile(
     index: DocumentIndex,
     *,
-    max_blocks: int = 200,
+    max_blocks: int | None = None,
     excerpt_chars: int = 700,
 ) -> dict:
     """A content-bearing description of the source document, block by block.
@@ -146,6 +146,11 @@ def document_profile(
     a document exceeds ``max_blocks``, labelled claims are kept first and the
     remainder fills in document order, and the shortfall is reported so the
     truncation is never silent.
+
+    ``max_blocks=None`` (the default) offers every block. The former default of
+    200 silently truncated long sources --- arXiv.2109.04415 has 280 blocks, so
+    a quarter of it was never shown to the router --- and a block the router
+    never sees can never be cited.
     """
     blocks = [block for block in index.blocks if block.markdown.strip()]
 
@@ -157,7 +162,7 @@ def document_profile(
             "text": block.markdown.strip()[:excerpt_chars],
         }
 
-    if len(blocks) <= max_blocks:
+    if max_blocks is None or len(blocks) <= max_blocks:
         selected = blocks
         omitted = 0
     else:
@@ -285,9 +290,16 @@ def route_chapters(
     budget: Budget,
     *,
     model: str,
-    max_chapters: int = 8,
+    max_chapters: int | None = None,
 ) -> tuple[ChapterNode, ...]:
-    """Pick the blueprint chapters whose mathematics the document covers."""
+    """Pick the blueprint chapters whose mathematics the document covers.
+
+    ``max_chapters=None`` (the default) keeps every chapter the router selected.
+    The former default of 8 discarded genuine selections beyond the eighth by
+    confidence, which capped a broad source's reachable declarations no matter
+    how much of the blueprint it actually covered. The router already answers
+    selected/not-selected per chapter, so truncation only ever lost real matches.
+    """
     if not nodes:
         return ()
     profile = document_profile(index)
@@ -306,6 +318,8 @@ def route_chapters(
             continue
         selected.append((float(row.get("confidence") or 0.0), node))
     selected.sort(key=lambda item: (-item[0], item[1].key))
+    if max_chapters is None:
+        return tuple(node for _, node in selected)
     return tuple(node for _, node in selected[:max_chapters])
 
 

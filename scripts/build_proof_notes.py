@@ -43,6 +43,7 @@ BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from proofmatch.blueprint import ENV_RE, parse_proof_sources  # noqa: E402
+from proofmatch.dataset_io import dataset_exists, read_dataset_text  # noqa: E402
 
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
 REFERENCES_DIR = BASE / "blueprint" / "src" / "references"
@@ -225,7 +226,7 @@ def main() -> int:
     ap.add_argument("--no-block-text", action="store_true")
     args = ap.parse_args()
 
-    if not args.dataset.exists():
+    if not dataset_exists(args.dataset):
         print(f"ERROR: {args.dataset} not found.")
         return 1
 
@@ -241,7 +242,7 @@ def main() -> int:
 
     records = [
         json.loads(line)
-        for line in args.dataset.read_text(encoding="utf-8").splitlines()
+        for line in read_dataset_text(args.dataset).splitlines()
         if line.strip()
     ]
     print(f"  {len(records)} dataset records\n")

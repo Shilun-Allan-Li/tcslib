@@ -176,7 +176,7 @@ $C$ has weight at most $w$.
 \label{CodingTheory.Johnson.coord_mul_pmOne}
 \leanok
 \uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.pmOne}
-\difficulty{3}
+\difficulty{2}
 For all binary words $x,y$ and every coordinate $i$,
 $\mathrm{pmOne}(x)_i \cdot \mathrm{pmOne}(y)_i$ equals $1$ if $x_i = y_i$ and $-1$ otherwise.
 \end{lemma}
@@ -186,7 +186,7 @@ $\mathrm{pmOne}(x)_i \cdot \mathrm{pmOne}(y)_i$ equals $1$ if $x_i = y_i$ and $-
 \label{CodingTheory.Johnson.inner_pmOne_pmOne}
 \leanok
 \uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.coord_mul_pmOne, CodingTheory.Johnson.hdist, CodingTheory.Johnson.pmOne}
-\difficulty{5}
+\difficulty{4}
 For all binary words $x,y$ of length $n$,
 \[
 \langle \mathrm{pmOne}(x), \mathrm{pmOne}(y)\rangle \;=\; n - 2\,\mathrm{hdist}(x,y).
@@ -198,7 +198,7 @@ For all binary words $x,y$ of length $n$,
 \label{CodingTheory.Johnson.inner_pmOne_ones}
 \leanok
 \uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.ones, CodingTheory.Johnson.pmOne, CodingTheory.Johnson.wt}
-\difficulty{5}
+\difficulty{4}
 For every binary word $x$ of length $n$,
 \[
 \langle \mathrm{pmOne}(x), \mathbf{1}\rangle \;=\; n - 2\,\mathrm{wt}(x).
@@ -257,7 +257,7 @@ For all $n,d$ one has $0 \le \alpha(n,d)$.
 \label{CodingTheory.Johnson.alpha_sq}
 \leanok
 \uses{CodingTheory.Johnson.alpha}
-\difficulty{4}
+\difficulty{3}
 If $n > 0$ and $2d \le n$ then $\alpha(n,d)^2 = (n - 2d)/n$.
 \end{lemma}
 
@@ -266,7 +266,7 @@ If $n > 0$ and $2d \le n$ then $\alpha(n,d)^2 = (n - 2d)/n$.
 \label{CodingTheory.Johnson.alpha_lt_one_of_hd1}
 \leanok
 \uses{CodingTheory.Johnson.alpha}
-\difficulty{4}
+\difficulty{3}
 If $n > 0$, $d \ge 1$, and $2d \le n$, then $\alpha(n,d) < 1$.
 \end{lemma}
 
@@ -275,7 +275,7 @@ If $n > 0$, $d \ge 1$, and $2d \le n$, then $\alpha(n,d) < 1$.
 \label{CodingTheory.Johnson.johnson_arith}
 \leanok
 \uses{CodingTheory.Johnson.J2, CodingTheory.Johnson.alpha}
-\difficulty{6}
+\difficulty{5}
 If $n > 0$, $2d \le n$, and $w \le J_2(n,d)$, then for $\alpha = \alpha(n,d)$
 \[
 (n - 2d) + \alpha^2 n + 2\alpha\,(2w - n) \;\le\; 0.
@@ -315,7 +315,7 @@ $x \neq -u$, then $x - \langle x,u\rangle u \neq 0$.
 \lean{CodingTheory.Johnson.proj_inj_on}
 \label{CodingTheory.Johnson.proj_inj_on}
 \leanok
-\difficulty{6}
+\difficulty{5}
 Let $u$ be a unit vector and $S$ a set of unit vectors each having non-positive
 inner product with $u$. Then $x \mapsto x - \langle x,u\rangle u$ is injective on $S$.
 \end{lemma}
@@ -333,7 +333,7 @@ the projection of $v$ onto the orthogonal complement of $\mathrm{span}\{u\}$.
 \label{CodingTheory.Johnson.orthProj_mem_orthogonal}
 \leanok
 \uses{CodingTheory.Johnson.orthProj}
-\difficulty{4}
+\difficulty{3}
 If $\norm{u} = 1$ then $\mathrm{orthProj}(u,v) \in (\mathrm{span}_{\mathbb{R}}\{u\})^{\perp}$
 for every $v$.
 \end{lemma}
@@ -353,7 +353,7 @@ $\mathrm{orthProj}(u,v) \neq 0$.
 \label{CodingTheory.Johnson.orthProj_inner_nonpos}
 \leanok
 \uses{CodingTheory.Johnson.orthProj}
-\difficulty{4}
+\difficulty{3}
 Let $\norm{u} = 1$ and let $v,w$ satisfy $\langle v,w\rangle \le 0$,
 $\langle v,u\rangle \le 0$ and $\langle w,u\rangle \le 0$. Then
 $\langle \mathrm{orthProj}(u,v), \mathrm{orthProj}(u,w)\rangle \le 0$.
@@ -364,7 +364,7 @@ $\langle \mathrm{orthProj}(u,v), \mathrm{orthProj}(u,w)\rangle \le 0$.
 \label{CodingTheory.Johnson.normalized_orthProj_injective}
 \leanok
 \uses{CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_ne_zero}
-\difficulty{7}
+\difficulty{6}
 Let $u,v,w$ be unit vectors with $\langle v,u\rangle \le 0$, $\langle w,u\rangle \le 0$,
 $\langle v,w\rangle \le 0$, with $v,w \notin \{u,-u\}$ and $v \neq w$. Then the
 normalized projections $\norm{\mathrm{orthProj}(u,v)}^{-1}\mathrm{orthProj}(u,v)$ and
@@ -387,7 +387,7 @@ $\norm{\ \norm{\mathrm{orthProj}(u,v)}^{-1}\,\mathrm{orthProj}(u,v)\ } = 1$.
 \label{CodingTheory.Johnson.normalized_orthProj_inner_nonpos}
 \leanok
 \uses{CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_inner_nonpos}
-\difficulty{3}
+\difficulty{2}
 Under $\norm{u} = 1$, $\langle v,w\rangle \le 0$, $\langle v,u\rangle \le 0$ and
 $\langle w,u\rangle \le 0$ (with both projections nonzero), the normalized projections
 of $v$ and $w$ also have non-positive inner product.
@@ -406,7 +406,7 @@ $\dim_{\mathbb{R}} (\mathrm{span}_{\mathbb{R}}\{u\})^{\perp} = \dim_{\mathbb{R}}
 \lean{CodingTheory.Johnson.card_filter_add_two}
 \label{CodingTheory.Johnson.card_filter_add_two}
 \leanok
-\difficulty{5}
+\difficulty{3}
 For a finite subset $S$ of an additive group and $u \in S$,
 $\abs{S} \le \abs{\{\, v \in S : v \neq u \text{ and } v \neq -u \,\}} + 2$.
 \end{lemma}
@@ -433,6 +433,10 @@ $\norm{\mathrm{orthProj}(u,v)}^{-1}\,\mathrm{orthProj}(u,v)$.
 
 \begin{theorem}[Rankin bound in a finite-dimensional space]
 \lean{CodingTheory.Johnson.rankin_bound_general}
+\proofsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p091-b003,
+  pdf-7251cb8e4bc5-p094-b001
+}
 \label{CodingTheory.Johnson.rankin_bound_general}
 \leanok
 \statementsource{ada-coding-book}{
@@ -441,8 +445,211 @@ $\norm{\mathrm{orthProj}(u,v)}^{-1}\,\mathrm{orthProj}(u,v)$.
   pdf-7251cb8e4bc5-p093-b001,
   pdf-7251cb8e4bc5-p094-b001
 }
+
+\proofstep
+  {CodingTheory.Johnson.BitVec}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001}
+\proofstep
+  {CodingTheory.Johnson.Euc}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b002}
+\proofstep
+  {CodingTheory.Johnson.wt}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p027-b002}
+\proofstep
+  {CodingTheory.Johnson.hdist}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {CodingTheory.Johnson.pmOne}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b004,
+    pdf-7251cb8e4bc5-p095-b001}
+\proofstep
+  {CodingTheory.Johnson.ones}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b002}
+\proofstep
+  {CodingTheory.Johnson.shifted}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b002}
+\proofstep
+  {CodingTheory.Johnson.normalize}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b002}
+\proofstep
+  {CodingTheory.Johnson.ones_apply}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b001}
+\proofstep
+  {CodingTheory.Johnson.pmOne_apply_false}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b001}
+\proofstep
+  {CodingTheory.Johnson.pmOne_apply_true}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b001}
+\proofstep
+  {CodingTheory.Johnson.J2}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p166-b003,
+    pdf-7251cb8e4bc5-p165-b004}
+\proofstep
+  {CodingTheory.Johnson.alpha}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p166-b003}
+\proofstep
+  {CodingTheory.Johnson.AdmissibleCode}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p022-b008,
+    pdf-7251cb8e4bc5-p027-b002}
+\proofstep
+  {CodingTheory.Johnson.coord_mul_pmOne}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b003}
+\proofstep
+  {CodingTheory.Johnson.inner_pmOne_pmOne}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b004,
+    pdf-7251cb8e4bc5-p095-b003}
+\proofstep
+  {CodingTheory.Johnson.inner_pmOne_ones}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b003}
+\proofstep
+  {CodingTheory.Johnson.inner_ones_ones}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b002}
+\proofstep
+  {CodingTheory.Johnson.inner_shifted_expand}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b003}
+\proofstep
+  {CodingTheory.Johnson.inner_shifted_le_expr}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b001}
+\proofstep
+  {CodingTheory.Johnson.alpha_nonneg}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.alpha_lt_one_of_hd1}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.johnson_arith}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p166-b003,
+    pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.orthProj}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.orthProj_mem_orthogonal}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.orthProj_ne_zero}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.orthProj_inner_nonpos}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.normalized_orthProj_injective}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.norm_normalized_orthProj}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.normalized_orthProj_inner_nonpos}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.finrank_orthogonal_span_singleton}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.card_filter_add_two}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.mkProj}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.mkProj_val}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.rankin_finset_bound}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b003,
+    pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.shifted_ne_zero_of_alpha_lt_one}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b003}
+\proofstep
+  {CodingTheory.Johnson.binary_johnson_card_bound_parametric}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.binary_johnson_card_bound}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p166-b003,
+    pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.binary_johnson_card_bound_of_admissible}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p166-b003}
 \uses{CodingTheory.Johnson.card_filter_add_two, CodingTheory.Johnson.finrank_orthogonal_span_singleton, CodingTheory.Johnson.mkProj, CodingTheory.Johnson.mkProj_val, CodingTheory.Johnson.norm_normalized_orthProj, CodingTheory.Johnson.normalized_orthProj_injective, CodingTheory.Johnson.normalized_orthProj_inner_nonpos, CodingTheory.Johnson.orthProj, CodingTheory.Johnson.orthProj_ne_zero}
-\difficulty{7}
+\difficulty{6}
 Let $V$ be a finite-dimensional real inner product space and $S \subseteq V$ a finite
 set of unit vectors whose pairwise inner products are non-positive. Then
 $\abs{S} \le 2 \dim_{\mathbb{R}} V$.
@@ -450,6 +657,10 @@ $\abs{S} \le 2 \dim_{\mathbb{R}} V$.
 
 \begin{theorem}[Rankin bound in $\mathbb{R}^n$]
 \lean{CodingTheory.Johnson.rankin_finset_bound}
+\proofsource{ada-coding-book}{
+  pdf-7251cb8e4bc5-p091-b003,
+  pdf-7251cb8e4bc5-p094-b001
+}
 \label{CodingTheory.Johnson.rankin_finset_bound}
 \leanok
 \statementsource{ada-coding-book}{
@@ -457,8 +668,214 @@ $\abs{S} \le 2 \dim_{\mathbb{R}} V$.
   pdf-7251cb8e4bc5-p092-b004,
   pdf-7251cb8e4bc5-p093-b001
 }
+
+\proofstep
+  {CodingTheory.Johnson.BitVec}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p015-b006,
+    pdf-7251cb8e4bc5-p016-b001}
+\proofstep
+  {CodingTheory.Johnson.Euc}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b002}
+\proofstep
+  {CodingTheory.Johnson.wt}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p027-b002}
+\proofstep
+  {CodingTheory.Johnson.hdist}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {CodingTheory.Johnson.pmOne}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b004,
+    pdf-7251cb8e4bc5-p094-b003}
+\proofstep
+  {CodingTheory.Johnson.ones}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b003}
+\proofstep
+  {CodingTheory.Johnson.shifted}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.normalize}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b002}
+\proofstep
+  {CodingTheory.Johnson.ones_apply}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b003}
+\proofstep
+  {CodingTheory.Johnson.pmOne_apply_false}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b001}
+\proofstep
+  {CodingTheory.Johnson.pmOne_apply_true}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b001}
+\proofstep
+  {CodingTheory.Johnson.J2}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p165-b004,
+    pdf-7251cb8e4bc5-p159-b002}
+\proofstep
+  {CodingTheory.Johnson.alpha}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.AdmissibleCode}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p022-b008,
+    pdf-7251cb8e4bc5-p027-b002}
+\proofstep
+  {CodingTheory.Johnson.coord_mul_pmOne}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b003}
+\proofstep
+  {CodingTheory.Johnson.inner_pmOne_pmOne}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b004,
+    pdf-7251cb8e4bc5-p095-b003}
+\proofstep
+  {CodingTheory.Johnson.inner_pmOne_ones}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p095-b003}
+\proofstep
+  {CodingTheory.Johnson.inner_ones_ones}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b002}
+\proofstep
+  {CodingTheory.Johnson.inner_shifted_expand}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.inner_shifted_le_expr}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.alpha_nonneg}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.alpha_lt_one_of_hd1}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.johnson_arith}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002,
+    pdf-7251cb8e4bc5-p165-b004}
+\proofstep
+  {CodingTheory.Johnson.orthProj}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.orthProj_mem_orthogonal}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.orthProj_ne_zero}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.orthProj_inner_nonpos}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.normalized_orthProj_injective}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.norm_normalized_orthProj}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.normalized_orthProj_inner_nonpos}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.finrank_orthogonal_span_singleton}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.card_filter_add_two}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.mkProj}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.mkProj_val}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.rankin_bound_general}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p091-b003,
+    pdf-7251cb8e4bc5-p094-b001}
+\proofstep
+  {CodingTheory.Johnson.shifted_ne_zero_of_alpha_lt_one}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.binary_johnson_card_bound_parametric}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p092-b002,
+    pdf-7251cb8e4bc5-p091-b003}
+\proofstep
+  {CodingTheory.Johnson.binary_johnson_card_bound}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p165-b004,
+    pdf-7251cb8e4bc5-p092-b002}
+\proofstep
+  {CodingTheory.Johnson.binary_johnson_card_bound_of_admissible}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p165-b004,
+    pdf-7251cb8e4bc5-p159-b002}
 \uses{CodingTheory.Johnson.Euc, CodingTheory.Johnson.rankin_bound_general}
-\difficulty{3}
+\difficulty{2}
 A finite set $S$ of unit vectors in $\mathbb{R}^n$ with pairwise non-positive inner
 products satisfies $\abs{S} \le 2n$.
 \end{theorem}
@@ -468,7 +885,7 @@ products satisfies $\abs{S} \le 2n$.
 \label{CodingTheory.Johnson.shifted_ne_zero_of_alpha_lt_one}
 \leanok
 \uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.Euc, CodingTheory.Johnson.ones, CodingTheory.Johnson.pmOne, CodingTheory.Johnson.shifted}
-\difficulty{4}
+\difficulty{3}
 If $n > 0$ and $0 \le \alpha < 1$, then $\hat{x}^\alpha \neq 0$ for every binary word
 $x$ of length $n$.
 \end{lemma}
@@ -478,7 +895,7 @@ $x$ of length $n$.
 \label{CodingTheory.Johnson.binary_johnson_card_bound_parametric}
 \leanok
 \uses{CodingTheory.Johnson.BitVec, CodingTheory.Johnson.Euc, CodingTheory.Johnson.hdist, CodingTheory.Johnson.inner_shifted_le_expr, CodingTheory.Johnson.normalize, CodingTheory.Johnson.rankin_finset_bound, CodingTheory.Johnson.shifted, CodingTheory.Johnson.wt}
-\difficulty{7}
+\difficulty{5}
 Let $n > 0$ and let $C$ be a finite set of binary words of length $n$ with pairwise
 Hamming distance at least $d$ and all weights at most $w$. If $\alpha \ge 0$ is such
 that $\hat{x}^\alpha \neq 0$ for all $x \in C$ and
@@ -501,7 +918,7 @@ are all at most $w$, and if $w \le J_2(n,d)$, then $\abs{C} \le 2n$.
 \label{CodingTheory.Johnson.binary_johnson_card_bound_of_admissible}
 \leanok
 \uses{CodingTheory.Johnson.AdmissibleCode, CodingTheory.Johnson.BitVec, CodingTheory.Johnson.J2, CodingTheory.Johnson.binary_johnson_card_bound}
-\difficulty{2}
+\difficulty{1}
 Assume $n > 0$, $1 \le d$ and $2d \le n$. Every $(n,d,w)$-admissible code $C$ with
 $w \le J_2(n,d)$ satisfies $\abs{C} \le 2n$.
 \end{theorem}

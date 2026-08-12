@@ -14,6 +14,7 @@ equality and its probabilistic inequality corollary.
 
 \begin{definition}[Composition of two restrictions]
 \lean{LMN.composeRestr}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b004}
 \label{LMN.composeRestr}
 \leanok
 \uses{SwitchingLemma2.Restriction}
@@ -25,6 +26,7 @@ and then $\rho_2$ on the variables left free by $\rho_1$.
 
 \begin{definition}[Per-variable Bernoulli weight]
 \lean{LMN.varWeight}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b003}
 \label{LMN.varWeight}
 \leanok
 For a parameter $p \in \bbr$, the per-variable weight assigns $p$ to a free
@@ -58,7 +60,7 @@ variable) returns $\rho$ unchanged.
 \label{LMN.bernoulliRestrWeight_eq_prod}
 \leanok
 \uses{LMN.varWeight, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
-\difficulty{6}
+\difficulty{5}
 The Bernoulli restriction weight of $\rho$ at parameter $p$ equals the product over
 all coordinates $i$ of the per-variable weights:
 \[
@@ -71,7 +73,7 @@ all coordinates $i$ of the per-variable weights:
 \label{LMN.varWeight_compose_sum}
 \leanok
 \uses{LMN.varWeight}
-\difficulty{4}
+\difficulty{3}
 For parameters $p, q \in \bbr$ and any outcome $c$, summing the products
 $\mathrm{varWeight}\,p\,a \cdot \mathrm{varWeight}\,q\,b$ over all pairs $(a,b)$ whose
 composition equals $c$ gives $\mathrm{varWeight}\,(pq)\,c$:
@@ -83,10 +85,11 @@ composition equals $c$ gives $\mathrm{varWeight}\,(pq)\,c$:
 
 \begin{lemma}[Fiber weight identity]
 \lean{LMN.compose_fiber_weight_eq}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b004}
 \label{LMN.compose_fiber_weight_eq}
 \leanok
 \uses{LMN.bernoulliRestrWeight_eq_prod, LMN.composeRestr, LMN.varWeight, LMN.varWeight_compose_sum, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
-\difficulty{7}
+\difficulty{6}
 Summing the product $\mathrm{bernoulliRestrWeight}\,p\,\rho_1 \cdot
 \mathrm{bernoulliRestrWeight}\,q\,\rho_2$ over all pairs $(\rho_1, \rho_2)$ that
 compose to $\sigma$ equals the Bernoulli weight of $\sigma$ at parameter $pq$:
@@ -100,10 +103,11 @@ compose to $\sigma$ equals the Bernoulli weight of $\sigma$ at parameter $pq$:
 
 \begin{theorem}[Composition of Bernoulli random restrictions, equality]
 \lean{LMN.restriction_compose_eq}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b004}
 \label{LMN.restriction_compose_eq}
 \leanok
 \uses{LMN.composeRestr, LMN.compose_fiber_weight_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
-\difficulty{6}
+\difficulty{5}
 For $0 < p \le 1$, $0 < q \le 1$ and any event on restrictions, the Bernoulli($pq$)
 probability of the event equals the weighted average, over Bernoulli($p$)
 restrictions $\rho_1$, of the Bernoulli($q$) probability that the event holds after
@@ -120,6 +124,7 @@ restriction.
 
 \begin{theorem}[Composition inequality]
 \lean{LMN.restriction_compose_le}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b004}
 \label{LMN.restriction_compose_le}
 \leanok
 \uses{LMN.composeRestr, LMN.restriction_compose_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight_nonneg'}

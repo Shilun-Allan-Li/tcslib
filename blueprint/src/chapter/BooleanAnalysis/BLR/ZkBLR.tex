@@ -113,7 +113,7 @@ $(\mathrm{normalize}\,f)(0) = 0$.
 \label{ZkBLR.linear_normalized}
 \leanok
 \uses{ZkBLR.is_linear, ZkBLR.normalized, ZkFourier.ZkVec}
-\difficulty{2}
+\difficulty{1}
 If $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is linear, then $f(0) = 0$, i.e.\
 $f$ is normalized.
 \end{lemma}
@@ -134,7 +134,7 @@ $\mathrm{dist}(f,g)\ge\varepsilon$ for every linear $g$.
 \label{ZkBLR.re_toOmega_le_re_rootOfUnity}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
-\difficulty{6}
+\difficulty{5}
 For $k \ge 2$ and any nonzero $a \in \mathbb{Z}_k$,
 $\operatorname{Re}(\omega_k^a) \le \cos(2\pi/k)$.
 \end{lemma}
@@ -144,7 +144,7 @@ $\operatorname{Re}(\omega_k^a) \le \cos(2\pi/k)$.
 \label{ZkBLR.re_fourier_coeff_upper_bound}
 \leanok
 \uses{ZkBLR.lift_omega, ZkBLR.linear_character, ZkBLR.re_toOmega_le_re_rootOfUnity, ZkBLR.zk_dist, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.rootOfUnity, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.toOmega_neg, ZkFourier.zkDot}
-\difficulty{6}
+\difficulty{5}
 For $k \ge 2$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$, the real part of
 the $s$-th Fourier coefficient of the lifted function $\widetilde{f}$ satisfies
 \[
@@ -159,7 +159,7 @@ the $s$-th Fourier coefficient of the lifted function $\widetilde{f}$ satisfies
 \label{ZkBLR.re_epsilon_far_bounds_fourier}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.is_linear, ZkBLR.lift_omega, ZkBLR.linear_character, ZkBLR.re_fourier_coeff_upper_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff, ZkFourier.zkDot_add_right}
-\difficulty{4}
+\difficulty{3}
 If $k \ge 2$ and $f$ is $\varepsilon$-far from linear (in the normalized sense),
 then for every $s \in \mathbb{Z}_k^n$,
 \[
@@ -199,7 +199,7 @@ The BLR acceptance probability of $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is
 \label{ZkBLR.BLR_completeness}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.is_linear, ZkFourier.ZkVec, ZkFourier.card_ZkVec}
-\difficulty{4}
+\difficulty{3}
 If $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is linear, then
 $\Pr[{\rm BLR\ accepts}\ f] = 1$.
 \end{lemma}
@@ -210,7 +210,7 @@ $\Pr[{\rm BLR\ accepts}\ f] = 1$.
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b005}
 \uses{ZkFourier.geom_sum_toOmega, ZkFourier.toOmega}
-\difficulty{2}
+\difficulty{1}
 For any $a \in \mathbb{Z}_k$,
 \[
   \sum_{j \in \mathbb{Z}_k} \omega_k^{ja}
@@ -223,7 +223,7 @@ For any $a \in \mathbb{Z}_k$,
 \label{ZkBLR.indicator_eq_char_sum_re}
 \leanok
 \uses{ZkBLR.geom_sum_toOmega_dual, ZkFourier.toOmega}
-\difficulty{3}
+\difficulty{2}
 For any $a \in \mathbb{Z}_k$,
 \[
   \mathbf{1}[a=0]
@@ -249,7 +249,7 @@ For any $j \in \mathbb{Z}_k$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
 \label{ZkBLR.triple_product_fourier}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion, ZkFourier.inner_product}
-\difficulty{7}
+\difficulty{6}
 For $j \in \mathbb{Z}_k$ and $F = \widetilde{f}_j$, the triple-product
 expectation satisfies
 \[
@@ -266,7 +266,7 @@ expectation satisfies
 \label{ZkBLR.BLR_accept_prob_eq_fourier_sum}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.indicator_eq_char_sum_re, ZkBLR.lift_omega_j, ZkBLR.triple_product_fourier, ZkFourier.ZkVec, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.toOmega_neg}
-\difficulty{7}
+\difficulty{6}
 The BLR acceptance probability admits the Fourier representation
 \[
   \Pr[{\rm accept}]
@@ -283,7 +283,7 @@ The BLR acceptance probability admits the Fourier representation
 \label{ZkBLR.lift_omega_j_zero_contribution}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.toOmega_zero}
-\difficulty{5}
+\difficulty{4}
 For any $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$, the $j=0$ term of the Fourier
 sum evaluates to $1$:
 \[
@@ -298,7 +298,7 @@ sum evaluates to $1$:
 \label{ZkBLR.weighted_fourier_sum_le_one}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{5}
+\difficulty{4}
 For any $j \in \mathbb{Z}_k$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
 \[
   \sum_{s\in\mathbb{Z}_k^n}
@@ -312,7 +312,7 @@ For any $j \in \mathbb{Z}_k$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
 \label{ZkBLR.cube_sum_bound_by_max}
 \leanok
 \uses{ZkBLR.lift_omega, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{4}
+\difficulty{3}
 If $\|\widehat{\widetilde{f}}(s)\| \le A$ for all $s \in \mathbb{Z}_p^n$, then
 \[
   \sum_{s\in\mathbb{Z}_p^n}
@@ -328,7 +328,7 @@ If $\|\widehat{\widetilde{f}}(s)\| \le A$ for all $s \in \mathbb{Z}_p^n$, then
 \label{ZkBLR.parseval_lift_omega}
 \leanok
 \uses{ZkBLR.lift_omega, ZkFourier.L2_norm_sq, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.fourier_coeff, ZkFourier.norm_toOmega, ZkFourier.parseval_identity}
-\difficulty{3}
+\difficulty{2}
 For $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$,
 \[
   \sum_{s\in\mathbb{Z}_p^n}
@@ -341,7 +341,7 @@ For $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$,
 \label{ZkBLR.weighted_fourier_sum_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega, ZkBLR.parseval_lift_omega, ZkBLR.re_epsilon_far_bounds_fourier, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{4}
+\difficulty{3}
 If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 (normalized), then
 \[
@@ -357,7 +357,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 \label{ZkBLR.re_fourier_coeff_lift_omega_j_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.re_epsilon_far_bounds_fourier, ZkBLR.zk_dist, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{5}
+\difficulty{4}
 If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 (normalized), $j \ne 0$, and $s \in \mathbb{Z}_p^n$, then
 \[
@@ -371,7 +371,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 \label{ZkBLR.weighted_sum_lift_omega_j_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkBLR.re_fourier_coeff_lift_omega_j_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{4}
+\difficulty{3}
 If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 (normalized) and $j \ne 0$, then
 \[
@@ -387,7 +387,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 \label{ZkBLR.BLR_soundness}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_accept_prob_eq_fourier_sum, ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j_zero_contribution, ZkBLR.weighted_sum_lift_omega_j_bound, ZkFourier.ZkVec}
-\difficulty{5}
+\difficulty{4}
 If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 (normalized), then
 \[
@@ -401,7 +401,7 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 \label{ZkBLR.unit_mul_epsilon_far}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.zk_dist, ZkFourier.ZkVec}
-\difficulty{5}
+\difficulty{4}
 If $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is $\varepsilon$-far from linear
 (normalized) and $j \in \mathbb{Z}_k^\times$ is a unit, then the scaled
 function $x \mapsto j \cdot f(x)$ is also $\varepsilon$-far from linear
@@ -413,7 +413,7 @@ function $x \mapsto j \cdot f(x)$ is also $\varepsilon$-far from linear
 \label{ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.re_epsilon_far_bounds_fourier, ZkBLR.unit_mul_epsilon_far, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{3}
+\difficulty{2}
 If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), $j \in
 \mathbb{Z}_k^\times$, and $s \in \mathbb{Z}_k^n$, then
 \[
@@ -427,7 +427,7 @@ If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), $j \in
 \label{ZkBLR.weighted_sum_unit_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{4}
+\difficulty{3}
 If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), and $j \in
 \mathbb{Z}_k^\times$, then
 \[
@@ -443,7 +443,7 @@ If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), and $j \in
 \label{ZkBLR.BLR_soundness_general}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_accept_prob_eq_fourier_sum, ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.weighted_fourier_sum_le_one, ZkBLR.weighted_sum_unit_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
-\difficulty{7}
+\difficulty{6}
 For $k \ge 2$, if $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is $\varepsilon$-far
 from linear (normalized), then
 \[
@@ -458,7 +458,7 @@ where $\varphi(k)$ denotes Euler's totient function.
 \label{ZkBLR.BLR_soundness_prime}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_soundness_general, ZkBLR.epsilon_far_from_linear_normalized, ZkFourier.ZkVec}
-\difficulty{3}
+\difficulty{2}
 If $p$ is prime and $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far
 from linear (normalized), then
 \[

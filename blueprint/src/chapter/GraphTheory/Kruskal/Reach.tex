@@ -73,7 +73,7 @@ $\mathtt{SymAdj}\,e_2\,u\,v$.
 \label{Kruskal.reach_symm}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.symAdj_symm}
-\difficulty{4}
+\difficulty{3}
 If $\mathtt{Reach}\,\mathit{edges}\,u\,v$ then $\mathtt{Reach}\,\mathit{edges}\,v\,u$.
 \end{lemma}
 
@@ -82,7 +82,7 @@ If $\mathtt{Reach}\,\mathit{edges}\,u\,v$ then $\mathtt{Reach}\,\mathit{edges}\,
 \label{Kruskal.reach_mono}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.symAdj_mono}
-\difficulty{4}
+\difficulty{3}
 If $\mathtt{Reach}\,e_1\,u\,v$ and every edge of $e_1$ also belongs to $e_2$, then
 $\mathtt{Reach}\,e_2\,u\,v$.
 \end{lemma}
@@ -102,7 +102,7 @@ the two endpoints of any listed edge are immediately reachable from each other.
 \label{Kruskal.reach_lift}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.WEdge, Kruskal.reach_mem_iff}
-\difficulty{4}
+\difficulty{3}
 If every symmetric adjacency in $\mathit{edges}$ implies reachability in
 $\mathit{edges}'$, and $\mathtt{Reach}\,\mathit{edges}\,u\,v$, then
 $\mathtt{Reach}\,\mathit{edges}'\,u\,v$.
@@ -113,7 +113,7 @@ $\mathtt{Reach}\,\mathit{edges}'\,u\,v$.
 \label{Kruskal.reach_cons_iff}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
-\difficulty{7}
+\difficulty{6}
 For a non-empty edge list $(g :: \mathit{rest})$, $\mathtt{Reach}\,(g :: \mathit{rest})\,a\,b$
 if and only if one of three cases holds: (1) $\mathtt{Reach}\,\mathit{rest}\,a\,b$;
 (2) $\mathtt{Reach}\,\mathit{rest}\,a\,g.u$ and $\mathtt{Reach}\,\mathit{rest}\,g.v\,b$;

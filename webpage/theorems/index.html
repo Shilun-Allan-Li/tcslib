@@ -322,6 +322,48 @@
   }
   .dag-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: baseline; }
 
+  /* Proof note: the informal account of the proof (citation and/or informalization) */
+  .note-kind {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px; font-weight: normal; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 1px 8px; margin-left: 8px; vertical-align: middle;
+  }
+  .proof-note { display: flex; flex-direction: column; gap: 10px; }
+  .note-cite {
+    border-left: 3px solid var(--accent); padding: 2px 0 2px 10px;
+  }
+  .note-cite-head {
+    font-size: 12px; color: var(--muted); margin-bottom: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  .note-which {
+    text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px;
+    color: var(--accent); border: 1px solid var(--border);
+    border-radius: 4px; padding: 0 4px; margin-right: 4px;
+  }
+  .note-block { margin: 6px 0; }
+  .note-block-id {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10px; color: var(--muted); opacity: 0.75;
+  }
+  .note-block-text { margin: 2px 0 0; }
+  .note-informal-details > summary {
+    cursor: pointer; font-size: 12px; color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  .note-informal { margin-top: 8px; }
+  .note-informal h4 { margin: 10px 0 4px; font-size: 14px; }
+  .note-informal ul { margin: 4px 0 4px 18px; padding: 0; }
+  .note-informal li { margin: 2px 0; }
+  .note-informal code {
+    background: var(--panel-2); border-radius: 4px; padding: 0 3px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+  }
+  .has-note { color: var(--accent); }
+  .no-note  { color: var(--muted); opacity: 0.7; }
+
   /* Basic Lean-ish syntax coloring */
   .lean-kw   { color: #bb9af7; }
   .lean-name-c { color: #7aa2f7; }
@@ -552,7 +594,7 @@ function escapeHtml(s) {
 function latexTextToHtml(src) {
   if (!src) return "";
   const math = [];
-  const stash = (m) => { const i = math.length; math.push(m); return " MATH" + i + " "; };
+  const stash = (m) => { const i = math.length; math.push(m); return "\u0000MATH" + i + "\u0000"; };
   // Order matters: longest / most specific delimiters first.
   let s = String(src)
     .replace(/\$\$[\s\S]*?\$\$/g, stash)
@@ -602,7 +644,7 @@ function latexTextToHtml(src) {
   s = s.replace(/\n\s*\n/g, "<br><br>").replace(/\n/g, " ");
 
   // Restore math placeholders.
-  s = s.replace(/ MATH(\d+) /g, (_, i) => math[+i]);
+  s = s.replace(/\u0000MATH(\d+)\u0000/g, (_, i) => math[+i]);
   return s;
 }
 
@@ -621,6 +663,85 @@ function highlightLean(escaped) {
     .replace(/&quot;[^&]*?&quot;/g, m => '<span class="lean-str">' + m + '</span>')
     .replace(kwRe, '<span class="lean-kw">$1</span>')
     .replace(/\b\d+\b/g, m => '<span class="lean-num">' + m + '</span>');
+}
+
+// Render an informalized note (Markdown-ish) without pulling in a Markdown library.
+// Math is lifted out first so escaping and the bold/code passes cannot corrupt it, then
+// restored for MathJax. The provenance HTML comments are dropped: their content is shown
+// as the note's source line instead.
+function noteMarkdownToHtml(md) {
+  const math = [];
+  let s = String(md).replace(/<!--[\s\S]*?-->/g, "");
+  s = s.replace(/\$\$[\s\S]*?\$\$|\$[^$\n]*\$/g, m => {
+    math.push(m);
+    return " MATH" + (math.length - 1) + " ";
+  });
+  s = escapeHtml(s);
+  s = s.replace(/^#+\s*(.+)$/gm, (_, h) => "<h4>" + h.trim() + "</h4>");
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  s = s.replace(/^\s*[-*]\s+(.+)$/gm, "<li>$1</li>");
+  s = s.replace(/^\s*(\d+)\.\s+(.+)$/gm, "<li>$2</li>");
+  s = s.replace(/(?:<li>[\s\S]*?<\/li>\s*)+/g, m => "<ul>" + m + "</ul>");
+  s = s.replace(/\n\s*\n/g, "<br><br>").replace(/\n/g, " ");
+  s = s.replace(/ MATH(\d+) /g, (_, i) => math[+i]);
+  // Stripping the provenance comments leaves blank lines at both ends; without this the
+  // note opens with a stray gap before its heading.
+  return s.replace(/^(?:\s|(?:<br>))+/, "").replace(/(?:\s|(?:<br>))+$/, "");
+}
+
+// The informal account of the proof: a citation into a source document, an
+// informalization of the Lean proof, or both. Sits above the formal proof file so the
+// reader meets the prose before the tactics.
+function proofNoteHtml(it) {
+  const pn = it.proof_notes;
+  if (!pn) return "";
+
+  const label = {
+    "proof_citation": "cited — the source proves this",
+    "statement_citation": "cited — the source states this, proof differs",
+    "informalized": "informalized from the Lean proof",
+    "proof_citation+informalized": "cited (proved) + informalized",
+    "statement_citation+informalized": "cited (stated) + informalized",
+  }[pn.kind] || pn.kind;
+
+  const citations = []
+    .concat((pn.proof_sources || []).map(s => ({ s, which: "proves" })))
+    .concat((pn.statement_sources || []).map(s => ({ s, which: "states" })));
+
+  const citeHtml = citations.map(({ s, which }) => {
+    const blocks = (s.block_text && s.block_text.length)
+      ? s.block_text.map(b =>
+          '<div class="note-block">' +
+            '<div class="note-block-id">' + escapeHtml(b.block) + '</div>' +
+            '<div class="note-block-text">' +
+              (b.text ? latexTextToHtml(b.text) : '<em class="warn">block text unavailable</em>') +
+            '</div>' +
+          '</div>').join("")
+      : '<div class="note-block-id">' + escapeHtml((s.blocks || []).join(", ")) + '</div>';
+    return (
+      '<div class="note-cite">' +
+        '<div class="note-cite-head">' +
+          '<span class="note-which">' + which + '</span> ' +
+          escapeHtml(s.document || "") +
+        '</div>' + blocks +
+      '</div>'
+    );
+  }).join("");
+
+  const inf = pn.informalized;
+  const infHtml = inf
+    ? '<details class="section note-informal-details"' + (citations.length ? '' : ' open') + '>' +
+        '<summary>Informalized from the Lean proof — ' +
+          escapeHtml(inf.path || "") + '</summary>' +
+        '<div class="note-informal">' + noteMarkdownToHtml(inf.markdown || "") + '</div>' +
+      '</details>'
+    : "";
+
+  return (
+    '<h3>Proof note <span class="note-kind">' + escapeHtml(label) + '</span></h3>' +
+    '<div class="section proof-note">' + citeHtml + infHtml + '</div>'
+  );
 }
 
 function detailHtml(it) {
@@ -666,6 +787,9 @@ function detailHtml(it) {
         ? ' · breadth-adj: ' + it.difficulty_breadth : '') +
       (it.n_upstream_defs != null ? ' · ' + it.n_upstream_defs + ' statement defs' : '') +
       (it.n_proof_upstream_decls != null ? ' · ' + it.n_proof_upstream_decls + ' proof decls' : '') +
+      (it.proof_notes
+        ? ' · <span class="has-note">proof note</span>'
+        : ' · <span class="no-note">no proof note</span>') +
     '</div>' +
 
     '<h3>Informal statement</h3>' +
@@ -675,6 +799,8 @@ function detailHtml(it) {
 
     '<h3>Formal (Lean) statement</h3>' +
     '<pre class="code">' + highlightLean(escapeHtml(formal)) + '</pre>' +
+
+    proofNoteHtml(it) +
 
     proofHtml
   );
@@ -695,7 +821,9 @@ function renderDetail(container, it) {
       }
     });
   }
-  typesetMath([...container.querySelectorAll(".informal, .def-body")]);
+  typesetMath([...container.querySelectorAll(
+    ".informal, .def-body, .note-block-text, .note-informal"
+  )]);
 }
 
 // Typeset via MathJax, retrying while the (deferred) MathJax script is still loading —

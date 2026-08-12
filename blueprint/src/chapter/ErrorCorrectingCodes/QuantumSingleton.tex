@@ -51,7 +51,7 @@ For $u = (x,z), v = (x',z') \in V = \mathbb{F}_p^n \times \mathbb{F}_p^n$,
 \label{sym_form_smul_right}
 \leanok
 \uses{sym_form}
-\difficulty{4}
+\difficulty{3}
 $\omega$ is bilinear: additive and scalar-homogeneous in each argument.
 \end{lemma}
 
@@ -62,7 +62,7 @@ $\omega$ is bilinear: additive and scalar-homogeneous in each argument.
 \proofsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b007}
 \statementsource{arXiv.2602.20186}{pdf-585ff62e2309-p002-b007}
 \uses{sym_form}
-\difficulty{3}
+\difficulty{2}
 $\omega(u,v) = -\omega(v,u)$.
 \end{lemma}
 
@@ -112,7 +112,7 @@ the \emph{weight} is $\mathrm{wt}(v) = |\mathrm{supp}(v)|$.
 \label{wt_le_n}
 \leanok
 \uses{wt}
-\difficulty{3}
+\difficulty{2}
 $\mathrm{wt}(v) \le n$ for all $v \in V$.
 \end{lemma}
 
@@ -134,7 +134,7 @@ $V_C = \{v \in V \mid \mathrm{supp}(v) \subseteq C\}$.
   pdf-585ff62e2309-p003-b008
 }
 \uses{V_sub}
-\difficulty{2}
+\difficulty{1}
 $\dim_{\mathbb{F}_p}(V_C) = 2|C|$.
 \end{lemma}
 
@@ -237,7 +237,7 @@ every $v \in V_E \cap S^{\perp_\omega}$ is already in $S$.
   pdf-585ff62e2309-p003-b016
 }
 \uses{correctable, code_dist}
-\difficulty{5}
+\difficulty{4}
 If $|E| < d(S)$, then $E$ is correctable.
 \end{lemma}
 
@@ -286,7 +286,7 @@ $k(S) = n - \dim(S)$.
 }
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p010-b001}
 \uses{correctable, code_k, dim_V_sub, finrank_sym_orth}
-\difficulty{5}
+\difficulty{4}
 Let $S$ be isotropic.  If $A,B \subseteq \mathrm{Fin}\,n$ are disjoint and both correctable, then
 \[
 k(S) \;\le\; n - |A| - |B|.
@@ -328,7 +328,7 @@ route is a symplectic dimension count with no density matrices.
 }
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p010-b001}
 \uses{two_disjoint_correctable_sets_bound_logical_dimension, dist_implies_correctable, code_dist_le_n}
-\difficulty{7}
+\difficulty{6}
 For any isotropic submodule $S \le V$,
 \[
 k(S) + 2(d(S) - 1) \;\le\; n.
@@ -360,6 +360,10 @@ The prime field $\mathrm{GF}(p)$, realized as $\mathbb{Z}/p\mathbb{Z}$ via \text
 
 \begin{definition}[Symplectic vector space]
 \lean{V}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p003-b003,
+  pdf-1ac7bb3b99cc-p004-b002
+}
 \label{V}
 \leanok
 \statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p007-b003}
@@ -405,7 +409,7 @@ functions on $C$ to a vector of $V$ by setting all coordinates outside $C$ to ze
 \label{restrictToC_extendFromC}
 \leanok
 \uses{extendFromC, restrictToC}
-\difficulty{3}
+\difficulty{2}
 For every $x$, $\mathrm{restrictToC}_C(\mathrm{extendFromC}_C(x)) = x$.
 \end{lemma}
 
@@ -414,7 +418,7 @@ For every $x$, $\mathrm{restrictToC}_C(\mathrm{extendFromC}_C(x)) = x$.
 \label{extendFromC_restrictToC}
 \leanok
 \uses{V_sub, extendFromC, restrictToC}
-\difficulty{4}
+\difficulty{3}
 For every $x \in V_C$, $\mathrm{extendFromC}_C(\mathrm{restrictToC}_C(x)) = x$.
 \end{lemma}
 
@@ -467,7 +471,7 @@ $g(S,M) = \dim_{\mathbb{F}_p}(S^{\perp}_M) - \dim_{\mathbb{F}_p}(S_M)$.
 \label{ker_r_E}
 \leanok
 \uses{V, V_sub, r_E}
-\difficulty{5}
+\difficulty{4}
 $\ker(r_E) = V_{\mathrm{univ} \setminus E}$, the subspace supported on the complement of $E$.
 \end{lemma}
 
@@ -492,7 +496,7 @@ $E^c = \mathrm{univ} \setminus E$.
 \label{dim_map_r_E}
 \leanok
 \uses{E_c, F, V, V_sub, ker_r_E, r_E}
-\difficulty{6}
+\difficulty{5}
 $\dim_{\mathbb{F}_p}(r_E(S)) = \dim_{\mathbb{F}_p}(S) - \dim_{\mathbb{F}_p}(S \cap V_{E^c})$.
 \end{lemma}
 
@@ -501,7 +505,7 @@ $\dim_{\mathbb{F}_p}(r_E(S)) = \dim_{\mathbb{F}_p}(S) - \dim_{\mathbb{F}_p}(S \c
 \label{sym_form_r_E}
 \leanok
 \uses{V, V_sub, r_E, sym_form}
-\difficulty{4}
+\difficulty{3}
 If $v \in V_M$, then $\omega(v,s) = \omega(v, r_M(s))$ for all $s \in V$.
 \end{lemma}
 
@@ -518,7 +522,7 @@ The composition $r_E^V : V \to V$ of $r_E$ with the inclusion $V_E \hookrightarr
 \label{sym_form_r_E_left}
 \leanok
 \uses{V, V_sub, r_E_V, sym_form, sym_form_r_E, sym_form_swap}
-\difficulty{4}
+\difficulty{3}
 If $v \in V_M$, then $\omega(r_M^V(s), v) = \omega(s, v)$ for all $s \in V$.
 \end{lemma}
 
@@ -536,7 +540,7 @@ If $v \in V_M$ and $\omega(v,w) = 0$ for all $w \in V_M$, then $v = 0$.
 \label{sym_form_left_restrict}
 \leanok
 \uses{V, V_sub, r_E, r_E_V, sym_form}
-\difficulty{4}
+\difficulty{3}
 If $v \in V_M$, then $\omega(r_M^V(s), v) = \omega(s, v)$ for all $s \in V$.
 \end{lemma}
 
@@ -545,7 +549,7 @@ If $v \in V_M$, then $\omega(r_M^V(s), v) = \omega(s, v)$ for all $s \in V$.
 \label{orth_inter_eq_orth_map}
 \leanok
 \uses{F, V, V_sub, r_E_V, symB_apply, sym_form, sym_form_left_restrict, sym_orth}
-\difficulty{5}
+\difficulty{4}
 $S^{\perp_\omega} \cap V_M = (r_M^V(S))^{\perp_\omega} \cap V_M$.
 \end{lemma}
 
@@ -579,7 +583,7 @@ For $x,y \in V_M$, $\mathrm{sym\_form\_sub}_M(x,y) = \omega(x,y)$ computed on th
 \label{sym_form_sub_nondegenerate}
 \leanok
 \uses{V_sub, sym_form, sym_form_nondegenerate_on_V_sub, sym_form_sub}
-\difficulty{5}
+\difficulty{3}
 The restricted symplectic form on $V_M$ is non-degenerate.
 \end{lemma}
 
@@ -588,7 +592,7 @@ The restricted symplectic form on $V_M$ is non-degenerate.
 \label{orth_inter_eq_orth_sub_image}
 \leanok
 \uses{F, V, V_sub, orth_inter_eq_orth_map, r_E, r_E_V, symB, sym_form_sub, sym_orth}
-\difficulty{5}
+\difficulty{3}
 $S^{\perp_\omega} \cap V_M$ is the image under $V_M \hookrightarrow V$ of the orthogonal complement
 of $r_M(S)$ with respect to the restricted form.
 \end{lemma}
@@ -598,7 +602,7 @@ of $r_M(S)$ with respect to the restricted form.
 \label{sym_form_sub_isRefl}
 \leanok
 \uses{V, sym_form, sym_form_sub, sym_form_sub_apply, sym_form_swap}
-\difficulty{4}
+\difficulty{3}
 The restricted symplectic form on $V_M$ is reflexive.
 \end{lemma}
 
@@ -607,7 +611,7 @@ The restricted symplectic form on $V_M$ is reflexive.
 \label{dim_orth_inter}
 \leanok
 \uses{F, V, V_sub, dim_V_sub, orth_inter_eq_orth_sub_image, r_E, sym_form_sub, sym_form_sub_isRefl, sym_form_sub_nondegenerate, sym_orth}
-\difficulty{5}
+\difficulty{4}
 $\dim_{\mathbb{F}_p}(S^{\perp_\omega} \cap V_M) = 2|M| - \dim_{\mathbb{F}_p}(r_M(S))$.
 \end{lemma}
 
@@ -616,7 +620,7 @@ $\dim_{\mathbb{F}_p}(S^{\perp_\omega} \cap V_M) = 2|M| - \dim_{\mathbb{F}_p}(r_M
 \label{g_expansion}
 \leanok
 \uses{E_c, F, IsIsotropic, S_M, S_perp_M, V, V_sub, dim_V_sub, dim_map_r_E, dim_orth_inter, g, r_E, sym_orth}
-\difficulty{6}
+\difficulty{5}
 For isotropic $S$,
 \[
 g(S,M) = 2|M| + \dim(S_{M^c}) - \dim(S) - \dim(S_M).
@@ -637,7 +641,7 @@ $(M^c)^c = M$.
 \label{dim_S_M_add_dim_S_M_c_le_dim_S}
 \leanok
 \uses{E_c, F, S_M, V, V_sub}
-\difficulty{5}
+\difficulty{4}
 $\dim_{\mathbb{F}_p}(S_M) + \dim_{\mathbb{F}_p}(S_{M^c}) \le \dim_{\mathbb{F}_p}(S)$.
 \end{lemma}
 
@@ -658,7 +662,7 @@ g(S,M) = \bigl(2|M| + \dim(S_{M^c})\bigr) - \bigl(\dim(S) + \dim(S_M)\bigr).
 \label{g_add_dims}
 \leanok
 \uses{E_c, F, IsIsotropic, S_M, V, V_sub, dim_S_M_add_dim_S_M_c_le_dim_S, dim_V_sub, dim_map_r_E, dim_orth_inter, g, g_formula, r_E, sym_orth}
-\difficulty{6}
+\difficulty{5}
 For isotropic $S$,
 \[
 g(S,M) + \dim(S_M) + \dim(S) = 2|M| + \dim(S_{M^c}).
@@ -670,7 +674,7 @@ g(S,M) + \dim(S_M) + \dim(S) = 2|M| + \dim(S_{M^c}).
 \label{dim_ineq_aux}
 \leanok
 \uses{E_c, F, IsIsotropic, S_M, V, g_add_dims}
-\difficulty{2}
+\difficulty{1}
 For isotropic $S$, $\dim(S) + \dim(S_M) \le 2|M| + \dim(S_{M^c})$.
 \end{lemma}
 
@@ -683,7 +687,7 @@ For isotropic $S$, $\dim(S) + \dim(S_M) \le 2|M| + \dim(S_{M^c})$.
   pdf-585ff62e2309-p003-b020
 }
 \uses{E_c, E_c_E_c, F, IsIsotropic, S_M, V, g, g_add_dims}
-\difficulty{5}
+\difficulty{4}
 For isotropic $S$,
 \[
 g(S,M) + g(S,M^c) = 2n - 2\dim_{\mathbb{F}_p}(S).
@@ -695,7 +699,7 @@ g(S,M) + g(S,M^c) = 2n - 2\dim_{\mathbb{F}_p}(S).
 \label{card_add_compl}
 \leanok
 \uses{E_c}
-\difficulty{3}
+\difficulty{2}
 $|M| + |M^c| = n$.
 \end{lemma}
 
@@ -705,7 +709,7 @@ $|M| + |M^c| = n$.
 \leanok
 \proofsource{arXiv.2602.20186}{pdf-585ff62e2309-p004-b002}
 \uses{F, S_M, V, V_sub, correctable, g, sym_orth}
-\difficulty{3}
+\difficulty{2}
 If $M$ is correctable for $S$, then $g(S,M) = 0$.
 \end{lemma}
 
@@ -715,7 +719,7 @@ If $M$ is correctable for $S$, then $g(S,M) = 0$.
 \leanok
 \proofsource{arXiv.2602.20186}{pdf-585ff62e2309-p004-b002}
 \uses{E_c, F, IsIsotropic, V, cleaning_dimension_identity, correctable, correctable_implies_g_zero, g}
-\difficulty{3}
+\difficulty{2}
 If $S$ is isotropic and $M$ is correctable, then
 $g(S,M^c) = 2n - 2\dim_{\mathbb{F}_p}(S)$.
 \end{lemma}
@@ -726,7 +730,7 @@ $g(S,M^c) = 2n - 2\dim_{\mathbb{F}_p}(S)$.
 \leanok
 \proofsource{arXiv.2602.20186}{pdf-585ff62e2309-p004-b005}
 \uses{F, S_M, S_perp_M, V, V_sub, correctable, dim_V_sub, g, r_E, sym_orth}
-\difficulty{7}
+\difficulty{6}
 If $B$ and $C$ are disjoint and $B$ is correctable for $S$, then
 $g(S, B \cup C) \le 2|C|$.
 \end{lemma}
@@ -748,7 +752,7 @@ full note:
 \label{V_sub_univ_eq_top}
 \leanok
 \uses{F, V, V_sub}
-\difficulty{3}
+\difficulty{2}
 $V_{\mathrm{univ}} = \top$, the entire space $V$.
 \end{lemma}
 
@@ -757,7 +761,7 @@ $V_{\mathrm{univ}} = \top$, the entire space $V$.
 \label{finrank_V}
 \leanok
 \uses{F, V, V_sub, V_sub_univ_eq_top, dim_V_sub}
-\difficulty{4}
+\difficulty{3}
 $\dim_{\mathbb{F}_p}(V) = 2n$.
 \end{lemma}
 
@@ -770,7 +774,7 @@ $\dim_{\mathbb{F}_p}(V) = 2n$.
   pdf-585ff62e2309-p003-b002
 }
 \uses{symB, symB_apply, sym_form_nondegenerate}
-\difficulty{3}
+\difficulty{2}
 The bundled symplectic form $\mathrm{symB}$ is non-degenerate.
 \end{lemma}
 
@@ -779,7 +783,7 @@ The bundled symplectic form $\mathrm{symB}$ is non-degenerate.
 \label{symB_isRefl}
 \leanok
 \uses{symB, symB_apply, sym_form, sym_form_swap}
-\difficulty{3}
+\difficulty{2}
 The bundled symplectic form $\mathrm{symB}$ is reflexive.
 \end{lemma}
 
@@ -806,7 +810,7 @@ If $S$ is isotropic and $k(S) = 0$, then $d(S) = 0$.
 \lean{exists_disjoint_finsets_card}
 \label{exists_disjoint_finsets_card}
 \leanok
-\difficulty{5}
+\difficulty{4}
 Whenever $2t \le n$, there exist disjoint finsets $A, B \subseteq \mathrm{Fin}\,n$ with
 $|A| = |B| = t$.
 \end{lemma}

@@ -147,7 +147,7 @@ It is defined by induction on $k$, using \texttt{bind}, \texttt{comap}, and \tex
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
-\difficulty{5}
+\difficulty{4}
 For a family $p$ and input tuples $x$, $y$,
 \[
   (\texttt{pi}\;p).\texttt{run}\;x\;y \;=\; \lambda i.\; (p_i).\texttt{run}\;(x\,i)\;(y\,i).
@@ -159,7 +159,7 @@ For a family $p$ and input tuples $x$, $y$,
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}
-\difficulty{6}
+\difficulty{4}
 The complexity of the $k$-fold product satisfies
 \[
   (\texttt{pi}\;p).\texttt{complexity} \;=\; \sum_{i=0}^{k-1} (p_i).\texttt{complexity}.

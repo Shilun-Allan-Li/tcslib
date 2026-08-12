@@ -18,7 +18,7 @@ splitting the protocol tree at a balanced subprotocol at each step.
 \label{CommunicationComplexity.Deterministic.Protocol.numLeaves_pos}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
-\difficulty{4}
+\difficulty{3}
 For every deterministic protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$, the number of
 leaves satisfies $0 < \texttt{CommunicationComplexity.Deterministic.Protocol.numLeaves}\;p$.
 In particular, the leaf count of a protocol is always at least one.
@@ -40,7 +40,7 @@ communication.
 \lean{CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced}
 \label{CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced}
 \leanok
-\difficulty{5}
+\difficulty{4}
 Let $m, n \in \mathbb{N}$ with $3m \le 2n$ and $3(n - m) \le 2n$.
 Then $9 \cdot \max(m^2,\,(n-m)^2) \le 4n^2$.
 This arithmetic inequality captures the key quantitative gain obtained when a split is
@@ -52,7 +52,7 @@ This arithmetic inequality captures the key quantitative gain obtained when a sp
 \label{CommunicationComplexity.Deterministic.Protocol.exists_balanced_simulation}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.complexity_eq_zero_of_numLeaves_eq_one, CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.numLeaves_pos, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt, CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches, CommunicationComplexity.Deterministic.Protocol.testSubprotocol, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
-\difficulty{7}
+\difficulty{6}
 For every deterministic protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$ there exists a
 protocol $q$ such that $q.\mathrm{run} = p.\mathrm{run}$ (i.e.\ $q$ computes the same
 function as $p$) and

@@ -11,6 +11,7 @@ most $(10pw)^s$ plus an exponentially small tail $e^{-np/3}$ that vanishes as $n
 
 \begin{definition}[Restrictions with a fixed number of free variables]
 \lean{BernoulliCost.fixedSizeRestrs}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \label{BernoulliCost.fixedSizeRestrs}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
@@ -20,6 +21,7 @@ whose set of free variables has cardinality exactly $k$.
 
 \begin{definition}[Fixed-size restriction probability $R_k$]
 \lean{BernoulliCost.fixedSizeRestrProb}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \label{BernoulliCost.fixedSizeRestrProb}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction}
@@ -40,7 +42,7 @@ The binomial probability mass function, $\Pr[\mathrm{Bin}(n,p) = k] = \binom{n}{
 \label{BernoulliCost.fixedSizeRestrProb_nonneg}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrProb, SwitchingLemma2.Restriction}
-\difficulty{2}
+\difficulty{1}
 For any event, the fixed-size restriction probability satisfies
 $0 \le \mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k$.
 \end{lemma}
@@ -50,7 +52,7 @@ $0 \le \mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k$.
 \label{BernoulliCost.fixedSizeRestrProb_le_one}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction}
-\difficulty{4}
+\difficulty{3}
 For any event, the fixed-size restriction probability satisfies
 $\mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k \le 1$.
 \end{lemma}
@@ -60,7 +62,7 @@ $\mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k \le 1$.
 \label{BernoulliCost.binomialPMF_nonneg}
 \leanok
 \uses{BernoulliCost.binomialPMF}
-\difficulty{3}
+\difficulty{2}
 If $0 \le p \le 1$, then $0 \le \mathrm{binomialPMF}\,n\,p\,k$ for every $k$.
 \end{lemma}
 
@@ -80,7 +82,7 @@ applied to $(p + (1-p))^n = 1$.
 \label{BernoulliCost.bernoulli_decompose}
 \leanok
 \uses{BernoulliCost.binomialPMF, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
-\difficulty{7}
+\difficulty{6}
 For $0 \le p \le 1$ and any event, the Bernoulli$(p)$ restriction probability decomposes
 according to the number of free variables:
 \[
@@ -94,7 +96,7 @@ because conditioning $R_p$ on having exactly $k$ free variables yields exactly t
 \label{BernoulliCost.chernoff_binomial_upper_tail}
 \leanok
 \uses{BernoulliCost.binomialPMF}
-\difficulty{7}
+\difficulty{6}
 For $0 < p \le 1$, the upper tail of the binomial distribution beyond $2np$ is exponentially
 small: summing $\mathrm{binomialPMF}\,n\,p\,k$ over those $k \in \{0, \dots, n\}$ with $k > 2np$
 is at most $e^{-np/3}$.
@@ -105,7 +107,7 @@ is at most $e^{-np/3}$.
 \label{BernoulliCost.bernoulli_restriction_cost}
 \leanok
 \uses{BernoulliCost.bernoulli_decompose, BernoulliCost.binomialPMF, BernoulliCost.binomialPMF_nonneg, BernoulliCost.binomialPMF_sum_one, BernoulliCost.chernoff_binomial_upper_tail, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
-\difficulty{6}
+\difficulty{5}
 Let $n > 0$, $0 < p \le 1$, and $w, s > 0$. If the event satisfies
 $\mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k \le (5kw/n)^s$ for every $k \le n$, then under
 the Bernoulli model,
@@ -118,7 +120,7 @@ the Bernoulli model,
 \lean{BernoulliCost.exp_neg_eventually_small}
 \label{BernoulliCost.exp_neg_eventually_small}
 \leanok
-\difficulty{6}
+\difficulty{3}
 For any $p > 0$ and any $\varepsilon > 0$, there exists $N$ such that for all $m \ge N$ one has
 $e^{-mp/3} < \varepsilon$; that is, the tail term decays to $0$.
 \end{lemma}
@@ -128,7 +130,7 @@ $e^{-mp/3} < \varepsilon$; that is, the tail term decays to $0$.
 \label{BernoulliCost.bernoulli_restriction_asymptotic}
 \leanok
 \uses{BernoulliCost.bernoulli_restriction_cost, BernoulliCost.exp_neg_eventually_small, BernoulliCost.fixedSizeRestrProb, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
-\difficulty{4}
+\difficulty{3}
 Let $0 < p \le 1$, $w, s > 0$, and $\varepsilon > 0$. Then there exists $N$ such that for every
 $n \ge N$ with $n > 0$ and every event satisfying
 $\mathrm{fixedSizeRestrProb}\,(\mathrm{event})\,k \le (5kw/n)^s$ for all $k \le n$, one has

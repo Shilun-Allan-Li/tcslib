@@ -35,7 +35,7 @@ For any PMF $p$ on $\mathrm{Fin}\,m$, $\mathrm{cdf}(p, 0) = 0$.
 \label{CommunicationComplexity.Internal.cdf_succ}
 \leanok
 \uses{CommunicationComplexity.Internal.cdf}
-\difficulty{4}
+\difficulty{3}
 For any PMF $p$ on $\mathrm{Fin}\,m$ and index $n \in \mathrm{Fin}\,m$,
 $\mathrm{cdf}(p, n+1) = \mathrm{cdf}(p, n) + p(n)$.
 \end{lemma}
@@ -45,7 +45,7 @@ $\mathrm{cdf}(p, n+1) = \mathrm{cdf}(p, n) + p(n)$.
 \label{CommunicationComplexity.Internal.cdf_one}
 \leanok
 \uses{CommunicationComplexity.Internal.cdf}
-\difficulty{3}
+\difficulty{2}
 For any PMF $p$ on $\mathrm{Fin}\,m$, $\mathrm{cdf}(p, m) = 1$.
 \end{lemma}
 
@@ -54,7 +54,7 @@ For any PMF $p$ on $\mathrm{Fin}\,m$, $\mathrm{cdf}(p, m) = 1$.
 \label{CommunicationComplexity.Internal.cdf_mono}
 \leanok
 \uses{CommunicationComplexity.Internal.cdf}
-\difficulty{4}
+\difficulty{3}
 For any PMF $p$ on $\mathrm{Fin}\,m$, the function $n \mapsto \mathrm{cdf}(p, n)$ is
 monotone non-decreasing.
 \end{lemma}
@@ -105,7 +105,7 @@ $j \in \mathrm{Fin}\,n$ satisfying $a \le j < b$ is at most $b - a + 1$.
 \label{CommunicationComplexity.Internal.uniformApprox_approx}
 \leanok
 \uses{CommunicationComplexity.Internal.card_nat_in_Ico, CommunicationComplexity.Internal.cdf, CommunicationComplexity.Internal.cdf_mono, CommunicationComplexity.Internal.cdf_one, CommunicationComplexity.Internal.cdf_succ, CommunicationComplexity.Internal.invCdf_eq_iff, CommunicationComplexity.Internal.uniformApprox}
-\difficulty{6}
+\difficulty{5}
 For any PMF $p$ on $\mathrm{Fin}\,m$, positive $n$, and index $i \in \mathrm{Fin}\,m$,
 the empirical frequency with which $\mathrm{uniformApprox}(p, n)$ outputs $i$ satisfies
 \[
@@ -119,7 +119,7 @@ the empirical frequency with which $\mathrm{uniformApprox}(p, n)$ outputs $i$ sa
 \label{CommunicationComplexity.Internal.single_coin_approx}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.hasSum_measure_singletons, CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset, CommunicationComplexity.Internal.uniformApprox, CommunicationComplexity.Internal.uniformApprox_approx, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
-\difficulty{7}
+\difficulty{6}
 For any finite probability space $\Omega$ and any $\delta > 0$, there exist $n \in \mathbb{N}$
 and a map $\varphi : \mathrm{CoinTape}(n) \to \Omega$ such that for every set $S \subseteq \Omega$,
 \[
@@ -143,7 +143,7 @@ then $\sum_a p(a)\,g(a) \le \sum_a q(a)\,g(a) + \delta$.
 \label{CommunicationComplexity.Internal.product_coin_approx}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_finset, CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype, CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset, CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod, CommunicationComplexity.Internal.single_coin_approx, CommunicationComplexity.Internal.weighted_sum_approx}
-\difficulty{7}
+\difficulty{6}
 For any two finite probability spaces $\Omega_X$ and $\Omega_Y$ and any $\delta > 0$,
 there exist $n_X, n_Y \in \mathbb{N}$ and maps $\varphi_X : \mathrm{CoinTape}(n_X) \to \Omega_X$,
 $\varphi_Y : \mathrm{CoinTape}(n_Y) \to \Omega_Y$ such that for every set
@@ -181,7 +181,7 @@ $\mathrm{toCoinTape}(p, \delta, h_\delta)\mathtt{.snd.snd.complexity} = p\mathtt
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Internal.product_coin_approx, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape}
-\difficulty{5}
+\difficulty{4}
 If a protocol $p$ approximately satisfies a predicate $Q$ with error at most $\varepsilon$,
 then the coin-tape conversion $\mathrm{toCoinTape}(p, \delta, h_\delta)$ approximately
 satisfies $Q$ with error at most $\varepsilon + \delta$.

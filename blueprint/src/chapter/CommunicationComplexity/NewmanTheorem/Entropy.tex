@@ -15,7 +15,7 @@ distributions.
 \lean{ProbabilityTheory.entropy_le_log_of_card_le}
 \label{ProbabilityTheory.entropy_le_log_of_card_le}
 \leanok
-\difficulty{3}
+\difficulty{2}
 If the alphabet type $S$ has $\mathrm{card}(S) \le N$, then for any random variable
 $X : \Omega \to S$ and measure $\mu$,
 \[
@@ -28,7 +28,7 @@ $X : \Omega \to S$ and measure $\mu$,
 \label{ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow}
 \leanok
 \uses{ProbabilityTheory.entropy_le_log_of_card_le}
-\difficulty{2}
+\difficulty{1}
 If $\mathrm{card}(S) \le 2^c$ for some $c : \mathbb{N}$, then
 \[
   H[X;\mu] \;\le\; c \cdot \log 2.
@@ -62,7 +62,7 @@ For measurable $X$ and $Y$ under a zero-or-probability measure $\mu$ with finite
 \lean{ProbabilityTheory.mutualInfo_congr_ae}
 \label{ProbabilityTheory.mutualInfo_congr_ae}
 \leanok
-\difficulty{3}
+\difficulty{1}
 If $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$, then
 $I[X : Y;\mu] = I[X' : Y';\mu]$.
 \end{theorem}
@@ -71,7 +71,7 @@ $I[X : Y;\mu] = I[X' : Y';\mu]$.
 \lean{ProbabilityTheory.mutualInfo_comp_right_of_injective}
 \label{ProbabilityTheory.mutualInfo_comp_right_of_injective}
 \leanok
-\difficulty{3}
+\difficulty{2}
 If $f : T \to V$ is measurable and injective, then
 $I[X : f \circ Y;\mu] = I[X : Y;\mu]$.
 \end{theorem}
@@ -97,7 +97,7 @@ If $Y =^{\mu\text{-a.e.}} c$ for some constant $c : T$, then $I[X : Y;\mu] = 0$.
 \lean{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \label{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \leanok
-\difficulty{4}
+\difficulty{3}
 If $X =^{\mu\text{-a.e.}} c$ for some constant $c : S$, then $I[X : Y \mid Z;\mu] = 0$.
 \end{theorem}
 
@@ -114,7 +114,7 @@ If $Y =^{\mu\text{-a.e.}} c$ for some constant $c : T$, then $I[X : Y \mid Z;\mu
 \lean{ProbabilityTheory.indepFun_of_measureReal_inter_preimage_singleton_eq_mul}
 \label{ProbabilityTheory.indepFun_of_measureReal_inter_preimage_singleton_eq_mul}
 \leanok
-\difficulty{5}
+\difficulty{4}
 For measurable $X : \Omega \to S$ and $Y : \Omega \to T$ with finite $S$ and $T$, if
 \[
   \mu(X^{-1}\{x\} \cap Y^{-1}\{y\}) = \mu(X^{-1}\{x\})\cdot\mu(Y^{-1}\{y\})
@@ -150,7 +150,7 @@ For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ran
 \label{ProbabilityTheory.condMutualInfo_le_entropy_left}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
-\difficulty{2}
+\difficulty{1}
 For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ranges,
 \[
   I[X : Y \mid Z;\mu] \;\le\; H[X;\mu].
@@ -162,7 +162,7 @@ For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ran
 \label{ProbabilityTheory.condMutualInfo_le_entropy_right}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_right}
-\difficulty{2}
+\difficulty{1}
 For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ranges,
 \[
   I[X : Y \mid Z;\mu] \;\le\; H[Y;\mu].
@@ -214,7 +214,7 @@ not change conditional mutual information:
 \lean{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
 \label{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
 \leanok
-\difficulty{6}
+\difficulty{5}
 For a measurable $f : U \to S \to V$, conditioning additionally on a deterministic function
 of $X$ and $Z$ cannot increase conditional mutual information:
 \[
@@ -241,7 +241,7 @@ of $Y$ and $Z$ cannot increase conditional mutual information:
 \lean{ProbabilityTheory.condMutualInfo_comp_conditioning_le_of_condMutualInfo_eq_zero}
 \label{ProbabilityTheory.condMutualInfo_comp_conditioning_le_of_condMutualInfo_eq_zero}
 \leanok
-\difficulty{6}
+\difficulty{5}
 Let $W : \Omega \to V$ and $f : V \to U$.  If $I[X : W \mid f \circ W;\mu] = 0$ (i.e., the
 coarse variable $f \circ W$ carries all the information about $X$ that $W$ does), then
 \[
@@ -266,7 +266,7 @@ For measurable $X$, $W$, $Y$, $Z$ with finite ranges under a zero-or-probability
 \label{ProbabilityTheory.condMutualInfo_prod_right_eq_add}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_prod_left_eq_add}
-\difficulty{3}
+\difficulty{2}
 For measurable $X$, $Y$, $W$, $Z$ with finite ranges under a zero-or-probability measure,
 \[
   I[X : (Y, W) \mid Z;\mu]
@@ -299,7 +299,7 @@ is the restriction of $X(\omega)$ to coordinates $0, 1, \ldots, i-1$.
 \label{ProbabilityTheory.condMutualInfo_boolVector_eq_sum_strictPrefix}
 \leanok
 \uses{ProbabilityTheory.boolVectorStrictPrefix, ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left, ProbabilityTheory.condMutualInfo_prod_left_eq_add}
-\difficulty{7}
+\difficulty{5}
 For a boolean-vector-valued $X : \Omega \to (\mathrm{Fin}\,m \to \mathrm{Bool})$,
 \[
   I[X : Y \mid Z;\mu]
@@ -324,7 +324,7 @@ For a finite measure $\mu$ and measurable sets $F \subseteq A$,
 \lean{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \label{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For a finite measure $\mu$ and measurable sets $F \subseteq A$,
 \[
   \mu_{\mathbb{R}}(A) \cdot (\mu[\,|\,A])_{\mathbb{R}}(F) \;=\; \mu_{\mathbb{R}}(F).
@@ -336,7 +336,7 @@ For a finite measure $\mu$ and measurable sets $F \subseteq A$,
 \label{ProbabilityTheory.condMutualInfo_prod_conditioning_eq_sum}
 \leanok
 \uses{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
-\difficulty{6}
+\difficulty{5}
 If the conditioning variable is a pair $(K, Z)$ with $K$ taking values in a finite type $A$,
 then
 \[
@@ -350,7 +350,7 @@ then
 \label{ProbabilityTheory.measureReal_mul_cond_condMutualInfo_le_condMutualInfo_of_event_eq_preimage}
 \leanok
 \uses{ProbabilityTheory.cond_cond_eq_cond_of_subset, ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
-\difficulty{7}
+\difficulty{5}
 Let $A = Z^{-1}(B)$ for some measurable $B$.  Then, under a probability measure $\mu$,
 \[
   \mu_{\mathbb{R}}(A) \cdot I[X : Y \mid Z;\,\mu[\,|\,A]]
@@ -362,7 +362,7 @@ Let $A = Z^{-1}(B)$ for some measurable $B$.  Then, under a probability measure 
 \lean{ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \label{ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \leanok
-\difficulty{5}
+\difficulty{4}
 For measurable $X$, $Y$, $W$ with finite ranges under a zero-or-probability measure,
 \[
   I[X : (Y, W);\mu] \;=\; I[X : Y;\mu] \;+\; I[X : W \mid Y;\mu].
@@ -374,7 +374,7 @@ For measurable $X$, $Y$, $W$ with finite ranges under a zero-or-probability meas
 \label{ProbabilityTheory.condMutualInfo_le_mutualInfo_of_condDependence_le}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_comp_right_of_injective, ProbabilityTheory.mutualInfo_prod_right_eq_add}
-\difficulty{5}
+\difficulty{4}
 If $I[X : W \mid Y;\mu] \le I[X : W;\mu]$, then
 \[
   I[X : Y \mid W;\mu] \;\le\; I[X : Y;\mu].
@@ -385,7 +385,7 @@ If $I[X : W \mid Y;\mu] \le I[X : W;\mu]$, then
 \lean{ProbabilityTheory.condEntropy_congr_ae}
 \label{ProbabilityTheory.condEntropy_congr_ae}
 \leanok
-\difficulty{3}
+\difficulty{2}
 Under a probability measure, if $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$
 (with all four variables measurable and of finite range), then
 $H[X \mid Y;\mu] = H[X' \mid Y';\mu]$.
@@ -396,7 +396,7 @@ $H[X \mid Y;\mu] = H[X' \mid Y';\mu]$.
 \label{ProbabilityTheory.condMutualInfo_congr_ae_left_right}
 \leanok
 \uses{ProbabilityTheory.condEntropy_congr_ae}
-\difficulty{4}
+\difficulty{3}
 Under a probability measure, if $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$,
 then $I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z;\mu]$ (the conditioning variable $Z$ is
 unchanged).
@@ -407,7 +407,7 @@ unchanged).
 \label{ProbabilityTheory.condMutualInfo_congr_ae}
 \leanok
 \uses{ProbabilityTheory.condEntropy_congr_ae}
-\difficulty{4}
+\difficulty{3}
 Under a probability measure, if $X =^{\mu\text{-a.e.}} X'$, $Y =^{\mu\text{-a.e.}} Y'$,
 and $Z =^{\mu\text{-a.e.}} Z'$, then $I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z';\mu]$.
 \end{theorem}
@@ -448,7 +448,7 @@ and \texttt{Finite} instances.
 \lean{ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
 \label{ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
 \leanok
-\difficulty{5}
+\difficulty{4}
 If $f : T \to V$ and $g : U \to W$ are measurable injections, then
 \[
   I[X : f \circ Y \mid g \circ Z;\mu] \;=\; I[X : Y \mid Z;\mu].
@@ -459,7 +459,7 @@ If $f : T \to V$ and $g : U \to W$ are measurable injections, then
 \lean{ProbabilityTheory.IdentDistrib.cond_of_pair}
 \label{ProbabilityTheory.IdentDistrib.cond_of_pair}
 \leanok
-\difficulty{6}
+\difficulty{5}
 If $(X, Y)$ and $(X', Y')$ have the same joint law and $s \subseteq B$ is measurable, then
 $X$ under $\mu[\,|\,Y^{-1}(s)]$ and $X'$ under $\mu'[\,|\,Y'^{-1}(s)]$ are identically
 distributed.

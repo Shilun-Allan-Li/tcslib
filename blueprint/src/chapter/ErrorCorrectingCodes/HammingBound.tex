@@ -25,6 +25,41 @@ where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
   pdf-24e94ad30862-p024-b003,
   pdf-24e94ad30862-p020-b001
 }
+\proofstep
+  {ErrorCorrectingCodes.Codeword}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001,
+    pdf-7251cb8e4bc5-p015-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.add}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p042-b003,
+    pdf-7251cb8e4bc5-p028-b004}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.sub}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p047-b004,
+    pdf-7251cb8e4bc5-p042-b003}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.zero}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p042-b005,
+    pdf-7251cb8e4bc5-p029-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_distance}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b006}
+
 \difficulty{7}
 For any center $c$ and radius $l$,
 \[
@@ -41,7 +76,7 @@ For any center $c$ and radius $l$,
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.distance}
-\difficulty{5}
+\difficulty{4}
 If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\in C$,
 \[
 B_{\lfloor(d-1)/2\rfloor}(c_1)
@@ -56,6 +91,55 @@ B_{\lfloor(d-1)/2\rfloor}(c_2)
 \label{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
+
+\proofstep
+  {ErrorCorrectingCodes.Codeword}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001,
+    pdf-7251cb8e4bc5-p015-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.add}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p028-b004,
+    pdf-7251cb8e4bc5-p028-b003}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.sub}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p047-b004}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.zero}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.Code}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p015-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_distance}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.distance}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p022-b008}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001,
+    pdf-7251cb8e4bc5-p030-b002}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \difficulty{3}
 Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
@@ -76,8 +160,72 @@ Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
   pdf-24e94ad30862-p021-b003,
   pdf-24e94ad30862-p021-b001
 }
+
+\proofstep
+  {ErrorCorrectingCodes.Codeword}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001,
+    pdf-7251cb8e4bc5-p015-b001}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.add}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p042-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.sub}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p047-b004}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.zero}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.Code}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p015-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_distance}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.distance}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p022-b008}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.dist_le_length}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball_size}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001,
+    pdf-7251cb8e4bc5-p070-b003}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001,
+    pdf-7251cb8e4bc5-p030-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
-\difficulty{6}
+\difficulty{5}
 Let $q=|\alpha|>1$.  If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
 \[
 |C|

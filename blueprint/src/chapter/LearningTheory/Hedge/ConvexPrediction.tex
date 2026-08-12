@@ -59,7 +59,7 @@ prediction, not to a weighted average of expert losses.
 \label{hedgePrediction_mem}
 \leanok
 \uses{hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgePrediction, inducedLoss}
-\difficulty{3}
+\difficulty{2}
 Let $S \subseteq \mathbb{R}$ be a convex set and suppose every expert prediction
 satisfies $p_t(i) \in S$ for all $t$ and $i$.  Then Hedge's weighted-average
 prediction $\widehat{x}_t \in S$ for every round $t$.  The result follows because
@@ -72,7 +72,7 @@ convex combination of points in $S$.
 \label{hedgePrediction_loss_le_hedgeLoss}
 \leanok
 \uses{hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss, hedgePrediction, hedgePrediction_mem, inducedLoss}
-\difficulty{4}
+\difficulty{3}
 Under the same hypotheses as above, assume additionally that for each round $t$ the
 map $x \mapsto \ell(x, o_t)$ is convex on $S$.  Then Jensen's inequality gives, for
 every $t$,
@@ -92,7 +92,7 @@ the individual expert losses.
 \label{hedgePredictionCumLoss_le_hedgeCumLoss}
 \leanok
 \uses{hedgeCumLoss, hedgePredictionCumLoss, hedgePrediction_loss_le_hedgeLoss, inducedLoss}
-\difficulty{2}
+\difficulty{1}
 Summing the per-round Jensen bound over all $T$ rounds, we obtain
 \[
   \mathcal{L}^{\mathrm{pred}}_T
@@ -108,7 +108,7 @@ the abstract cumulative Hedge loss on the induced expert loss table.
 \label{hedgePrediction_regret_bound_tight}
 \leanok
 \uses{LossSeq.Valid, bestExpertLoss, hedgePredictionCumLoss, hedgePredictionCumLoss_le_hedgeCumLoss, hedge_regret_bound_tight, inducedLoss, regret}
-\difficulty{4}
+\difficulty{2}
 Let $S \subseteq \mathbb{R}$ be convex, $\eta > 0$, and suppose all expert predictions
 lie in $S$, each round loss is convex on $S$, and the induced loss table is valid.
 Then the regret of Hedge's actual weighted-average predictions satisfies
@@ -127,7 +127,7 @@ theorem \texttt{hedge\_regret\_bound\_tight}.
 \label{hedgePrediction_regret_tight_optimal}
 \leanok
 \uses{LossSeq.Valid, bestExpertLoss, hedgePredictionCumLoss, hedgePredictionCumLoss_le_hedgeCumLoss, hedge_regret_tight_optimal, inducedLoss, optimalEtaTight, regret}
-\difficulty{4}
+\difficulty{2}
 Under the same convexity hypotheses, with $T > 0$, $N > 1$, and the learning rate set
 to $\eta^* = \texttt{optimalEtaTight}\,N\,T$, the regret satisfies
 \[

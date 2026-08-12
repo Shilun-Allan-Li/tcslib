@@ -18,7 +18,7 @@ bounds are proved in full.
 \lean{normal_form_reduction}
 \label{normal_form_reduction}
 \leanok
-\difficulty{2}
+\difficulty{1}
 \statementsource{LDC_now}{
   pdf-4377a4b7ed99-p075-b002,
   pdf-4377a4b7ed99-p075-b004,
@@ -90,12 +90,23 @@ cast into $\bbr$.
 
 \begin{theorem}[Binomial ratio bound, upper]
 \lean{binomial_ratio_upper}
+\proofsource{arXiv.2308.15403}{
+  pdf-b372a20892ce-p005-b005,
+  pdf-b372a20892ce-p005-b006
+}
 \label{binomial_ratio_upper}
 \leanok
 \statementsource{arXiv.2308.15403}{
   pdf-b372a20892ce-p005-b005,
   pdf-b372a20892ce-p005-b006
 }
+
+\proofstep
+  {chooseR}
+  {context}
+  {arXiv.2308.15403}
+  {pdf-b372a20892ce-p005-b005,
+    pdf-b372a20892ce-p005-b006}
 \uses{chooseR}
 \difficulty{7}
 Fact 4.2 (upper half).  Let $n, \ell, q$ be naturals with $n > 0$, $q > 0$, $q \le \ell$,
@@ -108,12 +119,23 @@ where both binomial coefficients are taken in $\bbr$ via $\texttt{chooseR}$.
 
 \begin{theorem}[Binomial ratio bound, lower]
 \lean{binomial_ratio_lower}
+\proofsource{arXiv.2308.15403}{
+  pdf-b372a20892ce-p005-b005,
+  pdf-b372a20892ce-p005-b006
+}
 \label{binomial_ratio_lower}
 \leanok
 \statementsource{arXiv.2308.15403}{
   pdf-b372a20892ce-p005-b005,
   pdf-b372a20892ce-p005-b006
 }
+
+\proofstep
+  {chooseR}
+  {context}
+  {arXiv.2308.15403}
+  {pdf-b372a20892ce-p005-b005,
+    pdf-b372a20892ce-p005-b006}
 \uses{chooseR}
 \difficulty{7}
 Fact 4.2 (lower half).  Under the same hypotheses $n > 0$, $q > 0$, $q \le \ell$,

@@ -113,7 +113,7 @@ $\mathrm{BoolToPM1}(\lnot b) = -\mathrm{BoolToPM1}(b)$.
 \label{BoolFourier.BoolToPM1_xor}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign}
-\difficulty{3}
+\difficulty{2}
 For all $a, b : \mathrm{Bool}$,
 $\mathrm{BoolToPM1}(a \oplus b) = \mathrm{BoolToPM1}(a) \cdot \mathrm{BoolToPM1}(b)$;
 that is, XOR corresponds to multiplication in $\{\pm 1\} \subset \mathbb{R}$.
@@ -208,7 +208,7 @@ For every $S \subseteq [n]$, $\chi_S(\mathbf{0}) = 1$.
 \label{BoolFourier.char_S_sq}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
-\difficulty{1}
+\difficulty{2}
 For every $S \subseteq [n]$ and $x \in \{0,1\}^n$,
 $\chi_S(x)^2 = 1$.
 \end{lemma}
@@ -224,6 +224,7 @@ $\chi_\emptyset = \mathbf{1}$, the constant function equal to $1$.
 
 \begin{lemma}[Product of characters]
 \lean{BoolFourier.char_S_times_char_T}
+\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{BoolFourier.char_S_times_char_T}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_mul_chiS}
@@ -251,7 +252,7 @@ where $S \mathbin{\triangle} T$ denotes the symmetric difference.
 \label{BoolFourier.sum_char_S_ne_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
-\difficulty{2}
+\difficulty{4}
 For every $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$,
 \[
   \sum_{S \subseteq [n]} \chi_S(x) = 0.
@@ -269,6 +270,10 @@ $\mathbb{E}[\chi_\emptyset] = 1$.
 
 \begin{lemma}[Expectation of non-empty character is zero]
 \lean{BoolFourier.expectation_char_nonempty}
+\statementsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b002,
+  pdf-50833afe7403-p022-b003
+}
 \label{BoolFourier.expectation_char_nonempty}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{
@@ -282,6 +287,10 @@ If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
 
 \begin{lemma}[Orthonormality: self inner product]
 \lean{BoolFourier.inner_product_char_self}
+\statementsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p004-b006,
+  pdf-50833afe7403-p004-b005
+}
 \label{BoolFourier.inner_product_char_self}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{
@@ -289,7 +298,7 @@ If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
   pdf-50833afe7403-p004-b005
 }
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.expectation, BoolFourier.inner_product}
-\difficulty{2}
+\difficulty{3}
 For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
 \end{lemma}
 
@@ -301,8 +310,274 @@ For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
   pdf-50833afe7403-p004-b006,
   pdf-50833afe7403-p004-b005
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p024-b001}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p024-b001}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b003}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p024-b001}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p024-b001}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p024-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p039-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p039-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p039-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b003}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002,
+    pdf-50833afe7403-p015-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p003-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p004-b006,
+    pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p017-b001}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p017-b001}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BoolFourier.BoolToPM1}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BoolFourier.expectation}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BoolFourier.expectation_factorizes}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p004-b006}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BoolFourier.char_S}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BoolFourier.char_S_times_char_T}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002,
+    pdf-50833afe7403-p015-b002}
+\proofstep
+  {BoolFourier.expectation_char_nonempty_aux_h_exp}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p004-b006}
+\proofstep
+  {BoolFourier.expectation_char_nonempty}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p003-b003}
 \uses{BoolFourier.char_S, BoolFourier.char_S_times_char_T, BoolFourier.expectation_char_nonempty, BoolFourier.inner_product}
-\difficulty{4}
+\difficulty{3}
 If $S \ne T$, then $\langle \chi_S, \chi_T \rangle = 0$.
 \end{lemma}
 
@@ -343,7 +618,7 @@ If $S \ne T$, then $\widehat{\chi_S}(T) = 0$.
 \label{BoolFourier.expectation_eq_expect}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
-\difficulty{1}
+\difficulty{2}
 The locally-defined expectation \texttt{BoolFourier.expectation} agrees with
 \texttt{BooleanAnalysis.expect}: for every $f$, $\mathbb{E}[f] = \mathrm{expect}(f)$.
 \end{lemma}
@@ -353,7 +628,7 @@ The locally-defined expectation \texttt{BoolFourier.expectation} agrees with
 \label{BoolFourier.fourier_coeff_eq}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.inner_product, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
-\difficulty{1}
+\difficulty{2}
 For every $f$ and $S$,
 $\mathrm{fourier\_coeff}(f, S) = \mathrm{fourierCoeff}(f, S)$, bridging the
 local and upstream definitions.
@@ -365,7 +640,7 @@ local and upstream definitions.
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BoolFourier.hypercube, BooleanAnalysis.walsh_expansion}
-\difficulty{1}
+\difficulty{2}
 Every Boolean function $f : \{0,1\}^n \to \mathbb{R}$ expands in the
 Walsh--Fourier basis:
 \[
@@ -381,8 +656,309 @@ Walsh--Fourier basis:
   pdf-50833afe7403-p005-b006,
   pdf-50833afe7403-p006-b001
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p024-b001}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p027-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p027-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b009}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p024-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p032-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p039-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p039-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p039-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b003}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p015-b002}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p003-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p004-b006}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p004-b006}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b006}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p017-b001}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p017-b001}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p016-b004}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p016-b004}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p016-b004}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p016-b004}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BoolFourier.expectation}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BoolFourier.L2_norm_sq}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b003}
+\proofstep
+  {BoolFourier.char_S}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b007}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
+\proofstep
+  {BoolFourier.expectation_eq_expect}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p001-b004}
+\proofstep
+  {BoolFourier.fourier_coeff_eq}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
+\proofstep
+  {BoolFourier.parseval_identity_aux_hL2}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b006}
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
-\difficulty{1}
+\difficulty{2}
 For every $f : \{0,1\}^n \to \mathbb{R}$,
 \[
   \sum_{S \subseteq [n]} \hat f(S)^2 = \|f\|_2^2.
@@ -391,10 +967,11 @@ For every $f : \{0,1\}^n \to \mathbb{R}$,
 
 \begin{lemma}[Convolution theorem]
 \lean{BoolFourier.fourier_coeff_convolution}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b006}
 \label{BoolFourier.fourier_coeff_convolution}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
-\difficulty{3}
+\difficulty{4}
 For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$,
 \[
   \widehat{f * g}(S) = \hat f(S) \cdot \hat g(S).

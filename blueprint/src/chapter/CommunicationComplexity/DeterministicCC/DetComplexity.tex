@@ -15,7 +15,7 @@ in terms of general protocols and in terms of finite-message protocols.
 \lean{CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
 \label{CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
 \leanok
-\difficulty{5}
+\difficulty{4}
 Let $\iota$ be a type and $f : \iota \to \mathbb{N}_\infty$ an $\mathbb{N}_\infty$-valued
 family.  Then $\inf_{i} f(i) \le n$ if and only if there exists an index $i$ such that
 $f(i) \le n$.  Here $n : \mathbb{N}$ is coerced into $\mathbb{N}_\infty = \mathrm{ENat}$.
@@ -40,7 +40,7 @@ result lives in $\mathrm{ENat}$ to accommodate the case where no finite protocol
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
-\difficulty{2}
+\difficulty{1}
 For $f : X \to Y \to \alpha$ and $n : \mathbb{N}$, we have $D(f) \le n$ if and only if
 there exists a protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$ such that $p$ computes $f$
 and $p.\mathrm{complexity} \le n$.
@@ -63,7 +63,7 @@ from the mutual simulation between general protocols and their finite-message co
 \label{CommunicationComplexity.Deterministic.le_communicationComplexity_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity}
-\difficulty{2}
+\difficulty{1}
 For $f : X \to Y \to \alpha$ and $n : \mathbb{N}$, we have $n \le D(f)$ (in
 $\mathbb{N}_\infty$) if and only if every protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$
 that computes $f$ satisfies $n \le p.\mathrm{complexity}$.

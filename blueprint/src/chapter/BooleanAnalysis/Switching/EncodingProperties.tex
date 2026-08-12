@@ -14,8 +14,41 @@ in the technical facts needed for the encode/decode round-trip.
 
 \begin{lemma}[Output bound for processClauseLits]
 \lean{SwitchingLemma2.processClauseLits_bound}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma2.processClauseLits_bound}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003,
+    pdf-b5e074215b9e-p002-b002}
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
 For any literal/index list and any path, the combined output of
@@ -36,8 +69,99 @@ path length, is still at most twice the length of the input path.
 
 \begin{lemma}[Length bound for the encoder loop]
 \lean{SwitchingLemma2.encode_go_aux_length_bound}
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b004,
+  pdf-b5e074215b9e-p002-b003
+}
 \label{SwitchingLemma2.encode_go_aux_length_bound}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003,
+    pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_bound}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_tight}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits_tight}
 \difficulty{4}
 The output produced by the encoder loop \texttt{SwitchingLemma2.razborovEncode}'s
@@ -54,8 +178,140 @@ $\mathrm{path}$ the current path.
   pdf-b5e074215b9e-p002-b003,
   pdf-b5e074215b9e-p002-b004
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {buildFullDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {buildFullDTree_eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {dtDepth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.extend}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.restrictFn}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.IsBadRestriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b001}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003,
+    pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_bound}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_tight}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_aux_length_bound}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.encode_go_aux_length_bound, SwitchingLemma2.razborovEncode}
-\difficulty{2}
+\difficulty{3}
 For a bad restriction $\rho$ of a DNF $f$ with depth parameter $d$, the encoded output
 \texttt{SwitchingLemma2.razborovEncode} has length at most $2d$.
 \end{lemma}
@@ -87,7 +343,7 @@ $v$; the resulting $\rho_0$ agrees with the input $\rho_0$ on $v$.
 \label{SwitchingLemma2.processClauseLits_rho_ne_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits}
-\difficulty{4}
+\difficulty{3}
 If $\rho_0\,v \neq \mathrm{none}$, then after running
 \texttt{SwitchingLemma2.processClauseLits} the resulting $\rho_0$ at $v$ is still not
 $\mathrm{none}$; the routine never turns a set value into an unset one.
@@ -121,7 +377,7 @@ accumulator.
 \label{SwitchingLemma2.encode_go_fst_acc}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_acc}
-\difficulty{3}
+\difficulty{1}
 The first component of the encoder loop \texttt{SwitchingLemma2.razborovEncode}'s
 \texttt{go} does not depend on the accumulator: running with accumulator $\mathrm{acc}$
 yields the same first component as running with the empty accumulator.
@@ -132,7 +388,7 @@ yields the same first component as running with the empty accumulator.
 \label{SwitchingLemma2.processEntries_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
-\difficulty{4}
+\difficulty{3}
 If $\sigma\,v = \mathrm{none}$, then the decoder's \texttt{processEntries} routine leaves
 $v$ unset; the resulting $\sigma$ is still $\mathrm{none}$ at $v$.
 \end{lemma}
@@ -153,7 +409,7 @@ $\sigma$ is still $\mathrm{none}$ at $v$.
 \label{SwitchingLemma2.processClauseLits_sigma_indep}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
-\difficulty{4}
+\difficulty{3}
 The remaining path, the $\rho_0$ output, and the auxiliary entry list produced by
 \texttt{SwitchingLemma2.processClauseLits} are all independent of the input $\sigma$: for
 any two starting restrictions $\sigma_1, \sigma_2$ these three components coincide.
@@ -175,7 +431,7 @@ argument: starting from $\sigma_1$ or $\sigma_2$ gives the same output.
 \label{SwitchingLemma2.processClauseLits_aux_entries_from_lits}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
-\difficulty{3}
+\difficulty{4}
 Every entry $e$ in the auxiliary list produced by
 \texttt{SwitchingLemma2.processClauseLits} has its index $e.1$ equal to the index of some
 literal $li$ from the input list.
@@ -186,7 +442,7 @@ literal $li$ from the input list.
 \label{SwitchingLemma2.processClauseLits_aux_ne_nonfree}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, SwitchingLemma2.zipIdx_drop_spec, Term}
-\difficulty{3}
+\difficulty{4}
 Suppose every input literal pair occurs in $t.\texttt{zipIdx}$ and no input literal has
 variable $v$. Then for every auxiliary entry $e$ of
 \texttt{SwitchingLemma2.processClauseLits}, the literal at position $e.1$ in $t$ does not
@@ -232,7 +488,7 @@ variable $v$, the folded $\rho_0$ agrees with the initial $\rho_0$ at $v$.
 \label{SwitchingLemma2.foldl_sigma_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
-\difficulty{4}
+\difficulty{3}
 If $\sigma\,v = \mathrm{none}$, then folding the decoder's $\sigma$-update over any list
 of entries still gives $\mathrm{none}$ at $v$; the fold never sets a previously unset
 variable to a value via the $\sigma$-update.
@@ -303,7 +559,7 @@ the value at $v$ depends only on the initial $\sigma$ at $v$.
 \label{SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
-\difficulty{5}
+\difficulty{4}
 If $\rho_0\,v = \mathrm{none}$ and \texttt{SwitchingLemma2.processClauseLits} leaves
 $\rho_0$ unset at $v$, then it also leaves $\sigma$ unchanged at $v$; the $\sigma$ output
 equals the input $\sigma$ at $v$, since $\rho_0$ and $\sigma$ are updated at the same
@@ -315,7 +571,7 @@ variables in lockstep.
 \label{SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_sigma_at_v, SwitchingLemma2.processClauseLits_sigma_indep, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
-\difficulty{6}
+\difficulty{5}
 At a variable $v$ that is free under $\rho_0$ and unset in both $\sigma_1$ and $\sigma_2$,
 the first component $\gamma$ of the encoder loop
 \texttt{SwitchingLemma2.razborovEncode}'s \texttt{go} takes the same value at $v$ whether
@@ -324,8 +580,60 @@ started from $\sigma_1$ or $\sigma_2$.
 
 \begin{lemma}[processEntries on processClauseLits data]
 \lean{SwitchingLemma2.processEntries_of_processClauseLits}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma2.processEntries_of_processClauseLits}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.zipIdx_drop_spec}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovDecode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
 Characterizes the decoder's \texttt{processEntries} when run on the auxiliary entries of
@@ -376,7 +684,7 @@ not $\mathrm{none}$.
 \label{SwitchingLemma2.roundtrip_base}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction}
-\difficulty{4}
+\difficulty{3}
 When the encoder returns $(\sigma, [])$ (an empty emitted list), the decoder loop
 \texttt{SwitchingLemma2.razborovDecode}'s \texttt{go} recovers $\sigma$ exactly, given
 that $\sigma$ and the decoder's starting restriction $\sigma_{\mathrm{dec}}$ agree with
@@ -389,8 +697,129 @@ $\rho_0$ is unset.
 
 \begin{lemma}[Encoder does not kill the first surviving clause]
 \lean{SwitchingLemma2.encode_go_not_kills_first_clause}
+\proofsource{switching-lemma}{
+  pdf-b5e074215b9e-p002-b003,
+  pdf-b5e074215b9e-p002-b004
+}
 \label{SwitchingLemma2.encode_go_not_kills_first_clause}
 \leanok
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Literal}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {Term}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DNF}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003,
+    pdf-b5e074215b9e-p001-b005}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.freeVars}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Restriction.numFree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p001-b007}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.Term.killedBy}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.canonicalDTree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b002}
+\proofstep
+  {SwitchingLemma2.processClauseLits}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.razborovEncode}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_nonfree}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.encode_go_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.encode_go_fst_acc}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b003}
+\proofstep
+  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
+\proofstep
+  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {context}
+  {switching-lemma}
+  {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem, SwitchingLemma2.processClauseLits_sigma_ne_neg, Term}
 \difficulty{6}
 Let $f$ be a DNF whose terms contain no two distinct literals on the same variable, and

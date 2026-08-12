@@ -63,7 +63,7 @@ The agreeing and disagreeing coordinates partition $\{0, \ldots, n-1\}$.
 \label{CommunicationComplexity.BitString.agreementCount_eq_length_sub_hammingDist}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.agreementCount, CommunicationComplexity.BitString.agreementCount_add_hammingDist_eq_length}
-\difficulty{3}
+\difficulty{2}
 For any two $n$-bit strings $x$ and $y$, the agreement count satisfies
 \[
   \mathrm{agreementCount}(x, y) = n - \mathrm{hammingDist}(x, y)
@@ -76,7 +76,7 @@ as an equality of integers (after casting the natural numbers to $\mathbb{Z}$).
 \label{CommunicationComplexity.BitString.signedInner_eq_length_sub_twice_hammingDist}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_append}
-\difficulty{5}
+\difficulty{4}
 For any two $n$-bit strings $x$ and $y$,
 \[
   \mathrm{signedInner}(x, y) \;=\; n - 2\,\mathrm{hammingDist}(x, y).
@@ -102,7 +102,7 @@ the number of disagreeing coordinates.
 \label{CommunicationComplexity.BitString.signedInner_append}
 \leanok
 \uses{CommunicationComplexity.BitString.signedInner}
-\difficulty{4}
+\difficulty{3}
 For strings $x_1, y_1 : \mathrm{Fin}\,m \to \mathrm{Bool}$ and
 $x_2, y_2 : \mathrm{Fin}\,n \to \mathrm{Bool}$,
 \[
@@ -117,7 +117,7 @@ Concatenating both pairs of bit strings adds their signed inner products.
 \label{CommunicationComplexity.BitString.signedInner_comp_cast}
 \leanok
 \uses{CommunicationComplexity.BitString.signedInner}
-\difficulty{2}
+\difficulty{1}
 If $m = n$ and $x, y : \mathrm{Fin}\,n \to \mathrm{Bool}$, then
 \[
   \mathrm{signedInner}(x \circ \mathrm{Fin.cast}\,h,\; y \circ \mathrm{Fin.cast}\,h)
@@ -131,7 +131,7 @@ Reindexing both inputs along a $\mathrm{Fin.cast}$ does not change the signed in
 \label{CommunicationComplexity.BitString.signedInner_amplify}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_append, CommunicationComplexity.BitString.signedInner_comp_cast}
-\difficulty{5}
+\difficulty{4}
 For any $n$-bit strings $x$ and $y$ and any $a : \mathbb{N}$,
 \[
   \mathrm{signedInner}(\mathrm{Fin.repeat}\,a\,x,\;\mathrm{Fin.repeat}\,a\,y)

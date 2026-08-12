@@ -18,6 +18,7 @@ balanced $\pm 1$-valued functions, and Friedgut's junta theorem.
 
 \begin{definition}[Noisy influence]
 \lean{KKL.noisyInfluence}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p009-b003}
 \label{KKL.noisyInfluence}
 \leanok
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
@@ -35,6 +36,7 @@ the sum being taken over all $S \subseteq [n]$ containing $i$.
 
 \begin{definition}[Low-degree truncation]
 \lean{KKL.lowDegreePart}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p014-b001}
 \label{KKL.lowDegreePart}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff}
@@ -102,7 +104,7 @@ $\mathrm{Inf}_i^{1}[f] = \mathrm{Inf}_i[f]$.
 \label{KKL.sum_noisyInfluence}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, KKL.noisyInfluence}
-\difficulty{4}
+\difficulty{3}
 For every $\rho$,
 \[
   \sum_{i=1}^{n} \mathrm{Inf}_i^{\rho}[f]
@@ -125,7 +127,7 @@ $I[f] = \sum_{i} \mathrm{Inf}_i[f]$.
 \label{KKL.expect_sq_pm_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.innerProduct_self_pm_one, BooleanAnalysis.isPmOne}
-\difficulty{3}
+\difficulty{2}
 If $f$ takes values in $\{-1, 1\}$, then $\E[f^2] = 1$.
 \end{lemma}
 
@@ -144,7 +146,7 @@ $\sum_{S \subseteq [n]} \hat f(S)^2 = \E[f^2]$.
 \label{KKL.low_plus_high_eq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, KKL.highDegreePart, KKL.lowDegreePart}
-\difficulty{4}
+\difficulty{3}
 For every $f$, every level $k$ and every point $x$ of the cube,
 $f_{\le k}(x) + f_{>k}(x) = f(x)$.
 \end{lemma}
@@ -175,14 +177,309 @@ above level $k$:
 
 \begin{lemma}[Fourier tail weight bound]
 \lean{KKL.tail_fourier_weight_bound}
+\proofsource{boolean-ch03-spectral-learning-restrictions}{
+  pdf-20e15a3d3d5e-p001-b005,
+  pdf-20e15a3d3d5e-p002-b001
+}
 \label{KKL.tail_fourier_weight_bound}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p001-b005,
   pdf-20e15a3d3d5e-p002-b001
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b002}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b005}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.influence}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.totalInfluence}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b005}
+\proofstep
+  {BooleanAnalysis.chiS_flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.influence_eq_sum_fourier}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p002-b001}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b002}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b002}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b002}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p010-b005}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p010-b005}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
-\difficulty{4}
+\difficulty{3}
 For $k > 0$ the Fourier weight of $f$ above level $k$ is controlled by the total
 influence:
 \[
@@ -192,12 +489,342 @@ influence:
 
 \begin{lemma}[Low-degree approximation]
 \lean{KKL.lowDegree_approx}
+\proofsource{boolean-ch03-spectral-learning-restrictions}{
+  pdf-20e15a3d3d5e-p001-b005,
+  pdf-20e15a3d3d5e-p002-b001
+}
 \label{KKL.lowDegree_approx}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p001-b005,
   pdf-20e15a3d3d5e-p002-b001
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p007-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p006-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p010-b005}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b002}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.influence}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.totalInfluence}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b005}
+\proofstep
+  {BooleanAnalysis.chiS_flipBit}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {BooleanAnalysis.influence_eq_sum_fourier}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p002-b001}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p004-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p003-b005}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p010-b005}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p010-b005}
+\proofstep
+  {KKL.lowDegreePart}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p013-b001}
+\proofstep
+  {KKL.highDegreePart}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {KKL.l2DistSq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p012-b003}
+\proofstep
+  {KKL.low_plus_high_eq}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {KKL.fourierCoeff_lowDegreePart}
+  {context}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p013-b001}
+\proofstep
+  {KKL.lowDegree_l2_error}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b003}
+\proofstep
+  {KKL.tail_fourier_weight_bound}
+  {direct}
+  {boolean-ch03-spectral-learning-restrictions}
+  {pdf-20e15a3d3d5e-p001-b005}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.totalInfluence, KKL.l2DistSq, KKL.lowDegreePart, KKL.lowDegree_l2_error, KKL.tail_fourier_weight_bound}
 \difficulty{1}
 For $k > 0$, the degree-$k$ truncation approximates $f$ with squared $L^2$ error at
@@ -209,7 +836,7 @@ most $I[f]/k$.
 \label{KKL.influential_coords_card}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence, KKL.influentialCoords}
-\difficulty{4}
+\difficulty{3}
 For $\tau > 0$ the number of $\tau$-influential coordinates satisfies
 $\abs{J_\tau(f)} \le I[f]/\tau$.
 \end{lemma}
@@ -230,7 +857,7 @@ $\E\big[(f_{\le k} - g)^2\big] \le n\tau$.
 \label{KKL.noisyInfluence_le_influence}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, KKL.noisyInfluence}
-\difficulty{3}
+\difficulty{2}
 For $0 \le \rho \le 1$ we have
 $\mathrm{Inf}_i^{\rho}[f] \le \mathrm{Inf}_i[f]$ for every coordinate $i$.
 \end{lemma}
@@ -251,7 +878,7 @@ $\mathrm{Inf}_i^{\rho}[f] \le \mathrm{Inf}_i[f]$.
 \label{KKL.cauchy_schwarz_influences}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.totalInfluence}
-\difficulty{3}
+\difficulty{2}
 The total influence obeys
 \[
   I[f]^2 \;\le\; n \sum_{i=1}^{n} \mathrm{Inf}_i[f]^2 .
@@ -263,7 +890,7 @@ The total influence obeys
 \label{KKL.max_influence_from_sum_sq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence}
-\difficulty{5}
+\difficulty{4}
 If $I[f] > 0$, then some coordinate $i$ satisfies
 \[
   \mathrm{Inf}_i[f] \;\ge\; \frac{\sum_{j} \mathrm{Inf}_j[f]^2}{I[f]} .
@@ -293,6 +920,12 @@ The \emph{noisy total influence} at rate $\rho$ is
 
 \begin{theorem}[KKL theorem for balanced functions]
 \lean{KKL.KKL_balanced}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p019-b004,
+  pdf-4ba63c9394e5-p021-b002,
+  pdf-4ba63c9394e5-p021-b004,
+  pdf-4ba63c9394e5-p022-b001
+}
 \label{KKL.KKL_balanced}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
@@ -308,7 +941,7 @@ The \emph{noisy total influence} at rate $\rho$ is
   pdf-4ba63c9394e5-p022-b002
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourierCoeff_empty, BooleanAnalysis.influence, BooleanAnalysis.isPmOne, BooleanAnalysis.max_influence_lower_bound, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg, KKL.noisyInfluence, KKL.noisyInfluence_le_influence, KKL.sum_noisyInfluence}
-\difficulty{6}
+\difficulty{5}
 (Kahn--Kalai--Linial, 1988.) Let $f : \{0,1\}^n \to \{-1,1\}$ be balanced,
 i.e.\ $\E[f] = 0$, with $n \ge 2$. Then some coordinate $i$ has
 \[
@@ -328,7 +961,7 @@ i.e.\ $\E[f] = 0$, with $n \ge 2$. Then some coordinate $i$ has
   pdf-4ba63c9394e5-p023-b001
 }
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.isPmOne, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg, BooleanAnalysis.uniformWeight, KKL.IsJunta, KKL.influentialCoords, KKL.influential_coords_card, KKL.l2DistSq, KKL.lowDegreePart, KKL.lowDegreePart_depends_on_influential, KKL.lowDegree_approx}
-\difficulty{7}
+\difficulty{6}
 (Friedgut, 1998.) Let $f : \{0,1\}^n \to \{-1,1\}$ and let $\varepsilon > 0$.
 Then there are a coordinate set $J$ and a function $g$ such that
 $\abs{J} \le 4n\,I[f]/\varepsilon$, the function $g$ is a $J$-junta, and
@@ -340,7 +973,7 @@ $\E\big[(f - g)^2\big] \le \varepsilon$.
 \label{KKL.balanced_totalInfluence_ge_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourierCoeff_empty, BooleanAnalysis.isPmOne, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
-\difficulty{4}
+\difficulty{3}
 If $f$ takes values in $\{-1,1\}$, $\E[f] = 0$ and $n > 0$, then $I[f] \ge 1$.
 \end{lemma}
 

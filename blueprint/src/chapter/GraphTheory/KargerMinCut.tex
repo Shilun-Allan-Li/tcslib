@@ -70,7 +70,7 @@ If $e \in E(G)$ is not a diagonal (self-loop) pair, then
 \label{contract_edge_count_le}
 \leanok
 \uses{Multigraph, Multigraph.contract, Multigraph.edgeCount}
-\difficulty{6}
+\difficulty{5}
 For every edge $e \in E(G)$, the contracted multigraph satisfies
 \[
   \abs{E(G/e)} \le \abs{E(G)} - 1 ,
@@ -113,7 +113,7 @@ This is a membership-based formulation independent of a choice of representative
 \label{crosses_iff_out}
 \leanok
 \uses{Crosses}
-\difficulty{5}
+\difficulty{4}
 For every finite set $S$ and unordered pair $e$, the predicate $\texttt{Crosses}\;S\;e$
 holds if and only if, writing $(x, y)$ for the chosen representative of $e$, either
 $x \in S$ and $y \notin S$, or $x \notin S$ and $y \in S$.
@@ -124,7 +124,7 @@ $x \in S$ and $y \notin S$, or $x \notin S$ and $y \in S$.
 \label{crossingEdges_eq_filter_crosses}
 \leanok
 \uses{Crosses, MulCut, MulCut.crossingEdges, Multigraph, crosses_iff_out}
-\difficulty{3}
+\difficulty{2}
 For every cut $C$ of $G$, the multiset of crossing edges equals the edge multiset of
 $G$ filtered by the predicate $\texttt{Crosses}\;S$.
 \end{lemma}
@@ -162,7 +162,7 @@ on the same side.
 \label{cut_size_preserved}
 \leanok
 \uses{Crosses, MulCut, MulCut.contractedCut, MulCut.crossingEdges, MulCut.size, Multigraph, Multigraph.contract, crosses_iff_out, crossingEdges_eq_filter_crosses}
-\difficulty{7}
+\difficulty{6}
 If $e \in E(G)$ does not cross the cut $C$, then the induced cut on $G/e$ has the same
 size as $C$:
 \[
@@ -175,7 +175,7 @@ size as $C$:
 \label{mincut_preserved_of_non_crossing}
 \leanok
 \uses{IsMulMinCut, MulCut, MulCut.contractedCut, MulCut.crossingEdges, MulCut.size, Multigraph, Multigraph.contract, count_bind_endpoints_eq_card_filter, crossingEdges_eq_filter_crosses, cut_size_preserved}
-\difficulty{7}
+\difficulty{6}
 If $C$ is a minimum cut of $G$ and $e \in E(G)$ does not cross $C$, then the induced cut
 on $G/e$ is again a minimum cut. Thus only crossing edges can destroy a fixed minimum
 cut during contraction.
@@ -224,7 +224,7 @@ counted with multiplicity.
 \lean{eq_out_or_eq_out_of_mem}
 \label{eq_out_or_eq_out_of_mem}
 \leanok
-\difficulty{3}
+\difficulty{2}
 If $z$ belongs to the unordered pair $e$, then $z$ equals one of the two components of
 the chosen representative of $e$.
 \end{lemma}
@@ -244,7 +244,7 @@ edges of $m$ containing $v$.
 \label{singleton_cut_size_eq_degree}
 \leanok
 \uses{MulCut, MulCut.crossingEdges, MulCut.size, Multigraph, Multigraph.degree, crosses_iff_out, crossingEdges_eq_filter_crosses, eq_out_or_eq_out_of_mem}
-\difficulty{6}
+\difficulty{5}
 Let $v \in V(G)$ be a vertex such that $V(G) \setminus \{v\}$ is nonempty. Then the cut
 given by $S = \{v\}$ is a legitimate cut of $G$ and its size equals $\deg(v)$.
 \end{lemma}
@@ -254,7 +254,7 @@ given by $S = \{v\}$ is a legitimate cut of $G$ and its size equals $\deg(v)$.
 \label{erase_nonempty_of_cut}
 \leanok
 \uses{MulCut, Multigraph}
-\difficulty{4}
+\difficulty{3}
 If $G$ admits a cut $C$, then for every vertex $v$ the set $V(G) \setminus \{v\}$ is
 nonempty, since both sides of $C$ are nonempty.
 \end{lemma}
@@ -282,7 +282,7 @@ Any $x$ occurring in the multiset of all edge endpoints of $G$ belongs to $V(G)$
 \lean{sum_counts_eq_card_of_subset}
 \label{sum_counts_eq_card_of_subset}
 \leanok
-\difficulty{6}
+\difficulty{5}
 If every element of a multiset $m$ lies in the finite set $s$, then
 \[
   \sum_{a \in s} \mathrm{count}_m(a) = \abs{m} .
@@ -294,7 +294,7 @@ If every element of a multiset $m$ lies in the finite set $s$, then
 \label{sum_degrees_eq_twice_edgeCount}
 \leanok
 \uses{Multigraph, Multigraph.degree, Multigraph.edgeCount, count_bind_endpoints_eq_card_filter, endpoints_mem_vertices, sum_counts_eq_card_of_subset}
-\difficulty{5}
+\difficulty{4}
 For every multigraph $G$,
 \[
   \sum_{v \in V(G)} \deg(v) = 2\abs{E(G)} .
@@ -306,7 +306,7 @@ For every multigraph $G$,
 \label{edge_count_lower_bound}
 \leanok
 \uses{Multigraph, Multigraph.degree, Multigraph.edgeCount, Multigraph.vertexCount, sum_degrees_eq_twice_edgeCount}
-\difficulty{4}
+\difficulty{3}
 If every vertex of $G$ has degree at least $k$, then
 \[
   k \cdot \abs{V(G)} \le 2\abs{E(G)} .
@@ -341,7 +341,7 @@ the invariant maintained after $i$ contraction steps.
 \lean{telescope_prod}
 \label{telescope_prod}
 \leanok
-\difficulty{6}
+\difficulty{5}
 For every $n \ge 2$,
 \[
   \prod_{i=0}^{n-3} \frac{n - i - 2}{n - i} = \frac{2}{n(n-1)} .
@@ -367,7 +367,7 @@ none of the $n-2$ contractions picks a cut edge, is bounded below by
 \label{karger_whp}
 \leanok
 \uses{Multigraph, Multigraph.vertexCount}
-\difficulty{6}
+\difficulty{5}
 Let $n = \abs{V(G)} \ge 4$. Repeating the algorithm $n(n-1)/2$ independent times, the
 success probability satisfies
 \[
@@ -388,7 +388,7 @@ probability at least $p$), then $m \le p^{-1}$.
 \lean{choose_two}
 \label{choose_two}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For $n \ge 2$,
 \[
   \binom{n}{2} = \frac{n(n-1)}{2}
@@ -422,7 +422,7 @@ sense that $\mathrm{numCuts} \cdot \frac{2}{n(n-1)} \le 1$, then
 \label{num_alpha_mincuts_le}
 \leanok
 \uses{Multigraph, Multigraph.vertexCount, card_le_of_disjoint_prob_lb, choose_le_pow}
-\difficulty{4}
+\difficulty{3}
 Let $\alpha > 0$ with $2\alpha \le n = \abs{V(G)}$. If a family of $\mathrm{numCuts}$
 $\alpha$-minimum cuts satisfies
 $\mathrm{numCuts} \cdot \binom{n}{2\alpha}^{-1} \le 1$, then

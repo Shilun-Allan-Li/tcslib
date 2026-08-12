@@ -62,7 +62,7 @@ $V$:
 \label{Halving.update_subset}
 \leanok
 \uses{Halving.update, Halving.voteFor}
-\difficulty{3}
+\difficulty{2}
 The updated version space is always a subset of the previous one:
 $\mathtt{update}(\mathtt{eval}, V, x, y) \subseteq V$.
 \end{lemma}
@@ -84,7 +84,7 @@ $\mathtt{target} \in \mathtt{update}(\mathtt{eval}, V, x, \mathtt{eval}\;\mathtt
 \label{Halving.mistake_halves}
 \leanok
 \uses{Halving.predict, Halving.update, Halving.voteFor, Halving.voteFor_false_add_true}
-\difficulty{5}
+\difficulty{4}
 If the algorithm makes a mistake on input $x$ with true label $y$ (i.e.\
 $\mathtt{predict}(\mathtt{eval}, V, x) \ne y$), then after the update at most half
 the hypotheses survive:
@@ -97,7 +97,7 @@ the hypotheses survive:
 \lean{Halving.log_succ_le_log_of_double_le}
 \label{Halving.log_succ_le_log_of_double_le}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For natural numbers $a$ and $b$ with $b > 0$ and $2b \le a$,
 \[
   \lfloor\log_2 b\rfloor + 1 \;\le\; \lfloor\log_2 a\rfloor.
@@ -122,7 +122,7 @@ plus the mistakes on the remainder using the updated version space.
 \label{Halving.mistakes_bound}
 \leanok
 \uses{Halving.log_succ_le_log_of_double_le, Halving.mistake_halves, Halving.mistakes, Halving.predict, Halving.target_mem_update, Halving.update, Halving.update_subset}
-\difficulty{6}
+\difficulty{5}
 In the realizable setting ($\mathtt{target} \in V$), the total number of mistakes made
 by the Halving Algorithm on any input sequence $xs$ is at most $\lfloor\log_2
 |V|\rfloor$:

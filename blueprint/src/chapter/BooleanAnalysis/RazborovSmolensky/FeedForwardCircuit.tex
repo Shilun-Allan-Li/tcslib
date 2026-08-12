@@ -144,7 +144,7 @@ several downstream gates are duplicated.
 \label{ACP.nodeToCircuit_eval}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.Gate.eval, ACP.FeedForward.IsAndOrGate, ACP.FeedForward.evalNode, ACP.nodeToCircuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit.eval}
-\difficulty{6}
+\difficulty{5}
 If every gate of $F$ is an AND or OR gate as recorded by $\texttt{isAnd}$ and
 $\texttt{gfin}$, then for every node $v$ at layer $m$ and every input
 $x : \mathrm{Fin}\,n \to \{0,1\}$,
@@ -249,7 +249,7 @@ $C.\texttt{toFeedForward}.\texttt{depth} = C.\texttt{depth} + 1$.
 \label{ACP.Circuit.toFeedForward_size_le}
 \leanok
 \uses{ACP.FeedForward.size, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.one_le_size, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toFeedForward}
-\difficulty{4}
+\difficulty{3}
 For every circuit $C$ on $n$ inputs,
 $C.\texttt{toFeedForward}.\texttt{size} \le C.\texttt{size} \cdot (C.\texttt{depth} + 1)$.
 \end{theorem}

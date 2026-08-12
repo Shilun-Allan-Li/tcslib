@@ -185,7 +185,7 @@ fraction of rounds on which action $i$ was played:
 \label{payoffVsPure_averageStrategy}
 \leanok
 \uses{ZeroSumGame, averageStrategy, payoffVsPure}
-\difficulty{3}
+\difficulty{4}
 For a game $G$, a column $j$, and $T$ row distributions
 $p_0, \dots, p_{T-1}$,
 \[
@@ -344,7 +344,7 @@ the abstract Hedge distribution $\mathrm{hedgeDist}(\eta, G.\mathrm{toLossSeq}(a
 \label{regret_to_payoff}
 \leanok
 \uses{ZeroSumGame}
-\difficulty{6}
+\difficulty{5}
 Suppose the row player uses per-round distributions $p_0, \dots, p_{T-1}$
 (each summing to $1$) against column responses $j_0, \dots, j_{T-1}$, and
 achieves cumulative loss regret at most $R$:
@@ -364,7 +364,7 @@ Then the total payoff satisfies
 \lean{avg_min_le_min_avg}
 \label{avg_min_le_min_avg}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For any $f : \mathrm{Fin}\,T \to \mathrm{Fin}\,N \to \mathbb{R}$ and $T > 0$,
 \[
   \frac{1}{T} \sum_{t=0}^{T-1} \min_{j} f(t, j)
@@ -378,7 +378,7 @@ For any $f : \mathrm{Fin}\,T \to \mathrm{Fin}\,N \to \mathbb{R}$ and $T > 0$,
 \label{hedge_construction}
 \leanok
 \uses{LossSeq, LossSeq.Valid, MixedStrategy, ZeroSumGame, ZeroSumGame.toLossSeq, ZeroSumGame.toLossSeq_valid, averageStrategy, bestColumn, bestColumn_spec, bestExpertLoss, cumLoss_horizon, empiricalStrategy, hedgeCumLoss, hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss, hedgeResponseNat, hedge_regret_bound_tight, payoffVsPure, payoffVsPure_averageStrategy, prefixHedgeMixedStrategy, prefixHedgeMixedStrategy_weight_eq_hedgeDist, pureVsPayoff, pureVsPayoff_empiricalStrategy, regret, regret_to_payoff}
-\difficulty{7}
+\difficulty{6}
 Given a game $G$ with $M \ge 2$ rows, a number of rounds $T > 0$, and a
 learning rate $\eta > 0$, there exist mixed strategies $p$ (row) and $q$
 (column) such that for all pure $i \in \mathrm{Fin}\,M$ and $j \in
@@ -398,7 +398,7 @@ column player taking pure best responses, and then averaging.
 \label{approx_minimax}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, hedge_construction, payoffVsPure, pureVsPayoff}
-\difficulty{6}
+\difficulty{5}
 For any finite zero-sum game $G$ with $M \ge 2$ rows and any $\varepsilon > 0$,
 there exist mixed strategies $p$ (row) and $q$ (column) forming an
 $\varepsilon$-approximate saddle point: for all pure $i \in \mathrm{Fin}\,M$

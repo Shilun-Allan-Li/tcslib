@@ -75,7 +75,7 @@ $(\mathrm{completeTreeAlice}\,d\,\mathrm{query}\,Q).\mathrm{run}\,x\,y =
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
-\difficulty{6}
+\difficulty{5}
 The complexity of \texttt{completeTreeAlice} equals $d$ plus the supremum of the complexities
 of all leaf protocols: $(\mathrm{completeTreeAlice}\,d\,\mathrm{query}\,Q).\mathrm{complexity}
 = d + \sup_{\mathrm{bits}} (Q\,\mathrm{bits}).\mathrm{complexity}$.
@@ -86,7 +86,7 @@ of all leaf protocols: $(\mathrm{completeTreeAlice}\,d\,\mathrm{query}\,Q).\math
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run}
-\difficulty{7}
+\difficulty{6}
 Given a finite nonempty type $\beta$, a function $f : X \to \beta$, and a family of binary
 protocols $Q : \beta \to \mathrm{Protocol}\,X\,Y\,\alpha$, there exists a binary protocol $R$
 such that $R.\mathrm{run}\,x\,y = (Q(f(x))).\mathrm{run}\,x\,y$ for all $x,y$, and whose
@@ -100,7 +100,7 @@ encoding of $\beta$.
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
-\difficulty{5}
+\difficulty{4}
 For every finite-message protocol $p$, there exists a binary protocol $P$ such that
 $P.\mathrm{run} = p.\mathrm{run}$ and $P.\mathrm{complexity} = p.\mathrm{complexity}$.
 This is the key existence result underlying \texttt{toProtocol}.
@@ -161,7 +161,7 @@ $(\texttt{ofProtocol}\,p).\mathrm{run}\,x\,y = p.\mathrm{run}\,x\,y$.
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
-\difficulty{3}
+\difficulty{2}
 For every binary protocol $p$,
 $(\texttt{ofProtocol}\,p).\mathrm{complexity} = p.\mathrm{complexity}$, using the fact that
 $\lceil \log_2 |\mathrm{Bool}| \rceil = 1$.

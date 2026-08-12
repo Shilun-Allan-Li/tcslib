@@ -1,8 +1,38 @@
 from __future__ import annotations
 
+import fcntl
+import os
 import re
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
+
+#: Serialises blueprint mutation across processes.
+#:
+#: Writing a citation is a read-modify-write: `plan_source_insert` reads the .tex and
+#: returns updated text, then `apply_blueprint_mutations` writes it. Two matches running
+#: concurrently on documents that cite the same chapter would both read the old text and
+#: the second write would silently drop the first one's citations. The lock must therefore
+#: span plan *and* apply, not just the write.
+#:
+#: It is held only for the (fast) mutation step, never across the LLM stages, so
+#: independent documents still route, judge and compare fully in parallel.
+_LOCK_PATH = Path(__file__).resolve().parent.parent / ".proofmatch-work" / ".blueprint.lock"
+
+
+@contextmanager
+def blueprint_write_lock():
+    """Hold an exclusive advisory lock for the duration of a plan+apply cycle."""
+    _LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    handle = os.open(_LOCK_PATH, os.O_RDWR | os.O_CREAT, 0o644)
+    try:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
+    finally:
+        os.close(handle)
 
 
 ENV_RE = re.compile(

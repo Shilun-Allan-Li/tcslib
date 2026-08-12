@@ -7,6 +7,7 @@ from typing import Mapping
 
 from proofmatch.blueprint import ENV_RE, LEAN_RE
 from proofmatch.models import Candidate
+from proofmatch.dataset_io import open_dataset
 
 
 @dataclass(frozen=True)
@@ -40,7 +41,7 @@ def load_blueprint_candidates(
     bindings: Mapping[str, BlueprintBinding],
 ) -> tuple[Candidate, ...]:
     candidates = []
-    with dataset.open(encoding="utf-8") as source:
+    with open_dataset(dataset) as source:
         for line_number, line in enumerate(source, start=1):
             try:
                 record = json.loads(line)

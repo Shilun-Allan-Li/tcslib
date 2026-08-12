@@ -26,7 +26,7 @@ switching-lemma $\texttt{Literal}\,n$, recording the same variable index and pol
 \label{BoolCircuit.Lit.eval_eq_toLiteral_eval}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, Literal.eval}
-\difficulty{3}
+\difficulty{2}
 For every literal $l$ and input $x : \mathrm{Fin}\,n \to \mathrm{Bool}$, the circuit
 evaluation $l.\mathrm{eval}\,x$ equals the evaluation of its converted literal
 $l.\mathrm{toLiteral}.\mathrm{eval}\,x$.
@@ -34,6 +34,10 @@ $l.\mathrm{toLiteral}.\mathrm{eval}\,x$.
 
 \begin{definition}[AND-clause to a term]
 \lean{BoolCircuit.NAndCircuit.clauseToTerm}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p001-b004,
+  pdf-fc447f326910-p011-b004
+}
 \label{BoolCircuit.NAndCircuit.clauseToTerm}
 \leanok
 \uses{BoolCircuit.Lit.toLiteral, BoolCircuit.NAndCircuit, Term}
@@ -44,6 +48,10 @@ through \texttt{Lit.toLiteral}.
 
 \begin{definition}[OR-clause to a term]
 \lean{BoolCircuit.NOrCircuit.clauseToTerm}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p002-b004,
+  pdf-fc447f326910-p011-b004
+}
 \label{BoolCircuit.NOrCircuit.clauseToTerm}
 \leanok
 \uses{BoolCircuit.Lit.toLiteral, Term}
@@ -54,6 +62,10 @@ the role of one CNF clause (a disjunction of literals).
 
 \begin{definition}[Depth-2 OR-circuit to a DNF]
 \lean{BoolCircuit.NOrCircuit.toDNF}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p011-b004,
+  pdf-fc447f326910-p001-b004
+}
 \label{BoolCircuit.NOrCircuit.toDNF}
 \leanok
 \uses{BoolCircuit.NAndCircuit.clauseToTerm, DNF}
@@ -64,6 +76,10 @@ a bare clause maps to the empty DNF.
 
 \begin{definition}[Depth-2 AND-circuit to a CNF]
 \lean{BoolCircuit.NAndCircuit.toCNF}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p011-b004,
+  pdf-fc447f326910-p002-b004
+}
 \label{BoolCircuit.NAndCircuit.toCNF}
 \leanok
 \uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.clauseToTerm, CNF}
@@ -77,7 +93,7 @@ a bare clause maps to the empty CNF.
 \label{BoolCircuit.foldr_and_lits_eq_term_eval}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, Term.eval}
-\difficulty{4}
+\difficulty{3}
 For any list of literals $lits$ and input $x$, the right fold of $\&\&$ over the literal
 evaluations (starting from $\mathrm{true}$) equals the term evaluation
 $\texttt{Term.eval}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
@@ -88,7 +104,7 @@ $\texttt{Term.eval}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 \label{BoolCircuit.foldr_or_lits_eq_clause_eval}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, CNF.evalClause}
-\difficulty{4}
+\difficulty{3}
 For any list of literals $lits$ and input $x$, the right fold of $||$ over the literal
 evaluations (starting from $\mathrm{false}$) equals the CNF clause evaluation
 $\texttt{CNF.evalClause}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
@@ -99,7 +115,7 @@ $\texttt{CNF.evalClause}\,(lits.\mathrm{map}\,\texttt{Lit.toLiteral})\,x$.
 \label{BoolCircuit.NOrCircuit.node_eval_eq_toDNF_eval}
 \leanok
 \uses{BoolCircuit.NAndCircuit, BoolCircuit.NAndCircuit.clauseToTerm, BoolCircuit.NAndCircuit.eval, BoolCircuit.NOrCircuit.eval, BoolCircuit.NOrCircuit.toDNF, BoolCircuit.foldr_and_lits_eq_term_eval, DNF.eval}
-\difficulty{5}
+\difficulty{4}
 If every child $c$ of an $\texttt{NOrCircuit}.\mathrm{node}\,cs$ is an AND-clause, then for
 all $x$ the circuit evaluation $(\texttt{NOrCircuit}.\mathrm{node}\,cs).\mathrm{eval}\,x$
 equals the DNF evaluation $\texttt{DNF.eval}\,((\texttt{NOrCircuit}.\mathrm{node}\,cs).\mathrm{toDNF})\,x$.
@@ -110,7 +126,7 @@ equals the DNF evaluation $\texttt{DNF.eval}\,((\texttt{NOrCircuit}.\mathrm{node
 \label{BoolCircuit.NAndCircuit.node_eval_eq_toCNF_eval}
 \leanok
 \uses{BoolCircuit.NAndCircuit.eval, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm, BoolCircuit.NOrCircuit.eval, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, CNF.evalClause, Term.eval}
-\difficulty{6}
+\difficulty{4}
 If every child $c$ of an $\texttt{NAndCircuit}.\mathrm{node}\,cs$ is an OR-clause, then for
 all $x$ the circuit evaluation $(\texttt{NAndCircuit}.\mathrm{node}\,cs).\mathrm{eval}\,x$
 equals the CNF evaluation $\texttt{CNF.eval}\,((\texttt{NAndCircuit}.\mathrm{node}\,cs).\mathrm{toCNF})\,x$.
@@ -121,7 +137,7 @@ equals the CNF evaluation $\texttt{CNF.eval}\,((\texttt{NAndCircuit}.\mathrm{nod
 \label{BoolCircuit.NAndCircuit.clauseToTerm_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm}
-\difficulty{5}
+\difficulty{4}
 If the variable indices of an AND-clause's literals are pairwise distinct, then the
 converted term $(\texttt{NAndCircuit}.\mathrm{clause}\,lits\,h).\mathrm{clauseToTerm}$ has the
 \texttt{Nodup} property.
@@ -193,13 +209,17 @@ $(\texttt{NOrCircuit}.\mathrm{node}\,cs).\mathrm{toDNF}$ has width at most $w$.
 \label{BoolCircuit.NAndCircuit.toCNF_width_bounded}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm_width, CNF.width}
-\difficulty{5}
+\difficulty{4}
 If every OR-clause child has at most $w$ literals (with distinct indices), then the CNF
 $(\texttt{NAndCircuit}.\mathrm{node}\,cs).\mathrm{toCNF}$ has width at most $w$.
 \end{theorem}
 
 \begin{theorem}[DNF terms of a depth-2 OR-circuit have no repeated indices]
 \lean{BoolCircuit.NOrCircuit.toDNF_terms_nodup}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p001-b004,
+  pdf-fc447f326910-p012-b001
+}
 \label{BoolCircuit.NOrCircuit.toDNF_terms_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit, BoolCircuit.NAndCircuit.clauseToTerm_nodup, BoolCircuit.NOrCircuit.toDNF}

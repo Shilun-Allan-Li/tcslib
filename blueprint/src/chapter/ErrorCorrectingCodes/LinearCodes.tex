@@ -39,7 +39,7 @@ $\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
 \lean{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \label{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \leanok
-\difficulty{3}
+\difficulty{2}
 For fixed $x\in\alpha^k$ and $v\in\alpha^n$, the set $\{G : Gx=v\}$ is finite.
 \end{lemma}
 
@@ -68,6 +68,60 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
   pdf-7251cb8e4bc5-p068-b001,
   pdf-7251cb8e4bc5-p068-b002
 }
+
+\proofstep
+  {ErrorCorrectingCodes.Codeword}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p016-b001,
+    pdf-7251cb8e4bc5-p015-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.add}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p042-b002,
+    pdf-7251cb8e4bc5-p042-b003}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.sub}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p047-b004}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.zero}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p042-b005}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_distance}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p018-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.hamming_ball}
+  {direct}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p029-b006}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.uniform_vector_dist}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p062-b003}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.finite_matrix_dist}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p068-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.matrix_dist}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p068-b001,
+    pdf-7251cb8e4bc5-p068-b002}
+\proofstep
+  {ErrorCorrectingCodes.Codeword.get_matrix_row}
+  {context}
+  {ada-coding-book}
+  {pdf-7251cb8e4bc5-p045-b006}
 \uses{ErrorCorrectingCodes.Codeword.matrix_dist, ErrorCorrectingCodes.Codeword.uniform_vector_dist, ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \difficulty{7}
 If $x\neq 0$ and $k\ge 1$, then for a uniformly random $n\times k$ matrix $G$ over $\alpha$,

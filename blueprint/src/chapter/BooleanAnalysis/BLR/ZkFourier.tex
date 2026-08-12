@@ -29,7 +29,7 @@ additive group structure of $(\mathbb{Z}/k\mathbb{Z})^n$.
 \label{ZkFourier.card_ZkVec}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.rootOfUnity}
-\difficulty{2}
+\difficulty{1}
 For $k \geq 1$, the finite type $\texttt{ZkFourier.ZkVec}\ k\ n$ has
 $|\mathbb{Z}_k^n| = k^n$ elements.
 \end{lemma}
@@ -80,7 +80,7 @@ The $k$-th power of the root of unity satisfies $\omega_k^k = 1$.
 \label{ZkFourier.toOmega_zero}
 \leanok
 \uses{ZkFourier.toOmega}
-\difficulty{2}
+\difficulty{1}
 The embedding sends zero to one: $\texttt{ZkFourier.toOmega}\ (0 : \mathbb{Z}/k\mathbb{Z}) = 1$.
 \end{lemma}
 
@@ -89,7 +89,7 @@ The embedding sends zero to one: $\texttt{ZkFourier.toOmega}\ (0 : \mathbb{Z}/k\
 \label{ZkFourier.toOmega_add}
 \leanok
 \uses{ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega}
-\difficulty{4}
+\difficulty{3}
 For $a, b : \mathbb{Z}/k\mathbb{Z}$,
 $\omega_k^{a+b} = \omega_k^a \cdot \omega_k^b$.
 That is, $\texttt{ZkFourier.toOmega}$ is a group homomorphism from
@@ -112,7 +112,7 @@ i.e.\ $\texttt{ZkFourier.toOmega}\ (-a) = \overline{\texttt{ZkFourier.toOmega}\ 
 \label{ZkFourier.norm_toOmega}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
-\difficulty{2}
+\difficulty{1}
 For every $a : \mathbb{Z}/k\mathbb{Z}$, $\|\omega_k^a\| = 1$; the image of
 $\texttt{ZkFourier.toOmega}$ lies on the complex unit circle.
 \end{lemma}
@@ -130,10 +130,14 @@ $\texttt{ZkFourier.toOmega}\ (j \cdot a) = (\omega_k^{j.\mathrm{val}})^{a.\mathr
 
 \begin{lemma}[Geometric sum orthogonality]
 \lean{ZkFourier.geom_sum_toOmega}
+\statementsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b002,
+  pdf-50833afe7403-p022-b003
+}
 \label{ZkFourier.geom_sum_toOmega}
 \leanok
 \uses{ZkFourier.isPrimitiveRoot_rootOfUnity, ZkFourier.rootOfUnity, ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega, ZkFourier.toOmega_mul}
-\difficulty{6}
+\difficulty{5}
 For $j : \mathbb{Z}/k\mathbb{Z}$,
 \[
   \sum_{a \in \mathbb{Z}/k\mathbb{Z}} \omega_k^{j \cdot a}
@@ -231,7 +235,7 @@ basis of $L^2(\mathbb{Z}_k^n)$.
 \label{ZkFourier.zkDot_add_right}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
-\difficulty{3}
+\difficulty{2}
 For $s, x, y \in \mathbb{Z}_k^n$,
 $s \cdot (x + y) = s \cdot x + s \cdot y$.
 \end{lemma}
@@ -259,7 +263,7 @@ For any $s \in \mathbb{Z}_k^n$, $s \cdot 0 = 0$.
 \label{ZkFourier.zkDot_neg_left}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
-\difficulty{3}
+\difficulty{2}
 For $s, x \in \mathbb{Z}_k^n$,
 $(-s) \cdot x = -(s \cdot x)$.
 \end{lemma}
@@ -269,17 +273,21 @@ $(-s) \cdot x = -(s \cdot x)$.
 \label{ZkFourier.zkDot_sub}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
-\difficulty{3}
+\difficulty{2}
 For $s, t, x \in \mathbb{Z}_k^n$,
 $(s - t) \cdot x = s \cdot x - t \cdot x$.
 \end{lemma}
 
 \begin{lemma}[Characters are multiplicative in the input]
 \lean{ZkFourier.char_s_add}
+\statementsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p021-b004,
+  pdf-50833afe7403-p022-b009
+}
 \label{ZkFourier.char_s_add}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_add, ZkFourier.zkDot_add_right}
-\difficulty{2}
+\difficulty{1}
 For $s, x, y \in \mathbb{Z}_k^n$,
 $\chi_s(x + y) = \chi_s(x) \cdot \chi_s(y)$.
 Each character is a group homomorphism from $(\mathbb{Z}_k^n, +)$ to
@@ -291,7 +299,7 @@ $(\mathbb{C}^\times, \cdot)$.
 \label{ZkFourier.char_s_zero_vec}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_zero, ZkFourier.zkDot_zero_right}
-\difficulty{2}
+\difficulty{1}
 For any $s \in \mathbb{Z}_k^n$, $\chi_s(0) = 1$.
 \end{lemma}
 
@@ -300,7 +308,7 @@ For any $s \in \mathbb{Z}_k^n$, $\chi_s(0) = 1$.
 \label{ZkFourier.char_s_zero_index}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_zero, ZkFourier.zkDot_zero_left}
-\difficulty{2}
+\difficulty{1}
 For any $x \in \mathbb{Z}_k^n$, $\chi_0(x) = 1$; the character indexed by
 the zero frequency is identically one.
 \end{lemma}
@@ -319,16 +327,17 @@ For all $s, x \in \mathbb{Z}_k^n$, $\|\chi_s(x)\| = 1$.
 \label{ZkFourier.char_s_ne_zero}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.norm_char_s}
-\difficulty{3}
+\difficulty{2}
 For all $s, x \in \mathbb{Z}_k^n$, $\chi_s(x) \neq 0$.
 \end{lemma}
 
 \begin{lemma}[Conjugate of a character]
 \lean{ZkFourier.char_s_conj}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{ZkFourier.char_s_conj}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_neg, ZkFourier.zkDot_neg_left}
-\difficulty{2}
+\difficulty{1}
 For $s, x \in \mathbb{Z}_k^n$,
 $\overline{\chi_s(x)} = \chi_{-s}(x)$.
 Complex conjugation of a character corresponds to negating its index.
@@ -336,10 +345,107 @@ Complex conjugation of a character corresponds to negating its index.
 
 \begin{lemma}[Product of two characters]
 \lean{ZkFourier.char_s_mul}
+\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{ZkFourier.char_s_mul}
 \leanok
+
+\proofstep
+  {ZkFourier.ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009,
+    pdf-50833afe7403-p021-b001}
+\proofstep
+  {ZkFourier.instDecidableEqZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.instFintypeZkVecOfNeZeroNat}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002,
+    pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.instAddCommGroupZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b001,
+    pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instModuleZModZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b007}
+\proofstep
+  {ZkFourier.rootOfUnity}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.isPrimitiveRoot_rootOfUnity}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.rootOfUnity_pow_k}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b001,
+    pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.toOmega_zero}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.toOmega_add}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.ZkFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.zkDot}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009,
+    pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.zkDot_zero_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.zkDot_zero_right}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s_zero_vec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.char_s_zero_index}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
-\difficulty{4}
+\difficulty{3}
 For $s, t, x \in \mathbb{Z}_k^n$,
 $\chi_s(x) \cdot \chi_t(x) = \chi_{s+t}(x)$.
 Pointwise multiplication of characters corresponds to addition of their
@@ -348,10 +454,14 @@ frequency indices.
 
 \begin{lemma}[Expectation of a nontrivial character is zero]
 \lean{ZkFourier.expectation_char_nontrivial}
+\statementsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b002,
+  pdf-50833afe7403-p022-b003
+}
 \label{ZkFourier.expectation_char_nontrivial}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.geom_sum_toOmega, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
-\difficulty{6}
+\difficulty{5}
 If $s \neq 0$, then $\mathbb{E}[\chi_s] = 0$.
 This follows from the geometric sum identity: when some coordinate $s_i \neq 0$,
 the sum over that coordinate vanishes.
@@ -362,25 +472,278 @@ the sum over that coordinate vanishes.
 \label{ZkFourier.expectation_char_trivial}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation}
-\difficulty{3}
+\difficulty{2}
 $\mathbb{E}[\chi_0] = 1$, since $\chi_0 \equiv 1$ and the sum of $k^n$ ones
 divided by $k^n$ equals one.
 \end{lemma}
 
 \begin{lemma}[Self-inner-product of a character]
 \lean{ZkFourier.inner_product_char_self}
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b004,
+  pdf-50833afe7403-p022-b005
+}
 \label{ZkFourier.inner_product_char_self}
 \leanok
+
+\proofstep
+  {ZkFourier.ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002,
+    pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.instDecidableEqZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instFintypeZkVecOfNeZeroNat}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002,
+    pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.instAddCommGroupZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b001}
+\proofstep
+  {ZkFourier.instModuleZModZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b007}
+\proofstep
+  {ZkFourier.card_ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b006}
+\proofstep
+  {ZkFourier.rootOfUnity}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega_zero}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.norm_toOmega}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.ZkFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.expectation}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.inner_product}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.zkDot}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009,
+    pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.zkDot_zero_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.zkDot_zero_right}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s_zero_vec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.char_s_zero_index}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
+\proofstep
+  {ZkFourier.norm_char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
 \uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.inner_product, ZkFourier.norm_char_s}
-\difficulty{3}
+\difficulty{2}
 For any $s \in \mathbb{Z}_k^n$, $\langle \chi_s, \chi_s \rangle = 1$.
 Every character is a unit-norm vector in $L^2(\mathbb{Z}_k^n)$.
 \end{lemma}
 
 \begin{lemma}[Orthogonality of distinct characters]
 \lean{ZkFourier.inner_product_char_nonself}
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b004,
+  pdf-50833afe7403-p022-b005
+}
 \label{ZkFourier.inner_product_char_nonself}
 \leanok
+
+\proofstep
+  {ZkFourier.ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002,
+    pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.instDecidableEqZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instFintypeZkVecOfNeZeroNat}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instAddCommGroupZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b001}
+\proofstep
+  {ZkFourier.instModuleZModZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b007}
+\proofstep
+  {ZkFourier.rootOfUnity}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.isPrimitiveRoot_rootOfUnity}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007,
+    pdf-50833afe7403-p022-b006}
+\proofstep
+  {ZkFourier.rootOfUnity_pow_k}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b001,
+    pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.toOmega_zero}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.toOmega_add}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.toOmega_neg}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b005}
+\proofstep
+  {ZkFourier.toOmega_mul}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.geom_sum_toOmega}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p022-b003}
+\proofstep
+  {ZkFourier.ZkFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.expectation}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.inner_product}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.zkDot}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.zkDot_zero_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.zkDot_zero_right}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.zkDot_neg_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002}
+\proofstep
+  {ZkFourier.char_s_zero_vec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.char_s_zero_index}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
+\proofstep
+  {ZkFourier.char_s_conj}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002}
+\proofstep
+  {ZkFourier.char_s_mul}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002}
+\proofstep
+  {ZkFourier.expectation_char_nontrivial}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p022-b003}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.char_s_mul, ZkFourier.expectation_char_nontrivial, ZkFourier.inner_product}
 \difficulty{3}
 If $s \neq t$, then $\langle \chi_s, \chi_t \rangle = 0$.
@@ -404,8 +767,126 @@ $s$ is
 
 \begin{lemma}[Fourier coefficient of a character at its own frequency]
 \lean{ZkFourier.fourier_coeff_char_self}
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b005,
+  pdf-50833afe7403-p022-b004
+}
 \label{ZkFourier.fourier_coeff_char_self}
 \leanok
+
+\proofstep
+  {ZkFourier.ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002,
+    pdf-50833afe7403-p021-b001}
+\proofstep
+  {ZkFourier.instDecidableEqZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instFintypeZkVecOfNeZeroNat}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instAddCommGroupZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b001}
+\proofstep
+  {ZkFourier.instModuleZModZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b007}
+\proofstep
+  {ZkFourier.card_ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b006}
+\proofstep
+  {ZkFourier.rootOfUnity}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega_zero}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.norm_toOmega}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.ZkFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.expectation}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.inner_product}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.zkDot}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009,
+    pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.zkDot_zero_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.zkDot_zero_right}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s_zero_vec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.char_s_zero_index}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
+\proofstep
+  {ZkFourier.norm_char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.inner_product_char_self}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b005,
+    pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.fourier_coeff}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_self}
 \difficulty{1}
 For any $s \in \mathbb{Z}_k^n$,
@@ -414,8 +895,171 @@ $\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
 
 \begin{lemma}[Fourier coefficient of a character at a different frequency]
 \lean{ZkFourier.fourier_coeff_char_of_ne}
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p022-b004,
+  pdf-50833afe7403-p022-b005
+}
 \label{ZkFourier.fourier_coeff_char_of_ne}
 \leanok
+
+\proofstep
+  {ZkFourier.ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009,
+    pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instDecidableEqZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.instFintypeZkVecOfNeZeroNat}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002,
+    pdf-50833afe7403-p021-b004}
+\proofstep
+  {ZkFourier.instAddCommGroupZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b001,
+    pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.instModuleZModZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b007}
+\proofstep
+  {ZkFourier.rootOfUnity}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007,
+    pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.isPrimitiveRoot_rootOfUnity}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007,
+    pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.rootOfUnity_pow_k}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b001,
+    pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.toOmega_zero}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.toOmega_add}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.toOmega_neg}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b001,
+    pdf-50833afe7403-p022-b001}
+\proofstep
+  {ZkFourier.toOmega_mul}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.geom_sum_toOmega}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p022-b003}
+\proofstep
+  {ZkFourier.ZkFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.expectation}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.inner_product}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.zkDot}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009,
+    pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.zkDot_zero_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
+\proofstep
+  {ZkFourier.zkDot_zero_right}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.zkDot_neg_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002}
+\proofstep
+  {ZkFourier.char_s_zero_vec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b004}
+\proofstep
+  {ZkFourier.char_s_zero_index}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
+\proofstep
+  {ZkFourier.char_s_conj}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002,
+    pdf-50833afe7403-p022-b001}
+\proofstep
+  {ZkFourier.char_s_mul}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002}
+\proofstep
+  {ZkFourier.expectation_char_nontrivial}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p022-b003}
+\proofstep
+  {ZkFourier.inner_product_char_nonself}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b004,
+    pdf-50833afe7403-p022-b005}
+\proofstep
+  {ZkFourier.fourier_coeff}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b003,
+    pdf-50833afe7403-p005-b001}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_nonself}
 \difficulty{1}
 If $s \neq t$, then $\widehat{\chi_s}(t) = \langle \chi_s, \chi_t \rangle = 0$.
@@ -430,7 +1074,7 @@ If $s \neq t$, then $\widehat{\chi_s}(t) = \langle \chi_s, \chi_t \rangle = 0$.
   pdf-50833afe7403-p022-b009
 }
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.zkDot}
-\difficulty{7}
+\difficulty{6}
 Every function $f : \mathbb{Z}_k^n \to \mathbb{C}$ admits the Fourier expansion
 \[
   f(x) = \sum_{s \in \mathbb{Z}_k^n} \hat{f}(s)\,\chi_s(x).
@@ -440,10 +1084,184 @@ The characters form a complete orthonormal basis of $L^2(\mathbb{Z}_k^n)$.
 
 \begin{lemma}[Parseval's identity]
 \lean{ZkFourier.parseval_identity}
+\proofsource{boolean-ch08-generalized-domains}{
+  pdf-50833afe7403-p006-b001,
+  pdf-50833afe7403-p005-b006,
+  pdf-50833afe7403-p021-b003
+}
 \label{ZkFourier.parseval_identity}
 \leanok
+
+\proofstep
+  {ZkFourier.ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002,
+    pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.instDecidableEqZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instFintypeZkVecOfNeZeroNat}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.instAddCommGroupZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b001}
+\proofstep
+  {ZkFourier.instModuleZModZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b007}
+\proofstep
+  {ZkFourier.card_ZkVec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p002-b006}
+\proofstep
+  {ZkFourier.rootOfUnity}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.toOmega}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.isPrimitiveRoot_rootOfUnity}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007,
+    pdf-50833afe7403-p022-b006}
+\proofstep
+  {ZkFourier.rootOfUnity_pow_k}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b001,
+    pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.toOmega_zero}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.toOmega_add}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.toOmega_neg}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b001,
+    pdf-50833afe7403-p023-b001}
+\proofstep
+  {ZkFourier.toOmega_mul}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.geom_sum_toOmega}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p022-b003}
+\proofstep
+  {ZkFourier.ZkFun}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.expectation}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.inner_product}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.L2_norm_sq}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p021-b002}
+\proofstep
+  {ZkFourier.zkDot}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.char_s}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009,
+    pdf-50833afe7403-p022-b007}
+\proofstep
+  {ZkFourier.zkDot_add_right}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.zkDot_zero_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
+\proofstep
+  {ZkFourier.zkDot_zero_right}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b009}
+\proofstep
+  {ZkFourier.zkDot_neg_left}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002}
+\proofstep
+  {ZkFourier.char_s_add}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.char_s_zero_vec}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002}
+\proofstep
+  {ZkFourier.char_s_zero_index}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b008}
+\proofstep
+  {ZkFourier.char_s_conj}
+  {context}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p023-b002}
+\proofstep
+  {ZkFourier.expectation_char_nontrivial}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p022-b002,
+    pdf-50833afe7403-p022-b003}
+\proofstep
+  {ZkFourier.fourier_coeff}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001}
+\proofstep
+  {ZkFourier.fourier_expansion}
+  {direct}
+  {boolean-ch08-generalized-domains}
+  {pdf-50833afe7403-p005-b001,
+    pdf-50833afe7403-p022-b009}
 \uses{ZkFourier.L2_norm_sq, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion}
-\difficulty{6}
+\difficulty{5}
 For any $f : \mathbb{Z}_k^n \to \mathbb{C}$,
 \[
   \sum_{s \in \mathbb{Z}_k^n} |\hat{f}(s)|^2 = \|f\|_2^2.
@@ -454,10 +1272,11 @@ Fourier transform.
 
 \begin{lemma}[Convolution theorem]
 \lean{ZkFourier.fourier_coeff_convolution}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b006}
 \label{ZkFourier.fourier_coeff_convolution}
 \leanok
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s_add, ZkFourier.convolution, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.inner_product}
-\difficulty{5}
+\difficulty{4}
 For $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ and $s \in \mathbb{Z}_k^n$,
 \[
   \widehat{f * g}(s) = \hat{f}(s)\,\hat{g}(s).

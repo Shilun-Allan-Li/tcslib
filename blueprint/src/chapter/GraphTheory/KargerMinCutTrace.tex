@@ -58,7 +58,7 @@ run of length $n$ followed by one surviving step.
 \label{KargerTrace.edgeCount_pos_of_mem}
 \leanok
 \uses{Multigraph, Multigraph.edgeCount}
-\difficulty{2}
+\difficulty{1}
 If $e$ is an edge of a multigraph $G$, then $G$ has positive edge count.
 \end{lemma}
 
@@ -107,7 +107,7 @@ count.
 \label{KargerTrace.survivingRun_cut_size_eq}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_cut_size_eq, MulCut.size}
-\difficulty{3}
+\difficulty{2}
 If $t$ is reachable from $s$ by a surviving run of any length, then
 $t.C.\mathrm{size} = s.C.\mathrm{size}$.
 \end{lemma}
@@ -117,7 +117,7 @@ $t.C.\mathrm{size} = s.C.\mathrm{size}$.
 \label{KargerTrace.survivingRun_mincut}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_mincut}
-\difficulty{3}
+\difficulty{2}
 If $t$ is reachable from $s$ by a surviving run and $s.C$ is a min-cut, then $t.C$ is a
 min-cut.
 \end{lemma}
@@ -127,7 +127,7 @@ min-cut.
 \label{KargerTrace.survivingRun_vertexCount_eq}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_vertexCount_eq, Multigraph.vertexCount}
-\difficulty{4}
+\difficulty{3}
 If $t$ is reachable from $s$ by a surviving run of $n$ steps, then
 $t.G.\mathrm{vertexCount} = s.G.\mathrm{vertexCount} - n$ (truncated subtraction on
 $\mathbb{N}$).
@@ -151,7 +151,7 @@ reached after the run still satisfies the handshaking lower bound
 \label{KargerTrace.survivingRun_edge_count_invariant_indexed}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingRun_edge_count_invariant, KargerTrace.survivingRun_vertexCount_eq, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount}
-\difficulty{3}
+\difficulty{2}
 The same invariant, with the vertex count after $n$ contractions written explicitly: for a
 surviving run of $n$ steps from $s$ to $t$ with $s.C$ a min-cut,
 \[
@@ -164,7 +164,7 @@ surviving run of $n$ steps from $s$ to $t$ with $s.C$ a min-cut,
 \label{KargerTrace.survivalProb_ge_factor}
 \leanok
 \uses{survivalProb}
-\difficulty{5}
+\difficulty{4}
 For naturals $c, n, m$ with $2 \le n$, $0 < m$ and $c\,n \le 2m$, the survival probability
 $1 - c/m$ satisfies
 \[
@@ -177,7 +177,7 @@ $1 - c/m$ satisfies
 \label{KargerTrace.survivingStep_survivalProb_ge_factor}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.survivalProb_ge_factor, KargerTrace.survivingStep_edgeCount_pos, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, edge_count_lower_bound, mincut_le_degree, survivalProb}
-\difficulty{4}
+\difficulty{3}
 If a surviving step is possible from $s$, the distinguished cut $s.C$ is a min-cut, and
 $s.G$ has at least two vertices, then writing $n = s.G.\mathrm{vertexCount}$,
 \[
@@ -231,7 +231,7 @@ cross the cut.
 \label{KargerTrace.nonCrossingChoiceCount_eq_edgeCount_sub_cutSize}
 \leanok
 \uses{Crosses, KargerTrace.State, KargerTrace.nonCrossingChoiceCount, MulCut.size, Multigraph.edgeCount, crossingEdges_eq_filter_crosses}
-\difficulty{5}
+\difficulty{4}
 For every state $s$, the number of non-crossing edge choices equals
 $s.G.\mathrm{edgeCount} - s.C.\mathrm{size}$.
 \end{lemma}
@@ -250,7 +250,7 @@ For every state $s$, $s.C.\mathrm{size} \le s.G.\mathrm{edgeCount}$.
 \label{KargerTrace.uniformSurvivalProb_eq_survivalProb}
 \leanok
 \uses{KargerTrace.State, KargerTrace.cut_size_le_edgeCount, KargerTrace.nonCrossingChoiceCount_eq_edgeCount_sub_cutSize, KargerTrace.uniformSurvivalProb, MulCut.size, Multigraph.edgeCount, survivalProb}
-\difficulty{4}
+\difficulty{3}
 If $s.G$ has at least one edge, the uniform survival probability of $s$ equals
 $\mathrm{survivalProb}(s.C.\mathrm{size},\, s.G.\mathrm{edgeCount}) = 1 - c/m$ with
 $c = s.C.\mathrm{size}$ and $m = s.G.\mathrm{edgeCount}$.
@@ -288,7 +288,7 @@ The occurrence sample space of a state has cardinality $s.G.\mathrm{edgeCount}$.
 \lean{KargerTrace.toEnumFinset_filter_fst_card_eq_filter_card}
 \label{KargerTrace.toEnumFinset_filter_fst_card_eq_filter_card}
 \leanok
-\difficulty{5}
+\difficulty{4}
 For a multiset $m$ and a decidable predicate $p$, the number of enumerated occurrences of
 $m$ whose first coordinate satisfies $p$ equals the cardinality of the sub-multiset of $m$
 filtered by $p$.
@@ -299,7 +299,7 @@ filtered by $p$.
 \label{KargerTrace.edgeChoiceSurvivalCount_eq_nonCrossingChoiceCount}
 \leanok
 \uses{Crosses, KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives, KargerTrace.nonCrossingChoiceCount, KargerTrace.nonCrossingEdges, KargerTrace.toEnumFinset_filter_fst_card_eq_filter_card}
-\difficulty{2}
+\difficulty{1}
 The number of surviving edge occurrences of a state equals its number of non-crossing edge
 choices.
 \end{lemma}
@@ -318,7 +318,7 @@ occurrences, i.e.\ the concrete one-step survival probability of the finite samp
 \label{KargerTrace.edgeChoiceSurvivalRatio_eq_uniformSurvivalProb}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace_card, KargerTrace.edgeChoiceSurvivalCount_eq_nonCrossingChoiceCount, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.uniformSurvivalProb}
-\difficulty{2}
+\difficulty{1}
 For every state, the occurrence-space survival ratio coincides with the uniform survival
 probability.
 \end{lemma}
@@ -400,7 +400,7 @@ contributing $0$.
 \label{KargerTrace.edgeChoice_attach_filter_card}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives}
-\difficulty{3}
+\difficulty{2}
 Counting surviving occurrences in the attached (subtype) version of the sample space gives
 the same number as counting them in the sample space itself.
 \end{lemma}
@@ -423,7 +423,7 @@ where terms failing $p$ contribute $0$.
 \label{KargerTrace.survivalEventProb_step_lower_bound}
 \leanok
 \uses{KargerTrace.State, KargerTrace.card_mul_le_sum_ite_of_lower_bound, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.edgeChoiceSurvives, KargerTrace.edgeChoice_attach_filter_card, KargerTrace.stateAfterSurvivingChoice, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_succ}
-\difficulty{6}
+\difficulty{5}
 If the occurrence sample space of $s$ is nonempty and every surviving branch has recursive
 survival probability at least $B$, then the averaged survival probability for one more step
 satisfies
@@ -438,7 +438,7 @@ satisfies
 \label{KargerTrace.edgeChoiceSurvivalRatio_ge_factor}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.cut_size_le_edgeCount, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.edgeChoiceSurvivalRatio_eq_uniformSurvivalProb, KargerTrace.survivalProb_ge_factor, KargerTrace.uniformSurvivalProb_eq_survivalProb, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, edge_count_lower_bound, mincut_le_degree}
-\difficulty{4}
+\difficulty{3}
 If $s.C$ is a min-cut of positive size and $s.G$ has at least two vertices, then with
 $n = s.G.\mathrm{vertexCount}$,
 \[
@@ -451,7 +451,7 @@ $n = s.G.\mathrm{vertexCount}$,
 \label{KargerTrace.survivalEventProb_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.cut_size_le_edgeCount, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSpace_card, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.edgeChoiceSurvivalRatio_ge_factor, KargerTrace.stateAfterSurvivingChoice, KargerTrace.stateAfterSurvivingChoice_step, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_step_lower_bound, KargerTrace.survivingStep_cut_size_eq, KargerTrace.survivingStep_mincut, KargerTrace.survivingStep_vertexCount_eq, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount}
-\difficulty{7}
+\difficulty{6}
 For every $n$ and every state $s$ whose distinguished cut is a min-cut of positive size,
 if $2 \le n$ and $s.G$ has exactly $n$ vertices, then the recursive sampling model
 survives $n-2$ contractions with probability at least
@@ -527,7 +527,7 @@ occurrence.
 \label{KargerTrace.graphAfterChoice_vertexCount_eq}
 \leanok
 \uses{KargerTrace.graphAfterChoice, KargerTrace.graphChoiceSpace, KargerTrace.graphChoice_mem_edges, Multigraph, Multigraph.vertexCount, contract_vertex_count}
-\difficulty{3}
+\difficulty{2}
 Contracting along any sampled edge occurrence decreases the vertex count by exactly one.
 \end{lemma}
 
@@ -556,7 +556,7 @@ of the algorithm without tracking any distinguished cut.
 \label{KargerTrace.kargerGraphRun_vertexCount_eq}
 \leanok
 \uses{KargerTrace.KargerGraphRun, KargerTrace.graphAfterChoice_vertexCount_eq, Multigraph, Multigraph.vertexCount}
-\difficulty{4}
+\difficulty{3}
 If $H$ is reachable from $G$ by a graph run of $\text{steps}$ contractions, then
 $H.\mathrm{vertexCount} = G.\mathrm{vertexCount} - \text{steps}$.
 \end{lemma}
@@ -586,7 +586,7 @@ two-vertex multigraph.
 \label{KargerTrace.choice_mem_graphChoiceSpace_of_edge_mem}
 \leanok
 \uses{KargerTrace.graphChoiceSpace, Multigraph}
-\difficulty{3}
+\difficulty{2}
 If $e$ is an edge of $G$, then the occurrence $(e, 0)$ belongs to the graph-only
 occurrence space of $G$.
 \end{lemma}
@@ -606,7 +606,7 @@ contraction produces exactly $t.G$.
 \label{KargerTrace.survivingRun_graphRun}
 \leanok
 \uses{KargerTrace.KargerGraphRun, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_graphChoice}
-\difficulty{4}
+\difficulty{3}
 A surviving run of $\text{steps}$ steps from $s$ to $t$ induces a graph-only Karger run of
 the same length from $s.G$ to $t.G$.
 \end{lemma}
@@ -638,7 +638,7 @@ the process.
 \label{KargerTrace.kargerGraphTrace_prefix_run}
 \leanok
 \uses{KargerTrace.KargerGraphRun, KargerTrace.KargerGraphTrace, KargerTrace.graphAfterChoice}
-\difficulty{5}
+\difficulty{3}
 For $i \le \text{steps}$, the first $i$ stages of an adaptive graph trace form a graph run
 from the initial graph to the graph at index $i$.
 \end{lemma}
@@ -658,7 +658,7 @@ equal to the initial vertex count minus $i$.
 \label{KargerTrace.kargerGraphTrace_full_output}
 \leanok
 \uses{KargerOutput, KargerTrace.KargerGraphTrace, KargerTrace.kargerGraphTrace_vertexCount_eq, Multigraph.vertexCount}
-\difficulty{3}
+\difficulty{2}
 If $2 \le n$ and an adaptive graph trace of $n-2$ steps starts from a graph with $n$
 vertices, then its final graph is a Karger output.
 \end{lemma}
@@ -678,7 +678,7 @@ starting from an $n$-vertex graph with $n \ge 2$ ends with a two-vertex graph.
 \label{KargerTrace.karger_algorithmic_trace_summary}
 \leanok
 \uses{IsMulMinCut, KargerOutput, KargerTrace.KargerGraphTrace, KargerTrace.State, KargerTrace.kargerGraphTrace_full_output, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_initial_lower_bound, MulCut.size, Multigraph.vertexCount}
-\difficulty{3}
+\difficulty{2}
 For a state $s$ whose distinguished cut is a min-cut of positive size and whose graph has
 $n = s.G.\mathrm{vertexCount} \ge 2$ vertices, both of the following hold: the recursive
 sampling model survives $n-2$ contractions with probability at least $2/(n(n-1))$, and
@@ -720,7 +720,7 @@ distinguished cuts and choosing, at each step, an occurrence realizing the survi
 \label{KargerTrace.survivingTrace_prefix_run}
 \leanok
 \uses{KargerTrace.SurvivingRun, KargerTrace.SurvivingTrace}
-\difficulty{4}
+\difficulty{3}
 For $i \le \text{steps}$, the first $i$ stages of an indexed surviving trace form a
 surviving run from the initial state to the state at index $i$.
 \end{lemma}
@@ -770,7 +770,7 @@ where $n_i$ is the vertex count at index $i$.
 \label{KargerTrace.survivingTrace_factor_product_eq_telescope}
 \leanok
 \uses{KargerTrace.SurvivingTrace, KargerTrace.survivingTrace_vertexCount_eq, Multigraph.vertexCount}
-\difficulty{5}
+\difficulty{4}
 If a surviving trace has $\text{steps} = n-2$ and starts from a graph with $n$ vertices,
 then
 \[
@@ -784,7 +784,7 @@ then
 \label{KargerTrace.survivingTrace_product_survival_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.SurvivingTrace, KargerTrace.survivingTrace_factor_product_eq_telescope, KargerTrace.survivingTrace_factor_product_le_survival_product, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, survivalProb, telescope_prod}
-\difficulty{4}
+\difficulty{3}
 For an indexed surviving trace of $n-2$ steps starting from an $n$-vertex graph with
 $n \ge 2$, initial min-cut, and at least two vertices at every step,
 \[
@@ -808,7 +808,7 @@ states of an indexed surviving trace.
 \label{KargerTrace.survivingTrace_uniform_product_eq_survival_product}
 \leanok
 \uses{KargerTrace.SurvivingTrace, KargerTrace.survivingStep_edgeCount_pos, KargerTrace.survivingTraceUniformSurvivalProduct, KargerTrace.uniformSurvivalProb_eq_survivalProb, MulCut.size, Multigraph.edgeCount, survivalProb}
-\difficulty{3}
+\difficulty{2}
 The uniform survival product of a trace equals the product over $i < \text{steps}$ of
 $\mathrm{survivalProb}$ applied to the cut size and edge count at index $i$.
 \end{lemma}
@@ -818,7 +818,7 @@ $\mathrm{survivalProb}$ applied to the cut size and edge count at index $i$.
 \label{KargerTrace.survivingTrace_uniform_product_eq_initial_cut_survival_product}
 \leanok
 \uses{KargerTrace.SurvivingRun, KargerTrace.SurvivingTrace, KargerTrace.survivingRun_cut_size_eq, KargerTrace.survivingTraceUniformSurvivalProduct, KargerTrace.survivingTrace_prefix_run, KargerTrace.survivingTrace_uniform_product_eq_survival_product, MulCut.size, Multigraph.edgeCount, survivalProb}
-\difficulty{4}
+\difficulty{3}
 The same product may be written using the initial cut size at every index, since cut size
 is invariant along a surviving trace.
 \end{lemma}
@@ -847,7 +847,7 @@ states of an indexed surviving trace.
 \label{KargerTrace.survivingTrace_edgeChoice_product_eq_uniform_product}
 \leanok
 \uses{KargerTrace.SurvivingTrace, KargerTrace.edgeChoiceSurvivalRatio_eq_uniformSurvivalProb, KargerTrace.survivingTraceEdgeChoiceSurvivalProduct, KargerTrace.survivingTraceUniformSurvivalProduct}
-\difficulty{3}
+\difficulty{2}
 For every indexed surviving trace, the product of occurrence-space survival ratios equals
 the product of uniform survival probabilities.
 \end{lemma}
@@ -857,7 +857,7 @@ the product of uniform survival probabilities.
 \label{KargerTrace.survivingTrace_edgeChoice_survival_product_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.SurvivingTrace, KargerTrace.survivingTraceEdgeChoiceSurvivalProduct, KargerTrace.survivingTrace_edgeChoice_product_eq_uniform_product, KargerTrace.survivingTrace_uniform_survival_product_lower_bound, Multigraph.vertexCount}
-\difficulty{2}
+\difficulty{1}
 For an indexed surviving trace of $n-2$ steps starting from an $n$-vertex graph with
 $n \ge 2$, initial min-cut, and at least two vertices at every step, the product of the
 finite uniform edge-choice survival ratios is at least $2/(n(n-1))$.

@@ -12,6 +12,7 @@ decision trees) needed elsewhere in the switching-lemma proof.
 
 \begin{definition}[Evaluation of a literal]
 \lean{BoolCircuit.Lit.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
 \label{BoolCircuit.Lit.eval}
 \leanok
 \uses{BoolCircuit.Lit}
@@ -22,6 +23,7 @@ the value $l.\mathrm{eval}\,x$ is $x_{l.\mathrm{idx}}$ when $l$ is positive
 
 \begin{definition}[Boolean circuit tree]
 \lean{BoolCircuit.Circuit}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.Circuit}
 \leanok
 \uses{BoolCircuit.Lit}
@@ -37,7 +39,7 @@ imposed.
 \label{BoolCircuit.Circuit.ind}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval}
-\difficulty{4}
+\difficulty{5}
 An induction principle for \texttt{Circuit} stating that to prove a predicate
 $\mathrm{motive}$ holds for every circuit it suffices to prove it for every literal and,
 in the node case, to prove $\mathrm{motive}(\texttt{node}\,isAnd\,cs)$ assuming
@@ -47,6 +49,7 @@ support for nested inductives.
 
 \begin{definition}[Evaluation of a circuit]
 \lean{BoolCircuit.Circuit.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.Circuit.eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Lit.eval}
@@ -67,6 +70,7 @@ contributes the sum of the literal counts of its children.
 
 \begin{definition}[Depth of a circuit]
 \lean{BoolCircuit.Circuit.depth}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.Circuit.depth}
 \leanok
 \uses{BoolCircuit.Circuit}
@@ -76,6 +80,7 @@ has depth $1$ plus the maximum depth among its children.
 
 \begin{definition}[Size of a circuit]
 \lean{BoolCircuit.Circuit.size}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b001}
 \label{BoolCircuit.Circuit.size}
 \leanok
 \uses{BoolCircuit.Circuit}
@@ -102,6 +107,7 @@ The sum of the sizes over a list $cs$ of circuits, used to compute the size at a
 
 \begin{definition}[Maximum fanin of a circuit]
 \lean{BoolCircuit.Circuit.maxFanin}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b001}
 \label{BoolCircuit.Circuit.maxFanin}
 \leanok
 \uses{BoolCircuit.Circuit}
@@ -112,6 +118,7 @@ its children.
 
 \begin{definition}[Normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.NAndCircuit}
 \leanok
 \uses{BoolCircuit.Lit}
@@ -124,6 +131,7 @@ alternating AND/OR normal form.
 
 \begin{definition}[Evaluation of a normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.NAndCircuit.eval}
 \leanok
 \uses{BoolCircuit.Lit.eval, BoolCircuit.NAndCircuit}
@@ -134,6 +142,7 @@ OR circuits' values.
 
 \begin{definition}[Evaluation of a normal-form OR circuit]
 \lean{BoolCircuit.NOrCircuit.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.NOrCircuit.eval}
 \leanok
 \uses{BoolCircuit.Lit.eval, BoolCircuit.NAndCircuit.eval}
@@ -162,6 +171,7 @@ length of its literal list, and a node contributes the sum over its child AND ci
 
 \begin{definition}[Size of a normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit.size}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b001}
 \label{BoolCircuit.NAndCircuit.size}
 \leanok
 \uses{BoolCircuit.NAndCircuit}
@@ -171,6 +181,7 @@ size $1$ plus the sum of the sizes of its child OR circuits.
 
 \begin{definition}[Size of a normal-form OR circuit]
 \lean{BoolCircuit.NOrCircuit.size}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b001}
 \label{BoolCircuit.NOrCircuit.size}
 \leanok
 \uses{BoolCircuit.NAndCircuit.size}
@@ -180,6 +191,7 @@ size $1$ plus the sum of the sizes of its child AND circuits.
 
 \begin{definition}[Depth of a normal-form AND circuit]
 \lean{BoolCircuit.NAndCircuit.depth}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.NAndCircuit.depth}
 \leanok
 \uses{BoolCircuit.NAndCircuit}
@@ -189,6 +201,7 @@ plus the maximum depth among its child OR circuits.
 
 \begin{definition}[Depth of a normal-form OR circuit]
 \lean{BoolCircuit.NOrCircuit.depth}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p011-b004}
 \label{BoolCircuit.NOrCircuit.depth}
 \leanok
 \uses{BoolCircuit.NAndCircuit.depth}
@@ -231,6 +244,7 @@ in fact equal, $l_1 = l_2$.
 
 \begin{definition}[Normalize a circuit to AND-normal form]
 \lean{BoolCircuit.Circuit.toNAnd}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b002}
 \label{BoolCircuit.Circuit.toNAnd}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.NAndCircuit}
@@ -242,6 +256,7 @@ alternation.
 
 \begin{definition}[Normalize a circuit to OR-normal form]
 \lean{BoolCircuit.Circuit.toNOr}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b002}
 \label{BoolCircuit.Circuit.toNOr}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.toNAnd}
@@ -285,7 +300,7 @@ over $cs$.
 \lean{BoolCircuit.foldr_add_map_le}
 \label{BoolCircuit.foldr_add_map_le}
 \leanok
-\difficulty{4}
+\difficulty{3}
 A technical lemma: if $g(h\,c) \le k \cdot f\,c$ for all $c \in cs$, then the additive
 \texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ is at most $k$ times the additive
 \texttt{foldr} of $f$ over $cs$.
@@ -355,10 +370,11 @@ $(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
 
 \begin{theorem}[Normalization at most doubles size]
 \lean{BoolCircuit.toNAnd_toNOr_size_le}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b002}
 \label{BoolCircuit.toNAnd_toNOr_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.size, BoolCircuit.NOrCircuit.size, BoolCircuit.foldr_add_map_le}
-\difficulty{7}
+\difficulty{6}
 For every circuit $c$, both normalizations have size at most twice the original:
 $(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$ and
 $(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
@@ -376,6 +392,7 @@ $(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 
 \begin{theorem}[OR-normalization at most doubles size]
 \lean{BoolCircuit.toNOr_size_le}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b002}
 \label{BoolCircuit.toNOr_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.size, BoolCircuit.toNAnd_toNOr_size_le}
@@ -436,6 +453,7 @@ The constant-false OR circuit, given by the empty clause (an empty disjunction).
 
 \begin{definition}[Evaluation of a literal]
 \lean{Literal.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
 \label{Literal.eval}
 \leanok
 \uses{Literal}
@@ -446,6 +464,11 @@ $\lnot x_{l.\mathrm{var}}$ for a negated one.
 
 \begin{definition}[Width of a CNF formula]
 \lean{CNF.width}
+\statementsource{boolean-ch04-dnf-switching-lmn}{
+  pdf-fc447f326910-p002-b004,
+  pdf-fc447f326910-p002-b002
+}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{CNF.width}
 \leanok
 \uses{CNF, Term.width}
@@ -455,6 +478,7 @@ for the empty formula).
 
 \begin{definition}[Evaluation of a decision tree]
 \lean{DecisionTree.eval}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \label{DecisionTree.eval}
 \leanok
 \uses{DecisionTree}
@@ -465,6 +489,7 @@ otherwise.
 
 \begin{definition}[Depth of a decision tree]
 \lean{DecisionTree.depth}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \label{DecisionTree.depth}
 \leanok
 \uses{DecisionTree}
@@ -487,7 +512,7 @@ $(\text{queried variable}, \text{branch direction})$ pairs along that path.
 \label{DecisionTree.length_deepPath}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, DecisionTree.depth}
-\difficulty{4}
+\difficulty{3}
 For every decision tree $T$, the length of its deepest path equals its depth:
 $T.\mathrm{deepPath}.\mathrm{length} = T.\mathrm{depth}$.
 \end{lemma}
@@ -497,7 +522,7 @@ $T.\mathrm{deepPath}.\mathrm{length} = T.\mathrm{depth}$.
 \label{buildFullDTree_depth}
 \leanok
 \uses{DecisionTree.depth, buildFullDTree}
-\difficulty{5}
+\difficulty{4}
 For a function $f$, an index $k \le n$, and an accumulator assignment $acc$, the complete
 decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ that queries variables
 $k, k+1, \dots, n-1$ in order has depth at most $n - k$.
@@ -508,7 +533,7 @@ $k, k+1, \dots, n-1$ in order has depth at most $n - k$.
 \label{buildFullDTree_eval}
 \leanok
 \uses{DecisionTree.eval, buildFullDTree}
-\difficulty{6}
+\difficulty{5}
 For a function $f$, an index $k \le n$, and assignments $acc, x$ agreeing on all
 coordinates below $k$ (i.e. $acc\,i = x\,i$ whenever $i.\mathrm{val} < k$), the complete
 decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ evaluates to $f\,x$ on $x$.
@@ -519,6 +544,7 @@ decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ evaluates to $f\,x$ on $x$.
 
 \begin{definition}[Circuit literal]
 \lean{BoolCircuit.Lit}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
 \label{BoolCircuit.Lit}
 \leanok
 A literal for Boolean circuits: a variable index $\mathtt{idx} : \mathrm{Fin}\,n$
@@ -527,6 +553,7 @@ together with a polarity $\mathtt{sign} : \mathrm{Bool}$ (true = positive occurr
 
 \begin{definition}[Literal]
 \lean{Literal}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
 \label{Literal}
 \leanok
 A literal for switching-lemma formulas: a variable $\mathtt{var} : \mathrm{Fin}\,n$
@@ -535,6 +562,8 @@ with a negation flag $\mathtt{neg} : \mathrm{Bool}$ (true = negated literal).
 
 \begin{definition}[Term]
 \lean{Term}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{Term}
 \leanok
 \uses{Literal}
@@ -544,6 +573,8 @@ $\mathtt{Term}\,n = \mathtt{List}\,(\mathtt{Literal}\,n)$.
 
 \begin{definition}[Term width]
 \lean{Term.width}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{Term.width}
 \leanok
 \uses{Term}
@@ -552,6 +583,8 @@ The width of a term is its number of literals (the list length).
 
 \begin{definition}[Term evaluation]
 \lean{Term.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{Term.eval}
 \leanok
 \uses{Term}
@@ -561,6 +594,8 @@ A term evaluates to true on input $x$ iff every literal in it holds under $x$
 
 \begin{definition}[DNF formula]
 \lean{DNF}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{DNF}
 \leanok
 \uses{Term}
@@ -570,6 +605,8 @@ $\mathtt{DNF}\,n = \mathtt{List}\,(\mathtt{Term}\,n)$.
 
 \begin{definition}[DNF width]
 \lean{DNF.width}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b002}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{DNF.width}
 \leanok
 \uses{DNF, Term.width}
@@ -579,6 +616,8 @@ formula).
 
 \begin{definition}[DNF evaluation]
 \lean{DNF.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p001-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{DNF.eval}
 \leanok
 \uses{DNF, Term.eval}
@@ -588,6 +627,8 @@ under $x$ (disjunction of conjunctions).
 
 \begin{definition}[CNF formula]
 \lean{CNF}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{CNF}
 \leanok
 \uses{Term}
@@ -598,6 +639,8 @@ dual evaluation semantics.
 
 \begin{definition}[Clause evaluation]
 \lean{CNF.evalClause}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{CNF.evalClause}
 \leanok
 \uses{CNF, Term}
@@ -607,6 +650,8 @@ under $x$ (disjunction semantics).
 
 \begin{definition}[CNF evaluation]
 \lean{CNF.eval}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b004}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b004}
 \label{CNF.eval}
 \leanok
 \uses{CNF, CNF.evalClause}
@@ -615,6 +660,7 @@ A CNF formula evaluates to true on input $x$ iff every clause holds under $x$.
 
 \begin{definition}[Decision tree]
 \lean{DecisionTree}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \label{DecisionTree}
 \leanok
 A decision tree on $n$ Boolean variables: a leaf $\mathtt{leaf}\,b$ outputs $b$,
@@ -634,6 +680,7 @@ outputs $f$ applied to the completed assignment at each leaf.
 
 \begin{definition}[Decision-tree depth of a function]
 \lean{dtDepth}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \label{dtDepth}
 \leanok
 \uses{DecisionTree, buildFullDTree}

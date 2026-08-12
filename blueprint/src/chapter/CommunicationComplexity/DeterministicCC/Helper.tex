@@ -32,7 +32,7 @@ i.e.\ the $n$-bit string consisting entirely of zeros.
 \label{CommunicationComplexity.exists_true_of_ne_zeroInput}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.boolSign, CommunicationComplexity.zeroInput}
-\difficulty{4}
+\difficulty{3}
 If $x : \texttt{BoolInput}(n)$ satisfies $x \ne \texttt{zeroInput}(n)$, then there exists
 some index $i \in \mathrm{Fin}\,n$ such that $x\,i = \mathrm{true}$.
 \end{lemma}
@@ -124,7 +124,7 @@ $(\texttt{flipAt}\,i\,x)\,j = x\,j$.
 \label{CommunicationComplexity.flipAt_flipAt}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt}
-\difficulty{4}
+\difficulty{3}
 For $i : \mathrm{Fin}\,n$ and $x : \texttt{BoolInput}(n)$,
 $\texttt{flipAt}\,i\,(\texttt{flipAt}\,i\,x) = x$.
 That is, applying $\texttt{flipAt}\,i$ twice recovers the original input.
@@ -135,7 +135,7 @@ That is, applying $\texttt{flipAt}\,i$ twice recovers the original input.
 \label{CommunicationComplexity.flipAt_bijective}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt, CommunicationComplexity.flipAt_flipAt}
-\difficulty{3}
+\difficulty{2}
 For every $i : \mathrm{Fin}\,n$, the map
 $\texttt{flipAt}\,i : \texttt{BoolInput}(n) \to \texttt{BoolInput}(n)$ is bijective; its
 two-sided inverse is itself.

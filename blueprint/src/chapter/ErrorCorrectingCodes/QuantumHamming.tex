@@ -15,6 +15,10 @@ conditions for $t$-error correction and is non-degenerate, then
 
 \begin{definition}[Pauli basis]
 \lean{PauliBasis}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p002-b006,
+  pdf-1ac7bb3b99cc-p003-b001
+}
 \label{PauliBasis}
 \leanok
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
@@ -23,6 +27,7 @@ The four Pauli basis elements $\{I,X,Y,Z\}$, represented as an inductive type.
 
 \begin{definition}[Pauli string]
 \lean{PauliString}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b004}
 \label{PauliString}
 \leanok
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
@@ -74,7 +79,7 @@ The set of all Pauli strings of weight at most $t$:
 }
 \proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \uses{PauliErrorsLe, weight}
-\difficulty{6}
+\difficulty{5}
 \[
 |\mathcal{E}(n,t)| \;=\; \sum_{i=0}^{t}\binom{n}{i}\,3^i.
 \]
@@ -121,6 +126,10 @@ $\dim_{\mathbb{C}}(\mathcal{H}_n) = 2^n$.
 
 \begin{definition}[Pauli operator]
 \lean{pauliOp}
+\statementsource{quant-ph.0005008}{
+  pdf-1ac7bb3b99cc-p002-b004,
+  pdf-1ac7bb3b99cc-p003-b003
+}
 \label{pauliOp}
 \leanok
 \statementsource{quant-ph.9608006}{
@@ -219,7 +228,7 @@ Pauli images of $C$ over all $t$-errors.
   pdf-bbdd8e5c3949-p009-b002
 }
 \uses{IsNondegenerate, pauliOp}
-\difficulty{7}
+\difficulty{6}
 If $C$ is non-degenerate and $E \neq F$ both have weight $\le t$, then
 $\hat{E}(C) \perp \hat{F}(C)$.
 \end{lemma}
@@ -261,7 +270,7 @@ If $C$ is non-degenerate,
   pdf-bbdd8e5c3949-p009-b003
 }
 \uses{error_sphere_dimension, finrank_Hn}
-\difficulty{4}
+\difficulty{3}
 If $C \le \mathcal{H}_n$ is non-degenerate, then
 \[
 \left(\sum_{i=0}^{t}\binom{n}{i}\,3^i\right)\cdot\dim_{\mathbb{C}}(C)
@@ -283,6 +292,7 @@ The $2\times 2$ identity matrix over $\mathbb{C}$, i.e.\ the Pauli operator $I$.
 
 \begin{definition}[Pauli $X$ matrix]
 \lean{sigmaX}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b006}
 \label{sigmaX}
 \leanok
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
@@ -293,6 +303,7 @@ over $\mathbb{C}$.
 
 \begin{definition}[Pauli $Y$ matrix]
 \lean{sigmaY}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b006}
 \label{sigmaY}
 \leanok
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
@@ -303,6 +314,7 @@ over $\mathbb{C}$.
 
 \begin{definition}[Pauli $Z$ matrix]
 \lean{sigmaZ}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b006}
 \label{sigmaZ}
 \leanok
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
@@ -313,6 +325,7 @@ over $\mathbb{C}$.
 
 \begin{definition}[Matrix of a Pauli basis element]
 \lean{PauliBasis.toMatrix}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b006}
 \label{PauliBasis.toMatrix}
 \leanok
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
@@ -323,6 +336,7 @@ $\{\sigma_I,\sigma_X,\sigma_Y,\sigma_Z\}$.
 
 \begin{definition}[Matrix of a Pauli string]
 \lean{pauliMatrix}
+\statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p003-b003}
 \label{pauliMatrix}
 \leanok
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
@@ -373,7 +387,7 @@ finset $S$.
 \leanok
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \uses{PauliNZ.toBasis, mkWithSupport, pauliStringsExactSupport, support, support_mkWithSupport}
-\difficulty{6}
+\difficulty{5}
 The number of Pauli strings with support exactly $S$ is $3^{|S|}$, since each coordinate in $S$
 is assigned one of the three non-identity Paulis.
 \end{lemma}
@@ -463,7 +477,7 @@ The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathca
   pdf-bbdd8e5c3949-p009-b003
 }
 \uses{ErrorSphere, Hn, IsNondegenerate, card_pauliErrorsLe, error_sphere_dimension, finrank_Hn}
-\difficulty{4}
+\difficulty{3}
 For a non-degenerate $[[n,k]]$ quantum code $C \le \mathcal{H}_n$ correcting $t$ errors, with
 $\dim_{\mathbb{C}}(C) = 2^k$, the dimension of the error sphere does not exceed the ambient
 dimension:
@@ -477,7 +491,7 @@ dimension:
 \label{PauliNZ.toBasis_ne_I}
 \leanok
 \uses{PauliNZ.toBasis}
-\difficulty{2}
+\difficulty{1}
 For every $a \in \mathrm{PauliNZ}$, its image $a.\mathrm{toBasis}$ in the Pauli basis
 differs from $I$; that is, the embedding of $\{X,Y,Z\}$ never hits the identity element.
 \end{lemma}

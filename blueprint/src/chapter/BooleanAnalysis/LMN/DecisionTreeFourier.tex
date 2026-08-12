@@ -66,7 +66,7 @@ $\mathrm{Fin}\,n$ is involutive.
 \label{DecisionTree.sum_symmDiff_reindex}
 \leanok
 \uses{DecisionTree.symmDiff_singleton_invol}
-\difficulty{2}
+\difficulty{1}
 For any $g : \mathcal{P}(\mathrm{Fin}\,n) \to \bbr$ and any $i$,
 \[
 \sum_{S} g(S \triangle \{i\}) = \sum_{S} g(S),
@@ -98,7 +98,7 @@ truncated subtraction on $\bbn$.
 \label{DecisionTree.signEval_eq_sum_coeffs}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.chiS_empty, DecisionTree, DecisionTree.chiS_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.eval, DecisionTree.signEval, DecisionTree.sum_symmDiff_reindex}
-\difficulty{7}
+\difficulty{6}
 For every decision tree $T$ and every point $x$ of the Boolean cube,
 \[
 T.\mathrm{signEval}(x) = \sum_{S} \mathrm{coeffs}\,T\,S \cdot \chi_S(x).
@@ -107,6 +107,7 @@ T.\mathrm{signEval}(x) = \sum_{S} \mathrm{coeffs}\,T\,S \cdot \chi_S(x).
 
 \begin{lemma}[Coefficients vanish above the depth]
 \lean{DecisionTree.coeffs_eq_zero_of_depth_lt}
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.coeffs_eq_zero_of_depth_lt}
 \leanok
 \uses{DecisionTree, DecisionTree.card_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.depth}
@@ -117,10 +118,11 @@ cardinality exceeding the tree depth carry no weight.
 
 \begin{lemma}[Coefficient $1$-norm bounded by tree size]
 \lean{DecisionTree.sum_abs_coeffs_le}
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.sum_abs_coeffs_le}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.size, DecisionTree.sum_symmDiff_reindex}
-\difficulty{6}
+\difficulty{5}
 For every decision tree $T$,
 \[
 \sum_{S} \abs{\mathrm{coeffs}\,T\,S} \le T.\mathrm{size},
@@ -130,6 +132,7 @@ i.e.\ the spectral $1$-norm of the coefficients is at most the number of leaves.
 
 \begin{lemma}[Granularity, multiplicative form]
 \lean{DecisionTree.coeffs_mul_two_pow_int}
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.coeffs_mul_two_pow_int}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.depth}
@@ -140,6 +143,7 @@ $\mathrm{coeffs}\,T\,S \cdot 2^k = m$.
 
 \begin{lemma}[Granularity of the coefficients]
 \lean{DecisionTree.coeffs_granular}
+\statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.coeffs_granular}
 \leanok
 \uses{DecisionTree, DecisionTree.coeffs, DecisionTree.coeffs_mul_two_pow_int, DecisionTree.depth}
@@ -164,7 +168,7 @@ $k$ has at most $2^k$ leaves.
 \label{DecisionTree.fourierCoeff_sum_chiS}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
-\difficulty{5}
+\difficulty{4}
 For any coefficient family $c$ and any frequency $T$, the Fourier coefficient of the
 explicit combination $x \mapsto \sum_{S} c(S)\,\chi_S(x)$ at $T$ equals $c(T)$.
 \end{lemma}
@@ -223,7 +227,7 @@ an integer multiple of $2^{-k}$, where $k$ is the tree depth.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.fourierCoeff_granular, DecisionTree.signEval, DecisionTree.size, DecisionTree.spectral_one_norm_le}
-\difficulty{6}
+\difficulty{5}
 The Fourier support of $T.\mathrm{signEval}$, i.e.\ the set of frequencies $S$ with
 $\widehat{T.\mathrm{signEval}}(S) \ne 0$, has cardinality at most
 $T.\mathrm{size}\cdot 2^{T.\mathrm{depth}}$.
@@ -235,7 +239,7 @@ $T.\mathrm{size}\cdot 2^{T.\mathrm{depth}}$.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.signEval, DecisionTree.size, DecisionTree.size_le_two_pow_depth, DecisionTree.sparsity_le}
-\difficulty{3}
+\difficulty{2}
 The Fourier support of $T.\mathrm{signEval}$ has cardinality at most
 $4^{T.\mathrm{depth}}$.
 \end{theorem}
@@ -246,7 +250,7 @@ $4^{T.\mathrm{depth}}$.
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b001}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
-\difficulty{2}
+\difficulty{1}
 For every Boolean function $f : \{0,1\}^n \to \{0,1\}$ there exists a decision tree $T$
 with $T.\mathrm{depth} \le \mathrm{dtDepth}\,f$ that computes $f$, i.e.\
 $T.\mathrm{eval}\,x = f(x)$ for all $x$.

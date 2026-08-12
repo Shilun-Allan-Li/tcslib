@@ -36,7 +36,7 @@ For all $x \in \Omega$, $\mathrm{rnDensity}(\mu,\nu)(x) \ge 0$.
 \label{CommunicationComplexity.measurable_rnDensity}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
-\difficulty{2}
+\difficulty{1}
 The function $x \mapsto \mathrm{rnDensity}(\mu,\nu)(x)$ is measurable.
 \end{theorem}
 
@@ -92,7 +92,7 @@ If $\mu \ll \nu$, then $\int (\mathrm{rnDensity}(\mu,\nu)(x) - 1)\,d\nu = 0$.
 \label{CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.rnDensity}
-\difficulty{4}
+\difficulty{3}
 If $\mu \ll \nu$ and $S \subseteq \Omega$ is measurable, then
 \[
   \mu(S) - \nu(S) \;=\; \int_S \bigl(\mathrm{rnDensity}(\mu,\nu)(x) - 1\bigr)\,d\nu.
@@ -103,7 +103,7 @@ If $\mu \ll \nu$ and $S \subseteq \Omega$ is measurable, then
 \lean{CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero}
 \label{CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero}
 \leanok
-\difficulty{5}
+\difficulty{4}
 Let $\mu$ be a finite measure and $g : \Omega \to \mathbb{R}$ measurable, integrable,
 and mean-zero ($\int g\,d\mu = 0$).  Then
 \[
@@ -115,7 +115,7 @@ and mean-zero ($\int g\,d\mu = 0$).  Then
 \lean{CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero}
 \label{CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero}
 \leanok
-\difficulty{6}
+\difficulty{5}
 Let $\mu$ be a finite measure and $g$ measurable, integrable, and mean-zero.  Then
 \[
   \sup_{S\text{ measurable}}\Bigl|\int_S g\,d\mu\Bigr|
@@ -174,7 +174,7 @@ $\mathrm{tvDistanceSup}(\mu,\nu) = \mathrm{densityPositiveIntegral}(\mu,\nu)$.
 \label{CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup, CommunicationComplexity.densityPositiveIntegral, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac}
-\difficulty{2}
+\difficulty{1}
 If $\mu \ll \nu$, then $\mathrm{TV}(\mu,\nu) = \mathrm{densityPositiveIntegral}(\mu,\nu)$.
 \end{theorem}
 
@@ -192,7 +192,7 @@ $\mathrm{densityPositiveIntegral}(\mu,\nu) = \tfrac{1}{2}\,\mathrm{densityAbsInt
 \lean{CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
 \label{CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
 \leanok
-\difficulty{5}
+\difficulty{4}
 For real numbers $u \ge 0$ and $y$, one has $u \cdot y \le \mathrm{klFun}(u) + e^y - 1$,
 where $\mathrm{klFun}(u) = u \ln u - u + 1$.
 \end{theorem}
@@ -201,7 +201,7 @@ where $\mathrm{klFun}(u) = u \ln u - u + 1$.
 \lean{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
 \label{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
 \leanok
-\difficulty{4}
+\difficulty{3}
 Let $\mu$ be a probability measure, $X : \Omega \to \mathbb{R}$ and $t \in \mathbb{R}$.
 If $e^{tX}$ is $\mu$-integrable, then
 $\int e^{t X(x) - \Lambda_\mu(t)}\,d\mu = 1$,
@@ -212,7 +212,7 @@ where $\Lambda_\mu(t) = \log\int e^{tX}\,d\mu$ is the cumulant generating functi
 \lean{CommunicationComplexity.integrable_exp_sub_cgf}
 \label{CommunicationComplexity.integrable_exp_sub_cgf}
 \leanok
-\difficulty{3}
+\difficulty{2}
 If $e^{tX}$ is $\mu$-integrable, then so is $x \mapsto e^{t X(x) - \Lambda_\mu(t)}$.
 \end{theorem}
 
@@ -221,7 +221,7 @@ If $e^{tX}$ is $\mu$-integrable, then so is $x \mapsto e^{t X(x) - \Lambda_\mu(t
 \label{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
 \leanok
 \uses{CommunicationComplexity.integrable_exp_sub_cgf, CommunicationComplexity.integral_exp_sub_cgf_eq_one, CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
-\difficulty{6}
+\difficulty{5}
 Let $f, X : \Omega \to \mathbb{R}$ with $f \ge 0$ and $\int f\,d\mu = 1$.  Under suitable
 integrability conditions on $f$, $X$, and $e^{tX}$,
 \[
@@ -234,7 +234,7 @@ integrability conditions on $f$, $X$, and $e^{tX}$,
 \label{CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun}
 \leanok
 \uses{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
-\difficulty{7}
+\difficulty{6}
 Let $f : \Omega \to \mathbb{R}$ with $f \ge 0$, $\int f\,d\mu = 1$, $f$ integrable,
 and $\mathrm{klFun}(f)$ integrable.  Then
 \[
@@ -247,7 +247,7 @@ and $\mathrm{klFun}(f)$ integrable.  Then
 \label{CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
-\difficulty{2}
+\difficulty{1}
 If $\mu \ll \nu$, then
 $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\,\mathrm{densityAbsIntegral}(\mu,\nu)$.
 \end{theorem}
@@ -257,7 +257,7 @@ $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\,\mathrm{densityAbsIntegral}(\mu,\nu)$.
 \label{CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun, CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.integral_rnDensity_eq_one_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.rnDensity, CommunicationComplexity.rnDensity_nonneg}
-\difficulty{3}
+\difficulty{2}
 If $\mu \ll \nu$ and the log-likelihood ratio $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable,
 then
 \[
@@ -272,7 +272,7 @@ then
 \label{CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
-\difficulty{2}
+\difficulty{1}
 If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 \[
   \int \mathrm{klFun}\bigl(\mathrm{rnDensity}(\mu,\nu)(x)\bigr)\,d\nu
@@ -299,7 +299,7 @@ If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 \label{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.density_l1_pinsker_le_kl_integral, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
-\difficulty{3}
+\difficulty{2}
 If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 \[
   2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \int \mathrm{llr}(\mu,\nu)(x)\,d\mu.
@@ -311,7 +311,7 @@ If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 \label{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
-\difficulty{3}
+\difficulty{2}
 If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
 \[
   \mathrm{ofReal}\bigl(2\,\mathrm{TV}(\mu,\nu)^2\bigr) \;\le\; \mathrm{KL}(\mu \| \nu)
@@ -324,7 +324,7 @@ in $\mathbb{R}_{\ge 0}^\infty$.
 \label{CommunicationComplexity.pinsker_inequality_of_ac}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
-\difficulty{4}
+\difficulty{2}
 If $\mu \ll \nu$ (without any integrability assumption), then
 $\mathrm{ofReal}(2\,\mathrm{TV}(\mu,\nu)^2) \le \mathrm{KL}(\mu \| \nu)$ in $\mathbb{R}_{\ge 0}^\infty$.
 \end{theorem}
@@ -334,7 +334,7 @@ $\mathrm{ofReal}(2\,\mathrm{TV}(\mu,\nu)^2) \le \mathrm{KL}(\mu \| \nu)$ in $\ma
 \label{CommunicationComplexity.pinsker_inequality}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac, CommunicationComplexity.tvDistance}
-\difficulty{4}
+\difficulty{2}
 For any two probability measures $\mu$ and $\nu$ on $\Omega$,
 \[
   \mathrm{ofReal}\bigl(2\,\mathrm{TV}(\mu,\nu)^2\bigr) \;\le\; \mathrm{KL}(\mu \| \nu),
@@ -347,7 +347,7 @@ where the inequality is in $\mathbb{R}_{\ge 0}^\infty$ and KL divergence uses na
 \label{CommunicationComplexity.two_mul_tvDistance_sq_le_toReal_klDiv}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality, CommunicationComplexity.tvDistance}
-\difficulty{3}
+\difficulty{2}
 If $\mathrm{KL}(\mu \| \nu) \ne \infty$, then
 \[
   2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \mathrm{KL}(\mu \| \nu).\mathrm{toReal},

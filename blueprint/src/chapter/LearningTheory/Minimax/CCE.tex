@@ -89,7 +89,7 @@ $\sigma^{\mathrm{col}}_j \ge 0$.
 \label{JointDistribution.rowMarginal_sum_one}
 \leanok
 \uses{JointDistribution, JointDistribution.rowMarginal}
-\difficulty{2}
+\difficulty{1}
 The row marginals form a valid probability distribution:
 $\sum_{i} \sigma^{\mathrm{row}}_i = 1$.
 \end{lemma}
@@ -99,7 +99,7 @@ $\sum_{i} \sigma^{\mathrm{row}}_i = 1$.
 \label{JointDistribution.colMarginal_sum_one}
 \leanok
 \uses{JointDistribution, JointDistribution.colMarginal}
-\difficulty{3}
+\difficulty{2}
 The column marginals form a valid probability distribution:
 $\sum_{j} \sigma^{\mathrm{col}}_j = 1$.
 \end{lemma}
@@ -191,7 +191,7 @@ the probability $p_i \cdot q_j$.
 \label{productDistribution_rowMarginal}
 \leanok
 \uses{JointDistribution.rowMarginal, MixedStrategy, productDistribution}
-\difficulty{3}
+\difficulty{2}
 For the product distribution of $p$ and $q$, the row marginal at $i$ equals
 $p_i$ (the original row mixed-strategy weight).
 \end{lemma}
@@ -201,7 +201,7 @@ $p_i$ (the original row mixed-strategy weight).
 \label{productDistribution_colMarginal}
 \leanok
 \uses{JointDistribution.colMarginal, MixedStrategy, productDistribution}
-\difficulty{3}
+\difficulty{2}
 For the product distribution of $p$ and $q$, the column marginal at $j$ equals
 $q_j$ (the original column mixed-strategy weight).
 \end{lemma}
@@ -222,7 +222,7 @@ $\frac{1}{T}\sum_{t=1}^{T} (p_t)_i \cdot (q_t)_j$.
 \label{empiricalJoint_rowMarginal}
 \leanok
 \uses{JointDistribution.rowMarginal, MixedStrategy, empiricalJoint}
-\difficulty{4}
+\difficulty{3}
 The row marginal of the empirical joint distribution at action $i$ equals the
 time-average of the row player's mixed-strategy weights:
 $(1/T)\sum_{t} (p_t)_i$.
@@ -233,7 +233,7 @@ $(1/T)\sum_{t} (p_t)_i$.
 \label{empiricalJoint_colMarginal}
 \leanok
 \uses{JointDistribution.colMarginal, MixedStrategy, empiricalJoint}
-\difficulty{4}
+\difficulty{3}
 The column marginal of the empirical joint distribution at action $j$ equals
 the time-average of the column player's mixed-strategy weights:
 $(1/T)\sum_{t} (q_t)_j$.
@@ -244,7 +244,7 @@ $(1/T)\sum_{t} (q_t)_j$.
 \label{empiricalJoint_sum_prob_mul}
 \leanok
 \uses{MixedStrategy, empiricalJoint}
-\difficulty{6}
+\difficulty{4}
 For any function $f : \mathrm{Fin}\,M \to \mathrm{Fin}\,N \to \mathbb{R}$,
 the sum $\sum_{i,j} \sigma_{ij} \cdot f(i,j)$ over the empirical joint
 distribution equals the time-average
@@ -284,7 +284,7 @@ equals the time-average of the per-round bilinear column utilities:
 \label{empiricalJoint_rowDeviationUtility}
 \leanok
 \uses{Game, JointDistribution.rowDeviationUtility, MixedStrategy, empiricalJoint, empiricalJoint_colMarginal}
-\difficulty{4}
+\difficulty{3}
 The row player's deviation utility for pure action $i'$ in the empirical
 distribution equals the time-average utility of always playing $i'$:
 \[
@@ -298,7 +298,7 @@ distribution equals the time-average utility of always playing $i'$:
 \label{empiricalJoint_colDeviationUtility}
 \leanok
 \uses{Game, JointDistribution.colDeviationUtility, MixedStrategy, empiricalJoint, empiricalJoint_rowMarginal}
-\difficulty{4}
+\difficulty{3}
 The column player's deviation utility for pure action $j'$ in the empirical
 distribution equals the time-average utility of always playing $j'$:
 \[
@@ -312,7 +312,7 @@ distribution equals the time-average utility of always playing $j'$:
 \label{empiricalJoint_isApproxCCE}
 \leanok
 \uses{Game, IsApproxCoarseCorrelatedEquilibrium, MixedStrategy, empiricalJoint, empiricalJoint_rowDeviationUtility, empiricalJoint_rowExpectedUtility, empiricalJoint_colDeviationUtility, empiricalJoint_colExpectedUtility}
-\difficulty{5}
+\difficulty{4}
 Let $G$ be a two-player game, $T > 0$, and let $p_t$, $q_t$ be the mixed
 strategies played at round $t$ by the row and column players respectively.
 Suppose that for every pure row deviation $i'$,

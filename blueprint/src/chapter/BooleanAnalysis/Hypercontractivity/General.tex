@@ -38,7 +38,7 @@ $x$ to $y$ under $\rho$-correlated noise.
 \label{GeneralHypercontractivity.noiseKernel_nonneg}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, GeneralHypercontractivity.noiseKernel}
-\difficulty{3}
+\difficulty{2}
 If $0 \le \rho \le 1$ then $K_\rho(x,y) \ge 0$ for all $x, y \in \mathrm{BoolCube}\,n$.
 \end{lemma}
 
@@ -47,7 +47,7 @@ If $0 \le \rho \le 1$ then $K_\rho(x,y) \ge 0$ for all $x, y \in \mathrm{BoolCub
 \label{GeneralHypercontractivity.sum_fourier_kernel}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
-\difficulty{4}
+\difficulty{3}
 For all $\rho \in \bbr$ and $x, y \in \mathrm{BoolCube}\,n$,
 \[
   \sum_{S \subseteq [n]} \rho^{\abs{S}}\,\chi_S(x)\,\chi_S(y)
@@ -60,7 +60,7 @@ For all $\rho \in \bbr$ and $x, y \in \mathrm{BoolCube}\,n$,
 \label{GeneralHypercontractivity.noiseOp_eq_kernel_sum}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.sum_fourier_kernel}
-\difficulty{4}
+\difficulty{3}
 For every $g : \mathrm{BoolCube}\,n \to \bbr$ and every $x$,
 \[
   (T_\rho g)(x) \;=\; \sum_{y} K_\rho(x,y)\, g(y).
@@ -84,7 +84,7 @@ For all $f, g : \mathrm{BoolCube}\,n \to \bbr$,
 \label{GeneralHypercontractivity.corrExpect_mono}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_nonneg}
-\difficulty{3}
+\difficulty{2}
 Let $0 \le \rho \le 1$ and let $h, h' : \mathrm{BoolCube}\,n \times \mathrm{BoolCube}\,n \to \bbr$
 satisfy $h(x,y) \le h'(x,y)$ for all $x, y$. Then the kernel-weighted average of $h$ is at
 most that of $h'$:
@@ -100,7 +100,7 @@ most that of $h'$:
 \label{GeneralHypercontractivity.noiseKernel_snoc}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, GeneralHypercontractivity.noiseKernel}
-\difficulty{3}
+\difficulty{2}
 For $x', y' \in \mathrm{BoolCube}\,n$ and bits $b, b'$,
 \[
   K_\rho\bigl(\mathrm{snoc}(x',b),\ \mathrm{snoc}(y',b')\bigr)
@@ -141,7 +141,7 @@ For $p > 0$ and $f : \mathrm{BoolCube}\,(n+1) \to \bbr$,
 \label{GeneralHypercontractivity.weighted_sum_succ_decomp}
 \leanok
 \uses{Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_snoc}
-\difficulty{6}
+\difficulty{5}
 For $F : \mathrm{BoolCube}\,(n+1) \times \mathrm{BoolCube}\,(n+1) \to \bbr$, the kernel-weighted
 bilinear average at dimension $n+1$ equals the $n$-dimensional kernel-weighted average of the
 one-bit average of the last coordinate:
@@ -159,7 +159,7 @@ one-bit average of the last coordinate:
 \label{GeneralHypercontractivity.one_bit_slice_eq_innerProduct}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
-\difficulty{5}
+\difficulty{4}
 Fix $x', y' \in \mathrm{BoolCube}\,n$ and $f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$. The
 one-bit kernel-weighted sum of the slices of $f$ at $x'$ and of $g$ at $y'$ equals the one-bit
 inner product of those slices against the noise operator:
@@ -178,7 +178,7 @@ functions on $\mathrm{BoolCube}\,1$.
 \label{GeneralHypercontractivity.one_bit_norm_slice}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
-\difficulty{4}
+\difficulty{3}
 For $p > 0$, $f : \mathrm{BoolCube}\,(n+1) \to \bbr$ and $x' \in \mathrm{BoolCube}\,n$,
 \[
   \Bigl(\E_{t \in \mathrm{BoolCube}\,1}\bigl[\abs{f(\mathrm{snoc}(x',t_0))}^p\bigr]\Bigr)^{1/p}
@@ -207,7 +207,7 @@ For $p \ge 1$ and $f : \mathrm{BoolCube}\,(n+1) \to \bbr$,
 \label{GeneralHypercontractivity.holder_ineq_bool}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
-\difficulty{5}
+\difficulty{4}
 For $p > 1$ and $f, h : \mathrm{BoolCube}\,n \to \bbr$,
 \[
   \inn{f, h} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p} \cdot
@@ -235,7 +235,7 @@ i.e.\ $T_\rho$ is a contraction in $L^q$ on one bit.
 \label{GeneralHypercontractivity.two_func_hyp_zero}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
-\difficulty{5}
+\difficulty{4}
 For $p, q \ge 1$, any $\rho \in \bbr$, and $f, g : \mathrm{BoolCube}\,0 \to \bbr$,
 \[
   \inn{f, T_\rho g} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}\,\bigl(\E[\abs{g}^q]\bigr)^{1/q}.
@@ -244,14 +244,315 @@ For $p, q \ge 1$, any $\rho \in \bbr$, and $f, g : \mathrm{BoolCube}\,0 \to \bbr
 
 \begin{lemma}[Inductive step for two-function hypercontractivity]
 \lean{GeneralHypercontractivity.two_func_hyp_succ}
+\statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p004-b003}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p015-b003,
+  pdf-4ba63c9394e5-p015-b002
+}
 \label{GeneralHypercontractivity.two_func_hyp_succ}
 \leanok
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p015-b002,
   pdf-4ba63c9394e5-p015-b003
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p005-b003}
+\proofstep
+  {Bonami.sum_boolCube_succ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {Bonami.uniformWeight_succ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.sum_fourier_kernel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p014-b003}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_snoc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_rpow}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.weighted_sum_succ_decomp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.one_bit_slice_eq_innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_clean}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_nonneg, GeneralHypercontractivity.norm_collapse_clean, GeneralHypercontractivity.one_bit_slice_eq_innerProduct, GeneralHypercontractivity.weighted_sum_succ_decomp}
-\difficulty{7}
+\difficulty{6}
 Let $p, q \ge 1$ and $0 \le \rho \le 1$. If the bound
 $\inn{f, T_\rho g} \le (\E[\abs{f}^p])^{1/p}(\E[\abs{g}^q])^{1/q}$ holds for all pairs of
 functions on one bit and for all pairs of functions on $n$ bits, then it holds for all
@@ -260,6 +561,11 @@ $f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$.
 
 \begin{theorem}[Two-function hypercontractivity induction theorem]
 \lean{GeneralHypercontractivity.hypercontractivity_induction}
+\proofsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p004-b003}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p015-b002,
+  pdf-4ba63c9394e5-p015-b003
+}
 \label{GeneralHypercontractivity.hypercontractivity_induction}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p004-b003}
@@ -267,8 +573,314 @@ $f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$.
   pdf-4ba63c9394e5-p015-b002,
   pdf-4ba63c9394e5-p015-b003
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p008-b005}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p008-b005}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p021-b003}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p021-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {Bonami.sum_boolCube_succ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {Bonami.uniformWeight_succ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.sum_fourier_kernel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p014-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_snoc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_rpow}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.weighted_sum_succ_decomp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.one_bit_slice_eq_innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_clean}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_zero}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b002}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_succ}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.two_func_hyp_succ, GeneralHypercontractivity.two_func_hyp_zero}
-\difficulty{3}
+\difficulty{2}
 Let $p, q \ge 1$ and $0 \le \rho \le 1$. If
 $\inn{f, T_\rho g} \le (\E[\abs{f}^p])^{1/p}(\E[\abs{g}^q])^{1/q}$ holds for all
 $f, g : \mathrm{BoolCube}\,1 \to \bbr$, then the same bound holds for all $n$ and all
@@ -279,6 +891,10 @@ $f, g : \mathrm{BoolCube}\,n \to \bbr$.
 
 \begin{theorem}[Weak two-function hypercontractivity on a single bit]
 \lean{GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p014-b004,
+  pdf-4ba63c9394e5-p014-b003
+}
 \label{GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p002-b002}
@@ -286,6 +902,372 @@ $f, g : \mathrm{BoolCube}\,n \to \bbr$.
   pdf-4ba63c9394e5-p014-b003,
   pdf-4ba63c9394e5-p014-b004
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b004}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005,
+    pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b004}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {SimpleHypercontractivity.expect_rpow_abs_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b003}
+\proofstep
+  {SimpleHypercontractivity.noiseOp_compose}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003,
+    pdf-4ba63c9394e5-p027-b004}
+\proofstep
+  {OneBit.boolCube1_univ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.finsetFin1_univ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.boolCube1_ne}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.finsetFin1_ne}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.one_bit_val_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b007}
+\proofstep
+  {OneBit.one_bit_val_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b007}
+\proofstep
+  {OneBit.expect_noiseOp_sq_one_bit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.expect_abs_rpow_one_bit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.two_point_ineq_unit}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003,
+    pdf-4ba63c9394e5-p012-b002}
+\proofstep
+  {OneBit.two_point_ineq}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b002,
+    pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.one_bit_p2_hypercontractivity}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b002,
+    pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {OneBit.cauchy_schwarz_bool}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p014-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, OneBit.cauchy_schwarz_bool, OneBit.one_bit_p2_hypercontractivity, SimpleHypercontractivity.expect_rpow_abs_nonneg, SimpleHypercontractivity.expect_sq_noiseOp_nonneg, SimpleHypercontractivity.noiseOp_compose}
 \difficulty{5}
 For $1 \le p \le 2$, $1 \le q \le 2$ and $f, g : \mathrm{BoolCube}\,1 \to \bbr$, with
@@ -297,6 +1279,10 @@ $\rho = \sqrt{(p-1)(q-1)}$,
 
 \begin{theorem}[Equivalence of one- and two-function hypercontractivity]
 \lean{GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
+\proofsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p003-b007,
+  pdf-9d1751394783-p004-b001
+}
 \label{GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
@@ -308,7 +1294,7 @@ $\rho = \sqrt{(p-1)(q-1)}$,
   pdf-4ba63c9394e5-p013-b003
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.holder_ineq_bool, OneBit.expect_nonneg_of_nonneg, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
-\difficulty{6}
+\difficulty{5}
 Let $1 \le p \le q$ with $q \ge 2$, and let $0 \le \rho \le 1$ satisfy
 $\rho \le \sqrt{(p-1)/(q-1)}$. Then the one-function bound
 \[
@@ -325,6 +1311,11 @@ holds.
 
 \begin{theorem}[Weak two-function hypercontractivity]
 \lean{GeneralHypercontractivity.weak_two_function_hypercontractivity}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p014-b004,
+  pdf-4ba63c9394e5-p015-b002,
+  pdf-4ba63c9394e5-p015-b003
+}
 \label{GeneralHypercontractivity.weak_two_function_hypercontractivity}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p002-b002}
@@ -333,6 +1324,455 @@ holds.
   pdf-4ba63c9394e5-p015-b003,
   pdf-4ba63c9394e5-p015-b005
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b008}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p006-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p022-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p020-b003}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p020-b003}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {Bonami.sum_boolCube_succ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {Bonami.uniformWeight_succ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p008-b002}
+\proofstep
+  {SimpleHypercontractivity.expect_rpow_abs_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b003}
+\proofstep
+  {SimpleHypercontractivity.noiseOp_compose}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {OneBit.boolCube1_univ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.finsetFin1_univ}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.boolCube1_ne}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.finsetFin1_ne}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p011-b002}
+\proofstep
+  {OneBit.one_bit_val_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p010-b004}
+\proofstep
+  {OneBit.one_bit_val_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p010-b004}
+\proofstep
+  {OneBit.expect_noiseOp_sq_one_bit}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.expect_abs_rpow_one_bit}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.two_point_ineq_unit}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b003}
+\proofstep
+  {OneBit.two_point_ineq}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b002}
+\proofstep
+  {OneBit.one_bit_p2_hypercontractivity}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p012-b002,
+    pdf-4ba63c9394e5-p013-b004}
+\proofstep
+  {OneBit.cauchy_schwarz_bool}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p014-b003}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p008-b007}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.sum_fourier_kernel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p014-b003}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_snoc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_rpow}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.weighted_sum_succ_decomp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.one_bit_slice_eq_innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_clean}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_zero}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_succ}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.hypercontractivity_induction}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p015-b002,
+    pdf-4ba63c9394e5-p015-b003}
+\proofstep
+  {GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p014-b004,
+    pdf-4ba63c9394e5-p014-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.hypercontractivity_induction, GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
 \difficulty{3}
 For $1 \le p \le 2$, $1 \le q \le 2$, any $n$, and $f, g : \mathrm{BoolCube}\,n \to \bbr$, with
@@ -349,7 +1789,7 @@ $\rho = \sqrt{(p-1)(q-1)}$,
 \label{GeneralHypercontractivity.noiseKernel_sum_right}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, GeneralHypercontractivity.noiseKernel}
-\difficulty{4}
+\difficulty{3}
 For $0 \le \rho \le 1$ and any fixed $x \in \mathrm{BoolCube}\,n$,
 $\sum_{y} K_\rho(x,y) = 1$.
 \end{lemma}
@@ -359,7 +1799,7 @@ $\sum_{y} K_\rho(x,y) = 1$.
 \label{GeneralHypercontractivity.noiseKernel_sum_left}
 \leanok
 \uses{BooleanAnalysis.BoolCube, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_sum_right}
-\difficulty{3}
+\difficulty{2}
 For $0 \le \rho \le 1$ and any fixed $y \in \mathrm{BoolCube}\,n$,
 $\sum_{x} K_\rho(x,y) = 1$.
 \end{lemma}
@@ -369,7 +1809,7 @@ $\sum_{x} K_\rho(x,y) = 1$.
 \label{GeneralHypercontractivity.noiseOp_abs_rpow_le_kernel_avg}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.noiseOp, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_nonneg, GeneralHypercontractivity.noiseKernel_sum_right, GeneralHypercontractivity.noiseOp_eq_kernel_sum}
-\difficulty{5}
+\difficulty{4}
 For $0 \le \rho \le 1$, $s \ge 1$, $f : \mathrm{BoolCube}\,n \to \bbr$ and any $x$,
 \[
   \abs{(T_\rho f)(x)}^s \;\le\; \sum_{y} K_\rho(x,y)\,\abs{f(y)}^s.
@@ -390,14 +1830,304 @@ For $s \ge 1$, $0 \le \rho \le 1$ and $f : \mathrm{BoolCube}\,n \to \bbr$,
 
 \begin{lemma}[Duality of noise-operator norm bounds]
 \lean{GeneralHypercontractivity.noise_op_norm_dual}
+\proofsource{boolean-ch09-hypercontractivity-kkl}{
+  pdf-4ba63c9394e5-p013-b002,
+  pdf-4ba63c9394e5-p013-b003
+}
 \label{GeneralHypercontractivity.noise_op_norm_dual}
 \leanok
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p013-b002,
   pdf-4ba63c9394e5-p013-b003
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b006}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p027-b009}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p023-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p002-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p007-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p032-b003}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p032-b003}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p032-b003}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p031-b004}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p032-b003}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p031-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p032-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p031-b004}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p021-b003}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p021-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p001-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p004-b004}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p009-b001}
+\proofstep
+  {SimpleHypercontractivity.expect_rpow_abs_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b006}
+\proofstep
+  {OneBit.expect_nonneg_of_nonneg}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p025-b007}
+\proofstep
+  {OneBit.expect_const_eq}
+  {context}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {OneBit.holder_sharpness}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p013-b003}
+\proofstep
+  {GeneralHypercontractivity.holder_ineq_bool}
+  {direct}
+  {boolean-ch09-hypercontractivity-kkl}
+  {pdf-4ba63c9394e5-p016-b006}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, GeneralHypercontractivity.holder_ineq_bool, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
-\difficulty{7}
+\difficulty{6}
 For $p, q > 1$ and $0 \le \rho \le 1$, the $(p \to q)$ bound
 \[
   \bigl(\E[\abs{T_\rho f}^q]\bigr)^{1/q} \le \bigl(\E[\abs{f}^p]\bigr)^{1/p}
@@ -425,7 +2155,7 @@ If $0 \le a$, $0 < b$ and $a \le b$, then $\sqrt{a/b} \le 1$.
 \lean{GeneralHypercontractivity.noise_param_eq}
 \label{GeneralHypercontractivity.noise_param_eq}
 \leanok
-\difficulty{2}
+\difficulty{1}
 If $u - 1 > 0$, then
 \[
   \Bigl(\frac{u}{u-1} - 1\Bigr)(p-1) \;=\; \frac{p-1}{u-1}.
@@ -434,6 +2164,10 @@ If $u - 1 > 0$, then
 
 \begin{theorem}[Bridging case of one-function hypercontractivity]
 \lean{GeneralHypercontractivity.bridging_hypercontractivity}
+\proofsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p004-b007,
+  pdf-9d1751394783-p002-b001
+}
 \label{GeneralHypercontractivity.bridging_hypercontractivity}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
@@ -444,6 +2178,499 @@ If $u - 1 > 0$, then
   pdf-4ba63c9394e5-p001-b002,
   pdf-4ba63c9394e5-p027-b004
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {Bonami.sum_boolCube_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p020-b004}
+\proofstep
+  {Bonami.uniformWeight_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p020-b004}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {SimpleHypercontractivity.expect_rpow_abs_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {SimpleHypercontractivity.noiseOp_compose}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b007}
+\proofstep
+  {OneBit.boolCube1_univ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.finsetFin1_univ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.boolCube1_ne}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.finsetFin1_ne}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.one_bit_val_false}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.one_bit_val_true}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.expect_noiseOp_sq_one_bit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.expect_abs_rpow_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.two_point_ineq_unit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001,
+    pdf-9d1751394783-p004-b007}
+\proofstep
+  {OneBit.two_point_ineq}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b007}
+\proofstep
+  {OneBit.one_bit_p2_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b005}
+\proofstep
+  {OneBit.expect_nonneg_of_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {OneBit.expect_const_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {OneBit.cauchy_schwarz_bool}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {OneBit.holder_sharpness}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.sum_fourier_kernel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_snoc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_rpow}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.weighted_sum_succ_decomp}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.one_bit_slice_eq_innerProduct}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_clean}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.holder_ineq_bool}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b004,
+    pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_zero}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.hypercontractivity_induction}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003,
+    pdf-9d1751394783-p002-b003}
+\proofstep
+  {GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002,
+    pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007,
+    pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.weak_two_function_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.sqrt_div_le_one}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {GeneralHypercontractivity.noise_param_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.noise_param_eq, GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.weak_two_function_hypercontractivity}
 \difficulty{4}
 For $1 \le p \le 2 \le u$, $f : \mathrm{BoolCube}\,n \to \bbr$, and
@@ -459,7 +2686,7 @@ $\rho = \sqrt{(p-1)/(u-1)}$,
 \lean{GeneralHypercontractivity.low_norms_interpolation_params}
 \label{GeneralHypercontractivity.low_norms_interpolation_params}
 \leanok
-\difficulty{5}
+\difficulty{4}
 Let $1 < p < u < 2$ and $\rho^2 = (p-1)/(u-1)$. Then there exist $\theta \in (0,1)$ and
 $s > 0$ with
 \[
@@ -473,7 +2700,7 @@ $s > 0$ with
 \lean{GeneralHypercontractivity.avg_rpow_ge_one}
 \label{GeneralHypercontractivity.avg_rpow_ge_one}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For $p \ge 1$ and $b \in [0,1]$,
 \[
   1 \;\le\; \frac{(1+b)^p + (1-b)^p}{2}.
@@ -484,7 +2711,7 @@ For $p \ge 1$ and $b \in [0,1]$,
 \lean{GeneralHypercontractivity.convex_sym_sum_mono}
 \label{GeneralHypercontractivity.convex_sym_sum_mono}
 \leanok
-\difficulty{6}
+\difficulty{5}
 If $f$ is convex on $[0,\infty)$ and $0 \le x \le y \le 1$, then
 \[
   f(1+x) + f(1-x) \;\le\; f(1+y) + f(1-y).
@@ -532,7 +2759,7 @@ Let $1 \le p \le q \le 2$, $b \in [0,1]$ and $\rho = \sqrt{(p-1)/(q-1)}$. Then
 \lean{GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
 \label{GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
 \leanok
-\difficulty{5}
+\difficulty{4}
 For $x \ge 0$ and $r \ge 1$, $x^r \ge 1 + r(x-1)$.
 \end{lemma}
 
@@ -617,6 +2844,11 @@ $\rho \le \sqrt{(p-1)/(u-1)}$, and $f : \mathrm{BoolCube}\,n \to \bbr$,
 
 \begin{theorem}[General one-function hypercontractivity]
 \lean{GeneralHypercontractivity.general_one_function_hypercontractivity}
+\proofsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p002-b001,
+  pdf-9d1751394783-p004-b002,
+  pdf-9d1751394783-p004-b007
+}
 \label{GeneralHypercontractivity.general_one_function_hypercontractivity}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
@@ -625,8 +2857,579 @@ $\rho \le \sqrt{(p-1)/(u-1)}$, and $f : \mathrm{BoolCube}\,n \to \bbr$,
   pdf-9d1751394783-p004-b007
 }
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b004}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p001-b005}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p039-b004}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p039-b004}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p037-b002}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p037-b002}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p037-b002}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p037-b002}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b006}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {Bonami.sum_boolCube_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {Bonami.uniformWeight_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p001-b005}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p001-b005}
+\proofstep
+  {SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {SimpleHypercontractivity.expect_rpow_abs_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {SimpleHypercontractivity.noiseOp_compose}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b007}
+\proofstep
+  {OneBit.boolCube1_univ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.finsetFin1_univ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.boolCube1_ne}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.finsetFin1_ne}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.one_bit_val_false}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.one_bit_val_true}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.expect_noiseOp_sq_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.expect_abs_rpow_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.two_point_ineq_unit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001,
+    pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.two_point_ineq}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b005}
+\proofstep
+  {OneBit.one_bit_p2_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b005}
+\proofstep
+  {OneBit.expect_nonneg_of_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {OneBit.expect_const_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {OneBit.cauchy_schwarz_bool}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {OneBit.holder_sharpness}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001,
+    pdf-9d1751394783-p003-b007}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {GeneralHypercontractivity.sum_fourier_kernel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_snoc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_rpow}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.weighted_sum_succ_decomp}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.one_bit_slice_eq_innerProduct}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_clean}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.holder_ineq_bool}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_zero}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.hypercontractivity_induction}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b003,
+    pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b003,
+    pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007,
+    pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.weak_two_function_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002,
+    pdf-9d1751394783-p002-b003}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_sum_right}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_sum_left}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_abs_rpow_le_kernel_avg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.trivial_contractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.noise_op_norm_dual}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007,
+    pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.sqrt_div_le_one}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {GeneralHypercontractivity.noise_param_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b003}
+\proofstep
+  {GeneralHypercontractivity.bridging_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001,
+    pdf-9d1751394783-p002-b003}
+\proofstep
+  {GeneralHypercontractivity.rpow_sum_antitone_exponent}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b002}
+\proofstep
+  {GeneralHypercontractivity.h_alpha_ineq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001,
+    pdf-9d1751394783-p005-b002}
+\proofstep
+  {GeneralHypercontractivity.integrated_h_alpha_ineq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b002}
+\proofstep
+  {GeneralHypercontractivity.two_point_ineq_general_unit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001,
+    pdf-9d1751394783-p004-b006}
+\proofstep
+  {GeneralHypercontractivity.low_norms_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b007}
+\proofstep
+  {GeneralHypercontractivity.low_norms_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001,
+    pdf-9d1751394783-p004-b002}
+\proofstep
+  {GeneralHypercontractivity.high_norms_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001,
+    pdf-9d1751394783-p003-b007}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.bridging_hypercontractivity, GeneralHypercontractivity.high_norms_hypercontractivity, GeneralHypercontractivity.low_norms_hypercontractivity, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.trivial_contractivity, SimpleHypercontractivity.noiseOp_compose}
-\difficulty{6}
+\difficulty{5}
 Let $1 \le p \le u$ with $u > 1$, and let $0 \le \rho \le 1$ satisfy
 $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr$,
 \[
@@ -636,6 +3439,10 @@ $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr
 
 \begin{theorem}[General two-function hypercontractivity]
 \lean{GeneralHypercontractivity.general_two_function_hypercontractivity}
+\proofsource{boolean-ch10-advanced-hypercontractivity}{
+  pdf-9d1751394783-p002-b002,
+  pdf-9d1751394783-p004-b002
+}
 \label{GeneralHypercontractivity.general_two_function_hypercontractivity}
 \leanok
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
@@ -647,8 +3454,585 @@ $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr
   pdf-4ba63c9394e5-p001-b002,
   pdf-4ba63c9394e5-p013-b002
 }
+
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {SwitchingLemma2.Restriction}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b002}
+\proofstep
+  {SwitchingLemma2.Literal.fixedBy}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b003}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p024-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p023-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004,
+    pdf-9d1751394783-p017-b004}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b004}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p040-b004}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p040-b004}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.derivativeLm}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p019-b006}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p015-b005}
+\proofstep
+  {Bonami.sum_boolCube_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p020-b004}
+\proofstep
+  {Bonami.uniformWeight_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p020-b004}
+\proofstep
+  {Bonami.uniformMeasure}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b002}
+\proofstep
+  {Bonami.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p016-b002}
+\proofstep
+  {SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {SimpleHypercontractivity.expect_rpow_abs_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {SimpleHypercontractivity.noiseOp_compose}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b007}
+\proofstep
+  {OneBit.boolCube1_univ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.finsetFin1_univ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.boolCube1_ne}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.finsetFin1_ne}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.one_bit_val_false}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.one_bit_val_true}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.expect_noiseOp_sq_one_bit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006}
+\proofstep
+  {OneBit.expect_abs_rpow_one_bit}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {OneBit.two_point_ineq_unit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001,
+    pdf-9d1751394783-p005-b002}
+\proofstep
+  {OneBit.two_point_ineq}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b007}
+\proofstep
+  {OneBit.one_bit_p2_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b005}
+\proofstep
+  {OneBit.expect_nonneg_of_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {OneBit.expect_const_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {OneBit.cauchy_schwarz_bool}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {OneBit.holder_sharpness}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002,
+    pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_nonneg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.sum_fourier_kernel}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002,
+    pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_snoc}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_rpow}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.weighted_sum_succ_decomp}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.one_bit_slice_eq_innerProduct}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b002,
+    pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.norm_collapse_clean}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.holder_ineq_bool}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b004}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_zero}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.two_func_hyp_succ}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.hypercontractivity_induction}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b003,
+    pdf-9d1751394783-p002-b003}
+\proofstep
+  {GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007,
+    pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.weak_two_function_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_sum_right}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseKernel_sum_left}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.noiseOp_abs_rpow_le_kernel_avg}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.trivial_contractivity}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p022-b001}
+\proofstep
+  {GeneralHypercontractivity.noise_op_norm_dual}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p003-b007,
+    pdf-9d1751394783-p004-b001}
+\proofstep
+  {GeneralHypercontractivity.sqrt_div_le_one}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001}
+\proofstep
+  {GeneralHypercontractivity.noise_param_eq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.bridging_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001,
+    pdf-9d1751394783-p002-b002}
+\proofstep
+  {GeneralHypercontractivity.rpow_sum_antitone_exponent}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b002}
+\proofstep
+  {GeneralHypercontractivity.h_alpha_ineq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b002}
+\proofstep
+  {GeneralHypercontractivity.integrated_h_alpha_ineq}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001}
+\proofstep
+  {GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
+  {context}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b002}
+\proofstep
+  {GeneralHypercontractivity.two_point_ineq_general_unit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p005-b001,
+    pdf-9d1751394783-p004-b006}
+\proofstep
+  {GeneralHypercontractivity.low_norms_one_bit}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p004-b006,
+    pdf-9d1751394783-p004-b007}
+\proofstep
+  {GeneralHypercontractivity.low_norms_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001,
+    pdf-9d1751394783-p004-b003}
+\proofstep
+  {GeneralHypercontractivity.high_norms_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001,
+    pdf-9d1751394783-p006-b003}
+\proofstep
+  {GeneralHypercontractivity.general_one_function_hypercontractivity}
+  {direct}
+  {boolean-ch10-advanced-hypercontractivity}
+  {pdf-9d1751394783-p002-b001,
+    pdf-9d1751394783-p001-b005}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.general_one_function_hypercontractivity, GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
-\difficulty{2}
+\difficulty{1}
 Let $1 \le p \le u$ with $u \ge 2$, and let $0 \le \rho \le 1$ satisfy
 $\rho \le \sqrt{(p-1)/(u-1)}$. Then for all $f, g : \mathrm{BoolCube}\,n \to \bbr$,
 \[

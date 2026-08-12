@@ -35,7 +35,7 @@ $(y, x) \in \texttt{swapInputSet}(R)$ if and only if $(x, y) \in R$.
 \label{CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.swapInputSet}
-\difficulty{3}
+\difficulty{1}
 For any set $R \subseteq X \times Y$, applying $\texttt{swapInputSet}$ twice recovers
 $R$: $\texttt{swapInputSet}(\texttt{swapInputSet}(R)) = R$.
 \end{theorem}
@@ -120,7 +120,7 @@ This is an internal auxiliary result proved by structural induction.
 \label{CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectangles_comap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.preimageInputSet, CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectanglesAux_comap}
-\difficulty{2}
+\difficulty{1}
 If $R$ is a leaf rectangle of $p$ and $f_X : X' \to X$, $f_Y : Y' \to Y$, then
 $\texttt{preimageInputSet}(f_X, f_Y, R)$ is a leaf rectangle of $p.\texttt{comap}(f_X, f_Y)$.
 \end{theorem}
@@ -130,7 +130,7 @@ $\texttt{preimageInputSet}(f_X, f_Y, R)$ is a leaf rectangle of $p.\texttt{comap
 \label{CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Rectangle.IsRectangle}
-\difficulty{4}
+\difficulty{3}
 Every element of $\texttt{leafRectanglesAux}(p, A, B)$ is a combinatorial rectangle, i.e.\
 a set of the form $A' \times B'$ for some $A' \subseteq X$, $B' \subseteq Y$.
 \end{lemma}
@@ -159,7 +159,7 @@ Every element $R$ of $\texttt{leafRectanglesAux}(p, A, B)$ satisfies $R \subsete
 \label{CommunicationComplexity.Deterministic.Protocol.aux_cover}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
-\difficulty{5}
+\difficulty{4}
 The union of $\texttt{leafRectanglesAux}(p, A, B)$ contains $A \times B$:
 $A \times B \subseteq \bigcup \texttt{leafRectanglesAux}(p, A, B)$.
 \end{lemma}
@@ -169,7 +169,7 @@ $A \times B \subseteq \bigcup \texttt{leafRectanglesAux}(p, A, B)$.
 \label{CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
-\difficulty{6}
+\difficulty{5}
 If $R, S \in \texttt{leafRectanglesAux}(p, A, B)$ and $R \neq S$, then $R$ and $S$ are
 disjoint subsets of $X \times Y$.
 \end{lemma}
@@ -179,7 +179,7 @@ disjoint subsets of $X \times Y$.
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
-\difficulty{2}
+\difficulty{1}
 For any protocol $p$, the union of all leaf rectangles equals the entire input space:
 $\bigcup \texttt{leafRectangles}(p) = X \times Y$.
 \end{lemma}
@@ -220,7 +220,7 @@ $g$-monochromatic: all inputs in $R$ receive the same value of $g$.
 \label{CommunicationComplexity.Deterministic.Protocol.aux_card}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
-\difficulty{5}
+\difficulty{4}
 For any protocol $p$ and constraint sets $A, B$, the number of elements in
 $\texttt{leafRectanglesAux}(p, A, B)$ is at most $2^{p.\texttt{complexity}}$.
 \end{lemma}
@@ -259,7 +259,7 @@ For any protocol $p$, the set $\texttt{leafRectangles}(p)$ is finite.
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle, CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono, CommunicationComplexity.Rectangle.IsMonoPartition}
-\difficulty{3}
+\difficulty{1}
 If $p$ computes $g : X \to Y \to \alpha$, then the collection $\texttt{leafRectangles}(p)$
 is a monochromatic rectangle partition of $X \times Y$ with respect to $g$: every element
 is a rectangle, the elements are pairwise disjoint, their union is all of $X \times Y$,
@@ -271,7 +271,7 @@ and each element is $g$-monochromatic.
 \label{CommunicationComplexity.Deterministic.Protocol.rectangle_partition}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Rectangle.IsMonoPartition}
-\difficulty{2}
+\difficulty{1}
 If $p$ computes $g : X \to Y \to \alpha$ with communication complexity $c$, then
 $\texttt{leafRectangles}(p)$ is a monochromatic rectangle partition of $X \times Y$ with
 respect to $g$ and has at most $2^c$ parts.
@@ -282,7 +282,7 @@ respect to $g$ and has at most $2^c$ parts.
 \label{CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Rectangle.IsRectangle}
-\difficulty{3}
+\difficulty{2}
 Given a subprotocol path $\texttt{hsp} : \texttt{SubprotocolPath}\,s\,p$, the set of input
 pairs $(x, y) \in X \times Y$ that reach $s$ along that path is a combinatorial rectangle
 $\texttt{reachXPath}(\texttt{hsp}) \times \texttt{reachYPath}(\texttt{hsp})$.
@@ -293,7 +293,7 @@ $\texttt{reachXPath}(\texttt{hsp}) \times \texttt{reachYPath}(\texttt{hsp})$.
 \label{CommunicationComplexity.Deterministic.Protocol.reaches_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle, CommunicationComplexity.Rectangle.IsRectangle}
-\difficulty{2}
+\difficulty{1}
 Given a subprotocol witness $\texttt{hsp} : \texttt{IsSubprotocol}\,s\,p$, the set of input
 pairs $(x, y) \in X \times Y$ that reach $s$ (via the canonical path choice) is a
 combinatorial rectangle.
@@ -304,7 +304,7 @@ combinatorial rectangle.
 \label{CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsMonoPartition}
-\difficulty{3}
+\difficulty{2}
 If $\mathrm{CC}(g) \leq n$, then there exists a monochromatic rectangle partition of
 $X \times Y$ with respect to $g$ having at most $2^n$ parts.
 \end{theorem}
@@ -314,7 +314,7 @@ $X \times Y$ with respect to $g$ having at most $2^n$ parts.
 \label{CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Deterministic.le_communicationComplexity_iff, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsMonoPartition}
-\difficulty{5}
+\difficulty{4}
 To prove $\mathrm{CC}(g) \geq n + 1$, it suffices to show that every monochromatic
 rectangle partition of $g$ has more than $2^n$ parts: if every $\texttt{IsMonoPartition}\,P\,g$
 satisfies $2^n < |P|$, then $(n+1) \leq \mathrm{CC}(g)$.
@@ -325,7 +325,7 @@ satisfies $2^n < |P|$, then $(n+1) \leq \mathrm{CC}(g)$.
 \label{CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_finite, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
-\difficulty{4}
+\difficulty{3}
 If $\mathrm{CC}(g) \leq n$ and $S \subseteq X \times Y$ is a fooling set for $g$, then
 $|S| \leq 2^n$.
 \end{theorem}
@@ -335,7 +335,7 @@ $|S| \leq 2^n$.
 \label{CommunicationComplexity.Deterministic.clog_ncard_le_communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsFoolingSet}
-\difficulty{4}
+\difficulty{3}
 For any fooling set $S$ for $g$, the deterministic communication complexity satisfies
 $\lceil \log_2 |S| \rceil \leq \mathrm{CC}(g)$ (as extended naturals).
 \end{theorem}

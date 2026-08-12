@@ -65,7 +65,7 @@ phrased for easy application in the inductive step of
 \label{sum_scaled_iid_gaussian_map}
 \leanok
 \uses{map_const_mul_gaussian}
-\difficulty{6}
+\difficulty{5}
 Let $Y_j : \Omega \to \mathbb{R}$ be i.i.d.\ with law $N(0,\sigma_0)$, and
 let $x : \iota \to \mathbb{R}$ be a fixed coefficient vector.  For any finite
 set $s$,
@@ -107,7 +107,7 @@ This definitional equality unfolds the linear map into its explicit sum form.
 \lean{norm_sq_toEuclideanLin}
 \label{norm_sq_toEuclideanLin}
 \leanok
-\difficulty{3}
+\difficulty{2}
 For a matrix $A$ and vector $x$,
 \[
   \|A.\texttt{toEuclideanLin}\,x\|^2
@@ -187,7 +187,7 @@ variance to an arbitrary non-zero NNReal variance $v$.
 \lean{integrable_exp_mul_sq_gaussianReal_zero}
 \label{integrable_exp_mul_sq_gaussianReal_zero}
 \leanok
-\difficulty{5}
+\difficulty{4}
 For $v\ne 0$ and $2tv < 1$, the function $y\mapsto e^{t y^2}$ is integrable
 with respect to $N(0,v)$.  This integrability statement accompanies
 \texttt{integral\_exp\_mul\_sq\_gaussianReal\_zero} and is a prerequisite for
@@ -219,7 +219,7 @@ The proof combines the Gaussian quadratic MGF closed form
 \label{hasBernsteinMGF_centered_chi_squared}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, centered_chi_squared_step}
-\difficulty{3}
+\difficulty{2}
 Under the same hypotheses as \texttt{centered\_chi\_squared\_step}, the
 centered summand $Y^2 - 1/k$ satisfies
 $\text{\texttt{ProbabilityTheory.HasBernsteinMGF}}\bigl(2/k^2,\;k/4\bigr)$ under $\mu$.

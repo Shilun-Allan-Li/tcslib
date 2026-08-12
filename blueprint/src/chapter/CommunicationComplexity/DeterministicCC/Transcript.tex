@@ -50,7 +50,7 @@ remaining pair belongs to the child transcript's input set.
 \label{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet_isRectangle}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcriptSwap, CommunicationComplexity.Rectangle.IsRectangle}
-\difficulty{5}
+\difficulty{4}
 For every protocol $p$ and every syntactic transcript $t$ of $p$, the input set
 $\mathrm{inputSet}(t)$ is a combinatorial rectangle, i.e.\ there exist sets $A \subseteq X$
 and $B \subseteq Y$ such that $\mathrm{inputSet}(t) = A \times B$.
@@ -81,7 +81,7 @@ of its own computed transcript: $xy \in \mathrm{inputSet}(p.\mathrm{transcript}(
 \label{CommunicationComplexity.Deterministic.Protocol.transcript_eq_of_mem}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-\difficulty{5}
+\difficulty{4}
 If an input pair $xy$ belongs to the input set of a syntactic transcript $t$ of $p$,
 then $t$ is exactly the transcript computed by running $p$ on $xy$:
 $p.\mathrm{transcript}(xy) = t$.
@@ -103,7 +103,7 @@ $p.\mathrm{run}(xy.1, xy.2) = \mathrm{Transcript.output}(p.\mathrm{transcript}(x
 \label{CommunicationComplexity.Deterministic.Protocol.run_eq_of_transcript_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.output, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-\difficulty{3}
+\difficulty{1}
 If two input pairs $xy$ and $xy'$ produce the same syntactic transcript under $p$, then
 they also produce the same protocol output:
 $p.\mathrm{transcript}(xy) = p.\mathrm{transcript}(xy')$ implies
@@ -114,7 +114,7 @@ $p.\mathrm{run}(xy.1, xy.2) = p.\mathrm{run}(xy'.1, xy'.2)$.
 \lean{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux}
 \label{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux}
 \leanok
-\difficulty{4}
+\difficulty{3}
 For natural numbers $a, b, c_a, c_b$ with $a \le 2^{c_a}$ and $b \le 2^{c_b}$, one has
 $a + b \le 2^{1 + \max(c_a, c_b)}$.
 \end{theorem}
@@ -124,7 +124,7 @@ $a + b \le 2^{1 + \max(c_a, c_b)}$.
 \label{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-\difficulty{5}
+\difficulty{4}
 A deterministic protocol $p$ has at most $2^{\mathrm{complexity}(p)}$ syntactic
 transcripts: $|\mathrm{Transcript}(p)| \le 2^{p.\mathrm{complexity}}$.
 \end{theorem}
@@ -145,7 +145,7 @@ node as the opposite player.
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_injective}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-\difficulty{6}
+\difficulty{4}
 For every protocol $p$, the map \texttt{transcriptSwap} from $\mathrm{Transcript}(p)$ to
 $\mathrm{Transcript}(p.\mathrm{swap})$ is injective: distinct transcripts of $p$ give
 distinct transcripts of the swapped protocol.
@@ -156,7 +156,7 @@ distinct transcripts of the swapped protocol.
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_transcript}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-\difficulty{3}
+\difficulty{2}
 For every protocol $p$ and inputs $x \in X$, $y \in Y$, swapping the transcript of $p$
 on $(x, y)$ equals the transcript of the swapped protocol on the reversed pair $(y, x)$:
 $\mathrm{transcriptSwap}(p.\mathrm{transcript}(x, y)) = p.\mathrm{swap}.\mathrm{transcript}(y, x)$.
@@ -178,7 +178,7 @@ Boolean message sequence while re-routing through the input maps.
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptComap_injective}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.transcriptComap, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-\difficulty{6}
+\difficulty{4}
 For every protocol $p$ and input maps $f_X : X' \to X$, $f_Y : Y' \to Y$, the map
 \texttt{CommunicationComplexity.Deterministic.Protocol.transcriptComap}~$p$~$f_X$~$f_Y$ from $\mathrm{Transcript}(p)$ to
 $\mathrm{Transcript}(p.\mathrm{comap}(f_X, f_Y))$ is injective.
@@ -189,7 +189,7 @@ $\mathrm{Transcript}(p.\mathrm{comap}(f_X, f_Y))$ is injective.
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptComap_transcript}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptComap, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-\difficulty{3}
+\difficulty{2}
 For every protocol $p$, maps $f_X : X' \to X$, $f_Y : Y' \to Y$, and inputs
 $x' \in X'$, $y' \in Y'$, pulling back the transcript of $p$ on $(f_X(x'), f_Y(y'))$
 equals the transcript of the comapped protocol on $(x', y')$:

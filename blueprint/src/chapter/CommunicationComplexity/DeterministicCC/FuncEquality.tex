@@ -38,7 +38,7 @@ hashing-based equality protocol.
 \label{CommunicationComplexity.Functions.Equality.communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha, CommunicationComplexity.Functions.Equality.equality}
-\difficulty{4}
+\difficulty{3}
 For every $n \in \mathbb{N}$,
 \[
   D(\mathrm{equality}_n) \;\le\; n + 1.
@@ -52,7 +52,7 @@ input and Bob sends back the single comparison bit.
 \label{CommunicationComplexity.Functions.Equality.communicationComplexity_zero}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Functions.Equality.equality}
-\difficulty{4}
+\difficulty{3}
 When $n = 0$ both inputs are the unique empty string, so the equality function
 is constantly \texttt{true} and requires zero communication:
 \[
@@ -65,7 +65,7 @@ is constantly \texttt{true} and requires zero communication:
 \label{CommunicationComplexity.Functions.Equality.le_communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Rectangle.monoPartition_cross_mem, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
-\difficulty{6}
+\difficulty{5}
 For every $n \ge 1$,
 \[
   n + 1 \;\le\; D(\mathrm{equality}_n).
@@ -81,7 +81,7 @@ pieces, requiring $n + 1$ bits to index.
 \label{CommunicationComplexity.Functions.Equality.communicationComplexity_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Functions.Equality.communicationComplexity_le, CommunicationComplexity.Functions.Equality.communicationComplexity_zero, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.le_communicationComplexity}
-\difficulty{4}
+\difficulty{2}
 The deterministic communication complexity of the equality function on $n$-bit
 strings is
 \[
@@ -105,7 +105,7 @@ $\mathtt{decide}(h(y) = h(x))$.
 \label{CommunicationComplexity.Functions.Equality.equalityHashProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.Equality.HashSpace, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
-\difficulty{3}
+\difficulty{1}
 For all $x, y : \mathrm{BoolInput}\,n$ and $h : \mathrm{HashSpace}(n,k)$,
 \[
   (\mathrm{equalityHashProtocol}\,n\,k).\mathrm{rrun}\,x\,y\,h
@@ -118,7 +118,7 @@ For all $x, y : \mathrm{BoolInput}\,n$ and $h : \mathrm{HashSpace}(n,k)$,
 \label{CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bob, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.output}
-\difficulty{4}
+\difficulty{3}
 The worst-case communication cost of $\mathrm{equalityHashProtocol}(n, k)$ is
 exactly $k + 1$ bits.
 \end{theorem}
@@ -143,7 +143,7 @@ The error bound follows from the collision probability of the random hash family
 \label{CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le}
 \leanok
 \uses{CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le_of_hε, CommunicationComplexity.PublicCoin.communicationComplexity}
-\difficulty{5}
+\difficulty{4}
 For every $n \in \mathbb{N}$ and every $\varepsilon > 0$,
 \[
   R_\varepsilon(\mathrm{equality}_n)

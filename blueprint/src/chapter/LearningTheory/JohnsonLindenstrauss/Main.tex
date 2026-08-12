@@ -113,7 +113,7 @@ event.
 \label{johnson_lindenstrauss_of_subgaussian}
 \leanok
 \uses{BadPair, BadSingle, IsJLEmbedding, concentration_zero, jl_concentration_single_subgaussian, jl_union_bound}
-\difficulty{5}
+\difficulty{4}
 Sub-Gaussian analogue of \texttt{johnson\_lindenstrauss\_of\_gaussian}: the Gaussian
 entry hypotheses are replaced by the assumptions that each row projection
 $(Ax)_i$ is sub-Gaussian with parameter $\|x\|^2/k$ and has variance exactly
@@ -166,7 +166,7 @@ consumed by both \texttt{johnson\_lindenstrauss\_of\_gaussian} and
 \label{johnson_lindenstrauss}
 \leanok
 \uses{BadSingle, IsJLEmbedding, exists_iid_gaussian_matrix, jl_failure_bound_of_dim, johnson_lindenstrauss_of_gaussian, measurableSet_badSingle}
-\difficulty{3}
+\difficulty{2}
 For any $0 < \varepsilon < 1$, $n \ge 2$, $k \ge 32 \log n / \varepsilon^2$,
 and any finite set $V \subseteq \mathbb{R}^d$ of at most $n$ points, there
 exists a linear map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ that is an
@@ -180,7 +180,7 @@ for all $u, v \in V$.
 \label{johnson_lindenstrauss_subgaussian}
 \leanok
 \uses{BadSingle, IsJLEmbedding, hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_failure_bound_of_dim, johnson_lindenstrauss_of_subgaussian, measurableSet_badSingle, measurable_radMatrix, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
-\difficulty{4}
+\difficulty{3}
 Rademacher ($\pm 1/\sqrt{k}$ entries) analogue of \texttt{johnson\_lindenstrauss}:
 same hypotheses on $\varepsilon$, $n$, $k$, and $V$, same conclusion---an
 $\varepsilon$-JL embedding of $V$ exists---but now realized by a Rademacher
@@ -235,7 +235,7 @@ realized by a Rademacher random matrix.
 \label{johnson_lindenstrauss_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss}
-\difficulty{3}
+\difficulty{2}
 For any $0 < \varepsilon < 1$ and $n \ge 2$, there exists a threshold
 $k_0 \in \mathbb{N}$ such that for every $k \ge k_0$, every ambient
 dimension $d$, and every set $V \subseteq \mathbb{R}^d$ of at most $n$ points,
@@ -248,7 +248,7 @@ exists.  In particular the target dimension is $O(\log n / \varepsilon^2)$.
 \label{johnson_lindenstrauss_subgaussian_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss_subgaussian}
-\difficulty{3}
+\difficulty{2}
 Sub-Gaussian (Rademacher) analogue of \texttt{johnson\_lindenstrauss\_dim\_bound}:
 same threshold $k_0 = O(\log n / \varepsilon^2)$, same universal conclusion for
 all $k \ge k_0$, $d$, and $V$ of size at most $n$, but inheriting the

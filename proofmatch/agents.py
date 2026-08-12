@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import time
 import tempfile
 from collections.abc import Mapping, Sequence
 from decimal import Decimal
@@ -11,6 +12,37 @@ from typing import Callable
 
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
+
+#: Transient-failure retry policy for `claude -p`. Three attempts total, doubling from
+#: this delay. Kept small: a stuck stage should surface, not spin.
+_INVOCATION_ATTEMPTS = 3
+_INVOCATION_BACKOFF_SECONDS = 5
+
+#: Substrings marking a failure that a retry can plausibly fix. Everything else --
+#: notably content-filter refusals and schema rejections -- fails fast.
+_TRANSIENT_MARKERS = (
+    "connection closed",
+    "connection reset",
+    "connection error",
+    "timed out",
+    "timeout",
+    "overloaded",
+    "rate limit",
+    "429",
+    "500",
+    "502",
+    "503",
+    "504",
+    "internal server error",
+    "service unavailable",
+    "temporarily",
+    "eof occurred",
+)
+
+
+def _is_transient(detail: str) -> bool:
+    lowered = (detail or "").casefold()
+    return any(marker in lowered for marker in _TRANSIENT_MARKERS)
 
 # Model tiers for the pipeline. DEFAULT_MODEL runs the high-volume stages
 # (cleanup, relevance, upstream mapping); COMPARE_MODEL runs the heavier
@@ -222,34 +254,54 @@ class ClaudeAgent:
         )
         # cwd is a fresh temp dir so the invocation picks up no project
         # CLAUDE.md or settings from wherever the pipeline happens to run.
-        with tempfile.TemporaryDirectory(prefix="proofmatch-agent-") as tmp:
-            try:
-                result = self.runner(
-                    command,
-                    input=envelope,
-                    check=True,
-                    capture_output=True,
-                    text=True,
-                    encoding="utf-8",
-                    cwd=tmp,
-                )
-            except (OSError, subprocess.CalledProcessError) as error:
-                stderr = getattr(error, "stderr", "") or ""
-                stdout = getattr(error, "stdout", "") or ""
-                # The CLI reports API failures as a JSON envelope on stdout;
-                # surface its result message (e.g. content-filter blocks)
-                # instead of a truncated envelope prefix.
-                detail = ""
+        #
+        # Transient API failures are retried. Only the comparison loop degrades
+        # gracefully on AgentInvocationError; routing and relevance do not, so one
+        # dropped connection during `route_chapters` used to abandon a whole document
+        # before any work was written (observed: "Connection closed mid-response"
+        # killing a match eight minutes in, after a four-hour sibling had just
+        # succeeded). Failures that will not improve on a retry -- a content-filter
+        # block, a malformed schema -- are raised immediately.
+        result = None
+        for attempt in range(_INVOCATION_ATTEMPTS):
+            with tempfile.TemporaryDirectory(prefix="proofmatch-agent-") as tmp:
                 try:
-                    envelope_value = json.loads(stdout)
-                    if isinstance(envelope_value, dict):
-                        detail = str(envelope_value.get("result") or "")
-                except json.JSONDecodeError:
-                    pass
-                detail = detail or stderr.strip() or stdout.strip()[:300]
-                raise AgentInvocationError(
-                    f"claude invocation failed: {detail}"
-                ) from error
+                    result = self.runner(
+                        command,
+                        input=envelope,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
+                        cwd=tmp,
+                    )
+                    break
+                except (OSError, subprocess.CalledProcessError) as error:
+                    stderr = getattr(error, "stderr", "") or ""
+                    stdout = getattr(error, "stdout", "") or ""
+                    # The CLI reports API failures as a JSON envelope on stdout;
+                    # surface its result message (e.g. content-filter blocks)
+                    # instead of a truncated envelope prefix.
+                    detail = ""
+                    try:
+                        envelope_value = json.loads(stdout)
+                        if isinstance(envelope_value, dict):
+                            detail = str(envelope_value.get("result") or "")
+                    except json.JSONDecodeError:
+                        pass
+                    detail = detail or stderr.strip() or stdout.strip()[:300]
+                    last = attempt == _INVOCATION_ATTEMPTS - 1
+                    if last or not _is_transient(detail):
+                        raise AgentInvocationError(
+                            f"claude invocation failed: {detail}"
+                        ) from error
+                    delay = _INVOCATION_BACKOFF_SECONDS * (2 ** attempt)
+                    print(
+                        f"  transient agent failure ({detail[:80]}); "
+                        f"retry {attempt + 1}/{_INVOCATION_ATTEMPTS - 1} in {delay}s"
+                    )
+                    time.sleep(delay)
+        assert result is not None
         output = parse_agent_output(result.stdout)
         structured = output["structured_output"]
         assert isinstance(structured, dict)
