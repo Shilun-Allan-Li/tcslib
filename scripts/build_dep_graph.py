@@ -37,16 +37,33 @@ def build_decl_ranges(refs: dict) -> dict[str, list[int]]:
     Returns: { decl_name: [startLine, endLine] }
     """
     ranges: dict[str, list[int]] = {}
+
+    def record(tuple_: object) -> None:
+        if (
+            isinstance(tuple_, list)
+            and len(tuple_) >= 9
+            and isinstance(tuple_[4], str)
+        ):
+            name = tuple_[4]
+            sl, el = tuple_[5], tuple_[7]
+            if name not in ranges:
+                ranges[name] = [sl, el]
+            else:
+                ranges[name][0] = min(ranges[name][0], sl)
+                ranges[name][1] = max(ranges[name][1], el)
+
     for v in refs.values():
+        # `usages` names the *enclosing* declaration, so a declaration is only seen
+        # here if something inside its body produced an extended reference. An
+        # `inductive` attributes its inner references to its constructors, never to
+        # itself, so `PauliBasis` was absent from the graph entirely — invisible to the
+        # dataset, to routing, and to the validator's orphan check, and it blocked three
+        # upstream mappings. Its own `definition` tuple carries exactly the same shape
+        # (name at index 4, range at 5/7), so seed from that too: any body-less
+        # declaration is authoritative about itself.
+        record(v.get("definition"))
         for usage in v.get("usages", []):
-            if len(usage) >= 9 and isinstance(usage[4], str):
-                name = usage[4]
-                sl, el = usage[5], usage[7]
-                if name not in ranges:
-                    ranges[name] = [sl, el]
-                else:
-                    ranges[name][0] = min(ranges[name][0], sl)
-                    ranges[name][1] = max(ranges[name][1], el)
+            record(usage)
     return ranges
 
 
