@@ -16,7 +16,7 @@ independent sets are exactly complementary.
 other; see \texttt{log/graphtheory-ISSUES.md} \S{}F.
 \end{definition}
 
-\begin{theorem}[isIndepSet_iff_isCovering_compl]
+\begin{theorem}[isIndepSet\_iff\_isCovering\_compl]
 \lean{SimpleGraph.isIndepSet_iff_isCovering_compl}
 \label{SimpleGraph.isIndepSet_iff_isCovering_compl}
 \uses{SimpleGraph.IsCovering}
@@ -37,7 +37,7 @@ minimised is never empty.  Contrast \texttt{edgeCoveringNumber} below, where the
 live.
 \end{definition}
 
-\begin{theorem}[indepNum_add_coveringNumber]
+\begin{theorem}[indepNum\_add\_coveringNumber]
 \lean{SimpleGraph.indepNum_add_coveringNumber}
 \label{SimpleGraph.indepNum_add_coveringNumber}
 \uses{SimpleGraph.coveringNumber}
@@ -80,7 +80,7 @@ why Theorem 7.2 carries $\delta > 0$, and why any lemma about $\beta'$ must eith
 it or handle the degenerate case explicitly.
 \end{definition}
 
-\begin{theorem}[matchingNumber_add_edgeCoveringNumber]
+\begin{theorem}[matchingNumber\_add\_edgeCoveringNumber]
 \lean{SimpleGraph.matchingNumber_add_edgeCoveringNumber}
 \label{SimpleGraph.matchingNumber_add_edgeCoveringNumber}
 \uses{SimpleGraph.edgeCoveringNumber, SimpleGraph.matchingNumber}
@@ -89,7 +89,7 @@ coverings are \textbf{not} complementary the way independent sets and coverings 
 The book is explicit about this (\S{}7.1, p. 110):
 \end{theorem}
 
-\begin{theorem}[indepNum_eq_edgeCoveringNumber]
+\begin{theorem}[indepNum\_eq\_edgeCoveringNumber]
 \lean{SimpleGraph.indepNum_eq_edgeCoveringNumber}
 \label{SimpleGraph.indepNum_eq_edgeCoveringNumber}
 \uses{SimpleGraph.edgeCoveringNumber}
@@ -97,7 +97,7 @@ K\"onig's min-max equality transported across the two Gallai identities.  The bo
 introduces it with (\S{}7.1, p. 110):
 \end{theorem}
 
-\begin{theorem}[isBipartite_iff_forall_subgraph_two_mul_indepNum_le]
+\begin{theorem}[isBipartite\_iff\_forall\_subgraph\_two\_mul\_indepNum\_le]
 \lean{SimpleGraph.isBipartite_iff_forall_subgraph_two_mul_indepNum_le}
 \label{SimpleGraph.isBipartite_iff_forall_subgraph_two_mul_indepNum_le}
 ($\Rightarrow$) Every subgraph of a bipartite graph is bipartite, and the larger side of a
@@ -116,7 +116,7 @@ place of \texttt{Fintype.card ↥H.verts} to avoid an instance that \texttt{[Fin
 does not supply.
 \end{theorem}
 
-\begin{theorem}[isBipartite_iff_forall_subgraph_indepNum_eq_edgeCoveringNumber]
+\begin{theorem}[isBipartite\_iff\_forall\_subgraph\_indepNum\_eq\_edgeCoveringNumber]
 \lean{SimpleGraph.isBipartite_iff_forall_subgraph_indepNum_eq_edgeCoveringNumber}
 \label{SimpleGraph.isBipartite_iff_forall_subgraph_indepNum_eq_edgeCoveringNumber}
 \uses{SimpleGraph.edgeCoveringNumber}
@@ -147,7 +147,7 @@ $G - e$ is \texttt{G.deleteEdges \{e\}}, on the same vertex type --- so $\nu$ is
 which is what makes the equivalence with $\beta$-criticality (below) exact.
 \end{definition}
 
-\begin{theorem}[no_cutVertex_of_isAlphaCritical]
+\begin{theorem}[no\_cutVertex\_of\_isAlphaCritical]
 \lean{SimpleGraph.no_cutVertex_of_isAlphaCritical}
 \label{SimpleGraph.no_cutVertex_of_isAlphaCritical}
 \uses{SimpleGraph.IsAlphaCritical, SimpleGraph.IsVertexCut}
@@ -172,7 +172,7 @@ the two exercises are parallel, and why 7.1.3(a) reduces to 7.1.2 in one line
 once Cor 7.1 is available.
 \end{definition}
 
-\begin{theorem}[no_cutVertex_of_isBetaCritical]
+\begin{theorem}[no\_cutVertex\_of\_isBetaCritical]
 \lean{SimpleGraph.no_cutVertex_of_isBetaCritical}
 \label{SimpleGraph.no_cutVertex_of_isBetaCritical}
 \uses{SimpleGraph.IsBetaCritical, SimpleGraph.IsVertexCut}
@@ -181,7 +181,7 @@ deletion leaves $\nu$ fixed.  So $\beta(G - e) < \beta(G)$ $\iff$ $\alpha(G - e)
 $\beta$-critical is the same condition as $\alpha$-critical.
 \end{theorem}
 
-\begin{theorem}[two_mul_coveringNumber_le]
+\begin{theorem}[two\_mul\_coveringNumber\_le]
 \lean{SimpleGraph.two_mul_coveringNumber_le}
 \label{SimpleGraph.two_mul_coveringNumber_le}
 \uses{SimpleGraph.coveringNumber}
@@ -227,7 +227,7 @@ be about the wrong number.  That existence result is therefore not optional
 scaffolding --- it gates the meaning of the definition itself.
 \end{definition}
 
-\begin{theorem}[isRamseyBound_mono]
+\begin{theorem}[isRamseyBound\_mono]
 \lean{SimpleGraph.isRamseyBound_mono}
 \label{SimpleGraph.isRamseyBound_mono}
 \uses{SimpleGraph.IsRamseyBound}
@@ -236,7 +236,7 @@ $n$ of them, get a $k$-clique or $l$-independent set there, and it survives in
 the larger graph.
 \end{theorem}
 
-\begin{theorem}[exists_isRamseyBound]
+\begin{theorem}[exists\_isRamseyBound]
 \lean{SimpleGraph.exists_isRamseyBound}
 \label{SimpleGraph.exists_isRamseyBound}
 \uses{SimpleGraph.IsRamseyBound}
@@ -263,7 +263,7 @@ suffices --- but it is what makes $r(k,l)$ the sharp threshold rather than merel
 \emph{a} bound.
 \end{theorem}
 
-\begin{theorem}[ramseyNumber_one_left]
+\begin{theorem}[ramseyNumber\_one\_left]
 \lean{SimpleGraph.ramseyNumber_one_left}
 \label{SimpleGraph.ramseyNumber_one_left}
 \uses{SimpleGraph.ramseyNumber}
@@ -276,7 +276,7 @@ must --- but $n = 0$ also satisfies it vacuously \emph{only if} \texttt{Fin 0} g
 has to be ruled out explicitly rather than assumed.
 \end{theorem}
 
-\begin{theorem}[ramseyNumber_one_right]
+\begin{theorem}[ramseyNumber\_one\_right]
 \lean{SimpleGraph.ramseyNumber_one_right}
 \label{SimpleGraph.ramseyNumber_one_right}
 \uses{SimpleGraph.ramseyNumber}
@@ -285,7 +285,7 @@ A 1-element independent set is a single vertex.  The mirror image of
 (Ex 7.2.1) --- though proving it directly is just as short.
 \end{theorem}
 
-\begin{theorem}[ramseyNumber_two_left]
+\begin{theorem}[ramseyNumber\_two\_left]
 \lean{SimpleGraph.ramseyNumber_two_left}
 \label{SimpleGraph.ramseyNumber_two_left}
 \uses{SimpleGraph.ramseyNumber}
@@ -295,7 +295,7 @@ suffices; and $l - 1$ does not, since $\bot$ on \texttt{Fin (l-1)} has no edge a
 $l$-element independent set.
 \end{theorem}
 
-\begin{theorem}[ramseyNumber_two_right]
+\begin{theorem}[ramseyNumber\_two\_right]
 \lean{SimpleGraph.ramseyNumber_two_right}
 \label{SimpleGraph.ramseyNumber_two_right}
 \uses{SimpleGraph.ramseyNumber}
@@ -306,7 +306,7 @@ complete graph on $k - 1$ vertices shows $k$ is needed.
 The mirror of \texttt{ramseyNumber\_two\_left} under \texttt{ramseyNumber\_comm}.
 \end{theorem}
 
-\begin{theorem}[ramsey_recursion]
+\begin{theorem}[ramsey\_recursion]
 \lean{SimpleGraph.ramsey_recursion}
 \label{SimpleGraph.ramsey_recursion}
 \uses{SimpleGraph.ramseyNumber}
@@ -317,7 +317,7 @@ bound of Theorem 7.5.
 but the proof must still convert $l - 1 + 1 = l$ explicitly at each use.
 \end{theorem}
 
-\begin{theorem}[ramsey_recursion_strict]
+\begin{theorem}[ramsey\_recursion\_strict]
 \lean{SimpleGraph.ramsey_recursion_strict}
 \label{SimpleGraph.ramsey_recursion_strict}
 \uses{SimpleGraph.ramseyNumber}
@@ -331,14 +331,14 @@ degree.  That one configuration is precisely the one where neither (i) nor (ii)
 holds, so ruling it out restores the case analysis.
 \end{theorem}
 
-\begin{theorem}[cycleGraph_five_cliqueFree_three]
+\begin{theorem}[cycleGraph\_five\_cliqueFree\_three]
 \lean{SimpleGraph.cycleGraph_five_cliqueFree_three}
 \label{SimpleGraph.cycleGraph_five_cliqueFree_three}
 $C_{5}$ has girth 5, so no triangle: each vertex has two neighbours and they are not
 adjacent to each other.
 \end{theorem}
 
-\begin{theorem}[cycleGraph_five_indepSetFree_three]
+\begin{theorem}[cycleGraph\_five\_indepSetFree\_three]
 \lean{SimpleGraph.cycleGraph_five_indepSetFree_three}
 \label{SimpleGraph.cycleGraph_five_indepSetFree_three}
 Any three of five cyclic positions include two consecutive ones, hence adjacent.
@@ -348,7 +348,7 @@ $C_{5}$ is self-complementary, which is what makes it work on both sides at once
 the book conjectures (\S{}7.2, p. 114) that all $(k,k)$-Ramsey graphs are.
 \end{theorem}
 
-\begin{theorem}[six_le_ramseyNumber_three_three]
+\begin{theorem}[six\_le\_ramseyNumber\_three\_three]
 \lean{SimpleGraph.six_le_ramseyNumber_three_three}
 \label{SimpleGraph.six_le_ramseyNumber_three_three}
 \uses{SimpleGraph.ramseyNumber}
@@ -373,7 +373,7 @@ A circulant on \texttt{ZMod 13}.  ${1, 5, 8, 12}$ is closed under negation
 directory.
 \end{definition}
 
-\begin{theorem}[cubicResidueGraph13_cliqueFree_three]
+\begin{theorem}[cubicResidueGraph13\_cliqueFree\_three]
 \lean{SimpleGraph.cubicResidueGraph13_cliqueFree_three}
 \label{SimpleGraph.cubicResidueGraph13_cliqueFree_three}
 \uses{SimpleGraph.cubicResidueGraph13}
@@ -382,7 +382,7 @@ ${1, 5, 8, 12}$; the arithmetic rules it out.  The graph is 4-regular and
 triangle-free.
 \end{theorem}
 
-\begin{theorem}[cubicResidueGraph13_indepSetFree_five]
+\begin{theorem}[cubicResidueGraph13\_indepSetFree\_five]
 \lean{SimpleGraph.cubicResidueGraph13_indepSetFree_five}
 \label{SimpleGraph.cubicResidueGraph13_indepSetFree_five}
 \uses{SimpleGraph.cubicResidueGraph13}
@@ -391,7 +391,7 @@ element of ${1, 5, 8, 12}$.  With thirteen residues and four forbidden
 differences, no such set exists.
 \end{theorem}
 
-\begin{theorem}[fourteen_le_ramseyNumber_three_five]
+\begin{theorem}[fourteen\_le\_ramseyNumber\_three\_five]
 \lean{SimpleGraph.fourteen_le_ramseyNumber_three_five}
 \label{SimpleGraph.fourteen_le_ramseyNumber_three_five}
 \uses{SimpleGraph.ramseyNumber}
@@ -413,7 +413,7 @@ symmetric graph.  ${1,2,4,8,9,13,15,16}$ is closed under negation
 \textbf{+} Fully defined, \texttt{symm}/\texttt{loopless} discharged by \texttt{decide} --- no \texttt{sorry}.
 \end{definition}
 
-\begin{theorem}[paleyGraph17_cliqueFree_four]
+\begin{theorem}[paleyGraph17\_cliqueFree\_four]
 \lean{SimpleGraph.paleyGraph17_cliqueFree_four}
 \label{SimpleGraph.paleyGraph17_cliqueFree_four}
 \uses{SimpleGraph.paleyGraph17}
@@ -421,7 +421,7 @@ Four vertices pairwise differing by quadratic residues would be a $K_{4}$; the
 arithmetic of ${1,2,4,8,9,13,15,16}$ prevents it, so $\omega = 3$.
 \end{theorem}
 
-\begin{theorem}[paleyGraph17_indepSetFree_four]
+\begin{theorem}[paleyGraph17\_indepSetFree\_four]
 \lean{SimpleGraph.paleyGraph17_indepSetFree_four}
 \label{SimpleGraph.paleyGraph17_indepSetFree_four}
 \uses{SimpleGraph.paleyGraph17}
@@ -433,7 +433,7 @@ complement, i.e. in an isomorphic copy --- ruled out by the previous lemma.
 $x \mapsto gx$ for $g$ a non-residue), which is more work than the direct check.
 \end{theorem}
 
-\begin{theorem}[eighteen_le_ramseyNumber_four_four]
+\begin{theorem}[eighteen\_le\_ramseyNumber\_four\_four]
 \lean{SimpleGraph.eighteen_le_ramseyNumber_four_four}
 \label{SimpleGraph.eighteen_le_ramseyNumber_four_four}
 \uses{SimpleGraph.ramseyNumber}
@@ -445,7 +445,7 @@ would need $r(3,4) = 9$ --- itself unstated and requiring the strict form of
 Theorem 7.4.
 \end{theorem}
 
-\begin{theorem}[ramseyNumber_le_choose]
+\begin{theorem}[ramseyNumber\_le\_choose]
 \lean{SimpleGraph.ramseyNumber_le_choose}
 \label{SimpleGraph.ramseyNumber_le_choose}
 \uses{SimpleGraph.ramseyNumber}
@@ -461,7 +461,7 @@ proof).  The Pascal step $C(m+n-3, m-1) + C(m+n-3, m-2) = C(m+n-2, m-1)$ is
 budget for that.
 \end{theorem}
 
-\begin{theorem}[card_simpleGraph_fin]
+\begin{theorem}[card\_simpleGraph\_fin]
 \lean{SimpleGraph.card_simpleGraph_fin}
 \label{SimpleGraph.card_simpleGraph_fin}
 A simple graph on a labelled vertex set is determined by which of the $C(n,2)$
@@ -476,7 +476,7 @@ work, not the arithmetic.
 The counting fact underlying Erd\H{o}s' probabilistic proof of Theorem 7.6.
 \end{theorem}
 
-\begin{theorem}[ramsey_self_lower_bound]
+\begin{theorem}[ramsey\_self\_lower\_bound]
 \lean{SimpleGraph.ramsey_self_lower_bound}
 \label{SimpleGraph.ramsey_self_lower_bound}
 \uses{SimpleGraph.ramseyNumber}
@@ -486,7 +486,7 @@ The exponent $k/2$ is real, hence the $\mathbb{R}$-valued statement --- the one 
 this chapter where $\mathbb{N}$ will not do.
 \end{theorem}
 
-\begin{theorem}[ramseyNumber_ge_of_min]
+\begin{theorem}[ramseyNumber\_ge\_of\_min]
 \lean{SimpleGraph.ramseyNumber_ge_of_min}
 \label{SimpleGraph.ramseyNumber_ge_of_min}
 \uses{SimpleGraph.ramseyNumber}
@@ -549,7 +549,7 @@ $k_{1} = \dots = k_m = 3$ gives the sequence $r_{n}$ of exercise 7.2.3, which is
 Schur's theorem consumes in \S{}7.4.
 \end{definition}
 
-\begin{theorem}[ramseyMulti_recursion]
+\begin{theorem}[ramseyMulti\_recursion]
 \lean{SimpleGraph.ramseyMulti_recursion}
 \label{SimpleGraph.ramseyMulti_recursion}
 \uses{SimpleGraph.ramseyNumberMulti}
@@ -566,7 +566,7 @@ subtraction $- m + 2$.
 keeps it from truncating.
 \end{theorem}
 
-\begin{theorem}[ramseyMulti_le_multinomial]
+\begin{theorem}[ramseyMulti\_le\_multinomial]
 \lean{SimpleGraph.ramseyMulti_le_multinomial}
 \label{SimpleGraph.ramseyMulti_le_multinomial}
 \uses{SimpleGraph.ramseyNumberMulti}
@@ -580,7 +580,7 @@ in chapter 5, the proof should establish the \emph{multiplied} form
 $r(\dots) * \prod k_{i}! \le (\sum k_{i})!$ and divide only at the end.
 \end{theorem}
 
-\begin{theorem}[ramseyNumber_comm]
+\begin{theorem}[ramseyNumber\_comm]
 \lean{SimpleGraph.ramseyNumber_comm}
 \label{SimpleGraph.ramseyNumber_comm}
 \uses{SimpleGraph.ramseyNumber}
@@ -606,7 +606,7 @@ Exactly what Schur's theorem (\S{}7.4) consumes.
 is currently provably $0$ for every $n$.
 \end{definition}
 
-\begin{theorem}[ramseyTriangle_recursion]
+\begin{theorem}[ramseyTriangle\_recursion]
 \lean{SimpleGraph.ramseyTriangle_recursion}
 \label{SimpleGraph.ramseyTriangle_recursion}
 \uses{SimpleGraph.ramseyTriangle}
@@ -620,7 +620,7 @@ triangle.
 Stated additively ($+ n$ on the left) to avoid $\mathbb{N}$ subtraction.
 \end{theorem}
 
-\begin{theorem}[ramseyTriangle_le_factorial_exp]
+\begin{theorem}[ramseyTriangle\_le\_factorial\_exp]
 \lean{SimpleGraph.ramseyTriangle_le_factorial_exp}
 \label{SimpleGraph.ramseyTriangle_le_factorial_exp}
 \uses{SimpleGraph.ramseyTriangle}
@@ -631,7 +631,7 @@ $r_{n} - 1 \le n! e$.
 $e$ appears precisely as $\sum 1/k!$.
 \end{theorem}
 
-\begin{theorem}[ramseyTriangle_three_le]
+\begin{theorem}[ramseyTriangle\_three\_le]
 \lean{SimpleGraph.ramseyTriangle_three_le}
 \label{SimpleGraph.ramseyTriangle_three_le}
 \uses{SimpleGraph.ramseyTriangle}
@@ -658,7 +658,7 @@ across-copy edges are treated symmetrically.  Composition is not commutative.
 Parts (b) and (c) of the exercise, to multiply Ramsey lower bounds.
 \end{definition}
 
-\begin{theorem}[indepNum_composition_le]
+\begin{theorem}[indepNum\_composition\_le]
 \lean{SimpleGraph.indepNum_composition_le}
 \label{SimpleGraph.indepNum_composition_le}
 \uses{SimpleGraph.composition}
@@ -668,7 +668,7 @@ non-adjacent), so at most $\alpha(G)$ copies are touched; within each, at most $
 vertices.  Multiply.
 \end{theorem}
 
-\begin{theorem}[ramsey_product_lower]
+\begin{theorem}[ramsey\_product\_lower]
 \lean{SimpleGraph.ramsey_product_lower}
 \label{SimpleGraph.ramsey_product_lower}
 \uses{SimpleGraph.ramseyNumber}
@@ -685,7 +685,7 @@ obvious} and is not stated in this file.  Without it, part (a) bounds only $\alp
 and the clique side has to be argued separately.
 \end{theorem}
 
-\begin{theorem}[abbott_lower_bound]
+\begin{theorem}[abbott\_lower\_bound]
 \lean{SimpleGraph.abbott_lower_bound}
 \label{SimpleGraph.abbott_lower_bound}
 \uses{SimpleGraph.ramseyNumber}
@@ -732,7 +732,7 @@ different carrier --- flexible, but it means \texttt{![pathGraph 4, pathGraph 4]
 must elaborate its motive carefully.
 \end{definition}
 
-\begin{theorem}[tree_isContained_of_minDegree_le]
+\begin{theorem}[tree\_isContained\_of\_minDegree\_le]
 \lean{SimpleGraph.tree_isContained_of_minDegree_le}
 \label{SimpleGraph.tree_isContained_of_minDegree_le}
 \emph{ (absent from Mathlib).  }If $\delta(G) \ge m - 1$
@@ -751,7 +751,7 @@ tree-target Ramsey numbers exactly computable.
 callers must supply it.
 \end{theorem}
 
-\begin{theorem}[generalisedRamsey_tree_star]
+\begin{theorem}[generalisedRamsey\_tree\_star]
 \lean{SimpleGraph.generalisedRamsey_tree_star}
 \label{SimpleGraph.generalisedRamsey_tree_star}
 \uses{SimpleGraph.generalisedRamseyNumber}
@@ -771,7 +771,7 @@ dependent spelling \texttt{Fin.cons T (Fin.cons \_ finZeroElim)} with an explici
 family \texttt{W := ![W, Fin 1 $\oplus$ Fin n]}, and \texttt{W : Type} rather than \texttt{Type*}.
 \end{theorem}
 
-\begin{theorem}[chvatal_tree_complete]
+\begin{theorem}[chvatal\_tree\_complete]
 \lean{SimpleGraph.chvatal_tree_complete}
 \label{SimpleGraph.chvatal_tree_complete}
 \uses{SimpleGraph.generalisedRamseyNumber}
@@ -793,7 +793,7 @@ $T$.
 so this exercise depends on the \emph{next} section, not just on \S{}7.2.
 \end{theorem}
 
-\begin{theorem}[degreeMajorised_of_cliqueFree]
+\begin{theorem}[degreeMajorised\_of\_cliqueFree]
 \lean{SimpleGraph.degreeMajorised_of_cliqueFree}
 \label{SimpleGraph.degreeMajorised_of_cliqueFree}
 \uses{SimpleGraph.DegreeMajorised, SimpleGraph.degreeSequence}
@@ -810,7 +810,7 @@ clause (\texttt{same degree sequence $\to$ G $\cong$ H}) cannot be right as stat
 conjunct.
 \end{theorem}
 
-\begin{theorem}[degreeMajorised_of_forall_degree_le]
+\begin{theorem}[degreeMajorised\_of\_forall\_degree\_le]
 \lean{SimpleGraph.degreeMajorised_of_forall_degree_le}
 \label{SimpleGraph.degreeMajorised_of_forall_degree_le}
 \uses{SimpleGraph.DegreeMajorised}
@@ -834,14 +834,14 @@ smallest of $H$.
    it does not actually discharge the step it was extracted for.
 \end{theorem}
 
-\begin{theorem}[turan_iso_of_card_edgeFinset_eq]
+\begin{theorem}[turan\_iso\_of\_card\_edgeFinset\_eq]
 \lean{SimpleGraph.turan_iso_of_card_edgeFinset_eq}
 \label{SimpleGraph.turan_iso_of_card_edgeFinset_eq}
 The balanced complete multipartite graph is not merely \emph{an} extremal example but
 the \textbf{unique} one, up to isomorphism.
 \end{theorem}
 
-\begin{theorem}[triangle_of_card_edgeFinset_gt]
+\begin{theorem}[triangle\_of\_card\_edgeFinset\_gt]
 \lean{SimpleGraph.triangle_of_card_edgeFinset_gt}
 \label{SimpleGraph.triangle_of_card_edgeFinset_gt}
 Tur\'an at $m = 2$ --- Mantel's 1907 case, half a century before the
@@ -851,7 +851,7 @@ edges.
 Cleared to $\nu^{2} < 4\varepsilon$ to avoid division.
 \end{theorem}
 
-\begin{theorem}[triangle_of_not_bipartite_of_card_edgeFinset_gt]
+\begin{theorem}[triangle\_of\_not\_bipartite\_of\_card\_edgeFinset\_gt]
 \lean{SimpleGraph.triangle_of_not_bipartite_of_card_edgeFinset_gt}
 \label{SimpleGraph.triangle_of_not_bipartite_of_card_edgeFinset_gt}
 Forbidding bipartiteness on top of triangle-freeness drops the cap from $\nu^{2}/4$ to
@@ -865,7 +865,7 @@ resemble the extremal one, so departing from it costs edges.
 Cleared to $(\nu-1)^{2} + 4 < 4\varepsilon$.
 \end{theorem}
 
-\begin{theorem}[isContained_completeBipartite_two_of_sum_choose_gt]
+\begin{theorem}[isContained\_completeBipartite\_two\_of\_sum\_choose\_gt]
 \lean{SimpleGraph.isContained_completeBipartite_two_of_sum_choose_gt}
 \label{SimpleGraph.isContained_completeBipartite_two_of_sum_choose_gt}
 Double-count \textbf{cherries} (paths of length two).  Each $v$ centres $C(d(v),2)$ of
@@ -876,7 +876,7 @@ would host $\le m-1$ cherries, capping the total at $(m-1)C(\nu,2)$.
 The prototype for K\H{o}v\'ari--S\'os--Tur\'an (exercise 7.3.5).
 \end{theorem}
 
-\begin{theorem}[isContained_completeBipartite_two_of_card_edgeFinset_gt]
+\begin{theorem}[isContained\_completeBipartite\_two\_of\_card\_edgeFinset\_gt]
 \lean{SimpleGraph.isContained_completeBipartite_two_of_card_edgeFinset_gt}
 \label{SimpleGraph.isContained_completeBipartite_two_of_card_edgeFinset_gt}
 Convert part (a)'s degree condition into an edge count.  By convexity,
@@ -909,7 +909,7 @@ Since $x$ is not assumed injective, two indices may carry the same point, and
 $i \ne j$ is what keeps the graph simple in that case.
 \end{definition}
 
-\begin{theorem}[card_unit_distance_pairs_le]
+\begin{theorem}[card\_unit\_distance\_pairs\_le]
 \lean{SimpleGraph.card_unit_distance_pairs_le}
 \label{SimpleGraph.card_unit_distance_pairs_le}
 \uses{SimpleGraph.unitDistanceGraph}
@@ -922,7 +922,7 @@ about circles into a forbidden subgraph.  The true order of growth of the
 unit-distance problem is still open (Erd\H{o}s).
 \end{theorem}
 
-\begin{theorem}[isContained_completeBipartite_of_card_edgeFinset_gt]
+\begin{theorem}[isContained\_completeBipartite\_of\_card\_edgeFinset\_gt]
 \lean{SimpleGraph.isContained_completeBipartite_of_card_edgeFinset_gt}
 \label{SimpleGraph.isContained_completeBipartite_of_card_edgeFinset_gt}
 Generalises 7.3.4 from $K_{2,m}$ to $K_{m,m}$.  Count \emph{stars} --- a vertex with $m$
@@ -971,7 +971,7 @@ is, without a separate existence lemma.
 Theorem 7.10 gives nothing and \texttt{schurNumber} falls back to \texttt{sInf $\emptyset$ = 0}.
 \end{definition}
 
-\begin{theorem}[schurNumber_three]
+\begin{theorem}[schurNumber\_three]
 \lean{SimpleGraph.schurNumber_three}
 \label{SimpleGraph.schurNumber_three}
 \uses{SimpleGraph.schurNumber}
@@ -982,7 +982,7 @@ Compare $s_{3} \le r_{3} = 17$: the Schur number is strictly below the Ramsey nu
 is derived from, so Theorem 7.10's bound is not tight.
 \end{theorem}
 
-\begin{theorem}[schurNumber_recursion]
+\begin{theorem}[schurNumber\_recursion]
 \lean{SimpleGraph.schurNumber_recursion}
 \label{SimpleGraph.schurNumber_recursion}
 \uses{SimpleGraph.schurNumber}
@@ -993,7 +993,7 @@ give the new $n$-th part the leftover residues.
 Stated additively as $3s_{n-1} \le s_{n} + 1$.
 \end{theorem}
 
-\begin{theorem}[schurNumber_lower_bound]
+\begin{theorem}[schurNumber\_lower\_bound]
 \lean{SimpleGraph.schurNumber_lower_bound}
 \label{SimpleGraph.schurNumber_lower_bound}
 \uses{SimpleGraph.schurNumber}
@@ -1024,7 +1024,7 @@ graph-theoretic:
 Rendered as \texttt{Metric.diam (Set.range x)}, so no clash with \texttt{SimpleGraph.diam}.
 \end{definition}
 
-\begin{theorem}[card_farGraph_le]
+\begin{theorem}[card\_farGraph\_le]
 \lean{SimpleGraph.card_farGraph_le}
 \label{SimpleGraph.card_farGraph_le}
 \uses{SimpleGraph.farGraph}
@@ -1037,7 +1037,7 @@ Two genuinely geometric inputs, neither in Mathlib:
 Given those, \texttt{farGraph} is $K_{4}$-free and \texttt{turan\_edge\_bound} at $m = 3$ finishes.
 \end{theorem}
 
-\begin{theorem}[exists_farGraph_card_eq]
+\begin{theorem}[exists\_farGraph\_card\_eq]
 \lean{SimpleGraph.exists_farGraph_card_eq}
 \label{SimpleGraph.exists_farGraph_card_eq}
 \uses{SimpleGraph.farGraph}
@@ -1046,7 +1046,7 @@ tripartite $T_{3,n}$, with $\lfloor n^{2}/3\rfloor$ edges --- so the Tur\'an bou
 the geometric optimum is realised by the graph-theoretic extremal configuration.
 \end{theorem}
 
-\begin{theorem}[card_unitDistanceGraph_le_of_diam_one]
+\begin{theorem}[card\_unitDistanceGraph\_le\_of\_diam\_one]
 \lean{SimpleGraph.card_unitDistanceGraph_le_of_diam_one}
 \label{SimpleGraph.card_unitDistanceGraph_le_of_diam_one}
 \uses{SimpleGraph.unitDistanceGraph}

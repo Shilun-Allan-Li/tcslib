@@ -22,7 +22,7 @@ interior and so is vacuously internally disjoint from everything --- which is
 intended, and is what makes \texttt{bridgeRel} reflexive on single edges.
 \end{definition}
 
-\begin{definition}[B&M's relation $~$ on $E(G) \ E(H)$: $e_{1} ~ e_{2}$ iff joined by a walk internally disjoint from $H$\dots]
+\begin{definition}[B\&M's relation $~$ on $E(G) \ E(H)$: $e_{1} ~ e_{2}$ iff joined by a walk internally disjoint from $H$\dots]
 \lean{SimpleGraph.bridgeRel}
 \label{SimpleGraph.bridgeRel}
 \leanok
@@ -209,7 +209,7 @@ established nothing.  It also violated the project convention
 debt, a \texttt{sorry}-ed definition is a silent change of meaning.
 
 It is now the honest negation of \texttt{Avoids}, built on the segment machinery above
-(\texttt{cycleDist} $\to$ \texttt{OnArc} $\to$ \texttt{ConsecutiveAttach} $\to$ \texttt{Avoids}), which is the layer B&M
+(\texttt{cycleDist} $\to$ \texttt{OnArc} $\to$ \texttt{ConsecutiveAttach} $\to$ \texttt{Avoids}), which is the layer B\&M
 assume when they speak of segments.  \textbf{!} \texttt{[DecidableEq V]} had to be added to the
 signature, since \texttt{cycleIdx} needs it; every use site already had the instance.
 \end{definition}
@@ -249,7 +249,7 @@ the definition does not assert existence: \texttt{IsLongestCycle} is a hypothesi
 supplied, and producing one requires knowing $G$ has a cycle at all.
 \end{definition}
 
-\begin{theorem}[minDegree_le_five_of_card_edge_le]
+\begin{theorem}[minDegree\_le\_five\_of\_card\_edge\_le]
 \lean{SimpleGraph.minDegree_le_five_of_card_edge_le}
 \label{SimpleGraph.minDegree_le_five_of_card_edge_le}
 \leanok
@@ -275,7 +275,7 @@ $h\nu$ is kept only so the statement still reads as the book's; do not go lookin
 a place to use it.
 \end{theorem}
 
-\begin{theorem}[card_edgeFinset_add_card_edgeFinset_compl]
+\begin{theorem}[card\_edgeFinset\_add\_card\_edgeFinset\_compl]
 \lean{SimpleGraph.card_edgeFinset_add_card_edgeFinset_compl}
 \label{SimpleGraph.card_edgeFinset_add_card_edgeFinset_compl}
 \leanok
@@ -292,7 +292,7 @@ the part most likely to exist already, so search before building).  Needs both
 only available with decidable adjacency.
 \end{theorem}
 
-\begin{theorem}[not_both_card_edge_le_of_eleven_le]
+\begin{theorem}[not\_both\_card\_edge\_le\_of\_eleven\_le]
 \lean{SimpleGraph.not_both_card_edge_le_of_eleven_le}
 \label{SimpleGraph.not_both_card_edge_le_of_eleven_le}
 \leanok
@@ -309,7 +309,7 @@ the topology stripped out.  The conclusion is therefore a negated conjunction
 rather than "$G^{c}$ is nonplanar".
 \end{theorem}
 
-\begin{theorem}[bridge_inter_subset_cycle]
+\begin{theorem}[bridge\_inter\_subset\_cycle]
 \lean{SimpleGraph.bridge_inter_subset_cycle}
 \label{SimpleGraph.bridge_inter_subset_cycle}
 \leanok
@@ -328,7 +328,7 @@ edges in \texttt{G.edgeSet \textbackslash\{\} H.edgeSet} are present and are nee
 \texttt{bridgeOf} degenerates (see its docstring).
 \end{theorem}
 
-\begin{theorem}[bridgeOf_connected]
+\begin{theorem}[bridgeOf\_connected]
 \lean{SimpleGraph.bridgeOf_connected}
 \label{SimpleGraph.bridgeOf_connected}
 \leanok
@@ -337,13 +337,13 @@ A bridge is one connected lump: its edges all lie in one $\sim$-class,
 and $\sim$ relates edges precisely when a walk avoiding $H$'s interior joins them.
 
 Together with \texttt{exists\_path\_internallyDisjoint} this is one of
-two facts B&M wave through and that everything downstream (theorems 9.6, 9.7 and
+two facts B\&M wave through and that everything downstream (theorems 9.6, 9.7 and
 exercise 9.4.3) actually consumes.  Step 3 is the real content and is worth
 extracting as a lemma about \texttt{bridgeRel} chains, since the same induction is needed
 for the companion result.
 \end{theorem}
 
-\begin{theorem}[exists_path_internallyDisjoint]
+\begin{theorem}[exists\_path\_internallyDisjoint]
 \lean{SimpleGraph.exists_path_internallyDisjoint}
 \label{SimpleGraph.exists_path_internallyDisjoint}
 \leanok
@@ -360,7 +360,7 @@ class.  Note the trans case in step 1 is the reason this is genuinely harder tha
 \texttt{bridgeOf\_connected} and not a corollary of it.
 \end{theorem}
 
-\begin{theorem}[bridge_tripod_of_three_attachments]
+\begin{theorem}[bridge\_tripod\_of\_three\_attachments]
 \lean{SimpleGraph.bridge_tripod_of_three_attachments}
 \label{SimpleGraph.bridge_tripod_of_three_attachments}
 \leanok
@@ -377,7 +377,7 @@ Note step 5 is genuinely extra work: the book states $v_{0} \in V(B) \ V(C)$ in 
 theorem but never justifies it in the proof.
 \end{theorem}
 
-\begin{theorem}[overlap_imp_skew_or_equivalent_three_bridge]
+\begin{theorem}[overlap\_imp\_skew\_or\_equivalent\_three\_bridge]
 \lean{SimpleGraph.overlap_imp_skew_or_equivalent_three_bridge}
 \label{SimpleGraph.overlap_imp_skew_or_equivalent_three_bridge}
 \leanok
@@ -393,7 +393,7 @@ of equivalent $k$-bridges.  Steps 2--4 all reduce to arc arithmetic on \texttt{c
 so the segment machinery built for \texttt{Overlaps} will carry most of them.
 \end{theorem}
 
-\begin{theorem}[exists_bridge_off_longest_cycle]
+\begin{theorem}[exists\_bridge\_off\_longest\_cycle]
 \lean{SimpleGraph.exists_bridge_off_longest_cycle}
 \label{SimpleGraph.exists_bridge_off_longest_cycle}
 \leanok
@@ -409,7 +409,7 @@ carries \texttt{hnh}; part (ii) as stated below drops it, which is where its def
 from.
 \end{theorem}
 
-\begin{theorem}[succ_attachments_not_adj]
+\begin{theorem}[succ\_attachments\_not\_adj]
 \lean{SimpleGraph.succ_attachments_not_adj}
 \label{SimpleGraph.succ_attachments_not_adj}
 \leanok
@@ -424,7 +424,7 @@ successor along $c$; the wraparound at the end of the support is handled by
 rather than as index arithmetic mod $n$.
 \end{theorem}
 
-\begin{theorem}[chvatal_erdos_hamiltonian]
+\begin{theorem}[chvatal\_erdos\_hamiltonian]
 \lean{SimpleGraph.chvatal_erdos_hamiltonian}
 \label{SimpleGraph.chvatal_erdos_hamiltonian}
 \leanok
@@ -436,13 +436,13 @@ whole bridge apparatus of \S{}9.4 that survives in this file exists to reach it 
 the prize of the surviving combinatorial core.
 
 \textbf{!} \texttt{h$\nu$ : 3 $\le$ Fintype.card V} is \textbf{load-bearing} and is \emph{not} in
-B&M --- the statement is false without it.  $K_{2}$ has $\alpha = 1$ and $\kappa = 1$, so $\alpha \le \kappa$
+B\&M --- the statement is false without it.  $K_{2}$ has $\alpha = 1$ and $\kappa = 1$, so $\alpha \le \kappa$
 holds, yet $K_{2}$ has no Hamilton cycle, there being no cycle of length two.  ($K_{1}$ is
 similar.)  Step 5 is where most of the work sits; step 4's cut argument is the part
 most likely to need its own supporting lemma.
 \end{theorem}
 
-\begin{theorem}[lineGraph_colorable_three_of_isHamiltonian_of_three_regular]
+\begin{theorem}[lineGraph\_colorable\_three\_of\_isHamiltonian\_of\_three\_regular]
 \lean{SimpleGraph.lineGraph_colorable_three_of_isHamiltonian_of_three_regular}
 \label{SimpleGraph.lineGraph_colorable_three_of_isHamiltonian_of_three_regular}
 \leanok

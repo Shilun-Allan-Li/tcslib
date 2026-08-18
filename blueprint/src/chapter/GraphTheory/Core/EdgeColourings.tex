@@ -37,7 +37,7 @@ and \texttt{isProper\_iff\_numColoursAt\_eq\_degree} below.
 $\sum_v c(v)$ is the potential function the whole chapter maximises.
 \end{definition}
 
-\begin{definition}[An optimal $k$-edge colouring: one that cannot be improved, where an improvement strictly increases $\sum\dots]
+\begin{definition}[An optimal $k$-edge colouring: one that cannot be improved, where an improvement strictly increases $\sum\dots$]
 \lean{SimpleGraph.IsOptimalEdgeColouring}
 \label{SimpleGraph.IsOptimalEdgeColouring}
 \leanok
@@ -150,7 +150,7 @@ This equivalence is the bridge turning "make the colouring proper" into the
 numerical goal "maximise $\sum_v c(v)$", which is what optimality is about.
 \end{theorem}
 
-\begin{theorem}[exists_two_edge_colouring_both_represented]
+\begin{theorem}[exists\_two\_edge\_colouring\_both\_represented]
 \lean{SimpleGraph.exists_two_edge_colouring_both_represented}
 \label{SimpleGraph.exists_two_edge_colouring_both_represented}
 \uses{SimpleGraph.IsRepresentedAt}
@@ -165,7 +165,7 @@ hypothesis far too strong (excluding every graph with an odd cycle anywhere) and
 the lemma useless for Lemma 6.1.2, which applies it to two-coloured components.
 \end{theorem}
 
-\begin{theorem}[isOddCycle_component_of_isOptimalEdgeColouring]
+\begin{theorem}[isOddCycle\_component\_of\_isOptimalEdgeColouring]
 \lean{SimpleGraph.isOddCycle_component_of_isOptimalEdgeColouring}
 \label{SimpleGraph.isOddCycle_component_of_isOptimalEdgeColouring}
 \uses{SimpleGraph.IsOptimalEdgeColouring, SimpleGraph.IsRepresentedAt, SimpleGraph.twoColourSubgraph}
@@ -221,7 +221,7 @@ The half of Vizing that carries all the work.  With (6.1) supplying $\chi' \ge \
 the two together pin $\chi'$ into ${\Delta, \Delta+1}$.
 \end{theorem}
 
-\begin{theorem}[exists_rebalanced_matchings]
+\begin{theorem}[exists\_rebalanced\_matchings]
 \lean{SimpleGraph.exists_rebalanced_matchings}
 \label{SimpleGraph.exists_rebalanced_matchings}
 Swapping roles along $P$ moves exactly one edge from the larger matching to the
@@ -234,11 +234,11 @@ subtraction.
 
 Matchings are carried as \texttt{Set (Sym2 V)} together with an existential witness
 \texttt{$\exists$ S : G.Subgraph, S.IsMatching $\land$ S.edgeSet = M}, rather than as subgraphs
-directly --- which makes the set operations $\$, $\cup$ in the book's formulas
+directly --- which makes the set operations $\setminus$, $\cup$ in the book's formulas
 literal, at the cost of re-deriving the subgraph witness for $M'$ and $N'$.
 \end{theorem}
 
-\begin{theorem}[exists_balanced_matching_decomposition]
+\begin{theorem}[exists\_balanced\_matching\_decomposition]
 \lean{SimpleGraph.exists_balanced_matching_decomposition}
 \label{SimpleGraph.exists_balanced_matching_decomposition}
 \textbf{!} In the book's notation $[x]$ is the \textbf{floor} and ${x}$ the \textbf{ceiling} --- the
@@ -327,7 +327,7 @@ The contrast with the odd case is entirely parity: with an odd number of vertice
 no round can involve everybody.
 \end{theorem}
 
-\begin{theorem}[Ex 6.2.2 \textbf{!} BLOCKED (Vizing): nonempty ($0 < k$) $k$-regular with $\nu$ odd $\Rightarrow$ $\chi' =\dots]
+\begin{theorem}[Ex 6.2.2 \textbf{!} BLOCKED (Vizing): nonempty ($0 < k$) $k$-regular with $\nu$ odd $\Rightarrow$ $\chi' =\dots$]
 \lean{SimpleGraph.edgeChromaticNumber_eq_maxDegree_add_one_of_regular_odd_card}
 \label{SimpleGraph.edgeChromaticNumber_eq_maxDegree_add_one_of_regular_odd_card}
 Each colour class is a matching, and a matching on an odd number of vertices
@@ -339,7 +339,7 @@ Generalises the odd complete graph of exercise 6.2.1: regularity plus odd order
 always forces the upper class.
 \end{theorem}
 
-\begin{theorem}[Ex 6.2.3(a) \textbf{!} BLOCKED (Vizing): $\nu = 2n+1$ and $\varepsilon > n\Delta$ $\Rightarrow$ $\chi' =\dots]
+\begin{theorem}[Ex 6.2.3(a) \textbf{!} BLOCKED (Vizing): $\nu = 2n+1$ and $\varepsilon > n\Delta$ $\Rightarrow$ $\chi' =\dots$]
 \lean{SimpleGraph.edgeChromaticNumber_eq_maxDegree_add_one_of_card_edges_gt}
 \label{SimpleGraph.edgeChromaticNumber_eq_maxDegree_add_one_of_card_edges_gt}
 With $\nu = 2n + 1$ odd, every matching covers an even number of vertices so has
@@ -414,7 +414,7 @@ omits at least one of the $\Delta(G)+1$ colours, and the two copies can be arran
 omit \emph{different} ones, so each matching edge finds a free colour.
 \end{theorem}
 
-\begin{theorem}[Ex 6.2.6(b) \textbf{!} BLOCKED (via (a)): if $H$ is nontrivial ($0 < \Delta(H)$) with $\chi'(H) =\dots]
+\begin{theorem}[Ex 6.2.6(b) \textbf{!} BLOCKED (via (a)): if $H$ is nontrivial ($0 < \Delta(H)$) with $\chi'(H) =\dots$]
 \lean{SimpleGraph.edgeChromaticNumber_boxProd}
 \label{SimpleGraph.edgeChromaticNumber_boxProd}
 $G \square H$ has degree $d(u) + d(v)$ at $(u, v)$, so $\Delta(G \square H) = \Delta(G) + \Delta(H)$.

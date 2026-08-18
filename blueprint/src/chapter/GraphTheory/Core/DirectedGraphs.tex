@@ -145,7 +145,7 @@ $2^\varepsilon$ orientation count.
 
 Since \texttt{Digraph} allows no parallel arcs in the same direction,
 $\varepsilon$ is simply the size of the adjacency relation, counted as a \texttt{Finset (V $\times$ V)}.
-Note this differs from the book for multi-digraphs, which B&M permit --- a point that
+Note this differs from the book for multi-digraphs, which B\&M permit --- a point that
 also forces the restatement of \texttt{adjMatrix} below.
 \end{definition}
 
@@ -243,7 +243,7 @@ completeness of the underlying graph) and "at most one" (from being an orientati
 into a single clause.
 \end{definition}
 
-\begin{definition}[B&M's $(S, T)$: arcs with tail in $S$, head in $T$]
+\begin{definition}[B\&M's $(S, T)$: arcs with tail in $S$, head in $T$]
 \lean{Digraph.arcsBetween}
 \label{Digraph.arcsBetween}
 \leanok
@@ -352,7 +352,7 @@ Bruijn digraph.
 \textbf{\textbf{!} Defective on two counts.}
 1. \emph{Inherits the \texttt{arcsOf} defect} --- both conjuncts are stated in terms of an opaque
    function, so the predicate currently means nothing.
-2. \emph{Admits the null walk.}  B&M's directed walks are explicitly \textbf{non-null}
+2. \emph{Admits the null walk.}  B\&M's directed walks are explicitly \textbf{non-null}
    (\S{}10.1), so \texttt{nil} is not a directed tour for them; here \texttt{Quiver.Path.nil}
    satisfies both conjuncts vacuously (\texttt{[].Nodup}, and no arc to exhaust when $D$
    has none).  This is not cosmetic: it makes \texttt{exists\_directedEulerTour\_iff} false
@@ -408,7 +408,7 @@ non-diconnected tournament, and what exercise 10.2.1 uses on tournaments.
 transcription.  Taken literally the book's condition puts an arc from $w_{i}$ to $w_{i}$
 whenever $D_{i}$ has any internal arc --- a loop at every non-trivial dicomponent --- which
 would make \texttt{condensation\_acyclic} false, since a loop is a directed cycle of length
-$1$.  B&M plainly intend $i \ne j$.
+$1$.  B\&M plainly intend $i \ne j$.
 
 The vertex type is \texttt{Quiver.StronglyConnectedComponent}, Mathlib's quotient by mutual
 reachability, which is exactly the set of dicomponents.
@@ -513,7 +513,7 @@ strictness.  Arc labels are not modelled: the label is recoverable from the arc,
 \texttt{exists\_deBruijn\_sequence} states the conclusion about the sequence directly.
 \end{definition}
 
-\begin{theorem}[card_orientations]
+\begin{theorem}[card\_orientations]
 \lean{card_orientations}
 \label{card_orientations}
 \leanok
@@ -528,7 +528,7 @@ only fiddly part --- the natural first move is to prove a helper turning
 \texttt{IsOrientationOf} into "for each edge, exactly one of the two directions".
 \end{theorem}
 
-\begin{theorem}[sum_indegree_eq_arcCount]
+\begin{theorem}[sum\_indegree\_eq\_arcCount]
 \lean{sum_indegree_eq_arcCount}
 \label{sum_indegree_eq_arcCount}
 \leanok
@@ -543,7 +543,7 @@ Stated as a conjunction because the book states both equalities
 at once; nothing forces them to share a proof, but step 4 notes they should.
 \end{theorem}
 
-\begin{theorem}[exists_indegree_zero_of_acyclic]
+\begin{theorem}[exists\_indegree\_zero\_of\_acyclic]
 \lean{exists_indegree_zero_of_acyclic}
 \label{exists_indegree_zero_of_acyclic}
 \leanok
@@ -558,7 +558,7 @@ $v$ to produce, while \texttt{hacyc} holds vacuously.  Note \texttt{hacyc} also 
 since a loop is a directed cycle of length $1$ under \texttt{IsDirectedCycle}.
 \end{theorem}
 
-\begin{theorem}[exists_topological_ordering]
+\begin{theorem}[exists\_topological\_ordering]
 \lean{exists_topological_ordering}
 \label{exists_topological_ordering}
 \leanok
@@ -575,7 +575,7 @@ earlier vertices" is contraposed into the equivalent and more usable
 the empty case is the induction's base.
 \end{theorem}
 
-\begin{theorem}[converse_converse]
+\begin{theorem}[converse\_converse]
 \lean{converse_converse}
 \label{converse_converse}
 \leanok
@@ -590,7 +590,7 @@ The shortest item in the file; a good first fill to shake out the
 \texttt{Digraph} extensionality API.
 \end{theorem}
 
-\begin{theorem}[converse_indegree]
+\begin{theorem}[converse\_indegree]
 \lean{converse_indegree}
 \label{converse_indegree}
 \leanok
@@ -604,7 +604,7 @@ The \texttt{open scoped Classical in} on this declaration supplies
 decidability for \texttt{D.converse.Adj}; step 3 is where that shows up.
 \end{theorem}
 
-\begin{theorem}[converse_reachable]
+\begin{theorem}[converse\_reachable]
 \lean{converse_reachable}
 \label{converse_reachable}
 \leanok
@@ -620,7 +620,7 @@ is in play, so $D$ and \texttt{D.converse} appear in the same statement without
 ambiguity.
 \end{theorem}
 
-\begin{theorem}[exists_outdegree_zero_of_acyclic]
+\begin{theorem}[exists\_outdegree\_zero\_of\_acyclic]
 \lean{exists_outdegree_zero_of_acyclic}
 \label{exists_outdegree_zero_of_acyclic}
 \leanok
@@ -636,7 +636,7 @@ Worth extracting as a standalone lemma, as \texttt{converse\_reachable} is the s
 level down.
 \end{theorem}
 
-\begin{theorem}[exists_directedPath_length_ge_maxMinDegree]
+\begin{theorem}[exists\_directedPath\_length\_ge\_maxMinDegree]
 \lean{exists_directedPath_length_ge_maxMinDegree}
 \label{exists_directedPath_length_ge_maxMinDegree}
 \leanok
@@ -651,7 +651,7 @@ two, produce the two paths and pick the longer.  \texttt{minIndegree}/\texttt{mi
 $\bigsqcap$ over $\mathbb{N}$, so \texttt{[Nonempty V]} is needed to keep them from collapsing to $0$.
 \end{theorem}
 
-\begin{theorem}[exists_directedCycle_length_ge]
+\begin{theorem}[exists\_directedCycle\_length\_ge]
 \lean{exists_directedCycle_length_ge}
 \label{exists_directedCycle_length_ge}
 \leanok
@@ -666,7 +666,7 @@ demand a directed cycle of length $\ge 1$ in a digraph that may have no cycle at
 \texttt{hdeg} pins \texttt{max $\delta^{-}$ $\delta^{+}$} to $k$ as an equality, matching the book.
 \end{theorem}
 
-\begin{theorem}[adjMatrix_pow_apply_eq_card_directedWalk]
+\begin{theorem}[adjMatrix\_pow\_apply\_eq\_card\_directedWalk]
 \lean{adjMatrix_pow_apply_eq_card_directedWalk}
 \label{adjMatrix_pow_apply_eq_card_directedWalk}
 \leanok
@@ -684,7 +684,7 @@ side is \texttt{Nat.card} of a subtype of \texttt{Quiver.Path}, which is finite 
 is pinned --- but that finiteness may need to be supplied for \texttt{Nat.card} to behave.
 \end{theorem}
 
-\begin{theorem}[condensation_acyclic]
+\begin{theorem}[condensation\_acyclic]
 \lean{condensation_acyclic}
 \label{condensation_acyclic}
 \leanok
@@ -701,7 +701,7 @@ which should be extracted first.  Note the statement quantifies over all base po
 $c$, since \texttt{IsDirectedCycle} is stated for closed paths at a given vertex.
 \end{theorem}
 
-\begin{theorem}[exists_balanced_orientation]
+\begin{theorem}[exists\_balanced\_orientation]
 \lean{exists_balanced_orientation}
 \label{exists_balanced_orientation}
 \leanok
@@ -719,7 +719,7 @@ decidability of the existentially-bound \texttt{D.Adj}; the outline's
 is why it was replaced.
 \end{theorem}
 
-\begin{theorem}[roy_gallai_directed_path]
+\begin{theorem}[roy\_gallai\_directed\_path]
 \lean{roy_gallai_directed_path}
 \label{roy_gallai_directed_path}
 \leanok
@@ -739,7 +739,7 @@ Step 4 is the mathematical core; steps 1 and 2 are both "choose a maximum/minimu
 a finite nonempty family" and should share a helper.
 \end{theorem}
 
-\begin{theorem}[exists_orientation_longest_directedPath_le]
+\begin{theorem}[exists\_orientation\_longest\_directedPath\_le]
 \lean{exists_orientation_longest_directedPath_le}
 \label{exists_orientation_longest_directedPath_le}
 \leanok
@@ -756,7 +756,7 @@ via corollary 8.1.2, not at $k = \chi$.  Step 4's injectivity is a cleaner invar
 to carry than the book's "no two vertices share a colour".
 \end{theorem}
 
-\begin{theorem}[redei_directed_hamilton_path]
+\begin{theorem}[redei\_directed\_hamilton\_path]
 \lean{redei_directed_hamilton_path}
 \label{redei_directed_hamilton_path}
 \leanok
@@ -764,7 +764,7 @@ to carry than the book's "no two vertices share a colour".
 (R\'edei, 1934).  *Every tournament has a directed Hamilton
 path.*
 
-B&M define the term just above: *A directed Hamilton path of $D$ is a directed path
+B\&M define the term just above: *A directed Hamilton path of $D$ is a directed path
 that includes every vertex of $D$.*
 
 In any round-robin competition the players can be lined up so that
@@ -778,7 +778,7 @@ cardinality claim, which is what step 3 delivers most directly.  Exercise 10.2.3
 gives an independent route not passing through theorem 10.1.
 \end{theorem}
 
-\begin{theorem}[chvatal_lovasz_semikernel]
+\begin{theorem}[chvatal\_lovasz\_semikernel]
 \lean{chvatal_lovasz_semikernel}
 \label{chvatal_lovasz_semikernel}
 \leanok
@@ -793,12 +793,12 @@ where independence forces $|S| = 1$.
 
 The $u = v$ disjunct in the goal covers the reflexive case and is
 not in the book, which says "each vertex \emph{not in} $S$"; it is harmless and makes the
-statement easier to instantiate.  \texttt{hloop : Irreflexive D.Adj} is B&M's "loopless".
+statement easier to instantiate.  \texttt{hloop : Irreflexive D.Adj} is B\&M's "loopless".
 \texttt{IsIndepSet} is taken in \texttt{toSimpleGraphInclusive}, matching "independent set" for the
 underlying graph.
 \end{theorem}
 
-\begin{theorem}[tournament_exists_king]
+\begin{theorem}[tournament\_exists\_king]
 \lean{tournament_exists_king}
 \label{tournament_exists_king}
 \leanok
@@ -816,7 +816,7 @@ the most games, and a tournament may have several kings.
 a legitimate semi-kernel and no $u$ exists.
 \end{theorem}
 
-\begin{theorem}[tournament_diconnected_or_reorient_one]
+\begin{theorem}[tournament\_diconnected\_or\_reorient\_one]
 \lean{tournament_diconnected_or_reorient_one}
 \label{tournament_diconnected_or_reorient_one}
 \leanok
@@ -832,7 +832,7 @@ Note the \texttt{if (u = y $\land$ v = x) then True} branch must come \emph{afte
 which it does.
 \end{theorem}
 
-\begin{theorem}[isUnilateral_iff_exists_spanning_directedWalk]
+\begin{theorem}[isUnilateral\_iff\_exists\_spanning\_directedWalk]
 \lean{isUnilateral_iff_exists_spanning_directedWalk}
 \label{isUnilateral_iff_exists_spanning_directedWalk}
 \leanok
@@ -851,7 +851,7 @@ far stronger requirement.  The Lean statement accordingly asks only for a
 condition --- do not be tempted to add \texttt{IsDirectedPath}.
 \end{theorem}
 
-\begin{theorem}[tournament_maximal_directedPath_insert]
+\begin{theorem}[tournament\_maximal\_directedPath\_insert]
 \lean{tournament_maximal_directedPath_insert}
 \label{tournament_maximal_directedPath_insert}
 \leanok
@@ -873,7 +873,7 @@ lists index far more comfortably.  \texttt{[Inhabited V]} supports \texttt{head!
 \texttt{hmax}; \texttt{hne : l $\ne$ []} keeps those meaningful.
 \end{theorem}
 
-\begin{theorem}[chvatal_komlos_monotone_directedPath]
+\begin{theorem}[chvatal\_komlos\_monotone\_directedPath]
 \lean{chvatal_komlos_monotone_directedPath}
 \label{chvatal_komlos_monotone_directedPath}
 \leanok
@@ -894,7 +894,7 @@ is the book's and is essential: with two weak orders step 3 would fail on an arc
 where $f u = f w$.
 \end{theorem}
 
-\begin{theorem}[erdos_szekeres_of_chvatal_komlos]
+\begin{theorem}[erdos\_szekeres\_of\_chvatal\_komlos]
 \lean{erdos_szekeres_of_chvatal_komlos}
 \label{erdos_szekeres_of_chvatal_komlos}
 \leanok
@@ -913,7 +913,7 @@ $\mathbb{Z}$-valued (the book's "integers") while part (a) needs $\mathbb{R}$, h
 sequence.
 \end{theorem}
 
-\begin{theorem}[exists_orientation_directedPath_le_maxDegree]
+\begin{theorem}[exists\_orientation\_directedPath\_le\_maxDegree]
 \lean{exists_orientation_directedPath_le_maxDegree}
 \label{exists_orientation_directedPath_le_maxDegree}
 \leanok
@@ -934,7 +934,7 @@ the theorem-10.1 remark was stated for an arbitrary $k$-colouring rather than an
 optimal one.
 \end{theorem}
 
-\begin{theorem}[moon_vertex_pancyclic]
+\begin{theorem}[moon\_vertex\_pancyclic]
 \lean{moon_vertex_pancyclic}
 \label{moon_vertex_pancyclic}
 \leanok
@@ -954,7 +954,7 @@ silently assumes $v$ follows $v_{0}$ and $w$ precedes $v_{2}$; check the index b
 against $n \ge 3$ before trusting it.
 \end{theorem}
 
-\begin{theorem}[ghouila_houri_directed_hamilton_cycle]
+\begin{theorem}[ghouila\_houri\_directed\_hamilton\_cycle]
 \lean{ghouila_houri_directed_hamilton_cycle}
 \label{ghouila_houri_directed_hamilton_cycle}
 \leanok
@@ -968,10 +968,10 @@ from it by orienting a graph suitably.
 
 \texttt{hdeg} states $\nu \le 2 d^{-}(v)$ and $\nu \le 2 d^{+}(v)$ rather than
 \texttt{min\{$\delta^{-}$,$\delta^{+}$\} $\ge$ $\nu$/2}, avoiding division; $hv : 2 < \nu$ is the book's $\nu/2 > 1$.  The
-result is only a \emph{special case} of Ghouila-Houri's theorem, as B&M note.
+result is only a \emph{special case} of Ghouila-Houri's theorem, as B\&M note.
 \end{theorem}
 
-\begin{theorem}[exists_directedEulerTour_iff]
+\begin{theorem}[exists\_directedEulerTour\_iff]
 \lean{exists_directedEulerTour_iff}
 \label{exists_directedEulerTour_iff}
 \leanok
@@ -986,7 +986,7 @@ and outdegree $2$, so it has a directed Euler tour, and that tour is exactly the
 binary sequence for the computer drum.
 
 Connectivity is asked of \texttt{toSimpleGraphInclusive}, the underlying
-graph, matching B&M's "$D$ is connected" (a property of the underlying graph, per
+graph, matching B\&M's "$D$ is connected" (a property of the underlying graph, per
 \S{}10.1).
 
 \textbf{+} \textbf{Statement repaired --- connectivity moved from the right-hand side into a
@@ -1013,7 +1013,7 @@ needed}: \texttt{hconn} already forces the arc-free case to be the one-vertex gr
 there.
 \end{theorem}
 
-\begin{theorem}[exists_arcDisjoint_directedPaths]
+\begin{theorem}[exists\_arcDisjoint\_directedPaths]
 \lean{exists_arcDisjoint_directedPaths}
 \label{exists_arcDisjoint_directedPaths}
 \uses{Digraph.IsDirectedPath, Digraph.arcsOf, Digraph.indegree, Digraph.outdegree, Digraph.toQuiver}
@@ -1037,7 +1037,7 @@ meaningless --- see that definition.  Degrees are compared in $\mathbb{Z}$ to le
 state genuine differences without $\mathbb{N}$-truncation.
 \end{theorem}
 
-\begin{theorem}[exists_directed_odd_cycle]
+\begin{theorem}[exists\_directed\_odd\_cycle]
 \lean{exists_directed_odd_cycle}
 \label{exists_directed_odd_cycle}
 \leanok
@@ -1056,7 +1056,7 @@ a \texttt{Quiver.Path}.  Step 2's "decompose a closed walk into directed cycles"
 Mathlib counterpart for \texttt{Quiver.Path} and will have to be built.
 \end{theorem}
 
-\begin{theorem}[diconnected_iff_isKArcConnected_one]
+\begin{theorem}[diconnected\_iff\_isKArcConnected\_one]
 \lean{diconnected_iff_isKArcConnected_one}
 \label{diconnected_iff_isKArcConnected_one}
 \leanok
@@ -1074,7 +1074,7 @@ load-bearing: on a one-vertex carrier there is no nonempty proper $S$, so
 breaks \texttt{associatedDigraph\_isKArcConnected\_iff} below.
 \end{theorem}
 
-\begin{theorem}[associatedDigraph_isKArcConnected_iff]
+\begin{theorem}[associatedDigraph\_isKArcConnected\_iff]
 \lean{associatedDigraph_isKArcConnected_iff}
 \label{associatedDigraph_isKArcConnected_iff}
 \leanok
@@ -1105,7 +1105,7 @@ statements in \texttt{Networks.lean} consume this lemma, so their hypotheses mus
 against the added \texttt{Nontrivial} when they are proved.
 \end{theorem}
 
-\begin{theorem}[deBruijnDigraph_indegree_eq_two]
+\begin{theorem}[deBruijnDigraph\_indegree\_eq\_two]
 \lean{deBruijnDigraph_indegree_eq_two}
 \label{deBruijnDigraph_indegree_eq_two}
 \leanok
@@ -1120,7 +1120,7 @@ $hn : 2 \le n$ is load-bearing in step 3: for $n = 1$ the carrier
 neighbours coincide and the degree is $1$, not $2$.
 \end{theorem}
 
-\begin{theorem}[deBruijnDigraph_connected]
+\begin{theorem}[deBruijnDigraph\_connected]
 \lean{deBruijnDigraph_connected}
 \label{deBruijnDigraph_connected}
 \leanok
@@ -1135,7 +1135,7 @@ argument is unlikely to be shorter than just writing the $n - 1$ intermediate
 vertices down as a function of the step index.
 \end{theorem}
 
-\begin{theorem}[deBruijnDigraph_exists_directedEulerTour]
+\begin{theorem}[deBruijnDigraph\_exists\_directedEulerTour]
 \lean{deBruijnDigraph_exists_directedEulerTour}
 \label{deBruijnDigraph_exists_directedEulerTour}
 \uses{Digraph.IsDirectedEulerTour, Digraph.toQuiver, deBruijnDigraph}
@@ -1157,7 +1157,7 @@ also that the \emph{labels} are not modelled --- the conclusion asserts a tour e
 turning it into the binary sequence is left to \texttt{exists\_deBruijn\_sequence}.
 \end{theorem}
 
-\begin{theorem}[robbins_orientation]
+\begin{theorem}[robbins\_orientation]
 \lean{robbins_orientation}
 \label{robbins_orientation}
 \leanok
@@ -1177,7 +1177,7 @@ not have; budget for it before starting.  \texttt{h2ec : 2 $\le$ edgeConnectivit
 route to the same conclusion, so neither theorem subsumes the other.
 \end{theorem}
 
-\begin{theorem}[exists_kArcConnected_orientation_of_eulerian]
+\begin{theorem}[exists\_kArcConnected\_orientation\_of\_eulerian]
 \lean{exists_kArcConnected_orientation_of_eulerian}
 \label{exists_kArcConnected_orientation_of_eulerian}
 \leanok
@@ -1196,7 +1196,7 @@ trail is what allows the discrepancy of one, and a closed tour would give equali
 Note \texttt{t : G.Walk u v} with $u$, $v$ unconstrained, so both cases are covered.
 \end{theorem}
 
-\begin{theorem}[tournament_adjMatrix_pow_pos]
+\begin{theorem}[tournament\_adjMatrix\_pow\_pos]
 \lean{tournament_adjMatrix_pow_pos}
 \label{tournament_adjMatrix_pow_pos}
 \leanok
@@ -1215,7 +1215,7 @@ truncates, since $d_{ij} \le d$; still, establish that inequality before the cas
 rather than relying on it implicitly.  $\nu \ge 5$ is load-bearing in step 4 only.
 \end{theorem}
 
-\begin{theorem}[tournament_adjMatrix_isPrimitive_iff]
+\begin{theorem}[tournament\_adjMatrix\_isPrimitive\_iff]
 \lean{tournament_adjMatrix_isPrimitive_iff}
 \label{tournament_adjMatrix_isPrimitive_iff}
 \leanok
@@ -1231,7 +1231,7 @@ ranking the players $1, 3, 2, 5, 4, 6$.  Non-diconnected tournaments are handled
 ranking within dicomponents and then ordering the dicomponents by dominance
 (exercises 10.1.9 and 10.1.3(b)).  Due to Wei (1952) and Kendall (1955).
 
-\textbf{!} Steps 2 and 4 are the awkward ones: B&M discharge them by
+\textbf{!} Steps 2 and 4 are the awkward ones: B\&M discharge them by
 pointing at a figure the source omits, so the two small tournaments have to be
 identified and checked from scratch.  Everything else follows from theorem 10.7 and
 exercise 10.1.8.

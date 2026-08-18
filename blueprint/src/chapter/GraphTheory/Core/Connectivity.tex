@@ -150,7 +150,7 @@ closure property is itself unproved here, which is the main obstacle to
 \texttt{block\_edges\_on\_common\_cycle}.
 \end{definition}
 
-\begin{theorem}[edgeConnectivity_le_minDegree]
+\begin{theorem}[edgeConnectivity\_le\_minDegree]
 \lean{SimpleGraph.edgeConnectivity_le_minDegree}
 \label{SimpleGraph.edgeConnectivity_le_minDegree}
 \leanok
@@ -172,7 +172,7 @@ and therefore has at most $\nu - 1$ elements; and in the no-vertex-cut case $\ka
 \emph{defined} to be $\nu - 1$.  Either way $\kappa \le \nu - 1$.
 \end{theorem}
 
-\begin{theorem}[Core of the block criterion: a connected graph on at least three vertices with no cut vertex has $\kappa\dots]
+\begin{theorem}[Core of the block criterion: a connected graph on at least three vertices with no cut vertex has $\kappa\dots$]
 \lean{SimpleGraph.two_le_vertexConnectivity_of_no_cutVertex}
 \label{SimpleGraph.two_le_vertexConnectivity_of_no_cutVertex}
 \leanok
@@ -233,7 +233,7 @@ three-line \texttt{calc}.  Writing $H = G - e$, the book's case analysis is:
 Every branch lands at $\kappa(G) \le \kappa(H) + 1$, which is the statement.
 \end{theorem}
 
-\begin{theorem}[exists_isVertexCut_singleton_of_isBridge]
+\begin{theorem}[exists\_isVertexCut\_singleton\_of\_isBridge]
 \lean{SimpleGraph.exists_isVertexCut_singleton_of_isBridge}
 \label{SimpleGraph.exists_isVertexCut_singleton_of_isBridge}
 \uses{SimpleGraph.IsVertexCut}
@@ -246,7 +246,7 @@ The book leaves this as an exercise, so there is no book proof to quote; the
 argument below is the standard one.
 \end{theorem}
 
-\begin{theorem}[vertexConnectivity_le_edgeConnectivity]
+\begin{theorem}[vertexConnectivity\_le\_edgeConnectivity]
 \lean{SimpleGraph.vertexConnectivity_le_edgeConnectivity}
 \label{SimpleGraph.vertexConnectivity_le_edgeConnectivity}
 \uses{SimpleGraph.edgeConnectivity, SimpleGraph.exists_deleteEdge_edgeConnectivity_eq, SimpleGraph.vertexConnectivity, SimpleGraph.vertexConnectivity_eq_zero_of_edgeConnectivity_eq_zero, SimpleGraph.vertexConnectivity_le_deleteEdge_succ}
@@ -262,7 +262,7 @@ factored out into \texttt{vertexConnectivity\_le\_deleteEdge\_succ}, so what rem
 is exactly the induction skeleton.
 \end{theorem}
 
-\begin{theorem}[whitney_inequalities]
+\begin{theorem}[whitney\_inequalities]
 \lean{SimpleGraph.whitney_inequalities}
 \label{SimpleGraph.whitney_inequalities}
 \leanok
@@ -282,7 +282,7 @@ Transfer of a walk into an induced subgraph: a walk all of whose vertices lie
 in $s$ witnesses reachability inside \texttt{G.induce s}.
 \end{theorem}
 
-\begin{theorem}[exists_two_internally_disjoint_paths_of_two_connected]
+\begin{theorem}[exists\_two\_internally\_disjoint\_paths\_of\_two\_connected]
 \lean{SimpleGraph.exists_two_internally_disjoint_paths_of_two_connected}
 \label{SimpleGraph.exists_two_internally_disjoint_paths_of_two_connected}
 \uses{SimpleGraph.InternallyDisjoint, SimpleGraph.vertexConnectivity}
@@ -298,7 +298,7 @@ it for free because its $d(u,v) = 1$ case produces a genuine \emph{cycle}
 via theorem 2.3, not merely two paths.
 \end{theorem}
 
-\begin{theorem}[two_connected_iff_two_internally_disjoint_paths]
+\begin{theorem}[two\_connected\_iff\_two\_internally\_disjoint\_paths]
 \lean{SimpleGraph.two_connected_iff_two_internally_disjoint_paths}
 \label{SimpleGraph.two_connected_iff_two_internally_disjoint_paths}
 \uses{SimpleGraph.InternallyDisjoint, SimpleGraph.block_edges_on_common_cycle, SimpleGraph.exists_two_internally_disjoint_paths_of_two_connected, SimpleGraph.reachable_induce_of_support_subset, SimpleGraph.two_le_vertexConnectivity_of_no_cutVertex, SimpleGraph.vertexConnectivity}
@@ -320,7 +320,7 @@ Then \texttt{two\_le\_vertexConnectivity\_of\_no\_cutVertex} converts "no cut ve
 $\kappa \ge 2$, which is where $\nu \ge 3$ is consumed.
 \end{theorem}
 
-\begin{theorem}[two_connected_vertices_on_common_cycle]
+\begin{theorem}[two\_connected\_vertices\_on\_common\_cycle]
 \lean{SimpleGraph.two_connected_vertices_on_common_cycle}
 \label{SimpleGraph.two_connected_vertices_on_common_cycle}
 \uses{SimpleGraph.vertexConnectivity}
@@ -336,7 +336,7 @@ must therefore go through the strengthened
 \texttt{p.edges.Disjoint q.edges} rules that degenerate case out.
 \end{theorem}
 
-\begin{theorem}[block_edges_on_common_cycle]
+\begin{theorem}[block\_edges\_on\_common\_cycle]
 \lean{SimpleGraph.block_edges_on_common_cycle}
 \label{SimpleGraph.block_edges_on_common_cycle}
 \uses{SimpleGraph.IsBlock}
@@ -370,7 +370,7 @@ The three cases are a single $if$-cascade on $m \% 2$ and $n \% 2$; Case 1 is th
 base and Cases 2--3 are $\sqcup$ with an extra chord relation.
 \end{definition}
 
-\begin{theorem}[hararyGraph_isConnectivity]
+\begin{theorem}[hararyGraph\_isConnectivity]
 \lean{SimpleGraph.hararyGraph_isConnectivity}
 \label{SimpleGraph.hararyGraph_isConnectivity}
 \uses{SimpleGraph.hararyGraph, SimpleGraph.vertexConnectivity}
@@ -398,7 +398,7 @@ $f$ and $g$ (least edge counts over all $m$-connected graphs) are not defined
 here.
 \end{theorem}
 
-\begin{theorem}[edgeCard_ge_of_kEdgeConnected]
+\begin{theorem}[edgeCard\_ge\_of\_kEdgeConnected]
 \lean{SimpleGraph.edgeCard_ge_of_kEdgeConnected}
 \label{SimpleGraph.edgeCard_ge_of_kEdgeConnected}
 \leanok
@@ -417,7 +417,7 @@ $k$ links, so it cannot be sparse --- this is exactly the lower bound
 $f(m, n) \ge \lceil mn/2\rceil$ of (3.1), which \S{}3.3 shows the Harary graphs attain.
 \end{theorem}
 
-\begin{theorem}[vertexConnectivity_eq_minDegree_of_delta_ge]
+\begin{theorem}[vertexConnectivity\_eq\_minDegree\_of\_delta\_ge]
 \lean{SimpleGraph.vertexConnectivity_eq_minDegree_of_delta_ge}
 \label{SimpleGraph.vertexConnectivity_eq_minDegree_of_delta_ge}
 \uses{SimpleGraph.vertexConnectivity}
@@ -433,7 +433,7 @@ Part (b) shows the bound is tight --- one step less density ($\delta = \nu - 3$)
 allows $\kappa < \delta$.
 \end{theorem}
 
-\begin{theorem}[vertexConn_eq_edgeConn_of_threeRegular]
+\begin{theorem}[vertexConn\_eq\_edgeConn\_of\_threeRegular]
 \lean{SimpleGraph.vertexConn_eq_edgeConn_of_threeRegular}
 \label{SimpleGraph.vertexConn_eq_edgeConn_of_threeRegular}
 \uses{SimpleGraph.edgeConnectivity, SimpleGraph.vertexConnectivity}
@@ -451,7 +451,7 @@ that for them the vertex and edge measures of reliability agree --- unlike the
 general situation, where figure 3.2 has $\kappa = 2 < \kappa' = 3$.
 \end{theorem}
 
-\begin{theorem}[two_edge_connected_iff_two_edge_disjoint_paths]
+\begin{theorem}[two\_edge\_connected\_iff\_two\_edge\_disjoint\_paths]
 \lean{SimpleGraph.two_edge_connected_iff_two_edge_disjoint_paths}
 \label{SimpleGraph.two_edge_connected_iff_two_edge_disjoint_paths}
 \uses{SimpleGraph.edgeConnectivity}

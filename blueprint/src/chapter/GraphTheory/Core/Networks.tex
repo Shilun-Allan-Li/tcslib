@@ -16,7 +16,7 @@ at the sinks, and shipped along the arcs, each with a maximum throughput.
 Capacity is carried as a \emph{function} \texttt{cap : V $\to$ V $\to$ $\mathbb{N}$}, with \texttt{cap u v = 0} encoding
 "no arc $u \to v$"; this makes $f^{+}$/$f^{-}$ plain \texttt{Finset.sum}s.  \textbf{!} It cannot represent
 \textbf{parallel arcs}, which is a real restriction --- lemma 11.4 is about a network in
-which every arc has unit capacity, and B&M's digraphs may have several arcs between
+which every arc has unit capacity, and B\&M's digraphs may have several arcs between
 the same pair.
 
 The structure carries \textbf{both} $X$, $Y$ (the source/sink \emph{sets} of \S{}11.1) and the
@@ -175,9 +175,9 @@ of Berge's theorem 5.1 for matchings.
 \leanok
 \uses{Networks.Network, Networks.Network.IsCut, Networks.Network.capOf}
 The cheapest way to sever the network --- the bottleneck.  Theorem 11.3
-says its capacity is exactly the maximum throughput.  B&M record the easy half
-first: \emph{If $f}$ is a maximum flow and $\tilde{K}$ is a minimum cut, we have, as a special
-case of theorem 11.1, that \texttt{val f\emph{ $\le$ cap $\tilde{K}$}} (11.8).
+says its capacity is exactly the maximum throughput.  B\&M record the easy half
+first: \emph{If \texttt{f*} is a maximum flow and $\tilde{K}$ is a minimum cut, we have, as a special
+case of theorem 11.1, that \texttt{val f* $\le$ cap $\tilde{K}$}} (11.8).
 
 As with \texttt{IsMaxFlow}, stated positively.
 \end{definition}
@@ -191,7 +191,7 @@ A route from source to sink along which the flow can still be pushed
 up.  Crucially it may travel \emph{against} an arc --- a \textbf{reverse arc} --- provided that
 arc currently carries positive flow, which can then be cancelled.  This is what
 lets the algorithm undo earlier bad choices, exactly as an augmenting path in
-matching theory rearranges an existing matching; B&M make the analogy explicit:
+matching theory rearranges an existing matching; B\&M make the analogy explicit:
 *the r\^ole played by incrementing paths in flow theory is analogous to that of
 augmenting paths in matching theory* (compare theorem 5.1).  The book's example is
 figure 11.5(a), where $P = xv_{1}v_{2}v_{3}y$ is $f$-incrementing with $\iota(P) = 2$.
@@ -256,8 +256,8 @@ forward direction has nothing to revise with.  Same convention violation as
 one arc per constructor:
 
     revisedFlow nil       = f
-    revisedFlow (fwd P _) = Function.update$_{2}$ (revisedFlow P) u v (f u v + iota P)
-    revisedFlow (back P _)= Function.update$_{2}$ (revisedFlow P) v u (f v u - iota P)
+    revisedFlow (fwd P \_) = Function.update$_{2}$ (revisedFlow P) u v (f u v + iota P)
+    revisedFlow (back P \_)= Function.update$_{2}$ (revisedFlow P) v u (f v u - iota P)
 
 \textbf{!} Note \texttt{iota P} must be the bottleneck of the \textbf{whole} path, not of the prefix, or
 the capacity constraint fails on early arcs --- so \texttt{iota} should be computed once and
@@ -460,7 +460,7 @@ a special case of \texttt{maxInternallyDisjointPaths}).  A $\Sigma$-typed family
 \begin{definition}[The associated digraph $D(G)$: each edge becomes two opposite arcs (cited as ex 10.3.6)]
 \lean{Networks.associatedDigraph}
 \label{Networks.associatedDigraph}
-Make every street two-way.  B&M call it \emph{a simple trick}: it is how
+Make every street two-way.  B\&M call it \emph{a simple trick}: it is how
 theorems 11.5 and 11.7 are deduced from their directed counterparts 11.4 and 11.6,
 since paths in $G$ correspond exactly to directed paths in $D(G)$.
 
@@ -499,13 +499,13 @@ should be checked before it is relied on elsewhere.
 \label{Networks.Network.IsFeasible}
 \leanok
 \uses{Networks.Network, Networks.Network.IsFlow, Networks.Network.fIn, Networks.Network.fOut}
-for supplies $\sigma$ and demands \texttt{dem} (B&M's $\partial$). \textbf{!} MISSING. Honest def.
+for supplies $\sigma$ and demands \texttt{dem} (B\&M's $\partial$). \textbf{!} MISSING. Honest def.
 
 Nobody ships more than they can produce, and everybody receives at
 least what they ordered.  Gale's theorem 11.8 characterises existence: for every
 $S$, the capacity out of $S$ must cover the \emph{net} demand of $\bar{S}$.
 
-\textbf{!} Missing from Mathlib.  \texttt{dem} is B&M's $\partial$.  Both conditions
+\textbf{!} Missing from Mathlib.  \texttt{dem} is B\&M's $\partial$.  Both conditions
 are cast to $\mathbb{Z}$ before subtracting, for the reason recorded under \texttt{val}.  Supplies
 and demands are $V \to \mathbb{N}$ total functions, with the conditions quantified only over
 $X$ and $Y$, so their values elsewhere are irrelevant.
@@ -562,7 +562,7 @@ the shape of \texttt{fOut}/\texttt{capOf} so the three compare directly.  Since 
 symmetric and the sum runs over $S \times S^{c}$, each crossing edge is counted \textbf{once}.
 \end{definition}
 
-\begin{theorem}[sum_resultant_eq_fOut_sub_fIn]
+\begin{theorem}[sum\_resultant\_eq\_fOut\_sub\_fIn]
 \lean{Networks.sum_resultant_eq_fOut_sub_fIn}
 \label{Networks.sum_resultant_eq_fOut_sub_fIn}
 \leanok
@@ -579,7 +579,7 @@ Note it needs \textbf{no} \texttt{IsFlow} hypothesis: it is pure bookkeeping abo
 $f$.
 \end{theorem}
 
-\begin{theorem}[fOut_X_sub_fIn_X_eq_fIn_Y_sub_fOut_Y]
+\begin{theorem}[fOut\_X\_sub\_fIn\_X\_eq\_fIn\_Y\_sub\_fOut\_Y]
 \lean{Networks.fOut_X_sub_fIn_X_eq_fIn_Y_sub_fOut_Y}
 \label{Networks.fOut_X_sub_fIn_X_eq_fIn_Y_sub_fOut_Y}
 \leanok
@@ -592,7 +592,7 @@ Step 4's $f^{+}(S) = f^{-}(S^{c})$ is worth an explicit \texttt{simp} lemma; it
 recurs throughout the chapter.  Step 3 is where \texttt{N.hdisj} is spent.
 \end{theorem}
 
-\begin{theorem}[val_eq_fOut_sub_fIn]
+\begin{theorem}[val\_eq\_fOut\_sub\_fIn]
 \lean{Networks.val_eq_fOut_sub_fIn}
 \label{Networks.val_eq_fOut_sub_fIn}
 \leanok
@@ -602,7 +602,7 @@ source: all the material has to cross somewhere, and nothing is lost in between.
 This is the observation from which theorem 11.1 immediately follows.
 
 \textbf{\textbf{!} Statement defect.}  This is \textbf{false as stated} --- the seam between \S{}11.1's
-multi-source setting and \S{}11.2's single-source one.  B&M close it by fiat
+multi-source setting and \S{}11.2's single-source one.  B\&M close it by fiat
 (*throughout the next three sections, we shall confine our attention to networks
 that have a single source $x$ and a single sink $y$*), but the \texttt{Network} structure
 here relates $x$, $y$ to $X$, $Y$ in no way at all, so \texttt{val} (defined over $X$) and
@@ -613,7 +613,7 @@ on this statement.  \textbf{The skeleton assumes it} --- step 1 is not derivable
 it.
 \end{theorem}
 
-\begin{theorem}[val_le_capOf]
+\begin{theorem}[val\_le\_capOf]
 \lean{Networks.val_le_capOf}
 \label{Networks.val_le_capOf}
 \leanok
@@ -621,10 +621,10 @@ it.
 Every unit shipped from $x$ to $y$ must squeeze through the cut, so no
 flow can exceed the cut's throughput.  This weak-duality bound is half of the
 max-flow min-cut theorem; the surprise of theorem 11.3 is that it is always
-attained.  B&M record the special case immediately: \texttt{val f* $\le$ cap $\tilde{K}$} (11.8).
+attained.  B\&M record the special case immediately: \texttt{val f* $\le$ cap $\tilde{K}$} (11.8).
 \end{theorem}
 
-\begin{theorem}[val_eq_capOf_iff]
+\begin{theorem}[val\_eq\_capOf\_iff]
 \lean{Networks.val_eq_capOf_iff}
 \label{Networks.val_eq_capOf_iff}
 \leanok
@@ -636,7 +636,7 @@ equality condition is worth stating separately rather than folding into theorem
 11.1.
 \end{theorem}
 
-\begin{theorem}[isMaxFlow_and_isMinCut_of_val_eq_cap]
+\begin{theorem}[isMaxFlow\_and\_isMinCut\_of\_val\_eq\_cap]
 \lean{Networks.isMaxFlow_and_isMinCut_of_val_eq_cap}
 \label{Networks.isMaxFlow_and_isMinCut_of_val_eq_cap}
 \leanok
@@ -647,7 +647,7 @@ method self-verifying: when the algorithm stops it produces a matching flow and 
 and their equality proves both optimal.
 \end{theorem}
 
-\begin{theorem}[exists_maxFlow]
+\begin{theorem}[exists\_maxFlow]
 \lean{Networks.exists_maxFlow}
 \label{Networks.exists_maxFlow}
 \leanok
@@ -663,7 +663,7 @@ theorem 11.1's bound is \emph{not} needed --- finiteness alone suffices, which i
 than the book's implicit reasoning and avoids the $X$/$x$ defect.
 \end{theorem}
 
-\begin{theorem}[exists_minCut]
+\begin{theorem}[exists\_minCut]
 \lean{Networks.exists_minCut}
 \label{Networks.exists_minCut}
 \leanok
@@ -680,7 +680,7 @@ since \texttt{hdisj} then forces $x \ne y$.  Without it the statement is false f
 with $x = y$, where no cut exists.
 \end{theorem}
 
-\begin{theorem}[maxFlow_and_minCut_zero_of_no_path]
+\begin{theorem}[maxFlow\_and\_minCut\_zero\_of\_no\_path]
 \lean{Networks.maxFlow_and_minCut_zero_of_no_path}
 \label{Networks.maxFlow_and_minCut_zero_of_no_path}
 \leanok
@@ -695,7 +695,7 @@ than as "no directed $(x,y)$-path", which is the same thing and needs no path
 API.
 \end{theorem}
 
-\begin{theorem}[isMinCut_union_inter]
+\begin{theorem}[isMinCut\_union\_inter]
 \lean{Networks.isMinCut_union_inter}
 \label{Networks.isMinCut_union_inter}
 \leanok
@@ -709,11 +709,11 @@ Unaffected by the $X$/$x$ defect --- the argument is entirely about
 and independently.
 \end{theorem}
 
-\begin{theorem}[maxFlow_iff_no_incrementing_path]
+\begin{theorem}[maxFlow\_iff\_no\_incrementing\_path]
 \lean{Networks.maxFlow_iff_no_incrementing_path}
 \label{Networks.maxFlow_iff_no_incrementing_path}
 \uses{Networks.Network, Networks.Network.IncPath, Networks.Network.IsFlow, Networks.Network.IsMaxFlow}
-B&M stress the analogy: *the r\^ole played by incrementing paths in flow
+B\&M stress the analogy: *the r\^ole played by incrementing paths in flow
 theory is analogous to that of augmenting paths in matching theory* --- compare
 Berge's theorem 5.1.
 
@@ -723,7 +723,7 @@ and \texttt{back} is immediate for walks.  \textbf{!} Step 5 uses theorem 11.1 a
 so it inherits the $X$/$x$ defect.
 \end{theorem}
 
-\begin{theorem}[exists_cut_of_no_incrementing_path]
+\begin{theorem}[exists\_cut\_of\_no\_incrementing\_path]
 \lean{Networks.exists_cut_of_no_incrementing_path}
 \label{Networks.exists_cut_of_no_incrementing_path}
 \leanok
@@ -741,13 +741,13 @@ rather than the other way round --- otherwise the reachability construction has 
 written twice.
 \end{theorem}
 
-\begin{theorem}[maxFlow_min_cut]
+\begin{theorem}[maxFlow\_min\_cut]
 \lean{Networks.maxFlow_min_cut}
 \label{Networks.maxFlow_min_cut}
 \uses{Networks.Network, Networks.Network.IsMaxFlow, Networks.Network.IsMinCut, Networks.Network.capOf, Networks.Network.val}
 Theorem 11.1 gave the easy half --- \texttt{val f $\le$ cap K} for every flow and
 cut; this says the bound is always achieved, so the bottleneck is not merely an
-upper limit but the exact answer.  B&M call it *of central importance in graph
+upper limit but the exact answer.  B\&M call it *of central importance in graph
 theory\emph{: }many results on graphs turn out to be easy consequences of this theorem as
 applied to suitably chosen networks*, as \S{}\S{}11.4 and 11.5 demonstrate with Menger's
 theorems and the Gale--Ryser criterion.
@@ -755,7 +755,7 @@ theorems and the Gale--Ryser criterion.
 \emph{The labelling method} (Ford and Fulkerson, 1957), which the constructive proof
 yields: start from the zero flow and repeatedly grow an $f$-unsaturated tree from
 $x$, until either it reaches $y$ (\textbf{breakthrough}, giving an incrementing path to
-revise along) or it stops growing (certifying maximality by theorem 11.2).  B&M note
+revise along) or it stops growing (certifying maximality by theorem 11.2).  B\&M note
 it is \emph{not} a good algorithm --- figure 11.9 gives a network needing $2m + 1$
 iterations for arbitrary $m$ --- but Edmonds and Karp (1970) showed that scanning
 "first-labelled first-scanned", i.e. always taking a \emph{shortest} incrementing path,
@@ -767,7 +767,7 @@ chain and inherits every defect below it, including the \texttt{sorry}-bodied $\
 \texttt{revisedFlow} via step 2.
 \end{theorem}
 
-\begin{theorem}[unitCapacity_maxFlow_eq_arcDisjoint]
+\begin{theorem}[unitCapacity\_maxFlow\_eq\_arcDisjoint]
 \lean{Networks.unitCapacity_maxFlow_eq_arcDisjoint}
 \label{Networks.unitCapacity_maxFlow_eq_arcDisjoint}
 \uses{Networks.Network, Networks.Network.IsMaxFlow, Networks.Network.maxArcDisjointPaths, Networks.Network.val}
@@ -776,13 +776,13 @@ carrying one unit.  This lemma is the bridge from flow theory to Menger.
 
 \textbf{!} Two imported dependencies, both currently defective: step 1
 needs chapter 10's exercise 10.3.3, whose statement there mentions the
-\texttt{sorry}-bodied \texttt{arcsOf}; and B&M's proof of \emph{that} exercise adds $l$ parallel arcs,
+\texttt{sorry}-bodied \texttt{arcsOf}; and B\&M's proof of \emph{that} exercise adds $l$ parallel arcs,
 which neither \texttt{Digraph} nor this file's \texttt{cap : V $\to$ V $\to$ $\mathbb{N}$} carrier can express.  \textbf{!}
 Also note \texttt{hunit : $\forall$ u v, cap u v $\le$ 1} permits \texttt{cap = 0}, i.e. absent arcs, which is
 what the book means by "each arc has unit capacity"; that reading is correct here.
 \end{theorem}
 
-\begin{theorem}[unitCapacity_minCut_eq_minDestroying]
+\begin{theorem}[unitCapacity\_minCut\_eq\_minDestroying]
 \lean{Networks.unitCapacity_minCut_eq_minDestroying}
 \label{Networks.unitCapacity_minCut_eq_minDestroying}
 \uses{Networks.Network, Networks.Network.IsMinCut, Networks.Network.capOf, Networks.Network.minArcsDestroyingPaths}
@@ -794,7 +794,7 @@ needs \texttt{hunit} \emph{and} that every counted arc actually exists (\texttt{
 so the sum-to-cardinality step deserves care.
 \end{theorem}
 
-\begin{theorem}[menger_arc_digraph]
+\begin{theorem}[menger\_arc\_digraph]
 \lean{Networks.menger_arc_digraph}
 \label{Networks.menger_arc_digraph}
 \uses{Networks.maxArcDisjointDirectedPaths, Networks.minArcsDestroyingDirectedPaths}
@@ -811,7 +811,7 @@ Defining the network-level pair \emph{in terms of} the digraph-level pair applie
 underlying digraph would make steps 2--3 definitional and is the better design.
 \end{theorem}
 
-\begin{theorem}[menger_edge_graph]
+\begin{theorem}[menger\_edge\_graph]
 \lean{Networks.menger_edge_graph}
 \label{Networks.menger_edge_graph}
 \uses{Networks.maxEdgeDisjointPaths, Networks.minEdgesDestroyingPaths}
@@ -822,7 +822,7 @@ Step 2's caveat is the one place where "a simple trick
 immediately yields" is doing real work; budget for it.
 \end{theorem}
 
-\begin{theorem}[k_edge_connected_iff_edge_disjoint_paths]
+\begin{theorem}[k\_edge\_connected\_iff\_edge\_disjoint\_paths]
 \lean{Networks.k_edge_connected_iff_edge_disjoint_paths}
 \label{Networks.k_edge_connected_iff_edge_disjoint_paths}
 \uses{Networks.edgeConnectivity, Networks.maxEdgeDisjointPaths}
@@ -840,7 +840,7 @@ boundary flagged there: on a one-vertex graph no edge cut exists, so
 \texttt{associatedDigraph\_isKArcConnected\_iff}.
 \end{theorem}
 
-\begin{theorem}[menger_vertex_digraph]
+\begin{theorem}[menger\_vertex\_digraph]
 \lean{Networks.menger_vertex_digraph}
 \label{Networks.menger_vertex_digraph}
 \uses{Networks.maxInternallyDisjointDirectedPaths, Networks.minVerticesDestroyingDirectedPaths}
@@ -854,7 +854,7 @@ $D'$-path from \texttt{inr x} to \texttt{inl y} never traverses $x$'s or $y$'s c
 correspondence is unharmed; but that fact needs stating rather than assuming.
 \end{theorem}
 
-\begin{theorem}[menger_vertex_graph]
+\begin{theorem}[menger\_vertex\_graph]
 \lean{Networks.menger_vertex_graph}
 \label{Networks.menger_vertex_graph}
 \uses{Networks.maxInternallyDisjointPaths, Networks.minVerticesDestroyingPaths}
@@ -869,7 +869,7 @@ theorem 11.5, so this is the better of the two undirected Menger theorems to att
 first.
 \end{theorem}
 
-\begin{theorem}[k_connected_iff_internally_disjoint_paths]
+\begin{theorem}[k\_connected\_iff\_internally\_disjoint\_paths]
 \lean{Networks.k_connected_iff_internally_disjoint_paths}
 \label{Networks.k_connected_iff_internally_disjoint_paths}
 \uses{Networks.maxInternallyDisjointPaths, Networks.vertexConnectivity}
@@ -877,21 +877,21 @@ $k$-connectivity says no $k - 1$ vertices disconnect the graph; theorem
 11.7 converts the local separation number for a nonadjacent pair into a path count,
 and minimising over pairs converts global into local.
 
-\textbf{!} B&M call this \emph{immediate}; it is not --- step 2 is genuine work,
+\textbf{!} B\&M call this \emph{immediate}; it is not --- step 2 is genuine work,
 and the $k = 2$ case alone is a full proof in the repo (\texttt{TwoConnected.lean:537}).
 Uses the local \texttt{vertexConnectivity}, whose $\nu - 1$ fallback for complete graphs
 interacts with step 2 (a complete graph has \emph{only} adjacent pairs), so check that
 boundary.  \texttt{h : k + 1 $\le$ card V} is the book's $\nu \ge k + 1$.
 \end{theorem}
 
-\begin{theorem}[dirac_k_vertices_on_cycle]
+\begin{theorem}[dirac\_k\_vertices\_on\_cycle]
 \lean{Networks.dirac_k_vertices_on_cycle}
 \label{Networks.dirac_k_vertices_on_cycle}
 \uses{Networks.vertexConnectivity}
 High connectivity forces any prescribed set of $k$ vertices onto a
 single cycle.  For $k = 2$ this is corollary 3.2.1 --- in a 2-connected graph any two
 vertices lie on a common cycle.  One of the classic applications of Menger's
-theorem, illustrating B&M's remark that *many results on graphs turn out to be easy
+theorem, illustrating B\&M's remark that *many results on graphs turn out to be easy
 consequences* of max-flow min-cut.
 
 Depends on exercise 11.4.3, hence on two \texttt{sorry}-bodied
@@ -901,7 +901,7 @@ dependency is repaired.  Among the \S{}11.4 items, this is the one whose stateme
 already honest.
 \end{theorem}
 
-\begin{theorem}[gale_feasible_flow]
+\begin{theorem}[gale\_feasible\_flow]
 \lean{Networks.gale_feasible_flow}
 \label{Networks.gale_feasible_flow}
 \leanok
@@ -919,7 +919,7 @@ one tries to apply those results to $N$ itself.  Step 1's construction is the
 largest single piece of work in \S{}11.5.
 \end{theorem}
 
-\begin{theorem}[galeRyser_realisable]
+\begin{theorem}[galeRyser\_realisable]
 \lean{Networks.galeRyser_realisable}
 \label{Networks.galeRyser_realisable}
 \leanok
@@ -941,7 +941,7 @@ book when filling.  The $(0,1)$-matrix carrier is used rather than a bipartite-g
 predicate; see \texttt{RealisableBipartite}.
 \end{theorem}
 
-\begin{theorem}[realisable_iff_reduced]
+\begin{theorem}[realisable\_iff\_reduced]
 \lean{Networks.realisable_iff_reduced}
 \label{Networks.realisable_iff_reduced}
 \leanok
@@ -954,14 +954,14 @@ this into a construction algorithm.
 \textbf{!} Two departures, both flagged in the source comment.  (i) $q'$
 uses \textbf{truncated} natural subtraction ($q j - 1$ is $0$ when $q j = 0$), which is
 harmless only because a realisable $q$ has $q j \ge 1$ wherever row $0$ puts an edge ---
-worth checking rather than assuming.  (ii) B&M's $q'$ is \textbf{re-sorted} into
+worth checking rather than assuming.  (ii) B\&M's $q'$ is \textbf{re-sorted} into
 nonincreasing order, which this statement elides; without re-sorting, $q'$ need not
 satisfy (11.17), so this reduction cannot be chained with theorem 11.9 as the book
 intends.  If the intent is to iterate the reduction, the re-sorting must be
 restored.
 \end{theorem}
 
-\begin{theorem}[isOrientable_iff_exists_partition]
+\begin{theorem}[isOrientable\_iff\_exists\_partition]
 \lean{Networks.isOrientable_iff_exists_partition}
 \label{Networks.isOrientable_iff_exists_partition}
 \leanok
@@ -978,7 +978,7 @@ odd-degree patch of chapter 10's exercise 10.1.10.  The absolute value is writte
 a \textbf{two-sided bound} to avoid \texttt{abs} and keep the arithmetic in $\mathbb{Z}$.
 \end{theorem}
 
-\begin{theorem}[isOrientable_pred_succ]
+\begin{theorem}[isOrientable\_pred\_succ]
 \lean{Networks.isOrientable_pred_succ}
 \label{Networks.isOrientable_pred_succ}
 \leanok

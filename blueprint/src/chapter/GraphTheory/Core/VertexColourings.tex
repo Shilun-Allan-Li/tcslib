@@ -253,7 +253,7 @@ tower carries the hypothesis $2 \le k$.  This def is the reason \texttt{mycielsk
 exist as a standalone operation rather than being inlined into theorem 8.7.
 \end{definition}
 
-\begin{theorem}[exists_isKCritical_subgraph]
+\begin{theorem}[exists\_isKCritical\_subgraph]
 \lean{SimpleGraph.exists_isKCritical_subgraph}
 \label{SimpleGraph.exists_isKCritical_subgraph}
 \leanok
@@ -287,7 +287,7 @@ Step 3 is the whole content and is reusable: the same
 ($\pi_k$ multiplies over components).  Worth proving once in a shared form.
 \end{theorem}
 
-\begin{theorem}[minDegree_ge]
+\begin{theorem}[minDegree\_ge]
 \lean{SimpleGraph.IsKCritical.minDegree_ge}
 \label{SimpleGraph.IsKCritical.minDegree_ge}
 \leanok
@@ -303,7 +303,7 @@ the strict inequality $\delta < k - 1$ is spent, so it needs $k \ge 1$ to know
 \texttt{Fin (k-1)} is the right palette --- available from $h.1$ as in step 1.
 \end{theorem}
 
-\begin{theorem}[card_filter_degree_ge_of_chromaticNumber]
+\begin{theorem}[card\_filter\_degree\_ge\_of\_chromaticNumber]
 \lean{SimpleGraph.card_filter_degree_ge_of_chromaticNumber}
 \label{SimpleGraph.card_filter_degree_ge_of_chromaticNumber}
 \leanok
@@ -317,7 +317,7 @@ why the filter in the goal mentions only $G$ --- the critical subgraph is existe
 and does not appear in the statement.
 \end{theorem}
 
-\begin{theorem}[chromaticNumber_le_maxDegree_add_one]
+\begin{theorem}[chromaticNumber\_le\_maxDegree\_add\_one]
 \lean{SimpleGraph.chromaticNumber_le_maxDegree_add_one}
 \label{SimpleGraph.chromaticNumber_le_maxDegree_add_one}
 \leanok
@@ -335,7 +335,7 @@ and \texttt{IsKCritical.minDegree\_ge}, both of which are substantially harder t
 corollary.  This is the cheapest genuine win in the file --- a good first fill.
 \end{theorem}
 
-\begin{theorem}[not_isClique_of_isVertexCut]
+\begin{theorem}[not\_isClique\_of\_isVertexCut]
 \lean{SimpleGraph.IsCritical.not_isClique_of_isVertexCut}
 \label{SimpleGraph.IsCritical.not_isClique_of_isVertexCut}
 \leanok
@@ -355,7 +355,7 @@ dependency cycle.  Note also that the book's $S$-components are defined only for
 \emph{connected} $G$, so step 2 genuinely needs it.
 \end{theorem}
 
-\begin{theorem}[connected_and_no_cut_vertex]
+\begin{theorem}[connected\_and\_no\_cut\_vertex]
 \lean{SimpleGraph.IsCritical.connected_and_no_cut_vertex}
 \label{SimpleGraph.IsCritical.connected_and_no_cut_vertex}
 \leanok
@@ -371,7 +371,7 @@ vertex is spelled as a one-element vertex cut, matching \texttt{IsVertexCut} abo
 satisfied by the empty graph.
 \end{theorem}
 
-\begin{theorem}[not_adj_of_isVertexCut_pair]
+\begin{theorem}[not\_adj\_of\_isVertexCut\_pair]
 \lean{SimpleGraph.IsCritical.not_adj_of_isVertexCut_pair}
 \label{SimpleGraph.IsCritical.not_adj_of_isVertexCut_pair}
 \leanok
@@ -388,7 +388,7 @@ weakened to plain criticality.  \texttt{huv : u $\ne$ v} is needed to know ${u, 
 two elements.
 \end{theorem}
 
-\begin{theorem}[chromaticNumber_ge_of_card_edges]
+\begin{theorem}[chromaticNumber\_ge\_of\_card\_edges]
 \lean{SimpleGraph.chromaticNumber_ge_of_card_edges}
 \label{SimpleGraph.chromaticNumber_ge_of_card_edges}
 \leanok
@@ -405,7 +405,7 @@ the \texttt{[Nonempty V]} hypothesis.)  $\chi$ is replaced by an arbitrary $k$ w
 the right-hand side is monotone in $k$ and $\chi$ is the least colourable $k$.
 \end{theorem}
 
-\begin{theorem}[chromaticNumber_le_five_of_odd_cycles_meet]
+\begin{theorem}[chromaticNumber\_le\_five\_of\_odd\_cycles\_meet]
 \lean{SimpleGraph.chromaticNumber_le_five_of_odd_cycles_meet}
 \label{SimpleGraph.chromaticNumber_le_five_of_odd_cycles_meet}
 \leanok
@@ -420,7 +420,7 @@ also applied with $p = q$ in step 2's minimality argument, where it is vacuous -
 the content is only in the disjointness contradiction of step 4.
 \end{theorem}
 
-\begin{theorem}[welsh_powell]
+\begin{theorem}[welsh\_powell]
 \lean{SimpleGraph.welsh_powell}
 \label{SimpleGraph.welsh_powell}
 \leanok
@@ -446,7 +446,7 @@ sequence, which is the small quantity worth having.  So do not go looking for a
 place to use $h\sigma$ --- there isn't one.
 \end{theorem}
 
-\begin{theorem}[chromaticNumber_le_ceil_sqrt_two_mul_card_edges]
+\begin{theorem}[chromaticNumber\_le\_ceil\_sqrt\_two\_mul\_card\_edges]
 \lean{SimpleGraph.chromaticNumber_le_ceil_sqrt_two_mul_card_edges}
 \label{SimpleGraph.chromaticNumber_le_ceil_sqrt_two_mul_card_edges}
 \leanok
@@ -459,7 +459,7 @@ The book's ${x}$ denotes the \textbf{ceiling}, rendered as $\lceil\cdot\rceil_{+
 \texttt{Real.sqrt} needs a real argument, hence the cast on $2 * \varepsilon$.
 \end{theorem}
 
-\begin{theorem}[nordhaus_gaddum]
+\begin{theorem}[nordhaus\_gaddum]
 \lean{SimpleGraph.nordhaus_gaddum}
 \label{SimpleGraph.nordhaus_gaddum}
 \leanok
@@ -475,7 +475,7 @@ hence step 1, which moves the whole argument into $\mathbb{N}$ before any arithm
 isolating as its own lemma about the two sorted sequences.
 \end{theorem}
 
-\begin{theorem}[szekeres_wilf]
+\begin{theorem}[szekeres\_wilf]
 \lean{SimpleGraph.szekeres_wilf}
 \label{SimpleGraph.szekeres_wilf}
 \leanok
@@ -494,7 +494,7 @@ Note the induction in step 2 is the formal content of "repeatedly strip off" ---
 usual, the informal repetition becomes an induction on the size of what remains.
 \end{theorem}
 
-\begin{theorem}[gallai_two_per_class]
+\begin{theorem}[gallai\_two\_per\_class]
 \lean{SimpleGraph.gallai_two_per_class}
 \label{SimpleGraph.gallai_two_per_class}
 \leanok
@@ -511,7 +511,7 @@ strengthening is what makes that usable.  \texttt{Set.ncard} is used rather than
 \texttt{Finset} card so the statement needs no decidability on colour classes.
 \end{theorem}
 
-\begin{theorem}[isKCritical_three_iff_odd_cycle]
+\begin{theorem}[isKCritical\_three\_iff\_odd\_cycle]
 \lean{SimpleGraph.isKCritical_three_iff_odd_cycle}
 \label{SimpleGraph.isKCritical_three_iff_odd_cycle}
 \leanok
@@ -530,7 +530,7 @@ of an odd cycle); factoring out "a subgraph attaining $\chi(G)$ must be $\top$" 
 lemma about \texttt{IsCritical} pays for itself across all three cases of 8.1.7.
 \end{theorem}
 
-\begin{theorem}[isKCritical_one_iff]
+\begin{theorem}[isKCritical\_one\_iff]
 \lean{SimpleGraph.isKCritical_one_iff}
 \label{SimpleGraph.isKCritical_one_iff}
 \leanok
@@ -546,7 +546,7 @@ $G$ being edgeless.  Note that without the \texttt{Subgraph}-lattice definition 
 to test, and every edgeless graph would count as 1-critical.
 \end{theorem}
 
-\begin{theorem}[isKCritical_two_iff]
+\begin{theorem}[isKCritical\_two\_iff]
 \lean{SimpleGraph.isKCritical_two_iff}
 \label{SimpleGraph.isKCritical_two_iff}
 \leanok
@@ -558,7 +558,7 @@ needs both colours; criticality leaves no room for anything else.
 "a subgraph attaining $\chi(G)$ must be $\top$" lemma noted under the 3-critical case.
 \end{theorem}
 
-\begin{theorem}[not_uniquelyColorable_of_isVertexCut]
+\begin{theorem}[not\_uniquelyColorable\_of\_isVertexCut]
 \lean{SimpleGraph.IsKCritical.not_uniquelyColorable_of_isVertexCut}
 \label{SimpleGraph.IsKCritical.not_uniquelyColorable_of_isVertexCut}
 \leanok
@@ -577,7 +577,7 @@ colouring of $G$.  With those, theorem 8.2 and this exercise differ only in step
 $k - 1$ is $\mathbb{N}$-subtraction; \texttt{hG.1} supplies $k \ge 1$.
 \end{theorem}
 
-\begin{theorem}[neighborSet_not_subset]
+\begin{theorem}[neighborSet\_not\_subset]
 \lean{SimpleGraph.IsCritical.neighborSet_not_subset}
 \label{SimpleGraph.IsCritical.neighborSet_not_subset}
 \leanok
@@ -592,7 +592,7 @@ Stated with $\lnot (\dots \subseteq \dots)$, matching the book's $\not\subset$. 
 is needed to know $\chi(G) \ge 1$ in step 1.
 \end{theorem}
 
-\begin{theorem}[no_isKCritical_card_eq_succ]
+\begin{theorem}[no\_isKCritical\_card\_eq\_succ]
 \lean{SimpleGraph.no_isKCritical_card_eq_succ}
 \label{SimpleGraph.no_isKCritical_card_eq_succ}
 \leanok
@@ -610,7 +610,7 @@ step 1 is $\mathbb{N}$-subtraction --- the case $k = 0$ should be dispatched sep
 0-chromatic graph has an empty carrier, so \texttt{card V = 1} is impossible).
 \end{theorem}
 
-\begin{theorem}[chromaticNumber_join]
+\begin{theorem}[chromaticNumber\_join]
 \lean{SimpleGraph.chromaticNumber_join}
 \label{SimpleGraph.chromaticNumber_join}
 \leanok
@@ -626,7 +626,7 @@ $a$, $b$ as naturals up front, as in step 1, keeps the arithmetic in $\mathbb{N}
 \texttt{[Nonempty $\alpha$]}, \texttt{[Nonempty $\beta$]} ensure both sides genuinely contribute.
 \end{theorem}
 
-\begin{theorem}[join_isCritical_iff]
+\begin{theorem}[join\_isCritical\_iff]
 \lean{SimpleGraph.join_isCritical_iff}
 \label{SimpleGraph.join_isCritical_iff}
 \leanok
@@ -642,7 +642,7 @@ Step 4 is the one that would be missed by reasoning only about
 subgraphs that are not themselves joins, and they must be handled.
 \end{theorem}
 
-\begin{theorem}[hajos_construction]
+\begin{theorem}[hajos\_construction]
 \lean{SimpleGraph.hajos_construction}
 \label{SimpleGraph.hajos_construction}
 \leanok
@@ -655,7 +655,7 @@ repairs the deleted edge on that side.  The \textbf{Haj\'os construction} matter
 iterated from $K_k$, it generates \emph{every} graph with chromatic number at least $k$
 --- a complete but impractical characterisation.
 
-The outline's binder ${k v v_{1} v_{2} : _}$ cannot elaborate
+The outline's binder $\{k\ v\ v_{1}\ v_{2} : \_\}$ cannot elaborate
 (heterogeneous types under one hole), so the statement uses explicit
 ${k : \mathbb{N}} {v v_{1} v_{2} : V}$.  Both graphs live on \textbf{one} carrier $V$; "exactly one
 vertex in common" is \texttt{hmeet : G$_{1}$.support $\cap$ G$_{2}$.support = \{v\}}, and each $G_{i}$'s real
@@ -664,7 +664,7 @@ induced graphs rather than about $G_{1}$, $G_{2}$ directly.  Edge deletion is \t
 and edge addition is \texttt{$\sqcup$ edge}.
 \end{theorem}
 
-\begin{theorem}[exists_isKCritical_four]
+\begin{theorem}[exists\_isKCritical\_four]
 \lean{SimpleGraph.exists_isKCritical_four}
 \label{SimpleGraph.exists_isKCritical_four}
 \leanok
@@ -677,7 +677,7 @@ The carrier is pinned to \texttt{Fin n}, so each construction must be
 transported along an explicit equivalence --- \texttt{Fin 1 $\oplus$ Fin (n-1) $\simeq$ Fin n} for case 2,
 and the Haj\'os single-carrier encoding of exercise 8.1.11 for case 3.  That
 transport, rather than the graph theory, is most of the Lean work here; a reusable
-"\texttt{IsKCritical} transfers along $$\simeq$g$" lemma is worth having first.
+"\texttt{IsKCritical} transfers along \texttt{$\simeq$g}" lemma is worth having first.
 \end{theorem}
 
 \begin{theorem}[kainen]
@@ -697,7 +697,7 @@ Step 4 needs \texttt{Fintype.card (Equiv.Perm (Fin n)) = n !} and the factorial 
 $n ! = n * (n-1)!$.
 \end{theorem}
 
-\begin{theorem}[edgeConnectivity_ge]
+\begin{theorem}[edgeConnectivity\_ge]
 \lean{SimpleGraph.IsKCritical.edgeConnectivity_ge}
 \label{SimpleGraph.IsKCritical.edgeConnectivity_ge}
 \leanok
@@ -709,14 +709,14 @@ corollary 8.2, which rules out cut vertices --- three different senses in which 
 critical graph is tightly held together.
 
 The conclusion \texttt{k - 1 $\le$ edgeConnectivity} \emph{is} the definition of
-$(k-1)$-edge-connected (B&M \S{}3.1: $G$ is $k$-edge-connected if $\kappa' \ge k$), so no
+$(k-1)$-edge-connected (B\&M \S{}3.1: $G$ is $k$-edge-connected if $\kappa' \ge k$), so no
 separate predicate is needed.  Step 1 relies on \texttt{sInf $\emptyset$ = 0} being harmless: if $G$
 has no edge cut at all the bound must still be proved, and there step 2 has nothing
 to work with --- dispatch that case by noting a graph with no edge cut is complete or
 trivial.
 \end{theorem}
 
-\begin{theorem}[brooks_chromaticNumber_le_maxDegree]
+\begin{theorem}[brooks\_chromaticNumber\_le\_maxDegree]
 \lean{SimpleGraph.brooks_chromaticNumber_le_maxDegree}
 \label{SimpleGraph.brooks_chromaticNumber_le_maxDegree}
 \leanok
@@ -735,7 +735,7 @@ caveat is worth taking seriously before starting: the reduction to the critical
 subgraph is stated casually by the book but is not free in Lean.
 \end{theorem}
 
-\begin{theorem}[brooks_iff_edge_bound]
+\begin{theorem}[brooks\_iff\_edge\_bound]
 \lean{SimpleGraph.brooks_iff_edge_bound}
 \label{SimpleGraph.brooks_iff_edge_bound}
 \leanok
@@ -753,7 +753,7 @@ at a graph it constructs --- this is an equivalence of schemas, not of propositi
 about one fixed $G$.
 \end{theorem}
 
-\begin{theorem}[chromaticIndex_le_four_of_maxDegree_three]
+\begin{theorem}[chromaticIndex\_le\_four\_of\_maxDegree\_three]
 \lean{SimpleGraph.chromaticIndex_le_four_of_maxDegree_three}
 \label{SimpleGraph.chromaticIndex_le_four_of_maxDegree_three}
 \leanok
@@ -764,14 +764,14 @@ for cubic graphs what Vizing's theorem 6.2 gives in general.
 
 Two departures from the book, both weakenings.  (i) $\chi'$ is
 spelled as \texttt{$\chi$(lineGraph)}; there is no separate \texttt{chromaticIndex} here.  (ii) The
-book says \emph{loopless}, which in B&M permits parallel edges; \texttt{SimpleGraph} has none,
+book says \emph{loopless}, which in B\&M permits parallel edges; \texttt{SimpleGraph} has none,
 so this is the simple-graph case only.  With multiplicities the degree count in
 step 1 is unchanged, but \texttt{lineGraph} would have to be redefined, so the weakening
 is deliberate.  Note also that the exercise is stated with $\Delta = 3$ exactly, not
 $\Delta \le 3$; only $\le$ is used.
 \end{theorem}
 
-\begin{theorem}[kCritical_two_vertex_cut_structure]
+\begin{theorem}[kCritical\_two\_vertex\_cut\_structure]
 \lean{SimpleGraph.kCritical_two_vertex_cut_structure}
 \label{SimpleGraph.kCritical_two_vertex_cut_structure}
 \leanok
@@ -793,7 +793,7 @@ The \texttt{(by simp [uvComponent])} arguments in the statement are the membersh
 onto every component by construction.
 \end{theorem}
 
-\begin{theorem}[kCritical_two_vertex_cut_degree_sum]
+\begin{theorem}[kCritical\_two\_vertex\_cut\_degree\_sum]
 \lean{SimpleGraph.kCritical_two_vertex_cut_degree_sum}
 \label{SimpleGraph.kCritical_two_vertex_cut_degree_sum}
 \leanok
@@ -810,7 +810,7 @@ would merge two edges into one and the degree identity would fail --- establish 
 they do not, or weaken the identity to the inequality actually needed.
 \end{theorem}
 
-\begin{theorem}[fourChromatic_hasK4Subdivision]
+\begin{theorem}[fourChromatic\_hasK4Subdivision]
 \lean{SimpleGraph.fourChromatic_hasK4Subdivision}
 \label{SimpleGraph.fourChromatic_hasK4Subdivision}
 \leanok
@@ -828,7 +828,7 @@ carrier's cardinality, but cases A and B produce graphs on \emph{different carri
 carriers of bounded size rather than over subgraphs of a fixed $G$.
 \end{theorem}
 
-\begin{theorem}[hasK4Subdivision_of_few_low_degree]
+\begin{theorem}[hasK4Subdivision\_of\_few\_low\_degree]
 \lean{SimpleGraph.hasK4Subdivision_of_few_low_degree}
 \label{SimpleGraph.hasK4Subdivision_of_few_low_degree}
 \leanok
@@ -846,7 +846,7 @@ statement exercise 8.3.2(a) reduces to, so filling that one first is not an
 option --- the dependency runs this way.
 \end{theorem}
 
-\begin{theorem}[hasK4Subdivision_of_card_edges]
+\begin{theorem}[hasK4Subdivision\_of\_card\_edges]
 \lean{SimpleGraph.hasK4Subdivision_of_card_edges}
 \label{SimpleGraph.hasK4Subdivision_of_card_edges}
 \leanok
@@ -862,7 +862,7 @@ keep $\mathbb{N}$-subtraction out.  Step 2's bookkeeping is the $\mathbb{N}$-ari
 isolating: \texttt{(G.induce \{v\}$^{c}$).edgeFinset.card + G.degree v = G.edgeFinset.card}.
 \end{theorem}
 
-\begin{theorem}[numColorings_add_contract]
+\begin{theorem}[numColorings\_add\_contract]
 \lean{SimpleGraph.numColorings_add_contract}
 \label{SimpleGraph.numColorings_add_contract}
 \leanok
@@ -875,12 +875,12 @@ run in either direction --- reducing to empty graphs (efficient for sparse $G$) 
 complete graphs (efficient for dense $G$), as illustrated in figure 8.9.
 
 Stated additively, $\pi_k(G) + \pi_k(G\cdot e) = \pi_k(G-e)$, to stay in
-$\mathbb{N}$ --- the book's headline form has a subtraction.  Happily this \emph{is} how B&M's own
+$\mathbb{N}$ --- the book's headline form has a subtraction.  Happily this \emph{is} how B\&M's own
 proof ends, so the Lean statement is the more faithful of the two.  Steps 2 and 3
 are the only real work; step 1 is bookkeeping and step 4 is $rw$.
 \end{theorem}
 
-\begin{theorem}[exists_chromaticPolynomial]
+\begin{theorem}[exists\_chromaticPolynomial]
 \lean{SimpleGraph.exists_chromaticPolynomial}
 \label{SimpleGraph.exists_chromaticPolynomial}
 \leanok
@@ -897,7 +897,7 @@ encoded as \texttt{$\forall$ i, 0 $\le$ (-1)\^{}($\nu$ - i) * p.coeff i} rather 
 non-negative $a_{i}$, which is equivalent and much easier to carry through step 5.
 \end{theorem}
 
-\begin{theorem}[chromaticPolynomial_coeff_card_sub_one]
+\begin{theorem}[chromaticPolynomial\_coeff\_card\_sub\_one]
 \lean{SimpleGraph.chromaticPolynomial_coeff_card_sub_one}
 \label{SimpleGraph.chromaticPolynomial_coeff_card_sub_one}
 \leanok
@@ -915,7 +915,7 @@ here and the one corollary 8.6 builds.  That uniqueness lemma is worth stating o
 and reusing in exercises 8.4.2(b) and 8.4.8.
 \end{theorem}
 
-\begin{theorem}[numColorings_of_isTree]
+\begin{theorem}[numColorings\_of\_isTree]
 \lean{SimpleGraph.numColorings_of_isTree}
 \label{SimpleGraph.numColorings_of_isTree}
 \leanok
@@ -931,7 +931,7 @@ sides are $0$ for a nonempty tree.  Consumed by exercises 8.4.3(b) (as the spann
 tree bound) and 8.4.4 (as the deleted-edge case of the cycle).
 \end{theorem}
 
-\begin{theorem}[numColorings_le_of_connected]
+\begin{theorem}[numColorings\_le\_of\_connected]
 \lean{SimpleGraph.numColorings_le_of_connected}
 \label{SimpleGraph.numColorings_le_of_connected}
 \leanok
@@ -945,7 +945,7 @@ states them together; only the second needs the guard on $k$.  Note step 5 is wh
 the whole content sits --- step 2's inequality is nearly formal.
 \end{theorem}
 
-\begin{theorem}[numColorings_cycleGraph]
+\begin{theorem}[numColorings\_cycleGraph]
 \lean{SimpleGraph.numColorings_cycleGraph}
 \label{SimpleGraph.numColorings_cycleGraph}
 \leanok
@@ -963,7 +963,7 @@ because \texttt{cycleGraph n} is only a cycle for $n \ge 3$, and because contrac
 of $C_{3}$ would leave a multi-edge, which \texttt{contractEdge} silently simplifies.
 \end{theorem}
 
-\begin{theorem}[numColorings_join_singleton]
+\begin{theorem}[numColorings\_join\_singleton]
 \lean{SimpleGraph.numColorings_join_singleton}
 \label{SimpleGraph.numColorings_join_singleton}
 \leanok
@@ -979,7 +979,7 @@ being nonempty --- so $hk$ is a convenience for the proof rather than a correcti
 the claim.
 \end{theorem}
 
-\begin{theorem}[numColorings_wheel]
+\begin{theorem}[numColorings\_wheel]
 \lean{SimpleGraph.numColorings_wheel}
 \label{SimpleGraph.numColorings_wheel}
 \leanok
@@ -994,7 +994,7 @@ $hn : 3 \le n$ is inherited from exercise 8.4.4 (the rim must be a
 genuine cycle); $hk : 1 \le k$ is what step 4 consumes.
 \end{theorem}
 
-\begin{theorem}[numColorings_eq_prod_components]
+\begin{theorem}[numColorings\_eq\_prod\_components]
 \lean{SimpleGraph.numColorings_eq_prod_components}
 \label{SimpleGraph.numColorings_eq_prod_components}
 \leanok
@@ -1011,7 +1011,7 @@ place and specialising twice, since the counting and the $\chi$ versions differ 
 in what is applied to the resulting family.
 \end{theorem}
 
-\begin{theorem}[numColorings_union_mul_inter]
+\begin{theorem}[numColorings\_union\_mul\_inter]
 \lean{SimpleGraph.numColorings_union_mul_inter}
 \label{SimpleGraph.numColorings_union_mul_inter}
 \leanok
@@ -1029,7 +1029,7 @@ own vertex set*.  Note that the book's identity is stated multiplicatively preci
 to avoid the division that step 5 also avoids.
 \end{theorem}
 
-\begin{theorem}[chromaticPolynomial_no_root_gt_card]
+\begin{theorem}[chromaticPolynomial\_no\_root\_gt\_card]
 \lean{SimpleGraph.chromaticPolynomial_no_root_gt_card}
 \label{SimpleGraph.chromaticPolynomial_no_root_gt_card}
 \leanok
@@ -1047,7 +1047,7 @@ independent interest --- it is the standard proof that $\pi_k$ is a polynomial a
 and an alternative to corollary 8.6's induction.
 \end{theorem}
 
-\begin{theorem}[exists_triangleFree_chromaticNumber_eq]
+\begin{theorem}[exists\_triangleFree\_chromaticNumber\_eq]
 \lean{SimpleGraph.exists_triangleFree_chromaticNumber_eq}
 \label{SimpleGraph.exists_triangleFree_chromaticNumber_eq}
 \leanok
@@ -1068,7 +1068,7 @@ generality" in the book's step 5 is a genuine permutation of the palette and mus
 be performed explicitly.
 \end{theorem}
 
-\begin{theorem}[mycielskiTower_isKCritical]
+\begin{theorem}[mycielskiTower\_isKCritical]
 \lean{SimpleGraph.mycielskiTower_isKCritical}
 \label{SimpleGraph.mycielskiTower_isKCritical}
 \leanok
@@ -1088,7 +1088,7 @@ unfolding \texttt{mycielskiTower (k+1) = ⟨\_, (mycielskiTower k).2.mycielskian
 makes step 2 usable.
 \end{theorem}
 
-\begin{theorem}[descartes_construction]
+\begin{theorem}[descartes\_construction]
 \lean{SimpleGraph.descartes_construction}
 \label{SimpleGraph.descartes_construction}
 \leanok
@@ -1106,7 +1106,7 @@ and the per-copy matching bijection have to be built explicitly, and \texttt{Fin
 instances derived for the resulting carrier.
 \end{theorem}
 
-\begin{theorem}[exists_chromaticNumber_ge_girth_six]
+\begin{theorem}[exists\_chromaticNumber\_ge\_girth\_six]
 \lean{SimpleGraph.exists_chromaticNumber_ge_girth_six}
 \label{SimpleGraph.exists_chromaticNumber_ge_girth_six}
 \leanok
@@ -1124,7 +1124,7 @@ instantiation at $m$ rather than $k$ is the small manoeuvre that lets the $\ge$
 induction feed part (a)'s $=$ hypothesis.
 \end{theorem}
 
-\begin{theorem}[exists_isCanonicalColouring]
+\begin{theorem}[exists\_isCanonicalColouring]
 \lean{SimpleGraph.exists_isCanonicalColouring}
 \label{SimpleGraph.exists_isCanonicalColouring}
 \leanok

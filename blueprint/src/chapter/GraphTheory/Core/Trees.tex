@@ -12,7 +12,7 @@
 Split the vertices into two nonempty groups and collect the edges
 running between them; deleting them severs every route from one group to the other.
 
-B&M define an edge cut \emph{by its shape} $[S, \bar{S}]$; this takes the
+B\&M define an edge cut \emph{by its shape} $[S, \bar{S}]$; this takes the
 operational characterisation --- a subset of \texttt{edgeSet} whose removal leaves $G$
 disconnected --- which for \textbf{connected} $G$ describes the same collections.  \textbf{!} For
 disconnected $G$ they diverge, and $\emptyset$ satisfies this predicate; that is the source of
@@ -45,7 +45,7 @@ wherever \texttt{IsBond} is used (theorem 2.6 already does --- its \texttt{hG} i
 \label{SimpleGraph.numSpanningTrees}
 \leanok
 \textbf{!} $\tau(G)$ counts the \emph{distinct} spanning trees, \textbf{not} the
-non-isomorphic ones.  B&M stress the difference: $K_{6}$ has six non-isomorphic spanning
+non-isomorphic ones.  B\&M stress the difference: $K_{6}$ has six non-isomorphic spanning
 trees (figure 2.1) but $6^{4} = 1296$ distinct ones.  $\tau$ satisfies deletion--contraction
 (theorem 2.8) and, for complete graphs, Cayley's formula (theorem 2.9); the general
 determinant formula is chapter 12's matrix-tree theorem.
@@ -82,7 +82,7 @@ incidences re-pointed at $u$, exactly as chapter 10's \texttt{Digraph.contractEd
 that definition is honest and complete, and can be transcribed.
 \end{definition}
 
-\begin{theorem}[tree_unique_path]
+\begin{theorem}[tree\_unique\_path]
 \lean{SimpleGraph.tree_unique_path}
 \label{SimpleGraph.tree_unique_path}
 \leanok
@@ -93,7 +93,7 @@ holds for loopless graphs (exercise 2.1.1), so "unique paths between all pairs" 
 equivalent definition of a tree --- that direction is not stated here.
 \end{theorem}
 
-\begin{theorem}[tree_card_edgeFinset]
+\begin{theorem}[tree\_card\_edgeFinset]
 \lean{SimpleGraph.tree_card_edgeFinset}
 \label{SimpleGraph.tree_card_edgeFinset}
 \leanok
@@ -104,18 +104,18 @@ Stated additively as $\varepsilon + 1 = \nu$ to avoid truncated
 $\mathbb{N}$-subtraction.
 \end{theorem}
 
-\begin{theorem}[tree_two_leaves]
+\begin{theorem}[tree\_two\_leaves]
 \lean{SimpleGraph.tree_two_leaves}
 \label{SimpleGraph.tree_two_leaves}
 \leanok
-A degree-one vertex of a tree is a \textbf{leaf}.  \textbf{!} B&M offer a more
+A degree-one vertex of a tree is a \textbf{leaf}.  \textbf{!} B\&M offer a more
 illuminating alternative (exercise 2.1.2): take a longest path; both endpoints have
 degree one, since an extra neighbour would either extend the path or close a cycle.
 That route would be shorter in Lean too, if \texttt{exists\_path\_length\_of\_minDegree}-style
 machinery from chapter 1 were available.
 \end{theorem}
 
-\begin{theorem}[cutEdge_iff_no_cycle]
+\begin{theorem}[cutEdge\_iff\_no\_cycle]
 \lean{SimpleGraph.cutEdge_iff_no_cycle}
 \label{SimpleGraph.cutEdge_iff_no_cycle}
 \leanok
@@ -123,12 +123,12 @@ Cut edges are exactly the edges lying on no cycle: an edge on a cycle has
 a detour around it, while an edge on no cycle is the sole link between the two sides it
 joins.
 
-Mathlib's \texttt{IsBridge} is B&M's \emph{cut edge}.  Note the conclusion
+Mathlib's \texttt{IsBridge} is B\&M's \emph{cut edge}.  Note the conclusion
 carries \texttt{G.Adj v w} as a conjunct, which \texttt{IsBridge} includes --- a non-edge is not a
 bridge.
 \end{theorem}
 
-\begin{theorem}[connected_isTree_iff_forall_edge_isBridge]
+\begin{theorem}[connected\_isTree\_iff\_forall\_edge\_isBridge]
 \lean{SimpleGraph.connected_isTree_iff_forall_edge_isBridge}
 \label{SimpleGraph.connected_isTree_iff_forall_edge_isBridge}
 \leanok
@@ -138,7 +138,7 @@ drops the connectivity hypothesis: $G$ is a \textbf{forest} iff every edge is a 
 edge.
 \end{theorem}
 
-\begin{theorem}[exists_spanningTree]
+\begin{theorem}[exists\_spanningTree]
 \lean{SimpleGraph.exists_spanningTree}
 \label{SimpleGraph.exists_spanningTree}
 \leanok
@@ -148,7 +148,7 @@ the rest of the chapter: corollary 2.4.2, theorem 2.6 and corollary 2.7 all open
 invoking it.
 \end{theorem}
 
-\begin{theorem}[connected_card_edgeFinset_ge]
+\begin{theorem}[connected\_card\_edgeFinset\_ge]
 \lean{SimpleGraph.connected_card_edgeFinset_ge}
 \label{SimpleGraph.connected_card_edgeFinset_ge}
 \leanok
@@ -158,7 +158,7 @@ are precisely the connected graphs paying exactly that price.  \textbf{!} Compar
 tree are all equivalent.
 \end{theorem}
 
-\begin{theorem}[spanningTree_add_edge_exists_cycle]
+\begin{theorem}[spanningTree\_add\_edge\_exists\_cycle]
 \lean{SimpleGraph.spanningTree_add_edge_exists_cycle}
 \label{SimpleGraph.spanningTree_add_edge_exists_cycle}
 \leanok
@@ -174,7 +174,7 @@ directly.  Chapter 12's \texttt{fundamentalCycle} needs the uniqueness half, so 
 propagates there.
 \end{theorem}
 
-\begin{theorem}[cotree_bond]
+\begin{theorem}[cotree\_bond]
 \lean{SimpleGraph.cotree_bond}
 \label{SimpleGraph.cotree_bond}
 \leanok
@@ -189,7 +189,7 @@ condition under which the defect disappears.  Use it explicitly rather than rely
 it silently.
 \end{theorem}
 
-\begin{theorem}[tree_isCutVertex_iff_degree]
+\begin{theorem}[tree\_isCutVertex\_iff\_degree]
 \lean{SimpleGraph.tree_isCutVertex_iff_degree}
 \label{SimpleGraph.tree_isCutVertex_iff_degree}
 \leanok
@@ -200,7 +200,7 @@ In a tree the cut vertices are exactly the internal (non-leaf) vertices.
 \texttt{IsAcyclic} API may supply it more directly than reproving the book's route.
 \end{theorem}
 
-\begin{theorem}[connected_two_non_cutVertices]
+\begin{theorem}[connected\_two\_non\_cutVertices]
 \lean{SimpleGraph.connected_two_non_cutVertices}
 \label{SimpleGraph.connected_two_non_cutVertices}
 \leanok
@@ -209,12 +209,12 @@ However tangled a connected graph is, there are always at least two
 vertices you can delete without breaking it apart.
 \end{theorem}
 
-\begin{theorem}[numSpanningTrees_deletion_contraction]
+\begin{theorem}[numSpanningTrees\_deletion\_contraction]
 \lean{SimpleGraph.numSpanningTrees_deletion_contraction}
 \label{SimpleGraph.numSpanningTrees_deletion_contraction}
 \uses{SimpleGraph.contract, SimpleGraph.numSpanningTrees}
 Iterating the recursion reduces any graph to trivial ones and so computes
-$\tau$ --- though B&M note it is impractical for large graphs, which is what motivates
+$\tau$ --- though B\&M note it is impractical for large graphs, which is what motivates
 chapter 12's determinant formula.
 
 \textbf{\textbf{!} Currently vacuous.}  \texttt{contract} has a \texttt{sorry} body, so $G \cdot e$ is opaque and this
@@ -229,14 +229,14 @@ docstring.
 \label{SimpleGraph.cayley}
 \leanok
 \uses{SimpleGraph.numSpanningTrees}
-\textbf{!} B&M caution that $n^{n-2}$ counts \emph{distinct} spanning trees, not
+\textbf{!} B\&M caution that $n^{n-2}$ counts \emph{distinct} spanning trees, not
 non-isomorphic ones: $K_{6}$ has six non-isomorphic ones but $6^{4} = 1296$ distinct.
 
 Mathlib has no Cayley formula and no Pr\"ufer correspondence, so all
 four steps are from scratch --- the largest single item in the chapter.
 \end{theorem}
 
-\begin{theorem}[exists_min_weight_spanningTree]
+\begin{theorem}[exists\_min\_weight\_spanningTree]
 \lean{SimpleGraph.exists_min_weight_spanningTree}
 \label{SimpleGraph.exists_min_weight_spanningTree}
 \leanok
@@ -250,5 +250,5 @@ spanning tree.  That is strictly weaker than theorem 2.10, which asserts the *gr
 output* is optimal --- the exchange argument quoted above is not exercised by the
 skeleton, which is a three-line finiteness argument instead.  Formalising the real
 theorem would need Kruskal's algorithm defined first.  Weights are $\mathbb{R}$-valued, matching
-B&M's remark that the algorithm is valid for arbitrary real weights.
+B\&M's remark that the algorithm is valid for arbitrary real weights.
 \end{theorem}
