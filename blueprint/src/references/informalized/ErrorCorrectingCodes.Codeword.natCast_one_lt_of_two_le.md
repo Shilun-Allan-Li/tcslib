@@ -18,7 +18,7 @@ Granular helper. It is the strict-inequality companion to
 well-defined.
 
 **Used in.** `Entropy.lean` (`hq1`, `hq_1`) and `ListDecoding.lean`; also the
-sole input to the three `Basic.lean` lemmas
-`natCast_sub_one_nonneg_of_two_le`, `natCast_sub_one_pos_of_two_le`, and
+sole input to the two `Basic.lean` lemmas
+`natCast_sub_one_pos_of_two_le` and
 `natCast_ne_one_of_two_le`, each of which calls it through a `show ... from`
 term inside `linarith`.

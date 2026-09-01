@@ -182,15 +182,6 @@ If $q \ge 2$, then $q > 0$ as a real number.
 If $q \ge 2$, then $1 < q$ as a real number.
 \end{lemma}
 
-\begin{lemma}[$q-1$ nonnegative]
-\lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_nonneg_of_two_le}
-\label{ErrorCorrectingCodes.Codeword.natCast_sub_one_nonneg_of_two_le}
-\leanok
-\uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
-\difficulty{2}
-If $q \ge 2$, then $0 \le q - 1$ as a real number.
-\end{lemma}
-
 \begin{lemma}[$q-1$ positive]
 \lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
 \label{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
@@ -217,14 +208,6 @@ If $q \ge 2$, then $q \ne 1$ as a real number.
 If $p < 1$, then $0 < 1 - p$.
 \end{lemma}
 
-\begin{lemma}[$1-p$ nonnegative when $p \le 1$]
-\lean{ErrorCorrectingCodes.Codeword.one_sub_nonneg_of_le_one}
-\label{ErrorCorrectingCodes.Codeword.one_sub_nonneg_of_le_one}
-\leanok
-\difficulty{2}
-If $p \le 1$, then $0 \le 1 - p$.
-\end{lemma}
-
 \begin{lemma}[$p(1-p)$ positive]
 \lean{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
 \label{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
@@ -242,11 +225,3 @@ If $0 < p$ and $p < 1$, then $0 < p(1 - p)$.
 If $0 < q$ and $p \le 1 - 1/q$, then $p < 1$.
 \end{lemma}
 
-\begin{lemma}[$1-p$ positive below $1 - 1/q$]
-\lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_le_one_sub_inv}
-\label{ErrorCorrectingCodes.Codeword.one_sub_pos_of_le_one_sub_inv}
-\leanok
-\uses{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
-\difficulty{1}
-If $0 < q$ and $p \le 1 - 1/q$, then $0 < 1 - p$.
-\end{lemma}

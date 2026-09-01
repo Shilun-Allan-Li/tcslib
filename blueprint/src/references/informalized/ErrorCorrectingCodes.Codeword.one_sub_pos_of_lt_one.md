@@ -16,5 +16,5 @@ positivity side condition on `1 - p` demanded by the third summand
 monotonicity arguments built on it.
 
 **Used in.** `Entropy.lean` at five call sites (`h_one_sub_p`, `hp₂`, `h1p`
-twice, `h1p_0`), and inside `Basic.lean` itself as the final step of both
-`mul_one_sub_pos` and `one_sub_pos_of_le_one_sub_inv`.
+twice, `h1p_0`), and inside `Basic.lean` itself as the final step of
+`mul_one_sub_pos`.

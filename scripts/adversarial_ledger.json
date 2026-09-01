@@ -21,19 +21,19 @@
    "note": ""
   },
   "TCSlib/Complexity/NPReductions/SATTo3SAT.lean::transformClause_soundness": {
-   "date": "2026-07-20",
-   "result": "skip-baseline",
-   "note": "matcher-constant reuse is in-file-only; un-probeable in import context"
+   "date": "2026-08-23",
+   "result": "pass 4/4",
+   "note": "RESOLVED (was skip-baseline): IN-FILE-ONLY CLASS CLOSED via #67 OPTIMISTIC LET-SWAP + REAL-FILE GATE — probe-blind decl converted ungated, validated by spawning bin/lean on the candidate file (matcher reuse correct there); full-candidate failed gate (pre-pass rename), pure-swap passed; output ZERO diagnostics"
   },
   "TCSlib/BooleanAnalysis/Switching/Circuit.lean::toNAnd_toNOr_size_le": {
-   "date": "2026-07-20",
-   "result": "partial 2/5",
-   "note": "residual: merged (ih h_ind) alias group + daggered cs✝ sig param"
+   "date": "2026-08-23",
+   "result": "pass 5/5",
+   "note": "RESOLVED (was 2/5): merged (ih h_ind) alias via rung T; daggered cs✝ handled; output 0 errors"
   },
   "TCSlib/BooleanAnalysis/Switching/Circuit.lean::buildFullDTree_depth": {
-   "date": "2026-07-20",
-   "result": "partial 1/3",
-   "note": "h1/h2 self-recursive, correctly gate-rejected"
+   "date": "2026-08-23",
+   "result": "pass 3/3",
+   "note": "RESOLVED (was 1/3): self-recursive h1/h2 LET-SWAPPED via rung L (no forward reference; consumers unchanged) — SELF-RECURSION CLASS CLOSED; h3 via INACC-ARGS retry; output 0 errors"
   },
   "TCSlib/BooleanAnalysis/Switching.lean::*": {
    "date": "2026-07-20",
@@ -61,9 +61,9 @@
    "note": "destr-have converted via destructuringHavesToObtain pre-pass; output 0 errors"
   },
   "TCSlib/BooleanAnalysis/LMN/CircuitTreeManip.lean::exists_circuit_depth_reduction": {
-   "date": "2026-07-20",
-   "result": "partial 5/10 residuals",
-   "note": "dagger-parse class FIXED (sigs sanitize ✝→_inacc); residuals: data-typed inaccessible callsite args (apply/assumption can't supply gates✝ function args; rung T skips untyped haves) + pp field-notation infidelity (Eq.isLt) on deep-shadowed induction' captures"
+   "date": "2026-08-23",
+   "result": "pass 10/10",
+   "note": "RESOLVED (was 5/10): data-inacc + Eq.isLt field-notation residuals converted via #66 pp.fieldNotation-off + #66b stale-ladder rung-T-first + rung L; output 0 errors (sorry pre-existing)"
   },
   "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::encode_go_fst_nonfree": {
    "date": "2026-07-20",
@@ -76,9 +76,9 @@
    "note": "output 0 errors"
   },
   "TCSlib/BooleanAnalysis/RazborovSmolensky/CircuitDegree.lean::pi_coordinate_bad_mul_le": {
-   "date": "2026-07-20",
-   "result": "partial 2/3 struct-field-have",
-   "note": "hfst lives in a structure-literal field by-block (invFun := fun x => ⟨_, by have hfst⟩) — probe replay yields 0 msgs; NEW residual class; output 0 errors"
+   "date": "2026-08-23",
+   "result": "pass 3/3",
+   "note": "RESOLVED (was 2/3): hfst struct-field-have converted via #59 routing; output 0 errors"
   },
   "TCSlib/Complexity/NPReductions/SATTo3SAT.lean::buildChain_all_satisfied": {
    "date": "2026-07-20",
@@ -86,14 +86,14 @@
    "note": "baseline probe per-decl granularity validated (sibling decl is baseline-skipped); output 0 errors"
   },
   "TCSlib/CommunicationComplexity/NewmanTheorem/Derandomization.lean::exists_good_randomness": {
-   "date": "2026-07-24",
-   "result": "pass 19/24",
-   "note": "classical-instance-loss FIXED: declScopedOpensFor bakes decl-scoped 'open X in' into written lemma prefixes; output 0 errors; 5 failures = known safe-reject classes"
+   "date": "2026-08-23",
+   "result": "pass 21/27",
+   "note": "re-grind checkpoint accepted as output per #60 rule (wedge inside non-convergent final pass); 2 FAILED (h_anon_7, hlt) = safe-reject; output verified 0 errors (warnings only); up from 19/24"
   },
   "TCSlib/BooleanAnalysis/Switching/RoundTrip.lean::go_roundtrip_gen": {
-   "date": "2026-07-21",
-   "result": "partial 18/23",
-   "note": "checkpointed grind; output 0 errors; failures = match-aux sigs + callsite type-mismatch (data-inacc family); final pass wedged idle, checkpoint is the output"
+   "date": "2026-08-23",
+   "result": "pass 23/23",
+   "note": "RESOLVED (was 18/23): match-aux + data-inacc callsite residuals converted under modern rungs; output 0 errors"
   },
   "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::encode_go_aux_length_bound": {
    "date": "2026-07-24",
@@ -106,9 +106,9 @@
    "note": "output 0 errors"
   },
   "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction.lean::function_hammingBall_card_le_binomial": {
-   "date": "2026-07-28",
-   "result": "pass 12/14",
-   "note": "re-grind under #59 routing: all 3 former struct-field skips TERM-EXTRACTED; 2 safe-reject failures (hdecode_surj, hcard_le); 2 checkpointed windows; output 0 errors"
+   "date": "2026-08-23",
+   "result": "pass 14/14",
+   "note": "RESOLVED (was 12/14): re-grind DONE-DECL, output verified 0 errors (warnings only); struct-field routing + modern rungs"
   },
   "TCSlib/BooleanAnalysis/KKL.lean::friedgut_junta": {
    "date": "2026-08-02",
@@ -116,9 +116,9 @@
    "note": "FULLY DEALT WITH by metaprogram: 26 extracted (incl 3 rung-T, hlow1/hlow_k untyped support) + 1 final-pass inlined (hlow_k) + 1 RUNG-L let-swapped (hlow_bound); output verified 0 errors, decl span have-free; rung L (gated have-to-let) + untyped rung-T one-liner landed in #61"
   },
   "TCSlib/GraphTheory/KargerMinCut.lean::mincut_preserved_of_non_crossing": {
-   "date": "2026-07-31",
-   "result": "pass 20/27 (final)",
-   "note": "hu/hvLift = multi-line struct-literal let-replay; 3 textual eq-param placements all parse-fail (struct-instance + by-block whitespace rules resist binder-position embedding); NEEDS AST-level eq-param construction (elaborate D' once, print with pp to a fresh named def, use hD'def : D' = thatDef) — future arc; 20/27 verified stands"
+   "date": "2026-08-23",
+   "result": "pass 27/27",
+   "note": "RESOLVED (was 20/27): huLift/hvLift family x4 LET-SWAPPED via rung L — multi-line struct-literal let-replay class closed WITHOUT the AST eq-param arc (let keeps defeq transparency in place); output 0 errors"
   },
   "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean::canonicalDTree_go_fuel_invariant": {
    "date": "2026-07-26",
@@ -129,6 +129,221 @@
    "date": "2026-07-26",
    "result": "pass 2/2",
    "note": "both via inacc-args retry; output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/KKL.lean::lowDegreePart_depends_on_influential": {
+   "date": "2026-08-13",
+   "result": "pass 14/14",
+   "note": "set-without-with + calc-internal haves + untyped this-have all handled; output 0 errors (only pre-existing SORRY 19d warning)"
+  },
+  "TCSlib/CommunicationComplexity/DeterministicCC/BalancedSimulation.lean::exists_balanced_simulation": {
+   "date": "2026-08-13",
+   "result": "pass 25/25",
+   "note": "renameUnivs fix validated (#62 let-replay rung raw-univ escape); output 0 errors; bullet-prefixed haves + dup hmax + p/n shadowing under strongRecOn all handled"
+  },
+  "TCSlib/ErrorCorrectingCodes/JohnsonBound.lean::rankin_bound_general": {
+   "date": "2026-08-13",
+   "result": "pass 17/17",
+   "note": "output 0 errors; induction' generalizing V with inaccessible instance binders (tp_8/tp_9/inst_*) handled; dup ha'/hb' via __dup2; apostrophe lemma names OK; file's old 5 pre-existing errors no longer present"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction.lean::monomial_lowDegree_squarefree_complete_on_rootCube": {
+   "date": "2026-08-13",
+   "result": "pass 15/15",
+   "note": "output 0 errors; 4-deep let chain S/A/B/c with dite + explicit section var (ω : K) + calc-step haves + untyped multi-line hprodadd all handled; huge rung-T one-liners valid"
+  },
+  "TCSlib/BooleanAnalysis/LMN/CircuitHelpers.lean::depth2AndToCNF_eval": {
+   "date": "2026-08-13",
+   "result": "pass 13/13",
+   "note": "output 0 errors; hardest profile yet: have-with-binder-telescope h_child, anon-hyp guillemet refs in have types, h_children_literals x3 shadow (__dup3), rename_i, match-term in have type, struct-literal by field — all handled"
+  },
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Bonami.lean::bonami_expect": {
+   "date": "2026-08-13",
+   "result": "pass 11/11",
+   "note": "output 0 errors; 7 set-without-with (5-deep chain a/b/A/B/C over g/hh) + induction named arms consuming ih + obtain rfl-pattern rewrite all handled"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky.lean::paddedResiduePolynomial_totalDegree_le": {
+   "date": "2026-08-13",
+   "result": "pass 6/6",
+   "note": "output 0 errors; calc + tactic-let under default autoImplicit handled"
+  },
+  "TCSlib/BooleanAnalysis/LMN/CircuitLayerReduction.lean::depth2_circuit_switching_bound": {
+   "date": "2026-08-13",
+   "result": "pass 5/5",
+   "note": "output 0 errors; h_eval x3 across sibling branches (__dup2/__dup3) + zeta-delta lit_dnf simp target + term-mode continuation-line haves handled"
+  },
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean::processEntries_of_processClauseLits": {
+   "date": "2026-08-13",
+   "result": "pass 2/2",
+   "note": "output 0 errors; statement-level let pcl + induction generalizing 4 vars + named arms handled"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/CircuitDegree.lean::prod_filter_fiber_mul_le": {
+   "date": "2026-08-13",
+   "result": "pass 1/1",
+   "note": "output 0 errors; 12-line equiv let with struct-literal by fields (left_inv/right_inv) + calc-proved have handled"
+  },
+  "TCSlib/ErrorCorrectingCodes/Entropy.lean::binomial_coef_asymptotic_lower_bound'": {
+   "date": "2026-08-13",
+   "result": "pass 128/139",
+   "note": "output 0 errors after #63 family: debrace pre-pass (by{ span truncation), probeTextGuard (pp-elision + 256KB), .skip sidecar (h_t3 wedges extract_goal pp of giant let-telescope, 3x40min), freshAuxName cross-window dup guard (h1p collision hand-repaired in checkpoint, root fixed at naming site); 4 windows, biggest decl ever"
+  },
+  "TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean::quantum_singleton_bound": {
+   "date": "2026-08-14",
+   "result": "pass 34/34",
+   "note": "output 0 errors; freshAuxName dup guard live (hk_le/hA_corr/hB_corr __dup2); cases-with + calc + tactic-lets handled"
+  },
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean::theorem71_finiteIndexedNoRegretBound_normalized": {
+   "date": "2026-08-14",
+   "result": "pass 31/31",
+   "note": "output 0 errors; anonymous this_1/this_2 haves converted"
+  },
+  "TCSlib/ErrorCorrectingCodes/SingletonBound.lean::singleton_bound": {
+   "date": "2026-08-14",
+   "result": "pass 19/19",
+   "note": "output 0 errors; SECOND organic by{ decl — debrace pre-pass fired and baseline passed (fix generalizes)"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinApproximation.lean::product_coin_approx": {
+   "date": "2026-08-14",
+   "result": "pass 16/16",
+   "note": "output 0 errors; set-heavy + calc + obtain handled"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky.lean::rootProduct_eq_residueIndicator_sum": {
+   "date": "2026-08-14",
+   "result": "pass 16/16",
+   "note": "output 0 errors; induction-with + calc + tactic-let; dup hfilter/hcard via freshAuxName"
+  },
+  "TCSlib/BooleanAnalysis/LMN/RestrictionFourier.lean::indicator_signProd_eq_prod": {
+   "date": "2026-08-14",
+   "result": "pass 14/14",
+   "note": "output 0 errors; cases-with + obtain; 4 dup names (hmem/hnot/hfree/hfix) via freshAuxName"
+  },
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Simple.lean::hypercontractivity_4_div_3_2": {
+   "date": "2026-08-14",
+   "result": "pass 14/14",
+   "note": "output 0 errors (clean check, no warnings); calc + set handled"
+  },
+  "TCSlib/LearningTheory/Minimax/FiniteMinimax.lean::approx_minimax": {
+   "date": "2026-08-14",
+   "result": "pass 12/12",
+   "note": "output 0 errors; let-replay hηdef eq-param committed with renamed universes (#62 fix exercised on organic decl)"
+  },
+  "TCSlib/LearningTheory/Halving.lean::mistakes_bound": {
+   "date": "2026-08-14",
+   "result": "pass 8/8",
+   "note": "output 0 errors; induction-with + y/V' let-chain via LET-REPLAY (2 eq-params x2 commits)"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem/TVDistance.lean::tvDistance_prod_le": {
+   "date": "2026-08-14",
+   "result": "pass 8/8",
+   "note": "output 0 errors; dry-check batch — 6 consecutive batches no new class, pool converged"
+  },
+  "TCSlib/ErrorCorrectingCodes/Entropy.lean::whole-file": {
+   "date": "2026-08-23",
+   "result": "campaign-complete",
+   "note": "ENTIRE FILE have-free through natural means: 0 unconverted haves, 197 aux lemmas, output 0 errors; no skiplist, no hand edits; classes #65 (declInfo guard), #65b (brace-aware span + debrace revert-and-continue), #65c (nested-rebinder this-scope) fixed en route"
+  },
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Simple.lean::innerProduct_le_L43_L4": {
+   "date": "2026-08-27",
+   "result": "pass 11/11",
+   "note": "sweep window 11: first-attempt clean, 0 FAILED; output 0 errors. NOTE: this decl has NO parameterized haves — not a #69 exercise despite the file containing some in other decls"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky.lean::padded_modQ_approx_gives_root_residue_approximants": {
+   "date": "2026-08-23",
+   "result": "pass 8/8",
+   "note": "sweep window 1: first-attempt clean; output 0 errors (warnings only)"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinApproximation.lean::card_nat_in_Ico": {
+   "date": "2026-08-23",
+   "result": "pass 7/7",
+   "note": "sweep window 2: first-attempt clean; output 0 errors"
+  },
+  "TCSlib/ErrorCorrectingCodes/HammingBound.lean::hamming_bound": {
+   "date": "2026-08-23",
+   "result": "pass 5/5",
+   "note": "sweep window 2: first-attempt clean; output 0 errors"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem.lean::newman": {
+   "date": "2026-08-23",
+   "result": "pass 5/5",
+   "note": "sweep window 3: first-attempt clean; output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/CircuitSize.lean::gateCountBefore_eq_sum_cards": {
+   "date": "2026-08-23",
+   "result": "pass 3/3",
+   "note": "sweep window 3: first-attempt clean; output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction.lean::exists_squarefree_representative_on_rootCube": {
+   "date": "2026-08-23",
+   "result": "pass 25/25",
+   "note": "sweep window 4: biggest sweep decl, first-attempt clean incl dup-guarded hx1/hprod; output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/ACpGates.lean::count_bad_S": {
+   "date": "2026-08-23",
+   "result": "pass 20/20",
+   "note": "sweep window 5: first-attempt clean, 4 dup-guarded families; output 0 errors"
+  },
+  "TCSlib/ErrorCorrectingCodes/Elias_Bassalygo_bound.lean::lemma_3_2": {
+   "date": "2026-08-23",
+   "result": "source-broken",
+   "note": "SOURCE does not compile vs pinned Mathlib (15 pre-existing errors: EuclideanSpace ℝ (Fin n) vs raw lambda type mismatches, ring→ring_nf, simp no-progress) — extractor untestable until the file is repaired; not a tool failure"
+  },
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Bonami.lean::paley_zygmund_ineq": {
+   "date": "2026-08-23",
+   "result": "pass 14/14",
+   "note": "sweep window 7: first-attempt clean; output 0 errors"
+  },
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/Rademacher.lean::hasSubgaussianMGF_scaled_entry": {
+   "date": "2026-08-23",
+   "result": "pass 12/12",
+   "note": "sweep window 7: first-attempt clean (mutual-file tag benign; hparam via rung L); output 0 errors"
+  },
+  "TCSlib/BooleanAnalysis/LMN/LMNConcentration.lean::circuit_fourier_concentration_log": {
+   "date": "2026-08-23",
+   "result": "pass 12/12",
+   "note": "sweep window 8: first-attempt clean, dup-guarded hcast/hmono; output 0 errors"
+  },
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncDisjointness.lean::le_communicationComplexity": {
+   "date": "2026-08-23",
+   "result": "pass 11/11",
+   "note": "sweep window 8: first-attempt clean; output 0 errors"
+  },
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean::theorem71_compactApproximation_of_uniformEquicontinuity": {
+   "date": "2026-08-23",
+   "result": "pass 9/9",
+   "note": "sweep window 9: first-attempt clean; output 0 errors"
+  },
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/ConcentrationBound.lean::sum_scaled_iid_gaussian_map": {
+   "date": "2026-08-23",
+   "result": "pass 7/7",
+   "note": "sweep window 9: first-attempt clean (mutual-file tag benign); output 0 errors"
+  },
+  "TCSlib/Complexity/NPReductions/ThreeSATToClique.lean::ThreeSAT_to_Clique_soundness": {
+   "date": "2026-08-27",
+   "result": "pass 7/7",
+   "note": "sweep window 10: first-attempt clean (cases-with + obtain + tactic-let); output 0 errors, warnings only"
+  },
+  "TCSlib/BooleanAnalysis/LMN/CircuitHelpers.lean::depth2OrToDNF_eval": {
+   "date": "2026-08-27",
+   "result": "pass 7/7",
+   "note": "RESOLVED (was 6/7): #69 PARAMETERIZED-HAVE CLASS CLOSED — binder-aware header split (splitHaveHeaderBindersType via scanBinderGroups) + binder text carried to callsite one-liners; h_child_eval now EXTRACTED, h_foldr 7/7; output 0 errors"
+  },
+  "TCSlib/ErrorCorrectingCodes/LinearCodes.lean::uniformity_lemma": {
+   "date": "2026-08-27",
+   "result": "pass 89/89",
+   "note": "sweep window 12: LARGEST decl of the sweep, 89/89 ZERO FAILED, output 0 errors. FIRST ORGANIC #69 EXERCISE — all 6 parameterized haves (8 occurrences with dups: h_k1 h_k2 h_eq_if_lt h_eq_if_gt h_l1 h_l2 x3) converted via let-swap/rung-T with binders correctly carried to callsites; also exercised #63a debrace pre-pass"
+  },
+  "TCSlib/BooleanAnalysis/RazborovSmolensky.lean::paddedResidueInput_modQTarget_eq_residueIndicator": {
+   "date": "2026-08-27",
+   "result": "pass 40/40",
+   "note": "sweep window 13: first-attempt clean, 0 FAILED (40 EXTRACTED/TERM-EXTRACTED); output 0 errors; ~40min single driver"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem/TVDistance.lean::tvDistance_eq_tvDistanceSup": {
+   "date": "2026-08-27",
+   "result": "pass 5/5",
+   "note": "sweep window 14: first-attempt clean, 0 FAILED; output 0 errors; #69 organic coverage — parameterized hset_le with SUBTYPE-braced binder type {S : Set Ω // MeasurableSet S}"
+  },
+  "TCSlib/CommunicationComplexity/NewmanTheorem/TVDistance.lean::tvDistanceSup_eq_half_sum": {
+   "date": "2026-08-27",
+   "result": "pass 7/7",
+   "note": "sweep window 14: first-attempt clean, 0 FAILED; output 0 errors; same subtype-braced parameterized hset_le"
   }
  }
 }

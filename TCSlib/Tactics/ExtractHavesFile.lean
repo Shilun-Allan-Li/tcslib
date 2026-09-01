@@ -147,6 +147,85 @@ private def maskCommentLines (lines : Array String) : Array String := Id.run do
       out := out.push l
   return out
 
+/-- Normalize brace-delimited `by`-blocks (`… by {` / `… by{` at end of line,
+    matching bare `}` close line) into ordinary whitespace-indented blocks,
+    LINE-COUNT-PRESERVING: the opener line is rewritten in place (brace
+    dropped), the close line is blanked. Fires only when (a) the net-brace
+    scan finds the close and its trim is exactly `"}"`, and (b) every
+    non-blank interior line is indented strictly deeper than the opener line
+    — under those conditions the whitespace block scopes identically, so the
+    rewrite is semantics-preserving; anything else is left untouched
+    (conservative — the decl then baseline-skips as before).
+    Rationale (#63, Entropy `binomial_coef_asymptotic_lower_bound'`,
+    139 haves, attempts=0): `blockEnd` and every truncated-prefix probe are
+    indentation-based. A decl body closed by a col-0 `}` gets its span cut
+    BEFORE the brace ("PARSE: unexpected end of input; expected '}'" on the
+    baseline and on every ladder probe alike), and a prefix truncated at a
+    have line leaves the `by{` unclosed. Debracing up front fixes span
+    detection, prefix replay, and the written output in one move. -/
+private def debraceByBlocks (lines : Array String) (headerStart bodyStart toIdx : Nat) :
+    Array String := Id.run do
+  let masked := maskCommentLines lines
+  let cmdIndent := lineIndent (lines[headerStart]!)
+  let mut out := lines
+  let mut i := headerStart
+  while i < min toIdx lines.size do
+    let realTrim := (out[i]!).trimRight
+    -- detect on the REAL line (a trailing comment would poison the rewrite);
+    -- require a space before `by` (or the line being exactly `by …`) so an
+    -- identifier merely ENDING in "by" never matches.
+    -- DECL-HEADER OPENERS ONLY (#65b, hamming_ball): inner by-brace blocks
+    -- (calc steps, bullet-attached `· suffices … by {`) have reference
+    -- columns this line-based model cannot get right — a bullet line's
+    -- CONTENT column differs from its indent, and a debraced block that
+    -- mis-scopes there silently drops goal-closing tactics ("unsolved
+    -- goals" at baseline; the revert-gate caught it, attempts=0). Only the
+    -- header `:= by{` breaks blockEnd/span detection, so only it needs
+    -- debracing; probes that truncate inside intact inner braces
+    -- PARSE-reject safely and those haves convert via rung T instead.
+    if i < bodyStart &&
+       (realTrim.endsWith " by {" || realTrim.endsWith " by{" ||
+        realTrim == "by {" || realTrim == "by{") then
+      -- matching close via net-brace scan over masked lines (opener counts 1)
+      let mut net : Int := 1
+      let mut j := i + 1
+      let mut close : Option Nat := none
+      while j < lines.size && close.isNone do
+        for c in (masked[j]!).toList do
+          if c == '{' then net := net + 1
+          else if c == '}' then net := net - 1
+        if net ≤ 0 then close := some j
+        j := j + 1
+      match close with
+      | some cj =>
+        if (masked[cj]!).trim == "}" && (out[cj]!).trim == "}" then
+          -- Lean scopes a whitespace by-block against the COMMAND's start
+          -- column, not the by-line's own indent: the decl-header `:= by{`
+          -- sits on an indented signature-continuation line (Entropy: opener
+          -- indent 10, body indent 2 — interior>opener would falsely reject).
+          -- Inner by-blocks (have/suffices/calc-step) reference their own
+          -- line's indent.
+          let base := if i < bodyStart then cmdIndent else lineIndent out[i]!
+          let mut ok := true
+          for k in [i+1:cj] do
+            if !isBlankLine masked[k]! && lineIndent out[k]! ≤ base then ok := false
+          -- the debraced block must also END at the close line: the first
+          -- non-blank line after it has to sit at indent ≤ base, else the
+          -- whitespace block would swallow it (brace version didn't)
+          let mut after := cj + 1
+          while after < lines.size && isBlankLine masked[after]! do
+            after := after + 1
+          if after < lines.size && lineIndent out[after]! > base then ok := false
+          if ok then
+            let newOpener :=
+              if realTrim.endsWith "by {" then realTrim.dropRight 4 ++ "by"
+              else realTrim.dropRight 3 ++ "by"
+            out := out.set! i newOpener
+            out := out.set! cj ""
+      | none => pure ()
+    i := i + 1
+  return out
+
 /-- Let-replay is DISABLED for whole-file runs: even with once-per-have
     limiting and 200K-heartbeat caps on both gates, the retries pushed full
     Entropy.lean runs past 116 CPU-minutes (baseline ~60) across four
@@ -1866,14 +1945,28 @@ elab "#extract_haves_file_to " srcLit:str dstLit:str : command => do
 -- already be present in the environment (unlike `#extract_haves_file`, whose
 -- documented limitation is exactly that requirement).
 
+/-- File-append-only trace into the probelog sidecar (NO `logInfo` — a
+    message-log write inside `elabCaptureMessages` would pollute its own
+    before/after diff). Used to bracket every elaboration helper so a wedge
+    (a probe that never returns — Entropy `h_t3`, 0% CPU, 3×40 idle min)
+    identifies its exact site and input size in the surviving probelog
+    instead of dying silent. -/
+private def ptrace (msg : String) : CommandElabM Unit := do
+  if let some p ← probeLogPathRef.get then
+    try IO.FS.withFile p .append fun h => h.putStrLn s!"[trace] {msg}"
+    catch _ => pure ()
+
 /-- Parse `src` as a single `command`, elaborate it in the CURRENT environment,
     and return every message logged during that elaboration, in order. Never
     permanently changes the environment (wrapped in `withoutModifyingEnv`) —
     only the message log (a separate part of the command state) survives. -/
 private def elabCaptureMessages (src : String) : CommandElabM (Array String) := do
+  ptrace s!"capture begin len={src.length}"
   let env ← getEnv
   match Lean.Parser.runParserCategory env `command src with
-  | .error _ => return #[]
+  | .error _ =>
+    ptrace "capture end (parse-fail)"
+    return #[]
   | .ok stx =>
     -- `MessageLog.toList`/`toArray` only reflect `unreported` messages — messages can
     -- be silently promoted to `reported` mid-elaboration (e.g. via snapshot reporting),
@@ -1888,8 +1981,11 @@ private def elabCaptureMessages (src : String) : CommandElabM (Array String) := 
     -- so `withScope` — not `withOptions`, which `CommandElabM` has no instance for.)
     withoutModifyingEnv (withScope (fun sc => { sc with opts := sc.opts.setBool `Elab.async false })
       (elabCommand stx))
+    ptrace "capture elab done, stringifying messages"
     let afterList := (← get).messages.reportedPlusUnreported.toList
-    (afterList.drop before).toArray.mapM (·.toString)
+    let out ← (afterList.drop before).toArray.mapM (·.toString)
+    ptrace s!"capture end msgs={out.size}"
+    return out
 
 /-- Parse `src` as a single `command`, elaborate it (rolled back, same as
     `elabCaptureMessages`), and report whether that elaboration logged any
@@ -1915,22 +2011,47 @@ private def elabCaptureMessages (src : String) : CommandElabM (Array String) := 
     mode, not a hypothetical: dropping `(d : Nat)` from a signature whose
     return type still used `d` passed this check before this fix, then failed
     with "Unknown identifier `d`" everywhere `d` was used once the file was
-    actually checked for real. -/
+    actually checked for real.
+
+    WEDGE GUARD (#63b, Entropy `h_t3`): renderings of haves buried in giant
+    let-telescopes carry pp-elided `⋯` (never elaborable) and/or grow to
+    hundreds of KB — elaborating those wedged the server IDLE (0% CPU, 40+
+    min, twice, reproducibly on the same have) with no heartbeat to bound
+    it. `probeTextGuard` rejects both shapes before parse/elab: safe
+    direction (a lost conversion, never shipped breakage), and the ladder
+    moves on to its next rung/have instead of hanging the whole window. -/
+private def probeTextGuard (src : String) : Option String :=
+  if (src.splitOn "⋯").length ≥ 2 then
+    some "GUARD: pp-elided `⋯` in probe text"
+  else if src.length > 262144 then
+    some s!"GUARD: probe text too large ({src.length} chars)"
+  else none
+
 private def elabCheckFirstError (src : String) : CommandElabM (Option String) := do
+  if let some g := probeTextGuard src then return some g
+  ptrace s!"check begin len={src.length}"
   let env ← getEnv
   match Lean.Parser.runParserCategory env `command src with
-  | .error e => return some s!"PARSE: {e}"
+  | .error e =>
+    ptrace "check end (parse-fail)"
+    return some s!"PARSE: {e}"
   | .ok stx =>
     let before := (← get).messages.reportedPlusUnreported.toList.length
     let aiOn ← probeAutoImplicitRef.get
     let setOpts (o : Options) : Options :=
       o.setBool `Elab.async false |>.setBool `autoImplicit aiOn |>.setBool `relaxedAutoImplicit aiOn
     withoutModifyingEnv (withScope (fun sc => { sc with opts := setOpts sc.opts }) (elabCommand stx))
+    ptrace "check elab done"
     let afterList := (← get).messages.reportedPlusUnreported.toList
     let newMsgs := afterList.drop before
     match newMsgs.find? (fun m => m.severity == .error) with
-    | none => return none
-    | some m => return some (← m.toString)
+    | none =>
+      ptrace "check end ok"
+      return none
+    | some m =>
+      let s ← m.toString
+      ptrace "check end err"
+      return some s
 
 /-- `logInfo` + crash-surviving append to the probe-log sidecar (see
     `probeLogPathRef`). Used for every probe/rejection line so a mid-decl
@@ -1959,11 +2080,16 @@ private def elabCheckOk (src : String) : CommandElabM Bool := do
     the sibling `hsq`'s inline `rw`, shipping the first-ever broken output
     file (2 errors) before this gate existed. -/
 private def elabCheckFirstErrorSeq (srcs : List String) : CommandElabM (Option String) := do
+  for src in srcs do
+    if let some g := probeTextGuard src then return some g
+  ptrace s!"checkSeq begin lens={srcs.map (·.length)}"
   let env ← getEnv
   let mut stxs : Array Syntax := #[]
   for src in srcs do
     match Lean.Parser.runParserCategory env `command src with
-    | .error e => return some s!"PARSE: {e}"
+    | .error e =>
+      ptrace "checkSeq end (parse-fail)"
+      return some s!"PARSE: {e}"
     | .ok stx => stxs := stxs.push stx
   let before := (← get).messages.reportedPlusUnreported.toList.length
   let aiOn ← probeAutoImplicitRef.get
@@ -1972,10 +2098,16 @@ private def elabCheckFirstErrorSeq (srcs : List String) : CommandElabM (Option S
   withoutModifyingEnv (withScope (fun sc => { sc with opts := setOpts sc.opts }) do
     for stx in stxs do
       elabCommand stx)
+  ptrace "checkSeq elab done"
   let afterList := (← get).messages.reportedPlusUnreported.toList
   match (afterList.drop before).find? (fun m => m.severity == .error) with
-  | none => return none
-  | some m => return some (← m.toString)
+  | none =>
+    ptrace "checkSeq end ok"
+    return none
+  | some m =>
+    let s ← m.toString
+    ptrace "checkSeq end err"
+    return some s
 
 /-- Parse+elaborate `src` (rolled back, same probe discipline as
     `elabCheckFirstError`) and return the VALUE (stored proof term) of the
@@ -1986,15 +2118,32 @@ private def elabCheckFirstErrorSeq (srcs : List String) : CommandElabM (Option S
     answer — "did the downstream `simp_all` actually consume this have?" —
     are answered exactly by the elaborated term. -/
 private def elabGetDeclInfo (src : String) (declName : Name) : CommandElabM (Option ConstantInfo) := do
+  -- WEDGE CURE (#65): this was the ONE elaboration helper without
+  -- `probeTextGuard`, and the h_t3/h_decomp wedge lived exactly here — the
+  -- pp.maxSteps un-elision turned giant let-telescope candidate sigs into
+  -- 3.3MB lemma texts (`[trace] declInfo begin len=3324845`, no end), and
+  -- elaborating one is unbounded work no heartbeat catches. A multi-MB
+  -- signature can never ship as a usable lemma, so rejecting is pure win:
+  -- the usage oracle falls back to unseeded trials, the ladder's own gates
+  -- (already guarded) reject the giant candidates fast, and the per-have
+  -- loop reaches rung T — whose proof-term closure prunes the context and
+  -- is the actual conversion route for this class.
+  if probeTextGuard src |>.isSome then
+    ptrace s!"declInfo GUARD-rejected len={src.length}"
+    return none
+  ptrace s!"declInfo begin len={src.length}"
   let env ← getEnv
   match Lean.Parser.runParserCategory env `command src with
-  | .error _ => return none
+  | .error _ =>
+    ptrace "declInfo end (parse-fail)"
+    return none
   | .ok stx =>
     let aiOn ← probeAutoImplicitRef.get
     let setOpts (o : Options) : Options :=
       o.setBool `Elab.async false |>.setBool `autoImplicit aiOn |>.setBool `relaxedAutoImplicit aiOn
     withoutModifyingEnv do
       withScope (fun sc => { sc with opts := setOpts sc.opts }) (elabCommand stx)
+      ptrace "declInfo end"
       return (← getEnv).find? declName
 
 /-- Collect have-style redexes — `(fun x => b) v` (tactic-mode `have`),
@@ -2061,11 +2210,13 @@ private partial def binderUsage (ty : Expr) (val? : Option Expr) (acc : Array (N
     extraction that exists only as a text edit to `lines`, not as a real
     declaration — UNLESS we actually add a (stub) declaration for it here. -/
 private def elabPersistCommand (src : String) : CommandElabM Unit := do
+  ptrace s!"persist begin len={src.length}"
   let env ← getEnv
   match Lean.Parser.runParserCategory env `command src with
-  | .error _ => pure ()
+  | .error _ => ptrace "persist end (parse-fail)"
   | .ok stx =>
     withScope (fun sc => { sc with opts := sc.opts.setBool `Elab.async false }) (elabCommand stx)
+    ptrace "persist end"
 
 /-- Find the first captured message shaped like `"theorem NAME ... := sorry"` or
     `"def NAME ... := sorry"` (this is exactly `extract_goal`'s output format),
@@ -2125,6 +2276,56 @@ private def scanBinderGroups (s : String) : Array String × String := Id.run do
     else
       go := false
   return (groups, String.mk (chars.extract i n).toList)
+
+/-- #69 PARAMETERIZED HAVES. Split a have/let HEADER (everything before the
+    top-level `:=`, already `collapseToOneLine`d by the caller) into
+    `(binderGroupsText, typeText)`.
+
+    A `have` may carry its own BINDERS between the name and the type ascription:
+      `have h_child_eval (c : Circuit n) (hc : c ∈ cs) : P c`
+    The old split was `headerBeforeAssign.splitOn " : "`, drop-first — which
+    matches the colon INSIDE the first binder group and produced
+      typeText = "Circuit n) (hc : c ∈ cs) : P c"
+    an unbalanced-paren fragment. Spliced into the callsite as
+    `have h_child_eval : Circuit n) (hc : c ∈ cs) : P c := …` it fails to PARSE,
+    so EVERY rung (goal-route ladder, rung T renderings, explicit) is rejected
+    with `expected end of input` before any mathematics is attempted —
+    CircuitHelpers `depth2OrToDNF_eval` h_child_eval, 6/7.
+
+    `scanBinderGroups` already tracks `()`/`{}`/`[]`/`⦃⦄` depth uniformly and
+    stops exactly where ` : TYPE` begins, so the correct split is: drop the
+    keyword and the name token, scan off the binder groups, and take the tail
+    after the remaining top-level colon. The groups are returned (not discarded)
+    so the callsite one-liner can re-emit them — the have is APPLIED to those
+    arguments downstream (`h_child_eval c hc`), so dropping them would change
+    the have's type and break every use.
+
+    Returns `("", "")` for an unannotated `have h := term` (no type, no
+    binders), matching the previous behaviour for that shape. -/
+private def splitHaveHeaderBindersType (headerBeforeAssign : String) :
+    String × String := Id.run do
+  let flat := collapseToOneLine headerBeforeAssign
+  let t0 := flat.trimLeft
+  let t := if t0.startsWith "· " then (t0.drop 2).trimLeft else t0
+  let afterKw :=
+    if t.startsWith "have " then t.drop "have ".length
+    else if t.startsWith "let " then t.drop "let ".length
+    else t
+  -- name token = up to the first space / colon / `=` (same rule as
+  -- `findAllHaveHeaders`, so the two agree on where the name ends)
+  let kwChars := afterKw.toList
+  let nameChars := kwChars.takeWhile (fun c => !(c == ' ' || c == ':' || c == '='))
+  let afterName := String.mk (kwChars.drop nameChars.length)
+  let (groups, rest) := scanBinderGroups afterName
+  let r := rest.trimLeft
+  -- `:=` here means the header carried no ascription at all; anything that is
+  -- not a bare `:` means we did not understand this shape — in both cases fall
+  -- back to "no binders, no type" rather than shipping a guess.
+  if r.startsWith ":=" || !(r.startsWith ":") then
+    return ("", "")
+  let ty := (r.drop 1).trim
+  let binderText := groups.toList.foldl (fun acc g => acc ++ " " ++ g) ""
+  return (binderText, ty)
 
 /-- Parse a captured `extract_goal` signature string (e.g.
     `"__sig__ (i j k : Nat) (h0 : i ≤ j) : i ≤ k"`) into
@@ -2432,6 +2633,42 @@ private def renameShadowedHaveNames (lines : Array String) (span : ThmSpan) : Ar
           lines := lines.set! i (replaceWord lines[i]! name newName)
     return lines
 
+/-- CROSS-WINDOW DUP GUARD (#63d): mint `<decl>_aux_<have>`, bumped with
+    `__dupK` while a declaration of that name already exists in the WORKING
+    FILE TEXT. Two distinct same-named haves converted in DIFFERENT resume
+    windows otherwise collide (Entropy `h1p`: windows 2 and 4 each wrote
+    `..._aux_h1p` — "has already been declared"): the in-window
+    `renameShadowedHaveNames` pre-pass cannot know about a conversion
+    committed by a PREVIOUS window (and #51's revert-gate can undo its
+    renames anyway), so uniqueness must be enforced at the naming site
+    against the checkpoint text itself. -/
+private def freshAuxName (lines : Array String) (declName haveName : String) : String :=
+  Id.run do
+    let isBoundary (c : Char) : Bool :=
+      !(c.isAlphanum || c == '_' || c == '\'' || c == '!' || c == '?')
+    let declared (nm : String) : Bool :=
+      lines.any (fun l =>
+        let t := l.trimLeft
+        let rest :=
+          if t.startsWith "private lemma " then some (t.drop "private lemma ".length)
+          else if t.startsWith "private theorem " then some (t.drop "private theorem ".length)
+          else if t.startsWith "lemma " then some (t.drop "lemma ".length)
+          else if t.startsWith "theorem " then some (t.drop "theorem ".length)
+          else none
+        match rest with
+        | none => false
+        | some r =>
+          r.startsWith nm &&
+          (r.length == nm.length || isBoundary (r.toList.getD nm.length ' ')))
+    let base := declName ++ "_aux_" ++ haveName
+    if !declared base then return base
+    let mut k := 2
+    while k < 32 do
+      let cand := base ++ s!"__dup{k}"
+      if !declared cand then return cand
+      k := k + 1
+    return base ++ "__dupX"
+
 /-- Give every line-start ANONYMOUS have (`have := term`, `have : T := term`,
     bullet-attached variants) a synthetic name `h_anon_N`, renaming downstream
     `this` references to match (scoped: stops at the first less-indented
@@ -2463,16 +2700,43 @@ private def nameAnonymousHaves (lines : Array String) (span : ThmSpan) : Array S
       let indentStr := String.mk (l.toList.takeWhile Char.isWhitespace)
       out := out.set! i (indentStr ++ bullet ++ "have " ++ newName ++ " " ++ core.drop "have ".length)
       let haveIndent := lineIndent l
-      for j in [i+1:span.bodyEnd] do
+      let mut j := i + 1
+      while j < span.bodyEnd do
         let lj := out[j]!
         if !isBlankLine lj && lineIndent lj < haveIndent then
-          break
-        let tj := lj.trimLeft
-        let cj := if tj.startsWith "· " then tj.drop 2 else tj
-        if cj.startsWith "have :=" || cj.startsWith "have : " || cj.startsWith "suffices" then
-          break
-        if containsWord lj "this" then
-          out := out.set! j (replaceWord lj "this" newName)
+          j := span.bodyEnd
+        else
+          let tj := lj.trimLeft
+          let cj := if tj.startsWith "· " then tj.drop 2 else tj
+          let isRebinder := cj.startsWith "have :=" || cj.startsWith "have : " || cj.startsWith "suffices"
+          if isRebinder && lineIndent lj ≤ haveIndent then
+            -- sibling (or outer) rebinder: shadows `this` for the rest of the
+            -- scope — stop, as before
+            j := span.bodyEnd
+          else if isRebinder then
+            -- NESTED rebinder (#65c, h_alg_2): its `this` binding is confined
+            -- to its own deeper block. The old unconditional break left the
+            -- OUTER have's later `this` references stale ("unknown
+            -- identifier" at the #51 gate → BOTH renames reverted → both
+            -- anonymous haves permanently invisible). Skip the nested block
+            -- wholesale (its `this` refs belong to the nested binder), then
+            -- RESUME rewriting — the outer `this` is live again once the
+            -- block closes.
+            -- the nested binder's `this` stays live through its block's
+            -- SAME-indent continuation lines too (`rw[...]` after the nested
+            -- have inside a let-by-block) — skip until indent drops BELOW
+            -- the rebinder's own (strict `>` resumed one line early and
+            -- rewrote the nested binder's consumer to the outer name:
+            -- "Nat.le_floor_iff h_anon_1" type mismatch)
+            let rebIndent := lineIndent lj
+            j := j + 1
+            while j < span.bodyEnd &&
+                  (isBlankLine out[j]! || lineIndent out[j]! ≥ rebIndent) do
+              j := j + 1
+          else
+            if containsWord lj "this" then
+              out := out.set! j (replaceWord lj "this" newName)
+            j := j + 1
   return out
 
 /-- Split MID-LINE named term-mode haves (`... ; have h := term [; rest]`) in
@@ -2958,10 +3222,10 @@ private def extractOneHaveViaGoal
   -- return type (`: ZkVec p n, ...` — "expected ':='" parse failures on
   -- ZkBLR's hpoint/hnorm). Collapsing turns colon-newline into colon-space
   -- first, so the have-name separator matches as intended.
-  let originalTypeText : String :=
-    match (collapseToOneLine headerBeforeAssign).splitOn " : " with
-    | _ :: rest => (" : ".intercalate rest).trim
-    | []        => ""
+  -- #69: binder-aware split — a have may carry its OWN binders between the name
+  -- and the colon (`have h (c : T) (hc : c ∈ cs) : P c`); a naive `splitOn " : "`
+  -- matches the binder's colon and ships an unbalanced-paren type fragment.
+  let (haveBinderText, originalTypeText) := splitHaveHeaderBindersType headerBeforeAssign
   -- A term-mode have can carry SAME-LINE continuation tactics after an outer
   -- semicolon (e.g. "have h := term; rw [sq] at h; exact h") — the have block's
   -- span is just that one line, so replacing it with a one-liner call would
@@ -3047,7 +3311,7 @@ private def extractOneHaveViaGoal
       "open scoped Classical in\n"
     else "")
   let lemmaPrefix := setOptPrefix ++ openPrefix ++ classicalPrefix
-  let externalName := span.name ++ "_aux_" ++ haveName
+  let externalName := freshAuxName lines span.name haveName
   if originalTypeText.isEmpty then
     -- Anonymous/untyped have: `extract_goal` can't be handed the have's own type
     -- (there isn't one in the source) without discarding the ORIGINAL VALUE, which
@@ -3232,7 +3496,7 @@ private def extractOneHaveViaGoal
           let call := if callArgNames.isEmpty then externalName
                       else "(" ++ externalName ++ " " ++ " ".intercalate callArgNames ++ ")"
           let oneLinerIndent := bulletIndentStr ++ (if isBulletAttached then "  " else "")
-          let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call
+          let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ (if ty == originalTypeText then haveBinderText else "") ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call
           let replacementLines : Array String :=
             (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
             (if termContinuation.isEmpty then #[oneLiner] else #[oneLiner, oneLinerIndent ++ termContinuation])
@@ -3286,7 +3550,7 @@ private def extractOneHaveViaGoal
               | _ => ""
             if !unkName.isEmpty && callArgNames.contains unkName then
               let call2 := "by apply " ++ externalName ++ " <;> assumption"
-              let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call2
+              let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ (if ty == originalTypeText then haveBinderText else "") ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call2
               let replacement2 : Array String :=
                 (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
                 (if termContinuation.isEmpty then #[oneLiner2] else #[oneLiner2, oneLinerIndent ++ termContinuation])
@@ -3308,7 +3572,7 @@ private def extractOneHaveViaGoal
                 -- can't backtrack across candidate hyps for data metavars —
                 -- `solve_by_elim` chains backward WITH backtracking.
                 let call3 := "by solve_by_elim [" ++ externalName ++ "]"
-                let oneLiner3 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call3
+                let oneLiner3 := oneLinerIndent ++ "have " ++ haveName ++ (if ty == originalTypeText then haveBinderText else "") ++ " : " ++ scrubUnivs (collapseToOneLine ty) ++ " := " ++ call3
                 let replacement3 : Array String :=
                   (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
                   (if termContinuation.isEmpty then #[oneLiner3] else #[oneLiner3, oneLinerIndent ++ termContinuation])
@@ -3450,14 +3714,17 @@ private def extractOneHaveViaGoal
     -- bare `inferInstance` mints a stuck `?m` ("type class instance
     -- expected", the whole counting_obstruction class); with the option the
     -- binder round-trips as `let this : DecidablePred ... := inferInstance;`.
-    let ppLetTele1 := "set_option pp.letVarTypes true in\nset_option pp.fullNames true in\nset_option pp.notation false in\nset_option pp.funBinderTypes true in\nset_option pp.proofs true in\nset_option pp.deepTerms true in\n"
+    -- pp.maxSteps: deepTerms=true alone still elides with `⋯` once the
+    -- default step budget is spent — h_t3-class giant let-telescopes hit it
+    -- (#64: every elided rendering is guard-rejected, a wasted candidate)
+    let ppLetTele1 := "set_option pp.letVarTypes true in\nset_option pp.fullNames true in\nset_option pp.notation false in\nset_option pp.funBinderTypes true in\nset_option pp.proofs true in\nset_option pp.deepTerms true in\nset_option pp.maxSteps 5000000 in\n"
     -- pp.explicit does NOT expand notation: the Finset set-builder
     -- `{s | ...}` survives it and re-elaborates as `Set` ("Application
     -- type mismatch ... Finset.sum low"), while rendering 1's
     -- pp.notation-false output dies on `↑x` coercions instead (which
     -- pp.explicit DOES expand, to `@Subtype.val ...`). Both options
     -- together cover both failure halves.
-    let ppLetTele2 := "set_option pp.letVarTypes true in\nset_option pp.explicit true in\nset_option pp.notation false in\nset_option pp.proofs true in\nset_option pp.deepTerms true in\nset_option pp.universes true in\n"
+    let ppLetTele2 := "set_option pp.letVarTypes true in\nset_option pp.explicit true in\nset_option pp.notation false in\nset_option pp.proofs true in\nset_option pp.deepTerms true in\nset_option pp.universes true in\nset_option pp.maxSteps 5000000 in\n"
     let cvVariantsR : List (String × List String × String) :=
       (cvVariants.map (fun cv => (cv, ([] : List String), ""))) ++
       (if revertRefs.isEmpty then [] else
@@ -4108,7 +4375,7 @@ private def extractOneHaveViaGoal
           -- the one-liner states the have's ORIGINAL type: the type-directed
           -- `apply … <;> assumption` peels the lemma's closure telescope off
           let oneLinerTy := if wonTele && !originalTypeText.isEmpty then originalTypeText else effectiveType
-          let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ " : " ++ scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call
+          let oneLiner := oneLinerIndent ++ "have " ++ haveName ++ (if oneLinerTy == originalTypeText then haveBinderText else "") ++ " : " ++ scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call
           let replacementLines : Array String :=
             (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
             (if termContinuation.isEmpty then #[oneLiner] else #[oneLiner, oneLinerIndent ++ termContinuation])
@@ -4156,7 +4423,7 @@ private def extractOneHaveViaGoal
             if !wonTele && !inaccRetried && !unkName.isEmpty && callArgNames.contains unkName then
               inaccRetried := true
               let call2 := "by apply " ++ externalName ++ " <;> assumption"
-              let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+              let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ (if oneLinerTy == originalTypeText then haveBinderText else "") ++ " : " ++
                 scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call2
               let replacement2 : Array String :=
                 (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
@@ -4180,7 +4447,7 @@ private def extractOneHaveViaGoal
                 -- DATA-TYPED INACCESSIBLE ARGS (#60): solve_by_elim backtracks
                 -- where `apply <;> assumption` cannot (see untyped branch).
                 let call3 := "by solve_by_elim [" ++ externalName ++ "]"
-                let oneLiner3 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+                let oneLiner3 := oneLinerIndent ++ "have " ++ haveName ++ (if oneLinerTy == originalTypeText then haveBinderText else "") ++ " : " ++
                   scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call3
                 let replacement3 : Array String :=
                   (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
@@ -4236,7 +4503,14 @@ private def extractOneHaveViaGoal
                 let proofPart2 := "\n".intercalate ((proofPart.splitOn "\n").map rewriteBrackets)
                 let sigLine2 := externalName ++ univSpec ++ paramsOnlyText ++ eqParams ++
                   " : " ++ collapseToOneLine returnTypeText
-                let lemmaText2 := setOptPrefix ++ classicalPrefix ++ "private lemma " ++ sigLine2 ++ proofPart2
+                -- renameUnivs, same as the main branch (4083): the WRITTEN
+                -- lemma lands inside the file's `variable {.. : Type*}` scope
+                -- whose auto-named `u_k` levels collide with a raw explicit
+                -- `.{u_k, ...}` spec — probes are blind to this (they omit the
+                -- variable prefix), so an unrenamed spec ships "universe level
+                -- already declared" + cascading Unknown-identifier callsites
+                -- (BalancedSimulation hm_lt_n/hInBound', #62).
+                let lemmaText2 := renameUnivs (setOptPrefix ++ classicalPrefix ++ "private lemma " ++ sigLine2 ++ proofPart2)
                 let rfls := String.join (replayDefs.map (fun _ => " rfl"))
                 -- under the revert-closure variant the callsite is TYPE-
                 -- DIRECTED (see the main `call`): telescope hyps close by
@@ -4249,7 +4523,7 @@ private def extractOneHaveViaGoal
                     "(" ++ externalName ++
                     (if callArgNames.isEmpty then "" else " " ++ " ".intercalate callArgNames) ++
                     rfls ++ ")"
-                let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+                let oneLiner2 := oneLinerIndent ++ "have " ++ haveName ++ (if oneLinerTy == originalTypeText then haveBinderText else "") ++ " : " ++
                   scrubUnivs (collapseToOneLine oneLinerTy) ++ " := " ++ call2
                 let replacement2 : Array String :=
                   (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
@@ -4574,9 +4848,15 @@ private def buildTermClosure (stack : Array TBinder) (tyL vL : Expr)
     let spineNames := (closureIdx.map (fun i => finalNames[i]!.toString)).toList
     let stmt := (renameNestedBindersGo closureIdx.size stmt0).run' (1, spineNames)
     let univNames := ((Lean.collectLevelParams {} stmt).params.toList.map (·.toString))
+    -- pp.fieldNotation OFF (#66): field-notation renderings are unfaithful on
+    -- deep-shadowed induction' captures — `Eq.isLt h` printed as `h.isLt`
+    -- re-elaborates against the WRONG namespace when the head type is
+    -- shadowed (CircuitTreeManip residual class). Plain applications always
+    -- re-elaborate faithfully.
     let baseOpts (o : Options) : Options :=
       o.setBool `pp.proofs true |>.setBool `pp.deepTerms true
         |>.setBool `pp.letVarTypes true |>.setNat `pp.maxSteps 5000000
+        |>.setBool `pp.fieldNotation false
     let renderers : List (String × (Options → Options)) :=
       [("plain", baseOpts),
        ("funBinderTypes", fun o => (baseOpts o).setBool `pp.funBinderTypes true),
@@ -4617,10 +4897,10 @@ private def extractOneHaveViaTerm
   let headerBeforeAssign := match topSplit with
     | some (h, _) => h.trimRight
     | none        => haveLineText.trimRight
-  let originalTypeText : String :=
-    match (collapseToOneLine headerBeforeAssign).splitOn " : " with
-    | _ :: rest => (" : ".intercalate rest).trim
-    | []        => ""
+  -- #69: binder-aware split — a have may carry its OWN binders between the name
+  -- and the colon (`have h (c : T) (hc : c ∈ cs) : P c`); a naive `splitOn " : "`
+  -- matches the binder's colon and ships an unbalanced-paren type fragment.
+  let (haveBinderText, originalTypeText) := splitHaveHeaderBindersType headerBeforeAssign
   -- UNTYPED HAVES (#61, KKL hlow1/hlow_k): no source annotation, but the
   -- have's TYPE is in the elaborated term (the redex binder) — each
   -- rendering's sig CONCLUSION is exactly that type, so the one-liner
@@ -4660,7 +4940,7 @@ private def extractOneHaveViaTerm
       "open scoped Classical in\n"
     else "")
   let lemmaPrefix := setOptPrefix ++ openPrefix ++ classicalPrefix
-  let externalName := span.name ++ "_aux_" ++ haveName
+  let externalName := freshAuxName lines span.name haveName
   -- ── the one full-declaration elaboration ──
   let bodyText := "\n".intercalate (lines.extract span.bodyStart span.bodyEnd).toList
   let probeSrc := ambientPrefix ++ renamedHeader ++ "\n" ++ bodyText
@@ -4767,9 +5047,9 @@ private def extractOneHaveViaTerm
               -- have's own line, which covers untyped call forms too.
               let oneLiner :=
                 if originalTypeText.isEmpty then
-                  oneLinerIndent ++ "have " ++ haveName ++ " := " ++ call
+                  oneLinerIndent ++ "have " ++ haveName ++ haveBinderText ++ " := " ++ call
                 else
-                  oneLinerIndent ++ "have " ++ haveName ++ " : " ++
+                  oneLinerIndent ++ "have " ++ haveName ++ haveBinderText ++ " : " ++
                     collapseToOneLine originalTypeText ++ " := " ++ call
               let replacementLines : Array String :=
                 (if isBulletAttached then #[bulletIndentStr ++ "·"] else #[]) ++
@@ -5759,38 +6039,109 @@ elab "#extract_haves_iter_decl " srcLit:str dstLit:str declLit:str : command => 
   -- skips them by design (whole-file iteration), but per-decl campaigns must
   -- reach the haves living inside SPLICED aux lemmas (rung E tails, rung D
   -- aux2s) — extraction never targeted those otherwise.
+  -- BRACE-AWARE SPAN (#65b): a `:= by{ … }` decl whose brace survives (the
+  -- debrace pre-pass is baseline-gated and REVERTS on brace-relaxed
+  -- indentation it cannot faithfully rewrite — hamming_ball) has its col-0
+  -- close line cut off by `blockEnd`. Extend bodyEnd until the net brace
+  -- count over the whole span closes, so the baseline, rung-T declInfo
+  -- probe, and whole-decl gates all see a parseable decl. For ordinary
+  -- whitespace decls the net is 0 at bodyEnd and this is a no-op.
+  let extendForBraces (lns : Array String) (s : ThmSpan) : ThmSpan := Id.run do
+    let masked := maskCommentLines lns
+    let mut net : Int := 0
+    for k in [s.headerStart : min s.bodyEnd lns.size] do
+      for c in (masked[k]!).toList do
+        if c == '{' then net := net + 1
+        else if c == '}' then net := net - 1
+    let mut e := s.bodyEnd
+    while net > 0 && e < lns.size do
+      for c in (masked[e]!).toList do
+        if c == '{' then net := net + 1
+        else if c == '}' then net := net - 1
+      e := e + 1
+    if e != s.bodyEnd then return { s with bodyEnd := e } else return s
   let findAnySpan (lns : Array String) (nm : String) : Option ThmSpan := Id.run do
-    match (findTheorems lns).find? (fun s => s.name == nm) with
-    | some s => return some s
-    | none =>
-      let mut i := 0
-      while i < lns.size do
-        let l := lns[i]!
-        if l.startsWith "private lemma " || l.startsWith "private theorem " then
-          let rest :=
-            if l.startsWith "private lemma " then l.drop "private lemma ".length
-            else l.drop "private theorem ".length
-          let nameEnd := rest.find (fun c => c == ' ' || c == '{' || c == '(' || c == ':' || c == '.')
-          let name := String.Pos.Raw.extract rest ⟨0⟩ nameEnd
-          if name == nm then
-            let mut j := i
-            let mut found := false
-            while j < lns.size && !found do
-              if (lns[j]!.splitOn ":= by").length ≥ 2 then found := true
+    let raw : Option ThmSpan :=
+      match (findTheorems lns).find? (fun s => s.name == nm) with
+      | some s => some s
+      | none => Id.run do
+        let mut i := 0
+        while i < lns.size do
+          let l := lns[i]!
+          if l.startsWith "private lemma " || l.startsWith "private theorem " then
+            let rest :=
+              if l.startsWith "private lemma " then l.drop "private lemma ".length
+              else l.drop "private theorem ".length
+            let nameEnd := rest.find (fun c => c == ' ' || c == '{' || c == '(' || c == ':' || c == '.')
+            let name := String.Pos.Raw.extract rest ⟨0⟩ nameEnd
+            if name == nm then
+              let mut j := i
+              let mut found := false
+              while j < lns.size && !found do
+                if (lns[j]!.splitOn ":= by").length ≥ 2 then found := true
+                else
+                  j := j + 1
+                  if j < lns.size && !isBlankLine lns[j]! && lineIndent lns[j]! == 0 && j > i then
+                    j := lns.size
+              if found then
+                let bodyStart := j + 1
+                return some { name := nm, fullName := nm, headerStart := i,
+                              bodyStart, bodyEnd := blockEnd lns bodyStart 0 }
               else
-                j := j + 1
-                if j < lns.size && !isBlankLine lns[j]! && lineIndent lns[j]! == 0 && j > i then
-                  j := lns.size
-            if found then
-              let bodyStart := j + 1
-              return some { name := nm, fullName := nm, headerStart := i,
-                            bodyStart, bodyEnd := blockEnd lns bodyStart 0 }
-            else
-              return none
-        i := i + 1
-      return none
+                return none
+          i := i + 1
+        return none
+    return raw.map (extendForBraces lns)
   -- ── extraction loop, restricted to the one named declaration ──
   let mut doneNames : List String := []
+  -- REPEATED-WINDOW FAST-PATH (#66b, CircuitTreeManip h_all_le): a have
+  -- whose goal-route ladder burned ≥2 whole windows without a terminal
+  -- outcome will burn every future window identically — the ladder is
+  -- deterministic and swap-pressure kills windows at a roughly fixed probe
+  -- depth. The progress file IS the cross-window memory: attempt lines end
+  -- with " ..." when opened and are followed by EXTRACTED/FAILED/… when
+  -- closed, so (opens - closes) ≥ 2 identifies the repeat-burner. Route it
+  -- straight to rung T (no prefix replay; converted every sibling of
+  -- h_all_le instantly), with rung L still following on rung-T failure.
+  let staleHaves : List String ← (do
+    if ← System.FilePath.pathExists progressPath then
+      let ptext ← IO.FS.readFile progressPath
+      let mut opens : List (String × Nat) := []
+      let mut closes : List (String × Nat) := []
+      for l in ptext.splitOn "\n" do
+        match l.splitOn (": " ++ declName ++ ".") with
+        | _ :: rest :: _ =>
+          let nm := (rest.splitOn " ").headD ""
+          if !nm.isEmpty then
+            if l.trimRight.endsWith " ..." then
+              opens := (nm, ((opens.lookup nm).getD 0) + 1) ::
+                opens.filter (fun (n, _) => n != nm)
+            else
+              closes := (nm, ((closes.lookup nm).getD 0) + 1) ::
+                closes.filter (fun (n, _) => n != nm)
+        | _ => pure ()
+      let stale := opens.filterMap (fun (n, c) =>
+        if c ≥ ((closes.lookup n).getD 0) + 2 then some n else none)
+      for nm in stale do
+        progress s!"STALE-LADDER: '{nm}' burned ≥2 windows — routing rung-T-first"
+      return stale
+    else
+      return [])
+  -- WEDGE SKIPLIST (#63c): `<output>.skip` lists have names (one per line)
+  -- to bypass entirely — the operator's tool for a have whose extraction
+  -- probe REPRODUCIBLY wedges the server idle (Entropy `h_t3`: three
+  -- windows, 40 idle minutes each; the wedge is inside the extract_goal
+  -- capture — pp of a giant let-telescope context — which no in-process
+  -- gate can bound). A skipped have stays inline: the same safe residual
+  -- as any FAILED have, but it costs zero wall-clock.
+  let skipPath := outputPath ++ ".skip"
+  if ← System.FilePath.pathExists skipPath then
+    let skipSrc ← IO.FS.readFile skipPath
+    for nmRaw in skipSrc.splitOn "\n" do
+      let nm := nmRaw.trim
+      if !nm.isEmpty then
+        doneNames := doneNames ++ [nm]
+        progress s!"SKIPLIST: '{nm}' bypassed via {skipPath}"
   let mut keepGoing := true
   -- BASELINE PROBE (#56): elaborate the UNMODIFIED decl in the gate context
   -- once, before any attempt. SATTo3SAT's transformClause_soundness fails
@@ -5803,28 +6154,146 @@ elab "#extract_haves_iter_decl " srcLit:str dstLit:str declLit:str : command => 
   -- zero attempts and report the real reason instead of N misleading
   -- per-have errors (and instead of blaming the pre-pass renames, whose
   -- revert-gate probe fails for the same baseline reason).
+  -- DEBRACE PRE-PASS (#63): normalize `by {`/`by{` brace-blocks in the target
+  -- decl's region BEFORE the span-based machinery runs — a col-0 `}` close
+  -- otherwise truncates the decl span (blockEnd is indentation-based) and
+  -- every truncated-prefix probe leaves the brace unclosed (uniform PARSE
+  -- wipeout, attempts=0). Bounded by the NAIVE span (its truncated bodyEnd
+  -- still covers every opener; the close-scan runs past it). The baseline
+  -- probe right below validates the rewrite: on ANY baseline failure the
+  -- pre-debrace text is restored, so the written output is never an
+  -- unverified mutation.
+  let preDebrace := lines
   match findAnySpan lines declName with
   | none => pure ()
-  | some span =>
-    let headerText0 := "\n".intercalate (lines.extract span.headerStart span.bodyStart).toList
-    let headerText :=
-      if headerText0.startsWith "private " then headerText0.drop "private ".length else headerText0
-    let kw := if headerText.startsWith "theorem " then "theorem " else "lemma "
-    let nsPathB := enclosingNamespacePathFor lines span.headerStart
-    let renHdr := kw ++ (if nsPathB.isEmpty then "" else nsPathB ++ ".") ++ "__baseline_check__" ++ ((headerText.drop kw.length).drop span.name.length)
-    let opens := enclosingOpensFor lines span.headerStart
-    let openPfx := if opens.isEmpty then "" else "open " ++ " ".intercalate opens ++ " in\n"
-    let setPfx := (enclosingSetOptionsFor lines span.headerStart).foldl
-      (fun acc (nm, v) => acc ++ "set_option " ++ nm ++ " " ++ v ++ " in\n") ""
-    let varPfx := (enclosingVariablesFor lines span.headerStart).foldl
-      (fun acc v => acc ++ v ++ " in\n") ""
-    let probeSrc := setPfx ++ openPfx ++ varPfx ++ renHdr ++ "\n" ++
-      "\n".intercalate (lines.extract span.bodyStart span.bodyEnd).toList
-    match ← elabCheckFirstError probeSrc with
-    | some err =>
+  | some sp0 =>
+    let debraced := debraceByBlocks lines sp0.headerStart sp0.bodyStart sp0.bodyEnd
+    if !(debraced == lines) then
+      progress s!"debrace pre-pass rewrote by-brace block(s) in '{declName}' region"
+      lines := debraced
+  let mut optimisticMode := false
+  let runBaseline (lns : Array String) : CommandElabM (Option String) := do
+    match findAnySpan lns declName with
+    | none => return none
+    | some span =>
+      let headerText0 := "\n".intercalate (lns.extract span.headerStart span.bodyStart).toList
+      let headerText :=
+        if headerText0.startsWith "private " then headerText0.drop "private ".length else headerText0
+      let kw := if headerText.startsWith "theorem " then "theorem " else "lemma "
+      let nsPathB := enclosingNamespacePathFor lns span.headerStart
+      let renHdr := kw ++ (if nsPathB.isEmpty then "" else nsPathB ++ ".") ++ "__baseline_check__" ++ ((headerText.drop kw.length).drop span.name.length)
+      let opens := enclosingOpensFor lns span.headerStart
+      let openPfx := if opens.isEmpty then "" else "open " ++ " ".intercalate opens ++ " in\n"
+      let setPfx := (enclosingSetOptionsFor lns span.headerStart).foldl
+        (fun acc (nm, v) => acc ++ "set_option " ++ nm ++ " " ++ v ++ " in\n") ""
+      let varPfx := (enclosingVariablesFor lns span.headerStart).foldl
+        (fun acc v => acc ++ v ++ " in\n") ""
+      let probeSrc := setPfx ++ openPfx ++ varPfx ++ renHdr ++ "\n" ++
+        "\n".intercalate (lns.extract span.bodyStart span.bodyEnd).toList
+      elabCheckFirstError probeSrc
+  match ← runBaseline lines with
+  | none => pure ()
+  | some err =>
+    -- DEBRACE REVERT-AND-CONTINUE (#65b, hamming_ball): a brace body with
+    -- brace-relaxed indentation cannot be faithfully debraced by any
+    -- line-based rewrite ("unsolved goals" at baseline). That is a failure
+    -- of the MUTATION, not of the decl — restore the braced source and
+    -- re-run the baseline on it (the brace-aware span now includes the
+    -- close line, so it parses). If the braced baseline passes, extraction
+    -- proceeds: ladder probes truncate inside braces and PARSE-reject
+    -- (safe), rung T needs no prefix replay and carries the conversions.
+    if !(lines == preDebrace) then
+      lines := preDebrace
+      match ← runBaseline lines with
+      | none =>
+        progress s!"debrace mutation failed its baseline — REVERTED to braced source, continuing (ladder brace-rejects are expected; rung T carries extraction)"
+      | some err2 =>
+        keepGoing := false
+        optimisticMode := true
+        progress s!"DECL BASELINE FAILED — '{declName}' does not re-elaborate in the probe env (in-file-only elaboration, e.g. matcher-constant reuse); entering OPTIMISTIC let-swap mode (err: {err2.take 160})"
+    else
       keepGoing := false
-      progress s!"DECL BASELINE FAILED — '{declName}' does not re-elaborate in the probe env (in-file-only elaboration, e.g. matcher-constant reuse); skipping extraction (err: {err.take 160})"
+      optimisticMode := true
+      progress s!"DECL BASELINE FAILED — '{declName}' does not re-elaborate in the probe env (in-file-only elaboration, e.g. matcher-constant reuse); entering OPTIMISTIC let-swap mode (err: {err.take 160})"
+  -- OPTIMISTIC LET-SWAP + REAL-FILE GATE (#67): an in-file-only decl
+  -- (matcher-constant reuse — SATTo3SAT transformClause_soundness) is
+  -- unreachable by every probe-validated rung, because the probe env
+  -- re-elaboration mints fresh matcher constants and every gate falsely
+  -- rejects. But the have→let swap needs no probe, and the REAL FILE is
+  -- its own oracle: apply the pre-passes and swap every line-start have
+  -- to a let UNGATED, write the whole candidate to a temp file, and
+  -- elaborate it with the actual lean binary (this server process IS
+  -- bin/lean; LEAN_PATH is inherited), where in-file matcher reuse behaves
+  -- exactly as in the source. Commit on exit 0, revert wholesale
+  -- otherwise — the old skip becomes the fallback, not the verdict.
+  if optimisticMode then
+    match findAnySpan lines declName with
     | none => pure ()
+    | some span0 =>
+      let leanBin ← IO.appPath
+      let gate (cand : Array String) (tag : String) : CommandElabM Bool := do
+        let tmpPath := outputPath ++ ".optimistic_check.lean"
+        IO.FS.writeFile tmpPath ("\n".intercalate cand.toList)
+        progress s!"OPTIMISTIC: real-file gate [{tag}] launching"
+        let out ← IO.Process.output { cmd := leanBin.toString, args := #[tmpPath] }
+        try IO.FS.removeFile tmpPath catch _ => pure ()
+        if out.exitCode == 0 then
+          return true
+        else
+          -- lean reports elaboration errors on STDOUT — log both streams
+          progress s!"OPTIMISTIC: gate [{tag}] FAILED (exit {out.exitCode}); out: {(collapseToOneLine out.stdout).take 300}; err: {(collapseToOneLine out.stderr).take 150}"
+          return false
+      let swapInSpan (src : Array String) (sp : ThmSpan) : Array String × Nat := Id.run do
+        let mut c := src
+        let mut n := 0
+        for i in [sp.bodyStart:sp.bodyEnd] do
+          let l := c[i]!
+          let t := l.trimLeft
+          let ind := String.mk (l.toList.takeWhile Char.isWhitespace)
+          if t.startsWith "have " then
+            c := c.set! i (ind ++ "let " ++ t.drop "have ".length)
+            n := n + 1
+          else if t.startsWith "· have " then
+            c := c.set! i (ind ++ "· let " ++ t.drop "· have ".length)
+            n := n + 1
+        return (c, n)
+      -- FULL candidate: pre-passes (ungated — the real-file gate validates
+      -- everything at once) + swap; reaches anonymous/mid-line haves too
+      let mut candF := lines
+      let (split1, _) := splitMidLineHavesInSpan candF span0
+      candF := split1
+      let span1 := (findAnySpan candF declName).getD span0
+      candF := renameShadowedHaveNames candF span1
+      candF := nameAnonymousHaves candF span1
+      let (split2, _) := splitMidLineHavesInSpan candF span1
+      candF := split2
+      let spanF := (findAnySpan candF declName).getD span1
+      let (candFull, swappedF) := swapInSpan candF spanF
+      -- PURE candidate: swaps only, no pre-passes — the conservative form
+      let (candPure, swappedP) := swapInSpan lines span0
+      if swappedF == 0 && swappedP == 0 then
+        progress s!"OPTIMISTIC: no swappable haves in '{declName}' — nothing to do"
+      else
+        let mut committed : Option (Array String × Nat × String) := none
+        if swappedF > 0 && (← gate candFull "full") then
+          committed := some (candFull, swappedF, "full")
+        else if swappedP > 0 && (← gate candPure "pure-swap") then
+          committed := some (candPure, swappedP, "pure-swap")
+        else
+          -- positive control: distinguish a broken transform from a broken
+          -- harness — if even the PRISTINE source fails this gate, the
+          -- verdicts above are meaningless (the #62-era verifier rule)
+          if ← gate lines "pristine-control" then
+            progress s!"OPTIMISTIC: candidates rejected but pristine passes — transform-level failure, reverted"
+          else
+            progress s!"OPTIMISTIC: PRISTINE CONTROL FAILED — gate harness unusable here (LEAN_PATH/env?); reverted"
+        match committed with
+        | some (cand, n, tag) =>
+          lines := cand
+          counter := counter + n
+          succeeded := succeeded + n
+          progress s!"OPTIMISTIC: real-file gate PASSED [{tag}] — {n} have(s) LET-SWAPPED in '{declName}'"
+        | none => pure ()
   while keepGoing do
     keepGoing := false
     match findAnySpan lines declName with
@@ -5928,8 +6397,13 @@ elab "#extract_haves_iter_decl " srcLit:str dstLit:str declLit:str : command => 
               keepGoing := true
           else
           counter := counter + 1
-          progress s!"attempt {counter}: {declName}.{haveName} ..."
-          match ← extractOneHaveViaGoal lines span haveIdx haveName counter with
+          let skipLadder := staleHaves.contains haveName
+          if skipLadder then
+            progress s!"attempt {counter}: {declName}.{haveName} (stale-ladder, rung-T first) ..."
+          else
+            progress s!"attempt {counter}: {declName}.{haveName} ..."
+          match ← (if skipLadder then pure (none : Option (Array String))
+                   else extractOneHaveViaGoal lines span haveIdx haveName counter) with
           | none =>
             -- rung T fallback: proof-term-based extraction (no prefix replay)
             match ← extractOneHaveViaTerm lines span haveIdx haveName counter with
