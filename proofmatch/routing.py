@@ -77,7 +77,9 @@ def _strip_tex(text: str) -> str:
     # `leanok` and leave a stray "ok" in the informal text.
     without_commands = re.sub(
         r"\\(leanok|lean|uses|label|difficulty|proofsource|statementsource|proofstep)"
-        r"(\{[^}]*\})*",
+        # `\proofstep` puts each of its arguments on its own line, so allow a single
+        # line break between the macro name and an argument, and between arguments.
+        r"(?:[ \t]*\n?[ \t]*\{[^{}]*\})*",
         "",
         without_comments,
     )

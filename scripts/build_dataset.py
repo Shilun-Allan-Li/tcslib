@@ -80,7 +80,22 @@ LEAN_BIND_RE = re.compile(r"^\s*\\lean\{([^}]*)\}\s*$")
 INLINE_LEAN_RE = re.compile(r"\\lean\{([^}]*)\}")
 BEGIN_RE = re.compile(r"\\begin\{(theorem|lemma|definition|proposition|corollary|sublemma)\}(?:\[([^\]]*)\])?")
 END_ENV_RE = re.compile(r"\\end\{(theorem|lemma|definition|proposition|corollary|sublemma)\}")
-DROP_LINE_RE = re.compile(r"^\s*\\(leanok|label|uses|lean|difficulty|proofsource|statementsource|proofstep)\b")
+DROP_LINE_RE = re.compile(
+    r"^\s*\\(leanok|label|uses|lean|difficulty|proofsource|statementsource|proofstep)\b(.*)$"
+)
+#: How many brace groups each dropped macro takes. `\proofstep` writes its four
+#: arguments on the lines *after* the macro name, so counting braces on the macro
+#: line alone stops the skip immediately and spills the arguments into the prose.
+DROP_MACRO_ARITY = {
+    "leanok": 0,
+    "label": 1,
+    "uses": 1,
+    "lean": 1,
+    "difficulty": 1,
+    "proofsource": 2,
+    "statementsource": 2,
+    "proofstep": 4,
+}
 USES_RE = re.compile(r"\\uses\{")
 DIFF_RE = re.compile(r"^\s*\\difficulty\{([^}]*)\}\s*$")
 PROOF_SOURCE_RE = re.compile(r"\\proofsource\{([^}]*)\}\{([^}]*)\}", re.DOTALL)
@@ -95,6 +110,25 @@ PROOF_STEP_RE = re.compile(
 
 _OPEN_DELIM = set("([{⟨")
 _CLOSE_DELIM = set(")]}⟩")
+
+
+def consume_macro_args(text: str, pending: int, depth: int) -> tuple[int, int]:
+    """Eat `pending` brace groups out of `text`, resuming at brace nesting `depth`.
+
+    Blueprint metadata macros may put their arguments on the lines that follow the
+    macro name, so dropping them from the prose is a multi-line job: this returns
+    the arguments and nesting still outstanding once `text` is exhausted.
+    """
+    for ch in text:
+        if depth:
+            depth += (ch == "{") - (ch == "}")
+            if not depth:
+                pending -= 1
+        elif not pending:
+            break
+        elif ch == "{":
+            depth = 1
+    return pending, depth
 
 
 def normalize_name(name: str) -> str:
@@ -135,6 +169,7 @@ def parse_blueprint(chapter_dir: Path = CHAPTER_DIR) -> dict[str, dict]:
             difficulty = None        # \difficulty{N}: intrinsic, tactic-only proof rating
             metadata_lines = []
             skip_braces = 0   # >0 while inside a still-open dropped macro
+            skip_args = 0     # dropped-macro arguments still to be eaten
             cap_uses = 0      # >0 while capturing a (possibly multi-line) \uses{...}
             i += 1
             while i < len(lines) and not END_ENV_RE.search(lines[i]):
@@ -145,8 +180,10 @@ def parse_blueprint(chapter_dir: Path = CHAPTER_DIR) -> dict[str, dict]:
                     cap_uses += line.count("{") - line.count("}")
                     i += 1
                     continue
-                if skip_braces > 0:
-                    skip_braces += line.count("{") - line.count("}")
+                if skip_args > 0 or skip_braces > 0:
+                    skip_args, skip_braces = consume_macro_args(
+                        line, skip_args, skip_braces
+                    )
                     i += 1
                     continue
                 mbind = LEAN_BIND_RE.match(line)
@@ -172,8 +209,10 @@ def parse_blueprint(chapter_dir: Path = CHAPTER_DIR) -> dict[str, dict]:
                         difficulty = int(mdiff.group(1).strip())
                     except ValueError:
                         difficulty = None
-                elif DROP_LINE_RE.match(line):
-                    skip_braces = max(0, line.count("{") - line.count("}"))
+                elif mdrop := DROP_LINE_RE.match(line):
+                    skip_args, skip_braces = consume_macro_args(
+                        mdrop.group(2), DROP_MACRO_ARITY[mdrop.group(1)], 0
+                    )
                 else:
                     body.append(line)
                 i += 1
