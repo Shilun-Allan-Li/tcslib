@@ -78,8 +78,54 @@ _ID_EXTRA = "'!?₀-₉₊-ₜ′″ᵢ-ᵪ"
 IDENT_RE = re.compile(rf"[^\W\d][\w{_ID_EXTRA}]*(?:\.[^\W\d][\w{_ID_EXTRA}]*)*")
 LEAN_BIND_RE = re.compile(r"^\s*\\lean\{([^}]*)\}\s*$")
 INLINE_LEAN_RE = re.compile(r"\\lean\{([^}]*)\}")
-BEGIN_RE = re.compile(r"\\begin\{(theorem|lemma|definition|proposition|corollary|sublemma)\}(?:\[([^\]]*)\])?")
+BEGIN_RE = re.compile(r"\\begin\{(theorem|lemma|definition|proposition|corollary|sublemma)\}")
 END_ENV_RE = re.compile(r"\\end\{(theorem|lemma|definition|proposition|corollary|sublemma)\}")
+
+
+def env_title(line: str, pos: int) -> str:
+    r"""The ``[...]`` title of a blueprint environment whose ``\begin`` ends at ``pos``.
+
+    A plain ``\[([^\]]*)\]`` stops at the first ``]``, which truncates every title that
+    holds a bracket: ``[{The $\mathrm{AC}^0[p]$ gate set}]`` arrived as
+    ``{The $\mathrm{AC}^0[p`` -- an unbalanced brace and an unclosed ``$`` that then
+    broke math rendering for the whole record downstream. Authors already guard such
+    titles with the braces LaTeX itself needs, so track brace depth, ignore any ``]``
+    sitting inside a group, and peel the guard back off.
+    """
+    if pos >= len(line) or line[pos] != "[":
+        return ""
+    depth = 0
+    i = pos + 1
+    while i < len(line):
+        c = line[i]
+        if c == "\\":               # an escaped character never delimits
+            i += 2
+            continue
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+        elif c == "]" and depth <= 0:
+            return _unguard(line[pos + 1:i].strip())
+        i += 1
+    return ""                       # unterminated on this line: no title, as before
+
+
+def _unguard(title: str) -> str:
+    """Drop the outer brace group, but only when it wraps the whole title."""
+    if not (title.startswith("{") and title.endswith("}")):
+        return title
+    depth = 0
+    for ch in title[:-1]:
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return title        # {a} b: the group closes early, keep as is
+    return title[1:-1]
+
+
 DROP_LINE_RE = re.compile(
     r"^\s*\\(leanok|label|uses|lean|difficulty|proofsource|statementsource|proofstep)\b(.*)$"
 )
@@ -162,7 +208,7 @@ def parse_blueprint(chapter_dir: Path = CHAPTER_DIR) -> dict[str, dict]:
                 i += 1
                 continue
             env = mb.group(1)
-            title = mb.group(2) or ""
+            title = env_title(lines[i], mb.end())
             bindings = []
             body = []
             uses_raw = ""

@@ -11,14 +11,71 @@
       displayMath: [['$$', '$$'], ['\\[', '\\]']],
       processEscapes: true,
       packages: {'[+]': ['ams', 'newcommand', 'configmacros']},
+      // Every macro the rendered prose can contain. MathJax does not autoload the
+      // `physics` package, so anything below that is left undefined renders as red
+      // \macro text in the page. Two groups:
+      //
+      //   1. the blueprint's own macros (blueprint/src/preamble/common.tex and
+      //      blueprint/src/util.sty) — keep these in step with those files;
+      //   2. macros belonging to cited source documents, whose preambles the
+      //      Markdown under blueprint/src/references/ does not carry over, so the
+      //      quoted block text arrives still using them.
       macros: {
-        bbr: '{\\mathbb{R}}',
-        bbn: '{\\mathbb{N}}',
-        bbz: '{\\mathbb{Z}}',
-        bbq: '{\\mathbb{Q}}',
+        // --- blueprint: letters -------------------------------------------------
         bbc: '{\\mathbb{C}}',
-        E: '{\\mathbb{E}}',
-        Pr: '{\\mathbb{P}}'
+        bbe: '{\\mathbb{E}}',
+        bbf: '{\\mathbb{F}}',
+        bbn: '{\\mathbb{N}}',
+        bbq: '{\\mathbb{Q}}',
+        bbr: '{\\mathbb{R}}',
+        bbt: '{\\mathbb{T}}',
+        bbz: '{\\mathbb{Z}}',
+        bbH: '{\\mathbb{H}}',
+        bbI: '{\\mathbb{I}}',
+        bbP: '{\\mathbb{P}}',
+        C:   '{\\mathbb{C}}',
+        E:   '{\\mathbb{E}}',
+        F:   '{\\mathbb{F}}',
+        N:   '{\\mathbb{N}}',
+        Pr:  '{\\mathbb{P}}',
+        // --- blueprint: paired delimiters and operators --------------------------
+        abs:   ['{\\left\\lvert #1\\right\\rvert}', 1],
+        Abs:   ['{\\lvert #1 \\rvert}', 1],
+        norm:  ['{\\lVert #1\\rVert}', 1],
+        inn:   ['{\\left\\langle #1 \\right\\rangle}', 1],
+        brac:  ['{\\left( #1\\right)}', 1],
+        ceil:  ['{\\lceil #1\\rceil}', 1],
+        floor: ['{\\lfloor #1\\rfloor}', 1],
+        ind:   ['{1_{#1}}', 1],
+        tup:   ['{\\vec{#1}}', 1],
+        lo:    ['{\\mathcal{L}{#1}}', 1],
+        dist:  '{\\operatorname{dist}}',
+        // --- arXiv.2308.15403 (3-query LDC lower bounds) -------------------------
+        // \Bits is the {0,1} alphabet, \Fits the {-1,1} one the normal-form
+        // reduction moves to (its decoding predicate is a product of codeword bits).
+        Bits: '{\\{0,1\\}}',
+        Fits: '{\\{-1,1\\}}',
+        cC:   '{\\mathcal{C}}',
+        cH:   '{\\mathcal{H}}',
+        eps:  '{\\varepsilon}',
+        val:  '{\\operatorname{val}}',
+        Dec:  '{\\mathsf{Dec}}',
+        // --- arXiv.1501.01571 (Tropp, matrix concentration) ----------------------
+        // \adj is Tropp's conjugate transpose B^*, not util.sty's adjugate operator
+        // (which the prose never uses); \coll is the Hermitian-dilation script font.
+        mtx:    ['{\\mathbf{#1}}', 1],
+        coll:   ['{\\mathcal{#1}}', 1],
+        Prob:   ['{\\mathbb{P}\\left\\{#1\\right\\}}', 1],
+        Expect: '{\\mathbb{E}}',
+        trace:  '{\\operatorname{tr}}',
+        adj:    '{*}',
+        // --- quant-ph/9705052 (quantum codes) -----------------------------------
+        bra: ['{\\left\\langle #1\\right\\rvert}', 1],
+        ket: ['{\\left\\lvert #1\\right\\rangle}', 1],
+        // --- odds and ends ------------------------------------------------------
+        restriction: '{\\upharpoonright}',
+        bigsqcap:    '{\\mathop{\\Large\\sqcap}}',
+        textbullet:  '{\\bullet}'
       }
     },
     svg: { fontCache: 'global' },
@@ -632,15 +689,74 @@ function renderList() {
   }
 }
 
+// Sidebar rows are plain text — MathJax never runs on them — so a title's LaTeX
+// has to be flattened by hand. Without this table \le, \varepsilon and friends
+// were deleted outright, turning "$k \le n$" into the unreadable "k n".
+const TEX_SYMBOL = {
+  alpha: "α", beta: "β", gamma: "γ", Gamma: "Γ", delta: "δ", Delta: "Δ",
+  epsilon: "ϵ", varepsilon: "ε", eps: "ε", zeta: "ζ", eta: "η", theta: "θ",
+  Theta: "Θ", vartheta: "ϑ", iota: "ι", kappa: "κ", lambda: "λ", Lambda: "Λ",
+  mu: "μ", nu: "ν", xi: "ξ", Xi: "Ξ", pi: "π", Pi: "Π", rho: "ρ", varrho: "ϱ",
+  sigma: "σ", Sigma: "Σ", tau: "τ", upsilon: "υ", phi: "ϕ", varphi: "φ",
+  Phi: "Φ", chi: "χ", psi: "ψ", Psi: "Ψ", omega: "ω", Omega: "Ω",
+  bbr: "ℝ", bbn: "ℕ", bbz: "ℤ", bbq: "ℚ", bbc: "ℂ", bbf: "𝔽", bbt: "𝕋",
+  N: "ℕ", C: "ℂ", F: "𝔽", E: "𝔼", Expect: "𝔼", Pr: "ℙ", Prob: "ℙ",
+  cC: "𝒞", cH: "ℋ", ell: "ℓ", emptyset: "∅", varnothing: "∅", infty: "∞",
+  le: "≤", leq: "≤", ge: "≥", geq: "≥", ne: "≠", neq: "≠", equiv: "≡",
+  approx: "≈", simeq: "≃", cong: "≅", sim: "∼", ll: "≪", gg: "≫",
+  pm: "±", mp: "∓", times: "×", cdot: "·", div: "÷", ast: "∗", star: "⋆",
+  oplus: "⊕", otimes: "⊗", odot: "⊙", circ: "∘", bullet: "•", dagger: "†",
+  to: "→", rightarrow: "→", longrightarrow: "⟶", leftarrow: "←",
+  leftrightarrow: "↔", longleftrightarrow: "⟷", mapsto: "↦",
+  hookrightarrow: "↪", gets: "←", Rightarrow: "⇒", Longrightarrow: "⟹",
+  Leftarrow: "⇐", Leftrightarrow: "⇔", xrightarrow: "→",
+  in: "∈", notin: "∉", ni: "∋", subset: "⊂", subseteq: "⊆", supset: "⊃",
+  supseteq: "⊇", sqsubseteq: "⊑", preceq: "⪯", cup: "∪", cap: "∩",
+  bigcup: "⋃", bigcap: "⋂", sqcup: "⊔", sqcap: "⊓", bigsqcup: "⨆",
+  bigsqcap: "⨅", setminus: "∖", triangle: "△", triangleright: "▷",
+  land: "∧", lor: "∨", wedge: "∧", vee: "∨", bigwedge: "⋀", bigvee: "⋁",
+  lnot: "¬", neg: "¬", forall: "∀", exists: "∃", iff: "⟺", perp: "⊥",
+  top: "⊤", bot: "⊥", square: "□", partial: "∂", nabla: "∇",
+  sum: "∑", prod: "∏", bigoplus: "⨁", bigotimes: "⨂", int: "∫", sqrt: "√",
+  lceil: "⌈", rceil: "⌉", lfloor: "⌊", rfloor: "⌋", langle: "⟨", rangle: "⟩",
+  lvert: "|", rvert: "|", lVert: "‖", rVert: "‖", mid: "|", vert: "|",
+  ldots: "…", dots: "…", cdots: "⋯", quad: " ", qquad: "  ",
+  restriction: "↾"
+};
+
+// One-argument wrappers: keep the argument, restore the delimiters.
+const TEX_DELIM = {
+  abs: ["|", "|"], Abs: ["|", "|"], norm: ["‖", "‖"], inn: ["⟨", "⟩"],
+  inner: ["⟨", "⟩"], brac: ["(", ")"], ceil: ["⌈", "⌉"], floor: ["⌊", "⌋"],
+  genset: ["⟨", "⟩"]
+};
+
+// Operator names that read as themselves once the backslash is gone.
+const TEX_WORD = new Set([
+  "log", "ln", "exp", "min", "max", "sup", "inf", "lim", "limsup", "liminf",
+  "dim", "deg", "det", "gcd", "ker", "dist", "val", "trace", "bmod", "pmod",
+  "sin", "cos", "tan", "arg"
+]);
+
 function plainTitle(s) {
   // Keep the CONTENT of $...$ math (deleting it turned e.g.
   // "Expected product for the $bc$--$ca$ pair" into "… the -- pair",
   // making distinct theorems indistinguishable in the sidebar).
-  return String(s)
+  const flat = String(s)
     .replace(/\$([^$]*)\$/g, "$1")
     .replace(/\\_/g, "_")
-    .replace(/\\[a-zA-Z]+/g, " ")
+    // Park escaped braces out of reach of the group-stripping pass at the end,
+    // so "$S \triangle \{i\}$" keeps its set braces.
+    .replace(/\\\{/g, "\uE000").replace(/\\\}/g, "\uE001")
+    .replace(/\\([A-Za-z]+)\{([^{}]*)\}/g, (m, name, body) =>
+      TEX_DELIM[name] ? TEX_DELIM[name][0] + body + TEX_DELIM[name][1] : m)
+    .replace(/\\([A-Za-z]+)/g, (m, name) =>
+      Object.prototype.hasOwnProperty.call(TEX_SYMBOL, name) ? TEX_SYMBOL[name]
+        : TEX_WORD.has(name) ? name
+        : " ");
+  return flat
     .replace(/[{}]/g, "")
+    .replace(/\uE000/g, "{").replace(/\uE001/g, "}")
     .replace(/---/g, "—")
     .replace(/--/g, "–")
     .replace(/\s+/g, " ")
@@ -661,8 +777,11 @@ function latexTextToHtml(src) {
   if (!src) return "";
   const math = [];
   const stash = (m) => { const i = math.length; math.push(m); return "\u0000MATH" + i + "\u0000"; };
+  // \ensuremath{X} is math wearing a text-mode coat; unwrap it before the stash pass
+  // below, or its body leaks out as literal "\emptyset"-style text.
+  const src2 = String(src).replace(/\\ensuremath\{([^{}]*)\}/g, (_, body) => "$" + body + "$");
   // Order matters: longest / most specific delimiters first.
-  let s = String(src)
+  let s = src2
     .replace(/\$\$[\s\S]*?\$\$/g, stash)
     .replace(/\\\[[\s\S]*?\\\]/g, stash)
     .replace(/\\\([\s\S]*?\\\)/g, stash)
@@ -680,17 +799,50 @@ function latexTextToHtml(src) {
   s = s.replace(/\\begin\{quote\}([\s\S]*?)\\end\{quote\}/g, (_, body) => "<blockquote>" + body + "</blockquote>");
   // Fallback: strip any remaining \begin{X}...\end{X} but keep contents.
   s = s.replace(/\\begin\{[^}]+\}([\s\S]*?)\\end\{[^}]+\}/g, "$1");
+  // \item also turns up on its own, outside any list environment; render it as the
+  // bullet it is rather than leaving the control sequence in the prose.
+  s = s.replace(/\s*\\item\s+/g, "<br>&bull; ");
 
-  // Text commands (repeat a couple of times to handle simple nesting).
+  // Text commands (repeat a couple of times to handle simple nesting). ARG also
+  // accepts escaped braces, so \texttt{Finset.univ \textbackslash\{\} X} is matched
+  // rather than left to leak out as raw LaTeX.
+  const ATOM = "(?:[^{}\\\\]|\\\\[\\s\\S])";
+  const ARG = "\\{((?:" + ATOM + "|\\{" + ATOM + "*\\})*)\\}";
+  const cmd = (name) => new RegExp("\\\\" + name + ARG, "g");
   for (let pass = 0; pass < 2; pass++) {
     s = s
-      .replace(/\\emph\{([^{}]*)\}/g, "<em>$1</em>")
-      .replace(/\\textbf\{([^{}]*)\}/g, "<strong>$1</strong>")
-      .replace(/\\textit\{([^{}]*)\}/g, "<em>$1</em>")
-      .replace(/\\texttt\{([^{}]*)\}/g, "<code>$1</code>")
-      .replace(/\\textsc\{([^{}]*)\}/g, "<span style=\"font-variant:small-caps\">$1</span>")
-      .replace(/\\underline\{([^{}]*)\}/g, "<u>$1</u>");
+      .replace(cmd("emph"), "<em>$1</em>")
+      .replace(cmd("textbf"), "<strong>$1</strong>")
+      .replace(cmd("textit"), "<em>$1</em>")
+      .replace(cmd("texttt"), "<code>$1</code>")
+      .replace(cmd("textsc"), "<span style=\"font-variant:small-caps\">$1</span>")
+      .replace(cmd("underline"), "<u>$1</u>");
   }
+
+  // Accents, as combining marks folded back into a single code point: \H{o} is the
+  // double acute in Erd\H{o}s. The empty-argument form (\^{}, \~{}) is LaTeX's way of
+  // writing the bare character, so it yields that instead of a stray mark. Letter
+  // accents demand their braces -- \v alone would swallow the "e" of \vec.
+  const ACCENT = {
+    '"': "̈", "'": "́", "`": "̀", "^": "̂", "~": "̃",
+    "=": "̄", ".": "̇", H: "̋", v: "̌", u: "̆",
+    c: "̧", k: "̨", r: "̊"
+  };
+  const accent = (mark, body, raw) =>
+    body ? (body + mark).normalize("NFC") : raw;
+  s = s
+    .replace(/\\(["'`^~=.])(?:\{([^{}]*)\}|(\w))/g,
+      (_, a, braced, bare) => accent(ACCENT[a], braced !== undefined ? braced : bare, a))
+    .replace(/\\([HvuckrH])\{([^{}]*)\}/g,
+      (_, a, body) => accent(ACCENT[a], body, ""));
+
+  // Blueprint-only markup: cross-references and the metadata macros carry no meaning
+  // without the blueprint's numbering, so drop them (with any tie that binds them to
+  // the preceding word) rather than printing the raw label.
+  s = s
+    .replace(/(?:~|\s)*\\(?:ref|eqref|cref|Cref|autoref|pageref)\{[^{}]*\}/g, "")
+    .replace(/\\(?:uses|difficulty|leanok|lean|alsoIn)\b(?:\{[^{}]*\})*/g, "")
+    .replace(/\\(?:proofsource|statementsource)\{[^{}]*\}\{[^{}]*\}/g, "");
 
   // A few standalone commands and escapes.
   s = s
@@ -698,6 +850,13 @@ function latexTextToHtml(src) {
     .replace(/\\&/g, "&amp;")
     .replace(/\\#/g, "#")
     .replace(/\\_/g, "_")
+    .replace(/\\\{/g, "{")
+    .replace(/\\\}/g, "}")
+    .replace(/\\S\{\}|\\S\b/g, "&sect;")
+    .replace(/\\(?:dots|ldots)\b/g, "&hellip;")
+    .replace(/\\textbackslash\{\}|\\textbackslash\b/g, "&#92;")
+    .replace(/\\textasciitilde\{\}|\\textasciitilde\b/g, "&#126;")
+    .replace(/\\textbullet\{\}|\\textbullet\b/g, "&bull;")
     .replace(/~/g, "&nbsp;")
     .replace(/\\\\/g, "<br>")
     .replace(/\\par\b/g, "<br><br>")
@@ -835,7 +994,7 @@ function detailHtml(it) {
 
   const defsHtml = defs.map(d => (
     '<div class="def">' +
-      '<div class="def-title">' + escapeHtml(d.title || "") + '</div>' +
+      '<div class="def-title">' + latexTextToHtml(d.title || "") + '</div>' +
       '<div class="def-id">' + escapeHtml(d.id || "") + '</div>' +
       '<div class="def-body">' + latexTextToHtml(d.informal || "") + '</div>' +
     '</div>'
@@ -888,7 +1047,7 @@ function renderDetail(container, it) {
     });
   }
   typesetMath([...container.querySelectorAll(
-    ".informal, .def-body, .note-block-text, .note-informal"
+    ".informal, .def-title, .def-body, .note-block-text, .note-informal"
   )]);
 }
 
