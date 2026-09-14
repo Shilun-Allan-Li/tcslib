@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.children_maxFanin_le",
+ "key": "e5321b37bfd17f8a",
+ "kind": "lemma",
+ "title": "Children inherit the fanin bound",
+ "statement": "Let $g$ be an internal gate of a Boolean circuit on $n$ variables — either an AND gate or an OR gate — applied to a list of child circuits, and suppose its maximum fanin is at most $w$. Then every child circuit occurring in that list also has maximum fanin at most $w$.",
+ "hypotheses_covered": [
+  "the circuit is an internal gate (AND or OR) applied to a list of children",
+  "c is one of those children",
+  "the gate's maximum fanin is at most w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a node circuit $\\mathrm{node}\\,\\mathit{isAnd}\\,cs$ has maximum fan-in at most $w$, then\nevery child $c \\in cs$ has maximum fan-in at most $w$."
+}

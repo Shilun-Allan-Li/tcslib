@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_rho_ne_none_of_mem",
+ "key": "b71015ca41e60b2b",
+ "kind": "lemma",
+ "title": "A clause literal's variable is fixed in the output restriction",
+ "statement": "Let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, let a list of literals be given (each paired with its position index inside its clause), and let a decision-tree path be given as a list of variable–direction pairs, with at least as many path entries as literals in the list. Process the literals against the path starting from $\\rho_0$ and $\\sigma$, and let $\\rho_0'$ be the updated first restriction that this returns. If some literal in the list has underlying variable $v$, then $v$ is not free in $\\rho_0'$; that is, $\\rho_0'(v)$ is a fixed Boolean value rather than the free marker.",
+ "hypotheses_covered": [
+  "some literal in the list has underlying variable $v$",
+  "at least as many path entries as literals in the list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If some input pair $p$ has variable $v$ and there are at least as many path entries as\nliterals, then the $\\rho_0$ output of \\texttt{SwitchingLemma2.processClauseLits} at $v$ is\nnot $\\mathrm{none}$."
+}

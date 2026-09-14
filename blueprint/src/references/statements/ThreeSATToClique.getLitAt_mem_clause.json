@@ -1,0 +1,17 @@
+{
+ "lean_name": "ThreeSATToClique.getLitAt_mem_clause",
+ "key": "b15385d5121d60c1",
+ "kind": "lemma",
+ "title": "Vertex literal lies among its clause's three literals",
+ "statement": "Let $f$ be a 3-CNF formula, let $v$ be a vertex of the conflict graph of $f$, and let $i$ be a clause index of $f$ such that the clause component of $v$ equals $i$. Then the literal named by $v$ is one of the three literals $l_1, l_2, l_3$ of the clause $f[i]$.",
+ "hypotheses_covered": [
+  "f is a 3-CNF formula",
+  "v is a vertex of the conflict graph of f",
+  "i is a clause index of f",
+  "the clause index of v equals i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $v$ is a clique vertex with $v.c\\_idx = i$, then the literal\n$\\mathtt{getLitAt}\\,f\\,v$ is one of the three literals $l_1$, $l_2$, $l_3$ of\nclause $f[i]$."
+}

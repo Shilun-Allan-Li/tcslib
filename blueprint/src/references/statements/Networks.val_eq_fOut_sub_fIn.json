@@ -1,0 +1,18 @@
+{
+ "lean_name": "Networks.val_eq_fOut_sub_fIn",
+ "key": "8050b027674e9a23",
+ "kind": "theorem",
+ "title": "Value of a flow across an arbitrary cut",
+ "statement": "Let $N$ be a network with source set $X$, a single distinguished source vertex $x$, and a single distinguished sink vertex $y$; let $f$ be a flow in $N$; and let $S$ be a set of vertices forming a cut, so that $x \\in S$ and $y \\notin S$. Then the value $\\operatorname{val} f = f^{+}(X) - f^{-}(X)$ of the flow is equal to the resultant flow out of $S$:\n\\[\n\\operatorname{val} f = f^{+}(S) - f^{-}(S).\n\\]",
+ "hypotheses_covered": [
+  "N is a network with a single distinguished source x and sink y",
+  "f is a flow in N",
+  "S is a cut of N: x in S and y not in S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "\\emph{For any flow \\texttt{f} and any cut \\texttt{(S, $\\bar{S}$)} in \\texttt{N},\n\\texttt{val f = f$^{+}$(S) - f$^{-}$(S)}.}"
+}

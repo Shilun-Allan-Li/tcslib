@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint",
+ "key": "c4bbc4ee5baad370",
+ "kind": "lemma",
+ "title": "Pairwise disjointness of the collision pieces",
+ "statement": "Fix a type $\\alpha$, a natural number $k$, and two elements $x, y : \\alpha$. For each value $a \\in \\{0, \\dots, k-1\\}$, let $C_a$ denote the set of hash functions $h : \\alpha \\to \\{0, \\dots, k-1\\}$ with $h(x) = a$ and $h(y) = a$. Then the family $(C_a)_a$ is pairwise disjoint: whenever $a \\ne b$, the sets $C_a$ and $C_b$ have empty intersection.",
+ "hypotheses_covered": [
+  "a type α",
+  "a natural number k",
+  "two elements x, y : α",
+  "conclusion: pairwise disjointness of the collision pieces over a : Fin k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $x, y : \\alpha$ and $k$, the sets $\\texttt{collisionPiece}\\,k\\,x\\,y\\,a$ for\n$a : \\mathrm{Fin}\\,k$ are pairwise disjoint: if $a \\ne b$ then\n$\\texttt{collisionPiece}\\,k\\,x\\,y\\,a \\cap \\texttt{collisionPiece}\\,k\\,x\\,y\\,b = \\emptyset$."
+}

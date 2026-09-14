@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.flipAt_flipAt",
+ "key": "0c62db3da1426fac",
+ "kind": "lemma",
+ "title": "Single-coordinate flip is an involution",
+ "statement": "Fix $n \\in \\bbn$, a coordinate $i \\in \\mathrm{Fin}\\,n$, and an $n$-bit Boolean input $x \\colon \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$. Writing $\\mathrm{flip}_i$ for the operation that negates the $i$-th coordinate of an input and leaves all other coordinates unchanged, applying it twice recovers the original input:\n\\[\n\\mathrm{flip}_i\\bigl(\\mathrm{flip}_i(x)\\bigr) = x.\n\\]",
+ "hypotheses_covered": [
+  "n : ℕ",
+  "coordinate i : Fin n",
+  "Boolean input x : BoolInput n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For $i : \\mathrm{Fin}\\,n$ and $x : \\texttt{BoolInput}(n)$,\n$\\texttt{flipAt}\\,i\\,(\\texttt{flipAt}\\,i\\,x) = x$.\nThat is, applying $\\texttt{flipAt}\\,i$ twice recovers the original input."
+}

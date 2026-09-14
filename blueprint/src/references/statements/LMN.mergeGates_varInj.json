@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.mergeGates_varInj",
+ "key": "2028c0e288306972",
+ "kind": "lemma",
+ "title": "Variable-injectivity is preserved by merging gate arrays",
+ "statement": "Let $g_1$ and $g_2$ be two arrays of DNF formulas over $n$ variables, indexed respectively by $\\{0,\\dots,m_1-1\\}$ and $\\{0,\\dots,m_2-1\\}$, and let $g$ be their merge: the array indexed by $\\{0,\\dots,m_1+m_2-1\\}$ that agrees with $g_1$ on the first $m_1$ indices and with $g_2$, shifted down by $m_1$, on the remaining $m_2$. Suppose that in every formula of $g_1$ and in every formula of $g_2$, any two literals lying in one and the same term whose variables coincide are in fact the identical literal. Then the merged array $g$ inherits this property: for every index $k$ and any two literals occurring in a common term of the formula $g(k)$ that share the same variable, the two literals are equal.",
+ "hypotheses_covered": [
+  "g_1 is an array of DNF formulas over n variables indexed by 0..m_1-1",
+  "g_2 is an array of DNF formulas over n variables indexed by 0..m_2-1",
+  "within each formula of g_1, two literals in a common term with equal variable are equal",
+  "within each formula of g_2, two literals in a common term with equal variable are equal",
+  "the conclusion holds at an arbitrary index k of the merged array"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If, in each DNF gate of $g_1$ and of $g_2$, any two literals of a common term that share\nthe same variable are equal, then the same holds for every gate of the merged array\n$\\mathrm{mergeGates}\\,g_1\\,g_2$."
+}

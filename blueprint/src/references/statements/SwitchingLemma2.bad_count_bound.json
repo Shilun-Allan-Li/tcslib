@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.bad_count_bound",
+ "key": "e36b6a73344b5642",
+ "kind": "lemma",
+ "title": "Counting bound for bad restrictions of a DNF",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables in which no two literals of the same term share a variable and no term lists the same literal twice, and suppose every term of $f$ has at most $w$ literals. Fix natural numbers $d \\le s$. Then the number of restrictions of the $n$ variables that leave exactly $s$ variables free and are bad for $f$ at depth $d$ — that is, for which the restricted function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth strictly greater than $d$ — is at most\n\\[\n\\binom{n}{\\,s-d\\,}\\, 2^{\\,n-(s-d)}\\, (4w)^{d}.\n\\]",
+ "hypotheses_covered": [
+  "every term of f has at most w literals (DNF width ≤ w)",
+  "d ≤ s",
+  "within each term, two literals with the same variable are equal",
+  "each term has no duplicate literals",
+  "ρ leaves exactly s variables free",
+  "ρ is bad for f at depth d (restricted function has decision-tree depth > d)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $d \\leq s$, the number of bad $s$-restrictions is at most\n$\\binom{n}{s-d}\\,2^{\\,n-(s-d)}\\,(4w)^d$: every bad $s$-restriction is mapped by\n$\\mathrm{razborovEncode}$ to a $\\gamma$ with exactly $s-d$ free variables, each\nfiber of this map has size at most $(4w)^d$, and there are\n$\\binom{n}{s-d}\\,2^{\\,n-(s-d)}$ possible values of $\\gamma$."
+}

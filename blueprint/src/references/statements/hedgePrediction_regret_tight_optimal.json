@@ -1,0 +1,20 @@
+{
+ "lean_name": "hedgePrediction_regret_tight_optimal",
+ "key": "4d134fc530e53770",
+ "kind": "theorem",
+ "title": "Optimal-rate regret bound for Hedge with convex prediction",
+ "statement": "Consider prediction with expert advice using $N \\ge 2$ experts over $T \\ge 1$ rounds, where predictions take values in a convex set $S \\subseteq \\bbr$. Let $\\ell : \\bbr \\times \\Omega \\to \\bbr$ be a loss function, let $p_t(i) \\in S$ be the prediction of expert $i$ at round $t$, and let $o_t \\in \\Omega$ be the outcome at round $t$; assume that for every round $t$ the map $x \\mapsto \\ell(x, o_t)$ is convex on $S$, and that all induced losses $\\ell(p_t(i), o_t)$ lie in $[0,1]$. Run the Hedge algorithm with learning rate $\\eta_{\\mathrm{tight}} = \\sqrt{8\\ln N / T}$, predicting at each round the Hedge weighted average $\\widehat{x}_t = \\sum_i p_t(i)\\, w_{t}(i) \\in S$, where the weights $w_t$ form the Hedge distribution built from the induced losses through the first $t$ rounds. Then the cumulative loss of these predictions exceeds the best expert's loss in hindsight by at most $\\sqrt{\\tfrac{T}{2}\\ln N}$:\n\\[\n  \\sum_{t} \\ell\\bigl(\\widehat{x}_t,\\, o_t\\bigr) \\;-\\; \\min_{i}\\, \\sum_{t} \\ell\\bigl(p_t(i),\\, o_t\\bigr)\n  \\;\\le\\; \\sqrt{\\tfrac{T}{2}\\ln N}.\n\\]",
+ "hypotheses_covered": [
+  "N > 1 (at least two experts)",
+  "T > 0 (at least one round)",
+  "S is a convex subset of the reals",
+  "every expert prediction lies in S",
+  "for each round the loss x ↦ ℓ(x, oₜ) is convex on S",
+  "the induced loss sequence is valid (all losses in [0,1])",
+  "the learning rate is η_tight = √(8 ln N / T)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same convexity hypotheses, with $T > 0$, $N > 1$, and the learning rate set\nto $\\eta^* = \\texttt{optimalEtaTight}\\,N\\,T$, the regret satisfies\n\\[\n  \\mathcal{L}^{\\mathrm{pred}}_T\n    - \\min_{i}\\,\\sum_{t} \\ell(p_t(i),\\, o_t)\n  \\;\\le\\;\n  \\sqrt{\\tfrac{T}{2}\\ln N}.\n\\]"
+}

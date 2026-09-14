@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.compression_and_of_cnfs",
+ "key": "8701a0b6c69d4e0a",
+ "kind": "theorem",
+ "title": "Closure of bounded-width CNFs under conjunction",
+ "statement": "Fix $n$ and a width bound $\\ell$, and let $f_1, \\dots, f_k$ be Boolean functions on $n$ variables, each mapping an assignment $x \\in \\{0,1\\}^n$ to a truth value. Suppose that every $f_i$ is computed by some CNF formula of width at most $\\ell$, that is, a conjunction of clauses in which each clause has at most $\\ell$ literals. Then their conjunction $x \\mapsto \\bigwedge_{i=1}^{k} f_i(x)$ is also computed by a single CNF formula of width at most $\\ell$.",
+ "hypotheses_covered": [
+  "number of variables n",
+  "a width bound l",
+  "a list of Boolean functions on n variables (children)",
+  "each function is computed by some CNF of width at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let an AND gate have a list of children, each of which computes a function expressible\nby a CNF of width at most $\\ell$. Then the AND of all children is itself computed by a\nsingle CNF of width at most $\\ell$, namely the concatenation of the children's clause\nlists. This collapses the AND layer and the CNF layer into one."
+}

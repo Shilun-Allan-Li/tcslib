@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemmaCNF.switching_lemma_cnf",
+ "key": "4d525b968e5c6ab7",
+ "kind": "theorem",
+ "title": "Håstad's switching lemma for CNF formulas",
+ "statement": "Let $\\psi$ be a CNF formula on $n \\ge 1$ Boolean variables whose width is at most $w$, and suppose that within each clause no literal is repeated and any two literals on the same variable coincide, so that the literals of every clause lie on distinct variables. Let $s$ and $d$ be natural numbers with $5s \\le n$. For a restriction $\\rho$ leaving some variables free and fixing the rest, write $\\psi\\!\\restriction_\\rho$ for the Boolean function $x \\mapsto \\psi\\bigl(\\rho.\\mathrm{extend}\\,x\\bigr)$ obtained by evaluating $\\psi$ with the fixed coordinates set by $\\rho$ and the free coordinates supplied by $x$, and let $\\mathrm{depth}(\\psi\\!\\restriction_\\rho)$ denote its decision-tree depth, the least depth of a decision tree computing it. Then, counting restrictions that leave exactly $s$ variables free and under which the restricted function still requires depth greater than $d$,\n\\[\n  \\bigl|\\{\\rho : \\rho \\text{ leaves exactly } s \\text{ variables free and } \\mathrm{depth}(\\psi\\!\\restriction_\\rho) > d\\}\\bigr| \\cdot n^{d}\n  \\;\\le\\; \\binom{n}{s}\\, 2^{\\,n-s}\\,(10\\,s\\,w)^{d}.\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "ψ is a CNF formula on n variables",
+  "width of ψ at most w",
+  "5s ≤ n",
+  "within each clause, literals with equal variable are identical",
+  "each clause has no repeated literal",
+  "counting restrictions with exactly s free variables and restricted decision-tree depth > d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a CNF $\\psi$ of width at most $w$ on $n$ variables with $5s \\leq n$ and clauses\nfree of duplicate or conflicting variables, the number of $s$-restrictions $\\rho$\nunder which $\\psi|_\\rho$ has decision-tree depth $> d$ satisfies\n\\[\n  \\abs{\\{\\rho : \\mathrm{IsRestriction}\\,s\\,\\rho \\wedge \\mathrm{IsBadRestriction}\\,\\psi.\\mathrm{eval}\\,d\\,\\rho\\}} \\cdot n^d\n  \\;\\leq\\; \\mathrm{numSRestrictions}\\,n\\,s \\cdot (10\\,s\\,w)^d .\n\\]"
+}

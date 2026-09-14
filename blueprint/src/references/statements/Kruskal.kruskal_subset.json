@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.kruskal_subset",
+ "key": "cedc4bbe3b795afb",
+ "kind": "lemma",
+ "title": "Kruskal's algorithm returns a subset of its input edges",
+ "statement": "Fix $n \\in \\bbn$ and a list of weighted edges over $n$ vertices. Every edge returned by running Kruskal's algorithm on this list occurs in the original list: if $e$ belongs to the output of $\\mathtt{kruskal}\\,n\\,\\mathit{edges}$, then $e$ belongs to $\\mathit{edges}$.",
+ "hypotheses_covered": [
+  "number of vertices n : ℕ",
+  "a list of weighted edges over n vertices",
+  "e is a member of the output of kruskal n edges"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every edge $e$ returned by $\\mathtt{kruskal}\\,n\\,\\mathit{edges}$ was already\npresent in $\\mathit{edges}$: if $e \\in \\mathtt{kruskal}\\,n\\,\\mathit{edges}$\nthen $e \\in \\mathit{edges}$."
+}

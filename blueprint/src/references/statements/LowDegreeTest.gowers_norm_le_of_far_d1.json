@@ -1,0 +1,17 @@
+{
+ "lean_name": "LowDegreeTest.gowers_norm_le_of_far_d1",
+ "key": "d163a342dfcc9555",
+ "kind": "lemma",
+ "title": "Gowers $U^2$ norm bound for functions far from low degree",
+ "statement": "Let $d \\ge 1$ and let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function, and write $F = (-1)^f$ for its $\\pm 1$ lift. Suppose $f$ is $\\varepsilon$-far from degree $\\le d$: that is, $0 \\le \\varepsilon \\le 1$, and every Boolean function $g$ of degree $\\le d$ satisfies $\\dist(f,g) \\ge \\varepsilon$, where $\\dist(f,g) = \\Pr_{x}[f(x) \\ne g(x)]$ over a uniform $x \\in \\{0,1\\}^n$. Then the second Gowers uniformity norm of $F$ obeys\n\\[\n  \\|F\\|_{U^2}^{4} \\;\\le\\; 1 - 2\\varepsilon .\n\\]",
+ "hypotheses_covered": [
+  "degree parameter satisfies $d \\ge 1$",
+  "$f$ is a Boolean function $\\{0,1\\}^n \\to \\{0,1\\}$",
+  "$0 \\le \\varepsilon \\le 1$",
+  "$f$ is $\\varepsilon$-far from degree $\\le d$ (every degree-$\\le d$ Boolean function is at distance $\\ge \\varepsilon$ from $f$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $d \\ge 1$ and $f$ is $\\varepsilon$-far from degree $\\le d$, then\n$\\|(-1)^f\\|_{U^2}^4 \\le 1 - 2\\varepsilon$."
+}

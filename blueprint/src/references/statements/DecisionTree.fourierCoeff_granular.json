@@ -1,0 +1,17 @@
+{
+ "lean_name": "DecisionTree.fourierCoeff_granular",
+ "key": "395383c776398c1a",
+ "kind": "theorem",
+ "title": "Granularity of decision-tree Fourier coefficients",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, let $f\\colon\\{0,1\\}^n\\to\\{-1,1\\}$ be the $\\pm1$-valued function it computes under the sign encoding $\\mathrm{false}\\mapsto 1$, $\\mathrm{true}\\mapsto -1$, and let $d$ be the depth of $T$. Then for every set of coordinates $S\\subseteq[n]$ there is an integer $m$ such that the Fourier--Walsh coefficient of $f$ at frequency $S$ satisfies\n\\[\n  \\hat f(S) \\;=\\; \\frac{m}{2^{d}}.\n\\]\nThat is, every Fourier coefficient of $f$ is an integer multiple of $2^{-d}$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables",
+  "S is a subset of the coordinates {1,...,n}",
+  "f is the sign-encoded function computed by T",
+  "d is the depth of T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $S$ there is an integer $m$ with\n$\\widehat{T.\\mathrm{signEval}}(S) = m / 2^{T.\\mathrm{depth}}$: every Fourier coefficient is\nan integer multiple of $2^{-k}$, where $k$ is the tree depth."
+}

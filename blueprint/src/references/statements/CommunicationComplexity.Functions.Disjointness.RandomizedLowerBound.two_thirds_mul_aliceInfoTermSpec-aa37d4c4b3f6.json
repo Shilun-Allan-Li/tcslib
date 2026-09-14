@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_thirds_mul_aliceInfoTermSpecialYFalse_le_aliceInfoTerm",
+ "key": "4df55aca889ac917",
+ "kind": "theorem",
+ "title": "Alice-side reweighting of conditional mutual information",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$. Consider the hard distribution over samples conditioned on the generated input pair $(X, Y)$ being disjoint, and let $M$ be the transcript that $p$ produces on that input, $X_T$ Alice's bit at the special coordinate $T$, and $(T, X_{<T}, Y_{\\ge T})$ Alice's corrected special-coordinate conditioning variable. Writing $I_D(X_T : M \\mid T, X_{<T}, Y_{\\ge T})$ for the conditional mutual information under this disjoint-conditioned distribution, and $I_{D_0}(X_T : M \\mid T, X_{<T}, Y_{\\ge T})$ for the same conditional mutual information under the distribution obtained by further conditioning on Bob's special bit $Y_T$ being false, one has\n\\[\n\\tfrac{2}{3}\\, I_{D_0}(X_T : M \\mid T, X_{<T}, Y_{\\ge T}) \\;\\le\\; I_D(X_T : M \\mid T, X_{<T}, Y_{\\ge T}).\n\\]",
+ "hypotheses_covered": [
+  "$n$ a positive integer",
+  "$p$ a deterministic disjointness protocol of length $n$",
+  "conditional mutual information taken under the disjoint-conditioned hard distribution (aliceInfoTerm)",
+  "conditional mutual information taken under the same distribution further conditioned on $Y_T$ = false (aliceInfoTermSpecialYFalse)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice-side reweighting: $(2/3) I(X_{T} : M | T, X_{<} T, Y_{≥T}, Y_{T}=0, D) ≤  I(X_{T} : M | T, X_{<} T, Y_{≥T}, D)$.  The factor is $Pr[Y_{T}=false | D] = 2/3$, and the event $Y_{T}=false$ is determined by the conditioning variable because $Y_{≥T}$ contains $Y_{T}$."
+}

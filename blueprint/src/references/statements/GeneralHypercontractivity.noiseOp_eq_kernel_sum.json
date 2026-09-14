@@ -1,0 +1,17 @@
+{
+ "lean_name": "GeneralHypercontractivity.noiseOp_eq_kernel_sum",
+ "key": "39e4be1994d464d7",
+ "kind": "lemma",
+ "title": "Noise operator as a kernel sum",
+ "statement": "Fix $\\rho \\in \\bbr$, an arity $n$, and a point $x \\in \\{0,1\\}^n$. For every Boolean function $g : \\{0,1\\}^n \\to \\bbr$, the value of the noise operator $T_\\rho$ at $x$ equals the average of $g$ against the noise kernel, namely\n\\[\n  (T_\\rho g)(x) \\;=\\; \\sum_{y \\in \\{0,1\\}^n} K_\\rho(x,y)\\, g(y),\n\\]\nwhere $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$ is the noise kernel and $\\sigma$ is the $\\pm 1$ sign encoding of a bit.",
+ "hypotheses_covered": [
+  "ρ ∈ ℝ arbitrary",
+  "arity n",
+  "arbitrary Boolean function g : {0,1}^n → ℝ",
+  "fixed point x ∈ {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $g : \\mathrm{BoolCube}\\,n \\to \\bbr$ and every $x$,\n\\[\n  (T_\\rho g)(x) \\;=\\; \\sum_{y} K_\\rho(x,y)\\, g(y).\n\\]"
+}

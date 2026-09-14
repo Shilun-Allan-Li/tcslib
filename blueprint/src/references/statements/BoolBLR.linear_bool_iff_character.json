@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolBLR.linear_bool_iff_character",
+ "key": "d8fe372c8d25c1ce",
+ "kind": "lemma",
+ "title": "Linear Boolean functions are exactly the Walsh characters",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function. Then $f$ is linear — that is, $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y \\in \\{0,1\\}^n$, where $\\oplus$ denotes bitwise XOR — if and only if there exists a set $S \\subseteq [n]$ for which the $\\pm 1$ lift $x \\mapsto (-1)^{f(x)}$ coincides with the Walsh character $\\chi_S(x) = \\prod_{i \\in S}(-1)^{x_i}$.",
+ "hypotheses_covered": [
+  "f is a Boolean function {0,1}^n → {0,1}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A Boolean function $f : \\{0,1\\}^n \\to \\{0,1\\}$ is linear if and only if\nthere exists a set $S \\subseteq [n]$ such that the $\\pm 1$ lift\n$\\texttt{BoolBLR.lift\\_pm1}\\,f$ equals the Fourier character $\\chi_S$."
+}

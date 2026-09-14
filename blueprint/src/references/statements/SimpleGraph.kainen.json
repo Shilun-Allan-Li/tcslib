@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleGraph.kainen",
+ "key": "32d07cbeee2ece61",
+ "kind": "theorem",
+ "title": "Kainen's theorem on chromatic number and edge cuts",
+ "statement": "Let $G$ be a finite graph, let $X$ be a set of its vertices with complement $V \\setminus X$, and let $n$ be a natural number. Suppose that the subgraphs induced on $X$ and on $V \\setminus X$ are each $n$-colourable, and that the edge cut between the two parts contains fewer than $n$ edges — that is, the number of edges having one endpoint in $X$ and the other in $V \\setminus X$ is at most $n-1$. Then $G$ is itself $n$-colourable.",
+ "hypotheses_covered": [
+  "G is a finite graph",
+  "X is a set of vertices (complement V∖X)",
+  "the subgraph induced on X is n-colourable",
+  "the subgraph induced on the complement of X is n-colourable",
+  "the edge cut between X and its complement has at most n-1 edges (cut size + 1 ≤ n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{ (B\\&M \\S{}8.1, verbatim; P. C. Kainen).  }Let \\texttt{(X, Y)} be a\npartition of \\texttt{V} such that \\texttt{G[X]} and \\texttt{G[Y]} are both\n\\texttt{n}-colourable. Show that,\nif the edge cut \\texttt{[X, Y]} has at most \\texttt{n - 1} edges, then \\texttt{G} is\nalso\n\\texttt{n}-colourable.*"
+}

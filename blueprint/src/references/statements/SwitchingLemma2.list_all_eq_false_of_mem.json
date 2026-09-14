@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.list_all_eq_false_of_mem",
+ "key": "df8d79089ba91bc4",
+ "kind": "lemma",
+ "title": "A false witness makes a universal test fail",
+ "statement": "Let $l$ be a list of elements of a type $\\alpha$ and let $p \\colon \\alpha \\to \\{\\mathrm{true}, \\mathrm{false}\\}$ be a Boolean predicate. If some element $a$ of $l$ satisfies $p(a) = \\mathrm{false}$, then the test whether every entry of $l$ satisfies $p$ evaluates to $\\mathrm{false}$.",
+ "hypotheses_covered": [
+  "a is a member of the list l",
+  "p a = false for that element"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If some element $a$ of a list $l$ satisfies $p(a) = \\mathrm{false}$, then $l.\\mathrm{all}\\,p$\nis false."
+}

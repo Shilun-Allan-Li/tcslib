@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_factor_product_eq_telescope",
+ "key": "b78aea7b482aacc9",
+ "kind": "lemma",
+ "title": "Telescoping form of the surviving-trace factor product",
+ "statement": "Let $T$ be a surviving trace of length $\\text{steps}$, and for each index $i$ write $v_i$ for the number of vertices of the multigraph in its state at index $i$. Suppose that $\\text{steps} = n - 2$ and that the initial graph has $v_0 = n$ vertices. Then\n\\[\n  \\prod_{i=0}^{\\text{steps}-1} \\frac{v_i - 2}{v_i}\n  \\;=\\;\n  \\prod_{i=0}^{n-3} \\frac{n - i - 2}{n - i},\n\\]\nwhere each factor is taken as a real number, the difference $v_i - 2$ in the left-hand numerator being the truncated subtraction in $\\bbn$ and the right-hand differences being taken in $\\bbr$.",
+ "hypotheses_covered": [
+  "T is a surviving trace of length `steps`",
+  "steps = n - 2",
+  "the initial state's graph has vertex count n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a surviving trace has $\\text{steps} = n-2$ and starts from a graph with $n$ vertices,\nthen\n\\[\n  \\prod_{i<\\text{steps}} \\frac{n_i-2}{n_i}\n  \\;=\\; \\prod_{i<n-2} \\frac{n-i-2}{n-i}.\n\\]"
+}

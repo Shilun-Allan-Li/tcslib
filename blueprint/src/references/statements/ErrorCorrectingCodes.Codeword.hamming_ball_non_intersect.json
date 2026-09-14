@@ -1,0 +1,17 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect",
+ "key": "2cf5ab915fe3b4b9",
+ "kind": "lemma",
+ "title": "Disjointness of decoding balls around distinct codewords",
+ "statement": "Let $C$ be a code of length $n$ over a finite alphabet $\\alpha$ whose minimum Hamming distance is $d$, with $d > 0$; that is, some two distinct codewords of $C$ lie at Hamming distance exactly $d$, and no two distinct codewords lie at distance less than $d$. Then for any two distinct codewords $c_1, c_2 \\in C$, the Hamming balls of radius $\\lfloor (d-1)/2 \\rfloor$ centered at $c_1$ and $c_2$ are disjoint: no codeword $c'$ satisfies both $d(c', c_1) \\le \\lfloor (d-1)/2 \\rfloor$ and $d(c', c_2) \\le \\lfloor (d-1)/2 \\rfloor$.",
+ "hypotheses_covered": [
+  "$C$ is a code of length $n$ over finite alphabet $\\alpha$",
+  "$C$ has minimum Hamming distance $d$",
+  "$d > 0$",
+  "$c_1, c_2 \\in C$ with $c_1 \\ne c_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\\in C$,\n\\[\nB_{\\lfloor(d-1)/2\\rfloor}(c_1)\n\\;\\cap\\;\nB_{\\lfloor(d-1)/2\\rfloor}(c_2)\n\\;=\\;\\varnothing.\n\\]"
+}

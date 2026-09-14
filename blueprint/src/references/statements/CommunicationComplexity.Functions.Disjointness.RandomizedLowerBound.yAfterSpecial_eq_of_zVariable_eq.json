@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial_eq_of_zVariable_eq",
+ "key": "c6b06faba1c72498",
+ "kind": "theorem",
+ "title": "Recovering Bob's after-special bits from the Z-value",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$. Each hard-distribution sample $\\omega$ determines a value $Z(\\omega) = (M, T, X_{<T}, Y_{>T})$, whose four components are the transcript of $p$ on the input pair induced by $\\omega$, the special coordinate $T$, Alice's bits at the coordinates strictly below $T$ (and false elsewhere), and Bob's bits at the coordinates strictly above $T$ (and false elsewhere). If $z$ is an achievable value of $Z$ and $\\omega$ is any sample with $Z(\\omega) = z$, then the bit-string assigning to each coordinate $i$ Bob's bit at $i$ when $T < i$ and false otherwise coincides with the $Y_{>T}$-component of $z$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a disjointness protocol",
+  "z is an achievable Z-value",
+  "ω is a hard-distribution sample",
+  "Z(ω) equals z"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Equal $Z$ value fixes Bob's bits after the special coordinate."
+}

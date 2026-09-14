@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.payoffVsPure_nonneg",
+ "key": "47f602aad37b9645",
+ "kind": "lemma",
+ "title": "Nonnegativity of the mixed payoff against a pure column",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column actions, let $p$ be a mixed row strategy over the $M$ rows, and let $j$ be a pure column action. Then the expected payoff of $p$ against column $j$ is non-negative:\n\\[\n  \\sum_{i} p_i \\cdot A_{ij} \\;\\ge\\; 0.\n\\]",
+ "hypotheses_covered": [
+  "G is a finite zero-sum game with M rows and N columns (payoff entries in [0,1])",
+  "p is a mixed row strategy over the M rows (nonnegative weights summing to 1)",
+  "j is a pure column action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any game $G$, mixed row strategy $p$, and pure column action $j$,\n$\\mathrm{payoffVsPure}(G,p,j) \\geq 0$."
+}

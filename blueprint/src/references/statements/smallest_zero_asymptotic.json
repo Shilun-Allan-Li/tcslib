@@ -1,0 +1,20 @@
+{
+ "lean_name": "smallest_zero_asymptotic",
+ "key": "47ff7d40c68b0e0f",
+ "kind": "theorem",
+ "title": "Asymptotics of the smallest Krawtchouk zero",
+ "statement": "Fix $\\tau$ with $0 < \\tau < 1/2$, and let $(t_n)$ be a sequence of natural numbers with $t_n/n \\to \\tau$. Then there is a real sequence $(a_n)$ with the following three properties. First, for all sufficiently large $n$, the number $a_n$ lies strictly below every real zero of the Krawtchouk polynomial $K_{t_n}^{(n)}$; that is, $K_{t_n}^{(n)}(\\xi) = 0$ implies $a_n < \\xi$. Second, $a_n/n \\to \\tfrac12 - \\sqrt{\\tau(1-\\tau)}$. Third, for all sufficiently large $n$, the truncated Christoffel--Darboux kernel satisfies $\\Phi_{n,t_n}(a_n, x) \\le 0$ for every integer $x$ with $\\big\\lfloor (\\tfrac12 - \\sqrt{\\tau(1-\\tau)})\\,n \\big\\rfloor \\le x \\le n$.",
+ "hypotheses_covered": [
+  "0 < τ",
+  "τ < 1/2",
+  "t_n/n → τ as n → ∞",
+  "conclusion: existence of sequence a_n",
+  "eventually a_n strictly below every real zero of K_{t_n}^{(n)}",
+  "a_n/n → 1/2 − √(τ(1−τ))",
+  "eventually Φ_{n,t_n}(a_n,x) ≤ 0 for integers x with ⌊(1/2 − √(τ(1−τ)))n⌋ ≤ x ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $0 < \\tau < 1/2$ and let $t_n$ satisfy $t_n / n \\to \\tau$. Then there is a\nsequence $a_n$ such that, eventually in $n$, $a_n$ lies strictly below every real\nzero of $K_{t_n}^{(n)}$, with $a_n/n \\to \\tfrac12 - \\sqrt{\\tau(1-\\tau)}$, and such\nthat eventually $\\Phi_{n,t_n}(a_n,x) \\le 0$ for all integers $x$ with\n$\\lfloor (\\tfrac12 - \\sqrt{\\tau(1-\\tau)})n \\rfloor \\le x \\le n$."
+}

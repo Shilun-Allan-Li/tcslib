@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.exists_circuit_depth_reduction",
+ "key": "099ee79aefb1d4e3",
+ "kind": "lemma",
+ "title": "Depth reduction for circuits with CNF and DNF gates",
+ "statement": "Let $c$ be a Boolean circuit on $m$ inputs whose depth is at least $1$, and suppose each input coordinate $i$ is fed by a Boolean function $g_i \\colon \\{0,1\\}^n \\to \\{0,1\\}$, so that $c$ computes the map $x \\mapsto c\\bigl(g_1(x),\\dots,g_m(x)\\bigr)$. Fix a width bound $l \\ge 1$, and assume that every $g_i$ is computed both by a DNF formula of width at most $l$, each of whose terms contains at most one literal per variable, and by a CNF formula of width at most $l$. Then there exist a number of inputs $m'$, Boolean functions $g'_1,\\dots,g'_{m'}$ each presented as a DNF formula of width at most $l$ with the same restriction that no term contains two literals in the same variable, and a circuit $c'$ of depth at most $\\mathrm{depth}(c) - 1$, such that $c\\bigl(g_1(x),\\dots,g_m(x)\\bigr) = c'\\bigl(g'_1(x),\\dots,g'_{m'}(x)\\bigr)$ for every assignment $x$.",
+ "hypotheses_covered": [
+  "circuit c on m inputs",
+  "each input coordinate fed by a Boolean function g_i on n variables",
+  "width bound l with l ≥ 1",
+  "depth of c is at least 1",
+  "each g_i has a width-≤ l DNF representation whose terms have at most one literal per variable (and no repeated literals)",
+  "each g_i has a width-≤ l CNF representation"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a circuit $c$ of depth at least $1$ (with $0 < l$) over gates that each have a width-$l$\nDNF representation with duplicate-free, non-repeating-variable terms and a width-$l$ CNF\nrepresentation, there exist a fresh gate family $\\mathrm{gates}'$ of such width-$l$ DNFs and\na circuit $c'$ of depth at most $\\mathrm{depth}\\,c - 1$ computing the same function as $c$."
+}

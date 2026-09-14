@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measurePreserving_dualHardSample",
+ "key": "66c9b4efc317f9f0",
+ "kind": "theorem",
+ "title": "Dualization preserves the uniform hard-sample measure",
+ "statement": "Fix a positive integer $n$, and consider the finite space of hard samples, each consisting of a distinguished coordinate $T \\in \\{0, 1, \\dots, n-1\\}$, two bits $x_T, y_T$, and a function assigning to every coordinate one of the three disjointness states (neither, left-only, or right-only); equip this space with its uniform counting measure $\\mathrm{vol}$. The dualization map — which sends $T$ to its reversed index $n-1-T$, exchanges the bits $x_T$ and $y_T$, and replaces the state function by the one that, at each reversed coordinate, swaps the left-only and right-only states while fixing neither — is measure-preserving for $\\mathrm{vol}$: it is measurable, and the pushforward of $\\mathrm{vol}$ along it is again $\\mathrm{vol}$.",
+ "hypotheses_covered": [
+  "$n$ a positive integer",
+  "the uniform (counting) measure on the finite hard-sample space is used on both source and target",
+  "the map being considered is the dualization map (reverse coordinate, swap $x_T$/$y_T$, swap left/right states at reversed coordinates)",
+  "claim is measure-preserving: measurability together with pushforward of volume equal to volume"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Hard-sample duality preserves the uniform hard-sample measure."
+}

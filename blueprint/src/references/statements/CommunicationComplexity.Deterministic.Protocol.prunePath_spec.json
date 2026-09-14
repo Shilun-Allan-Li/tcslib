@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.prunePath_spec",
+ "key": "4e480b0311a22600",
+ "kind": "lemma",
+ "title": "Path deletion yields the pruned protocol",
+ "statement": "Let $p$ be a deterministic communication protocol and let $s$ be a rooted subprotocol of $p$, recorded by a subprotocol path running from the root of $p$ down to the root of $s$. Suppose that $s$ has strictly fewer leaves than $p$. Then splicing this path out of $p$ does not fall into the empty root case, in which the subprotocol coincides with the whole protocol, but instead returns a genuine protocol; and that protocol is exactly the pruned protocol determined by the path together with this leaf-count hypothesis.",
+ "hypotheses_covered": [
+  "a subprotocol path witness from $s$ to $p$",
+  "$s$ has strictly fewer leaves than $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the hypothesis $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$, we have\n$\\texttt{deletePath}\\;\\texttt{hsp} = \\texttt{some}\\;(\\texttt{prunePath}\\;\\texttt{hsp}\\;\\texttt{hlt})$."
+}

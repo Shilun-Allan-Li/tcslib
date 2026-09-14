@@ -1,0 +1,18 @@
+{
+ "lean_name": "error_subspaces_orthogonal",
+ "key": "fadeea571c1cd387",
+ "kind": "lemma",
+ "title": "Orthogonality of distinct error subspaces",
+ "statement": "Let $C \\le \\mathcal{H}_n$ be a code that is non-degenerate for $t$-error correction, and let $E, F$ be Pauli strings on $n$ qubits with weights $\\mathrm{wt}(E) \\le t$ and $\\mathrm{wt}(F) \\le t$ and $E \\neq F$. Then the images $\\hat{E}(C)$ and $\\hat{F}(C)$ of $C$ under the corresponding Pauli operators are orthogonal subspaces of $\\mathcal{H}_n$; that is, $\\langle \\hat{E}\\,u,\\, \\hat{F}\\,v\\rangle = 0$ for all $u, v \\in C$.",
+ "hypotheses_covered": [
+  "C is non-degenerate for t-error correction",
+  "E and F are Pauli strings on n qubits",
+  "weight of E at most t",
+  "weight of F at most t",
+  "E is not equal to F"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $C$ is non-degenerate and $E \\neq F$ both have weight $\\le t$, then\n$\\hat{E}(C) \\perp \\hat{F}(C)$."
+}

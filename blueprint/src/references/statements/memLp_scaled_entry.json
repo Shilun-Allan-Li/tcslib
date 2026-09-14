@@ -1,0 +1,19 @@
+{
+ "lean_name": "memLp_scaled_entry",
+ "key": "5fccfc444deeac80",
+ "kind": "lemma",
+ "title": "Scaled Rademacher entry lies in $L^2$",
+ "statement": "Fix $k > 0$ and a vector $x \\in \\bbr^d$, and let $\\mu$ be the joint Rademacher product measure on the sample space of $k \\times d$ arrays $\\omega = (\\omega_{ij})$. Then for every pair of indices $i$ and $j$, the coordinate function $\\omega \\mapsto \\dfrac{x_j}{\\sqrt{k}}\\,\\omega_{ij}$ is square-integrable with respect to $\\mu$; that is, it belongs to $L^2(\\mu)$.",
+ "hypotheses_covered": [
+  "k > 0",
+  "x is a vector in ℝ^d",
+  "i is an index in Fin k",
+  "j is an index in Fin d",
+  "measure is the joint Rademacher product measure",
+  "exponent p = 2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k > 0$, $x \\in \\mathbb{R}^d$, and indices $i,j$, the function\n$\\omega \\mapsto (x_j/\\sqrt{k})\\,\\omega_{ij}$ belongs to $L^2(\\mathrm{radJointMeasure})$."
+}

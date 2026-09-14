@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity",
+ "key": "99f325a6ef49fcbc",
+ "kind": "theorem",
+ "title": "Transcript count bounded by communication complexity",
+ "statement": "For every deterministic two-party communication protocol $p$ with input types $X$ and $Y$ and output type $\\alpha$, the number of syntactic transcripts of $p$ is at most $2$ raised to its communication complexity:\n\\[\n\\abs{\\mathrm{Transcript}(p)} \\le 2^{\\mathrm{complexity}(p)}.\n\\]",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over input types X, Y with output type alpha"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nA deterministic protocol $p$ has at most $2^{\\mathrm{complexity}(p)}$ syntactic\ntranscripts: $|\\mathrm{Transcript}(p)| \\le 2^{p.\\mathrm{complexity}}$."
+}

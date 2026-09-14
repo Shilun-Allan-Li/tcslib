@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.clauseToTerm_width",
+ "key": "0c0acf0c6b25a3ec",
+ "kind": "theorem",
+ "title": "Width of the term from an OR-clause",
+ "statement": "Let $\\mathrm{lits}$ be a list of circuit literals over $n$ variables whose variable indices are pairwise distinct. Then the width of the term obtained from the OR-clause on $\\mathrm{lits}$ — that is, the term formed by converting each circuit literal to its corresponding literal — equals the number of literals in $\\mathrm{lits}$.",
+ "hypotheses_covered": [
+  "lits is a list of circuit literals over n variables",
+  "the variable indices of lits are pairwise distinct (Nodup)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The width of the term obtained from an OR-clause equals the number of its literals:\n$\\texttt{Term.width}\\,(\\texttt{NOrCircuit}.\\mathrm{clause}\\,lits\\,h).\\mathrm{clauseToTerm} = lits.\\mathrm{length}$."
+}

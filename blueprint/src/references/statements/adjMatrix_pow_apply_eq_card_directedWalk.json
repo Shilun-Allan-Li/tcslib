@@ -1,0 +1,17 @@
+{
+ "lean_name": "adjMatrix_pow_apply_eq_card_directedWalk",
+ "key": "7600092c8dd16485",
+ "kind": "theorem",
+ "title": "Powers of the adjacency matrix count directed walks",
+ "statement": "Let $D$ be a digraph on a finite vertex set $V$, and let $A$ be its $0/1$ adjacency matrix over $\\bbn$, so $A_{uv} = 1$ when there is an arc from $u$ to $v$ and $A_{uv} = 0$ otherwise. Then for every $k \\in \\bbn$ and all vertices $u, v \\in V$, the entry $(A^k)_{uv}$ equals the number of directed walks of length $k$ from $u$ to $v$ in $D$, that is, the number of sequences of $k$ arrows $u = w_0 \\to w_1 \\to \\cdots \\to w_k = v$.",
+ "hypotheses_covered": [
+  "finite vertex set V",
+  "natural number k",
+  "vertices u and v",
+  "adjacency matrix taken over the naturals"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Show that the \\texttt{(i, j)}th entry of\n\\texttt{A$^{k}$} is the number of directed \\texttt{(v$_{i}$, v$_{j}$)}-walks of length \\texttt{k} in \\texttt{D}.}"
+}

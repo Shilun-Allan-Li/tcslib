@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_cover",
+ "key": "b0f395708faaba6f",
+ "kind": "lemma",
+ "title": "Leaf rectangles cover the input rectangle",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn from a set $X$, Bob's inputs from a set $Y$, and outputs in a type $\\alpha$, and let $A \\subseteq X$ and $B \\subseteq Y$. Then the rectangle $A \\times B$ is contained in the union of the auxiliary leaf rectangles of $p$ relative to the constraint $A \\times B$; that is, every pair $(x, y) \\in A \\times B$ lies in at least one rectangle of this collection.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol over X, Y with output type α",
+  "A is a subset of X",
+  "B is a subset of Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe union of $\\texttt{leafRectanglesAux}(p, A, B)$ contains $A \\times B$:\n$A \\times B \\subseteq \\bigcup \\texttt{leafRectanglesAux}(p, A, B)$."
+}

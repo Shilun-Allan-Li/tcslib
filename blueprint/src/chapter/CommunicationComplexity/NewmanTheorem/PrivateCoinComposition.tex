@@ -22,28 +22,39 @@ protocol that runs $p$ and then applies $g$ to its output, yielding a protocol w
 output type $\beta$ and the same communication tree.
 \end{definition}
 
-\begin{theorem}[Simulation of mapped protocol]
+\begin{theorem}[Mapping commutes with private-coin execution]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For any inputs $x : X$, $y : Y$ and random coins $\omega_x : \Omega_X$,
-$\omega_y : \Omega_Y$, the randomised run of the mapped protocol satisfies
+Let $p$ be a private-coin finite-message communication protocol with input types $X$ and
+$Y$, private-randomness types $\Omega_X$ and $\Omega_Y$, and output type $\alpha$, and
+let $g \colon \alpha \to \beta$. Write $\mathrm{map}(g, p)$ for the protocol that runs
+$p$ and then applies $g$ to the result, and let executing a protocol on inputs $x, y$
+with private coins $\omega_x, \omega_y$ denote running it on the paired inputs
+$(\omega_x, x)$ and $(\omega_y, y)$. Then for all $x \in X$, $y \in Y$, $\omega_x \in
+\Omega_X$, and $\omega_y \in \Omega_Y$,
 \[
-  (p.\mathrm{map}\;g).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y
-  \;=\; g\,(p.\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y).
+\bigl(\text{executing } \mathrm{map}(g, p) \text{ on } x, y \text{ with coins }
+\omega_x, \omega_y\bigr)
+  \;=\;
+g\bigl(\text{executing } p \text{ on } x, y \text{ with coins } \omega_x,
+\omega_y\bigr).
 \]
 \end{theorem}
 
-\begin{theorem}[Complexity of mapped protocol]
+\begin{theorem}[Output map preserves communication complexity]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map}
 \difficulty{1}
-Mapping a function over the output of a protocol does not change its communication
-complexity: $(p.\mathrm{map}\;g).\mathrm{complexity} = p.\mathrm{complexity}$.
+Let $p$ be a private-coin finite-message protocol with input types $X$, $Y$,
+private-randomness types $\Omega_X$, $\Omega_Y$, and output type $\alpha$, and let $g
+\colon \alpha \to \beta$ be any function. Then the protocol obtained by running $p$ and
+applying $g$ to its output has the same communication complexity as $p$, i.e.
+$\mathrm{complexity}(\mathrm{map}\,g\,p) = \mathrm{complexity}(p)$.
 \end{theorem}
 
 \begin{definition}[Monadic bind of private-coin protocols]
@@ -56,17 +67,28 @@ Given a protocol $p$ with output type $\alpha$ and a family $q : \alpha \to \mat
 executes $q\,a$ on the same inputs using the same randomness spaces.
 \end{definition}
 
-\begin{theorem}[Simulation of bound protocol]
+\begin{theorem}[Execution of a sequentially composed private-coin protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For all $x, y, \omega_x, \omega_y$, the randomised run of the bound protocol satisfies
+Let $p$ be a private-coin finite-message protocol with input types $X$, $Y$,
+private-coin types $\Omega_X$, $\Omega_Y$, and output type $\alpha$, and let $q$ assign
+to each value $a \in \alpha$ a private-coin finite-message protocol $q(a)$ over input
+types $X$, $Y$ and private-coin types $\Omega_X$, $\Omega_Y$ with output type $\beta$.
+Then for all inputs $x \in X$, $y \in Y$ and private coins $\omega_x \in \Omega_X$,
+$\omega_y \in \Omega_Y$,
 \[
-  (p.\mathrm{bind}\;q).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y
-  \;=\; (q\,(p.\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y)).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y.
+  (p \mathbin{\gg\!=} q)\;\text{run on }(x,y)\text{ with coins }(\omega_x,\omega_y)
+  \;=\;
+  q(a)\;\text{run on }(x,y)\text{ with coins }(\omega_x,\omega_y),
 \]
+where $a \in \alpha$ is the output of executing $p$ on inputs $x, y$ with coins
+$\omega_x, \omega_y$. That is, running the sequential composition of $p$ and $q$ on
+inputs $x, y$ with private coins $\omega_x, \omega_y$ gives the value obtained by first
+running $p$ on $x, y$ with coins $\omega_x, \omega_y$ to produce an output $a$, and then
+running $q(a)$ on $x, y$ with coins $\omega_x, \omega_y$.
 \end{theorem}
 
 \begin{definition}[Randomness reindexing]
@@ -80,27 +102,34 @@ a protocol over $\Omega_X'$ and $\Omega_Y'$ that maps coins through $hX$ and $hY
 before passing them to $p$.
 \end{definition}
 
-\begin{theorem}[Simulation after randomness reindexing]
+\begin{theorem}[Randomness reindexing commutes with execution]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For all $x, y, \omega_x' : \Omega_X', \omega_y' : \Omega_Y'$,
-\[
-  (\mathrm{comapRandomness}\;hX\;hY\;p).\mathrm{rrun}\;x\;y\;\omega_x'\;\omega_y'
-  \;=\; p.\mathrm{rrun}\;x\;y\;(hX\;\omega_x')\;(hY\;\omega_y').
-\]
+Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$ with
+private-randomness types $\Omega_X$, $\Omega_Y$ and output type $\alpha$, and let $hX :
+\Omega_X' \to \Omega_X$ and $hY : \Omega_Y' \to \Omega_Y$ be functions reindexing the
+two randomness spaces. Then for all inputs $x : X$, $y : Y$ and all coins $\omega_x :
+\Omega_X'$, $\omega_y : \Omega_Y'$, executing the reindexed protocol on $x, y$ with
+coins $\omega_x, \omega_y$ yields the same output as executing $p$ itself on $x, y$ with
+the pushed-forward coins $hX(\omega_x)$ and $hY(\omega_y)$.
 \end{theorem}
 
-\begin{theorem}[Complexity after randomness reindexing]
+\begin{theorem}[Complexity is invariant under randomness reindexing]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}
 \difficulty{1}
-Reindexing the randomness spaces of a protocol does not change its communication
-complexity: $(\mathrm{comapRandomness}\;hX\;hY\;p).\mathrm{complexity} = p.\mathrm{complexity}$.
+Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$ with
+private-randomness types $\Omega_X$, $\Omega_Y$ and output type $\alpha$, and let $hX :
+\Omega_X' \to \Omega_X$ and $hY : \Omega_Y' \to \Omega_Y$ be arbitrary maps of
+randomness spaces. Reindexing the randomness of $p$ through $hX$ and $hY$ — that is,
+forming the protocol over $\Omega_X'$, $\Omega_Y'$ that maps its coins through $hX$ and
+$hY$ before feeding them to $p$ — yields a protocol with the same worst-case
+communication complexity as $p$.
 \end{theorem}
 
 \begin{definition}[Product of two private-coin protocols]
@@ -115,29 +144,44 @@ randomness drawn from $\Omega_{X_1} \times \Omega_{X_2}$ and $\Omega_{Y_1} \time
 returning the pair of their outputs in $\alpha_1 \times \alpha_2$.
 \end{definition}
 
-\begin{theorem}[Simulation of product protocol]
+\begin{theorem}[Product protocol runs its factors in parallel]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For all $x, y, \omega_x : \Omega_{X_1} \times \Omega_{X_2},
-\omega_y : \Omega_{Y_1} \times \Omega_{Y_2}$,
+Let $p_1$ and $p_2$ be private-coin finite-message protocols over the same input types
+$X$ and $Y$, with output types $\alpha_1$ and $\alpha_2$ and private-randomness types
+$(\Omega_{X_1}, \Omega_{Y_1})$ and $(\Omega_{X_2}, \Omega_{Y_2})$ respectively. Then for
+all inputs $x : X$ and $y : Y$, and all paired private coins $\omega_x = (\omega_{x,1},
+\omega_{x,2}) \in \Omega_{X_1} \times \Omega_{X_2}$ and $\omega_y = (\omega_{y,1},
+\omega_{y,2}) \in \Omega_{Y_1} \times \Omega_{Y_2}$, executing the product protocol of
+$p_1$ and $p_2$ yields the pair
 \[
-  (\mathrm{prod}\;p_1\;p_2).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y
-  \;=\; (p_1.\mathrm{rrun}\;x\;y\;\omega_x.1\;\omega_y.1,\;
-         p_2.\mathrm{rrun}\;x\;y\;\omega_x.2\;\omega_y.2).
+\bigl(p_1(x, y; \omega_{x,1}, \omega_{y,1}),\; p_2(x, y; \omega_{x,2},
+\omega_{y,2})\bigr),
 \]
+where each component is the output of the corresponding factor run on the same inputs
+with its own share of the private randomness.
 \end{theorem}
 
-\begin{theorem}[Complexity of product protocol]
+\begin{theorem}[Communication cost of the product protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod}
 \difficulty{1}
-The communication complexity of the product protocol is the sum of the individual
-complexities: $(\mathrm{prod}\;p_1\;p_2).\mathrm{complexity} = p_1.\mathrm{complexity} + p_2.\mathrm{complexity}$.
+Let $p_1$ and $p_2$ be private-coin finite-message protocols, both over the same input
+types $X$ and $Y$, with private-randomness types $(\Omega_{X_1}, \Omega_{Y_1})$ and
+$(\Omega_{X_2}, \Omega_{Y_2})$ and output types $\alpha_1$ and $\alpha_2$ respectively.
+Their product, the protocol on inputs $X$ and $Y$ that runs $p_1$ and $p_2$ in parallel
+using independent randomness drawn from $\Omega_{X_1} \times \Omega_{X_2}$ and
+$\Omega_{Y_1} \times \Omega_{Y_2}$ and returns the pair of their outputs, has worst-case
+communication cost (in bits) equal to the sum of the individual costs:
+\[
+\mathrm{complexity}(p_1 \times p_2) = \mathrm{complexity}(p_1) +
+\mathrm{complexity}(p_2).
+\]
 \end{theorem}
 
 \begin{definition}[$k$-fold product of private-coin protocols]
@@ -152,27 +196,39 @@ $(\prod_i \Omega_{Xf}\,i,\, \prod_i \Omega_{Yf}\,i)$, returning the tuple of out
 $(i : \mathrm{Fin}\,k) \to \alpha_f\,i$.
 \end{definition}
 
-\begin{theorem}[Simulation of $k$-fold product]
+\begin{theorem}[Componentwise execution of the product protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For all $x, y, \omega_x, \omega_y$,
+Let $k$ be a natural number and, for each $i \in \mathrm{Fin}\,k$, let $p_i$ be a
+private-coin finite-message protocol with private-randomness types $\Omega_{X,i}$ for
+Alice and $\Omega_{Y,i}$ for Bob, common public input types $X$ and $Y$, and output type
+$\alpha_i$. Fix public inputs $x \in X$ and $y \in Y$, together with coin vectors
+$\omega_x \in \prod_{i} \Omega_{X,i}$ and $\omega_y \in \prod_{i} \Omega_{Y,i}$. Then
+executing the product protocol on these data agrees componentwise with executing each
+factor on its own coordinate of the randomness:
 \[
-  (\mathrm{pi}\;p).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y
-  \;=\; \lambda\,i.\; (p\,i).\mathrm{rrun}\;x\;y\;(\omega_x\,i)\;(\omega_y\,i).
+  (\pi\,p).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y
+\;=\; \bigl(\, i \mapsto (p_i).\mathrm{rrun}\;x\;y\;(\omega_x\,i)\;(\omega_y\,i)
+\,\bigr).
 \]
 \end{theorem}
 
-\begin{theorem}[Complexity of $k$-fold product]
+\begin{theorem}[Additivity of complexity under products]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi}
 \difficulty{1}
-The communication complexity of the $k$-fold product equals the sum of individual
-complexities: $(\mathrm{pi}\;p).\mathrm{complexity} = \sum_{i} (p\,i).\mathrm{complexity}$.
+Let $k$ be a natural number and let $p_0, \dots, p_{k-1}$ be a family of private-coin
+finite-message protocols indexed by $i \in \mathrm{Fin}\,k$, where $p_i$ has
+private-randomness types $\Omega_{X,i}$, $\Omega_{Y,i}$, shared input types $X$, $Y$,
+and output type $\alpha_i$. Then the communication complexity of their $k$-fold product
+protocol equals the sum of the individual communication complexities, \[
+\mathrm{complexity}\bigl(\textstyle\prod_{i} p_i\bigr) = \sum_{i}
+\mathrm{complexity}(p_i). \]
 \end{theorem}
 
 \begin{definition}[Bind with fresh independent randomness]
@@ -187,29 +243,44 @@ obtains its output $a$, then runs $q\,a$ using a fresh, independent second compo
 yielding a protocol over $(\Omega_X \times \Omega_X', \Omega_Y \times \Omega_Y')$.
 \end{definition}
 
-\begin{theorem}[Simulation of bind with fresh randomness]
+\begin{theorem}[Fresh-randomness bind computes by splitting the coins]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For all $x, y, \omega_x : \Omega_X \times \Omega_X', \omega_y : \Omega_Y \times \Omega_Y'$,
+Let $p$ be a private-coin finite-message protocol over inputs $X$, $Y$ with private
+randomness types $\Omega_X$, $\Omega_Y$ and output type $\alpha$, and let $q$ assign to
+each output $a\in\alpha$ a private-coin finite-message protocol $q(a)$ over the same
+inputs $X$, $Y$ with fresh randomness types $\Omega_X'$, $\Omega_Y'$ and output type
+$\beta$. Then for all inputs $x\in X$, $y\in Y$ and all coin pairs
+$\omega_x=(\omega_x^1,\omega_x^2)\in\Omega_X\times\Omega_X'$ and
+$\omega_y=(\omega_y^1,\omega_y^2)\in\Omega_Y\times\Omega_Y'$, executing the
+fresh-randomness bind of $p$ and $q$ agrees with running $p$ on the first coordinates of
+the coins to obtain an output $a$ and then running $q(a)$ on the second coordinates:
 \[
-  (\mathrm{rbind}\;p\;q).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y
-  \;=\; (q\,(p.\mathrm{rrun}\;x\;y\;\omega_x.1\;\omega_y.1)).\mathrm{rrun}\;x\;y\;\omega_x.2\;\omega_y.2.
+  \mathrm{rrun}\big(\mathrm{rbind}(p,q)\big)\,x\,y\,\omega_x\,\omega_y
+  \;=\;
+\mathrm{rrun}\big(q(\mathrm{rrun}\,p\,x\,y\,\omega_x^1\,\omega_y^1)\big)\,x\,y\,\omega_x^2\,\omega_y^2
+.
 \]
 \end{theorem}
 
-\begin{theorem}[Complexity of bind with fresh randomness (constant continuation)]
+\begin{theorem}[Complexity of bind with fresh randomness under a constant continuation]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_complexity_const}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_complexity_const}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}
 \difficulty{2}
-If the continuation $q\,a$ has the same complexity $c$ for every output $a$ of $p$,
-then
+Let $p$ be a private-coin finite-message protocol over inputs $X$, $Y$ with private
+randomness $(\Omega_X, \Omega_Y)$ and output type $\alpha$, and let $q$ assign to each
+output $a \in \alpha$ a private-coin finite-message protocol $q\,a$ over $X$, $Y$ with
+fresh randomness $(\Omega_X', \Omega_Y')$ and output type $\beta$. Suppose there is a
+natural number $c$ with $\mathrm{complexity}(q\,a) = c$ for every $a \in \alpha$. Then
+the protocol obtained by running $p$ and then $q\,a$ with independent randomness
+satisfies
 \[
-  (\mathrm{rbind}\;p\;q).\mathrm{complexity} \;=\; p.\mathrm{complexity} + c.
+  \mathrm{complexity}(\mathrm{rbind}\,p\,q) \;=\; \mathrm{complexity}(p) + c.
 \]
 \end{theorem}
 
@@ -223,25 +294,36 @@ Given a private-coin protocol $p_1$ and a deterministic protocol $p_2$,
 in $\alpha_1 \times \alpha_2$, with $p_2$ contributing no additional randomness.
 \end{definition}
 
-\begin{theorem}[Simulation of private-coin times deterministic]
+\begin{theorem}[Execution of a private-coin–deterministic product protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For all $x, y, \omega_x, \omega_y$,
-\[
-  (\mathrm{prodDet}\;p_1\;p_2).\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y
-  \;=\; (p_1.\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y,\; p_2.\mathrm{run}\;x\;y).
-\]
+Let $X$, $Y$ be input types and $\Omega_X$, $\Omega_Y$ private-randomness types. Let
+$p_1$ be a private-coin finite-message protocol over these types with output type
+$\alpha_1$, and let $p_2$ be a deterministic finite-message protocol over $X$, $Y$ with
+output type $\alpha_2$. Then for all inputs $x : X$, $y : Y$ and all private coins
+$\omega_x : \Omega_X$, $\omega_y : \Omega_Y$, executing the product protocol of $p_1$
+and $p_2$ on $x$, $y$ with coins $\omega_x$, $\omega_y$ yields the pair whose first
+component is the output of $p_1$ executed on $x$, $y$ with coins $\omega_x$, $\omega_y$
+and whose second component is the output of the deterministic protocol $p_2$ run on $x$,
+$y$.
 \end{theorem}
 
-\begin{theorem}[Complexity of private-coin times deterministic]
+\begin{theorem}[Additivity of complexity under the product of protocols]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}
 \difficulty{2}
-The communication complexity of \texttt{prodDet}~$p_1$~$p_2$ equals the sum of both
-complexities: $(\mathrm{prodDet}\;p_1\;p_2).\mathrm{complexity} = p_1.\mathrm{complexity} + p_2.\mathrm{complexity}$.
+Fix input types $X$, $Y$, a private-randomness type $\Omega_X$ for Alice and $\Omega_Y$
+for Bob, and output types $\alpha_1$, $\alpha_2$. Let $p_1$ be a private-coin
+finite-message protocol producing an output in $\alpha_1$, and let $p_2$ be a
+deterministic finite-message protocol over $X$, $Y$ producing an output in $\alpha_2$.
+Form their product, the private-coin protocol that runs $p_1$ and then $p_2$ on the same
+inputs (with $p_2$ using no private randomness) and reports the pair of their outputs in
+$\alpha_1 \times \alpha_2$. Then the worst-case communication cost of this product
+equals the sum of the individual costs, that is, the complexity of the product is the
+complexity of $p_1$ plus the complexity of $p_2$.
 \end{theorem}

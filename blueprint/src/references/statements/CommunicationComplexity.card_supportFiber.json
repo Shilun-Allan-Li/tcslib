@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.card_supportFiber",
+ "key": "e2404f4e3ce5c2fc",
+ "kind": "lemma",
+ "title": "Cardinality of a support fiber",
+ "statement": "Let $\\alpha$ be a finite alphabet, fix a word $u \\colon \\{1,\\dots,n\\} \\to \\alpha$ of length $n$, and let $S \\subseteq \\{1,\\dots,n\\}$ be a set of coordinate positions. Then the number of words $v$ of length $n$ over $\\alpha$ that differ from $u$ at exactly the positions in $S$ (that is, $v_i \\ne u_i$ for $i \\in S$ and $v_i = u_i$ for $i \\notin S$) is\n\\[\n  (\\abs{\\alpha} - 1)^{\\abs{S}}.\n\\]",
+ "hypotheses_covered": [
+  "alphabet $\\alpha$ is finite",
+  "a word $u$ of length $n$ over $\\alpha$",
+  "a set $S$ of coordinate positions among $\\{1,\\dots,n\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any word $u$ and finset $S \\subseteq \\mathrm{Fin}\\,n$,\n\\[\n  |\\mathrm{supportFiber}(u,S)| = (|\\alpha| - 1)^{|S|}.\n\\]"
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "SimpleHypercontractivity.card_image_castSucc_union_last",
+ "key": "b1382b78839daef2",
+ "kind": "lemma",
+ "title": "Cardinality after lifting a set and adjoining the top coordinate",
+ "statement": "Let $n$ be a natural number and let $S \\subseteq \\{0, 1, \\dots, n-1\\}$. Embed $S$ into $\\{0, 1, \\dots, n\\}$ by the map that sends each index to itself, and adjoin the top index $n$. Since $n$ is not the image of any element of $S$, this union satisfies\n\\[\n\\abs{\\{\\, i : i \\in S \\,\\} \\cup \\{n\\}} = \\abs{S} + 1.\n\\]",
+ "hypotheses_covered": [
+  "S is a finite subset of {0,...,n-1} (Finset (Fin n))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Adjoining the (necessarily new) last coordinate to a lifted set increases its\ncardinality by one:\n$|\\mathrm{castSucc}(S)\\cup\\{\\mathrm{last}\\,n\\}| = |S| + 1$."
+}

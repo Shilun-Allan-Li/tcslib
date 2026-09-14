@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition",
+ "key": "020d62dded7ded96",
+ "kind": "theorem",
+ "title": "Leaf rectangles of a protocol form a monochromatic partition",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$ producing outputs in $\\alpha$, and let $g : X \\to Y \\to \\alpha$. If $p$ computes $g$, then the collection of leaf rectangles of $p$ is a monochromatic rectangle partition of $X \\times Y$ for $g$: every leaf rectangle is a rectangle and is monochromatic for $g$, the leaf rectangles cover all of $X \\times Y$, and any two distinct leaf rectangles are disjoint.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol over X, Y with outputs in α",
+  "g : X → Y → α",
+  "p computes g (p.run x y = g x y for all x, y)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $p$ computes $g : X \\to Y \\to \\alpha$, then the collection $\\texttt{leafRectangles}(p)$\nis a monochromatic rectangle partition of $X \\times Y$ with respect to $g$: every element\nis a rectangle, the elements are pairwise disjoint, their union is all of $X \\times Y$,\nand each element is $g$-monochromatic."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "spectral_norm_bound",
+ "key": "7d8f713b7183fcae",
+ "kind": "theorem",
+ "title": "Positivity of the spectral norm bound",
+ "statement": "Let $k, d, \\ell$ be positive integers and let $n \\ge 2$. Then there exists a positive real constant $C_1 > 0$ for which the quantity\n\\[\n  C_1 \\cdot d \\cdot \\sqrt{k\\,\\ell\\,\\log n}\n\\]\nis itself positive.",
+ "hypotheses_covered": [
+  "k > 0",
+  "d > 0",
+  "ℓ > 0",
+  "n ≥ 2"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean conclusion asserts only that a positive constant C₁ exists making the product C₁·d·√(k·ℓ·log n) positive; the \"expected spectral norm\" reading in the source comment is external context not carried by the formal statement, so it is not asserted.",
+ "rubric": [],
+ "replaced": "For naturals $k, d, \\ell > 0$ and $n \\ge 2$ there exists a real constant $C_1 > 0$ such\nthat\n\\[\n  C_1 \\cdot d \\cdot \\sqrt{k\\,\\ell\\,\\log n} \\;>\\; 0 .\n\\]\nThe displayed quantity is the matrix-Khintchine bound $\\E_b[\\norm{A}] \\le\nC_1\\, d\\, \\sqrt{k\\,\\ell\\,\\log n}$ appearing in the argument, and the statement asserts\nthat such a positive constant, with positive associated bound, exists."
+}

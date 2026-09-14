@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.gateCountBefore_succ",
+ "key": "b64d87c7804715a3",
+ "kind": "lemma",
+ "title": "Gate-count recursion across layers",
+ "statement": "Let $F$ be a layered feedforward circuit over the Boolean alphabet $\\bbf_2$ with input type $\\mathrm{Fin}\\,n$, in which every layer has finitely many nodes, and for each natural number $k \\le \\mathrm{depth}(F)$ let $g_F(k)$ denote the number of non-input gates lying in layers $1,\\dots,k$ (so $g_F(0) = 0$). Then for every $d$ with $d + 1 \\le \\mathrm{depth}(F)$, \\[ g_F(d+1) = g_F(d) + \\abs{N_{d+1}}, \\] where $\\abs{N_{d+1}}$ is the number of nodes in layer $d+1$.",
+ "hypotheses_covered": [
+  "circuit over the Boolean alphabet Fin 2 with input type Fin n",
+  "every layer (node set) is finite",
+  "d + 1 ≤ depth of F"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$\\mathrm{gateCountBefore}\\,F\\,(d+1)$ equals $\\mathrm{gateCountBefore}\\,F\\,d$ plus the cardinality of\nthe node set at layer $d+1$."
+}

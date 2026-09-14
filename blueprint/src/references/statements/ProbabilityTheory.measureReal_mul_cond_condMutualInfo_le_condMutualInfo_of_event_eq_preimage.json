@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.measureReal_mul_cond_condMutualInfo_le_condMutualInfo_of_event_eq_preimage",
+ "key": "9233f93a50e70fce",
+ "kind": "theorem",
+ "title": "Conditioning on a $Z$-event scales down conditional mutual information",
+ "statement": "Let $X$, $Y$, and $Z$ be random variables of finite range on a probability space $(\\Omega, \\mu)$, taking values in countable measurable spaces, and let $A = Z^{-1}(B)$ be the event that $Z$ lands in a measurable set $B$. Writing $I[X : Y \\mid Z;\\, \\nu]$ for the conditional mutual information of $X$ and $Y$ given $Z$ computed under a measure $\\nu$, and $\\mu[\\,\\cdot \\mid A]$ for $\\mu$ conditioned on the event $A$, one has\n\\[\n  \\mu(A) \\cdot I[X : Y \\mid Z;\\, \\mu[\\,\\cdot \\mid A]] \\;\\le\\; I[X : Y \\mid Z;\\, \\mu].\n\\]",
+ "hypotheses_covered": [
+  "μ is a probability measure",
+  "X, Y, Z measurable with finite range",
+  "value spaces S, T, U countable",
+  "B is a measurable set",
+  "A equals the preimage Z⁻¹(B)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A = Z^{-1}(B)$ for some measurable $B$.  Then, under a probability measure $\\mu$,\n\\[\n  \\mu_{\\mathbb{R}}(A) \\cdot I[X : Y \\mid Z;\\,\\mu[\\,|\\,A]]\n  \\;\\le\\; I[X : Y \\mid Z;\\,\\mu].\n\\]"
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.contradiction_clause_eval_true",
+ "key": "055665b7d39444ab",
+ "kind": "lemma",
+ "title": "Contradictory clauses are tautologies",
+ "statement": "Let $t$ be a term over $n$ Boolean variables — a list of literals, each a variable together with a polarity — and suppose $t$ contains two literals on the same variable with opposite polarities, one negated and one not. Then, read as a single clause under disjunction semantics, $t$ evaluates to true under every assignment $x : \\{0,\\dots,n-1\\} \\to \\{\\mathrm{true},\\mathrm{false}\\}$; that is, some literal of $t$ holds under $x$, for every $x$.",
+ "hypotheses_covered": [
+  "t is a term (list of literals) over n variables",
+  "t contains two literals on the same variable with opposite polarities"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathrm{termHasContradiction}\\,t = \\texttt{true}$, then viewed as a clause $t$ is a\ntautology: $\\mathrm{CNF.evalClause}\\,t\\,x = \\texttt{true}$ for every $x$."
+}

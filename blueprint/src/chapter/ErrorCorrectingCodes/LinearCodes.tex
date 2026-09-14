@@ -9,18 +9,21 @@ $x\in\alpha^k$, the output $Gx$ is uniformly distributed over $\alpha^n$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Distance equals minimum weight in linear codes}
 
-\begin{theorem}[Distance equals minimum nonzero weight]
+\begin{theorem}[Minimum distance equals minimum nonzero weight]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
 \label{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p047-b004}
 \uses{ErrorCorrectingCodes.Codeword.Linear_Code', ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.distance}
 \difficulty{4}
-If $C$ is linear (witnessed by some generator matrix) and has minimum distance $d$, then:
-\begin{itemize}
-  \item every nonzero codeword in $C$ has weight at least $d$;
-  \item some codeword in $C$ has weight exactly $d$.
-\end{itemize}
+Let $\alpha$ be a finite field and let $C$ be a linear code of length $n$ over $\alpha$,
+meaning there is a generator matrix $G$ whose columns generate $C$ (every $G$-image of a
+message word lies in $C$, and every codeword of $C$ is such an image). Suppose $d$ is
+the minimum distance of $C$, that is, some two distinct codewords of $C$ lie at Hamming
+distance exactly $d$ and no two distinct codewords lie closer. Then every nonzero
+codeword of $C$ has Hamming weight at least $d$, and some codeword of $C$ has Hamming
+weight exactly $d$, where the weight of a codeword is its Hamming distance from the
+all-zero codeword.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,12 +38,15 @@ The uniform probability mass function on $\alpha^n$, encoded as a function
 $\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
 \end{definition}
 
-\begin{lemma}[Finiteness of constrained matrix set]
+\begin{lemma}[Finiteness of the solution set of a linear matrix equation]
 \lean{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \label{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \leanok
 \difficulty{2}
-For fixed $x\in\alpha^k$ and $v\in\alpha^n$, the set $\{G : Gx=v\}$ is finite.
+Let $\alpha$ be a finite field, and let $n$ and $k$ be natural numbers. Fix a codeword
+$v : \mathrm{Fin}\,n \to \alpha$ of length $n$ and a codeword $x : \mathrm{Fin}\,k \to
+\alpha$ of length $k$. Then the set of matrices $G \in \alpha^{n \times k}$ satisfying
+$Gx = v$ is finite.
 \end{lemma}
 
 \begin{definition}[Distribution induced by random matrices]
@@ -60,7 +66,7 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Uniformity lemma}
 
-\begin{theorem}[Uniformity of $Gx$ for nonzero $x$]
+\begin{theorem}[Random matrix images of a nonzero vector are uniform]
 \lean{ErrorCorrectingCodes.Codeword.uniformity_lemma}
 \label{ErrorCorrectingCodes.Codeword.uniformity_lemma}
 \leanok
@@ -68,7 +74,6 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
   pdf-7251cb8e4bc5-p068-b001,
   pdf-7251cb8e4bc5-p068-b002
 }
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -124,10 +129,13 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
   {pdf-7251cb8e4bc5-p045-b006}
 \uses{ErrorCorrectingCodes.Codeword.matrix_dist, ErrorCorrectingCodes.Codeword.uniform_vector_dist, ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \difficulty{7}
-If $x\neq 0$ and $k\ge 1$, then for a uniformly random $n\times k$ matrix $G$ over $\alpha$,
-the product $Gx$ is uniformly distributed over $\alpha^n$:
+Let $\alpha$ be a finite field, and fix $n \ge 0$ and $k \ge 1$. Let $x \in \alpha^k$ be
+a nonzero vector. Then the distribution on $\alpha^n$ obtained by sampling an $n \times
+k$ matrix $G$ with entries in $\alpha$ uniformly at random and returning the product
+$Gx$ coincides with the uniform distribution on $\alpha^n$; that is, for every $v \in
+\alpha^n$,
 \[
-\Pr[Gx = v] = \frac{1}{|\alpha|^n}
-\quad\text{for all }v\in\alpha^n.
+\frac{\bigl|\{\,G \in \alpha^{n \times k} : Gx = v\,\}\bigr|}{\abs{\alpha}^{nk}} =
+\frac{1}{\abs{\alpha}^{n}}.
 \]
 \end{theorem}

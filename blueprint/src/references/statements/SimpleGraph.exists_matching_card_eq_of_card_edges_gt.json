@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleGraph.exists_matching_card_eq_of_card_edges_gt",
+ "key": "51454d63d9c299fe",
+ "kind": "theorem",
+ "title": "Large edge count forces a matching of size $k$",
+ "statement": "Let $G$ be a finite bipartite graph with vertex parts $X$ and $Y$, so that every edge of $G$ joins a vertex of $X$ to a vertex of $Y$, and suppose $\\abs{X} = \\abs{Y} = n$. Write $\\varepsilon$ for the number of edges of $G$, and let $k$ be a natural number. If $(k-1)\\,n < \\varepsilon$, then $G$ contains a matching consisting of exactly $k$ edges.",
+ "hypotheses_covered": [
+  "G is bipartite with parts X and Y",
+  "|X| = n",
+  "|Y| = n",
+  "number of edges > (k-1)·n",
+  "conclusion: a matching with exactly k edges exists"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Ex 5.2.6(b): simple, \\texttt{|X| = |Y| = n}, \\texttt{$\\varepsilon$ > (k$-$1)n}\n$\\Rightarrow$ a matching of size \\texttt{k}.\n\n(b) Deduce that if $G$ is simple with $|X| = |Y| = n$ and\n$\\varepsilon > (k-1)n$, then $G$ has a matching of cardinality $k$."
+}

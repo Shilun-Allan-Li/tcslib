@@ -1,0 +1,16 @@
+{
+ "lean_name": "Networks.val_le_capOf",
+ "key": "847d3c67963148a3",
+ "kind": "theorem",
+ "title": "Weak duality: flow value is bounded by cut capacity",
+ "statement": "Let $N$ be a network with disjoint nonempty source set $X$ and sink set $Y$, distinguished source $x$ and sink $y$, and integer capacity function $c$. Let $f$ be a flow in $N$, and let $(S,\\bar S)$ be a cut, so that $x\\in S$ and $y\\notin S$. Then the value of $f$ is at most the capacity of the cut:\n\\[\n\\mathrm{val}(f)\\;\\le\\;\\operatorname{cap}(S,\\bar S)\\;=\\;\\sum_{u\\in S}\\sum_{v\\notin S} c(u,v).\n\\]",
+ "hypotheses_covered": [
+  "f is a flow in N (capacity constraint and conservation at intermediate vertices)",
+  "S determines a cut: x in S and y not in S",
+  "N is a network with disjoint nonempty source set X and sink set Y and nonnegative integer capacities"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{For any flow \\texttt{f} and any cut \\texttt{K = (S, $\\bar{S}$)} in \\texttt{N},\n\\texttt{val f $\\le$ cap K}.}"
+}

@@ -14,60 +14,80 @@ depth of a node after a further random restriction.
 % LMN.restrictFn_composeRestr is documented in Depth3Switching.tex (same private
 % lemma name appears in this module too; the binding label lives there to stay unique).
 
-\begin{lemma}[Child depth bound]
+\begin{lemma}[Depth of a child of a Boolean-circuit gate]
 \lean{LMN.children_depth_le}
 \label{LMN.children_depth_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
 \difficulty{4}
-If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has depth at most $d$, then every child
-$c \in cs$ has depth at most $d - 1$.
+Let $C$ be a Boolean circuit on $n$ variables of the form of a single gate — an AND gate
+or an OR gate — applied to a list of child circuits, and let $c$ be one of those
+children. If the depth of $C$ is at most $d$, then the depth of $c$ is at most $d - 1$.
 \end{lemma}
 
-\begin{lemma}[Sum of child sizes bound]
+\begin{lemma}[Bound on the total size of a gate's children]
 \lean{LMN.children_size_sum_le}
 \label{LMN.children_size_sum_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
 \difficulty{2}
-If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has size at most $s$, then the sum of
-the sizes of its children is at most $s - 1$.
+Let $g = \mathrm{node}\,(\mathit{isAnd},\, cs)$ be an internal gate of a Boolean circuit
+on $n$ variables, with $cs$ the list of its child subcircuits, and let $s$ be a natural
+number with $\mathrm{size}(g) \le s$. Then the sum of the sizes of the children,
+$\sum_{c \in cs} \mathrm{size}(c)$, is at most $s - 1$ (truncated natural-number
+subtraction).
 \end{lemma}
 
-\begin{lemma}[Child fan-in bound]
+\begin{lemma}[Children inherit the fanin bound]
 \lean{LMN.children_maxFanin_le}
 \label{LMN.children_maxFanin_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.maxFanin}
 \difficulty{4}
-If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has maximum fan-in at most $w$, then
-every child $c \in cs$ has maximum fan-in at most $w$.
+Let $g$ be an internal gate of a Boolean circuit on $n$ variables — either an AND gate
+or an OR gate — applied to a list of child circuits, and suppose its maximum fanin is at
+most $w$. Then every child circuit occurring in that list also has maximum fanin at most
+$w$.
 \end{lemma}
 
-\begin{lemma}[Child size bounded by parent]
+\begin{lemma}[Child circuit size bounded by parent]
 \lean{LMN.child_size_le_parent}
 \label{LMN.child_size_le_parent}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, LMN.children_size_sum_le}
 \difficulty{4}
-If a node circuit $\mathrm{node}\,\mathit{isAnd}\,cs$ has size at most $s$, then every
-child $c \in cs$ has size at most $s - 1$.
+Let $g$ be a Boolean circuit on $n$ variables that is a single gate — an AND or OR gate
+applied to a list of child circuits — and let $c$ be one of those children. If the size
+of $g$ (its total number of gate and literal nodes) is at most $s$, then the size of $c$
+is at most $s - 1$.
 \end{lemma}
 
-\begin{lemma}[Restricted evaluation of a node]
+\begin{lemma}[Restriction commutes with gate evaluation]
 \lean{LMN.restrictFn_node_eval}
 \label{LMN.restrictFn_node_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{2}
-The restriction of the evaluation of a node circuit equals the conjunction or disjunction,
-according to $\mathit{isAnd}$, of the restricted evaluations of its children. That is,
-$\mathrm{restrictFn}\,(\mathrm{eval}\,(\mathrm{node}\,\mathit{isAnd}\,cs))\,\rho$ sends $x$
-to the fold-$\mathrm{and}$ over $cs$ of $\mathrm{restrictFn}\,c.\mathrm{eval}\,\rho\,x$ when
-$\mathit{isAnd}$ is true, and to the corresponding fold-$\mathrm{or}$ otherwise.
+Fix $n$ variables and let $C_1,\dots,C_k$ be a finite list of Boolean circuits on them,
+let $\rho$ be a restriction, and let $b$ be a Boolean flag. For a Boolean function $f$
+write $f_\rho$ for its restriction by $\rho$, the function $x \mapsto
+f(\rho.\mathrm{extend}\,x)$. Form the circuit node with children $C_1,\dots,C_k$, read
+as an AND gate when $b$ is true and as an OR gate when $b$ is false, and let $g$ be its
+evaluation. Then the restriction of the gate's evaluation agrees, as a Boolean function,
+with the gate applied to the restricted evaluations of the children: for every
+assignment $x$,
+\[
+g_\rho(x) =
+\begin{cases}
+\displaystyle\bigwedge_{i=1}^{k} (C_i)_\rho(x) & \text{if } b = \mathrm{true},\\[1ex]
+\displaystyle\bigvee_{i=1}^{k} (C_i)_\rho(x) & \text{if } b = \mathrm{false},
+\end{cases}
+\]
+where $(C_i)_\rho$ denotes the restriction by $\rho$ of the evaluation of $C_i$, an
+empty conjunction is $\mathrm{true}$, and an empty disjunction is $\mathrm{false}$.
 \end{lemma}
 
-\begin{lemma}[AND of children has a small CNF]
+\begin{lemma}[Small-width CNF for a restricted AND of circuits]
 \lean{LMN.and_children_have_cnf}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p002-b006,
@@ -75,7 +95,6 @@ $\mathit{isAnd}$ is true, and to the corresponding fold-$\mathrm{or}$ otherwise.
 }
 \label{LMN.and_children_have_cnf}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -266,13 +285,16 @@ $\mathit{isAnd}$ is true, and to the corresponding fold-$\mathrm{or}$ otherwise.
   {pdf-fc447f326910-p013-b002}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, LMN.compression_and_of_cnfs, LMN.restrictFn_node_eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-If every child $c \in cs$ satisfies $\mathrm{dtDepth}(\mathrm{restrictFn}\,c.\mathrm{eval}\,\rho) \le l$,
-then there is a CNF $\psi$ of width at most $l$ that computes the restriction of the AND node:
-$\mathrm{CNF.eval}\,\psi\,x = \mathrm{restrictFn}\,(\mathrm{eval}\,(\mathrm{node}\,\mathrm{true}\,cs))\,\rho\,x$
-for all $x$.
+Let $cs$ be a finite list of Boolean circuits on $n$ variables, let $\rho$ be a
+restriction on those variables, and let $l$ be a natural number. Suppose that for every
+circuit $c$ in $cs$, the restricted function $x \mapsto c(\rho.\mathrm{extend}\,x)$ has
+decision-tree depth at most $l$. Then there is a CNF formula $\psi$ of width at most $l$
+that computes the restriction of the AND of $cs$: writing $g$ for the AND gate applied
+to the circuits in $cs$, one has $\psi(x) = g(\rho.\mathrm{extend}\,x)$ for every
+assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
 \end{lemma}
 
-\begin{lemma}[OR of children has a small DNF]
+\begin{lemma}[A small-width DNF for the restriction of an OR gate]
 \lean{LMN.or_children_have_dnf}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p002-b006,
@@ -280,7 +302,6 @@ for all $x$.
 }
 \label{LMN.or_children_have_dnf}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -480,13 +501,19 @@ for all $x$.
   {pdf-fc447f326910-p012-b004}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, LMN.restrictFn_node_eval, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-If every child $c \in cs$ satisfies $\mathrm{dtDepth}(\mathrm{restrictFn}\,c.\mathrm{eval}\,\rho) \le l$,
-then there is a DNF $\varphi$ of width at most $l$ that computes the restriction of the OR node:
-$\mathrm{DNF.eval}\,\varphi\,x = \mathrm{restrictFn}\,(\mathrm{eval}\,(\mathrm{node}\,\mathrm{false}\,cs))\,\rho\,x$
-for all $x$.
+Let $c_1,\dots,c_m$ be Boolean circuits on $n$ variables, let $\rho$ be a restriction of
+those variables, and let $l$ be a natural number. For a Boolean function $g$ write
+$g\!\restriction_\rho$ for its restriction by $\rho$, the function $x \mapsto
+g(\rho.\mathrm{extend}\,x)$ that fixes each coordinate assigned by $\rho$ and reads the
+remaining coordinates from $x$. Suppose that for every child $c$ among $c_1,\dots,c_m$
+the restricted function $c\!\restriction_\rho$ is computed by some decision tree of
+depth at most $l$. Then there is a DNF formula $\varphi$ of width at most $l$ that
+computes the restriction $F\!\restriction_\rho$ of the OR gate $F$ over the children,
+i.e.\ $\varphi(x) = F\!\restriction_\rho(x)$ for every assignment $x$, where $F$
+evaluates to the disjunction of the values $c_1,\dots,c_m$.
 \end{lemma}
 
-\begin{lemma}[Compression and switching for a node]
+\begin{lemma}[Compression and switching at a single gate]
 \lean{LMN.compress_and_switch}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -501,7 +528,6 @@ for all $x$.
 }
 \label{LMN.compress_and_switch}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1666,12 +1692,23 @@ for all $x$.
   {pdf-fc447f326910-p012-b004}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF.eval, DNF.eval, LMN.and_children_have_cnf, LMN.composeRestr, LMN.or_children_have_dnf, LMN.restrictFn_composeRestr, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
-Suppose $0 < l$, $0 < n$, and every child $c \in cs$ satisfies
-$\mathrm{dtDepth}(\mathrm{restrictFn}\,c.\mathrm{eval}\,\rho_1) \le l$. Then under a further
-Bernoulli random restriction $\rho_2$ with parameter $1/(40 l)$, the probability that the
-restricted node $\mathrm{restrictFn}\,(\mathrm{eval}\,(\mathrm{node}\,\mathit{isAnd}\,cs))\,(\mathrm{composeRestr}\,\rho_1\,\rho_2)$
-has decision-tree depth greater than $t$ is at most
+Fix $n \ge 1$, an integer $l \ge 1$, and a natural number $t$, and write $D(g)$ for the
+decision-tree depth of a Boolean function $g$ on $n$ variables, that is, the least depth
+of a decision tree computing $g$. For a function $g$ and a restriction $\rho$ on the $n$
+variables, let $g\!\restriction_{\rho}$ denote the function obtained from $g$ by fixing
+each coordinate to the value $\rho$ assigns it and leaving the coordinates $\rho$ marks
+free as inputs. Let $c_1,\dots,c_m$ be Boolean circuits on $n$ variables, and let $F$ be
+the function computed by a single AND gate, or by a single OR gate, applied to
+$c_1,\dots,c_m$; the bound below holds for either gate. Suppose a restriction $\rho_1$
+satisfies $D\!\left(c_i\!\restriction_{\rho_1}\right) \le l$ for every $i$. Draw a
+random restriction $\rho_2$ under which each of the $n$ variables is independently left
+free with probability $p = \tfrac{1}{40 l}$ and otherwise fixed, taking each of the
+values $0$ and $1$ with probability $\tfrac{1-p}{2}$, and let $\rho_1 \circ \rho_2$ be
+the composite restriction that keeps every value fixed by $\rho_1$ and applies $\rho_2$
+to the coordinates $\rho_1$ leaves free. Then
 \[
-  \left(\tfrac{1}{2}\right)^{t} + \exp\!\left(-\tfrac{n}{120 l}\right).
+\Pr_{\rho_2}\!\left[\, D\!\left(F\!\restriction_{\rho_1 \circ \rho_2}\right) > t
+\,\right]
+  \;\le\; \left(\tfrac{1}{2}\right)^{t} + \exp\!\left(-\frac{n}{120\, l}\right).
 \]
 \end{lemma}

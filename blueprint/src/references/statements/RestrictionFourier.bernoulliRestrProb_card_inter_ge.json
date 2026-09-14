@@ -1,0 +1,18 @@
+{
+ "lean_name": "RestrictionFourier.bernoulliRestrProb_card_inter_ge",
+ "key": "6fb5ce31c45e1118",
+ "kind": "theorem",
+ "title": "Lower bound on the free coordinates within a set",
+ "statement": "Fix $n$ and a parameter $p$ with $0 \\le p \\le 1$, let $U \\subseteq \\mathrm{Fin}\\,n$ be a set of coordinates, and let $k \\ge 1$ be an integer satisfying $3k \\le p\\,\\abs{U}$. Draw a Bernoulli($p$) random restriction $\\rho$ on $n$ variables, and let $J$ denote its set of free variables. Then\n\\[\n  \\Pr\\bigl[\\,k \\le \\abs{U \\cap J}\\,\\bigr] \\;\\ge\\; \\frac{1}{4}.\n\\]",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "U a finite set of coordinates in Fin n",
+  "k ≥ 1",
+  "3k ≤ p·|U|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $0 \\le p \\le 1$, let $U$ be a set of coordinates and let $k \\ge 1$ satisfy\n$3k \\le p\\abs{U}$. Then, under a Bernoulli($p$)-random restriction with free set $J$,\n\\[\n  \\Pr\\bigl[k \\le \\abs{U \\cap J}\\bigr] \\;\\ge\\; \\frac{1}{4},\n\\]\nwhich is the form consumed by the concentration transfer of O'Donnell Lemma 4.21."
+}

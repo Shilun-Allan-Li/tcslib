@@ -14,6 +14,8 @@ original public-coin protocol deterministically.
 
 \begin{definition}[Newman index space]
 \lean{CommunicationComplexity.PublicCoin.newmanIndexSpace}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p012-b002}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p005-b004}
 \label{CommunicationComplexity.PublicCoin.newmanIndexSpace}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}
@@ -25,6 +27,8 @@ reduction.
 
 \begin{definition}[Newman protocol]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p012-b002}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p005-b004}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic, CommunicationComplexity.PublicCoin.newmanIndexSpace}
@@ -36,48 +40,3584 @@ run the $i$-th seed from a fixed table of good randomness values (obtained via a
 and union-bound argument) through the original public-coin protocol deterministically.
 \end{definition}
 
-\begin{theorem}[Newman protocol approximately computes $f$]
+\begin{theorem}[Newman's reduction preserves approximate correctness]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes}
+\proofsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p012-b002}
+\proofsource{raoyehudayoff-ch03-randomized-protocols}{
+  pdf-3eebfb23ab53-p005-b003,
+  pdf-3eebfb23ab53-p005-b004
+}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002,
+    pdf-d54d402b16e2-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002,
+    pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b004,
+    pdf-d54d402b16e2-p007-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b004,
+    pdf-d54d402b16e2-p007-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b003,
+    pdf-d54d402b16e2-p007-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002,
+    pdf-d54d402b16e2-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b003,
+    pdf-d54d402b16e2-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p007-b003}
+\proofstep
+  {CommunicationComplexity.BoolInput}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.zeroInput}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.boolSign}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b006}
+\proofstep
+  {CommunicationComplexity.boolSign_xor}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b006}
+\proofstep
+  {CommunicationComplexity.flipAt}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p014-b002}
+\proofstep
+  {CommunicationComplexity.flipAt_apply_same}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p014-b002}
+\proofstep
+  {CommunicationComplexity.flipAt_apply_ne}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p014-b002}
+\proofstep
+  {CommunicationComplexity.flipAt_flipAt}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p014-b002}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b005,
+    pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.ofMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.toPMF}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measure_eq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.hasSum_measure_singletons}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_prod}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_finset}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.HashSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.measureSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.finiteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashSpace.finiteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.CoinTape}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.coinTapeMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.coinTapeIsProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.coinTapeFiniteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.rrun_eq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b005}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun_eq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b005}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.output}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.alice}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.bob}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.rrun_eq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.ApproxSatisfies}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.output}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bob}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun_eq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.Internal.cdf}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_zero}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_succ}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_one}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_mono}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.invCdf}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.invCdf_eq_iff}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.uniformApprox}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.card_nat_in_Ico}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.uniformApprox_approx}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.single_coin_approx}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003,
+    pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.weighted_sum_approx}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Internal.product_coin_approx}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003,
+    pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003,
+    pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003,
+    pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.cost}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Transcript}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p008-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptMeasurableSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcript}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b005}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.toDeterministic}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.toDeterministic_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.toDeterministic_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prob_many_events_le}
+  {direct}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness}
+  {direct}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002,
+    pdf-d54d402b16e2-p011-b005}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.setFinFiniteMeasureSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateNonempty}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateMeasurableSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateDiscreteMeasurableSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateFiniteMeasureSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.xBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.yBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.card}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.not_xBit_and_yBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.instNonempty}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.instMeasurableSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.measureSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.finiteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.equivProd}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.card}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_real}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_univ}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_real}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinate}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinate_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_real}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialIntersect}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEvent}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEvent}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialIntersectFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEventFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEventFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b004}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.TranscriptType}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType.ext}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType.equivProd}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZTypeFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZTypeDecidableEq}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZVariable}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.transcript}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.specialCoordinate}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.xBefore}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.yAfter}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.raw}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.achievable}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.ext}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zTypeFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zTypeMeasurableSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_zFiber_ne_zero}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputMeasure_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit_of_ne_special}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit_of_ne_special}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.not_xBit_and_yBit_of_ne_special}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_xBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_yBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_xBit_yBit}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjoint_X_Y_iff}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ignoredCoordinate}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointModel}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventEquiv}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventInterDisjointModelEquiv}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventInterDisjointModelFintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialIntersect}
+  {direct}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002,
+    pdf-d54d402b16e2-p015-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent_eq_compl_specialIntersect}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent}
+  {direct}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measure_disjointEvent_ne_zero}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p016-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBoolPair}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p015-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBoolPair_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p015-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw_isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p017-b001}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.boolInputFiniteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p013-b004}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.innerProduct}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b006}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.innerProduct_zero_right}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p004-b006}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.xorInput}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.xorInput_apply}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.xorInput_eq_zeroInput_iff}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p002-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p011-b003,
+    pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_run}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_cost}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_complexity}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet_rrun}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Unit.measureSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Unit.isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.Unit.finiteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.fintype}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.nonempty}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.measureSpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.isProbabilityMeasure}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.finiteProbabilitySpace}
+  {context}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol}
+  {direct}
+  {roughgarden-cc-bootcamp}
+  {pdf-d54d402b16e2-p012-b002,
+    pdf-d54d402b16e2-p011-b005}
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol, CommunicationComplexity.PublicCoin.newmanIndexSpace, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \difficulty{5}
-If $p$ is a public-coin finite-message protocol that $\varepsilon$-computes $f$, and $c > 1$,
-then the Newman protocol $(p.\mathtt{newmanProtocol}\;f\;\varepsilon\;c)$
-is a private-coin protocol that $(c \cdot \varepsilon)$-computes $f$, i.e.\
-for all inputs $x \in X$ and $y \in Y$ the probability that the protocol's output
-differs from $f(x, y)$ is at most $c \cdot \varepsilon$.
+Let $\Omega$ be a finite probability space, let $X$ and $Y$ be finite types, and let $p$
+be a public-coin finite-message protocol over shared randomness $\Omega$ with inputs in
+$X$ and $Y$ and outputs in a type $\alpha$. Fix a target function $f : X \times Y \to
+\alpha$, a real error bound $\varepsilon$, and a real constant $c > 1$, and suppose that
+$p$ $\varepsilon$-computes $f$, meaning that for every input pair $(x,y)$ the
+probability over the shared randomness that $p$ outputs something other than $f(x,y)$ is
+at most $\varepsilon$. Then the associated Newman protocol — the private-coin protocol
+in which Alice draws an index into the fixed table of good random seeds, sends it to
+Bob, and both run $p$ deterministically on that seed — $(c\varepsilon)$-computes $f$:
+for every input pair $(x,y)$ the probability over the private randomness that its output
+differs from $f(x,y)$ is at most $c\varepsilon$.
 \end{theorem}
 
-\begin{theorem}[Newman protocol complexity]
+\begin{theorem}[Communication cost of the Newman protocol]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity}
+\proofsource{raoyehudayoff-ch03-randomized-protocols}{
+  pdf-3eebfb23ab53-p005-b003,
+  pdf-3eebfb23ab53-p005-b004
+}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004,
+    pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b001}
+\proofstep
+  {CommunicationComplexity.BoolInput}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.zeroInput}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.boolSign}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.boolSign_xor}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.flipAt}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.flipAt_apply_same}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.flipAt_apply_ne}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.flipAt_flipAt}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b003,
+    pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.ofMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.toPMF}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measure_eq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.hasSum_measure_singletons}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_prod}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_prod}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_finset}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.HashSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.measureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.finiteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashSpace.finiteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.CoinTape}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.coinTapeMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.coinTapeIsProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.coinTapeFiniteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001,
+    pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.rrun_eq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun_eq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001,
+    pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001,
+    pdf-3eebfb23ab53-p001-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.output}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.alice}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.bob}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.rrun_eq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.ApproxSatisfies}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001,
+    pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.output}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bob}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun_eq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001,
+    pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001,
+    pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001,
+    pdf-3eebfb23ab53-p005-b002}
+\proofstep
+  {CommunicationComplexity.Internal.cdf}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_zero}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_succ}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_one}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.cdf_mono}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.invCdf}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.invCdf_eq_iff}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.uniformApprox}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.card_nat_in_Ico}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.uniformApprox_approx}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.single_coin_approx}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.weighted_sum_approx}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Internal.product_coin_approx}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004,
+    pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004,
+    pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b003,
+    pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004,
+    pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b003,
+    pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002,
+    pdf-3eebfb23ab53-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.cost}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Transcript}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005,
+    pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcript}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005,
+    pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b005}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.toDeterministic}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001,
+    pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.toDeterministic_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.Protocol.toDeterministic_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004,
+    pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001,
+    pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prob_many_events_le}
+  {direct}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness}
+  {direct}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004,
+    pdf-3eebfb23ab53-p005-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.setFinFiniteMeasureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateNonempty}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateDiscreteMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateFiniteMeasureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.xBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.yBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.card}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.not_xBit_and_yBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.instNonempty}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.instMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.measureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.finiteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.equivProd}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.HardSample.card}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_real}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformFin_univ}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_singleton}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool_real}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinate}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinate_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_real}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_univ}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.X}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.input}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialIntersect}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEvent}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEvent}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialIntersectFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialBitsEventFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinateEventFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.TranscriptType}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType.ext}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType.equivProd}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZTypeFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZTypeDecidableEq}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.rawZVariable}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.transcript}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.specialCoordinate}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.xBefore}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.yAfter}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.raw}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.achievable}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.ext}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zTypeFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zTypeMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_zFiber_ne_zero}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.inputMeasure_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBit_of_ne_special}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit_of_ne_special}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.not_xBit_and_yBit_of_ne_special}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_xBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_yBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_xBit_yBit}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjoint_X_Y_iff}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCoordinateVector}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ignoredCoordinate}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointModel}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventEquiv}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventInterDisjointModelEquiv}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEventInterDisjointModelFintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialIntersect}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointEvent_eq_compl_specialIntersect}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_disjointEvent}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measure_disjointEvent_ne_zero}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialPair}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBoolPair}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBoolPair_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b003,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b004,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b004,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b004,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b004,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b004,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw_isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p006-b004,
+    pdf-3eebfb23ab53-p002-b002}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.boolInputFiniteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.innerProduct}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.innerProduct_zero_right}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.xorInput}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.xorInput_apply}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.InnerProduct.xorInput_eq_zeroInput_iff}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_cost}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bind_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet_rrun}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.Unit.measureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Unit.isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.Unit.finiteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.fintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.nonempty}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.measureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.newmanIndexSpace.finiteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol}
+  {direct}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004,
+    pdf-3eebfb23ab53-p005-b003}
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity, CommunicationComplexity.PublicCoin.newmanIndexSpace}
 \difficulty{3}
-If $p$ is a public-coin finite-message protocol that $\varepsilon$-computes $f$, and $c > 1$,
-then the communication complexity of the Newman protocol equals
-$\lceil \log_2(\mathtt{derandomizationSamples}\;X\;Y\;\varepsilon\;c) \rceil + p.\mathtt{complexity}$,
-i.e.\ the original complexity plus the number of bits needed to index the seed table.
+Let $X$ and $Y$ be finite types, let $\Omega$ be a finite probability space, and let $p$
+be a public-coin finite-message protocol over $\Omega$ with private inputs in $X$ and
+$Y$ and outputs in a type $\alpha$. Fix a target function $f : X \to Y \to \alpha$, real
+parameters $\varepsilon$ and $c$ with $c > 1$, and suppose that $p$
+$\varepsilon$-computes $f$. Then the communication complexity of the associated Newman
+protocol equals
+\[
+  \left\lceil \log_2 t(X, Y, \varepsilon, c) \right\rceil + \mathrm{complexity}(p),
+\]
+where $t(X, Y, \varepsilon, c)$ is the derandomization sample count and
+$\mathrm{complexity}(p)$ is the communication complexity of $p$; that is, running the
+Newman protocol costs exactly the cost of $p$ together with the number of bits Alice
+needs to name one seed in the table of size $t(X, Y, \varepsilon, c)$.
 \end{theorem}
 
-\begin{theorem}[Newman's theorem]
+\begin{theorem}[Newman's theorem for communication complexity]
 \lean{CommunicationComplexity.PublicCoin.newman}
+\proofsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p012-b002,
+  pdf-d54d402b16e2-p011-b005
+}
+\proofsource{raoyehudayoff-ch03-randomized-protocols}{
+  pdf-3eebfb23ab53-p005-b003,
+  pdf-3eebfb23ab53-p005-b004
+}
 \label{CommunicationComplexity.PublicCoin.newman}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.communicationComplexity, CommunicationComplexity.PrivateCoin.communicationComplexity_le_of_finiteMessage, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_iff}
 \difficulty{5}
-Let $f : X \to Y \to \alpha$ with $X, Y$ finite, let $\varepsilon, \varepsilon' \in \mathbb{R}$
-and $c > 1$ satisfy $c \cdot \varepsilon < \varepsilon'$.
-Then the private-coin communication complexity of $f$ at error $\varepsilon'$ is at most the
-public-coin complexity at error $\varepsilon$ plus
-$\lceil \log_2(\mathtt{derandomizationSamples}\;X\;Y\;\varepsilon\;c) \rceil$:
+Let $X$ and $Y$ be finite types, let $f : X \to Y \to \alpha$, and let $\varepsilon,
+\varepsilon', c \in \bbr$ satisfy $1 < c$ and $c\varepsilon < \varepsilon'$. Then the
+private-coin communication complexity of $f$ at error tolerance $\varepsilon'$ does not
+exceed the public-coin communication complexity of $f$ at error tolerance $\varepsilon$
+increased by $\lceil \log_2 t(X, Y, \varepsilon, c)\rceil$, where $t(X, Y, \varepsilon,
+c)$ is the derandomization sample count; that is,
 \[
   \mathrm{CC}^{\mathrm{priv}}_{\varepsilon'}(f)
   \;\le\;
   \mathrm{CC}^{\mathrm{pub}}_{\varepsilon}(f)
-  + \left\lceil \log_2\!\left(\mathtt{derandomizationSamples}\;X\;Y\;\varepsilon\;c\right) \right\rceil.
+  \;+\;
+  \bigl\lceil \log_2 t(X, Y, \varepsilon, c) \bigr\rceil ,
 \]
-In particular, switching from public-coin to private-coin randomness costs only
-$O(\log(|X| \cdot |Y|) / \varepsilon^2)$ additional bits.
+with both complexities taken as values in $\bbn \cup \{\infty\}$.
 \end{theorem}

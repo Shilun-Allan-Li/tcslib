@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.lowDegreeSquarefreePolynomial_add",
+ "key": "dd09b10eb7e50ef0",
+ "kind": "theorem",
+ "title": "Additivity of the coefficient-to-polynomial map",
+ "statement": "Fix a field $K$ and natural numbers $n$ and $D$, and let $\\mathcal{S}_{n,D}$ be the set of subsets $s \\subseteq \\mathrm{Fin}\\,n$ with $\\abs{s} \\le D$. For a coefficient function $c \\colon \\mathcal{S}_{n,D} \\to K$, write $P(c) = \\sum_{s \\in \\mathcal{S}_{n,D}} c(s)\\, \\prod_{i \\in s} X_i$ for the associated squarefree polynomial in $K[X_i : i \\in \\mathrm{Fin}\\,n]$. Then for any two coefficient functions $c_1, c_2 \\colon \\mathcal{S}_{n,D} \\to K$ one has \\[ P(c_1 + c_2) = P(c_1) + P(c_2), \\] where $c_1 + c_2$ denotes the pointwise sum.",
+ "hypotheses_covered": [
+  "K is a field",
+  "n, D are natural numbers",
+  "c₁, c₂ are coefficient functions on low-degree squarefree supports S_{n,D}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The constructor $\\texttt{ACP.lowDegreeSquarefreePolynomial}$ is additive in its coefficient\nargument: the polynomial attached to $c_1 + c_2$ is the sum of the polynomials attached\nto $c_1$ and to $c_2$."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_rrun",
+ "key": "cb65e3cdba60d823",
+ "kind": "theorem",
+ "title": "Product protocol runs its factors in parallel",
+ "statement": "Let $p_1$ and $p_2$ be private-coin finite-message protocols over the same input types $X$ and $Y$, with output types $\\alpha_1$ and $\\alpha_2$ and private-randomness types $(\\Omega_{X_1}, \\Omega_{Y_1})$ and $(\\Omega_{X_2}, \\Omega_{Y_2})$ respectively. Then for all inputs $x : X$ and $y : Y$, and all paired private coins $\\omega_x = (\\omega_{x,1}, \\omega_{x,2}) \\in \\Omega_{X_1} \\times \\Omega_{X_2}$ and $\\omega_y = (\\omega_{y,1}, \\omega_{y,2}) \\in \\Omega_{Y_1} \\times \\Omega_{Y_2}$, executing the product protocol of $p_1$ and $p_2$ yields the pair\n\\[\n  \\bigl(p_1(x, y; \\omega_{x,1}, \\omega_{y,1}),\\; p_2(x, y; \\omega_{x,2}, \\omega_{y,2})\\bigr),\n\\]\nwhere each component is the output of the corresponding factor run on the same inputs with its own share of the private randomness.",
+ "hypotheses_covered": [
+  "p1 a private-coin finite-message protocol with randomness spaces Ω_X1, Ω_Y1",
+  "p2 a private-coin finite-message protocol with randomness spaces Ω_X2, Ω_Y2",
+  "both over the same input types X, Y",
+  "inputs x : X, y : Y",
+  "Alice's coin ω_x in the product space Ω_X1 × Ω_X2",
+  "Bob's coin ω_y in the product space Ω_Y1 × Ω_Y2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $x, y, \\omega_x : \\Omega_{X_1} \\times \\Omega_{X_2},\n\\omega_y : \\Omega_{Y_1} \\times \\Omega_{Y_2}$,\n\\[\n  (\\mathrm{prod}\\;p_1\\;p_2).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y\n  \\;=\\; (p_1.\\mathrm{rrun}\\;x\\;y\\;\\omega_x.1\\;\\omega_y.1,\\;\n         p_2.\\mathrm{rrun}\\;x\\;y\\;\\omega_x.2\\;\\omega_y.2).\n\\]"
+}

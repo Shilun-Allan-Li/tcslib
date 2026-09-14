@@ -1,0 +1,19 @@
+{
+ "lean_name": "Bonami.b_reasonable_anticon_zero",
+ "key": "a9799932d01227b4",
+ "kind": "lemma",
+ "title": "Anti-concentration for $B$-reasonable variables",
+ "statement": "Let $X$ be a real-valued random variable on a probability space $(\\Omega, P)$ with finite second and fourth moments and $\\E[X^2] > 0$, and suppose $X$ is $B$-reasonable. Then for every $t \\in [0,1]$,\n\\[\nP\\bigl(\\,\\abs{X} > t\\,\\norm{X}_2\\,\\bigr) \\ge \\frac{(1-t^2)^2}{B},\n\\]\nwhere $\\norm{X}_2 = \\bigl(\\E[X^2]\\bigr)^{1/2}$; equivalently, the probability that $X^2 > t^2\\,\\E[X^2]$ is at least $(1-t^2)^2/B$.",
+ "hypotheses_covered": [
+  "X is B-reasonable (fourth moment controlled by squared second moment)",
+  "second moment E[X^2] is finite (X^2 integrable)",
+  "fourth moment E[X^4] is finite (X^4 integrable)",
+  "E[X^2] > 0",
+  "0 ≤ t",
+  "t ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $X$ is $B$-reasonable and not equivalent to $0$, then for every $t \\in [0,1]$,\n\\[\n\\Pr\\bigl[\\,|X| > t\\,\\norm{X}_2\\,\\bigr] \\ge \\frac{(1-t^2)^2}{B}.\n\\]"
+}

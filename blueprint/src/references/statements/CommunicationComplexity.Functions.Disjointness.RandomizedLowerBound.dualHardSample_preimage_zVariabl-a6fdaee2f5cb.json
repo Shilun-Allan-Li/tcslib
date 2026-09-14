@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample_preimage_zVariable_dualZValue_inter_specialX",
+ "key": "05c0abb2dbfaed54",
+ "kind": "theorem",
+ "title": "Sample-space duality on Z-fibers and special bits",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the disjointness problem on inputs of length $n$. For a hard-distribution sample $\\omega$, let $Z_p(\\omega)$ be its $Z$-value — the transcript of $p$ on the input pair induced by $\\omega$, together with the special coordinate and the input bits lying strictly before and strictly after it — and let $\\alpha(\\omega)$ and $\\beta(\\omega)$ denote, respectively, Alice's and Bob's bit at that special coordinate. Let $D$ be the sample-space duality that swaps the roles of Alice and Bob and reverses the coordinate order, let $p^{\\ast}$ be the dual protocol, and let $z^{\\ast}$ be the dual of an achievable $Z$-value $z$. Then for every achievable $Z$-value $z$ of $p$ and every bit $b$,\n\\[\nD^{-1}\\!\\Big(\\, Z_{p^{\\ast}}^{-1}(\\{z^{\\ast}\\}) \\cap \\alpha^{-1}(\\{b\\}) \\,\\Big)\n\\;=\\;\nZ_{p}^{-1}(\\{z\\}) \\cap \\beta^{-1}(\\{b\\}).\n\\]\nEquivalently, a sample $\\omega$ has $Z_p(\\omega) = z$ with Bob's special bit equal to $b$ if and only if its dual $D(\\omega)$ has dual $Z$-value $z^{\\ast}$ with Alice's special bit equal to $b$.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol on length-n inputs",
+  "z an achievable Z-value of p",
+  "b a Boolean bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Pulling a dual $Z$ fiber intersected with a dual Alice-special-bit event back along hard-sample duality gives the corresponding original Bob-special-bit event."
+}

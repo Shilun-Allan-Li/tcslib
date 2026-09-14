@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le",
+ "key": "96ac7fec6b781004",
+ "kind": "theorem",
+ "title": "Rank bound from communication complexity",
+ "statement": "Let $X$ and $Y$ be finite types and let $f : X \\to Y \\to \\mathrm{Bool}$ be a two-party Boolean function, whose rank $\\mathrm{rank}(f)$ is the $\\bbr$-rank of the $0/1$ matrix $M_f \\in \\bbr^{X \\times Y}$ with $(M_f)_{x,y} = 1$ exactly when $f\\,x\\,y = \\mathrm{true}$. If the deterministic communication complexity $D(f)$ is at most $n$ for some $n \\in \\bbn$, then $\\mathrm{rank}(f) \\le 2^n$.",
+ "hypotheses_covered": [
+  "$X$ finite",
+  "$Y$ finite",
+  "$f : X \\to Y \\to \\mathrm{Bool}$ a Boolean function",
+  "$n \\in \\mathbb{N}$",
+  "deterministic communication complexity $D(f) \\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf the deterministic communication complexity of $f : X \\to Y \\to \\mathrm{Bool}$\nis at most $n \\in \\mathbb{N}$, then $\\mathrm{rank}(f) \\le 2^n$."
+}

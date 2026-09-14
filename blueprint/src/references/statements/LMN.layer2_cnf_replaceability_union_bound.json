@@ -1,0 +1,23 @@
+{
+ "lean_name": "LMN.layer2_cnf_replaceability_union_bound",
+ "key": "a4affad8e79ee5b6",
+ "kind": "theorem",
+ "title": "Union bound for layer-2 CNF replaceability",
+ "statement": "Let $g_1,\\dots,g_{s_2}$ be a family of DNF formulas in $n$ variables, and suppose $n \\ge 1$. Fix a width bound $w \\ge 1$ and assume each $g_i$ has width at most $w$; assume moreover that within every term of every $g_i$ the literals are pairwise distinct and any two literals on the same variable coincide, so that no variable occurs more than once in a term. Let $p \\in \\bbr$ satisfy $0 < p \\le \\frac{1}{40w}$ and $p \\le 1$, and draw a random restriction $\\rho$ on the $n$ variables from the Bernoulli($p$) distribution, in which each variable is independently left free with probability $p$ and otherwise fixed to $0$ or $1$ each with probability $\\frac{1-p}{2}$. Then the probability that some gate $g_i$ fails to be representable after restriction — that is, that there is an index $i$ for which the restricted function $g_i\\!\\restriction_\\rho$ (the value $x \\mapsto g_i(\\rho.\\mathrm{extend}\\,x)$) is not computed by any CNF formula of width at most $l$ — is at most\n\\[\n  s_2 \\cdot \\left( \\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\left(-\\tfrac{n p}{3}\\right) \\right).\n\\]",
+ "hypotheses_covered": [
+  "a family of $s_2$ DNF gates in $n$ variables",
+  "each gate has width at most $w$",
+  "$w > 0$",
+  "in each term, literals sharing a variable are identical",
+  "each term has no repeated literal (no duplicates)",
+  "$n > 0$",
+  "$p > 0$",
+  "$p \\le 1/(40w)$",
+  "$p \\le 1$",
+  "conclusion: failure probability $\\le s_2((1/2)^l + \\exp(-np/3))$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\mathrm{gates}_0,\\dots,\\mathrm{gates}_{s_2-1}$ be the layer-2 $\\mathrm{DNF}$ gates, each of\nwidth at most $w>0$ (with distinct variables per term and no duplicate literals), let $n>0$,\nand let $0<p\\le \\tfrac{1}{40w}$ with $p\\le 1$. Then the probability under a Bernoulli$(p)$\nrestriction $\\rho$ that some gate fails to admit a width-$l$ $\\mathrm{CNF}$ representation of\n$\\mathrm{gates}_i|_\\rho$ is at most\n\\[\n  s_2\\cdot\\Bigl(\\Bigl(\\tfrac12\\Bigr)^l + \\exp\\!\\Bigl(-\\tfrac{np}{3}\\Bigr)\\Bigr).\n\\]"
+}

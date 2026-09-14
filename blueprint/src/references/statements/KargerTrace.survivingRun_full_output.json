@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.survivingRun_full_output",
+ "key": "e62ea5640fbd2bc9",
+ "kind": "lemma",
+ "title": "Termination of a full surviving run at two vertices",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut of $G$, and write $n$ for the number of vertices of $G$; suppose $n \\ge 2$. If a state $t$ is reached from $s$ by a surviving run of exactly $n - 2$ consecutive surviving steps — each step contracting an edge of the current graph that does not cross the distinguished cut — then the multigraph of $t$ satisfies the termination condition of the algorithm, that is, it has exactly two vertices.",
+ "hypotheses_covered": [
+  "the multigraph of s has at least two vertices (2 ≤ its vertex count)",
+  "a surviving run of length (vertex count of s's graph) − 2 leading from s to t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s.G$ has at least two vertices and $t$ is reached from $s$ by a surviving run of\n$s.G.\\mathrm{vertexCount} - 2$ steps, then $t.G$ is a Karger output."
+}

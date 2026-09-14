@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.fixedTerm_implies_dtDepth_zero",
+ "key": "28e153e190c6a253",
+ "kind": "lemma",
+ "title": "A fixed term forces zero decision-tree depth",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables and let $\\rho$ be a restriction of those variables. If at least one term of $f$ is fixed by $\\rho$, then the restricted Boolean function $x \\mapsto f(\\rho\\text{-extension of }x)$ has decision-tree depth $0$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n Boolean variables",
+  "ρ is a restriction on n variables",
+  "some term of f is fixed by ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf some term of a DNF $f$ is fixed by $\\rho$, then the restricted function\n$\\mathrm{restrictFn}\\,f.\\mathrm{eval}\\,\\rho$ is identically true and hence has\ndecision-tree depth $0$."
+}

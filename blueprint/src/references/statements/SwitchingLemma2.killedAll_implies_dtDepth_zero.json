@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.killedAll_implies_dtDepth_zero",
+ "key": "4156ec2bf25edb04",
+ "kind": "lemma",
+ "title": "Killed terms force zero decision-tree depth",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables and let $\\rho$ be a restriction on these variables. If every term of $f$ is killed by $\\rho$ — that is, each term contains a literal whose variable $\\rho$ fixes to the value making that literal false — then the restricted function $x \\mapsto f\\bigl(\\rho.\\mathrm{extend}\\,x\\bigr)$ has decision-tree depth $0$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "ρ is a restriction on n variables",
+  "every term of f is killed by ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf every term of a DNF $f$ is killed by $\\rho$, then the restricted function\n$\\mathrm{restrictFn}\\,f.\\mathrm{eval}\\,\\rho$ is identically false and hence has\ndecision-tree depth $0$."
+}

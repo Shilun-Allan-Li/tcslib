@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.map_complexity",
+ "key": "badf2d4273e3265b",
+ "kind": "theorem",
+ "title": "Post-processing preserves communication complexity",
+ "statement": "Let $X$, $Y$, $\\alpha$, and $\\beta$ be types, let $g : \\alpha \\to \\beta$ be any function, and let $p$ be a finite-message deterministic two-party communication protocol with input types $X$, $Y$ and output type $\\alpha$. Applying $g$ to the output of $p$ — that is, running $p$ and post-processing its result through $g$ — yields a protocol whose communication complexity equals that of $p$: \\[ \\mathrm{complexity}(\\mathrm{map}\\,g\\,p) = \\mathrm{complexity}(p). \\]",
+ "hypotheses_covered": [
+  "a function g : α → β",
+  "a finite-message protocol p with input types X, Y and output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any function $g : \\alpha \\to \\beta$ and protocol $p$,\n$(\\texttt{map}\\;g\\;p).\\texttt{complexity} = p.\\texttt{complexity}$.\nMapping a post-processing function over the output does not change the number of bits\ncommunicated."
+}

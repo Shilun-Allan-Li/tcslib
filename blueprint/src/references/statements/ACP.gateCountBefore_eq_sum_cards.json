@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.gateCountBefore_eq_sum_cards",
+ "key": "d3ca0a5588949bad",
+ "kind": "lemma",
+ "title": "Partial gate count as a sum of layer sizes",
+ "statement": "Let $F$ be a Boolean feed-forward circuit (alphabet $\\bbf_2$, input type $\\mathrm{Fin}\\,n$) all of whose node layers are finite, and write $\\mathrm{depth}(F)$ for its depth. For a natural number $d$ with $d \\le \\mathrm{depth}(F)$, the number of non-input gates in the first $d$ layers equals the total number of nodes across layers $1,\\dots,d$:\n\\[\n(\\text{non-input gates in layers } 1,\\dots,d) \\;=\\; \\sum_{i=1}^{d} \\abs{L_i},\n\\]\nwhere $L_i$ denotes the set of nodes in the $i$-th layer of $F$.",
+ "hypotheses_covered": [
+  "F is a Boolean feed-forward circuit over Fin 2 with input Fin n",
+  "every node layer of F is finite",
+  "d ≤ depth of F"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a feed-forward circuit with all node layers finite.  Then for every $d$ with\n$d \\le F.\\mathrm{depth}$,\n\\[\n\\mathrm{gateCountBefore}\\,F\\,d\n  \\;=\\; \\sum_{j : \\mathrm{Fin}\\,d} \\abs{F.\\mathrm{nodes}(\\mathrm{gateLayerIdx}\\,F\\,h_d\\,j)},\n\\]\nthat is, the number of non-input gates in the first $d$ layers is the sum of the cardinalities of\nthose layers."
+}

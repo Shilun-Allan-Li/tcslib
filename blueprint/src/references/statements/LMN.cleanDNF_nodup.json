@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.cleanDNF_nodup",
+ "key": "e73ec270af2b8909",
+ "kind": "lemma",
+ "title": "Cleaned DNF terms have no repeated literals",
+ "statement": "Let $d$ be a DNF formula in $n$ variables, and clean it by first deleting every term that contains some variable together with its negation, and then, within each surviving term, keeping only the first literal on each variable and discarding any later literal whose variable has already appeared. Every term of the resulting formula is then duplicate-free: no literal occurs twice in it, where two literals count as equal when they share both variable and polarity.",
+ "hypotheses_covered": [
+  "d is an arbitrary DNF formula in n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Every term of $\\mathrm{cleanDNF}\\,d$ satisfies \\texttt{Nodup}, i.e.\\ contains no repeated literal."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkBLR.parseval_lift_omega",
+ "key": "d53fdf76ed751fd0",
+ "kind": "lemma",
+ "title": "Parseval identity for a root-of-unity lift",
+ "statement": "Let $p$ be a prime and $n \\ge 0$, and write $\\omega_p = e^{2\\pi i/p}$. For a function $f : \\mathbb{Z}_p^n \\to \\mathbb{Z}/p\\mathbb{Z}$, let $\\widetilde{f} : \\mathbb{Z}_p^n \\to \\mathbb{C}$ be its lift $\\widetilde{f}(x) = \\omega_p^{f(x)}$, and let $\\widehat{\\widetilde{f}}(s)$ denote its Fourier coefficient at frequency $s \\in \\mathbb{Z}_p^n$. Then\n\\[\n  \\sum_{s \\in \\mathbb{Z}_p^n} \\bigl|\\widehat{\\widetilde{f}}(s)\\bigr|^2 = 1.\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "f is a function from Z_p^n to Z/pZ",
+  "sum ranges over all frequencies s in Z_p^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : \\mathbb{Z}_p^n \\to \\mathbb{Z}_p$,\n\\[\n  \\sum_{s\\in\\mathbb{Z}_p^n}\n  \\bigl\\|\\widehat{\\widetilde{f}}(s)\\bigr\\|^2 = 1.\n\\]"
+}

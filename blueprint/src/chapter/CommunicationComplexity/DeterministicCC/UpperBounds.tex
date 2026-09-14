@@ -11,47 +11,46 @@ of the relevant cardinality.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Complexity bounded by $\lceil\log|X|\rceil + \lceil\log|Y|\rceil$]
+\begin{theorem}[Communication complexity bounded by input sizes]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
-For finite, nonempty types $X$ and $Y$ and any function $f : X \to Y \to \alpha$,
-the deterministic communication complexity satisfies
+Let $X$ and $Y$ be finite nonempty types, let $\alpha$ be any type, and let $f : X \to Y
+\to \alpha$. Then the deterministic communication complexity of $f$ satisfies
 \[
-  \mathrm{CC}(f) \;\le\; \lceil\log_2 |X|\rceil + \lceil\log_2 |Y|\rceil.
+  D(f) \;\le\; \lceil \log_2 \abs{X} \rceil + \lceil \log_2 \abs{Y} \rceil,
 \]
-This bound is achieved by the protocol in which Alice sends her entire input to Bob
-and Bob then sends his entire input to Alice.
+where $\abs{X}$ and $\abs{Y}$ denote the cardinalities of $X$ and $Y$.
 \end{theorem}
 
-\begin{theorem}[Complexity bounded by $\lceil\log|X|\rceil + \lceil\log|\alpha|\rceil$]
+\begin{theorem}[Trivial upper bound on deterministic communication complexity]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
-For finite, nonempty types $X$ and $\alpha$ and any function $f : X \to Y \to \alpha$,
-the deterministic communication complexity satisfies
+Let $X$ and $\alpha$ be finite nonempty types, let $Y$ be an arbitrary type, and let $f
+: X \to Y \to \alpha$ be a two-argument function. Then the deterministic communication
+complexity of $f$ satisfies
 \[
-  \mathrm{CC}(f) \;\le\; \lceil\log_2 |X|\rceil + \lceil\log_2 |\alpha|\rceil.
+  D(f) \;\le\; \lceil \log_2 \abs{X} \rceil + \lceil \log_2 \abs{\alpha} \rceil,
 \]
-This bound is achieved by the protocol in which Alice sends her input $x$ to Bob,
-and Bob computes and sends back the output $f(x, y)$.
+where $\abs{X}$ and $\abs{\alpha}$ denote the cardinalities of $X$ and $\alpha$.
 \end{theorem}
 
-\begin{theorem}[Complexity bounded by $\lceil\log|Y|\rceil + \lceil\log|\alpha|\rceil$]
+\begin{theorem}[Complexity bound of ceil-log of range and codomain sizes]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_Y_alpha}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_Y_alpha}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
-For finite, nonempty types $Y$ and $\alpha$ and any function $f : X \to Y \to \alpha$,
-the deterministic communication complexity satisfies
+Let $X$ be an arbitrary type and let $Y$ and $\alpha$ be finite nonempty types. Then for
+every function $f : X \to Y \to \alpha$, the deterministic communication complexity of
+$f$ satisfies
 \[
-  \mathrm{CC}(f) \;\le\; \lceil\log_2 |Y|\rceil + \lceil\log_2 |\alpha|\rceil.
+  D(f) \;\le\; \lceil \log_2 \abs{Y} \rceil + \lceil \log_2 \abs{\alpha} \rceil,
 \]
-This bound is achieved by the protocol in which Bob sends his input $y$ to Alice,
-and Alice computes and sends back the output $f(x, y)$.
+where $\abs{Y}$ and $\abs{\alpha}$ denote the cardinalities of $Y$ and $\alpha$.
 \end{theorem}

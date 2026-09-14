@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_aliceCoarseInfoTermSpecialYFalse",
+ "key": "f240dadbeb2d420f",
+ "kind": "theorem",
+ "title": "Averaged special-bit KL equals conditional mutual information",
+ "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for the disjointness problem on inputs of length $n$. Let $\\mu$ denote the hard distribution on samples, conditioned on the event that Alice's set and Bob's set are disjoint and on the event that Bob's bit at the special coordinate $T$ equals $\\mathtt{false}$; let $\\E_\\mu$ denote expectation under $\\mu$, and let $I_\\mu$ denote conditional mutual information under $\\mu$. Let $M$ denote the transcript produced by running $p$ on the generated input pair, let $X_T$ denote Alice's bit at the special coordinate, and let $Z = (M,\\,T,\\,X_{<T},\\,Y_{>T})$ denote the fine variable consisting of the transcript together with the coarse data $(T, X_{<T}, Y_{>T})$. Then the $\\mu$-average of the Kullback–Leibler divergence $D(\\cdot\\,\\|\\,\\cdot)$ from the conditional law of $X_T$ given $Z$ to the uniform distribution on $\\{0,1\\}$ equals the conditional mutual information between $X_T$ and $M$ given the coarse data:\n\\[\n\\E_\\mu\\!\\left[\\, D\\!\\big(\\operatorname{Law}_\\mu(X_T \\mid Z)\\ \\big\\|\\ \\mathrm{Unif}\\{0,1\\}\\big)\\,\\right]\n\\;=\\; I_\\mu\\big(X_T \\,;\\, M \\,\\big|\\, T,\\, X_{<T},\\, Y_{>T}\\big).\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol on inputs of length n",
+  "distribution = hard distribution conditioned on disjointness and on Bob's special bit being false",
+  "integrand is the per-fiber KL of the conditional law of the special Alice bit against the uniform bit, evaluated at the fine variable Z=(M,T,X_{<T},Y_{>T})",
+  "right side is the conditional mutual information of X_T and M given the coarse conditioning (T, X_{<T}, Y_{>T})"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "KL identification with the coarse $Z$ conditioning: the average Alice one-bit fiber KL is the conditional mutual information $I(X_{T} : M | T,X_{<T},Y_{>T},Y_{T}=0,D)$."
+}

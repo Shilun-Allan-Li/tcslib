@@ -1,0 +1,16 @@
+{
+ "lean_name": "bernoulli_mgf_bound",
+ "key": "9676f4b9116eb25f",
+ "kind": "theorem",
+ "title": "Bernoulli MGF bound (Hoeffding's lemma)",
+ "statement": "Let $L \\in [0,1]$ and let $\\eta$ be a real number. Then the moment generating function of the shifted Bernoulli weight $1 - L + L\\,e^{-\\eta}$ satisfies\n\\[\n  \\ln\\!\\bigl(1 - L + L\\,e^{-\\eta}\\bigr)\n  \\;\\le\\;\n  -L\\eta + \\frac{\\eta^2}{8}.\n\\]",
+ "hypotheses_covered": [
+  "0 ≤ L",
+  "L ≤ 1",
+  "η an arbitrary real number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $L \\in [0,1]$ and any $\\eta \\in \\bbr$,\n\\[\n  \\ln\\!\\bigl(1 - L + L\\,e^{-\\eta}\\bigr)\n  \\;\\le\\;\n  -L\\eta + \\frac{\\eta^2}{8}.\n\\]\nThe bound is established by showing that the function\n$\\varphi(\\eta) = -L\\eta + \\eta^2/8 - \\ln(1-L+Le^{-\\eta})$ is convex with\n$\\varphi(0) = 0$ and $\\varphi'(0) = 0$."
+}

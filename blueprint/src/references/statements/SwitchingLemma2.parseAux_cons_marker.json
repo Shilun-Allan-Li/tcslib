@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.parseAux_cons_marker",
+ "key": "c5733084f221184c",
+ "kind": "lemma",
+ "title": "Parsing an entry immediately followed by a termination marker",
+ "statement": "Fix a width $w \\ge 1$ and an index $\\mathrm{idx} < w$, together with a direction bit $\\mathrm{dir}$ and an arbitrary list of remaining entries $\\mathrm{rest}$. Parsing the list that begins with the entry $(\\mathrm{idx}, \\mathrm{dir})$, followed immediately by the termination marker $(w, \\mathrm{false})$, and then by $\\mathrm{rest}$, produces the triple $(\\mathrm{idx}, \\mathrm{dir}, \\mathrm{true})$ — with $\\mathrm{idx}$ viewed as an element of $\\{0, \\dots, w-1\\}$ and the final component recording that this entry is marked — prepended to the parse of $\\mathrm{rest}$.",
+ "hypotheses_covered": [
+  "width w is positive (w ≥ 1)",
+  "index idx satisfies idx < w",
+  "the list has the shape (idx, dir) :: (w, false) :: rest, i.e. the entry is immediately followed by the marker (w, false)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Equational lemma: if an entry $(idx, dir)$ with $idx < w$ is immediately\nfollowed by the marker $(w, \\mathrm{false})$, then $\\mathrm{parseAux}$ emits the\ntriple $(\\langle idx, h\\rangle, dir, \\mathrm{true})$ followed by the parse of the\nrest."
+}

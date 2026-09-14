@@ -13,6 +13,10 @@ public-coin communication complexity at error $\varepsilon$ exceeds $n$.
 
 \begin{definition}[Distributional error of a one-way protocol]
 \lean{CommunicationComplexity.Deterministic.OneWay.Protocol.distributionalError}
+\statementsource{roughgarden-cc-oneway}{
+  pdf-043896d6545f-p012-b003,
+  pdf-043896d6545f-p012-b004
+}
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.distributionalError}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace}
@@ -37,66 +41,402 @@ deterministic one-way protocol obtained by substituting $\omega$ for the public
 randomness: it uses the same message type and sends/decodes by fixing $\omega$ in $p$.
 \end{definition}
 
-\begin{theorem}[Run of derandomised protocol]
+\begin{theorem}[Fixing the coin recovers the randomised run]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_run}
 \label{CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun, CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic}
 \difficulty{1}
-For any public-coin protocol $p$, coin outcome $\omega$, and inputs $x \in X$,
-$y \in Y$,
-\[
-  (p.\mathrm{toDeterministic}(\omega)).\mathrm{run}(x, y)
-  \;=\;
-  p.\mathrm{rrun}(x, y, \omega).
-\]
-That is, running the derandomised protocol on $(x,y)$ agrees with running the
-randomised protocol on $(x,y)$ with fixed randomness $\omega$.
+Let $p$ be a one-way public-coin protocol with shared-randomness type $\Omega$, input
+types $X$ and $Y$, and output type $\alpha$; let $\omega \in \Omega$ be a coin outcome
+and $x \in X$, $y \in Y$ be inputs. Fixing the public coin at $\omega$ turns $p$ into a
+deterministic one-way protocol, and executing that deterministic protocol on inputs $x$
+and $y$ yields the same output as running $p$ on the joint inputs $(\omega, x)$ for
+Alice and $(\omega, y)$ for Bob. In both cases the output is Bob's decoder applied to
+his input $(\omega, y)$ together with the message that Alice's encoder assigns to
+$(\omega, x)$.
 \end{theorem}
 
-\begin{theorem}[Cost of derandomised protocol]
+\begin{theorem}[Cost invariance under derandomization]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_cost}
 \label{CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_cost}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic}
 \difficulty{1}
-For any public-coin protocol $p$ and coin outcome $\omega$,
-\[
-  (p.\mathrm{toDeterministic}(\omega)).\mathrm{cost} \;=\; p.\mathrm{cost}.
-\]
-Fixing the randomness does not change the communication cost of the protocol.
+Let $p$ be a one-way public-coin protocol over a shared randomness type $\Omega$, with
+input types $X$, $Y$ and output type $\alpha$, and let $\omega \in \Omega$ be a fixed
+coin outcome. Then the deterministic one-way protocol obtained from $p$ by substituting
+$\omega$ for the public randomness has the same communication cost as $p$; that is, both
+have cost $\lceil \log_2 |M| \rceil$ bits, where $M$ is the shared message codebook.
 \end{theorem}
 
-\begin{lemma}[Fubini swap for failure integrals]
+\begin{lemma}[Exchanging the order of integration for the failure probability]
 \lean{CommunicationComplexity.PublicCoin.OneWay.failureIntegral_swap}
 \label{CommunicationComplexity.PublicCoin.OneWay.failureIntegral_swap}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
 \difficulty{5}
-Let $\mu$ be a finite probability measure on $X \times Y$, let $p$ be a one-way
-public-coin protocol with coin tape of length $m$, and let $f : X \to Y \to \alpha$.
-Then
+Let $X \times Y$ be a finite set equipped with a probability measure $\mu$, let $p$ be a
+one-way public-coin protocol with inputs in $X$ and $Y$, outputs in $\alpha$, and shared
+randomness ranging over coin tapes of length $m$, and let $f : X \times Y \to \alpha$ be
+a target function. Write $\mathrm{rrun}(p, x, y, \omega)$ for the output produced by
+running $p$ on inputs $x$ and $y$ under coin tape $\omega$, and let $\nu$ be the measure
+carried by the coin tapes of length $m$. Then
 \[
-  \int_{\omega}\Pr_{(x,y)\sim\mu}\bigl[p.\mathrm{rrun}(x,y,\omega)\neq f(x,y)\bigr]\,d\omega
+  \int \mu\bigl(\{(x,y) : \mathrm{rrun}(p,x,y,\omega) \neq f(x,y)\}\bigr)\,d\nu(\omega)
   \;=\;
-  \int_{(x,y)\sim\mu}\Pr_{\omega}\bigl[p.\mathrm{rrun}(x,y,\omega)\neq f(x,y)\bigr]\,d\mu,
+  \int \nu\bigl(\{\omega : \mathrm{rrun}(p,x,y,\omega) \neq f(x,y)\}\bigr)\,d\mu(x,y),
 \]
-i.e.\ the order of integration over the coin tape and the input distribution may be
-exchanged (Fubini's theorem applied to the $\{0,1\}$-valued failure indicator).
+where each measure is read as a real number. That is, integrating the $\mu$-probability
+of failure over the choice of coin tape yields the same value as integrating the
+$\nu$-probability of failure over the choice of input pair.
 \end{lemma}
 
-\begin{theorem}[Yao's minimax principle for one-way protocols]
+\begin{theorem}[Yao's minimax lower bound for one-way public-coin protocols]
 \lean{CommunicationComplexity.PublicCoin.OneWay.lt_communicationComplexity_of_forall_distributionalError_gt}
+\proofsource{roughgarden-cc-oneway}{
+  pdf-043896d6545f-p012-b004,
+  pdf-043896d6545f-p012-b005,
+  pdf-043896d6545f-p013-b001
+}
 \label{CommunicationComplexity.PublicCoin.OneWay.lt_communicationComplexity_of_forall_distributionalError_gt}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p013-b009,
+    pdf-043896d6545f-p014-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p014-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p014-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p014-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p014-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p014-b001}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002,
+    pdf-043896d6545f-p012-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002,
+    pdf-043896d6545f-p012-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.toPMF}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p013-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p012-b005}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p013-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p013-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p013-b001}
+\proofstep
+  {CommunicationComplexity.CoinTape}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.coinTapeMeasure}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.coinTapeIsProbabilityMeasure}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.coinTapeFiniteProbabilitySpace}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b003,
+    pdf-043896d6545f-p002-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.cost}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_complexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002,
+    pdf-043896d6545f-p002-b003}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b003,
+    pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004,
+    pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p002-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.OneWay.Protocol.distributionalError}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p012-b004}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002,
+    pdf-043896d6545f-p012-b005}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_run}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p010-b002}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_cost}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p012-b005}
+\proofstep
+  {CommunicationComplexity.PublicCoin.OneWay.failureIntegral_swap}
+  {context}
+  {roughgarden-cc-oneway}
+  {pdf-043896d6545f-p013-b001,
+    pdf-043896d6545f-p012-b005}
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.Protocol.distributionalError, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le, CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt, CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun, CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic, CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_run, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff, CommunicationComplexity.PublicCoin.OneWay.failureIntegral_swap}
 \difficulty{5}
-Let $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $n \in \mathbb{N}$.
-Suppose there exists a finite joint distribution $\mu$ on $X \times Y$ such that every
-deterministic one-way protocol $p$ with $p.\mathrm{cost} \le n$ satisfies
-$p.\mathrm{distributionalError}(\mu, f) > \varepsilon$.
-Then the one-way public-coin communication complexity of $f$ at error $\varepsilon$
-satisfies $n < \mathrm{communicationComplexity}(f, \varepsilon)$.
-This is one direction of Yao's minimax principle: a hard input distribution witnesses
-a lower bound on randomised complexity.
+Let $f : X \to Y \to \alpha$ be a function, let $\varepsilon \in \bbr$, and let $n \in
+\bbn$. Suppose there is a finite probability distribution $\mu$ on $X \times Y$ under
+which every deterministic one-way protocol $p$ of communication cost at most $n$ has
+distributional error strictly greater than $\varepsilon$; that is,
+$\Pr_{(x,y)\sim\mu}\bigl[\,p\text{ outputs a value}\neq f(x,y)\,\bigr] > \varepsilon$
+for every such $p$. Then the $\varepsilon$-error one-way public-coin communication
+complexity of $f$ is strictly greater than $n$.
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "GeneralHypercontractivity.noiseKernel_snoc",
+ "key": "5ddaa3a8f11f6452",
+ "kind": "lemma",
+ "title": "Factorization of the noise kernel along the last coordinate",
+ "statement": "Fix $\\rho \\in \\bbr$, points $x', y'$ in the Boolean hypercube $\\{0,1\\}^n$, and bits $b, b'$. Write $(x', b)$ and $(y', b')$ for the points of $\\{0,1\\}^{n+1}$ obtained by appending $b$ and $b'$, respectively, as the final coordinate. Then the noise kernel of the extended pair factors as\n\\[\n  K_\\rho\\bigl((x', b),\\, (y', b')\\bigr)\n  \\;=\\; K_\\rho(x', y') \\cdot \\frac{1 + \\rho\\,\\chi(b)\\,\\chi(b')}{2},\n\\]\nwhere $\\chi(\\cdot)$ is the $\\pm 1$ sign encoding of a bit.",
+ "hypotheses_covered": [
+  "ρ a real number",
+  "x', y' points of the n-dimensional Boolean hypercube",
+  "b, b' bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $x', y' \\in \\mathrm{BoolCube}\\,n$ and bits $b, b'$,\n\\[\n  K_\\rho\\bigl(\\mathrm{snoc}(x',b),\\ \\mathrm{snoc}(y',b')\\bigr)\n  \\;=\\; K_\\rho(x',y') \\cdot \\frac{1 + \\rho\\,\\chi(b)\\,\\chi(b')}{2}.\n\\]"
+}

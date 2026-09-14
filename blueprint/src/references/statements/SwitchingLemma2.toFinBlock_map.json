@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.toFinBlock_map",
+ "key": "614981d6a3085621",
+ "kind": "lemma",
+ "title": "Bounded-index cast is undone by taking values",
+ "statement": "Fix a natural number $w$, and let $l$ be a finite list of pairs $(i,b)$ with $i \\in \\bbn$ and $b$ a Boolean, subject to the requirement that $i < w$ for every pair in $l$. Reinterpret each such pair as $(\\bar\\imath, b)$, where $\\bar\\imath$ is the element of $\\mathrm{Fin}\\,w$ whose underlying value is $i$, obtaining a list over $\\mathrm{Fin}\\,w \\times \\mathrm{Bool}$. Applying the map $(j,b) \\mapsto (j\\text{'s underlying natural number}, b)$ to each entry of that list yields $l$.",
+ "hypotheses_covered": [
+  "w a natural number",
+  "l a finite list of (natural number, Boolean) pairs",
+  "every first coordinate of l is less than w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Mapping the $\\mathrm{Fin}$ blocks back to $(\\mathbb{N} \\times \\mathrm{Bool})$\nvia $p \\mapsto (p.1.\\mathrm{val}, p.2)$ recovers the original list $l$."
+}

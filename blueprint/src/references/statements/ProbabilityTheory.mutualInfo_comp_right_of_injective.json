@@ -1,0 +1,21 @@
+{
+ "lean_name": "ProbabilityTheory.mutualInfo_comp_right_of_injective",
+ "key": "a65b4c9824548444",
+ "kind": "theorem",
+ "title": "Mutual information is invariant under injective recoding",
+ "statement": "Let $X\\colon\\Omega\\to S$ and $Y\\colon\\Omega\\to T$ be measurable random variables on a probability space $(\\Omega,\\mu)$ (allowing also $\\mu$ to be the zero measure), where $S$ and $T$ are countable and each of $X$ and $Y$ takes only finitely many values. If $f\\colon T\\to V$ is a measurable injection into a countable space $V$, then passing $Y$ through $f$ leaves the mutual information with $X$ unchanged:\n\\[\nI[X : f\\circ Y\\, ;\\, \\mu] = I[X : Y\\, ;\\, \\mu].\n\\]",
+ "hypotheses_covered": [
+  "X measurable, valued in a countable space",
+  "Y measurable, valued in a countable space",
+  "μ is a probability measure (or the zero measure)",
+  "X has finite range",
+  "Y has finite range",
+  "f is measurable",
+  "f is injective",
+  "f maps into a countable space V"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : T \\to V$ is measurable and injective, then\n$I[X : f \\circ Y;\\mu] = I[X : Y;\\mu]$."
+}

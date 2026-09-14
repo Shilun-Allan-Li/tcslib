@@ -1,0 +1,18 @@
+{
+ "lean_name": "RestrictionFourier.bernoulliRestrProb_card_inter_lt",
+ "key": "641ba06a9b83516a",
+ "kind": "theorem",
+ "title": "Lower-tail bound for free coordinates in a set",
+ "statement": "Let $p \\in \\bbr$ satisfy $0 \\le p \\le 1$, let $U \\subseteq \\mathrm{Fin}\\,n$ be a finite set of coordinates, and let $k$ be a positive integer with $3k \\le p\\,\\abs{U}$. Writing $J$ for the set of free variables of a Bernoulli($p$)-random restriction $\\rho$ on $n$ variables, the probability that fewer than $k$ coordinates of $U$ remain free satisfies\n\\[\n  \\Pr\\bigl[\\,\\abs{U \\cap J} < k\\,\\bigr] \\;\\le\\; \\frac{3}{4k}.\n\\]",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "U a finite set of coordinates",
+  "k ≥ 1 (positive integer)",
+  "3k ≤ p·|U|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $0 \\le p \\le 1$, let $U$ be a set of coordinates and let $k \\ge 1$ satisfy\n$3k \\le p\\abs{U}$. Then, under a Bernoulli($p$)-random restriction with free set $J$,\n\\[\n  \\Pr\\bigl[\\abs{U \\cap J} < k\\bigr] \\;\\le\\; \\frac{3}{4k}.\n\\]\nThis is the Bernoulli-restriction analogue of the binomial lower tail used in O'Donnell\nLemma 4.21, with the textbook bound $e^{-2k/3}$ replaced by the elementary $3/(4k) \\le 3/4 < 1$."
+}

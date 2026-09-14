@@ -1,0 +1,17 @@
+{
+ "lean_name": "variance_row_proj",
+ "key": "1a4c53b02c0053c1",
+ "kind": "lemma",
+ "title": "Variance of a row of a Rademacher projection",
+ "statement": "Fix an integer $k \\ge 1$, a vector $x \\in \\bbr^d$, and a row index $i \\in \\{1,\\dots,k\\}$. Let $A$ be the Rademacher matrix drawn from the joint Rademacher product measure, so its $k \\cdot d$ entries $A_{ij} = \\omega_{ij}/\\sqrt{k}$ are independent, each equal to $\\pm 1/\\sqrt{k}$ with probability $1/2$. Then the $i$-th coordinate of the image $Ax$ has variance\n\\[\n  \\mathrm{Var}\\!\\bigl[(Ax)_i\\bigr] = \\frac{\\norm{x}^2}{k}.\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1 (0 < k)",
+  "x is a vector in ℝ^d",
+  "i is a row index in Fin k",
+  "randomness governed by the joint Rademacher product measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k > 0$, $x \\in \\mathbb{R}^d$, and $i \\in \\mathrm{Fin}\\,k$,\n\\[\n  \\mathrm{Var}\\!\\bigl[\\omega \\mapsto (A(\\omega)\\,x)_i;\\,\\mathrm{radJointMeasure}\\bigr]\n  = \\frac{\\norm{x}^2}{k}.\n\\]"
+}

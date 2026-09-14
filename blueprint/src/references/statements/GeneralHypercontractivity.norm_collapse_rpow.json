@@ -1,0 +1,15 @@
+{
+ "lean_name": "GeneralHypercontractivity.norm_collapse_rpow",
+ "key": "aa936210b149fb15",
+ "kind": "lemma",
+ "title": "Collapse of the $p$-th moment along the last coordinate",
+ "statement": "Let $p > 0$ and let $f : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function of arity $n+1$. Writing $(x', b) \\in \\{0,1\\}^n \\times \\{0,1\\}$ for the point of $\\{0,1\\}^{n+1}$ whose first $n$ coordinates are $x'$ and whose last coordinate is $b$, one has\n\\[\n  \\E\\bigl[\\,\\abs{f}^p\\,\\bigr]\n  \\;=\\;\n  \\E_{x' \\in \\{0,1\\}^n}\\!\\left[\\tfrac12\\Bigl(\\abs{f(x', 0)}^p + \\abs{f(x', 1)}^p\\Bigr)\\right],\n\\]\nwhere both expectations are taken with respect to the uniform measure on the respective hypercubes.",
+ "hypotheses_covered": [
+  "$p > 0$",
+  "$f$ is a real-valued Boolean function of arity $n+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p > 0$ and $f : \\mathrm{BoolCube}\\,(n+1) \\to \\bbr$,\n\\[\n  \\E\\bigl[\\abs{f}^p\\bigr]\n  \\;=\\; \\E_{x'}\\Bigl[\\tfrac12\\bigl(\\abs{f(\\mathrm{snoc}(x',\\mathit{false}))}^p + \\abs{f(\\mathrm{snoc}(x',\\mathit{true}))}^p\\bigr)\\Bigr].\n\\]"
+}

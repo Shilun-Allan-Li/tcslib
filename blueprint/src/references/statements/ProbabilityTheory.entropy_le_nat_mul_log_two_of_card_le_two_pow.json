@@ -1,0 +1,19 @@
+{
+ "lean_name": "ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow",
+ "key": "bb249f7dca3e75e5",
+ "kind": "theorem",
+ "title": "Entropy bound for an alphabet of at most $2^c$ symbols",
+ "statement": "Let $S$ be a finite nonempty set and let $X$ be a random variable on a probability space $\\Omega$ (equipped with a measure $\\mu$) taking values in $S$. If the number of elements of $S$ is at most $2^c$ for some natural number $c$, then the Shannon entropy of $X$ satisfies\n\\[\n  H[X;\\mu] \\;\\le\\; c\\,\\log 2,\n\\]\nwhere the logarithm is natural (so the entropy is measured in nats).",
+ "hypotheses_covered": [
+  "$S$ finite",
+  "$S$ nonempty",
+  "$X$ a random variable on $\\Omega$ valued in $S$",
+  "$\\mu$ a measure on $\\Omega$",
+  "$c$ a natural number",
+  "cardinality of $S$ at most $2^c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathrm{card}(S) \\le 2^c$ for some $c : \\mathbb{N}$, then\n\\[\n  H[X;\\mu] \\;\\le\\; c \\cdot \\log 2.\n\\]"
+}

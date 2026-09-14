@@ -1,0 +1,15 @@
+{
+ "lean_name": "LowDegreeTest.RM_test_completeness",
+ "key": "69fecf239043721e",
+ "kind": "lemma",
+ "title": "Completeness of the Reed–Muller degree test",
+ "statement": "Fix a degree bound $d$ and let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function belonging to the Reed–Muller code $\\mathrm{RM}(d,n)$, that is, a function of degree at most $d$. Then the $(d+1)$-fold derivative test accepts $f$ with probability exactly $1$:\n\\[\n  \\E_{x}\\,\\E_{h_1,\\ldots,h_{d+1}}\\bigl[\\mathbf{1}[\\mathrm{GP}((-1)^f,\\, d{+}1,\\, x,\\, h_1,\\ldots,h_{d+1}) = 1]\\bigr] = 1,\n\\]\nwhere $x$ and the direction vectors $h_1,\\ldots,h_{d+1}$ range uniformly over $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on {0,1}^n",
+  "f lies in the Reed-Muller code RM(d,n), i.e. has degree at most d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every codeword $f \\in \\mathrm{RM}(d, n)$ is accepted by the degree-$d$ test with\nprobability $1$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv",
+ "key": "1b2ba942eae76d49",
+ "kind": "theorem",
+ "title": "Faithful finite-message simulation of private-coin protocols",
+ "statement": "Let $p$ be a binary private-coin protocol with randomness spaces $\\Omega_X$ and $\\Omega_Y$, input spaces $X$ and $Y$, and output type $\\alpha$, in which Alice's and Bob's messages are single bits. Then there exists a private-coin finite-message protocol $P$ over the same spaces such that, for every pair of inputs $x \\in X$, $y \\in Y$ and every pair of private coins $\\omega_x \\in \\Omega_X$, $\\omega_y \\in \\Omega_Y$, the two protocols return the same output when run on $x, y$ with coins $\\omega_x, \\omega_y$, and moreover $P$ has exactly the same communication complexity as $p$.",
+ "hypotheses_covered": [
+  "p is a binary private-coin protocol over randomness spaces Ω_X, Ω_Y, input spaces X, Y, and output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary private-coin protocol $p$, there exists a finite-message protocol $P$\nsuch that $P.\\texttt{rrun}\\,x\\,y\\,\\omega_x\\,\\omega_y = p.\\texttt{rrun}\\,x\\,y\\,\\omega_x\\,\\omega_y$\nfor all inputs and coins, and $P.\\texttt{complexity} = p.\\texttt{complexity}$.  The witness\nis $P = \\texttt{ofProtocol}\\,p$."
+}

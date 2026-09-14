@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.reaches_isRectangle",
+ "key": "05f9f3b399e45167",
+ "kind": "theorem",
+ "title": "Reachable inputs of a subprotocol form a rectangle",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $p$ be a deterministic two-party communication protocol over Alice's inputs $X$ and Bob's inputs $Y$ with outputs in $\\alpha$, and suppose $s$ is a rooted subtree of $p$. Then the set of input pairs $(x, y) \\in X \\times Y$ that reach $s$ — those for which $x$ lies in Alice's reach set and $y$ lies in Bob's reach set — is a rectangle: it factors as a product $A \\times B$ for some $A \\subseteq X$ and $B \\subseteq Y$.",
+ "hypotheses_covered": [
+  "$s$ is a subprotocol (rooted subtree) of the protocol $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nGiven a subprotocol witness $\\texttt{hsp} : \\texttt{IsSubprotocol}\\,s\\,p$, the set of input\npairs $(x, y) \\in X \\times Y$ that reach $s$ (via the canonical path choice) is a\ncombinatorial rectangle."
+}

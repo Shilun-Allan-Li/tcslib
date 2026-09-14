@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.reach_cons_iff",
+ "key": "e718a766ffaf90f9",
+ "kind": "lemma",
+ "title": "Head–tail decomposition of reachability",
+ "statement": "Let $g$ be a weighted edge on $n$ vertices with endpoints $p$ and $q$, let $\\mathit{rest}$ be a list of weighted edges on the same $n$ vertices, and let $a$ and $b$ be vertices; say two vertices are \\emph{$\\mathit{rest}$-connected} when they are joined by a path using only the edges in $\\mathit{rest}$. Then $a$ and $b$ are joined by a path through the edges of the list obtained by prepending $g$ to $\\mathit{rest}$ if and only if at least one of the following holds: $a$ and $b$ are $\\mathit{rest}$-connected; or $a$ is $\\mathit{rest}$-connected to $p$ while $q$ is $\\mathit{rest}$-connected to $b$; or $a$ is $\\mathit{rest}$-connected to $q$ while $p$ is $\\mathit{rest}$-connected to $b$.",
+ "hypotheses_covered": [
+  "g is a weighted edge on n vertices with endpoints p and q",
+  "rest is a list of weighted edges on n vertices",
+  "a and b are vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a non-empty edge list $(g :: \\mathit{rest})$, $\\mathtt{Reach}\\,(g :: \\mathit{rest})\\,a\\,b$\nif and only if one of three cases holds: (1) $\\mathtt{Reach}\\,\\mathit{rest}\\,a\\,b$;\n(2) $\\mathtt{Reach}\\,\\mathit{rest}\\,a\\,g.u$ and $\\mathtt{Reach}\\,\\mathit{rest}\\,g.v\\,b$;\nor (3) $\\mathtt{Reach}\\,\\mathit{rest}\\,a\\,g.v$ and $\\mathtt{Reach}\\,\\mathit{rest}\\,g.u\\,b$."
+}

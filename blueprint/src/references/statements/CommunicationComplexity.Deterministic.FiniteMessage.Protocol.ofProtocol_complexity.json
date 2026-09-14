@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity",
+ "key": "2f11be7ce8ec15d2",
+ "kind": "theorem",
+ "title": "Embedding binary protocols preserves complexity",
+ "statement": "Let $p$ be a deterministic binary two-party communication protocol over input types $X$ and $Y$ with output type $\\alpha$, and let its embedding into the finite-message framework send each Boolean message as an element of $\\{\\mathtt{false},\\mathtt{true}\\}$. Then the communication complexity of the embedded finite-message protocol equals the communication complexity of $p$.",
+ "hypotheses_covered": [
+  "p is a deterministic binary protocol over X, Y with output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary protocol $p$,\n$(\\texttt{ofProtocol}\\,p).\\mathrm{complexity} = p.\\mathrm{complexity}$, using the fact that\n$\\lceil \\log_2 |\\mathrm{Bool}| \\rceil = 1$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "ACP.finset_toList_filter_length_eq_card",
+ "key": "493bbd51a8c64d44",
+ "kind": "lemma",
+ "title": "Filtered list length equals filtered finset cardinality",
+ "statement": "Let $s$ be a finite set of elements of a type $\\alpha$, and let $q$ be a decidable predicate on $\\alpha$. Writing the elements of $s$ out as a list (in any order) and discarding those that fail $q$ produces a list whose length equals the number of elements of $s$ that satisfy $q$; that is, the length of the filtered list agrees with the cardinality of the subset $\\{x \\in s : q(x)\\}$.",
+ "hypotheses_covered": [
+  "s is a finite set over a type α",
+  "q is a decidable predicate on α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a finset $s$ and a decidable predicate $q$, the length of the filtered list\n$s.\\mathrm{toList}$ by $q$ equals the cardinality of the filtered finset $s$ by $q$."
+}

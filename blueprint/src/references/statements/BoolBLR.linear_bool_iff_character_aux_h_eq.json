@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolBLR.linear_bool_iff_character_aux_h_eq",
+ "key": "aaa1eca06980849b",
+ "kind": "lemma",
+ "title": "XOR-additivity of a Boolean function whose lift is a character",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function whose $\\pm 1$ lift coincides with a Walsh character, say $x \\mapsto (-1)^{f(x)}$ equals $\\chi_S$ for some $S \\subseteq [n]$, and fix points $x, y \\in \\{0,1\\}^n$. If the character is multiplicative at this pair, meaning $\\chi_S(x \\oplus y) = \\chi_S(x)\\,\\chi_S(y)$ where $x \\oplus y$ denotes the componentwise XOR, then\n\\[\n  (-1)^{f(x \\oplus y)} \\;=\\; (-1)^{f(x) \\oplus f(y)}.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean-valued function on the n-cube",
+  "the pm-1 lift of f equals the Walsh character chi_S for some S ⊆ [n]",
+  "fixed points x, y in the hypercube",
+  "multiplicativity of chi_S at x, y: chi_S(x XOR y) = chi_S(x) chi_S(y)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ satisfy $\\texttt{BoolBLR.lift\\_pm1}\\,f = \\chi_S$\nfor some $S \\subseteq [n]$, and let $x, y \\in \\{0,1\\}^n$.  Assuming the\nmultiplicativity identity $\\chi_S(x \\oplus y) = \\chi_S(x)\\chi_S(y)$, one has\n\\[\n  (-1)^{f(x \\oplus y)} \\;=\\; (-1)^{f(x) \\oplus f(y)}.\n\\]"
+}

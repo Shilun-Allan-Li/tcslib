@@ -1,0 +1,21 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_prod_conditioning_eq_sum",
+ "key": "7074294b686e6d2e",
+ "kind": "theorem",
+ "title": "Chain decomposition of conditional mutual information over a finite variable",
+ "statement": "Let $(\\Omega,\\mu)$ be a finite measure space, and let $X$, $Y$, $K$, and $Z$ be measurable functions on $\\Omega$ taking values in countable spaces, with $X$ and $Y$ each having finite range, $K$ taking values in a finite set $A$, and $Z$ taking values in a finite space. Then the mutual information of $X$ and $Y$ conditioned on the pair $(K,Z)$ decomposes as the $\\mu$-weighted average, over the values of $K$, of the mutual information of $X$ and $Y$ conditioned on $Z$ alone:\n\\[\n  I[X : Y \\mid (K,Z);\\,\\mu]\n  \\;=\\; \\sum_{k \\in A} \\mu\\bigl(K^{-1}\\{k\\}\\bigr)\\cdot I\\bigl[X : Y \\mid Z;\\; \\mu[\\,\\cdot \\mid K = k\\,]\\bigr],\n\\]\nwhere $\\mu(K^{-1}\\{k\\})$ denotes the (real-valued) measure of the event $\\{K = k\\}$ and $\\mu[\\,\\cdot \\mid K = k\\,]$ denotes $\\mu$ conditioned on that event.",
+ "hypotheses_covered": [
+  "mu is a finite measure",
+  "K is measurable",
+  "Z is measurable",
+  "X has finite range",
+  "Y has finite range",
+  "A (codomain of K) is finite",
+  "codomain of Z is finite",
+  "codomains of X, Y are countable with measurable singletons"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the conditioning variable is a pair $(K, Z)$ with $K$ taking values in a finite type $A$,\nthen\n\\[\n  I[X : Y \\mid (K, Z);\\mu]\n  \\;=\\; \\sum_{k : A} \\mu_{\\mathbb{R}}(K^{-1}\\{k\\}) \\cdot I[X : Y \\mid Z;\\,\\mu[\\,|\\,K \\leftarrow k]].\n\\]"
+}

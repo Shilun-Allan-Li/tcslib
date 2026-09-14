@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol",
+ "key": "a553363c08941af7",
+ "kind": "theorem",
+ "title": "Every subprotocol relation has a path witness",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols over the same input types $X$ and $Y$ and output type $\\alpha$. If $s$ is a subprotocol of $p$ — that is, the subprotocol predicate holds of the pair $(s, p)$ — then the type of subprotocol paths from $s$ to $p$ is nonempty: there exists a data-carrying witness recording the sequence of branch choices leading from the root of $p$ down to the root of $s$.",
+ "hypotheses_covered": [
+  "s and p are protocols over the same X, Y, α",
+  "the subprotocol predicate holds of (s, p)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s$ is a subprotocol of $p$ (i.e.\\ \\texttt{IsSubprotocol} $s\\; p$ holds), then the type\n\\texttt{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath} $s\\; p$ is nonempty.  That is, every propositional subprotocol\nembedding has at least one data-carrying path witness."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.karger_algorithmic_trace_summary",
+ "key": "bf8d631aa8c479f1",
+ "kind": "theorem",
+ "title": "Karger contraction: min-cut survival bound and termination",
+ "statement": "Let $s$ be a state consisting of a multigraph $G$ with $n$ vertices together with a distinguished cut $C$ of $G$, and suppose that $C$ is a minimum cut, that its size is strictly positive, and that $n \\ge 2$. Then two conclusions hold simultaneously. First, the recursive survival probability that $C$ is preserved through the next $n-2$ random edge-occurrence contractions of $s$ is at least\n\\[\n\\frac{2}{n(n-1)}.\n\\]\nSecond, every adaptive graph trace of $n-2$ contraction steps whose initial graph is $G$ terminates in the output condition of the algorithm, that is, its graph after $n-2$ steps has exactly two vertices.",
+ "hypotheses_covered": [
+  "distinguished cut C is a minimum cut",
+  "cut size is strictly positive",
+  "graph has at least 2 vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a state $s$ whose distinguished cut is a min-cut of positive size and whose graph has\n$n = s.G.\\mathrm{vertexCount} \\ge 2$ vertices, both of the following hold: the recursive\nsampling model survives $n-2$ contractions with probability at least $2/(n(n-1))$, and\nevery adaptive graph trace of $n-2$ contractions starting from $s.G$ ends with a Karger\noutput."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "nonzero_entry_count",
+ "key": "50e753ec7af411af",
+ "kind": "theorem",
+ "title": "A factor-of-two bound between two multiples of a binomial coefficient",
+ "statement": "Let $n \\ge 4$, $k > 0$ and $\\ell \\ge 2$ be natural numbers satisfying $2\\ell \\le 2n$ and $\\ell^{2}k \\le n$. Then\n\\[\n  2\\binom{2n-4}{\\,\\ell-2\\,} \\;\\le\\; 4\\binom{2n-4}{\\,\\ell-2\\,}.\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 4",
+  "k > 0",
+  "ℓ ≥ 2",
+  "2ℓ ≤ 2n",
+  "ℓ²·k ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "The conclusion is the bare arithmetic inequality $2\\binom{2n-4}{\\ell-2} \\le 4\\binom{2n-4}{\\ell-2}$, which holds for any natural number; the five hypotheses appear in the statement but do not bear on it. The comments frame this as a placeholder for a \"good pairs\" count for a Kikuchi matrix, but no such object occurs in the actual claim, so I have rendered only what the statement asserts.",
+ "rubric": [],
+ "replaced": "For naturals $n \\ge 4$, $k > 0$ and $\\ell \\ge 2$ with $2\\ell \\le 2n$ and\n$\\ell^{2}k \\le n$ (the smallness condition $\\ell \\le \\sqrt{n/k}$), the count of good\npairs recorded for a derived clause satisfies\n\\[\n  2\\binom{2n-4}{\\ell-2} \\;\\le\\; 4\\binom{2n-4}{\\ell-2},\n\\]\ni.e.\\ the guaranteed number $2\\binom{2n-4}{\\ell-2}$ of nonzero entries is at most the\ntotal number $4\\binom{2n-4}{\\ell-2}$ of potential pairs $(S,T)$."
+}

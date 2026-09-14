@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.bernoulliRestrWeight_sum_one",
+ "key": "aed354fd758f0b39",
+ "kind": "lemma",
+ "title": "Bernoulli restriction weights sum to one",
+ "statement": "Fix $n \\in \\bbn$ and a real parameter $p$ with $0 \\le p \\le 1$. For a restriction $\\rho$ on $n$ variables, write $F(\\rho)$ for its set of free variables. Then, summing the Bernoulli weight over all restrictions,\n\\[\n  \\sum_{\\rho} p^{\\abs{F(\\rho)}} \\left(\\tfrac{1-p}{2}\\right)^{\\,n - \\abs{F(\\rho)}} = 1,\n\\]\nso these weights define a probability distribution on the set of restrictions on $n$ variables.",
+ "hypotheses_covered": [
+  "$0 \\le p$",
+  "$p \\le 1$",
+  "sum ranges over all restrictions $\\rho$ on $n$ variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $0 \\le p \\le 1$, then the Bernoulli weights form a probability distribution: summing\n$\\mathrm{bernoulliRestrWeight}(p,\\rho)$ over all restrictions $\\rho$ on $n$ variables\nyields $1$."
+}

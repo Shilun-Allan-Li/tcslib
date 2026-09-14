@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div",
+ "key": "0c30be7162c51f67",
+ "kind": "theorem",
+ "title": "Markov's inequality on a finite probability space",
+ "statement": "Let $\\Omega$ be a finite probability space and let $f : \\Omega \\to \\bbr$ be a nonnegative function, so that $f(\\omega) \\ge 0$ for every $\\omega \\in \\Omega$. Then for every real $\\varepsilon > 0$, the probability that $f$ attains at least $\\varepsilon$ is bounded by the mean of $f$ divided by $\\varepsilon$:\n\\[\n  \\E\\!\\left[\\,\\{\\omega \\mid \\varepsilon \\le f(\\omega)\\}\\,\\right]\n  \\;\\le\\; \\frac{\\int_\\Omega f(\\omega)\\,d\\omega}{\\varepsilon}.\n\\]",
+ "hypotheses_covered": [
+  "Ω is a finite probability space",
+  "f is nonnegative: 0 ≤ f(ω) for all ω",
+  "ε > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a nonneg function $f : \\Omega \\to \\mathbb{R}$ on a finite probability space and\n$\\varepsilon > 0$,\n\\[\n  \\mathrm{volume}^{\\mathbb{R}}\\{\\omega \\mid \\varepsilon \\le f(\\omega)\\}\n  \\;\\le\\; \\frac{\\int_\\Omega f}{\\varepsilon}.\n\\]"
+}

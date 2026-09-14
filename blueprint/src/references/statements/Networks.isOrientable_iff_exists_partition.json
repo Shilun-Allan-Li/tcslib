@@ -1,0 +1,18 @@
+{
+ "lean_name": "Networks.isOrientable_iff_exists_partition",
+ "key": "13729acb84bc9b4b",
+ "kind": "theorem",
+ "title": "Cut characterization of $(m,n)$-orientability of regular graphs",
+ "statement": "Let $G$ be a finite simple graph that is $(m+n)$-regular. Then $G$ is $(m,n)$-orientable — it admits an orientation in which every vertex has indegree $m$ or $n$ — if and only if the vertex set can be split into two disjoint sets $V_1$ and $V_2$ whose union is the whole vertex set, such that for every set $S$ of vertices\n\\[\n\\abs{(m-n)\\bigl(\\abs{V_1\\cap S}-\\abs{V_2\\cap S}\\bigr)}\\;\\le\\;\\abs{[S,\\bar S]},\n\\]\nwhere $\\abs{[S,\\bar S]}$ is the number of edges of $G$ with one end in $S$ and the other outside $S$.",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "G is (m+n)-regular",
+  "characterization is a biconditional (iff)",
+  "V is partitioned into disjoint V₁, V₂ with union the whole vertex set",
+  "the two-sided (absolute-value) cut bound holds for every vertex set S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{.  }\\texttt{G} is \\texttt{(m,n)}-orientable if and only if there is a\npartition \\texttt{(V$_{1}$, V$_{2}$)} of \\texttt{V} such that, for every \\texttt{S\n$\\subseteq$ V},*\n\n|(m - n)(|V$_{1}$ $\\cap$ S| - |V$_{2}$ $\\cap$ S|)| $\\le$ |[S, $\\bar{S}$]|."
+}

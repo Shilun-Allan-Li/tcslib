@@ -1,0 +1,17 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.gv_bound",
+ "key": "3299f6af78a7da19",
+ "kind": "theorem",
+ "title": "Gilbert–Varshamov bound for linear codes",
+ "statement": "Let $\\alpha$ be a finite field with $q = \\abs{\\alpha}$ elements, and let $n, k, d$ be natural numbers. Write $B_{d-1}(\\mathbf{0})$ for the Hamming ball of radius $d-1$ about the all-zero codeword in $\\alpha^n$, and suppose\n\\[\nk \\le n - \\bigl\\lceil \\log_q \\abs{B_{d-1}(\\mathbf{0})} \\bigr\\rceil - 1.\n\\]\nThen there exists an $n \\times k$ generator matrix $G$ over $\\alpha$ such that for every nonzero message $x \\in \\alpha^k$, the codeword $Gx \\in \\alpha^n$ has Hamming weight at least $d$.",
+ "hypotheses_covered": [
+  "α is a finite field with q = |α| elements",
+  "n, k, d are natural numbers",
+  "k ≤ n − ⌈log_q |B_{d-1}(0)|⌉ − 1 (ceiling log base q of the Hamming ball of radius d−1 about zero)",
+  "conclusion: existence of an n×k generator matrix G mapping every nonzero message to a codeword of weight ≥ d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $k \\le n - \\lceil\\log_q|B_{d-1}(\\mathbf{0})|\\rceil - 1$, then there exists a\ngenerator matrix $G$ such that every nonzero message is mapped to a codeword of\nHamming weight at least $d$."
+}

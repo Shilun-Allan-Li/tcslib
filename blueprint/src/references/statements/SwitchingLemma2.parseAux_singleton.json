@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.parseAux_singleton",
+ "key": "4c0da276025b8fa3",
+ "kind": "lemma",
+ "title": "Parsing a single in-range entry",
+ "statement": "Fix $w \\ge 1$, and let $(\\mathrm{idx}, \\mathrm{dir})$ be a single entry whose index satisfies $\\mathrm{idx} < w$. Then parsing the one-element list $[(\\mathrm{idx}, \\mathrm{dir})]$ yields the singleton list $[(\\mathrm{idx}, \\mathrm{dir}, \\mathrm{false})]$, where the index is viewed as an element of $\\{0, 1, \\dots, w-1\\}$ and the marker flag is $\\mathrm{false}$ (there is no following entry to carry a termination marker).",
+ "hypotheses_covered": [
+  "width w is positive (w ≥ 1)",
+  "the entry's index satisfies idx < w",
+  "the input list consists of the single entry (idx, dir)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Equational lemma: a single in-range entry $(idx, dir)$ parses to the singleton\n$[(\\langle idx, h\\rangle, dir, \\mathrm{false})]$."
+}

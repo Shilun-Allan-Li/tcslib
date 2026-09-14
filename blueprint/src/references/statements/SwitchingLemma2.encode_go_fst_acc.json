@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_fst_acc",
+ "key": "358689f36739d0e2",
+ "kind": "lemma",
+ "title": "Accumulator-independence of the encoder's first output",
+ "statement": "Fix a DNF formula $f$ on $n$ variables, a width parameter $w \\in \\bbn$, a fuel bound $\\in \\bbn$, a partial path recorded as a list of variable–value pairs $(i,b) \\in \\mathrm{Fin}\\,n \\times \\{0,1\\}$, and two restrictions $\\rho_0, \\sigma$ on the $n$ variables. The auxiliary recursion underlying the Razborov encoding takes, in addition, a starting accumulator: a list of index–bit pairs in $\\bbn \\times \\{0,1\\}$, and returns a pair. Then the first component of its output does not depend on that accumulator: running the recursion from an arbitrary accumulator yields the same first component as running it from the empty accumulator.",
+ "hypotheses_covered": [
+  "DNF formula f on n variables",
+  "width parameter w in the naturals",
+  "fuel bound in the naturals",
+  "path: list of variable-value pairs",
+  "restriction rho_0",
+  "restriction sigma",
+  "arbitrary starting accumulator (list of index-bit pairs)"
+ ],
+ "confidence": "low",
+ "caveat": "The auxiliary function razborovEncode.go is not among the supplied definitions, so what it computes and what its first output component means cannot be described from the given material; only the structural claim — that this first component is invariant under changing the starting accumulator — can be stated faithfully.",
+ "rubric": [],
+ "replaced": "The first component of the encoder loop \\texttt{SwitchingLemma2.razborovEncode}'s\n\\texttt{go} does not depend on the accumulator: running with accumulator $\\mathrm{acc}$\nyields the same first component as running with the empty accumulator."
+}

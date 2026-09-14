@@ -1,0 +1,14 @@
+{
+ "lean_name": "SwitchingLemma2.zipIdx_find_to_find",
+ "key": "4498b948beab0d1d",
+ "kind": "lemma",
+ "title": "Projecting an indexed search back to the list",
+ "statement": "Let $l$ be a list over a type $\\alpha$, let $p\\colon\\alpha\\to\\{\\text{true},\\text{false}\\}$ be a predicate, and fix a starting index $s$. Form the indexed list obtained by pairing each entry of $l$ with its position, numbered consecutively from $s$. If the first pair in this indexed list whose first component satisfies $p$ is the pair $(x,\\mathrm{idx})$, then $x$ is the first entry of $l$ satisfying $p$.",
+ "hypotheses_covered": [
+  "searching the list indexed from s returns the pair (x, idx) as its first component-satisfying entry"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Searching the indexed list $l.\\mathrm{zipIdx}$ with a predicate and projecting onto the\nfirst component agrees with the corresponding $\\mathrm{find?}$ on $l$."
+}

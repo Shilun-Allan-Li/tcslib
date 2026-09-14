@@ -1,0 +1,20 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.exists_good_randomness",
+ "key": "875ab8ad531dfcc5",
+ "kind": "theorem",
+ "title": "Existence of good randomness for derandomization",
+ "statement": "Let $\\Omega$ be a finite probability space and let $X$ and $Y$ be finite input sets. Let $p$ be a public-coin finite-message protocol over shared randomness $\\Omega$ with private inputs in $X$ and $Y$ and output type $\\alpha$, let $f : X \\to Y \\to \\alpha$, and let $\\varepsilon, c \\in \\bbr$ with $c > 1$. Suppose $p$ $\\varepsilon$-computes $f$, so that for every input pair $(x,y)$ the probability over $\\omega$ that the randomized execution $\\mathrm{rrun}(p,x,y,\\omega)$ differs from $f(x,y)$ is at most $\\varepsilon$. Then, writing $t = t(X,Y,\\varepsilon,c)$ for the derandomization sample count, there exists a family $\\omega_0, \\dots, \\omega_{t-1} \\in \\Omega$ of shared-randomness values such that for every $(x,y)$,\n\\[\n  \\frac{\\#\\{\\, i \\mid \\mathrm{rrun}(p,x,y,\\omega_i) \\ne f(x,y) \\,\\}}{t} \\;\\le\\; c\\,\\varepsilon.\n\\]",
+ "hypotheses_covered": [
+  "Ω is a finite probability space",
+  "X and Y are finite types",
+  "p is a public-coin finite-message protocol over Ω, X, Y, α",
+  "f : X → Y → α is the target function",
+  "ε and c are reals",
+  "c > 1",
+  "p ε-computes f (error probability ≤ ε for every input pair)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\Omega$ be a finite probability space, let $p$ be a public-coin protocol on $X\n\\times Y$ with output type $\\alpha$, and let $f : X \\to Y \\to \\alpha$.  Suppose $c > 1$\nand $p$ $\\varepsilon$-computes $f$ (i.e.\\ for every $(x, y)$, the probability that $p$\nproduces an incorrect output is at most $\\varepsilon$).  Then there exist\n$t = \\texttt{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.derandomizationSamples}(X, Y, \\varepsilon, c)$\nrandom seeds $\\omega_0, \\dots, \\omega_{t-1} \\in \\Omega$ such that for every $(x, y)$,\n\\[\n  \\frac{\\#\\{\\,i \\mid p.\\text{rrun}(x, y, \\omega_i) \\ne f(x, y)\\,\\}}{t}\n  \\;\\le\\; c\\,\\varepsilon.\n\\]"
+}

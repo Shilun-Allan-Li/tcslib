@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles",
+ "key": "2f72f39c5953ca0a",
+ "kind": "lemma",
+ "title": "Signed bias as a sum over leaf rectangles",
+ "statement": "Let $\\mu$ be a finite probability space on $X \\times Y$, let $p$ be a deterministic Boolean communication protocol with input types $X$ and $Y$, and let $g : X \\to Y \\to \\mathrm{Bool}$. Writing $\\sigma$ for the sign map sending $\\mathrm{false}$ to $1$ and $\\mathrm{true}$ to $-1$, the signed bias of $p$ against $g$ satisfies\n\\[\n  \\E_{(x,y)\\sim\\mu}\\bigl[\\sigma\\bigl(p(x,y)\\bigr)\\cdot\\sigma\\bigl(g(x,y)\\bigr)\\bigr]\n  \\;=\\;\n  \\sum_{R}\\; s(p,R)\\,\\cdot\\,\\mathrm{disc}_\\mu(g,R),\n\\]\nwhere the sum runs over the (finitely many) leaf rectangles $R$ of $p$, the value $p(x,y)$ is the output of $p$ on inputs $x$ and $y$, the rectangle sign $s(p,R)$ equals $+1$ if $p$ outputs $\\mathrm{false}$ at every point of $R$ and $-1$ otherwise, and $\\mathrm{disc}_\\mu(g,R) = \\E_{(x,y)\\sim\\mu}[\\mathbf{1}_R(x,y)\\cdot\\sigma(g(x,y))]$ is the discrepancy of $g$ on $R$.",
+ "hypotheses_covered": [
+  "μ is a finite probability space on X × Y",
+  "p is a deterministic Boolean protocol on inputs X (Alice) and Y (Bob)",
+  "g : X → Y → Bool is a Boolean function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe signed bias $\\mathbb{E}_{(x,y)}\\bigl[\\sigma(p.\\mathrm{run}(x,y))\\cdot\\sigma(g(x,y))\\bigr]$\nequals the sum over all leaf rectangles $R$ of\n$\\mathrm{rectangleSign}(p,R)\\cdot\\mathrm{disc}_\\mu(g,R)$."
+}

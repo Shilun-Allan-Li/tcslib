@@ -1,0 +1,21 @@
+{
+ "lean_name": "LMN.switching_bernoulli_dtDepth_cnf_general",
+ "key": "ad1e56d3d64673da",
+ "kind": "theorem",
+ "title": "General switching lemma for CNF formulas",
+ "statement": "Let $f$ be a CNF formula in $n \\ge 1$ Boolean variables whose width is at most $w$, with $w \\ge 1$, and let $p \\in \\bbr$ satisfy $0 < p \\le 1/(40w)$ and $p \\le 1$. Consider a Bernoulli($p$) random restriction $\\rho$ of the $n$ variables, in which each variable is independently left free with probability $p$ and otherwise fixed to $\\mathtt{false}$ or to $\\mathtt{true}$, each with probability $(1-p)/2$, and write $f_\\rho$ for the Boolean function on the free coordinates obtained by evaluating $f$ with the fixed coordinates set by $\\rho$. Then for every $t \\in \\bbn$,\n\\[\n  \\Pr_{\\rho}\\bigl[\\,\\mathrm{depth}(f_\\rho) > t\\,\\bigr] \\;\\le\\; \\left(\\tfrac12\\right)^{t} + \\exp\\!\\left(-\\,\\tfrac{np}{3}\\right),\n\\]\nwhere $\\mathrm{depth}(f_\\rho)$ denotes the decision-tree depth of $f_\\rho$.",
+ "hypotheses_covered": [
+  "f is a CNF formula on n variables",
+  "width of f is at most w",
+  "w > 0",
+  "n > 0",
+  "0 < p",
+  "p ≤ 1/(40w)",
+  "p ≤ 1",
+  "t is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be a CNF of width at most $w$ with $0<w$ and $0<n$, and let $p\\in\\bbr$ satisfy\n$0<p$, $p\\le \\tfrac{1}{40w}$ and $p\\le 1$. Then for every $t\\in\\bbn$,\n\\[\n\\mathrm{bernoulliRestrProb}\\,p\\,\\bigl(\\rho \\mapsto \\mathrm{dtDepth}(\\mathrm{restrictFn}\\,(\\mathrm{CNF.eval}\\,f)\\,\\rho) > t\\bigr)\n\\;\\le\\; \\bigl(\\tfrac12\\bigr)^{t} + \\exp\\!\\bigl(-np/3\\bigr),\n\\]\nagain without any non-duplication hypothesis on $f$."
+}

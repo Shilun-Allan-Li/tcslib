@@ -1,0 +1,14 @@
+{
+ "lean_name": "SimpleGraph.lineGraph_edgeCard",
+ "key": "bd5a4cfe4e6cfdfe",
+ "kind": "theorem",
+ "title": "Edge count of a line graph",
+ "statement": "Let $G$ be a finite simple graph, and let $L(G)$ denote its line graph, whose vertices are the edges of $G$, with two such vertices adjacent precisely when the corresponding edges of $G$ share a common endpoint. Then the number of edges of $L(G)$ equals\n\\[\n\\sum_{v} \\binom{\\deg_G(v)}{2},\n\\]\nwhere the sum runs over all vertices $v$ of $G$ and $\\deg_G(v)$ is the degree of $v$.",
+ "hypotheses_covered": [
+  "G is a finite simple graph (Fintype V, DecidableEq V, simple graph G with decidable adjacency)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{If \\texttt{G} is simple, the edge graph of \\texttt{G}\nhas \\texttt{$\\sum$\\_\\{v $\\in$ V(G)\\} C(d\\_G(v), 2)} edges.}"
+}

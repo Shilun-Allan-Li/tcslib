@@ -54,86 +54,105 @@ differs from \texttt{hedgeCumLoss}: here the loss is applied to the averaged
 prediction, not to a weighted average of expert losses.
 \end{definition}
 
-\begin{lemma}[Weighted average stays in convex set]
+\begin{lemma}[Hedge prediction stays in the convex prediction set]
 \lean{hedgePrediction_mem}
 \label{hedgePrediction_mem}
 \leanok
 \uses{hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgePrediction, inducedLoss}
 \difficulty{2}
-Let $S \subseteq \mathbb{R}$ be a convex set and suppose every expert prediction
-satisfies $p_t(i) \in S$ for all $t$ and $i$.  Then Hedge's weighted-average
-prediction $\widehat{x}_t \in S$ for every round $t$.  The result follows because
-the Hedge weights are nonneg\-ative and sum to one, so the weighted average is a
-convex combination of points in $S$.
+Let $S \subseteq \bbr$ be a convex set, fix any learning rate $\eta \in \bbr$, a loss
+function $\ell : \bbr \to \Omega \to \bbr$, expert predictions $p_t(i)$, and a sequence
+of outcomes, and suppose that every expert prediction lies in $S$, that is $p_t(i) \in
+S$ for all rounds $t$ and all experts $i$. Then for every round $t$, Hedge's
+weighted-average prediction $\widehat{x}_t = \sum_{i} w^{(\eta)}_{t,i}\, p_t(i)$ —
+formed from the Hedge distribution of the loss table induced by $\ell$, the predictions,
+and the outcomes up to round $t$ — again lies in $S$.
 \end{lemma}
 
-\begin{lemma}[Jensen bridge: prediction loss bounded by Hedge loss]
+\begin{lemma}[Jensen bound for Hedge's weighted-average prediction]
 \lean{hedgePrediction_loss_le_hedgeLoss}
 \label{hedgePrediction_loss_le_hedgeLoss}
 \leanok
 \uses{hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss, hedgePrediction, hedgePrediction_mem, inducedLoss}
 \difficulty{3}
-Under the same hypotheses as above, assume additionally that for each round $t$ the
-map $x \mapsto \ell(x, o_t)$ is convex on $S$.  Then Jensen's inequality gives, for
-every $t$,
+Fix $N \ge 1$ experts, a horizon of $T$ rounds, a learning rate $\eta \in \bbr$, and a
+convex set $S \subseteq \bbr$. Let $\ell : \bbr \times \Omega \to \bbr$ be a loss
+function, let $e_t(i) \in \bbr$ be expert $i$'s prediction at round $t$, and let $o_t
+\in \Omega$ be the outcome at round $t$; write $L_{t,i} = \ell(e_t(i), o_t)$ for the
+induced loss table and let $q_t(i)$ denote the Hedge distribution over the experts
+computed from $L$ at round $t$. Suppose every prediction $e_t(i)$ lies in $S$, and that
+for each round $t$ the map $x \mapsto \ell(x, o_t)$ is convex on $S$. Then at every
+round $t$ the loss of Hedge's weighted-average prediction $\widehat{x}_t = \sum_{i}
+q_t(i)\, e_t(i)$ is at most its expected loss under $q_t$:
 \[
   \ell\!\left(\widehat{x}_t,\, o_t\right)
   \;\le\;
-  \texttt{hedgeLoss}\,\eta\,L\,t
-  \;=\;
-  \sum_{i} w^{(\eta)}_{t,i}\,\ell(p_t(i),\, o_t).
+  \sum_{i=1}^{N} q_t(i)\, \ell\!\left(e_t(i),\, o_t\right).
 \]
-That is, the loss of the averaged prediction is at most the Hedge-weighted average of
-the individual expert losses.
 \end{lemma}
 
-\begin{lemma}[Cumulative Jensen inequality]
+\begin{lemma}[Jensen bound for Hedge's averaged predictions]
 \lean{hedgePredictionCumLoss_le_hedgeCumLoss}
 \label{hedgePredictionCumLoss_le_hedgeCumLoss}
 \leanok
 \uses{hedgeCumLoss, hedgePredictionCumLoss, hedgePrediction_loss_le_hedgeLoss, inducedLoss}
 \difficulty{1}
-Summing the per-round Jensen bound over all $T$ rounds, we obtain
+Fix a learning rate $\eta \in \bbr$, a loss function $\ell : \bbr \to \Omega \to \bbr$,
+expert predictions $p : \mathrm{Fin}\,T \to \mathrm{Fin}\,N \to \bbr$ (with $N \ge 1$),
+and a sequence of outcomes $o : \mathrm{Fin}\,T \to \Omega$. Suppose $S \subseteq \bbr$
+is convex, every expert prediction $p_t(i)$ lies in $S$, and for each round $t$ the map
+$x \mapsto \ell(x, o_t)$ is convex on $S$. Then the cumulative loss of Hedge's
+weighted-average predictions is at most the cumulative Hedge loss computed on the
+induced loss sequence:
 \[
-  \mathcal{L}^{\mathrm{pred}}_T
+  \sum_{t=0}^{T-1} \ell\!\left(\widehat{x}_t,\, o_t\right)
   \;\le\;
-  \texttt{hedgeCumLoss}\,\eta\,L,
+  \sum_{t=0}^{T-1} \sum_{i=1}^{N} p_t(i)\,\ell\!\left(p_t(i), o_t\right),
 \]
-i.e.\ the actual cumulative loss of Hedge's convex-combination predictions is at most
-the abstract cumulative Hedge loss on the induced expert loss table.
+where $\widehat{x}_t = \sum_{i} p_t(i)\, p_t(i)$ is the Hedge weighted-average
+prediction at round $t$ and $p_t$ is the Hedge distribution at that round.
 \end{lemma}
 
-\begin{theorem}[Tight regret bound for convex prediction]
+\begin{theorem}[Tight regret bound for Hedge's convex predictions]
 \lean{hedgePrediction_regret_bound_tight}
 \label{hedgePrediction_regret_bound_tight}
 \leanok
 \uses{LossSeq.Valid, bestExpertLoss, hedgePredictionCumLoss, hedgePredictionCumLoss_le_hedgeCumLoss, hedge_regret_bound_tight, inducedLoss, regret}
 \difficulty{2}
-Let $S \subseteq \mathbb{R}$ be convex, $\eta > 0$, and suppose all expert predictions
-lie in $S$, each round loss is convex on $S$, and the induced loss table is valid.
-Then the regret of Hedge's actual weighted-average predictions satisfies
+Let $S \subseteq \bbr$ be a convex set, let $\eta > 0$ be a learning rate, and consider
+a prediction problem with $N \ge 1$ experts over $T$ rounds, an outcome $o_t$ at each
+round $t$, and a loss function $\ell(x, o)$. Suppose that every expert prediction
+$p_t(i)$ lies in $S$, that for each round $t$ the map $x \mapsto \ell(x, o_t)$ is convex
+on $S$, and that the induced loss sequence is valid, so that each expert's per-round
+loss $\ell(p_t(i), o_t)$ lies in $[0,1]$. Then the cumulative loss
+$\mathcal{L}^{\mathrm{pred}}_T = \sum_{t} \ell(\widehat{x}_t, o_t)$ of Hedge's
+weighted-average predictions $\widehat{x}_t$ exceeds the best expert loss in hindsight
+$L^* = \min_{i} \sum_{t} \ell(p_t(i), o_t)$ by at most
 \[
-  \mathcal{L}^{\mathrm{pred}}_T
-    - \min_{i}\,\sum_{t} \ell(p_t(i),\, o_t)
-  \;\le\;
-  \frac{\ln N}{\eta} + \frac{\eta T}{8}.
+  \mathcal{L}^{\mathrm{pred}}_T - L^* \;\le\; \frac{\ln N}{\eta} + \frac{\eta T}{8}.
 \]
-The proof combines the cumulative Jensen bound with the abstract tight Hedge regret
-theorem \texttt{hedge\_regret\_bound\_tight}.
 \end{theorem}
 
-\begin{theorem}[Optimal-rate regret bound for convex prediction]
+\begin{theorem}[Optimal-rate regret bound for Hedge with convex prediction]
 \lean{hedgePrediction_regret_tight_optimal}
 \label{hedgePrediction_regret_tight_optimal}
 \leanok
 \uses{LossSeq.Valid, bestExpertLoss, hedgePredictionCumLoss, hedgePredictionCumLoss_le_hedgeCumLoss, hedge_regret_tight_optimal, inducedLoss, optimalEtaTight, regret}
 \difficulty{2}
-Under the same convexity hypotheses, with $T > 0$, $N > 1$, and the learning rate set
-to $\eta^* = \texttt{optimalEtaTight}\,N\,T$, the regret satisfies
+Consider prediction with expert advice using $N \ge 2$ experts over $T \ge 1$ rounds,
+where predictions take values in a convex set $S \subseteq \bbr$. Let $\ell : \bbr
+\times \Omega \to \bbr$ be a loss function, let $p_t(i) \in S$ be the prediction of
+expert $i$ at round $t$, and let $o_t \in \Omega$ be the outcome at round $t$; assume
+that for every round $t$ the map $x \mapsto \ell(x, o_t)$ is convex on $S$, and that all
+induced losses $\ell(p_t(i), o_t)$ lie in $[0,1]$. Run the Hedge algorithm with learning
+rate $\eta_{\mathrm{tight}} = \sqrt{8\ln N / T}$, predicting at each round the Hedge
+weighted average $\widehat{x}_t = \sum_i p_t(i)\, w_{t}(i) \in S$, where the weights
+$w_t$ form the Hedge distribution built from the induced losses through the first $t$
+rounds. Then the cumulative loss of these predictions exceeds the best expert's loss in
+hindsight by at most $\sqrt{\tfrac{T}{2}\ln N}$:
 \[
-  \mathcal{L}^{\mathrm{pred}}_T
-    - \min_{i}\,\sum_{t} \ell(p_t(i),\, o_t)
-  \;\le\;
-  \sqrt{\tfrac{T}{2}\ln N}.
+\sum_{t} \ell\bigl(\widehat{x}_t,\, o_t\bigr) \;-\; \min_{i}\, \sum_{t}
+\ell\bigl(p_t(i),\, o_t\bigr)
+  \;\le\; \sqrt{\tfrac{T}{2}\ln N}.
 \]
 \end{theorem}

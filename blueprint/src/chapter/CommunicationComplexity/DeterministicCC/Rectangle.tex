@@ -13,25 +13,41 @@ monochromatic rectangle partition is at least the size of any fooling set.
 
 \begin{definition}[Rectangle]
 \lean{CommunicationComplexity.Rectangle.IsRectangle}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p007-b003}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p004-b006}
 \label{CommunicationComplexity.Rectangle.IsRectangle}
 \leanok
 A subset $S \subseteq X \times Y$ is a \emph{rectangle} if it factors as a
 product $A \times B$ for some $A \subseteq X$ and $B \subseteq Y$.
 \end{definition}
 
-\begin{theorem}[Cross-product characterization of rectangles]
+\begin{theorem}[Cross characterization of combinatorial rectangles]
 \lean{CommunicationComplexity.Rectangle.IsRectangle_iff}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p007-b003}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p004-b007,
+  pdf-fa052d8c95c0-p004-b008,
+  pdf-fa052d8c95c0-p005-b001
+}
 \label{CommunicationComplexity.Rectangle.IsRectangle_iff}
 \leanok
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
 \uses{CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
-A set $R \subseteq X \times Y$ is a rectangle if and only if it satisfies the
-\emph{cross property}: whenever $(x, y) \in R$ and $(x', y') \in R$, the mixed
-pairs $(x', y)$ and $(x, y')$ also belong to $R$.
+A subset $R \subseteq X \times Y$ is a rectangle — that is, $R = A \times B$ for some $A
+\subseteq X$ and $B \subseteq Y$ — if and only if it is closed under crossing: for all
+$x, x' \in X$ and $y, y' \in Y$, whenever $(x, y) \in R$ and $(x', y') \in R$, both
+mixed pairs $(x', y)$ and $(x, y')$ also lie in $R$.
 \end{theorem}
 
 \begin{definition}[Monochromatic set]
 \lean{CommunicationComplexity.Rectangle.IsMonochromatic}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p008-b002}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b004}
 \label{CommunicationComplexity.Rectangle.IsMonochromatic}
 \leanok
 A set $S \subseteq X \times Y$ is \emph{monochromatic} for a function
@@ -41,6 +57,14 @@ for all $(x,y), (x',y') \in S$.
 
 \begin{definition}[Fooling set]
 \lean{CommunicationComplexity.Rectangle.IsFoolingSet}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p009-b006,
+  pdf-d54d402b16e2-p010-b001
+}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p011-b003,
+  pdf-fa052d8c95c0-p011-b005
+}
 \label{CommunicationComplexity.Rectangle.IsFoolingSet}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonochromatic, CommunicationComplexity.Rectangle.IsRectangle}
@@ -52,6 +76,14 @@ monochromatic for $g$.
 
 \begin{definition}[Monochromatic rectangle partition]
 \lean{CommunicationComplexity.Rectangle.IsMonoPartition}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p008-b004,
+  pdf-d54d402b16e2-p008-b006
+}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p005-b003,
+  pdf-fa052d8c95c0-p005-b005
+}
 \label{CommunicationComplexity.Rectangle.IsMonoPartition}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonochromatic, CommunicationComplexity.Rectangle.IsRectangle}
@@ -61,24 +93,26 @@ $\mathcal{P}$ is a rectangle, every member is monochromatic for $g$, the members
 cover all of $X \times Y$, and distinct members are disjoint.
 \end{definition}
 
-\begin{theorem}[Every point lies in some part]
+\begin{theorem}[Every point lies in some part of a partition]
 \lean{CommunicationComplexity.Rectangle.monoPartition_point_mem}
 \label{CommunicationComplexity.Rectangle.monoPartition_point_mem}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{2}
-If $\mathcal{P}$ is a monochromatic rectangle partition for $g$, then for every
-point $p \in X \times Y$ there exists some $R \in \mathcal{P}$ with $p \in R$.
+Let $g : X \times Y \to \alpha$ and let $\mathcal{P}$ be a monochromatic rectangle
+partition for $g$. Then every point $p \in X \times Y$ belongs to at least one member $R
+\in \mathcal{P}$.
 \end{theorem}
 
-\begin{theorem}[Uniqueness of part containing a point]
+\begin{theorem}[Uniqueness of the part containing a point]
 \lean{CommunicationComplexity.Rectangle.monoPartition_part_unique}
 \label{CommunicationComplexity.Rectangle.monoPartition_part_unique}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{2}
-If $\mathcal{P}$ is a monochromatic rectangle partition for $g$ and a point
-$p \in X \times Y$ belongs to two parts $R, S \in \mathcal{P}$, then $R = S$.
+Let $\mathcal{P}$ be a monochromatic rectangle partition for a function $g : X \to Y \to
+\alpha$, and let $R, S \in \mathcal{P}$. If some point $p \in X \times Y$ lies in both
+$R$ and $S$, then $R = S$.
 \end{theorem}
 
 \begin{theorem}[Cross closure within a part]
@@ -87,39 +121,107 @@ $p \in X \times Y$ belongs to two parts $R, S \in \mathcal{P}$, then $R = S$.
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.IsRectangle_iff}
 \difficulty{1}
-If $\mathcal{P}$ is a monochromatic rectangle partition for $g$, $R \in \mathcal{P}$,
-and $(x,y), (x',y') \in R$, then the mixed pairs $(x',y)$ and $(x,y')$ both
-belong to $R$.
+Let $\mathcal{P}$ be a monochromatic rectangle partition for a function $g : X \to Y \to
+\alpha$, and let $R \in \mathcal{P}$. If $(x,y)$ and $(x',y')$ both belong to $R$, then
+the two "crossed" pairs $(x',y)$ and $(x,y')$ also belong to $R$.
 \end{theorem}
 
-\begin{theorem}[Equal values within a part]
+\begin{theorem}[Constant values within a part]
 \lean{CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \label{CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \leanok
 \uses{CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{1}
-If $\mathcal{P}$ is a monochromatic rectangle partition for $g$, $R \in \mathcal{P}$,
-and $(x,y), (x',y') \in R$, then $g\,x\,y = g\,x'\,y'$.
+Let $\mathcal{P}$ be a monochromatic rectangle partition for a function $g : X \to Y \to
+\alpha$, and let $R \in \mathcal{P}$. Then $g$ is constant on $R$: for any $(x,y),
+(x',y') \in R$ we have $g\,x\,y = g\,x'\,y'$.
 \end{theorem}
 
-\begin{theorem}[Fooling set bound — extended cardinality]
+\begin{theorem}[Fooling set bound from a monochromatic rectangle partition]
 \lean{CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p011-b005}
 \label{CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
 \leanok
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsFoolingSet}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b005,
+    pdf-fa052d8c95c0-p011-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonoPartition}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_point_mem}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005,
+    pdf-fa052d8c95c0-p005-b003}
 \uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_point_mem}
 \difficulty{4}
-If $S$ is a fooling set for $g$ and $\mathcal{P}$ is a monochromatic rectangle
-partition for $g$, then $\#S \le \#\mathcal{P}$ in the sense of extended natural
-number cardinality (\texttt{Set.encard}).
+Let $X$, $Y$, and $\alpha$ be sets and let $g : X \times Y \to \alpha$. If $S \subseteq
+X \times Y$ is a fooling set for $g$ and $\mathcal{P}$ is a monochromatic rectangle
+partition for $g$, then the cardinality of $S$ is at most the cardinality of
+$\mathcal{P}$, that is $\abs{S} \le \abs{\mathcal{P}}$, where cardinalities are compared
+as extended natural numbers (allowing the value $\infty$).
 \end{theorem}
 
-\begin{theorem}[Fooling set bound — finite cardinality]
+\begin{theorem}[Fooling set bound via monochromatic partition]
 \lean{CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p011-b005}
 \label{CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
 \leanok
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsFoolingSet}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b005,
+    pdf-fa052d8c95c0-p011-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonoPartition}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_point_mem}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003,
+    pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b005,
+    pdf-fa052d8c95c0-p008-b004}
 \uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
 \difficulty{3}
-If $S$ is a fooling set for $g$, $\mathcal{P}$ is a monochromatic rectangle
-partition for $g$, and $\mathcal{P}$ is finite, then
-$|S| \le |\mathcal{P}|$ as natural numbers (\texttt{Set.ncard}).
+Let $g : X \times Y \to \alpha$, let $S \subseteq X \times Y$ be a fooling set for $g$,
+and let $\mathcal{P}$ be a monochromatic rectangle partition for $g$. If $\mathcal{P}$
+is finite, then the number of points of $S$ is at most the number of members of
+$\mathcal{P}$; that is, $\abs{S} \le \abs{\mathcal{P}}$.
 \end{theorem}

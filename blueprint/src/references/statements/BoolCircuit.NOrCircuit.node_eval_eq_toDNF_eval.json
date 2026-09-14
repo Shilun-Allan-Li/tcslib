@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.node_eval_eq_toDNF_eval",
+ "key": "34c018bc36b1b735",
+ "kind": "theorem",
+ "title": "Depth-2 OR-circuit agrees with its DNF translation",
+ "statement": "Let $cs$ be a list of normal-form AND circuits on $n$ variables, and suppose each member of $cs$ is a base AND-clause (a conjunction of literals with distinct variable indices) rather than an AND-node built from OR-subcircuits. Form the normal-form OR circuit whose children are exactly the circuits in $cs$, so that it computes their disjunction. Then for every assignment $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$, this OR circuit evaluates at $x$ to the same Boolean value as the DNF formula obtained from it by converting each child AND-clause into a term.",
+ "hypotheses_covered": [
+  "n variables",
+  "cs is a list of normal-form AND circuits",
+  "every element of cs is a base AND-clause (not a node)",
+  "x is a Boolean assignment on Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every child $c$ of an $\\texttt{NOrCircuit}.\\mathrm{node}\\,cs$ is an AND-clause, then for\nall $x$ the circuit evaluation $(\\texttt{NOrCircuit}.\\mathrm{node}\\,cs).\\mathrm{eval}\\,x$\nequals the DNF evaluation $\\texttt{DNF.eval}\\,((\\texttt{NOrCircuit}.\\mathrm{node}\\,cs).\\mathrm{toDNF})\\,x$."
+}

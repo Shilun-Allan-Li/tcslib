@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.time_seq",
+ "key": "dd337fc7b6f2f18c",
+ "kind": "theorem",
+ "title": "Additivity of time cost under sequencing",
+ "statement": "Let $T$ be a type equipped with an addition, and regard a value of $\\mathrm{TimeM}\\,T\\,\\alpha$ as a computation that returns a result in $\\alpha$ together with an accumulated time cost $\\mathrm{time}(\\cdot) \\in T$. Given a computation $f$ of a function $\\alpha \\to \\beta$ and a thunked computation $x$ of an argument in $\\alpha$, the applicative sequencing $f \\mathbin{\\langle *\\rangle} x$, which applies the computed function to the computed argument, has time cost $\\mathrm{time}(f) + \\mathrm{time}(x())$, the sum of the cost of $f$ and the cost of forcing and running $x$.",
+ "hypotheses_covered": [
+  "T carries an addition operation",
+  "f is a computation of a function α → β",
+  "x is a Unit-thunked computation of a value in α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The time cost of $\\mathrm{seq}\\,f\\,x$ is $f.\\mathrm{time} + (x\\,()).\\mathrm{time}$."
+}

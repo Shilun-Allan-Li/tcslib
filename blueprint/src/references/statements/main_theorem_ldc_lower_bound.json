@@ -1,0 +1,21 @@
+{
+ "lean_name": "main_theorem_ldc_lower_bound",
+ "key": "5d9a8c4a17f6b23b",
+ "kind": "theorem",
+ "title": "Cubic lower-bound inequality for 3-query locally decodable codes",
+ "statement": "Let $k \\ge 1$ and $n \\ge 2$ be integers, and let $\\delta, \\varepsilon \\in (0,1]$. Suppose $L$ is a normal form $(3,\\delta,\\varepsilon)$-decodable code with message length $k$ and block length $n$, whose density parameter equals $\\delta$ and whose advantage parameter equals $\\varepsilon$. Then there exists a real constant $C > 0$ for which\n\\[\n  k^3 \\;\\le\\; \\frac{n \\, C \\, (\\log n)^6}{\\varepsilon^{16}\\,\\delta^{16}} .\n\\]\nHere $C$ is quantified after $k$, $n$, $\\delta$, $\\varepsilon$ and the code $L$ have been fixed, so it is permitted to depend on all of them.",
+ "hypotheses_covered": [
+  "$k \\ge 1$ (positive integer message length)",
+  "$n \\ge 2$ (block length)",
+  "$\\delta \\in (0,1]$ (density parameter positive and at most $1$)",
+  "$\\varepsilon \\in (0,1]$ (advantage parameter positive and at most $1$)",
+  "$L$ is a normal form $(3,\\delta,\\varepsilon)$-decodable code with message length $k$ and block length $n$",
+  "the density parameter of $L$ equals $\\delta$",
+  "the advantage parameter of $L$ equals $\\varepsilon$",
+  "conclusion: existence of a constant $C > 0$, quantified after all parameters, with the stated inequality"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean places the existential for $C$ inside the conclusion, after every parameter is fixed, so the informalization reflects that $C$ may depend on $k, n, \\delta, \\varepsilon$ and $L$; I have rendered this faithfully rather than as an absolute constant.",
+ "rubric": [],
+ "replaced": "Let $k > 0$, $n \\ge 2$, and let $\\delta, \\varepsilon \\in (0,1]$. Let $L$ be a normal form\n$(3,\\delta,\\varepsilon)$-decodable code with message length $k$ and block length $n$,\nwhose parameters are $\\delta$ and $\\varepsilon$. Then there is a constant $C > 0$ with\n\\[\n  k^3 \\;\\le\\; \\frac{n \\cdot C \\cdot (\\log n)^6}{\\varepsilon^{16}\\,\\delta^{16}} .\n\\]\n\\emph{Placeholder --- the statement carries no lower-bound content.}  The constant $C$ is\nquantified \\emph{after} $k$, $n$, $\\delta$, $\\varepsilon$ and the code $L$, so it may depend on\nall of them; the Lean proof takes\n$C = (k^3\\varepsilon^{16}\\delta^{16} + 1)/(n\\log^6 n)$, which satisfies the displayed\ninequality for \\emph{every} choice of parameters.  The intended Theorem~9.1 of\nAlrabiah--Guruswami--Kothari--Manohar requires an \\emph{absolute} $C$, quantified before the\ninstance, and would yield $n = \\Omega(k^3/\\log^6 k)$; that theorem is \\emph{not} formalised\nhere, and this entry must not be cited as a formalisation of it."
+}

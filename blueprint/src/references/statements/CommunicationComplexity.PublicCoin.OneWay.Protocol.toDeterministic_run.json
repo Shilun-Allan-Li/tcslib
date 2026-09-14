@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.OneWay.Protocol.toDeterministic_run",
+ "key": "f04e7d02e7af0517",
+ "kind": "theorem",
+ "title": "Fixing the coin recovers the randomised run",
+ "statement": "Let $p$ be a one-way public-coin protocol with shared-randomness type $\\Omega$, input types $X$ and $Y$, and output type $\\alpha$; let $\\omega \\in \\Omega$ be a coin outcome and $x \\in X$, $y \\in Y$ be inputs. Fixing the public coin at $\\omega$ turns $p$ into a deterministic one-way protocol, and executing that deterministic protocol on inputs $x$ and $y$ yields the same output as running $p$ on the joint inputs $(\\omega, x)$ for Alice and $(\\omega, y)$ for Bob. In both cases the output is Bob's decoder applied to his input $(\\omega, y)$ together with the message that Alice's encoder assigns to $(\\omega, x)$.",
+ "hypotheses_covered": [
+  "p is a one-way public-coin protocol with randomness type Ω, input types X, Y, and output type α",
+  "ω ∈ Ω is a fixed coin outcome",
+  "x ∈ X is Alice's input",
+  "y ∈ Y is Bob's input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any public-coin protocol $p$, coin outcome $\\omega$, and inputs $x \\in X$,\n$y \\in Y$,\n\\[\n  (p.\\mathrm{toDeterministic}(\\omega)).\\mathrm{run}(x, y)\n  \\;=\\;\n  p.\\mathrm{rrun}(x, y, \\omega).\n\\]\nThat is, running the derandomised protocol on $(x,y)$ agrees with running the\nrandomised protocol on $(x,y)$ with fixed randomness $\\omega$."
+}

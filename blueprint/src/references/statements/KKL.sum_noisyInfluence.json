@@ -1,0 +1,17 @@
+{
+ "lean_name": "KKL.sum_noisyInfluence",
+ "key": "20859c996ff25aef",
+ "kind": "lemma",
+ "title": "Sum of noisy influences",
+ "statement": "Fix an integer $n$ and a real number $\\rho$, and let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function. Summing the noisy influence at noise rate $\\rho$ over all coordinates $i\\in[n]$ gives\n\\[\n  \\sum_{i=1}^{n} \\mathrm{Inf}_i^{\\rho}[f]\n  \\;=\\; \\sum_{S\\subseteq[n]} \\abs{S}\\,\\rho^{\\,\\abs{S}-1}\\,\\hat f(S)^2,\n\\]\nwhere the right-hand sum ranges over all subsets $S$ of $[n]$.",
+ "hypotheses_covered": [
+  "arity n and a Boolean function f : {0,1}^n → ℝ",
+  "a real noise rate ρ (no constraint imposed)",
+  "sum over all coordinates i ∈ [n]",
+  "right-hand sum over all subsets S ⊆ [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $\\rho$,\n\\[\n  \\sum_{i=1}^{n} \\mathrm{Inf}_i^{\\rho}[f]\n  \\;=\\; \\sum_{S \\subseteq [n]} \\abs{S}\\,\\rho^{\\abs{S}-1}\\,\\hat f(S)^2 .\n\\]"
+}

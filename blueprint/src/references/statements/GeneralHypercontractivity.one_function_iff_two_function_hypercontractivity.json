@@ -1,0 +1,21 @@
+{
+ "lean_name": "GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity",
+ "key": "c7cbae3d04d77226",
+ "kind": "theorem",
+ "title": "Equivalence of one- and two-function hypercontractivity",
+ "statement": "Let $1 \\le p \\le q$ with $q \\ge 2$, and let $\\rho$ satisfy $0 \\le \\rho \\le 1$ together with $\\rho \\le \\sqrt{(p-1)/(q-1)}$. Then the one-function hypercontractive inequality\n\\[\n  \\bigl(\\E\\bigl[\\abs{T_\\rho f}^q\\bigr]\\bigr)^{1/q} \\le \\bigl(\\E\\bigl[\\abs{f}^p\\bigr]\\bigr)^{1/p}\n  \\qquad \\text{for every Boolean function } f\n\\]\nholds if and only if the dual two-function inequality\n\\[\n  \\langle f, T_\\rho g\\rangle \\le \\bigl(\\E\\bigl[\\abs{f}^{q/(q-1)}\\bigr]\\bigr)^{(q-1)/q}\\,\\bigl(\\E\\bigl[\\abs{g}^p\\bigr]\\bigr)^{1/p}\n  \\qquad \\text{for every pair of Boolean functions } f, g\n\\]\nholds, where $T_\\rho$ is the noise operator and $\\E$ and $\\langle\\,\\cdot\\,,\\cdot\\,\\rangle$ are the expectation and $L^2$ inner product with respect to the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "$1 \\le p$",
+  "$p \\le q$",
+  "$2 \\le q$",
+  "$0 \\le \\rho$",
+  "$\\rho \\le 1$",
+  "$\\rho \\le \\sqrt{(p-1)/(q-1)}$",
+  "one-function bound quantified over all $f$",
+  "two-function bound quantified over all $f,g$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $1 \\le p \\le q$ with $q \\ge 2$, and let $0 \\le \\rho \\le 1$ satisfy\n$\\rho \\le \\sqrt{(p-1)/(q-1)}$. Then the one-function bound\n\\[\n  \\bigl(\\E[\\abs{T_\\rho f}^q]\\bigr)^{1/q} \\le \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}\n  \\qquad \\text{for all } f\n\\]\nholds if and only if the dual two-function bound\n\\[\n  \\inn{f, T_\\rho g} \\le \\bigl(\\E[\\abs{f}^{q/(q-1)}]\\bigr)^{(q-1)/q}\\,\\bigl(\\E[\\abs{g}^p]\\bigr)^{1/p}\n  \\qquad \\text{for all } f, g\n\\]\nholds."
+}

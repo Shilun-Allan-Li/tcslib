@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.const_mul_n_le_complexity_of_distributionalError_le",
+ "key": "c3b23d74dbe15820",
+ "kind": "theorem",
+ "title": "Distributional communication lower bound for set disjointness",
+ "statement": "Fix a positive integer $n$, and let $\\mu_n$ be the hard input distribution on pairs of subsets $(X, Y)$ of $[n] = \\{0, 1, \\dots, n-1\\}$. Let $p$ be a deterministic two-party communication protocol for set disjointness on inputs from $[n]$, and suppose its distributional error against the disjointness function under $\\mu_n$ is at most $\\tfrac{1}{32}$, i.e.\\ the $\\mu_n$-probability that the output of $p$ disagrees with $\\mathrm{disjointness}(n, X, Y)$ is at most $\\tfrac{1}{32}$. Then the communication complexity of $p$ satisfies\n\\[\n\\frac{\\left(1/32768\\right)^2 \\, n}{3 \\ln 2} \\;\\le\\; \\mathrm{complexity}(p).\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic protocol for disjointness inputs of length n",
+  "distributional error of p against disjointness under the hard input distribution is at most 1/32"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Deterministic fixed-error disjointness lower bound from the information estimate."
+}

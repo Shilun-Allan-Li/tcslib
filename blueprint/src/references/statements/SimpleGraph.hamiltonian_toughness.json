@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.hamiltonian_toughness",
+ "key": "e32ed4e412f9fe47",
+ "kind": "theorem",
+ "title": "Hamiltonian graphs are 1-tough",
+ "statement": "Let $G$ be a finite simple graph with vertex set $V$, and suppose $G$ has a Hamiltonian cycle. Then for every nonempty proper subset $S \\subsetneq V$, the number of connected components of the induced subgraph $G - S$ obtained by deleting the vertices of $S$ satisfies\n\\[ c(G - S) \\le \\abs{S}. \\]",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "G is Hamiltonian",
+  "S is nonempty",
+  "S is a proper subset of V (S ≠ V)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Thm 4.2: if \\texttt{G} is hamiltonian then \\texttt{$\\omega$(G $-$ S) $\\le$ |S|} for\nevery nonempty proper \\texttt{S}.\n\nIf $G$ is hamiltonian then, for every nonempty proper subset\n$S$ of $V$\n\\[\\omega(G - S) \\le |S| \\qquad (4.1)\\]"
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "SimpleHypercontractivity.hypercontractivity_p_2_general",
+ "key": "9f7cdeeb50f3a06d",
+ "kind": "theorem",
+ "title": "Dual $(p,2)$ hypercontractivity from Hölder and a $(2,q)$ bound",
+ "statement": "Let $1 < p$ and $q \\ge 2$ be conjugate exponents, so that $1/p + 1/q = 1$, let $\\rho \\in \\bbr$, and let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function; write $\\norm{g}_r = (\\E[\\abs{g}^r])^{1/r}$ for the $L^r$ norm under the uniform measure on the hypercube. Suppose Hölder's inequality holds for the exponent pair $(p,q)$, that is, $\\langle u, v\\rangle \\le \\norm{u}_p\\,\\norm{v}_q$ for all Boolean functions $u,v$, and suppose the noise operator satisfies the $(2,q)$ bound $\\E\\bigl[\\abs{T_\\rho g}^q\\bigr] \\le \\bigl(\\E[g^2]\\bigr)^{q/2}$ for every Boolean function $g$. Then $T_\\rho$ satisfies the dual $(p,2)$ bound\n\\[\n  \\bigl(\\E[(T_\\rho f)^2]\\bigr)^{1/2} \\le \\bigl(\\E[\\,\\abs{f}^p\\,]\\bigr)^{1/p}.\n\\]",
+ "hypotheses_covered": [
+  "$1 < p$",
+  "$q \\ge 2$",
+  "conjugate exponents $1/p + 1/q = 1$",
+  "$f$ a Boolean function",
+  "Hölder's inequality for the pair $(p,q)$",
+  "$(2,q)$ hypercontractivity bound for $T_\\rho$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $1 < p$, $q \\ge 2$ with $1/p + 1/q = 1$. Given a Hölder inequality for the pair\n$(p,q)$ and a $(2,q)$-hypercontractivity bound for $T_\\rho$, one concludes the dual\n$(p,2)$ bound:\n\\[\n  \\bigl(\\E[(T_\\rho f)^2]\\bigr)^{1/2} \\le \\bigl(\\E[\\,\\abs{f}^p\\,]\\bigr)^{1/p}.\n\\]"
+}

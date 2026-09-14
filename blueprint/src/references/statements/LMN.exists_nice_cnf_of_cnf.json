@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.exists_nice_cnf_of_cnf",
+ "key": "ec04da358eba2136",
+ "kind": "theorem",
+ "title": "Reduction of a CNF to a duplicate-free normal form",
+ "statement": "Let $\\psi$ be a CNF formula in the variables $x_1,\\dots,x_n$, written as a conjunction of clauses, each clause a disjunction of literals. Then there is a CNF formula $\\psi'$ that computes the same Boolean function as $\\psi$, that is, $\\psi'(x)=\\psi(x)$ for every assignment $x\\in\\{0,1\\}^n$, whose width (the maximum number of literals in any of its clauses) is at most that of $\\psi$, and in which every clause is free of repetition in the strong sense that no literal occurs twice and no two distinct literals share a variable.",
+ "hypotheses_covered": [
+  "input is an arbitrary CNF formula ψ in n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any CNF $\\psi$ there exists a CNF $\\psi'$ of width $\\le$ that of $\\psi$, evaluating\nidentically to $\\psi$ on every input, with no duplicate literals in any clause and with\neach clause variable-injective. Hence every CNF can be cleaned to satisfy the switching\nlemma hypotheses."
+}

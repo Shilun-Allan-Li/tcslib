@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.stateAfterSurvivingChoice_step",
+ "key": "71922b15fb005110",
+ "kind": "lemma",
+ "title": "Sampled surviving occurrence yields a surviving step",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $C$ of $G$, and let a sampled edge occurrence be given in the sample space of $s$ — a pair (edge, occurrence index) drawn from the edge multiset of $G$ — whose underlying edge does not cross $C$. Then the pair formed by $s$ and the successor state obtained by contracting $s$ along that edge occurrence stands in the surviving-step relation; that is, the successor state arises from $s$ by contracting some edge of $G$ that does not cross $C$.",
+ "hypotheses_covered": [
+  "s is a state (multigraph with a distinguished cut)",
+  "choice is an edge occurrence in the sample space of s",
+  "the sampled occurrence survives: its underlying edge does not cross the cut"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any surviving edge occurrence at $s$, the pair consisting of $s$ and the resulting\nsuccessor state is a surviving step."
+}

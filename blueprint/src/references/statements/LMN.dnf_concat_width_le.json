@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.dnf_concat_width_le",
+ "key": "31f9fbc2374cd9f3",
+ "kind": "lemma",
+ "title": "Width bound for a concatenation of DNF formulas",
+ "statement": "Let $\\varphi_1, \\dots, \\varphi_s$ be DNF formulas over $n$ variables, and let $\\ell$ be a natural number such that each $\\varphi_i$ has width at most $\\ell$ (that is, every term of every $\\varphi_i$ contains at most $\\ell$ literals). Then the DNF formula obtained by concatenating all of their term lists into a single list of terms also has width at most $\\ell$.",
+ "hypotheses_covered": [
+  "dnfs is a list of DNF formulas over n variables",
+  "each DNF in the list has width at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If DNFs $\\varphi_1, \\dots, \\varphi_s$ each have width at most $\\ell$, then the DNF\nobtained by concatenating all their term lists also has width at most $\\ell$."
+}

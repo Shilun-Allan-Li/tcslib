@@ -1,0 +1,15 @@
+{
+ "lean_name": "ThreeSATToClique.ThreeSAT_to_Clique_completeness",
+ "key": "cf1f14064067e2a6",
+ "kind": "theorem",
+ "title": "Completeness of the 3-SAT to clique reduction",
+ "statement": "Let $f$ be a 3-CNF formula consisting of $m$ clauses, and let its conflict graph be the simple graph on the vertices $\\langle c, \\ell\\rangle$ (clause index $c$, literal position $\\ell$) in which two vertices are adjacent exactly when they belong to different clauses and their literals do not conflict. If $f$ is satisfiable, then this conflict graph has an $m$-clique.",
+ "hypotheses_covered": [
+  "f is a 3-CNF formula with m = f.length clauses",
+  "f is satisfiable (there is an assignment satisfying every clause)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a 3-CNF formula $f$ with $m$ clauses is satisfiable, then the conflict graph\n$\\mathtt{toCliqueGraph}\\,f$ contains an $m$-clique: $\\mathtt{is3Satisfiable}\\,f \\to\n\\mathtt{hasClique}\\,(\\mathtt{toCliqueGraph}\\,f)\\,f.\\mathtt{length}$."
+}

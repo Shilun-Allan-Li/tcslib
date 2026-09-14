@@ -1,0 +1,17 @@
+{
+ "lean_name": "LowDegreeTest.gowers_product_succ",
+ "key": "46d724824155ca8f",
+ "kind": "lemma",
+ "title": "Recursive unfolding of the Gowers product",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function, let $k \\ge 0$, let $x \\in \\{0,1\\}^n$ be a base point, and let $h_1, \\ldots, h_{k+1} \\in \\{0,1\\}^n$ be direction vectors. Then the order-$(k{+}1)$ Gowers product splits along its last direction as\n\\[\n  \\mathrm{GP}(f, k{+}1, x, h_1, \\ldots, h_{k+1})\n  = \\mathrm{GP}(f, k, x, h_1, \\ldots, h_k)\n    \\cdot \\mathrm{GP}(f, k, x \\oplus h_{k+1}, h_1, \\ldots, h_k),\n\\]\nwhere $x \\oplus h_{k+1}$ denotes the componentwise XOR.",
+ "hypotheses_covered": [
+  "f is a Boolean function on {0,1}^n",
+  "k is a natural number",
+  "x is a base point in {0,1}^n",
+  "h_1,...,h_{k+1} are direction vectors in {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $f$, $k \\ge 0$, $x$, and direction vectors $h_1,\\ldots,h_{k+1}$, the\nGowers product unfolds as\n\\[\n  \\mathrm{GP}(f, k{+}1, x, h_1,\\ldots,h_{k+1})\n  = \\mathrm{GP}(f, k, x, h_1,\\ldots,h_k)\n    \\cdot \\mathrm{GP}(f, k, x \\oplus h_{k+1}, h_1,\\ldots,h_k).\n\\]"
+}

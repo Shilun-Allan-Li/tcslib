@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some",
+ "key": "18e059962be41006",
+ "kind": "lemma",
+ "title": "Deleting an unreached subprotocol preserves outputs",
+ "statement": "Let $p$ be a deterministic two-party communication protocol on input types $X$ (Alice) and $Y$ (Bob), and let $s$ be a rooted subprotocol of $p$ witnessed by a subprotocol path from $s$ to $p$. Suppose that deleting this path — splicing out the branch of $p$ leading to $s$ — yields a protocol $q$ (rather than being undefined, which happens only when $s$ is the whole of $p$). Then for every pair of inputs $(x,y)$ that does not reach the subprotocol $s$ along the path — that is, $x$ is not a reachable Alice input or $y$ is not a reachable Bob input for that path — executing $q$ on $(x,y)$ produces the same output as executing $p$ on $(x,y)$.",
+ "hypotheses_covered": [
+  "a subprotocol path from s to p",
+  "deleting the path yields some protocol q (the non-root case)",
+  "the pair (x,y) does not reach the subprotocol path"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\texttt{deletePath}\\;\\texttt{hsp} = \\texttt{some}\\;q$ and $(x, y)$ does not reach the\nsubprotocol path, then $q.\\texttt{run}\\;x\\;y = p.\\texttt{run}\\;x\\;y$."
+}

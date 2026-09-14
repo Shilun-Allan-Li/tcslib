@@ -1,0 +1,16 @@
+{
+ "lean_name": "GeneralHypercontractivity.noiseKernel_sum_left",
+ "key": "7fd66e15d57c6438",
+ "kind": "lemma",
+ "title": "Noise kernel sums to one over the cube",
+ "statement": "Fix a correlation parameter $\\rho$ with $0 \\le \\rho \\le 1$ and a point $y$ in the Boolean hypercube $\\{0,1\\}^n$. Then summing the noise kernel over all $x$ in the cube gives\n\\[\n  \\sum_{x \\in \\{0,1\\}^n} K_\\rho(x,y) \\;=\\; 1,\n\\]\nso that for each fixed $y$ the values $K_\\rho(\\cdot,y)$ form a probability distribution on the hypercube.",
+ "hypotheses_covered": [
+  "$0 \\le \\rho$",
+  "$\\rho \\le 1$",
+  "$y$ a fixed point of the Boolean hypercube $\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 \\le \\rho \\le 1$ and any fixed $y \\in \\mathrm{BoolCube}\\,n$,\n$\\sum_{x} K_\\rho(x,y) = 1$."
+}

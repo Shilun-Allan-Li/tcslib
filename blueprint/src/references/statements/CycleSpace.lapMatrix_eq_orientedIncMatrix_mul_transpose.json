@@ -1,0 +1,18 @@
+{
+ "lean_name": "CycleSpace.lapMatrix_eq_orientedIncMatrix_mul_transpose",
+ "key": "ae83d6eaf1b46fea",
+ "kind": "theorem",
+ "title": "Laplacian as oriented incidence matrix times its transpose",
+ "statement": "Let $G$ be a simple graph on a finite vertex set $V$, and let $(\\mathrm{tail}, \\mathrm{head})$ be an orientation of $G$ on a finite arc set $A$, so that each edge of $G$ is directed from its tail to its head. Write $M$ for the oriented incidence matrix of this orientation over $\\bbz$, the $V \\times A$ integer matrix whose entry in row $v$ and column $a$ is $1$ if $v$ is the tail of $a$, $-1$ if $v$ is the head of $a$, and $0$ otherwise. Then the graph Laplacian $L(G)$ of $G$, taken with integer entries, satisfies\n\\[\nL(G) = M M^{\\mathsf{T}}.\n\\]",
+ "hypotheses_covered": [
+  "V is a finite vertex set",
+  "A is a finite arc set",
+  "G is a simple graph on V",
+  "(tail, head) is an orientation of G",
+  "matrices and Laplacian taken over the integers ℤ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{The conductance matrix \\texttt{C} of a loopless graph \\texttt{G}\nsatisfies \\texttt{C = MM'}, where \\texttt{M} is the incidence matrix of any orientation\nof \\texttt{G}.}\n\n\\emph{The conductance matrix \\texttt{C = [c\\_ij]} of a loopless graph \\texttt{G}\nis the \\texttt{$\\nu$ $\\times$ $\\nu$} matrix with \\texttt{c\\_ii = $\\sum$\\_\\{j $\\ne$ i\\}\na\\_ij} and \\texttt{c\\_ij = -a\\_ij} for\n\\texttt{i $\\ne$ j}, where \\texttt{A} is the adjacency matrix.}"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.hamiltonian_iff_of_closureSteps",
+ "key": "0050c3b39cb70ed3",
+ "kind": "theorem",
+ "title": "Closure steps preserve Hamiltonicity",
+ "statement": "Let $G$ be a finite simple graph on $\\nu$ vertices, and suppose $H$ is obtained from $G$ by a finite sequence (possibly empty) of Bondy–Chvátal closure steps, each of which selects two distinct nonadjacent vertices whose degrees sum to at least $\\nu$ and joins them by an edge. Then $G$ is Hamiltonian if and only if $H$ is Hamiltonian.",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "H is reachable from G by the reflexive–transitive closure of the closure-step relation (a finite, possibly empty, sequence of closure steps)",
+  "each closure step adds an edge between two distinct nonadjacent vertices whose degree sum is at least the number of vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Thm 4.4 (honest restatement): reachability by closure steps preserves hamiltonicity.\n\nA simple graph is hamiltonian if and only if its closure is\nhamiltonian."
+}

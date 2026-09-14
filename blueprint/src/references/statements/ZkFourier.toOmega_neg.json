@@ -1,0 +1,15 @@
+{
+ "lean_name": "ZkFourier.toOmega_neg",
+ "key": "243b3b8595df0fbb",
+ "kind": "lemma",
+ "title": "Conjugation of a Fourier character under negation",
+ "statement": "Let $k \\ge 1$ and let $\\omega_k = e^{2\\pi i/k}$ be the primitive $k$-th root of unity, and for $a \\in \\mathbb{Z}/k\\mathbb{Z}$ write $\\omega_k^{a}$ for the value $\\omega_k$ raised to the canonical representative of $a$ in $\\{0,\\dots,k-1\\}$. Then for every $a \\in \\mathbb{Z}/k\\mathbb{Z}$,\n\\[\n\\omega_k^{-a} = \\overline{\\omega_k^{a}},\n\\]\nthat is, replacing $a$ by its additive inverse conjugates the corresponding character value.",
+ "hypotheses_covered": [
+  "k is nonzero (k ≥ 1), i.e. NeZero k",
+  "a ranges over Z/kZ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $a : \\mathbb{Z}/k\\mathbb{Z}$,\n$\\omega_k^{-a} = \\overline{\\omega_k^a}$,\ni.e.\\ $\\texttt{ZkFourier.toOmega}\\ (-a) = \\overline{\\texttt{ZkFourier.toOmega}\\ a}$."
+}

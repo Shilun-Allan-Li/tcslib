@@ -1,0 +1,16 @@
+{
+ "lean_name": "edge_count_lower_bound",
+ "key": "ce6d79133c06adc2",
+ "kind": "lemma",
+ "title": "Edge count lower bound from a minimum degree",
+ "statement": "Let $G$ be a loopless multigraph with finite vertex set $V$ and edge multiset $E$, and let $k$ be a natural number. If every vertex $v \\in V$ has degree at least $k$ in $G$, then\n\\[\n  k \\cdot \\abs{V} \\le 2\\,\\abs{E},\n\\]\nwhere $\\abs{V}$ is the number of vertices and $\\abs{E}$ is the number of edges counted with multiplicity.",
+ "hypotheses_covered": [
+  "G is a loopless multigraph with finite vertex set",
+  "k is a natural number",
+  "every vertex of G has degree at least k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every vertex of $G$ has degree at least $k$, then\n\\[\n  k \\cdot \\abs{V(G)} \\le 2\\abs{E(G)} .\n\\]"
+}

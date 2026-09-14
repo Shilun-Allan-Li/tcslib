@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.foldr_or_lits_eq_clause_eval",
+ "key": "2cf2087f09c863c9",
+ "kind": "theorem",
+ "title": "Fold of ORs over literals equals clause evaluation",
+ "statement": "Let $\\ell_1, \\dots, \\ell_k$ be a list of circuit literals on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be an assignment. Then the right fold of disjunction over the literal evaluations, starting from $\\mathrm{false}$,\n\\[\n\\ell_1.\\mathrm{eval}\\,x \\;\\lor\\; \\bigl(\\ell_2.\\mathrm{eval}\\,x \\;\\lor\\; \\cdots \\;\\lor\\; (\\ell_k.\\mathrm{eval}\\,x \\;\\lor\\; \\mathrm{false})\\bigr),\n\\]\nequals the clause evaluation on $x$ of the term obtained by converting each circuit literal to its switching-lemma literal; that is, both equal $\\mathrm{true}$ precisely when some literal in the list holds under $x$.",
+ "hypotheses_covered": [
+  "a list of circuit literals on n variables",
+  "an assignment x : Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any list of literals $lits$ and input $x$, the right fold of $||$ over the literal\nevaluations (starting from $\\mathrm{false}$) equals the CNF clause evaluation\n$\\texttt{CNF.evalClause}\\,(lits.\\mathrm{map}\\,\\texttt{Lit.toLiteral})\\,x$."
+}

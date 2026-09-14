@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.OneWay.le_communicationComplexity_iff",
+ "key": "dffa594d988887c9",
+ "kind": "theorem",
+ "title": "Lower-bound characterisation of one-way public-coin communication complexity",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function, let $\\varepsilon \\in \\bbr$, and let $m \\in \\bbn$. Then $m$ is a lower bound for the $\\varepsilon$-error one-way public-coin communication complexity of $f$, in the sense that $m \\le \\mathrm{CC}(f,\\varepsilon)$ as elements of $\\bbn_\\infty$, if and only if every protocol $p$ over a coin tape $\\mathrm{CoinTape}(n)$ of any length $n \\in \\bbn$ that $\\varepsilon$-computes $f$ has bit cost at least $m$.",
+ "hypotheses_covered": [
+  "f : X → Y → α is a function",
+  "ε is a real number",
+  "m is a natural number",
+  "conclusion is a biconditional (iff)",
+  "left side: m ≤ ε-error one-way public-coin communication complexity of f (in ℕ∞)",
+  "right side: for every n and every protocol over CoinTape(n) that ε-computes f, its cost is at least m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : X \\to Y \\to \\alpha$, $\\varepsilon \\in \\mathbb{R}$, and $m \\in \\mathbb{N}$,\nthe complexity satisfies $m \\le \\mathrm{CC}(f,\\varepsilon)$ (as extended naturals)\nif and only if every protocol $p$ over any $\\mathrm{CoinTape}(n)$ that\n$\\varepsilon$-computes $f$ has $p.\\mathrm{cost} \\ge m$."
+}

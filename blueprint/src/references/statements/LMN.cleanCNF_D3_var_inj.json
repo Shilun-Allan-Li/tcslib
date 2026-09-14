@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.cleanCNF_D3_var_inj",
+ "key": "5eceae7d26f3428e",
+ "kind": "lemma",
+ "title": "Variable-injective clauses in a cleaned CNF",
+ "statement": "Let $\\psi$ be a CNF formula over the variables $\\mathrm{Fin}\\,n$. After cleaning $\\psi$ — that is, after discarding every tautological clause and then deduplicating the variables within each surviving clause — every clause becomes variable-injective: in any clause of the cleaned formula, any two literals sharing the same variable are in fact the same literal.",
+ "hypotheses_covered": [
+  "ψ is a CNF formula over Fin n",
+  "c ranges over clauses of the cleaned CNF cleanCNF_D3 ψ",
+  "l₁, l₂ are literals of c with equal variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In every clause of $\\mathrm{cleanCNF\\_D3}\\,\\psi$, any two literals sharing the same\nvariable are equal."
+}

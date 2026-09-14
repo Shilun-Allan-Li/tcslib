@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent_mul_quarter_sub_two_mul_le_distributionalError",
+ "key": "870c5a86fe258cca",
+ "kind": "theorem",
+ "title": "Good-event lower bound on distributional error for set disjointness",
+ "statement": "Fix a positive integer $n$, a deterministic protocol $p$ that computes set disjointness on pairs of subsets of $[n]$ (Alice and Bob each holding one subset), and a real number $\\gamma$. Draw a sample $\\omega$ from the hard distribution, and let $Z(\\omega)$ be the summary consisting of the transcript that $p$ produces on the associated input pair $(X(\\omega),Y(\\omega))$, the special coordinate $T$, Alice's input bits at the coordinates below $T$, and Bob's input bits at the coordinates above $T$. Call $\\omega$ \\emph{good} if, conditioned on the value of $Z(\\omega)$, the law of the special bit-pair $(x_T,y_T)$ lies within total variation distance $2\\gamma$ of the uniform distribution on $\\{0,1\\}^2$. Then\n\\[\n\\Pr[\\omega \\text{ is good}]\\cdot\\left(\\tfrac14 - 2\\gamma\\right) \\le \\mathrm{err}(p),\n\\]\nwhere $\\mathrm{err}(p)$ is the distributional error of $p$ against the disjointness function under the input distribution induced by the hard distribution.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic protocol on pairs of subsets of [n] with Boolean output",
+  "gamma is a real number",
+  "the good event is the set of samples whose conditional special-pair law is within total variation distance 2gamma of uniform",
+  "the probability is taken under the hard distribution on samples",
+  "the distributional error is measured against the disjointness function under the induced input distribution"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The final good-fiber error calculation, phrased using distributional error."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "SwitchingBernoulli.switching_bernoulli_dtDepth_dnf",
+ "key": "4517892f6a9575e3",
+ "kind": "theorem",
+ "title": "Bernoulli switching lemma for DNF formulas",
+ "statement": "Let $f$ be a DNF formula on $n \\ge 1$ Boolean variables whose width is at most $w$, where $w \\ge 1$, and suppose that no term of $f$ reads any variable more than once: each term is a duplicate-free list of literals, and any two literals in a common term that share a variable are equal. Fix a real parameter $p$ with $0 < p \\le \\tfrac{1}{40w}$, so in particular $p \\le 1$. Then for every $t \\in \\bbn$, under a Bernoulli($p$) random restriction $\\rho$ the restricted function $f\\vert_\\rho$ (that is, $f$ evaluated on the free coordinates with the remaining coordinates fixed by $\\rho$) satisfies\n\\[\n  \\Pr_{p}\\big[\\, f\\vert_\\rho \\text{ has decision-tree depth exceeding } t \\,\\big] \\;\\le\\; \\left(\\tfrac12\\right)^{t} + \\exp\\!\\left(-\\tfrac{np}{3}\\right),\n\\]\nwhere the decision-tree depth of a Boolean function is the least depth of a decision tree computing it.",
+ "hypotheses_covered": [
+  "DNF width at most w",
+  "w positive (0 < w)",
+  "each term reads any shared variable identically (no conflicting literals)",
+  "each term has no duplicate literals",
+  "n positive (0 < n)",
+  "p positive (0 < p)",
+  "p ≤ 1/(40w)",
+  "p ≤ 1",
+  "t a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be a width-$w$ DNF ($0 < w$) with no repeated variables per term, and\n$0 < n$. For a Bernoulli$(p)$ random restriction with $0 < p \\le 1/(40w)$ and\n$p \\le 1$, and for every $t$,\n\\[\n  \\Pr_{R_p}\\big[\\mathrm{dtDepth}(f|_\\rho) > t\\big]\n    \\;\\le\\; \\left(\\tfrac12\\right)^t + e^{-np/3}.\n\\]\nThe $(1/2)^t$ term comes from the switching lemma via the Bernoulli cost\nreduction, and $e^{-np/3}$ is the Chernoff tail for leaving too many free\nvariables."
+}

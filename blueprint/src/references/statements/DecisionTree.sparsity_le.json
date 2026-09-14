@@ -1,0 +1,14 @@
+{
+ "lean_name": "DecisionTree.sparsity_le",
+ "key": "281e565eeb53cac9",
+ "kind": "theorem",
+ "title": "Fourier sparsity bound for decision trees",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and let $g \\colon \\{0,1\\}^n \\to \\{-1,1\\}$ be the sign-encoded function it computes. Then the number of frequencies $S \\subseteq [n]$ at which the Fourier--Walsh coefficient of $g$ is nonzero satisfies\n\\[\n  \\abs{\\{\\, S \\subseteq [n] : \\hat g(S) \\neq 0 \\,\\}} \\;\\le\\; \\mathrm{size}(T)\\cdot 2^{\\,\\mathrm{depth}(T)},\n\\]\nwhere $\\mathrm{size}(T)$ is the number of leaves of $T$ and $\\mathrm{depth}(T)$ is its maximum root-to-leaf path length.",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Fourier support of $T.\\mathrm{signEval}$, i.e.\\ the set of frequencies $S$ with\n$\\widehat{T.\\mathrm{signEval}}(S) \\ne 0$, has cardinality at most\n$T.\\mathrm{size}\\cdot 2^{T.\\mathrm{depth}}$."
+}

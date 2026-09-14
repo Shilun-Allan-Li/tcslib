@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.triplesToAux_append",
+ "key": "b417f44907094a16",
+ "kind": "lemma",
+ "title": "Triples-to-aux conversion distributes over concatenation",
+ "statement": "Fix a width $w \\in \\bbn$, and let $\\Phi$ denote the triples-to-aux conversion, which turns a finite list of triples in $\\mathrm{Fin}(w) \\times \\mathrm{Bool} \\times \\mathrm{Bool}$ into an aux list of $(\\bbn \\times \\mathrm{Bool})$ entries. Then $\\Phi$ carries concatenation to concatenation: for any two such lists $T_1$ and $T_2$, \\[ \\Phi(T_1 \\mathbin{+\\!\\!+} T_2) = \\Phi(T_1) \\mathbin{+\\!\\!+} \\Phi(T_2). \\]",
+ "hypotheses_covered": [
+  "fixed width $w \\in \\bbn$",
+  "two lists $T_1, T_2$ of triples in $\\mathrm{Fin}(w) \\times \\mathrm{Bool} \\times \\mathrm{Bool}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$\\mathrm{triplesToAux}\\,(ts_1 \\mathbin{+\\!\\!+} ts_2) = \\mathrm{triplesToAux}\\,ts_1 \\mathbin{+\\!\\!+} \\mathrm{triplesToAux}\\,ts_2$."
+}

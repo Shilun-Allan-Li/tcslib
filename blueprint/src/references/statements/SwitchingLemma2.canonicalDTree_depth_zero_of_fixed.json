@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalDTree_depth_zero_of_fixed",
+ "key": "b09263b4f573ec67",
+ "kind": "lemma",
+ "title": "Canonical tree has depth zero when a term is fixed",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables and let $\\rho$ be a restriction on those variables. If some term of $f$ is fixed by $\\rho$ — that is, at least one conjunction of literals in $f$ has every literal fixed to true by $\\rho$ — then the canonical decision tree of $f$ under $\\rho$ has depth $0$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "ρ is a restriction on n variables",
+  "some term of f is fixed by ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf some clause of $f$ is fixed (satisfied) by $\\rho$, the canonical decision tree\nfor $f|_\\rho$ is the leaf $\\mathrm{true}$ and hence has depth $0$."
+}

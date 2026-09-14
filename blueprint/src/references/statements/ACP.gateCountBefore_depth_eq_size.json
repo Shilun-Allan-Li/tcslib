@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.gateCountBefore_depth_eq_size",
+ "key": "d222af22c9e69982",
+ "kind": "lemma",
+ "title": "Full-depth gate count equals the circuit size",
+ "statement": "Let $F$ be a feedforward circuit over the alphabet $\\bbf_2$ with input type $\\mathrm{Fin}\\,n$, and suppose each of its node layers is finite. Counting the non-input nodes layer by layer through all of the layers $1,\\dots,\\mathrm{depth}(F)$, and accumulating these counts over the full depth of $F$, yields exactly the size of $F$, that is, its total number of non-input nodes.",
+ "hypotheses_covered": [
+  "F is a feedforward circuit over the alphabet F_2 with input type Fin n",
+  "every node layer of F is finite",
+  "the running count is accumulated through all layers up to depth(F)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a feed-forward circuit $F$ with all node layers finite, taking $d = F.\\mathrm{depth}$ gives\n\\[\n\\mathrm{gateCountBefore}\\,F\\,F.\\mathrm{depth} \\;=\\; F.\\mathrm{size}.\n\\]"
+}

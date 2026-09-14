@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet",
+ "key": "af9401af2a8fdbe2",
+ "kind": "theorem",
+ "title": "The disjointness fooling set",
+ "statement": "Fix $n \\in \\bbn$, and consider the set-disjointness function on subsets of $[n]$, namely the Boolean function $g(X, Y)$ that is $\\mathtt{true}$ exactly when $X \\cap Y = \\emptyset$. Then the collection $\\{(X, X^c) \\mid X \\subseteq [n]\\}$ of complementary pairs is a fooling set for $g$: for every rectangle $R = A \\times B$ (with $A, B$ families of subsets of $[n]$) that is monochromatic for $g$, the intersection of $R$ with this collection contains at most one point.",
+ "hypotheses_covered": [
+  "n is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe collection $\\{(X, X^c) \\mid X \\subseteq [n]\\}$ is a fooling set for\n$\\mathrm{disjointness}(n)$: every pair $(X, X^c)$ evaluates to $\\mathtt{true}$,\nand for any monochromatic rectangle $R$ with $\\mathrm{disjointness} = \\mathtt{true}$\nthat contains two distinct fooling-set pairs, those pairs must coincide."
+}

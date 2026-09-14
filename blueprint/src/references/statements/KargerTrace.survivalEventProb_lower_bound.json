@@ -1,0 +1,17 @@
+{
+ "lean_name": "KargerTrace.survivalEventProb_lower_bound",
+ "key": "fc29a9c711cdc0c9",
+ "kind": "theorem",
+ "title": "Karger contraction survival lower bound",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $C$, and let $n$ be a natural number with $2 \\le n$. Suppose that $C$ is a minimum cut of $G$, that $C$ has positive size, and that $G$ has exactly $n$ vertices. Then the recursive survival probability that $C$ survives $n-2$ successive uniformly random edge-occurrence contractions is at least\n\\[\n  \\frac{2}{n(n-1)}.\n\\]",
+ "hypotheses_covered": [
+  "C is a minimum cut of G",
+  "the cut C has positive size",
+  "n ≥ 2",
+  "G has exactly n vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n$ and every state $s$ whose distinguished cut is a min-cut of positive size,\nif $2 \\le n$ and $s.G$ has exactly $n$ vertices, then the recursive sampling model\nsurvives $n-2$ contractions with probability at least\n\\[\n  \\frac{2}{n(n-1)}.\n\\]"
+}

@@ -11,173 +11,193 @@ specialize to the Boolean ($\mathrm{Bool}$) case.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[KL divergence as log-likelihood ratio sum (absolutely continuous case)]
+\begin{theorem}[KL divergence as a log-likelihood-ratio sum (absolutely continuous case)]
 \lean{CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
 \label{CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{3}
-Let $\Omega$ be a finite measurable space and let $\mu, \nu$ be finite measures on $\Omega$
-with $\mu \ll \nu$.  Then
+Let $\Omega$ be a finite measurable space, and let $\mu$ and $\nu$ be finite measures on
+$\Omega$ with $\mu$ absolutely continuous with respect to $\nu$. Write
+$\tfrac{d\mu}{d\nu}$ for the Radon–Nikodym derivative and let $\mathrm{llr}(\omega) =
+\log \tfrac{d\mu}{d\nu}(\omega)$ be the log-likelihood ratio at $\omega$. Then the
+Kullback–Leibler divergence satisfies
 \[
   D_{\mathrm{KL}}(\mu \,\|\, \nu)
-  = \mathrm{ofReal}\!\left(
-      \sum_{\omega : \Omega} \mu.\mathrm{real}\,\{\omega\} \cdot \mathrm{llr}(\mu,\nu,\omega)
-      + \nu.\mathrm{real}\,\mathrm{univ}
-      - \mu.\mathrm{real}\,\mathrm{univ}
-    \right),
+= \left[\; \sum_{\omega \in \Omega} \mu(\{\omega\})\,\mathrm{llr}(\omega) \;+\;
+\nu(\Omega) \;-\; \mu(\Omega) \;\right]_{+},
 \]
-where $\mathrm{llr}(\mu,\nu,\omega) = \log \frac{d\mu}{d\nu}(\omega)$ is the
-log-likelihood ratio at $\omega$.
+where $[\,x\,]_{+}$ denotes the value in $[0,\infty]$ obtained by viewing the real
+number $x$ as a nonnegative extended real, negative values being sent to $0$.
 \end{theorem}
 
-\begin{theorem}[KL divergence as log-likelihood ratio sum]
+\begin{theorem}[KL divergence on a finite space as a log-likelihood-ratio sum]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
 \label{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons, CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
 \difficulty{4}
-Let $\Omega$ be a finite measurable space and let $\mu, \nu$ be finite measures on $\Omega$.
-Then
+Let $\Omega$ be a finite discrete measurable space, and let $\mu$ and $\nu$ be finite
+measures on $\Omega$. If there is a point $\omega \in \Omega$ with $\nu(\{\omega\}) = 0$
+but $\mu(\{\omega\}) \neq 0$, then the Kullback–Leibler divergence is infinite,
+$D_{\mathrm{KL}}(\mu \,\|\, \nu) = \infty$. Otherwise,
 \[
   D_{\mathrm{KL}}(\mu \,\|\, \nu)
-  = \begin{cases}
-      \infty & \text{if } \exists\,\omega,\; \nu\{\omega\} = 0 \text{ and } \mu\{\omega\} \neq 0,\\[4pt]
-      \mathrm{ofReal}\!\displaystyle\left(
-        \sum_{\omega}\mu.\mathrm{real}\,\{\omega\}\cdot\mathrm{llr}(\mu,\nu,\omega)
-        +\nu.\mathrm{real}\,\mathrm{univ}-\mu.\mathrm{real}\,\mathrm{univ}
-      \right) & \text{otherwise.}
-    \end{cases}
+= \left(\ \sum_{\omega \in \Omega} \mu(\{\omega\})\,\log\frac{d\mu}{d\nu}(\omega)\ +\
+\nu(\Omega)\ -\ \mu(\Omega)\ \right)_{\!+},
 \]
+where $\log\frac{d\mu}{d\nu}$ denotes the log-likelihood ratio of $\mu$ with respect to
+$\nu$, the measures are read as their real values, and $(x)_+$ takes the enclosed real
+number as a nonnegative extended real, sending any negative value to $0$.
 \end{theorem}
 
-\begin{theorem}[KL divergence between PMFs as log-likelihood ratio sum]
+\begin{theorem}[KL divergence of probability mass functions]
 \lean{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr}
 \label{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
 \difficulty{3}
-Let $\Omega$ be a finite measurable space and let $p, q$ be PMFs on $\Omega$.  Then
+Let $\Omega$ be a finite discrete measurable space, and let $p$ and $q$ be probability
+mass functions on $\Omega$. Then the Kullback–Leibler divergence between the probability
+measures they induce is
 \[
-  D_{\mathrm{KL}}(p \,\|\, q)
-  = \begin{cases}
-      \infty & \text{if } \exists\,\omega,\; q(\omega) = 0 \text{ and } p(\omega) \neq 0,\\[4pt]
-      \mathrm{ofReal}\!\displaystyle\left(
-        \sum_{\omega} p(\omega).\mathrm{toReal} \cdot \mathrm{llr}(p,q,\omega)
-      \right) & \text{otherwise.}
-    \end{cases}
+  D_{\mathrm{KL}}(p \,\|\, q) =
+  \begin{cases}
+\infty & \text{if } q(\omega) = 0 \text{ and } p(\omega) \neq 0 \text{ for some } \omega
+\in \Omega, \\[4pt]
+\displaystyle\sum_{\omega \in \Omega} p(\omega)\,\log\!\frac{p(\omega)}{q(\omega)} &
+\text{otherwise,}
+  \end{cases}
 \]
+where in the second case the (nonnegative) real sum is read as an element of
+$[0,\infty]$.
 \end{theorem}
 
-\begin{theorem}[Radon--Nikodym derivative equals singleton mass ratio]
+\begin{theorem}[Radon–Nikodym derivative as a ratio of point masses]
 \lean{CommunicationComplexity.rnDeriv_toReal_eq_singleton_ratio}
 \label{CommunicationComplexity.rnDeriv_toReal_eq_singleton_ratio}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{4}
-Let $\Omega$ be a finite measurable space, $\mu \ll \nu$ finite measures, and $\omega \in \Omega$
-with $\nu\{\omega\} \neq 0$.  Then the real-valued Radon--Nikodym derivative satisfies
+Let $\Omega$ be a finite measurable space carrying two finite measures $\mu$ and $\nu$
+with $\mu \ll \nu$, and let $\omega \in \Omega$ be a point whose singleton has positive
+mass, $\nu(\{\omega\}) \neq 0$. Then the Radon–Nikodym derivative of $\mu$ with respect
+to $\nu$ takes at $\omega$ the value
 \[
-  \left(\frac{d\mu}{d\nu}(\omega)\right).\mathrm{toReal}
-  = \frac{\mu.\mathrm{real}\,\{\omega\}}{\nu.\mathrm{real}\,\{\omega\}}.
+  \frac{d\mu}{d\nu}(\omega) = \frac{\mu(\{\omega\})}{\nu(\{\omega\})},
 \]
+where both sides are read as nonnegative real numbers.
 \end{theorem}
 
-\begin{theorem}[Singleton mass times log-likelihood ratio equals log of mass ratio]
+\begin{theorem}[Singleton mass times log-likelihood ratio]
 \lean{CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio}
 \label{CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.rnDeriv_toReal_eq_singleton_ratio}
 \difficulty{3}
-Let $\Omega$ be a finite measurable space, $\mu \ll \nu$ finite measures, and $\omega \in \Omega$.
-Then
+Let $\Omega$ be a finite discrete measurable space, let $\mu$ and $\nu$ be finite
+measures on $\Omega$ with $\mu$ absolutely continuous with respect to $\nu$, and let
+$\omega \in \Omega$. Writing $\mu(\{\omega\})$ and $\nu(\{\omega\})$ for the
+(real-valued) masses of the singleton $\{\omega\}$ and $\log\frac{d\mu}{d\nu}$ for the
+log-likelihood ratio of $\mu$ against $\nu$, one has
 \[
-  \mu.\mathrm{real}\,\{\omega\} \cdot \mathrm{llr}(\mu,\nu,\omega)
-  = \mu.\mathrm{real}\,\{\omega\}
-    \cdot \log\!\left(
-      \frac{\mu.\mathrm{real}\,\{\omega\}}{\nu.\mathrm{real}\,\{\omega\}}
-    \right).
+  \mu(\{\omega\}) \cdot \log\frac{d\mu}{d\nu}(\omega)
+  = \mu(\{\omega\}) \cdot \log\!\left(\frac{\mu(\{\omega\})}{\nu(\{\omega\})}\right).
 \]
 \end{theorem}
 
-\begin{theorem}[KL divergence as logarithmic mass ratio sum]
+\begin{theorem}[KL divergence on a finite space as a sum of log-ratios]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \label{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr, CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio}
 \difficulty{4}
-Let $\Omega$ be a finite measurable space and let $\mu, \nu$ be finite measures on $\Omega$.
-Then
+Let $\Omega$ be a finite discrete measurable space, and let $\mu$ and $\nu$ be finite
+measures on $\Omega$. If there is a point $\omega \in \Omega$ with $\nu(\{\omega\}) = 0$
+but $\mu(\{\omega\}) \neq 0$, then the Kullback–Leibler divergence is infinite:
+\[
+  D_{\mathrm{KL}}(\mu \,\|\, \nu) = \infty.
+\]
+Otherwise,
 \[
   D_{\mathrm{KL}}(\mu \,\|\, \nu)
-  = \begin{cases}
-      \infty & \text{if } \exists\,\omega,\; \nu\{\omega\} = 0 \text{ and } \mu\{\omega\} \neq 0,\\[4pt]
-      \mathrm{ofReal}\!\displaystyle\left(
-        \sum_{\omega}
-          \mu.\mathrm{real}\,\{\omega\}
-          \cdot\log\!\frac{\mu.\mathrm{real}\,\{\omega\}}{\nu.\mathrm{real}\,\{\omega\}}
-        +\nu.\mathrm{real}\,\mathrm{univ}-\mu.\mathrm{real}\,\mathrm{univ}
-      \right) & \text{otherwise.}
-    \end{cases}
+  = \left(
+      \sum_{\omega \in \Omega}
+        \mu(\{\omega\}) \,\log\!\frac{\mu(\{\omega\})}{\nu(\{\omega\})}
+      + \nu(\Omega) - \mu(\Omega)
+    \right)_{+},
 \]
+where each $\mu(\{\omega\})$, $\nu(\{\omega\})$, $\mu(\Omega)$, $\nu(\Omega)$ denotes
+the (real-valued) mass of the indicated set and $(x)_{+} = \max(x, 0)$ is the
+nonnegative part.
 \end{theorem}
 
-\begin{theorem}[KL divergence is finite to full-support probability measure]
+\begin{theorem}[Finiteness of KL divergence against a full-support measure]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_ne_top_of_forall_toPMF_ne_zero}
 \label{CommunicationComplexity.FiniteMeasureSpace.klDiv_ne_top_of_forall_toPMF_ne_zero}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \difficulty{2}
-Let $\Omega$ be a finite measurable space and let $\mu, \nu$ be probability measures on $\Omega$.
-If $\nu$ has full support (i.e.\ $\nu.\mathrm{toPMF}(\omega) \neq 0$ for all $\omega$), then
-$D_{\mathrm{KL}}(\mu \,\|\, \nu) \neq \infty$.
+Let $\Omega$ be a finite discrete measurable space, and let $\mu$ and $\nu$ be
+probability measures on $\Omega$. If $\nu$ assigns positive mass to every point, meaning
+$\nu(\{\omega\}) \neq 0$ for all $\omega \in \Omega$, then the Kullback–Leibler
+divergence $D_{\mathrm{KL}}(\mu \,\|\, \nu)$ is finite.
 \end{theorem}
 
-\begin{theorem}[KL divergence between PMFs as logarithmic mass ratio sum]
+\begin{theorem}[Kullback–Leibler divergence between probability mass functions]
 \lean{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_log}
 \label{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_log}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \difficulty{3}
-Let $\Omega$ be a finite measurable space and let $p, q$ be PMFs on $\Omega$.  Then
+Let $\Omega$ be a finite discrete measurable space, and let $p$ and $q$ be probability
+mass functions on $\Omega$, each regarded as the probability measure it induces. Then
+the Kullback–Leibler divergence $D_{\mathrm{KL}}(p \,\|\, q)$, valued in $[0,\infty]$,
+equals $+\infty$ whenever there exists some $\omega \in \Omega$ with $q(\omega) = 0$ and
+$p(\omega) \neq 0$, and otherwise equals the value in $[0,\infty]$ obtained from
 \[
-  D_{\mathrm{KL}}(p \,\|\, q)
-  = \begin{cases}
-      \infty & \text{if } \exists\,\omega,\; q(\omega) = 0 \text{ and } p(\omega) \neq 0,\\[4pt]
-      \mathrm{ofReal}\!\displaystyle\left(
-        \sum_{\omega}
-          p(\omega).\mathrm{toReal}
-          \cdot\log\!\frac{p(\omega).\mathrm{toReal}}{q(\omega).\mathrm{toReal}}
-      \right) & \text{otherwise.}
-    \end{cases}
+  \sum_{\omega \in \Omega} p(\omega)\,\log\!\frac{p(\omega)}{q(\omega)},
 \]
+where each mass $p(\omega)$, $q(\omega)$ is taken as its real value and negative sums
+are read as $0$.
 \end{theorem}
 
-\begin{theorem}[Boolean KL divergence matches PFR \texttt{KLDiv}]
+\begin{theorem}[Real-valued and extended KL divergence agree on Bool]
 \lean{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
 \label{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \difficulty{4}
-Let $\mu, \nu$ be probability measures on $\mathrm{Bool}$ with $\nu$ of full support.  Then
+Let $\mu$ and $\nu$ be probability measures on the two-point space $\mathrm{Bool} =
+\{\mathrm{false}, \mathrm{true}\}$, and suppose $\nu$ has full support, meaning
+$\nu(\{b\}) > 0$ for each of the two points $b$. Writing $D_{\mathrm{KL}}(\mu \,\|\,
+\nu) \in [0, \infty]$ for the Kullback–Leibler divergence valued in the extended
+nonnegative reals, its real cast agrees with the real-valued Kullback–Leibler divergence
+of the identity map, regarded as a random variable, under $\mu$ and under $\nu$; that
+is,
 \[
-  \bigl(D_{\mathrm{KL}}(\mu \,\|\, \nu)\bigr).\mathrm{toReal}
-  = \mathrm{KL}[\mathrm{id};\mu \,\#\, \mathrm{id};\nu],
+  \bigl(D_{\mathrm{KL}}(\mu \,\|\, \nu)\bigr)_{\bbr}
+  = \mathrm{KL}[\,\mathrm{id};\mu \,\#\, \mathrm{id};\nu\,].
 \]
-where the right-hand side is the PFR real-valued KL divergence of the identity random variable.
 \end{theorem}
 
-\begin{theorem}[KL divergence of pushed-forward Boolean variable matches PFR \texttt{KLDiv}]
+\begin{theorem}[Real value of a conditioned Boolean Kullback–Leibler divergence]
 \lean{ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero}
 \label{ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero}
 \leanok
 \uses{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
 \difficulty{3}
-Let $\mu$ be a finite measure on a measurable space $\Omega$, $X : \Omega \to \mathrm{Bool}$
-a measurable function, $S \subseteq \Omega$ a set with $\mu.\mathrm{real}\,S \neq 0$, and $\nu$
-a full-support probability measure on $\mathrm{Bool}$.  Then
+Let $\mu$ be a finite measure on a measurable space $\Omega$, let $X:\Omega\to\{0,1\}$
+be a measurable Boolean random variable, and let $S\subseteq\Omega$ be a set whose
+$\mu$-measure (as a real number) is nonzero, so that the conditional probability measure
+$\mu(\cdot\mid S)$ is well defined. Let $\nu$ be a probability measure on $\{0,1\}$ that
+assigns strictly positive mass to each of the two points. Then the extended-real
+Kullback–Leibler divergence of the law $X_{\ast}\,\mu(\cdot\mid S)$ of $X$ under the
+conditional measure relative to $\nu$, taken as a real number, coincides with its
+explicit pointwise value:
 \[
-  \bigl(D_{\mathrm{KL}}(X_*(\mu[\cdot|S]) \,\|\, \nu)\bigr).\mathrm{toReal}
-  = \mathrm{KL}[X;\mu[\cdot|S] \,\#\, \mathrm{id};\nu].
+D_{\mathrm{KL}}\!\bigl(X_{\ast}\,\mu(\cdot\mid S)\ \big\|\ \nu\bigr)
+= \sum_{b\in\{0,1\}} \bbP_{\mu(\cdot\mid S)}(X=b)\,
+\log\frac{\bbP_{\mu(\cdot\mid S)}(X=b)}{\nu(\{b\})}.
 \]
 \end{theorem}

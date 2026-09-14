@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.find_clause_preserved_in_encode",
+ "key": "97a4e55ee0f52d80",
+ "kind": "lemma",
+ "title": "First surviving term preserved by the decoded restriction",
+ "statement": "Let $f$ be a DNF formula on $n$ variables, viewed as an ordered list of terms, in which no term contains two distinct literals on the same variable. Fix restrictions $\\rho_0$ and $\\sigma$ such that $\\sigma$ leaves free every variable that $\\rho_0$ leaves free, and suppose that $t_{\\mathrm{clause}}$ is the first term of $f$, in list order, that is not killed by $\\rho_0$. Let $\\rho_{\\mathrm{enc}}$ be the restriction obtained as the first component of the output of the Razborov encoding procedure applied to $f$ — with width parameter $w$ and the given fuel and path arguments — started from $\\rho_0$ and $\\sigma$, and let $\\rho_{\\mathrm{dec}}$ be any restriction that agrees with $\\rho_0$ on every variable that $\\rho_0$ fixes and with $\\rho_{\\mathrm{enc}}$ on every variable that $\\rho_0$ leaves free. Then $t_{\\mathrm{clause}}$ is also the first term of $f$, in list order, that is not killed by $\\rho_{\\mathrm{dec}}$.",
+ "hypotheses_covered": [
+  "No term of $f$ has two distinct literals on the same variable",
+  "$t_{\\mathrm{clause}}$ is the first term of $f$ not killed by $\\rho_0$",
+  "$\\sigma$ leaves free every variable left free by $\\rho_0$",
+  "$\\rho_{\\mathrm{dec}}$ agrees with the encoder's output restriction on variables free under $\\rho_0$",
+  "$\\rho_{\\mathrm{dec}}$ agrees with $\\rho_0$ on variables fixed by $\\rho_0$"
+ ],
+ "confidence": "low",
+ "caveat": "Hypothesis hB is stated in terms of an external, undefined encoding function (razborovEncode.go), whose output restriction $\\rho_{\\mathrm{enc}}$ cannot be made fully self-contained without knowing what that procedure computes; the surrounding combinatorial content (first non-killed term preserved) is otherwise clear and faithfully rendered.",
+ "rubric": [],
+ "replaced": "\nFor a DNF $f$ with no two literals in a term sharing a variable, suppose the encoder finds\n$t_{\\mathrm{clause}}$ as the first term not killed by $\\rho_0$. Under the agreement\nhypotheses relating $\\rho_0$, $\\sigma$, and the decoder restriction $\\rho_{0,\\mathrm{dec}}$\n(agreeing with the encoder output on free variables and with $\\rho_0$ on set variables),\nthe decoder restriction also finds $t_{\\mathrm{clause}}$ as its first non-killed clause."
+}

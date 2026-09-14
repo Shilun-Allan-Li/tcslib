@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice",
+ "key": "5ef6b3967701e776",
+ "kind": "theorem",
+ "title": "Binary encoding of a finite-alphabet message from Alice",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $\\beta$ be a finite nonempty type, let $f : X \\to \\beta$ be a function, and let $Q : \\beta \\to \\mathrm{Protocol}\\,X\\,Y\\,\\alpha$ assign to each value $b \\in \\beta$ a deterministic two-party communication protocol. Then there exists a deterministic protocol $R$ over the same input types such that, on every pair of inputs $x : X$ and $y : Y$, running $R$ yields the same output as running the protocol $Q(f(x))$, and the communication complexity of $R$ equals\n\\[\n\\lceil \\log_2 \\abs{\\beta} \\rceil \\;+\\; \\max_{b \\in \\beta} \\operatorname{complexity}(Q(b)),\n\\]\nwhere $\\abs{\\beta}$ denotes the cardinality of $\\beta$.",
+ "hypotheses_covered": [
+  "β is a finite type",
+  "β is nonempty",
+  "f : X → β is a function labelling inputs by β",
+  "Q assigns a protocol to each element of β"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Given a finite nonempty type $\\beta$, a function $f : X \\to \\beta$, and a family of binary\nprotocols $Q : \\beta \\to \\mathrm{Protocol}\\,X\\,Y\\,\\alpha$, there exists a binary protocol $R$\nsuch that $R.\\mathrm{run}\\,x\\,y = (Q(f(x))).\\mathrm{run}\\,x\\,y$ for all $x,y$, and whose\ncomplexity satisfies $R.\\mathrm{complexity} = \\lceil \\log_2 |\\beta| \\rceil +\n\\sup_{b \\in \\beta}(Q\\,b).\\mathrm{complexity}$, constructed via a complete binary tree\nencoding of $\\beta$."
+}

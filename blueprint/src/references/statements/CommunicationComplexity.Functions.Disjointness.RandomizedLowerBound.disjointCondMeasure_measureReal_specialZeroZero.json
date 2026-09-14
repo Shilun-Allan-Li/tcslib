@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialZeroZero",
+ "key": "db724186947c55a6",
+ "kind": "theorem",
+ "title": "Special coordinate is doubly zero with probability one third",
+ "statement": "Fix $n \\ge 1$, and consider a sample drawn uniformly from the finite space consisting of a distinguished coordinate $T \\in \\{0,\\dots,n-1\\}$, two special bits $x_T, y_T \\in \\{0,1\\}$, and, for every coordinate, an independent label from $\\{\\text{neither},\\text{leftOnly},\\text{rightOnly}\\}$; these data determine Alice's set $X = \\{i : x_i = 1\\}$ and Bob's set $Y = \\{i : y_i = 1\\}$, where at the coordinate $T$ the two bits are $x_T$ and $y_T$ and at every other coordinate they are read off the label (with $\\text{neither}\\mapsto(0,0)$, $\\text{leftOnly}\\mapsto(1,0)$, $\\text{rightOnly}\\mapsto(0,1)$). Conditioning this uniform measure on the event that $X$ and $Y$ are disjoint, the conditional probability of the event $x_T = 0$ and $y_T = 0$ is exactly $\\tfrac{1}{3}$.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "sample drawn from the uniform (hard) distribution on HardSample n",
+  "conditioned on the event that X and Y are disjoint",
+  "event measured: both special bits x_T and y_T equal 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the disjoint-conditioned hard distribution, $(X_{T},Y_{T})=(0,0)$ has mass $1 / 3$."
+}

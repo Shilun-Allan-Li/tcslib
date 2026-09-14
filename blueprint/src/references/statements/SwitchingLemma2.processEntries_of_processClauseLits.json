@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.processEntries_of_processClauseLits",
+ "key": "feb7e5da76bd92df",
+ "kind": "lemma",
+ "title": "Decoder replay of a clause's processed free literals",
+ "statement": "Work over $n$ Boolean variables, where a *literal* is a variable together with a negation flag, a *term* is a list of literals (a conjunction), and a *restriction* $\\rho : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ fixes some variables and leaves the rest free. Let $t$ be a term whose length is at most a bound $w$, let $\\mathit{lits}$ be a list of literals each paired with a position index, every such pair occurring among the indexed entries of $t$, and fix a canonical decision-tree path together with restrictions $\\rho_0^{\\mathrm{enc}}, \\sigma^{\\mathrm{enc}}, \\sigma^{\\mathrm{dec}}, \\rho_0^{\\mathrm{dec}}$ and a remainder list. Then, running the decoder's entry-processing routine on the auxiliary data emitted when this clause's free literals are consumed against the path — followed by the termination marker $(w, \\mathrm{false})$ and the remainder — yields the same $\\sigma$- and $\\rho_0$-restrictions as folding the corresponding per-entry updates directly over that auxiliary data, with the remainder left unconsumed.",
+ "hypotheses_covered": [
+  "term $t$ over $n$ variables",
+  "length bound $t.\\mathrm{length} \\le w$",
+  "list of literal/index pairs $\\mathit{lits}$",
+  "decision-tree path",
+  "four restrictions $\\rho_0^{\\mathrm{enc}}, \\sigma^{\\mathrm{enc}}, \\sigma^{\\mathrm{dec}}, \\rho_0^{\\mathrm{dec}}$",
+  "remainder list $\\mathit{rest}$",
+  "every pair in $\\mathit{lits}$ occurs in $t$'s indexed entries"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement's conclusion is given as `sorry` (elided), and the decoder function it compares against is not among the supplied definitions, so the precise equation cannot be recovered from the ground truth. The rendered conclusion is reconstructed from the existing informal hint and the description of the clause-processing step, not verified against Lean; the hypotheses, however, are rendered faithfully from the snippet.",
+ "rubric": [],
+ "replaced": "\nCharacterizes the decoder's \\texttt{processEntries} when run on the auxiliary entries of\n\\texttt{SwitchingLemma2.processClauseLits} followed by a termination marker $(w,\n\\mathrm{false})$ and a remainder: the result is given by folding the decoder's $\\sigma$-\nand $\\rho_0$-updates over those auxiliary entries, leaving the remainder unconsumed,\nprovided $t.\\mathrm{length} \\le w$ and every input literal occurs in $t.\\texttt{zipIdx}$."
+}

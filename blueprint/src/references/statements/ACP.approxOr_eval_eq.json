@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.approxOr_eval_eq",
+ "key": "5e073ce6995c4159",
+ "kind": "lemma",
+ "title": "Evaluation commutes with the OR approximator",
+ "statement": "Fix a prime $p$, and let $P_1,\\dots,P_{\\mathrm{width}}$ be polynomials in the variables $y_1,\\dots,y_{\\mathrm{vars}}$ over $\\bbz/p$, together with subsets $S_1,\\dots,S_\\ell$ of the index set $\\{1,\\dots,\\mathrm{width}\\}$. Then for every point $y : \\{1,\\dots,\\mathrm{vars}\\} \\to \\bbz/p$, evaluating the randomized OR-approximating polynomial $1 - \\prod_{k=1}^{\\ell}\\bigl(1 - (\\sum_{i \\in S_k} P_i)^{p-1}\\bigr)$ at $y$ yields the value obtained by feeding the scalars $P_1(y),\\dots,P_{\\mathrm{width}}(y)$ into the value-level OR approximator with the same subsets:\n\\[\n\\Bigl(1 - \\prod_{k=1}^{\\ell}\\bigl(1 - (\\textstyle\\sum_{i \\in S_k} P_i)^{p-1}\\bigr)\\Bigr)\\!\\big|_{y}\n\\;=\\;\n1 - \\prod_{k=1}^{\\ell}\\Bigl(1 - \\bigl(\\textstyle\\sum_{i \\in S_k} P_i(y)\\bigr)^{p-1}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "polynomials $P_i$ over $\\bbz/p$ indexed by $i \\in \\{1,\\dots,\\mathrm{width}\\}$",
+  "subsets $S_1,\\dots,S_\\ell$ of the input positions",
+  "evaluation point $y : \\{1,\\dots,\\mathrm{vars}\\} \\to \\bbz/p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Evaluating $\\texttt{ACP.approxOr}\\,(P, S)$ at a point $y$ gives the same result as applying\nthe value-level approximator $\\texttt{ACP.approxOr\\_val}$ to the evaluated inputs\n$i \\mapsto P_i(y)$ with the same seed $S$."
+}

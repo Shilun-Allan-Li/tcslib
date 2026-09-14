@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.razborovEncode_fst_numFree_eq",
+ "key": "2df8ee4b5c7daa44",
+ "kind": "lemma",
+ "title": "Free-variable count of the Razborov encoding's output",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables in which no term repeats a literal, and within each term any two literals on the same variable coincide (so each variable occurs at most once per term). Let $\\rho$ be a restriction with exactly $s$ free variables, and let $w$ and $d$ be natural numbers with $d \\le s$. Suppose $\\rho$ is bad for $f$ at depth $d$, meaning the restricted Boolean function $f|_\\rho$ has decision-tree depth strictly greater than $d$. Then the restriction forming the first component of the Razborov encoding of $f$ and $\\rho$ with parameters $w$ and $d$ has exactly $s - d$ free variables.",
+ "hypotheses_covered": [
+  "ρ has exactly s free variables",
+  "d ≤ s",
+  "ρ is bad for f at depth d (decision-tree depth of f|_ρ exceeds d)",
+  "within each term, two literals on the same variable coincide",
+  "each term has no repeated literal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a bad $s$-restriction $\\rho$ with $d \\leq s$, the first component\n(the $\\gamma$-output) of $\\mathrm{razborovEncode}\\,f\\,w\\,d\\,\\rho$ is an\n$(s-d)$-restriction, since the encoder fixes exactly $d$ previously free\nvariables."
+}

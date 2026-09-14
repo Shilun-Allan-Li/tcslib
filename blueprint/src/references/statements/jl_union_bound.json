@@ -1,0 +1,18 @@
+{
+ "lean_name": "jl_union_bound",
+ "key": "b391e10271cc5a9d",
+ "kind": "theorem",
+ "title": "Union bound for Johnson–Lindenstrauss distortion",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, and let $A\\colon\\Omega\\to\\bbr^{k\\times d}$ be a measurable random $k\\times d$ matrix. Fix a finite set $V\\subseteq\\bbr^d$ and a parameter $\\varepsilon\\in\\bbr$, and suppose that for every pair $u,v\\in V$ the single-vector bad event for the difference $u-v$ has probability at most $2\\exp(-k\\varepsilon^2/8)$, that is,\n\\[\n  \\mu\\bigl\\{\\,\\omega : \\varepsilon\\,\\|u-v\\|^2 < \\bigl|\\,\\|A(\\omega)(u-v)\\|^2 - \\|u-v\\|^2\\,\\bigr|\\,\\bigr\\} \\le 2\\exp\\!\\bigl(-k\\varepsilon^2/8\\bigr).\n\\]\nThen the probability of the bad-pair event — that some ordered pair $(u,v)\\in V\\times V$ fails the two-sided distortion bound $(1-\\varepsilon)\\|u-v\\|^2 \\le \\|A(\\omega)(u-v)\\|^2 \\le (1+\\varepsilon)\\|u-v\\|^2$ — is at most\n\\[\n  |V|^2 \\cdot 2\\exp\\!\\bigl(-k\\varepsilon^2/8\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "(Ω,μ) is a probability space",
+  "A is a measurable random k×d matrix",
+  "V is a finite subset of ℝ^d",
+  "ε is a real parameter",
+  "each single-vector bad event for u−v has probability ≤ 2·exp(−kε²/8)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose each per-pair bad event satisfies\n$\\Pr[\\text{BadSingle}\\;\\varepsilon\\;A\\;\\cdot] \\le 2\\exp(-k\\varepsilon^2/8)$.\nThen the probability that \\emph{some} ordered pair in $V \\times V$ is\ndistorted is at most\n\\[\n  |V|^2 \\cdot 2\\,\\exp\\!\\bigl(-k\\varepsilon^2/8\\bigr).\n\\]"
+}

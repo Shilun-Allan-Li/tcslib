@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.restrictFn_congr",
+ "key": "db0378e04c6d7fc2",
+ "kind": "lemma",
+ "title": "Restriction respects pointwise equality",
+ "statement": "Let $f, g : (\\mathrm{Fin}\\,n \\to \\bbf_2\\text{-valued Boolean inputs}) \\to \\mathrm{Bool}$ be two Boolean functions on $n$ variables that agree everywhere, $f(y) = g(y)$ for every input $y$, and let $\\rho$ be a restriction on $n$ variables. Then the restricted functions agree as well: writing $f_\\rho(x) = f(\\rho.\\mathrm{extend}\\,x)$ for the restriction of $f$ by $\\rho$, one has $f_\\rho(x) = g_\\rho(x)$ for every $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$.",
+ "hypotheses_covered": [
+  "f and g agree pointwise: f(y) = g(y) for all y",
+  "rho is a restriction on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two Boolean functions $f$ and $g$ agree at every input, then for any restriction\n$\\rho$ their restrictions agree pointwise: $\\mathrm{restrictFn}\\, f\\,\\rho\\,x = \\mathrm{restrictFn}\\, g\\,\\rho\\,x$\nfor all $x$."
+}

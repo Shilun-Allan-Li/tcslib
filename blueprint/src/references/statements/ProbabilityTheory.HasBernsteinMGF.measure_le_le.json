@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.HasBernsteinMGF.measure_le_le",
+ "key": "6811641353a2beca",
+ "kind": "lemma",
+ "title": "Lower-tail Bernstein bound",
+ "statement": "Let $X : \\Omega \\to \\bbr$ be a random variable on a probability space carrying a finite measure $\\mu$, and suppose $X$ satisfies the Bernstein moment generating function condition with parameters $c$ and $t_{\\max}$: for every $t$ with $|t| \\le t_{\\max}$, the exponential moment $e^{tX}$ is $\\mu$-integrable and $\\E_\\mu[e^{tX}] \\le e^{c t^2}$. If $c > 0$, then for every $s$ with $0 \\le s \\le 2 c\\, t_{\\max}$,\n\\[\n  \\mu\\bigl(\\{\\omega \\mid X(\\omega) \\le -s\\}\\bigr) \\;\\le\\; \\exp\\!\\Bigl(-\\frac{s^2}{4c}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "μ is a finite measure",
+  "X satisfies the Bernstein MGF condition with parameters c and t_max",
+  "c > 0",
+  "0 ≤ s",
+  "s ≤ 2c·t_max"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X$ satisfy $\\texttt{ProbabilityTheory.HasBernsteinMGF}\\ X\\ \\mu\\ c\\ t_{\\max}$\nwith $c > 0$.  For every $s$ with $0 \\le s \\le 2c\\,t_{\\max}$,\n\\[\n  \\mu\\bigl(\\{\\omega \\mid X(\\omega) \\le -s\\}\\bigr) \\;\\le\\;\n  \\exp\\!\\Bigl(-\\tfrac{s^2}{4c}\\Bigr).\n\\]\nThis is the symmetric lower-tail analogue of\n$\\texttt{ProbabilityTheory.HasBernsteinMGF.measure\\_ge\\_le}$,\nobtained by applying the upper-tail bound to $-X$."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "SwitchingLemma2.go_roundtrip_gen",
+ "key": "e30763a4604614e8",
+ "kind": "lemma",
+ "title": "Round-trip core of the Razborov encoding",
+ "statement": "Fix a DNF formula $f$ on $n$ variables whose width is at most $w$ and in which no term repeats a variable (within a single term, any two literals on the same variable are equal). Given a fuel budget, a partial decision path, and restrictions $\\rho_0$ and $\\sigma$, let the encoding procedure, started with empty auxiliary data, return a restriction $\\rho^\\ast$ together with an output list $c$; let $D$ denote the decoding procedure run on $c$ with a fuel budget $m$ and starting restrictions $\\sigma_{\\mathrm{dec}}$ and $\\rho_{0,\\mathrm{dec}}$. Suppose that $\\sigma$ is free wherever $\\rho_0$ is free; that on every variable left free by $\\rho_0$ both $\\sigma_{\\mathrm{dec}}$ and $\\rho_{0,\\mathrm{dec}}$ agree with $\\rho^\\ast$; that on every variable fixed by $\\rho_0$ one has $\\sigma_{\\mathrm{dec}} = \\sigma$ and $\\rho_{0,\\mathrm{dec}} = \\rho_0$; and that $m$ is at least one more than the length of $c$. Then the restriction returned by $D$ equals $\\sigma$.",
+ "hypotheses_covered": [
+  "width of f is at most w",
+  "no term repeats a variable (hnd)",
+  "sigma is free wherever rho_0 is free (hE)",
+  "sigma_dec agrees with the encoder output on rho_0-free variables (hA)",
+  "rho_0_dec agrees with the encoder output on rho_0-free variables (hB)",
+  "sigma_dec equals sigma on rho_0-fixed variables (hC)",
+  "rho_0_dec equals rho_0 on rho_0-fixed variables (hD)",
+  "decoder fuel is at least length of encoder output plus one (hfuel)"
+ ],
+ "confidence": "low",
+ "caveat": "The statement is phrased in terms of the internal fuel-parametrized recursive workers `razborovEncode.go` and `razborovDecode.go`, which are not among the supplied definitions and have no standard mathematical name; the encoding and decoding procedures, their fuel budgets, path prefix, auxiliary accumulator, and paired outputs are implementation scaffolding of a formalized proof, so this is a generalized inductive invariant rather than a self-standing mathematical theorem. The prose describes these helpers abstractly, but faithful informalization is inherently limited.",
+ "rubric": [],
+ "replaced": "\nThe generalized round-trip statement: for a DNF $f$ of width at most $w$ with distinct\nvariables per term, given decoder states $\\sigma_{\\mathrm{dec}}$ and $\\rho_{0,\\mathrm{dec}}$\nthat satisfy the round-trip invariants relative to the encoder output and enough decoder\nfuel, the first component of the decoder run on the encoder's output list equals the\noriginal $\\sigma$. This is the inductive core from which the closed round trip follows."
+}

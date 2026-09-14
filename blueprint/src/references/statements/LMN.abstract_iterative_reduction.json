@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.abstract_iterative_reduction",
+ "key": "f3520f47b6b63ec2",
+ "kind": "theorem",
+ "title": "Abstract iterative reduction bound",
+ "statement": "Let $m$ be a natural number and let $\\ell_0,\\dots,\\ell_{m-1}$ be natural numbers (the layer sizes) whose sum is at most a positive integer $s$. Fix a real number $\\varepsilon>0$, and suppose that $b_0,\\dots,b_{m-1}$ are real numbers satisfying\n\\[\nb_i \\;\\le\\; \\ell_i\\cdot\\left(\\tfrac12\\right)^{\\log_2\\!\\left(2s/\\varepsilon\\right)}\n\\qquad\\text{for every } i.\n\\]\nThen $\\sum_{i} b_i \\le \\varepsilon/2$.",
+ "hypotheses_covered": [
+  "number of stages $m$",
+  "layer sizes $\\ell_i$ indexed by $i \\in \\{0,\\dots,m-1\\}$",
+  "$\\sum_i \\ell_i \\le s$",
+  "$0 < s$",
+  "$0 < \\varepsilon$",
+  "per-stage bound $b_i \\le \\ell_i \\cdot (1/2)^{\\log_2(2s/\\varepsilon)}$ for each $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $\\sum_i \\mathrm{layer\\_size}(i)\\le s$ with $0<s$ and $0<\\varepsilon$, if each\nper-stage bound satisfies\n$\\mathrm{per\\_stage\\_bound}(i)\\le(\\mathrm{layer\\_size}(i))\\cdot(1/2)^{\\log_2(2s/\\varepsilon)}$,\nthen $\\sum_i \\mathrm{per\\_stage\\_bound}(i)\\le\\varepsilon/2$. This packages the\nunion bound over all $d-2$ iterations as a purely arithmetic consequence of the\nper-stage bounds."
+}

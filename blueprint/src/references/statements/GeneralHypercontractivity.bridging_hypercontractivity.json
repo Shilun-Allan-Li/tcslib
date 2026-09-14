@@ -1,0 +1,18 @@
+{
+ "lean_name": "GeneralHypercontractivity.bridging_hypercontractivity",
+ "key": "16aa661fc4055436",
+ "kind": "theorem",
+ "title": "Bridging case of hypercontractivity on the Boolean cube",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function, and let $p,u\\in\\bbr$ satisfy $1\\le p\\le 2\\le u$. Set $\\rho=\\sqrt{(p-1)/(u-1)}$ and let $T_\\rho$ denote the noise operator with parameter $\\rho$. Then\n\\[\n  \\bigl(\\E\\bigl[\\,\\abs{T_\\rho f}^{\\,u}\\,\\bigr]\\bigr)^{1/u}\n  \\;\\le\\;\n  \\bigl(\\E\\bigl[\\,\\abs{f}^{\\,p}\\,\\bigr]\\bigr)^{1/p},\n\\]\nwhere the expectations are taken with respect to the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "$1 \\le p$",
+  "$p \\le 2$",
+  "$2 \\le u$",
+  "$f$ a real-valued Boolean function on $\\{0,1\\}^n$",
+  "$\\rho = \\sqrt{(p-1)/(u-1)}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $1 \\le p \\le 2 \\le u$, $f : \\mathrm{BoolCube}\\,n \\to \\bbr$, and\n$\\rho = \\sqrt{(p-1)/(u-1)}$,\n\\[\n  \\bigl(\\E[\\abs{T_\\rho f}^u]\\bigr)^{1/u} \\;\\le\\; \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}.\n\\]"
+}

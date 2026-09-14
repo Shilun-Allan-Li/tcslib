@@ -1,0 +1,19 @@
+{
+ "lean_name": "hoeffding_log_mgf_tight",
+ "key": "488d1b23dfefc886",
+ "kind": "theorem",
+ "title": "Tight Hoeffding bound on the exponential loss",
+ "statement": "Let $p_1,\\dots,p_n$ be a probability distribution, so $p_i \\ge 0$ for every $i$ and $\\sum_{i=1}^n p_i = 1$, and let $\\ell_1,\\dots,\\ell_n \\in [0,1]$ be losses. Write $L = \\sum_{i=1}^n p_i\\,\\ell_i$ for the expected loss. Then for every $\\eta > 0$,\n\\[\n  \\log\\!\\Bigl(\\sum_{i=1}^n p_i\\,e^{-\\eta\\,\\ell_i}\\Bigr)\n  \\;\\le\\;\n  -\\eta\\,L + \\frac{\\eta^2}{8}.\n\\]",
+ "hypotheses_covered": [
+  "n > 0",
+  "each p_i ≥ 0",
+  "the p_i sum to 1",
+  "each loss ℓ_i ≥ 0",
+  "each loss ℓ_i ≤ 1",
+  "η > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses as \\texttt{hoeffding\\_log\\_mgf\\_weak}, the tighter bound holds:\n\\[\n  \\ln\\!\\Bigl(\\sum_{i} p_i\\,e^{-\\eta\\,\\ell_i}\\Bigr)\n  \\;\\le\\;\n  -\\eta L + \\frac{\\eta^2}{8}.\n\\]"
+}

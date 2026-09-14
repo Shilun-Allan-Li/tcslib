@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.kruskal_spans",
+ "key": "1c730d959d11fcad",
+ "kind": "theorem",
+ "title": "Kruskal's output preserves connectivity",
+ "statement": "Fix $n \\in \\bbn$, and let $E$ be a list of weighted edges on the vertex set $\\mathrm{Fin}\\,n$. Then the edge list $\\mathrm{kruskal}\\,n\\,E$ produced by Kruskal's algorithm on $E$ spans $E$: for every pair of vertices $u, v \\in \\mathrm{Fin}\\,n$, if $u$ and $v$ are connected by a path through the edges of $E$, then they are also connected by a path through the selected edges $\\mathrm{kruskal}\\,n\\,E$.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "E is a list of weighted edges on Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every weighted edge list $E$ over $\\mathrm{Fin}\\,n$, the output $\\mathrm{kruskal}\\,n\\,E$\nspans like $E$: any two vertices reachable in $E$ are reachable using only the selected\nedges."
+}

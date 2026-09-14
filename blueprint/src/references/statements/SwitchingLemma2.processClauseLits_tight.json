@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_tight",
+ "key": "22684ffe3fb512a6",
+ "kind": "lemma",
+ "title": "Tight length bound for processing a nonempty clause against a nonempty path",
+ "statement": "Run the clause-processing procedure on a nonempty list of free literals — each paired with its position index in the clause — and a nonempty canonical path, starting from restrictions $\\rho_0$ and $\\sigma$, and let its output consist of a remaining path and a list of accumulated auxiliary entries (among the updated restrictions). Writing $a$ for the number of auxiliary entries produced, $r$ for the length of the remaining path returned, and $m$ for the length of the input path, we have\n\\[\na + 1 + 2r \\le 2m.\n\\]",
+ "hypotheses_covered": [
+  "input literal list is nonempty (a head literal-with-index followed by a tail)",
+  "input path is nonempty (a head step followed by a tail)",
+  "two restrictions ρ₀ and σ are supplied as starting states"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On non-empty literal and path lists, \\texttt{SwitchingLemma2.processClauseLits} satisfies\nthe strengthened bound: the auxiliary-entry length plus one, plus twice the remaining\npath length, is still at most twice the length of the input path."
+}

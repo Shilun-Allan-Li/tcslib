@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.switched_gates_give_new_dnfs",
+ "key": "8f76a2b40d1a100b",
+ "kind": "lemma",
+ "title": "Switched gates yield bounded-width clean DNFs",
+ "statement": "Let $n$, $m$, and $l$ be natural numbers, let $\\rho_1$ be a restriction on $n$ variables, and let $g_1, \\dots, g_m$ be DNF formulas on $n$ variables. For each $i$, write $g_i|_{\\rho_1}$ for the restricted Boolean function $x \\mapsto g_i\\bigl(\\rho_1.\\mathrm{extend}\\,x\\bigr)$, that is, $g_i$ evaluated on the input obtained by setting the fixed coordinates of $\\rho_1$ and reading the free coordinates from $x$. Suppose that for every $i$ the decision-tree depth of $g_i|_{\\rho_1}$ is at most $l$. Then there exist DNF formulas $g_1', \\dots, g_m'$ such that, for every $i$: the width of $g_i'$ is at most $l$; $g_i'$ computes $g_i|_{\\rho_1}$ on every input; within each term of $g_i'$ any two literals on the same variable are identical; and no term of $g_i'$ contains a repeated literal.",
+ "hypotheses_covered": [
+  "a family of m DNF formulas g_i on n variables",
+  "a restriction ρ₁ on n variables",
+  "a bound l",
+  "for each gate i, the decision-tree depth of the restricted function g_i|_{ρ₁} is at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nSuppose for each gate $i$ the restricted function $\\mathrm{restrictFn}\\,(\\mathrm{gates}\\,i).\\mathrm{eval}\\,\\rho_1$\nhas decision-tree depth at most $l$. Then there exist DNFs $\\mathrm{gates}'$ such that each\n$(\\mathrm{gates}'\\,i)$ has width at most $l$, evaluates to the corresponding restricted gate\nfunction on every input, and is clean: within each term every literal is determined by its\nvariable (injectivity on variables) and each term has no duplicate literals."
+}

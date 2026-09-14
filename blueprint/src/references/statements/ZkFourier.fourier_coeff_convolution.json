@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.fourier_coeff_convolution",
+ "key": "25541b62c4f62003",
+ "kind": "lemma",
+ "title": "Convolution theorem for the Fourier transform on $\\mathbb{Z}_k^n$",
+ "statement": "Fix an integer $k \\ge 1$ and let $f, g : \\mathbb{Z}_k^n \\to \\mathbb{C}$ be complex-valued functions on $\\mathbb{Z}_k^n$, with convolution $(f * g)(x) = \\mathbb{E}_y\\!\\left[f(y)\\,g(x - y)\\right]$ and Fourier coefficients $\\hat{f}(s) = \\langle f, \\chi_s\\rangle$ taken at any frequency $s \\in \\mathbb{Z}_k^n$. Then the Fourier transform carries convolution to pointwise multiplication:\n\\[\n  \\widehat{f * g}(s) = \\hat{f}(s)\\,\\hat{g}(s).\n\\]",
+ "hypotheses_covered": [
+  "k is nonzero (k ≥ 1)",
+  "f, g are complex-valued functions on Z_k^n",
+  "s is a frequency in Z_k^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f, g : \\mathbb{Z}_k^n \\to \\mathbb{C}$ and $s \\in \\mathbb{Z}_k^n$,\n\\[\n  \\widehat{f * g}(s) = \\hat{f}(s)\\,\\hat{g}(s).\n\\]\nConvolution in the spatial domain corresponds to pointwise multiplication in\nthe frequency domain."
+}

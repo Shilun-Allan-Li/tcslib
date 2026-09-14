@@ -1,0 +1,18 @@
+{
+ "lean_name": "empiricalJoint_rowExpectedUtility",
+ "key": "630139672649094d",
+ "kind": "lemma",
+ "title": "Row expected utility of the empirical joint distribution",
+ "statement": "Fix a finite two-player game with $M$ row actions and $N$ column actions, and write $u_r(i,j)$ for the row player's payoff at the pure profile $(i,j)$. Suppose that over $T > 0$ rounds the row player plays a mixed strategy $p_t$ and the column player a mixed strategy $q_t$ in each round $t$, and let $\\sigma$ be the empirical joint distribution given by $\\sigma_{ij} = \\frac{1}{T}\\sum_{t=1}^{T}(p_t)_i\\,(q_t)_j$. Then the row player's expected utility under $\\sigma$ equals the time-average of the per-round bilinear payoffs:\n\\[\n  \\sum_{i,j}\\sigma_{ij}\\,u_r(i,j)\n    = \\frac{1}{T}\\sum_{t=1}^{T}\\sum_{i,j}(p_t)_i\\,(q_t)_j\\,u_r(i,j).\n\\]",
+ "hypotheses_covered": [
+  "T > 0 rounds",
+  "row player mixed strategies p_t for each round",
+  "column player mixed strategies q_t for each round",
+  "finite game with row utility u_r on M×N profiles",
+  "empirical joint distribution σ formed from the p_t and q_t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The row player's expected utility under the empirical joint distribution equals\nthe time-average of the per-round bilinear utilities:\n\\[\n  \\mathrm{rowExpUtil}(\\sigma^{\\mathrm{emp}}, G) =\n  \\frac{1}{T}\\sum_{t}\\sum_{i,j}(p_t)_i\\,(q_t)_j\\,u_r(i,j).\n\\]"
+}

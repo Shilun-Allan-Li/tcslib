@@ -1,0 +1,14 @@
+{
+ "lean_name": "SATTo3SAT.SAT_to_3SAT_completeness",
+ "key": "34a0f9ddfad6d727",
+ "kind": "theorem",
+ "title": "Completeness of the SAT to 3-SAT encoding",
+ "statement": "Let $f$ be a CNF formula over a variable type $V$, and let $\\mathrm{to3SAT}(f)$ be the 3-CNF formula produced by the standard clause-splitting transformation, whose variables are those of $V$ together with fresh auxiliary chain variables introduced to break each long clause into a chain of three-literal clauses. If $f$ is satisfiable — that is, some assignment to $V$ makes every clause of $f$ true — then $\\mathrm{to3SAT}(f)$ is 3-satisfiable: there is an assignment to its variables under which every 3-clause is true.",
+ "hypotheses_covered": [
+  "$f$ is a satisfiable CNF formula over $V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a CNF formula $f$ is satisfiable, then $\\texttt{SATTo3SAT.to3SAT}\\,f$ is 3-satisfiable.\nThe witnessing 3-SAT assignment is \\texttt{SATTo3SAT.globalAssignment} $\\alpha\\,f$, where\n$\\alpha$ is the original satisfying assignment."
+}

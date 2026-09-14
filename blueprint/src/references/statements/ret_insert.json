@@ -1,0 +1,16 @@
+{
+ "lean_name": "ret_insert",
+ "key": "8a21e9aa6142be75",
+ "kind": "theorem",
+ "title": "Correctness of timed ordered insertion",
+ "statement": "Let $\\alpha$ be a linearly ordered type. For every $x \\in \\alpha$ and every finite list $\\mathit{xs}$ over $\\alpha$, the value returned by the timed insertion of $x$ into $\\mathit{xs}$ (discarding the accumulated time cost) coincides with the ordinary ordered insertion of $x$ into $\\mathit{xs}$ with respect to the order $\\le$: the list obtained by placing $x$ immediately before the first entry $y$ of $\\mathit{xs}$ satisfying $x \\le y$, and at the end if no such entry exists.",
+ "hypotheses_covered": [
+  "α is a linear order",
+  "x is an element of α",
+  "xs is a list over α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The value returned by the timed insertion of $x$ into $\\mathit{xs}$ is the ordinary ordered\ninsertion of $x$ into $\\mathit{xs}$ for the relation $\\le$."
+}

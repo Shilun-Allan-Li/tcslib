@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceConditioning_eq_recode_condBits",
+ "key": "a2af2320a9fdfe83",
+ "kind": "theorem",
+ "title": "Recoding recovers Alice's coordinate conditioning",
+ "statement": "Fix a positive integer $n$ and a coordinate index $i \\in \\{0, 1, \\dots, n-1\\}$, and consider any assignment $c = (c_0, \\dots, c_{n-1})$ of a disjointness value to each coordinate, where each $c_k$ carries Alice's bit $x_k$ and Bob's bit $y_k$. Then Alice's fixed-coordinate conditioning at $i$ — the pair whose first component holds $x_j$ for $j < i$ and $\\mathrm{false}$ elsewhere, and whose second component holds $y_j$ for $j \\ge i$ and $\\mathrm{false}$ elsewhere — coincides with the result of first forming the single bit vector $w$ with $w_k = x_k$ for $k < i$ and $w_k = y_k$ for $k \\ge i$, and then recoding $w$ into the padded pair $\\bigl(\\,j \\mapsto w_j \\text{ if } j < i \\text{ else } \\mathrm{false},\\ \\ j \\mapsto w_j \\text{ if } i \\le j \\text{ else } \\mathrm{false}\\,\\bigr)$. The two constructions agree as functions of the coordinate assignment.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "i is a coordinate index in {0,...,n-1}",
+  "quantified over every assignment of disjointness values to the n coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The one-bit-per-coordinate conditioning recodes to the padded-pair conditioning."
+}

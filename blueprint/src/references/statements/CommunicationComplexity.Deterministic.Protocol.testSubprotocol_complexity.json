@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity",
+ "key": "170f2b0b87f7a6cd",
+ "kind": "lemma",
+ "title": "Complexity of the test subprotocol",
+ "statement": "Let $X$ and $Y$ be the input types of Alice and Bob in a deterministic two-party communication protocol producing values of type $\\alpha$, and suppose $s$ is a subprotocol of such a protocol $p$. For any two further protocols $q_{\\mathrm{in}}$ and $q_{\\mathrm{out}}$, the test subprotocol — which spends one bit for Alice and one bit for Bob to decide whether the input reaches $s$, then continues as $q_{\\mathrm{in}}$ if it does and as $q_{\\mathrm{out}}$ otherwise — has communication complexity \\[ 2 + \\max\\bigl(\\mathrm{complexity}(q_{\\mathrm{in}}),\\, \\mathrm{complexity}(q_{\\mathrm{out}})\\bigr). \\]",
+ "hypotheses_covered": [
+  "s is a subprotocol of p (IsSubprotocol s p)",
+  "two given protocols qIn and qOut"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The communication complexity of \\texttt{testSubprotocol hsp qIn qOut} equals\n$2 + \\max(\\texttt{qIn}.\\texttt{complexity},\\; \\texttt{qOut}.\\texttt{complexity})$."
+}

@@ -13,6 +13,11 @@ worst-case bit complexity, equivalence and correctness predicates, and structura
 
 \begin{definition}[Deterministic communication protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p004-b005
+}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b001}
 \label{CommunicationComplexity.Deterministic.Protocol}
 \leanok
 A deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob)
@@ -24,6 +29,11 @@ function $f : X \to \mathrm{Bool}$ to her input and branches on the resulting bi
 
 \begin{definition}[Protocol execution]
 \lean{CommunicationComplexity.Deterministic.Protocol.run}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p004-b005
+}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
@@ -34,6 +44,8 @@ returning the stored value of type $\alpha$.
 
 \begin{definition}[Communication complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.complexity}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p002-b002}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b003}
 \label{CommunicationComplexity.Deterministic.Protocol.complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
@@ -55,6 +67,8 @@ inputs $(x, y)$.
 
 \begin{definition}[Protocol computes a function]
 \lean{CommunicationComplexity.Deterministic.Protocol.Computes}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p008-b002}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b003}
 \label{CommunicationComplexity.Deterministic.Protocol.Computes}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
@@ -72,62 +86,76 @@ by exchanging the roles of Alice and Bob throughout: every alice node becomes a 
 and vice versa, while output nodes are left unchanged.
 \end{definition}
 
-\begin{theorem}[Swap preserves run]
+\begin{theorem}[Role swap preserves protocol output]
 \lean{CommunicationComplexity.Deterministic.Protocol.swap_run}
 \label{CommunicationComplexity.Deterministic.Protocol.swap_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap}
 \difficulty{2}
-For any protocol $p$ over $X \times Y$ and any inputs $x : X$, $y : Y$,
-\[
-  p.\texttt{swap}.\texttt{run}\;y\;x \;=\; p.\texttt{run}\;x\;y.
-\]
+Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn
+from $X$, Bob's inputs drawn from $Y$, and outputs in $\alpha$, and let $x : X$ and $y :
+Y$ be inputs. Then executing the role-swapped protocol on the input pair $(y, x)$
+returns the same value as executing $p$ on $(x, y)$.
 \end{theorem}
 
-\begin{theorem}[Swap preserves complexity]
+\begin{theorem}[Role swap preserves communication complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.swap_complexity}
 \label{CommunicationComplexity.Deterministic.Protocol.swap_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.swap}
 \difficulty{2}
-For any protocol $p$ over $X \times Y$,
-\[
-  p.\texttt{swap}.\texttt{complexity} \;=\; p.\texttt{complexity}.
-\]
+Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn
+from a type $X$, Bob's from a type $Y$, and outputs in a type $\alpha$. Let
+$p^{\mathrm{swap}}$ be the protocol obtained by interchanging the roles of Alice and Bob
+throughout — turning every Alice node into a Bob node and vice versa while leaving
+output nodes unchanged. Then $p^{\mathrm{swap}}$ has the same communication complexity
+as $p$: the worst-case number of bits exchanged is unaffected by the swap.
 \end{theorem}
 
-\begin{theorem}[Swap is an involution]
+\begin{theorem}[Role swap is an involution]
 \lean{CommunicationComplexity.Deterministic.Protocol.swap_swap}
 \label{CommunicationComplexity.Deterministic.Protocol.swap_swap}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.swap}
 \difficulty{2}
-Swapping Alice and Bob twice recovers the original protocol: for any $p$ over $X \times Y$,
-$p.\texttt{swap}.\texttt{swap} = p$.
+Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn
+from a type $X$, Bob's from a type $Y$, and outputs in a type $\alpha$. Applying the
+role swap twice — first exchanging the roles of Alice and Bob throughout $p$, then
+exchanging them again — returns the original protocol $p$ unchanged.
 \end{theorem}
 
-\begin{theorem}[Alice node to Bob node]
+\begin{theorem}[Swapping an Alice-rooted protocol to a Bob-rooted one]
 \lean{CommunicationComplexity.Deterministic.Protocol.alice_to_bob}
 \label{CommunicationComplexity.Deterministic.Protocol.alice_to_bob}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
 \difficulty{1}
-For any alice-rooted protocol $\texttt{alice}\;f\;P$ over $X \times Y$, there exists a
-protocol $q$ over $Y \times X$ such that $q.\texttt{run}\;y\;x = (\texttt{alice}\;f\;P).\texttt{run}\;x\;y$
-for all $x, y$, and $q.\texttt{complexity} = (\texttt{alice}\;f\;P).\texttt{complexity}$.
-This allows reducing the bob case to the alice case in inductive arguments.
+Let $X$, $Y$, and $\alpha$ be types, let $f : X \to \mathrm{Bool}$, and let $P$ assign
+to each bit $b \in \mathrm{Bool}$ a deterministic communication protocol $P(b)$ over
+input types $X$ (Alice) and $Y$ (Bob) with output type $\alpha$. Consider the protocol
+whose root is an Alice node: on inputs $x$ and $y$ it applies $f$ to $x$ and continues
+with $P(f(x))$. Then there exists a protocol $q$ over input types $Y$ (Alice) and $X$
+(Bob) with output type $\alpha$ such that, for all $x \in X$ and $y \in Y$, executing
+$q$ on inputs $y$ and $x$ returns the same value of $\alpha$ as executing the original
+Alice-rooted protocol on inputs $x$ and $y$, and moreover $q$ has the same communication
+complexity as that protocol.
 \end{theorem}
 
-\begin{theorem}[Bob node to Alice node]
+\begin{theorem}[Turning a Bob-rooted protocol into a role-swapped protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.bob_to_alice}
 \label{CommunicationComplexity.Deterministic.Protocol.bob_to_alice}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
 \difficulty{1}
-For any bob-rooted protocol $\texttt{bob}\;g\;P$ over $X \times Y$, there exists a protocol
-$q$ over $Y \times X$ such that $q.\texttt{run}\;y\;x = (\texttt{bob}\;g\;P).\texttt{run}\;x\;y$
-for all $x, y$, and $q.\texttt{complexity} = (\texttt{bob}\;g\;P).\texttt{complexity}$.
-This allows reducing the alice case to the bob case in inductive arguments.
+Let $X$ and $Y$ be the input types of Alice and Bob and let $\alpha$ be the output type.
+Fix a function $f : Y \to \mathrm{Bool}$ together with a family of deterministic
+communication protocols $P(\mathtt{false})$ and $P(\mathtt{true})$, and let $R$ be the
+protocol whose root is a bob node: on inputs $x$ (Alice) and $y$ (Bob) it computes the
+bit $f(y)$ and then runs $P(f(y))$. Then there is a deterministic communication protocol
+$q$ with the roles of Alice and Bob interchanged — Alice's input drawn from $Y$ and
+Bob's from $X$ — such that for all $x$ and $y$, running $q$ on Alice-input $y$ and
+Bob-input $x$ yields the same output value as running $R$ on Alice-input $x$ and
+Bob-input $y$, and moreover $q$ has the same communication complexity as $R$.
 \end{theorem}
 
 \begin{definition}[Input pull-back]
@@ -140,27 +168,30 @@ $p$ over $X \times Y$ to a protocol over $X' \times Y'$ by pre-composing every m
 function with $f_X$ or $f_Y$ as appropriate, leaving output nodes unchanged.
 \end{definition}
 
-\begin{theorem}[Comap run]
+\begin{theorem}[Pull-back commutes with protocol execution]
 \lean{CommunicationComplexity.Deterministic.Protocol.comap_run}
 \label{CommunicationComplexity.Deterministic.Protocol.comap_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{2}
-For any protocol $p$ over $X \times Y$, input maps $f_X : X' \to X$ and $f_Y : Y' \to Y$,
-and inputs $x' : X'$, $y' : Y'$,
-\[
-  (p.\texttt{comap}\;f_X\;f_Y).\texttt{run}\;x'\;y' \;=\; p.\texttt{run}\;(f_X\,x')\;(f_Y\,y').
-\]
+Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn
+from $X$ and Bob's from $Y$, producing values in $\alpha$, and let $f_X : X' \to X$ and
+$f_Y : Y' \to Y$ be arbitrary maps of input types. Then for all $x' \in X'$ and $y' \in
+Y'$, running the pull-back of $p$ along $f_X$ and $f_Y$ on the inputs $x'$ and $y'$
+yields the same output as running $p$ itself on the transported inputs $f_X(x')$ and
+$f_Y(y')$.
 \end{theorem}
 
-\begin{theorem}[Comap preserves complexity]
+\begin{theorem}[Pull-back preserves communication complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.comap_complexity}
 \label{CommunicationComplexity.Deterministic.Protocol.comap_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{2}
-For any protocol $p$ over $X \times Y$ and input maps $f_X : X' \to X$, $f_Y : Y' \to Y$,
-\[
-  (p.\texttt{comap}\;f_X\;f_Y).\texttt{complexity} \;=\; p.\texttt{complexity}.
-\]
+Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn
+from $X$, Bob's inputs from $Y$, and outputs in $\alpha$, and let $f_X : X' \to X$ and
+$f_Y : Y' \to Y$ be maps re-indexing the two input types. Then the pull-back protocol
+over $X'$ and $Y'$ obtained by pre-composing each of Alice's message functions with
+$f_X$ and each of Bob's message functions with $f_Y$ has the same communication
+complexity as $p$.
 \end{theorem}

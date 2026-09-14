@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.reach_mono",
+ "key": "2191e815a3bb3972",
+ "kind": "lemma",
+ "title": "Monotonicity of reachability under edge addition",
+ "statement": "Fix $n$, let $e_1$ and $e_2$ be lists of weighted edges on the vertex set $\\mathrm{Fin}\\,n$, and let $u, v : \\mathrm{Fin}\\,n$. Suppose $u$ and $v$ are connected by a path through the edges of $e_1$, and that every edge of $e_1$ also occurs in $e_2$. Then $u$ and $v$ are connected by a path through the edges of $e_2$.",
+ "hypotheses_covered": [
+  "u and v are reachable through the edges of e1",
+  "every edge of e1 also belongs to e2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathtt{Reach}\\,e_1\\,u\\,v$ and every edge of $e_1$ also belongs to $e_2$, then\n$\\mathtt{Reach}\\,e_2\\,u\\,v$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.exists_isVertexCut_singleton_of_isBridge",
+ "key": "3610a79d75175044",
+ "kind": "theorem",
+ "title": "A bridge forces a cut vertex",
+ "statement": "Let $G$ be a connected simple graph on a finite vertex set $V$ with at least three vertices, and suppose the edge $\\{u,v\\}$ of $G$ is a bridge (that is, deleting it disconnects $G$). Then $G$ has a cut vertex: there exists a vertex $w$ such that the singleton $\\{w\\}$ is a vertex cut of $G$, meaning $\\{w\\}$ is a proper subset of $V$ and the graph $G - w$ obtained by deleting $w$ is disconnected.",
+ "hypotheses_covered": [
+  "G is a connected simple graph",
+  "V is finite",
+  "V has at least 3 vertices",
+  "the edge {u,v} is a bridge of G"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Used by \\texttt{vertexConnectivity\\_le\\_deleteEdge\\_succ}.\n\n\\textbf{2.3.1} Let $G$ be connected with $\\nu\\ge 3$. Show that - (a) if $G$ has a cut\nedge, then $G$ has a vertex $v$ such that $\\omega(G-v)>\\omega(G)$; - (b) the converse of\n(a) is not necessarily true."
+}

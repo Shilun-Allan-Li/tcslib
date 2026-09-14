@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_sigma_at_v",
+ "key": "c7de6ef00295656f",
+ "kind": "lemma",
+ "title": "Updated restriction at a variable depends only on its starting value",
+ "statement": "Consider the routine that processes one clause's free literals — a list of literals, each tagged with its position index in the clause — against a canonical decision-tree path, starting from a restriction $\\rho_0$ and a restriction $\\sigma$, and returning (among other data) an updated restriction $\\sigma'$. Fix the list of literals, the path, the restriction $\\rho_0$, and a variable $v$. If two starting restrictions $\\sigma_1$ and $\\sigma_2$ agree at $v$, that is $\\sigma_1(v) = \\sigma_2(v)$, then the updated restrictions produced from $\\sigma_1$ and from $\\sigma_2$ also agree at $v$; equivalently, the value at $v$ of the updated $\\sigma$-restriction depends only on the starting value $\\sigma(v)$.",
+ "hypotheses_covered": [
+  "a list of literals paired with position indices",
+  "a decision-tree path",
+  "a starting restriction $\\rho_0$",
+  "two starting restrictions $\\sigma_1, \\sigma_2$",
+  "a variable $v$",
+  "$\\sigma_1$ and $\\sigma_2$ agree at $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two starting restrictions agree at $v$ ($\\sigma_1\\,v = \\sigma_2\\,v$), then the\n$\\sigma$ output of \\texttt{SwitchingLemma2.processClauseLits} at $v$ is the same for both;\nthe value at $v$ depends only on the initial $\\sigma$ at $v$."
+}

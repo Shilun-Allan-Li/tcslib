@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity",
+ "key": "55aaf520a2f88052",
+ "kind": "theorem",
+ "title": "Communication cost of the equality hashing protocol",
+ "statement": "For all natural numbers $n$ and $k$, the public-coin equality hashing protocol on $n$-bit Boolean inputs with hash range $\\mathrm{Fin}(2^k)$ — in which, given a shared random hash $h$, Alice sends the value $h(x) \\in \\mathrm{Fin}(2^k)$ and Bob replies with the truth value of whether $h(y) = h(x)$ — has worst-case communication complexity exactly $k + 1$ bits.",
+ "hypotheses_covered": [
+  "n a natural number",
+  "k a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe worst-case communication cost of $\\mathrm{equalityHashProtocol}(n, k)$ is\nexactly $k + 1$ bits."
+}

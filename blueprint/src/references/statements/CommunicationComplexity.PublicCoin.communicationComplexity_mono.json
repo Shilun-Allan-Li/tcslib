@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.communicationComplexity_mono",
+ "key": "edcef8689be9ae3f",
+ "kind": "theorem",
+ "title": "Monotonicity of public-coin complexity in the error",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function of two arguments, and let $\\varepsilon, \\varepsilon' \\in \\bbr$ be error parameters with $\\varepsilon' \\le \\varepsilon$. Then the $\\varepsilon$-error public-coin randomized communication complexity of $f$ is at most its $\\varepsilon'$-error public-coin randomized communication complexity: $\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\le \\mathrm{R}^{\\mathrm{pub}}_{\\varepsilon'}(f)$, this inequality holding in $\\bbn_\\infty$. That is, permitting a larger error tolerance can only decrease the worst-case number of bits that must be exchanged.",
+ "hypotheses_covered": [
+  "f : X → Y → α is a two-argument function",
+  "real error parameters ε and ε'",
+  "ε' ≤ ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Public-coin communication complexity is monotone in the error parameter: if\n$\\varepsilon' \\le \\varepsilon$, then\n$\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\le \\mathrm{R}^{\\mathrm{pub}}_{\\varepsilon'}(f)$.\nAllowing more error can only make computation easier."
+}

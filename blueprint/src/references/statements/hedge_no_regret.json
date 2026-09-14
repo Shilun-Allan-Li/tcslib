@@ -1,0 +1,18 @@
+{
+ "lean_name": "hedge_no_regret",
+ "key": "e422a3cf6bbd9d25",
+ "kind": "theorem",
+ "title": "Hedge achieves vanishing average regret",
+ "statement": "Fix $N > 1$ experts and $T$ rounds with $T > 0$, and suppose $2\\ln N \\le T$. Let $\\ell$ be a valid loss sequence for $N$ experts over $T$ rounds, so that every individual loss satisfies $0 \\le \\ell_t(i) \\le 1$. Running the Hedge algorithm with the optimal learning rate $\\eta^* = \\sqrt{2\\ln N / T}$, the average regret against the best expert in hindsight is bounded by\n\\[\n  \\frac{R_T(\\eta^*)}{T} \\;\\le\\; \\sqrt{\\frac{2\\ln N}{T}}.\n\\]",
+ "hypotheses_covered": [
+  "N &gt; 1 experts",
+  "T &gt; 0 rounds",
+  "2 ln N ≤ T",
+  "loss sequence ℓ is valid (each loss in [0,1])",
+  "learning rate is the optimal η* = sqrt(2 ln N / T)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $T \\ge 2\\ln N$, then for any valid loss sequence the \\emph{average regret}\nsatisfies\n\\[\n  \\frac{R_T(\\eta^*)}{T} \\;\\le\\; \\sqrt{\\frac{2\\ln N}{T}},\n\\]\nwhich tends to $0$ as $T \\to \\infty$ with $N$ fixed, confirming that Hedge is\na no-regret algorithm."
+}

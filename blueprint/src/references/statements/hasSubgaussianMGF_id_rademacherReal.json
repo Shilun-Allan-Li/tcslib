@@ -1,0 +1,16 @@
+{
+ "lean_name": "hasSubgaussianMGF_id_rademacherReal",
+ "key": "d3915b4dd88014f9",
+ "kind": "lemma",
+ "title": "Identity is sub-Gaussian with variance proxy one under Rademacher",
+ "statement": "Let $\\mathrm{Rad}$ denote the Rademacher distribution on $\\bbr$, placing mass $1/2$ at each of $-1$ and $+1$, and regard the identity map as the real random variable $X$ with law $\\mathrm{Rad}$. Then $X$ is sub-Gaussian with variance proxy $1$: its moment generating function satisfies\n\\[\n\\E\\!\\left[e^{tX}\\right] \\le e^{t^{2}/2} \\qquad \\text{for every } t \\in \\bbr.\n\\]",
+ "hypotheses_covered": [
+  "measure is the Rademacher distribution on the reals",
+  "random variable is the identity map",
+  "variance proxy (sub-Gaussian parameter) equals 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The identity function $\\mathrm{id} : \\mathbb{R} \\to \\mathbb{R}$ satisfies\n$\\mathrm{HasSubgaussianMGF}(\\mathrm{id}, 1, \\mathrm{Rad})$, i.e.\\ its MGF is\nbounded by $e^{t^2/2}$ for all $t \\in \\mathbb{R}$."
+}

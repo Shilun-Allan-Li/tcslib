@@ -1,0 +1,20 @@
+{
+ "lean_name": "empiricalJoint_isApproxCCE",
+ "key": "6d97415e64560003",
+ "kind": "theorem",
+ "title": "No-regret play yields an approximate coarse correlated equilibrium",
+ "statement": "Let $G$ be a finite two-player game with row utility $u_r$ and column utility $u_c$ over $M$ row actions and $N$ column actions, and consider $T > 0$ rounds of play in which the row player uses the mixed strategy $p_t$ and the column player uses the mixed strategy $q_t$ at round $t$. Fix $\\varepsilon \\in \\bbr$, and suppose that for every pure row deviation $i'$,\n\\[\n  \\sum_{t=1}^{T}\\sum_{j}(q_t)_j\\, u_r(i',j)\n  \\;-\\; \\sum_{t=1}^{T}\\sum_{i,j}(p_t)_i (q_t)_j\\, u_r(i,j)\n  \\;\\le\\; \\varepsilon T,\n\\]\nand for every pure column deviation $j'$,\n\\[\n  \\sum_{t=1}^{T}\\sum_{i}(p_t)_i\\, u_c(i,j')\n  \\;-\\; \\sum_{t=1}^{T}\\sum_{i,j}(p_t)_i (q_t)_j\\, u_c(i,j)\n  \\;\\le\\; \\varepsilon T.\n\\]\nThen the empirical joint distribution of the play, which assigns to each profile $(i,j)$ the probability $\\frac{1}{T}\\sum_{t=1}^{T}(p_t)_i (q_t)_j$, is an $\\varepsilon$-coarse correlated equilibrium of $G$.",
+ "hypotheses_covered": [
+  "T > 0 rounds",
+  "G a two-player game with M row and N column actions",
+  "p_t mixed strategy over row actions at each round",
+  "q_t mixed strategy over column actions at each round",
+  "epsilon a real number",
+  "row regret bound: for every pure row deviation, aggregate deviation gain at most epsilon*T",
+  "column regret bound: for every pure column deviation, aggregate deviation gain at most epsilon*T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $G$ be a two-player game, $T > 0$, and let $p_t$, $q_t$ be the mixed\nstrategies played at round $t$ by the row and column players respectively.\nSuppose that for every pure row deviation $i'$,\n\\[\n  \\sum_{t}\\sum_{j}(q_t)_j u_r(i',j)\n  - \\sum_{t}\\sum_{i,j}(p_t)_i(q_t)_j u_r(i,j) \\le \\varepsilon T,\n\\]\nand similarly for every column deviation $j'$ using $u_c$.\nThen the empirical joint distribution is an $\\varepsilon$-CCE of $G$."
+}

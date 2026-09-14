@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.clause_nodup",
+ "key": "62cd4c4c47244d96",
+ "kind": "theorem",
+ "title": "Distinct variable indices in an OR clause",
+ "statement": "Fix a natural number $n$, and let $\\ell$ be a list of literals over $n$ variables, each literal being a pair consisting of a variable index in $\\mathrm{Fin}\\,n$ and a sign in $\\mathrm{Bool}$. Suppose the variable indices occurring in $\\ell$ are pairwise distinct, and let $c$ be the OR-clause circuit built from $\\ell$ under this distinctness hypothesis. Then the list of variable indices of $\\ell$ is duplicate-free, i.e. its entries are pairwise distinct.",
+ "hypotheses_covered": [
+  "n a natural number",
+  "lits a list of literals over n variables",
+  "the variable indices of lits are pairwise distinct (duplicate-free)",
+  "c is the OR-clause circuit built from lits under that distinctness proof"
+ ],
+ "confidence": "high",
+ "caveat": "The conclusion coincides with the distinctness hypothesis already assumed of the literal list, so the statement is essentially a restatement of that hypothesis.",
+ "rubric": [],
+ "replaced": "If a normal-form OR circuit $c$ equals a clause built from literals $lits$ with a\nduplication-free proof $h$, then the variable indices $lits.\\mathrm{map}\\;\\mathrm{Lit.idx}$\nare pairwise distinct."
+}

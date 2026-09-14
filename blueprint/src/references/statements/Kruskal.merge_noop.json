@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.merge_noop",
+ "key": "a03dacef38657ff7",
+ "kind": "lemma",
+ "title": "Merging within a single component leaves the state unchanged",
+ "statement": "Let $\\mathit{uf}\\colon \\mathrm{Fin}\\,n \\to \\bbn$ be a union-find state on $n$ nodes, and let $i,j$ be two nodes whose representatives agree, $\\mathit{uf}(i) = \\mathit{uf}(j)$. Then merging the components of $i$ and $j$ has no effect: the merged state equals $\\mathit{uf}$.",
+ "hypotheses_covered": [
+  "uf is a union-find state on n nodes",
+  "i and j are nodes in Fin n",
+  "uf(i) = uf(j)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two vertices $i, j$ already carry the same representative,\n$\\mathit{uf}\\,i = \\mathit{uf}\\,j$, then merging them leaves the state unchanged:\n$\\mathit{uf}.\\mathtt{merge}\\,i\\,j = \\mathit{uf}$."
+}

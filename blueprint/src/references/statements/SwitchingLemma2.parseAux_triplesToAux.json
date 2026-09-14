@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.parseAux_triplesToAux",
+ "key": "d8b3b9e8bc1915d4",
+ "kind": "lemma",
+ "title": "Round-trip recovery of triple lists",
+ "statement": "Fix a width $w \\ge 1$, and let $ts$ be any finite list of triples $(p, d, m)$, where the position $p$ ranges over $\\{0, 1, \\dots, w-1\\}$ and $d, m$ are Boolean flags. Converting $ts$ into an aux list of index–direction entries — appending a termination marker, the pair consisting of the out-of-range index $w$ together with the flag false, after each triple whose flag $m$ is true — and then parsing that aux list back into triples recovers exactly the original list $ts$.",
+ "hypotheses_covered": [
+  "width w is positive (w ≥ 1)",
+  "ts is an arbitrary finite list of triples (position in {0,…,w-1}, direction bit, marker bit)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Round-trip identity: for every triple list $ts$, applying\n$\\mathrm{triplesToAux}$ and then $\\mathrm{parseAux}$ recovers $ts$."
+}

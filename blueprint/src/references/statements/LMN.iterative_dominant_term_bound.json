@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.iterative_dominant_term_bound",
+ "key": "533f272de16f78d5",
+ "kind": "theorem",
+ "title": "Iterative dominant-term bound (conclusion unspecified)",
+ "statement": "Fix a natural number $m$ and layer sizes $\\ell_0,\\dots,\\ell_{m-1}\\in\\bbn$, and let $s\\in\\bbn$ with $s>0$ bound their total, $\\sum_{i} \\ell_i \\le s$. Let $\\varepsilon>0$ be a real number. Under these hypotheses the intended conclusion is that, on setting $l=\\log_2(2s/\\varepsilon)$, the total weighted contribution is controlled by $\\varepsilon/2$, namely $\\sum_{i} \\ell_i\\,(1/2)^{l}\\le \\varepsilon/2$; however, the formal statement leaves both the value $l$ and the conclusion as placeholders, so it asserts no mathematical claim beyond these hypotheses.",
+ "hypotheses_covered": [
+  "m layers with natural-number sizes layer_size : Fin m → ℕ",
+  "the layer sizes sum to at most s",
+  "s is a positive natural number",
+  "ε is a positive real number"
+ ],
+ "confidence": "low",
+ "caveat": "The ground-truth formal statement has `let l := sorry` and no further conclusion — both the definition of the threshold l and the theorem's claim are placeholders. There is therefore no verifiable conclusion to informalize. The bound shown (l = log₂(2s/ε) giving ∑ ℓᵢ·(1/2)^l ≤ ε/2) is taken from the `current` hint, which is not ground truth and cannot be confirmed against the Lean; it is reported only as the apparent intent, clearly flagged as unverified.",
+ "rubric": [],
+ "replaced": "For $\\sum_i \\mathrm{layer\\_size}(i)\\le s$ with $0<s$ and $0<\\varepsilon$, setting\n$l=\\log_2(2s/\\varepsilon)$ gives\n\\[\n\\sum_i \\bigl(\\mathrm{layer\\_size}(i)\\bigr)\\cdot (1/2)^l \\le \\varepsilon/2 .\n\\]"
+}

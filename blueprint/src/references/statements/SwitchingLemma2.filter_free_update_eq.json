@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.filter_free_update_eq",
+ "key": "b19a670246f8fd86",
+ "kind": "lemma",
+ "title": "Filtering literals by freeness is invariant under an unrelated update",
+ "statement": "Let $\\rho : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ be a restriction, let $R$ be a list of literals on the variables $\\mathrm{Fin}\\,n$, and let $v \\in \\mathrm{Fin}\\,n$ and $b \\in \\mathrm{Bool}$. Write $\\rho[v \\mapsto b]$ for the restriction that agrees with $\\rho$ everywhere except at $v$, where it takes the fixed value $b$. If the variable of every literal in $R$ is distinct from $v$, then selecting from $R$ those literals whose variable is free under $\\rho[v \\mapsto b]$ yields the same list as selecting those whose variable is free under $\\rho$.",
+ "hypotheses_covered": [
+  "every literal in the list R has variable distinct from v",
+  "R is a list of literals on Fin n",
+  "rho is a restriction on n variables",
+  "v is a variable index",
+  "b is a Boolean value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every literal of $\\mathit{rest}$ has variable distinct from $v$, then filtering $\\mathit{rest}$ by\nfreeness under $\\rho[v \\mapsto b]$ gives the same list as filtering by freeness under $\\rho$."
+}

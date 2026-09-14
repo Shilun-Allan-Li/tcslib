@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.mergeAll_preserves",
+ "key": "092bb781610ed92d",
+ "kind": "lemma",
+ "title": "Merging edges preserves shared components",
+ "statement": "Let $\\mathit{uf} \\colon \\mathrm{Fin}\\,n \\to \\bbn$ be a union-find state assigning each of $n$ nodes a representative, and let $\\mathit{es}$ be a list of weighted edges over these $n$ nodes. Suppose two nodes $a, b \\in \\mathrm{Fin}\\,n$ satisfy $\\mathit{uf}(a) = \\mathit{uf}(b)$. Folding every edge of $\\mathit{es}$ into $\\mathit{uf}$ in sequence yields a union-find state $\\mathit{uf}'$ for which $\\mathit{uf}'(a) = \\mathit{uf}'(b)$; that is, sequential merging never separates two nodes that already carry a common representative.",
+ "hypotheses_covered": [
+  "nodes a and b start with equal representative: uf(a) = uf(b)",
+  "arbitrary list of weighted edges es folded via mergeAll"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathit{uf}\\,a = \\mathit{uf}\\,b$, then for any list of weighted edges\n$\\mathit{edges}$ we still have\n$(\\mathit{uf}.\\mathtt{mergeAll}\\,\\mathit{edges})\\,a = (\\mathit{uf}.\\mathtt{mergeAll}\\,\\mathit{edges})\\,b$;\nthat is, merging never splits vertices that are already in the same component."
+}

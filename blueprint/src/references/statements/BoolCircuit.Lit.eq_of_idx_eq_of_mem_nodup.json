@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.Lit.eq_of_idx_eq_of_mem_nodup",
+ "key": "6c4a566a4b0a72fe",
+ "kind": "theorem",
+ "title": "Distinct indices determine literals in a list",
+ "statement": "Let $\\ell_1,\\dots,\\ell_m$ be a list of circuit literals over $n$ variables whose variable indices are pairwise distinct. Then any two literals $l_1$ and $l_2$ in this list that have the same variable index are equal; that is, if $l_1$ and $l_2$ both occur in the list and $l_1.\\mathrm{idx} = l_2.\\mathrm{idx}$, then $l_1 = l_2$.",
+ "hypotheses_covered": [
+  "The list's variable indices are pairwise distinct (nodup)",
+  "l₁ occurs in the list",
+  "l₂ occurs in the list",
+  "l₁ and l₂ share the same variable index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In a clause whose variable indices are pairwise distinct, any two literals\n$l_1, l_2 \\in lits$ that share the same index ($l_1.\\mathrm{idx} = l_2.\\mathrm{idx}$) are\nin fact equal, $l_1 = l_2$."
+}

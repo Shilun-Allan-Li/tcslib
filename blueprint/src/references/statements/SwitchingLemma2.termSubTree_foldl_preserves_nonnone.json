@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_foldl_preserves_nonnone",
+ "key": "8039851732e6eaba",
+ "kind": "lemma",
+ "title": "Fixed variables survive the literal fold",
+ "statement": "Let $\\rho : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ be a restriction on $n$ variables, let $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be a Boolean assignment, and let $\\ell_1, \\dots, \\ell_m$ be literals on these variables. Process the literals from left to right, starting from $\\rho$: at each literal, if its variable is still free in the restriction accumulated so far, fix that variable to the value $x$ assigns it, and otherwise change nothing. Then any variable $v$ that already carries a fixed value under $\\rho$ (that is, $\\rho(v)$ leaves $v$ set rather than free) still carries a fixed value in the final restriction; the fold never frees an already-fixed variable.",
+ "hypotheses_covered": [
+  "a list of literals on n variables",
+  "a restriction ρ on n variables",
+  "a Boolean assignment x : Fin n → Bool",
+  "a variable v that is fixed in ρ (ρ(v) ≠ none)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\rho(v) \\neq \\mathrm{none}$, then after the $\\mathrm{termSubTree}$ fold over $\\mathit{lits}$ the\nentry at $v$ remains non-\\texttt{none}; that is, the fold never unsets an already-fixed variable."
+}

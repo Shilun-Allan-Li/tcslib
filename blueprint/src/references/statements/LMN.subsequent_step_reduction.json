@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.subsequent_step_reduction",
+ "key": "1178c9c1abb30de7",
+ "kind": "theorem",
+ "title": "Bernoulli restriction collapses DNF gates to narrow CNFs",
+ "statement": "Fix positive integers $n$ and $l$, and let $g_1,\\dots,g_{s_i}$ be DNF formulas on $n$ variables, each of width at most $l$, and each in reduced form: no term repeats a literal, and within a term any two literals on the same variable coincide, so every variable occurs at most once in each term. Let $p$ be a real parameter with $0 < p \\le 1$ and $p \\le \\tfrac{1}{40\\,l}$. Draw a Bernoulli($p$) random restriction $\\rho$ of the $n$ variables, which independently leaves each variable free with probability $p$ and otherwise fixes it to $0$ or $1$ each with probability $(1-p)/2$. Then the probability that some restricted gate fails to be computed by a narrow CNF — that is, for some $i$ there is no CNF formula $\\psi$ of width at most $l$ satisfying $\\psi(x) = g_i(\\rho.\\mathrm{extend}\\,x)$ for every assignment $x$ — is at most\n\\[\n  s_i\\left(\\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\left(-\\tfrac{n p}{3}\\right)\\right).\n\\]",
+ "hypotheses_covered": [
+  "family of $s_i$ DNF formulas on $n$ variables",
+  "each DNF has width at most $l$",
+  "$l > 0$",
+  "$n > 0$",
+  "no term repeats a literal (Nodup)",
+  "within a term, same-variable literals are identical",
+  "$p > 0$",
+  "$p \\le 1/(40 l)$",
+  "$p \\le 1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $g_1,\\dots,g_{s_i}$ be width-$\\le l$ DNFs on $n$ variables (with $0<l$,\n$0<n$), and let $0<p\\le 1/(40l)$ with $p\\le 1$. Under a Bernoulli$(p)$ random\nrestriction $\\rho$, the probability that some restricted gate fails to be\nrepresentable by a width-$\\le l$ CNF agreeing with it pointwise is at most\n$s_i\\cdot\\bigl((1/2)^l+\\exp(-np/3)\\bigr)$. This is the one-step reduction bound\napplied with width parameter $l$."
+}

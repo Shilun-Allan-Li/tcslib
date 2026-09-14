@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.NAndCircuit.clauseToTerm_nodup",
+ "key": "d2eea3ecb446cf72",
+ "kind": "theorem",
+ "title": "AND-clause conversion preserves distinctness",
+ "statement": "Let $lits$ be a list of Boolean-circuit literals over $n$ variables, and suppose the list of variable indices $\\mathrm{idx}(l)$ taken over the literals $l$ in $lits$ has no repeated entry. Then the term obtained from the normal-form AND-clause on $lits$ by mapping each circuit literal to its switching-lemma literal, viewed as a list of literals, has no repeated entry.",
+ "hypotheses_covered": [
+  "lits is a list of circuit literals over n variables",
+  "the list of variable indices of the literals in lits has no repeated entry (Nodup on the mapped indices)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the variable indices of an AND-clause's literals are pairwise distinct, then the\nconverted term $(\\texttt{NAndCircuit}.\\mathrm{clause}\\,lits\\,h).\\mathrm{clauseToTerm}$ has the\n\\texttt{Nodup} property."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_card",
+ "key": "adec1dba99e1f0a5",
+ "kind": "lemma",
+ "title": "Leaf rectangle count bounded by two to the complexity",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with input types $X$ (Alice) and $Y$ (Bob), and let $A \\subseteq X$ and $B \\subseteq Y$. Then the number of distinct rectangles among the auxiliary leaf rectangles of $p$ relative to the constraint $A \\times B$ is at most $2^{c}$, where $c$ is the communication complexity of $p$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over X (Alice), Y (Bob), producing values in α",
+  "A is a subset of X",
+  "B is a subset of Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any protocol $p$ and constraint sets $A, B$, the number of elements in\n$\\texttt{leafRectanglesAux}(p, A, B)$ is at most $2^{p.\\texttt{complexity}}$."
+}

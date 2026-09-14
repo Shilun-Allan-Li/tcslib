@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt",
+ "key": "c61bc2bf06bba9e9",
+ "kind": "lemma",
+ "title": "Leaf count after pruning a subprotocol path",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols, and let $s$ lie along a subprotocol path inside $p$, so that $s$ occurs as a rooted subtree of $p$. If $s$ has strictly fewer leaves than $p$, that is, if the number of leaves of $s$ is less than the number of leaves of $p$, then the protocol obtained by pruning this path from $p$ has exactly $\\text{numLeaves}(p) - \\text{numLeaves}(s)$ leaves.",
+ "hypotheses_covered": [
+  "s and p are deterministic communication protocols",
+  "a subprotocol path witnessing s as a rooted subtree of p",
+  "the number of leaves of s is strictly less than the number of leaves of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$, then\n$(\\texttt{prunePath}\\;\\texttt{hsp}\\;\\texttt{hlt}).\\mathrm{numLeaves} = p.\\mathrm{numLeaves} - s.\\mathrm{numLeaves}$."
+}

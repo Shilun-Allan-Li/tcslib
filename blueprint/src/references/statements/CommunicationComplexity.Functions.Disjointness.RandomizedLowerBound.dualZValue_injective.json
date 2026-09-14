@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualZValue_injective",
+ "key": "740df50075a2d112",
+ "kind": "theorem",
+ "title": "Injectivity of the dual Z-value map",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ over disjointness inputs of length $n$. An (achievable) $Z$-value of $p$ is a tuple recording a transcript of $p$, a special coordinate $t \\in \\{0,\\dots,n-1\\}$, and two Boolean vectors capturing Alice's bits before $t$ and Bob's bits after $t$, subject to the constraint that the tuple arises from some hard-distribution sample. Consider the dualization map that sends each such $Z$-value of $p$ to the corresponding $Z$-value of the dual protocol, by dualizing the transcript (swapping the roles of Alice and Bob and reversing both coordinate sets), replacing the special coordinate $t$ by its reverse $n-1-t$, and interchanging the two Boolean vectors while reversing the coordinate order of each. This map is injective.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol over disjointness inputs of length $n$",
+  "domain is the type of achievable $Z$-values of $p$",
+  "codomain is the type of $Z$-values of the dual protocol"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The $Z$-value recoding induced by protocol and hard-sample duality is injective."
+}

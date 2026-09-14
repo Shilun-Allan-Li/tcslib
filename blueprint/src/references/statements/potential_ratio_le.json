@@ -1,0 +1,17 @@
+{
+ "lean_name": "potential_ratio_le",
+ "key": "d41e74ee14790aad",
+ "kind": "lemma",
+ "title": "Potential ratio bound for Hedge",
+ "statement": "Fix $N \\ge 1$ experts, a horizon of $T$ rounds, a learning rate $\\eta > 0$, and a valid loss sequence $\\ell$. Then for every round $t$ with $t < T$, the consecutive potentials satisfy\n\\[\n  \\frac{W_{t+1}}{W_t} \\;\\le\\; 1 - \\bigl(1 - e^{-\\eta}\\bigr)\\,\\widehat{\\ell}_t,\n\\]\nwhere $\\widehat{\\ell}_t = \\sum_{i=1}^{N} p_t(i)\\,\\ell_t(i)$ is the expected loss of the learner under the Hedge distribution at round $t$.",
+ "hypotheses_covered": [
+  "at least one expert ($N \\ge 1$)",
+  "positive learning rate $\\eta > 0$",
+  "$\\ell$ is a valid loss sequence (all losses in $[0,1]$)",
+  "round $t$ with $t + 1 \\le T$ (i.e. $t < T$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a valid loss sequence and $\\eta > 0$, the ratio of consecutive potentials\nsatisfies\n\\[\n  \\frac{W_{t+1}}{W_t} \\;\\le\\; 1 - (1 - e^{-\\eta})\\,\\widehat{\\ell}_t,\n\\]\nwhere $\\widehat{\\ell}_t = \\sum_i p_t(i)\\,\\ell_t(i)$ is the expected loss at\nround $t$.  This is the key potential-ratio lemma of Cesa-Bianchi and Lugosi."
+}

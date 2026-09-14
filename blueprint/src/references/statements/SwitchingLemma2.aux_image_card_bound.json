@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.aux_image_card_bound",
+ "key": "77e67755cc3af5f7",
+ "kind": "lemma",
+ "title": "Cardinality bound on the encoding-image over bad restrictions",
+ "statement": "Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, let $d$ be a natural number, and let $\\gamma$ be a fixed restriction. Write the Razborov encoding of $f$ with parameters $w, d$ on a restriction $\\rho$ as a pair $(\\gamma_\\rho, \\mathrm{aux}_\\rho)$, where $\\gamma_\\rho$ is the extended restriction and $\\mathrm{aux}_\\rho$ is the auxiliary list. Consider those restrictions $\\rho$ that are bad for the Boolean function computed by $f$ at depth $d$ — that is, the restriction of that function by $\\rho$ has decision-tree depth strictly greater than $d$ — and that satisfy $\\gamma_\\rho = \\gamma$. Then the number of distinct auxiliary lists $\\mathrm{aux}_\\rho$ arising from such $\\rho$ is at most $(4w)^d$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "the width of f is at most w",
+  "d is a natural number and γ a fixed restriction",
+  "ρ ranges over restrictions bad for f's Boolean function at depth d",
+  "ρ's Razborov encoding has first component equal to γ",
+  "the image is taken under ρ ↦ second component (auxiliary list) of the Razborov encoding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe number of distinct aux lists produced by the Razborov encoder on bad\nrestrictions with a fixed first component $\\gamma$ is at most $(4w)^d$."
+}

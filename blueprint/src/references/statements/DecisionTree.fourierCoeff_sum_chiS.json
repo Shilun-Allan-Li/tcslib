@@ -1,0 +1,17 @@
+{
+ "lean_name": "DecisionTree.fourierCoeff_sum_chiS",
+ "key": "5dffef943fad779e",
+ "kind": "lemma",
+ "title": "Recovery of coefficients from a character expansion",
+ "statement": "Fix $n$, let $c$ assign a real number $c(S)$ to each subset $S \\subseteq [n]$, and consider the Boolean function $f(x) = \\sum_{S \\subseteq [n]} c(S)\\,\\chi_S(x)$, where $\\chi_S$ is the Walsh--Fourier character of $S$. Then for every $T \\subseteq [n]$ the Fourier--Walsh coefficient of $f$ at frequency $T$ recovers the corresponding coefficient, namely $\\hat f(T) = c(T)$.",
+ "hypotheses_covered": [
+  "arity n fixed",
+  "coefficient family c on subsets of [n]",
+  "f defined as the sum of c(S) times chi_S over all subsets S",
+  "frequency T a subset of [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any coefficient family $c$ and any frequency $T$, the Fourier coefficient of the\nexplicit combination $x \\mapsto \\sum_{S} c(S)\\,\\chi_S(x)$ at $T$ equals $c(T)$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.survivingStep_mincut",
+ "key": "a74d6eba8372e626",
+ "kind": "lemma",
+ "title": "A surviving contraction preserves minimum-cut status",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $C$ of $G$, and let $t$ be a state obtained from $s$ by a surviving step: that is, $t$ arises by contracting some edge $e$ of $G$ that does not cross $C$, so that $t$ has graph $G/e$ and its distinguished cut is the cut induced by $C$ on $G/e$. If $C$ is a minimum cut of $G$, then the distinguished cut of $t$ is a minimum cut of $G/e$.",
+ "hypotheses_covered": [
+  "t arises from s by a surviving step (contract a non-crossing edge e of s.G)",
+  "s.C is a minimum cut of s.G"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $t$ is obtained from $s$ by a surviving step and $s.C$ is a min-cut of $s.G$, then\n$t.C$ is a min-cut of $t.G$."
+}

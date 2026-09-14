@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none",
+ "key": "329b948ccdfedbc8",
+ "kind": "lemma",
+ "title": "Trivial path is reached by every input",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice inputs in $X$ and Bob inputs in $Y$, and let $\\pi$ be a subprotocol path witnessing that a subprotocol $s$ is a rooted subtree of $p$. If deleting the path $\\pi$ from $p$ returns no protocol — which occurs precisely when the path is trivial, so that $s = p$ — then every input pair $(x, y) \\in X \\times Y$ reaches $s$ along $\\pi$, meaning $x$ is consistent with all of Alice's choices along $\\pi$ and $y$ is consistent with all of Bob's choices along $\\pi$.",
+ "hypotheses_covered": [
+  "a subprotocol path from s to p",
+  "deleting the path yields none"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\texttt{deletePath}\\;\\texttt{hsp} = \\texttt{none}$ (meaning $s = p$), then every input pair\n$(x, y)$ satisfies $\\texttt{reachesPath}\\;\\texttt{hsp}\\;x\\;y$."
+}

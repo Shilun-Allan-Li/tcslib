@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Equality.communicationComplexity_zero",
+ "key": "9deccbc398d52ec3",
+ "kind": "theorem",
+ "title": "Deterministic complexity of equality at $n = 0$",
+ "statement": "Let $\\mathrm{equality}_0 \\colon \\mathrm{BoolInput}\\,0 \\times \\mathrm{BoolInput}\\,0 \\to \\mathrm{Bool}$ be the equality function on $0$-bit Boolean inputs, and let $D(\\mathrm{equality}_0)$ denote its deterministic communication complexity, that is, the infimum over all deterministic two-party protocols computing it of the worst-case number of bits exchanged, taken in $\\bbn_\\infty$. Then\n\\[\n  D(\\mathrm{equality}_0) = 0.\n\\]",
+ "hypotheses_covered": [
+  "input length is n = 0",
+  "complexity measured as the deterministic communication complexity D (infimum over computing protocols, valued in ENat)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When $n = 0$ both inputs are the unique empty string, so the equality function\nis constantly \\texttt{true} and requires zero communication:\n\\[\n  D(\\mathrm{equality}_0) = 0.\n\\]"
+}

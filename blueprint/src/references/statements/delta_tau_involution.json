@@ -1,0 +1,16 @@
+{
+ "lean_name": "delta_tau_involution",
+ "key": "f46cdad1b2f536f4",
+ "kind": "theorem",
+ "title": "An involution of the interval $[0,\\tfrac12]$",
+ "statement": "Let $\\delta$ be a real number with $0 \\le \\delta \\le \\tfrac12$, and define $\\tau = \\tfrac12 - \\sqrt{\\delta(1-\\delta)}$. Then $\\tau$ again lies in $[0,\\tfrac12]$ and applying the same rule to it recovers $\\delta$, that is, $\\tfrac12 - \\sqrt{\\tau(1-\\tau)} = \\delta$. Hence the map $x \\mapsto \\tfrac12 - \\sqrt{x(1-x)}$ is an involution of the interval $[0,\\tfrac12]$.",
+ "hypotheses_covered": [
+  "δ is a real number",
+  "0 ≤ δ",
+  "δ ≤ 1/2"
+ ],
+ "confidence": "low",
+ "caveat": "The provided Lean snippet is truncated: the definition of τ and the entire conclusion are elided as `sorry` (`let τ := sorry`), so only the hypotheses (δ : ℝ, 0 ≤ δ, δ ≤ 1/2) can be read directly from the formal statement. The rendered claim reconstructs the intended content from the `current` statement, which is mathematically self-consistent and exactly requires δ ≤ 1/2 (so that √(τ(1−τ)) = |½−δ| = ½−δ). If the actual formal conclusion differs from this reconstruction, the prose should be corrected to match it.",
+ "rubric": [],
+ "replaced": "For $0 \\le \\delta \\le 1/2$, setting $\\tau = \\tfrac12 - \\sqrt{\\delta(1-\\delta)}$ gives\nback $\\delta = \\tfrac12 - \\sqrt{\\tau(1-\\tau)}$; that is, the map is an involution on\n$[0,1/2]$."
+}

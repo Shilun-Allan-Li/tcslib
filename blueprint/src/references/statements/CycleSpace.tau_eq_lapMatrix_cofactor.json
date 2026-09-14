@@ -1,0 +1,20 @@
+{
+ "lean_name": "CycleSpace.tau_eq_lapMatrix_cofactor",
+ "key": "7f5bec0c5b09de7d",
+ "kind": "theorem",
+ "title": "Matrix–Tree theorem via a Laplacian cofactor",
+ "statement": "Let $G$ be a finite simple graph on a vertex set $V$, and let $(\\mathrm{tail}, \\mathrm{head})$ be an orientation of $G$ with arc set $A$, so that $G$ is the underlying graph of the digraph $(\\mathrm{tail}, \\mathrm{head})$. Write $L$ for the graph Laplacian of $G$ over $\\bbz$, the $V \\times V$ matrix whose diagonal entry at $v$ is the degree of $v$ and whose off-diagonal entry at $(u,v)$ is $-1$ when $u$ and $v$ are adjacent and $0$ otherwise. Fix vertices $i, j \\in V$ and a bijection $e$ between the set of vertices other than $i$ and the set of vertices other than $j$, and let $M$ be the submatrix of $L$ whose rows are indexed by the vertices $u \\neq i$, whose columns are indexed by the vertices $u \\neq i$ as well, and whose $(u, u')$ entry is $L_{u,\\, e(u')}$. Then the number $\\tau$ of spanning trees of the digraph $(\\mathrm{tail}, \\mathrm{head})$ satisfies either $\\tau = \\det M$ or $\\tau = -\\det M$.",
+ "hypotheses_covered": [
+  "G is a finite simple graph on vertex set V",
+  "(tail, head) is an orientation of G, i.e. G is its underlying graph, with arc set A",
+  "the Laplacian is taken with integer entries",
+  "vertices i and j are fixed",
+  "e is a bijection between the vertices other than i and the vertices other than j",
+  "the reduced matrix deletes row i, uses columns other than j reindexed through e",
+  "conclusion holds up to sign (det or its negation)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Full form. \\emph{All cofactors of the conductance matrix \\texttt{C} are equal to\n\\texttt{$\\tau$(G)}.}\n\nShow that all cofactors of the conductance matrix \\texttt{C} are equal to\n\\texttt{$\\tau$(G)}."
+}

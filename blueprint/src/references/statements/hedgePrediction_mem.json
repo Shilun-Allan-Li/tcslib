@@ -1,0 +1,17 @@
+{
+ "lean_name": "hedgePrediction_mem",
+ "key": "292be654cc752891",
+ "kind": "lemma",
+ "title": "Hedge prediction stays in the convex prediction set",
+ "statement": "Let $S \\subseteq \\bbr$ be a convex set, fix any learning rate $\\eta \\in \\bbr$, a loss function $\\ell : \\bbr \\to \\Omega \\to \\bbr$, expert predictions $p_t(i)$, and a sequence of outcomes, and suppose that every expert prediction lies in $S$, that is $p_t(i) \\in S$ for all rounds $t$ and all experts $i$. Then for every round $t$, Hedge's weighted-average prediction $\\widehat{x}_t = \\sum_{i} w^{(\\eta)}_{t,i}\\, p_t(i)$ — formed from the Hedge distribution of the loss table induced by $\\ell$, the predictions, and the outcomes up to round $t$ — again lies in $S$.",
+ "hypotheses_covered": [
+  "$S$ is a convex subset of $\\bbr$",
+  "learning rate $\\eta \\in \\bbr$ arbitrary",
+  "every expert prediction $p_t(i)$ lies in $S$",
+  "$\\widehat{x}_t$ is the Hedge weighted-average prediction at round $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S \\subseteq \\mathbb{R}$ be a convex set and suppose every expert prediction\nsatisfies $p_t(i) \\in S$ for all $t$ and $i$.  Then Hedge's weighted-average\nprediction $\\widehat{x}_t \\in S$ for every round $t$.  The result follows because\nthe Hedge weights are nonneg\\-ative and sum to one, so the weighted average is a\nconvex combination of points in $S$."
+}

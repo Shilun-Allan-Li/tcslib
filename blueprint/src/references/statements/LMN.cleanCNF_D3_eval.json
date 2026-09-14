@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.cleanCNF_D3_eval",
+ "key": "9dbfe5f34920ae41",
+ "kind": "lemma",
+ "title": "Cleaning preserves CNF evaluation",
+ "statement": "Let $\\psi$ be a CNF formula over $n$ Boolean variables — a conjunction of clauses, each clause a disjunction of literals — and let $x \\in \\{0,1\\}^n$ be an assignment. Form the cleaned formula from $\\psi$ by first deleting every tautological clause (a clause containing two literals on the same variable with opposite signs) and then, within each surviving clause, keeping only the first literal on each variable and discarding later literals on variables already seen. Then the cleaned formula and $\\psi$ evaluate to the same Boolean value on $x$.",
+ "hypotheses_covered": [
+  "ψ is a CNF formula over n variables",
+  "x is a Boolean assignment on the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every assignment $x$, the cleaned CNF $\\mathrm{cleanCNF\\_D3}\\,\\psi$ evaluates to the\nsame value as $\\psi$."
+}

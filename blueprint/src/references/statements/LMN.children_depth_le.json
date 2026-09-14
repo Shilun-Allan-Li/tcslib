@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.children_depth_le",
+ "key": "f7e9454e9975b790",
+ "kind": "lemma",
+ "title": "Depth of a child of a Boolean-circuit gate",
+ "statement": "Let $C$ be a Boolean circuit on $n$ variables of the form of a single gate — an AND gate or an OR gate — applied to a list of child circuits, and let $c$ be one of those children. If the depth of $C$ is at most $d$, then the depth of $c$ is at most $d - 1$.",
+ "hypotheses_covered": [
+  "C is a gate node (AND or OR) with children list cs",
+  "c is a member of the children list cs",
+  "the depth of the node C is at most d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a node circuit $\\mathrm{node}\\,\\mathit{isAnd}\\,cs$ has depth at most $d$, then every child\n$c \\in cs$ has depth at most $d - 1$."
+}

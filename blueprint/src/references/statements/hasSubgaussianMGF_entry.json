@@ -1,0 +1,16 @@
+{
+ "lean_name": "hasSubgaussianMGF_entry",
+ "key": "7ebb278b9bee98bf",
+ "kind": "lemma",
+ "title": "Rademacher entries are sub-Gaussian with variance proxy one",
+ "statement": "Let $\\omega = (\\omega_{ij})$ be a random $k \\times d$ real array whose entries are independent and identically distributed, each taking the values $-1$ and $+1$ with probability $\\tfrac{1}{2}$ apiece. Then for every index $i \\in \\{1,\\dots,k\\}$ and $j \\in \\{1,\\dots,d\\}$, the single entry $\\omega_{ij}$ is sub-Gaussian with variance proxy $1$; that is, its moment generating function satisfies $\\E\\!\\left[e^{t\\,\\omega_{ij}}\\right] \\le e^{t^2/2}$ for every $t \\in \\bbr$.",
+ "hypotheses_covered": [
+  "joint Rademacher product measure making all k·d entries i.i.d. Rademacher",
+  "fixed index (i,j) with i in the k rows and j in the d columns",
+  "variance proxy equals 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For each $(i,j) \\in \\mathrm{Fin}\\,k \\times \\mathrm{Fin}\\,d$, the function\n$\\omega \\mapsto \\omega_{ij}$ satisfies\n$\\mathrm{HasSubgaussianMGF}(\\cdot, 1, \\mathrm{radJointMeasure})$ under the\njoint product measure."
+}

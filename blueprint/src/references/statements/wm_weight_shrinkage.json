@@ -1,0 +1,17 @@
+{
+ "lean_name": "wm_weight_shrinkage",
+ "key": "f57424a5ae1515e8",
+ "kind": "theorem",
+ "title": "Weight shrinkage after $M$ mistakes",
+ "statement": "Let $\\beta \\in (0,1)$, let $W : \\bbn \\to \\bbr$ be a sequence of positive reals, and let $M$ be a natural number such that $W(k+1) \\le W(k) \\cdot \\tfrac{1+\\beta}{2}$ for every $k < M$. Then\n\\[\n  W(M) \\;\\le\\; W(0) \\cdot \\left(\\frac{1+\\beta}{2}\\right)^{\\!M}.\n\\]",
+ "hypotheses_covered": [
+  "β > 0",
+  "β < 1",
+  "W k > 0 for all k",
+  "one-step contraction W(k+1) ≤ W(k)·(1+β)/2 for k < M"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\beta \\in (0,1)$, let $W : \\mathbb{N} \\to \\mathbb{R}$ be a sequence of positive\nreals, and suppose $W(k+1) \\le W(k) \\cdot \\tfrac{1+\\beta}{2}$ for every $k < M$.\nThen\n\\[\n  W(M) \\;\\le\\; W(0) \\cdot \\left(\\frac{1+\\beta}{2}\\right)^{\\!M}.\n\\]"
+}

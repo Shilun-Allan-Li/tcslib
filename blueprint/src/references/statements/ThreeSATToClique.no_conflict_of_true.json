@@ -1,0 +1,16 @@
+{
+ "lean_name": "ThreeSATToClique.no_conflict_of_true",
+ "key": "98f33c3891566d87",
+ "kind": "lemma",
+ "title": "True literals never conflict",
+ "statement": "Let $\\alpha$ be a truth assignment on a set $V$ of variables, and let $\\ell_1,\\ell_2$ be literals over $V$, each of the form $\\mathrm{pos}\\,v$ (the variable $v$) or $\\mathrm{neg}\\,v$ (its negation). If both $\\ell_1$ and $\\ell_2$ evaluate to true under $\\alpha$, then they do not conflict; that is, they are not the positive and negative occurrences of one and the same variable.",
+ "hypotheses_covered": [
+  "α is a truth assignment on V",
+  "ℓ₁ evaluates to true under α",
+  "ℓ₂ evaluates to true under α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If an assignment $\\alpha$ makes both $l_1$ and $l_2$ true, then $l_1$ and $l_2$\ndo not conflict: $\\mathtt{evalLiteral}\\,\\alpha\\,l_1 \\to \\mathtt{evalLiteral}\\,\\alpha\\,l_2\n\\to \\neg\\,\\mathtt{literalsConflict}\\,l_1\\,l_2$."
+}

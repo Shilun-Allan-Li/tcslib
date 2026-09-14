@@ -1,0 +1,14 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_rho_stable",
+ "key": "b5cdf9fa4bb2d864",
+ "kind": "lemma",
+ "title": "Untouched variables of a processed clause remain fixed in $\\rho_0$",
+ "statement": "Fix $n$ and let $\\mathrm{lits}$ be a list of literals on $n$ variables, each paired with a position index, and let $\\mathrm{path}$ be a list of variable–direction pairs. Given restrictions $\\rho_0,\\sigma$ on $n$ variables and a variable $v$ such that $v$ is not the variable of any literal occurring in $\\mathrm{lits}$, the updated restriction $\\rho_0'$ produced by processing the clause's free literals of $\\mathrm{lits}$ against $\\mathrm{path}$ starting from $\\rho_0$ and $\\sigma$ agrees with $\\rho_0$ at $v$; that is, $\\rho_0'(v) = \\rho_0(v)$.",
+ "hypotheses_covered": [
+  "v is not the variable of any literal in the list lits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a variable $v$ is the variable of no literal in the input list, then\n\\texttt{SwitchingLemma2.processClauseLits} leaves the $\\rho_0$ restriction unchanged at\n$v$; the resulting $\\rho_0$ agrees with the input $\\rho_0$ on $v$."
+}

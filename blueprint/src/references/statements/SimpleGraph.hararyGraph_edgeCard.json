@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleGraph.hararyGraph_edgeCard",
+ "key": "2d366f9d066af0b0",
+ "kind": "theorem",
+ "title": "Edge count of the Harary graph",
+ "statement": "Let $m$ and $n$ be natural numbers with $n \\ge 1$ and $m < n$, and let $H_{m,n}$ be the Harary graph on the $n$ vertices $\\bbz/n\\bbz$. Then $H_{m,n}$ has exactly $\\lceil mn/2 \\rceil$ edges (equivalently, $\\lfloor (mn+1)/2 \\rfloor$).",
+ "hypotheses_covered": [
+  "n ≥ 1 (NeZero n)",
+  "m < n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Edge count / optimality: \\texttt{H\\_\\{m,n\\}} has \\texttt{$\\lceil$mn/2$\\rceil$} edges.\n\nIt is easy to see that $\\varepsilon(H_{m,n}) = \\{mn/2\\}$. Thus, by theorem 3.3, \\[f(m,\nn) \\le \\{mn/2\\} \\qquad (3.2)\\] It now follows from (3.1) and (3.2) that \\[f(m, n) =\n\\{mn/2\\}\\] and that $H_{m,n}$ is an $m$-connected graph on $n$ vertices with as few\nedges as possible. We note that since, for any graph $G$, $\\kappa \\le \\kappa'$ (theorem\n3.1), $H_{m,n}$ is also $m$-edge-connected. Thus, denoting by $g(m, n)$ the least\npossible number of edges in an $m$-edge-connected graph on $n$ vertices, we have, for $1\n< m < n$ \\[g(m, n) = \\{mn/2\\} \\qquad (3.3)\\]"
+}

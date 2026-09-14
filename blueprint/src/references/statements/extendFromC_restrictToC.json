@@ -1,0 +1,16 @@
+{
+ "lean_name": "extendFromC_restrictToC",
+ "key": "44a9aa5649a9b173",
+ "kind": "lemma",
+ "title": "Extension recovers a vector supported on $C$",
+ "statement": "Fix a prime $p$ and a subset $C \\subseteq \\{1,\\dots,n\\}$ of coordinates, and let $V_C \\subseteq \\mathbb{F}_p^n \\times \\mathbb{F}_p^n$ be the submodule of pairs of vectors whose support is contained in $C$. Then extending back the coordinate functions of a supported vector recovers that vector exactly: for every $x \\in V_C$, applying the restriction map $V_C \\to (C \\to \\mathbb{F}_p) \\times (C \\to \\mathbb{F}_p)$ and then the extension-by-zero map back into $V_C$ returns $x$. Equivalently, the extension map is a left inverse of the restriction map.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$C$ is a subset of the $n$ coordinates",
+  "$x$ ranges over the support submodule $V_C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $x \\in V_C$, $\\mathrm{extendFromC}_C(\\mathrm{restrictToC}_C(x)) = x$."
+}

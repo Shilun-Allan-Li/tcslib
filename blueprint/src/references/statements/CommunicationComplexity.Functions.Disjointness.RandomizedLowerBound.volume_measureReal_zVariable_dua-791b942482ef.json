@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measureReal_zVariable_dualProtocol_dualZValue_inter_specialX",
+ "key": "712ddab63c97e16f",
+ "kind": "theorem",
+ "title": "Duality exchanges the special bits on $Z$-fibers",
+ "statement": "Fix a positive integer $n$ and let $p$ be a deterministic two-party protocol for the length-$n$ disjointness problem, run on the input pair produced by a sample $\\omega$ drawn from the hard sample space $\\Omega$ (a finite type carrying the volume measure). To each sample associate its $Z$-value $Z_p(\\omega)$, which records the transcript of $p$ on the input of $\\omega$, the special coordinate $T = T(\\omega)$, Alice's input bits strictly before $T$, and Bob's input bits strictly after $T$; for an achievable value $z$ write $Z_p^{-1}(z) \\subseteq \\Omega$ for the fiber of samples with $Z_p(\\omega) = z$. Let $p^{\\dagger}$ be the dual protocol, obtained by exchanging the roles of Alice and Bob and reversing the coordinate order, and let $z^{\\dagger}$ be the dual $Z$-value of $z$. Writing $x_T(\\omega)$ and $y_T(\\omega)$ for Alice's and Bob's bits at the special coordinate, for every achievable $Z$-value $z$ of $p$ and every $b \\in \\{0,1\\}$ the real-valued volume measure satisfies\n\\[\n\\operatorname{vol}\\!\\big(Z_{p^{\\dagger}}^{-1}(z^{\\dagger}) \\cap \\{\\omega : x_T(\\omega) = b\\}\\big)\n= \\operatorname{vol}\\!\\big(Z_p^{-1}(z) \\cap \\{\\omega : y_T(\\omega) = b\\}\\big).\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a protocol for length-n disjointness",
+  "z an achievable Z-value of p",
+  "b a Boolean value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Real-valued version of \\texttt{volume\\_zVariable\\_dualProtocol\\_dualZValue\\_inter\\_specialX}."
+}

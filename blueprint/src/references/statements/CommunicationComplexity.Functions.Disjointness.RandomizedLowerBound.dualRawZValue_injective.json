@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualRawZValue_injective",
+ "key": "5a16b6d7ff256a22",
+ "kind": "theorem",
+ "title": "Injectivity of raw-$Z$ dualization",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$. The dualization map sends a raw $Z = (M, T, X_{<T}, Y_{>T})$ value for $p$ to the corresponding value for the dual protocol — the protocol obtained from $p$ by exchanging the roles of Alice and Bob and reversing both coordinate sets — as follows: the transcript $M$ is carried through the transcript-level map induced by this duality; the special coordinate $T \\in \\{0, \\dots, n-1\\}$ is replaced by its reversal $n - 1 - T$; the new ``before'' vector is the coordinate-reversal of $Y_{>T}$; and the new ``after'' vector is the coordinate-reversal of $X_{<T}$. This map is injective.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "p is a deterministic disjointness protocol for inputs of length n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Raw $Z$ dualization is injective."
+}

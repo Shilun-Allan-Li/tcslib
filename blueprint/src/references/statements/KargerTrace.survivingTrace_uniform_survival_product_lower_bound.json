@@ -1,0 +1,19 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_uniform_survival_product_lower_bound",
+ "key": "75234ee048af62bc",
+ "kind": "theorem",
+ "title": "Karger survival lower bound for a minimum cut",
+ "statement": "Let $n \\ge 2$ and let $T$ be a surviving trace of $n-2$ steps, indexing states $T_0, T_1, \\ldots$ each consisting of a multigraph together with a distinguished cut. Suppose the distinguished cut of the initial state $T_0$ is a minimum cut of its graph, that this initial graph has exactly $n$ vertices, and that for every step index $i < n-2$ the graph of $T_i$ has at least two vertices. Then the product of the uniform one-step survival probabilities of the states $T_0, \\ldots, T_{n-3}$ satisfies \\[ \\frac{2}{n(n-1)} \\le \\prod_{i=0}^{n-3} p_i, \\] where $p_i$ is the number of edges of $T_i$ not crossing its distinguished cut divided by the total edge count of $T_i$.",
+ "hypotheses_covered": [
+  "T is a surviving trace of n-2 steps",
+  "n ≥ 2",
+  "the distinguished cut of the initial state is a minimum cut",
+  "the initial graph has exactly n vertices",
+  "every state before the last has a graph with at least 2 vertices",
+  "conclusion: product of survival probabilities ≥ 2/(n(n-1))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses as the product-level bound, the product of the concrete uniform\none-step survival probabilities along the trace is at least $2/(n(n-1))$."
+}

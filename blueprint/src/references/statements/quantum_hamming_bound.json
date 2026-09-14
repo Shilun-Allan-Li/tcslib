@@ -1,0 +1,16 @@
+{
+ "lean_name": "quantum_hamming_bound",
+ "key": "252e7a8b942073a0",
+ "kind": "theorem",
+ "title": "Quantum Hamming bound for non-degenerate codes",
+ "statement": "Let $C \\le \\mathcal{H}_n$ be a subspace of the $n$-qubit Hilbert space whose complex dimension is $\\dim_{\\mathbb{C}} C = 2^k$, and suppose $k \\le n$. If $C$ is a non-degenerate code correcting $t$ errors — meaning it satisfies the Knill–Laflamme condition $P_C\\,E^\\dagger F\\,P_C = \\lambda_{EF}\\,P_C$ for all Pauli strings $E,F$ of weight at most $t$, and moreover $P_C\\,E^\\dagger F\\,P_C = 0$ whenever $E \\ne F$, where $P_C$ is the orthogonal projection onto $C$ — then\n\\[\n\\sum_{j=0}^{t} \\binom{n}{j}\\, 3^{\\,j} \\;\\le\\; 2^{\\,n-k}.\n\\]",
+ "hypotheses_covered": [
+  "complex dimension of C equals 2^k",
+  "C is non-degenerate for t errors (Knill–Laflamme condition on weight-≤t Pauli strings, plus vanishing off-diagonal terms for distinct strings)",
+  "k ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $C \\le \\mathcal{H}_n$ is non-degenerate, then\n\\[\n\\left(\\sum_{i=0}^{t}\\binom{n}{i}\\,3^i\\right)\\cdot\\dim_{\\mathbb{C}}(C)\n\\;\\le\\; 2^n.\n\\]"
+}

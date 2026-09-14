@@ -1,0 +1,19 @@
+{
+ "lean_name": "GeneralHypercontractivity.integrated_h_alpha_ineq",
+ "key": "dbd53a17370aee2d",
+ "kind": "lemma",
+ "title": "Integrated two-point hypercontractive inequality",
+ "statement": "Let $p, q, b$ be real numbers with $1 \\le p \\le q \\le 2$ and $0 \\le b \\le 1$, and set $\\rho = \\sqrt{(p-1)/(q-1)}$. Then\n\\[\n  \\frac{(1+\\rho b)^q + (1-\\rho b)^q - 2}{q}\n  \\;\\le\\;\n  \\frac{(1+b)^p + (1-b)^p - 2}{p}.\n\\]",
+ "hypotheses_covered": [
+  "1 ≤ p",
+  "p ≤ q",
+  "q ≤ 2",
+  "0 ≤ b",
+  "b ≤ 1",
+  "ρ defined as √((p-1)/(q-1))"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion (including the definition of ρ and the inequality itself) is elided as `sorry` in the formal statement, so it cannot be verified against ground truth. The hypotheses (1 ≤ p ≤ q ≤ 2, b ∈ [0,1]) are taken directly from the Lean binders; the displayed inequality and the value ρ = √((p-1)/(q-1)) are reconstructed from the `current` hint, which matches the standard integrated two-point inequality used in hypercontractivity theory but is not confirmed by the snippet.",
+ "rubric": [],
+ "replaced": "Let $1 \\le p \\le q \\le 2$, $b \\in [0,1]$ and $\\rho = \\sqrt{(p-1)/(q-1)}$. Then\n\\[\n  \\frac{(1+\\rho b)^q + (1-\\rho b)^q - 2}{q}\n  \\;\\le\\;\n  \\frac{(1+b)^p + (1-b)^p - 2}{p}.\n\\]"
+}

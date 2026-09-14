@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.payoffVsPure_le_one",
+ "key": "217699d5246dc04b",
+ "kind": "lemma",
+ "title": "Expected payoff against a pure column is at most one",
+ "statement": "Let $G$ be a finite two-player zero-sum game whose payoff matrix $A$ has every entry in $[0,1]$, let $p$ be a mixed row strategy with weights $p_i$, and let $j$ be a fixed pure column action. Then the row player's expected payoff against column $j$ satisfies \\[ \\sum_i p_i \\cdot A_{ij} \\;\\le\\; 1. \\]",
+ "hypotheses_covered": [
+  "G is a finite zero-sum game with payoff entries in [0,1]",
+  "p is a mixed row strategy (weights nonnegative, summing to one)",
+  "j is a fixed pure column action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any game $G$, mixed row strategy $p$, and pure column action $j$,\n$\\mathrm{payoffVsPure}(G,p,j) \\leq 1$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.exists_gate_poly_family",
+ "key": "1c4556c965e7c4aa",
+ "kind": "lemma",
+ "title": "Existence of a gate approximator family",
+ "statement": "Let $p$ be a prime, and fix natural numbers $n$ and $\\ell$. For every gate operation $\\mathrm{op}$ belonging to the $\\mathrm{AC}^0[p]$ gate set — the identity, the NOT gate, the unbounded fan-in AND gate of any arity, and the unbounded $\\mathrm{MOD}_p$ gate of any arity — there exists a gate approximator family for $\\mathrm{op}$ in $n$ variables with parameter $\\ell$; that is, a nonempty finite seed type together with, for each tuple of incoming polynomials over $\\bbz/p$ and each seed, an approximating polynomial in $n$ variables whose total degree is at most $(p-1)\\,\\ell$ times the largest degree among the incoming polynomials, and such that for every Boolean input at which all incoming polynomials evaluate into $\\{0,1\\}$, the number of seeds on which the approximator disagrees with the true gate value, multiplied by $2^{\\ell}$, is at most the total number of seeds.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$n$ is a natural number (number of variables)",
+  "$\\ell$ is a natural number (parameter)",
+  "$\\mathrm{op}$ is a gate operation on $\\mathrm{Fin}\\,2$",
+  "$\\mathrm{op}$ lies in the $\\mathrm{AC}^0[p]$ gate set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n$, every error parameter $\\ell$, and every gate operation $\\mathrm{op}$ belonging to the\n$\\mathrm{AC}^0[p]$ gate set, there exists a \\texttt{GatePolyFamily} $p\\,n\\,\\ell\\,\\mathrm{op}$."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "jl_concentration_single_subgaussian",
+ "key": "56733a0417b5c195",
+ "kind": "theorem",
+ "title": "Distribution-agnostic JL single-vector concentration",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, let $A\\colon\\Omega\\to\\bbr^{k\\times d}$ be a random matrix with $k\\ge 1$ rows, and let $x\\in\\bbr^d$ be a nonzero vector. Write $(Ax)_i$ for the $i$-th coordinate of the image $Ax\\in\\bbr^k$, and suppose that the $k$ coordinates $(Ax)_1,\\dots,(Ax)_k$ are measurable and mutually independent, that each is sub-Gaussian with variance proxy $\\norm{x}^2/k$ — meaning $e^{t(Ax)_i}$ is $\\mu$-integrable and $\\E_\\mu\\!\\bigl[e^{t(Ax)_i}\\bigr]\\le \\exp\\!\\bigl((\\norm{x}^2/k)\\,t^2/2\\bigr)$ for every $t\\in\\bbr$ — and that each has second moment $\\E_\\mu\\!\\bigl[(Ax)_i^2\\bigr]=\\norm{x}^2/k$. Then for every $\\varepsilon$ with $0<\\varepsilon<1$,\n\\[\n  \\mu\\!\\left(\\bigl\\{\\,\\omega : \\varepsilon\\norm{x}^2 < \\bigl|\\,\\norm{Ax}^2-\\norm{x}^2\\,\\bigr|\\,\\bigr\\}\\right)\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\tfrac{k\\varepsilon^2}{8}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1 (positive number of rows)",
+  "(Ω, μ) a probability space",
+  "A a random k×d matrix",
+  "x a nonzero vector in ℝ^d",
+  "each coordinate (Ax)_i is measurable",
+  "the k coordinates (Ax)_i are mutually independent",
+  "each coordinate has integrable exponential moment for all t",
+  "each coordinate's MGF is bounded by exp((‖x‖²/k)t²/2) (sub-Gaussian variance proxy ‖x‖²/k)",
+  "each coordinate has second moment ‖x‖²/k",
+  "0 < ε < 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A : \\Omega \\to \\mathbb{R}^{k \\times d}$ be a random matrix on a probability\nspace, and let $x \\in \\mathbb{R}^d$ be a nonzero vector.  Suppose the $k$ row\nprojections $(Ax)_i$ are mutually independent, each integrable against\n$e^{t(\\cdot)}$ for every $t \\in \\mathbb{R}$, each has sub-Gaussian MGF bounded\nby $\\exp\\!\\bigl((\\norm{x}^2/k)\\,t^2/2\\bigr)$, and each satisfies\n$\\int (Ax)_i^2 \\, d\\mu = \\norm{x}^2/k$.  Then for every $0 < \\varepsilon < 1$,\n\\[\n  \\Pr\\!\\bigl[\\varepsilon\\norm{x}^2 < \\bigl|\\norm{Ax}^2 - \\norm{x}^2\\bigr|\\bigr]\n  \\;\\leq\\; 2\\exp\\!\\Bigl(-\\tfrac{k\\varepsilon^2}{8}\\Bigr).\n\\]"
+}

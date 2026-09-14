@@ -1,0 +1,18 @@
+{
+ "lean_name": "hasSubgaussianMGF_row_proj",
+ "key": "076fefc11221abaf",
+ "kind": "lemma",
+ "title": "Rows of a Rademacher projection are sub-Gaussian",
+ "statement": "Fix an integer $k \\ge 1$ and a dimension $d$, let $x \\in \\bbr^d$ (with its Euclidean norm), and fix a row index $i \\in \\{1,\\dots,k\\}$. Draw the entries of the Rademacher matrix $A(\\omega)_{ij} = \\omega_{ij}/\\sqrt{k}$ by making all $kd$ signs $\\omega_{ij}$ independent Rademacher variables. Then the real random variable\n\\[\n\\omega \\;\\longmapsto\\; (A(\\omega)\\,x)_i \\;=\\; \\frac{1}{\\sqrt{k}}\\sum_{j} \\omega_{ij}\\, x_j\n\\]\nhas a sub-Gaussian moment generating function with variance proxy $\\norm{x}^2/k$: for every $t \\in \\bbr$,\n\\[\n\\E\\!\\left[e^{\\,t\\,(A(\\omega)x)_i}\\right] \\;\\le\\; \\exp\\!\\left(\\frac{t^2}{2}\\cdot\\frac{\\norm{x}^2}{k}\\right).\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1 (0 < k)",
+  "x a vector in ℝ^d",
+  "row index i ∈ Fin k",
+  "entries i.i.d. Rademacher under the joint product measure",
+  "variance proxy equals ‖x‖²/k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k > 0$, $x \\in \\mathbb{R}^d$, and $i \\in \\mathrm{Fin}\\,k$, the $i$-th row\nprojection $\\omega \\mapsto (A(\\omega)\\,x)_i = (1/\\sqrt{k})\\sum_j \\omega_{ij} x_j$\nsatisfies $\\mathrm{HasSubgaussianMGF}(\\cdot, \\norm{x}^2/k,\n\\mathrm{radJointMeasure})$."
+}

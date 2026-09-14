@@ -1,0 +1,16 @@
+{
+ "lean_name": "integral_exp_mul_sq_gaussianReal_zero",
+ "key": "93c5df5b97ee6914",
+ "kind": "lemma",
+ "title": "Quadratic exponential integral against a centered Gaussian",
+ "statement": "Let $v > 0$ and write $N(0,v)$ for the centered Gaussian distribution on $\\bbr$ with mean $0$ and variance $v$. Then for every real number $t$ with $2tv < 1$,\n\\[\n  \\int_{\\bbr} e^{t y^2}\\, \\mathrm{d}N(0,v)(y) = \\frac{1}{\\sqrt{1 - 2tv}}.\n\\]",
+ "hypotheses_covered": [
+  "variance v is nonzero, i.e. v > 0",
+  "t is real with 2tv < 1",
+  "integration is against the centered Gaussian measure N(0,v)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $Y\\sim N(0,v)$ with $v\\ne 0$ and $2tv < 1$,\n\\[\n  \\int y.\\, e^{t y^2}\\,\\mathrm{d}(N(0,v))\n  \\;=\\; \\frac{1}{\\sqrt{1-2tv}}.\n\\]\nThis generalizes \\texttt{integral\\_exp\\_mul\\_sq\\_standardGaussian} from unit\nvariance to an arbitrary non-zero NNReal variance $v$."
+}

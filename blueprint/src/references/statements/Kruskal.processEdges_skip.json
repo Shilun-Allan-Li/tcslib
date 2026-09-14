@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.processEdges_skip",
+ "key": "40edbfc2f19f58d2",
+ "kind": "lemma",
+ "title": "Skipping an intra-component edge in the sweep",
+ "statement": "Fix a number of nodes $n$, a union-find state $\\mathit{uf} : \\mathrm{Fin}\\,n \\to \\bbn$, a weighted edge $e$ over $n$ vertices with endpoints $u$ and $v$, and a list $\\mathit{rest}$ of further weighted edges over $n$ vertices. Suppose the two endpoints of $e$ already have the same representative in $\\mathit{uf}$, that is, $\\mathit{uf}(u) = \\mathit{uf}(v)$. Then the edge-selection sweep applied to the list $e :: \\mathit{rest}$ starting from state $\\mathit{uf}$ with empty accumulator returns exactly the same edge list as the sweep applied to $\\mathit{rest}$ starting from the same state $\\mathit{uf}$ with empty accumulator.",
+ "hypotheses_covered": [
+  "endpoints of e share a representative: uf(u) = uf(v)",
+  "same union-find state uf on both sides",
+  "empty accumulator on both sides"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the endpoints of $e$ already have the same union--find representative, then the\ngreedy loop on $e :: rest$ from state $uf$ returns exactly the output of the loop on\n$rest$ from the same state."
+}

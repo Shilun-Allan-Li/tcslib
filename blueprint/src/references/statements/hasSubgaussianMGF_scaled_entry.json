@@ -1,0 +1,19 @@
+{
+ "lean_name": "hasSubgaussianMGF_scaled_entry",
+ "key": "172dd588aad2eccf",
+ "kind": "lemma",
+ "title": "Scaled Rademacher entry is sub-Gaussian",
+ "statement": "Fix natural numbers $k > 0$ and $d$, a vector $x \\in \\bbr^d$, a row index $i$, and a column index $j$. Consider the joint Rademacher product measure on the space of $k \\times d$ real arrays $\\omega = (\\omega_{ij})$, under which every entry is an independent $\\pm 1$ Rademacher variable (equal to $-1$ or $+1$ with probability $\\tfrac12$ each). Then the scaled entry $\\omega \\mapsto (x_j/\\sqrt{k})\\,\\omega_{ij}$ has a sub-Gaussian moment generating function with variance proxy $x_j^2/k$; that is, its moment generating function is finite and satisfies \\[ \\E\\!\\left[\\exp\\!\\big(t\\,(x_j/\\sqrt{k})\\,\\omega_{ij}\\big)\\right] \\le \\exp\\!\\left(\\tfrac{1}{2}\\,\\frac{x_j^2}{k}\\,t^2\\right) \\qquad\\text{for all } t \\in \\bbr. \\]",
+ "hypotheses_covered": [
+  "k > 0",
+  "x is a vector in ℝ^d",
+  "row index i in Fin k",
+  "column index j in Fin d",
+  "joint Rademacher product measure on k×d arrays",
+  "variance proxy equal to x_j^2 / k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k > 0$, $x \\in \\mathbb{R}^d$, and indices $i,j$, the function\n$\\omega \\mapsto (x_j / \\sqrt{k})\\,\\omega_{ij}$ satisfies\n$\\mathrm{HasSubgaussianMGF}(\\cdot, x_j^2/k, \\mathrm{radJointMeasure})$."
+}

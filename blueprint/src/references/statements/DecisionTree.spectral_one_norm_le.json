@@ -1,0 +1,17 @@
+{
+ "lean_name": "DecisionTree.spectral_one_norm_le",
+ "key": "c4e4464b87d3ebad",
+ "kind": "theorem",
+ "title": "Spectral one-norm bounded by decision tree size",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and let $g : \\{0,1\\}^n \\to \\{-1,1\\}$ be the sign-encoded function it computes, sending an input $x$ to $\\sigma(T(x))$ (with $\\mathrm{false}\\mapsto 1$ and $\\mathrm{true}\\mapsto -1$). Then the sum of the absolute values of its Fourier--Walsh coefficients is bounded by the size of $T$, i.e. its number of leaves:\n\\[\n  \\sum_{S \\subseteq [n]} \\bigl|\\hat g(S)\\bigr| \\;\\le\\; \\mathrm{size}(T),\n\\]\nwhere the sum ranges over all subsets $S$ of $\\{1,\\dots,n\\}$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables",
+  "g is its sign-encoded {-1,1}-valued function",
+  "sum over all subsets S of Fin n of |Fourier coefficient|",
+  "bound is size(T), the number of leaves"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every decision tree $T$,\n\\[\n\\sum_{S} \\bigl| \\widehat{T.\\mathrm{signEval}}(S) \\bigr| \\le T.\\mathrm{size},\n\\]\ni.e.\\ $\\norm{\\widehat{f}}_1 \\le s$ for the tree size $s$."
+}

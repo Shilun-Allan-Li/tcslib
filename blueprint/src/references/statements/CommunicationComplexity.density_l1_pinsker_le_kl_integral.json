@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.density_l1_pinsker_le_kl_integral",
+ "key": "408fb257cd999ae7",
+ "kind": "theorem",
+ "title": "Pinsker-type bound via the KL integral",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on a measurable space $\\Omega$ with $\\mu$ absolutely continuous with respect to $\\nu$, and write $\\frac{d\\mu}{d\\nu}$ for the (real-valued) Radon–Nikodym density. Suppose the log-likelihood ratio $x \\mapsto \\log\\frac{d\\mu}{d\\nu}(x)$ is $\\mu$-integrable. Then\n\\[\n  \\frac{1}{2}\\left(\\int_{\\Omega} \\left|\\frac{d\\mu}{d\\nu}(x) - 1\\right|\\,d\\nu(x)\\right)^{2}\n  \\;\\le\\;\n  \\int_{\\Omega} \\log\\frac{d\\mu}{d\\nu}(x)\\,d\\mu(x),\n\\]\nwhere the inner integral on the left is the $L^{1}(\\nu)$-distance of the density from the constant $1$.",
+ "hypotheses_covered": [
+  "μ and ν are probability measures on a measurable space Ω",
+  "μ is absolutely continuous with respect to ν",
+  "the log-likelihood ratio log(dμ/dν) is μ-integrable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mu \\ll \\nu$ and $\\mathrm{llr}(\\mu,\\nu)$ is $\\mu$-integrable, then\n\\[\n  \\tfrac{1}{2}\\,\\mathrm{densityAbsIntegral}(\\mu,\\nu)^2\n  \\;\\le\\; \\int \\mathrm{llr}(\\mu,\\nu)(x)\\,d\\mu.\n\\]"
+}

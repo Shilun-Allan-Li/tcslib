@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolBLR.triple_expectation_as_convolution",
+ "key": "17745348c5c348e0",
+ "kind": "lemma",
+ "title": "Triple expectation as an inner expectation",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function on the hypercube, write $x \\oplus y$ for the componentwise XOR of $x, y \\in \\{0,1\\}^n$, and let $\\E$ denote expectation over a uniformly random point of $\\{0,1\\}^n$. Then\n\\[\n  \\E_x\\!\\left[\\E_y\\!\\left[f(x)\\,f(y)\\,f(x \\oplus y)\\right]\\right]\n  \\;=\\;\n  \\E_x\\!\\left[f(x)\\cdot\\E_y\\!\\left[f(y)\\,f(x \\oplus y)\\right]\\right].\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function {0,1}^n -> R"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $f : \\{0,1\\}^n \\to \\mathbb{R}$,\n\\[\n  \\E_x\\!\\left[\\E_y\\!\\left[f(x)\\,f(y)\\,f(x \\oplus y)\\right]\\right]\n  \\;=\\;\n  \\E_x\\!\\left[f(x)\\cdot\\E_y\\!\\left[f(y)\\,f(x \\oplus y)\\right]\\right].\n\\]"
+}

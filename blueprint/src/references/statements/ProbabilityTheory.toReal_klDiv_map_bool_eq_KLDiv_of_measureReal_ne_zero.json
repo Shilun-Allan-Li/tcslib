@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero",
+ "key": "07968d15112dda54",
+ "kind": "theorem",
+ "title": "Real value of a conditioned Boolean Kullback–Leibler divergence",
+ "statement": "Let $\\mu$ be a finite measure on a measurable space $\\Omega$, let $X:\\Omega\\to\\{0,1\\}$ be a measurable Boolean random variable, and let $S\\subseteq\\Omega$ be a set whose $\\mu$-measure (as a real number) is nonzero, so that the conditional probability measure $\\mu(\\cdot\\mid S)$ is well defined. Let $\\nu$ be a probability measure on $\\{0,1\\}$ that assigns strictly positive mass to each of the two points. Then the extended-real Kullback–Leibler divergence of the law $X_{\\ast}\\,\\mu(\\cdot\\mid S)$ of $X$ under the conditional measure relative to $\\nu$, taken as a real number, coincides with its explicit pointwise value:\n\\[\nD_{\\mathrm{KL}}\\!\\bigl(X_{\\ast}\\,\\mu(\\cdot\\mid S)\\ \\big\\|\\ \\nu\\bigr)\n= \\sum_{b\\in\\{0,1\\}} \\bbP_{\\mu(\\cdot\\mid S)}(X=b)\\,\n\\log\\frac{\\bbP_{\\mu(\\cdot\\mid S)}(X=b)}{\\nu(\\{b\\})}.\n\\]",
+ "hypotheses_covered": [
+  "μ is a finite measure on Ω",
+  "X is a measurable Boolean random variable",
+  "S has nonzero real μ-measure (conditional measure defined)",
+  "ν is a probability measure on Bool",
+  "ν assigns positive mass to each point (full support)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu$ be a finite measure on a measurable space $\\Omega$, $X : \\Omega \\to \\mathrm{Bool}$\na measurable function, $S \\subseteq \\Omega$ a set with $\\mu.\\mathrm{real}\\,S \\neq 0$, and $\\nu$\na full-support probability measure on $\\mathrm{Bool}$.  Then\n\\[\n  \\bigl(D_{\\mathrm{KL}}(X_*(\\mu[\\cdot|S]) \\,\\|\\, \\nu)\\bigr).\\mathrm{toReal}\n  = \\mathrm{KL}[X;\\mu[\\cdot|S] \\,\\#\\, \\mathrm{id};\\nu].\n\\]"
+}

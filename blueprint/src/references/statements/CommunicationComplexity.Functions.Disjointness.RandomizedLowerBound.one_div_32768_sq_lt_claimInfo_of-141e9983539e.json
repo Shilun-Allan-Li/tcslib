@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.one_div_32768_sq_lt_claimInfo_of_distributionalError_le",
+ "key": "de248ebb0bdd2f7f",
+ "kind": "theorem",
+ "title": "Information lower bound for low-error disjointness protocols",
+ "statement": "Fix a positive integer $n$, and let $p$ be a deterministic two-party communication protocol whose inputs are subsets $X, Y \\subseteq [n]$ (held by Alice and Bob, respectively) and whose output is Boolean. Consider the hard input distribution generated as follows: choose a special coordinate $T \\in [n]$, bits $x_T, y_T \\in \\{0,1\\}$, and, for every coordinate $i \\ne T$, a label in $\\{\\text{neither}, \\text{left only}, \\text{right only}\\}$, all uniformly and independently; a \"left only\" (resp. \"right only\") label places $i$ in $X$ (resp. $Y$) and in no other set, \"neither\" places it in neither, while at $T$ the bits $x_T, y_T$ decide membership of $T$ in $X$ and in $Y$. Suppose that against this distribution the protocol $p$ computes set-disjointness — outputting whether $X \\cap Y = \\emptyset$ — with distributional error at most $1/32$, i.e.\\ the probability that the output of $p$ on $(X, Y)$ disagrees with the disjointness indicator is at most $1/32$. Then, writing $\\Pi$ for the transcript produced by running $p$ on $(X, Y)$ and conditioning throughout on the event that $X$ and $Y$ are disjoint,\n\\[\nI\\bigl(x_T \\,;\\, \\Pi \\,\\bigm|\\, T,\\, X_{<T},\\, Y_{\\ge T}\\bigr) \\;+\\; I\\bigl(y_T \\,;\\, \\Pi \\,\\bigm|\\, T,\\, X_{\\le T},\\, Y_{>T}\\bigr) \\;>\\; \\Bigl(\\tfrac{1}{32768}\\Bigr)^{2},\n\\]\nwhere $X_{<T}$ (resp. $X_{\\le T}$) records Alice's membership bits at the coordinates strictly below $T$ (resp. at most $T$), $Y_{\\ge T}$ (resp. $Y_{>T}$) records Bob's membership bits at the coordinates at least $T$ (resp. strictly above $T$), and all remaining coordinates are set to $0$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic protocol on set-disjointness inputs of length n with Boolean output",
+  "the hard input distribution on (X, Y) induced from the sample of special coordinate, its two bits, and per-coordinate labels",
+  "distributional error of p against the disjointness function under this distribution is at most 1/32",
+  "the two conditional mutual informations are taken under the measure conditioned on X and Y being disjoint"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A deterministic protocol with distributional error at most $1 / 32$ must reveal a constant amount of the corrected special-coordinate information."
+}

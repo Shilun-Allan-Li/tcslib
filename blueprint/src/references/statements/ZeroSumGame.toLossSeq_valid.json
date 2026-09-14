@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZeroSumGame.toLossSeq_valid",
+ "key": "c906406549c8f212",
+ "kind": "lemma",
+ "title": "Validity of the loss sequence induced by a zero-sum game",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column actions, given by a payoff matrix $A$ whose entries satisfy $0 \\le A_{ij} \\le 1$, and let $j_0, \\dots, j_{T-1}$ be any sequence of column responses. Then the induced loss sequence for the row player, defined by $\\ell_t(i) = 1 - A_{i,j_t}$ for each round $t < T$ and row action $i$, is valid: every loss lies in $[0,1]$, i.e. $0 \\le \\ell_t(i) \\le 1$ for all $t$ and $i$.",
+ "hypotheses_covered": [
+  "G is a finite zero-sum game with M row and N column actions",
+  "payoff entries satisfy 0 ≤ A_ij ≤ 1",
+  "an arbitrary sequence of column responses over T rounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The loss sequence $G.\\mathrm{toLossSeq}(\\mathrm{colResponse})$ is valid, i.e.\\\nevery loss lies in $[0, 1]$, because the payoffs satisfy $0 \\le A_{ij} \\le 1$."
+}

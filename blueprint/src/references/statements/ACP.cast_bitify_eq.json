@@ -1,0 +1,15 @@
+{
+ "lean_name": "ACP.cast_bitify_eq",
+ "key": "96a8bdfbca45e0bb",
+ "kind": "lemma",
+ "title": "Booleanization is a section on $\\{0,1\\}$",
+ "statement": "Let $p$ be a prime and let $a \\in \\mathbb{Z}/p$ satisfy $a \\in \\{0, 1\\}$. Write $\\beta(a) \\in \\mathrm{Fin}\\,2$ for the booleanization of $a$, equal to $1$ when $a = 1$ and to $0$ otherwise. Then interpreting $\\beta(a)$ as a natural number and reducing it back modulo $p$ recovers $a$; that is, the image of $\\beta(a)$ under $\\mathrm{Fin}\\,2 \\to \\mathbb{N} \\to \\mathbb{Z}/p$ equals $a$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "a lies in {0,1} ⊆ ℤ/p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $a \\in \\{0,1\\} \\subseteq \\mathbb{Z}/p$, then casting $\\texttt{ACP.bitify}\\,(a)$ back into\n$\\mathbb{Z}/p$ through $\\mathbb{N}$ recovers $a$."
+}

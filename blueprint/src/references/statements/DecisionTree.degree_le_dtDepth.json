@@ -1,0 +1,17 @@
+{
+ "lean_name": "DecisionTree.degree_le_dtDepth",
+ "key": "4ea0d2650602fb3f",
+ "kind": "theorem",
+ "title": "Degree bounded by decision-tree depth",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function, and let $D(f)$ denote its decision-tree depth, the least $d$ for which some decision tree of depth at most $d$ computes $f$. Let $g : \\{0,1\\}^n \\to \\bbr$ be its sign encoding, $g(x) = \\sigma(f(x))$, where $\\sigma$ sends $0$ to $1$ and $1$ to $-1$. Then $g$ has degree at most $D(f)$: every set $S$ with $\\hat g(S) \\neq 0$ satisfies $\\abs{S} \\le D(f)$.",
+ "hypotheses_covered": [
+  "f is a Boolean-valued function on the n-cube",
+  "g is the sign encoding of f",
+  "D(f) is the decision-tree depth of f",
+  "conclusion: every nonzero Fourier coefficient of g is supported on a set of size at most D(f)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every Boolean function $f$, the $\\pm 1$-encoding\n$x \\mapsto \\mathrm{boolToSign}(f(x))$ has Fourier degree at most $\\mathrm{dtDepth}\\,f$,\nthe minimum depth of a decision tree computing $f$. This is the implication\n$\\mathrm{DT}(f) \\le k \\Rightarrow \\deg(f) \\le k$ used as input to O'Donnell's Lemma 4.21."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Bonami.degree_avgLast",
+ "key": "f9aaedc163904fbb",
+ "kind": "lemma",
+ "title": "Averaging over a coordinate preserves the degree bound",
+ "statement": "Let $f\\colon\\{0,1\\}^{n+1}\\to\\bbr$ be a Boolean function on $n+1$ variables, and suppose $f$ has degree at most $k$; that is, every set $S$ with nonzero Fourier coefficient $\\hat f(S)\\ne 0$ satisfies $\\abs{S}\\le k$. Form the average of $f$ over its last coordinate, the function on $n$ variables obtained by fixing that coordinate to each of its two values and averaging,\n\\[\n  x \\;\\longmapsto\\; \\tfrac12\\bigl(f(x,0) + f(x,1)\\bigr).\n\\]\nThen this averaged function also has degree at most $k$: each set $S$ with a nonzero Fourier coefficient of the average satisfies $\\abs{S}\\le k$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on n+1 variables",
+  "f has degree at most k (every nonzero Fourier coefficient is supported on a set of size at most k)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f$ has degree at most $k$, then its average over the last coordinate $\\mathrm{avgLast}\\,f$\nalso has degree at most $k$."
+}

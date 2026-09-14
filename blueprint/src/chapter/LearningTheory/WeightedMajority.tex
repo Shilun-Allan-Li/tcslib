@@ -17,41 +17,50 @@ shows the analysis is essentially tight for deterministic learners.
 \label{wm_weight_shrinkage}
 \leanok
 \difficulty{4}
-Let $\beta \in (0,1)$, let $W : \mathbb{N} \to \mathbb{R}$ be a sequence of positive
-reals, and suppose $W(k+1) \le W(k) \cdot \tfrac{1+\beta}{2}$ for every $k < M$.
-Then
+Let $\beta \in (0,1)$, let $W : \bbn \to \bbr$ be a sequence of positive reals, and let
+$M$ be a natural number such that $W(k+1) \le W(k) \cdot \tfrac{1+\beta}{2}$ for every
+$k < M$. Then
 \[
   W(M) \;\le\; W(0) \cdot \left(\frac{1+\beta}{2}\right)^{\!M}.
 \]
 \end{theorem}
 
-\begin{theorem}[Total weight upper bound]
+\begin{theorem}[Geometric decay of a shrinking weight sequence]
 \lean{wm_weight_upper_bound}
 \label{wm_weight_upper_bound}
 \leanok
 \uses{wm_weight_shrinkage}
 \difficulty{1}
-Under the same shrinkage hypothesis as \texttt{wm\_weight\_shrinkage}, if additionally
-$n \ge 1$ and the initial total weight satisfies $W(0) = n$, then
+Fix an integer $n \ge 1$ and a real number $\beta$ with $0 < \beta < 1$, and let $W
+\colon \bbn \to \bbr$ be a sequence of strictly positive reals with $W(0) = n$. Suppose
+that for every $k < M$ the sequence shrinks by at least the factor $(1+\beta)/2$ at each
+step, in the sense that
 \[
-  W(M) \;\le\; n \cdot \left(\frac{1+\beta}{2}\right)^{\!M}.
+  W(k+1) \;\le\; W(k)\cdot\frac{1+\beta}{2}.
+\]
+Then
+\[
+  W(M) \;\le\; n\left(\frac{1+\beta}{2}\right)^{\!M}.
 \]
 \end{theorem}
 
-\begin{theorem}[Combined potential bound]
+\begin{theorem}[Combined potential bound in logarithmic form]
 \lean{wm_combined_potential_bound}
 \label{wm_combined_potential_bound}
 \leanok
 \difficulty{1}
-Let $\beta \in (0,1)$, $n \ge 1$, and suppose
-$\beta^{M^*} \le n \cdot \bigl(\tfrac{1+\beta}{2}\bigr)^{M_{\mathrm{WM}}}$.
+Let $\beta \in (0,1)$ and let $n \ge 1$ be an integer, and let $M^\ast, M_{\mathrm{WM}}$
+be nonnegative integers satisfying
+\[
+  \beta^{M^\ast} \;\le\; n \cdot \left(\tfrac{1+\beta}{2}\right)^{M_{\mathrm{WM}}}.
+\]
 Then
 \[
-  \log\!\left(\beta^{M^*}\right)
+  \log\!\left(\beta^{M^\ast}\right)
   \;\le\;
-  \log\!\left(n \cdot \left(\tfrac{1+\beta}{2}\right)^{M_{\mathrm{WM}}}\right).
+  \log\!\left(n \cdot \left(\tfrac{1+\beta}{2}\right)^{M_{\mathrm{WM}}}\right),
 \]
-This packages the potential inequality into logarithmic form by monotonicity of $\log$.
+where $\log$ denotes the natural logarithm.
 \end{theorem}
 
 \begin{theorem}[Logarithmic mistake bound]
@@ -59,26 +68,28 @@ This packages the potential inequality into logarithmic form by monotonicity of 
 \label{wm_mistake_bound_log}
 \leanok
 \difficulty{3}
-Let $n \ge 2$, $\beta \in (0,1)$, and suppose
-$\beta^{M^*} \le n \cdot \bigl(\tfrac{1+\beta}{2}\bigr)^{M_{\mathrm{WM}}}$.
+Let $n \ge 2$ be an integer and let $\beta \in (0,1)$. Suppose $M^*$ and
+$M_{\mathrm{WM}}$ are nonnegative integers satisfying
+\[
+  \beta^{M^*} \;\le\; n \cdot \left(\frac{1+\beta}{2}\right)^{M_{\mathrm{WM}}}.
+\]
 Then
 \[
   M_{\mathrm{WM}} \cdot \log\!\frac{2}{1+\beta}
   \;\le\;
   \log n \;+\; M^* \cdot \log\frac{1}{\beta}.
 \]
-Equivalently, $M_{\mathrm{WM}} \le \dfrac{\log n + M^* \cdot \log(1/\beta)}{\log(2/(1+\beta))}$,
-giving the standard Weighted Majority mistake bound.
 \end{theorem}
 
-\begin{theorem}[Factor-2 lower bound for deterministic algorithms]
+\begin{theorem}[Factor-2 mistake bound for a deterministic learner]
 \lean{deterministic_factor2_lower_bound}
 \label{deterministic_factor2_lower_bound}
 \leanok
 \difficulty{1}
-For any $T \in \mathbb{N}$, there exist $M_{\mathrm{alg}}, M^* \in \mathbb{N}$ with
-$M_{\mathrm{alg}} = T$ and $2 M^* \le T$.
-This witnesses that a deterministic learner facing two constant experts can be forced
-by an adversary to make $T$ mistakes while the best expert makes at most $T/2$,
-showing the factor of $2$ in the Weighted Majority bound is unavoidable.
+For every natural number $T$ there exist natural numbers $M_{\mathrm{alg}}$ and $M^*$
+such that $M_{\mathrm{alg}} = T$ and $2M^* \le T$. Interpreting $M_{\mathrm{alg}}$ as
+the number of mistakes made by a deterministic online learner over $T$ rounds and $M^*$
+as the number made by the best fixed expert, this exhibits a scenario in which the
+learner errs on every round while the best expert errs at most $T/2$ times, so no
+deterministic strategy can guarantee fewer than twice the optimal number of mistakes.
 \end{theorem}

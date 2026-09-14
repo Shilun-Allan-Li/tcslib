@@ -1,0 +1,16 @@
+{
+ "lean_name": "ArrowTheorem.corrFunc_eq_neg_third_of_weight_one",
+ "key": "ad0da80a57270d7f",
+ "kind": "lemma",
+ "title": "Extremal correlation concentrates weight on level one",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a $\\pm 1$-valued Boolean function that is odd, meaning $f(\\lnot x)=-f(x)$ for every $x$, and suppose its Fourier correlation function attains the value\n\\[\n  \\mathrm{corr}(f)\\;=\\;\\sum_{S\\subseteq[n]}\\hat f(S)^2\\,(-1/3)^{|S|}\\;=\\;-\\tfrac13.\n\\]\nThen $\\hat f(S)=0$ for every subset $S\\subseteq[n]$ with $|S|\\neq 1$; that is, all Fourier--Walsh weight of $f$ is carried by the singleton frequencies.",
+ "hypotheses_covered": [
+  "f is ±1-valued",
+  "f is odd",
+  "corr(f) = -1/3"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathrm{corr}(f) = -1/3$, then $\\hat f(S) = 0$ for all $S$ with\n$|S| \\ne 1$.  Combined with oddness ($\\hat f(\\varnothing) = 0$), all Fourier\nweight lies on level 1: $W_1[f] = 1$."
+}

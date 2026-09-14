@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.monomial_lowDegree_squarefree_complete_on_rootCube",
+ "key": "303b66c8eca817de",
+ "kind": "theorem",
+ "title": "Low-degree monomials multilinearize on the root cube",
+ "statement": "Let $K$ be a field and let $\\omega \\in K$ satisfy $\\omega \\ne 1$. Fix $n, D \\in \\bbn$, and consider a monomial $a\\,X^m$ in the variables $X_1,\\dots,X_n$ over $K$, given by an exponent vector $m : \\mathrm{Fin}\\,n \\to \\bbn$ and a coefficient $a \\in K$, whose total degree $\\sum_i m_i$ is at most $D$. Then there exist coefficients $c : \\mathcal{S}_{n,D} \\to K$, indexed by the squarefree supports $s \\subseteq \\mathrm{Fin}\\,n$ with $\\abs{s} \\le D$, such that the squarefree polynomial $\\sum_{\\abs{s} \\le D} c(s)\\prod_{i \\in s} X_i$ takes the same value as $a\\,X^m$ at every point $x$ of the root cube $\\{1,\\omega\\}^n$.",
+ "hypotheses_covered": [
+  "ω ≠ 1",
+  "total degree of the monomial (sum of exponents) is at most D",
+  "n and D are natural numbers",
+  "arbitrary coefficient a in K and exponent vector m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Assume $\\omega \\ne 1$.  If a monomial $a\\,X^m$ has total exponent sum\n$\\sum_i m_i \\le D$, then it agrees on the root cube $\\{1,\\omega\\}^n$ with a squarefree\npolynomial built only from supports of size at most $D$: there exist coefficients\n$c$ on $\\texttt{ACP.LowDegreeSupport}\\ n\\ D$ with\n$(\\texttt{ACP.lowDegreeSquarefreePolynomial}\\ c)(x) = (a\\,X^m)(x)$ for every $x$ in the cube."
+}

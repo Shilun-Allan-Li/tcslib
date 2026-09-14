@@ -1,0 +1,14 @@
+{
+ "lean_name": "LowDegreeTest.gowers_U2_eq_L2_conv",
+ "key": "728ade062e3d82f8",
+ "kind": "lemma",
+ "title": "The fourth power of the $U^2$ norm as the squared $L^2$ norm of a convolution",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function, and write $x \\oplus y$ for the componentwise XOR of $x, y \\in \\{0,1\\}^n$. Then the fourth power of the second Gowers uniformity norm of $f$ equals the squared $L^2$ norm of the self-convolution $f * f$, where $(f * f)(x) = \\E_{y}[f(y)\\,f(x \\oplus y)]$; that is,\n\\[\n  \\|f\\|_{U^2}^4 = \\|f * f\\|_2^2 = \\E_{x}\\bigl[(f * f)(x)^2\\bigr].\n\\]",
+ "hypotheses_covered": [
+  "f is a real-valued Boolean function on the n-dimensional hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : \\{0,1\\}^n \\to \\bbr$,\n$\\|f\\|_{U^2}^4 = \\|f * f\\|_2^2$,\nwhere $f * f$ denotes the convolution of $f$ with itself."
+}

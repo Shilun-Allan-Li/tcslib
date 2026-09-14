@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalDTree_alive_eq_termSubTree",
+ "key": "a401e9d556b1dcca",
+ "kind": "lemma",
+ "title": "Alive step of the canonical decision-tree builder",
+ "statement": "Fix $n$ Boolean variables, and let $f$ be a DNF formula (a list of terms) and $\\rho$ a restriction. Write $T(f, k, \\rho)$ for the fuel-bounded canonical decision tree of $f$ under $\\rho$ built with fuel budget $k$, and for a term $s$, a restriction $\\sigma$, and a continuation $c$ mapping restrictions to decision trees, write $S(s, \\sigma, c)$ for the term sub-tree of $s$ under $\\sigma$ with continuation $c$. Suppose that, under $\\rho$, not every term of $f$ is killed and no term of $f$ is fixed, and let $t$ be the first term of $f$, in list order, that is not killed by $\\rho$. Then\n\\[\nT(f,\\ \\mathit{fuel}+1,\\ \\rho) \\;=\\; S(t,\\ \\rho,\\ c),\n\\]\nwhere the continuation $c$ sends a restriction $\\rho'$ to the leaf that outputs true when $t$ is fixed by $\\rho'$, and to $T(f,\\ \\mathit{fuel},\\ \\rho')$ otherwise.",
+ "hypotheses_covered": [
+  "not every term of f is killed by ρ",
+  "no term of f is fixed by ρ",
+  "t is the first term of f (in list order) not killed by ρ",
+  "the builder is run with fuel fuel+1, recursing with fuel"
+ ],
+ "confidence": "high",
+ "caveat": "The recursion canonicalDTree.go is not among the supplied definitions; it is rendered as a named fuel-bounded builder $T$ that appears identically on both sides, so the unfolding is faithful without its internal definition.",
+ "rubric": [],
+ "replaced": "When not all terms are killed and none is fixed, and $t$ is the first non-killed clause,\n$\\mathrm{canonicalDTree.go}\\,f\\,(\\mathit{fuel}+1)\\,\\rho$ unfolds to $\\mathrm{termSubTree}\\,t\\,\\rho\\,\\mathrm{cont}$,\nwhere $\\mathrm{cont}\\,\\rho'$ is $\\mathrm{leaf}\\ \\mathrm{true}$ if $t$ is fixed by $\\rho'$ and otherwise\n$\\mathrm{canonicalDTree.go}\\,f\\,\\mathit{fuel}\\,\\rho'$."
+}

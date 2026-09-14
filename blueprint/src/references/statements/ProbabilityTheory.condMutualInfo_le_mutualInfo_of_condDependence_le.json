@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_le_mutualInfo_of_condDependence_le",
+ "key": "12f1a5ba29472ffd",
+ "kind": "theorem",
+ "title": "Conditioning monotonicity for mutual information",
+ "statement": "Let $X$, $Y$, and $W$ be random variables on a probability space $(\\Omega,\\mu)$ (with $\\mu$ a probability measure, or else the zero measure), taking values in countable measurable spaces and each assuming only finitely many values. Write $I[X : Y;\\mu]$ for the mutual information of $X$ and $Y$, and $I[X : Y \\mid W;\\mu]$ for their mutual information conditioned on $W$. If conditioning on $Y$ does not increase the mutual information between $X$ and $W$, that is,\n\\[\n  I[X : W \\mid Y;\\mu] \\;\\le\\; I[X : W;\\mu],\n\\]\nthen conditioning on $W$ does not increase the mutual information between $X$ and $Y$:\n\\[\n  I[X : Y \\mid W;\\mu] \\;\\le\\; I[X : Y;\\mu].\n\\]",
+ "hypotheses_covered": [
+  "X, Y, W are measurable random variables",
+  "value spaces are countable (measurable singleton classes)",
+  "μ is zero or a probability measure",
+  "X, Y, W each have finite range",
+  "hypothesis I[X:W|Y;μ] ≤ I[X:W;μ]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $I[X : W \\mid Y;\\mu] \\le I[X : W;\\mu]$, then\n\\[\n  I[X : Y \\mid W;\\mu] \\;\\le\\; I[X : Y;\\mu].\n\\]"
+}

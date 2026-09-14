@@ -57,31 +57,41 @@ variable $i$ with subtrees $\mathrm{lo}, \mathrm{hi}$ assigns to $S$ the value
 \label{DecisionTree.symmDiff_singleton_invol}
 \leanok
 \difficulty{1}
-For a fixed $i$, the map $S \mapsto S \triangle \{i\}$ on subsets of
-$\mathrm{Fin}\,n$ is involutive.
+Fix $n \in \bbn$ and an index $i \in \{0, 1, \dots, n-1\}$. The map on subsets of $\{0,
+1, \dots, n-1\}$ that sends each set $S$ to its symmetric difference $S \triangle \{i\}$
+with the singleton $\{i\}$ is an involution: applying it twice returns every set to
+itself, so $\bigl(S \triangle \{i\}\bigr) \triangle \{i\} = S$ for all $S$.
 \end{lemma}
 
-\begin{lemma}[Reindexing a frequency sum by $S \mapsto S \triangle \{i\}$]
+\begin{lemma}[Invariance of a subset-sum under symmetric difference with a point]
 \lean{DecisionTree.sum_symmDiff_reindex}
 \label{DecisionTree.sum_symmDiff_reindex}
 \leanok
 \uses{DecisionTree.symmDiff_singleton_invol}
 \difficulty{1}
-For any $g : \mathcal{P}(\mathrm{Fin}\,n) \to \bbr$ and any $i$,
+Fix $n \in \bbn$, let $i$ be an element of $\{0, 1, \dots, n-1\}$, and let $g$ assign a
+real number to each subset of $\{0, 1, \dots, n-1\}$. Then summing $g$ over all subsets
+is unaffected by first toggling the membership of $i$; that is,
 \[
-\sum_{S} g(S \triangle \{i\}) = \sum_{S} g(S),
+\sum_{S} g\big(S \mathbin{\triangle} \{i\}\big) = \sum_{S} g(S),
 \]
-the sums ranging over all subsets $S$ of $\mathrm{Fin}\,n$.
+where both sums range over all subsets $S \subseteq \{0, 1, \dots, n-1\}$ and $S
+\mathbin{\triangle} \{i\}$ denotes the symmetric difference of $S$ with the singleton
+$\{i\}$.
 \end{lemma}
 
-\begin{lemma}[Character of a singleton-shifted frequency]
+\begin{lemma}[Symmetric difference by a singleton toggles a Walsh character]
 \lean{DecisionTree.chiS_symmDiff_singleton}
 \label{DecisionTree.chiS_symmDiff_singleton}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.chiS_mul_chiS, BooleanAnalysis.chiS_singleton}
 \difficulty{1}
-For all $S$, $i$, and $x$ in the Boolean cube,
-$\chi_{S \triangle \{i\}}(x) = \chi_S(x)\cdot \mathrm{boolToSign}(x_i)$.
+Let $S\subseteq[n]$, let $i\in[n]$, and let $x\in\{0,1\}^n$. Then the Walsh--Fourier
+character indexed by the symmetric difference $S\mathbin{\triangle}\{i\}$ satisfies
+\[
+  \chi_{S\,\triangle\,\{i\}}(x) \;=\; \chi_S(x)\,\sigma(x_i),
+\]
+where $\sigma$ is the sign encoding $\sigma(x_i)=(-1)^{x_i}$.
 \end{lemma}
 
 \begin{lemma}[Cardinality under singleton symmetric difference]
@@ -89,182 +99,234 @@ $\chi_{S \triangle \{i\}}(x) = \chi_S(x)\cdot \mathrm{boolToSign}(x_i)$.
 \label{DecisionTree.card_symmDiff_singleton}
 \leanok
 \difficulty{4}
-For all $S$ and $i$, $\abs{S} - 1 \le \abs{S \triangle \{i\}}$, the subtraction being
-truncated subtraction on $\bbn$.
+Let $S$ be a finite subset of $\{0,1,\dots,n-1\}$ and let $i$ be one of these indices.
+Then the symmetric difference $S \triangle \{i\}$ satisfies
+\[
+\abs{S} - 1 \le \abs{S \triangle \{i\}},
+\]
+where $\abs{S} - 1$ denotes truncated subtraction on the natural numbers (so it is $0$
+when $S$ is empty).
 \end{lemma}
 
-\begin{lemma}[Character expansion of the tree function]
+\begin{lemma}[Walsh expansion of a decision tree's sign function]
 \lean{DecisionTree.signEval_eq_sum_coeffs}
 \label{DecisionTree.signEval_eq_sum_coeffs}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.chiS_empty, DecisionTree, DecisionTree.chiS_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.eval, DecisionTree.signEval, DecisionTree.sum_symmDiff_reindex}
 \difficulty{6}
-For every decision tree $T$ and every point $x$ of the Boolean cube,
+Let $T$ be a decision tree on $n$ Boolean variables, computing the $\pm 1$-valued
+sign-encoded function $x \mapsto \sigma(T(x))$, where $\sigma$ is the sign encoding
+sending $\mathrm{false}$ to $1$ and $\mathrm{true}$ to $-1$. For every point $x \in
+\{0,1\}^n$,
 \[
-T.\mathrm{signEval}(x) = \sum_{S} \mathrm{coeffs}\,T\,S \cdot \chi_S(x).
+  \sigma(T(x)) \;=\; \sum_{S \subseteq [n]} c_T(S)\,\chi_S(x),
 \]
+where the sum ranges over all subsets $S$ of $[n]$, $c_T(S)$ denotes the recursively
+defined coefficient of $T$ at the frequency $S$, and $\chi_S$ is the Walsh character of
+$S$.
 \end{lemma}
 
-\begin{lemma}[Coefficients vanish above the depth]
+\begin{lemma}[Fourier coefficients vanish above the tree depth]
 \lean{DecisionTree.coeffs_eq_zero_of_depth_lt}
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.coeffs_eq_zero_of_depth_lt}
 \leanok
 \uses{DecisionTree, DecisionTree.card_symmDiff_singleton, DecisionTree.coeffs, DecisionTree.depth}
 \difficulty{4}
-If $T.\mathrm{depth} < \abs{S}$, then $\mathrm{coeffs}\,T\,S = 0$: frequencies of
-cardinality exceeding the tree depth carry no weight.
+Let $T$ be a decision tree on $n$ Boolean variables, and let $S \subseteq
+\{0,1,\dots,n-1\}$ be a set of variables whose cardinality $\abs{S}$ exceeds the depth
+of $T$. Then the coefficient assigned to the frequency $S$ vanishes,
+$\mathrm{coeffs}\,T\,S = 0$.
 \end{lemma}
 
-\begin{lemma}[Coefficient $1$-norm bounded by tree size]
+\begin{lemma}[Coefficient one-norm bounded by tree size]
 \lean{DecisionTree.sum_abs_coeffs_le}
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.sum_abs_coeffs_le}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.size, DecisionTree.sum_symmDiff_reindex}
 \difficulty{5}
-For every decision tree $T$,
+Let $T$ be a decision tree on $n$ Boolean variables, and for each subset $S \subseteq
+\{0,\dots,n-1\}$ let $\mathrm{coeffs}\,T\,(S)$ denote its recursively defined Fourier
+coefficient at frequency $S$. Then the total absolute mass of these coefficients is
+bounded by the number of leaves of $T$:
 \[
-\sum_{S} \abs{\mathrm{coeffs}\,T\,S} \le T.\mathrm{size},
+\sum_{S} \abs{\mathrm{coeffs}\,T\,(S)} \;\le\; \mathrm{size}(T).
 \]
-i.e.\ the spectral $1$-norm of the coefficients is at most the number of leaves.
 \end{lemma}
 
-\begin{lemma}[Granularity, multiplicative form]
+\begin{lemma}[Dyadic granularity of decision-tree Fourier coefficients]
 \lean{DecisionTree.coeffs_mul_two_pow_int}
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.coeffs_mul_two_pow_int}
 \leanok
 \uses{BooleanAnalysis.boolToSign, DecisionTree, DecisionTree.coeffs, DecisionTree.depth}
 \difficulty{5}
-If $T.\mathrm{depth} \le k$, then for every $S$ there is an integer $m$ with
-$\mathrm{coeffs}\,T\,S \cdot 2^k = m$.
+Let $T$ be a decision tree on $n$ Boolean variables, and write $\mathrm{coeffs}(T) :
+\mathcal{P}(\{0,\dots,n-1\}) \to \bbr$ for its recursively defined coefficient function.
+If $k$ is a natural number with $\mathrm{depth}(T) \le k$, then for every set $S$ of
+variables the scaled coefficient $\mathrm{coeffs}(T)(S)\cdot 2^{k}$ is an integer; that
+is, there exists $m \in \bbz$ with $\mathrm{coeffs}(T)(S)\cdot 2^{k} = m$.
 \end{lemma}
 
-\begin{lemma}[Granularity of the coefficients]
+\begin{lemma}[Dyadic granularity of a decision tree's coefficients]
 \lean{DecisionTree.coeffs_granular}
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \label{DecisionTree.coeffs_granular}
 \leanok
 \uses{DecisionTree, DecisionTree.coeffs, DecisionTree.coeffs_mul_two_pow_int, DecisionTree.depth}
 \difficulty{2}
-For every $S$ there is an integer $m$ with
-$\mathrm{coeffs}\,T\,S = m / 2^{T.\mathrm{depth}}$; that is, every coefficient is an
-integer multiple of $2^{-T.\mathrm{depth}}$.
+Let $T$ be a decision tree on $n$ Boolean variables, and let $S \subseteq
+\{0,\dots,n-1\}$ be a frequency set. Then the coefficient $\mathrm{coeffs}\,T\,S$ is a
+dyadic rational with denominator $2^{\mathrm{depth}(T)}$: there exists an integer $m \in
+\bbz$ such that \[ \mathrm{coeffs}\,T\,S = \frac{m}{2^{\mathrm{depth}(T)}}. \]
+Equivalently, every such coefficient is an integer multiple of $2^{-\mathrm{depth}(T)}$.
 \end{lemma}
 
-\begin{lemma}[Size bounded by $2^{\mathrm{depth}}$]
+\begin{lemma}[Size bounded by two to the depth]
 \lean{DecisionTree.size_le_two_pow_depth}
 \label{DecisionTree.size_le_two_pow_depth}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.size}
 \difficulty{4}
-Every decision tree satisfies $T.\mathrm{size} \le 2^{T.\mathrm{depth}}$: a tree of depth
-$k$ has at most $2^k$ leaves.
+Let $T$ be a decision tree on $n$ Boolean variables, with size (number of leaves)
+$\mathrm{size}(T)$ and depth $\mathrm{depth}(T)$. Then $\mathrm{size}(T) \le
+2^{\mathrm{depth}(T)}$; that is, a decision tree of depth $k$ has at most $2^{k}$
+leaves.
 \end{lemma}
 
-\begin{lemma}[Uniqueness of the character expansion]
+\begin{lemma}[Recovery of coefficients from a character expansion]
 \lean{DecisionTree.fourierCoeff_sum_chiS}
 \label{DecisionTree.fourierCoeff_sum_chiS}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-For any coefficient family $c$ and any frequency $T$, the Fourier coefficient of the
-explicit combination $x \mapsto \sum_{S} c(S)\,\chi_S(x)$ at $T$ equals $c(T)$.
+Fix $n$, let $c$ assign a real number $c(S)$ to each subset $S \subseteq [n]$, and
+consider the Boolean function $f(x) = \sum_{S \subseteq [n]} c(S)\,\chi_S(x)$, where
+$\chi_S$ is the Walsh--Fourier character of $S$. Then for every $T \subseteq [n]$ the
+Fourier--Walsh coefficient of $f$ at frequency $T$ recovers the corresponding
+coefficient, namely $\hat f(T) = c(T)$.
 \end{lemma}
 
-\begin{theorem}[Fourier coefficients of a tree function]
+\begin{theorem}[Fourier coefficients of a decision tree]
 \lean{DecisionTree.fourierCoeff_signEval}
 \label{DecisionTree.fourierCoeff_signEval}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs, DecisionTree.fourierCoeff_sum_chiS, DecisionTree.signEval, DecisionTree.signEval_eq_sum_coeffs}
 \difficulty{2}
-For every decision tree $T$ and every $S$, the Fourier coefficient
-$\widehat{T.\mathrm{signEval}}(S)$ equals $\mathrm{coeffs}\,T\,S$; the recursively defined
-coefficients are exactly the Fourier coefficients.
+Let $T$ be a decision tree on $n$ Boolean variables, and let $\sigma\!\circ\! T$ denote
+its sign-encoded function $x \mapsto \sigma(T(x))$ on the Boolean hypercube $\{0,1\}^n$.
+Then for every frequency set $S \subseteq [n]$, the Fourier–Walsh coefficient of this
+function at $S$ agrees with the recursively defined tree coefficient:
+\[
+  \widehat{\sigma\!\circ\! T}(S) \;=\; \mathrm{coeffs}(T)(S).
+\]
 \end{theorem}
 
-\begin{theorem}[Degree bounded by depth (Proposition 3.16)]
+\begin{theorem}[Fourier degree of a decision tree is at most its depth]
 \lean{DecisionTree.degree_le_depth}
 \label{DecisionTree.degree_le_depth}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.has_degree_at_most, DecisionTree, DecisionTree.coeffs_eq_zero_of_depth_lt, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
 \difficulty{3}
-The function computed by a decision tree of depth $k$ has Fourier degree at most $k$:
-$T.\mathrm{signEval}$ has degree at most $T.\mathrm{depth}$.
+Let $T$ be a decision tree on $n$ Boolean variables, and let $f\colon\{0,1\}^n\to\bbr$
+be the $\pm 1$-valued function it computes, so that $f(x)=\sigma(T(x))$ where $\sigma$
+sends $\mathrm{false}$ to $1$ and $\mathrm{true}$ to $-1$. Then $f$ has Fourier degree
+at most the depth of $T$: for every $S\subseteq\{1,\dots,n\}$ with $\hat f(S)\ne 0$, one
+has $\abs{S}\le\operatorname{depth}(T)$.
 \end{theorem}
 
-\begin{theorem}[Spectral $1$-norm bounded by size (Proposition 3.16)]
+\begin{theorem}[Spectral one-norm bounded by decision tree size]
 \lean{DecisionTree.spectral_one_norm_le}
 \label{DecisionTree.spectral_one_norm_le}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval, DecisionTree.size, DecisionTree.sum_abs_coeffs_le}
 \difficulty{2}
-For every decision tree $T$,
+Let $T$ be a decision tree on $n$ Boolean variables, and let $g : \{0,1\}^n \to
+\{-1,1\}$ be the sign-encoded function it computes, sending an input $x$ to
+$\sigma(T(x))$ (with $\mathrm{false}\mapsto 1$ and $\mathrm{true}\mapsto -1$). Then the
+sum of the absolute values of its Fourier--Walsh coefficients is bounded by the size of
+$T$, i.e. its number of leaves:
 \[
-\sum_{S} \bigl| \widehat{T.\mathrm{signEval}}(S) \bigr| \le T.\mathrm{size},
+  \sum_{S \subseteq [n]} \bigl|\hat g(S)\bigr| \;\le\; \mathrm{size}(T),
 \]
-i.e.\ $\norm{\widehat{f}}_1 \le s$ for the tree size $s$.
+where the sum ranges over all subsets $S$ of $\{1,\dots,n\}$.
 \end{theorem}
 
-\begin{theorem}[Granularity of the Fourier coefficients (Proposition 3.16)]
+\begin{theorem}[Granularity of decision-tree Fourier coefficients]
 \lean{DecisionTree.fourierCoeff_granular}
 \label{DecisionTree.fourierCoeff_granular}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.coeffs_granular, DecisionTree.depth, DecisionTree.fourierCoeff_signEval, DecisionTree.signEval}
 \difficulty{1}
-For every $S$ there is an integer $m$ with
-$\widehat{T.\mathrm{signEval}}(S) = m / 2^{T.\mathrm{depth}}$: every Fourier coefficient is
-an integer multiple of $2^{-k}$, where $k$ is the tree depth.
+Let $T$ be a decision tree on $n$ Boolean variables, let $f\colon\{0,1\}^n\to\{-1,1\}$
+be the $\pm1$-valued function it computes under the sign encoding $\mathrm{false}\mapsto
+1$, $\mathrm{true}\mapsto -1$, and let $d$ be the depth of $T$. Then for every set of
+coordinates $S\subseteq[n]$ there is an integer $m$ such that the Fourier--Walsh
+coefficient of $f$ at frequency $S$ satisfies
+\[
+  \hat f(S) \;=\; \frac{m}{2^{d}}.
+\]
+That is, every Fourier coefficient of $f$ is an integer multiple of $2^{-d}$.
 \end{theorem}
 
-\begin{theorem}[Sparsity bound (Proposition 3.16)]
+\begin{theorem}[Fourier sparsity bound for decision trees]
 \lean{DecisionTree.sparsity_le}
 \label{DecisionTree.sparsity_le}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.fourierCoeff_granular, DecisionTree.signEval, DecisionTree.size, DecisionTree.spectral_one_norm_le}
 \difficulty{5}
-The Fourier support of $T.\mathrm{signEval}$, i.e.\ the set of frequencies $S$ with
-$\widehat{T.\mathrm{signEval}}(S) \ne 0$, has cardinality at most
-$T.\mathrm{size}\cdot 2^{T.\mathrm{depth}}$.
+Let $T$ be a decision tree on $n$ Boolean variables, and let $g \colon \{0,1\}^n \to
+\{-1,1\}$ be the sign-encoded function it computes. Then the number of frequencies $S
+\subseteq [n]$ at which the Fourier--Walsh coefficient of $g$ is nonzero satisfies
+\[
+\abs{\{\, S \subseteq [n] : \hat g(S) \neq 0 \,\}} \;\le\; \mathrm{size}(T)\cdot
+2^{\,\mathrm{depth}(T)},
+\]
+where $\mathrm{size}(T)$ is the number of leaves of $T$ and $\mathrm{depth}(T)$ is its
+maximum root-to-leaf path length.
 \end{theorem}
 
-\begin{theorem}[Sparsity, absolute form]
+\begin{theorem}[Fourier sparsity bound for decision trees]
 \lean{DecisionTree.sparsity_le_four_pow}
 \label{DecisionTree.sparsity_le_four_pow}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.fourierCoeff, DecisionTree, DecisionTree.depth, DecisionTree.signEval, DecisionTree.size, DecisionTree.size_le_two_pow_depth, DecisionTree.sparsity_le}
 \difficulty{2}
-The Fourier support of $T.\mathrm{signEval}$ has cardinality at most
-$4^{T.\mathrm{depth}}$.
+Let $T$ be a decision tree on $n$ Boolean variables, and let
+$f\colon\{0,1\}^n\to\{-1,1\}$ be its sign-encoded tree function. Then the number of
+subsets $S\subseteq[n]$ whose Fourier--Walsh coefficient $\hat f(S)$ is nonzero is at
+most $4^{\,\mathrm{depth}(T)}$.
 \end{theorem}
 
-\begin{lemma}[Specification of the minimum decision-tree depth]
+\begin{lemma}[Attainment of the decision-tree depth]
 \lean{DecisionTree.exists_dtree_of_dtDepth}
 \label{DecisionTree.exists_dtree_of_dtDepth}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b001}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
 \difficulty{1}
-For every Boolean function $f : \{0,1\}^n \to \{0,1\}$ there exists a decision tree $T$
-with $T.\mathrm{depth} \le \mathrm{dtDepth}\,f$ that computes $f$, i.e.\
-$T.\mathrm{eval}\,x = f(x)$ for all $x$.
+For every Boolean function $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$,
+there is a decision tree $T$ on the $n$ Boolean variables whose depth is at most the
+decision-tree depth of $f$ and which computes $f$, meaning $T$ evaluates to $f(x)$ on
+every input $x$.
 \end{lemma}
 
-\begin{theorem}[Degree bounded by decision-tree depth (Proposition 3.16)]
+\begin{theorem}[Degree bounded by decision-tree depth]
 \lean{DecisionTree.degree_le_dtDepth}
 \label{DecisionTree.degree_le_dtDepth}
 \leanok
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p006-b003}
 \uses{BooleanAnalysis.boolToSign, BooleanAnalysis.has_degree_at_most, DecisionTree.degree_le_depth, DecisionTree.exists_dtree_of_dtDepth, DecisionTree.signEval, dtDepth}
 \difficulty{3}
-For every Boolean function $f$, the $\pm 1$-encoding
-$x \mapsto \mathrm{boolToSign}(f(x))$ has Fourier degree at most $\mathrm{dtDepth}\,f$,
-the minimum depth of a decision tree computing $f$. This is the implication
-$\mathrm{DT}(f) \le k \Rightarrow \deg(f) \le k$ used as input to O'Donnell's Lemma 4.21.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function, and let $D(f)$ denote its
+decision-tree depth, the least $d$ for which some decision tree of depth at most $d$
+computes $f$. Let $g : \{0,1\}^n \to \bbr$ be its sign encoding, $g(x) = \sigma(f(x))$,
+where $\sigma$ sends $0$ to $1$ and $1$ to $-1$. Then $g$ has degree at most $D(f)$:
+every set $S$ with $\hat g(S) \neq 0$ satisfies $\abs{S} \le D(f)$.
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceChainConditioningValue_injective",
+ "key": "3e9463833aa417e3",
+ "kind": "theorem",
+ "title": "Injectivity of the chain-rule conditioning recoding",
+ "statement": "Fix $n \\ge 1$ and an index $i \\in \\{0, 1, \\dots, n-1\\}$, and consider Boolean strings valued in $\\bbf_2 = \\{0,1\\}$. Define a map that sends a pair $(x, y)$, where $x \\colon \\{0,\\dots,i-1\\} \\to \\bbf_2$ records the first $i$ coordinates of Alice's input and $y \\colon \\{0,\\dots,n-1\\} \\to \\bbf_2$ is Bob's full input, to the triple $(u, v, w)$ of Boolean functions on all of $\\{0,\\dots,n-1\\}$ given by $u(j) = y(j)$ if $j < i$ and $u(j) = 0$ otherwise, $v(j) = x(j)$ if $j < i$ and $v(j) = 0$ otherwise, and $w(j) = y(j)$ if $j \\ge i$ and $w(j) = 0$ otherwise; that is, $(x,y) \\mapsto (y_{<i}, x_{<i}, y_{\\ge i})$ with all out-of-range coordinates zero-padded. Then this map is injective.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "i is an index in Fin n",
+  "input is a pair (x : Fin i → Bool, y : Fin n → Bool)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The chain-rule conditioning $(Y_{<i}, X_{<i}, Y_{≥i})$ is an injective recoding of $(X_{<i}, Y)$."
+}

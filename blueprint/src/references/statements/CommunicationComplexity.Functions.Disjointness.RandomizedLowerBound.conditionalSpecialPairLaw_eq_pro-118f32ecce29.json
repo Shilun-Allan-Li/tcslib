@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_fiber_volume_factorization",
+ "key": "63ce9d69fad16105",
+ "kind": "theorem",
+ "title": "Product form of the conditional special-pair law from fiber factorization",
+ "statement": "Fix a positive integer $n$, a deterministic disjointness protocol $p$ on inputs of length $n$, and an achievable value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$. Write $F$ for the fiber of $Z$ above $z$, and for a subset $S$ of the sample space let $\\mathrm{vol}(S)$ denote its real-valued volume. Suppose that for every pair of bits $(b_1, b_2) \\in \\mathrm{Bool} \\times \\mathrm{Bool}$,\n\\[\n\\mathrm{vol}(F)\\cdot\\mathrm{vol}\\!\\left(F \\cap \\{\\text{special bit-pair} = (b_1, b_2)\\}\\right)\n= \\mathrm{vol}\\!\\left(F \\cap \\{\\text{Alice's special bit} = b_1\\}\\right)\\cdot\\mathrm{vol}\\!\\left(F \\cap \\{\\text{Bob's special bit} = b_2\\}\\right).\n\\]\nThen the conditional law of the special bit-pair on the fiber $F$ equals the product of the conditional law of Alice's special bit and the conditional law of Bob's special bit.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol on inputs of length n",
+  "z is an achievable value of the Z variable",
+  "for every bit-pair (b1,b2), the cross-multiplied fiber-volume factorization identity holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A cross-multiplied version of singleton factorization, phrased using the original hard distribution instead of conditional fiber probabilities."
+}

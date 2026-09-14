@@ -1,0 +1,15 @@
+{
+ "lean_name": "OneBit.cauchy_schwarz_bool",
+ "key": "5e9e951a82fc5fb7",
+ "kind": "lemma",
+ "title": "Cauchy–Schwarz for the Boolean inner product",
+ "statement": "Let $f, g : \\{0,1\\}^n \\to \\bbr$ be Boolean functions, and write $\\E[h] = 2^{-n}\\sum_{x \\in \\{0,1\\}^n} h(x)$ for the expectation under the uniform measure and $\\langle f, g\\rangle = \\E[f\\cdot g]$ for the $L^2$ inner product. Then\n\\[\n  \\langle f, g\\rangle \\;\\le\\; \\big(\\E[f^2]\\big)^{1/2}\\,\\big(\\E[g^2]\\big)^{1/2}.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on the n-dimensional cube",
+  "g is a Boolean function on the n-dimensional cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f, g : \\mathrm{BoolCube}\\,n \\to \\bbr$,\n\\[\n  \\langle f, g\\rangle \\le \\big(\\E[f^2]\\big)^{1/2}\\,\\big(\\E[g^2]\\big)^{1/2}.\n\\]"
+}

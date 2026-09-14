@@ -1,0 +1,15 @@
+{
+ "lean_name": "TimeM.time_map",
+ "key": "42a722c6cc89a63e",
+ "kind": "theorem",
+ "title": "Mapping preserves time cost",
+ "statement": "A timed computation over a cost type $T$ is a pair consisting of a return value in $\\alpha$ and an accumulated time cost in $T$. For any function $f\\colon \\alpha \\to \\beta$ and any timed computation $x$, applying $f$ to the return value of $x$ (leaving the value's type as $\\beta$) yields a timed computation whose time cost equals that of $x$.",
+ "hypotheses_covered": [
+  "f : α → β is an arbitrary function",
+  "x is a timed computation of type TimeM T α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Mapping a function over a computation does not change its time cost: it is $x.\\mathrm{time}$."
+}

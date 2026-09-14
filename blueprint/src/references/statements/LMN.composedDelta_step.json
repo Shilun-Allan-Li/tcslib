@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.composedDelta_step",
+ "key": "d2fd90f07bf03a57",
+ "kind": "lemma",
+ "title": "Recursive step for the composed restriction parameter",
+ "statement": "Write $\\delta(w,l,d) = \\dfrac{1}{40w}\\left(\\dfrac{1}{40l}\\right)^{d-2}$ for the composed restriction parameter, with fan-in bound $w$, width parameter $l$, and depth $d$. For natural numbers $w$ and $l$ and any depth $d \\ge 3$,\n\\[\n  \\delta(w,l,d) = \\frac{1}{40w}\\,\\delta(l,l,d-1).\n\\]",
+ "hypotheses_covered": [
+  "w a natural number",
+  "l a natural number (used as the real width parameter)",
+  "d a natural number depth",
+  "3 ≤ d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For natural numbers $w,l$ and depth $d\\ge 3$,\n\\[\n  \\mathrm{composedDelta}(w,l,d) = \\frac{1}{40w}\\cdot \\mathrm{composedDelta}(l,l,d-1).\n\\]"
+}

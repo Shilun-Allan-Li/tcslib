@@ -1,0 +1,21 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq",
+ "key": "15ee4035df489120",
+ "kind": "lemma",
+ "title": "Counting inequality for list decoding",
+ "statement": "Fix an integer alphabet size $q \\ge 2$, a real number $p$, and integers $n$ and $L \\ge 1$. Set the rate\n\\[\nr \\;=\\; 1 - H_q(p) - \\frac{1}{L},\n\\]\nand define\n\\[\nM \\;=\\; \\bigl\\lfloor q^{\\,r n} \\bigr\\rfloor,\n\\qquad\nV \\;=\\; \\bigl\\lfloor q^{\\,H_q(p)\\, n} \\bigr\\rfloor .\n\\]\nAssume that $0 < M \\le q^n$ and $L < M$. Then\n\\[\nq^n \\cdot \\binom{V}{L+1} \\cdot \\binom{q^n - (L+1)}{\\,M - (L+1)\\,}\n\\;<\\;\n\\binom{q^n}{M}.\n\\]",
+ "hypotheses_covered": [
+  "alphabet size q ≥ 2",
+  "L ≥ 1",
+  "rate r = 1 − H_q(p) − 1/L",
+  "M = ⌊q^{rn}⌋",
+  "V = ⌊q^{H_q(p) n}⌋",
+  "M > 0",
+  "M ≤ q^n",
+  "L < M"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For the choice $r = 1-H_q(\\rho)-1/L$, $M=\\lfloor q^{rn}\\rfloor$, and\n$V=\\lfloor q^{H_q(\\rho)n}\\rfloor$, whenever $L<M\\le q^n$,\n\\[\nq^n\\cdot\\tbinom{V}{L+1}\\cdot\\tbinom{q^n-(L+1)}{M-(L+1)}\n\\;<\\;\n\\tbinom{q^n}{M}.\n\\]"
+}

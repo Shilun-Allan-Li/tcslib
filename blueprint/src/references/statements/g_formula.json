@@ -1,0 +1,16 @@
+{
+ "lean_name": "g_formula",
+ "key": "d551bdf0bbef54fb",
+ "kind": "lemma",
+ "title": "Dimension formula for the operator count of an isotropic subspace",
+ "statement": "Let $p$ be prime, and equip the symplectic space $V = \\mathbb{F}_p^n \\times \\mathbb{F}_p^n$ with its standard alternating form $\\omega$. If $S \\le V$ is an isotropic subspace and $M \\subseteq \\{0,1,\\dots,n-1\\}$ is any set of coordinates, then\n\\[\ng(S,M) \\;=\\; \\bigl(2\\,\\abs{M} + \\dim_{\\mathbb{F}_p} S_{M^c}\\bigr) \\;-\\; \\bigl(\\dim_{\\mathbb{F}_p} S + \\dim_{\\mathbb{F}_p} S_M\\bigr),\n\\]\nwhere $M^c$ is the complement of $M$ and $S_{M^c} = S \\cap V_{M^c}$ consists of the vectors of $S$ supported on $M^c$.",
+ "hypotheses_covered": [
+  "S is an isotropic subspace of V (hS : IsIsotropic S)",
+  "M is a set of coordinates (finset of Fin n)",
+  "p is prime (Fact p.Prime)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For isotropic $S$,\n\\[\ng(S,M) = \\bigl(2|M| + \\dim(S_{M^c})\\bigr) - \\bigl(\\dim(S) + \\dim(S_M)\\bigr).\n\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "sum_degrees_eq_twice_edgeCount",
+ "key": "898186934f63dc92",
+ "kind": "lemma",
+ "title": "Handshake lemma for multigraphs",
+ "statement": "Let $G$ be a loopless multigraph, given by a finite vertex set $V$ together with a multiset $E$ of edges, each edge an unordered pair of distinct vertices of $V$. For a vertex $v$, let $\\deg(v)$ be the number of edges of $G$ incident to $v$, counted with multiplicity. Then\n\\[\n  \\sum_{v \\in V} \\deg(v) = 2\\,\\abs{E},\n\\]\nwhere $\\abs{E}$ is the number of edges counted with multiplicity.",
+ "hypotheses_covered": [
+  "G is a multigraph with a finite vertex set",
+  "edges form a multiset (counted with multiplicity)",
+  "edges are loopless / endpoints are distinct vertices",
+  "deg(v) counts incident edges with multiplicity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every multigraph $G$,\n\\[\n  \\sum_{v \\in V(G)} \\deg(v) = 2\\abs{E(G)} .\n\\]"
+}

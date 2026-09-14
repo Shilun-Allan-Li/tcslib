@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.Circuit.exists_node_of_depth_ge_one",
+ "key": "3e1b1385e15f2c06",
+ "kind": "lemma",
+ "title": "A circuit of positive depth is a gate",
+ "statement": "Let $c$ be a Boolean circuit whose depth is at least $1$. Then $c$ is not a literal: it is an internal gate, so there exist a Boolean flag $\\mathit{isAnd}$ and a list $cs$ of child circuits for which $c$ is the node with gate type $\\mathit{isAnd}$ applied to the children $cs$.",
+ "hypotheses_covered": [
+  "c is a Boolean circuit",
+  "the depth of c is at least 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A circuit $c$ with $\\mathrm{depth}\\,c \\geq 1$ is not a literal: there exist a Boolean\nflag $\\mathit{isAnd}$ and a child list $cs$ with $c = \\mathrm{Circuit.node}\\,\\mathit{isAnd}\\,cs$."
+}

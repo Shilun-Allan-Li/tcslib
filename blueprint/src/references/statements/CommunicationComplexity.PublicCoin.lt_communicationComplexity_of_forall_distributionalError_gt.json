@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt",
+ "key": "6adbb3528a0ffe98",
+ "kind": "theorem",
+ "title": "Distributional lower bound for public-coin complexity",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a target function, let $\\varepsilon \\in \\bbr$, let $n \\in \\bbn$, and let $\\mu$ be a finite probability space on $X \\times Y$. Suppose that every deterministic protocol $p$ whose communication complexity is at most $n$ has distributional error strictly greater than $\\varepsilon$ against $f$ under $\\mu$; that is, the $\\mu$-probability that $p$ disagrees with $f$ exceeds $\\varepsilon$. Then the $\\varepsilon$-error public-coin randomized communication complexity of $f$ is strictly greater than $n$.",
+ "hypotheses_covered": [
+  "f : X → Y → α is the target function",
+  "ε is a real number",
+  "n is a natural number",
+  "μ is a finite probability space on X × Y",
+  "every deterministic protocol of complexity ≤ n has distributional error > ε against f under μ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f : X \\to Y \\to \\alpha$, $\\varepsilon \\in \\mathbb{R}$, $n \\in \\mathbb{N}$, and let\n$\\mu$ be a finite probability distribution on $X \\times Y$.  If every deterministic\nprotocol $p$ with $p.\\mathrm{complexity} \\le n$ satisfies\n$p.\\mathrm{distributionalError}(\\mu, f) > \\varepsilon$, then the public-coin randomized\ncommunication complexity of $f$ at error $\\varepsilon$ is strictly greater than $n$.\nThis is one direction of Yao's minimax principle: a hard distribution for all small\ndeterministic protocols certifies a lower bound on randomized complexity."
+}

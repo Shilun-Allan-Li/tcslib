@@ -1,0 +1,23 @@
+{
+ "lean_name": "LMN.iterative_reduction_bound",
+ "key": "17b512912089ddcf",
+ "kind": "lemma",
+ "title": "Iterative circuit reduction bound with Chernoff tails",
+ "statement": "Let $c$ be a Boolean circuit on $n \\ge 1$ variables of depth at most $d$, size at most $s$, and maximum fan-in at most $w$, where $d \\ge 2$ and $s, w, l \\ge 1$, and fix a threshold $t$. Apply a Bernoulli random restriction with parameter\n\\[\n  \\delta = \\frac{1}{40w}\\left(\\frac{1}{40l}\\right)^{d-2},\n\\]\nso that each variable is left free with probability $\\delta$ and otherwise fixed to $\\mathtt{false}$ or $\\mathtt{true}$ with equal probability. Then the probability that the restricted function $x \\mapsto c(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth exceeding $t$ satisfies\n\\[\n  s\\left(\\tfrac12\\right)^{l} + \\left(\\tfrac12\\right)^{t}\n  + s\\,\\exp\\!\\left(-\\frac{n}{120w}\\right)\n  + s\\,\\exp\\!\\left(-\\frac{n}{120l}\\right)\n\\]\nas an upper bound.",
+ "hypotheses_covered": [
+  "depth of c at most d",
+  "size of c at most s",
+  "maximum fan-in of c at most w",
+  "d ≥ 2",
+  "s > 0",
+  "w > 0",
+  "l > 0",
+  "n > 0",
+  "restriction parameter equals composedDelta(w, l, d)",
+  "event: restricted function has decision-tree depth > t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most\n$s$, and fan-in at most $w$, where $d \\ge 2$ and $s, w, l > 0$. Under a Bernoulli($\\delta$)\nrandom restriction $\\rho$ with $\\delta = \\mathrm{composedDelta}\\,w\\,l\\,d$, the probability\nthat the restricted function has decision-tree depth exceeding $t$ is bounded by\n\\[\n  s \\cdot \\left(\\tfrac{1}{2}\\right)^l + \\left(\\tfrac{1}{2}\\right)^t\n  + s \\cdot \\exp\\!\\left(-\\tfrac{n}{120 w}\\right)\n  + s \\cdot \\exp\\!\\left(-\\tfrac{n}{120 l}\\right).\n\\]\nThe exponential Chernoff tails vanish as $n \\to \\infty$."
+}

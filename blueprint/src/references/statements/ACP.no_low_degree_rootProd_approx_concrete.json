@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.no_low_degree_rootProd_approx_concrete",
+ "key": "c648e12fc3078541",
+ "kind": "theorem",
+ "title": "No low-degree approximation of the coordinate product on the root cube",
+ "statement": "Let $K$ be a finite field and let $\\omega \\in K$ satisfy $\\omega \\neq 0$ and $\\omega \\neq 1$, and fix natural numbers $n, d, e, B$. Suppose that\n\\[\n  \\sum_{t=0}^{e} \\binom{2^{n}}{t}\\,\\abs{K}^{t} \\;\\le\\; B\n\\]\nand that\n\\[\n  \\abs{K}^{2^{n}} \\;>\\; \\abs{\\,\\mathcal{S}_{n,\\lfloor n/2\\rfloor + d} \\to K\\,}\\cdot B ,\n\\]\nwhere $\\abs{\\mathcal{S}_{n,\\lfloor n/2\\rfloor + d} \\to K}$ is the number of functions from $\\mathcal{S}_{n,\\lfloor n/2\\rfloor + d}$ to $K$. Then there is no polynomial $P \\in K[X_1,\\dots,X_n]$ of total degree at most $d$ whose bad count against the coordinate product $x \\mapsto \\prod_{i} x_i$ on the root cube $\\{1,\\omega\\}^{n}$ is at most $e$; that is, every such $P$ disagrees with $\\prod_i x_i$ at more than $e$ points of $\\{1,\\omega\\}^n$.",
+ "hypotheses_covered": [
+  "$K$ is a finite field",
+  "$\\omega \\neq 0$",
+  "$\\omega \\neq 1$",
+  "ball bound: $\\sum_{t=0}^{e}\\binom{2^n}{t}|K|^t \\le B$",
+  "strict counting inequality $|K|^{2^n} > |\\mathcal{S}_{n,\\lfloor n/2\\rfloor+d}\\to K|\\cdot B$",
+  "conclusion combines total degree $\\le d$ with bad count $\\le e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K$ be finite, $\\omega \\ne 0$, $\\omega \\ne 1$.  Suppose\n$\\sum_{t=0}^{e} \\binom{2^n}{t}\\,\\abs{K}^{\\,t} \\le B$ and\n\\[\n\\abs{K}^{2^n} \\;>\\; \\abs{\\mathcal{S}_{n,\\lfloor n/2 \\rfloor + d} \\to K}\\cdot B .\n\\]\nThen no polynomial $P$ with $\\deg P \\le d$ approximates the product\n$x \\mapsto \\prod_i x_i$ on the root cube with at most $e$ errors, i.e. there is no such\n$P$ with $\\texttt{ACP.rootCubeBadCount}\\ (\\prod_i x_i)\\ P \\le e$."
+}

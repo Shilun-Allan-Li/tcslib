@@ -1,0 +1,16 @@
+{
+ "lean_name": "radJointMeasure_row_marginal",
+ "key": "8209472a4c787ef5",
+ "kind": "lemma",
+ "title": "Row marginal of the joint Rademacher measure",
+ "statement": "Fix natural numbers $k$ and $d$ and a row index $i \\in \\{0, \\dots, k-1\\}$, and consider the joint measure on the set of $k \\times d$ real arrays under which all $k \\cdot d$ entries are independent Rademacher variables, each taking the values $-1$ and $+1$ with probability $\\tfrac12$ apiece. Then the pushforward of this measure along the map that sends an array to its $i$-th row, an element of $\\mathbb{R}^d$, equals the $d$-fold product $\\bigotimes_{j=1}^{d} \\mathrm{Rad}$ of Rademacher distributions.",
+ "hypotheses_covered": [
+  "k and d are natural numbers",
+  "i is a row index in {0, ..., k-1}",
+  "joint measure is the i.i.d. Rademacher product over all k×d entries"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The pushforward of the joint measure along the $i$-th row projection\n$\\omega \\mapsto \\omega_i$ equals the product measure\n$\\bigotimes_{j \\in \\mathrm{Fin}\\,d} \\mathrm{Rad}$."
+}

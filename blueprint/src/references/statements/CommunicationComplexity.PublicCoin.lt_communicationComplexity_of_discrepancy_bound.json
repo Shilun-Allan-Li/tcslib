@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_discrepancy_bound",
+ "key": "f34010ce23615777",
+ "kind": "theorem",
+ "title": "Discrepancy lower bound for public-coin complexity",
+ "statement": "Let $\\mu$ be a finite probability space on $X \\times Y$, let $g : X \\to Y \\to \\mathrm{Bool}$, and let $\\varepsilon, \\gamma \\in \\bbr$ and $n \\in \\bbn$. Suppose that every rectangle $R = A \\times B \\subseteq X \\times Y$ satisfies $\\abs{\\mathrm{disc}_\\mu(g, R)} \\le \\gamma$, where $\\mathrm{disc}_\\mu(g, R) = \\E_{(x,y)\\sim\\mu}\\bigl[\\mathbf{1}_R(x,y)\\cdot\\sigma(g(x,y))\\bigr]$ and $\\sigma$ sends $\\mathrm{false}$ to $1$ and $\\mathrm{true}$ to $-1$. If moreover $2^n \\cdot \\gamma < 1 - 2\\varepsilon$, then $n < \\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(g)$, the $\\varepsilon$-error public-coin randomized communication complexity of $g$.",
+ "hypotheses_covered": [
+  "finite probability space μ on X × Y",
+  "g : X → Y → Bool",
+  "ε, γ real and n natural",
+  "every rectangle R has |disc_μ(g,R)| ≤ γ",
+  "2^n · γ < 1 − 2ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\mu$ be a distribution on $X \\times Y$, let $g : X \\to Y \\to \\mathrm{Bool}$, and\nlet $\\varepsilon, \\gamma \\in \\mathbb{R}$ and $n \\in \\mathbb{N}$.  If every combinatorial\nrectangle $R$ satisfies $|\\mathrm{disc}_\\mu(g,R)| \\le \\gamma$, and if\n$2^n \\cdot \\gamma < 1 - 2\\varepsilon$, then $n < \\mathrm{CC}(g,\\varepsilon)$ (the\npublic-coin $\\varepsilon$-error communication complexity of $g$)."
+}

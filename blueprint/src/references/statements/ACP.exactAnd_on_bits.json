@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.exactAnd_on_bits",
+ "key": "170644f488af2568",
+ "kind": "lemma",
+ "title": "Fermat power product computes Boolean AND",
+ "statement": "Let $p$ be a prime, and let $x_0,\\dots,x_{w-1}$ be elements of $\\mathbb{Z}/p$, each lying in $\\{0,1\\}$. Then\n\\[\n\\prod_i \\bigl(1 - (1 - x_i)^{p-1}\\bigr) = \\prod_i \\beta(x_i),\n\\]\nwhere $\\beta$ is the booleanization $\\mathbb{Z}/p \\to \\mathrm{Fin}\\,2$ (sending $1$ to $1$ and everything else to $0$). The left-hand product is taken in $\\mathbb{Z}/p$; on the right, the product of the $\\beta(x_i)$ is formed in $\\mathrm{Fin}\\,2$, and its value—the natural number $0$ or $1$—is cast into $\\mathbb{Z}/p$. Thus the Fermat-power expression on the left evaluates to the Boolean AND of the inputs.",
+ "hypotheses_covered": [
+  "p is prime",
+  "inputs x_i are elements of Z/p",
+  "each x_i lies in {0,1}",
+  "width (number of inputs) is arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If all values $\\mathrm{inputs}_i$ lie in $\\{0,1\\} \\subseteq \\mathbb{Z}/p$, then\n$\\prod_i \\bigl(1 - (1 - \\mathrm{inputs}_i)^{p-1}\\bigr)$ equals the cast into $\\mathbb{Z}/p$\nof $\\prod_i \\texttt{ACP.bitify}\\,(\\mathrm{inputs}_i)$, the Boolean AND of the booleanized\ninputs."
+}

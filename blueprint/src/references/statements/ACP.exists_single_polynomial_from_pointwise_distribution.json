@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.exists_single_polynomial_from_pointwise_distribution",
+ "key": "35c7eb54db13c820",
+ "kind": "theorem",
+ "title": "A single polynomial from a pointwise error bound",
+ "statement": "Fix a prime $p$, and let $(P_s)_{s \\in S}$ be a family of polynomials in $(\\bbz/p)[X_1,\\dots,X_n]$ indexed by a nonempty finite set $S$ of seeds, let $f : \\{0,1\\}^n \\to \\bbz/p$ be a target function, and let $\\ell$ and $B$ be natural numbers. For a Boolean input $x \\in \\{0,1\\}^n$, write $\\bar{x} \\in (\\bbz/p)^n$ for its coordinatewise image under the inclusion $\\{0,1\\} \\hookrightarrow \\bbz/p$. Suppose that for every Boolean input $x$,\n\\[\n\\bigl|\\{\\, s \\in S : P_s(\\bar{x}) \\neq f(x)\\,\\}\\bigr| \\cdot 2^{\\ell} \\;\\le\\; B \\cdot \\abs{S}.\n\\]\nThen there exists a seed $s \\in S$ for which the number of Boolean inputs $x \\in \\{0,1\\}^n$ with $P_s(\\bar{x}) \\neq f(x)$, multiplied by $2^{\\ell}$, is at most $B \\cdot 2^{n}$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "S (Seed) is finite and nonempty",
+  "family of polynomials P_s over Z/p in n variables indexed by S",
+  "target function f on the Boolean cube to Z/p",
+  "natural numbers ℓ and B",
+  "pointwise bound: for every Boolean input x, (number of bad seeds) · 2^ℓ ≤ B · |S|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a family of polynomials over $\\mathbb{Z}/p$ indexed by a nonempty finite seed\ntype. If for every Boolean input $x$ the number of seeds $s$ with\n$(P_s)(\\mathrm{boolInput}(x)) \\neq f(x)$, times $2^{\\ell}$, is at most\n$B\\cdot\\abs{\\mathrm{Seed}}$, then some seed $s$ satisfies\n$\\mathrm{badInputCount}(f, P_s)\\cdot 2^{\\ell} \\le B\\cdot 2^{n}$."
+}

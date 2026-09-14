@@ -1,0 +1,20 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_ApproxComputes",
+ "key": "683bbbcff6dc324e",
+ "kind": "theorem",
+ "title": "Newman's reduction preserves approximate correctness",
+ "statement": "Let $\\Omega$ be a finite probability space, let $X$ and $Y$ be finite types, and let $p$ be a public-coin finite-message protocol over shared randomness $\\Omega$ with inputs in $X$ and $Y$ and outputs in a type $\\alpha$. Fix a target function $f : X \\times Y \\to \\alpha$, a real error bound $\\varepsilon$, and a real constant $c > 1$, and suppose that $p$ $\\varepsilon$-computes $f$, meaning that for every input pair $(x,y)$ the probability over the shared randomness that $p$ outputs something other than $f(x,y)$ is at most $\\varepsilon$. Then the associated Newman protocol — the private-coin protocol in which Alice draws an index into the fixed table of good random seeds, sends it to Bob, and both run $p$ deterministically on that seed — $(c\\varepsilon)$-computes $f$: for every input pair $(x,y)$ the probability over the private randomness that its output differs from $f(x,y)$ is at most $c\\varepsilon$.",
+ "hypotheses_covered": [
+  "Ω is a finite probability space",
+  "X and Y are finite",
+  "p is a public-coin finite-message protocol over Ω",
+  "f : X → Y → α is the target function",
+  "ε and c are real parameters",
+  "c > 1",
+  "p ε-computes f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $p$ is a public-coin finite-message protocol that $\\varepsilon$-computes $f$, and $c > 1$,\nthen the Newman protocol $(p.\\mathtt{newmanProtocol}\\;f\\;\\varepsilon\\;c)$\nis a private-coin protocol that $(c \\cdot \\varepsilon)$-computes $f$, i.e.\\\nfor all inputs $x \\in X$ and $y \\in Y$ the probability that the protocol's output\ndiffers from $f(x, y)$ is at most $c \\cdot \\varepsilon$."
+}

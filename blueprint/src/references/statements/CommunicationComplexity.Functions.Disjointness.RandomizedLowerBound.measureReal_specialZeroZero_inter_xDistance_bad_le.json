@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero_inter_xDistance_bad_le",
+ "key": "0cd46d898f62277c",
+ "kind": "theorem",
+ "title": "Mass of the Alice-bit deviation event on the zero–zero slice",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the length-$n$ set-disjointness problem, and let $\\gamma > 0$. Work under the hard distribution on samples $\\omega$, each of which determines a special coordinate $T$, Alice's and Bob's input sets $X$ and $Y$ (with special bits $x_T$ and $y_T$), and the transcript $M$ produced by $p$ on input $(X,Y)$. For a value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$, let $\\delta_X(z)$ be the total variation distance between the conditional law of $x_T$ given $\\{Z = z\\}$ and the uniform distribution on one bit. Suppose that, under the hard distribution conditioned on the disjointness event $X \\cap Y = \\varnothing$,\n\\[ I\\big(x_T ; M \\mid T,\\, X_{<T},\\, Y_{\\ge T}\\big) \\;+\\; I\\big(y_T ; M \\mid T,\\, X_{\\le T},\\, Y_{>T}\\big) \\;\\le\\; \\frac{2\\gamma^4}{3}. \\]\nThen the hard distribution assigns mass at most $\\gamma/2$ to the set of samples for which both special bits vanish, $x_T = y_T = 0$, and $\\delta_X(Z) > \\gamma$.",
+ "hypotheses_covered": [
+  "input length $n$, a positive integer",
+  "a deterministic protocol $p$ for length-$n$ disjointness",
+  "$\\gamma > 0$",
+  "conditional-mutual-information bound $I(x_T;M\\mid T,X_{<T},Y_{\\ge T}) + I(y_T;M\\mid T,X_{\\le T},Y_{>T}) \\le 2\\gamma^4/3$ under the disjointness-conditioned hard distribution"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice marginal estimate: under the $(X_{T},Y_{T})=(0,0)$ slice, the set of $Z$ fibers whose Alice special-bit marginal is farther than $γ$ from uniform has mass at most $γ / 2$."
+}

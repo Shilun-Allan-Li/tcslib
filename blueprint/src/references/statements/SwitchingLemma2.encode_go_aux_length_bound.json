@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_aux_length_bound",
+ "key": "6e777d0843d5faff",
+ "kind": "lemma",
+ "title": "Length bound for the switching-lemma encoder loop",
+ "statement": "Consider the recursive encoding routine underlying Razborov's proof of the switching lemma, which processes a DNF formula $f$ on $n$ variables against a width parameter $w$ and a fuel bound, while carrying a path recorded as a list of variable–value pairs $(i,b) \\in \\mathrm{Fin}\\,n \\times \\mathrm{Bool}$, two restrictions $\\rho_0, \\sigma$ on $n$ variables, and an accumulator $\\mathrm{acc}$ recorded as a list of index–value pairs in $\\bbn \\times \\mathrm{Bool}$; it returns a pair of lists. Then the second component of its output has length at most $\\abs{\\mathrm{acc}} + 2\\,\\abs{\\mathrm{path}}$, where $\\abs{\\mathrm{acc}}$ and $\\abs{\\mathrm{path}}$ denote the lengths of the accumulator and path lists.",
+ "hypotheses_covered": [
+  "DNF formula f on n variables",
+  "width parameter w",
+  "fuel bound",
+  "path as a list of variable-value pairs in Fin n × Bool",
+  "two restrictions ρ₀, σ on n variables",
+  "accumulator acc as a list of index-value pairs in ℕ × Bool"
+ ],
+ "confidence": "low",
+ "caveat": "The routine `razborovEncode.go` is an internal recursive helper that is not among the supplied definitions, so what it actually computes and what its returned lists represent cannot be described faithfully; only the shape of its inputs and the stated length inequality on the second output component can be rendered exactly.",
+ "rubric": [],
+ "replaced": "\nThe output produced by the encoder loop \\texttt{SwitchingLemma2.razborovEncode}'s\n\\texttt{go} grows in a controlled way: its second component has length at most\n$|\\mathrm{acc}| + 2 \\cdot |\\mathrm{path}|$, where $\\mathrm{acc}$ is the accumulator and\n$\\mathrm{path}$ the current path."
+}

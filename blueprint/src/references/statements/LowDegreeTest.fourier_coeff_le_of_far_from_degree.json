@@ -1,0 +1,18 @@
+{
+ "lean_name": "LowDegreeTest.fourier_coeff_le_of_far_from_degree",
+ "key": "f10403238fd3e180",
+ "kind": "lemma",
+ "title": "Fourier coefficients of a function far from low degree",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function, let $d\\ge 1$, and let $\\varepsilon$ satisfy $0\\le\\varepsilon\\le 1$. Suppose $f$ is $\\varepsilon$-far from degree $\\le d$; that is, $\\Pr_{x}[f(x)\\ne g(x)]\\ge\\varepsilon$ for every Boolean function $g:\\{0,1\\}^n\\to\\{0,1\\}$ of degree $\\le d$. Writing $(-1)^f:\\{0,1\\}^n\\to\\{\\pm1\\}$ for the $\\pm1$ lift of $f$ and $\\widehat{(-1)^f}(S)=\\E_x[(-1)^{f(x)}\\chi_S(x)]$ for its Fourier coefficient at $S$, we then have, for every $S\\subseteq[n]$,\n\\[\n  \\widehat{(-1)^f}(S)\\;\\le\\;1-2\\varepsilon.\n\\]",
+ "hypotheses_covered": [
+  "d ≥ 1",
+  "0 ≤ ε",
+  "ε ≤ 1",
+  "f is ε-far from degree ≤ d: dist(f,g) ≥ ε for every Boolean g of degree ≤ d",
+  "conclusion holds for every S ⊆ [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $d \\ge 1$ and $f$ is $\\varepsilon$-far from every degree-$\\le d$ Boolean function,\nthen for every $S \\subseteq [n]$,\n$\\hat{f}(S) \\le 1 - 2\\varepsilon$."
+}

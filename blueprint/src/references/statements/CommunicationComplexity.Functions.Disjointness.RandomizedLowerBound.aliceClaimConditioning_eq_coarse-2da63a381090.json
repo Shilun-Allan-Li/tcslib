@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning_eq_coarseConditioning_of_specialY_false",
+ "key": "2a3ee4fd5acceaec",
+ "kind": "theorem",
+ "title": "Coincidence of Alice's and coarse conditioning when Bob's special bit is off",
+ "statement": "Let $\\omega$ be a sample of the hard distribution, with special coordinate $T$, and let $X_{<T}$ denote Alice's input bits at the coordinates strictly before $T$ (padded with $\\mathrm{false}$ elsewhere), $Y_{\\ge T}$ Bob's input bits at the coordinates from $T$ onward (padded with $\\mathrm{false}$ elsewhere), and $Y_{>T}$ Bob's input bits at the coordinates strictly after $T$ (padded with $\\mathrm{false}$ elsewhere). If Bob's bit at the special coordinate is $\\mathrm{false}$, then Alice's corrected special-coordinate conditioning variable and the coarse conditioning variable coincide:\n\\[\n(T,\\; X_{<T},\\; Y_{\\ge T}) \\;=\\; (T,\\; X_{<T},\\; Y_{>T}).\n\\]",
+ "hypotheses_covered": [
+  "Bob's bit at the special coordinate T is false (specialY ω = false)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On the branch $Y_{T}=false$, Alice's corrected conditioning is exactly the coarse conditioning from $Z=(M,T,X_{<T},Y_{>T})$."
+}

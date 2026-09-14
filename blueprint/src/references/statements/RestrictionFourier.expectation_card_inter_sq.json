@@ -1,0 +1,17 @@
+{
+ "lean_name": "RestrictionFourier.expectation_card_inter_sq",
+ "key": "fc0fe6d364a94744",
+ "kind": "lemma",
+ "title": "Second moment of the free-coordinate count",
+ "statement": "Fix $n \\in \\bbn$, a parameter $p \\in \\bbr$, and a set of coordinates $U \\subseteq \\mathrm{Fin}\\,n$. For a restriction $\\rho$ on $n$ variables write $J(\\rho)$ for its set of free variables. Summing over all such restrictions, each weighted by its Bernoulli weight, one has\n\\[\n  \\sum_{\\rho} p^{\\abs{J(\\rho)}}\\left(\\tfrac{1-p}{2}\\right)^{\\,n - \\abs{J(\\rho)}} \\abs{U \\cap J(\\rho)}^2\n  \\;=\\; p\\,\\abs{U} + p^2\\bigl(\\abs{U}^2 - \\abs{U}\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "parameter p is a real number",
+  "U is a subset of Fin n",
+  "sum ranges over all restrictions on n variables",
+  "each term weighted by the Bernoulli restriction weight"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,\n\\[\n  \\E\\bigl[\\abs{U \\cap J}^2\\bigr] \\;=\\; p \\cdot \\abs{U} \\;+\\; p^2\\bigl(\\abs{U}^2 - \\abs{U}\\bigr).\n\\]"
+}

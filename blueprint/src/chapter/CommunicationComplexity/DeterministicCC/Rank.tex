@@ -12,6 +12,7 @@ complexity of $f$ is at least $\lceil \log_2 \mathrm{rank}(M_f) \rceil$.
 
 \begin{definition}[Boolean function matrix]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
+\statementsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p001-b001}
 \label{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
 \leanok
 Given a Boolean function $f : X \to Y \to \mathrm{Bool}$, the matrix
@@ -21,6 +22,10 @@ $f\,x\,y = \mathrm{true}$ and $(M_f)_{x,y} = 0$ otherwise.
 
 \begin{definition}[Rank of a Boolean function]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionRank}
+\statementsource{raoyehudayoff-ch02-rank}{
+  pdf-d59395db8359-p001-b001,
+  pdf-d59395db8359-p003-b002
+}
 \label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
@@ -31,83 +36,1304 @@ $\mathrm{rank}(f) = \mathrm{rank}_{\mathbb{R}}(M_f) \in \mathbb{N}$.
 
 \begin{definition}[Rectangle indicator matrix]
 \lean{CommunicationComplexity.Deterministic.Rank.rectMatrix}
+\statementsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p003-b008}
 \label{CommunicationComplexity.Deterministic.Rank.rectMatrix}
 \leanok
 For a subset $R \subseteq X \times Y$, the matrix $M_R \in \mathbb{R}^{X \times Y}$
 is defined by $(M_R)_{x,y} = 1$ if $(x,y) \in R$ and $(M_R)_{x,y} = 0$ otherwise.
 \end{definition}
 
-\begin{theorem}[Rectangle matrix has rank at most one]
+\begin{theorem}[Combinatorial rectangles have rank-one indicator matrices]
 \lean{CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
+\proofsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p003-b008}
 \label{CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003,
+    pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003,
+    pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008,
+    pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.rectMatrix}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
 \uses{CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
-If $R \subseteq X \times Y$ is a combinatorial rectangle, i.e.\ $R = A \times B$
-for some $A \subseteq X$ and $B \subseteq Y$, then $\mathrm{rank}(M_R) \le 1$.
-This follows because $M_R$ is an outer product of the indicator vectors of $A$ and $B$.
+Let $X$ be any set and $Y$ a finite set, and let $R \subseteq X \times Y$ be a
+rectangle, meaning $R = A \times B$ for some $A \subseteq X$ and $B \subseteq Y$. Let
+$M_R \in \bbr^{X \times Y}$ be its indicator matrix, with $(M_R)_{x,y} = 1$ when $(x,y)
+\in R$ and $(M_R)_{x,y} = 0$ otherwise. Then $\mathrm{rank}(M_R) \le 1$.
 \end{theorem}
 
-\begin{theorem}[Rank is subadditive for two matrices]
+\begin{theorem}[Subadditivity of matrix rank]
 \lean{Matrix.rank_add_le}
 \label{Matrix.rank_add_le}
 \leanok
 \difficulty{3}
-For any two matrices $A, B \in \mathbb{R}^{X \times Y}$,
+Let $X$ be any index set and $Y$ a finite index set, and let $A, B \in \bbr^{X \times
+Y}$ be real matrices with rows indexed by $X$ and columns indexed by $Y$. Then
 \[
   \mathrm{rank}(A + B) \le \mathrm{rank}(A) + \mathrm{rank}(B).
 \]
 \end{theorem}
 
-\begin{theorem}[Rank is subadditive over finite sums]
+\begin{theorem}[Subadditivity of matrix rank over finite sums]
 \lean{Matrix.rank_sum_le}
 \label{Matrix.rank_sum_le}
 \leanok
 \uses{Matrix.rank_add_le}
 \difficulty{3}
-For any finite index set $\iota$, a finite set $s \subseteq \iota$, and a family
-of matrices $A : \iota \to \mathbb{R}^{X \times Y}$,
+Let $s$ be a finite subset of an index set, and let $(A_i)_{i \in s}$ be a family of
+real matrices with rows indexed by a set $X$ and columns indexed by a finite set $Y$.
+Then the rank of their sum is at most the sum of their ranks:
 \[
-  \mathrm{rank}\!\left(\sum_{i \in s} A_i\right) \le \sum_{i \in s} \mathrm{rank}(A_i).
+\mathrm{rank}\!\left(\sum_{i \in s} A_i\right) \;\le\; \sum_{i \in s}
+\mathrm{rank}(A_i).
 \]
 \end{theorem}
 
-\begin{theorem}[Rank bounded by partition size]
+\begin{theorem}[Rank bounded by monochromatic partition size]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard}
+\proofsource{raoyehudayoff-ch02-rank}{
+  pdf-d59395db8359-p003-b007,
+  pdf-d59395db8359-p003-b008
+}
 \label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005,
+    pdf-d59395db8359-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonoPartition}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_point_mem}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_part_unique}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_values_eq}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionRank}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.rectMatrix}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {Matrix.rank_add_le}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p002-b001}
+\proofstep
+  {Matrix.rank_sum_le}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p002-b001,
+    pdf-d59395db8359-p003-b008}
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix, CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one, CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_part_unique, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq, Matrix.rank_sum_le}
 \difficulty{6}
-If $\mathcal{P}$ is a monochromatic rectangle partition of a Boolean function
-$f : X \to Y \to \mathrm{Bool}$, then
-$\mathrm{rank}(f) \le |\mathcal{P}|$.
-The proof decomposes $M_f$ as a sum of the indicator matrices of the
-$1$-coloured rectangles in $\mathcal{P}$ and applies subadditivity of rank together
-with the fact that each such rectangle matrix has rank at most $1$.
+Let $X$ be a finite set, $Y$ a finite set, and $f : X \to Y \to \mathrm{Bool}$ a Boolean
+function. If $\mathcal{P}$ is a monochromatic rectangle partition of $X \times Y$ for
+$f$, then the rank of $f$ is at most the number of members of $\mathcal{P}$:
+\[
+\mathrm{rank}(f) \le \abs{\mathcal{P}}.
+\]
 \end{theorem}
 
-\begin{theorem}[Rank bounded by $2^n$ when complexity is at most $n$]
+\begin{theorem}[Rank bound from communication complexity]
 \lean{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le}
+\proofsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p003-b009}
 \label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Computes}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p011-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p011-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b002}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonoPartition}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_point_mem}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_part_unique}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_values_eq}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_subset}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_cover}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_mono}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_card}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_card}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionRank}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.rectMatrix}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {Matrix.rank_add_le}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p002-b001}
+\proofstep
+  {Matrix.rank_sum_le}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p002-b001,
+    pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007,
+    pdf-d59395db8359-p003-b008}
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
 \difficulty{2}
-If the deterministic communication complexity of $f : X \to Y \to \mathrm{Bool}$
-is at most $n \in \mathbb{N}$, then $\mathrm{rank}(f) \le 2^n$.
+Let $X$ and $Y$ be finite types and let $f : X \to Y \to \mathrm{Bool}$ be a two-party
+Boolean function, whose rank $\mathrm{rank}(f)$ is the $\bbr$-rank of the $0/1$ matrix
+$M_f \in \bbr^{X \times Y}$ with $(M_f)_{x,y} = 1$ exactly when $f\,x\,y =
+\mathrm{true}$. If the deterministic communication complexity $D(f)$ is at most $n$ for
+some $n \in \bbn$, then $\mathrm{rank}(f) \le 2^n$.
 \end{theorem}
 
-\begin{theorem}[Log-rank lower bound]
+\begin{theorem}[Log-rank lower bound on deterministic communication complexity]
 \lean{CommunicationComplexity.Deterministic.Rank.clog_boolFunctionRank_le_communicationComplexity}
+\proofsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p003-b009}
 \label{CommunicationComplexity.Deterministic.Rank.clog_boolFunctionRank_le_communicationComplexity}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Computes}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p011-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p006-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonoPartition}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007,
+    pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_point_mem}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_part_unique}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_values_eq}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_subset}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_cover}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_mono}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_card}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007,
+    pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_card}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007,
+    pdf-d59395db8359-p003-b009}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b009,
+    pdf-d59395db8359-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionRank}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p001-b002,
+    pdf-d59395db8359-p001-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.rectMatrix}
+  {context}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b008}
+\proofstep
+  {Matrix.rank_add_le}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p002-b001}
+\proofstep
+  {Matrix.rank_sum_le}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p002-b001,
+    pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007,
+    pdf-d59395db8359-p003-b008}
+\proofstep
+  {CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le}
+  {direct}
+  {raoyehudayoff-ch02-rank}
+  {pdf-d59395db8359-p003-b007,
+    pdf-d59395db8359-p003-b009}
 \uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le, CommunicationComplexity.Deterministic.communicationComplexity}
 \difficulty{3}
-For any Boolean function $f : X \to Y \to \mathrm{Bool}$ (with $X$ finite and $Y$
-a \texttt{Fintype}),
+Let $X$ be a finite type and $Y$ a finite type, and let $f : X \to Y \to \mathrm{Bool}$
+be a Boolean function with associated $0/1$ matrix $M_f \in \bbr^{X \times Y}$, whose
+rank $\mathrm{rank}(f) = \mathrm{rank}_{\bbr}(M_f)$ is the rank of $f$. Then the
+deterministic communication complexity $D(f) \in \bbn_\infty$ of $f$ satisfies
 \[
-  \lceil \log_2 \mathrm{rank}(f) \rceil \;\le\;
-  \mathrm{DC}(f),
+  \lceil \log_2 \mathrm{rank}(f) \rceil \;\le\; D(f).
 \]
-where $\mathrm{DC}(f)$ is the deterministic communication complexity of $f$,
-taken as an element of $\mathbb{N}_\infty$.
 \end{theorem}

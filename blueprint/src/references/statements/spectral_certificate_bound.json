@@ -1,0 +1,17 @@
+{
+ "lean_name": "spectral_certificate_bound",
+ "key": "712916b1bc5c5a86",
+ "kind": "theorem",
+ "title": "Spectral certificate value bound",
+ "statement": "Let $\\mathrm{val}_{f_{L,R}}$, $N$, $D$, and $\\norm{A}$ be real numbers with $D > 0$ and $N > 0$. If\n\\[\n  \\mathrm{val}_{f_{L,R}} \\;\\le\\; \\frac{N}{D}\\,\\norm{A},\n\\]\nthen $\\mathrm{val}_{f_{L,R}} \\le \\frac{N}{D}\\,\\norm{A}$.",
+ "hypotheses_covered": [
+  "$\\mathrm{val}_{f_{L,R}}$, $N$, $D$, $\\norm{A}$ are real numbers",
+  "$D > 0$",
+  "$N > 0$",
+  "the bound $\\mathrm{val}_{f_{L,R}} \\le (N/D)\\norm{A}$ holds"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean statement is a tautology: its conclusion is verbatim its hypothesis, so the prose faithfully repeats the assumed inequality as the conclusion. The names $N$, $D$, $\\norm{A}$ are plain real variables in the formal statement, carrying no built-in interpretation as binomial coefficients or a spectral norm, so no such interpretation is asserted here.",
+ "rubric": [],
+ "replaced": "For reals $\\mathrm{val}_{f_{L,R}}$, $N$, $D$ and $\\norm{A}$ with $D > 0$ and $N > 0$,\nif\n\\[\n  \\mathrm{val}_{f_{L,R}} \\;\\le\\; \\frac{N}{D}\\,\\norm{A},\n\\]\nthen the same bound holds. Here $N = \\binom{2n}{\\ell}$, $D = 2\\binom{2n-4}{\\ell-2}$,\nand $\\norm{A}$ is the spectral norm of the Kikuchi matrix $A$, so the statement records\nthe certificate $\\mathrm{val}(f_{L,R}) \\le (N/D)\\,\\norm{A}$."
+}

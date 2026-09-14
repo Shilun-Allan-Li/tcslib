@@ -1,0 +1,15 @@
+{
+ "lean_name": "ArrowTheorem.corrFunc_ge_neg_third",
+ "key": "652409a1a6495b7e",
+ "kind": "lemma",
+ "title": "Lower bound for the Fourier correlation function",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function that is odd, so that $f(\\lnot x)=-f(x)$ for all $x$, and $\\pm 1$-valued, so that $f(x)\\in\\{-1,1\\}$ for all $x$. Then its Fourier correlation function satisfies\n\\[\n  \\mathrm{corr}(f) \\;=\\; \\sum_{S\\subseteq[n]} \\hat f(S)^2\\,(-1/3)^{|S|} \\;\\ge\\; -\\tfrac13,\n\\]\nwhere $\\hat f(S)$ denotes the Fourier--Walsh coefficient of $f$ at frequency $S$.",
+ "hypotheses_covered": [
+  "f is an odd Boolean function: f(¬x) = −f(x)",
+  "f is ±1-valued: f(x) ∈ {−1, 1}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any odd $\\pm 1$-valued function,\n\\[\n  \\mathrm{corr}(f) \\;\\ge\\; -1/3.\n\\]"
+}

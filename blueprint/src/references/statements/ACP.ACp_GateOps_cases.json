@@ -1,0 +1,15 @@
+{
+ "lean_name": "ACP.ACp_GateOps_cases",
+ "key": "6b195437e4168164",
+ "kind": "lemma",
+ "title": "Case analysis on the $\\mathrm{AC}^0[p]$ gate set",
+ "statement": "Let $p$ be a prime, and let $\\mathrm{op}$ be a gate operation belonging to the $\\mathrm{AC}^0[p]$ gate set over the alphabet $\\mathrm{Fin}\\,2$. Then $\\mathrm{op}$ is one of exactly four kinds of gate: the identity gate $x \\mapsto x_0$ on a single input, the NOT gate $x \\mapsto 1 - x_0$ on a single input, the unbounded fan-in AND gate $x \\mapsto \\prod_{i} x_i$ for some arity $n$, or the unbounded $\\mathrm{MOD}_p$ gate for some arity $n$.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$\\mathrm{op}$ is a gate operation lying in the $\\mathrm{AC}^0[p]$ gate set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every gate operation in $\\texttt{ACP.ACp\\_GateOps}$ is one of the following: the identity gate\non a single input, the NOT gate $x \\mapsto 1 - x_0$, an unbounded AND gate\n$x \\mapsto \\prod_i x_i$ of some arity $n$, or a $\\texttt{ACP.modGateOp}$ of some arity $n$."
+}

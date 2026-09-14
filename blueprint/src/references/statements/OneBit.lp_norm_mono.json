@@ -1,0 +1,16 @@
+{
+ "lean_name": "OneBit.lp_norm_mono",
+ "key": "1836504f9f576cf9",
+ "kind": "lemma",
+ "title": "Monotonicity of $L^r$ norms under the uniform measure",
+ "statement": "Let $f\\colon\\{0,1\\}^n\\to\\bbr$ be a Boolean function, and let $r,s$ be real numbers with $1\\le r\\le s$. Writing $\\E$ for the expectation under the uniform probability measure on $\\{0,1\\}^n$, the $L^r$ norm of $f$ is bounded by its $L^s$ norm:\n\\[\n  \\big(\\E\\big[\\,|f|^{r}\\,\\big]\\big)^{1/r}\\;\\le\\;\\big(\\E\\big[\\,|f|^{s}\\,\\big]\\big)^{1/s}.\n\\]",
+ "hypotheses_covered": [
+  "1 ≤ r",
+  "r ≤ s",
+  "f is a Boolean function of arity n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $1 \\le r \\le s$ and any $f : \\mathrm{BoolCube}\\,n \\to \\bbr$,\n\\[\n  \\big(\\E[|f|^r]\\big)^{1/r} \\le \\big(\\E[|f|^s]\\big)^{1/s}.\n\\]\nThis is the power-mean inequality for the uniform probability measure on the cube."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "ACP.exactMod_on_bits",
+ "key": "a286bb921d5b26fe",
+ "kind": "lemma",
+ "title": "Exact $\\mathrm{MOD}_p$ on Boolean inputs",
+ "statement": "Let $p$ be a prime and let $\\mathrm{inputs}_0, \\dots, \\mathrm{inputs}_{w-1}$ be elements of $\\mathbb{Z}/p$, each lying in $\\{0,1\\}$. Then\n\\[\n1 - \\Bigl(\\sum_{i} \\mathrm{inputs}_i\\Bigr)^{p-1} = \\operatorname{MOD}_p\\bigl(\\mathrm{inputs}_0, \\dots, \\mathrm{inputs}_{w-1}\\bigr),\n\\]\nwhere the right-hand side is the output of the unbounded $\\mathrm{MOD}_p$ gate on the booleanizations of the inputs — equal to $1$ when $\\sum_i \\mathrm{inputs}_i = 0$ in $\\mathbb{Z}/p$ and to $0$ otherwise — regarded as an element of $\\{0,1\\} \\subseteq \\mathbb{Z}/p$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "each input lies in {0,1} ⊆ ℤ/p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If all values $\\mathrm{inputs}_i$ lie in $\\{0,1\\} \\subseteq \\mathbb{Z}/p$, then\n$1 - \\bigl(\\sum_i \\mathrm{inputs}_i\\bigr)^{p-1}$ equals the cast into $\\mathbb{Z}/p$ of the\noutput of the $\\mathrm{MOD}_p$ gate applied to the booleanized inputs\n$i \\mapsto \\texttt{ACP.bitify}\\,(\\mathrm{inputs}_i)$."
+}

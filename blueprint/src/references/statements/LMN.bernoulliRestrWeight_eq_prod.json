@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.bernoulliRestrWeight_eq_prod",
+ "key": "e7be3f91a4d99e15",
+ "kind": "lemma",
+ "title": "Bernoulli restriction weight as a product over coordinates",
+ "statement": "Let $p$ be a real parameter and let $\\rho$ be a restriction on $n$ variables, assigning each coordinate either a fixed Boolean value or leaving it free. Writing $k$ for the number of free coordinates, the Bernoulli weight of $\\rho$ equals the product over all $n$ coordinates of the per-variable weights:\n\\[\n  p^{k}\\left(\\tfrac{1-p}{2}\\right)^{\\,n-k}\n  \\;=\\;\n  \\prod_{i=1}^{n} w_p\\bigl(\\rho(i)\\bigr),\n\\]\nwhere each factor $w_p(\\rho(i))$ equals $p$ when coordinate $i$ is free and $(1-p)/2$ when it is fixed.",
+ "hypotheses_covered": [
+  "real parameter p",
+  "restriction ρ on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Bernoulli restriction weight of $\\rho$ at parameter $p$ equals the product over\nall coordinates $i$ of the per-variable weights:\n\\[\n  \\mathrm{bernoulliRestrWeight}\\,p\\,\\rho = \\prod_{i : \\mathrm{Fin}\\,n} \\mathrm{varWeight}\\,p\\,(\\rho\\,i).\n\\]"
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.survivingRun_edge_count_invariant",
+ "key": "73165aebee4d6c40",
+ "kind": "lemma",
+ "title": "Karger min-cut edge-count invariant along a surviving run",
+ "statement": "Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph together with a distinguished cut, and suppose that $t$ is obtained from $s$ by a surviving run of some length $n$, that is, by $n$ successive contractions of edges that do not cross the distinguished cut. If the distinguished cut $C$ of $s$ is a minimum cut of the multigraph $s.G$, with size $k$ (its number of crossing edges), then the number of vertices $|V|$ and the number of edges $|E|$ of the final multigraph $t.G$ satisfy\n\\[\n  k \\cdot |V| \\;\\le\\; 2\\,|E|.\n\\]",
+ "hypotheses_covered": [
+  "t is reached from s by a surviving run of length n (n non-crossing contractions)",
+  "the distinguished cut of s is a minimum cut of s.G"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $t$ is reachable from $s$ by a surviving run and $s.C$ is a min-cut, then the graph\nreached after the run still satisfies the handshaking lower bound\n\\[\n  s.C.\\mathrm{size}\\cdot t.G.\\mathrm{vertexCount} \\;\\le\\; 2\\, t.G.\\mathrm{edgeCount}.\n\\]"
+}

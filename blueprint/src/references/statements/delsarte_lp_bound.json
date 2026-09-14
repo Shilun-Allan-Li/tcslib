@@ -1,0 +1,16 @@
+{
+ "lean_name": "delsarte_lp_bound",
+ "key": "c3ac1c9a721d3173",
+ "kind": "theorem",
+ "title": "Delsarte linear-programming bound",
+ "statement": "Fix naturals $n$ and $d$, and let $F_0, F_1, \\dots, F_n$ be real coefficients defining the function $F(x) = \\sum_{j=0}^{n} F_j\\, K_j^{(n)}(x)$. Suppose that $F_0 > 0$, that $F_j \\ge 0$ for every $j$ with $1 \\le j \\le n$, and that $F(x) \\le 0$ for every integer $x$ with $d \\le x \\le n$. Then the maximum size of a binary code of length $n$ and minimum distance $d$ satisfies\n\\[\n  A(n,d) \\;\\le\\; \\frac{F(0)}{F_0}.\n\\]",
+ "hypotheses_covered": [
+  "F_0 > 0",
+  "F_j >= 0 for 1 <= j <= n",
+  "F(x) <= 0 for every integer x with d <= x <= n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $F(x) = \\sum_{j=0}^{n} F_j K_j^{(n)}(x)$ for real coefficients $F_j$. If\n$F_0 > 0$, if $F_j \\ge 0$ for all $1 \\le j \\le n$, and if $F(x) \\le 0$ for every\ninteger $x$ with $d \\le x \\le n$, then\n\\[\n  A(n,d) \\;\\le\\; \\frac{F(0)}{F_0}.\n\\]"
+}

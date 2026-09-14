@@ -1,0 +1,18 @@
+{
+ "lean_name": "GeneralHypercontractivity.hypercontractivity_induction",
+ "key": "2fc416021c78c8be",
+ "kind": "theorem",
+ "title": "Tensorisation of the two-function hypercontractive inequality",
+ "statement": "Fix exponents $p, q \\ge 1$ and a noise parameter $\\rho$ with $0 \\le \\rho \\le 1$, and write $T_\\rho$ for the associated noise operator. Suppose the two-function bound\n\\[\n  \\langle f, T_\\rho g\\rangle \\;\\le\\; \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}\\,\\bigl(\\E[\\abs{g}^q]\\bigr)^{1/q}\n\\]\nholds for every pair of Boolean functions $f, g \\colon \\{0,1\\}^1 \\to \\bbr$ on the one-dimensional cube. Then, for every $n$, the same inequality holds for every pair of Boolean functions $f, g \\colon \\{0,1\\}^n \\to \\bbr$.",
+ "hypotheses_covered": [
+  "p ≥ 1",
+  "q ≥ 1",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "base case: the two-function bound holds for all f, g on the 1-dimensional cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $p, q \\ge 1$ and $0 \\le \\rho \\le 1$. If\n$\\inn{f, T_\\rho g} \\le (\\E[\\abs{f}^p])^{1/p}(\\E[\\abs{g}^q])^{1/q}$ holds for all\n$f, g : \\mathrm{BoolCube}\\,1 \\to \\bbr$, then the same bound holds for all $n$ and all\n$f, g : \\mathrm{BoolCube}\\,n \\to \\bbr$."
+}

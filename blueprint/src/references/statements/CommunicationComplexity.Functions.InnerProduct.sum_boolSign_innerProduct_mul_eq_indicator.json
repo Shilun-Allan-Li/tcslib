@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_mul_eq_indicator",
+ "key": "048f84417419e962",
+ "kind": "lemma",
+ "title": "Summed Walsh orthogonality for the mod-2 inner product",
+ "statement": "Fix $n \\in \\bbn$. For a Boolean value $b$, let $\\varepsilon(b) \\in \\{\\pm 1\\}$ denote its Boolean sign, equal to $+1$ when $b$ is $\\mathrm{false}$ and $-1$ when $b$ is $\\mathrm{true}$; and for $n$-bit Boolean inputs $x, y$, let $\\langle x, y\\rangle$ denote their mod-2 inner product (which is $\\mathrm{true}$ exactly when the number of coordinates $i$ with $x_i = y_i = \\mathrm{true}$ is odd). Then for any two $n$-bit Boolean inputs $y$ and $z$,\n\\[\n  \\sum_{x} \\varepsilon\\bigl(\\langle x, y\\rangle\\bigr)\\,\\varepsilon\\bigl(\\langle x, z\\rangle\\bigr)\n  = \\begin{cases} 2^n & \\text{if } y = z, \\\\ 0 & \\text{if } y \\neq z, \\end{cases}\n\\]\nwhere the sum ranges over all $2^n$ Boolean inputs $x$.",
+ "hypotheses_covered": [
+  "y and z are arbitrary n-bit Boolean inputs (no side conditions)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $y, z : \\mathrm{BoolInput}\\,n$,\n\\[\n  \\sum_{x : \\mathrm{BoolInput}\\,n}\n    \\mathrm{boolSign}(\\mathrm{IP}(x, y)) \\cdot \\mathrm{boolSign}(\\mathrm{IP}(x, z))\n  \\;=\\; \\begin{cases} 2^n & \\text{if } y = z, \\\\ 0 & \\text{otherwise.} \\end{cases}\n\\]"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.processEdges_take_weight",
+ "key": "59bd62058fdb3e7d",
+ "kind": "lemma",
+ "title": "Weight contributed by an accepted edge",
+ "statement": "Fix a natural number $n$ and a union-find state $\\mathit{uf}$ over $n$ nodes, and let $e$ be a weighted edge over $n$ vertices — with endpoints $u_e, v_e$ and weight $w_e$ — followed by a list $\\mathit{rest}$ of further weighted edges. Suppose the endpoints of $e$ lie in different components, that is, $\\mathit{uf}(u_e) \\ne \\mathit{uf}(v_e)$. Then the total weight of the edge-selection sweep applied to the list $e :: \\mathit{rest}$ starting from $\\mathit{uf}$ and an empty accumulator equals $w_e$ plus the total weight of the sweep applied to $\\mathit{rest}$ starting from an empty accumulator and the state obtained by merging the components of $u_e$ and $v_e$ in $\\mathit{uf}$.",
+ "hypotheses_covered": [
+  "endpoints of $e$ lie in different components: $\\mathit{uf}(u_e) \\ne \\mathit{uf}(v_e)$",
+  "the processed list has head $e$ and tail $\\mathit{rest}$",
+  "both sweeps begin from an empty accumulator"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the endpoints of $e$ lie in different components of $uf$, then the total weight of the\ngreedy output on $e :: rest$ equals $e.\\mathrm{weight}$ plus the total weight of the\ngreedy output on $rest$ started from the merged state $uf.\\mathrm{merge}\\,e.u\\,e.v$."
+}

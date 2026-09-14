@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Internal.uniformApprox_approx",
+ "key": "6b48c2eba4b555fd",
+ "kind": "theorem",
+ "title": "Uniform approximation error bound",
+ "statement": "Let $p$ be a probability mass function on $\\mathrm{Fin}\\,m$ with $m \\ge 1$, and let $n \\ge 1$ be an integer. For each $j \\in \\mathrm{Fin}\\,n$, let $\\varphi(j) \\in \\mathrm{Fin}\\,m$ be the largest index $k$ whose cumulative probability $\\sum_{\\ell < k} p(\\ell)$ does not exceed $j/n$; equivalently, $\\varphi$ evaluates the generalized inverse (quantile function) of the cumulative distribution function of $p$ at the $n$ equally spaced points $0, 1/n, \\dots, (n-1)/n$. Then for every index $i \\in \\mathrm{Fin}\\,m$, the fraction of these $n$ points that $\\varphi$ sends to $i$ exceeds the true probability $p(i)$ by at most $1/n$:\n\\[\n  \\frac{\\abs{\\{\\, j \\in \\mathrm{Fin}\\,n : \\varphi(j) = i \\,\\}}}{n}\n  \\;\\le\\; p(i) + \\frac{1}{n},\n\\]\nwhere $p(i)$ is read as a real number.",
+ "hypotheses_covered": [
+  "p is a probability mass function on Fin m",
+  "m ≥ 1",
+  "n ≥ 1",
+  "i is an index in Fin m",
+  "conclusion: empirical frequency of value i is ≤ p(i) + 1/n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any PMF $p$ on $\\mathrm{Fin}\\,m$, positive $n$, and index $i \\in \\mathrm{Fin}\\,m$,\nthe empirical frequency with which $\\mathrm{uniformApprox}(p, n)$ outputs $i$ satisfies\n\\[\n  \\frac{|\\{j \\in \\mathrm{Fin}\\,n : \\mathrm{uniformApprox}(p,n)(j) = i\\}|}{n}\n  \\;\\le\\; p(i) + \\frac{1}{n}.\n\\]"
+}

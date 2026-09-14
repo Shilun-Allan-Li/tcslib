@@ -1,0 +1,18 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.hamming_bound",
+ "key": "7f35229df03e08de",
+ "kind": "theorem",
+ "title": "Hamming (sphere-packing) bound",
+ "statement": "Let $\\alpha$ be a finite alphabet with $q = \\abs{\\alpha} > 1$ symbols, and let $C \\subseteq \\alpha^n$ be a code (a finite set of length-$n$ codewords) whose minimum Hamming distance is $d$, with $d > 0$. Then\n\\[\n\\abs{C} \\;\\le\\; \\frac{q^{\\,n}}{\\displaystyle\\sum_{i=0}^{\\lfloor (d-1)/2 \\rfloor} \\binom{n}{i}\\,(q-1)^{i}}.\n\\]",
+ "hypotheses_covered": [
+  "finite alphabet $\\alpha$",
+  "$q = |\\alpha| > 1$",
+  "$C$ is a code of length $n$ over $\\alpha$",
+  "$C$ has minimum Hamming distance $d$",
+  "$d > 0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $q=|\\alpha|>1$.  If $C\\subseteq\\alpha^n$ has minimum distance $d>0$, then\n\\[\n|C|\n\\;\\le\\;\n\\frac{q^n}{\\displaystyle\\sum_{i=0}^{\\lfloor(d-1)/2\\rfloor}\\binom{n}{i}(q-1)^i}.\n\\]"
+}

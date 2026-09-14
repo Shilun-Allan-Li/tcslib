@@ -1,0 +1,17 @@
+{
+ "lean_name": "hedge_regret_bound",
+ "key": "4c6c9c39361e38df",
+ "kind": "theorem",
+ "title": "Regret bound for the Hedge algorithm",
+ "statement": "Fix $N \\ge 1$ experts and $T$ rounds, and let $\\ell$ be a valid loss sequence, so that $0 \\le \\ell_t(i) \\le 1$ for every round $t$ and expert $i$. Then for any learning rate $\\eta$ with $0 < \\eta \\le 1$, the regret of the Hedge algorithm satisfies\n\\[\n  R_T(\\eta) \\;\\le\\; \\frac{\\ln N}{\\eta} + \\frac{\\eta\\,T}{2}.\n\\]",
+ "hypotheses_covered": [
+  "at least one expert ($N \\ge 1$)",
+  "learning rate positive ($0 < \\eta$)",
+  "learning rate at most one ($\\eta \\le 1$)",
+  "loss sequence is valid ($0 \\le \\ell_t(i) \\le 1$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\textbf{Hedge Regret Bound} (Cesa-Bianchi \\& Lugosi, Theorem 2.2).\nFor any valid loss sequence with $N$ experts, $T$ rounds, and $\\eta \\in (0,1]$,\n\\[\n  R_T(\\eta) \\;\\le\\; \\frac{\\ln N}{\\eta} + \\frac{\\eta T}{2}.\n\\]"
+}

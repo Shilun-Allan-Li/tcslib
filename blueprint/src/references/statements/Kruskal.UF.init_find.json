@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.UF.init_find",
+ "key": "b055149fd0fc8130",
+ "kind": "lemma",
+ "title": "Find on the initial union-find",
+ "statement": "Consider the identity union-find on $n$ nodes, in which every node is its own representative. For every node $i \\in \\mathrm{Fin}\\,n$, applying the find operation to this initial state returns the underlying numeric value of $i$; that is, the representative of $i$ is $i$ itself.",
+ "hypotheses_covered": [
+  "n a natural number",
+  "i a node in Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $i : \\mathrm{Fin}\\,n$, the find operation on the initial\nunion-find returns $i$'s numeric value: $(\\mathtt{init}\\,n).\\mathtt{find}\\,i = i.\\mathtt{val}$."
+}

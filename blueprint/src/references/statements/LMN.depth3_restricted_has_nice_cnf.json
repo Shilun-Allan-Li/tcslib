@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.depth3_restricted_has_nice_cnf",
+ "key": "0f0d06e4531315d4",
+ "kind": "lemma",
+ "title": "Restricted conjunction of DNFs has a low-width simple CNF",
+ "statement": "Let $g_1,\\dots,g_s$ be DNF formulas in $n$ Boolean variables, and let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be their conjunction, so that $f(x) = \\mathrm{true}$ if and only if $g_i(x) = \\mathrm{true}$ for every $i$. Fix a restriction $\\rho$ of the $n$ variables, and write $h_\\rho$ for the restriction of a Boolean function $h$ by $\\rho$ (the function obtained by fixing each coordinate that $\\rho$ sets and leaving the rest free). Suppose that for every $i$ the restricted gate $(g_i)_\\rho$ has decision-tree depth at most $l$. Then the restricted function $f_\\rho$ is computed by some CNF formula $\\Psi$ of width at most $l$ — every clause contains at most $l$ literals — in which each clause is simple: no literal occurs twice, and any two literals in a clause that share a variable are identical. That is, $\\Psi(x) = f_\\rho(x)$ for all $x$.",
+ "hypotheses_covered": [
+  "f is the conjunction of the DNF gates g_1,...,g_s (f(x) true iff every gate is true at x)",
+  "rho is a restriction of the n variables",
+  "each restricted gate (g_i)_rho has decision-tree depth at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose $f$ is the AND of the gates ($f(x) = \\mathrm{true}$ iff every gate is true at\n$x$) and each restricted gate has decision-tree depth $\\le l$. Then there is a CNF\n$\\Psi$ of width $\\le l$, with nodup and variable-injective clauses, whose evaluation\nequals $\\mathrm{restrictFn}\\, f\\,\\rho_1$."
+}

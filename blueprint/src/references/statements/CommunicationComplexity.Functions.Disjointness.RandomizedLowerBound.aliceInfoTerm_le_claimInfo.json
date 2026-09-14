@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_le_claimInfo",
+ "key": "809bc5188f8a03ae",
+ "kind": "theorem",
+ "title": "Alice's information term is bounded by the total claim information",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$, and give the hard sample space the distribution conditioned on the event that the generated input pair $(X,Y)$ is disjoint. Write $T$ for the special coordinate, $X_T$ and $Y_T$ for Alice's and Bob's bits at $T$, and $M$ for the transcript produced by running $p$ on the input $(X,Y)$. Let Alice's information term be the conditional mutual information\n\\[\nI\\bigl(X_T \\,;\\, M \\,\\big|\\, T,\\, X_{<T},\\, Y_{\\ge T}\\bigr),\n\\]\nBob's information term be $I\\bigl(Y_T \\,;\\, M \\,\\big|\\, T,\\, X_{\\le T},\\, Y_{>T}\\bigr)$, and the total claim information be the sum of the two. Then Alice's information term is at most the total claim information.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol of length n",
+  "underlying measure is the hard distribution conditioned on the disjointness event"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice's information term is bounded by the total corrected information."
+}

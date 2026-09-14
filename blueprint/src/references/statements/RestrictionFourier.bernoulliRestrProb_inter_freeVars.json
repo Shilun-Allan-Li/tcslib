@@ -1,0 +1,18 @@
+{
+ "lean_name": "RestrictionFourier.bernoulliRestrProb_inter_freeVars",
+ "key": "6147b753b65a6217",
+ "kind": "theorem",
+ "title": "Distribution of a fixed coordinate set under a random restriction",
+ "statement": "Fix $n$, a real parameter $p$, and two subsets $U, S \\subseteq [n]$. Let $\\rho$ be a Bernoulli($p$) random restriction on $n$ variables, meaning each restriction is drawn with weight $p^{\\abs{J}}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-\\abs{J}}$, where $J$ denotes its set of free variables. Then the probability that the free variables lying inside $U$ are exactly those of $S$ is\n\\[\n  \\Pr_\\rho\\bigl[\\,U \\cap J = S\\,\\bigr] \\;=\\;\n  \\begin{cases}\n    p^{\\abs{S}}\\,(1-p)^{\\abs{U \\setminus S}}, & S \\subseteq U,\\\\[2pt]\n    0, & \\text{otherwise.}\n  \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "p a real parameter",
+  "U a subset of [n]",
+  "S a subset of [n]",
+  "rho a Bernoulli(p) random restriction with free set J",
+  "event: U intersect J equals S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a Bernoulli($p$)-random restriction $\\rho$ with free set $J = \\rho.\\mathrm{freeVars}$\nand sets $U, S \\subseteq [n]$,\n\\[\n  \\Pr_\\rho\\bigl[U \\cap J = S\\bigr] \\;=\\;\n  \\begin{cases} p^{\\abs{S}}\\,(1-p)^{\\abs{U \\setminus S}} & S \\subseteq U,\\\\\n  0 & \\text{otherwise.}\\end{cases}\n\\]\nCombined with the second identity this yields O'Donnell's form\n$\\E_\\rho[\\widehat{f_\\rho}(S)^2] = \\sum_U \\Pr[U \\cap J = S]\\cdot \\widehat{f}(U)^2$."
+}

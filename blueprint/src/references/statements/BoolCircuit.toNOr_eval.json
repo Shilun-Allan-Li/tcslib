@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.toNOr_eval",
+ "key": "f348805a76e2fcbe",
+ "kind": "theorem",
+ "title": "OR-normalization preserves semantics",
+ "statement": "Let $c$ be a Boolean circuit on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$ be an assignment. Then the normal-form OR circuit obtained by OR-normalizing $c$ computes the same Boolean value as $c$ itself: evaluated at $x$, it agrees with the value of $c$ at $x$.",
+ "hypotheses_covered": [
+  "circuit c on n variables",
+  "assignment x : Fin n → 𝔽₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$ and assignment $x$,\n$(c.\\mathrm{toNOr}).\\mathrm{eval}\\,x = c.\\mathrm{eval}\\,x$."
+}

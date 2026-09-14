@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.processEntries_preserves_none",
+ "key": "6fc7bf5b61bdfb48",
+ "kind": "lemma",
+ "title": "Entry processing preserves free variables",
+ "statement": "Fix $n$ variables and consider the entry-processing step of the Razborov decoding procedure, which takes a term $t$ (a conjunction of literals) over these variables, a natural number $w$, two restrictions $\\sigma, \\rho_0 \\colon \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$, and a list $\\mathit{aux}$ of pairs $(\\mathbb{N} \\times \\mathrm{Bool})$, and returns a restriction as the first component of its output. If $\\sigma$ leaves a variable $v$ free (that is, $\\sigma(v) = \\mathtt{none}$), then the restriction produced by this step also leaves $v$ free.",
+ "hypotheses_covered": [
+  "term t over n variables",
+  "natural number w",
+  "restrictions σ and ρ₀",
+  "auxiliary list of (ℕ × Bool) pairs",
+  "variable v",
+  "σ leaves v free (σ v = none)"
+ ],
+ "confidence": "low",
+ "caveat": "The routine razborovDecode.processEntries is not among the supplied definitions and is an opaque internal step of the decoder, so its actual behaviour (and the roles of t, w, ρ₀, and aux) cannot be described mathematically; only its input/output signature and the single genuine hypothesis σ v = none can be rendered faithfully.",
+ "rubric": [],
+ "replaced": "If $\\sigma\\,v = \\mathrm{none}$, then the decoder's \\texttt{processEntries} routine leaves\n$v$ unset; the resulting $\\sigma$ is still $\\mathrm{none}$ at $v$."
+}

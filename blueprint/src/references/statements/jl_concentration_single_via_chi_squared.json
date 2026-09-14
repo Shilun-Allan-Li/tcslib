@@ -1,0 +1,21 @@
+{
+ "lean_name": "jl_concentration_single_via_chi_squared",
+ "key": "dfc334812210106f",
+ "kind": "theorem",
+ "title": "Johnson–Lindenstrauss concentration for a single vector",
+ "statement": "Let $k \\ge 1$, and let $A$ be a random $k \\times d$ real matrix on a probability space $(\\Omega, \\mu)$ whose $kd$ entries $A_{ij}$ are jointly independent, each Gaussian with law $N(0, 1/k)$. Then for every fixed vector $x \\in \\bbr^d$ and every $\\varepsilon$ with $0 < \\varepsilon < 1$,\n\\[\n  \\mu\\bigl\\{\\,\\omega : \\bigl|\\,\\|A(\\omega)\\,x\\|^2 - \\|x\\|^2\\,\\bigr| > \\varepsilon\\,\\|x\\|^2 \\,\\bigr\\}\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\frac{k\\,\\varepsilon^2}{8}\\Bigr),\n\\]\nwhere $\\|A(\\omega)\\,x\\|$ denotes the Euclidean norm of the image $A(\\omega)\\,x \\in \\bbr^k$.",
+ "hypotheses_covered": [
+  "k ≥ 1 (0 < k)",
+  "μ is a probability measure",
+  "A is (measurably) a random k×d matrix",
+  "each entry A_ij is distributed as N(0, 1/k)",
+  "the entries are jointly independent (row entries independent and rows independent)",
+  "x is a fixed vector in ℝ^d",
+  "0 < ε",
+  "ε < 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A:\\Omega\\to\\mathbb{R}^{k\\times d}$ be a random matrix under a probability\nmeasure $\\mu$ whose entries $A_{ij}$ are each $N(0,1/k)$ and are jointly\nindependent (row entries and row vectors alike).  For any fixed\n$x\\in\\mathbb{R}^d$ and $0<\\varepsilon<1$,\n\\[\n  \\mu\\bigl\\{\\omega \\mid \\texttt{BadSingle}\\,\\varepsilon\\,(A\\,\\omega)\\,x\\bigr\\}\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\frac{k\\,\\varepsilon^2}{8}\\Bigr).\n\\]\nThe proof handles $x=0$ via \\texttt{concentration\\_zero} and the general case by\nshowing each row projection $\\sum_j A_{ij}\\,x_j$ is Gaussian with variance\n$\\|x\\|^2/k$, establishing independence of row projections via\n\\texttt{rows\\_indep}, and then applying \\texttt{chi\\_squared\\_tail}."
+}

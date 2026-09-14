@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.BitString.signedInner_eq_length_sub_twice_hammingDist",
+ "key": "23cecf935cb37877",
+ "kind": "theorem",
+ "title": "Signed inner product via Hamming distance",
+ "statement": "Let $x, y$ be two $n$-bit strings, that is, functions from $\\{0, 1, \\dots, n-1\\}$ to $\\{0,1\\}$, and let $d(x,y)$ denote their Hamming distance, the number of coordinates on which they disagree. Then their signed inner product — the sum over all coordinates of $+1$ where $x$ and $y$ agree and $-1$ where they disagree — satisfies\n\\[\n  \\langle x, y\\rangle_{\\pm} \\;=\\; n - 2\\,d(x, y).\n\\]",
+ "hypotheses_covered": [
+  "x and y are n-bit strings (functions from Fin n to Bool)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two $n$-bit strings $x$ and $y$,\n\\[\n  \\mathrm{signedInner}(x, y) \\;=\\; n - 2\\,\\mathrm{hammingDist}(x, y).\n\\]"
+}

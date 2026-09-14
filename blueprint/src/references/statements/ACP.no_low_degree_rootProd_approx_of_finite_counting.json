@@ -1,0 +1,20 @@
+{
+ "lean_name": "ACP.no_low_degree_rootProd_approx_of_finite_counting",
+ "key": "a218faf219389875",
+ "kind": "theorem",
+ "title": "Top-monomial inapproximability from finite counting data",
+ "statement": "Let $K$ be a finite field, let $\\omega \\in K$ be nonzero, and fix natural numbers $n, d, e, B$. Suppose that every function $f : \\{1,\\omega\\}^n \\to K$ agrees, at every point of the cube $\\{1,\\omega\\}^n$, with some squarefree (multilinear) polynomial $\\sum_{S \\subseteq \\{1,\\dots,n\\}} c_S \\prod_{i \\in S} X_i$. Suppose further that a finite family of polynomials $(P_c)_{c \\in \\mathrm{Cand}}$, indexed by a finite type $\\mathrm{Cand}$, is complete for total degree at most $\\lfloor n/2 \\rfloor + d$, in the sense that every $Q \\in K[X_1,\\dots,X_n]$ with $\\deg Q \\le \\lfloor n/2 \\rfloor + d$ agrees with some $P_c$ at every point of the cube; that for each $c$ the Hamming ball of radius $e$ centered at the function $x \\mapsto P_c(x)$ contains at most $B$ functions on the cube; and that the number of functions $\\{1,\\omega\\}^n \\to K$ strictly exceeds $\\abs{\\mathrm{Cand}} \\cdot B$. Then there is no polynomial $P$ with $\\deg P \\le d$ such that $P(x) \\neq \\prod_{i} x_i$ for at most $e$ points $x$ of the cube; that is, no polynomial of total degree at most $d$ approximates the product $\\prod_i x_i$ on $\\{1,\\omega\\}^n$ with at most $e$ errors.",
+ "hypotheses_covered": [
+  "$K$ is a finite field",
+  "$\\omega \\neq 0$",
+  "every function on the cube is computed by a squarefree (multilinear) polynomial",
+  "the candidate family is finite (indexed by a Fintype $\\mathrm{Cand}$)",
+  "the candidate family is complete for total degree $\\le \\lfloor n/2 \\rfloor + d$",
+  "each candidate's Hamming ball of radius $e$ has at most $B$ functions",
+  "the number of functions from the cube to $K$ exceeds $\\abs{\\mathrm{Cand}} \\cdot B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The same conclusion as the previous theorem, with the abstract counting hypothesis replaced\nby explicit data: a finite candidate family representing all degree-$\\le n/2 + d$\npolynomials on the cube, a bound $B$ on the size of each Hamming ball of radius $e$, and\nthe strict inequality $\\abs{\\{1,\\omega\\}^n \\to K} > \\abs{\\mathrm{Cand}} \\cdot B$."
+}

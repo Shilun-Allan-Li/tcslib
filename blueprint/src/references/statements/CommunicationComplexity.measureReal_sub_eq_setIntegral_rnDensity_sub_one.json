@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one",
+ "key": "c097df8be0363240",
+ "kind": "theorem",
+ "title": "Set difference of two measures as an integral of the density minus one",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on a measurable space $\\Omega$ with $\\mu$ absolutely continuous with respect to $\\nu$ (that is, $\\mu \\ll \\nu$), and let $S \\subseteq \\Omega$. Writing $\\frac{d\\mu}{d\\nu}$ for the (real-valued) Radon–Nikodym derivative of $\\mu$ with respect to $\\nu$, one has\n\\[\n  \\mu(S) - \\nu(S) \\;=\\; \\int_{S} \\left( \\frac{d\\mu}{d\\nu}(x) - 1 \\right) d\\nu(x).\n\\]",
+ "hypotheses_covered": [
+  "$\\mu$ is a probability measure on $\\Omega$",
+  "$\\nu$ is a probability measure on $\\Omega$",
+  "$\\mu \\ll \\nu$ (absolute continuity)",
+  "$S$ is a subset of $\\Omega$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mu \\ll \\nu$ and $S \\subseteq \\Omega$ is measurable, then\n\\[\n  \\mu(S) - \\nu(S) \\;=\\; \\int_S \\bigl(\\mathrm{rnDensity}(\\mu,\\nu)(x) - 1\\bigr)\\,d\\nu.\n\\]"
+}

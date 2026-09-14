@@ -1,0 +1,18 @@
+{
+ "lean_name": "bestRow_spec",
+ "key": "9d50f7a2657a72d4",
+ "kind": "lemma",
+ "title": "Optimality of the row best response",
+ "statement": "Let $G$ be a finite two-player zero-sum game with a nonempty set of $M$ row actions and $N$ column actions, given by a payoff matrix $A$ with $0 \\le A_{ij} \\le 1$, and let $q$ be a mixed strategy for the column player. For a pure row $i$, write $u(i) = \\sum_{j} A_{ij}\\, q_j$ for its expected payoff against $q$, and let $i^\\ast$ be a row maximising $u$. Then $u(i) \\le u(i^\\ast)$ for every row $i$.",
+ "hypotheses_covered": [
+  "G is a finite zero-sum game with M rows and N columns",
+  "the row action set is nonempty (M ≠ 0)",
+  "q is a mixed column strategy",
+  "i^* is the maximiser of the expected pure-row payoff against q",
+  "i is an arbitrary pure row"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any game $G$, mixed column strategy $q$, and pure row $i$,\n\\[\n  \\mathrm{pureVsPayoff}(G, i, q)\n  \\;\\le\\;\n  \\mathrm{pureVsPayoff}(G, \\mathrm{bestRow}(G, q), q).\n\\]"
+}

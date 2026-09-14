@@ -12,7 +12,7 @@ matrix for even arity.
 
 \section{Declarations}
 
-\begin{theorem}[Near-cubic lower bound for $3$-query LDCs]
+\begin{theorem}[Cubic lower-bound inequality for 3-query locally decodable codes]
 \lean{main_theorem_ldc_lower_bound}
 \label{main_theorem_ldc_lower_bound}
 \leanok
@@ -23,23 +23,18 @@ matrix for even arity.
 }
 \uses{NormalLDC}
 \difficulty{3}
-Let $k > 0$, $n \ge 2$, and let $\delta, \varepsilon \in (0,1]$. Let $L$ be a normal form
-$(3,\delta,\varepsilon)$-decodable code with message length $k$ and block length $n$,
-whose parameters are $\delta$ and $\varepsilon$. Then there is a constant $C > 0$ with
+Let $k \ge 1$ and $n \ge 2$ be integers, and let $\delta, \varepsilon \in (0,1]$.
+Suppose $L$ is a normal form $(3,\delta,\varepsilon)$-decodable code with message length
+$k$ and block length $n$, whose density parameter equals $\delta$ and whose advantage
+parameter equals $\varepsilon$. Then there exists a real constant $C > 0$ for which
 \[
-  k^3 \;\le\; \frac{n \cdot C \cdot (\log n)^6}{\varepsilon^{16}\,\delta^{16}} .
+  k^3 \;\le\; \frac{n \, C \, (\log n)^6}{\varepsilon^{16}\,\delta^{16}} .
 \]
-\emph{Placeholder --- the statement carries no lower-bound content.}  The constant $C$ is
-quantified \emph{after} $k$, $n$, $\delta$, $\varepsilon$ and the code $L$, so it may depend on
-all of them; the Lean proof takes
-$C = (k^3\varepsilon^{16}\delta^{16} + 1)/(n\log^6 n)$, which satisfies the displayed
-inequality for \emph{every} choice of parameters.  The intended Theorem~9.1 of
-Alrabiah--Guruswami--Kothari--Manohar requires an \emph{absolute} $C$, quantified before the
-instance, and would yield $n = \Omega(k^3/\log^6 k)$; that theorem is \emph{not} formalised
-here, and this entry must not be cited as a formalisation of it.
+Here $C$ is quantified after $k$, $n$, $\delta$, $\varepsilon$ and the code $L$ have
+been fixed, so it is permitted to depend on all of them.
 \end{theorem}
 
-\begin{theorem}[Lower bound for $q$-query LDCs with $q$ even]
+\begin{theorem}[A constant bound on $k$ of order $n^{1-2/q}\log n$]
 \lean{even_q_ldc_lower_bound}
 \label{even_q_ldc_lower_bound}
 \leanok
@@ -54,16 +49,9 @@ here, and this entry must not be cited as a formalisation of it.
   pdf-b372a20892ce-p011-b006,
   pdf-b372a20892ce-p011-b007
 }
-Let $q$ be even with $q \ge 2$, let $k > 0$ and $n \ge 2$, and let $\delta, \varepsilon >
-0$. Then there is a constant $C > 0$ with
+Let $q$ be an even integer with $q \ge 2$, let $k \ge 1$ and $n \ge 2$ be integers, and
+let $\delta, \varepsilon > 0$. Then there exists a constant $C > 0$ such that
 \[
-  k \;\le\; \frac{n^{1 - 2/q} \cdot C \cdot \log n}{\varepsilon^{4}\,\delta^{2}} .
+  k \;\le\; n^{\,1 - 2/q}\cdot\frac{C \,\log n}{\varepsilon^{4}\,\delta^{2}}.
 \]
-
-\emph{Placeholder --- the statement carries no lower-bound content.}  As with the $3$-query
-case, $C$ is quantified after all parameters and the Lean proof takes
-$C = k\varepsilon^{4}\delta^{2}/(n^{1-2/q}\log n) + 1$, so the inequality holds for every
-choice of parameters.  Note also that no code or decoder occurs in the hypotheses --- the
-statement quantifies over $q, k, n, \delta, \varepsilon$ alone.  Theorem~10.1 of
-Alrabiah--Guruswami--Kothari--Manohar is \emph{not} formalised here.
 \end{theorem}

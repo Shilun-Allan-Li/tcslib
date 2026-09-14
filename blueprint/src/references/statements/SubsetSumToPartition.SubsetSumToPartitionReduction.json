@@ -1,0 +1,17 @@
+{
+ "lean_name": "SubsetSumToPartition.SubsetSumToPartitionReduction",
+ "key": "980c8db471bd169f",
+ "kind": "theorem",
+ "title": "Subset Sum reduces to Partition",
+ "statement": "Let $U$ be a finite type, let $w : U \\to \\bbn$ be a weight function, and let $T \\in \\bbn$ be a target satisfying $T \\le \\sum_{a} w(a)$. Write $W = \\sum_{a} w(a)$, and form the weight function on the augmented universe $U \\oplus \\mathrm{Bool}$ that assigns weight $w(a)$ to each original item $a$, weight $2W - T$ to one added dummy item, and weight $W + T$ to a second added dummy item. Then some subset of $U$ has total $w$-weight exactly $T$ if and only if the augmented universe admits a partition into two parts of equal total weight.",
+ "hypotheses_covered": [
+  "w : U → ℕ is a weight function on a finite type U",
+  "T ∈ ℕ is a target",
+  "T ≤ sum of all weights",
+  "conclusion is an iff between SubsetSum(w,T) and Partition of the augmented weight function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $w : U \\to \\mathbb{N}$ and $T \\in \\mathbb{N}$ with $T \\le \\sum_{a} w(a)$, the Subset\nSum instance $(w, T)$ is solvable if and only if the Partition instance with weight\nfunction $\\texttt{SubsetSumToPartition.partitionWeight}\\ w\\ T$ on $U \\oplus \\mathrm{Bool}$\nis solvable."
+}

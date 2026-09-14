@@ -1,0 +1,14 @@
+{
+ "lean_name": "SATTo3SAT.SAT_to_3SAT_soundness",
+ "key": "322fabf5c9a0e3bd",
+ "kind": "theorem",
+ "title": "Soundness of the SAT-to-3-SAT encoding",
+ "statement": "Let $f$ be a CNF formula over a variable type $V$, and let its SAT-to-3-SAT encoding be the 3-CNF formula over the extended variable type (the original variables together with the fresh auxiliary chain variables). If this encoded 3-CNF formula is 3-satisfiable — that is, some assignment of the extended variables satisfies all of its 3-clauses — then $f$ itself is satisfiable.",
+ "hypotheses_covered": [
+  "the 3-CNF encoding of f is 3-satisfiable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\texttt{SATTo3SAT.to3SAT}\\,f$ is 3-satisfiable, then the original CNF formula $f$ is\nsatisfiable.  The witnessing assignment for $f$ is the restriction of any 3-SAT\nsatisfying assignment $\\alpha_3$ to original variables, $v \\mapsto \\alpha_3(\\mathtt{orig}\\,v)$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac",
+ "key": "b204d15d62d8a8ba",
+ "kind": "theorem",
+ "title": "Positive part equals half the total variation of the density",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on a measurable space $\\Omega$, with $\\mu$ absolutely continuous with respect to $\\nu$, and write $\\frac{d\\mu}{d\\nu}$ for the Radon–Nikodym density of $\\mu$ with respect to $\\nu$. Then the excess mass of the density above $1$, integrated over the region where the density is at least $1$, equals half the $L^1(\\nu)$-distance of the density from $1$:\n\\[\n\\int_{\\{x\\,:\\,\\frac{d\\mu}{d\\nu}(x)\\,\\ge\\,1\\}} \\left(\\frac{d\\mu}{d\\nu}(x)-1\\right)\\,d\\nu(x) \\;=\\; \\frac{1}{2}\\int_{\\Omega} \\left|\\frac{d\\mu}{d\\nu}(x)-1\\right|\\,d\\nu(x).\n\\]",
+ "hypotheses_covered": [
+  "μ and ν are probability measures on a measurable space Ω",
+  "μ is absolutely continuous with respect to ν"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mu \\ll \\nu$, then\n$\\mathrm{densityPositiveIntegral}(\\mu,\\nu) = \\tfrac{1}{2}\\,\\mathrm{densityAbsIntegral}(\\mu,\\nu)$."
+}

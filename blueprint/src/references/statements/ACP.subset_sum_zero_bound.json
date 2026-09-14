@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.subset_sum_zero_bound",
+ "key": "85cf8fec10b8fd24",
+ "kind": "lemma",
+ "title": "At most half of subset sums vanish",
+ "statement": "Let $p$ be a prime and let $v = (v_i)_{i \\in \\{1,\\dots,n\\}}$ be a nonzero tuple of elements of the field $\\bbz/p\\bbz$. Then at most half of the $2^n$ subsets of the index set $\\{1,\\dots,n\\}$ have vanishing subset sum; that is, twice the number of subsets $s \\subseteq \\{1,\\dots,n\\}$ for which $\\sum_{i \\in s} v_i = 0$ is at most $2^n$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "v is a tuple of n elements of Z/pZ",
+  "v is nonzero",
+  "conclusion: twice the count of zero-sum subsets is at most the total number 2^n of subsets"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a nonzero vector $v : \\mathrm{Fin}\\,n \\to \\mathbb{Z}/p$, the number of subsets\n$s \\subseteq \\mathrm{Fin}\\,n$ with $\\sum_{i \\in s} v_i = 0$ is at most half of all $2^n$\nsubsets; formally, twice that count is at most the total number of subsets."
+}

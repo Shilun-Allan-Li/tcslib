@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.approxOrPolyList_length",
+ "key": "f58c21df5ec0de9e",
+ "kind": "lemma",
+ "title": "Number of OR-approximating polynomials",
+ "statement": "Fix a prime $p$ and, for a given width $\\mathrm{width}$ and seed length $\\ell$, a family of polynomials $P_1,\\dots,P_{\\mathrm{width}}$ over $\\bbz/p$ in a fixed number of variables. Form the list whose entries are the OR-approximating polynomials, one for each random seed — a seed being a tuple $(S_1,\\dots,S_\\ell)$ of $\\ell$ subsets of the index set $\\{1,\\dots,\\mathrm{width}\\}$, listed with multiplicity. Then this list has length $2^{\\mathrm{width}\\cdot\\ell}$, the number of such seeds.",
+ "hypotheses_covered": [
+  "p is prime",
+  "polynomials P_1,...,P_width over Z/p in vars variables are given",
+  "width and seed length ℓ are fixed naturals"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The list $\\texttt{ACP.approxOrPolyList}$ has length $2^{\\mathrm{width}\\cdot\\ell}$."
+}

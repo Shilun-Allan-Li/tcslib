@@ -1,0 +1,16 @@
+{
+ "lean_name": "integral_entry",
+ "key": "175633ee11b47127",
+ "kind": "lemma",
+ "title": "Mean of a single Rademacher entry",
+ "statement": "Let $\\omega = (\\omega_{ij})$ be a $k \\times d$ array whose entries are independent Rademacher variables, each taking the values $-1$ and $+1$ with probability $\\tfrac12$ apiece. Then for every pair of indices $i \\in \\{1,\\dots,k\\}$ and $j \\in \\{1,\\dots,d\\}$, the entry $\\omega_{ij}$ has mean zero: $\\E[\\omega_{ij}] = 0$.",
+ "hypotheses_covered": [
+  "index i in Fin k",
+  "index j in Fin d",
+  "expectation taken under the joint Rademacher product measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $(i,j)$, the expected value of $\\omega_{ij}$ under the joint measure is\n$0$: $\\int \\omega_{ij} \\, d\\mathrm{radJointMeasure} = 0$."
+}

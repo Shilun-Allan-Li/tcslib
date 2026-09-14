@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.selectBranchVar_spec",
+ "key": "ae9fe15485c699fe",
+ "kind": "lemma",
+ "title": "Branch-variable selection returns a free variable",
+ "statement": "Let $f$ be a DNF formula on $n$ variables and $\\rho$ a restriction. Suppose that at least one term of $f$ is not killed by $\\rho$, and that no term of $f$ is fixed by $\\rho$. Then the branch-variable selection procedure applied to $f$ and $\\rho$ succeeds, returning a variable $v$ that is free in $\\rho$.",
+ "hypotheses_covered": [
+  "some term of f is not killed by ρ (¬∀ t∈f, killedBy)",
+  "no term of f is fixed by ρ (¬∃ t∈f, fixedBy)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nWhen not every term of $f$ is killed by $\\rho$ and no term is fixed by $\\rho$, the function\n$\\mathrm{selectBranchVar}\\,f\\,\\rho$ returns some variable $v$, and that $v$ is free in $\\rho$."
+}

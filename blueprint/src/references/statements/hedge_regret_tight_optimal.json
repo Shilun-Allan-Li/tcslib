@@ -1,0 +1,17 @@
+{
+ "lean_name": "hedge_regret_tight_optimal",
+ "key": "14898d10c2e9ddcb",
+ "kind": "theorem",
+ "title": "Optimal-rate regret bound for Hedge",
+ "statement": "Consider the Hedge algorithm run against a valid loss sequence for $N > 1$ experts over $T \\ge 1$ rounds, so that every individual loss lies in $[0,1]$. If the learning rate is set to the tight optimal value $\\eta_{\\mathrm{tight}} = \\sqrt{8\\ln N / T}$, then the regret against the best expert in hindsight satisfies\n\\[\n  R_T(\\eta_{\\mathrm{tight}}) \\;\\le\\; \\sqrt{\\tfrac{T}{2}\\,\\ln N}.\n\\]",
+ "hypotheses_covered": [
+  "T ≥ 1 rounds (0 < T)",
+  "N > 1 experts",
+  "loss sequence is valid: every loss lies in [0,1]",
+  "learning rate chosen as η_tight = √(8 ln N / T)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any valid loss sequence with $N > 1$ experts, $T \\ge 1$ rounds, using\n$\\eta_{\\mathrm{tight}} = \\sqrt{8\\ln N / T}$,\n\\[\n  R_T(\\eta_{\\mathrm{tight}}) \\;\\le\\; \\sqrt{\\frac{T}{2}\\ln N}.\n\\]"
+}

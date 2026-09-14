@@ -11,72 +11,101 @@ together with the complement rule for Bernoulli-restriction probabilities.
 
 \section{Declarations}
 
-\begin{lemma}[Subset-of-free-variables indicator factors per coordinate]
+\begin{lemma}[Indicator of a subset lying among free variables as a coordinate product]
 \lean{RestrictionFourier.indicator_subset_eq_prod}
 \label{RestrictionFourier.indicator_subset_eq_prod}
 \leanok
 \uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{4}
-For a set $T \subseteq \{0,\dots,n-1\}$ and a restriction $\rho$, the indicator of the event
-$T \subseteq \mathrm{freeVars}(\rho)$ equals the product over all coordinates $i$ of the factor
-that is the indicator of $\rho(i) = \star$ when $i \in T$, and $1$ otherwise.
+Let $\rho$ be a restriction on $n$ variables — a map assigning each index $i \in
+\{0,\dots,n-1\}$ either a fixed Boolean value or the free mark — and let $T \subseteq
+\{0,\dots,n-1\}$. Then the indicator of the event that every index in $T$ is free under
+$\rho$ factors as a product over all $n$ coordinates: \[ \mathbf{1}\bigl[\,T \subseteq
+\{i : \rho(i)\ \text{is free}\}\,\bigr] \;=\; \prod_{i=0}^{n-1} c_i, \] where the factor
+$c_i$ equals $\mathbf{1}[\rho(i)\ \text{is free}]$ when $i \in T$ and equals $1$
+otherwise.
 \end{lemma}
 
-\begin{theorem}[{Free-set marginal $\Pr[T \subseteq J] = p^{\abs{T}}$}]
+\begin{theorem}[Free-set marginal of a Bernoulli restriction]
 \lean{RestrictionFourier.bernoulliRestrProb_subset_freeVars}
 \label{RestrictionFourier.bernoulliRestrProb_subset_freeVars}
 \leanok
 \uses{LMN.varWeight, RestrictionFourier.indicator_subset_eq_prod, RestrictionFourier.sum_bernoulli_prod, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
 \difficulty{4}
-Under a Bernoulli($p$)-random restriction with free-coordinate set $J$, the probability that a
-fixed set $T$ is contained in $J$ is
+Fix $n \in \bbn$, a real parameter $p$, and a subset $T \subseteq \{1, \dots, n\}$ of
+the coordinates. Draw a Bernoulli($p$) random restriction $\rho$ on $n$ variables, and
+write $J$ for its set of free variables (the coordinates $\rho$ leaves unset). Then the
+probability that every coordinate of $T$ is left free is
 \[
-  \Pr[T \subseteq J] \;=\; p^{\abs{T}} .
+  \Pr\bigl[\,T \subseteq J\,\bigr] \;=\; p^{\abs{T}},
 \]
-This is the first-moment half of O'Donnell Proposition 4.17.
+that is, the total Bernoulli weight of those restrictions whose free variables include
+$T$ equals $p^{\abs{T}}$.
 \end{theorem}
 
-\begin{lemma}[Free-coordinate count as a sum of indicators]
+\begin{lemma}[Free-variable count as a sum of indicators]
 \lean{RestrictionFourier.card_inter_eq_sum}
 \label{RestrictionFourier.card_inter_eq_sum}
 \leanok
 \uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{3}
-For a set $U$ and a restriction $\rho$ with free-coordinate set $J$, the real number
-$\abs{U \cap J}$ equals $\sum_{i \in U} \mathbf{1}[\rho(i) = \star]$.
+Let $\rho$ be a restriction on $n$ variables, and let $U \subseteq \{1,\dots,n\}$ be a
+set of indices. Then the number of indices in $U$ at which $\rho$ is free (unset),
+viewed as a real number, equals
+\[
+\abs{U \cap J} = \sum_{i \in U} \mathbf{1}[\rho(i)\ \text{is free}],
+\]
+where $J$ is the set of free variables of $\rho$ and each summand is $1$ when $\rho(i)$
+is unset and $0$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Expectation of one free-coordinate indicator]
+\begin{lemma}[Total Bernoulli weight of restrictions leaving a coordinate free]
 \lean{RestrictionFourier.expectation_free_indicator}
 \label{RestrictionFourier.expectation_free_indicator}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{4}
-For each coordinate $i$, the Bernoulli($p$)-weighted sum over all restrictions of the indicator
-that $i$ is free equals $p$; that is, $\E[\mathbf{1}[i \in J]] = p$.
+Fix a real parameter $p$ and a coordinate $i$ among the $n$ variables. Summing the
+Bernoulli weight of $\rho$ over all restrictions $\rho$ on $n$ variables that leave $i$
+free — that is, those for which $i$ is a free variable of $\rho$ — gives
+\[
+\sum_{\rho \,:\, i \text{ free in } \rho}
+p^{\,|F(\rho)|}\left(\tfrac{1-p}{2}\right)^{\,n-|F(\rho)|} = p,
+\]
+where $F(\rho)$ denotes the set of free variables of $\rho$.
 \end{lemma}
 
-\begin{lemma}[Expectation of a product of two free-coordinate indicators]
+\begin{lemma}[Probability that two fixed coordinates are both free]
 \lean{RestrictionFourier.expectation_free_indicator_pair}
 \label{RestrictionFourier.expectation_free_indicator_pair}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{4}
-For distinct coordinates $i \ne j$, the Bernoulli($p$)-weighted sum over all restrictions of the
-product of the two indicators that $i$ and $j$ are free equals $p^2$; that is,
-$\E[\mathbf{1}[i \in J]\,\mathbf{1}[j \in J]] = p^2$.
+Fix $n$ and two distinct variables $i \neq j$ among the $n$ variables, and let $p \in
+\bbr$. Write $w_p(\rho)$ for the Bernoulli weight of a restriction $\rho$ on $n$
+variables, namely $p^{k}\left(\tfrac{1-p}{2}\right)^{n-k}$ where $k$ is the number of
+free variables of $\rho$. Then, summing over all such restrictions, the total weight
+carried by those $\rho$ that leave both $i$ and $j$ free equals $p^2$; that is,
+\[
+\sum_{\rho} w_p(\rho)\,\mathbf{1}[\rho(i)\text{ free}]\,\mathbf{1}[\rho(j)\text{ free}]
+= p^2.
+\]
 \end{lemma}
 
-\begin{lemma}[First moment of the free-coordinate count]
+\begin{lemma}[First moment of the free-variable count under a Bernoulli restriction]
 \lean{RestrictionFourier.expectation_card_inter}
 \label{RestrictionFourier.expectation_card_inter}
 \leanok
 \uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{3}
-Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
+Fix $n$ and a real number $p$, and let $\rho$ range over all restrictions on the $n$
+variables, each weighted by its Bernoulli weight $w_p(\rho)$. Writing $J(\rho)$ for the
+set of free variables of $\rho$, then for every set $U$ of variables,
 \[
-  \E\bigl[\abs{U \cap J}\bigr] \;=\; p \cdot \abs{U} .
+  \sum_{\rho} w_p(\rho)\,\abs{U \cap J(\rho)} \;=\; p\,\abs{U}.
 \]
+Equivalently, when $0 \le p \le 1$ so that $w_p$ is a probability distribution, the
+expected number of free variables landing in $U$ is $p\,\abs{U}$.
 \end{lemma}
 
 \begin{lemma}[Second moment of the free-coordinate count]
@@ -85,9 +114,14 @@ Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 \leanok
 \uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, RestrictionFourier.expectation_free_indicator_pair, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{5}
-Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
+Fix $n \in \bbn$, a parameter $p \in \bbr$, and a set of coordinates $U \subseteq
+\mathrm{Fin}\,n$. For a restriction $\rho$ on $n$ variables write $J(\rho)$ for its set
+of free variables. Summing over all such restrictions, each weighted by its Bernoulli
+weight, one has
 \[
-  \E\bigl[\abs{U \cap J}^2\bigr] \;=\; p \cdot \abs{U} \;+\; p^2\bigl(\abs{U}^2 - \abs{U}\bigr).
+\sum_{\rho} p^{\abs{J(\rho)}}\left(\tfrac{1-p}{2}\right)^{\,n - \abs{J(\rho)}} \abs{U
+\cap J(\rho)}^2
+  \;=\; p\,\abs{U} + p^2\bigl(\abs{U}^2 - \abs{U}\bigr).
 \]
 \end{lemma}
 
@@ -97,48 +131,60 @@ Under a Bernoulli($p$)-random restriction with free set $J$, for every set $U$,
 \leanok
 \uses{RestrictionFourier.expectation_card_inter, RestrictionFourier.expectation_card_inter_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{4}
-For $0 \le p \le 1$ and every set $U$, the Bernoulli($p$)-weighted mean squared deviation of
-$\abs{U \cap J}$ from $p\abs{U}$ is
+Let $0 \le p \le 1$, and let $U \subseteq \mathrm{Fin}\,n$ be a set of coordinates. For
+a restriction $\rho$ on $n$ variables, write $w_p(\rho)$ for its Bernoulli weight and
+$F(\rho)$ for its set of free variables. Then the $w_p$-weighted average, over all
+restrictions $\rho$ on $n$ variables, of the squared deviation of $\abs{U \cap F(\rho)}$
+from $p\abs{U}$ satisfies
 \[
-  \E\bigl[(p\abs{U} - \abs{U \cap J})^2\bigr] \;=\; p \cdot \abs{U} \cdot (1 - p).
+\sum_{\rho}\, w_p(\rho)\,\bigl(p\abs{U} - \abs{U \cap F(\rho)}\bigr)^2 \;=\;
+p\,\abs{U}\,(1 - p).
 \]
 \end{lemma}
 
-\begin{theorem}[Chebyshev lower tail for the free-coordinate count]
+\begin{theorem}[Lower-tail bound for free coordinates in a set]
 \lean{RestrictionFourier.bernoulliRestrProb_card_inter_lt}
 \label{RestrictionFourier.bernoulliRestrProb_card_inter_lt}
 \leanok
 \uses{RestrictionFourier.variance_card_inter, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 \difficulty{6}
-Let $0 \le p \le 1$, let $U$ be a set of coordinates and let $k \ge 1$ satisfy
-$3k \le p\abs{U}$. Then, under a Bernoulli($p$)-random restriction with free set $J$,
+Let $p \in \bbr$ satisfy $0 \le p \le 1$, let $U \subseteq \mathrm{Fin}\,n$ be a finite
+set of coordinates, and let $k$ be a positive integer with $3k \le p\,\abs{U}$. Writing
+$J$ for the set of free variables of a Bernoulli($p$)-random restriction $\rho$ on $n$
+variables, the probability that fewer than $k$ coordinates of $U$ remain free satisfies
 \[
-  \Pr\bigl[\abs{U \cap J} < k\bigr] \;\le\; \frac{3}{4k}.
+  \Pr\bigl[\,\abs{U \cap J} < k\,\bigr] \;\le\; \frac{3}{4k}.
 \]
-This is the Bernoulli-restriction analogue of the binomial lower tail used in O'Donnell
-Lemma 4.21, with the textbook bound $e^{-2k/3}$ replaced by the elementary $3/(4k) \le 3/4 < 1$.
 \end{theorem}
 
-\begin{lemma}[Complement rule for Bernoulli-restriction probability]
+\begin{lemma}[Complement rule for the Bernoulli restriction measure]
 \lean{RestrictionFourier.bernoulliRestrProb_not}
 \label{RestrictionFourier.bernoulliRestrProb_not}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{3}
-For $0 \le p \le 1$ and any decidable event $E$ on restrictions,
-$\Pr[\neg E] = 1 - \Pr[E]$ under the Bernoulli($p$)-restriction measure.
+Fix $n$ and a parameter $p$ with $0 \le p \le 1$, and consider the Bernoulli($p$) random
+restriction on $n$ variables, under which each restriction $\rho$ receives weight
+$p^{k}\,\bigl(\tfrac{1-p}{2}\bigr)^{\,n-k}$, where $k$ is the number of free variables
+of $\rho$. For any decidable predicate $E$ on restrictions, writing $\Pr[E]$ for the
+total weight of the restrictions satisfying $E$, the probability that $E$ fails equals
+one minus the probability that $E$ holds:
+\[
+  \Pr[\lnot E] = 1 - \Pr[E].
+\]
 \end{lemma}
 
-\begin{theorem}[Lower bound on the probability of many free coordinates]
+\begin{theorem}[Lower bound on the free coordinates within a set]
 \lean{RestrictionFourier.bernoulliRestrProb_card_inter_ge}
 \label{RestrictionFourier.bernoulliRestrProb_card_inter_ge}
 \leanok
 \uses{RestrictionFourier.bernoulliRestrProb_card_inter_lt, RestrictionFourier.bernoulliRestrProb_not, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
 \difficulty{4}
-Let $0 \le p \le 1$, let $U$ be a set of coordinates and let $k \ge 1$ satisfy
-$3k \le p\abs{U}$. Then, under a Bernoulli($p$)-random restriction with free set $J$,
+Fix $n$ and a parameter $p$ with $0 \le p \le 1$, let $U \subseteq \mathrm{Fin}\,n$ be a
+set of coordinates, and let $k \ge 1$ be an integer satisfying $3k \le p\,\abs{U}$. Draw
+a Bernoulli($p$) random restriction $\rho$ on $n$ variables, and let $J$ denote its set
+of free variables. Then
 \[
-  \Pr\bigl[k \le \abs{U \cap J}\bigr] \;\ge\; \frac{1}{4},
+  \Pr\bigl[\,k \le \abs{U \cap J}\,\bigr] \;\ge\; \frac{1}{4}.
 \]
-which is the form consumed by the concentration transfer of O'Donnell Lemma 4.21.
 \end{theorem}

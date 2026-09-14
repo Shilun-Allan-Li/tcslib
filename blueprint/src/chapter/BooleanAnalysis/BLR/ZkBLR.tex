@@ -58,15 +58,17 @@ $\mathrm{dist}(f,g) \ge \varepsilon$ for every linear function
 $g : \mathbb{Z}_k^n \to \mathbb{Z}_k$.
 \end{definition}
 
-\begin{lemma}[Linear iff dot-product character]
+\begin{lemma}[Linear functions as dot-product characters]
 \lean{ZkBLR.linear_iff_character}
 \label{ZkBLR.linear_iff_character}
 \leanok
 \uses{ZkBLR.is_linear, ZkFourier.ZkVec, ZkFourier.zkDot, ZkFourier.zkDot_add_right}
 \difficulty{6}
-A function $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is linear if and only if
-there exists $s \in \mathbb{Z}_k^n$ such that $f(x) = s \cdot x$ for all $x$,
-where $s \cdot x = \sum_i s_i x_i$ denotes the dot product in $\mathbb{Z}_k$.
+Fix an integer $k \ge 1$ and a dimension $n$, and let $f : (\bbz/k\bbz)^n \to
+\bbz/k\bbz$ be any function. Then $f$ is linear — that is, $f(x+y) = f(x) + f(y)$ for
+all $x, y \in (\bbz/k\bbz)^n$ — if and only if there is a vector $s \in (\bbz/k\bbz)^n$
+with $f(x) = s \cdot x = \sum_{i=0}^{n-1} s_i x_i$ for every $x$, all sums taken modulo
+$k$.
 \end{lemma}
 
 \begin{definition}[Canonical linear character]
@@ -98,14 +100,15 @@ function $(\mathrm{normalize}\,f)(x) = f(x) - f(0)$, which satisfies
 $(\mathrm{normalize}\,f)(0) = 0$.
 \end{definition}
 
-\begin{lemma}[Normalization vanishes at origin]
+\begin{lemma}[Normalization vanishes at the origin]
 \lean{ZkBLR.normalize_zero}
 \label{ZkBLR.normalize_zero}
 \leanok
 \uses{ZkBLR.normalize, ZkFourier.ZkVec}
 \difficulty{1}
-For any $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
-$(\mathrm{normalize}\,f)(0) = 0$.
+Let $f : (\bbz/k\bbz)^n \to \bbz/k\bbz$ be any function on the $n$-dimensional space
+over $\bbz/k\bbz$, and let its normalization be $(\mathrm{normalize}\,f)(x) = f(x) -
+f(0)$. Then this normalization vanishes at the origin: $(\mathrm{normalize}\,f)(0) = 0$.
 \end{lemma}
 
 \begin{lemma}[Linear functions are normalized]
@@ -114,8 +117,9 @@ $(\mathrm{normalize}\,f)(0) = 0$.
 \leanok
 \uses{ZkBLR.is_linear, ZkBLR.normalized, ZkFourier.ZkVec}
 \difficulty{1}
-If $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is linear, then $f(0) = 0$, i.e.\
-$f$ is normalized.
+Let $k \ge 1$ and $n$ be natural numbers, and let $f : (\bbz/k\bbz)^n \to \bbz/k\bbz$ be
+a linear function, meaning $f(x+y) = f(x) + f(y)$ for all $x, y \in (\bbz/k\bbz)^n$.
+Then $f$ is normalized: $f(0) = 0$.
 \end{lemma}
 
 \begin{definition}[$\varepsilon$-far from linear, normalized version]
@@ -129,42 +133,55 @@ if $f$ is normalized ($f(0)=0$), $0\le\varepsilon\le 1$, and
 $\mathrm{dist}(f,g)\ge\varepsilon$ for every linear $g$.
 \end{definition}
 
-\begin{lemma}[Real part of root of unity bounded by $\cos(2\pi/k)$]
+\begin{lemma}[Real part of a nontrivial root of unity]
 \lean{ZkBLR.re_toOmega_le_re_rootOfUnity}
 \label{ZkBLR.re_toOmega_le_re_rootOfUnity}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
 \difficulty{5}
-For $k \ge 2$ and any nonzero $a \in \mathbb{Z}_k$,
-$\operatorname{Re}(\omega_k^a) \le \cos(2\pi/k)$.
+Let $k \ge 2$ and write $\omega_k = e^{2\pi i / k}$ for the primitive $k$-th root of
+unity. For every nonzero $a \in \mathbb{Z}/k\mathbb{Z}$,
+\[
+\operatorname{Re}\!\left(\omega_k^{\,a}\right) \le \cos\!\left(\frac{2\pi}{k}\right),
+\]
+where $\omega_k^{\,a}$ denotes $\omega_k$ raised to the canonical representative of $a$
+in $\{0, 1, \ldots, k-1\}$.
 \end{lemma}
 
-\begin{lemma}[Upper bound on real part of Fourier coefficient]
+\begin{lemma}[Upper bound on the real part of a Fourier coefficient]
 \lean{ZkBLR.re_fourier_coeff_upper_bound}
 \label{ZkBLR.re_fourier_coeff_upper_bound}
 \leanok
 \uses{ZkBLR.lift_omega, ZkBLR.linear_character, ZkBLR.re_toOmega_le_re_rootOfUnity, ZkBLR.zk_dist, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.rootOfUnity, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.toOmega_neg, ZkFourier.zkDot}
 \difficulty{5}
-For $k \ge 2$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$, the real part of
-the $s$-th Fourier coefficient of the lifted function $\widetilde{f}$ satisfies
+Let $k \ge 2$ and let $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$, with lift $\widetilde{f}(x)
+= \omega_k^{f(x)}$ where $\omega_k = e^{2\pi i/k}$. Then for every frequency $s \in
+\mathbb{Z}_k^n$, the real part of the Fourier coefficient of $\widetilde{f}$ at $s$ is
+bounded above by
 \[
   \operatorname{Re}\bigl[\widehat{\widetilde{f}}(s)\bigr]
   \;\le\;
-  1 - \bigl(1 - \cos(2\pi/k)\bigr)\cdot\mathrm{dist}(f,\chi_s).
+  1 - \bigl(1 - \cos(2\pi/k)\bigr)\,\mathrm{dist}(f,\chi_s),
 \]
+where $\chi_s(x) = s\cdot x$ is the linear character and $\mathrm{dist}(f,\chi_s)$ is
+the fraction of inputs $x$ on which $f(x) \ne s\cdot x$.
 \end{lemma}
 
-\begin{lemma}[Fourier bound from $\varepsilon$-far hypothesis]
+\begin{lemma}[Fourier bound for functions far from linear]
 \lean{ZkBLR.re_epsilon_far_bounds_fourier}
 \label{ZkBLR.re_epsilon_far_bounds_fourier}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.is_linear, ZkBLR.lift_omega, ZkBLR.linear_character, ZkBLR.re_fourier_coeff_upper_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff, ZkFourier.zkDot_add_right}
 \difficulty{3}
-If $k \ge 2$ and $f$ is $\varepsilon$-far from linear (in the normalized sense),
-then for every $s \in \mathbb{Z}_k^n$,
+Fix an integer $k \ge 2$ and let $f : \bbz_k^n \to \bbz_k$ be $\varepsilon$-far from
+linear in the normalized sense: that is, $f(0) = 0$, the parameter satisfies $0 \le
+\varepsilon \le 1$, and $\dist(f, g) \ge \varepsilon$ for every linear $g : \bbz_k^n \to
+\bbz_k$. Write $\widetilde{f}(x) = \omega_k^{f(x)}$ for the lift of $f$ to the unit
+circle, where $\omega_k = e^{2\pi i/k}$, and let $\widehat{\widetilde{f}}(s)$ denote its
+Fourier coefficient at frequency $s$. Then for every $s \in \bbz_k^n$,
 \[
   \operatorname{Re}\bigl[\widehat{\widetilde{f}}(s)\bigr]
-  \;\le\; 1 - \bigl(1-\cos(2\pi/k)\bigr)\varepsilon.
+  \;\le\; 1 - \bigl(1 - \cos(2\pi/k)\bigr)\,\varepsilon.
 \]
 \end{lemma}
 
@@ -194,206 +211,273 @@ The BLR acceptance probability of $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is
 \]
 \end{definition}
 
-\begin{lemma}[BLR completeness]
+\begin{lemma}[Completeness of the BLR linearity test]
 \lean{ZkBLR.BLR_completeness}
 \label{ZkBLR.BLR_completeness}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.is_linear, ZkFourier.ZkVec, ZkFourier.card_ZkVec}
 \difficulty{3}
-If $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is linear, then
-$\Pr[{\rm BLR\ accepts}\ f] = 1$.
+Let $k \ge 1$ and $n \ge 0$, and let $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ be a linear
+function, meaning $f(x+y) = f(x) + f(y)$ for all $x, y \in \mathbb{Z}_k^n$. Then the BLR
+acceptance probability of $f$ equals $1$; that is,
+\[
+  \Pr_{x,y}\bigl[f(x+y) = f(x) + f(y)\bigr] = 1,
+\]
+where $x$ and $y$ range independently and uniformly over $\mathbb{Z}_k^n$.
 \end{lemma}
 
-\begin{lemma}[Geometric sum of twisted roots of unity]
+\begin{lemma}[Orthogonality sum for additive characters mod $k$]
 \lean{ZkBLR.geom_sum_toOmega_dual}
 \label{ZkBLR.geom_sum_toOmega_dual}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b005}
 \uses{ZkFourier.geom_sum_toOmega, ZkFourier.toOmega}
 \difficulty{1}
-For any $a \in \mathbb{Z}_k$,
+Let $k \ge 1$ and write $\omega_k = e^{2\pi i/k}$ for the primitive $k$-th root of
+unity. For each $a \in \mathbb{Z}/k\mathbb{Z}$,
 \[
-  \sum_{j \in \mathbb{Z}_k} \omega_k^{ja}
-  \;=\; \begin{cases} k & \text{if } a = 0, \\ 0 & \text{otherwise.} \end{cases}
+  \sum_{j \in \mathbb{Z}/k\mathbb{Z}} \omega_k^{\,j a}
+  \;=\;
+  \begin{cases}
+    k & \text{if } a = 0, \\
+    0 & \text{otherwise,}
+  \end{cases}
 \]
+where each exponent $ja \in \mathbb{Z}/k\mathbb{Z}$ is taken via its canonical
+representative in $\{0, 1, \ldots, k-1\}$.
 \end{lemma}
 
-\begin{lemma}[Indicator as character sum]
+\begin{lemma}[Indicator as a character sum]
 \lean{ZkBLR.indicator_eq_char_sum_re}
 \label{ZkBLR.indicator_eq_char_sum_re}
 \leanok
 \uses{ZkBLR.geom_sum_toOmega_dual, ZkFourier.toOmega}
 \difficulty{2}
-For any $a \in \mathbb{Z}_k$,
+Let $k \ge 1$ and write $\omega_k = e^{2\pi i/k}$ for the primitive $k$-th root of
+unity. For every $a \in \mathbb{Z}/k\mathbb{Z}$,
 \[
-  \mathbf{1}[a=0]
-  \;=\; \frac{1}{k}\,\operatorname{Re}\!\left[\sum_{j\in\mathbb{Z}_k}\omega_k^{ja}\right].
+\mathbf{1}[a = 0] \;=\; \frac{1}{k}\,\operatorname{Re}\!\left(\sum_{j \in
+\mathbb{Z}/k\mathbb{Z}} \omega_k^{\,ja}\right),
 \]
+where the exponent $ja$ is computed in $\mathbb{Z}/k\mathbb{Z}$ and then lifted to its
+canonical representative in $\{0,\ldots,k-1\}$, and the left-hand side equals $1$ when
+$a = 0$ and $0$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Parseval identity for $j$-twisted lift]
+\begin{lemma}[Parseval identity for the twisted lift]
 \lean{ZkBLR.parseval_lift_omega_j}
 \label{ZkBLR.parseval_lift_omega_j}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.L2_norm_sq, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.fourier_coeff, ZkFourier.norm_toOmega, ZkFourier.parseval_identity, ZkFourier.toOmega}
 \difficulty{3}
-For any $j \in \mathbb{Z}_k$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
+Let $k \ge 1$ and $n \ge 0$ be integers, and write $\omega_k = e^{2\pi i/k}$. Fix $j \in
+\mathbb{Z}/k\mathbb{Z}$ and an arbitrary function $f : \mathbb{Z}_k^n \to
+\mathbb{Z}/k\mathbb{Z}$, and let $\widetilde{f}_j : \mathbb{Z}_k^n \to \mathbb{C}$ be
+the $j$-twisted lift given by $\widetilde{f}_j(x) = \omega_k^{\,j\cdot f(x)}$, with
+Fourier coefficients $\widehat{\widetilde{f}_j}(s)$ indexed by the frequencies $s \in
+\mathbb{Z}_k^n$. Then
 \[
-  \sum_{s \in \mathbb{Z}_k^n}
-  \bigl\|\widehat{(\widetilde{f}_j)}(s)\bigr\|^2 = 1.
+\sum_{s \in \mathbb{Z}_k^n} \bigl\lvert \widehat{\widetilde{f}_j}(s) \bigr\rvert^{2} =
+1.
 \]
 \end{lemma}
 
-\begin{lemma}[Triple-product Fourier expansion]
+\begin{lemma}[Triple-product identity for the twisted lift]
 \lean{ZkBLR.triple_product_fourier}
 \label{ZkBLR.triple_product_fourier}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion, ZkFourier.inner_product}
 \difficulty{6}
-For $j \in \mathbb{Z}_k$ and $F = \widetilde{f}_j$, the triple-product
-expectation satisfies
+Fix $k \ge 1$ and $n \ge 0$, and work over the group $\mathbb{Z}_k^n =
+(\mathbb{Z}/k\mathbb{Z})^n$ with primitive $k$-th root of unity $\omega_k = e^{2\pi
+i/k}$. Given $j \in \mathbb{Z}/k\mathbb{Z}$ and a map $f \colon \mathbb{Z}_k^n \to
+\mathbb{Z}/k\mathbb{Z}$, let $F(x) = \omega_k^{\,j\cdot f(x)}$ be its $j$-twisted lift,
+and for $s \in \mathbb{Z}_k^n$ let $\widehat{F}(s) =
+\mathbb{E}_x\!\big[F(x)\,\overline{\omega_k^{\,s\cdot x}}\big]$ be its Fourier
+coefficient, where $s\cdot x = \sum_{i} s_i x_i \in \mathbb{Z}/k\mathbb{Z}$ and
+$\mathbb{E}$ denotes the uniform average over $\mathbb{Z}_k^n$. Then the triple-product
+expectation over independent uniform $x,y$ equals a cubic sum of the Fourier
+coefficients:
 \[
-  \mathbb{E}_x\!\left[\mathbb{E}_y\!\left[
-    F(x{+}y)\,\overline{F(x)}\,\overline{F(y)}
-  \right]\right]
-  = \sum_{s\in\mathbb{Z}_k^n}
-    \|\widehat{F}(s)\|^2\,\overline{\widehat{F}(s)}.
+  \mathbb{E}_x\,\mathbb{E}_y\!\left[F(x+y)\,\overline{F(x)}\,\overline{F(y)}\right]
+= \sum_{s\in\mathbb{Z}_k^n} \bigl\lvert
+\widehat{F}(s)\bigr\rvert^2\,\overline{\widehat{F}(s)}.
 \]
 \end{lemma}
 
-\begin{lemma}[BLR probability as Fourier sum]
+\begin{lemma}[BLR acceptance probability as a Fourier sum]
 \lean{ZkBLR.BLR_accept_prob_eq_fourier_sum}
 \label{ZkBLR.BLR_accept_prob_eq_fourier_sum}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.indicator_eq_char_sum_re, ZkBLR.lift_omega_j, ZkBLR.triple_product_fourier, ZkFourier.ZkVec, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.toOmega_neg}
 \difficulty{6}
-The BLR acceptance probability admits the Fourier representation
+Let $k \ge 1$, and let $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$. For each $j \in
+\mathbb{Z}_k$ let $\widetilde{f}_j(x) = \omega_k^{\,j\,f(x)}$ denote the $j$-twisted
+lift of $f$, and write $\widehat{\widetilde{f}_j}(s)$ for its Fourier coefficient at
+frequency $s \in \mathbb{Z}_k^n$. Then the BLR acceptance probability of $f$ admits the
+representation
 \[
-  \Pr[{\rm accept}]
+  \Pr_{x,y}\bigl[f(x+y)=f(x)+f(y)\bigr]
   = \frac{1}{k}
-    \sum_{j\in\mathbb{Z}_k}
+    \sum_{j\in\mathbb{Z}_k}\;
     \sum_{s\in\mathbb{Z}_k^n}
-    \bigl\|\widehat{(\widetilde{f}_j)}(s)\bigr\|^2
-    \operatorname{Re}\!\left[\widehat{(\widetilde{f}_j)}(s)\right].
+    \bigl|\widehat{\widetilde{f}_j}(s)\bigr|^2\,
+    \operatorname{Re}\widehat{\widetilde{f}_j}(s),
 \]
+where $|\cdot|$ is the complex modulus and $\operatorname{Re}$ the real part.
 \end{lemma}
 
-\begin{lemma}[Zero-index contribution equals one]
+\begin{lemma}[Zero-twisted lift contributes one to the Fourier sum]
 \lean{ZkBLR.lift_omega_j_zero_contribution}
 \label{ZkBLR.lift_omega_j_zero_contribution}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.toOmega_zero}
 \difficulty{4}
-For any $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$, the $j=0$ term of the Fourier
-sum evaluates to $1$:
+Fix an integer $k \ge 1$, and let $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ be arbitrary.
+Write $\widetilde{f}_0(x) = \omega_k^{\,0 \cdot f(x)}$ for the $0$-twisted lift of $f$
+(equivalently, the constant function $1$), and let $\widehat{\widetilde{f}_0}(s)$ denote
+its Fourier coefficient at frequency $s \in \mathbb{Z}_k^n$. Then
 \[
-  \sum_{s\in\mathbb{Z}_k^n}
-  \bigl\|\widehat{(\widetilde{f}_0)}(s)\bigr\|^2\,
-  \operatorname{Re}\!\left[\widehat{(\widetilde{f}_0)}(s)\right] = 1.
+  \sum_{s \in \mathbb{Z}_k^n}
+    \bigl|\widehat{\widetilde{f}_0}(s)\bigr|^2 \,
+    \operatorname{Re}\widehat{\widetilde{f}_0}(s) = 1,
 \]
+where $|\cdot|$ is the complex modulus.
 \end{lemma}
 
-\begin{lemma}[Weighted Fourier sum at most one]
+\begin{lemma}[Weighted Fourier sum bounded by one]
 \lean{ZkBLR.weighted_fourier_sum_le_one}
 \label{ZkBLR.weighted_fourier_sum_le_one}
 \leanok
 \uses{ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{4}
-For any $j \in \mathbb{Z}_k$ and $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$,
+Let $k \ge 1$ and $n$ be integers, fix $j \in \mathbb{Z}/k\mathbb{Z}$ and a function $f
+: \mathbb{Z}_k^n \to \mathbb{Z}/k\mathbb{Z}$, and let $\widetilde{f}_j(x) =
+\omega_k^{\,j\,f(x)}$ be its $j$-twisted lift, with Fourier coefficients
+$\widehat{\widetilde{f}_j}(s)$ indexed by frequencies $s \in \mathbb{Z}_k^n$. Then
 \[
-  \sum_{s\in\mathbb{Z}_k^n}
-  \bigl\|\widehat{(\widetilde{f}_j)}(s)\bigr\|^2\,
-  \operatorname{Re}\!\left[\widehat{(\widetilde{f}_j)}(s)\right] \;\le\; 1.
+  \sum_{s \in \mathbb{Z}_k^n}
+    \bigl\lvert \widehat{\widetilde{f}_j}(s) \bigr\rvert^{2}\,
+    \operatorname{Re}\widehat{\widetilde{f}_j}(s)
+  \;\le\; 1,
 \]
+where $\lvert\cdot\rvert$ denotes the complex modulus and $\operatorname{Re}$ the real
+part.
 \end{lemma}
 
-\begin{lemma}[Cube-sum bounded by max times square-sum]
+\begin{lemma}[Cube-sum of Fourier coefficients bounded by the maximum]
 \lean{ZkBLR.cube_sum_bound_by_max}
 \label{ZkBLR.cube_sum_bound_by_max}
 \leanok
 \uses{ZkBLR.lift_omega, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{3}
-If $\|\widehat{\widetilde{f}}(s)\| \le A$ for all $s \in \mathbb{Z}_p^n$, then
+Let $p$ be a prime, let $n \ge 0$, and let $f : \bbz_p^n \to \bbz_p$ be a function,
+whose lift to roots of unity is $\widetilde{f}(x) = \omega_p^{f(x)}$ with $\omega_p =
+e^{2\pi i/p}$. Write $\widehat{\widetilde{f}}(s)$ for the Fourier coefficient of
+$\widetilde{f}$ at frequency $s \in \bbz_p^n$. If $A \in \bbr$ is such that
+$\bigl\|\widehat{\widetilde{f}}(s)\bigr\| \le A$ for every $s \in \bbz_p^n$, then
 \[
-  \sum_{s\in\mathbb{Z}_p^n}
-  \bigl\|\widehat{\widetilde{f}}(s)\bigr\|^3
+  \sum_{s \in \bbz_p^n} \bigl\|\widehat{\widetilde{f}}(s)\bigr\|^3
   \;\le\;
-  A \cdot \sum_{s\in\mathbb{Z}_p^n}
-  \bigl\|\widehat{\widetilde{f}}(s)\bigr\|^2.
+  A \sum_{s \in \bbz_p^n} \bigl\|\widehat{\widetilde{f}}(s)\bigr\|^2.
 \]
 \end{lemma}
 
-\begin{lemma}[Parseval identity for lift\_omega]
+\begin{lemma}[Parseval identity for a root-of-unity lift]
 \lean{ZkBLR.parseval_lift_omega}
 \label{ZkBLR.parseval_lift_omega}
 \leanok
 \uses{ZkBLR.lift_omega, ZkFourier.L2_norm_sq, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.fourier_coeff, ZkFourier.norm_toOmega, ZkFourier.parseval_identity}
 \difficulty{2}
-For $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$,
+Let $p$ be a prime and $n \ge 0$, and write $\omega_p = e^{2\pi i/p}$. For a function $f
+: \mathbb{Z}_p^n \to \mathbb{Z}/p\mathbb{Z}$, let $\widetilde{f} : \mathbb{Z}_p^n \to
+\mathbb{C}$ be its lift $\widetilde{f}(x) = \omega_p^{f(x)}$, and let
+$\widehat{\widetilde{f}}(s)$ denote its Fourier coefficient at frequency $s \in
+\mathbb{Z}_p^n$. Then
 \[
-  \sum_{s\in\mathbb{Z}_p^n}
-  \bigl\|\widehat{\widetilde{f}}(s)\bigr\|^2 = 1.
+  \sum_{s \in \mathbb{Z}_p^n} \bigl|\widehat{\widetilde{f}}(s)\bigr|^2 = 1.
 \]
 \end{lemma}
 
-\begin{lemma}[Weighted Fourier sum bounded by $\varepsilon$-far condition]
+\begin{lemma}[Weighted Fourier sum bound for functions far from linear]
 \lean{ZkBLR.weighted_fourier_sum_bound}
 \label{ZkBLR.weighted_fourier_sum_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega, ZkBLR.parseval_lift_omega, ZkBLR.re_epsilon_far_bounds_fourier, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{3}
-If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
-(normalized), then
+Let $p$ be prime, and let $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ be normalized and
+$\varepsilon$-far from linear: that is, $f(0) = 0$, the parameter satisfies $0 \le
+\varepsilon \le 1$, and $\mathrm{dist}(f,g) \ge \varepsilon$ for every linear $g :
+\mathbb{Z}_p^n \to \mathbb{Z}_p$. Write $\widetilde{f}(x) = \omega_p^{f(x)}$ for the
+lift of $f$ to the $p$-th roots of unity, and $\hat{\widetilde{f}}(s)$ for its Fourier
+coefficient at frequency $s \in \mathbb{Z}_p^n$. Then
 \[
-  \sum_{s\in\mathbb{Z}_p^n}
-  \bigl\|\widehat{\widetilde{f}}(s)\bigr\|^2\,
-  \operatorname{Re}\!\left[\widehat{\widetilde{f}}(s)\right]
-  \;\le\; 1 - \bigl(1-\cos(2\pi/p)\bigr)\varepsilon.
+  \sum_{s \in \mathbb{Z}_p^n}
+    \bigl|\hat{\widetilde{f}}(s)\bigr|^2 \,
+    \operatorname{Re}\bigl[\hat{\widetilde{f}}(s)\bigr]
+  \;\le\;
+  1 - \bigl(1 - \cos(2\pi/p)\bigr)\varepsilon .
 \]
 \end{lemma}
 
-\begin{lemma}[Fourier coefficient real-part bound for $j$-twisted lift]
+\begin{lemma}[Fourier coefficient bound for a twisted lift of an $\varepsilon$-far function]
 \lean{ZkBLR.re_fourier_coeff_lift_omega_j_bound}
 \label{ZkBLR.re_fourier_coeff_lift_omega_j_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.re_epsilon_far_bounds_fourier, ZkBLR.zk_dist, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{4}
-If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
-(normalized), $j \ne 0$, and $s \in \mathbb{Z}_p^n$, then
+Let $p$ be a prime, let $n \ge 0$, and write $\omega_p = e^{2\pi i/p}$ for the primitive
+$p$-th root of unity. Let $f : \bbz_p^{\,n} \to \bbz_p$ be normalized ($f(0)=0$) and
+$\varepsilon$-far from linear, meaning $0 \le \varepsilon \le 1$ and $\Pr_x[f(x)\ne
+g(x)] \ge \varepsilon$ for every additive homomorphism $g : \bbz_p^{\,n} \to \bbz_p$.
+Fix $j \in \bbz_p$ with $j \ne 0$, and for $s \in \bbz_p^{\,n}$ let $\widehat{h}(s) =
+\E_x\bigl[h(x)\,\omega_p^{-\,s\cdot x}\bigr]$ denote the Fourier coefficient of a
+function $h : \bbz_p^{\,n} \to \bbc$ at frequency $s$, where $s\cdot x = \sum_{i} s_i
+x_i \in \bbz_p$. Then the $j$-twisted lift $\widetilde{f}_j(x) = \omega_p^{\,j\,f(x)}$
+satisfies
 \[
-  \operatorname{Re}\!\left[\widehat{(\widetilde{f}_j)}(s)\right]
-  \;\le\; 1 - \bigl(1-\cos(2\pi/p)\bigr)\varepsilon.
+\operatorname{Re}\,\widehat{\widetilde{f}_j}(s) \;\le\; 1 - \bigl(1 -
+\cos(2\pi/p)\bigr)\,\varepsilon
 \]
+for every $s \in \bbz_p^{\,n}$.
 \end{lemma}
 
-\begin{lemma}[Weighted sum bound for $j$-twisted lift]
+\begin{lemma}[Weighted Fourier bound for the twisted lift of a far-from-linear function]
 \lean{ZkBLR.weighted_sum_lift_omega_j_bound}
 \label{ZkBLR.weighted_sum_lift_omega_j_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkBLR.re_fourier_coeff_lift_omega_j_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{3}
-If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
-(normalized) and $j \ne 0$, then
+Let $p$ be prime and let $f : \bbz_p^n \to \bbz_p$ be normalized, meaning $f(0) = 0$,
+and $\varepsilon$-far from linear: $0 \le \varepsilon \le 1$ and $\mathrm{dist}(f,g) \ge
+\varepsilon$ for every linear function $g : \bbz_p^n \to \bbz_p$, where $\mathrm{dist}$
+denotes the fraction of inputs on which the two functions disagree. Fix a nonzero $j \in
+\bbz_p$ and let $\widetilde{f}_j(x) = \omega_p^{\,j\, f(x)}$ be the associated
+$j$-twisted lift, with $\omega_p = e^{2\pi i / p}$, and write
+$\widehat{\widetilde{f}_j}(s)$ for its Fourier coefficient at frequency $s$. Then
 \[
-  \sum_{s\in\mathbb{Z}_p^n}
-  \bigl\|\widehat{(\widetilde{f}_j)}(s)\bigr\|^2\,
-  \operatorname{Re}\!\left[\widehat{(\widetilde{f}_j)}(s)\right]
-  \;\le\; 1 - \bigl(1-\cos(2\pi/p)\bigr)\varepsilon.
+\sum_{s \in \bbz_p^n} \bigl|\widehat{\widetilde{f}_j}(s)\bigr|^2
+\,\operatorname{Re}\widehat{\widetilde{f}_j}(s)
+  \;\le\; 1 - \bigl(1 - \cos(2\pi/p)\bigr)\varepsilon .
 \]
 \end{lemma}
 
-\begin{lemma}[BLR soundness for prime fields]
+\begin{lemma}[BLR soundness over a prime field]
 \lean{ZkBLR.BLR_soundness}
 \label{ZkBLR.BLR_soundness}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_accept_prob_eq_fourier_sum, ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j_zero_contribution, ZkBLR.weighted_sum_lift_omega_j_bound, ZkFourier.ZkVec}
 \difficulty{4}
-If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
-(normalized), then
+Let $p$ be prime and fix $n \ge 0$. Let $f : \bbz_p^n \to \bbz_p$ be a normalized
+function (so $f(0)=0$), and let $0 \le \varepsilon \le 1$ be such that $f$ is
+$\varepsilon$-far from every linear map, meaning $\mathrm{dist}(f,g) \ge \varepsilon$
+for every linear $g : \bbz_p^n \to \bbz_p$, where $\mathrm{dist}(f,g) = \Pr_x[f(x) \ne
+g(x)]$. Then the BLR acceptance probability of $f$ satisfies
 \[
-  \Pr[{\rm BLR\ accepts}\ f]
-  \;\le\; 1 - \frac{p-1}{p}\bigl(1-\cos(2\pi/p)\bigr)\varepsilon.
+  \Pr_{x,y}\bigl[f(x+y) = f(x)+f(y)\bigr]
+  \;\le\; 1 - \frac{p-1}{p}\,\bigl(1 - \cos(2\pi/p)\bigr)\,\varepsilon,
 \]
+where $x,y$ range uniformly and independently over $\bbz_p^n$.
 \end{lemma}
 
 \begin{lemma}[$\varepsilon$-farness preserved under unit scaling]
@@ -402,69 +486,89 @@ If $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far from linear
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.zk_dist, ZkFourier.ZkVec}
 \difficulty{4}
-If $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is $\varepsilon$-far from linear
-(normalized) and $j \in \mathbb{Z}_k^\times$ is a unit, then the scaled
-function $x \mapsto j \cdot f(x)$ is also $\varepsilon$-far from linear
-(normalized).
+Let $f : \bbz_k^n \to \bbz_k$ be a normalized function that is $\varepsilon$-far from
+linear, meaning $f(0) = 0$, $0 \le \varepsilon \le 1$, and $\dist(f, g) \ge \varepsilon$
+for every linear $g : \bbz_k^n \to \bbz_k$. Then for any unit $j \in (\bbz_k)^\times$,
+the scaled function $x \mapsto j \cdot f(x)$ is again normalized and $\varepsilon$-far
+from linear.
 \end{lemma}
 
-\begin{lemma}[Real-part bound for unit-twisted lift]
+\begin{lemma}[Real-part bound for a unit-twisted lift]
 \lean{ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound}
 \label{ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.re_epsilon_far_bounds_fourier, ZkBLR.unit_mul_epsilon_far, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{2}
-If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), $j \in
-\mathbb{Z}_k^\times$, and $s \in \mathbb{Z}_k^n$, then
+Let $k \ge 2$ and let $f : \bbz_k^n \to \bbz_k$ be normalized and $\varepsilon$-far from
+linear, meaning that $f(0) = 0$, that $0 \le \varepsilon \le 1$, and that $\dist(f,g)
+\ge \varepsilon$ for every linear $g : \bbz_k^n \to \bbz_k$ (where $\dist$ is the
+fraction of inputs on which two functions disagree). Fix a unit $j \in
+(\bbz/k\bbz)^\times$ and a frequency $s \in \bbz_k^n$, and let $\widetilde{f}_j(x) =
+\omega_k^{\,j\,f(x)}$ be the corresponding $j$-twisted lift, with $\omega_k = e^{2\pi
+i/k}$. Then the Fourier coefficient of $\widetilde{f}_j$ at $s$ has real part bounded by
 \[
-  \operatorname{Re}\!\left[\widehat{(\widetilde{f}_j)}(s)\right]
-  \;\le\; 1 - \bigl(1-\cos(2\pi/k)\bigr)\varepsilon.
+\operatorname{Re}\,\widehat{\widetilde{f}_j}(s) \;\le\; 1 - \bigl(1 -
+\cos(2\pi/k)\bigr)\,\varepsilon .
 \]
 \end{lemma}
 
-\begin{lemma}[Weighted sum bound for unit-twisted lift]
+\begin{lemma}[A weighted Fourier-coefficient bound for a unit-twisted lift]
 \lean{ZkBLR.weighted_sum_unit_bound}
 \label{ZkBLR.weighted_sum_unit_bound}
 \leanok
 \uses{ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.parseval_lift_omega_j, ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{3}
-If $k \ge 2$, $f$ is $\varepsilon$-far from linear (normalized), and $j \in
-\mathbb{Z}_k^\times$, then
+Let $k \ge 2$, and let $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ be normalized (that is,
+$f(0) = 0$) and $\varepsilon$-far from linear for some $0 \le \varepsilon \le 1$,
+meaning that $\mathrm{dist}(f,g) \ge \varepsilon$ for every linear function $g :
+\mathbb{Z}_k^n \to \mathbb{Z}_k$. Then for every unit $j \in
+(\mathbb{Z}/k\mathbb{Z})^\times$, the $j$-twisted lift $\widetilde{f}_j(x) =
+\omega_k^{\,j\,f(x)}$ satisfies
 \[
-  \sum_{s\in\mathbb{Z}_k^n}
-  \bigl\|\widehat{(\widetilde{f}_j)}(s)\bigr\|^2\,
-  \operatorname{Re}\!\left[\widehat{(\widetilde{f}_j)}(s)\right]
-  \;\le\; 1 - \bigl(1-\cos(2\pi/k)\bigr)\varepsilon.
+  \sum_{s \in \mathbb{Z}_k^n}
+    \bigl|\widehat{\widetilde{f}_j}(s)\bigr|^2 \,
+    \operatorname{Re}\widehat{\widetilde{f}_j}(s)
+  \;\le\; 1 - \bigl(1 - \cos(2\pi/k)\bigr)\varepsilon,
 \]
+where $\widehat{\widetilde{f}_j}(s)$ denotes the Fourier coefficient of
+$\widetilde{f}_j$ at frequency $s$.
 \end{lemma}
 
-\begin{lemma}[BLR soundness for general $k$]
+\begin{lemma}[BLR soundness over $\mathbb{Z}_k$]
 \lean{ZkBLR.BLR_soundness_general}
 \label{ZkBLR.BLR_soundness_general}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_accept_prob_eq_fourier_sum, ZkBLR.epsilon_far_from_linear_normalized, ZkBLR.lift_omega_j, ZkBLR.weighted_fourier_sum_le_one, ZkBLR.weighted_sum_unit_bound, ZkFourier.ZkVec, ZkFourier.fourier_coeff}
 \difficulty{6}
-For $k \ge 2$, if $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ is $\varepsilon$-far
-from linear (normalized), then
+Let $k \ge 2$, and let $f : \mathbb{Z}_k^n \to \mathbb{Z}_k$ be normalized, so that
+$f(0) = 0$. Fix a real number $\varepsilon$ with $0 \le \varepsilon \le 1$, and suppose
+$f$ is $\varepsilon$-far from linear: for every linear function $g : \mathbb{Z}_k^n \to
+\mathbb{Z}_k$ (one satisfying $g(x+y) = g(x)+g(y)$ for all $x,y$), the fraction of
+inputs on which $f$ and $g$ disagree is at least $\varepsilon$. Then the acceptance
+probability of the BLR linearity test, taken over independent uniform $x, y \in
+\mathbb{Z}_k^n$, obeys
 \[
-  \Pr[{\rm BLR\ accepts}\ f]
-  \;\le\; 1 - \frac{\varphi(k)}{k}\bigl(1-\cos(2\pi/k)\bigr)\varepsilon,
+  \Pr_{x,y}\bigl[f(x+y) = f(x)+f(y)\bigr]
+  \;\le\; 1 - \frac{\varphi(k)}{k}\bigl(1 - \cos(2\pi/k)\bigr)\,\varepsilon,
 \]
-where $\varphi(k)$ denotes Euler's totient function.
+where $\varphi$ denotes Euler's totient function.
 \end{lemma}
 
-\begin{lemma}[BLR soundness for prime modulus]
+\begin{lemma}[BLR soundness over a prime field]
 \lean{ZkBLR.BLR_soundness_prime}
 \label{ZkBLR.BLR_soundness_prime}
 \leanok
 \uses{ZkBLR.BLR_accept_prob, ZkBLR.BLR_soundness_general, ZkBLR.epsilon_far_from_linear_normalized, ZkFourier.ZkVec}
 \difficulty{2}
-If $p$ is prime and $f : \mathbb{Z}_p^n \to \mathbb{Z}_p$ is $\varepsilon$-far
-from linear (normalized), then
+Let $p$ be prime and let $f : \bbz_p^n \to \bbz_p$ be normalized, meaning $f(0) = 0$.
+Fix $\varepsilon$ with $0 \le \varepsilon \le 1$, and suppose $f$ is $\varepsilon$-far
+from linear: every linear function $g : \bbz_p^n \to \bbz_p$ (one satisfying $g(x+y) =
+g(x)+g(y)$ for all $x,y$) has $\dist(f,g) \ge \varepsilon$, where $\dist(f,g) =
+\Pr_x[f(x) \ne g(x)]$. Then the BLR acceptance probability of $f$ obeys
 \[
-  \Pr[{\rm BLR\ accepts}\ f]
-  \;\le\; 1 - \frac{p-1}{p}\bigl(1-\cos(2\pi/p)\bigr)\varepsilon,
+  \Pr_{x,y}\bigl[f(x+y) = f(x)+f(y)\bigr]
+  \;\le\; 1 - \frac{p-1}{p}\bigl(1 - \cos(2\pi/p)\bigr)\,\varepsilon,
 \]
-recovering the prime-field soundness bound as a corollary of the general
-result (using $\varphi(p)=p-1$).
+the probability being taken over $x,y$ drawn independently and uniformly from
+$\bbz_p^n$.
 \end{lemma}

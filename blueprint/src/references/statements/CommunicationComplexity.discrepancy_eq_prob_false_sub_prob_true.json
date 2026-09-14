@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.discrepancy_eq_prob_false_sub_prob_true",
+ "key": "21e24cbba09406e4",
+ "kind": "theorem",
+ "title": "Discrepancy as a difference of probabilities",
+ "statement": "Let $\\mu$ be a finite probability space on the product $X \\times Y$, let $g : X \\times Y \\to \\mathrm{Bool}$, and let $S \\subseteq X \\times Y$. Then the discrepancy of $g$ on $S$ satisfies\n\\[\n  \\mathrm{disc}_\\mu(g, S)\n  \\;=\\;\n  \\mu\\bigl(\\{(x,y) \\in S : g(x,y) = \\mathrm{false}\\}\\bigr)\n  \\;-\\;\n  \\mu\\bigl(\\{(x,y) \\in S : g(x,y) = \\mathrm{true}\\}\\bigr),\n\\]\nthat is, the probability mass inside $S$ on which $g$ is $\\mathrm{false}$ minus the probability mass inside $S$ on which $g$ is $\\mathrm{true}$.",
+ "hypotheses_covered": [
+  "finite probability space μ on X × Y",
+  "Boolean function g : X × Y → Bool",
+  "subset S ⊆ X × Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The discrepancy of $g$ on $S$ equals the $\\mu$-probability mass of the set where $g$\noutputs $\\mathrm{false}$ inside $S$, minus the $\\mu$-probability mass of the set where $g$\noutputs $\\mathrm{true}$ inside $S$:\n\\[\n  \\mathrm{disc}_\\mu(g,S)\n  \\;=\\;\n  \\mu\\!\\bigl(\\{(x,y)\\in S \\mid g(x,y)=\\mathrm{false}\\}\\bigr)\n  \\;-\\;\n  \\mu\\!\\bigl(\\{(x,y)\\in S \\mid g(x,y)=\\mathrm{true}\\}\\bigr).\n\\]"
+}

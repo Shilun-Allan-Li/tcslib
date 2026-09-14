@@ -19,15 +19,19 @@ concrete bound $\Pr[\varepsilon\norm{x}^2 < \abs{\norm{Ax}^2 - \norm{x}^2}] \leq
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, jl_concentration_single_via_bernstein}
 \difficulty{5}
-Let $A : \Omega \to \mathbb{R}^{k \times d}$ be a random matrix on a probability
-space, and let $x \in \mathbb{R}^d$ be a nonzero vector.  Suppose the $k$ row
-projections $(Ax)_i$ are mutually independent, each integrable against
-$e^{t(\cdot)}$ for every $t \in \mathbb{R}$, each has sub-Gaussian MGF bounded
-by $\exp\!\bigl((\norm{x}^2/k)\,t^2/2\bigr)$, and each satisfies
-$\int (Ax)_i^2 \, d\mu = \norm{x}^2/k$.  Then for every $0 < \varepsilon < 1$,
+Let $(\Omega,\mu)$ be a probability space, let $A\colon\Omega\to\bbr^{k\times d}$ be a
+random matrix with $k\ge 1$ rows, and let $x\in\bbr^d$ be a nonzero vector. Write
+$(Ax)_i$ for the $i$-th coordinate of the image $Ax\in\bbr^k$, and suppose that the $k$
+coordinates $(Ax)_1,\dots,(Ax)_k$ are measurable and mutually independent, that each is
+sub-Gaussian with variance proxy $\norm{x}^2/k$ — meaning $e^{t(Ax)_i}$ is
+$\mu$-integrable and $\E_\mu\!\bigl[e^{t(Ax)_i}\bigr]\le
+\exp\!\bigl((\norm{x}^2/k)\,t^2/2\bigr)$ for every $t\in\bbr$ — and that each has second
+moment $\E_\mu\!\bigl[(Ax)_i^2\bigr]=\norm{x}^2/k$. Then for every $\varepsilon$ with
+$0<\varepsilon<1$,
 \[
-  \Pr\!\bigl[\varepsilon\norm{x}^2 < \bigl|\norm{Ax}^2 - \norm{x}^2\bigr|\bigr]
-  \;\leq\; 2\exp\!\Bigl(-\tfrac{k\varepsilon^2}{8}\Bigr).
+\mu\!\left(\bigl\{\,\omega : \varepsilon\norm{x}^2 <
+\bigl|\,\norm{Ax}^2-\norm{x}^2\,\bigr|\,\bigr\}\right)
+  \;\le\; 2\exp\!\Bigl(-\tfrac{k\varepsilon^2}{8}\Bigr).
 \]
 \end{theorem}
 
@@ -40,23 +44,24 @@ $\tfrac{1}{2}\delta_{-1} + \tfrac{1}{2}\delta_{+1}$, placing equal mass $1/2$
 at $-1$ and at $+1$.
 \end{definition}
 
-\begin{lemma}[$1/2$ is finite as an extended non-negative real]
+\begin{lemma}[Finiteness of one-half in the extended nonnegative reals]
 \lean{rad_half_ne_top}
 \label{rad_half_ne_top}
 \leanok
 \difficulty{2}
-The value $1/2$, viewed as an element of $\mathbb{R}_{\geq 0}^\infty$, is not
-equal to $\top$.
+Regarded as an element of the extended nonnegative reals $[0,\infty]$, the number $1/2$
+is not equal to $\infty$.
 \end{lemma}
 
-\begin{lemma}[{Rademacher support in $[-1,1]$}]
+\begin{lemma}[{Rademacher samples lie in $[-1,1]$}]
 \lean{rademacherReal_mem_Icc}
 \label{rademacherReal_mem_Icc}
 \leanok
 \uses{rademacherReal}
 \difficulty{3}
-Almost every sample from the Rademacher distribution lies in the interval
-$[-1, 1]$: $\mathrm{Rad}$-a.e.\ $y \in [-1, 1]$.
+Let $\mathrm{Rad} = \tfrac{1}{2}\delta_{-1} + \tfrac{1}{2}\delta_{+1}$ be the Rademacher
+distribution on $\mathbb{R}$. Then $\mathrm{Rad}$-almost every point $y$ satisfies $y
+\in [-1, 1]$.
 \end{lemma}
 
 \begin{lemma}[Integrability under a scaled Dirac measure]
@@ -65,52 +70,60 @@ $[-1, 1]$: $\mathrm{Rad}$-a.e.\ $y \in [-1, 1]$.
 \leanok
 \uses{rad_half_ne_top}
 \difficulty{1}
-For any $a \in \mathbb{R}$ and any measurable function $f : \mathbb{R} \to
-\mathbb{R}$, the function $f$ is integrable with respect to the measure
-$\tfrac{1}{2}\,\delta_a$.
+Fix a point $a \in \bbr$, and let $\delta_a$ denote the Dirac measure concentrated at
+$a$. Then every function $f : \bbr \to \bbr$ is integrable with respect to the finite
+measure $\tfrac{1}{2}\,\delta_a$.
 \end{lemma}
 
-\begin{lemma}[Every function is integrable under the Rademacher measure]
+\begin{lemma}[Integrability against the Rademacher measure]
 \lean{integrable_rademacherReal}
 \label{integrable_rademacherReal}
 \leanok
 \uses{integrable_smul_dirac, rademacherReal}
 \difficulty{1}
-For any $f : \mathbb{R} \to \mathbb{R}$, the function $f$ is integrable with
-respect to the Rademacher measure $\mathrm{Rad}$.
+Let $\mathrm{Rad} = \tfrac{1}{2}\delta_{-1} + \tfrac{1}{2}\delta_{+1}$ be the Rademacher
+distribution on $\bbr$. Then every function $f \colon \bbr \to \bbr$ is integrable with
+respect to $\mathrm{Rad}$.
 \end{lemma}
 
-\begin{lemma}[Mean of the Rademacher distribution is zero]
+\begin{lemma}[Mean of the Rademacher distribution]
 \lean{integral_id_rademacherReal}
 \label{integral_id_rademacherReal}
 \leanok
 \uses{integrable_smul_dirac, rademacherReal}
 \difficulty{2}
-The expected value of the identity under the Rademacher distribution is zero:
-$\int y \, d\mathrm{Rad}(y) = 0$.
+Let $\mathrm{Rad} = \tfrac{1}{2}\delta_{-1} + \tfrac{1}{2}\delta_{+1}$ be the Rademacher
+distribution on $\bbr$. Then the mean of the identity function against $\mathrm{Rad}$
+vanishes, \[ \int_{\bbr} y \, d\mathrm{Rad}(y) = 0. \]
 \end{lemma}
 
-\begin{lemma}[Second moment of the Rademacher distribution is one]
+\begin{lemma}[Second moment of the Rademacher distribution]
 \lean{integral_sq_rademacherReal}
 \label{integral_sq_rademacherReal}
 \leanok
 \uses{integrable_smul_dirac, rademacherReal}
 \difficulty{2}
-The second moment of the Rademacher distribution equals one:
-$\int y^2 \, d\mathrm{Rad}(y) = 1$.
+Let $\mathrm{Rad} = \tfrac{1}{2}\delta_{-1} + \tfrac{1}{2}\delta_{+1}$ be the Rademacher
+distribution on $\bbr$, placing equal mass $1/2$ at $-1$ and at $+1$. Then its second
+moment equals one:
+\[
+\int_{\bbr} y^2 \, d\mathrm{Rad}(y) = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Identity is sub-Gaussian with parameter $1$ under $\mathrm{Rad}$]
+\begin{lemma}[Identity is sub-Gaussian with variance proxy one under Rademacher]
 \lean{hasSubgaussianMGF_id_rademacherReal}
 \label{hasSubgaussianMGF_id_rademacherReal}
 \leanok
 \uses{integral_id_rademacherReal, rademacherReal, rademacherReal_mem_Icc}
 \difficulty{4}
-The identity function $\mathrm{id} : \mathbb{R} \to \mathbb{R}$ satisfies
-$\mathrm{HasSubgaussianMGF}(\mathrm{id}, 1, \mathrm{Rad})$, i.e.\ its MGF is
-bounded by $e^{t^2/2}$ for all $t \in \mathbb{R}$.  This follows from
-Hoeffding's lemma applied to the centred random variable supported in $[-1, 1]$,
-whose sub-Gaussian parameter is $\bigl((1-(-1))/2\bigr)^2 = 1$.
+Let $\mathrm{Rad}$ denote the Rademacher distribution on $\bbr$, placing mass $1/2$ at
+each of $-1$ and $+1$, and regard the identity map as the real random variable $X$ with
+law $\mathrm{Rad}$. Then $X$ is sub-Gaussian with variance proxy $1$: its moment
+generating function satisfies
+\[
+\E\!\left[e^{tX}\right] \le e^{t^{2}/2} \qquad \text{for every } t \in \bbr.
+\]
 \end{lemma}
 
 \begin{definition}[Rademacher matrix sample space]
@@ -143,221 +156,294 @@ $A(\omega)_{ij} = \omega_{ij}/\sqrt{k}$, scaling the raw $\pm 1$ entries by
 $1/\sqrt{k}$.
 \end{definition}
 
-\begin{lemma}[Measurability of the Rademacher matrix]
+\begin{lemma}[Measurability of the Rademacher matrix map]
 \lean{measurable_radMatrix}
 \label{measurable_radMatrix}
 \leanok
 \uses{radMatrix}
 \difficulty{2}
-The map $\omega \mapsto \mathrm{radMatrix}(k,d,\omega)$ is measurable with
-respect to the product $\sigma$-algebra on $\mathrm{Rad\Omega}(k,d)$.
+Equip the sample space $\Omega = \{\omega : \mathrm{Fin}\,k \to \mathrm{Fin}\,d \to
+\bbr\}$ of $k \times d$ real arrays with its product $\sigma$-algebra, and the space
+$\bbr^{k \times d}$ of matrices likewise. Then the map $A : \Omega \to \bbr^{k\times d}$
+sending $\omega$ to the matrix with entries $A(\omega)_{ij} = \omega_{ij}/\sqrt{k}$ is
+measurable.
 \end{lemma}
 
-\begin{lemma}[Row marginal of the joint measure]
+\begin{lemma}[Row marginal of the joint Rademacher measure]
 \lean{radJointMeasure_row_marginal}
 \label{radJointMeasure_row_marginal}
 \leanok
 \uses{RadΩ, radJointMeasure, rademacherReal}
 \difficulty{2}
-The pushforward of the joint measure along the $i$-th row projection
-$\omega \mapsto \omega_i$ equals the product measure
-$\bigotimes_{j \in \mathrm{Fin}\,d} \mathrm{Rad}$.
+Fix natural numbers $k$ and $d$ and a row index $i \in \{0, \dots, k-1\}$, and consider
+the joint measure on the set of $k \times d$ real arrays under which all $k \cdot d$
+entries are independent Rademacher variables, each taking the values $-1$ and $+1$ with
+probability $\tfrac12$ apiece. Then the pushforward of this measure along the map that
+sends an array to its $i$-th row, an element of $\mathbb{R}^d$, equals the $d$-fold
+product $\bigotimes_{j=1}^{d} \mathrm{Rad}$ of Rademacher distributions.
 \end{lemma}
 
-\begin{lemma}[Entry marginal of the joint measure]
+\begin{lemma}[Entry marginal of the joint Rademacher measure]
 \lean{radJointMeasure_entry_marginal}
 \label{radJointMeasure_entry_marginal}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_row_marginal, rademacherReal}
 \difficulty{3}
-The pushforward of the joint measure along the $(i,j)$-entry projection
-$\omega \mapsto \omega_{ij}$ equals $\mathrm{Rad}$.
+Let $\mathrm{Rad} = \tfrac{1}{2}\delta_{-1} + \tfrac{1}{2}\delta_{+1}$ be the Rademacher
+distribution on $\bbr$, and let $\mu$ be the product measure on the space of $k \times
+d$ real arrays $\omega = (\omega_{ij})$ under which all $k \cdot d$ entries are
+independent and $\mathrm{Rad}$-distributed. Then for every index $(i,j) \in
+\mathrm{Fin}\,k \times \mathrm{Fin}\,d$, the pushforward of $\mu$ along the coordinate
+projection $\omega \mapsto \omega_{ij}$ is exactly $\mathrm{Rad}$.
 \end{lemma}
 
-\begin{lemma}[Within-row entries are i.i.d.\ Rademacher]
+\begin{lemma}[Independence of the entries within a row]
 \lean{radJointMeasure_row_iid}
 \label{radJointMeasure_row_iid}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_entry_marginal, radJointMeasure_row_marginal, rademacherReal}
 \difficulty{4}
-For each fixed row $i \in \mathrm{Fin}\,k$, the $d$ functions
-$j \mapsto \omega_{ij}$ are mutually independent under the joint measure.
+Draw a $k \times d$ real matrix $\omega = (\omega_{ij})$ from the joint measure under
+which all $k \cdot d$ entries are independent and identically distributed Rademacher
+variables, each taking the values $-1$ and $+1$ with probability $1/2$. Then for every
+fixed row index $i \in \{1,\dots,k\}$, the family of coordinate maps $\bigl(\omega
+\mapsto \omega_{ij}\bigr)_{1 \le j \le d}$ — the $d$ entries lying in row $i$ — is
+mutually independent.
 \end{lemma}
 
-\begin{lemma}[Rows are mutually independent]
+\begin{lemma}[Rows of a Rademacher matrix are mutually independent]
 \lean{radJointMeasure_rows_iid}
 \label{radJointMeasure_rows_iid}
 \leanok
 \uses{RadΩ, radJointMeasure}
 \difficulty{1}
-The $k$ row vectors $i \mapsto (\omega_{ij})_{j}$, viewed as
-$\mathrm{Fin}\,d \to \mathbb{R}$-valued random variables, are mutually
-independent under the joint measure.
+Equip the space of $k \times d$ real arrays $\omega = (\omega_{ij})$ with the joint
+Rademacher product measure, under which the $k \cdot d$ entries are independent and each
+$\omega_{ij}$ takes the values $-1$ and $+1$ with equal probability $1/2$. For each
+index $i \in \{1,\dots,k\}$, let $R_i$ be the $i$-th row, that is, the
+$\mathbb{R}^d$-valued random variable $\omega \mapsto (\omega_{ij})_{j}$. Then the
+family $(R_i)_{i}$ of $k$ rows is mutually independent.
 \end{lemma}
 
-\begin{lemma}[Each entry is sub-Gaussian with parameter $1$]
+\begin{lemma}[Rademacher entries are sub-Gaussian with variance proxy one]
 \lean{hasSubgaussianMGF_entry}
 \label{hasSubgaussianMGF_entry}
 \leanok
 \uses{RadΩ, hasSubgaussianMGF_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal}
 \difficulty{3}
-For each $(i,j) \in \mathrm{Fin}\,k \times \mathrm{Fin}\,d$, the function
-$\omega \mapsto \omega_{ij}$ satisfies
-$\mathrm{HasSubgaussianMGF}(\cdot, 1, \mathrm{radJointMeasure})$ under the
-joint product measure.
+Let $\omega = (\omega_{ij})$ be a random $k \times d$ real array whose entries are
+independent and identically distributed, each taking the values $-1$ and $+1$ with
+probability $\tfrac{1}{2}$ apiece. Then for every index $i \in \{1,\dots,k\}$ and $j \in
+\{1,\dots,d\}$, the single entry $\omega_{ij}$ is sub-Gaussian with variance proxy $1$;
+that is, its moment generating function satisfies $\E\!\left[e^{t\,\omega_{ij}}\right]
+\le e^{t^2/2}$ for every $t \in \bbr$.
 \end{lemma}
 
-\begin{lemma}[Scaled entry is sub-Gaussian with parameter $x_j^2/k$]
+\begin{lemma}[Scaled Rademacher entry is sub-Gaussian]
 \lean{hasSubgaussianMGF_scaled_entry}
 \label{hasSubgaussianMGF_scaled_entry}
 \leanok
 \uses{RadΩ, integral_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal, rademacherReal_mem_Icc}
 \difficulty{5}
-For $k > 0$, $x \in \mathbb{R}^d$, and indices $i,j$, the function
-$\omega \mapsto (x_j / \sqrt{k})\,\omega_{ij}$ satisfies
-$\mathrm{HasSubgaussianMGF}(\cdot, x_j^2/k, \mathrm{radJointMeasure})$.
+Fix natural numbers $k > 0$ and $d$, a vector $x \in \bbr^d$, a row index $i$, and a
+column index $j$. Consider the joint Rademacher product measure on the space of $k
+\times d$ real arrays $\omega = (\omega_{ij})$, under which every entry is an
+independent $\pm 1$ Rademacher variable (equal to $-1$ or $+1$ with probability
+$\tfrac12$ each). Then the scaled entry $\omega \mapsto (x_j/\sqrt{k})\,\omega_{ij}$ has
+a sub-Gaussian moment generating function with variance proxy $x_j^2/k$; that is, its
+moment generating function is finite and satisfies \[
+\E\!\left[\exp\!\big(t\,(x_j/\sqrt{k})\,\omega_{ij}\big)\right] \le
+\exp\!\left(\tfrac{1}{2}\,\frac{x_j^2}{k}\,t^2\right) \qquad\text{for all } t \in \bbr.
+\]
 \end{lemma}
 
-\begin{lemma}[Row projection is sub-Gaussian with parameter $\norm{x}^2/k$]
+\begin{lemma}[Rows of a Rademacher projection are sub-Gaussian]
 \lean{hasSubgaussianMGF_row_proj}
 \label{hasSubgaussianMGF_row_proj}
 \leanok
 \uses{RadΩ, hasSubgaussianMGF_scaled_entry, radJointMeasure, radJointMeasure_row_iid, radMatrix}
 \difficulty{5}
-For $k > 0$, $x \in \mathbb{R}^d$, and $i \in \mathrm{Fin}\,k$, the $i$-th row
-projection $\omega \mapsto (A(\omega)\,x)_i = (1/\sqrt{k})\sum_j \omega_{ij} x_j$
-satisfies $\mathrm{HasSubgaussianMGF}(\cdot, \norm{x}^2/k,
-\mathrm{radJointMeasure})$.  This follows by combining per-summand Hoeffding
-bounds with independence of the within-row entries.
+Fix an integer $k \ge 1$ and a dimension $d$, let $x \in \bbr^d$ (with its Euclidean
+norm), and fix a row index $i \in \{1,\dots,k\}$. Draw the entries of the Rademacher
+matrix $A(\omega)_{ij} = \omega_{ij}/\sqrt{k}$ by making all $kd$ signs $\omega_{ij}$
+independent Rademacher variables. Then the real random variable
+\[
+\omega \;\longmapsto\; (A(\omega)\,x)_i \;=\; \frac{1}{\sqrt{k}}\sum_{j} \omega_{ij}\,
+x_j
+\]
+has a sub-Gaussian moment generating function with variance proxy $\norm{x}^2/k$: for
+every $t \in \bbr$,
+\[
+\E\!\left[e^{\,t\,(A(\omega)x)_i}\right] \;\le\;
+\exp\!\left(\frac{t^2}{2}\cdot\frac{\norm{x}^2}{k}\right).
+\]
 \end{lemma}
 
-\begin{lemma}[Variance of $\mathrm{id}$ under $\mathrm{Rad}$ is $1$]
+\begin{lemma}[Variance of the identity under the Rademacher distribution]
 \lean{variance_id_rademacherReal}
 \label{variance_id_rademacherReal}
 \leanok
 \uses{integral_id_rademacherReal, integral_sq_rademacherReal, rademacherReal, rademacherReal_mem_Icc}
 \difficulty{3}
-The variance of the identity function under the Rademacher distribution is $1$:
-$\mathrm{Var}[\mathrm{id}; \mathrm{Rad}] = 1$.
+Let $X$ be a real random variable distributed according to the Rademacher distribution
+$\mathrm{Rad} = \tfrac12\delta_{-1} + \tfrac12\delta_{+1}$, so that $X$ takes the values
+$-1$ and $+1$ each with probability $1/2$. Then the variance of $X$ is
+\[
+\mathrm{Var}(X) = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Variance of a single entry is $1$]
+\begin{lemma}[Variance of a single Rademacher entry]
 \lean{variance_entry}
 \label{variance_entry}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_entry_marginal, variance_id_rademacherReal}
 \difficulty{2}
-For any $(i,j)$, the variance of the entry $\omega \mapsto \omega_{ij}$ under
-the joint measure is $1$:
-$\mathrm{Var}[\omega \mapsto \omega_{ij}; \mathrm{radJointMeasure}] = 1$.
+Let $\omega$ be a $k \times d$ random array whose entries are independent and
+identically distributed with the Rademacher distribution $\tfrac{1}{2}\delta_{-1} +
+\tfrac{1}{2}\delta_{+1}$, taking each of the values $-1$ and $+1$ with probability
+$1/2$. Then for every index $(i,j)$ with $i \in \{0,\dots,k-1\}$ and $j \in
+\{0,\dots,d-1\}$, the single entry $\omega_{ij}$ has variance
+\[
+\mathrm{Var}(\omega_{ij}) = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Mean of a single entry is $0$]
+\begin{lemma}[Mean of a single Rademacher entry]
 \lean{integral_entry}
 \label{integral_entry}
 \leanok
 \uses{RadΩ, integral_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal}
 \difficulty{3}
-For any $(i,j)$, the expected value of $\omega_{ij}$ under the joint measure is
-$0$: $\int \omega_{ij} \, d\mathrm{radJointMeasure} = 0$.
+Let $\omega = (\omega_{ij})$ be a $k \times d$ array whose entries are independent
+Rademacher variables, each taking the values $-1$ and $+1$ with probability $\tfrac12$
+apiece. Then for every pair of indices $i \in \{1,\dots,k\}$ and $j \in \{1,\dots,d\}$,
+the entry $\omega_{ij}$ has mean zero: $\E[\omega_{ij}] = 0$.
 \end{lemma}
 
-\begin{lemma}[Scaled entry belongs to $L^2$]
+\begin{lemma}[Scaled Rademacher entry lies in $L^2$]
 \lean{memLp_scaled_entry}
 \label{memLp_scaled_entry}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal_mem_Icc}
 \difficulty{4}
-For $k > 0$, $x \in \mathbb{R}^d$, and indices $i,j$, the function
-$\omega \mapsto (x_j/\sqrt{k})\,\omega_{ij}$ belongs to $L^2(\mathrm{radJointMeasure})$.
+Fix $k > 0$ and a vector $x \in \bbr^d$, and let $\mu$ be the joint Rademacher product
+measure on the sample space of $k \times d$ arrays $\omega = (\omega_{ij})$. Then for
+every pair of indices $i$ and $j$, the coordinate function $\omega \mapsto
+\dfrac{x_j}{\sqrt{k}}\,\omega_{ij}$ is square-integrable with respect to $\mu$; that is,
+it belongs to $L^2(\mu)$.
 \end{lemma}
 
-\begin{lemma}[Variance of a scaled entry is $x_j^2/k$]
+\begin{lemma}[Variance of a scaled Rademacher entry]
 \lean{variance_scaled_entry}
 \label{variance_scaled_entry}
 \leanok
 \uses{RadΩ, radJointMeasure, variance_entry}
 \difficulty{3}
-For $k > 0$, $x \in \mathbb{R}^d$, and indices $i,j$,
-$\mathrm{Var}[\omega \mapsto (x_j/\sqrt{k})\,\omega_{ij}; \mathrm{radJointMeasure}]
-= x_j^2/k$.
+Let $k > 0$ and let $x \in \bbr^d$. Draw a $k \times d$ array $\omega$ whose entries
+$\omega_{ij}$ are independent Rademacher variables, each equal to $-1$ or $+1$ with
+probability $\tfrac{1}{2}$. Then for any indices $i \in \{1,\dots,k\}$ and $j \in
+\{1,\dots,d\}$, the real random variable $\omega \mapsto (x_j/\sqrt{k})\,\omega_{ij}$
+has variance
+\[
+\mathrm{Var}\!\left[\frac{x_j}{\sqrt{k}}\,\omega_{ij}\right] = \frac{x_j^2}{k}.
+\]
 \end{lemma}
 
-\begin{lemma}[Variance of the row projection is $\norm{x}^2/k$]
+\begin{lemma}[Variance of a row of a Rademacher projection]
 \lean{variance_row_proj}
 \label{variance_row_proj}
 \leanok
 \uses{RadΩ, memLp_scaled_entry, radJointMeasure, radJointMeasure_row_iid, radMatrix, variance_scaled_entry}
 \difficulty{5}
-For $k > 0$, $x \in \mathbb{R}^d$, and $i \in \mathrm{Fin}\,k$,
+Fix an integer $k \ge 1$, a vector $x \in \bbr^d$, and a row index $i \in
+\{1,\dots,k\}$. Let $A$ be the Rademacher matrix drawn from the joint Rademacher product
+measure, so its $k \cdot d$ entries $A_{ij} = \omega_{ij}/\sqrt{k}$ are independent,
+each equal to $\pm 1/\sqrt{k}$ with probability $1/2$. Then the $i$-th coordinate of the
+image $Ax$ has variance
 \[
-  \mathrm{Var}\!\bigl[\omega \mapsto (A(\omega)\,x)_i;\,\mathrm{radJointMeasure}\bigr]
-  = \frac{\norm{x}^2}{k}.
+  \mathrm{Var}\!\bigl[(Ax)_i\bigr] = \frac{\norm{x}^2}{k}.
 \]
-This follows from per-summand variance $x_j^2/k$ together with
-within-row independence.
 \end{lemma}
 
-\begin{lemma}[Mean of the row projection is $0$]
+\begin{lemma}[Row projection of the Rademacher matrix has mean zero]
 \lean{integral_row_proj}
 \label{integral_row_proj}
 \leanok
 \uses{RadΩ, integral_entry, memLp_scaled_entry, radJointMeasure, radMatrix}
 \difficulty{4}
-For $k > 0$, $x \in \mathbb{R}^d$, and $i \in \mathrm{Fin}\,k$,
-$\int (A(\omega)\,x)_i \, d\mathrm{radJointMeasure} = 0$.
+Fix integers $k > 0$ and $d \ge 0$, and let the entries $\omega_{ij}$, for $i \in
+\{1,\dots,k\}$ and $j \in \{1,\dots,d\}$, be independent Rademacher random variables,
+each taking the values $-1$ and $+1$ with probability $1/2$. Form the $k \times d$
+random matrix $M$ with entries $M_{ij} = \omega_{ij}/\sqrt{k}$. Then for every fixed
+vector $x \in \bbr^d$ and every row index $i \in \{1,\dots,k\}$, the $i$-th coordinate
+of the image $Mx$ has expectation zero:
+\[
+\E\bigl[(Mx)_i\bigr] = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Second moment of the row projection equals $\norm{x}^2/k$]
+\begin{lemma}[Second moment of a single row of a Rademacher projection]
 \lean{integral_sq_row_proj}
 \label{integral_sq_row_proj}
 \leanok
 \uses{RadΩ, hasSubgaussianMGF_row_proj, integral_row_proj, memLp_scaled_entry, radJointMeasure, radMatrix, variance_row_proj}
 \difficulty{4}
-For $k > 0$, $x \in \mathbb{R}^d$, and $i \in \mathrm{Fin}\,k$,
+Fix integers $k > 0$ and $d \ge 0$, a vector $x \in \bbr^d$, and a row index $i \in \{1,
+\dots, k\}$. Draw $\omega$ from the joint Rademacher measure on
+$\mathrm{Rad\Omega}(k,d)$, form the Rademacher matrix $A(\omega) \in \bbr^{k \times d}$,
+and let $(A(\omega)x)_i$ denote the $i$-th coordinate of the image of $x$ under the
+linear map $A(\omega)$. Then the second moment of this coordinate is
 \[
-  \int \bigl((A(\omega)\,x)_i\bigr)^2 \, d\mathrm{radJointMeasure}
-  = \frac{\norm{x}^2}{k}.
+  \E\bigl[\,(A(\omega)x)_i^2\,\bigr] = \frac{\norm{x}^2}{k}.
 \]
-This follows from $\int Y^2 = \mathrm{Var}[Y] + (\int Y)^2 = \norm{x}^2/k + 0$.
 \end{lemma}
 
-\begin{lemma}[Row projections are mutually independent]
+\begin{lemma}[Independence of the row projections of a Rademacher matrix]
 \lean{radMatrix_proj_indep}
 \label{radMatrix_proj_indep}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_rows_iid, radMatrix}
 \difficulty{3}
-For any $x \in \mathbb{R}^d$, the $k$ row projections
-$i \mapsto (A(\omega)\,x)_i$ are mutually independent random variables under
-the joint Rademacher measure.
+Fix natural numbers $k$ and $d$, and let the entries of a $k \times d$ matrix be drawn
+independently from the Rademacher distribution and each scaled by $1/\sqrt{k}$, giving a
+random matrix $A(\omega) \in \bbr^{k \times d}$ whose sample $\omega$ is distributed
+according to the joint Rademacher product measure. Then for every fixed vector $x \in
+\bbr^{d}$, the $k$ real-valued random variables $\omega \mapsto
+\bigl(A(\omega)\,x\bigr)_i$, one for each row index $i \in \{1,\dots,k\}$, are mutually
+independent.
 \end{lemma}
 
-\begin{lemma}[Row projections are measurable]
+\begin{lemma}[Measurability of a row of the Rademacher projection]
 \lean{radMatrix_proj_meas}
 \label{radMatrix_proj_meas}
 \leanok
 \uses{RadΩ, radMatrix}
 \difficulty{2}
-For any $x \in \mathbb{R}^d$ and $i \in \mathrm{Fin}\,k$, the map
-$\omega \mapsto (A(\omega)\,x)_i$ is measurable.
+Fix natural numbers $k, d$, a vector $x \in \bbr^d$, and an index $i \in \{1, \dots,
+k\}$. Regard the sample space $\mathrm{Rad\Omega}(k,d)$ of $k \times d$ real arrays with
+its product measurable structure, and for a sample $\omega$ let $A(\omega)$ be the
+Rademacher matrix with entries $A(\omega)_{ij} = \omega_{ij}/\sqrt{k}$, acting as a
+linear map $\bbr^d \to \bbr^k$. Then the map $\omega \mapsto (A(\omega)\,x)_i$, sending
+each sample to the $i$-th coordinate of the image of $x$, is measurable.
 \end{lemma}
 
-\begin{theorem}[JL concentration for the Rademacher matrix]
+\begin{theorem}[Johnson–Lindenstrauss concentration for a single Rademacher projection]
 \lean{jl_concentration_single_rademacher}
 \label{jl_concentration_single_rademacher}
 \leanok
 \uses{hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_concentration_single_subgaussian, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
 \difficulty{3}
-Let $k, d \geq 1$ and let $A$ be the Rademacher matrix $\mathrm{radMatrix}(k,d)$
-on the joint $\pm 1$ sample space.  For every nonzero $x \in \mathbb{R}^d$ and
-every $0 < \varepsilon < 1$,
+Let $k \ge 1$ be an integer, let $x \in \bbr^d$ be a nonzero vector, and fix
+$\varepsilon$ with $0 < \varepsilon < 1$. Let $A$ be the $k \times d$ matrix whose $kd$
+entries are independent, each taking the values $+1/\sqrt{k}$ and $-1/\sqrt{k}$ with
+probability $1/2$ apiece. Then the squared norm $\norm{Ax}^2$ concentrates about
+$\norm{x}^2$, with the probability of a deviation exceeding $\varepsilon\norm{x}^2$
+bounded by
 \[
-  \Pr_{\mathrm{radJointMeasure}}\!\bigl[
-    \varepsilon\norm{x}^2 < \bigl|\norm{A\omega\, x}^2 - \norm{x}^2\bigr|
-  \bigr]
-  \;\leq\; 2\exp\!\Bigl(-\frac{k\varepsilon^2}{8}\Bigr).
+\Pr\!\bigl[\, \varepsilon\norm{x}^2 < \bigl|\,\norm{Ax}^2 - \norm{x}^2\,\bigr| \,\bigr]
+  \;\le\; 2\exp\!\Bigl(-\frac{k\varepsilon^2}{8}\Bigr).
 \]
-This recovers Achlioptas's $\pm 1$-entries variant of Johnson--Lindenstrauss
-with the Dasgupta--Gupta exponent.
+The bound is Achlioptas's $\pm1$-entry variant of the Johnson–Lindenstrauss lemma, with
+the Dasgupta–Gupta exponent.
 \end{theorem}

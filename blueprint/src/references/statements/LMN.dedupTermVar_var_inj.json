@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.dedupTermVar_var_inj",
+ "key": "ee165ca1ded05bed",
+ "kind": "lemma",
+ "title": "Variable-injectivity of literal de-duplication",
+ "statement": "Let $t$ be a term over $n$ variables, that is, a list of literals, each literal consisting of a variable in $\\{0,1,\\dots,n-1\\}$ together with a negation flag. Let $t'$ be the de-duplicated term obtained by scanning $t$ and retaining each literal only when no earlier-retained literal already uses the same variable. Then within $t'$ the variable of a literal determines that literal: any two literals $l_1, l_2 \\in t'$ whose variables agree are equal, that is, they have the same variable and the same negation flag.",
+ "hypotheses_covered": [
+  "t is a term (list of literals over n variables)",
+  "l₁ belongs to the de-duplicated term",
+  "l₂ belongs to the de-duplicated term",
+  "l₁ and l₂ have the same variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Within $\\mathrm{dedupTermVar}\\,t$ the variable of a literal determines the literal: any two\nliterals $l_1,l_2\\in\\mathrm{dedupTermVar}\\,t$ with $l_1.\\mathrm{var}=l_2.\\mathrm{var}$ are equal."
+}

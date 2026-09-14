@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleHypercontractivity.finset_fin_succ_sum_partition",
+ "key": "bb14bc9e118d396f",
+ "kind": "lemma",
+ "title": "Splitting a subset-sum by the last coordinate",
+ "statement": "Fix $n \\in \\bbn$ and identify a subset of $\\{0, 1, \\dots, n\\}$ that omits the top element $n$ with the corresponding subset of $\\{0, 1, \\dots, n-1\\}$, via the inclusion $\\iota$ that sends $T \\subseteq \\{0,\\dots,n-1\\}$ to the same set regarded inside $\\{0,\\dots,n\\}$. Then for every function $\\varphi$ assigning a real number to each subset of $\\{0, 1, \\dots, n\\}$,\n\\[\n  \\sum_{S \\subseteq \\{0,\\dots,n\\}} \\varphi(S)\n  = \\sum_{T \\subseteq \\{0,\\dots,n-1\\}} \\varphi\\bigl(\\iota(T)\\bigr)\n  + \\sum_{T \\subseteq \\{0,\\dots,n-1\\}} \\varphi\\bigl(\\iota(T) \\cup \\{n\\}\\bigr),\n\\]\nthe two terms collecting the subsets of $\\{0,\\dots,n\\}$ that exclude and that include the element $n$, respectively.",
+ "hypotheses_covered": [
+  "φ is an arbitrary real-valued function on subsets of Fin(n+1)",
+  "n is a natural number (n may be 0)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $\\varphi$ on subsets of $\\mathrm{Fin}(n+1)$, the total sum splits according to\nwhether the last coordinate belongs to the subset:\n\\[\n  \\sum_{S \\subseteq \\mathrm{Fin}(n+1)} \\varphi(S)\n  = \\sum_{T \\subseteq \\mathrm{Fin}\\,n} \\varphi(\\mathrm{castSucc}(T))\n  + \\sum_{T \\subseteq \\mathrm{Fin}\\,n} \\varphi(\\mathrm{castSucc}(T)\\cup\\{\\mathrm{last}\\,n\\}).\n\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_prod_left_eq_add",
+ "key": "acce31a0fc0b8675",
+ "kind": "theorem",
+ "title": "Chain rule for conditional mutual information",
+ "statement": "Let $X$, $W$, $Y$, and $Z$ be random variables on a measure space $(\\Omega,\\mu)$, each valued in a countable measurable space and each attaining only finitely many values, and suppose $\\mu$ is either the zero measure or a probability measure. Writing $I[U : V \\mid T;\\mu]$ for the mutual information of $U$ and $V$ conditioned on $T$, the pair $(X,W)$ obeys the chain rule\n\\[\n  I[(X,W) : Y \\mid Z;\\mu]\n  \\;=\\; I[X : Y \\mid Z;\\mu] \\;+\\; I[W : Y \\mid (X,Z);\\mu].\n\\]",
+ "hypotheses_covered": [
+  "X, W, Y, Z are measurable",
+  "each of X, W, Y, Z has finite range",
+  "μ is zero or a probability measure",
+  "value spaces are countable with measurable singletons"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For measurable $X$, $W$, $Y$, $Z$ with finite ranges under a zero-or-probability measure,\n\\[\n  I[(X,W) : Y \\mid Z;\\mu]\n  \\;=\\; I[X : Y \\mid Z;\\mu] \\;+\\; I[W : Y \\mid (X, Z);\\mu].\n\\]"
+}

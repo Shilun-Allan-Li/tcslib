@@ -11,25 +11,29 @@ of $f|_\rho$.
 
 \section{Declarations}
 
-\begin{lemma}[Updating a free variable decreases the free count]
+\begin{lemma}[Fixing a free variable lowers the free count]
 \lean{SwitchingLemma2.numFree_update_lt}
 \label{SwitchingLemma2.numFree_update_lt}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree}
 \difficulty{4}
-If $v$ is a free variable of a restriction $\rho$, then fixing $v$ to a value $b$
-strictly decreases the number of free variables: $\mathrm{numFree}(\rho[v \mapsto b]) < \mathrm{numFree}(\rho)$.
+Let $\rho$ be a restriction on $n$ variables, and let $v$ be a free variable of $\rho$.
+For any Boolean value $b$, let $\rho'$ be the restriction that agrees with $\rho$
+everywhere except at $v$, where it assigns the fixed value $b$. Then the number of free
+variables of $\rho'$ is strictly less than the number of free variables of $\rho$.
 \end{lemma}
 
-\begin{lemma}[A free variable exists when neither killed nor fixed]
+\begin{lemma}[Existence of a free variable when no term is fixed and not all are killed]
 \lean{SwitchingLemma2.exists_free_of_not_killed_not_fixed}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \label{SwitchingLemma2.exists_free_of_not_killed_not_fixed}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy}
 \difficulty{5}
-For a DNF $f$ and restriction $\rho$, if not every term is killed by $\rho$ and no term
-is fixed by $\rho$, then $\rho$ has at least one free variable $v \in \rho.\mathrm{freeVars}$.
+Let $f$ be a DNF formula on $n$ variables and let $\rho$ be a restriction on those
+variables. Suppose that not every term of $f$ is killed by $\rho$, and that no term of
+$f$ is fixed by $\rho$. Then $\rho$ leaves at least one variable free; that is, there
+exists an index $v \in \mathrm{Fin}\,n$ with $\rho(v)$ unset.
 \end{lemma}
 
 \begin{definition}[Branch variable selection]
@@ -43,12 +47,11 @@ the variable on which the canonical tree should next branch, drawn from the free
 of the first term not killed by $\rho$.
 \end{definition}
 
-\begin{lemma}[Specification of branch variable selection]
+\begin{lemma}[Branch-variable selection returns a free variable]
 \lean{SwitchingLemma2.selectBranchVar_spec}
 \label{SwitchingLemma2.selectBranchVar_spec}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -106,8 +109,10 @@ of the first term not killed by $\rho$.
   {pdf-b5e074215b9e-p002-b002}
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.selectBranchVar}
 \difficulty{5}
-When not every term of $f$ is killed by $\rho$ and no term is fixed by $\rho$, the function
-$\mathrm{selectBranchVar}\,f\,\rho$ returns some variable $v$, and that $v$ is free in $\rho$.
+Let $f$ be a DNF formula on $n$ variables and $\rho$ a restriction. Suppose that at
+least one term of $f$ is not killed by $\rho$, and that no term of $f$ is fixed by
+$\rho$. Then the branch-variable selection procedure applied to $f$ and $\rho$ succeeds,
+returning a variable $v$ that is free in $\rho$.
 \end{lemma}
 
 \begin{definition}[Sub-tree for a term]
@@ -140,76 +145,119 @@ $\rho.\mathrm{numFree} + \text{(positive)}$, repeatedly selecting the first non-
 expanding its free variables.
 \end{definition}
 
-\begin{lemma}[Extending an updated restriction agrees with the original]
+\begin{lemma}[Updating a restriction at a free variable to match the point]
 \lean{SwitchingLemma2.extend_update_self}
 \label{SwitchingLemma2.extend_update_self}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
 \difficulty{3}
-If $v$ is free in $\rho$ and the input $x$ satisfies $x(v) = b$, then extending the updated
-restriction $\rho[v \mapsto b]$ by $x$ yields the same total assignment as extending $\rho$ by $x$.
+Let $\rho$ be a restriction on $n$ variables, let $x : \mathrm{Fin}\,n \to
+\mathrm{Bool}$ be a point, and let $v \in \mathrm{Fin}\,n$ be a free variable of $\rho$
+with $x(v) = b$. Let $\rho[v \mapsto b]$ be the restriction obtained from $\rho$ by
+fixing the value of variable $v$ to $b$ (and leaving every other variable as in $\rho$).
+Then $\rho[v \mapsto b]$ and $\rho$ have the same extension along $x$; that is, $(\rho[v
+\mapsto b]).\mathrm{extend}\,x$ and $\rho.\mathrm{extend}\,x$ agree as Boolean
+assignments.
 \end{lemma}
 
-\begin{lemma}[\texttt{termSubTree} preserves semantics]
+\begin{lemma}[Semantic correctness of the term sub-tree]
 \lean{SwitchingLemma2.termSubTree_eval}
 \label{SwitchingLemma2.termSubTree_eval}
 \leanok
 \uses{DecisionTree, DecisionTree.eval, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
 \difficulty{4}
-Evaluating $\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ at $x$ equals evaluating the
-continuation at $x$, applied to the restriction obtained by folding $x$'s values into $\rho$ along
-the free literals of $\mathit{lits}$.
+Fix $n$, and let $\ell_1,\dots,\ell_m$ be a list of literals over $n$ variables, $\rho$
+a restriction on those variables, $\mathrm{cont}$ a map sending each restriction to a
+decision tree, and $x \in \{\mathrm{true},\mathrm{false}\}^n$ an assignment. Then
+evaluating the term sub-tree built from $\ell_1,\dots,\ell_m$, $\rho$, and
+$\mathrm{cont}$ at $x$ gives the same Boolean value as evaluating
+$\mathrm{cont}(\rho^\ast)$ at $x$, where $\rho^\ast$ is obtained from $\rho$ by
+processing the literals in order: for each $\ell_i$, if its variable is free in the
+current restriction, that variable is fixed to $x$'s value there, and otherwise the
+restriction is left unchanged.
 \end{lemma}
 
-\begin{lemma}[\texttt{termSubTree} fold preserves extension]
+\begin{lemma}[Fixing free variables to a point preserves its extension]
 \lean{SwitchingLemma2.termSubTree_extend_eq}
 \label{SwitchingLemma2.termSubTree_extend_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.extend_update_self}
 \difficulty{3}
-After $\mathrm{termSubTree}$ assigns all free variables of $\mathit{lits}$ from $x$, the resulting
-restriction extends by $x$ to the same total assignment as $\rho$ does: $(\mathrm{fold}\,\mathit{lits}\,\rho).\mathrm{extend}\,x = \rho.\mathrm{extend}\,x$.
+Let $\rho$ be a restriction on $n$ variables, let $x : \mathrm{Fin}\,n \to
+\mathrm{Bool}$ be a point, and let $\ell_1, \dots, \ell_m$ be a list of literals over
+these variables. Form a sequence of restrictions $\rho_0 = \rho, \rho_1, \dots, \rho_m$
+by processing the literals in order: for each $k$, writing $v_k$ for the variable of
+$\ell_k$, if $v_k$ is free in $\rho_{k-1}$ then let $\rho_k$ agree with $\rho_{k-1}$
+except that $v_k$ is fixed to the value $x(v_k)$, and otherwise let $\rho_k =
+\rho_{k-1}$. Then the extension of $\rho_m$ along $x$ equals the extension of $\rho$
+along $x$.
 \end{lemma}
 
-\begin{lemma}[Fold preserves non-\texttt{none} entries]
+\begin{lemma}[Fixed variables survive the literal fold]
 \lean{SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
 \label{SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{3}
-If $\rho(v) \neq \mathrm{none}$, then after the $\mathrm{termSubTree}$ fold over $\mathit{lits}$ the
-entry at $v$ remains non-\texttt{none}; that is, the fold never unsets an already-fixed variable.
+Let $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ be a restriction on $n$
+variables, let $x : \mathrm{Fin}\,n \to \mathrm{Bool}$ be a Boolean assignment, and let
+$\ell_1, \dots, \ell_m$ be literals on these variables. Process the literals from left
+to right, starting from $\rho$: at each literal, if its variable is still free in the
+restriction accumulated so far, fix that variable to the value $x$ assigns it, and
+otherwise change nothing. Then any variable $v$ that already carries a fixed value under
+$\rho$ (that is, $\rho(v)$ leaves $v$ set rather than free) still carries a fixed value
+in the final restriction; the fold never frees an already-fixed variable.
 \end{lemma}
 
-\begin{lemma}[Fold sets free literal variables]
+\begin{lemma}[Folding literals fixes each initially free variable]
 \lean{SwitchingLemma2.termSubTree_foldl_sets_member}
 \label{SwitchingLemma2.termSubTree_foldl_sets_member}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
 \difficulty{4}
-If a literal $l \in \mathit{lits}$ has variable free in $\rho$, then after the $\mathrm{termSubTree}$
-fold the entry at $l.\mathrm{var}$ is no longer \texttt{none} (it has been set to some value).
+Fix $n$ variables, let $x : \mathrm{Fin}\,n \to \mathrm{Bool}$ be a Boolean assignment,
+let $\rho$ be a restriction on these variables, and let $\ell_1, \dots, \ell_m$ be a
+list of literals. Process the literals from left to right, maintaining a current
+restriction that begins as $\rho$: at each literal $\ell$, if its underlying variable
+$\ell.\mathrm{var}$ is free in the current restriction, update that restriction by
+fixing $\ell.\mathrm{var}$ to the value $x(\ell.\mathrm{var})$, and otherwise leave the
+restriction unchanged; write $\rho^*$ for the restriction obtained after the whole list
+has been processed. Then for every literal $\ell$ in the list whose variable is free in
+the original restriction $\rho$, the value $\rho^*(\ell.\mathrm{var})$ is set, i.e.\
+$\ell.\mathrm{var}$ is not free in $\rho^*$.
 \end{lemma}
 
-\begin{lemma}[Fold strictly decreases the free count]
+\begin{lemma}[Sequential fixing strictly reduces the free count]
 \lean{SwitchingLemma2.termSubTree_foldl_numFree_lt}
 \label{SwitchingLemma2.termSubTree_foldl_numFree_lt}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.termSubTree_foldl_preserves_nonnone, SwitchingLemma2.termSubTree_foldl_sets_member}
 \difficulty{4}
-When at least one literal of $\mathit{lits}$ has a variable free in $\rho$, the $\mathrm{termSubTree}$
-fold strictly decreases $\mathrm{numFree}$.
+Let $\rho$ be a restriction on $n$ variables, let $x : \mathrm{Fin}\,n \to
+\mathrm{Bool}$ be a Boolean assignment, and let $\ell_1, \dots, \ell_k$ be a list of
+literals on $n$ variables. Process the literals from left to right, starting from
+$\rho$: at each step, if the current literal's variable is still free in the restriction
+obtained so far, fix that variable to the value $x$ assigns it, and otherwise leave the
+restriction unchanged; write $\rho'$ for the restriction produced after all $k$ steps.
+If at least one literal in the list has its variable free in the original restriction
+$\rho$, then $\rho'$ has strictly fewer free variables than $\rho$.
 \end{lemma}
 
-\begin{lemma}[Correctness of the fueled construction]
+\begin{lemma}[Correctness of the fuel-bounded decision-tree construction]
 \lean{SwitchingLemma2.canonicalDTree_go_correct}
 \label{SwitchingLemma2.canonicalDTree_go_correct}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.fixedBy_eval_true, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Literal.killedBy_eval_false, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.list_all_eq_false_of_mem, SwitchingLemma2.list_any_eq_false, SwitchingLemma2.restrictFn, SwitchingLemma2.termSubTree_eval, SwitchingLemma2.termSubTree_extend_eq, SwitchingLemma2.termSubTree_foldl_numFree_lt, Term.eval}
 \difficulty{6}
-Provided the fuel exceeds $\rho.\mathrm{numFree}$, the tree $\mathrm{canonicalDTree.go}\,f\,\mathit{fuel}\,\rho$
-computes the restricted function: for all $x$, its evaluation equals $\mathrm{restrictFn}\,(f.\mathrm{eval})\,\rho\,x$.
+Let $f$ be a DNF formula on $n$ Boolean variables, let $\rho$ be a restriction of those
+variables, and let $m$ be a natural number strictly greater than the number of free
+variables of $\rho$. Denote by $T$ the decision tree obtained from $f$ and $\rho$ by the
+canonical fuel-bounded recursion run with fuel budget $m$. Then $T$ computes the
+restriction of $f$ by $\rho$: for every assignment $x : \mathrm{Fin}\,n \to
+\mathrm{Bool}$, evaluating $T$ at $x$ returns $f$ applied to the extension of $x$ along
+$\rho$ — the assignment that uses $\rho$'s fixed value on each constrained coordinate
+and $x$'s value on each free coordinate.
 \end{lemma}
 
 \begin{lemma}[Correctness of the canonical decision tree]
@@ -217,7 +265,6 @@ computes the restricted function: for all $x$, its evaluation equals $\mathrm{re
 \label{SwitchingLemma2.canonicalDTree_correct}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -360,211 +407,312 @@ computes the restricted function: for all $x$, its evaluation equals $\mathrm{re
   {pdf-b5e074215b9e-p002-b002}
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_go_correct, SwitchingLemma2.restrictFn}
 \difficulty{1}
-For every $x$, the canonical decision tree evaluates correctly:
-$(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{eval}\,x = \mathrm{restrictFn}\,(f.\mathrm{eval})\,\rho\,x$.
+Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction of
+those variables. Then the canonical decision tree of $f$ under $\rho$ computes exactly
+the restriction of $f$ by $\rho$: for every Boolean assignment $x : \mathrm{Fin}\,n \to
+\mathrm{Bool}$, evaluating the tree at $x$ yields the value of $f$ on the assignment
+that takes $\rho(i)$ wherever $\rho$ fixes coordinate $i$ and $x_i$ on the free
+coordinates.
 \end{lemma}
 
-\begin{lemma}[Updating cannot increase the free count]
+\begin{lemma}[Fixing a variable does not increase the free count]
 \lean{SwitchingLemma2.numFree_update_le}
 \label{SwitchingLemma2.numFree_update_le}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree}
 \difficulty{3}
-Fixing a variable $v$ to a value $b$ never increases the number of free variables:
-$\mathrm{numFree}(\rho[v \mapsto b]) \le \mathrm{numFree}(\rho)$.
+Let $\rho$ be a restriction on $n$ variables, let $v \in \mathrm{Fin}\,n$, and let $b$
+be a Boolean value. Write $\rho[v \mapsto b]$ for the restriction that agrees with
+$\rho$ everywhere except at $v$, where it takes the fixed value $b$. Then the number of
+free variables of $\rho[v \mapsto b]$ is at most the number of free variables of $\rho$.
 \end{lemma}
 
-\begin{lemma}[\texttt{termSubTree} is extensional in its continuation]
+\begin{lemma}[Continuation-extensionality of the term sub-tree]
 \lean{SwitchingLemma2.termSubTree_cont_congr}
 \label{SwitchingLemma2.termSubTree_cont_congr}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_le, SwitchingLemma2.termSubTree}
 \difficulty{4}
-If two continuations $\mathrm{cont}_1, \mathrm{cont}_2$ agree on all restrictions $\rho'$ with
-$\rho'.\mathrm{numFree} \le \rho.\mathrm{numFree}$, then $\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}_1 = \mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}_2$.
+Let $\ell$ be a list of literals on $n$ variables and let $\rho$ be a restriction. For a
+continuation $c : \mathrm{Restriction}\,n \to \mathrm{DecisionTree}\,n$, write $T(\ell,
+\rho, c)$ for the term sub-tree built from $\ell$ starting at $\rho$ with continuation
+$c$. If two continuations $c_1$ and $c_2$ agree on every restriction $\rho'$ whose
+number of free variables is at most the number of free variables of $\rho$ — that is,
+$c_1(\rho') = c_2(\rho')$ whenever $\rho'$ has no more free variables than $\rho$ — then
+$T(\ell, \rho, c_1) = T(\ell, \rho, c_2)$.
 \end{lemma}
 
-\begin{lemma}[\texttt{termSubTree} extensionality, strict version]
+\begin{lemma}[Strict continuation-invariance of the term sub-tree]
 \lean{SwitchingLemma2.termSubTree_cont_congr_strict}
 \label{SwitchingLemma2.termSubTree_cont_congr_strict}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_lt, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cont_congr}
 \difficulty{4}
-If $\mathit{lits}$ contains at least one literal free in $\rho$, then the two continuations need
-only agree on restrictions $\rho'$ with $\rho'.\mathrm{numFree} < \rho.\mathrm{numFree}$ for the two
-$\mathrm{termSubTree}$ trees to be equal.
+Let $L$ be a list of literals on $n$ variables and $\rho$ a restriction on those
+variables, and suppose at least one literal in $L$ has its variable free under $\rho$.
+Let $c_1$ and $c_2$ be two continuations — maps sending each restriction to a decision
+tree — that agree on every restriction having strictly fewer free variables than $\rho$.
+Then the two term sub-trees built from $L$ and $\rho$, one using the continuation $c_1$
+and the other using $c_2$, are identical.
 \end{lemma}
 
-\begin{lemma}[Fuel invariance of \texttt{canonicalDTree.go}]
+\begin{lemma}[Fuel invariance of the canonical decision-tree recursion]
 \lean{SwitchingLemma2.canonicalDTree_go_fuel_invariant}
 \label{SwitchingLemma2.canonicalDTree_go_fuel_invariant}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.termSubTree_cont_congr_strict}
 \difficulty{6}
-Once the fuel exceeds $\rho.\mathrm{numFree}$, the resulting tree does not depend on the exact
-fuel: for any $\mathit{fuel}_1, \mathit{fuel}_2 > \rho.\mathrm{numFree}$, $\mathrm{canonicalDTree.go}\,f\,\mathit{fuel}_1\,\rho = \mathrm{canonicalDTree.go}\,f\,\mathit{fuel}_2\,\rho$.
+Let $f$ be a DNF formula on $n$ variables, and let $\rho$ be a restriction on those
+variables having $k$ free variables. Write $G(f, m, \rho)$ for the fuel-bounded
+recursion that builds a decision tree from the DNF $f$ and the restriction $\rho$, in
+which the natural-number fuel budget $m$ serves as an upper bound on the recursion
+depth. Then for any two fuel budgets $m_1$ and $m_2$ that both strictly exceed $k$, the
+two trees coincide: $G(f, m_1, \rho) = G(f, m_2, \rho)$.
 \end{lemma}
 
-\begin{lemma}[Continuation equals the canonical tree]
+\begin{lemma}[Fuel invariance of the canonical decision tree continuation]
 \lean{SwitchingLemma2.cont_eq_canonicalDTree}
 \label{SwitchingLemma2.cont_eq_canonicalDTree}
 \leanok
 \uses{DNF, SwitchingLemma2.Literal.fixedBy, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_go_fuel_invariant, Term}
 \difficulty{4}
-For $t \in f$ and a restriction $\rho'$ with $\rho_{\mathrm{orig}}.\mathrm{numFree} \ge \rho'.\mathrm{numFree} + 1$,
-the standard continuation $\bigl(\text{if } t \text{ fixed by } \rho' \text{ then } \mathrm{leaf}\ \mathrm{true}\ \text{else}\ \mathrm{canonicalDTree.go}\,f\,\rho_{\mathrm{orig}}.\mathrm{numFree}\,\rho'\bigr)$
-equals $\mathrm{canonicalDTree}\,f\,\rho'$.
+The canonical decision tree of a DNF formula $f$ under a restriction $\rho$ is built by
+a fuel-limited recursion; write $G_k(f,\rho)$ for the decision tree it returns when run
+with fuel budget $k \in \bbn$ starting from $\rho$, so that the canonical decision tree
+of $f$ under $\rho$ is $G_{m(\rho)+1}(f,\rho)$, where $m(\rho)$ denotes the number of
+free variables of $\rho$. Let $f$ be a DNF formula on $n$ variables, let $t$ be a term
+with $t \in f$, and let $\rho_{\mathrm{orig}}$ and $\rho'$ be restrictions with
+$m(\rho_{\mathrm{orig}}) \ge m(\rho') + 1$. Then the tree that returns the constant-true
+leaf if $t$ is fixed by $\rho'$ and returns $G_{m(\rho_{\mathrm{orig}})}(f,\rho')$
+otherwise is equal to the canonical decision tree of $f$ under $\rho'$.
 \end{lemma}
 
-\begin{lemma}[Unfolding \texttt{termSubTree} at a free head]
+\begin{lemma}[Unfolding the term sub-tree at a free head literal]
 \lean{SwitchingLemma2.termSubTree_cons_free}
 \label{SwitchingLemma2.termSubTree_cons_free}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
 \difficulty{1}
-When the head literal $l$ is free in $\rho$, $\mathrm{termSubTree}\,(l :: \mathit{rest})\,\rho\,\mathrm{cont}$
-is a branch on $l.\mathrm{var}$ whose two children are the recursive $\mathrm{termSubTree}$ calls on
-$\mathit{rest}$ with $\rho$ updated to $\mathrm{some}\ \mathrm{false}$ and $\mathrm{some}\ \mathrm{true}$.
+Let $l$ be a literal on $n$ Boolean variables, write $i$ for its underlying variable,
+let $\mathit{rest}$ be a further list of literals, let $\rho$ be a restriction on these
+$n$ variables, and let the continuation assign a decision tree to each restriction. If
+$i$ is free under $\rho$, then the sub-tree built for the list $l :: \mathit{rest}$
+under $\rho$ (with this continuation) is the branch that queries $i$, whose false-child
+is the sub-tree built for $\mathit{rest}$ under the restriction obtained from $\rho$ by
+fixing $i$ to false, and whose true-child is the sub-tree built for $\mathit{rest}$
+under the restriction obtained from $\rho$ by fixing $i$ to true, both with the same
+continuation.
 \end{lemma}
 
-\begin{lemma}[Unfolding \texttt{termSubTree} at a non-free head]
+\begin{lemma}[Skipping a fixed head literal in the term sub-tree]
 \lean{SwitchingLemma2.termSubTree_cons_nonfree}
 \label{SwitchingLemma2.termSubTree_cons_nonfree}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
 \difficulty{1}
-When the head literal $l$ is not free in $\rho$, it is skipped:
-$\mathrm{termSubTree}\,(l :: \mathit{rest})\,\rho\,\mathrm{cont} = \mathrm{termSubTree}\,\mathit{rest}\,\rho\,\mathrm{cont}$.
+Let $\rho$ be a restriction on $n$ variables, let $l$ be a literal whose underlying
+variable $v$ is not free under $\rho$ (that is, $\rho$ already assigns $v$ a fixed
+Boolean value), let $\mathit{rest}$ be a list of literals, and let $\mathrm{cont} :
+\mathrm{Restriction}\,n \to \mathrm{DecisionTree}\,n$ be a continuation. Then the
+sub-tree built for the term $l :: \mathit{rest}$ under $\rho$ with continuation
+$\mathrm{cont}$ coincides with the one built for $\mathit{rest}$ under $\rho$ with the
+same continuation; the fixed head literal $l$ contributes no branch.
 \end{lemma}
 
-\begin{lemma}[\texttt{deepPath} head extraction for \texttt{termSubTree}]
+\begin{lemma}[Head of the deepest path through a term sub-tree]
 \lean{SwitchingLemma2.termSubTree_deepPath_head_free}
 \label{SwitchingLemma2.termSubTree_deepPath_head_free}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_free}
 \difficulty{3}
-When the head literal $l$ is free in $\rho$, the deepest root-to-leaf path of
-$\mathrm{termSubTree}\,(l :: \mathit{rest})\,\rho\,\mathrm{cont}$ begins with $(l.\mathrm{var}, b)$ for some
-$b$ (the direction of the deeper child), followed by the deep path of the recursive call on
-$\rho[l.\mathrm{var} \mapsto b]$.
+Fix a restriction $\rho$ on $n$ variables and a continuation $c$ that assigns a decision
+tree to each restriction. Let $l$ be a literal whose variable $v$ is free in $\rho$, and
+let $\mathit{rest}$ be a further list of literals. Then there is a Boolean value $b$
+such that the deepest root-to-leaf path of the term sub-tree built from the literal list
+$l :: \mathit{rest}$, the restriction $\rho$, and the continuation $c$ begins with the
+pair $(v, b)$ and continues with the deepest root-to-leaf path of the term sub-tree
+built from $\mathit{rest}$, the restriction $\rho$ with $v$ now fixed to the value $b$,
+and the same continuation $c$.
 \end{lemma}
 
-\begin{lemma}[Freeness is unchanged by an unrelated update]
+\begin{lemma}[Filtering literals by freeness is invariant under an unrelated update]
 \lean{SwitchingLemma2.filter_free_update_eq}
 \label{SwitchingLemma2.filter_free_update_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{3}
-If every literal of $\mathit{rest}$ has variable distinct from $v$, then filtering $\mathit{rest}$ by
-freeness under $\rho[v \mapsto b]$ gives the same list as filtering by freeness under $\rho$.
+Let $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ be a restriction, let
+$R$ be a list of literals on the variables $\mathrm{Fin}\,n$, and let $v \in
+\mathrm{Fin}\,n$ and $b \in \mathrm{Bool}$. Write $\rho[v \mapsto b]$ for the
+restriction that agrees with $\rho$ everywhere except at $v$, where it takes the fixed
+value $b$. If the variable of every literal in $R$ is distinct from $v$, then selecting
+from $R$ those literals whose variable is free under $\rho[v \mapsto b]$ yields the same
+list as selecting those whose variable is free under $\rho$.
 \end{lemma}
 
-\begin{lemma}[\texttt{deepPath} variables match the free literals]
+\begin{lemma}[Deep-path variables track the free literals of a term]
 \lean{SwitchingLemma2.termSubTree_deepPath_var_match}
 \label{SwitchingLemma2.termSubTree_deepPath_var_match}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
 \difficulty{5}
-For $\mathit{lits}$ with pairwise distinct variables, the $k$-th variable of the deep path of
-$\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ equals the variable of the $k$-th literal in the
-free-filtered list of $\mathit{lits}$.
+Let $\mathit{lits}$ be a list of literals on $n$ Boolean variables whose variables are
+pairwise distinct, let $\rho$ be a restriction, and let $g$ be a map sending each
+restriction to a decision tree. Let $T$ be the sub-tree built for the term
+$\mathit{lits}$ under $\rho$ with continuation $g$: reading the literals of
+$\mathit{lits}$ in order, it branches on each literal whose variable is free under
+$\rho$, skips the others, and evaluates $g$ at each leaf. Write $\mathit{lits}_\rho$ for
+the sublist of $\mathit{lits}$, in order, consisting of exactly those literals whose
+variable is free under $\rho$. Then for every index $k$ smaller than both the length of
+$\mathit{lits}_\rho$ and the length of the deepest root-to-leaf path of $T$, the
+variable queried at position $k$ of that deepest path equals the variable of the $k$-th
+literal of $\mathit{lits}_\rho$.
 \end{lemma}
 
-\begin{lemma}[\texttt{deepPath} length decomposition for \texttt{termSubTree}]
+\begin{lemma}[Deepest-path length of a term sub-tree]
 \lean{SwitchingLemma2.termSubTree_deepPath_append}
 \label{SwitchingLemma2.termSubTree_deepPath_append}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
 \difficulty{5}
-For $\mathit{lits}$ with pairwise distinct variables there is a restriction $\rho'$, agreeing with
-$\rho$ off the variables of $\mathit{lits}$, such that the deep-path length of
-$\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ equals the number of free literals of $\mathit{lits}$
-plus the deep-path length of $\mathrm{cont}\,\rho'$.
+Let $\rho$ be a restriction on $n$ variables, let $\mathit{lits}$ be a list of literals
+whose underlying variables are pairwise distinct, and let $\mathrm{cont}$ be a
+continuation assigning a decision tree to every restriction. Then there is a restriction
+$\rho'$ that agrees with $\rho$ at every variable not occurring among the literals of
+$\mathit{lits}$, and such that the deepest root-to-leaf path of the term sub-tree built
+from $\mathit{lits}$, $\rho$, and $\mathrm{cont}$ has length equal to the number of
+literals in $\mathit{lits}$ whose variable is free under $\rho$, plus the length of the
+deepest root-to-leaf path of $\mathrm{cont}(\rho')$.
 \end{lemma}
 
-\begin{lemma}[\texttt{deepPath} split for \texttt{termSubTree}]
+\begin{lemma}[Deepest-path split of a term's sub-tree]
 \lean{SwitchingLemma2.termSubTree_deepPath_split}
 \label{SwitchingLemma2.termSubTree_deepPath_split}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
 \difficulty{5}
-For $\mathit{lits}$ with pairwise distinct variables, the deep path of
-$\mathrm{termSubTree}\,\mathit{lits}\,\rho\,\mathrm{cont}$ splits as a prefix (one entry per free literal of
-$\mathit{lits}$) appended with the deep path of $\mathrm{cont}\,\rho'$, where $\rho'$ agrees with $\rho$
-off the variables of $\mathit{lits}$.
+Let $\mathit{lits}$ be a list of literals on $n$ variables in which no two literals
+share the same variable, let $\rho$ be a restriction on $n$ variables, and let $c$ be a
+continuation, that is, a map sending each restriction to a decision tree. Then there
+exist a list $P$ of (variable, branch-direction) pairs and a restriction $\rho'$ such
+that the deepest path of the sub-tree for the term $\mathit{lits}$ built from $\rho$ and
+$c$ equals $P$ followed by the deepest path of $c(\rho')$; the length of $P$ equals the
+number of literals of $\mathit{lits}$ whose variable is free under $\rho$; and $\rho'$
+agrees with $\rho$ on every variable that does not occur among the variables of
+$\mathit{lits}$.
 \end{lemma}
 
-\begin{lemma}[Alive branch delegates to \texttt{termSubTree}]
+\begin{lemma}[Alive step of the canonical decision-tree builder]
 \lean{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
 \label{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.termSubTree, Term}
 \difficulty{2}
-When not all terms are killed and none is fixed, and $t$ is the first non-killed clause,
-$\mathrm{canonicalDTree.go}\,f\,(\mathit{fuel}+1)\,\rho$ unfolds to $\mathrm{termSubTree}\,t\,\rho\,\mathrm{cont}$,
-where $\mathrm{cont}\,\rho'$ is $\mathrm{leaf}\ \mathrm{true}$ if $t$ is fixed by $\rho'$ and otherwise
-$\mathrm{canonicalDTree.go}\,f\,\mathit{fuel}\,\rho'$.
+Fix $n$ Boolean variables, and let $f$ be a DNF formula (a list of terms) and $\rho$ a
+restriction. Write $T(f, k, \rho)$ for the fuel-bounded canonical decision tree of $f$
+under $\rho$ built with fuel budget $k$, and for a term $s$, a restriction $\sigma$, and
+a continuation $c$ mapping restrictions to decision trees, write $S(s, \sigma, c)$ for
+the term sub-tree of $s$ under $\sigma$ with continuation $c$. Suppose that, under
+$\rho$, not every term of $f$ is killed and no term of $f$ is fixed, and let $t$ be the
+first term of $f$, in list order, that is not killed by $\rho$. Then
+\[
+T(f,\ \mathit{fuel}+1,\ \rho) \;=\; S(t,\ \rho,\ c),
+\]
+where the continuation $c$ sends a restriction $\rho'$ to the leaf that outputs true
+when $t$ is fixed by $\rho'$, and to $T(f,\ \mathit{fuel},\ \rho')$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Alive branch delegates to \texttt{termSubTree} (top level)]
+\begin{lemma}[One-step unfolding of the canonical tree at a live restriction]
 \lean{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
 \label{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_alive_eq_termSubTree, SwitchingLemma2.termSubTree, Term}
 \difficulty{1}
-The top-level analogue of the previous lemma for $\mathrm{canonicalDTree}$ itself:
-under the alive-branch hypotheses with first non-killed clause $t$, $\mathrm{canonicalDTree}\,f\,\rho$
-equals $\mathrm{termSubTree}\,t\,\rho\,\mathrm{cont}$ with the same fixed-or-recurse continuation
-running at fuel $\rho.\mathrm{numFree}$.
+Let $f$ be a DNF formula and $\rho$ a restriction on $n$ variables such that $\rho$ does
+not kill every term of $f$ and fixes no term of $f$, and let $t$ be the first term of
+$f$, in list order, that $\rho$ does not kill. Then the canonical decision tree of $f$
+under $\rho$ equals the term sub-tree built for $t$ over $\rho$ whose continuation,
+evaluated at each leaf restriction $\rho'$ reached along a root-to-leaf path, returns
+the constant-true leaf when $\rho'$ fixes $t$ and otherwise returns the fuel-bounded
+canonical construction for $f$ under $\rho'$ run with fuel budget equal to the number of
+free variables of $\rho$.
 \end{lemma}
 
-\begin{lemma}[Skipping a non-free prefix in \texttt{termSubTree}]
+\begin{lemma}[Dropping a variable-fixed prefix from the term sub-tree]
 \lean{SwitchingLemma2.termSubTree_skip_nonfree_prefix'}
 \label{SwitchingLemma2.termSubTree_skip_nonfree_prefix'}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree}
 \difficulty{3}
-If every literal in $\mathit{prefix}$ has variable not free in $\rho$, then
-$\mathrm{termSubTree}\,(\mathit{prefix} \mathbin{+\!\!+} \mathit{rest})\,\rho\,\mathrm{cont} = \mathrm{termSubTree}\,\mathit{rest}\,\rho\,\mathrm{cont}$.
+Fix a restriction $\rho$ on $n$ variables and a continuation $c$ assigning a decision
+tree to each restriction. For a list of literals $L$, write $T(L)$ for the term sub-tree
+built from $L$ under $\rho$ with continuation $c$: it branches, in order, on each
+literal of $L$ whose variable is free in $\rho$, skipping the rest, and at every leaf
+invokes $c$ on the restriction updated along that path. Let $P$ and $R$ be lists of
+literals, and suppose every literal in $P$ has its variable already fixed by $\rho$,
+that is, not among the free variables of $\rho$. Then prepending $P$ to $R$ leaves the
+resulting tree unchanged:
+\[
+T(P \frown R) = T(R),
+\]
+where $P \frown R$ denotes the concatenation of $P$ followed by $R$.
 \end{lemma}
 
-\begin{lemma}[Skipping an updated head literal]
+\begin{lemma}[Skipping a fixed head literal in the term sub-tree]
 \lean{SwitchingLemma2.termSubTree_skip_updated_head}
 \label{SwitchingLemma2.termSubTree_skip_updated_head}
 \leanok
 \uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree}
 \difficulty{2}
-If $l.\mathrm{var} = v$, then $\mathrm{termSubTree}\,(l :: \mathit{rest})\,(\rho[v \mapsto b])\,\mathrm{cont} = \mathrm{termSubTree}\,\mathit{rest}\,(\rho[v \mapsto b])\,\mathrm{cont}$,
-since after the update $v$ is no longer free and $l$ is skipped.
+Let $\rho$ be a restriction on $n$ variables and $g$ a continuation assigning a decision
+tree to each restriction on $n$ variables. Fix a variable $v$, a Boolean value $b$, and
+a literal $\ell$ whose variable is $v$, and let $\mathit{rest}$ be a further list of
+literals. Write $\rho[v \mapsto b]$ for the restriction that agrees with $\rho$
+everywhere except at $v$, where it is fixed to the value $b$. Then the term sub-tree
+built from the list obtained by prepending $\ell$ to $\mathit{rest}$, under $\rho[v
+\mapsto b]$ with continuation $g$, coincides with the term sub-tree built from
+$\mathit{rest}$ alone under the same restriction and the same continuation.
 \end{lemma}
 
-\begin{lemma}[Tree depth bounds decision-tree depth]
+\begin{lemma}[Depth bounds decision-tree depth]
 \lean{SwitchingLemma2.depth_ge_dtDepth}
 \label{SwitchingLemma2.depth_ge_dtDepth}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
 \difficulty{1}
-If a decision tree $T$ computes a function $f$ (i.e. $T.\mathrm{eval}\,x = f(x)$ for all $x$), then its
-depth is at least the decision-tree depth of $f$: $T.\mathrm{depth} \ge \mathrm{dtDepth}\,f$.
+Let $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean function,
+and let $T$ be a decision tree on $n$ Boolean variables that computes $f$, in the sense
+that $T$ evaluates to $f(x)$ on every input $x$. Then the depth of $T$ is at least the
+decision-tree depth of $f$; that is, $\mathrm{depth}(T)$ is no smaller than the least
+depth of any decision tree computing $f$.
 \end{lemma}
 
-\begin{lemma}[Canonical tree depth bounds \texttt{dtDepth}]
+\begin{lemma}[Canonical tree depth lower-bounds decision-tree depth]
 \lean{SwitchingLemma2.canonicalDTree_depth_ge}
 \label{SwitchingLemma2.canonicalDTree_depth_ge}
 \leanok
 \uses{DNF, DNF.eval, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_correct, SwitchingLemma2.depth_ge_dtDepth, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-The depth of the canonical decision tree for $f|_\rho$ is at least the decision-tree depth of the
-restricted function: $(\mathrm{canonicalDTree}\,f\,\rho).\mathrm{depth} \ge \mathrm{dtDepth}\,(\mathrm{restrictFn}\,(f.\mathrm{eval})\,\rho)$.
+Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction on
+those variables, and write $f|_\rho$ for the restricted Boolean function $x \mapsto
+f\big(\rho.\mathrm{extend}\,x\big)$, which evaluates $f$ on the assignment that takes
+the fixed value of $\rho$ where one is set and reads the remaining coordinates from $x$.
+Then the depth of the canonical decision tree for $f$ under $\rho$ is at least the
+decision-tree depth of $f|_\rho$; that is, the least depth of any decision tree
+computing $f|_\rho$ does not exceed the depth of the canonical tree.
 \end{lemma}
 
-\begin{lemma}[Decision-tree depth bounded by free count]
+\begin{lemma}[Decision-tree depth bounded by the number of free variables]
 \lean{SwitchingLemma2.dtDepth_restrictFn_le_numFree}
 \label{SwitchingLemma2.dtDepth_restrictFn_le_numFree}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.depth_ge_dtDepth, SwitchingLemma2.extend_update_self, SwitchingLemma2.numFree_update_lt, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
-For any function $f$ and restriction $\rho$, the decision-tree depth of the restricted function is at
-most the number of free variables: $\mathrm{dtDepth}\,(\mathrm{restrictFn}\,f\,\rho) \le \rho.\mathrm{numFree}$.
+Let $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean function
+and let $\rho$ be a restriction on $n$ variables, fixing some coordinates to Boolean
+values and leaving the rest free. Then the decision-tree depth of the restricted
+function $f\!\restriction_\rho$, which sends $x$ to $f$ evaluated with the free
+coordinates taken from $x$ and the remaining coordinates set by $\rho$, is at most the
+number of free variables of $\rho$.
 \end{lemma}

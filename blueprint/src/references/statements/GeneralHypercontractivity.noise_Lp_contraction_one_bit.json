@@ -1,0 +1,17 @@
+{
+ "lean_name": "GeneralHypercontractivity.noise_Lp_contraction_one_bit",
+ "key": "af0ce0a2fdc732b7",
+ "kind": "lemma",
+ "title": "$L^q$ contractivity of the one-bit noise operator",
+ "statement": "Let $q \\ge 1$ and let $\\rho$ be a real number with $0 \\le \\rho \\le 1$. Then for every Boolean function $g \\colon \\{0,1\\}^1 \\to \\bbr$ on a single bit, the noise operator $T_\\rho$ satisfies\n\\[\n  \\bigl(\\E\\!\\left[\\,\\abs{T_\\rho g}^{\\,q}\\,\\right]\\bigr)^{1/q}\n  \\;\\le\\;\n  \\bigl(\\E\\!\\left[\\,\\abs{g}^{\\,q}\\,\\right]\\bigr)^{1/q},\n\\]\nwhere both expectations are taken with respect to the uniform measure on $\\{0,1\\}^1$.",
+ "hypotheses_covered": [
+  "q ≥ 1",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "g is a Boolean function on one bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $q \\ge 1$, $0 \\le \\rho \\le 1$ and $g : \\mathrm{BoolCube}\\,1 \\to \\bbr$,\n\\[\n  \\bigl(\\E[\\abs{T_\\rho g}^q]\\bigr)^{1/q} \\;\\le\\; \\bigl(\\E[\\abs{g}^q]\\bigr)^{1/q},\n\\]\ni.e.\\ $T_\\rho$ is a contraction in $L^q$ on one bit."
+}

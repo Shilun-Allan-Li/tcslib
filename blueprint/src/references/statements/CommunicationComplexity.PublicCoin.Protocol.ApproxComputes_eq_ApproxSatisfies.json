@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.Protocol.ApproxComputes_eq_ApproxSatisfies",
+ "key": "e1754f65ea0ec7f6",
+ "kind": "theorem",
+ "title": "Approximate computation as satisfying pointwise equality",
+ "statement": "Let $p$ be a public-coin protocol over a shared-randomness space $\\Omega$ carrying a measure, with Alice's inputs in $X$, Bob's in $Y$, and outputs in $\\alpha$, let $f : X \\to Y \\to \\alpha$ be a function, and let $\\varepsilon \\in \\bbr$. Then the assertion that $p$ $\\varepsilon$-computes $f$ coincides with the assertion that $p$ $\\varepsilon$-satisfies the predicate $Q(x, y, a)$ given by $a = f(x, y)$; that is, the two propositions are equal.",
+ "hypotheses_covered": [
+  "public-coin protocol p over a measure space Ω",
+  "function f : X → Y → α",
+  "real parameter ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any public-coin protocol $p$, function $f : X \\to Y \\to \\alpha$, and\n$\\varepsilon \\in \\mathbb{R}$,\n\\[\n  p.\\texttt{ApproxComputes}\\,f\\,\\varepsilon\n  \\;=\\;\n  p.\\texttt{ApproxSatisfies}\\,(\\lambda\\,x\\,y\\,a.\\; a = f\\,x\\,y)\\,\\varepsilon.\n\\]\nThat is, $\\varepsilon$-computing $f$ is exactly $\\varepsilon$-satisfying the\npointwise equality predicate $a = f\\,x\\,y$."
+}

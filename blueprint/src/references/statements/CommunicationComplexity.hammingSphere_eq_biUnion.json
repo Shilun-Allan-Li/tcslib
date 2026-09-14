@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.hammingSphere_eq_biUnion",
+ "key": "96235f39814431e1",
+ "kind": "lemma",
+ "title": "Hamming sphere as a union of support fibers",
+ "statement": "Let $\\alpha$ be a finite alphabet, let $u \\in \\alpha^n$ be a word of length $n$, and let $r$ be a natural number. Then the Hamming sphere $S_r(u)$ of radius $r$ centred at $u$ is the union, taken over all $r$-element subsets $S$ of the $n$ coordinate positions, of the support fibers of $u$ over $S$ — that is, the sets of words differing from $u$ at exactly the positions in $S$:\n\\[\n  S_r(u) = \\bigcup_{\\substack{S \\subseteq \\{1,\\dots,n\\} \\\\ \\abs{S} = r}} \\{\\, v \\in \\alpha^n : v \\text{ and } u \\text{ differ in exactly the positions of } S \\,\\}.\n\\]",
+ "hypotheses_covered": [
+  "u is a word of length n over the finite alphabet α",
+  "α is a finite alphabet",
+  "r is a natural number (the radius)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Hamming sphere of radius $r$ centred at $u$ equals the union of support fibers over\nall size-$r$ subsets of $\\mathrm{Fin}\\,n$:\n\\[\n  S_r(u) = \\bigcup_{S \\in \\binom{[n]}{r}} \\mathrm{supportFiber}(u,S).\n\\]"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_cond_zVariable_eq_cond_inter",
+ "key": "24cd7b84463f7b99",
+ "kind": "theorem",
+ "title": "Iterated conditioning collapses to the joint event",
+ "statement": "Fix an input length $n \\ge 1$, a deterministic disjointness protocol $p$ on inputs of length $n$, and an achievable value $z$ of the summary variable $Z = (M, T, X_{<T}, Y_{>T})$. Let $D$ denote the hard distribution conditioned on the event that the two generated input sets are disjoint, and write $Y_T$ for Bob's bit at the special coordinate. Then conditioning $D$ first on the event $\\{Y_T = \\mathrm{false}\\}$ and then on the fiber $\\{Z = z\\}$ produces exactly the same measure as conditioning $D$ in a single step on the intersection $\\{Y_T = \\mathrm{false}\\} \\cap \\{Z = z\\}$.",
+ "hypotheses_covered": [
+  "input length n ≥ 1 (n : ℕ+)",
+  "a deterministic disjointness protocol p",
+  "z an achievable value of the Z variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Conditioning first on $Y_{T}=false$ under $D$, then on a $Z$ value, is the same as conditioning under $D$ on the intersection of those events."
+}

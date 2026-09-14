@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.sum_chiS_mul_eq",
+ "key": "febb3d1bf11ee74b",
+ "kind": "lemma",
+ "title": "Completeness kernel for the Walsh basis",
+ "statement": "Let $x, y \\in \\{0,1\\}^n$ be points of the Boolean hypercube. Then the sum of the products of Walsh--Fourier characters over all subsets of $[n]$ satisfies\n\\[\n  \\sum_{S \\subseteq [n]} \\chi_S(x)\\,\\chi_S(y) \\;=\\;\n  \\begin{cases} 2^n & \\text{if } x = y,\\\\[2pt] 0 & \\text{if } x \\neq y. \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "x and y are points of the Boolean hypercube {0,1}^n",
+  "sum ranges over all subsets S of [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For points $x, y\\in\\{0,1\\}^n$,\n\\[\n  \\sum_{S\\subseteq[n]} \\chi_S(x)\\,\\chi_S(y) \\;=\\;\n  \\begin{cases} 2^n & x = y,\\\\ 0 & x\\ne y. \\end{cases}\n\\]\nThis is the completeness kernel underlying Fourier inversion."
+}

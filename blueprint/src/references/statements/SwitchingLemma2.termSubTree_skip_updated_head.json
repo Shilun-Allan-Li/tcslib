@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_skip_updated_head",
+ "key": "61eb4de61db67e28",
+ "kind": "lemma",
+ "title": "Skipping a fixed head literal in the term sub-tree",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables and $g$ a continuation assigning a decision tree to each restriction on $n$ variables. Fix a variable $v$, a Boolean value $b$, and a literal $\\ell$ whose variable is $v$, and let $\\mathit{rest}$ be a further list of literals. Write $\\rho[v \\mapsto b]$ for the restriction that agrees with $\\rho$ everywhere except at $v$, where it is fixed to the value $b$. Then the term sub-tree built from the list obtained by prepending $\\ell$ to $\\mathit{rest}$, under $\\rho[v \\mapsto b]$ with continuation $g$, coincides with the term sub-tree built from $\\mathit{rest}$ alone under the same restriction and the same continuation.",
+ "hypotheses_covered": [
+  "the head literal $\\ell$ queries the variable $v$ (its variable equals $v$)",
+  "the restriction is updated at $v$ to fix it to the value $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $l.\\mathrm{var} = v$, then $\\mathrm{termSubTree}\\,(l :: \\mathit{rest})\\,(\\rho[v \\mapsto b])\\,\\mathrm{cont} = \\mathrm{termSubTree}\\,\\mathit{rest}\\,(\\rho[v \\mapsto b])\\,\\mathrm{cont}$,\nsince after the update $v$ is no longer free and $l$ is skipped."
+}

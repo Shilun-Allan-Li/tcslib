@@ -1,0 +1,19 @@
+{
+ "lean_name": "SATTo3SAT.eval_local_eq_global",
+ "key": "64303f940f692733",
+ "kind": "lemma",
+ "title": "Local and global assignments agree on local literals",
+ "statement": "Let $\\alpha$ be a truth assignment of the variables $V$, and let $f$ be a CNF formula over $V$ with clauses $C_0, \\dots, C_{m-1}$. Fix an index $i$ with $0 \\le i < m$ and write $C_i$ for the $i$-th clause. Let $l$ be a literal over the auxiliary variable type $\\mathtt{AuxVar}\\,V$ that is local to $i$, meaning that every auxiliary variable $y_{i',j}$ occurring in $l$ satisfies $i' = i$. Write $\\hat\\alpha$ for the global assignment determined by $\\alpha$ and $f$, which sends each original variable to its value under $\\alpha$ and each auxiliary variable $y_{i',j}$ to the truth of the assertion that the first $j+2$ literals of clause $C_{i'}$ are all false under $\\alpha$; and write $\\alpha_i$ for the corresponding local assignment, built from clause $C_i$ alone. Then $l$ takes the same truth value under $\\hat\\alpha$ as under $\\alpha_i$.",
+ "hypotheses_covered": [
+  "α is a truth assignment of V",
+  "f is a CNF formula over V",
+  "i is a clause index with i < f.length",
+  "clause is the i-th clause of f",
+  "l is a literal over AuxVar V",
+  "l is local to index i"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement is incomplete: the local assignment (local_α₃) is defined as `sorry` and the equality that forms the conclusion is missing entirely from the snippet, so it does not fully compile. I reconstructed the intended claim — that a literal local to clause i evaluates identically under the global assignment and under the local assignment built from clause i alone — from the lemma name, the `current` hint, and the definitions of globalAssignment/extraVal. The exact form of the local assignment cannot be verified from the ground truth given.",
+ "rubric": [],
+ "replaced": "For a literal $l$ local to index $i$, the evaluation of $l$ under the global assignment\n\\texttt{SATTo3SAT.globalAssignment} $\\alpha\\,f$ agrees with its evaluation under the local\nassignment that maps $\\mathtt{extra}\\,i\\,j \\mapsto \\texttt{SATTo3SAT.extraVal}\\,\\alpha\\,(f_i)\\,j$."
+}

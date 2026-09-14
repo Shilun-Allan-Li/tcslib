@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xVector_message_info_dualProtocol_eq_yVector_message_info",
+ "key": "1d18be14a02a456b",
+ "kind": "theorem",
+ "title": "Duality identity for conditional transcript information",
+ "statement": "Fix a positive integer $n$, and consider the length-$n$ set-disjointness problem in which Alice and Bob each hold a subset of $\\{0,1,\\dots,n-1\\}$. Let $p$ be a deterministic two-party communication protocol on such inputs with Boolean output, and let $p^\\ast$ be the dual protocol formed from $p$ by exchanging the roles of Alice and Bob and reversing the coordinate order of both input sets. Draw a random sample $\\omega$ from the hard distribution conditioned on the event that the two generated sets are disjoint; write $x(\\omega), y(\\omega) \\in \\{0,1\\}^n$ for Alice's and Bob's full length-$n$ input vectors at $\\omega$, and, for a protocol $q$, write $\\Pi_q(\\omega)$ for the transcript produced by running $q$ on the pair $(x(\\omega), y(\\omega))$. Then, with every information quantity taken over $\\omega$ under the disjointness-conditioned distribution, the conditional mutual information between Alice's input vector and the transcript of $p^\\ast$ given Bob's input vector equals the conditional mutual information between Bob's input vector and the transcript of $p$ given Alice's input vector: \\[ I\\bigl(x(\\omega) \\,;\\, \\Pi_{p^\\ast}(\\omega) \\mid y(\\omega)\\bigr) = I\\bigl(y(\\omega) \\,;\\, \\Pi_{p}(\\omega) \\mid x(\\omega)\\bigr). \\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic protocol on length-n disjointness inputs with Boolean output",
+  "information computed under the disjointness-conditioned hard distribution"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Full-vector information for the dual protocol is the swapped full-vector information for the original protocol."
+}

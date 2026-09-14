@@ -1,0 +1,16 @@
+{
+ "lean_name": "DecisionTree.chiS_symmDiff_singleton",
+ "key": "5a2659c441ebf9ba",
+ "kind": "lemma",
+ "title": "Symmetric difference by a singleton toggles a Walsh character",
+ "statement": "Let $S\\subseteq[n]$, let $i\\in[n]$, and let $x\\in\\{0,1\\}^n$. Then the Walsh--Fourier character indexed by the symmetric difference $S\\mathbin{\\triangle}\\{i\\}$ satisfies\n\\[\n  \\chi_{S\\,\\triangle\\,\\{i\\}}(x) \\;=\\; \\chi_S(x)\\,\\sigma(x_i),\n\\]\nwhere $\\sigma$ is the sign encoding $\\sigma(x_i)=(-1)^{x_i}$.",
+ "hypotheses_covered": [
+  "S is a subset of [n]",
+  "i is an index in [n]",
+  "x is a point of the Boolean cube {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $S$, $i$, and $x$ in the Boolean cube,\n$\\chi_{S \\triangle \\{i\\}}(x) = \\chi_S(x)\\cdot \\mathrm{boolToSign}(x_i)$."
+}

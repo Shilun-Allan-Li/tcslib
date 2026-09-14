@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.NAndCircuit.clause_nodup",
+ "key": "80c5dc4836bddde9",
+ "kind": "theorem",
+ "title": "Distinct variable indices in an AND clause",
+ "statement": "Fix $n$, and let $lits$ be a list of literals over the variables $\\{0,\\dots,n-1\\}$ whose underlying variable indices, obtained by taking the index of each literal in $lits$, are pairwise distinct. If a normal-form AND circuit on $n$ variables equals the base clause built from $lits$ together with this distinctness witness, then the list of variable indices of $lits$ has no repeated entries.",
+ "hypotheses_covered": [
+  "the variable indices of lits are pairwise distinct (Nodup)",
+  "the circuit c equals the clause built from lits and this distinctness proof"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a normal-form AND circuit $c$ equals a clause built from literals $lits$ with a\nduplication-free proof $h$, then the variable indices $lits.\\mathrm{map}\\;\\mathrm{Lit.idx}$\nare pairwise distinct."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "ArrowTheorem.profile_kernel_gen",
+ "key": "3e413a91c2bb9ad4",
+ "kind": "lemma",
+ "title": "General profile kernel for paired preference assignments",
+ "statement": "Let $x, y : \\mathrm{Fin}\\,6 \\to \\mathrm{Bool}$ be two preference assignments whose sign encodings have balanced marginals, $\\sum_{k=1}^{6}\\sigma(x_k) = \\sum_{k=1}^{6}\\sigma(y_k) = 0$, and whose signed correlation is $\\sum_{k=1}^{6}\\sigma(x_k)\\,\\sigma(y_k) = -2$. For a profile $p : \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,6$, write $x\\circ p$ and $y\\circ p$ for the points of the Boolean hypercube whose $i$-th coordinates are $x_{p(i)}$ and $y_{p(i)}$. Then for all subsets $S, T \\subseteq [n]$, the average of the product of Walsh characters over all $6^n$ profiles satisfies\n\\[\n  \\Bigl(\\tfrac16\\Bigr)^{n}\\sum_{p:\\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,6}\n    \\chi_S(x\\circ p)\\,\\chi_T(y\\circ p)\n  \\;=\\;\n  \\begin{cases} \\bigl(-\\tfrac13\\bigr)^{\\abs{S}} & S = T,\\\\[2pt] 0 & S \\ne T. \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "xPref has balanced marginals: sum of sign encodings over the 6 orderings is 0",
+  "yPref has balanced marginals: sum of sign encodings over the 6 orderings is 0",
+  "signed cross-correlation of xPref and yPref equals -2",
+  "S and T are arbitrary finite subsets of [n]",
+  "n is the (arbitrary) number of voters / dimension"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{xPref},\\mathrm{yPref}:\\mathrm{Fin}\\,6\\to\\mathrm{Bool}$ be two\npreference assignments with balanced marginals\n$\\sum_k s(\\mathrm{xPref}(k)) = \\sum_k s(\\mathrm{yPref}(k)) = 0$ and cross-sum\n$\\sum_k s(\\mathrm{xPref}(k))\\,s(\\mathrm{yPref}(k)) = -2$.  Then for all\n$S,T\\subseteq[n]$,\n\\[\n  \\Bigl(\\tfrac16\\Bigr)^{\\!n}\\sum_{p:\\mathrm{Profile}\\,n}\n    \\chi_S\\bigl(\\mathrm{xPref}\\circ p\\bigr)\\,\\chi_T\\bigl(\\mathrm{yPref}\\circ p\\bigr)\n  \\;=\\;\n  \\begin{cases} (-1/3)^{|S|} & S = T \\\\ 0 & S\\ne T. \\end{cases}\n\\]"
+}

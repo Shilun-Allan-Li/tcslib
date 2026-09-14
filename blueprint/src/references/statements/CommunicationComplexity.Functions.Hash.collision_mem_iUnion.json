@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Hash.collision_mem_iUnion",
+ "key": "260cb43d0f1176d0",
+ "kind": "lemma",
+ "title": "Collision event as a union of collision pieces",
+ "statement": "Let $\\alpha$ be a type, let $k$ be a natural number, and let $x, y \\in \\alpha$. Writing a hash function as a map $h : \\alpha \\to \\mathrm{Fin}\\,k$, the collision event on which $x$ and $y$ receive the same hash value decomposes as the union of collision pieces over all possible common values:\n\\[\n  \\{\\, h : \\alpha \\to \\mathrm{Fin}\\,k \\mid h(x) = h(y) \\,\\}\n  \\;=\\; \\bigcup_{a \\in \\mathrm{Fin}\\,k} \\{\\, h \\mid h(x) = a \\text{ and } h(y) = a \\,\\}.\n\\]",
+ "hypotheses_covered": [
+  "a type α",
+  "a natural number k",
+  "two points x, y of α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $x, y : \\alpha$ and any $k$,\n\\[\n  \\{h : \\texttt{HashSpace}\\,\\alpha\\,k \\mid h(x) = h(y)\\}\n  \\;=\\; \\bigcup_{a : \\mathrm{Fin}\\,k} \\texttt{collisionPiece}\\,k\\,x\\,y\\,a.\n\\]"
+}

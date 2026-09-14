@@ -1,0 +1,15 @@
+{
+ "lean_name": "CodingTheory.Johnson.inner_shifted_expand",
+ "key": "ad45fe8ba2f165e3",
+ "kind": "lemma",
+ "title": "Bilinear expansion of the shifted inner product",
+ "statement": "Let $\\alpha \\in \\bbr$, let $x, y$ be binary words of length $n$, and write $\\mathbf{1}$ for the all-ones vector in $\\bbr^n$ and $s(x), s(y) \\in \\bbr^n$ for the $\\pm 1$ embeddings of $x$ and $y$ (with $i$-th coordinate $-1$ where the corresponding bit is true and $+1$ otherwise). Form the shifted vectors $\\hat{x}^\\alpha = s(x) - \\alpha \\mathbf{1}$ and $\\hat{y}^\\alpha = s(y) - \\alpha \\mathbf{1}$. Then their Euclidean inner product expands as\n\\[\n\\langle \\hat{x}^\\alpha,\\, \\hat{y}^\\alpha \\rangle\n= \\langle s(x),\\, s(y) \\rangle\n- \\alpha\\,\\langle s(x),\\, \\mathbf{1} \\rangle\n- \\alpha\\,\\langle s(y),\\, \\mathbf{1} \\rangle\n+ \\alpha^2\\,\\langle \\mathbf{1},\\, \\mathbf{1} \\rangle.\n\\]",
+ "hypotheses_covered": [
+  "real parameter α",
+  "binary words x, y of length n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $\\alpha \\in \\mathbb{R}$ and binary words $x,y$,\n\\[\n\\langle \\hat{x}^\\alpha, \\hat{y}^\\alpha \\rangle\n= \\langle \\mathrm{pmOne}(x), \\mathrm{pmOne}(y)\\rangle\n - \\alpha\\langle \\mathrm{pmOne}(x), \\mathbf{1}\\rangle\n - \\alpha\\langle \\mathrm{pmOne}(y), \\mathbf{1}\\rangle\n + \\alpha^2 \\langle \\mathbf{1}, \\mathbf{1}\\rangle.\n\\]"
+}

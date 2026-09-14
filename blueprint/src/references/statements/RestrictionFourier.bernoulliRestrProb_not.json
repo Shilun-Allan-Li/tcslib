@@ -1,0 +1,16 @@
+{
+ "lean_name": "RestrictionFourier.bernoulliRestrProb_not",
+ "key": "c33bf8f2323c6e8d",
+ "kind": "lemma",
+ "title": "Complement rule for the Bernoulli restriction measure",
+ "statement": "Fix $n$ and a parameter $p$ with $0 \\le p \\le 1$, and consider the Bernoulli($p$) random restriction on $n$ variables, under which each restriction $\\rho$ receives weight $p^{k}\\,\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-k}$, where $k$ is the number of free variables of $\\rho$. For any decidable predicate $E$ on restrictions, writing $\\Pr[E]$ for the total weight of the restrictions satisfying $E$, the probability that $E$ fails equals one minus the probability that $E$ holds:\n\\[\n  \\Pr[\\lnot E] = 1 - \\Pr[E].\n\\]",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "event is a decidable predicate on restrictions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 \\le p \\le 1$ and any decidable event $E$ on restrictions,\n$\\Pr[\\neg E] = 1 - \\Pr[E]$ under the Bernoulli($p$)-restriction measure."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.theorem71_compactApproximation_of_jointContinuous_compact",
+ "key": "ae836e3eb749fa97",
+ "kind": "theorem",
+ "title": "Compact approximation from joint continuity on a compact column set",
+ "statement": "Let $X, Y \\subseteq \\bbr$ and $f : \\bbr \\times \\bbr \\to \\bbr$ satisfy the convex-compact minimax hypotheses, and suppose in addition that $Y$ is compact and that $f$ is jointly continuous on $X \\times Y$. Then for every $\\varepsilon > 0$ there is a nonempty finite subset $u \\subseteq X$ such that\n\\[\n  \\sup_{y \\in Y} \\inf_{x \\in u} f(x,y)\n    \\;\\le\\;\n  \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y) + \\varepsilon;\n\\]\nthat is, restricting the row player to a suitable finite sample raises the lower value by at most $\\varepsilon$.",
+ "hypotheses_covered": [
+  "the convex-compact minimax hypotheses hold for $X$, $Y$, $f$ (both sets nonempty, $X$ compact and convex, $Y$ convex, $f$ continuous and convex in the row variable, concave in the column variable, and bounded above and below on $X\\times Y$)",
+  "$Y$ is compact",
+  "$f$ is jointly continuous on $X \\times Y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the convex-compact minimax hypotheses, if $Y$ is compact and $f$ is jointly\ncontinuous on $X \\times Y$, then $\\texttt{OnlineLearning.Theorem71CompactApproximation}$\nholds.  This is obtained by combining\n$\\texttt{OnlineLearning.theorem71\\_uniformEquicontinuity\\_of\\_jointContinuous\\_compact}$ with\n$\\texttt{OnlineLearning.theorem71\\_compactApproximation\\_of\\_uniformEquicontinuity}$."
+}

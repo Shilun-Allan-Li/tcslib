@@ -89,14 +89,18 @@ The squared $L^2$ distance between two Boolean functions is
 $\E\big[(f(x) - g(x))^2\big]$ under the uniform measure on the cube.
 \end{definition}
 
-\begin{lemma}[Noisy influence at $\rho = 1$]
+\begin{lemma}[Noisy influence at noise rate one]
 \lean{KKL.noisyInfluence_one}
 \label{KKL.noisyInfluence_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, KKL.noisyInfluence}
 \difficulty{3}
-At noise rate $\rho = 1$ the noisy influence coincides with the ordinary influence:
-$\mathrm{Inf}_i^{1}[f] = \mathrm{Inf}_i[f]$.
+Fix a coordinate $i \in [n]$ and a Boolean function $f:\{0,1\}^n\to\bbr$. At noise rate
+$\rho = 1$, the noisy influence of $i$ on $f$ coincides with the ordinary influence of
+$i$ on $f$:
+\[
+  \mathrm{Inf}_i^{1}[f] \;=\; \mathrm{Inf}_i[f].
+\]
 \end{lemma}
 
 \begin{lemma}[Sum of noisy influences]
@@ -105,21 +109,30 @@ $\mathrm{Inf}_i^{1}[f] = \mathrm{Inf}_i[f]$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, KKL.noisyInfluence}
 \difficulty{3}
-For every $\rho$,
+Fix an integer $n$ and a real number $\rho$, and let $f:\{0,1\}^n\to\bbr$ be a Boolean
+function. Summing the noisy influence at noise rate $\rho$ over all coordinates
+$i\in[n]$ gives
 \[
   \sum_{i=1}^{n} \mathrm{Inf}_i^{\rho}[f]
-  \;=\; \sum_{S \subseteq [n]} \abs{S}\,\rho^{\abs{S}-1}\,\hat f(S)^2 .
+  \;=\; \sum_{S\subseteq[n]} \abs{S}\,\rho^{\,\abs{S}-1}\,\hat f(S)^2,
 \]
+where the right-hand sum ranges over all subsets $S$ of $[n]$.
 \end{lemma}
 
-\begin{lemma}[Total influence as a sum of influences]
+\begin{lemma}[Total influence as the sum of coordinate influences]
 \lean{KKL.totalInfluence_eq_sum_influences}
 \label{KKL.totalInfluence_eq_sum_influences}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.totalInfluence}
 \difficulty{1}
-The total influence is the sum of the coordinate influences:
-$I[f] = \sum_{i} \mathrm{Inf}_i[f]$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and for each coordinate $i \in
+\{1,\dots,n\}$ let $\mathrm{Inf}_i[f] = \E\!\left[(f(x)-f(x^i))^2/4\right]$ denote the
+influence of coordinate $i$, where $x^i$ is $x$ with its $i$-th bit flipped and $\E$ is
+expectation under the uniform measure on $\{0,1\}^n$. Then the total influence of $f$ is
+the sum of the individual coordinate influences,
+\[
+  I[f] \;=\; \sum_{i=1}^{n} \mathrm{Inf}_i[f].
+\]
 \end{lemma}
 
 \begin{lemma}[Second moment of a $\pm 1$-valued function]
@@ -128,54 +141,77 @@ $I[f] = \sum_{i} \mathrm{Inf}_i[f]$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.innerProduct_self_pm_one, BooleanAnalysis.isPmOne}
 \difficulty{2}
-If $f$ takes values in $\{-1, 1\}$, then $\E[f^2] = 1$.
+Let $f : \{0,1\}^n \to \bbr$ be a $\pm 1$-valued function, so that $f(x) \in \{-1, 1\}$
+for every $x \in \{0,1\}^n$. Then, with respect to the uniform measure, $\E[f^2] = 1$;
+that is, $2^{-n}\sum_{x \in \{0,1\}^n} f(x)^2 = 1$.
 \end{lemma}
 
-\begin{lemma}[Parseval in second-moment form]
+\begin{lemma}[Parseval's identity for Boolean functions]
 \lean{KKL.sum_fourier_sq_eq_expect_sq}
 \label{KKL.sum_fourier_sq_eq_expect_sq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
 \difficulty{2}
-For every Boolean function $f$,
-$\sum_{S \subseteq [n]} \hat f(S)^2 = \E[f^2]$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function. Then the sum of the squared
+Fourier--Walsh coefficients of $f$ over all subsets $S \subseteq [n]$ equals the
+expectation of $f^2$ under the uniform measure:
+\[
+  \sum_{S \subseteq [n]} \hat f(S)^2 \;=\; \E\!\left[f^2\right].
+\]
 \end{lemma}
 
-\begin{lemma}[Low and high parts recombine]
+\begin{lemma}[Low and high degree parts reconstruct the function]
 \lean{KKL.low_plus_high_eq}
 \label{KKL.low_plus_high_eq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, KKL.highDegreePart, KKL.lowDegreePart}
 \difficulty{3}
-For every $f$, every level $k$ and every point $x$ of the cube,
-$f_{\le k}(x) + f_{>k}(x) = f(x)$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function and let $k \in \bbn$ be a threshold
+level. Then for every point $x \in \{0,1\}^n$ of the cube,
+\[
+  f_{\le k}(x) + f_{>k}(x) = f(x),
+\]
+where $f_{\le k}(x) = \sum_{\abs{S}\le k}\hat f(S)\,\chi_S(x)$ and $f_{>k}(x) =
+\sum_{\abs{S} > k}\hat f(S)\,\chi_S(x)$ are the low- and high-degree parts of $f$ at
+level $k$. That is, splitting the Fourier–Walsh expansion of $f$ into frequencies of
+degree at most $k$ and degree greater than $k$ recovers $f$ exactly.
 \end{lemma}
 
-\begin{lemma}[Fourier coefficients of the low-degree part]
+\begin{lemma}[Fourier coefficients of the low-degree truncation]
 \lean{KKL.fourierCoeff_lowDegreePart}
 \label{KKL.fourierCoeff_lowDegreePart}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight, KKL.lowDegreePart}
 \difficulty{6}
-The truncation acts as a projection on the Fourier side: for every $S$,
-$\widehat{f_{\le k}}(S) = \hat f(S)$ when $\abs{S} \le k$, and
-$\widehat{f_{\le k}}(S) = 0$ otherwise.
+Let $f\colon\{0,1\}^n\to\bbr$ be a Boolean function and $k$ a natural number. For every
+subset $S\subseteq[n]$, the Fourier--Walsh coefficient of the low-degree part $f_{\le
+k}$ at frequency $S$ satisfies
+\[
+  \widehat{f_{\le k}}(S) \;=\;
+  \begin{cases}
+    \hat f(S) & \text{if } \abs{S}\le k,\\[2pt]
+    0 & \text{if } \abs{S} > k.
+  \end{cases}
+\]
 \end{lemma}
 
-\begin{lemma}[$L^2$ error of low-degree truncation]
+\begin{lemma}[$L^2$ error of the low-degree truncation]
 \lean{KKL.lowDegree_l2_error}
 \label{KKL.lowDegree_l2_error}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval, BooleanAnalysis.uniformWeight, KKL.fourierCoeff_lowDegreePart, KKL.highDegreePart, KKL.l2DistSq, KKL.lowDegreePart, KKL.low_plus_high_eq}
 \difficulty{5}
-The squared $L^2$ error of the degree-$k$ truncation is exactly the Fourier weight
-above level $k$:
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and for a natural number $k$ let
+$f_{\le k}(x) = \sum_{\abs{S}\le k} \hat f(S)\,\chi_S(x)$ be its low-degree part,
+retaining only the Fourier--Walsh coefficients of degree at most $k$. Then, under the
+uniform measure on the cube, the squared $L^2$ distance between $f$ and this truncation
+equals the total Fourier weight sitting above level $k$:
 \[
-  \E\big[(f - f_{\le k})^2\big] \;=\; \sum_{\abs{S} > k} \hat f(S)^2 .
+  \E\big[(f(x) - f_{\le k}(x))^2\big] \;=\; \sum_{\abs{S} > k} \hat f(S)^2 .
 \]
 \end{lemma}
 
-\begin{lemma}[Fourier tail weight bound]
+\begin{lemma}[Fourier tail weight bound above level $k$]
 \lean{KKL.tail_fourier_weight_bound}
 \proofsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p001-b005,
@@ -187,7 +223,6 @@ above level $k$:
   pdf-20e15a3d3d5e-p001-b005,
   pdf-20e15a3d3d5e-p002-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -480,14 +515,15 @@ above level $k$:
   {pdf-20e15a3d3d5e-p010-b005}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 \difficulty{3}
-For $k > 0$ the Fourier weight of $f$ above level $k$ is controlled by the total
-influence:
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and let $k$ be a positive integer.
+Then the total Fourier weight of $f$ carried by frequencies of size strictly greater
+than $k$ is bounded by the total influence divided by $k$:
 \[
-  \sum_{\abs{S} > k} \hat f(S)^2 \;\le\; \frac{I[f]}{k}.
+  \sum_{\substack{S \subseteq [n] \\ \abs{S} > k}} \hat f(S)^2 \;\le\; \frac{I[f]}{k}.
 \]
 \end{lemma}
 
-\begin{lemma}[Low-degree approximation]
+\begin{lemma}[Low-degree approximation error bound]
 \lean{KKL.lowDegree_approx}
 \proofsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p001-b005,
@@ -499,7 +535,6 @@ influence:
   pdf-20e15a3d3d5e-p001-b005,
   pdf-20e15a3d3d5e-p002-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -827,8 +862,14 @@ influence:
   {pdf-20e15a3d3d5e-p001-b005}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.totalInfluence, KKL.l2DistSq, KKL.lowDegreePart, KKL.lowDegree_l2_error, KKL.tail_fourier_weight_bound}
 \difficulty{1}
-For $k > 0$, the degree-$k$ truncation approximates $f$ with squared $L^2$ error at
-most $I[f]/k$.
+Let $f\colon\{0,1\}^n\to\bbr$ be a Boolean function and let $k\ge 1$ be an integer.
+Writing $f_{\le k}(x)=\sum_{\abs S\le k}\hat f(S)\,\chi_S(x)$ for the truncation of $f$
+to its Fourier coefficients of degree at most $k$, the squared $L^2$ distance between
+$f$ and $f_{\le k}$ under the uniform measure on the cube is bounded by
+\[
+  \E\big[(f(x)-f_{\le k}(x))^2\big]\;\le\;\frac{I[f]}{k},
+\]
+where $I[f]=\sum_{i=1}^n\mathrm{Inf}_i[f]$ is the total influence of $f$.
 \end{lemma}
 
 \begin{lemma}[Few influential coordinates]
@@ -837,8 +878,13 @@ most $I[f]/k$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence, KKL.influentialCoords}
 \difficulty{3}
-For $\tau > 0$ the number of $\tau$-influential coordinates satisfies
-$\abs{J_\tau(f)} \le I[f]/\tau$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function and let $\tau > 0$. The number of
+$\tau$-influential coordinates of $f$ — those $i \in [n]$ with $\mathrm{Inf}_i[f] \ge
+\tau$ — is bounded by
+\[
+  \abs{J_\tau(f)} \;\le\; \frac{I[f]}{\tau},
+\]
+where $I[f] = \sum_{i=1}^n \mathrm{Inf}_i[f]$ is the total influence.
 \end{lemma}
 
 \begin{lemma}[Low-degree part is close to a junta on the influential coordinates]
@@ -847,9 +893,15 @@ $\abs{J_\tau(f)} \le I[f]/\tau$.
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval, BooleanAnalysis.uniformWeight, KKL.IsJunta, KKL.influentialCoords, KKL.l2DistSq, KKL.lowDegreePart}
 \difficulty{7}
-For every $f$, every level $k$ and every $\tau > 0$ there is a function $g$ that is a
-junta on the $\tau$-influential coordinates $J_\tau(f)$ and satisfies
-$\E\big[(f_{\le k} - g)^2\big] \le n\tau$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, let $k$ be a natural number, and let
+$\tau>0$. Then there is a Boolean function $g:\{0,1\}^n\to\bbr$ that is a junta on the
+set $J_\tau(f)=\{\,i\in[n]:\mathrm{Inf}_i[f]\ge\tau\,\}$ of $\tau$-influential
+coordinates and that approximates the low-degree part $f_{\le k}$ in squared $L^2$
+distance, namely
+\[
+  \E\big[(f_{\le k}(x)-g(x))^2\big]\;\le\;n\,\tau,
+\]
+where the expectation is taken under the uniform measure on the cube.
 \end{lemma}
 
 \begin{lemma}[Noisy influence is dominated by influence]
@@ -858,53 +910,70 @@ $\E\big[(f_{\le k} - g)^2\big] \le n\tau$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, KKL.noisyInfluence}
 \difficulty{2}
-For $0 \le \rho \le 1$ we have
-$\mathrm{Inf}_i^{\rho}[f] \le \mathrm{Inf}_i[f]$ for every coordinate $i$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, let $i\in[n]$ be a coordinate, and let
+$\rho\in\bbr$ satisfy $0\le\rho\le 1$. Then the noisy influence of $i$ on $f$ at noise
+rate $\rho$ is at most the influence of $i$ on $f$:
+\[
+  \mathrm{Inf}_i^{\rho}[f]\;\le\;\mathrm{Inf}_i[f].
+\]
 \end{lemma}
 
-\begin{lemma}[Noisy influence bound for $\pm 1$-valued functions]
+\begin{lemma}[Noisy influence bounded by influence]
 \lean{KKL.noisyInfluence_power_bound}
 \label{KKL.noisyInfluence_power_bound}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.isPmOne, KKL.noisyInfluence, KKL.noisyInfluence_le_influence}
 \difficulty{1}
-For a $\pm 1$-valued $f$ and $0 < \rho \le 1$, the noisy influence of any coordinate
-is at most its ordinary influence:
-$\mathrm{Inf}_i^{\rho}[f] \le \mathrm{Inf}_i[f]$.
+Let $f:\{0,1\}^n\to\bbr$ be a $\pm 1$-valued Boolean function, let $i\in[n]$ be a
+coordinate, and let $\rho$ be a noise rate with $0<\rho\le 1$. Then the noisy influence
+of $i$ on $f$ at rate $\rho$ is at most the ordinary influence of $i$ on $f$:
+\[
+\mathrm{Inf}_i^{\rho}[f]\;=\;\sum_{S\ni i}\rho^{\abs{S}-1}\,\hat
+f(S)^2\;\le\;\mathrm{Inf}_i[f].
+\]
 \end{lemma}
 
-\begin{lemma}[Cauchy--Schwarz for influences]
+\begin{lemma}[Cauchy–Schwarz bound on total influence]
 \lean{KKL.cauchy_schwarz_influences}
 \label{KKL.cauchy_schwarz_influences}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.totalInfluence}
 \difficulty{2}
-The total influence obeys
+Let $n$ be a natural number and let $f : \{0,1\}^n \to \bbr$ be a Boolean function, with
+influences $\mathrm{Inf}_i[f]$ for $i = 1, \dots, n$ and total influence $I[f] =
+\sum_{i=1}^n \mathrm{Inf}_i[f]$. Then
 \[
   I[f]^2 \;\le\; n \sum_{i=1}^{n} \mathrm{Inf}_i[f]^2 .
 \]
 \end{lemma}
 
-\begin{lemma}[Maximum influence from the sum of squares]
+\begin{lemma}[Maximum influence bounds the normalized sum of squares]
 \lean{KKL.max_influence_from_sum_sq}
 \label{KKL.max_influence_from_sum_sq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence}
 \difficulty{4}
-If $I[f] > 0$, then some coordinate $i$ satisfies
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function with positive total influence, $I[f]
+= \sum_{j=1}^{n} \mathrm{Inf}_j[f] > 0$. Then some coordinate $i$ satisfies
 \[
-  \mathrm{Inf}_i[f] \;\ge\; \frac{\sum_{j} \mathrm{Inf}_j[f]^2}{I[f]} .
+  \mathrm{Inf}_i[f] \;\ge\; \frac{\sum_{j=1}^{n} \mathrm{Inf}_j[f]^2}{I[f]}.
 \]
 \end{lemma}
 
-\begin{theorem}[Averaging form of KKL]
+\begin{theorem}[Averaging bound for coordinate influence]
 \lean{KKL.KKL_trivial}
 \label{KKL.KKL_trivial}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.max_influence_lower_bound, BooleanAnalysis.totalInfluence}
 \difficulty{1}
-For $n > 0$ there exists a coordinate $i$ with
-$\mathrm{Inf}_i[f] \ge I[f]/n$, the trivial averaging bound.
+Let $n \ge 1$ and let $f : \{0,1\}^n \to \bbr$ be a Boolean function. Then some
+coordinate carries at least the average influence: there exists an index $i \in
+\{1,\dots,n\}$ with
+\[
+  \mathrm{Inf}_i[f] \;\ge\; \frac{I[f]}{n},
+\]
+where $\mathrm{Inf}_i[f]$ is the influence of coordinate $i$ and $I[f] = \sum_{j=1}^n
+\mathrm{Inf}_j[f]$ is the total influence.
 \end{theorem}
 
 \begin{definition}[Noisy total influence]
@@ -942,8 +1011,9 @@ The \emph{noisy total influence} at rate $\rho$ is
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourierCoeff_empty, BooleanAnalysis.influence, BooleanAnalysis.isPmOne, BooleanAnalysis.max_influence_lower_bound, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg, KKL.noisyInfluence, KKL.noisyInfluence_le_influence, KKL.sum_noisyInfluence}
 \difficulty{5}
-(Kahn--Kalai--Linial, 1988.) Let $f : \{0,1\}^n \to \{-1,1\}$ be balanced,
-i.e.\ $\E[f] = 0$, with $n \ge 2$. Then some coordinate $i$ has
+Let $f : \{0,1\}^n \to \{-1,1\}$ be a $\pm 1$-valued Boolean function that is balanced,
+meaning $\E[f] = 0$, and suppose $n \ge 2$. Then there is a coordinate $i \in [n]$ whose
+influence satisfies
 \[
   \mathrm{Inf}_i[f] \;\ge\; \frac{\log n}{30\,n}.
 \]
@@ -962,19 +1032,25 @@ i.e.\ $\E[f] = 0$, with $n \ge 2$. Then some coordinate $i$ has
 }
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.isPmOne, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg, BooleanAnalysis.uniformWeight, KKL.IsJunta, KKL.influentialCoords, KKL.influential_coords_card, KKL.l2DistSq, KKL.lowDegreePart, KKL.lowDegreePart_depends_on_influential, KKL.lowDegree_approx}
 \difficulty{6}
-(Friedgut, 1998.) Let $f : \{0,1\}^n \to \{-1,1\}$ and let $\varepsilon > 0$.
-Then there are a coordinate set $J$ and a function $g$ such that
-$\abs{J} \le 4n\,I[f]/\varepsilon$, the function $g$ is a $J$-junta, and
-$\E\big[(f - g)^2\big] \le \varepsilon$.
+Let $f : \{0,1\}^n \to \{-1,1\}$ be a $\pm 1$-valued Boolean function with total
+influence $I[f]$, and let $\varepsilon > 0$. Then there exist a coordinate set $J
+\subseteq [n]$ and a Boolean function $g : \{0,1\}^n \to \bbr$ such that
+\[
+  \abs{J} \;\le\; \frac{4n\,I[f]}{\varepsilon},
+\]
+$g$ is a $J$-junta, and $\E\big[(f(x) - g(x))^2\big] \le \varepsilon$ under the uniform
+measure on the cube.
 \end{theorem}
 
-\begin{lemma}[Balanced $\pm 1$-valued functions have total influence at least one]
+\begin{lemma}[Balanced Boolean functions have total influence at least one]
 \lean{KKL.balanced_totalInfluence_ge_one}
 \label{KKL.balanced_totalInfluence_ge_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourierCoeff_empty, BooleanAnalysis.isPmOne, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 \difficulty{3}
-If $f$ takes values in $\{-1,1\}$, $\E[f] = 0$ and $n > 0$, then $I[f] \ge 1$.
+Let $n \ge 1$ and let $f : \{0,1\}^n \to \bbr$ be a $\pm 1$-valued Boolean function that
+is balanced, meaning $\E[f] = 0$ under the uniform measure. Then its total influence
+satisfies $I[f] \ge 1$.
 \end{lemma}
 
 \begin{lemma}[Nonnegativity of the influence entropy]
@@ -983,10 +1059,11 @@ If $f$ takes values in $\{-1,1\}$, $\E[f] = 0$ and $n > 0$, then $I[f] \ge 1$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence}
 \difficulty{4}
-If $I[f] > 0$, then the entropy-like quantity attached to the influence distribution
-is nonnegative:
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function whose total influence $I[f] =
+\sum_{i=1}^n \mathrm{Inf}_i[f]$ is strictly positive. Then
 \[
   0 \;\le\; \sum_{i=1}^{n} \frac{\mathrm{Inf}_i[f]}{I[f]}\,
-    \log\!\left(\frac{I[f]}{\mathrm{Inf}_i[f]}\right).
+    \log\!\left(\frac{I[f]}{\mathrm{Inf}_i[f]}\right),
 \]
+where $\log$ denotes the natural logarithm.
 \end{lemma}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.all_gates_have_small_cnf",
+ "key": "2dac9e30a47b861c",
+ "kind": "theorem",
+ "title": "Small CNFs for restricted DNF gates",
+ "statement": "Let $n$ and $l$ be natural numbers, let $\\mathrm{gates}_0,\\dots,\\mathrm{gates}_{s-1}$ be a family of DNF formulas in $n$ variables, and let $\\rho$ be a restriction on the $n$ variables. Suppose that for every index $i$ the restricted function $x \\mapsto (\\mathrm{gates}_i)(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth at most $l$. Then for every index $i$ there is a CNF formula $\\psi$ of width at most $l$ that computes this restricted function, that is, $\\psi(x) = (\\mathrm{gates}_i)(\\rho.\\mathrm{extend}\\,x)$ for every Boolean assignment $x$.",
+ "hypotheses_covered": [
+  "n variables and width bound l",
+  "a family of DNF formulas indexed by i",
+  "a restriction ρ",
+  "each restricted gate has decision-tree depth ≤ l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nGiven a family of $\\mathrm{DNF}$ gates and a restriction $\\rho$ under which every gate\nsatisfies $\\mathrm{dtDepth}(\\mathrm{gates}_i|_\\rho)\\le l$, every gate can be replaced by a\n$\\mathrm{CNF}$ of width at most $l$ computing $\\mathrm{gates}_i|_\\rho$ on all inputs."
+}

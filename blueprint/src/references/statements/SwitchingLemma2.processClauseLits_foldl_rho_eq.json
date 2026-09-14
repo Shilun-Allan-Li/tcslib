@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_foldl_rho_eq",
+ "key": "f3c99d542190e5e6",
+ "kind": "lemma",
+ "title": "Decoder fold recovers the clause-processing restriction",
+ "statement": "Let $t$ be a term on $n$ variables (a list of literals), and let $\\mathrm{lits}$ be a list of literal–index pairs, each of which is required to be a literal of $t$ together with its position — that is, every pair in $\\mathrm{lits}$ occurs in the list obtained by pairing each literal of $t$ with its index. Fix a path, restrictions $\\rho_0$, $\\sigma$, and $\\rho_0^{\\mathrm{dec}}$ on the $n$ variables, and a variable $v$ with $\\rho_0(v) = \\rho_0^{\\mathrm{dec}}(v)$. Processing $\\mathrm{lits}$ against the path starting from $\\rho_0$ and $\\sigma$ yields an updated restriction $\\rho_0'$ together with an auxiliary list of pairs $(i, b)$. Now form a restriction by folding over this auxiliary list, left to right, starting from $\\rho_0^{\\mathrm{dec}}$: an entry $(i, b)$ leaves the current restriction unchanged if $t$ has no literal at position $i$, and otherwise fixes the variable of the literal at position $i$ to the Boolean value $b$. Then the restriction so obtained and $\\rho_0'$ take the same value at $v$.",
+ "hypotheses_covered": [
+  "t is a term on n variables (a list of literals)",
+  "lits is a list of literal-index pairs",
+  "every pair in lits is a literal of t together with its position (lies in t.zipIdx)",
+  "a path and restrictions rho0, sigma, rho0_dec are given, plus a variable v",
+  "rho0(v) = rho0_dec(v)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose every input literal pair occurs in $t.\\texttt{zipIdx}$ and the decoder's initial\n$\\rho_0$ value agrees with the encoder's at $v$. Then folding the decoder's\n$\\rho_0$-update over the auxiliary entries of\n\\texttt{SwitchingLemma2.processClauseLits} reproduces the $\\rho_0$ component of that\nroutine at $v$."
+}

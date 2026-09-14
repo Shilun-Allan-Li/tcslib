@@ -1,0 +1,21 @@
+{
+ "lean_name": "SimpleGraph.succ_attachments_not_adj",
+ "key": "b92cf4ce6507b1d9",
+ "kind": "theorem",
+ "title": "Non-adjacency of successors of a bridge's attachment vertices on a longest cycle",
+ "statement": "Let $G$ be a finite connected graph, and let $C$ be a longest cycle of $G$, with its vertices listed in cyclic order as $v_0, v_1, v_2, \\dots$ (so $v_k$ is the vertex reached after $k$ steps along $C$, and $v_{k+1}$ is its successor). Let $e$ be an edge of $G$ that does not lie on $C$, and let $B$ be the bridge of $C$ that contains $e$; suppose $B$ has at least one vertex not lying on $C$. If $v_i$ and $v_j$ are two distinct vertices of attachment of $B$ to $C$, then $v_{i+1}$ and $v_{j+1}$ are not adjacent in $G$.",
+ "hypotheses_covered": [
+  "$G$ is connected",
+  "$G$ is finite",
+  "$C$ is a longest cycle of $G$",
+  "$e$ is an edge of $G$ not lying on $C$",
+  "the bridge $B$ of $C$ containing $e$ has a vertex off $C$",
+  "$v_i$ is a vertex of attachment of $B$ to $C$",
+  "$v_j$ is a vertex of attachment of $B$ to $C$",
+  "$v_i$ and $v_j$ are distinct"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{\\dots{}(ii) if \\texttt{v$_{i}$} and \\texttt{v$_{j}$} are\nvertices of attachment of \\texttt{B}, then \\texttt{v\\_\\{i+1\\}v\\_\\{j+1\\} $\\notin$ E}.}"
+}

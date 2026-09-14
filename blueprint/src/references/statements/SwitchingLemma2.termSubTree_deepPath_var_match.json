@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_deepPath_var_match",
+ "key": "52dacfb48a813d4b",
+ "kind": "lemma",
+ "title": "Deep-path variables track the free literals of a term",
+ "statement": "Let $\\mathit{lits}$ be a list of literals on $n$ Boolean variables whose variables are pairwise distinct, let $\\rho$ be a restriction, and let $g$ be a map sending each restriction to a decision tree. Let $T$ be the sub-tree built for the term $\\mathit{lits}$ under $\\rho$ with continuation $g$: reading the literals of $\\mathit{lits}$ in order, it branches on each literal whose variable is free under $\\rho$, skips the others, and evaluates $g$ at each leaf. Write $\\mathit{lits}_\\rho$ for the sublist of $\\mathit{lits}$, in order, consisting of exactly those literals whose variable is free under $\\rho$. Then for every index $k$ smaller than both the length of $\\mathit{lits}_\\rho$ and the length of the deepest root-to-leaf path of $T$, the variable queried at position $k$ of that deepest path equals the variable of the $k$-th literal of $\\mathit{lits}_\\rho$.",
+ "hypotheses_covered": [
+  "lits is a list of literals on n variables",
+  "the variables of lits are pairwise distinct",
+  "rho is a restriction",
+  "g is a continuation from restrictions to decision trees",
+  "k is less than the length of the free-filtered sublist of lits",
+  "k is less than the length of the deepest path of the term sub-tree"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $\\mathit{lits}$ with pairwise distinct variables, the $k$-th variable of the deep path of\n$\\mathrm{termSubTree}\\,\\mathit{lits}\\,\\rho\\,\\mathrm{cont}$ equals the variable of the $k$-th literal in the\nfree-filtered list of $\\mathit{lits}$."
+}

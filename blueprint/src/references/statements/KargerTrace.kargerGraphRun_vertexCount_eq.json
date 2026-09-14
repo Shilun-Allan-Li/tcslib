@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.kargerGraphRun_vertexCount_eq",
+ "key": "3eb5d4a60e44ea78",
+ "kind": "lemma",
+ "title": "Vertex count after a graph-only Karger run",
+ "statement": "Let $G$ and $H$ be multigraphs on a vertex type $\\alpha$, and let $\\mathrm{steps} \\in \\bbn$. If $H$ arises from $G$ by a graph-only Karger run consisting of $\\mathrm{steps}$ successive edge-occurrence contractions, then the number of vertices of $H$ equals the number of vertices of $G$ minus $\\mathrm{steps}$, using truncated subtraction of natural numbers. Thus each contraction removes exactly one vertex, and after $\\mathrm{steps}$ of them the vertex count has dropped by $\\mathrm{steps}$.",
+ "hypotheses_covered": [
+  "G and H are multigraphs on a vertex type",
+  "steps is a natural number",
+  "H is obtained from G by a graph-only Karger run of `steps` edge-occurrence contractions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $H$ is reachable from $G$ by a graph run of $\\text{steps}$ contractions, then\n$H.\\mathrm{vertexCount} = G.\\mathrm{vertexCount} - \\text{steps}$."
+}

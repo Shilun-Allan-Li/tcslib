@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.clauseToTerm_var_inj",
+ "key": "de539a01d4839620",
+ "kind": "theorem",
+ "title": "Variable-injectivity of a converted OR-clause",
+ "statement": "Let $n \\ge 0$ and let $lits$ be a list of circuit literals over $n$ variables whose variable indices are pairwise distinct, and form the term obtained by converting each literal of $lits$ to a switching-lemma literal (recording the same variable and polarity). Then any two literals of this term that share the same variable $\\mathtt{var} \\in \\mathrm{Fin}\\,n$ are in fact equal.",
+ "hypotheses_covered": [
+  "lits is a list of circuit literals over n variables",
+  "the variable indices of lits are pairwise distinct (Nodup)",
+  "l₁ and l₂ range over the converted term",
+  "l₁.var = l₂.var"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the literal indices of an OR-clause are distinct, then within the converted term any\ntwo literals sharing the same variable are equal."
+}

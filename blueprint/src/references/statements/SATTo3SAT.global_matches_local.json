@@ -1,0 +1,18 @@
+{
+ "lean_name": "SATTo3SAT.global_matches_local",
+ "key": "65cbbf00be0c14a1",
+ "kind": "lemma",
+ "title": "Global and local assignments agree on an encoded clause",
+ "statement": "Fix an assignment $\\alpha$ of truth values to the variables of a type $V$, a CNF formula $f$, and an index $i$ with $i < \\mathrm{length}(f)$; let $C$ be the $i$-th clause of $f$, and let $c_3$ be any of the 3-clauses produced by encoding $C$ as clause number $i$. Consider the global lifted assignment on $\\mathtt{AuxVar}\\,V$, which sends each original variable $v$ to $\\alpha(v)$ and each auxiliary chain variable $y_{i',j}$ to the truth value of the assertion ``the first $j+2$ literals of the $i'$-th clause of $f$ are all false under $\\alpha$'', together with the local assignment that agrees with $\\alpha$ on original variables and sends $y_{i,j}$ to the truth value of ``the first $j+2$ literals of $C$ are all false under $\\alpha$''. Then $c_3$ is satisfied by the global assignment if and only if it is satisfied by the local assignment.",
+ "hypotheses_covered": [
+  "α is an assignment on V",
+  "f is a CNF formula",
+  "i < length(f)",
+  "clause C equals the i-th clause of f",
+  "c₃ is one of the 3-clauses in the encoding of C as clause i"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion of the Lean lemma is left as `sorry` (`let local_α₃ : Assignment (AuxVar V) := sorry`, with no proposition following it), so there is no formal ground truth for what is claimed. The equivalence stated above is reconstructed from the upstream definitions (the global assignment lift and the auxiliary-variable valuation) and the existing informal note, not read off the formal statement; it should be treated as the plausible intended claim rather than a faithful rendering.",
+ "rubric": [],
+ "replaced": "For a 3-clause $c_3$ produced by $\\texttt{SATTo3SAT.transformClause}\\,i\\,\\mathit{clause}$\n(where $\\mathit{clause} = f_i$), satisfaction of $c_3$ under the global assignment\n\\texttt{SATTo3SAT.globalAssignment} $\\alpha\\,f$ is equivalent to satisfaction under the\nlocal assignment $\\mathtt{extra}\\,i\\,j \\mapsto \\texttt{SATTo3SAT.extraVal}\\,\\alpha\\,\\mathit{clause}\\,j$."
+}

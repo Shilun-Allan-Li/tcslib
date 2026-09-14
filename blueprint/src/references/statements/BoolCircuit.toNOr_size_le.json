@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolCircuit.toNOr_size_le",
+ "key": "9ada1f4fb2cefff7",
+ "kind": "theorem",
+ "title": "OR-normalization at most doubles size",
+ "statement": "Let $c$ be a Boolean circuit on $n$ variables, and let $\\mathrm{size}(c)$ denote its total node count (literal leaves plus internal AND/OR gates). Write $c'$ for the OR-normal form of $c$, the normal-form OR circuit obtained by rewriting $c$ into strictly alternating AND/OR normal form. Then the size of $c'$ is at most twice the size of $c$:\n\\[\n\\mathrm{size}(c') \\le 2\\,\\mathrm{size}(c).\n\\]",
+ "hypotheses_covered": [
+  "c is a Boolean circuit on n variables (universally quantified, no side hypotheses)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$,\n$(c.\\mathrm{toNOr}).\\mathrm{size} \\le 2\\,c.\\mathrm{size}$."
+}

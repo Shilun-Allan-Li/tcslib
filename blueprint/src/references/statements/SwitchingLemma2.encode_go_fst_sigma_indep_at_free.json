@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_fst_sigma_indep_at_free",
+ "key": "7c27ccaf614194c3",
+ "kind": "lemma",
+ "title": "Free-variable output of the Razborov encoder is independent of its starting restriction",
+ "statement": "Fix a DNF formula $f$ on $n$ variables, a width $w$, a fuel bound, a decision path (a list of variable–direction pairs), and a base restriction $\\rho_0$. The recursive worker of the Razborov encoding, run on these inputs together with a running restriction $\\sigma$ and empty auxiliary data, returns among its outputs a restriction; write $R(\\sigma)$ for this first output component. Let $v$ be a variable that is left free by $\\rho_0$ and by two running restrictions $\\sigma_1$ and $\\sigma_2$, meaning $\\rho_0(v)$, $\\sigma_1(v)$, and $\\sigma_2(v)$ are all undefined. Then the two runs agree at $v$: $R(\\sigma_1)(v) = R(\\sigma_2)(v)$.",
+ "hypotheses_covered": [
+  "v is free under the base restriction ρ₀ (ρ₀ v = none)",
+  "v is free under σ₁ (σ₁ v = none)",
+  "v is free under σ₂ (σ₂ v = none)",
+  "shared inputs f, w, fuel, path, ρ₀, and empty auxiliary data"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "At a variable $v$ that is free under $\\rho_0$ and unset in both $\\sigma_1$ and $\\sigma_2$,\nthe first component $\\gamma$ of the encoder loop\n\\texttt{SwitchingLemma2.razborovEncode}'s \\texttt{go} takes the same value at $v$ whether\nstarted from $\\sigma_1$ or $\\sigma_2$."
+}

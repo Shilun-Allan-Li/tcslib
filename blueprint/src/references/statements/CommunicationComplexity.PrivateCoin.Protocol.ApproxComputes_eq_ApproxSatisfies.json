@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes_eq_ApproxSatisfies",
+ "key": "36b73f8f7b54a22c",
+ "kind": "theorem",
+ "title": "Approximate computation as satisfaction of the equality predicate",
+ "statement": "Let $p$ be a private-coin protocol with randomness spaces $\\Omega_X$ and $\\Omega_Y$, input spaces $X$ and $Y$, and output type $\\alpha$, each randomness space carrying a measure, let $f : X \\to Y \\to \\alpha$ be a target function, and let $\\varepsilon \\in \\bbr$. Then the proposition that $p$ approximately computes $f$ within error $\\varepsilon$ coincides with the proposition that $p$ approximately satisfies, within error $\\varepsilon$, the predicate that holds of $(x, y, a)$ exactly when $a = f(x, y)$.",
+ "hypotheses_covered": [
+  "private-coin protocol p with randomness spaces Omega_X, Omega_Y and measures",
+  "target function f : X -> Y -> alpha",
+  "error bound epsilon in R"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any private-coin protocol $p$, function $f : X \\to Y \\to \\alpha$, and error bound\n$\\varepsilon \\in \\mathbb{R}$,\n\\[\n  p.\\mathrm{ApproxComputes}\\;f\\;\\varepsilon\n  \\;=\\;\n  p.\\mathrm{ApproxSatisfies}\\!\\left(\\lambda\\,x\\,y\\,a,\\; a = f\\,x\\,y\\right)\\varepsilon.\n\\]\nIn other words, $\\varepsilon$-computing $f$ is the same as $\\varepsilon$-satisfying the\nequality predicate $a = f\\,x\\,y$."
+}

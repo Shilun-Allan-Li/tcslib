@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.ret_pure",
+ "key": "a21cdffefa7b15ee",
+ "kind": "theorem",
+ "title": "Return value of a pure timed computation",
+ "statement": "A *timed computation* $\\mathrm{TimeM}\\,T\\,\\alpha$ records a return value in $\\alpha$ together with an accumulated time cost in $T$. Suppose $T$ carries a distinguished zero element, and let $\\mathrm{pure}\\,a$ denote the timed computation that returns $a$ at zero cost. Then for every $a \\in \\alpha$, the return value of $\\mathrm{pure}\\,a$ is $a$.",
+ "hypotheses_covered": [
+  "T has a zero element (Zero T)",
+  "an element a : α",
+  "the computation pure a : TimeM T α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The value returned by $\\mathrm{pure}\\,a$ is $a$."
+}

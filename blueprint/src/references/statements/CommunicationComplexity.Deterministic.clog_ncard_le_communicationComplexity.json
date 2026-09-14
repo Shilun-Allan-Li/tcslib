@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.clog_ncard_le_communicationComplexity",
+ "key": "a39408a493ae67fd",
+ "kind": "theorem",
+ "title": "Fooling-set lower bound for deterministic communication complexity",
+ "statement": "Let $g : X \\times Y \\to \\alpha$ be a two-argument function and let $S \\subseteq X \\times Y$ be a fooling set for $g$, meaning that every rectangle that is monochromatic for $g$ meets $S$ in at most one point. Then the deterministic communication complexity of $g$ satisfies\n\\[\n  \\lceil \\log_2 \\abs{S} \\rceil \\;\\le\\; D(g),\n\\]\nwhere $\\abs{S}$ is the number of elements of $S$ and both sides are compared in $\\bbn_\\infty$.",
+ "hypotheses_covered": [
+  "g is a two-argument function X → Y → α",
+  "S is a subset of X × Y",
+  "S is a fooling set for g",
+  "inequality holds in the extended naturals ENat"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any fooling set $S$ for $g$, the deterministic communication complexity satisfies\n$\\lceil \\log_2 |S| \\rceil \\leq \\mathrm{CC}(g)$ (as extended naturals)."
+}

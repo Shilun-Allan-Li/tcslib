@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.card_fiber_inter_specialX_mul_card_fiber_inter_specialY",
+ "key": "fd49e11adb46180e",
+ "kind": "theorem",
+ "title": "Fiberwise independence of the two special bits",
+ "statement": "Fix a positive integer $n$, a deterministic communication protocol $p$ for disjointness inputs of length $n$, an achievable value $z$ of the associated $Z$-variable, and a pair of bits $b=(b_1,b_2)$. Let $F$ be the fiber consisting of those hard-distribution samples $\\omega$ whose $Z$-variable equals $z$, and for such a sample write $x_T(\\omega)$ for Alice's bit at the special coordinate and $y_T(\\omega)$ for Bob's bit at the special coordinate. Then\n\\[\n\\abs{\\{\\omega\\in F : x_T(\\omega)=b_1\\}}\\cdot\\abs{\\{\\omega\\in F : y_T(\\omega)=b_2\\}}\n=\\abs{\\{\\omega\\in F : (x_T(\\omega),y_T(\\omega))=b\\}}\\cdot\\abs{F}.\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol of length n",
+  "z an achievable value of the Z-variable for p",
+  "b = (b_1, b_2) a pair of bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The switching map $(ωX, ωY) ↦ (mix ωX ωY, mix ωY ωX)$ gives the cardinal identity underlying conditional independence of \\texttt{specialX} and \\texttt{specialY} on a $Z=z$ fiber."
+}

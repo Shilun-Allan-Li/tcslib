@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun_eq",
+ "key": "0743e7a67c4ee543",
+ "kind": "theorem",
+ "title": "Explicit-coin execution as paired-input execution",
+ "statement": "Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$, with private-randomness types $\\Omega_X$, $\\Omega_Y$ and output type $\\alpha$. For all inputs $x : X$ and $y : Y$ and all private coins $\\omega_x : \\Omega_X$ and $\\omega_y : \\Omega_Y$, executing $p$ with those explicit coins agrees with executing the underlying deterministic finite-message protocol on the paired inputs $(\\omega_x, x)$ for Alice and $(\\omega_y, y)$ for Bob; that is, both yield the same element of $\\alpha$.",
+ "hypotheses_covered": [
+  "p is a private-coin finite-message protocol over X, Y with coin types \\Omega_X, \\Omega_Y and output \\alpha",
+  "x : X",
+  "y : Y",
+  "\\omega_x : \\Omega_X",
+  "\\omega_y : \\Omega_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$ and inputs $x$, $y$, $\\omega_x$, $\\omega_y$, we have\n$p.\\texttt{rrun}\\,x\\,y\\,\\omega_x\\,\\omega_y = p.\\texttt{run}\\,(\\omega_x, x)\\,(\\omega_y, y)$.\nThis is a definitional equality exposed as a \\texttt{simp} lemma."
+}

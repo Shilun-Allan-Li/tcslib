@@ -1,0 +1,18 @@
+{
+ "lean_name": "bestColumn_spec",
+ "key": "2563629e9d5a91e4",
+ "kind": "lemma",
+ "title": "Optimality of the column best response",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N \\ge 1$ column actions, given by a payoff matrix $A_{ij} \\in [0,1]$, and let $p$ be a mixed strategy for the row player, with weights $p_i$. Write $v(j) = \\sum_i p_i A_{ij}$ for the expected payoff of $p$ against the pure column $j$, and let $j^*$ be a column that minimises $v$ over all $N$ columns. Then $v(j^*) \\le v(j)$ for every column $j$; that is, $j^*$ is indeed a minimiser of the expected payoff against $p$.",
+ "hypotheses_covered": [
+  "finite zero-sum game G with M rows and N columns and payoffs in [0,1]",
+  "at least one column (N ≥ 1)",
+  "p is a mixed row strategy",
+  "j* is the minimising column (column best response)",
+  "j ranges over all columns"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any game $G$, mixed row strategy $p$, and pure column $j$,\n\\[\n  \\mathrm{payoffVsPure}(G, p, \\mathrm{bestColumn}(G, p))\n  \\;\\le\\;\n  \\mathrm{payoffVsPure}(G, p, j).\n\\]\nThat is, the chosen column is indeed a minimiser."
+}

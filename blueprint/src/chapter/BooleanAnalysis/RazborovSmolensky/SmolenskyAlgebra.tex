@@ -44,67 +44,106 @@ $E \le \mathrm{badInputCount}(f, P)$, i.e.\ $f$ cannot be computed by a degree-$
 polynomial on more than $2^n - E$ points of the Boolean cube.
 \end{definition}
 
-\begin{lemma}[Averaging over parameters]
+\begin{lemma}[Averaging a pointwise counting bound over parameters]
 \lean{ACP.exists_good_parameter_of_pointwise_bound}
 \label{ACP.exists_good_parameter_of_pointwise_bound}
 \leanok
 \difficulty{5}
-Let $\alpha,\beta$ be finite types with $\beta$ nonempty and let
-$\mathrm{Fail} : \alpha \to \beta \to \mathrm{Prop}$ be decidable. If for every $a$ the
-number of $b$ with $\mathrm{Fail}\,a\,b$ satisfies
-$\abs{\{b : \mathrm{Fail}\,a\,b\}}\cdot C \le B\cdot\abs{\beta}$, then there is a single
-$b$ with $\abs{\{a : \mathrm{Fail}\,a\,b\}}\cdot C \le B\cdot\abs{\alpha}$.
+Let $\alpha$ and $\beta$ be finite types with $\beta$ nonempty, let $\mathrm{Fail} :
+\alpha \to \beta \to \mathrm{Prop}$ be a decidable binary relation, and let $B, C$ be
+natural numbers. Suppose that for every $a \in \alpha$ the number of $b \in \beta$ with
+$\mathrm{Fail}\,a\,b$ satisfies
+\[
+\abs{\{\, b \in \beta : \mathrm{Fail}\,a\,b \,\}}\cdot C \;\le\; B\cdot\abs{\beta}.
+\]
+Then there exists a single $b \in \beta$ for which
+\[
+\abs{\{\, a \in \alpha : \mathrm{Fail}\,a\,b \,\}}\cdot C \;\le\; B\cdot\abs{\alpha}.
+\]
 \end{lemma}
 
-\begin{theorem}[One polynomial from a pointwise distribution]
+\begin{theorem}[A single polynomial from a pointwise error bound]
 \lean{ACP.exists_single_polynomial_from_pointwise_distribution}
 \label{ACP.exists_single_polynomial_from_pointwise_distribution}
 \leanok
 \uses{ACP.badInputCount, ACP.boolInput, ACP.exists_good_parameter_of_pointwise_bound}
 \difficulty{2}
-Let $P$ be a family of polynomials over $\mathbb{Z}/p$ indexed by a nonempty finite seed
-type. If for every Boolean input $x$ the number of seeds $s$ with
-$(P_s)(\mathrm{boolInput}(x)) \neq f(x)$, times $2^{\ell}$, is at most
-$B\cdot\abs{\mathrm{Seed}}$, then some seed $s$ satisfies
-$\mathrm{badInputCount}(f, P_s)\cdot 2^{\ell} \le B\cdot 2^{n}$.
+Fix a prime $p$, and let $(P_s)_{s \in S}$ be a family of polynomials in
+$(\bbz/p)[X_1,\dots,X_n]$ indexed by a nonempty finite set $S$ of seeds, let $f :
+\{0,1\}^n \to \bbz/p$ be a target function, and let $\ell$ and $B$ be natural numbers.
+For a Boolean input $x \in \{0,1\}^n$, write $\bar{x} \in (\bbz/p)^n$ for its
+coordinatewise image under the inclusion $\{0,1\} \hookrightarrow \bbz/p$. Suppose that
+for every Boolean input $x$,
+\[
+\bigl|\{\, s \in S : P_s(\bar{x}) \neq f(x)\,\}\bigr| \cdot 2^{\ell} \;\le\; B \cdot
+\abs{S}.
+\]
+Then there exists a seed $s \in S$ for which the number of Boolean inputs $x \in
+\{0,1\}^n$ with $P_s(\bar{x}) \neq f(x)$, multiplied by $2^{\ell}$, is at most $B \cdot
+2^{n}$.
 \end{theorem}
 
-\begin{theorem}[{Single low-degree polynomial for an $\mathrm{AC}^0[p]$ circuit}]
+\begin{theorem}[{Low-degree polynomial approximation of an AC⁰[p] circuit}]
 \lean{ACP.exists_single_poly_for_circuit_one_size}
 \label{ACP.exists_single_poly_for_circuit_one_size}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.badInputCount, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one_size, ACP.exists_single_polynomial_from_pointwise_distribution}
 \difficulty{2}
-Let $F$ be a feed-forward circuit with a unique output that only uses $\mathrm{AC}^0[p]$
-gate operations. Then there exists a polynomial $P$ over $\mathbb{Z}/p$ with
-$\deg P \le \mathrm{circuitDegreeBound}\,p\,\ell\,(\mathrm{depth}\,F)$ whose bad-input
-count against the function computed by $F$ satisfies
-$\mathrm{badInputCount}\cdot 2^{\ell} \le \abs{F}\cdot 2^{n}$, where $\abs{F}$ is the
-circuit size.
+Let $p$ be a prime, let $n\in\bbn$, and let $F$ be a feedforward circuit over the
+alphabet $\{0,1\}$ with input type $\mathrm{Fin}\,n$, a unique output node, and finitely
+many nodes in each layer, every one of whose gates is drawn from the $\mathrm{AC}^0[p]$
+gate set (the identity, NOT, and unbounded fan-in AND gates, together with the unbounded
+$\mathrm{MOD}_p$ gates). Write $g\colon\{0,1\}^n\to\bbz/p$ for the function computed by
+$F$, namely its single output value cast into $\bbz/p$. Then for every $\ell\in\bbn$
+there exists a polynomial $P\in(\bbz/p)[X_1,\dots,X_n]$ of total degree at most
+$\bigl((p-1)\ell\bigr)^{\operatorname{depth}(F)}$ such that the number $b$ of Boolean
+inputs $x\in\{0,1\}^n$ at which $P$, evaluated at the point of $(\bbz/p)^n$ whose $i$-th
+coordinate is the image of $x_i$ in $\bbz/p$, differs from $g(x)$ satisfies
+\[
+b\cdot 2^{\ell}\;\le\;\operatorname{size}(F)\cdot 2^{n},
+\]
+where $\operatorname{size}(F)$ is the number of non-input nodes of $F$.
 \end{theorem}
 
-\begin{theorem}[Size lower bound from a degree lower bound]
+\begin{theorem}[Size lower bound from a low-degree bad-count bound]
 \lean{ACP.size_lower_bound_from_badCountLB}
 \label{ACP.size_lower_bound_from_badCountLB}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.LowDegreeBadCountLB, ACP.badInputCount, ACP.circuitDegreeBound, ACP.exists_single_poly_for_circuit_one_size, ACP.modGateOp, ACP.modQTarget}
 \difficulty{3}
-If a feed-forward circuit $F$ over the $\mathrm{AC}^0[p]$ gate set computes
-$\mathrm{MOD}_q$ on all Boolean inputs, and if $\mathrm{MOD}_q$ (viewed in $\mathbb{Z}/p$)
-admits the lower bound $\mathrm{LowDegreeBadCountLB}$ with parameters
-$(\mathrm{circuitDegreeBound}\,p\,\ell\,(\mathrm{depth}\,F), E)$, then
-$E \cdot 2^{\ell} \le \abs{F}\cdot 2^{n}$.
+Let $p$ and $q$ be primes, and let $F$ be a feedforward circuit over the alphabet
+$\{0,1\}$ with input coordinates indexed by $\mathrm{Fin}\,n$, finitely many nodes in
+each layer, and a single output node. Suppose every gate of $F$ belongs to the
+$\mathrm{AC}^0[p]$ gate set (identity, NOT, unbounded fan-in AND, and unbounded
+$\mathrm{MOD}_p$ gates of every arity), and that $F$ computes the $\mathrm{MOD}_q$
+function on every Boolean input $x \in \{0,1\}^n$. Let $\ell, E \in \bbn$, and suppose
+the low-degree bad-count lower bound holds for $\mathrm{MOD}_q$ (viewed as a function
+into $\bbz/p$) with degree budget $\bigl((p-1)\ell\bigr)^{\mathrm{depth}(F)}$ and count
+$E$; that is, every polynomial in $(\bbz/p)[X_1,\dots,X_n]$ of total degree at most
+$\bigl((p-1)\ell\bigr)^{\mathrm{depth}(F)}$ disagrees with $\mathrm{MOD}_q$ on at least
+$E$ points of the Boolean cube. Then
+\[
+E \cdot 2^{\ell} \le \abs{F} \cdot 2^{n},
+\]
+where $\abs{F}$ is the number of non-input nodes of $F$.
 \end{theorem}
 
-\begin{theorem}[Relative-error size lower bound]
+\begin{theorem}[Size lower bound from a relative bad-count bound]
 \lean{ACP.size_lower_bound_from_relative_badCountLB}
 \label{ACP.size_lower_bound_from_relative_badCountLB}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.LowDegreeBadCountLB, ACP.circuitDegreeBound, ACP.modGateOp, ACP.modQTarget, ACP.size_lower_bound_from_badCountLB}
 \difficulty{3}
-Same hypotheses as the previous theorem, but with the bad-count bound taken in the
-relative form $E = \delta \cdot 2^{n}$; the conclusion is then the clean size bound
-$\delta \cdot 2^{\ell} \le \abs{F}$.
+Let $p$ and $q$ be primes, and let $F$ be a layered feedforward circuit over the Boolean
+alphabet with input coordinates $\mathrm{Fin}\,n$ and a single output, each of whose
+layers is finite. Suppose $F$ uses only $\mathrm{AC}^0[p]$ gates (the identity gate, the
+NOT gate, unbounded fan-in AND gates, and unbounded $\mathrm{MOD}_p$ gates), and that
+$F$ computes the $\mathrm{MOD}_q$ function on its $n$ Boolean inputs. Fix $\ell, \delta
+\in \bbn$, and assume the relative low-degree bad-count bound: every polynomial $P \in
+(\bbz/p)[X_1,\dots,X_n]$ of total degree at most
+$\bigl((p-1)\ell\bigr)^{\mathrm{depth}(F)}$ disagrees with the $\mathrm{MOD}_q$ target
+(viewed in $\bbz/p$) on at least $\delta \cdot 2^{n}$ of the $2^{n}$ Boolean inputs.
+Then the size of $F$ satisfies $\delta \cdot 2^{\ell} \le \abs{F}$.
 \end{theorem}
 
 \begin{definition}[Standard field $\mathbb{F}_{p^{q-1}}$]
@@ -115,42 +154,44 @@ The Galois field $\mathbb{F}_{p^{q-1}}$, the standard field choice for the
 $\mathrm{MOD}_q$ lower bound.
 \end{definition}
 
-\begin{lemma}[Exponent $q-1$ is nonzero]
+\begin{lemma}[The predecessor of a prime is nonzero]
 \lean{ACP.q_sub_one_ne_zero}
 \label{ACP.q_sub_one_ne_zero}
 \leanok
 \difficulty{1}
-For a prime $q$ we have $q - 1 \neq 0$; this is the side condition needed to compute the
-cardinality of $\mathbb{F}_{p^{q-1}}$.
+Let $q$ be a prime number. Then $q - 1 \neq 0$, where the subtraction is taken over the
+natural numbers.
 \end{lemma}
 
-\begin{lemma}[Cardinality of $\mathbb{F}_{p^{q-1}}$]
+\begin{lemma}[Cardinality of the field $\mathbb{F}_{p^{q-1}}$]
 \lean{ACP.natCard_modqField}
 \label{ACP.natCard_modqField}
 \leanok
 \uses{ACP.ModqField, ACP.q_sub_one_ne_zero}
 \difficulty{1}
-For primes $p$ and $q$, the field $\mathrm{ModqField}\,q$ has exactly $p^{q-1}$ elements.
+Let $p$ and $q$ be prime numbers. The Galois field $\mathbb{F}_{p^{q-1}}$ has exactly
+$p^{q-1}$ elements.
 \end{lemma}
 
-\begin{theorem}[A unit of order exactly $q$]
+\begin{theorem}[An element of order $q$ in $\mathbb{F}_{p^{q-1}}^{\times}$]
 \lean{ACP.exists_unit_of_order_q_modqField}
 \label{ACP.exists_unit_of_order_q_modqField}
 \leanok
 \uses{ACP.ModqField, ACP.natCard_modqField}
 \difficulty{5}
-If $p \neq q$ are primes, then the unit group of $\mathbb{F}_{p^{q-1}}$ contains an
-element $u$ with $\mathrm{ord}(u) = q$.
+Let $p$ and $q$ be distinct prime numbers, and let $\mathbb{F}_{p^{q-1}}$ denote the
+finite field with $p^{q-1}$ elements. Then the multiplicative group
+$\mathbb{F}_{p^{q-1}}^{\times}$ contains a unit $u$ whose order is exactly $q$.
 \end{theorem}
 
-\begin{theorem}[Nontrivial $q$-th root of unity]
+\begin{theorem}[Nontrivial $q$-th root of unity in $\bbf_{p^{q-1}}$]
 \lean{ACP.exists_nontrivial_qth_root_modqField}
 \label{ACP.exists_nontrivial_qth_root_modqField}
 \leanok
 \uses{ACP.ModqField, ACP.exists_unit_of_order_q_modqField}
 \difficulty{3}
-If $p \neq q$ are primes, then there is $\omega \in \mathbb{F}_{p^{q-1}}$ with
-$\omega^{q} = 1$ and $\omega \neq 1$.
+Let $p$ and $q$ be distinct primes. Then the field $\bbf_{p^{q-1}}$ contains an element
+$\omega \neq 1$ satisfying $\omega^{q} = 1$; that is, a nontrivial $q$-th root of unity.
 \end{theorem}
 
 \begin{definition}[Root-of-unity cube $\{1,\omega\}^n$]
@@ -161,14 +202,17 @@ The subtype of vectors $x : \mathrm{Fin}\,n \to K$ such that each coordinate sat
 $x_i = 1$ or $x_i = \omega$.
 \end{definition}
 
-\begin{theorem}[Polynomial representation on the root cube]
+\begin{theorem}[Polynomial representative on the root cube]
 \lean{ACP.exists_multilinear_representative_on_rootCube}
 \label{ACP.exists_multilinear_representative_on_rootCube}
 \leanok
 \uses{ACP.rootCube}
 \difficulty{6}
-Every function $f : \{1,\omega\}^n \to K$ agrees on the cube with the evaluation of some
-polynomial $P \in K[X_1,\dots,X_n]$, i.e.\ $P(x) = f(x)$ for all $x$ in the cube.
+Let $K$ be a field, let $\omega \in K$, and let $n$ be a natural number. Write
+$\{1,\omega\}^n$ for the root cube, the set of vectors $x = (x_1,\dots,x_n) \in K^n$
+with $x_i \in \{1,\omega\}$ for every $i$. Then for every function $f : \{1,\omega\}^n
+\to K$ there exists a polynomial $P \in K[X_1,\dots,X_n]$ such that $P(x_1,\dots,x_n) =
+f(x)$ for all $x$ in the cube.
 \end{theorem}
 
 \begin{definition}[Squarefree monomial]
@@ -195,64 +239,80 @@ Given coefficients $c_S$ indexed by subsets $S \subseteq \mathrm{Fin}\,n$, the p
 \leanok
 \uses{ACP.squarefreeMonomial}
 \difficulty{1}
-For any $x : \mathrm{Fin}\,n \to K$, the monomial indexed by $s$ evaluates to
-$\prod_{i \in s} x_i$.
+Let $K$ be a field, let $n$ be a natural number, and let $s \subseteq \mathrm{Fin}\,n$.
+For every point $x : \mathrm{Fin}\,n \to K$, the squarefree monomial $\prod_{i \in s}
+X_i$ evaluated at $x$ equals $\prod_{i \in s} x_i$.
 \end{theorem}
 
-\begin{theorem}[Affine expression is coordinatewise inversion]
+\begin{theorem}[Affine map realises coordinatewise inversion on the cube]
 \lean{ACP.rootCube_affine_inverse}
 \label{ACP.rootCube_affine_inverse}
 \leanok
 \uses{ACP.rootCube}
 \difficulty{2}
-If $\omega \neq 0$ and $x$ lies in $\{1,\omega\}^n$, then for every coordinate $i$,
+Let $K$ be a field, let $\omega \in K$ be a nonzero element, and let $x \in
+\{1,\omega\}^n$, so that each coordinate $x_i$ equals either $1$ or $\omega$. Then for
+every coordinate $i$,
 \[
   1 + \omega^{-1} - \omega^{-1} x_i = x_i^{-1}.
 \]
 \end{theorem}
 
-\begin{theorem}[Degree of a squarefree monomial]
+\begin{theorem}[Total degree of a squarefree monomial]
 \lean{ACP.squarefreeMonomial_totalDegree_le_card}
 \label{ACP.squarefreeMonomial_totalDegree_le_card}
 \leanok
 \uses{ACP.squarefreeMonomial}
 \difficulty{2}
-The total degree of $\prod_{i \in s} X_i$ is at most $\abs{s}$.
+Fix a field $K$ and let $s \subseteq \{0,1,\dots,n-1\}$ be a set of variable indices.
+The total degree of the squarefree monomial $\prod_{i \in s} X_i$ in the polynomial ring
+$K[X_0,\dots,X_{n-1}]$ is at most $\abs{s}$.
 \end{theorem}
 
-\begin{theorem}[Coordinates on the root cube are nonzero]
+\begin{theorem}[Coordinates of a root-cube vector are nonzero]
 \lean{ACP.rootCube_coord_ne_zero}
 \label{ACP.rootCube_coord_ne_zero}
 \leanok
 \uses{ACP.rootCube}
 \difficulty{2}
-If $\omega \neq 0$ and $x \in \{1,\omega\}^n$, then $x_i \neq 0$ for every $i$.
+Let $K$ be a field and let $\omega \in K$ with $\omega \neq 0$. If $x \in
+\{1,\omega\}^n$, that is, $x$ is a vector in $K^n$ each of whose coordinates equals
+either $1$ or $\omega$, then every coordinate is nonzero: $x_i \neq 0$ for each index
+$i$.
 \end{theorem}
 
-\begin{theorem}[Top monomial times a complement inverse monomial]
+\begin{theorem}[Top monomial times complementary inverse monomial]
 \lean{ACP.rootCube_top_mul_compl_inverse}
 \label{ACP.rootCube_top_mul_compl_inverse}
 \leanok
 \uses{ACP.rootCube, ACP.rootCube_coord_ne_zero}
 \difficulty{4}
-For $\omega \neq 0$, $x \in \{1,\omega\}^n$ and $s \subseteq \mathrm{Fin}\,n$,
+Let $K$ be a field, let $\omega \in K$ be nonzero, and let $x \in \{1,\omega\}^n$, that
+is, a vector $x \colon \mathrm{Fin}\,n \to K$ each of whose coordinates equals $1$ or
+$\omega$. Then for every subset $s \subseteq \mathrm{Fin}\,n$,
 \[
-  \Bigl(\prod_{i} x_i\Bigr)\cdot \prod_{i \in s^{c}} x_i^{-1} \;=\; \prod_{i \in s} x_i .
+  \Bigl(\prod_{i} x_i\Bigr)\cdot \prod_{i \in s^{c}} x_i^{-1} \;=\; \prod_{i \in s} x_i,
 \]
+where the first product runs over all coordinates and $s^{c}$ denotes the complement of
+$s$.
 \end{theorem}
 
-\begin{theorem}[Split at degree $n/2$]
+\begin{theorem}[Splitting a multilinear polynomial at half degree on the cube $\{1,\omega\}^n$]
 \lean{ACP.split_multilinear_at_half_degree}
 \label{ACP.split_multilinear_at_half_degree}
 \leanok
 \uses{ACP.rootCube, ACP.rootCube_affine_inverse, ACP.rootCube_top_mul_compl_inverse, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card, ACP.squarefreePolynomial}
 \difficulty{6}
-Let $\omega \neq 0$ and let $c$ be a coefficient family. Then there are polynomials
-$P_1, P_2$ of total degree at most $n/2$ such that for every $x \in \{1,\omega\}^n$,
+Let $K$ be a field, let $\omega \in K$ be nonzero, and let $(c_S)_{S \subseteq
+\mathrm{Fin}\,n}$ be a family of coefficients in $K$ indexed by the subsets of
+$\mathrm{Fin}\,n$. Then there exist polynomials $P_1, P_2 \in K[X_i : i \in
+\mathrm{Fin}\,n]$, each of total degree at most $\lfloor n/2 \rfloor$, such that for
+every point $x \in \{1,\omega\}^n$ (that is, every $x$ with $x_i \in \{1,\omega\}$ for
+all $i$),
 \[
-  \Bigl(\textstyle\sum_S c_S \prod_{i \in S} X_i\Bigr)(x)
-   = P_1(x) + \Bigl(\prod_i x_i\Bigr)\cdot P_2\bigl(1 + \omega^{-1} - \omega^{-1}x_1,\dots,
-     1 + \omega^{-1} - \omega^{-1}x_n\bigr).
+  \sum_{S \subseteq \mathrm{Fin}\,n} c_S \prod_{i \in S} x_i
+   \;=\; P_1(x) + \Bigl(\prod_{i} x_i\Bigr)\, P_2(y),
+   \qquad y_i = 1 + \omega^{-1} - \omega^{-1} x_i .
 \]
 \end{theorem}
 
@@ -270,17 +330,22 @@ with $\omega \neq 0$ computes $x \mapsto x^{-1}$.
 \leanok
 \uses{ACP.affineInvPoly}
 \difficulty{1}
-For any $x : \mathrm{Fin}\,n \to K$, the polynomial $\mathrm{affineInvPoly}\,\omega\,i$
-evaluates to $1 + \omega^{-1} - \omega^{-1} x_i$.
+Let $K$ be a field, let $\omega \in K$, let $n$ be a natural number, and let $i \in
+\{0,\dots,n-1\}$ index one of the $n$ coordinates. Then for every point $x =
+(x_0,\dots,x_{n-1}) \in K^n$, evaluating the affine inverse coordinate polynomial $1 +
+\omega^{-1} - \omega^{-1} X_i$ at $x$ yields \[ 1 + \omega^{-1} - \omega^{-1} x_i. \]
 \end{theorem}
 
-\begin{theorem}[Affine inverse polynomial has degree at most one]
+\begin{theorem}[Total degree of the affine inverse coordinate polynomial]
 \lean{ACP.affineInvPoly_totalDegree_le_one}
 \label{ACP.affineInvPoly_totalDegree_le_one}
 \leanok
 \uses{ACP.affineInvPoly}
 \difficulty{3}
-The total degree of $\mathrm{affineInvPoly}\,\omega\,i$ is at most $1$.
+Let $K$ be a field, fix an element $\omega \in K$, and let $n$ be a natural number with
+a distinguished coordinate index $i \in \{0,\dots,n-1\}$. The polynomial $1 +
+\omega^{-1} - \omega^{-1} X_i$ in the polynomial ring $K[X_0,\dots,X_{n-1}]$ has total
+degree at most $1$.
 \end{theorem}
 
 \begin{definition}[Affine-substituted squarefree monomial]
@@ -292,39 +357,49 @@ For $s \subseteq \mathrm{Fin}\,n$, the product $\prod_{i \in s}(1 + \omega^{-1} 
 \omega^{-1}X_i)$, i.e.\ the squarefree monomial after the affine inverse substitution.
 \end{definition}
 
-\begin{theorem}[Evaluation of the affine squarefree monomial]
+\begin{theorem}[Evaluation of the affine-substituted squarefree monomial]
 \lean{ACP.affineSquarefreeMonomial_eval}
 \label{ACP.affineSquarefreeMonomial_eval}
 \leanok
 \uses{ACP.affineSquarefreeMonomial}
 \difficulty{1}
-For any $x : \mathrm{Fin}\,n \to K$, the affine squarefree monomial indexed by $s$
-evaluates to $\prod_{i \in s} (1 + \omega^{-1} - \omega^{-1} x_i)$.
+Let $K$ be a field, let $\omega \in K$, and fix $n \in \bbn$. For a subset $s \subseteq
+\{1,\dots,n\}$, form the polynomial $\prod_{i \in s}\bigl(1 + \omega^{-1} - \omega^{-1}
+X_i\bigr) \in K[X_1,\dots,X_n]$. Then for every point $x \colon \{1,\dots,n\} \to K$,
+this polynomial evaluates at $x$ to
+\[
+\prod_{i \in s}\bigl(1 + \omega^{-1} - \omega^{-1}\, x_i\bigr).
+\]
 \end{theorem}
 
-\begin{theorem}[Degree of the affine squarefree monomial]
+\begin{theorem}[Total degree of the affine-substituted squarefree monomial]
 \lean{ACP.affineSquarefreeMonomial_totalDegree_le_card}
 \label{ACP.affineSquarefreeMonomial_totalDegree_le_card}
 \leanok
 \uses{ACP.affineInvPoly, ACP.affineInvPoly_totalDegree_le_one, ACP.affineSquarefreeMonomial}
 \difficulty{2}
-The total degree of $\mathrm{affineSquarefreeMonomial}\,\omega\,s$ is at most $\abs{s}$.
+Let $K$ be a field, let $\omega \in K$, and fix $n \in \bbn$ together with a subset $s
+\subseteq \{0, 1, \dots, n-1\}$. Then the total degree of the affine-substituted
+squarefree monomial $\prod_{i \in s}\bigl(1 + \omega^{-1} - \omega^{-1} X_i\bigr)$,
+viewed as a polynomial in $K[X_0, \dots, X_{n-1}]$, is at most $\abs{s}$.
 \end{theorem}
 
-\begin{theorem}[Direct split at degree $n/2$]
+\begin{theorem}[Direct half-degree split on the cube $\{1,\omega\}^n$]
 \lean{ACP.split_multilinear_at_half_degree_direct}
 \label{ACP.split_multilinear_at_half_degree_direct}
 \leanok
 \uses{ACP.affineSquarefreeMonomial, ACP.affineSquarefreeMonomial_totalDegree_le_card, ACP.rootCube, ACP.rootCube_affine_inverse, ACP.rootCube_top_mul_compl_inverse, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card, ACP.squarefreePolynomial}
 \difficulty{6}
-Let $\omega \neq 0$ and let $c$ be a coefficient family. Then there are polynomials
-$P_1, R$ of total degree at most $n/2$ such that for every $x \in \{1,\omega\}^n$,
+Let $K$ be a field, fix a scalar $\omega \in K$ with $\omega \neq 0$, and let $n$ be a
+natural number. For any family of coefficients $(c_S)$ indexed by the subsets $S
+\subseteq \{1,\dots,n\}$, form the multilinear polynomial $F = \sum_{S} c_S \prod_{i \in
+S} X_i$ in $K[X_1,\dots,X_n]$. Then there exist polynomials $P_1, R \in
+K[X_1,\dots,X_n]$, each of total degree at most $\lfloor n/2 \rfloor$, such that for
+every point $x \in \{1,\omega\}^n$ (that is, every $x$ with each coordinate $x_i$ equal
+to $1$ or to $\omega$) one has
 \[
-  \Bigl(\textstyle\sum_S c_S \prod_{i \in S} X_i\Bigr)(x)
-   = P_1(x) + \Bigl(\prod_i x_i\Bigr) R(x),
+  F(x) = P_1(x) + \Bigl(\prod_{i=1}^{n} x_i\Bigr)\, R(x).
 \]
-so that the second factor is already evaluated at $x$ itself rather than at the affine
-substitution.
 \end{theorem}
 
 \begin{definition}[Bad count of a polynomial on the root cube]
@@ -353,63 +428,91 @@ The finite set of functions $f : \{1,\omega\}^n \to K$ that differ from a given 
 function on at most $e$ points of the cube.
 \end{definition}
 
-\begin{theorem}[Covering by Hamming balls: counting bound]
+\begin{theorem}[Covering by Hamming balls: a counting bound]
 \lean{ACP.finite_cover_by_hamming_balls_card_bound}
 \label{ACP.finite_cover_by_hamming_balls_card_bound}
 \leanok
 \difficulty{5}
-Let $\alpha, \beta, \mathrm{Cand}$ be finite and let $\mathrm{center} : \mathrm{Cand}
-\to (\alpha \to \beta)$. If every ball $\{f : \abs{\{a : \mathrm{center}\,c\,a \neq f(a)\}}
-\le e\}$ has at most $B$ elements, and every $f : \alpha \to \beta$ lies in one of these
-balls, then $\abs{\alpha \to \beta} \le \abs{\mathrm{Cand}} \cdot B$.
+Let $\alpha$, $\beta$, and $\mathrm{Cand}$ be finite sets, and assign to each candidate
+$c \in \mathrm{Cand}$ a function $\mathrm{center}(c) \colon \alpha \to \beta$. For a
+radius $e \in \bbn$, write the Hamming ball of radius $e$ about $c$ for the set of
+functions $f \colon \alpha \to \beta$ that differ from $\mathrm{center}(c)$ in at most
+$e$ coordinates, that is, with $\abs{\{a \in \alpha : \mathrm{center}(c)(a) \neq f(a)\}}
+\le e$. Suppose that every such ball contains at most $B$ functions, and that every $f
+\colon \alpha \to \beta$ lies in the ball about at least one candidate. Then \[
+\abs{\{\text{functions } \alpha \to \beta\}} \le \abs{\mathrm{Cand}} \cdot B. \]
 \end{theorem}
 
-\begin{theorem}[Finite counting obstruction on the root cube]
+\begin{theorem}[Counting obstruction to low-degree approximation on the root cube]
 \lean{ACP.rootCube_counting_obstruction}
 \label{ACP.rootCube_counting_obstruction}
 \leanok
 \uses{ACP.finite_cover_by_hamming_balls_card_bound, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCubeFunctionBadCount}
 \difficulty{4}
-Suppose a finite family $(\mathrm{poly}\,c)_{c \in \mathrm{Cand}}$ represents, on the cube,
-every polynomial of total degree at most $D$; suppose each Hamming ball of radius $e$
-around such a candidate has at most $B$ elements; and suppose
-$\abs{\{1,\omega\}^n \to K} > \abs{\mathrm{Cand}} \cdot B$. Then it is not the case that
-every function on the cube has a degree-$\le D$ approximant with at most $e$ bad points.
+Let $K$ be a finite field, fix an element $\omega \in K$, and let $n, D, e, B$ be
+natural numbers. Write $\{1,\omega\}^n$ for the cube of vectors in $\mathrm{Fin}\,n \to
+K$ whose every coordinate equals $1$ or $\omega$. Suppose a finite index set
+$\mathrm{Cand}$ is equipped with a map assigning to each candidate $c$ a polynomial $P_c
+\in K[X_1,\dots,X_n]$, and that the following hold: (i) every polynomial $Q$ of total
+degree at most $D$ agrees, at every point of $\{1,\omega\}^n$, with $P_c$ for some
+candidate $c$; (ii) for each candidate $c$, the Hamming ball of radius $e$ centered at
+the function $x \mapsto P_c(x)$ contains at most $B$ functions $\{1,\omega\}^n \to K$;
+and (iii) $\abs{\{1,\omega\}^n \to K} > \abs{\mathrm{Cand}}\cdot B$. Then it is not the
+case that every function $f : \{1,\omega\}^n \to K$ admits a polynomial $Q$ of total
+degree at most $D$ differing from $f$ on at most $e$ points of the cube.
 \end{theorem}
 
-\begin{theorem}[Approximating the top monomial approximates everything]
+\begin{theorem}[Approximating the top monomial approximates every function]
 \lean{ACP.rootProd_approx_implies_all_functions_approx}
 \label{ACP.rootProd_approx_implies_all_functions_approx}
 \leanok
 \uses{ACP.rootCube, ACP.rootCubeBadCount, ACP.split_multilinear_at_half_degree_direct, ACP.squarefreePolynomial}
 \difficulty{4}
-Assume $\omega \neq 0$ and that every function on $\{1,\omega\}^n$ is represented on the
-cube by a squarefree polynomial. If $P$ has total degree at most $d$ and approximates the
-top monomial $x \mapsto \prod_i x_i$ with at most $e$ bad points, then every function
-$f$ on the cube has a polynomial $Q$ with $\deg Q \le n/2 + d$ and at most $e$ bad points.
+Let $K$ be a finite field and fix $\omega \in K$ with $\omega \neq 0$, and let $n$ be a
+natural number. Suppose that every function $f\colon \{1,\omega\}^n \to K$ agrees, at
+every point of the cube $\{1,\omega\}^n$, with some squarefree polynomial $\sum_{S
+\subseteq \{1,\dots,n\}} c_S \prod_{i \in S} X_i$ over $K$. If a polynomial $P$ in $n$
+variables over $K$ has total degree at most $d$ and disagrees with the top monomial $x
+\mapsto \prod_{i} x_i$ on at most $e$ points of $\{1,\omega\}^n$, then every function
+$f\colon \{1,\omega\}^n \to K$ admits a polynomial $Q$ of total degree at most $\lfloor
+n/2 \rfloor + d$ that disagrees with $f$ on at most $e$ points of the cube.
 \end{theorem}
 
-\begin{theorem}[No low-degree approximant to the top monomial]
+\begin{theorem}[No low-degree approximation of the top monomial on the root cube]
 \lean{ACP.no_low_degree_rootProd_approx}
 \label{ACP.no_low_degree_rootProd_approx}
 \leanok
 \uses{ACP.rootCube, ACP.rootCubeBadCount, ACP.rootProd_approx_implies_all_functions_approx, ACP.squarefreePolynomial}
 \difficulty{2}
-Assume $\omega \neq 0$, that every function on $\{1,\omega\}^n$ has a squarefree
-representative, and the counting hypothesis that not every function on the cube admits a
-degree-$\le n/2 + d$ approximant with at most $e$ bad points. Then no polynomial of total
-degree at most $d$ approximates the top monomial $x \mapsto \prod_i x_i$ within $e$ bad
-points.
+Let $K$ be a finite field, let $\omega \in K$ be nonzero, and write $\{1,\omega\}^n$ for
+the set of vectors in $K^n$ each of whose coordinates equals $1$ or $\omega$. Suppose
+that every function $f : \{1,\omega\}^n \to K$ agrees, at every point of the cube, with
+some multilinear polynomial $\sum_{S \subseteq \{1,\dots,n\}} c_S \prod_{i \in S} X_i$;
+and suppose that some function on the cube cannot be approximated to within $e$ errors
+by any polynomial of total degree at most $\lfloor n/2 \rfloor + d$ — that is, for at
+least one $f$, every such polynomial disagrees with $f$ on more than $e$ points of the
+cube. Then no polynomial $P$ of total degree at most $d$ agrees with the top monomial $x
+\mapsto \prod_{i=1}^{n} x_i$ on all but at most $e$ points of $\{1,\omega\}^n$.
 \end{theorem}
 
-\begin{theorem}[Top-monomial inapproximability from finite counting]
+\begin{theorem}[Top-monomial inapproximability from finite counting data]
 \lean{ACP.no_low_degree_rootProd_approx_of_finite_counting}
 \label{ACP.no_low_degree_rootProd_approx_of_finite_counting}
 \leanok
 \uses{ACP.no_low_degree_rootProd_approx, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCube_counting_obstruction, ACP.squarefreePolynomial}
 \difficulty{1}
-The same conclusion as the previous theorem, with the abstract counting hypothesis replaced
-by explicit data: a finite candidate family representing all degree-$\le n/2 + d$
-polynomials on the cube, a bound $B$ on the size of each Hamming ball of radius $e$, and
-the strict inequality $\abs{\{1,\omega\}^n \to K} > \abs{\mathrm{Cand}} \cdot B$.
+Let $K$ be a finite field, let $\omega \in K$ be nonzero, and fix natural numbers $n, d,
+e, B$. Suppose that every function $f : \{1,\omega\}^n \to K$ agrees, at every point of
+the cube $\{1,\omega\}^n$, with some squarefree (multilinear) polynomial $\sum_{S
+\subseteq \{1,\dots,n\}} c_S \prod_{i \in S} X_i$. Suppose further that a finite family
+of polynomials $(P_c)_{c \in \mathrm{Cand}}$, indexed by a finite type $\mathrm{Cand}$,
+is complete for total degree at most $\lfloor n/2 \rfloor + d$, in the sense that every
+$Q \in K[X_1,\dots,X_n]$ with $\deg Q \le \lfloor n/2 \rfloor + d$ agrees with some
+$P_c$ at every point of the cube; that for each $c$ the Hamming ball of radius $e$
+centered at the function $x \mapsto P_c(x)$ contains at most $B$ functions on the cube;
+and that the number of functions $\{1,\omega\}^n \to K$ strictly exceeds
+$\abs{\mathrm{Cand}} \cdot B$. Then there is no polynomial $P$ with $\deg P \le d$ such
+that $P(x) \neq \prod_{i} x_i$ for at most $e$ points $x$ of the cube; that is, no
+polynomial of total degree at most $d$ approximates the product $\prod_i x_i$ on
+$\{1,\omega\}^n$ with at most $e$ errors.
 \end{theorem}

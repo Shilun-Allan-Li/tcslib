@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_real_apply",
+ "key": "84c3234b0fabaed2",
+ "kind": "theorem",
+ "title": "Conditional measure on a $Z$-fiber as a normalized intersection",
+ "statement": "Fix a positive integer $n$, a deterministic disjointness protocol $p$ on inputs of length $n$, and an achievable value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$; let $F$ denote the fiber of $Z$ above $z$, that is, the set of hard-distribution samples $\\omega$ with $Z(\\omega) = z$. Write $\\mathrm{vol}$ for the ambient volume measure on the (finite) sample space of hard-distribution samples, and let $\\mathrm{vol}(\\cdot \\mid F)$ be the associated measure conditioned on $F$. Then for every set $S$ of hard-distribution samples, the real number assigned to $S$ by the conditioned measure satisfies\n\\[\n\\mathrm{vol}(S \\mid F) \\;=\\; \\mathrm{vol}(F)^{-1}\\,\\cdot\\,\\mathrm{vol}(F \\cap S),\n\\]\nwhere the factor $\\mathrm{vol}(F)^{-1}$ is the real reciprocal, so that both sides equal $0$ when $F$ has measure zero.",
+ "hypotheses_covered": [
+  "positive integer $n$",
+  "a deterministic disjointness protocol $p$ on inputs of length $n$",
+  "an achievable value $z$ of the $Z$ variable",
+  "an arbitrary set $S$ of hard-distribution samples"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Conditional probabilities under a $Z=z$ fiber are computed by intersecting with the fiber and dividing by its mass."
+}

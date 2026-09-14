@@ -1,0 +1,18 @@
+{
+ "lean_name": "RestrictionFourier.expectation_free_indicator",
+ "key": "118a2bf9a9a14231",
+ "kind": "lemma",
+ "title": "Total Bernoulli weight of restrictions leaving a coordinate free",
+ "statement": "Fix a real parameter $p$ and a coordinate $i$ among the $n$ variables. Summing the Bernoulli weight of $\\rho$ over all restrictions $\\rho$ on $n$ variables that leave $i$ free — that is, those for which $i$ is a free variable of $\\rho$ — gives\n\\[\n  \\sum_{\\rho \\,:\\, i \\text{ free in } \\rho} p^{\\,|F(\\rho)|}\\left(\\tfrac{1-p}{2}\\right)^{\\,n-|F(\\rho)|} = p,\n\\]\nwhere $F(\\rho)$ denotes the set of free variables of $\\rho$.",
+ "hypotheses_covered": [
+  "real parameter p",
+  "coordinate i among the n variables",
+  "sum ranges over all restrictions on n variables",
+  "each term is the Bernoulli weight of the restriction",
+  "indicator selects restrictions leaving coordinate i free"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For each coordinate $i$, the Bernoulli($p$)-weighted sum over all restrictions of the indicator\nthat $i$ is free equals $p$; that is, $\\E[\\mathbf{1}[i \\in J]] = p$."
+}

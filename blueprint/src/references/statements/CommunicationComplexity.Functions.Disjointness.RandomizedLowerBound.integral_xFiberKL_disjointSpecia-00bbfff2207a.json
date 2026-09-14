@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_aliceInfoTermSpecialYFalse",
+ "key": "9a93dcc605b7242f",
+ "kind": "theorem",
+ "title": "Averaged fiber KL equals Alice's conditional mutual information",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$, and work under the hard distribution conditioned on Alice's and Bob's generated input sets being disjoint and on Bob's bit $Y_T$ at the special coordinate $T$ being $\\mathrm{false}$. Write $M$ for the transcript that $p$ produces on the generated input, let $Z = (M,\\, T,\\, X_{<T},\\, Y_{>T})$ be the associated fiber variable, and let $U$ be the uniform law on one bit. Then the expectation, taken over this conditioned distribution, of the Kullback–Leibler divergence $D_{\\mathrm{KL}}\\!\\big(P_{X_T \\mid Z}\\,\\big\\|\\,U\\big)$ of the conditional law of Alice's special bit $X_T$ given $Z$ relative to $U$ equals the conditional mutual information $I\\big(X_T ; M \\mid T,\\, X_{<T},\\, Y_{\\ge T}\\big)$ between $X_T$ and $M$ given Alice's conditioning variable $(T,\\, X_{<T},\\, Y_{\\ge T})$, computed under the same conditioned distribution.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol of length n",
+  "distribution conditioned on the inputs being disjoint",
+  "further conditioned on Bob's special bit Y_T being false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Identification of the average Alice one-bit fiber KL with the conditional mutual information under $Y_{T}=false$.  This packages the step $p(x_{t} | z) = p(x_{t} | z, y_{t}=0) = p(x_{t} | z, y_{t}=0, D)$ coming from independence and the rectangle property of the transcript."
+}

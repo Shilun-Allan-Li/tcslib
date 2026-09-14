@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleHypercontractivity.qth_moment_decomp",
+ "key": "ebc26f303d880fb0",
+ "kind": "lemma",
+ "title": "$q$-th moment decomposition along the last coordinate",
+ "statement": "Let $q$ be a natural number and let $f:\\{0,1\\}^{n+1}\\to\\bbr$ be a Boolean function. Write $g$ for the average of $f$ over its last coordinate and $h$ for the half-difference of $f$ over its last coordinate, both Boolean functions on $\\{0,1\\}^n$. Then the $q$-th moment of $f$ under the uniform measure on $\\{0,1\\}^{n+1}$ decomposes as\n\\[\n  \\E[f^q] \\;=\\; \\E\\!\\left[\\frac{(g+h)^q + (g-h)^q}{2}\\right],\n\\]\nwhere the expectation on the right is taken over the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "$q$ is a natural number",
+  "$f$ is a Boolean function on $n+1$ variables",
+  "$g$ is the average of $f$ over its last coordinate",
+  "$h$ is the half-difference of $f$ over its last coordinate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : \\{0,1\\}^{n+1} \\to \\bbr$, writing $g = \\mathrm{avgLast}\\,f$ and\n$h = \\mathrm{diffLast}\\,f$, the $q$-th moment decomposes as\n\\[\n  \\E[f^q] = \\E\\!\\left[\\frac{(g+h)^q + (g-h)^q}{2}\\right].\n\\]"
+}

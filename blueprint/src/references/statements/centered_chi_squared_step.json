@@ -1,0 +1,18 @@
+{
+ "lean_name": "centered_chi_squared_step",
+ "key": "b478f8e3d955dda7",
+ "kind": "theorem",
+ "title": "Centered chi-squared MGF bound",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space and let $k$ be a positive natural number. Suppose $Y:\\Omega\\to\\bbr$ is measurable and normally distributed with mean $0$ and variance $1/k$, that is, its law $Y_*\\mu$ equals $N(0,1/k)$. Then for every real $t$ with $\\abs{t}\\le k/4$, the function $\\omega\\mapsto \\exp\\!\\bigl(t\\,(Y(\\omega)^2 - 1/k)\\bigr)$ is $\\mu$-integrable, and the moment generating function of the centered variable $Y^2 - 1/k$ satisfies\n\\[\n  \\E_\\mu\\!\\left[e^{t(Y^2 - 1/k)}\\right] \\;\\le\\; \\exp\\!\\Bigl(\\frac{2t^2}{k^2}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$k$ is a positive natural number ($0 < k$)",
+  "$Y$ is measurable",
+  "$Y$ has law $N(0,1/k)$",
+  "$t$ is real with $|t| \\le k/4$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $(\\Omega,\\mu)$ be a probability space, $k>0$, and let $Y:\\Omega\\to\\mathbb{R}$\nbe measurable with $Y_*\\mu = N(0,1/k)$.  For every $t\\in\\mathbb{R}$ with\n$|t|\\le k/4$, the map $\\omega\\mapsto\\exp\\bigl(t(Y(\\omega)^2-1/k)\\bigr)$ is\n$\\mu$-integrable and\n\\[\n  \\mathbb{E}_\\mu\\!\\left[e^{t(Y^2 - 1/k)}\\right]\n  \\;\\le\\; \\exp\\!\\Bigl(\\frac{2t^2}{k^2}\\Bigr).\n\\]"
+}

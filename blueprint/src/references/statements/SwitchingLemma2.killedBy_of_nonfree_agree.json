@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.killedBy_of_nonfree_agree",
+ "key": "8c80432f3c479a63",
+ "kind": "lemma",
+ "title": "Killing preserved under agreement on fixed variables",
+ "statement": "Let $t$ be a term on $n$ variables and let $\\rho, \\sigma : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ be two restrictions such that $\\sigma(v) = \\rho(v)$ for every variable $v$ that $\\rho$ fixes (that is, whenever $\\rho(v) \\neq \\mathrm{none}$). If $t$ is killed by $\\rho$, then $t$ is also killed by $\\sigma$.",
+ "hypotheses_covered": [
+  "t is a term on n variables",
+  "ρ and σ are restrictions on n variables",
+  "σ agrees with ρ on every variable ρ fixes (ρ v ≠ none → σ v = ρ v)",
+  "t is killed by ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a term $t$ is killed by $\\rho$ and a restriction $\\sigma$ agrees with $\\rho$ on every\nnon-free variable (i.e.\\ $\\sigma(v) = \\rho(v)$ whenever $\\rho(v) \\neq \\mathrm{none}$), then\n$t$ is also killed by $\\sigma$."
+}

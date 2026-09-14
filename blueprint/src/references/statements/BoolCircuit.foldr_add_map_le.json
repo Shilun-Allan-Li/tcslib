@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.foldr_add_map_le",
+ "key": "558ddb1800054dc3",
+ "kind": "theorem",
+ "title": "Sums commute with a mapped pointwise bound",
+ "statement": "Let $f\\colon\\alpha\\to\\bbn$, $g\\colon\\beta\\to\\bbn$, and $h\\colon\\alpha\\to\\beta$ be functions into the natural numbers, let $cs$ be a finite list of elements of $\\alpha$, and let $k\\in\\bbn$. If $g(h(c)) \\le k\\, f(c)$ holds for every entry $c$ of $cs$, then, summing over the entries of $cs$ (with multiplicity),\n\\[ \\sum_{c \\in cs} g\\bigl(h(c)\\bigr) \\;\\le\\; k \\sum_{c \\in cs} f(c). \\]",
+ "hypotheses_covered": [
+  "functions f, g into the naturals and h between the domains",
+  "cs a finite list over the source type",
+  "k a natural number",
+  "pointwise bound g(h c) ≤ k · f c for every entry c of cs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A technical lemma: if $g(h\\,c) \\le k \\cdot f\\,c$ for all $c \\in cs$, then the additive\n\\texttt{foldr} of $g$ over $cs.\\mathrm{map}\\;h$ is at most $k$ times the additive\n\\texttt{foldr} of $f$ over $cs$."
+}

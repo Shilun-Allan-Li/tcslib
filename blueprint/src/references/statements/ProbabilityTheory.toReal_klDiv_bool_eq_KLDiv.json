@@ -1,0 +1,16 @@
+{
+ "lean_name": "ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv",
+ "key": "4790ddaace55e55b",
+ "kind": "theorem",
+ "title": "Real-valued and extended KL divergence agree on Bool",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on the two-point space $\\mathrm{Bool} = \\{\\mathrm{false}, \\mathrm{true}\\}$, and suppose $\\nu$ has full support, meaning $\\nu(\\{b\\}) > 0$ for each of the two points $b$. Writing $D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu) \\in [0, \\infty]$ for the Kullback–Leibler divergence valued in the extended nonnegative reals, its real cast agrees with the real-valued Kullback–Leibler divergence of the identity map, regarded as a random variable, under $\\mu$ and under $\\nu$; that is,\n\\[\n  \\bigl(D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu)\\bigr)_{\\bbr}\n  = \\mathrm{KL}[\\,\\mathrm{id};\\mu \\,\\#\\, \\mathrm{id};\\nu\\,].\n\\]",
+ "hypotheses_covered": [
+  "μ is a probability measure on Bool",
+  "ν is a probability measure on Bool",
+  "ν has full support: ν({b}) ≠ 0 for every b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu, \\nu$ be probability measures on $\\mathrm{Bool}$ with $\\nu$ of full support.  Then\n\\[\n  \\bigl(D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu)\\bigr).\\mathrm{toReal}\n  = \\mathrm{KL}[\\mathrm{id};\\mu \\,\\#\\, \\mathrm{id};\\nu],\n\\]\nwhere the right-hand side is the PFR real-valued KL divergence of the identity random variable."
+}

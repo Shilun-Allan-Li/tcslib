@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.cnf_concat_eval",
+ "key": "99800c6f573d5147",
+ "kind": "lemma",
+ "title": "Evaluation of concatenated CNF formulas",
+ "statement": "Let $\\psi_1, \\dots, \\psi_k$ be CNF formulas over the variables $\\{1, \\dots, n\\}$, and form the single CNF formula obtained by concatenating all of their clause lists into one. Then for every assignment $x \\colon \\{1,\\dots,n\\} \\to \\{\\text{true},\\text{false}\\}$, this concatenated formula evaluates to true at $x$ if and only if every $\\psi_i$ evaluates to true at $x$.",
+ "hypotheses_covered": [
+  "a finite list of CNF formulas over n variables",
+  "an assignment x of the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input $x$, the value of the concatenated CNF at $x$ equals the conjunction over\nall $\\psi$ in the list of $\\psi.\\mathrm{eval}\\,x$; that is, it holds iff every component\nCNF holds at $x$."
+}

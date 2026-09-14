@@ -1,0 +1,16 @@
+{
+ "lean_name": "cut_size_preserved",
+ "key": "ea2a23522247a972",
+ "kind": "lemma",
+ "title": "Contracting a non-crossing edge preserves cut size",
+ "statement": "Let $G$ be a multigraph with vertex set $V(G)$ and edge multiset $E(G)$, and let $C$ be a cut of $G$, given by a nonempty proper subset $S \\subseteq V(G)$ with nonempty complement. Suppose $e \\in E(G)$ is an edge that does not cross $C$, i.e.\\ both endpoints of $e$ lie on the same side of the partition. Then the cut induced on the contracted multigraph $G/e$ by merging the endpoints of $e$ has the same size as $C$: the number of edges crossing the induced cut in $G/e$, counted with multiplicity, equals the number of edges crossing $C$ in $G$.",
+ "hypotheses_covered": [
+  "$C$ is a cut of $G$ (nonempty $S$, nonempty complement)",
+  "$e$ is an edge of $G$",
+  "$e$ does not cross $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $e \\in E(G)$ does not cross the cut $C$, then the induced cut on $G/e$ has the same\nsize as $C$:\n\\[\n  \\abs{\\text{cut } C \\text{ in } G/e} = \\abs{C} .\n\\]"
+}

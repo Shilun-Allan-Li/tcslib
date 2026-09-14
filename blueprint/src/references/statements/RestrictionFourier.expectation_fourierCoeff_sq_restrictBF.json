@@ -1,0 +1,18 @@
+{
+ "lean_name": "RestrictionFourier.expectation_fourierCoeff_sq_restrictBF",
+ "key": "e42563fd6c69506b",
+ "kind": "theorem",
+ "title": "Expected squared Fourier coefficient under a random restriction",
+ "statement": "Fix a dimension $n$, a real number $p$, a Boolean function $f:\\{0,1\\}^n\\to\\bbr$, and a set $S\\subseteq[n]$. For a restriction $\\rho$ on the $n$ variables, let $k(\\rho)$ denote its number of free variables and give it the Bernoulli weight $w_p(\\rho)=p^{\\,k(\\rho)}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-k(\\rho)}$; write $f_\\rho$ for the restriction of $f$ by $\\rho$ and $\\hat g(T)$ for the Fourier--Walsh coefficient of a Boolean function $g$ at a set $T$. Then, with the left sum over all restrictions on the $n$ variables and the right sum over all $U\\subseteq[n]$,\n\\[\n  \\sum_{\\rho} w_p(\\rho)\\,\\widehat{f_\\rho}(S)^2\n  \\;=\\;\n  \\sum_{U\\subseteq[n]}\n  \\begin{cases}\n    p^{\\,\\abs{S}}\\,(1-p)^{\\abs{U\\setminus S}}\\,\\hat f(U)^2 & \\text{if } S\\subseteq U,\\\\[2pt]\n    0 & \\text{otherwise.}\n  \\end{cases}\n\\]\nWhen $0\\le p\\le 1$ the weights $w_p(\\rho)$ form a probability distribution, so the left-hand side is the expectation of $\\widehat{f_\\rho}(S)^2$ over a Bernoulli$(p)$ random restriction.",
+ "hypotheses_covered": [
+  "real parameter p (no constraint)",
+  "Boolean function f on n variables",
+  "set S ⊆ [n]",
+  "sum over all restrictions ρ weighted by the Bernoulli weight w_p(ρ)",
+  "right-hand sum over all U ⊆ [n], with summand 0 unless S ⊆ U"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under a Bernoulli($p$)-random restriction $\\rho$, the expected squared Fourier\ncoefficient at $S$ is\n\\[\n  \\E_\\rho\\bigl[\\widehat{f_\\rho}(S)^2\\bigr] \\;=\\; \\sum_{U \\supseteq S}\n  p^{\\abs{S}}\\,(1-p)^{\\abs{U \\setminus S}}\\cdot \\widehat{f}(U)^2,\n\\]\nwhere the sum runs over all $U \\subseteq [n]$ and the terms with $S \\not\\subseteq U$\nvanish."
+}

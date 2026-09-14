@@ -1,0 +1,17 @@
+{
+ "lean_name": "jl_failure_bound_of_dim",
+ "key": "4fa4baf775a597d4",
+ "kind": "lemma",
+ "title": "Numerical failure-probability bound for Johnson–Lindenstrauss",
+ "statement": "Let $\\varepsilon > 0$ and let $n \\ge 2$ be an integer, and suppose the target dimension $k$ satisfies $k \\ge 32 \\log n / \\varepsilon^2$. Then for any finite set $V$ of points in a Euclidean space with $\\abs{V} \\le n$, one has $k > 0$ and \\[ \\abs{V}^2 \\cdot 2\\exp\\!\\left(-\\tfrac{k\\varepsilon^2}{8}\\right) < 1. \\]",
+ "hypotheses_covered": [
+  "ε > 0",
+  "n ≥ 2",
+  "k ≥ 32·log n / ε²",
+  "V finite with |V| ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Given $0 < \\varepsilon$, $n \\ge 2$, $k \\ge 32 \\log n / \\varepsilon^2$, and\n$|V| \\le n$, this lemma derives (i) $k > 0$ and (ii)\n$|V|^2 \\cdot 2\\exp(-k\\varepsilon^2/8) < 1$, the numerical precondition\nconsumed by both \\texttt{johnson\\_lindenstrauss\\_of\\_gaussian} and\n\\texttt{johnson\\_lindenstrauss\\_of\\_subgaussian}."
+}

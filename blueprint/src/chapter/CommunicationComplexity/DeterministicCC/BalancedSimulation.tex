@@ -13,51 +13,304 @@ splitting the protocol tree at a balanced subprotocol at each step.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Positive leaf count]
+\begin{lemma}[Every protocol has at least one leaf]
 \lean{CommunicationComplexity.Deterministic.Protocol.numLeaves_pos}
 \label{CommunicationComplexity.Deterministic.Protocol.numLeaves_pos}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{3}
-For every deterministic protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$, the number of
-leaves satisfies $0 < \texttt{CommunicationComplexity.Deterministic.Protocol.numLeaves}\;p$.
-In particular, the leaf count of a protocol is always at least one.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$. Then the number of leaves of $p$ — that is, the
+number of output nodes in its tree shape — is strictly positive, and so is at least one.
 \end{lemma}
 
-\begin{lemma}[Zero complexity when one leaf]
+\begin{lemma}[Single-leaf protocols have zero complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.complexity_eq_zero_of_numLeaves_eq_one}
 \label{CommunicationComplexity.Deterministic.Protocol.complexity_eq_zero_of_numLeaves_eq_one}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.numLeaves_pos, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{4}
-If a protocol $p$ has exactly one leaf (i.e.\ $p.\mathrm{numLeaves} = 1$), then its
-communication complexity satisfies $p.\mathrm{complexity} = 0$.
-The only protocol with a single leaf is an immediate output node, which requires no
-communication.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$
+with output type $\alpha$. If $p$ has exactly one leaf, that is, if the number of output
+nodes of $p$ equals $1$, then the communication complexity of $p$ is $0$.
 \end{lemma}
 
-\begin{lemma}[Balanced splitting bound on squared maximum]
+\begin{lemma}[Balanced split bound on the squared larger part]
 \lean{CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced}
 \label{CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced}
 \leanok
 \difficulty{4}
-Let $m, n \in \mathbb{N}$ with $3m \le 2n$ and $3(n - m) \le 2n$.
-Then $9 \cdot \max(m^2,\,(n-m)^2) \le 4n^2$.
-This arithmetic inequality captures the key quantitative gain obtained when a split is
-\emph{balanced}: neither piece exceeds $\tfrac{2}{3}$ of the total.
+Let $m, n \in \bbn$ satisfy $3m \le 2n$ and $3(n - m) \le 2n$, so that neither of the
+two parts $m$ and $n - m$ exceeds two-thirds of $n$. Then
+\[
+9 \cdot \max\bigl(m^2,\,(n - m)^2\bigr) \le 4 n^2.
+\]
 \end{lemma}
 
-\begin{theorem}[Balanced simulation of deterministic protocols]
+\begin{theorem}[Balanced simulation of a deterministic protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.exists_balanced_simulation}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p004-b002,
+  pdf-fa052d8c95c0-p004-b003,
+  pdf-fa052d8c95c0-p004-b004,
+  pdf-fa052d8c95c0-p004-b005
+}
 \label{CommunicationComplexity.Deterministic.Protocol.exists_balanced_simulation}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.shape}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.numLeaves}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.balanced_aux}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003,
+    pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachesPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reaches}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.deletePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.prunePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.prune}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.numLeaves_pos}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity_eq_zero_of_numLeaves_eq_one}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.complexity_eq_zero_of_numLeaves_eq_one, CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.numLeaves_pos, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt, CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches, CommunicationComplexity.Deterministic.Protocol.testSubprotocol, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
 \difficulty{6}
-For every deterministic protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$ there exists a
-protocol $q$ such that $q.\mathrm{run} = p.\mathrm{run}$ (i.e.\ $q$ computes the same
-function as $p$) and
+For every deterministic two-party communication protocol $p$ over input types $X$ and
+$Y$ with outputs in $\alpha$, there exists a protocol $q$ that computes the same
+function — that is, $q$ and $p$ return the same value on every pair of inputs $(x,y)$ —
+and whose communication complexity $c(q)$ satisfies
 \[
-  3^{c(q)} \;\le\; 2^{c(q)} \cdot (\#\mathrm{leaves}(p))^{2},
+  3^{c(q)} \;\le\; 2^{c(q)} \cdot \ell(p)^{2},
 \]
-where $c(q)$ denotes the communication complexity of $q$.
+where $\ell(p)$ denotes the number of leaves (output nodes) of $p$.
 \end{theorem}

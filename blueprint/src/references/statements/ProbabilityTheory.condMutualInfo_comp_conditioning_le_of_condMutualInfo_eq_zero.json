@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_comp_conditioning_le_of_condMutualInfo_eq_zero",
+ "key": "a10f1baa6843c421",
+ "kind": "theorem",
+ "title": "Coarser conditioning does not increase conditional mutual information",
+ "statement": "Let $X$, $Y$, and $W$ be random variables on a probability space $(\\Omega,\\mu)$, taking values in countable measurable spaces and each attaining only finitely many values, and let $f$ be a measurable map defined on the range of $W$. Suppose the conditional mutual information $I[X : W \\mid f\\circ W;\\mu]$ vanishes, so that $X$ and $W$ are conditionally independent given the coarsened variable $f\\circ W$. Then\n\\[\n  I[X : Y \\mid f\\circ W;\\mu] \\;\\le\\; I[X : Y \\mid W;\\mu].\n\\]",
+ "hypotheses_covered": [
+  "X, Y, W random variables into countable spaces",
+  "X, Y, W have finite range",
+  "f measurable",
+  "mu is a probability (or zero) measure",
+  "I[X : W | f∘W; μ] = 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W : \\Omega \\to V$ and $f : V \\to U$.  If $I[X : W \\mid f \\circ W;\\mu] = 0$ (i.e., the\ncoarse variable $f \\circ W$ carries all the information about $X$ that $W$ does), then\n\\[\n  I[X : Y \\mid f \\circ W;\\mu] \\;\\le\\; I[X : Y \\mid W;\\mu].\n\\]"
+}

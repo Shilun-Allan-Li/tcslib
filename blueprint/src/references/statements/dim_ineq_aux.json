@@ -1,0 +1,19 @@
+{
+ "lean_name": "dim_ineq_aux",
+ "key": "de71287093679c50",
+ "kind": "lemma",
+ "title": "A dimension inequality for isotropic subspaces",
+ "statement": "Let $p$ be a prime and $V = \\bbf_p^n \\times \\bbf_p^n$, equipped with the symplectic form $\\omega\\big((x,z),(x',z')\\big) = \\sum_{i} (x_i z'_i - z_i x'_i)$. For a coordinate subset $M \\subseteq \\{0,\\dots,n-1\\}$, let $V_M \\le V$ be the support submodule of vectors supported on $M$, and for a subspace $S \\le V$ write $S_M = S \\cap V_M$. If $S$ is isotropic, that is $\\omega(u,v) = 0$ for all $u,v \\in S$, then \\[ \\dim_{\\bbf_p} S + \\dim_{\\bbf_p} S_M \\;\\le\\; 2\\,\\abs{M} + \\dim_{\\bbf_p} S_{M^c}, \\] where $M^c = \\{0,\\dots,n-1\\} \\setminus M$ is the complementary coordinate set.",
+ "hypotheses_covered": [
+  "p prime, so F_p is a field",
+  "S is a subspace of V = F_p^n × F_p^n",
+  "S is isotropic for the symplectic form ω",
+  "M is a subset of the coordinate index set Fin n",
+  "S_M denotes S ∩ V_M, the part of S supported on M",
+  "S_{M^c} uses the complementary coordinate set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For isotropic $S$, $\\dim(S) + \\dim(S_M) \\le 2|M| + \\dim(S_{M^c})$."
+}

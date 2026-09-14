@@ -11,137 +11,190 @@ distributions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Entropy bounded by log of alphabet size]
+\begin{theorem}[Entropy bounded by the logarithm of the alphabet size]
 \lean{ProbabilityTheory.entropy_le_log_of_card_le}
 \label{ProbabilityTheory.entropy_le_log_of_card_le}
 \leanok
 \difficulty{2}
-If the alphabet type $S$ has $\mathrm{card}(S) \le N$, then for any random variable
-$X : \Omega \to S$ and measure $\mu$,
+Let $S$ be a finite nonempty set, let $(\Omega,\mu)$ be a measure space, and let
+$X\colon\Omega\to S$ be a random variable. If $N$ is a natural number with $\abs{S}\le
+N$, then the Shannon entropy of $X$ satisfies
 \[
-  H[X;\mu] \;\le\; \log N.
+  H[X;\mu]\;\le\;\log N.
 \]
 \end{theorem}
 
-\begin{theorem}[Entropy bounded by $c \log 2$ when alphabet fits in $c$ bits]
+\begin{theorem}[Entropy bound for an alphabet of at most $2^c$ symbols]
 \lean{ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow}
 \label{ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow}
 \leanok
 \uses{ProbabilityTheory.entropy_le_log_of_card_le}
 \difficulty{1}
-If $\mathrm{card}(S) \le 2^c$ for some $c : \mathbb{N}$, then
+Let $S$ be a finite nonempty set and let $X$ be a random variable on a probability space
+$\Omega$ (equipped with a measure $\mu$) taking values in $S$. If the number of elements
+of $S$ is at most $2^c$ for some natural number $c$, then the Shannon entropy of $X$
+satisfies
 \[
-  H[X;\mu] \;\le\; c \cdot \log 2.
+  H[X;\mu] \;\le\; c\,\log 2,
 \]
+where the logarithm is natural (so the entropy is measured in nats).
 \end{theorem}
 
-\begin{theorem}[Mutual information bounded by left entropy]
+\begin{theorem}[Mutual information is bounded by left entropy]
 \lean{ProbabilityTheory.mutualInfo_le_entropy_left}
 \label{ProbabilityTheory.mutualInfo_le_entropy_left}
 \leanok
 \difficulty{2}
-For measurable $X$ and $Y$ under a zero-or-probability measure $\mu$ with finite ranges,
+Let $X$ and $Y$ be measurable random variables on a measure space $(\Omega,\mu)$, taking
+values in countable measurable spaces and each attaining only finitely many values, and
+suppose $\mu$ is either the zero measure or a probability measure. Then the mutual
+information between $X$ and $Y$ is at most the Shannon entropy of $X$:
 \[
   I[X : Y;\mu] \;\le\; H[X;\mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Mutual information bounded by right entropy]
+\begin{theorem}[Mutual information is bounded by the entropy of either variable]
 \lean{ProbabilityTheory.mutualInfo_le_entropy_right}
 \label{ProbabilityTheory.mutualInfo_le_entropy_right}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_le_entropy_left}
 \difficulty{2}
-For measurable $X$ and $Y$ under a zero-or-probability measure $\mu$ with finite ranges,
+Let $X \colon \Omega \to S$ and $Y \colon \Omega \to T$ be measurable random variables,
+each taking only finitely many values, defined on a space $\Omega$ equipped with a
+measure $\mu$ that is either the zero measure or a probability measure. Writing
+$H[Y;\mu]$ for the Shannon entropy of $Y$ and $I[X:Y;\mu]$ for the mutual information
+between $X$ and $Y$, one has
 \[
-  I[X : Y;\mu] \;\le\; H[Y;\mu].
+  I[X:Y;\mu] \;\le\; H[Y;\mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Mutual information invariant under a.e.\ substitution]
+\begin{theorem}[Mutual information under almost-everywhere substitution]
 \lean{ProbabilityTheory.mutualInfo_congr_ae}
 \label{ProbabilityTheory.mutualInfo_congr_ae}
 \leanok
 \difficulty{1}
-If $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$, then
-$I[X : Y;\mu] = I[X' : Y';\mu]$.
+Let $(\Omega, \mu)$ be a measured space and let $S$ and $T$ be countable measurable
+spaces. Suppose $X, X' \colon \Omega \to S$ and $Y, Y' \colon \Omega \to T$ are maps
+with $X$ and $Y$ measurable, and that $X = X'$ and $Y = Y'$ hold $\mu$-almost
+everywhere. Then the mutual information is unchanged, $I[X : Y \,;\, \mu] = I[X' : Y'
+\,;\, \mu]$.
 \end{theorem}
 
-\begin{theorem}[Mutual information invariant under injective recoding of right variable]
+\begin{theorem}[Mutual information is invariant under injective recoding]
 \lean{ProbabilityTheory.mutualInfo_comp_right_of_injective}
 \label{ProbabilityTheory.mutualInfo_comp_right_of_injective}
 \leanok
 \difficulty{2}
-If $f : T \to V$ is measurable and injective, then
-$I[X : f \circ Y;\mu] = I[X : Y;\mu]$.
+Let $X\colon\Omega\to S$ and $Y\colon\Omega\to T$ be measurable random variables on a
+probability space $(\Omega,\mu)$ (allowing also $\mu$ to be the zero measure), where $S$
+and $T$ are countable and each of $X$ and $Y$ takes only finitely many values. If
+$f\colon T\to V$ is a measurable injection into a countable space $V$, then passing $Y$
+through $f$ leaves the mutual information with $X$ unchanged:
+\[
+I[X : f\circ Y\, ;\, \mu] = I[X : Y\, ;\, \mu].
+\]
 \end{theorem}
 
-\begin{theorem}[Mutual information zero when left variable is a.e.\ constant]
+\begin{theorem}[Vanishing of mutual information for an almost-surely constant variable]
 \lean{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
 \label{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
 \leanok
 \difficulty{3}
-If $X =^{\mu\text{-a.e.}} c$ for some constant $c : S$, then $I[X : Y;\mu] = 0$.
+Let $\mu$ be a probability measure (or the zero measure) on a sample space $\Omega$, and
+let $X\colon\Omega\to S$ and $Y\colon\Omega\to T$ be measurable random variables taking
+countably many values, each with finite range. If there is a constant $c\in S$ such that
+$X=c$ holds $\mu$-almost everywhere, then the mutual information between $X$ and $Y$
+vanishes: $I[X:Y;\mu]=0$.
 \end{theorem}
 
-\begin{theorem}[Mutual information zero when right variable is a.e.\ constant]
+\begin{theorem}[Vanishing of mutual information with an almost-surely constant variable]
 \lean{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_right}
 \label{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_right}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
 \difficulty{2}
-If $Y =^{\mu\text{-a.e.}} c$ for some constant $c : T$, then $I[X : Y;\mu] = 0$.
+Let $X \colon \Omega \to S$ and $Y \colon \Omega \to T$ be measurable random variables
+taking values in countable spaces, defined on a space $\Omega$ carrying a probability
+measure $\mu$ (or the zero measure), and suppose each of $X$ and $Y$ takes only finitely
+many values. If $Y$ is $\mu$-almost-surely equal to a fixed constant $c \in T$, then the
+mutual information between $X$ and $Y$ vanishes: \[ I[X : Y \,;\, \mu] = 0. \]
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information zero when left variable is a.e.\ constant]
+\begin{theorem}[Vanishing conditional mutual information for an almost-surely constant variable]
 \lean{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \label{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \leanok
 \difficulty{3}
-If $X =^{\mu\text{-a.e.}} c$ for some constant $c : S$, then $I[X : Y \mid Z;\mu] = 0$.
+Let $\mu$ be a probability measure on a sample space $\Omega$ (or the zero measure), and
+let $X$, $Y$, $Z$ be measurable random variables on $\Omega$ taking finitely many values
+in the countable sets $S$, $T$, $U$ respectively. If there is a constant $c \in S$ with
+$X = c$ holding $\mu$-almost everywhere, then the conditional mutual information of $X$
+and $Y$ given $Z$ vanishes:
+\[
+I[X : Y \mid Z ; \mu] = 0.
+\]
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information zero when right variable is a.e.\ constant]
+\begin{theorem}[Vanishing of conditional mutual information for an almost-surely constant variable]
 \lean{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_right}
 \label{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_right}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \difficulty{2}
-If $Y =^{\mu\text{-a.e.}} c$ for some constant $c : T$, then $I[X : Y \mid Z;\mu] = 0$.
+Let $X$, $Y$, and $Z$ be discrete random variables on a probability space $(\Omega,
+\mu)$ — where $\mu$ is either the zero measure or a probability measure — taking values
+in countable measurable spaces $S$, $T$, and $U$ respectively, with each of $X$, $Y$,
+$Z$ almost surely taking only finitely many values, and with $X$ and $Y$ measurable. If
+there is a constant $c \in T$ such that $Y = c$ $\mu$-almost everywhere, then the
+conditional mutual information satisfies $I[X : Y \mid Z; \mu] = 0$.
 \end{theorem}
 
-\begin{theorem}[Independence from singleton-fiber factorization]
+\begin{theorem}[Independence from factorization of fiber probabilities]
 \lean{ProbabilityTheory.indepFun_of_measureReal_inter_preimage_singleton_eq_mul}
 \label{ProbabilityTheory.indepFun_of_measureReal_inter_preimage_singleton_eq_mul}
 \leanok
 \difficulty{4}
-For measurable $X : \Omega \to S$ and $Y : \Omega \to T$ with finite $S$ and $T$, if
+Let $\mu$ be a finite measure on a measurable space $\Omega$, and let $S$ and $T$ be
+finite sets. Let $X : \Omega \to S$ and $Y : \Omega \to T$ be measurable maps such that,
+for every $x \in S$ and $y \in T$,
 \[
-  \mu(X^{-1}\{x\} \cap Y^{-1}\{y\}) = \mu(X^{-1}\{x\})\cdot\mu(Y^{-1}\{y\})
+\mu\bigl(X^{-1}\{x\} \cap Y^{-1}\{y\}\bigr) = \mu\bigl(X^{-1}\{x\}\bigr)\cdot
+\mu\bigl(Y^{-1}\{y\}\bigr),
 \]
-holds for all $x, y$, then $X$ and $Y$ are independent under $\mu$.
+where each measure is taken as a real number. Then $X$ and $Y$ are independent under
+$\mu$.
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information bounded by left conditional entropy]
+\begin{theorem}[Conditional mutual information bounded by conditional entropy]
 \lean{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
 \label{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
 \leanok
 \difficulty{2}
-For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ranges,
+Let $X$, $Y$, and $Z$ be random variables on a probability space $(\Omega, \mu)$, taking
+values in countable measurable spaces, and assume each takes only finitely many values
+(with positive probability). Then the conditional mutual information of $X$ and $Y$
+given $Z$ is at most the conditional entropy of $X$ given $Z$:
 \[
-  I[X : Y \mid Z;\mu] \;\le\; H[X \mid Z;\mu].
+  I[X : Y \mid Z ; \mu] \;\le\; H[X \mid Z ; \mu].
 \]
+Here $\mu$ is allowed to be either a probability measure or the zero measure.
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information bounded by right conditional entropy]
+\begin{theorem}[Conditional mutual information bounded by conditional entropy]
 \lean{ProbabilityTheory.condMutualInfo_le_condEntropy_right}
 \label{ProbabilityTheory.condMutualInfo_le_condEntropy_right}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
 \difficulty{2}
-For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ranges,
+Let $X$, $Y$, and $Z$ be measurable random variables on a common probability space
+$(\Omega, \mu)$, each taking values in a countable measurable space and each having
+finite range, and suppose $\mu$ is either the zero measure or a probability measure.
+Then the conditional mutual information of $X$ and $Y$ given $Z$ is at most the
+conditional entropy of $Y$ given $Z$:
 \[
-  I[X : Y \mid Z;\mu] \;\le\; H[Y \mid Z;\mu].
+  I[X : Y \mid Z ; \mu] \;\le\; H[Y \mid Z ; \mu].
 \]
 \end{theorem}
 
@@ -151,138 +204,180 @@ For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ran
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_left}
 \difficulty{1}
-For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ranges,
+Let $X$, $Y$, and $Z$ be measurable random variables on a probability space $(\Omega,
+\mu)$, taking values in countable spaces and each attaining only finitely many values.
+Then the conditional mutual information of $X$ and $Y$ given $Z$ is bounded above by the
+Shannon entropy of $X$:
 \[
-  I[X : Y \mid Z;\mu] \;\le\; H[X;\mu].
+  I[X : Y \mid Z ; \mu] \;\le\; H[X ; \mu].
 \]
+(The bound also holds trivially when $\mu$ is the zero measure.)
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information bounded by right entropy]
+\begin{theorem}[Conditional mutual information bounded by the entropy of one variable]
 \lean{ProbabilityTheory.condMutualInfo_le_entropy_right}
 \label{ProbabilityTheory.condMutualInfo_le_entropy_right}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_le_condEntropy_right}
 \difficulty{1}
-For measurable $X$, $Y$, $Z$ under a zero-or-probability measure with finite ranges,
+Let $X$, $Y$, and $Z$ be random variables on a probability space $(\Omega, \mu)$, taking
+values in countable measurable spaces and each attaining only finitely many values. Then
+the mutual information between $X$ and $Y$ conditioned on $Z$ is at most the Shannon
+entropy of $Y$:
 \[
-  I[X : Y \mid Z;\mu] \;\le\; H[Y;\mu].
+  I[X : Y \mid Z; \mu] \;\le\; H[Y; \mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Conditional data processing: postprocessing depending on conditioning value]
+\begin{theorem}[Conditional data processing with conditioning-dependent maps]
 \lean{ProbabilityTheory.condMutualInfo_comp_left_le_of_comp_conditioning}
 \label{ProbabilityTheory.condMutualInfo_comp_left_le_of_comp_conditioning}
 \leanok
 \difficulty{4}
-If $f : U \to S \to V$ is any function (where $Z : \Omega \to U$ is the conditioning
-variable), then applying $f(Z(\omega))$ to $X(\omega)$ before measuring mutual information
-cannot increase it:
+Let $X$, $Y$, and $Z$ be random variables on a probability space $(\Omega, \mu)$, taking
+values in countable measurable spaces $S$, $T$, and $U$ respectively, each measurable
+and of finite range. For any function $f \colon U \times S \to V$ into a countable
+measurable space $V$, form the postprocessed variable $W(\omega) = f\bigl(Z(\omega),
+X(\omega)\bigr)$, obtained by applying to $X$ a map that may itself depend on the
+conditioning value $Z$. Then the conditional mutual information satisfies
 \[
-  I[\omega \mapsto f(Z(\omega))(X(\omega)) : Y \mid Z;\mu]
-  \;\le\; I[X : Y \mid Z;\mu].
+  I[\,W : Y \mid Z;\, \mu\,] \;\le\; I[\,X : Y \mid Z;\, \mu\,].
 \]
 \end{theorem}
 
-\begin{theorem}[Conditional data processing on the right depending on conditioning value]
+\begin{theorem}[Conditional data processing with conditioning-dependent maps]
 \lean{ProbabilityTheory.condMutualInfo_comp_right_le_of_comp_conditioning}
 \label{ProbabilityTheory.condMutualInfo_comp_right_le_of_comp_conditioning}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_comp_left_le_of_comp_conditioning}
 \difficulty{3}
-For a measurable function $f : U \to T \to V$ (with $Z : \Omega \to U$ the conditioning
-variable), applying $f(Z(\omega))$ to $Y(\omega)$ cannot increase conditional mutual information:
+Let $X\colon\Omega\to S$, $Y\colon\Omega\to T$, and $Z\colon\Omega\to U$ be measurable
+random variables on a probability space $(\Omega,\mu)$, each taking only countably many
+values and having finite range, where $S$, $T$, and $U$ are countable measurable spaces.
+Let $f\colon U\times T\to V$ be a measurable map into a countable measurable space $V$,
+and define $W(\omega)=f\big(Z(\omega),Y(\omega)\big)$. Then the conditional mutual
+information satisfies
 \[
-  I[X : \omega \mapsto f(Z(\omega))(Y(\omega)) \mid Z;\mu]
-  \;\le\; I[X : Y \mid Z;\mu].
+  I[X : W \mid Z;\mu] \;\le\; I[X : Y \mid Z;\mu].
 \]
+That is, replacing $Y$ by any function of $Y$ that is also permitted to depend on the
+conditioning variable $Z$ cannot increase the conditional mutual information with $X$.
 \end{theorem}
 
-\begin{theorem}[Conditioning on $(Z, f(Z))$ equals conditioning on $Z$]
+\begin{theorem}[Conditioning on $(Z, f(Z))$ versus conditioning on $Z$]
 \lean{ProbabilityTheory.condMutualInfo_conditioning_prod_function_eq}
 \label{ProbabilityTheory.condMutualInfo_conditioning_prod_function_eq}
 \leanok
 \difficulty{2}
-Adding a deterministic function of the conditioning variable to the conditioning variable does
-not change conditional mutual information:
+Let $X$, $Y$, and $Z$ be discrete random variables on a probability space $(\Omega,
+\mu)$, each taking values in a countable set and attaining only finitely many values,
+and let $f$ be an arbitrary function defined on the range of $Z$. Then the conditional
+mutual information of $X$ and $Y$ given the augmented variable $(Z, f(Z))$ equals the
+conditional mutual information of $X$ and $Y$ given $Z$ alone:
 \[
-  I[X : Y \mid (\omega \mapsto (Z(\omega),\, f(Z(\omega))));\mu]
-  \;=\; I[X : Y \mid Z;\mu].
+  I\bigl(X ; Y \mid (Z, f(Z))\bigr) = I(X ; Y \mid Z).
 \]
 \end{theorem}
 
-\begin{theorem}[Extra left-side conditioning cannot increase conditional mutual information]
+\begin{theorem}[Adding a deterministic function of the pair as extra conditioning]
 \lean{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
 \label{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
 \leanok
 \difficulty{5}
-For a measurable $f : U \to S \to V$, conditioning additionally on a deterministic function
-of $X$ and $Z$ cannot increase conditional mutual information:
+Let $X$, $Y$, $Z$ be random variables on a probability space $(\Omega,\mu)$ (where $\mu$
+is allowed to be the zero measure), taking values in countable measurable spaces $S$,
+$T$, $U$ respectively, and assume each of $X$, $Y$, $Z$ is measurable with finite range.
+Let $V$ be a further countable measurable space and let $f\colon U\times S\to V$ be
+measurable, and write $f(Z,X)$ for the random variable $\omega\mapsto
+f\bigl(Z(\omega),X(\omega)\bigr)$. Then conditioning additionally on $f(Z,X)$ cannot
+increase the conditional mutual information of $X$ and $Y$ given $Z$:
 \[
-  I[X : Y \mid (\omega \mapsto (Z(\omega),\, f(Z(\omega))(X(\omega))));\mu]
-  \;\le\; I[X : Y \mid Z;\mu].
+  I[X : Y \mid (Z,\, f(Z,X)) ; \mu]
+  \;\le\;
+  I[X : Y \mid Z ; \mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Extra right-side conditioning cannot increase conditional mutual information]
+\begin{theorem}[Conditioning on a function of the conditioned variables cannot raise conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_conditioning_prod_right_function_le}
 \label{ProbabilityTheory.condMutualInfo_conditioning_prod_right_function_le}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le}
 \difficulty{2}
-For a measurable $f : U \to T \to V$, conditioning additionally on a deterministic function
-of $Y$ and $Z$ cannot increase conditional mutual information:
+Let $X$, $Y$, $Z$ be random variables on a probability space $(\Omega, \mu)$, taking
+values in countable measurable spaces, each measurable and with finite range. Let $f$ be
+a measurable function of two arguments, and write $f(Z, Y)$ for the random variable
+$\omega \mapsto f\bigl(Z(\omega), Y(\omega)\bigr)$. Then conditioning on the pair
+$\bigl(Z, f(Z, Y)\bigr)$ — that is, refining the conditioning variable $Z$ by a
+deterministic function of $Z$ and $Y$ — cannot increase the conditional mutual
+information between $X$ and $Y$:
 \[
-  I[X : Y \mid (\omega \mapsto (Z(\omega),\, f(Z(\omega))(Y(\omega))));\mu]
-  \;\le\; I[X : Y \mid Z;\mu].
+  I\bigl[X : Y \mid (Z,\, f(Z, Y))\bigr] \;\le\; I\bigl[X : Y \mid Z\bigr].
 \]
 \end{theorem}
 
-\begin{theorem}[Finer conditioning increases conditional mutual information when coarse carries no extra info]
+\begin{theorem}[Coarser conditioning does not increase conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_comp_conditioning_le_of_condMutualInfo_eq_zero}
 \label{ProbabilityTheory.condMutualInfo_comp_conditioning_le_of_condMutualInfo_eq_zero}
 \leanok
 \difficulty{5}
-Let $W : \Omega \to V$ and $f : V \to U$.  If $I[X : W \mid f \circ W;\mu] = 0$ (i.e., the
-coarse variable $f \circ W$ carries all the information about $X$ that $W$ does), then
+Let $X$, $Y$, and $W$ be random variables on a probability space $(\Omega,\mu)$, taking
+values in countable measurable spaces and each attaining only finitely many values, and
+let $f$ be a measurable map defined on the range of $W$. Suppose the conditional mutual
+information $I[X : W \mid f\circ W;\mu]$ vanishes, so that $X$ and $W$ are conditionally
+independent given the coarsened variable $f\circ W$. Then
 \[
-  I[X : Y \mid f \circ W;\mu] \;\le\; I[X : Y \mid W;\mu].
+  I[X : Y \mid f\circ W;\mu] \;\le\; I[X : Y \mid W;\mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Chain rule: splitting a left-side pair]
+\begin{theorem}[Chain rule for conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_prod_left_eq_add}
 \label{ProbabilityTheory.condMutualInfo_prod_left_eq_add}
 \leanok
 \difficulty{5}
-For measurable $X$, $W$, $Y$, $Z$ with finite ranges under a zero-or-probability measure,
+Let $X$, $W$, $Y$, and $Z$ be random variables on a measure space $(\Omega,\mu)$, each
+valued in a countable measurable space and each attaining only finitely many values, and
+suppose $\mu$ is either the zero measure or a probability measure. Writing $I[U : V \mid
+T;\mu]$ for the mutual information of $U$ and $V$ conditioned on $T$, the pair $(X,W)$
+obeys the chain rule
 \[
   I[(X,W) : Y \mid Z;\mu]
-  \;=\; I[X : Y \mid Z;\mu] \;+\; I[W : Y \mid (X, Z);\mu].
+  \;=\; I[X : Y \mid Z;\mu] \;+\; I[W : Y \mid (X,Z);\mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Chain rule: splitting a right-side pair]
+\begin{theorem}[Chain rule for conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_prod_right_eq_add}
 \label{ProbabilityTheory.condMutualInfo_prod_right_eq_add}
 \leanok
 \uses{ProbabilityTheory.condMutualInfo_prod_left_eq_add}
 \difficulty{2}
-For measurable $X$, $Y$, $W$, $Z$ with finite ranges under a zero-or-probability measure,
+Let $X$, $Y$, $Z$, and $W$ be measurable functions on a probability space $(\Omega,
+\mu)$, where $\mu$ is either the zero measure or a probability measure, each taking
+values in a countable measurable space and attaining only finitely many values. Write
+$I(X ; Y \mid Z)$ for the conditional mutual information between $X$ and $Y$ given $Z$.
+Then the conditional mutual information between $X$ and the pair $(Y, W)$ given $Z$
+satisfies
 \[
-  I[X : (Y, W) \mid Z;\mu]
-  \;=\; I[X : Y \mid Z;\mu] \;+\; I[X : W \mid (Y, Z);\mu].
+I\bigl(X ; (Y, W) \mid Z\bigr) \;=\; I(X ; Y \mid Z) \;+\; I\bigl(X ; W \mid (Y,
+Z)\bigr).
 \]
 \end{theorem}
 
-\begin{theorem}[Pairing the right variable cannot decrease conditional mutual information]
+\begin{theorem}[Adjoining a variable cannot decrease conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_le_prod_right_snd}
 \label{ProbabilityTheory.condMutualInfo_le_prod_right_snd}
 \leanok
 \difficulty{2}
-For measurable $X$, $Y$, $W$, $Z$ with finite ranges under a probability measure,
+Let $X$, $Y$, $W$, and $Z$ be measurable functions on a probability space $(\Omega,
+\mu)$, taking values in countable measurable spaces and each having finite range. Then
+the conditional mutual information satisfies
 \[
-  I[X : W \mid Z;\mu] \;\le\; I[X : (Y, W) \mid Z;\mu].
+  I[X : W \mid Z; \mu] \;\le\; I[X : (Y, W) \mid Z; \mu],
 \]
+where $(Y, W)$ denotes the joint random variable $\omega \mapsto (Y(\omega),
+W(\omega))$.
 \end{theorem}
 
 \begin{definition}[Strict prefix of a boolean vector]
@@ -294,19 +389,23 @@ and an index $i : \mathrm{Fin}\,m$, the \emph{strict prefix} $\mathrm{boolVector
 is the restriction of $X(\omega)$ to coordinates $0, 1, \ldots, i-1$.
 \end{definition}
 
-\begin{theorem}[Chain rule for conditional mutual information against a boolean vector]
+\begin{theorem}[Chain rule for conditional mutual information over a boolean vector]
 \lean{ProbabilityTheory.condMutualInfo_boolVector_eq_sum_strictPrefix}
 \label{ProbabilityTheory.condMutualInfo_boolVector_eq_sum_strictPrefix}
 \leanok
 \uses{ProbabilityTheory.boolVectorStrictPrefix, ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left, ProbabilityTheory.condMutualInfo_prod_left_eq_add}
 \difficulty{5}
-For a boolean-vector-valued $X : \Omega \to (\mathrm{Fin}\,m \to \mathrm{Bool})$,
+Let $Y$ and $Z$ be random variables on a probability space $(\Omega, \mu)$ (allowing
+also the zero measure), each taking countably many values with finite range, and let $X
+: \Omega \to (\{0,1\}^m)$ be a random boolean vector; assume $X$, $Y$, and $Z$ are
+measurable. Writing $X_i(\omega) = X(\omega)(i)$ for the $i$-th coordinate and
+$X_{<i}(\omega)$ for the strict prefix consisting of coordinates $0, 1, \ldots, i-1$,
+the conditional mutual information of $X$ and $Y$ given $Z$ decomposes as
 \[
   I[X : Y \mid Z;\mu]
   \;=\; \sum_{i=0}^{m-1}
-        I[X_i : Y \mid (\mathrm{boolVectorStrictPrefix}\,X\,i,\, Z);\mu],
+        I\bigl[X_i : Y \mid (X_{<i},\, Z);\mu\bigr].
 \]
-where $X_i(\omega) = X(\omega)(i)$.
 \end{theorem}
 
 \begin{theorem}[Iterated conditioning on a subset]
@@ -314,153 +413,211 @@ where $X_i(\omega) = X(\omega)(i)$.
 \label{ProbabilityTheory.cond_cond_eq_cond_of_subset}
 \leanok
 \difficulty{2}
-For a finite measure $\mu$ and measurable sets $F \subseteq A$,
+Let $\mu$ be a finite measure on a measurable space, and let $F \subseteq A$ be
+measurable sets. Then conditioning $\mu$ on $A$ and afterwards on $F$ gives the same
+measure as conditioning $\mu$ on $F$ directly:
 \[
-  (\mu[\,|\,A])[\,|\,F] \;=\; \mu[\,|\,F].
+  (\mu[\,\cdot \mid A])[\,\cdot \mid F] \;=\; \mu[\,\cdot \mid F].
 \]
 \end{theorem}
 
-\begin{theorem}[Real-mass reweighting for nested conditioning events]
+\begin{theorem}[Multiplication rule for a nested conditioning event]
 \lean{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \label{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \leanok
 \difficulty{3}
-For a finite measure $\mu$ and measurable sets $F \subseteq A$,
+Let $\mu$ be a finite measure on a measurable space $\Omega$, let $A$ be a measurable
+set, and let $F \subseteq A$. Writing $\mu(\,\cdot \mid A)$ for the conditional measure
+obtained by restricting $\mu$ to $A$ and normalising by $\mu(A)$, and taking all masses
+as real numbers, one has
 \[
-  \mu_{\mathbb{R}}(A) \cdot (\mu[\,|\,A])_{\mathbb{R}}(F) \;=\; \mu_{\mathbb{R}}(F).
+  \mu(A)\,\cdot\,\mu(F \mid A) \;=\; \mu(F).
 \]
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information as an average over a finite partition]
+\begin{theorem}[Chain decomposition of conditional mutual information over a finite variable]
 \lean{ProbabilityTheory.condMutualInfo_prod_conditioning_eq_sum}
 \label{ProbabilityTheory.condMutualInfo_prod_conditioning_eq_sum}
 \leanok
 \uses{ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \difficulty{5}
-If the conditioning variable is a pair $(K, Z)$ with $K$ taking values in a finite type $A$,
-then
+Let $(\Omega,\mu)$ be a finite measure space, and let $X$, $Y$, $K$, and $Z$ be
+measurable functions on $\Omega$ taking values in countable spaces, with $X$ and $Y$
+each having finite range, $K$ taking values in a finite set $A$, and $Z$ taking values
+in a finite space. Then the mutual information of $X$ and $Y$ conditioned on the pair
+$(K,Z)$ decomposes as the $\mu$-weighted average, over the values of $K$, of the mutual
+information of $X$ and $Y$ conditioned on $Z$ alone:
 \[
-  I[X : Y \mid (K, Z);\mu]
-  \;=\; \sum_{k : A} \mu_{\mathbb{R}}(K^{-1}\{k\}) \cdot I[X : Y \mid Z;\,\mu[\,|\,K \leftarrow k]].
+  I[X : Y \mid (K,Z);\,\mu]
+\;=\; \sum_{k \in A} \mu\bigl(K^{-1}\{k\}\bigr)\cdot I\bigl[X : Y \mid Z;\; \mu[\,\cdot
+\mid K = k\,]\bigr],
 \]
+where $\mu(K^{-1}\{k\})$ denotes the (real-valued) measure of the event $\{K = k\}$ and
+$\mu[\,\cdot \mid K = k\,]$ denotes $\mu$ conditioned on that event.
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information on an event is bounded by the unconditional value]
+\begin{theorem}[Conditioning on a $Z$-event scales down conditional mutual information]
 \lean{ProbabilityTheory.measureReal_mul_cond_condMutualInfo_le_condMutualInfo_of_event_eq_preimage}
 \label{ProbabilityTheory.measureReal_mul_cond_condMutualInfo_le_condMutualInfo_of_event_eq_preimage}
 \leanok
 \uses{ProbabilityTheory.cond_cond_eq_cond_of_subset, ProbabilityTheory.measureReal_mul_cond_real_eq_measureReal_of_subset}
 \difficulty{5}
-Let $A = Z^{-1}(B)$ for some measurable $B$.  Then, under a probability measure $\mu$,
+Let $X$, $Y$, and $Z$ be random variables of finite range on a probability space
+$(\Omega, \mu)$, taking values in countable measurable spaces, and let $A = Z^{-1}(B)$
+be the event that $Z$ lands in a measurable set $B$. Writing $I[X : Y \mid Z;\, \nu]$
+for the conditional mutual information of $X$ and $Y$ given $Z$ computed under a measure
+$\nu$, and $\mu[\,\cdot \mid A]$ for $\mu$ conditioned on the event $A$, one has
 \[
-  \mu_{\mathbb{R}}(A) \cdot I[X : Y \mid Z;\,\mu[\,|\,A]]
-  \;\le\; I[X : Y \mid Z;\,\mu].
+  \mu(A) \cdot I[X : Y \mid Z;\, \mu[\,\cdot \mid A]] \;\le\; I[X : Y \mid Z;\, \mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Chain rule for mutual information: splitting a right-side pair]
+\begin{theorem}[Chain rule for mutual information over a pair]
 \lean{ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \label{ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \leanok
 \difficulty{4}
-For measurable $X$, $Y$, $W$ with finite ranges under a zero-or-probability measure,
+Let $X$, $Y$, and $W$ be measurable random variables on a probability space $(\Omega,
+\mu)$, taking values in countable measurable spaces, and suppose each of $X$, $Y$, $W$
+takes only finitely many values almost surely. Then the mutual information between $X$
+and the pair $(Y, W)$ decomposes as
 \[
-  I[X : (Y, W);\mu] \;=\; I[X : Y;\mu] \;+\; I[X : W \mid Y;\mu].
+  I(X : (Y, W)) \;=\; I(X : Y) \;+\; I(X : W \mid Y),
 \]
+where $I(X : W \mid Y)$ is the mutual information of $X$ and $W$ conditioned on $Y$. (If
+$\mu$ is the zero measure rather than a probability measure, both sides are $0$.)
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information bounded by unconditioned mutual information]
+\begin{theorem}[Conditioning monotonicity for mutual information]
 \lean{ProbabilityTheory.condMutualInfo_le_mutualInfo_of_condDependence_le}
 \label{ProbabilityTheory.condMutualInfo_le_mutualInfo_of_condDependence_le}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_comp_right_of_injective, ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \difficulty{4}
-If $I[X : W \mid Y;\mu] \le I[X : W;\mu]$, then
+Let $X$, $Y$, and $W$ be random variables on a probability space $(\Omega,\mu)$ (with
+$\mu$ a probability measure, or else the zero measure), taking values in countable
+measurable spaces and each assuming only finitely many values. Write $I[X : Y;\mu]$ for
+the mutual information of $X$ and $Y$, and $I[X : Y \mid W;\mu]$ for their mutual
+information conditioned on $W$. If conditioning on $Y$ does not increase the mutual
+information between $X$ and $W$, that is,
+\[
+  I[X : W \mid Y;\mu] \;\le\; I[X : W;\mu],
+\]
+then conditioning on $W$ does not increase the mutual information between $X$ and $Y$:
 \[
   I[X : Y \mid W;\mu] \;\le\; I[X : Y;\mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Conditional entropy invariant under a.e.\ substitution]
+\begin{theorem}[Conditional entropy is invariant under a.e.-equal random variables]
 \lean{ProbabilityTheory.condEntropy_congr_ae}
 \label{ProbabilityTheory.condEntropy_congr_ae}
 \leanok
 \difficulty{2}
-Under a probability measure, if $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$
-(with all four variables measurable and of finite range), then
-$H[X \mid Y;\mu] = H[X' \mid Y';\mu]$.
+Let $(\Omega,\mu)$ be a probability space, and let $X,X'\colon\Omega\to S$ and
+$Y,Y'\colon\Omega\to T$ be measurable random variables valued in countable measurable
+spaces, each taking only finitely many values. If $X = X'$ and $Y = Y'$ hold
+$\mu$-almost everywhere, then the conditional Shannon entropies agree: \[ H[X \mid
+Y;\mu] = H[X' \mid Y';\mu]. \]
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information invariant under a.e.\ substitution of both variables]
+\begin{theorem}[Conditional mutual information under a.e. change of both arguments]
 \lean{ProbabilityTheory.condMutualInfo_congr_ae_left_right}
 \label{ProbabilityTheory.condMutualInfo_congr_ae_left_right}
 \leanok
 \uses{ProbabilityTheory.condEntropy_congr_ae}
 \difficulty{3}
-Under a probability measure, if $X =^{\mu\text{-a.e.}} X'$ and $Y =^{\mu\text{-a.e.}} Y'$,
-then $I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z;\mu]$ (the conditioning variable $Z$ is
-unchanged).
+Let $\mu$ be a probability measure on a sample space $\Omega$, and let $X, X' \colon
+\Omega \to S$, $Y, Y' \colon \Omega \to T$, and $Z \colon \Omega \to U$ be measurable
+maps into countable spaces, each taking only finitely many values $\mu$-almost surely.
+If $X = X'$ and $Y = Y'$ hold $\mu$-almost everywhere, then the conditional mutual
+informations agree:
+\[
+I[X : Y \mid Z\,;\,\mu] \;=\; I[X' : Y' \mid Z\,;\,\mu].
+\]
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information invariant under a.e.\ substitution of all three variables]
+\begin{theorem}[Conditional mutual information is invariant under a.e. equal variables]
 \lean{ProbabilityTheory.condMutualInfo_congr_ae}
 \label{ProbabilityTheory.condMutualInfo_congr_ae}
 \leanok
 \uses{ProbabilityTheory.condEntropy_congr_ae}
 \difficulty{3}
-Under a probability measure, if $X =^{\mu\text{-a.e.}} X'$, $Y =^{\mu\text{-a.e.}} Y'$,
-and $Z =^{\mu\text{-a.e.}} Z'$, then $I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z';\mu]$.
+Let $(\Omega,\mu)$ be a probability space, and let $X,X'$, $Y,Y'$, and $Z,Z'$ be
+measurable random variables on $\Omega$ taking values in countable (discrete) measurable
+spaces, each attaining only finitely many values. If $X = X'$, $Y = Y'$, and $Z = Z'$
+hold $\mu$-almost everywhere, then the conditional mutual informations agree: \[ I[X : Y
+\mid Z;\, \mu] = I[X' : Y' \mid Z';\, \mu]. \]
 \end{theorem}
 
-\begin{theorem}[Finite-space a.e.\ congruence for conditional mutual information]
+\begin{theorem}[Almost-everywhere invariance of conditional mutual information]
 \lean{ProbabilityTheory.condMutualInfo_congr_ae_finite}
 \label{ProbabilityTheory.condMutualInfo_congr_ae_finite}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, ProbabilityTheory.condMutualInfo_congr_ae}
 \difficulty{2}
-Version of \texttt{ProbabilityTheory.condMutualInfo\_congr\_ae} for finite measurable sample
-spaces: measurability and finite-range conditions are inferred automatically from the
-\texttt{CommunicationComplexity.FiniteMeasureSpace} and \texttt{Finite} instances, so only
-the a.e.\ equality hypotheses need to be supplied.
+Let $\mu$ be a probability measure on a finite sample space $\Omega$ (with every subset
+measurable), and let $X, X'$, $Y, Y'$, and $Z, Z'$ be random variables on $\Omega$
+taking values in the finite sets $S$, $T$, and $U$ respectively. If $X = X'$, $Y = Y'$,
+and $Z = Z'$ each hold $\mu$-almost everywhere, then the conditional mutual informations
+coincide: \[ I[X : Y \mid Z\,;\,\mu] = I[X' : Y' \mid Z'\,;\,\mu]. \]
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information determined by the joint law]
+\begin{theorem}[Conditional mutual information depends only on the joint law]
 \lean{ProbabilityTheory.IdentDistrib.condMutualInfo_eq}
 \label{ProbabilityTheory.IdentDistrib.condMutualInfo_eq}
 \leanok
 \difficulty{4}
-If $(X, Y, Z)$ and $(X', Y', Z')$ have the same joint distribution (i.e., are identically
-distributed), then $I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z';\mu']$.
+Let $X,Y,Z$ be measurable random variables on a probability space $(\Omega,\mu)$ and let
+$X',Y',Z'$ be measurable random variables on a probability space $(\Omega',\mu')$, all
+taking values in countable measurable spaces and each assuming only finitely many
+values. If the triples $(X,Y,Z)$ and $(X',Y',Z')$ are identically distributed, meaning
+they induce the same joint law on $S\times T\times U$, then their conditional mutual
+informations agree: \[ I[X : Y \mid Z;\mu] = I[X' : Y' \mid Z';\mu']. \]
 \end{theorem}
 
-\begin{theorem}[Finite-space version: conditional mutual information determined by the joint law]
+\begin{theorem}[Conditional mutual information depends only on the joint law]
 \lean{ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite}
 \label{ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, ProbabilityTheory.IdentDistrib.condMutualInfo_eq}
 \difficulty{2}
-Finite-space version of \texttt{ProbabilityTheory.IdentDistrib.condMutualInfo\_eq}: measurability
-and finite-range conditions are inferred from \texttt{CommunicationComplexity.FiniteMeasureSpace}
-and \texttt{Finite} instances.
+Let $(\Omega,\mu)$ and $(\Omega',\mu')$ be finite probability spaces, and let $S$, $T$,
+$U$ be finite sets. Consider random variables $X\colon\Omega\to S$, $Y\colon\Omega\to
+T$, $Z\colon\Omega\to U$ defined on the first space and $X'\colon\Omega'\to S$,
+$Y'\colon\Omega'\to T$, $Z'\colon\Omega'\to U$ defined on the second. If the joint
+random vectors $(X,Y,Z)$ and $(X',Y',Z')$ are identically distributed — that is, they
+induce the same probability measure on $S\times T\times U$ — then their conditional
+mutual informations agree: \[ I(X;Y\mid Z) = I(X';Y'\mid Z'). \]
 \end{theorem}
 
-\begin{theorem}[Conditional mutual information invariant under injective recodings of right and conditioning variables]
+\begin{theorem}[Conditional mutual information under injective recoding of the second and conditioning variables]
 \lean{ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
 \label{ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective}
 \leanok
 \difficulty{4}
-If $f : T \to V$ and $g : U \to W$ are measurable injections, then
+Let $\mu$ be a probability measure on a sample space $\Omega$, and let $X$, $Y$, $Z$ be
+measurable random variables on $\Omega$, taking values in countable measurable spaces
+$S$, $T$, $U$ respectively and each having finite range. Let $f\colon T\to V$ and
+$g\colon U\to W$ be measurable injections into countable measurable spaces. Then
+relabelling the second and conditioning variables by $f$ and $g$ leaves the conditional
+mutual information unchanged:
 \[
-  I[X : f \circ Y \mid g \circ Z;\mu] \;=\; I[X : Y \mid Z;\mu].
+  I[X : f\circ Y \mid g\circ Z ; \mu] \;=\; I[X : Y \mid Z ; \mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Identical distribution of pairs preserved under conditioning on the same set]
+\begin{theorem}[Identical distribution of a component under conditioning on the other]
 \lean{ProbabilityTheory.IdentDistrib.cond_of_pair}
 \label{ProbabilityTheory.IdentDistrib.cond_of_pair}
 \leanok
 \difficulty{5}
-If $(X, Y)$ and $(X', Y')$ have the same joint law and $s \subseteq B$ is measurable, then
-$X$ under $\mu[\,|\,Y^{-1}(s)]$ and $X'$ under $\mu'[\,|\,Y'^{-1}(s)]$ are identically
-distributed.
+Let $X, Y$ be measurable maps from a probability space $(\Omega, \mu)$ taking values in
+measurable spaces $A$ and $B$, and let $X', Y'$ be measurable maps from a probability
+space $(\Omega', \mu')$ into the same spaces $A$ and $B$, with $Y$ and $Y'$ measurable.
+Suppose the pairs $(X, Y)$ and $(X', Y')$ are identically distributed, that is, they
+induce the same law on $A \times B$ under $\mu$ and $\mu'$ respectively. Then for every
+measurable set $s \subseteq B$, the maps $X$ and $X'$ are identically distributed with
+respect to the conditioned measures $\mu[\,\cdot \mid Y^{-1}(s)]$ and $\mu'[\,\cdot \mid
+Y'^{-1}(s)]$.
 \end{theorem}

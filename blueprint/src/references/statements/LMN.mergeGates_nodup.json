@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.mergeGates_nodup",
+ "key": "443ff74bd9566b16",
+ "kind": "lemma",
+ "title": "Merging arrays of DNF formulas preserves duplicate-free terms",
+ "statement": "Fix $n \\in \\bbn$, and let $g_1$ and $g_2$ be two arrays of DNF formulas over $n$ variables, of lengths $m_1$ and $m_2$ respectively; write $g_1 \\sqcup g_2$ for their merge, the array of length $m_1+m_2$ whose first $m_1$ entries are the formulas of $g_1$, in order, and whose remaining $m_2$ entries are those of $g_2$, in order. Suppose that every term occurring in any formula of $g_1$, and every term occurring in any formula of $g_2$, is a list of literals with no repetition. Then the same holds for the merged array: for every index $k$ and every term $t$ of the formula at position $k$ in $g_1 \\sqcup g_2$, the literals of $t$ are pairwise distinct.",
+ "hypotheses_covered": [
+  "every term of every formula in the first array has no repeated literal",
+  "every term of every formula in the second array has no repeated literal",
+  "k ranges over the indices of the merged array (of length m₁+m₂)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every term of every DNF gate of $g_1$ and of $g_2$ has no duplicate literals\n($\\mathrm{Nodup}$), then every term of every gate of the merged array\n$\\mathrm{mergeGates}\\,g_1\\,g_2$ likewise has no duplicate literals."
+}

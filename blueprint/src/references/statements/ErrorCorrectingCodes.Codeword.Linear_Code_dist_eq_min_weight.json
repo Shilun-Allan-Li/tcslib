@@ -1,0 +1,16 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight",
+ "key": "89a1e439abab7600",
+ "kind": "lemma",
+ "title": "Minimum distance equals minimum nonzero weight",
+ "statement": "Let $\\alpha$ be a finite field and let $C$ be a linear code of length $n$ over $\\alpha$, meaning there is a generator matrix $G$ whose columns generate $C$ (every $G$-image of a message word lies in $C$, and every codeword of $C$ is such an image). Suppose $d$ is the minimum distance of $C$, that is, some two distinct codewords of $C$ lie at Hamming distance exactly $d$ and no two distinct codewords lie closer. Then every nonzero codeword of $C$ has Hamming weight at least $d$, and some codeword of $C$ has Hamming weight exactly $d$, where the weight of a codeword is its Hamming distance from the all-zero codeword.",
+ "hypotheses_covered": [
+  "C is a linear code witnessed by a generator matrix G",
+  "d is the minimum Hamming distance of C (attained by some distinct pair, and a lower bound for all distinct pairs)",
+  "alphabet is a finite field"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $C$ is linear (witnessed by some generator matrix) and has minimum distance $d$, then:\n\\begin{itemize}\n  \\item every nonzero codeword in $C$ has weight at least $d$;\n  \\item some codeword in $C$ has weight exactly $d$.\n\\end{itemize}"
+}

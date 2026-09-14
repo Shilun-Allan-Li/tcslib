@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.size_eq_sum_cards",
+ "key": "fd57beecea50ddaf",
+ "kind": "lemma",
+ "title": "Circuit size as a sum of layer cardinalities",
+ "statement": "Let $F$ be a layered feedforward circuit over the Boolean alphabet $\\bbf_2 = \\{0,1\\}$ with input type $\\mathrm{Fin}\\,n$, and suppose every node layer of $F$ is finite. Then the size of $F$ equals the sum of the cardinalities of its non-input layers:\n\\[\n\\mathrm{size}(F) \\;=\\; \\sum_{d\\,=\\,0}^{\\mathrm{depth}(F)-1} \\abs{\\,\\text{layer } (d+1)\\,},\n\\]\nthat is, the total number of non-input nodes is obtained by adding up the numbers of nodes in layers $1, \\dots, \\mathrm{depth}(F)$.",
+ "hypotheses_covered": [
+  "alphabet is the Boolean values Fin 2",
+  "input type is Fin n",
+  "every node layer is finite"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a feed-forward circuit $F$ with all node layers finite,\n\\[\nF.\\mathrm{size} \\;=\\; \\sum_{d : \\mathrm{Fin}\\,F.\\mathrm{depth}} \\abs{F.\\mathrm{nodes}(d+1)},\n\\]\nso the total number of non-input gates equals the sum of the cardinalities of all non-input layers."
+}

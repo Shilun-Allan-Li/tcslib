@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.exists_free_of_not_killed_not_fixed",
+ "key": "d8c7d48925ad2129",
+ "kind": "lemma",
+ "title": "Existence of a free variable when no term is fixed and not all are killed",
+ "statement": "Let $f$ be a DNF formula on $n$ variables and let $\\rho$ be a restriction on those variables. Suppose that not every term of $f$ is killed by $\\rho$, and that no term of $f$ is fixed by $\\rho$. Then $\\rho$ leaves at least one variable free; that is, there exists an index $v \\in \\mathrm{Fin}\\,n$ with $\\rho(v)$ unset.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "ρ is a restriction on n variables",
+  "not every term of f is killed by ρ",
+  "no term of f is fixed by ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a DNF $f$ and restriction $\\rho$, if not every term is killed by $\\rho$ and no term\nis fixed by $\\rho$, then $\\rho$ has at least one free variable $v \\in \\rho.\\mathrm{freeVars}$."
+}

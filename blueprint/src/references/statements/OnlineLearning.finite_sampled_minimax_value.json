@@ -1,0 +1,17 @@
+{
+ "lean_name": "OnlineLearning.finite_sampled_minimax_value",
+ "key": "e8507b731c0df2f0",
+ "kind": "theorem",
+ "title": "Minimax theorem for a sampled finite game",
+ "statement": "Let $f : \\bbr \\to \\bbr \\to \\bbr$ be a payoff function, and let $x : [M] \\to \\bbr$ and $y : [N] \\to \\bbr$ be finite families of row and column points such that $0 \\le f(x_i, y_j) \\le 1$ for all $i$ and $j$. Suppose the column action set is nonempty ($N \\ge 1$) and there are at least two row actions ($M \\ge 2$). Then the sampled game — the $M \\times N$ matrix game with entries $f(x_i, y_j)$ — has equal lower and upper values,\n\\[\n  \\sup_{p \\in \\Delta_M}\\; \\inf_{j \\in [N]}\\; \\sum_{i} p_i\\, f(x_i, y_j)\n  \\;=\\;\n  \\inf_{q \\in \\Delta_N}\\; \\sup_{i \\in [M]}\\; \\sum_{j} f(x_i, y_j)\\, q_j,\n\\]\nwhere $\\Delta_M$ and $\\Delta_N$ denote the sets of mixed strategies over the row and column actions.",
+ "hypotheses_covered": [
+  "payoff entries lie in [0,1] (0 ≤ f(x_i,y_j) ≤ 1)",
+  "at least one column action (N ≥ 1, NeZero N)",
+  "at least one row action (NeZero M)",
+  "at least two row actions (1 < M)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same size hypotheses as \\texttt{OnlineLearning.finite\\_minimax\\_value},\nthe sampled game satisfies $v^-(\\mathrm{sampledGame}) = v^+(\\mathrm{sampledGame})$."
+}

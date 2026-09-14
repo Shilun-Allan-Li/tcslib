@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf",
+ "key": "06e52abd189cba97",
+ "kind": "lemma",
+ "title": "Small decision-tree depth yields narrow DNF and CNF",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\bbf_2) \\to \\{0,1\\}$ be a Boolean function, and let $d$ be a natural number such that the decision-tree depth of $f$ is at most $d$. Then $f$ is computed by a DNF formula of width at most $d$ and by a CNF formula of width at most $d$; that is, there exist a disjunction of terms and a conjunction of clauses, each term or clause containing at most $d$ literals, that both agree with $f$ on every input.",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "decision-tree depth of f is at most d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $\\mathrm{dtDepth}\\,f \\leq d$, then $f$ is computed by a DNF of width at most\n$d$ and by a CNF of width at most $d$."
+}

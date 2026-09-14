@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.Circuit.ind",
+ "key": "89aca9385d111653",
+ "kind": "theorem",
+ "title": "Structural induction on Boolean circuits",
+ "statement": "Let $P$ be a property of Boolean circuits on $n$ variables. Suppose that $P$ holds for every literal circuit, and that whenever $P$ holds for every circuit in a list $cs$ of children, it also holds for the gate circuit $\\mathrm{node}(isAnd, cs)$ formed from $cs$ (an AND gate when $isAnd = \\mathrm{true}$, an OR gate when $isAnd = \\mathrm{false}$). Then $P$ holds for every Boolean circuit on $n$ variables.",
+ "hypotheses_covered": [
+  "base case: property holds for every literal circuit",
+  "step case: for every gate, if the property holds for all children in the list then it holds for the gate node"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "An induction principle for \\texttt{Circuit} stating that to prove a predicate\n$\\mathrm{motive}$ holds for every circuit it suffices to prove it for every literal and,\nin the node case, to prove $\\mathrm{motive}(\\texttt{node}\\,isAnd\\,cs)$ assuming\n$\\mathrm{motive}\\,c$ for every child $c \\in cs$. This works around the lack of native\nsupport for nested inductives."
+}

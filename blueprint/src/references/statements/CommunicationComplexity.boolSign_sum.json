@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.boolSign_sum",
+ "key": "3b2f8ba9cd3564fd",
+ "kind": "lemma",
+ "title": "Boolean sign turns parity into a product of signs",
+ "statement": "Let $\\alpha$ be a type, let $s$ be a finite set of indices from $\\alpha$, and let $f : \\alpha \\to \\{\\mathrm{false}, \\mathrm{true}\\}$ be a Boolean-valued function. Write $\\sigma$ for the Boolean sign, so that $\\sigma(\\mathrm{false}) = 1$ and $\\sigma(\\mathrm{true}) = -1$, and let $\\bigoplus_{i \\in s} f(i)$ denote the sum of the values $f(i)$ taken in the Booleans under exclusive-or, so that this sum equals $\\mathrm{true}$ precisely when an odd number of indices $i \\in s$ satisfy $f(i) = \\mathrm{true}$. Then the sign of this parity equals the product of the individual signs:\n\\[\n  \\sigma\\!\\left(\\bigoplus_{i \\in s} f(i)\\right) \\;=\\; \\prod_{i \\in s} \\sigma\\bigl(f(i)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "s is a finite set of indices in a type α",
+  "f is a Boolean-valued function on α",
+  "the sum over s is taken in the Booleans under exclusive-or (parity)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a finite type $\\alpha$, a finite set $s : \\mathrm{Finset}\\,\\alpha$, and a function\n$f : \\alpha \\to \\mathrm{Bool}$,\n\\[\n  \\texttt{CommunicationComplexity.boolSign}\\!\\left(\\sum_{i \\in s} f(i)\\right)\n  \\;=\\; \\prod_{i \\in s} \\texttt{boolSign}(f(i)).\n\\]"
+}

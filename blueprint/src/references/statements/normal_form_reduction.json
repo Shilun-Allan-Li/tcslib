@@ -1,0 +1,18 @@
+{
+ "lean_name": "normal_form_reduction",
+ "key": "7fdb99f3c9b896e0",
+ "kind": "theorem",
+ "title": "Existence of normal-form reduction parameters",
+ "statement": "Let $q \\ge 2$ be an integer, let $k$ and $n$ be positive integers, and let $\\delta, \\varepsilon > 0$. Then there exist a natural number $n' \\le 6n$ and real numbers $\\delta', \\varepsilon' > 0$ such that\n\\[\n  \\delta' \\ \\ge\\ \\frac{\\varepsilon\\,\\delta}{3\\,q^{2}\\,2^{\\,q-1}},\n  \\qquad\n  \\varepsilon' \\ \\ge\\ \\frac{\\varepsilon}{2^{\\,2q}}.\n\\]",
+ "hypotheses_covered": [
+  "q ≥ 2",
+  "k > 0",
+  "n > 0",
+  "δ > 0",
+  "ε > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fact 3.6 (Yekhanin, Lemma 6.2), in the existential form used downstream: for\n$q \\ge 2$, $k, n > 0$ and $\\delta, \\varepsilon > 0$ there exist a length $n' \\le 6n$ and\nparameters $\\delta', \\varepsilon' > 0$ with\n\\[\n  \\delta' \\ \\ge\\ \\frac{\\varepsilon\\,\\delta}{3q^2\\,2^{\\,q-1}},\n  \\qquad\n  \\varepsilon' \\ \\ge\\ \\frac{\\varepsilon}{2^{2q}} .\n\\]\nThese are exactly the parameters of the normally decodable code obtained from a\nbinary $(q,\\delta,\\varepsilon)$-LDC $C : \\{0,1\\}^k \\to \\{0,1\\}^n$; the Lean statement asserts\nonly the existence of such $n', \\delta', \\varepsilon'$.\n\n\\emph{Placeholder.}  The Lean statement quantifies over parameters only: no code, decoder, or\nnormal-form construction occurs in it, and it is discharged by exhibiting witnesses that make\nthe two inequalities reflexive.  It records the shape of Fact 3.6's output for downstream use\nand does \\emph{not} formalise the reduction.  It must not be cited as a formalisation of that\nreduction."
+}

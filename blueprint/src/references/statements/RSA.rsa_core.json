@@ -1,0 +1,16 @@
+{
+ "lean_name": "RSA.rsa_core",
+ "key": "ccb3b825c6455898",
+ "kind": "lemma",
+ "title": "Core RSA exponent identity",
+ "statement": "Let $p$ be a prime and let $c \\in \\bbn$ be arbitrary. Then for every $x \\in \\bbz/p\\bbz$,\n\\[\nx^{\\,1 + c(p-1)} = x .\n\\]\nThis is the form of Fermat's little theorem underlying RSA, and it holds for all $x$, including $x = 0$.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$c$ is a natural number",
+  "$x$ ranges over $\\bbz/p\\bbz$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be prime. For every $c \\in \\bbn$ and every $x \\in \\bbz/p\\bbz$,\n\\[\nx^{\\,1 + c(p-1)} = x .\n\\]\nThis is the form of Fermat's little theorem needed for RSA, valid also at $x = 0$."
+}

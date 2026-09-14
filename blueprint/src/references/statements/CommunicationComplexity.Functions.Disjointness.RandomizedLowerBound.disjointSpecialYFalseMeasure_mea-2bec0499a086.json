@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_specialX_inter_coarseConditioning",
+ "key": "f52e83e2e71ffc9b",
+ "kind": "theorem",
+ "title": "Uniformity of Alice's special bit over coarse fibers",
+ "statement": "Fix a positive integer $n$, and let $\\mu$ denote the hard distribution on samples conditioned on the event that Alice's and Bob's generated input sets are disjoint and further conditioned on Bob's special bit being $\\mathsf{false}$. Write $X_T$ for Alice's bit at the special coordinate and write $(T, X_{<T}, Y_{>T})$ for the coarse variable recording the special coordinate together with Alice's bits strictly before it and Bob's bits strictly after it. Then for every bit $b \\in \\{\\mathsf{false}, \\mathsf{true}\\}$ and every value $c$ of the coarse variable,\n\\[\n\\mu\\big(\\{X_T = b\\} \\cap \\{(T, X_{<T}, Y_{>T}) = c\\}\\big) = \\tfrac{1}{2}\\,\\mu\\big(\\{(T, X_{<T}, Y_{>T}) = c\\}\\big),\n\\]\nwhere the measures are taken as real numbers; that is, under $\\mu$, Alice's special bit is uniformly distributed over each fiber of the coarse variable.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "b is a bit (true or false)",
+  "c is a value of the coarse variable (special coordinate, Alice's bits before it, Bob's bits after it)",
+  "the measure is the disjoint-conditioned hard distribution further conditioned on Bob's special bit being false",
+  "real-valued measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The preceding ambient counting identity remains true after conditioning on $Y_{T}=false$."
+}

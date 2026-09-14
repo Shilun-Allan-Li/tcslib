@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL_eq_cond_specialYFalse_klDiv",
+ "key": "8c544e3badb42a3e",
+ "kind": "theorem",
+ "title": "Fiber KL divergence unchanged by conditioning on the special Y-bit",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the disjointness function on inputs of length $n$, and let $z$ be an achievable value of the variable $Z = (M, T, X_{<T}, Y_{>T})$, recording the transcript, the special coordinate $T$, Alice's bits before $T$, and Bob's bits after $T$. Write $\\mu_z$ for the hard distribution conditioned on the fiber $\\{Z = z\\}$, and let $U$ be the uniform law on one bit. Suppose the event that Bob's bit $Y_T$ at the special coordinate equals $\\mathrm{false}$ has nonzero probability under $\\mu_z$. Then the Kullback–Leibler divergence from $U$ of the law of Alice's special bit $X_T$ under $\\mu_z$ equals the Kullback–Leibler divergence from $U$ of the law of $X_T$ under $\\mu_z$ additionally conditioned on the event $\\{Y_T = \\mathrm{false}\\}$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol on inputs of length n",
+  "z is an achievable value of the variable Z = (M, T, X_{<T}, Y_{>T})",
+  "under the fiber measure, the event {Y_T = false} has nonzero probability"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "After rectangle switching, Alice's \\texttt{xFiberKL} can be computed by first conditioning on $Y_{T}=false$ inside the $Z=z$ fiber."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "rows_indep",
+ "key": "309462de92ce14e4",
+ "kind": "lemma",
+ "title": "Independence of coordinates of a random matrix–vector product",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, and let $A$ be a random $k\\times d$ real matrix, that is, a measurable map assigning to each $\\omega\\in\\Omega$ a matrix $A(\\omega)\\in\\bbr^{k\\times d}$. Suppose the rows of $A$ are mutually independent, meaning the $k$ random vectors $\\omega\\mapsto\\bigl(A(\\omega)_{i,1},\\dots,A(\\omega)_{i,d}\\bigr)\\in\\bbr^{d}$, for $i=1,\\dots,k$, are mutually independent under $\\mu$. Then for every fixed $x\\in\\bbr^{d}$ the $k$ coordinates of the product $A(\\omega)\\,x$, namely the real-valued random variables $\\omega\\mapsto (A(\\omega)\\,x)_i=\\sum_{j=1}^{d}A(\\omega)_{i,j}\\,x_j$ for $i=1,\\dots,k$, are mutually independent under $\\mu$.",
+ "hypotheses_covered": [
+  "probability space (Ω, μ)",
+  "A is a random k×d real matrix",
+  "the rows of A are mutually independent random vectors",
+  "x is a fixed vector in ℝ^d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the row vectors of $A$ (as $(\\mathrm{Fin}\\,d\\to\\mathbb{R})$-valued random\nvariables) are mutually independent under $\\mu$, then for any fixed\n$x\\in\\mathbb{R}^d$ the scalar row-projections\n$(A\\,\\omega).\\texttt{toEuclideanLin}\\,x\\,i = \\sum_j A_{\\omega,i,j}\\,x_j$\nare independent across $i\\in\\mathrm{Fin}\\,k$, since each is a measurable\nfunction of a distinct row of $A$."
+}

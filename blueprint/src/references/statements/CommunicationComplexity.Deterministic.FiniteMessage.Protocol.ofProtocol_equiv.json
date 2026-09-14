@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv",
+ "key": "bde917d68cfc2722",
+ "kind": "theorem",
+ "title": "Realizing binary protocols as finite-message protocols",
+ "statement": "Let $X$ and $Y$ be the input types of Alice and Bob and let $\\alpha$ be an output type. For every binary deterministic communication protocol $p$ over $X$, $Y$, and $\\alpha$, there is a finite-message protocol $P$ over the same input and output types that computes the same output on every pair of inputs — that is, $\\mathrm{run}(P) = \\mathrm{run}(p)$ as functions of $x \\in X$ and $y \\in Y$ — and has the same communication complexity, $\\mathrm{complexity}(P) = \\mathrm{complexity}(p)$.",
+ "hypotheses_covered": [
+  "an arbitrary binary deterministic protocol p over X, Y, alpha is given"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary protocol $p$, there exists a finite-message protocol $P$ with\n$P.\\mathrm{run} = p.\\mathrm{run}$ and $P.\\mathrm{complexity} = p.\\mathrm{complexity}$.\nTogether with \\texttt{toProtocol\\_exists}, this shows the two models are equivalent up to\ncomplexity."
+}

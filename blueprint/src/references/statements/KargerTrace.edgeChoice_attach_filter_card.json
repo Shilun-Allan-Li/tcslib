@@ -1,0 +1,14 @@
+{
+ "lean_name": "KargerTrace.edgeChoice_attach_filter_card",
+ "key": "c893d6c75b555ba7",
+ "kind": "lemma",
+ "title": "Survivor count over the attached sample space",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $S$ of $G$, and let $\\Omega$ be its sample space of edge occurrences — the finite set of pairs $(e, i)$ where $e$ is an edge of $G$ and $i$ is an occurrence index distinguishing parallel copies of that edge. Call an occurrence *surviving* when its underlying edge $e$ does not cross $S$, that is, when it is not the case that one endpoint of $e$ lies in $S$ and the other lies outside $S$. Then the number of surviving occurrences is the same whether they are counted directly among the elements of $\\Omega$ or among the elements of the equinumerous copy of $\\Omega$ obtained by regarding each member together with the fact that it belongs to $\\Omega$; in both counts the survival test is applied to the underlying occurrence, and the two cardinalities agree.",
+ "hypotheses_covered": [
+  "s is a state consisting of a multigraph G and a distinguished cut S of G"
+ ],
+ "confidence": "high",
+ "caveat": "This is an unconditional bookkeeping identity: it asserts that counting the survivors is unchanged when the sample space is replaced by its canonical bijective subtype copy, since the survival predicate depends only on the underlying edge occurrence.",
+ "rubric": [],
+ "replaced": "Counting surviving occurrences in the attached (subtype) version of the sample space gives\nthe same number as counting them in the sample space itself."
+}

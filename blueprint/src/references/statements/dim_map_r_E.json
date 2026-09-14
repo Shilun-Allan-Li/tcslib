@@ -1,0 +1,16 @@
+{
+ "lean_name": "dim_map_r_E",
+ "key": "60871a965d8f608f",
+ "kind": "lemma",
+ "title": "Rank of a restricted subspace of $\\mathbb{F}_p^n \\times \\mathbb{F}_p^n$",
+ "statement": "Fix a prime $p$ and an integer $n \\ge 0$, and let $V = \\mathbb{F}_p^n \\times \\mathbb{F}_p^n$. For a set $E$ of coordinates, let $r_E \\colon V \\to V$ be the restriction map that leaves each coordinate in $E$ unchanged and sets every coordinate outside $E$ to zero, and for a set $C$ of coordinates let $V_C \\le V$ be the subspace of vectors supported on $C$. Then for every subspace $S \\le V$,\n\\[\n\\dim_{\\mathbb{F}_p} r_E(S) \\;=\\; \\dim_{\\mathbb{F}_p} S \\;-\\; \\dim_{\\mathbb{F}_p}\\!\\bigl(S \\cap V_{E^c}\\bigr),\n\\]\nwhere $E^c$ denotes the complement of $E$ among the $n$ coordinates.",
+ "hypotheses_covered": [
+  "p is prime",
+  "S is a subspace of V = F_p^n × F_p^n",
+  "E is a set of coordinates (subset of Fin n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$\\dim_{\\mathbb{F}_p}(r_E(S)) = \\dim_{\\mathbb{F}_p}(S) - \\dim_{\\mathbb{F}_p}(S \\cap V_{E^c})$."
+}

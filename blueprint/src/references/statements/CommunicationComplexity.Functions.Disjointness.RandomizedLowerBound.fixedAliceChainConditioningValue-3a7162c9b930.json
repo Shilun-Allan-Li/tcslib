@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceChainConditioningValue_fixedAliceFullYConditioning",
+ "key": "911c366cd4bb5d84",
+ "kind": "theorem",
+ "title": "Chain-rule recoding of the full-Y conditioning variable",
+ "statement": "Fix a positive integer $n$ and a coordinate $i \\in \\{0,1,\\dots,n-1\\}$. Let $R$ be the map that sends a pair $(a,b)$ — where $a$ is a Boolean vector indexed by $\\{0,\\dots,i-1\\}$ and $b$ is a Boolean vector of length $n$ — to\n\\[\nR(a,b) = \\Bigl(\\ j\\mapsto b_j\\,[\\,j<i\\,],\\ \\ \\bigl(\\,j\\mapsto a_j\\,[\\,j<i\\,],\\ \\ j\\mapsto b_j\\,[\\,i\\le j\\,]\\,\\bigr)\\ \\Bigr),\n\\]\nwhose three components are all Boolean vectors of length $n$; here $[\\,\\cdot\\,]$ is the Iverson bracket, so each component takes the value $0$ at every index falling outside the range named in its own bracket. For every sample $\\omega$ of the hard distribution, let $b$ be Bob's full induced input vector of length $n$ and let $a$ be Alice's induced input restricted to the coordinates $\\{0,\\dots,i-1\\}$ (a Boolean vector on those indices, carrying no padding). Then\n\\[\nR(a,b) = \\bigl(\\,y_{<i},\\ (\\,x_{<i},\\ y_{\\ge i}\\,)\\,\\bigr),\n\\]\nwhere $x_{<i}$, $y_{<i}$, and $y_{\\ge i}$ are the length-$n$ Boolean vectors that equal Alice's induced input at each index below $i$, Bob's induced input at each index below $i$, and Bob's induced input at each index at least $i$, respectively, and are $0$ at every other index.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "i a coordinate in {0,...,n-1}",
+  "equality of the two functions, i.e. it holds for every hard-distribution sample ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On hard samples, recoding $(X_{<i}, Y)$ gives exactly $(Y_{<i}, X_{<i}, Y_{≥i})$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_complexity",
+ "key": "8248a3f6570f7979",
+ "kind": "theorem",
+ "title": "Additivity of communication complexity under products",
+ "statement": "Let $k$ be a natural number, and for each index $i \\in \\{0, 1, \\dots, k-1\\}$ let $p_i$ be a finite-message protocol over input types $X_i$, $Y_i$ with output type $\\alpha_i$. The $k$-fold product protocol runs each $p_i$ on the $i$-th coordinates of a pair of input tuples in $\\prod_i X_i$ and $\\prod_i Y_i$ and collects the outputs into a tuple in $\\prod_i \\alpha_i$. Then the communication complexity of the $k$-fold product protocol equals the sum of the communication complexities of the factors:\n\\[\n  \\mathrm{complexity}\\!\\left(\\prod_{i} p_i\\right) = \\sum_{i=0}^{k-1} \\mathrm{complexity}(p_i).\n\\]",
+ "hypotheses_covered": [
+  "a natural number k",
+  "a family of finite-message protocols p_i indexed by i in Fin k, over input types X_i, Y_i and output type α_i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The complexity of the $k$-fold product satisfies\n\\[\n  (\\texttt{pi}\\;p).\\texttt{complexity} \\;=\\; \\sum_{i=0}^{k-1} (p_i).\\texttt{complexity}.\n\\]"
+}

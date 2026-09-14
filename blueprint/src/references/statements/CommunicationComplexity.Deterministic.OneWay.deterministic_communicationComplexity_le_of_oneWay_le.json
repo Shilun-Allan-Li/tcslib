@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le",
+ "key": "e9ec9d285f633998",
+ "kind": "theorem",
+ "title": "One-way bound implies interactive bound",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a two-argument function whose output type $\\alpha$ is finite and nonempty, and let $n \\in \\bbn$. If the one-way deterministic communication complexity of $f$ is at most $n$, then the (interactive) deterministic communication complexity of $f$ is at most $n + \\lceil \\log_2 \\abs{\\alpha} \\rceil$.",
+ "hypotheses_covered": [
+  "output type α is finite",
+  "output type α is nonempty",
+  "f is a function X → Y → α",
+  "n is a natural number",
+  "one-way communication complexity of f is at most n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the one-way communication complexity of $f : X \\to Y \\to \\alpha$ is at most $n$, then\nthe (interactive) deterministic communication complexity of $f$ is at most\n$n + \\lceil \\log_2 |\\alpha| \\rceil$, with the additive term accounting for Bob's cost\nof transmitting the decoded output in the interactive model."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_sigma_none_of_rho_none",
+ "key": "ab703d96a0d70512",
+ "kind": "lemma",
+ "title": "Processed assignment unchanged where the restriction stays free",
+ "statement": "Fix $n$, and let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables. Run the clause-processing procedure on a list of literals (each paired with its position index) together with a decision-tree path, starting from $\\rho_0$ and $\\sigma$, and write $\\rho_0'$ and $\\sigma'$ for the two restrictions it returns. If a variable $v$ is free under the input, $\\rho_0(v) = \\mathrm{none}$, and remains free under the output, $\\rho_0'(v) = \\mathrm{none}$, then the procedure has not altered $\\sigma$ at $v$ either: $\\sigma'(v) = \\sigma(v)$.",
+ "hypotheses_covered": [
+  "v is free under the input restriction ($\\rho_0(v) = \\mathrm{none}$)",
+  "v remains free under the output restriction ($\\rho_0'(v) = \\mathrm{none}$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\rho_0\\,v = \\mathrm{none}$ and \\texttt{SwitchingLemma2.processClauseLits} leaves\n$\\rho_0$ unset at $v$, then it also leaves $\\sigma$ unchanged at $v$; the $\\sigma$ output\nequals the input $\\sigma$ at $v$, since $\\rho_0$ and $\\sigma$ are updated at the same\nvariables in lockstep."
+}

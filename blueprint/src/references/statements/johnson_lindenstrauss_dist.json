@@ -1,0 +1,19 @@
+{
+ "lean_name": "johnson_lindenstrauss_dist",
+ "key": "c9d69f9e670be1db",
+ "kind": "theorem",
+ "title": "Johnson–Lindenstrauss flattening in distance form",
+ "statement": "Let $\\varepsilon \\in (0,1)$ and let $n \\ge 2$ be an integer, and suppose the target dimension $k$ satisfies $k \\ge 32\\,\\log n / \\varepsilon^2$. Then for every finite set $V \\subseteq \\bbr^d$ of at most $n$ points there exists a linear map $f : \\bbr^d \\to \\bbr^k$ such that, for all $u, v \\in V$,\n\\[\n  \\sqrt{1-\\varepsilon}\\,\\norm{u - v} \\;\\le\\; \\norm{f(u) - f(v)} \\;\\le\\; \\sqrt{1+\\varepsilon}\\,\\norm{u - v},\n\\]\nwhere $\\norm{\\cdot}$ denotes the Euclidean norm.",
+ "hypotheses_covered": [
+  "0 < ε",
+  "ε < 1",
+  "n ≥ 2 (integer)",
+  "k ≥ 32·log n / ε²",
+  "V a finite subset of ℝ^d",
+  "|V| ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses as \\texttt{johnson\\_lindenstrauss}, there exists a linear\nmap $f : \\mathbb{R}^d \\to_L \\mathbb{R}^k$ such that for all $u, v \\in V$,\n\\[\n  \\sqrt{1-\\varepsilon}\\,\\|u - v\\| \\;\\le\\; \\|f(u) - f(v)\\| \\;\\le\\;\n  \\sqrt{1+\\varepsilon}\\,\\|u - v\\|.\n\\]"
+}

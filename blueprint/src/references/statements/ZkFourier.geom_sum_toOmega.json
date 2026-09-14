@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.geom_sum_toOmega",
+ "key": "e7952f3fcadc7825",
+ "kind": "lemma",
+ "title": "Character orthogonality on $\\mathbb{Z}/k\\mathbb{Z}$",
+ "statement": "Let $k \\ge 1$ and let $\\omega_k = e^{2\\pi i/k}$ be the primitive $k$-th root of unity. For each $a \\in \\mathbb{Z}/k\\mathbb{Z}$, write $\\omega_k^{a}$ for $\\omega_k$ raised to the canonical representative of $a$ in $\\{0,\\ldots,k-1\\}$. Then for every $j \\in \\mathbb{Z}/k\\mathbb{Z}$,\n\\[\n  \\sum_{a \\in \\mathbb{Z}/k\\mathbb{Z}} \\omega_k^{\\,j a}\n  = \\begin{cases} k & \\text{if } j = 0, \\\\ 0 & \\text{if } j \\neq 0. \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "k is nonzero (NeZero k)",
+  "j ranges over Z/kZ",
+  "sum over all a in Z/kZ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $j : \\mathbb{Z}/k\\mathbb{Z}$,\n\\[\n  \\sum_{a \\in \\mathbb{Z}/k\\mathbb{Z}} \\omega_k^{j \\cdot a}\n  = \\begin{cases} k & \\text{if } j = 0, \\\\ 0 & \\text{if } j \\neq 0. \\end{cases}\n\\]\nThis is the fundamental character-orthogonality identity for $\\mathbb{Z}/k\\mathbb{Z}$."
+}

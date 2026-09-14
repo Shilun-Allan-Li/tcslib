@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.exists_poly_list_for_circuit_one_size",
+ "key": "e9d85d7a26a4a607",
+ "kind": "theorem",
+ "title": "Polynomial approximator list for a single-output $\\mathrm{AC}^0[p]$ circuit",
+ "statement": "Let $p$ be a prime and let $F$ be a feedforward circuit over the alphabet $\\mathrm{Fin}\\,2$ with $n$ Boolean input variables, finitely many nodes in each layer, and a single output node, every gate of which belongs to the $\\mathrm{AC}^0[p]$ gate set. Then for each $\\ell \\in \\bbn$ there exists a nonempty list of polynomials $P_1, \\dots, P_m \\in (\\bbz/p)[X_1, \\dots, X_n]$, each of total degree at most $\\bigl((p-1)\\ell\\bigr)^{\\mathrm{depth}(F)}$, with the following property. Given a Boolean input $x \\colon \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,2$, let $\\hat{x} \\colon \\mathrm{Fin}\\,n \\to \\bbz/p$ denote $x$ cast coordinatewise into $\\bbz/p$, and let $b(x) \\in \\bbz/p$ denote the image of the single output bit that $F$ computes on $x$. Then for every such $x$ the number of indices $j$ at which the polynomial disagrees with the circuit satisfies\n\\[\n\\bigl|\\{\\, j : P_j(\\hat{x}) \\ne b(x) \\,\\}\\bigr| \\cdot 2^{\\ell} \\;\\le\\; \\mathrm{size}(F) \\cdot m,\n\\]\nwhere $\\mathrm{size}(F)$ is the number of non-input nodes of $F$ and $m$ is the length of the list.",
+ "hypotheses_covered": [
+  "p is prime",
+  "F is a feedforward circuit over Fin 2 with Fin n inputs",
+  "each layer has finitely many nodes",
+  "the output type is unique (single output node)",
+  "every gate of F lies in the AC^0[p] gate set",
+  "a natural-number parameter ℓ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The list formulation of the previous theorem: for a circuit $F$ with a unique output node whose\ngates all lie in the $\\mathrm{AC}^0[p]$ gate set, there is a nonempty list $Ps$ of polynomials in\n$\\bbz/p[X_1,\\dots,X_n]$, each of total degree at most\n$\\mathrm{circuitDegreeBound}\\,p\\,\\ell\\,F.\\mathrm{depth}$, such that for every Boolean input $x$ the\nsublist of $P \\in Ps$ with $P(\\mathrm{boolInput}_p(x)) \\ne F.\\mathrm{eval}_1(x)$ satisfies\n\\[\n\\abs{\\{P \\in Ps : \\text{$P$ is wrong at $x$}\\}} \\cdot 2^{\\ell}\n  \\;\\le\\; F.\\mathrm{size} \\cdot \\abs{Ps}.\n\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "CycleSpace.isUnimodular_deleteRow",
+ "key": "a85ebd9f9a613a50",
+ "kind": "theorem",
+ "title": "Unimodularity of the reduced oriented incidence matrix",
+ "statement": "Let $D$ be a finite digraph with vertex set $V$ and arc set $A$, where each arc $a$ has a tail and a head in $V$, and let $M$ be its oriented incidence matrix over $\\bbz$: the rows are indexed by $V$, the columns by $A$, and the $(v,a)$ entry equals $1$ if $v$ is the tail of $a$, equals $-1$ if $v$ is the head of $a$, and equals $0$ otherwise. Fix a vertex $y \\in V$, and let $K$ be the matrix obtained from $M$ by deleting the row indexed by $y$. Then $K$ is unimodular: for every injective map $g$ from an index set into the columns of $K$, the square submatrix of $K$ formed by selecting the columns $g$ (against all remaining rows) has determinant $0$, $1$, or $-1$.",
+ "hypotheses_covered": [
+  "D is a finite digraph with vertex set V and arc set A, given by tail and head maps A → V",
+  "M is the integer oriented incidence matrix (rows = vertices, columns = arcs)",
+  "y is a fixed vertex of V, whose row is deleted to form K",
+  "conclusion: every full square submatrix of K, selected by an injective column map, has determinant in {0, 1, -1}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{.  }A matrix \\texttt{K} obtained from \\texttt{M} by deleting any one row\nis unimodular.*"
+}

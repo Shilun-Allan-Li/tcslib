@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.switching_lemma",
+ "key": "109f6bf5309b916b",
+ "kind": "theorem",
+ "title": "Håstad's switching lemma for bounded-width DNFs",
+ "statement": "Let $n \\ge 1$, and let $f$ be a DNF formula on $n$ Boolean variables whose width is at most $w$, so that every term of $f$ has at most $w$ literals. Suppose that $5s \\le n$, that no term of $f$ contains two distinct literals on the same variable, and that no term of $f$ repeats a literal. Call a restriction $\\rho$ on the $n$ variables an $s$-restriction if it leaves exactly $s$ variables free, and call it bad (at depth $d$) if the restricted function $f|_\\rho$ has decision-tree depth strictly greater than $d$. Then the number $N$ of $s$-restrictions that are bad satisfies\n\\[\n  N \\cdot n^{d} \\;\\le\\; \\binom{n}{s}\\, 2^{\\,n-s}\\, (10\\,s\\,w)^{d}.\n\\]",
+ "hypotheses_covered": [
+  "0 < n",
+  "width(f) ≤ w",
+  "5s ≤ n",
+  "within each term, two literals on the same variable are identical",
+  "each term has no repeated literal",
+  "count restricts to restrictions with exactly s free variables (s-restrictions)",
+  "bad means restricted function has decision-tree depth > d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n>0$, let $f:\\{0,1\\}^n\\to\\{0,1\\}$ be a DNF formula, and fix $w,s,d\\in\\bbn$.\nAssume\n\\begin{itemize}\n  \\item $\\text{width}(f)\\le w$ (width counted as list length, see\n        Section~\\ref{sec:faithfulness}),\n  \\item $5s \\le n$,\n  \\item $f$ satisfies the \\emph{non-contradictory clause} hypothesis\n        \\texttt{hnd}: for every term $t\\in f$ and every pair of literals\n        $\\ell_1,\\ell_2\\in t$, if $\\ell_1.\\mathrm{var}=\\ell_2.\\mathrm{var}$ then\n        $\\ell_1=\\ell_2$.\n\\end{itemize}\nThen\n\\[\n  \\bigl|\\{\\,\\rho : \\rho\\text{ is an $s$-restriction and }\n        \\mathrm{dtDepth}(f|_\\rho)>d\\,\\}\\bigr| \\cdot n^d\n  \\;\\le\\;\n  \\mathrm{numSRestrictions}(n,s)\\,\\cdot\\,(10\\,s\\,w)^d.\n\\]"
+}

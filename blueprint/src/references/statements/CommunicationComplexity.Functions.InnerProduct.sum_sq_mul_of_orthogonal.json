@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_of_orthogonal",
+ "key": "8a87b1b1fd85d522",
+ "kind": "lemma",
+ "title": "Weighted orthogonality identity",
+ "statement": "Let $\\alpha$ and $\\beta$ be finite index sets, and let $\\phi : \\alpha \\times \\beta \\to \\bbr$ be a real-valued array whose columns are mutually orthogonal with a common squared length: for a fixed constant $c \\in \\bbr$,\n\\[\n  \\sum_{x \\in \\alpha} \\phi(x,y)\\,\\phi(x,z) = \\begin{cases} c & \\text{if } y = z,\\\\ 0 & \\text{if } y \\neq z,\\end{cases}\n\\]\nfor all $y, z \\in \\beta$. Then for any weights $b : \\beta \\to \\bbr$,\n\\[\n  \\sum_{x \\in \\alpha} \\Bigl(\\sum_{y \\in \\beta} b(y)\\,\\phi(x,y)\\Bigr)^{2}\n  \\;=\\; c \\sum_{y \\in \\beta} b(y)^{2}.\n\\]",
+ "hypotheses_covered": [
+  "finite index sets α and β",
+  "real array φ : α × β → ℝ",
+  "constant c",
+  "columns of φ are orthogonal with common squared length c (∑ₓ φ(x,y)φ(x,z) = c if y=z else 0)",
+  "arbitrary weights b : β → ℝ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\phi : \\alpha \\to \\beta \\to \\mathbb{R}$ be a family of functions satisfying the\northogonality condition $\\sum_{x:\\alpha} \\phi(x,y)\\,\\phi(x,z) = c \\cdot [\\![y=z]\\!]$\nfor a constant $c$.  Then for any weights $b : \\beta \\to \\mathbb{R}$,\n\\[\n  \\sum_{x:\\alpha} \\Bigl(\\sum_{y:\\beta} b(y)\\,\\phi(x,y)\\Bigr)^2\n  \\;=\\; \\sum_{y:\\beta} b(y)^2 \\cdot c.\n\\]"
+}

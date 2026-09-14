@@ -57,25 +57,28 @@ $j$ by reassigning every node whose representative equals $\mathit{uf}(j)$ to
 instead carry the representative $\mathit{uf}(i)$.
 \end{definition}
 
-\begin{lemma}[Initial find is identity]
+\begin{lemma}[Find on the initial union-find]
 \lean{Kruskal.UF.init_find}
 \label{Kruskal.UF.init_find}
 \leanok
 \uses{Kruskal.UF.find, Kruskal.UF.init}
 \difficulty{1}
-For every $i : \mathrm{Fin}\,n$, the find operation on the initial
-union-find returns $i$'s numeric value: $(\mathtt{init}\,n).\mathtt{find}\,i = i.\mathtt{val}$.
+Consider the identity union-find on $n$ nodes, in which every node is its own
+representative. For every node $i \in \mathrm{Fin}\,n$, applying the find operation to
+this initial state returns the underlying numeric value of $i$; that is, the
+representative of $i$ is $i$ itself.
 \end{lemma}
 
-\begin{lemma}[Find unfolds to array lookup]
+\begin{lemma}[Find equals direct lookup]
 \lean{Kruskal.UF.find_def}
 \label{Kruskal.UF.find_def}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.find}
 \difficulty{1}
-For any union-find state $\mathit{uf}$ and index $i$,
-$\mathit{uf}.\mathtt{find}\,i = \mathit{uf}(i)$; this is the unfolding
-simp-lemma for \texttt{find}.
+Let $\mathit{uf} \colon \mathrm{Fin}\,n \to \bbn$ be a union-find state on $n$ nodes,
+and let $i$ be one of its nodes. Then the representative of $i$ returned by
+$\mathrm{find}$ coincides with the direct evaluation of the state at $i$; that is,
+$\mathrm{find}(\mathit{uf}, i) = \mathit{uf}(i)$.
 \end{lemma}
 
 \begin{definition}[Merge all edges into union-find]
@@ -122,25 +125,28 @@ runs \texttt{processEdges} on the sorted list starting from the identity
 union-find, returning the selected spanning-tree edges.
 \end{definition}
 
-\begin{lemma}[Output of processEdges comes from input or accumulator]
+\begin{lemma}[Membership in the edge-selection output]
 \lean{Kruskal.processEdges_mem}
 \label{Kruskal.processEdges_mem}
 \leanok
 \uses{Kruskal.UF, Kruskal.WEdge, Kruskal.processEdges}
 \difficulty{4}
-Let $\mathit{es}$ be a list of weighted edges, $\mathit{uf}$ a union-find
-state, $\mathit{acc}$ an accumulator list, and $e$ an edge.  If
-$e \in \mathtt{processEdges}\,\mathit{es}\,\mathit{uf}\,\mathit{acc}$, then
-$e \in \mathit{acc}$ or $e \in \mathit{es}$.
+Fix $n$, and let $\mathit{es}$ be a list of weighted edges over $n$ vertices, let
+$\mathit{uf}$ be a union-find state on $n$ nodes, and let $\mathit{acc}$ be an
+accumulator list of weighted edges. If a weighted edge $e$ occurs in the output produced
+by running the edge-selection sweep on the edge list $\mathit{es}$, the union-find state
+$\mathit{uf}$, and the accumulator $\mathit{acc}$, then $e$ already occurs in the
+accumulator $\mathit{acc}$ or $e$ occurs in the edge list $\mathit{es}$.
 \end{lemma}
 
-\begin{lemma}[Kruskal output is a subset of the input]
+\begin{lemma}[Kruskal's algorithm returns a subset of its input edges]
 \lean{Kruskal.kruskal_subset}
 \label{Kruskal.kruskal_subset}
 \leanok
 \uses{Kruskal.WEdge, Kruskal.kruskal, Kruskal.processEdges_mem}
 \difficulty{3}
-Every edge $e$ returned by $\mathtt{kruskal}\,n\,\mathit{edges}$ was already
-present in $\mathit{edges}$: if $e \in \mathtt{kruskal}\,n\,\mathit{edges}$
-then $e \in \mathit{edges}$.
+Fix $n \in \bbn$ and a list of weighted edges over $n$ vertices. Every edge returned by
+running Kruskal's algorithm on this list occurs in the original list: if $e$ belongs to
+the output of $\mathtt{kruskal}\,n\,\mathit{edges}$, then $e$ belongs to
+$\mathit{edges}$.
 \end{lemma}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolFourier.expectation_factorizes",
+ "key": "6b725097d5ebbb85",
+ "kind": "lemma",
+ "title": "Factorisation of expectation over product functions",
+ "statement": "Let $g : \\{0,1\\}^n \\to \\bbr$ be given coordinatewise, so that for each index $i \\in \\{0,\\dots,n-1\\}$ we have a function $g_i : \\{0,1\\} \\to \\bbr$, and let $f : \\{0,1\\}^n \\to \\bbr$ be the product function $f(x) = \\prod_{i} g_i(x_i)$. Then its uniform expectation over the Boolean hypercube factorises as\n\\[\n  \\E[f] = \\prod_{i} \\frac{g_i(0) + g_i(1)}{2}.\n\\]",
+ "hypotheses_covered": [
+  "g is a family of functions g_i : {0,1} → ℝ indexed by the n coordinates",
+  "f is the product function x ↦ ∏_i g_i(x_i)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $g : \\mathrm{Fin}\\,n \\to \\mathrm{Bool} \\to \\mathbb{R}$ and\n$f(x) = \\prod_{i} g_i(x_i)$, then\n\\[\n  \\mathbb{E}[f]\n  = \\prod_{i=0}^{n-1} \\frac{g_i(\\mathtt{false}) + g_i(\\mathtt{true})}{2}.\n\\]"
+}

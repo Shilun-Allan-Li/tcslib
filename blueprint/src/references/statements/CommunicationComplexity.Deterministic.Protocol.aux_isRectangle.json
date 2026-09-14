@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_isRectangle",
+ "key": "f9b8320275823aaf",
+ "kind": "lemma",
+ "title": "Auxiliary leaf sets are rectangles",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob), and let $A \\subseteq X$ and $B \\subseteq Y$. Then every set belonging to the auxiliary leaf-rectangle collection of $p$ relative to the constraint $A \\times B$ is a rectangle; that is, if $R \\subseteq X \\times Y$ is one of these leaf sets, then $R = A' \\times B'$ for some $A' \\subseteq X$ and $B' \\subseteq Y$.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol over X, Y (values in α)",
+  "A ⊆ X",
+  "B ⊆ Y",
+  "R belongs to the auxiliary leaf-rectangle collection of p relative to A × B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nEvery element of $\\texttt{leafRectanglesAux}(p, A, B)$ is a combinatorial rectangle, i.e.\\\na set of the form $A' \\times B'$ for some $A' \\subseteq X$, $B' \\subseteq Y$."
+}

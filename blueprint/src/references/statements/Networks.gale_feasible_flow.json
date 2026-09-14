@@ -1,0 +1,17 @@
+{
+ "lean_name": "Networks.gale_feasible_flow",
+ "key": "cde18e6247ac9fa2",
+ "kind": "theorem",
+ "title": "Gale's feasible flow theorem",
+ "statement": "(Gale, 1957.) Let $N$ be a network with source set $X$, sink set $Y$, and capacity function $c$, and suppose each vertex $x$ is assigned a non-negative integer supply $\\sigma(x)$ and each vertex $y$ a non-negative integer demand $\\partial(y)$. Then $N$ admits a feasible flow for the supplies $\\sigma$ and demands $\\partial$ if and only if, for every vertex set $S$,\n\\[\n\\sum_{v \\in Y \\cap \\bar S} \\partial(v) \\;-\\; \\sum_{v \\in X \\cap \\bar S} \\sigma(v) \\;\\le\\; \\mathrm{cap}(S, \\bar S),\n\\]\nwhere $\\bar S$ denotes the complement of $S$ and $\\mathrm{cap}(S,\\bar S)$ is the capacity of the cut from $S$ to $\\bar S$.",
+ "hypotheses_covered": [
+  "N is a network with disjoint nonempty source set X and sink set Y and capacity function c",
+  "supply function assigning a non-negative integer to each vertex",
+  "demand function assigning a non-negative integer to each vertex",
+  "biconditional: a feasible flow exists iff the cut inequality holds for every vertex set S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "(Gale, 1957). \\emph{There exists a feasible flow in \\texttt{N} if and only if, for all\n\\texttt{S $\\subseteq$ V}, \\texttt{c(S, $\\bar{S}$) $\\ge$ $\\partial$(Y $\\cap$ $\\bar{S}$) -\n$\\sigma$(X $\\cap$ $\\bar{S}$)}.}"
+}

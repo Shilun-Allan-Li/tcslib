@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_remaining_le_numFree",
+ "key": "f161794a6d56c99c",
+ "kind": "lemma",
+ "title": "Free-variable bound on the leftover path",
+ "statement": "Let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, let $L$ be a list of literals each paired with its position index in a clause, and let $P$ be a decision-tree path (a list of variable–direction pairs). Suppose the length of $P$ is at most the number of free variables of $\\rho_0$. Write $(P', \\rho_0', \\sigma', A)$ for the result of processing $L$ against $P$ starting from $\\rho_0$ and $\\sigma$, so that $P'$ is the remaining path and $\\rho_0'$ the updated first restriction. Then the length of $P'$ is at most the number of free variables of $\\rho_0'$.",
+ "hypotheses_covered": [
+  "initial path length at most the number of free variables of ρ₀",
+  "L is a list of literals paired with position indices",
+  "P is a decision-tree path",
+  "ρ₀ and σ are restrictions on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the initial path length is at most $\\rho_0.\\mathrm{numFree}$, then after\n$\\mathrm{processClauseLits}$ the remaining path length is at most the updated\n$\\rho_0$'s $\\mathrm{numFree}$."
+}

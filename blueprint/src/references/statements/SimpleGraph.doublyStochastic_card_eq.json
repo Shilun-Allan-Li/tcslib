@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.doublyStochastic_card_eq",
+ "key": "fd7732c5f50eca7d",
+ "kind": "theorem",
+ "title": "Doubly balanced matrices are square",
+ "statement": "Let $m$ and $n$ be finite index sets, and let $Q = (Q_{ij})_{i \\in m,\\, j \\in n}$ be a real matrix whose every row sums to $1$, so that $\\sum_{j \\in n} Q_{ij} = 1$ for each $i \\in m$, and whose every column sums to $1$, so that $\\sum_{i \\in m} Q_{ij} = 1$ for each $j \\in n$. Then the two index sets have the same size, $\\abs{m} = \\abs{n}$; that is, $Q$ is square.",
+ "hypotheses_covered": [
+  "m and n are finite index sets",
+  "Q is a real matrix indexed by m and n",
+  "every row of Q sums to 1",
+  "every column of Q sums to 1"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean statement imposes only unit row and column sums, not non-negativity, so the rendered statement omits the textbook's non-negativity hypothesis (which is not needed for this conclusion and is genuinely absent from the formal statement).",
+ "rubric": [],
+ "replaced": "Ex 5.2.8(a): a (rectangular) doubly stochastic matrix is necessarily square. ---\nRESTATED\n(Mathlib's \\texttt{doublyStochastic} is square by type, so the literal statement is\nvacuous).\n\n\\textbf{5.2.8}\\emph{ A non-negative real matrix $\\mathbf{Q}$ is }doubly stochastic* if\nthe sum of the entries in each row of $\\mathbf{Q}$ is 1 and the sum of the\nentries in each column of $\\mathbf{Q}$ is 1. [...] Show that\n\n(a) every doubly stochastic matrix is necessarily square;"
+}

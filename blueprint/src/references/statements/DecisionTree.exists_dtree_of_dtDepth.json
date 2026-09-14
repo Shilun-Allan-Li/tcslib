@@ -1,0 +1,14 @@
+{
+ "lean_name": "DecisionTree.exists_dtree_of_dtDepth",
+ "key": "fe1f9f3f7fd80c0b",
+ "kind": "lemma",
+ "title": "Attainment of the decision-tree depth",
+ "statement": "For every Boolean function $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$, there is a decision tree $T$ on the $n$ Boolean variables whose depth is at most the decision-tree depth of $f$ and which computes $f$, meaning $T$ evaluates to $f(x)$ on every input $x$.",
+ "hypotheses_covered": [
+  "f is an arbitrary Boolean function on n variables (no further hypotheses)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every Boolean function $f : \\{0,1\\}^n \\to \\{0,1\\}$ there exists a decision tree $T$\nwith $T.\\mathrm{depth} \\le \\mathrm{dtDepth}\\,f$ that computes $f$, i.e.\\\n$T.\\mathrm{eval}\\,x = f(x)$ for all $x$."
+}

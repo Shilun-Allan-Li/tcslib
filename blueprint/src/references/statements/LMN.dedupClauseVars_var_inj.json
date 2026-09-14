@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.dedupClauseVars_var_inj",
+ "key": "f51ad1caeebcaece",
+ "kind": "lemma",
+ "title": "Variable-injectivity of a deduplicated clause",
+ "statement": "Let $c$ be a clause, that is, a list of literals over the variables $\\{0,1,\\dots,n-1\\}$, each literal consisting of a variable together with a negation flag. Form the deduplicated clause obtained from $c$ by keeping, for each variable, only its first occurrence. Then any two literals of this deduplicated clause that share the same variable are in fact the same literal; equivalently, distinct literals of the deduplicated clause have distinct variables.",
+ "hypotheses_covered": [
+  "l₁ belongs to the deduplicated clause",
+  "l₂ belongs to the deduplicated clause",
+  "l₁ and l₂ have equal variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In $\\mathrm{dedupClauseVars}\\,c$, any two literals with the same variable are equal;\nthat is, the resulting clause has pairwise distinct variable indices."
+}

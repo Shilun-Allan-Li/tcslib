@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.NAndCircuit.toCNF_var_inj",
+ "key": "94567f3edc9d2ce9",
+ "kind": "theorem",
+ "title": "Variable-injectivity within the clauses of an AND-node's CNF",
+ "statement": "Let $cs$ be a list of normal-form OR circuits on $n$ variables, and suppose every member of $cs$ is a base OR-clause: for each $c \\in cs$ there is a list of circuit literals $lits$, whose variable indices are pairwise distinct, with $c = \\mathrm{clause}\\,lits$. Form the CNF formula of the AND-node over $cs$ by converting each of these OR-clauses into a term. Then within any single clause of this CNF, any two literals that share the same variable are identical — in particular they carry the same negation flag.",
+ "hypotheses_covered": [
+  "cs is a list of normal-form OR circuits on n variables",
+  "every member of cs is a base OR-clause (of the form clause lits), not an OR-node",
+  "the variable indices of each clause's literals are pairwise distinct (Nodup)",
+  "t ranges over the terms of the CNF of the AND-node over cs",
+  "l₁, l₂ are literals of t with equal variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every child of an $\\texttt{NAndCircuit}.\\mathrm{node}\\,cs$ is an OR-clause with distinct\nliteral indices, then in every clause of the resulting CNF any two literals on the same\nvariable are equal."
+}

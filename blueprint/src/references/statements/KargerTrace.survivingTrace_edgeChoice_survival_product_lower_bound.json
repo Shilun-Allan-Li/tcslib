@@ -1,0 +1,18 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_edgeChoice_survival_product_lower_bound",
+ "key": "45fa3390700bc178",
+ "kind": "theorem",
+ "title": "Karger survival product lower bound",
+ "statement": "Fix an integer $n \\ge 2$ and let $T$ be an indexed surviving trace of length $n-2$: a sequence of states $T_0, T_1, \\dots$ in which each $T_{i+1}$ (for $i < n-2$) arises from $T_i$ by contracting an edge of its multigraph that does not cross the distinguished cut. Suppose the distinguished cut of the initial state $T_0$ is a minimum cut of the initial multigraph, that this initial multigraph has exactly $n$ vertices, and that the multigraph of $T_i$ has at least $2$ vertices for every $i < n-2$. Then the product over $i < n-2$ of the one-step survival ratios $\\mathrm{surv}(T_i)$ — each the fraction of edge occurrences of $T_i$ whose underlying edge does not cross the distinguished cut — satisfies \\[ \\frac{2}{n(n-1)} \\le \\prod_{i=0}^{n-3} \\mathrm{surv}(T_i). \\]",
+ "hypotheses_covered": [
+  "T is an indexed surviving trace of length n-2",
+  "the initial cut is a minimum cut of the initial multigraph",
+  "n is at least 2",
+  "the initial multigraph has exactly n vertices",
+  "every state before the last has a multigraph with at least 2 vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For an indexed surviving trace of $n-2$ steps starting from an $n$-vertex graph with\n$n \\ge 2$, initial min-cut, and at least two vertices at every step, the product of the\nfinite uniform edge-choice survival ratios is at least $2/(n(n-1))$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleGraph.spanningTree_add_edge_exists_cycle",
+ "key": "af15e4f4e22a695a",
+ "kind": "theorem",
+ "title": "Adding a non-tree edge creates a cycle",
+ "statement": "Let $G$ be a finite simple graph, and let $T$ be a spanning tree of $G$: a connected, acyclic subgraph of $G$ that touches every vertex. If $e$ is an edge of $G$ that does not lie in $T$, then the graph $T + e$ obtained by adjoining $e$ to $T$ contains a cycle, i.e. there is a vertex $u$ and a closed walk from $u$ to itself in $T + e$ that is a cycle.",
+ "hypotheses_covered": [
+  "finite vertex set",
+  "T is a tree (connected and acyclic), hence spanning",
+  "T is a subgraph of G",
+  "e is an edge of G",
+  "e does not lie in T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Let \\texttt{T} be a spanning tree of a connected graph \\texttt{G} and let\n\\texttt{e} be an edge of \\texttt{G} not in \\texttt{T}.  Then \\texttt{T + e} contains a unique cycle.}"
+}

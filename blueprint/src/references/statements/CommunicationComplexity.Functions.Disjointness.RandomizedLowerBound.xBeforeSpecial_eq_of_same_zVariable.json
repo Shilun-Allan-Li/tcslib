@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_eq_of_same_zVariable",
+ "key": "1b21ad5b9b171bdd",
+ "kind": "theorem",
+ "title": "Agreement of the pre-special bits on a Z-fibre",
+ "statement": "Fix an integer $n \\ge 1$ and a deterministic communication protocol $p$ for disjointness on $n$ coordinates, and consider the coarse variable $Z = (M, T, X_{<T}, Y_{>T})$ — the transcript $M$ produced by running $p$ on the input pair, the special coordinate $T$, the vector $X_{<T}$ of Alice's bits strictly below $T$ (padded with $\\mathrm{false}$ elsewhere), and the vector $Y_{>T}$ of Bob's bits strictly above $T$ (padded with $\\mathrm{false}$ elsewhere). If two hard-distribution samples $\\omega$ and $\\omega'$ yield the same value $z$ of $Z$, then they determine the same pre-special vector: $X_{<T}(\\omega) = X_{<T}(\\omega')$.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "p is a disjointness protocol on n coordinates",
+  "z is an achievable value of the Z-variable for p",
+  "sample ω has Z-value equal to z",
+  "sample ω' has Z-value equal to z"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Two samples in the same $Z$ fiber have the same $X_{<T}$ conditioning data."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.lowDegree_squarefree_complete_on_rootCube",
+ "key": "bcd038d82d078e19",
+ "kind": "theorem",
+ "title": "Completeness of low-degree squarefree polynomials on the root cube",
+ "statement": "Let $K$ be a field and let $\\omega \\in K$ satisfy $\\omega \\ne 1$. For natural numbers $n$ and $D$, write $\\{1,\\omega\\}^n$ for the set of vectors $x : \\mathrm{Fin}\\,n \\to K$ each of whose coordinates equals $1$ or $\\omega$, and let $\\mathcal{S}_{n,D}$ be the collection of finsets $s \\subseteq \\mathrm{Fin}\\,n$ with $\\abs{s} \\le D$. Then for every polynomial $Q \\in K[X_i : i \\in \\mathrm{Fin}\\,n]$ of total degree at most $D$, there exist coefficients $c : \\mathcal{S}_{n,D} \\to K$ such that the squarefree polynomial $\\sum_{\\abs{s} \\le D} c(s)\\,\\prod_{i \\in s} X_i$ agrees with $Q$ at every point of $\\{1,\\omega\\}^n$.",
+ "hypotheses_covered": [
+  "ω ≠ 1",
+  "Q is a multivariate polynomial in n variables over the field K",
+  "total degree of Q is at most D",
+  "conclusion: existence of coefficients c on low-degree supports whose squarefree polynomial equals Q on the whole root cube {1,ω}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Assume $\\omega \\ne 1$.  Every polynomial $Q$ with $\\deg Q \\le D$ agrees on the root cube\n$\\{1,\\omega\\}^n$ with a low-degree squarefree polynomial: there are coefficients $c$ on\n$\\texttt{ACP.LowDegreeSupport}\\ n\\ D$ such that\n$(\\texttt{ACP.lowDegreeSquarefreePolynomial}\\ c)(x) = Q(x)$ for all $x$ in the cube."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_vertexCount_eq",
+ "key": "31a2666a686e73ae",
+ "kind": "lemma",
+ "title": "Vertex count along a surviving trace",
+ "statement": "Let $T$ be a surviving trace of length $\\mathrm{steps}$ over a vertex type $\\alpha$: a family of states $(G_j, C_j)$ indexed by $j \\in \\bbn$, in which each consecutive pair below $\\mathrm{steps}$ is joined by a surviving step (the graph $G_{j+1}$ arises from $G_j$ by contracting an edge that does not cross the distinguished cut). Then for every index $i \\le \\mathrm{steps}$, the number of vertices of the graph at index $i$ equals the number of vertices of the initial graph at index $0$ minus $i$; that is, $\\lvert V(G_i)\\rvert = \\lvert V(G_0)\\rvert - i$.",
+ "hypotheses_covered": [
+  "T is a surviving trace of length steps",
+  "index i is at most steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i \\le \\text{steps}$, the graph at index $i$ of a surviving trace has vertex count\nequal to the initial vertex count minus $i$."
+}

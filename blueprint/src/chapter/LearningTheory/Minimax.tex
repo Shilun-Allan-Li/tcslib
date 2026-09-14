@@ -11,21 +11,20 @@ of~$\bbr$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Convex-compact minimax theorem]
+\begin{theorem}[Convex-compact minimax theorem on the line]
 \lean{OnlineLearning.convex_compact_minimax}
 \label{OnlineLearning.convex_compact_minimax}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.convex_compact_minimax_by_separation}
 \difficulty{1}
-Let $X, Y \subseteq \bbr$ and $f : \bbr \to \bbr \to \bbr$ satisfy the bundled
-hypotheses $\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$: $X$ is nonempty,
-compact and convex, $Y$ is nonempty and convex, $f$ is bounded above and below on
-$X \times Y$, convex and continuous in the row variable for each $y \in Y$, and
-concave in the column variable for each $x \in X$. Then the minimax identity
-$\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds:
+Let $X, Y \subseteq \bbr$ be nonempty convex sets with $X$ compact, and let $f : \bbr
+\times \bbr \to \bbr$ be a payoff function that is bounded above and below on $X \times
+Y$. Suppose that for every $y \in Y$ the map $x \mapsto f(x,y)$ is continuous and convex
+on $X$, and that for every $x \in X$ the map $y \mapsto f(x,y)$ is concave on $Y$. Then
+the minimax identity holds:
 \[
-  \inf_{x \in X} \sup_{y \in Y} f(x,y) \;=\; \sup_{y \in Y} \inf_{x \in X} f(x,y).
+  \inf_{x \in X}\,\sup_{y \in Y}\, f(x,y)
+  \;=\;
+  \sup_{y \in Y}\,\inf_{x \in X}\, f(x,y).
 \]
-This is the public form of the theorem for the project; it hides the choice of
-proof route from downstream files.
 \end{theorem}

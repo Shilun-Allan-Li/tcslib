@@ -1,0 +1,15 @@
+{
+ "lean_name": "ZkBLR.indicator_eq_char_sum_re",
+ "key": "4ae75fdcc3d98792",
+ "kind": "lemma",
+ "title": "Indicator as a character sum",
+ "statement": "Let $k \\ge 1$ and write $\\omega_k = e^{2\\pi i/k}$ for the primitive $k$-th root of unity. For every $a \\in \\mathbb{Z}/k\\mathbb{Z}$,\n\\[\n  \\mathbf{1}[a = 0] \\;=\\; \\frac{1}{k}\\,\\operatorname{Re}\\!\\left(\\sum_{j \\in \\mathbb{Z}/k\\mathbb{Z}} \\omega_k^{\\,ja}\\right),\n\\]\nwhere the exponent $ja$ is computed in $\\mathbb{Z}/k\\mathbb{Z}$ and then lifted to its canonical representative in $\\{0,\\ldots,k-1\\}$, and the left-hand side equals $1$ when $a = 0$ and $0$ otherwise.",
+ "hypotheses_covered": [
+  "k ≥ 1 (NeZero k)",
+  "a ranges over ℤ/kℤ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $a \\in \\mathbb{Z}_k$,\n\\[\n  \\mathbf{1}[a=0]\n  \\;=\\; \\frac{1}{k}\\,\\operatorname{Re}\\!\\left[\\sum_{j\\in\\mathbb{Z}_k}\\omega_k^{ja}\\right].\n\\]"
+}

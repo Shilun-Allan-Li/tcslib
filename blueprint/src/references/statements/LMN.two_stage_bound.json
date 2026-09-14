@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.two_stage_bound",
+ "key": "c6efbe1affad9a53",
+ "kind": "theorem",
+ "title": "General two-stage restriction bound",
+ "statement": "Let $p_1, p_2 \\in (0,1]$, let $E$ and $A$ be events on restrictions of $n$ variables, and let $\\beta \\ge 0$. Write $\\Pr_p[\\,\\cdot\\,]$ for the probability of an event under a Bernoulli($p$) random restriction, and for restrictions $\\rho_1, \\rho_2$ let $\\rho_1 \\circ \\rho_2$ denote their composition (the values fixed by $\\rho_1$, filled in by $\\rho_2$ on the coordinates $\\rho_1$ leaves free). Suppose that for every restriction $\\rho_1$ for which $A(\\rho_1)$ fails, one has $\\Pr_{p_2}[\\,E(\\rho_1 \\circ \\rho_2)\\,] \\le \\beta$. Then\n\\[\n  \\Pr_{p_1 p_2}[E] \\;\\le\\; \\Pr_{p_1}[A] + \\beta .\n\\]",
+ "hypotheses_covered": [
+  "0 < p_1",
+  "p_1 ≤ 1",
+  "0 < p_2",
+  "p_2 ≤ 1",
+  "β ≥ 0",
+  "for every ρ₁ with ¬A(ρ₁), the Bernoulli(p₂)-probability of E(ρ₁ ∘ ρ₂) is at most β"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $0 < p_1,p_2 \\le 1$, let $E$ be an event on restrictions and $A$ a ``failure''\nevent, and let $\\beta \\ge 0$. If for every $\\rho_1$ with $\\lnot A(\\rho_1)$ the\nconditional probability $\\Pr_{p_2}[E(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2)] \\le \\beta$, then\n$\\Pr_{p_1 p_2}[E] \\le \\Pr_{p_1}[A] + \\beta$."
+}

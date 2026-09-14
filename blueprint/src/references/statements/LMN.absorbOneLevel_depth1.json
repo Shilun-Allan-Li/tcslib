@@ -1,0 +1,20 @@
+{
+ "lean_name": "LMN.absorbOneLevel_depth1",
+ "key": "fe8af661828334ee",
+ "kind": "lemma",
+ "title": "Absorbing a depth-one top gate into the second layer",
+ "statement": "Let $\\mathrm{data}$ be layer-2 data over $n$ Boolean variables: a family of gates, each computing a DNF formula, sharing a common positive width bound. Let $c_{\\mathrm{top}}$ be a Boolean circuit whose input variables are indexed by these gates, and fix an integer $l \\ge 1$. Suppose that $c_{\\mathrm{top}}$ has depth exactly $1$ (a single AND or OR gate applied to literals in the gate outputs), and that each gate computes a function that is representable both by a DNF of width at most $l$ — one in which, within every term, distinct literals carry distinct variables and no literal is repeated — and by a CNF of width at most $l$. Then there exist layer-2 data $\\mathrm{data}'$ of width at most $l$ and a circuit $c_{\\mathrm{top}}'$ of depth $0$ over the gates of $\\mathrm{data}'$ such that, for every Boolean assignment $x$ to the $n$ variables, the value of $c_{\\mathrm{top}}$ evaluated on the outputs of the gates of $\\mathrm{data}$ equals the value of $c_{\\mathrm{top}}'$ evaluated on the outputs of the gates of $\\mathrm{data}'$.",
+ "hypotheses_covered": [
+  "data is layer-2 data over n (gates computing DNFs with a common positive width bound)",
+  "c_top is a Boolean circuit on the gate-indexed variables of data",
+  "l is a positive integer (0 < l)",
+  "c_top has depth at most 1",
+  "c_top has depth at least 1 (hence depth exactly 1)",
+  "each gate has an equivalent DNF of width at most l with distinct-variable and no-duplicate-literal conditions on its terms",
+  "each gate has an equivalent CNF of width at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c_{\\mathrm{top}}$ have depth exactly $1$ over the gates of some $\\mathrm{Layer2Data}$,\nwhere (with $0 < l$) each gate has a width-$l$ DNF and CNF representation. Then there is a\nnew $\\mathrm{Layer2Data}'$ of width at most $l$ and a circuit $c_{\\mathrm{top}}'$ of depth\n$0$ over it computing the same function as $c_{\\mathrm{top}}$ over the original gates."
+}

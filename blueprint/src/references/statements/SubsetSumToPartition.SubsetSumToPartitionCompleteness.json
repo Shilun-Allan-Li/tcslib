@@ -1,0 +1,17 @@
+{
+ "lean_name": "SubsetSumToPartition.SubsetSumToPartitionCompleteness",
+ "key": "c54bd0efcc6182c8",
+ "kind": "theorem",
+ "title": "Completeness of the Subset Sum to Partition reduction",
+ "statement": "Let $w : U \\to \\bbn$ be a weight function on a finite type $U$, and let $T \\in \\bbn$ satisfy $T \\le \\sum_{a} w(a)$. If the Subset Sum instance $(w, T)$ has a solution — some subset of $U$ with total weight exactly $T$ — then the Partition instance on the augmented type $U \\oplus \\mathrm{Bool}$ whose weights are given by the reduction weight function built from $(w, T)$ has a solution; that is, $U \\oplus \\mathrm{Bool}$ admits a subset whose total weight equals that of its complement.",
+ "hypotheses_covered": [
+  "w : U → ℕ a weight function on a finite type U",
+  "target T ∈ ℕ",
+  "T ≤ ∑ₐ w(a)",
+  "the Subset Sum instance (w, T) has a solution"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w : U \\to \\mathbb{N}$ and $T \\in \\mathbb{N}$ satisfy $T \\le \\sum_{a} w(a)$. If the\nSubset Sum instance $(w, T)$ has a solution, then the Partition instance with weight\nfunction $\\texttt{SubsetSumToPartition.partitionWeight}\\ w\\ T$ on $U \\oplus \\mathrm{Bool}$\nhas a solution."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Networks.isMinCut_union_inter",
+ "key": "88c9f092434412a5",
+ "kind": "theorem",
+ "title": "Minimum cuts are closed under union and intersection",
+ "statement": "Let $N$ be a network with a single source $x$ and a single sink $y$, and recall that a cut is determined by a vertex set $S$ with $x \\in S$ and $y \\notin S$, its capacity being $\\sum_{u \\in S}\\sum_{v \\notin S} c(u,v)$; a cut is a minimum cut if no cut has strictly smaller capacity. If the cuts determined by vertex sets $S$ and $T$ are both minimum cuts of $N$, then the cuts determined by $S \\cup T$ and by $S \\cap T$ are also minimum cuts of $N$.",
+ "hypotheses_covered": [
+  "N is a network (single source x, single sink y)",
+  "S determines a minimum cut",
+  "T determines a minimum cut"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{If \\texttt{(S, $\\bar{S}$)} and \\texttt{(T, $\\bar{T}$)} are minimum cuts in\n\\texttt{N}, then\n\\texttt{(S $\\cup$ T, ...)} and \\texttt{(S $\\cap$ T, ...)} are also minimum cuts in \\texttt{N}.}"
+}

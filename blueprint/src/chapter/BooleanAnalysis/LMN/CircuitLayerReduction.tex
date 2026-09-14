@@ -27,47 +27,59 @@ restriction parameter is
 \]
 \end{definition}
 
-\begin{lemma}[Positivity of the composed parameter]
+\begin{lemma}[Positivity of the composed restriction parameter]
 \lean{LMN.composedDelta_pos}
 \label{LMN.composedDelta_pos}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{1}
-For $w>0$ and $l>0$, the composed restriction parameter $\mathrm{composedDelta}(w,l,d)$ is
-positive.
+Let $w$ be a positive integer fan-in bound, let $l > 0$ be a width parameter, and let
+$d$ be any depth. Then the composed Bernoulli restriction parameter
+\[
+  \delta(w,l,d) = \frac{1}{40w}\cdot\left(\frac{1}{40l}\right)^{d-2}
+\]
+is strictly positive.
 \end{lemma}
 
-\begin{lemma}[The composed parameter is at most one]
+\begin{lemma}[The composed restriction parameter is at most one]
 \lean{LMN.composedDelta_le_one}
 \label{LMN.composedDelta_le_one}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{2}
-For $w\ge 1$, $l\ge 1$, and $d\ge 2$, the composed restriction parameter satisfies
-$\mathrm{composedDelta}(w,l,d)\le 1$.
+Let $w \ge 1$ be a natural number, let $l \ge 1$ be a real number, and let $d \ge 2$ be
+a natural number. Then the composed Bernoulli restriction parameter satisfies
+\[
+  \frac{1}{40w}\cdot\left(\frac{1}{40l}\right)^{d-2} \le 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Recursive step factorization (left)]
+\begin{lemma}[Recursive step for the composed restriction parameter]
 \lean{LMN.composedDelta_step}
 \label{LMN.composedDelta_step}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{3}
-For natural numbers $w,l$ and depth $d\ge 3$,
+Write $\delta(w,l,d) = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$ for the composed
+restriction parameter, with fan-in bound $w$, width parameter $l$, and depth $d$. For
+natural numbers $w$ and $l$ and any depth $d \ge 3$,
 \[
-  \mathrm{composedDelta}(w,l,d) = \frac{1}{40w}\cdot \mathrm{composedDelta}(l,l,d-1).
+  \delta(w,l,d) = \frac{1}{40w}\,\delta(l,l,d-1).
 \]
 \end{lemma}
 
-\begin{lemma}[Recursive step factorization (right)]
+\begin{lemma}[Recursive step for the composed restriction parameter]
 \lean{LMN.composedDelta_step_right}
 \label{LMN.composedDelta_step_right}
 \leanok
 \uses{LMN.composedDelta}
 \difficulty{3}
-For $d\ge 3$ and $l>0$, the composed parameter factors as the $(d-1)$ case times $1/(40l)$:
+Fix a fan-in bound $w$, a width parameter $l > 0$, and a depth $d \ge 3$, and for these
+values write $\delta(w,l,d)$ for the composed Bernoulli restriction parameter, namely
+$\delta(w,l,d) = \frac{1}{40w}\left(\frac{1}{40l}\right)^{d-2}$. Then decreasing the
+depth by one removes a single factor of $1/(40l)$:
 \[
-  \mathrm{composedDelta}(w,l,d) = \mathrm{composedDelta}(w,l,d-1)\cdot\frac{1}{40l}.
+  \delta(w,l,d) = \delta(w,l,d-1)\cdot\frac{1}{40l}.
 \]
 \end{lemma}
 
@@ -83,7 +95,7 @@ that every gate's width is at most $\mathrm{width}$, together with the hypothesi
 each term of each gate distinct literals have distinct variables.
 \end{definition}
 
-\begin{theorem}[One-step switching for layer-2 data]
+\begin{theorem}[One-step switching bound for a layer-2 DNF circuit]
 \lean{LMN.normalform_one_step_switching}
 \label{LMN.normalform_one_step_switching}
 \leanok
@@ -97,7 +109,6 @@ each term of each gate distinct literals have distinct variables.
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p008-b005
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -998,15 +1009,23 @@ each term of each gate distinct literals have distinct variables.
   {pdf-b5e074215b9e-p004-b002}
 \uses{DNF.eval, LMN.Layer2Data, LMN.switching_bernoulli_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-For layer-2 data and a Bernoulli parameter $p$ with $0<p\le 1/(40\cdot\mathrm{width})$ and
-$p\le 1$, the probability that some gate's restricted function has decision-tree depth greater
-than $l$ is at most
+Fix layer-2 data over $n \ge 1$ Boolean variables: a family of $N$ gates, each computing
+a DNF formula, with a common width bound $w \ge 1$ so that every gate has width at most
+$w$. Let $l \in \bbn$ and let $p \in \bbr$ satisfy $0 < p \le \tfrac{1}{40 w}$ and $p
+\le 1$. Consider a Bernoulli($p$) random restriction $\rho$ on the $n$ variables, in
+which each variable is independently left free with probability $p$ and otherwise fixed
+to $0$ or to $1$, each with probability $\tfrac{1-p}{2}$. Then the probability that some
+gate $i$ has restricted function $f_i\!\restriction_\rho$ (the gate's DNF evaluated on
+the free coordinates, with the fixed coordinates set by $\rho$) of decision-tree depth
+greater than $l$ satisfies
 \[
-  \mathrm{numGates}\cdot\left((1/2)^{l} + \exp(-np/3)\right).
+\bbP\!\left[\,\exists\, i:\ \mathrm{depth}\big(f_i\!\restriction_\rho\big) > l\,\right]
+  \;\le\; N\left(\left(\tfrac{1}{2}\right)^{l} + \exp\!\big(-np/3\big)\right),
 \]
+where $\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $g$.
 \end{theorem}
 
-\begin{theorem}[One-step CNF replaceability for layer-2 data]
+\begin{theorem}[One-step CNF replaceability for a layer of DNF gates]
 \lean{LMN.normalform_one_step_cnf_replaceability}
 \label{LMN.normalform_one_step_cnf_replaceability}
 \leanok
@@ -1018,7 +1037,6 @@ than $l$ is at most
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p008-b005
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1987,72 +2005,105 @@ than $l$ is at most
   {pdf-fc447f326910-p011-b004}
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, LMN.Layer2Data, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{1}
-For layer-2 data and a Bernoulli parameter $p$ with $0<p\le 1/(40\cdot\mathrm{width})$ and
-$p\le 1$, the probability that it fails that every gate's restricted function is computed by
-some width-$l$ CNF is at most
+Fix layer-2 data over $n \ge 1$ variables: a family of $m$ DNF gates $G_1, \dots, G_m$
+together with a common width bound $w > 0$ satisfying $\mathrm{width}(G_i) \le w$ for
+every $i$. Let $l \in \bbn$ and let $p \in \bbr$ satisfy $0 < p \le \tfrac{1}{40\,w}$
+and $p \le 1$. Then, under a Bernoulli($p$) random restriction $\rho$ on the $n$
+variables, the probability that some gate fails the property — that is, the probability
+that it is *not* the case that for every $i$ the restricted function $x \mapsto
+G_i(\rho.\mathrm{extend}\,x)$ agrees, on all inputs, with some CNF formula of width at
+most $l$ — is at most
 \[
-  \mathrm{numGates}\cdot\left((1/2)^{l} + \exp(-np/3)\right).
+  m\left(\left(\tfrac{1}{2}\right)^{l} + \exp\!\left(-\tfrac{n p}{3}\right)\right).
 \]
 \end{theorem}
 
-\begin{theorem}[Aggregating per-layer bounds]
+\begin{theorem}[Aggregating per-layer bounds into a total bound]
 \lean{LMN.full_iterative_bound}
 \label{LMN.full_iterative_bound}
 \leanok
 \uses{LMN.multi_stage_failure_bound}
 \difficulty{1}
-Given layer sizes summing to at most $s$, if each per-layer quantity is bounded by
-$\mathrm{layerSize}(i)\cdot\alpha$ (with $\alpha\ge 0$) and a final term is bounded by $\beta$,
-then the total $\sum_i \mathrm{per\_layer}(i) + \mathrm{final}$ is at most $s\cdot\alpha+\beta$.
+Fix a natural number $m$ and layer sizes $\ell_1, \dots, \ell_m \in \bbn$ whose total
+satisfies $\sum_{i=1}^m \ell_i \le s$ for some $s \in \bbn$. Let $\alpha \ge 0$ and
+$\beta$ be real numbers, and suppose $a_1, \dots, a_m$ are real quantities with $a_i \le
+\ell_i\,\alpha$ for each $i$, together with a final real quantity $b$ satisfying $b \le
+\beta$. Then
+\[
+\sum_{i=1}^m a_i + b \;\le\; s\,\alpha + \beta.
+\]
 \end{theorem}
 
-\begin{lemma}[Restriction commutes with restriction composition]
+\begin{lemma}[Restricting by a composed restriction in two stages]
 \lean{LMN.restrictFn_composeRestr'}
 \label{LMN.restrictFn_composeRestr'}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn}
 \difficulty{1}
-For a Boolean function $f$ and restrictions $\rho_1,\rho_2$, restricting by the composed
-restriction equals restricting by $\rho_1$ and then by $\rho_2$:
+Let $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean function on
+$n$ variables, and let $\rho_1, \rho_2$ be two restrictions on those variables, each
+fixing some coordinates to Boolean values and leaving the rest free. Write $\rho_1 \circ
+\rho_2$ for their composition, the restriction that on each coordinate uses the value
+fixed by $\rho_1$ when there is one and otherwise the value assigned by $\rho_2$, and
+for a restriction $\rho$ write $f\!\restriction_\rho$ for the function obtained from $f$
+by fixing the coordinates set by $\rho$ and evaluating on the remaining free
+coordinates. Then restricting $f$ by the composition $\rho_1 \circ \rho_2$ gives the
+same function as first restricting $f$ by $\rho_1$ and then restricting the function
+$f\!\restriction_{\rho_1}$ by $\rho_2$:
 \[
-  \mathrm{restrictFn}\,f\,(\mathrm{composeRestr}\,\rho_1\,\rho_2)
-    = \mathrm{restrictFn}\,(\mathrm{restrictFn}\,f\,\rho_1)\,\rho_2.
+f\!\restriction_{\rho_1 \circ \rho_2} \;=\;
+\bigl(f\!\restriction_{\rho_1}\bigr)\!\restriction_{\rho_2}.
 \]
 \end{lemma}
 
-\begin{theorem}[Two-stage probability bound]
+\begin{theorem}[Two-stage bound for composed Bernoulli restrictions]
 \lean{LMN.two_stage_bound'}
 \label{LMN.two_stage_bound'}
 \leanok
 \uses{LMN.composeRestr, LMN.restriction_compose_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{5}
-Let $p_1,p_2\in(0,1]$, let $E$ and $A$ be predicates on restrictions, and let $\beta\ge 0$.
-If for every $\rho_1$ with $\neg A(\rho_1)$ the conditional probability
-$\Pr_{p_2}[E(\mathrm{composeRestr}\,\rho_1\,\rho_2)]\le\beta$, then
+Let $p_1, p_2 \in (0,1]$, let $E$ and $A$ be predicates on restrictions of $n$
+variables, and let $\beta \ge 0$. For a parameter $p$ write $\bbP_p[\,\cdot\,]$ for the
+Bernoulli event probability under a Bernoulli($p$) random restriction, and for two
+restrictions $\rho_1, \rho_2$ write $\rho_1 \ast \rho_2$ for their composition (using
+the value $\rho_1$ fixes on each coordinate, and otherwise the value from $\rho_2$).
+Suppose that for every restriction $\rho_1$ with $\neg A(\rho_1)$ one has
+$\bbP_{p_2}\!\left[\, E(\rho_1 \ast \rho_2) \,\right] \le \beta$. Then
 \[
-  \Pr_{p_1 p_2}[E] \le \Pr_{p_1}[A] + \beta.
+  \bbP_{p_1 p_2}[E] \;\le\; \bbP_{p_1}[A] + \beta .
 \]
 \end{theorem}
 
-\begin{lemma}[Monotonicity in the depth threshold]
+\begin{lemma}[Monotonicity of the depth-threshold probability]
 \lean{LMN.bernoulliRestrProb_dtDepth_mono}
 \label{LMN.bernoulliRestrProb_dtDepth_mono}
 \leanok
 \uses{LMN.bernoulliRestrProb_mono, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-For $0\le p\le 1$, a Boolean function $f$, and thresholds $l_1\le l_2$, the probability that
-the restricted function exceeds depth $l_2$ is at most the probability that it exceeds depth
-$l_1$.
+Fix a parameter $p$ with $0 \le p \le 1$, a Boolean function $f : (\mathrm{Fin}\,n \to
+\mathrm{Bool}) \to \mathrm{Bool}$, and thresholds $l_1 \le l_2$. Under a Bernoulli($p$)
+random restriction $\rho$ on the $n$ variables, the probability that the restricted
+function $x \mapsto f(\rho.\mathrm{extend}\,x)$ has decision-tree depth strictly greater
+than $l_2$ is at most the probability that it has decision-tree depth strictly greater
+than $l_1$.
 \end{lemma}
 
-\begin{lemma}[Congruence under pointwise-equal functions]
+\begin{lemma}[Congruence of the depth-exceedance probability for equal functions]
 \lean{LMN.bernoulliRestrProb_congr_fn'}
 \label{LMN.bernoulliRestrProb_congr_fn'}
 \leanok
 \uses{SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-If $f$ and $g$ agree on every input, then the probability that the restriction of $f$ exceeds
-depth $t$ equals the corresponding probability for $g$.
+Fix a real parameter $p$, a threshold $t \in \bbn$, and two Boolean functions $f, g :
+(\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ that agree at every input, so
+$f(x) = g(x)$ for all $x$. Draw a Bernoulli($p$) random restriction $\rho$ of the $n$
+variables, write $h_\rho$ for the restricted function obtained from a Boolean function
+$h$ under $\rho$, and let $D(\cdot)$ denote decision-tree depth. Then
+\[
+  \bbP_p\!\left[\,D(f_\rho) > t\,\right] = \bbP_p\!\left[\,D(g_\rho) > t\,\right],
+\]
+i.e.\ the two functions assign the same probability to the event that the restricted
+function has decision-tree depth strictly greater than $t$.
 \end{lemma}
 
 \begin{lemma}[Switching bound for depth-2 circuits]
@@ -2069,15 +2120,23 @@ depth $t$ equals the corresponding probability for $g$.
 }
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, CNF.eval, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_congr_fn', LMN.depth2AndToCNF, LMN.depth2AndToCNF_eval, LMN.depth2AndToCNF_width_le, LMN.depth2OrToDNF, LMN.depth2OrToDNF_eval, LMN.depth2OrToDNF_width_le, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, Literal.eval, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, Term.eval, Term.width, dtDepth}
 \difficulty{5}
-If $f$ is computed by a circuit of depth at most $2$, size at most $s$, and fan-in at most $w$,
-then for a Bernoulli parameter $p$ with $0<p\le 1/(40w)$ and $p\le 1$,
+Let $f\colon\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables that is
+computed by some Boolean circuit of depth at most $2$, size at most $s$, and fan-in at
+most $w$, where $w\ge 1$. Fix a real parameter $p$ with $0<p\le \tfrac{1}{40w}$ (so in
+particular $p\le 1$), and draw a random restriction $\rho$ in which each of the $n$
+variables is, independently, left free with probability $p$ and otherwise fixed to the
+value $0$ or to the value $1$, each with probability $\tfrac{1-p}{2}$. Write $f_\rho$
+for the restriction of $f$ by $\rho$ (the function $x\mapsto f$ evaluated at the
+assignment agreeing with $\rho$ on its fixed coordinates and with $x$ on the free ones),
+and let $D(g)$ denote the least depth of a decision tree computing a function $g$. Then
+for every $t\in\bbn$,
 \[
-  \Pr_{p}\!\left[\mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\right]
-    \le (1/2)^{t} + \exp(-np/3).
+\Pr_{\rho}\!\left[\, D(f_\rho) > t \,\right]\ \le\ \left(\tfrac12\right)^{t} +
+\exp\!\left(-\tfrac{np}{3}\right).
 \]
 \end{lemma}
 
-\begin{lemma}[Inductive base case: depth-2 bound]
+\begin{lemma}[Base case of the circuit-to-decision-tree reduction (depth 2)]
 \lean{LMN.circuit_reduction_ind_base}
 \label{LMN.circuit_reduction_ind_base}
 \leanok
@@ -2089,7 +2148,6 @@ then for a Bernoulli parameter $p$ with $0<p\le 1/(40w)$ and $p\le 1$,
   pdf-b5e074215b9e-p003-b004,
   pdf-b5e074215b9e-p004-b002
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -3264,28 +3322,45 @@ then for a Bernoulli parameter $p$ with $0<p\le 1/(40w)$ and $p\le 1$,
     pdf-fc447f326910-p012-b004}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, DecisionTree.eval, LMN.composedDelta, LMN.composedDelta_le_one, LMN.depth2_circuit_switching_bound, LMN.dtDepth_restrictFn_le', SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_sum_one, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{6}
-The base case ($d=2$) of the inductive bound: if $f$ is computed by a depth-$2$ circuit of
-size at most $s$ and fan-in at most $w$ (with $s,w,l>0$ and $n>0$), then under the composed
-restriction parameter $\mathrm{composedDelta}(w,l,2)$,
+Let $f\colon\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables, let
+$s,w,l\ge 1$ be positive integers, let $t\ge 0$, and suppose $f$ is computed by a
+Boolean circuit of depth at most $2$, size at most $s$, and fan-in at most $w$. Draw a
+random restriction $\rho$ that leaves each variable free independently with probability
+$p=\tfrac{1}{40w}$ and otherwise fixes it to $0$ or $1$, each with probability
+$\tfrac{1-p}{2}$. Writing $D(g)$ for the least depth of a decision tree computing a
+Boolean function $g$, and $f\!\restriction_\rho$ for the function obtained from $f$ by
+substituting the fixed values of $\rho$ and keeping the free coordinates as inputs, the
+probability that the restricted function is hard to compute by a shallow decision tree
+satisfies
 \[
-  \Pr\!\left[\mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\right]
-  \le (s-1)(1/2)^{l} + (1/2)^{t} + (s-1)\exp\!\left(-\tfrac{n}{120w}\right)
-    + s\,\exp\!\left(-\tfrac{n}{120l}\right).
+  \Pr_{\rho}\!\big[\,D(f\!\restriction_\rho) > t\,\big]
+  \le (s-1)\left(\tfrac12\right)^{l} + \left(\tfrac12\right)^{t}
++ (s-1)\exp\!\left(-\tfrac{n}{120w}\right) + s\,\exp\!\left(-\tfrac{n}{120l}\right).
 \]
 \end{lemma}
 
-\begin{lemma}[Union bound over a list of circuits]
+\begin{lemma}[Union bound for a random restriction over a list of circuits]
 \lean{LMN.bernoulliRestrProb_list_union_bound}
 \label{LMN.bernoulliRestrProb_list_union_bound}
 \leanok
 \uses{BoolCircuit.Circuit, LMN.bernoulliRestrProb_union_bound_fin, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
 \difficulty{4}
-For $0\le p\le 1$, a list of circuits $\mathit{cs}$, and a predicate $\mathrm{bad}$ on circuits
-and restrictions, the probability that some circuit in $\mathit{cs}$ is bad is bounded by the
-folded sum of the per-circuit probabilities $\sum_{c\in \mathit{cs}}\Pr_{p}[\mathrm{bad}\,c]$.
+Fix a parameter $p$ with $0 \le p \le 1$, and consider a Bernoulli$(p)$ random
+restriction on $n$ variables, under which each variable is independently left free with
+probability $p$ and fixed to each of the two Boolean values with probability $(1-p)/2$.
+Let $c_1, \dots, c_m$ be a list of Boolean circuits on $n$ variables, and for each
+circuit $c$ let $\mathrm{bad}(c, \cdot)$ be a predicate on restrictions. Then the
+probability that some circuit in the list is bad is at most the sum of the individual
+probabilities:
+\[
+\Pr_p\!\left[\exists\, i,\ \mathrm{bad}(c_i, \rho)\right] \;\le\; \sum_{i=1}^{m}
+\Pr_p\!\left[\mathrm{bad}(c_i, \rho)\right],
+\]
+where each term is the probability, under the same random restriction, that the
+corresponding predicate holds.
 \end{lemma}
 
-\begin{lemma}[Inductive step: depth $d\ge 3$]
+\begin{lemma}[Inductive step of the circuit-to-decision-tree reduction]
 \lean{LMN.circuit_reduction_ind_step}
 \label{LMN.circuit_reduction_ind_step}
 \leanok
@@ -3300,17 +3375,29 @@ folded sum of the per-circuit probabilities $\sum_{c\in \mathit{cs}}\Pr_{p}[\mat
 }
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, DecisionTree.depth, DecisionTree.eval, LMN.bernoulliRestrProb_list_union_bound, LMN.child_size_le_parent, LMN.children_depth_le, LMN.children_maxFanin_le, LMN.children_size_sum_le, LMN.composedDelta, LMN.composedDelta_le_one, LMN.composedDelta_pos, LMN.composedDelta_step_right, LMN.compress_and_switch, LMN.dtDepth_restrictFn_le', LMN.two_stage_bound', SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{7}
-The inductive step: for depth $d\ge 3$, assuming the bound holds for depth $d-1$ (the
-hypothesis $\mathit{ih}$ applied to each child of the root), a circuit of depth at most $d$,
-size at most $s$, and fan-in at most $w$ satisfies, under $\mathrm{composedDelta}(w,l,d)$,
+Let $f:\{0,1\}^n \to \{0,1\}$ be a Boolean function on $n \ge 1$ variables, and fix
+natural numbers $d,s,w,l,t$ with $d \ge 3$ and $s,w,l \ge 1$. Suppose $f$ is computed by
+a Boolean circuit of depth at most $d$, size at most $s$, and maximum fan-in at most
+$w$. For parameters $w,l$ and a depth $e$, write $\delta_e =
+\frac{1}{40w}\left(\frac{1}{40l}\right)^{e-2}$ for the composed restriction parameter;
+let $D(g)$ denote the decision-tree depth of a Boolean function $g$, and let $g|_\rho$
+denote its restriction by a restriction $\rho$. Assume the following inductive
+hypothesis: for every Boolean function $g$ on $n$ variables and every integer $s' \ge
+1$, if $g$ is computed by a circuit of depth at most $d-1$, size at most $s'$, and
+maximum fan-in at most $w$, then under a Bernoulli random restriction $\rho$ with
+parameter $\delta_{d-1}$,
 \[
-  \Pr\!\left[\mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\right]
-  \le (s-1)(1/2)^{l} + (1/2)^{t} + (s-1)\exp\!\left(-\tfrac{n}{120w}\right)
-    + s\,\exp\!\left(-\tfrac{n}{120l}\right).
+\Pr_{\rho}\!\left[D(g|_\rho) > l\right] \le (s'-1)(1/2)^{l} + (1/2)^{l} +
+(s'-1)\exp\!\left(-\tfrac{n}{120w}\right) + s'\exp\!\left(-\tfrac{n}{120l}\right).
+\]
+Then under a Bernoulli random restriction $\rho$ with parameter $\delta_{d}$,
+\[
+\Pr_{\rho}\!\left[D(f|_\rho) > t\right] \le (s-1)(1/2)^{l} + (1/2)^{t} +
+(s-1)\exp\!\left(-\tfrac{n}{120w}\right) + s\exp\!\left(-\tfrac{n}{120l}\right).
 \]
 \end{lemma}
 
-\begin{theorem}[Iterative reduction bound (tight form)]
+\begin{theorem}[Restriction bound for shrinking decision-tree depth]
 \lean{LMN.circuit_reduction_ind}
 \label{LMN.circuit_reduction_ind}
 \leanok
@@ -3324,7 +3411,6 @@ size at most $s$, and fan-in at most $w$ satisfies, under $\mathrm{composedDelta
   pdf-fc447f326910-p013-b002,
   pdf-fc447f326910-p014-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -4669,17 +4755,28 @@ size at most $s$, and fan-in at most $w$ satisfies, under $\mathrm{composedDelta
   {pdf-fc447f326910-p012-b004}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_ind_base, LMN.circuit_reduction_ind_step, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-By strong induction on the depth $d\ge 2$: if $f$ is computed by a circuit of depth at most
-$d$, size at most $s$, and fan-in at most $w$ (with $s,w,l,n>0$), then under
-$\mathrm{composedDelta}(w,l,d)$,
+Let $f\colon\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables, and let
+$d\ge 2$, $s\ge 1$, $w\ge 1$, and $l\ge 1$ be positive integers together with an integer
+threshold $t\ge 0$. Suppose $f$ is computed by some Boolean circuit of depth at most
+$d$, size at most $s$ (counting gates and literal leaves), and fan-in at most $w$. Let
+$\rho$ be a Bernoulli random restriction on the $n$ variables with survival parameter
 \[
-  \Pr\!\left[\mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\right]
-  \le (s-1)(1/2)^{l} + (1/2)^{t} + (s-1)\exp\!\left(-\tfrac{n}{120w}\right)
-    + s\,\exp\!\left(-\tfrac{n}{120l}\right).
+  p = \frac{1}{40w}\left(\frac{1}{40l}\right)^{d-2},
+\]
+so that each variable is independently left free with probability $p$ and otherwise
+fixed to $0$ or to $1$, each with probability $(1-p)/2$. Write $f\restriction_\rho$ for
+the function obtained from $f$ by substituting the values $\rho$ assigns and keeping the
+free coordinates as inputs, and let $D(g)$ denote the least depth of a decision tree
+computing a Boolean function $g$. Then
+\[
+  \bbP\!\left[D(f\restriction_\rho) > t\right]
+  \;\le\; (s-1)\left(\tfrac{1}{2}\right)^{l} + \left(\tfrac{1}{2}\right)^{t}
+    + (s-1)\exp\!\left(-\tfrac{n}{120\,w}\right)
+    + s\,\exp\!\left(-\tfrac{n}{120\,l}\right).
 \]
 \end{theorem}
 
-\begin{theorem}[Iterative reduction bound (relaxed form)]
+\begin{theorem}[Random-restriction bound on the decision-tree depth of a small circuit]
 \lean{LMN.circuit_reduction_aux}
 \label{LMN.circuit_reduction_aux}
 \leanok
@@ -4693,7 +4790,6 @@ $\mathrm{composedDelta}(w,l,d)$,
   pdf-fc447f326910-p013-b002,
   pdf-fc447f326910-p014-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -6052,16 +6148,21 @@ $\mathrm{composedDelta}(w,l,d)$,
     pdf-fc447f326910-p006-b004}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_ind, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
-Replacing the coefficient $s-1$ by $s$ in the previous bound: under the same hypotheses and
-the parameter $\mathrm{composedDelta}(w,l,d)$,
+Let $f\colon\{0,1\}^n \to \{0,1\}$ be a Boolean function on $n \ge 1$ variables, and let
+$d,s,w,l,t \in \bbn$ satisfy $d \ge 2$ and $s,w,l \ge 1$. Suppose $f$ is computed by
+some Boolean circuit of depth at most $d$, size at most $s$, and maximum fan-in at most
+$w$. Write $f\!\restriction_\rho$ for the restriction of $f$ by a restriction $\rho$,
+and let $D(g)$ denote the decision-tree depth of a Boolean function $g$, that is, the
+least depth of a decision tree computing it. Then, under a Bernoulli random restriction
+$\rho$ with parameter $\delta = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$,
 \[
-  \Pr\!\left[\mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\right]
-  \le s(1/2)^{l} + (1/2)^{t} + s\,\exp\!\left(-\tfrac{n}{120w}\right)
-    + s\,\exp\!\left(-\tfrac{n}{120l}\right).
+  \bbP\bigl[\, D(f\!\restriction_\rho) > t \,\bigr]
+  \;\le\; s\left(\tfrac{1}{2}\right)^{l} + \left(\tfrac{1}{2}\right)^{t}
+    + s\,\exp\!\left(-\tfrac{n}{120w}\right) + s\,\exp\!\left(-\tfrac{n}{120l}\right).
 \]
 \end{theorem}
 
-\begin{theorem}[Circuit reduction core bound]
+\begin{theorem}[Switching-lemma bound on decision-tree depth after a random restriction]
 \lean{LMN.circuit_reduction_core}
 \label{LMN.circuit_reduction_core}
 \leanok
@@ -6075,7 +6176,6 @@ the parameter $\mathrm{composedDelta}(w,l,d)$,
   pdf-fc447f326910-p013-b002,
   pdf-fc447f326910-p014-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -7444,11 +7544,21 @@ the parameter $\mathrm{composedDelta}(w,l,d)$,
   {pdf-fc447f326910-p012-b004}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_aux, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-The user-facing form of the iterative reduction: for $f$ computed by a circuit of depth at
-most $d\ge 2$, size at most $s$, and fan-in at most $w$, under $\mathrm{composedDelta}(w,l,d)$,
+Let $f:\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables, and let
+$d,s,w,l,t$ be natural numbers with $d\ge 2$ and $s,w,l\ge 1$. Suppose $f$ is computed
+by some Boolean circuit of depth at most $d$, size at most $s$, and fan-in at most $w$.
+Draw a random restriction $\rho$ on the $n$ variables in which each variable is
+independently left free with probability
 \[
-  \Pr\!\left[\mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\right]
-  \le s(1/2)^{l} + (1/2)^{t} + s\,\exp\!\left(-\tfrac{n}{120w}\right)
-    + s\,\exp\!\left(-\tfrac{n}{120l}\right).
+  p \;=\; \frac{1}{40w}\left(\frac{1}{40l}\right)^{d-2},
+\]
+and is otherwise fixed to $0$ or to $1$, each with probability $(1-p)/2$; let
+$f\restriction_\rho$ denote the function of the free variables obtained by substituting
+the fixed values into $f$. Then the probability that $f\restriction_\rho$ cannot be
+computed by any decision tree of depth at most $t$ satisfies
+\[
+  \bbP\!\left[\,\text{decision-tree depth of } f\restriction_\rho > t\,\right]
+  \;\le\; s\left(\tfrac12\right)^{l} + \left(\tfrac12\right)^{t}
+  + s\,\exp\!\left(-\frac{n}{120w}\right) + s\,\exp\!\left(-\frac{n}{120l}\right).
 \]
 \end{theorem}

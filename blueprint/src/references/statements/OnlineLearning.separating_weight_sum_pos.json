@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.separating_weight_sum_pos",
+ "key": "acaeae3176456664",
+ "kind": "lemma",
+ "title": "Positivity of the separator's total weight",
+ "statement": "Let $X, Y \\subseteq \\bbr$, let $f : \\bbr \\to \\bbr \\to \\bbr$ be a payoff function, and let $u$ be a finite sample of columns drawn from $Y$. Suppose $X$ is nonempty, fix a vector $c \\in \\bbr^u$, and let $L : \\bbr^u \\to \\bbr$ be a continuous linear functional that strictly separates $c$ from the finite upper image $U(X,f,u)$, in the sense that $L(z) < L(c)$ for every $z \\in U(X,f,u)$. Writing $e_y \\in \\bbr^u$ for the standard basis vector supported at coordinate $y$, one then has\n\\[\n  0 \\;<\\; \\sum_{y \\in u} \\bigl(-L(e_y)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "$X$ is nonempty",
+  "$L$ is a continuous linear functional on $\\bbr^u$",
+  "$L$ strictly separates $c$ from the finite upper image: $L(z) < L(c)$ for all $z \\in U(X,f,u)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same separation hypothesis, with $X$ nonempty,\n\\[\n  0 \\;<\\; \\sum_{y \\in u} \\bigl(-L(e_y)\\bigr).\n\\]\nConsequently the negated coordinates can be normalized to a probability vector on\nthe sampled columns."
+}

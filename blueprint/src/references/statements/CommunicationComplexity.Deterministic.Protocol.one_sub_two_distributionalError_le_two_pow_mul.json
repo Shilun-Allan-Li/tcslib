@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul",
+ "key": "075b0e65a7daff2a",
+ "kind": "theorem",
+ "title": "Discrepancy lower bound on distributional error",
+ "statement": "Let $\\mu$ be a finite probability measure on $X \\times Y$, let $g : X \\times Y \\to \\mathrm{Bool}$, and let $\\gamma \\in \\bbr$ be such that every rectangle $R \\subseteq X \\times Y$ satisfies $\\abs{\\mathrm{disc}_\\mu(g, R)} \\le \\gamma$. Then for every deterministic Boolean-valued communication protocol $p$, writing $\\mathrm{err}$ for the $\\mu$-probability that $p$ disagrees with $g$ (that is, the measure of $\\{(x,y) : p(x,y) \\ne g(x,y)\\}$) and $c$ for the communication complexity of $p$,\n\\[\n  1 - 2\\,\\mathrm{err} \\;\\le\\; 2^{c}\\cdot\\gamma .\n\\]",
+ "hypotheses_covered": [
+  "finite probability space μ on X × Y",
+  "Boolean function g on X × Y",
+  "real bound γ",
+  "deterministic Boolean protocol p",
+  "every rectangle R has |disc_μ(g,R)| ≤ γ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf every combinatorial rectangle $R$ satisfies $|\\mathrm{disc}_\\mu(g,R)| \\le \\gamma$,\nthen for any deterministic protocol $p$,\n\\[\n  1 - 2\\cdot p.\\mathrm{distributionalError}_\\mu(g)\n  \\;\\le\\;\n  2^{p.\\mathrm{complexity}} \\cdot \\gamma.\n\\]"
+}

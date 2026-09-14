@@ -13,46 +13,50 @@ decision-tree depth.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Lower bound on $\mathrm{logb}_2(2s/\varepsilon)$]
+\begin{lemma}[A logarithmic lower bound]
 \lean{LMN.logb_2s_div_eps_pos}
 \label{LMN.logb_2s_div_eps_pos}
 \leanok
 \difficulty{3}
-For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon \le 1$,
-the quantity $l = \log_2(2s/\varepsilon)$ satisfies $1 \le l$.
+Let $s \in \bbn$ be a positive integer and let $\varepsilon \in \bbr$ satisfy $0 <
+\varepsilon \le 1$. Then \[ 1 \le \log_2\!\left(\frac{2s}{\varepsilon}\right). \]
 \end{lemma}
 
-\begin{lemma}[Monotonicity of $\mathrm{logb}_2(2s/\varepsilon)$ in $s$]
+\begin{lemma}[Monotonicity of a base-2 logarithm in a scale factor]
 \lean{LMN.logb_2_div_eps_le_l}
 \label{LMN.logb_2_div_eps_le_l}
 \leanok
 \difficulty{3}
-For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon$,
-we have $\log_2(2/\varepsilon) \le \log_2(2s/\varepsilon)$.
+Let $s \ge 1$ be a positive integer and let $\varepsilon > 0$ be a real number. Then
+\[
+\log_2\!\left(\frac{2}{\varepsilon}\right) \le
+\log_2\!\left(\frac{2s}{\varepsilon}\right).
+\]
 \end{lemma}
 
-\begin{lemma}[Bound $s \cdot 2^{-l} \le \varepsilon/2$]
+\begin{lemma}[Bound on $s\cdot(1/2)^{\log_2(2s/\varepsilon)}$]
 \lean{LMN.size_times_two_pow_neg_l_le}
 \label{LMN.size_times_two_pow_neg_l_le}
 \leanok
 \difficulty{3}
-For $s \in \bbn$ with $0 < s$ and $\varepsilon \in \bbr$ with $0 < \varepsilon$,
-taking $l = \log_2(2s/\varepsilon)$ gives
+Let $s$ be a positive integer and let $\varepsilon > 0$ be a real number. Then
 \[
-  s \cdot 2^{-l} \le \frac{\varepsilon}{2},
+s \cdot \left(\tfrac{1}{2}\right)^{\log_2(2s/\varepsilon)} \;\le\;
+\frac{\varepsilon}{2},
 \]
-since $2^{-l} = \varepsilon/(2s)$.
+where the exponent $\log_2(2s/\varepsilon)$ is the base-$2$ logarithm.
 \end{lemma}
 
-\begin{lemma}[Value of $2^{-\mathrm{logb}_2(2/\varepsilon)}$]
+\begin{lemma}[A base-two logarithm identity]
 \lean{LMN.two_pow_neg_logb_2_div_eps}
 \label{LMN.two_pow_neg_logb_2_div_eps}
 \leanok
 \difficulty{2}
-For $\varepsilon \in \bbr$ with $0 < \varepsilon$,
+For every real number $\varepsilon > 0$,
 \[
-  2^{-\log_2(2/\varepsilon)} = \frac{\varepsilon}{2}.
+  \left(\tfrac{1}{2}\right)^{\log_2(2/\varepsilon)} = \frac{\varepsilon}{2},
 \]
+where $\log_2$ denotes the logarithm to base $2$.
 \end{lemma}
 
 \begin{lemma}[Iterative circuit reduction bound with Chernoff tails]
@@ -72,19 +76,25 @@ For $\varepsilon \in \bbr$ with $0 < \varepsilon$,
 }
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_core, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most
-$s$, and fan-in at most $w$, where $d \ge 2$ and $s, w, l > 0$. Under a Bernoulli($\delta$)
-random restriction $\rho$ with $\delta = \mathrm{composedDelta}\,w\,l\,d$, the probability
-that the restricted function has decision-tree depth exceeding $t$ is bounded by
+Let $c$ be a Boolean circuit on $n \ge 1$ variables of depth at most $d$, size at most
+$s$, and maximum fan-in at most $w$, where $d \ge 2$ and $s, w, l \ge 1$, and fix a
+threshold $t$. Apply a Bernoulli random restriction with parameter
 \[
-  s \cdot \left(\tfrac{1}{2}\right)^l + \left(\tfrac{1}{2}\right)^t
-  + s \cdot \exp\!\left(-\tfrac{n}{120 w}\right)
-  + s \cdot \exp\!\left(-\tfrac{n}{120 l}\right).
+  \delta = \frac{1}{40w}\left(\frac{1}{40l}\right)^{d-2},
 \]
-The exponential Chernoff tails vanish as $n \to \infty$.
+so that each variable is left free with probability $\delta$ and otherwise fixed to
+$\mathtt{false}$ or $\mathtt{true}$ with equal probability. Then the probability that
+the restricted function $x \mapsto c(\rho.\mathrm{extend}\,x)$ has decision-tree depth
+exceeding $t$ satisfies
+\[
+  s\left(\tfrac12\right)^{l} + \left(\tfrac12\right)^{t}
+  + s\,\exp\!\left(-\frac{n}{120w}\right)
+  + s\,\exp\!\left(-\frac{n}{120l}\right)
+\]
+as an upper bound.
 \end{lemma}
 
-\begin{theorem}[O'Donnell Lemma 4.28, with tails]
+\begin{theorem}[Switching-lemma depth bound for bounded-depth circuits]
 \lean{LMN.odonnell_lemma_4_28}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -99,7 +109,6 @@ The exponential Chernoff tails vanish as $n \to \infty$.
   pdf-fc447f326910-p013-b002,
   pdf-fc447f326910-p014-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1497,15 +1506,25 @@ The exponential Chernoff tails vanish as $n \to \infty$.
   {pdf-fc447f326910-p012-b003}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.composedDelta, LMN.iterative_reduction_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{2}
-Let $c$ be a circuit on $n$ variables with $n > 0$, depth at most $d$, size at most
-$s$, and fan-in at most $w$, where $d \ge 2$ and $s, w, l > 0$. Fix $\varepsilon > 0$ and
-naturals $l, t$ with $s \cdot \left(\tfrac{1}{2}\right)^l \le \varepsilon/2$ and
-$\left(\tfrac{1}{2}\right)^t \le \varepsilon/2$. Then under a Bernoulli($\mathrm{composedDelta}\,w\,l\,d$)
-restriction $\rho$,
+Let $c$ be a Boolean circuit on $n \ge 1$ variables with depth at most $d$, size at most
+$s$, and maximum fan-in at most $w$, where $d \ge 2$ and $s, w, l > 0$. Fix a real
+number $\varepsilon > 0$ and natural numbers $l, t$ satisfying $s \cdot
+\left(\tfrac{1}{2}\right)^{l} \le \varepsilon/2$ and $\left(\tfrac{1}{2}\right)^{t} \le
+\varepsilon/2$, and put
 \[
-  \Pr\!\left[\, \mathrm{DT}(c\!\restriction_\rho) > t \,\right]
-  \le \varepsilon + s \cdot \exp\!\left(-\tfrac{n}{120 w}\right)
-  + s \cdot \exp\!\left(-\tfrac{n}{120 l}\right).
+  \delta \;=\; \frac{1}{40w}\left(\frac{1}{40l}\right)^{d-2}.
 \]
-The exponential tails vanish as $n \to \infty$, giving $\Pr \le \varepsilon$ asymptotically.
+Draw a random restriction $\rho$ on the $n$ variables by leaving each coordinate free
+with probability $\delta$ and otherwise fixing it to a uniformly random Boolean value,
+all coordinates independent. Let $c\!\restriction_{\rho}$ denote the restricted function
+of the free coordinates, obtained by evaluating $c$ with the coordinates set by $\rho$
+held to their fixed values. Then the probability that $c\!\restriction_{\rho}$ has
+decision-tree depth exceeding $t$—that is, that no decision tree of depth at most $t$
+computes it—satisfies
+\[
+\Pr_{\rho}\!\left[\,
+\operatorname{depth}_{\mathrm{DT}}\!\left(c\!\restriction_{\rho}\right) > t \,\right]
+  \;\le\; \varepsilon \;+\; s \cdot \exp\!\left(-\frac{n}{120\,w}\right)
+  \;+\; s \cdot \exp\!\left(-\frac{n}{120\,l}\right).
+\]
 \end{theorem}

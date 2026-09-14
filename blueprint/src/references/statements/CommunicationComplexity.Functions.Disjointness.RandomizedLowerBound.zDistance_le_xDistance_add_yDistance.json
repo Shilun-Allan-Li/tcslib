@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zDistance_le_xDistance_add_yDistance",
+ "key": "22568b0ede61aa92",
+ "kind": "theorem",
+ "title": "Total variation of the special bit-pair versus its marginals",
+ "statement": "Fix a positive integer $n$, a deterministic communication protocol $p$ for length-$n$ disjointness inputs, and a value $z$ of the coarse conditioning variable. Conditioning on the event that this variable equals $z$ produces a joint law on the special-coordinate bit-pair $(a,b)$ — where $a$ is Alice's bit and $b$ is Bob's bit at the special coordinate — together with its two one-bit marginals, the conditional law of $a$ and the conditional law of $b$. Then the total variation distance between the joint conditional law and the uniform distribution on $\\{0,1\\}^2$ is at most the sum of the total variation distances of the two marginals from the uniform distribution on $\\{0,1\\}$:\n\\[\n\\mathrm{TV}\\big(\\mathcal{L}(a,b),\\,\\mathrm{Unif}(\\{0,1\\}^2)\\big)\\;\\le\\;\\mathrm{TV}\\big(\\mathcal{L}(a),\\,\\mathrm{Unif}(\\{0,1\\})\\big)\\;+\\;\\mathrm{TV}\\big(\\mathcal{L}(b),\\,\\mathrm{Unif}(\\{0,1\\})\\big).\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic protocol for length-n disjointness inputs",
+  "z a value of the coarse conditioning (Z) variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Product-distribution step for $Z$ fibers. Conditioned on a transcript rectangle and the coarse data, the special bits are independent, so the pair TV distance is controlled by the two one-bit TV distances."
+}

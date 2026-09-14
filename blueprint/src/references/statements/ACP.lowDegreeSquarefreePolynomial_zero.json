@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.lowDegreeSquarefreePolynomial_zero",
+ "key": "c09abf20d41d4a34",
+ "kind": "theorem",
+ "title": "Zero coefficients yield the zero polynomial",
+ "statement": "Let $K$ be a field and let $n, D \\in \\bbn$. Applying the low-degree squarefree polynomial construction to the identically zero coefficient function on $\\mathcal{S}_{n,D}$ produces the zero element of the polynomial ring $K[X_0, \\dots, X_{n-1}]$; that is,\n\\[\n\\sum_{\\substack{s \\subseteq \\mathrm{Fin}\\,n \\\\ \\abs{s} \\le D}} 0 \\cdot \\prod_{i \\in s} X_i \\;=\\; 0 .\n\\]",
+ "hypotheses_covered": [
+  "field $K$",
+  "natural numbers $n$ and $D$",
+  "coefficient function identically zero on $\\mathcal{S}_{n,D}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The constructor $\\texttt{ACP.lowDegreeSquarefreePolynomial}$ sends the identically zero\ncoefficient function to the zero polynomial."
+}

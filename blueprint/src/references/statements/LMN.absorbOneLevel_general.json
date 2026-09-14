@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.absorbOneLevel_general",
+ "key": "77c05d8c2d1d0022",
+ "kind": "lemma",
+ "title": "Absorbing one level of a depth-two circuit",
+ "statement": "Let $D$ be layer-2 data over $n$ variables: a family of DNF gates $g_0,\\dots,g_{m-1}$ together with a common positive width bound. Let $C$ be a Boolean circuit whose $m$ inputs are indexed by these gates and whose depth is at least $2$, and let $l\\ge 1$. Suppose that for each index $i$ the gate $g_i$ admits a DNF formula of width at most $l$ that computes the same Boolean function as $g_i$ and in which, within every term, distinct literals use distinct variables and no literal is repeated, as well as a CNF formula of width at most $l$ computing that same Boolean function. Then there exist layer-2 data $D'$ over $n$ variables of width at most $l$, with gate family $h_0,\\dots,h_{k-1}$, and a Boolean circuit $C'$ whose $k$ inputs are indexed by these gates and whose depth is at most $\\mathrm{depth}(C)-1$, such that for every assignment $x\\colon\\mathrm{Fin}\\,n\\to\\{\\mathrm{true},\\mathrm{false}\\}$ the value of $C$ on the input vector $\\bigl(g_i(x)\\bigr)_i$ equals the value of $C'$ on the input vector $\\bigl(h_j(x)\\bigr)_j$.",
+ "hypotheses_covered": [
+  "layer-2 data $D$ over $n$ variables (a DNF gate family with a positive common width bound)",
+  "top circuit $C$ on the gates as inputs",
+  "$l \\ge 1$",
+  "$\\mathrm{depth}(C) \\ge 2$",
+  "each gate has a width-$\\le l$ DNF computing the same function, with per-term variable-injective, duplicate-free literals",
+  "each gate has a width-$\\le l$ CNF computing the same function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe $\\mathrm{Layer2Data}$ wrapper of the general depth reduction: for $c_{\\mathrm{top}}$ of\ndepth at least $2$ (with $0 < l$) over gates having width-$l$ DNF and CNF representations,\nthere are a new $\\mathrm{Layer2Data}'$ of width at most $l$ and a circuit $c_{\\mathrm{top}}'$\nof depth at most $\\mathrm{depth}\\,c_{\\mathrm{top}} - 1$ computing the same function."
+}

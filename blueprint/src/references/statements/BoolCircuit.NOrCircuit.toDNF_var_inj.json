@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.toDNF_var_inj",
+ "key": "19b64d7539775d12",
+ "kind": "theorem",
+ "title": "Variable-injectivity of literals in the DNF of an OR-of-clauses",
+ "statement": "Fix $n \\in \\bbn$ and a list $c_1, \\dots, c_m$ of normal-form AND circuits on $n$ variables, and suppose each $c_i$ is a base AND-clause — that is, $c_i = \\mathrm{clause}(\\ell_1, \\dots, \\ell_{k_i})$ for some list of circuit literals whose variable indices are pairwise distinct. Let $F$ be the DNF formula obtained from the OR circuit $\\mathrm{node}(c_1, \\dots, c_m)$ by converting each clause $c_i$ into the term formed by its literals. Then in every term of $F$, any two literals that share the same variable are identical.",
+ "hypotheses_covered": [
+  "each circuit in the list is a base AND-clause (not an internal node)",
+  "within each clause, the variable indices of its literals are pairwise distinct"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every child of an $\\texttt{NOrCircuit}.\\mathrm{node}\\,cs$ is an AND-clause with distinct\nliteral indices, then in every term of the resulting DNF any two literals on the same\nvariable are equal."
+}

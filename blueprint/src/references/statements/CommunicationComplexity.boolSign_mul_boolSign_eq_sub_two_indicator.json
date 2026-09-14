@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator",
+ "key": "9f534c3b85110240",
+ "kind": "lemma",
+ "title": "Product of two Boolean signs",
+ "statement": "For all Boolean values $a$ and $b$, the product of their signs satisfies\n\\[\n  \\mathrm{sign}(a)\\cdot\\mathrm{sign}(b) \\;=\\; 1 - 2\\,\\mathbf{1}[a \\ne b],\n\\]\nwhere $\\mathrm{sign}(\\cdot)$ sends $\\mathrm{false}$ to $1$ and $\\mathrm{true}$ to $-1$, and $\\mathbf{1}[a \\ne b]$ is $1$ when $a$ and $b$ differ and $0$ when they agree. Equivalently, this product equals $1$ when the two bits are equal and $-1$ when they disagree.",
+ "hypotheses_covered": [
+  "a and b are arbitrary Boolean values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $a, b : \\mathrm{Bool}$,\n\\[\n  \\texttt{CommunicationComplexity.boolSign}(a) \\cdot \\texttt{CommunicationComplexity.boolSign}(b)\n  \\;=\\; 1 - 2 \\cdot \\mathbf{1}[a \\ne b].\n\\]\nIn other words, the product of two $\\pm 1$ signs equals $1$ when the bits agree and\n$-1$ when they disagree."
+}

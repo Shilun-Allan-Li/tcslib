@@ -1,0 +1,22 @@
+{
+ "lean_name": "ACP.exists_poly_distribution_for_circuit_one_size",
+ "key": "9718c6b2d835aa3d",
+ "kind": "theorem",
+ "title": "Polynomial approximating distribution for an AC⁰[p] circuit",
+ "statement": "Let $p$ be a prime, and let $F$ be a feedforward circuit over the Boolean alphabet $\\mathrm{Fin}\\,2$ with input coordinates indexed by $\\mathrm{Fin}\\,n$ and a single output node, in which every layer has finitely many nodes and every gate operation belongs to the $\\mathrm{AC}^0[p]$ gate set (the identity gate, the NOT gate, the unbounded fan-in AND gate of every arity, and the $\\mathrm{MOD}_p$ gate of every arity). For a Boolean input $x : \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,2$, write $\\bar{x} \\in (\\bbz/p)^n$ for the point whose $i$-th coordinate is the residue of $x_i$ modulo $p$, and let $c(x) \\in \\bbz/p$ be the residue of the single Boolean value that $F$ computes on $x$. Then for every $\\ell \\in \\bbn$ there exist a finite nonempty index set $\\mathrm{Seed}$ and a family of polynomials $(P_s)_{s \\in \\mathrm{Seed}}$ in $\\bbz/p[X_1,\\dots,X_n]$, each of total degree at most $\\bigl((p-1)\\ell\\bigr)^{d}$, where $d$ is the depth of $F$, such that for every Boolean input $x$,\n\\[\n\\bigl|\\{\\, s \\in \\mathrm{Seed} : P_s(\\bar{x}) \\neq c(x) \\,\\}\\bigr| \\cdot 2^{\\ell} \\;\\le\\; \\operatorname{size}(F) \\cdot \\abs{\\mathrm{Seed}},\n\\]\nwhere $\\operatorname{size}(F)$ denotes the number of non-input nodes of $F$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "F is a feedforward circuit over Fin 2 with inputs indexed by Fin n",
+  "the output type is unique (single output node)",
+  "every layer of F has finitely many nodes",
+  "F uses only AC^0[p] gate operations",
+  "ℓ is a natural number",
+  "Seed is finite and nonempty (positive cardinality)",
+  "each polynomial has total degree at most ((p-1)ℓ)^depth",
+  "bad-seed count times 2^ℓ is at most size(F) times |Seed|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Same statement for a circuit with a unique output node: there exist a finite nonempty seed type\n$\\mathrm{Seed}$ and polynomials $P : \\mathrm{Seed} \\to \\bbz/p[X_1,\\dots,X_n]$, each of total degree\nat most $\\mathrm{circuitDegreeBound}\\,p\\,\\ell\\,F.\\mathrm{depth}$, such that for every Boolean input\n$x$ the number of seeds $s$ with\n$P_s(\\mathrm{boolInput}_p(x)) \\ne F.\\mathrm{eval}_1(x)$ obeys\n\\[\n\\abs{\\{s : \\text{$s$ is bad for $x$}\\}} \\cdot 2^{\\ell}\n  \\;\\le\\; F.\\mathrm{size} \\cdot \\abs{\\mathrm{Seed}}.\n\\]"
+}

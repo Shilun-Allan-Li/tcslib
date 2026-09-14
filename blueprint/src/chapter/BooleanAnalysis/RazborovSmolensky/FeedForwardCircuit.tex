@@ -86,8 +86,8 @@ $F.\texttt{eval}\,xs\,\texttt{default} \in \alpha$ computed by the circuit.
 \lean{ACP.FeedForward.size}
 \label{ACP.FeedForward.size}
 \leanok
-The size of $F$ is the cardinality $\mathrm{Nat.card}$ of the sigma type of all
-non-input nodes, i.e.\ the total number of nodes lying in layers $1,\dots,\texttt{depth}$.
+The size of $F$ is the number of its non-input nodes, i.e.\ the total number of
+nodes lying in layers $1, \dots, \mathrm{depth}(F)$.
 \end{definition}
 
 \begin{definition}[Finiteness of all layers]
@@ -105,13 +105,15 @@ For a set $S$ of gate operations, $\texttt{onlyUsesGates}\ S$ asserts that the
 operation of every gate of the circuit belongs to $S$.
 \end{definition}
 
-\begin{theorem}[Every circuit has at least one node]
+\begin{theorem}[Every circuit has size at least one]
 \lean{BoolCircuit.Circuit.one_le_size}
 \label{BoolCircuit.Circuit.one_le_size}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
 \difficulty{2}
-For every Boolean circuit $C$ on $n$ inputs, $1 \le C.\texttt{size}$.
+Let $C$ be a Boolean circuit on $n$ variables. Then the size of $C$ — the total number
+of literal leaves and internal AND/OR gates — is at least $1$; that is, $1 \le
+\mathrm{size}(C)$.
 \end{theorem}
 
 \begin{definition}[AND/OR gate restriction]
@@ -145,24 +147,26 @@ several downstream gates are duplicated.
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.Gate.eval, ACP.FeedForward.IsAndOrGate, ACP.FeedForward.evalNode, ACP.nodeToCircuit, BoolCircuit.Circuit.eval, BoolCircuit.Lit.eval}
 \difficulty{5}
-If every gate of $F$ is an AND or OR gate as recorded by $\texttt{isAnd}$ and
-$\texttt{gfin}$, then for every node $v$ at layer $m$ and every input
-$x : \mathrm{Fin}\,n \to \{0,1\}$,
-\[
-(\texttt{nodeToCircuit}\ F\ \texttt{isAnd}\ \texttt{gfin}\ m\ h\ v).\texttt{eval}\ x
- = F.\texttt{evalNode}\ v\ x .
-\]
+Let $F$ be a Boolean feedforward circuit whose inputs are indexed by $\mathrm{Fin}\,n$,
+and suppose each of its gates has finite arity and computes either the conjunction or
+the disjunction of its inputs, according to a flag marking every non-input node as an
+AND node or an OR node. Then for every layer $m$ with $m \le \mathrm{depth}(F)$, every
+node $v$ of layer $m$, and every input assignment $x : \mathrm{Fin}\,n \to \bbf_2$, the
+Boolean circuit obtained by tree-unrolling $v$, evaluated at $x$, equals the value that
+$v$ takes in $F$ under the assignment $x$.
 \end{theorem}
 
-\begin{theorem}[Size bound for tree-unrolling]
+\begin{theorem}[Exponential size bound for tree-unrolling]
 \lean{ACP.nodeToCircuit_size_le}
 \label{ACP.nodeToCircuit_size_le}
 \leanok
 \uses{ACP.FeedForward, ACP.nodeToCircuit, BoolCircuit.Circuit.size}
 \difficulty{6}
-If every gate of $F$ has at most $k$ input wires, i.e.\
-$\mathrm{card}\,(F.\texttt{gates}\ d\ v).\texttt{op}.\iota \le k$ for all $d$ and $v$,
-then the unrolling of any node at layer $m$ has size at most $(k+1)^m$.
+Let $F$ be a Boolean feedforward circuit from the inputs $\mathrm{Fin}\,n$ to an output
+type, in which every gate has finitely many input wires, and suppose $k \in \bbn$ bounds
+these arities, so that each gate has at most $k$ input wires. Then for every layer $m
+\le \mathrm{depth}(F)$ and every node $v$ of layer $m$, the tree-unrolling of $v$ is a
+Boolean circuit of size at most $(k+1)^m$.
 \end{theorem}
 
 \begin{definition}[Conversion to a Boolean circuit]
@@ -175,29 +179,35 @@ the tree-shaped $\texttt{Circuit}\ n$ obtained by tree-unrolling $o$ from the la
 layer down to the inputs.
 \end{definition}
 
-\begin{theorem}[Conversion preserves evaluation]
+\begin{theorem}[Tree-unrolling preserves evaluation]
 \lean{ACP.FeedForward.toCircuit_eval}
 \label{ACP.FeedForward.toCircuit_eval}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.IsAndOrGate, ACP.FeedForward.eval, ACP.FeedForward.toCircuit, ACP.nodeToCircuit_eval, BoolCircuit.Circuit.eval}
 \difficulty{1}
-If every gate of $F$ is an AND or OR gate, then for every output node $o$ and every
-input $x$,
-\[
-(F.\texttt{toCircuit}\ \texttt{isAnd}\ \texttt{gfin}\ o).\texttt{eval}\ x
- = F.\texttt{eval}\ x\ o .
-\]
+Let $F$ be a Boolean feedforward circuit with input variables indexed by
+$\mathrm{Fin}\,n$ and output nodes of type $\mathrm{out}$, equipped with a flag
+assigning to each non-input node the label AND or OR and a witness that each gate has
+finite arity. Suppose $F$ is an AND/OR circuit: every gate computes the conjunction of
+the values on its input wires when its node is labelled AND, and their disjunction when
+it is labelled OR. Then for every output node $o$ and every assignment $x :
+\mathrm{Fin}\,n \to \bbf_2$, the tree-shaped Boolean circuit obtained by unrolling $o$
+from the last layer down to the inputs, evaluated at $x$, agrees with the value that $F$
+itself assigns to $o$ under the input assignment $x$.
 \end{theorem}
 
-\begin{theorem}[Size bound for the converted circuit]
+\begin{theorem}[Size bound for the tree-unrolling of a feedforward circuit]
 \lean{ACP.FeedForward.toCircuit_size_le}
 \label{ACP.FeedForward.toCircuit_size_le}
 \leanok
 \uses{ACP.FeedForward, ACP.FeedForward.toCircuit, ACP.nodeToCircuit_size_le, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toFeedForward}
 \difficulty{1}
-If every gate of $F$ has at most $k$ input wires, then for every output node $o$ the
-tree-unrolled circuit satisfies
-$(F.\texttt{toCircuit}\ \texttt{isAnd}\ \texttt{gfin}\ o).\texttt{size} \le (k+1)^{F.\texttt{depth}}$.
+Let $F$ be a layered feedforward circuit over the Boolean alphabet with input type
+$\mathrm{Fin}\,n$ and output type $\mathrm{out}$, of depth $d$, in which each gate is
+designated an AND gate or an OR gate. Suppose every gate has finite input arity, and
+that there is a bound $k \in \bbn$ such that every gate reads from at most $k$ input
+wires. Then for each output node $o$, the tree-unrolled Boolean circuit obtained from
+$o$ has size (its total number of AND/OR gates and literal leaves) at most $(k+1)^{d}$.
 \end{theorem}
 
 \begin{definition}[Embedding a Boolean circuit as a feedforward circuit]
@@ -213,43 +223,58 @@ $C.\texttt{eval}$ from all inputs at once, and all later gates are identity wire
 that pass the single Boolean value upward.
 \end{definition}
 
-\begin{theorem}[Non-input nodes of the embedding are constant]
+\begin{theorem}[Non-input nodes of the circuit embedding compute the circuit]
 \lean{ACP.Circuit.toFeedForward_evalNode_const}
 \label{ACP.Circuit.toFeedForward_evalNode_const}
 \leanok
 \uses{ACP.FeedForward.evalNode, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toFeedForward}
 \difficulty{4}
-For every input $x$, every layer index $m$ with $0 < m$ and every node $v$ of layer
-$m$ of $C.\texttt{toFeedForward}$, the value of $v$ is
-$C.\texttt{toFeedForward}.\texttt{evalNode}\ v\ x = C.\texttt{eval}\ x$.
+Let $C$ be a Boolean circuit on $n$ variables and let $x : \mathrm{Fin}\,n \to \bbf_2$
+be an assignment of Boolean values to the inputs of $C$. The feedforward embedding of
+$C$ is a layered circuit of depth $\mathrm{depth}(C) + 1$ whose layer $0$ carries the
+$n$ input variables and each of whose higher layers carries a single node. Then for
+every layer index $m$ with $1 \le m \le \mathrm{depth}(C) + 1$ and every node $v$ of
+layer $m$, the value assigned to $v$ by the feedforward embedding on input $x$ equals
+$\mathrm{eval}(C, x)$, the value of $C$ on $x$.
 \end{theorem}
 
-\begin{theorem}[The embedding computes the same function]
+\begin{theorem}[Correctness of the feedforward embedding]
 \lean{ACP.Circuit.toFeedForward_eval}
 \label{ACP.Circuit.toFeedForward_eval}
 \leanok
 \uses{ACP.Circuit.toFeedForward_evalNode_const, ACP.FeedForward.eval₁, BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toFeedForward}
 \difficulty{2}
-For every circuit $C$ on $n$ inputs and every input $x$,
-$C.\texttt{toFeedForward}.\texttt{eval}_1\ x = C.\texttt{eval}\ x$.
+Let $C$ be a Boolean circuit on $n$ variables, and let $x : \mathrm{Fin}\,n \to \bbf_2$
+be an assignment of Boolean values to those variables. Form the feedforward embedding of
+$C$, a layered feedforward circuit with a single output wire, and let its unique output
+value under $x$ be the Boolean it computes. Then this value equals $C(x)$, the value
+obtained by evaluating the circuit $C$ directly on the assignment $x$.
 \end{theorem}
 
-\begin{theorem}[Depth of the embedding]
+\begin{theorem}[Depth of the feedforward embedding]
 \lean{ACP.Circuit.toFeedForward_depth}
 \label{ACP.Circuit.toFeedForward_depth}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.toFeedForward}
 \difficulty{1}
-The embedding uses one extra layer for the inputs:
-$C.\texttt{toFeedForward}.\texttt{depth} = C.\texttt{depth} + 1$.
+Let $C$ be a Boolean circuit on $n$ variables, with depth $\mathrm{depth}(C)$ equal to
+the length of the longest root-to-leaf path in $C$. Embedding $C$ as a layered
+feedforward circuit — in which layer $0$ carries the $n$ input variables and each higher
+layer carries a single wire — produces a circuit whose depth equals $\mathrm{depth}(C) +
+1$.
 \end{theorem}
 
-\begin{theorem}[Size bound for the embedding]
+\begin{theorem}[Size bound for the feedforward embedding of a Boolean circuit]
 \lean{ACP.Circuit.toFeedForward_size_le}
 \label{ACP.Circuit.toFeedForward_size_le}
 \leanok
 \uses{ACP.FeedForward.size, BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.one_le_size, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toFeedForward}
 \difficulty{3}
-For every circuit $C$ on $n$ inputs,
-$C.\texttt{toFeedForward}.\texttt{size} \le C.\texttt{size} \cdot (C.\texttt{depth} + 1)$.
+Let $C$ be a Boolean circuit on $n$ variables, and let $\mathrm{size}(C)$ and
+$\mathrm{depth}(C)$ denote its total number of nodes and its depth, respectively.
+Writing $\widehat{C}$ for the layered feedforward circuit obtained by embedding $C$, the
+number of non-input nodes of $\widehat{C}$ satisfies
+\[
+\mathrm{size}(\widehat{C}) \;\le\; \mathrm{size}(C)\,\bigl(\mathrm{depth}(C) + 1\bigr).
+\]
 \end{theorem}

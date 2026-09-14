@@ -24,27 +24,29 @@ $\varphi : \mathrm{CoinTape}(n) \to \Omega$ provided by
 \texttt{CommunicationComplexity.Internal.single\_coin\_approx}.
 \end{definition}
 
-\begin{theorem}[CoinTape approximation preserves complexity]
+\begin{theorem}[Coin-tape conversion preserves complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
 \difficulty{1}
-For any finite-message protocol $p$ over a finite probability space $\Omega$ and any
-$\delta > 0$, the complexity of the \texttt{CoinTape} approximation
-$(p.\mathrm{toCoinTape}\;\delta).2$ equals the complexity of the original protocol $p$.
+Let $\Omega$ be a finite probability space, and let $p$ be a public-coin finite-message
+protocol over shared randomness $\Omega$ with input sets $X$, $Y$ and output type
+$\alpha$. For every real number $\delta > 0$, the coin-tape conversion of $p$ at slack
+$\delta$ yields a length $n$ and a finite-message protocol over $\mathrm{CoinTape}(n)$
+whose communication complexity equals the communication complexity of $p$.
 \end{theorem}
 
-\begin{theorem}[CoinTape approximation preserves ApproxSatisfies]
+\begin{theorem}[Coin-tape conversion preserves approximate satisfaction]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Internal.single_coin_approx, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
 \difficulty{5}
 Let $p$ be a public-coin finite-message protocol over a finite probability space
-$\Omega$, let $Q : X \to Y \to \alpha \to \mathrm{Prop}$ be a correctness predicate,
-and let $\varepsilon, \delta > 0$. If $p$ approximately satisfies $Q$ with error at
-most $\varepsilon$ (i.e.\ $p.\mathrm{ApproxSatisfies}\;Q\;\varepsilon$ holds), then
-the \texttt{CoinTape} approximation $(p.\mathrm{toCoinTape}\;\delta).2$ approximately
-satisfies $Q$ with error at most $\varepsilon + \delta$.
+$\Omega$, with private input sets $X$ and $Y$ and outputs in $\alpha$; let $Q : X \to Y
+\to \alpha \to \mathrm{Prop}$ be a predicate; and let $\varepsilon$ and $\delta$ be real
+numbers with $\delta > 0$. If $p$ approximately satisfies $Q$ with error at most
+$\varepsilon$, then the coin-tape protocol obtained by converting $p$ with slack
+$\delta$ approximately satisfies $Q$ with error at most $\varepsilon + \delta$.
 \end{theorem}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Hash.collisionPiece_measureReal",
+ "key": "7d9dfcba67bef294",
+ "kind": "lemma",
+ "title": "Measure of a collision piece",
+ "statement": "Let $\\alpha$ be a finite type and let $k \\ge 1$. Fix two distinct elements $x \\ne y$ of $\\alpha$ and a value $a \\in \\mathrm{Fin}\\,k$, and equip the space of hash functions $\\alpha \\to \\mathrm{Fin}\\,k$ with the product of the uniform probability measures on the coordinates. Then the collision piece consisting of those hash functions $h$ with $h(x) = a$ and $h(y) = a$ has measure\n\\[\n  \\left(\\frac{1}{k}\\right)^2.\n\\]",
+ "hypotheses_covered": [
+  "$\\alpha$ is a finite type",
+  "$k \\ge 1$ (i.e. $k \\ne 0$)",
+  "$x$ and $y$ are distinct",
+  "$a$ is a fixed value in $\\mathrm{Fin}\\,k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ be a finite type, $k \\ge 1$, $x \\ne y \\in \\alpha$, and $a : \\mathrm{Fin}\\,k$.\nUnder the product measure on $\\texttt{HashSpace}\\,\\alpha\\,k$,\n\\[\n  \\mu_{\\mathbb{R}}(\\texttt{collisionPiece}\\,k\\,x\\,y\\,a) = \\left(\\frac{1}{k}\\right)^2.\n\\]"
+}

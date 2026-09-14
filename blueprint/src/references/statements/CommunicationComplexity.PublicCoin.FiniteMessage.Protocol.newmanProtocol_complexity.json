@@ -1,0 +1,20 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.newmanProtocol_complexity",
+ "key": "35bc38530b35295e",
+ "kind": "theorem",
+ "title": "Communication cost of the Newman protocol",
+ "statement": "Let $X$ and $Y$ be finite types, let $\\Omega$ be a finite probability space, and let $p$ be a public-coin finite-message protocol over $\\Omega$ with private inputs in $X$ and $Y$ and outputs in a type $\\alpha$. Fix a target function $f : X \\to Y \\to \\alpha$, real parameters $\\varepsilon$ and $c$ with $c > 1$, and suppose that $p$ $\\varepsilon$-computes $f$. Then the communication complexity of the associated Newman protocol equals\n\\[\n  \\left\\lceil \\log_2 t(X, Y, \\varepsilon, c) \\right\\rceil + \\mathrm{complexity}(p),\n\\]\nwhere $t(X, Y, \\varepsilon, c)$ is the derandomization sample count and $\\mathrm{complexity}(p)$ is the communication complexity of $p$; that is, running the Newman protocol costs exactly the cost of $p$ together with the number of bits Alice needs to name one seed in the table of size $t(X, Y, \\varepsilon, c)$.",
+ "hypotheses_covered": [
+  "X and Y are finite types",
+  "Ω is a finite probability space",
+  "p is a public-coin finite-message protocol over Ω",
+  "f : X → Y → α is the target function",
+  "ε, c are real parameters",
+  "c > 1",
+  "p ε-computes f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $p$ is a public-coin finite-message protocol that $\\varepsilon$-computes $f$, and $c > 1$,\nthen the communication complexity of the Newman protocol equals\n$\\lceil \\log_2(\\mathtt{derandomizationSamples}\\;X\\;Y\\;\\varepsilon\\;c) \\rceil + p.\\mathtt{complexity}$,\ni.e.\\ the original complexity plus the number of bits needed to index the seed table."
+}

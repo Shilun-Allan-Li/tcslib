@@ -1,0 +1,20 @@
+{
+ "lean_name": "GeneralHypercontractivity.general_two_function_hypercontractivity",
+ "key": "44f47f76b82bfe02",
+ "kind": "theorem",
+ "title": "General two-function hypercontractivity",
+ "statement": "Fix real exponents $1 \\le p \\le u$ with $u \\ge 2$, and a noise rate $\\rho$ with $0 \\le \\rho \\le 1$ satisfying $\\rho \\le \\sqrt{(p-1)/(u-1)}$. Then for every pair of Boolean functions $f, g : \\{0,1\\}^n \\to \\bbr$,\n\\[\n  \\langle f, T_\\rho g\\rangle\n  \\;\\le\\;\n  \\bigl(\\E\\bigl[\\,\\abs{f}^{u/(u-1)}\\,\\bigr]\\bigr)^{(u-1)/u}\\,\n  \\bigl(\\E\\bigl[\\,\\abs{g}^{p}\\,\\bigr]\\bigr)^{1/p},\n\\]\nwhere $\\langle\\cdot,\\cdot\\rangle$ is the $L^2$ inner product, $\\E$ the expectation, and $T_\\rho$ the noise operator, all taken with respect to the uniform measure on the hypercube.",
+ "hypotheses_covered": [
+  "1 ≤ p",
+  "p ≤ u",
+  "2 ≤ u",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "ρ ≤ sqrt((p-1)/(u-1))",
+  "f, g arbitrary Boolean functions of arity n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $1 \\le p \\le u$ with $u \\ge 2$, and let $0 \\le \\rho \\le 1$ satisfy\n$\\rho \\le \\sqrt{(p-1)/(u-1)}$. Then for all $f, g : \\mathrm{BoolCube}\\,n \\to \\bbr$,\n\\[\n  \\inn{f, T_\\rho g} \\;\\le\\;\n  \\bigl(\\E[\\abs{f}^{u/(u-1)}]\\bigr)^{(u-1)/u}\\,\\bigl(\\E[\\abs{g}^p]\\bigr)^{1/p}.\n\\]"
+}

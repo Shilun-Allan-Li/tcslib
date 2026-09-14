@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.nodeToCircuit_eval",
+ "key": "668bcb0f64fb344b",
+ "kind": "theorem",
+ "title": "Tree-unrolling preserves the value of a node",
+ "statement": "Let $F$ be a Boolean feedforward circuit whose inputs are indexed by $\\mathrm{Fin}\\,n$, and suppose each of its gates has finite arity and computes either the conjunction or the disjunction of its inputs, according to a flag marking every non-input node as an AND node or an OR node. Then for every layer $m$ with $m \\le \\mathrm{depth}(F)$, every node $v$ of layer $m$, and every input assignment $x : \\mathrm{Fin}\\,n \\to \\bbf_2$, the Boolean circuit obtained by tree-unrolling $v$, evaluated at $x$, equals the value that $v$ takes in $F$ under the assignment $x$.",
+ "hypotheses_covered": [
+  "F is a Boolean feedforward circuit with inputs indexed by Fin n",
+  "each gate has finite arity (gfin)",
+  "every gate is the conjunction or disjunction of its inputs per the AND/OR flag (hcorrect, isAnd)",
+  "m is a layer index with m ≤ depth(F)",
+  "v is a node at layer m",
+  "x is an input assignment Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every gate of $F$ is an AND or OR gate as recorded by $\\texttt{isAnd}$ and\n$\\texttt{gfin}$, then for every node $v$ at layer $m$ and every input\n$x : \\mathrm{Fin}\\,n \\to \\{0,1\\}$,\n\\[\n(\\texttt{nodeToCircuit}\\ F\\ \\texttt{isAnd}\\ \\texttt{gfin}\\ m\\ h\\ v).\\texttt{eval}\\ x\n = F.\\texttt{evalNode}\\ v\\ x .\n\\]"
+}

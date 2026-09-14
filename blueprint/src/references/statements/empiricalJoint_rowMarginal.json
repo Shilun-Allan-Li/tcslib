@@ -1,0 +1,17 @@
+{
+ "lean_name": "empiricalJoint_rowMarginal",
+ "key": "5be5a5b418b66b3c",
+ "kind": "lemma",
+ "title": "Row marginal of the empirical joint distribution",
+ "statement": "Fix $T \\ge 1$ rounds of play in which the row player uses mixed strategies $p_1,\\dots,p_T$ over $M$ actions and the column player uses mixed strategies $q_1,\\dots,q_T$ over $N$ actions, and let $\\sigma$ be the empirical joint distribution, which assigns to each profile $(i,j)$ the time-averaged probability $\\frac{1}{T}\\sum_{t=1}^{T} (p_t)_i (q_t)_j$. Then for every row action $i$, the row marginal $\\sigma^{\\mathrm{row}}_i = \\sum_{j} \\sigma_{ij}$ equals the time-average of the row player's weight on $i$:\n\\[\n\\sigma^{\\mathrm{row}}_i \\;=\\; \\frac{1}{T}\\sum_{t=1}^{T} (p_t)_i .\n\\]",
+ "hypotheses_covered": [
+  "$T > 0$ (at least one round)",
+  "row player's per-round mixed strategies $p_t$ over $M$ actions",
+  "column player's per-round mixed strategies $q_t$ over $N$ actions",
+  "$i$ is a row action in $\\mathrm{Fin}\\,M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The row marginal of the empirical joint distribution at action $i$ equals the\ntime-average of the row player's mixed-strategy weights:\n$(1/T)\\sum_{t} (p_t)_i$."
+}

@@ -17,7 +17,7 @@ result records the inequality that the corresponding step of the argument contri
 
 \section{Declarations}
 
-\begin{theorem}[Cauchy--Schwarz trick for the $3$-XOR value]
+\begin{theorem}[A Cauchy–Schwarz estimate for the 3-XOR value]
 \lean{cauchy_schwarz_trick}
 \label{cauchy_schwarz_trick}
 \leanok
@@ -31,19 +31,18 @@ result records the inequality that the corresponding step of the argument contri
   pdf-b372a20892ce-p007-b006,
   pdf-b372a20892ce-p007-b007
 }
-For natural numbers $n, m > 0$ and reals $\mathrm{val}_f, \mathrm{val}_{f_{L,R}}$, if
+Let $n, m$ be positive integers, and let $v, w$ be real numbers (thought of as the value
+of a $3$-XOR polynomial and that of its derived $4$-XOR polynomial). If
 \[
-  9\,\mathrm{val}_f^{2} \;\le\; 3nm + 4n\,\mathrm{val}_{f_{L,R}},
+  9\,v^{2} \;\le\; 3nm + 4n\,w,
 \]
 then
 \[
-  \mathrm{val}_f^{2} \;\le\; \frac{nm}{3} + \frac{4n\,\mathrm{val}_{f_{L,R}}}{9}.
+  v^{2} \;\le\; \frac{nm}{3} + \frac{4n\,w}{9}.
 \]
-This is the normalised form of the Cauchy--Schwarz step relating the value of the
-$3$-XOR polynomial $f_b$ to the value of the derived $4$-XOR polynomial $f_{L,R}$.
 \end{theorem}
 
-\begin{theorem}[Nonzero entry count for the Kikuchi matrix]
+\begin{theorem}[A factor-of-two bound between two multiples of a binomial coefficient]
 \lean{nonzero_entry_count}
 \label{nonzero_entry_count}
 \leanok
@@ -57,17 +56,14 @@ $3$-XOR polynomial $f_b$ to the value of the derived $4$-XOR polynomial $f_{L,R}
   pdf-b372a20892ce-p008-b008,
   pdf-b372a20892ce-p009-b005
 }
-For naturals $n \ge 4$, $k > 0$ and $\ell \ge 2$ with $2\ell \le 2n$ and
-$\ell^{2}k \le n$ (the smallness condition $\ell \le \sqrt{n/k}$), the count of good
-pairs recorded for a derived clause satisfies
+Let $n \ge 4$, $k > 0$ and $\ell \ge 2$ be natural numbers satisfying $2\ell \le 2n$ and
+$\ell^{2}k \le n$. Then
 \[
-  2\binom{2n-4}{\ell-2} \;\le\; 4\binom{2n-4}{\ell-2},
+  2\binom{2n-4}{\,\ell-2\,} \;\le\; 4\binom{2n-4}{\,\ell-2\,}.
 \]
-i.e.\ the guaranteed number $2\binom{2n-4}{\ell-2}$ of nonzero entries is at most the
-total number $4\binom{2n-4}{\ell-2}$ of potential pairs $(S,T)$.
 \end{theorem}
 
-\begin{theorem}[Row sparsity of the Kikuchi matrices]
+\begin{theorem}[A natural-number bound implies itself]
 \lean{row_bound_le_two_d}
 \statementsource{arXiv.2109.04415}{pdf-9c5df3bb4a04-p033-b002}
 \label{row_bound_le_two_d}
@@ -77,13 +73,10 @@ total number $4\binom{2n-4}{\ell-2}$ of potential pairs $(S,T)$.
   pdf-b372a20892ce-p008-b007,
   pdf-b372a20892ce-p010-b002
 }
-For naturals $d$ and $\mathrm{row\_nnz}$, if the number of nonzero entries in a row of
-the matrix $B_i$ satisfies $\mathrm{row\_nnz} \le 2d$, then $\mathrm{row\_nnz} \le 2d$.
-This records the row/column bound: with pair-degree at most $d$, each $B_i$ has at most
-$2d$ nonzero entries per row and per column.
+Let $d$ and $r$ be natural numbers. If $r \le 2d$, then $r \le 2d$.
 \end{theorem}
 
-\begin{theorem}[Spectral certificate for the derived $4$-XOR value]
+\begin{theorem}[Spectral certificate value bound]
 \lean{spectral_certificate_bound}
 \label{spectral_certificate_bound}
 \leanok
@@ -94,14 +87,12 @@ $2d$ nonzero entries per row and per column.
   pdf-9c5df3bb4a04-p030-b003
 }
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p009-b001}
-For reals $\mathrm{val}_{f_{L,R}}$, $N$, $D$ and $\norm{A}$ with $D > 0$ and $N > 0$,
-if
+Let $\mathrm{val}_{f_{L,R}}$, $N$, $D$, and $\norm{A}$ be real numbers with $D > 0$ and
+$N > 0$. If
 \[
   \mathrm{val}_{f_{L,R}} \;\le\; \frac{N}{D}\,\norm{A},
 \]
-then the same bound holds. Here $N = \binom{2n}{\ell}$, $D = 2\binom{2n-4}{\ell-2}$,
-and $\norm{A}$ is the spectral norm of the Kikuchi matrix $A$, so the statement records
-the certificate $\mathrm{val}(f_{L,R}) \le (N/D)\,\norm{A}$.
+then $\mathrm{val}_{f_{L,R}} \le \frac{N}{D}\,\norm{A}$.
 \end{theorem}
 
 \begin{theorem}[Positivity of the spectral norm bound]
@@ -121,17 +112,15 @@ the certificate $\mathrm{val}(f_{L,R}) \le (N/D)\,\norm{A}$.
   pdf-7fbbda473d03-p006-b003,
   pdf-7fbbda473d03-p001-b006
 }
-For naturals $k, d, \ell > 0$ and $n \ge 2$ there exists a real constant $C_1 > 0$ such
-that
+Let $k, d, \ell$ be positive integers and let $n \ge 2$. Then there exists a positive
+real constant $C_1 > 0$ for which the quantity
 \[
-  C_1 \cdot d \cdot \sqrt{k\,\ell\,\log n} \;>\; 0 .
+  C_1 \cdot d \cdot \sqrt{k\,\ell\,\log n}
 \]
-The displayed quantity is the matrix-Khintchine bound $\E_b[\norm{A}] \le
-C_1\, d\, \sqrt{k\,\ell\,\log n}$ appearing in the argument, and the statement asserts
-that such a positive constant, with positive associated bound, exists.
+is itself positive.
 \end{theorem}
 
-\begin{theorem}[$3$-XOR refutation bound]
+\begin{theorem}[Self-implication of the 3-XOR refutation bound]
 \lean{three_xor_refutation}
 \label{three_xor_refutation}
 \leanok
@@ -146,14 +135,11 @@ that such a positive constant, with positive associated bound, exists.
   pdf-b372a20892ce-p006-b005,
   pdf-b372a20892ce-p009-b003
 }
-For naturals $k, d > 0$, $n \ge 2$ and $m \le nk$ there exists a real constant
-$C_2 > 0$ such that, for every real $\mathrm{val}_f^{\mathrm{exp}}$ satisfying
+Let $k$, $n$, $d$ be natural numbers with $k > 0$, $n \ge 2$, and $d > 0$, and let $m$
+be a natural number with $m \le nk$. Then there exists a real constant $C_2 > 0$ such
+that every real number $v$ satisfying
 \[
-  \mathrm{val}_f^{\mathrm{exp}} \;\le\;
-    C_2 \, n \, \sqrt{k} \, d \, (nk)^{1/8} \, (\log n)^{1/4},
+  v \;\le\; C_2 \, n \, \sqrt{k} \, d \, (nk)^{1/8} (\log n)^{1/4}
 \]
-the same bound holds. The displayed inequality is the refutation bound
-$\E_b[\mathrm{val}(f_b)] \le C_2\, n \sqrt{k}\, d\, (nk)^{1/8} (\log n)^{1/4}$ obtained
-by combining the Cauchy--Schwarz trick, the spectral certificate, the binomial ratio
-estimate and the spectral norm bound with the choice $\ell = \Theta(\sqrt{n/k})$.
+also satisfies $v \le C_2 \, n \, \sqrt{k} \, d \, (nk)^{1/8} (\log n)^{1/4}$.
 \end{theorem}

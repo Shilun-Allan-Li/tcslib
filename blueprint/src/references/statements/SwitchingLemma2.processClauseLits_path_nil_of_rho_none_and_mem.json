@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem",
+ "key": "63d4dc5f26b3ab60",
+ "kind": "lemma",
+ "title": "Empty remaining path when a clause literal's variable stays free",
+ "statement": "Fix $n$, a list $\\mathit{lits}$ whose entries are literals paired with clause positions, a path $\\mathit{path}$ presented as a list of variable–direction pairs, and two restrictions $\\rho_0,\\sigma$ on $n$ variables. Suppose the pair $(l,\\mathit{idx})$ occurs in $\\mathit{lits}$, that every entry of $\\mathit{lits}$ whose variable equals $\\mathrm{var}(l)$ is equal to $l$ itself, and that $\\rho_0$ leaves $\\mathrm{var}(l)$ free. Processing $\\mathit{lits}$ against $\\mathit{path}$ from the starting restrictions $\\rho_0$ and $\\sigma$ yields an updated restriction $\\rho_0'$, an updated restriction $\\sigma'$, a remaining path, and accumulated auxiliary data. If $\\rho_0'$ still leaves $\\mathrm{var}(l)$ free, then the remaining path yielded is empty.",
+ "hypotheses_covered": [
+  "the pair $(l,\\mathit{idx})$ belongs to $\\mathit{lits}$",
+  "every entry of $\\mathit{lits}$ with variable $\\mathrm{var}(l)$ equals $l$",
+  "$\\rho_0$ leaves $\\mathrm{var}(l)$ free at the start",
+  "the updated restriction $\\rho_0'$ still leaves $\\mathrm{var}(l)$ free"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose $(l, idx)$ is in the input list, no other input literal shares $l$'s variable,\n$\\rho_0\\,l.\\mathrm{var} = \\mathrm{none}$ initially, and\n\\texttt{SwitchingLemma2.processClauseLits} still leaves $\\rho_0$ unset at\n$l.\\mathrm{var}$. Then the remaining path returned by the routine is empty, since $l$ was\nnever processed because the path ran out first."
+}

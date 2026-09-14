@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.full_iterative_bound",
+ "key": "2e8ed64a9df4ed2e",
+ "kind": "theorem",
+ "title": "Aggregating per-layer bounds into a total bound",
+ "statement": "Fix a natural number $m$ and layer sizes $\\ell_1, \\dots, \\ell_m \\in \\bbn$ whose total satisfies $\\sum_{i=1}^m \\ell_i \\le s$ for some $s \\in \\bbn$. Let $\\alpha \\ge 0$ and $\\beta$ be real numbers, and suppose $a_1, \\dots, a_m$ are real quantities with $a_i \\le \\ell_i\\,\\alpha$ for each $i$, together with a final real quantity $b$ satisfying $b \\le \\beta$. Then\n\\[\n\\sum_{i=1}^m a_i + b \\;\\le\\; s\\,\\alpha + \\beta.\n\\]",
+ "hypotheses_covered": [
+  "m layers with sizes ℓ_i in ℕ",
+  "sum of layer sizes at most s",
+  "α ≥ 0",
+  "each per-layer quantity a_i ≤ ℓ_i·α",
+  "final quantity b ≤ β"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Given layer sizes summing to at most $s$, if each per-layer quantity is bounded by\n$\\mathrm{layerSize}(i)\\cdot\\alpha$ (with $\\alpha\\ge 0$) and a final term is bounded by $\\beta$,\nthen the total $\\sum_i \\mathrm{per\\_layer}(i) + \\mathrm{final}$ is at most $s\\cdot\\alpha+\\beta$."
+}

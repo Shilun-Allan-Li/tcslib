@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_sigma_ne_neg",
+ "key": "c94e897c4ee15f95",
+ "kind": "lemma",
+ "title": "Processing free literals preserves a variable's non-negating assignment",
+ "statement": "Let $\\ell$ be a literal with variable $v$ and negation flag $b$, let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, and let $\\mathit{lits}$ be a list of literals (each tagged with its position index in the clause) run against a decision-tree path. Suppose that every literal in $\\mathit{lits}$ whose variable is $v$ is equal to $\\ell$, and that $\\sigma$ does not already assign $v$ the fixed value $b$, i.e. $\\sigma(v) \\neq \\mathrm{some}\\,b$. Then the restriction $\\sigma'$ obtained as the $\\sigma$-component of processing $\\mathit{lits}$ against the path starting from $\\rho_0$ and $\\sigma$ still does not assign $v$ the value $b$, i.e. $\\sigma'(v) \\neq \\mathrm{some}\\,b$.",
+ "hypotheses_covered": [
+  "every literal in the list sharing l's variable equals l",
+  "σ(l.var) ≠ some l.neg initially",
+  "the output σ-component evaluated at l.var"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If no literal in the input list shares $l$'s variable except $l$ itself, and the initial\n$\\sigma$ at $l.\\mathrm{var}$ is not $\\mathrm{some}\\ l.\\mathrm{neg}$, then after\n\\texttt{SwitchingLemma2.processClauseLits} the $\\sigma$ output at $l.\\mathrm{var}$ is still\nnot $\\mathrm{some}\\ l.\\mathrm{neg}$."
+}

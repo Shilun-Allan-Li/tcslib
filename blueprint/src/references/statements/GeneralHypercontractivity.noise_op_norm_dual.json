@@ -1,0 +1,18 @@
+{
+ "lean_name": "GeneralHypercontractivity.noise_op_norm_dual",
+ "key": "d584dc07eb2002cf",
+ "kind": "lemma",
+ "title": "Duality of noise-operator norm bounds",
+ "statement": "Fix exponents $p, q > 1$ and a noise parameter $\\rho$ with $0 \\le \\rho \\le 1$, and write $p' = p/(p-1)$ and $q' = q/(q-1)$ for the H\\\"older conjugates. Then the noise operator $T_\\rho$ on Boolean functions $f : \\{0,1\\}^n \\to \\bbr$ satisfies the $(p \\to q)$ bound\n\\[\n  \\bigl(\\E\\bigl[\\,\\abs{T_\\rho f}^q\\,\\bigr]\\bigr)^{1/q} \\;\\le\\; \\bigl(\\E\\bigl[\\,\\abs{f}^p\\,\\bigr]\\bigr)^{1/p}\n  \\qquad \\text{for every } f\n\\]\nif and only if it satisfies the conjugate $(q' \\to p')$ bound\n\\[\n  \\bigl(\\E\\bigl[\\,\\abs{T_\\rho f}^{p'}\\,\\bigr]\\bigr)^{1/p'} \\;\\le\\; \\bigl(\\E\\bigl[\\,\\abs{f}^{q'}\\,\\bigr]\\bigr)^{1/q'}\n  \\qquad \\text{for every } f,\n\\]\nwhere all norms are taken with respect to the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "p > 1",
+  "q > 1",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "bound quantified over all Boolean functions f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $p, q > 1$ and $0 \\le \\rho \\le 1$, the $(p \\to q)$ bound\n\\[\n  \\bigl(\\E[\\abs{T_\\rho f}^q]\\bigr)^{1/q} \\le \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}\n  \\qquad \\text{for all } f\n\\]\nholds if and only if the bound for the H\\\"older-conjugate exponents holds:\n\\[\n  \\bigl(\\E[\\abs{T_\\rho f}^{p/(p-1)}]\\bigr)^{(p-1)/p} \\le\n  \\bigl(\\E[\\abs{f}^{q/(q-1)}]\\bigr)^{(q-1)/q}\n  \\qquad \\text{for all } f.\n\\]"
+}

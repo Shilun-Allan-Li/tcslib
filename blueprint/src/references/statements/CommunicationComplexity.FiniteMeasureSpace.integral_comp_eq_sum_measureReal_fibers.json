@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers",
+ "key": "ee1917b8d542f1db",
+ "kind": "theorem",
+ "title": "Integral of a discrete-valued function as a sum over fibers",
+ "statement": "Let $\\Omega$ be a finite measurable space, $\\alpha$ a finite type on which every subset is measurable, $\\mu$ a finite measure on $\\Omega$, and $Z : \\Omega \\to \\alpha$ and $f : \\alpha \\to \\bbr$ any functions. Then\n\\[\n  \\int_\\Omega f(Z(\\omega))\\,d\\mu(\\omega)\n  \\;=\\; \\sum_{z \\in \\alpha} \\mu\\bigl(Z^{-1}(\\{z\\})\\bigr)\\, f(z),\n\\]\nwhere $\\mu(Z^{-1}(\\{z\\}))$ denotes the real number giving the measure of the fiber $Z^{-1}(\\{z\\}) = \\{\\omega \\in \\Omega : Z(\\omega) = z\\}$.",
+ "hypotheses_covered": [
+  "Ω a finite measurable space",
+  "α a finite type with the discrete measurable structure",
+  "μ a finite measure on Ω",
+  "Z a function Ω → α",
+  "f a function α → ℝ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $Z : \\Omega \\to \\alpha$ be a measurable map from a finite measurable space to a\nfinite discrete type, $\\mu$ a finite measure on $\\Omega$, and $f : \\alpha \\to\n\\mathbb{R}$.  Then\n\\[\n  \\int_\\Omega f(Z(\\omega))\\,d\\mu(\\omega)\n  \\;=\\; \\sum_{z \\in \\alpha} \\mu^{\\mathbb{R}}(Z^{-1}\\{z\\}) \\cdot f(z).\n\\]"
+}

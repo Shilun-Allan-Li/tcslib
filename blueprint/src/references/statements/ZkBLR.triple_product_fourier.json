@@ -1,0 +1,18 @@
+{
+ "lean_name": "ZkBLR.triple_product_fourier",
+ "key": "3f9ca34108efa088",
+ "kind": "lemma",
+ "title": "Triple-product identity for the twisted lift",
+ "statement": "Fix $k \\ge 1$ and $n \\ge 0$, and work over the group $\\mathbb{Z}_k^n = (\\mathbb{Z}/k\\mathbb{Z})^n$ with primitive $k$-th root of unity $\\omega_k = e^{2\\pi i/k}$. Given $j \\in \\mathbb{Z}/k\\mathbb{Z}$ and a map $f \\colon \\mathbb{Z}_k^n \\to \\mathbb{Z}/k\\mathbb{Z}$, let $F(x) = \\omega_k^{\\,j\\cdot f(x)}$ be its $j$-twisted lift, and for $s \\in \\mathbb{Z}_k^n$ let $\\widehat{F}(s) = \\mathbb{E}_x\\!\\big[F(x)\\,\\overline{\\omega_k^{\\,s\\cdot x}}\\big]$ be its Fourier coefficient, where $s\\cdot x = \\sum_{i} s_i x_i \\in \\mathbb{Z}/k\\mathbb{Z}$ and $\\mathbb{E}$ denotes the uniform average over $\\mathbb{Z}_k^n$. Then the triple-product expectation over independent uniform $x,y$ equals a cubic sum of the Fourier coefficients:\n\\[\n  \\mathbb{E}_x\\,\\mathbb{E}_y\\!\\left[F(x+y)\\,\\overline{F(x)}\\,\\overline{F(y)}\\right]\n  = \\sum_{s\\in\\mathbb{Z}_k^n} \\bigl\\lvert \\widehat{F}(s)\\bigr\\rvert^2\\,\\overline{\\widehat{F}(s)}.\n\\]",
+ "hypotheses_covered": [
+  "k is nonzero (k ≥ 1)",
+  "j ∈ ℤ/kℤ",
+  "f : ℤ_k^n → ℤ/kℤ",
+  "F is the j-twisted lift ω_k^{j·f(x)}",
+  "expectations are uniform averages over ℤ_k^n in x and y independently"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $j \\in \\mathbb{Z}_k$ and $F = \\widetilde{f}_j$, the triple-product\nexpectation satisfies\n\\[\n  \\mathbb{E}_x\\!\\left[\\mathbb{E}_y\\!\\left[\n    F(x{+}y)\\,\\overline{F(x)}\\,\\overline{F(y)}\n  \\right]\\right]\n  = \\sum_{s\\in\\mathbb{Z}_k^n}\n    \\|\\widehat{F}(s)\\|^2\\,\\overline{\\widehat{F}(s)}.\n\\]"
+}

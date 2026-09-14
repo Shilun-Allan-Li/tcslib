@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleGraph.exists_chromaticPolynomial",
+ "key": "b236e35758ba7642",
+ "kind": "theorem",
+ "title": "Existence of the chromatic polynomial",
+ "statement": "Let $G$ be a finite simple graph on a nonempty vertex set, and write $n$ for the number of its vertices and $\\pi_k(G)$ for the number of distinct proper $k$-colourings of $G$. Then there is a polynomial $p \\in \\bbz[x]$ with integer coefficients such that $p(k) = \\pi_k(G)$ for every $k \\in \\bbn$; moreover $p$ has degree $n$, leading coefficient $1$, and constant term $0$, and its coefficients alternate in sign, in the sense that $(-1)^{n-i}\\,a_i \\ge 0$ for every $i$, where $a_i$ denotes the coefficient of $x^i$ in $p$.",
+ "hypotheses_covered": [
+  "G is a finite simple graph (Fintype V)",
+  "the vertex set is nonempty (Nonempty V)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{For any graph \\texttt{G}, \\texttt{$\\pi$\\_k(G)} is a polynomial in \\texttt{k} of\ndegree\n\\texttt{$\\nu$}, with integer coefficients, leading term \\texttt{k\\textasciicircum{}$\\nu$} and constant term zero.\nFurthermore, the coefficients of \\texttt{$\\pi$\\_k(G)} alternate in sign.}"
+}

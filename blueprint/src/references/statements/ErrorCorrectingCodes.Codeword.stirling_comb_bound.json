@@ -1,0 +1,18 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.stirling_comb_bound",
+ "key": "daac0e944b2af4f7",
+ "kind": "lemma",
+ "title": "Stirling-type lower bound for a factorial ratio",
+ "statement": "Let $a,b,n\\in\\bbn$ with $a>0$, $b>0$, and $a+b=n$, and let $c>0$ be a real number. Suppose the factorial product $a!\\,b!$ admits the Stirling-type upper bound\n\\[\na!\\,b! \\;\\le\\; c\\cdot\\Bigl(\\sqrt{2}\\,\\sqrt{a}\\,\\sqrt{\\pi}\\,(a/e)^{a}\\Bigr)\\Bigl(\\sqrt{2}\\,\\sqrt{b}\\,\\sqrt{\\pi}\\,(b/e)^{b}\\Bigr).\n\\]\nThen the ratio $n!/(a!\\,b!)$ is bounded below by\n\\[\n\\frac{n^{n}}{a^{a}\\,b^{b}}\\cdot\\frac{1}{c\\,\\sqrt{\\pi/2}\\,\\sqrt{n}}\n\\;\\le\\;\n\\frac{n!}{a!\\,b!}.\n\\]",
+ "hypotheses_covered": [
+  "a > 0",
+  "b > 0",
+  "c > 0",
+  "a + b = n",
+  "Stirling-type upper bound on a!·b! with constant c"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $a,b,n\\in\\mathbb{N}$ with $a,b>0$, $a+b=n$, and let $c>0$. Suppose the Stirling-type bound\n\\[\na!\\,\\cdot\\,b! \\;\\le\\; c\\cdot\\Big(\\sqrt{2}\\sqrt{a}\\sqrt{\\pi}\\,(a/e)^a\\cdot\\sqrt{2}\\sqrt{b}\\sqrt{\\pi}\\,(b/e)^b\\Big)\n\\]\nholds. Then\n\\[\n\\frac{n^n}{a^a\\,b^b}\\,\\Big/\\,\\big(c\\,\\sqrt{\\pi/2}\\,\\sqrt{n}\\big)\n\\;\\le\\;\n\\frac{n!}{a!\\,b!}.\n\\]"
+}

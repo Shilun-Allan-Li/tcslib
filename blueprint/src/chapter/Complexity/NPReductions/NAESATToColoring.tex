@@ -147,43 +147,48 @@ $\mathtt{clauseNode}\;c\;k \mapsto
 \texttt{NAEtoColor.clauseNodeColor}\;(\mathit{assign}(c.v_0))\;(\mathit{assign}(c.v_1))\;(\mathit{assign}(c.v_2))\;k$.
 \end{definition}
 
-\begin{lemma}[Completeness of reduction]
+\begin{lemma}[Completeness of the NAE-SAT to 3-coloring reduction]
 \lean{NAEtoColor.NAEtoColorCompleteness}
 \label{NAEtoColor.NAEtoColorCompleteness}
 \leanok
 \uses{NAEtoColor.EdgeRelation, NAEtoColor.Is3Colorable, NAEtoColor.IsSatisfiable, NAEtoColor.NAESat3, NAEtoColor.OutputVertex, NAEtoColor.ReductionGraph, NAEtoColor.SatisfiesClause, NAEtoColor.clauseNodeColor, NAEtoColor.naeColoring}
 \difficulty{5}
-If a NAE-SAT instance $f$ over variable type $V$ is satisfiable, then the
-reduction graph $\texttt{NAEtoColor.ReductionGraph}\;f$ is 3-colorable.
-Concretely, any satisfying assignment yields the proper coloring
-$\texttt{NAEtoColor.naeColoring}$.
+Let $f$ be a NAE-SAT instance over a variable type $V$, that is, a list of not-all-equal
+clauses each naming three variables. If $f$ is satisfiable — some Boolean assignment $V
+\to \{\mathrm{true}, \mathrm{false}\}$ makes the three variables of every clause not all
+receive the same value — then the reduction graph of $f$ is 3-colorable, meaning it
+admits a proper coloring with the three colors $\{0, 1, 2\}$.
 \end{lemma}
 
-\begin{lemma}[Soundness of reduction]
+\begin{lemma}[Soundness of the NAE-SAT to 3-coloring reduction]
 \lean{NAEtoColor.NAEtoColorSoundness}
 \label{NAEtoColor.NAEtoColorSoundness}
 \leanok
 \uses{NAEtoColor.EdgeRelation, NAEtoColor.Is3Colorable, NAEtoColor.IsSatisfiable, NAEtoColor.NAESat3, NAEtoColor.OutputVertex, NAEtoColor.ReductionGraph, NAEtoColor.SatisfiesClause, NAEtoColor.SatisfiesNAE3}
 \difficulty{6}
-If the reduction graph $\texttt{NAEtoColor.ReductionGraph}\;f$ is 3-colorable,
-then the NAE-SAT instance $f$ is satisfiable.
-The assignment is recovered by comparing each variable-node color to the
-``true'' color (ground color $+1 \pmod{3}$); the triangle gadgets within each
-clause force the three variable colors to be not all equal, yielding a
-NAE-satisfying assignment.
+Let $f$ be a NAE-SAT instance over a variable type $V$, that is, a list of Not-All-Equal
+clauses, each clause naming three variables. Form the reduction graph associated to $f$:
+its vertices are a single ground vertex, one vertex for each variable in $V$, and, for
+every clause, three gadget vertices; its edges join the ground vertex to each variable
+vertex, join each variable vertex $v$ to a clause-gadget vertex whenever $v$ occurs in
+the corresponding position of that clause, and, for every clause of $f$, join its three
+gadget vertices pairwise into a triangle. If this graph is 3-colorable — that is, its
+vertices admit a coloring by $\{0,1,2\}$ in which adjacent vertices receive distinct
+colors — then $f$ is satisfiable: there exists a Boolean assignment $\mathit{assign} : V
+\to \{\mathrm{true},\mathrm{false}\}$ under which every clause of $f$ has its three
+assigned values not all equal.
 \end{lemma}
 
-\begin{theorem}[NAE-SAT iff 3-colorable]
+\begin{theorem}[Correctness of the NAE-SAT to 3-coloring reduction]
 \lean{NAEtoColor.NAEtoColorReduction}
 \label{NAEtoColor.NAEtoColorReduction}
 \leanok
 \uses{NAEtoColor.Is3Colorable, NAEtoColor.IsSatisfiable, NAEtoColor.NAESat3, NAEtoColor.NAEtoColorCompleteness, NAEtoColor.NAEtoColorSoundness, NAEtoColor.ReductionGraph}
 \difficulty{1}
-For any NAE-SAT instance $f$ over variable type $V$,
-\[
-  \texttt{NAEtoColor.IsSatisfiable}\;f
-  \;\iff\;
-  \texttt{NAEtoColor.Is3Colorable}\;(\texttt{NAEtoColor.ReductionGraph}\;f).
-\]
-This is the main reduction theorem, combining completeness and soundness.
+Let $f$ be a NAE-SAT instance over a variable type $V$, and let $\Gamma(f)$ denote its
+reduction graph, the simple graph built from $f$ as described above (a ground vertex
+joined to every variable vertex, each variable vertex joined to the clause-gadget
+vertices for the clauses in which it occurs, and the three gadget vertices of each
+clause joined pairwise into a triangle). Then $f$ is satisfiable if and only if
+$\Gamma(f)$ is 3-colorable.
 \end{theorem}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.finite_cover_by_hamming_balls_card_bound",
+ "key": "056a71cdfd1a1d0d",
+ "kind": "theorem",
+ "title": "Covering by Hamming balls: a counting bound",
+ "statement": "Let $\\alpha$, $\\beta$, and $\\mathrm{Cand}$ be finite sets, and assign to each candidate $c \\in \\mathrm{Cand}$ a function $\\mathrm{center}(c) \\colon \\alpha \\to \\beta$. For a radius $e \\in \\bbn$, write the Hamming ball of radius $e$ about $c$ for the set of functions $f \\colon \\alpha \\to \\beta$ that differ from $\\mathrm{center}(c)$ in at most $e$ coordinates, that is, with $\\abs{\\{a \\in \\alpha : \\mathrm{center}(c)(a) \\neq f(a)\\}} \\le e$. Suppose that every such ball contains at most $B$ functions, and that every $f \\colon \\alpha \\to \\beta$ lies in the ball about at least one candidate. Then \\[ \\abs{\\{\\text{functions } \\alpha \\to \\beta\\}} \\le \\abs{\\mathrm{Cand}} \\cdot B. \\]",
+ "hypotheses_covered": [
+  "α, β, Cand are finite",
+  "center assigns to each candidate a function α → β",
+  "e and B are natural numbers",
+  "each Hamming ball of radius e about a center contains at most B functions",
+  "every function α → β lies within Hamming distance e of some center"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha, \\beta, \\mathrm{Cand}$ be finite and let $\\mathrm{center} : \\mathrm{Cand}\n\\to (\\alpha \\to \\beta)$. If every ball $\\{f : \\abs{\\{a : \\mathrm{center}\\,c\\,a \\neq f(a)\\}}\n\\le e\\}$ has at most $B$ elements, and every $f : \\alpha \\to \\beta$ lies in one of these\nballs, then $\\abs{\\alpha \\to \\beta} \\le \\abs{\\mathrm{Cand}} \\cdot B$."
+}

@@ -14,49 +14,58 @@ for the set $J$ of free coordinates.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{definition}[Restriction commutes with the $\pm 1$-encoding]
+\begin{definition}[Restriction commutes with the sign encoding]
 \lean{RestrictionFourier.restrictBF_boolToSign}
 \label{RestrictionFourier.restrictBF_boolToSign}
 \leanok
 \uses{BooleanAnalysis.boolToSign, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{1}
-The restriction $\mathrm{restrictBF}$ of a real-valued Boolean function reads free
-coordinates from the input and fixed coordinates from the restriction $\rho$, i.e.
-$(\mathrm{restrictBF}\,f\,\rho)(x) = f(\rho.\mathrm{extend}\,x)$. This statement says
-that for a Boolean-valued $f : \{0,1\}^n \to \{0,1\}$, restricting its $\pm1$-encoding
-agrees with encoding the restricted function: $\mathrm{restrictBF}\,(\mathrm{boolToSign}\circ f)\,\rho
-= \mathrm{boolToSign}\circ(\mathrm{restrictFn}\,f\,\rho)$.
+Write $\sigma\colon\{0,1\}\to\{-1,1\}$ for the sign encoding, $\sigma(0)=1$ and
+$\sigma(1)=-1$, and for a function $g$ on the cube (Boolean- or real-valued) let
+$g_\rho$ denote its restriction along $\rho$, obtained by reading each free coordinate
+from the input and each fixed coordinate from $\rho$. Let $f\colon\{0,1\}^n\to\{0,1\}$
+be a Boolean-valued function and let $\rho$ be a restriction on $n$ variables. Then
+restricting the real-valued function $x\mapsto\sigma(f(x))$ along $\rho$ agrees with
+first restricting $f$ and then applying the sign encoding; that is, $(\sigma\circ
+f)_\rho=\sigma\circ f_\rho$, so that for every point $x$,
+\[
+  (\sigma\circ f)_\rho(x)\;=\;\sigma\big(f_\rho(x)\big).
+\]
 \end{definition}
 
-\begin{definition}[Membership in the free variables]
+\begin{definition}[Characterizing the free coordinates of a restriction]
 \lean{RestrictionFourier.mem_freeVars}
 \label{RestrictionFourier.mem_freeVars}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{1}
-For a restriction $\rho$ and a coordinate $i$, we have $i \in \rho.\mathrm{freeVars}$ if
-and only if $\rho\,i = \mathtt{none}$, i.e. exactly when $\rho$ leaves the coordinate $i$
-unfixed. The companion definition $\mathrm{signProd}\,\rho\,T = \prod_{i \in T}
-\mathrm{boolToSign}((\rho\,i).\mathrm{getD}\ \mathtt{false})$ collects the $\pm1$-encodings of
-the bits $\rho$ fixes on a set $T$.
+Let $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ be a restriction on $n$
+variables, and let $i \in \mathrm{Fin}\,n$ be a coordinate. Then $i$ belongs to the set
+of free variables of $\rho$ if and only if $\rho(i)$ is unset; that is, exactly when
+$\rho$ leaves the coordinate $i$ free rather than fixing it to a Boolean value.
 \end{definition}
 
-\begin{lemma}[Character through a restriction splits]
+\begin{lemma}[Splitting a Walsh character along a restriction]
 \lean{RestrictionFourier.chiS_extend}
 \label{RestrictionFourier.chiS_extend}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
 \difficulty{3}
-For a set $U \subseteq [n]$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
-and an input $x$,
+Let $\rho$ be a restriction on $n$ variables, let $J\subseteq[n]$ be its set of free
+coordinates, and let $U\subseteq[n]$ and $x\in\{0,1\}^n$ be arbitrary. Write $\hat x$
+for the extension of $x$ by $\rho$, namely the point of $\{0,1\}^n$ that agrees with $x$
+on the free coordinates and takes the fixed value of $\rho$ on the remaining ones. Then
+the Walsh character $\chi_U$ evaluated at $\hat x$ factors as
 \[
-  \chi_U(\rho.\mathrm{extend}\,x) \;=\; \chi_{U \cap J}(x)\cdot \mathrm{signProd}\,\rho\,(U \setminus J),
+  \chi_U(\hat x) \;=\; \chi_{U\cap J}(x)\cdot\prod_{i\in U\setminus J}\sigma(b_i),
 \]
-so the character splits into a character in the free coordinates times a constant sign
-coming from the fixed coordinates.
+where $b_i$ denotes the Boolean value that $\rho$ fixes at coordinate $i$ and $\sigma$
+is the sign encoding sending $\mathtt{false}\mapsto 1$ and $\mathtt{true}\mapsto -1$.
+Thus the character splits into a Walsh character in the free coordinates lying in $U$
+times a constant $\pm1$ sign contributed by the fixed coordinates of $U$.
 \end{lemma}
 
-\begin{theorem}[Closed form for restricted Fourier coefficients]
+\begin{theorem}[Fourier coefficients of a restricted Boolean function]
 \lean{RestrictionFourier.fourierCoeff_restrictBF}
 \proofsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p008-b002,
@@ -68,7 +77,6 @@ coming from the fixed coordinates.
   pdf-20e15a3d3d5e-p008-b002,
   pdf-20e15a3d3d5e-p008-b003
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -337,43 +345,61 @@ coming from the fixed coordinates.
   {pdf-20e15a3d3d5e-p008-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, DecisionTree.fourierCoeff_sum_chiS, RestrictionFourier.chiS_extend, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
 \difficulty{5}
-For $f : \{0,1\}^n \to \bbr$, a restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$,
-and $S \subseteq [n]$,
+Let $f : \{0,1\}^n \to \bbr$, and let $\rho$ be a restriction on $n$ variables; write $J
+\subseteq [n]$ for its set of free coordinates, namely the coordinates left unset by
+$\rho$. Let $f_\rho : \{0,1\}^n \to \bbr$ be the restricted function whose value at a
+point $x$ is obtained by evaluating $f$ at the assignment that agrees with $x$ on the
+free coordinates in $J$ and takes the bit fixed by $\rho$ on every other coordinate.
+Then for every $S \subseteq [n]$,
 \[
-  \widehat{f_\rho}(S) \;=\; \sum_{U \subseteq [n]} \mathbf{1}[U \cap J = S]\cdot
-  \widehat{f}(U)\cdot \mathrm{signProd}\,\rho\,(U \setminus J),
+\widehat{f_\rho}(S) \;=\; \sum_{\substack{U \subseteq [n] \\ U \cap J = S}}
+\widehat{f}(U)\;\prod_{i \in U \setminus J} \sigma(\rho_i),
 \]
-where $f_\rho = \mathrm{restrictBF}\,f\,\rho$. This is the analogue of O'Donnell
-Corollary 3.22.
+where $\sigma$ denotes the sign encoding and, for each $i \in U \setminus J$ (which lies
+outside $J$ and is therefore a coordinate fixed by $\rho$), $\rho_i \in
+\{\mathtt{false},\mathtt{true}\}$ is the bit that $\rho$ assigns there. This is
+O'Donnell's Corollary 3.22.
 \end{theorem}
 
-\begin{lemma}[Sums over restrictions of per-coordinate products factor]
+\begin{lemma}[Sums of coordinatewise products over restrictions factor]
 \lean{RestrictionFourier.sum_restriction_prod}
 \label{RestrictionFourier.sum_restriction_prod}
 \leanok
 \uses{SwitchingLemma2.Restriction}
 \difficulty{2}
-For any family $h : [n] \to \mathrm{Option}\ \mathrm{Bool} \to \bbr$,
+Fix $n \in \bbn$, and for each coordinate $i \in \{1,\dots,n\}$ let $h_i :
+\{\mathtt{true},\mathtt{false},\ast\} \to \bbr$ be a real-valued weight assigned to the
+three possible states of that coordinate (fixed to true, fixed to false, or left free).
+Then summing the product of these weights over all $3^n$ restrictions $\rho$ on $n$
+variables equals the product over coordinates of the coordinatewise total weights:
 \[
-  \sum_{\rho} \prod_{i} h\,i\,(\rho\,i) \;=\; \prod_{i} \sum_{v} h\,i\,v,
+\sum_{\rho} \prod_{i=1}^{n} h_i\bigl(\rho(i)\bigr) \;=\; \prod_{i=1}^{n} \sum_{v}
+h_i(v),
 \]
-the sum ranging over all restrictions $\rho$ on $n$ variables and $v$ over the three
-possible per-coordinate values.
+where $\rho$ ranges over all restrictions on $n$ variables and $v$ ranges over the three
+per-coordinate states.
 \end{lemma}
 
-\begin{lemma}[Bernoulli-weighted products factor]
+\begin{lemma}[Bernoulli restriction weights factor over coordinates]
 \lean{RestrictionFourier.sum_bernoulli_prod}
 \label{RestrictionFourier.sum_bernoulli_prod}
 \leanok
 \uses{LMN.bernoulliRestrWeight_eq_prod, LMN.varWeight, RestrictionFourier.sum_restriction_prod, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{3}
-For $p \in \bbr$ and any family $h : [n] \to \mathrm{Option}\ \mathrm{Bool} \to \bbr$,
+Fix $n \in \bbn$ and a real parameter $p$, and recall that a restriction on $n$
+variables is a map $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ assigning
+each variable either a fixed Boolean value or the free marker $\mathrm{none}$. Write
+$w_p(\rho) = p^{\,k}\bigl(\tfrac{1-p}{2}\bigr)^{\,n-k}$ for its Bernoulli weight, where
+$k$ is the number of free variables of $\rho$, and let $\omega_p$ be the per-variable
+weight given by $\omega_p(\mathrm{none}) = p$ and $\omega_p(v) = \tfrac{1-p}{2}$ for a
+fixed value $v$. Then for every family $h_i : \mathrm{Option}\,\mathrm{Bool} \to \bbr$
+indexed by $i \in \mathrm{Fin}\,n$,
 \[
-  \sum_{\rho} \mathrm{bernoulliRestrWeight}\,p\,\rho \cdot \prod_{i} h\,i\,(\rho\,i)
-  \;=\; \prod_{i} \sum_{v} \mathrm{varWeight}\,p\,v \cdot h\,i\,v,
+  \sum_{\rho}\, w_p(\rho) \prod_{i} h_i(\rho(i))
+  \;=\; \prod_{i} \sum_{v}\, \omega_p(v)\, h_i(v),
 \]
-so the Bernoulli weight is absorbed coordinatewise into the per-variable weight
-$\mathrm{varWeight}$.
+where the outer sum ranges over all restrictions $\rho$ on $n$ variables and each inner
+sum ranges over $v \in \mathrm{Option}\,\mathrm{Bool}$.
 \end{lemma}
 
 \begin{definition}[Per-coordinate local factor]
@@ -389,62 +415,86 @@ remaining coordinates. It encodes the event $U \cap \mathrm{freeVars} = S$ toget
 the sign contributed on $U \setminus S$.
 \end{definition}
 
-\begin{lemma}[Indicator times sign factors into local factors]
+\begin{lemma}[Indicator times sign product factors over coordinates]
 \lean{RestrictionFourier.indicator_signProd_eq_prod}
 \label{RestrictionFourier.indicator_signProd_eq_prod}
 \leanok
 \uses{BooleanAnalysis.boolToSign, RestrictionFourier.localFactor, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{5}
-If $S \subseteq U$ then for every restriction $\rho$ with free set $J$,
+Let $U, S \subseteq [n]$ with $S \subseteq U$, and let $\rho$ be a restriction on $n$
+variables whose free-variable set is $J$. Write $\sigma(b) \in \{\pm1\}$ for the sign
+encoding of a bit $b$, and let $\ell(U,S,i,\rho(i))$ denote the per-coordinate local
+factor at coordinate $i$. Then
 \[
-  \mathbf{1}[U \cap J = S]\cdot \mathrm{signProd}\,\rho\,(U \setminus J)
-  \;=\; \prod_{i} \mathrm{localFactor}\,U\,S\,i\,(\rho\,i),
+\mathbf{1}[\,U \cap J = S\,]\cdot \prod_{i \in U \setminus J} \sigma\bigl(\rho(i)\bigr)
+  \;=\; \prod_{i=1}^{n} \ell\bigl(U, S, i, \rho(i)\bigr),
 \]
-where the left-hand side is understood as $0$ when the indicator fails.
+where the left-hand side is read as $0$ whenever $U \cap J \neq S$. Equivalently, the
+product on the right vanishes unless the free coordinates of $\rho$ lying in $U$ are
+exactly $S$, in which case it equals the product of the $\pm1$-encodings of the bits
+that $\rho$ fixes on $U \setminus J$.
 \end{lemma}
 
-\begin{lemma}[Average of one local factor]
+\begin{lemma}[Averaging a single local factor against the Bernoulli weight]
 \lean{RestrictionFourier.sum_varWeight_localFactor}
 \label{RestrictionFourier.sum_varWeight_localFactor}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
 \difficulty{2}
-For $p \in \bbr$, sets $U, S$ and a coordinate $i$,
+Fix a real parameter $p$, two coordinate sets $U, S \subseteq [n]$, and a coordinate $i
+\in [n]$. Writing $w_p$ for the per-variable Bernoulli weight — which assigns $p$ to the
+free value and $(1-p)/2$ to each of the two fixed values — and $\ell_{U,S,i}$ for the
+per-coordinate local factor at $i$, the weighted sum over the three possible
+per-coordinate values $v$ (free, or fixed to either Boolean) is
 \[
-  \sum_{v} \mathrm{varWeight}\,p\,v \cdot \mathrm{localFactor}\,U\,S\,i\,v
-  \;=\; \begin{cases} p & i \in S,\\ 0 & i \in U \setminus S,\\ 1 & \text{otherwise.}\end{cases}
+  \sum_{v} w_p(v)\,\ell_{U,S,i}(v)
+  \;=\;
+  \begin{cases}
+    p & \text{if } i \in S,\\
+    0 & \text{if } i \in U \setminus S,\\
+    1 & \text{otherwise.}
+  \end{cases}
 \]
 \end{lemma}
 
-\begin{lemma}[Average of a product of two local factors]
+\begin{lemma}[Averaging a product of two local factors]
 \lean{RestrictionFourier.sum_varWeight_localFactor_mul}
 \label{RestrictionFourier.sum_varWeight_localFactor_mul}
 \leanok
 \uses{BooleanAnalysis.boolToSign, LMN.varWeight, RestrictionFourier.localFactor}
 \difficulty{2}
-For $p \in \bbr$, sets $U, V, S$ and a coordinate $i$,
+Fix a real parameter $p$, subsets $U, V, S \subseteq [n]$, and a coordinate $i \in [n]$.
+Averaging over the three per-coordinate values $v$ — the free value and the two fixed
+signs — with the per-variable weight $w_p(v)$, the product of the two local factors, one
+for the pair $(U,S)$ and one for the pair $(V,S)$, satisfies
 \[
-  \sum_{v} \mathrm{varWeight}\,p\,v \cdot \bigl(\mathrm{localFactor}\,U\,S\,i\,v\cdot
-  \mathrm{localFactor}\,V\,S\,i\,v\bigr)
-  = \begin{cases} p & i \in S,\\ 1-p & i \notin S,\ i \in U \text{ and } i \in V,\\
-  0 & i \notin S,\ i \in U \text{ or } i \in V,\\ 1 & \text{otherwise,}\end{cases}
+  \sum_{v} w_p(v)\,\ell_{U,S}(i,v)\,\ell_{V,S}(i,v)
+  = \begin{cases}
+      p & i \in S,\\[2pt]
+      1-p & i \notin S,\ i \in U,\ \text{and}\ i \in V,\\[2pt]
+      0 & i \notin S\ \text{and exactly one of}\ i \in U,\ i \in V\ \text{holds},\\[2pt]
+      1 & i \notin S,\ i \notin U,\ \text{and}\ i \notin V,
+    \end{cases}
 \]
-which is the per-coordinate average needed for the squared coefficient.
+where $w_p$ denotes the per-variable weight and $\ell_{W,S}$ the local factor determined
+by the sets $W$ and $S$.
 \end{lemma}
 
-\begin{lemma}[Product of a three-case indicator weight]
+\begin{lemma}[Product of a three-valued weight over coordinates]
 \lean{RestrictionFourier.prod_if_subset}
 \label{RestrictionFourier.prod_if_subset}
 \leanok
 \difficulty{4}
-For $p \in \bbr$ and sets $S, U \subseteq [n]$,
+Let $n$ be a natural number, let $p \in \bbr$, and let $S, U \subseteq \{1, \dots, n\}$.
+For each coordinate $i$, assign the weight $p$ if $i \in S$, the weight $1 - p$ if $i
+\in U \setminus S$, and the weight $1$ otherwise. Then the product of these weights over
+all $n$ coordinates equals
 \[
-  \prod_{i} \bigl(p \text{ if } i \in S,\ (1-p) \text{ if } i \in U \setminus S,\ 1
-  \text{ otherwise}\bigr) \;=\; p^{\abs{S}}\,(1-p)^{\abs{U \setminus S}}.
+  p^{\abs{S}}\,(1-p)^{\abs{U \setminus S}}.
 \]
 \end{lemma}
 
-\begin{theorem}[Proposition 4.17, first identity]
+\begin{theorem}[Expected Fourier coefficient under a random restriction]
 \lean{RestrictionFourier.expectation_fourierCoeff_restrictBF}
 \label{RestrictionFourier.expectation_fourierCoeff_restrictBF}
 \leanok
@@ -455,16 +505,21 @@ For $p \in \bbr$ and sets $S, U \subseteq [n]$,
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{5}
-Under a Bernoulli($p$)-random restriction $\rho$, the expected Fourier coefficient of the
-restricted function at $S$ is
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, let $S\subseteq[n]$ be a frequency set,
+and let $p\in\bbr$. For a restriction $\rho$ on $n$ variables, write $f_\rho$ for the
+restricted function and $k(\rho)$ for the number of free variables of $\rho$. Summing
+the Fourier coefficient $\widehat{f_\rho}(S)$ over all restrictions $\rho$, each
+weighted by its Bernoulli weight $p^{k(\rho)}\bigl(\tfrac{1-p}{2}\bigr)^{\,n-k(\rho)}$,
+gives
 \[
-  \E_\rho\bigl[\widehat{f_\rho}(S)\bigr] \;=\; p^{\abs{S}}\cdot \widehat{f}(S),
+  \sum_{\rho} p^{k(\rho)}\left(\tfrac{1-p}{2}\right)^{\,n-k(\rho)}\widehat{f_\rho}(S)
+  \;=\; p^{\abs{S}}\,\hat f(S).
 \]
-the expectation being the $\mathrm{bernoulliRestrWeight}\,p$-weighted sum over all
-restrictions.
+(When $0\le p\le 1$ these weights form the distribution of a Bernoulli$(p)$-random
+restriction, and the left-hand side is the expectation $\E_\rho[\widehat{f_\rho}(S)]$.)
 \end{theorem}
 
-\begin{theorem}[Proposition 4.17, second identity]
+\begin{theorem}[Expected squared Fourier coefficient under a random restriction]
 \lean{RestrictionFourier.expectation_fourierCoeff_sq_restrictBF}
 \label{RestrictionFourier.expectation_fourierCoeff_sq_restrictBF}
 \leanok
@@ -475,40 +530,57 @@ restrictions.
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.localFactor, RestrictionFourier.prod_if_subset, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor_mul, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
 \difficulty{6}
-Under a Bernoulli($p$)-random restriction $\rho$, the expected squared Fourier
-coefficient at $S$ is
+Fix a dimension $n$, a real number $p$, a Boolean function $f:\{0,1\}^n\to\bbr$, and a
+set $S\subseteq[n]$. For a restriction $\rho$ on the $n$ variables, let $k(\rho)$ denote
+its number of free variables and give it the Bernoulli weight
+$w_p(\rho)=p^{\,k(\rho)}\bigl(\tfrac{1-p}{2}\bigr)^{\,n-k(\rho)}$; write $f_\rho$ for
+the restriction of $f$ by $\rho$ and $\hat g(T)$ for the Fourier--Walsh coefficient of a
+Boolean function $g$ at a set $T$. Then, with the left sum over all restrictions on the
+$n$ variables and the right sum over all $U\subseteq[n]$,
 \[
-  \E_\rho\bigl[\widehat{f_\rho}(S)^2\bigr] \;=\; \sum_{U \supseteq S}
-  p^{\abs{S}}\,(1-p)^{\abs{U \setminus S}}\cdot \widehat{f}(U)^2,
+  \sum_{\rho} w_p(\rho)\,\widehat{f_\rho}(S)^2
+  \;=\;
+  \sum_{U\subseteq[n]}
+  \begin{cases}
+p^{\,\abs{S}}\,(1-p)^{\abs{U\setminus S}}\,\hat f(U)^2 & \text{if } S\subseteq U,\\[2pt]
+    0 & \text{otherwise.}
+  \end{cases}
 \]
-where the sum runs over all $U \subseteq [n]$ and the terms with $S \not\subseteq U$
-vanish.
+When $0\le p\le 1$ the weights $w_p(\rho)$ form a probability distribution, so the
+left-hand side is the expectation of $\widehat{f_\rho}(S)^2$ over a Bernoulli$(p)$
+random restriction.
 \end{theorem}
 
-\begin{lemma}[The squared sign product is one]
+\begin{lemma}[The sign product squares to one]
 \lean{RestrictionFourier.signProd_sq}
 \label{RestrictionFourier.signProd_sq}
 \leanok
 \uses{BooleanAnalysis.boolToSign_sq, SwitchingLemma2.Restriction}
 \difficulty{2}
-For every restriction $\rho$ and every set $T \subseteq [n]$, $(\mathrm{signProd}\,\rho\,T)^2 = 1$.
+Let $\rho$ be a restriction on $n$ variables and let $T \subseteq [n]$, and write
+$s(\rho, T) \in \bbr$ for the sign product of the bits that $\rho$ fixes on $T$, that
+is, the product over $i \in T$ of the $\pm 1$-encoding of $\rho$'s value at $i$. Being a
+product of values in $\{-1, 1\}$, it satisfies \[ s(\rho, T)^2 = 1. \]
 \end{lemma}
 
-\begin{theorem}[Proposition 4.17, probability form]
+\begin{theorem}[Distribution of a fixed coordinate set under a random restriction]
 \lean{RestrictionFourier.bernoulliRestrProb_inter_freeVars}
 \label{RestrictionFourier.bernoulliRestrProb_inter_freeVars}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, RestrictionFourier.expectation_fourierCoeff_sq_restrictBF, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.signProd_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
 \difficulty{5}
-For a Bernoulli($p$)-random restriction $\rho$ with free set $J = \rho.\mathrm{freeVars}$
-and sets $U, S \subseteq [n]$,
+Fix $n$, a real parameter $p$, and two subsets $U, S \subseteq [n]$. Let $\rho$ be a
+Bernoulli($p$) random restriction on $n$ variables, meaning each restriction is drawn
+with weight $p^{\abs{J}}\bigl(\tfrac{1-p}{2}\bigr)^{\,n-\abs{J}}$, where $J$ denotes its
+set of free variables. Then the probability that the free variables lying inside $U$ are
+exactly those of $S$ is
 \[
-  \Pr_\rho\bigl[U \cap J = S\bigr] \;=\;
-  \begin{cases} p^{\abs{S}}\,(1-p)^{\abs{U \setminus S}} & S \subseteq U,\\
-  0 & \text{otherwise.}\end{cases}
+  \Pr_\rho\bigl[\,U \cap J = S\,\bigr] \;=\;
+  \begin{cases}
+    p^{\abs{S}}\,(1-p)^{\abs{U \setminus S}}, & S \subseteq U,\\[2pt]
+    0, & \text{otherwise.}
+  \end{cases}
 \]
-Combined with the second identity this yields O'Donnell's form
-$\E_\rho[\widehat{f_\rho}(S)^2] = \sum_U \Pr[U \cap J = S]\cdot \widehat{f}(U)^2$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

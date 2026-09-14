@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.not_mem_crossingEdges_of_edgeChoiceSurvives",
+ "key": "64debcd3f811e33b",
+ "kind": "lemma",
+ "title": "Surviving edge occurrences do not cross the cut",
+ "statement": "Let $s = (G, C)$ be a state of the contraction process, consisting of a multigraph $G$ and a distinguished cut $C$ with side $S$, and let $(e, i)$ be an edge occurrence in the sample space of $s$, so that $e$ is an edge of $G$ and $i$ indexes its parallel copies. If this occurrence survives — that is, if $e$ does not cross $S$, meaning it is not the case that $e$ has one endpoint in $S$ and another endpoint outside $S$ — then $e$ does not belong to the multiset of crossing edges of $C$.",
+ "hypotheses_covered": [
+  "s is a state consisting of a multigraph G and a cut C",
+  "(e,i) is an edge occurrence in the sample space of s",
+  "the occurrence survives: its underlying edge e does not cross the cut S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If an edge occurrence of $s$ survives, then its underlying edge is not a crossing edge of\nthe distinguished cut $s.C$."
+}

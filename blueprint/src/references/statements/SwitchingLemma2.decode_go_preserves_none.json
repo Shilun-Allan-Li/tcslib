@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.decode_go_preserves_none",
+ "key": "486ca8ac5b744971",
+ "kind": "lemma",
+ "title": "Decoder loop preserves free variables",
+ "statement": "Fix a number of variables $n$, and let $D$ denote the recursive loop underlying Razborov's decoder, which takes as input a DNF formula $f$ on $n$ variables, a width parameter $w \\in \\bbn$, a fuel bound $\\mathrm{fuel} \\in \\bbn$, two restrictions $\\sigma$ and $\\rho_0$ on the $n$ variables, and an auxiliary list of index–value pairs drawn from $\\bbn \\times \\mathrm{Bool}$, and returns a pair whose first component is again a restriction on the $n$ variables. Then for every variable $v$ with $\\sigma(v) = \\mathrm{none}$, the first component of $D(f, w, \\mathrm{fuel}, \\sigma, \\rho_0, \\mathrm{aux})$ also assigns $\\mathrm{none}$ to $v$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "w is a natural-number width parameter",
+  "fuel is a natural-number bound",
+  "σ and ρ₀ are restrictions on the n variables",
+  "aux is a list of index–value (ℕ × Bool) pairs",
+  "v is a variable with σ(v) = none"
+ ],
+ "confidence": "low",
+ "caveat": "The declaration concerns an internal auxiliary recursion (razborovDecode.go) whose actual computation is not part of the supplied material, so the prose faithfully states the invariant (variables left free by σ remain free in the output restriction) but cannot make the loop's internal behaviour self-contained; the roles of w, fuel, ρ₀, and aux are named but not otherwise specified.",
+ "rubric": [],
+ "replaced": "If $\\sigma\\,v = \\mathrm{none}$, then the decoder loop\n\\texttt{SwitchingLemma2.razborovDecode}'s \\texttt{go} leaves $v$ unset; its resulting\n$\\sigma$ is still $\\mathrm{none}$ at $v$."
+}

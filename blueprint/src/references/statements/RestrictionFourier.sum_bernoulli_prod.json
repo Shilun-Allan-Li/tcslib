@@ -1,0 +1,16 @@
+{
+ "lean_name": "RestrictionFourier.sum_bernoulli_prod",
+ "key": "da501fe9ece399f1",
+ "kind": "lemma",
+ "title": "Bernoulli restriction weights factor over coordinates",
+ "statement": "Fix $n \\in \\bbn$ and a real parameter $p$, and recall that a restriction on $n$ variables is a map $\\rho : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ assigning each variable either a fixed Boolean value or the free marker $\\mathrm{none}$. Write $w_p(\\rho) = p^{\\,k}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-k}$ for its Bernoulli weight, where $k$ is the number of free variables of $\\rho$, and let $\\omega_p$ be the per-variable weight given by $\\omega_p(\\mathrm{none}) = p$ and $\\omega_p(v) = \\tfrac{1-p}{2}$ for a fixed value $v$. Then for every family $h_i : \\mathrm{Option}\\,\\mathrm{Bool} \\to \\bbr$ indexed by $i \\in \\mathrm{Fin}\\,n$,\n\\[\n  \\sum_{\\rho}\\, w_p(\\rho) \\prod_{i} h_i(\\rho(i))\n  \\;=\\; \\prod_{i} \\sum_{v}\\, \\omega_p(v)\\, h_i(v),\n\\]\nwhere the outer sum ranges over all restrictions $\\rho$ on $n$ variables and each inner sum ranges over $v \\in \\mathrm{Option}\\,\\mathrm{Bool}$.",
+ "hypotheses_covered": [
+  "real parameter $p$",
+  "number of variables $n$",
+  "family of weight functions $h_i : \\mathrm{Option}\\,\\mathrm{Bool} \\to \\bbr$ for each coordinate $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p \\in \\bbr$ and any family $h : [n] \\to \\mathrm{Option}\\ \\mathrm{Bool} \\to \\bbr$,\n\\[\n  \\sum_{\\rho} \\mathrm{bernoulliRestrWeight}\\,p\\,\\rho \\cdot \\prod_{i} h\\,i\\,(\\rho\\,i)\n  \\;=\\; \\prod_{i} \\sum_{v} \\mathrm{varWeight}\\,p\\,v \\cdot h\\,i\\,v,\n\\]\nso the Bernoulli weight is absorbed coordinatewise into the per-variable weight\n$\\mathrm{varWeight}$."
+}

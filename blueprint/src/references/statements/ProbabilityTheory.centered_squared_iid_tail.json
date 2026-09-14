@@ -1,0 +1,21 @@
+{
+ "lean_name": "ProbabilityTheory.centered_squared_iid_tail",
+ "key": "9fa0f0b5176cf649",
+ "kind": "lemma",
+ "title": "Bernstein tail bound for a sum of centered squares",
+ "statement": "Let $(Y_i)_{i}$ be a finite family of measurable real random variables on a probability space $(\\Omega, \\mu)$, indexed by a finite set of cardinality $n$, and suppose the $Y_i$ are mutually independent. Fix real numbers $\\sigma^2$, $c > 0$, and $t_{\\max}$, and suppose that for each $i$ the centered square $Y_i^2 - \\sigma^2$ satisfies the Bernstein MGF condition with parameters $c$ and $t_{\\max}$. Then for every $s$ with $0 \\le s \\le 2 n c\\, t_{\\max}$,\n\\[\n  \\mu\\!\\left(\\left\\{\\omega \\;\\middle|\\;\n    s < \\left|\\sum_{i} Y_i(\\omega)^2 - n\\sigma^2\\right|\\right\\}\\right)\n  \\;\\le\\;\n  2\\exp\\!\\left(-\\frac{s^2}{4 n c}\\right).\n\\]",
+ "hypotheses_covered": [
+  "finite index set of cardinality n",
+  "each Y_i measurable",
+  "the Y_i are mutually independent",
+  "mu is a probability measure",
+  "c > 0",
+  "each centered square Y_i^2 - sigma^2 satisfies the Bernstein MGF condition with parameters c and t_max",
+  "s >= 0",
+  "s <= 2 n c t_max"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\{Y_i\\}_{i \\in \\iota}$ be a mutually independent, identically\ndistributed family of measurable real random variables on a probability\nspace $(\\Omega, \\mu)$, where $|\\iota| = n$.  Suppose that for each $i$\nthe centered square $Y_i^2 - \\sigma^2$ satisfies\n$\\texttt{ProbabilityTheory.HasBernsteinMGF}\\ (Y_i^2 - \\sigma^2)\\ \\mu\\ c\\ t_{\\max}$\nwith $c > 0$.  Then for every $s$ with\n$0 \\le s \\le 2n c\\, t_{\\max}$,\n\\[\n  \\mu\\!\\left(\\left\\{\\omega \\;\\middle|\\;\n    s < \\left|\\sum_{i} Y_i(\\omega)^2 - n\\sigma^2\\right|\\right\\}\\right)\n  \\;\\le\\;\n  2\\exp\\!\\Bigl(-\\tfrac{s^2}{4nc}\\Bigr).\n\\]"
+}

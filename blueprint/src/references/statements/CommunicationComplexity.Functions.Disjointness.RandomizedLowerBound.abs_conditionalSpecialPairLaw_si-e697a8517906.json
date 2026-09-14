@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.abs_conditionalSpecialPairLaw_singleton_sub_quarter_le",
+ "key": "f679c3ec0cdf2049",
+ "kind": "theorem",
+ "title": "Singleton masses of a good conditional special-pair law",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the disjointness problem on inputs of length $n$, drawn under the hard distribution. Write $(x_T, y_T)$ for the pair of Alice's and Bob's bits at the special coordinate $T$, and for a value $z$ of the conditioning statistic let $\\mu_z$ denote the conditional law of this bit-pair on $\\{0,1\\}^2$ given that the statistic equals $z$. Suppose $z$ is $\\gamma$-good, in the sense that the total variation distance between $\\mu_z$ and the uniform distribution on $\\{0,1\\}^2$ is at most $2\\gamma$. Then for every bit-pair $b \\in \\{0,1\\}^2$,\n\\[\n  \\abs{\\mu_z(\\{b\\}) - \\tfrac{1}{4}} \\le 2\\gamma .\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol on inputs of length n",
+  "gamma a real number",
+  "z a value of the conditioning statistic",
+  "z is gamma-good: total variation distance of its conditional special-pair law from the uniform law on bit-pairs is at most 2*gamma",
+  "b an arbitrary bit-pair"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A good $z$ gives the expected singleton-mass estimate for the conditional special-pair law."
+}

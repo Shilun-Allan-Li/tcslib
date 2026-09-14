@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_fst_eq_rec",
+ "key": "5b8fb6cce7eecb03",
+ "kind": "lemma",
+ "title": "Encoder first component matches the recursive step",
+ "statement": "Fix a DNF formula $f$ on $n$ variables, two restrictions $\\rho_0$ and $\\sigma$, a fuel budget, and a path $\\mathrm{step} :: \\mathrm{rest}$ consisting of a first variable–direction pair $\\mathrm{step}$ followed by a list $\\mathrm{rest}$ of further such pairs. Suppose $t_{\\mathrm{clause}}$ is the first term of $f$ that is not killed by $\\rho_0$, and that, listing the literals of $t_{\\mathrm{clause}}$ each tagged with its position in the term and keeping only those whose variable is free under $\\rho_0$, this filtered list is nonempty, of the form $\\mathit{fl} :: \\mathit{fls}$. Then the first component of the encoder run at fuel one greater on the whole path $\\mathrm{step} :: \\mathrm{rest}$ coincides with the first component of the encoder run at the smaller fuel started from the state obtained by processing the clause's free literals $\\mathit{fl} :: \\mathit{fls}$ against that same path from $\\rho_0$ and $\\sigma$.",
+ "hypotheses_covered": [
+  "a DNF formula f on n variables",
+  "restrictions ρ₀ and σ",
+  "a fuel budget and a path step :: rest of variable–direction pairs",
+  "t_clause is the first term of f not killed by ρ₀",
+  "the position-tagged literals of t_clause with variable free under ρ₀ form the nonempty list fl :: fls"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion of the Lean statement is elided as `sorry` in the provided ground truth (`let pcl := sorry`), and the encoder function whose runs are being compared is not among the supplied definitions. The conclusion above is reconstructed from the `current` hint (equality of the first components of two encoder runs, one at fuel+1 on the full path and one at the lower fuel on the state produced by `processClauseLits` applied to fl :: fls), and cannot be verified against the formal statement; it may misstate the actual claim.",
+ "rubric": [],
+ "replaced": "When the encoder finds $t_{\\mathrm{clause}}$ as the first clause not killed by $\\rho_0$ and\nits filtered free-variable literals form a nonempty list $\\mathit{fl}::\\mathit{fls}$, the\nfirst component of the encoder run with fuel $\\mathrm{fuel}+1$ on path $\\mathit{step}::\\mathit{rest}$\nequals the first component of the recursive encoder run with fuel $\\mathrm{fuel}$ on the\nprocessed state $\\mathrm{pcl} = \\mathrm{processClauseLits}\\,(\\mathit{fl}::\\mathit{fls})\\,(\\mathit{step}::\\mathit{rest})\\,\\rho_0\\,\\sigma$."
+}

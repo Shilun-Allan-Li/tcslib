@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xVector_message_info_le_complexity_mul_log_two",
+ "key": "591508c082880d8e",
+ "kind": "theorem",
+ "title": "Information cost bound for the disjointness transcript",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic two‑party communication protocol on disjointness inputs of length $n$. Sample from the hard distribution conditioned on the event that the two generated sets are disjoint, and write $X, Y \\colon \\{1,\\dots,n\\} \\to \\{0,1\\}$ for Alice's and Bob's resulting input vectors and $M$ for the transcript that $p$ produces on the corresponding input pair. Then the conditional mutual information between $X$ and $M$ given $Y$, computed under this conditioned distribution, satisfies\n\\[\n  I(X ; M \\mid Y) \\le \\mathrm{complexity}(p)\\cdot \\log 2,\n\\]\nwhere $\\mathrm{complexity}(p)$ is the worst‑case number of bits exchanged by $p$ and $\\log$ denotes the natural logarithm.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic protocol on disjointness inputs of length n (ProtocolType)",
+  "the distribution is the hard distribution conditioned on the disjointness event",
+  "X is Alice's input vector, Y is Bob's input vector, M is the induced transcript"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Alice full-vector information is bounded by the transcript entropy."
+}

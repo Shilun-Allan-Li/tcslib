@@ -1,0 +1,16 @@
+{
+ "lean_name": "DecisionTree.degree_le_depth",
+ "key": "6aba9d83caaf78b5",
+ "kind": "theorem",
+ "title": "Fourier degree of a decision tree is at most its depth",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and let $f\\colon\\{0,1\\}^n\\to\\bbr$ be the $\\pm 1$-valued function it computes, so that $f(x)=\\sigma(T(x))$ where $\\sigma$ sends $\\mathrm{false}$ to $1$ and $\\mathrm{true}$ to $-1$. Then $f$ has Fourier degree at most the depth of $T$: for every $S\\subseteq\\{1,\\dots,n\\}$ with $\\hat f(S)\\ne 0$, one has $\\abs{S}\\le\\operatorname{depth}(T)$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables",
+  "f is the sign-encoded function computed by T",
+  "conclusion: every nonzero Fourier coefficient hat f(S) is supported on a set S with |S| at most depth(T)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The function computed by a decision tree of depth $k$ has Fourier degree at most $k$:\n$T.\\mathrm{signEval}$ has degree at most $T.\\mathrm{depth}$."
+}

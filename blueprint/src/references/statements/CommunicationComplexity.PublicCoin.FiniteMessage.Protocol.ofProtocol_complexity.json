@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_complexity",
+ "key": "d96b7b25dc1cc169",
+ "kind": "theorem",
+ "title": "Complexity invariance of the finite-message embedding",
+ "statement": "Let $\\Omega$ be a shared-randomness space, let $X$ and $Y$ be the private input sets of Alice and Bob, let $\\alpha$ be an output type, and let $p$ be a binary public-coin protocol over shared randomness $\\Omega$ with these private inputs and this output — that is, a deterministic protocol whose players branch on Boolean messages, with Alice reading $\\Omega \\times X$ and Bob reading $\\Omega \\times Y$. Embedding $p$ into the finite-message framework by regarding each Boolean message as an element of the two-element type $\\mathrm{Bool}$ yields a finite-message protocol whose worst-case communication complexity equals the worst-case communication complexity of $p$.",
+ "hypotheses_covered": [
+  "p is a binary public-coin protocol over shared randomness Ω with private inputs X, Y and output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any binary public-coin protocol $p$,\n$(\\mathrm{ofProtocol}\\,p).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

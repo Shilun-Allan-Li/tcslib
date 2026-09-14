@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_sigma_stable",
+ "key": "317c31cc352dc5f6",
+ "kind": "lemma",
+ "title": "Stability of the restriction σ away from a clause's variables",
+ "statement": "Fix $n$ and let $\\mathrm{lits}$ be a list of literals over $\\mathrm{Fin}\\,n$, each paired with a position index, let $\\mathrm{path}$ be a list of variable–direction pairs, and let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables. Suppose $v \\in \\mathrm{Fin}\\,n$ is not the variable of any literal occurring in $\\mathrm{lits}$. Then the restriction $\\sigma'$ produced by processing $\\mathrm{lits}$ against $\\mathrm{path}$ starting from $\\rho_0$ and $\\sigma$ agrees with $\\sigma$ at $v$, that is $\\sigma'(v) = \\sigma(v)$.",
+ "hypotheses_covered": [
+  "lits: list of literal-index pairs over Fin n",
+  "path: list of variable-direction pairs",
+  "rho_0 and sigma are restrictions on n variables",
+  "v is a variable in Fin n",
+  "v is not the variable of any literal in lits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a variable $v$ is the variable of no literal in the input list, then\n\\texttt{SwitchingLemma2.processClauseLits} leaves the $\\sigma$ restriction unchanged at\n$v$; that is, the resulting $\\sigma$ agrees with the input $\\sigma$ on $v$."
+}

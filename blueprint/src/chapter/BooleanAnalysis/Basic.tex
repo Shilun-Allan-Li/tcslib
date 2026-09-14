@@ -85,31 +85,45 @@ uniform measure:
 The \emph{$L^2$ norm} of $f$: $\|f\| = \sqrt{\langle f,f\rangle}$.
 \end{definition}
 
-\begin{lemma}[Inner product is symmetric]
+\begin{lemma}[Symmetry of the $L^2$ inner product]
 \lean{BooleanAnalysis.innerProduct_comm}
 \label{BooleanAnalysis.innerProduct_comm}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
 \difficulty{1}
-$\langle f, g\rangle = \langle g, f\rangle$.
+For any two Boolean functions $f, g : \{0,1\}^n \to \bbr$, the $L^2$ inner product with
+respect to the uniform measure is symmetric:
+\[
+  \langle f, g\rangle = \langle g, f\rangle.
+\]
 \end{lemma}
 
-\begin{lemma}[Inner product is nonneg on the diagonal]
+\begin{lemma}[Nonnegativity of the $L^2$ norm squared]
 \lean{BooleanAnalysis.innerProduct_self_nonneg}
 \label{BooleanAnalysis.innerProduct_self_nonneg}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
 \difficulty{2}
-$\langle f, f\rangle \ge 0$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function of arity $n$. Then its $L^2$ inner
+product with itself is nonnegative:
+\[
+  \langle f, f\rangle \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} f(x)^2 \;\ge\; 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Inner product is linear in the first argument]
+\begin{lemma}[Additivity of the inner product in the first argument]
 \lean{BooleanAnalysis.innerProduct_add_left}
 \label{BooleanAnalysis.innerProduct_add_left}
 \leanok
 \uses{BooleanAnalysis.innerProduct}
 \difficulty{2}
-$\langle f + g, h\rangle = \langle f, h\rangle + \langle g, h\rangle$.
+Let $n$ be a natural number and let $f, g, h : \{0,1\}^n \to \bbr$ be Boolean functions.
+With respect to the $L^2$ inner product under the uniform measure, $\langle f, g\rangle
+= 2^{-n}\sum_{x\in\{0,1\}^n} f(x)\,g(x)$, one has
+\[
+  \langle f + g,\, h\rangle \;=\; \langle f, h\rangle + \langle g, h\rangle,
+\]
+where $f + g$ denotes the pointwise sum.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +140,7 @@ The \emph{sign encoding} maps $\mathrm{Bool}$ to $\{-1,1\}\subset\bbr$:
 \]
 \end{definition}
 
-\begin{lemma}[Basic sign identities]
+\begin{lemma}[Sign encoding of false]
 \lean{BooleanAnalysis.boolToSign_false}
 \label{BooleanAnalysis.boolToSign_false}
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p002-b001}
@@ -142,8 +156,24 @@ The \emph{sign encoding} maps $\mathrm{Bool}$ to $\{-1,1\}\subset\bbr$:
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 \difficulty{1}
-$\sigma(\texttt{false}) = 1$, $\sigma(\texttt{true}) = -1$,
-$\sigma(b)^2 = 1$, and $\sigma(\lnot b) = -\sigma(b)$.
+Under the sign encoding $\sigma\colon\mathrm{Bool}\to\{-1,1\}$, the Boolean value
+$\mathrm{false}$ is sent to $1$; that is, $\sigma(\mathrm{false}) = 1$.
+
+Under the sign encoding $\sigma\colon \mathrm{Bool}\to\{-1,1\}$, which sends the truth
+value false to $1$ and true to $-1$, the truth value true is mapped to $-1$; that is,
+$\sigma(\text{true}) = -1$.
+
+For every Boolean value $b$, the sign encoding satisfies $\sigma(b)^2 = 1$.
+
+For every $b \in \mathrm{Bool}$, the sign encoding $\sigma(b) \in \{-1,1\}$ satisfies
+$\sigma(b)\cdot\sigma(b) = 1$; that is, $\sigma(b)^2 = 1$.
+
+Let $\sigma\colon\mathrm{Bool}\to\{-1,1\}$ be the sign encoding, so that
+$\sigma(\mathrm{false})=1$ and $\sigma(\mathrm{true})=-1$. Then for every Boolean value
+$b$, negating $b$ flips the sign of its encoding:
+\[
+  \sigma(\lnot b) \;=\; -\,\sigma(b).
+\]
 \end{lemma}
 
 \begin{definition}[Walsh character]
@@ -164,68 +194,91 @@ The family $\{\chi_S\}_{S\subseteq[n]}$ forms an orthonormal basis for
 $L^2(\{0,1\}^n,\mathrm{uniform})$.
 \end{definition}
 
-\begin{lemma}[Character of the empty set]
+\begin{lemma}[Empty-set Walsh character]
 \lean{BooleanAnalysis.chiS_empty}
 \label{BooleanAnalysis.chiS_empty}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p004-b001}
 \uses{BooleanAnalysis.chiS}
 \difficulty{1}
-$\chi_\varnothing \equiv 1$.
+The Walsh–Fourier character associated to the empty subset of $[n]$ is the constant
+function equal to $1$; that is, $\chi_\emptyset(x) = 1$ for every point $x$ of the
+Boolean hypercube $\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Character of a singleton]
+\begin{lemma}[Value of a singleton Walsh character]
 \lean{BooleanAnalysis.chiS_singleton}
 \label{BooleanAnalysis.chiS_singleton}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign}
 \difficulty{1}
-$\chi_{\{i\}}(x) = \sigma(x_i)$.
+Fix a dimension $n$, a coordinate $i \in [n]$, and a point $x$ of the Boolean hypercube
+$\{0,1\}^n$. Then the Walsh--Fourier character of the singleton set $\{i\}$, evaluated
+at $x$, is the sign encoding of the $i$-th coordinate of $x$:
+\[
+  \chi_{\{i\}}(x) \;=\; \sigma(x_i).
+\]
 \end{lemma}
 
-\begin{lemma}[Characters take values in $\{-1,1\}$]
+\begin{lemma}[Walsh characters square to one]
 \lean{BooleanAnalysis.chiS_sq_eq_one}
 \label{BooleanAnalysis.chiS_sq_eq_one}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_sq}
 \difficulty{4}
-$\chi_S(x)^2 = 1$ for all $S$ and $x$.
+Let $n$ be a natural number, let $S \subseteq [n]$, and let $x \in \{0,1\}^n$ be a point
+of the Boolean hypercube. Then the Walsh--Fourier character $\chi_S$ satisfies
+$\chi_S(x)^2 = 1$; that is, every character takes values in $\{-1, 1\}$.
 \end{lemma}
 
-\begin{lemma}[Characters are multiplicative on disjoint sets]
+\begin{lemma}[Multiplicativity of Walsh characters on disjoint sets]
 \lean{BooleanAnalysis.chiS_mul_of_disjoint}
 \label{BooleanAnalysis.chiS_mul_of_disjoint}
 \leanok
 \proofsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b004}
 \uses{BooleanAnalysis.chiS}
 \difficulty{1}
-If $S$ and $T$ are disjoint then $\chi_{S\cup T}(x) = \chi_S(x)\cdot\chi_T(x)$.
+Let $n$ be a natural number, and let $S, T \subseteq [n]$ be disjoint subsets of
+coordinates. Then for every point $x$ of the Boolean hypercube $\{0,1\}^n$, the
+Walsh--Fourier character of the union factors as the product of the characters of the
+two sets:
+\[
+  \chi_{S \cup T}(x) \;=\; \chi_S(x)\,\chi_T(x).
+\]
 \end{lemma}
 
-\begin{lemma}[Product of two characters]
+\begin{lemma}[Walsh characters multiply by symmetric difference]
 \lean{BooleanAnalysis.chiS_mul_chiS}
 \label{BooleanAnalysis.chiS_mul_chiS}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b004}
 \uses{BooleanAnalysis.chiS}
 \difficulty{5}
-$\chi_S(x)\cdot\chi_T(x) = \chi_{S\mathbin{\triangle} T}(x)$,
-where $\triangle$ denotes symmetric difference.
+Fix $n$, and for a subset $S\subseteq[n]$ let $\chi_S\colon\{0,1\}^n\to\bbr$ denote the
+associated Walsh--Fourier character. Then for all subsets $S,T\subseteq[n]$ and every
+point $x\in\{0,1\}^n$,
+\[
+  \chi_S(x)\,\chi_T(x) \;=\; \chi_{S\,\triangle\,T}(x),
+\]
+where $S\,\triangle\,T$ is the symmetric difference of $S$ and $T$.
 \end{lemma}
 
-\begin{lemma}[Character under global bit flip]
+\begin{lemma}[Walsh character under global bit flip]
 \lean{BooleanAnalysis.chiS_neg}
 \label{BooleanAnalysis.chiS_neg}
 \leanok
 \uses{BooleanAnalysis.chiS, BooleanAnalysis.boolToSign_not}
 \difficulty{4}
-Flipping all bits multiplies the character by $(-1)^{|S|}$:
+Let $n$ be a natural number, let $S \subseteq [n]$, and let $x \in \{0,1\}^n$. Writing
+$\lnot x$ for the point obtained by flipping every coordinate of $x$, the Walsh--Fourier
+character $\chi_S$ satisfies
 \[
-  \chi_S(\lnot x) \;=\; (-1)^{|S|}\,\chi_S(x).
+  \chi_S(\lnot x) \;=\; (-1)^{\abs{S}}\,\chi_S(x),
 \]
+where $\abs{S}$ is the number of elements of $S$.
 \end{lemma}
 
-\begin{lemma}[Count of Walsh characters]
+\begin{lemma}[Number of Walsh characters equals $2^n$]
 \lean{BooleanAnalysis.card_walsh_characters}
 \label{BooleanAnalysis.card_walsh_characters}
 \leanok
@@ -234,7 +287,6 @@ Flipping all bits multiplies the character by $(-1)^{|S|}$:
   pdf-50833afe7403-p003-b005,
   pdf-50833afe7403-p002-b006
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -457,8 +509,9 @@ Flipping all bits multiplies the character by $(-1)^{|S|}$:
   {pdf-50833afe7403-p003-b002}
 \uses{BooleanAnalysis.chiS}
 \difficulty{1}
-There are exactly $2^n$ Walsh characters, matching the dimension of
-$L^2(\{0,1\}^n)$.
+For each $n$, the number of subsets $S \subseteq [n]$ is exactly $2^n$. Since the Walsh
+characters $\chi_S$ are indexed by these subsets, there are precisely $2^n$ of them,
+matching the dimension of $L^2(\{0,1\}^n)$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -477,20 +530,24 @@ The \emph{Fourier--Walsh coefficient} of $f$ at frequency $S$ is
 \]
 \end{definition}
 
-\begin{lemma}[Fourier coefficient at $\varnothing$ equals expectation]
+\begin{lemma}[Empty-set Fourier coefficient is the mean]
 \lean{BooleanAnalysis.fourierCoeff_empty}
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b006}
 \label{BooleanAnalysis.fourierCoeff_empty}
 \leanok
 \uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.expect}
 \difficulty{1}
-$\hat f(\varnothing) = \E[f]$.
+Let $f\colon\{0,1\}^n\to\bbr$ be a Boolean function. Then its Fourier–Walsh coefficient
+at the empty frequency equals its expectation under the uniform measure:
+\[
+  \hat f(\varnothing) \;=\; \E[f].
+\]
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Walsh expansion}
 
-\begin{theorem}[Walsh expansion]
+\begin{theorem}[Walsh–Fourier expansion of a Boolean function]
 \lean{BooleanAnalysis.walsh_expansion}
 \label{BooleanAnalysis.walsh_expansion}
 \leanok
@@ -505,11 +562,14 @@ $\hat f(\varnothing) = \E[f]$.
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p005-b004}
 \uses{BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS}
 \difficulty{5}
-Every Boolean function $f:\{0,1\}^n\to\bbr$ has the unique representation
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function of arity $n$. Then at every point
+$x\in\{0,1\}^n$,
 \[
-  f(x) \;=\; \sum_{S\subseteq[n]} \hat f(S)\,\chi_S(x).
+  f(x) \;=\; \sum_{S\subseteq[n]} \hat f(S)\,\chi_S(x),
 \]
-This is the Fourier inversion formula for the uniform measure on $\{0,1\}^n$.
+where the sum ranges over all subsets $S$ of $[n]$, $\chi_S$ is the Walsh character of
+$S$, and $\hat f(S)=\langle f,\chi_S\rangle$ is the Fourier–Walsh coefficient of $f$ at
+$S$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -528,7 +588,6 @@ This is the Fourier inversion formula for the uniform measure on $\{0,1\}^n$.
   pdf-50833afe7403-p004-b006
 }
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b003}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -744,13 +803,16 @@ This is the Fourier inversion formula for the uniform measure on $\{0,1\}^n$.
   {pdf-50833afe7403-p014-b003}
 \uses{BooleanAnalysis.innerProduct, BooleanAnalysis.chiS, BooleanAnalysis.chiS_mul_chiS}
 \difficulty{4}
-The Walsh characters form an orthonormal system:
+For any two subsets $S, T \subseteq [n]$, the $L^2$ inner product of the Walsh--Fourier
+characters $\chi_S$ and $\chi_T$, taken with respect to the uniform measure on
+$\{0,1\}^n$, satisfies
 \[
-  \langle \chi_S, \chi_T\rangle \;=\; [S = T].
+\langle \chi_S, \chi_T\rangle \;=\; \begin{cases} 1 & S = T,\\ 0 & S \neq T. \end{cases}
 \]
+In particular, the family $\{\chi_S\}_{S\subseteq[n]}$ is orthonormal.
 \end{theorem}
 
-\begin{lemma}[Self inner product of a character is 1]
+\begin{lemma}[Walsh characters have unit norm]
 \lean{BooleanAnalysis.innerProduct_chi_self}
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \label{BooleanAnalysis.innerProduct_chi_self}
@@ -760,7 +822,6 @@ The Walsh characters form an orthonormal system:
   pdf-50833afe7403-p004-b006
 }
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b003}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -968,10 +1029,14 @@ The Walsh characters form an orthonormal system:
   {pdf-50833afe7403-p002-b007}
 \uses{BooleanAnalysis.fourier_coeff_chi}
 \difficulty{1}
-$\langle \chi_S, \chi_S\rangle = 1$.
+Let $n$ be a natural number and let $S \subseteq [n]$. Under the uniform measure on the
+Boolean hypercube $\{0,1\}^n$, the Walsh--Fourier character $\chi_S$ satisfies
+\[
+  \langle \chi_S, \chi_S\rangle \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} \chi_S(x)^2 \;=\; 1.
+\]
 \end{lemma}
 
-\begin{theorem}[Parseval's identity]
+\begin{theorem}[Parseval's identity for Boolean functions]
 \lean{BooleanAnalysis.parseval}
 \label{BooleanAnalysis.parseval}
 \leanok
@@ -983,9 +1048,12 @@ $\langle \chi_S, \chi_S\rangle = 1$.
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p006-b003}
 \uses{BooleanAnalysis.innerProduct, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.walsh_expansion}
 \difficulty{6}
-The squared $L^2$ norm of $f$ equals the sum of squared Fourier coefficients:
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and equip $\{0,1\}^n$ with the
+uniform probability measure. Then the $L^2$ inner product of $f$ with itself equals the
+sum of the squares of its Fourier--Walsh coefficients over all subsets $S \subseteq
+[n]$:
 \[
-  \|f\|^2 \;=\; \langle f, f\rangle \;=\; \sum_{S\subseteq[n]} \hat f(S)^2.
+  \langle f, f\rangle \;=\; \sum_{S \subseteq [n]} \hat f(S)^2.
 \]
 \end{theorem}
 
@@ -1033,7 +1101,11 @@ $I[f] = \sum_{i=1}^n \mathrm{Inf}_i[f]$.
 \leanok
 \uses{BooleanAnalysis.influence, BooleanAnalysis.chiS}
 \difficulty{5}
-$\mathrm{Inf}_i[\chi_S] = [i\in S]$.
+Fix $n$, a coordinate $i \in [n]$, and a set $S \subseteq [n]$. The influence of
+coordinate $i$ on the Walsh--Fourier character $\chi_S$ is
+\[
+  \mathrm{Inf}_i[\chi_S] = \begin{cases} 1 & i \in S, \\ 0 & i \notin S. \end{cases}
+\]
 \end{lemma}
 
 \begin{theorem}[Influence via Fourier coefficients]
@@ -1045,7 +1117,6 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 \label{BooleanAnalysis.influence_eq_sum_fourier}
 \leanok
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p006-b001}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1316,6 +1387,9 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
   {pdf-50833afe7403-p017-b001}
 \uses{BooleanAnalysis.influence, BooleanAnalysis.fourierCoeff, BooleanAnalysis.parseval, BooleanAnalysis.walsh_expansion, BooleanAnalysis.fourier_coeff_chi}
 \difficulty{6}
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function and fix a coordinate $i\in[n]$. Then the
+influence of $i$ on $f$ equals the sum of the squared Fourier--Walsh coefficients over
+all frequencies containing $i$:
 \[
   \mathrm{Inf}_i[f] \;=\; \sum_{\substack{S\subseteq[n]\\ i\in S}} \hat f(S)^2.
 \]
@@ -1331,7 +1405,6 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p010-b001}
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p010-b001}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1609,19 +1682,29 @@ $\mathrm{Inf}_i[\chi_S] = [i\in S]$.
   {pdf-50833afe7403-p014-b003}
 \uses{BooleanAnalysis.totalInfluence, BooleanAnalysis.influence_eq_sum_fourier}
 \difficulty{3}
+For every Boolean function $f\colon\{0,1\}^n\to\bbr$, the total influence of $f$ is
+recovered from its Fourier--Walsh spectrum by
 \[
-  I[f] \;=\; \sum_{S\subseteq[n]} |S|\,\hat f(S)^2.
+  I[f] \;=\; \sum_{S\subseteq[n]} \abs{S}\,\hat f(S)^2,
 \]
+where the sum ranges over all subsets $S$ of $[n]=\{1,\dots,n\}$, $\abs{S}$ is the
+cardinality of $S$, and $\hat f(S)$ is the Fourier--Walsh coefficient of $f$ at
+frequency $S$.
 \end{theorem}
 
-\begin{lemma}[Influence is at most 1]
+\begin{lemma}[Influence is bounded by one]
 \lean{BooleanAnalysis.influence_le_one}
 \label{BooleanAnalysis.influence_le_one}
 \leanok
 \uses{BooleanAnalysis.influence}
 \difficulty{4}
-For any $\pm 1$-valued function and any coordinate $i$,
-$\mathrm{Inf}_i[f] \le 1$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function taking values in $\{-1, 1\}$, and let
+$i$ be one of its $n$ coordinates. Then the influence of coordinate $i$ on $f$ satisfies
+\[
+  \mathrm{Inf}_i[f] \;=\; \E\!\left[\frac{(f(x)-f(x^i))^2}{4}\right] \;\le\; 1,
+\]
+where $x^i$ denotes the point obtained from $x$ by flipping its $i$-th coordinate and
+the expectation is taken under the uniform measure on $\{0,1\}^n$.
 \end{lemma}
 
 \begin{lemma}[Average influence lower bound]
@@ -1630,7 +1713,13 @@ $\mathrm{Inf}_i[f] \le 1$.
 \leanok
 \uses{BooleanAnalysis.totalInfluence, BooleanAnalysis.influence}
 \difficulty{4}
-There exists a coordinate $i$ with $\mathrm{Inf}_i[f] \ge I[f]/n$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function on the hypercube of dimension $n\ge 1$.
+Then some coordinate carries at least the average influence: there exists an index $i$
+with
+\[
+  \mathrm{Inf}_i[f] \;\ge\; \frac{I[f]}{n},
+\]
+where $I[f]=\sum_{j=1}^{n}\mathrm{Inf}_j[f]$ is the total influence.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1656,7 +1745,7 @@ with $x_i$ with probability $\tfrac{1+\rho}{2}$ and is flipped with probability
 $\tfrac{1-\rho}{2}$, independently.
 \end{definition}
 
-\begin{theorem}[Noise operator in the Fourier domain]
+\begin{theorem}[Noise operator acts diagonally in the Fourier domain]
 \lean{BooleanAnalysis.noiseOp_fourier}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p008-b005,
@@ -1667,12 +1756,15 @@ $\tfrac{1-\rho}{2}$, independently.
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p013-b003}
 \uses{BooleanAnalysis.noiseOp, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi}
 \difficulty{6}
+Let $\rho\in\bbr$, let $f:\{0,1\}^n\to\bbr$ be a Boolean function, and let
+$S\subseteq[n]$. Then the Fourier--Walsh coefficient of the noise-operator image $T_\rho
+f$ at frequency $S$ is
 \[
-  \widehat{T_\rho f}(S) \;=\; \rho^{|S|}\,\hat f(S).
+  \widehat{T_\rho f}(S) \;=\; \rho^{\abs{S}}\,\hat f(S).
 \]
 \end{theorem}
 
-\begin{theorem}[Stability formula]
+\begin{theorem}[Noise stability via Fourier coefficients]
 \lean{BooleanAnalysis.stability_formula}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p008-b005,
@@ -1684,7 +1776,6 @@ $\tfrac{1-\rho}{2}$, independently.
   pdf-352ab7ff3113-p013-b004,
   pdf-352ab7ff3113-p014-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1922,9 +2013,13 @@ $\tfrac{1-\rho}{2}$, independently.
   {pdf-50833afe7403-p002-b007}
 \uses{BooleanAnalysis.noiseOp, BooleanAnalysis.innerProduct, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.walsh_expansion}
 \difficulty{6}
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function and let $\rho \in \bbr$. Then the
+correlation of $f$ with its noised version under the uniform measure is given by
 \[
-  \langle f, T_\rho f\rangle \;=\; \sum_{S\subseteq[n]} \rho^{|S|}\,\hat f(S)^2.
+  \langle f, T_\rho f\rangle \;=\; \sum_{S\subseteq[n]} \rho^{|S|}\,\hat f(S)^2,
 \]
+where $\langle\cdot,\cdot\rangle$ is the $L^2$ inner product, $T_\rho$ is the noise
+operator, and $\hat f(S)$ denotes the Fourier--Walsh coefficient of $f$ at $S$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1941,13 +2036,15 @@ bit: $\mathrm{dict}_i(x) = (-1)^{x_i}$.  Its unique nonzero Fourier coefficient
 is $\widehat{\mathrm{dict}_i}(\{i\}) = 1$.
 \end{definition}
 
-\begin{lemma}[Dictator equals singleton character]
+\begin{lemma}[Dictator function as a singleton character]
 \lean{BooleanAnalysis.dictator_eq_chi}
 \label{BooleanAnalysis.dictator_eq_chi}
 \leanok
 \uses{BooleanAnalysis.dictator, BooleanAnalysis.chiS}
 \difficulty{1}
-$\mathrm{dict}_i = \chi_{\{i\}}$.
+For each coordinate $i \in [n]$, the dictator function on the Boolean hypercube
+$\{0,1\}^n$ coincides with the Walsh--Fourier character associated to the singleton set
+$\{i\}$; that is, $\mathrm{dict}_i = \chi_{\{i\}}$ as functions $\{0,1\}^n \to \bbr$.
 \end{lemma}
 
 \begin{definition}[Parity]
@@ -1960,7 +2057,7 @@ The \emph{parity function} $f(x) = (-1)^{x_1+\cdots+x_n}$ satisfies
 $\hat f([n]) = 1$ and $\hat f(S) = 0$ for $S\ne[n]$.
 \end{definition}
 
-\begin{lemma}[Parity equals full character]
+\begin{lemma}[Parity as the Walsh character of the full set]
 \lean{BooleanAnalysis.parity_eq_chi_univ}
 \label{BooleanAnalysis.parity_eq_chi_univ}
 \leanok
@@ -1971,7 +2068,10 @@ $\hat f([n]) = 1$ and $\hat f(S) = 0$ for $S\ne[n]$.
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p002-b007}
 \uses{BooleanAnalysis.parity, BooleanAnalysis.chiS}
 \difficulty{1}
-$\mathrm{parity}_n = \chi_{[n]}$.
+For every $n$, the parity function $\mathrm{parity}_n(x) = \prod_{i=1}^{n}\sigma(x_i)$
+on the Boolean hypercube $\{0,1\}^n$ coincides, as a Boolean function, with the
+Walsh--Fourier character $\chi_{[n]}$ indexed by the full set $[n] = \{1,\dots,n\}$;
+that is, $\mathrm{parity}_n = \chi_{[n]}$.
 \end{lemma}
 
 \begin{definition}[Majority]
@@ -2023,26 +2123,34 @@ This models antisymmetry of pairwise preferences in social choice.
 $f$ is \emph{$\pm 1$-valued} if $f(x)\in\{-1,1\}$ for all $x$.
 \end{definition}
 
-\begin{lemma}[Odd functions have zero even-level Fourier coefficients]
+\begin{lemma}[Vanishing of even-level Fourier coefficients of odd functions]
 \lean{BooleanAnalysis.fourierCoeff_odd_even}
 \label{BooleanAnalysis.fourierCoeff_odd_even}
 \leanok
 \uses{BooleanAnalysis.isOddFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS_neg}
 \difficulty{5}
-If $f$ is odd and $|S|$ is even, then $\hat f(S) = 0$.
+Let $f : \{0,1\}^n \to \bbr$ be an odd Boolean function, meaning $f(\lnot x) = -f(x)$
+for every $x \in \{0,1\}^n$, where $\lnot x$ denotes the pointwise negation of $x$. Then
+for every subset $S \subseteq [n]$ of even cardinality, the Fourier--Walsh coefficient
+of $f$ at $S$ vanishes: $\hat f(S) = 0$.
 \end{lemma}
 
-\begin{lemma}[Self inner product of a $\pm 1$ function]
+\begin{lemma}[Self-inner product of a sign function]
 \lean{BooleanAnalysis.innerProduct_self_pm_one}
 \label{BooleanAnalysis.innerProduct_self_pm_one}
 \leanok
 \proofsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p007-b004}
 \uses{BooleanAnalysis.isPmOne, BooleanAnalysis.innerProduct}
 \difficulty{3}
-If $f$ is $\pm 1$-valued then $\langle f, f\rangle = 1$.
+Let $f : \{0,1\}^n \to \bbr$ be a $\pm 1$-valued Boolean function, so that $f(x) \in
+\{-1, 1\}$ for every $x \in \{0,1\}^n$. Then its $L^2$ inner product with itself, taken
+with respect to the uniform measure on the cube, equals $1$:
+\[
+  \langle f, f \rangle \;=\; 2^{-n}\sum_{x \in \{0,1\}^n} f(x)^2 \;=\; 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Parseval for $\pm 1$-valued functions]
+\begin{lemma}[Parseval's identity for $\pm 1$-valued functions]
 \lean{BooleanAnalysis.parseval_pm_one}
 \label{BooleanAnalysis.parseval_pm_one}
 \leanok
@@ -2050,7 +2158,13 @@ If $f$ is $\pm 1$-valued then $\langle f, f\rangle = 1$.
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p006-b003}
 \uses{BooleanAnalysis.isPmOne, BooleanAnalysis.parseval, BooleanAnalysis.innerProduct_self_pm_one}
 \difficulty{1}
-If $f$ is $\pm 1$-valued then $\sum_{S\subseteq[n]}\hat f(S)^2 = 1$.
+Let $f \colon \{0,1\}^n \to \bbr$ be a Boolean function that is $\pm 1$-valued, meaning
+$f(x) \in \{-1,1\}$ for every $x \in \{0,1\}^n$. Then its Fourier--Walsh coefficients
+satisfy
+\[
+  \sum_{S \subseteq [n]} \hat f(S)^2 \;=\; 1,
+\]
+the sum ranging over all subsets $S$ of $[n]$.
 \end{lemma}
 
 \begin{definition}[Fourier weight at level $k$]
@@ -2069,7 +2183,7 @@ The \emph{Fourier weight at level $k$} is
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Moment equals power of expectation]
+\begin{lemma}[Moments under the uniform measure]
 \lean{BooleanAnalysis.moment_eq_expect}
 \label{BooleanAnalysis.moment_eq_expect}
 \leanok
@@ -2079,23 +2193,27 @@ The \emph{Fourier weight at level $k$} is
 }
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{3}
-Let $P$ be a probability measure on $\{0,1\}^n$ that assigns the uniform weight
-to each singleton.  Then for any Boolean function $f$ and $p\in\mathbb{N}$, the
-$p$-th moment of $f$ under $P$ equals the uniform expectation of $f^p$:
+Let $P$ be a probability measure on the Boolean hypercube $\{0,1\}^n$ that assigns every
+singleton the uniform weight $2^{-n}$. Then for any Boolean function $f : \{0,1\}^n \to
+\bbr$ and any $p \in \bbn$, the $p$-th moment of $f$ under $P$ equals the uniform
+expectation of $f^p$:
 \[
-  \mathbb{E}_P[f^p] \;=\; \E\!\left[f(x)^p\right].
+  \E_P\!\left[f^p\right] \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} f(x)^p.
 \]
 \end{lemma}
 
-\begin{lemma}[Sum over subsets as a product]
+\begin{lemma}[Sum over subsets equals a product of one plus each term]
 \lean{BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
 \label{BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
 \leanok
 \difficulty{3}
-For any $c : \mathrm{Fin}\,n \to \bbr$,
+For any real numbers $c_0,\dots,c_{n-1}$, indexed by $i \in \mathrm{Fin}\,n$,
 \[
-  \sum_{S\subseteq[n]} \prod_{i\in S} c_i \;=\; \prod_{i=1}^n (1 + c_i).
+\sum_{S \subseteq \{0,\dots,n-1\}} \; \prod_{i \in S} c_i \;=\; \prod_{i=0}^{n-1} (1 +
+c_i),
 \]
+where the sum ranges over all subsets $S$ of the index set (with the empty product equal
+to $1$).
 \end{lemma}
 
 \begin{lemma}[Completeness kernel for the Walsh basis]
@@ -2109,12 +2227,12 @@ For any $c : \mathrm{Fin}\,n \to \bbr$,
 }
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.boolToSign_mul_self, BooleanAnalysis.chiS, BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
 \difficulty{4}
-For points $x, y\in\{0,1\}^n$,
+Let $x, y \in \{0,1\}^n$ be points of the Boolean hypercube. Then the sum of the
+products of Walsh--Fourier characters over all subsets of $[n]$ satisfies
 \[
-  \sum_{S\subseteq[n]} \chi_S(x)\,\chi_S(y) \;=\;
-  \begin{cases} 2^n & x = y,\\ 0 & x\ne y. \end{cases}
+  \sum_{S \subseteq [n]} \chi_S(x)\,\chi_S(y) \;=\;
+  \begin{cases} 2^n & \text{if } x = y,\\[2pt] 0 & \text{if } x \neq y. \end{cases}
 \]
-This is the completeness kernel underlying Fourier inversion.
 \end{lemma}
 
 \begin{definition}[Degree at most $k$]
@@ -2131,27 +2249,33 @@ coefficient is supported on a set of size at most $k$: for all $S$, if
 $\hat f(S)\ne 0$ then $|S|\le k$.
 \end{definition}
 
-\begin{lemma}[Sum of sign encoding over a bit]
+\begin{lemma}[Sign encoding sums to zero over the Booleans]
 \lean{BooleanAnalysis.sum_boolToSign}
 \label{BooleanAnalysis.sum_boolToSign}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 \difficulty{1}
-Summing the sign encoding over the two Boolean values gives zero:
-$\sum_{b\in\mathrm{Bool}} \sigma(b) = 0$.
+Let $\sigma\colon\mathrm{Bool}\to\{-1,1\}$ be the sign encoding, sending the value
+*false* to $1$ and the value *true* to $-1$. Summing $\sigma$ over the two Boolean
+values yields
+\[
+  \sum_{b\in\mathrm{Bool}} \sigma(b) = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Sum of a character over the cube]
+\begin{lemma}[Sum of a Walsh character over the cube]
 \lean{BooleanAnalysis.sum_chiS}
 \label{BooleanAnalysis.sum_chiS}
 \leanok
 \statementsource{boolean-ch01-fourier-blr}{pdf-cdca27e1b5fd-p006-b005}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{5}
-Summing the character $\chi_S$ over the whole hypercube yields
+Let $n$ be a natural number and let $S \subseteq [n]$. Summing the Walsh--Fourier
+character $\chi_S$ over the entire Boolean hypercube $\{0,1\}^n$ gives
 \[
-  \sum_{x\in\{0,1\}^n} \chi_S(x) \;=\;
-  \begin{cases} 2^n & S = \varnothing,\\ 0 & S\ne\varnothing. \end{cases}
+  \sum_{x \in \{0,1\}^n} \chi_S(x) \;=\;
+\begin{cases} 2^n & \text{if } S = \varnothing,\\ 0 & \text{if } S \ne \varnothing.
+\end{cases}
 \]
 \end{lemma}
 
@@ -2163,7 +2287,6 @@ Summing the character $\chi_S$ over the whole hypercube yields
 }
 \label{BooleanAnalysis.plancherel}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2396,44 +2519,49 @@ Summing the character $\chi_S$ over the whole hypercube yields
   {pdf-50833afe7403-p003-b002}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight, BooleanAnalysis.walsh_expansion}
 \difficulty{6}
-The inner product of two Boolean functions equals the sum of the products of
-their Fourier coefficients:
+Let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions. Then their $L^2$ inner product
+with respect to the uniform measure equals the sum, over all subsets $S \subseteq [n]$,
+of the products of their corresponding Fourier--Walsh coefficients:
 \[
   \langle f, g\rangle \;=\; \sum_{S\subseteq[n]} \hat f(S)\,\hat g(S).
 \]
 \end{theorem}
 
-\begin{lemma}[Flipping a bit twice is the identity]
+\begin{lemma}[Bit-flip is an involution]
 \lean{BooleanAnalysis.flipBit_flipBit}
 \label{BooleanAnalysis.flipBit_flipBit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
 \difficulty{2}
-Flipping coordinate $i$ twice returns the original point:
-$(x^i)^i = x$.
+For a point $x$ in the Boolean hypercube $\{0,1\}^n$ and a coordinate $i$, flipping the
+$i$-th coordinate of $x$ twice returns the original point: $(x^i)^i = x$.
 \end{lemma}
 
-\begin{lemma}[Flipping bit $i$ leaves other coordinates fixed]
+\begin{lemma}[Bit flip preserves the other coordinates]
 \lean{BooleanAnalysis.flipBit_ne}
 \label{BooleanAnalysis.flipBit_ne}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.flipBit}
 \difficulty{1}
-If $i\ne j$ then flipping coordinate $i$ does not change coordinate $j$:
-$(x^i)_j = x_j$.
+Let $x\in\{0,1\}^n$ be a point of the Boolean hypercube, and let $i,j$ be coordinate
+indices with $i\ne j$. Writing $x^i$ for the point obtained from $x$ by flipping the
+$i$-th coordinate, we have $(x^i)_j = x_j$; that is, flipping coordinate $i$ leaves
+coordinate $j$ unchanged.
 \end{lemma}
 
-\begin{lemma}[Character under a single bit flip]
+\begin{lemma}[Walsh character under a single bit flip]
 \lean{BooleanAnalysis.chiS_flipBit}
 \label{BooleanAnalysis.chiS_flipBit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.flipBit}
 \difficulty{5}
-Flipping coordinate $i$ negates $\chi_S$ when $i\in S$ and leaves it unchanged
-otherwise:
+Fix a subset $S\subseteq[n]$ of coordinates. For every point $x$ of the Boolean
+hypercube $\{0,1\}^n$ and every coordinate $i\in[n]$, the value of the Walsh--Fourier
+character $\chi_S$ at the point $x^i$ obtained by flipping the $i$-th coordinate of $x$
+is
 \[
   \chi_S(x^i) \;=\;
-  \begin{cases} -\chi_S(x) & i\in S,\\ \chi_S(x) & i\notin S. \end{cases}
+  \begin{cases} -\chi_S(x) & i\in S,\\[2pt] \chi_S(x) & i\notin S. \end{cases}
 \]
 \end{lemma}
 
@@ -2450,26 +2578,36 @@ The \emph{discrete derivative} of $f$ in direction $i$ is the Boolean function
 where $x^{i\mapsto b}$ sets coordinate $i$ of $x$ to $b$.
 \end{definition}
 
-\begin{lemma}[Derivative is additive]
+\begin{lemma}[Additivity of the discrete derivative]
 \lean{BooleanAnalysis.derivative_add}
 \label{BooleanAnalysis.derivative_add}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p005-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
 \difficulty{1}
-The discrete derivative respects addition:
-$D_i(f + g) = D_i f + D_i g$.
+Fix an arity $n$ and a coordinate direction $i \in \{1, \dots, n\}$. For any two Boolean
+functions $f, g : \{0,1\}^n \to \bbr$, the discrete derivative in direction $i$
+satisfies
+\[
+  D_i(f + g) = D_i f + D_i g,
+\]
+that is, the operator $D_i$ is additive.
 \end{lemma}
 
-\begin{lemma}[Derivative commutes with scalars]
+\begin{lemma}[Homogeneity of the discrete derivative]
 \lean{BooleanAnalysis.derivative_smul}
 \label{BooleanAnalysis.derivative_smul}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p005-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
 \difficulty{1}
-The discrete derivative commutes with scalar multiplication:
-$D_i(c\cdot f) = c\cdot D_i f$ for $c\in\bbr$.
+Fix an arity $n$ and a coordinate direction $i \in \{1,\dots,n\}$. For every scalar $c
+\in \bbr$ and every Boolean function $f : \{0,1\}^n \to \bbr$, the discrete derivative
+in direction $i$ commutes with scalar multiplication:
+\[
+  D_i(c \cdot f) = c \cdot D_i f,
+\]
+that is, scaling $f$ by $c$ scales its discrete derivative by the same factor.
 \end{lemma}
 
 \begin{definition}[Derivative as a linear map]
@@ -2497,24 +2635,35 @@ values of coordinate $i$:
 \]
 \end{definition}
 
-\begin{lemma}[Expectation operator is additive]
+\begin{lemma}[Additivity of the expectation operator]
 \lean{BooleanAnalysis.expectation_add}
 \label{BooleanAnalysis.expectation_add}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
 \difficulty{1}
-The expectation operator respects addition:
-$E_i(f + g) = E_i f + E_i g$.
+Fix $n \in \bbn$ and a coordinate direction $i \in \{1,\dots,n\}$, and write $E_i$ for
+the expectation operator in direction $i$, which sends a Boolean function $h : \{0,1\}^n
+\to \bbr$ to the function $(E_i h)(x) = \tfrac{1}{2}\bigl(h(x^{i\mapsto 0}) +
+h(x^{i\mapsto 1})\bigr)$. Then $E_i$ is additive: for all Boolean functions $f, g :
+\{0,1\}^n \to \bbr$,
+\[
+  E_i(f + g) = E_i f + E_i g.
+\]
 \end{lemma}
 
-\begin{lemma}[Expectation operator commutes with scalars]
+\begin{lemma}[Homogeneity of the expectation operator]
 \lean{BooleanAnalysis.expectation_smul}
 \label{BooleanAnalysis.expectation_smul}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expectationOperator}
 \difficulty{1}
-The expectation operator commutes with scalar multiplication:
-$E_i(c\cdot f) = c\cdot E_i f$ for $c\in\bbr$.
+Let $n$ be an arity and let $i$ be one of its coordinates. For every scalar $c \in \bbr$
+and every Boolean function $f : \{0,1\}^n \to \bbr$, applying the expectation operator
+in direction $i$ to the scaled function $c\,f$ yields $c$ times the expectation operator
+applied to $f$:
+\[
+  E_i(c\,f) = c\,E_i f.
+\]
 \end{lemma}
 
 \begin{definition}[Expectation operator as a linear map]
@@ -2526,15 +2675,16 @@ The expectation operator $E_i$ packaged as an $\bbr$-linear map on the space of
 Boolean functions.
 \end{definition}
 
-\begin{lemma}[Noise operator is self-adjoint]
+\begin{lemma}[Self-adjointness of the noise operator]
 \lean{BooleanAnalysis.noiseOp_self_adjoint}
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p030-b001}
 \label{BooleanAnalysis.noiseOp_self_adjoint}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.plancherel}
 \difficulty{4}
-The noise operator $T_\rho$ is self-adjoint with respect to the $L^2$ inner
-product:
+Fix a dimension $n$ and let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions. For any
+real number $\rho$, the noise operator $T_\rho$ is self-adjoint with respect to the
+$L^2$ inner product induced by the uniform measure on $\{0,1\}^n$:
 \[
   \langle T_\rho f, g\rangle \;=\; \langle f, T_\rho g\rangle.
 \]

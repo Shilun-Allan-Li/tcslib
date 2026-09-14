@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.toOmega_mul",
+ "key": "91b9f54d433cf6bc",
+ "kind": "lemma",
+ "title": "Multiplicativity of the root-of-unity embedding",
+ "statement": "Fix a positive integer $k$ and let $\\omega_k = e^{2\\pi i / k}$. For $b \\in \\mathbb{Z}/k\\mathbb{Z}$, write $\\lfloor b\\rfloor \\in \\{0,\\ldots,k-1\\}$ for its canonical representative and set $\\chi(b) = \\omega_k^{\\lfloor b\\rfloor}$. Then for all $j, a \\in \\mathbb{Z}/k\\mathbb{Z}$,\n\\[\n  \\chi(j \\cdot a) = \\bigl(\\omega_k^{\\lfloor j\\rfloor}\\bigr)^{\\lfloor a\\rfloor}.\n\\]",
+ "hypotheses_covered": [
+  "k is a positive integer (NeZero k)",
+  "j is an element of Z/kZ",
+  "a is an element of Z/kZ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $j, a : \\mathbb{Z}/k\\mathbb{Z}$,\n$\\omega_k^{j \\cdot a} = (\\omega_k^j)^a$, i.e.\\\n$\\texttt{ZkFourier.toOmega}\\ (j \\cdot a) = (\\omega_k^{j.\\mathrm{val}})^{a.\\mathrm{val}}$."
+}

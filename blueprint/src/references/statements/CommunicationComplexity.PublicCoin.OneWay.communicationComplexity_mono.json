@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_mono",
+ "key": "757f083e401f1fed",
+ "kind": "theorem",
+ "title": "Monotonicity of communication complexity in the error tolerance",
+ "statement": "Fix a function $f : X \\to Y \\to \\alpha$ and real error tolerances $\\varepsilon', \\varepsilon$ with $\\varepsilon' \\le \\varepsilon$. Then the $\\varepsilon$-error one-way public-coin communication complexity of $f$ is at most its $\\varepsilon'$-error one-way public-coin communication complexity, where each such complexity is the infimum (in $\\bbn \\cup \\{\\infty\\}$) of the bit cost over all coin-tape lengths $n$ and all one-way public-coin protocols that compute $f$ to the corresponding error tolerance. In other words, relaxing the permitted error can only decrease (or leave unchanged) the required communication.",
+ "hypotheses_covered": [
+  "a function f : X → Y → α",
+  "real error tolerances ε' ≤ ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The $\\varepsilon$-error one-way public-coin communication complexity of $f$ is\nmonotone non-increasing in $\\varepsilon$: if $\\varepsilon' \\le \\varepsilon$ then\n$\\mathrm{CC}(f,\\varepsilon) \\le \\mathrm{CC}(f,\\varepsilon')$.  Intuitively, a\nstricter error budget can only demand a larger protocol cost."
+}

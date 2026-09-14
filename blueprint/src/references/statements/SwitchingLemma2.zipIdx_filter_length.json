@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.zipIdx_filter_length",
+ "key": "bc90d4c8d2dde2ce",
+ "kind": "lemma",
+ "title": "Indexing a term preserves the count of matching literals",
+ "statement": "Let $t$ be a term over $n$ variables, that is, a finite list of literals, and let $p$ be a predicate on literals. Form from $t$ the indexed list in which each literal is paired with its position in $t$. Then the number of entries of this indexed list whose literal component satisfies $p$ equals the number of literals of $t$ that satisfy $p$.",
+ "hypotheses_covered": [
+  "$t$ is a term (finite list of literals) over $n$ variables",
+  "$p$ is a Boolean predicate on literals"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Filtering $t.\\mathrm{zipIdx}$ by a predicate on the literal component has the same\nlength as filtering the original term $t$ by the same predicate."
+}

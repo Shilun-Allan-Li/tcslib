@@ -127,61 +127,74 @@ best expert in hindsight:
 \]
 \end{definition}
 
-\begin{lemma}[Potential at time zero]
+\begin{lemma}[Initial value of the potential]
 \lean{potential_zero}
 \label{potential_zero}
 \leanok
 \uses{LossSeq, cumLoss, hedgeWeight, potential}
 \difficulty{3}
-At time $0$, all cumulative losses are zero, so every weight equals $1$, and
-the potential equals the number of experts: $W_0 = N$.
+Fix $N \ge 1$ experts, a horizon $T$, and a loss sequence $\ell$ over these experts and
+rounds, and let $\eta \in \bbr$ be a learning rate. At time $0$ every expert has zero
+cumulative loss, so each unnormalized Hedge weight equals $1$, and the potential is
+\[
+  W_0 \;=\; \sum_{i=1}^{N} \exp\!\bigl(-\eta \cdot L_0(i)\bigr) \;=\; N .
+\]
 \end{lemma}
 
-\begin{lemma}[Positivity of weights]
+\begin{lemma}[Positivity of Hedge weights]
 \lean{hedgeWeight_pos}
 \label{hedgeWeight_pos}
 \leanok
 \uses{LossSeq, hedgeWeight}
 \difficulty{1}
-For any $\eta$, loss sequence $\ell$, time $t$, and expert $i$, the weight
-$w_t(i) = \exp(-\eta \cdot L_t(i))$ is strictly positive.
+Fix a learning rate $\eta \in \bbr$, a loss sequence $\ell$ for $N$ experts over $T$
+rounds, a time $t$, and an expert $i$. Then the unnormalized Hedge weight $w_t(i) =
+\exp\!\bigl(-\eta \cdot L_t(i)\bigr)$, where $L_t(i) = \sum_{s < t} \ell_s(i)$ is the
+cumulative loss of expert $i$ through the first $t$ rounds, is strictly positive.
 \end{lemma}
 
-\begin{lemma}[Positivity of the potential]
+\begin{lemma}[Positivity of the Hedge potential]
 \lean{potential_pos}
 \label{potential_pos}
 \leanok
 \uses{LossSeq, hedgeWeight_pos, potential}
 \difficulty{2}
-For any $\eta$, loss sequence $\ell$, and time $t$, the potential $W_t > 0$.
-This follows because $W_t$ is a finite sum of positive terms over the nonempty
-set of $N \ge 1$ experts.
+Fix a learning rate $\eta \in \bbr$, a loss sequence $\ell$ for $N \ge 1$ experts over
+$T$ rounds, and a time $t$. Then the potential at time $t$ is strictly positive:
+\[
+  W_t \;=\; \sum_{i=1}^{N} \exp\!\bigl(-\eta \cdot L_t(i)\bigr) \;>\; 0,
+\]
+where $L_t(i) = \sum_{s < t} \ell_s(i)$ is the cumulative loss of expert $i$ through the
+first $t$ rounds.
 \end{lemma}
 
-\begin{lemma}[Exponential convexity bound]
+\begin{lemma}[Chord bound for the exponential on the unit interval]
 \lean{exp_neg_le_linear}
 \label{exp_neg_le_linear}
 \leanok
 \difficulty{4}
-For $\eta > 0$ and $x \in [0,1]$,
+For every $\eta > 0$ and every $x \in [0,1]$, the value $e^{-\eta x}$ lies below the
+chord joining the endpoints of the graph of $t \mapsto e^{-\eta t}$ over $[0,1]$; that
+is, the inequality
 \[
-  e^{-\eta x} \;\le\; 1 - (1 - e^{-\eta})\,x.
+  e^{-\eta x} \;\le\; 1 - \bigl(1 - e^{-\eta}\bigr)\,x
 \]
-This follows from convexity of the exponential: $e^{x \cdot (-\eta)} \le
-x\,e^{-\eta} + (1-x)\,e^{0}$.
+holds, the right-hand side being the affine function equal to $1$ at $x = 0$ and to
+$e^{-\eta}$ at $x = 1$.
 \end{lemma}
 
-\begin{lemma}[Cumulative loss successor step]
+\begin{lemma}[Cumulative loss recurrence]
 \lean{cumLoss_succ}
 \label{cumLoss_succ}
 \leanok
 \uses{LossSeq, cumLoss}
 \difficulty{4}
-The cumulative loss satisfies the recurrence
+Let $\ell$ be a loss sequence for $N$ experts over $T$ rounds, and write $L_t(i) =
+\sum_{s < t} \ell_s(i)$ for the cumulative loss of expert $i$ through the first $t$
+rounds. Then for every round $t < T$ and every expert $i$,
 \[
-  L_{t+1}(i) \;=\; L_t(i) + \ell_t(i)
+  L_{t+1}(i) \;=\; L_t(i) + \ell_t(i).
 \]
-for every $t < T$ and expert $i$.
 \end{lemma}
 
 \begin{lemma}[Cumulative loss at the horizon]
@@ -190,59 +203,72 @@ for every $t < T$ and expert $i$.
 \leanok
 \uses{LossSeq, cumLoss}
 \difficulty{2}
-At the final horizon, $L_T(i) = \sum_{t : \mathrm{Fin}\,T} \ell_t(i)$, i.e.,
-the cumulative loss through $T$ equals the full sum over all rounds.
+Fix $N$ experts and a horizon $T$, and let $\ell$ be a loss sequence assigning to each
+round $t$ and expert $i$ a real loss $\ell_t(i)$. For every expert $i$, the cumulative
+loss through the first $T$ rounds equals the total loss over all rounds: $L_T(i) =
+\sum_{t} \ell_t(i)$, where $t$ ranges over all $T$ rounds.
 \end{lemma}
 
-\begin{lemma}[Weight successor factorization]
+\begin{lemma}[Recursion for the Hedge weight]
 \lean{hedgeWeight_succ}
 \label{hedgeWeight_succ}
 \leanok
 \uses{LossSeq, cumLoss_succ, hedgeWeight}
 \difficulty{2}
-The weight factorizes across rounds:
+Fix a learning rate $\eta \in \bbr$ and a loss sequence $\ell$ for $N$ experts over $T$
+rounds. For every round $t \in \mathrm{Fin}\,T$ and every expert $i \in
+\mathrm{Fin}\,N$, the unnormalized Hedge weights satisfy
 \[
-  w_{t+1}(i) \;=\; w_t(i) \cdot \exp\!\bigl(-\eta\,\ell_t(i)\bigr).
+  w_{t+1}(i) \;=\; w_t(i)\cdot \exp\!\bigl(-\eta\,\ell_t(i)\bigr).
 \]
 \end{lemma}
 
-\begin{lemma}[Hedge distribution sums to one]
+\begin{lemma}[The Hedge distribution sums to one]
 \lean{hedgeDist_sum}
 \label{hedgeDist_sum}
 \leanok
 \uses{LossSeq, hedgeDist, potential_pos}
 \difficulty{2}
-For any $\eta$, valid loss sequence $\ell$, and time $t$,
-$\sum_{i=1}^{N} p_t(i) = 1$, so the Hedge distribution is a proper probability
-distribution.
+Fix a number of experts $N \ge 1$, a horizon $T$, a learning rate $\eta \in \bbr$, a
+loss sequence $\ell$ for $N$ experts over $T$ rounds, and a round $t$. Then the Hedge
+distribution at round $t$ sums to one over all experts,
+\[
+  \sum_{i=1}^{N} p_t(i) = 1,
+\]
+so it is a probability distribution on the $N$ experts.
 \end{lemma}
 
-\begin{lemma}[Potential ratio bound]
+\begin{lemma}[Potential ratio bound for Hedge]
 \lean{potential_ratio_le}
 \label{potential_ratio_le}
 \leanok
 \uses{LossSeq, LossSeq.Valid, exp_neg_le_linear, hedgeDist, hedgeLoss, hedgeWeight, hedgeWeight_pos, hedgeWeight_succ, potential, potential_pos}
 \difficulty{5}
-For a valid loss sequence and $\eta > 0$, the ratio of consecutive potentials
-satisfies
+Fix $N \ge 1$ experts, a horizon of $T$ rounds, a learning rate $\eta > 0$, and a valid
+loss sequence $\ell$. Then for every round $t$ with $t < T$, the consecutive potentials
+satisfy
 \[
-  \frac{W_{t+1}}{W_t} \;\le\; 1 - (1 - e^{-\eta})\,\widehat{\ell}_t,
+  \frac{W_{t+1}}{W_t} \;\le\; 1 - \bigl(1 - e^{-\eta}\bigr)\,\widehat{\ell}_t,
 \]
-where $\widehat{\ell}_t = \sum_i p_t(i)\,\ell_t(i)$ is the expected loss at
-round $t$.  This is the key potential-ratio lemma of Cesa-Bianchi and Lugosi.
+where $\widehat{\ell}_t = \sum_{i=1}^{N} p_t(i)\,\ell_t(i)$ is the expected loss of the
+learner under the Hedge distribution at round $t$.
 \end{lemma}
 
-\begin{lemma}[Logarithmic potential step bound]
+\begin{lemma}[One-step logarithmic potential bound for Hedge]
 \lean{log_potential_step}
 \label{log_potential_step}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeLoss, potential, potential_pos, potential_ratio_le}
 \difficulty{4}
-For a valid loss sequence, $\eta > 0$, and $t < T$,
+Fix $N \ge 1$ experts and $T$ rounds, a learning rate $\eta > 0$, and a valid loss
+sequence $\ell$, so that $0 \le \ell_t(i) \le 1$ for every round $t$ and expert $i$.
+Writing $W_t = \sum_{i=1}^N \exp\!\bigl(-\eta L_t(i)\bigr)$ for the Hedge potential and
+$\widehat{\ell}_t = \sum_{i=1}^N p_t(i)\,\ell_t(i)$ for the expected loss under the
+Hedge distribution, the one-round change in log-potential is controlled by the expected
+loss: for each round $t$,
 \[
-  \ln W_{t+1} - \ln W_t \;\le\; -(1 - e^{-\eta})\,\widehat{\ell}_t,
+  \ln W_{t+1} - \ln W_t \;\le\; -\bigl(1 - e^{-\eta}\bigr)\,\widehat{\ell}_t.
 \]
-which follows from $\ln(1-x) \le -x$ applied to the potential ratio bound.
 \end{lemma}
 
 \begin{lemma}[Quadratic upper bound on $e^{-t}$]
@@ -250,7 +276,8 @@ which follows from $\ln(1-x) \le -x$ applied to the potential ratio bound.
 \label{exp_neg_le_quadratic}
 \leanok
 \difficulty{4}
-For $t \ge 0$,
+For every real number $t \ge 0$, the value $e^{-t}$ is at most the second-order Taylor
+polynomial $1 - t + t^2/2$; that is,
 \[
   e^{-t} \;\le\; 1 - t + \frac{t^2}{2}.
 \]
@@ -262,68 +289,74 @@ For $t \ge 0$,
 \leanok
 \uses{exp_neg_le_quadratic}
 \difficulty{2}
-For $\eta > 0$,
+For every real number $\eta > 0$, the quantity $1 - e^{-\eta}$ is bounded below by its
+second-order Taylor expansion at the origin:
 \[
-  1 - e^{-\eta} \;\ge\; \eta - \frac{\eta^2}{2}.
+  1 - e^{-\eta} \;\ge\; \eta - \frac{\eta^{2}}{2}.
 \]
-This follows directly from the quadratic bound $e^{-\eta} \le 1 - \eta + \eta^2/2$.
 \end{lemma}
 
-\begin{lemma}[Lower bound on potential via best expert]
+\begin{lemma}[Potential lower bound via the best expert]
 \lean{potential_ge_best_expert}
 \label{potential_ge_best_expert}
 \leanok
 \uses{LossSeq, bestExpertLoss, cumLoss, hedgeWeight, potential}
 \difficulty{4}
-The final potential is at least the weight of the best expert:
+Fix $N \ge 1$ experts and $T$ rounds, a loss sequence $\ell$, and a learning rate $\eta
+> 0$. Then the final potential is at least the unnormalized Hedge weight of the best
+expert in hindsight:
 \[
-  W_T \;\ge\; \exp\!\bigl(-\eta \cdot L^*\bigr),
+  W_T \;\ge\; \exp\!\bigl(-\eta \, L^*\bigr),
 \]
-where $L^* = \min_i L_T(i)$ is the best expert's cumulative loss.
+where $L^* = \min_{i} L_T(i)$ is the smallest cumulative loss over the full horizon $T$.
 \end{lemma}
 
-\begin{lemma}[Hedge distribution is nonnegative]
+\begin{lemma}[Nonnegativity of the Hedge distribution]
 \lean{hedgeDist_nonneg}
 \label{hedgeDist_nonneg}
 \leanok
 \uses{LossSeq, hedgeDist, hedgeWeight_pos, potential_pos}
 \difficulty{1}
-For any $\eta$, loss sequence $\ell$, time $t$, and expert $i$, the Hedge
-distribution satisfies $p_t(i) \ge 0$.
+Fix $N \ge 1$ experts and $T$ rounds, a learning rate $\eta \in \bbr$, and a loss
+sequence $\ell$. For every time $t$ and every expert $i$, the Hedge distribution is
+nonnegative, that is, $p_t(i) \ge 0$.
 \end{lemma}
 
-\begin{lemma}[Expected loss at most one]
+\begin{lemma}[Hedge's expected loss is at most one]
 \lean{hedgeLoss_le_one}
 \label{hedgeLoss_le_one}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss}
 \difficulty{3}
-For a valid loss sequence, the expected loss at each round satisfies
-$\widehat{\ell}_t \le 1$, since individual losses are at most $1$ and the
-Hedge distribution is a probability measure.
+Fix a learning rate $\eta \in \bbr$, and let $\ell$ be a valid loss sequence for $N \ge
+1$ experts over $T$ rounds, so that $0 \le \ell_t(i) \le 1$ for every round $t$ and
+expert $i$. Then at each round $t$ the expected loss of the learner under the Hedge
+distribution satisfies $\widehat{\ell}_t \le 1$.
 \end{lemma}
 
-\begin{lemma}[Expected loss nonnegative]
+\begin{lemma}[Nonnegativity of Hedge's expected loss]
 \lean{hedgeLoss_nonneg}
 \label{hedgeLoss_nonneg}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeDist_nonneg, hedgeLoss}
 \difficulty{2}
-For a valid loss sequence, the expected loss at each round satisfies
-$\widehat{\ell}_t \ge 0$, since individual losses are nonnegative and the
-Hedge distribution is nonnegative.
+Let $\ell$ be a valid loss sequence for $N \ge 1$ experts over $T$ rounds, fix any
+learning rate $\eta \in \bbr$, and let $t$ be one of the rounds. Then the learner's
+expected loss $\widehat{\ell}_t = \sum_{i=1}^{N} p_t(i)\,\ell_t(i)$ under the Hedge
+distribution is nonnegative, $\widehat{\ell}_t \ge 0$.
 \end{lemma}
 
-\begin{theorem}[Hedge regret bound]
+\begin{theorem}[Regret bound for the Hedge algorithm]
 \lean{hedge_regret_bound}
 \label{hedge_regret_bound}
 \leanok
 \uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, hedgeLoss_le_one, hedgeLoss_nonneg, log_potential_step, one_sub_exp_neg_ge, potential, potential_ge_best_expert, potential_zero, regret}
 \difficulty{5}
-\textbf{Hedge Regret Bound} (Cesa-Bianchi \& Lugosi, Theorem 2.2).
-For any valid loss sequence with $N$ experts, $T$ rounds, and $\eta \in (0,1]$,
+Fix $N \ge 1$ experts and $T$ rounds, and let $\ell$ be a valid loss sequence, so that
+$0 \le \ell_t(i) \le 1$ for every round $t$ and expert $i$. Then for any learning rate
+$\eta$ with $0 < \eta \le 1$, the regret of the Hedge algorithm satisfies
 \[
-  R_T(\eta) \;\le\; \frac{\ln N}{\eta} + \frac{\eta T}{2}.
+  R_T(\eta) \;\le\; \frac{\ln N}{\eta} + \frac{\eta\,T}{2}.
 \]
 \end{theorem}
 
@@ -338,31 +371,36 @@ bound is
 \]
 \end{definition}
 
-\begin{theorem}[Hedge with optimal learning rate]
+\begin{theorem}[Optimal-rate regret bound for Hedge]
 \lean{hedge_regret_optimal}
 \label{hedge_regret_optimal}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_bound, optimalEta, regret}
 \difficulty{5}
-If $T \ge 2\ln N$ (so that $\eta^* \le 1$), then for any valid loss sequence,
+Consider the Hedge algorithm run on $N > 1$ experts over $T > 0$ rounds against a valid
+loss sequence $\ell$, that is, one with $0 \le \ell_t(i) \le 1$ for every round $t$ and
+expert $i$. Suppose $2\ln N \le T$, and run Hedge with the learning rate $\eta^* =
+\sqrt{2\ln N / T}$. Then the regret—the learner's total expected loss minus the loss of
+the best single expert in hindsight—satisfies
 \[
   R_T(\eta^*) \;\le\; \sqrt{2\,T\ln N}.
 \]
 \end{theorem}
 
-\begin{theorem}[Hedge is no-regret]
+\begin{theorem}[Hedge achieves vanishing average regret]
 \lean{hedge_no_regret}
 \label{hedge_no_regret}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_optimal, optimalEta, regret}
 \difficulty{4}
-If $T \ge 2\ln N$, then for any valid loss sequence the \emph{average regret}
-satisfies
+Fix $N > 1$ experts and $T$ rounds with $T > 0$, and suppose $2\ln N \le T$. Let $\ell$
+be a valid loss sequence for $N$ experts over $T$ rounds, so that every individual loss
+satisfies $0 \le \ell_t(i) \le 1$. Running the Hedge algorithm with the optimal learning
+rate $\eta^* = \sqrt{2\ln N / T}$, the average regret against the best expert in
+hindsight is bounded by
 \[
-  \frac{R_T(\eta^*)}{T} \;\le\; \sqrt{\frac{2\ln N}{T}},
+  \frac{R_T(\eta^*)}{T} \;\le\; \sqrt{\frac{2\ln N}{T}}.
 \]
-which tends to $0$ as $T \to \infty$ with $N$ fixed, confirming that Hedge is
-a no-regret algorithm.
 \end{theorem}
 
 \begin{lemma}[Hoeffding's lemma]
@@ -371,24 +409,25 @@ a no-regret algorithm.
 \leanok
 \uses{bernoulli_mgf_bound}
 \difficulty{2}
-For $p \in [0,1]$ and any $h \in \mathbb{R}$,
+Let $p \in [0,1]$ and let $h \in \bbr$ be arbitrary. Then
 \[
-  \ln\!\bigl((1-p) + p\,e^h\bigr) \;\le\; p\,h + \frac{h^2}{8}.
+  \log\!\bigl((1-p) + p\,e^{h}\bigr) \;\le\; p\,h + \frac{h^{2}}{8}.
 \]
-This specializes the Bernoulli moment-generating-function bound from
-\texttt{bernoulli\_mgf\_bound} by substituting $\eta = -h$.
 \end{lemma}
 
-\begin{lemma}[Tight per-step logarithmic potential bound]
+\begin{lemma}[Tight per-step logarithmic potential bound for Hedge]
 \lean{log_potential_step_tight}
 \label{log_potential_step_tight}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeLoss, hedgeLoss_le_one, hedgeLoss_nonneg, hoeffding_lemma, potential, potential_pos, potential_ratio_le}
 \difficulty{4}
-For a valid loss sequence and $\eta > 0$, applying Hoeffding's lemma gives the
-tighter per-step bound
+Fix $N \ge 1$ experts and a learning rate $\eta > 0$, and let $\ell$ be a valid loss
+sequence over $T$ rounds, so that every individual loss satisfies $0 \le \ell_t(i) \le
+1$. Write $W_t = \sum_{i=1}^{N} \exp(-\eta L_t(i))$ for the Hedge potential after $t$
+rounds, and $\widehat{\ell}_t$ for the expected loss of the learner at round $t$ under
+the Hedge distribution. Then for every round $t$ (with $0 \le t < T$),
 \[
-  \ln W_{t+1} - \ln W_t \;\le\; -\eta\,\widehat{\ell}_t + \frac{\eta^2}{8}.
+  \log W_{t+1} - \log W_t \;\le\; -\eta\,\widehat{\ell}_t + \frac{\eta^2}{8}.
 \]
 \end{lemma}
 
@@ -398,10 +437,12 @@ tighter per-step bound
 \leanok
 \uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, log_potential_step_tight, potential, potential_ge_best_expert, potential_zero, regret}
 \difficulty{5}
-\textbf{Tight Hedge Regret Bound} (Cesa-Bianchi \& Lugosi).
-For any valid loss sequence with $N$ experts, $T$ rounds, and $\eta > 0$,
+Fix $N \ge 1$ experts and a horizon of $T$ rounds, and run the Hedge algorithm with a
+learning rate $\eta > 0$. For every valid loss sequence $\ell$ — one whose losses
+satisfy $0 \le \ell_t(i) \le 1$ for all rounds $t$ and experts $i$ — the regret of Hedge
+is bounded by
 \[
-  R_T(\eta) \;\le\; \frac{\ln N}{\eta} + \frac{\eta T}{8}.
+  R_T(\eta) \;\le\; \frac{\log N}{\eta} + \frac{\eta\,T}{8}.
 \]
 \end{theorem}
 
@@ -415,15 +456,17 @@ The learning rate that optimizes the tight Hedge bound is
 \]
 \end{definition}
 
-\begin{theorem}[Tight Hedge with optimal learning rate]
+\begin{theorem}[Optimal-rate regret bound for Hedge]
 \lean{hedge_regret_tight_optimal}
 \label{hedge_regret_tight_optimal}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_bound_tight, optimalEtaTight, regret}
 \difficulty{4}
-For any valid loss sequence with $N > 1$ experts, $T \ge 1$ rounds, using
-$\eta_{\mathrm{tight}} = \sqrt{8\ln N / T}$,
+Consider the Hedge algorithm run against a valid loss sequence for $N > 1$ experts over
+$T \ge 1$ rounds, so that every individual loss lies in $[0,1]$. If the learning rate is
+set to the tight optimal value $\eta_{\mathrm{tight}} = \sqrt{8\ln N / T}$, then the
+regret against the best expert in hindsight satisfies
 \[
-  R_T(\eta_{\mathrm{tight}}) \;\le\; \sqrt{\frac{T}{2}\ln N}.
+  R_T(\eta_{\mathrm{tight}}) \;\le\; \sqrt{\tfrac{T}{2}\,\ln N}.
 \]
 \end{theorem}

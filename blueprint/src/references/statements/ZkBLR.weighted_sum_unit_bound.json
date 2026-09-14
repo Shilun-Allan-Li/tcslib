@@ -1,0 +1,18 @@
+{
+ "lean_name": "ZkBLR.weighted_sum_unit_bound",
+ "key": "23250954eff56375",
+ "kind": "lemma",
+ "title": "A weighted Fourier-coefficient bound for a unit-twisted lift",
+ "statement": "Let $k \\ge 2$, and let $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$ be normalized (that is, $f(0) = 0$) and $\\varepsilon$-far from linear for some $0 \\le \\varepsilon \\le 1$, meaning that $\\mathrm{dist}(f,g) \\ge \\varepsilon$ for every linear function $g : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$. Then for every unit $j \\in (\\mathbb{Z}/k\\mathbb{Z})^\\times$, the $j$-twisted lift $\\widetilde{f}_j(x) = \\omega_k^{\\,j\\,f(x)}$ satisfies\n\\[\n  \\sum_{s \\in \\mathbb{Z}_k^n}\n    \\bigl|\\widehat{\\widetilde{f}_j}(s)\\bigr|^2 \\,\n    \\operatorname{Re}\\widehat{\\widetilde{f}_j}(s)\n  \\;\\le\\; 1 - \\bigl(1 - \\cos(2\\pi/k)\\bigr)\\varepsilon,\n\\]\nwhere $\\widehat{\\widetilde{f}_j}(s)$ denotes the Fourier coefficient of $\\widetilde{f}_j$ at frequency $s$.",
+ "hypotheses_covered": [
+  "$k \\ge 2$",
+  "$f$ is normalized ($f(0)=0$)",
+  "$0 \\le \\varepsilon \\le 1$",
+  "$f$ is $\\varepsilon$-far from every linear function ($\\mathrm{dist}(f,g)\\ge\\varepsilon$)",
+  "$j$ is a unit of $\\mathbb{Z}/k\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $k \\ge 2$, $f$ is $\\varepsilon$-far from linear (normalized), and $j \\in\n\\mathbb{Z}_k^\\times$, then\n\\[\n  \\sum_{s\\in\\mathbb{Z}_k^n}\n  \\bigl\\|\\widehat{(\\widetilde{f}_j)}(s)\\bigr\\|^2\\,\n  \\operatorname{Re}\\!\\left[\\widehat{(\\widetilde{f}_j)}(s)\\right]\n  \\;\\le\\; 1 - \\bigl(1-\\cos(2\\pi/k)\\bigr)\\varepsilon.\n\\]"
+}

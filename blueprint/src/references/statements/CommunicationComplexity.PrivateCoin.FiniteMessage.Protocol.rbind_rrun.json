@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_rrun",
+ "key": "142a1f2ab7f87e9c",
+ "kind": "theorem",
+ "title": "Fresh-randomness bind computes by splitting the coins",
+ "statement": "Let $p$ be a private-coin finite-message protocol over inputs $X$, $Y$ with private randomness types $\\Omega_X$, $\\Omega_Y$ and output type $\\alpha$, and let $q$ assign to each output $a\\in\\alpha$ a private-coin finite-message protocol $q(a)$ over the same inputs $X$, $Y$ with fresh randomness types $\\Omega_X'$, $\\Omega_Y'$ and output type $\\beta$. Then for all inputs $x\\in X$, $y\\in Y$ and all coin pairs $\\omega_x=(\\omega_x^1,\\omega_x^2)\\in\\Omega_X\\times\\Omega_X'$ and $\\omega_y=(\\omega_y^1,\\omega_y^2)\\in\\Omega_Y\\times\\Omega_Y'$, executing the fresh-randomness bind of $p$ and $q$ agrees with running $p$ on the first coordinates of the coins to obtain an output $a$ and then running $q(a)$ on the second coordinates:\n\\[\n  \\mathrm{rrun}\\big(\\mathrm{rbind}(p,q)\\big)\\,x\\,y\\,\\omega_x\\,\\omega_y\n  \\;=\\;\n  \\mathrm{rrun}\\big(q(\\mathrm{rrun}\\,p\\,x\\,y\\,\\omega_x^1\\,\\omega_y^1)\\big)\\,x\\,y\\,\\omega_x^2\\,\\omega_y^2 .\n\\]",
+ "hypotheses_covered": [
+  "p is a private-coin finite-message protocol over inputs X, Y with randomness Ω_X, Ω_Y and output α",
+  "q maps each output a ∈ α to a protocol over X, Y with fresh randomness Ω_X', Ω_Y' and output β",
+  "inputs x ∈ X and y ∈ Y",
+  "Alice's coin pair ω_x ∈ Ω_X × Ω_X'",
+  "Bob's coin pair ω_y ∈ Ω_Y × Ω_Y'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $x, y, \\omega_x : \\Omega_X \\times \\Omega_X', \\omega_y : \\Omega_Y \\times \\Omega_Y'$,\n\\[\n  (\\mathrm{rbind}\\;p\\;q).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y\n  \\;=\\; (q\\,(p.\\mathrm{rrun}\\;x\\;y\\;\\omega_x.1\\;\\omega_y.1)).\\mathrm{rrun}\\;x\\;y\\;\\omega_x.2\\;\\omega_y.2.\n\\]"
+}

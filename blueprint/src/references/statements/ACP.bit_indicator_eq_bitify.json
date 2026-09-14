@@ -1,0 +1,15 @@
+{
+ "lean_name": "ACP.bit_indicator_eq_bitify",
+ "key": "3f82f6b3b353c98f",
+ "kind": "lemma",
+ "title": "Fermat indicator computes the boolean value",
+ "statement": "Let $p$ be a prime and let $a \\in \\mathbb{Z}/p$ lie in $\\{0, 1\\}$. Then\n\\[\n1 - (1 - a)^{p-1} = \\mathrm{bitify}(a),\n\\]\nwhere the right-hand side denotes the element of $\\{0,1\\}\\subseteq \\mathbb{Z}/p$ obtained by casting the value $\\mathrm{bitify}(a) \\in \\mathrm{Fin}\\,2$ through the natural numbers into $\\mathbb{Z}/p$; that is, the expression $1 - (1 - a)^{p-1}$ equals $1$ when $a = 1$ and $0$ when $a = 0$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "a lies in {0,1} in Z/p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $a \\in \\{0,1\\} \\subseteq \\mathbb{Z}/p$, then $1 - (1-a)^{p-1}$ equals the cast of\n$\\texttt{ACP.bitify}\\,(a)$ into $\\mathbb{Z}/p$."
+}

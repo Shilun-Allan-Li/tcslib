@@ -1,0 +1,21 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_fst_nonfree",
+ "key": "ac60a83cea057d94",
+ "kind": "lemma",
+ "title": "Encoder agrees with $\\sigma$ at variables fixed by $\\rho_0$",
+ "statement": "Fix $n$ and work with formulas on the variables $\\mathrm{Fin}\\,n$. Let $f$ be a DNF formula, $w \\in \\bbn$ a width parameter, and $\\mathrm{fuel} \\in \\bbn$ a bound on the recursion depth; let $\\mathrm{path}$ be a list of variable–value pairs (elements of $\\mathrm{Fin}\\,n \\times \\mathrm{Bool}$), let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, and let $\\mathrm{acc}$ be a list of index–value pairs holding the encoding accumulated so far. The recursive core of the Razborov encoder sends this data to a pair whose first component is again a restriction; write $\\gamma$ for that restriction. Then for every variable $v$ that is fixed by $\\rho_0$ — that is, $\\rho_0(v) \\neq \\mathrm{none}$ — one has $\\gamma(v) = \\sigma(v)$.",
+ "hypotheses_covered": [
+  "a DNF formula f on n variables",
+  "a width parameter w",
+  "a recursion-depth bound (fuel)",
+  "a path list of variable-value pairs",
+  "restrictions ρ₀ and σ on n variables",
+  "an accumulator list of index-value pairs",
+  "a variable v",
+  "v is fixed by ρ₀ (ρ₀ v ≠ none)"
+ ],
+ "confidence": "low",
+ "caveat": "The recursive helper razborovEncode.go is not defined in the provided snippet, so its computed meaning can only be gestured at as \"the recursive core of the Razborov encoder\"; the statement's shape (first component of the output pair equals σ at fixed variables) is fully rendered, but a graduate-quality description of what the encoder computes cannot be given faithfully from the material at hand.",
+ "rubric": [],
+ "replaced": "If $\\rho_0\\,v \\neq \\mathrm{none}$ (so $v$ is non-free), then the first component\n$\\gamma$ of the encoder loop \\texttt{SwitchingLemma2.razborovEncode}'s \\texttt{go}\nreturns $\\sigma\\,v$ at $v$; the encoder does not alter $\\sigma$ on non-free variables."
+}

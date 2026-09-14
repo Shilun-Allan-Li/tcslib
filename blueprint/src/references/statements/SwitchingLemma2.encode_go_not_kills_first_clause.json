@@ -1,0 +1,22 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_not_kills_first_clause",
+ "key": "a07fb30c498b61a8",
+ "kind": "lemma",
+ "title": "Encoder does not kill the first surviving clause",
+ "statement": "Let $f$ be a DNF formula on $n$ variables in which no term contains two distinct literals over the same variable, and let $w$ be a natural-number width parameter. Fix two restrictions $\\rho_0$ and $\\sigma$ on the $n$ variables such that $\\sigma$ leaves a variable free whenever $\\rho_0$ does (that is, $\\rho_0(v)$ undefined implies $\\sigma(v)$ undefined), and let $t$ be the first term of $f$, in list order, that is not killed by $\\rho_0$. Run the recursion at the heart of the Razborov encoding on $f$ and $w$ — with any fuel budget, any decision path, initial data $\\rho_0$ and $\\sigma$, and empty accumulated data — and write $\\rho$ for the restriction it returns as its first component. Then for every literal $l$ of $t$ whose variable is left free by $\\rho_0$, the output restriction $\\rho$ does not kill $l$: it does not fix the variable of $l$ to the value that would make $l$ false.",
+ "hypotheses_covered": [
+  "$f$ is a DNF formula on $n$ variables",
+  "$w$ is a natural-number width parameter",
+  "no term of $f$ has two distinct literals on the same variable",
+  "arbitrary fuel budget, decision path, and empty accumulator for the encoding recursion",
+  "$\\rho_0$ and $\\sigma$ are restrictions on the $n$ variables",
+  "$\\sigma$ is free wherever $\\rho_0$ is free",
+  "$t$ is the first term of $f$ not killed by $\\rho_0$",
+  "$l$ is a literal of $t$",
+  "$\\rho_0$ leaves the variable of $l$ free"
+ ],
+ "confidence": "low",
+ "caveat": "The core function, the recursive worker of the Razborov encoding, is not among the supplied definitions, so its internal behaviour cannot be rendered faithfully; the prose describes it only as an opaque recursion returning a restriction. The remaining hypotheses and the conclusion (the returned restriction does not fix the free literal's variable to its falsifying value) are fully determined by the Lean statement.",
+ "rubric": [],
+ "replaced": "\nLet $f$ be a DNF whose terms contain no two distinct literals on the same variable, and\nlet $t$ be the first term of $f$ not killed by $\\rho_0$ (as returned by\n\\texttt{find?}). If $l \\in t$ has $\\rho_0\\,l.\\mathrm{var} = \\mathrm{none}$ and $\\sigma$\nis unset wherever $\\rho_0$ is, then the first component of the encoder loop\n\\texttt{SwitchingLemma2.razborovEncode}'s \\texttt{go} (for any fuel, path, and empty\naccumulator) at $l.\\mathrm{var}$ is not $\\mathrm{some}\\ l.\\mathrm{neg}$; the encoder\nnever assigns the free literal $l$ its negating value, so it does not kill the first\nsurviving clause."
+}

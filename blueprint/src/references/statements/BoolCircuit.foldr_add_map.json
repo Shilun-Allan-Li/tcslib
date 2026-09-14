@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.foldr_add_map",
+ "key": "e41518ada6168e18",
+ "kind": "theorem",
+ "title": "Sums agree under a compatible relabelling",
+ "statement": "Let $f\\colon A \\to \\bbn$ and $g\\colon B \\to \\bbn$ be functions into the natural numbers, let $h\\colon A \\to B$ be a map, and let $c_1,\\dots,c_m$ be a finite list of elements of $A$. If $g(h(c)) = f(c)$ for every entry $c$ of the list, then\n\\[\n\\sum_{i=1}^{m} g\\bigl(h(c_i)\\bigr) \\;=\\; \\sum_{i=1}^{m} f(c_i),\n\\]\nwhere each sum is taken over the list in order with initial value $0$.",
+ "hypotheses_covered": [
+  "g(h c) = f c for every element c of the list cs",
+  "cs is a finite list over the domain of f and h"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A technical lemma: if $g(h\\,c) = f\\,c$ for all $c \\in cs$, then the additive\n\\texttt{foldr} of $g$ over $cs.\\mathrm{map}\\;h$ equals the additive \\texttt{foldr} of $f$\nover $cs$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.dedupTermVar_preserves_clause_eval",
+ "key": "439490bd35b9fe5b",
+ "kind": "lemma",
+ "title": "De-duplication preserves clause value",
+ "statement": "Let $t$ be a term over the variables $x_0,\\dots,x_{n-1}$, that is, a list of literals, and let $x \\in \\{0,1\\}^n$ be an assignment. Suppose $t$ contains no two literals on the same variable with opposite polarities. Let $t'$ be the term obtained from $t$ by scanning it and keeping a literal only when no earlier-kept literal uses the same variable, so that each variable of $t$ occurs at most once in $t'$. Then $t'$ and $t$ have the same value as a clause under $x$: some literal of $t'$ is satisfied by $x$ if and only if some literal of $t$ is.",
+ "hypotheses_covered": [
+  "term t (list of literals over n variables)",
+  "assignment x : Fin n → Bool",
+  "t has no contradiction: no two literals share a variable with opposite polarity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a non-contradictory clause $t$, de-duplication preserves the disjunctive (clause)\nvalue: $\\mathrm{CNF.evalClause}\\,(\\mathrm{dedupTermVar}\\,t)\\,x = \\mathrm{CNF.evalClause}\\,t\\,x$."
+}

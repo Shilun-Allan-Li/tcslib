@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialY_false_eq_preimage_aliceClaimConditioningYFalseValues",
+ "key": "f06ddd08ceabc79e",
+ "kind": "theorem",
+ "title": "Event that Bob's special bit is false as a conditioning-variable preimage",
+ "statement": "Fix a positive integer $n$ and work over the hard-distribution sample space, whose samples $\\omega$ record a special coordinate $T \\in \\{0,\\dots,n-1\\}$ together with enough data to determine Alice's and Bob's bits at every coordinate. Let $Y_T(\\omega)$ denote Bob's bit at the special coordinate, and let the conditioning variable be the triple $\\bigl(T,\\,X_{<T},\\,Y_{\\ge T}\\bigr)$ consisting of the special coordinate, Alice's bits strictly before it (padded with $\\mathrm{false}$ elsewhere), and Bob's bits from it onward (padded with $\\mathrm{false}$ elsewhere). Then the set of samples with $Y_T = \\mathrm{false}$ coincides exactly with the set of samples whose conditioning variable $(t,x,y)$ satisfies $y(t) = \\mathrm{false}$.",
+ "hypotheses_covered": [
+  "n is a positive integer (n : ℕ+)",
+  "ambient type is the hard-distribution sample space HardSample n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The event $Y_{T}=false$ is determined by Alice's corrected conditioning variable."
+}

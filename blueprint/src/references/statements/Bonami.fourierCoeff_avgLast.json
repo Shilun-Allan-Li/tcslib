@@ -1,0 +1,15 @@
+{
+ "lean_name": "Bonami.fourierCoeff_avgLast",
+ "key": "289f7d37c3e458e0",
+ "kind": "lemma",
+ "title": "Fourier coefficient of the average over the last coordinate",
+ "statement": "Let $f$ be a Boolean function of arity $n+1$, let $g$ be the average of $f$ over its last coordinate — the Boolean function of arity $n$ given by $g(x) = \\tfrac12\\bigl(f(x,\\text{false}) + f(x,\\text{true})\\bigr)$ — and let $S \\subseteq [n]$ be a set of coordinates among the first $n$. Write $\\iota\\colon [n] \\hookrightarrow [n+1]$ for the inclusion sending each of the first $n$ coordinates to itself and omitting the last, so that $\\iota(S)$ is $S$ viewed as a subset of $[n+1]$ that avoids the coordinate $n+1$. Then the Fourier–Walsh coefficient of $g$ at frequency $S$ equals the Fourier–Walsh coefficient of $f$ at frequency $\\iota(S)$: \\[ \\hat g(S) \\;=\\; \\hat f\\bigl(\\iota(S)\\bigr). \\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n+1",
+  "S is a subset of the first n coordinates [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For each $S \\subseteq \\mathrm{Fin}\\,n$, the Fourier coefficient of $\\mathrm{avgLast}\\,f$ at $S$\nequals the Fourier coefficient of $f$ at the image of $S$ under \\texttt{castSucc}:\n$\\widehat{\\mathrm{avgLast}\\,f}(S) = \\widehat{f}(\\mathrm{castSucc}(S))$."
+}

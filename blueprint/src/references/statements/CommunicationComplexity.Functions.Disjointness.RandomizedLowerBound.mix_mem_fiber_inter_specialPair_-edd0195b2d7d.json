@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialPair_of_mem_specialX_specialY",
+ "key": "9b7bc30e9f924751",
+ "kind": "theorem",
+ "title": "Mixing preserves the fiber and sets the special pair",
+ "statement": "Fix a deterministic communication protocol $p$ for disjointness on $n$ coordinates, a value $z$ of the statistic $Z = (M, T, X_{<T}, Y_{>T})$ recorded by the protocol (its transcript, the special coordinate, Alice's input bits before the special coordinate, and Bob's input bits after it), and two bits $b_X, b_Y$. Let $\\omega_X$ and $\\omega_Y$ be hard-distribution samples that both lie in the fiber $Z = z$, and suppose that Alice's bit at the special coordinate of $\\omega_X$ equals $b_X$ while Bob's bit at the special coordinate of $\\omega_Y$ equals $b_Y$. Then the mixed sample — taking Alice's input from $\\omega_X$ and Bob's input from $\\omega_Y$ — again lies in the fiber $Z = z$, and its pair of special-coordinate bits is $(b_X, b_Y)$.",
+ "hypotheses_covered": [
+  "omega_X lies in the Z=z fiber",
+  "Alice's special bit of omega_X equals b_X",
+  "omega_Y lies in the Z=z fiber",
+  "Bob's special bit of omega_Y equals b_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two samples are in a $Z=z$ fiber, and the first has Alice special bit \\texttt{bX} while the second has Bob special bit \\texttt{bY}, then their mix is in the same fiber with special pair $(bX, bY)$."
+}

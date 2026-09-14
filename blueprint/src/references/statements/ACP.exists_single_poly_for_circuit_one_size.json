@@ -1,0 +1,20 @@
+{
+ "lean_name": "ACP.exists_single_poly_for_circuit_one_size",
+ "key": "1295ab6106c1a056",
+ "kind": "theorem",
+ "title": "Low-degree polynomial approximation of an AC⁰[p] circuit",
+ "statement": "Let $p$ be a prime, let $n\\in\\bbn$, and let $F$ be a feedforward circuit over the alphabet $\\{0,1\\}$ with input type $\\mathrm{Fin}\\,n$, a unique output node, and finitely many nodes in each layer, every one of whose gates is drawn from the $\\mathrm{AC}^0[p]$ gate set (the identity, NOT, and unbounded fan-in AND gates, together with the unbounded $\\mathrm{MOD}_p$ gates). Write $g\\colon\\{0,1\\}^n\\to\\bbz/p$ for the function computed by $F$, namely its single output value cast into $\\bbz/p$. Then for every $\\ell\\in\\bbn$ there exists a polynomial $P\\in(\\bbz/p)[X_1,\\dots,X_n]$ of total degree at most $\\bigl((p-1)\\ell\\bigr)^{\\operatorname{depth}(F)}$ such that the number $b$ of Boolean inputs $x\\in\\{0,1\\}^n$ at which $P$, evaluated at the point of $(\\bbz/p)^n$ whose $i$-th coordinate is the image of $x_i$ in $\\bbz/p$, differs from $g(x)$ satisfies\n\\[\nb\\cdot 2^{\\ell}\\;\\le\\;\\operatorname{size}(F)\\cdot 2^{n},\n\\]\nwhere $\\operatorname{size}(F)$ is the number of non-input nodes of $F$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "n a natural number and input type Fin n",
+  "F a feedforward circuit over Fin 2 with input Fin n",
+  "each layer of F has finitely many nodes",
+  "F has a unique output node",
+  "every gate of F lies in the AC⁰[p] gate set",
+  "ℓ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a feed-forward circuit with a unique output that only uses $\\mathrm{AC}^0[p]$\ngate operations. Then there exists a polynomial $P$ over $\\mathbb{Z}/p$ with\n$\\deg P \\le \\mathrm{circuitDegreeBound}\\,p\\,\\ell\\,(\\mathrm{depth}\\,F)$ whose bad-input\ncount against the function computed by $F$ satisfies\n$\\mathrm{badInputCount}\\cdot 2^{\\ell} \\le \\abs{F}\\cdot 2^{n}$, where $\\abs{F}$ is the\ncircuit size."
+}

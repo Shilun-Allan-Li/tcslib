@@ -1,0 +1,17 @@
+{
+ "lean_name": "ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun",
+ "key": "b54fe382426d8990",
+ "kind": "lemma",
+ "title": "Sub-exponential MGF bound for independent sums",
+ "statement": "Let $(X_i)_{i \\in \\iota}$ be a family of measurable real random variables on a probability space $(\\Omega, \\mu)$ that are mutually independent, and let $s$ be a finite set of indices. Fix a radius $t_{\\max}$, and suppose that for each $i \\in s$ there is a constant $c_i$ such that $e^{tX_i}$ is $\\mu$-integrable and $\\mathbf{E}_\\mu[e^{tX_i}] \\le e^{c_i t^2}$ for every $t$ with $|t| \\le t_{\\max}$. Then the sum $\\sum_{i \\in s} X_i$ satisfies the same two-parameter sub-exponential bound with radius $t_{\\max}$ and constant $\\sum_{i \\in s} c_i$: for every $t$ with $|t| \\le t_{\\max}$, the moment $e^{t \\sum_{i \\in s} X_i}$ is $\\mu$-integrable and $\\mathbf{E}_\\mu\\!\\left[e^{t \\sum_{i \\in s} X_i}\\right] \\le e^{(\\sum_{i \\in s} c_i)\\, t^2}$.",
+ "hypotheses_covered": [
+  "μ is a probability measure",
+  "the family (X_i) is mutually independent",
+  "each X_i is measurable",
+  "for each i in the finite set s, X_i satisfies the Bernstein MGF condition with constant c_i and common radius t_max"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\{X_i\\}_{i \\in s}$ be a mutually independent family of measurable\nreal random variables on a probability space, each satisfying\n$\\texttt{ProbabilityTheory.HasBernsteinMGF}\\ (X_i)\\ \\mu\\ c_i\\ t_{\\max}$ for\na common radius $t_{\\max}$.  Then the finite sum\n$\\sum_{i \\in s} X_i$ satisfies\n$\\texttt{ProbabilityTheory.HasBernsteinMGF}\\ (\\sum_{i\\in s} X_i)\\ \\mu\\ (\\sum_{i\\in s} c_i)\\ t_{\\max}$."
+}

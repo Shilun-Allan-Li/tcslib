@@ -1,0 +1,20 @@
+{
+ "lean_name": "GeneralHypercontractivity.general_one_function_hypercontractivity",
+ "key": "a315a30cc837ebcf",
+ "kind": "theorem",
+ "title": "General one-function hypercontractivity",
+ "statement": "Let $1 \\le p \\le u$ with $u > 1$, and let $\\rho$ satisfy $0 \\le \\rho \\le 1$ together with $\\rho \\le \\sqrt{(p-1)/(u-1)}$. Then for every Boolean function $f:\\{0,1\\}^n \\to \\bbr$, the noise operator $T_\\rho$ contracts the $L^u$ norm below the $L^p$ norm:\n\\[\n  \\bigl(\\E\\!\\left[\\abs{T_\\rho f}^u\\right]\\bigr)^{1/u} \\;\\le\\; \\bigl(\\E\\!\\left[\\abs{f}^p\\right]\\bigr)^{1/p},\n\\]\nwhere the expectations are taken over the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "1 ≤ p",
+  "p ≤ u",
+  "1 < u",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "ρ ≤ sqrt((p-1)/(u-1))",
+  "f is a Boolean function on the n-cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $1 \\le p \\le u$ with $u > 1$, and let $0 \\le \\rho \\le 1$ satisfy\n$\\rho \\le \\sqrt{(p-1)/(u-1)}$. Then for every $f : \\mathrm{BoolCube}\\,n \\to \\bbr$,\n\\[\n  \\bigl(\\E[\\abs{T_\\rho f}^u]\\bigr)^{1/u} \\;\\le\\; \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}.\n\\]"
+}

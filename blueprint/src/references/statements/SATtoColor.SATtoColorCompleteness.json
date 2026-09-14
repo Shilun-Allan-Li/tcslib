@@ -1,0 +1,15 @@
+{
+ "lean_name": "SATtoColor.SATtoColorCompleteness",
+ "key": "fbc2f733814f8cc3",
+ "kind": "lemma",
+ "title": "Completeness of the 3-SAT to 3-coloring reduction",
+ "statement": "Let $f$ be a 3-SAT instance over a variable type $V$, that is, a list of clauses, each a disjunction of three literals. If $f$ is satisfiable — there exists a Boolean assignment $\\mathrm{assign} : V \\to \\mathrm{Bool}$ under which every clause of $f$ has at least one true literal — then the reduction graph $\\mathrm{ReductionGraph}(f)$ is 3-colorable, i.e.\\ it admits a proper coloring by the three colors $\\mathrm{Fin}\\,3$.",
+ "hypotheses_covered": [
+  "f is a 3-SAT instance over variable type V",
+  "f is satisfiable (some Boolean assignment satisfies every clause)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the 3-SAT instance $f$ is satisfiable, then the reduction graph\n$\\mathrm{ReductionGraph}(f)$ is 3-colorable.  Formally:\n\\[\n  \\mathrm{IsSatisfiable}(f) \\;\\Longrightarrow\\;\n  \\mathrm{Is3Colorable}(\\mathrm{ReductionGraph}(f)).\n\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Bonami.moment_eq_expect",
+ "key": "fe6afadc23143746",
+ "kind": "lemma",
+ "title": "Moments equal expectations under the uniform law",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function of arity $n$, let $p$ be a natural number, and let $P$ be a probability measure on the Boolean hypercube $\\{0,1\\}^n$ that assigns to each singleton $\\{x\\}$ the uniform weight $2^{-n}$. Then the $p$-th moment of $f$ under $P$ equals the expectation of $f^p$ under the uniform measure:\n\\[\n  \\int f^p \\, dP \\;=\\; \\E\\!\\left[f^p\\right] \\;=\\; 2^{-n}\\sum_{x\\in\\{0,1\\}^n} f(x)^p.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n",
+  "p is a natural number",
+  "P is a probability measure on the Boolean hypercube",
+  "P assigns each singleton the uniform weight 2^{-n}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $P$ is a probability measure on the cube assigning each point the uniform weight, then the\n$p$-th moment of $f$ under $P$ coincides with the expectation $\\E[f^p]$."
+}

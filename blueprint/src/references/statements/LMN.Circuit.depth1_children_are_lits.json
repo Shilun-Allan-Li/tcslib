@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.Circuit.depth1_children_are_lits",
+ "key": "2e6bfc751c174871",
+ "kind": "lemma",
+ "title": "Children of a depth-one gate are literals",
+ "statement": "Let $C$ be the Boolean circuit consisting of a single gate (an AND gate or an OR gate, according to a flag $\\mathit{isAnd}$) applied to a list $cs$ of child circuits, so that the depth of $C$ equals $1$ plus the maximum depth among the circuits in $cs$. If the depth of $C$ is at most $1$, then every child circuit $c \\in cs$ has depth $0$; that is, each child is a literal.",
+ "hypotheses_covered": [
+  "circuit is a single AND/OR node applied to children cs",
+  "the node's depth is at most 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a node $\\mathrm{Circuit.node}\\,\\mathit{isAnd}\\,cs$ has depth at most $1$, then every\nchild $c \\in cs$ has depth $0$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.uniformSurvivalProb_eq_survivalProb",
+ "key": "15250921fbed8eb2",
+ "kind": "lemma",
+ "title": "Uniform edge choice realizes the survival probability",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $C$, and suppose $G$ has at least one edge, so that its edge count $m$ is positive. Then the uniform one-step survival probability of $s$ — the number of non-crossing edge choices divided by $m$ — equals\n\\[\n  1 - \\frac{c}{m},\n\\]\nwhere $c$ is the size of the cut $C$, that is, its number of crossing edges (each counted with multiplicity).",
+ "hypotheses_covered": [
+  "s is a state: a multigraph G with a distinguished cut C",
+  "the edge count m of G is positive (G has at least one edge)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s.G$ has at least one edge, the uniform survival probability of $s$ equals\n$\\mathrm{survivalProb}(s.C.\\mathrm{size},\\, s.G.\\mathrm{edgeCount}) = 1 - c/m$ with\n$c = s.C.\\mathrm{size}$ and $m = s.G.\\mathrm{edgeCount}$."
+}

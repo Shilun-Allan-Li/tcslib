@@ -1,0 +1,14 @@
+{
+ "lean_name": "Kruskal.processEdges_mem",
+ "key": "c700597636e18ba0",
+ "kind": "lemma",
+ "title": "Membership in the edge-selection output",
+ "statement": "Fix $n$, and let $\\mathit{es}$ be a list of weighted edges over $n$ vertices, let $\\mathit{uf}$ be a union-find state on $n$ nodes, and let $\\mathit{acc}$ be an accumulator list of weighted edges. If a weighted edge $e$ occurs in the output produced by running the edge-selection sweep on the edge list $\\mathit{es}$, the union-find state $\\mathit{uf}$, and the accumulator $\\mathit{acc}$, then $e$ already occurs in the accumulator $\\mathit{acc}$ or $e$ occurs in the edge list $\\mathit{es}$.",
+ "hypotheses_covered": [
+  "e occurs in the output of the edge-selection sweep on es, uf, and acc"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathit{es}$ be a list of weighted edges, $\\mathit{uf}$ a union-find\nstate, $\\mathit{acc}$ an accumulator list, and $e$ an edge.  If\n$e \\in \\mathtt{processEdges}\\,\\mathit{es}\\,\\mathit{uf}\\,\\mathit{acc}$, then\n$e \\in \\mathit{acc}$ or $e \\in \\mathit{es}$."
+}

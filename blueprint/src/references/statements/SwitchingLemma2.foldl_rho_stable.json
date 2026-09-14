@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.foldl_rho_stable",
+ "key": "1473d7d0e9757fca",
+ "kind": "lemma",
+ "title": "Stability of a restriction fold at an untouched variable",
+ "statement": "Fix $n$, and let $t$ be a term over $n$ variables, that is a list of literals, together with a restriction $\\rho_0 : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$, a variable $v \\in \\mathrm{Fin}\\,n$, and a finite list of entries $(k_1, b_1), \\dots, (k_m, b_m)$ with each $k_i \\in \\bbn$ and each $b_i$ a Boolean. Process these entries from left to right, starting from $\\rho_0$: for an entry $(k_i, b_i)$, delete the first $k_i$ literals of $t$; if what remains is nonempty with head literal $l$, update the current restriction so that the variable of $l$ is now assigned the fixed value $b_i$, and otherwise leave the restriction unchanged. Suppose that for every entry $(k_i, b_i)$, whenever deleting the first $k_i$ literals of $t$ leaves a nonempty list with head literal $l$, the variable of $l$ is not $v$. Then the restriction obtained after processing all the entries assigns $v$ the same value as $\\rho_0$ does.",
+ "hypotheses_covered": [
+  "t is a term (list of literals) over n variables",
+  "entries is a list of pairs (position k, Boolean value b)",
+  "ρ₀ is the initial restriction",
+  "v is the target variable",
+  "for every entry, if dropping the first k literals of t leaves a nonempty list with head literal l, then l's variable is not v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Folding the decoder's $\\rho_0$-update over a list of entries leaves $v$ unchanged when\nno entry targets $v$; if for every entry the literal at its position in $t$ does not have\nvariable $v$, the folded $\\rho_0$ agrees with the initial $\\rho_0$ at $v$."
+}

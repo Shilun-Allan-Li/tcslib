@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.reachable_induce_of_support_subset",
+ "key": "35057ae98bd71630",
+ "kind": "theorem",
+ "title": "Reachability in an induced subgraph from a contained walk",
+ "statement": "Let $G$ be a finite simple graph on a vertex set $V$, let $s \\subseteq V$, and let $u, v \\in s$. If there is a walk $p$ from $u$ to $v$ in $G$ every vertex of which lies in $s$, then $u$ and $v$, regarded as vertices of the induced subgraph $G[s]$, are reachable from one another in $G[s]$; that is, some walk joins them within $G[s]$.",
+ "hypotheses_covered": [
+  "s is a subset of the vertices",
+  "u and v lie in s",
+  "there is a walk p from u to v in G",
+  "every vertex on p's support lies in s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Transfer of a walk into an induced subgraph: a walk all of whose vertices lie\nin \\texttt{s} witnesses reachability inside \\texttt{G.induce s}."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "johnson_lindenstrauss_subgaussian_dist",
+ "key": "06765a9f7b52555e",
+ "kind": "theorem",
+ "title": "Johnson–Lindenstrauss flattening: distance form",
+ "statement": "Let $\\varepsilon \\in (0,1)$ and let $n \\ge 2$ be an integer. Suppose $k$ is a natural number with $k \\ge 32\\,(\\log n)/\\varepsilon^2$, and let $V$ be a finite set of at most $n$ points in $\\bbr^d$. Then there exists a linear map $f : \\bbr^d \\to \\bbr^k$ such that for all $u, v \\in V$,\n\\[\n\\sqrt{1-\\varepsilon}\\,\\norm{u-v} \\;\\le\\; \\norm{f(u)-f(v)} \\;\\le\\; \\sqrt{1+\\varepsilon}\\,\\norm{u-v}.\n\\]",
+ "hypotheses_covered": [
+  "ε > 0",
+  "ε < 1",
+  "n ≥ 2 (integer)",
+  "k ≥ 32 log n / ε²",
+  "V a finite subset of ℝ^d with |V| ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses as \\texttt{johnson\\_lindenstrauss\\_subgaussian}, there\nexists a linear map $f : \\mathbb{R}^d \\to_L \\mathbb{R}^k$ satisfying the same\ntwo-sided distance-ratio bounds as \\texttt{johnson\\_lindenstrauss\\_dist}, now\nrealized by a Rademacher random matrix."
+}

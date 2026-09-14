@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.publicCoin_le_communicationComplexity_of_hbound",
+ "key": "b542ea267313b819",
+ "kind": "theorem",
+ "title": "Public-coin lower bound for the inner product",
+ "statement": "Let $k, n \\in \\bbn$ and let $\\varepsilon \\in \\bbr$. If\n\\[\n  2^{k}\\,\\sqrt{1/2^{n}} \\;<\\; 1 - 2\\varepsilon,\n\\]\nthen $k$ is strictly smaller than the $\\varepsilon$-error public-coin randomized communication complexity of the mod-2 inner product function on $n$-bit inputs; that is, $k < \\mathrm{R}^{\\mathrm{pub}}_{\\varepsilon}\\!\\bigl(\\mathrm{IP}_{n}\\bigr)$.",
+ "hypotheses_covered": [
+  "k, n natural numbers",
+  "ε real",
+  "bound 2^k · √(1/2^n) < 1 − 2ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $k, n \\in \\mathbb{N}$ and $\\varepsilon \\in \\mathbb{R}$ satisfy\n$2^k \\cdot \\sqrt{1/2^n} < 1 - 2\\varepsilon$, then\n\\[\n  k \\;<\\; \\mathrm{CC}_{\\varepsilon}^{\\mathrm{pub}}(\\mathrm{IP}_n),\n\\]\nproviding a public-coin communication complexity lower bound for the inner product\nfunction via the discrepancy method."
+}

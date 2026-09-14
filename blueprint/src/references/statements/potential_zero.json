@@ -1,0 +1,17 @@
+{
+ "lean_name": "potential_zero",
+ "key": "6c86ac1bfcbe27e1",
+ "kind": "lemma",
+ "title": "Initial value of the potential",
+ "statement": "Fix $N \\ge 1$ experts, a horizon $T$, and a loss sequence $\\ell$ over these experts and rounds, and let $\\eta \\in \\bbr$ be a learning rate. At time $0$ every expert has zero cumulative loss, so each unnormalized Hedge weight equals $1$, and the potential is\n\\[\n  W_0 \\;=\\; \\sum_{i=1}^{N} \\exp\\!\\bigl(-\\eta \\cdot L_0(i)\\bigr) \\;=\\; N .\n\\]",
+ "hypotheses_covered": [
+  "N experts with N ≥ 1 (NeZero N)",
+  "a horizon of T rounds",
+  "a loss sequence ℓ for N experts over T rounds",
+  "a real learning rate η"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "At time $0$, all cumulative losses are zero, so every weight equals $1$, and\nthe potential equals the number of experts: $W_0 = N$."
+}

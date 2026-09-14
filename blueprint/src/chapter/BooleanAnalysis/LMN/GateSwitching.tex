@@ -18,14 +18,16 @@ circuit layer.
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 \difficulty{4}
-Let $p\in[0,1]$ and let $A,B$ be predicates on restrictions. If $A(\rho)$ implies $B(\rho)$
-for every restriction $\rho$, then
+Fix a parameter $p \in [0,1]$, and for a predicate $E$ on restrictions of $n$ variables
+write $\bbP_p[E]$ for the probability that $E$ holds under a Bernoulli($p$) random
+restriction. If $A$ and $B$ are predicates on restrictions such that $A(\rho)$ implies
+$B(\rho)$ for every restriction $\rho$, then
 \[
-  \mathrm{bernoulliRestrProb}\,p\,A \le \mathrm{bernoulliRestrProb}\,p\,B .
+  \bbP_p[A] \le \bbP_p[B].
 \]
 \end{lemma}
 
-\begin{theorem}[Restricted DNF gate has a small CNF, with high probability]
+\begin{theorem}[Bernoulli restriction of a narrow DNF to a narrow CNF, with high probability]
 \lean{LMN.switching_bernoulli_gate_to_cnf}
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p008-b005,
@@ -39,16 +41,18 @@ for every restriction $\rho$, then
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_mono, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn}
 \difficulty{3}
-Let $g$ be a $\mathrm{DNF}$ of width at most $w>0$ (with distinct variables per term and
-no duplicate literals), let $n>0$, and let $0<p\le \tfrac{1}{40w}$ with $p\le 1$. Then the
-probability under a Bernoulli$(p)$ restriction $\rho$ that $g|_\rho$ cannot be expressed as a
-$\mathrm{CNF}$ of width at most $l$ is at most
+Let $g$ be a DNF formula on $n \ge 1$ variables whose width is at most $w$, where $w \ge
+1$, and suppose that within each term of $g$ any two literals having the same variable
+are equal and no literal is repeated. Let $l$ be a natural number, and let $p$ be a real
+number with $0 < p \le 1$ and $p \le \tfrac{1}{40w}$. Then, under a Bernoulli$(p)$
+random restriction $\rho$, the probability that the restricted function $g|_\rho$ is
+computed by no CNF formula of width at most $l$ is at most
 \[
-  \Bigl(\tfrac12\Bigr)^l + \exp\!\Bigl(-\tfrac{np}{3}\Bigr).
+  \left(\tfrac{1}{2}\right)^{l} + \exp\!\left(-\tfrac{np}{3}\right).
 \]
 \end{theorem}
 
-\begin{theorem}[Restricted CNF gate has a small DNF, with high probability]
+\begin{theorem}[A Bernoulli-restricted CNF collapses to a narrow DNF]
 \lean{LMN.switching_bernoulli_gate_to_dnf_from_cnf}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \statementsource{switching-lemma}{
@@ -60,16 +64,19 @@ $\mathrm{CNF}$ of width at most $l$ is at most
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_mono, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn}
 \difficulty{3}
-The dual statement. Let $g$ be a $\mathrm{CNF}$ of width at most $w>0$ (with distinct
-variables per clause and no duplicate literals), let $n>0$, and let $0<p\le \tfrac{1}{40w}$
-with $p\le 1$. Then the probability under a Bernoulli$(p)$ restriction $\rho$ that $g|_\rho$
-cannot be expressed as a $\mathrm{DNF}$ of width at most $l$ is at most
+Let $g$ be a CNF formula on $n \ge 1$ variables whose width is at most $w$, where $w \ge
+1$, and suppose that within each clause no two distinct literals share a variable and no
+literal is repeated. Fix a natural number $l$ and a real parameter $p$ with $0 < p \le
+\tfrac{1}{40w}$, so in particular $p \le 1$. Then, drawing a Bernoulli$(p)$ random
+restriction $\rho$ on the $n$ variables, the probability that the restricted function
+$g|_\rho$ (the function $x \mapsto g(\rho.\mathrm{extend}\,x)$ on the free coordinates)
+cannot be computed exactly by any DNF formula of width at most $l$ is at most
 \[
-  \Bigl(\tfrac12\Bigr)^l + \exp\!\Bigl(-\tfrac{np}{3}\Bigr).
+  \left(\tfrac12\right)^{l} + \exp\!\left(-\tfrac{np}{3}\right).
 \]
 \end{theorem}
 
-\begin{theorem}[Small decision-tree depth yields a small CNF]
+\begin{theorem}[Small decision-tree depth yields a narrow CNF]
 \lean{LMN.restricted_has_small_cnf_of_dtDepth_le}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
@@ -77,7 +84,6 @@ cannot be expressed as a $\mathrm{DNF}$ of width at most $l$ is at most
 }
 \label{LMN.restricted_has_small_cnf_of_dtDepth_le}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -226,11 +232,17 @@ cannot be expressed as a $\mathrm{DNF}$ of width at most $l$ is at most
   {pdf-b5e074215b9e-p003-b003}
 \uses{CNF, CNF.eval, CNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-If the restricted function $f|_\rho$ has decision-tree depth at most $l$, then there exists a
-$\mathrm{CNF}$ $\psi$ of width at most $l$ that computes $f|_\rho$ on every input.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function, let $\rho$ be a restriction on
+the $n$ variables (fixing some coordinates to Boolean values and leaving the rest free),
+and write $f\!\restriction_\rho$ for the restricted function $x \mapsto
+f(\rho.\mathrm{extend}\,x)$, obtained by evaluating $f$ with the fixed coordinates set
+by $\rho$ and the free coordinates supplied by $x$. If $f\!\restriction_\rho$ has
+decision-tree depth at most $l$, then there is a CNF formula $\psi$ whose every clause
+contains at most $l$ literals and which computes $f\!\restriction_\rho$ on every input,
+that is, $\psi(x) = f\!\restriction_\rho(x)$ for all $x \in \{0,1\}^n$.
 \end{theorem}
 
-\begin{theorem}[Small decision-tree depth yields a small DNF]
+\begin{theorem}[From small decision-tree depth to a small-width DNF]
 \lean{LMN.restricted_has_small_dnf_of_dtDepth_le}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
@@ -238,7 +250,6 @@ $\mathrm{CNF}$ $\psi$ of width at most $l$ that computes $f|_\rho$ on every inpu
 }
 \label{LMN.restricted_has_small_dnf_of_dtDepth_le}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -387,11 +398,17 @@ $\mathrm{CNF}$ $\psi$ of width at most $l$ that computes $f|_\rho$ on every inpu
   {pdf-b5e074215b9e-p003-b003}
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-If the restricted function $f|_\rho$ has decision-tree depth at most $l$, then there exists a
-$\mathrm{DNF}$ $\varphi$ of width at most $l$ that computes $f|_\rho$ on every input.
+Let $f : (\bbf_2^{\,n} \to \{0,1\})$ be a Boolean function on $n$ variables and let
+$\rho$ be a restriction that fixes some variables to Boolean values and leaves the
+others free, so that the restricted function $f|_\rho$ sends a point $x$ to the value of
+$f$ on the assignment agreeing with $\rho$ on the fixed coordinates and with $x$ on the
+free ones. If $f|_\rho$ has decision-tree depth at most $l$ — that is, some decision
+tree of depth at most $l$ computes it — then there exists a DNF formula $\varphi$ whose
+width (the maximum number of literals in any of its terms) is at most $l$ and which
+agrees with $f|_\rho$ on every input.
 \end{theorem}
 
-\begin{theorem}[Union bound on gates with large decision-tree depth]
+\begin{theorem}[Union bound for large decision-tree depth under a random restriction]
 \lean{LMN.switching_bernoulli_union_bound}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -403,7 +420,6 @@ $\mathrm{DNF}$ $\varphi$ of width at most $l$ that computes $f|_\rho$ on every i
 }
 \label{LMN.switching_bernoulli_union_bound}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1310,17 +1326,21 @@ $\mathrm{DNF}$ $\varphi$ of width at most $l$ that computes $f|_\rho$ on every i
   {pdf-fc447f326910-p008-b005}
 \uses{DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{6}
-Let $\mathrm{gates}_0,\dots,\mathrm{gates}_{s-1}$ be $s$ many $\mathrm{DNF}$s, each of width at
-most $w>0$ (with distinct variables per term and no duplicate literals), let $n>0$, and let
-$0<p\le \tfrac{1}{40w}$ with $p\le 1$. Then the probability under a Bernoulli$(p)$ restriction
-$\rho$ that some gate $\mathrm{gates}_i$ has $\mathrm{dtDepth}(\mathrm{gates}_i|_\rho) > l$ is
-at most
+Let $D_0,\dots,D_{s-1}$ be $s$ DNF formulas on $n$ Boolean variables, with $n \ge 1$,
+each of width at most $w$ where $w \ge 1$, and suppose that in every term of every $D_i$
+each variable occurs at most once (no term repeats a literal, and any two literals of a
+term on the same variable coincide). Let $p \in \bbr$ satisfy $0 < p \le \tfrac{1}{40w}$
+and $p \le 1$. Draw a Bernoulli$(p)$ random restriction $\rho$, which independently
+leaves each variable free with probability $p$ and otherwise fixes it to
+$\mathtt{false}$ or $\mathtt{true}$ each with probability $(1-p)/2$. Then the
+probability that some restricted formula $D_i\!\restriction_\rho$ computes a Boolean
+function of decision-tree depth greater than $l$ is at most
 \[
-  s\cdot\Bigl(\Bigl(\tfrac12\Bigr)^l + \exp\!\Bigl(-\tfrac{np}{3}\Bigr)\Bigr).
+  s\left(\left(\tfrac12\right)^{l} + \exp\!\left(-\tfrac{np}{3}\right)\right).
 \]
 \end{theorem}
 
-\begin{theorem}[All gates admit a small CNF under a good restriction]
+\begin{theorem}[Small CNFs for restricted DNF gates]
 \lean{LMN.all_gates_have_small_cnf}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
@@ -1329,7 +1349,6 @@ at most
 }
 \label{LMN.all_gates_have_small_cnf}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1484,9 +1503,13 @@ at most
     pdf-b5e074215b9e-p003-b004}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-Given a family of $\mathrm{DNF}$ gates and a restriction $\rho$ under which every gate
-satisfies $\mathrm{dtDepth}(\mathrm{gates}_i|_\rho)\le l$, every gate can be replaced by a
-$\mathrm{CNF}$ of width at most $l$ computing $\mathrm{gates}_i|_\rho$ on all inputs.
+Let $n$ and $l$ be natural numbers, let $\mathrm{gates}_0,\dots,\mathrm{gates}_{s-1}$ be
+a family of DNF formulas in $n$ variables, and let $\rho$ be a restriction on the $n$
+variables. Suppose that for every index $i$ the restricted function $x \mapsto
+(\mathrm{gates}_i)(\rho.\mathrm{extend}\,x)$ has decision-tree depth at most $l$. Then
+for every index $i$ there is a CNF formula $\psi$ of width at most $l$ that computes
+this restricted function, that is, $\psi(x) =
+(\mathrm{gates}_i)(\rho.\mathrm{extend}\,x)$ for every Boolean assignment $x$.
 \end{theorem}
 
 \begin{theorem}[Union bound for layer-2 CNF replaceability]
@@ -1501,7 +1524,6 @@ $\mathrm{CNF}$ of width at most $l$ computing $\mathrm{gates}_i|_\rho$ on all in
 }
 \label{LMN.layer2_cnf_replaceability_union_bound}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2440,13 +2462,21 @@ $\mathrm{CNF}$ of width at most $l$ computing $\mathrm{gates}_i|_\rho$ on all in
     pdf-fc447f326910-p012-b004}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_mono, LMN.restricted_has_small_cnf_of_dtDepth_le, LMN.switching_bernoulli_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{4}
-Let $\mathrm{gates}_0,\dots,\mathrm{gates}_{s_2-1}$ be the layer-2 $\mathrm{DNF}$ gates, each of
-width at most $w>0$ (with distinct variables per term and no duplicate literals), let $n>0$,
-and let $0<p\le \tfrac{1}{40w}$ with $p\le 1$. Then the probability under a Bernoulli$(p)$
-restriction $\rho$ that some gate fails to admit a width-$l$ $\mathrm{CNF}$ representation of
-$\mathrm{gates}_i|_\rho$ is at most
+Let $g_1,\dots,g_{s_2}$ be a family of DNF formulas in $n$ variables, and suppose $n \ge
+1$. Fix a width bound $w \ge 1$ and assume each $g_i$ has width at most $w$; assume
+moreover that within every term of every $g_i$ the literals are pairwise distinct and
+any two literals on the same variable coincide, so that no variable occurs more than
+once in a term. Let $p \in \bbr$ satisfy $0 < p \le \frac{1}{40w}$ and $p \le 1$, and
+draw a random restriction $\rho$ on the $n$ variables from the Bernoulli($p$)
+distribution, in which each variable is independently left free with probability $p$ and
+otherwise fixed to $0$ or $1$ each with probability $\frac{1-p}{2}$. Then the
+probability that some gate $g_i$ fails to be representable after restriction — that is,
+that there is an index $i$ for which the restricted function $g_i\!\restriction_\rho$
+(the value $x \mapsto g_i(\rho.\mathrm{extend}\,x)$) is not computed by any CNF formula
+of width at most $l$ — is at most
 \[
-  s_2\cdot\Bigl(\Bigl(\tfrac12\Bigr)^l + \exp\!\Bigl(-\tfrac{np}{3}\Bigr)\Bigr).
+s_2 \cdot \left( \left(\tfrac{1}{2}\right)^{l} + \exp\!\left(-\tfrac{n p}{3}\right)
+\right).
 \]
 \end{theorem}
 
@@ -2458,11 +2488,16 @@ $\mathrm{gates}_i|_\rho$ is at most
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.layer2_cnf_replaceability_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{3}
-Under the same hypotheses as the previous theorem, fix $\varepsilon>0$ and $s_2>0$, and suppose
-$n$ is large enough that $\exp\!\bigl(-\tfrac{np}{3}\bigr)\le \tfrac{\varepsilon}{s_2}$. Then the
-probability under a Bernoulli$(p)$ restriction $\rho$ that some layer-2 gate fails to admit a
-width-$l$ $\mathrm{CNF}$ representation of $\mathrm{gates}_i|_\rho$ is at most
+Fix $n \ge 1$ and let $g_1, \dots, g_{s_2}$ be $s_2 \ge 1$ DNF formulas on $n$ variables
+(each a disjunction of terms, each term a conjunction of literals), each of width at
+most $w \ge 1$, and such that within every term distinct literals involve distinct
+variables (no variable occurs more than once in a term). Let $p$ satisfy $0 < p \le 1$
+and $p \le \tfrac{1}{40w}$, and let $\varepsilon > 0$ be such that
+$\exp\!\bigl(-\tfrac{np}{3}\bigr) \le \tfrac{\varepsilon}{s_2}$. Then, under a
+Bernoulli$(p)$ random restriction $\rho$, the probability that there exists an index $i$
+for which the restricted function $g_i|_\rho$ admits no CNF formula of width at most $l$
+computing it (equal to it at every input) is at most
 \[
-  s_2\cdot\Bigl(\tfrac12\Bigr)^l + \varepsilon .
+  s_2 \cdot \Bigl(\tfrac12\Bigr)^{l} + \varepsilon .
 \]
 \end{theorem}

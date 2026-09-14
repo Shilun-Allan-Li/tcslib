@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.exists_good_parameter_of_pointwise_bound",
+ "key": "34b3a35a55b3a6e5",
+ "kind": "lemma",
+ "title": "Averaging a pointwise counting bound over parameters",
+ "statement": "Let $\\alpha$ and $\\beta$ be finite types with $\\beta$ nonempty, let $\\mathrm{Fail} : \\alpha \\to \\beta \\to \\mathrm{Prop}$ be a decidable binary relation, and let $B, C$ be natural numbers. Suppose that for every $a \\in \\alpha$ the number of $b \\in \\beta$ with $\\mathrm{Fail}\\,a\\,b$ satisfies\n\\[\n\\abs{\\{\\, b \\in \\beta : \\mathrm{Fail}\\,a\\,b \\,\\}}\\cdot C \\;\\le\\; B\\cdot\\abs{\\beta}.\n\\]\nThen there exists a single $b \\in \\beta$ for which\n\\[\n\\abs{\\{\\, a \\in \\alpha : \\mathrm{Fail}\\,a\\,b \\,\\}}\\cdot C \\;\\le\\; B\\cdot\\abs{\\alpha}.\n\\]",
+ "hypotheses_covered": [
+  "α is a finite type",
+  "β is a finite type",
+  "β is nonempty",
+  "Fail is a decidable relation on α × β",
+  "B and C are natural numbers",
+  "for every a, the count of failing b times C is at most B times |β|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha,\\beta$ be finite types with $\\beta$ nonempty and let\n$\\mathrm{Fail} : \\alpha \\to \\beta \\to \\mathrm{Prop}$ be decidable. If for every $a$ the\nnumber of $b$ with $\\mathrm{Fail}\\,a\\,b$ satisfies\n$\\abs{\\{b : \\mathrm{Fail}\\,a\\,b\\}}\\cdot C \\le B\\cdot\\abs{\\beta}$, then there is a single\n$b$ with $\\abs{\\{a : \\mathrm{Fail}\\,a\\,b\\}}\\cdot C \\le B\\cdot\\abs{\\alpha}$."
+}

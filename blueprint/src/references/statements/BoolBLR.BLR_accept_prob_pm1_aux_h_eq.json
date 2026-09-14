@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolBLR.BLR_accept_prob_pm1_aux_h_eq",
+ "key": "dff7e3ab74615e4a",
+ "kind": "lemma",
+ "title": "Pointwise $\\pm 1$ form of the BLR indicator",
+ "statement": "Fix $n \\in \\bbn$ and a Boolean-valued function $f : \\{0,1\\}^n \\to \\{0,1\\}$, and let $g : \\{0,1\\}^n \\to \\bbr$ be its $\\pm 1$ lift, $g(x) = (-1)^{f(x)}$. Then for all $x, y \\in \\{0,1\\}^n$,\n\\[\n  \\mathbf{1}\\!\\left[\\, g(x \\oplus y) = g(x)\\,g(y) \\,\\right]\n  \\;=\\;\n  \\frac{1 + g(x)\\,g(y)\\,g(x \\oplus y)}{2},\n\\]\nwhere $x \\oplus y$ denotes the componentwise XOR and the left-hand side is $1$ when the equality holds and $0$ otherwise.",
+ "hypotheses_covered": [
+  "n : ℕ (dimension of the hypercube)",
+  "f : {0,1}^n → Bool (Boolean-valued function being lifted)",
+  "universally quantified over all x, y in {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Write $g = \\texttt{BoolBLR.lift\\_pm1}\\,f$.  For all $x, y \\in \\{0,1\\}^n$,\n\\[\n  \\mathbf{1}\\!\\left[g(x \\oplus y) = g(x)\\,g(y)\\right]\n  \\;=\\;\n  \\frac{1 + g(x)\\,g(y)\\,g(x \\oplus y)}{2}.\n\\]"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.kargerGraphRun_full_vertexCount_eq_two",
+ "key": "86a95541d3e75e30",
+ "kind": "lemma",
+ "title": "A full Karger run terminates with two vertices",
+ "statement": "Let $G$ and $H$ be multigraphs on a common vertex type, and suppose $G$ has at least two vertices. If $H$ is obtained from $G$ by a graph-only Karger run consisting of exactly $n - 2$ successive edge-occurrence contractions, where $n$ is the number of vertices of $G$, then $H$ has exactly two vertices.",
+ "hypotheses_covered": [
+  "G and H are multigraphs on the same vertex type",
+  "G has at least two vertices",
+  "H is reachable from G by a Karger run of length (number of vertices of G) − 2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $G$ has at least two vertices and $H$ is reachable from $G$ by\n$G.\\mathrm{vertexCount} - 2$ contractions, then $H$ has exactly two vertices."
+}

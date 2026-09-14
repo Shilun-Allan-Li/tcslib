@@ -1,0 +1,17 @@
+{
+ "lean_name": "ArrowTheorem.profile_kernel_bcca",
+ "key": "24a1d4313d9d2c8a",
+ "kind": "lemma",
+ "title": "The $bc$–$ca$ profile kernel",
+ "statement": "Let $S, T \\subseteq [n]$, and for a profile $p \\colon \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,6$ write $x(p)$ for its $bc$-vote vector and $y(p)$ for its $ca$-vote vector, each lying in $\\{0,1\\}^n$. Averaging the product of Walsh characters over all $6^n$ profiles gives\n\\[\n  \\left(\\tfrac{1}{6}\\right)^{n} \\sum_{p} \\chi_S\\bigl(x(p)\\bigr)\\,\\chi_T\\bigl(y(p)\\bigr)\n  \\;=\\;\n  \\begin{cases} \\left(-\\tfrac{1}{3}\\right)^{\\abs{S}} & \\text{if } S = T,\\\\[2pt] 0 & \\text{if } S \\ne T. \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "S is a subset of [n]",
+  "T is a subset of [n]",
+  "the sum ranges over all profiles p : Fin n → Fin 6",
+  "the normalizing prefactor (1/6)^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Specialization of the general kernel to the $bc$--$ca$ vote pair: for all\n$S,T\\subseteq[n]$,\n\\[\n  \\Bigl(\\tfrac16\\Bigr)^{\\!n}\\sum_{p}\n    \\chi_S(\\mathrm{bcVotes}(p))\\,\\chi_T(\\mathrm{caVotes}(p))\n  \\;=\\;\n  \\begin{cases} (-1/3)^{|S|} & S = T \\\\ 0 & S\\ne T. \\end{cases}\n\\]"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.char_s_add",
+ "key": "e7ff15f626e4a1ad",
+ "kind": "lemma",
+ "title": "Additivity of a Fourier character on $\\mathbb{Z}_k^n$",
+ "statement": "Fix integers $k \\ge 1$ and $n \\ge 0$, let $\\omega_k = e^{2\\pi i/k}$, and for $s \\in (\\mathbb{Z}/k\\mathbb{Z})^n$ let $\\chi_s : (\\mathbb{Z}/k\\mathbb{Z})^n \\to \\mathbb{C}$ be the character $\\chi_s(x) = \\omega_k^{\\,s\\cdot x}$, where $s\\cdot x = \\sum_{i=1}^{n} s_i x_i \\in \\mathbb{Z}/k\\mathbb{Z}$ is the componentwise dot product. Then for all $x, y \\in (\\mathbb{Z}/k\\mathbb{Z})^n$,\n\\[\n\\chi_s(x + y) = \\chi_s(x)\\,\\chi_s(y).\n\\]",
+ "hypotheses_covered": [
+  "k is a positive integer (NeZero k)",
+  "s is a fixed vector in (Z/kZ)^n",
+  "x and y are arbitrary vectors in (Z/kZ)^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $s, x, y \\in \\mathbb{Z}_k^n$,\n$\\chi_s(x + y) = \\chi_s(x) \\cdot \\chi_s(y)$.\nEach character is a group homomorphism from $(\\mathbb{Z}_k^n, +)$ to\n$(\\mathbb{C}^\\times, \\cdot)$."
+}

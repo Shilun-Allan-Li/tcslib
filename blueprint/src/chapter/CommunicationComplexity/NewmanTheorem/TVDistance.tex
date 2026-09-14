@@ -48,60 +48,85 @@ The \emph{supremum definition} of total variation distance between $\mu$ and $\n
 \label{CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart}
 \leanok
 \difficulty{2}
-For any signed measure $s$ on $\Omega$ and any measurable set $S$, the value $s(S)$
-equals the difference of its Jordan positive and negative parts:
-$s(S) = s^+(S) - s^-(S)$.
+Let $s$ be a signed measure on a measurable space $\Omega$, and let $s = s^+ - s^-$ be
+its Jordan decomposition into a pair of (finite, mutually singular) positive measures
+$s^+$ and $s^-$. Then for every measurable set $S \subseteq \Omega$,
+\[
+s(S) = s^+(S) - s^-(S),
+\]
+where $s^+(S)$ and $s^-(S)$ denote the real-valued measures of $S$ under the positive
+and negative parts.
 \end{lemma}
 
-\begin{lemma}[Signed difference vanishes on the whole space]
+\begin{lemma}[Signed measure difference vanishes on the whole space]
 \lean{CommunicationComplexity.TVDistance.signedMeasureDiff_univ}
 \label{CommunicationComplexity.TVDistance.signedMeasureDiff_univ}
 \leanok
 \uses{CommunicationComplexity.signedMeasureDiff}
 \difficulty{1}
-For any two probability measures $\mu$ and $\nu$, the signed difference satisfies
-$(\mu - \nu)(\Omega) = 0$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
+- \nu$ denote their signed measure difference. Then $(\mu - \nu)(\Omega) = 0$.
 \end{lemma}
 
-\begin{lemma}[Jordan parts agree on the whole space]
+\begin{lemma}[Jordan parts of a probability-measure difference have equal total mass]
 \lean{CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ}
 \label{CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ}
 \leanok
 \uses{CommunicationComplexity.TVDistance.signedMeasureDiff_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
 \difficulty{2}
-For probability measures $\mu$ and $\nu$, the Jordan positive part and the Jordan
-negative part of $\mu - \nu$ assign equal real mass to $\Omega$:
-$((\mu-\nu)^+)(\Omega) = ((\mu-\nu)^-)(\Omega)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
+- \nu$ be their signed measure difference. Writing $(\mu-\nu)^{+}$ and $(\mu-\nu)^{-}$
+for the positive and negative parts of the Jordan decomposition of $\mu - \nu$, the two
+parts assign the same total real mass to the whole space:
+\[
+(\mu-\nu)^{+}(\Omega) = (\mu-\nu)^{-}(\Omega).
+\]
 \end{lemma}
 
-\begin{lemma}[Total variation mass of the whole space]
+\begin{lemma}[Total variation mass as the sum of Jordan parts]
 \lean{CommunicationComplexity.TVDistance.totalVariation_real_univ}
 \label{CommunicationComplexity.TVDistance.totalVariation_real_univ}
 \leanok
 \difficulty{1}
-For any signed measure $s$, the real-valued total variation mass of $\Omega$ equals the
-sum of the Jordan positive and negative part masses:
-$\|s\|_{\mathrm{TV}}(\Omega) = s^+(\Omega) + s^-(\Omega)$.
+Let $s$ be a signed measure on a measurable space $\Omega$, with Jordan decomposition $s
+= s^+ - s^-$ into its positive and negative parts $s^+$ and $s^-$. Then the total mass
+of the total variation measure $\abs{s}$ of $s$, taken as a real number, is the sum of
+the total masses of the two Jordan parts:
+\[
+\abs{s}(\Omega) = s^+(\Omega) + s^-(\Omega).
+\]
 \end{lemma}
 
-\begin{lemma}[Half total variation equals positive Jordan part]
+\begin{lemma}[Half the total variation equals the positive Jordan part]
 \lean{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ}
 \label{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ}
 \leanok
 \uses{CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ, CommunicationComplexity.TVDistance.totalVariation_real_univ, CommunicationComplexity.signedMeasureDiff}
 \difficulty{2}
-For probability measures $\mu$ and $\nu$,
-$\tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega) = ((\mu-\nu)^+)(\Omega)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let
+$\mu-\nu$ denote their signed measure difference. Writing $\abs{\mu-\nu}$ for its total
+variation measure and $(\mu-\nu)^{+}$ for the positive part of its Jordan decomposition,
+one has
+\[
+\tfrac{1}{2}\,\abs{\mu-\nu}(\Omega) = (\mu-\nu)^{+}(\Omega),
+\]
+where both sides are evaluated as real numbers on the whole space $\Omega$.
 \end{lemma}
 
-\begin{lemma}[Event gap bounded by half total variation]
+\begin{lemma}[Event probability gap bounded by half the total variation]
 \lean{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
 \label{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ, CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
 \difficulty{4}
-For every measurable set $S \subseteq \Omega$,
-$|(\mu-\nu)(S)| \le \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
+- \nu$ denote their signed measure difference. Then for every measurable set $S
+\subseteq \Omega$,
+\[
+  \abs{(\mu - \nu)(S)} \;\le\; \tfrac{1}{2}\, \abs{\mu - \nu}(\Omega),
+\]
+where $\abs{\mu - \nu}$ is the total variation measure of $\mu - \nu$ and $\abs{\mu -
+\nu}(\Omega)$ is its total mass.
 \end{lemma}
 
 \begin{lemma}[Probability gap bounded by half total variation]
@@ -110,97 +135,137 @@ $|(\mu-\nu)(S)| \le \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation, CommunicationComplexity.signedMeasureDiff}
 \difficulty{2}
-For every measurable set $S \subseteq \Omega$,
-$|\mu(S) - \nu(S)| \le \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
+- \nu$ denote their signed measure difference. Then for every measurable set $S
+\subseteq \Omega$,
+\[
+\abs{\mu(S) - \nu(S)} \le \tfrac{1}{2}\,\abs{\mu - \nu}(\Omega),
+\]
+where $\abs{\mu - \nu}$ is the total variation measure of $\mu - \nu$.
 \end{lemma}
 
-\begin{lemma}[Attainment of the signed measure bound]
+\begin{lemma}[Attainment of half the total variation by a single event]
 \lean{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation}
 \label{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
 \difficulty{4}
-There exists a measurable set $S \subseteq \Omega$ for which the bound is tight:
-$|(\mu-\nu)(S)| = \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
+- \nu$ denote their signed measure difference. Then there exists a measurable set $S
+\subseteq \Omega$ at which
+\[
+\abs{(\mu - \nu)(S)} = \tfrac{1}{2}\,\abs{\mu - \nu}(\Omega),
+\]
+where $\abs{\mu - \nu}$ is the total variation measure of $\mu - \nu$; that is, some
+event realizes exactly half the total variation of $\mu - \nu$ over the whole space.
 \end{lemma}
 
-\begin{lemma}[Attainment of the probability gap bound]
+\begin{lemma}[Attainment of the total-variation distance]
 \lean{CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation}
 \label{CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation, CommunicationComplexity.signedMeasureDiff}
 \difficulty{2}
-There exists a measurable set $S \subseteq \Omega$ such that
-$|\mu(S) - \nu(S)| = \tfrac{1}{2}\|\mu-\nu\|_{\mathrm{TV}}(\Omega)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
+- \nu$ denote their signed measure difference, with total variation measure
+$\abs{\mu-\nu}$. Then there exists a measurable set $S \subseteq \Omega$ such that
+\[
+  \abs{\mu(S) - \nu(S)} = \tfrac{1}{2}\,\abs{\mu-\nu}(\Omega).
+\]
 \end{lemma}
 
-\begin{theorem}[Equivalence of the two TV distance definitions]
+\begin{theorem}[Equivalence of the two definitions of total variation distance]
 \lean{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup}
 \label{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation, CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation, CommunicationComplexity.signedMeasureDiff, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistanceSup}
 \difficulty{4}
-The total-variation-mass definition and the supremum-over-events definition coincide:
-$\mathrm{TV}(\mu,\nu) = \mathrm{TV}_{\sup}(\mu,\nu)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$. Then the
+total variation distance $\mathrm{TV}(\mu,\nu) =
+\tfrac{1}{2}\norm{\mu-\nu}_{\mathrm{TV}}$, defined as half the total variation norm of
+the signed measure $\mu-\nu$, agrees with its supremum form over events,
+\[
+\mathrm{TV}(\mu,\nu) \;=\; \sup\bigl\{\,\abs{\mu(S)-\nu(S)} : S \subseteq \Omega \text{
+measurable}\,\bigr\}.
+\]
 \end{theorem}
 
-\begin{theorem}[TV distance bounds event probability gaps]
+\begin{theorem}[Events differ by at most the total variation distance]
 \lean{CommunicationComplexity.TVDistance.abs_measureReal_sub_le_tvDistance}
 \label{CommunicationComplexity.TVDistance.abs_measureReal_sub_le_tvDistance}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation, CommunicationComplexity.tvDistance}
 \difficulty{1}
-For every measurable set $S \subseteq \Omega$,
-$|\mu(S) - \nu(S)| \le \mathrm{TV}(\mu,\nu)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$. Then for
+every measurable set $S \subseteq \Omega$,
+\[
+  \abs{\mu(S) - \nu(S)} \le \mathrm{TV}(\mu,\nu),
+\]
+where $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\norm{\mu - \nu}_{\mathrm{TV}}$ is the total
+variation distance between $\mu$ and $\nu$.
 \end{theorem}
 
-\begin{theorem}[TV distance is nonneg]
+\begin{theorem}[Nonnegativity of total variation distance]
 \lean{CommunicationComplexity.TVDistance.tvDistance_nonneg}
 \label{CommunicationComplexity.TVDistance.tvDistance_nonneg}
 \leanok
 \uses{CommunicationComplexity.tvDistance}
 \difficulty{1}
-For any two probability measures $\mu$ and $\nu$, $\mathrm{TV}(\mu,\nu) \ge 0$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$. Then their
+total variation distance is nonnegative, $\mathrm{TV}(\mu,\nu) \ge 0$.
 \end{theorem}
 
-\begin{lemma}[Indicator sum bounded by positive part sum]
+\begin{lemma}[Indicator sum bounded by the positive-part sum]
 \lean{CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart}
 \label{CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart}
 \leanok
 \difficulty{3}
-For any function $a : \alpha \to \mathbb{R}$ on a finite type $\alpha$ and any set $S
-\subseteq \alpha$,
-$\sum_{x \in S} a(x) \le \sum_{x : \alpha} \max(a(x), 0)$.
+Let $\alpha$ be a finite type and let $a : \alpha \to \bbr$ be a real-valued function.
+For every subset $S \subseteq \alpha$,
+\[
+\sum_{x \in S} a(x) \;\le\; \sum_{x \in \alpha} \max\bigl(a(x),\,0\bigr).
+\]
 \end{lemma}
 
-\begin{lemma}[Positive part sum equals half the $\ell^1$ sum]
+\begin{lemma}[Positive part sum equals half the $\ell^1$ norm]
 \lean{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \label{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \leanok
 \difficulty{4}
-Let $a : \alpha \to \mathbb{R}$ be a function on a finite type with $\sum_x a(x) = 0$.
-Then $\sum_x \max(a(x), 0) = \tfrac{1}{2}\sum_x |a(x)|$.
+Let $a\colon\alpha\to\bbr$ be a real-valued function on a finite type $\alpha$ whose
+values sum to zero, that is, $\sum_{x\in\alpha} a(x) = 0$. Then the sum of the positive
+parts of $a$ equals half the sum of its absolute values:
+\[
+\sum_{x\in\alpha} \max\bigl(a(x),\,0\bigr) \;=\; \frac{1}{2}\sum_{x\in\alpha}
+\abs{a(x)}.
+\]
 \end{lemma}
 
-\begin{lemma}[Indicator sum absolutely bounded by half $\ell^1$ sum]
+\begin{lemma}[Half-total-variation bound for a zero-sum indicator sum]
 \lean{CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
 \label{CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
 \leanok
 \uses{CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart, CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \difficulty{4}
-If $a : \alpha \to \mathbb{R}$ satisfies $\sum_x a(x) = 0$, then for every $S \subseteq
-\alpha$,
-$\bigl|\sum_{x \in S} a(x)\bigr| \le \tfrac{1}{2}\sum_x |a(x)|$.
+Let $\alpha$ be a finite type and let $a : \alpha \to \bbr$ be a real-valued function
+whose entries sum to zero, $\sum_{x \in \alpha} a(x) = 0$. Then for every subset $S
+\subseteq \alpha$,
+\[
+  \Bigl|\sum_{x \in S} a(x)\Bigr| \;\le\; \tfrac{1}{2} \sum_{x \in \alpha} \abs{a(x)}.
+\]
 \end{lemma}
 
-\begin{lemma}[Positive-part indicator sum equals half $\ell^1$ sum]
+\begin{lemma}[Positive part of a zero-sum family equals half its total variation]
 \lean{CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
 \label{CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
 \leanok
 \uses{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \difficulty{2}
-If $a : \alpha \to \mathbb{R}$ satisfies $\sum_x a(x) = 0$, then
-$\bigl|\sum_x \max(a(x),0)\bigr| = \tfrac{1}{2}\sum_x |a(x)|$.
+Let $\alpha$ be a finite type and let $a : \alpha \to \bbr$ be a family of real numbers
+whose total sum vanishes, $\sum_{x} a(x) = 0$. Then
+\[
+\Bigl|\sum_{x} \max(a(x), 0)\Bigr| = \tfrac{1}{2} \sum_{x} \abs{a(x)}.
+\]
 \end{lemma}
 
 \begin{definition}[Singleton mass difference]
@@ -211,14 +276,21 @@ For probability measures $\mu$ and $\nu$ on $\Omega$ and a point $\omega \in \Om
 the \emph{singleton mass difference} is $\mu(\{\omega\}) - \nu(\{\omega\}) \in \mathbb{R}$.
 \end{definition}
 
-\begin{lemma}[Probability gap as sum of singleton mass differences]
+\begin{lemma}[Probability gap as a sum of singleton mass differences]
 \lean{CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff}
 \label{CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons, CommunicationComplexity.TVDistance.singletonMassDiff}
 \difficulty{3}
-On a finite measurable space, for any measurable set $S$,
-$\mu(S) - \nu(S) = \sum_{\omega \in S} (\mu(\{\omega\}) - \nu(\{\omega\}))$.
+Let $\Omega$ be a finite discrete measurable space, and let $\mu$ and $\nu$ be
+probability measures on $\Omega$. Then for every subset $S \subseteq \Omega$,
+\[
+\mu(S) - \nu(S) = \sum_{\omega \in \Omega} \mathbf{1}[\omega \in
+S]\,\bigl(\mu(\{\omega\}) - \nu(\{\omega\})\bigr),
+\]
+where the sum ranges over all points of $\Omega$ and each term contributes the singleton
+mass difference $\mu(\{\omega\}) - \nu(\{\omega\})$ exactly when $\omega \in S$ and $0$
+otherwise.
 \end{lemma}
 
 \begin{lemma}[Singleton mass differences sum to zero]
@@ -227,58 +299,73 @@ $\mu(S) - \nu(S) = \sum_{\omega \in S} (\mu(\{\omega\}) - \nu(\{\omega\}))$.
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons, CommunicationComplexity.TVDistance.singletonMassDiff}
 \difficulty{3}
-On a finite measurable space, the singleton mass differences sum to zero:
-$\sum_{\omega : \Omega} (\mu(\{\omega\}) - \nu(\{\omega\})) = 0$.
+Let $\Omega$ be a finite discrete measurable space, and let $\mu$ and $\nu$ be
+probability measures on $\Omega$. Then the singleton mass differences sum to zero:
+\[
+\sum_{\omega \in \Omega} \bigl(\mu(\{\omega\}) - \nu(\{\omega\})\bigr) = 0.
+\]
 \end{lemma}
 
-\begin{theorem}[TV distance as half $\ell^1$ distance on finite spaces (supremum form)]
+\begin{theorem}[Total variation distance as half the $\ell^1$ distance]
 \lean{CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum}
 \label{CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs, CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs, CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff, CommunicationComplexity.TVDistance.singletonMassDiff, CommunicationComplexity.TVDistance.sum_singletonMassDiff_eq_zero, CommunicationComplexity.tvDistanceSup}
 \difficulty{5}
-On a finite measurable space $\Omega$, the supremum form of total variation distance
-satisfies
+Let $\Omega$ be a finite set equipped with the discrete measurable structure, and let
+$\mu$ and $\nu$ be probability measures on $\Omega$. Then the supremum form of total
+variation distance, $\mathrm{TV}_{\sup}(\mu,\nu) = \sup\{|\mu(S) - \nu(S)| : S \subseteq
+\Omega\}$, is exactly half the $\ell^1$ distance between the two measures across the
+individual points:
 \[
-  \mathrm{TV}_{\sup}(\mu,\nu) \;=\; \frac{1}{2}\sum_{\omega:\Omega}
-    |\mu(\{\omega\}) - \nu(\{\omega\})|.
+\mathrm{TV}_{\sup}(\mu,\nu) \;=\; \frac{1}{2}\sum_{\omega \in \Omega}
+\bigl|\mu(\{\omega\}) - \nu(\{\omega\})\bigr|.
 \]
 \end{theorem}
 
-\begin{theorem}[TV distance as half $\ell^1$ distance on finite spaces]
+\begin{theorem}[Total variation distance as half the $\ell^1$ distance]
 \lean{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum}
 \label{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum, CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup, CommunicationComplexity.tvDistance}
 \difficulty{1}
-On a finite measurable space $\Omega$,
+Let $\Omega$ be a finite discrete measurable space, and let $\mu$ and $\nu$ be
+probability measures on $\Omega$. Then the total variation distance between $\mu$ and
+$\nu$ equals half the sum, over all points $\omega \in \Omega$, of the absolute
+differences of their point masses:
 \[
-  \mathrm{TV}(\mu,\nu) \;=\; \frac{1}{2}\sum_{\omega:\Omega}
-    |\mu(\{\omega\}) - \nu(\{\omega\})|.
+  \mathrm{TV}(\mu,\nu) \;=\; \frac{1}{2}\sum_{\omega \in \Omega}
+    \abs{\mu(\{\omega\}) - \nu(\{\omega\})}.
 \]
 \end{theorem}
 
-\begin{theorem}[TV distance on Bool equals gap at true]
+\begin{theorem}[Total variation distance on the two-point space]
 \lean{CommunicationComplexity.TVDistance.tvDistance_bool_eq_abs_true}
 \label{CommunicationComplexity.TVDistance.tvDistance_bool_eq_abs_true}
 \leanok
 \uses{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
 \difficulty{4}
-For probability measures $\mu$ and $\nu$ on $\mathrm{Bool}$,
-$\mathrm{TV}(\mu,\nu) = |\mu(\{\mathrm{true}\}) - \nu(\{\mathrm{true}\})|$.
+Let $\mu$ and $\nu$ be probability measures on the two-point space $\mathrm{Bool} =
+\{\mathrm{true}, \mathrm{false}\}$. Then their total variation distance is the absolute
+difference of the masses they assign to the single point $\mathrm{true}$:
+\[
+\mathrm{TV}(\mu,\nu) = \abs{\mu(\{\mathrm{true}\}) - \nu(\{\mathrm{true}\})}.
+\]
 \end{theorem}
 
-\begin{theorem}[TV distance sub-additivity for product measures]
+\begin{theorem}[Subadditivity of total variation distance under products]
 \lean{CommunicationComplexity.TVDistance.tvDistance_prod_le}
 \label{CommunicationComplexity.TVDistance.tvDistance_prod_le}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
 \difficulty{5}
-For probability measures $\mu_1, \nu_1$ on $\alpha$ and $\mu_2, \nu_2$ on $\beta$
-(both finite measurable spaces),
+Let $\alpha$ and $\beta$ be finite discrete measurable spaces, let $\mu_1,\nu_1$ be
+probability measures on $\alpha$, and let $\mu_2,\nu_2$ be probability measures on
+$\beta$. Writing $\mathrm{TV}$ for the total variation distance and $\mu_1\otimes\mu_2$
+for the product measure, the total variation distance between the two product measures
+satisfies
 \[
-  \mathrm{TV}(\mu_1 \otimes \mu_2,\, \nu_1 \otimes \nu_2)
-  \;\le\;
-  \mathrm{TV}(\mu_1,\nu_1) + \mathrm{TV}(\mu_2,\nu_2).
+\mathrm{TV}(\mu_1\otimes\mu_2,\ \nu_1\otimes\nu_2)\ \le\
+\mathrm{TV}(\mu_1,\nu_1)+\mathrm{TV}(\mu_2,\nu_2).
 \]
 \end{theorem}

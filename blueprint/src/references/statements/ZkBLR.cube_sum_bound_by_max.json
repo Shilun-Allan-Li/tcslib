@@ -1,0 +1,17 @@
+{
+ "lean_name": "ZkBLR.cube_sum_bound_by_max",
+ "key": "78b25bff6b9004ca",
+ "kind": "lemma",
+ "title": "Cube-sum of Fourier coefficients bounded by the maximum",
+ "statement": "Let $p$ be a prime, let $n \\ge 0$, and let $f : \\bbz_p^n \\to \\bbz_p$ be a function, whose lift to roots of unity is $\\widetilde{f}(x) = \\omega_p^{f(x)}$ with $\\omega_p = e^{2\\pi i/p}$. Write $\\widehat{\\widetilde{f}}(s)$ for the Fourier coefficient of $\\widetilde{f}$ at frequency $s \\in \\bbz_p^n$. If $A \\in \\bbr$ is such that $\\bigl\\|\\widehat{\\widetilde{f}}(s)\\bigr\\| \\le A$ for every $s \\in \\bbz_p^n$, then\n\\[\n  \\sum_{s \\in \\bbz_p^n} \\bigl\\|\\widehat{\\widetilde{f}}(s)\\bigr\\|^3\n  \\;\\le\\;\n  A \\sum_{s \\in \\bbz_p^n} \\bigl\\|\\widehat{\\widetilde{f}}(s)\\bigr\\|^2.\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "f maps Z_p^n to Z_p",
+  "A is a real number",
+  "every Fourier coefficient of the lift has norm at most A"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\|\\widehat{\\widetilde{f}}(s)\\| \\le A$ for all $s \\in \\mathbb{Z}_p^n$, then\n\\[\n  \\sum_{s\\in\\mathbb{Z}_p^n}\n  \\bigl\\|\\widehat{\\widetilde{f}}(s)\\bigr\\|^3\n  \\;\\le\\;\n  A \\cdot \\sum_{s\\in\\mathbb{Z}_p^n}\n  \\bigl\\|\\widehat{\\widetilde{f}}(s)\\bigr\\|^2.\n\\]"
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "LMN.depth3_second_stage_bound",
+ "key": "dbcb7983b0ef185b",
+ "kind": "lemma",
+ "title": "Second-stage switching bound for an AND of DNFs",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function on $n\\ge 1$ variables, and write $D(h)$ for the decision-tree depth of a Boolean function $h$, i.e. the least depth of a decision tree computing it. Suppose $f$ is the conjunction $f=g_1\\wedge\\cdots\\wedge g_{s_2}$ of DNF formulas $g_1,\\dots,g_{s_2}$, meaning $f(x)=1$ exactly when $g_i(x)=1$ for every $i$. Fix a restriction $\\rho_1$ on the $n$ variables such that each restricted gate satisfies $D(g_i\\!\\restriction\\!\\rho_1)\\le l$, where $l\\ge 1$, and let $t$ be a natural number. Suppose $0<p_2\\le \\tfrac{1}{40l}$ (so in particular $p_2\\le 1$), and let $\\rho_2$ be a Bernoulli($p_2$) random restriction — each variable independently left free with probability $p_2$ and fixed to $0$ or $1$ with probability $(1-p_2)/2$ each. Writing $\\rho_1\\circ\\rho_2$ for the composite restriction that applies $\\rho_1$ first and then $\\rho_2$ on the coordinates left free by $\\rho_1$, we have\n\\[\n\\Pr_{\\rho_2}\\!\\big[\\, D\\big(f\\!\\restriction\\!(\\rho_1\\circ\\rho_2)\\big) > t \\,\\big]\\;\\le\\;\\left(\\tfrac12\\right)^{t}+\\exp\\!\\big(-n\\,p_2/3\\big).\n\\]",
+ "hypotheses_covered": [
+  "f is the AND of the DNF gates g_1,...,g_{s_2}",
+  "each restricted gate g_i↾ρ₁ has decision-tree depth ≤ l",
+  "l ≥ 1",
+  "n ≥ 1",
+  "0 < p₂",
+  "p₂ ≤ 1/(40l)",
+  "p₂ ≤ 1",
+  "ρ₂ drawn from the Bernoulli(p₂) restriction distribution"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose $f$ is the AND of the gates and, under the first-stage restriction $\\rho_1$,\neach restricted gate has decision-tree depth $\\le l$ (with $l > 0$, $n > 0$). Then for\nany $0 < p_2 \\le 1/(40l)$ the second-stage Bernoulli$(p_2)$ restriction satisfies\n$\\Pr_{\\rho_2}[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\, f\\,(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2)) > t]\n\\le (1/2)^t + \\exp(-np_2/3)$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_bound",
+ "key": "a9152e6efeb92284",
+ "kind": "lemma",
+ "title": "Length bound on the clause-processing output",
+ "statement": "Fix a list of literal–position pairs $L$, a path $P$ (a list of variable–direction pairs), and two restrictions $\\rho_0, \\sigma$ on $n$ variables. Running the clause-processing operation on these inputs yields a remaining path $P'$ and an auxiliary list $A$ of position–direction pairs (together with updated restrictions). Then\n\\[\n\\abs{A} + 2\\,\\abs{P'} \\le 2\\,\\abs{P},\n\\]\nwhere $\\abs{\\cdot}$ denotes the number of entries of a list.",
+ "hypotheses_covered": [
+  "arbitrary list of literal-index pairs L",
+  "arbitrary path P (list of variable-direction pairs)",
+  "arbitrary restrictions ρ₀ and σ on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any literal/index list and any path, the combined output of\n\\texttt{SwitchingLemma2.processClauseLits} is bounded: the length of its auxiliary entry\nlist plus twice the length of its remaining path is at most $2 \\cdot |\\mathrm{path}|$."
+}

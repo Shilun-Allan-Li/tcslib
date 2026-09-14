@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Internal.invCdf_eq_iff",
+ "key": "d0c6872b9c19a09f",
+ "kind": "theorem",
+ "title": "Characterization of the inverse CDF",
+ "statement": "Let $p$ be a probability mass function on $\\mathrm{Fin}\\,m = \\{0, 1, \\dots, m-1\\}$ with $m \\ge 1$, and write $F(n) = \\sum_{j < n} p(j) \\in \\bbr_{\\ge 0}^{\\infty}$ for its cumulative distribution function. Let $x \\in \\bbr_{\\ge 0}^{\\infty}$ satisfy $x < 1$, and let $i \\in \\mathrm{Fin}\\,m$. Then the largest index whose cumulative probability does not exceed $x$ equals $i$ if and only if\n\\[\nF(i) \\le x < F(i+1).\n\\]",
+ "hypotheses_covered": [
+  "p is a probability mass function on Fin m",
+  "m ≥ 1 (NeZero m)",
+  "x lies in the extended nonnegative reals",
+  "x < 1",
+  "i is an index in Fin m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a probability mass function on $\\mathrm{Fin}\\,m$ with $m \\ge 1$, let $x \\in\n\\bbr_{\\ge 0}^{\\infty}$ satisfy $x < 1$, and let $i \\in \\mathrm{Fin}\\,m$. Then\n$\\mathrm{invCdf}(p, x) = i$ if and only if\n\\[\n\\mathrm{cdf}(p, i) \\le x < \\mathrm{cdf}(p, i+1).\n\\]"
+}

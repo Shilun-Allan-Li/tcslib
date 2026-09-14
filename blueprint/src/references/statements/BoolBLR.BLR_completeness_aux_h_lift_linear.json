@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolBLR.BLR_completeness_aux_h_lift_linear",
+ "key": "11fbacc699f54899",
+ "kind": "lemma",
+ "title": "Multiplicativity of the sign lift of an XOR-homomorphism",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a function that respects componentwise XOR, meaning $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y \\in \\{0,1\\}^n$, and let $g : \\{0,1\\}^n \\to \\bbr$ be its $\\pm 1$ lift, $g(x) = (-1)^{f(x)}$. Then $g$ turns XOR into multiplication:\n\\[\n  g(x \\oplus y) \\;=\\; g(x)\\,g(y) \\qquad \\text{for all } x, y \\in \\{0,1\\}^n.\n\\]",
+ "hypotheses_covered": [
+  "f maps the Boolean hypercube to {0,1}",
+  "f is a homomorphism for componentwise XOR: f(x⊕y) = f(x)⊕f(y) for all x,y",
+  "g is the ±1 lift of f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ satisfy $f(x \\oplus y) = f(x) \\oplus f(y)$ for\nall $x, y$, and write $g = \\texttt{BoolBLR.lift\\_pm1}\\,f$.  Then $g$ is\nmultiplicative on XOR:\n\\[\n  g(x \\oplus y) \\;=\\; g(x)\\,g(y) \\qquad \\text{for all } x, y \\in \\{0,1\\}^n.\n\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolFourier.fourier_coeff_convolution_aux_h_split",
+ "key": "ee416ea8d2d5fae2",
+ "kind": "lemma",
+ "title": "Multiplicative splitting of a Walsh character along XOR",
+ "statement": "Let $S \\subseteq [n]$, let $f, g : \\{0,1\\}^n \\to \\bbr$ be Boolean functions, and suppose the interchange-of-summation identity\n\\[\n  \\sum_{x} \\Big(\\sum_{y} f(y)\\, g(x \\oplus y)\\Big)\\,\\chi_S(x)\n  \\;=\\; \\sum_{y} f(y) \\sum_{x} g(x \\oplus y)\\,\\chi_S(x)\n\\]\nholds, where all sums range over $\\{0,1\\}^n$ and $\\oplus$ is componentwise XOR. Then for all $x, y \\in \\{0,1\\}^n$,\n\\[\n  \\chi_S(x) \\;=\\; \\chi_S(x \\oplus y)\\,\\chi_S(y),\n\\]\nwhere $\\chi_S$ is the Walsh--Fourier character of $S$; that is, $\\chi_S$ is a character of the group $(\\bbf_2)^n$.",
+ "hypotheses_covered": [
+  "subset S of [n]",
+  "Boolean functions f and g of arity n",
+  "the Fubini/interchange-of-summation identity involving f, g and the character (an unused premise)",
+  "arbitrary points x, y of the hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "The interchange-of-summation premise is carried by the statement but plays no role in the conclusion (it is a leftover of the enclosing proof); it is included for faithfulness. The functions $f, g$ appear only in that premise.",
+ "rubric": [],
+ "replaced": "For all $x, y \\in \\{0,1\\}^n$ and $S \\subseteq [n]$,\n\\[\n  \\chi_S(x) \\;=\\; \\chi_S(x \\oplus y)\\,\\chi_S(y),\n\\]\nexpressing that $\\chi_S$ is a character of the group $(\\mathbb{F}_2)^n$.  The statement\nalso carries the (unused) Fubini hypothesis of the enclosing proof."
+}

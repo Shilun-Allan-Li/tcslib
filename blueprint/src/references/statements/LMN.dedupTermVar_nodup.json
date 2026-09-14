@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.dedupTermVar_nodup",
+ "key": "40fb700f82a5540a",
+ "kind": "lemma",
+ "title": "De-duplication produces a repetition-free term",
+ "statement": "Let $t$ be a term over $n$ variables, that is, a list of literals, each a variable in $\\{0,\\dots,n-1\\}$ together with a negation flag. Form a new term $t'$ by scanning $t$ and retaining a literal exactly when no already-retained literal has the same variable, discarding any literal whose variable has already occurred. Then $t'$ has no repeated literal: no literal occurs twice in $t'$.",
+ "hypotheses_covered": [
+  "t is an arbitrary term (list of literals) over n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every term $t$, the de-duplicated term $\\mathrm{dedupTermVar}\\,t$ has no repeated\nliterals (it satisfies \\texttt{Nodup})."
+}

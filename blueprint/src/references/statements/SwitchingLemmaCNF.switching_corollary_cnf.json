@@ -1,0 +1,21 @@
+{
+ "lean_name": "SwitchingLemmaCNF.switching_corollary_cnf",
+ "key": "4310928435b10f2a",
+ "kind": "theorem",
+ "title": "Switching lemma corollary for CNF formulas",
+ "statement": "Fix $n \\ge 1$ and let $\\psi$ be a CNF formula on $n$ Boolean variables whose width is at most $w$, meaning every clause of $\\psi$ has at most $w$ literals; assume moreover that no clause of $\\psi$ repeats a literal or uses a variable in two of its literals, and that $5s \\le n$. Call a restriction $\\rho$ that leaves exactly $s$ of the $n$ variables free \\emph{bad} if the restricted function $x \\mapsto \\psi(\\rho.\\mathrm{extend}\\,x)$ is computed by no DNF formula of width at most $w$. Then the number $B$ of bad restrictions satisfies\n\\[\n  B \\cdot n^{w} \\;\\le\\; \\binom{n}{s}\\, 2^{\\,n-s} \\, (10\\,s\\,w)^{w}.\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "ψ is a CNF formula on n variables",
+  "ψ has width at most w",
+  "5s ≤ n",
+  "no clause repeats a literal (Nodup)",
+  "no clause uses a variable in two literals (same var ⇒ same literal)",
+  "counts restrictions with exactly s free variables",
+  "bad = restricted function not computed by any DNF of width ≤ w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a CNF $\\psi$ of width at most $w$ with $5s \\leq n$ and well-formed clauses, the\nnumber of $s$-restrictions $\\rho$ for which $\\psi|_\\rho$ cannot be represented by a\nDNF of width $\\leq w$ satisfies\n\\[\n  \\abs{\\{\\rho : \\mathrm{IsRestriction}\\,s\\,\\rho \\wedge \\lnot\\,\\exists \\varphi,\\ \\varphi.\\mathrm{width} \\leq w \\wedge \\varphi \\equiv \\psi|_\\rho\\}} \\cdot n^w\n  \\;\\leq\\; \\mathrm{numSRestrictions}\\,n\\,s \\cdot (10\\,s\\,w)^w .\n\\]"
+}

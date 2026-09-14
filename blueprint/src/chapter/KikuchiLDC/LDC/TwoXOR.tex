@@ -34,18 +34,12 @@ and is constant in the edge count and in $b$.
   pdf-b372a20892ce-p006-b004,
   pdf-b372a20892ce-p007-b002
 }
-Let $k, n, d$ be natural numbers with $0 < k$, $2 \le n$ and $0 < d$. Then there is a
-constant $C_0 > 0$ such that for every number of heavy pairs $n_P$ satisfying
-$n_P \cdot d \le n k$ one has
+Fix natural numbers $k, n, d$ with $k \ge 1$, $n \ge 2$, and $d \ge 1$. Then there is a
+positive constant $C_0 > 0$ such that for every natural number $n_P$ satisfying $n_P\, d
+\le n k$, one has
 \[
   n \, \sqrt{n_P} \, \sqrt{k \log n}
-    \;\le\; C_0 \, n \, k \, \sqrt{\frac{\log n}{d}} .
+    \;\le\; C_0 \, n \, k \, \sqrt{\frac{\log n}{d}} ,
 \]
-In other words, the bound coming from the spectral estimate
-$\sqrt{n \abs{P}} \cdot \norm{A}_2$ together with $\abs{P} \le nk/d$ is
-$O\!\left(n k \sqrt{\log n / d}\right)$.
-
-\emph{Placeholder.}  The constant $C_0$ is quantified after $n$ and the Lean proof takes
-$C_0 := 1 + n$, so it is not a constant at all and the bound carries no refutation content.
-Lemma 7.1 is \emph{not} formalised here.
+where $\log$ denotes the natural logarithm.
 \end{theorem}

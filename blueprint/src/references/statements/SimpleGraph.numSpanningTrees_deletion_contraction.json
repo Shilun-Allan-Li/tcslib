@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleGraph.numSpanningTrees_deletion_contraction",
+ "key": "dcc7b2f185c4b953",
+ "kind": "theorem",
+ "title": "Deletion–contraction for spanning trees",
+ "statement": "Let $G$ be a finite graph, and write $\\tau(G)$ for its number of spanning trees, that is, the number of tree subgraphs of $G$ on the full vertex set. If $e$ is an edge of $G$, then\n\\[\n\\tau(G) = \\tau(G - e) + \\tau(G \\cdot e),\n\\]\nwhere $G - e$ is the graph obtained by deleting $e$ and $G \\cdot e$ is the graph obtained by contracting $e$ (deleting it and identifying its two ends).",
+ "hypotheses_covered": [
+  "G is a finite graph",
+  "e is an edge of G (e ∈ G.edgeSet)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "(deletion--contraction). \\emph{If \\texttt{e} is a link of \\texttt{G}, then\n\\texttt{$\\tau$(G) = $\\tau$(G - e) + $\\tau$(G $\\cdot$ e)}.}"
+}

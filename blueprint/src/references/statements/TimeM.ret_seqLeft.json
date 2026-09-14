@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.ret_seqLeft",
+ "key": "2c3801bbf34122f8",
+ "kind": "theorem",
+ "title": "Return value of left-sequencing",
+ "statement": "A value of type $\\mathrm{TimeM}\\,T\\,\\alpha$ is a computation carrying both a return value in $\\alpha$ and an accumulated cost in $T$; write $\\mathrm{ret}$ for the return-value component. Suppose $T$ is equipped with an addition, let $x$ be such a computation of type $\\mathrm{TimeM}\\,T\\,\\alpha$, and let $y$ be a (thunked) computation of type $\\mathrm{TimeM}\\,T\\,\\beta$. Then the left-sequencing $x \\mathbin{<{*}} y$, which runs both computations and adds their costs but keeps only the value produced by $x$, has return value $\\mathrm{ret}(x \\mathbin{<{*}} y) = \\mathrm{ret}(x)$.",
+ "hypotheses_covered": [
+  "T carries an addition",
+  "x is a computation of type TimeM T α",
+  "y is a (thunked) computation of type TimeM T β"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The left-sequencing of $x$ and $y$ returns $x.\\mathrm{ret}$."
+}

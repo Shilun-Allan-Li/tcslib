@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.absorbOneLevel",
+ "key": "3f0112c066167a6a",
+ "kind": "lemma",
+ "title": "One-level absorption into the second layer",
+ "statement": "Let $n, l \\in \\bbn$ with $l \\ge 1$, and let $\\mathcal{D}$ be a layer-2 datum on $n$ variables whose gates $g_0, \\dots, g_{m-1}$ are DNF formulas. Let $C$ be a Boolean circuit on $m$ inputs — one per gate — with $\\mathrm{depth}(C) \\ge 1$, and consider the composite Boolean function $x \\mapsto C\\bigl(g_0(x), \\dots, g_{m-1}(x)\\bigr)$. Suppose that each gate $g_i$ admits both a DNF representation $\\varphi_i$ of width at most $l$ computing the same function as $g_i$ — one in which, within every term, any two literals sharing a variable coincide and no literal is repeated — and a CNF representation of width at most $l$ computing that same function. Then there exist a layer-2 datum $\\mathcal{D}'$ on $n$ variables of width at most $l$, with gates $g'_0, \\dots, g'_{m'-1}$, and a Boolean circuit $C'$ on $m'$ inputs with $\\mathrm{depth}(C') \\le \\mathrm{depth}(C) - 1$, such that for every assignment $x : \\mathrm{Fin}\\,n \\to \\bbf_2$,\n\\[\n  C\\bigl(g_0(x), \\dots, g_{m-1}(x)\\bigr) = C'\\bigl(g'_0(x), \\dots, g'_{m'-1}(x)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "$l \\ge 1$",
+  "$C$ has depth at least $1$",
+  "each gate has a width-$\\le l$ DNF equivalent",
+  "the DNF's terms satisfy per-term variable injectivity",
+  "the DNF's terms are repetition-free",
+  "each gate has a width-$\\le l$ CNF equivalent"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe combined absorption step: for $c_{\\mathrm{top}}$ of depth at least $1$ (with $0 < l$)\nover $\\mathrm{Layer2Data}$ gates having width-$l$ DNF and CNF representations, there are a\nnew $\\mathrm{Layer2Data}'$ of width at most $l$ and a circuit $c_{\\mathrm{top}}'$ of depth\nat most $\\mathrm{depth}\\,c_{\\mathrm{top}} - 1$ computing the same function. This dispatches\nto the depth-1 case (giving depth $0$) and the general case (giving depth at most $1$)."
+}

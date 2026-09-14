@@ -21,6 +21,11 @@
 
 \newcommand{\lo}[1]{\mathcal{L}{#1}}
 
+% Mathlib's big meet (U+2A05). amssymb has no big square-cap: the print build only gets one
+% because it loads unicode-math, which the web build does not, and MathJax has
+% none either -- so define it here for whichever build is missing it.
+\providecommand{\bigsqcap}{\mathop{\sqcap}}
+
 % Paired delimiters
 \newcommand{\abs}[1]{\left\lvert #1\right\rvert}
 \newcommand{\Abs}[1]{\lvert #1 \rvert}

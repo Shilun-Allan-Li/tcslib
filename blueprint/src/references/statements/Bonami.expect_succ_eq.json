@@ -1,0 +1,14 @@
+{
+ "lean_name": "Bonami.expect_succ_eq",
+ "key": "6f0cf2ed89791fbe",
+ "kind": "lemma",
+ "title": "Expectation splits over the last coordinate",
+ "statement": "Let $\\varphi : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function on $n+1$ variables, and for a bit $b \\in \\{0,1\\}$ let $\\varphi_b : \\{0,1\\}^n \\to \\bbr$, $\\varphi_b(x) = \\varphi(x, b)$, be its restriction obtained by fixing the last coordinate to $b$. Then the expectation of $\\varphi$ under the uniform measure on $\\{0,1\\}^{n+1}$ is the average of the expectations of its two restrictions:\n\\[\n  \\E[\\varphi] \\;=\\; \\frac{\\E[\\varphi_{0}] + \\E[\\varphi_{1}]}{2}.\n\\]",
+ "hypotheses_covered": [
+  "φ is a Boolean function on n+1 variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The expectation of $\\varphi$ on the cube of dimension $n+1$ is the average of the expectations\nof its two restrictions:\n\\[\n\\E[\\varphi] = \\tfrac12\\bigl(\\E[\\mathrm{restrictLast}\\,\\varphi\\,\\mathrm{false}] + \\E[\\mathrm{restrictLast}\\,\\varphi\\,\\mathrm{true}]\\bigr).\n\\]"
+}

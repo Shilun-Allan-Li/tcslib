@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_measureReal_zVariable",
+ "key": "5c6c68fa22cb9d4a",
+ "kind": "theorem",
+ "title": "Special-bit conditioning rescales a $Z$-fiber's mass by $3/2$",
+ "statement": "Fix a positive length $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$, and let $z$ be an achievable value of the variable $Z=(M,T,X_{<T},Y_{>T})$ for $p$, with fiber $Z^{-1}(z)$. Write $D$ for the hard distribution conditioned on the generated input pair being disjoint, and let $D'$ be $D$ conditioned further on the event $\\{Y_T=\\mathrm{false}\\}$ that Bob's bit at the special coordinate $T$ is $\\mathrm{false}$. Then\n\\[\nD'\\big(Z^{-1}(z)\\big) \\;=\\; \\frac{3}{2}\\, D\\big(\\{Y_T=\\mathrm{false}\\}\\cap Z^{-1}(z)\\big).\n\\]",
+ "hypotheses_covered": [
+  "positive length $n$",
+  "a deterministic disjointness protocol $p$ of length $n$",
+  "an achievable value $z$ of the $Z$-variable for $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The mass of a $Z$ fiber under the Alice-side conditioned measure, with the $3/2$ scaling from $Pr_{D}[Y_{T}=false]=2/3$ made explicit."
+}

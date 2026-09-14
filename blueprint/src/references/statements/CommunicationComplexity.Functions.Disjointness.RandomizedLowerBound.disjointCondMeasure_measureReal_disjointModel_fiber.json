@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_disjointModel_fiber",
+ "key": "21cc8e03036f6d98",
+ "kind": "theorem",
+ "title": "Uniform pushforward of the disjointness-conditioned hard distribution",
+ "statement": "Let $n \\ge 1$, and write $\\mathcal{C} = \\{\\text{neither}, \\text{left-only}, \\text{right-only}\\}$ for the three-element type of disjoint coordinates. Consider the hard distribution on samples conditioned on the event that the generated input pair of sets is disjoint. For every point $z$ of the product space $\\{1,\\dots,n\\} \\times \\bigl(\\{1,\\dots,n\\} \\to \\mathcal{C}\\bigr) \\times \\mathcal{C}$, the conditional probability that a sample's disjoint model — namely the triple consisting of its special coordinate, its generated disjoint coordinate-pair vector, and the ignored value at the special coordinate — equals $z$ is exactly\n\\[ \\frac{1}{n \\cdot 3^{n} \\cdot 3}. \\]\nSince this value is independent of $z$ and equals the reciprocal of the cardinality of the product space, the disjoint model pushes the conditioned distribution forward to the uniform distribution on that space.",
+ "hypotheses_covered": [
+  "n is a positive natural number (n ≥ 1)",
+  "z is an arbitrary point of the product space Fin n × (Fin n → DisjointCoordinate) × DisjointCoordinate",
+  "the distribution is the hard distribution conditioned on the disjointness event"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the disjoint-conditioned distribution, the disjoint model is uniform."
+}

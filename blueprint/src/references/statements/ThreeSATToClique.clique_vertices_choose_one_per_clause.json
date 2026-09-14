@@ -1,0 +1,17 @@
+{
+ "lean_name": "ThreeSATToClique.clique_vertices_choose_one_per_clause",
+ "key": "067b9974ee3bf15e",
+ "kind": "lemma",
+ "title": "One clique vertex per clause",
+ "statement": "Let $f$ be a 3-CNF formula with $m$ clauses, and let $s$ be a set of vertices of the conflict graph of $f$. Suppose that $s$ has exactly $m$ elements and forms a clique, meaning any two distinct vertices of $s$ are adjacent. Then for every clause index $i \\in \\mathrm{Fin}\\,m$ there is exactly one vertex $u \\in s$ whose clause component equals $i$.",
+ "hypotheses_covered": [
+  "f is a 3-CNF formula with m = f.length clauses",
+  "s is a finite set of conflict-graph vertices",
+  "s has cardinality equal to the number of clauses m",
+  "s is a clique in the conflict graph of f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s$ is a set of $m$ vertices forming a clique in the conflict graph of a formula\n$f$ with $m$ clauses, then for every clause index $i : \\mathrm{Fin}\\,m$ there is\nexactly one vertex $u \\in s$ with $u.c\\_idx = i$."
+}

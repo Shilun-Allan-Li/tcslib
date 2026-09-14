@@ -1,0 +1,16 @@
+{
+ "lean_name": "BernoulliCost.binomialPMF_sum_one",
+ "key": "d1714819bf8b7260",
+ "kind": "lemma",
+ "title": "Binomial probability mass function sums to one",
+ "statement": "Let $n$ be a natural number and let $p$ be a real number with $0 \\le p \\le 1$. Then the binomial probabilities $\\binom{n}{k}\\, p^k\\, (1-p)^{n-k}$ sum to one over all outcomes, \\[\\sum_{k=0}^{n} \\binom{n}{k}\\, p^k\\, (1-p)^{n-k} = 1.\\]",
+ "hypotheses_covered": [
+  "$n$ a natural number",
+  "$0 \\le p$",
+  "$p \\le 1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $0 \\le p \\le 1$, then the binomial PMF sums to $1$ over $k$ ranging in $\\{0, \\dots, n\\}$,\ni.e.\\ $\\sum_{k=0}^{n} \\mathrm{binomialPMF}\\,n\\,p\\,k = 1$. This is the binomial theorem\napplied to $(p + (1-p))^n = 1$."
+}

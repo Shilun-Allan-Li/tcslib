@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolFourier.sum_char_S_ne_zero",
+ "key": "31f74d8ef5d2b0ed",
+ "kind": "lemma",
+ "title": "Vanishing of the character sum at a nonzero point",
+ "statement": "Fix $n\\in\\bbn$ and a point $x\\in\\{0,1\\}^n$, and for each subset $S\\subseteq[n]$ let $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ be the Walsh–Fourier character. If $x$ is not the all-zeros point, then\n\\[\n  \\sum_{S\\subseteq[n]}\\chi_S(x)=0,\n\\]\nthe sum ranging over all $2^n$ subsets of $[n]$.",
+ "hypotheses_covered": [
+  "x is a point of the Boolean hypercube {0,1}^n",
+  "x is not the all-zeros point (x ≠ zero_vec n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $x \\in \\{0,1\\}^n$ with $x \\ne \\mathbf{0}$,\n\\[\n  \\sum_{S \\subseteq [n]} \\chi_S(x) = 0.\n\\]"
+}

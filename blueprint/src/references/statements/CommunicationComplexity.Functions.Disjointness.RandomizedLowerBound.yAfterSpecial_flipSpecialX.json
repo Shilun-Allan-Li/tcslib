@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial_flipSpecialX",
+ "key": "0ebb32da87825373",
+ "kind": "theorem",
+ "title": "Flipping Alice's special bit fixes Bob's post-special input",
+ "statement": "Let $n$ be a positive integer, and let $\\omega$ be a sample of the hard distribution, consisting of a distinguished coordinate $T \\in \\{0,\\dots,n-1\\}$, Alice's special bit $x_T \\in \\{0,1\\}$, Bob's special bit $y_T \\in \\{0,1\\}$, and an assignment $i \\mapsto c_i$ of a coordinate type to each index $i$. Let Bob's bit at coordinate $i$ be $y_T$ when $i = T$ and otherwise the bit determined by the coordinate type $c_i$, and let $\\beta(\\omega) \\in \\{0,1\\}^n$ be Bob's post-special vector, whose $i$-th entry equals Bob's bit at $i$ when $T < i$ and is $0$ otherwise. Writing $\\omega'$ for the sample obtained from $\\omega$ by replacing $x_T$ with its negation and leaving $T$, $y_T$, and the coordinate-type assignment unchanged, we have \\[ \\beta(\\omega') = \\beta(\\omega); \\] that is, toggling only Alice's special-coordinate bit leaves Bob's input bits after the special coordinate unchanged.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "ω is a hard-distribution sample given by T, x_T, y_T, and a coordinate-type assignment"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Technical auxiliary result for \\texttt{yAfterSpecial\\_flipSpecialX}."
+}

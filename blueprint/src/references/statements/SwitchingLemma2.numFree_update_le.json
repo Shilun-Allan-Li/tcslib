@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.numFree_update_le",
+ "key": "e5f522779329bab6",
+ "kind": "lemma",
+ "title": "Fixing a variable does not increase the free count",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, let $v \\in \\mathrm{Fin}\\,n$, and let $b$ be a Boolean value. Write $\\rho[v \\mapsto b]$ for the restriction that agrees with $\\rho$ everywhere except at $v$, where it takes the fixed value $b$. Then the number of free variables of $\\rho[v \\mapsto b]$ is at most the number of free variables of $\\rho$.",
+ "hypotheses_covered": [
+  "a restriction $\\rho$ on $n$ variables",
+  "a variable index $v \\in \\mathrm{Fin}\\,n$",
+  "a Boolean value $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fixing a variable $v$ to a value $b$ never increases the number of free variables:\n$\\mathrm{numFree}(\\rho[v \\mapsto b]) \\le \\mathrm{numFree}(\\rho)$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Networks.val_eq_capOf_iff",
+ "key": "60f509736ba05d3a",
+ "kind": "theorem",
+ "title": "Equality in the flow-value/cut-capacity bound",
+ "statement": "Let $N$ be a network with capacity function $c$, distinguished source $x$ and sink $y$, let $f$ be a flow in $N$, and let $S$ be a vertex set defining a cut, so that $x \\in S$ and $y \\notin S$; write $\\bar S$ for the complementary vertex set. Then the value of the flow equals the capacity of the cut, $\\mathrm{val}(f) = \\mathrm{cap}(S,\\bar S)$, if and only if $f(u,v) = c(u,v)$ for every arc with $u \\in S$ and $v \\in \\bar S$ (each forward arc across the cut is saturated) and $f(u,v) = 0$ for every arc with $u \\in \\bar S$ and $v \\in S$ (each backward arc across the cut carries no flow).",
+ "hypotheses_covered": [
+  "N is a network (disjoint nonempty source and sink sets, capacity function)",
+  "f is a flow in N (capacity constraint and conservation at intermediate vertices)",
+  "S defines a cut: x ∈ S and y ∉ S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "(equality condition). \\emph{Equality holds in \\texttt{val f $\\le$ cap K} if and only if\neach arc in \\texttt{(S, $\\bar{S}$)} is \\texttt{f}-saturated and each arc in\n\\texttt{($\\bar{S}$, S)} is \\texttt{f}-zero.}"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolBLR.fourier_coeff_le_of_far_from_linear",
+ "key": "5701f1ce3a536b47",
+ "kind": "lemma",
+ "title": "Fourier coefficient bound for functions far from linear",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be $\\varepsilon$-far from linear, meaning that $0 \\le \\varepsilon \\le 1$ and every linear function $g : \\{0,1\\}^n \\to \\{0,1\\}$ (one satisfying $g(x \\oplus y) = g(x) \\oplus g(y)$ for all $x,y$) has $\\Pr_{x}[f(x) \\ne g(x)] \\ge \\varepsilon$ under the uniform distribution. Let $F(x) = (-1)^{f(x)}$ be the $\\pm 1$ lift of $f$. Then for every subset $S \\subseteq [n]$, the Fourier coefficient of $F$ at $S$ satisfies\n\\[\n  \\hat F(S) \\;=\\; \\E_{x}\\bigl[F(x)\\,\\chi_S(x)\\bigr] \\;\\le\\; 1 - 2\\varepsilon,\n\\]\nwhere $\\chi_S(x) = \\prod_{i \\in S}(-1)^{x_i}$ is the Walsh character indexed by $S$.",
+ "hypotheses_covered": [
+  "$0 \\le \\varepsilon$",
+  "$\\varepsilon \\le 1$",
+  "$f$ is $\\varepsilon$-far from every linear function under the uniform distribution",
+  "conclusion holds for every $S \\subseteq [n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\{0,1\\}^n \\to \\{0,1\\}$ is $\\varepsilon$-far from linear, then for\nevery $S \\subseteq [n]$,\n\\[\n  \\widehat{\\texttt{BoolBLR.lift\\_pm1}\\,f}(S) \\;\\le\\; 1 - 2\\varepsilon.\n\\]"
+}

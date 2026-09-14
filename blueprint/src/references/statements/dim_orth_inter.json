@@ -1,0 +1,17 @@
+{
+ "lean_name": "dim_orth_inter",
+ "key": "f78b746ed90fdf13",
+ "kind": "lemma",
+ "title": "Dimension of the orthogonal intersection over a coordinate set",
+ "statement": "Fix a prime $p$, an integer $n$, and work in the symplectic space $V = \\bbf_p^{\\,n} \\times \\bbf_p^{\\,n}$ equipped with the symplectic form $\\omega\\big((x,z),(x',z')\\big) = \\sum_{i} (x_i z'_i - z_i x'_i)$. Let $M$ be a subset of the coordinate set $\\{0,1,\\dots,n-1\\}$, let $V_M \\le V$ be the support submodule of vectors whose coordinates vanish outside $M$, and let $r_M : V \\to V_M$ be the restriction map that zeroes every coordinate outside $M$. Then for any $\\bbf_p$-subspace $S \\le V$, the symplectic orthogonal complement $S^{\\perp_\\omega}$ satisfies\n\\[\n\\dim_{\\bbf_p}\\big(S^{\\perp_\\omega} \\cap V_M\\big) \\;=\\; 2\\,\\abs{M} \\;-\\; \\dim_{\\bbf_p}\\big(r_M(S)\\big).\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "ambient space V = F_p^n x F_p^n with symplectic form omega",
+  "M a finite subset of the coordinate set Fin n",
+  "S an F_p-subspace of V"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$\\dim_{\\mathbb{F}_p}(S^{\\perp_\\omega} \\cap V_M) = 2|M| - \\dim_{\\mathbb{F}_p}(r_M(S))$."
+}

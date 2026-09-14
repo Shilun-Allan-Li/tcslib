@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.integral_exp_sub_cgf_eq_one",
+ "key": "7a7da6cc0b6dd540",
+ "kind": "theorem",
+ "title": "Exponential tilting by the cumulant generating function normalises to one",
+ "statement": "Let $\\mu$ be a probability measure on a measurable space $\\Omega$, let $X : \\Omega \\to \\bbr$ be a random variable, and let $t \\in \\bbr$. Write $\\Lambda(t) = \\log \\int_\\Omega e^{t X(x)}\\,d\\mu(x)$ for the cumulant generating function of $X$ at $t$. If the function $x \\mapsto e^{t X(x)}$ is $\\mu$-integrable, then\n\\[\n\\int_\\Omega e^{\\,t X(x) - \\Lambda(t)}\\,d\\mu(x) = 1.\n\\]",
+ "hypotheses_covered": [
+  "μ is a probability measure on Ω",
+  "X is a real-valued random variable on Ω",
+  "t is a real number",
+  "x ↦ e^{tX(x)} is μ-integrable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu$ be a probability measure, $X : \\Omega \\to \\mathbb{R}$ and $t \\in \\mathbb{R}$.\nIf $e^{tX}$ is $\\mu$-integrable, then\n$\\int e^{t X(x) - \\Lambda_\\mu(t)}\\,d\\mu = 1$,\nwhere $\\Lambda_\\mu(t) = \\log\\int e^{tX}\\,d\\mu$ is the cumulant generating function."
+}

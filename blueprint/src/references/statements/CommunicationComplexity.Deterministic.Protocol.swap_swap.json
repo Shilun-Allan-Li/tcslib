@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.swap_swap",
+ "key": "d68e9dd9c122be80",
+ "kind": "theorem",
+ "title": "Role swap is an involution",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn from a type $X$, Bob's from a type $Y$, and outputs in a type $\\alpha$. Applying the role swap twice — first exchanging the roles of Alice and Bob throughout $p$, then exchanging them again — returns the original protocol $p$ unchanged.",
+ "hypotheses_covered": [
+  "p is a protocol over input types X (Alice) and Y (Bob) with outputs in α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Swapping Alice and Bob twice recovers the original protocol: for any $p$ over $X \\times Y$,\n$p.\\texttt{swap}.\\texttt{swap} = p$."
+}

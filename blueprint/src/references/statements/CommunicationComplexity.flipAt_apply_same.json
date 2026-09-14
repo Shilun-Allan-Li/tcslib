@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.flipAt_apply_same",
+ "key": "1d4ccbff04a1a838",
+ "kind": "lemma",
+ "title": "Value of the single-coordinate flip at the flipped coordinate",
+ "statement": "Let $n \\in \\bbn$, let $i \\in \\mathrm{Fin}\\,n$ be a coordinate index, and let $x$ be an $n$-bit Boolean input. The single-coordinate flip of $x$ at $i$ — the input obtained from $x$ by negating its $i$-th coordinate and leaving all others unchanged — has value $\\neg\\,x_i$ at coordinate $i$.",
+ "hypotheses_covered": [
+  "n ∈ ℕ",
+  "coordinate index i ∈ Fin n",
+  "n-bit Boolean input x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i : \\mathrm{Fin}\\,n$ and $x : \\texttt{BoolInput}(n)$,\n$(\\texttt{flipAt}\\,i\\,x)\\,i = \\neg(x\\,i)$."
+}

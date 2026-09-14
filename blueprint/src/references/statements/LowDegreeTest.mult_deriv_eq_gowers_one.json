@@ -1,0 +1,16 @@
+{
+ "lean_name": "LowDegreeTest.mult_deriv_eq_gowers_one",
+ "key": "a0c48a6a91501790",
+ "kind": "lemma",
+ "title": "Multiplicative derivative as the order-one Gowers product",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function, and let $x, h \\in \\{0,1\\}^n$. Then the multiplicative derivative of $f$ in direction $h$, evaluated at $x$, coincides with the order-$1$ Gowers product of $f$ at base point $x$ with the single direction vector $h$; that is,\n\\[\n  (\\Delta_h f)(x) \\;=\\; \\mathrm{GP}(f, 1, x, h) \\;=\\; f(x)\\, f(x \\oplus h),\n\\]\nwhere $\\oplus$ denotes componentwise XOR.",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n (f : {0,1}^n → ℝ)",
+  "x is a point of the hypercube",
+  "h is a direction vector in the hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : \\{0,1\\}^n \\to \\bbr$, $x, h \\in \\{0,1\\}^n$,\n$(\\Delta_h f)(x) = \\mathrm{GP}(f, 1, x, h)$."
+}

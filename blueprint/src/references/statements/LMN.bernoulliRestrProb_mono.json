@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.bernoulliRestrProb_mono",
+ "key": "eece731193dfa459",
+ "kind": "lemma",
+ "title": "Monotonicity of the Bernoulli restriction probability",
+ "statement": "Fix a parameter $p \\in [0,1]$, and for a predicate $E$ on restrictions of $n$ variables write $\\bbP_p[E]$ for the probability that $E$ holds under a Bernoulli($p$) random restriction. If $A$ and $B$ are predicates on restrictions such that $A(\\rho)$ implies $B(\\rho)$ for every restriction $\\rho$, then\n\\[\n  \\bbP_p[A] \\le \\bbP_p[B].\n\\]",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "A ρ implies B ρ for every restriction ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p\\in[0,1]$ and let $A,B$ be predicates on restrictions. If $A(\\rho)$ implies $B(\\rho)$\nfor every restriction $\\rho$, then\n\\[\n  \\mathrm{bernoulliRestrProb}\\,p\\,A \\le \\mathrm{bernoulliRestrProb}\\,p\\,B .\n\\]"
+}

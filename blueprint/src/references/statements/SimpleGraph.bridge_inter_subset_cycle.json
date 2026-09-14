@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.bridge_inter_subset_cycle",
+ "key": "c86b5cc2caeebb62",
+ "kind": "theorem",
+ "title": "Distinct bridges meet only in the subgraph",
+ "statement": "Let $H$ be a subgraph of a finite simple graph $G$, and let $e$ and $e'$ be edges of $G$ that do not belong to $H$, so both lie in $E(G)\\setminus E(H)$. Recall that two such edges are called equivalent when they are joined by a walk, internally disjoint from $H$, whose first and last edges are the two given ones, and that the bridge of $H$ containing an edge $f$ is the subgraph of $G$ induced by the equivalence class of $f$. Write $B$ for the bridge containing $e$ and $B'$ for the bridge containing $e'$. If $e$ and $e'$ are not equivalent, then every vertex lying in both $B$ and $B'$ is a vertex of $H$; that is, $V(B)\\cap V(B')\\subseteq V(H)$.",
+ "hypotheses_covered": [
+  "$e$ is an edge of $G$ not in $H$ (in $E(G)\\setminus E(H)$)",
+  "$e'$ is an edge of $G$ not in $H$ (in $E(G)\\setminus E(H)$)",
+  "$e$ and $e'$ are not related by the bridge equivalence (they lie in distinct bridges)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Show that if \\texttt{B} and \\texttt{B'} are two\ndistinct bridges, then \\texttt{V(B) $\\cap$ V(B') $\\subseteq$ V(C)}.}\n\nThe text states it too: \\emph{It is also easy to see that two bridges of \\texttt{H} have\nno\nvertices in common except, possibly, for vertices of \\texttt{H}.}"
+}

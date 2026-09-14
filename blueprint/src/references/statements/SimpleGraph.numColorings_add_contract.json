@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleGraph.numColorings_add_contract",
+ "key": "edc22559952367ed",
+ "kind": "theorem",
+ "title": "Deletion–contraction recurrence for the chromatic polynomial",
+ "statement": "Let $G$ be a finite simple graph, let $u$ and $v$ be adjacent vertices of $G$, and let $k$ be a natural number. Writing $\\pi_k(H)$ for the number of proper $k$-colourings of a graph $H$, let $G - uv$ be the graph obtained from $G$ by deleting the edge $uv$, and let $G \\cdot uv$ be the graph obtained by contracting that edge, i.e. by identifying $u$ and $v$ into a single vertex. Then\n\\[\n\\pi_k(G) + \\pi_k(G \\cdot uv) = \\pi_k(G - uv).\n\\]",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "u and v are adjacent vertices (G.Adj u v)",
+  "k is a natural number",
+  "G - uv is G with edge uv deleted",
+  "G · uv is G with edge uv contracted (v identified into u)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "(deletion--contraction). \\emph{If \\texttt{G} is simple, then \\texttt{$\\pi$\\_k(G) =\n$\\pi$\\_k(G - e) - $\\pi$\\_k(G $\\cdot$ e)} for any edge \\texttt{e} of \\texttt{G}.}"
+}

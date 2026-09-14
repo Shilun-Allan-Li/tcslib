@@ -1,0 +1,17 @@
+{
+ "lean_name": "KKL.noisyInfluence_power_bound",
+ "key": "9f79804709cf99ca",
+ "kind": "lemma",
+ "title": "Noisy influence bounded by influence",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a $\\pm 1$-valued Boolean function, let $i\\in[n]$ be a coordinate, and let $\\rho$ be a noise rate with $0<\\rho\\le 1$. Then the noisy influence of $i$ on $f$ at rate $\\rho$ is at most the ordinary influence of $i$ on $f$:\n\\[\n  \\mathrm{Inf}_i^{\\rho}[f]\\;=\\;\\sum_{S\\ni i}\\rho^{\\abs{S}-1}\\,\\hat f(S)^2\\;\\le\\;\\mathrm{Inf}_i[f].\n\\]",
+ "hypotheses_covered": [
+  "$f$ is $\\pm 1$-valued",
+  "$i$ is a coordinate in $[n]$",
+  "noise rate $\\rho > 0$",
+  "noise rate $\\rho \\le 1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a $\\pm 1$-valued $f$ and $0 < \\rho \\le 1$, the noisy influence of any coordinate\nis at most its ordinary influence:\n$\\mathrm{Inf}_i^{\\rho}[f] \\le \\mathrm{Inf}_i[f]$."
+}

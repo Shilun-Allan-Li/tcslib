@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_eq_of_zVariable_eq",
+ "key": "aef24e221f20e72f",
+ "kind": "theorem",
+ "title": "Recovering Alice's early bits from the Z variable",
+ "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for the length-$n$ disjointness problem, whose inputs are pairs of subsets of $\\{1,\\dots,n\\}$. Recall that each hard-distribution sample $\\omega$ determines a value $Z(\\omega) = (M, T, X_{<T}, Y_{>T})$ of the associated $Z$ variable, consisting of the transcript, the special coordinate, Alice's bits strictly before the special coordinate (padded by $\\mathrm{false}$ elsewhere), and Bob's bits strictly after it. Let $z$ be any achievable value of this $Z$ variable. Then for every hard-distribution sample $\\omega$ with $Z(\\omega) = z$, the function recording Alice's bits before the special coordinate of $\\omega$ agrees with the $X_{<T}$ component of $z$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol on length-n inputs",
+  "z is an achievable value of the Z variable",
+  "omega is a hard-distribution sample",
+  "the Z variable of omega equals z"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Equal $Z$ value fixes Alice's bits before the special coordinate."
+}

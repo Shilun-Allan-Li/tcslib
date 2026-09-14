@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.BitString.signedInner_comp_cast",
+ "key": "d18c843185371aa8",
+ "kind": "theorem",
+ "title": "Invariance of the signed inner product under reindexing",
+ "statement": "Let $m$ and $n$ be natural numbers with $m = n$, and let $x, y \\colon \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be two $n$-bit strings, writing $\\langle x, y\\rangle$ for their signed inner product. The equality $m = n$ gives a bijection $\\sigma \\colon \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,n$, and precomposing with it turns $x$ and $y$ into the $m$-bit strings $x \\circ \\sigma$ and $y \\circ \\sigma$. Then reindexing both strings in this way leaves the signed inner product unchanged:\n\\[\n  \\langle x \\circ \\sigma,\\; y \\circ \\sigma\\rangle \\;=\\; \\langle x, y\\rangle.\n\\]",
+ "hypotheses_covered": [
+  "m and n are natural numbers",
+  "m = n",
+  "x, y are n-bit strings (functions Fin n → Bool)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m$ and $n$ be natural numbers with $m = n$, and let $x, y \\colon \\mathrm{Fin}\\,n\n\\to \\mathrm{Bool}$ be two $n$-bit strings. The equality $m = n$ induces a bijection\n$\\sigma \\colon \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,n$, and precomposing with it turns $x$\nand $y$ into the $m$-bit strings $x \\circ \\sigma$ and $y \\circ \\sigma$. Reindexing both\nstrings in this way leaves the signed inner product unchanged:\n\\[\n\\mathrm{signedInner}(x \\circ \\sigma,\\; y \\circ \\sigma) \\;=\\; \\mathrm{signedInner}(x, y).\n\\]"
+}

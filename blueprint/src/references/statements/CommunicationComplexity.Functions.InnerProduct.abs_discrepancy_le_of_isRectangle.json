@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.abs_discrepancy_le_of_isRectangle",
+ "key": "85d7872fb870f457",
+ "kind": "theorem",
+ "title": "Rectangle discrepancy bound for the inner product",
+ "statement": "Fix a natural number $n$ and equip the set $\\{0,1\\}^n \\times \\{0,1\\}^n$ of pairs of $n$-bit Boolean vectors with the uniform probability measure. Let $\\mathrm{IP}_n(x,y) = \\bigoplus_{i=1}^{n}(x_i \\wedge y_i)$ be the mod-2 inner product. Then for every rectangle $R \\subseteq \\{0,1\\}^n \\times \\{0,1\\}^n$ — that is, every set of the form $R = A \\times B$ with $A, B \\subseteq \\{0,1\\}^n$ — the discrepancy of $\\mathrm{IP}_n$ on $R$ satisfies\n\\[\n  \\bigl|\\mathrm{disc}(\\mathrm{IP}_n, R)\\bigr|\n  \\;\\le\\;\n  \\sqrt{\\frac{1}{2^{n}}},\n\\]\nwhere the discrepancy is the expectation over a uniformly random pair $(x,y)$ of $\\mathbf{1}_R(x,y)\\,\\sigma(\\mathrm{IP}_n(x,y))$, with $\\sigma$ the sign map sending $\\mathrm{false} \\mapsto 1$ and $\\mathrm{true} \\mapsto -1$.",
+ "hypotheses_covered": [
+  "n a natural number (the bit length)",
+  "R is a rectangle, i.e. R = A × B for some A, B ⊆ {0,1}^n",
+  "discrepancy taken with respect to the uniform finite probability measure on the pair space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every combinatorial rectangle $R \\subseteq \\mathrm{BoolInput}\\,n \\times \\mathrm{BoolInput}\\,n$\nhas discrepancy at most $2^{-n/2}$ for the mod-2 inner product function under the\nuniform distribution:\n\\[\n  \\bigl|\\mathrm{disc}(\\mathrm{IP}_n, R)\\bigr|\n  \\;\\le\\; \\sqrt{\\frac{1}{2^n}}.\n\\]"
+}

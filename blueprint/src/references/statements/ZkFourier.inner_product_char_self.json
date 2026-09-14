@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.inner_product_char_self",
+ "key": "7dec2c41f385ee1c",
+ "kind": "lemma",
+ "title": "Self-inner-product of a Fourier character",
+ "statement": "Fix an integer $k \\ge 1$ and a dimension $n \\ge 0$, and let $\\omega_k = e^{2\\pi i/k}$. For $s \\in \\mathbb{Z}_k^n$, let $\\chi_s(x) = \\omega_k^{\\,s\\cdot x}$ be the Fourier character indexed by $s$, and equip functions on $\\mathbb{Z}_k^n$ with the Hermitian inner product $\\langle f,g\\rangle = \\frac{1}{k^n}\\sum_{x\\in\\mathbb{Z}_k^n} f(x)\\,\\overline{g(x)}$. Then every character has unit norm: for all $s \\in \\mathbb{Z}_k^n$, \\[ \\langle \\chi_s, \\chi_s\\rangle = 1. \\]",
+ "hypotheses_covered": [
+  "k ≥ 1 (k nonzero, NeZero k)",
+  "arbitrary dimension n ≥ 0",
+  "arbitrary index vector s ∈ Z_k^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any $s \\in \\mathbb{Z}_k^n$, $\\langle \\chi_s, \\chi_s \\rangle = 1$.\nEvery character is a unit-norm vector in $L^2(\\mathbb{Z}_k^n)$."
+}

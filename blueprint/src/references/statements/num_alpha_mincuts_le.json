@@ -1,0 +1,17 @@
+{
+ "lean_name": "num_alpha_mincuts_le",
+ "key": "3ef75cb5cd5fe327",
+ "kind": "theorem",
+ "title": "At most $n^{2\\alpha}$ near-minimum cuts",
+ "statement": "Let $G$ be a multigraph with $n$ vertices, and let $\\alpha$ and $m$ be natural numbers with $\\alpha \\ge 1$ and $2\\alpha \\le n$. If, as an inequality of real numbers, $m \\cdot \\binom{n}{2\\alpha}^{-1} \\le 1$, then $m \\le n^{2\\alpha}$.",
+ "hypotheses_covered": [
+  "G is a multigraph whose vertex count is n",
+  "the parameter alpha is a positive natural number",
+  "2*alpha is at most n",
+  "the real inequality m * (1/binom(n, 2*alpha)) <= 1 holds"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean treats the cut count m (numCuts) as an abstract natural number constrained only by the given inequality; the reading of m as the number of $\\alpha$-approximate minimum cuts of $G$ is the intended interpretation, not part of the formal statement.",
+ "rubric": [],
+ "replaced": "Let $\\alpha > 0$ with $2\\alpha \\le n = \\abs{V(G)}$. If a family of $\\mathrm{numCuts}$\n$\\alpha$-minimum cuts satisfies\n$\\mathrm{numCuts} \\cdot \\binom{n}{2\\alpha}^{-1} \\le 1$, then\n\\[\n  \\mathrm{numCuts} \\le n^{2\\alpha} .\n\\]"
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "BernoulliCost.bernoulli_restriction_asymptotic",
+ "key": "0126f4d827088d36",
+ "kind": "theorem",
+ "title": "Bernoulli restriction cost, asymptotic version",
+ "statement": "Fix a parameter $p$ with $0 < p \\le 1$, positive integers $w, s > 0$, and a tolerance $\\varepsilon > 0$. Then there exists $N \\in \\bbn$ such that for every $n \\ge N$ with $n > 0$ and every decidable event on restrictions of $n$ variables, the following holds: if the fixed-size restriction probability satisfies\n\\[\n  R_k[\\mathrm{event}] \\le \\left(\\frac{5\\,k\\,w}{n}\\right)^{s} \\qquad \\text{for every } k \\le n,\n\\]\nthen the probability of the event under a Bernoulli($p$) random restriction satisfies\n\\[\n  \\Pr_{p}[\\mathrm{event}] \\le (10\\,p\\,w)^{s} + \\varepsilon.\n\\]",
+ "hypotheses_covered": [
+  "0 < p",
+  "p ≤ 1",
+  "w > 0",
+  "s > 0",
+  "ε > 0",
+  "existence of threshold N",
+  "n ≥ N",
+  "n > 0",
+  "event is a decidable predicate on restrictions of n variables",
+  "for all k ≤ n, fixed-size restriction probability R_k[event] ≤ (5kw/n)^s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $0 < p \\le 1$, $w, s > 0$, and $\\varepsilon > 0$. Then there exists $N$ such that for every\n$n \\ge N$ with $n > 0$ and every event satisfying\n$\\mathrm{fixedSizeRestrProb}\\,(\\mathrm{event})\\,k \\le (5kw/n)^s$ for all $k \\le n$, one has\n$\\Pr_{R_p}[\\mathrm{event}] \\le (10pw)^s + \\varepsilon$. Asymptotically the exponential tail\nvanishes, leaving only the leading bound $(10pw)^s$."
+}

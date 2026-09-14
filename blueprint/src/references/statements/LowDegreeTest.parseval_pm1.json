@@ -1,0 +1,14 @@
+{
+ "lean_name": "LowDegreeTest.parseval_pm1",
+ "key": "c71eca6f60988bb0",
+ "kind": "lemma",
+ "title": "Parseval identity for the sign lift of a Boolean function",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function, and let $g : \\{0,1\\}^n \\to \\bbr$ be its $\\pm 1$ lift $g(x) = (-1)^{f(x)}$. Writing $\\hat g(S) = \\E[g\\,\\chi_S]$ for the Fourier coefficient of $g$ at $S$, where $\\chi_S(x) = \\prod_{i \\in S}(-1)^{x_i}$ and the expectation is over $x$ uniform on $\\{0,1\\}^n$, one has\n\\[\n  \\sum_{S \\subseteq [n]} \\hat g(S)^2 = 1.\n\\]",
+ "hypotheses_covered": [
+  "f is a function from the Boolean cube {0,1}^n to {0,1} (Bool-valued)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every Boolean function $f : \\{0,1\\}^n \\to \\{0,1\\}$,\n$\\sum_{S \\subseteq [n]} \\hat{f}(S)^2 = 1$."
+}

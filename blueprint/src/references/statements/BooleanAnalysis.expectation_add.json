@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.expectation_add",
+ "key": "a18288ede9e98334",
+ "kind": "lemma",
+ "title": "Additivity of the expectation operator",
+ "statement": "Fix $n \\in \\bbn$ and a coordinate direction $i \\in \\{1,\\dots,n\\}$, and write $E_i$ for the expectation operator in direction $i$, which sends a Boolean function $h : \\{0,1\\}^n \\to \\bbr$ to the function $(E_i h)(x) = \\tfrac{1}{2}\\bigl(h(x^{i\\mapsto 0}) + h(x^{i\\mapsto 1})\\bigr)$. Then $E_i$ is additive: for all Boolean functions $f, g : \\{0,1\\}^n \\to \\bbr$,\n\\[\n  E_i(f + g) = E_i f + E_i g.\n\\]",
+ "hypotheses_covered": [
+  "arity n : ℕ",
+  "coordinate direction i : Fin n",
+  "Boolean functions f, g of arity n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The expectation operator respects addition:\n$E_i(f + g) = E_i f + E_i g$."
+}

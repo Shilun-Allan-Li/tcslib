@@ -1,0 +1,15 @@
+{
+ "lean_name": "cnfToDualDNF_eval",
+ "key": "9b853693dbf02fbf",
+ "kind": "lemma",
+ "title": "De Morgan dual of a CNF computes its negation",
+ "statement": "Let $\\psi$ be a formula in conjunctive normal form over $n$ Boolean variables — a conjunction of clauses, each clause a disjunction of literals — and let its De Morgan dual DNF be obtained by negating every literal of $\\psi$, so that each clause $\\bigvee_j l_{ij}$ becomes the term $\\bigwedge_j \\lnot l_{ij}$. Then for every assignment $x \\colon \\{0,\\dots,n-1\\} \\to \\{\\mathrm{true},\\mathrm{false}\\}$, evaluating this dual DNF at $x$ yields exactly the negation of the value of $\\psi$ at $x$.",
+ "hypotheses_covered": [
+  "CNF formula ψ over n variables",
+  "Boolean assignment x on the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$(\\mathrm{cnfToDualDNF}\\,\\psi).\\mathrm{eval}\\,x = \\lnot\\,(\\psi.\\mathrm{eval}\\,x)$."
+}

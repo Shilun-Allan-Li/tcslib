@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real",
+ "key": "09592ebe6ef624f2",
+ "kind": "theorem",
+ "title": "Law of total probability over the fibers of a random variable",
+ "statement": "Let $\\Omega$ be a finite measurable space equipped with a finite measure $\\mu$, let $\\alpha$ be a finite set, let $Z : \\Omega \\to \\alpha$ be a measurable ($\\alpha$-valued) map, and let $S \\subseteq \\Omega$. Writing $\\mu^{\\bbr}$ for the real-valued measure and $\\mu[\\,\\cdot \\mid A\\,]$ for the measure conditioned on an event $A$, we have\n\\[\n  \\mu^{\\bbr}(S)\n  \\;=\\; \\sum_{z \\in \\alpha} \\mu^{\\bbr}\\bigl(Z^{-1}(\\{z\\})\\bigr)\\,\n        \\cdot\\, \\mu\\bigl[\\,\\cdot \\mid Z^{-1}(\\{z\\})\\,\\bigr]^{\\bbr}(S),\n\\]\nso the total mass of $S$ is recovered by summing, over the values $z$ of $Z$, the mass of the fiber $Z^{-1}(\\{z\\})$ times the conditional mass of $S$ given that fiber.",
+ "hypotheses_covered": [
+  "Ω is a finite (and discrete) measurable space",
+  "α is a finite type with the discrete σ-algebra",
+  "μ is a finite measure on Ω",
+  "Z is an α-valued map on Ω",
+  "S is a subset of Ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $Z : \\Omega \\to \\alpha$ be a finite-valued random variable on a finite measurable\nspace with finite measure $\\mu$, and let $S \\subseteq \\Omega$.  Then\n\\[\n  \\mu^{\\mathbb{R}}(S)\n  \\;=\\; \\sum_{z \\in \\alpha} \\mu^{\\mathbb{R}}(Z^{-1}\\{z\\})\n        \\cdot \\mu\\bigl[\\,\\cdot \\mid Z^{-1}\\{z\\}\\bigr]^{\\mathbb{R}}(S).\n\\]\nThis is the law of total probability expressed in real-valued measure notation."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_factor_product_le_survival_product",
+ "key": "33d4003ff24e0e18",
+ "kind": "lemma",
+ "title": "Karger step factors bound the survival-probability product",
+ "statement": "Let $T$ be a surviving trace of $\\mathrm{steps}$ steps, with states $s_0, s_1, \\dots$; write $G_i$ for the multigraph and $C_i$ for the distinguished cut in state $s_i$, and let $n_i$ and $m_i$ denote the vertex count and edge count of $G_i$. Suppose the initial cut $C_0$ is a minimum cut of $G_0$, and that $n_i \\ge 2$ for every index $i < \\mathrm{steps}$. Then, writing $c$ for the size of $C_0$,\n\\[\n  \\prod_{i < \\mathrm{steps}} \\frac{n_i - 2}{n_i}\n  \\;\\le\\;\n  \\prod_{i < \\mathrm{steps}} \\left(1 - \\frac{c}{m_i}\\right),\n\\]\nthe right-hand factors being the one-step survival probabilities for cut size $c$ and edge count $m_i$.",
+ "hypotheses_covered": [
+  "T is a surviving trace of length steps",
+  "the initial cut C_0 is a minimum cut of G_0",
+  "for every index i < steps, the graph G_i has at least two vertices (n_i ≥ 2)",
+  "c is the size of the initial cut C_0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the initial cut is a min-cut and every graph along the first $\\text{steps}$ indices has\nat least two vertices, then\n\\[\n  \\prod_{i<\\text{steps}} \\frac{n_i-2}{n_i} \\;\\le\\;\n  \\prod_{i<\\text{steps}} \\mathrm{survivalProb}\\bigl(\\,\\text{initial cut size},\\;\n  \\text{edge count at }i\\,\\bigr),\n\\]\nwhere $n_i$ is the vertex count at index $i$."
+}

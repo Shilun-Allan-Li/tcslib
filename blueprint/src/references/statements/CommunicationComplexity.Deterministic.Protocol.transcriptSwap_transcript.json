@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.transcriptSwap_transcript",
+ "key": "929b3d48bd2e247d",
+ "kind": "theorem",
+ "title": "Role swap commutes with transcript computation",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob), and let $x \\in X$ and $y \\in Y$ be inputs. Running $p$ on the pair $(x,y)$ produces a syntactic transcript, and applying the transcript-swap operation to it — reinterpreting each communication node as the opposite player while preserving the Boolean message sequence — yields exactly the transcript obtained by running the role-swapped protocol (in which Alice and Bob exchange roles) on the reversed pair $(y,x)$.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol over X, Y with output type α",
+  "x is an input in X",
+  "y is an input in Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every protocol $p$ and inputs $x \\in X$, $y \\in Y$, swapping the transcript of $p$\non $(x, y)$ equals the transcript of the swapped protocol on the reversed pair $(y, x)$:\n$\\mathrm{transcriptSwap}(p.\\mathrm{transcript}(x, y)) = p.\\mathrm{swap}.\\mathrm{transcript}(y, x)$."
+}

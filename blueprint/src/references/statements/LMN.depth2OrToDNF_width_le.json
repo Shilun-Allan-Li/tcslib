@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.depth2OrToDNF_width_le",
+ "key": "7d3ad2eeb90768aa",
+ "kind": "lemma",
+ "title": "Width bound for the depth-two OR-to-DNF conversion",
+ "statement": "Let $cs$ be a list of Boolean circuits on $n$ variables, regarded as the children of a top-level OR gate, and suppose that this OR gate has depth at most $2$. Form the DNF obtained from $cs$ by converting each literal child into a singleton term, each AND child into the term consisting of its literals, and each OR child into the singleton terms of its literals. Then the width of this DNF (the maximum number of literals in any of its terms) is at most the maximum fan-in of the OR gate.",
+ "hypotheses_covered": [
+  "cs is a list of circuits (the children of a top OR gate)",
+  "the OR gate node(false, cs) has depth at most 2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the top OR node $\\mathrm{node}\\,\\texttt{false}\\,cs$ has depth at most $2$, the resulting DNF\nhas width at most the maximum fan-in of the circuit:\n$(\\mathrm{depth2OrToDNF}\\,cs).\\mathrm{width} \\le (\\mathrm{node}\\,\\texttt{false}\\,cs).\\mathrm{maxFanin}$."
+}

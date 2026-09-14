@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.dtDepth_composeRestr_le",
+ "key": "e9b943b7f90ec649",
+ "kind": "theorem",
+ "title": "Composing restrictions does not increase decision-tree depth",
+ "statement": "Let $f$ be a Boolean function of $n$ variables, and let $\\rho_1$ and $\\rho_2$ be two restrictions on those variables, each pinning some coordinates to a fixed Boolean value and leaving the rest free. Let $\\rho_1 \\circ \\rho_2$ be the composed restriction that fixes each coordinate $i$ to the value assigned by $\\rho_1$ when $\\rho_1$ pins $i$, and otherwise to the value assigned by $\\rho_2$. For a restriction $\\rho$, write $f|_{\\rho}$ for the function obtained from $f$ by substituting the fixed values of $\\rho$ and treating the coordinates left free by $\\rho$ as its inputs, and let $\\operatorname{depth}_{\\mathrm{DT}}(g)$ denote the least $d$ for which some decision tree of depth at most $d$ computes $g$. Then further restricting along $\\rho_2$ can only lower this depth:\n\\[\n\\operatorname{depth}_{\\mathrm{DT}}\\bigl(f|_{\\rho_1 \\circ \\rho_2}\\bigr) \\le \\operatorname{depth}_{\\mathrm{DT}}\\bigl(f|_{\\rho_1}\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "ρ₁ is a restriction on n variables",
+  "ρ₂ is a restriction on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be a Boolean function on\n$n$ variables, and let $\\rho_1, \\rho_2$ be two restrictions on those variables. Write\n$\\rho_1 * \\rho_2$ for their composition, the restriction that on each coordinate takes\nthe value fixed by $\\rho_1$ where $\\rho_1$ sets one and the value given by $\\rho_2$\notherwise, and for a restriction $\\rho$ write $f|_\\rho$ for the restricted function $x\n\\mapsto f(y)$, where $y$ agrees with $\\rho$ on the coordinates $\\rho$ fixes and with $x$\non the free coordinates. Then \\[ \\mathrm{dtDepth}\\bigl(f|_{\\rho_1 * \\rho_2}\\bigr) \\le\n\\mathrm{dtDepth}\\bigl(f|_{\\rho_1}\\bigr), \\] where $\\mathrm{dtDepth}$ denotes the least\ndepth of a decision tree computing the given function."
+}

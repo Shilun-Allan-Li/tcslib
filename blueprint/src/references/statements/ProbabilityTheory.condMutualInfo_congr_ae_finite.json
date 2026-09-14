@@ -1,0 +1,19 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_congr_ae_finite",
+ "key": "e9a558a60fea2be2",
+ "kind": "theorem",
+ "title": "Almost-everywhere invariance of conditional mutual information",
+ "statement": "Let $\\mu$ be a probability measure on a finite sample space $\\Omega$ (with every subset measurable), and let $X, X'$, $Y, Y'$, and $Z, Z'$ be random variables on $\\Omega$ taking values in the finite sets $S$, $T$, and $U$ respectively. If $X = X'$, $Y = Y'$, and $Z = Z'$ each hold $\\mu$-almost everywhere, then the conditional mutual informations coincide: \\[ I[X : Y \\mid Z\\,;\\,\\mu] = I[X' : Y' \\mid Z'\\,;\\,\\mu]. \\]",
+ "hypotheses_covered": [
+  "Ω is a finite discrete measurable space",
+  "S, T, U are finite value types",
+  "μ is a probability measure",
+  "X = X' μ-almost everywhere",
+  "Y = Y' μ-almost everywhere",
+  "Z = Z' μ-almost everywhere"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Version of \\texttt{ProbabilityTheory.condMutualInfo\\_congr\\_ae} for finite measurable sample\nspaces: measurability and finite-range conditions are inferred automatically from the\n\\texttt{CommunicationComplexity.FiniteMeasureSpace} and \\texttt{Finite} instances, so only\nthe a.e.\\ equality hypotheses need to be supplied."
+}

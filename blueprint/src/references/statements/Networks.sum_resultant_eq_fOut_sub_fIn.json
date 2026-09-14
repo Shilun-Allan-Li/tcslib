@@ -1,0 +1,19 @@
+{
+ "lean_name": "Networks.sum_resultant_eq_fOut_sub_fIn",
+ "key": "ba511c6aa693dc7c",
+ "kind": "theorem",
+ "title": "Resultant flow out of a set as a sum over singleton vertices",
+ "statement": "Let $N$ be a network on a finite vertex set $V$, let $f$ assign a nonnegative integer $f(u,v)$ to each ordered pair of vertices $u,v$, and let $S\\subseteq V$. Summing the resultant flow out of a singleton $\\{v\\}$ over all vertices $v\\in S$ recovers the resultant flow out of $S$; that is, the following identity holds in $\\bbz$:\n\\[\n  \\sum_{v\\in S}\\bigl(f^{+}(\\{v\\})-f^{-}(\\{v\\})\\bigr)=f^{+}(S)-f^{-}(S).\n\\]",
+ "hypotheses_covered": [
+  "N is a network",
+  "f assigns a nonnegative integer to each ordered pair of vertices (f : V → V → ℕ)",
+  "S is a subset of the vertex set",
+  "the vertex set V is finite"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "\\emph{For any flow \\texttt{f} in \\texttt{N} and any \\texttt{S $\\subseteq$ V},\n\\texttt{$\\sum$\\_\\{v $\\in$ S\\} (f$^{+}$(v) - f$^{-}$(v)) = f$^{+}$(S) - f$^{-}$(S)}.  (Note that, in general,\n\\texttt{$\\sum$\\_\\{v $\\in$ S\\} f$^{+}$(v) $\\ne$ f$^{+}$(S)} and \\texttt{$\\sum$\\_\\{v $\\in$ S\\} f$^{-}$(v) $\\ne$ f$^{-}$(S)}.)}"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Rank.clog_boolFunctionRank_le_communicationComplexity",
+ "key": "cfb7172c4a5b3419",
+ "kind": "theorem",
+ "title": "Log-rank lower bound on deterministic communication complexity",
+ "statement": "Let $X$ be a finite type and $Y$ a finite type, and let $f : X \\to Y \\to \\mathrm{Bool}$ be a Boolean function with associated $0/1$ matrix $M_f \\in \\bbr^{X \\times Y}$, whose rank $\\mathrm{rank}(f) = \\mathrm{rank}_{\\bbr}(M_f)$ is the rank of $f$. Then the deterministic communication complexity $D(f) \\in \\bbn_\\infty$ of $f$ satisfies\n\\[\n  \\lceil \\log_2 \\mathrm{rank}(f) \\rceil \\;\\le\\; D(f).\n\\]",
+ "hypotheses_covered": [
+  "X is finite",
+  "Y is finite",
+  "f is a Boolean function X → Y → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any Boolean function $f : X \\to Y \\to \\mathrm{Bool}$ on finite $X$ and $Y$,\n\\[\n  \\lceil \\log_2 \\mathrm{rank}(f) \\rceil \\;\\le\\;\n  \\mathrm{DC}(f),\n\\]\nwhere $\\mathrm{DC}(f)$ is the deterministic communication complexity of $f$,\ntaken as an element of $\\mathbb{N}_\\infty$."
+}

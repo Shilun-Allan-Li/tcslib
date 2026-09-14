@@ -68,19 +68,18 @@ column $j^* \in \mathrm{Fin}\,N$ that minimises $\mathrm{payoffVsPure}(G, p,
 \cdot)$, chosen via the classical axiom of choice from the finite minimiser.
 \end{definition}
 
-\begin{lemma}[Best-column minimality]
+\begin{lemma}[Optimality of the column best response]
 \lean{bestColumn_spec}
 \label{bestColumn_spec}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, bestColumn, payoffVsPure}
 \difficulty{1}
-For any game $G$, mixed row strategy $p$, and pure column $j$,
-\[
-  \mathrm{payoffVsPure}(G, p, \mathrm{bestColumn}(G, p))
-  \;\le\;
-  \mathrm{payoffVsPure}(G, p, j).
-\]
-That is, the chosen column is indeed a minimiser.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N \ge 1$ column
+actions, given by a payoff matrix $A_{ij} \in [0,1]$, and let $p$ be a mixed strategy
+for the row player, with weights $p_i$. Write $v(j) = \sum_i p_i A_{ij}$ for the
+expected payoff of $p$ against the pure column $j$, and let $j^*$ be a column that
+minimises $v$ over all $N$ columns. Then $v(j^*) \le v(j)$ for every column $j$; that
+is, $j^*$ is indeed a minimiser of the expected payoff against $p$.
 \end{lemma}
 
 \begin{definition}[Row best response]
@@ -93,34 +92,34 @@ row $i^* \in \mathrm{Fin}\,M$ that maximises $\mathrm{pureVsPayoff}(G, \cdot,
 q)$, chosen classically from the finite maximiser.
 \end{definition}
 
-\begin{lemma}[Best-row maximality]
+\begin{lemma}[Optimality of the row best response]
 \lean{bestRow_spec}
 \label{bestRow_spec}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, bestRow, pureVsPayoff}
 \difficulty{1}
-For any game $G$, mixed column strategy $q$, and pure row $i$,
-\[
-  \mathrm{pureVsPayoff}(G, i, q)
-  \;\le\;
-  \mathrm{pureVsPayoff}(G, \mathrm{bestRow}(G, q), q).
-\]
+Let $G$ be a finite two-player zero-sum game with a nonempty set of $M$ row actions and
+$N$ column actions, given by a payoff matrix $A$ with $0 \le A_{ij} \le 1$, and let $q$
+be a mixed strategy for the column player. For a pure row $i$, write $u(i) = \sum_{j}
+A_{ij}\, q_j$ for its expected payoff against $q$, and let $i^\ast$ be a row maximising
+$u$. Then $u(i) \le u(i^\ast)$ for every row $i$.
 \end{lemma}
 
-\begin{theorem}[Weak duality]
+\begin{theorem}[Weak duality for finite zero-sum games]
 \lean{weak_duality}
 \label{weak_duality}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, ZeroSumGame.toLossSeq, payoffVsPure, pureVsPayoff}
 \difficulty{5}
-For any game $G$ and any mixed strategies $p$ (row) and $q$ (column),
+Let $G$ be a finite two-player zero-sum game with $M \ge 1$ row actions and $N \ge 1$
+column actions, given by a payoff matrix $A$ whose entries satisfy $A_{ij} \in [0,1]$,
+where the row player maximises and the column player minimises. Let $p = (p_i)$ be a
+mixed strategy for the row player and $q = (q_j)$ a mixed strategy for the column
+player. Then the row player's guaranteed payoff under $p$ never exceeds the payoff the
+column player can be forced above under $q$:
 \[
-  \inf_{j \in \mathrm{Fin}\,N} \mathrm{payoffVsPure}(G, p, j)
-  \;\le\;
-  \sup_{i \in \mathrm{Fin}\,M} \mathrm{pureVsPayoff}(G, i, q).
+  \min_{j} \sum_{i} p_i\, A_{ij} \;\le\; \max_{i} \sum_{j} A_{ij}\, q_j .
 \]
-The row player's worst-case mixed payoff never exceeds the column player's
-best-case mixed payoff.
 \end{theorem}
 
 \begin{definition}[Loss sequence induced by a game]
@@ -134,14 +133,18 @@ induced \emph{loss sequence} for the row player is $\ell_t(i) = 1 - A_{i,j_t}
 framework used by Hedge.
 \end{definition}
 
-\begin{lemma}[Induced loss sequence is valid]
+\begin{lemma}[Validity of the loss sequence induced by a zero-sum game]
 \lean{ZeroSumGame.toLossSeq_valid}
 \label{ZeroSumGame.toLossSeq_valid}
 \leanok
 \uses{LossSeq.Valid, ZeroSumGame, ZeroSumGame.toLossSeq}
 \difficulty{2}
-The loss sequence $G.\mathrm{toLossSeq}(\mathrm{colResponse})$ is valid, i.e.\
-every loss lies in $[0, 1]$, because the payoffs satisfy $0 \le A_{ij} \le 1$.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, given by a payoff matrix $A$ whose entries satisfy $0 \le A_{ij} \le 1$, and
+let $j_0, \dots, j_{T-1}$ be any sequence of column responses. Then the induced loss
+sequence for the row player, defined by $\ell_t(i) = 1 - A_{i,j_t}$ for each round $t <
+T$ and row action $i$, is valid: every loss lies in $[0,1]$, i.e. $0 \le \ell_t(i) \le
+1$ for all $t$ and $i$.
 \end{lemma}
 
 \begin{definition}[Average strategy]
@@ -180,36 +183,40 @@ fraction of rounds on which action $i$ was played:
 \]
 \end{definition}
 
-\begin{lemma}[Payoff under average strategy]
+\begin{lemma}[Average strategy's payoff against a pure column]
 \lean{payoffVsPure_averageStrategy}
 \label{payoffVsPure_averageStrategy}
 \leanok
 \uses{ZeroSumGame, averageStrategy, payoffVsPure}
 \difficulty{4}
-For a game $G$, a column $j$, and $T$ row distributions
-$p_0, \dots, p_{T-1}$,
+Let $G$ be a finite two-player zero-sum game with $M \ge 1$ row actions and $N$ column
+actions, given by a payoff matrix $A$ with $0 \le A_{ij} \le 1$, and fix a pure column
+action $j$. Let $T > 0$ and let $p_0, \dots, p_{T-1}$ be probability distributions over
+the $M$ row actions, each presented as non-negative weights $p_t(i)$ summing to $1$, and
+let $\bar{p}$ be their average strategy, the mixed row strategy with weights $\bar{p}_i
+= \frac{1}{T}\sum_{t=0}^{T-1} p_t(i)$. Then the expected payoff of $\bar{p}$ against
+column $j$ satisfies
 \[
-  \mathrm{payoffVsPure}(G, \bar{p}, j)
+  \sum_{i} \bar{p}_i \, A_{ij}
   \;=\;
-  \frac{1}{T} \sum_{t=0}^{T-1} \sum_{i} p_t(i) \cdot A_{ij},
+  \frac{1}{T} \sum_{t=0}^{T-1} \sum_{i} p_t(i) \, A_{ij}.
 \]
-where $\bar{p}$ is the average strategy.
 \end{lemma}
 
-\begin{lemma}[Payoff of pure row under empirical column]
+\begin{lemma}[Pure-row payoff against the empirical column strategy]
 \lean{pureVsPayoff_empiricalStrategy}
 \label{pureVsPayoff_empiricalStrategy}
 \leanok
 \uses{ZeroSumGame, empiricalStrategy, pureVsPayoff}
 \difficulty{4}
-For a game $G$, a pure row $i$, and a sequence of pure column actions
-$a_0, \dots, a_{T-1}$,
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N \ge 1$ column
+actions, and payoff matrix $A$. Fix a row action $i$ and a sequence of column actions
+$a_0, \dots, a_{T-1}$ with $T > 0$, and let $\hat{q}$ be the associated empirical column
+strategy. Then the expected payoff of row $i$ against $\hat{q}$ equals the average
+payoff over the sequence:
 \[
-  \mathrm{pureVsPayoff}(G, i, \hat{q})
-  \;=\;
-  \frac{1}{T} \sum_{t=0}^{T-1} A_{i, a_t},
+  \sum_{j} A_{ij}\,\hat{q}_j \;=\; \frac{1}{T}\sum_{t=0}^{T-1} A_{i,\,a_t}.
 \]
-where $\hat{q}$ is the empirical column strategy.
 \end{lemma}
 
 \begin{definition}[Prefix cumulative game loss]
@@ -250,24 +257,32 @@ The \emph{prefix potential} is the sum of prefix Hedge weights over all rows:
 \]
 \end{definition}
 
-\begin{lemma}[Prefix Hedge weight is positive]
+\begin{lemma}[Positivity of the prefix Hedge weight]
 \lean{prefixHedgeWeight_pos}
 \label{prefixHedgeWeight_pos}
 \leanok
 \uses{ZeroSumGame, prefixHedgeWeight}
 \difficulty{1}
-For any game $G$, learning rate $\eta$, prefix of column actions, and row $i$,
-the prefix Hedge weight $w_t(i) = \exp(-\eta L_t(i)) > 0$.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, let $\eta \in \bbr$ be a learning rate, and fix any prefix $a_0, \dots,
+a_{t-1}$ of $t$ column actions together with a row $i$. Then the prefix Hedge weight
+$w_t(i) = \exp\!\bigl(-\eta \cdot L_t(i)\bigr)$ is strictly positive, where $L_t(i) =
+\sum_{s=0}^{t-1}\bigl(1 - A_{i,a_s}\bigr)$ is the prefix cumulative loss of row $i$.
 \end{lemma}
 
-\begin{lemma}[Prefix potential is positive]
+\begin{lemma}[Positivity of the prefix potential]
 \lean{prefixPotential_pos}
 \label{prefixPotential_pos}
 \leanok
 \uses{ZeroSumGame, prefixHedgeWeight_pos, prefixPotential}
 \difficulty{2}
-When $M \ge 1$, the prefix potential $\Phi_t > 0$, since it is a non-empty sum
-of positive terms.
+Let $G$ be a finite two-player zero-sum game with at least one row action, fix a
+learning rate $\eta \in \bbr$, and let $a_0, \dots, a_{t-1}$ be any prefix of column
+actions. Then the prefix potential is strictly positive,
+\[
+  \Phi_t \;=\; \sum_{i} \exp\!\bigl(-\eta\, L_t(i)\bigr) \;>\; 0,
+\]
+where $L_t(i)$ is the prefix cumulative loss of row $i$.
 \end{lemma}
 
 \begin{definition}[Prefix Hedge mixed strategy]
@@ -295,135 +310,170 @@ is the prefix Hedge mixed strategy.  This is defined by well-founded recursion
 on $t$.
 \end{definition}
 
-\begin{lemma}[Prefix loss equals cumulative loss]
+\begin{lemma}[Prefix game loss equals induced cumulative loss]
 \lean{prefixGameLoss_eq_cumLoss}
 \label{prefixGameLoss_eq_cumLoss}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, cumLoss, prefixGameLoss}
 \difficulty{4}
-For any fixed column-action sequence $a : \mathrm{Fin}\,T \to \mathrm{Fin}\,N$,
-round $t < T$, and row $i$, the prefix cumulative loss of row $i$ along the
-first $t$ actions equals the abstract cumulative loss of $i$ in the induced loss
-sequence: $\mathrm{prefixGameLoss}(\dots) = \mathrm{cumLoss}(G.\mathrm{toLossSeq}(a), t, i)$.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, given by a payoff matrix $A$ with $0 \le A_{ij} \le 1$, and let $a_0, \dots,
+a_{T-1}$ be a sequence of column actions with each $a_s \in \mathrm{Fin}\,N$. Fix a row
+action $i \in \mathrm{Fin}\,M$ and a round $t \in \mathrm{Fin}\,T$. Then the prefix
+cumulative loss of row $i$ along the first $t$ column actions coincides with the
+cumulative loss of expert $i$ through the first $t$ rounds of the loss sequence induced
+by $G$ and $(a_s)_s$; that is,
+\[
+\sum_{s=0}^{t-1} \bigl(1 - A_{i,\,a_s}\bigr) \;=\; \sum_{s < t} \bigl(1 -
+A_{i,\,a_s}\bigr).
+\]
 \end{lemma}
 
-\begin{lemma}[Prefix weight equals Hedge weight]
+\begin{lemma}[Prefix Hedge weight agrees with the induced-loss Hedge weight]
 \lean{prefixHedgeWeight_eq_hedgeWeight}
 \label{prefixHedgeWeight_eq_hedgeWeight}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, hedgeWeight, prefixGameLoss_eq_cumLoss, prefixHedgeWeight}
 \difficulty{2}
-The prefix Hedge weight of row $i$ at round $t$ equals the abstract Hedge
-weight $\mathrm{hedgeWeight}(\eta, G.\mathrm{toLossSeq}(a), t, i)$ for the
-induced loss sequence.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, with payoff matrix $A$, let $\eta \in \bbr$ be a learning rate, and let $a_0,
+\dots, a_{T-1}$ be a sequence of column actions, so that $a : \mathrm{Fin}\,T \to
+\mathrm{Fin}\,N$. Fix a round $t \in \mathrm{Fin}\,T$ and a row $i \in \mathrm{Fin}\,M$.
+Then the prefix Hedge weight of row $i$ at learning rate $\eta$, computed from the
+length-$t$ prefix $a_0, \dots, a_{t-1}$ of column actions, equals the Hedge weight of
+expert $i$ at time $t$ and learning rate $\eta$ for the loss sequence $\ell_s(j) = 1 -
+A_{j, a_s}$ induced by $G$ along $a$; that is, both equal
+\[
+  \exp\!\Bigl(-\eta \sum_{s < t} \bigl(1 - A_{i, a_s}\bigr)\Bigr).
+\]
 \end{lemma}
 
-\begin{lemma}[Prefix potential equals Hedge potential]
+\begin{lemma}[Prefix potential equals the induced Hedge potential]
 \lean{prefixPotential_eq_potential}
 \label{prefixPotential_eq_potential}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, potential, prefixHedgeWeight_eq_hedgeWeight, prefixPotential}
 \difficulty{2}
-The prefix potential at round $t$ equals the abstract Hedge potential
-$\mathrm{potential}(\eta, G.\mathrm{toLossSeq}(a), t)$ for the induced loss
-sequence.
+Let $G$ be a finite two-player zero-sum game with payoff matrix $A$ having $M$ rows and
+$N$ columns, fix a learning rate $\eta \in \bbr$, and let $a_0, \dots, a_{T-1}$ be a
+sequence of $T$ column actions. For any round $t < T$, the prefix potential of $G$ at
+learning rate $\eta$ formed from the first $t$ column actions $a_0, \dots, a_{t-1}$
+equals the Hedge potential at time $t$ of the loss sequence $\ell_s(i) = 1 - A_{i, a_s}$
+induced on the row player by $G$ and the full sequence of column actions; that is, \[
+\sum_{i \in \mathrm{Fin}\,M} \exp\!\Bigl(-\eta \sum_{s=0}^{t-1}\bigl(1 - A_{i,
+a_s}\bigr)\Bigr) \;=\; \sum_{i \in \mathrm{Fin}\,M} \exp\!\bigl(-\eta\, L_t(i)\bigr), \]
+where $L_t(i) = \sum_{s < t} \ell_s(i)$ is the cumulative loss of row $i$.
 \end{lemma}
 
-\begin{lemma}[Prefix strategy weight equals Hedge distribution]
+\begin{lemma}[Prefix Hedge strategy agrees with the abstract Hedge distribution]
 \lean{prefixHedgeMixedStrategy_weight_eq_hedgeDist}
 \label{prefixHedgeMixedStrategy_weight_eq_hedgeDist}
 \leanok
 \uses{ZeroSumGame, ZeroSumGame.toLossSeq, hedgeDist, prefixHedgeMixedStrategy, prefixHedgeWeight_eq_hedgeWeight, prefixPotential_eq_potential}
 \difficulty{2}
-The weight of row $i$ in the prefix Hedge mixed strategy at round $t$ equals
-the abstract Hedge distribution $\mathrm{hedgeDist}(\eta, G.\mathrm{toLossSeq}(a), t, i)$.
+Let $G$ be a finite two-player zero-sum game with $M \ge 1$ row actions and $N$ column
+actions, fix a learning rate $\eta \in \bbr$, and let $a_0, \dots, a_{T-1}$ be a
+sequence of column actions. For any round $t < T$ and any row $i$, the weight assigned
+to $i$ by the prefix Hedge mixed strategy built from the length-$t$ prefix $a_0, \dots,
+a_{t-1}$ equals the Hedge distribution value $p_t(i)$ obtained by running abstract
+Hedge, at the same learning rate $\eta$, on the loss sequence $\ell$ induced by $G$ and
+$a$, namely $\ell_s(i) = 1 - A_{i, a_s}$. In symbols, both sides equal $w_t(i)/\Phi_t$,
+where $w_t(i) = \exp(-\eta \sum_{s<t}(1 - A_{i,a_s}))$ and $\Phi_t = \sum_{k} w_t(k)$.
 \end{lemma}
 
-\begin{lemma}[Regret-to-payoff bridge]
+\begin{lemma}[Regret-to-payoff bridge for zero-sum games]
 \lean{regret_to_payoff}
 \label{regret_to_payoff}
 \leanok
 \uses{ZeroSumGame}
 \difficulty{5}
-Suppose the row player uses per-round distributions $p_0, \dots, p_{T-1}$
-(each summing to $1$) against column responses $j_0, \dots, j_{T-1}$, and
-achieves cumulative loss regret at most $R$:
+Consider a finite two-player zero-sum game with $M \ge 1$ row actions and $N$ column
+actions and payoff matrix $A$, every entry of which satisfies $0 \le A_{ij} \le 1$,
+played over $T \ge 1$ rounds. Suppose that in each round $t$ the row player commits to a
+probability distribution $p_t$ over the row actions (so $\sum_i p_t(i) = 1$) while the
+column player chooses an action $j_t$, and that the cumulative loss regret is bounded by
+$R$:
 \[
-  \sum_t \sum_i p_t(i)(1 - A_{i,j_t})
-  - \min_i \sum_t (1 - A_{i,j_t}) \;\le\; R.
+  \sum_t \sum_i p_t(i)\,\bigl(1 - A_{i,j_t}\bigr)
+  \;-\; \min_i \sum_t \bigl(1 - A_{i,j_t}\bigr) \;\le\; R,
 \]
-Then the total payoff satisfies
+where the minimum runs over the row actions. Then the row player's cumulative expected
+payoff satisfies
 \[
-  \sum_t \sum_i p_t(i) A_{i,j_t}
+  \sum_t \sum_i p_t(i)\,A_{i,j_t}
   \;\ge\;
-  \sup_i \sum_t A_{i,j_t} - R.
+  \max_i \sum_t A_{i,j_t} \;-\; R,
 \]
+with the maximum taken over the row actions.
 \end{lemma}
 
-\begin{lemma}[Average of per-round minima is at most minimum of averages]
+\begin{lemma}[Average of pointwise minima at most minimum of averages]
 \lean{avg_min_le_min_avg}
 \label{avg_min_le_min_avg}
 \leanok
 \difficulty{3}
-For any $f : \mathrm{Fin}\,T \to \mathrm{Fin}\,N \to \mathbb{R}$ and $T > 0$,
+Let $N \ge 1$ and $T \ge 1$ be integers, and let $f(t,j)$ be a real number for each $t
+\in \{1,\dots,T\}$ and each $j \in \{1,\dots,N\}$. Then averaging over $t$ before
+minimising over $j$ can only increase the value:
 \[
-  \frac{1}{T} \sum_{t=0}^{T-1} \min_{j} f(t, j)
+  \frac{1}{T} \sum_{t=1}^{T} \min_{1 \le j \le N} f(t,j)
   \;\le\;
-  \min_{j} \frac{1}{T} \sum_{t=0}^{T-1} f(t, j).
+  \min_{1 \le j \le N} \frac{1}{T} \sum_{t=1}^{T} f(t,j).
 \]
 \end{lemma}
 
-\begin{lemma}[Hedge construction]
+\begin{lemma}[Hedge yields an approximate minimax pair]
 \lean{hedge_construction}
 \label{hedge_construction}
 \leanok
 \uses{LossSeq, LossSeq.Valid, MixedStrategy, ZeroSumGame, ZeroSumGame.toLossSeq, ZeroSumGame.toLossSeq_valid, averageStrategy, bestColumn, bestColumn_spec, bestExpertLoss, cumLoss_horizon, empiricalStrategy, hedgeCumLoss, hedgeDist, hedgeDist_nonneg, hedgeDist_sum, hedgeLoss, hedgeResponseNat, hedge_regret_bound_tight, payoffVsPure, payoffVsPure_averageStrategy, prefixHedgeMixedStrategy, prefixHedgeMixedStrategy_weight_eq_hedgeDist, pureVsPayoff, pureVsPayoff_empiricalStrategy, regret, regret_to_payoff}
 \difficulty{6}
-Given a game $G$ with $M \ge 2$ rows, a number of rounds $T > 0$, and a
-learning rate $\eta > 0$, there exist mixed strategies $p$ (row) and $q$
-(column) such that for all pure $i \in \mathrm{Fin}\,M$ and $j \in
-\mathrm{Fin}\,N$,
+Let $G$ be a finite two-player zero-sum game with $M \ge 2$ row actions and $N \ge 1$
+column actions, with payoff matrix $(A_{ij})$ satisfying $0 \le A_{ij} \le 1$; the row
+player maximises and the column player minimises. Fix an integer $T > 0$ and a learning
+rate $\eta > 0$. Then there exist a mixed row strategy $p$ and a mixed column strategy
+$q$ such that, for every pure row $i \in \{1,\dots,M\}$ and every pure column $j \in
+\{1,\dots,N\}$,
 \[
-  \mathrm{payoffVsPure}(G, p, j)
-  + \frac{\ln M / \eta + \eta T / 8}{T}
+  \sum_{i'} p_{i'}\,A_{i'j} \;+\; \frac{(\ln M)/\eta + \eta T/8}{T}
   \;\ge\;
-  \mathrm{pureVsPayoff}(G, i, q).
+  \sum_{j'} A_{ij'}\,q_{j'}.
 \]
-The strategies are constructed by running Hedge for $T$ rounds, with the
-column player taking pure best responses, and then averaging.
 \end{lemma}
 
-\begin{theorem}[Approximate minimax]
+\begin{theorem}[Approximate minimax for finite zero-sum games]
 \lean{approx_minimax}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p004-b003}
 \label{approx_minimax}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, hedge_construction, payoffVsPure, pureVsPayoff}
 \difficulty{5}
-For any finite zero-sum game $G$ with $M \ge 2$ rows and any $\varepsilon > 0$,
-there exist mixed strategies $p$ (row) and $q$ (column) forming an
-$\varepsilon$-approximate saddle point: for all pure $i \in \mathrm{Fin}\,M$
-and $j \in \mathrm{Fin}\,N$,
+Let $G$ be a finite two-player zero-sum game with payoff matrix $A$, having $M \ge 2$
+row actions and at least one column action, and let $\varepsilon > 0$. Then there exist
+a mixed row strategy $p$ and a mixed column strategy $q$ that form an
+$\varepsilon$-approximate saddle point: for every pure row $i$ and every pure column
+$j$,
 \[
-  \mathrm{payoffVsPure}(G, p, j) + \varepsilon
-  \;\ge\;
-  \mathrm{pureVsPayoff}(G, i, q).
+  \sum_{k} p_k\, A_{kj} \;+\; \varepsilon \;\ge\; \sum_{\ell} A_{i\ell}\, q_\ell .
 \]
+That is, up to an additive $\varepsilon$, the expected payoff of $p$ against any pure
+column is at least the expected payoff of any pure row against $q$.
 \end{theorem}
 
-\begin{theorem}[Approximate minimax theorem]
+\begin{theorem}[Approximate minimax theorem for finite zero-sum games]
 \lean{minimax_approx_theorem}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p004-b003}
 \label{minimax_approx_theorem}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, approx_minimax, payoffVsPure, pureVsPayoff}
 \difficulty{1}
-For any finite zero-sum game $G$ with at least $2$ row actions and any
-$\varepsilon > 0$, there exist mixed strategies $p, q$ such that for all pure
-$i, j$,
+Let $G$ be a finite two-player zero-sum game with payoff matrix $A$, having at least two
+row actions and at least one column action, and suppose every entry satisfies $0 \le
+A_{ij} \le 1$. Then for every $\varepsilon > 0$ there exist a mixed row strategy $p$ and
+a mixed column strategy $q$ such that, for every pure row $i$ and every pure column $j$,
 \[
-  \mathrm{payoffVsPure}(G, p, j) + \varepsilon
-  \;\ge\;
-  \mathrm{pureVsPayoff}(G, i, q).
+  \sum_{k} p_k \, A_{kj} + \varepsilon \;\ge\; \sum_{\ell} A_{i\ell} \, q_\ell.
 \]
-This is the same guarantee as \texttt{approx\_minimax}, stated in the
-$\forall \varepsilon > 0, \exists p, q$ form.
+That is, the row player's guaranteed payoff under $p$ against any column falls short of
+the column player's exposure under $q$ against any row by at most $\varepsilon$.
 \end{theorem}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_cont_congr_strict",
+ "key": "8a068b4790cc64e5",
+ "kind": "lemma",
+ "title": "Strict continuation-invariance of the term sub-tree",
+ "statement": "Let $L$ be a list of literals on $n$ variables and $\\rho$ a restriction on those variables, and suppose at least one literal in $L$ has its variable free under $\\rho$. Let $c_1$ and $c_2$ be two continuations — maps sending each restriction to a decision tree — that agree on every restriction having strictly fewer free variables than $\\rho$. Then the two term sub-trees built from $L$ and $\\rho$, one using the continuation $c_1$ and the other using $c_2$, are identical.",
+ "hypotheses_covered": [
+  "L is a list of literals on n variables",
+  "rho is a restriction on n variables",
+  "at least one literal in L has its variable free under rho",
+  "the continuations c_1 and c_2 agree on every restriction with strictly fewer free variables than rho"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathit{lits}$ contains at least one literal free in $\\rho$, then the two continuations need\nonly agree on restrictions $\\rho'$ with $\\rho'.\\mathrm{numFree} < \\rho.\\mathrm{numFree}$ for the two\n$\\mathrm{termSubTree}$ trees to be equal."
+}

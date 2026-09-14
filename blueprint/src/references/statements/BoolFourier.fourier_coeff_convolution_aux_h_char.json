@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolFourier.fourier_coeff_convolution_aux_h_char",
+ "key": "434691090293f6c5",
+ "kind": "lemma",
+ "title": "Shift rule for character-weighted sums",
+ "statement": "Let $f, g : \\{0,1\\}^n \\to \\bbr$ be Boolean functions, let $S \\subseteq [n]$, and write $\\chi_S(x) = \\prod_{i \\in S}(-1)^{x_i}$ for the associated Walsh character, where $\\oplus$ denotes componentwise XOR. Suppose the order of summation may be interchanged in the double sum\n\\[\n  \\sum_{x}\\Big(\\sum_{y} f(y)\\,g(x \\oplus y)\\Big)\\chi_S(x)\n  \\;=\\;\n  \\sum_{y} f(y)\\sum_{x} g(x \\oplus y)\\,\\chi_S(x).\n\\]\nThen for every $y \\in \\{0,1\\}^n$, translating the argument of $g$ by $y$ multiplies the character-weighted sum by the factor $\\chi_S(y)$:\n\\[\n  \\sum_{x} g(x \\oplus y)\\,\\chi_S(x)\n  \\;=\\;\n  \\chi_S(y)\\sum_{x} g(x)\\,\\chi_S(x).\n\\]",
+ "hypotheses_covered": [
+  "f and g are Boolean functions on {0,1}^n",
+  "S is a subset of [n]",
+  "the Fubini interchange of summation order holds for the double sum with f, g, chi_S",
+  "y is a point of the hypercube {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f, g : \\{0,1\\}^n \\to \\mathbb{R}$, let $S \\subseteq [n]$, assume the Fubini\ninterchange for the convolution coefficient, and let $y \\in \\{0,1\\}^n$.  Then\ntranslating the argument of $g$ by $y$ only multiplies the character-weighted sum by\n$\\chi_S(y)$:\n\\[\n  \\sum_{x} g(x \\oplus y)\\,\\chi_S(x)\n  \\;=\\; \\chi_S(y) \\sum_{x} g(x)\\,\\chi_S(x).\n\\]"
+}

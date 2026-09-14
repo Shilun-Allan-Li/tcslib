@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_cond_specialY_eq_volume_cond_inter",
+ "key": "963170bb471198dd",
+ "kind": "theorem",
+ "title": "Iterated conditioning on a fiber and Bob's special bit",
+ "statement": "Fix a positive integer $n$, a deterministic protocol $p$ for the disjointness problem on inputs of length $n$, an achievable value $z$ of the coarse variable $Z = (M, T, X_{<T}, Y_{>T})$, and a Boolean $b$. On the sample space of hard samples, write $\\mu$ for the ambient measure, let $F = \\{Z = z\\}$ be the fiber above $z$, and let $E$ be the event that Bob's bit at the special coordinate equals $b$. Then conditioning the fiber measure $\\mu[\\,\\cdot \\mid F]$ further on $E$ yields the same measure as conditioning $\\mu$ directly on the intersection $F \\cap E$:\n\\[\n\\bigl(\\mu[\\,\\cdot \\mid F]\\bigr)[\\,\\cdot \\mid E] \\;=\\; \\mu[\\,\\cdot \\mid F \\cap E].\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a disjointness protocol",
+  "z is an achievable value of the Z variable for p",
+  "b is a Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Conditioning a $Z=z$ fiber further on a special Bob-bit value is the same as conditioning the ambient hard distribution on the intersection of those two fiber events."
+}

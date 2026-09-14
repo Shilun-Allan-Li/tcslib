@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measurePreserving_flipSpecialX",
+ "key": "f0d326395a558817",
+ "kind": "theorem",
+ "title": "Bit-flip on Alice's special coordinate preserves volume",
+ "statement": "Fix a positive integer $n$, and consider the finite sample space whose points are the hard samples $\\omega = (T, x_T, y_T, \\mathrm{other})$, with $T \\in \\{0, \\dots, n-1\\}$, bits $x_T, y_T \\in \\{\\text{false}, \\text{true}\\}$, and a coordinate labelling $\\mathrm{other} \\colon \\{0,\\dots,n-1\\} \\to \\{\\text{neither}, \\text{leftOnly}, \\text{rightOnly}\\}$. Let $f$ be the self-map of this space that toggles Alice's special-coordinate bit, sending $\\omega$ to $(T, \\lnot x_T, y_T, \\mathrm{other})$ while leaving $T$, $y_T$, and $\\mathrm{other}$ fixed. Then $f$ is measure-preserving for the volume (uniform counting) measure on the finite sample space: it is measurable and pushes the volume measure forward to itself.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "the map flips only the special bit x_T (negation), keeping T, y_T, other fixed",
+  "conclusion: the map is measure-preserving from volume to volume on the finite sample space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Technical auxiliary result for \\texttt{volume\\_measurePreserving\\_flipSpecialX}."
+}

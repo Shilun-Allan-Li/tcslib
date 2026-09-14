@@ -1,0 +1,15 @@
+{
+ "lean_name": "ZkFourier.fourier_coeff_char_of_ne",
+ "key": "367ded29557ef302",
+ "kind": "lemma",
+ "title": "Orthogonality of distinct Fourier characters",
+ "statement": "Fix an integer $k \\ge 1$ and a dimension $n$, and let $\\omega_k = e^{2\\pi i / k}$. For a frequency $s \\in \\mathbb{Z}_k^n$, write $\\chi_s(x) = \\omega_k^{\\,s \\cdot x}$ for the associated Fourier character on $\\mathbb{Z}_k^n$, where $s \\cdot x = \\sum_{i} s_i x_i$ is computed in $\\mathbb{Z}/k\\mathbb{Z}$. Then for any two distinct frequencies $s \\ne t$ in $\\mathbb{Z}_k^n$, the Fourier coefficient of the character $\\chi_s$ at $t$ vanishes:\n\\[\n  \\widehat{\\chi_s}(t) = \\langle \\chi_s, \\chi_t \\rangle = \\mathbb{E}_{x}\\!\\left[\\chi_s(x)\\,\\overline{\\chi_t(x)}\\right] = 0.\n\\]",
+ "hypotheses_covered": [
+  "k is a positive integer (NeZero k)",
+  "s and t are distinct frequencies in Z_k^n (s ≠ t)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $s \\neq t$, then $\\widehat{\\chi_s}(t) = \\langle \\chi_s, \\chi_t \\rangle = 0$."
+}

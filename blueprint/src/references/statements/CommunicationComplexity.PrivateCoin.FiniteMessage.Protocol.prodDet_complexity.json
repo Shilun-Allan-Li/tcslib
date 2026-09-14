@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_complexity",
+ "key": "804546cd4a898c88",
+ "kind": "theorem",
+ "title": "Additivity of complexity under the product of protocols",
+ "statement": "Fix input types $X$, $Y$, a private-randomness type $\\Omega_X$ for Alice and $\\Omega_Y$ for Bob, and output types $\\alpha_1$, $\\alpha_2$. Let $p_1$ be a private-coin finite-message protocol producing an output in $\\alpha_1$, and let $p_2$ be a deterministic finite-message protocol over $X$, $Y$ producing an output in $\\alpha_2$. Form their product, the private-coin protocol that runs $p_1$ and then $p_2$ on the same inputs (with $p_2$ using no private randomness) and reports the pair of their outputs in $\\alpha_1 \\times \\alpha_2$. Then the worst-case communication cost of this product equals the sum of the individual costs, that is, the complexity of the product is the complexity of $p_1$ plus the complexity of $p_2$.",
+ "hypotheses_covered": [
+  "p1 is a private-coin finite-message protocol with output in α₁",
+  "p2 is a deterministic finite-message protocol with output in α₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The communication complexity of \\texttt{prodDet}~$p_1$~$p_2$ equals the sum of both\ncomplexities: $(\\mathrm{prodDet}\\;p_1\\;p_2).\\mathrm{complexity} = p_1.\\mathrm{complexity} + p_2.\\mathrm{complexity}$."
+}

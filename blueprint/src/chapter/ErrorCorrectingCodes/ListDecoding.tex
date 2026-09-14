@@ -30,13 +30,17 @@ $\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.list_decodable, ErrorCorrectingCodes.Codeword.hamming_ball}
 \difficulty{6}
-If the ball volume $V$ and code size $M$ satisfy the counting inequality
+Let $\alpha$ be a finite field, and fix natural numbers $n$, $L$, $M$ and a real number
+$p$ with $0 \le p \le 1$, $1 \le L$, $L < M$, and $M \le \abs{\alpha}^n$. Suppose $V$ is
+a natural number bounding the volume of every Hamming ball of radius $\lfloor
+pn\rfloor$, in the sense that each such ball around an arbitrary word $y \in \alpha^n$
+contains at most $V$ codewords, and suppose that
 \[
-|\alpha|^n\cdot\tbinom{V}{L+1}\cdot\tbinom{|\alpha|^n-(L+1)}{M-(L+1)}
-\;<\;
-\tbinom{|\alpha|^n}{M},
+\abs{\alpha}^n \cdot \binom{V}{L+1} \cdot \binom{\abs{\alpha}^n - (L+1)}{\,M-(L+1)\,}
+\;<\; \binom{\abs{\alpha}^n}{M}.
 \]
-then there exists a code $C$ of size $M$ that is $(p,L)$-list-decodable.
+Then there exists a code $C$ of length $n$ over $\alpha$ consisting of exactly $M$
+codewords that is $(p,L)$-list-decodable.
 \end{lemma}
 
 \begin{lemma}[Binomial ratio bound]
@@ -44,10 +48,12 @@ then there exists a code $C$ of size $M$ that is $(p,L)$-list-decodable.
 \label{ErrorCorrectingCodes.Codeword.binom_ratio_bound}
 \leanok
 \difficulty{5}
-For $k\le M\le N$,
+Let $N$, $M$, and $k$ be natural numbers with $k \le M \le N$. Then the ratio of
+binomial coefficients satisfies
 \[
-\frac{\binom{N-k}{M-k}}{\binom{N}{M}} \;\le\; \Bigl(\frac{M}{N}\Bigr)^k.
+\frac{\binom{N-k}{M-k}}{\binom{N}{M}} \;\le\; \left(\frac{M}{N}\right)^{k},
 \]
+where the quantities are compared as real numbers.
 \end{lemma}
 
 \begin{lemma}[Counting inequality for list decoding]
@@ -56,24 +62,37 @@ For $k\le M\le N$,
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.binom_ratio_bound, ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{5}
-For the choice $r = 1-H_q(\rho)-1/L$, $M=\lfloor q^{rn}\rfloor$, and
-$V=\lfloor q^{H_q(\rho)n}\rfloor$, whenever $L<M\le q^n$,
+Fix an integer alphabet size $q \ge 2$, a real number $p$, and integers $n$ and $L \ge
+1$. Set the rate
 \[
-q^n\cdot\tbinom{V}{L+1}\cdot\tbinom{q^n-(L+1)}{M-(L+1)}
+r \;=\; 1 - H_q(p) - \frac{1}{L},
+\]
+and define
+\[
+M \;=\; \bigl\lfloor q^{\,r n} \bigr\rfloor,
+\qquad
+V \;=\; \bigl\lfloor q^{\,H_q(p)\, n} \bigr\rfloor .
+\]
+Assume that $0 < M \le q^n$ and $L < M$. Then
+\[
+q^n \cdot \binom{V}{L+1} \cdot \binom{q^n - (L+1)}{\,M - (L+1)\,}
 \;<\;
-\tbinom{q^n}{M}.
+\binom{q^n}{M}.
 \]
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{List-decoding capacity}
 
-\begin{theorem}[List-decoding capacity]
+\begin{theorem}[List-decoding over a q-ary alphabet]
 \lean{ErrorCorrectingCodes.Codeword.list_decoding_capacity}
 \label{ErrorCorrectingCodes.Codeword.list_decoding_capacity}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.exists_listDecodable_code, ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq, ErrorCorrectingCodes.Codeword.qary_entropy_pos, ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
 \difficulty{5}
-For any $q=|\alpha|$, $0<\rho\le 1-1/q$, and $L\ge 1$, there exist codes of rate
-$r = 1-H_q(\rho)-1/L$ that are $(\rho,L)$-list-decodable.
+Let $\alpha$ be a finite field, write $q = \abs{\alpha}$ for the number of its elements,
+and fix a real number $p$ with $0 < p \le 1 - \tfrac{1}{q}$ together with an integer $L
+\ge 1$. In this regime one considers block codes over the alphabet $\alpha$ that admit
+list decoding from a $p$-fraction of symbol errors with output lists of size at most
+$L$, and the associated rate $r$ they can achieve.
 \end{theorem}

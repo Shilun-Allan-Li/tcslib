@@ -1,0 +1,17 @@
+{
+ "lean_name": "RestrictionFourier.variance_card_inter",
+ "key": "c4a0c1e19ff758fb",
+ "kind": "lemma",
+ "title": "Variance of the free-coordinate count",
+ "statement": "Let $0 \\le p \\le 1$, and let $U \\subseteq \\mathrm{Fin}\\,n$ be a set of coordinates. For a restriction $\\rho$ on $n$ variables, write $w_p(\\rho)$ for its Bernoulli weight and $F(\\rho)$ for its set of free variables. Then the $w_p$-weighted average, over all restrictions $\\rho$ on $n$ variables, of the squared deviation of $\\abs{U \\cap F(\\rho)}$ from $p\\abs{U}$ satisfies\n\\[\n  \\sum_{\\rho}\\, w_p(\\rho)\\,\\bigl(p\\abs{U} - \\abs{U \\cap F(\\rho)}\\bigr)^2 \\;=\\; p\\,\\abs{U}\\,(1 - p).\n\\]",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "U a finite set of coordinates in Fin n",
+  "sum over all restrictions on n variables weighted by the Bernoulli weight"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 \\le p \\le 1$ and every set $U$, the Bernoulli($p$)-weighted mean squared deviation of\n$\\abs{U \\cap J}$ from $p\\abs{U}$ is\n\\[\n  \\E\\bigl[(p\\abs{U} - \\abs{U \\cap J})^2\\bigr] \\;=\\; p \\cdot \\abs{U} \\cdot (1 - p).\n\\]"
+}

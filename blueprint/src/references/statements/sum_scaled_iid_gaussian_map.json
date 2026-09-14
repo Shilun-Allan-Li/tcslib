@@ -1,0 +1,20 @@
+{
+ "lean_name": "sum_scaled_iid_gaussian_map",
+ "key": "de9677515704a3b6",
+ "kind": "lemma",
+ "title": "Weighted sum of independent Gaussians is Gaussian",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, and let $(Y_j)_{j}$ be a family of independent, measurable real-valued random variables, each distributed as a centred Gaussian with mean $0$ and variance $\\sigma_0 \\ge 0$. Then for any real coefficients $(x_j)_j$ and any finite index set $s$, the random variable $\\sum_{j \\in s} x_j\\, Y_j$ has distribution $N\\!\\Bigl(0,\\; \\bigl(\\sum_{j \\in s} x_j^2\\bigr)\\,\\sigma_0\\Bigr)$; that is, its law is the centred Gaussian on $\\bbr$ with variance $\\sigma_0 \\sum_{j \\in s} x_j^2$.",
+ "hypotheses_covered": [
+  "μ is a probability measure",
+  "each Y_j is measurable",
+  "each Y_j has law N(0, σ₀) (mean 0, variance σ₀)",
+  "the family (Y_j) is independent",
+  "σ₀ ≥ 0",
+  "x is a real coefficient vector",
+  "s is a finite index set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $Y_j : \\Omega \\to \\mathbb{R}$ be i.i.d.\\ with law $N(0,\\sigma_0)$, and\nlet $x : \\iota \\to \\mathbb{R}$ be a fixed coefficient vector.  For any finite\nset $s$,\n\\[\n  \\Bigl(\\textstyle\\sum_{j\\in s} x_j Y_j\\Bigr)_*\\mu\n  \\;=\\; N\\!\\Bigl(0,\\;\\sigma_0 \\cdot \\textstyle\\sum_{j\\in s} x_j^2\\Bigr).\n\\]"
+}

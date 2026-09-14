@@ -1,0 +1,17 @@
+{
+ "lean_name": "SATTo3SAT.mem_to3SAT_iff",
+ "key": "eb8e8841f704ad3c",
+ "kind": "lemma",
+ "title": "Membership in the SAT-to-3-SAT encoding",
+ "statement": "Let $f = (C_0, \\dots, C_{m-1})$ be a CNF formula over a variable type $V$, and write $\\mathrm{Aux}(V)$ for the auxiliary variable type built from $V$. For each index $i$ with $0 \\le i < m$, let $T_i$ be the list of $3$-clauses obtained by encoding the single clause $C_i$ at index $i$, and take the SAT-to-3-SAT encoding of $f$ to be the $3$-CNF formula over $\\mathrm{Aux}(V)$ formed by concatenating $T_0, T_1, \\dots, T_{m-1}$ in order. Then a $3$-clause $c$ over $\\mathrm{Aux}(V)$ occurs in the SAT-to-3-SAT encoding of $f$ if and only if there exists an index $i < m$ such that $c$ occurs in $T_i$.",
+ "hypotheses_covered": [
+  "f is a CNF formula over a variable type V",
+  "c is a 3-clause over the auxiliary variable type built from V",
+  "existence of an index i with i < m (the number of clauses of f)",
+  "c occurs in the single-clause encoding of the i-th clause at index i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A 3-clause $c_3$ belongs to $\\texttt{SATTo3SAT.to3SAT}\\,f$ if and only if there exists\n$i < |f|$ such that $c_3$ belongs to $\\texttt{SATTo3SAT.transformClause}\\,i\\,(f_i)$."
+}

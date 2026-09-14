@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.cont_eq_canonicalDTree",
+ "key": "d24a3c985acf7a29",
+ "kind": "lemma",
+ "title": "Fuel invariance of the canonical decision tree continuation",
+ "statement": "The canonical decision tree of a DNF formula $f$ under a restriction $\\rho$ is built by a fuel-limited recursion; write $G_k(f,\\rho)$ for the decision tree it returns when run with fuel budget $k \\in \\bbn$ starting from $\\rho$, so that the canonical decision tree of $f$ under $\\rho$ is $G_{m(\\rho)+1}(f,\\rho)$, where $m(\\rho)$ denotes the number of free variables of $\\rho$. Let $f$ be a DNF formula on $n$ variables, let $t$ be a term with $t \\in f$, and let $\\rho_{\\mathrm{orig}}$ and $\\rho'$ be restrictions with $m(\\rho_{\\mathrm{orig}}) \\ge m(\\rho') + 1$. Then the tree that returns the constant-true leaf if $t$ is fixed by $\\rho'$ and returns $G_{m(\\rho_{\\mathrm{orig}})}(f,\\rho')$ otherwise is equal to the canonical decision tree of $f$ under $\\rho'$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "t is a term belonging to f",
+  "rho_orig and rho' are restrictions",
+  "m(rho_orig) >= m(rho') + 1 (fuel bound on numbers of free variables)"
+ ],
+ "confidence": "low",
+ "caveat": "The lemma is a fuel-bookkeeping identity for the recursion that defines the canonical decision tree: the fuel budget and the fuel-limited helper are implementation scaffolding without a clean standalone textbook meaning, so the faithful rendering necessarily exposes the fuel parameter rather than a purely mathematical object.",
+ "rubric": [],
+ "replaced": "For $t \\in f$ and a restriction $\\rho'$ with $\\rho_{\\mathrm{orig}}.\\mathrm{numFree} \\ge \\rho'.\\mathrm{numFree} + 1$,\nthe standard continuation $\\bigl(\\text{if } t \\text{ fixed by } \\rho' \\text{ then } \\mathrm{leaf}\\ \\mathrm{true}\\ \\text{else}\\ \\mathrm{canonicalDTree.go}\\,f\\,\\rho_{\\mathrm{orig}}.\\mathrm{numFree}\\,\\rho'\\bigr)$\nequals $\\mathrm{canonicalDTree}\\,f\\,\\rho'$."
+}

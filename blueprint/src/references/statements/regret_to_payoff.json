@@ -1,0 +1,19 @@
+{
+ "lean_name": "regret_to_payoff",
+ "key": "063ee6a3c1baa991",
+ "kind": "lemma",
+ "title": "Regret-to-payoff bridge for zero-sum games",
+ "statement": "Consider a finite two-player zero-sum game with $M \\ge 1$ row actions and $N$ column actions and payoff matrix $A$, every entry of which satisfies $0 \\le A_{ij} \\le 1$, played over $T \\ge 1$ rounds. Suppose that in each round $t$ the row player commits to a probability distribution $p_t$ over the row actions (so $\\sum_i p_t(i) = 1$) while the column player chooses an action $j_t$, and that the cumulative loss regret is bounded by $R$:\n\\[\n  \\sum_t \\sum_i p_t(i)\\,\\bigl(1 - A_{i,j_t}\\bigr)\n  \\;-\\; \\min_i \\sum_t \\bigl(1 - A_{i,j_t}\\bigr) \\;\\le\\; R,\n\\]\nwhere the minimum runs over the row actions. Then the row player's cumulative expected payoff satisfies\n\\[\n  \\sum_t \\sum_i p_t(i)\\,A_{i,j_t}\n  \\;\\ge\\;\n  \\max_i \\sum_t A_{i,j_t} \\;-\\; R,\n\\]\nwith the maximum taken over the row actions.",
+ "hypotheses_covered": [
+  "payoff entries lie in [0,1] (zero-sum game)",
+  "at least one row action, M ≥ 1",
+  "at least one round, T ≥ 1",
+  "each p_t is a probability distribution summing to 1",
+  "column responses j_t chosen each round",
+  "cumulative loss regret is at most R"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the row player uses per-round distributions $p_0, \\dots, p_{T-1}$\n(each summing to $1$) against column responses $j_0, \\dots, j_{T-1}$, and\nachieves cumulative loss regret at most $R$:\n\\[\n  \\sum_t \\sum_i p_t(i)(1 - A_{i,j_t})\n  - \\min_i \\sum_t (1 - A_{i,j_t}) \\;\\le\\; R.\n\\]\nThen the total payoff satisfies\n\\[\n  \\sum_t \\sum_i p_t(i) A_{i,j_t}\n  \\;\\ge\\;\n  \\sup_i \\sum_t A_{i,j_t} - R.\n\\]"
+}

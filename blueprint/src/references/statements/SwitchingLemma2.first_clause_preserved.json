@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.first_clause_preserved",
+ "key": "7de67960aa92f93c",
+ "kind": "lemma",
+ "title": "First surviving term is preserved under agreement on fixed variables",
+ "statement": "Let $f$ be a DNF formula on $n$ variables — a list of terms, each a conjunction of literals — and let $\\rho$ and $\\sigma$ be restrictions of these $n$ variables. Suppose $\\sigma$ agrees with $\\rho$ on every variable that $\\rho$ fixes, that is, $\\sigma(v) = \\rho(v)$ for every variable $v$ on which $\\rho$ takes a Boolean value rather than leaving it free. Let $t$ be the first term of $f$ (in list order) that is not killed by $\\rho$, and suppose in addition that $t$ is not killed by $\\sigma$. Then $t$ is also the first term of $f$ that is not killed by $\\sigma$.",
+ "hypotheses_covered": [
+  "σ agrees with ρ on every variable ρ fixes (ρ(v) ≠ none ⇒ σ(v) = ρ(v))",
+  "t is the first term of f not killed by ρ",
+  "t is not killed by σ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose $t$ is the first term of $f$ not killed by $\\rho$, that $\\sigma$ agrees with\n$\\rho$ on all non-free variables, and that $t$ is not killed by $\\sigma$. Then $t$ is also\nthe first term of $f$ not killed by $\\sigma$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.zipIdx_filter_getElem_fst",
+ "key": "f76cd4b1dadd415f",
+ "kind": "lemma",
+ "title": "Filtering commutes with position annotation on literals",
+ "statement": "Let $t = (\\ell_0,\\ell_1,\\dots,\\ell_{m-1})$ be a term, that is a list of literals over $\\mathrm{Fin}\\,n$, and let $p$ be a Boolean predicate on literals. Annotate each literal with its position to obtain the list of pairs $(\\ell_i, i)$, and retain those pairs whose literal satisfies $p$; separately, retain the literals of $t$ that satisfy $p$. Then for every index $k$ that is smaller than the length of both retained lists, the literal in the $k$-th retained pair equals the $k$-th retained literal of $t$.",
+ "hypotheses_covered": [
+  "t is a term (list of literals over Fin n)",
+  "p is a Boolean predicate on literals",
+  "k is below the length of the filtered position-annotated list",
+  "k is below the length of the filtered term"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The literal component of the $k$-th element of the filtered $t.\\mathrm{zipIdx}$\nequals the $k$-th element of the filtered term $t$."
+}

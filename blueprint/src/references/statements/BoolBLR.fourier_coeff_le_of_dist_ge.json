@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolBLR.fourier_coeff_le_of_dist_ge",
+ "key": "12283f311d870501",
+ "kind": "lemma",
+ "title": "Fourier coefficient bound from distance",
+ "statement": "Let $f,g:\\{0,1\\}^n\\to\\{0,1\\}$ be Boolean-valued functions, let $S\\subseteq[n]$, and let $\\varepsilon\\in\\bbr$. Write $f^{\\pm},g^{\\pm}:\\{0,1\\}^n\\to\\bbr$ for their $\\pm1$ lifts, given by $x\\mapsto(-1)^{f(x)}$ and $x\\mapsto(-1)^{g(x)}$. Suppose that $g^{\\pm}$ coincides with the Walsh character $\\chi_S$, and that $\\dist(f,g)=\\Pr_{x}[f(x)\\ne g(x)]\\ge\\varepsilon$. Then the Fourier coefficient of $f^{\\pm}$ at $S$ satisfies \\[\\widehat{f^{\\pm}}(S)\\;\\le\\;1-2\\varepsilon.\\]",
+ "hypotheses_covered": [
+  "f, g are Boolean-valued functions on {0,1}^n",
+  "S is a subset of [n]",
+  "ε is a real number",
+  "the ±1 lift of g equals the Walsh character χ_S",
+  "dist(f,g) ≥ ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f, g : \\{0,1\\}^n \\to \\{0,1\\}$, let $S \\subseteq [n]$, and suppose\n$\\texttt{BoolBLR.lift\\_pm1}\\,g = \\chi_S$ and $\\dist(f, g) \\ge \\varepsilon$.\nThen the Fourier coefficient of $\\texttt{BoolBLR.lift\\_pm1}\\,f$ at $S$\nsatisfies $\\widehat{\\texttt{BoolBLR.lift\\_pm1}\\,f}(S) \\le 1 - 2\\varepsilon$."
+}

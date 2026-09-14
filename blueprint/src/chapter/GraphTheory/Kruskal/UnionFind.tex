@@ -11,150 +11,190 @@ path in the corresponding edge set.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Reflexivity of SamePartition]
+\begin{lemma}[Reflexivity of the same-partition relation]
 \lean{Kruskal.UF.SamePartition.rfl}
 \label{Kruskal.UF.SamePartition.rfl}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition}
 \difficulty{1}
-Every union--find state $\mathit{uf} : \mathtt{UF}\,n$ induces the same partition as
-itself: $\mathtt{SamePartition}\,\mathit{uf}\,\mathit{uf}$.
+Fix $n \in \bbn$, and recall that a union-find state on $n$ nodes is a function
+$\mathrm{Fin}\,n \to \bbn$ assigning to each node a representative label. Every such
+state $\mathit{uf}$ induces the same partition as itself: for all nodes $i, j :
+\mathrm{Fin}\,n$, one has $\mathit{uf}(i) = \mathit{uf}(j)$ if and only if
+$\mathit{uf}(i) = \mathit{uf}(j)$.
 \end{lemma}
 
-\begin{lemma}[Symmetry of SamePartition]
+\begin{lemma}[Symmetry of the same-partition relation]
 \lean{Kruskal.UF.SamePartition.symm}
 \label{Kruskal.UF.SamePartition.symm}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition}
 \difficulty{1}
-If $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_2$ then
-$\mathtt{SamePartition}\,\mathit{uf}_2\,\mathit{uf}_1$.
+Fix $n \in \bbn$, and regard a union-find state on $n$ nodes as a function
+$\mathrm{Fin}\,n \to \bbn$ assigning each node a representative. If two such states
+$\mathit{uf}_1$ and $\mathit{uf}_2$ induce the same partition — that is, for all nodes
+$i, j$ one has $\mathit{uf}_1(i) = \mathit{uf}_1(j)$ if and only if $\mathit{uf}_2(i) =
+\mathit{uf}_2(j)$ — then $\mathit{uf}_2$ and $\mathit{uf}_1$ likewise induce the same
+partition.
 \end{lemma}
 
-\begin{lemma}[Transitivity of SamePartition]
+\begin{lemma}[Transitivity of the same-partition relation]
 \lean{Kruskal.UF.SamePartition.trans}
 \label{Kruskal.UF.SamePartition.trans}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition}
 \difficulty{1}
-If $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_2$ and
-$\mathtt{SamePartition}\,\mathit{uf}_2\,\mathit{uf}_3$, then
-$\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_3$. Together with reflexivity and
-symmetry, $\mathtt{SamePartition}$ is an equivalence relation on union--find states.
+Let $n$ be a natural number, and let $\mathit{uf}_1, \mathit{uf}_2, \mathit{uf}_3 :
+\mathrm{Fin}\,n \to \bbn$ be three union-find states on $n$ nodes. Suppose that
+$\mathit{uf}_1$ and $\mathit{uf}_2$ induce the same partition of the nodes, and that
+$\mathit{uf}_2$ and $\mathit{uf}_3$ induce the same partition. Then $\mathit{uf}_1$ and
+$\mathit{uf}_3$ induce the same partition: for all nodes $i, j$, one has
+$\mathit{uf}_1(i) = \mathit{uf}_1(j)$ if and only if $\mathit{uf}_3(i) =
+\mathit{uf}_3(j)$.
 \end{lemma}
 
-\begin{lemma}[Merging within a component is a no-op]
+\begin{lemma}[Merging within a single component leaves the state unchanged]
 \lean{Kruskal.merge_noop}
 \label{Kruskal.merge_noop}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge}
 \difficulty{2}
-If two vertices $i, j$ already carry the same representative,
-$\mathit{uf}\,i = \mathit{uf}\,j$, then merging them leaves the state unchanged:
-$\mathit{uf}.\mathtt{merge}\,i\,j = \mathit{uf}$.
+Let $\mathit{uf}\colon \mathrm{Fin}\,n \to \bbn$ be a union-find state on $n$ nodes, and
+let $i,j$ be two nodes whose representatives agree, $\mathit{uf}(i) = \mathit{uf}(j)$.
+Then merging the components of $i$ and $j$ has no effect: the merged state equals
+$\mathit{uf}$.
 \end{lemma}
 
-\begin{lemma}[Merging preserves existing components]
+\begin{lemma}[Merging edges preserves shared components]
 \lean{Kruskal.mergeAll_preserves}
 \label{Kruskal.mergeAll_preserves}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
 \difficulty{3}
-If $\mathit{uf}\,a = \mathit{uf}\,b$, then for any list of weighted edges
-$\mathit{edges}$ we still have
-$(\mathit{uf}.\mathtt{mergeAll}\,\mathit{edges})\,a = (\mathit{uf}.\mathtt{mergeAll}\,\mathit{edges})\,b$;
-that is, merging never splits vertices that are already in the same component.
+Let $\mathit{uf} \colon \mathrm{Fin}\,n \to \bbn$ be a union-find state assigning each
+of $n$ nodes a representative, and let $\mathit{es}$ be a list of weighted edges over
+these $n$ nodes. Suppose two nodes $a, b \in \mathrm{Fin}\,n$ satisfy $\mathit{uf}(a) =
+\mathit{uf}(b)$. Folding every edge of $\mathit{es}$ into $\mathit{uf}$ in sequence
+yields a union-find state $\mathit{uf}'$ for which $\mathit{uf}'(a) = \mathit{uf}'(b)$;
+that is, sequential merging never separates two nodes that already carry a common
+representative.
 \end{lemma}
 
-\begin{lemma}[Merging characterizes reachability]
+\begin{lemma}[Merging preserves the reachability invariant]
 \lean{Kruskal.mergeAll_iff_reach}
 \label{Kruskal.mergeAll_iff_reach}
 \leanok
 \uses{Kruskal.Reach, Kruskal.UF, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.reach_cons_iff, Kruskal.reach_mono, Kruskal.reach_symm}
 \difficulty{6}
-Suppose the union--find state $\mathit{uf}$ represents reachability in a base edge list,
-i.e.\ $\mathit{uf}\,a = \mathit{uf}\,b \leftrightarrow \mathtt{Reach}\,\mathit{base}\,a\,b$
-for all $a, b$. Then after merging along $\mathit{edges}$,
-\[
-  (\mathit{uf}.\mathtt{mergeAll}\,\mathit{edges})\,a
-    = (\mathit{uf}.\mathtt{mergeAll}\,\mathit{edges})\,b
-  \quad\longleftrightarrow\quad
-  \mathtt{Reach}\,(\mathit{base} \mathbin{+\!\!+} \mathit{edges})\,a\,b .
-\]
+Fix $n$ and let $uf : \mathrm{Fin}\,n \to \bbn$ be a union-find state assigning each of
+the $n$ nodes a representative. Let $\mathit{base}$ and $\mathit{edges}$ be lists of
+weighted edges on these $n$ vertices, and suppose $uf$ already encodes reachability
+along $\mathit{base}$, in the sense that for all nodes $a, b$ one has $uf(a) = uf(b)$ if
+and only if $a$ and $b$ are connected by a path through the edges of $\mathit{base}$.
+Then, writing $uf'$ for the state obtained by merging the endpoints of every edge of
+$\mathit{edges}$ into $uf$ in order, for all nodes $a, b$ one has $uf'(a) = uf'(b)$ if
+and only if $a$ and $b$ are connected by a path through the edges of the concatenated
+list $\mathit{base} \mathbin{+\!\!+} \mathit{edges}$.
 \end{lemma}
 
-\begin{lemma}[Correctness of merging from the initial state]
+\begin{lemma}[Correctness of union-find merging from the initial state]
 \lean{Kruskal.mergeAll_init_iff}
 \label{Kruskal.mergeAll_init_iff}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.UF.init, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.mergeAll_iff_reach}
 \difficulty{4}
-Starting from the initial union--find state $\mathtt{UF.init}\,n$, in which every vertex
-is its own component, two vertices $a, b$ end up with the same representative after
-merging along $\mathit{edges}$ if and only if $\mathtt{Reach}\,\mathit{edges}\,a\,b$.
+Fix a natural number $n$, and let $\mathit{edges}$ be a list of weighted edges on the
+vertex set $\mathrm{Fin}\,n$. Consider the union-find state obtained by starting from
+the initial state on $n$ nodes, in which every node is its own representative, and
+processing $\mathit{edges}$ in order, so that at each weighted edge the components of
+the two endpoints of that edge are merged. Then, for any two vertices $a, b \in
+\mathrm{Fin}\,n$, the vertices $a$ and $b$ carry the same representative in the
+resulting state if and only if $a$ and $b$ are connected by a path through the edges of
+$\mathit{edges}$ — equivalently, if and only if the reflexive--transitive closure of
+symmetric adjacency along $\mathit{edges}$ relates $a$ to $b$.
 \end{lemma}
 
-\begin{lemma}[Merging respects SamePartition]
+\begin{lemma}[Merging edges preserves equal partitions]
 \lean{Kruskal.mergeAll_congr}
 \label{Kruskal.mergeAll_congr}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
 \difficulty{3}
-If $\mathtt{SamePartition}\,\mathit{uf}_1\,\mathit{uf}_2$, then merging both states along
-the same edge list preserves this:
-$\mathtt{SamePartition}\,(\mathit{uf}_1.\mathtt{mergeAll}\,\mathit{edges})\,(\mathit{uf}_2.\mathtt{mergeAll}\,\mathit{edges})$.
+Let $\mathit{uf}_1, \mathit{uf}_2 : \mathrm{Fin}\,n \to \bbn$ be two union-find states
+over $n$ nodes that induce the same partition, meaning that for all nodes $i, j$ one has
+$\mathit{uf}_1(i) = \mathit{uf}_1(j)$ if and only if $\mathit{uf}_2(i) =
+\mathit{uf}_2(j)$. Then for any list of weighted edges, folding that list into each
+state by successively merging the endpoints of every edge yields two states that again
+induce the same partition.
 \end{lemma}
 
-\begin{lemma}[Two merges commute up to partition]
+\begin{lemma}[Merge order is irrelevant to the induced partition]
 \lean{Kruskal.merge_swap_partition}
 \label{Kruskal.merge_swap_partition}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.WEdge}
 \difficulty{3}
-For any state $\mathit{uf}$ and edges $a, b$, merging the endpoints of $a$ and then those
-of $b$ yields the same partition as merging them in the opposite order:
-$\mathtt{SamePartition}\,((\mathit{uf}.\mathtt{merge}\,a.u\,a.v).\mathtt{merge}\,b.u\,b.v)\,((\mathit{uf}.\mathtt{merge}\,b.u\,b.v).\mathtt{merge}\,a.u\,a.v)$.
+Let $n$ be a natural number, let $\mathit{uf}\colon \mathrm{Fin}\,n \to \bbn$ be a
+union-find state, and let $a$ and $b$ be weighted edges over $n$ vertices, with
+endpoints $a_u, a_v$ and $b_u, b_v$ respectively. Form one state by merging the
+components of $a_u$ and $a_v$ and then merging the components of $b_u$ and $b_v$, and a
+second state by performing these two merges in the opposite order. Then the two
+resulting states induce the same partition of the nodes: for all $i, j :
+\mathrm{Fin}\,n$, the first state assigns $i$ and $j$ the same representative if and
+only if the second state does.
 \end{lemma}
 
-\begin{lemma}[Merging is permutation invariant]
+\begin{lemma}[Permutation invariance of edge merging]
 \lean{Kruskal.mergeAll_perm}
 \label{Kruskal.mergeAll_perm}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.trans, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.erase_append_perm, Kruskal.mergeAll_congr, Kruskal.merge_swap_partition}
 \difficulty{4}
-If the edge lists $l_1$ and $l_2$ are permutations of each other, then merging along them
-gives the same partition:
-$\mathtt{SamePartition}\,(\mathit{uf}.\mathtt{mergeAll}\,l_1)\,(\mathit{uf}.\mathtt{mergeAll}\,l_2)$.
+Fix $n$ and an initial union-find state $\mathit{uf} : \mathrm{Fin}\,n \to \bbn$. If two
+lists of weighted edges $l_1$ and $l_2$ over $n$ vertices are permutations of one
+another, then folding each list into $\mathit{uf}$ by merging the endpoints of every
+edge in turn yields two union-find states that induce the same partition of the nodes;
+that is, for all $i, j : \mathrm{Fin}\,n$, the two states assign $i$ and $j$ equal
+representatives under one exactly when they do under the other.
 \end{lemma}
 
-\begin{lemma}[Merging along a list with one appended edge]
+\begin{lemma}[Appending a final edge to a merge fold]
 \lean{Kruskal.mergeAll_append_single}
 \label{Kruskal.mergeAll_append_single}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
 \difficulty{2}
-Merging along $l \mathbin{+\!\!+} [e]$ equals first merging along $l$ and then merging the
-endpoints of $e$:
-$\mathit{uf}.\mathtt{mergeAll}\,(l \mathbin{+\!\!+} [e]) = (\mathit{uf}.\mathtt{mergeAll}\,l).\mathtt{merge}\,e.u\,e.v$.
+Fix $n \in \bbn$ and a union-find state $\mathit{uf} \colon \mathrm{Fin}\,n \to \bbn$ on
+$n$ nodes. For any list $l$ of weighted edges over $n$ vertices and any single weighted
+edge $e$ over $n$ vertices with endpoints $u$ and $v$, merging all edges of the list $l
+\mathbin{+\!\!+} [e]$ into $\mathit{uf}$ in order produces the same union-find state as
+first merging all edges of $l$ into $\mathit{uf}$ in order and then merging the
+components of $u$ and $v$ in the state so obtained.
 \end{lemma}
 
-\begin{lemma}[Merging along a cons list]
+\begin{lemma}[Peeling the leading edge off a merge fold]
 \lean{Kruskal.mergeAll_cons_eq}
 \label{Kruskal.mergeAll_cons_eq}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.rfl, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge}
 \difficulty{1}
-Merging along $e :: S$ gives the same partition as first merging the endpoints of $e$ and
-then merging along $S$:
-$\mathtt{SamePartition}\,(\mathit{uf}.\mathtt{mergeAll}\,(e :: S))\,((\mathit{uf}.\mathtt{merge}\,e.u\,e.v).\mathtt{mergeAll}\,S)$.
+Let $\mathit{uf} : \mathrm{Fin}\,n \to \bbn$ be a union-find state on $n$ nodes, let $e$
+be a weighted edge with endpoints $u$ and $v$ over these nodes, and let $S$ be a list of
+weighted edges over the same nodes. Folding the list $e :: S$ into $\mathit{uf}$ and
+folding the list $S$ into the union-find state that merges the components of $u$ and $v$
+in $\mathit{uf}$ induce the same partition of the nodes: for all nodes $i$ and $j$,
+folding $e :: S$ into $\mathit{uf}$ assigns $i$ and $j$ a common representative if and
+only if folding $S$ into the merge of $u$ and $v$ assigns $i$ and $j$ a common
+representative.
 \end{lemma}
 
-\begin{lemma}[Moving a member edge to the end is a permutation]
+\begin{lemma}[Moving a member to the end is a permutation]
 \lean{Kruskal.erase_append_perm}
 \label{Kruskal.erase_append_perm}
 \leanok
 \uses{Kruskal.WEdge}
 \difficulty{1}
-If $e \in l$ for an edge list $l$, then $l$ is a permutation of
-$l.\mathtt{erase}\,e \mathbin{+\!\!+} [e]$.
+Let $l$ be a finite list of weighted edges over $n$ vertices, and let $e$ be a weighted
+edge that occurs in $l$. Then $l$ is a permutation of the list obtained by deleting the
+first occurrence of $e$ from $l$ and appending $e$ at the end.
 \end{lemma}

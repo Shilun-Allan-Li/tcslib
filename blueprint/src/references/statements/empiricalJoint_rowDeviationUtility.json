@@ -1,0 +1,18 @@
+{
+ "lean_name": "empiricalJoint_rowDeviationUtility",
+ "key": "e1439925aff47ac0",
+ "kind": "lemma",
+ "title": "Empirical row deviation utility as a time average",
+ "statement": "Let $G$ be a finite two-player game with $M$ row actions and $N$ column actions, and let $u_r(i,j)$ denote the row player's utility. Fix an integer $T \\ge 1$, and suppose that in each round $t \\in \\{1,\\dots,T\\}$ the row player plays the mixed strategy $p_t$ over the $M$ row actions and the column player plays the mixed strategy $q_t$ over the $N$ column actions, giving rise to the empirical joint distribution $\\sigma$ with $\\sigma_{ij} = \\tfrac{1}{T}\\sum_{t=1}^{T} (p_t)_i\\,(q_t)_j$. Then for every pure row action $i'$, the row player's deviation utility under $\\sigma$ equals the time average of the expected utilities of playing $i'$ against each round's column strategy:\n\\[\n  \\sum_{j} \\sigma^{\\mathrm{col}}_j\\, u_r(i',j)\n  = \\frac{1}{T}\\sum_{t=1}^{T}\\sum_{j} (q_t)_j\\, u_r(i',j).\n\\]",
+ "hypotheses_covered": [
+  "T > 0 (at least one round)",
+  "row player uses mixed strategy p_t each round",
+  "column player uses mixed strategy q_t each round",
+  "finite game G with row utility u_r",
+  "fixed pure row action i'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The row player's deviation utility for pure action $i'$ in the empirical\ndistribution equals the time-average utility of always playing $i'$:\n\\[\n  \\mathrm{rowDevUtil}(\\sigma^{\\mathrm{emp}}, G, i') =\n  \\frac{1}{T}\\sum_{t}\\sum_{j}(q_t)_j\\,u_r(i',j).\n\\]"
+}

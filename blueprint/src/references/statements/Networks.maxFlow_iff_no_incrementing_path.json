@@ -1,0 +1,15 @@
+{
+ "lean_name": "Networks.maxFlow_iff_no_incrementing_path",
+ "key": "ff33b48335b0e39c",
+ "kind": "theorem",
+ "title": "Max-flow criterion via incrementing paths",
+ "statement": "Let $N$ be a network — a finite digraph carrying a nonnegative integer capacity on each arc, with disjoint nonempty source and sink sets and a distinguished source $x$ and sink $y$ — and let $f$ be a flow in $N$. Then $f$ is a maximum flow if and only if there is no $f$-incrementing path in $N$ ending at the sink $y$.",
+ "hypotheses_covered": [
+  "N is a network (finite digraph with integer arc capacities, disjoint nonempty source set X and sink set Y, distinguished source x and sink y)",
+  "f is a flow in N"
+ ],
+ "confidence": "high",
+ "caveat": "The predicate IncPath (f-incrementing path to y) is used in the statement but its definition was not supplied among the given upstream definitions; I have rendered it by its standard meaning — a path along which the flow f can be augmented, terminating at the distinguished sink y.",
+ "rubric": [],
+ "replaced": "\\emph{A flow \\texttt{f} in \\texttt{N} is a maximum flow if and only if \\texttt{N}\ncontains no \\texttt{f}-incrementing path.}"
+}

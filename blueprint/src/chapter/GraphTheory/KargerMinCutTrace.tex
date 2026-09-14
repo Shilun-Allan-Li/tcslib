@@ -53,110 +53,148 @@ $s$ to a state $t$: the empty run has $n = 0$ and $t = s$, and a run of length $
 run of length $n$ followed by one surviving step.
 \end{definition}
 
-\begin{lemma}[Positive edge count from an edge]
+\begin{lemma}[Positivity of the edge count when an edge exists]
 \lean{KargerTrace.edgeCount_pos_of_mem}
 \label{KargerTrace.edgeCount_pos_of_mem}
 \leanok
 \uses{Multigraph, Multigraph.edgeCount}
 \difficulty{1}
-If $e$ is an edge of a multigraph $G$, then $G$ has positive edge count.
+Let $G$ be a multigraph on a vertex type $\alpha$, and suppose $e$ is an edge of $G$.
+Then the edge count of $G$, the number of edges counted with multiplicity, is strictly
+positive.
 \end{lemma}
 
-\begin{lemma}[A surviving step preserves cut size]
+\begin{lemma}[Contraction along a non-crossing edge preserves cut size]
 \lean{KargerTrace.survivingStep_cut_size_eq}
 \label{KargerTrace.survivingStep_cut_size_eq}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingStep, MulCut.size, cut_size_preserved}
 \difficulty{2}
-If $t$ is obtained from $s$ by a surviving step, then the distinguished cuts have the same
-size: $t.C.\mathrm{size} = s.C.\mathrm{size}$.
+Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph
+together with a distinguished cut of that multigraph. If $t$ arises from $s$ by a
+surviving step — that is, $t$ is obtained by contracting some edge $e$ of the multigraph
+of $s$ that does not cross the distinguished cut of $s$ — then the two distinguished
+cuts have the same size; equivalently, the number of edges crossing the distinguished
+cut of $t$, counted with multiplicity, equals the number of edges crossing the
+distinguished cut of $s$.
 \end{lemma}
 
-\begin{lemma}[A surviving step preserves minimality]
+\begin{lemma}[A surviving contraction preserves minimum-cut status]
 \lean{KargerTrace.survivingStep_mincut}
 \label{KargerTrace.survivingStep_mincut}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingStep, mincut_preserved_of_non_crossing}
 \difficulty{2}
-If $t$ is obtained from $s$ by a surviving step and $s.C$ is a min-cut of $s.G$, then
-$t.C$ is a min-cut of $t.G$.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$ of $G$, and let $t$ be a state obtained from $s$ by a
+surviving step: that is, $t$ arises by contracting some edge $e$ of $G$ that does not
+cross $C$, so that $t$ has graph $G/e$ and its distinguished cut is the cut induced by
+$C$ on $G/e$. If $C$ is a minimum cut of $G$, then the distinguished cut of $t$ is a
+minimum cut of $G/e$.
 \end{lemma}
 
-\begin{lemma}[A surviving step removes one vertex]
+\begin{lemma}[A surviving contraction step removes one vertex]
 \lean{KargerTrace.survivingStep_vertexCount_eq}
 \label{KargerTrace.survivingStep_vertexCount_eq}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.contractState, Multigraph.vertexCount, contract_vertex_count}
 \difficulty{3}
-If $t$ is obtained from $s$ by a surviving step, then $t.G$ has exactly one vertex fewer
-than $s.G$.
+Let $s$ and $t$ be states of the contraction process, each a multigraph together with a
+distinguished cut, and suppose that $t$ arises from $s$ by a surviving step, that is,
+$t$ is obtained by contracting some edge $e$ of the multigraph of $s$ that does not
+cross the distinguished cut of $s$. Then the number of vertices of the multigraph of $t$
+equals the number of vertices of the multigraph of $s$ minus $1$ (with the difference
+taken in $\bbn$).
 \end{lemma}
 
-\begin{lemma}[A surviving step requires an edge]
+\begin{lemma}[Positive edge count under a surviving step]
 \lean{KargerTrace.survivingStep_edgeCount_pos}
 \label{KargerTrace.survivingStep_edgeCount_pos}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.edgeCount_pos_of_mem, Multigraph.edgeCount}
 \difficulty{2}
-If some state $t$ is reachable from $s$ by a surviving step, then $s.G$ has positive edge
-count.
+Let $s$ and $t$ be states of the contraction process, each a multigraph equipped with a
+distinguished cut. If $t$ arises from $s$ by a surviving step — that is, by contracting
+some edge of the multigraph of $s$ that does not cross the distinguished cut of $s$ —
+then the multigraph of $s$ has positive edge count.
 \end{lemma}
 
-\begin{lemma}[A surviving run preserves cut size]
+\begin{lemma}[Invariance of cut size along a surviving run]
 \lean{KargerTrace.survivingRun_cut_size_eq}
 \label{KargerTrace.survivingRun_cut_size_eq}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_cut_size_eq, MulCut.size}
 \difficulty{2}
-If $t$ is reachable from $s$ by a surviving run of any length, then
-$t.C.\mathrm{size} = s.C.\mathrm{size}$.
+Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph
+together with a distinguished cut, and suppose that $t$ is obtained from $s$ by a
+surviving run of length $n$, that is, by $n$ consecutive contractions of edges that do
+not cross the distinguished cut of the current state. Then the distinguished cut of $t$
+has the same size as the distinguished cut of $s$, where the size of a cut is the number
+of its crossing edges counted with multiplicity.
 \end{lemma}
 
-\begin{lemma}[A surviving run preserves minimality]
+\begin{lemma}[Surviving runs preserve minimality of the tracked cut]
 \lean{KargerTrace.survivingRun_mincut}
 \label{KargerTrace.survivingRun_mincut}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_mincut}
 \difficulty{2}
-If $t$ is reachable from $s$ by a surviving run and $s.C$ is a min-cut, then $t.C$ is a
-min-cut.
+Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph
+together with a distinguished cut of that multigraph, and suppose that $t$ is obtained
+from $s$ by a surviving run of some length $n$, that is, by $n$ consecutive contractions
+of edges that never cross the distinguished cut. If the distinguished cut of $s$ is a
+minimum cut of its multigraph, then the distinguished cut of $t$ is a minimum cut of its
+multigraph.
 \end{lemma}
 
-\begin{lemma}[An $n$-step surviving run removes $n$ vertices]
+\begin{lemma}[Vertex count after an $n$-step surviving run]
 \lean{KargerTrace.survivingRun_vertexCount_eq}
 \label{KargerTrace.survivingRun_vertexCount_eq}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_vertexCount_eq, Multigraph.vertexCount}
 \difficulty{3}
-If $t$ is reachable from $s$ by a surviving run of $n$ steps, then
-$t.G.\mathrm{vertexCount} = s.G.\mathrm{vertexCount} - n$ (truncated subtraction on
-$\mathbb{N}$).
+Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph
+together with a distinguished cut, and suppose that $t$ is reached from $s$ by a
+surviving run of length $n$, that is, by $n$ consecutive contractions of edges that do
+not cross the tracked cut. Writing $G_s$ and $G_t$ for the multigraphs of $s$ and $t$,
+and $\lvert V(G)\rvert$ for the number of vertices of a multigraph $G$, we have \[
+\lvert V(G_t)\rvert = \lvert V(G_s)\rvert - n, \] where the subtraction is truncated
+subtraction on $\bbn$ (equal to $0$ once $n$ exceeds $\lvert V(G_s)\rvert$).
 \end{lemma}
 
-\begin{lemma}[Trace-level edge-count invariant]
+\begin{lemma}[Karger min-cut edge-count invariant along a surviving run]
 \lean{KargerTrace.survivingRun_edge_count_invariant}
 \label{KargerTrace.survivingRun_edge_count_invariant}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingRun_cut_size_eq, KargerTrace.survivingRun_mincut, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, edge_count_lower_bound, mincut_le_degree}
 \difficulty{4}
-If $t$ is reachable from $s$ by a surviving run and $s.C$ is a min-cut, then the graph
-reached after the run still satisfies the handshaking lower bound
+Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph
+together with a distinguished cut, and suppose that $t$ is obtained from $s$ by a
+surviving run of some length $n$, that is, by $n$ successive contractions of edges that
+do not cross the distinguished cut. If the distinguished cut $C$ of $s$ is a minimum cut
+of the multigraph $s.G$, with size $k$ (its number of crossing edges), then the number
+of vertices $|V|$ and the number of edges $|E|$ of the final multigraph $t.G$ satisfy
 \[
-  s.C.\mathrm{size}\cdot t.G.\mathrm{vertexCount} \;\le\; 2\, t.G.\mathrm{edgeCount}.
+  k \cdot |V| \;\le\; 2\,|E|.
 \]
 \end{lemma}
 
-\begin{lemma}[Indexed trace edge-count invariant]
+\begin{lemma}[Indexed edge-count invariant for surviving runs]
 \lean{KargerTrace.survivingRun_edge_count_invariant_indexed}
 \label{KargerTrace.survivingRun_edge_count_invariant_indexed}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingRun_edge_count_invariant, KargerTrace.survivingRun_vertexCount_eq, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount}
 \difficulty{2}
-The same invariant, with the vertex count after $n$ contractions written explicitly: for a
-surviving run of $n$ steps from $s$ to $t$ with $s.C$ a min-cut,
+Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph
+together with a distinguished cut, and suppose $t$ is reached from $s$ by a surviving
+run of $n$ steps. Write $C$ for the distinguished cut of $s$ and $G$ for its multigraph,
+and let $G'$ denote the multigraph of $t$. If $C$ is a minimum cut of $G$, then
 \[
-  s.C.\mathrm{size}\cdot(s.G.\mathrm{vertexCount} - n) \;\le\; 2\, t.G.\mathrm{edgeCount}.
+  \abs{C}\,\bigl(\abs{V(G)} - n\bigr) \;\le\; 2\,\abs{E(G')},
 \]
+where $\abs{C}$ is the size of the cut (its number of crossing edges), $\abs{V(G)}$ is
+the number of vertices of $G$, $\abs{E(G')}$ is the number of edges of $G'$ counted with
+multiplicity, and the difference $\abs{V(G)} - n$ is truncated at $0$.
 \end{lemma}
 
 \begin{lemma}[Algebraic one-step survival bound]
@@ -165,37 +203,49 @@ surviving run of $n$ steps from $s$ to $t$ with $s.C$ a min-cut,
 \leanok
 \uses{survivalProb}
 \difficulty{4}
-For naturals $c, n, m$ with $2 \le n$, $0 < m$ and $c\,n \le 2m$, the survival probability
-$1 - c/m$ satisfies
+Let $c$, $n$, and $m$ be natural numbers with $n \ge 2$, $m > 0$, and $cn \le 2m$. Then
+the one-step survival probability $1 - \frac{c}{m}$ satisfies
 \[
   \frac{n-2}{n} \;\le\; 1 - \frac{c}{m}.
 \]
 \end{lemma}
 
-\begin{lemma}[One-step survival bound at a surviving state]
+\begin{lemma}[One-step survival bound for a minimum cut]
 \lean{KargerTrace.survivingStep_survivalProb_ge_factor}
 \label{KargerTrace.survivingStep_survivalProb_ge_factor}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.survivalProb_ge_factor, KargerTrace.survivingStep_edgeCount_pos, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, edge_count_lower_bound, mincut_le_degree, survivalProb}
 \difficulty{3}
-If a surviving step is possible from $s$, the distinguished cut $s.C$ is a min-cut, and
-$s.G$ has at least two vertices, then writing $n = s.G.\mathrm{vertexCount}$,
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$ of $G$. Suppose that a surviving step is possible from $s$,
+meaning that $G$ has an edge that does not cross $C$, whose contraction — merging the
+endpoints of that edge, deleting the resulting self-loops, and passing to the cut that
+$C$ induces on the contracted graph — yields a further state of the process. Assume
+moreover that $C$ is a minimum cut of $G$ and that $G$ has at least two vertices.
+Writing $n$ for the number of vertices of $G$, $k$ for the size of $C$ (its number of
+crossing edges, counted with multiplicity), and $m$ for the number of edges of $G$
+(counted with multiplicity), one has
 \[
-  \frac{n-2}{n} \;\le\; \mathrm{survivalProb}(s.C.\mathrm{size},\, s.G.\mathrm{edgeCount}).
+  \frac{n-2}{n} \;\le\; 1 - \frac{k}{m},
 \]
+so that $\frac{n-2}{n}$ is at most the one-step survival probability of $C$.
 \end{lemma}
 
-\begin{lemma}[One-step survival bound after $i$ contractions]
+\begin{lemma}[One-step survival lower bound in edge contraction]
 \lean{KargerTrace.survivingRun_survivalProb_ge_factor}
 \label{KargerTrace.survivingRun_survivalProb_ge_factor}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.SurvivingStep, KargerTrace.survivalProb_ge_factor, KargerTrace.survivingRun_cut_size_eq, KargerTrace.survivingRun_mincut, KargerTrace.survivingStep_edgeCount_pos, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, edge_count_lower_bound, mincut_le_degree, survivalProb}
 \difficulty{4}
-If $t$ is reached from $s$ by a surviving run of $i$ steps, a further surviving step is
-possible from $t$, $s.C$ is a min-cut, and $t.G$ has at least two vertices, then with
-$n_t = t.G.\mathrm{vertexCount}$,
+Let $s$, $t$, and $u$ be states of the contraction process, each a multigraph paired
+with a distinguished cut. Suppose $t$ is reached from $s$ by a surviving run of $i$
+steps, that a further surviving step leads from $t$ to $u$, that the distinguished cut
+of $s$ is a minimum cut of the multigraph of $s$, and that the multigraph of $t$ has at
+least two vertices. Writing $n_t$ for the number of vertices of the multigraph of $t$,
+$c$ for the size of the distinguished cut of $s$, and $m$ for the number of edges of the
+multigraph of $t$, then
 \[
-  \frac{n_t-2}{n_t} \;\le\; \mathrm{survivalProb}(s.C.\mathrm{size},\, t.G.\mathrm{edgeCount}).
+  \frac{n_t - 2}{n_t} \;\le\; 1 - \frac{c}{m}.
 \]
 \end{lemma}
 
@@ -226,14 +276,21 @@ edge count of $s.G$, i.e.\ the probability that a uniformly chosen edge occurren
 cross the cut.
 \end{definition}
 
-\begin{lemma}[Non-crossing choices count edges minus cut size]
+\begin{lemma}[Non-crossing edge count equals edges minus cut size]
 \lean{KargerTrace.nonCrossingChoiceCount_eq_edgeCount_sub_cutSize}
 \label{KargerTrace.nonCrossingChoiceCount_eq_edgeCount_sub_cutSize}
 \leanok
 \uses{Crosses, KargerTrace.State, KargerTrace.nonCrossingChoiceCount, MulCut.size, Multigraph.edgeCount, crossingEdges_eq_filter_crosses}
 \difficulty{4}
-For every state $s$, the number of non-crossing edge choices equals
-$s.G.\mathrm{edgeCount} - s.C.\mathrm{size}$.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$, whose two sides are given by a vertex subset $S$ and its
+complement. Then the number of edges of $G$ that do not cross $C$ — those having no
+endpoint in $S$ or no endpoint outside $S$, counted with multiplicity — equals the total
+edge count of $G$ minus the size of $C$, the difference being taken as truncated
+subtraction in $\bbn$:
+\[
+\#\{\text{non-crossing edges of }s\} \;=\; \abs{E(G)} - \abs{C}.
+\]
 \end{lemma}
 
 \begin{lemma}[Cut size bounded by edge count]
@@ -242,18 +299,27 @@ $s.G.\mathrm{edgeCount} - s.C.\mathrm{size}$.
 \leanok
 \uses{KargerTrace.State, MulCut.crossingEdges, MulCut.size, Multigraph.edgeCount}
 \difficulty{2}
-For every state $s$, $s.C.\mathrm{size} \le s.G.\mathrm{edgeCount}$.
+Let $G$ be a multigraph and let $C$ be a cut of $G$, given by a vertex subset $S$ that
+is nonempty and has nonempty complement. Then the size of $C$ — the number of edges of
+$G$ having exactly one endpoint in $S$, counted with multiplicity — is at most the total
+number of edges of $G$, again counted with multiplicity.
 \end{lemma}
 
-\begin{lemma}[Uniform choice realizes the survival probability]
+\begin{lemma}[Uniform edge choice realizes the survival probability]
 \lean{KargerTrace.uniformSurvivalProb_eq_survivalProb}
 \label{KargerTrace.uniformSurvivalProb_eq_survivalProb}
 \leanok
 \uses{KargerTrace.State, KargerTrace.cut_size_le_edgeCount, KargerTrace.nonCrossingChoiceCount_eq_edgeCount_sub_cutSize, KargerTrace.uniformSurvivalProb, MulCut.size, Multigraph.edgeCount, survivalProb}
 \difficulty{3}
-If $s.G$ has at least one edge, the uniform survival probability of $s$ equals
-$\mathrm{survivalProb}(s.C.\mathrm{size},\, s.G.\mathrm{edgeCount}) = 1 - c/m$ with
-$c = s.C.\mathrm{size}$ and $m = s.G.\mathrm{edgeCount}$.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$, and suppose $G$ has at least one edge, so that its edge
+count $m$ is positive. Then the uniform one-step survival probability of $s$ — the
+number of non-crossing edge choices divided by $m$ — equals
+\[
+  1 - \frac{c}{m},
+\]
+where $c$ is the size of the cut $C$, that is, its number of crossing edges (each
+counted with multiplicity).
 \end{lemma}
 
 \begin{definition}[Sample space of edge occurrences]
@@ -275,33 +341,47 @@ The predicate on an edge occurrence saying that its underlying edge does not cro
 distinguished cut of $s$.
 \end{definition}
 
-\begin{lemma}[Size of the occurrence space]
+\begin{lemma}[Cardinality of the edge-occurrence space]
 \lean{KargerTrace.edgeChoiceSpace_card}
 \label{KargerTrace.edgeChoiceSpace_card}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace, Multigraph.edgeCount}
 \difficulty{1}
-The occurrence sample space of a state has cardinality $s.G.\mathrm{edgeCount}$.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a cut of $G$, and let its sample space of edge occurrences be the finite set of
+pairs (edge, occurrence index) drawn from the edge multiset of $G$. Then this sample
+space has cardinality equal to the edge count of $G$, that is, the number of edges of
+$G$ counted with multiplicity.
 \end{lemma}
 
-\begin{lemma}[Filtering occurrences by first coordinate]
+\begin{lemma}[Filtering enumerated multiset occurrences by element]
 \lean{KargerTrace.toEnumFinset_filter_fst_card_eq_filter_card}
 \label{KargerTrace.toEnumFinset_filter_fst_card_eq_filter_card}
 \leanok
 \difficulty{4}
-For a multiset $m$ and a decidable predicate $p$, the number of enumerated occurrences of
-$m$ whose first coordinate satisfies $p$ equals the cardinality of the sub-multiset of $m$
-filtered by $p$.
+Let $\alpha$ be a type with decidable equality, let $m$ be a finite multiset over
+$\alpha$, and let $p$ be a decidable predicate on $\alpha$. Form the enumeration set of
+$m$, consisting of all pairs $(a, i)$ with $a$ an element of $m$ and $0 \le i <
+\text{count}_m(a)$, so that each occurrence of each element of $m$ is represented
+exactly once. Then the number of such pairs $(a,i)$ whose first coordinate $a$ satisfies
+$p$ equals the size (counted with multiplicity) of the sub-multiset of $m$ consisting of
+the elements satisfying $p$.
 \end{lemma}
 
-\begin{lemma}[Surviving occurrences count non-crossing choices]
+\begin{lemma}[Surviving edge occurrences equal non-crossing edge count]
 \lean{KargerTrace.edgeChoiceSurvivalCount_eq_nonCrossingChoiceCount}
 \label{KargerTrace.edgeChoiceSurvivalCount_eq_nonCrossingChoiceCount}
 \leanok
 \uses{Crosses, KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives, KargerTrace.nonCrossingChoiceCount, KargerTrace.nonCrossingEdges, KargerTrace.toEnumFinset_filter_fst_card_eq_filter_card}
 \difficulty{1}
-The number of surviving edge occurrences of a state equals its number of non-crossing edge
-choices.
+Let $s$ be a state of the contraction process, consisting of a loopless multigraph $G$
+together with a distinguished cut $S \subseteq V(G)$, and enumerate the edge multiset of
+$G$ as a finite set of edge occurrences $(e, i)$, where the index $i$ distinguishes
+parallel copies of the same edge. Say that an occurrence $(e, i)$ survives when its
+underlying edge $e$ does not cross $S$, that is, when it is not the case that one
+endpoint of $e$ lies in $S$ and the other lies outside $S$. Then the number of surviving
+edge occurrences equals the number of edges of $G$ that do not cross $S$, counted with
+multiplicity.
 \end{lemma}
 
 \begin{definition}[Survival ratio of the occurrence space]
@@ -313,34 +393,45 @@ The ratio of the number of surviving edge occurrences to the total number of edg
 occurrences, i.e.\ the concrete one-step survival probability of the finite sampling model.
 \end{definition}
 
-\begin{lemma}[Survival ratio equals uniform survival probability]
+\begin{lemma}[Survival ratio equals the uniform survival probability]
 \lean{KargerTrace.edgeChoiceSurvivalRatio_eq_uniformSurvivalProb}
 \label{KargerTrace.edgeChoiceSurvivalRatio_eq_uniformSurvivalProb}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace_card, KargerTrace.edgeChoiceSurvivalCount_eq_nonCrossingChoiceCount, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.uniformSurvivalProb}
 \difficulty{1}
-For every state, the occurrence-space survival ratio coincides with the uniform survival
-probability.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$ of $G$. Form the survival ratio by enumerating the edge
+occurrences of $G$ — the pairs of an edge with an index distinguishing its parallel
+copies — and dividing the number of occurrences whose underlying edge does not cross $C$
+by the total number of occurrences. Then this ratio equals the uniform survival
+probability of $s$, namely the number of edges of $G$ that do not cross $C$, counted
+with multiplicity, divided by the total edge count of $G$.
 \end{lemma}
 
-\begin{lemma}[An occurrence carries an actual edge]
+\begin{lemma}[Edge component of a sampled occurrence lies in the graph]
 \lean{KargerTrace.edgeChoice_mem_edges}
 \label{KargerTrace.edgeChoice_mem_edges}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace}
 \difficulty{2}
-The first projection of any element of the occurrence sample space of $s$ is an edge of
-$s.G$.
+Let $s$ be a state of the contraction process, with underlying multigraph $G$, and let
+$(e, k)$ be any element of the sample space of edge occurrences of $s$ — a pair
+consisting of an edge together with an index distinguishing parallel copies. Then the
+edge $e$ is a member of the edge multiset of $G$.
 \end{lemma}
 
-\begin{lemma}[Surviving occurrences are non-crossing]
+\begin{lemma}[Surviving edge occurrences do not cross the cut]
 \lean{KargerTrace.not_mem_crossingEdges_of_edgeChoiceSurvives}
 \label{KargerTrace.not_mem_crossingEdges_of_edgeChoiceSurvives}
 \leanok
 \uses{Crosses, KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives, MulCut.crossingEdges, crossingEdges_eq_filter_crosses}
 \difficulty{3}
-If an edge occurrence of $s$ survives, then its underlying edge is not a crossing edge of
-the distinguished cut $s.C$.
+Let $s = (G, C)$ be a state of the contraction process, consisting of a multigraph $G$
+and a distinguished cut $C$ with side $S$, and let $(e, i)$ be an edge occurrence in the
+sample space of $s$, so that $e$ is an edge of $G$ and $i$ indexes its parallel copies.
+If this occurrence survives — that is, if $e$ does not cross $S$, meaning it is not the
+case that $e$ has one endpoint in $S$ and another endpoint outside $S$ — then $e$ does
+not belong to the multiset of crossing edges of $C$.
 \end{lemma}
 
 \begin{definition}[Successor state of a surviving occurrence]
@@ -352,14 +443,19 @@ Given a state $s$ and a sampled edge occurrence that does not cross the distingu
 this is the state obtained by contracting $s$ along the underlying edge.
 \end{definition}
 
-\begin{lemma}[Sampling a surviving occurrence gives a surviving step]
+\begin{lemma}[Sampled surviving occurrence yields a surviving step]
 \lean{KargerTrace.stateAfterSurvivingChoice_step}
 \label{KargerTrace.stateAfterSurvivingChoice_step}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives, KargerTrace.edgeChoice_mem_edges, KargerTrace.not_mem_crossingEdges_of_edgeChoiceSurvives, KargerTrace.stateAfterSurvivingChoice}
 \difficulty{1}
-For any surviving edge occurrence at $s$, the pair consisting of $s$ and the resulting
-successor state is a surviving step.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$ of $G$, and let a sampled edge occurrence be given in the
+sample space of $s$ — a pair (edge, occurrence index) drawn from the edge multiset of
+$G$ — whose underlying edge does not cross $C$. Then the pair formed by $s$ and the
+successor state obtained by contracting $s$ along that edge occurrence stands in the
+surviving-step relation; that is, the successor state arises from $s$ by contracting
+some edge of $G$ that does not cross $C$.
 \end{lemma}
 
 \begin{definition}[Recursive survival probability]
@@ -374,63 +470,89 @@ for occurrences that cross the cut and the recursive value at the contracted sta
 otherwise.
 \end{definition}
 
-\begin{lemma}[Base case of the recursive survival probability]
+\begin{lemma}[Zero-step survival probability equals one]
 \lean{KargerTrace.survivalEventProb_zero}
 \label{KargerTrace.survivalEventProb_zero}
 \leanok
 \uses{KargerTrace.State, KargerTrace.survivalEventProb}
 \difficulty{1}
-With no remaining contractions the survival probability is $1$.
+For every state $s$ — a multigraph $G$ together with a distinguished cut $C$ of $G$ —
+the recursive survival probability of the distinguished cut over zero random
+edge-occurrence choices equals $1$.
 \end{lemma}
 
-\begin{lemma}[Recursion step of the survival probability]
+\begin{lemma}[One-step recursion for the survival probability]
 \lean{KargerTrace.survivalEventProb_succ}
 \label{KargerTrace.survivalEventProb_succ}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives, KargerTrace.stateAfterSurvivingChoice, KargerTrace.survivalEventProb}
 \difficulty{1}
-The unfolding equation: the survival probability for $\text{steps}+1$ contractions at $s$
-is the average over all edge occurrences of $s$ of the survival probability for
-$\text{steps}$ contractions at the contracted state, with crossing occurrences
-contributing $0$.
+Let $s$ be a state, consisting of a multigraph $G$ together with a distinguished cut $C$
+of $G$, and let $\mathrm{steps}$ be a natural number. Write $P_k(s)$ for the survival
+probability of the cut over $k$ random edge-occurrence choices starting from $s$. Then
+\[
+P_{\mathrm{steps}+1}(s)
+  \;=\;
+  \frac{1}{N}\sum_{\text{occurrences } c}
+  \begin{cases}
+P_{\mathrm{steps}}\!\bigl(s_c\bigr) & \text{if the edge of } c \text{ does not cross }
+C,\\[4pt]
+    0 & \text{otherwise,}
+  \end{cases}
+\]
+where the sum ranges over the finite set of edge occurrences of $G$ (each parallel copy
+of an edge counted separately), $N$ is the number of such occurrences, and $s_c$ denotes
+the state obtained by contracting $s$ along the underlying edge of a surviving
+occurrence $c$.
 \end{lemma}
 
-\begin{lemma}[Surviving occurrences in the attached sample space]
+\begin{lemma}[Survivor count over the attached sample space]
 \lean{KargerTrace.edgeChoice_attach_filter_card}
 \label{KargerTrace.edgeChoice_attach_filter_card}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives}
 \difficulty{2}
-Counting surviving occurrences in the attached (subtype) version of the sample space gives
-the same number as counting them in the sample space itself.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $S$ of $G$, and let $\Omega$ be its sample space of edge
+occurrences — the finite set of pairs $(e, i)$ where $e$ is an edge of $G$ and $i$ is an
+occurrence index distinguishing parallel copies of that edge. Call an occurrence
+*surviving* when its underlying edge $e$ does not cross $S$, that is, when it is not the
+case that one endpoint of $e$ lies in $S$ and the other lies outside $S$. Then the
+number of surviving occurrences is the same whether they are counted directly among the
+elements of $\Omega$ or among the elements of the equinumerous copy of $\Omega$ obtained
+by regarding each member together with the fact that it belongs to $\Omega$; in both
+counts the survival test is applied to the underlying occurrence, and the two
+cardinalities agree.
 \end{lemma}
 
-\begin{lemma}[Counting bound for a conditional sum]
+\begin{lemma}[Counting lower bound for a conditional sum]
 \lean{KargerTrace.card_mul_le_sum_ite_of_lower_bound}
 \label{KargerTrace.card_mul_le_sum_ite_of_lower_bound}
 \leanok
 \difficulty{4}
-Let $S$ be a finite set, $p$ a decidable predicate, $f : S \to \bbr$ and $B \in \bbr$ with
-$B \le f(x)$ for every $x \in S$ satisfying $p$.  Then
+Let $S$ be a finite set, let $p$ be a predicate on $S$, and let $f\colon S \to \bbr$.
+Suppose $B \in \bbr$ is a lower bound for $f$ on the elements satisfying $p$, that is,
+$B \le f(x)$ for every $x \in S$ with $p(x)$. Then
 \[
-  \abs{\{x \in S : p(x)\}} \cdot B \;\le\; \sum_{x \in S} \bigl[\, p(x) \,\bigr] f(x),
+\abs{\{x \in S : p(x)\}} \cdot B \;\le\; \sum_{x \in S} \begin{cases} f(x) & \text{if }
+p(x),\\ 0 & \text{otherwise.}\end{cases}
 \]
-where terms failing $p$ contribute $0$.
 \end{lemma}
 
-\begin{lemma}[One-step lower bound for the recursive probability]
+\begin{lemma}[One-step lower bound for the survival probability]
 \lean{KargerTrace.survivalEventProb_step_lower_bound}
 \label{KargerTrace.survivalEventProb_step_lower_bound}
 \leanok
 \uses{KargerTrace.State, KargerTrace.card_mul_le_sum_ite_of_lower_bound, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.edgeChoiceSurvives, KargerTrace.edgeChoice_attach_filter_card, KargerTrace.stateAfterSurvivingChoice, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_succ}
 \difficulty{5}
-If the occurrence sample space of $s$ is nonempty and every surviving branch has recursive
-survival probability at least $B$, then the averaged survival probability for one more step
-satisfies
-\[
-  \mathrm{edgeChoiceSurvivalRatio}(s)\cdot B \;\le\;
-  \mathrm{survivalEventProb}(\text{steps}+1,\, s).
-\]
+Let $s$ be a state of the contraction process — a multigraph together with a
+distinguished cut — and assume that its sample space of edge occurrences is nonempty.
+Fix a natural number $k$ and a real number $B$, and suppose that for every edge
+occurrence that survives, meaning its underlying edge does not cross the distinguished
+cut, the recursive survival probability over $k$ further choices, evaluated at the
+successor state obtained by contracting $s$ along that occurrence, is at least $B$. Then
+the recursive survival probability over $k+1$ choices at $s$ is at least the survival
+ratio of $s$ multiplied by $B$.
 \end{lemma}
 
 \begin{lemma}[Survival ratio bounded below by the Karger factor]
@@ -439,49 +561,63 @@ satisfies
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.cut_size_le_edgeCount, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.edgeChoiceSurvivalRatio_eq_uniformSurvivalProb, KargerTrace.survivalProb_ge_factor, KargerTrace.uniformSurvivalProb_eq_survivalProb, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, edge_count_lower_bound, mincut_le_degree}
 \difficulty{3}
-If $s.C$ is a min-cut of positive size and $s.G$ has at least two vertices, then with
-$n = s.G.\mathrm{vertexCount}$,
+Let $s$ be a state of the contraction process — a multigraph $G$ together with a
+distinguished cut $C$ of $G$ — and write $n$ for the number of vertices of $G$. Suppose
+that $C$ is a minimum cut of $G$, that the size of $C$ is strictly positive, and that $n
+\ge 2$. Then the survival ratio of the edge-occurrence sample space of $s$ is at least
+$\tfrac{n-2}{n}$; that is,
 \[
-  \frac{n-2}{n} \;\le\; \mathrm{edgeChoiceSurvivalRatio}(s).
+  \frac{n-2}{n} \;\le\; \rho(s),
 \]
+where $\rho(s)$ is the fraction of edge occurrences whose underlying edge does not cross
+$C$.
 \end{lemma}
 
-\begin{theorem}[Recursive survival lower bound]
+\begin{theorem}[Karger contraction survival lower bound]
 \lean{KargerTrace.survivalEventProb_lower_bound}
 \label{KargerTrace.survivalEventProb_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.cut_size_le_edgeCount, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSpace_card, KargerTrace.edgeChoiceSurvivalRatio, KargerTrace.edgeChoiceSurvivalRatio_ge_factor, KargerTrace.stateAfterSurvivingChoice, KargerTrace.stateAfterSurvivingChoice_step, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_step_lower_bound, KargerTrace.survivingStep_cut_size_eq, KargerTrace.survivingStep_mincut, KargerTrace.survivingStep_vertexCount_eq, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount}
 \difficulty{6}
-For every $n$ and every state $s$ whose distinguished cut is a min-cut of positive size,
-if $2 \le n$ and $s.G$ has exactly $n$ vertices, then the recursive sampling model
-survives $n-2$ contractions with probability at least
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$, and let $n$ be a natural number with $2 \le n$. Suppose
+that $C$ is a minimum cut of $G$, that $C$ has positive size, and that $G$ has exactly
+$n$ vertices. Then the recursive survival probability that $C$ survives $n-2$ successive
+uniformly random edge-occurrence contractions is at least
 \[
   \frac{2}{n(n-1)}.
 \]
 \end{theorem}
 
-\begin{theorem}[Survival lower bound at the initial state]
+\begin{theorem}[Karger survival lower bound at the initial state]
 \lean{KargerTrace.survivalEventProb_initial_lower_bound}
 \label{KargerTrace.survivalEventProb_initial_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_lower_bound, MulCut.size, Multigraph.vertexCount}
 \difficulty{1}
-For a state $s$ whose distinguished cut is a min-cut of positive size and whose graph has
-at least two vertices, writing $n = s.G.\mathrm{vertexCount}$,
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$ of $G$, and write $n$ for the number of vertices of $G$.
+Suppose that $C$ is a minimum cut of $G$, that its size is positive, and that $n \ge 2$.
+Then the probability that $C$ survives $n-2$ successive uniformly random edge-occurrence
+contractions is at least
 \[
-  \frac{2}{n(n-1)} \;\le\; \mathrm{survivalEventProb}(n-2,\, s).
+  \frac{2}{n(n-1)}.
 \]
 \end{theorem}
 
-\begin{theorem}[Fixed min-cut survival probability]
+\begin{theorem}[Karger min-cut survival probability lower bound]
 \lean{KargerTrace.fixed_mincut_survival_probability_lower_bound}
 \label{KargerTrace.fixed_mincut_survival_probability_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.State, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_initial_lower_bound, MulCut.size, Multigraph.vertexCount}
 \difficulty{1}
-Human-facing form of the previous statement: a fixed min-cut of positive size in a graph
-with $n \ge 2$ vertices survives the $n-2$ random contractions with probability at least
-$2/(n(n-1))$.
+Let $s$ be a state consisting of a multigraph $G$ on $n = \abs{V(G)}$ vertices together
+with a distinguished cut $C$ of $G$, and suppose that $C$ is a minimum cut of $G$, that
+its size is positive, and that $n \ge 2$. Then the probability that $C$ survives $n-2$
+successive uniformly random contractions of edge occurrences is at least
+\[
+\frac{2}{n(n-1)}.
+\]
 \end{theorem}
 
 \begin{definition}[Graph-only occurrence space]
@@ -493,24 +629,30 @@ The finite set of edge occurrences of a multigraph $G$, the same construction as
 state-level sample space but without reference to a distinguished cut.
 \end{definition}
 
-\begin{lemma}[The two occurrence spaces agree]
+\begin{lemma}[Agreement of the graph-only and state occurrence spaces]
 \lean{KargerTrace.graphChoiceSpace_eq_edgeChoiceSpace}
 \label{KargerTrace.graphChoiceSpace_eq_edgeChoiceSpace}
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.graphChoiceSpace}
 \difficulty{1}
-For every state $s$, the graph-only occurrence space of $s.G$ equals the occurrence space
-of $s$.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut of $G$. Then the graph-only occurrence space built from $G$
+coincides, as a finite set of edge occurrences $(e, k) \in \mathrm{Sym}_2\,\alpha \times
+\bbn$, with the state's sample space of edge occurrences; that is, both are the set of
+edge occurrences of the state's underlying multigraph.
 \end{lemma}
 
-\begin{lemma}[A graph occurrence carries an actual edge]
+\begin{lemma}[Edge component of an occurrence lies in the edge multiset]
 \lean{KargerTrace.graphChoice_mem_edges}
 \label{KargerTrace.graphChoice_mem_edges}
 \leanok
 \uses{KargerTrace.graphChoiceSpace, Multigraph}
 \difficulty{2}
-The first projection of any element of the graph-only occurrence space of $G$ is an edge
-of $G$.
+Let $G$ be a multigraph, and let its graph-only occurrence space be the finite set of
+edge occurrences of $G$, whose elements are pairs $(e, k)$ consisting of an edge $e$
+together with an index $k$ distinguishing the copies of $e$ among the parallel edges of
+$G$. Then for every occurrence $(e, k)$ in this space, the edge $e$ belongs to the edge
+multiset of $G$.
 \end{lemma}
 
 \begin{definition}[Graph after a sampled contraction]
@@ -522,13 +664,17 @@ The multigraph obtained by contracting $G$ along the edge underlying a sampled e
 occurrence.
 \end{definition}
 
-\begin{lemma}[Sampled contraction removes one vertex]
+\begin{lemma}[Sampled contraction removes exactly one vertex]
 \lean{KargerTrace.graphAfterChoice_vertexCount_eq}
 \label{KargerTrace.graphAfterChoice_vertexCount_eq}
 \leanok
 \uses{KargerTrace.graphAfterChoice, KargerTrace.graphChoiceSpace, KargerTrace.graphChoice_mem_edges, Multigraph, Multigraph.vertexCount, contract_vertex_count}
 \difficulty{2}
-Contracting along any sampled edge occurrence decreases the vertex count by exactly one.
+Let $G$ be a multigraph on a vertex type $\alpha$ with decidable equality, and let $c$
+be a sampled edge occurrence of $G$, i.e.\ an element of its finite set of edge
+occurrences. Writing $G_c$ for the multigraph obtained by contracting $G$ along the edge
+underlying $c$, the number of vertices of $G_c$ equals the number of vertices of $G$
+minus one.
 \end{lemma}
 
 \begin{lemma}[State contraction agrees with graph contraction]
@@ -537,8 +683,12 @@ Contracting along any sampled edge occurrence decreases the vertex count by exac
 \leanok
 \uses{KargerTrace.State, KargerTrace.edgeChoiceSpace, KargerTrace.edgeChoiceSurvives, KargerTrace.graphAfterChoice, KargerTrace.graphChoiceSpace, KargerTrace.graphChoiceSpace_eq_edgeChoiceSpace, KargerTrace.stateAfterSurvivingChoice}
 \difficulty{1}
-The graph of the successor state after a surviving occurrence equals the graph obtained by
-contracting $s.G$ along the same occurrence viewed in the graph-only occurrence space.
+Let $s$ be a state of the contraction process, comprising a multigraph $G$ together with
+a distinguished cut $C$, and let $(e, i)$ be an edge occurrence of $G$ drawn from its
+sample space of edge occurrences, whose underlying edge $e$ does not cross $C$. Then the
+multigraph carried by the successor state obtained by contracting $s$ along this
+occurrence is equal to the multigraph obtained by contracting $G$ itself along the same
+occurrence, namely the contraction $G/e$.
 \end{lemma}
 
 \begin{definition}[Graph-only Karger run]
@@ -551,54 +701,67 @@ successive arbitrary edge-occurrence contractions.  It models the actual graph e
 of the algorithm without tracking any distinguished cut.
 \end{definition}
 
-\begin{lemma}[Vertex count along a graph run]
+\begin{lemma}[Vertex count after a graph-only Karger run]
 \lean{KargerTrace.kargerGraphRun_vertexCount_eq}
 \label{KargerTrace.kargerGraphRun_vertexCount_eq}
 \leanok
 \uses{KargerTrace.KargerGraphRun, KargerTrace.graphAfterChoice_vertexCount_eq, Multigraph, Multigraph.vertexCount}
 \difficulty{3}
-If $H$ is reachable from $G$ by a graph run of $\text{steps}$ contractions, then
-$H.\mathrm{vertexCount} = G.\mathrm{vertexCount} - \text{steps}$.
+Let $G$ and $H$ be multigraphs on a vertex type $\alpha$, and let $\mathrm{steps} \in
+\bbn$. If $H$ arises from $G$ by a graph-only Karger run consisting of $\mathrm{steps}$
+successive edge-occurrence contractions, then the number of vertices of $H$ equals the
+number of vertices of $G$ minus $\mathrm{steps}$, using truncated subtraction of natural
+numbers. Thus each contraction removes exactly one vertex, and after $\mathrm{steps}$ of
+them the vertex count has dropped by $\mathrm{steps}$.
 \end{lemma}
 
-\begin{lemma}[A full graph run ends with two vertices]
+\begin{lemma}[A full Karger run terminates with two vertices]
 \lean{KargerTrace.kargerGraphRun_full_vertexCount_eq_two}
 \label{KargerTrace.kargerGraphRun_full_vertexCount_eq_two}
 \leanok
 \uses{KargerTrace.KargerGraphRun, KargerTrace.kargerGraphRun_vertexCount_eq, Multigraph, Multigraph.vertexCount}
 \difficulty{2}
-If $G$ has at least two vertices and $H$ is reachable from $G$ by
-$G.\mathrm{vertexCount} - 2$ contractions, then $H$ has exactly two vertices.
+Let $G$ and $H$ be multigraphs on a common vertex type, and suppose $G$ has at least two
+vertices. If $H$ is obtained from $G$ by a graph-only Karger run consisting of exactly
+$n - 2$ successive edge-occurrence contractions, where $n$ is the number of vertices of
+$G$, then $H$ has exactly two vertices.
 \end{lemma}
 
-\begin{lemma}[A full graph run yields a Karger output]
+\begin{lemma}[Termination of a full Karger run]
 \lean{KargerTrace.kargerGraphRun_full_output}
 \label{KargerTrace.kargerGraphRun_full_output}
 \leanok
 \uses{KargerOutput, KargerTrace.KargerGraphRun, KargerTrace.kargerGraphRun_full_vertexCount_eq_two, Multigraph, Multigraph.vertexCount}
 \difficulty{1}
-Under the same hypotheses, the terminal graph $H$ is a valid Karger output, i.e.\ a
-two-vertex multigraph.
+Let $G$ be a multigraph with at least two vertices, write $n$ for its vertex count, and
+suppose $H$ is obtained from $G$ by a graph-only Karger run consisting of exactly $n -
+2$ successive edge-occurrence contractions. Then $H$ satisfies the termination condition
+of the algorithm; that is, $H$ has exactly two vertices.
 \end{lemma}
 
-\begin{lemma}[Every edge yields an occurrence]
+\begin{lemma}[The zeroth occurrence of an edge lies in the occurrence space]
 \lean{KargerTrace.choice_mem_graphChoiceSpace_of_edge_mem}
 \label{KargerTrace.choice_mem_graphChoiceSpace_of_edge_mem}
 \leanok
 \uses{KargerTrace.graphChoiceSpace, Multigraph}
 \difficulty{2}
-If $e$ is an edge of $G$, then the occurrence $(e, 0)$ belongs to the graph-only
-occurrence space of $G$.
+Let $G$ be a multigraph on a vertex type $\alpha$, and let $e$ be an edge of $G$, that
+is, a member of the edge multiset of $G$. Then the occurrence $(e, 0)$ belongs to the
+graph-only occurrence space of $G$; in other words, the pair consisting of $e$ together
+with the index $0$ is one of the enumerated edge occurrences of $G$.
 \end{lemma}
 
-\begin{lemma}[A surviving step is realized by a graph occurrence]
+\begin{lemma}[Surviving step realized by a sampled edge occurrence]
 \lean{KargerTrace.survivingStep_graphChoice}
 \label{KargerTrace.survivingStep_graphChoice}
 \leanok
 \uses{KargerTrace.State, KargerTrace.SurvivingStep, KargerTrace.choice_mem_graphChoiceSpace_of_edge_mem, KargerTrace.graphAfterChoice, KargerTrace.graphChoiceSpace}
 \difficulty{3}
-If $t$ arises from $s$ by a surviving step, then there is an edge occurrence of $s.G$ whose
-contraction produces exactly $t.G$.
+Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph
+together with a distinguished cut of it. If $t$ arises from $s$ by a surviving step—that
+is, by contracting some edge of $s$'s multigraph that does not cross its distinguished
+cut—then there is an edge occurrence in the graph-only occurrence space of $s$'s
+multigraph whose sampled contraction produces exactly the multigraph of $t$.
 \end{lemma}
 
 \begin{lemma}[Surviving runs project to graph runs]
@@ -607,18 +770,27 @@ contraction produces exactly $t.G$.
 \leanok
 \uses{KargerTrace.KargerGraphRun, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.survivingStep_graphChoice}
 \difficulty{3}
-A surviving run of $\text{steps}$ steps from $s$ to $t$ induces a graph-only Karger run of
-the same length from $s.G$ to $t.G$.
+Let $s$ and $t$ be states of the contraction process over a vertex type $\alpha$, each
+consisting of a multigraph together with a distinguished cut of it. If $t$ is reached
+from $s$ by a surviving run of some number $\mathrm{steps}$ of consecutive surviving
+steps — each contracting an edge that does not cross the current distinguished cut —
+then the underlying multigraph of $t$ is reached from the underlying multigraph of $s$
+by a graph-only Karger run of the same length $\mathrm{steps}$, that is, by
+$\mathrm{steps}$ successive edge-occurrence contractions.
 \end{lemma}
 
-\begin{lemma}[A full surviving run ends with a Karger output]
+\begin{lemma}[Termination of a full surviving run at two vertices]
 \lean{KargerTrace.survivingRun_full_output}
 \label{KargerTrace.survivingRun_full_output}
 \leanok
 \uses{KargerOutput, KargerTrace.State, KargerTrace.SurvivingRun, KargerTrace.kargerGraphRun_full_output, KargerTrace.survivingRun_graphRun, Multigraph.vertexCount}
 \difficulty{1}
-If $s.G$ has at least two vertices and $t$ is reached from $s$ by a surviving run of
-$s.G.\mathrm{vertexCount} - 2$ steps, then $t.G$ is a Karger output.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut of $G$, and write $n$ for the number of vertices of $G$;
+suppose $n \ge 2$. If a state $t$ is reached from $s$ by a surviving run of exactly $n -
+2$ consecutive surviving steps — each step contracting an edge of the current graph that
+does not cross the distinguished cut — then the multigraph of $t$ satisfies the
+termination condition of the algorithm, that is, it has exactly two vertices.
 \end{lemma}
 
 \begin{definition}[Adaptive graph trace]
@@ -639,61 +811,88 @@ the process.
 \leanok
 \uses{KargerTrace.KargerGraphRun, KargerTrace.KargerGraphTrace, KargerTrace.graphAfterChoice}
 \difficulty{3}
-For $i \le \text{steps}$, the first $i$ stages of an adaptive graph trace form a graph run
-from the initial graph to the graph at index $i$.
+Let $T$ be an adaptive graph trace of length $\text{steps}$, so that $T$ records a graph
+at each index, a sampled edge occurrence at each index below $\text{steps}$, and
+produces each successive graph as the contraction of its predecessor along that
+occurrence. Then for every index $i \le \text{steps}$, the graph-only Karger run
+relation holds for $i$ steps between the initial graph $T_0$ and the graph $T_i$; that
+is, $T_i$ is reachable from $T_0$ by exactly $i$ successive edge-occurrence
+contractions.
 \end{lemma}
 
-\begin{lemma}[Vertex count along a graph trace]
+\begin{lemma}[Vertex count decreases by one per contraction step]
 \lean{KargerTrace.kargerGraphTrace_vertexCount_eq}
 \label{KargerTrace.kargerGraphTrace_vertexCount_eq}
 \leanok
 \uses{KargerTrace.KargerGraphTrace, KargerTrace.kargerGraphRun_vertexCount_eq, KargerTrace.kargerGraphTrace_prefix_run, Multigraph.vertexCount}
 \difficulty{1}
-For $i \le \text{steps}$, the graph at index $i$ of an adaptive trace has vertex count
-equal to the initial vertex count minus $i$.
+Let $(G_i)_{i \in \bbn}$ be an adaptive contraction trace over $\text{steps}$ rounds on
+a vertex type with decidable equality: a family of multigraphs in which, for each index
+$i < \text{steps}$, the graph $G_{i+1}$ is obtained from $G_i$ by contracting the edge
+underlying a sampled edge occurrence of $G_i$. Then for every $i \le \text{steps}$, the
+number of vertices of $G_i$ equals the initial vertex count minus $i$; that is, $\lvert
+V(G_i)\rvert = \lvert V(G_0)\rvert - i$.
 \end{lemma}
 
-\begin{lemma}[A full graph trace terminates with two vertices]
+\begin{lemma}[Karger's algorithm terminates with two vertices]
 \lean{KargerTrace.kargerGraphTrace_full_output}
 \label{KargerTrace.kargerGraphTrace_full_output}
 \leanok
 \uses{KargerOutput, KargerTrace.KargerGraphTrace, KargerTrace.kargerGraphTrace_vertexCount_eq, Multigraph.vertexCount}
 \difficulty{2}
-If $2 \le n$ and an adaptive graph trace of $n-2$ steps starts from a graph with $n$
-vertices, then its final graph is a Karger output.
+Let $n \ge 2$, and let $T$ be an adaptive graph trace of $n-2$ steps whose initial
+multigraph $T_0$ has exactly $n$ vertices. Then the multigraph $T_{n-2}$ reached after
+all $n-2$ contraction steps is a valid output of the algorithm; that is, it has exactly
+two vertices.
 \end{lemma}
 
-\begin{theorem}[Adaptive traces output two vertices]
+\begin{theorem}[Karger contraction terminates at two vertices]
 \lean{KargerTrace.adaptive_karger_trace_outputs_two_vertices}
 \label{KargerTrace.adaptive_karger_trace_outputs_two_vertices}
 \leanok
 \uses{KargerOutput, KargerTrace.KargerGraphTrace, KargerTrace.kargerGraphTrace_full_output, Multigraph.vertexCount}
 \difficulty{1}
-Human-facing termination statement: every adaptive graph trace of $n-2$ contractions
-starting from an $n$-vertex graph with $n \ge 2$ ends with a two-vertex graph.
+Let $n \ge 2$, and let $T$ be an adaptive graph trace of $n-2$ contraction steps whose
+initial multigraph $T_0$ has exactly $n$ vertices. Then the final multigraph $T_{n-2}$,
+obtained after the $n-2$ successive edge contractions prescribed by the trace, satisfies
+the termination condition: it has exactly two vertices.
 \end{theorem}
 
-\begin{theorem}[Algorithmic trace summary]
+\begin{theorem}[Karger contraction: min-cut survival bound and termination]
 \lean{KargerTrace.karger_algorithmic_trace_summary}
 \label{KargerTrace.karger_algorithmic_trace_summary}
 \leanok
 \uses{IsMulMinCut, KargerOutput, KargerTrace.KargerGraphTrace, KargerTrace.State, KargerTrace.kargerGraphTrace_full_output, KargerTrace.survivalEventProb, KargerTrace.survivalEventProb_initial_lower_bound, MulCut.size, Multigraph.vertexCount}
 \difficulty{2}
-For a state $s$ whose distinguished cut is a min-cut of positive size and whose graph has
-$n = s.G.\mathrm{vertexCount} \ge 2$ vertices, both of the following hold: the recursive
-sampling model survives $n-2$ contractions with probability at least $2/(n(n-1))$, and
-every adaptive graph trace of $n-2$ contractions starting from $s.G$ ends with a Karger
-output.
+Let $s$ be a state consisting of a multigraph $G$ with $n$ vertices together with a
+distinguished cut $C$ of $G$, and suppose that $C$ is a minimum cut, that its size is
+strictly positive, and that $n \ge 2$. Then two conclusions hold simultaneously. First,
+the recursive survival probability that $C$ is preserved through the next $n-2$ random
+edge-occurrence contractions of $s$ is at least
+\[
+\frac{2}{n(n-1)}.
+\]
+Second, every adaptive graph trace of $n-2$ contraction steps whose initial graph is $G$
+terminates in the output condition of the algorithm, that is, its graph after $n-2$
+steps has exactly two vertices.
 \end{theorem}
 
-\begin{theorem}[Main adaptive trace theorem]
+\begin{theorem}[Karger contraction: minimum-cut survival bound and termination]
 \lean{KargerTrace.adaptive_karger_trace_main}
 \label{KargerTrace.adaptive_karger_trace_main}
 \leanok
 \uses{IsMulMinCut, KargerOutput, KargerTrace.KargerGraphTrace, KargerTrace.State, KargerTrace.karger_algorithmic_trace_summary, KargerTrace.survivalEventProb, MulCut.size, Multigraph.vertexCount}
 \difficulty{1}
-Human-facing name for the previous conjunction: the survival lower bound $2/(n(n-1))$
-together with termination of every adaptive graph trace of $n-2$ contractions.
+Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together
+with a distinguished cut $C$ of $G$, and write $n$ for the number of vertices of $G$.
+Suppose that $C$ is a minimum cut of $G$, that $C$ has positive size, and that $n \ge
+2$. Let $p$ denote the probability that $C$ survives $n-2$ successive uniformly random
+edge-occurrence contractions. Then
+\[
+\frac{2}{n(n-1)} \;\le\; p,
+\]
+and, moreover, every adaptive graph trace of $n-2$ contraction steps whose initial graph
+is $G$ ends in a multigraph with exactly two vertices.
 \end{theorem}
 
 \begin{definition}[Indexed surviving trace]
@@ -721,8 +920,11 @@ distinguished cuts and choosing, at each step, an occurrence realizing the survi
 \leanok
 \uses{KargerTrace.SurvivingRun, KargerTrace.SurvivingTrace}
 \difficulty{3}
-For $i \le \text{steps}$, the first $i$ stages of an indexed surviving trace form a
-surviving run from the initial state to the state at index $i$.
+Let $T$ be a surviving trace of length $\text{steps}$ over a vertex type $\alpha$, that
+is, a family of states $(T_j)_{j \in \bbn}$ in which each consecutive pair $T_j,
+T_{j+1}$ with $j < \text{steps}$ is related by a surviving step. Then for every index
+$i$ with $i \le \text{steps}$, the states $T_0, T_1, \dots, T_i$ constitute a surviving
+run of length $i$ from the initial state $T_0$ to the state $T_i$.
 \end{lemma}
 
 \begin{lemma}[Vertex count along a surviving trace]
@@ -731,8 +933,13 @@ surviving run from the initial state to the state at index $i$.
 \leanok
 \uses{KargerTrace.SurvivingTrace, KargerTrace.survivingRun_vertexCount_eq, KargerTrace.survivingTrace_prefix_run, Multigraph.vertexCount}
 \difficulty{1}
-For $i \le \text{steps}$, the graph at index $i$ of a surviving trace has vertex count
-equal to the initial vertex count minus $i$.
+Let $T$ be a surviving trace of length $\mathrm{steps}$ over a vertex type $\alpha$: a
+family of states $(G_j, C_j)$ indexed by $j \in \bbn$, in which each consecutive pair
+below $\mathrm{steps}$ is joined by a surviving step (the graph $G_{j+1}$ arises from
+$G_j$ by contracting an edge that does not cross the distinguished cut). Then for every
+index $i \le \mathrm{steps}$, the number of vertices of the graph at index $i$ equals
+the number of vertices of the initial graph at index $0$ minus $i$; that is, $\lvert
+V(G_i)\rvert = \lvert V(G_0)\rvert - i$.
 \end{lemma}
 
 \begin{lemma}[Per-step survival bound along a surviving trace]
@@ -741,57 +948,75 @@ equal to the initial vertex count minus $i$.
 \leanok
 \uses{IsMulMinCut, KargerTrace.SurvivingTrace, KargerTrace.survivingRun_survivalProb_ge_factor, KargerTrace.survivingTrace_prefix_run, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, survivalProb}
 \difficulty{1}
-If the initial cut of an indexed surviving trace is a min-cut, $i < \text{steps}$, and the
-graph at index $i$ has at least two vertices, then with $n_i$ its vertex count,
+Let $T = (G_0, C_0), (G_1, C_1), \dots$ be a surviving trace: a family of states indexed
+by $\bbn$ in which each state at an index below $\text{steps}$ passes to its successor
+by contracting some edge of its current multigraph that does not cross its distinguished
+cut. Suppose the initial cut $C_0$ is a minimum cut of $G_0$, and fix an index $i <
+\text{steps}$ at which the multigraph $G_i$ has at least two vertices. Writing $n_i$ for
+the number of vertices of $G_i$, $m_i$ for the number of edges of $G_i$ (counted with
+multiplicity), and $c$ for the size of the initial cut $C_0$ (its number of crossing
+edges), one has
 \[
-  \frac{n_i-2}{n_i} \;\le\;
-  \mathrm{survivalProb}\bigl(\,\text{initial cut size},\; \text{edge count at }i\,\bigr).
+  \frac{n_i - 2}{n_i} \;\le\; 1 - \frac{c}{m_i}.
 \]
 \end{lemma}
 
-\begin{lemma}[Product of factors bounds the product of survival probabilities]
+\begin{lemma}[Karger step factors bound the survival-probability product]
 \lean{KargerTrace.survivingTrace_factor_product_le_survival_product}
 \label{KargerTrace.survivingTrace_factor_product_le_survival_product}
 \leanok
 \uses{IsMulMinCut, KargerTrace.SurvivingTrace, KargerTrace.survivingTrace_survivalProb_ge_factor, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, survivalProb}
 \difficulty{3}
-If the initial cut is a min-cut and every graph along the first $\text{steps}$ indices has
-at least two vertices, then
+Let $T$ be a surviving trace of $\mathrm{steps}$ steps, with states $s_0, s_1, \dots$;
+write $G_i$ for the multigraph and $C_i$ for the distinguished cut in state $s_i$, and
+let $n_i$ and $m_i$ denote the vertex count and edge count of $G_i$. Suppose the initial
+cut $C_0$ is a minimum cut of $G_0$, and that $n_i \ge 2$ for every index $i <
+\mathrm{steps}$. Then, writing $c$ for the size of $C_0$,
 \[
-  \prod_{i<\text{steps}} \frac{n_i-2}{n_i} \;\le\;
-  \prod_{i<\text{steps}} \mathrm{survivalProb}\bigl(\,\text{initial cut size},\;
-  \text{edge count at }i\,\bigr),
+  \prod_{i < \mathrm{steps}} \frac{n_i - 2}{n_i}
+  \;\le\;
+  \prod_{i < \mathrm{steps}} \left(1 - \frac{c}{m_i}\right),
 \]
-where $n_i$ is the vertex count at index $i$.
+the right-hand factors being the one-step survival probabilities for cut size $c$ and
+edge count $m_i$.
 \end{lemma}
 
-\begin{lemma}[Factor product in telescoping form]
+\begin{lemma}[Telescoping form of the surviving-trace factor product]
 \lean{KargerTrace.survivingTrace_factor_product_eq_telescope}
 \label{KargerTrace.survivingTrace_factor_product_eq_telescope}
 \leanok
 \uses{KargerTrace.SurvivingTrace, KargerTrace.survivingTrace_vertexCount_eq, Multigraph.vertexCount}
 \difficulty{4}
-If a surviving trace has $\text{steps} = n-2$ and starts from a graph with $n$ vertices,
-then
+Let $T$ be a surviving trace of length $\text{steps}$, and for each index $i$ write
+$v_i$ for the number of vertices of the multigraph in its state at index $i$. Suppose
+that $\text{steps} = n - 2$ and that the initial graph has $v_0 = n$ vertices. Then
 \[
-  \prod_{i<\text{steps}} \frac{n_i-2}{n_i}
-  \;=\; \prod_{i<n-2} \frac{n-i-2}{n-i}.
+  \prod_{i=0}^{\text{steps}-1} \frac{v_i - 2}{v_i}
+  \;=\;
+  \prod_{i=0}^{n-3} \frac{n - i - 2}{n - i},
 \]
+where each factor is taken as a real number, the difference $v_i - 2$ in the left-hand
+numerator being the truncated subtraction in $\bbn$ and the right-hand differences being
+taken in $\bbr$.
 \end{lemma}
 
-\begin{theorem}[Product-level trace survival bound]
+\begin{theorem}[Product lower bound for min-cut survival in Karger contraction]
 \lean{KargerTrace.survivingTrace_product_survival_lower_bound}
 \label{KargerTrace.survivingTrace_product_survival_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.SurvivingTrace, KargerTrace.survivingTrace_factor_product_eq_telescope, KargerTrace.survivingTrace_factor_product_le_survival_product, MulCut.size, Multigraph.edgeCount, Multigraph.vertexCount, survivalProb, telescope_prod}
 \difficulty{3}
-For an indexed surviving trace of $n-2$ steps starting from an $n$-vertex graph with
-$n \ge 2$, initial min-cut, and at least two vertices at every step,
+Let $T$ be an indexed surviving trace of $n-2$ steps over a vertex type $\alpha$, with
+states $s_0, s_1, s_2, \ldots$, and suppose $2 \le n$. Write $c$ for the size of the
+distinguished cut of the initial state $s_0$, and $m_i$ for the edge count of the
+multigraph at state $s_i$. Assume that the distinguished cut of $s_0$ is a minimum cut
+of its multigraph, that the multigraph of $s_0$ has exactly $n$ vertices, and that for
+every $i < n-2$ the multigraph of $s_i$ has at least two vertices. Then
 \[
-  \frac{2}{n(n-1)} \;\le\;
-  \prod_{i<n-2} \mathrm{survivalProb}\bigl(\,\text{initial cut size},\;
-  \text{edge count at }i\,\bigr).
+  \frac{2}{n(n-1)} \;\le\; \prod_{i=0}^{n-3}\left(1 - \frac{c}{m_i}\right),
 \]
+where each factor $1 - c/m_i$ is the step-survival probability determined by the initial
+cut size $c$ and the edge count $m_i$.
 \end{theorem}
 
 \begin{definition}[Product of uniform survival probabilities]
@@ -803,34 +1028,58 @@ The product over $i < \text{steps}$ of the uniform one-step survival probabiliti
 states of an indexed surviving trace.
 \end{definition}
 
-\begin{lemma}[Uniform product as a product of survival probabilities]
+\begin{lemma}[Uniform survival product equals the product of one-step survival probabilities]
 \lean{KargerTrace.survivingTrace_uniform_product_eq_survival_product}
 \label{KargerTrace.survivingTrace_uniform_product_eq_survival_product}
 \leanok
 \uses{KargerTrace.SurvivingTrace, KargerTrace.survivingStep_edgeCount_pos, KargerTrace.survivingTraceUniformSurvivalProduct, KargerTrace.uniformSurvivalProb_eq_survivalProb, MulCut.size, Multigraph.edgeCount, survivalProb}
 \difficulty{2}
-The uniform survival product of a trace equals the product over $i < \text{steps}$ of
-$\mathrm{survivalProb}$ applied to the cut size and edge count at index $i$.
+Let $T$ be an indexed surviving trace of length $\text{steps}$, recording at each index
+$i$ a state consisting of a multigraph $G_i$ together with a distinguished cut $C_i$,
+with consecutive states below $\text{steps}$ related by a surviving step. Then the
+product of the uniform one-step survival probabilities of the states of $T$ equals the
+product, over all $i < \text{steps}$, of the one-step survival probability $1 -
+\dfrac{c_i}{m_i}$, where $c_i$ is the size of the cut $C_i$ (its number of crossing
+edges) and $m_i$ is the total edge count of $G_i$; that is,
+\[
+  \prod_{i < \text{steps}} \frac{\#\{\text{non-crossing edges of state } i\}}{m_i}
+  \;=\;
+  \prod_{i < \text{steps}} \left(1 - \frac{c_i}{m_i}\right).
+\]
 \end{lemma}
 
-\begin{lemma}[Uniform product with the initial cut size]
+\begin{lemma}[Uniform survival product via the initial cut size]
 \lean{KargerTrace.survivingTrace_uniform_product_eq_initial_cut_survival_product}
 \label{KargerTrace.survivingTrace_uniform_product_eq_initial_cut_survival_product}
 \leanok
 \uses{KargerTrace.SurvivingRun, KargerTrace.SurvivingTrace, KargerTrace.survivingRun_cut_size_eq, KargerTrace.survivingTraceUniformSurvivalProduct, KargerTrace.survivingTrace_prefix_run, KargerTrace.survivingTrace_uniform_product_eq_survival_product, MulCut.size, Multigraph.edgeCount, survivalProb}
 \difficulty{3}
-The same product may be written using the initial cut size at every index, since cut size
-is invariant along a surviving trace.
+Let $T$ be an indexed surviving trace of length $\mathrm{steps}$, with states $s_0, s_1,
+\dots$, and write $c$ for the size of the distinguished cut of the initial state $s_0$
+and $m_i$ for the edge count of the graph of state $s_i$. Then the product of the
+uniform one-step survival probabilities of the states $s_0, \dots, s_{\mathrm{steps}-1}$
+equals
+\[
+  \prod_{i=0}^{\mathrm{steps}-1} \left(1 - \frac{c}{m_i}\right),
+\]
+the product of the one-step survival probabilities computed with the initial cut size
+$c$ at every index.
 \end{lemma}
 
-\begin{theorem}[Lower bound for the uniform survival product]
+\begin{theorem}[Karger survival lower bound for a minimum cut]
 \lean{KargerTrace.survivingTrace_uniform_survival_product_lower_bound}
 \label{KargerTrace.survivingTrace_uniform_survival_product_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.SurvivingTrace, KargerTrace.survivingTraceUniformSurvivalProduct, KargerTrace.survivingTrace_product_survival_lower_bound, KargerTrace.survivingTrace_uniform_product_eq_initial_cut_survival_product, Multigraph.vertexCount}
 \difficulty{2}
-Under the same hypotheses as the product-level bound, the product of the concrete uniform
-one-step survival probabilities along the trace is at least $2/(n(n-1))$.
+Let $n \ge 2$ and let $T$ be a surviving trace of $n-2$ steps, indexing states $T_0,
+T_1, \ldots$ each consisting of a multigraph together with a distinguished cut. Suppose
+the distinguished cut of the initial state $T_0$ is a minimum cut of its graph, that
+this initial graph has exactly $n$ vertices, and that for every step index $i < n-2$ the
+graph of $T_i$ has at least two vertices. Then the product of the uniform one-step
+survival probabilities of the states $T_0, \ldots, T_{n-3}$ satisfies \[
+\frac{2}{n(n-1)} \le \prod_{i=0}^{n-3} p_i, \] where $p_i$ is the number of edges of
+$T_i$ not crossing its distinguished cut divided by the total edge count of $T_i$.
 \end{theorem}
 
 \begin{definition}[Product of occurrence-space survival ratios]
@@ -842,23 +1091,37 @@ The product over $i < \text{steps}$ of the finite sample-space survival ratios o
 states of an indexed surviving trace.
 \end{definition}
 
-\begin{lemma}[The two concrete products agree]
+\begin{lemma}[Occurrence-space and uniform survival products agree]
 \lean{KargerTrace.survivingTrace_edgeChoice_product_eq_uniform_product}
 \label{KargerTrace.survivingTrace_edgeChoice_product_eq_uniform_product}
 \leanok
 \uses{KargerTrace.SurvivingTrace, KargerTrace.edgeChoiceSurvivalRatio_eq_uniformSurvivalProb, KargerTrace.survivingTraceEdgeChoiceSurvivalProduct, KargerTrace.survivingTraceUniformSurvivalProduct}
 \difficulty{2}
-For every indexed surviving trace, the product of occurrence-space survival ratios equals
-the product of uniform survival probabilities.
+Let $T$ be an indexed surviving trace of $\text{steps}$ steps, so that $T$ assigns to
+each index $i \in \bbn$ a state $T_i$ and, for every $i < \text{steps}$, the passage
+from $T_i$ to $T_{i+1}$ is a surviving step. Then
+\[
+\prod_{i \,<\, \text{steps}} r(T_i) \;=\; \prod_{i \,<\, \text{steps}} p(T_i),
+\]
+where $r(T_i)$ denotes the occurrence-space survival ratio of $T_i$ (the number of
+surviving edge occurrences divided by the total number of edge occurrences) and $p(T_i)$
+denotes its uniform one-step survival probability (the number of non-crossing edges
+divided by the total edge count).
 \end{lemma}
 
-\begin{theorem}[Lower bound for the occurrence-space survival product]
+\begin{theorem}[Karger survival product lower bound]
 \lean{KargerTrace.survivingTrace_edgeChoice_survival_product_lower_bound}
 \label{KargerTrace.survivingTrace_edgeChoice_survival_product_lower_bound}
 \leanok
 \uses{IsMulMinCut, KargerTrace.SurvivingTrace, KargerTrace.survivingTraceEdgeChoiceSurvivalProduct, KargerTrace.survivingTrace_edgeChoice_product_eq_uniform_product, KargerTrace.survivingTrace_uniform_survival_product_lower_bound, Multigraph.vertexCount}
 \difficulty{1}
-For an indexed surviving trace of $n-2$ steps starting from an $n$-vertex graph with
-$n \ge 2$, initial min-cut, and at least two vertices at every step, the product of the
-finite uniform edge-choice survival ratios is at least $2/(n(n-1))$.
+Fix an integer $n \ge 2$ and let $T$ be an indexed surviving trace of length $n-2$: a
+sequence of states $T_0, T_1, \dots$ in which each $T_{i+1}$ (for $i < n-2$) arises from
+$T_i$ by contracting an edge of its multigraph that does not cross the distinguished
+cut. Suppose the distinguished cut of the initial state $T_0$ is a minimum cut of the
+initial multigraph, that this initial multigraph has exactly $n$ vertices, and that the
+multigraph of $T_i$ has at least $2$ vertices for every $i < n-2$. Then the product over
+$i < n-2$ of the one-step survival ratios $\mathrm{surv}(T_i)$ — each the fraction of
+edge occurrences of $T_i$ whose underlying edge does not cross the distinguished cut —
+satisfies \[ \frac{2}{n(n-1)} \le \prod_{i=0}^{n-3} \mathrm{surv}(T_i). \]
 \end{theorem}

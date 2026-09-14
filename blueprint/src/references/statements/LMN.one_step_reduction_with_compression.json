@@ -1,0 +1,23 @@
+{
+ "lean_name": "LMN.one_step_reduction_with_compression",
+ "key": "5210677ecc84a5bc",
+ "kind": "theorem",
+ "title": "One-step compression of DNF gates under random restriction",
+ "statement": "Let $g_1,\\dots,g_{s_2}$ be DNF formulas on $n \\ge 1$ variables, each of width at most $w$, where $w \\ge 1$; assume that in every term of every $g_i$ any two literals on the same variable coincide (so no term repeats a variable or contains both a literal and its negation) and no literal occurs twice in the term. Fix a natural number $\\ell$ and a real $p$ with $0 < p \\le \\tfrac{1}{40w}$ and $p \\le 1$. Then, for a Bernoulli-$p$ random restriction $\\rho$ of the $n$ variables,\n\\[\n  \\Pr_\\rho\\Bigl[\\text{for every } i,\\ g_i|_\\rho \\text{ is computed by some CNF formula of width } \\le \\ell\\Bigr]\n  \\;\\ge\\; 1 - s_2\\left(\\left(\\tfrac12\\right)^{\\ell} + \\exp\\!\\left(-\\tfrac{np}{3}\\right)\\right),\n\\]\nwhere $g_i|_\\rho$ is the restriction of $g_i$ by $\\rho$ and a CNF formula $\\psi$ *computes* $g_i|_\\rho$ when $\\psi$ and $g_i|_\\rho$ agree on every input.",
+ "hypotheses_covered": [
+  "s_2 gates, each a DNF formula on n variables",
+  "each gate has width at most w",
+  "w > 0",
+  "in each term, literals on the same variable coincide (no repeated variable, no contradictory pair)",
+  "in each term no literal is repeated",
+  "n > 0",
+  "p > 0",
+  "p ≤ 1/(40w)",
+  "p ≤ 1",
+  "ℓ a natural number (target CNF width bound)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g_1, \\dots, g_{s_2}$ be width-$w$ DNF formulas on $n > 0$ variables, each term of\neach $g_i$ free of repeated and of contradictory literals, and let $0 < p \\le 1/(40w)$\nwith $p \\le 1$.  Under a Bernoulli-$p$ random restriction $\\rho$,\n\\[\n  \\Pr_\\rho\\bigl[\\,\\forall i,\\ \\exists \\text{ a CNF } \\psi \\text{ of width} \\le \\ell\n     \\text{ with } \\psi = g_i|_\\rho\\,\\bigr]\n  \\;\\ge\\; 1 - s_2 \\cdot \\left( (1/2)^{\\ell} + \\exp(-np/3) \\right).\n\\]"
+}

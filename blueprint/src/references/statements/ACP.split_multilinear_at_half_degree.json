@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.split_multilinear_at_half_degree",
+ "key": "63fea7b00b78c9e0",
+ "kind": "theorem",
+ "title": "Splitting a multilinear polynomial at half degree on the cube $\\{1,\\omega\\}^n$",
+ "statement": "Let $K$ be a field, let $\\omega \\in K$ be nonzero, and let $(c_S)_{S \\subseteq \\mathrm{Fin}\\,n}$ be a family of coefficients in $K$ indexed by the subsets of $\\mathrm{Fin}\\,n$. Then there exist polynomials $P_1, P_2 \\in K[X_i : i \\in \\mathrm{Fin}\\,n]$, each of total degree at most $\\lfloor n/2 \\rfloor$, such that for every point $x \\in \\{1,\\omega\\}^n$ (that is, every $x$ with $x_i \\in \\{1,\\omega\\}$ for all $i$),\n\\[\n  \\sum_{S \\subseteq \\mathrm{Fin}\\,n} c_S \\prod_{i \\in S} x_i\n   \\;=\\; P_1(x) + \\Bigl(\\prod_{i} x_i\\Bigr)\\, P_2(y),\n   \\qquad y_i = 1 + \\omega^{-1} - \\omega^{-1} x_i .\n\\]",
+ "hypotheses_covered": [
+  "ω is a nonzero element of the field K",
+  "a coefficient family c indexed by subsets of Fin n",
+  "P₁ has total degree at most ⌊n/2⌋",
+  "P₂ has total degree at most ⌊n/2⌋",
+  "the identity holds for every x in the cube {1,ω}^n, with the argument of P₂ reparametrized coordinatewise by 1 + ω⁻¹ − ω⁻¹ xᵢ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\omega \\neq 0$ and let $c$ be a coefficient family. Then there are polynomials\n$P_1, P_2$ of total degree at most $n/2$ such that for every $x \\in \\{1,\\omega\\}^n$,\n\\[\n  \\Bigl(\\textstyle\\sum_S c_S \\prod_{i \\in S} X_i\\Bigr)(x)\n   = P_1(x) + \\Bigl(\\prod_i x_i\\Bigr)\\cdot P_2\\bigl(1 + \\omega^{-1} - \\omega^{-1}x_1,\\dots,\n     1 + \\omega^{-1} - \\omega^{-1}x_n\\bigr).\n\\]"
+}

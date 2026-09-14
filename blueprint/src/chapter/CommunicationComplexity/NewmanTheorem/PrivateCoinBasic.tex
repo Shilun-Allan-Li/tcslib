@@ -12,6 +12,14 @@ each hold independent private randomness; correctness is measured by the probabi
 
 \begin{definition}[Private-coin protocol]
 \lean{CommunicationComplexity.PrivateCoin.Protocol}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p011-b003
+}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{
+  pdf-3eebfb23ab53-p003-b004,
+  pdf-3eebfb23ab53-p004-b001
+}
 \label{CommunicationComplexity.PrivateCoin.Protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
@@ -24,6 +32,10 @@ $(\omega_y, y)$, so each player's coin flip is invisible to the other.
 
 \begin{definition}[Output node]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.output}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p004-b005
+}
 \label{CommunicationComplexity.PrivateCoin.Protocol.output}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.Protocol}
@@ -33,6 +45,10 @@ value $a : \alpha$, without any further communication.
 
 \begin{definition}[Alice's message node]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.alice}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p004-b005
+}
 \label{CommunicationComplexity.PrivateCoin.Protocol.alice}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.Protocol}
@@ -44,6 +60,10 @@ continues with $P(\text{bit})$.
 
 \begin{definition}[Bob's message node]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.bob}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p004-b005
+}
 \label{CommunicationComplexity.PrivateCoin.Protocol.bob}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.Protocol}
@@ -55,6 +75,10 @@ with $P(\text{bit})$.
 
 \begin{definition}[Randomized execution]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.rrun}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p011-b003
+}
 \label{CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PrivateCoin.Protocol}
@@ -64,20 +88,27 @@ Bob's private coin $\omega_y \in \Omega_Y$, returning the output $\alpha$.  It i
 defined by $p.\mathrm{run}\,(\omega_x, x)\,(\omega_y, y)$.
 \end{definition}
 
-\begin{theorem}[Randomized execution unfolding]
+\begin{theorem}[Randomized execution as deterministic run on paired inputs]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.rrun_eq}
 \label{CommunicationComplexity.PrivateCoin.Protocol.rrun_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{1}
-For any private-coin protocol $p$ and any inputs $x$, $y$, $\omega_x$, $\omega_y$, we
-have $p.\mathrm{rrun}\;x\;y\;\omega_x\;\omega_y = p.\mathrm{run}\,(\omega_x, x)\,(\omega_y, y)$.
-This is a definitional equality used as a simp lemma to unfold the randomized
-execution to the underlying deterministic run.
+Let $p$ be a private-coin protocol with randomness spaces $\Omega_X$ and $\Omega_Y$,
+input spaces $X$ and $Y$, and output type $\alpha$. Then for all inputs $x \in X$ and $y
+\in Y$ and all coin outcomes $\omega_x \in \Omega_X$ and $\omega_y \in \Omega_Y$, the
+randomized execution of $p$ equals the deterministic execution of $p$ on the paired
+inputs $(\omega_x, x)$ and $(\omega_y, y)$:
+\[
+\mathrm{rrun}(p, x, y, \omega_x, \omega_y) \;=\; \mathrm{run}\bigl(p, (\omega_x, x),
+(\omega_y, y)\bigr).
+\]
 \end{theorem}
 
 \begin{definition}[Approximate satisfaction]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.ApproxSatisfies}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p011-b003}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p004-b001}
 \label{CommunicationComplexity.PrivateCoin.Protocol.ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
@@ -92,6 +123,11 @@ where $\mu$ is the product measure on $\Omega_X \times \Omega_Y$.
 
 \begin{definition}[Approximate computation]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p011-b003,
+  pdf-d54d402b16e2-p013-b004
+}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p004-b001}
 \label{CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
@@ -105,19 +141,16 @@ This formalises the standard notion of bounded-error private-coin randomized
 communication complexity.
 \end{definition}
 
-\begin{theorem}[Approximate computation equals approximate satisfaction]
+\begin{theorem}[Approximate computation as satisfaction of the equality predicate]
 \lean{CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \label{CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.Protocol.ApproxSatisfies}
 \difficulty{1}
-For any private-coin protocol $p$, function $f : X \to Y \to \alpha$, and error bound
-$\varepsilon \in \mathbb{R}$,
-\[
-  p.\mathrm{ApproxComputes}\;f\;\varepsilon
-  \;=\;
-  p.\mathrm{ApproxSatisfies}\!\left(\lambda\,x\,y\,a,\; a = f\,x\,y\right)\varepsilon.
-\]
-In other words, $\varepsilon$-computing $f$ is the same as $\varepsilon$-satisfying the
-equality predicate $a = f\,x\,y$.
+Let $p$ be a private-coin protocol with randomness spaces $\Omega_X$ and $\Omega_Y$,
+input spaces $X$ and $Y$, and output type $\alpha$, each randomness space carrying a
+measure, let $f : X \to Y \to \alpha$ be a target function, and let $\varepsilon \in
+\bbr$. Then the proposition that $p$ approximately computes $f$ within error
+$\varepsilon$ coincides with the proposition that $p$ approximately satisfies, within
+error $\varepsilon$, the predicate that holds of $(x, y, a)$ exactly when $a = f(x, y)$.
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside",
+ "key": "de7997946094eec0",
+ "kind": "lemma",
+ "title": "Test subprotocol agrees with the reject branch off the reach set",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over Alice's input type $X$ and Bob's input type $Y$ with outputs in $\\alpha$, let $s$ be a subprotocol of $p$, and let $q_{\\mathrm{in}}$ and $q_{\\mathrm{out}}$ be two further such protocols. Suppose an input pair $(x, y) \\in X \\times Y$ does not reach $s$; that is, $x$ fails to lie in Alice's reach set for $s$, or $y$ fails to lie in Bob's reach set for $s$. Then executing the test subprotocol built from $s$, $q_{\\mathrm{in}}$, and $q_{\\mathrm{out}}$ on $(x, y)$ yields the same output as executing $q_{\\mathrm{out}}$ on $(x, y)$.",
+ "hypotheses_covered": [
+  "s is a subprotocol of p",
+  "qIn and qOut are protocols over the same input and output types",
+  "the input pair (x, y) does not reach s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $(x, y)$ does not reach the subprotocol $s$ of $p$, then\n$(\\texttt{testSubprotocol}\\;\\texttt{hsp}\\;\\texttt{qIn}\\;\\texttt{qOut}).\\texttt{run}\\;x\\;y = \\texttt{qOut}.\\texttt{run}\\;x\\;y$."
+}

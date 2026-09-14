@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.sum_fixedAliceFullYInfoTerm_eq_xVector_info",
+ "key": "471fa1a954b3da62",
+ "kind": "theorem",
+ "title": "Chain rule for the mutual information between Alice's input and the transcript",
+ "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for length-$n$ disjointness inputs, and work throughout under the hard distribution on samples conditioned on the event that the generated input pair is disjoint. Under this distribution write $X = (X_1, \\ldots, X_n)$ for Alice's input vector, $Y$ for Bob's input vector, $M$ for the transcript produced by running $p$ on the input pair $(X, Y)$, and $X_{<i}$ for the strict prefix $(X_1, \\ldots, X_{i-1})$ of Alice's vector. Then\n\\[ \\sum_{i=1}^{n} I\\bigl(X_i : M \\mid X_{<i},\\, Y\\bigr) = I\\bigl(X : M \\mid Y\\bigr), \\]\nwhere each $I(\\,\\cdot : \\cdot \\mid \\cdot\\,)$ denotes conditional mutual information taken with respect to the conditioned distribution.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic protocol for length-n disjointness inputs",
+  "all information quantities are taken under the hard distribution conditioned on the disjointness event"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Chain rule for the full Alice vector: $∑_{i} I(X_{i} : M | X_{<i},Y,D) = I(X : M | Y,D)$."
+}

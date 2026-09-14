@@ -1,0 +1,17 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_conditioning_prod_function_eq",
+ "key": "b239a8f0b8750789",
+ "kind": "theorem",
+ "title": "Conditioning on $(Z, f(Z))$ versus conditioning on $Z$",
+ "statement": "Let $X$, $Y$, and $Z$ be discrete random variables on a probability space $(\\Omega, \\mu)$, each taking values in a countable set and attaining only finitely many values, and let $f$ be an arbitrary function defined on the range of $Z$. Then the conditional mutual information of $X$ and $Y$ given the augmented variable $(Z, f(Z))$ equals the conditional mutual information of $X$ and $Y$ given $Z$ alone:\n\\[\n  I\\bigl(X ; Y \\mid (Z, f(Z))\\bigr) = I(X ; Y \\mid Z).\n\\]",
+ "hypotheses_covered": [
+  "X, Y, Z measurable random variables into countable spaces",
+  "each of X, Y, Z has finite range",
+  "μ is a probability measure (or zero)",
+  "f an arbitrary function on the value space of Z"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Adding a deterministic function of the conditioning variable to the conditioning variable does\nnot change conditional mutual information:\n\\[\n  I[X : Y \\mid (\\omega \\mapsto (Z(\\omega),\\, f(Z(\\omega))));\\mu]\n  \\;=\\; I[X : Y \\mid Z;\\mu].\n\\]"
+}

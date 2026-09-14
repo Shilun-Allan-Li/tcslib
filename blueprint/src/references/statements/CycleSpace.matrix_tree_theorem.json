@@ -1,0 +1,15 @@
+{
+ "lean_name": "CycleSpace.matrix_tree_theorem",
+ "key": "c5d34a2c71bb172f",
+ "kind": "theorem",
+ "title": "The matrix-tree theorem",
+ "statement": "\\textbf{The matrix-tree theorem} (Kirchhoff, 1847). Let $D$ be a connected digraph with vertex set $V$ and arc set $A$, and let $M$ be its oriented incidence matrix, the $V \\times A$ matrix whose entry in row $v$ and column $a$ is $1$ if $v$ is the tail of $a$, is $-1$ if $v$ is the head of $a$, and is $0$ otherwise. Fix any vertex $y \\in V$, and let $K$ be the reduced incidence matrix obtained from $M$ by deleting the row indexed by $y$. Then the number $\\tau(D)$ of spanning trees of $D$ satisfies \\[ \\tau(D) = \\det\\!\\left(K K^{\\mathsf{T}}\\right), \\] the equality holding in $\\bbz$.",
+ "hypotheses_covered": [
+  "D is a connected digraph (with vertex set V and arc set A)",
+  "y is a chosen vertex of D (whose row is deleted from the incidence matrix)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\textbf{The matrix-tree theorem} (implicit in Kirchhoff, 1847). \\emph{\\texttt{$\\tau$(G)\n= det KK'}, where \\texttt{K} is obtained from the incidence matrix \\texttt{M} by\ndeleting any one row.}"
+}

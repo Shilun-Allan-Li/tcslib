@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.isBipartite_iff_forall_subgraph_two_mul_indepNum_le",
+ "key": "bc0bdbb153fe0a9e",
+ "kind": "theorem",
+ "title": "Bipartiteness via independence numbers of subgraphs",
+ "statement": "Let $G$ be a finite simple graph. Then $G$ is bipartite if and only if every subgraph $H$ of $G$ satisfies\n\\[\n\\abs{V(H)} \\le 2\\,\\alpha(H),\n\\]\nwhere $V(H)$ is the vertex set of $H$ and $\\alpha(H)$ denotes the independence number of $H$, that is, the size of a largest set of pairwise non-adjacent vertices of $H$.",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "biconditional: G is bipartite",
+  "quantifier: for every subgraph H of G",
+  "conclusion: number of vertices of H at most twice the independence number of H"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "7.1.1   (a) Show that $G$ is bipartite if and only if\n$\\alpha(H) \\geq \\frac{1}{2}\\nu(H)$ for every subgraph $H$ of $G$."
+}

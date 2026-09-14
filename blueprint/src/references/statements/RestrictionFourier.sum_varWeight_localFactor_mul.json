@@ -1,0 +1,17 @@
+{
+ "lean_name": "RestrictionFourier.sum_varWeight_localFactor_mul",
+ "key": "d86b32427f560f8a",
+ "kind": "lemma",
+ "title": "Averaging a product of two local factors",
+ "statement": "Fix a real parameter $p$, subsets $U, V, S \\subseteq [n]$, and a coordinate $i \\in [n]$. Averaging over the three per-coordinate values $v$ — the free value and the two fixed signs — with the per-variable weight $w_p(v)$, the product of the two local factors, one for the pair $(U,S)$ and one for the pair $(V,S)$, satisfies\n\\[\n  \\sum_{v} w_p(v)\\,\\ell_{U,S}(i,v)\\,\\ell_{V,S}(i,v)\n  = \\begin{cases}\n      p & i \\in S,\\\\[2pt]\n      1-p & i \\notin S,\\ i \\in U,\\ \\text{and}\\ i \\in V,\\\\[2pt]\n      0 & i \\notin S\\ \\text{and exactly one of}\\ i \\in U,\\ i \\in V\\ \\text{holds},\\\\[2pt]\n      1 & i \\notin S,\\ i \\notin U,\\ \\text{and}\\ i \\notin V,\n    \\end{cases}\n\\]\nwhere $w_p$ denotes the per-variable weight and $\\ell_{W,S}$ the local factor determined by the sets $W$ and $S$.",
+ "hypotheses_covered": [
+  "real parameter p",
+  "subsets U, V, S of [n]",
+  "coordinate i in [n]",
+  "sum over all per-coordinate values v (Option Bool)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p \\in \\bbr$, sets $U, V, S$ and a coordinate $i$,\n\\[\n  \\sum_{v} \\mathrm{varWeight}\\,p\\,v \\cdot \\bigl(\\mathrm{localFactor}\\,U\\,S\\,i\\,v\\cdot\n  \\mathrm{localFactor}\\,V\\,S\\,i\\,v\\bigr)\n  = \\begin{cases} p & i \\in S,\\\\ 1-p & i \\notin S,\\ i \\in U \\text{ and } i \\in V,\\\\\n  0 & i \\notin S,\\ i \\in U \\text{ or } i \\in V,\\\\ 1 & \\text{otherwise,}\\end{cases}\n\\]\nwhich is the per-coordinate average needed for the squared coefficient."
+}

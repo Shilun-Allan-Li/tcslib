@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.transcriptComap_injective",
+ "key": "ae8fdc64aae3fd00",
+ "kind": "theorem",
+ "title": "Injectivity of the transcript pull-back",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be maps on the input spaces. Consider the pulled-back protocol over $X' \\times Y'$ obtained by pre-composing every message function of $p$ with $f_X$ or $f_Y$ as appropriate. Then the map that sends each syntactic transcript of $p$ to the corresponding transcript of this pulled-back protocol — preserving the sequence of Boolean messages while re-routing through the input maps — is injective.",
+ "hypotheses_covered": [
+  "a deterministic protocol p over input types X, Y with output type α",
+  "input maps f_X : X' → X and f_Y : Y' → Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every protocol $p$ and input maps $f_X : X' \\to X$, $f_Y : Y' \\to Y$, the map\n\\texttt{CommunicationComplexity.Deterministic.Protocol.transcriptComap}~$p$~$f_X$~$f_Y$ from $\\mathrm{Transcript}(p)$ to\n$\\mathrm{Transcript}(p.\\mathrm{comap}(f_X, f_Y))$ is injective."
+}

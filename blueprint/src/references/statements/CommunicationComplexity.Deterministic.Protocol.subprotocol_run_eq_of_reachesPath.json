@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath",
+ "key": "f0da0c759d943a5a",
+ "kind": "lemma",
+ "title": "Running a protocol and a reached subprotocol agree",
+ "statement": "Let $p$ and $s$ be deterministic two-party communication protocols over Alice's input type $X$ and Bob's input type $Y$ with output type $\\alpha$, and let $\\pi$ be a subprotocol path witnessing that $s$ sits at a rooted subtree of $p$. Suppose the input pair $(x, y)$ reaches $s$ along $\\pi$, meaning $x$ lies in the set of Alice inputs consistent with all of Alice's branching choices on $\\pi$ and $y$ lies in the set of Bob inputs consistent with all of Bob's branching choices on $\\pi$. Then executing $p$ and executing $s$ on $(x, y)$ yield the same output.",
+ "hypotheses_covered": [
+  "p and s are protocols over X, Y with output type α",
+  "a subprotocol path π witnesses s is a rooted subtree of p",
+  "(x, y) reaches s along π: x is consistent with Alice's choices and y with Bob's choices on π"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input pair $(x, y)$ reaches the subprotocol $s$ of $p$ via path \\texttt{hsp}, then\nrunning $p$ and running $s$ on $(x, y)$ produce the same output: $p.\\texttt{run}\\;x\\;y =\ns.\\texttt{run}\\;x\\;y$."
+}

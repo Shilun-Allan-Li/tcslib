@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.ramsey_recursion",
+ "key": "fec03646bf5475a1",
+ "kind": "theorem",
+ "title": "The Ramsey recursion inequality",
+ "statement": "For integers $k \\ge 2$ and $l \\ge 2$, the Ramsey numbers satisfy\n\\[\nr(k, l) \\le r(k, l-1) + r(k-1, l),\n\\]\nwhere $r(k, l)$ denotes the least number of vertices $n$ such that every simple graph on $n$ vertices contains either a clique on $k$ vertices or an independent set on $l$ vertices.",
+ "hypotheses_covered": [
+  "k ≥ 2",
+  "l ≥ 2",
+  "conclusion: r(k,l) ≤ r(k,l-1) + r(k-1,l)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two integers $k \\geq 2$ and $l \\geq 2$\n\\[r(k, l) \\leq r(k, l-1) + r(k-1, l) \\qquad (7.7)\\]\nFurthermore, if $r(k, l-1)$ and $r(k-1, l)$ are both even, then strict\ninequality holds in (7.7)."
+}

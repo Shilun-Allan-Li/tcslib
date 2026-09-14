@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.piece_card",
+ "key": "4f7a8e6a3af9bb71",
+ "kind": "lemma",
+ "title": "Support fibers split into equal-cardinality slices",
+ "statement": "Let $u$ be a word of length $n$ over a finite alphabet $\\alpha$, let $S$ be a set of coordinate positions, and let $i$ be a position with $i \\notin S$. For every symbol $a \\in \\alpha$ with $a \\ne u_i$, the words in the support fiber of $u$ over $\\{i\\} \\cup S$ — those differing from $u$ at exactly the positions in $\\{i\\} \\cup S$ — whose entry at position $i$ equals $a$ are exactly as many as the words in the support fiber of $u$ over $S$, that is, the words differing from $u$ at exactly the positions in $S$.",
+ "hypotheses_covered": [
+  "u is a word of length n over the finite alphabet α",
+  "S is a set of coordinate positions",
+  "i is a position with i ∉ S",
+  "a is a symbol with a ≠ u_i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i \\notin S$ and any alternative symbol $a \\in \\mathrm{choices}(u,i)$, the slice\n$\\{v \\in \\mathrm{supportFiber}(u,\\{i\\}\\cup S) : v_i = a\\}$\nhas the same cardinality as $\\mathrm{supportFiber}(u,S)$."
+}

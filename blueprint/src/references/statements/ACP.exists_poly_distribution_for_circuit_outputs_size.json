@@ -1,0 +1,20 @@
+{
+ "lean_name": "ACP.exists_poly_distribution_for_circuit_outputs_size",
+ "key": "f5430ef78d987566",
+ "kind": "theorem",
+ "title": "Polynomial approximation of AC⁰[p] circuits, size form",
+ "statement": "Let $p$ be a prime and let $F$ be a feedforward circuit over the Boolean alphabet $\\{0,1\\}$ with inputs indexed by $\\{1,\\dots,n\\}$ and a finite set of outputs, in which every layer has only finitely many nodes and every gate belongs to the $\\mathrm{AC}^0[p]$ gate set. Then for every $\\ell \\in \\bbn$ there exist a finite, nonempty seed set $\\mathrm{Seed}$ and, for each seed $s \\in \\mathrm{Seed}$ and each output $o$, a polynomial $P_{s,o} \\in \\bbz/p[X_1,\\dots,X_n]$ of total degree at most $\\bigl((p-1)\\ell\\bigr)^{\\mathrm{depth}(F)}$, such that for every Boolean input $x \\in \\{0,1\\}^n$ the seeds that err on $x$ satisfy\n\\[\n\\abs{\\bigl\\{\\, s \\in \\mathrm{Seed} : P_{s,o}(\\bar x) \\neq \\overline{F(x)(o)}\\ \\text{for some output } o \\,\\bigr\\}} \\cdot 2^{\\ell} \\;\\le\\; \\mathrm{size}(F) \\cdot \\abs{\\mathrm{Seed}},\n\\]\nwhere $\\bar x \\in (\\bbz/p)^n$ and $\\overline{F(x)(o)} \\in \\bbz/p$ denote the images under $\\{0,1\\} \\to \\bbz/p$ of the Boolean vector $x$ and of the circuit's output at $o$ on input $x$, respectively.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$F$ is a feedforward circuit over the Boolean alphabet $\\{0,1\\}$",
+  "inputs indexed by $n$ coordinates",
+  "finite output set",
+  "every layer has finitely many nodes",
+  "every gate lies in the $\\mathrm{AC}^0[p]$ gate set",
+  "$\\ell$ is an arbitrary natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a prime, and let $F$ be a feedforward circuit over the Boolean alphabet\n$\\{0,1\\}$ with inputs indexed by $n$ coordinates and a finite output set, in which every\nlayer has only finitely many nodes and every gate belongs to the $\\mathrm{AC}^0[p]$ gate\nset. Then for every $\\ell \\in \\bbn$ there exist a finite, nonempty seed set\n$\\mathrm{Seed}$ and a family of polynomials $P_{s,o} \\in \\bbz/p[X_1,\\dots,X_n]$, one for\neach seed $s \\in \\mathrm{Seed}$ and each output $o$, such that every $P_{s,o}$ has total\ndegree at most $\\mathrm{circuitDegreeBound}(p,\\ell,\\mathrm{depth}(F))$, and such that,\nfor every Boolean input $x$ on the $n$ coordinates, the seeds that err on $x$ — those\n$s$ for which, for some output $o$, the value\n$P_{s,o}\\bigl(\\mathrm{boolInput}_p(x)\\bigr)$ differs in $\\bbz/p$ from the image in\n$\\bbz/p$ of the circuit's output at $o$ on input $x$ — satisfy\n\\[\n\\abs{\\{\\, s \\in \\mathrm{Seed} : s \\text{ errs on } x \\,\\}} \\cdot 2^{\\ell} \\;\\le\\;\n\\mathrm{size}(F) \\cdot \\abs{\\mathrm{Seed}}.\n\\]"
+}

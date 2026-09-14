@@ -111,7 +111,6 @@ extending the integer-argument definition to real arguments.
 \label{krawtchouk_zero}
 \leanok
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
-
 \proofstep
   {krawtchouk}
   {direct}
@@ -120,10 +119,14 @@ extending the integer-argument definition to real arguments.
     pdf-abed77da6b7a-p007-b008}
 \uses{krawtchouk}
 \difficulty{1}
-For all $n$ and $x$, $K_0^{(n)}(x) = 1$.
+For all natural numbers $n$ and $x$, the degree-zero binary Krawtchouk polynomial is
+identically $1$; that is,
+\[
+  K_0^{(n)}(x) = 1.
+\]
 \end{theorem}
 
-\begin{theorem}[Krawtchouk polynomial at $x = 0$]
+\begin{theorem}[Krawtchouk polynomial at zero]
 \lean{krawtchouk_eval_zero}
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p003-b007}
 \label{krawtchouk_eval_zero}
@@ -135,17 +138,20 @@ For all $n$ and $x$, $K_0^{(n)}(x) = 1$.
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \uses{krawtchouk}
 \difficulty{2}
-For $j \le n$, $K_j^{(n)}(0) = \binom{n}{j}$.
+Let $n$ and $j$ be natural numbers with $j \le n$. Then the binary Krawtchouk polynomial
+$K_j^{(n)}$ evaluated at $0$ equals the binomial coefficient $\binom{n}{j}$, that is,
+\[
+  K_j^{(n)}(0) = \binom{n}{j}.
+\]
 \end{theorem}
 
-\begin{theorem}[First Krawtchouk polynomial]
+\begin{theorem}[Value of the first Krawtchouk polynomial]
 \lean{krawtchouk_one}
 \proofsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
 \label{krawtchouk_one}
 \leanok
 \statementsource{arXiv.1812.04992}{pdf-f300deb505d8-p002-b006}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b010}
-
 \proofstep
   {krawtchouk}
   {direct}
@@ -153,10 +159,14 @@ For $j \le n$, $K_j^{(n)}(0) = \binom{n}{j}$.
   {pdf-abed77da6b7a-p007-b009}
 \uses{krawtchouk}
 \difficulty{3}
-For $x \le n$, $K_1^{(n)}(x) = n - 2x$.
+Let $n$ and $x$ be natural numbers with $x \le n$. Then the first binary Krawtchouk
+polynomial at $x$ satisfies
+\[
+  K_1^{(n)}(x) = n - 2x.
+\]
 \end{theorem}
 
-\begin{theorem}[Krawtchouk generating function]
+\begin{theorem}[Generating function of the Krawtchouk polynomials]
 \lean{krawtchouk_generating_function}
 \label{krawtchouk_generating_function}
 \leanok
@@ -167,13 +177,14 @@ For $x \le n$, $K_1^{(n)}(x) = n - 2x$.
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b008}
 \uses{krawtchouk}
 \difficulty{6}
-For $x \le n$ and every real $z$,
+Let $n$ and $x$ be natural numbers with $x \le n$, and let $K_j^{(n)}(x)$ denote the
+binary Krawtchouk polynomial. Then for every real $z$,
 \[
-  \sum_{j=0}^{n} K_j^{(n)}(x)\, z^{j} \;=\; (1-z)^{x}(1+z)^{\,n-x}.
+  \sum_{j=0}^{n} K_j^{(n)}(x)\, z^{j} \;=\; (1-z)^{x}\,(1+z)^{\,n-x}.
 \]
 \end{theorem}
 
-\begin{theorem}[Orthogonality of Krawtchouk polynomials]
+\begin{theorem}[Orthogonality of the Krawtchouk polynomials]
 \lean{krawtchouk_orthogonality}
 \label{krawtchouk_orthogonality}
 \leanok
@@ -182,15 +193,18 @@ For $x \le n$ and every real $z$,
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b012}
 \uses{krawtchouk, krawtchouk_generating_function}
 \difficulty{7}
-For $r \le n$ and $s \le n$,
+Fix a natural number $n$, and let $r, s$ be natural numbers with $r \le n$ and $s \le
+n$. Then the binary Krawtchouk polynomials satisfy
 \[
-  \sum_{x=0}^{n} \binom{n}{x} K_r^{(n)}(x)\,K_s^{(n)}(x)
+  \sum_{x=0}^{n} \binom{n}{x}\, K_r^{(n)}(x)\, K_s^{(n)}(x)
   \;=\;
   \begin{cases}
-    2^{n}\binom{n}{r}, & r = s,\\
-    0, & r \ne s.
+    2^{n}\dbinom{n}{r}, & r = s,\\[2pt]
+    0, & r \ne s;
   \end{cases}
 \]
+that is, they are orthogonal with respect to the weights $\binom{n}{x}$ on $\{0, 1,
+\dots, n\}$.
 \end{theorem}
 
 \begin{theorem}[Three-term recurrence for Krawtchouk polynomials]
@@ -202,25 +216,31 @@ For $r \le n$ and $s \le n$,
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p007-b013}
 \uses{krawtchouk, krawtchouk_generating_function}
 \difficulty{7}
-For $1 \le j$, $j + 1 \le n$ and $x \le n$,
+Let $n$, $j$, and $x$ be natural numbers with $1 \le j$, $j + 1 \le n$, and $x \le n$.
+Then the binary Krawtchouk polynomials $K_j^{(n)}$ satisfy the three-term recurrence
 \[
-  (j+1)\,K_{j+1}^{(n)}(x) \;=\; (n - 2x)\,K_j^{(n)}(x) - (n - j + 1)\,K_{j-1}^{(n)}(x).
+(j+1)\,K_{j+1}^{(n)}(x) \;=\; (n - 2x)\,K_j^{(n)}(x) \;-\; (n - j +
+1)\,K_{j-1}^{(n)}(x).
 \]
 \end{theorem}
 
-\begin{theorem}[Agreement of the sum formula and the polynomial form]
+\begin{theorem}[Krawtchouk polynomial evaluated at an integer]
 \lean{krawtchoukPoly_eval_nat}
 \label{krawtchoukPoly_eval_nat}
 \leanok
 \uses{krawtchouk, krawtchoukPoly, krawtchouk_zero, krawtchouk_one, krawtchouk_recurrence}
 \difficulty{4}
-For $j \le n$ and $x \le n$, evaluating the polynomial $K_j^{(n)}$ at the real number
-$x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
+Fix a natural number $n$, and let $j, x$ be natural numbers with $j \le n$ and $x \le
+n$. Then the Krawtchouk polynomial $K_j^{(n)}$, evaluated at the real number $x$, equals
+the alternating sum
+\[
+  K_j^{(n)}(x) \;=\; \sum_{i=0}^{j} (-1)^i \binom{x}{i}\binom{n-x}{j-i}.
+\]
 \end{theorem}
 
 \subsection{Delsarte's linear programming bound}
 
-\begin{theorem}[Delsarte LP inequality]
+\begin{theorem}[Delsarte linear-programming bound]
 \lean{delsarte_lp_bound}
 \proofsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p005-b002,
@@ -239,7 +259,6 @@ $x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
   pdf-abed77da6b7a-p005-b002,
   pdf-abed77da6b7a-p005-b003
 }
-
 \proofstep
   {codeA}
   {context}
@@ -252,9 +271,11 @@ $x$ gives the value $K_j^{(n)}(x)$ of the alternating-sum definition.
   {pdf-abed77da6b7a-p007-b009,
     pdf-abed77da6b7a-p007-b008}
 \uses{codeA, krawtchouk}
-Let $F(x) = \sum_{j=0}^{n} F_j K_j^{(n)}(x)$ for real coefficients $F_j$. If
-$F_0 > 0$, if $F_j \ge 0$ for all $1 \le j \le n$, and if $F(x) \le 0$ for every
-integer $x$ with $d \le x \le n$, then
+Fix naturals $n$ and $d$, and let $F_0, F_1, \dots, F_n$ be real coefficients defining
+the function $F(x) = \sum_{j=0}^{n} F_j\, K_j^{(n)}(x)$. Suppose that $F_0 > 0$, that
+$F_j \ge 0$ for every $j$ with $1 \le j \le n$, and that $F(x) \le 0$ for every integer
+$x$ with $d \le x \le n$. Then the maximum size of a binary code of length $n$ and
+minimum distance $d$ satisfies
 \[
   A(n,d) \;\le\; \frac{F(0)}{F_0}.
 \]
@@ -274,7 +295,7 @@ For $t \le n$ and real $a, x$, the truncated reproducing kernel is
 \]
 \end{definition}
 
-\begin{theorem}[Christoffel--Darboux identity for Krawtchouk polynomials]
+\begin{theorem}[Christoffel–Darboux identity for Krawtchouk polynomials]
 \lean{cd_identity}
 \label{cd_identity}
 \leanok
@@ -285,13 +306,17 @@ For $t \le n$ and real $a, x$, the truncated reproducing kernel is
 }
 \uses{cdKernel, krawtchoukPoly}
 \difficulty{6}
-For $t + 1 \le n$ and real $a \ne x$ there is a scalar $c > 0$ with
+Let $n, t$ be natural numbers with $t + 1 \le n$, and let $a, x$ be real numbers with $a
+\ne x$. Then there is a positive constant $c > 0$ for which the truncated
+Christoffel–Darboux kernel satisfies
 \[
-  \Phi_{n,t}(a,x) \;=\; c\,\frac{K_t^{(n)}(a)K_{t+1}^{(n)}(x) - K_{t+1}^{(n)}(a)K_t^{(n)}(x)}{a - x}.
+\Phi_{n,t}(a,x) \;=\; c\,\frac{K_t^{(n)}(a)\,K_{t+1}^{(n)}(x) -
+K_{t+1}^{(n)}(a)\,K_t^{(n)}(x)}{a - x},
 \]
+where $K_j^{(n)}$ denotes the $j$-th Krawtchouk polynomial.
 \end{theorem}
 
-\begin{theorem}[Positivity of Krawtchouk values below all zeros]
+\begin{theorem}[Positivity of Krawtchouk values below the smallest zero]
 \lean{krawtchouk_positive_below_smallest_zero}
 \proofsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p005-b005,
@@ -306,7 +331,6 @@ For $t + 1 \le n$ and real $a \ne x$ there is a scalar $c > 0$ with
   pdf-abed77da6b7a-p005-b005,
   pdf-abed77da6b7a-p008-b004
 }
-
 \proofstep
   {krawtchoukPoly}
   {direct}
@@ -315,8 +339,10 @@ For $t + 1 \le n$ and real $a \ne x$ there is a scalar $c > 0$ with
     pdf-abed77da6b7a-p007-b010,
     pdf-abed77da6b7a-p007-b008}
 \uses{krawtchoukPoly}
-Fix $t + 1 \le n$ and a real $a$ that is strictly smaller than every real zero
-$\xi$ of $K_t^{(n)}$. Then $K_j^{(n)}(a) > 0$ for every $j \le t$.
+Let $n$ and $t$ be natural numbers with $t + 1 \le n$, and let $K_j^{(n)}$ denote the
+degree-$j$ Krawtchouk polynomial associated with $n$. Suppose $a$ is a real number lying
+strictly below every real zero of $K_t^{(n)}$: that is, $a < \xi$ whenever
+$K_t^{(n)}(\xi) = 0$. Then $K_j^{(n)}(a) > 0$ for every $j$ with $j \le t$.
 \end{theorem}
 
 \begin{theorem}[Nonpositivity of the kernel beyond a threshold]
@@ -327,12 +353,14 @@ $\xi$ of $K_t^{(n)}$. Then $K_j^{(n)}(a) > 0$ for every $j \le t$.
   pdf-abed77da6b7a-p005-b005
 }
 \uses{cdKernel, krawtchoukPoly}
-Under the same hypotheses ($t + 1 \le n$ and $a$ strictly below every real zero of
-$K_t^{(n)}$), there exists a threshold $\eta$ such that $\Phi_{n,t}(a,x) \le 0$ for
+Fix natural numbers $t$ and $n$ with $t + 1 \le n$, and let $a$ be a real number lying
+strictly to the left of every real zero of the Krawtchouk polynomial $K_t^{(n)}$; that
+is, $a < \xi$ whenever $K_t^{(n)}(\xi) = 0$. Then there is a real threshold $\eta$ such
+that the truncated Christoffel--Darboux kernel satisfies $\Phi_{n,t}(a, x) \le 0$ for
 every integer $x$ with $\eta \le x \le n$.
 \end{theorem}
 
-\begin{theorem}[Finite-$n$ MRRW bound]
+\begin{theorem}[Finite-length MRRW linear-programming bound]
 \lean{finite_n_mrrw_bound}
 \label{finite_n_mrrw_bound}
 \leanok
@@ -342,10 +370,13 @@ every integer $x$ with $\eta \le x \le n$.
 }
 \uses{cdKernel, codeA, delsarte_lp_bound, krawtchoukPoly, krawtchoukPoly_eval_nat, krawtchouk_positive_below_smallest_zero}
 \difficulty{6}
-Let $t + 1 \le n$, let $a$ be strictly below every real zero of $K_t^{(n)}$, and
-suppose $\Phi_{n,t}(a,x) \le 0$ for every integer $x$ with $d \le x \le n$. Then
+Fix natural numbers $n$, $t$, and $d$ with $t + 1 \le n$, and let $a$ be a real number
+lying strictly below every real zero of the Krawtchouk polynomial $K_t^{(n)}$. Suppose
+that the truncated Christoffel--Darboux kernel satisfies $\Phi_{n,t}(a, x) \le 0$ for
+every integer $x$ with $d \le x \le n$. Then the maximum size of a binary code of length
+$n$ and minimum distance $d$ is bounded by
 \[
-  A(n,d) \;\le\; \Phi_{n,t}(a,0).
+  A(n, d) \;\le\; \Phi_{n,t}(a, 0).
 \]
 \end{theorem}
 
@@ -367,7 +398,6 @@ suppose $\Phi_{n,t}(a,x) \le 0$ for every integer $x$ with $d \le x \le n$. Then
   pdf-abed77da6b7a-p008-b008,
   pdf-abed77da6b7a-p006-b002
 }
-
 \proofstep
   {krawtchoukPoly}
   {direct}
@@ -384,11 +414,14 @@ suppose $\Phi_{n,t}(a,x) \le 0$ for every integer $x$ with $d \le x \le n$. Then
     pdf-abed77da6b7a-p008-b003,
     pdf-abed77da6b7a-p008-b002}
 \uses{cdKernel, krawtchoukPoly}
-Let $0 < \tau < 1/2$ and let $t_n$ satisfy $t_n / n \to \tau$. Then there is a
-sequence $a_n$ such that, eventually in $n$, $a_n$ lies strictly below every real
-zero of $K_{t_n}^{(n)}$, with $a_n/n \to \tfrac12 - \sqrt{\tau(1-\tau)}$, and such
-that eventually $\Phi_{n,t_n}(a_n,x) \le 0$ for all integers $x$ with
-$\lfloor (\tfrac12 - \sqrt{\tau(1-\tau)})n \rfloor \le x \le n$.
+Fix $\tau$ with $0 < \tau < 1/2$, and let $(t_n)$ be a sequence of natural numbers with
+$t_n/n \to \tau$. Then there is a real sequence $(a_n)$ with the following three
+properties. First, for all sufficiently large $n$, the number $a_n$ lies strictly below
+every real zero of the Krawtchouk polynomial $K_{t_n}^{(n)}$; that is,
+$K_{t_n}^{(n)}(\xi) = 0$ implies $a_n < \xi$. Second, $a_n/n \to \tfrac12 -
+\sqrt{\tau(1-\tau)}$. Third, for all sufficiently large $n$, the truncated
+Christoffel--Darboux kernel satisfies $\Phi_{n,t_n}(a_n, x) \le 0$ for every integer $x$
+with $\big\lfloor (\tfrac12 - \sqrt{\tau(1-\tau)})\,n \big\rfloor \le x \le n$.
 \end{theorem}
 
 \begin{theorem}[Entropy growth rate of the objective]
@@ -402,7 +435,6 @@ $\lfloor (\tfrac12 - \sqrt{\tau(1-\tau)})n \rfloor \le x \le n$.
   pdf-abed77da6b7a-p006-b001,
   pdf-abed77da6b7a-p006-b002
 }
-
 \proofstep
   {binaryEntropy}
   {direct}
@@ -423,18 +455,23 @@ $\lfloor (\tfrac12 - \sqrt{\tau(1-\tau)})n \rfloor \le x \le n$.
     pdf-abed77da6b7a-p008-b003,
     pdf-abed77da6b7a-p005-b004}
 \uses{binaryEntropy, cdKernel, krawtchoukPoly}
-Let $0 < \tau < 1/2$, let $t_n/n \to \tau$, and let $a_n$ eventually lie strictly
-below every real zero of $K_{t_n}^{(n)}$. Then
+Fix $0 < \tau < 1/2$, and let $(t_n)$ be a sequence of natural numbers and $(a_n)$ a
+sequence of reals such that $t_n/n \to \tau$ and, for all sufficiently large $n$, the
+point $a_n$ lies strictly below every real zero of the Krawtchouk polynomial
+$K_{t_n}^{(n)}$. Then the truncated Christoffel--Darboux kernel evaluated at $(a_n, 0)$
+grows at rate at most $H(\tau)$, in the sense that
 \[
-  \limsup_{n\to\infty} \frac{1}{n}\log_2 \Phi_{n,t_n}(a_n,0) \;\le\; H(\tau).
+  \limsup_{n\to\infty} \frac{1}{n}\log_2 \Phi_{n,t_n}(a_n, 0) \;\le\; H(\tau),
 \]
+where $H$ is the binary entropy function in base $2$.
 \end{theorem}
 
-\begin{theorem}[Entropy asymptotics for binomial tails]
+\begin{theorem}[Entropy asymptotics for binomial tail sums]
 \lean{binomial_tail_entropy_asymptotic}
 \label{binomial_tail_entropy_asymptotic}
 \uses{binaryEntropy}
-For $0 \le \tau \le 1/2$,
+Fix a real number $\tau$ with $0 \le \tau \le \tfrac12$. Then the normalized base-$2$
+logarithm of the lower binomial tail sum converges to the binary entropy of $\tau$:
 \[
   \frac{1}{n}\log_2\!\left(\sum_{j=0}^{\lfloor \tau n\rfloor} \binom{n}{j}\right)
   \;\longrightarrow\; H(\tau)
@@ -444,35 +481,39 @@ For $0 \le \tau \le 1/2$,
 
 \subsection{Conclusion of the MRRW bound}
 
-\begin{theorem}[Involution between $\delta$ and $\tau$]
+\begin{theorem}[{An involution of the interval $[0,\tfrac12]$}]
 \lean{delta_tau_involution}
 \label{delta_tau_involution}
 \leanok
 \difficulty{3}
-For $0 \le \delta \le 1/2$, setting $\tau = \tfrac12 - \sqrt{\delta(1-\delta)}$ gives
-back $\delta = \tfrac12 - \sqrt{\tau(1-\tau)}$; that is, the map is an involution on
-$[0,1/2]$.
+Let $\delta$ be a real number with $0 \le \delta \le \tfrac12$, and define $\tau =
+\tfrac12 - \sqrt{\delta(1-\delta)}$. Then $\tau$ again lies in $[0,\tfrac12]$ and
+applying the same rule to it recovers $\delta$, that is, $\tfrac12 - \sqrt{\tau(1-\tau)}
+= \delta$. Hence the map $x \mapsto \tfrac12 - \sqrt{x(1-x)}$ is an involution of the
+interval $[0,\tfrac12]$.
 \end{theorem}
 
-\begin{theorem}[Binary entropy at $0$]
+\begin{theorem}[Binary entropy at zero]
 \lean{binaryEntropy_zero}
 \label{binaryEntropy_zero}
 \leanok
 \uses{binaryEntropy}
 \difficulty{1}
-$H(0) = 0$.
+Let $H(x) = -x\log_2 x - (1-x)\log_2(1-x)$ be the binary entropy function in base $2$,
+under the convention $0\log_2 0 = 0$. Then $H(0) = 0$.
 \end{theorem}
 
-\begin{theorem}[Binary entropy at $1/2$]
+\begin{theorem}[Binary entropy at one-half]
 \lean{binaryEntropy_half}
 \label{binaryEntropy_half}
 \leanok
 \uses{binaryEntropy}
 \difficulty{2}
+The binary entropy function $H$ attains the value $1$ at the point $1/2$; that is,
 $H(1/2) = 1$.
 \end{theorem}
 
-\begin{theorem}[Binary first MRRW bound]
+\begin{theorem}[First linear-programming (MRRW) bound on binary codes]
 \lean{mrrw_bound}
 \proofsource{IEEE-TIT.23.157}{
   pdf-abed77da6b7a-p003-b003,
@@ -484,7 +525,6 @@ $H(1/2) = 1$.
   pdf-abed77da6b7a-p003-b003,
   pdf-abed77da6b7a-p006-b002
 }
-
 \proofstep
   {codeA}
   {direct}
@@ -501,8 +541,10 @@ $H(1/2) = 1$.
   {IEEE-TIT.23.157}
   {pdf-abed77da6b7a-p001-b004}
 \uses{binaryEntropy, rate}
-For every $\delta$ with $0 \le \delta \le 1/2$,
+For every real $\delta$ with $0 \le \delta \le 1/2$, the asymptotic binary code rate
+satisfies
 \[
-  R(\delta) \;\le\; H\!\left(\tfrac12 - \sqrt{\delta(1-\delta)}\right).
+  R(\delta) \;\le\; H\!\left(\tfrac12 - \sqrt{\delta(1-\delta)}\right),
 \]
+where $H$ is the base-$2$ binary entropy function.
 \end{theorem}

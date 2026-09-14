@@ -1,0 +1,23 @@
+{
+ "lean_name": "OnlineLearning.weak_convex_compact_minimax",
+ "key": "1f5b38290ae20a29",
+ "kind": "lemma",
+ "title": "Weak minimax inequality for convex-compact games",
+ "statement": "Let $X, Y \\subseteq \\bbr$ be nonempty convex sets with $X$ also compact, and let $f : X \\times Y \\to \\bbr$ be a payoff that is bounded above and below on $X \\times Y$, such that for every $y \\in Y$ the map $x \\mapsto f(x,y)$ is continuous and convex on $X$, and for every $x \\in X$ the map $y \\mapsto f(x,y)$ is concave on $Y$. Then\n\\[\n  \\sup_{y \\in Y}\\,\\inf_{x \\in X}\\, f(x,y)\n  \\;\\leq\\;\n  \\inf_{x \\in X}\\,\\sup_{y \\in Y}\\, f(x,y).\n\\]",
+ "hypotheses_covered": [
+  "X nonempty",
+  "Y nonempty",
+  "X compact",
+  "X convex",
+  "Y convex",
+  "f continuous in x for each y",
+  "f convex in x for each y",
+  "f concave in y for each x",
+  "f bounded above on X×Y",
+  "f bounded below on X×Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the hypotheses \\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses},\n\\[\n  \\sup_{y \\in Y}\\,\\inf_{x \\in X}\\,f(x,y)\n  \\;\\leq\\;\n  \\inf_{x \\in X}\\,\\sup_{y \\in Y}\\,f(x,y).\n\\]\nThis is the easy direction of the minimax theorem: for every fixed $(x,y)$,\n$\\inf_{x'} f(x',y) \\leq f(x,y) \\leq \\sup_{y'} f(x,y')$, and the inequality\nis preserved when taking $\\sup$ then $\\inf$."
+}

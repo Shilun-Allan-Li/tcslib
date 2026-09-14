@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.communicationComplexity_le_iff",
+ "key": "58c071bec04fe906",
+ "kind": "theorem",
+ "title": "Bit bound as existence of an approximating protocol",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function of Alice's input and Bob's input, let $\\varepsilon \\in \\bbr$ be an error parameter, and let $m \\in \\bbn$. Then the $\\varepsilon$-error public-coin communication complexity satisfies $\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\le m$ if and only if there exist a length $n \\in \\bbn$ and a public-coin protocol $p$ over the coin tape $\\mathrm{CoinTape}(n)$ such that $p$ $\\varepsilon$-computes $f$ and the worst-case bit complexity of $p$ is at most $m$.",
+ "hypotheses_covered": [
+  "f : X → Y → α is a two-argument function",
+  "ε is a real error parameter",
+  "m is a natural number bound",
+  "conclusion: complexity ≤ m iff there exists n and a protocol on CoinTape(n) that ε-computes f with complexity ≤ m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : X \\to Y \\to \\alpha$, $\\varepsilon \\in \\mathbb{R}$, and $m \\in \\mathbb{N}$,\nwe have $\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\le m$ if and only if there exist\n$n \\in \\mathbb{N}$ and a public-coin protocol $p$ on $\\mathrm{CoinTape}(n)$ such that\n$p$ $\\varepsilon$-approximates $f$ and $p.\\mathrm{complexity} \\le m$."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "LMN.switching_bernoulli_dtDepth_dnf_general",
+ "key": "432bd9b83f945b1e",
+ "kind": "theorem",
+ "title": "General switching lemma for DNFs",
+ "statement": "Let $f$ be a DNF formula on $n \\ge 1$ Boolean variables whose width is at most $w$, where $w \\ge 1$, and let $p \\in \\bbr$ satisfy $0 < p \\le 1$ together with $p \\le \\tfrac{1}{40w}$. Draw a Bernoulli($p$) random restriction $\\rho$, which independently leaves each of the $n$ variables free with probability $p$ and otherwise fixes it to a uniformly random Boolean value, and let $f_\\rho$ denote the function of the free variables obtained by evaluating $f$ with the fixed coordinates set according to $\\rho$. Then for every $t \\in \\bbn$,\n\\[\n  \\bbP_\\rho\\!\\left[\\operatorname{depth}(f_\\rho) > t\\right]\n  \\;\\le\\; \\left(\\tfrac12\\right)^{t} + \\exp\\!\\left(-\\tfrac{np}{3}\\right),\n\\]\nwhere $\\operatorname{depth}(f_\\rho)$ is the decision-tree depth of $f_\\rho$, i.e.\\ the least depth of a decision tree computing it.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "width of f is at most w",
+  "w > 0",
+  "n > 0",
+  "0 < p",
+  "p <= 1/(40w)",
+  "p <= 1",
+  "t is an arbitrary natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be a DNF of width at most $w$ with $0<w$ and $0<n$, and let $p\\in\\bbr$ satisfy\n$0<p$, $p\\le \\tfrac{1}{40w}$ and $p\\le 1$. Then for every $t\\in\\bbn$,\n\\[\n\\mathrm{bernoulliRestrProb}\\,p\\,\\bigl(\\rho \\mapsto \\mathrm{dtDepth}(\\mathrm{restrictFn}\\,f.\\mathrm{eval}\\,\\rho) > t\\bigr)\n\\;\\le\\; \\bigl(\\tfrac12\\bigr)^{t} + \\exp\\!\\bigl(-np/3\\bigr).\n\\]\nUnlike the base version, no syntactic non-duplication hypothesis is required, since the\nformula is first cleaned."
+}

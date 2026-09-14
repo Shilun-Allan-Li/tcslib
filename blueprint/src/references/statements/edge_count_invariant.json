@@ -1,0 +1,15 @@
+{
+ "lean_name": "edge_count_invariant",
+ "key": "cc5ddd78b5a96f58",
+ "kind": "lemma",
+ "title": "Edge-count lower bound at each contraction step",
+ "statement": "Let $G_0$ be a multigraph, and let $C_0$ be a minimum cut of $G_0$, so that the number of edges crossing $C_0$ (counted with multiplicity), its size, is no larger than that of any other cut. Then for every natural number $i$ with $i < \\abs{V(G_0)} - 1$,\n\\[\n  \\mathrm{size}(C_0)\\cdot\\bigl(\\abs{V(G_0)} - i\\bigr) \\;\\le\\; 2\\,\\abs{E(G_0)},\n\\]\nwhere $\\abs{V(G_0)}$ is the vertex count and $\\abs{E(G_0)}$ is the edge count of $G_0$.",
+ "hypotheses_covered": [
+  "C₀ is a minimum cut of G₀",
+  "the step index satisfies i < |V(G₀)| − 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C_0$ be a minimum cut of $G_0$ and let $i < \\abs{V(G_0)} - 1$. Then\n\\[\n  \\abs{C_0} \\cdot \\bigl(\\abs{V(G_0)} - i\\bigr) \\le 2\\abs{E(G_0)} ,\n\\]\nthe invariant maintained after $i$ contraction steps."
+}

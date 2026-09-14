@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolBLR.BLR_accept_prob_pm1",
+ "key": "c9eba2a2fb024256",
+ "kind": "lemma",
+ "title": "BLR acceptance probability in ±1 form",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function, and write $F(x) = (-1)^{f(x)} \\in \\{\\pm 1\\}$ for its sign lift. Then the BLR acceptance probability of $f$, the probability that $F(x \\oplus y) = F(x)\\,F(y)$ when $x$ and $y$ are drawn independently and uniformly from $\\{0,1\\}^n$, satisfies\n\\[\n  \\Pr_{x,y}[\\text{BLR accepts}]\n  \\;=\\;\n  \\frac{1 + \\E_{x}\\!\\left[\\E_{y}\\!\\left[ F(x)\\,F(y)\\,F(x \\oplus y) \\right]\\right]}{2},\n\\]\nwhere $x \\oplus y$ denotes the componentwise XOR.",
+ "hypotheses_covered": [
+  "f is a Boolean-valued function on the n-dimensional hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $f : \\{0,1\\}^n \\to \\{0,1\\}$,\n\\[\n  \\Pr[\\text{BLR accepts}]\n  \\;=\\;\n  \\frac{1 + \\E_x\\!\\left[\\E_y\\!\\left[\n    \\texttt{BoolBLR.lift\\_pm1}\\,f(x)\\cdot\n    \\texttt{BoolBLR.lift\\_pm1}\\,f(y)\\cdot\n    \\texttt{BoolBLR.lift\\_pm1}\\,f(x \\oplus y)\n  \\right]\\right]}{2}.\n\\]"
+}

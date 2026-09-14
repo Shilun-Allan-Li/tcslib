@@ -1,0 +1,18 @@
+{
+ "lean_name": "Networks.realisable_iff_reduced",
+ "key": "2cbbf55524ab854e",
+ "kind": "theorem",
+ "title": "One-row reduction for bipartite degree realisability",
+ "statement": "Let $p_0, p_1, \\ldots, p_m$ and $q_0, q_1, \\ldots, q_{n-1}$ be nonnegative integers, regarded as prescribed row degrees and column degrees. Then the pair $(p, q)$ is realisable by a simple bipartite graph if and only if the reduced pair $(p', q')$ is realisable, where $p' = (p_1, \\ldots, p_m)$ is obtained by deleting the first row degree $p_0$, and the reduced column degrees are\n\\[\nq'_j = \\max(q_j - 1,\\, 0) \\quad\\text{for every column } j \\text{ with } j < p_0, \\qquad q'_j = q_j \\quad\\text{otherwise;}\n\\]\nthat is, one is subtracted (never below zero) from each of the first $p_0$ column degrees and the remaining column degrees are left unchanged.",
+ "hypotheses_covered": [
+  "p is a sequence of m+1 nonnegative integer row degrees",
+  "q is a sequence of n nonnegative integer column degrees",
+  "reduced row sequence deletes the first entry p_0",
+  "reduced column j (for j < p_0) is q_j minus one, truncated at zero",
+  "reduced column j (for j >= p_0) equals q_j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{.  }Let \\texttt{p} and \\texttt{q} be nonincreasing sequences of\nnon-negative integers, and denote by \\texttt{p'} the sequence \\texttt{(p$_{2}$, \\dots{},\np\\_m)} and by \\texttt{q'}\nthe sequence \\texttt{(q$_{1}$ - 1, \\dots{}, q\\_\\{p$_{1}$\\} - 1, q\\_\\{p$_{1}$+1\\},\n\\dots{}, q\\_n)}. Then \\texttt{(p, q)} is\nrealisable by a simple bipartite graph if and only if the same is true of\n\\texttt{(p', q')}.*"
+}

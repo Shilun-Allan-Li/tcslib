@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalPath_preserve_processClauseLits",
+ "key": "e8bd7f91fe457e42",
+ "kind": "lemma",
+ "title": "Clause processing preserves the canonical path",
+ "statement": "Fix $n$, a DNF formula $f$ on $n$ variables, and two restrictions $\\rho_0$ and $\\sigma$ on those variables. Suppose $t$ is the first term of $f$ not killed by $\\rho_0$, that $t$ has no repeated literal, and that any two literals of $t$ with equal variables are themselves equal. Let $\\mathrm{lits}$ be the list of literals of $t$ whose variable is free under $\\rho_0$, each tagged with its position in $t$, and let $\\mathrm{path}$ be a canonical path for $f|_{\\rho_0}$ — an initial segment of the deepest root-to-leaf path of the canonical decision tree of $f|_{\\rho_0}$ — of length at most the depth of the canonical decision tree of $f|_{\\rho_0}$. Assume that for every index $k$ below the smaller of the lengths of $\\mathrm{lits}$ and $\\mathrm{path}$, the variable of the $k$-th literal of $\\mathrm{lits}$ equals the variable queried at the $k$-th step of $\\mathrm{path}$. Process $\\mathrm{lits}$ against $\\mathrm{path}$ in lockstep, one path step per literal, forming a restriction $\\rho_0'$ and a shortened path $\\mathrm{path}'$ as follows: a literal with variable $v$ and negation flag $b$ aligned with a path step of direction $d$ contributes the assignment $v \\mapsto d$ to $\\rho_0'$ (and the assignment $v \\mapsto \\lnot b$ to $\\sigma$), and its path step is dropped; $\\rho_0'$ agrees with $\\rho_0$ on every other variable, and $\\mathrm{path}'$ is the unconsumed tail of $\\mathrm{path}$. Then $\\mathrm{path}'$ is a canonical path for $f|_{\\rho_0'}$, and the length of $\\mathrm{path}'$ is at most the depth of the canonical decision tree of $f|_{\\rho_0'}$.",
+ "hypotheses_covered": [
+  "path is a canonical path for the canonical decision tree of f under rho_0",
+  "the k-th literal of lits and the k-th path step share a variable, for k below the shorter length",
+  "t is the first term of f not killed by rho_0",
+  "any two literals of t with the same variable are equal",
+  "t has no repeated literal",
+  "path length is at most the depth of the canonical decision tree of f under rho_0",
+  "lits is the position-tagged list of literals of t whose variable is free under rho_0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When the literals are the free literals of the first alive clause and the input\npath is canonical, $\\mathrm{IsCanonicalPath}$ is preserved by\n$\\mathrm{processClauseLits}$: the remaining path is again a canonical path for the\nupdated restriction, and its length is at most the depth of the updated canonical\ntree."
+}

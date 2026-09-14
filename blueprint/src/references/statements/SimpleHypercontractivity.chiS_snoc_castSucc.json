@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleHypercontractivity.chiS_snoc_castSucc",
+ "key": "112603bf81e7ccc0",
+ "kind": "lemma",
+ "title": "Walsh character is unchanged by appending an unused coordinate",
+ "statement": "Fix $n\\in\\bbn$, and let $S\\subseteq[n]$, $x\\in\\{0,1\\}^n$, and $b\\in\\{0,1\\}$. Form the point $(x,b)\\in\\{0,1\\}^{n+1}$ obtained by appending $b$ as the final coordinate, and regard $S$ as a subset $S'\\subseteq[n+1]$ via the inclusion $[n]\\hookrightarrow[n+1]$ that leaves each index fixed (so the new last coordinate never lies in $S'$). Then the Walsh--Fourier character of $S'$ evaluated at the extended point agrees with that of $S$ at the original point:\n\\[\n  \\chi_{S'}\\big((x,b)\\big) \\;=\\; \\chi_S(x).\n\\]",
+ "hypotheses_covered": [
+  "subset S of the index set [n]",
+  "point x in the Boolean cube {0,1}^n",
+  "bit b appended as the final coordinate",
+  "S lifted to [n+1] by the coordinate-fixing inclusion"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a subset $S \\subseteq \\mathrm{Fin}\\,n$, a point $x \\in \\{0,1\\}^n$, and a bit $b$,\nthe parity character of the lifted set equals the character of $S$ on $x$:\n\\[\n  \\chi_{\\,\\mathrm{castSucc}(S)}(\\mathrm{snoc}\\,x\\,b) = \\chi_S(x).\n\\]\nThat is, appending a last coordinate $b$ and not including it in the set leaves the\ncharacter unchanged."
+}

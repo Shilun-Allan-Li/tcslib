@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.cleanCNF_width_le",
+ "key": "7b1c10b9da0fdf4d",
+ "kind": "lemma",
+ "title": "Cleaning a CNF does not increase its width",
+ "statement": "Let $c$ be a CNF formula, that is, a list of clauses, each clause being a list of literals over the variables $\\{0,\\dots,n-1\\}$. Define the width of a clause to be its number of literals and the width of $c$ to be the maximum width among its clauses (and $0$ if $c$ has no clauses). Form the cleaned formula from $c$ by discarding every clause that contains some variable together with both of its polarities, and then, within each surviving clause, keeping only the first occurrence of each variable and deleting all later literals on a variable already seen. Then the width of the cleaned formula is at most the width of $c$.",
+ "hypotheses_covered": [
+  "c is an arbitrary CNF formula over Fin n (no side hypotheses)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The cleaned CNF has width at most that of the original:\n$\\mathrm{CNF.width}\\,(\\mathrm{cleanCNF}\\,c) \\le \\mathrm{CNF.width}\\,c$."
+}

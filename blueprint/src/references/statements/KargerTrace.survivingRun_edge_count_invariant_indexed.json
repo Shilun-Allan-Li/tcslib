@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.survivingRun_edge_count_invariant_indexed",
+ "key": "4435e44b507ca3be",
+ "kind": "lemma",
+ "title": "Indexed edge-count invariant for surviving runs",
+ "statement": "Let $s$ and $t$ be states of the contraction process, each consisting of a multigraph together with a distinguished cut, and suppose $t$ is reached from $s$ by a surviving run of $n$ steps. Write $C$ for the distinguished cut of $s$ and $G$ for its multigraph, and let $G'$ denote the multigraph of $t$. If $C$ is a minimum cut of $G$, then\n\\[\n  \\abs{C}\\,\\bigl(\\abs{V(G)} - n\\bigr) \\;\\le\\; 2\\,\\abs{E(G')},\n\\]\nwhere $\\abs{C}$ is the size of the cut (its number of crossing edges), $\\abs{V(G)}$ is the number of vertices of $G$, $\\abs{E(G')}$ is the number of edges of $G'$ counted with multiplicity, and the difference $\\abs{V(G)} - n$ is truncated at $0$.",
+ "hypotheses_covered": [
+  "surviving run of $n$ steps from state $s$ to state $t$",
+  "the distinguished cut of $s$ is a minimum cut of the multigraph of $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The same invariant, with the vertex count after $n$ contractions written explicitly: for a\nsurviving run of $n$ steps from $s$ to $t$ with $s.C$ a min-cut,\n\\[\n  s.C.\\mathrm{size}\\cdot(s.G.\\mathrm{vertexCount} - n) \\;\\le\\; 2\\, t.G.\\mathrm{edgeCount}.\n\\]"
+}

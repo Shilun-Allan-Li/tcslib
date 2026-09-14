@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_mul_integral_xDistance_sq_le_integral_xFiberKL_disjointSpecialYFalse",
+ "key": "16a0b45c7db086a6",
+ "kind": "theorem",
+ "title": "Integrated Pinsker bound for Alice's special bit",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the disjointness problem on inputs that are subsets of an $n$-element set. For a hard sample $\\omega$, let $Z(\\omega)$ be the record consisting of the transcript produced by running $p$ on the induced input pair, the special coordinate $T$, Alice's input bits at the coordinates strictly below $T$ (padded by $\\mathrm{false}$ elsewhere), and Bob's input bits at the coordinates strictly above $T$. Write $\\nu_{Z(\\omega)}$ for the conditional law of Alice's special bit $X_T$ given the value of $Z(\\omega)$ — the pushforward, under the ambient uniform law on hard samples restricted to the fibre $\\{Z = Z(\\omega)\\}$, of the map $\\omega \\mapsto X_T$ — and let $U$ denote the uniform distribution on a single bit. Let $\\mu$ be the hard distribution conditioned both on the induced input pair being disjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. Then\n\\[\n2\\int \\mathrm{TV}\\!\\bigl(\\nu_{Z(\\omega)},\\, U\\bigr)^{2}\\, d\\mu(\\omega)\\ \\le\\ \\int D_{\\mathrm{KL}}\\!\\bigl(\\nu_{Z(\\omega)}\\,\\big\\|\\,U\\bigr)\\, d\\mu(\\omega),\n\\]\nwhere $\\mathrm{TV}$ is the total variation distance and $D_{\\mathrm{KL}}$ the Kullback–Leibler divergence.",
+ "hypotheses_covered": [
+  "$n$ a positive integer",
+  "$p$ a deterministic disjointness protocol on inputs that are subsets of an $n$-element set",
+  "conclusion integrates against the hard distribution conditioned on disjointness and on Bob's special bit being false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Integrated Alice Pinsker bound over the $D ∧ Y_{T}=false$ conditioned measure."
+}

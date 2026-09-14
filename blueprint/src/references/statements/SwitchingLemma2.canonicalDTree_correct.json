@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalDTree_correct",
+ "key": "8401d033d453e8c1",
+ "kind": "lemma",
+ "title": "Correctness of the canonical decision tree",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables and let $\\rho$ be a restriction of those variables. Then the canonical decision tree of $f$ under $\\rho$ computes exactly the restriction of $f$ by $\\rho$: for every Boolean assignment $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$, evaluating the tree at $x$ yields the value of $f$ on the assignment that takes $\\rho(i)$ wherever $\\rho$ fixes coordinate $i$ and $x_i$ on the free coordinates.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n Boolean variables",
+  "ρ is a restriction of those variables",
+  "the equality holds for every Boolean assignment x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every $x$, the canonical decision tree evaluates correctly:\n$(\\mathrm{canonicalDTree}\\,f\\,\\rho).\\mathrm{eval}\\,x = \\mathrm{restrictFn}\\,(f.\\mathrm{eval})\\,\\rho\\,x$."
+}

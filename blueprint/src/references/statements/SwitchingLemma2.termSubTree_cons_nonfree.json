@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_cons_nonfree",
+ "key": "64172f9cb42d6e9d",
+ "kind": "lemma",
+ "title": "Skipping a fixed head literal in the term sub-tree",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, let $l$ be a literal whose underlying variable $v$ is not free under $\\rho$ (that is, $\\rho$ already assigns $v$ a fixed Boolean value), let $\\mathit{rest}$ be a list of literals, and let $\\mathrm{cont} : \\mathrm{Restriction}\\,n \\to \\mathrm{DecisionTree}\\,n$ be a continuation. Then the sub-tree built for the term $l :: \\mathit{rest}$ under $\\rho$ with continuation $\\mathrm{cont}$ coincides with the one built for $\\mathit{rest}$ under $\\rho$ with the same continuation; the fixed head literal $l$ contributes no branch.",
+ "hypotheses_covered": [
+  "l.var is not a free variable of ρ",
+  "l is a literal on n variables",
+  "rest is a list of literals",
+  "cont is a continuation from restrictions to decision trees",
+  "ρ is a restriction on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When the head literal $l$ is not free in $\\rho$, it is skipped:\n$\\mathrm{termSubTree}\\,(l :: \\mathit{rest})\\,\\rho\\,\\mathrm{cont} = \\mathrm{termSubTree}\\,\\mathit{rest}\\,\\rho\\,\\mathrm{cont}$."
+}

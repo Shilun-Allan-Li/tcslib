@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.Circuit.depth1_all_lits",
+ "key": "c0d9f35d2f7c3f0b",
+ "kind": "lemma",
+ "title": "Depth-one gates have only literal inputs",
+ "statement": "Fix a number of variables $m$, a gate type $isAnd \\in \\{\\mathrm{true}, \\mathrm{false}\\}$, and a list $cs$ of Boolean circuits on $m$ variables, and form the circuit $\\mathrm{node}(isAnd, cs)$ whose root gate is applied to the children in $cs$. If this circuit has depth at most $1$, then every child $c$ in $cs$ is a literal; that is, there exists a literal $l$ with $c = \\mathrm{lit}(l)$.",
+ "hypotheses_covered": [
+  "circuit is a single node node(isAnd, cs) with children cs",
+  "the node has depth at most 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a node $\\mathrm{Circuit.node}\\,\\mathit{isAnd}\\,cs$ has depth at most $1$, then every\nchild $c \\in cs$ is a literal, i.e.\\ $c = \\mathrm{Circuit.lit}\\,lr$ for some $lr$."
+}

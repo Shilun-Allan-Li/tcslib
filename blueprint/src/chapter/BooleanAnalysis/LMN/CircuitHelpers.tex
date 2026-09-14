@@ -18,20 +18,23 @@ from shallow Boolean circuits into DNF/CNF formulas.
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{1}
-If $f,g:(\mathrm{Fin}\,n\to\{0,1\})\to\{0,1\}$ agree pointwise, i.e.\ $f(x)=g(x)$ for all $x$,
-then for every restriction $\rho$ the restricted functions coincide:
-$\mathrm{restrictFn}\,f\,\rho = \mathrm{restrictFn}\,g\,\rho$.
+Let $f, g : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be two Boolean
+functions that agree at every point, so that $f(x) = g(x)$ for all $x$. Then for every
+restriction $\rho$ on $n$ variables, the restricted functions coincide: the restriction
+of $f$ by $\rho$ equals the restriction of $g$ by $\rho$.
 \end{lemma}
 
-\begin{lemma}[Bernoulli restriction probability depends only on the function]
+\begin{lemma}[Depth-exceedance probability depends only on the function]
 \lean{LMN.bernoulliRestrProb_congr_fn}
 \label{LMN.bernoulliRestrProb_congr_fn}
 \leanok
 \uses{LMN.dedupTermVar, LMN.restrictFn_ext', SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
-If $f$ and $g$ agree pointwise, then for any $p\in\bbr$ and $t\in\bbn$ the Bernoulli
-restriction probabilities of the events $\{\rho : \mathrm{dtDepth}(\mathrm{restrictFn}\,f\,\rho) > t\}$
-and $\{\rho : \mathrm{dtDepth}(\mathrm{restrictFn}\,g\,\rho) > t\}$ are equal.
+Let $f, g : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be Boolean functions
+on $n$ variables that agree at every input, and fix a real parameter $p$ and a threshold
+$t \in \bbn$. Then the Bernoulli($p$) restriction probability of the event that a random
+restriction $\rho$ produces a restricted function of decision-tree depth strictly
+greater than $t$ is the same for $f$ as for $g$.
 \end{lemma}
 
 \begin{definition}[De-duplicate literals by variable]
@@ -71,34 +74,44 @@ $\mathrm{cleanCNF}\,c$ filters out the contradictory (tautological) clauses of t
 and then de-duplicates the literals of each remaining clause via $\mathrm{dedupTermVar}$.
 \end{definition}
 
-\begin{lemma}[De-duplication yields no duplicate literals]
+\begin{lemma}[De-duplication produces a repetition-free term]
 \lean{LMN.dedupTermVar_nodup}
 \label{LMN.dedupTermVar_nodup}
 \leanok
 \uses{LMN.dedupTermVar, Literal, Term}
 \difficulty{4}
-For every term $t$, the de-duplicated term $\mathrm{dedupTermVar}\,t$ has no repeated
-literals (it satisfies \texttt{Nodup}).
+Let $t$ be a term over $n$ variables, that is, a list of literals, each a variable in
+$\{0,\dots,n-1\}$ together with a negation flag. Form a new term $t'$ by scanning $t$
+and retaining a literal exactly when no already-retained literal has the same variable,
+discarding any literal whose variable has already occurred. Then $t'$ has no repeated
+literal: no literal occurs twice in $t'$.
 \end{lemma}
 
-\begin{lemma}[De-duplication is variable-injective]
+\begin{lemma}[Variable-injectivity of literal de-duplication]
 \lean{LMN.dedupTermVar_var_inj}
 \label{LMN.dedupTermVar_var_inj}
 \leanok
 \uses{LMN.dedupTermVar, Literal, Term}
 \difficulty{4}
-Within $\mathrm{dedupTermVar}\,t$ the variable of a literal determines the literal: any two
-literals $l_1,l_2\in\mathrm{dedupTermVar}\,t$ with $l_1.\mathrm{var}=l_2.\mathrm{var}$ are equal.
+Let $t$ be a term over $n$ variables, that is, a list of literals, each literal
+consisting of a variable in $\{0,1,\dots,n-1\}$ together with a negation flag. Let $t'$
+be the de-duplicated term obtained by scanning $t$ and retaining each literal only when
+no earlier-retained literal already uses the same variable. Then within $t'$ the
+variable of a literal determines that literal: any two literals $l_1, l_2 \in t'$ whose
+variables agree are equal, that is, they have the same variable and the same negation
+flag.
 \end{lemma}
 
-\begin{lemma}[De-duplication does not increase width]
+\begin{lemma}[De-duplication does not increase term length]
 \lean{LMN.dedupTermVar_width_le}
 \label{LMN.dedupTermVar_width_le}
 \leanok
 \uses{LMN.contradiction_term_eval_false, LMN.dedupTermVar, Term}
 \difficulty{4}
-The de-duplicated term is no longer than the original:
-$(\mathrm{dedupTermVar}\,t).\mathrm{length} \le t.\mathrm{length}$.
+Let $t$ be a term, that is, a finite list of literals over the variables $\{0, 1, \dots,
+n-1\}$, and let $t'$ be the term obtained from $t$ by scanning it and keeping each
+literal only when no literal already kept uses the same variable. Then $t'$ has length
+at most that of $t$.
 \end{lemma}
 
 \begin{lemma}[Contradictory terms evaluate to false]
@@ -107,117 +120,176 @@ $(\mathrm{dedupTermVar}\,t).\mathrm{length} \le t.\mathrm{length}$.
 \leanok
 \uses{LMN.termHasContradiction, Literal, Literal.eval, Term, Term.eval}
 \difficulty{4}
-If $\mathrm{termHasContradiction}\,t = \texttt{true}$, then for every input $x$ the term
-evaluates to false under conjunction: $\mathrm{Term.eval}\,t\,x = \texttt{false}$.
+Let $t$ be a term (a conjunction of literals) over the variables $x_0,\dots,x_{n-1}$. If
+$t$ contains two literals on the same variable with opposite polarities — one negated
+and one not — then $t$ evaluates to false under every assignment $x : \{0,\dots,n-1\}
+\to \{\mathrm{true},\mathrm{false}\}$.
 \end{lemma}
 
-\begin{lemma}[De-duplication preserves term evaluation]
+\begin{lemma}[De-duplication preserves term value on consistent terms]
 \lean{LMN.dedupTermVar_preserves_term_eval}
 \label{LMN.dedupTermVar_preserves_term_eval}
 \leanok
 \uses{LMN.dedupTermVar, LMN.termHasContradiction, Literal, Literal.eval, Term, Term.eval}
 \difficulty{5}
-For a non-contradictory term $t$ (i.e.\ $\mathrm{termHasContradiction}\,t = \texttt{false}$),
-de-duplication does not change the conjunction value:
-$\mathrm{Term.eval}\,(\mathrm{dedupTermVar}\,t)\,x = \mathrm{Term.eval}\,t\,x$ for all $x$.
+Let $t$ be a term over $n$ variables, that is, a list of literals $l$, each carrying a
+variable $l.\mathrm{var} \in \{0,\dots,n-1\}$ and a polarity flag, and interpreted
+conjunctively: $t$ evaluates to true on an assignment $x \in \{0,1\}^n$ exactly when
+every literal in $t$ holds under $x$. Suppose $t$ is consistent, meaning it contains no
+two literals on the same variable with opposite polarities. Let $t'$ be the term
+obtained from $t$ by keeping, for each variable, only its first occurrence and
+discarding every later literal whose variable has already appeared. Then $t'$ and $t$
+have the same value on every assignment $x$.
 \end{lemma}
 
-\begin{lemma}[cleanDNF preserves evaluation]
+\begin{lemma}[Cleaning a DNF preserves its Boolean function]
 \lean{LMN.cleanDNF_eval}
 \label{LMN.cleanDNF_eval}
 \leanok
 \uses{DNF, DNF.eval, LMN.cleanDNF, LMN.contradiction_term_eval_false, LMN.dedupTermVar_preserves_term_eval, LMN.termHasContradiction}
 \difficulty{4}
-For every DNF $d$ and input $x$, the cleaned formula computes the same Boolean function:
-$(\mathrm{cleanDNF}\,d).\mathrm{eval}\,x = d.\mathrm{eval}\,x$.
+Let $d$ be a DNF formula in $n$ Boolean variables — a disjunction of terms, each term a
+conjunction of literals over the variables $\{0,\dots,n-1\}$ — and form the cleaned
+formula by first discarding every term that contains some variable together with its
+negation, and then, in each surviving term, keeping only the first literal on each
+variable and deleting any later literal repeating that variable. Then the cleaned
+formula and $d$ compute the same Boolean function: for every assignment $x \colon
+\{0,\dots,n-1\} \to \{\mathrm{true},\mathrm{false}\}$, the cleaned formula evaluates to
+true at $x$ if and only if $d$ does.
 \end{lemma}
 
-\begin{lemma}[Contradictory clauses evaluate to true]
+\begin{lemma}[Contradictory clauses are tautologies]
 \lean{LMN.contradiction_clause_eval_true}
 \label{LMN.contradiction_clause_eval_true}
 \leanok
 \uses{CNF.evalClause, LMN.termHasContradiction, Literal.eval, Term}
 \difficulty{2}
-If $\mathrm{termHasContradiction}\,t = \texttt{true}$, then viewed as a clause $t$ is a
-tautology: $\mathrm{CNF.evalClause}\,t\,x = \texttt{true}$ for every $x$.
+Let $t$ be a term over $n$ Boolean variables — a list of literals, each a variable
+together with a polarity — and suppose $t$ contains two literals on the same variable
+with opposite polarities, one negated and one not. Then, read as a single clause under
+disjunction semantics, $t$ evaluates to true under every assignment $x : \{0,\dots,n-1\}
+\to \{\mathrm{true},\mathrm{false}\}$; that is, some literal of $t$ holds under $x$, for
+every $x$.
 \end{lemma}
 
-\begin{lemma}[De-duplication preserves clause evaluation]
+\begin{lemma}[De-duplication preserves clause value]
 \lean{LMN.dedupTermVar_preserves_clause_eval}
 \label{LMN.dedupTermVar_preserves_clause_eval}
 \leanok
 \uses{CNF.evalClause, LMN.cleanDNF_width_le, LMN.dedupTermVar, LMN.termHasContradiction, Literal, Literal.eval, Term}
 \difficulty{5}
-For a non-contradictory clause $t$, de-duplication preserves the disjunctive (clause)
-value: $\mathrm{CNF.evalClause}\,(\mathrm{dedupTermVar}\,t)\,x = \mathrm{CNF.evalClause}\,t\,x$.
+Let $t$ be a term over the variables $x_0,\dots,x_{n-1}$, that is, a list of literals,
+and let $x \in \{0,1\}^n$ be an assignment. Suppose $t$ contains no two literals on the
+same variable with opposite polarities. Let $t'$ be the term obtained from $t$ by
+scanning it and keeping a literal only when no earlier-kept literal uses the same
+variable, so that each variable of $t$ occurs at most once in $t'$. Then $t'$ and $t$
+have the same value as a clause under $x$: some literal of $t'$ is satisfied by $x$ if
+and only if some literal of $t$ is.
 \end{lemma}
 
-\begin{lemma}[cleanCNF preserves evaluation]
+\begin{lemma}[Cleaning a CNF preserves its truth value]
 \lean{LMN.cleanCNF_eval}
 \label{LMN.cleanCNF_eval}
 \leanok
 \uses{CNF, CNF.eval, LMN.cleanCNF, LMN.contradiction_clause_eval_true, LMN.dedupTermVar_preserves_clause_eval, LMN.termHasContradiction}
 \difficulty{4}
-For every CNF $c$ and input $x$, cleaning preserves the computed function:
-$\mathrm{CNF.eval}\,(\mathrm{cleanCNF}\,c)\,x = \mathrm{CNF.eval}\,c\,x$.
+Represent a CNF formula over the variables indexed by $\{0,1,\dots,n-1\}$ as a
+conjunction of clauses, each clause being a disjunction of literals, where a literal is
+a variable or its negation. Cleaning such a formula proceeds in two steps: first delete
+every clause that contains some variable together with both polarities (one literal
+negated, one not), and then, within each surviving clause, keep a literal only when its
+variable has not already occurred among the literals retained earlier in that clause.
+Then for every CNF formula $c$ and every Boolean assignment $x \colon
+\{0,\dots,n-1\}\to\{\mathrm{true},\mathrm{false}\}$, the cleaned formula and $c$ take
+the same Boolean value at $x$.
 \end{lemma}
 
-\begin{lemma}[cleanDNF does not increase width]
+\begin{lemma}[Cleaning a DNF does not increase its width]
 \lean{LMN.cleanDNF_width_le}
 \label{LMN.cleanDNF_width_le}
 \leanok
 \uses{DNF, DNF.width, LMN.cleanDNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, Term.width}
 \difficulty{5}
-The cleaned DNF has width at most that of the original:
-$(\mathrm{cleanDNF}\,d).\mathrm{width} \le d.\mathrm{width}$.
+Let $d$ be a DNF formula over $n$ variables — a disjunction of terms, each term a
+conjunction of literals — and form its cleaned version by first deleting every
+contradictory term (one containing a variable together with its negation) and then, in
+each surviving term, discarding any literal whose variable already occurs in an earlier
+retained literal of that term. The width of a term is its number of literals, and the
+width of a formula is the largest width of any of its terms (with width $0$ for the
+empty formula). Then the width of the cleaned formula is at most the width of $d$.
 \end{lemma}
 
-\begin{lemma}[cleanCNF does not increase width]
+\begin{lemma}[Cleaning a CNF does not increase its width]
 \lean{LMN.cleanCNF_width_le}
 \label{LMN.cleanCNF_width_le}
 \leanok
 \uses{CNF, CNF.width, LMN.cleanCNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, Term, Term.width}
 \difficulty{5}
-The cleaned CNF has width at most that of the original:
-$\mathrm{CNF.width}\,(\mathrm{cleanCNF}\,c) \le \mathrm{CNF.width}\,c$.
+Let $c$ be a CNF formula, that is, a list of clauses, each clause being a list of
+literals over the variables $\{0,\dots,n-1\}$. Define the width of a clause to be its
+number of literals and the width of $c$ to be the maximum width among its clauses (and
+$0$ if $c$ has no clauses). Form the cleaned formula from $c$ by discarding every clause
+that contains some variable together with both of its polarities, and then, within each
+surviving clause, keeping only the first occurrence of each variable and deleting all
+later literals on a variable already seen. Then the width of the cleaned formula is at
+most the width of $c$.
 \end{lemma}
 
-\begin{lemma}[cleanDNF is variable-injective per term]
+\begin{lemma}[Variable-injectivity of literals in a cleaned DNF]
 \lean{LMN.cleanDNF_var_inj}
 \label{LMN.cleanDNF_var_inj}
 \leanok
 \uses{DNF, LMN.cleanDNF, LMN.dedupTermVar, LMN.dedupTermVar_var_inj}
 \difficulty{3}
-In every term of $\mathrm{cleanDNF}\,d$, the variable determines the literal: for each such
-term, any two of its literals with the same variable are equal.
+Let $d$ be a DNF formula over $n$ variables — a list of terms, each term a list of
+literals, where a literal names a variable in $\{0,\dots,n-1\}$ together with a polarity
+(negated or not). Form a new formula $d'$ from $d$ by first discarding every term that
+contains two literals on the same variable with opposite polarities, and then, in each
+surviving term, keeping only the first literal encountered on each variable and deleting
+all later literals that repeat an already-kept variable. Then in every term of $d'$ the
+variable determines the literal: for any two literals $l_1, l_2$ occurring in such a
+term, if $l_1$ and $l_2$ name the same variable, then $l_1 = l_2$.
 \end{lemma}
 
-\begin{lemma}[cleanDNF terms have no duplicate literals]
+\begin{lemma}[Cleaned DNF terms have no repeated literals]
 \lean{LMN.cleanDNF_nodup}
 \label{LMN.cleanDNF_nodup}
 \leanok
 \uses{DNF, LMN.cleanDNF, LMN.dedupTermVar_nodup}
 \difficulty{2}
-Every term of $\mathrm{cleanDNF}\,d$ satisfies \texttt{Nodup}, i.e.\ contains no repeated literal.
+Let $d$ be a DNF formula in $n$ variables, and clean it by first deleting every term
+that contains some variable together with its negation, and then, within each surviving
+term, keeping only the first literal on each variable and discarding any later literal
+whose variable has already appeared. Every term of the resulting formula is then
+duplicate-free: no literal occurs twice in it, where two literals count as equal when
+they share both variable and polarity.
 \end{lemma}
 
-\begin{lemma}[cleanCNF is variable-injective per clause]
+\begin{lemma}[Variable-injectivity of cleaned clauses]
 \lean{LMN.cleanCNF_var_inj}
 \label{LMN.cleanCNF_var_inj}
 \leanok
 \uses{CNF, LMN.cleanCNF, LMN.dedupTermVar_var_inj}
 \difficulty{2}
-In every clause of $\mathrm{cleanCNF}\,c$, the variable determines the literal: any two
-literals of the clause sharing a variable are equal.
+Let $c$ be a CNF formula over the variable set $\{0,\dots,n-1\}$, and let $\hat c$ be
+the formula obtained from $c$ by first deleting every clause that contains some variable
+together with its negation, and then, in each surviving clause, keeping only one literal
+per variable. Then within any single clause of $\hat c$ the variable of a literal
+determines that literal completely: if two literals of the clause share the same
+variable, they are equal (and in particular have the same polarity).
 \end{lemma}
 
-\begin{lemma}[cleanCNF clauses have no duplicate literals]
+\begin{lemma}[Cleaned clauses have no repeated literals]
 \lean{LMN.cleanCNF_nodup}
 \label{LMN.cleanCNF_nodup}
 \leanok
 \uses{CNF, LMN.cleanCNF, LMN.dedupTermVar_nodup}
 \difficulty{2}
-Every clause of $\mathrm{cleanCNF}\,c$ satisfies \texttt{Nodup}.
+Let $c$ be a CNF formula over $n$ variables, and form its cleaned version by first
+discarding every clause that contains some variable both positively and negatively, and
+then deleting from each surviving clause every literal whose variable already occurs
+earlier in that clause. Then each clause of the resulting formula, viewed as a list of
+literals, contains no repeated literal.
 \end{lemma}
 
 \begin{theorem}[General switching lemma for DNFs]
@@ -234,17 +306,22 @@ Every clause of $\mathrm{cleanCNF}\,c$ satisfies \texttt{Nodup}.
 \leanok
 \uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{2}
-Let $f$ be a DNF of width at most $w$ with $0<w$ and $0<n$, and let $p\in\bbr$ satisfy
-$0<p$, $p\le \tfrac{1}{40w}$ and $p\le 1$. Then for every $t\in\bbn$,
+Let $f$ be a DNF formula on $n \ge 1$ Boolean variables whose width is at most $w$,
+where $w \ge 1$, and let $p \in \bbr$ satisfy $0 < p \le 1$ together with $p \le
+\tfrac{1}{40w}$. Draw a Bernoulli($p$) random restriction $\rho$, which independently
+leaves each of the $n$ variables free with probability $p$ and otherwise fixes it to a
+uniformly random Boolean value, and let $f_\rho$ denote the function of the free
+variables obtained by evaluating $f$ with the fixed coordinates set according to $\rho$.
+Then for every $t \in \bbn$,
 \[
-\mathrm{bernoulliRestrProb}\,p\,\bigl(\rho \mapsto \mathrm{dtDepth}(\mathrm{restrictFn}\,f.\mathrm{eval}\,\rho) > t\bigr)
-\;\le\; \bigl(\tfrac12\bigr)^{t} + \exp\!\bigl(-np/3\bigr).
+  \bbP_\rho\!\left[\operatorname{depth}(f_\rho) > t\right]
+  \;\le\; \left(\tfrac12\right)^{t} + \exp\!\left(-\tfrac{np}{3}\right),
 \]
-Unlike the base version, no syntactic non-duplication hypothesis is required, since the
-formula is first cleaned.
+where $\operatorname{depth}(f_\rho)$ is the decision-tree depth of $f_\rho$, i.e.\ the
+least depth of a decision tree computing it.
 \end{theorem}
 
-\begin{theorem}[General switching lemma for CNFs]
+\begin{theorem}[General switching lemma for CNF formulas]
 \lean{LMN.switching_bernoulli_dtDepth_cnf_general}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \statementsource{switching-lemma}{
@@ -255,33 +332,42 @@ formula is first cleaned.
 \leanok
 \uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF, LMN.cleanCNF_eval, LMN.cleanCNF_nodup, LMN.cleanCNF_var_inj, LMN.cleanCNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{2}
-Let $f$ be a CNF of width at most $w$ with $0<w$ and $0<n$, and let $p\in\bbr$ satisfy
-$0<p$, $p\le \tfrac{1}{40w}$ and $p\le 1$. Then for every $t\in\bbn$,
+Let $f$ be a CNF formula in $n \ge 1$ Boolean variables whose width is at most $w$, with
+$w \ge 1$, and let $p \in \bbr$ satisfy $0 < p \le 1/(40w)$ and $p \le 1$. Consider a
+Bernoulli($p$) random restriction $\rho$ of the $n$ variables, in which each variable is
+independently left free with probability $p$ and otherwise fixed to $\mathtt{false}$ or
+to $\mathtt{true}$, each with probability $(1-p)/2$, and write $f_\rho$ for the Boolean
+function on the free coordinates obtained by evaluating $f$ with the fixed coordinates
+set by $\rho$. Then for every $t \in \bbn$,
 \[
-\mathrm{bernoulliRestrProb}\,p\,\bigl(\rho \mapsto \mathrm{dtDepth}(\mathrm{restrictFn}\,(\mathrm{CNF.eval}\,f)\,\rho) > t\bigr)
-\;\le\; \bigl(\tfrac12\bigr)^{t} + \exp\!\bigl(-np/3\bigr),
+\Pr_{\rho}\bigl[\,\mathrm{depth}(f_\rho) > t\,\bigr] \;\le\; \left(\tfrac12\right)^{t} +
+\exp\!\left(-\,\tfrac{np}{3}\right),
 \]
-again without any non-duplication hypothesis on $f$.
+where $\mathrm{depth}(f_\rho)$ denotes the decision-tree depth of $f_\rho$.
 \end{theorem}
 
-\begin{lemma}[Children of a depth-$\le 1$ node are literals]
+\begin{lemma}[Depth-one gates have only literal children]
 \lean{LMN.depth_le_one_children_are_lits}
 \label{LMN.depth_le_one_children_are_lits}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
 \difficulty{4}
-If a gate node $\mathrm{node}\,\mathit{isAnd}\,cs$ has depth at most $1$, then every child
-$c\in cs$ is a literal, i.e.\ $c = \mathrm{lit}\,l$ for some literal $l$.
+Let $C$ be a Boolean circuit on $n$ variables of the form $g(c_1,\dots,c_k)$, a single
+gate $g$ (either AND or OR) applied to a list of child circuits $c_1,\dots,c_k$. If the
+depth of $C$ is at most $1$, then every child $c_i$ is a literal, that is, $c_i =
+\ell_i$ for some literal $\ell_i$ (a variable index together with a polarity).
 \end{lemma}
 
-\begin{lemma}[Children of a depth-$\le 2$ node have depth $\le 1$]
+\begin{lemma}[Children of a depth-two node have depth at most one]
 \lean{LMN.depth_le_two_children_depth_le_one}
 \label{LMN.depth_le_two_children_depth_le_one}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
 \difficulty{2}
-If a gate node $\mathrm{node}\,\mathit{isAnd}\,cs$ has depth at most $2$, then every child
-$c\in cs$ has depth at most $1$.
+Let $g = \mathrm{node}(\mathit{isAnd}, cs)$ be a Boolean circuit consisting of a single
+gate (an AND gate if $\mathit{isAnd}$ is true, an OR gate otherwise) applied to a list
+$cs$ of child circuits, and suppose its depth satisfies $\mathrm{depth}(g) \le 2$. Then
+every child circuit $c$ in $cs$ has depth $\mathrm{depth}(c) \le 1$.
 \end{lemma}
 
 \begin{definition}[Depth-$\le 1$ AND subcircuit to a term]
@@ -314,48 +400,59 @@ child becomes a singleton clause, each OR child becomes the clause of its litera
 AND child contributes the singleton clauses of its literals.
 \end{definition}
 
-\begin{lemma}[depth2OrToDNF preserves evaluation]
+\begin{lemma}[DNF conversion preserves the value of a shallow OR gate]
 \lean{LMN.depth2OrToDNF_eval}
 \label{LMN.depth2OrToDNF_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.eval_eq_toLiteral_eval, BoolCircuit.Lit.toLiteral, DNF.eval, LMN.depth2OrToDNF, LMN.depth_le_one_children_are_lits, LMN.depth_le_two_children_depth_le_one, Literal.eval, Term.eval}
 \difficulty{5}
-If the top OR node $\mathrm{node}\,\texttt{false}\,cs$ has depth at most $2$, then the DNF
-$\mathrm{depth2OrToDNF}\,cs$ computes the same Boolean function as the circuit:
-$(\mathrm{depth2OrToDNF}\,cs).\mathrm{eval}\,x = (\mathrm{node}\,\texttt{false}\,cs).\mathrm{eval}\,x$
-for all $x$.
+Let $cs$ be a finite list of Boolean circuits on $n$ variables, regarded as the children
+of a top-level OR gate $\varphi$, and suppose $\varphi$ has depth at most $2$. Form a
+DNF $D$ from $cs$ by turning each literal child into a singleton term, each AND child
+into the single term consisting of all its literals, and each OR child into the
+collection of singleton terms of its literals (in each case reading a circuit literal as
+the corresponding DNF literal, keeping the same variable and polarity). Then $D$ and
+$\varphi$ compute the same Boolean function: $D(x) = \varphi(x)$ for every assignment $x
+\colon \{0,\dots,n-1\} \to \{\mathrm{true},\mathrm{false}\}$.
 \end{lemma}
 
-\begin{lemma}[depth2AndToCNF preserves evaluation]
+\begin{lemma}[Correctness of the depth-2 AND-to-CNF conversion]
 \lean{LMN.depth2AndToCNF_eval}
 \label{LMN.depth2AndToCNF_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.toLiteral, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, CNF.evalClause, LMN.depth2AndToCNF, LMN.depth_le_two_children_depth_le_one, Literal.eval}
 \difficulty{6}
-If the top AND node $\mathrm{node}\,\texttt{true}\,cs$ has depth at most $2$, then the CNF
-$\mathrm{depth2AndToCNF}\,cs$ computes the same Boolean function as the circuit:
-$\mathrm{CNF.eval}\,(\mathrm{depth2AndToCNF}\,cs)\,x = (\mathrm{node}\,\texttt{true}\,cs).\mathrm{eval}\,x$
-for all $x$.
+Let $cs$ be a list of Boolean circuits on $n$ variables, viewed as the children of a
+top-level AND gate, and suppose the AND-of-children circuit $\bigwedge cs$ has depth at
+most $2$. Then the depth-$2$ AND-to-CNF conversion applied to $cs$ produces a CNF
+formula computing the same Boolean function as $\bigwedge cs$: for every assignment $x :
+\mathrm{Fin}\,n \to \mathrm{Bool}$, the value of the resulting CNF at $x$ equals the
+value of $\bigwedge cs$ at $x$.
 \end{lemma}
 
-\begin{lemma}[Width bound for depth2OrToDNF]
+\begin{lemma}[Width bound for the depth-two OR-to-DNF conversion]
 \lean{LMN.depth2OrToDNF_width_le}
 \label{LMN.depth2OrToDNF_width_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.maxFanin, BoolCircuit.Lit.toLiteral, DNF.width, LMN.depth2OrToDNF}
 \difficulty{5}
-If the top OR node $\mathrm{node}\,\texttt{false}\,cs$ has depth at most $2$, the resulting DNF
-has width at most the maximum fan-in of the circuit:
-$(\mathrm{depth2OrToDNF}\,cs).\mathrm{width} \le (\mathrm{node}\,\texttt{false}\,cs).\mathrm{maxFanin}$.
+Let $cs$ be a list of Boolean circuits on $n$ variables, regarded as the children of a
+top-level OR gate, and suppose that this OR gate has depth at most $2$. Form the DNF
+obtained from $cs$ by converting each literal child into a singleton term, each AND
+child into the term consisting of its literals, and each OR child into the singleton
+terms of its literals. Then the width of this DNF (the maximum number of literals in any
+of its terms) is at most the maximum fan-in of the OR gate.
 \end{lemma}
 
-\begin{lemma}[Width bound for depth2AndToCNF]
+\begin{lemma}[Width bound for the depth-two AND-to-CNF conversion]
 \lean{LMN.depth2AndToCNF_width_le}
 \label{LMN.depth2AndToCNF_width_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.maxFanin, BoolCircuit.Lit.toLiteral, CNF.width, LMN.depth2AndToCNF}
 \difficulty{5}
-If the top AND node $\mathrm{node}\,\texttt{true}\,cs$ has depth at most $2$, the resulting CNF
-has width at most the maximum fan-in of the circuit:
-$\mathrm{CNF.width}\,(\mathrm{depth2AndToCNF}\,cs) \le (\mathrm{node}\,\texttt{true}\,cs).\mathrm{maxFanin}$.
+Let $cs$ be a list of Boolean circuits on $n$ variables, regarded as the children of a
+top AND gate, and suppose this AND gate has depth at most $2$. Then the CNF formula
+obtained by converting these children — each literal child becoming a singleton clause,
+each OR child the clause of its literals, and each AND child contributing the singleton
+clauses of its literals — has width at most the maximum fanin of the AND gate.
 \end{lemma}

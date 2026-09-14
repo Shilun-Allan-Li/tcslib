@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_mix",
+ "key": "aff204251547357f",
+ "kind": "theorem",
+ "title": "Mixing preserves Alice's before-special vector",
+ "statement": "Let $\\omega_X$ and $\\omega_Y$ be two samples of the hard distribution that share the same special coordinate $T$, that agree on Alice's before-special vector (the bits Alice holds at the coordinates strictly below $T$, padded with $\\mathrm{false}$ elsewhere), and that agree on Bob's after-special vector (the bits Bob holds at the coordinates strictly above $T$, padded with $\\mathrm{false}$ elsewhere). Then the mixed sample $\\mathrm{mix}(\\omega_X,\\omega_Y)$, which takes Alice's data from $\\omega_X$ and Bob's data from $\\omega_Y$, has the same before-special vector as $\\omega_X$.",
+ "hypotheses_covered": [
+  "same special coordinate: $\\omega_X.T = \\omega_Y.T$",
+  "equal Alice before-special vectors: $\\mathrm{xBeforeSpecial}(\\omega_X) = \\mathrm{xBeforeSpecial}(\\omega_Y)$",
+  "equal Bob after-special vectors: $\\mathrm{yAfterSpecial}(\\omega_X) = \\mathrm{yAfterSpecial}(\\omega_Y)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Mixing preserves Alice's before-$T$ conditioning data from the first sample."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_singleton",
+ "key": "e0878af38bff4e62",
+ "kind": "theorem",
+ "title": "Singleton mass of the conditional special-bit law",
+ "statement": "Fix a positive integer $n$, a deterministic protocol $p$ for length-$n$ set disjointness, a value $z$ in the range of the variable $Z = (M, T, X_{<T}, Y_{>T})$, and a bit $b$. Let $\\mu_z$ denote the hard input distribution conditioned on the fiber $\\{Z = z\\}$, and let $X_T$ denote Alice's bit at the special coordinate $T$. Then the conditional law of $X_T$ on this fiber — the pushforward of $\\mu_z$ along the map $X_T$ — assigns to the singleton $\\{b\\}$ exactly the $\\mu_z$-probability of the event that Alice's special bit equals $b$; that is, its real-valued mass at $b$ equals $\\mu_z\\big(\\{\\,X_T = b\\,\\}\\big)$.",
+ "hypotheses_covered": [
+  "a deterministic disjointness protocol $p$ on inputs of length $n$",
+  "an achievable value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$",
+  "a bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On a positive-mass $Z=z$ fiber, Alice's conditional special-bit singleton mass is the corresponding preimage probability under the fiber measure."
+}

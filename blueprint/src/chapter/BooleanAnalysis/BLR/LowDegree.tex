@@ -17,44 +17,49 @@ probability at least $\varepsilon$.
 
 \subsection{Hypercube algebra}
 
-\begin{lemma}[Commutativity of XOR]
+\begin{lemma}[Commutativity of componentwise XOR]
 \lean{LowDegreeTest.xor_vec_comm}
 \label{LowDegreeTest.xor_vec_comm}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{1}
-For all $x, y \in \{0,1\}^n$, coordinate-wise XOR satisfies
-$x \oplus y = y \oplus x$.
+For all $x, y \in \{0,1\}^n$, the componentwise XOR is symmetric: the vectors with
+$i$-th coordinates $x_i \oplus y_i$ and $y_i \oplus x_i$ coincide, so $x \oplus y = y
+\oplus x$.
 \end{lemma}
 
-\begin{lemma}[XOR with zero vector]
+\begin{lemma}[XOR with the all-zeros vector]
 \lean{LowDegreeTest.xor_vec_zero}
 \label{LowDegreeTest.xor_vec_zero}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec, BoolFourier.zero_vec}
 \difficulty{1}
-For all $x \in \{0,1\}^n$, we have $x \oplus \mathbf{0} = x$, where
-$\mathbf{0}$ denotes the all-zero vector.
+For every $x \in \{0,1\}^n$, the componentwise XOR of $x$ with the all-zeros vector
+$\mathbf{0}$ equals $x$; that is, $x \oplus \mathbf{0} = x$. Equivalently, $\mathbf{0}$
+is a right identity for the group operation on $(\bbf_2)^n$.
 \end{lemma}
 
-\begin{lemma}[XOR self-inverse]
+\begin{lemma}[XOR of a vector with itself]
 \lean{LowDegreeTest.xor_vec_self}
 \label{LowDegreeTest.xor_vec_self}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec, BoolFourier.zero_vec}
 \difficulty{2}
-For all $x \in \{0,1\}^n$, we have $x \oplus x = \mathbf{0}$, so every element
-is its own inverse under XOR.
+For every $x \in \{0,1\}^n$, the componentwise XOR of $x$ with itself is the all-zeros
+vector: $x \oplus x = \mathbf{0}$.
 \end{lemma}
 
-\begin{lemma}[Associativity of XOR]
+\begin{lemma}[Associativity of componentwise XOR]
 \lean{LowDegreeTest.xor_vec_assoc}
 \label{LowDegreeTest.xor_vec_assoc}
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{1}
-For all $x, y, z \in \{0,1\}^n$, coordinate-wise XOR is associative:
-$(x \oplus y) \oplus z = x \oplus (y \oplus z)$.
+For all $x, y, z \in \{0,1\}^n$, the componentwise XOR is associative: writing $x \oplus
+y$ for the vector with $i$th coordinate $x_i \oplus y_i$,
+\[
+(x \oplus y) \oplus z = x \oplus (y \oplus z).
+\]
 \end{lemma}
 
 \subsection{Gowers product}
@@ -89,50 +94,65 @@ It averages $f$ over the $2^k$ vertices of the combinatorial cube
 $x + \mathrm{span}\{h_1,\ldots,h_k\}$.
 \end{definition}
 
-\begin{lemma}[Gowers product base case]
+\begin{lemma}[Base case of the Gowers product]
 \lean{LowDegreeTest.gowers_product_zero}
 \label{LowDegreeTest.gowers_product_zero}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.gowers_product}
 \difficulty{1}
-For any $f : \{0,1\}^n \to \bbr$ and $x \in \{0,1\}^n$, the order-$0$ Gowers
-product satisfies $\mathrm{GP}(f, 0, x, \emptyset) = f(x)$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function and let $x \in \{0,1\}^n$. With no
+direction vectors supplied, the order-$0$ Gowers product equals the value of $f$ at $x$:
+\[
+  \mathrm{GP}(f, 0, x, \emptyset) = f(x).
+\]
 \end{lemma}
 
-\begin{lemma}[Gowers product recursive step]
+\begin{lemma}[Recursive unfolding of the Gowers product]
 \lean{LowDegreeTest.gowers_product_succ}
 \label{LowDegreeTest.gowers_product_succ}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.gowers_product}
 \difficulty{1}
-For any $f$, $k \ge 0$, $x$, and direction vectors $h_1,\ldots,h_{k+1}$, the
-Gowers product unfolds as
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, let $k \ge 0$, let $x \in \{0,1\}^n$
+be a base point, and let $h_1, \ldots, h_{k+1} \in \{0,1\}^n$ be direction vectors. Then
+the order-$(k{+}1)$ Gowers product splits along its last direction as
 \[
-  \mathrm{GP}(f, k{+}1, x, h_1,\ldots,h_{k+1})
-  = \mathrm{GP}(f, k, x, h_1,\ldots,h_k)
-    \cdot \mathrm{GP}(f, k, x \oplus h_{k+1}, h_1,\ldots,h_k).
+  \mathrm{GP}(f, k{+}1, x, h_1, \ldots, h_{k+1})
+  = \mathrm{GP}(f, k, x, h_1, \ldots, h_k)
+    \cdot \mathrm{GP}(f, k, x \oplus h_{k+1}, h_1, \ldots, h_k),
 \]
+where $x \oplus h_{k+1}$ denotes the componentwise XOR.
 \end{lemma}
 
-\begin{lemma}[Order-1 Gowers product is multiplicative derivative]
+\begin{lemma}[Multiplicative derivative as the order-one Gowers product]
 \lean{LowDegreeTest.mult_deriv_eq_gowers_one}
 \label{LowDegreeTest.mult_deriv_eq_gowers_one}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.gowers_product, LowDegreeTest.mult_deriv}
 \difficulty{1}
-For $f : \{0,1\}^n \to \bbr$, $x, h \in \{0,1\}^n$,
-$(\Delta_h f)(x) = \mathrm{GP}(f, 1, x, h)$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and let $x, h \in \{0,1\}^n$. Then
+the multiplicative derivative of $f$ in direction $h$, evaluated at $x$, coincides with
+the order-$1$ Gowers product of $f$ at base point $x$ with the single direction vector
+$h$; that is,
+\[
+  (\Delta_h f)(x) \;=\; \mathrm{GP}(f, 1, x, h) \;=\; f(x)\, f(x \oplus h),
+\]
+where $\oplus$ denotes componentwise XOR.
 \end{lemma}
 
-\begin{lemma}[Gowers product of $\pm 1$ functions]
+\begin{lemma}[Gowers products of a $\pm1$-valued function take values $\pm1$]
 \lean{LowDegreeTest.gowers_product_pm1}
 \label{LowDegreeTest.gowers_product_pm1}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.gowers_product, LowDegreeTest.gowers_product_succ}
 \difficulty{4}
-If $f : \{0,1\}^n \to \{0,1\}$ and $F = (-1)^f$ is its $\pm 1$ lift, then for
-every $k$, $x$, and $h_1,\ldots,h_k$,
-$\mathrm{GP}(F, k, x, h_1,\ldots,h_k) \in \{1, -1\}$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function, and let $F : \{0,1\}^n \to
+\bbr$, $F(x) = (-1)^{f(x)}$, be its $\pm1$ lift. Then for every order $k \ge 0$, every
+base point $x \in \{0,1\}^n$, and all direction vectors $h_1, \ldots, h_k \in
+\{0,1\}^n$, the order-$k$ Gowers product satisfies
+\[
+  \mathrm{GP}(F, k, x, h_1, \ldots, h_k) \in \{1, -1\}.
+\]
 \end{lemma}
 
 \subsection{Multi-expectation}
@@ -149,24 +169,29 @@ For $g : (\{0,1\}^n)^k \to \bbr$, the multi-expectation is the uniform average
 \]
 \end{definition}
 
-\begin{lemma}[Cardinality of multi-hypercube]
+\begin{lemma}[Cardinality of $k$-tuples over the Boolean hypercube]
 \lean{LowDegreeTest.card_multi_hypercube}
 \label{LowDegreeTest.card_multi_hypercube}
 \leanok
 \uses{BoolFourier.card_hypercube, BoolFourier.hypercube}
 \difficulty{2}
-The number of $k$-tuples of vectors in $\{0,1\}^n$ is
-$|(\{0,1\}^n)^k| = 2^{nk}$.
+Fix natural numbers $n$ and $k$, and let $\{0,1\}^n$ denote the Boolean hypercube of
+dimension $n$. The set of $k$-tuples of points of $\{0,1\}^n$, that is
+$\left(\{0,1\}^n\right)^k$, has exactly $2^{nk}$ elements.
 \end{lemma}
 
-\begin{lemma}[Multi-expectation of constant]
+\begin{lemma}[Multi-expectation of a constant]
 \lean{LowDegreeTest.multi_expectation_const}
 \label{LowDegreeTest.multi_expectation_const}
 \leanok
 \uses{BoolFourier.card_hypercube, BoolFourier.hypercube, LowDegreeTest.multi_expectation}
 \difficulty{3}
-For any constant $c \in \bbr$,
-$\E_{h_1,\ldots,h_k}[c] = c$.
+For any constant $c \in \bbr$ and any $k$, the uniform average over $k$ points
+$h_1,\ldots,h_k$ of the Boolean hypercube $\{0,1\}^n$ of the constant function equal to
+$c$ is itself $c$:
+\[
+  \E_{h_1,\ldots,h_k}[c] = c.
+\]
 \end{lemma}
 
 \subsection{Polynomial degree}
@@ -192,44 +217,59 @@ A Boolean function $f : \{0,1\}^n \to \{0,1\}$ has degree $\le d$ if its $\pm 1$
 lift $(-1)^f$ has degree $\le d$ in the sense of \texttt{LowDegreeTest.is\_degree\_le\_pm1}.
 \end{definition}
 
-\begin{lemma}[Degree monotone in $d$]
+\begin{lemma}[Degree bound is monotone]
 \lean{LowDegreeTest.degree_le_succ}
 \label{LowDegreeTest.degree_le_succ}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.xor_vec, LowDegreeTest.is_degree_le_pm1}
 \difficulty{4}
-If $f$ has degree $\le d$, then $f$ also has degree $\le d+1$.
+Let $f : \{0,1\}^n \to \bbr$, and recall that $f$ has degree $\le d$ when all of its
+$(d{+}1)$-fold multiplicative derivatives vanish, i.e. the Gowers product
+$\mathrm{GP}(f, d{+}1, x, h_1,\ldots,h_{d+1}) = 1$ for every base point $x \in
+\{0,1\}^n$ and all directions $h_1,\ldots,h_{d+1} \in \{0,1\}^n$. If $f$ has degree $\le
+d$, then $f$ also has degree $\le d+1$; that is, $\mathrm{GP}(f, d{+}2, x,
+h_1,\ldots,h_{d+2}) = 1$ for every $x$ and all directions $h_1,\ldots,h_{d+2} \in
+\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Degree $\le 0$ iff constant]
+\begin{lemma}[Degree at most zero characterizes constant functions]
 \lean{LowDegreeTest.degree_le_zero_iff_constant}
 \label{LowDegreeTest.degree_le_zero_iff_constant}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.is_degree_le_bool}
 \difficulty{5}
-A Boolean function $f : \{0,1\}^n \to \{0,1\}$ has degree $\le 0$ if and only if
-it is constant, i.e.\ $f(x) = f(y)$ for all $x, y \in \{0,1\}^n$.
+A Boolean function $f : \{0,1\}^n \to \{0,1\}$ has degree $\le 0$ if and only if it is
+constant, that is, $f(x) = f(y)$ for all $x, y \in \{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Linear functions have degree $\le 1$]
+\begin{lemma}[Linear Boolean functions have degree at most one]
 \lean{LowDegreeTest.linear_is_degree_le_one}
 \label{LowDegreeTest.linear_is_degree_le_one}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.gowers_product_succ, LowDegreeTest.is_degree_le_bool}
 \difficulty{5}
-If $f : \{0,1\}^n \to \{0,1\}$ is $\mathbb{F}_2$-linear (i.e.\
-$f(x \oplus y) = f(x) \oplus f(y)$ for all $x,y$), then $f$ has degree $\le 1$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be linear, meaning $f(x \oplus y) = f(x) \oplus f(y)$
+for all $x, y \in \{0,1\}^n$, where $\oplus$ denotes componentwise XOR. Then $f$ has
+degree $\le 1$: its $\pm 1$ lift $(-1)^f$ has vanishing multiplicative derivatives of
+order two, so that for every base point $x \in \{0,1\}^n$ and every pair of directions
+$h_1, h_2 \in \{0,1\}^n$ the order-$2$ Gowers product of $(-1)^f$ over the combinatorial
+square $x + \operatorname{span}\{h_1, h_2\}$ equals $1$.
 \end{lemma}
 
-\begin{lemma}[Degree $\le 1$ implies affine]
+\begin{lemma}[Degree-one Boolean functions are affine]
 \lean{LowDegreeTest.degree_le_one_implies_affine}
 \label{LowDegreeTest.degree_le_one_implies_affine}
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \uses{BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BoolFourier.xor_vec, BoolFourier.zero_vec, LowDegreeTest.gowers_product_succ, LowDegreeTest.is_degree_le_bool}
 \difficulty{6}
-If $f : \{0,1\}^n \to \{0,1\}$ has degree $\le 1$, then $f$ is affine: either
-$f$ is $\mathbb{F}_2$-linear or $\lnot f$ (bitwise negation) is $\mathbb{F}_2$-linear.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function of degree at most $1$; that is,
+its $\pm 1$ lift $x \mapsto (-1)^{f(x)}$ has degree at most $1$, meaning every
+second-order multiplicative derivative is trivial: for all $x, h_1, h_2 \in \{0,1\}^n$
+the order-$2$ Gowers product of $(-1)^f$ at $x$ in directions $h_1, h_2$ equals $1$.
+Then $f$ is affine over $\bbf_2$: either $f$ itself is linear, satisfying $f(x \oplus y)
+= f(x) \oplus f(y)$ for all $x, y$, or its pointwise negation $x \mapsto \lnot f(x)$ is
+linear.
 \end{lemma}
 
 \subsection{Reed--Muller codes}
@@ -246,55 +286,64 @@ $f : \{0,1\}^m \to \{0,1\}$ of degree $\le d$:
 \]
 \end{definition}
 
-\begin{lemma}[Reed--Muller code is monotone in degree]
+\begin{lemma}[Monotonicity of Reed–Muller codes in the degree]
 \lean{LowDegreeTest.ReedMuller_monotone}
 \label{LowDegreeTest.ReedMuller_monotone}
 \leanok
 \uses{LowDegreeTest.ReedMuller, LowDegreeTest.degree_le_succ}
 \difficulty{1}
-$\mathrm{RM}(d, n) \subseteq \mathrm{RM}(d+1, n)$ for every $d$ and $n$.
+Fix an ambient dimension $n$ and a degree $d$. Every Boolean function $f : \{0,1\}^n \to
+\{0,1\}$ of degree at most $d$ also has degree at most $d+1$; equivalently, the
+Reed–Muller code $\mathrm{RM}(d,n)$ is contained in $\mathrm{RM}(d+1,n)$.
 \end{lemma}
 
-\begin{lemma}[Zero function in every Reed--Muller code]
+\begin{lemma}[The zero function has degree at most $d$]
 \lean{LowDegreeTest.zero_mem_ReedMuller}
 \label{LowDegreeTest.zero_mem_ReedMuller}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.ReedMuller}
 \difficulty{3}
-The constant-false function $\mathbf{0} : \{0,1\}^n \to \{0,1\}$ belongs to
-$\mathrm{RM}(d, n)$ for every $d$.
+Fix $n, d \in \bbn$. The identically-false function $\mathbf{0} : \{0,1\}^n \to
+\{0,1\}$, sending every input to $0$, lies in the Reed--Muller code $\mathrm{RM}(d, n)$;
+that is, it has degree at most $d$.
 \end{lemma}
 
-\begin{lemma}[One function in every Reed--Muller code]
+\begin{lemma}[The constant-true function is low degree]
 \lean{LowDegreeTest.one_mem_ReedMuller}
 \label{LowDegreeTest.one_mem_ReedMuller}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.ReedMuller, LowDegreeTest.gowers_product}
 \difficulty{3}
-The constant-true function $\mathbf{1} : \{0,1\}^n \to \{0,1\}$ belongs to
-$\mathrm{RM}(d, n)$ for every $d$.
+For every $n$ and every degree bound $d$, the constant function $\mathbf{1} : \{0,1\}^n
+\to \{0,1\}$ taking the value $1$ at every point lies in the Reed--Muller code
+$\mathrm{RM}(d, n)$; that is, it has degree $\le d$.
 \end{lemma}
 
-\begin{lemma}[Linear functions in $\mathrm{RM}(1,n)$]
+\begin{lemma}[Linear Boolean functions lie in the first-order Reed–Muller code]
 \lean{LowDegreeTest.linear_mem_ReedMuller_one}
 \label{LowDegreeTest.linear_mem_ReedMuller_one}
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, LowDegreeTest.ReedMuller, LowDegreeTest.linear_is_degree_le_one}
 \difficulty{1}
-Every $\mathbb{F}_2$-linear function $f : \{0,1\}^n \to \{0,1\}$ belongs to
-$\mathrm{RM}(1, n)$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a linear Boolean function, meaning that $f(x \oplus
+y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$, where $\oplus$ denotes
+componentwise XOR. Then $f$ belongs to the first-order Reed–Muller code $\mathrm{RM}(1,
+n)$; that is, $f$ has degree at most $1$.
 \end{lemma}
 
-\begin{lemma}[$\mathrm{RM}(1,n)$ consists of affine functions]
+\begin{lemma}[Degree-one Reed–Muller functions are affine]
 \lean{LowDegreeTest.ReedMuller_one_is_affine}
 \label{LowDegreeTest.ReedMuller_one_is_affine}
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, LowDegreeTest.ReedMuller, LowDegreeTest.degree_le_one_implies_affine}
 \difficulty{1}
-Every $f \in \mathrm{RM}(1, n)$ is affine: either $f$ is $\mathbb{F}_2$-linear or
-$\lnot f$ is $\mathbb{F}_2$-linear.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function lying in the Reed–Muller code
+$\mathrm{RM}(1,n)$, that is, a function of degree at most $1$. Then $f$ is affine:
+either $f$ is $\mathbb{F}_2$-linear, meaning $f(x \oplus y) = f(x) \oplus f(y)$ for all
+$x, y \in \{0,1\}^n$, or the complementary function $x \mapsto \lnot f(x)$ is
+$\mathbb{F}_2$-linear.
 \end{lemma}
 
 \subsection{Gowers norms}
@@ -313,52 +362,69 @@ The $k$-th Gowers uniformity norm to the $2^k$-th power is
 \]
 \end{definition}
 
-\begin{lemma}[Gowers norm equals 1 iff low degree]
+\begin{lemma}[Gowers norm one iff bounded degree]
 \lean{LowDegreeTest.gowers_norm_eq_one_iff}
 \label{LowDegreeTest.gowers_norm_eq_one_iff}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.card_hypercube, BoolFourier.expectation, BoolFourier.hypercube, LowDegreeTest.card_multi_hypercube, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product, LowDegreeTest.gowers_product_pm1, LowDegreeTest.is_degree_le_bool, LowDegreeTest.is_degree_le_pm1, LowDegreeTest.multi_expectation}
 \difficulty{6}
-For a Boolean function $f : \{0,1\}^n \to \{0,1\}$ and $d \ge 0$,
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function and let $d$ be a nonnegative
+integer, and write $(-1)^f : \{0,1\}^n \to \{\pm 1\}$ for its sign lift. Then the
+$2^{d+1}$-th power of the order-$(d+1)$ Gowers uniformity norm of $(-1)^f$ equals $1$,
 \[
-  \|(-1)^f\|_{U^{d+1}}^{2^{d+1}} = 1
-  \;\iff\;
-  \deg(f) \le d.
+  \|(-1)^f\|_{U^{d+1}}^{2^{d+1}} = 1,
 \]
+if and only if $(-1)^f$ has degree at most $d$, meaning that for every base point $x \in
+\{0,1\}^n$ and all direction vectors $h_1,\ldots,h_{d+1} \in \{0,1\}^n$ the $(d+1)$-fold
+Gowers product $\mathrm{GP}\big((-1)^f, d{+}1, x, h_1,\ldots,h_{d+1}\big)$ equals $1$.
 \end{lemma}
 
-\begin{lemma}[$U^2$ norm equals $L^2$ norm of convolution]
+\begin{lemma}[The fourth power of the $U^2$ norm as the squared $L^2$ norm of a convolution]
 \lean{LowDegreeTest.gowers_U2_eq_L2_conv}
 \label{LowDegreeTest.gowers_U2_eq_L2_conv}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product, LowDegreeTest.multi_expectation, LowDegreeTest.xor_vec_comm}
 \difficulty{6}
-For $f : \{0,1\}^n \to \bbr$,
-$\|f\|_{U^2}^4 = \|f * f\|_2^2$,
-where $f * f$ denotes the convolution of $f$ with itself.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and write $x \oplus y$ for the
+componentwise XOR of $x, y \in \{0,1\}^n$. Then the fourth power of the second Gowers
+uniformity norm of $f$ equals the squared $L^2$ norm of the self-convolution $f * f$,
+where $(f * f)(x) = \E_{y}[f(y)\,f(x \oplus y)]$; that is,
+\[
+  \|f\|_{U^2}^4 = \|f * f\|_2^2 = \E_{x}\bigl[(f * f)(x)^2\bigr].
+\]
 \end{lemma}
 
-\begin{lemma}[$U^2$ norm in terms of Fourier coefficients]
+\begin{lemma}[The $U^2$ norm as the $\ell^4$ norm of the Fourier spectrum]
 \lean{LowDegreeTest.gowers_U2_fourier}
 \label{LowDegreeTest.gowers_U2_fourier}
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p003-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.parseval_identity, LowDegreeTest.gowers_U2_eq_L2_conv, LowDegreeTest.gowers_norm_pow}
 \difficulty{2}
-For $f : \{0,1\}^n \to \bbr$,
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, with Gowers uniformity norm
+$\|f\|_{U^2}$ and Fourier coefficients $\hat f(S) = \E_x[f(x)\chi_S(x)]$ indexed by the
+subsets $S \subseteq [n]$. Then
 \[
-  \|f\|_{U^2}^4 = \sum_{S \subseteq [n]} \hat{f}(S)^4.
+  \|f\|_{U^2}^4 \;=\; \sum_{S \subseteq [n]} \hat f(S)^4 .
 \]
 \end{lemma}
 
-\begin{lemma}[Gowers norm at most 1 for $\pm 1$ functions]
+\begin{lemma}[Gowers norm at most one for sign-valued functions]
 \lean{LowDegreeTest.gowers_norm_le_one}
 \label{LowDegreeTest.gowers_norm_le_one}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.card_hypercube, BoolFourier.hypercube, LowDegreeTest.card_multi_hypercube, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product, LowDegreeTest.gowers_product_pm1}
 \difficulty{4}
-For every Boolean function $f : \{0,1\}^n \to \{0,1\}$ and every $k \ge 0$,
-$\|(-1)^f\|_{U^k}^{2^k} \le 1$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function on the hypercube, and let
+$g = (-1)^f$ be its $\pm 1$ lift, the real-valued function $g(x) = (-1)^{f(x)} \in \{\pm
+1\}$. Then for every $k \in \bbn$, the $k$-th Gowers uniformity norm of $g$ (in power
+form) satisfies
+\[
+  \|g\|_{U^k}^{2^k}
+= \E_{x \in \{0,1\}^n}\,\E_{h_1,\ldots,h_k}\!\left[\mathrm{GP}(g, k, x,
+h_1,\ldots,h_k)\right]
+  \;\le\; 1.
+\]
 \end{lemma}
 
 \subsection{Gowers product algebra}
@@ -372,38 +438,55 @@ The pointwise product of two real-valued functions on the hypercube:
 $(f \cdot g)(x) = f(x) \cdot g(x)$.
 \end{definition}
 
-\begin{lemma}[Gowers product is multiplicative]
+\begin{lemma}[Multiplicativity of the Gowers product]
 \lean{LowDegreeTest.gowers_product_mul}
 \label{LowDegreeTest.gowers_product_mul}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.boolFun_mul, LowDegreeTest.gowers_product}
 \difficulty{3}
-For $f, g : \{0,1\}^n \to \bbr$,
-$\mathrm{GP}(f \cdot g, k, x, h_1,\ldots,h_k)
- = \mathrm{GP}(f, k, x, h_1,\ldots,h_k) \cdot \mathrm{GP}(g, k, x, h_1,\ldots,h_k)$.
+Let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions, fix an order $k \ge 0$, a base
+point $x \in \{0,1\}^n$, and direction vectors $h_1, \ldots, h_k \in \{0,1\}^n$, and
+write $f \cdot g$ for the pointwise product $(f \cdot g)(y) = f(y)\,g(y)$. Then the
+order-$k$ Gowers product of the product function equals the product of the two Gowers
+products:
+\[
+  \mathrm{GP}(f \cdot g,\, k,\, x,\, h_1, \ldots, h_k)
+  = \mathrm{GP}(f,\, k,\, x,\, h_1, \ldots, h_k)
+    \cdot \mathrm{GP}(g,\, k,\, x,\, h_1, \ldots, h_k).
+\]
 \end{lemma}
 
-\begin{lemma}[Degree absorption for Gowers product]
+\begin{lemma}[Low-degree factors are absorbed by the Gowers product]
 \lean{LowDegreeTest.gowers_product_mul_degree_le}
 \label{LowDegreeTest.gowers_product_mul_degree_le}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.boolFun_mul, LowDegreeTest.gowers_product, LowDegreeTest.gowers_product_mul, LowDegreeTest.is_degree_le_pm1}
 \difficulty{1}
-If $g$ has degree $\le d$, then for any $f$,
-$\mathrm{GP}(f \cdot g, d{+}1, x, h_1,\ldots,h_{d+1})
- = \mathrm{GP}(f, d{+}1, x, h_1,\ldots,h_{d+1})$:
-multiplying by a low-degree function does not change the $(d{+}1)$-fold Gowers
-product.
+Let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions, and suppose $g$ has degree $\le
+d$, meaning that for every base point $y \in \{0,1\}^n$ and all direction vectors
+$h_1,\ldots,h_{d+1} \in \{0,1\}^n$ one has $\mathrm{GP}(g, d{+}1, y, h_1,\ldots,h_{d+1})
+= 1$. Then for every base point $x \in \{0,1\}^n$ and all directions $h_1,\ldots,h_{d+1}
+\in \{0,1\}^n$, the order-$(d{+}1)$ Gowers product of the pointwise product $f \cdot g$
+agrees with that of $f$ alone:
+\[
+  \mathrm{GP}(f \cdot g,\, d{+}1,\, x,\, h_1,\ldots,h_{d+1})
+  = \mathrm{GP}(f,\, d{+}1,\, x,\, h_1,\ldots,h_{d+1}).
+\]
 \end{lemma}
 
-\begin{lemma}[Gowers norm preserved under multiplication by low-degree function]
+\begin{lemma}[Gowers norm invariant under multiplication by a low-degree function]
 \lean{LowDegreeTest.gowers_norm_mul_degree_le}
 \label{LowDegreeTest.gowers_norm_mul_degree_le}
 \leanok
 \uses{BoolFourier.BoolFun, LowDegreeTest.boolFun_mul, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product_mul_degree_le, LowDegreeTest.is_degree_le_pm1}
 \difficulty{2}
-If $g$ has degree $\le d$, then
-$\|f \cdot g\|_{U^{d+1}}^{2^{d+1}} = \|f\|_{U^{d+1}}^{2^{d+1}}$.
+Fix $n, d \in \bbn$ and let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions. If $g$ has
+degree $\le d$—that is, every $(d{+}1)$-fold multiplicative derivative of $g$ equals
+$1$—then multiplying by $g$ leaves the $(d{+}1)$-st Gowers uniformity norm unchanged:
+writing $f \cdot g$ for the pointwise product $(f \cdot g)(x) = f(x)\,g(x)$,
+\[
+  \|f \cdot g\|_{U^{d+1}}^{2^{d+1}} = \|f\|_{U^{d+1}}^{2^{d+1}}.
+\]
 \end{lemma}
 
 \subsection{Degree test}
@@ -431,25 +514,37 @@ if $0 \le \varepsilon \le 1$ and $\dist(f, g) \ge \varepsilon$ for every Boolean
 function $g$ of degree $\le d$.
 \end{definition}
 
-\begin{lemma}[Acceptance probability formula]
+\begin{lemma}[Gowers norm and the low-degree test acceptance probability]
 \lean{LowDegreeTest.degree_test_accept_prob_eq}
 \label{LowDegreeTest.degree_test_accept_prob_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.card_hypercube, BoolFourier.expectation, BoolFourier.hypercube, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product, LowDegreeTest.gowers_product_pm1, LowDegreeTest.multi_expectation}
 \difficulty{5}
-For every Boolean function $f : \{0,1\}^n \to \{0,1\}$,
+Fix $n$ and an integer $d \ge 0$, and let $f : \{0,1\}^n \to \{0,1\}$ be a
+Boolean-valued function with $\pm1$ lift $(-1)^f : \{0,1\}^n \to \{\pm1\}$. Then the
+probability that the $(d+1)$-fold derivative low-degree test accepts $f$ is
 \[
-  \Pr[\text{accept}] = \frac{1 + \|(-1)^f\|_{U^{d+1}}^{2^{d+1}}}{2}.
+  \Pr[\text{accept}] \;=\; \frac{1 + \|(-1)^f\|_{U^{d+1}}^{2^{d+1}}}{2},
 \]
+where $\|(-1)^f\|_{U^{d+1}}^{2^{d+1}}$ is the $(d+1)$-st Gowers uniformity norm of the
+lift raised to the power $2^{d+1}$.
 \end{lemma}
 
-\begin{lemma}[Completeness of the degree test]
+\begin{lemma}[Completeness of the low-degree test]
 \lean{LowDegreeTest.degree_test_completeness}
 \label{LowDegreeTest.degree_test_completeness}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.degree_test_accept_prob_eq, LowDegreeTest.gowers_norm_eq_one_iff, LowDegreeTest.is_degree_le_bool}
 \difficulty{2}
-If $\deg(f) \le d$, then the degree-$d$ test accepts $f$ with probability $1$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function of degree at most $d$, meaning
+that its $\pm 1$ lift $(-1)^f$ has every $(d{+}1)$-fold Gowers product equal to $1$: for
+all base points $x$ and all direction vectors $h_1,\ldots,h_{d+1} \in \{0,1\}^n$, one
+has $\mathrm{GP}\bigl((-1)^f, d{+}1, x, h_1,\ldots,h_{d+1}\bigr) = 1$. Then the
+$(d{+}1)$-fold derivative test accepts $f$ with probability exactly $1$; that is,
+\[
+\E_{x}\,\E_{h_1,\ldots,h_{d+1}}\bigl[\mathbf{1}[\mathrm{GP}((-1)^f,\, d{+}1,\, x,\,
+h_1,\ldots,h_{d+1}) = 1]\bigr] = 1.
+\]
 \end{lemma}
 
 \begin{lemma}[Qualitative soundness of the degree test]
@@ -458,80 +553,122 @@ If $\deg(f) \le d$, then the degree-$d$ test accepts $f$ with probability $1$.
 \leanok
 \uses{BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.degree_test_accept_prob_eq, LowDegreeTest.gowers_norm_eq_one_iff, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product_pm1, LowDegreeTest.is_degree_le_bool}
 \difficulty{5}
-If $\deg(f) > d$, then the degree-$d$ test accepts $f$ with probability strictly
-less than $1$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function that does not have degree at most
+$d$, meaning that its $\pm 1$ lift $(-1)^f$ has at least one nonvanishing $(d{+}1)$-fold
+multiplicative derivative: there exist a base point $x$ and directions
+$h_1,\ldots,h_{d+1} \in \{0,1\}^n$ with $\mathrm{GP}\!\left((-1)^f,\, d{+}1,\, x,\,
+h_1,\ldots,h_{d+1}\right) \neq 1$. Then the $(d{+}1)$-fold derivative test accepts $f$
+with probability strictly less than $1$.
 \end{lemma}
 
 \subsection{Fourier analysis and degree}
 
-\begin{lemma}[Fourier characters have degree $\le 1$]
+\begin{lemma}[Walsh characters have degree at most one]
 \lean{LowDegreeTest.char_is_degree_le_one}
 \label{LowDegreeTest.char_is_degree_le_one}
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, LowDegreeTest.gowers_product, LowDegreeTest.is_degree_le_pm1}
 \difficulty{4}
-For every $S \subseteq [n]$, the Fourier character $\chi_S$ has degree $\le 1$.
+For every subset $S \subseteq [n]$, the Walsh--Fourier character $\chi_S$ has degree at
+most $1$: every second-order Gowers product of $\chi_S$ equals $1$. Explicitly, for all
+base points $x \in \{0,1\}^n$ and all direction vectors $h_1, h_2 \in \{0,1\}^n$,
+\[
+\chi_S(x)\,\chi_S(x \oplus h_1)\,\chi_S(x \oplus h_2)\,\chi_S(x \oplus h_1 \oplus h_2)
+\;=\; 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Negated character has degree $\le 1$]
+\begin{lemma}[Negated Walsh character has degree at most one]
 \lean{LowDegreeTest.neg_char_is_degree_le_one}
 \label{LowDegreeTest.neg_char_is_degree_le_one}
 \leanok
 \statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.is_degree_le_pm1}
 \difficulty{2}
-For every $S \subseteq [n]$, the function $-\chi_S$ has degree $\le 1$.
+For every subset $S \subseteq [n]$, the negated Walsh--Fourier character $x \mapsto
+-\chi_S(x)$ on $\{0,1\}^n$ has degree $\le 1$: its second-order multiplicative
+derivatives all equal $1$. Explicitly, for every base point $x \in \{0,1\}^n$ and every
+pair of direction vectors $h_1, h_2 \in \{0,1\}^n$, the order-$2$ Gowers product of
+$-\chi_S$ satisfies $\mathrm{GP}(-\chi_S, 2, x, h_1, h_2) = 1$.
 \end{lemma}
 
-\begin{lemma}[Fourier characters have degree $\le d$ for $d \ge 1$]
+\begin{lemma}[Walsh characters have bounded multiplicative degree]
 \lean{LowDegreeTest.char_is_degree_le}
 \label{LowDegreeTest.char_is_degree_le}
 \leanok
 \uses{BoolFourier.char_S, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.degree_le_succ, LowDegreeTest.is_degree_le_pm1}
 \difficulty{3}
-For every $S \subseteq [n]$ and $d \ge 1$, the character $\chi_S$ has degree $\le d$.
+For every subset $S \subseteq [n]$ and every integer $d \ge 1$, the Walsh--Fourier
+character $\chi_S$ has degree $\le d$: for every base point $x \in \{0,1\}^n$ and all
+direction vectors $h_1, \ldots, h_{d+1} \in \{0,1\}^n$, the $(d{+}1)$-fold Gowers
+product satisfies $\mathrm{GP}(\chi_S,\, d{+}1,\, x,\, h_1, \ldots, h_{d+1}) = 1$.
 \end{lemma}
 
-\begin{lemma}[Negated character has degree $\le d$ for $d \ge 1$]
+\begin{lemma}[Negated Walsh character has degree at most $d$]
 \lean{LowDegreeTest.neg_char_is_degree_le}
 \label{LowDegreeTest.neg_char_is_degree_le}
 \leanok
 \uses{BoolFourier.char_S, LowDegreeTest.degree_le_succ, LowDegreeTest.is_degree_le_pm1, LowDegreeTest.neg_char_is_degree_le_one}
 \difficulty{3}
-For every $S \subseteq [n]$ and $d \ge 1$, the function $-\chi_S$ has degree $\le d$.
+For every subset $S \subseteq [n]$ and every integer $d \ge 1$, the negated Walsh
+character $x \mapsto -\chi_S(x)$ has degree $\le d$. Equivalently, all of its
+$(d{+}1)$-fold multiplicative derivatives are trivial: for every base point $x \in
+\{0,1\}^n$ and all direction vectors $h_1,\ldots,h_{d+1} \in \{0,1\}^n$, the
+order-$(d{+}1)$ Gowers product satisfies $\mathrm{GP}(-\chi_S,\, d{+}1,\, x,\,
+h_1,\ldots,h_{d+1}) = 1$.
 \end{lemma}
 
-\begin{lemma}[Fourier coefficients bounded when $\varepsilon$-far from degree $d$]
+\begin{lemma}[Fourier coefficients of a function far from low degree]
 \lean{LowDegreeTest.fourier_coeff_le_of_far_from_degree}
 \label{LowDegreeTest.fourier_coeff_le_of_far_from_degree}
 \leanok
 \uses{BoolBLR.fourier_coeff_le_of_dist_ge, BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.chiS, LowDegreeTest.char_is_degree_le, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_bool}
 \difficulty{5}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from every degree-$\le d$ Boolean function,
-then for every $S \subseteq [n]$,
-$\hat{f}(S) \le 1 - 2\varepsilon$.
+Let $f:\{0,1\}^n\to\{0,1\}$ be a Boolean function, let $d\ge 1$, and let $\varepsilon$
+satisfy $0\le\varepsilon\le 1$. Suppose $f$ is $\varepsilon$-far from degree $\le d$;
+that is, $\Pr_{x}[f(x)\ne g(x)]\ge\varepsilon$ for every Boolean function
+$g:\{0,1\}^n\to\{0,1\}$ of degree $\le d$. Writing $(-1)^f:\{0,1\}^n\to\{\pm1\}$ for the
+$\pm1$ lift of $f$ and $\widehat{(-1)^f}(S)=\E_x[(-1)^{f(x)}\chi_S(x)]$ for its Fourier
+coefficient at $S$, we then have, for every $S\subseteq[n]$,
+\[
+  \widehat{(-1)^f}(S)\;\le\;1-2\varepsilon.
+\]
 \end{lemma}
 
-\begin{lemma}[Negated Fourier coefficients bounded when $\varepsilon$-far]
+\begin{lemma}[Fourier coefficients bounded below when far from low degree]
 \lean{LowDegreeTest.neg_fourier_coeff_le_of_far_from_degree}
 \label{LowDegreeTest.neg_fourier_coeff_le_of_far_from_degree}
 \leanok
 \uses{BoolBLR.bool_dist, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.PM1ToBool?, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_bool, LowDegreeTest.is_degree_le_pm1, LowDegreeTest.neg_char_is_degree_le}
 \difficulty{6}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then for every
-$S \subseteq [n]$, $-\hat{f}(S) \le 1 - 2\varepsilon$
-(equivalently, $\hat{f}(S) \ge -(1-2\varepsilon)$).
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function, let $d \ge 1$, and write $F =
+(-1)^f : \{0,1\}^n \to \{\pm 1\}$ for its $\pm 1$ lift. Suppose $f$ is $\varepsilon$-far
+from degree $\le d$; that is, $0 \le \varepsilon \le 1$ and every Boolean function $g$
+of degree $\le d$ satisfies $\Pr_{x}[f(x) \ne g(x)] \ge \varepsilon$. Then for every $S
+\subseteq [n]$,
+\[
+  -\widehat{F}(S) \;\le\; 1 - 2\varepsilon,
+\]
+where $\widehat{F}(S) = \mathbb{E}_x\bigl[F(x)\,\chi_S(x)\bigr]$ is the Fourier
+coefficient of $F$ at $S$; equivalently, $\widehat{F}(S) \ge 2\varepsilon - 1$.
 \end{lemma}
 
-\begin{lemma}[Absolute Fourier coefficients bounded when $\varepsilon$-far]
+\begin{lemma}[Fourier coefficients of a function far from low degree]
 \lean{LowDegreeTest.abs_fourier_coeff_le_of_far_from_degree}
 \label{LowDegreeTest.abs_fourier_coeff_le_of_far_from_degree}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube, LowDegreeTest.epsilon_far_from_RM, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.fourier_coeff_le_of_far_from_degree, LowDegreeTest.neg_fourier_coeff_le_of_far_from_degree}
 \difficulty{2}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then for every
-$S \subseteq [n]$, $|\hat{f}(S)| \le 1 - 2\varepsilon$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function, let $d \ge 1$, and let
+$\varepsilon$ be a real number with $0 \le \varepsilon \le 1$. Suppose $f$ is
+$\varepsilon$-far from degree $\le d$, meaning that $\dist(f,g) \ge \varepsilon$ for
+every Boolean function $g$ of degree $\le d$. Then, writing $\widehat{(-1)^f}(S)$ for
+the Fourier coefficient at $S$ of the $\pm 1$ lift $x \mapsto (-1)^{f(x)}$, we have
+\[
+  \bigl|\widehat{(-1)^f}(S)\bigr| \;\le\; 1 - 2\varepsilon
+  \qquad\text{for every } S \subseteq [n].
+\]
 \end{lemma}
 
 \subsection{Quantitative soundness}
@@ -555,7 +692,7 @@ The acceptance probability of the Reed--Muller test, defined as the degree-test
 acceptance probability \texttt{LowDegreeTest.degree\_test\_accept\_prob}.
 \end{definition}
 
-\begin{lemma}[Parseval for $\pm 1$ functions]
+\begin{lemma}[Parseval identity for the sign lift of a Boolean function]
 \lean{LowDegreeTest.parseval_pm1}
 \label{LowDegreeTest.parseval_pm1}
 \leanok
@@ -565,84 +702,110 @@ acceptance probability \texttt{LowDegreeTest.degree\_test\_accept\_prob}.
 }
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 \difficulty{2}
-For every Boolean function $f : \{0,1\}^n \to \{0,1\}$,
-$\sum_{S \subseteq [n]} \hat{f}(S)^2 = 1$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function, and let $g : \{0,1\}^n \to
+\bbr$ be its $\pm 1$ lift $g(x) = (-1)^{f(x)}$. Writing $\hat g(S) = \E[g\,\chi_S]$ for
+the Fourier coefficient of $g$ at $S$, where $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ and
+the expectation is over $x$ uniform on $\{0,1\}^n$, one has
+\[
+  \sum_{S \subseteq [n]} \hat g(S)^2 = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[$U^2$ norm bounded when $\varepsilon$-far from degree $d$]
+\begin{lemma}[$U^2$ norm bound for functions far from low degree]
 \lean{LowDegreeTest.gowers_U2_le_of_far}
 \label{LowDegreeTest.gowers_U2_le_of_far}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube, LowDegreeTest.abs_fourier_coeff_le_of_far_from_degree, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.gowers_U2_fourier, LowDegreeTest.gowers_norm_pow, LowDegreeTest.parseval_pm1}
 \difficulty{4}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then
-$\|(-1)^f\|_{U^2}^4 \le (1 - 2\varepsilon)^2$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function, let $d \ge 1$, and let
+$\varepsilon$ satisfy $0 \le \varepsilon \le 1$. Suppose $f$ is $\varepsilon$-far from
+degree $\le d$; that is, $\dist(f,g) \ge \varepsilon$ for every Boolean function $g$ of
+degree $\le d$. Then the $\pm 1$ lift $(-1)^f : \{0,1\}^n \to \{\pm 1\}$ satisfies \[
+\bigl\lVert (-1)^f \bigr\rVert_{U^2}^{4} \;\le\; (1 - 2\varepsilon)^2, \] where
+$\lVert\,\cdot\,\rVert_{U^2}^{4}$ denotes the second Gowers uniformity norm raised to
+the fourth power,
+$\E_{x}\,\E_{h_1,h_2}\!\bigl[\mathrm{GP}\bigl((-1)^f,2,x,h_1,h_2\bigr)\bigr]$.
 \end{lemma}
 
-\begin{lemma}[Squaring bound]
+\begin{lemma}[Squaring contracts on the unit interval]
 \lean{LowDegreeTest.sq_one_sub_two_eps_le}
 \label{LowDegreeTest.sq_one_sub_two_eps_le}
 \leanok
 \difficulty{2}
-For $\varepsilon \in [0, \tfrac{1}{2}]$,
-$(1 - 2\varepsilon)^2 \le 1 - 2\varepsilon$.
+For every real number $\varepsilon$ with $0 \le \varepsilon \le \tfrac{1}{2}$, the
+quantity $1 - 2\varepsilon$ lies in $[0,1]$ and hence is not increased by squaring:
+\[
+(1 - 2\varepsilon)^2 \le 1 - 2\varepsilon.
+\]
 \end{lemma}
 
-\begin{lemma}[$\varepsilon \le 1/2$ when $\varepsilon$-far from degree $\ge 1$]
+\begin{lemma}[Farness from low degree is at most one half]
 \lean{LowDegreeTest.eps_le_half_of_far}
 \label{LowDegreeTest.eps_le_half_of_far}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube, LowDegreeTest.abs_fourier_coeff_le_of_far_from_degree, LowDegreeTest.epsilon_far_from_degree}
 \difficulty{3}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then
-$\varepsilon \le 1/2$.
+Fix $n$ and an integer $d \ge 1$, and let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean
+function. If $f$ is $\varepsilon$-far from degree $\le d$ — that is, $0 \le \varepsilon
+\le 1$ and every Boolean function $g$ of degree $\le d$ satisfies $\dist(f,g) \ge
+\varepsilon$ — then $\varepsilon \le 1/2$.
 \end{lemma}
 
-\begin{lemma}[$U^2$ norm bounded by $1 - 2\varepsilon$ when $\varepsilon$-far (base case)]
+\begin{lemma}[Gowers $U^2$ norm bound for functions far from low degree]
 \lean{LowDegreeTest.gowers_norm_le_of_far_d1}
 \label{LowDegreeTest.gowers_norm_le_of_far_d1}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.eps_le_half_of_far, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.gowers_U2_le_of_far, LowDegreeTest.gowers_norm_pow, LowDegreeTest.sq_one_sub_two_eps_le}
 \difficulty{2}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then
-$\|(-1)^f\|_{U^2}^4 \le 1 - 2\varepsilon$.
+Let $d \ge 1$ and let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function, and write $F =
+(-1)^f$ for its $\pm 1$ lift. Suppose $f$ is $\varepsilon$-far from degree $\le d$: that
+is, $0 \le \varepsilon \le 1$, and every Boolean function $g$ of degree $\le d$
+satisfies $\dist(f,g) \ge \varepsilon$, where $\dist(f,g) = \Pr_{x}[f(x) \ne g(x)]$ over
+a uniform $x \in \{0,1\}^n$. Then the second Gowers uniformity norm of $F$ obeys
+\[
+  \|F\|_{U^2}^{4} \;\le\; 1 - 2\varepsilon .
+\]
 \end{lemma}
 
-\begin{lemma}[$\varepsilon$-far is monotone in $d$]
+\begin{lemma}[Monotonicity of $\varepsilon$-farness in the degree bound]
 \lean{LowDegreeTest.epsilon_far_monotone}
 \label{LowDegreeTest.epsilon_far_monotone}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.degree_le_succ, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_pm1}
 \difficulty{3}
-If $d' \le d$ and $f$ is $\varepsilon$-far from degree $\le d$, then $f$ is also
-$\varepsilon$-far from degree $\le d'$.
+Fix a Boolean function $f : \{0,1\}^n \to \{0,1\}$, a real number $\varepsilon$ with $0
+\le \varepsilon \le 1$, and natural numbers $d' \le d$. If $f$ is $\varepsilon$-far from
+degree $\le d$ — that is, $\dist(f, g) \ge \varepsilon$ for every Boolean function $g$
+of degree $\le d$ — then $f$ is also $\varepsilon$-far from degree $\le d'$.
 \end{lemma}
 
-\begin{lemma}[Derivative distance lemma]
+\begin{lemma}[Distance of the discrete derivative from low degree]
 \lean{LowDegreeTest.derivative_distance_lemma}
 \label{LowDegreeTest.derivative_distance_lemma}
 \leanok
 \uses{BoolBLR.bool_dist, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_bool}
 \difficulty{4}
-If $d \ge 2$ and $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from degree
-$\le d$, then there exists $\delta \ge \varepsilon$ such that for every
-$h \in \{0,1\}^n$ there exists a Boolean function $g$ of degree $\le d{-}1$
-with $\dist(\Delta_h f, g) \ge \delta$.  Intuitively, the multiplicative derivative
-$\Delta_h f(x) = f(x) \oplus f(x \oplus h)$ is on average far from degree
-$\le d{-}1$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function that is $\varepsilon$-far from
+degree $\le d$, where $d \ge 2$; in particular $0 \le \varepsilon \le 1$. For a shift $h
+\in \{0,1\}^n$, write $\partial_h f$ for the discrete derivative $\partial_h f(x) = f(x)
+\oplus f(x \oplus h)$. Then there exists a real number $\delta \ge \varepsilon$ such
+that for every $h \in \{0,1\}^n$ there is a Boolean function $g : \{0,1\}^n \to \{0,1\}$
+for which, if $g$ has degree $\le d-1$, then $\dist(\partial_h f, g) \ge \delta$.
 \end{lemma}
 
-\begin{lemma}[Gowers norm bound when $\varepsilon$-far (inductive)]
+\begin{lemma}[Gowers norm bound for functions far from low degree]
 \lean{LowDegreeTest.gowers_norm_le_of_far}
 \label{LowDegreeTest.gowers_norm_le_of_far}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.gowers_norm_le_of_far_d1, LowDegreeTest.gowers_norm_pow}
 \difficulty{3}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from degree $\le d$, then there exists
-a constant $c > 0$ such that
-$\|(-1)^f\|_{U^{d+1}}^{2^{d+1}} \le 1 - c\varepsilon$.
-For $d = 1$ one may take $c = 2$; the case $d \ge 2$ follows by induction using
-the derivative distance lemma (BKSSZ 2010).
+Let $d \ge 1$ and let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function that is
+$\varepsilon$-far from degree $\le d$, meaning $0 \le \varepsilon \le 1$ and $\dist(f,
+g) \ge \varepsilon$ for every Boolean function $g$ of degree $\le d$. Then there is a
+constant $c > 0$ for which the $\pm 1$ lift $(-1)^{f}$ satisfies
+\[
+  \bigl\|(-1)^{f}\bigr\|_{U^{d+1}}^{2^{d+1}} \;\le\; 1 - c\,\varepsilon.
+\]
 \end{lemma}
 
 \begin{lemma}[Quantitative soundness of the degree test]
@@ -650,27 +813,45 @@ the derivative distance lemma (BKSSZ 2010).
 \label{LowDegreeTest.degree_test_quantitative_soundness}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.epsilon_far_from_degree}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from every degree-$\le d$ function, then
-$\Pr[\text{degree test accepts } f] \le 1 - \varepsilon$.
+Fix $d \ge 1$ and let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function that is
+$\varepsilon$-far from degree $\le d$; that is, $0 \le \varepsilon \le 1$ and every
+Boolean function $g$ of degree $\le d$ satisfies $\dist(f,g) \ge \varepsilon$. Then the
+$(d{+}1)$-fold derivative test accepts $f$ with probability at most $1 - \varepsilon$:
+\[
+  \E_{x}\,\E_{h_1,\ldots,h_{d+1}}
+  \bigl[\mathbf{1}[\mathrm{GP}((-1)^f, d{+}1, x, h_1,\ldots,h_{d+1}) = 1]\bigr]
+  \;\le\; 1 - \varepsilon,
+\]
+where $x$ and the direction vectors $h_1,\ldots,h_{d+1}$ range uniformly over
+$\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Completeness of the Reed--Muller test]
+\begin{lemma}[Completeness of the Reed–Muller degree test]
 \lean{LowDegreeTest.RM_test_completeness}
 \label{LowDegreeTest.RM_test_completeness}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.ReedMuller, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.degree_test_completeness}
 \difficulty{1}
-Every codeword $f \in \mathrm{RM}(d, n)$ is accepted by the degree-$d$ test with
-probability $1$.
+Fix a degree bound $d$ and let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function
+belonging to the Reed–Muller code $\mathrm{RM}(d,n)$, that is, a function of degree at
+most $d$. Then the $(d+1)$-fold derivative test accepts $f$ with probability exactly
+$1$:
+\[
+\E_{x}\,\E_{h_1,\ldots,h_{d+1}}\bigl[\mathbf{1}[\mathrm{GP}((-1)^f,\, d{+}1,\, x,\,
+h_1,\ldots,h_{d+1}) = 1]\bigr] = 1,
+\]
+where $x$ and the direction vectors $h_1,\ldots,h_{d+1}$ range uniformly over
+$\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the Reed--Muller test]
+\begin{lemma}[Soundness of the low-degree derivative test]
 \lean{LowDegreeTest.RM_test_soundness}
 \label{LowDegreeTest.RM_test_soundness}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.degree_test_quantitative_soundness, LowDegreeTest.epsilon_far_from_degree}
 \difficulty{1}
-If $d \ge 1$ and $f$ is $\varepsilon$-far from every codeword of $\mathrm{RM}(d, n)$,
-then the Reed--Muller test accepts $f$ with probability at most $1 - \varepsilon$,
-i.e.\ it rejects with probability at least $\varepsilon$.
+Fix $d \ge 1$ and let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function. Suppose $f$ is
+$\varepsilon$-far from degree $\le d$; that is, $0 \le \varepsilon \le 1$ and
+$\dist(f,g) \ge \varepsilon$ for every Boolean function $g$ of degree $\le d$. Then the
+$(d{+}1)$-fold derivative test accepts $f$ with probability at most $1 - \varepsilon$.
 \end{lemma}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt",
+ "key": "bab8982721dcaff1",
+ "kind": "lemma",
+ "title": "Pruning preserves outputs on inputs that miss the subprotocol",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols over Alice's inputs $X$, Bob's inputs $Y$, and output type $\\alpha$, and suppose $s$ is a subprotocol of $p$ (a rooted subtree) whose leaf count is strictly smaller than that of $p$. Form the pruned protocol obtained by deleting the subtree $s$ from $p$. Then for every pair of inputs $x \\in X$ and $y \\in Y$ that does not reach $s$ — that is, $(x,y)$ fails to be consistent with all of the branching choices along the path from the root of $p$ down to $s$ — the pruned protocol and $p$ produce the same output on $(x,y)$: running the pruned protocol on $x$ and $y$ yields exactly $p$'s output on $x$ and $y$.",
+ "hypotheses_covered": [
+  "s is a subprotocol of p",
+  "s.numLeaves < p.numLeaves (strictly fewer leaves)",
+  "inputs x in X and y in Y",
+  "(x,y) does not reach s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$ and $(x, y)$ does not reach $s$, then\n$(\\texttt{prune}\\;\\texttt{hsp}\\;\\texttt{hlt}).\\texttt{run}\\;x\\;y = p.\\texttt{run}\\;x\\;y$."
+}

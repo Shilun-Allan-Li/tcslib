@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.OneWay.lt_communicationComplexity_of_forall_distributionalError_gt",
+ "key": "193ccae90ef5b1be",
+ "kind": "theorem",
+ "title": "Yao's minimax lower bound for one-way public-coin protocols",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function, let $\\varepsilon \\in \\bbr$, and let $n \\in \\bbn$. Suppose there is a finite probability distribution $\\mu$ on $X \\times Y$ under which every deterministic one-way protocol $p$ of communication cost at most $n$ has distributional error strictly greater than $\\varepsilon$; that is, $\\Pr_{(x,y)\\sim\\mu}\\bigl[\\,p\\text{ outputs a value}\\neq f(x,y)\\,\\bigr] > \\varepsilon$ for every such $p$. Then the $\\varepsilon$-error one-way public-coin communication complexity of $f$ is strictly greater than $n$.",
+ "hypotheses_covered": [
+  "function f : X → Y → α to be computed",
+  "real error parameter ε",
+  "natural-number cost bound n",
+  "a finite probability distribution μ on X × Y",
+  "every deterministic one-way protocol of cost ≤ n has distributional error > ε under μ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f : X \\to Y \\to \\alpha$, $\\varepsilon \\in \\mathbb{R}$, and $n \\in \\mathbb{N}$.\nSuppose there exists a finite joint distribution $\\mu$ on $X \\times Y$ such that every\ndeterministic one-way protocol $p$ with $p.\\mathrm{cost} \\le n$ satisfies\n$p.\\mathrm{distributionalError}(\\mu, f) > \\varepsilon$.\nThen the one-way public-coin communication complexity of $f$ at error $\\varepsilon$\nsatisfies $n < \\mathrm{communicationComplexity}(f, \\varepsilon)$.\nThis is one direction of Yao's minimax principle: a hard input distribution witnesses\na lower bound on randomised complexity."
+}

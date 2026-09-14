@@ -1,0 +1,15 @@
+{
+ "lean_name": "KKL.lowDegree_approx",
+ "key": "daf1e667aa63e2b3",
+ "kind": "lemma",
+ "title": "Low-degree approximation error bound",
+ "statement": "Let $f\\colon\\{0,1\\}^n\\to\\bbr$ be a Boolean function and let $k\\ge 1$ be an integer. Writing $f_{\\le k}(x)=\\sum_{\\abs S\\le k}\\hat f(S)\\,\\chi_S(x)$ for the truncation of $f$ to its Fourier coefficients of degree at most $k$, the squared $L^2$ distance between $f$ and $f_{\\le k}$ under the uniform measure on the cube is bounded by\n\\[\n  \\E\\big[(f(x)-f_{\\le k}(x))^2\\big]\\;\\le\\;\\frac{I[f]}{k},\n\\]\nwhere $I[f]=\\sum_{i=1}^n\\mathrm{Inf}_i[f]$ is the total influence of $f$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on the n-cube",
+  "k is a natural number with 0 < k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $k > 0$, the degree-$k$ truncation approximates $f$ with squared $L^2$ error at\nmost $I[f]/k$."
+}

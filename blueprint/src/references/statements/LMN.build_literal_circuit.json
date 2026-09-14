@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.build_literal_circuit",
+ "key": "c3205c08556441b3",
+ "kind": "lemma",
+ "title": "A depth-one circuit for a single gate over literals",
+ "statement": "Fix an arity $k$, a gate type given by a flag that selects AND when true and OR when false, and a family of polarities $\\sigma : \\mathrm{Fin}\\,k \\to \\mathbb{F}_2$. For each variable index $j \\in \\mathrm{Fin}\\,k$, let $\\ell_j$ be the literal on variable $j$ with polarity $\\sigma(j)$, and let $G$ be the single gate of the chosen type applied to the list $\\ell_0, \\ell_1, \\dots, \\ell_{k-1}$. Then there is a Boolean circuit $c'$ of depth at most $1$ that computes the same Boolean function as $G$: for every assignment $g : \\mathrm{Fin}\\,k \\to \\mathbb{F}_2$, the value of $c'$ at $g$ equals the value of $G$ at $g$.",
+ "hypotheses_covered": [
+  "gate type flag (AND when true, OR when false)",
+  "arity k",
+  "polarity family signs : Fin k → Bool",
+  "existence of circuit of depth ≤ 1",
+  "agreement with the single gate over the k literals on every assignment g"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any flag $\\mathit{isAnd}$, arity $k$, and sign family $\\mathit{signs} : \\mathrm{Fin}\\,k\n\\to \\mathrm{Bool}$, there is a circuit $c'$ of depth at most $1$ that equals the node\n$\\mathrm{Circuit.node}\\,\\mathit{isAnd}$ over the literals $\\mathrm{Circuit.lit}\\,\\langle j,\n\\mathit{signs}\\,j\\rangle$, evaluating identically on every input assignment $g$."
+}

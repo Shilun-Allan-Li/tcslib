@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.exists_poly_list_for_circuit_one",
+ "key": "8d6c021992e13938",
+ "kind": "theorem",
+ "title": "Polynomial list approximating a single-output $\\mathrm{AC}^0[p]$ circuit",
+ "statement": "Let $p$ be a prime and let $F$ be a layered feedforward circuit over the Boolean alphabet $\\mathrm{Fin}\\,2$, with inputs indexed by $\\mathrm{Fin}\\,n$, finitely many nodes in every layer, and a single output node, and suppose every gate of $F$ belongs to the $\\mathrm{AC}^0[p]$ gate set (the identity, NOT, unbounded fan-in AND, and unbounded $\\mathrm{MOD}_p$ gates of every arity). Then for every $\\ell \\in \\bbn$ there is a nonempty list $P_1,\\dots,P_m$ of polynomials in the variables $\\{X_i : i \\in \\mathrm{Fin}\\,n\\}$ over $\\bbz/p$, each of total degree at most $\\bigl((p-1)\\ell\\bigr)^{\\mathrm{depth}(F)}$, with the following property. For a Boolean input $x : \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,2$, write $\\hat{x} \\in (\\bbz/p)^n$ for the point whose $i$-th coordinate is the image of $x_i$ in $\\bbz/p$, and let $b(x) \\in \\bbz/p$ be the image of the single Boolean value output by $F$ on $x$. Then for every such $x$, the number of indices $j$ with $P_j(\\hat{x}) \\neq b(x)$, multiplied by $2^{\\ell}$, is at most $s \\cdot m$, where $s$ is the total number of non-input gates of $F$ and $m$ is the length of the list.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$F$ is a layered feedforward circuit over $\\mathrm{Fin}\\,2$ with inputs $\\mathrm{Fin}\\,n$",
+  "each layer of $F$ has finitely many nodes",
+  "$F$ has a single output node",
+  "every gate of $F$ lies in the $\\mathrm{AC}^0[p]$ gate set",
+  "for every $\\ell \\in \\bbn$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a prime, and let $F$ be a layered feedforward circuit over the Boolean\nalphabet $\\mathrm{Fin}\\,2$, with input coordinates indexed by $\\mathrm{Fin}\\,n$ and a\nsingle output node, each of whose layers has finitely many nodes and all of whose gates\nbelong to the $\\mathrm{AC}^0[p]$ gate set. Then for every $\\ell \\in \\bbn$ there is a\nnonempty list $Ps$ of multivariate polynomials over $\\bbz/p$ in the variables indexed by\n$\\mathrm{Fin}\\,n$ such that every entry $P$ of $Ps$ has total degree at most\n$\\mathrm{circuitDegreeBound}(p,\\ell,\\mathrm{depth}(F)) =\n\\bigl((p-1)\\ell\\bigr)^{\\mathrm{depth}(F)}$, and for every Boolean input $x :\n\\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,2$ the number of entries $P$ of $Ps$ whose value\n$P\\bigl(\\mathrm{boolInput}_p(x)\\bigr)$ disagrees with the circuit's single Boolean\noutput on $x$, cast into $\\bbz/p$, multiplied by $2^{\\ell}$, is at most\n$\\mathrm{gateCountBefore}(F,\\mathrm{depth}(F)) \\cdot \\abs{Ps}$."
+}

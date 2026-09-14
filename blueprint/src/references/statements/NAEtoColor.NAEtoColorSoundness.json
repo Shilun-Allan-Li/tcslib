@@ -1,0 +1,17 @@
+{
+ "lean_name": "NAEtoColor.NAEtoColorSoundness",
+ "key": "0bcc97640fad87c7",
+ "kind": "lemma",
+ "title": "Soundness of the NAE-SAT to 3-coloring reduction",
+ "statement": "Let $f$ be a NAE-SAT instance over a variable type $V$, that is, a list of Not-All-Equal clauses, each clause naming three variables. Form the reduction graph associated to $f$: its vertices are a single ground vertex, one vertex for each variable in $V$, and, for every clause, three gadget vertices; its edges join the ground vertex to each variable vertex, join each variable vertex $v$ to a clause-gadget vertex whenever $v$ occurs in the corresponding position of that clause, and, for every clause of $f$, join its three gadget vertices pairwise into a triangle. If this graph is 3-colorable — that is, its vertices admit a coloring by $\\{0,1,2\\}$ in which adjacent vertices receive distinct colors — then $f$ is satisfiable: there exists a Boolean assignment $\\mathit{assign} : V \\to \\{\\mathrm{true},\\mathrm{false}\\}$ under which every clause of $f$ has its three assigned values not all equal.",
+ "hypotheses_covered": [
+  "f is a NAE-SAT instance over variable type V (a list of NAE clauses)",
+  "the reduction graph of f is 3-colorable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "If the reduction graph $\\texttt{NAEtoColor.ReductionGraph}\\;f$ is 3-colorable,\nthen the NAE-SAT instance $f$ is satisfiable.\nThe assignment is recovered by comparing each variable-node color to the\n``true'' color (ground color $+1 \\pmod{3}$); the triangle gadgets within each\nclause force the three variable colors to be not all equal, yielding a\nNAE-satisfying assignment."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleGraph.exists_common_coset_transversal",
+ "key": "3614f1bd465e2998",
+ "kind": "theorem",
+ "title": "Common transversal of left and right cosets (P. Hall)",
+ "statement": "Let $H$ be a finite group and let $K \\le H$ be a subgroup. Then there exist a natural number $n$ and elements $h_1, \\dots, h_n \\in H$ such that the assignment $i \\mapsto h_i K$, sending each index to the corresponding left coset viewed as a subset of $H$, is a bijection from $\\{1, \\dots, n\\}$ onto the collection of all subsets of $H$, and, simultaneously, the assignment $i \\mapsto K h_i$, sending each index to the corresponding right coset, is also a bijection from $\\{1, \\dots, n\\}$ onto the collection of all subsets of $H$.",
+ "hypotheses_covered": [
+  "$H$ is a finite group",
+  "$K$ is a subgroup of $H$"
+ ],
+ "confidence": "low",
+ "caveat": "The Lean gives the two coset maps codomain `Set H` (all subsets of $H$), so `Function.Bijective` literally asserts each map is a bijection onto the full power set of $H$ — which is what I rendered. This is almost certainly a mis-formalization of the classical P. Hall result (where the maps should enumerate exactly the left, resp. right, cosets of $K$); read literally the formal claim is false, but per the ground-truth rule I have stated the formal statement rather than the intended one. Confidence marked low because of this codomain discrepancy.",
+ "rubric": [],
+ "replaced": "Ex 5.2.9: a common transversal of the left and right cosets of a subgroup (P. Hall).\n\n5.2.9 Let $H$ be a finite group and let $K$ be a subgroup of $H$. Show that there exist\nelements $h_1, h_2, \\ldots, h_n \\in H$ such that $h_1K, h_2K, \\ldots, h_nK$ are the left\ncosets of $K$ and $Kh_1, Kh_2, \\ldots, Kh_n$ are the right cosets of $K$. (P. Hall)"
+}

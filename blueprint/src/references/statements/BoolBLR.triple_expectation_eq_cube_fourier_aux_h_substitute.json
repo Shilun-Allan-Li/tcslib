@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolBLR.triple_expectation_eq_cube_fourier_aux_h_substitute",
+ "key": "b64872ee592dfeed",
+ "kind": "lemma",
+ "title": "Expectation of a function against its Fourier-expanded autocorrelation",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function, and let $g$ denote its $\\pm 1$ lift, so that $g(x) = (-1)^{f(x)}$. Suppose that the convolution of $g$ with itself admits the Fourier expansion\n\\[\n  (g * g)(x) \\;=\\; \\sum_{S \\subseteq [n]} \\hat{g}(S)^2\\,\\chi_S(x)\n  \\qquad\\text{for every } x \\in \\{0,1\\}^n,\n\\]\nwhere $\\chi_S$ is the Walsh character of $S$ and $\\hat{g}(S) = \\langle g, \\chi_S\\rangle$. Then\n\\[\n  \\E_x\\!\\left[g(x)\\,(g * g)(x)\\right]\n  \\;=\\;\n  \\sum_{S \\subseteq [n]} \\hat{g}(S)^2\\,\\E_x\\!\\left[g(x)\\,\\chi_S(x)\\right],\n\\]\nthe expectation being taken uniformly over $x \\in \\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "f is a Boolean-valued function on the hypercube",
+  "g is the ±1 lift of f",
+  "hypothesis: the self-convolution of g equals the sum over S of g-hat(S)^2 times chi_S, pointwise for all x",
+  "conclusion: E[g·(g*g)] equals sum over S of g-hat(S)^2 · E[g·chi_S]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Write $g = \\texttt{BoolBLR.lift\\_pm1}\\,f$ and assume\n$(g * g)(x) = \\sum_S \\hat{g}(S)^2 \\chi_S(x)$ for all $x$.  Then\n\\[\n  \\E_x\\!\\left[g(x)\\,(g * g)(x)\\right]\n  \\;=\\;\n  \\sum_{S \\subseteq [n]} \\hat{g}(S)^2\\,\\E_x\\!\\left[g(x)\\,\\chi_S(x)\\right].\n\\]"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mix_swap",
+ "key": "bbf697b53e37a022",
+ "kind": "theorem",
+ "title": "Double mixing recovers the first sample",
+ "statement": "For two samples $\\omega,\\omega'$ of the hard distribution, let $\\omega\\ast\\omega'$ denote their *mixture*: the sample built by taking Alice's input from $\\omega$ and Bob's input from $\\omega'$. Let $\\omega_X$ and $\\omega_Y$ be two samples that share the same special coordinate $T$, whose Alice-bits before the special coordinate agree, and whose Bob-bits after the special coordinate agree. Then\n\\[\n(\\omega_X\\ast\\omega_Y)\\ast(\\omega_Y\\ast\\omega_X)=\\omega_X .\n\\]",
+ "hypotheses_covered": [
+  "same special coordinate T",
+  "Alice's bits before the special coordinate agree",
+  "Bob's bits after the special coordinate agree"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Swapping twice recovers the first sample. This is the involution behind the rectangle-counting argument for conditional independence on $Z$ fibers."
+}

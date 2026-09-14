@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.switched_gates_have_dnf_cnf",
+ "key": "10dc9d2d2dccb150",
+ "kind": "lemma",
+ "title": "DNF and CNF forms of shallow restricted gates",
+ "statement": "Let $g_1,\\dots,g_m$ be DNF formulas on $n$ Boolean variables, let $\\rho$ be a restriction of these variables, and let $l\\in\\bbn$. For each $i$, write $f_i$ for the restriction of $g_i$ by $\\rho$, that is, the Boolean function $x \\mapsto g_i(\\rho.\\mathrm{extend}\\,x)$ that evaluates $g_i$ with the coordinates fixed by $\\rho$ set accordingly and the free coordinates supplied by $x$, and suppose that every $f_i$ has decision-tree depth at most $l$. Then for each $i$ there is a DNF formula $\\varphi_i$ of width at most $l$ that computes $f_i$, in which no term repeats a literal and no two literals of the same term share a variable; and there is a CNF formula $\\psi_i$ of width at most $l$ that also computes $f_i$.",
+ "hypotheses_covered": [
+  "m gates, each a DNF formula on n variables",
+  "a restriction ρ of the n variables",
+  "a natural number l",
+  "for every gate i, the restriction of g_i by ρ has decision-tree depth at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf, after applying a restriction $\\rho$, every gate function\n$\\mathrm{restrictFn}\\,(\\mathrm{gates}\\,i).\\mathrm{eval}\\,\\rho$ has decision-tree depth at\nmost $l$, then each gate admits both a width-$l$ DNF representation (whose terms are\nduplicate-free and contain no two literals on the same variable) and a width-$l$ CNF\nrepresentation, each computing the same function."
+}

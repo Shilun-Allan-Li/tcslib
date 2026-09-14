@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.razborovEncode_path_length",
+ "key": "adc6cccb5550444d",
+ "kind": "lemma",
+ "title": "Bad restrictions force a canonical path of length $d$",
+ "statement": "Let $f$ be a DNF formula on $n$ variables, let $\\rho$ be a restriction of those variables, and let $d$ be a natural number. Suppose $\\rho$ is bad for $f$ at depth $d$: the restriction $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ of the Boolean function computed by $f$ has decision-tree depth strictly greater than $d$. Then the deepest root-to-leaf path of the canonical decision tree of $f$ under $\\rho$, truncated to its first $d$ steps, is a sequence of exactly $d$ pairs (queried variable, branch direction) — equivalently, that path has length at least $d$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "ρ is a restriction on n variables",
+  "d is a natural number",
+  "ρ is bad for f at depth d, i.e. the restricted function of f has decision-tree depth greater than d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nWhen $\\rho$ is bad, the prefix\n$(\\mathrm{canonicalDTree}\\,f\\,\\rho).\\mathrm{deepPath}.\\mathrm{take}\\,d$ used by the\nencoder has length exactly $d$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceClaimConditioning_ae_eq_coarseConditioning_disjointSpecialYFalse",
+ "key": "14524e49ac6c15ae",
+ "kind": "theorem",
+ "title": "Almost-sure agreement of Alice's and the coarse conditioning variable",
+ "statement": "Fix a positive integer $n$, and work on the sample space of the hard distribution for set disjointness, where each sample determines a special coordinate $T \\in \\{0,\\dots,n-1\\}$ together with Alice's and Bob's input bits. Write $X_{<T}$ for Alice's bits at the coordinates strictly below $T$ (padded with $\\mathrm{false}$ elsewhere), $Y_{\\ge T}$ for Bob's bits at the coordinates from $T$ onward (padded with $\\mathrm{false}$ elsewhere), and $Y_{>T}$ for Bob's bits at the coordinates strictly above $T$ (padded with $\\mathrm{false}$ elsewhere). Then, under the hard distribution conditioned on the event that Alice's and Bob's input sets are disjoint and further on Bob's bit at the special coordinate being $\\mathrm{false}$, the triple $(T, X_{<T}, Y_{\\ge T})$ equals the triple $(T, X_{<T}, Y_{>T})$ almost everywhere.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "measure is the hard distribution conditioned on the disjointness event",
+  "measure is further conditioned on Bob's bit at the special coordinate being false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under $D ∧ Y_{T}=false$, Alice's fine conditioning variable is a.e. the coarse conditioning variable."
+}

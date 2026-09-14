@@ -1,0 +1,14 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_cons_free",
+ "key": "4eec2194301204b3",
+ "kind": "lemma",
+ "title": "Unfolding the term sub-tree at a free head literal",
+ "statement": "Let $l$ be a literal on $n$ Boolean variables, write $i$ for its underlying variable, let $\\mathit{rest}$ be a further list of literals, let $\\rho$ be a restriction on these $n$ variables, and let the continuation assign a decision tree to each restriction. If $i$ is free under $\\rho$, then the sub-tree built for the list $l :: \\mathit{rest}$ under $\\rho$ (with this continuation) is the branch that queries $i$, whose false-child is the sub-tree built for $\\mathit{rest}$ under the restriction obtained from $\\rho$ by fixing $i$ to false, and whose true-child is the sub-tree built for $\\mathit{rest}$ under the restriction obtained from $\\rho$ by fixing $i$ to true, both with the same continuation.",
+ "hypotheses_covered": [
+  "the underlying variable of the head literal l is free under the restriction rho"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When the head literal $l$ is free in $\\rho$, $\\mathrm{termSubTree}\\,(l :: \\mathit{rest})\\,\\rho\\,\\mathrm{cont}$\nis a branch on $l.\\mathrm{var}$ whose two children are the recursive $\\mathrm{termSubTree}$ calls on\n$\\mathit{rest}$ with $\\rho$ updated to $\\mathrm{some}\\ \\mathrm{false}$ and $\\mathrm{some}\\ \\mathrm{true}$."
+}

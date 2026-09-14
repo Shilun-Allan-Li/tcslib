@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.exists_aux_injection",
+ "key": "169f23e22573568b",
+ "kind": "lemma",
+ "title": "Injectivity of the Razborov encoding on its auxiliary output",
+ "statement": "Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, let $w$ satisfy $w > 0$, let $d$ be a natural number, and let $\\gamma$ be a fixed restriction on the same $n$ variables. Consider the collection of all restrictions $\\rho$ that are bad for the Boolean function computed by $f$ at depth $d$ — that is, the function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth strictly greater than $d$ — and whose Razborov encoding with parameters $w,d$ has first component equal to $\\gamma$; write $S$ for the set of auxiliary lists $\\mathrm{aux} \\in (\\bbn \\times \\mathrm{Bool})^{*}$ arising as the second component of the Razborov encoding of such a $\\rho$. Then there exists a map $g$ from auxiliary lists to functions $\\mathrm{Fin}\\,d \\to \\mathrm{Fin}\\,w \\times \\mathrm{Bool} \\times \\mathrm{Bool}$ that is injective on $S$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "the width of f is at most w",
+  "0 < w",
+  "d is a natural-number depth parameter",
+  "γ is a fixed restriction on n variables",
+  "domain of injectivity: aux components of the Razborov encoding over restrictions that are bad for f's Boolean function at depth d and whose encoding has first component γ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exists a function $g$ from aux lists into\n$\\mathrm{Fin}\\,d \\to \\mathrm{Fin}\\,w \\times \\mathrm{Bool} \\times \\mathrm{Bool}$\nthat is injective on the image of the Razborov encoder over bad $s$-restrictions\nwith fixed $\\gamma$. This isolates the combinatorial encoding of each of the $d$\npath steps as a triple $(\\mathrm{position}, \\mathrm{direction}, \\mathrm{hasMarker})$."
+}

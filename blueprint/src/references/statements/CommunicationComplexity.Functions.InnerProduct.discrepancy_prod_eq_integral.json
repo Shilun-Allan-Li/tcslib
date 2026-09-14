@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.discrepancy_prod_eq_integral",
+ "key": "16d9690a62dba3f1",
+ "kind": "lemma",
+ "title": "Discrepancy of a rectangle as an iterated integral",
+ "statement": "Fix $n$, work over the type $\\mathrm{BoolInput}(n)$ of $n$-bit Boolean inputs equipped with a finite probability measure on the product $\\mathrm{BoolInput}(n)\\times\\mathrm{BoolInput}(n)$, and let $\\mathrm{IP}$ denote the mod-$2$ inner product. For any two subsets $A, B \\subseteq \\mathrm{BoolInput}(n)$, the discrepancy of $\\mathrm{IP}$ on the combinatorial rectangle $A\\times B$ factors as the iterated integral\n\\[\n  \\mathrm{disc}\\bigl(\\mathrm{IP},\\, A\\times B\\bigr)\n  = \\int_{x} \\mathbf{1}_A(x)\\left(\\int_{y} \\mathbf{1}_B(y)\\,\\sigma\\bigl(\\mathrm{IP}(x,y)\\bigr)\\right),\n\\]\nwhere $\\mathbf{1}_A$ and $\\mathbf{1}_B$ are the indicator functions of $A$ and $B$, and $\\sigma$ is the Boolean sign map sending $\\mathrm{false}\\mapsto 1$ and $\\mathrm{true}\\mapsto -1$.",
+ "hypotheses_covered": [
+  "A ⊆ BoolInput n (a subset A)",
+  "B ⊆ BoolInput n (a subset B)",
+  "finite probability space on the product BoolInput n × BoolInput n",
+  "discrepancy taken with respect to the inner product function IP"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For sets $A, B \\subseteq \\mathrm{BoolInput}\\,n$, the discrepancy of the rectangle\n$A \\times B$ for the inner product function equals\n\\[\n  \\mathrm{disc}(\\mathrm{IP}, A \\times B)\n  = \\int_x \\mathbf{1}_A(x)\n      \\int_y \\mathbf{1}_B(y)\\,\\mathrm{boolSign}(\\mathrm{IP}(x,y)).\n\\]"
+}

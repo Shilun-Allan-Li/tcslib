@@ -1,0 +1,14 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_uniform_product_eq_initial_cut_survival_product",
+ "key": "15a0cc415a48aec5",
+ "kind": "lemma",
+ "title": "Uniform survival product via the initial cut size",
+ "statement": "Let $T$ be an indexed surviving trace of length $\\mathrm{steps}$, with states $s_0, s_1, \\dots$, and write $c$ for the size of the distinguished cut of the initial state $s_0$ and $m_i$ for the edge count of the graph of state $s_i$. Then the product of the uniform one-step survival probabilities of the states $s_0, \\dots, s_{\\mathrm{steps}-1}$ equals\n\\[\n  \\prod_{i=0}^{\\mathrm{steps}-1} \\left(1 - \\frac{c}{m_i}\\right),\n\\]\nthe product of the one-step survival probabilities computed with the initial cut size $c$ at every index.",
+ "hypotheses_covered": [
+  "T is an indexed surviving trace of length steps (consecutive states related by a surviving step)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The same product may be written using the initial cut size at every index, since cut size\nis invariant along a surviving trace."
+}

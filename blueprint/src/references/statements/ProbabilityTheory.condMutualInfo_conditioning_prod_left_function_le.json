@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_conditioning_prod_left_function_le",
+ "key": "068695a3752e1f7c",
+ "kind": "theorem",
+ "title": "Adding a deterministic function of the pair as extra conditioning",
+ "statement": "Let $X$, $Y$, $Z$ be random variables on a probability space $(\\Omega,\\mu)$ (where $\\mu$ is allowed to be the zero measure), taking values in countable measurable spaces $S$, $T$, $U$ respectively, and assume each of $X$, $Y$, $Z$ is measurable with finite range. Let $V$ be a further countable measurable space and let $f\\colon U\\times S\\to V$ be measurable, and write $f(Z,X)$ for the random variable $\\omega\\mapsto f\\bigl(Z(\\omega),X(\\omega)\\bigr)$. Then conditioning additionally on $f(Z,X)$ cannot increase the conditional mutual information of $X$ and $Y$ given $Z$:\n\\[\n  I[X : Y \\mid (Z,\\, f(Z,X)) ; \\mu]\n  \\;\\le\\;\n  I[X : Y \\mid Z ; \\mu].\n\\]",
+ "hypotheses_covered": [
+  "μ is the zero measure or a probability measure",
+  "X, Y, Z are measurable",
+  "X, Y, Z have finite range",
+  "S, T, U, V are countable measurable spaces (with measurable singletons)",
+  "f : U × S → V is measurable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a measurable $f : U \\to S \\to V$, conditioning additionally on a deterministic function\nof $X$ and $Z$ cannot increase conditional mutual information:\n\\[\n  I[X : Y \\mid (\\omega \\mapsto (Z(\\omega),\\, f(Z(\\omega))(X(\\omega))));\\mu]\n  \\;\\le\\; I[X : Y \\mid Z;\\mu].\n\\]"
+}

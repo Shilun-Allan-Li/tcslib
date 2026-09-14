@@ -1,0 +1,19 @@
+{
+ "lean_name": "johnson_lindenstrauss_dim_bound",
+ "key": "e64621ff049631cb",
+ "kind": "theorem",
+ "title": "Existence of a Johnson–Lindenstrauss dimension threshold",
+ "statement": "Let $\\varepsilon$ be a real number with $0 < \\varepsilon < 1$, and let $n \\ge 2$ be an integer. Then there is a threshold $k_0 \\in \\bbn$ such that for every target dimension $k \\ge k_0$, every ambient dimension $d$, and every finite set $V \\subseteq \\bbr^d$ of at most $n$ points, there exists a linear map $f : \\bbr^d \\to \\bbr^k$ that is an $\\varepsilon$-JL embedding of $V$; that is, for all $u, v \\in V$,\n\\[\n  (1 - \\varepsilon)\\,\\norm{u - v}^2 \\;\\le\\; \\norm{f(u) - f(v)}^2 \\;\\le\\; (1 + \\varepsilon)\\,\\norm{u - v}^2.\n\\]",
+ "hypotheses_covered": [
+  "0 < ε",
+  "ε < 1",
+  "2 ≤ n (at least two points allowed)",
+  "target dimension k at least the threshold k₀",
+  "arbitrary ambient dimension d",
+  "finite point set V of cardinality at most n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $0 < \\varepsilon < 1$ and $n \\ge 2$, there exists a threshold\n$k_0 \\in \\mathbb{N}$ such that for every $k \\ge k_0$, every ambient\ndimension $d$, and every set $V \\subseteq \\mathbb{R}^d$ of at most $n$ points,\nan $\\varepsilon$-JL embedding $f : \\mathbb{R}^d \\to_L \\mathbb{R}^k$ of $V$\nexists.  In particular the target dimension is $O(\\log n / \\varepsilon^2)$."
+}

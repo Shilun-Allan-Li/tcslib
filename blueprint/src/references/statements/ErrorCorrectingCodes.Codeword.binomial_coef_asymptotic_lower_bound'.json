@@ -1,0 +1,18 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'",
+ "key": "8e91859e312ef3ad",
+ "kind": "lemma",
+ "title": "Asymptotic lower bound on a weighted binomial coefficient",
+ "statement": "Fix a real number $p$ with $0 < p < 1$ and an integer $q \\ge 2$, and let $H_q$ denote the $q$-ary entropy function. Then there is a function $\\varepsilon \\colon \\bbn \\to \\bbr$ with $\\varepsilon(n) = o(n)$ such that, for all sufficiently large $n$,\n\\[\n\\binom{n}{\\lfloor np \\rfloor}\\,(q-1)^{pn} \\;\\ge\\; q^{\\,H_q(p)\\,n \\,-\\, \\varepsilon(n)}.\n\\]",
+ "hypotheses_covered": [
+  "0 < p",
+  "p < 1",
+  "q ≥ 2 (integer q)",
+  "existence of an error term ε(n) that is o(n) as n → ∞",
+  "the inequality holds eventually (for all sufficiently large n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0<p<1$ and $q\\ge 2$, eventually\n\\[\n\\tbinom{n}{\\lfloor np\\rfloor}(q-1)^{pn}\n\\;\\ge\\;\nq^{H_q(p)\\,n - \\varepsilon(n)},\n\\quad \\varepsilon(n) = o(n).\n\\]"
+}

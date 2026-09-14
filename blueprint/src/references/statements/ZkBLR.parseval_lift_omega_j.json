@@ -1,0 +1,18 @@
+{
+ "lean_name": "ZkBLR.parseval_lift_omega_j",
+ "key": "fa31dd1b94521bf2",
+ "kind": "lemma",
+ "title": "Parseval identity for the twisted lift",
+ "statement": "Let $k \\ge 1$ and $n \\ge 0$ be integers, and write $\\omega_k = e^{2\\pi i/k}$. Fix $j \\in \\mathbb{Z}/k\\mathbb{Z}$ and an arbitrary function $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}/k\\mathbb{Z}$, and let $\\widetilde{f}_j : \\mathbb{Z}_k^n \\to \\mathbb{C}$ be the $j$-twisted lift given by $\\widetilde{f}_j(x) = \\omega_k^{\\,j\\cdot f(x)}$, with Fourier coefficients $\\widehat{\\widetilde{f}_j}(s)$ indexed by the frequencies $s \\in \\mathbb{Z}_k^n$. Then\n\\[\n  \\sum_{s \\in \\mathbb{Z}_k^n} \\bigl\\lvert \\widehat{\\widetilde{f}_j}(s) \\bigr\\rvert^{2} = 1.\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1 (NeZero k)",
+  "j ∈ ℤ/kℤ",
+  "f : ℤ_k^n → ℤ/kℤ arbitrary",
+  "sum over all frequencies s ∈ ℤ_k^n of the squared modulus of the Fourier coefficient of the j-twisted lift",
+  "the sum equals 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $j \\in \\mathbb{Z}_k$ and $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$,\n\\[\n  \\sum_{s \\in \\mathbb{Z}_k^n}\n  \\bigl\\|\\widehat{(\\widetilde{f}_j)}(s)\\bigr\\|^2 = 1.\n\\]"
+}

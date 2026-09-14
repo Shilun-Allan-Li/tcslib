@@ -28,18 +28,21 @@ $c$ controls the quadratic growth near zero and $t_{\max}$ bounds the
 radius of validity.
 \end{definition}
 
-\begin{lemma}[iid closure of the Bernstein MGF condition]
+\begin{lemma}[Sub-exponential MGF bound for independent sums]
 \lean{ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
 \label{ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{4}
-Let $\{X_i\}_{i \in s}$ be a mutually independent family of measurable
-real random variables on a probability space, each satisfying
-$\texttt{ProbabilityTheory.HasBernsteinMGF}\ (X_i)\ \mu\ c_i\ t_{\max}$ for
-a common radius $t_{\max}$.  Then the finite sum
-$\sum_{i \in s} X_i$ satisfies
-$\texttt{ProbabilityTheory.HasBernsteinMGF}\ (\sum_{i\in s} X_i)\ \mu\ (\sum_{i\in s} c_i)\ t_{\max}$.
+Let $(X_i)_{i \in \iota}$ be a family of measurable real random variables on a
+probability space $(\Omega, \mu)$ that are mutually independent, and let $s$ be a finite
+set of indices. Fix a radius $t_{\max}$, and suppose that for each $i \in s$ there is a
+constant $c_i$ such that $e^{tX_i}$ is $\mu$-integrable and $\mathbf{E}_\mu[e^{tX_i}]
+\le e^{c_i t^2}$ for every $t$ with $|t| \le t_{\max}$. Then the sum $\sum_{i \in s}
+X_i$ satisfies the same two-parameter sub-exponential bound with radius $t_{\max}$ and
+constant $\sum_{i \in s} c_i$: for every $t$ with $|t| \le t_{\max}$, the moment $e^{t
+\sum_{i \in s} X_i}$ is $\mu$-integrable and $\mathbf{E}_\mu\!\left[e^{t \sum_{i \in s}
+X_i}\right] \le e^{(\sum_{i \in s} c_i)\, t^2}$.
 \end{lemma}
 
 \begin{lemma}[Upper-tail Bernstein bound]
@@ -48,14 +51,14 @@ $\texttt{ProbabilityTheory.HasBernsteinMGF}\ (\sum_{i\in s} X_i)\ \mu\ (\sum_{i\
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{4}
-Let $X$ satisfy $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
-with $c > 0$.  For every $s$ with $0 \le s \le 2c\,t_{\max}$,
+Let $X : \Omega \to \bbr$ be a random variable on a finite measure space $(\Omega,
+\mu)$, and suppose $X$ satisfies the Bernstein moment-generating-function condition with
+parameters $c$ and $t_{\max}$: for every $t$ with $\abs{t} \le t_{\max}$ the exponential
+moment $e^{tX}$ is $\mu$-integrable and $\E_\mu[e^{tX}] \le e^{c t^2}$. If $c > 0$, then
+for every $s$ with $0 \le s \le 2c\,t_{\max}$ the upper tail obeys
 \[
-  \mu\bigl(\{\omega \mid s \le X(\omega)\}\bigr) \;\le\;
-  \exp\!\Bigl(-\tfrac{s^2}{4c}\Bigr).
+  \mu\bigl(\{\omega : s \le X(\omega)\}\bigr) \;\le\; \exp\!\Bigl(-\frac{s^2}{4c}\Bigr).
 \]
-The condition $s \le 2c\,t_{\max}$ ensures that the Chernoff-optimal
-parameter $t = s/(2c)$ lies in the validity region $|t| \le t_{\max}$.
 \end{lemma}
 
 \begin{lemma}[Lower-tail Bernstein bound]
@@ -64,50 +67,51 @@ parameter $t = s/(2c)$ lies in the validity region $|t| \le t_{\max}$.
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
 \difficulty{4}
-Let $X$ satisfy $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
-with $c > 0$.  For every $s$ with $0 \le s \le 2c\,t_{\max}$,
+Let $X : \Omega \to \bbr$ be a random variable on a probability space carrying a finite
+measure $\mu$, and suppose $X$ satisfies the Bernstein moment generating function
+condition with parameters $c$ and $t_{\max}$: for every $t$ with $|t| \le t_{\max}$, the
+exponential moment $e^{tX}$ is $\mu$-integrable and $\E_\mu[e^{tX}] \le e^{c t^2}$. If
+$c > 0$, then for every $s$ with $0 \le s \le 2 c\, t_{\max}$,
 \[
-  \mu\bigl(\{\omega \mid X(\omega) \le -s\}\bigr) \;\le\;
-  \exp\!\Bigl(-\tfrac{s^2}{4c}\Bigr).
+\mu\bigl(\{\omega \mid X(\omega) \le -s\}\bigr) \;\le\;
+\exp\!\Bigl(-\frac{s^2}{4c}\Bigr).
 \]
-This is the symmetric lower-tail analogue of
-$\texttt{ProbabilityTheory.HasBernsteinMGF.measure\_ge\_le}$,
-obtained by applying the upper-tail bound to $-X$.
 \end{lemma}
 
-\begin{lemma}[Two-sided Bernstein bound]
+\begin{lemma}[Two-sided Bernstein tail bound]
 \lean{ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
 \label{ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_ge_le, ProbabilityTheory.HasBernsteinMGF.measure_le_le}
 \difficulty{4}
-Let $X$ satisfy $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$
-with $c > 0$.  For every $s$ with $0 \le s \le 2c\,t_{\max}$,
+Let $X : \Omega \to \bbr$ be a random variable on a probability space $(\Omega, \mu)$,
+and let $c, t_{\max} \ge 0$ be real parameters such that $X$ satisfies the Bernstein
+moment generating function condition with parameters $c$ and $t_{\max}$: for every $t$
+with $\abs{t} \le t_{\max}$ the exponential moment $e^{tX}$ is $\mu$-integrable and
+$\E_\mu[e^{tX}] \le e^{c t^2}$. If $c > 0$, then for every $s$ with $0 \le s \le 2 c\,
+t_{\max}$,
 \[
-  \mu\bigl(\{\omega \mid s < |X(\omega)|\}\bigr) \;\le\;
-  2\exp\!\Bigl(-\tfrac{s^2}{4c}\Bigr).
+\mu\bigl(\{\omega \mid s < \abs{X(\omega)}\}\bigr) \;\le\;
+2\exp\!\Bigl(-\frac{s^2}{4c}\Bigr).
 \]
-The bound follows by combining the upper- and lower-tail bounds via a
-union bound.
 \end{lemma}
 
-\begin{lemma}[Centered squared iid Bernstein tail bound]
+\begin{lemma}[Bernstein tail bound for a sum of centered squares]
 \lean{ProbabilityTheory.centered_squared_iid_tail}
 \label{ProbabilityTheory.centered_squared_iid_tail}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le, ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
 \difficulty{5}
-Let $\{Y_i\}_{i \in \iota}$ be a mutually independent, identically
-distributed family of measurable real random variables on a probability
-space $(\Omega, \mu)$, where $|\iota| = n$.  Suppose that for each $i$
-the centered square $Y_i^2 - \sigma^2$ satisfies
-$\texttt{ProbabilityTheory.HasBernsteinMGF}\ (Y_i^2 - \sigma^2)\ \mu\ c\ t_{\max}$
-with $c > 0$.  Then for every $s$ with
-$0 \le s \le 2n c\, t_{\max}$,
+Let $(Y_i)_{i}$ be a finite family of measurable real random variables on a probability
+space $(\Omega, \mu)$, indexed by a finite set of cardinality $n$, and suppose the $Y_i$
+are mutually independent. Fix real numbers $\sigma^2$, $c > 0$, and $t_{\max}$, and
+suppose that for each $i$ the centered square $Y_i^2 - \sigma^2$ satisfies the Bernstein
+MGF condition with parameters $c$ and $t_{\max}$. Then for every $s$ with $0 \le s \le 2
+n c\, t_{\max}$,
 \[
   \mu\!\left(\left\{\omega \;\middle|\;
     s < \left|\sum_{i} Y_i(\omega)^2 - n\sigma^2\right|\right\}\right)
   \;\le\;
-  2\exp\!\Bigl(-\tfrac{s^2}{4nc}\Bigr).
+  2\exp\!\left(-\frac{s^2}{4 n c}\right).
 \]
 \end{lemma}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "hedgeWeight_pos",
+ "key": "4de417bb1ab0b6f6",
+ "kind": "lemma",
+ "title": "Positivity of Hedge weights",
+ "statement": "Fix a learning rate $\\eta \\in \\bbr$, a loss sequence $\\ell$ for $N$ experts over $T$ rounds, a time $t$, and an expert $i$. Then the unnormalized Hedge weight $w_t(i) = \\exp\\!\\bigl(-\\eta \\cdot L_t(i)\\bigr)$, where $L_t(i) = \\sum_{s < t} \\ell_s(i)$ is the cumulative loss of expert $i$ through the first $t$ rounds, is strictly positive.",
+ "hypotheses_covered": [
+  "learning rate η ∈ ℝ (arbitrary)",
+  "loss sequence ℓ for N experts over T rounds",
+  "round index t",
+  "expert i ∈ Fin N"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $\\eta$, loss sequence $\\ell$, time $t$, and expert $i$, the weight\n$w_t(i) = \\exp(-\\eta \\cdot L_t(i))$ is strictly positive."
+}

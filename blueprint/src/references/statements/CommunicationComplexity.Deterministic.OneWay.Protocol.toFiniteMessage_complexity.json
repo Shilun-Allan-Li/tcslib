@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_complexity",
+ "key": "3bceb805b9efadcf",
+ "kind": "theorem",
+ "title": "Complexity of the finite-message embedding",
+ "statement": "Let $p$ be a one-way deterministic communication protocol with inputs in $X$, $Y$ and output type $\\alpha$, and suppose $\\alpha$ is finite and nonempty. The finite-message protocol obtained from $p$ — Alice sends her one-way message, after which Bob transmits the decoded output as an index in $\\{0,\\ldots,\\abs{\\alpha}-1\\}$ — has communication complexity\n\\[\n\\left\\lceil \\log_2 \\abs{\\mathrm{Message}} \\right\\rceil + \\left\\lceil \\log_2 \\abs{\\alpha} \\right\\rceil,\n\\]\nthat is, the bit cost of $p$ plus $\\lceil \\log_2 \\abs{\\alpha}\\rceil$, where $\\mathrm{Message}$ is the codebook of $p$.",
+ "hypotheses_covered": [
+  "output type α is finite (Fintype α)",
+  "output type α is nonempty (Nonempty α)",
+  "p is a one-way deterministic protocol"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The interactive complexity of the embedding equals the one-way cost plus the cost for\nBob to transmit the decoded output:\n$(p.\\mathtt{toFiniteMessage}).\\mathtt{complexity} = p.\\mathtt{cost} + \\lceil \\log_2 |\\alpha| \\rceil$."
+}

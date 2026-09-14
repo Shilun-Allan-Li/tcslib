@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.Y_dualHardSample",
+ "key": "1ba71f8089965bc7",
+ "kind": "theorem",
+ "title": "Bob's dual input set is the reversal of Alice's set",
+ "statement": "Fix $n \\ge 1$, and let $\\omega$ be a sample of the hard distribution on $n$ coordinates, with Alice's input set $X(\\omega) \\subseteq \\{0,\\dots,n-1\\}$ and Bob's input set $Y(\\omega)$. Passing to the dual sample $\\omega'$ — obtained by swapping Alice's and Bob's roles and reversing the coordinate order — Bob's input set of $\\omega'$ is exactly the coordinate reversal of Alice's input set of $\\omega$: \\[ Y(\\omega') = \\{\\, i : \\operatorname{rev}(i) \\in X(\\omega) \\,\\}, \\] where $\\operatorname{rev}(i) = n-1-i$. Equivalently, a coordinate $i$ belongs to Bob's set for the dualized sample precisely when the reversed coordinate $\\operatorname{rev}(i)$ belongs to Alice's set for the original sample.",
+ "hypotheses_covered": [
+  "ω is a hard-distribution sample on n coordinates (n a positive natural)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Dual hard samples swap Bob's input with Alice's input and reverse coordinates."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.dtDepth_restrictFn_le'",
+ "key": "7d955264a00caa48",
+ "kind": "theorem",
+ "title": "Decision-tree depth is monotone under restriction",
+ "statement": "Let $f$ be a Boolean function of $n$ Boolean variables, and let $\\rho$ be a restriction that fixes some of these variables to Boolean values and leaves the remaining ones free. Write $f_\\rho$ for the restricted function, whose value on an input $x$ is $f$ evaluated at the assignment that agrees with $\\rho$ on the fixed coordinates and with $x$ on the free coordinates. Writing $D(g)$ for the decision-tree depth of a Boolean function $g$ — the least depth of a decision tree computing $g$ — one has $D(f_\\rho) \\le D(f)$.",
+ "hypotheses_covered": [
+  "f a Boolean function on n variables",
+  "ρ a restriction on those n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every Boolean function $f$ and restriction $\\rho$, the decision-tree depth of the\nrestricted function satisfies $\\mathrm{dtDepth}(f|_\\rho) \\le \\mathrm{dtDepth}(f)$."
+}

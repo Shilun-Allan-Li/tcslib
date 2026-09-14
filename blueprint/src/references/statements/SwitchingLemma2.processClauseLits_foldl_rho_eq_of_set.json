@@ -1,0 +1,21 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set",
+ "key": "3f623d6f11098c6f",
+ "kind": "lemma",
+ "title": "Decoding fold recovers the processed restriction at a newly set variable",
+ "statement": "Let $t$ be a term on $n$ variables, and let $L$ be a list of literal–index pairs each of which occurs at its recorded position in $t$ (that is, every pair in $L$ lies in the enumeration of $t$ that tags each literal with its index). Fix restrictions $\\rho_0$, $\\sigma$, and $\\rho_0^{\\mathrm{dec}}$ on $n$ variables, a decision-tree path $P$, and a variable $v$ that $\\rho_0$ leaves free. Running the clause-processing routine on $L$, $P$, $\\rho_0$, $\\sigma$ produces an updated restriction $\\rho_0'$ together with auxiliary data $A$, a list of (position index, direction) pairs, and assume that $\\rho_0'$ assigns a value at $v$. Consider the restriction obtained by folding $A$ over the starting restriction $\\rho_0^{\\mathrm{dec}}$, where each pair $(i, b)$ leaves the current restriction unchanged if $t$ has no literal at position $i$, and otherwise sets the variable of the $i$-th literal of $t$ to the value $b$. Then this folded restriction agrees with $\\rho_0'$ at $v$; that is, its value at $v$ equals $\\rho_0'(v)$.",
+ "hypotheses_covered": [
+  "t is a term on n variables",
+  "L is a list of literal-index pairs",
+  "each pair of L occurs at its recorded index in t (hmem)",
+  "restrictions rho_0, sigma, rho_0_dec are given",
+  "a decision-tree path P is given",
+  "a variable v is given",
+  "rho_0 leaves v free (hfree)",
+  "the processed restriction rho_0' assigns a value at v (hset)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A variant of the previous lemma allowing the decoder's initial $\\rho_0$ to differ from\nthe encoder's: provided $\\rho_0\\,v = \\mathrm{none}$ and\n\\texttt{SwitchingLemma2.processClauseLits} sets the $\\rho_0$ component at $v$, the\n$\\rho_0$-fold over the auxiliary entries still reproduces the routine's $\\rho_0$ value at\n$v$."
+}

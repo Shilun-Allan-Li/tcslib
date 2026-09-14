@@ -1,0 +1,14 @@
+{
+ "lean_name": "SATTo3SAT.List.take_succ_of_drop_cons",
+ "key": "dda0a086f0603fe7",
+ "kind": "lemma",
+ "title": "Extending a list prefix past a dropped head",
+ "statement": "Let $l$ be a list over a type $\\alpha$, let $n$ be a natural number, and suppose that dropping the first $n$ entries of $l$ leaves a nonempty list whose head is $a$ (so that $l$ has more than $n$ entries and its $(n+1)$-st entry is $a$). Then the prefix consisting of the first $n+1$ entries of $l$ equals the prefix consisting of the first $n$ entries with $a$ appended: taking $n+1$ entries of $l$ gives (taking $n$ entries of $l$) followed by $[a]$.",
+ "hypotheses_covered": [
+  "dropping the first n entries of l yields a list with head a (i.e. l.drop n = a :: rest)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $l.\\mathtt{drop}\\,n = a :: \\mathit{rest}$, then $l.\\mathtt{take}\\,(n+1) = l.\\mathtt{take}\\,n \\mathbin{+\\!\\!+} [a]$."
+}

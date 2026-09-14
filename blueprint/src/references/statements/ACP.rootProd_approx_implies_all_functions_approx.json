@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.rootProd_approx_implies_all_functions_approx",
+ "key": "c9bfedd858ad0725",
+ "kind": "theorem",
+ "title": "Approximating the top monomial approximates every function",
+ "statement": "Let $K$ be a finite field and fix $\\omega \\in K$ with $\\omega \\neq 0$, and let $n$ be a natural number. Suppose that every function $f\\colon \\{1,\\omega\\}^n \\to K$ agrees, at every point of the cube $\\{1,\\omega\\}^n$, with some squarefree polynomial $\\sum_{S \\subseteq \\{1,\\dots,n\\}} c_S \\prod_{i \\in S} X_i$ over $K$. If a polynomial $P$ in $n$ variables over $K$ has total degree at most $d$ and disagrees with the top monomial $x \\mapsto \\prod_{i} x_i$ on at most $e$ points of $\\{1,\\omega\\}^n$, then every function $f\\colon \\{1,\\omega\\}^n \\to K$ admits a polynomial $Q$ of total degree at most $\\lfloor n/2 \\rfloor + d$ that disagrees with $f$ on at most $e$ points of the cube.",
+ "hypotheses_covered": [
+  "$K$ is a finite field",
+  "$\\omega \\neq 0$",
+  "every function on $\\{1,\\omega\\}^n$ is represented on the cube by a squarefree polynomial",
+  "$P$ has total degree at most $d$",
+  "$P$ disagrees with the top monomial $\\prod_i x_i$ on at most $e$ points of the cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Assume $\\omega \\neq 0$ and that every function on $\\{1,\\omega\\}^n$ is represented on the\ncube by a squarefree polynomial. If $P$ has total degree at most $d$ and approximates the\ntop monomial $x \\mapsto \\prod_i x_i$ with at most $e$ bad points, then every function\n$f$ on the cube has a polynomial $Q$ with $\\deg Q \\le n/2 + d$ and at most $e$ bad points."
+}

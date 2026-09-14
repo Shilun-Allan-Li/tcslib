@@ -36,61 +36,87 @@ i.e. the sum of the squarefree monomials $\texttt{ACP.squarefreeMonomial}\ s$ we
 $c$, with the terms of support size $> D$ set to $0$.
 \end{definition}
 
-\begin{theorem}[Squarefree representative on the root cube]
+\begin{theorem}[Squarefree polynomial representation on the root cube]
 \lean{ACP.exists_squarefree_representative_on_rootCube}
 \label{ACP.exists_squarefree_representative_on_rootCube}
 \leanok
 \uses{ACP.rootCube, ACP.squarefreeMonomial, ACP.squarefreePolynomial}
 \difficulty{7}
-Every function $f : \{1,\omega\}^n \to K$ on the root cube is represented by a squarefree
-(multilinear) polynomial: there are coefficients $c$ indexed by finsets of
-$\mathrm{Fin}\,n$ such that $(\texttt{ACP.squarefreePolynomial}\ c)(x) = f(x)$ for all
-$x$ in the root cube.
+Let $K$ be a field, fix an element $\omega \in K$, and let $n$ be a natural number.
+Write $\{1,\omega\}^n$ for the set of vectors $x = (x_1,\dots,x_n)$ with each coordinate
+$x_i \in \{1,\omega\}$. Then for every function $f : \{1,\omega\}^n \to K$ there exist
+coefficients $c_S \in K$, indexed by the subsets $S \subseteq \{1,\dots,n\}$, such that
+the squarefree (multilinear) polynomial
+\[
+  P(X_1,\dots,X_n) \;=\; \sum_{S} c_S \prod_{i \in S} X_i
+\]
+satisfies $P(x) = f(x)$ for every $x \in \{1,\omega\}^n$.
 \end{theorem}
 
-\begin{theorem}[Monomial-level degree-preserving multilinearization]
+\begin{theorem}[Low-degree monomials multilinearize on the root cube]
 \lean{ACP.monomial_lowDegree_squarefree_complete_on_rootCube}
 \label{ACP.monomial_lowDegree_squarefree_complete_on_rootCube}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.rootCube, ACP.squarefreeMonomial}
 \difficulty{6}
-Assume $\omega \ne 1$.  If a monomial $a\,X^m$ has total exponent sum
-$\sum_i m_i \le D$, then it agrees on the root cube $\{1,\omega\}^n$ with a squarefree
-polynomial built only from supports of size at most $D$: there exist coefficients
-$c$ on $\texttt{ACP.LowDegreeSupport}\ n\ D$ with
-$(\texttt{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = (a\,X^m)(x)$ for every $x$ in the cube.
+Let $K$ be a field and let $\omega \in K$ satisfy $\omega \ne 1$. Fix $n, D \in \bbn$,
+and consider a monomial $a\,X^m$ in the variables $X_1,\dots,X_n$ over $K$, given by an
+exponent vector $m : \mathrm{Fin}\,n \to \bbn$ and a coefficient $a \in K$, whose total
+degree $\sum_i m_i$ is at most $D$. Then there exist coefficients $c : \mathcal{S}_{n,D}
+\to K$, indexed by the squarefree supports $s \subseteq \mathrm{Fin}\,n$ with $\abs{s}
+\le D$, such that the squarefree polynomial $\sum_{\abs{s} \le D} c(s)\prod_{i \in s}
+X_i$ takes the same value as $a\,X^m$ at every point $x$ of the root cube
+$\{1,\omega\}^n$.
 \end{theorem}
 
-\begin{lemma}[Additivity in the coefficient function]
+\begin{lemma}[Additivity of the coefficient-to-polynomial map]
 \lean{ACP.lowDegreeSquarefreePolynomial_add}
 \label{ACP.lowDegreeSquarefreePolynomial_add}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
 \difficulty{3}
-The constructor $\texttt{ACP.lowDegreeSquarefreePolynomial}$ is additive in its coefficient
-argument: the polynomial attached to $c_1 + c_2$ is the sum of the polynomials attached
-to $c_1$ and to $c_2$.
+Fix a field $K$ and natural numbers $n$ and $D$, and let $\mathcal{S}_{n,D}$ be the set
+of subsets $s \subseteq \mathrm{Fin}\,n$ with $\abs{s} \le D$. For a coefficient
+function $c \colon \mathcal{S}_{n,D} \to K$, write $P(c) = \sum_{s \in
+\mathcal{S}_{n,D}} c(s)\, \prod_{i \in s} X_i$ for the associated squarefree polynomial
+in $K[X_i : i \in \mathrm{Fin}\,n]$. Then for any two coefficient functions $c_1, c_2
+\colon \mathcal{S}_{n,D} \to K$ one has \[ P(c_1 + c_2) = P(c_1) + P(c_2), \] where $c_1
++ c_2$ denotes the pointwise sum.
 \end{lemma}
 
-\begin{lemma}[Zero coefficients give the zero polynomial]
+\begin{lemma}[Zero coefficients yield the zero polynomial]
 \lean{ACP.lowDegreeSquarefreePolynomial_zero}
 \label{ACP.lowDegreeSquarefreePolynomial_zero}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
 \difficulty{2}
-The constructor $\texttt{ACP.lowDegreeSquarefreePolynomial}$ sends the identically zero
-coefficient function to the zero polynomial.
+Let $K$ be a field and let $n, D \in \bbn$. Applying the low-degree squarefree
+polynomial construction to the identically zero coefficient function on
+$\mathcal{S}_{n,D}$ produces the zero element of the polynomial ring $K[X_0, \dots,
+X_{n-1}]$; that is,
+\[
+\sum_{\substack{s \subseteq \mathrm{Fin}\,n \\ \abs{s} \le D}} 0 \cdot \prod_{i \in s}
+X_i \;=\; 0 .
+\]
 \end{lemma}
 
-\begin{lemma}[Finite-sum linearity in the coefficients]
+\begin{lemma}[Additivity in the coefficients]
 \lean{ACP.lowDegreeSquarefreePolynomial_sum}
 \label{ACP.lowDegreeSquarefreePolynomial_sum}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_add, ACP.lowDegreeSquarefreePolynomial_zero}
 \difficulty{4}
-For a finite index set $S$ and coefficient functions $c_i$, the polynomial attached to
-the pointwise sum $\sum_{i \in S} c_i$ equals $\sum_{i \in S}$ of the polynomials attached
-to the individual $c_i$.
+Fix a field $K$ and natural numbers $n, D$, and write $\mathcal{S}_{n,D}$ for the type
+of subsets $s \subseteq \mathrm{Fin}\,n$ with $\abs{s} \le D$. For a coefficient
+function $c \colon \mathcal{S}_{n,D} \to K$, let $P(c)$ denote the multivariate
+polynomial $\sum_{s \in \mathcal{S}_{n,D}} c(s)\, \prod_{i \in s} X_i$ over $K$ in the
+variables $X_0, \dots, X_{n-1}$. Then for any finite index set $S$ and any family of
+coefficient functions $(c_i)_{i \in S}$ with each $c_i \colon \mathcal{S}_{n,D} \to K$,
+the polynomial built from the pointwise sum of coefficients equals the sum of the
+individual polynomials:
+\[
+P\!\left(\sum_{i \in S} c_i\right) = \sum_{i \in S} P(c_i).
+\]
 \end{lemma}
 
 \begin{theorem}[Completeness of low-degree squarefree polynomials on the root cube]
@@ -99,20 +125,30 @@ to the individual $c_i$.
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_sum, ACP.monomial_lowDegree_squarefree_complete_on_rootCube, ACP.rootCube}
 \difficulty{5}
-Assume $\omega \ne 1$.  Every polynomial $Q$ with $\deg Q \le D$ agrees on the root cube
-$\{1,\omega\}^n$ with a low-degree squarefree polynomial: there are coefficients $c$ on
-$\texttt{ACP.LowDegreeSupport}\ n\ D$ such that
-$(\texttt{ACP.lowDegreeSquarefreePolynomial}\ c)(x) = Q(x)$ for all $x$ in the cube.
+Let $K$ be a field and let $\omega \in K$ satisfy $\omega \ne 1$. For natural numbers
+$n$ and $D$, write $\{1,\omega\}^n$ for the set of vectors $x : \mathrm{Fin}\,n \to K$
+each of whose coordinates equals $1$ or $\omega$, and let $\mathcal{S}_{n,D}$ be the
+collection of finsets $s \subseteq \mathrm{Fin}\,n$ with $\abs{s} \le D$. Then for every
+polynomial $Q \in K[X_i : i \in \mathrm{Fin}\,n]$ of total degree at most $D$, there
+exist coefficients $c : \mathcal{S}_{n,D} \to K$ such that the squarefree polynomial
+$\sum_{\abs{s} \le D} c(s)\,\prod_{i \in s} X_i$ agrees with $Q$ at every point of
+$\{1,\omega\}^n$.
 \end{theorem}
 
-\begin{lemma}[Degree bound for the constructed polynomial]
+\begin{lemma}[Total degree bound for a low-degree squarefree polynomial]
 \lean{ACP.lowDegreeSquarefreePolynomial_totalDegree_le}
 \label{ACP.lowDegreeSquarefreePolynomial_totalDegree_le}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card}
 \difficulty{4}
-For any coefficient function $c$ on $\texttt{ACP.LowDegreeSupport}\ n\ D$, the polynomial
-$\texttt{ACP.lowDegreeSquarefreePolynomial}\ c$ has total degree at most $D$.
+Let $K$ be a field and fix $n, D \in \bbn$. For any assignment of coefficients $c \colon
+\mathcal{S}_{n,D} \to K$, indexed by the subsets $s \subseteq \mathrm{Fin}\,n$ with
+$\abs{s} \le D$, the polynomial
+\[
+\sum_{\substack{s \subseteq \mathrm{Fin}\,n \\ \abs{s} \le D}} c(s)\, \prod_{i \in s}
+X_i \in K[X_0, \dots, X_{n-1}]
+\]
+has total degree at most $D$.
 \end{lemma}
 
 \begin{definition}[Support-to-sigma injection]
@@ -126,28 +162,31 @@ $\{t : \mathrm{Finset}(\mathrm{Fin}\,n) \mid \abs{t} = \abs{s}\}$.  It is used a
 injection for the binomial-sum bound rather than as a full equivalence.
 \end{definition}
 
-\begin{theorem}[Binomial bound on the number of low-degree supports]
+\begin{theorem}[Binomial-sum bound on low-degree supports]
 \lean{ACP.lowDegreeSupport_card_le_binomial_sum}
 \label{ACP.lowDegreeSupport_card_le_binomial_sum}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeCoeff_card, ACP.lowDegreeSupportSigmaMap}
 \difficulty{4}
-The number of low-degree squarefree supports satisfies
+For natural numbers $n$ and $D$, let $\mathcal{S}_{n,D}$ denote the (finite) type of
+low-degree squarefree supports on $\mathrm{Fin}\,n$, that is, the subsets $s \subseteq
+\mathrm{Fin}\,n$ with $\abs{s} \le D$. Then the number of such supports satisfies
 \[
 \abs{\mathcal{S}_{n,D}} \;\le\; \sum_{t=0}^{D} \binom{n}{t}.
 \]
 \end{theorem}
 
-\begin{lemma}[Size of the coefficient family]
+\begin{lemma}[Cardinality of the space of coefficient functions]
 \lean{ACP.lowDegreeCoeff_card}
 \label{ACP.lowDegreeCoeff_card}
 \leanok
 \uses{ACP.LowDegreeSupport}
 \difficulty{1}
-For a finite type $K_0$, the number of coefficient functions on low-degree supports is
+Fix natural numbers $n$ and $D$, and write $\mathcal{S}_{n,D}$ for the type of supports
+of squarefree monomials of degree at most $D$ in $n$ variables. For any finite type
+$K_0$, the number of functions from $\mathcal{S}_{n,D}$ to $K_0$ is
 \[
-\abs{\mathcal{S}_{n,D} \to K_0}
-  \;=\; \abs{K_0}^{\,\abs{\mathcal{S}_{n,D}}} .
+\abs{\mathcal{S}_{n,D} \to K_0} \;=\; \abs{K_0}^{\,\abs{\mathcal{S}_{n,D}}}.
 \]
 \end{lemma}
 
@@ -166,18 +205,21 @@ If $\omega \ne 1$, the explicit equivalence $\{1,\omega\}^n \simeq (\mathrm{Fin}
 \leanok
 \uses{ACP.rootCube, ACP.rootCubeEquivFinTwo}
 \difficulty{2}
-If $\omega \ne 1$ and $K$ is finite, then the root cube has exactly $2^n$ points:
-$\abs{\{1,\omega\}^n} = 2^n$.
+Let $K$ be a finite field and let $\omega \in K$ with $\omega \ne 1$. Then the root cube
+$\{1,\omega\}^n$, consisting of those vectors $x : \mathrm{Fin}\,n \to K$ with $x_i \in
+\{1,\omega\}$ for every coordinate $i$, has exactly $2^n$ elements.
 \end{lemma}
 
-\begin{lemma}[Number of functions on the root cube]
+\begin{lemma}[Counting functions on the root-of-unity cube]
 \lean{ACP.rootCube_function_card_of_ne_one}
 \label{ACP.rootCube_function_card_of_ne_one}
 \leanok
 \uses{ACP.rootCube, ACP.rootCube_card_of_ne_one}
 \difficulty{2}
-If $\omega \ne 1$ and $K$ is finite, the number of functions $\{1,\omega\}^n \to K$ is
-$\abs{K}^{2^n}$.
+Let $K$ be a finite field, let $\omega \in K$ with $\omega \ne 1$, and let $n \in \bbn$.
+Writing $\{1,\omega\}^n$ for the set of vectors $x : \mathrm{Fin}\,n \to K$ each of
+whose coordinates equals $1$ or $\omega$, the number of functions $\{1,\omega\}^n \to K$
+is \[ \abs{K}^{\,2^n}. \]
 \end{lemma}
 
 \begin{theorem}[Hamming-ball bound for function spaces]
@@ -185,57 +227,78 @@ $\abs{K}^{2^n}$.
 \label{ACP.function_hammingBall_card_le_binomial}
 \leanok
 \difficulty{6}
-For finite types $\alpha, \beta$, a center function $\mathrm{center} : \alpha \to \beta$
-and a radius $e$, the number of functions $f : \alpha \to \beta$ that differ from the
-center on at most $e$ coordinates is bounded by
+Let $\alpha$ and $\beta$ be finite types, fix a function $\mathrm{center} : \alpha \to
+\beta$, and let $e \in \bbn$. Then the number of functions $f : \alpha \to \beta$ that
+disagree with $\mathrm{center}$ on at most $e$ points of $\alpha$ — that is, for which
+$\abs{\{a \in \alpha : \mathrm{center}(a) \ne f(a)\}} \le e$ — satisfies
 \[
-\sum_{t=0}^{e} \binom{\abs{\alpha}}{t}\,\abs{\beta}^{\,t}.
+\abs{\{\, f : \alpha \to \beta \;:\; \abs{\{a \in \alpha : \mathrm{center}(a) \ne
+f(a)\}} \le e \,\}} \;\le\; \sum_{t=0}^{e} \binom{\abs{\alpha}}{t}\,\abs{\beta}^{\,t}.
 \]
-This is a slightly coarser form of the usual bound, which carries
-$(\abs{\beta}-1)^t$ in place of $\abs{\beta}^t$.
 \end{theorem}
 
-\begin{theorem}[Hamming-ball bound on the root cube]
+\begin{theorem}[Volume bound for a Hamming ball on the root cube]
 \lean{ACP.rootCubeBall_card_le_binomial}
 \label{ACP.rootCubeBall_card_le_binomial}
 \leanok
 \uses{ACP.function_hammingBall_card_le_binomial, ACP.rootCube, ACP.rootCubeBall, ACP.rootCubeFunctionBadCount}
 \difficulty{2}
-For any center function on the root cube and any radius $e$, the Hamming ball
-$\texttt{ACP.rootCubeBall}$ of radius $e$ around it satisfies
+Let $K$ be a finite field, let $\omega \in K$, and let $n, e \in \bbn$. Write
+$\{1,\omega\}^n$ for the root cube of vectors $x : \{0,\dots,n-1\} \to K$ each of whose
+coordinates equals $1$ or $\omega$, and consider functions $f : \{1,\omega\}^n \to K$,
+the Hamming distance between two such functions being the number of points of the cube
+on which they differ. For any function $\mathrm{center} : \{1,\omega\}^n \to K$, the
+number of functions whose Hamming distance from $\mathrm{center}$ is at most $e$
+satisfies
 \[
-\abs{B_e(\mathrm{center})}
-  \;\le\; \sum_{t=0}^{e} \binom{\abs{\{1,\omega\}^n}}{t}\,\abs{K}^{\,t}.
+\abs{\{\, f : \{1,\omega\}^n \to K \;\mid\; f \text{ differs from } \mathrm{center}
+\text{ on at most } e \text{ points}\,\}}
+  \;\le\; \sum_{t=0}^{e} \binom{\,\abs{\{1,\omega\}^n}\,}{t}\,\abs{K}^{\,t},
 \]
+where $\abs{\{1,\omega\}^n}$ is the number of points of the cube and $\abs{K}$ is the
+number of elements of $K$.
 \end{theorem}
 
-\begin{theorem}[Counting obstruction for low-degree squarefree candidates]
+\begin{theorem}[Counting obstruction for low-degree squarefree approximation on the root cube]
 \lean{ACP.rootCube_counting_obstruction_lowDegreeSquarefree}
 \label{ACP.rootCube_counting_obstruction_lowDegreeSquarefree}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegree_squarefree_complete_on_rootCube, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCubeBall_card_le_binomial, ACP.rootCube_card_of_ne_one, ACP.rootCube_counting_obstruction, ACP.rootCube_function_card_of_ne_one}
 \difficulty{4}
-Let $K$ be finite and $\omega \ne 1$.  Suppose the ball bound
-$\sum_{t=0}^{e} \binom{2^n}{t}\,\abs{K}^{\,t} \le B$ holds and the counting is strict,
+Let $K$ be a finite field, let $\omega \in K$ satisfy $\omega \neq 1$, and fix natural
+numbers $n, D, e, B$. Suppose the ball bound
 \[
-\abs{K}^{2^n} \;>\; \abs{\mathcal{S}_{n,D} \to K}\cdot B .
+\sum_{t=0}^{e} \binom{2^n}{t}\,\abs{K}^{\,t} \;\le\; B
+\]
+holds, together with the strict counting inequality
+\[
+\abs{K}^{\,2^n} \;>\; \abs{\mathcal{S}_{n,D} \to K}\cdot B .
 \]
 Then it is \emph{not} the case that every function $f : \{1,\omega\}^n \to K$ admits a
-polynomial $Q$ with $\deg Q \le D$ and $\texttt{ACP.rootCubeBadCount}\ f\ Q \le e$.
+multivariate polynomial $Q \in K[X_i : i \in \mathrm{Fin}\,n]$ of total degree at most
+$D$ that disagrees with $f$ on at most $e$ points of the cube $\{1,\omega\}^n$; that is,
+some $f$ fails to be approximated in this sense by any such $Q$.
 \end{theorem}
 
-\begin{theorem}[Concrete root-product lower bound]
+\begin{theorem}[No low-degree approximation of the coordinate product on the root cube]
 \lean{ACP.no_low_degree_rootProd_approx_concrete}
 \label{ACP.no_low_degree_rootProd_approx_concrete}
 \leanok
 \uses{ACP.LowDegreeSupport, ACP.exists_squarefree_representative_on_rootCube, ACP.no_low_degree_rootProd_approx, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCube_counting_obstruction_lowDegreeSquarefree, ACP.squarefreePolynomial}
 \difficulty{2}
-Let $K$ be finite, $\omega \ne 0$, $\omega \ne 1$.  Suppose
-$\sum_{t=0}^{e} \binom{2^n}{t}\,\abs{K}^{\,t} \le B$ and
+Let $K$ be a finite field and let $\omega \in K$ satisfy $\omega \neq 0$ and $\omega
+\neq 1$, and fix natural numbers $n, d, e, B$. Suppose that
 \[
-\abs{K}^{2^n} \;>\; \abs{\mathcal{S}_{n,\lfloor n/2 \rfloor + d} \to K}\cdot B .
+  \sum_{t=0}^{e} \binom{2^{n}}{t}\,\abs{K}^{t} \;\le\; B
 \]
-Then no polynomial $P$ with $\deg P \le d$ approximates the product
-$x \mapsto \prod_i x_i$ on the root cube with at most $e$ errors, i.e. there is no such
-$P$ with $\texttt{ACP.rootCubeBadCount}\ (\prod_i x_i)\ P \le e$.
+and that
+\[
+  \abs{K}^{2^{n}} \;>\; \abs{\,\mathcal{S}_{n,\lfloor n/2\rfloor + d} \to K\,}\cdot B ,
+\]
+where $\abs{\mathcal{S}_{n,\lfloor n/2\rfloor + d} \to K}$ is the number of functions
+from $\mathcal{S}_{n,\lfloor n/2\rfloor + d}$ to $K$. Then there is no polynomial $P \in
+K[X_1,\dots,X_n]$ of total degree at most $d$ whose bad count against the coordinate
+product $x \mapsto \prod_{i} x_i$ on the root cube $\{1,\omega\}^{n}$ is at most $e$;
+that is, every such $P$ disagrees with $\prod_i x_i$ at more than $e$ points of
+$\{1,\omega\}^n$.
 \end{theorem}

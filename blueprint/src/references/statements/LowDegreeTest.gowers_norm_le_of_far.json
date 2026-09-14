@@ -1,0 +1,16 @@
+{
+ "lean_name": "LowDegreeTest.gowers_norm_le_of_far",
+ "key": "e55d68cdbd25979a",
+ "kind": "lemma",
+ "title": "Gowers norm bound for functions far from low degree",
+ "statement": "Let $d \\ge 1$ and let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function that is $\\varepsilon$-far from degree $\\le d$, meaning $0 \\le \\varepsilon \\le 1$ and $\\dist(f, g) \\ge \\varepsilon$ for every Boolean function $g$ of degree $\\le d$. Then there is a constant $c > 0$ for which the $\\pm 1$ lift $(-1)^{f}$ satisfies\n\\[\n  \\bigl\\|(-1)^{f}\\bigr\\|_{U^{d+1}}^{2^{d+1}} \\;\\le\\; 1 - c\\,\\varepsilon.\n\\]",
+ "hypotheses_covered": [
+  "d ≥ 1",
+  "f is a Boolean function {0,1}^n → {0,1}",
+  "f is ε-far from degree ≤ d (which includes 0 ≤ ε ≤ 1 and dist(f,g) ≥ ε for all degree-≤d g)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $d \\ge 1$ and $f$ is $\\varepsilon$-far from degree $\\le d$, then there exists\na constant $c > 0$ such that\n$\\|(-1)^f\\|_{U^{d+1}}^{2^{d+1}} \\le 1 - c\\varepsilon$.\nFor $d = 1$ one may take $c = 2$; the case $d \\ge 2$ follows by induction using\nthe derivative distance lemma (BKSSZ 2010)."
+}

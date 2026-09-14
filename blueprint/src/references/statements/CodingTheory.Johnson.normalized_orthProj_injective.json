@@ -1,0 +1,22 @@
+{
+ "lean_name": "CodingTheory.Johnson.normalized_orthProj_injective",
+ "key": "08e1ff678bdfb97e",
+ "kind": "lemma",
+ "title": "Distinct normalized projections off a unit vector",
+ "statement": "Let $u,v,w$ be unit vectors in a real inner product space satisfying $\\langle v,u\\rangle \\le 0$, $\\langle w,u\\rangle \\le 0$, and $\\langle v,w\\rangle \\le 0$, and suppose that neither $v$ nor $w$ equals $u$ or $-u$ and that $v \\neq w$. For $x$ in the space write $\\pi(x) = x - \\langle u,x\\rangle\\,u$ for the projection of $x$ onto the orthogonal complement of $\\mathrm{span}\\{u\\}$. Then the two normalized projections $\\norm{\\pi(v)}^{-1}\\,\\pi(v)$ and $\\norm{\\pi(w)}^{-1}\\,\\pi(w)$ cannot be equal.",
+ "hypotheses_covered": [
+  "u, v, w are unit vectors",
+  "inner product of v and u is nonpositive",
+  "inner product of w and u is nonpositive",
+  "inner product of v and w is nonpositive",
+  "v is not equal to u",
+  "v is not equal to -u",
+  "w is not equal to u",
+  "w is not equal to -u",
+  "v is not equal to w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $u,v,w$ be unit vectors with $\\langle v,u\\rangle \\le 0$, $\\langle w,u\\rangle \\le 0$,\n$\\langle v,w\\rangle \\le 0$, with $v,w \\notin \\{u,-u\\}$ and $v \\neq w$. Then the\nnormalized projections $\\norm{\\mathrm{orthProj}(u,v)}^{-1}\\mathrm{orthProj}(u,v)$ and\n$\\norm{\\mathrm{orthProj}(u,w)}^{-1}\\mathrm{orthProj}(u,w)$ cannot be equal\n(the statement derives a contradiction from their equality)."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalDTree_deepPath_length_ge",
+ "key": "8464149b01968bc8",
+ "kind": "lemma",
+ "title": "Bad restrictions force a long path in the canonical tree",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables, let $\\rho$ be a restriction of those variables, and let $d$ be a natural number. Write $f|_\\rho$ for the restricted Boolean function, which sends an assignment $x$ to the value of $f$ on the assignment that agrees with $\\rho$ on its fixed variables and with $x$ on its free variables. Suppose $\\rho$ is bad for $f$ at depth $d$, meaning that the decision-tree depth of $f|_\\rho$ — the least depth of any decision tree computing $f|_\\rho$ — is strictly greater than $d$. Then the deepest root-to-leaf path of the canonical decision tree of $f$ under $\\rho$ has length strictly greater than $d$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "ρ is a restriction of the n variables",
+  "d is a natural number",
+  "ρ is bad for f at depth d: the restricted function f|_ρ has decision-tree depth > d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $\\rho$ is a bad restriction (so $\\mathrm{dtDepth}(f|_\\rho) > d$), then the\ndeepest path of the canonical decision tree $\\mathrm{canonicalDTree}\\,f\\,\\rho$\nhas length strictly greater than $d$."
+}

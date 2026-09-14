@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.pi_run",
+ "key": "75b0569533d33ba8",
+ "kind": "theorem",
+ "title": "Running the product protocol componentwise",
+ "statement": "Let $k \\in \\bbn$, and for each index $i \\in \\mathrm{Fin}\\,k$ let $p_i$ be a finite-message protocol over input types $X_i$, $Y_i$ with output type $\\alpha_i$. Given input tuples $x = (x_i)_{i}$ and $y = (y_i)_{i}$, running the $k$-fold product protocol on $x$ and $y$ yields the tuple whose $i$-th coordinate is the result of running $p_i$ on the components $x_i$ and $y_i$; that is,\n\\[\n  \\mathrm{run}\\bigl(\\Pi_i\\, p_i\\bigr)\\,x\\,y \\;=\\; \\bigl(\\, i \\mapsto \\mathrm{run}(p_i)\\,x_i\\,y_i \\,\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "a natural number $k$",
+  "a family of finite-message protocols $p_i$ over $X_i$, $Y_i$, $\\alpha_i$ indexed by $i \\in \\mathrm{Fin}\\,k$",
+  "an input tuple $x$ with $x_i \\in X_i$",
+  "an input tuple $y$ with $y_i \\in Y_i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a family $p$ and input tuples $x$, $y$,\n\\[\n  (\\texttt{pi}\\;p).\\texttt{run}\\;x\\;y \\;=\\; \\lambda i.\\; (p_i).\\texttt{run}\\;(x\\,i)\\;(y\\,i).\n\\]"
+}

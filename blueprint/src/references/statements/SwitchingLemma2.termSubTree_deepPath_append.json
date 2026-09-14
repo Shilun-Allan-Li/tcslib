@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_deepPath_append",
+ "key": "ea45779aea430192",
+ "kind": "lemma",
+ "title": "Deepest-path length of a term sub-tree",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, let $\\mathit{lits}$ be a list of literals whose underlying variables are pairwise distinct, and let $\\mathrm{cont}$ be a continuation assigning a decision tree to every restriction. Then there is a restriction $\\rho'$ that agrees with $\\rho$ at every variable not occurring among the literals of $\\mathit{lits}$, and such that the deepest root-to-leaf path of the term sub-tree built from $\\mathit{lits}$, $\\rho$, and $\\mathrm{cont}$ has length equal to the number of literals in $\\mathit{lits}$ whose variable is free under $\\rho$, plus the length of the deepest root-to-leaf path of $\\mathrm{cont}(\\rho')$.",
+ "hypotheses_covered": [
+  "lits is a list of literals with pairwise distinct variables",
+  "rho is a restriction on n variables",
+  "cont is a map from restrictions to decision trees"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $\\mathit{lits}$ with pairwise distinct variables there is a restriction $\\rho'$, agreeing with\n$\\rho$ off the variables of $\\mathit{lits}$, such that the deep-path length of\n$\\mathrm{termSubTree}\\,\\mathit{lits}\\,\\rho\\,\\mathrm{cont}$ equals the number of free literals of $\\mathit{lits}$\nplus the deep-path length of $\\mathrm{cont}\\,\\rho'$."
+}

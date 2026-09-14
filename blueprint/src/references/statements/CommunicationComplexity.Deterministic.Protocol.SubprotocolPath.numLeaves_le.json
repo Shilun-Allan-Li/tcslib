@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le",
+ "key": "52fca9e7ee4b0f63",
+ "kind": "lemma",
+ "title": "Leaf count is monotone along subprotocol paths",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols over the same input types, and suppose there is a subprotocol path from $s$ to $p$, witnessing that $s$ occurs as a rooted subtree of $p$. Then $s$ has at most as many leaves as $p$; that is, the number of leaves of $s$ is less than or equal to the number of leaves of $p$.",
+ "hypotheses_covered": [
+  "a subprotocol path from s to p exists, witnessing that s is a rooted subtree of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If \\texttt{hsp} is a \\texttt{SubprotocolPath} from $s$ to $p$, then\n$s.\\mathrm{numLeaves} \\le p.\\mathrm{numLeaves}$.  A subtree cannot have more leaves than\nits parent."
+}

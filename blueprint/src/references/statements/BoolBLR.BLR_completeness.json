@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolBLR.BLR_completeness",
+ "key": "f55cbc5f767ae93c",
+ "kind": "lemma",
+ "title": "Completeness of the BLR linearity test",
+ "statement": "Let $n$ be a natural number and let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be linear, meaning that $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y \\in \\{0,1\\}^n$. Then the BLR acceptance probability of $f$ equals $1$; that is, when $x$ and $y$ are drawn uniformly and independently from $\\{0,1\\}^n$, the test always accepts.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "f maps the Boolean hypercube of dimension n to Bool",
+  "f is linear: f(x XOR y) = f(x) XOR f(y) for all x, y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\{0,1\\}^n \\to \\{0,1\\}$ is linear, then\n$\\texttt{BoolBLR.BLR\\_accept\\_prob}\\,f = 1$; that is, the BLR test accepts\nevery linear function with probability $1$."
+}

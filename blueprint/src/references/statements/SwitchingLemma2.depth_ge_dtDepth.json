@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.depth_ge_dtDepth",
+ "key": "9d939f3486d92728",
+ "kind": "lemma",
+ "title": "Depth bounds decision-tree depth",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be a Boolean function, and let $T$ be a decision tree on $n$ Boolean variables that computes $f$, in the sense that $T$ evaluates to $f(x)$ on every input $x$. Then the depth of $T$ is at least the decision-tree depth of $f$; that is, $\\mathrm{depth}(T)$ is no smaller than the least depth of any decision tree computing $f$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables",
+  "T computes f: T evaluates to f(x) on every input x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a decision tree $T$ computes a function $f$ (i.e. $T.\\mathrm{eval}\\,x = f(x)$ for all $x$), then its\ndepth is at least the decision-tree depth of $f$: $T.\\mathrm{depth} \\ge \\mathrm{dtDepth}\\,f$."
+}

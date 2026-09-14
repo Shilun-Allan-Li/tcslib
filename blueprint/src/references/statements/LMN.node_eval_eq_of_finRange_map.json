@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.node_eval_eq_of_finRange_map",
+ "key": "a3e54e71b4d54610",
+ "kind": "lemma",
+ "title": "Gate value is preserved under child-wise equality",
+ "statement": "Fix a Boolean flag $\\mathit{isAnd}$ and a finite list $c_1,\\dots,c_k$ of Boolean circuits on $m$ variables, and let $d_1,\\dots,d_k$ be Boolean circuits on $M$ variables, one for each position of the list. Given assignments $g : \\mathrm{Fin}\\,m \\to \\bbf_2$ and $g' : \\mathrm{Fin}\\,M \\to \\bbf_2$ such that every re-indexed child agrees with the corresponding original child, i.e. $d_j$ evaluated at $g'$ equals $c_j$ evaluated at $g$ for each position $j$, the gate node with flag $\\mathit{isAnd}$ over $c_1,\\dots,c_k$ evaluated at $g$ equals the gate node with the same flag $\\mathit{isAnd}$ over $d_1,\\dots,d_k$ evaluated at $g'$. Here the node is the conjunction of its children's values when $\\mathit{isAnd} = \\mathrm{true}$ and their disjunction when $\\mathit{isAnd} = \\mathrm{false}$.",
+ "hypotheses_covered": [
+  "gate flag isAnd (shared by both nodes)",
+  "original children c_1,...,c_k on m variables",
+  "re-indexed children d_1,...,d_k on M variables, one per position",
+  "assignment g on m variables and g' on M variables",
+  "child-wise equality: d_j at g' equals c_j at g for each position j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If each re-indexed child $\\mathrm{new\\_cs}\\,j$ evaluated at $g'$ agrees with the original\nchild $cs.\\mathrm{get}\\,j$ evaluated at $g$, then the node over $cs$ at $g$ equals the node\nover $(\\mathrm{List.finRange}\\,cs.\\mathrm{length}).\\mathrm{map}\\,\\mathrm{new\\_cs}$ at $g'$,\nfor the same flag $\\mathit{isAnd}$."
+}

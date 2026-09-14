@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.UF.find_def",
+ "key": "ce5410859f08129e",
+ "kind": "lemma",
+ "title": "Find equals direct lookup",
+ "statement": "Let $\\mathit{uf} \\colon \\mathrm{Fin}\\,n \\to \\bbn$ be a union-find state on $n$ nodes, and let $i$ be one of its nodes. Then the representative of $i$ returned by $\\mathrm{find}$ coincides with the direct evaluation of the state at $i$; that is, $\\mathrm{find}(\\mathit{uf}, i) = \\mathit{uf}(i)$.",
+ "hypotheses_covered": [
+  "a number of nodes $n$",
+  "a union-find state $uf$ on $n$ nodes",
+  "a node $i$ in $\\mathrm{Fin}\\,n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any union-find state $\\mathit{uf}$ and index $i$,\n$\\mathit{uf}.\\mathtt{find}\\,i = \\mathit{uf}(i)$; this is the unfolding\nsimp-lemma for \\texttt{find}."
+}

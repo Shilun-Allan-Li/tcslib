@@ -1,0 +1,19 @@
+{
+ "lean_name": "RSA.rsa_correctness",
+ "key": "796e499d41e2c9b8",
+ "kind": "theorem",
+ "title": "Correctness of RSA",
+ "statement": "Let $(n,e)$ be an RSA public key belonging to a secret key that also supplies distinct primes $p$ and $q$ with $n = pq$, a private exponent $d$, and a natural number $k$ satisfying $ed = 1 + k(p-1)(q-1)$. Then for every message $m \\in \\bbn$, decrypting the encryption of $m$ returns the class of $m$ modulo $n$: in $\\bbz/n\\bbz$ we have $\\bigl(\\bar m^{\\,e}\\bigr)^{d} = \\bar m$.",
+ "hypotheses_covered": [
+  "sec is an RSA secret key providing p, q, d, k",
+  "p and q are prime",
+  "p ≠ q (distinct primes)",
+  "public modulus factors as n = pq",
+  "exponents satisfy ed = 1 + k(p-1)(q-1)",
+  "m is an arbitrary natural number message"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any secret key and any message $m \\in \\bbn$, decrypting the encryption of $m$ recovers $m$:\n\\[\n\\bigl(\\bar m^{\\,e}\\bigr)^{d} = \\bar m \\quad \\text{in } \\bbz/n\\bbz .\n\\]"
+}

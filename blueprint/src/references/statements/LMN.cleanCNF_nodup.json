@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.cleanCNF_nodup",
+ "key": "7a827d587ff3e21c",
+ "kind": "lemma",
+ "title": "Cleaned clauses have no repeated literals",
+ "statement": "Let $c$ be a CNF formula over $n$ variables, and form its cleaned version by first discarding every clause that contains some variable both positively and negatively, and then deleting from each surviving clause every literal whose variable already occurs earlier in that clause. Then each clause of the resulting formula, viewed as a list of literals, contains no repeated literal.",
+ "hypotheses_covered": [
+  "c is a CNF formula over n variables",
+  "clauses with a variable and its negation are discarded",
+  "surviving clauses are de-duplicated by variable",
+  "conclusion holds for every clause of the cleaned formula"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Every clause of $\\mathrm{cleanCNF}\\,c$ satisfies \\texttt{Nodup}."
+}

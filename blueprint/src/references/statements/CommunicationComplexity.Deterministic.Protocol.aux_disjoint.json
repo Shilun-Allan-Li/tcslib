@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_disjoint",
+ "key": "a5a94a53434b7dba",
+ "kind": "lemma",
+ "title": "Distinct auxiliary leaf rectangles are disjoint",
+ "statement": "Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$ (Bob) producing values of type $\\alpha$, and let $A \\subseteq X$ and $B \\subseteq Y$. If $R$ and $S$ are two distinct rectangles in the collection of auxiliary leaf rectangles of $p$ relative to $A$ and $B$, then $R$ and $S$ are disjoint as subsets of $X \\times Y$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over X, Y with values in α",
+  "A is a subset of X",
+  "B is a subset of Y",
+  "R belongs to the auxiliary leaf rectangles of p relative to A and B",
+  "S belongs to the auxiliary leaf rectangles of p relative to A and B",
+  "R and S are distinct"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $R, S \\in \\texttt{leafRectanglesAux}(p, A, B)$ and $R \\neq S$, then $R$ and $S$ are\ndisjoint subsets of $X \\times Y$."
+}

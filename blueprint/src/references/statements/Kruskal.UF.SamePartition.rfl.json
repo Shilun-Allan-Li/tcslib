@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.UF.SamePartition.rfl",
+ "key": "29477598dd5340db",
+ "kind": "lemma",
+ "title": "Reflexivity of the same-partition relation",
+ "statement": "Fix $n \\in \\bbn$, and recall that a union-find state on $n$ nodes is a function $\\mathrm{Fin}\\,n \\to \\bbn$ assigning to each node a representative label. Every such state $\\mathit{uf}$ induces the same partition as itself: for all nodes $i, j : \\mathrm{Fin}\\,n$, one has $\\mathit{uf}(i) = \\mathit{uf}(j)$ if and only if $\\mathit{uf}(i) = \\mathit{uf}(j)$.",
+ "hypotheses_covered": [
+  "n : ℕ (number of nodes)",
+  "uf : a union-find state on n nodes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every union--find state $\\mathit{uf} : \\mathtt{UF}\\,n$ induces the same partition as\nitself: $\\mathtt{SamePartition}\\,\\mathit{uf}\\,\\mathit{uf}$."
+}

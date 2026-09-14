@@ -61,15 +61,17 @@ if $0 \le \varepsilon \le 1$ and for every linear function
 $g : \{0,1\}^n \to \{0,1\}$ we have $\dist(f, g) \ge \varepsilon$.
 \end{definition}
 
-\begin{lemma}[Linear iff equal to a Fourier character]
+\begin{lemma}[Linear Boolean functions are exactly the Walsh characters]
 \lean{BoolBLR.linear_bool_iff_character}
 \label{BoolBLR.linear_bool_iff_character}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{6}
-A Boolean function $f : \{0,1\}^n \to \{0,1\}$ is linear if and only if
-there exists a set $S \subseteq [n]$ such that the $\pm 1$ lift
-$\texttt{BoolBLR.lift\_pm1}\,f$ equals the Fourier character $\chi_S$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function. Then $f$ is linear — that is,
+$f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$, where $\oplus$ denotes
+bitwise XOR — if and only if there exists a set $S \subseteq [n]$ for which the $\pm 1$
+lift $x \mapsto (-1)^{f(x)}$ coincides with the Walsh character $\chi_S(x) = \prod_{i
+\in S}(-1)^{x_i}$.
 \end{lemma}
 
 \begin{definition}[BLR acceptance probability]
@@ -91,31 +93,33 @@ The \emph{BLR acceptance probability} of $f : \{0,1\}^n \to \{0,1\}$ is
 where $x, y$ are drawn uniformly from $\{0,1\}^n$.
 \end{definition}
 
-\begin{lemma}[BLR acceptance in $\pm 1$ form]
+\begin{lemma}[BLR acceptance probability in ±1 form]
 \lean{BoolBLR.BLR_accept_prob_pm1}
 \label{BoolBLR.BLR_accept_prob_pm1}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.lift_pm1, BoolFourier.card_hypercube, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{3}
-For any $f : \{0,1\}^n \to \{0,1\}$,
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function, and write $F(x) =
+(-1)^{f(x)} \in \{\pm 1\}$ for its sign lift. Then the BLR acceptance probability of
+$f$, the probability that $F(x \oplus y) = F(x)\,F(y)$ when $x$ and $y$ are drawn
+independently and uniformly from $\{0,1\}^n$, satisfies
 \[
-  \Pr[\text{BLR accepts}]
+  \Pr_{x,y}[\text{BLR accepts}]
   \;=\;
-  \frac{1 + \E_x\!\left[\E_y\!\left[
-    \texttt{BoolBLR.lift\_pm1}\,f(x)\cdot
-    \texttt{BoolBLR.lift\_pm1}\,f(y)\cdot
-    \texttt{BoolBLR.lift\_pm1}\,f(x \oplus y)
-  \right]\right]}{2}.
+  \frac{1 + \E_{x}\!\left[\E_{y}\!\left[ F(x)\,F(y)\,F(x \oplus y) \right]\right]}{2},
 \]
+where $x \oplus y$ denotes the componentwise XOR.
 \end{lemma}
 
-\begin{lemma}[Triple expectation as convolution]
+\begin{lemma}[Triple expectation as an inner expectation]
 \lean{BoolBLR.triple_expectation_as_convolution}
 \label{BoolBLR.triple_expectation_as_convolution}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.xor_vec}
 \difficulty{2}
-For any $f : \{0,1\}^n \to \mathbb{R}$,
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function on the hypercube, write $x \oplus y$
+for the componentwise XOR of $x, y \in \{0,1\}^n$, and let $\E$ denote expectation over
+a uniformly random point of $\{0,1\}^n$. Then
 \[
   \E_x\!\left[\E_y\!\left[f(x)\,f(y)\,f(x \oplus y)\right]\right]
   \;=\;
@@ -123,19 +127,24 @@ For any $f : \{0,1\}^n \to \mathbb{R}$,
 \]
 \end{lemma}
 
-\begin{lemma}[Triple expectation equals sum of cubed Fourier coefficients]
+\begin{lemma}[Cube of Fourier coefficients as an autocorrelation expectation]
 \lean{BoolBLR.triple_expectation_eq_cube_fourier}
 \label{BoolBLR.triple_expectation_eq_cube_fourier}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{3}
-For any $f : \{0,1\}^n \to \{0,1\}$, letting $\hat{g}(S)$ denote the Fourier
-coefficient of $g = \texttt{BoolBLR.lift\_pm1}\,f$,
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function on the hypercube, and let
+$g = (-1)^{f}$ denote its $\pm 1$ lift. Then the double uniform expectation of the
+triple product of $g$ over independent inputs and their componentwise XOR equals the sum
+of the cubes of the Fourier coefficients of $g$:
 \[
-  \E_x\!\left[\E_y\!\left[g(x)\,g(y)\,g(x \oplus y)\right]\right]
+  \E_{x}\!\left[\,\E_{y}\!\left[\,g(x)\,g(y)\,g(x \oplus y)\,\right]\right]
   \;=\;
-  \sum_{S \subseteq [n]} \hat{g}(S)^3.
+  \sum_{S \subseteq [n]} \hat{g}(S)^{3},
 \]
+where $x, y$ range uniformly over $\{0,1\}^n$, $(x \oplus y)_i = x_i \oplus y_i$, and
+$\hat{g}(S) = \langle g, \chi_S \rangle$ is the Fourier coefficient at $S \subseteq
+[n]$.
 \end{lemma}
 
 \begin{lemma}[Fourier coefficient bound from distance]
@@ -144,149 +153,178 @@ coefficient of $g = \texttt{BoolBLR.lift\_pm1}\,f$,
 \leanok
 \uses{BoolBLR.bool_dist, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.card_hypercube, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product}
 \difficulty{4}
-Let $f, g : \{0,1\}^n \to \{0,1\}$, let $S \subseteq [n]$, and suppose
-$\texttt{BoolBLR.lift\_pm1}\,g = \chi_S$ and $\dist(f, g) \ge \varepsilon$.
-Then the Fourier coefficient of $\texttt{BoolBLR.lift\_pm1}\,f$ at $S$
-satisfies $\widehat{\texttt{BoolBLR.lift\_pm1}\,f}(S) \le 1 - 2\varepsilon$.
+Let $f,g:\{0,1\}^n\to\{0,1\}$ be Boolean-valued functions, let $S\subseteq[n]$, and let
+$\varepsilon\in\bbr$. Write $f^{\pm},g^{\pm}:\{0,1\}^n\to\bbr$ for their $\pm1$ lifts,
+given by $x\mapsto(-1)^{f(x)}$ and $x\mapsto(-1)^{g(x)}$. Suppose that $g^{\pm}$
+coincides with the Walsh character $\chi_S$, and that $\dist(f,g)=\Pr_{x}[f(x)\ne
+g(x)]\ge\varepsilon$. Then the Fourier coefficient of $f^{\pm}$ at $S$ satisfies
+\[\widehat{f^{\pm}}(S)\;\le\;1-2\varepsilon.\]
 \end{lemma}
 
-\begin{lemma}[Fourier coefficient bound when $\varepsilon$-far from linear]
+\begin{lemma}[Fourier coefficient bound for functions far from linear]
 \lean{BoolBLR.fourier_coeff_le_of_far_from_linear}
 \label{BoolBLR.fourier_coeff_le_of_far_from_linear}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_dist_ge, BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolBLR.linear_bool_iff_character, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.chiS}
 \difficulty{5}
-If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then for
-every $S \subseteq [n]$,
+Let $f : \{0,1\}^n \to \{0,1\}$ be $\varepsilon$-far from linear, meaning that $0 \le
+\varepsilon \le 1$ and every linear function $g : \{0,1\}^n \to \{0,1\}$ (one satisfying
+$g(x \oplus y) = g(x) \oplus g(y)$ for all $x,y$) has $\Pr_{x}[f(x) \ne g(x)] \ge
+\varepsilon$ under the uniform distribution. Let $F(x) = (-1)^{f(x)}$ be the $\pm 1$
+lift of $f$. Then for every subset $S \subseteq [n]$, the Fourier coefficient of $F$ at
+$S$ satisfies
 \[
-  \widehat{\texttt{BoolBLR.lift\_pm1}\,f}(S) \;\le\; 1 - 2\varepsilon.
+  \hat F(S) \;=\; \E_{x}\bigl[F(x)\,\chi_S(x)\bigr] \;\le\; 1 - 2\varepsilon,
 \]
+where $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ is the Walsh character indexed by $S$.
 \end{lemma}
 
-\begin{lemma}[Soundness bound via Fourier analysis]
+\begin{lemma}[Sum of cubed Fourier coefficients bounds distance to linearity]
 \lean{BoolBLR.BLR_soundness_via_fourier}
 \label{BoolBLR.BLR_soundness_via_fourier}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 \difficulty{3}
-If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then the
-sum of cubed Fourier coefficients of $\texttt{BoolBLR.lift\_pm1}\,f$ satisfies
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function and let $\varepsilon \in \bbr$
+with $0 \le \varepsilon \le 1$, and suppose $f$ is $\varepsilon$-far from linear: for
+every linear function $g : \{0,1\}^n \to \{0,1\}$ one has $\dist(f,g) \ge \varepsilon$.
+Writing $F = (-1)^{f}$ for the $\pm 1$ lift of $f$ and $\hat F(S) = \langle F,
+\chi_S\rangle$ for its Fourier coefficient at $S \subseteq [n]$, the sum of the cubed
+coefficients over all subsets satisfies
 \[
-  \sum_{S \subseteq [n]} \widehat{\texttt{BoolBLR.lift\_pm1}\,f}(S)^3
-  \;\le\; 1 - 2\varepsilon.
+  \sum_{S \subseteq [n]} \hat F(S)^3 \;\le\; 1 - 2\varepsilon.
 \]
-This follows by combining the per-coefficient bound $\hat{f}(S) \le 1-2\varepsilon$
-with the Parseval identity $\sum_S \hat{f}(S)^2 = 1$.
 \end{lemma}
 
-\begin{lemma}[BLR completeness]
+\begin{lemma}[Completeness of the BLR linearity test]
 \lean{BoolBLR.BLR_completeness}
 \label{BoolBLR.BLR_completeness}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{2}
-If $f : \{0,1\}^n \to \{0,1\}$ is linear, then
-$\texttt{BoolBLR.BLR\_accept\_prob}\,f = 1$; that is, the BLR test accepts
-every linear function with probability $1$.
+Let $n$ be a natural number and let $f : \{0,1\}^n \to \{0,1\}$ be linear, meaning that
+$f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$. Then the BLR acceptance
+probability of $f$ equals $1$; that is, when $x$ and $y$ are drawn uniformly and
+independently from $\{0,1\}^n$, the test always accepts.
 \end{lemma}
 
-\begin{lemma}[BLR soundness]
+\begin{lemma}[Soundness of the BLR linearity test]
 \lean{BoolBLR.BLR_soundness}
 \label{BoolBLR.BLR_soundness}
 \leanok
 \uses{BoolBLR.BLR_accept_prob, BoolBLR.BLR_accept_prob_pm1, BoolBLR.BLR_soundness_via_fourier, BoolBLR.epsilon_far_from_linear, BoolBLR.triple_expectation_eq_cube_fourier, BoolFourier.hypercube}
 \difficulty{2}
-If $f : \{0,1\}^n \to \{0,1\}$ is $\varepsilon$-far from linear, then
+Let $f : \{0,1\}^n \to \{0,1\}$ and let $\varepsilon \in \bbr$ satisfy $0 \le
+\varepsilon \le 1$. Suppose $f$ is $\varepsilon$-far from linear, meaning that every
+linear function $g : \{0,1\}^n \to \{0,1\}$ (one satisfying $g(x \oplus y) = g(x) \oplus
+g(y)$ for all $x, y$) has distance $\Pr_{x}[f(x) \ne g(x)] \ge \varepsilon$ from $f$.
+Then the BLR acceptance probability of $f$ satisfies
 \[
-  \texttt{BoolBLR.BLR\_accept\_prob}\,f \;\le\; 1 - \varepsilon.
+\E_{x}\!\left[\E_{y}\!\left[\mathbf{1}\!\left[(-1)^{f(x \oplus y)} =
+(-1)^{f(x)}\,(-1)^{f(y)}\right]\right]\right] \;\le\; 1 - \varepsilon,
 \]
-That is, a function that is $\varepsilon$-far from every linear function
-causes the BLR test to reject with probability at least $\varepsilon$.
+where $x$ and $y$ range uniformly over $\{0,1\}^n$; equivalently, the test rejects $f$
+with probability at least $\varepsilon$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Value of a linear function on an indicator vector]
+\begin{lemma}[Value of a linear Boolean function on an indicator vector]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_fx_1}
 \label{BoolBLR.linear_bool_iff_character_aux_h_fx_1}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{5}
-Let $f : \{0,1\}^n \to \{0,1\}$ be linear.  Then for every
-$s \subseteq [n]$, writing $\mathbf{1}_s$ for the indicator vector of $s$ and
-$e_i$ for the $i$-th basis vector, the value $f(\mathbf{1}_s)$ is
-\texttt{false} when
+Let $f : \{0,1\}^n \to \{0,1\}$ be a linear Boolean function, meaning $f(x \oplus y) =
+f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$, where $\oplus$ is componentwise XOR. For
+a subset $s \subseteq \{0, \dots, n-1\}$, let $\mathbf{1}_s \in \{0,1\}^n$ be its
+indicator vector, whose $i$-th coordinate is $1$ when $i \in s$ and $0$ otherwise, and
+for each index $i$ let $e_i \in \{0,1\}^n$ be the standard basis vector, whose $i$-th
+coordinate is $1$ and all others $0$. Then for every $s$ the value $f(\mathbf{1}_s)$ is
+$0$ when
 \[
-  \sum_{i \in s} \mathbf{1}[f(e_i) = \texttt{true}] \equiv 0 \pmod 2
+  \sum_{i \in s} \mathbf{1}[\,f(e_i) = 1\,] \equiv 0 \pmod 2,
 \]
-and \texttt{true} otherwise; that is, $f(\mathbf{1}_s)$ is the parity of the
-number of $i \in s$ with $f(e_i) = \texttt{true}$.
+and $1$ otherwise; that is, $f(\mathbf{1}_s)$ equals the parity of the number of $i \in
+s$ with $f(e_i) = 1$.
 \end{lemma}
 
-\begin{lemma}[Value of a linear function via its support]
+\begin{lemma}[Value of a linear Boolean function from its values on basis vectors]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_fx_2}
 \label{BoolBLR.linear_bool_iff_character_aux_h_fx_2}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.linear_bool_iff_character_aux_h_fx_1, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 \difficulty{2}
-Specialization of the previous lemma to the support of an arbitrary point:
-if $f : \{0,1\}^n \to \{0,1\}$ is linear, then for every $x \in \{0,1\}^n$
-the value $f(x)$ is the parity of the number of coordinates $i$ with
-$x_i = \texttt{true}$ and $f(e_i) = \texttt{true}$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a linear Boolean function, meaning $f(x \oplus y) =
+f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$, and for each coordinate $i$ let $e_i \in
+\{0,1\}^n$ denote the standard basis vector that is $1$ in position $i$ and $0$
+elsewhere. Then for every $x \in \{0,1\}^n$, the value $f(x)$ equals the parity of the
+number of coordinates $i$ with $x_i = 1$ and $f(e_i) = 1$; that is, $f(x) = 1$ if that
+count is odd and $f(x) = 0$ if it is even.
 \end{lemma}
 
-\begin{lemma}[Multiplicativity of the Fourier characters]
+\begin{lemma}[Multiplicativity of the Walsh characters]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_char}
 \label{BoolBLR.linear_bool_iff_character_aux_h_char}
 \leanok
 \uses{BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.chiS}
 \difficulty{3}
-For every $S \subseteq [n]$ and all $x, y \in \{0,1\}^n$,
+Fix $n$ and a subset $S \subseteq [n]$, and let $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$
+be the associated Walsh character on the hypercube $\{0,1\}^n$. Then for all $x, y \in
+\{0,1\}^n$,
 \[
-  \chi_S(x \oplus y) \;=\; \chi_S(x)\,\chi_S(y).
+  \chi_S(x \oplus y) \;=\; \chi_S(x)\,\chi_S(y),
 \]
+where $x \oplus y$ denotes the componentwise XOR.
 \end{lemma}
 
-\begin{lemma}[$\pm 1$ lift of a character is XOR-additive]
+\begin{lemma}[XOR-additivity of a Boolean function whose lift is a character]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_eq}
 \label{BoolBLR.linear_bool_iff_character_aux_h_eq}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_xor, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{2}
-Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$
-for some $S \subseteq [n]$, and let $x, y \in \{0,1\}^n$.  Assuming the
-multiplicativity identity $\chi_S(x \oplus y) = \chi_S(x)\chi_S(y)$, one has
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function whose $\pm 1$ lift
+coincides with a Walsh character, say $x \mapsto (-1)^{f(x)}$ equals $\chi_S$ for some
+$S \subseteq [n]$, and fix points $x, y \in \{0,1\}^n$. If the character is
+multiplicative at this pair, meaning $\chi_S(x \oplus y) = \chi_S(x)\,\chi_S(y)$ where
+$x \oplus y$ denotes the componentwise XOR, then
 \[
   (-1)^{f(x \oplus y)} \;=\; (-1)^{f(x) \oplus f(y)}.
 \]
 \end{lemma}
 
-\begin{lemma}[Value of a linear function via its support, restated]
+\begin{lemma}[Value of a linear Boolean function from its action on basis vectors]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_fx}
 \label{BoolBLR.linear_bool_iff_character_aux_h_fx}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolBLR.linear_bool_iff_character_aux_h_fx_2, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 \difficulty{1}
-Restatement of the support formula in the exact form used inside the proof of
-the character criterion: for linear $f$ and any $x \in \{0,1\}^n$, $f(x)$ is
-the parity of the number of coordinates $i$ with $x_i = \texttt{true}$ and
-$f(e_i) = \texttt{true}$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a linear Boolean function, meaning $f(x \oplus y) =
+f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$, where $\oplus$ is componentwise XOR. For
+each coordinate $i$, let $e_i \in \{0,1\}^n$ denote the standard basis vector that is
+$1$ in coordinate $i$ and $0$ elsewhere. Then for every $x \in \{0,1\}^n$, the value
+$f(x)$ is $1$ if the number of coordinates $i$ with $x_i = 1$ and $f(e_i) = 1$ is odd,
+and $0$ if that number is even; equivalently, $f(x)$ is the parity of $\lvert\{\, i :
+x_i = 1 \text{ and } f(e_i) = 1 \,\}\rvert$.
 \end{lemma}
 
-\begin{lemma}[XOR-additivity of a function whose lift is a character]
+\begin{lemma}[XOR-additivity of a Boolean function that lifts to a character]
 \lean{BoolBLR.linear_bool_iff_character_aux_h_eq_h}
 \label{BoolBLR.linear_bool_iff_character_aux_h_eq_h}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolBLR.linear_bool_iff_character_aux_h_char, BoolBLR.linear_bool_iff_character_aux_h_eq, BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{1}
-If $\texttt{BoolBLR.lift\_pm1}\,f = \chi_S$ for some $S \subseteq [n]$, then for
-all $x, y \in \{0,1\}^n$,
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function whose $\pm 1$ lift $x
+\mapsto (-1)^{f(x)}$ coincides with the Walsh character $\chi_S$ for some subset $S
+\subseteq [n]$. Then for all $x, y \in \{0,1\}^n$,
 \[
-  (-1)^{f(x \oplus y)} \;=\; (-1)^{f(x) \oplus f(y)}.
+  (-1)^{f(x \oplus y)} \;=\; (-1)^{f(x) \oplus f(y)},
 \]
-This is the previous lemma with the multiplicativity hypothesis discharged.
+where $x \oplus y$ denotes the componentwise XOR of $x$ and $y$ and $f(x) \oplus f(y)$
+the XOR of the two Boolean outputs.
 \end{lemma}
 
 \begin{lemma}[Pointwise $\pm 1$ form of the BLR indicator]
@@ -295,12 +333,16 @@ This is the previous lemma with the multiplicativity hypothesis discharged.
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{3}
-Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
+Fix $n \in \bbn$ and a Boolean-valued function $f : \{0,1\}^n \to \{0,1\}$, and let $g :
+\{0,1\}^n \to \bbr$ be its $\pm 1$ lift, $g(x) = (-1)^{f(x)}$. Then for all $x, y \in
+\{0,1\}^n$,
 \[
-  \mathbf{1}\!\left[g(x \oplus y) = g(x)\,g(y)\right]
+  \mathbf{1}\!\left[\, g(x \oplus y) = g(x)\,g(y) \,\right]
   \;=\;
-  \frac{1 + g(x)\,g(y)\,g(x \oplus y)}{2}.
+  \frac{1 + g(x)\,g(y)\,g(x \oplus y)}{2},
 \]
+where $x \oplus y$ denotes the componentwise XOR and the left-hand side is $1$ when the
+equality holds and $0$ otherwise.
 \end{lemma}
 
 \begin{lemma}[Fourier expansion of the self-convolution]
@@ -309,26 +351,39 @@ Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For all $x, y \in \{0,1\}^n$,
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.fourier_expansion, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 \difficulty{3}
-Write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  For every $x \in \{0,1\}^n$,
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function, and let $g : \{0,1\}^n \to
+\bbr$ be its $\pm 1$ lift, $g(x) = (-1)^{f(x)}$. Writing $g * g$ for the
+self-convolution $(g * g)(x) = \E_{y}\bigl[g(y)\,g(x \oplus y)\bigr]$ with respect to
+the uniform measure, and $\hat g(S) = \E[g\,\chi_S]$ for the Fourier coefficient of $g$
+at $S$, one has for every $x \in \{0,1\}^n$
 \[
-  (g * g)(x) \;=\; \sum_{S \subseteq [n]} \hat{g}(S)^2\,\chi_S(x),
+  (g * g)(x) \;=\; \sum_{S \subseteq [n]} \hat g(S)^2\, \chi_S(x),
 \]
-i.e.\ the self-convolution of $g$ has Fourier coefficients $\hat{g}(S)^2$.
+where $\chi_S(x) = \prod_{i \in S} (-1)^{x_i}$ is the Walsh character of $S$. That is,
+the self-convolution of $g$ has Fourier coefficients $\hat g(S)^2$.
 \end{lemma}
 
-\begin{lemma}[Substituting the convolution expansion into the expectation]
+\begin{lemma}[Expectation of a function against its Fourier-expanded autocorrelation]
 \lean{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_substitute}
 \label{BoolBLR.triple_expectation_eq_cube_fourier_aux_h_substitute}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 \difficulty{3}
-Write $g = \texttt{BoolBLR.lift\_pm1}\,f$ and assume
-$(g * g)(x) = \sum_S \hat{g}(S)^2 \chi_S(x)$ for all $x$.  Then
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function, and let $g$ denote its $\pm 1$
+lift, so that $g(x) = (-1)^{f(x)}$. Suppose that the convolution of $g$ with itself
+admits the Fourier expansion
+\[
+  (g * g)(x) \;=\; \sum_{S \subseteq [n]} \hat{g}(S)^2\,\chi_S(x)
+  \qquad\text{for every } x \in \{0,1\}^n,
+\]
+where $\chi_S$ is the Walsh character of $S$ and $\hat{g}(S) = \langle g,
+\chi_S\rangle$. Then
 \[
   \E_x\!\left[g(x)\,(g * g)(x)\right]
   \;=\;
-  \sum_{S \subseteq [n]} \hat{g}(S)^2\,\E_x\!\left[g(x)\,\chi_S(x)\right].
+  \sum_{S \subseteq [n]} \hat{g}(S)^2\,\E_x\!\left[g(x)\,\chi_S(x)\right],
 \]
+the expectation being taken uniformly over $x \in \{0,1\}^n$.
 \end{lemma}
 
 \begin{lemma}[Product of $\pm 1$ lifts as a disagreement indicator]
@@ -337,57 +392,68 @@ $(g * g)(x) = \sum_S \hat{g}(S)^2 \chi_S(x)$ for all $x$.  Then
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 \difficulty{2}
-For all $f, g : \{0,1\}^n \to \{0,1\}$ and every $x \in \{0,1\}^n$,
+Let $f, g : \{0,1\}^n \to \{0,1\}$ be Boolean-valued functions on the hypercube, and
+write $F, G : \{0,1\}^n \to \bbr$ for their $\pm 1$ lifts, given by $F(x) = (-1)^{f(x)}$
+and $G(x) = (-1)^{g(x)}$. Then for every point $x \in \{0,1\}^n$,
 \[
-  (-1)^{f(x)}\,(-1)^{g(x)} \;=\; 1 - 2\cdot\mathbf{1}\!\left[f(x) \ne g(x)\right].
+  F(x)\,G(x) \;=\; 1 - 2\cdot\mathbf{1}\!\left[f(x) \ne g(x)\right],
 \]
+so the product equals $+1$ where $f$ and $g$ agree at $x$ and $-1$ where they disagree.
 \end{lemma}
 
-\begin{lemma}[Parseval for a $\pm 1$ lift]
+\begin{lemma}[Parseval identity for the sign lift of a Boolean function]
 \lean{BoolBLR.BLR_soundness_via_fourier_aux_hparseval}
 \label{BoolBLR.BLR_soundness_via_fourier_aux_hparseval}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 \difficulty{2}
-For every $f : \{0,1\}^n \to \{0,1\}$, the $\pm 1$ lift
-$g = \texttt{BoolBLR.lift\_pm1}\,f$ has unit Fourier mass:
+Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function, and let $g : \{0,1\}^n \to
+\bbr$ be its $\pm 1$ lift, given by $g(x) = (-1)^{f(x)}$. Then the Fourier coefficients
+$\hat g(S) = \langle g, \chi_S\rangle$, taken over all subsets $S \subseteq [n]$,
+satisfy
 \[
-  \sum_{S \subseteq [n]} \hat{g}(S)^2 \;=\; 1.
+  \sum_{S \subseteq [n]} \hat g(S)^2 \;=\; 1.
 \]
 \end{lemma}
 
-\begin{lemma}[Per-coefficient cube bound for $\varepsilon$-far functions]
+\begin{lemma}[Per-coefficient cube bound for functions far from linear]
 \lean{BoolBLR.BLR_soundness_via_fourier_aux_h_bound}
 \label{BoolBLR.BLR_soundness_via_fourier_aux_h_bound}
 \leanok
 \uses{BoolBLR.epsilon_far_from_linear, BoolBLR.fourier_coeff_le_of_far_from_linear, BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube}
 \difficulty{2}
-Let $f : \{0,1\}^n \to \{0,1\}$ be $\varepsilon$-far from linear and write
-$g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then for every $S \subseteq [n]$,
+Let $f : \{0,1\}^n \to \{0,1\}$ be $\varepsilon$-far from linear, meaning that $0 \le
+\varepsilon \le 1$ and every linear function $g : \{0,1\}^n \to \{0,1\}$ (one satisfying
+$g(x \oplus y) = g(x) \oplus g(y)$ for all $x,y$) has distance $\Pr_{x}[f(x) \ne g(x)]
+\ge \varepsilon$ from $f$. Write $\hat F(S) = \E[F \cdot \chi_S]$ for the Fourier
+coefficient of $F = (-1)^{f}$, the $\pm 1$ lift of $f$, at a subset $S \subseteq [n]$.
+Then for every such $S$,
 \[
-  \hat{g}(S)^3 \;\le\; \hat{g}(S)^2\,(1 - 2\varepsilon).
+  \hat F(S)^3 \;\le\; \hat F(S)^2\,(1 - 2\varepsilon).
 \]
 \end{lemma}
 
-\begin{lemma}[Unfolded form of Boolean linearity]
+\begin{lemma}[Linearity gives additivity on XOR]
 \lean{BoolBLR.BLR_completeness_aux_h_linear}
 \label{BoolBLR.BLR_completeness_aux_h_linear}
 \leanok
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{1}
-If $f : \{0,1\}^n \to \{0,1\}$ is linear, then
-$f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$.
+Let $f : \{0,1\}^n \to \{0,1\}$ be a linear function, meaning that $f(x \oplus y) = f(x)
+\oplus f(y)$ for all $x, y \in \{0,1\}^n$, where $\oplus$ denotes componentwise XOR.
+Then for all $x, y \in \{0,1\}^n$ we have $f(x \oplus y) = f(x) \oplus f(y)$.
 \end{lemma}
 
-\begin{lemma}[Multiplicativity of the lift of a linear function]
+\begin{lemma}[Multiplicativity of the sign lift of an XOR-homomorphism]
 \lean{BoolBLR.BLR_completeness_aux_h_lift_linear}
 \label{BoolBLR.BLR_completeness_aux_h_lift_linear}
 \leanok
 \uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1_xor, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{2}
-Let $f : \{0,1\}^n \to \{0,1\}$ satisfy $f(x \oplus y) = f(x) \oplus f(y)$ for
-all $x, y$, and write $g = \texttt{BoolBLR.lift\_pm1}\,f$.  Then $g$ is
-multiplicative on XOR:
+Let $f : \{0,1\}^n \to \{0,1\}$ be a function that respects componentwise XOR, meaning
+$f(x \oplus y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$, and let $g : \{0,1\}^n
+\to \bbr$ be its $\pm 1$ lift, $g(x) = (-1)^{f(x)}$. Then $g$ turns XOR into
+multiplication:
 \[
   g(x \oplus y) \;=\; g(x)\,g(y) \qquad \text{for all } x, y \in \{0,1\}^n.
 \]

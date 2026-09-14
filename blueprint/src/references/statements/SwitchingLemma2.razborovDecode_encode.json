@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.razborovDecode_encode",
+ "key": "84f0a76ed6275c6f",
+ "kind": "lemma",
+ "title": "Razborov decoding inverts encoding on bad restrictions",
+ "statement": "Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that no term of $f$ contains two distinct literals on the same variable (within each term, any two literals sharing a variable coincide). Let $\\rho$ be a restriction that is bad for $f$ at depth $d$, meaning the restriction of the Boolean function computed by $f$ along $\\rho$ has decision-tree depth strictly greater than $d$. Writing $(\\gamma, \\mathrm{aux})$ for the pair produced by the Razborov encoding of $f$, $w$, $d$, $\\rho$, the Razborov decoding of $(\\gamma, \\mathrm{aux})$ with parameters $f$ and $w$ returns the original restriction $\\rho$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "width of f is at most w (f.width ≤ w)",
+  "within each term of f, literals on the same variable are equal (non-degeneracy)",
+  "ρ is a bad restriction for f's Boolean function at depth d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a width-$w$ DNF $f$ with distinct variables per term and a bad restriction $\\rho$ for\n$f.\\mathrm{eval}$ at depth $d$, decoding the Razborov encoding of $\\rho$ returns $\\rho$:\n$\\mathrm{razborovDecode}\\ f\\ w\\ (\\mathrm{razborovEncode}\\ f\\ w\\ d\\ \\rho) = \\rho$."
+}

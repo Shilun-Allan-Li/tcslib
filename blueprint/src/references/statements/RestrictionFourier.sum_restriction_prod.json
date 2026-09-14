@@ -1,0 +1,14 @@
+{
+ "lean_name": "RestrictionFourier.sum_restriction_prod",
+ "key": "244d716e0d34ce67",
+ "kind": "lemma",
+ "title": "Sums of coordinatewise products over restrictions factor",
+ "statement": "Fix $n \\in \\bbn$, and for each coordinate $i \\in \\{1,\\dots,n\\}$ let $h_i : \\{\\mathtt{true},\\mathtt{false},\\ast\\} \\to \\bbr$ be a real-valued weight assigned to the three possible states of that coordinate (fixed to true, fixed to false, or left free). Then summing the product of these weights over all $3^n$ restrictions $\\rho$ on $n$ variables equals the product over coordinates of the coordinatewise total weights:\n\\[\n  \\sum_{\\rho} \\prod_{i=1}^{n} h_i\\bigl(\\rho(i)\\bigr) \\;=\\; \\prod_{i=1}^{n} \\sum_{v} h_i(v),\n\\]\nwhere $\\rho$ ranges over all restrictions on $n$ variables and $v$ ranges over the three per-coordinate states.",
+ "hypotheses_covered": [
+  "a family of weight functions h_i, one per coordinate, on the three restriction states"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any family $h : [n] \\to \\mathrm{Option}\\ \\mathrm{Bool} \\to \\bbr$,\n\\[\n  \\sum_{\\rho} \\prod_{i} h\\,i\\,(\\rho\\,i) \\;=\\; \\prod_{i} \\sum_{v} h\\,i\\,v,\n\\]\nthe sum ranging over all restrictions $\\rho$ on $n$ variables and $v$ over the three\npossible per-coordinate values."
+}

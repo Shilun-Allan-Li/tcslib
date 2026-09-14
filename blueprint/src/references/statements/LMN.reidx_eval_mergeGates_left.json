@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.reidx_eval_mergeGates_left",
+ "key": "1f92000d358c5f03",
+ "kind": "lemma",
+ "title": "Left re-indexing preserves circuit evaluation",
+ "statement": "Let $c$ be a Boolean circuit on $m_1$ variables, and let $g_1 : \\mathrm{Fin}\\,m_1 \\to \\bbf_2$ and $g_2 : \\mathrm{Fin}\\,m_2 \\to \\bbf_2$ be assignments. Write $\\iota : \\mathrm{Fin}\\,m_1 \\to \\mathrm{Fin}\\,(m_1+m_2)$, $i \\mapsto i$, for the order-preserving inclusion of the first block, and let $g$ be the merged assignment on $m_1 + m_2$ variables that agrees with $g_1$ on the first $m_1$ indices and with $g_2$ on the last $m_2$. Then the circuit obtained by replacing each literal index $i$ of $c$ by $\\iota(i)$ (keeping its sign), evaluated under $g$, has the same value as $c$ evaluated under $g_1$.",
+ "hypotheses_covered": [
+  "c is a Boolean circuit on m₁ variables",
+  "g₁ is an assignment on Fin m₁",
+  "g₂ is an assignment on Fin m₂",
+  "re-indexing along the left inclusion ι = Fin.castAdd, i ↦ i",
+  "evaluation under the merged assignment of g₁ and g₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a Boolean circuit on $m_1$ variables, and let $g_1 : \\mathrm{Fin}\\,m_1 \\to\n\\mathrm{Bool}$ and $g_2 : \\mathrm{Fin}\\,m_2 \\to \\mathrm{Bool}$ be Boolean arrays.\nRe-index $c$ along the left inclusion $\\mathrm{Fin}\\,m_1 \\to \\mathrm{Fin}\\,(m_1+m_2)$,\n$i \\mapsto i$, which sends each literal index $i$ to the same index $i$ in the enlarged\nrange and keeps its sign. Then evaluating the re-indexed circuit under the merged array\n$\\mathrm{mergeGates}\\,g_1\\,g_2$ gives the same Boolean value as evaluating $c$ under\n$g_1$."
+}

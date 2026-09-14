@@ -1,0 +1,20 @@
+{
+ "lean_name": "SimpleGraph.exists_min_weight_spanningTree",
+ "key": "9e672a90b75a763d",
+ "kind": "theorem",
+ "title": "Existence of a minimum-weight spanning tree",
+ "statement": "Let $G$ be a connected simple graph on a finite vertex set $V$, and let $w$ assign a real weight $w(e)$ to each unordered pair $e$ of vertices. Then there exists a spanning subgraph $T$ of $G$ that is a tree and whose total edge weight $\\sum_{e \\in E(T)} w(e)$ is least among all subgraphs $T'$ of $G$ that are trees.",
+ "hypotheses_covered": [
+  "V is a finite vertex set",
+  "G is a simple graph",
+  "G is connected",
+  "w is a real-valued weight on unordered pairs of vertices",
+  "T is a subgraph of G (T ≤ G)",
+  "T is a tree",
+  "T minimizes total edge weight over all subgraph-trees T' of G"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "(Kruskal optimality), stated as an existence result. \\emph{Among all spanning trees of a\nconnected weighted graph there is one of minimum total edge weight --- an optimal tree\n--- and Kruskal's algorithm constructs one.}"
+}

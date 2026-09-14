@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.clauseToTerm_nodup",
+ "key": "540da4ab6eb69f6e",
+ "kind": "theorem",
+ "title": "OR-clause conversion preserves distinctness",
+ "statement": "Let $lits$ be a list of circuit literals in $n$ variables whose underlying variable indices are pairwise distinct. Then the term obtained by converting the OR-clause on $lits$ — the list of switching-lemma literals produced by sending each circuit literal to its counterpart — has no repeated entries.",
+ "hypotheses_covered": [
+  "lits is a list of circuit literals in n variables",
+  "the variable indices of lits are pairwise distinct (nodup)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the variable indices of an OR-clause's literals are pairwise distinct, then the\nconverted term $(\\texttt{NOrCircuit}.\\mathrm{clause}\\,lits\\,h).\\mathrm{clauseToTerm}$ has the\n\\texttt{Nodup} property."
+}

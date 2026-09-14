@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_sum_zVariable_klDiv",
+ "key": "61cca58df027912b",
+ "kind": "theorem",
+ "title": "Fiber-wise decomposition of the averaged Alice-bit KL cost",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ whose inputs are pairs of subsets of an $n$-element coordinate set. Let $\\mu$ be the hard distribution conditioned both on the two generated input sets being disjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. For a sample $\\omega$, let $Z(\\omega)$ record the transcript of $p$ on the generated input, the special coordinate $T$, Alice's input bits at the coordinates strictly before $T$, and Bob's input bits at the coordinates strictly after $T$, and let $\\mathcal Z$ be the finite set of values it takes; for each $z \\in \\mathcal Z$ write $F_z = \\{\\omega : Z(\\omega) = z\\}$ for the corresponding fiber. For a value $z$, let $\\kappa(z)$ be the Kullback–Leibler divergence, taken as a real number, of the law of Alice's bit at the special coordinate — obtained from the ambient sample measure conditioned on $F_z$ — from the uniform law on one bit. Then\n\\[ \\int \\kappa\\big(Z(\\omega)\\big)\\, d\\mu(\\omega) \\;=\\; \\sum_{z \\in \\mathcal Z} \\mu(F_z)\\; D_{\\mathrm{KL}}\\!\\Big( \\mathcal L_\\mu\\big(\\text{Alice's special bit} \\mid Z = z\\big) \\,\\Big\\|\\, \\mathrm{Unif}\\{0,1\\} \\Big), \\]\nwhere $\\mathcal L_\\mu(\\,\\cdot \\mid Z = z)$ denotes the law under $\\mu$ conditioned on the fiber $F_z$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol on inputs of length n"
+ ],
+ "confidence": "high",
+ "caveat": "Note that inside the KL divergence the two sides use different conditional laws of Alice's special bit — the left-hand integrand conditions the ambient sample measure on the fiber, whereas the right-hand summand conditions the disjoint-and-special-Y-false measure μ on the fiber; the statement is rendered exactly as written.",
+ "rubric": [],
+ "replaced": "The averaged Alice fiber KL cost under $D ∧ Y_{T}=false$ as a finite sum of actual KL divergences for the conditional $Z=z$ laws."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "tournament_maximal_directedPath_insert",
+ "key": "abb541b94e6fdc4c",
+ "kind": "theorem",
+ "title": "Inserting a vertex into a non-extendable directed path in a tournament",
+ "statement": "Let $D$ be a tournament on a finite vertex set $V$ — an orientation of the complete graph on $V$. Let $v_1, v_2, \\dots, v_k$ be a directed path in $D$: a nonempty list of distinct vertices such that $v_j \\to v_{j+1}$ is an arc of $D$ for every $1 \\le j < k$. Suppose this path cannot be extended at either end, meaning that for every vertex $w$ not among $v_1, \\dots, v_k$ there is no arc from $w$ to $v_1$ and no arc from $v_k$ to $w$. Then for every vertex $v$ not on the path there is an index $i$ with $1 \\le i < k$ such that $v_i \\to v$ and $v \\to v_{i+1}$ are both arcs of $D$; that is, $v$ can be inserted between two consecutive vertices of the path.",
+ "hypotheses_covered": [
+  "D is a tournament",
+  "V is finite",
+  "the path is a nonempty list of vertices",
+  "the vertices of the path are distinct",
+  "consecutive vertices are joined by an arc (directed chain)",
+  "the path is non-extendable at both ends: no outside w has an arc into v_1, and v_k has no arc to any outside w",
+  "v is a vertex not on the path"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Let \\texttt{P = (v$_{1}$, \\dots{}, v\\_k)} be a maximal directed path in a\ntournament \\texttt{D}. Suppose \\texttt{P} is not a directed Hamilton path and let\n\\texttt{v} be any\nvertex not on \\texttt{P}. Then for some \\texttt{i}, both \\texttt{(v$_{i}$, v)} and\n\\texttt{(v, v\\_\\{i+1\\})} are arcs\nof \\texttt{D}.}"
+}

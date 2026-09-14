@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance_dualProtocol_dualZValue_eq_yDistance",
+ "key": "4ac93ec81d9da590",
+ "kind": "theorem",
+ "title": "Duality exchanges Alice's and Bob's special-bit distances",
+ "statement": "Fix a positive integer $n$, a deterministic communication protocol $p$ for disjointness inputs of length $n$, and an achievable value $z$ of the summary variable $Z$ associated with $p$. For any such pair, let the *special-bit distance from uniform* be the total variation distance between the conditional law of the relevant party's bit at the special coordinate — given that the summary variable equals $z$ — and the uniform law on a single bit; write it $d_X$ when the party is Alice and $d_Y$ when the party is Bob. Passing to the dual protocol $p^{*}$, obtained by interchanging the roles of Alice and Bob and reversing the coordinate order of both input sets, and to the correspondingly dualized value $z^{*}$ of $Z$, one has \\[ d_X\\bigl(p^{*},\\,z^{*}\\bigr) = d_Y\\bigl(p,\\,z\\bigr). \\] That is, Alice's special-bit distance from uniform in the dual system equals Bob's special-bit distance from uniform in the original.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol of length n",
+  "z an achievable value of the summary variable Z for p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Alice one-bit distance for the dual protocol at the recoded $Z$ value is the original Bob one-bit distance."
+}

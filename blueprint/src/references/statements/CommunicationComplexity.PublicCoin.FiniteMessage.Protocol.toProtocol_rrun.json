@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_rrun",
+ "key": "4471b5c735399b72",
+ "kind": "theorem",
+ "title": "Binary conversion preserves randomized execution",
+ "statement": "Let $p$ be a public-coin finite-message protocol with shared-randomness space $\\Omega$, private input sets $X$ and $Y$, and output type $\\alpha$, and let $q$ be the binary public-coin protocol obtained from $p$ by encoding each finite-alphabet message as a string of bits. Then for every pair of private inputs $x \\in X$ and $y \\in Y$ and every shared random string $\\omega \\in \\Omega$, the two protocols produce the same output when executed on those inputs with that randomness: the randomized execution of $q$ on $x$, $y$, $\\omega$ equals the randomized execution of $p$ on $x$, $y$, $\\omega$.",
+ "hypotheses_covered": [
+  "p is a public-coin finite-message protocol over Ω, X, Y, α",
+  "arbitrary private input x ∈ X",
+  "arbitrary private input y ∈ Y",
+  "arbitrary shared random string ω ∈ Ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$, inputs $x$, $y$, and shared randomness $\\omega$,\n$(p.\\mathrm{toProtocol}).\\mathrm{rrun}\\,x\\,y\\,\\omega = p.\\mathrm{rrun}\\,x\\,y\\,\\omega$."
+}

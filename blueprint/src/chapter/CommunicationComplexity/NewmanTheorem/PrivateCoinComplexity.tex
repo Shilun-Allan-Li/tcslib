@@ -13,6 +13,10 @@ error parameter $\varepsilon$.
 
 \begin{definition}[Private-coin communication complexity]
 \lean{CommunicationComplexity.PrivateCoin.communicationComplexity}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p011-b003
+}
 \label{CommunicationComplexity.PrivateCoin.communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes}
@@ -27,64 +31,86 @@ i.e.\ the minimum worst-case number of bits exchanged over all private-coin rand
 protocols that compute $f$ with error at most $\varepsilon$ on every input.
 \end{definition}
 
-\begin{theorem}[Upper-bound characterization]
+\begin{theorem}[Characterization of private-coin complexity by upper bounds]
 \lean{CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff}
 \label{CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Internal.enat_iInf_le_coe_iff, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.communicationComplexity}
 \difficulty{1}
-For any $n \in \mathbb{N}$, we have $R_\varepsilon(f) \le n$ if and only if there exist
-coin-tape sizes $n_X, n_Y \in \mathbb{N}$ and a protocol
-$p : \mathrm{Protocol}(\{0,1\}^{n_X}, \{0,1\}^{n_Y}, X, Y, \alpha)$ such that
-$p$ $\varepsilon$-approximately computes $f$ and $p.\mathrm{complexity} \le n$.
+Let $f : X \to Y \to \alpha$ be a function, let $\varepsilon \in \bbr$ be an error
+bound, and let $n \in \bbn$. Then the $\varepsilon$-error private-coin randomized
+communication complexity of $f$ is at most $n$ if and only if there exist coin-tape
+lengths $n_X, n_Y \in \bbn$ and a private-coin protocol $p$ with Alice's randomness
+space $\{0,1\}^{n_X}$ and Bob's randomness space $\{0,1\}^{n_Y}$, inputs in $X$ and $Y$,
+and outputs in $\alpha$, such that $p$ computes $f$ with error at most $\varepsilon$ on
+every input and the communication complexity of $p$ is at most $n$.
 \end{theorem}
 
-\begin{theorem}[Lower-bound characterization]
+\begin{theorem}[Lower bound characterization of private-coin complexity]
 \lean{CommunicationComplexity.PrivateCoin.le_communicationComplexity_iff}
 \label{CommunicationComplexity.PrivateCoin.le_communicationComplexity_iff}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.communicationComplexity}
 \difficulty{1}
-For any $n \in \mathbb{N}$, we have $n \le R_\varepsilon(f)$ (in $\mathbb{N}_\infty$) if and only if
-every private-coin protocol $p$ over coin tapes of any size that $\varepsilon$-approximately
-computes $f$ satisfies $n \le p.\mathrm{complexity}$.
+Let $f : X \to Y \to \alpha$ be a function, let $\varepsilon \in \bbr$, and let
+$R_\varepsilon(f) \in \bbn \cup \{\infty\}$ denote its $\varepsilon$-error private-coin
+randomized communication complexity, namely the least worst-case number of bits
+exchanged by any private-coin protocol that computes $f$ with error probability at most
+$\varepsilon$ on every input. Then for every $n \in \bbn$, the inequality $n \le
+R_\varepsilon(f)$ holds (in the extended natural numbers) if and only if every
+private-coin protocol $p$ — over coin tapes $\{0,1\}^{n_X}$ for Alice and
+$\{0,1\}^{n_Y}$ for Bob, for arbitrary lengths $n_X, n_Y \in \bbn$ — that
+$\varepsilon$-computes $f$ has communication complexity at least $n$.
 \end{theorem}
 
-\begin{theorem}[Finite-message characterization]
+\begin{theorem}[Finite-message characterization of private-coin complexity]
 \lean{CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff_finiteMessage}
 \label{CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff_finiteMessage}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PrivateCoin.communicationComplexity, CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff}
 \difficulty{4}
-For any $n \in \mathbb{N}$, $R_\varepsilon(f) \le n$ if and only if there exist coin-tape sizes
-$n_X, n_Y \in \mathbb{N}$ and a \emph{finite-message} protocol
-$p : \mathrm{FiniteMessage.Protocol}(\{0,1\}^{n_X}, \{0,1\}^{n_Y}, X, Y, \alpha)$ such that
-$p$ $\varepsilon$-approximately computes $f$ and $p.\mathrm{complexity} \le n$.
-This establishes that passing to the finite-message variant does not change the complexity measure.
+Let $f : X \to Y \to \alpha$ be a function, let $\varepsilon \in \bbr$ be an error
+bound, and let $n \in \bbn$. Then the $\varepsilon$-error private-coin randomized
+communication complexity satisfies $R_\varepsilon(f) \le n$ if and only if there exist
+coin-tape lengths $n_X, n_Y \in \bbn$ and a private-coin finite-message protocol $p$
+with randomness spaces $\{0,1\}^{n_X}$ and $\{0,1\}^{n_Y}$ (over input types $X$, $Y$
+and output type $\alpha$) such that $p$ computes $f$ with error at most $\varepsilon$ on
+every input pair and has worst-case communication cost at most $n$. Thus the
+private-coin complexity, defined via binary-message protocols, is unchanged when one
+instead allows protocols whose players may send elements of arbitrary finite nonempty
+message alphabets, each $\beta$-valued message being charged $\lceil \log_2 \abs{\beta}
+\rceil$ bits.
 \end{theorem}
 
-\begin{theorem}[Monotonicity in error]
+\begin{theorem}[Monotonicity of communication complexity in the error]
 \lean{CommunicationComplexity.PrivateCoin.communicationComplexity_mono}
 \label{CommunicationComplexity.PrivateCoin.communicationComplexity_mono}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.communicationComplexity, CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff}
 \difficulty{4}
-If $\varepsilon' \le \varepsilon$, then $R_\varepsilon(f) \le R_{\varepsilon'}(f)$.
-In other words, the private-coin communication complexity is monotone decreasing in the
-error parameter: permitting more error can only reduce (or preserve) the required
-communication.
+Let $f : X \to Y \to \alpha$ be a function of two arguments, and let $R_\varepsilon(f)$
+denote its $\varepsilon$-error private-coin randomized communication complexity — the
+least worst-case number of bits exchanged by any private-coin protocol computing $f$
+with probability of error at most $\varepsilon$ on every input, taken as an extended
+natural number. Then for any two error bounds $\varepsilon', \varepsilon \in \bbr$ with
+$\varepsilon' \le \varepsilon$, we have $R_\varepsilon(f) \le R_{\varepsilon'}(f)$; that
+is, allowing a larger error can only decrease or preserve the required communication.
 \end{theorem}
 
-\begin{theorem}[Complexity upper bound from finite-probability protocol]
+\begin{theorem}[Finite-probability protocols bound private-coin complexity]
 \lean{CommunicationComplexity.PrivateCoin.communicationComplexity_le_of_finiteMessage}
 \label{CommunicationComplexity.PrivateCoin.communicationComplexity_le_of_finiteMessage}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape_complexity, CommunicationComplexity.PrivateCoin.communicationComplexity, CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
-Let $\Omega_X$ and $\Omega_Y$ be finite probability spaces and let
-$p : \mathrm{FiniteMessage.Protocol}(\Omega_X, \Omega_Y, X, Y, \alpha)$ be a finite-message
-protocol that $\varepsilon'$-approximately computes $f$.
-If $\varepsilon' < \varepsilon$, then $R_\varepsilon(f) \le p.\mathrm{complexity}$.
-This is the key reduction step showing that protocols over arbitrary finite probability spaces
-witness upper bounds on the private-coin complexity.
+Let $X$, $Y$, and $\alpha$ be types, let $f : X \to Y \to \alpha$ be the function to be
+computed, and let $\Omega_X$ and $\Omega_Y$ be finite probability spaces serving as the
+two players' private randomness. Fix real numbers $\varepsilon'$ and $\varepsilon$ with
+$\varepsilon' < \varepsilon$, and let $p$ be a finite-message private-coin protocol with
+randomness spaces $\Omega_X$ and $\Omega_Y$, input types $X$ and $Y$, and output type
+$\alpha$, and suppose that $p$ computes $f$ with error at most $\varepsilon'$, i.e.\ for
+every input pair $(x,y)$ the probability that $p$ returns a value other than $f(x,y)$ is
+at most $\varepsilon'$. Then the $\varepsilon$-error private-coin randomized
+communication complexity of $f$ satisfies $R_\varepsilon(f) \le \mathrm{complexity}(p)$,
+where the right-hand side is the worst-case number of bits exchanged by $p$.
 \end{theorem}

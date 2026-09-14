@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.cleanCNF_var_inj",
+ "key": "dd16c4afba72d0bd",
+ "kind": "lemma",
+ "title": "Variable-injectivity of cleaned clauses",
+ "statement": "Let $c$ be a CNF formula over the variable set $\\{0,\\dots,n-1\\}$, and let $\\hat c$ be the formula obtained from $c$ by first deleting every clause that contains some variable together with its negation, and then, in each surviving clause, keeping only one literal per variable. Then within any single clause of $\\hat c$ the variable of a literal determines that literal completely: if two literals of the clause share the same variable, they are equal (and in particular have the same polarity).",
+ "hypotheses_covered": [
+  "c is a CNF formula over Fin n",
+  "t is a clause of the cleaned formula",
+  "l₁ and l₂ are literals of t",
+  "l₁ and l₂ have the same variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In every clause of $\\mathrm{cleanCNF}\\,c$, the variable determines the literal: any two\nliterals of the clause sharing a variable are equal."
+}

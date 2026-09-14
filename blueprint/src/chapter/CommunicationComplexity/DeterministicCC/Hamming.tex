@@ -53,33 +53,41 @@ For a length-$n$ code over an alphabet of size $q$, the \emph{ball volume} at ra
 \]
 \end{definition}
 
-\begin{lemma}[Spheres of different radii are disjoint]
+\begin{lemma}[Disjointness of Hamming spheres of distinct radii]
 \lean{CommunicationComplexity.hammingSpheres_disjoint}
 \label{CommunicationComplexity.hammingSpheres_disjoint}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingSphere}
 \difficulty{2}
-For any centre $u$ and distinct radii $r \ne t$, the Hamming spheres
-$S_r(u)$ and $S_t(u)$ are disjoint finsets.
+Let $\alpha$ be a finite alphabet, fix a centre word $u \in \alpha^n$, and let $r$ and
+$t$ be natural numbers with $r \ne t$. Then the Hamming sphere $S_r(u) = \{v \in
+\alpha^n : d(u,v) = r\}$ of radius $r$ and the Hamming sphere $S_t(u) = \{v \in \alpha^n
+: d(u,v) = t\}$ of radius $t$, both centred at $u$, are disjoint, where $d$ denotes the
+Hamming distance.
 \end{lemma}
 
-\begin{lemma}[Spheres are pairwise disjoint]
+\begin{lemma}[Pairwise disjointness of Hamming spheres]
 \lean{CommunicationComplexity.hammingSpheres_pairwise_disjoint}
 \label{CommunicationComplexity.hammingSpheres_pairwise_disjoint}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSpheres_disjoint}
 \difficulty{1}
-For any centre $u$ and bound $r$, the family $\{S_t(u)\}_{t < r}$ is pairwise disjoint
-as a family of finsets indexed by $\{0,\ldots,r-1\}$.
+Let $\alpha$ be a finite alphabet, let $u \in \alpha^n$ be a word of length $n$, and let
+$r$ be a natural number. For $t \in \bbn$, write $S_t(u)$ for the Hamming sphere of
+radius $t$ centred at $u$. Then the family $\{S_t(u)\}_{t \in \{0,1,\ldots,r-1\}}$ is
+pairwise disjoint: for any two distinct indices $s, t$ with $s, t < r$, the spheres
+$S_s(u)$ and $S_t(u)$ share no common word.
 \end{lemma}
 
-\begin{lemma}[Ball equals disjoint union of spheres]
+\begin{lemma}[Hamming ball as the disjoint union of spheres]
 \lean{CommunicationComplexity.hammingBall_eq_hammingSpheres}
 \label{CommunicationComplexity.hammingBall_eq_hammingSpheres}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSpheres_pairwise_disjoint}
 \difficulty{3}
-The Hamming ball of radius $r$ decomposes as the disjoint union
+Let $u \in \alpha^n$ be a word of length $n$ over a finite alphabet $\alpha$, and let
+$r$ be a natural number. Then the Hamming ball of radius $r$ centred at $u$ is the
+disjoint union of the Hamming spheres of radii $0, 1, \dots, r$ centred at $u$:
 \[
   B_r(u) = \bigsqcup_{k=0}^{r} S_k(u).
 \]
@@ -95,14 +103,18 @@ where the two words differ:
 $\mathrm{support}(u,v) = \{i \in \mathrm{Fin}\,n : u_i \ne v_i\}$.
 \end{definition}
 
-\begin{lemma}[Support card equals Hamming distance]
+\begin{lemma}[Hamming distance as the size of the support]
 \lean{CommunicationComplexity.support_dist}
 \label{CommunicationComplexity.support_dist}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.support}
 \difficulty{1}
-For any two words $u,v$, the Hamming distance equals the cardinality of their support:
-$\mathrm{hammingDist}(u,v) = |\mathrm{support}(u,v)|$.
+Let $u,v$ be words of length $n$ over a finite alphabet $\alpha$, that is, functions
+$\mathrm{Fin}\,n \to \alpha$. Then the Hamming distance between them equals the number
+of coordinates on which they differ:
+\[
+d(u,v) = \abs{\{i \in \mathrm{Fin}\,n : u_i \ne v_i\}}.
+\]
 \end{lemma}
 
 \begin{definition}[Support fiber]
@@ -115,26 +127,33 @@ is the set of words that differ from $u$ at exactly the positions in $S$:
 $\mathrm{supportFiber}(u,S) = \{v : \mathrm{support}(u,v) = S\}$.
 \end{definition}
 
-\begin{lemma}[Support fibers over distinct sets are disjoint]
+\begin{lemma}[Disjointness of support fibers over distinct sets]
 \lean{CommunicationComplexity.supportFiber_disjoint}
 \label{CommunicationComplexity.supportFiber_disjoint}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{2}
-If $S \ne T$ are distinct finsets of coordinate positions, then
-$\mathrm{supportFiber}(u,S)$ and $\mathrm{supportFiber}(u,T)$ are disjoint finsets.
+Fix a word $u$ of length $n$ over a finite alphabet, and let $S$ and $T$ be two distinct
+sets of coordinate positions in $\{0,\dots,n-1\}$. Then the support fiber of $u$ over
+$S$ and the support fiber of $u$ over $T$ are disjoint: no word $v$ can differ from $u$
+at exactly the positions in $S$ while also differing from $u$ at exactly the positions
+in $T$.
 \end{lemma}
 
-\begin{lemma}[Sphere as union of support fibers]
+\begin{lemma}[Hamming sphere as a union of support fibers]
 \lean{CommunicationComplexity.hammingSphere_eq_biUnion}
 \label{CommunicationComplexity.hammingSphere_eq_biUnion}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.hammingSphere, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{2}
-The Hamming sphere of radius $r$ centred at $u$ equals the union of support fibers over
-all size-$r$ subsets of $\mathrm{Fin}\,n$:
+Let $\alpha$ be a finite alphabet, let $u \in \alpha^n$ be a word of length $n$, and let
+$r$ be a natural number. Then the Hamming sphere $S_r(u)$ of radius $r$ centred at $u$
+is the union, taken over all $r$-element subsets $S$ of the $n$ coordinate positions, of
+the support fibers of $u$ over $S$ — that is, the sets of words differing from $u$ at
+exactly the positions in $S$:
 \[
-  S_r(u) = \bigcup_{S \in \binom{[n]}{r}} \mathrm{supportFiber}(u,S).
+S_r(u) = \bigcup_{\substack{S \subseteq \{1,\dots,n\} \\ \abs{S} = r}} \{\, v \in
+\alpha^n : v \text{ and } u \text{ differ in exactly the positions of } S \,\}.
 \]
 \end{lemma}
 
@@ -147,61 +166,73 @@ For a word $u$ and position $i$, the \emph{choices} at $i$ is the finset of symb
 $a \in \alpha$ with $a \ne u_i$, i.e.\ the non-trivial alternatives for position $i$.
 \end{definition}
 
-\begin{lemma}[Choices cardinality]
+\begin{lemma}[Number of alternative symbols at a position]
 \lean{CommunicationComplexity.choices_card}
 \label{CommunicationComplexity.choices_card}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices}
 \difficulty{3}
-For any word $u$ and position $i$, the number of alternative symbols at $i$ is
-$|\mathrm{choices}(u,i)| = |\alpha| - 1$.
+Let $\alpha$ be a finite alphabet, let $u \colon \mathrm{Fin}\,n \to \alpha$ be a word
+of length $n$ over $\alpha$, and let $i$ be a position. Then the set of symbols $a \in
+\alpha$ with $a \ne u_i$ has cardinality $\abs{\alpha} - 1$.
 \end{lemma}
 
-\begin{lemma}[Choices partition a support fiber]
+\begin{lemma}[Partitioning a support fiber by the symbol at one coordinate]
 \lean{CommunicationComplexity.choices_partition_supportFiber}
 \label{CommunicationComplexity.choices_partition_supportFiber}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{4}
-For a word $u$, a set $S$ of positions, and a position $i$, the support fiber over
-$\{i\} \cup S$ is partitioned by the value chosen at position $i$:
+Let $\alpha$ be a finite alphabet, and let $u$ be a word of length $n$ over $\alpha$,
+that is, a function $u \colon \mathrm{Fin}\,n \to \alpha$. Fix a set $S \subseteq
+\mathrm{Fin}\,n$ of coordinate positions together with a further position $i \in
+\mathrm{Fin}\,n$, and let $F$ be the support fiber of $u$ over $\{i\} \cup S$, namely
+the set of words that differ from $u$ in exactly the positions belonging to $\{i\} \cup
+S$. Since $i$ lies in $\{i\} \cup S$, every word in $F$ carries at position $i$ some
+symbol distinct from $u_i$, and grouping the words of $F$ by that symbol partitions $F$:
+it equals the disjoint union, taken over all symbols $a \in \alpha$ with $a \ne u_i$, of
+the sets $\{v \in F : v_i = a\}$,
 \[
-  \mathrm{supportFiber}(u, \{i\} \cup S)
-  = \bigsqcup_{a \in \mathrm{choices}(u,i)}
-    \{v \in \mathrm{supportFiber}(u,\{i\}\cup S) : v_i = a\}.
+  F = \bigsqcup_{\substack{a \in \alpha \\ a \ne u_i}} \{\, v \in F : v_i = a \,\}.
 \]
 \end{lemma}
 
-\begin{lemma}[Each piece has the same cardinality]
+\begin{lemma}[Support fibers split into equal-cardinality slices]
 \lean{CommunicationComplexity.piece_card}
 \label{CommunicationComplexity.piece_card}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{6}
-For $i \notin S$ and any alternative symbol $a \in \mathrm{choices}(u,i)$, the slice
-$\{v \in \mathrm{supportFiber}(u,\{i\}\cup S) : v_i = a\}$
-has the same cardinality as $\mathrm{supportFiber}(u,S)$.
+Let $u$ be a word of length $n$ over a finite alphabet $\alpha$, let $S$ be a set of
+coordinate positions, and let $i$ be a position with $i \notin S$. For every symbol $a
+\in \alpha$ with $a \ne u_i$, the words in the support fiber of $u$ over $\{i\} \cup S$
+— those differing from $u$ at exactly the positions in $\{i\} \cup S$ — whose entry at
+position $i$ equals $a$ are exactly as many as the words in the support fiber of $u$
+over $S$, that is, the words differing from $u$ at exactly the positions in $S$.
 \end{lemma}
 
-\begin{lemma}[Support fiber cardinality]
+\begin{lemma}[Cardinality of a support fiber]
 \lean{CommunicationComplexity.card_supportFiber}
 \label{CommunicationComplexity.card_supportFiber}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices_card, CommunicationComplexity.choices_partition_supportFiber, CommunicationComplexity.piece_card, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
 \difficulty{5}
-For any word $u$ and finset $S \subseteq \mathrm{Fin}\,n$,
+Let $\alpha$ be a finite alphabet, fix a word $u \colon \{1,\dots,n\} \to \alpha$ of
+length $n$, and let $S \subseteq \{1,\dots,n\}$ be a set of coordinate positions. Then
+the number of words $v$ of length $n$ over $\alpha$ that differ from $u$ at exactly the
+positions in $S$ (that is, $v_i \ne u_i$ for $i \in S$ and $v_i = u_i$ for $i \notin S$)
+is
 \[
-  |\mathrm{supportFiber}(u,S)| = (|\alpha| - 1)^{|S|}.
+  (\abs{\alpha} - 1)^{\abs{S}}.
 \]
 \end{lemma}
 
-\begin{lemma}[Hamming sphere cardinality]
+\begin{lemma}[Cardinality of a Hamming sphere]
 \lean{CommunicationComplexity.hammingSphere_card}
 \label{CommunicationComplexity.hammingSphere_card}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
-
 \proofstep
   {CommunicationComplexity.Word}
   {context}
@@ -260,9 +291,12 @@ For any word $u$ and finset $S \subseteq \mathrm{Fin}\,n$,
   {pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.card_supportFiber, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_eq_biUnion, CommunicationComplexity.supportFiber_disjoint}
 \difficulty{3}
-For any centre $u \in \alpha^n$ and radius $k$,
+Let $\alpha$ be a finite alphabet and fix a word $u \in \alpha^n$ of length $n$, where
+the Hamming distance $d(x,y)$ between two words counts the coordinates in which they
+differ. For every radius $k \in \bbn$, the Hamming sphere $S_k(u) = \{v \in \alpha^n :
+d(u,v) = k\}$ of words at Hamming distance exactly $k$ from $u$ has cardinality
 \[
-  |S_k(u)| = \binom{n}{k}(|\alpha|-1)^k.
+  \abs{S_k(u)} = \binom{n}{k}\,(\abs{\alpha}-1)^k.
 \]
 \end{lemma}
 
@@ -274,7 +308,6 @@ For any centre $u \in \alpha^n$ and radius $k$,
   pdf-7251cb8e4bc5-p032-b001,
   pdf-7251cb8e4bc5-p070-b003
 }
-
 \proofstep
   {CommunicationComplexity.Word}
   {context}
@@ -349,9 +382,12 @@ For any centre $u \in \alpha^n$ and radius $k$,
   {pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.ballVol, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_card}
 \difficulty{5}
-For any centre $u \in \alpha^n$ and radius $r$,
+Let $\alpha$ be a finite alphabet, and consider words of length $n$ over $\alpha$. For
+any centre word $u \in \alpha^n$ and any radius $r$, the Hamming ball $B_r(u)$ has
+cardinality equal to the ball volume at radius $r$ for a length-$n$ code over an
+alphabet of size $\abs{\alpha}$; that is,
 \[
-  |B_r(u)| = \mathrm{ballVol}(n,r,|\alpha|) = \sum_{i=0}^{r}\binom{n}{i}(|\alpha|-1)^i.
+  \abs{B_r(u)} = \sum_{i=0}^{r} \binom{n}{i}\,(\abs{\alpha} - 1)^i.
 \]
 \end{lemma}
 
@@ -361,8 +397,11 @@ For any centre $u \in \alpha^n$ and radius $r$,
 \leanok
 \uses{CommunicationComplexity.ballVol}
 \difficulty{1}
-In the binary case $q = 2$, the ball volume simplifies to
+For all $n, t \in \bbn$, write $V_q(n,t) = \sum_{i=0}^{t} \binom{n}{i}(q-1)^i$ for the
+ball volume at radius $t$ of a length-$n$ code over an alphabet of size $q$. Over a
+binary alphabet, i.e. taking $q = 2$, this reduces to the partial sum of binomial
+coefficients
 \[
-  \mathrm{ballVol}(n,t,2) = \sum_{i=0}^{t}\binom{n}{i}.
+  V_2(n,t) = \sum_{i=0}^{t} \binom{n}{i}.
 \]
 \end{lemma}

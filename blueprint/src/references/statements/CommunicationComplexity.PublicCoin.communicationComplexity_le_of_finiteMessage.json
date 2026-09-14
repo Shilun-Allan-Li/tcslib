@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.communicationComplexity_le_of_finiteMessage",
+ "key": "003a4a90663a4d84",
+ "kind": "theorem",
+ "title": "Coin-tape bound from a finite-message protocol",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $\\Omega$ be a finite probability space, and let $f : X \\to Y \\to \\alpha$. Fix real numbers $\\varepsilon' < \\varepsilon$, and suppose $p$ is a public-coin finite-message protocol with shared randomness $\\Omega$ and private inputs in $X$ and $Y$ that $\\varepsilon'$-computes $f$, meaning that for every input pair $(x,y)$ the probability over $\\omega \\in \\Omega$ that the protocol's output differs from $f(x,y)$ is at most $\\varepsilon'$. Then the $\\varepsilon$-error public-coin randomized communication complexity of $f$ satisfies\n\\[\n  \\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\;\\le\\; \\mathrm{complexity}(p),\n\\]\nwhere $\\mathrm{complexity}(p)$ is the worst-case bit cost of $p$ (a $\\beta$-valued message costing $\\lceil \\log_2 \\abs{\\beta}\\rceil$ bits) and the inequality holds in $\\bbn \\cup \\{\\infty\\}$.",
+ "hypotheses_covered": [
+  "Ω is a finite probability space",
+  "f : X → Y → α",
+  "real numbers ε' < ε",
+  "p is a public-coin finite-message protocol over Ω",
+  "p ε'-computes f (error at most ε' on every input)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Omega$ be a finite probability space, $f : X \\to Y \\to \\alpha$, and $\\varepsilon' < \\varepsilon$.\nIf a finite-message public-coin protocol $p$ over $\\Omega$ computes $f$ with error at most\n$\\varepsilon'$, then $\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\le p.\\mathrm{complexity}$.\nThis allows one to transfer upper bounds from protocols over arbitrary finite probability\nspaces to the coin-tape formulation."
+}

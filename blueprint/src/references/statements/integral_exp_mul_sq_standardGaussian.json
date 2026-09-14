@@ -1,0 +1,16 @@
+{
+ "lean_name": "integral_exp_mul_sq_standardGaussian",
+ "key": "2ca3696009acae44",
+ "kind": "lemma",
+ "title": "Quadratic Gaussian integral",
+ "statement": "Let $Z$ be a standard Gaussian random variable, $Z \\sim N(0,1)$, and let $s \\in \\bbr$ satisfy $2s < 1$. Then\n\\[\n  \\E\\!\\left[e^{s Z^2}\\right]\n  = \\int_{\\bbr} e^{s z^2}\\, \\mathrm{d}N(0,1)(z)\n  = \\frac{1}{\\sqrt{1 - 2s}}.\n\\]",
+ "hypotheses_covered": [
+  "s is a real number",
+  "2s < 1 (so the integral converges)",
+  "integration against the standard Gaussian measure N(0,1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $Z\\sim N(0,1)$ and $2s<1$,\n\\[\n  \\int z.\\, e^{s z^2}\\,\\mathrm{d}(N(0,1))\n  \\;=\\; \\frac{1}{\\sqrt{1-2s}}.\n\\]\nThis is the closed-form moment-generating function of the standard chi-squared\ndistribution."
+}

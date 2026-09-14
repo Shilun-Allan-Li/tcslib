@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.theorem71_finiteNoRegretBound_normalized",
+ "key": "c8b353345ee02bdf",
+ "kind": "theorem",
+ "title": "Finite no-regret bound for normalized convex-compact games",
+ "statement": "Let $X, Y \\subseteq \\bbr$ and $f : \\bbr \\to \\bbr \\to \\bbr$ satisfy the convex-compact minimax hypotheses, and suppose the payoff is normalized so that $0 \\le f(x,y) \\le 1$ for all $x \\in X$ and $y \\in Y$. Then for every nonempty finite subset $u \\subseteq X$,\n\\[\n  \\inf_{x \\in X} \\sup_{y \\in Y} f(x,y)\n    \\;\\le\\;\n  \\sup_{y \\in Y} \\inf_{x \\in u} f(x,y);\n\\]\nthat is, the game's upper value is bounded above by the lower value of the game in which the row player is restricted to the finite sample $u$ while the column player still ranges over all of $Y$.",
+ "hypotheses_covered": [
+  "convex-compact minimax hypotheses on X, Y, f",
+  "payoff normalized: 0 ≤ f(x,y) ≤ 1 for all x ∈ X, y ∈ Y",
+  "conclusion holds for every nonempty finite subset u ⊆ X"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the convex-compact minimax hypotheses and $0 \\le f \\le 1$,\n$\\texttt{OnlineLearning.Theorem71FiniteNoRegretBound}$ holds.  This removes the artificial\n$\\mathrm{Fin}\\,M$ indexing from\n$\\texttt{OnlineLearning.theorem71\\_finiteIndexedNoRegretBound\\_normalized}$; the singleton\ncase is handled separately since the finite minimax theorem requires at least two row\nactions."
+}

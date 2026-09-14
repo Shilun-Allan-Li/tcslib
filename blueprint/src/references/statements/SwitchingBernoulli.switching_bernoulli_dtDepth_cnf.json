@@ -1,0 +1,22 @@
+{
+ "lean_name": "SwitchingBernoulli.switching_bernoulli_dtDepth_cnf",
+ "key": "e7158604b3e63005",
+ "kind": "theorem",
+ "title": "Bernoulli switching lemma for CNF formulas",
+ "statement": "Let $f$ be a CNF formula on $n \\ge 1$ variables whose width is at most $w$, where $w \\ge 1$, and suppose every clause of $f$ is proper: within any one clause, two literals sharing the same variable are equal, and no literal is repeated. Let $p \\in \\bbr$ satisfy $0 < p \\le \\tfrac{1}{40w}$, and in addition $p \\le 1$. Draw a Bernoulli($p$) random restriction $\\rho$, which independently leaves each variable free with probability $p$ and otherwise fixes it to one of the two Boolean values, each with probability $(1-p)/2$; write $f\\vert_\\rho$ for the function of the remaining free variables obtained by fixing the assigned coordinates according to $\\rho$. Then for every $t \\in \\bbn$,\n\\[\n  \\Pr_\\rho\\big[\\,\\mathrm{depth}(f\\vert_\\rho) > t\\,\\big]\n    \\;\\le\\; \\left(\\tfrac12\\right)^{t} + e^{-np/3},\n\\]\nwhere $\\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $g$.",
+ "hypotheses_covered": [
+  "width of f at most w",
+  "w > 0",
+  "within each clause, literals with equal variable are identical",
+  "each clause has no duplicate literals",
+  "n > 0",
+  "p > 0",
+  "p ≤ 1/(40w)",
+  "p ≤ 1",
+  "t an arbitrary natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The same statement for a width-$w$ CNF $f$: under a Bernoulli$(p)$ restriction\nwith $0 < p \\le 1/(40w)$ and $p \\le 1$,\n\\[\n  \\Pr_{R_p}\\big[\\mathrm{dtDepth}(f|_\\rho) > t\\big]\n    \\;\\le\\; \\left(\\tfrac12\\right)^t + e^{-np/3},\n\\]\nobtained from the DNF version via the dual-DNF representation of $f$."
+}

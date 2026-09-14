@@ -1,0 +1,16 @@
+{
+ "lean_name": "SATtoColor.SATtoColorReduction",
+ "key": "a94df35b23f3eb07",
+ "kind": "theorem",
+ "title": "Correctness of the 3-SAT to 3-coloring reduction",
+ "statement": "Let $f$ be a 3-SAT instance over a variable type $V$: a list of clauses, each clause an ordered triple of literals, where a literal is a positive or a negative occurrence of a variable in $V$. Then $f$ is satisfiable — some Boolean assignment $V \\to \\{\\mathrm{true}, \\mathrm{false}\\}$ makes every clause in $f$ true — if and only if the reduction graph associated to $f$ is 3-colorable, that is, admits a proper coloring by three colors.",
+ "hypotheses_covered": [
+  "f is a 3-SAT instance (list of clauses) over variable type V"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "A 3-SAT instance $f$ is satisfiable if and only if the reduction graph is\n3-colorable:\n\\[\n  \\mathrm{IsSatisfiable}(f)\n  \\;\\longleftrightarrow\\;\n  \\mathrm{Is3Colorable}(\\mathrm{ReductionGraph}(f)).\n\\]\nThis is the conjunction of completeness and soundness of the reduction."
+}

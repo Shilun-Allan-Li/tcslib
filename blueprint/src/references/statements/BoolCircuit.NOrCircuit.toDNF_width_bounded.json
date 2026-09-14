@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.toDNF_width_bounded",
+ "key": "a244b67608ac3461",
+ "kind": "theorem",
+ "title": "Width bound for the DNF of a disjunction of AND-clauses",
+ "statement": "Let $cs$ be a finite list of normal-form AND circuits on $n$ variables, and let $w \\in \\bbn$. Suppose every circuit in $cs$ is a base clause — a list of literals whose variable indices are pairwise distinct — and that each such clause contains at most $w$ literals. Then the DNF obtained from the normal-form OR circuit whose disjuncts are the circuits in $cs$, by converting each AND-clause into a term, has width at most $w$; that is, every term in it has at most $w$ literals.",
+ "hypotheses_covered": [
+  "cs is a list of normal-form AND circuits on n variables",
+  "w is a natural number",
+  "each circuit in cs is a base clause with pairwise distinct variable indices",
+  "each such clause has at most w literals"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every AND-clause child has at most $w$ literals (with distinct indices), then the DNF\n$(\\texttt{NOrCircuit}.\\mathrm{node}\\,cs).\\mathrm{toDNF}$ has width at most $w$."
+}

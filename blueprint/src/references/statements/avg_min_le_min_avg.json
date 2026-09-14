@@ -1,0 +1,16 @@
+{
+ "lean_name": "avg_min_le_min_avg",
+ "key": "85c6f21ceb5a0b62",
+ "kind": "lemma",
+ "title": "Average of pointwise minima at most minimum of averages",
+ "statement": "Let $N \\ge 1$ and $T \\ge 1$ be integers, and let $f(t,j)$ be a real number for each $t \\in \\{1,\\dots,T\\}$ and each $j \\in \\{1,\\dots,N\\}$. Then averaging over $t$ before minimising over $j$ can only increase the value:\n\\[\n  \\frac{1}{T} \\sum_{t=1}^{T} \\min_{1 \\le j \\le N} f(t,j)\n  \\;\\le\\;\n  \\min_{1 \\le j \\le N} \\frac{1}{T} \\sum_{t=1}^{T} f(t,j).\n\\]",
+ "hypotheses_covered": [
+  "N ≥ 1 (index set j nonempty, from NeZero N)",
+  "T ≥ 1, i.e. T > 0",
+  "f a real-valued function of t and j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $f : \\mathrm{Fin}\\,T \\to \\mathrm{Fin}\\,N \\to \\mathbb{R}$ and $T > 0$,\n\\[\n  \\frac{1}{T} \\sum_{t=0}^{T-1} \\min_{j} f(t, j)\n  \\;\\le\\;\n  \\min_{j} \\frac{1}{T} \\sum_{t=0}^{T-1} f(t, j).\n\\]"
+}

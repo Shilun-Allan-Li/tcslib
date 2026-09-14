@@ -19,7 +19,7 @@ O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The formalised statement}
 
-\begin{theorem}[Switching Lemma -- Lean statement]
+\begin{theorem}[Håstad's switching lemma for bounded-width DNFs]
 \label{thm:switching_lemma}
 \lean{SwitchingLemma2.switching_lemma}
 \label{SwitchingLemma2.switching_lemma}
@@ -31,7 +31,6 @@ O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
   pdf-b5e074215b9e-p002-b003,
   pdf-b5e074215b9e-p002-b004
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -906,23 +905,15 @@ O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
   {pdf-b5e074215b9e-p002-b003}
 \uses{DNF.width, SwitchingLemma2.IsRestriction, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.numSRestrictions, SwitchingLemma2.bad_count_bound, SwitchingLemma2.bad_filter_empty_of_d_ge_s, SwitchingLemma2.choose_mul_pow_bound}
 \difficulty{5}
-Let $n>0$, let $f:\{0,1\}^n\to\{0,1\}$ be a DNF formula, and fix $w,s,d\in\bbn$.
-Assume
-\begin{itemize}
-  \item $\text{width}(f)\le w$ (width counted as list length, see
-        Section~\ref{sec:faithfulness}),
-  \item $5s \le n$,
-  \item $f$ satisfies the \emph{non-contradictory clause} hypothesis
-        \texttt{hnd}: for every term $t\in f$ and every pair of literals
-        $\ell_1,\ell_2\in t$, if $\ell_1.\mathrm{var}=\ell_2.\mathrm{var}$ then
-        $\ell_1=\ell_2$.
-\end{itemize}
-Then
+Let $n \ge 1$, and let $f$ be a DNF formula on $n$ Boolean variables whose width is at
+most $w$, so that every term of $f$ has at most $w$ literals. Suppose that $5s \le n$,
+that no term of $f$ contains two distinct literals on the same variable, and that no
+term of $f$ repeats a literal. Call a restriction $\rho$ on the $n$ variables an
+$s$-restriction if it leaves exactly $s$ variables free, and call it bad (at depth $d$)
+if the restricted function $f|_\rho$ has decision-tree depth strictly greater than $d$.
+Then the number $N$ of $s$-restrictions that are bad satisfies
 \[
-  \bigl|\{\,\rho : \rho\text{ is an $s$-restriction and }
-        \mathrm{dtDepth}(f|_\rho)>d\,\}\bigr| \cdot n^d
-  \;\le\;
-  \mathrm{numSRestrictions}(n,s)\,\cdot\,(10\,s\,w)^d.
+  N \cdot n^{d} \;\le\; \binom{n}{s}\, 2^{\,n-s}\, (10\,s\,w)^{d}.
 \]
 \end{theorem}
 
@@ -1091,7 +1082,7 @@ inequality \texttt{choose\_mul\_pow\_bound}, which is where $5s\le n$ is consume
 %-----------------------------------------------------------------------------
 \section{Corollary: no small CNF approximations}
 
-\begin{theorem}[Switching corollary]
+\begin{theorem}[Switching corollary: restrictions with no narrow CNF]
 \label{thm:switching_corollary}
 \lean{SwitchingLemma2.switching_corollary}
 \label{SwitchingLemma2.switching_corollary}
@@ -1099,11 +1090,18 @@ inequality \texttt{choose\_mul\_pow\_bound}, which is where $5s\le n$ is consume
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
 \uses{SwitchingLemma2.switching_lemma}
 \difficulty{4}
-Under the same hypotheses as Theorem~\ref{thm:switching_lemma},
+Let $f$ be a DNF formula on $n \ge 1$ variables in which no variable occurs more than
+once within any single term, and let $w, s \in \bbn$ satisfy $5s \le n$ and
+$\mathrm{width}(f) \le w$ (that is, every term of $f$ has at most $w$ literals). For a
+restriction $\rho$ that fixes some variables and leaves the others free, write
+$f\!\restriction_\rho$ for the Boolean function obtained by evaluating $f$ with the
+fixed coordinates set by $\rho$ and the free coordinates supplied as input. Then the
+number of restrictions $\rho$ leaving exactly $s$ of the $n$ variables free for which
+$f\!\restriction_\rho$ agrees with no CNF formula of width at most $w$ satisfies
 \[
-  \bigl|\{\rho : \mathrm{IsRestriction}\ s\ \rho,\ f|_\rho
-    \text{ has no CNF of width}\le w\}\bigr| \cdot n^w
-  \le \mathrm{numSRestrictions}(n,s)\,(10sw)^w.
+\bigl|\{\rho : \rho \text{ leaves exactly } s \text{ variables free, and }
+f\!\restriction_\rho \text{ has no width-}{\le}w\text{ CNF}\}\bigr| \cdot n^{w}
+  \;\le\; \binom{n}{s}\, 2^{\,n-s}\,(10sw)^{w}.
 \]
 \end{theorem}
 

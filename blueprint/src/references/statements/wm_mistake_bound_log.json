@@ -1,0 +1,18 @@
+{
+ "lean_name": "wm_mistake_bound_log",
+ "key": "1191283f8dae8f82",
+ "kind": "theorem",
+ "title": "Logarithmic mistake bound",
+ "statement": "Let $n \\ge 2$ be an integer and let $\\beta \\in (0,1)$. Suppose $M^*$ and $M_{\\mathrm{WM}}$ are nonnegative integers satisfying\n\\[\n  \\beta^{M^*} \\;\\le\\; n \\cdot \\left(\\frac{1+\\beta}{2}\\right)^{M_{\\mathrm{WM}}}.\n\\]\nThen\n\\[\n  M_{\\mathrm{WM}} \\cdot \\log\\!\\frac{2}{1+\\beta}\n  \\;\\le\\;\n  \\log n \\;+\\; M^* \\cdot \\log\\frac{1}{\\beta}.\n\\]",
+ "hypotheses_covered": [
+  "n is an integer with n ≥ 2 (from 1 < n)",
+  "β is real with 0 < β",
+  "β < 1",
+  "M^* and M_WM are natural numbers",
+  "the assumption β^{M^*} ≤ n·((1+β)/2)^{M_WM}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n \\ge 2$, $\\beta \\in (0,1)$, and suppose\n$\\beta^{M^*} \\le n \\cdot \\bigl(\\tfrac{1+\\beta}{2}\\bigr)^{M_{\\mathrm{WM}}}$.\nThen\n\\[\n  M_{\\mathrm{WM}} \\cdot \\log\\!\\frac{2}{1+\\beta}\n  \\;\\le\\;\n  \\log n \\;+\\; M^* \\cdot \\log\\frac{1}{\\beta}.\n\\]\nEquivalently, $M_{\\mathrm{WM}} \\le \\dfrac{\\log n + M^* \\cdot \\log(1/\\beta)}{\\log(2/(1+\\beta))}$,\ngiving the standard Weighted Majority mistake bound."
+}

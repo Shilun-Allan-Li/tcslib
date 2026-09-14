@@ -1,0 +1,19 @@
+{
+ "lean_name": "prefixPotential_eq_potential",
+ "key": "42338cc24dbe16cd",
+ "kind": "lemma",
+ "title": "Prefix potential equals the induced Hedge potential",
+ "statement": "Let $G$ be a finite two-player zero-sum game with payoff matrix $A$ having $M$ rows and $N$ columns, fix a learning rate $\\eta \\in \\bbr$, and let $a_0, \\dots, a_{T-1}$ be a sequence of $T$ column actions. For any round $t < T$, the prefix potential of $G$ at learning rate $\\eta$ formed from the first $t$ column actions $a_0, \\dots, a_{t-1}$ equals the Hedge potential at time $t$ of the loss sequence $\\ell_s(i) = 1 - A_{i, a_s}$ induced on the row player by $G$ and the full sequence of column actions; that is, \\[ \\sum_{i \\in \\mathrm{Fin}\\,M} \\exp\\!\\Bigl(-\\eta \\sum_{s=0}^{t-1}\\bigl(1 - A_{i, a_s}\\bigr)\\Bigr) \\;=\\; \\sum_{i \\in \\mathrm{Fin}\\,M} \\exp\\!\\bigl(-\\eta\\, L_t(i)\\bigr), \\] where $L_t(i) = \\sum_{s < t} \\ell_s(i)$ is the cumulative loss of row $i$.",
+ "hypotheses_covered": [
+  "game $G$ with $M$ rows and $N$ columns",
+  "learning rate $\\eta \\in \\bbr$",
+  "sequence of $T$ column actions",
+  "round $t < T$ (a $\\mathrm{Fin}\\,T$ index)",
+  "prefix taken over the first $t$ actions",
+  "loss sequence induced by $G$ via $\\ell_s(i) = 1 - A_{i,a_s}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The prefix potential at round $t$ equals the abstract Hedge potential\n$\\mathrm{potential}(\\eta, G.\\mathrm{toLossSeq}(a), t)$ for the induced loss\nsequence."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.list_filter_map_length",
+ "key": "39d81b8eed436c5d",
+ "kind": "lemma",
+ "title": "Length is preserved when filtering commutes with mapping",
+ "statement": "Let $l$ be a finite list with entries in a set $\\alpha$, let $f\\colon \\alpha \\to \\beta$ be a function, and let $P$ be a decidable predicate on $\\beta$. Then applying $f$ to every entry of $l$ and retaining those whose image satisfies $P$ yields a list of the same length as retaining those entries $a$ of $l$ for which $P(f(a))$ holds; that is, the sublist $\\bigl(\\mathrm{map}\\,f\\,(l)\\bigr)$ filtered by $P$ and the sublist of $l$ filtered by the pulled-back predicate $a \\mapsto P(f(a))$ have equal length.",
+ "hypotheses_covered": [
+  "l is a list over a type α",
+  "f is a function α → β",
+  "P is a decidable predicate on β"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a list $l$, a map $f$ and a decidable predicate $P$, the length of the filter of $l.\\mathrm{map}\\,f$\nby $P$ equals the length of the filter of $l$ by the pulled-back predicate $a \\mapsto P(f(a))$."
+}

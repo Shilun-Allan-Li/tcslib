@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.approxAndPolyList_length",
+ "key": "202bdb6f781bb608",
+ "kind": "lemma",
+ "title": "Length of the list of AND-approximating polynomials",
+ "statement": "Fix a prime $p$ and, for natural numbers $\\mathrm{vars}$, $\\mathrm{width}$, and $\\ell$, let $P_1,\\dots,P_{\\mathrm{width}}$ be polynomials in $\\mathrm{vars}$ variables over $\\bbz/p$. A random seed is a tuple $(S_1,\\dots,S_\\ell)$ of subsets of the width positions $\\{1,\\dots,\\mathrm{width}\\}$, of which there are $(2^{\\mathrm{width}})^{\\ell} = 2^{\\mathrm{width}\\cdot\\ell}$. The list obtained by recording the AND-approximating polynomial of $P_1,\\dots,P_{\\mathrm{width}}$ for every such seed therefore has length $2^{\\mathrm{width}\\cdot\\ell}$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "P_1,...,P_width are polynomials in vars variables over Z/p",
+  "seeds are l-tuples of subsets of the width positions",
+  "list has one entry per seed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The list $\\texttt{ACP.approxAndPolyList}$ has length $2^{\\mathrm{width}\\cdot\\ell}$."
+}

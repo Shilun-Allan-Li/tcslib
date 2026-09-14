@@ -1,0 +1,16 @@
+{
+ "lean_name": "contract_vertex_count",
+ "key": "d313a28da1c235d4",
+ "kind": "lemma",
+ "title": "Contraction reduces the vertex count by one",
+ "statement": "Let $G$ be a multigraph and let $e$ be an edge of $G$ that is not a self-loop, so that its two endpoints are distinct. Writing $G/e$ for the multigraph obtained by contracting $e$, its vertex count satisfies\n\\[\n  \\abs{V(G/e)} = \\abs{V(G)} - 1,\n\\]\nwhere the subtraction is truncated at $0$.",
+ "hypotheses_covered": [
+  "G is a multigraph",
+  "e is an edge of G (e ∈ E(G))",
+  "e is not a self-loop (not a diagonal pair)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $e \\in E(G)$ is not a diagonal (self-loop) pair, then\n\\[\n  \\abs{V(G/e)} = \\abs{V(G)} - 1 .\n\\]"
+}

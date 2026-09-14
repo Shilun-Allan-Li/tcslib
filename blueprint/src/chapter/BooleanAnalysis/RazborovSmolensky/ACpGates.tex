@@ -29,9 +29,10 @@ fan-in AND gate $x \mapsto \prod_{i} x_i$.
 \label{ACP.tuple_fail_count}
 \leanok
 \difficulty{4}
-For a finite index type $\iota$, a finite type $\beta$ and a decidable predicate $P$ on
-$\beta$, the number of functions $f : \iota \to \beta$ with $P(f(i))$ for all $i$ equals
-$\abs{\{b : P(b)\}}^{\abs{\iota}}$.
+Let $\iota$ be a finite index type, let $\beta$ be a finite type, and let $P$ be a
+decidable predicate on $\beta$. Then the number of functions $f : \iota \to \beta$ such
+that $P(f(i))$ holds for every $i \in \iota$ equals $\abs{\{\,b \in \beta :
+P(b)\,\}}^{\abs{\iota}}$.
 \end{lemma}
 
 \begin{lemma}[Averaging for the probabilistic method]
@@ -39,12 +40,12 @@ $\abs{\{b : P(b)\}}^{\abs{\iota}}$.
 \label{ACP.prob_method_averaging}
 \leanok
 \difficulty{5}
-Let $\mathrm{Bad}$ be a finite set of elements of $\alpha$, let $\mathrm{Fail} : \alpha \to
-\beta \to \mathrm{Prop}$ be decidable with $\beta$ finite and nonempty, and let $C$ be a
-natural number. If for every $a \in \mathrm{Bad}$ we have
-$\abs{\{b : \mathrm{Fail}(a,b)\}} \cdot C \le \abs{\beta}$, then there exists a single
-$b \in \beta$ with $\abs{\{a \in \mathrm{Bad} : \mathrm{Fail}(a,b)\}} \cdot C \le
-\abs{\mathrm{Bad}}$.
+Let $\alpha$ be a finite type and $\beta$ a finite nonempty type, let $\mathrm{Bad}
+\subseteq \alpha$ be a finite set, let $\mathrm{Fail} \subseteq \alpha \times \beta$ be
+a decidable relation, and let $C$ be a natural number. Suppose that for every $a \in
+\mathrm{Bad}$ we have $\abs{\{b \in \beta : \mathrm{Fail}(a,b)\}} \cdot C \le
+\abs{\beta}$. Then there exists a single $b \in \beta$ such that $\abs{\{a \in
+\mathrm{Bad} : \mathrm{Fail}(a,b)\}} \cdot C \le \abs{\mathrm{Bad}}$.
 \end{lemma}
 
 \begin{definition}[Booleanization of a field element]
@@ -61,29 +62,39 @@ otherwise. It is intended to be applied only to values lying in $\{0,1\}$.
 \leanok
 \uses{ACP.bitify}
 \difficulty{2}
-If $a \in \{0,1\} \subseteq \mathbb{Z}/p$, then casting $\texttt{ACP.bitify}\,(a)$ back into
-$\mathbb{Z}/p$ through $\mathbb{N}$ recovers $a$.
+Let $p$ be a prime and let $a \in \mathbb{Z}/p$ satisfy $a \in \{0, 1\}$. Write
+$\beta(a) \in \mathrm{Fin}\,2$ for the booleanization of $a$, equal to $1$ when $a = 1$
+and to $0$ otherwise. Then interpreting $\beta(a)$ as a natural number and reducing it
+back modulo $p$ recovers $a$; that is, the image of $\beta(a)$ under $\mathrm{Fin}\,2
+\to \mathbb{N} \to \mathbb{Z}/p$ equals $a$.
 \end{lemma}
 
-\begin{lemma}[Fermat indicator of zero]
+\begin{lemma}[Fermat indicator of zero mod p]
 \lean{ACP.one_sub_pow_card_sub_one}
 \label{ACP.one_sub_pow_card_sub_one}
 \leanok
 \difficulty{3}
-For every $a \in \mathbb{Z}/p$ with $p$ prime,
+Let $p$ be a prime and let $a \in \bbz/p\bbz$. Then
 \[
-1 - a^{p-1} = \begin{cases} 1 & \text{if } a = 0,\\ 0 & \text{otherwise.}\end{cases}
+1 - a^{p-1} = \begin{cases} 1 & \text{if } a = 0,\\ 0 & \text{if } a \neq 0.\end{cases}
 \]
+That is, $1 - a^{p-1}$ is the indicator of $a = 0$ in the field $\bbz/p\bbz$.
 \end{lemma}
 
-\begin{lemma}[Bit indicator agrees with booleanization]
+\begin{lemma}[Fermat indicator computes the boolean value]
 \lean{ACP.bit_indicator_eq_bitify}
 \label{ACP.bit_indicator_eq_bitify}
 \leanok
 \uses{ACP.bitify}
 \difficulty{2}
-If $a \in \{0,1\} \subseteq \mathbb{Z}/p$, then $1 - (1-a)^{p-1}$ equals the cast of
-$\texttt{ACP.bitify}\,(a)$ into $\mathbb{Z}/p$.
+Let $p$ be a prime and let $a \in \mathbb{Z}/p$ lie in $\{0, 1\}$. Then
+\[
+1 - (1 - a)^{p-1} = \mathrm{bitify}(a),
+\]
+where the right-hand side denotes the element of $\{0,1\}\subseteq \mathbb{Z}/p$
+obtained by casting the value $\mathrm{bitify}(a) \in \mathrm{Fin}\,2$ through the
+natural numbers into $\mathbb{Z}/p$; that is, the expression $1 - (1 - a)^{p-1}$ equals
+$1$ when $a = 1$ and $0$ when $a = 0$.
 \end{lemma}
 
 \begin{definition}[Unbounded $\mathrm{MOD}_p$ gate]
@@ -142,34 +153,48 @@ $1 - \prod_{k}\bigl(1 - v_k^{\,p-1}\bigr)$, which detects whether some coordinat
 nonzero.
 \end{definition}
 
-\begin{theorem}[Degree bound for the OR approximator]
+\begin{theorem}[Degree bound for the OR-approximating polynomial]
 \lean{ACP.approxOr_totalDegree}
 \label{ACP.approxOr_totalDegree}
 \leanok
 \uses{ACP.approxOr}
 \difficulty{4}
-The total degree of $\texttt{ACP.approxOr}$ applied to $P_1,\dots,P_{\mathrm{width}}$ and a
-seed $S$ is at most $(p-1)\,\ell \cdot \sup_i \deg(P_i)$.
+Let $p$ be a prime, and work over the ring of polynomials in $\mathrm{vars}$ variables
+with coefficients in $\bbz/p$. Given a family of polynomials
+$P_1,\dots,P_{\mathrm{width}}$ from this ring, together with a seed consisting of $\ell$
+subsets $S_1,\dots,S_\ell$ of the index set $\{1,\dots,\mathrm{width}\}$, the associated
+OR-approximating polynomial has total degree at most
+\[
+(p-1)\,\ell\cdot \sup_i \deg(P_i),
+\]
+where the supremum is taken over all indices $i$.
 \end{theorem}
 
-\begin{theorem}[Degree bound for the exact $\mathrm{MOD}_p$ polynomial]
+\begin{theorem}[Total degree of the exact $\mathrm{MOD}_p$ polynomial]
 \lean{ACP.exactMod_totalDegree}
 \label{ACP.exactMod_totalDegree}
 \leanok
 \uses{ACP.exactMod}
 \difficulty{3}
-The total degree of $\texttt{ACP.exactMod}$ applied to $P_1,\dots,P_{\mathrm{width}}$ is at
-most $(p-1)\cdot \sup_i \deg(P_i)$.
+Let $p$ be a prime and fix natural numbers $\mathrm{vars}$ and $\mathrm{width}$. Let
+$P_0,\dots,P_{\mathrm{width}-1}$ be polynomials in $\mathrm{vars}$ variables over the
+field $\bbz/p$. Then the total degree of the exact $\mathrm{MOD}_p$ polynomial $1 -
+\bigl(\sum_i P_i\bigr)^{p-1}$ is at most
+\[
+(p-1)\cdot \sup_i \deg(P_i),
+\]
+the supremum being taken over all $i$ (and read as $0$ when $\mathrm{width}=0$).
 \end{theorem}
 
-\begin{lemma}[Half the subsets miss a nonzero vector]
+\begin{lemma}[At most half of subset sums vanish]
 \lean{ACP.subset_sum_zero_bound}
 \label{ACP.subset_sum_zero_bound}
 \leanok
 \difficulty{5}
-For a nonzero vector $v : \mathrm{Fin}\,n \to \mathbb{Z}/p$, the number of subsets
-$s \subseteq \mathrm{Fin}\,n$ with $\sum_{i \in s} v_i = 0$ is at most half of all $2^n$
-subsets; formally, twice that count is at most the total number of subsets.
+Let $p$ be a prime and let $v = (v_i)_{i \in \{1,\dots,n\}}$ be a nonzero tuple of
+elements of the field $\bbz/p\bbz$. Then at most half of the $2^n$ subsets of the index
+set $\{1,\dots,n\}$ have vanishing subset sum; that is, twice the number of subsets $s
+\subseteq \{1,\dots,n\}$ for which $\sum_{i \in s} v_i = 0$ is at most $2^n$.
 \end{lemma}
 
 \begin{lemma}[Evaluation commutes with the OR approximator]
@@ -178,20 +203,33 @@ subsets; formally, twice that count is at most the total number of subsets.
 \leanok
 \uses{ACP.approxOr, ACP.approxOr_val}
 \difficulty{1}
-Evaluating $\texttt{ACP.approxOr}\,(P, S)$ at a point $y$ gives the same result as applying
-the value-level approximator $\texttt{ACP.approxOr\_val}$ to the evaluated inputs
-$i \mapsto P_i(y)$ with the same seed $S$.
+Fix a prime $p$, and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in the variables
+$y_1,\dots,y_{\mathrm{vars}}$ over $\bbz/p$, together with subsets $S_1,\dots,S_\ell$ of
+the index set $\{1,\dots,\mathrm{width}\}$. Then for every point $y :
+\{1,\dots,\mathrm{vars}\} \to \bbz/p$, evaluating the randomized OR-approximating
+polynomial $1 - \prod_{k=1}^{\ell}\bigl(1 - (\sum_{i \in S_k} P_i)^{p-1}\bigr)$ at $y$
+yields the value obtained by feeding the scalars $P_1(y),\dots,P_{\mathrm{width}}(y)$
+into the value-level OR approximator with the same subsets:
+\[
+\Bigl(1 - \prod_{k=1}^{\ell}\bigl(1 - (\textstyle\sum_{i \in S_k}
+P_i)^{p-1}\bigr)\Bigr)\!\big|_{y}
+\;=\;
+1 - \prod_{k=1}^{\ell}\Bigl(1 - \bigl(\textstyle\sum_{i \in S_k}
+P_i(y)\bigr)^{p-1}\Bigr).
+\]
 \end{lemma}
 
-\begin{lemma}[Characterization of approximator failure]
+\begin{lemma}[Failure characterization of the value-level OR approximator]
 \lean{ACP.approxOr_failure_iff}
 \label{ACP.approxOr_failure_iff}
 \leanok
 \uses{ACP.OR_val, ACP.approxOr_val, ACP.one_sub_pow_card_sub_one}
 \difficulty{4}
-For $v : \mathrm{Fin}\,\mathrm{width} \to \mathbb{Z}/p$ and a seed $S$, the value-level
-approximator differs from the OR detector if and only if $v \ne 0$ and every seed subset has
-vanishing sum, i.e.\ $\sum_{i \in S_k} v_i = 0$ for all $k$.
+Fix a prime $p$, and let $v : \mathrm{Fin}\,\mathrm{width} \to \bbz/p$ be a vector
+together with a family $S_1,\dots,S_\ell$ of subsets of $\{1,\dots,\mathrm{width}\}$.
+Then the value-level OR approximator built from $v$ and $S$ disagrees with the
+value-level OR detector of $v$ if and only if $v \neq 0$ yet $\sum_{i \in S_k} v_i = 0$
+in $\bbz/p$ for every index $k$.
 \end{lemma}
 
 \begin{lemma}[Bad-seed count for a nonzero input]
@@ -200,29 +238,42 @@ vanishing sum, i.e.\ $\sum_{i \in S_k} v_i = 0$ for all $k$.
 \leanok
 \uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val}
 \difficulty{5}
-For a nonzero $v$, the number of seeds $S : \mathrm{Fin}\,\ell \to \mathrm{Finset}
-(\mathrm{Fin}\,\mathrm{width})$ on which the value-level approximator disagrees with the OR
-detector, multiplied by $2^\ell$, is at most the total number of seeds.
+Fix a prime $p$ and let $v : \mathrm{Fin}\,\mathrm{width} \to \bbz/p$ be a nonzero
+vector. Consider families $S = (S_1,\dots,S_\ell)$ of subsets $S_k \subseteq
+\mathrm{Fin}\,\mathrm{width}$, indexed by $\mathrm{Fin}\,\ell$, and call such a family
+*bad* for $v$ if the value-level OR approximator $1 - \prod_k\bigl(1 - (\sum_{i \in S_k}
+v_i)^{p-1}\bigr)$ disagrees with the value-level OR detector $1 - \prod_k\bigl(1 -
+v_k^{\,p-1}\bigr)$. Then the number of bad families, multiplied by $2^\ell$, is at most
+the total number of families $S : \mathrm{Fin}\,\ell \to
+\mathrm{Finset}(\mathrm{Fin}\,\mathrm{width})$.
 \end{lemma}
 
-\begin{lemma}[Number of random seeds]
+\begin{lemma}[Cardinality of tuples of subsets]
 \lean{ACP.approxSeed_card}
 \label{ACP.approxSeed_card}
 \leanok
 \difficulty{2}
-The type of seeds $\mathrm{Fin}\,\ell \to \mathrm{Finset}(\mathrm{Fin}\,\mathrm{width})$,
-i.e.\ $\ell$ independent subset choices, has cardinality $2^{\mathrm{width}\cdot \ell}$.
+For natural numbers $\mathrm{width}$ and $\ell$, the number of $\ell$-tuples of subsets
+of an $\mathrm{width}$-element set equals $2^{\mathrm{width}\cdot\ell}$; that is, the
+set of functions assigning to each index $i \in \{0,\dots,\ell-1\}$ a subset of
+$\{0,\dots,\mathrm{width}-1\}$ has exactly $2^{\mathrm{width}\cdot\ell}$ elements.
 \end{lemma}
 
-\begin{lemma}[Bad-seed bound for every input]
+\begin{lemma}[Bad-seed bound for the value-level OR approximator]
 \lean{ACP.count_bad_S_or}
 \label{ACP.count_bad_S_or}
 \leanok
 \uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val, ACP.count_bad_S}
 \difficulty{2}
-Without any nonvanishing hypothesis on $v$: the number of seeds on which the value-level
-approximator disagrees with the OR detector, multiplied by $2^\ell$, is at most the total
-number of seeds.
+Fix a prime $p$ and natural numbers $w$ and $\ell$, and let $v = (v_1,\dots,v_w)$ be an
+arbitrary vector in $(\bbz/p)^w$ (no coordinate is assumed nonzero). Call a *seed* a
+tuple $S = (S_1,\dots,S_\ell)$ of subsets of $\{1,\dots,w\}$, and call it *bad* when the
+value-level OR approximator determined by $v$ and $S$ differs from the value-level OR
+detector of $v$. Then, writing $N = (2^{w})^{\ell}$ for the total number of seeds, the
+number of bad seeds satisfies
+\[
+(\text{number of bad seeds})\cdot 2^{\ell} \;\le\; N.
+\]
 \end{lemma}
 
 \begin{definition}[List of OR-approximating polynomials]
@@ -235,37 +286,58 @@ is a list rather than a set, so a polynomial arising from several seeds appears 
 corresponding multiplicity.
 \end{definition}
 
-\begin{lemma}[Length of the OR polynomial list]
+\begin{lemma}[Number of OR-approximating polynomials]
 \lean{ACP.approxOrPolyList_length}
 \label{ACP.approxOrPolyList_length}
 \leanok
 \uses{ACP.approxOrPolyList, ACP.approxSeed_card}
 \difficulty{2}
-The list $\texttt{ACP.approxOrPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
+Fix a prime $p$ and, for a given width $\mathrm{width}$ and seed length $\ell$, a family
+of polynomials $P_1,\dots,P_{\mathrm{width}}$ over $\bbz/p$ in a fixed number of
+variables. Form the list whose entries are the OR-approximating polynomials, one for
+each random seed — a seed being a tuple $(S_1,\dots,S_\ell)$ of $\ell$ subsets of the
+index set $\{1,\dots,\mathrm{width}\}$, listed with multiplicity. Then this list has
+length $2^{\mathrm{width}\cdot\ell}$, the number of such seeds.
 \end{lemma}
 
-\begin{theorem}[Pointwise bad-seed count for OR]
+\begin{theorem}[Few seeds miss the true OR at a point]
 \lean{ACP.approxOr_pointwise_bad_count}
 \label{ACP.approxOr_pointwise_bad_count}
 \leanok
 \uses{ACP.OR_val, ACP.approxOr, ACP.approxOr_eval_eq, ACP.approxSeed_card, ACP.count_bad_S_or}
 \difficulty{2}
-Fix an evaluation point $y$. The number of seeds $S$ for which
-$\texttt{ACP.approxOr}\,(P,S)$ evaluated at $y$ differs from
-$1 - \prod_k \bigl(1 - P_k(y)^{p-1}\bigr)$, multiplied by $2^\ell$, is at most
-$2^{\mathrm{width}\cdot\ell}$; that is, at most a $2^{-\ell}$ fraction of seeds fail at $y$.
+Fix a prime $p$, and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in
+$\mathrm{vars}$ variables over $\bbz/p$, evaluated at a fixed point $y \in
+(\bbz/p)^{\mathrm{vars}}$. A seed is a tuple $S = (S_1,\dots,S_\ell)$ of $\ell$ subsets
+of $\{1,\dots,\mathrm{width}\}$, of which there are $2^{\mathrm{width}\cdot\ell}$ in
+all; call $S$ bad at $y$ when the randomized OR-approximating polynomial built from the
+$P_i$ and $S$, evaluated at $y$, differs from the value-level OR
+\[
+1 - \prod_{k=1}^{\mathrm{width}}\bigl(1 - P_k(y)^{\,p-1}\bigr).
+\]
+Then the number of seeds that are bad at $y$, multiplied by $2^\ell$, is at most
+$2^{\mathrm{width}\cdot\ell}$; equivalently, at most a $2^{-\ell}$ fraction of all seeds
+are bad at $y$.
 \end{theorem}
 
-\begin{theorem}[Good OR approximators exist as a distribution]
+\begin{theorem}[Existence of a good OR-approximating polynomial list]
 \lean{ACP.exists_good_approxOr}
 \label{ACP.exists_good_approxOr}
 \leanok
 \uses{ACP.approxOr, ACP.approxOrPolyList, ACP.approxOrPolyList_length, ACP.approxOr_pointwise_bad_count, ACP.approxOr_totalDegree}
 \difficulty{3}
-There is a list $Ps$ of polynomials, namely $\texttt{ACP.approxOrPolyList}\,(P)$, of length
-$2^{\mathrm{width}\cdot\ell}$, every entry of which has total degree at most
-$(p-1)\ell\cdot\sup_i \deg(P_i)$, and such that for every evaluation point $y$ the number of
-seeds failing to compute the OR value at $y$, times $2^\ell$, is at most the length of $Ps$.
+Fix a prime $p$ and natural numbers $\mathrm{vars}$, $\mathrm{width}$, and $\ell$, and
+let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in $\mathrm{vars}$ variables over
+$\bbz/p$. Then there is a list $Ps$ of polynomials over $\bbz/p$ that is exactly the
+list of OR-approximating polynomials — one entry for every seed $S$, a seed being an
+assignment $k \mapsto S_k$ of a subset $S_k$ of the $\mathrm{width}$ positions to each
+of the $\ell$ rounds — and this list has the following three properties. Its length is
+$2^{\mathrm{width}\cdot\ell}$; every entry has total degree at most $(p-1)\,\ell\,\sup_i
+\deg(P_i)$; and for every evaluation point $y \in (\bbz/p)^{\mathrm{vars}}$, the number
+of seeds $S$ for which the OR-approximating polynomial of $S$ evaluated at $y$ differs
+from the exact value $1 - \prod_{k=1}^{\mathrm{width}}\bigl(1 - P_k(y)^{p-1}\bigr)$,
+when multiplied by $2^{\ell}$, is at most the length $2^{\mathrm{width}\cdot\ell}$ of
+$Ps$.
 \end{theorem}
 
 \begin{definition}[Randomized AND-approximating polynomial]
@@ -277,14 +349,19 @@ The De Morgan dual of the OR approximator: $1 - \texttt{ACP.approxOr}\,(1 - P, S
 approximator is applied to the negated inputs $i \mapsto 1 - P_i$.
 \end{definition}
 
-\begin{theorem}[Degree bound for the AND approximator]
+\begin{theorem}[Total-degree bound for the AND approximator]
 \lean{ACP.approxAnd_totalDegree}
 \label{ACP.approxAnd_totalDegree}
 \leanok
 \uses{ACP.approxAnd, ACP.approxOr_totalDegree}
 \difficulty{4}
-The total degree of $\texttt{ACP.approxAnd}\,(P,S)$ is at most
-$(p-1)\,\ell\cdot\sup_i \deg(P_i)$, the same bound as for the OR approximator.
+Fix a prime $p$, and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials over $\bbz/p$ in
+the input variables, together with subsets $S_1,\dots,S_\ell$ of the index set
+$\{1,\dots,\mathrm{width}\}$. Then the AND-approximating polynomial built from these
+data has total degree at most
+\[
+(p-1)\,\ell\,\cdot\,\sup_{1 \le i \le \mathrm{width}} \deg(P_i).
+\]
 \end{theorem}
 
 \begin{definition}[List of AND-approximating polynomials]
@@ -295,49 +372,72 @@ $(p-1)\,\ell\cdot\sup_i \deg(P_i)$, the same bound as for the OR approximator.
 The list of all polynomials $\texttt{ACP.approxAnd}\,(P,S)$, one entry per random seed $S$.
 \end{definition}
 
-\begin{lemma}[Length of the AND polynomial list]
+\begin{lemma}[Length of the list of AND-approximating polynomials]
 \lean{ACP.approxAndPolyList_length}
 \label{ACP.approxAndPolyList_length}
 \leanok
 \uses{ACP.approxAndPolyList, ACP.approxSeed_card}
 \difficulty{2}
-The list $\texttt{ACP.approxAndPolyList}$ has length $2^{\mathrm{width}\cdot\ell}$.
+Fix a prime $p$ and, for natural numbers $\mathrm{vars}$, $\mathrm{width}$, and $\ell$,
+let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in $\mathrm{vars}$ variables over
+$\bbz/p$. A random seed is a tuple $(S_1,\dots,S_\ell)$ of subsets of the width
+positions $\{1,\dots,\mathrm{width}\}$, of which there are $(2^{\mathrm{width}})^{\ell}
+= 2^{\mathrm{width}\cdot\ell}$. The list obtained by recording the AND-approximating
+polynomial of $P_1,\dots,P_{\mathrm{width}}$ for every such seed therefore has length
+$2^{\mathrm{width}\cdot\ell}$.
 \end{lemma}
 
-\begin{theorem}[Pointwise bad-seed count for AND]
+\begin{theorem}[Pointwise bad-seed count for the AND approximator]
 \lean{ACP.approxAnd_pointwise_bad_count}
 \label{ACP.approxAnd_pointwise_bad_count}
 \leanok
 \uses{ACP.approxAnd, ACP.approxOr, ACP.approxOr_pointwise_bad_count}
 \difficulty{4}
-Fix an evaluation point $y$. The number of seeds $S$ for which
-$\texttt{ACP.approxAnd}\,(P,S)$ evaluated at $y$ differs from
-$\prod_k \bigl(1 - (1 - P_k(y))^{p-1}\bigr)$, multiplied by $2^\ell$, is at most
-$2^{\mathrm{width}\cdot\ell}$.
+Fix a prime $p$, polynomials $P_1,\dots,P_{\mathrm{width}}$ over $\bbz/p$ in
+$\mathrm{vars}$ variables, and an evaluation point $y \in (\bbz/p)^{\mathrm{vars}}$.
+Consider the $2^{\mathrm{width}\cdot\ell}$ possible seeds $S = (S_1,\dots,S_\ell)$, each
+$S_k$ a subset of $\{1,\dots,\mathrm{width}\}$, and let $N$ be the number of seeds for
+which the randomized AND-approximating polynomial evaluated at $y$ differs from
+$\prod_{k=1}^{\mathrm{width}}\bigl(1-(1-P_k(y))^{p-1}\bigr)$. Then
+\[
+N \cdot 2^{\ell} \le 2^{\mathrm{width}\cdot\ell}.
+\]
 \end{theorem}
 
-\begin{theorem}[Good AND approximators exist as a distribution]
+\begin{theorem}[Existence of a good AND-approximating polynomial family]
 \lean{ACP.exists_good_approxAnd}
 \label{ACP.exists_good_approxAnd}
 \leanok
 \uses{ACP.approxAnd, ACP.approxAndPolyList, ACP.approxAndPolyList_length, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree}
 \difficulty{3}
-There is a list $Ps$ of polynomials, namely $\texttt{ACP.approxAndPolyList}\,(P)$, of length
-$2^{\mathrm{width}\cdot\ell}$, every entry of which has total degree at most
-$(p-1)\ell\cdot\sup_i \deg(P_i)$, and such that for every evaluation point $y$ the number of
-seeds failing to compute the AND value at $y$, times $2^\ell$, is at most the length of
-$Ps$.
+Let $p$ be prime, let $\mathrm{vars}$, $\mathrm{width}$, and $\ell$ be natural numbers,
+and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials over $\bbz/p$ in $\mathrm{vars}$
+variables. Call a *seed* an $\ell$-tuple $S=(S_1,\dots,S_\ell)$ of subsets of
+$\{1,\dots,\mathrm{width}\}$, and for each seed $S$ write $A_S$ for the associated
+AND-approximating polynomial; there are exactly $2^{\mathrm{width}\cdot\ell}$ seeds.
+Then the list whose entries are the polynomials $A_S$, one per seed, has length
+$2^{\mathrm{width}\cdot\ell}$, and every entry has total degree at most
+$(p-1)\,\ell\,\sup_i \deg(P_i)$. Moreover, for every point
+$y\in(\bbz/p)^{\mathrm{vars}}$, if $N(y)$ denotes the number of seeds $S$ for which
+\[
+A_S(y)\ \neq\ \prod_{k=1}^{\mathrm{width}}\Bigl(1-\bigl(1-P_k(y)\bigr)^{p-1}\Bigr)
+\]
+(the right-hand side being the exact conjunction value at $y$), then $N(y)\cdot
+2^{\ell}\le 2^{\mathrm{width}\cdot\ell}$.
 \end{theorem}
 
-\begin{lemma}[{Case analysis on $\mathrm{AC}^0[p]$ gates}]
+\begin{lemma}[{Case analysis on the $\mathrm{AC}^0[p]$ gate set}]
 \lean{ACP.ACp_GateOps_cases}
 \label{ACP.ACp_GateOps_cases}
 \leanok
 \uses{ACP.AC_GateOps, ACP.ACp_GateOps, ACP.FeedForward.GateOp.id, ACP.modGateOp}
 \difficulty{3}
-Every gate operation in $\texttt{ACP.ACp\_GateOps}$ is one of the following: the identity gate
-on a single input, the NOT gate $x \mapsto 1 - x_0$, an unbounded AND gate
-$x \mapsto \prod_i x_i$ of some arity $n$, or a $\texttt{ACP.modGateOp}$ of some arity $n$.
+Let $p$ be a prime, and let $\mathrm{op}$ be a gate operation belonging to the
+$\mathrm{AC}^0[p]$ gate set over the alphabet $\mathrm{Fin}\,2$. Then $\mathrm{op}$ is
+one of exactly four kinds of gate: the identity gate $x \mapsto x_0$ on a single input,
+the NOT gate $x \mapsto 1 - x_0$ on a single input, the unbounded fan-in AND gate $x
+\mapsto \prod_{i} x_i$ for some arity $n$, or the unbounded $\mathrm{MOD}_p$ gate for
+some arity $n$.
 \end{lemma}
 
 \begin{lemma}[Exact $\mathrm{MOD}_p$ on Boolean inputs]
@@ -346,38 +446,52 @@ $x \mapsto \prod_i x_i$ of some arity $n$, or a $\texttt{ACP.modGateOp}$ of some
 \leanok
 \uses{ACP.bitify, ACP.cast_bitify_eq, ACP.modGateOp, ACP.one_sub_pow_card_sub_one}
 \difficulty{3}
-If all values $\mathrm{inputs}_i$ lie in $\{0,1\} \subseteq \mathbb{Z}/p$, then
-$1 - \bigl(\sum_i \mathrm{inputs}_i\bigr)^{p-1}$ equals the cast into $\mathbb{Z}/p$ of the
-output of the $\mathrm{MOD}_p$ gate applied to the booleanized inputs
-$i \mapsto \texttt{ACP.bitify}\,(\mathrm{inputs}_i)$.
+Let $p$ be a prime and let $\mathrm{inputs}_0, \dots, \mathrm{inputs}_{w-1}$ be elements
+of $\mathbb{Z}/p$, each lying in $\{0,1\}$. Then
+\[
+1 - \Bigl(\sum_{i} \mathrm{inputs}_i\Bigr)^{p-1} =
+\operatorname{MOD}_p\bigl(\mathrm{inputs}_0, \dots, \mathrm{inputs}_{w-1}\bigr),
+\]
+where the right-hand side is the output of the unbounded $\mathrm{MOD}_p$ gate on the
+booleanizations of the inputs — equal to $1$ when $\sum_i \mathrm{inputs}_i = 0$ in
+$\mathbb{Z}/p$ and to $0$ otherwise — regarded as an element of $\{0,1\} \subseteq
+\mathbb{Z}/p$.
 \end{lemma}
 
-\begin{lemma}[Exact AND on Boolean inputs]
+\begin{lemma}[Fermat power product computes Boolean AND]
 \lean{ACP.exactAnd_on_bits}
 \label{ACP.exactAnd_on_bits}
 \leanok
 \uses{ACP.bitify}
 \difficulty{4}
-If all values $\mathrm{inputs}_i$ lie in $\{0,1\} \subseteq \mathbb{Z}/p$, then
-$\prod_i \bigl(1 - (1 - \mathrm{inputs}_i)^{p-1}\bigr)$ equals the cast into $\mathbb{Z}/p$
-of $\prod_i \texttt{ACP.bitify}\,(\mathrm{inputs}_i)$, the Boolean AND of the booleanized
-inputs.
+Let $p$ be a prime, and let $x_0,\dots,x_{w-1}$ be elements of $\mathbb{Z}/p$, each
+lying in $\{0,1\}$. Then
+\[
+\prod_i \bigl(1 - (1 - x_i)^{p-1}\bigr) = \prod_i \beta(x_i),
+\]
+where $\beta$ is the booleanization $\mathbb{Z}/p \to \mathrm{Fin}\,2$ (sending $1$ to
+$1$ and everything else to $0$). The left-hand product is taken in $\mathbb{Z}/p$; on
+the right, the product of the $\beta(x_i)$ is formed in $\mathrm{Fin}\,2$, and its
+value—the natural number $0$ or $1$—is cast into $\mathbb{Z}/p$. Thus the Fermat-power
+expression on the left evaluates to the Boolean AND of the inputs.
 \end{lemma}
 
-\begin{lemma}[Approximating polynomial family for a single gate]
+\begin{lemma}[{Low-degree approximating polynomials for an $\mathrm{AC}^0[p]$ gate}]
 \lean{ACP.exists_poly_for_gate}
 \label{ACP.exists_poly_for_gate}
 \leanok
 \uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
 \difficulty{6}
-Let $\mathrm{op}$ be a gate in $\texttt{ACP.ACp\_GateOps}$ and let $P_i$ be polynomials over
-$\mathbb{Z}/p$ computing its inputs. Then there exist a nonempty finite seed type
-$\mathrm{Seed}$ with decidable equality and a family $P : \mathrm{Seed} \to
-\mathrm{MvPolynomial}(\mathrm{Fin}\,n, \mathbb{Z}/p)$ such that every $P(s)$ has total degree
-at most $(p-1)\ell\cdot\sup_i \deg(P_i)$, and for every Boolean input $x$, writing
-$y_j = x_j$ cast into $\mathbb{Z}/p$ and $\mathrm{inputs}_i = P_i(y)$, if all
-$\mathrm{inputs}_i$ lie in $\{0,1\}$ then the number of seeds $s$ with
-$P(s)(y)$ different from the gate value
-$\mathrm{op}.\mathrm{func}(i \mapsto \texttt{ACP.bitify}(\mathrm{inputs}_i))$, multiplied by
+Let $p$ be a prime, and fix natural numbers $n$ and $\ell$. Let $\mathrm{op}$ be a gate
+operation from the $\mathrm{AC}^0[p]$ gate set, and for each input wire $i$ of
+$\mathrm{op}$ let $P_i$ be a polynomial in $\mathbb{Z}/p[X_1,\dots,X_n]$. Then there
+exist a nonempty finite index set $\mathrm{Seed}$ with decidable equality and a family
+of polynomials $(P_s)_{s\in\mathrm{Seed}}$ in $\mathbb{Z}/p[X_1,\dots,X_n]$ with the
+following two properties. First, each $P_s$ has total degree at most
+$(p-1)\,\ell\,\sup_i \deg(P_i)$. Second, for every Boolean assignment $x\in\{0,1\}^n$,
+write $y\in(\mathbb{Z}/p)^n$ for the coordinatewise image of $x$ under the inclusion
+$\mathrm{Fin}\,2\hookrightarrow\mathbb{Z}/p$; then, provided every value $P_i(y)$ lies
+in $\{0,1\}$, the number of seeds $s\in\mathrm{Seed}$ for which $P_s(y)$ differs from
+the gate output $\mathrm{op}\bigl(i\mapsto\mathrm{bitify}(P_i(y))\bigr)$, multiplied by
 $2^\ell$, is at most $\abs{\mathrm{Seed}}$.
 \end{lemma}

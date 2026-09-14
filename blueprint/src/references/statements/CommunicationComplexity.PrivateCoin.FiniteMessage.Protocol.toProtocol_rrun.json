@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun",
+ "key": "6a0b2fa7a2299898",
+ "kind": "theorem",
+ "title": "Execution is preserved under conversion to a binary private-coin protocol",
+ "statement": "Let $p$ be a private-coin finite-message protocol with private-randomness spaces $\\Omega_X$ and $\\Omega_Y$, input spaces $X$ and $Y$, and output type $\\alpha$, in which each message is an element of an arbitrary finite nonempty type. Fix inputs $x \\in X$ and $y \\in Y$ together with private coins $\\omega_x \\in \\Omega_X$ and $\\omega_y \\in \\Omega_Y$. Then converting $p$ to a binary private-coin protocol leaves its randomized execution unchanged: running the converted protocol on $x, y$ with coins $\\omega_x, \\omega_y$ returns the same element of $\\alpha$ as running $p$ itself on the same inputs and coins.",
+ "hypotheses_covered": [
+  "p is a private-coin finite-message protocol with spaces Omega_X, Omega_Y, X, Y and output alpha",
+  "inputs x in X and y in Y",
+  "Alice's private coin omega_x in Omega_X",
+  "Bob's private coin omega_y in Omega_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$ and inputs $x$, $y$, $\\omega_x$, $\\omega_y$,\n$(p.\\texttt{toProtocol}).\\texttt{rrun}\\,x\\,y\\,\\omega_x\\,\\omega_y =\np.\\texttt{rrun}\\,x\\,y\\,\\omega_x\\,\\omega_y$."
+}

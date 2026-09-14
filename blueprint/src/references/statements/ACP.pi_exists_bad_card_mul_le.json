@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.pi_exists_bad_card_mul_le",
+ "key": "1a14fae3087b91ad",
+ "kind": "lemma",
+ "title": "Counting product tuples bad in some coordinate",
+ "statement": "Let $\\iota$ be a finite index set, and for each $i \\in \\iota$ let $\\beta_i$ be a finite set equipped with a predicate $\\mathrm{Bad}_i$ singling out its \"bad\" elements. Fix a natural number $C$, and suppose that for every coordinate $i$ the bad elements are sufficiently rare, in the sense that\n\\[\n\\abs{\\{\\, b \\in \\beta_i : \\mathrm{Bad}_i(b) \\,\\}}\\cdot C \\;\\le\\; \\abs{\\beta_i}.\n\\]\nThen, among all dependent tuples $f$ in the product $\\prod_{i \\in \\iota} \\beta_i$, those that are bad in at least one coordinate satisfy\n\\[\n\\abs{\\{\\, f \\in \\textstyle\\prod_{i \\in \\iota}\\beta_i : \\exists\\, i,\\ \\mathrm{Bad}_i(f_i) \\,\\}}\\cdot C \\;\\le\\; \\abs{\\iota}\\cdot\\Bigl\\lvert\\textstyle\\prod_{i \\in \\iota}\\beta_i\\Bigr\\rvert.\n\\]",
+ "hypotheses_covered": [
+  "ι is finite",
+  "each β_i is finite",
+  "a predicate Bad_i on each β_i",
+  "C is a natural number",
+  "for each i, (number of bad elements of β_i) · C ≤ |β_i|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Given for each coordinate $i$ a decidable predicate $\\mathrm{Bad}_i$ on $\\beta_i$ with\n$\\abs{\\{b : \\mathrm{Bad}_i(b)\\}} \\cdot C \\le \\abs{\\beta_i}$, the number of dependent functions bad\nat some coordinate obeys\n\\[\n\\abs{\\{f : \\exists i,\\ \\mathrm{Bad}_i(f_i)\\}} \\cdot C \\;\\le\\; \\abs{\\iota} \\cdot \\abs{(i : \\iota) \\to \\beta_i}.\n\\]"
+}

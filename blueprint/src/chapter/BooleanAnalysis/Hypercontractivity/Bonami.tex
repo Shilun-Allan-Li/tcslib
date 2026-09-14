@@ -24,7 +24,7 @@ A real random variable $X$ on a measurable space $\Omega$ with measure $P$ is
 \]
 \end{definition}
 
-\begin{lemma}[Tail bound for $B$-reasonable variables]
+\begin{lemma}[Fourth-moment tail bound for $B$-reasonable variables]
 \lean{Bonami.b_reasonable_tail_bound}
 \label{Bonami.b_reasonable_tail_bound}
 \leanok
@@ -32,7 +32,6 @@ A real random variable $X$ on a measurable space $\Omega$ with measure $P$ is
   pdf-4ba63c9394e5-p003-b001,
   pdf-4ba63c9394e5-p003-b002
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -260,14 +259,15 @@ A real random variable $X$ on a measurable space $\Omega$ with measure $P$ is
   {pdf-4ba63c9394e5-p004-b002}
 \uses{Bonami.IsBReasonable}
 \difficulty{5}
-If $X$ is $B$-reasonable and not equivalent to $0$ (its second moment is positive), then for
-every $t > 0$,
+Let $X$ be a real random variable on a probability space $\Omega$ that is $B$-reasonable
+and whose fourth power $X^4$ is integrable, and suppose its second moment is strictly
+positive, $\E[X^2] > 0$. Then for every $t > 0$,
 \[
-\Pr\bigl[\,|X| \ge t\,\norm{X}_2\,\bigr] \le \frac{B}{t^4}.
+\Pr\!\bigl[\, X^4 \ge t^4\,(\E[X^2])^2 \,\bigr] \le \frac{B}{t^4}.
 \]
 \end{lemma}
 
-\begin{lemma}[$B$-reasonability from minimal probability]
+\begin{lemma}[$B$-reasonability from a lower bound on atom probabilities]
 \lean{Bonami.min_prob_b_reasonable}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p009-b003}
 \label{Bonami.min_prob_b_reasonable}
@@ -278,21 +278,25 @@ every $t > 0$,
 }
 \uses{Bonami.IsBReasonable}
 \difficulty{5}
-Let $X$ be a discrete random variable on a finite space whose law is a PMF $\pi$. If
-$\mu > 0$ is a lower bound on every atom probability $\pi(\omega)$, then $X$ is
-$(1/\mu)$-reasonable.
+Let $X$ be a real-valued random variable on a finite sample space $\Omega$, whose law is
+a probability mass function $\pi$, and suppose $\mu > 0$ satisfies $\mu \le \pi(\omega)$
+for every $\omega \in \Omega$. Then $X$ is $(1/\mu)$-reasonable, that is,
+\[
+\E[X^4] \le \frac{1}{\mu}\bigl(\E[X^2]\bigr)^2 .
+\]
 \end{lemma}
 
-\begin{lemma}[Paley--Zygmund inequality]
+\begin{lemma}[Paley–Zygmund inequality]
 \lean{Bonami.paley_zygmund_ineq}
 \label{Bonami.paley_zygmund_ineq}
 \leanok
 \uses{Bonami.degree_zero_fourth_moment}
 \difficulty{6}
-Let $Z \ge 0$ be a nonnegative random variable with finite first and second moments and
-positive mean. For every $\theta$ with $0 \le \theta \le 1$,
+Let $Z$ be a real-valued random variable on a probability space that is almost surely
+nonnegative and has finite first and second moments $\E[Z]$ and $\E[Z^2]$, with $\E[Z] >
+0$. Then for every $\theta$ with $0 \le \theta \le 1$,
 \[
-\Pr\bigl[\,Z > \theta\,\E[Z]\,\bigr] \ge \frac{(1-\theta)^2\,(\E[Z])^2}{\E[Z^2]}.
+\Pr\bigl[\, Z > \theta\,\E[Z] \,\bigr] \;\ge\; \frac{(1-\theta)^2\,(\E[Z])^2}{\E[Z^2]}.
 \]
 \end{lemma}
 
@@ -304,7 +308,6 @@ positive mean. For every $\theta$ with $0 \le \theta \le 1$,
   pdf-4ba63c9394e5-p003-b003,
   pdf-4ba63c9394e5-p003-b004
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -537,10 +540,14 @@ positive mean. For every $\theta$ with $0 \le \theta \le 1$,
   {pdf-4ba63c9394e5-p009-b002}
 \uses{Bonami.IsBReasonable, Bonami.paley_zygmund_ineq}
 \difficulty{5}
-If $X$ is $B$-reasonable and not equivalent to $0$, then for every $t \in [0,1]$,
+Let $X$ be a real-valued random variable on a probability space $(\Omega, P)$ with
+finite second and fourth moments and $\E[X^2] > 0$, and suppose $X$ is $B$-reasonable.
+Then for every $t \in [0,1]$,
 \[
-\Pr\bigl[\,|X| > t\,\norm{X}_2\,\bigr] \ge \frac{(1-t^2)^2}{B}.
+P\bigl(\,\abs{X} > t\,\norm{X}_2\,\bigr) \ge \frac{(1-t^2)^2}{B},
 \]
+where $\norm{X}_2 = \bigl(\E[X^2]\bigr)^{1/2}$; equivalently, the probability that $X^2
+> t^2\,\E[X^2]$ is at least $(1-t^2)^2/B$.
 \end{lemma}
 
 \begin{definition}[Restriction of the last coordinate]
@@ -571,68 +578,103 @@ The half-difference $\mathrm{diffLast}\,f$ of $f$ over its last coordinate is th
 $n$ variables given by $\tfrac12\bigl(\mathrm{restrictLast}\,f\,\mathrm{false} - \mathrm{restrictLast}\,f\,\mathrm{true}\bigr)$.
 \end{definition}
 
-\begin{lemma}[Restriction at false]
+\begin{lemma}[Recovering the false-restriction from average and half-difference]
 \lean{Bonami.restrictLast_false_eq}
 \label{Bonami.restrictLast_false_eq}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc}
 \difficulty{2}
-For every $x$, the restriction of $f$ fixing the last coordinate to false equals the sum of
-the average and the half-difference: $\mathrm{restrictLast}\,f\,\mathrm{false}\,x = \mathrm{avgLast}\,f\,x + \mathrm{diffLast}\,f\,x$.
+Let $f$ be a Boolean function on $n+1$ variables, and let $x$ be a point of the
+$n$-dimensional Boolean hypercube. Then the restriction of $f$ obtained by fixing its
+last coordinate to $\mathrm{false}$ equals the sum of the average and the
+half-difference of $f$ over that coordinate:
+\[
+f(x,\mathrm{false}) = \frac{f(x,\mathrm{false}) + f(x,\mathrm{true})}{2} +
+\frac{f(x,\mathrm{false}) - f(x,\mathrm{true})}{2}.
+\]
 \end{lemma}
 
-\begin{lemma}[Restriction at true]
+\begin{lemma}[Recovering the true-restriction from average and half-difference]
 \lean{Bonami.restrictLast_true_eq}
 \label{Bonami.restrictLast_true_eq}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc}
 \difficulty{2}
-For every $x$, the restriction of $f$ fixing the last coordinate to true equals the difference
-of the average and the half-difference: $\mathrm{restrictLast}\,f\,\mathrm{true}\,x = \mathrm{avgLast}\,f\,x - \mathrm{diffLast}\,f\,x$.
+Let $f : \{0,1\}^{n+1} \to \bbr$ be a Boolean function on $n+1$ variables. For a bit
+$b$, write $f_b : \{0,1\}^n \to \bbr$ for the restriction $x \mapsto f(x,b)$ that fixes
+the last coordinate to $b$, and let its average and half-difference over the last
+coordinate be the functions $\tfrac12(f_0 + f_1)$ and $\tfrac12(f_0 - f_1)$. Then for
+every point $x \in \{0,1\}^n$, the restriction fixing the last coordinate to
+$\mathrm{true}$ equals the average minus the half-difference at that point:
+\[
+f_1(x) \;=\; \tfrac12\bigl(f_0(x) + f_1(x)\bigr) \;-\; \tfrac12\bigl(f_0(x) -
+f_1(x)\bigr).
+\]
 \end{lemma}
 
-\begin{lemma}[Sum over the hypercube splits on the last bit]
+\begin{lemma}[Splitting a sum over the hypercube on its last coordinate]
 \lean{Bonami.sum_boolCube_succ}
 \label{Bonami.sum_boolCube_succ}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 \difficulty{4}
-For any $\varphi$ on the cube of dimension $n+1$, the total sum decomposes according to the
-value of the last coordinate:
+Let $n$ be a natural number and let $\varphi \colon \{0,1\}^{n+1} \to \bbr$ be a
+real-valued function on the Boolean hypercube of dimension $n+1$. Then the sum of
+$\varphi$ over all points of the cube splits according to the value of the final
+coordinate:
 \[
-\sum_{x \in \{0,1\}^{n+1}} \varphi(x) = \sum_{x \in \{0,1\}^{n}} \varphi(x,\mathrm{false}) + \sum_{x \in \{0,1\}^{n}} \varphi(x,\mathrm{true}).
+\sum_{x \in \{0,1\}^{n+1}} \varphi(x) \;=\; \sum_{y \in \{0,1\}^{n}}
+\varphi\bigl((y,\mathrm{false})\bigr) \;+\; \sum_{y \in \{0,1\}^{n}}
+\varphi\bigl((y,\mathrm{true})\bigr),
 \]
+where $(y,b)$ denotes the point of $\{0,1\}^{n+1}$ obtained by appending the bit $b$ to
+$y \in \{0,1\}^{n}$ as its last coordinate.
 \end{lemma}
 
-\begin{lemma}[Uniform weight halves under one extra variable]
+\begin{lemma}[Uniform weight halves with each added coordinate]
 \lean{Bonami.uniformWeight_succ}
 \label{Bonami.uniformWeight_succ}
 \leanok
 \uses{BooleanAnalysis.uniformWeight}
 \difficulty{2}
-The uniform point weight satisfies $\mathrm{uniformWeight}(n+1) = \mathrm{uniformWeight}(n)/2$.
+For every natural number $n$, the uniform weight $2^{-n}$ assigned to each point of
+$\{0,1\}^n$ satisfies \[2^{-(n+1)} = \frac{2^{-n}}{2},\] so that the uniform weight on
+the cube of one higher dimension is half the uniform weight on the original cube.
 \end{lemma}
 
-\begin{lemma}[Fourier coefficient of the average]
+\begin{lemma}[Fourier coefficient of the average over the last coordinate]
 \lean{Bonami.fourierCoeff_avgLast}
 \label{Bonami.fourierCoeff_avgLast}
 \leanok
 \uses{Bonami.avgLast, Bonami.restrictLast, Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 \difficulty{4}
-For each $S \subseteq \mathrm{Fin}\,n$, the Fourier coefficient of $\mathrm{avgLast}\,f$ at $S$
-equals the Fourier coefficient of $f$ at the image of $S$ under \texttt{castSucc}:
-$\widehat{\mathrm{avgLast}\,f}(S) = \widehat{f}(\mathrm{castSucc}(S))$.
+Let $f$ be a Boolean function of arity $n+1$, let $g$ be the average of $f$ over its
+last coordinate — the Boolean function of arity $n$ given by $g(x) =
+\tfrac12\bigl(f(x,\text{false}) + f(x,\text{true})\bigr)$ — and let $S \subseteq [n]$ be
+a set of coordinates among the first $n$. Write $\iota\colon [n] \hookrightarrow [n+1]$
+for the inclusion sending each of the first $n$ coordinates to itself and omitting the
+last, so that $\iota(S)$ is $S$ viewed as a subset of $[n+1]$ that avoids the coordinate
+$n+1$. Then the Fourier–Walsh coefficient of $g$ at frequency $S$ equals the
+Fourier–Walsh coefficient of $f$ at frequency $\iota(S)$: \[ \hat g(S) \;=\; \hat
+f\bigl(\iota(S)\bigr). \]
 \end{lemma}
 
-\begin{lemma}[Fourier coefficient of the half-difference]
+\begin{lemma}[Fourier coefficient of the half-difference over the last coordinate]
 \lean{Bonami.fourierCoeff_diffLast}
 \label{Bonami.fourierCoeff_diffLast}
 \leanok
 \uses{Bonami.diffLast, Bonami.restrictLast, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 \difficulty{5}
-For each $S \subseteq \mathrm{Fin}\,n$, the Fourier coefficient of $\mathrm{diffLast}\,f$ at $S$
-equals the Fourier coefficient of $f$ at the image of $S$ under \texttt{castSucc} together with
-the last index: $\widehat{\mathrm{diffLast}\,f}(S) = \widehat{f}\bigl(\mathrm{castSucc}(S) \cup \{\mathrm{last}\,n\}\bigr)$.
+Let $f\colon\{0,1\}^{n+1}\to\bbr$ be a Boolean function on $n+1$ variables, and let
+$g\colon\{0,1\}^{n}\to\bbr$ be its half-difference over the last coordinate, given by
+$g(x)=\tfrac12\bigl(f(x,0)-f(x,1)\bigr)$. For every frequency set
+$S\subseteq\{1,\dots,n\}$, the Fourier--Walsh coefficient of $g$ at $S$ equals the
+Fourier--Walsh coefficient of $f$ at the frequency set obtained by regarding $S$ as a
+subset of the first $n$ coordinates of $\{1,\dots,n+1\}$ and adjoining the last
+coordinate:
+\[
+  \hat g(S) \;=\; \hat f\bigl(S\cup\{n+1\}\bigr).
+\]
 \end{lemma}
 
 \begin{lemma}[Expectation splits over the last coordinate]
@@ -641,30 +683,38 @@ the last index: $\widehat{\mathrm{diffLast}\,f}(S) = \widehat{f}\bigl(\mathrm{ca
 \leanok
 \uses{Bonami.restrictLast, Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{2}
-The expectation of $\varphi$ on the cube of dimension $n+1$ is the average of the expectations
-of its two restrictions:
+Let $\varphi : \{0,1\}^{n+1} \to \bbr$ be a Boolean function on $n+1$ variables, and for
+a bit $b \in \{0,1\}$ let $\varphi_b : \{0,1\}^n \to \bbr$, $\varphi_b(x) = \varphi(x,
+b)$, be its restriction obtained by fixing the last coordinate to $b$. Then the
+expectation of $\varphi$ under the uniform measure on $\{0,1\}^{n+1}$ is the average of
+the expectations of its two restrictions:
 \[
-\E[\varphi] = \tfrac12\bigl(\E[\mathrm{restrictLast}\,\varphi\,\mathrm{false}] + \E[\mathrm{restrictLast}\,\varphi\,\mathrm{true}]\bigr).
+  \E[\varphi] \;=\; \frac{\E[\varphi_{0}] + \E[\varphi_{1}]}{2}.
 \]
 \end{lemma}
 
-\begin{lemma}[Fourth-power algebraic identity]
+\begin{lemma}[A fourth-power sum-and-difference identity]
 \lean{Bonami.fourth_pow_sum}
 \label{Bonami.fourth_pow_sum}
 \leanok
 \difficulty{1}
-For all real $a, b$, $(a+b)^4 + (a-b)^4 = 2\,(a^4 + 6\,a^2 b^2 + b^4)$.
+For all real numbers $a$ and $b$, the sum of the fourth powers of $a+b$ and $a-b$
+satisfies
+\[
+(a+b)^4 + (a-b)^4 = 2\left(a^4 + 6\,a^2 b^2 + b^4\right).
+\]
 \end{lemma}
 
-\begin{lemma}[Second-power algebraic identity]
+\begin{lemma}[Parallelogram identity for real numbers]
 \lean{Bonami.second_pow_sum}
 \label{Bonami.second_pow_sum}
 \leanok
 \difficulty{1}
-For all real $a, b$, $(a+b)^2 + (a-b)^2 = 2\,(a^2 + b^2)$.
+For all real numbers $a$ and $b$, the identity \[(a+b)^2 + (a-b)^2 = 2\,(a^2 + b^2)\]
+holds.
 \end{lemma}
 
-\begin{lemma}[Fourth-moment decomposition]
+\begin{lemma}[Fourth-moment decomposition over the last coordinate]
 \lean{Bonami.fourth_moment_decomp}
 \label{Bonami.fourth_moment_decomp}
 \leanok
@@ -672,7 +722,6 @@ For all real $a, b$, $(a+b)^2 + (a-b)^2 = 2\,(a^2 + b^2)$.
   pdf-4ba63c9394e5-p005-b001,
   pdf-4ba63c9394e5-p004-b004
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -925,19 +974,21 @@ For all real $a, b$, $(a+b)^2 + (a-b)^2 = 2\,(a^2 + b^2)$.
   {pdf-4ba63c9394e5-p009-b002}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_succ_eq, Bonami.restrictLast, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{4}
-Writing $g = \mathrm{avgLast}\,f$ and $h = \mathrm{diffLast}\,f$, the fourth moment of $f$
-decomposes as
+Let $f : \{0,1\}^{n+1} \to \bbr$ be a Boolean function on $n+1$ variables, and let $g$
+and $h$ be the average and the half-difference of $f$ over its last coordinate, so that
+$g(x) = \tfrac12\bigl(f(x,0) + f(x,1)\bigr)$ and $h(x) = \tfrac12\bigl(f(x,0) -
+f(x,1)\bigr)$ for $x \in \{0,1\}^n$. Then, with all expectations taken under the uniform
+measure, the fourth moment of $f$ decomposes as
 \[
-\E[f^4] = \E[g^4] + 6\,\E[g^2 h^2] + \E[h^4].
+\E[f^4] \;=\; \E[g^4] + 6\,\E[g^2 h^2] + \E[h^4].
 \]
 \end{lemma}
 
-\begin{lemma}[Second-moment decomposition]
+\begin{lemma}[Second-moment decomposition over the last coordinate]
 \lean{Bonami.second_moment_decomp}
 \label{Bonami.second_moment_decomp}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p005-b001}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1185,87 +1236,131 @@ decomposes as
   {pdf-4ba63c9394e5-p009-b002}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, Bonami.restrictLast_true_eq, Bonami.sum_boolCube_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-Writing $g = \mathrm{avgLast}\,f$ and $h = \mathrm{diffLast}\,f$, the second moment of $f$
-decomposes as $\E[f^2] = \E[g^2] + \E[h^2]$.
+Let $f : \{0,1\}^{n+1} \to \bbr$ be a Boolean function on $n+1$ variables. Define its
+average and half-difference over the last coordinate as the functions on $n$ variables
+\[
+g(x) = \tfrac12\bigl(f(x,0) + f(x,1)\bigr), \qquad h(x) = \tfrac12\bigl(f(x,0) -
+f(x,1)\bigr).
+\]
+Then, with the expectation on the left taken under the uniform measure on
+$\{0,1\}^{n+1}$ and those on the right under the uniform measure on $\{0,1\}^n$, the
+second moment of $f$ decomposes as
+\[
+  \E\bigl[f^2\bigr] = \E\bigl[g^2\bigr] + \E\bigl[h^2\bigr].
+\]
 \end{lemma}
 
-\begin{lemma}[Cauchy--Schwarz for the expectation]
+\begin{lemma}[Cauchy–Schwarz for the uniform expectation]
 \lean{Bonami.expect_cs_sq}
 \label{Bonami.expect_cs_sq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-For Boolean functions $g, h$ on the cube, $\bigl(\E[g^2 h^2]\bigr)^2 \le \E[g^4]\cdot\E[h^4]$.
+Let $g, h : \{0,1\}^n \to \bbr$ be Boolean functions, and let $\E[\,\cdot\,]$ denote the
+expectation under the uniform measure on the hypercube $\{0,1\}^n$. Then
+\[
+  \bigl(\E[g^2 h^2]\bigr)^2 \;\le\; \E[g^4]\cdot\E[h^4].
+\]
 \end{lemma}
 
-\begin{lemma}[{Nonnegativity of $\E[f^2]$}]
+\begin{lemma}[Nonnegativity of the mean square]
 \lean{Bonami.expect_sq_nonneg}
 \label{Bonami.expect_sq_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{1}
-For every Boolean function $f$, $0 \le \E[f^2]$.
+For every Boolean function $f : \{0,1\}^n \to \bbr$, the expectation of $f^2$ under the
+uniform measure is nonnegative: $0 \le \E[f^2]$, where $\E[f^2] =
+2^{-n}\sum_{x\in\{0,1\}^n} f(x)^2$.
 \end{lemma}
 
-\begin{lemma}[{Nonnegativity of $\E[g^2 h^2]$}]
+\begin{lemma}[Nonnegativity of the expectation of a product of squares]
 \lean{Bonami.expect_sq_nonneg_prod}
 \label{Bonami.expect_sq_nonneg_prod}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{1}
-For Boolean functions $g, h$, $0 \le \E[g^2 h^2]$.
+For any two Boolean functions $g, h : \{0,1\}^n \to \bbr$, the expectation of the
+product of their squares under the uniform measure is nonnegative:
+\[
+\E\!\left[\,g^2\, h^2\,\right] \;=\; 2^{-n} \sum_{x \in \{0,1\}^n} g(x)^2\, h(x)^2
+\;\ge\; 0.
+\]
 \end{lemma}
 
-\begin{lemma}[{Nonnegativity of $\E[f^4]$}]
+\begin{lemma}[Nonnegativity of the fourth moment]
 \lean{Bonami.expect_fourth_nonneg}
 \label{Bonami.expect_fourth_nonneg}
 \leanok
 \uses{Bonami.expect_sq_nonneg_prod, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{2}
-For every Boolean function $f$, $0 \le \E[f^4]$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function on the Boolean hypercube. Then its
+fourth moment under the uniform measure is nonnegative:
+\[
+  \E\!\left[f^4\right] \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} f(x)^4 \;\ge\; 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Degree bound for the average]
+\begin{lemma}[Averaging over a coordinate preserves the degree bound]
 \lean{Bonami.degree_avgLast}
 \label{Bonami.degree_avgLast}
 \leanok
 \uses{Bonami.avgLast, Bonami.restrictLast, Bonami.sum_boolCube_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 \difficulty{5}
-If $f$ has degree at most $k$, then its average over the last coordinate $\mathrm{avgLast}\,f$
-also has degree at most $k$.
+Let $f\colon\{0,1\}^{n+1}\to\bbr$ be a Boolean function on $n+1$ variables, and suppose
+$f$ has degree at most $k$; that is, every set $S$ with nonzero Fourier coefficient
+$\hat f(S)\ne 0$ satisfies $\abs{S}\le k$. Form the average of $f$ over its last
+coordinate, the function on $n$ variables obtained by fixing that coordinate to each of
+its two values and averaging,
+\[
+  x \;\longmapsto\; \tfrac12\bigl(f(x,0) + f(x,1)\bigr).
+\]
+Then this averaged function also has degree at most $k$: each set $S$ with a nonzero
+Fourier coefficient of the average satisfies $\abs{S}\le k$.
 \end{lemma}
 
-\begin{lemma}[Degree bound for the half-difference]
+\begin{lemma}[Degree bound for the half-difference over the last coordinate]
 \lean{Bonami.degree_diffLast}
 \label{Bonami.degree_diffLast}
 \leanok
 \uses{Bonami.diffLast, Bonami.restrictLast, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.innerProduct}
 \difficulty{5}
-If $f$ has degree at most $k$, then its half-difference over the last coordinate
-$\mathrm{diffLast}\,f$ has degree at most $k-1$.
+Let $f\colon\{0,1\}^{n+1}\to\bbr$ be a Boolean function of degree at most $k$, meaning
+that every frequency set $S$ with nonzero Fourier--Walsh coefficient $\hat f(S)\ne 0$
+satisfies $\abs{S}\le k$. Write $f_0$ and $f_1$ for the two restrictions of $f$ to
+$\{0,1\}^{n}$ obtained by fixing its last coordinate to $0$ and to $1$ respectively, and
+let $g=\tfrac12(f_0-f_1)$ be the half-difference of $f$ over that coordinate. Then $g$
+is a Boolean function on $\{0,1\}^{n}$ of degree at most $k-1$, with $k-1$ interpreted
+as $0$ when $k=0$.
 \end{lemma}
 
-\begin{lemma}[Degree-zero functions are constant]
+\begin{lemma}[Degree-zero Boolean functions are constant]
 \lean{Bonami.degree_zero_const}
 \label{Bonami.degree_zero_const}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.walsh_expansion}
 \difficulty{3}
-A Boolean function $f$ of degree at most $0$ is constant: $f(x) = f(\mathrm{default})$ for all
-$x$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function of degree at most $0$; that is, every set
+$S$ with nonzero Fourier--Walsh coefficient $\hat f(S)\ne 0$ satisfies $|S|\le 0$. Then
+$f$ is constant: for every point $x\in\{0,1\}^n$ one has $f(x)=f(x_0)$, where $x_0$ is
+the all-$\mathtt{false}$ point.
 \end{lemma}
 
-\begin{lemma}[Fourth moment of a constant function]
+\begin{lemma}[Fourth moment of a degree-zero Boolean function]
 \lean{Bonami.degree_zero_fourth_moment}
 \label{Bonami.degree_zero_fourth_moment}
 \leanok
 \uses{Bonami.degree_zero_const, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.uniformWeight}
 \difficulty{3}
-For a Boolean function $f$ of degree at most $0$ (hence constant),
-$\E[f^4] = \bigl(\E[f^2]\bigr)^2$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function of degree at most $0$, meaning that every
+set $S$ with a nonzero Fourier coefficient $\hat f(S)\ne 0$ satisfies $|S|\le 0$. Then,
+with expectations taken under the uniform measure on $\{0,1\}^n$,
+\[
+  \E[f^4] \;=\; \bigl(\E[f^2]\bigr)^2.
+\]
 \end{lemma}
 
-\begin{lemma}[Algebraic inductive step for Bonami]
+\begin{lemma}[Algebraic inductive step for the Bonami lemma]
 \lean{Bonami.bonami_algebra}
 \label{Bonami.bonami_algebra}
 \leanok
@@ -1491,10 +1586,8 @@ $\E[f^4] = \bigl(\E[f^2]\bigr)^2$.
   {context}
   {boolean-ch09-hypercontractivity-kkl}
   {pdf-4ba63c9394e5-p009-b002}
-
-The key algebraic inequality driving the inductive step of the Bonami lemma: for
-$a, b, A, B, C \ge 0$ (with $a, b, B, C$ nonnegative) satisfying
-$A \le 9^{m+1} a^2$, $B \le 9^m b^2$, and $C^2 \le A\cdot B$, one has
+Fix a natural number $m$, and let $a, b, B, C$ be nonnegative real numbers and $A$ a
+real number satisfying $A \le 9^{m+1} a^2$, $B \le 9^m b^2$, and $C^2 \le A B$. Then
 \[
 A + 6C + B \le 9^{m+1}\,(a+b)^2.
 \]
@@ -1509,7 +1602,6 @@ A + 6C + B \le 9^{m+1}\,(a+b)^2.
   pdf-4ba63c9394e5-p004-b004,
   pdf-4ba63c9394e5-p005-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1848,10 +1940,12 @@ A + 6C + B \le 9^{m+1}\,(a+b)^2.
   {pdf-4ba63c9394e5-p002-b003}
 \uses{Bonami.avgLast, Bonami.bonami_algebra, Bonami.degree_avgLast, Bonami.degree_diffLast, Bonami.degree_zero_fourth_moment, Bonami.diffLast, Bonami.expect_cs_sq, Bonami.expect_fourth_nonneg, Bonami.expect_sq_nonneg, Bonami.expect_sq_nonneg_prod, Bonami.fourth_moment_decomp, Bonami.second_moment_decomp, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.uniformWeight}
 \difficulty{6}
-The main Bonami inequality stated through the expectation operator: if a Boolean function $f$
-has degree at most $k$, then
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function of degree at most $k$, meaning that
+every nonzero Fourier coefficient $\hat f(S)$ is supported on a set $S$ with $|S| \le
+k$. Writing $\E$ for the expectation under the uniform measure on $\{0,1\}^n$, we then
+have
 \[
-\E[f^4] \le 9^{k}\,\bigl(\E[f^2]\bigr)^2.
+  \E[f^4] \;\le\; 9^{k}\,\bigl(\E[f^2]\bigr)^2.
 \]
 \end{lemma}
 
@@ -1861,8 +1955,13 @@ has degree at most $k$, then
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{2}
-If $P$ is a probability measure on the cube assigning each point the uniform weight, then the
-$p$-th moment of $f$ under $P$ coincides with the expectation $\E[f^p]$.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function of arity $n$, let $p$ be a natural
+number, and let $P$ be a probability measure on the Boolean hypercube $\{0,1\}^n$ that
+assigns to each singleton $\{x\}$ the uniform weight $2^{-n}$. Then the $p$-th moment of
+$f$ under $P$ equals the expectation of $f^p$ under the uniform measure:
+\[
+  \int f^p \, dP \;=\; \E\!\left[f^p\right] \;=\; 2^{-n}\sum_{x\in\{0,1\}^n} f(x)^p.
+\]
 \end{lemma}
 
 \begin{definition}[Uniform measure on the hypercube]
@@ -1873,17 +1972,18 @@ $p$-th moment of $f$ under $P$ coincides with the expectation $\E[f^p]$.
 The canonical uniform probability measure on the Boolean hypercube $\{0,1\}^n$.
 \end{definition}
 
-\begin{lemma}[Uniform measure of a point]
+\begin{lemma}[Uniform measure of a single point of the hypercube]
 \lean{Bonami.uniformMeasure_apply}
 \label{Bonami.uniformMeasure_apply}
 \leanok
 \uses{Bonami.uniformMeasure, BooleanAnalysis.BoolCube, BooleanAnalysis.uniformWeight}
 \difficulty{2}
-The uniform measure assigns each point $x$ of the cube the combinatorial uniform weight:
-$(\mathrm{uniformMeasure}\,n)(\{x\}) = \mathrm{uniformWeight}\,n$.
+Let $n$ be a natural number and let $x$ be a point of the Boolean hypercube $\{0,1\}^n$.
+Under the canonical uniform probability measure on $\{0,1\}^n$, the measure of the
+singleton $\{x\}$, taken as a real number, equals the uniform weight $2^{-n}$.
 \end{lemma}
 
-\begin{lemma}[Bonami lemma]
+\begin{lemma}[Bonami's hypercontractivity lemma for low-degree functions]
 \lean{Bonami.bonami_lemma}
 \label{Bonami.bonami_lemma}
 \leanok
@@ -1892,7 +1992,6 @@ $(\mathrm{uniformMeasure}\,n)(\{x\}) = \mathrm{uniformWeight}\,n$.
   pdf-4ba63c9394e5-p004-b004,
   pdf-4ba63c9394e5-p005-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2251,6 +2350,12 @@ $(\mathrm{uniformMeasure}\,n)(\{x\}) = \mathrm{uniformWeight}\,n$.
   {pdf-4ba63c9394e5-p004-b002}
 \uses{Bonami.IsBReasonable, Bonami.bonami_expect, Bonami.moment_eq_expect, Bonami.uniformMeasure, Bonami.uniformMeasure_apply, BooleanAnalysis.BooleanFunc, BooleanAnalysis.has_degree_at_most}
 \difficulty{2}
-A Boolean function $f$ of degree at most $k$ is $9^{k}$-reasonable under the uniform measure on
-the hypercube.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function whose Fourier expansion has degree at
+most $k$; that is, every nonzero Fourier coefficient $\hat f(S)$ is supported on a set
+$S$ with $\abs{S} \le k$. When $\{0,1\}^n$ is equipped with the uniform probability
+measure, $f$ is $9^k$-reasonable: its fourth moment is controlled by the square of its
+second moment via
+\[
+\E[f^4] \le 9^k \bigl(\E[f^2]\bigr)^2 .
+\]
 \end{lemma}

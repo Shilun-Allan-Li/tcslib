@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateWithCondBit_spec",
+ "key": "969cdc2960de0e5f",
+ "kind": "theorem",
+ "title": "Conditional coordinate recovers its bit",
+ "statement": "Each coordinate of a disjointness instance takes one of three values — belonging to neither player, to the left player (Alice) only, or to the right player (Bob) only — and one records Alice's bit, equal to $1$ exactly on the left-only value, and Bob's bit, equal to $1$ exactly on the right-only value. Fix a positive integer $n$, indices $i, k \\in \\{0, 1, \\dots, n-1\\}$, and a bit $b \\in \\{0,1\\}$, and form the coordinate value that is left-only if $k < i$ and $b = 1$, right-only if $k \\ge i$ and $b = 1$, and neither in every case where $b = 0$. Then reading Alice's bit of this value when $k < i$, and Bob's bit of it when $k \\ge i$, returns $b$.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "i is an index in Fin n",
+  "k is an index in Fin n",
+  "b is a boolean bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Technical auxiliary result for \\texttt{coordinateWithCondBit\\_spec}."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "exists_arcDisjoint_directedPaths",
+ "key": "577b6b2c88f52a34",
+ "kind": "theorem",
+ "title": "Arc-disjoint directed paths from an excess to a deficit vertex",
+ "statement": "Let $D$ be a finite digraph, let $x \\neq y$ be two of its vertices, and let $l$ be a natural number. Suppose that $d^{+}(x) - d^{-}(x) = l$ and $d^{-}(y) - d^{+}(y) = l$, and that every other vertex $v$ (that is, $v \\neq x$ and $v \\neq y$) satisfies $d^{+}(v) = d^{-}(v)$, where $d^{+}$ and $d^{-}$ denote outdegree and indegree. Then $D$ contains $l$ pairwise arc-disjoint directed paths from $x$ to $y$.",
+ "hypotheses_covered": [
+  "$D$ is a finite digraph",
+  "$x \\neq y$",
+  "$d^{+}(x) - d^{-}(x) = l$",
+  "$d^{-}(y) - d^{+}(y) = l$",
+  "$d^{+}(v) = d^{-}(v)$ for every $v \\neq x, y$",
+  "$l$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Let \\texttt{D} be a digraph such that (i)\n\\texttt{d$^{+}$(x) - d$^{-}$(x) = l = d$^{-}$(y) - d$^{+}$(y)} and (ii) \\texttt{d$^{+}$(v) = d$^{-}$(v)} for\n\\texttt{v $\\in$ V \\textbackslash{} \\{x, y\\}}.  Show, using exercise 10.3.2, that there exist \\texttt{l} arc-disjoint\ndirected \\texttt{(x, y)}-paths in \\texttt{D}.}"
+}

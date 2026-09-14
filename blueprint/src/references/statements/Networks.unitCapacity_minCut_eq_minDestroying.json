@@ -1,0 +1,16 @@
+{
+ "lean_name": "Networks.unitCapacity_minCut_eq_minDestroying",
+ "key": "ad08c64b5d596400",
+ "kind": "theorem",
+ "title": "Min cut equals min arcs destroying all paths in a unit-capacity network",
+ "statement": "Let $N$ be a network with capacity function $c$, a single source $x$, and a single sink $y$, and suppose every arc has capacity at most $1$, that is $c(u,v) \\le 1$ for all vertices $u,v$. For a set $S$ of vertices with $x \\in S$ and $y \\notin S$, write $\\mathrm{cap}(S) = \\sum_{u \\in S}\\sum_{v \\notin S} c(u,v)$ for its cut capacity, and suppose $S$ is a minimum cut, meaning $\\mathrm{cap}(S) \\le \\mathrm{cap}(S')$ for every set $S'$ with $x \\in S'$ and $y \\notin S'$. Then $\\mathrm{cap}(S)$ equals the minimum number of arcs whose deletion destroys every directed $(x,y)$-path in $N$.",
+ "hypotheses_covered": [
+  "network with single source x and single sink y",
+  "every arc has capacity at most 1 (unit capacity)",
+  "S is a minimum cut (x in S, y not in S, minimizing cut capacity)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{In a unit-capacity network, the capacity of a minimum cut\nis equal to the minimum number \\texttt{n} of arcs whose deletion destroys all directed\n\\texttt{(x, y)}-paths.}"
+}

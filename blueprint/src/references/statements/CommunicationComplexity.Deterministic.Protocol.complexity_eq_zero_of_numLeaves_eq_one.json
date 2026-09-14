@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.complexity_eq_zero_of_numLeaves_eq_one",
+ "key": "36f6a55b60f59d76",
+ "kind": "lemma",
+ "title": "Single-leaf protocols have zero complexity",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$ with output type $\\alpha$. If $p$ has exactly one leaf, that is, if the number of output nodes of $p$ equals $1$, then the communication complexity of $p$ is $0$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over X, Y, α",
+  "p has exactly one leaf (numLeaves = 1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a protocol $p$ has exactly one leaf (i.e.\\ $p.\\mathrm{numLeaves} = 1$), then its\ncommunication complexity satisfies $p.\\mathrm{complexity} = 0$.\nThe only protocol with a single leaf is an immediate output node, which requires no\ncommunication."
+}

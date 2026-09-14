@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.mem_filter_freeVars_zipIdx",
+ "key": "55b2323ec5831f13",
+ "kind": "lemma",
+ "title": "Filtering enumerated literals by free variables",
+ "statement": "Fix a natural number $n$, a restriction $\\rho_0$ on $n$ variables, and a list $t$ of literals. Enumerate $t$ as the list of pairs $(\\ell, i)$, where $\\ell$ ranges over the literals of $t$ and $i$ is the position of $\\ell$ in $t$, and keep only those pairs whose literal's variable is a free variable of $\\rho_0$. Then every pair $(\\ell, i)$ surviving this filter is itself one of the enumerated pairs of $t$, and its literal's variable $v$ is free under $\\rho_0$, meaning $\\rho_0$ leaves $v$ unset.",
+ "hypotheses_covered": [
+  "p lies in the filtered enumerated list of t_clause",
+  "the filter keeps pairs whose literal's variable is free under ρ₀"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a pair $p$ lies in the list obtained by filtering the indexed literals of\n$t_{\\mathrm{clause}}$ (its \\texttt{zipIdx}) to those whose variable is free under $\\rho_0$,\nthen $p$ is a member of $t_{\\mathrm{clause}}.\\mathrm{zipIdx}$ and its variable is free,\ni.e.\\ $\\rho_0\\,(p.1.\\mathrm{var}) = \\texttt{none}$."
+}

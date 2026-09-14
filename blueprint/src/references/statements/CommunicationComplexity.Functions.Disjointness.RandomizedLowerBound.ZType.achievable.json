@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.achievable",
+ "key": "d713ef8f4adb326a",
+ "kind": "theorem",
+ "title": "Every achievable Z-value comes from a hard sample",
+ "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for disjointness inputs of length $n$, and recall that the raw $Z$-variable sends each hard-distribution sample $\\omega$ to the tuple $Z(\\omega) = (M, T, X_{<T}, Y_{>T})$ consisting of the transcript of $p$ on $\\omega$'s input, the special coordinate, and the input bits before and after that coordinate. An achievable $Z$-value is a raw value together with a witness that it arises this way. Then for every achievable $Z$-value $z$, there exists a hard-distribution sample $\\omega$ such that $Z(\\omega)$ equals the underlying raw value of $z$.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol",
+  "z an achievable Z-value (element of the subtype ZType n p)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The achievability proof carried by a \\texttt{ZType} value."
+}

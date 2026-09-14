@@ -1,0 +1,18 @@
+{
+ "lean_name": "wm_combined_potential_bound",
+ "key": "8f228a9ec5328f28",
+ "kind": "theorem",
+ "title": "Combined potential bound in logarithmic form",
+ "statement": "Let $\\beta \\in (0,1)$ and let $n \\ge 1$ be an integer, and let $M^\\ast, M_{\\mathrm{WM}}$ be nonnegative integers satisfying\n\\[\n  \\beta^{M^\\ast} \\;\\le\\; n \\cdot \\left(\\tfrac{1+\\beta}{2}\\right)^{M_{\\mathrm{WM}}}.\n\\]\nThen\n\\[\n  \\log\\!\\left(\\beta^{M^\\ast}\\right)\n  \\;\\le\\;\n  \\log\\!\\left(n \\cdot \\left(\\tfrac{1+\\beta}{2}\\right)^{M_{\\mathrm{WM}}}\\right),\n\\]\nwhere $\\log$ denotes the natural logarithm.",
+ "hypotheses_covered": [
+  "n is a positive integer (n ≥ 1)",
+  "0 < β",
+  "β < 1",
+  "M^* and M_WM are natural numbers",
+  "the potential inequality β^{M^*} ≤ n·((1+β)/2)^{M_WM}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\beta \\in (0,1)$, $n \\ge 1$, and suppose\n$\\beta^{M^*} \\le n \\cdot \\bigl(\\tfrac{1+\\beta}{2}\\bigr)^{M_{\\mathrm{WM}}}$.\nThen\n\\[\n  \\log\\!\\left(\\beta^{M^*}\\right)\n  \\;\\le\\;\n  \\log\\!\\left(n \\cdot \\left(\\tfrac{1+\\beta}{2}\\right)^{M_{\\mathrm{WM}}}\\right).\n\\]\nThis packages the potential inequality into logarithmic form by monotonicity of $\\log$."
+}

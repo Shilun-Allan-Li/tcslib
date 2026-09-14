@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies",
+ "key": "22cc4c8760a0749f",
+ "kind": "theorem",
+ "title": "Approximate computation as approximate satisfaction of equality",
+ "statement": "Let $\\Omega$ be a probability space, and let $p$ be a public-coin finite-message protocol with shared randomness in $\\Omega$, private inputs from $X$ and $Y$, and outputs in $\\alpha$. For every function $f : X \\to Y \\to \\alpha$ and every real number $\\varepsilon$, the assertion that $p$ $\\varepsilon$-computes $f$ coincides with the assertion that $p$ $\\varepsilon$-satisfies the predicate $(x, y, a) \\mapsto (a = f\\,x\\,y)$; that is, the two propositions are equal.",
+ "hypotheses_covered": [
+  "Ω carries a measure space structure",
+  "p is a public-coin finite-message protocol over Ω, X, Y, α",
+  "f : X → Y → α is an arbitrary function",
+  "ε is an arbitrary real number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$, function $f$, and error bound $\\varepsilon$,\n$p.\\mathrm{ApproxComputes}\\,f\\,\\varepsilon = p.\\mathrm{ApproxSatisfies}\\,(\\lambda\\,x\\,y\\,a,\\; a = f\\,x\\,y)\\,\\varepsilon$.\nThus approximate computation is a special case of approximate predicate satisfaction."
+}

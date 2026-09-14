@@ -1,0 +1,16 @@
+{
+ "lean_name": "RSA.rsa_zmod_of_factor",
+ "key": "f7950d3363551266",
+ "kind": "lemma",
+ "title": "RSA exponent identity modulo a prime",
+ "statement": "Let $p$ be a prime, and let $m$, $N$, and $c$ be natural numbers satisfying $N = 1 + c(p-1)$. Then\n\\[\nm^{N} \\equiv m \\pmod{p};\n\\]\nthat is, $m^{N}$ and $m$ have the same image in $\\bbz/p\\bbz$. (The congruence holds for every $m$, including multiples of $p$.)",
+ "hypotheses_covered": [
+  "p is prime",
+  "m, N (the exponent ed), c are natural numbers",
+  "N = 1 + c(p-1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be prime and $m, ed, c \\in \\bbn$ with $ed = 1 + c(p-1)$. Then $m^{ed} \\equiv m$ in\n$\\bbz/p\\bbz$, where both sides are the images of natural numbers."
+}

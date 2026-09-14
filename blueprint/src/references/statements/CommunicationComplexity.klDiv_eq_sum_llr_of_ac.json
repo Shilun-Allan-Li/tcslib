@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.klDiv_eq_sum_llr_of_ac",
+ "key": "1901e88c58cc1aed",
+ "kind": "theorem",
+ "title": "KL divergence as a log-likelihood-ratio sum (absolutely continuous case)",
+ "statement": "Let $\\Omega$ be a finite measurable space, and let $\\mu$ and $\\nu$ be finite measures on $\\Omega$ with $\\mu$ absolutely continuous with respect to $\\nu$. Write $\\tfrac{d\\mu}{d\\nu}$ for the Radon–Nikodym derivative and let $\\mathrm{llr}(\\omega) = \\log \\tfrac{d\\mu}{d\\nu}(\\omega)$ be the log-likelihood ratio at $\\omega$. Then the Kullback–Leibler divergence satisfies\n\\[\n  D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu)\n  = \\left[\\; \\sum_{\\omega \\in \\Omega} \\mu(\\{\\omega\\})\\,\\mathrm{llr}(\\omega) \\;+\\; \\nu(\\Omega) \\;-\\; \\mu(\\Omega) \\;\\right]_{+},\n\\]\nwhere $[\\,x\\,]_{+}$ denotes the value in $[0,\\infty]$ obtained by viewing the real number $x$ as a nonnegative extended real, negative values being sent to $0$.",
+ "hypotheses_covered": [
+  "Ω is a finite measurable space (finite and discrete)",
+  "μ and ν are finite measures on Ω",
+  "μ is absolutely continuous with respect to ν"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Omega$ be a finite measurable space and let $\\mu, \\nu$ be finite measures on $\\Omega$\nwith $\\mu \\ll \\nu$.  Then\n\\[\n  D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu)\n  = \\mathrm{ofReal}\\!\\left(\n      \\sum_{\\omega : \\Omega} \\mu.\\mathrm{real}\\,\\{\\omega\\} \\cdot \\mathrm{llr}(\\mu,\\nu,\\omega)\n      + \\nu.\\mathrm{real}\\,\\mathrm{univ}\n      - \\mu.\\mathrm{real}\\,\\mathrm{univ}\n    \\right),\n\\]\nwhere $\\mathrm{llr}(\\mu,\\nu,\\omega) = \\log \\frac{d\\mu}{d\\nu}(\\omega)$ is the\nlog-likelihood ratio at $\\omega$."
+}

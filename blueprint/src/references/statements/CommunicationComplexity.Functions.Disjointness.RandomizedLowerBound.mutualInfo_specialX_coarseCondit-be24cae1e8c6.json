@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mutualInfo_specialX_coarseConditioning_disjointSpecialYFalse_eq_zero",
+ "key": "9b790530b295e42f",
+ "kind": "theorem",
+ "title": "Independence of Alice's special bit from the coarse variable",
+ "statement": "Fix a positive integer $n$ and take the hard distribution on samples conditioned on the event that Alice's set $X$ and Bob's set $Y$ are disjoint, and further conditioned on Bob's special bit $Y_T$ being false. Under this conditional distribution the mutual information between Alice's special bit $X_T$ and the coarse variable $(T,\\, X_{<T},\\, Y_{>T})$ is zero:\n\\[\nI\\bigl(X_T \\,;\\, (T,\\, X_{<T},\\, Y_{>T})\\bigr) = 0,\n\\]\nso that $X_T$ is independent of $(T,\\, X_{<T},\\, Y_{>T})$.",
+ "hypotheses_covered": [
+  "$n$ a positive integer",
+  "measure is the hard distribution conditioned on the disjointness event",
+  "further conditioned on Bob's special bit $Y_T$ being false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under $D ∧ Y_{T}=false$, the coarse data $T, X_{<T}, Y_{>T}$ is independent of $X_{T}$. This is the sampling independence used before adding the transcript rectangle."
+}

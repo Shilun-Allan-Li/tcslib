@@ -1,0 +1,17 @@
+{
+ "lean_name": "KargerTrace.survivingRun_survivalProb_ge_factor",
+ "key": "f3c723fb36035c44",
+ "kind": "lemma",
+ "title": "One-step survival lower bound in edge contraction",
+ "statement": "Let $s$, $t$, and $u$ be states of the contraction process, each a multigraph paired with a distinguished cut. Suppose $t$ is reached from $s$ by a surviving run of $i$ steps, that a further surviving step leads from $t$ to $u$, that the distinguished cut of $s$ is a minimum cut of the multigraph of $s$, and that the multigraph of $t$ has at least two vertices. Writing $n_t$ for the number of vertices of the multigraph of $t$, $c$ for the size of the distinguished cut of $s$, and $m$ for the number of edges of the multigraph of $t$, then\n\\[\n  \\frac{n_t - 2}{n_t} \\;\\le\\; 1 - \\frac{c}{m}.\n\\]",
+ "hypotheses_covered": [
+  "t reached from s by a surviving run of i steps",
+  "a surviving step leads from t to u",
+  "the distinguished cut of s is a minimum cut of s's multigraph",
+  "the multigraph of t has at least two vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $t$ is reached from $s$ by a surviving run of $i$ steps, a further surviving step is\npossible from $t$, $s.C$ is a min-cut, and $t.G$ has at least two vertices, then with\n$n_t = t.G.\\mathrm{vertexCount}$,\n\\[\n  \\frac{n_t-2}{n_t} \\;\\le\\; \\mathrm{survivalProb}(s.C.\\mathrm{size},\\, t.G.\\mathrm{edgeCount}).\n\\]"
+}

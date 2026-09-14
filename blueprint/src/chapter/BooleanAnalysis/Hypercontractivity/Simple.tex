@@ -12,100 +12,124 @@ Fourier, and combinatorial lemmas used along the way.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Character of a lifted set ignores the last coordinate]
+\begin{lemma}[Walsh character is unchanged by appending an unused coordinate]
 \lean{SimpleHypercontractivity.chiS_snoc_castSucc}
 \label{SimpleHypercontractivity.chiS_snoc_castSucc}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS}
 \difficulty{1}
-For a subset $S \subseteq \mathrm{Fin}\,n$, a point $x \in \{0,1\}^n$, and a bit $b$,
-the parity character of the lifted set equals the character of $S$ on $x$:
+Fix $n\in\bbn$, and let $S\subseteq[n]$, $x\in\{0,1\}^n$, and $b\in\{0,1\}$. Form the
+point $(x,b)\in\{0,1\}^{n+1}$ obtained by appending $b$ as the final coordinate, and
+regard $S$ as a subset $S'\subseteq[n+1]$ via the inclusion $[n]\hookrightarrow[n+1]$
+that leaves each index fixed (so the new last coordinate never lies in $S'$). Then the
+Walsh--Fourier character of $S'$ evaluated at the extended point agrees with that of $S$
+at the original point:
 \[
-  \chi_{\,\mathrm{castSucc}(S)}(\mathrm{snoc}\,x\,b) = \chi_S(x).
+  \chi_{S'}\big((x,b)\big) \;=\; \chi_S(x).
 \]
-That is, appending a last coordinate $b$ and not including it in the set leaves the
-character unchanged.
 \end{lemma}
 
-\begin{lemma}[Character of a lifted set with the last coordinate]
+\begin{lemma}[Walsh character on an extended coordinate set]
 \lean{SimpleHypercontractivity.chiS_snoc_with_last}
 \label{SimpleHypercontractivity.chiS_snoc_with_last}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{2}
-For $S \subseteq \mathrm{Fin}\,n$, a point $x$, and a bit $b$, adjoining the last
-coordinate to the lifted set multiplies the character by the sign of $b$:
+Let $S \subseteq [n]$, let $x \in \{0,1\}^n$, and let $b$ be a bit. Write $(x,b) \in
+\{0,1\}^{n+1}$ for the point obtained by appending $b$ as the final coordinate, and let
+$S' \subseteq [n+1]$ be the image of $S$ under the inclusion $[n] \hookrightarrow [n+1]$
+of the first $n$ coordinates, together with the new last coordinate $n+1$. Then
 \[
-  \chi_{\,\mathrm{castSucc}(S)\cup\{\mathrm{last}\,n\}}(\mathrm{snoc}\,x\,b)
-  = (-1)^{b}\,\chi_S(x),
+  \chi_{S'}(x,b) \;=\; \sigma(b)\,\chi_S(x),
 \]
-where $(-1)^b$ denotes \texttt{boolToSign}\,$b$.
+where $\sigma$ is the sign encoding; that is, adjoining the last coordinate to the
+lifted index set multiplies the Walsh character by the sign of $b$.
 \end{lemma}
 
-\begin{lemma}[Partition of a sum over subsets of $\mathrm{Fin}(n+1)$]
+\begin{lemma}[Splitting a subset-sum by the last coordinate]
 \lean{SimpleHypercontractivity.finset_fin_succ_sum_partition}
 \label{SimpleHypercontractivity.finset_fin_succ_sum_partition}
 \leanok
 \difficulty{5}
-For any $\varphi$ on subsets of $\mathrm{Fin}(n+1)$, the total sum splits according to
-whether the last coordinate belongs to the subset:
+Fix $n \in \bbn$ and identify a subset of $\{0, 1, \dots, n\}$ that omits the top
+element $n$ with the corresponding subset of $\{0, 1, \dots, n-1\}$, via the inclusion
+$\iota$ that sends $T \subseteq \{0,\dots,n-1\}$ to the same set regarded inside
+$\{0,\dots,n\}$. Then for every function $\varphi$ assigning a real number to each
+subset of $\{0, 1, \dots, n\}$,
 \[
-  \sum_{S \subseteq \mathrm{Fin}(n+1)} \varphi(S)
-  = \sum_{T \subseteq \mathrm{Fin}\,n} \varphi(\mathrm{castSucc}(T))
-  + \sum_{T \subseteq \mathrm{Fin}\,n} \varphi(\mathrm{castSucc}(T)\cup\{\mathrm{last}\,n\}).
+  \sum_{S \subseteq \{0,\dots,n\}} \varphi(S)
+  = \sum_{T \subseteq \{0,\dots,n-1\}} \varphi\bigl(\iota(T)\bigr)
+  + \sum_{T \subseteq \{0,\dots,n-1\}} \varphi\bigl(\iota(T) \cup \{n\}\bigr),
 \]
+the two terms collecting the subsets of $\{0,\dots,n\}$ that exclude and that include
+the element $n$, respectively.
 \end{lemma}
 
-\begin{lemma}[Cardinality of a lifted set]
+\begin{lemma}[Cardinality is preserved under the successor inclusion]
 \lean{SimpleHypercontractivity.card_image_castSucc}
 \label{SimpleHypercontractivity.card_image_castSucc}
 \leanok
 \difficulty{1}
-Lifting a set along $\mathrm{castSucc}$ preserves its cardinality:
-$|\mathrm{castSucc}(S)| = |S|$.
+Let $S \subseteq \{0, 1, \dots, n-1\}$ be a finite set of indices, and let $\iota \colon
+\{0, 1, \dots, n-1\} \hookrightarrow \{0, 1, \dots, n\}$ be the order-preserving
+inclusion that regards each index as an element of the enlarged range. Then the image
+$\iota(S)$ has the same cardinality as $S$, that is, $\abs{\iota(S)} = \abs{S}$.
 \end{lemma}
 
-\begin{lemma}[Cardinality of a lifted set with the last coordinate]
+\begin{lemma}[Cardinality after lifting a set and adjoining the top coordinate]
 \lean{SimpleHypercontractivity.card_image_castSucc_union_last}
 \label{SimpleHypercontractivity.card_image_castSucc_union_last}
 \leanok
 \difficulty{2}
-Adjoining the (necessarily new) last coordinate to a lifted set increases its
-cardinality by one:
-$|\mathrm{castSucc}(S)\cup\{\mathrm{last}\,n\}| = |S| + 1$.
+Let $n$ be a natural number and let $S \subseteq \{0, 1, \dots, n-1\}$. Embed $S$ into
+$\{0, 1, \dots, n\}$ by the map that sends each index to itself, and adjoin the top
+index $n$. Since $n$ is not the image of any element of $S$, this union satisfies
+\[
+\abs{\{\, i : i \in S \,\} \cup \{n\}} = \abs{S} + 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Noise operator decomposes along the last coordinate]
+\begin{lemma}[Noise operator splits along the last coordinate]
 \lean{SimpleHypercontractivity.noiseOp_snoc}
 \label{SimpleHypercontractivity.noiseOp_snoc}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.fourierCoeff_avgLast, Bonami.fourierCoeff_diffLast, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.noiseOp, SimpleHypercontractivity.card_image_castSucc, SimpleHypercontractivity.card_image_castSucc_union_last, SimpleHypercontractivity.chiS_snoc_castSucc, SimpleHypercontractivity.chiS_snoc_with_last, SimpleHypercontractivity.finset_fin_succ_sum_partition}
 \difficulty{4}
-For $f : \{0,1\}^{n+1} \to \bbr$ the noise operator splits over the last coordinate:
+Fix $\rho \in \bbr$ and a Boolean function $f \colon \{0,1\}^{n+1} \to \bbr$, and let
+$Af$ and $Df$ be the average and the half-difference of $f$ over its last coordinate,
+each a Boolean function on $\{0,1\}^n$. For every $x \in \{0,1\}^n$ and every bit $b$,
 \[
-  T_\rho f(\mathrm{snoc}\,x\,b)
-  = T_\rho(\mathrm{avgLast}\,f)(x) + (-1)^b\,\rho\,T_\rho(\mathrm{diffLast}\,f)(x),
+  T_\rho f(x, b) \;=\; T_\rho(Af)(x) \;+\; \sigma(b)\,\rho\,T_\rho(Df)(x),
 \]
-where $\mathrm{avgLast}\,f$ and $\mathrm{diffLast}\,f$ are the average and difference of
-$f$ over the last bit.
+where $(x,b) \in \{0,1\}^{n+1}$ is the point obtained by appending $b$ as the last
+coordinate, $\sigma$ is the sign encoding, and $T_\rho$ is the noise operator.
 \end{lemma}
 
-\begin{lemma}[Fourth moment decomposition with the noise operator]
+\begin{lemma}[Fourth-moment decomposition under the noise operator]
 \lean{SimpleHypercontractivity.fourth_moment_noise_decomp}
 \label{SimpleHypercontractivity.fourth_moment_noise_decomp}
 \leanok
 \proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p007-b004}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.fourth_moment_decomp, Bonami.restrictLast, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.noiseOp_snoc}
 \difficulty{4}
-For $f : \{0,1\}^{n+1} \to \bbr$, writing $g = \mathrm{avgLast}\,f$ and
-$h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
+Let $f:\{0,1\}^{n+1}\to\bbr$ be a Boolean function, and let $\rho\in\bbr$. Write $g$ for
+the average of $f$ over its last coordinate and $h$ for the corresponding
+half-difference, so that
 \[
-  \E[(T_\rho f)^4]
-  = \E[(T_\rho g)^4] + 6\rho^2\,\E[(T_\rho g)^2 (T_\rho h)^2] + \rho^4\,\E[(T_\rho h)^4].
+  g(x)=\tfrac12\bigl(f(x,0)+f(x,1)\bigr),\qquad
+  h(x)=\tfrac12\bigl(f(x,0)-f(x,1)\bigr)
+\]
+are Boolean functions of the first $n$ variables. Then the fourth moment of $T_\rho f$
+under the uniform measure decomposes as
+\[
+  \E\bigl[(T_\rho f)^4\bigr]
+  = \E\bigl[(T_\rho g)^4\bigr]
+  + 6\rho^2\,\E\bigl[(T_\rho g)^2\,(T_\rho h)^2\bigr]
+  + \rho^4\,\E\bigl[(T_\rho h)^4\bigr].
 \]
 \end{lemma}
 
-\begin{theorem}[$(2,4)$-Hypercontractivity (Bonami--Beckner)]
+\begin{theorem}[The $(2,4)$-hypercontractive inequality]
 \lean{SimpleHypercontractivity.hypercontractivity_2_4}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p002-b001,
@@ -119,7 +143,6 @@ $h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
   pdf-4ba63c9394e5-p007-b002,
   pdf-4ba63c9394e5-p007-b004
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -468,28 +491,33 @@ $h = \mathrm{diffLast}\,f$, the fourth moment of $T_\rho f$ decomposes as
   {pdf-4ba63c9394e5-p007-b004}
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_cs_sq, Bonami.expect_fourth_nonneg, Bonami.expect_sq_nonneg, Bonami.second_moment_decomp, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.fourth_moment_noise_decomp}
 \difficulty{5}
-For any Boolean function $f : \{0,1\}^n \to \bbr$ and noise parameter $\rho$ with
-$\rho^2 \le 1/3$ (equivalently $\abs{\rho} \le 1/\sqrt3$),
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function and let $\rho\in\bbr$ be a noise
+parameter satisfying $\rho^2\le 1/3$. Then the fourth moment of the noised function is
+controlled by the square of its second moment:
 \[
-  \E[(T_\rho f)^4] \le \bigl(\E[f^2]\bigr)^2,
+  \E\bigl[(T_\rho f)^4\bigr]\;\le\;\bigl(\E[f^2]\bigr)^2,
 \]
-that is $\norm{T_\rho f}_4 \le \norm{f}_2$.
+where $T_\rho$ is the noise operator and $\E$ denotes expectation under the uniform
+measure on $\{0,1\}^n$. Equivalently, $\norm{T_\rho f}_4\le\norm{f}_2$.
 \end{theorem}
 
-\begin{lemma}[Hölder's inequality for $p = 4/3$, $q = 4$]
+\begin{lemma}[Hölder's inequality for the exponents $4/3$ and $4$]
 \lean{SimpleHypercontractivity.innerProduct_le_L43_L4}
 \label{SimpleHypercontractivity.innerProduct_le_L43_L4}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 \difficulty{5}
-For Boolean functions $f, g$,
+Let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions, and take all expectations with
+respect to the uniform measure on $\{0,1\}^n$. Then their $L^2$ inner product satisfies
 \[
   \langle f, g \rangle
-  \le \bigl(\E[\,\abs{f}^{4/3}\,]\bigr)^{3/4}\,\bigl(\E[\,\abs{g}^{4}\,]\bigr)^{1/4}.
+  \;\le\;
+  \bigl(\E[\,\abs{f}^{4/3}\,]\bigr)^{3/4}\,
+  \bigl(\E[\,\abs{g}^{4}\,]\bigr)^{1/4}.
 \]
 \end{lemma}
 
-\begin{theorem}[$(4/3,2)$-Hypercontractivity with $\rho = 1/\sqrt3$]
+\begin{theorem}[The $(4/3,2)$-hypercontractive inequality at $\rho=1/\sqrt3$]
 \lean{SimpleHypercontractivity.hypercontractivity_4_div_3_2}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p004-b006,
@@ -503,7 +531,6 @@ For Boolean functions $f, g$,
   pdf-4ba63c9394e5-p008-b002,
   pdf-4ba63c9394e5-p008-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -893,49 +920,60 @@ For Boolean functions $f, g$,
   {pdf-4ba63c9394e5-p008-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, BooleanAnalysis.uniformWeight, SimpleHypercontractivity.hypercontractivity_2_4, SimpleHypercontractivity.innerProduct_le_L43_L4}
 \difficulty{5}
-Boolean functions are $(4/3, 2)$-hypercontractive with parameter $1/\sqrt3$: for any
-$f : \{0,1\}^n \to \bbr$,
+For every Boolean function $f:\{0,1\}^n\to\bbr$, applying the noise operator with
+parameter $\rho=1/\sqrt3$ contracts the $L^2$ norm below the $L^{4/3}$ norm of the
+original function:
 \[
-  \bigl(\E[(T_{1/\sqrt3} f)^2]\bigr)^{1/2}
-  \le \bigl(\E[\,\abs{f}^{4/3}\,]\bigr)^{3/4}.
+  \bigl(\E\bigl[(T_{1/\sqrt3} f)^2\bigr]\bigr)^{1/2}
+  \;\le\;
+  \bigl(\E\bigl[\,\abs{f}^{4/3}\,\bigr]\bigr)^{3/4},
 \]
+where both expectations are taken under the uniform measure on the hypercube.
 \end{theorem}
 
-\begin{lemma}[$L^2$ norm of $T_\rho f$ in Fourier space]
+\begin{lemma}[Fourier expansion of the squared norm of a noised function]
 \lean{SimpleHypercontractivity.noise_l2_fourier}
 \label{SimpleHypercontractivity.noise_l2_fourier}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.parseval}
 \difficulty{2}
-The squared $L^2$ norm of $T_\rho f$ expands over the Fourier spectrum:
+Let $n\in\bbn$, let $f\colon\{0,1\}^n\to\bbr$ be a Boolean function, and let
+$\rho\in\bbr$. Write $T_\rho$ for the noise operator with parameter $\rho$,
+$\langle\,\cdot\,,\,\cdot\,\rangle$ for the $L^2$ inner product under the uniform
+measure on $\{0,1\}^n$, and $\hat f(S)$ for the Fourier--Walsh coefficient of $f$ at
+frequency $S\subseteq[n]$. Then
 \[
-  \langle T_\rho f, T_\rho f \rangle
-  = \sum_{S \subseteq \mathrm{Fin}\,n} \rho^{2\abs{S}}\,\widehat{f}(S)^2.
+  \langle T_\rho f,\, T_\rho f\rangle
+  \;=\; \sum_{S\subseteq[n]} \bigl(\rho^{|S|}\bigr)^2\,\hat f(S)^2 .
 \]
 \end{lemma}
 
-\begin{theorem}[Contractivity ($q = 2$ case)]
+\begin{theorem}[Contractivity of the noise operator in $L^2$]
 \lean{SimpleHypercontractivity.contractivity}
 \label{SimpleHypercontractivity.contractivity}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.parseval, SimpleHypercontractivity.noise_l2_fourier}
 \difficulty{3}
-For $\rho^2 \le 1$ and any Boolean function $f$,
+Fix $n$, let $f\colon\{0,1\}^n\to\bbr$ be any Boolean function, and let $\rho\in\bbr$
+satisfy $\rho^2\le 1$. Writing $T_\rho$ for the noise operator, so that $T_\rho
+f(x)=\sum_{S\subseteq[n]}\rho^{|S|}\,\hat f(S)\,\chi_S(x)$, one has
 \[
-  \E[(T_\rho f)^2] \le \E[f^2].
+  \E\big[(T_\rho f)^2\big]\;\le\;\E\big[f^2\big],
 \]
-This is the $q = 2$ case of hypercontractivity.
+where the expectation is taken with respect to the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
-\begin{lemma}[Binomial coefficient bound]
+\begin{lemma}[A bound on even binomial coefficients]
 \lean{SimpleHypercontractivity.binom_coeff_ineq}
 \label{SimpleHypercontractivity.binom_coeff_ineq}
 \leanok
 \difficulty{6}
-For natural numbers $k \ge 1$ and $j \le k$,
+For every natural number $k \ge 1$ and every natural number $j$ with $j \le k$, the
+inequality
 \[
-  \binom{2k}{2j} \le \binom{k}{j}\,(2k-1)^j.
+  \binom{2k}{2j} \;\le\; \binom{k}{j}\,(2k-1)^{j}
 \]
+holds.
 \end{lemma}
 
 \begin{lemma}[$q$-th moment decomposition along the last coordinate]
@@ -944,28 +982,36 @@ For natural numbers $k \ge 1$ and $j \le k$,
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{4}
-For $f : \{0,1\}^{n+1} \to \bbr$, writing $g = \mathrm{avgLast}\,f$ and
-$h = \mathrm{diffLast}\,f$, the $q$-th moment decomposes as
+Let $q$ be a natural number and let $f:\{0,1\}^{n+1}\to\bbr$ be a Boolean function.
+Write $g$ for the average of $f$ over its last coordinate and $h$ for the
+half-difference of $f$ over its last coordinate, both Boolean functions on $\{0,1\}^n$.
+Then the $q$-th moment of $f$ under the uniform measure on $\{0,1\}^{n+1}$ decomposes as
 \[
-  \E[f^q] = \E\!\left[\frac{(g+h)^q + (g-h)^q}{2}\right].
+  \E[f^q] \;=\; \E\!\left[\frac{(g+h)^q + (g-h)^q}{2}\right],
 \]
+where the expectation on the right is taken over the uniform measure on $\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[$q$-th moment decomposition with the noise operator]
+\begin{lemma}[Moment decomposition of the noise operator across the last coordinate]
 \lean{SimpleHypercontractivity.noise_qth_moment_decomp}
 \label{SimpleHypercontractivity.noise_qth_moment_decomp}
 \leanok
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.restrictLast, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.noiseOp_snoc, SimpleHypercontractivity.qth_moment_decomp}
 \difficulty{4}
-For $f : \{0,1\}^{n+1} \to \bbr$, writing $g = T_\rho(\mathrm{avgLast}\,f)$ and
-$h = T_\rho(\mathrm{diffLast}\,f)$, the $q$-th moment of $T_\rho f$ decomposes as
+Let $f:\{0,1\}^{n+1}\to\bbr$ be a Boolean function, let $\rho\in\bbr$, and let $q$ be a
+nonnegative integer. Write $A$ for the average of $f$ over its last coordinate and $D$
+for the half-difference of $f$ over its last coordinate, both functions on $\{0,1\}^n$.
+Then the $q$-th moment of $T_\rho f$ over the uniform measure on $\{0,1\}^{n+1}$
+decomposes as
 \[
-  \E[(T_\rho f)^q]
-  = \E\!\left[\frac{(g + \rho h)^q + (g - \rho h)^q}{2}\right].
+  \E_{x\in\{0,1\}^{n+1}}\!\bigl[(T_\rho f)(x)^q\bigr]
+= \E_{x\in\{0,1\}^{n}}\!\left[\frac{\bigl(T_\rho A(x) + \rho\,T_\rho D(x)\bigr)^{q} +
+\bigl(T_\rho A(x) - \rho\,T_\rho D(x)\bigr)^{q}}{2}\right],
 \]
+where on the right-hand side the noise operator acts on functions of $n$ variables.
 \end{lemma}
 
-\begin{theorem}[$(2,2k)$-Hypercontractivity (Bonami--Beckner)]
+\begin{theorem}[$(2, 2k)$-hypercontractivity for the noise operator]
 \lean{SimpleHypercontractivity.hypercontractivity_2_2k}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p002-b001,
@@ -980,15 +1026,17 @@ $h = T_\rho(\mathrm{diffLast}\,f)$, the $q$-th moment of $T_\rho f$ decomposes a
 }
 \uses{Bonami.avgLast, Bonami.diffLast, Bonami.expect_sq_nonneg, Bonami.second_moment_decomp, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, BooleanAnalysis.walsh_expansion, SimpleHypercontractivity.binom_coeff_ineq, SimpleHypercontractivity.noise_qth_moment_decomp}
 \difficulty{7}
-For any Boolean function $f : \{0,1\}^n \to \bbr$, integer $k \ge 1$, and noise
-parameter $\rho$ with $\rho^2 \le 1/(2k-1)$,
+Fix an integer $k \ge 1$ and a real number $\rho$ with $\rho^2 \le \dfrac{1}{2k-1}$.
+Then for every function $f : \{0,1\}^n \to \bbr$ on the Boolean hypercube,
 \[
-  \E[(T_\rho f)^{2k}] \le \bigl(\E[f^2]\bigr)^k,
+  \E\bigl[(T_\rho f)^{2k}\bigr] \;\le\; \bigl(\E[f^2]\bigr)^{k},
 \]
-equivalently $\norm{T_\rho f}_{2k} \le \norm{f}_2$.
+where the expectation is taken under the uniform measure on $\{0,1\}^n$ and $T_\rho$ is
+the noise operator $T_\rho f = \sum_{S \subseteq [n]} \rho^{|S|}\,\hat f(S)\,\chi_S$.
+Equivalently, $\norm{T_\rho f}_{2k} \le \norm{f}_2$.
 \end{theorem}
 
-\begin{theorem}[$(2,q)$-Hypercontractivity for even $q$]
+\begin{theorem}[$(2,q)$-hypercontractivity for even exponents]
 \lean{SimpleHypercontractivity.hypercontractivity_2_q}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p002-b001,
@@ -1005,27 +1053,30 @@ equivalently $\norm{T_\rho f}_{2k} \le \norm{f}_2$.
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.hypercontractivity_2_2k}
 \difficulty{3}
-For an even integer $q \ge 2$ and noise parameter $\rho$ with $\rho^2 \le 1/(q-1)$,
+Let $q \ge 2$ be an even integer, and let $\rho \in \bbr$ satisfy $\rho^2 \le
+\tfrac{1}{q-1}$. Then for every Boolean function $f : \{0,1\}^n \to \bbr$, the noise
+operator $T_\rho$ contracts from $L^2$ to $L^q$ in the sense that
 \[
-  \E[(T_\rho f)^q] \le \bigl(\E[f^2]\bigr)^{q/2}.
+  \E\bigl[(T_\rho f)^q\bigr] \;\le\; \bigl(\E[f^2]\bigr)^{q/2},
 \]
-This is the $(2,2k)$ theorem restated in terms of an even exponent $q = 2k$.
+where both expectations are taken with respect to the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
-\begin{theorem}[$(2,2)$-Hypercontractivity]
+\begin{theorem}[$L^2$ contractivity of the noise operator]
 \lean{SimpleHypercontractivity.hypercontractivity_2_2}
 \label{SimpleHypercontractivity.hypercontractivity_2_2}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.contractivity}
 \difficulty{1}
-For $\rho^2 \le 1$ and any Boolean function $f$,
+Let $\rho\in\bbr$ satisfy $\rho^2\le 1$, and let $f:\{0,1\}^n\to\bbr$ be a Boolean
+function. Then the noise operator $T_\rho$ does not increase the $L^2$ norm under the
+uniform measure:
 \[
-  \E[(T_\rho f)^2] \le \bigl(\E[f^2]\bigr)^1,
+  \E\!\left[(T_\rho f)^2\right] \;\le\; \E\!\left[f^2\right].
 \]
-the $q = 2$ instance, which is just contractivity.
 \end{theorem}
 
-\begin{theorem}[$(2,6)$-Hypercontractivity]
+\begin{theorem}[A $(2,6)$-hypercontractive inequality for the noise operator]
 \lean{SimpleHypercontractivity.hypercontractivity_2_6}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p002-b001,
@@ -1040,13 +1091,16 @@ the $q = 2$ instance, which is just contractivity.
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.hypercontractivity_2_q}
 \difficulty{1}
-For $\rho^2 \le 1/5$ and any Boolean function $f$,
+Let $\rho\in\bbr$ satisfy $\rho^2\le \tfrac15$, and let $f:\{0,1\}^n\to\bbr$ be any
+Boolean function. Then the sixth moment of the noised function $T_\rho f$ is controlled
+by the cube of the second moment of $f$:
 \[
-  \E[(T_\rho f)^6] \le \bigl(\E[f^2]\bigr)^3.
+  \E\bigl[(T_\rho f)^6\bigr] \;\le\; \bigl(\E[f^2]\bigr)^3,
 \]
+where both expectations are taken with respect to the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
-\begin{theorem}[$(2,2k)$-Hypercontractivity in norm form]
+\begin{theorem}[$(2,2k)$-hypercontractivity in norm form]
 \lean{SimpleHypercontractivity.hypercontractivity_2_2k_rpow}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p002-b001,
@@ -1062,30 +1116,38 @@ For $\rho^2 \le 1/5$ and any Boolean function $f$,
 }
 \uses{Bonami.expect_sq_nonneg, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, SimpleHypercontractivity.hypercontractivity_2_2k}
 \difficulty{3}
-For $k \ge 1$ and noise parameter $\rho$ with $\rho^2 \le 1/(2k-1)$, the $(2,2k)$
-bound in the form $\norm{T_\rho f}_{2k} \le \norm{f}_2$:
+Fix an integer $k \ge 1$ and a real noise rate $\rho$ satisfying $\rho^2 \le
+\tfrac{1}{2k-1}$. Then for every Boolean function $f\colon\{0,1\}^n\to\bbr$, the image
+$T_\rho f$ under the noise operator obeys the $L^{2k}$-to-$L^2$ hypercontractive bound
 \[
-  \bigl(\E[(T_\rho f)^{2k}]\bigr)^{1/(2k)} \le \bigl(\E[f^2]\bigr)^{1/2}.
+  \bigl(\E\bigl[(T_\rho f)^{2k}\bigr]\bigr)^{1/(2k)} \;\le\; \bigl(\E[f^2]\bigr)^{1/2},
 \]
+where the expectation is taken with respect to the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
-\begin{lemma}[Inner product equals expected square]
+\begin{lemma}[Self inner product equals expected square]
 \lean{SimpleHypercontractivity.innerProduct_eq_expect_sq}
 \label{SimpleHypercontractivity.innerProduct_eq_expect_sq}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 \difficulty{2}
-The self inner product of a Boolean function equals the expectation of its square:
-$\langle f, f \rangle = \E[f^2]$.
+For a Boolean function $f : \{0,1\}^n \to \bbr$, the $L^2$ inner product of $f$ with
+itself equals the expectation of its square: $\langle f, f\rangle = \E[f^2]$, that is,
+$2^{-n}\sum_{x \in \{0,1\}^n} f(x)^2$.
 \end{lemma}
 
-\begin{lemma}[Nonnegativity of the expected square of $T_\rho f$]
+\begin{lemma}[Nonnegativity of the expected square of a smoothed Boolean function]
 \lean{SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
 \label{SimpleHypercontractivity.expect_sq_noiseOp_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
 \difficulty{2}
-For any $\rho$ and Boolean function $f$, $\E[(T_\rho f)^2] \ge 0$.
+Let $f\colon\{0,1\}^n\to\bbr$ be a Boolean function and let $\rho\in\bbr$ be arbitrary.
+Applying the noise operator $T_\rho$ to $f$ and averaging the square over the uniform
+measure gives a nonnegative quantity:
+\[
+  \E\!\left[(T_\rho f)^2\right]\;\ge\;0.
+\]
 \end{lemma}
 
 \begin{lemma}[Nonnegativity of an expected absolute power]
@@ -1094,7 +1156,12 @@ For any $\rho$ and Boolean function $f$, $\E[(T_\rho f)^2] \ge 0$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{2}
-For any real exponent $p$ and Boolean function $f$, $\E[\,\abs{f}^p\,] \ge 0$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function and let $p\in\bbr$ be any real exponent.
+Then, under the uniform measure on the hypercube, the expected value of $\abs{f}^p$ is
+nonnegative:
+\[
+\E\!\left[\,\abs{f}^{\,p}\,\right]\;=\;2^{-n}\sum_{x\in\{0,1\}^n}\abs{f(x)}^{\,p}\;\ge\;0.
+\]
 \end{lemma}
 
 \begin{lemma}[Composition of noise operators]
@@ -1103,11 +1170,16 @@ For any real exponent $p$ and Boolean function $f$, $\E[\,\abs{f}^p\,] \ge 0$.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier}
 \difficulty{2}
-Composing two noise operators multiplies their parameters:
-$T_\rho(T_\sigma f) = T_{\rho\sigma} f$.
+For any real parameters $\rho,\sigma$ and any Boolean function
+$f\colon\{0,1\}^n\to\bbr$, applying the noise operator $T_\sigma$ and then the noise
+operator $T_\rho$ is the same as applying the single noise operator $T_{\rho\sigma}$;
+that is,
+\[
+  T_\rho\bigl(T_\sigma f\bigr) \;=\; T_{\rho\sigma}\,f .
+\]
 \end{lemma}
 
-\begin{theorem}[$(p,2)$-Hypercontractivity via duality]
+\begin{theorem}[Dual $(p,2)$ hypercontractivity from Hölder and a $(2,q)$ bound]
 \lean{SimpleHypercontractivity.hypercontractivity_p_2_general}
 \proofsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p006-b003,
@@ -1119,7 +1191,6 @@ $T_\rho(T_\sigma f) = T_{\rho\sigma} f$.
   pdf-4ba63c9394e5-p013-b002,
   pdf-4ba63c9394e5-p013-b003
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1399,9 +1470,14 @@ $T_\rho(T_\sigma f) = T_{\rho\sigma} f$.
   {pdf-4ba63c9394e5-p002-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, SimpleHypercontractivity.expect_rpow_abs_nonneg, SimpleHypercontractivity.expect_sq_noiseOp_nonneg, SimpleHypercontractivity.innerProduct_eq_expect_sq}
 \difficulty{5}
-Let $1 < p$, $q \ge 2$ with $1/p + 1/q = 1$. Given a Hölder inequality for the pair
-$(p,q)$ and a $(2,q)$-hypercontractivity bound for $T_\rho$, one concludes the dual
-$(p,2)$ bound:
+Let $1 < p$ and $q \ge 2$ be conjugate exponents, so that $1/p + 1/q = 1$, let $\rho \in
+\bbr$, and let $f : \{0,1\}^n \to \bbr$ be a Boolean function; write $\norm{g}_r =
+(\E[\abs{g}^r])^{1/r}$ for the $L^r$ norm under the uniform measure on the hypercube.
+Suppose Hölder's inequality holds for the exponent pair $(p,q)$, that is, $\langle u,
+v\rangle \le \norm{u}_p\,\norm{v}_q$ for all Boolean functions $u,v$, and suppose the
+noise operator satisfies the $(2,q)$ bound $\E\bigl[\abs{T_\rho g}^q\bigr] \le
+\bigl(\E[g^2]\bigr)^{q/2}$ for every Boolean function $g$. Then $T_\rho$ satisfies the
+dual $(p,2)$ bound
 \[
   \bigl(\E[(T_\rho f)^2]\bigr)^{1/2} \le \bigl(\E[\,\abs{f}^p\,]\bigr)^{1/p}.
 \]
@@ -1410,7 +1486,7 @@ $(p,2)$ bound:
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Key algebraic inequality closing the recurrence]
+\begin{lemma}[A quadratic inequality from bound data]
 \lean{SimpleHypercontractivity.hypercontractivity_algebra'}
 \proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p007-b004}
 \proofstep
@@ -1636,7 +1712,6 @@ $(p,2)$ bound:
   {context}
   {boolean-ch09-hypercontractivity-kkl}
   {pdf-4ba63c9394e5-p009-b002}
-
 \label{SimpleHypercontractivity.hypercontractivity_algebra'}
 \leanok
 \difficulty{4}
@@ -1644,11 +1719,9 @@ $(p,2)$ bound:
   pdf-4ba63c9394e5-p007-b004,
   pdf-4ba63c9394e5-p005-b001
 }
-Let $a, b, A, B, C, \rho$ be reals with $a \ge 0$, $b \ge 0$, $B \ge 0$, and suppose
-$A \le a^2$, $B \le b^2$, $C^2 \le AB$, and $\rho^2 \le 1/3$. Then
+Let $a,b,A,B,C,\rho$ be real numbers with $a\ge 0$, $b\ge 0$, and $B\ge 0$, and suppose
+that $A\le a^2$, $B\le b^2$, $C^2\le AB$, and $\rho^2\le \tfrac13$. Then
 \[
   A + 6\rho^2 C + \rho^4 B \;\le\; (a+b)^2 .
 \]
-This is the algebraic step that makes the induction in the $(2,4)$-hypercontractivity
-argument close.
 \end{lemma}

@@ -53,29 +53,34 @@ from the vertex set. Parallel edges between the merged vertex and the rest of th
 are retained with multiplicity.
 \end{definition}
 
-\begin{lemma}[Contraction drops the vertex count by one]
+\begin{lemma}[Contraction reduces the vertex count by one]
 \lean{contract_vertex_count}
 \label{contract_vertex_count}
 \leanok
 \uses{Multigraph, Multigraph.contract, Multigraph.vertexCount}
 \difficulty{2}
-If $e \in E(G)$ is not a diagonal (self-loop) pair, then
+Let $G$ be a multigraph and let $e$ be an edge of $G$ that is not a self-loop, so that
+its two endpoints are distinct. Writing $G/e$ for the multigraph obtained by contracting
+$e$, its vertex count satisfies
 \[
-  \abs{V(G/e)} = \abs{V(G)} - 1 .
+  \abs{V(G/e)} = \abs{V(G)} - 1,
 \]
+where the subtraction is truncated at $0$.
 \end{lemma}
 
-\begin{lemma}[Contraction drops at least one edge]
+\begin{lemma}[Contraction removes at least one edge]
 \lean{contract_edge_count_le}
 \label{contract_edge_count_le}
 \leanok
 \uses{Multigraph, Multigraph.contract, Multigraph.edgeCount}
 \difficulty{5}
-For every edge $e \in E(G)$, the contracted multigraph satisfies
+Let $G$ be a multigraph and let $e \in E(G)$ be one of its edges. Then the multigraph
+$G/e$ obtained by contracting $e$ satisfies
 \[
-  \abs{E(G/e)} \le \abs{E(G)} - 1 ,
+  \abs{E(G/e)} \le \abs{E(G)} - 1,
 \]
-so contraction never increases the edge count and removes at least the contracted edge.
+where both edge counts are taken with multiplicity; in particular, contracting an edge
+never increases the number of edges and eliminates at least the contracted edge itself.
 \end{lemma}
 
 \begin{definition}[Cut of a multigraph]
@@ -108,25 +113,29 @@ holds when some element of $e$ lies in $S$ and some element of $e$ lies outside 
 This is a membership-based formulation independent of a choice of representative.
 \end{definition}
 
-\begin{lemma}[Crossing in terms of chosen representatives]
+\begin{lemma}[Crossing via a chosen representative of the edge]
 \lean{crosses_iff_out}
 \label{crosses_iff_out}
 \leanok
 \uses{Crosses}
 \difficulty{4}
-For every finite set $S$ and unordered pair $e$, the predicate $\texttt{Crosses}\;S\;e$
-holds if and only if, writing $(x, y)$ for the chosen representative of $e$, either
-$x \in S$ and $y \notin S$, or $x \notin S$ and $y \in S$.
+Let $S$ be a finite subset of a type $\alpha$, and let $e$ be an unordered pair of
+elements of $\alpha$; write $(x,y)$ for a chosen ordered representative of $e$. Then $e$
+crosses $S$ — that is, some element of $e$ lies in $S$ and some element of $e$ lies
+outside $S$ — if and only if either $x \in S$ and $y \notin S$, or $x \notin S$ and $y
+\in S$.
 \end{lemma}
 
-\begin{lemma}[Crossing edges as a filter by the crossing predicate]
+\begin{lemma}[Crossing edges as the membership-based edge filter]
 \lean{crossingEdges_eq_filter_crosses}
 \label{crossingEdges_eq_filter_crosses}
 \leanok
 \uses{Crosses, MulCut, MulCut.crossingEdges, Multigraph, crosses_iff_out}
 \difficulty{2}
-For every cut $C$ of $G$, the multiset of crossing edges equals the edge multiset of
-$G$ filtered by the predicate $\texttt{Crosses}\;S$.
+Let $G$ be a multigraph and let $C$ be a cut of $G$ determined by a vertex subset $S$.
+Then the multiset of edges crossing $C$ equals the sub-multiset of edges $e$ of $G$ for
+which some endpoint of $e$ lies in $S$ while some endpoint of $e$ lies outside $S$,
+counted with multiplicity.
 \end{lemma}
 
 \begin{definition}[Size of a cut]
@@ -157,17 +166,19 @@ $e$, and both nonemptiness conditions continue to hold because $e$ has both endp
 on the same side.
 \end{definition}
 
-\begin{lemma}[Non-crossing contraction preserves cut size]
+\begin{lemma}[Contracting a non-crossing edge preserves cut size]
 \lean{cut_size_preserved}
 \label{cut_size_preserved}
 \leanok
 \uses{Crosses, MulCut, MulCut.contractedCut, MulCut.crossingEdges, MulCut.size, Multigraph, Multigraph.contract, crosses_iff_out, crossingEdges_eq_filter_crosses}
 \difficulty{6}
-If $e \in E(G)$ does not cross the cut $C$, then the induced cut on $G/e$ has the same
-size as $C$:
-\[
-  \abs{\text{cut } C \text{ in } G/e} = \abs{C} .
-\]
+Let $G$ be a multigraph with vertex set $V(G)$ and edge multiset $E(G)$, and let $C$ be
+a cut of $G$, given by a nonempty proper subset $S \subseteq V(G)$ with nonempty
+complement. Suppose $e \in E(G)$ is an edge that does not cross $C$, i.e.\ both
+endpoints of $e$ lie on the same side of the partition. Then the cut induced on the
+contracted multigraph $G/e$ by merging the endpoints of $e$ has the same size as $C$:
+the number of edges crossing the induced cut in $G/e$, counted with multiplicity, equals
+the number of edges crossing $C$ in $G$.
 \end{lemma}
 
 \begin{lemma}[Non-crossing contraction preserves minimality]
@@ -176,9 +187,12 @@ size as $C$:
 \leanok
 \uses{IsMulMinCut, MulCut, MulCut.contractedCut, MulCut.crossingEdges, MulCut.size, Multigraph, Multigraph.contract, count_bind_endpoints_eq_card_filter, crossingEdges_eq_filter_crosses, cut_size_preserved}
 \difficulty{6}
-If $C$ is a minimum cut of $G$ and $e \in E(G)$ does not cross $C$, then the induced cut
-on $G/e$ is again a minimum cut. Thus only crossing edges can destroy a fixed minimum
-cut during contraction.
+Let $G$ be a multigraph, and let $C$ be a minimum cut of $G$, given by a vertex subset
+$S$ that is nonempty and has nonempty complement in $V(G)$. Suppose $e \in E(G)$ is an
+edge that does not cross $C$, so that both endpoints of $e$ lie on the same side of the
+partition. Then the cut induced by $C$ on the contracted multigraph $G/e$ — obtained by
+merging the endpoints of $e$ and intersecting $S$ with the surviving vertices — is again
+a minimum cut, of $G/e$.
 \end{lemma}
 
 \begin{definition}[One contraction step of Karger's algorithm]
@@ -220,13 +234,14 @@ The degree of $v$ in a loopless multigraph $G$ is the number of edges incident t
 counted with multiplicity.
 \end{definition}
 
-\begin{lemma}[Membership in an unordered pair identifies a representative]
+\begin{lemma}[Membership in an unordered pair meets a chosen representative]
 \lean{eq_out_or_eq_out_of_mem}
 \label{eq_out_or_eq_out_of_mem}
 \leanok
 \difficulty{2}
-If $z$ belongs to the unordered pair $e$, then $z$ equals one of the two components of
-the chosen representative of $e$.
+Let $e$ be an unordered pair of elements of a type $\alpha$ with decidable equality, and
+let $(a, b)$ be the ordered pair chosen as a representative of $e$. If an element $z$
+belongs to $e$, then $z = a$ or $z = b$.
 \end{lemma}
 
 \begin{lemma}[Endpoint multiplicity equals incidence count]
@@ -234,39 +249,46 @@ the chosen representative of $e$.
 \label{count_bind_endpoints_eq_card_filter}
 \leanok
 \difficulty{4}
-For a multiset $m$ of unordered pairs and a vertex $v$, the multiplicity of $v$ in the
-multiset obtained by binding each edge to its set of endpoints equals the number of
-edges of $m$ containing $v$.
+Let $m$ be a multiset of unordered pairs (edges) drawn from a type $\alpha$, and fix an
+element $v \in \alpha$. For each edge $e$, let $\{e\}_\ast$ denote the finite set of its
+endpoints — a singleton when $e$ is a loop and a two-element set otherwise — and form
+the multiset obtained by concatenating $\{e\}_\ast$ over all $e$ in $m$, counting
+multiplicities of $m$. Then the multiplicity of $v$ in this concatenated multiset equals
+the number of edges $e$ of $m$ for which $v$ is an endpoint of $e$.
 \end{lemma}
 
-\begin{lemma}[Singleton cut has size equal to the degree]
+\begin{lemma}[Size of a singleton cut equals the vertex degree]
 \lean{singleton_cut_size_eq_degree}
 \label{singleton_cut_size_eq_degree}
 \leanok
 \uses{MulCut, MulCut.crossingEdges, MulCut.size, Multigraph, Multigraph.degree, crosses_iff_out, crossingEdges_eq_filter_crosses, eq_out_or_eq_out_of_mem}
 \difficulty{5}
-Let $v \in V(G)$ be a vertex such that $V(G) \setminus \{v\}$ is nonempty. Then the cut
-given by $S = \{v\}$ is a legitimate cut of $G$ and its size equals $\deg(v)$.
+Let $G$ be a loopless multigraph with vertex set $V(G)$, and let $v \in V(G)$ be a
+vertex whose deletion leaves at least one other vertex, i.e. $V(G) \setminus \{v\}$ is
+nonempty. Then the singleton $S = \{v\}$ is a cut of $G$, and the size of this cut — the
+number of edges with exactly one endpoint in $\{v\}$, counted with multiplicity — equals
+the degree $\deg(v)$ of $v$.
 \end{lemma}
 
-\begin{lemma}[Removing a vertex leaves a nonempty vertex set]
+\begin{lemma}[Deleting a vertex from a cuttable multigraph]
 \lean{erase_nonempty_of_cut}
 \label{erase_nonempty_of_cut}
 \leanok
 \uses{MulCut, Multigraph}
 \difficulty{3}
-If $G$ admits a cut $C$, then for every vertex $v$ the set $V(G) \setminus \{v\}$ is
-nonempty, since both sides of $C$ are nonempty.
+Let $G$ be a multigraph that admits a cut. Then for every vertex $v$, the vertex set of
+$G$ with $v$ removed, $V(G) \setminus \{v\}$, is nonempty.
 \end{lemma}
 
-\begin{lemma}[Min-cut size is at most every degree]
+\begin{lemma}[Minimum cut is at most every vertex degree]
 \lean{mincut_le_degree}
 \label{mincut_le_degree}
 \leanok
 \uses{IsMulMinCut, MulCut, MulCut.size, Multigraph, Multigraph.degree, erase_nonempty_of_cut, singleton_cut_size_eq_degree}
 \difficulty{3}
-If $C$ is a minimum cut of $G$ and $v \in V(G)$, then $\abs{C} \le \deg(v)$: otherwise
-the singleton cut at $v$ would be smaller.
+Let $G$ be a loopless multigraph, let $C$ be a minimum cut of $G$, and let $v$ be any
+vertex of $G$. Then the size of $C$ is at most the degree of $v$, that is,
+$\mathrm{size}(C) \le \deg(v)$.
 \end{lemma}
 
 \begin{lemma}[Endpoints of edges are vertices]
@@ -275,7 +297,9 @@ the singleton cut at $v$ would be smaller.
 \leanok
 \uses{Multigraph}
 \difficulty{2}
-Any $x$ occurring in the multiset of all edge endpoints of $G$ belongs to $V(G)$.
+Let $G$ be a multigraph on a vertex type $\alpha$, with vertex set $V(G)$ and edge
+multiset $E(G)$. If a point $x \in \alpha$ occurs as an endpoint of some edge of $G$ —
+that is, $x$ lies in one of the unordered pairs making up $E(G)$ — then $x \in V(G)$.
 \end{lemma}
 
 \begin{lemma}[Summing multiplicities over a covering set]
@@ -283,22 +307,29 @@ Any $x$ occurring in the multiset of all edge endpoints of $G$ belongs to $V(G)$
 \label{sum_counts_eq_card_of_subset}
 \leanok
 \difficulty{5}
-If every element of a multiset $m$ lies in the finite set $s$, then
+Let $m$ be a finite multiset with elements drawn from a type $\alpha$, and let $s$ be a
+finite set of elements of $\alpha$ that contains every element occurring in $m$. Writing
+$\mathrm{count}_m(a)$ for the multiplicity of $a$ in $m$, the multiplicities over $s$
+sum to the total size of the multiset:
 \[
-  \sum_{a \in s} \mathrm{count}_m(a) = \abs{m} .
+  \sum_{a \in s} \mathrm{count}_m(a) = \abs{m}.
 \]
 \end{lemma}
 
-\begin{lemma}[Handshake lemma]
+\begin{lemma}[Handshake lemma for multigraphs]
 \lean{sum_degrees_eq_twice_edgeCount}
 \label{sum_degrees_eq_twice_edgeCount}
 \leanok
 \uses{Multigraph, Multigraph.degree, Multigraph.edgeCount, count_bind_endpoints_eq_card_filter, endpoints_mem_vertices, sum_counts_eq_card_of_subset}
 \difficulty{4}
-For every multigraph $G$,
+Let $G$ be a loopless multigraph, given by a finite vertex set $V$ together with a
+multiset $E$ of edges, each edge an unordered pair of distinct vertices of $V$. For a
+vertex $v$, let $\deg(v)$ be the number of edges of $G$ incident to $v$, counted with
+multiplicity. Then
 \[
-  \sum_{v \in V(G)} \deg(v) = 2\abs{E(G)} .
+  \sum_{v \in V} \deg(v) = 2\,\abs{E},
 \]
+where $\abs{E}$ is the number of edges counted with multiplicity.
 \end{lemma}
 
 \begin{lemma}[Edge count lower bound from a minimum degree]
@@ -307,10 +338,14 @@ For every multigraph $G$,
 \leanok
 \uses{Multigraph, Multigraph.degree, Multigraph.edgeCount, Multigraph.vertexCount, sum_degrees_eq_twice_edgeCount}
 \difficulty{3}
-If every vertex of $G$ has degree at least $k$, then
+Let $G$ be a loopless multigraph with finite vertex set $V$ and edge multiset $E$, and
+let $k$ be a natural number. If every vertex $v \in V$ has degree at least $k$ in $G$,
+then
 \[
-  k \cdot \abs{V(G)} \le 2\abs{E(G)} .
+  k \cdot \abs{V} \le 2\,\abs{E},
 \]
+where $\abs{V}$ is the number of vertices and $\abs{E}$ is the number of edges counted
+with multiplicity.
 \end{lemma}
 
 \begin{definition}[Survival probability of one step]
@@ -324,64 +359,68 @@ edge is not one of the $c$ cut edges, namely
 \]
 \end{definition}
 
-\begin{lemma}[Edge count invariant along the algorithm]
+\begin{lemma}[Edge-count lower bound at each contraction step]
 \lean{edge_count_invariant}
 \label{edge_count_invariant}
 \leanok
 \uses{IsMulMinCut, MulCut, MulCut.size, Multigraph, Multigraph.edgeCount, Multigraph.vertexCount, edge_count_lower_bound, mincut_le_degree}
 \difficulty{3}
-Let $C_0$ be a minimum cut of $G_0$ and let $i < \abs{V(G_0)} - 1$. Then
+Let $G_0$ be a multigraph, and let $C_0$ be a minimum cut of $G_0$, so that the number
+of edges crossing $C_0$ (counted with multiplicity), its size, is no larger than that of
+any other cut. Then for every natural number $i$ with $i < \abs{V(G_0)} - 1$,
 \[
-  \abs{C_0} \cdot \bigl(\abs{V(G_0)} - i\bigr) \le 2\abs{E(G_0)} ,
+  \mathrm{size}(C_0)\cdot\bigl(\abs{V(G_0)} - i\bigr) \;\le\; 2\,\abs{E(G_0)},
 \]
-the invariant maintained after $i$ contraction steps.
+where $\abs{V(G_0)}$ is the vertex count and $\abs{E(G_0)}$ is the edge count of $G_0$.
 \end{lemma}
 
-\begin{lemma}[Telescoping product]
+\begin{lemma}[Telescoping product identity]
 \lean{telescope_prod}
 \label{telescope_prod}
 \leanok
 \difficulty{5}
-For every $n \ge 2$,
+For every integer $n \ge 2$, the telescoping product
 \[
-  \prod_{i=0}^{n-3} \frac{n - i - 2}{n - i} = \frac{2}{n(n-1)} .
+  \prod_{i=0}^{n-3} \frac{n - i - 2}{n - i} = \frac{2}{n(n-1)}
 \]
+holds, where the factors are evaluated as real numbers.
 \end{lemma}
 
-\begin{theorem}[Survival probability of a fixed min-cut]
+\begin{theorem}[Lower bound for the min-cut survival product]
 \lean{karger_survival_prob_algorithmic}
 \label{karger_survival_prob_algorithmic}
 \leanok
 \uses{IsMulMinCut, MulCut, Multigraph, Multigraph.vertexCount, telescope_prod}
 \difficulty{1}
-Let $C$ be a minimum cut of a multigraph $G$ with $n = \abs{V(G)} \ge 4$. Then the
-telescoping product of per-step survival factors, which represents the probability that
-none of the $n-2$ contractions picks a cut edge, is bounded below by
+Let $C$ be a minimum cut of a multigraph $G$, and write $n$ for its number of vertices;
+suppose $n \ge 4$. Then
 \[
-  \frac{2}{n(n-1)} \;\le\; \prod_{i=0}^{n-3} \frac{n - i - 2}{n - i} .
+  \frac{2}{n(n-1)} \;\le\; \prod_{i=0}^{n-3} \frac{n-i-2}{n-i}.
 \]
 \end{theorem}
 
-\begin{theorem}[Repetition succeeds with high probability]
+\begin{theorem}[Karger's contraction algorithm succeeds with high probability]
 \lean{karger_whp}
 \label{karger_whp}
 \leanok
 \uses{Multigraph, Multigraph.vertexCount}
 \difficulty{5}
-Let $n = \abs{V(G)} \ge 4$. Repeating the algorithm $n(n-1)/2$ independent times, the
-success probability satisfies
+Let $G$ be a loopless multigraph whose vertex set is finite, and suppose $G$ has $n \ge
+4$ vertices. Then running Karger's random-contraction algorithm $\binom{n}{2} =
+n(n-1)/2$ times independently and returning the smallest cut found succeeds with
+probability
 \[
-  1 - \left(1 - \frac{2}{n(n-1)}\right)^{n(n-1)/2} \;\ge\; 1 - e^{-1} .
+  1 - \left(1 - \frac{2}{n(n-1)}\right)^{n(n-1)/2} \;\ge\; 1 - e^{-1}.
 \]
 \end{theorem}
 
-\begin{lemma}[Counting disjoint events of large probability]
+\begin{lemma}[A cardinality bound from a probability sum]
 \lean{card_le_of_disjoint_prob_lb}
 \label{card_le_of_disjoint_prob_lb}
 \leanok
 \difficulty{2}
-If $p > 0$ and $m \cdot p \le 1$ (as is the case for $m$ disjoint events each of
-probability at least $p$), then $m \le p^{-1}$.
+Let $m$ be a natural number and $p > 0$ a real number. If $m p \le 1$, then $m \le
+p^{-1}$.
 \end{lemma}
 
 \begin{lemma}[Closed form for $\binom{n}{2}$]
@@ -389,44 +428,44 @@ probability at least $p$), then $m \le p^{-1}$.
 \label{choose_two}
 \leanok
 \difficulty{3}
-For $n \ge 2$,
+For every natural number $n \ge 2$, the binomial coefficient counting the unordered
+pairs from an $n$-element set satisfies
 \[
-  \binom{n}{2} = \frac{n(n-1)}{2}
+  \binom{n}{2} = \frac{n(n-1)}{2},
 \]
-as real numbers.
+an identity of real numbers.
 \end{lemma}
 
-\begin{lemma}[Polynomial bound on a binomial coefficient]
+\begin{lemma}[Power bound on a binomial coefficient]
 \lean{choose_le_pow}
 \label{choose_le_pow}
 \leanok
 \difficulty{1}
-For all $n$ and $\alpha$, $\binom{n}{2\alpha} \le n^{2\alpha}$.
+For all natural numbers $n$ and $\alpha$, the binomial coefficient of $n$ over $2\alpha$
+is bounded by the corresponding power of $n$: \[\binom{n}{2\alpha} \le n^{2\alpha}.\]
 \end{lemma}
 
-\begin{theorem}[At most $\binom{n}{2}$ minimum cuts]
+\begin{theorem}[A counting bound of $\binom{n}{2}$]
 \lean{num_mincuts_le_choose}
 \label{num_mincuts_le_choose}
 \leanok
 \uses{Multigraph, Multigraph.vertexCount, card_le_of_disjoint_prob_lb, choose_two}
 \difficulty{4}
-Let $n = \abs{V(G)} \ge 2$. If a family of $\mathrm{numCuts}$ cuts is disjoint in the
-sense that $\mathrm{numCuts} \cdot \frac{2}{n(n-1)} \le 1$, then
+Let $G$ be a multigraph whose (finite) vertex set has $n \ge 2$ elements, and let $m$ be
+a natural number. If
 \[
-  \mathrm{numCuts} \le \binom{n}{2} .
+  m \cdot \frac{2}{n(n-1)} \le 1,
 \]
+then $m \le \binom{n}{2}$.
 \end{theorem}
 
-\begin{theorem}[At most $n^{2\alpha}$ approximate minimum cuts]
+\begin{theorem}[At most $n^{2\alpha}$ near-minimum cuts]
 \lean{num_alpha_mincuts_le}
 \label{num_alpha_mincuts_le}
 \leanok
 \uses{Multigraph, Multigraph.vertexCount, card_le_of_disjoint_prob_lb, choose_le_pow}
 \difficulty{3}
-Let $\alpha > 0$ with $2\alpha \le n = \abs{V(G)}$. If a family of $\mathrm{numCuts}$
-$\alpha$-minimum cuts satisfies
-$\mathrm{numCuts} \cdot \binom{n}{2\alpha}^{-1} \le 1$, then
-\[
-  \mathrm{numCuts} \le n^{2\alpha} .
-\]
+Let $G$ be a multigraph with $n$ vertices, and let $\alpha$ and $m$ be natural numbers
+with $\alpha \ge 1$ and $2\alpha \le n$. If, as an inequality of real numbers, $m \cdot
+\binom{n}{2\alpha}^{-1} \le 1$, then $m \le n^{2\alpha}$.
 \end{theorem}

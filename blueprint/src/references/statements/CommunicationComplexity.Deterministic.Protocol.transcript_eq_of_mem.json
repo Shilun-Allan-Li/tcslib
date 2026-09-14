@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.transcript_eq_of_mem",
+ "key": "82973b90a20a0dfd",
+ "kind": "theorem",
+ "title": "Transcript recovered from its input set",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, let $t$ be a syntactic transcript of $p$, and let $(x, y) \\in X \\times Y$ be an input pair. If $(x, y)$ belongs to the input set of $t$, then executing $p$ on $(x, y)$ produces exactly the transcript $t$; that is, $p.\\mathrm{transcript}(x, y) = t$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over X, Y with output α",
+  "t is a syntactic transcript of p",
+  "(x,y) is an input pair in X × Y",
+  "(x,y) belongs to the input set of t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If an input pair $xy$ belongs to the input set of a syntactic transcript $t$ of $p$,\nthen $t$ is exactly the transcript computed by running $p$ on $xy$:\n$p.\\mathrm{transcript}(xy) = t$."
+}

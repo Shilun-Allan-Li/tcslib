@@ -1,0 +1,18 @@
+{
+ "lean_name": "Halving.halving_bound",
+ "key": "7d27d2005c36ca8e",
+ "kind": "theorem",
+ "title": "Halving mistake bound",
+ "statement": "Let $\\mathtt{eval} : \\mathit{Hyp} \\to X \\to \\mathsf{Bool}$ assign a Boolean label to each input under each hypothesis, let $H$ be a finite class of hypotheses, and fix a target hypothesis $\\mathtt{target} \\in H$ that supplies the correct label $\\mathtt{eval}(\\mathtt{target}, x)$ for every input $x$. Then, on any finite sequence $xs$ of inputs, the number of mistakes made by the Halving Algorithm run from the initial version space $H$ is at most $\\lfloor \\log_2 \\abs{H} \\rfloor$:\n\\[\n  \\mathtt{mistakes}(\\mathtt{eval}, \\mathtt{target}, H, xs) \\;\\le\\; \\lfloor \\log_2 \\abs{H} \\rfloor.\n\\]",
+ "hypotheses_covered": [
+  "evaluation map eval : Hyp → X → Bool",
+  "finite hypothesis class H",
+  "target hypothesis providing the labels",
+  "target ∈ H",
+  "arbitrary finite input sequence xs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Specialising to the initial hypothesis class $H$ (with $\\mathtt{target} \\in H$), the\nHalving Algorithm makes at most $\\lfloor\\log_2 |H|\\rfloor$ mistakes on any input\nsequence:\n\\[\n  \\mathtt{mistakes}(\\mathtt{eval}, \\mathtt{target}, H, xs)\n  \\;\\le\\; \\lfloor\\log_2 |H|\\rfloor.\n\\]"
+}

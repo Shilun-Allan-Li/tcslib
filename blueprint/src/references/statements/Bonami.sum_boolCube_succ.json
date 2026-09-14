@@ -1,0 +1,15 @@
+{
+ "lean_name": "Bonami.sum_boolCube_succ",
+ "key": "a0fd1c219aff308f",
+ "kind": "lemma",
+ "title": "Splitting a sum over the hypercube on its last coordinate",
+ "statement": "Let $n$ be a natural number and let $\\varphi \\colon \\{0,1\\}^{n+1} \\to \\bbr$ be a real-valued function on the Boolean hypercube of dimension $n+1$. Then the sum of $\\varphi$ over all points of the cube splits according to the value of the final coordinate:\n\\[\n\\sum_{x \\in \\{0,1\\}^{n+1}} \\varphi(x) \\;=\\; \\sum_{y \\in \\{0,1\\}^{n}} \\varphi\\bigl((y,\\mathrm{false})\\bigr) \\;+\\; \\sum_{y \\in \\{0,1\\}^{n}} \\varphi\\bigl((y,\\mathrm{true})\\bigr),\n\\]\nwhere $(y,b)$ denotes the point of $\\{0,1\\}^{n+1}$ obtained by appending the bit $b$ to $y \\in \\{0,1\\}^{n}$ as its last coordinate.",
+ "hypotheses_covered": [
+  "n a natural number",
+  "φ a real-valued function on the (n+1)-dimensional Boolean hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $\\varphi$ on the cube of dimension $n+1$, the total sum decomposes according to the\nvalue of the last coordinate:\n\\[\n\\sum_{x \\in \\{0,1\\}^{n+1}} \\varphi(x) = \\sum_{x \\in \\{0,1\\}^{n}} \\varphi(x,\\mathrm{false}) + \\sum_{x \\in \\{0,1\\}^{n}} \\varphi(x,\\mathrm{true}).\n\\]"
+}

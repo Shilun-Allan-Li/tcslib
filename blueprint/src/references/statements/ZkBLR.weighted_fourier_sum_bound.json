@@ -1,0 +1,18 @@
+{
+ "lean_name": "ZkBLR.weighted_fourier_sum_bound",
+ "key": "63d1750415bfeb65",
+ "kind": "lemma",
+ "title": "Weighted Fourier sum bound for functions far from linear",
+ "statement": "Let $p$ be prime, and let $f : \\mathbb{Z}_p^n \\to \\mathbb{Z}_p$ be normalized and $\\varepsilon$-far from linear: that is, $f(0) = 0$, the parameter satisfies $0 \\le \\varepsilon \\le 1$, and $\\mathrm{dist}(f,g) \\ge \\varepsilon$ for every linear $g : \\mathbb{Z}_p^n \\to \\mathbb{Z}_p$. Write $\\widetilde{f}(x) = \\omega_p^{f(x)}$ for the lift of $f$ to the $p$-th roots of unity, and $\\hat{\\widetilde{f}}(s)$ for its Fourier coefficient at frequency $s \\in \\mathbb{Z}_p^n$. Then\n\\[\n  \\sum_{s \\in \\mathbb{Z}_p^n}\n    \\bigl|\\hat{\\widetilde{f}}(s)\\bigr|^2 \\,\n    \\operatorname{Re}\\bigl[\\hat{\\widetilde{f}}(s)\\bigr]\n  \\;\\le\\;\n  1 - \\bigl(1 - \\cos(2\\pi/p)\\bigr)\\varepsilon .\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "f maps Z_p^n to Z_p",
+  "f is normalized: f(0) = 0",
+  "0 ≤ ε ≤ 1",
+  "dist(f,g) ≥ ε for every linear g"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\mathbb{Z}_p^n \\to \\mathbb{Z}_p$ is $\\varepsilon$-far from linear\n(normalized), then\n\\[\n  \\sum_{s\\in\\mathbb{Z}_p^n}\n  \\bigl\\|\\widehat{\\widetilde{f}}(s)\\bigr\\|^2\\,\n  \\operatorname{Re}\\!\\left[\\widehat{\\widetilde{f}}(s)\\right]\n  \\;\\le\\; 1 - \\bigl(1-\\cos(2\\pi/p)\\bigr)\\varepsilon.\n\\]"
+}

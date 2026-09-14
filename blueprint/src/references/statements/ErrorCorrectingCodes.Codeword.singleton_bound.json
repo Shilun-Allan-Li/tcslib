@@ -1,0 +1,17 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.singleton_bound",
+ "key": "5fe9af0b991b8c7c",
+ "kind": "theorem",
+ "title": "Singleton bound",
+ "statement": "Let $\\alpha$ be a finite alphabet with at least two symbols, and let $C$ be a code of length $n$ over $\\alpha$ — that is, a finite set of codewords $c : \\mathrm{Fin}\\,n \\to \\alpha$. Suppose $C$ has minimum distance $d$, meaning that some two distinct codewords of $C$ are at Hamming distance exactly $d$ and no two distinct codewords are at distance less than $d$. Then\n\\[\n\\abs{C} \\;\\le\\; \\abs{\\alpha}^{\\,n-d+1}.\n\\]",
+ "hypotheses_covered": [
+  "alphabet is finite",
+  "alphabet is nontrivial (at least two symbols)",
+  "C is a code of length n over the alphabet",
+  "C has minimum distance d (distinct codewords realizing distance d, and no two distinct codewords closer than d)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nAssuming $\\alpha$ is nontrivial, a code $C\\subseteq\\alpha^n$ with minimum distance $d$\nsatisfies\n\\[\n|C| \\;\\le\\; |\\alpha|^{\\,n-d+1}.\n\\]"
+}

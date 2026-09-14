@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.BitString.agreementCount_add_hammingDist_eq_length",
+ "key": "888087b0cce92286",
+ "kind": "theorem",
+ "title": "Agreement count plus Hamming distance equals length",
+ "statement": "Let $x$ and $y$ be $n$-bit strings. Then the number of coordinates on which $x$ and $y$ agree, together with their Hamming distance $d(x, y)$ — the number of coordinates on which they differ — sums to the length:\n\\[\n  \\#\\{i : x_i = y_i\\} + d(x, y) = n.\n\\]",
+ "hypotheses_covered": [
+  "two n-bit strings x and y (over Fin n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two $n$-bit strings $x$ and $y$,\n\\[\n  \\mathrm{agreementCount}(x, y) + \\mathrm{hammingDist}(x, y) = n.\n\\]\nThe agreeing and disagreeing coordinates partition $\\{0, \\ldots, n-1\\}$."
+}

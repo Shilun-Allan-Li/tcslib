@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Hash.collision_prob_le",
+ "key": "0229b0379b711b18",
+ "kind": "theorem",
+ "title": "Collision probability bound for random hashing",
+ "statement": "Let $\\alpha$ be a finite type and let $k \\ge 1$, so that each hash value lies in $\\{0,\\dots,k-1\\}$. Consider the space of hash functions $h \\colon \\alpha \\to \\mathrm{Fin}\\,k$, equipped with the uniform product probability measure, and fix two distinct points $x \\ne y$ in $\\alpha$. Then the probability that $x$ and $y$ collide is at most $1/k$:\n\\[\n  \\Pr\\bigl[\\,h(x) = h(y)\\,\\bigr] \\;\\le\\; \\frac{1}{k}.\n\\]",
+ "hypotheses_covered": [
+  "α is a finite type",
+  "k ≥ 1 (NeZero k)",
+  "x and y are distinct (x ≠ y)",
+  "h ranges over the space of hash functions α → Fin k under the uniform product measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\alpha$ be a finite type, $k \\ge 1$, and let $x \\ne y \\in \\alpha$.\nFor a uniformly random hash function $h : \\alpha \\to \\mathrm{Fin}\\,k$,\n\\[\n  \\Pr[h(x) = h(y)] \\;\\le\\; \\frac{1}{k}.\n\\]\nThat is, $\\mu_{\\mathbb{R}}\\bigl(\\{h \\in \\texttt{HashSpace}\\,\\alpha\\,k \\mid h(x) = h(y)\\}\\bigr) \\le 1/k$."
+}

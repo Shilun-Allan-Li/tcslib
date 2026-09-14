@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.dedupClauseVars_length_le",
+ "key": "2a2abff982f7b75d",
+ "kind": "lemma",
+ "title": "Deduplication does not increase clause length",
+ "statement": "Let $c$ be a clause, that is, a finite list of literals over the variables $\\{0,1,\\dots,n-1\\}$, and let $\\mathrm{dedup}(c)$ be the clause obtained from $c$ by retaining, for each variable, only its first occurring literal and discarding every later literal on the same variable. Then the length of $\\mathrm{dedup}(c)$ is at most the length of $c$.",
+ "hypotheses_covered": [
+  "c is a list of literals over Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The length of $\\mathrm{dedupClauseVars}\\,c$ is at most the length of $c$."
+}

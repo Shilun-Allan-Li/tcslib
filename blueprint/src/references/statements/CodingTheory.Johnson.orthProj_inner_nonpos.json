@@ -1,0 +1,18 @@
+{
+ "lean_name": "CodingTheory.Johnson.orthProj_inner_nonpos",
+ "key": "19e530c9440b639b",
+ "kind": "lemma",
+ "title": "Projection off a unit vector preserves nonpositive inner products",
+ "statement": "Let $V$ be a real inner product space, and let $u,v,w \\in V$ with $\\norm{u} = 1$. Suppose the three pairwise inner products $\\langle v,w\\rangle$, $\\langle v,u\\rangle$, and $\\langle w,u\\rangle$ are all nonpositive. For a vector $x \\in V$, write $x - \\langle u,x\\rangle\\, u$ for the projection of $x$ onto the orthogonal complement of $\\mathrm{span}\\{u\\}$. Then the projections of $v$ and $w$ again have nonpositive inner product:\n\\[\n\\bigl\\langle\\, v - \\langle u,v\\rangle\\, u,\\ \\ w - \\langle u,w\\rangle\\, u \\,\\bigr\\rangle \\le 0.\n\\]",
+ "hypotheses_covered": [
+  "real inner product space V",
+  "u is a unit vector (‖u‖ = 1)",
+  "⟨v,w⟩ ≤ 0",
+  "⟨v,u⟩ ≤ 0",
+  "⟨w,u⟩ ≤ 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\norm{u} = 1$ and let $v,w$ satisfy $\\langle v,w\\rangle \\le 0$,\n$\\langle v,u\\rangle \\le 0$ and $\\langle w,u\\rangle \\le 0$. Then\n$\\langle \\mathrm{orthProj}(u,v), \\mathrm{orthProj}(u,w)\\rangle \\le 0$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.prod_filter_fiber_mul_le",
+ "key": "fcb7ee45985d1c30",
+ "kind": "lemma",
+ "title": "Fiberwise product counting bound",
+ "statement": "Let $\\alpha$ and $\\beta$ be finite types, let $P$ be a predicate on $\\alpha$ and $Q$ a predicate on $\\alpha \\times \\beta$, and let $C, B$ be natural numbers. Suppose that for every $a \\in \\alpha$ satisfying $P(a)$, the fiber $\\{\\,b \\in \\beta : Q(a,b)\\,\\}$ satisfies $\\abs{\\{\\,b : Q(a,b)\\,\\}} \\cdot C \\le B$. Then\n\\[\n\\abs{\\{\\,(a,b) \\in \\alpha \\times \\beta : P(a) \\wedge Q(a,b)\\,\\}} \\cdot C\n\\;\\le\\;\n\\abs{\\{\\,a \\in \\alpha : P(a)\\,\\}} \\cdot B .\n\\]",
+ "hypotheses_covered": [
+  "α and β are finite types",
+  "P is a predicate on α",
+  "Q is a predicate on pairs in α × β",
+  "C and B are natural numbers",
+  "for every a with P(a), the fiber count of b satisfying Q(a,b) times C is at most B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a predicate on $\\alpha$, $Q$ a predicate on $\\alpha \\times \\beta$, and $C, B$ natural\nnumbers such that for every $a$ with $P(a)$ the fiber count satisfies\n$\\abs{\\{b : Q(a,b)\\}} \\cdot C \\le B$.  Then\n\\[\n\\abs{\\{z \\in \\alpha\\times\\beta : P(z_1) \\wedge Q(z_1,z_2)\\}} \\cdot C \\;\\le\\;\n\\abs{\\{a : P(a)\\}} \\cdot B .\n\\]"
+}

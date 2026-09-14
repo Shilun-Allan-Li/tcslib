@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.dedupTermVar_width_le",
+ "key": "5076ebcdaa8e68db",
+ "kind": "lemma",
+ "title": "De-duplication does not increase term length",
+ "statement": "Let $t$ be a term, that is, a finite list of literals over the variables $\\{0, 1, \\dots, n-1\\}$, and let $t'$ be the term obtained from $t$ by scanning it and keeping each literal only when no literal already kept uses the same variable. Then $t'$ has length at most that of $t$.",
+ "hypotheses_covered": [
+  "t is a term (a finite list of literals over n variables)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The de-duplicated term is no longer than the original:\n$(\\mathrm{dedupTermVar}\\,t).\\mathrm{length} \\le t.\\mathrm{length}$."
+}

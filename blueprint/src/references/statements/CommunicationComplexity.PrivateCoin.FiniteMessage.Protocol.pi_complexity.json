@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_complexity",
+ "key": "58fa6a41c9e89361",
+ "kind": "theorem",
+ "title": "Additivity of complexity under products",
+ "statement": "Let $k$ be a natural number and let $p_0, \\dots, p_{k-1}$ be a family of private-coin finite-message protocols indexed by $i \\in \\mathrm{Fin}\\,k$, where $p_i$ has private-randomness types $\\Omega_{X,i}$, $\\Omega_{Y,i}$, shared input types $X$, $Y$, and output type $\\alpha_i$. Then the communication complexity of their $k$-fold product protocol equals the sum of the individual communication complexities, \\[ \\mathrm{complexity}\\bigl(\\textstyle\\prod_{i} p_i\\bigr) = \\sum_{i} \\mathrm{complexity}(p_i). \\]",
+ "hypotheses_covered": [
+  "k : ℕ, the number of protocols",
+  "a family of private-coin finite-message protocols p_i indexed by i ∈ Fin k, with heterogeneous randomness types Ω_{X,i}, Ω_{Y,i} and output types α_i over shared inputs X, Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The communication complexity of the $k$-fold product equals the sum of individual\ncomplexities: $(\\mathrm{pi}\\;p).\\mathrm{complexity} = \\sum_{i} (p\\,i).\\mathrm{complexity}$."
+}

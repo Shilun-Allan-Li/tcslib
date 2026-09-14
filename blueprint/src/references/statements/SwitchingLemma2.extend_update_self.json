@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.extend_update_self",
+ "key": "ab67a6ebc676f62f",
+ "kind": "lemma",
+ "title": "Updating a restriction at a free variable to match the point",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, let $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be a point, and let $v \\in \\mathrm{Fin}\\,n$ be a free variable of $\\rho$ with $x(v) = b$. Let $\\rho[v \\mapsto b]$ be the restriction obtained from $\\rho$ by fixing the value of variable $v$ to $b$ (and leaving every other variable as in $\\rho$). Then $\\rho[v \\mapsto b]$ and $\\rho$ have the same extension along $x$; that is, $(\\rho[v \\mapsto b]).\\mathrm{extend}\\,x$ and $\\rho.\\mathrm{extend}\\,x$ agree as Boolean assignments.",
+ "hypotheses_covered": [
+  "v is a free variable of ρ",
+  "x(v) = b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $v$ is free in $\\rho$ and the input $x$ satisfies $x(v) = b$, then extending the updated\nrestriction $\\rho[v \\mapsto b]$ by $x$ yields the same total assignment as extending $\\rho$ by $x$."
+}

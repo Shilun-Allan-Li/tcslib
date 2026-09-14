@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le",
+ "key": "eb83dfaed3b716e9",
+ "kind": "theorem",
+ "title": "Public-coin communication complexity of equality",
+ "statement": "For every natural number $n$ and every real $\\varepsilon > 0$, the $\\varepsilon$-error public-coin randomized communication complexity of the equality function $\\mathrm{equality}_n$ on pairs of $n$-bit Boolean strings satisfies\n\\[\n  \\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(\\mathrm{equality}_n)\n  \\;\\le\\;\n  \\left\\lceil \\log_2\\!\\left(\\lceil \\varepsilon^{-1}\\rceil + 1\\right)\\right\\rceil + 1,\n\\]\nwhere $\\lceil \\varepsilon^{-1}\\rceil$ denotes the least natural number at least $\\varepsilon^{-1}$ and $\\lceil\\,\\cdot\\,\\rceil$ inside the logarithm the ceiling of the base-$2$ logarithm. That is, there is a public-coin protocol computing $\\mathrm{equality}_n$ with error probability at most $\\varepsilon$ on every input pair whose worst-case number of exchanged bits is bounded by this quantity.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "ε is a positive real (0 < ε)",
+  "bound is in ℕ∞ (ENat)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every $n \\in \\mathbb{N}$ and every $\\varepsilon > 0$,\n\\[\n  R_\\varepsilon(\\mathrm{equality}_n)\n  \\;\\le\\; \\left\\lfloor \\log_2\\!\\left(\\lceil \\varepsilon^{-1} \\rceil + 1\\right)\\right\\rfloor + 1.\n\\]"
+}

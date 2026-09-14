@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_cond_eq_disjointCondMeasure_cond_of_subset_disjointEvent",
+ "key": "a647da4f944d1148",
+ "kind": "theorem",
+ "title": "Conditioning commutes with conditioning on disjointness",
+ "statement": "Fix $n \\ge 1$ coordinates, and write $\\mathbb{P}$ for the uniform probability measure on the finite space of hard-distribution samples. Let $E$ denote the disjointness event — the set of samples for which Alice's input set and Bob's input set are disjoint — and let $\\mathbb{P}(\\,\\cdot \\mid E)$ be the hard distribution conditioned on disjointness. Then for every event $A \\subseteq E$, conditioning on $A$ produces the same measure whether one starts from $\\mathbb{P}$ or from $\\mathbb{P}(\\,\\cdot \\mid E)$; that is, $\\mathbb{P}(\\,\\cdot \\mid A) = \\mathbb{P}(\\,\\cdot \\mid E)(\\,\\cdot \\mid A)$.",
+ "hypotheses_covered": [
+  "A is a subset of the disjointness event ($A \\subseteq E$)",
+  "a positive number of coordinates $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Conditioning on a subevent of disjointness is the same under the ambient hard distribution and under the hard distribution first conditioned on disjointness."
+}

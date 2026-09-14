@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTermSpecialYFalse_eq_aliceCoarseInfoTermSpecialYFalse",
+ "key": "fd6df7acec621ad3",
+ "kind": "theorem",
+ "title": "Equality of fine and coarse Alice information terms",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$, and let $\\mu$ be the hard distribution on samples, conditioned on the generated input pair $(X,Y)$ being disjoint and on Bob's special bit $Y_T$ being false. Write $X_T$ for Alice's bit at the special coordinate $T$ and $\\Pi$ for the transcript that $p$ produces on the generated input. Then the conditional mutual information of $X_T$ and $\\Pi$ given the triple $(T,\\,X_{<T},\\,Y_{\\ge T})$ equals the conditional mutual information of $X_T$ and $\\Pi$ given the coarser triple $(T,\\,X_{<T},\\,Y_{>T})$, both computed under $\\mu$; that is,\n\\[\nI\\big(X_T ; \\Pi \\mid T, X_{<T}, Y_{\\ge T}\\big) \\;=\\; I\\big(X_T ; \\Pi \\mid T, X_{<T}, Y_{>T}\\big).\n\\]\nHere $X_{<T}$ denotes Alice's bits strictly before the special coordinate (padded with false elsewhere), $Y_{>T}$ Bob's bits strictly after it, and $Y_{\\ge T}$ Bob's bits from the special coordinate onward.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol on inputs of length n",
+  "measure conditioned on the input pair being disjoint",
+  "measure further conditioned on Bob's special bit being false",
+  "conditioning variables differ only by inclusion of the special coordinate in Bob's suffix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The fine $Y_{≥T}$ and coarse $Y_{>T}$ versions of the Alice $Y_{T}=false$ information term agree, because $Y_{T}$ is fixed on the conditioned measure."
+}

@@ -13,6 +13,10 @@ error parameter $\varepsilon$.
 
 \begin{definition}[Public-coin communication complexity]
 \lean{CommunicationComplexity.PublicCoin.communicationComplexity}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p002-b002,
+  pdf-d54d402b16e2-p011-b003
+}
 \label{CommunicationComplexity.PublicCoin.communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.ApproxComputes}
@@ -29,65 +33,88 @@ public-coin randomized protocols that compute $f$ with error at most $\varepsilo
 every input.
 \end{definition}
 
-\begin{theorem}[Characterization of complexity bound]
+\begin{theorem}[Bit bound as existence of an approximating protocol]
 \lean{CommunicationComplexity.PublicCoin.communicationComplexity_le_iff}
 \label{CommunicationComplexity.PublicCoin.communicationComplexity_le_iff}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Internal.enat_iInf_le_coe_iff, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.communicationComplexity}
 \difficulty{2}
-For $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $m \in \mathbb{N}$,
-we have $\mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \le m$ if and only if there exist
-$n \in \mathbb{N}$ and a public-coin protocol $p$ on $\mathrm{CoinTape}(n)$ such that
-$p$ $\varepsilon$-approximates $f$ and $p.\mathrm{complexity} \le m$.
+Let $f : X \to Y \to \alpha$ be a function of Alice's input and Bob's input, let
+$\varepsilon \in \bbr$ be an error parameter, and let $m \in \bbn$. Then the
+$\varepsilon$-error public-coin communication complexity satisfies
+$\mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \le m$ if and only if there exist a length $n
+\in \bbn$ and a public-coin protocol $p$ over the coin tape $\mathrm{CoinTape}(n)$ such
+that $p$ $\varepsilon$-computes $f$ and the worst-case bit complexity of $p$ is at most
+$m$.
 \end{theorem}
 
-\begin{theorem}[Lower bound characterization]
+\begin{theorem}[Lower-bound characterisation of public-coin complexity]
 \lean{CommunicationComplexity.PublicCoin.le_communicationComplexity_iff}
 \label{CommunicationComplexity.PublicCoin.le_communicationComplexity_iff}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.communicationComplexity}
 \difficulty{2}
-For $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $m \in \mathbb{N}$,
-we have $m \le \mathrm{R}^{\mathrm{pub}}_\varepsilon(f)$ if and only if every
-public-coin protocol $p$ on any $\mathrm{CoinTape}(n)$ that $\varepsilon$-approximates
-$f$ satisfies $m \le p.\mathrm{complexity}$.
+Let $f : X \to Y \to \alpha$ be a function, let $\varepsilon \in \bbr$, and let $m \in
+\bbn$. Write $\mathrm{R}^{\mathrm{pub}}_\varepsilon(f)$ for the $\varepsilon$-error
+public-coin randomized communication complexity of $f$, namely the infimum in $\bbn \cup
+\{\infty\}$ of the worst-case bit complexity over all public-coin protocols that compute
+$f$ with error at most $\varepsilon$ on every input. Then $m \le
+\mathrm{R}^{\mathrm{pub}}_\varepsilon(f)$ if and only if, for every $n \in \bbn$ and
+every public-coin protocol $p$ using a coin tape of length $n$, whenever $p$
+$\varepsilon$-computes $f$ its communication complexity satisfies $m \le
+\mathrm{complexity}(p)$.
 \end{theorem}
 
-\begin{theorem}[Finite-message characterization of complexity bound]
+\begin{theorem}[Finite-message characterization of public-coin complexity]
 \lean{CommunicationComplexity.PublicCoin.communicationComplexity_le_iff_finiteMessage}
 \label{CommunicationComplexity.PublicCoin.communicationComplexity_le_iff_finiteMessage}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_iff}
 \difficulty{4}
-For $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $m \in \mathbb{N}$,
-we have $\mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \le m$ if and only if there exist
-$n \in \mathbb{N}$ and a finite-message public-coin protocol $p$ on
-$\mathrm{CoinTape}(n)$ such that $p$ $\varepsilon$-approximates $f$ and
-$p.\mathrm{complexity} \le m$. This shows that the binary-message and
-finite-message formulations of public-coin complexity coincide.
+Fix an output type $\alpha$, a function $f : X \to Y \to \alpha$, an error tolerance
+$\varepsilon \in \bbr$, and a natural number $m$. Then the $\varepsilon$-error
+public-coin randomized communication complexity of $f$ satisfies
+$\mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \le m$ if and only if there exist a coin-tape
+length $n \in \bbn$ and a public-coin finite-message protocol $p$ over the shared
+randomness $\mathrm{CoinTape}(n)$ such that $p$ $\varepsilon$-computes $f$ — that is,
+for every input pair $(x,y)$ the probability over the coin tape $\omega$ that $p$
+outputs a value other than $f(x,y)$ is at most $\varepsilon$ — and the communication
+complexity of $p$ is at most $m$.
 \end{theorem}
 
-\begin{theorem}[Monotonicity in error]
+\begin{theorem}[Monotonicity of public-coin complexity in the error]
 \lean{CommunicationComplexity.PublicCoin.communicationComplexity_mono}
 \label{CommunicationComplexity.PublicCoin.communicationComplexity_mono}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_iff}
 \difficulty{4}
-Public-coin communication complexity is monotone in the error parameter: if
-$\varepsilon' \le \varepsilon$, then
-$\mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \le \mathrm{R}^{\mathrm{pub}}_{\varepsilon'}(f)$.
-Allowing more error can only make computation easier.
+Let $f : X \to Y \to \alpha$ be a function of two arguments, and let $\varepsilon,
+\varepsilon' \in \bbr$ be error parameters with $\varepsilon' \le \varepsilon$. Then the
+$\varepsilon$-error public-coin randomized communication complexity of $f$ is at most
+its $\varepsilon'$-error public-coin randomized communication complexity:
+$\mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \le
+\mathrm{R}^{\mathrm{pub}}_{\varepsilon'}(f)$, this inequality holding in $\bbn_\infty$.
+That is, permitting a larger error tolerance can only decrease the worst-case number of
+bits that must be exchanged.
 \end{theorem}
 
-\begin{theorem}[Upper bound from finite-message protocol on general probability space]
+\begin{theorem}[Coin-tape bound from a finite-message protocol]
 \lean{CommunicationComplexity.PublicCoin.communicationComplexity_le_of_finiteMessage}
 \label{CommunicationComplexity.PublicCoin.communicationComplexity_le_of_finiteMessage}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
-Let $\Omega$ be a finite probability space, $f : X \to Y \to \alpha$, and $\varepsilon' < \varepsilon$.
-If a finite-message public-coin protocol $p$ over $\Omega$ computes $f$ with error at most
-$\varepsilon'$, then $\mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \le p.\mathrm{complexity}$.
-This allows one to transfer upper bounds from protocols over arbitrary finite probability
-spaces to the coin-tape formulation.
+Let $X$, $Y$, and $\alpha$ be types, let $\Omega$ be a finite probability space, and let
+$f : X \to Y \to \alpha$. Fix real numbers $\varepsilon' < \varepsilon$, and suppose $p$
+is a public-coin finite-message protocol with shared randomness $\Omega$ and private
+inputs in $X$ and $Y$ that $\varepsilon'$-computes $f$, meaning that for every input
+pair $(x,y)$ the probability over $\omega \in \Omega$ that the protocol's output differs
+from $f(x,y)$ is at most $\varepsilon'$. Then the $\varepsilon$-error public-coin
+randomized communication complexity of $f$ satisfies
+\[
+  \mathrm{R}^{\mathrm{pub}}_\varepsilon(f) \;\le\; \mathrm{complexity}(p),
+\]
+where $\mathrm{complexity}(p)$ is the worst-case bit cost of $p$ (a $\beta$-valued
+message costing $\lceil \log_2 \abs{\beta}\rceil$ bits) and the inequality holds in
+$\bbn \cup \{\infty\}$.
 \end{theorem}

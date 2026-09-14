@@ -1,0 +1,17 @@
+{
+ "lean_name": "OneBit.one_bit_2q_hypercontractivity",
+ "key": "4d8870b3398b415a",
+ "kind": "theorem",
+ "title": "One-bit $(2,q)$-hypercontractivity",
+ "statement": "Fix a real exponent $q \\ge 2$, and let $g : \\{0,1\\} \\to \\bbr$ be a Boolean function of arity one. Write $\\norm{h}_p = \\left(\\E\\,|h|^{p}\\right)^{1/p}$ for the $L^p$ norm taken with respect to the uniform measure, and let $T_\\rho$ denote the noise operator. Then, with noise parameter $\\rho = 1/\\sqrt{q-1}$,\n\\[\n  \\norm{T_{1/\\sqrt{q-1}}\\, g}_q \\;\\le\\; \\norm{g}_2 .\n\\]",
+ "hypotheses_covered": [
+  "q is real with q ≥ 2",
+  "g is a Boolean function of arity one (on the single-bit cube)",
+  "noise parameter is ρ = 1/√(q−1)",
+  "left norm is the L^q norm, right norm is the L^2 norm, both under the uniform measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $g : \\mathrm{BoolCube}\\,1 \\to \\bbr$ and $q \\ge 2$,\n\\[\n  \\norm{T_{1/\\sqrt{q-1}}\\, g}_q \\le \\norm{g}_2 .\n\\]"
+}

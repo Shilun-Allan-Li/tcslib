@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.mergeGates_natAdd",
+ "key": "a833d7817cf98278",
+ "kind": "lemma",
+ "title": "Merged array on right-hand indices",
+ "statement": "Let $g_1 : \\mathrm{Fin}\\,m_1 \\to \\alpha$ and $g_2 : \\mathrm{Fin}\\,m_2 \\to \\alpha$ be gate arrays, and let $i \\in \\mathrm{Fin}\\,m_2$. Then the merged array of $g_1$ and $g_2$ takes the value $g_2(i)$ at the index $m_1 + i$.",
+ "hypotheses_covered": [
+  "gate array $g_1 : \\mathrm{Fin}\\,m_1 \\to \\alpha$",
+  "gate array $g_2 : \\mathrm{Fin}\\,m_2 \\to \\alpha$",
+  "index $i \\in \\mathrm{Fin}\\,m_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $i : \\mathrm{Fin}\\,m_2$, evaluating the merged array at the right-embedded index\n$\\mathrm{natAdd}\\,m_1\\,i$ recovers $g_2\\,i$, i.e.\n$\\mathrm{mergeGates}\\,g_1\\,g_2\\,(\\mathrm{natAdd}\\,m_1\\,i) = g_2\\,i$."
+}

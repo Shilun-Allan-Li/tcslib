@@ -1,0 +1,17 @@
+{
+ "lean_name": "LowDegreeTest.gowers_norm_eq_one_iff",
+ "key": "26807eabe02872da",
+ "kind": "lemma",
+ "title": "Gowers norm one iff bounded degree",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function and let $d$ be a nonnegative integer, and write $(-1)^f : \\{0,1\\}^n \\to \\{\\pm 1\\}$ for its sign lift. Then the $2^{d+1}$-th power of the order-$(d+1)$ Gowers uniformity norm of $(-1)^f$ equals $1$,\n\\[\n  \\|(-1)^f\\|_{U^{d+1}}^{2^{d+1}} = 1,\n\\]\nif and only if $(-1)^f$ has degree at most $d$, meaning that for every base point $x \\in \\{0,1\\}^n$ and all direction vectors $h_1,\\ldots,h_{d+1} \\in \\{0,1\\}^n$ the $(d+1)$-fold Gowers product $\\mathrm{GP}\\big((-1)^f, d{+}1, x, h_1,\\ldots,h_{d+1}\\big)$ equals $1$.",
+ "hypotheses_covered": [
+  "f a Boolean function {0,1}^n -> {0,1}",
+  "d a nonnegative integer (natural number)",
+  "the statement concerns the pm1 lift (-1)^f",
+  "order d+1 Gowers norm raised to the 2^(d+1) power"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a Boolean function $f : \\{0,1\\}^n \\to \\{0,1\\}$ and $d \\ge 0$,\n\\[\n  \\|(-1)^f\\|_{U^{d+1}}^{2^{d+1}} = 1\n  \\;\\iff\\;\n  \\deg(f) \\le d.\n\\]"
+}

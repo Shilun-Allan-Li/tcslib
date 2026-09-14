@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolBLR.triple_expectation_eq_cube_fourier",
+ "key": "71c6e2e94d4bbc67",
+ "kind": "lemma",
+ "title": "Cube of Fourier coefficients as an autocorrelation expectation",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function on the hypercube, and let $g = (-1)^{f}$ denote its $\\pm 1$ lift. Then the double uniform expectation of the triple product of $g$ over independent inputs and their componentwise XOR equals the sum of the cubes of the Fourier coefficients of $g$:\n\\[\n  \\E_{x}\\!\\left[\\,\\E_{y}\\!\\left[\\,g(x)\\,g(y)\\,g(x \\oplus y)\\,\\right]\\right]\n  \\;=\\;\n  \\sum_{S \\subseteq [n]} \\hat{g}(S)^{3},\n\\]\nwhere $x, y$ range uniformly over $\\{0,1\\}^n$, $(x \\oplus y)_i = x_i \\oplus y_i$, and $\\hat{g}(S) = \\langle g, \\chi_S \\rangle$ is the Fourier coefficient at $S \\subseteq [n]$.",
+ "hypotheses_covered": [
+  "f is a Boolean-valued function on the n-dimensional hypercube (f : {0,1}^n → {0,1})"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $f : \\{0,1\\}^n \\to \\{0,1\\}$, letting $\\hat{g}(S)$ denote the Fourier\ncoefficient of $g = \\texttt{BoolBLR.lift\\_pm1}\\,f$,\n\\[\n  \\E_x\\!\\left[\\E_y\\!\\left[g(x)\\,g(y)\\,g(x \\oplus y)\\right]\\right]\n  \\;=\\;\n  \\sum_{S \\subseteq [n]} \\hat{g}(S)^3.\n\\]"
+}

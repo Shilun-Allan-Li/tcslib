@@ -1,0 +1,14 @@
+{
+ "lean_name": "Bonami.fourth_moment_decomp",
+ "key": "50579dcb7be3154b",
+ "kind": "lemma",
+ "title": "Fourth-moment decomposition over the last coordinate",
+ "statement": "Let $f : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function on $n+1$ variables, and let $g$ and $h$ be the average and the half-difference of $f$ over its last coordinate, so that $g(x) = \\tfrac12\\bigl(f(x,0) + f(x,1)\\bigr)$ and $h(x) = \\tfrac12\\bigl(f(x,0) - f(x,1)\\bigr)$ for $x \\in \\{0,1\\}^n$. Then, with all expectations taken under the uniform measure, the fourth moment of $f$ decomposes as\n\\[\n\\E[f^4] \\;=\\; \\E[g^4] + 6\\,\\E[g^2 h^2] + \\E[h^4].\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n+1 variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nWriting $g = \\mathrm{avgLast}\\,f$ and $h = \\mathrm{diffLast}\\,f$, the fourth moment of $f$\ndecomposes as\n\\[\n\\E[f^4] = \\E[g^4] + 6\\,\\E[g^2 h^2] + \\E[h^4].\n\\]"
+}

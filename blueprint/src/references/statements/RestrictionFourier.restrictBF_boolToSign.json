@@ -1,0 +1,15 @@
+{
+ "lean_name": "RestrictionFourier.restrictBF_boolToSign",
+ "key": "8c947bc3088cf848",
+ "kind": "lemma",
+ "title": "Restriction commutes with the sign encoding",
+ "statement": "Write $\\sigma\\colon\\{0,1\\}\\to\\{-1,1\\}$ for the sign encoding, $\\sigma(0)=1$ and $\\sigma(1)=-1$, and for a function $g$ on the cube (Boolean- or real-valued) let $g_\\rho$ denote its restriction along $\\rho$, obtained by reading each free coordinate from the input and each fixed coordinate from $\\rho$. Let $f\\colon\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean-valued function and let $\\rho$ be a restriction on $n$ variables. Then restricting the real-valued function $x\\mapsto\\sigma(f(x))$ along $\\rho$ agrees with first restricting $f$ and then applying the sign encoding; that is, $(\\sigma\\circ f)_\\rho=\\sigma\\circ f_\\rho$, so that for every point $x$,\n\\[\n  (\\sigma\\circ f)_\\rho(x)\\;=\\;\\sigma\\big(f_\\rho(x)\\big).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean-valued function on the hypercube {0,1}^n",
+  "ρ is a restriction on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The restriction $\\mathrm{restrictBF}$ of a real-valued Boolean function reads free\ncoordinates from the input and fixed coordinates from the restriction $\\rho$, i.e.\n$(\\mathrm{restrictBF}\\,f\\,\\rho)(x) = f(\\rho.\\mathrm{extend}\\,x)$. This statement says\nthat for a Boolean-valued $f : \\{0,1\\}^n \\to \\{0,1\\}$, restricting its $\\pm1$-encoding\nagrees with encoding the restricted function: $\\mathrm{restrictBF}\\,(\\mathrm{boolToSign}\\circ f)\\,\\rho\n= \\mathrm{boolToSign}\\circ(\\mathrm{restrictFn}\\,f\\,\\rho)$."
+}

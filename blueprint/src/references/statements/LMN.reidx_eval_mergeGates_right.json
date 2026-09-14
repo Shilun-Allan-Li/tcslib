@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.reidx_eval_mergeGates_right",
+ "key": "3e28b6c24f229e39",
+ "kind": "lemma",
+ "title": "Right embedding evaluates a circuit through the merged assignment",
+ "statement": "Let $m_1, m_2$ be natural numbers, let $c$ be a Boolean circuit on $m_2$ variables, and let $g_1 : \\bbf_2^{m_1}$ and $g_2 : \\bbf_2^{m_2}$ be Boolean assignments. Form the merged assignment on $m_1 + m_2$ variables that takes the values of $g_1$ on indices $0,\\dots,m_1-1$ and the values of $g_2$ on indices $m_1,\\dots,m_1+m_2-1$, and re-index $c$ by the right embedding $i \\mapsto m_1 + i$ from $\\mathrm{Fin}\\,m_2$ into $\\mathrm{Fin}\\,(m_1+m_2)$. Then \\[ \\bigl(\\mathrm{reidx}(c,\\; i \\mapsto m_1 + i)\\bigr)(\\text{merged assignment}) = c(g_2), \\] where each side denotes circuit evaluation; that is, evaluating the re-indexed circuit under the merged assignment gives the same Boolean value as evaluating $c$ directly under $g_2$.",
+ "hypotheses_covered": [
+  "circuit c on m₂ variables",
+  "assignment g₁ on m₁ variables",
+  "assignment g₂ on m₂ variables",
+  "re-indexing via the right embedding i ↦ m₁ + i",
+  "evaluation under the merged assignment of g₁ and g₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a circuit $c$ on $m_2$ gates and Boolean gate values $g_1, g_2$, reindexing $c$ along\nthe right embedding $\\mathrm{natAdd}\\,m_1$ and evaluating against the merged array yields\nthe original evaluation: $(\\mathrm{reidx}\\,c\\,(\\mathrm{natAdd}\\,m_1)).\\mathrm{eval}\\,(\\mathrm{mergeGates}\\,g_1\\,g_2) = c.\\mathrm{eval}\\,g_2$."
+}

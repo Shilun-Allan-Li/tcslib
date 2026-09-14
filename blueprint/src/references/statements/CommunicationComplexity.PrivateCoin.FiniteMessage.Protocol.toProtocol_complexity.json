@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity",
+ "key": "838f0b8805523d9e",
+ "kind": "theorem",
+ "title": "Complexity is preserved by the binary conversion",
+ "statement": "Let $p$ be a private-coin finite-message protocol with private randomness spaces $\\Omega_X$ and $\\Omega_Y$, input types $X$ and $Y$, and output type $\\alpha$, in which each message is an element of an arbitrary finite nonempty type $\\beta$ costing $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits. Converting $p$ into the associated binary private-coin protocol, in which every message is encoded as a string of bits, leaves the worst-case communication complexity unchanged: the complexity of the converted binary protocol equals the complexity of $p$.",
+ "hypotheses_covered": [
+  "p is a private-coin finite-message protocol over randomness spaces Ω_X, Ω_Y, inputs X, Y, output α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$, $(p.\\texttt{toProtocol}).\\texttt{complexity} = p.\\texttt{complexity}$."
+}

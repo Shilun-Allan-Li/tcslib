@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_sum_zVariable",
+ "key": "33ef07ca0b08fe7e",
+ "kind": "theorem",
+ "title": "Fiber decomposition of the averaged Alice KL cost",
+ "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for set disjointness on subsets of $\\{1,\\dots,n\\}$. Let $\\mu$ denote the hard distribution over samples, conditioned both on the two generated input sets being disjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. Let $Z$ be the statistic sending each sample $\\omega$ to the tuple consisting of the transcript of $p$ on its input pair, the special coordinate, Alice's input bits strictly before that coordinate, and Bob's input bits strictly after it; the map $Z$ takes only finitely many values. For each such value $z$, let $\\mathrm{KL}(z)$ be the real-valued Kullback–Leibler divergence, from the uniform distribution on one bit, of the conditional law of Alice's special bit given $Z = z$. Then the $\\mu$-average of the KL cost, evaluated along $Z$, splits as a finite fiber-weighted sum:\n\\[\n\\int \\mathrm{KL}\\bigl(Z(\\omega)\\bigr)\\, d\\mu(\\omega)\n  \\;=\\; \\sum_{z}\\, \\mu\\bigl(Z^{-1}(z)\\bigr)\\,\\mathrm{KL}(z),\n\\]\nwhere $z$ ranges over all values of $Z$ and $\\mu\\bigl(Z^{-1}(z)\\bigr)$ is the $\\mu$-measure of the fiber $\\{\\omega : Z(\\omega) = z\\}$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol on subsets of an n-element set",
+  "the averaging measure is the hard distribution conditioned on disjointness and on Bob's special bit being false",
+  "Z (the z-variable) ranges over its finite value type"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The averaged Alice fiber KL cost under $D ∧ Y_{T}=false$, as a finite sum over $Z$ values."
+}

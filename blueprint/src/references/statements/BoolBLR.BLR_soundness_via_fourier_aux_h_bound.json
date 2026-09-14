@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolBLR.BLR_soundness_via_fourier_aux_h_bound",
+ "key": "ec42031310006d88",
+ "kind": "lemma",
+ "title": "Per-coefficient cube bound for functions far from linear",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be $\\varepsilon$-far from linear, meaning that $0 \\le \\varepsilon \\le 1$ and every linear function $g : \\{0,1\\}^n \\to \\{0,1\\}$ (one satisfying $g(x \\oplus y) = g(x) \\oplus g(y)$ for all $x,y$) has distance $\\Pr_{x}[f(x) \\ne g(x)] \\ge \\varepsilon$ from $f$. Write $\\hat F(S) = \\E[F \\cdot \\chi_S]$ for the Fourier coefficient of $F = (-1)^{f}$, the $\\pm 1$ lift of $f$, at a subset $S \\subseteq [n]$. Then for every such $S$,\n\\[\n  \\hat F(S)^3 \\;\\le\\; \\hat F(S)^2\\,(1 - 2\\varepsilon).\n\\]",
+ "hypotheses_covered": [
+  "f maps the hypercube to {0,1}",
+  "f is ε-far from linear (which carries 0 ≤ ε ≤ 1 and the distance bound against every linear g)",
+  "F is the ±1 lift of f",
+  "the bound holds for every subset S ⊆ [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be $\\varepsilon$-far from linear and write\n$g = \\texttt{BoolBLR.lift\\_pm1}\\,f$.  Then for every $S \\subseteq [n]$,\n\\[\n  \\hat{g}(S)^3 \\;\\le\\; \\hat{g}(S)^2\\,(1 - 2\\varepsilon).\n\\]"
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "time_insertionSort_le_rec",
+ "key": "eda743c0be03477d",
+ "kind": "theorem",
+ "title": "Insertion sort respects its comparison recurrence",
+ "statement": "Let $\\alpha$ be a linearly ordered type and let $xs$ be a finite list of elements of $\\alpha$. Running the timed insertion sort on $xs$ charges at most $T(\\abs{xs})$ units of time, where $\\abs{xs}$ is the length of $xs$ and $T$ is the recurrence given by $T(0) = 0$ and $T(n+1) = T(n) + n$.",
+ "hypotheses_covered": [
+  "$\\alpha$ carries a linear order",
+  "$xs$ is a finite list over $\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The time cost recorded by the timed insertion sort of $\\mathit{xs}$ is at most\n$T(\\abs{\\mathit{xs}})$, where $T$ is the insertion sort recurrence."
+}

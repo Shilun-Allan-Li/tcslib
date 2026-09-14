@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.exists_forall_le_of_finite_sublevel_intersections",
+ "key": "6198c5b6ed22e5b5",
+ "kind": "lemma",
+ "title": "From finite feasibility to a uniform row point",
+ "statement": "Let $X, Y \\subseteq \\bbr$ together with a payoff function $f : \\bbr \\to \\bbr \\to \\bbr$ satisfy the convex-compact minimax hypotheses, and let $c \\in \\bbr$. Suppose that for every finite subset $u \\subseteq Y$ the set $X \\cap \\bigcap_{y \\in u} \\mathrm{sublevel}(X,f,y,c)$ is nonempty, where $\\mathrm{sublevel}(X,f,y,c) = X \\cap \\{x \\in \\bbr : f(x,y) \\le c\\}$; that is, there is a common row point $x \\in X$ with $f(x,y) \\le c$ for all $y$ in that finite set. Then there exists a single $x \\in X$ with $f(x,y) \\le c$ for every $y \\in Y$.",
+ "hypotheses_covered": [
+  "X, Y and f satisfy the convex-compact minimax hypotheses",
+  "threshold c ∈ ℝ",
+  "for every finite subset u ⊆ Y, the intersection of X with the minimax sublevel sets over u is nonempty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under \\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}, let $c \\in \\bbr$.\nIf for every finite subset $u \\subseteq Y$ there exists $x \\in X$ with\n$f(x,y) \\leq c$ for all $y \\in u$, then there exists $x \\in X$ with\n$f(x,y) \\leq c$ for \\emph{all} $y \\in Y$."
+}

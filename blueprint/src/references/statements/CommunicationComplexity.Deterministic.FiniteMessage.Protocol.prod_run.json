@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_run",
+ "key": "6a2cd2cf6dcf04c2",
+ "kind": "theorem",
+ "title": "Product protocol computes componentwise",
+ "statement": "Let $p_1$ be a finite-message protocol with input types $X_1$, $Y_1$ and output type $\\alpha_1$, and let $p_2$ be a finite-message protocol with input types $X_2$, $Y_2$ and output type $\\alpha_2$. For every pair of inputs $x = (x_1, x_2) \\in X_1 \\times X_2$ and $y = (y_1, y_2) \\in Y_1 \\times Y_2$, running the product protocol of $p_1$ and $p_2$ on $(x, y)$ yields the pair of the two componentwise executions:\n\\[\n  \\mathrm{run}(p_1 \\times p_2,\\, x,\\, y) \\;=\\; \\bigl(\\mathrm{run}(p_1,\\, x_1,\\, y_1),\\; \\mathrm{run}(p_2,\\, x_2,\\, y_2)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "p_1 a finite-message protocol over (X_1, Y_1, alpha_1)",
+  "p_2 a finite-message protocol over (X_2, Y_2, alpha_2)",
+  "input x = (x_1, x_2) in X_1 x X_2",
+  "input y = (y_1, y_2) in Y_1 x Y_2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For protocols $p_1$, $p_2$ and inputs $x = (x_1, x_2)$, $y = (y_1, y_2)$,\n\\[\n  (p_1.\\texttt{prod}\\;p_2).\\texttt{run}\\;x\\;y\n  \\;=\\; (p_1.\\texttt{run}\\;x_1\\;y_1,\\; p_2.\\texttt{run}\\;x_2\\;y_2).\n\\]"
+}

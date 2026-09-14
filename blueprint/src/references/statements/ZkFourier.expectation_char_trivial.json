@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.expectation_char_trivial",
+ "key": "ea1f4bc498d27ebb",
+ "kind": "lemma",
+ "title": "Expectation of the trivial character equals one",
+ "statement": "Fix an integer $k \\ge 1$ and let $\\omega_k = e^{2\\pi i/k}$ be the associated primitive $k$-th root of unity. For a natural number $n$ and an index $s \\in (\\mathbb{Z}/k\\mathbb{Z})^n$, let $\\chi_s \\colon (\\mathbb{Z}/k\\mathbb{Z})^n \\to \\mathbb{C}$ be the Fourier character $\\chi_s(x) = \\omega_k^{\\,s \\cdot x}$, and write $\\mathbb{E}[f] = k^{-n}\\sum_{x} f(x)$ for the uniform average of a complex-valued function $f$ over $(\\mathbb{Z}/k\\mathbb{Z})^n$. Then the trivial character $\\chi_0$, indexed by the zero vector, has expectation $\\mathbb{E}[\\chi_0] = 1$.",
+ "hypotheses_covered": [
+  "$k \\ge 1$ (i.e. $k \\ne 0$)",
+  "$n$ a natural number",
+  "character indexed by the zero vector $s = 0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$\\mathbb{E}[\\chi_0] = 1$, since $\\chi_0 \\equiv 1$ and the sum of $k^n$ ones\ndivided by $k^n$ equals one."
+}

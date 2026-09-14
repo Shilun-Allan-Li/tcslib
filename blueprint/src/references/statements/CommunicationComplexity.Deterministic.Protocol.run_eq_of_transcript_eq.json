@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.run_eq_of_transcript_eq",
+ "key": "03f2656df2476af3",
+ "kind": "theorem",
+ "title": "Transcript determines output",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with outputs in $\\alpha$, and let $(x, y)$ and $(x', y')$ be two input pairs in $X \\times Y$. If executing $p$ on $(x, y)$ produces the same syntactic transcript as executing $p$ on $(x', y')$, then $p$ returns the same output on both inputs: the value obtained by running $p$ on $(x, y)$ equals the value obtained by running $p$ on $(x', y')$.",
+ "hypotheses_covered": [
+  "a deterministic protocol p over input types X, Y with outputs in α",
+  "two input pairs (x,y) and (x',y') in X × Y",
+  "the transcripts of p on the two input pairs are equal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf two input pairs $xy$ and $xy'$ produce the same syntactic transcript under $p$, then\nthey also produce the same protocol output:\n$p.\\mathrm{transcript}(xy) = p.\\mathrm{transcript}(xy')$ implies\n$p.\\mathrm{run}(xy.1, xy.2) = p.\\mathrm{run}(xy'.1, xy'.2)$."
+}

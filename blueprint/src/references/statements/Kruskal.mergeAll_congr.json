@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.mergeAll_congr",
+ "key": "6f14db8e3c2a5f75",
+ "kind": "lemma",
+ "title": "Merging edges preserves equal partitions",
+ "statement": "Let $\\mathit{uf}_1, \\mathit{uf}_2 : \\mathrm{Fin}\\,n \\to \\bbn$ be two union-find states over $n$ nodes that induce the same partition, meaning that for all nodes $i, j$ one has $\\mathit{uf}_1(i) = \\mathit{uf}_1(j)$ if and only if $\\mathit{uf}_2(i) = \\mathit{uf}_2(j)$. Then for any list of weighted edges, folding that list into each state by successively merging the endpoints of every edge yields two states that again induce the same partition.",
+ "hypotheses_covered": [
+  "uf1 and uf2 are union-find states on Fin n",
+  "a given list of weighted edges over n vertices",
+  "uf1 and uf2 induce the same partition (SamePartition uf1 uf2)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathtt{SamePartition}\\,\\mathit{uf}_1\\,\\mathit{uf}_2$, then merging both states along\nthe same edge list preserves this:\n$\\mathtt{SamePartition}\\,(\\mathit{uf}_1.\\mathtt{mergeAll}\\,\\mathit{edges})\\,(\\mathit{uf}_2.\\mathtt{mergeAll}\\,\\mathit{edges})$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "num_mincuts_le_choose",
+ "key": "46fb2db4b7a30a90",
+ "kind": "theorem",
+ "title": "A counting bound of $\\binom{n}{2}$",
+ "statement": "Let $G$ be a multigraph whose (finite) vertex set has $n \\ge 2$ elements, and let $m$ be a natural number. If\n\\[\n  m \\cdot \\frac{2}{n(n-1)} \\le 1,\n\\]\nthen $m \\le \\binom{n}{2}$.",
+ "hypotheses_covered": [
+  "multigraph G with vertex count n",
+  "n \\ge 2",
+  "m is a natural number",
+  "m \\cdot 2/(n(n-1)) \\le 1 as a real inequality"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n = \\abs{V(G)} \\ge 2$. If a family of $\\mathrm{numCuts}$ cuts is disjoint in the\nsense that $\\mathrm{numCuts} \\cdot \\frac{2}{n(n-1)} \\le 1$, then\n\\[\n  \\mathrm{numCuts} \\le \\binom{n}{2} .\n\\]"
+}

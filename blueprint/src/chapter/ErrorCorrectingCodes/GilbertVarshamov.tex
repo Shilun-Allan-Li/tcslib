@@ -15,12 +15,11 @@ The proof is a probabilistic (union-bound) counting argument over random generat
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Probabilistic bound on low-weight outputs}
 
-\begin{theorem}[Probability of low-weight codeword]
+\begin{theorem}[Weight distribution of a random linear image is dominated by a Hamming ball]
 \lean{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \label{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p086-b002}
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -85,11 +84,18 @@ The proof is a probabilistic (union-bound) counting argument over random generat
     pdf-7251cb8e4bc5-p068-b002}
 \uses{ErrorCorrectingCodes.Codeword.uniformity_lemma, ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.hamming_ball}
 \difficulty{6}
-For any nonzero $x\in\alpha^k$,
+Let $\alpha$ be a finite field, let $n$ and $k \ge 1$ be natural numbers, and fix a
+nonzero codeword $x \in \alpha^{k}$ together with an integer $d > 0$. Regard an $n
+\times k$ matrix $G$ over $\alpha$ as chosen uniformly at random among all
+$\abs{\alpha}^{nk}$ such matrices, so that the image $Gx$ is a codeword of length $n$.
+Then the probability that $Gx$ has Hamming weight strictly less than $d$ is at most the
+fraction of all codewords of length $n$ that lie in the Hamming ball of radius $d-1$
+about the all-zero codeword:
 \[
-\frac{|\{G : \mathrm{wt}(Gx) < d\}|}{|\alpha|^{nk}}
+\frac{\abs{\{\, G \in \alpha^{n \times k} : \operatorname{wt}(Gx) < d
+\,\}}}{\abs{\alpha}^{nk}}
 \;\le\;
-\frac{|B_{d-1}(\mathbf{0})|}{|\alpha|^n}.
+\frac{\abs{B_{d-1}(\mathbf{0})}}{\abs{\alpha}^{n}}.
 \]
 \end{theorem}
 
@@ -101,7 +107,6 @@ For any nonzero $x\in\alpha^k$,
 \label{ErrorCorrectingCodes.Codeword.existence_bound}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p086-b002}
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -173,17 +178,22 @@ For any nonzero $x\in\alpha^k$,
   {pdf-7251cb8e4bc5-p086-b002}
 \uses{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \difficulty{5}
-The number of $n\times k$ matrices that send some nonzero message to a codeword of
-weight $<d$ is at most
+Let $\alpha$ be a finite nonempty field, let $n$ and $k$ be natural numbers with $k \ge
+1$, and let $d$ be a positive integer. Regard an $n \times k$ matrix $G$ over $\alpha$
+as a map sending a message $x \in \alpha^{k}$ to the length-$n$ codeword $Gx$. Then the
+number of such matrices $G$ for which some nonzero message $x$ has $\mathrm{wt}(Gx) < d$
+is at most
 \[
-(|\alpha|^k-1)\cdot|\alpha|^{nk-n}\cdot|B_{d-1}(\mathbf{0})|.
+(\abs{\alpha}^{k} - 1)\cdot \abs{\alpha}^{\,nk - n}\cdot \abs{B_{d-1}(\mathbf 0)},
 \]
+where $\mathrm{wt}$ denotes Hamming weight and $B_{d-1}(\mathbf 0)$ is the Hamming ball
+of radius $d-1$ about the all-zero codeword of length $n$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Gilbert--Varshamov bound}
 
-\begin{theorem}[Gilbert--Varshamov bound]
+\begin{theorem}[Gilbert–Varshamov bound for linear codes]
 \lean{ErrorCorrectingCodes.Codeword.gv_bound}
 \label{ErrorCorrectingCodes.Codeword.gv_bound}
 \leanok
@@ -191,7 +201,6 @@ weight $<d$ is at most
   pdf-7251cb8e4bc5-p086-b002,
   pdf-7251cb8e4bc5-p082-b004
 }
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -272,7 +281,13 @@ weight $<d$ is at most
     pdf-7251cb8e4bc5-p082-b004}
 \uses{ErrorCorrectingCodes.Codeword.existence_bound}
 \difficulty{5}
-If $k \le n - \lceil\log_q|B_{d-1}(\mathbf{0})|\rceil - 1$, then there exists a
-generator matrix $G$ such that every nonzero message is mapped to a codeword of
-Hamming weight at least $d$.
+Let $\alpha$ be a finite field with $q = \abs{\alpha}$ elements, and let $n, k, d$ be
+natural numbers. Write $B_{d-1}(\mathbf{0})$ for the Hamming ball of radius $d-1$ about
+the all-zero codeword in $\alpha^n$, and suppose
+\[
+k \le n - \bigl\lceil \log_q \abs{B_{d-1}(\mathbf{0})} \bigr\rceil - 1.
+\]
+Then there exists an $n \times k$ generator matrix $G$ over $\alpha$ such that for every
+nonzero message $x \in \alpha^k$, the codeword $Gx \in \alpha^n$ has Hamming weight at
+least $d$.
 \end{theorem}

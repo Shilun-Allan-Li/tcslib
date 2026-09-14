@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.one_step_dtDepth_bound",
+ "key": "52441b136d0e0535",
+ "kind": "theorem",
+ "title": "One-step decision-tree depth bound under a random restriction",
+ "statement": "Fix an integer $n \\ge 1$, let $w \\ge 1$, and let $g_1, \\dots, g_{s_2}$ be $s_2$ DNF formulas on $n$ Boolean variables, each of width at most $w$. Assume that in every term of every $g_i$ no literal is repeated and no two distinct literals share a variable. Let $p \\in \\bbr$ satisfy $0 < p \\le \\tfrac{1}{40w}$ (so in particular $p \\le 1$). Then, under a Bernoulli($p$) random restriction $\\rho$ on the $n$ variables, the probability that every restricted formula $x \\mapsto g_i(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth at most $\\ell$ is at least\n\\[\n  1 - s_2\\left( \\left(\\tfrac{1}{2}\\right)^{\\ell} + \\exp\\!\\left(-np/3\\right) \\right).\n\\]",
+ "hypotheses_covered": [
+  "a family of $s_2$ DNF formulas on $n$ variables",
+  "each formula has width at most $w$",
+  "$w > 0$",
+  "within each term, two literals on the same variable are identical",
+  "each term has no duplicate literals",
+  "$n > 0$",
+  "$p > 0$",
+  "$p \\le 1/(40w)$",
+  "$p \\le 1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nUnder a Bernoulli restriction with $p \\le 1/(40w)$ on $s_2$ width-$w$ DNF gates, the\nprobability that every restricted gate has decision-tree depth at most $\\ell$ is at\nleast $1 - s_2 \\cdot \\left( (1/2)^{\\ell} + \\exp(-np/3) \\right)$."
+}

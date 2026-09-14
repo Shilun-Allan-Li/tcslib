@@ -1,0 +1,18 @@
+{
+ "lean_name": "Halving.mistake_halves",
+ "key": "5d7f377a02dd0f91",
+ "kind": "lemma",
+ "title": "Mistake bound for the Halving algorithm",
+ "statement": "Let $\\mathtt{eval} : \\mathit{Hyp} \\to X \\to \\mathsf{Bool}$ be an evaluation map, let $V \\subseteq \\mathit{Hyp}$ be a finite version space, let $x \\in X$ be an input, and let $y \\in \\mathsf{Bool}$ be its true label. If the Halving prediction on $x$ is wrong, that is $\\mathtt{predict}(\\mathtt{eval}, V, x) \\ne y$, then the updated version space contains at most half of the hypotheses:\n\\[\n  2 \\cdot \\abs{\\mathtt{update}(\\mathtt{eval}, V, x, y)} \\le \\abs{V}.\n\\]",
+ "hypotheses_covered": [
+  "eval is an evaluation map Hyp → X → Bool",
+  "V is a finite version space of hypotheses",
+  "x is an input",
+  "y is the true (Boolean) label",
+  "the Halving prediction on x disagrees with y (a mistake)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the algorithm makes a mistake on input $x$ with true label $y$ (i.e.\\\n$\\mathtt{predict}(\\mathtt{eval}, V, x) \\ne y$), then after the update at most half\nthe hypotheses survive:\n\\[\n  2 \\cdot |\\mathtt{update}(\\mathtt{eval}, V, x, y)| \\;\\le\\; |V|.\n\\]"
+}

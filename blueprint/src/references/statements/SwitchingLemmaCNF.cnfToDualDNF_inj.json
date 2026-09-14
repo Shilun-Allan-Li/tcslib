@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemmaCNF.cnfToDualDNF_inj",
+ "key": "ae918320645994fb",
+ "kind": "lemma",
+ "title": "Dual DNF preserves within-clause variable-distinctness",
+ "statement": "Let $\\psi$ be a CNF formula on $n$ variables with the property that, within each of its clauses, any two literals having the same variable are in fact the same literal (so no variable occurs in a clause with both polarities, nor is any literal repeated). Then the De Morgan dual DNF obtained from $\\psi$ by negating every literal has the same property term by term: within each of its terms, any two literals sharing a variable are equal.",
+ "hypotheses_covered": [
+  "ψ is a CNF formula on n variables",
+  "within every clause of ψ, any two literals with equal variable are equal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If within each clause of $\\psi$ any two literals with the same variable are equal,\nthen the same holds within every term of $\\mathrm{cnfToDualDNF}\\,\\psi$."
+}

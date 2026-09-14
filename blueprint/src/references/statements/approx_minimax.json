@@ -1,0 +1,17 @@
+{
+ "lean_name": "approx_minimax",
+ "key": "7c42a1372136fd09",
+ "kind": "theorem",
+ "title": "Approximate minimax for finite zero-sum games",
+ "statement": "Let $G$ be a finite two-player zero-sum game with payoff matrix $A$, having $M \\ge 2$ row actions and at least one column action, and let $\\varepsilon > 0$. Then there exist a mixed row strategy $p$ and a mixed column strategy $q$ that form an $\\varepsilon$-approximate saddle point: for every pure row $i$ and every pure column $j$,\n\\[\n  \\sum_{k} p_k\\, A_{kj} \\;+\\; \\varepsilon \\;\\ge\\; \\sum_{\\ell} A_{i\\ell}\\, q_\\ell .\n\\]\nThat is, up to an additive $\\varepsilon$, the expected payoff of $p$ against any pure column is at least the expected payoff of any pure row against $q$.",
+ "hypotheses_covered": [
+  "G is a finite two-player zero-sum game (payoff entries in [0,1])",
+  "at least two row actions (1 < M)",
+  "at least one column action (N nonempty)",
+  "epsilon > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any finite zero-sum game $G$ with $M \\ge 2$ rows and any $\\varepsilon > 0$,\nthere exist mixed strategies $p$ (row) and $q$ (column) forming an\n$\\varepsilon$-approximate saddle point: for all pure $i \\in \\mathrm{Fin}\\,M$\nand $j \\in \\mathrm{Fin}\\,N$,\n\\[\n  \\mathrm{payoffVsPure}(G, p, j) + \\varepsilon\n  \\;\\ge\\;\n  \\mathrm{pureVsPayoff}(G, i, q).\n\\]"
+}

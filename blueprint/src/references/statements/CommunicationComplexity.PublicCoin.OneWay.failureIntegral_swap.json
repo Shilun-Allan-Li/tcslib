@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.OneWay.failureIntegral_swap",
+ "key": "73c83f3fb3af8c75",
+ "kind": "lemma",
+ "title": "Exchanging the order of integration for the failure probability",
+ "statement": "Let $X \\times Y$ be a finite set equipped with a probability measure $\\mu$, let $p$ be a one-way public-coin protocol with inputs in $X$ and $Y$, outputs in $\\alpha$, and shared randomness ranging over coin tapes of length $m$, and let $f : X \\times Y \\to \\alpha$ be a target function. Write $\\mathrm{rrun}(p, x, y, \\omega)$ for the output produced by running $p$ on inputs $x$ and $y$ under coin tape $\\omega$, and let $\\nu$ be the measure carried by the coin tapes of length $m$. Then\n\\[\n  \\int \\mu\\bigl(\\{(x,y) : \\mathrm{rrun}(p,x,y,\\omega) \\neq f(x,y)\\}\\bigr)\\,d\\nu(\\omega)\n  \\;=\\;\n  \\int \\nu\\bigl(\\{\\omega : \\mathrm{rrun}(p,x,y,\\omega) \\neq f(x,y)\\}\\bigr)\\,d\\mu(x,y),\n\\]\nwhere each measure is read as a real number. That is, integrating the $\\mu$-probability of failure over the choice of coin tape yields the same value as integrating the $\\nu$-probability of failure over the choice of input pair.",
+ "hypotheses_covered": [
+  "X × Y is a finite probability space with measure μ",
+  "p is a one-way public-coin protocol over coin tapes of length m, inputs X and Y, output α",
+  "f : X × Y → α is a target function",
+  "coin tapes of length m carry their measure ν (volume)",
+  "each set measure is taken as a real number (toReal)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu$ be a finite probability measure on $X \\times Y$, let $p$ be a one-way\npublic-coin protocol with coin tape of length $m$, and let $f : X \\to Y \\to \\alpha$.\nThen\n\\[\n  \\int_{\\omega}\\Pr_{(x,y)\\sim\\mu}\\bigl[p.\\mathrm{rrun}(x,y,\\omega)\\neq f(x,y)\\bigr]\\,d\\omega\n  \\;=\\;\n  \\int_{(x,y)\\sim\\mu}\\Pr_{\\omega}\\bigl[p.\\mathrm{rrun}(x,y,\\omega)\\neq f(x,y)\\bigr]\\,d\\mu,\n\\]\ni.e.\\ the order of integration over the coin tape and the input distribution may be\nexchanged (Fubini's theorem applied to the $\\{0,1\\}$-valued failure indicator)."
+}

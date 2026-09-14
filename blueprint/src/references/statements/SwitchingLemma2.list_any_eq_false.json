@@ -1,0 +1,14 @@
+{
+ "lean_name": "SwitchingLemma2.list_any_eq_false",
+ "key": "955e17022eb0faba",
+ "kind": "lemma",
+ "title": "Boolean existential over a list is false when the predicate always fails",
+ "statement": "Let $l$ be a finite list of elements of a type $\\alpha$, and let $p \\colon \\alpha \\to \\{\\mathrm{true}, \\mathrm{false}\\}$ be a Boolean predicate. If $p(x) = \\mathrm{false}$ for every entry $x$ of $l$, then the Boolean existential $\\bigvee_{x \\in l} p(x)$ — the value $\\mathrm{true}$ exactly when some entry of $l$ satisfies $p$ — is $\\mathrm{false}$.",
+ "hypotheses_covered": [
+  "p(x) = false for every element x of the list l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a Boolean predicate $p$ is false on every element of a list $l$, then $l.\\mathrm{any}\\,p$\nis false."
+}

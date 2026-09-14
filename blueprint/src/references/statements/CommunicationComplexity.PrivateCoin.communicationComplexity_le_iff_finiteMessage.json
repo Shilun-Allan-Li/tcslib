@@ -1,0 +1,21 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff_finiteMessage",
+ "key": "0120027e6dd68d4e",
+ "kind": "theorem",
+ "title": "Finite-message characterization of private-coin complexity",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function, let $\\varepsilon \\in \\bbr$ be an error bound, and let $n \\in \\bbn$. Then the $\\varepsilon$-error private-coin randomized communication complexity satisfies $R_\\varepsilon(f) \\le n$ if and only if there exist coin-tape lengths $n_X, n_Y \\in \\bbn$ and a private-coin finite-message protocol $p$ with randomness spaces $\\{0,1\\}^{n_X}$ and $\\{0,1\\}^{n_Y}$ (over input types $X$, $Y$ and output type $\\alpha$) such that $p$ computes $f$ with error at most $\\varepsilon$ on every input pair and has worst-case communication cost at most $n$. Thus the private-coin complexity, defined via binary-message protocols, is unchanged when one instead allows protocols whose players may send elements of arbitrary finite nonempty message alphabets, each $\\beta$-valued message being charged $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits.",
+ "hypotheses_covered": [
+  "function f : X → Y → α",
+  "real error bound ε",
+  "natural number bound n",
+  "biconditional: R_ε(f) ≤ n",
+  "existence of coin-tape lengths n_X, n_Y",
+  "existence of a private-coin finite-message protocol p over those coin tapes",
+  "p ε-computes f (error ≤ ε on every input pair)",
+  "complexity of p ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $n \\in \\mathbb{N}$, $R_\\varepsilon(f) \\le n$ if and only if there exist coin-tape sizes\n$n_X, n_Y \\in \\mathbb{N}$ and a \\emph{finite-message} protocol\n$p : \\mathrm{FiniteMessage.Protocol}(\\{0,1\\}^{n_X}, \\{0,1\\}^{n_Y}, X, Y, \\alpha)$ such that\n$p$ $\\varepsilon$-approximately computes $f$ and $p.\\mathrm{complexity} \\le n$.\nThis establishes that passing to the finite-message variant does not change the complexity measure."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.hamiltonian_of_closureSteps_top",
+ "key": "060a1feb81c43340",
+ "kind": "theorem",
+ "title": "Reaching the complete graph by closure steps forces a Hamiltonian cycle",
+ "statement": "Let $G$ be a finite simple graph on $\\nu \\ge 3$ vertices. Suppose the complete graph on the vertices of $G$ can be obtained from $G$ by finitely many (possibly zero) Bondy--Chv\\'atal closure steps, each of which joins some pair of distinct nonadjacent vertices whose degrees sum to at least $\\nu$. Then $G$ is Hamiltonian, that is, $G$ has a cycle through all of its vertices.",
+ "hypotheses_covered": [
+  "at least three vertices ($3 \\le \\nu$)",
+  "the complete graph is reachable from $G$ by the reflexive-transitive closure of the closure-step relation (finitely many, possibly zero, closure steps)",
+  "each step: distinct nonadjacent pair with degree sum at least $\\nu$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Cor 4.4 (honest restatement): if closure steps reach \\texttt{$\\top$}, then \\texttt{G}\nwas hamiltonian.\n\nLet $G$ be a simple graph with $\\nu \\geq 3$. If $c(G)$ is complete, then $G$ is\nhamiltonian.\n\nThe book gives no separate proof, deriving it from Theorem 4.4 together with:\n\nupon making the trivial observation that all complete graphs on at least three\nvertices are hamiltonian, we obtain the following result."
+}

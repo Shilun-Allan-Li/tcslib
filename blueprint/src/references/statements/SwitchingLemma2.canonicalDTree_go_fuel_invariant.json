@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalDTree_go_fuel_invariant",
+ "key": "49779470fb16fe8a",
+ "kind": "lemma",
+ "title": "Fuel invariance of the canonical decision-tree recursion",
+ "statement": "Let $f$ be a DNF formula on $n$ variables, and let $\\rho$ be a restriction on those variables having $k$ free variables. Write $G(f, m, \\rho)$ for the fuel-bounded recursion that builds a decision tree from the DNF $f$ and the restriction $\\rho$, in which the natural-number fuel budget $m$ serves as an upper bound on the recursion depth. Then for any two fuel budgets $m_1$ and $m_2$ that both strictly exceed $k$, the two trees coincide: $G(f, m_1, \\rho) = G(f, m_2, \\rho)$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "rho is a restriction on n variables",
+  "k equals the number of free variables of rho",
+  "first fuel budget strictly exceeds the number of free variables of rho",
+  "second fuel budget strictly exceeds the number of free variables of rho"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Once the fuel exceeds $\\rho.\\mathrm{numFree}$, the resulting tree does not depend on the exact\nfuel: for any $\\mathit{fuel}_1, \\mathit{fuel}_2 > \\rho.\\mathrm{numFree}$, $\\mathrm{canonicalDTree.go}\\,f\\,\\mathit{fuel}_1\\,\\rho = \\mathrm{canonicalDTree.go}\\,f\\,\\mathit{fuel}_2\\,\\rho$."
+}

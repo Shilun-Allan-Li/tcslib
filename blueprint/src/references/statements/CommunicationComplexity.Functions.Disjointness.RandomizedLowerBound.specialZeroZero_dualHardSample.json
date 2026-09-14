@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialZeroZero_dualHardSample",
+ "key": "6889b68681ffb97a",
+ "kind": "theorem",
+ "title": "Duality invariance of the all-zero special-bit event",
+ "statement": "Fix $n \\ge 1$, and let a hard sample $\\omega$ record a special coordinate $T \\in \\{0,\\dots,n-1\\}$, Alice's and Bob's bits $x_T, y_T \\in \\{\\mathrm{false},\\mathrm{true}\\}$ at that coordinate, and a labelling of every coordinate by one of the three disjointness states. Let its dual be the hard sample obtained by reversing the coordinate order (sending each index $i$ to $n-1-i$), swapping the sides of every coordinate label, and interchanging Alice's and Bob's special bits, so that the dual's Alice-bit is $y_T$ and its Bob-bit is $x_T$. Then the dual of $\\omega$ has both of its special bits equal to $\\mathrm{false}$ if and only if $\\omega$ itself has both special bits equal to $\\mathrm{false}$.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "omega is a hard sample (special coordinate T, special bits x_T and y_T, and a labelling of the other coordinates)",
+  "the dual sample is formed by reversing coordinates, swapping label sides, and interchanging the two special bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The $X_{T}=Y_{T}=false$ slice is invariant under hard-sample duality."
+}

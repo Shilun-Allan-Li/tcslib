@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_wellformed",
+ "key": "e1ccca2164c4de7b",
+ "kind": "lemma",
+ "title": "Well-formedness invariant of the encoder's auxiliary output",
+ "statement": "Let $f$ be a DNF formula on $n$ variables whose width does not exceed a positive integer $w$, and fix a recursion-budget (fuel) parameter, a path $P$ presented as a list of variable–direction pairs in $\\mathrm{Fin}\\,n \\times \\mathrm{Bool}$, and two restrictions $\\rho_0$ and $\\sigma$ on the $n$ variables. Run the Razborov encoder's recursive worker on $f$, $w$, the fuel, $P$, $\\rho_0$, and $\\sigma$ starting from an empty auxiliary accumulator, and let $A$ be its auxiliary output, a list of pairs in $\\bbn \\times \\mathrm{Bool}$. Then there exists a list $ts$ of triples in $\\mathrm{Fin}\\,w \\times \\mathrm{Bool} \\times \\mathrm{Bool}$ such that $A$ is exactly the aux list obtained from $ts$ by the triples-to-aux conversion, the number of triples in $ts$ is at most the length of $P$, and, whenever $ts$ is nonempty, the marker flag (the final Boolean component) of its last triple equals true.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "w is a positive integer (0 < w)",
+  "the width of f is at most w",
+  "a fuel/recursion-budget parameter is given",
+  "a path given as a list of pairs in Fin n × Bool",
+  "two restrictions ρ₀ and σ on the n variables",
+  "the encoder is run starting from an empty auxiliary accumulator"
+ ],
+ "confidence": "low",
+ "caveat": "The statement is about the internal recursive worker of the Razborov encoder (`razborovEncode.go`) and its auxiliary accumulator; the worker's own definition is not among the given upstream definitions, so the prose can faithfully render the shape of the invariant (the existential decomposition, the length bound, and the terminal-marker condition) but cannot make the encoder's computational behavior self-contained for a reader without the source.",
+ "rubric": [],
+ "replaced": "The aux output of $\\mathrm{razborovEncode.go}$ (started with empty accumulator)\ncan be written as $\\mathrm{triplesToAux}\\,w\\,ts$ for some triple list $ts$ whose\nlength is bounded by the path length and whose last element, if any, has marker\nflag true. This is the main structural invariant of the encoder."
+}

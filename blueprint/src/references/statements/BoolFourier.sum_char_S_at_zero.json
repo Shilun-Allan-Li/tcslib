@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolFourier.sum_char_S_at_zero",
+ "key": "904dd543a5ce561d",
+ "kind": "lemma",
+ "title": "Summing all Walsh characters at the origin",
+ "statement": "Fix $n \\in \\bbn$, and for each subset $S \\subseteq [n]$ let $\\chi_S \\colon \\{0,1\\}^n \\to \\bbr$ denote the Walsh--Fourier character $\\chi_S(x) = \\prod_{i \\in S}(-1)^{x_i}$. Writing $\\mathbf{0}$ for the all-zeros point of $\\{0,1\\}^n$, summing these characters evaluated at $\\mathbf{0}$ over all $2^n$ subsets of $[n]$ gives\n\\[\n  \\sum_{S \\subseteq [n]} \\chi_S(\\mathbf{0}) \\;=\\; \\abs{\\{0,1\\}^n},\n\\]\nthe number of points of the Boolean hypercube.",
+ "hypotheses_covered": [
+  "dimension n : ℕ",
+  "sum ranges over all subsets S of [n]",
+  "each character evaluated at the all-zeros vector",
+  "right-hand side is the cardinality of the hypercube {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\[\n  \\sum_{S \\subseteq [n]} \\chi_S(\\mathbf{0}) = 2^n.\n\\]"
+}

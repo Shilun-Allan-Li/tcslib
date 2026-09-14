@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo_dualProtocol",
+ "key": "978e3bcca07afa5e",
+ "kind": "theorem",
+ "title": "Duality invariance of the claim information",
+ "statement": "Fix a positive integer $n$ and identify the coordinate set with $\\{0,1,\\dots,n-1\\}$. Draw a sample $\\omega$ from the hard distribution on inputs, conditioned on the event that Alice's set $X(\\omega)$ and Bob's set $Y(\\omega)$ are disjoint, and write $T$ for the special coordinate of $\\omega$ and $X_T, Y_T$ for Alice's and Bob's bits at $T$. For a deterministic protocol $p$ whose two inputs both range over subsets of $\\{0,\\dots,n-1\\}$, let $\\Pi_p$ be the transcript that $p$ produces on the pair $\\bigl(X(\\omega), Y(\\omega)\\bigr)$. Let $X_{<T}$ and $X_{\\le T}$ be the vectors of Alice's bits at the coordinates below $T$, respectively at the coordinates at most $T$, each set to $0$ outside that range, and let $Y_{\\ge T}$ and $Y_{>T}$ be the vectors of Bob's bits at the coordinates at least $T$, respectively above $T$, each set to $0$ outside that range. Define the claim information of $p$ by\n\\[\n\\mathcal{I}(p) \\;=\\; I\\!\\left(X_T \\,;\\, \\Pi_p \\,\\middle|\\, T,\\, X_{<T},\\, Y_{\\ge T}\\right) \\;+\\; I\\!\\left(Y_T \\,;\\, \\Pi_p \\,\\middle|\\, T,\\, X_{\\le T},\\, Y_{>T}\\right),\n\\]\nboth conditional mutual informations being taken under the conditioned distribution. Let $p^{\\dagger}$ be the protocol obtained from $p$ by exchanging the roles of Alice and Bob throughout and reversing the coordinate order $i \\mapsto n-1-i$ on both parties' input sets. Then $\\mathcal{I}(p^{\\dagger}) = \\mathcal{I}(p)$.",
+ "hypotheses_covered": [
+  "n is a positive integer (n : ℕ+)",
+  "p is a deterministic communication protocol whose inputs are both subsets of the n-element coordinate set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "The total corrected information is invariant under protocol duality."
+}

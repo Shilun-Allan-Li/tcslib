@@ -1,0 +1,15 @@
+{
+ "lean_name": "karger_whp",
+ "key": "0931d3b301b4aea0",
+ "kind": "theorem",
+ "title": "Karger's contraction algorithm succeeds with high probability",
+ "statement": "Let $G$ be a loopless multigraph whose vertex set is finite, and suppose $G$ has $n \\ge 4$ vertices. Then running Karger's random-contraction algorithm $\\binom{n}{2} = n(n-1)/2$ times independently and returning the smallest cut found succeeds with probability\n\\[\n  1 - \\left(1 - \\frac{2}{n(n-1)}\\right)^{n(n-1)/2} \\;\\ge\\; 1 - e^{-1}.\n\\]",
+ "hypotheses_covered": [
+  "G is a loopless multigraph with finite vertex set",
+  "the vertex count of G is at least 4 (n \\ge 4)"
+ ],
+ "confidence": "low",
+ "caveat": "The provided formal statement is truncated: its conclusion is `let n := sorry`, so the actual claim being proved is not present in the ground-truth snippet. Only the setup (a loopless finite multigraph) and the hypothesis $4 \\le$ vertexCount are verifiable. The conclusion rendered above is reconstructed from the declaration name (`karger_whp`) and the `current` hint, and cannot be checked against the formal statement; the exact bound, the number of repetitions, and the direction/strictness of the inequalities may differ from what the completed Lean statement asserts.",
+ "rubric": [],
+ "replaced": "Let $n = \\abs{V(G)} \\ge 4$. Repeating the algorithm $n(n-1)/2$ independent times, the\nsuccess probability satisfies\n\\[\n  1 - \\left(1 - \\frac{2}{n(n-1)}\\right)^{n(n-1)/2} \\;\\ge\\; 1 - e^{-1} .\n\\]"
+}

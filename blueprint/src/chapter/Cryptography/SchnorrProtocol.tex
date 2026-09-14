@@ -82,32 +82,37 @@ $\mathbb{Z}_q$, the extractor returns
 \]
 \end{definition}
 
-\begin{theorem}[Completeness]
+\begin{theorem}[Completeness of the Schnorr identification protocol]
 \lean{Schnorr.schnorr_completeness}
 \label{Schnorr.schnorr_completeness}
 \leanok
 \uses{Schnorr.Verify, Schnorr.commit, Schnorr.respond}
 \difficulty{4}
-Let $g \in G$ be an element of order $q$ and let $w, r, c \in \mathbb{Z}_q$.
-Then the honest transcript $(g^r, c, r + c \cdot w)$ satisfies the verifier
-equation with respect to the public key $\mathit{pk} = g^w$:
+Let $q$ be a prime, let $G$ be a commutative group, and let $g \in G$ be an element of
+order $q$. For any witness $w$, randomness $r$, and challenge $c$ in $\mathbb{Z}_q$, the
+honest transcript — commitment $a = g^{r}$, challenge $c$, and response $s = r + c\,w$ —
+is accepted by the verifier against the public key $\mathit{pk} = g^{w}$; that is,
 \[
-  g^{(r + c \cdot w).\mathrm{val}} \;=\; g^{r.\mathrm{val}} \cdot (g^{w.\mathrm{val}})^{c.\mathrm{val}}.
+  g^{\,s} \;=\; a \cdot \mathit{pk}^{\,c},
 \]
+where each exponent is taken via the canonical lift of the corresponding element of
+$\mathbb{Z}_q$ to $\mathbb{N}$.
 \end{theorem}
 
-\begin{theorem}[Special soundness]
+\begin{theorem}[Special soundness of the Schnorr protocol]
 \lean{Schnorr.schnorr_soundness}
 \label{Schnorr.schnorr_soundness}
 \leanok
 \uses{Schnorr.Verify, Schnorr.extract}
 \difficulty{4}
-Let $g \in G$ have order $q$, and let $a \in G$, $c_1 \neq c_2 \in \mathbb{Z}_q$,
-$s_1, s_2 \in \mathbb{Z}_q$ be such that both transcripts $(a, c_1, s_1)$ and
-$(a, c_2, s_2)$ satisfy $\mathrm{Verify}$ with respect to public key
-$\mathit{pk} = g^w$.  Then the extractor recovers the witness:
+Special soundness. Let $q$ be prime, let $g$ be an element of order $q$ in a commutative
+group $G$, and take the public key $\mathit{pk} = g^{w}$ for some witness $w \in
+\bbz_q$. Suppose $a \in G$, and suppose $c_1, c_2 \in \bbz_q$ are distinct challenges
+with responses $s_1, s_2 \in \bbz_q$ such that both transcripts $(a, c_1, s_1)$ and $(a,
+c_2, s_2)$ are accepted by the verifier for $\mathit{pk}$. Then the extractor recovers
+the witness:
 \[
-  \frac{s_1 - s_2}{c_1 - c_2} \;=\; w \;\in\; \mathbb{Z}_q.
+  \frac{s_1 - s_2}{c_1 - c_2} \;=\; w \quad\text{in } \bbz_q.
 \]
 \end{theorem}
 
@@ -120,15 +125,18 @@ $\sigma_{w,c} : \mathbb{Z}_q \xrightarrow{\;\sim\;} \mathbb{Z}_q$ by
 $r \mapsto r + c \cdot w$, with inverse $s \mapsto s - c \cdot w$.
 \end{definition}
 
-\begin{theorem}[Honest-verifier zero knowledge]
+\begin{theorem}[Honest-verifier zero knowledge of the Schnorr protocol]
 \lean{Schnorr.schnorr_hvzk}
 \label{Schnorr.schnorr_hvzk}
 \leanok
 \uses{Schnorr.commit, Schnorr.honest, Schnorr.reindex, Schnorr.respond, Schnorr.schnorr_completeness, Schnorr.simulate}
 \difficulty{3}
-Let $g \in G$ have order $q$ and let $w, c \in \mathbb{Z}_q$.  The honest
-transcript map $r \mapsto \mathrm{honest}(g, w, r, c)$ and the simulator map
-$r \mapsto \mathrm{simulate}(g,\, g^w,\, c,\, \sigma_{w,c}(r))$ are equal as
-functions $\mathbb{Z}_q \to \mathrm{Transcript}(G, q)$, where
-$\sigma_{w,c} = \mathrm{reindex}(w, c)$ is the bijective shift $r \mapsto r + c \cdot w$.
+Let $G$ be a commutative group, let $q$ be prime, and let $g \in G$ be an element of
+order $q$, taken as the public generator. Fix a witness $w \in \bbz_q$ and a challenge
+$c \in \bbz_q$, and let $\mathit{pk} = g^{w}$ be the associated public key. Then, as
+functions $\bbz_q \to G \times \bbz_q \times \bbz_q$ of the prover's randomness $r$, the
+honest transcript map $r \mapsto \big(g^{r},\, c,\, r + c\cdot w\big)$ coincides with
+the simulator map fed the reindexed randomness $\sigma_{w,c}(r) = r + c\cdot w$, namely
+$r \mapsto \big(g^{\sigma_{w,c}(r)}\cdot(\mathit{pk}^{\,c})^{-1},\, c,\,
+\sigma_{w,c}(r)\big)$; that is, these two maps are equal.
 \end{theorem}

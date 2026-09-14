@@ -34,17 +34,17 @@ applied to a list of child circuits. No alternation or deduplication constraint 
 imposed.
 \end{definition}
 
-\begin{theorem}[Custom induction principle for circuits]
+\begin{theorem}[Structural induction on Boolean circuits]
 \lean{BoolCircuit.Circuit.ind}
 \label{BoolCircuit.Circuit.ind}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval}
 \difficulty{5}
-An induction principle for \texttt{Circuit} stating that to prove a predicate
-$\mathrm{motive}$ holds for every circuit it suffices to prove it for every literal and,
-in the node case, to prove $\mathrm{motive}(\texttt{node}\,isAnd\,cs)$ assuming
-$\mathrm{motive}\,c$ for every child $c \in cs$. This works around the lack of native
-support for nested inductives.
+Let $P$ be a property of Boolean circuits on $n$ variables. Suppose that $P$ holds for
+every literal circuit, and that whenever $P$ holds for every circuit in a list $cs$ of
+children, it also holds for the gate circuit $\mathrm{node}(isAnd, cs)$ formed from $cs$
+(an AND gate when $isAnd = \mathrm{true}$, an OR gate when $isAnd = \mathrm{false}$).
+Then $P$ holds for every Boolean circuit on $n$ variables.
 \end{theorem}
 
 \begin{definition}[Evaluation of a circuit]
@@ -209,37 +209,43 @@ The depth of a normal-form OR circuit: a clause has depth $0$, and a node has de
 plus the maximum depth among its child AND circuits.
 \end{definition}
 
-\begin{theorem}[Clause indices are nodup (AND)]
+\begin{theorem}[Distinct variable indices in an AND clause]
 \lean{BoolCircuit.NAndCircuit.clause_nodup}
 \label{BoolCircuit.NAndCircuit.clause_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit}
 \difficulty{1}
-If a normal-form AND circuit $c$ equals a clause built from literals $lits$ with a
-duplication-free proof $h$, then the variable indices $lits.\mathrm{map}\;\mathrm{Lit.idx}$
-are pairwise distinct.
+Fix $n$, and let $lits$ be a list of literals over the variables $\{0,\dots,n-1\}$ whose
+underlying variable indices, obtained by taking the index of each literal in $lits$, are
+pairwise distinct. If a normal-form AND circuit on $n$ variables equals the base clause
+built from $lits$ together with this distinctness witness, then the list of variable
+indices of $lits$ has no repeated entries.
 \end{theorem}
 
-\begin{theorem}[Clause indices are nodup (OR)]
+\begin{theorem}[Distinct variable indices in an OR clause]
 \lean{BoolCircuit.NOrCircuit.clause_nodup}
 \label{BoolCircuit.NOrCircuit.clause_nodup}
 \leanok
 \uses{BoolCircuit.Lit}
 \difficulty{1}
-If a normal-form OR circuit $c$ equals a clause built from literals $lits$ with a
-duplication-free proof $h$, then the variable indices $lits.\mathrm{map}\;\mathrm{Lit.idx}$
-are pairwise distinct.
+Fix a natural number $n$, and let $\ell$ be a list of literals over $n$ variables, each
+literal being a pair consisting of a variable index in $\mathrm{Fin}\,n$ and a sign in
+$\mathrm{Bool}$. Suppose the variable indices occurring in $\ell$ are pairwise distinct,
+and let $c$ be the OR-clause circuit built from $\ell$ under this distinctness
+hypothesis. Then the list of variable indices of $\ell$ is duplicate-free, i.e. its
+entries are pairwise distinct.
 \end{theorem}
 
-\begin{theorem}[Equal indices imply equal literals in a nodup clause]
+\begin{theorem}[Distinct indices determine literals in a list]
 \lean{BoolCircuit.Lit.eq_of_idx_eq_of_mem_nodup}
 \label{BoolCircuit.Lit.eq_of_idx_eq_of_mem_nodup}
 \leanok
 \uses{BoolCircuit.Lit}
 \difficulty{4}
-In a clause whose variable indices are pairwise distinct, any two literals
-$l_1, l_2 \in lits$ that share the same index ($l_1.\mathrm{idx} = l_2.\mathrm{idx}$) are
-in fact equal, $l_1 = l_2$.
+Let $\ell_1,\dots,\ell_m$ be a list of circuit literals over $n$ variables whose
+variable indices are pairwise distinct. Then any two literals $l_1$ and $l_2$ in this
+list that have the same variable index are equal; that is, if $l_1$ and $l_2$ both occur
+in the list and $l_1.\mathrm{idx} = l_2.\mathrm{idx}$, then $l_1 = l_2$.
 \end{theorem}
 
 \begin{definition}[Normalize a circuit to AND-normal form]
@@ -266,65 +272,85 @@ as a single AND node built from the children's $\mathrm{toNOr}$ images, enforcin
 alternation.
 \end{definition}
 
-\begin{theorem}[Fold commutes with map (conjunction)]
+\begin{theorem}[Mapped conjunction fold equals the original]
 \lean{BoolCircuit.foldr_and_map}
 \label{BoolCircuit.foldr_and_map}
 \leanok
 \difficulty{3}
-A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the conjunctive
-\texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ equals the conjunctive \texttt{foldr} of
-$f$ over $cs$.
+Let $\alpha$ and $\beta$ be types, let
+$f\colon\alpha\to\{\mathrm{true},\mathrm{false}\}$ and
+$g\colon\beta\to\{\mathrm{true},\mathrm{false}\}$ be Boolean-valued functions, let
+$h\colon\alpha\to\beta$, and let $cs$ be a finite list of elements of $\alpha$. Suppose
+that $g(h(c)) = f(c)$ for every $c$ appearing in $cs$. Then the Boolean conjunction of
+$g$ over the mapped list, $\bigwedge_{c\in cs} g(h(c))$, equals the Boolean conjunction
+of $f$ over $cs$, namely $\bigwedge_{c\in cs} f(c)$, where in each case the conjunction
+is folded from the right starting from $\mathrm{true}$.
 \end{theorem}
 
-\begin{theorem}[Fold commutes with map (disjunction)]
+\begin{theorem}[Disjunctive fold commutes with a compatible map]
 \lean{BoolCircuit.foldr_or_map}
 \label{BoolCircuit.foldr_or_map}
 \leanok
 \difficulty{3}
-A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the disjunctive
-\texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ equals the disjunctive \texttt{foldr} of
-$f$ over $cs$.
+Let $f : \alpha \to \{\text{true},\text{false}\}$ and $g : \beta \to
+\{\text{true},\text{false}\}$ be Boolean-valued functions, let $h : \alpha \to \beta$,
+and let $c_1, \dots, c_n$ be a finite list of elements of $\alpha$. If $g(h(c)) = f(c)$
+for every element $c$ of the list, then the disjunction $g(h(c_1)) \vee \cdots \vee
+g(h(c_n))$ of the values of $g$ over the mapped list equals the disjunction $f(c_1) \vee
+\cdots \vee f(c_n)$ of the values of $f$ over the original list, where each empty
+disjunction is taken to be $\text{false}$.
 \end{theorem}
 
-\begin{theorem}[Fold commutes with map (addition)]
+\begin{theorem}[Sums agree under a compatible relabelling]
 \lean{BoolCircuit.foldr_add_map}
 \label{BoolCircuit.foldr_add_map}
 \leanok
 \difficulty{3}
-A technical lemma: if $g(h\,c) = f\,c$ for all $c \in cs$, then the additive
-\texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ equals the additive \texttt{foldr} of $f$
-over $cs$.
+Let $f\colon A \to \bbn$ and $g\colon B \to \bbn$ be functions into the natural numbers,
+let $h\colon A \to B$ be a map, and let $c_1,\dots,c_m$ be a finite list of elements of
+$A$. If $g(h(c)) = f(c)$ for every entry $c$ of the list, then
+\[
+\sum_{i=1}^{m} g\bigl(h(c_i)\bigr) \;=\; \sum_{i=1}^{m} f(c_i),
+\]
+where each sum is taken over the list in order with initial value $0$.
 \end{theorem}
 
-\begin{theorem}[Fold inequality under map (addition)]
+\begin{theorem}[Sums commute with a mapped pointwise bound]
 \lean{BoolCircuit.foldr_add_map_le}
 \label{BoolCircuit.foldr_add_map_le}
 \leanok
 \difficulty{3}
-A technical lemma: if $g(h\,c) \le k \cdot f\,c$ for all $c \in cs$, then the additive
-\texttt{foldr} of $g$ over $cs.\mathrm{map}\;h$ is at most $k$ times the additive
-\texttt{foldr} of $f$ over $cs$.
+Let $f\colon\alpha\to\bbn$, $g\colon\beta\to\bbn$, and $h\colon\alpha\to\beta$ be
+functions into the natural numbers, let $cs$ be a finite list of elements of $\alpha$,
+and let $k\in\bbn$. If $g(h(c)) \le k\, f(c)$ holds for every entry $c$ of $cs$, then,
+summing over the entries of $cs$ (with multiplicity),
+\[ \sum_{c \in cs} g\bigl(h(c)\bigr) \;\le\; k \sum_{c \in cs} f(c). \]
 \end{theorem}
 
-\begin{theorem}[Normalization preserves semantics]
+\begin{theorem}[Normalization preserves circuit semantics]
 \lean{BoolCircuit.toNAnd_toNOr_eval}
 \label{BoolCircuit.toNAnd_toNOr_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.eval, BoolCircuit.NOrCircuit.eval}
 \difficulty{5}
-For every circuit $c$ and assignment $x$, both normalizations agree with the original
-on values: $(c.\mathrm{toNAnd}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$ and
-$(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
+Let $c$ be a Boolean circuit on $n$ variables and let $x : \mathrm{Fin}\,n \to \bbf_2$
+be an assignment. Then both alternating normal forms of $c$ compute the same value as
+$c$ itself: the normal-form AND circuit obtained by normalizing $c$ evaluates at $x$ to
+$c$'s value, and likewise the normal-form OR circuit obtained by normalizing $c$
+evaluates at $x$ to $c$'s value.
 \end{theorem}
 
-\begin{theorem}[AND-normalization preserves semantics]
+\begin{theorem}[Correctness of AND-normal-form conversion]
 \lean{BoolCircuit.toNAnd_eval}
 \label{BoolCircuit.toNAnd_eval}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.eval, BoolCircuit.toNAnd_toNOr_eval}
 \difficulty{1}
-For every circuit $c$ and assignment $x$,
-$(c.\mathrm{toNAnd}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
+Let $c$ be a Boolean circuit on $n$ variables — a tree of literals combined by AND and
+OR gates — and let $x : \mathrm{Fin}\,n \to \bbf_2$ be an assignment to those variables.
+Converting $c$ into strictly alternating AND-normal form and evaluating the resulting
+normal-form AND circuit at $x$ yields the same Boolean value as evaluating $c$ directly
+at $x$.
 \end{theorem}
 
 \begin{theorem}[OR-normalization preserves semantics]
@@ -333,29 +359,36 @@ $(c.\mathrm{toNAnd}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.eval, BoolCircuit.toNAnd_toNOr_eval}
 \difficulty{1}
-For every circuit $c$ and assignment $x$,
-$(c.\mathrm{toNOr}).\mathrm{eval}\,x = c.\mathrm{eval}\,x$.
+Let $c$ be a Boolean circuit on $n$ variables and let $x : \mathrm{Fin}\,n \to \bbf_2$
+be an assignment. Then the normal-form OR circuit obtained by OR-normalizing $c$
+computes the same Boolean value as $c$ itself: evaluated at $x$, it agrees with the
+value of $c$ at $x$.
 \end{theorem}
 
-\begin{theorem}[Normalization preserves literal count]
+\begin{theorem}[Normalization preserves the literal count]
 \lean{BoolCircuit.toNAnd_toNOr_litCount}
 \label{BoolCircuit.toNAnd_toNOr_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.litCount, BoolCircuit.NOrCircuit.litCount}
 \difficulty{5}
-For every circuit $c$, both normalizations preserve the literal count:
-$(c.\mathrm{toNAnd}).\mathrm{litCount} = c.\mathrm{litCount}$ and
-$(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
+Let $c$ be a Boolean circuit on $n$ variables, whose literal count is the number of
+literal occurrences it contains (a leaf literal counting once, and an AND or OR gate
+counting the total over its children). Converting $c$ to strictly alternating AND/OR
+normal form preserves this count: both the AND-normal form of $c$ and the OR-normal form
+of $c$ have the same number of literal occurrences as $c$ itself.
 \end{theorem}
 
-\begin{theorem}[AND-normalization preserves literal count]
+\begin{theorem}[AND-normalization preserves the literal count]
 \lean{BoolCircuit.toNAnd_litCount}
 \label{BoolCircuit.toNAnd_litCount}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.litCount, BoolCircuit.toNAnd_toNOr_litCount}
 \difficulty{1}
-For every circuit $c$,
-$(c.\mathrm{toNAnd}).\mathrm{litCount} = c.\mathrm{litCount}$.
+Let $c$ be a Boolean circuit on $n$ variables, and let $c'$ be the normal-form AND
+circuit obtained by normalizing it (a literal becomes a singleton clause, an AND gate
+normalizes each child to OR-normal form, and an OR gate is wrapped as a single OR node
+over the AND-normalizations of its children). Then $c'$ contains exactly as many literal
+occurrences as $c$: the number of literals in $c'$ equals the number of literals in $c$.
 \end{theorem}
 
 \begin{theorem}[OR-normalization preserves literal count]
@@ -364,30 +397,37 @@ $(c.\mathrm{toNAnd}).\mathrm{litCount} = c.\mathrm{litCount}$.
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.litCount, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.litCount, BoolCircuit.toNAnd_toNOr_litCount}
 \difficulty{1}
-For every circuit $c$,
-$(c.\mathrm{toNOr}).\mathrm{litCount} = c.\mathrm{litCount}$.
+For every Boolean circuit $c$ on $n$ variables, converting $c$ to OR-normal form leaves
+its total number of literal occurrences unchanged: the literal count of the normal-form
+OR circuit obtained from $c$ equals the literal count of $c$ itself.
 \end{theorem}
 
-\begin{theorem}[Normalization at most doubles size]
+\begin{theorem}[Normalization at most doubles circuit size]
 \lean{BoolCircuit.toNAnd_toNOr_size_le}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b002}
 \label{BoolCircuit.toNAnd_toNOr_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNAnd, BoolCircuit.Circuit.toNOr, BoolCircuit.NAndCircuit.size, BoolCircuit.NOrCircuit.size, BoolCircuit.foldr_add_map_le}
 \difficulty{6}
-For every circuit $c$, both normalizations have size at most twice the original:
-$(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$ and
-$(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
+Let $c$ be a Boolean circuit on $n$ variables, and write $\mathrm{size}(c)$ for its
+total node count. Converting $c$ into either alternating normal form increases its size
+by at most a factor of two: the normal-form AND circuit obtained by normalizing $c$ has
+size at most $2\,\mathrm{size}(c)$, and the normal-form OR circuit obtained by
+normalizing $c$ likewise has size at most $2\,\mathrm{size}(c)$.
 \end{theorem}
 
-\begin{theorem}[AND-normalization at most doubles size]
+\begin{theorem}[AND-normalization at most doubles circuit size]
 \lean{BoolCircuit.toNAnd_size_le}
 \label{BoolCircuit.toNAnd_size_le}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNAnd, BoolCircuit.NAndCircuit.size, BoolCircuit.toNAnd_toNOr_size_le}
 \difficulty{1}
-For every circuit $c$,
-$(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$.
+Let $c$ be a Boolean circuit on $n$ variables, where the size of a circuit is its total
+number of nodes, counting internal AND/OR gates together with literal leaves.
+Normalizing $c$ into strictly alternating AND-normal form — a literal becoming a
+singleton clause, an AND gate normalizing each child into OR-normal form, and an OR gate
+becoming a single wrapping OR node over its children's AND-normal forms — yields a
+normal-form AND circuit whose size is at most twice the size of $c$.
 \end{theorem}
 
 \begin{theorem}[OR-normalization at most doubles size]
@@ -397,8 +437,14 @@ $(c.\mathrm{toNAnd}).\mathrm{size} \le 2\,c.\mathrm{size}$.
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, BoolCircuit.Circuit.toNOr, BoolCircuit.NOrCircuit.size, BoolCircuit.toNAnd_toNOr_size_le}
 \difficulty{1}
-For every circuit $c$,
-$(c.\mathrm{toNOr}).\mathrm{size} \le 2\,c.\mathrm{size}$.
+Let $c$ be a Boolean circuit on $n$ variables, and let $\mathrm{size}(c)$ denote its
+total node count (literal leaves plus internal AND/OR gates). Write $c'$ for the
+OR-normal form of $c$, the normal-form OR circuit obtained by rewriting $c$ into
+strictly alternating AND/OR normal form. Then the size of $c'$ is at most twice the size
+of $c$:
+\[
+\mathrm{size}(c') \le 2\,\mathrm{size}(c).
+\]
 \end{theorem}
 
 \begin{definition}[Forget AND-normal form back to a circuit]
@@ -507,14 +553,15 @@ the deeper subtree (ties broken toward the high subtree). It returns the list of
 $(\text{queried variable}, \text{branch direction})$ pairs along that path.
 \end{definition}
 
-\begin{lemma}[Deep path length equals depth]
+\begin{lemma}[Length of the deepest path equals the depth]
 \lean{DecisionTree.length_deepPath}
 \label{DecisionTree.length_deepPath}
 \leanok
 \uses{DecisionTree, DecisionTree.deepPath, DecisionTree.depth}
 \difficulty{3}
-For every decision tree $T$, the length of its deepest path equals its depth:
-$T.\mathrm{deepPath}.\mathrm{length} = T.\mathrm{depth}$.
+Let $T$ be a decision tree on $n$ Boolean variables. Then the deepest root-to-leaf path
+of $T$ has length equal to the depth of $T$; that is, the number of branch queries along
+that path is exactly $\mathrm{depth}(T)$.
 \end{lemma}
 
 \begin{lemma}[Depth bound for the full decision tree]
@@ -523,9 +570,10 @@ $T.\mathrm{deepPath}.\mathrm{length} = T.\mathrm{depth}$.
 \leanok
 \uses{DecisionTree.depth, buildFullDTree}
 \difficulty{4}
-For a function $f$, an index $k \le n$, and an accumulator assignment $acc$, the complete
-decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ that queries variables
-$k, k+1, \dots, n-1$ in order has depth at most $n - k$.
+Let $f\colon\{0,1\}^n \to \{0,1\}$ be a Boolean function on $n$ variables, let $k \le
+n$, and let $acc$ be a partial assignment of the variables. Then the full decision tree
+for $f$ that queries the variables $k, k+1, \dots, n-1$ in order starting from $acc$ has
+depth at most $n - k$.
 \end{lemma}
 
 \begin{lemma}[Correctness of the full decision tree]
@@ -534,9 +582,12 @@ $k, k+1, \dots, n-1$ in order has depth at most $n - k$.
 \leanok
 \uses{DecisionTree.eval, buildFullDTree}
 \difficulty{5}
-For a function $f$, an index $k \le n$, and assignments $acc, x$ agreeing on all
-coordinates below $k$ (i.e. $acc\,i = x\,i$ whenever $i.\mathrm{val} < k$), the complete
-decision tree $\mathrm{buildFullDTree}\,f\,k\,acc$ evaluates to $f\,x$ on $x$.
+Let $f \colon (\bbf_2)^n \to \{\mathtt{true},\mathtt{false}\}$ be a Boolean function on
+$n$ variables, let $k \le n$, and let $acc, x \colon \{0,\dots,n-1\} \to
+\{\mathtt{true},\mathtt{false}\}$ be two assignments that agree on every coordinate
+below $k$, that is $acc_i = x_i$ for all $i < k$. Then the full decision tree for $f$
+that branches on variables $k, k+1, \dots, n-1$ starting from the accumulator $acc$
+evaluates on input $x$ to $f(x)$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha",
+ "key": "7c9dd330524b602e",
+ "kind": "theorem",
+ "title": "Trivial upper bound on deterministic communication complexity",
+ "statement": "Let $X$ and $\\alpha$ be finite nonempty types, let $Y$ be an arbitrary type, and let $f : X \\to Y \\to \\alpha$ be a two-argument function. Then the deterministic communication complexity of $f$ satisfies\n\\[\n  D(f) \\;\\le\\; \\lceil \\log_2 \\abs{X} \\rceil + \\lceil \\log_2 \\abs{\\alpha} \\rceil,\n\\]\nwhere $\\abs{X}$ and $\\abs{\\alpha}$ denote the cardinalities of $X$ and $\\alpha$.",
+ "hypotheses_covered": [
+  "X finite",
+  "α finite",
+  "X nonempty",
+  "α nonempty",
+  "f : X → Y → α a two-argument function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For finite, nonempty types $X$ and $\\alpha$ and any function $f : X \\to Y \\to \\alpha$,\nthe deterministic communication complexity satisfies\n\\[\n  \\mathrm{CC}(f) \\;\\le\\; \\lceil\\log_2 |X|\\rceil + \\lceil\\log_2 |\\alpha|\\rceil.\n\\]\nThis bound is achieved by the protocol in which Alice sends her input $x$ to Bob,\nand Bob computes and sends back the output $f(x, y)$."
+}

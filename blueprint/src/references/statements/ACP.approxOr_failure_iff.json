@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.approxOr_failure_iff",
+ "key": "80187d21450b4c08",
+ "kind": "lemma",
+ "title": "Failure characterization of the value-level OR approximator",
+ "statement": "Fix a prime $p$, and let $v : \\mathrm{Fin}\\,\\mathrm{width} \\to \\bbz/p$ be a vector together with a family $S_1,\\dots,S_\\ell$ of subsets of $\\{1,\\dots,\\mathrm{width}\\}$. Then the value-level OR approximator built from $v$ and $S$ disagrees with the value-level OR detector of $v$ if and only if $v \\neq 0$ yet $\\sum_{i \\in S_k} v_i = 0$ in $\\bbz/p$ for every index $k$.",
+ "hypotheses_covered": [
+  "p is a prime",
+  "v is a vector in Fin width → ZMod p",
+  "S is a family of ℓ subsets of Fin width",
+  "conclusion: approximator ≠ detector iff (v ≠ 0 and every subset sum ∑_{i∈S_k} v_i vanishes)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $v : \\mathrm{Fin}\\,\\mathrm{width} \\to \\mathbb{Z}/p$ and a seed $S$, the value-level\napproximator differs from the OR detector if and only if $v \\ne 0$ and every seed subset has\nvanishing sum, i.e.\\ $\\sum_{i \\in S_k} v_i = 0$ for all $k$."
+}

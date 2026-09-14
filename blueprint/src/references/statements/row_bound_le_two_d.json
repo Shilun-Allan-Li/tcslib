@@ -1,0 +1,16 @@
+{
+ "lean_name": "row_bound_le_two_d",
+ "key": "a58ce01a0ddb5064",
+ "kind": "theorem",
+ "title": "A natural-number bound implies itself",
+ "statement": "Let $d$ and $r$ be natural numbers. If $r \\le 2d$, then $r \\le 2d$.",
+ "hypotheses_covered": [
+  "d a natural number",
+  "r (row_nnz) a natural number",
+  "hypothesis r ≤ 2d"
+ ],
+ "confidence": "high",
+ "caveat": "The formal statement is a tautology: its single hypothesis is identical to its conclusion, and it carries no matrix or graph content. The prose in `current` about Kikuchi matrices and pair-degree describes a mathematical context that appears nowhere in the Lean, so it has been dropped as non-truthful to the ground statement.",
+ "rubric": [],
+ "replaced": "For naturals $d$ and $\\mathrm{row\\_nnz}$, if the number of nonzero entries in a row of\nthe matrix $B_i$ satisfies $\\mathrm{row\\_nnz} \\le 2d$, then $\\mathrm{row\\_nnz} \\le 2d$.\nThis records the row/column bound: with pair-degree at most $d$, each $B_i$ has at most\n$2d$ nonzero entries per row and per column."
+}

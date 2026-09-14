@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.mergeAll_perm",
+ "key": "a289fb8257798bf7",
+ "kind": "lemma",
+ "title": "Permutation invariance of edge merging",
+ "statement": "Fix $n$ and an initial union-find state $\\mathit{uf} : \\mathrm{Fin}\\,n \\to \\bbn$. If two lists of weighted edges $l_1$ and $l_2$ over $n$ vertices are permutations of one another, then folding each list into $\\mathit{uf}$ by merging the endpoints of every edge in turn yields two union-find states that induce the same partition of the nodes; that is, for all $i, j : \\mathrm{Fin}\\,n$, the two states assign $i$ and $j$ equal representatives under one exactly when they do under the other.",
+ "hypotheses_covered": [
+  "number of nodes n",
+  "initial union-find state uf",
+  "l1 and l2 are permutations of each other"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the edge lists $l_1$ and $l_2$ are permutations of each other, then merging along them\ngives the same partition:\n$\\mathtt{SamePartition}\\,(\\mathit{uf}.\\mathtt{mergeAll}\\,l_1)\\,(\\mathit{uf}.\\mathtt{mergeAll}\\,l_2)$."
+}

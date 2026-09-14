@@ -1,0 +1,19 @@
+{
+ "lean_name": "hoeffding_log_mgf_weak",
+ "key": "1cd7d1350fb80b19",
+ "kind": "theorem",
+ "title": "Weak Hoeffding log-MGF bound",
+ "statement": "Let $n \\ge 1$ and let $p = (p_1, \\dots, p_n)$ be a probability vector, so that $p_i \\ge 0$ for every $i$ and $\\sum_{i} p_i = 1$. Let $\\ell_1, \\dots, \\ell_n \\in [0,1]$, and let $\\eta > 0$. Writing $L = \\sum_{i} p_i \\ell_i$ for the average loss, one has\n\\[\n  \\log\\!\\Bigl(\\sum_{i} p_i\\, e^{-\\eta\\, \\ell_i}\\Bigr)\n  \\;\\le\\;\n  -\\eta L + \\frac{\\eta^2}{2}.\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 1",
+  "p_i ≥ 0 for all i",
+  "∑ p_i = 1",
+  "ℓ_i ≥ 0 for all i",
+  "ℓ_i ≤ 1 for all i",
+  "η > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a probability vector on $\\mathrm{Fin}\\,n$ and let $\\ell_i \\in [0,1]$ for all\n$i$.  For $\\eta > 0$, setting $L = \\sum_i p_i \\ell_i$,\n\\[\n  \\ln\\!\\Bigl(\\sum_{i} p_i\\,e^{-\\eta\\,\\ell_i}\\Bigr)\n  \\;\\le\\;\n  -\\eta L + \\frac{\\eta^2}{2}.\n\\]"
+}

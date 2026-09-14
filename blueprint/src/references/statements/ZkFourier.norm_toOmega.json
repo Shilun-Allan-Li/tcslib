@@ -1,0 +1,15 @@
+{
+ "lean_name": "ZkFourier.norm_toOmega",
+ "key": "382fb46192774564",
+ "kind": "lemma",
+ "title": "Unit modulus of powers of a root of unity",
+ "statement": "Fix an integer $k \\ge 1$ and write $\\omega_k = e^{2\\pi i/k}$ for the primitive $k$-th root of unity. For every residue $a \\in \\mathbb{Z}/k\\mathbb{Z}$, the complex number $\\omega_k^{a}$, obtained by raising $\\omega_k$ to the canonical representative of $a$ in $\\{0,\\dots,k-1\\}$, satisfies $\\norm{\\omega_k^{a}} = 1$, so it lies on the unit circle.",
+ "hypotheses_covered": [
+  "k is a positive natural number (NeZero k)",
+  "a is an element of Z/kZ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $a : \\mathbb{Z}/k\\mathbb{Z}$, $\\|\\omega_k^a\\| = 1$; the image of\n$\\texttt{ZkFourier.toOmega}$ lies on the complex unit circle."
+}

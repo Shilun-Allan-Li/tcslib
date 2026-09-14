@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Equality.equalityHashProtocol_rrun",
+ "key": "7d6ec1a0ea1e13c9",
+ "kind": "theorem",
+ "title": "Output of the equality hashing protocol",
+ "statement": "Fix natural numbers $n$ and $k$, let $x, y \\in \\mathrm{BoolInput}(n)$ be $n$-bit Boolean strings, and let $h \\in \\mathrm{HashSpace}(n,k)$ be a hash function sending $n$-bit strings into $\\mathrm{Fin}(2^k)$. Running the equality hashing protocol on private inputs $x$ and $y$ with $h$ as the shared public randomness returns the Boolean value $\\mathrm{decide}(h(x) = h(y))$; that is, the protocol outputs $\\mathrm{true}$ precisely when the two hashes $h(x)$ and $h(y)$ agree.",
+ "hypotheses_covered": [
+  "n, k natural numbers",
+  "x, y are n-bit Boolean inputs",
+  "h is a hash function in HashSpace(n,k)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $x, y : \\mathrm{BoolInput}\\,n$ and $h : \\mathrm{HashSpace}(n,k)$,\n\\[\n  (\\mathrm{equalityHashProtocol}\\,n\\,k).\\mathrm{rrun}\\,x\\,y\\,h\n  \\;=\\; \\mathtt{decide}(h(x) = h(y)).\n\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.hamming_ball_size",
+ "key": "87bf616ba30d2612",
+ "kind": "theorem",
+ "title": "Cardinality of Hamming balls",
+ "statement": "Let $\\alpha$ be a finite alphabet, and regard a codeword of length $n$ as a function $\\mathrm{Fin}\\,n \\to \\alpha$, with the Hamming distance $d(x,y)$ counting the coordinates in which two codewords differ. For every radius $l$ and every center codeword $c$, the Hamming ball $B_l(c) = \\{c' : d(c',c) \\le l\\}$ has cardinality\n\\[\n\\abs{B_l(c)} \\;=\\; \\sum_{i=0}^{l} \\binom{n}{i}\\,(\\abs{\\alpha}-1)^{i},\n\\]\nwhere $\\abs{\\alpha}$ is the number of symbols in the alphabet.",
+ "hypotheses_covered": [
+  "finite alphabet $\\alpha$",
+  "codeword length $n$",
+  "radius $l$",
+  "arbitrary center codeword $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any center $c$ and radius $l$,\n\\[\n|B_l(c)| \\;=\\; \\sum_{i=0}^{l} \\binom{n}{i}\\,(|\\alpha|-1)^i.\n\\]"
+}

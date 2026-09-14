@@ -21,14 +21,15 @@ each literal index $i$ by $f(i)$ (keeping its sign) and recursing structurally t
 $\mathrm{And}/\mathrm{Or}$ nodes.
 \end{definition}
 
-\begin{theorem}[Re-indexing preserves depth]
+\begin{theorem}[Re-indexing preserves circuit depth]
 \lean{BoolCircuit.Circuit.reidx_depth}
 \label{BoolCircuit.Circuit.reidx_depth}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx}
 \difficulty{5}
-For every circuit $c$ on $m$ variables and every $f : \mathrm{Fin}\,m \to \mathrm{Fin}\,m'$,
-the re-indexed circuit has the same depth as $c$, i.e. $\mathrm{depth}(\mathrm{reidx}(c, f)) = \mathrm{depth}(c)$.
+Let $c$ be a Boolean circuit on $m$ variables and let $f : \mathrm{Fin}\,m \to
+\mathrm{Fin}\,m'$ be any map of variable indices. Then re-indexing $c$ along $f$ leaves
+its depth unchanged: $\mathrm{depth}(\mathrm{reidx}(c, f)) = \mathrm{depth}(c)$.
 \end{theorem}
 
 \begin{theorem}[Re-indexing commutes with evaluation]
@@ -37,8 +38,13 @@ the re-indexed circuit has the same depth as $c$, i.e. $\mathrm{depth}(\mathrm{r
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx, BoolCircuit.Lit.eval}
 \difficulty{5}
-For every circuit $c$ on $m$ variables, every $f : \mathrm{Fin}\,m \to \mathrm{Fin}\,m'$,
-and every assignment $g : \mathrm{Fin}\,m' \to \mathrm{Bool}$, evaluating the re-indexed
-circuit under $g$ equals evaluating $c$ under the pulled-back assignment $g \circ f$, i.e.
-$\mathrm{eval}(\mathrm{reidx}(c, f), g) = \mathrm{eval}(c, g \circ f)$.
+Let $c$ be a Boolean circuit on $m$ variables, let $f : \mathrm{Fin}\,m \to
+\mathrm{Fin}\,m'$ be a re-indexing map, and let $g : \mathrm{Fin}\,m' \to \bbf_2$ be an
+assignment to the $m'$ variables. Then evaluating the re-indexed circuit
+$\mathrm{reidx}(c, f)$ under $g$ gives the same value as evaluating the original circuit
+$c$ under the pulled-back assignment $g \circ f$:
+\[
+\mathrm{eval}\big(\mathrm{reidx}(c, f),\, g\big) = \mathrm{eval}\big(c,\, g \circ
+f\big).
+\]
 \end{theorem}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "hedgeWeight_succ",
+ "key": "4e622b293be0b259",
+ "kind": "lemma",
+ "title": "Recursion for the Hedge weight",
+ "statement": "Fix a learning rate $\\eta \\in \\bbr$ and a loss sequence $\\ell$ for $N$ experts over $T$ rounds. For every round $t \\in \\mathrm{Fin}\\,T$ and every expert $i \\in \\mathrm{Fin}\\,N$, the unnormalized Hedge weights satisfy\n\\[\n  w_{t+1}(i) \\;=\\; w_t(i)\\cdot \\exp\\!\\bigl(-\\eta\\,\\ell_t(i)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "learning rate η ∈ ℝ",
+  "loss sequence ℓ for N experts over T rounds",
+  "round t ∈ Fin T",
+  "expert i ∈ Fin N"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "The weight factorizes across rounds:\n\\[\n  w_{t+1}(i) \\;=\\; w_t(i) \\cdot \\exp\\!\\bigl(-\\eta\\,\\ell_t(i)\\bigr).\n\\]"
+}

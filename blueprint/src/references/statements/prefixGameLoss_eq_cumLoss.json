@@ -1,0 +1,17 @@
+{
+ "lean_name": "prefixGameLoss_eq_cumLoss",
+ "key": "6f13282d3c0ce327",
+ "kind": "lemma",
+ "title": "Prefix game loss equals induced cumulative loss",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column actions, given by a payoff matrix $A$ with $0 \\le A_{ij} \\le 1$, and let $a_0, \\dots, a_{T-1}$ be a sequence of column actions with each $a_s \\in \\mathrm{Fin}\\,N$. Fix a row action $i \\in \\mathrm{Fin}\\,M$ and a round $t \\in \\mathrm{Fin}\\,T$. Then the prefix cumulative loss of row $i$ along the first $t$ column actions coincides with the cumulative loss of expert $i$ through the first $t$ rounds of the loss sequence induced by $G$ and $(a_s)_s$; that is,\n\\[\n  \\sum_{s=0}^{t-1} \\bigl(1 - A_{i,\\,a_s}\\bigr) \\;=\\; \\sum_{s < t} \\bigl(1 - A_{i,\\,a_s}\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "G a finite zero-sum game with M rows and N columns and payoffs in [0,1]",
+  "a sequence of column actions indexed by Fin T",
+  "a round t in Fin T (so t < T)",
+  "a row action i in Fin M"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any fixed column-action sequence $a : \\mathrm{Fin}\\,T \\to \\mathrm{Fin}\\,N$,\nround $t < T$, and row $i$, the prefix cumulative loss of row $i$ along the\nfirst $t$ actions equals the abstract cumulative loss of $i$ in the induced loss\nsequence: $\\mathrm{prefixGameLoss}(\\dots) = \\mathrm{cumLoss}(G.\\mathrm{toLossSeq}(a), t, i)$."
+}

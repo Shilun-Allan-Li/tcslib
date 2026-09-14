@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.exactMod_totalDegree",
+ "key": "9c7e63652d92098f",
+ "kind": "theorem",
+ "title": "Total degree of the exact $\\mathrm{MOD}_p$ polynomial",
+ "statement": "Let $p$ be a prime and fix natural numbers $\\mathrm{vars}$ and $\\mathrm{width}$. Let $P_0,\\dots,P_{\\mathrm{width}-1}$ be polynomials in $\\mathrm{vars}$ variables over the field $\\bbz/p$. Then the total degree of the exact $\\mathrm{MOD}_p$ polynomial $1 - \\bigl(\\sum_i P_i\\bigr)^{p-1}$ is at most\n\\[\n(p-1)\\cdot \\sup_i \\deg(P_i),\n\\]\nthe supremum being taken over all $i$ (and read as $0$ when $\\mathrm{width}=0$).",
+ "hypotheses_covered": [
+  "p is prime",
+  "vars and width are natural numbers",
+  "a family of width polynomials P_i in vars variables over Z/p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The total degree of $\\texttt{ACP.exactMod}$ applied to $P_1,\\dots,P_{\\mathrm{width}}$ is at\nmost $(p-1)\\cdot \\sup_i \\deg(P_i)$."
+}

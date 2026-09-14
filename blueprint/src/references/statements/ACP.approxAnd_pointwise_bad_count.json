@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.approxAnd_pointwise_bad_count",
+ "key": "bfa7ac8a386172b7",
+ "kind": "theorem",
+ "title": "Pointwise bad-seed count for the AND approximator",
+ "statement": "Fix a prime $p$, polynomials $P_1,\\dots,P_{\\mathrm{width}}$ over $\\bbz/p$ in $\\mathrm{vars}$ variables, and an evaluation point $y \\in (\\bbz/p)^{\\mathrm{vars}}$. Consider the $2^{\\mathrm{width}\\cdot\\ell}$ possible seeds $S = (S_1,\\dots,S_\\ell)$, each $S_k$ a subset of $\\{1,\\dots,\\mathrm{width}\\}$, and let $N$ be the number of seeds for which the randomized AND-approximating polynomial evaluated at $y$ differs from $\\prod_{k=1}^{\\mathrm{width}}\\bigl(1-(1-P_k(y))^{p-1}\\bigr)$. Then\n\\[\nN \\cdot 2^{\\ell} \\le 2^{\\mathrm{width}\\cdot\\ell}.\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "polynomials P_i over Z/p in vars variables, indexed by i in {1,...,width}",
+  "an evaluation point y in (Z/p)^vars",
+  "seeds S range over functions from {1,...,ℓ} to subsets of {1,...,width}",
+  "N counts seeds where approxAnd(P,S)(y) ≠ ∏_k (1 - (1 - P_k(y))^{p-1})",
+  "conclusion: N · 2^ℓ ≤ 2^{width·ℓ}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix an evaluation point $y$. The number of seeds $S$ for which\n$\\texttt{ACP.approxAnd}\\,(P,S)$ evaluated at $y$ differs from\n$\\prod_k \\bigl(1 - (1 - P_k(y))^{p-1}\\bigr)$, multiplied by $2^\\ell$, is at most\n$2^{\\mathrm{width}\\cdot\\ell}$."
+}

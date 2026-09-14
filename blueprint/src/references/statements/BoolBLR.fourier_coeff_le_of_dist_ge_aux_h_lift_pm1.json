@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolBLR.fourier_coeff_le_of_dist_ge_aux_h_lift_pm1",
+ "key": "fafc891d1e31a0fd",
+ "kind": "lemma",
+ "title": "Product of $\\pm 1$ lifts as a disagreement indicator",
+ "statement": "Let $f, g : \\{0,1\\}^n \\to \\{0,1\\}$ be Boolean-valued functions on the hypercube, and write $F, G : \\{0,1\\}^n \\to \\bbr$ for their $\\pm 1$ lifts, given by $F(x) = (-1)^{f(x)}$ and $G(x) = (-1)^{g(x)}$. Then for every point $x \\in \\{0,1\\}^n$,\n\\[\n  F(x)\\,G(x) \\;=\\; 1 - 2\\cdot\\mathbf{1}\\!\\left[f(x) \\ne g(x)\\right],\n\\]\nso the product equals $+1$ where $f$ and $g$ agree at $x$ and $-1$ where they disagree.",
+ "hypotheses_covered": [
+  "f, g are functions from the n-dimensional Boolean hypercube to {0,1}",
+  "the identity holds for every point x in the hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $f, g : \\{0,1\\}^n \\to \\{0,1\\}$ and every $x \\in \\{0,1\\}^n$,\n\\[\n  (-1)^{f(x)}\\,(-1)^{g(x)} \\;=\\; 1 - 2\\cdot\\mathbf{1}\\!\\left[f(x) \\ne g(x)\\right].\n\\]"
+}

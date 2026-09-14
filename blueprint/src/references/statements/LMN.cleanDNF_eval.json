@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.cleanDNF_eval",
+ "key": "ed3dd47fc996e9a3",
+ "kind": "lemma",
+ "title": "Cleaning a DNF preserves its Boolean function",
+ "statement": "Let $d$ be a DNF formula in $n$ Boolean variables — a disjunction of terms, each term a conjunction of literals over the variables $\\{0,\\dots,n-1\\}$ — and form the cleaned formula by first discarding every term that contains some variable together with its negation, and then, in each surviving term, keeping only the first literal on each variable and deleting any later literal repeating that variable. Then the cleaned formula and $d$ compute the same Boolean function: for every assignment $x \\colon \\{0,\\dots,n-1\\} \\to \\{\\mathrm{true},\\mathrm{false}\\}$, the cleaned formula evaluates to true at $x$ if and only if $d$ does.",
+ "hypotheses_covered": [
+  "arbitrary DNF formula d over n variables",
+  "arbitrary Boolean assignment x on the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every DNF $d$ and input $x$, the cleaned formula computes the same Boolean function:\n$(\\mathrm{cleanDNF}\\,d).\\mathrm{eval}\\,x = d.\\mathrm{eval}\\,x$."
+}

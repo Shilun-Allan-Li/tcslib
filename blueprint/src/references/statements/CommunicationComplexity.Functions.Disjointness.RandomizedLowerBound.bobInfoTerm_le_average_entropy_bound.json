@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm_le_average_entropy_bound",
+ "key": "58d9cf9483a5029f",
+ "kind": "theorem",
+ "title": "Information bound for Bob's special-coordinate bit",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$, with communication complexity $\\ell$. Sample an input from the hard distribution conditioned on the event that Alice's and Bob's generated sets are disjoint; let $M$ denote the transcript that $p$ produces on the sampled input pair, let $T$ denote the special coordinate, let $Y_T$ denote Bob's bit at the special coordinate, and let $(T, X_{\\le T}, Y_{>T})$ denote Bob's special-coordinate conditioning variable. Then the conditional mutual information between $Y_T$ and $M$ given $(T, X_{\\le T}, Y_{>T})$ satisfies\n\\[\nI\\!\\left(Y_T : M \\mid T,\\, X_{\\le T},\\, Y_{>T}\\right) \\le \\frac{\\ell \\, \\log 2}{n}.\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol of length n",
+  "communication complexity of p is ℓ (entering the bound)",
+  "measure is the hard distribution conditioned on disjointness",
+  "mutual information is between specialY (Y_T) and the transcript M",
+  "conditioning is on the tuple (T, X_{≤T}, Y_{>T})"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Bob's averaged fixed-coordinate information plus the entropy bound $H(M) ≤ ℓ$."
+}

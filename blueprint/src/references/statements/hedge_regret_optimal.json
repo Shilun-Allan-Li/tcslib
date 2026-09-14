@@ -1,0 +1,18 @@
+{
+ "lean_name": "hedge_regret_optimal",
+ "key": "e0aeb7ecf38a593f",
+ "kind": "theorem",
+ "title": "Optimal-rate regret bound for Hedge",
+ "statement": "Consider the Hedge algorithm run on $N > 1$ experts over $T > 0$ rounds against a valid loss sequence $\\ell$, that is, one with $0 \\le \\ell_t(i) \\le 1$ for every round $t$ and expert $i$. Suppose $2\\ln N \\le T$, and run Hedge with the learning rate $\\eta^* = \\sqrt{2\\ln N / T}$. Then the regret—the learner's total expected loss minus the loss of the best single expert in hindsight—satisfies\n\\[\n  R_T(\\eta^*) \\;\\le\\; \\sqrt{2\\,T\\ln N}.\n\\]",
+ "hypotheses_covered": [
+  "T > 0 rounds",
+  "N > 1 experts",
+  "2 ln N ≤ T",
+  "valid loss sequence (losses in [0,1])",
+  "learning rate equals the optimal η* = sqrt(2 ln N / T)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $T \\ge 2\\ln N$ (so that $\\eta^* \\le 1$), then for any valid loss sequence,\n\\[\n  R_T(\\eta^*) \\;\\le\\; \\sqrt{2\\,T\\ln N}.\n\\]"
+}

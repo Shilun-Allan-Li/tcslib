@@ -1,0 +1,19 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_comp_right_le_of_comp_conditioning",
+ "key": "0dad746034dafe08",
+ "kind": "theorem",
+ "title": "Conditional data processing with conditioning-dependent maps",
+ "statement": "Let $X\\colon\\Omega\\to S$, $Y\\colon\\Omega\\to T$, and $Z\\colon\\Omega\\to U$ be measurable random variables on a probability space $(\\Omega,\\mu)$, each taking only countably many values and having finite range, where $S$, $T$, and $U$ are countable measurable spaces. Let $f\\colon U\\times T\\to V$ be a measurable map into a countable measurable space $V$, and define $W(\\omega)=f\\big(Z(\\omega),Y(\\omega)\\big)$. Then the conditional mutual information satisfies\n\\[\n  I[X : W \\mid Z;\\mu] \\;\\le\\; I[X : Y \\mid Z;\\mu].\n\\]\nThat is, replacing $Y$ by any function of $Y$ that is also permitted to depend on the conditioning variable $Z$ cannot increase the conditional mutual information with $X$.",
+ "hypotheses_covered": [
+  "X, Y, Z measurable random variables",
+  "S, T, U (and V) countable measurable spaces",
+  "X, Y, Z have finite range",
+  "μ is a probability measure",
+  "f : U × T → V is measurable",
+  "W(ω) = f(Z(ω), Y(ω))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a measurable function $f : U \\to T \\to V$ (with $Z : \\Omega \\to U$ the conditioning\nvariable), applying $f(Z(\\omega))$ to $Y(\\omega)$ cannot increase conditional mutual information:\n\\[\n  I[X : \\omega \\mapsto f(Z(\\omega))(Y(\\omega)) \\mid Z;\\mu]\n  \\;\\le\\; I[X : Y \\mid Z;\\mu].\n\\]"
+}

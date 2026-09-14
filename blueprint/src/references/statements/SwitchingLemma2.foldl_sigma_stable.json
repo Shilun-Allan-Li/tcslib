@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.foldl_sigma_stable",
+ "key": "0ad1ed30798f2acf",
+ "kind": "lemma",
+ "title": "Fold of variable-freeing updates leaves untargeted variables fixed",
+ "statement": "Fix a term $t$ over $n$ variables (a list of literals), a restriction $\\sigma : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$, a variable $v$, and a finite list of entries, each a pair $(k, b)$ with $k \\in \\bbn$ and $b$ a Boolean. Process the entries left to right, starting from $\\sigma$: for an entry $(k, b)$, delete the first $k$ literals of $t$; if what remains is empty, leave the current restriction unchanged, and otherwise, writing $l$ for the first remaining literal, reset the restriction to be free (unassigned) at the variable of $l$. (The Boolean component $b$ of each entry is never used.) Suppose that for every entry $(k, b)$ in the list, if deleting the first $k$ literals of $t$ leaves a nonempty list whose first literal is $l$, then the variable of $l$ is not $v$. Then the restriction obtained after processing all the entries takes the same value at $v$ as $\\sigma$ does.",
+ "hypotheses_covered": [
+  "t is a term (list of literals) over Fin n",
+  "entries is a list of pairs (k : ℕ, b : Bool)",
+  "σ is the initial restriction, v the variable examined",
+  "for each entry (k,b), if dropping the first k literals of t leaves l :: rest then l.var ≠ v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Folding the decoder's $\\sigma$-update over a list of entries leaves $v$ unchanged when\nno entry targets $v$; that is, if for every entry the literal at its position in $t$ does\nnot have variable $v$, the folded $\\sigma$ agrees with the initial $\\sigma$ at $v$."
+}

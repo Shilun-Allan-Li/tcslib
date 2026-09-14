@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity",
+ "key": "b30c8f5d4e3e42a5",
+ "kind": "theorem",
+ "title": "Pullback preserves communication complexity",
+ "statement": "Let $p$ be a finite-message deterministic communication protocol over input types $X$ and $Y$ with output type $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be maps of input types. Then the pullback protocol obtained by precomposing every message function of $p$ with $f_X$ or $f_Y$ (as appropriate) has the same communication complexity as $p$.",
+ "hypotheses_covered": [
+  "p a finite-message protocol over X, Y with output type α",
+  "a map f_X : X' → X",
+  "a map f_Y : Y' → Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The pullback does not change the communication complexity:\n$(p.\\mathrm{comap}\\,f_X\\,f_Y).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

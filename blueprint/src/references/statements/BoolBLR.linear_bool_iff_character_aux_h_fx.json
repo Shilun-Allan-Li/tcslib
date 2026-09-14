@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolBLR.linear_bool_iff_character_aux_h_fx",
+ "key": "b190f3eb8673331b",
+ "kind": "lemma",
+ "title": "Value of a linear Boolean function from its action on basis vectors",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a linear Boolean function, meaning $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y \\in \\{0,1\\}^n$, where $\\oplus$ is componentwise XOR. For each coordinate $i$, let $e_i \\in \\{0,1\\}^n$ denote the standard basis vector that is $1$ in coordinate $i$ and $0$ elsewhere. Then for every $x \\in \\{0,1\\}^n$, the value $f(x)$ is $1$ if the number of coordinates $i$ with $x_i = 1$ and $f(e_i) = 1$ is odd, and $0$ if that number is even; equivalently, $f(x)$ is the parity of $\\lvert\\{\\, i : x_i = 1 \\text{ and } f(e_i) = 1 \\,\\}\\rvert$.",
+ "hypotheses_covered": [
+  "dimension n a natural number",
+  "f is a Boolean function on the n-dimensional hypercube",
+  "f is linear (f(x⊕y) = f(x)⊕f(y))",
+  "x is an arbitrary point of the hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Restatement of the support formula in the exact form used inside the proof of\nthe character criterion: for linear $f$ and any $x \\in \\{0,1\\}^n$, $f(x)$ is\nthe parity of the number of coordinates $i$ with $x_i = \\texttt{true}$ and\n$f(e_i) = \\texttt{true}$."
+}

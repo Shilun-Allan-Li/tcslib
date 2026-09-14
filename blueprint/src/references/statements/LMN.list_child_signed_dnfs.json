@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.list_child_signed_dnfs",
+ "key": "01b1b87aba74ba51",
+ "kind": "lemma",
+ "title": "Signed DNFs for depth-one circuits over gates",
+ "statement": "Let $g_1,\\dots,g_m \\colon \\{0,1\\}^n \\to \\{0,1\\}$ be Boolean functions, and suppose that each $g_i$ is computed both by a DNF formula of width at most $l$ and by a CNF formula of width at most $l$. Let $C_1,\\dots,C_k$ be Boolean circuits on $m$ inputs, each of depth at most $1$. Then for every $j \\in \\{1,\\dots,k\\}$ there exist a DNF formula $\\varphi_j$ on the $n$ variables and a sign $\\varepsilon_j \\in \\{\\mathrm{true},\\mathrm{false}\\}$ such that $\\varphi_j$ has width at most $l$, each term of $\\varphi_j$ contains every variable at most once (so no term repeats a literal or carries a variable in both polarities), and, for every assignment $x \\in \\{0,1\\}^n$, the value $\\varphi_j(x)$ when $\\varepsilon_j = \\mathrm{true}$ and $\\lnot\\varphi_j(x)$ when $\\varepsilon_j = \\mathrm{false}$ equals $C_j\\bigl(g_1(x),\\dots,g_m(x)\\bigr)$.",
+ "hypotheses_covered": [
+  "each circuit in the list has depth at most 1",
+  "each gate has a DNF of width at most l computing it",
+  "each gate has a CNF of width at most l computing it"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Given a list $cs$ of circuits each of depth at most $1$, over gates with width-$l$ DNF and\nCNF representations, there are families $\\varphi_s$ of width-$l$ DNFs (with duplicate-free,\nnon-repeating-variable terms) and signs indexed by $\\mathrm{Fin}\\,cs.\\mathrm{length}$ such\nthat, for each index $j$, the signed evaluation of $\\varphi_s\\,j$ matches\n$(cs.\\mathrm{get}\\,j).\\mathrm{eval}\\,(\\lambda i,\\ \\mathrm{gates}\\,i\\,x)$ on every $x$."
+}

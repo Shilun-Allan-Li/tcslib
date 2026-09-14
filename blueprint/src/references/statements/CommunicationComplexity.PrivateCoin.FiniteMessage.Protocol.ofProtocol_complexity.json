@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity",
+ "key": "5615898c8ca01203",
+ "kind": "theorem",
+ "title": "Embedding a binary private-coin protocol preserves complexity",
+ "statement": "Let $p$ be a binary private-coin protocol with randomness spaces $\\Omega_X$ and $\\Omega_Y$, input spaces $X$ and $Y$, and output type $\\alpha$. Then the private-coin finite-message protocol obtained by embedding $p$ has the same communication complexity as $p$; that is, viewing each Boolean message of $p$ as an element of the two-element message alphabet leaves the worst-case number of bits exchanged unchanged.",
+ "hypotheses_covered": [
+  "p is a binary private-coin protocol over randomness spaces Ω_X, Ω_Y, inputs X, Y, and output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any binary private-coin protocol $p$,\n$(\\texttt{ofProtocol}\\,p).\\texttt{complexity} = p.\\texttt{complexity}$."
+}

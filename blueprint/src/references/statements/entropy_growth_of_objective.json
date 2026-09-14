@@ -1,0 +1,17 @@
+{
+ "lean_name": "entropy_growth_of_objective",
+ "key": "180816ac665ad9b0",
+ "kind": "theorem",
+ "title": "Entropy growth rate of the objective",
+ "statement": "Fix $0 < \\tau < 1/2$, and let $(t_n)$ be a sequence of natural numbers and $(a_n)$ a sequence of reals such that $t_n/n \\to \\tau$ and, for all sufficiently large $n$, the point $a_n$ lies strictly below every real zero of the Krawtchouk polynomial $K_{t_n}^{(n)}$. Then the truncated Christoffel--Darboux kernel evaluated at $(a_n, 0)$ grows at rate at most $H(\\tau)$, in the sense that\n\\[\n  \\limsup_{n\\to\\infty} \\frac{1}{n}\\log_2 \\Phi_{n,t_n}(a_n, 0) \\;\\le\\; H(\\tau),\n\\]\nwhere $H$ is the binary entropy function in base $2$.",
+ "hypotheses_covered": [
+  "0 < τ",
+  "τ < 1/2",
+  "t_n/n → τ as n → ∞",
+  "eventually a_n lies strictly below every real zero of K_{t_n}^{(n)}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $0 < \\tau < 1/2$, let $t_n/n \\to \\tau$, and let $a_n$ eventually lie strictly\nbelow every real zero of $K_{t_n}^{(n)}$. Then\n\\[\n  \\limsup_{n\\to\\infty} \\frac{1}{n}\\log_2 \\Phi_{n,t_n}(a_n,0) \\;\\le\\; H(\\tau).\n\\]"
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "even_q_ldc_lower_bound",
+ "key": "864de135f4aba03d",
+ "kind": "theorem",
+ "title": "A constant bound on $k$ of order $n^{1-2/q}\\log n$",
+ "statement": "Let $q$ be an even integer with $q \\ge 2$, let $k \\ge 1$ and $n \\ge 2$ be integers, and let $\\delta, \\varepsilon > 0$. Then there exists a constant $C > 0$ such that\n\\[\n  k \\;\\le\\; n^{\\,1 - 2/q}\\cdot\\frac{C \\,\\log n}{\\varepsilon^{4}\\,\\delta^{2}}.\n\\]",
+ "hypotheses_covered": [
+  "q even",
+  "q ≥ 2",
+  "k ≥ 1 (positive integer)",
+  "n ≥ 2",
+  "δ > 0",
+  "ε > 0"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean statement quantifies only over the numbers $q,k,n,\\delta,\\varepsilon$; no code or decoder appears among its hypotheses, so the claim is exactly the existence of a positive constant making the displayed inequality hold, with $C$ chosen after all parameters.",
+ "rubric": [],
+ "replaced": "Let $q$ be even with $q \\ge 2$, let $k > 0$ and $n \\ge 2$, and let $\\delta, \\varepsilon >\n0$. Then there is a constant $C > 0$ with\n\\[\n  k \\;\\le\\; \\frac{n^{1 - 2/q} \\cdot C \\cdot \\log n}{\\varepsilon^{4}\\,\\delta^{2}} .\n\\]\n\n\\emph{Placeholder --- the statement carries no lower-bound content.}  As with the $3$-query\ncase, $C$ is quantified after all parameters and the Lean proof takes\n$C = k\\varepsilon^{4}\\delta^{2}/(n^{1-2/q}\\log n) + 1$, so the inequality holds for every\nchoice of parameters.  Note also that no code or decoder occurs in the hypotheses --- the\nstatement quantifies over $q, k, n, \\delta, \\varepsilon$ alone.  Theorem~10.1 of\nAlrabiah--Guruswami--Kothari--Manohar is \\emph{not} formalised here."
+}

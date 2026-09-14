@@ -1,0 +1,18 @@
+{
+ "lean_name": "ZkBLR.BLR_soundness",
+ "key": "5ee8c906d97b5991",
+ "kind": "lemma",
+ "title": "BLR soundness over a prime field",
+ "statement": "Let $p$ be prime and fix $n \\ge 0$. Let $f : \\bbz_p^n \\to \\bbz_p$ be a normalized function (so $f(0)=0$), and let $0 \\le \\varepsilon \\le 1$ be such that $f$ is $\\varepsilon$-far from every linear map, meaning $\\mathrm{dist}(f,g) \\ge \\varepsilon$ for every linear $g : \\bbz_p^n \\to \\bbz_p$, where $\\mathrm{dist}(f,g) = \\Pr_x[f(x) \\ne g(x)]$. Then the BLR acceptance probability of $f$ satisfies\n\\[\n  \\Pr_{x,y}\\bigl[f(x+y) = f(x)+f(y)\\bigr]\n  \\;\\le\\; 1 - \\frac{p-1}{p}\\,\\bigl(1 - \\cos(2\\pi/p)\\bigr)\\,\\varepsilon,\n\\]\nwhere $x,y$ range uniformly and independently over $\\bbz_p^n$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "f maps Z_p^n to Z_p",
+  "f is normalized, f(0)=0",
+  "0 ≤ ε ≤ 1",
+  "f is ε-far from every linear function (dist(f,g) ≥ ε for all linear g)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\mathbb{Z}_p^n \\to \\mathbb{Z}_p$ is $\\varepsilon$-far from linear\n(normalized), then\n\\[\n  \\Pr[{\\rm BLR\\ accepts}\\ f]\n  \\;\\le\\; 1 - \\frac{p-1}{p}\\bigl(1-\\cos(2\\pi/p)\\bigr)\\varepsilon.\n\\]"
+}

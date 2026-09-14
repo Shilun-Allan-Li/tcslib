@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_measure_condBit_ne_zero",
+ "key": "9baf032000833b00",
+ "kind": "theorem",
+ "title": "Positivity of each conditioning-bit event",
+ "statement": "Fix a positive integer $n$, and draw a random vector of $n$ disjoint-coordinate symbols by sampling each of its $n$ coordinates independently and uniformly from the three values *neither*, *left-only*, and *right-only*. For a coordinate index $k$ write $X_k$ for Alice's bit at that coordinate (equal to $1$ exactly when the $k$-th symbol is *left-only*) and $Y_k$ for Bob's bit (equal to $1$ exactly when it is *right-only*). Then for every pair of indices $i,k \\in \\{0,1,\\dots,n-1\\}$ and every bit $b \\in \\{0,1\\}$, the event that Alice's conditioning bit at coordinate $k$ under cut-off $i$ — namely $X_k$ when $k<i$ and $Y_k$ otherwise — takes the value $b$ has strictly positive probability under this uniform law.",
+ "hypotheses_covered": [
+  "n a positive natural number",
+  "index i in Fin n",
+  "index k in Fin n",
+  "b a Boolean value",
+  "uniform law on vectors of disjoint-coordinate symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Each single-coordinate conditioning bit has positive mass under the uniform disjoint-vector law."
+}

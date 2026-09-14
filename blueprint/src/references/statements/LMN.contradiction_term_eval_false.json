@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.contradiction_term_eval_false",
+ "key": "6715761dc08686de",
+ "kind": "lemma",
+ "title": "Contradictory terms evaluate to false",
+ "statement": "Let $t$ be a term (a conjunction of literals) over the variables $x_0,\\dots,x_{n-1}$. If $t$ contains two literals on the same variable with opposite polarities — one negated and one not — then $t$ evaluates to false under every assignment $x : \\{0,\\dots,n-1\\} \\to \\{\\mathrm{true},\\mathrm{false}\\}$.",
+ "hypotheses_covered": [
+  "t is a term over n variables",
+  "t contains two literals on the same variable with opposite polarities (termHasContradiction t = true)",
+  "x is an arbitrary assignment of the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathrm{termHasContradiction}\\,t = \\texttt{true}$, then for every input $x$ the term\nevaluates to false under conjunction: $\\mathrm{Term.eval}\\,t\\,x = \\texttt{false}$."
+}

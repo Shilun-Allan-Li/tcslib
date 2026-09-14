@@ -1,0 +1,19 @@
+{
+ "lean_name": "johnson_lindenstrauss_subgaussian_dim_bound",
+ "key": "667696c56acb10a1",
+ "kind": "theorem",
+ "title": "Dimension threshold for Johnson–Lindenstrauss embeddings",
+ "statement": "Fix a distortion parameter $\\varepsilon$ with $0 < \\varepsilon < 1$ and an integer $n \\ge 2$. Then there is a threshold $k_0 \\in \\bbn$ such that for every target dimension $k \\ge k_0$, every source dimension $d$, and every finite set $V \\subseteq \\bbr^d$ of at most $n$ points, there exists a linear map $f : \\bbr^d \\to \\bbr^k$ that is an $\\varepsilon$-JL embedding of $V$: that is, $(1-\\varepsilon)\\,\\|u - v\\|^2 \\le \\|f(u) - f(v)\\|^2 \\le (1+\\varepsilon)\\,\\|u - v\\|^2$ for all $u, v \\in V$.",
+ "hypotheses_covered": [
+  "distortion parameter positive: 0 < ε",
+  "distortion parameter below one: ε < 1",
+  "at least two points: 2 ≤ n",
+  "threshold k₀ holds for every target dimension k ≥ k₀",
+  "universal over every source dimension d",
+  "V finite with at most n points: |V| ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Sub-Gaussian (Rademacher) analogue of \\texttt{johnson\\_lindenstrauss\\_dim\\_bound}:\nsame threshold $k_0 = O(\\log n / \\varepsilon^2)$, same universal conclusion for\nall $k \\ge k_0$, $d$, and $V$ of size at most $n$, but inheriting the\nHanson-Wright axiom from the sub-Gaussian concentration chain."
+}

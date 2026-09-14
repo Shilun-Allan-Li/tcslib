@@ -12,74 +12,91 @@ redundant edge from a candidate set without increasing its total weight.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Exchanging the head edge for a new edge]
+\begin{lemma}[Head-edge exchange preserves reachability]
 \lean{Kruskal.exchange_take_head}
 \label{Kruskal.exchange_take_head}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.reach_lift, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
 \difficulty{5}
-Let $\mathit{base}, \mathit{rest}$ be edge lists on $n$ vertices and let $g, e$ be edges.
-Suppose that in $\mathit{base} \mathbin{+\!\!+} \mathit{rest}$ the vertex $e.u$ reaches
-$g.u$ and $g.v$ reaches $e.v$. Then every pair $a, b$ that is reachable in
-$\mathit{base} \mathbin{+\!\!+} (g :: \mathit{rest})$ is also reachable in
-$\mathit{base} \mathbin{+\!\!+} \mathit{rest} \mathbin{+\!\!+} [e]$; that is, $g$ may be
-replaced by $e$ without losing connectivity.
+Let $\mathit{base}$ and $\mathit{rest}$ be lists of weighted edges on $n$ vertices, and
+let $g$ and $e$ be two further weighted edges, with respective endpoints $u_g, v_g$ and
+$u_e, v_e$. Suppose that, using only the edges in the concatenation $\mathit{base}
+\mathbin{+\!\!+} \mathit{rest}$, the vertex $u_e$ is connected to $u_g$ and the vertex
+$v_g$ is connected to $v_e$. Then for every pair of vertices $a, b$ that are connected
+using the edges of $\mathit{base} \mathbin{+\!\!+} (g :: \mathit{rest})$, the vertices
+$a$ and $b$ are also connected using the edges of $\mathit{base} \mathbin{+\!\!+}
+\mathit{rest} \mathbin{+\!\!+} [e]$.
 \end{lemma}
 
-\begin{lemma}[Exchanging the head edge, reversed orientation]
+\begin{lemma}[Edge exchange preserving reachability, reversed orientation]
 \lean{Kruskal.exchange_take_head'}
 \label{Kruskal.exchange_take_head'}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.WEdge, Kruskal.exchange_take_head, Kruskal.reach_lift}
 \difficulty{3}
-The same exchange statement with the endpoints of $g$ taken in the opposite order:
-if in $\mathit{base} \mathbin{+\!\!+} \mathit{rest}$ the vertex $e.u$ reaches $g.v$ and
-$g.u$ reaches $e.v$, then every pair reachable in
-$\mathit{base} \mathbin{+\!\!+} (g :: \mathit{rest})$ is reachable in
-$\mathit{base} \mathbin{+\!\!+} \mathit{rest} \mathbin{+\!\!+} [e]$.
+Fix $n$ and consider weighted edges on a vertex set of size $n$, each edge carrying a
+first and a second endpoint. For a list of edges $L$, write $a \leadsto_L b$ to mean
+that $a$ reaches $b$ through $L$, i.e.\ $a$ and $b$ are joined by a path whose edges lie
+in $L$ (the reflexive–transitive closure of the symmetric adjacency relation induced by
+$L$). Let $\mathit{base}$ and $\mathit{rest}$ be lists of weighted edges, and let $g$
+and $e$ be weighted edges, with first and second endpoints $g_1, g_2$ and $e_1, e_2$
+respectively. Suppose that, using the edges in the concatenation $\mathit{base}
+\mathbin{+\!\!+} \mathit{rest}$, the endpoint $e_1$ reaches $g_2$ and the endpoint $g_1$
+reaches $e_2$. Then for every pair of vertices $a, b$: if $a \leadsto b$ using the list
+obtained by placing $g$ at the front of $\mathit{rest}$ and appending that to
+$\mathit{base}$, then $a \leadsto b$ using $\mathit{base} \mathbin{+\!\!+} \mathit{rest}
+\mathbin{+\!\!+} [e]$, the concatenation of $\mathit{base}$, $\mathit{rest}$, and the
+single edge $e$.
 \end{lemma}
 
-\begin{lemma}[Exchange argument over a base edge list]
+\begin{lemma}[Base-relative exchange of an edge in Kruskal's algorithm]
 \lean{Kruskal.exchange_with_base}
 \label{Kruskal.exchange_with_base}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.exchange_take_head, Kruskal.exchange_take_head', Kruskal.reach_cons_iff, Kruskal.reach_lift, Kruskal.reach_mem_iff, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
 \difficulty{6}
-Let $\mathit{base}, S$ be edge lists and let $e$ be an edge with $e.u \neq e.v$ whose
-endpoints are connected in $\mathit{base} \mathbin{+\!\!+} S$ but not in $\mathit{base}$
-alone. Then there exists an edge $f \in S$ such that every pair $a, b$ reachable in
-$\mathit{base} \mathbin{+\!\!+} S$ remains reachable in
-$\mathit{base} \mathbin{+\!\!+} (S \setminus \{f\}) \mathbin{+\!\!+} [e]$, where
-$S \setminus \{f\}$ denotes $\mathtt{S.erase}\,f$.
+Let $\mathit{base}$ and $S$ be lists of weighted edges on $n$ vertices, and let $e$ be a
+weighted edge whose two endpoints are distinct. Suppose the endpoints of $e$ are
+connected by a path using the edges of $\mathit{base}$ together with those of $S$, but
+are not connected using the edges of $\mathit{base}$ alone. Then there is an edge $f$
+occurring in $S$ such that, for every pair of vertices $a$ and $b$ connected by a path
+through the edges of $\mathit{base}$ together with $S$, the vertices $a$ and $b$ are
+still connected by a path through the edges of $\mathit{base}$ together with the edges
+of $S$ after removing one occurrence of $f$ and adjoining $e$.
 \end{lemma}
 
-\begin{lemma}[Union--find form of the exchange argument]
+\begin{lemma}[Union-find form of the exchange argument]
 \lean{Kruskal.uf_exchange}
 \label{Kruskal.uf_exchange}
 \leanok
 \uses{Kruskal.Reach, Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.exchange_with_base, Kruskal.mergeAll_iff_reach, Kruskal.reach_lift, Kruskal.reach_mem_iff, Kruskal.reach_mono, Kruskal.reach_symm}
 \difficulty{5}
-Let $\mathit{uf}$ be a union--find state whose classes are exactly the reachability
-classes of an edge list $\mathit{base}$, i.e.\ $\mathit{uf}\,a = \mathit{uf}\,b$ iff
-$a$ and $b$ are reachable in $\mathit{base}$. If merging all edges of $S$ into
-$\mathit{uf}$ identifies $e.u$ and $e.v$ while $\mathit{uf}$ itself keeps them apart,
-then there is an edge $f \in S$ such that
-$(\mathit{uf}.\mathtt{merge}\,e.u\,e.v).\mathtt{mergeAll}\,(S \setminus \{f\})$
-induces the same partition as $\mathit{uf}.\mathtt{mergeAll}\,S$.
+Let $\mathit{uf}\colon \mathrm{Fin}\,n \to \bbn$ be a union-find state whose classes
+coincide with the reachability classes of an edge list $\mathit{base}$: for all nodes
+$a,b$ one has $\mathit{uf}(a) = \mathit{uf}(b)$ if and only if $a$ and $b$ are joined by
+a path through the edges of $\mathit{base}$. Let $S$ be a further list of weighted
+edges, and let $e$ be a weighted edge with endpoints $u$ and $v$ such that merging every
+edge of $S$ into $\mathit{uf}$ places $u$ and $v$ in a common component, while
+$\mathit{uf}$ itself keeps them in distinct components. Then there is an edge $f \in S$
+for which the state obtained by first merging $u$ with $v$ and then merging all edges of
+$S$ other than $f$ induces the same partition of the nodes as the state obtained by
+merging all edges of $S$ into $\mathit{uf}$.
 \end{lemma}
 
-\begin{lemma}[Removing a redundant edge from a candidate set]
+\begin{lemma}[Dropping a redundant edge from a candidate set]
 \lean{Kruskal.reduce_to_rest}
 \label{Kruskal.reduce_to_rest}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.rfl, Kruskal.UF.SamePartition.trans, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.merge_noop, Kruskal.totalWeight}
 \difficulty{5}
-Let $\mathit{uf}$ be a union--find state, $e$ an edge, and $\mathit{rest}, S$ edge lists
-with every element of $S$ lying in $e :: \mathit{rest}$, such that
-$\mathit{uf}.\mathtt{mergeAll}\,S$ and $\mathit{uf}.\mathtt{mergeAll}\,\mathit{rest}$
-induce the same partition. If $e$ is redundant for $\mathit{uf}$, i.e.\
-$\mathit{uf}\,e.u = \mathit{uf}\,e.v$, then there exists a list $S'$ all of whose edges
-lie in $\mathit{rest}$, such that $\mathit{uf}.\mathtt{mergeAll}\,S'$ induces the same
-partition as $\mathit{uf}.\mathtt{mergeAll}\,\mathit{rest}$ and
-$\mathtt{totalWeight}\,S' \leq \mathtt{totalWeight}\,S$.
+Let $\mathit{uf}$ be a union-find state on $n$ nodes, let $e$ be a weighted edge with
+endpoints $u$ and $v$, and let $\mathit{rest}$ and $S$ be lists of weighted edges.
+Suppose every edge of $S$ occurs in the list $e :: \mathit{rest}$ formed by prepending
+$e$ to $\mathit{rest}$; that merging all edges of $S$ into $\mathit{uf}$ induces the
+same partition of the nodes as merging all edges of $\mathit{rest}$ into $\mathit{uf}$;
+and that $e$ is already redundant for $\mathit{uf}$, meaning $\mathit{uf}(u) =
+\mathit{uf}(v)$. Then there exists a list $S'$ of weighted edges, every one of which
+occurs in $\mathit{rest}$, such that merging all edges of $S'$ into $\mathit{uf}$
+induces the same partition as merging all edges of $\mathit{rest}$, and the total weight
+of $S'$ is at most the total weight of $S$.
 \end{lemma}

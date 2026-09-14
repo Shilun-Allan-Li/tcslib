@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_complexity",
+ "key": "ef88ae7bc3c6e723",
+ "kind": "theorem",
+ "title": "Communication complexity of a product protocol",
+ "statement": "Let $p_1$ and $p_2$ be public-coin finite-message protocols over the common private input sets $X$ and $Y$, with shared-randomness spaces $\\Omega_1$ and $\\Omega_2$ and output types $\\alpha_1$ and $\\alpha_2$ respectively. Then the communication complexity of their product protocol $\\mathrm{prod}\\;p_1\\;p_2$, which runs $p_1$ and $p_2$ independently on the same inputs, equals the sum of the individual complexities:\n\\[\n\\mathrm{complexity}(\\mathrm{prod}\\;p_1\\;p_2) = \\mathrm{complexity}(p_1) + \\mathrm{complexity}(p_2).\n\\]",
+ "hypotheses_covered": [
+  "a public-coin finite-message protocol p1 over shared randomness Omega1 with output type alpha1",
+  "a public-coin finite-message protocol p2 over shared randomness Omega2 with output type alpha2",
+  "both over the same private input sets X and Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The communication complexity of $\\mathrm{prod}\\;p_1\\;p_2$ equals the sum of the\ncomplexities of $p_1$ and $p_2$:\n$(\\mathrm{prod}\\;p_1\\;p_2).\\mathrm{complexity} =\n  p_1.\\mathrm{complexity} + p_2.\\mathrm{complexity}$."
+}

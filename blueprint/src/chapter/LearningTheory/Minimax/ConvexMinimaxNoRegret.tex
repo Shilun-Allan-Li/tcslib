@@ -81,107 +81,142 @@ where $x : \mathrm{Fin}\,M \to X$ is the sample.  This is a technical variant of
 $\texttt{OnlineLearning.finiteRowSampleLowerValue}$ used in intermediate results.
 \end{definition}
 
-\begin{theorem}[Minimax from the Theorem 7.1 proof route]
+\begin{theorem}[Minimax equality on convex compact sets]
 \lean{OnlineLearning.convex_compact_minimax_of_theorem71_route}
 \label{OnlineLearning.convex_compact_minimax_of_theorem71_route}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.Theorem71CompactApproximation, OnlineLearning.Theorem71FiniteNoRegretBound, OnlineLearning.weak_convex_compact_minimax}
 \difficulty{3}
-If the standard convex-compact minimax hypotheses hold, the finite no-regret bound
-$\texttt{OnlineLearning.Theorem71FiniteNoRegretBound}$ holds, and the compact approximation
-property $\texttt{OnlineLearning.Theorem71CompactApproximation}$ holds, then the minimax
-equality
+Let $X, Y \subseteq \bbr$ and let $f : \bbr \to \bbr \to \bbr$. Suppose that $X$ and $Y$
+are nonempty, that $X$ is compact and convex, that $Y$ is convex, that the map $x
+\mapsto f(x,y)$ is continuous and convex on $X$ for every $y \in Y$, that the map $y
+\mapsto f(x,y)$ is concave on $Y$ for every $x \in X$, and that $f$ is bounded above and
+below on $X \times Y$. Suppose moreover that for every nonempty finite subset $u
+\subseteq X$,
 \[
-  \inf_{x \in X} \sup_{y \in Y} f(x,y)
-    = \sup_{y \in Y} \inf_{x \in X} f(x,y)
+  \inf_{x \in X} \sup_{y \in Y} f(x,y) \;\le\; \sup_{y \in Y} \inf_{x \in u} f(x,y),
 \]
-holds.
+and that for every $\varepsilon > 0$ there exists a nonempty finite subset $u \subseteq
+X$ with
+\[
+\sup_{y \in Y} \inf_{x \in u} f(x,y) \;\le\; \sup_{y \in Y} \inf_{x \in X} f(x,y) +
+\varepsilon.
+\]
+Then
+\[
+  \inf_{x \in X} \sup_{y \in Y} f(x,y) \;=\; \sup_{y \in Y} \inf_{x \in X} f(x,y).
+\]
 \end{theorem}
 
-\begin{theorem}[Compact approximation from uniform equicontinuity]
+\begin{theorem}[Compact approximation of the lower value from uniform equicontinuity]
 \lean{OnlineLearning.theorem71_compactApproximation_of_uniformEquicontinuity}
 \label{OnlineLearning.theorem71_compactApproximation_of_uniformEquicontinuity}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71CompactApproximation, OnlineLearning.Theorem71UniformEquicontinuity, OnlineLearning.finiteRowSampleLowerValue}
 \difficulty{5}
-Under the convex-compact minimax hypotheses, if $f$ satisfies
-$\texttt{OnlineLearning.Theorem71UniformEquicontinuity}$, then
-$\texttt{OnlineLearning.Theorem71CompactApproximation}$ holds: a finite cover of the
-compact set $X$ together with equicontinuity shows that the finite sample lower value
-approximates the full lower value to within any $\varepsilon > 0$.
+Let $X, Y \subseteq \bbr$ be nonempty, with $X$ compact and convex and $Y$ convex, and
+let $f : \bbr \times \bbr \to \bbr$ be bounded above and below on $X \times Y$, with
+$f(\cdot, y)$ continuous and convex on $X$ for every $y \in Y$ and $f(x, \cdot)$ concave
+on $Y$ for every $x \in X$. Suppose in addition that $f$ is uniformly equicontinuous in
+its first argument, uniformly over the columns: for every $\varepsilon > 0$ there is
+$\rho > 0$ with $|f(x,y) - f(x',y)| < \varepsilon$ whenever $x, x' \in X$, $y \in Y$,
+and $\dist(x, x') < \rho$. Then for every $\varepsilon > 0$ there exists a nonempty
+finite sample $u \subseteq X$ such that
+\[
+  \sup_{y \in Y} \inf_{x \in u} f(x, y)
+    \;\le\;
+  \sup_{y \in Y} \inf_{x \in X} f(x, y) + \varepsilon;
+\]
+that is, restricting the row player to a suitable finite subset of $X$ raises the lower
+value of the game by at most $\varepsilon$.
 \end{theorem}
 
-\begin{theorem}[Uniform equicontinuity from joint continuity on compact $X \times Y$]
+\begin{theorem}[Uniform equicontinuity in the row variable from joint continuity on a compact domain]
 \lean{OnlineLearning.theorem71_uniformEquicontinuity_of_jointContinuous_compact}
 \label{OnlineLearning.theorem71_uniformEquicontinuity_of_jointContinuous_compact}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71UniformEquicontinuity}
 \difficulty{4}
-If the convex-compact minimax hypotheses hold, $Y$ is compact, and
-$(x,y) \mapsto f(x,y)$ is continuous on $X \times Y$, then
-$\texttt{OnlineLearning.Theorem71UniformEquicontinuity}$ holds.  The proof applies the
-Heine--Cantor theorem to upgrade joint continuity on the compact product $X \times Y$ to
-uniform continuity, then restricts variation to the first coordinate.
+Let $X, Y \subseteq \bbr$ and $f : \bbr \times \bbr \to \bbr$ satisfy the convex-compact
+minimax hypotheses, and suppose in addition that $Y$ is compact and that $(x,y) \mapsto
+f(x,y)$ is continuous on $X \times Y$. Then $f$ is uniformly equicontinuous in its first
+argument, uniformly over all columns: for every $\varepsilon > 0$ there exists $\rho >
+0$ such that for all $x, x' \in X$ and all $y \in Y$,
+\[
+  \dist(x, x') < \rho \;\Longrightarrow\; |f(x,y) - f(x',y)| < \varepsilon.
+\]
 \end{theorem}
 
-\begin{theorem}[Compact approximation from joint continuity on compact $X \times Y$]
+\begin{theorem}[Compact approximation from joint continuity on a compact column set]
 \lean{OnlineLearning.theorem71_compactApproximation_of_jointContinuous_compact}
 \label{OnlineLearning.theorem71_compactApproximation_of_jointContinuous_compact}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71CompactApproximation, OnlineLearning.theorem71_compactApproximation_of_uniformEquicontinuity, OnlineLearning.theorem71_uniformEquicontinuity_of_jointContinuous_compact}
 \difficulty{1}
-Under the convex-compact minimax hypotheses, if $Y$ is compact and $f$ is jointly
-continuous on $X \times Y$, then $\texttt{OnlineLearning.Theorem71CompactApproximation}$
-holds.  This is obtained by combining
-$\texttt{OnlineLearning.theorem71\_uniformEquicontinuity\_of\_jointContinuous\_compact}$ with
-$\texttt{OnlineLearning.theorem71\_compactApproximation\_of\_uniformEquicontinuity}$.
+Let $X, Y \subseteq \bbr$ and $f : \bbr \times \bbr \to \bbr$ satisfy the convex-compact
+minimax hypotheses, and suppose in addition that $Y$ is compact and that $f$ is jointly
+continuous on $X \times Y$. Then for every $\varepsilon > 0$ there is a nonempty finite
+subset $u \subseteq X$ such that
+\[
+  \sup_{y \in Y} \inf_{x \in u} f(x,y)
+    \;\le\;
+  \sup_{y \in Y} \inf_{x \in X} f(x,y) + \varepsilon;
+\]
+that is, restricting the row player to a suitable finite sample raises the lower value
+by at most $\varepsilon$.
 \end{theorem}
 
-\begin{theorem}[Finite indexed no-regret bound (normalized)]
+\begin{theorem}[Upper minimax value bounded by a finite row sample's lower value]
 \lean{OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \label{OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.exists_forall_le_of_finite_sublevel_intersections, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.minimaxSublevel, OnlineLearning.payoffVsPure_nonneg, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, payoffVsPure, pureVsPayoff}
 \difficulty{7}
-Under the convex-compact minimax hypotheses and the normalization $0 \le f \le 1$, for
-any row sample $x : \mathrm{Fin}\,M \to X$ with $M \ge 2$,
+Let $X, Y \subseteq \bbr$ satisfy the convex-compact minimax hypotheses for a payoff $f
+: \bbr \to \bbr \to \bbr$, and suppose in addition that $f$ is normalized, $0 \le f(x,y)
+\le 1$ for all $x \in X$ and $y \in Y$. Fix an integer $M \ge 2$ and a finite row sample
+$x : \mathrm{Fin}\,M \to X$, writing $x_i$ for its $i$-th point. Then
 \[
-  \inf_{x' \in X} \sup_{y \in Y} f(x', y)
+  \inf_{x' \in X}\; \sup_{y \in Y}\; f(x', y)
     \;\le\;
-  \sup_{y \in Y} \inf_{i \in \mathrm{Fin}\,M} f(x_i, y).
+  \sup_{y \in Y}\; \inf_{i \in \mathrm{Fin}\,M}\; f(x_i, y).
 \]
-The proof constructs a finite matrix game with payoff $1 - f$ on each finite column
-subset, applies the finite minimax theorem (via the upstream no-regret development), and
-uses compactness of $X$ to pass to all columns.
 \end{theorem}
 
-\begin{theorem}[Finite no-regret bound (normalized, Finset version)]
+\begin{theorem}[Finite no-regret bound for normalized convex-compact games]
 \lean{OnlineLearning.theorem71_finiteNoRegretBound_normalized}
 \label{OnlineLearning.theorem71_finiteNoRegretBound_normalized}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71FiniteNoRegretBound, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteRowSampleLowerValue, OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \difficulty{5}
-Under the convex-compact minimax hypotheses and $0 \le f \le 1$,
-$\texttt{OnlineLearning.Theorem71FiniteNoRegretBound}$ holds.  This removes the artificial
-$\mathrm{Fin}\,M$ indexing from
-$\texttt{OnlineLearning.theorem71\_finiteIndexedNoRegretBound\_normalized}$; the singleton
-case is handled separately since the finite minimax theorem requires at least two row
-actions.
+Let $X, Y \subseteq \bbr$ and $f : \bbr \to \bbr \to \bbr$ satisfy the convex-compact
+minimax hypotheses, and suppose the payoff is normalized so that $0 \le f(x,y) \le 1$
+for all $x \in X$ and $y \in Y$. Then for every nonempty finite subset $u \subseteq X$,
+\[
+  \inf_{x \in X} \sup_{y \in Y} f(x,y)
+    \;\le\;
+  \sup_{y \in Y} \inf_{x \in u} f(x,y);
+\]
+that is, the game's upper value is bounded above by the lower value of the game in which
+the row player is restricted to the finite sample $u$ while the column player still
+ranges over all of $Y$.
 \end{theorem}
 
-\begin{theorem}[No-regret minimax equality (normalized, joint-compact)]
+\begin{theorem}[A normalized convex–concave minimax equality]
 \lean{OnlineLearning.convex_compact_minimax_noRegret_jointCompact_normalized}
 \label{OnlineLearning.convex_compact_minimax_noRegret_jointCompact_normalized}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.convex_compact_minimax_of_theorem71_route, OnlineLearning.theorem71_compactApproximation_of_jointContinuous_compact, OnlineLearning.theorem71_finiteNoRegretBound_normalized}
 \difficulty{1}
-Under the convex-compact minimax hypotheses, if additionally $Y$ is compact, $f$ is
-jointly continuous on $X \times Y$, and $0 \le f \le 1$, then the minimax equality
+Let $X, Y \subseteq \bbr$ be nonempty, compact, convex sets, and let $f : \bbr \times
+\bbr \to \bbr$ be jointly continuous on $X \times Y$ and normalized so that $0 \le
+f(x,y) \le 1$ for all $x \in X$ and $y \in Y$. Suppose that $f$ is bounded above and
+below on $X \times Y$, that for every $y \in Y$ the map $x \mapsto f(x,y)$ is continuous
+and convex on $X$, and that for every $x \in X$ the map $y \mapsto f(x,y)$ is concave on
+$Y$. Then
 \[
-  \inf_{x \in X} \sup_{y \in Y} f(x,y)
-    = \sup_{y \in Y} \inf_{x \in X} f(x,y)
+  \inf_{x \in X}\,\sup_{y \in Y}\,f(x,y)
+  \;=\;
+  \sup_{y \in Y}\,\inf_{x \in X}\,f(x,y).
 \]
-holds.  The proof combines the normalized finite no-regret bound with the compact
-approximation theorem derived from joint continuity on compact $X \times Y$, without
-invoking any separation argument.
 \end{theorem}

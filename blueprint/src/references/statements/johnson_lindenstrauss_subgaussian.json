@@ -1,0 +1,19 @@
+{
+ "lean_name": "johnson_lindenstrauss_subgaussian",
+ "key": "77233889f1c8ae87",
+ "kind": "theorem",
+ "title": "Johnson–Lindenstrauss flattening lemma",
+ "statement": "Let $0 < \\varepsilon < 1$, let $n \\ge 2$ be an integer, and let $k$ be a target dimension satisfying $k \\ge 32\\,\\log n / \\varepsilon^2$. Then for every finite set $V$ of at most $n$ points in $\\bbr^d$ there exists a linear map $f \\colon \\bbr^d \\to \\bbr^k$ such that every pair $u, v \\in V$ has its squared distance preserved up to a factor $\\varepsilon$:\n\\[\n  (1 - \\varepsilon)\\,\\|u - v\\|^2 \\;\\le\\; \\|f(u) - f(v)\\|^2 \\;\\le\\; (1 + \\varepsilon)\\,\\|u - v\\|^2.\n\\]",
+ "hypotheses_covered": [
+  "0 < ε",
+  "ε < 1",
+  "n ≥ 2 (integer)",
+  "k ≥ 32 log n / ε²",
+  "V is a finite set of points in ℝ^d",
+  "|V| ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Rademacher ($\\pm 1/\\sqrt{k}$ entries) analogue of \\texttt{johnson\\_lindenstrauss}:\nsame hypotheses on $\\varepsilon$, $n$, $k$, and $V$, same conclusion---an\n$\\varepsilon$-JL embedding of $V$ exists---but now realized by a Rademacher\nmatrix."
+}

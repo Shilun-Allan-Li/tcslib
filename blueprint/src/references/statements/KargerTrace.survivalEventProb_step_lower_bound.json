@@ -1,0 +1,18 @@
+{
+ "lean_name": "KargerTrace.survivalEventProb_step_lower_bound",
+ "key": "a67d22af91f2549a",
+ "kind": "lemma",
+ "title": "One-step lower bound for the survival probability",
+ "statement": "Let $s$ be a state of the contraction process — a multigraph together with a distinguished cut — and assume that its sample space of edge occurrences is nonempty. Fix a natural number $k$ and a real number $B$, and suppose that for every edge occurrence that survives, meaning its underlying edge does not cross the distinguished cut, the recursive survival probability over $k$ further choices, evaluated at the successor state obtained by contracting $s$ along that occurrence, is at least $B$. Then the recursive survival probability over $k+1$ choices at $s$ is at least the survival ratio of $s$ multiplied by $B$.",
+ "hypotheses_covered": [
+  "s is a state (multigraph with a distinguished cut)",
+  "the edge-occurrence sample space of s is nonempty (positive cardinality)",
+  "a fixed number of steps k",
+  "a real number B",
+  "for every surviving edge occurrence, B lower-bounds the k-step survival probability at the corresponding successor state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the occurrence sample space of $s$ is nonempty and every surviving branch has recursive\nsurvival probability at least $B$, then the averaged survival probability for one more step\nsatisfies\n\\[\n  \\mathrm{edgeChoiceSurvivalRatio}(s)\\cdot B \\;\\le\\;\n  \\mathrm{survivalEventProb}(\\text{steps}+1,\\, s).\n\\]"
+}

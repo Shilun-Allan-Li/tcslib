@@ -1,0 +1,14 @@
+{
+ "lean_name": "deterministic_factor2_lower_bound",
+ "key": "f5e97fed7163a069",
+ "kind": "theorem",
+ "title": "Factor-2 mistake bound for a deterministic learner",
+ "statement": "For every natural number $T$ there exist natural numbers $M_{\\mathrm{alg}}$ and $M^*$ such that $M_{\\mathrm{alg}} = T$ and $2M^* \\le T$. Interpreting $M_{\\mathrm{alg}}$ as the number of mistakes made by a deterministic online learner over $T$ rounds and $M^*$ as the number made by the best fixed expert, this exhibits a scenario in which the learner errs on every round while the best expert errs at most $T/2$ times, so no deterministic strategy can guarantee fewer than twice the optimal number of mistakes.",
+ "hypotheses_covered": [
+  "T is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean statement asserts only the bare arithmetic existence of $M_{\\mathrm{alg}} = T$ and $M^*$ with $2M^* \\le T$ (trivially witnessed by $M^* = 0$); the online-learning reading is the intended interpretation, not part of the formal content, so the sentence flags it as an interpretation rather than a proven claim about learners.",
+ "rubric": [],
+ "replaced": "For any $T \\in \\mathbb{N}$, there exist $M_{\\mathrm{alg}}, M^* \\in \\mathbb{N}$ with\n$M_{\\mathrm{alg}} = T$ and $2 M^* \\le T$.\nThis witnesses that a deterministic learner facing two constant experts can be forced\nby an adversary to make $T$ mistakes while the best expert makes at most $T/2$,\nshowing the factor of $2$ in the Weighted Majority bound is unavoidable."
+}

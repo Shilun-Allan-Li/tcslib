@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.lowDegreeSquarefreePolynomial_sum",
+ "key": "50691241bd67e6d8",
+ "kind": "theorem",
+ "title": "Additivity in the coefficients",
+ "statement": "Fix a field $K$ and natural numbers $n, D$, and write $\\mathcal{S}_{n,D}$ for the type of subsets $s \\subseteq \\mathrm{Fin}\\,n$ with $\\abs{s} \\le D$. For a coefficient function $c \\colon \\mathcal{S}_{n,D} \\to K$, let $P(c)$ denote the multivariate polynomial $\\sum_{s \\in \\mathcal{S}_{n,D}} c(s)\\, \\prod_{i \\in s} X_i$ over $K$ in the variables $X_0, \\dots, X_{n-1}$. Then for any finite index set $S$ and any family of coefficient functions $(c_i)_{i \\in S}$ with each $c_i \\colon \\mathcal{S}_{n,D} \\to K$, the polynomial built from the pointwise sum of coefficients equals the sum of the individual polynomials:\n\\[\nP\\!\\left(\\sum_{i \\in S} c_i\\right) = \\sum_{i \\in S} P(c_i).\n\\]",
+ "hypotheses_covered": [
+  "K is a field",
+  "n, D are natural numbers",
+  "S is a finite index set over an arbitrary type ι",
+  "a family of coefficient functions c_i : LowDegreeSupport n D → K indexed by S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a finite index set $S$ and coefficient functions $c_i$, the polynomial attached to\nthe pointwise sum $\\sum_{i \\in S} c_i$ equals $\\sum_{i \\in S}$ of the polynomials attached\nto the individual $c_i$."
+}

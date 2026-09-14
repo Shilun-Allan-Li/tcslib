@@ -1,0 +1,16 @@
+{
+ "lean_name": "heavy_pair_count_bound",
+ "key": "e672a9cb04d6c8e2",
+ "kind": "theorem",
+ "title": "Counting heavy pairs in a 3-uniform hypergraph",
+ "statement": "Let $H$ be a $3$-uniform hypergraph on the vertex set $\\mathrm{Fin}\\,n$, so that every edge of $H$ has exactly three vertices, and let $d$ be a positive integer. Call a two-element set $Q = \\{u,v\\}$ of vertices *heavy* if its degree exceeds $d$, that is, if more than $d$ edges of $H$ contain $Q$, and let $P$ denote the collection of all heavy pairs. Then\n\\[\n  \\abs{P} \\cdot d \\;\\le\\; 3\\,\\abs{H}.\n\\]",
+ "hypotheses_covered": [
+  "H is 3-uniform (every edge has exactly 3 vertices)",
+  "d > 0",
+  "heavy pairs P are the 2-element vertex sets Q with degree_H(Q) > d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $H$ be a $3$-uniform hypergraph on $\\mathrm{Fin}\\,n$ and let $d > 0$. Then the number\nof heavy pairs satisfies\n\\[\n  \\abs{P} \\cdot d \\;\\le\\; 3 \\, \\abs{H},\n\\]\nwhere $P$ is the set of pairs of degree more than $d$; equivalently $\\abs{P} \\le 3m/d$\nfor $m = \\abs{H}$ edges, since each $3$-edge contributes exactly three pairs."
+}

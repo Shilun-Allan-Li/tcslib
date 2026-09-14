@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.cleanCNF_eval",
+ "key": "24cf06d0633a1b9f",
+ "kind": "lemma",
+ "title": "Cleaning a CNF preserves its truth value",
+ "statement": "Represent a CNF formula over the variables indexed by $\\{0,1,\\dots,n-1\\}$ as a conjunction of clauses, each clause being a disjunction of literals, where a literal is a variable or its negation. Cleaning such a formula proceeds in two steps: first delete every clause that contains some variable together with both polarities (one literal negated, one not), and then, within each surviving clause, keep a literal only when its variable has not already occurred among the literals retained earlier in that clause. Then for every CNF formula $c$ and every Boolean assignment $x \\colon \\{0,\\dots,n-1\\}\\to\\{\\mathrm{true},\\mathrm{false}\\}$, the cleaned formula and $c$ take the same Boolean value at $x$.",
+ "hypotheses_covered": [
+  "an arbitrary CNF formula c over n variables",
+  "an arbitrary Boolean assignment x on the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every CNF $c$ and input $x$, cleaning preserves the computed function:\n$\\mathrm{CNF.eval}\\,(\\mathrm{cleanCNF}\\,c)\\,x = \\mathrm{CNF.eval}\\,c\\,x$."
+}

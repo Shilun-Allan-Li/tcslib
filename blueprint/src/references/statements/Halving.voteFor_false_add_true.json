@@ -1,0 +1,16 @@
+{
+ "lean_name": "Halving.voteFor_false_add_true",
+ "key": "7c5cf133b011af52",
+ "kind": "lemma",
+ "title": "Vote counts partition the version space",
+ "statement": "Let $\\mathrm{eval}$ be a Boolean evaluation map assigning to each hypothesis and each input a truth value, let $V$ be a finite version space of hypotheses, and let $x$ be an input. Every hypothesis in $V$ predicts either $\\mathsf{false}$ or $\\mathsf{true}$ on $x$, so the number of hypotheses in $V$ predicting $\\mathsf{false}$ on $x$ and the number predicting $\\mathsf{true}$ on $x$ sum to the total number of hypotheses in $V$:\n\\[\n  \\abs{\\{\\,h \\in V : \\mathrm{eval}(h, x) = \\mathsf{false}\\,\\}} +\n  \\abs{\\{\\,h \\in V : \\mathrm{eval}(h, x) = \\mathsf{true}\\,\\}} = \\abs{V}.\n\\]",
+ "hypotheses_covered": [
+  "Boolean evaluation map eval : Hyp → X → Bool",
+  "finite version space V of hypotheses",
+  "input x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any version space $V$ and input $x$, the false-voters and true-voters partition\n$V$:\n\\[\n  |\\mathtt{voteFor}(\\mathtt{eval}, V, x, \\mathsf{false})| +\n  |\\mathtt{voteFor}(\\mathtt{eval}, V, x, \\mathsf{true})| = |V|.\n\\]"
+}

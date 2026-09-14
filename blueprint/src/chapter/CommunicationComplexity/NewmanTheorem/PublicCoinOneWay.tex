@@ -13,6 +13,10 @@ that the protocol's output disagrees with the target function.
 
 \begin{definition}[One-way public-coin protocol]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol}
+\statementsource{roughgarden-cc-oneway}{
+  pdf-043896d6545f-p002-b003,
+  pdf-043896d6545f-p010-b002
+}
 \label{CommunicationComplexity.PublicCoin.OneWay.Protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol}
@@ -25,6 +29,10 @@ a component of both players' inputs.
 
 \begin{definition}[Protocol execution with shared randomness]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
+\statementsource{roughgarden-cc-oneway}{
+  pdf-043896d6545f-p002-b003,
+  pdf-043896d6545f-p010-b002
+}
 \label{CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.OneWay.Protocol}
@@ -36,6 +44,10 @@ the decoded output $p.\mathrm{decode}(p.\mathrm{send}(\omega, x),\,(\omega, y))$
 
 \begin{definition}[$\varepsilon$-approximate computation]
 \lean{CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
+\statementsource{roughgarden-cc-oneway}{
+  pdf-043896d6545f-p010-b003,
+  pdf-043896d6545f-p002-b004
+}
 \label{CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.rrun}
@@ -50,6 +62,10 @@ $p$ errs is at most $\varepsilon$:
 
 \begin{definition}[$\varepsilon$-error one-way public-coin communication complexity]
 \lean{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
+\statementsource{roughgarden-cc-oneway}{
+  pdf-043896d6545f-p002-b004,
+  pdf-043896d6545f-p011-b002
+}
 \label{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes}
@@ -60,38 +76,46 @@ protocols $p$ over the coin-tape space $\mathrm{CoinTape}(n)$ that
 $\varepsilon$-compute $f$.
 \end{definition}
 
-\begin{theorem}[Upper bound characterisation]
+\begin{theorem}[Upper-bound characterisation of public-coin communication complexity]
 \lean{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
 \label{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Internal.enat_iInf_le_coe_iff, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
 \difficulty{2}
-For $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $m \in \mathbb{N}$,
-the complexity satisfies $\mathrm{CC}(f,\varepsilon) \le m$ if and only if there
-exist $n \in \mathbb{N}$ and a protocol $p$ over $\mathrm{CoinTape}(n)$ such that
-$p$ $\varepsilon$-computes $f$ and $p.\mathrm{cost} \le m$.
+Fix a function $f : X \to Y \to \alpha$, a real error bound $\varepsilon$, and a natural
+number $m$. Then the $\varepsilon$-error one-way public-coin communication complexity of
+$f$ is at most $m$ (as an element of $\bbn_\infty$) if and only if there exist a length
+$n \in \bbn$ and a one-way public-coin protocol $p$ over the coin-tape space
+$\mathrm{CoinTape}(n)$ such that $p$ $\varepsilon$-computes $f$ and the bit cost of $p$
+is at most $m$.
 \end{theorem}
 
-\begin{theorem}[Lower bound characterisation]
+\begin{theorem}[Lower-bound characterisation of one-way public-coin communication complexity]
 \lean{CommunicationComplexity.PublicCoin.OneWay.le_communicationComplexity_iff}
 \label{CommunicationComplexity.PublicCoin.OneWay.le_communicationComplexity_iff}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.PublicCoin.OneWay.Protocol, CommunicationComplexity.PublicCoin.OneWay.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
 \difficulty{2}
-For $f : X \to Y \to \alpha$, $\varepsilon \in \mathbb{R}$, and $m \in \mathbb{N}$,
-the complexity satisfies $m \le \mathrm{CC}(f,\varepsilon)$ (as extended naturals)
-if and only if every protocol $p$ over any $\mathrm{CoinTape}(n)$ that
-$\varepsilon$-computes $f$ has $p.\mathrm{cost} \ge m$.
+Let $f : X \to Y \to \alpha$ be a function, let $\varepsilon \in \bbr$, and let $m \in
+\bbn$. Then $m$ is a lower bound for the $\varepsilon$-error one-way public-coin
+communication complexity of $f$, in the sense that $m \le \mathrm{CC}(f,\varepsilon)$ as
+elements of $\bbn_\infty$, if and only if every protocol $p$ over a coin tape
+$\mathrm{CoinTape}(n)$ of any length $n \in \bbn$ that $\varepsilon$-computes $f$ has
+bit cost at least $m$.
 \end{theorem}
 
-\begin{theorem}[Monotonicity in error]
+\begin{theorem}[Monotonicity of communication complexity in the error tolerance]
 \lean{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_mono}
 \label{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_mono}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.OneWay.communicationComplexity, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff}
 \difficulty{4}
-The $\varepsilon$-error one-way public-coin communication complexity of $f$ is
-monotone non-increasing in $\varepsilon$: if $\varepsilon' \le \varepsilon$ then
-$\mathrm{CC}(f,\varepsilon) \le \mathrm{CC}(f,\varepsilon')$.  Intuitively, a
-stricter error budget can only demand a larger protocol cost.
+Fix a function $f : X \to Y \to \alpha$ and real error tolerances $\varepsilon',
+\varepsilon$ with $\varepsilon' \le \varepsilon$. Then the $\varepsilon$-error one-way
+public-coin communication complexity of $f$ is at most its $\varepsilon'$-error one-way
+public-coin communication complexity, where each such complexity is the infimum (in
+$\bbn \cup \{\infty\}$) of the bit cost over all coin-tape lengths $n$ and all one-way
+public-coin protocols that compute $f$ to the corresponding error tolerance. In other
+words, relaxing the permitted error can only decrease (or leave unchanged) the required
+communication.
 \end{theorem}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.Protocol.rrun_eq",
+ "key": "132b1dc9427a9a54",
+ "kind": "theorem",
+ "title": "Randomized execution as deterministic execution on paired inputs",
+ "statement": "Let $p$ be a public-coin protocol with shared randomness in $\\Omega$, Alice's private input in $X$, and Bob's in $Y$, producing an output in $\\alpha$. Then for every $x \\in X$, $y \\in Y$, and $\\omega \\in \\Omega$, the randomized execution of $p$ on $x$, $y$ with random string $\\omega$ equals the execution of the underlying deterministic protocol on the paired inputs $(\\omega, x)$ and $(\\omega, y)$.",
+ "hypotheses_covered": [
+  "public-coin protocol p over randomness Omega, inputs X, Y, output alpha",
+  "private input x in X",
+  "private input y in Y",
+  "shared random string omega in Omega"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any public-coin protocol $p$, inputs $x$, $y$, and randomness $\\omega$,\n$p.\\texttt{rrun}\\,x\\,y\\,\\omega = p.\\texttt{run}\\,(\\omega, x)\\,(\\omega, y)$.\nThis is a definitional unfolding used as a \\texttt{simp} lemma."
+}

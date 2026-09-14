@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.dtDepth_le_implies_nice_dnf",
+ "key": "d0a2fc57216d18e2",
+ "kind": "theorem",
+ "title": "Bounded decision-tree depth yields a narrow, tidy DNF",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\bbf_2)$ — more precisely $f$ a Boolean function on $n$ variables — have decision-tree depth at most $d$. Then $f$ is computed by a DNF formula $\\varphi$ (a disjunction of terms, each term a conjunction of literals) of width at most $d$, meaning every term of $\\varphi$ contains at most $d$ literals, such that $\\varphi(x) = f(x)$ for all inputs $x$. Moreover each term of $\\varphi$ is tidy: no literal is repeated within a term, and no two literals in the same term share a variable (equivalently, within any one term each variable occurs at most once, and with a single fixed polarity).",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "decision-tree depth of f is at most d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf a Boolean function $f$ has decision-tree depth $\\le d$, then there is a DNF $\\varphi$\nof width $\\le d$ that computes $f$, with all terms nodup and variable-injective."
+}

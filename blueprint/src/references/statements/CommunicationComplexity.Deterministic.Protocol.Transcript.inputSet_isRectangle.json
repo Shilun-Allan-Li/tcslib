@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet_isRectangle",
+ "key": "d4497e67bdb9ee8d",
+ "kind": "theorem",
+ "title": "Every transcript's input set is a rectangle",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, and let $t$ be a syntactic transcript of $p$. Then the input set of $t$ — the set of all input pairs $(x, y) \\in X \\times Y$ whose execution of $p$ follows exactly the path recorded by $t$ — is a rectangle: there exist $A \\subseteq X$ and $B \\subseteq Y$ such that this set equals $A \\times B$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over input types X, Y with output type α",
+  "t is a syntactic transcript of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every protocol $p$ and every syntactic transcript $t$ of $p$, the input set\n$\\mathrm{inputSet}(t)$ is a combinatorial rectangle, i.e.\\ there exist sets $A \\subseteq X$\nand $B \\subseteq Y$ such that $\\mathrm{inputSet}(t) = A \\times B$."
+}

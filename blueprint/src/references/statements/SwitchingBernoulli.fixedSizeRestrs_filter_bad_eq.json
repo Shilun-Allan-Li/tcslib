@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq",
+ "key": "363d272bc9e8829a",
+ "kind": "lemma",
+ "title": "Equal counts of the bad size-$k$ restrictions",
+ "statement": "Let $f$ be a Boolean function on $n$ variables and fix natural numbers $d$ and $k$. For a restriction $\\rho$ on these variables, write $f|_\\rho$ for the restricted function that sends a point $x$ to the value of $f$ obtained by fixing each assigned coordinate as $\\rho$ prescribes and reading each free coordinate off $x$, and call $\\rho$ bad for $f$ at depth $d$ when the decision-tree depth of $f|_\\rho$ is strictly greater than $d$. Then the number of restrictions that have exactly $k$ free variables and are bad for $f$ at depth $d$ is the same whether these are counted within the collection of all restrictions with exactly $k$ free variables or within the collection of all restrictions on the $n$ variables that both have exactly $k$ free variables and are bad for $f$ at depth $d$.",
+ "hypotheses_covered": [
+  "a Boolean function f on n variables",
+  "a depth parameter d",
+  "a number k of free variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a function $f$ and parameters $d, k$, the number of size-$k$ restrictions\n$\\rho$ with $\\mathrm{dtDepth}(f|_\\rho) > d$ equals the number of restrictions\nthat are $k$-restrictions and are bad for $f$ at depth $d$ in the counting\nswitching-lemma sense."
+}

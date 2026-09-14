@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.FeedForward.toCircuit_size_le",
+ "key": "803ba0c33a329946",
+ "kind": "theorem",
+ "title": "Size bound for the tree-unrolling of a feedforward circuit",
+ "statement": "Let $F$ be a layered feedforward circuit over the Boolean alphabet with input type $\\mathrm{Fin}\\,n$ and output type $\\mathrm{out}$, of depth $d$, in which each gate is designated an AND gate or an OR gate. Suppose every gate has finite input arity, and that there is a bound $k \\in \\bbn$ such that every gate reads from at most $k$ input wires. Then for each output node $o$, the tree-unrolled Boolean circuit obtained from $o$ has size (its total number of AND/OR gates and literal leaves) at most $(k+1)^{d}$.",
+ "hypotheses_covered": [
+  "Boolean feedforward circuit with inputs Fin n and outputs out",
+  "depth d of the circuit",
+  "each gate designated AND or OR (isAnd)",
+  "each gate has finite input arity (gfin)",
+  "every gate has fan-in at most k",
+  "a chosen output node o"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every gate of $F$ has at most $k$ input wires, then for every output node $o$ the\ntree-unrolled circuit satisfies\n$(F.\\texttt{toCircuit}\\ \\texttt{isAnd}\\ \\texttt{gfin}\\ o).\\texttt{size} \\le (k+1)^{F.\\texttt{depth}}$."
+}

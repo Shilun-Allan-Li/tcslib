@@ -1,0 +1,15 @@
+{
+ "lean_name": "KKL.influence_entropy_nonneg",
+ "key": "b5050696b7bd7cbb",
+ "kind": "lemma",
+ "title": "Nonnegativity of the influence entropy",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function whose total influence $I[f] = \\sum_{i=1}^n \\mathrm{Inf}_i[f]$ is strictly positive. Then\n\\[\n  0 \\;\\le\\; \\sum_{i=1}^{n} \\frac{\\mathrm{Inf}_i[f]}{I[f]}\\,\n    \\log\\!\\left(\\frac{I[f]}{\\mathrm{Inf}_i[f]}\\right),\n\\]\nwhere $\\log$ denotes the natural logarithm.",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n",
+  "total influence I[f] is strictly positive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $I[f] > 0$, then the entropy-like quantity attached to the influence distribution\nis nonnegative:\n\\[\n  0 \\;\\le\\; \\sum_{i=1}^{n} \\frac{\\mathrm{Inf}_i[f]}{I[f]}\\,\n    \\log\\!\\left(\\frac{I[f]}{\\mathrm{Inf}_i[f]}\\right).\n\\]"
+}

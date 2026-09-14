@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_measureReal_zVariable_dualProtocol_dualZValue",
+ "key": "b48b825931fa4aa4",
+ "kind": "theorem",
+ "title": "Dualization preserves the volume of Z-value fibers",
+ "statement": "Fix a positive integer $n$, and let $p$ be a deterministic communication protocol whose two inputs are subsets of $\\{0,1,\\dots,n-1\\}$ — one held by Alice, one by Bob — and whose output is a single bit. Each sample $\\omega$ of the hard distribution determines an input pair, and running $p$ on that pair records a transcript; together with the sample's special coordinate $T$, Alice's input bits at the coordinates strictly below $T$, and Bob's input bits at the coordinates strictly above $T$, this transcript forms the value $Z_p(\\omega)$. For an achievable value $z$ of this record, let $Z_p^{-1}(z)$ be the set of samples $\\omega$ with $Z_p(\\omega)=z$. Let $p^{\\vee}$ be the protocol obtained from $p$ by exchanging the roles of Alice and Bob and by reversing the coordinate order $i \\mapsto n-1-i$ in both input subsets. Let $z^{\\vee}$ be the value whose special coordinate is $n-1-T$, whose Alice-bits-before-the-special-coordinate vector is the coordinate reversal of the Bob-bits-after vector recorded by $z$, whose Bob-bits-after vector is the coordinate reversal of the Alice-bits-before vector recorded by $z$, and whose transcript is the transcript recorded by $z$ reinterpreted as a transcript of $p^{\\vee}$ by swapping the two players and re-routing each message through the coordinate reversal $i \\mapsto n-1-i$. Then the volume, taken as a real number, of $Z_{p^{\\vee}}^{-1}(z^{\\vee})$ equals the volume, taken as a real number, of $Z_p^{-1}(z)$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol on n coordinates (subset-pair inputs, Boolean output)",
+  "z is an achievable Z-value of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Real-valued version of \\texttt{volume\\_zVariable\\_dualProtocol\\_dualZValue}."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "cumLoss_succ",
+ "key": "3a927452bca736a7",
+ "kind": "lemma",
+ "title": "Cumulative loss recurrence",
+ "statement": "Let $\\ell$ be a loss sequence for $N$ experts over $T$ rounds, and write $L_t(i) = \\sum_{s < t} \\ell_s(i)$ for the cumulative loss of expert $i$ through the first $t$ rounds. Then for every round $t < T$ and every expert $i$,\n\\[\n  L_{t+1}(i) \\;=\\; L_t(i) + \\ell_t(i).\n\\]",
+ "hypotheses_covered": [
+  "loss sequence for N experts over T rounds",
+  "t is a round index with t < T",
+  "i is an expert index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The cumulative loss satisfies the recurrence\n\\[\n  L_{t+1}(i) \\;=\\; L_t(i) + \\ell_t(i)\n\\]\nfor every $t < T$ and expert $i$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Bonami.fourierCoeff_diffLast",
+ "key": "aadc2063833852aa",
+ "kind": "lemma",
+ "title": "Fourier coefficient of the half-difference over the last coordinate",
+ "statement": "Let $f\\colon\\{0,1\\}^{n+1}\\to\\bbr$ be a Boolean function on $n+1$ variables, and let $g\\colon\\{0,1\\}^{n}\\to\\bbr$ be its half-difference over the last coordinate, given by $g(x)=\\tfrac12\\bigl(f(x,0)-f(x,1)\\bigr)$. For every frequency set $S\\subseteq\\{1,\\dots,n\\}$, the Fourier--Walsh coefficient of $g$ at $S$ equals the Fourier--Walsh coefficient of $f$ at the frequency set obtained by regarding $S$ as a subset of the first $n$ coordinates of $\\{1,\\dots,n+1\\}$ and adjoining the last coordinate:\n\\[\n  \\hat g(S) \\;=\\; \\hat f\\bigl(S\\cup\\{n+1\\}\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n+1 variables",
+  "S is a frequency set among the first n coordinates (S ⊆ Fin n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For each $S \\subseteq \\mathrm{Fin}\\,n$, the Fourier coefficient of $\\mathrm{diffLast}\\,f$ at $S$\nequals the Fourier coefficient of $f$ at the image of $S$ under \\texttt{castSucc} together with\nthe last index: $\\widehat{\\mathrm{diffLast}\\,f}(S) = \\widehat{f}\\bigl(\\mathrm{castSucc}(S) \\cup \\{\\mathrm{last}\\,n\\}\\bigr)$."
+}

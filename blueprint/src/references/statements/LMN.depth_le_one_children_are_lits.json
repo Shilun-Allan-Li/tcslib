@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.depth_le_one_children_are_lits",
+ "key": "e7235528f6605f9e",
+ "kind": "lemma",
+ "title": "Depth-one gates have only literal children",
+ "statement": "Let $C$ be a Boolean circuit on $n$ variables of the form $g(c_1,\\dots,c_k)$, a single gate $g$ (either AND or OR) applied to a list of child circuits $c_1,\\dots,c_k$. If the depth of $C$ is at most $1$, then every child $c_i$ is a literal, that is, $c_i = \\ell_i$ for some literal $\\ell_i$ (a variable index together with a polarity).",
+ "hypotheses_covered": [
+  "C is a gate node applied to a list of children (with gate type AND or OR)",
+  "the depth of the node is at most 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a gate node $\\mathrm{node}\\,\\mathit{isAnd}\\,cs$ has depth at most $1$, then every child\n$c\\in cs$ is a literal, i.e.\\ $c = \\mathrm{lit}\\,l$ for some literal $l$."
+}

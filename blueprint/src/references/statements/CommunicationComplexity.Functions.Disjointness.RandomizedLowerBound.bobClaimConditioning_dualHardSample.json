@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobClaimConditioning_dualHardSample",
+ "key": "c532f308ebda2499",
+ "kind": "theorem",
+ "title": "Duality exchanges Alice's and Bob's conditioning variables",
+ "statement": "Fix a positive integer $n$ and a hard-distribution sample $\\omega$ with special coordinate $T \\in \\{0,\\dots,n-1\\}$. Write $\\mathrm{rev}$ for the order-reversing map $i \\mapsto n-1-i$ on coordinates, and for a Boolean vector $u$ write $\\bar u = u \\circ \\mathrm{rev}$ for its coordinate reversal. Recall that Alice's conditioning variable of $\\omega$ is the triple $\\bigl(T,\\ X_{<T},\\ Y_{\\ge T}\\bigr)$ — the special coordinate together with Alice's bits strictly before $T$ (padded with $\\mathrm{false}$ elsewhere) and Bob's bits from $T$ onward — while Bob's conditioning variable is $\\bigl(T,\\ X_{\\le T},\\ Y_{>T}\\bigr)$. Let $\\omega^\\ast$ denote the dual sample, obtained from $\\omega$ by reversing the coordinate order and interchanging Alice's and Bob's roles. Then Bob's conditioning variable of $\\omega^\\ast$ equals the dual recoding of Alice's conditioning variable of $\\omega$; that is, if $\\bigl(T,\\ X_{<T},\\ Y_{\\ge T}\\bigr)$ is Alice's conditioning variable of $\\omega$, then Bob's conditioning variable of $\\omega^\\ast$ is exactly $\\bigl(\\mathrm{rev}(T),\\ \\overline{Y_{\\ge T}},\\ \\overline{X_{<T}}\\bigr)$.",
+ "hypotheses_covered": [
+  "$n$ a positive natural number",
+  "$\\omega$ an arbitrary hard-distribution sample"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Bob's corrected conditioning in the dual is Alice's corrected conditioning in recoded form."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "CodingTheory.Johnson.normalized_orthProj_inner_nonpos",
+ "key": "3f7c1b4ef7411e58",
+ "kind": "lemma",
+ "title": "Non-positive inner product of normalized projections off a unit vector",
+ "statement": "Let $u,v,w$ be vectors in a real inner product space with $\\norm{u}=1$, and suppose the three inner products $\\langle v,w\\rangle$, $\\langle v,u\\rangle$, and $\\langle w,u\\rangle$ are all nonpositive. For a vector $x$, write $x^{\\perp}=x-\\langle u,x\\rangle\\,u$ for its component orthogonal to $u$, and assume that both $v^{\\perp}$ and $w^{\\perp}$ are nonzero. Then their normalizations still have nonpositive inner product:\n\\[\n\\left\\langle \\frac{v^{\\perp}}{\\norm{v^{\\perp}}},\\ \\frac{w^{\\perp}}{\\norm{w^{\\perp}}}\\right\\rangle \\le 0.\n\\]",
+ "hypotheses_covered": [
+  "u is a unit vector: ‖u‖ = 1",
+  "⟨v,w⟩ ≤ 0",
+  "⟨v,u⟩ ≤ 0",
+  "⟨w,u⟩ ≤ 0",
+  "the orthogonal component of v off u is nonzero",
+  "the orthogonal component of w off u is nonzero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under $\\norm{u} = 1$, $\\langle v,w\\rangle \\le 0$, $\\langle v,u\\rangle \\le 0$ and\n$\\langle w,u\\rangle \\le 0$ (with both projections nonzero), the normalized projections\nof $v$ and $w$ also have non-positive inner product."
+}

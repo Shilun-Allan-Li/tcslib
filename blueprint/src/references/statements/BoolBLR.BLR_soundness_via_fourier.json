@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolBLR.BLR_soundness_via_fourier",
+ "key": "5a77432a6e8e2cee",
+ "kind": "lemma",
+ "title": "Sum of cubed Fourier coefficients bounds distance to linearity",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function and let $\\varepsilon \\in \\bbr$ with $0 \\le \\varepsilon \\le 1$, and suppose $f$ is $\\varepsilon$-far from linear: for every linear function $g : \\{0,1\\}^n \\to \\{0,1\\}$ one has $\\dist(f,g) \\ge \\varepsilon$. Writing $F = (-1)^{f}$ for the $\\pm 1$ lift of $f$ and $\\hat F(S) = \\langle F, \\chi_S\\rangle$ for its Fourier coefficient at $S \\subseteq [n]$, the sum of the cubed coefficients over all subsets satisfies\n\\[\n  \\sum_{S \\subseteq [n]} \\hat F(S)^3 \\;\\le\\; 1 - 2\\varepsilon.\n\\]",
+ "hypotheses_covered": [
+  "f : {0,1}^n → {0,1} is a Boolean function",
+  "ε is real with 0 ≤ ε ≤ 1",
+  "f is ε-far from linear: dist(f,g) ≥ ε for every linear g",
+  "sum ranges over all subsets S of [n]",
+  "coefficients are those of the ±1 lift of f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\{0,1\\}^n \\to \\{0,1\\}$ is $\\varepsilon$-far from linear, then the\nsum of cubed Fourier coefficients of $\\texttt{BoolBLR.lift\\_pm1}\\,f$ satisfies\n\\[\n  \\sum_{S \\subseteq [n]} \\widehat{\\texttt{BoolBLR.lift\\_pm1}\\,f}(S)^3\n  \\;\\le\\; 1 - 2\\varepsilon.\n\\]"
+}

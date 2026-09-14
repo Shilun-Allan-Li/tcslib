@@ -1,0 +1,22 @@
+{
+ "lean_name": "Schnorr.schnorr_soundness",
+ "key": "f4b62de289117c61",
+ "kind": "theorem",
+ "title": "Special soundness of the Schnorr protocol",
+ "statement": "Special soundness. Let $q$ be prime, let $g$ be an element of order $q$ in a commutative group $G$, and take the public key $\\mathit{pk} = g^{w}$ for some witness $w \\in \\bbz_q$. Suppose $a \\in G$, and suppose $c_1, c_2 \\in \\bbz_q$ are distinct challenges with responses $s_1, s_2 \\in \\bbz_q$ such that both transcripts $(a, c_1, s_1)$ and $(a, c_2, s_2)$ are accepted by the verifier for $\\mathit{pk}$. Then the extractor recovers the witness:\n\\[\n  \\frac{s_1 - s_2}{c_1 - c_2} \\;=\\; w \\quad\\text{in } \\bbz_q.\n\\]",
+ "hypotheses_covered": [
+  "q is prime",
+  "g has order q in a commutative group",
+  "public key is g^w for witness w",
+  "a in G",
+  "challenges c₁, c₂ in Z_q",
+  "responses s₁, s₂ in Z_q",
+  "c₁ ≠ c₂",
+  "verifier accepts (a, c₁, s₁) for pk = g^w",
+  "verifier accepts (a, c₂, s₂) for pk = g^w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g \\in G$ have order $q$, and let $a \\in G$, $c_1 \\neq c_2 \\in \\mathbb{Z}_q$,\n$s_1, s_2 \\in \\mathbb{Z}_q$ be such that both transcripts $(a, c_1, s_1)$ and\n$(a, c_2, s_2)$ satisfy $\\mathrm{Verify}$ with respect to public key\n$\\mathit{pk} = g^w$.  Then the extractor recovers the witness:\n\\[\n  \\frac{s_1 - s_2}{c_1 - c_2} \\;=\\; w \\;\\in\\; \\mathbb{Z}_q.\n\\]"
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "count_bind_endpoints_eq_card_filter",
+ "key": "db21a1320889f6b0",
+ "kind": "lemma",
+ "title": "Endpoint multiplicity equals incidence count",
+ "statement": "Let $m$ be a multiset of unordered pairs (edges) drawn from a type $\\alpha$, and fix an element $v \\in \\alpha$. For each edge $e$, let $\\{e\\}_\\ast$ denote the finite set of its endpoints — a singleton when $e$ is a loop and a two-element set otherwise — and form the multiset obtained by concatenating $\\{e\\}_\\ast$ over all $e$ in $m$, counting multiplicities of $m$. Then the multiplicity of $v$ in this concatenated multiset equals the number of edges $e$ of $m$ for which $v$ is an endpoint of $e$.",
+ "hypotheses_covered": [
+  "m is a multiset of unordered pairs (Sym2) over a type with decidable equality",
+  "v is a fixed element of the underlying type"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a multiset $m$ of unordered pairs and a vertex $v$, the multiplicity of $v$ in the\nmultiset obtained by binding each edge to its set of endpoints equals the number of\nedges of $m$ containing $v$."
+}

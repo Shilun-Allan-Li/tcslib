@@ -12,7 +12,7 @@ at most $\varepsilon/2$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Reduction at subsequent layers]
+\begin{theorem}[Bernoulli restriction collapses DNF gates to narrow CNFs]
 \lean{LMN.subsequent_step_reduction}
 \label{LMN.subsequent_step_reduction}
 \leanok
@@ -21,7 +21,6 @@ at most $\varepsilon/2$.
   pdf-fc447f326910-p013-b002
 }
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -973,15 +972,22 @@ at most $\varepsilon/2$.
   {pdf-fc447f326910-p012-b004}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{1}
-Let $g_1,\dots,g_{s_i}$ be width-$\le l$ DNFs on $n$ variables (with $0<l$,
-$0<n$), and let $0<p\le 1/(40l)$ with $p\le 1$. Under a Bernoulli$(p)$ random
-restriction $\rho$, the probability that some restricted gate fails to be
-representable by a width-$\le l$ CNF agreeing with it pointwise is at most
-$s_i\cdot\bigl((1/2)^l+\exp(-np/3)\bigr)$. This is the one-step reduction bound
-applied with width parameter $l$.
+Fix positive integers $n$ and $l$, and let $g_1,\dots,g_{s_i}$ be DNF formulas on $n$
+variables, each of width at most $l$, and each in reduced form: no term repeats a
+literal, and within a term any two literals on the same variable coincide, so every
+variable occurs at most once in each term. Let $p$ be a real parameter with $0 < p \le
+1$ and $p \le \tfrac{1}{40\,l}$. Draw a Bernoulli($p$) random restriction $\rho$ of the
+$n$ variables, which independently leaves each variable free with probability $p$ and
+otherwise fixes it to $0$ or $1$ each with probability $(1-p)/2$. Then the probability
+that some restricted gate fails to be computed by a narrow CNF — that is, for some $i$
+there is no CNF formula $\psi$ of width at most $l$ satisfying $\psi(x) =
+g_i(\rho.\mathrm{extend}\,x)$ for every assignment $x$ — is at most
+\[
+  s_i\left(\left(\tfrac{1}{2}\right)^{l} + \exp\!\left(-\tfrac{n p}{3}\right)\right).
+\]
 \end{theorem}
 
-\begin{theorem}[Decision-tree depth at subsequent layers]
+\begin{theorem}[Decision-tree depth of restricted DNF gates]
 \lean{LMN.subsequent_step_dtDepth}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b008}
 \label{LMN.subsequent_step_dtDepth}
@@ -992,22 +998,29 @@ applied with width parameter $l$.
 }
 \uses{DNF, DNF.eval, DNF.width, LMN.one_step_dtDepth_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{1}
-Under the same hypotheses, a Bernoulli$(p)$ restriction $\rho$ leaves every one of
-the $s_i$ width-$\le l$ gates with restricted function of decision-tree depth at
-most $l$, with probability at least
-$1-s_i\cdot\bigl((1/2)^l+\exp(-np/3)\bigr)$. This is the decision-tree-depth form
-of the one-step bound applied with width $l$.
+Fix an integer $n \ge 1$ and a positive integer $l$, and let $\phi_1, \dots, \phi_s$ be
+DNF formulas on $n$ Boolean variables, each of width at most $l$ and each written so
+that no variable occurs more than once in any single term — that is, no term repeats a
+literal, and no term contains two literals on the same variable. Let $p \in \bbr$
+satisfy $0 < p \le \tfrac{1}{40 l}$ (so in particular $p \le 1$). Then a Bernoulli$(p)$
+random restriction $\rho$ on the $n$ variables satisfies, with probability at least
+\[
+  1 - s\left(\left(\tfrac{1}{2}\right)^{l} + \exp\!\left(-\tfrac{np}{3}\right)\right),
+\]
+that for every $i$ the restricted function $x \mapsto \phi_i$ evaluated on the
+coordinates left free by $\rho$ (with the fixed coordinates set by $\rho$) has
+decision-tree depth at most $l$.
 \end{theorem}
 
-\begin{theorem}[Multi-stage failure bound]
+\begin{theorem}[Summing per-layer failure bounds]
 \lean{LMN.multi_stage_failure_bound}
 \label{LMN.multi_stage_failure_bound}
 \leanok
 \difficulty{3}
-If over $m$ stages each failure bound satisfies
-$\mathrm{failure\_bound}(i)\le (\mathrm{layer\_size}(i))\cdot\alpha$ with
-$\alpha\ge 0$, and $\sum_i \mathrm{layer\_size}(i)\le s$, then
-$\sum_i \mathrm{failure\_bound}(i)\le s\cdot\alpha$.
+Let $\alpha \ge 0$, let $s \in \bbn$, and consider $m$ stages with layer sizes $\ell_0,
+\ldots, \ell_{m-1} \in \bbn$ whose total does not exceed $s$, i.e. $\sum_{i} \ell_i \le
+s$. Suppose real numbers $b_0, \ldots, b_{m-1}$ satisfy $b_i \le \ell_i\,\alpha$ for
+every $i$. Then $\sum_{i} b_i \le s\,\alpha$.
 \end{theorem}
 
 \begin{theorem}[Union bound for restriction probabilities]
@@ -1016,16 +1029,18 @@ $\sum_i \mathrm{failure\_bound}(i)\le s\cdot\alpha$.
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
 \difficulty{5}
-For $0\le p\le 1$ and finitely many events $A_0,\dots,A_{m-1}$ on restrictions, the
-Bernoulli$(p)$ probability that some $A_i$ holds is at most the sum of the
-individual probabilities:
+Fix a parameter $p \in \bbr$ with $0 \le p \le 1$, and let $A_0, \dots, A_{m-1}$ be
+finitely many events on restrictions of $n$ variables. Under a Bernoulli($p$) random
+restriction, the probability that at least one of the events $A_i$ occurs is at most the
+sum of the probabilities of the individual events:
 \[
-\mathrm{bernoulliRestrProb}\,p\,(\exists i,\,A_i)\le
-\sum_i \mathrm{bernoulliRestrProb}\,p\,(A_i).
+\bbP_p\!\left[\exists i,\ A_i(\rho)\right] \le \sum_{i=0}^{m-1}
+\bbP_p\!\left[A_i(\rho)\right],
 \]
+where $\bbP_p[\cdot]$ denotes the Bernoulli event probability at parameter $p$.
 \end{theorem}
 
-\begin{theorem}[Iterative dominant-term bound]
+\begin{theorem}[Iterative dominant-term bound (conclusion unspecified)]
 \lean{LMN.iterative_dominant_term_bound}
 \label{LMN.iterative_dominant_term_bound}
 \leanok
@@ -1034,30 +1049,36 @@ individual probabilities:
   pdf-fc447f326910-p012-b003
 }
 \difficulty{4}
-For $\sum_i \mathrm{layer\_size}(i)\le s$ with $0<s$ and $0<\varepsilon$, setting
-$l=\log_2(2s/\varepsilon)$ gives
-\[
-\sum_i \bigl(\mathrm{layer\_size}(i)\bigr)\cdot (1/2)^l \le \varepsilon/2 .
-\]
+Fix a natural number $m$ and layer sizes $\ell_0,\dots,\ell_{m-1}\in\bbn$, and let
+$s\in\bbn$ with $s>0$ bound their total, $\sum_{i} \ell_i \le s$. Let $\varepsilon>0$ be
+a real number. Under these hypotheses the intended conclusion is that, on setting
+$l=\log_2(2s/\varepsilon)$, the total weighted contribution is controlled by
+$\varepsilon/2$, namely $\sum_{i} \ell_i\,(1/2)^{l}\le \varepsilon/2$; however, the
+formal statement leaves both the value $l$ and the conclusion as placeholders, so it
+asserts no mathematical claim beyond these hypotheses.
 \end{theorem}
 
-\begin{theorem}[Two-stage composed union bound]
+\begin{theorem}[A union bound for two-stage Bernoulli restrictions]
 \lean{LMN.two_stage_composed_union_bound}
 \label{LMN.two_stage_composed_union_bound}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
-For $0\le p\le 1$ and $0\le q\le 1$, and decidable events $A,B$ on restrictions,
+Fix $n$, and let $p,q$ be real parameters with $0\le p\le 1$ and $0\le q\le 1$. For a
+parameter $r$ write $w_r(\rho)$ for the Bernoulli weight of a restriction $\rho$ on $n$
+variables at parameter $r$, and write $\bbP_r[E]$ for the Bernoulli event probability of
+a predicate $E$ on restrictions at parameter $r$. Then for any two predicates $A$ and
+$B$ on restrictions of $n$ variables,
 \[
-\sum_{\rho_1}\mathrm{bernoulliRestrWeight}\,p\,\rho_1\cdot
-\mathrm{bernoulliRestrProb}\,q\,(A(\rho_1)\vee B(\rho_2))
-\le \mathrm{bernoulliRestrProb}\,p\,A + \mathrm{bernoulliRestrProb}\,q\,B,
+\sum_{\rho_1} w_p(\rho_1)\,\bbP_q\!\big[\,\rho_2 \mapsto A(\rho_1)\lor B(\rho_2)\,\big]
+\;\le\; \bbP_p[A] + \bbP_q[B],
 \]
-where the inner event combines $A$ on the first-stage restriction with $B$ on the
-second-stage restriction. This bounds the failure of a composed two-stage
-Bernoulli restriction by the sum of the two individual stage probabilities.
+where the inner sum ranges over all restrictions $\rho_1$ on $n$ variables and, for each
+fixed $\rho_1$, the predicate $\rho_2 \mapsto A(\rho_1)\lor B(\rho_2)$ holds at a
+second-stage restriction $\rho_2$ exactly when $A$ holds at $\rho_1$ or $B$ holds at
+$\rho_2$.
 \end{theorem}
 
-\begin{theorem}[Abstract iterative reduction]
+\begin{theorem}[Abstract iterative reduction bound]
 \lean{LMN.abstract_iterative_reduction}
 \label{LMN.abstract_iterative_reduction}
 \leanok
@@ -1067,10 +1088,12 @@ Bernoulli restriction by the sum of the two individual stage probabilities.
 }
 \uses{LMN.iterative_dominant_term_bound}
 \difficulty{2}
-For $\sum_i \mathrm{layer\_size}(i)\le s$ with $0<s$ and $0<\varepsilon$, if each
-per-stage bound satisfies
-$\mathrm{per\_stage\_bound}(i)\le(\mathrm{layer\_size}(i))\cdot(1/2)^{\log_2(2s/\varepsilon)}$,
-then $\sum_i \mathrm{per\_stage\_bound}(i)\le\varepsilon/2$. This packages the
-union bound over all $d-2$ iterations as a purely arithmetic consequence of the
-per-stage bounds.
+Let $m$ be a natural number and let $\ell_0,\dots,\ell_{m-1}$ be natural numbers (the
+layer sizes) whose sum is at most a positive integer $s$. Fix a real number
+$\varepsilon>0$, and suppose that $b_0,\dots,b_{m-1}$ are real numbers satisfying
+\[
+b_i \;\le\; \ell_i\cdot\left(\tfrac12\right)^{\log_2\!\left(2s/\varepsilon\right)}
+\qquad\text{for every } i.
+\]
+Then $\sum_{i} b_i \le \varepsilon/2$.
 \end{theorem}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "ACP.rootCube_counting_obstruction",
+ "key": "1de1a3e57791360d",
+ "kind": "theorem",
+ "title": "Counting obstruction to low-degree approximation on the root cube",
+ "statement": "Let $K$ be a finite field, fix an element $\\omega \\in K$, and let $n, D, e, B$ be natural numbers. Write $\\{1,\\omega\\}^n$ for the cube of vectors in $\\mathrm{Fin}\\,n \\to K$ whose every coordinate equals $1$ or $\\omega$. Suppose a finite index set $\\mathrm{Cand}$ is equipped with a map assigning to each candidate $c$ a polynomial $P_c \\in K[X_1,\\dots,X_n]$, and that the following hold: (i) every polynomial $Q$ of total degree at most $D$ agrees, at every point of $\\{1,\\omega\\}^n$, with $P_c$ for some candidate $c$; (ii) for each candidate $c$, the Hamming ball of radius $e$ centered at the function $x \\mapsto P_c(x)$ contains at most $B$ functions $\\{1,\\omega\\}^n \\to K$; and (iii) $\\abs{\\{1,\\omega\\}^n \\to K} > \\abs{\\mathrm{Cand}}\\cdot B$. Then it is not the case that every function $f : \\{1,\\omega\\}^n \\to K$ admits a polynomial $Q$ of total degree at most $D$ differing from $f$ on at most $e$ points of the cube.",
+ "hypotheses_covered": [
+  "K is a finite field",
+  "a distinguished element ω of K",
+  "natural numbers n, D, e, B",
+  "a finite candidate type Cand with a polynomial-valued map poly",
+  "completeness: every total-degree-≤D polynomial agrees on the cube with some poly c",
+  "ball bound: each candidate's evaluation function has a radius-e Hamming ball of size ≤ B",
+  "strict counting: |functions on the cube → K| > |Cand| · B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a finite family $(\\mathrm{poly}\\,c)_{c \\in \\mathrm{Cand}}$ represents, on the cube,\nevery polynomial of total degree at most $D$; suppose each Hamming ball of radius $e$\naround such a candidate has at most $B$ elements; and suppose\n$\\abs{\\{1,\\omega\\}^n \\to K} > \\abs{\\mathrm{Cand}} \\cdot B$. Then it is not the case that\nevery function on the cube has a degree-$\\le D$ approximant with at most $e$ bad points."
+}

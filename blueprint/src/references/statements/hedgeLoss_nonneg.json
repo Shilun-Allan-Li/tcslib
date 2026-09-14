@@ -1,0 +1,18 @@
+{
+ "lean_name": "hedgeLoss_nonneg",
+ "key": "976c30df3ed7176e",
+ "kind": "lemma",
+ "title": "Nonnegativity of Hedge's expected loss",
+ "statement": "Let $\\ell$ be a valid loss sequence for $N \\ge 1$ experts over $T$ rounds, fix any learning rate $\\eta \\in \\bbr$, and let $t$ be one of the rounds. Then the learner's expected loss $\\widehat{\\ell}_t = \\sum_{i=1}^{N} p_t(i)\\,\\ell_t(i)$ under the Hedge distribution is nonnegative, $\\widehat{\\ell}_t \\ge 0$.",
+ "hypotheses_covered": [
+  "N experts with N nonzero (at least one expert)",
+  "T rounds",
+  "valid loss sequence (each loss in [0,1])",
+  "learning rate η an arbitrary real",
+  "a round t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a valid loss sequence, the expected loss at each round satisfies\n$\\widehat{\\ell}_t \\ge 0$, since individual losses are nonnegative and the\nHedge distribution is nonnegative."
+}

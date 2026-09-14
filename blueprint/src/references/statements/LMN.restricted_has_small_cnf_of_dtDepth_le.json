@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.restricted_has_small_cnf_of_dtDepth_le",
+ "key": "753873b0a7a1e555",
+ "kind": "theorem",
+ "title": "Small decision-tree depth yields a narrow CNF",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function, let $\\rho$ be a restriction on the $n$ variables (fixing some coordinates to Boolean values and leaving the rest free), and write $f\\!\\restriction_\\rho$ for the restricted function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$, obtained by evaluating $f$ with the fixed coordinates set by $\\rho$ and the free coordinates supplied by $x$. If $f\\!\\restriction_\\rho$ has decision-tree depth at most $l$, then there is a CNF formula $\\psi$ whose every clause contains at most $l$ literals and which computes $f\\!\\restriction_\\rho$ on every input, that is, $\\psi(x) = f\\!\\restriction_\\rho(x)$ for all $x \\in \\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "ρ is a restriction on the n variables",
+  "the restricted function f|_ρ has decision-tree depth at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf the restricted function $f|_\\rho$ has decision-tree depth at most $l$, then there exists a\n$\\mathrm{CNF}$ $\\psi$ of width at most $l$ that computes $f|_\\rho$ on every input."
+}

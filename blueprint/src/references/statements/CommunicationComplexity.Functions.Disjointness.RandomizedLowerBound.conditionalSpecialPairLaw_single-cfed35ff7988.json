@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_singleton_factorization_of_eq_prod",
+ "key": "95b87ab4c5022031",
+ "kind": "theorem",
+ "title": "Pointwise factorization of the conditional special-pair law",
+ "statement": "Fix a deterministic disjointness protocol $p$ on inputs of length $n$ and an achievable value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$. Write $\\mu$ for the conditional law of the special-coordinate bit-pair on the fiber $\\{Z = z\\}$, and $\\mu_X$, $\\mu_Y$ for the conditional laws on that same fiber of Alice's bit and of Bob's bit at the special coordinate, all measures on Boolean values. Suppose the joint law factors as the product of its marginals, $\\mu = \\mu_X \\otimes \\mu_Y$. Then for every pair of bits $b = (b_1, b_2) \\in \\mathrm{Bool} \\times \\mathrm{Bool}$, the real-valued mass assigned to the singleton is the product of the marginal masses, \\[ \\mu(\\{b\\}) = \\mu_X(\\{b_1\\}) \\cdot \\mu_Y(\\{b_2\\}). \\]",
+ "hypotheses_covered": [
+  "p is a deterministic disjointness protocol on inputs of length n",
+  "z is an achievable value of the Z variable for p",
+  "the conditional special-pair law equals the product of the conditional special-X and special-Y laws",
+  "b is a pair of Boolean bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A product special-pair law gives singleton factorization of the conditional bit laws on the same $Z$ fiber."
+}

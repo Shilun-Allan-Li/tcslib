@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_fixedAliceCrossInfoTriple_uniform",
+ "key": "8356ce58ad5611e2",
+ "kind": "theorem",
+ "title": "Uniform law of Alice's fixed-coordinate information triple",
+ "statement": "Fix a positive integer $n$ and a coordinate $i \\in \\{0, 1, \\dots, n-1\\}$. Consider two ways of producing a triple. First, draw a hard-distribution sample conditioned on the event that Alice's input set $X$ and Bob's input set $Y$ are disjoint, and record the triple $\\bigl(x_i,\\; Y_{<i},\\; (X_{<i}, Y_{\\ge i})\\bigr)$, where $x_i$ is Alice's bit at coordinate $i$, $Y_{<i}$ is Bob's bit vector on the coordinates $j < i$ (set to $\\mathrm{false}$ elsewhere), $X_{<i}$ is Alice's bit vector on the coordinates $j < i$, and $Y_{\\ge i}$ is Bob's bit vector on the coordinates $j \\ge i$ (each padded with $\\mathrm{false}$ outside its range). Second, draw a vector of disjoint coordinates uniformly at random and form the same triple from Alice's and Bob's bits read off that vector. Then these two random triples are identically distributed.",
+ "hypotheses_covered": [
+  "n a positive natural number",
+  "a fixed coordinate index i in {0,...,n-1}",
+  "source law: the hard distribution conditioned on the disjointness event",
+  "target law: the uniform distribution on disjoint-coordinate vectors",
+  "the compared object is the triple (Alice's bit x_i, Bob's prefix Y_{<i}, Alice's conditioning pair (X_{<i}, Y_{>=i}))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The fixed-coordinate Alice cross-information triple has the same law under $D$ as the corresponding coordinate-vector triple under the uniform disjoint-coordinate law."
+}

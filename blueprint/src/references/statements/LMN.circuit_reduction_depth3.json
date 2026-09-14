@@ -1,0 +1,20 @@
+{
+ "lean_name": "LMN.circuit_reduction_depth3",
+ "key": "cc5ccdb56c75dd52",
+ "kind": "theorem",
+ "title": "Decision-tree depth after a random restriction of a depth-three circuit",
+ "statement": "Fix $n \\ge 1$, and let $f\\colon \\{0,1\\}^n \\to \\{0,1\\}$ be the conjunction of $s_2$ DNF formulas $g_1,\\dots,g_{s_2}$, so that $f(x)=1$ if and only if $g_i(x)=1$ for every $i$. Assume a width bound $w \\ge 1$ under which each $g_i$ has width at most $w$ (every term of every gate has at most $w$ literals), and assume that within each term of each gate the literals are distinct and no variable occurs twice. Fix integers $l \\ge 1$ and $t$, and let $\\rho$ be a Bernoulli random restriction with parameter $\\frac{1}{40w}\\cdot\\frac{1}{40l}$; write $p_1=\\frac{1}{40w}$ and $p_2=\\frac{1}{40l}$. Write $f\\!\\restriction_\\rho$ for the function obtained by extending each input with the values $\\rho$ fixes, and let $D(\\cdot)$ denote decision-tree depth (the least depth of a decision tree computing the given function). Then the probability that the restricted function has decision-tree depth exceeding $t$ obeys\n\\[\n\\Pr_\\rho\\!\\big[\\,D(f\\!\\restriction_\\rho) > t\\,\\big]\n\\;\\le\\; s_2\\big((1/2)^{l} + e^{-n p_1/3}\\big) + \\big((1/2)^{t} + e^{-n p_2/3}\\big).\n\\]",
+ "hypotheses_covered": [
+  "f is the conjunction (AND) of the s₂ DNF gates",
+  "each gate has width at most w",
+  "w > 0",
+  "within each term, literals sharing a variable are identical (no repeated variable)",
+  "each term has no duplicate literals",
+  "n > 0",
+  "l > 0"
+ ],
+ "confidence": "low",
+ "caveat": "The formal snippet elides the theorem's conclusion entirely: its type ends with `let p₁ : ℝ := sorry`, so the probabilistic bound is not present in the ground-truth statement. The displayed inequality (the composed-restriction parameter (1/40w)·(1/40l), the p₁, p₂ substitution, and the s₂-weighted bound) is reconstructed from the `current` informal statement, not verified against a Lean conclusion — hence low confidence. Only the hypotheses are genuinely fixed by the snippet: f is the AND of the DNF gates, the width bound w, the no-repeated-variable and no-duplicate-literal conditions per term, and the positivity constraints n>0, w>0, l>0. Note t carries no positivity hypothesis, and the Bernoulli restriction belongs to the missing conclusion rather than to the stated hypotheses. This rewrite fixes only the flagged lean-notation issue by replacing the identifiers dtDepth, restrictFn, and composedDelta with mathematical notation.",
+ "rubric": [],
+ "replaced": "\nFor a depth-3 circuit in normal form (AND of $s_2$ width-$w$ DNF gates, with $w,l > 0$,\n$n > 0$), under the composed Bernoulli$(\\mathrm{composedDelta}\\,w\\,l\\,3) =\n\\mathrm{Bernoulli}(1/(40w) \\cdot 1/(40l))$ restriction, writing $p_1 = 1/(40w)$ and\n$p_2 = 1/(40l)$,\n\\[\n\\Pr_\\rho[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\, f\\,\\rho) > t]\n\\le s_2\\bigl((1/2)^l + \\exp(-np_1/3)\\bigr) + \\bigl((1/2)^t + \\exp(-np_2/3)\\bigr).\n\\]"
+}

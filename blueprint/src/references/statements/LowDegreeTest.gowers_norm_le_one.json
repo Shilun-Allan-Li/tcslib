@@ -1,0 +1,16 @@
+{
+ "lean_name": "LowDegreeTest.gowers_norm_le_one",
+ "key": "b2cd7f87254d4a39",
+ "kind": "lemma",
+ "title": "Gowers norm at most one for sign-valued functions",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function on the hypercube, and let $g = (-1)^f$ be its $\\pm 1$ lift, the real-valued function $g(x) = (-1)^{f(x)} \\in \\{\\pm 1\\}$. Then for every $k \\in \\bbn$, the $k$-th Gowers uniformity norm of $g$ (in power form) satisfies\n\\[\n  \\|g\\|_{U^k}^{2^k}\n  = \\E_{x \\in \\{0,1\\}^n}\\,\\E_{h_1,\\ldots,h_k}\\!\\left[\\mathrm{GP}(g, k, x, h_1,\\ldots,h_k)\\right]\n  \\;\\le\\; 1.\n\\]",
+ "hypotheses_covered": [
+  "f is a function from the hypercube {0,1}^n to {0,1}",
+  "g is the ±1 lift of f",
+  "k is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every Boolean function $f : \\{0,1\\}^n \\to \\{0,1\\}$ and every $k \\ge 0$,\n$\\|(-1)^f\\|_{U^k}^{2^k} \\le 1$."
+}

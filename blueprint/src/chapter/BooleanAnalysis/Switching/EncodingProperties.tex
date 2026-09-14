@@ -12,12 +12,11 @@ in the technical facts needed for the encode/decode round-trip.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Output bound for processClauseLits]
+\begin{lemma}[Length bound on the clause-processing output]
 \lean{SwitchingLemma2.processClauseLits_bound}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma2.processClauseLits_bound}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -51,23 +50,35 @@ in the technical facts needed for the encode/decode round-trip.
     pdf-b5e074215b9e-p002-b002}
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
-For any literal/index list and any path, the combined output of
-\texttt{SwitchingLemma2.processClauseLits} is bounded: the length of its auxiliary entry
-list plus twice the length of its remaining path is at most $2 \cdot |\mathrm{path}|$.
+Fix a list of literal–position pairs $L$, a path $P$ (a list of variable–direction
+pairs), and two restrictions $\rho_0, \sigma$ on $n$ variables. Running the
+clause-processing operation on these inputs yields a remaining path $P'$ and an
+auxiliary list $A$ of position–direction pairs (together with updated restrictions).
+Then
+\[
+\abs{A} + 2\,\abs{P'} \le 2\,\abs{P},
+\]
+where $\abs{\cdot}$ denotes the number of entries of a list.
 \end{lemma}
 
-\begin{lemma}[Tight bound for non-empty inputs]
+\begin{lemma}[Tight length bound for processing a nonempty clause against a nonempty path]
 \lean{SwitchingLemma2.processClauseLits_tight}
 \label{SwitchingLemma2.processClauseLits_tight}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_bound}
 \difficulty{3}
-On non-empty literal and path lists, \texttt{SwitchingLemma2.processClauseLits} satisfies
-the strengthened bound: the auxiliary-entry length plus one, plus twice the remaining
-path length, is still at most twice the length of the input path.
+Run the clause-processing procedure on a nonempty list of free literals — each paired
+with its position index in the clause — and a nonempty canonical path, starting from
+restrictions $\rho_0$ and $\sigma$, and let its output consist of a remaining path and a
+list of accumulated auxiliary entries (among the updated restrictions). Writing $a$ for
+the number of auxiliary entries produced, $r$ for the length of the remaining path
+returned, and $m$ for the length of the input path, we have
+\[
+a + 1 + 2r \le 2m.
+\]
 \end{lemma}
 
-\begin{lemma}[Length bound for the encoder loop]
+\begin{lemma}[Length bound for the switching-lemma encoder loop]
 \lean{SwitchingLemma2.encode_go_aux_length_bound}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
@@ -75,7 +86,6 @@ path length, is still at most twice the length of the input path.
 }
 \label{SwitchingLemma2.encode_go_aux_length_bound}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -164,13 +174,18 @@ path length, is still at most twice the length of the input path.
   {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits_tight}
 \difficulty{4}
-The output produced by the encoder loop \texttt{SwitchingLemma2.razborovEncode}'s
-\texttt{go} grows in a controlled way: its second component has length at most
-$|\mathrm{acc}| + 2 \cdot |\mathrm{path}|$, where $\mathrm{acc}$ is the accumulator and
-$\mathrm{path}$ the current path.
+Consider the recursive encoding routine underlying Razborov's proof of the switching
+lemma, which processes a DNF formula $f$ on $n$ variables against a width parameter $w$
+and a fuel bound, while carrying a path recorded as a list of variable–value pairs
+$(i,b) \in \mathrm{Fin}\,n \times \mathrm{Bool}$, two restrictions $\rho_0, \sigma$ on
+$n$ variables, and an accumulator $\mathrm{acc}$ recorded as a list of index–value pairs
+in $\bbn \times \mathrm{Bool}$; it returns a pair of lists. Then the second component of
+its output has length at most $\abs{\mathrm{acc}} + 2\,\abs{\mathrm{path}}$, where
+$\abs{\mathrm{acc}}$ and $\abs{\mathrm{path}}$ denote the lengths of the accumulator and
+path lists.
 \end{lemma}
 
-\begin{lemma}[Encoding length is at most $2d$]
+\begin{lemma}[Auxiliary encoding length is at most twice the depth]
 \lean{SwitchingLemma2.razborovEncode_aux_length_le}
 \label{SwitchingLemma2.razborovEncode_aux_length_le}
 \leanok
@@ -178,7 +193,6 @@ $\mathrm{path}$ the current path.
   pdf-b5e074215b9e-p002-b003,
   pdf-b5e074215b9e-p002-b004
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -312,52 +326,75 @@ $\mathrm{path}$ the current path.
   {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.encode_go_aux_length_bound, SwitchingLemma2.razborovEncode}
 \difficulty{3}
-For a bad restriction $\rho$ of a DNF $f$ with depth parameter $d$, the encoded output
-\texttt{SwitchingLemma2.razborovEncode} has length at most $2d$.
+Let $f$ be a DNF formula on $n$ Boolean variables, let $w, d \in \bbn$, and let $\rho$
+be a restriction that is bad for $f$ at depth $d$; that is, the restriction of the
+Boolean function computed by $f$ along $\rho$ has decision-tree depth strictly greater
+than $d$. Then the auxiliary component of the Razborov encoding of $f$ and $\rho$ with
+parameters $w$ and $d$ — the list of $(\bbn \times \mathrm{Bool})$ pairs returned as the
+second entry of the encoding — has length at most $2d$.
 \end{lemma}
 
-\begin{lemma}[processClauseLits preserves $\sigma$ off the literal list]
+\begin{lemma}[Stability of the restriction σ away from a clause's variables]
 \lean{SwitchingLemma2.processClauseLits_sigma_stable}
 \label{SwitchingLemma2.processClauseLits_sigma_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
-If a variable $v$ is the variable of no literal in the input list, then
-\texttt{SwitchingLemma2.processClauseLits} leaves the $\sigma$ restriction unchanged at
-$v$; that is, the resulting $\sigma$ agrees with the input $\sigma$ on $v$.
+Fix $n$ and let $\mathrm{lits}$ be a list of literals over $\mathrm{Fin}\,n$, each
+paired with a position index, let $\mathrm{path}$ be a list of variable–direction pairs,
+and let $\rho_0$ and $\sigma$ be restrictions on $n$ variables. Suppose $v \in
+\mathrm{Fin}\,n$ is not the variable of any literal occurring in $\mathrm{lits}$. Then
+the restriction $\sigma'$ produced by processing $\mathrm{lits}$ against $\mathrm{path}$
+starting from $\rho_0$ and $\sigma$ agrees with $\sigma$ at $v$, that is $\sigma'(v) =
+\sigma(v)$.
 \end{lemma}
 
-\begin{lemma}[processClauseLits preserves $\rho_0$ off the literal list]
+\begin{lemma}[Untouched variables of a processed clause remain fixed in $\rho_0$]
 \lean{SwitchingLemma2.processClauseLits_rho_stable}
 \label{SwitchingLemma2.processClauseLits_rho_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
-If a variable $v$ is the variable of no literal in the input list, then
-\texttt{SwitchingLemma2.processClauseLits} leaves the $\rho_0$ restriction unchanged at
-$v$; the resulting $\rho_0$ agrees with the input $\rho_0$ on $v$.
+Fix $n$ and let $\mathrm{lits}$ be a list of literals on $n$ variables, each paired with
+a position index, and let $\mathrm{path}$ be a list of variable–direction pairs. Given
+restrictions $\rho_0,\sigma$ on $n$ variables and a variable $v$ such that $v$ is not
+the variable of any literal occurring in $\mathrm{lits}$, the updated restriction
+$\rho_0'$ produced by processing the clause's free literals of $\mathrm{lits}$ against
+$\mathrm{path}$ starting from $\rho_0$ and $\sigma$ agrees with $\rho_0$ at $v$; that
+is, $\rho_0'(v) = \rho_0(v)$.
 \end{lemma}
 
-\begin{lemma}[processClauseLits never frees $\rho_0$]
+\begin{lemma}[Processing a clause preserves fixed variables of the restriction]
 \lean{SwitchingLemma2.processClauseLits_rho_ne_none}
 \label{SwitchingLemma2.processClauseLits_rho_ne_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits}
 \difficulty{3}
-If $\rho_0\,v \neq \mathrm{none}$, then after running
-\texttt{SwitchingLemma2.processClauseLits} the resulting $\rho_0$ at $v$ is still not
-$\mathrm{none}$; the routine never turns a set value into an unset one.
+Fix $n$, and let $\rho_0$ and $\sigma$ be restrictions on $n$ variables, let $\ell$ be a
+list of literals each paired with its position index in a clause, and let a
+decision-tree path be given. Suppose the variable $v$ is fixed under $\rho_0$, i.e.
+$\rho_0(v) \neq \mathrm{none}$. Then, after processing the clause's free literals
+against the path — which returns updated versions of $\rho_0$, $\sigma$, together with
+the remaining path and the accumulated auxiliary data — the variable $v$ remains fixed
+in the returned restriction $\rho_0$: its value there is again not $\mathrm{none}$. In
+other words, this process never frees a variable that was already fixed in $\rho_0$.
 \end{lemma}
 
-\begin{lemma}[Encoder $\gamma$ preserves $\sigma$ at non-free variables]
+\begin{lemma}[Encoder agrees with $\sigma$ at variables fixed by $\rho_0$]
 \lean{SwitchingLemma2.encode_go_fst_nonfree}
 \label{SwitchingLemma2.encode_go_fst_nonfree}
 \leanok
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits_rho_ne_none, SwitchingLemma2.processClauseLits_sigma_stable}
 \difficulty{5}
-If $\rho_0\,v \neq \mathrm{none}$ (so $v$ is non-free), then the first component
-$\gamma$ of the encoder loop \texttt{SwitchingLemma2.razborovEncode}'s \texttt{go}
-returns $\sigma\,v$ at $v$; the encoder does not alter $\sigma$ on non-free variables.
+Fix $n$ and work with formulas on the variables $\mathrm{Fin}\,n$. Let $f$ be a DNF
+formula, $w \in \bbn$ a width parameter, and $\mathrm{fuel} \in \bbn$ a bound on the
+recursion depth; let $\mathrm{path}$ be a list of variable–value pairs (elements of
+$\mathrm{Fin}\,n \times \mathrm{Bool}$), let $\rho_0$ and $\sigma$ be restrictions on
+$n$ variables, and let $\mathrm{acc}$ be a list of index–value pairs holding the
+encoding accumulated so far. The recursive core of the Razborov encoder sends this data
+to a pair whose first component is again a restriction; write $\gamma$ for that
+restriction. Then for every variable $v$ that is fixed by $\rho_0$ — that is, $\rho_0(v)
+\neq \mathrm{none}$ — one has $\gamma(v) = \sigma(v)$.
 \end{lemma}
 
 \begin{lemma}[Accumulator decomposition for the encoder loop]
@@ -366,224 +403,330 @@ returns $\sigma\,v$ at $v$; the encoder does not alter $\sigma$ on non-free vari
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction}
 \difficulty{4}
-The encoder loop \texttt{SwitchingLemma2.razborovEncode}'s \texttt{go} run with an
-accumulator decomposes into a run on the empty accumulator: its result can be expressed
-in terms of the corresponding empty-accumulator computation together with the supplied
-accumulator.
+Fix a DNF formula $f$ on $n$ variables — a list of terms, each a conjunction of literals
+— together with a width parameter $w \in \bbn$, a fuel bound $\mathrm{fuel} \in \bbn$, a
+path $P$ recording the variable–value pairs already committed (a list of elements of
+$\mathrm{Fin}\,n \times \mathrm{Bool}$), two restrictions $\rho_0, \sigma :
+\mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$, and an accumulator $A$, a list of
+index–value pairs in $\bbn \times \mathrm{Bool}$. The tail-recursive helper of
+Razborov's encoding procedure, run from the initial accumulator $A$ on these data,
+produces the same output as the corresponding run started from the empty accumulator,
+with the entries of $A$ carried through unchanged; that is, the accumulator contributes
+to the result only additively and does not affect the encoding computed by the procedure
+itself.
 \end{lemma}
 
-\begin{lemma}[Encoder $\gamma$ independent of the accumulator]
+\begin{lemma}[Accumulator-independence of the encoder's first output]
 \lean{SwitchingLemma2.encode_go_fst_acc}
 \label{SwitchingLemma2.encode_go_fst_acc}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_acc}
 \difficulty{1}
-The first component of the encoder loop \texttt{SwitchingLemma2.razborovEncode}'s
-\texttt{go} does not depend on the accumulator: running with accumulator $\mathrm{acc}$
-yields the same first component as running with the empty accumulator.
+Fix a DNF formula $f$ on $n$ variables, a width parameter $w \in \bbn$, a fuel bound
+$\in \bbn$, a partial path recorded as a list of variable–value pairs $(i,b) \in
+\mathrm{Fin}\,n \times \{0,1\}$, and two restrictions $\rho_0, \sigma$ on the $n$
+variables. The auxiliary recursion underlying the Razborov encoding takes, in addition,
+a starting accumulator: a list of index–bit pairs in $\bbn \times \{0,1\}$, and returns
+a pair. Then the first component of its output does not depend on that accumulator:
+running the recursion from an arbitrary accumulator yields the same first component as
+running it from the empty accumulator.
 \end{lemma}
 
-\begin{lemma}[processEntries preserves none]
+\begin{lemma}[Entry processing preserves free variables]
 \lean{SwitchingLemma2.processEntries_preserves_none}
 \label{SwitchingLemma2.processEntries_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
 \difficulty{3}
-If $\sigma\,v = \mathrm{none}$, then the decoder's \texttt{processEntries} routine leaves
-$v$ unset; the resulting $\sigma$ is still $\mathrm{none}$ at $v$.
+Fix $n$ variables and consider the entry-processing step of the Razborov decoding
+procedure, which takes a term $t$ (a conjunction of literals) over these variables, a
+natural number $w$, two restrictions $\sigma, \rho_0 \colon \mathrm{Fin}\,n \to
+\mathrm{Option}\,\mathrm{Bool}$, and a list $\mathit{aux}$ of pairs $(\mathbb{N} \times
+\mathrm{Bool})$, and returns a restriction as the first component of its output. If
+$\sigma$ leaves a variable $v$ free (that is, $\sigma(v) = \mathtt{none}$), then the
+restriction produced by this step also leaves $v$ free.
 \end{lemma}
 
-\begin{lemma}[Decoder loop preserves none]
+\begin{lemma}[Decoder loop preserves free variables]
 \lean{SwitchingLemma2.decode_go_preserves_none}
 \label{SwitchingLemma2.decode_go_preserves_none}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.processEntries_preserves_none}
 \difficulty{4}
-If $\sigma\,v = \mathrm{none}$, then the decoder loop
-\texttt{SwitchingLemma2.razborovDecode}'s \texttt{go} leaves $v$ unset; its resulting
-$\sigma$ is still $\mathrm{none}$ at $v$.
+Fix a number of variables $n$, and let $D$ denote the recursive loop underlying
+Razborov's decoder, which takes as input a DNF formula $f$ on $n$ variables, a width
+parameter $w \in \bbn$, a fuel bound $\mathrm{fuel} \in \bbn$, two restrictions $\sigma$
+and $\rho_0$ on the $n$ variables, and an auxiliary list of index–value pairs drawn from
+$\bbn \times \mathrm{Bool}$, and returns a pair whose first component is again a
+restriction on the $n$ variables. Then for every variable $v$ with $\sigma(v) =
+\mathrm{none}$, the first component of $D(f, w, \mathrm{fuel}, \sigma, \rho_0,
+\mathrm{aux})$ also assigns $\mathrm{none}$ to $v$.
 \end{lemma}
 
-\begin{lemma}[processClauseLits components independent of $\sigma$]
+\begin{lemma}[Independence of the path, restriction, and auxiliary outputs from $\sigma$]
 \lean{SwitchingLemma2.processClauseLits_sigma_indep}
 \label{SwitchingLemma2.processClauseLits_sigma_indep}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{3}
-The remaining path, the $\rho_0$ output, and the auxiliary entry list produced by
-\texttt{SwitchingLemma2.processClauseLits} are all independent of the input $\sigma$: for
-any two starting restrictions $\sigma_1, \sigma_2$ these three components coincide.
+Fix a list of literals, each paired with its position index within a clause, a
+decision-tree path, a restriction $\rho_0$, and two arbitrary restrictions $\sigma_1$
+and $\sigma_2$ on $n$ variables. Running the clause-processing procedure on this data
+with $\sigma_1$ and with $\sigma_2$ produces the same three outputs in each case: the
+same remaining path, the same updated restriction $\rho_0$, and the same accumulated
+auxiliary list of (position index, path direction) pairs. In other words, of the
+procedure's outputs only the returned $\sigma$ can depend on the $\sigma$ supplied as
+input; the path, the $\rho_0$ component, and the auxiliary data are all unaffected by
+that choice.
 \end{lemma}
 
-\begin{lemma}[Encoder output independent of $\sigma$]
+\begin{lemma}[Encoder output's second component is independent of σ]
 \lean{SwitchingLemma2.encode_go_snd_sigma_indep}
 \label{SwitchingLemma2.encode_go_snd_sigma_indep}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_acc, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_sigma_indep}
 \difficulty{5}
-The second component (the emitted bit list) of the encoder loop
-\texttt{SwitchingLemma2.razborovEncode}'s \texttt{go} does not depend on the $\sigma$
-argument: starting from $\sigma_1$ or $\sigma_2$ gives the same output.
+Fix a DNF formula $f$ on $n$ variables, two natural-number parameters $w$ and $t$ (a
+fuel bound), a list of decisions pairing a variable with a Boolean value, and a
+restriction $\rho_0$. Run the Razborov encoding loop on this data, started with empty
+auxiliary data, using a restriction $\sigma$. Then the second component of the loop's
+output is the same whether one supplies the restriction $\sigma_1$ or the restriction
+$\sigma_2$ in place of $\sigma$; that is, this component does not depend on the $\sigma$
+argument.
 \end{lemma}
 
-\begin{lemma}[Auxiliary entries come from input literals]
+\begin{lemma}[Auxiliary indices trace back to input literals]
 \lean{SwitchingLemma2.processClauseLits_aux_entries_from_lits}
 \label{SwitchingLemma2.processClauseLits_aux_entries_from_lits}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
-Every entry $e$ in the auxiliary list produced by
-\texttt{SwitchingLemma2.processClauseLits} has its index $e.1$ equal to the index of some
-literal $li$ from the input list.
+Fix $n$, and process the free literals of a clause against a decision-tree path: take a
+list $\mathrm{lits}$ of literal–index pairs, a decision-tree path, and two restrictions
+$\rho_0$ and $\sigma$ on $n$ variables, and write $A$ for the accumulated list of
+index–direction pairs returned as auxiliary data. Then for every pair $(i, b) \in A$,
+the index $i$ equals the index component $j$ of some literal–index pair $(\ell, j) \in
+\mathrm{lits}$.
 \end{lemma}
 
-\begin{lemma}[No auxiliary entry targets a non-free variable]
+\begin{lemma}[Recorded positions avoid a designated variable]
 \lean{SwitchingLemma2.processClauseLits_aux_ne_nonfree}
 \label{SwitchingLemma2.processClauseLits_aux_ne_nonfree}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{4}
-Suppose every input literal pair occurs in $t.\texttt{zipIdx}$ and no input literal has
-variable $v$. Then for every auxiliary entry $e$ of
-\texttt{SwitchingLemma2.processClauseLits}, the literal at position $e.1$ in $t$ does not
-have variable $v$.
+Let $t$ be a term in $n$ variables, let $v \in \mathrm{Fin}\,n$ be a variable, and let
+$\rho_0, \sigma$ be restrictions on $n$ variables. Let $\mathit{lits}$ be a list of
+literals each tagged with a natural-number position, and suppose that every tagged
+literal in $\mathit{lits}$ occurs in the position-indexed enumeration of $t$ (each
+literal of $t$ paired with its index), and that no literal appearing in $\mathit{lits}$
+has variable $v$. Consider the clause auxiliary data — the list of (position, direction)
+pairs — produced by processing $\mathit{lits}$ against a path starting from $\rho_0$ and
+$\sigma$. Then for every pair $(i, b)$ in this auxiliary data, whenever the literals of
+$t$ from position $i$ onward form a nonempty list with leading literal $\ell$, the
+variable of $\ell$ is different from $v$.
 \end{lemma}
 
-\begin{lemma}[Auxiliary entries reference free variables]
+\begin{lemma}[Auxiliary entries mark variables free under the restriction]
 \lean{SwitchingLemma2.processClauseLits_aux_vars_free}
 \label{SwitchingLemma2.processClauseLits_aux_vars_free}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_entries_from_lits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{3}
-Suppose every input literal pair occurs in $t.\texttt{zipIdx}$ and all input literals are
-free under $\rho_0$. Then for every auxiliary entry $e$ of
-\texttt{SwitchingLemma2.processClauseLits}, the literal at position $e.1$ in $t$ has a
-variable that is free under $\rho_0$ (its $\rho_0$ value is $\mathrm{none}$).
+Let $t$ be a term on $n$ variables (a list of literals), let $\rho_0$ and $\sigma$ be
+restrictions on $n$ variables, let $L$ be a list of literals each paired with a position
+index, and let $P$ be a decision-tree path. Suppose that every pair $(\ell, i)$ in $L$
+occurs in the indexed enumeration of $t$ — so that $\ell$ is precisely the literal at
+position $i$ of $t$ — and that every literal appearing in $L$ has its variable free
+under $\rho_0$ (its value under $\rho_0$ is $\mathrm{none}$). Then for each auxiliary
+entry $(i, b)$ produced by processing $L$ against $P$ starting from $\rho_0$ and
+$\sigma$, and for any literal $\ell'$ and list $r$ with $t$ from position $i$ onward
+equal to $\ell' :: r$ (i.e. discarding the first $i$ literals of $t$ leaves a nonempty
+list headed by $\ell'$), the variable of $\ell'$ is free under $\rho_0$.
 \end{lemma}
 
-\begin{lemma}[$\sigma$-foldl stable off targeted variables]
+\begin{lemma}[Fold of variable-freeing updates leaves untargeted variables fixed]
 \lean{SwitchingLemma2.foldl_sigma_stable}
 \label{SwitchingLemma2.foldl_sigma_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, Term}
 \difficulty{4}
-Folding the decoder's $\sigma$-update over a list of entries leaves $v$ unchanged when
-no entry targets $v$; that is, if for every entry the literal at its position in $t$ does
-not have variable $v$, the folded $\sigma$ agrees with the initial $\sigma$ at $v$.
+Fix a term $t$ over $n$ variables (a list of literals), a restriction $\sigma :
+\mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$, a variable $v$, and a finite list
+of entries, each a pair $(k, b)$ with $k \in \bbn$ and $b$ a Boolean. Process the
+entries left to right, starting from $\sigma$: for an entry $(k, b)$, delete the first
+$k$ literals of $t$; if what remains is empty, leave the current restriction unchanged,
+and otherwise, writing $l$ for the first remaining literal, reset the restriction to be
+free (unassigned) at the variable of $l$. (The Boolean component $b$ of each entry is
+never used.) Suppose that for every entry $(k, b)$ in the list, if deleting the first
+$k$ literals of $t$ leaves a nonempty list whose first literal is $l$, then the variable
+of $l$ is not $v$. Then the restriction obtained after processing all the entries takes
+the same value at $v$ as $\sigma$ does.
 \end{lemma}
 
-\begin{lemma}[$\rho_0$-foldl stable off targeted variables]
+\begin{lemma}[Stability of a restriction fold at an untouched variable]
 \lean{SwitchingLemma2.foldl_rho_stable}
 \label{SwitchingLemma2.foldl_rho_stable}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, Term}
 \difficulty{4}
-Folding the decoder's $\rho_0$-update over a list of entries leaves $v$ unchanged when
-no entry targets $v$; if for every entry the literal at its position in $t$ does not have
-variable $v$, the folded $\rho_0$ agrees with the initial $\rho_0$ at $v$.
+Fix $n$, and let $t$ be a term over $n$ variables, that is a list of literals, together
+with a restriction $\rho_0 : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$, a
+variable $v \in \mathrm{Fin}\,n$, and a finite list of entries $(k_1, b_1), \dots, (k_m,
+b_m)$ with each $k_i \in \bbn$ and each $b_i$ a Boolean. Process these entries from left
+to right, starting from $\rho_0$: for an entry $(k_i, b_i)$, delete the first $k_i$
+literals of $t$; if what remains is nonempty with head literal $l$, update the current
+restriction so that the variable of $l$ is now assigned the fixed value $b_i$, and
+otherwise leave the restriction unchanged. Suppose that for every entry $(k_i, b_i)$,
+whenever deleting the first $k_i$ literals of $t$ leaves a nonempty list with head
+literal $l$, the variable of $l$ is not $v$. Then the restriction obtained after
+processing all the entries assigns $v$ the same value as $\rho_0$ does.
 \end{lemma}
 
-\begin{lemma}[$\sigma$-foldl preserves none]
+\begin{lemma}[Folding never assigns a free variable]
 \lean{SwitchingLemma2.foldl_sigma_preserves_none}
 \label{SwitchingLemma2.foldl_sigma_preserves_none}
 \leanok
 \uses{SwitchingLemma2.Restriction, Term}
 \difficulty{3}
-If $\sigma\,v = \mathrm{none}$, then folding the decoder's $\sigma$-update over any list
-of entries still gives $\mathrm{none}$ at $v$; the fold never sets a previously unset
-variable to a value via the $\sigma$-update.
+Let $t$ be a term on $n$ variables (a list of literals), let $(k_1,b_1),\dots,(k_m,b_m)$
+be a list of pairs in $\bbn\times\mathrm{Bool}$, and let $\rho$ be a restriction on $n$
+variables. Process the entries left to right, starting from $\rho$: for the entry
+$(k_i,b_i)$, delete the first $k_i$ literals of $t$; if nothing remains, leave the
+current restriction unchanged, and otherwise reset the variable of the first surviving
+literal to free. Then for every variable $v$ left free by $\rho$, the restriction
+obtained at the end of this process still leaves $v$ free.
 \end{lemma}
 
-\begin{lemma}[$\sigma$-foldl produces none at a newly set free variable]
+\begin{lemma}[Decoder fold frees a variable set during clause processing]
 \lean{SwitchingLemma2.processClauseLits_foldl_sigma_none}
 \label{SwitchingLemma2.processClauseLits_foldl_sigma_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_sigma_preserves_none, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
-Suppose every input literal pair occurs in $t.\texttt{zipIdx}$, that $\rho_0\,v =
-\mathrm{none}$, and that \texttt{SwitchingLemma2.processClauseLits} sets the $\rho_0$
-component at $v$. Then folding the decoder's $\sigma$-update over the auxiliary entries
-yields $\mathrm{none}$ at $v$.
+Let $t$ be a term on $n$ variables — a list of literals, each carrying a variable and a
+negation flag — and refer to the position of a literal by its index in this list. Let
+$\mathrm{lits}$ be a list of (literal, index) pairs, every one of which is the literal
+occurring at that index in $t$; let $\mathrm{path}$ be a list of (variable, Boolean)
+pairs; and let $\rho_0$, $\sigma$, and $\sigma_{\mathrm{dec}}$ be restrictions on $n$
+variables, with $v$ a distinguished variable. Feeding $\mathrm{lits}$, $\mathrm{path}$,
+$\rho_0$, and $\sigma$ to the clause-processing procedure returns an updated restriction
+$\rho_0'$ together with an auxiliary list $A$ of (index, direction) pairs. Suppose
+$\rho_0(v)$ is free while $\rho_0'(v)$ is fixed. Then processing $A$ from left to right,
+starting from $\sigma_{\mathrm{dec}}$ and, at each entry whose index component is $i$,
+resetting to free the variable of the $i$-th literal of $t$ whenever $t$ has a literal
+at position $i$ (and otherwise leaving the restriction unchanged), yields a restriction
+that is free at $v$.
 \end{lemma}
 
-\begin{lemma}[$\rho_0$-foldl agrees with processClauseLits output]
+\begin{lemma}[Decoder fold recovers the clause-processing restriction]
 \lean{SwitchingLemma2.processClauseLits_foldl_rho_eq}
 \label{SwitchingLemma2.processClauseLits_foldl_rho_eq}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{4}
-Suppose every input literal pair occurs in $t.\texttt{zipIdx}$ and the decoder's initial
-$\rho_0$ value agrees with the encoder's at $v$. Then folding the decoder's
-$\rho_0$-update over the auxiliary entries of
-\texttt{SwitchingLemma2.processClauseLits} reproduces the $\rho_0$ component of that
-routine at $v$.
+Let $t$ be a term on $n$ variables (a list of literals), and let $\mathrm{lits}$ be a
+list of literal–index pairs, each of which is required to be a literal of $t$ together
+with its position — that is, every pair in $\mathrm{lits}$ occurs in the list obtained
+by pairing each literal of $t$ with its index. Fix a path, restrictions $\rho_0$,
+$\sigma$, and $\rho_0^{\mathrm{dec}}$ on the $n$ variables, and a variable $v$ with
+$\rho_0(v) = \rho_0^{\mathrm{dec}}(v)$. Processing $\mathrm{lits}$ against the path
+starting from $\rho_0$ and $\sigma$ yields an updated restriction $\rho_0'$ together
+with an auxiliary list of pairs $(i, b)$. Now form a restriction by folding over this
+auxiliary list, left to right, starting from $\rho_0^{\mathrm{dec}}$: an entry $(i, b)$
+leaves the current restriction unchanged if $t$ has no literal at position $i$, and
+otherwise fixes the variable of the literal at position $i$ to the Boolean value $b$.
+Then the restriction so obtained and $\rho_0'$ take the same value at $v$.
 \end{lemma}
 
-\begin{lemma}[$\rho_0$-foldl agrees when $v$ is newly set]
+\begin{lemma}[Decoding fold recovers the processed restriction at a newly set variable]
 \lean{SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
 \label{SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_foldl_rho_eq, SwitchingLemma2.processClauseLits_no_target_of_rho_none, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
-A variant of the previous lemma allowing the decoder's initial $\rho_0$ to differ from
-the encoder's: provided $\rho_0\,v = \mathrm{none}$ and
-\texttt{SwitchingLemma2.processClauseLits} sets the $\rho_0$ component at $v$, the
-$\rho_0$-fold over the auxiliary entries still reproduces the routine's $\rho_0$ value at
-$v$.
+Let $t$ be a term on $n$ variables, and let $L$ be a list of literal–index pairs each of
+which occurs at its recorded position in $t$ (that is, every pair in $L$ lies in the
+enumeration of $t$ that tags each literal with its index). Fix restrictions $\rho_0$,
+$\sigma$, and $\rho_0^{\mathrm{dec}}$ on $n$ variables, a decision-tree path $P$, and a
+variable $v$ that $\rho_0$ leaves free. Running the clause-processing routine on $L$,
+$P$, $\rho_0$, $\sigma$ produces an updated restriction $\rho_0'$ together with
+auxiliary data $A$, a list of (position index, direction) pairs, and assume that
+$\rho_0'$ assigns a value at $v$. Consider the restriction obtained by folding $A$ over
+the starting restriction $\rho_0^{\mathrm{dec}}$, where each pair $(i, b)$ leaves the
+current restriction unchanged if $t$ has no literal at position $i$, and otherwise sets
+the variable of the $i$-th literal of $t$ to the value $b$. Then this folded restriction
+agrees with $\rho_0'$ at $v$; that is, its value at $v$ equals $\rho_0'(v)$.
 \end{lemma}
 
-\begin{lemma}[No auxiliary entry targets a still-free variable]
+\begin{lemma}[Still-free variables avoid the clause's literals]
 \lean{SwitchingLemma2.processClauseLits_no_target_of_rho_none}
 \label{SwitchingLemma2.processClauseLits_no_target_of_rho_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{5}
-Contrapositive of $\rho_0$-stability: if $\rho_0\,v = \mathrm{none}$, the
-\texttt{SwitchingLemma2.processClauseLits} output keeps $\rho_0$ unset at $v$, and there
-are at least as many path entries as literals, then no input literal has variable $v$.
+Fix a number $n$ of variables, and let $\rho_0$ and $\sigma$ be restrictions on them.
+Suppose the free literals of a clause are given as a list, each literal paired with its
+position index, and let a decision-tree path be a list of variable–direction pairs whose
+length is at least the number of literals. Running the clause-processing operation on
+this list, this path, $\rho_0$, and $\sigma$ returns an updated restriction $\rho_0'$ in
+place of $\rho_0$. If a variable $v$ is free under $\rho_0$ and remains free under
+$\rho_0'$, then no literal on the list has $v$ as its underlying variable.
 \end{lemma}
 
-\begin{lemma}[processClauseLits $\sigma$ output depends only on $\sigma\,v$]
+\begin{lemma}[Updated restriction at a variable depends only on its starting value]
 \lean{SwitchingLemma2.processClauseLits_sigma_at_v}
 \label{SwitchingLemma2.processClauseLits_sigma_at_v}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{3}
-If two starting restrictions agree at $v$ ($\sigma_1\,v = \sigma_2\,v$), then the
-$\sigma$ output of \texttt{SwitchingLemma2.processClauseLits} at $v$ is the same for both;
-the value at $v$ depends only on the initial $\sigma$ at $v$.
+Consider the routine that processes one clause's free literals — a list of literals,
+each tagged with its position index in the clause — against a canonical decision-tree
+path, starting from a restriction $\rho_0$ and a restriction $\sigma$, and returning
+(among other data) an updated restriction $\sigma'$. Fix the list of literals, the path,
+the restriction $\rho_0$, and a variable $v$. If two starting restrictions $\sigma_1$
+and $\sigma_2$ agree at $v$, that is $\sigma_1(v) = \sigma_2(v)$, then the updated
+restrictions produced from $\sigma_1$ and from $\sigma_2$ also agree at $v$;
+equivalently, the value at $v$ of the updated $\sigma$-restriction depends only on the
+starting value $\sigma(v)$.
 \end{lemma}
 
-\begin{lemma}[$\sigma$ stays none when $\rho_0$ stays free]
+\begin{lemma}[Processed assignment unchanged where the restriction stays free]
 \lean{SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
 \label{SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{4}
-If $\rho_0\,v = \mathrm{none}$ and \texttt{SwitchingLemma2.processClauseLits} leaves
-$\rho_0$ unset at $v$, then it also leaves $\sigma$ unchanged at $v$; the $\sigma$ output
-equals the input $\sigma$ at $v$, since $\rho_0$ and $\sigma$ are updated at the same
-variables in lockstep.
+Fix $n$, and let $\rho_0$ and $\sigma$ be restrictions on $n$ variables. Run the
+clause-processing procedure on a list of literals (each paired with its position index)
+together with a decision-tree path, starting from $\rho_0$ and $\sigma$, and write
+$\rho_0'$ and $\sigma'$ for the two restrictions it returns. If a variable $v$ is free
+under the input, $\rho_0(v) = \mathrm{none}$, and remains free under the output,
+$\rho_0'(v) = \mathrm{none}$, then the procedure has not altered $\sigma$ at $v$ either:
+$\sigma'(v) = \sigma(v)$.
 \end{lemma}
 
-\begin{lemma}[Encoder $\gamma$ at a free variable independent of initial $\sigma$]
+\begin{lemma}[Free-variable output of the Razborov encoder is independent of its starting restriction]
 \lean{SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
 \label{SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_sigma_at_v, SwitchingLemma2.processClauseLits_sigma_indep, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
 \difficulty{5}
-At a variable $v$ that is free under $\rho_0$ and unset in both $\sigma_1$ and $\sigma_2$,
-the first component $\gamma$ of the encoder loop
-\texttt{SwitchingLemma2.razborovEncode}'s \texttt{go} takes the same value at $v$ whether
-started from $\sigma_1$ or $\sigma_2$.
+Fix a DNF formula $f$ on $n$ variables, a width $w$, a fuel bound, a decision path (a
+list of variable–direction pairs), and a base restriction $\rho_0$. The recursive worker
+of the Razborov encoding, run on these inputs together with a running restriction
+$\sigma$ and empty auxiliary data, returns among its outputs a restriction; write
+$R(\sigma)$ for this first output component. Let $v$ be a variable that is left free by
+$\rho_0$ and by two running restrictions $\sigma_1$ and $\sigma_2$, meaning $\rho_0(v)$,
+$\sigma_1(v)$, and $\sigma_2(v)$ are all undefined. Then the two runs agree at $v$:
+$R(\sigma_1)(v) = R(\sigma_2)(v)$.
 \end{lemma}
 
-\begin{lemma}[processEntries on processClauseLits data]
+\begin{lemma}[Decoder replay of a clause's processed free literals]
 \lean{SwitchingLemma2.processEntries_of_processClauseLits}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma2.processEntries_of_processClauseLits}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -636,60 +779,84 @@ started from $\sigma_1$ or $\sigma_2$.
   {pdf-b5e074215b9e-p002-b004}
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
-Characterizes the decoder's \texttt{processEntries} when run on the auxiliary entries of
-\texttt{SwitchingLemma2.processClauseLits} followed by a termination marker $(w,
-\mathrm{false})$ and a remainder: the result is given by folding the decoder's $\sigma$-
-and $\rho_0$-updates over those auxiliary entries, leaving the remainder unconsumed,
-provided $t.\mathrm{length} \le w$ and every input literal occurs in $t.\texttt{zipIdx}$.
+Work over $n$ Boolean variables, where a *literal* is a variable together with a
+negation flag, a *term* is a list of literals (a conjunction), and a *restriction* $\rho
+: \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ fixes some variables and leaves
+the rest free. Let $t$ be a term whose length is at most a bound $w$, let
+$\mathit{lits}$ be a list of literals each paired with a position index, every such pair
+occurring among the indexed entries of $t$, and fix a canonical decision-tree path
+together with restrictions $\rho_0^{\mathrm{enc}}, \sigma^{\mathrm{enc}},
+\sigma^{\mathrm{dec}}, \rho_0^{\mathrm{dec}}$ and a remainder list. Then, running the
+decoder's entry-processing routine on the auxiliary data emitted when this clause's free
+literals are consumed against the path — followed by the termination marker $(w,
+\mathrm{false})$ and the remainder — yields the same $\sigma$- and $\rho_0$-restrictions
+as folding the corresponding per-entry updates directly over that auxiliary data, with
+the remainder left unconsumed.
 \end{lemma}
 
-\begin{lemma}[processClauseLits never sets $\sigma$ to the negating value]
+\begin{lemma}[Processing free literals preserves a variable's non-negating assignment]
 \lean{SwitchingLemma2.processClauseLits_sigma_ne_neg}
 \label{SwitchingLemma2.processClauseLits_sigma_ne_neg}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
-If no literal in the input list shares $l$'s variable except $l$ itself, and the initial
-$\sigma$ at $l.\mathrm{var}$ is not $\mathrm{some}\ l.\mathrm{neg}$, then after
-\texttt{SwitchingLemma2.processClauseLits} the $\sigma$ output at $l.\mathrm{var}$ is still
-not $\mathrm{some}\ l.\mathrm{neg}$.
+Let $\ell$ be a literal with variable $v$ and negation flag $b$, let $\rho_0$ and
+$\sigma$ be restrictions on $n$ variables, and let $\mathit{lits}$ be a list of literals
+(each tagged with its position index in the clause) run against a decision-tree path.
+Suppose that every literal in $\mathit{lits}$ whose variable is $v$ is equal to $\ell$,
+and that $\sigma$ does not already assign $v$ the fixed value $b$, i.e. $\sigma(v) \neq
+\mathrm{some}\,b$. Then the restriction $\sigma'$ obtained as the $\sigma$-component of
+processing $\mathit{lits}$ against the path starting from $\rho_0$ and $\sigma$ still
+does not assign $v$ the value $b$, i.e. $\sigma'(v) \neq \mathrm{some}\,b$.
 \end{lemma}
 
-\begin{lemma}[Path is exhausted when a member variable stays free]
+\begin{lemma}[Empty remaining path when a clause literal's variable stays free]
 \lean{SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
 \label{SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{5}
-Suppose $(l, idx)$ is in the input list, no other input literal shares $l$'s variable,
-$\rho_0\,l.\mathrm{var} = \mathrm{none}$ initially, and
-\texttt{SwitchingLemma2.processClauseLits} still leaves $\rho_0$ unset at
-$l.\mathrm{var}$. Then the remaining path returned by the routine is empty, since $l$ was
-never processed because the path ran out first.
+Fix $n$, a list $\mathit{lits}$ whose entries are literals paired with clause positions,
+a path $\mathit{path}$ presented as a list of variable–direction pairs, and two
+restrictions $\rho_0,\sigma$ on $n$ variables. Suppose the pair $(l,\mathit{idx})$
+occurs in $\mathit{lits}$, that every entry of $\mathit{lits}$ whose variable equals
+$\mathrm{var}(l)$ is equal to $l$ itself, and that $\rho_0$ leaves $\mathrm{var}(l)$
+free. Processing $\mathit{lits}$ against $\mathit{path}$ from the starting restrictions
+$\rho_0$ and $\sigma$ yields an updated restriction $\rho_0'$, an updated restriction
+$\sigma'$, a remaining path, and accumulated auxiliary data. If $\rho_0'$ still leaves
+$\mathrm{var}(l)$ free, then the remaining path yielded is empty.
 \end{lemma}
 
-\begin{lemma}[A member literal forces $\rho_0$ to be set]
+\begin{lemma}[A clause literal's variable is fixed in the output restriction]
 \lean{SwitchingLemma2.processClauseLits_rho_ne_none_of_mem}
 \label{SwitchingLemma2.processClauseLits_rho_ne_none_of_mem}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{4}
-If some input pair $p$ has variable $v$ and there are at least as many path entries as
-literals, then the $\rho_0$ output of \texttt{SwitchingLemma2.processClauseLits} at $v$ is
-not $\mathrm{none}$.
+Let $\rho_0$ and $\sigma$ be restrictions on $n$ variables, let a list of literals be
+given (each paired with its position index inside its clause), and let a decision-tree
+path be given as a list of variable–direction pairs, with at least as many path entries
+as literals in the list. Process the literals against the path starting from $\rho_0$
+and $\sigma$, and let $\rho_0'$ be the updated first restriction that this returns. If
+some literal in the list has underlying variable $v$, then $v$ is not free in $\rho_0'$;
+that is, $\rho_0'(v)$ is a fixed Boolean value rather than the free marker.
 \end{lemma}
 
-\begin{lemma}[Round-trip base case]
+\begin{lemma}[Round-trip base case for the decoder]
 \lean{SwitchingLemma2.roundtrip_base}
 \label{SwitchingLemma2.roundtrip_base}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction}
 \difficulty{3}
-When the encoder returns $(\sigma, [])$ (an empty emitted list), the decoder loop
-\texttt{SwitchingLemma2.razborovDecode}'s \texttt{go} recovers $\sigma$ exactly, given
-that $\sigma$ and the decoder's starting restriction $\sigma_{\mathrm{dec}}$ agree with
-$\sigma$ on both free and non-free variables and that $\sigma$ is unset wherever
-$\rho_0$ is unset.
+Fix $n$, and let $f$ be a DNF formula on $n$ variables and $w$ a natural number. Let
+$\rho_0$, $\sigma$, $\sigma_{\mathrm{dec}}$, and $\rho_0^{\mathrm{dec}}$ be restrictions
+on $n$ variables (each variable either assigned a Boolean value or left free), and let
+$d$ be a fuel bound. Suppose that $\sigma$ leaves free every variable that $\rho_0$
+leaves free, and that $\sigma_{\mathrm{dec}}$ agrees with $\sigma$ on every variable —
+both those that $\rho_0$ leaves free and those that $\rho_0$ fixes. Then running the
+Razborov decoding loop on $f$, with width $w$, fuel $d$, working restrictions
+$\sigma_{\mathrm{dec}}$ and $\rho_0^{\mathrm{dec}}$, and the empty list of emitted
+advice, yields an output whose first component is exactly $\sigma$.
 \end{lemma}
 
 %%% added by the blueprint pipeline
@@ -703,7 +870,6 @@ $\rho_0$ is unset.
 }
 \label{SwitchingLemma2.encode_go_not_kills_first_clause}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -822,12 +988,15 @@ $\rho_0$ is unset.
   {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem, SwitchingLemma2.processClauseLits_sigma_ne_neg, Term}
 \difficulty{6}
-Let $f$ be a DNF whose terms contain no two distinct literals on the same variable, and
-let $t$ be the first term of $f$ not killed by $\rho_0$ (as returned by
-\texttt{find?}). If $l \in t$ has $\rho_0\,l.\mathrm{var} = \mathrm{none}$ and $\sigma$
-is unset wherever $\rho_0$ is, then the first component of the encoder loop
-\texttt{SwitchingLemma2.razborovEncode}'s \texttt{go} (for any fuel, path, and empty
-accumulator) at $l.\mathrm{var}$ is not $\mathrm{some}\ l.\mathrm{neg}$; the encoder
-never assigns the free literal $l$ its negating value, so it does not kill the first
-surviving clause.
+Let $f$ be a DNF formula on $n$ variables in which no term contains two distinct
+literals over the same variable, and let $w$ be a natural-number width parameter. Fix
+two restrictions $\rho_0$ and $\sigma$ on the $n$ variables such that $\sigma$ leaves a
+variable free whenever $\rho_0$ does (that is, $\rho_0(v)$ undefined implies $\sigma(v)$
+undefined), and let $t$ be the first term of $f$, in list order, that is not killed by
+$\rho_0$. Run the recursion at the heart of the Razborov encoding on $f$ and $w$ — with
+any fuel budget, any decision path, initial data $\rho_0$ and $\sigma$, and empty
+accumulated data — and write $\rho$ for the restriction it returns as its first
+component. Then for every literal $l$ of $t$ whose variable is left free by $\rho_0$,
+the output restriction $\rho$ does not kill $l$: it does not fix the variable of $l$ to
+the value that would make $l$ false.
 \end{lemma}

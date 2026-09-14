@@ -1,0 +1,14 @@
+{
+ "lean_name": "SwitchingLemma2.zipIdx_drop_spec",
+ "key": "273850aaf2e85970",
+ "kind": "lemma",
+ "title": "Membership in the index-tagged list locates a tail",
+ "statement": "Let $t$ be a list over a type $\\alpha$, and tag each entry of $t$ with its zero-based position, forming the list of pairs $(t_i, i)$. If a pair $(l, i)$ occurs among these tagged entries — equivalently, the entry of $t$ at position $i$ is $l$ — then deleting the first $i$ entries of $t$ leaves a nonempty list whose first element is $l$; that is, there is a list $\\mathit{rest}$ with $t$ from position $i$ onward equal to $l$ prepended to $\\mathit{rest}$.",
+ "hypotheses_covered": [
+  "the pair $(l, idx)$ belongs to the index-tagged list of $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $(l, \\mathit{idx}) \\in t.\\mathrm{zipIdx}$, then dropping $\\mathit{idx}$ elements from $t$\nyields a list starting with $l$, i.e.\\ $t.\\mathrm{drop}\\,\\mathit{idx} = l :: \\mathit{rest}$\nfor some remaining tail."
+}

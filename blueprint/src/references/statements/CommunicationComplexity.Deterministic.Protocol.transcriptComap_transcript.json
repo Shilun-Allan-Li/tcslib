@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.transcriptComap_transcript",
+ "key": "2475720d88ee4c31",
+ "kind": "theorem",
+ "title": "Pull-back commutes with transcript execution",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be functions; write $p'$ for the pulled-back protocol over $X' \\times Y'$ obtained by pre-composing each of Alice's and Bob's message functions with $f_X$ and $f_Y$ respectively. Then for every $x' \\in X'$ and $y' \\in Y'$, running $p$ on the pair $(f_X(x'), f_Y(y'))$ to obtain its syntactic transcript and then re-routing that transcript through $f_X$ and $f_Y$ into a transcript of $p'$ yields exactly the syntactic transcript produced by running $p'$ directly on $(x', y')$.",
+ "hypotheses_covered": [
+  "protocol p over X (Alice), Y (Bob), output α",
+  "map f_X : X' → X",
+  "map f_Y : Y' → Y",
+  "input x' ∈ X'",
+  "input y' ∈ Y'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$\n(Bob) with output type $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be\nfunctions, so that $\\mathrm{comap}(p, f_X, f_Y)$ is the pulled-back protocol over $X'\n\\times Y'$. Then for all inputs $x' \\in X'$ and $y' \\in Y'$,\n\\[\n\\mathrm{transcriptComap}\\big(p,\\, f_X,\\, f_Y,\\, \\mathrm{transcript}(p, (f_X(x'),\nf_Y(y')))\\big)\n= \\mathrm{transcript}\\big(\\mathrm{comap}(p, f_X, f_Y),\\, (x', y')\\big);\n\\]\nthat is, executing $p$ on the pair $(f_X(x'), f_Y(y'))$ and then re-routing the\nresulting transcript through $f_X$ and $f_Y$ produces the very same transcript as\nexecuting the pulled-back protocol directly on $(x', y')$."
+}

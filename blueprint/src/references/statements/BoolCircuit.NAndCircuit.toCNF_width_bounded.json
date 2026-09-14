@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.NAndCircuit.toCNF_width_bounded",
+ "key": "6e6dcb0e2ec9cfcd",
+ "kind": "theorem",
+ "title": "Width bound for the CNF of an AND of OR-clauses",
+ "statement": "Fix $n \\in \\bbn$, let $cs$ be a list of normal-form OR circuits on $n$ variables, and let $w \\in \\bbn$. Suppose every circuit in $cs$ is an OR-clause on some list of literals whose variable indices are pairwise distinct and whose length is at most $w$. Form the normal-form AND circuit that conjoins all the members of $cs$, and convert that circuit to a CNF formula by turning each OR-clause into a clause (a disjunction of its literals). Then this CNF formula has width at most $w$; equivalently, each of its clauses contains at most $w$ literals.",
+ "hypotheses_covered": [
+  "n variables",
+  "cs is a list of normal-form OR circuits on n variables",
+  "w is a natural-number bound",
+  "each circuit in cs is an OR-clause (not a node)",
+  "each clause's literals have pairwise distinct variable indices",
+  "each clause has at most w literals"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every OR-clause child has at most $w$ literals (with distinct indices), then the CNF\n$(\\texttt{NAndCircuit}.\\mathrm{node}\\,cs).\\mathrm{toCNF}$ has width at most $w$."
+}

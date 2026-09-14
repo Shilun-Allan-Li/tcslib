@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.mergeGates_width",
+ "key": "305e7753cad5b028",
+ "kind": "lemma",
+ "title": "Width bound preserved under concatenating families of formulas",
+ "statement": "Let $g_1$ and $g_2$ be two families of DNF formulas over $n$ variables, indexed respectively by $m_1$ and $m_2$ positions, and let $l$ be a natural number. Suppose every formula in $g_1$ and every formula in $g_2$ has width at most $l$. Then every formula in the merged family of $m_1 + m_2$ formulas — those of $g_1$ in order, followed by those of $g_2$ — also has width at most $l$.",
+ "hypotheses_covered": [
+  "g₁ is a family of m₁ DNF formulas over n variables",
+  "g₂ is a family of m₂ DNF formulas over n variables",
+  "l is a natural number bound",
+  "every formula in g₁ has width ≤ l",
+  "every formula in g₂ has width ≤ l",
+  "conclusion holds for every index of the merged family of size m₁ + m₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every gate of $g_1$ and every gate of $g_2$ has width at most $l$, then every gate of\nthe merged array $\\mathrm{mergeGates}\\,g_1\\,g_2$ has width at most $l$."
+}

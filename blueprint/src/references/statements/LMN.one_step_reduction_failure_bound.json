@@ -1,0 +1,23 @@
+{
+ "lean_name": "LMN.one_step_reduction_failure_bound",
+ "key": "6acca86760b16d53",
+ "kind": "theorem",
+ "title": "Failure probability for one-step CNF representation of DNF gates",
+ "statement": "Fix an integer $w \\ge 1$ and let $D_1, \\dots, D_{s_2}$ be DNF formulas over $n \\ge 1$ Boolean variables, each of width at most $w$, and suppose that within every term of every $D_i$ no variable occurs more than once (distinct literals of a term have distinct underlying variables, and no literal is repeated). Let $0 < p \\le \\tfrac{1}{40w}$ (so in particular $p \\le 1$), and draw a Bernoulli$(p)$ random restriction $\\rho$ on the $n$ variables, in which each variable is independently left free with probability $p$ and otherwise fixed to $0$ or to $1$, each with probability $\\tfrac{1-p}{2}$. Then for any target width $l$, the probability that some restricted gate $x \\mapsto D_i(\\rho.\\mathrm{extend}\\,x)$ fails to be computed by any CNF formula of width at most $l$ is at most\n\\[\n  s_2\\!\\left( \\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\left(-\\tfrac{np}{3}\\right) \\right).\n\\]",
+ "hypotheses_covered": [
+  "s₂ DNF gates on n variables (gates : Fin s₂ → DNF n)",
+  "each gate has width at most w",
+  "w > 0",
+  "within each term, literals sharing a variable are identical (no variable in both polarities)",
+  "each term has no duplicate literals (Nodup)",
+  "n > 0",
+  "p > 0",
+  "p ≤ 1/(40w)",
+  "p ≤ 1",
+  "conclusion: failure probability of admitting a width-≤l CNF for every gate is at most s₂((1/2)^l + exp(-np/3))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $s_2$ layer-2 DNF gates of width at most $w$ (with the usual no-duplicate-variable\nand nodup hypotheses on terms) and a Bernoulli restriction with parameter\n$p \\le 1/(40w)$, the probability that some gate fails to admit a width-$\\ell$ CNF\nrepresentation of its restriction is at most\n$s_2 \\cdot \\left( (1/2)^{\\ell} + \\exp(-np/3) \\right)$."
+}

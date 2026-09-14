@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.circuit_depth_zero_is_lit",
+ "key": "18593ad827f587da",
+ "kind": "lemma",
+ "title": "Depth-zero circuits are literals",
+ "statement": "Let $c$ be a Boolean circuit on $m$ variables — a tree whose leaves are literals and whose internal nodes are AND or OR gates applied to lists of subcircuits — and suppose its depth is $0$. Then $c$ is a single leaf: there exists a literal $l$ such that $c$ consists of that literal alone.",
+ "hypotheses_covered": [
+  "c is a Boolean circuit on m variables",
+  "the depth of c equals 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a circuit $c$ has depth $0$, then $c$ is a single literal: there exists a literal\n$l$ with $c = \\mathrm{Circuit.lit}\\,l$."
+}

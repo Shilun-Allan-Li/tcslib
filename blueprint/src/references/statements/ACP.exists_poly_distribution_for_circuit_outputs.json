@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.exists_poly_distribution_for_circuit_outputs",
+ "key": "8298570fc1823d62",
+ "kind": "theorem",
+ "title": "Polynomial approximation of the outputs of an AC⁰[p] circuit",
+ "statement": "Let $p$ be a prime, let $F$ be a feedforward circuit over the alphabet $\\mathrm{Fin}\\,2$ with input type $\\mathrm{Fin}\\,n$ and a finite output type, all of whose node sets are finite and which uses only $\\mathrm{AC}^0[p]$ gates, and fix an error parameter $\\ell \\in \\bbn$. Write $d = \\mathrm{depth}(F)$ for its depth and $N$ for the total number of its non-input gates, that is, the sum over the layers $1,\\dots,d$ of the number of nodes in each layer. For a bit $b \\in \\mathrm{Fin}\\,2$ write $\\overline{b} \\in \\bbz/p$ for the image of $b$ regarded as a natural number, and for a Boolean input $x : \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,2$ write $\\hat{x} \\in (\\bbz/p)^n$ for the point whose $i$-th coordinate is $\\overline{x_i}$. Then there exist a nonempty finite seed type $S$ and, for each seed $s \\in S$ and each output node $o$, a polynomial $P_{s,o}$ in $n$ variables over $\\bbz/p$, such that every $P_{s,o}$ has total degree at most $\\bigl((p-1)\\ell\\bigr)^{d}$ and, for every Boolean input $x$,\n\\[\n\\abs{\\bigl\\{\\, s \\in S : \\exists\\, o,\\ P_{s,o}(\\hat{x}) \\ne \\overline{F(x)(o)} \\,\\bigr\\}} \\cdot 2^{\\ell} \\;\\le\\; N \\cdot \\abs{S},\n\\]\nwhere $F(x)(o) \\in \\mathrm{Fin}\\,2$ is the value the circuit $F$ computes at output node $o$ on input $x$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "F is a feedforward circuit over Fin 2 with input type Fin n",
+  "output type is finite",
+  "all node sets are finite",
+  "F uses only AC^0[p] gates",
+  "an error parameter ℓ ∈ ℕ is fixed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a feedforward circuit over the alphabet $\\mathrm{Fin}\\,2$ with input type\n$\\mathrm{Fin}\\,n$ and a finite output type $\\mathrm{out}$, whose node sets are all\nfinite and which uses only $\\mathrm{AC}^0[p]$ gates, and let $\\ell \\in \\bbn$ be an error\nparameter. Then there exists a nonempty finite seed type $\\mathrm{Seed}$ together with a\nfamily $P$ that assigns to each seed $s$ and each output node $o$ a polynomial $P(s,o)$\nin the $n$ variables over $\\bbz/p$, such that every $P(s,o)$ has total degree at most\n$\\mathrm{circuitDegreeBound}(p,\\ell,\\mathrm{depth}(F))$ and, for every Boolean input $x\n: \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,2$,\n\\[\n\\abs{\\bigl\\{\\, s \\in \\mathrm{Seed} : \\exists\\, o,\\\nP(s,o)\\bigl(\\mathrm{boolInput}_p(x)\\bigr) \\ne \\overline{\\,y(x,o)\\,} \\,\\bigr\\}} \\cdot\n2^{\\ell}\n\\;\\le\\; \\mathrm{gateCountBefore}(F,\\mathrm{depth}(F)) \\cdot \\abs{\\mathrm{Seed}},\n\\]\nwhere $y(x,o) \\in \\mathrm{Fin}\\,2$ is the value of the circuit $F$ on input $x$ at\noutput node $o$, and $\\overline{\\,\\cdot\\,}$ denotes the image in $\\bbz/p$ of a Boolean\nvalue regarded as a natural number."
+}

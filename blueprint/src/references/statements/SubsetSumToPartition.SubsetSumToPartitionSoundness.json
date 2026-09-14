@@ -1,0 +1,17 @@
+{
+ "lean_name": "SubsetSumToPartition.SubsetSumToPartitionSoundness",
+ "key": "4b38f8561f05afc0",
+ "kind": "theorem",
+ "title": "Soundness of the Subset Sum to Partition reduction",
+ "statement": "Let $w : \\bbn^{U}$ be a weight function on a finite type $U$, and let $T \\in \\bbn$ be a target with $T \\le \\sum_{a} w(a)$. Form the reduction weight function on the augmented type $U \\oplus \\mathrm{Bool}$, which assigns each original item the weight $w(a)$, the first dummy item the weight $2\\sum_a w(a) - T$, and the second dummy item the weight $\\sum_a w(a) + T$. Then, if this augmented instance is a yes-instance of Partition — some subset of $U \\oplus \\mathrm{Bool}$ has the same total weight as its complement — the original instance $(w, T)$ is a yes-instance of Subset Sum, i.e.\\ some subset of $U$ has total weight exactly $T$.",
+ "hypotheses_covered": [
+  "weight function $w : U \\to \\bbn$ on a finite type $U$",
+  "target $T \\in \\bbn$",
+  "$T \\le \\sum_a w(a)$",
+  "the Partition instance for the reduction weight function has a solution (hypothesis of the implication)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w : U \\to \\mathbb{N}$ and $T \\in \\mathbb{N}$ satisfy $T \\le \\sum_{a} w(a)$. If the\nPartition instance with weight function\n$\\texttt{SubsetSumToPartition.partitionWeight}\\ w\\ T$ on $U \\oplus \\mathrm{Bool}$ has a\nsolution, then the original Subset Sum instance $(w, T)$ has a solution."
+}

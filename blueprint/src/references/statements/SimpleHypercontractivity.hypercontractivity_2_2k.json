@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleHypercontractivity.hypercontractivity_2_2k",
+ "key": "6959e1336f2d3150",
+ "kind": "theorem",
+ "title": "$(2, 2k)$-hypercontractivity for the noise operator",
+ "statement": "Fix an integer $k \\ge 1$ and a real number $\\rho$ with $\\rho^2 \\le \\dfrac{1}{2k-1}$. Then for every function $f : \\{0,1\\}^n \\to \\bbr$ on the Boolean hypercube,\n\\[\n  \\E\\bigl[(T_\\rho f)^{2k}\\bigr] \\;\\le\\; \\bigl(\\E[f^2]\\bigr)^{k},\n\\]\nwhere the expectation is taken under the uniform measure on $\\{0,1\\}^n$ and $T_\\rho$ is the noise operator $T_\\rho f = \\sum_{S \\subseteq [n]} \\rho^{|S|}\\,\\hat f(S)\\,\\chi_S$. Equivalently, $\\norm{T_\\rho f}_{2k} \\le \\norm{f}_2$.",
+ "hypotheses_covered": [
+  "k is a positive integer (1 ≤ k)",
+  "noise parameter ρ satisfies ρ² ≤ 1/(2k-1)",
+  "f is a Boolean function {0,1}^n → ℝ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any Boolean function $f : \\{0,1\\}^n \\to \\bbr$, integer $k \\ge 1$, and noise\nparameter $\\rho$ with $\\rho^2 \\le 1/(2k-1)$,\n\\[\n  \\E[(T_\\rho f)^{2k}] \\le \\bigl(\\E[f^2]\\bigr)^k,\n\\]\nequivalently $\\norm{T_\\rho f}_{2k} \\le \\norm{f}_2$."
+}

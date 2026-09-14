@@ -1,0 +1,15 @@
+{
+ "lean_name": "card_pauliErrorsLe",
+ "key": "f14d083c57b9910b",
+ "kind": "theorem",
+ "title": "Cardinality of the bounded-weight Pauli error set",
+ "statement": "For natural numbers $n$ and $t$, the number of Pauli strings of length $n$ whose weight is at most $t$ is\n\\[\n|\\mathcal{E}(n,t)| \\;=\\; \\sum_{j=0}^{t} \\binom{n}{j}\\, 3^{\\,j}.\n\\]\nHere a Pauli string is a function $p : \\mathrm{Fin}\\,n \\to \\{I,X,Y,Z\\}$, and its weight $\\mathrm{wt}(p)$ is the number of coordinates $i$ with $p(i) \\neq I$; the sum counts, for each $j \\le t$, the $\\binom{n}{j}$ choices of a weight-$j$ support together with the $3^{j}$ assignments of a non-identity Pauli to each chosen coordinate.",
+ "hypotheses_covered": [
+  "n : ℕ (length of the Pauli strings)",
+  "t : ℕ (weight bound)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\[\n|\\mathcal{E}(n,t)| \\;=\\; \\sum_{i=0}^{t}\\binom{n}{i}\\,3^i.\n\\]"
+}

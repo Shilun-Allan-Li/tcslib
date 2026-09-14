@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.lowDegreeSquarefreePolynomial_totalDegree_le",
+ "key": "f589020f76340d55",
+ "kind": "theorem",
+ "title": "Total degree bound for a low-degree squarefree polynomial",
+ "statement": "Let $K$ be a field and fix $n, D \\in \\bbn$. For any assignment of coefficients $c \\colon \\mathcal{S}_{n,D} \\to K$, indexed by the subsets $s \\subseteq \\mathrm{Fin}\\,n$ with $\\abs{s} \\le D$, the polynomial\n\\[\n\\sum_{\\substack{s \\subseteq \\mathrm{Fin}\\,n \\\\ \\abs{s} \\le D}} c(s)\\, \\prod_{i \\in s} X_i \\in K[X_0, \\dots, X_{n-1}]\n\\]\nhas total degree at most $D$.",
+ "hypotheses_covered": [
+  "$K$ is a field",
+  "natural numbers $n$ and $D$",
+  "coefficient function $c$ on the low-degree squarefree supports $\\mathcal{S}_{n,D}$ (subsets $s\\subseteq\\mathrm{Fin}\\,n$ with $|s|\\le D$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any coefficient function $c$ on $\\texttt{ACP.LowDegreeSupport}\\ n\\ D$, the polynomial\n$\\texttt{ACP.lowDegreeSquarefreePolynomial}\\ c$ has total degree at most $D$."
+}

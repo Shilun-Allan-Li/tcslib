@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning_ae_eq_coordinateAliceConditioning",
+ "key": "3a7c6eb9e46f20fc",
+ "kind": "theorem",
+ "title": "Two forms of Alice's conditioning agree almost surely",
+ "statement": "Fix a positive integer $n$ and a coordinate $i \\in \\{0, 1, \\dots, n-1\\}$, and equip the sample space of the hard distribution with the measure obtained by conditioning on the event that the generated pair of input sets is disjoint. There are two ways to record Alice's conditioning information at coordinate $i$ from a sample $\\omega$: directly, as the pair $\\big(X_{<i}(\\omega),\\, Y_{\\ge i}(\\omega)\\big)$ formed from the sample's own Alice-prefix and Bob-suffix bits; and indirectly, by first forming the generated disjoint coordinate-pair vector of $\\omega$ and then extracting the coordinate-vector conditioning $\\big(\\text{$x$-bits before }i,\\, \\text{$y$-bits from }i\\text{ onward}\\big)$ from it. With respect to this conditioned measure, these two functions of $\\omega$ are equal almost everywhere; that is, they agree outside a set of measure zero.",
+ "hypotheses_covered": [
+  "positive number of coordinates $n$",
+  "a fixed coordinate $i$ among the $n$ coordinates",
+  "the measure is the hard distribution conditioned on the disjointness event"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under $D$, Alice's fixed conditioning is the corresponding coordinate-vector projection."
+}

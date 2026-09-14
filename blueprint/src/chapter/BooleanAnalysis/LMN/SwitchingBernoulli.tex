@@ -17,24 +17,31 @@ fixed-size counting switching lemma to the Bernoulli restriction model.
 \leanok
 \uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.numSRestrictions}
 \difficulty{6}
-For $k \le n$, the set of restrictions of $\mathrm{Fin}\,n$ leaving exactly $k$
-variables free has cardinality $\binom{n}{k}\,2^{\,n-k}$, i.e.\ it equals
-$\mathrm{numSRestrictions}\,n\,k$.
+Let $n$ and $k$ be natural numbers with $k \le n$. Among all restrictions on $n$
+variables — maps assigning each variable either a fixed Boolean value or leaving it free
+— those whose set of free variables has cardinality exactly $k$ number precisely
+$\binom{n}{k}\,2^{\,n-k}$.
 \end{lemma}
 
-\begin{lemma}[Bad fixed-size restrictions match the counting filter]
+\begin{lemma}[Equal counts of the bad size-$k$ restrictions]
 \lean{SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq}
 \label{SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq}
 \leanok
 \uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.IsRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{2}
-For a function $f$ and parameters $d, k$, the number of size-$k$ restrictions
-$\rho$ with $\mathrm{dtDepth}(f|_\rho) > d$ equals the number of restrictions
-that are $k$-restrictions and are bad for $f$ at depth $d$ in the counting
-switching-lemma sense.
+Let $f$ be a Boolean function on $n$ variables and fix natural numbers $d$ and $k$. For
+a restriction $\rho$ on these variables, write $f|_\rho$ for the restricted function
+that sends a point $x$ to the value of $f$ obtained by fixing each assigned coordinate
+as $\rho$ prescribes and reading each free coordinate off $x$, and call $\rho$ bad for
+$f$ at depth $d$ when the decision-tree depth of $f|_\rho$ is strictly greater than $d$.
+Then the number of restrictions that have exactly $k$ free variables and are bad for $f$
+at depth $d$ is the same whether these are counted within the collection of all
+restrictions with exactly $k$ free variables or within the collection of all
+restrictions on the $n$ variables that both have exactly $k$ free variables and are bad
+for $f$ at depth $d$.
 \end{lemma}
 
-\begin{lemma}[Fixed-size switching bound for small $k$]
+\begin{lemma}[Fixed-size switching bound for small restriction size]
 \lean{SwitchingBernoulli.switching_fixedSize_bound_small}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p001-b008,
@@ -46,7 +53,6 @@ switching-lemma sense.
 \label{SwitchingBernoulli.switching_fixedSize_bound_small}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -845,13 +851,23 @@ switching-lemma sense.
   {pdf-b5e074215b9e-p002-b001}
 \uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, DNF, DNF.eval, DNF.width, SwitchingBernoulli.fixedSizeRestrs_card, SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.restrictFn, SwitchingLemma2.switching_lemma, dtDepth}
 \difficulty{5}
-For a width-$w$ DNF $f$ with no repeated variables per term, $0 < n$, and
-$5k \le n$, the probability over uniform size-$k$ restrictions that the
-restricted function has decision-tree depth exceeding $d$ is at most
-$\left(10kw/n\right)^d$.
+Let $f$ be a DNF formula on $n$ Boolean variables with $n \ge 1$, and suppose every term
+of $f$ has width at most $w$, so that $f$ is a disjunction of conjunctions of at most
+$w$ literals. Assume that no variable occurs more than once within any single term, that
+is, each term consists of literals with pairwise distinct variables (and hence has no
+repeated literal). Fix natural numbers $k$ and $d$ with $5k \le n$, and draw a
+restriction $\rho$ uniformly at random from the fixed-size model $R_k$, which is uniform
+over all restrictions of the $n$ variables that leave exactly $k$ variables free. Then
+the probability that the restricted function $x \mapsto f(\rho.\mathrm{extend}\,x)$ has
+decision-tree depth greater than $d$ satisfies
+\[
+\bbP_{\rho \sim R_k}\!\bigl[\, \mathrm{depth}\bigl(f\!\restriction_\rho\bigr) > d
+\,\bigr] \;\le\; \left(\frac{10\,k\,w}{n}\right)^{d},
+\]
+where $\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $g$.
 \end{lemma}
 
-\begin{lemma}[Fixed-size switching bound]
+\begin{lemma}[Switching lemma for fixed-size restrictions]
 \lean{SwitchingBernoulli.switching_fixedSize_bound}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p001-b008,
@@ -863,7 +879,6 @@ $\left(10kw/n\right)^d$.
 \label{SwitchingBernoulli.switching_fixedSize_bound}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1675,13 +1690,23 @@ $\left(10kw/n\right)^d$.
   {pdf-b5e074215b9e-p001-b008}
 \uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound_small, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{3}
-For a width-$w$ DNF $f$ with $0 < w$, $0 < n$, and $k \le n$, the size-$k$
-restriction probability that $\mathrm{dtDepth}(f|_\rho) > d$ is at most
-$\left(10kw/n\right)^d$. This removes the $5k \le n$ restriction by using the
-trivial bound when $5k > n$.
+Let $f$ be a DNF formula on $n \ge 1$ variables in which every term has width at most
+$w$, where $w \ge 1$, and in which each term is reduced: no literal is repeated, and any
+two literals of a term sharing the same variable are equal (so a variable occurs at most
+once, and never with both polarities, within a term). For a Boolean function $g$ on some
+set of inputs, write $D(g)$ for its decision-tree depth, the least depth of a decision
+tree computing $g$. Fix a natural number $d$ and an integer $k$ with $k \le n$, and draw
+a restriction $\rho$ uniformly at random among all restrictions of the $n$ variables
+that leave exactly $k$ variables free (the fixed-size restriction model $R_k$). Writing
+$f|_\rho$ for the function obtained by fixing each set variable to the value assigned by
+$\rho$ and keeping the $k$ free variables as inputs, one has
+\[
+\bbP_{\rho}\!\left[\, D(f|_\rho) > d \,\right] \;\le\;
+\left(\frac{10\,k\,w}{n}\right)^{d}.
+\]
 \end{lemma}
 
-\begin{lemma}[Rescaled fixed-size switching bound]
+\begin{lemma}[Rescaled fixed-size switching lemma bound]
 \lean{SwitchingBernoulli.switching_fixedSize_bound_rescaled}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p001-b008,
@@ -1693,7 +1718,6 @@ trivial bound when $5k > n$.
 \label{SwitchingBernoulli.switching_fixedSize_bound_rescaled}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2512,12 +2536,19 @@ trivial bound when $5k > n$.
   {pdf-b5e074215b9e-p001-b008}
 \uses{BernoulliCost.fixedSizeRestrProb, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{2}
-The same fixed-size bound written in the form expected by the Bernoulli
-restriction-cost theorem: the probability is at most
-$\left(5k\cdot(2w)/n\right)^d$, using $10kw/n = 5k\cdot(2w)/n$.
+Let $f$ be a DNF formula on $n \ge 1$ Boolean variables whose width is at most $w$, with
+$w \ge 1$, and suppose that within each term of $f$ no variable occurs more than once —
+that is, every term is a repetition-free list of literals in which any two literals
+sharing a variable are identical. Fix an integer $k$ with $0 \le k \le n$, and let $R_k$
+denote the fixed-size restriction model, uniform over all restrictions of the $n$
+variables that leave exactly $k$ of them free. Then for every $d$, the probability under
+$R_k$ that the restricted function $f_\rho$ (with the assigned coordinates fixed
+according to $\rho$ and the $k$ free coordinates left as inputs) has decision-tree depth
+greater than $d$ satisfies
+\[ \bbP_{\rho \sim R_k}\!\left[\, \mathrm{depth}(f_\rho) > d \,\right] \;\le\; \left(\frac{5k \cdot 2w}{n}\right)^{d}. \]
 \end{lemma}
 
-\begin{theorem}[Bernoulli switching lemma for DNFs]
+\begin{theorem}[Bernoulli switching lemma for DNF formulas]
 \lean{SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b008}
 \label{SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
@@ -2525,19 +2556,22 @@ $\left(5k\cdot(2w)/n\right)^d$, using $10kw/n = 5k\cdot(2w)/n$.
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{BernoulliCost.bernoulli_restriction_cost, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound_rescaled, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-Let $f$ be a width-$w$ DNF ($0 < w$) with no repeated variables per term, and
-$0 < n$. For a Bernoulli$(p)$ random restriction with $0 < p \le 1/(40w)$ and
-$p \le 1$, and for every $t$,
+Let $f$ be a DNF formula on $n \ge 1$ Boolean variables whose width is at most $w$,
+where $w \ge 1$, and suppose that no term of $f$ reads any variable more than once: each
+term is a duplicate-free list of literals, and any two literals in a common term that
+share a variable are equal. Fix a real parameter $p$ with $0 < p \le \tfrac{1}{40w}$, so
+in particular $p \le 1$. Then for every $t \in \bbn$, under a Bernoulli($p$) random
+restriction $\rho$ the restricted function $f\vert_\rho$ (that is, $f$ evaluated on the
+free coordinates with the remaining coordinates fixed by $\rho$) satisfies
 \[
-  \Pr_{R_p}\big[\mathrm{dtDepth}(f|_\rho) > t\big]
-    \;\le\; \left(\tfrac12\right)^t + e^{-np/3}.
+\Pr_{p}\big[\, f\vert_\rho \text{ has decision-tree depth exceeding } t \,\big] \;\le\;
+\left(\tfrac12\right)^{t} + \exp\!\left(-\tfrac{np}{3}\right),
 \]
-The $(1/2)^t$ term comes from the switching lemma via the Bernoulli cost
-reduction, and $e^{-np/3}$ is the Chernoff tail for leaving too many free
-variables.
+where the decision-tree depth of a Boolean function is the least depth of a decision
+tree computing it.
 \end{theorem}
 
-\begin{theorem}[Bernoulli switching lemma for CNFs]
+\begin{theorem}[Bernoulli switching lemma for CNF formulas]
 \lean{SwitchingBernoulli.switching_bernoulli_dtDepth_cnf}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b008}
 \label{SwitchingBernoulli.switching_bernoulli_dtDepth_cnf}
@@ -2545,11 +2579,18 @@ variables.
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{CNF, CNF.eval, CNF.width, DNF.eval, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, SwitchingLemmaCNF.cnfToDualDNF_inj, SwitchingLemmaCNF.cnfToDualDNF_nodup, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width, dtDepth, dtDepth_neg}
 \difficulty{4}
-The same statement for a width-$w$ CNF $f$: under a Bernoulli$(p)$ restriction
-with $0 < p \le 1/(40w)$ and $p \le 1$,
+Let $f$ be a CNF formula on $n \ge 1$ variables whose width is at most $w$, where $w \ge
+1$, and suppose every clause of $f$ is proper: within any one clause, two literals
+sharing the same variable are equal, and no literal is repeated. Let $p \in \bbr$
+satisfy $0 < p \le \tfrac{1}{40w}$, and in addition $p \le 1$. Draw a Bernoulli($p$)
+random restriction $\rho$, which independently leaves each variable free with
+probability $p$ and otherwise fixes it to one of the two Boolean values, each with
+probability $(1-p)/2$; write $f\vert_\rho$ for the function of the remaining free
+variables obtained by fixing the assigned coordinates according to $\rho$. Then for
+every $t \in \bbn$,
 \[
-  \Pr_{R_p}\big[\mathrm{dtDepth}(f|_\rho) > t\big]
-    \;\le\; \left(\tfrac12\right)^t + e^{-np/3},
+  \Pr_\rho\big[\,\mathrm{depth}(f\vert_\rho) > t\,\big]
+    \;\le\; \left(\tfrac12\right)^{t} + e^{-np/3},
 \]
-obtained from the DNF version via the dual-DNF representation of $f$.
+where $\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $g$.
 \end{theorem}

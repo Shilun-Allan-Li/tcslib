@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_aux_vars_free",
+ "key": "e0db6c57e2cf2831",
+ "kind": "lemma",
+ "title": "Auxiliary entries mark variables free under the restriction",
+ "statement": "Let $t$ be a term on $n$ variables (a list of literals), let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, let $L$ be a list of literals each paired with a position index, and let $P$ be a decision-tree path. Suppose that every pair $(\\ell, i)$ in $L$ occurs in the indexed enumeration of $t$ — so that $\\ell$ is precisely the literal at position $i$ of $t$ — and that every literal appearing in $L$ has its variable free under $\\rho_0$ (its value under $\\rho_0$ is $\\mathrm{none}$). Then for each auxiliary entry $(i, b)$ produced by processing $L$ against $P$ starting from $\\rho_0$ and $\\sigma$, and for any literal $\\ell'$ and list $r$ with $t$ from position $i$ onward equal to $\\ell' :: r$ (i.e. discarding the first $i$ literals of $t$ leaves a nonempty list headed by $\\ell'$), the variable of $\\ell'$ is free under $\\rho_0$.",
+ "hypotheses_covered": [
+  "e = (i,b) is an auxiliary entry in the output of processClauseLits applied to L, P, ρ₀, σ",
+  "every literal-index pair in L occurs in the indexed enumeration of t",
+  "every literal in L has its variable free under ρ₀",
+  "dropping the first e.1 literals of t yields a nonempty list with head ℓ'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose every input literal pair occurs in $t.\\texttt{zipIdx}$ and all input literals are\nfree under $\\rho_0$. Then for every auxiliary entry $e$ of\n\\texttt{SwitchingLemma2.processClauseLits}, the literal at position $e.1$ in $t$ has a\nvariable that is free under $\\rho_0$ (its $\\rho_0$ value is $\\mathrm{none}$)."
+}

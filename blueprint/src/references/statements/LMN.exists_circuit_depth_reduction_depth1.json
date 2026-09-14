@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.exists_circuit_depth_reduction_depth1",
+ "key": "e58ff492cb8e3977",
+ "kind": "lemma",
+ "title": "Depth reduction for depth-one composed circuits",
+ "statement": "Let $c$ be a Boolean circuit on $m$ inputs of depth exactly $1$, and let $g_1,\\dots,g_m \\colon (\\mathrm{Fin}\\,n \\to \\bbf_2) \\to \\bbf_2$ be Boolean functions on $n$ variables, each of which is computed by some DNF formula of width at most $l$ and also by some CNF formula of width at most $l$. Then the composed function $x \\mapsto c\\big(g_1(x),\\dots,g_m(x)\\big)$ — obtained by feeding $g_i(x)$ into the $i$-th input of $c$ — is, up to an overall sign, computed by a single DNF formula of width at most $l$ each of whose terms has no repeated literal and mentions every variable at most once (in particular no term contains both a variable and its negation). Precisely, there exist such a DNF formula $\\varphi$ and a sign bit $s$ so that, for every $x$, $\\varphi(x) = c\\big(g_1(x),\\dots,g_m(x)\\big)$ when $s$ is positive and $\\lnot\\varphi(x) = c\\big(g_1(x),\\dots,g_m(x)\\big)$ when $s$ is negative.",
+ "hypotheses_covered": [
+  "circuit c on m inputs has depth exactly 1",
+  "each of the m inputs is a Boolean function g_i on n variables",
+  "each g_i is computed by a DNF of width at most l",
+  "each g_i is computed by a CNF of width at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A circuit $c$ of depth exactly $1$ over gates with width-$l$ DNF and CNF representations\ncollapses to a single signed gate: there exist a width-$l$ DNF $\\varphi$ (with\nduplicate-free, non-repeating-variable terms) and a sign bit whose signed evaluation\nequals $c.\\mathrm{eval}\\,(\\lambda i,\\ \\mathrm{gates}\\,i\\,x)$ for all $x$."
+}

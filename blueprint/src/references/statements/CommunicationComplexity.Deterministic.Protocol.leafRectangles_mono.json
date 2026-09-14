@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono",
+ "key": "10a0c91f60a92d26",
+ "kind": "lemma",
+ "title": "Leaf rectangles of a protocol are monochromatic",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$ with output type $\\alpha$, and let $g : X \\to Y \\to \\alpha$ be a function that $p$ computes, meaning that running $p$ on any pair of inputs $(x, y)$ returns $g\\,x\\,y$. Then every leaf rectangle $R$ of $p$ is monochromatic for $g$: the value $g\\,x\\,y$ is the same for all $(x, y) \\in R$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over X, Y with output type α",
+  "g : X → Y → α is a function",
+  "p computes g",
+  "R is a leaf rectangle of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $p$ computes $g : X \\to Y \\to \\alpha$ and $R \\in \\texttt{leafRectangles}(p)$, then $R$ is\n$g$-monochromatic: all inputs in $R$ receive the same value of $g$."
+}

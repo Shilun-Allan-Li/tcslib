@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_cond_specialYFalse_eq_disjointSpecialYFalseMeasure_cond_zVariable",
+ "key": "c6ddf5826d60c244",
+ "kind": "theorem",
+ "title": "Commuting the $Z$-fiber and disjointness conditionings",
+ "statement": "Fix a length $n \\ge 1$ and a deterministic disjointness protocol $p$ on inputs of length $n$. Let $\\mu$ be the uniform distribution on the hard sample space, and let $Z = (M, T, X_{<T}, Y_{>T})$ be the random variable recording the transcript $M$ of $p$ on the generated input pair, the special coordinate $T$, Alice's input bits strictly before $T$, and Bob's input bits strictly after $T$; write $Y_T$ for Bob's bit at the special coordinate, and call a sample disjoint when Alice's and Bob's generated sets are disjoint. Then for every achievable value $z$ of $Z$, the measure obtained from $\\mu$ by first conditioning on the fiber $\\{Z = z\\}$ and then further conditioning on $\\{Y_T = \\mathrm{false}\\}$ coincides with the measure obtained from $\\mu$ by conditioning on disjointness and on $\\{Y_T = \\mathrm{false}\\}$ and then conditioning on $\\{Z = z\\}$.",
+ "hypotheses_covered": [
+  "positive input length $n$",
+  "a deterministic disjointness protocol $p$ of length $n$",
+  "an achievable value $z$ of the $Z=(M,T,X_{<T},Y_{>T})$ variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Conditioning a $Z=z$ fiber further on $Y_{T}=false$ agrees with conditioning the $D ∧ Y_{T}=false$ measure on the same $Z$ fiber."
+}

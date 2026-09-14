@@ -1,0 +1,18 @@
+{
+ "lean_name": "jl_dist_of_embedding",
+ "key": "72467a4468f1479e",
+ "kind": "lemma",
+ "title": "Distance form of a JL embedding",
+ "statement": "Let $0 < \\varepsilon < 1$, let $V$ be a finite set of points in $\\bbr^d$, and let $f : \\bbr^d \\to \\bbr^k$ be a linear map that is an $\\varepsilon$-JL embedding of $V$, so that for every pair $u, v \\in V$ one has $(1-\\varepsilon)\\,\\|u-v\\|^2 \\le \\|f(u)-f(v)\\|^2 \\le (1+\\varepsilon)\\,\\|u-v\\|^2$. Then for all $u, v \\in V$,\n\\[\n  \\sqrt{1-\\varepsilon}\\,\\|u - v\\| \\;\\le\\; \\|f(u) - f(v)\\| \\;\\le\\; \\sqrt{1+\\varepsilon}\\,\\|u - v\\|.\n\\]",
+ "hypotheses_covered": [
+  "0 < ε",
+  "ε < 1",
+  "V a finite set of points in ℝ^d",
+  "f a linear map ℝ^d → ℝ^k",
+  "f is an ε-JL embedding of V (two-sided squared-distance bound)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f$ is an $\\varepsilon$-JL embedding of $V$ (in the squared-distance sense),\nthen for all $u, v \\in V$,\n\\[\n  \\sqrt{1-\\varepsilon}\\,\\|u - v\\| \\;\\le\\; \\|f(u) - f(v)\\| \\;\\le\\;\n  \\sqrt{1+\\varepsilon}\\,\\|u - v\\|,\n\\]\nobtained by taking square roots of the \\texttt{JLDistortion} bounds."
+}

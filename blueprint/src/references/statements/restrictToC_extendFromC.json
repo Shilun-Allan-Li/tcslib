@@ -1,0 +1,16 @@
+{
+ "lean_name": "restrictToC_extendFromC",
+ "key": "4e9b8365e3b98492",
+ "kind": "lemma",
+ "title": "Restriction inverts extension on coordinates in $C$",
+ "statement": "Fix a prime $p$, a natural number $n$, and a subset $C \\subseteq \\{0,1,\\dots,n-1\\}$ of coordinates, and let $V_C$ denote the support submodule of $V = \\bbf_p^n \\times \\bbf_p^n$ consisting of vectors whose support lies in $C$. Let $E \\colon (C \\to \\bbf_p) \\times (C \\to \\bbf_p) \\to V_C$ be the extension map, which sends a pair $(f,g)$ to the vector agreeing with $f$ and $g$ on $C$ and equal to zero off $C$, and let $R \\colon V_C \\to (C \\to \\bbf_p) \\times (C \\to \\bbf_p)$ be the restriction map, which sends a vector supported on $C$ to its two component functions restricted to $C$. Then $R \\circ E$ is the identity: for every pair $x = (f,g)$ of functions $f, g \\colon C \\to \\bbf_p$ one has $R(E(x)) = x$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "C is a subset of the coordinate index set Fin n",
+  "x is an arbitrary pair of functions on C"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $x$, $\\mathrm{restrictToC}_C(\\mathrm{extendFromC}_C(x)) = x$."
+}

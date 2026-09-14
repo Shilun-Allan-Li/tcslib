@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_foldl_sigma_none",
+ "key": "901547c0939b462f",
+ "kind": "lemma",
+ "title": "Decoder fold frees a variable set during clause processing",
+ "statement": "Let $t$ be a term on $n$ variables — a list of literals, each carrying a variable and a negation flag — and refer to the position of a literal by its index in this list. Let $\\mathrm{lits}$ be a list of (literal, index) pairs, every one of which is the literal occurring at that index in $t$; let $\\mathrm{path}$ be a list of (variable, Boolean) pairs; and let $\\rho_0$, $\\sigma$, and $\\sigma_{\\mathrm{dec}}$ be restrictions on $n$ variables, with $v$ a distinguished variable. Feeding $\\mathrm{lits}$, $\\mathrm{path}$, $\\rho_0$, and $\\sigma$ to the clause-processing procedure returns an updated restriction $\\rho_0'$ together with an auxiliary list $A$ of (index, direction) pairs. Suppose $\\rho_0(v)$ is free while $\\rho_0'(v)$ is fixed. Then processing $A$ from left to right, starting from $\\sigma_{\\mathrm{dec}}$ and, at each entry whose index component is $i$, resetting to free the variable of the $i$-th literal of $t$ whenever $t$ has a literal at position $i$ (and otherwise leaving the restriction unchanged), yields a restriction that is free at $v$.",
+ "hypotheses_covered": [
+  "each (literal, index) pair in lits occurs at that index in t",
+  "the restriction ρ₀ is free at v",
+  "the ρ₀ component returned by the clause-processing procedure is fixed at v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose every input literal pair occurs in $t.\\texttt{zipIdx}$, that $\\rho_0\\,v =\n\\mathrm{none}$, and that \\texttt{SwitchingLemma2.processClauseLits} sets the $\\rho_0$\ncomponent at $v$. Then folding the decoder's $\\sigma$-update over the auxiliary entries\nyields $\\mathrm{none}$ at $v$."
+}

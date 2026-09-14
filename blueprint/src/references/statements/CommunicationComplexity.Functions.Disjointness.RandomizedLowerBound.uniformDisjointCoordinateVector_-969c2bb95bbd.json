@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_residual_cond_iIndepFun",
+ "key": "8788e2d79fc82bae",
+ "kind": "theorem",
+ "title": "Independence of the residual–conditioning coordinate pairs",
+ "statement": "Fix a positive integer $n$ and an index $i \\in \\{0,\\dots,n-1\\}$, and let the coordinate vector $c = (c_0,\\dots,c_{n-1})$ be drawn from the uniform law on $\\{\\text{neither},\\text{leftOnly},\\text{rightOnly}\\}^{n}$. For each coordinate $k$ form the pair $\\bigl(R_i(k,c),\\,A_i(k,c)\\bigr)$, where $A_i(k,c)$ is Alice's conditioning bit — the $X$-bit of $c_k$ when $k<i$ and the $Y$-bit of $c_k$ when $k\\ge i$ — and $R_i(k,c)$ is the corresponding residual bit — the $Y$-bit of $c_k$ when $k<i$, the $X$-bit of $c_k$ when $k=i$, and $\\mathrm{false}$ when $k>i$. Then the family of these $\\{0,1\\}\\times\\{0,1\\}$-valued pairs, indexed by $k \\in \\{0,\\dots,n-1\\}$, is mutually independent.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "i is a fixed coordinate index in Fin n",
+  "coordinate vector distributed by the uniform law on DisjointCoordinate^n",
+  "for each k the pair is (residual bit, conditioning bit) at k relative to i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The per-coordinate residual/conditioning pairs are independent under the product-uniform disjoint-coordinate law."
+}

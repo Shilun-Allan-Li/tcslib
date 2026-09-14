@@ -1,0 +1,15 @@
+{
+ "lean_name": "ACP.Circuit.toFeedForward_eval",
+ "key": "94575948d98d836f",
+ "kind": "theorem",
+ "title": "Correctness of the feedforward embedding",
+ "statement": "Let $C$ be a Boolean circuit on $n$ variables, and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$ be an assignment of Boolean values to those variables. Form the feedforward embedding of $C$, a layered feedforward circuit with a single output wire, and let its unique output value under $x$ be the Boolean it computes. Then this value equals $C(x)$, the value obtained by evaluating the circuit $C$ directly on the assignment $x$.",
+ "hypotheses_covered": [
+  "a Boolean circuit C on n variables",
+  "a Boolean assignment x to the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $C$ on $n$ inputs and every input $x$,\n$C.\\texttt{toFeedForward}.\\texttt{eval}_1\\ x = C.\\texttt{eval}\\ x$."
+}

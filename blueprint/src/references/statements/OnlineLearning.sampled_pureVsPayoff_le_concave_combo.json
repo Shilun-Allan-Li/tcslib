@@ -1,0 +1,17 @@
+{
+ "lean_name": "OnlineLearning.sampled_pureVsPayoff_le_concave_combo",
+ "key": "05053edac31ed126",
+ "kind": "lemma",
+ "title": "Concavity bound on sampled payoff against a mixed column",
+ "statement": "Let $f:\\bbr\\times\\bbr\\to\\bbr$ be a payoff function taking values in $[0,1]$, and let $x:[M]\\to\\bbr$ and $y:[N]\\to\\bbr$ be finite families of row and column points. Fix a row index $i$ and a mixed column strategy $q$, whose weights $q_j\\ge 0$ sum to $1$. Suppose $Y\\subseteq\\bbr$ contains every $y_j$ and the section $y'\\mapsto f(x_i,y')$ is concave on $Y$. Then the expected payoff of pure row $i$ against $q$ in the sampled game is at most the value of $f$ at the $q$-averaged column point:\n\\[\n  \\sum_{j} f(x_i,y_j)\\, q_j \\;\\le\\; f\\!\\left(x_i,\\; \\sum_{j} q_j\\, y_j\\right).\n\\]",
+ "hypotheses_covered": [
+  "payoff values lie in [0,1] (nonneg and ≤ 1)",
+  "q is a mixed strategy: weights nonnegative and summing to 1",
+  "the section f(x_i, ·) is concave on Y",
+  "every column point y_j lies in Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f(x_i,\\cdot)$ is concave on $Y$ and every $y_j \\in Y$, then for any mixed\ncolumn strategy $q \\in \\Delta_N$,\n\\[\n  \\mathrm{pureVsPayoff}(\\mathrm{sampledGame},\\,i,\\,q)\n  \\;\\leq\\;\n  f\\!\\left(x_i,\\; \\sum_j q_j\\,y_j\\right).\n\\]"
+}

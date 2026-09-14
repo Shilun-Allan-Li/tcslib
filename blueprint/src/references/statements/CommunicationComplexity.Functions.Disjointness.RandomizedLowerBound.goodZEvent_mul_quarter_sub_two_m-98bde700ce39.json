@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.goodZEvent_mul_quarter_sub_two_mul_le_protocolErrorEvent",
+ "key": "861440df627d5906",
+ "kind": "theorem",
+ "title": "Error lower bound from the good-summary event",
+ "statement": "Fix a positive integer $n$ and a deterministic two-party communication protocol $p$ that attempts to decide set disjointness on pairs of subsets of $[n]=\\{1,\\dots,n\\}$, and let $\\gamma\\in\\bbr$. Draw a sample $\\omega$ from the hard distribution, which produces inputs $X(\\omega),Y(\\omega)\\subseteq[n]$ together with a distinguished special coordinate $T$, and let $Z(\\omega)$ be the summary statistic consisting of the transcript of $p$ on $(X(\\omega),Y(\\omega))$, the coordinate $T$, Alice's input bits strictly before $T$, and Bob's input bits strictly after $T$. Call $\\omega$ \\emph{good} when the conditional law of the special bit-pair $(x_T,y_T)$, given the value of $Z(\\omega)$, lies within total variation distance $2\\gamma$ of the uniform law on $\\{0,1\\}^2$, and call $\\omega$ \\emph{erroneous} when $p$ outputs a value different from the true disjointness of $X(\\omega)$ and $Y(\\omega)$. Then, with all probabilities taken under the hard distribution,\n\\[\n\\Pr[\\omega \\text{ good}]\\cdot\\left(\\tfrac14 - 2\\gamma\\right)\\ \\le\\ \\Pr[\\omega \\text{ erroneous}].\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol on subsets of [n]",
+  "γ an arbitrary real parameter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Averaging the good-fiber error lower bound over all good $Z$ fibers gives an unconditional error lower bound."
+}

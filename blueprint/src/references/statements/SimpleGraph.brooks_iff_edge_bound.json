@@ -1,0 +1,24 @@
+{
+ "lean_name": "SimpleGraph.brooks_iff_edge_bound",
+ "key": "00a11f99020182b5",
+ "kind": "theorem",
+ "title": "Equivalence of Brooks' theorem and an edge bound for critical graphs",
+ "statement": "The following two statements are equivalent. (i) (Brooks' theorem) Every finite nonempty connected graph $G$ that is neither a complete graph nor an odd cycle satisfies $\\chi(G) \\le \\Delta(G)$, where $\\chi(G)$ denotes the chromatic number and $\\Delta(G)$ the maximum degree. (ii) For every integer $k \\ge 4$, every finite nonempty $k$-critical graph $G$ that is not complete satisfies $\\nu(k-1) + 1 \\le 2\\varepsilon$, where $\\nu$ is the number of vertices and $\\varepsilon$ the number of edges of $G$.",
+ "hypotheses_covered": [
+  "Brooks side: finite nonempty vertex set",
+  "Brooks side: G connected",
+  "Brooks side: G not isomorphic to any odd cycle",
+  "Brooks side: G not the complete graph",
+  "Brooks side conclusion: chromatic number at most maximum degree",
+  "Edge-bound side: finite nonempty vertex set",
+  "Edge-bound side: G is k-critical",
+  "Edge-bound side: k >= 4",
+  "Edge-bound side: G not the complete graph",
+  "Edge-bound side conclusion: nu*(k-1)+1 <= 2*epsilon",
+  "the two statements are equivalent (iff)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Show that Brooks' theorem is equivalent\nto the following statement: if \\texttt{G} is \\texttt{k}-critical (\\texttt{k $\\ge$ 4})\nand not complete, then\n\\texttt{2$\\varepsilon$ $\\ge$ $\\nu$(k-1) + 1}.}"
+}

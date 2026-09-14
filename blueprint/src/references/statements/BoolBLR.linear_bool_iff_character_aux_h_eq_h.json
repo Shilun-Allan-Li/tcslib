@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolBLR.linear_bool_iff_character_aux_h_eq_h",
+ "key": "6b9981290dd8985a",
+ "kind": "lemma",
+ "title": "XOR-additivity of a Boolean function that lifts to a character",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function whose $\\pm 1$ lift $x \\mapsto (-1)^{f(x)}$ coincides with the Walsh character $\\chi_S$ for some subset $S \\subseteq [n]$. Then for all $x, y \\in \\{0,1\\}^n$,\n\\[\n  (-1)^{f(x \\oplus y)} \\;=\\; (-1)^{f(x) \\oplus f(y)},\n\\]\nwhere $x \\oplus y$ denotes the componentwise XOR of $x$ and $y$ and $f(x) \\oplus f(y)$ the XOR of the two Boolean outputs.",
+ "hypotheses_covered": [
+  "f : {0,1}^n → {0,1} a Boolean-valued function",
+  "S ⊆ [n]",
+  "the ±1 lift of f equals the Walsh character χ_S",
+  "conclusion for all x, y in {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\texttt{BoolBLR.lift\\_pm1}\\,f = \\chi_S$ for some $S \\subseteq [n]$, then for\nall $x, y \\in \\{0,1\\}^n$,\n\\[\n  (-1)^{f(x \\oplus y)} \\;=\\; (-1)^{f(x) \\oplus f(y)}.\n\\]\nThis is the previous lemma with the multiplicativity hypothesis discharged."
+}

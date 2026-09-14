@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.stateAfterSurvivingChoice_graph_eq",
+ "key": "9b716d7f9a8c8e1c",
+ "kind": "lemma",
+ "title": "State contraction agrees with graph contraction",
+ "statement": "Let $s$ be a state of the contraction process, comprising a multigraph $G$ together with a distinguished cut $C$, and let $(e, i)$ be an edge occurrence of $G$ drawn from its sample space of edge occurrences, whose underlying edge $e$ does not cross $C$. Then the multigraph carried by the successor state obtained by contracting $s$ along this occurrence is equal to the multigraph obtained by contracting $G$ itself along the same occurrence, namely the contraction $G/e$.",
+ "hypotheses_covered": [
+  "state s = (multigraph G, distinguished cut C)",
+  "an edge occurrence (e,i) in the sample space of G",
+  "the occurrence survives: its underlying edge e does not cross C"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The graph of the successor state after a surviving occurrence equals the graph obtained by\ncontracting $s.G$ along the same occurrence viewed in the graph-only occurrence space."
+}

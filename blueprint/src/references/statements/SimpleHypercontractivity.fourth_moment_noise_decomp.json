@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleHypercontractivity.fourth_moment_noise_decomp",
+ "key": "825752cafda88881",
+ "kind": "lemma",
+ "title": "Fourth-moment decomposition under the noise operator",
+ "statement": "Let $f:\\{0,1\\}^{n+1}\\to\\bbr$ be a Boolean function, and let $\\rho\\in\\bbr$. Write $g$ for the average of $f$ over its last coordinate and $h$ for the corresponding half-difference, so that\n\\[\n  g(x)=\\tfrac12\\bigl(f(x,0)+f(x,1)\\bigr),\\qquad\n  h(x)=\\tfrac12\\bigl(f(x,0)-f(x,1)\\bigr)\n\\]\nare Boolean functions of the first $n$ variables. Then the fourth moment of $T_\\rho f$ under the uniform measure decomposes as\n\\[\n  \\E\\bigl[(T_\\rho f)^4\\bigr]\n  = \\E\\bigl[(T_\\rho g)^4\\bigr]\n  + 6\\rho^2\\,\\E\\bigl[(T_\\rho g)^2\\,(T_\\rho h)^2\\bigr]\n  + \\rho^4\\,\\E\\bigl[(T_\\rho h)^4\\bigr].\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n+1 variables",
+  "ρ is a real parameter (no constraint)",
+  "g is the average of f over its last coordinate",
+  "h is the half-difference of f over its last coordinate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : \\{0,1\\}^{n+1} \\to \\bbr$, writing $g = \\mathrm{avgLast}\\,f$ and\n$h = \\mathrm{diffLast}\\,f$, the fourth moment of $T_\\rho f$ decomposes as\n\\[\n  \\E[(T_\\rho f)^4]\n  = \\E[(T_\\rho g)^4] + 6\\rho^2\\,\\E[(T_\\rho g)^2 (T_\\rho h)^2] + \\rho^4\\,\\E[(T_\\rho h)^4].\n\\]"
+}

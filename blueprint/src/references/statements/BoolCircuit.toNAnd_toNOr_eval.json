@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.toNAnd_toNOr_eval",
+ "key": "71a7f87396b35fe1",
+ "kind": "theorem",
+ "title": "Normalization preserves circuit semantics",
+ "statement": "Let $c$ be a Boolean circuit on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$ be an assignment. Then both alternating normal forms of $c$ compute the same value as $c$ itself: the normal-form AND circuit obtained by normalizing $c$ evaluates at $x$ to $c$'s value, and likewise the normal-form OR circuit obtained by normalizing $c$ evaluates at $x$ to $c$'s value.",
+ "hypotheses_covered": [
+  "a Boolean circuit c on n variables",
+  "an assignment x : Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$ and assignment $x$, both normalizations agree with the original\non values: $(c.\\mathrm{toNAnd}).\\mathrm{eval}\\,x = c.\\mathrm{eval}\\,x$ and\n$(c.\\mathrm{toNOr}).\\mathrm{eval}\\,x = c.\\mathrm{eval}\\,x$."
+}

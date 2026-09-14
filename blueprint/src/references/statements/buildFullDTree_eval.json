@@ -1,0 +1,15 @@
+{
+ "lean_name": "buildFullDTree_eval",
+ "key": "a14494c637f25f5e",
+ "kind": "lemma",
+ "title": "Correctness of the full decision tree",
+ "statement": "Let $f \\colon (\\bbf_2)^n \\to \\{\\mathtt{true},\\mathtt{false}\\}$ be a Boolean function on $n$ variables, let $k \\le n$, and let $acc, x \\colon \\{0,\\dots,n-1\\} \\to \\{\\mathtt{true},\\mathtt{false}\\}$ be two assignments that agree on every coordinate below $k$, that is $acc_i = x_i$ for all $i < k$. Then the full decision tree for $f$ that branches on variables $k, k+1, \\dots, n-1$ starting from the accumulator $acc$ evaluates on input $x$ to $f(x)$.",
+ "hypotheses_covered": [
+  "k ≤ n",
+  "acc and x agree on all coordinates below k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a function $f$, an index $k \\le n$, and assignments $acc, x$ agreeing on all\ncoordinates below $k$ (i.e. $acc\\,i = x\\,i$ whenever $i.\\mathrm{val} < k$), the complete\ndecision tree $\\mathrm{buildFullDTree}\\,f\\,k\\,acc$ evaluates to $f\\,x$ on $x$."
+}

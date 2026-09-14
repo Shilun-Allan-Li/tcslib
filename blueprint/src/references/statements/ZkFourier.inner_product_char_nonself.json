@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.inner_product_char_nonself",
+ "key": "6de8f93383b0309b",
+ "kind": "lemma",
+ "title": "Orthogonality of distinct characters",
+ "statement": "Let $k \\ge 1$ and $n \\ge 0$, and let $\\omega_k = e^{2\\pi i/k}$. For $s, t \\in \\mathbb{Z}_k^n$ with $s \\ne t$, the Fourier characters $\\chi_s(x) = \\omega_k^{s\\cdot x}$ and $\\chi_t(x) = \\omega_k^{t\\cdot x}$ are orthogonal with respect to the Hermitian inner product $\\langle f, g\\rangle = \\frac{1}{k^n}\\sum_{x \\in \\mathbb{Z}_k^n} f(x)\\,\\overline{g(x)}$; that is, $\\langle \\chi_s, \\chi_t\\rangle = 0$.",
+ "hypotheses_covered": [
+  "k is nonzero (NeZero k)",
+  "s and t are vectors in Z_k^n",
+  "s ≠ t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $s \\neq t$, then $\\langle \\chi_s, \\chi_t \\rangle = 0$.\nTogether with $\\texttt{ZkFourier.inner\\_product\\_char\\_self}$, this shows that the\ncharacters form an orthonormal system."
+}

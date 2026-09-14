@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_le_average_entropy_bound",
+ "key": "20e6e61acd6e29e6",
+ "kind": "theorem",
+ "title": "Bounding Alice's special-coordinate information by the protocol cost",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic two-party communication protocol for disjointness on inputs of length $n$, with communication complexity $\\ell$. Draw a hard sample and condition on the event $D$ that Alice's generated set $X$ and Bob's generated set $Y$ are disjoint; let $T$ be the special coordinate, $X_T$ Alice's bit at $T$, and $M$ the transcript obtained by running $p$ on the generated input pair $(X,Y)$. Then, under this disjointness-conditioned hard distribution, the conditional mutual information between Alice's special-coordinate bit and the transcript, given the special coordinate together with Alice's bits before it and Bob's bits from it onward, satisfies\n\\[\nI\\bigl(X_T : M \\mid T,\\, X_{<T},\\, Y_{\\ge T}\\bigr) \\;\\le\\; \\frac{\\ell \\,\\log 2}{n}.\n\\]",
+ "hypotheses_covered": [
+  "p is a deterministic disjointness protocol on length-n inputs",
+  "n is a positive integer",
+  "distribution is the hard sample conditioned on the disjointness event",
+  "conditioning variable is (T, X_{<T}, Y_{≥T})",
+  "bound uses the communication complexity of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice's averaged fixed-coordinate information plus the entropy bound $H(M) ≤ ℓ$."
+}

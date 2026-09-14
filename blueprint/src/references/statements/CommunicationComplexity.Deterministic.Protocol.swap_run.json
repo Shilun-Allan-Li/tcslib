@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.swap_run",
+ "key": "884c181298ad7c74",
+ "kind": "theorem",
+ "title": "Role swap preserves protocol output",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn from $X$, Bob's inputs drawn from $Y$, and outputs in $\\alpha$, and let $x : X$ and $y : Y$ be inputs. Then executing the role-swapped protocol on the input pair $(y, x)$ returns the same value as executing $p$ on $(x, y)$.",
+ "hypotheses_covered": [
+  "a deterministic protocol p over input types X (Alice) and Y (Bob) with outputs in α",
+  "an input x : X for Alice",
+  "an input y : Y for Bob"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$ over $X \\times Y$ and any inputs $x : X$, $y : Y$,\n\\[\n  p.\\texttt{swap}.\\texttt{run}\\;y\\;x \\;=\\; p.\\texttt{run}\\;x\\;y.\n\\]"
+}

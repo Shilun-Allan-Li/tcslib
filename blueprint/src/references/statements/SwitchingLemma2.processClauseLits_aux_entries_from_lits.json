@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_aux_entries_from_lits",
+ "key": "546425a22021f807",
+ "kind": "lemma",
+ "title": "Auxiliary indices trace back to input literals",
+ "statement": "Fix $n$, and process the free literals of a clause against a decision-tree path: take a list $\\mathrm{lits}$ of literal–index pairs, a decision-tree path, and two restrictions $\\rho_0$ and $\\sigma$ on $n$ variables, and write $A$ for the accumulated list of index–direction pairs returned as auxiliary data. Then for every pair $(i, b) \\in A$, the index $i$ equals the index component $j$ of some literal–index pair $(\\ell, j) \\in \\mathrm{lits}$.",
+ "hypotheses_covered": [
+  "a list of literal-index pairs lits",
+  "a decision-tree path",
+  "restrictions ρ₀ and σ on n variables",
+  "(i,b) is an entry of the accumulated auxiliary list of index-direction pairs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every entry $e$ in the auxiliary list produced by\n\\texttt{SwitchingLemma2.processClauseLits} has its index $e.1$ equal to the index of some\nliteral $li$ from the input list."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le",
+ "key": "e756d12dd23bb1a5",
+ "kind": "theorem",
+ "title": "Low deterministic complexity yields a small monochromatic partition",
+ "statement": "Let $g : X \\times Y \\to \\alpha$ be a two-argument function, and let $n$ be a natural number. If the deterministic communication complexity $D(g)$ satisfies $D(g) \\le n$, then there is a collection $\\mathcal{P}$ of subsets of $X \\times Y$ that is a monochromatic rectangle partition for $g$ — every member is a rectangle, every member is monochromatic for $g$, the members cover $X \\times Y$, and distinct members are disjoint — and whose number of parts satisfies $\\abs{\\mathcal{P}} \\le 2^n$.",
+ "hypotheses_covered": [
+  "g is a function X → Y → α",
+  "n is a natural number",
+  "communication complexity D(g) ≤ n (with n coerced into ENat)",
+  "conclusion: exists a monochromatic rectangle partition of X × Y for g",
+  "conclusion: the partition has at most 2^n parts (ncard ≤ 2^n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $\\mathrm{CC}(g) \\leq n$, then there exists a monochromatic rectangle partition of\n$X \\times Y$ with respect to $g$ having at most $2^n$ parts."
+}

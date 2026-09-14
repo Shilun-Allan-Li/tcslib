@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zeroInput_indicator",
+ "key": "3e4967ef80f39db2",
+ "kind": "lemma",
+ "title": "Character sum of the mod-2 inner product",
+ "statement": "Fix a bit-string $z \\in \\{0,1\\}^n$, and for each $x \\in \\{0,1\\}^n$ let $\\langle x, z\\rangle \\in \\{0,1\\}$ denote the mod-2 inner product of $x$ and $z$. Summing the Boolean sign $(-1)^{\\langle x, z\\rangle}$ over all $2^n$ inputs $x$ gives\n\\[\n  \\sum_{x \\in \\{0,1\\}^n} (-1)^{\\langle x, z\\rangle}\n  \\;=\\;\n  \\begin{cases} 2^n & \\text{if $z$ is the all-zero string,} \\\\ 0 & \\text{otherwise.} \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "z is an arbitrary n-bit Boolean input",
+  "sum ranges over all x in the n-bit Boolean inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $z : \\mathrm{BoolInput}\\,n$,\n\\[\n  \\sum_{x : \\mathrm{BoolInput}\\,n} \\mathrm{boolSign}(\\mathrm{innerProduct}(n, x, z))\n  \\;=\\; \\begin{cases} 2^n & \\text{if } z = \\mathbf{0}, \\\\ 0 & \\text{otherwise.} \\end{cases}\n\\]"
+}

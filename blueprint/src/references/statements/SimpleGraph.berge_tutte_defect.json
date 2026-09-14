@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleGraph.berge_tutte_defect",
+ "key": "7b90674a0fb90e73",
+ "kind": "theorem",
+ "title": "Berge's defect formula for maximum matchings",
+ "statement": "Let $G$ be a finite simple graph on vertex set $V$, and let $M$ be a maximum matching of $G$, so that no matching of $G$ has more edges than $M$. For a set $S \\subseteq V$, write $o(G - S)$ for the number of connected components having an odd number of vertices in the subgraph of $G$ induced on $V \\setminus S$. Then\n\\[\n2\\,\\abs{M} + \\max_{S \\subseteq V}\\bigl(o(G - S) - \\abs{S}\\bigr) = \\abs{V},\n\\]\nwhere $\\abs{M}$ is the number of edges of $M$ and the maximum ranges over all subsets $S$ of $V$.",
+ "hypotheses_covered": [
+  "finite graph (V finite)",
+  "M is a maximum matching of G"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Ex 5.3.4*: the Berge--Tutte defect formula (stated additively to avoid $\\mathbb{N}$\nsubtraction).\n\n\\textbf{5.3.4}* Prove the following generalisation of Tutte's theorem (5.4): the number\nof edges in a maximum matching of $G$ is $\\frac{1}{2}(\\nu-d)$, where \\[d = \\max_{S\n\\subseteq V}\\{o(G-S)-|S|\\}.\\] (C. Berge)"
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "median3_correct",
+ "key": "1a423e6c19d5ff17",
+ "kind": "theorem",
+ "title": "Correctness of the timed median of three",
+ "statement": "Let $a$, $b$, $c$ be elements of a linearly ordered set. Then the value returned by the timed computation $\\mathrm{median3}(a,b,c)$ is a median of $a$, $b$, and $c$: it is one of the three inputs occupying the middle position in the order, so that at least one of the remaining two values is $\\le$ it and at least one is $\\ge$ it.",
+ "hypotheses_covered": [
+  "a, b, c are elements of a linearly ordered type"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The value returned by $\\mathrm{median3}\\,a\\,b\\,c$ is a median of $a$, $b$, $c$, in the sense that\nit lies between at least one of the pairs drawn from $\\{a,b,c\\}$."
+}

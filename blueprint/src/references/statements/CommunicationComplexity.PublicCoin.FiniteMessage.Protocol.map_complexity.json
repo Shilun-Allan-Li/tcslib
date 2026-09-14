@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.map_complexity",
+ "key": "48fb3e89a3653832",
+ "kind": "theorem",
+ "title": "Map over the output preserves complexity",
+ "statement": "Let $p$ be a public-coin finite-message protocol over a shared-randomness space $\\Omega$, private input sets $X$ and $Y$, and output type $\\alpha$, and let $g : \\alpha \\to \\beta$ be any function. Then the protocol $p.\\mathrm{map}\\,g$, which runs $p$ and applies $g$ to its output, has the same communication complexity as $p$:\n\\[\n\\mathrm{complexity}(p.\\mathrm{map}\\,g) = \\mathrm{complexity}(p).\n\\]",
+ "hypotheses_covered": [
+  "g : α → β an arbitrary function",
+  "p a public-coin finite-message protocol over Ω, X, Y with output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $g : \\alpha \\to \\beta$ and protocol $p$, the communication complexity of\n$p.\\mathrm{map}\\;g$ equals that of $p$:\n$(p.\\mathrm{map}\\;g).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

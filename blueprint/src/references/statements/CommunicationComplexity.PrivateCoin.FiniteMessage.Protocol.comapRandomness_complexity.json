@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.comapRandomness_complexity",
+ "key": "9bf2288b19a04e6b",
+ "kind": "theorem",
+ "title": "Complexity is invariant under randomness reindexing",
+ "statement": "Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$ with private-randomness types $\\Omega_X$, $\\Omega_Y$ and output type $\\alpha$, and let $hX : \\Omega_X' \\to \\Omega_X$ and $hY : \\Omega_Y' \\to \\Omega_Y$ be arbitrary maps of randomness spaces. Reindexing the randomness of $p$ through $hX$ and $hY$ — that is, forming the protocol over $\\Omega_X'$, $\\Omega_Y'$ that maps its coins through $hX$ and $hY$ before feeding them to $p$ — yields a protocol with the same worst-case communication complexity as $p$.",
+ "hypotheses_covered": [
+  "a private-coin finite-message protocol p over Ω_X, Ω_Y, X, Y, α",
+  "a map hX : Ω_X' → Ω_X of Alice's randomness spaces",
+  "a map hY : Ω_Y' → Ω_Y of Bob's randomness spaces"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Reindexing the randomness spaces of a protocol does not change its communication\ncomplexity: $(\\mathrm{comapRandomness}\\;hX\\;hY\\;p).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

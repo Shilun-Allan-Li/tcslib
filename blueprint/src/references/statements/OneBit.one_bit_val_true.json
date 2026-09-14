@@ -1,0 +1,14 @@
+{
+ "lean_name": "OneBit.one_bit_val_true",
+ "key": "d20f87c0e0d3a37f",
+ "kind": "lemma",
+ "title": "Recovering a one-bit function's value from its Fourier coefficients",
+ "statement": "Let $f\\colon\\{0,1\\}\\to\\bbr$ be a Boolean function of a single bit, and write $\\hat f(\\emptyset)$ and $\\hat f(\\{0\\})$ for its two Fourier--Walsh coefficients, where $\\{0\\}$ is the singleton frequency consisting of the sole coordinate. Then the value of $f$ at the input whose coordinate is set (the bit value corresponding to $-1$ under the sign encoding) equals the difference of these two coefficients,\n\\[\n  f(1) \\;=\\; \\hat f(\\emptyset) - \\hat f(\\{0\\}).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a one-bit function $f$, its value on the all-$\\mathit{true}$ input is the difference of\nits two Fourier coefficients:\n$f(\\mathit{true}) = \\widehat{f}(\\emptyset) - \\widehat{f}(\\{0\\})$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_skip_nonfree_prefix'",
+ "key": "bc09e359dc2671f8",
+ "kind": "lemma",
+ "title": "Dropping a variable-fixed prefix from the term sub-tree",
+ "statement": "Fix a restriction $\\rho$ on $n$ variables and a continuation $c$ assigning a decision tree to each restriction. For a list of literals $L$, write $T(L)$ for the term sub-tree built from $L$ under $\\rho$ with continuation $c$: it branches, in order, on each literal of $L$ whose variable is free in $\\rho$, skipping the rest, and at every leaf invokes $c$ on the restriction updated along that path. Let $P$ and $R$ be lists of literals, and suppose every literal in $P$ has its variable already fixed by $\\rho$, that is, not among the free variables of $\\rho$. Then prepending $P$ to $R$ leaves the resulting tree unchanged:\n\\[\nT(P \\frown R) = T(R),\n\\]\nwhere $P \\frown R$ denotes the concatenation of $P$ followed by $R$.",
+ "hypotheses_covered": [
+  "P and R are lists of literals on n variables",
+  "rho is a restriction and c a continuation from restrictions to decision trees",
+  "every literal in the prefix P has its variable not among the free variables of rho"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "If every literal in $\\mathit{prefix}$ has variable not free in $\\rho$, then\n$\\mathrm{termSubTree}\\,(\\mathit{prefix} \\mathbin{+\\!\\!+} \\mathit{rest})\\,\\rho\\,\\mathrm{cont} = \\mathrm{termSubTree}\\,\\mathit{rest}\\,\\rho\\,\\mathrm{cont}$."
+}

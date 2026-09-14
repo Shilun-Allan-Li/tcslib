@@ -1,0 +1,21 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prob_many_events_le",
+ "key": "4d3a165cfab60646",
+ "kind": "theorem",
+ "title": "Hoeffding tail bound for a sum of bounded independent variables",
+ "statement": "Let $(\\Omega', \\mu)$ be a probability space, let $t \\ge 1$, and let $Y_0, \\dots, Y_{t-1} : \\Omega' \\to \\bbr$ be mutually independent, almost everywhere measurable random variables that almost surely take values in $[0,1]$. Suppose $\\E[Y_i] \\le \\varepsilon$ for every $i$, where $0 \\le \\varepsilon$, and let $c > 1$. Then\n\\[\n  \\mu\\!\\left\\{\\omega \\;\\middle|\\; c\\,\\varepsilon\\,t \\le \\sum_{i=0}^{t-1} Y_i(\\omega)\\right\\}\n  \\;\\le\\;\n  \\exp\\!\\left(-2(c-1)^2\\varepsilon^2 t\\right).\n\\]",
+ "hypotheses_covered": [
+  "probability space (Ω', μ)",
+  "t random variables Y_i, with t ≥ 1",
+  "the Y_i are mutually independent",
+  "each Y_i is almost everywhere measurable",
+  "each Y_i almost surely lies in [0,1]",
+  "E[Y_i] ≤ ε for every i",
+  "ε ≥ 0",
+  "c > 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $(\\Omega', \\mu)$ be a probability space and let $Y_0, \\dots, Y_{t-1} : \\Omega' \\to\n\\mathbb{R}$ be mutually independent, a.e.\\ $[0,1]$-valued random variables satisfying\n$\\mathbb{E}[Y_i] \\le \\varepsilon$ for all $i$, with $\\varepsilon \\ge 0$ and $c > 1$.\nThen\n\\[\n  \\mu\\!\\left\\{\\omega \\;\\middle|\\; c\\,\\varepsilon\\,t \\le \\sum_{i=0}^{t-1} Y_i(\\omega)\\right\\}\n  \\;\\le\\;\n  \\exp\\!\\left(-2(c-1)^2\\varepsilon^2 t\\right).\n\\]"
+}

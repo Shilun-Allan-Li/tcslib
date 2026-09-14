@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleHypercontractivity.hypercontractivity_2_4",
+ "key": "d769f794705d8500",
+ "kind": "theorem",
+ "title": "The $(2,4)$-hypercontractive inequality",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function and let $\\rho\\in\\bbr$ be a noise parameter satisfying $\\rho^2\\le 1/3$. Then the fourth moment of the noised function is controlled by the square of its second moment:\n\\[\n  \\E\\bigl[(T_\\rho f)^4\\bigr]\\;\\le\\;\\bigl(\\E[f^2]\\bigr)^2,\n\\]\nwhere $T_\\rho$ is the noise operator and $\\E$ denotes expectation under the uniform measure on $\\{0,1\\}^n$. Equivalently, $\\norm{T_\\rho f}_4\\le\\norm{f}_2$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on {0,1}^n",
+  "rho is a real noise parameter",
+  "rho^2 <= 1/3"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any Boolean function $f : \\{0,1\\}^n \\to \\bbr$ and noise parameter $\\rho$ with\n$\\rho^2 \\le 1/3$ (equivalently $\\abs{\\rho} \\le 1/\\sqrt3$),\n\\[\n  \\E[(T_\\rho f)^4] \\le \\bigl(\\E[f^2]\\bigr)^2,\n\\]\nthat is $\\norm{T_\\rho f}_4 \\le \\norm{f}_2$."
+}

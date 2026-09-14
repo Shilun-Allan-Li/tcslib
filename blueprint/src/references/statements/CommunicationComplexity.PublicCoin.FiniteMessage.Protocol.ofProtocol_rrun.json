@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_rrun",
+ "key": "808423eea901ab82",
+ "kind": "theorem",
+ "title": "Embedding preserves randomized execution",
+ "statement": "Let $\\Omega$ be a shared-randomness space, let $X$ and $Y$ be the private input sets of the two players, and let $\\alpha$ be an output type. Let $p$ be a binary public-coin protocol over these types, that is, a deterministic protocol whose players receive inputs in $\\Omega \\times X$ and $\\Omega \\times Y$. Embedding $p$ into the finite-message framework—by treating each Boolean message as a message drawn from the two-element type—and then running the result yields the same output as running $p$ directly: for every private input $x \\in X$, every private input $y \\in Y$, and every shared random string $\\omega \\in \\Omega$, the finite-message embedding of $p$, executed on the paired inputs $(\\omega, x)$ and $(\\omega, y)$, returns the same value in $\\alpha$ as $p$ executed on those same paired inputs.",
+ "hypotheses_covered": [
+  "p is a binary public-coin protocol over Ω, X, Y, α",
+  "x is a private input in X",
+  "y is a private input in Y",
+  "ω is a shared random string in Ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "For any binary public-coin protocol $p$, inputs $x$, $y$, and shared randomness $\\omega$,\n$(\\mathrm{ofProtocol}\\,p).\\mathrm{rrun}\\,x\\,y\\,\\omega = p.\\mathrm{rrun}\\,x\\,y\\,\\omega$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "potential_pos",
+ "key": "691135d3c731a31f",
+ "kind": "lemma",
+ "title": "Positivity of the Hedge potential",
+ "statement": "Fix a learning rate $\\eta \\in \\bbr$, a loss sequence $\\ell$ for $N \\ge 1$ experts over $T$ rounds, and a time $t$. Then the potential at time $t$ is strictly positive:\n\\[\n  W_t \\;=\\; \\sum_{i=1}^{N} \\exp\\!\\bigl(-\\eta \\cdot L_t(i)\\bigr) \\;>\\; 0,\n\\]\nwhere $L_t(i) = \\sum_{s < t} \\ell_s(i)$ is the cumulative loss of expert $i$ through the first $t$ rounds.",
+ "hypotheses_covered": [
+  "at least one expert (N ≥ 1)",
+  "arbitrary real learning rate η",
+  "arbitrary loss sequence ℓ",
+  "arbitrary time t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $\\eta$, loss sequence $\\ell$, and time $t$, the potential $W_t > 0$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_crossInfo_eq_zero",
+ "key": "c06a325bd7add52f",
+ "kind": "theorem",
+ "title": "Conditional independence in the uniform disjoint-coordinate distribution",
+ "statement": "Fix a positive integer $n$ and draw $C = (C_1,\\dots,C_n)$ uniformly at random from $\\{\\text{neither},\\text{leftOnly},\\text{rightOnly}\\}^n$, so that the $n$ coordinates are independent and each is uniform on the three possibilities. For each index $j$ set Alice's bit $X_j = \\mathbf{1}[C_j = \\text{leftOnly}]$ and Bob's bit $Y_j = \\mathbf{1}[C_j = \\text{rightOnly}]$. Then for every coordinate $i$, the conditional mutual information, taken under this uniform law, between Alice's bit at $i$ and Bob's bits strictly before $i$, given the pair consisting of Alice's bits strictly before $i$ and Bob's bits from $i$ onward, vanishes:\n\\[\nI\\big(X_i \\,;\\, (Y_j)_{j<i} \\,\\big|\\, (X_j)_{j<i},\\,(Y_j)_{j\\ge i}\\big) = 0.\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "i a fixed coordinate index in {0,...,n-1}",
+  "coordinates drawn independently and uniformly over the three-element type (uniform law)",
+  "conditioning variable is the pair (Alice's bits before i, Bob's bits from i onward)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Product-coordinate form of the fixed-coordinate independence input, using the padded-pair conditioning variable."
+}

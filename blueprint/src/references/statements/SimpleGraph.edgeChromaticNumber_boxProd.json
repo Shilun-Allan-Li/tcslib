@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleGraph.edgeChromaticNumber_boxProd",
+ "key": "3b92be93c632a23e",
+ "kind": "theorem",
+ "title": "Chromatic index of a Cartesian product of graphs",
+ "statement": "Let $G$ and $H$ be finite simple graphs, and let $G \\square H$ denote their Cartesian product, the graph on $V(G) \\times V(H)$ in which $(u,x)$ and $(v,y)$ are adjacent exactly when either $u = v$ and $x \\sim y$ in $H$, or $x = y$ and $u \\sim v$ in $G$. For a graph $K$, write $\\Delta(K)$ for its maximum degree and $\\chi'(K)$ for its chromatic index, the least number of colors needed to color the edges of $K$ so that any two edges meeting at a common vertex receive different colors (equivalently, the chromatic number of the line graph of $K$). If $H$ has at least one edge, so that $\\Delta(H) > 0$, and $H$ satisfies $\\chi'(H) = \\Delta(H)$, then $\\chi'(G \\square H) = \\Delta(G \\square H)$.",
+ "hypotheses_covered": [
+  "$G$ is a finite simple graph",
+  "$H$ is a finite simple graph",
+  "$H$ has positive maximum degree, $\\Delta(H) > 0$",
+  "$H$ has chromatic index equal to its maximum degree, $\\chi'(H) = \\Delta(H)$",
+  "conclusion: $\\chi'(G \\square H) = \\Delta(G \\square H)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Ex 6.2.6(b)\n\n(b) Deduce that if $H$ is nontrivial with $\\chi'(H) = \\Delta(H)$, then\n$\\chi'(G \\times H) = \\Delta(G \\times H)$."
+}

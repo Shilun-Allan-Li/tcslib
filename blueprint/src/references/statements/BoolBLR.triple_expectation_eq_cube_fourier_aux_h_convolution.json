@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolBLR.triple_expectation_eq_cube_fourier_aux_h_convolution",
+ "key": "fc1474df5f38ced2",
+ "kind": "lemma",
+ "title": "Fourier expansion of the self-convolution",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function, and let $g : \\{0,1\\}^n \\to \\bbr$ be its $\\pm 1$ lift, $g(x) = (-1)^{f(x)}$. Writing $g * g$ for the self-convolution $(g * g)(x) = \\E_{y}\\bigl[g(y)\\,g(x \\oplus y)\\bigr]$ with respect to the uniform measure, and $\\hat g(S) = \\E[g\\,\\chi_S]$ for the Fourier coefficient of $g$ at $S$, one has for every $x \\in \\{0,1\\}^n$\n\\[\n  (g * g)(x) \\;=\\; \\sum_{S \\subseteq [n]} \\hat g(S)^2\\, \\chi_S(x),\n\\]\nwhere $\\chi_S(x) = \\prod_{i \\in S} (-1)^{x_i}$ is the Walsh character of $S$. That is, the self-convolution of $g$ has Fourier coefficients $\\hat g(S)^2$.",
+ "hypotheses_covered": [
+  "f is a Boolean-valued function on the n-dimensional hypercube",
+  "g is the ±1 lift of f",
+  "the identity holds for every x in the hypercube",
+  "sum ranges over all subsets S of [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Write $g = \\texttt{BoolBLR.lift\\_pm1}\\,f$.  For every $x \\in \\{0,1\\}^n$,\n\\[\n  (g * g)(x) \\;=\\; \\sum_{S \\subseteq [n]} \\hat{g}(S)^2\\,\\chi_S(x),\n\\]\ni.e.\\ the self-convolution of $g$ has Fourier coefficients $\\hat{g}(S)^2$."
+}

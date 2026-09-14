@@ -1,0 +1,19 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_conditioning_prod_right_function_le",
+ "key": "21012df9dd68f44c",
+ "kind": "theorem",
+ "title": "Conditioning on a function of the conditioned variables cannot raise conditional mutual information",
+ "statement": "Let $X$, $Y$, $Z$ be random variables on a probability space $(\\Omega, \\mu)$, taking values in countable measurable spaces, each measurable and with finite range. Let $f$ be a measurable function of two arguments, and write $f(Z, Y)$ for the random variable $\\omega \\mapsto f\\bigl(Z(\\omega), Y(\\omega)\\bigr)$. Then conditioning on the pair $\\bigl(Z, f(Z, Y)\\bigr)$ — that is, refining the conditioning variable $Z$ by a deterministic function of $Z$ and $Y$ — cannot increase the conditional mutual information between $X$ and $Y$:\n\\[\n  I\\bigl[X : Y \\mid (Z,\\, f(Z, Y))\\bigr] \\;\\le\\; I\\bigl[X : Y \\mid Z\\bigr].\n\\]",
+ "hypotheses_covered": [
+  "μ is a probability measure (or zero)",
+  "X, Y, Z measurable",
+  "X, Y, Z have finite range",
+  "value spaces are countable",
+  "f is measurable",
+  "conditioning variable is the pair (Z, f(Z,Y))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a measurable $f : U \\to T \\to V$, conditioning additionally on a deterministic function\nof $Y$ and $Z$ cannot increase conditional mutual information:\n\\[\n  I[X : Y \\mid (\\omega \\mapsto (Z(\\omega),\\, f(Z(\\omega))(Y(\\omega))));\\mu]\n  \\;\\le\\; I[X : Y \\mid Z;\\mu].\n\\]"
+}

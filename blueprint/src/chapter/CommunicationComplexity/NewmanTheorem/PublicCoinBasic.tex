@@ -13,6 +13,11 @@ correctness: $\varepsilon$-satisfying a predicate and $\varepsilon$-computing a 
 
 \begin{definition}[Public-coin protocol]
 \lean{CommunicationComplexity.PublicCoin.Protocol}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p011-b003}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{
+  pdf-3eebfb23ab53-p003-b004,
+  pdf-3eebfb23ab53-p004-b001
+}
 \label{CommunicationComplexity.PublicCoin.Protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
@@ -54,6 +59,10 @@ the protocol continues according to $P : \mathrm{Bool} \to \mathrm{Protocol}$.
 
 \begin{definition}[Randomized execution]
 \lean{CommunicationComplexity.PublicCoin.Protocol.rrun}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{
+  pdf-3eebfb23ab53-p003-b004,
+  pdf-3eebfb23ab53-p004-b001
+}
 \label{CommunicationComplexity.PublicCoin.Protocol.rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PublicCoin.Protocol}
@@ -63,19 +72,22 @@ underlying deterministic protocol on the paired inputs $(\omega, x)$ and $(\omeg
 and returns the resulting output.
 \end{definition}
 
-\begin{theorem}[\texttt{rrun} unfolding]
+\begin{theorem}[Randomized execution as deterministic execution on paired inputs]
 \lean{CommunicationComplexity.PublicCoin.Protocol.rrun_eq}
 \label{CommunicationComplexity.PublicCoin.Protocol.rrun_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
 \difficulty{1}
-For any public-coin protocol $p$, inputs $x$, $y$, and randomness $\omega$,
-$p.\texttt{rrun}\,x\,y\,\omega = p.\texttt{run}\,(\omega, x)\,(\omega, y)$.
-This is a definitional unfolding used as a \texttt{simp} lemma.
+Let $p$ be a public-coin protocol with shared randomness in $\Omega$, Alice's private
+input in $X$, and Bob's in $Y$, producing an output in $\alpha$. Then for every $x \in
+X$, $y \in Y$, and $\omega \in \Omega$, the randomized execution of $p$ on $x$, $y$ with
+random string $\omega$ equals the execution of the underlying deterministic protocol on
+the paired inputs $(\omega, x)$ and $(\omega, y)$.
 \end{theorem}
 
 \begin{definition}[$\varepsilon$-satisfies a predicate]
 \lean{CommunicationComplexity.PublicCoin.Protocol.ApproxSatisfies}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p004-b001}
 \label{CommunicationComplexity.PublicCoin.Protocol.ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
@@ -88,6 +100,8 @@ $Q : X \to Y \to \alpha \to \mathrm{Prop}$ if for every input pair $(x, y)$,
 
 \begin{definition}[$\varepsilon$-computes a function]
 \lean{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p011-b003}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p004-b001}
 \label{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun}
@@ -100,19 +114,16 @@ Here the volume is taken with respect to the measure on $\Omega$ given by the
 \texttt{MeasureSpace} instance.
 \end{definition}
 
-\begin{theorem}[\texttt{ApproxComputes} equals \texttt{ApproxSatisfies} at equality]
+\begin{theorem}[Approximate computation as satisfying pointwise equality]
 \lean{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \label{CommunicationComplexity.PublicCoin.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.ApproxComputes, CommunicationComplexity.PublicCoin.Protocol.ApproxSatisfies}
 \difficulty{1}
-For any public-coin protocol $p$, function $f : X \to Y \to \alpha$, and
-$\varepsilon \in \mathbb{R}$,
-\[
-  p.\texttt{ApproxComputes}\,f\,\varepsilon
-  \;=\;
-  p.\texttt{ApproxSatisfies}\,(\lambda\,x\,y\,a.\; a = f\,x\,y)\,\varepsilon.
-\]
-That is, $\varepsilon$-computing $f$ is exactly $\varepsilon$-satisfying the
-pointwise equality predicate $a = f\,x\,y$.
+Let $p$ be a public-coin protocol over a shared-randomness space $\Omega$ carrying a
+measure, with Alice's inputs in $X$, Bob's in $Y$, and outputs in $\alpha$, let $f : X
+\to Y \to \alpha$ be a function, and let $\varepsilon \in \bbr$. Then the assertion that
+$p$ $\varepsilon$-computes $f$ coincides with the assertion that $p$
+$\varepsilon$-satisfies the predicate $Q(x, y, a)$ given by $a = f(x, y)$; that is, the
+two propositions are equal.
 \end{theorem}

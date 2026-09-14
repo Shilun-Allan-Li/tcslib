@@ -1,0 +1,15 @@
+{
+ "lean_name": "crossingEdges_eq_filter_crosses",
+ "key": "eaab0bf0074ef18d",
+ "kind": "lemma",
+ "title": "Crossing edges as the membership-based edge filter",
+ "statement": "Let $G$ be a multigraph and let $C$ be a cut of $G$ determined by a vertex subset $S$. Then the multiset of edges crossing $C$ equals the sub-multiset of edges $e$ of $G$ for which some endpoint of $e$ lies in $S$ while some endpoint of $e$ lies outside $S$, counted with multiplicity.",
+ "hypotheses_covered": [
+  "$G$ is a multigraph",
+  "$C$ is a cut of $G$ with distinguished side $S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every cut $C$ of $G$, the multiset of crossing edges equals the edge multiset of\n$G$ filtered by the predicate $\\texttt{Crosses}\\;S$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "RestrictionFourier.prod_if_subset",
+ "key": "6f9d9f417c6c6263",
+ "kind": "lemma",
+ "title": "Product of a three-valued weight over coordinates",
+ "statement": "Let $n$ be a natural number, let $p \\in \\bbr$, and let $S, U \\subseteq \\{1, \\dots, n\\}$. For each coordinate $i$, assign the weight $p$ if $i \\in S$, the weight $1 - p$ if $i \\in U \\setminus S$, and the weight $1$ otherwise. Then the product of these weights over all $n$ coordinates equals\n\\[\n  p^{\\abs{S}}\\,(1-p)^{\\abs{U \\setminus S}}.\n\\]",
+ "hypotheses_covered": [
+  "p is a real number",
+  "S is a subset of the n coordinates",
+  "U is a subset of the n coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p \\in \\bbr$ and sets $S, U \\subseteq [n]$,\n\\[\n  \\prod_{i} \\bigl(p \\text{ if } i \\in S,\\ (1-p) \\text{ if } i \\in U \\setminus S,\\ 1\n  \\text{ otherwise}\\bigr) \\;=\\; p^{\\abs{S}}\\,(1-p)^{\\abs{U \\setminus S}}.\n\\]"
+}

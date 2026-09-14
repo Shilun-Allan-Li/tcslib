@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_path_length_eq",
+ "key": "0fb7e3a66d394874",
+ "kind": "lemma",
+ "title": "Path length consumed by clause processing",
+ "statement": "Run the clause-processing operation on a list of literals — each tagged with its position in the clause — and a decision-tree path (a list of variable–direction pairs), starting from restrictions $\\rho_0$ and $\\sigma$. Writing $\\ell$ for the number of literals and $m$ for the length of the path, the residual path returned by the operation has length exactly $m - \\min(\\ell, m)$; equivalently, this residual length together with $\\min(\\ell, m)$ sums to $m$.",
+ "hypotheses_covered": [
+  "literal list (each with position index)",
+  "decision-tree path",
+  "input restrictions ρ₀ and σ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$\\mathrm{processClauseLits}$ consumes exactly\n$\\min(\\mathrm{lits.length}, \\mathrm{path.length})$ path entries; the remaining\npath length plus this minimum equals the original path length."
+}

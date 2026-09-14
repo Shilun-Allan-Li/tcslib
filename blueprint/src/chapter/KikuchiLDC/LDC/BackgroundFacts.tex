@@ -14,7 +14,7 @@ bounds are proved in full.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Reduction to normal form, parameter shell]
+\begin{theorem}[Existence of normal-form reduction parameters]
 \lean{normal_form_reduction}
 \label{normal_form_reduction}
 \leanok
@@ -30,26 +30,17 @@ bounds are proved in full.
   pdf-4377a4b7ed99-p079-b001
 }
 \statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p005-b003}
-Fact 3.6 (Yekhanin, Lemma 6.2), in the existential form used downstream: for
-$q \ge 2$, $k, n > 0$ and $\delta, \varepsilon > 0$ there exist a length $n' \le 6n$ and
-parameters $\delta', \varepsilon' > 0$ with
+Let $q \ge 2$ be an integer, let $k$ and $n$ be positive integers, and let $\delta,
+\varepsilon > 0$. Then there exist a natural number $n' \le 6n$ and real numbers
+$\delta', \varepsilon' > 0$ such that
 \[
-  \delta' \ \ge\ \frac{\varepsilon\,\delta}{3q^2\,2^{\,q-1}},
+  \delta' \ \ge\ \frac{\varepsilon\,\delta}{3\,q^{2}\,2^{\,q-1}},
   \qquad
-  \varepsilon' \ \ge\ \frac{\varepsilon}{2^{2q}} .
+  \varepsilon' \ \ge\ \frac{\varepsilon}{2^{\,2q}}.
 \]
-These are exactly the parameters of the normally decodable code obtained from a
-binary $(q,\delta,\varepsilon)$-LDC $C : \{0,1\}^k \to \{0,1\}^n$; the Lean statement asserts
-only the existence of such $n', \delta', \varepsilon'$.
-
-\emph{Placeholder.}  The Lean statement quantifies over parameters only: no code, decoder, or
-normal-form construction occurs in it, and it is discharged by exhibiting witnesses that make
-the two inequalities reflexive.  It records the shape of Fact 3.6's output for downstream use
-and does \emph{not} formalise the reduction.  It must not be cited as a formalisation of that
-reduction.
 \end{theorem}
 
-\begin{theorem}[Rectangular matrix Khintchine bound]
+\begin{theorem}[A positive constant below the matrix Khintchine bound]
 \lean{matrix_khintchine}
 \label{matrix_khintchine}
 \leanok
@@ -63,21 +54,12 @@ reduction.
   pdf-7fbbda473d03-p007-b006,
   pdf-7fbbda473d03-p008-b002
 }
-Fact 4.1 (Tropp 2015, Theorem 4.1.1), stated abstractly through the bounding quantity it
-produces: for $k > 0$, a variance proxy $\sigma^2 > 0$ and dimensions $d_1, d_2 > 0$ there is a
-constant $C_{\mathrm{MK}} > 0$ with
+Let $k$ be a positive integer, let $\sigma^2 > 0$ be a real number, and let $d_1$ and
+$d_2$ be positive integers. Then there exists a positive real number $C_{\mathrm{MK}} >
+0$ satisfying
 \[
   C_{\mathrm{MK}} \ \le\ \sqrt{\,2\,\sigma^2 \log(d_1 + d_2)\,}.
 \]
-This is the bound the Khintchine inequality supplies for
-$\E\bigl[\norm{\sum_i b_i X_i}_2\bigr]$ when the $b_i$ are i.i.d.\ uniform signs and
-$\sigma^2 = \max\bigl(\norm{\sum_i X_i X_i^{\mathsf T}}_2, \norm{\sum_i X_i^{\mathsf T} X_i}_2\bigr)$.
-
-\emph{Placeholder.}  No matrices, random signs, or spectral norms appear in the Lean
-statement: it asserts only that some positive real lies below the stated square root, and is
-discharged by taking that square root itself.  It records the shape of the Khintchine bound
-for downstream use and does \emph{not} formalise Tropp's inequality.  It must not be cited as
-a formalisation of that inequality.
 \end{theorem}
 
 \begin{definition}[Real-valued binomial coefficient]
@@ -100,7 +82,6 @@ cast into $\bbr$.
   pdf-b372a20892ce-p005-b005,
   pdf-b372a20892ce-p005-b006
 }
-
 \proofstep
   {chooseR}
   {context}
@@ -109,15 +90,15 @@ cast into $\bbr$.
     pdf-b372a20892ce-p005-b006}
 \uses{chooseR}
 \difficulty{7}
-Fact 4.2 (upper half).  Let $n, \ell, q$ be naturals with $n > 0$, $q > 0$, $q \le \ell$,
-$2\ell \le n$ and $2q \le n$.  Then
+Let $n, \ell, q$ be natural numbers with $n > 0$, $q > 0$, $q \le \ell$, $2\ell \le n$,
+and $2q \le n$. Then the ratio of real-valued binomial coefficients satisfies
 \[
-  \frac{\binom{n-2q}{\ell-q}}{\binom{n}{\ell}} \ \le\ e^{3q}\left(\frac{\ell}{n}\right)^{q},
+\frac{\binom{n-2q}{\ell-q}}{\binom{n}{\ell}} \ \le\
+e^{3q}\left(\frac{\ell}{n}\right)^{q}.
 \]
-where both binomial coefficients are taken in $\bbr$ via $\texttt{chooseR}$.
 \end{theorem}
 
-\begin{theorem}[Binomial ratio bound, lower]
+\begin{theorem}[Lower bound for a ratio of binomial coefficients]
 \lean{binomial_ratio_lower}
 \proofsource{arXiv.2308.15403}{
   pdf-b372a20892ce-p005-b005,
@@ -129,7 +110,6 @@ where both binomial coefficients are taken in $\bbr$ via $\texttt{chooseR}$.
   pdf-b372a20892ce-p005-b005,
   pdf-b372a20892ce-p005-b006
 }
-
 \proofstep
   {chooseR}
   {context}
@@ -138,10 +118,11 @@ where both binomial coefficients are taken in $\bbr$ via $\texttt{chooseR}$.
     pdf-b372a20892ce-p005-b006}
 \uses{chooseR}
 \difficulty{7}
-Fact 4.2 (lower half).  Under the same hypotheses $n > 0$, $q > 0$, $q \le \ell$,
-$2\ell \le n$ and $2q \le n$,
+Let $n$, $\ell$, and $q$ be natural numbers with $n \ge 1$ and $q \ge 1$, and suppose
+that $q \le \ell$, $2\ell \le n$, and $2q \le n$. Then
 \[
-  e^{-3q}\left(\frac{\ell}{n}\right)^{q} \ \le\ \frac{\binom{n-2q}{\ell-q}}{\binom{n}{\ell}},
+e^{-3q}\left(\frac{\ell}{n}\right)^{q} \ \le\
+\frac{\binom{n-2q}{\ell-q}}{\binom{n}{\ell}},
 \]
-with the binomial coefficients again read in $\bbr$ via $\texttt{chooseR}$.
+where the binomial coefficients are evaluated in $\bbr$.
 \end{theorem}

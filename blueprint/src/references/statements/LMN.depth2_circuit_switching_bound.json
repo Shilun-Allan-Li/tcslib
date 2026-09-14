@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.depth2_circuit_switching_bound",
+ "key": "90c9b62984d0b9d3",
+ "kind": "lemma",
+ "title": "Switching bound for depth-2 circuits",
+ "statement": "Let $f\\colon\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function on $n\\ge 1$ variables that is computed by some Boolean circuit of depth at most $2$, size at most $s$, and fan-in at most $w$, where $w\\ge 1$. Fix a real parameter $p$ with $0<p\\le \\tfrac{1}{40w}$ (so in particular $p\\le 1$), and draw a random restriction $\\rho$ in which each of the $n$ variables is, independently, left free with probability $p$ and otherwise fixed to the value $0$ or to the value $1$, each with probability $\\tfrac{1-p}{2}$. Write $f_\\rho$ for the restriction of $f$ by $\\rho$ (the function $x\\mapsto f$ evaluated at the assignment agreeing with $\\rho$ on its fixed coordinates and with $x$ on the free ones), and let $D(g)$ denote the least depth of a decision tree computing a function $g$. Then for every $t\\in\\bbn$,\n\\[\n  \\Pr_{\\rho}\\!\\left[\\, D(f_\\rho) > t \\,\\right]\\ \\le\\ \\left(\\tfrac12\\right)^{t} + \\exp\\!\\left(-\\tfrac{np}{3}\\right).\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "w ≥ 1 (0 < w)",
+  "f is computed by a Boolean circuit of depth ≤ 2",
+  "that circuit has size ≤ s",
+  "that circuit has fan-in ≤ w",
+  "p > 0",
+  "p ≤ 1/(40w)",
+  "p ≤ 1",
+  "t is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f$ is computed by a circuit of depth at most $2$, size at most $s$, and fan-in at most $w$,\nthen for a Bernoulli parameter $p$ with $0<p\\le 1/(40w)$ and $p\\le 1$,\n\\[\n  \\Pr_{p}\\!\\left[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,f\\,\\rho) > t\\right]\n    \\le (1/2)^{t} + \\exp(-np/3).\n\\]"
+}

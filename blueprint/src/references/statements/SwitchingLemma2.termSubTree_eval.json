@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_eval",
+ "key": "4f94fbf86fff4402",
+ "kind": "lemma",
+ "title": "Semantic correctness of the term sub-tree",
+ "statement": "Fix $n$, and let $\\ell_1,\\dots,\\ell_m$ be a list of literals over $n$ variables, $\\rho$ a restriction on those variables, $\\mathrm{cont}$ a map sending each restriction to a decision tree, and $x \\in \\{\\mathrm{true},\\mathrm{false}\\}^n$ an assignment. Then evaluating the term sub-tree built from $\\ell_1,\\dots,\\ell_m$, $\\rho$, and $\\mathrm{cont}$ at $x$ gives the same Boolean value as evaluating $\\mathrm{cont}(\\rho^\\ast)$ at $x$, where $\\rho^\\ast$ is obtained from $\\rho$ by processing the literals in order: for each $\\ell_i$, if its variable is free in the current restriction, that variable is fixed to $x$'s value there, and otherwise the restriction is left unchanged.",
+ "hypotheses_covered": [
+  "a list of literals over n variables",
+  "a restriction ρ",
+  "a continuation from restrictions to decision trees",
+  "a Boolean assignment x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Evaluating $\\mathrm{termSubTree}\\,\\mathit{lits}\\,\\rho\\,\\mathrm{cont}$ at $x$ equals evaluating the\ncontinuation at $x$, applied to the restriction obtained by folding $x$'s values into $\\rho$ along\nthe free literals of $\\mathit{lits}$."
+}

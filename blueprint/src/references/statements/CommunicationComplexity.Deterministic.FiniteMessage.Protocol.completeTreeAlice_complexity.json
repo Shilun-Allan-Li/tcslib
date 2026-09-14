@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity",
+ "key": "e9e569f0bbcfe9fd",
+ "kind": "theorem",
+ "title": "Complexity of the complete Alice-query tree",
+ "statement": "Fix a natural number $d$, together with binary query functions $\\mathrm{query}_0,\\dots,\\mathrm{query}_{d-1} : X \\to \\mathrm{Bool}$ and a family of deterministic protocols $Q(\\mathrm{bits})$ indexed by the bit patterns $\\mathrm{bits} : \\mathrm{Fin}\\,d \\to \\mathrm{Bool}$. Form the protocol that has Alice read the bits $\\mathrm{query}_0(x),\\dots,\\mathrm{query}_{d-1}(x)$ in sequence and then run $Q$ on the collected pattern. Its communication complexity is\n\\[\nd + \\max_{\\mathrm{bits} : \\mathrm{Fin}\\,d \\to \\mathrm{Bool}} \\; \\mathrm{complexity}\\bigl(Q(\\mathrm{bits})\\bigr),\n\\]\nthe maximum being taken over all $2^d$ length-$d$ bit patterns.",
+ "hypotheses_covered": [
+  "depth d : ℕ",
+  "d query functions query : Fin d → X → Bool",
+  "family of protocols Q indexed by bit patterns Fin d → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The complexity of \\texttt{completeTreeAlice} equals $d$ plus the supremum of the complexities\nof all leaf protocols: $(\\mathrm{completeTreeAlice}\\,d\\,\\mathrm{query}\\,Q).\\mathrm{complexity}\n= d + \\sup_{\\mathrm{bits}} (Q\\,\\mathrm{bits}).\\mathrm{complexity}$."
+}

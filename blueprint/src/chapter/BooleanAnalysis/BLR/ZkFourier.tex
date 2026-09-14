@@ -24,14 +24,17 @@ $\mathrm{Fin}\,n \to \mathbb{Z}/k\mathbb{Z}$.  It carries the pointwise
 additive group structure of $(\mathbb{Z}/k\mathbb{Z})^n$.
 \end{definition}
 
-\begin{lemma}[Cardinality of $\mathbb{Z}_k^n$]
+\begin{lemma}[Cardinality of the space of vectors over $\mathbb{Z}/k\mathbb{Z}$]
 \lean{ZkFourier.card_ZkVec}
 \label{ZkFourier.card_ZkVec}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.rootOfUnity}
 \difficulty{1}
-For $k \geq 1$, the finite type $\texttt{ZkFourier.ZkVec}\ k\ n$ has
-$|\mathbb{Z}_k^n| = k^n$ elements.
+Let $k$ and $n$ be natural numbers with $k \ge 1$. The set $(\mathbb{Z}/k\mathbb{Z})^n$
+of $n$-tuples with entries in $\mathbb{Z}/k\mathbb{Z}$ is finite, and its cardinality is
+\[
+\bigl|(\mathbb{Z}/k\mathbb{Z})^n\bigr| = k^n.
+\]
 \end{lemma}
 
 \begin{definition}[Primitive $k$-th root of unity]
@@ -56,79 +59,103 @@ $\{0, \ldots, k-1\} \subset \mathbb{N}$.  This is the group homomorphism
 $(\mathbb{Z}/k\mathbb{Z}, +) \to (\mathbb{C}^\times, \cdot)$.
 \end{definition}
 
-\begin{lemma}[$\omega_k$ is a primitive $k$-th root]
+\begin{lemma}[$\omega_k$ is a primitive $k$-th root of unity]
 \lean{ZkFourier.isPrimitiveRoot_rootOfUnity}
 \label{ZkFourier.isPrimitiveRoot_rootOfUnity}
 \leanok
 \uses{ZkFourier.rootOfUnity}
 \difficulty{1}
-$\omega_k = e^{2\pi i/k}$ is a primitive $k$-th root of unity in $\mathbb{C}$,
-i.e.\ $\omega_k^k = 1$ and $\omega_k^j \neq 1$ for $0 < j < k$.
+Let $k$ be a positive integer and set $\omega_k = e^{2\pi i / k} \in \bbc$. Then
+$\omega_k$ is a primitive $k$-th root of unity: $\omega_k^k = 1$, and no smaller
+positive power of $\omega_k$ equals $1$, so that $\omega_k^j = 1$ for a natural number
+$j$ holds precisely when $k$ divides $j$.
 \end{lemma}
 
-\begin{lemma}[$\omega_k^k = 1$]
+\begin{lemma}[The $k$-th power of a $k$-th root of unity]
 \lean{ZkFourier.rootOfUnity_pow_k}
 \label{ZkFourier.rootOfUnity_pow_k}
 \leanok
 \uses{ZkFourier.isPrimitiveRoot_rootOfUnity, ZkFourier.rootOfUnity}
 \difficulty{1}
-The $k$-th power of the root of unity satisfies $\omega_k^k = 1$.
+Let $k$ be a positive integer and let $\omega_k = e^{2\pi i / k}$ be the primitive
+$k$-th root of unity in $\mathbb{C}$. Then $\omega_k^k = 1$.
 \end{lemma}
 
-\begin{lemma}[$\omega_k^0 = 1$]
+\begin{lemma}[The additive identity maps to one]
 \lean{ZkFourier.toOmega_zero}
 \label{ZkFourier.toOmega_zero}
 \leanok
 \uses{ZkFourier.toOmega}
 \difficulty{1}
-The embedding sends zero to one: $\texttt{ZkFourier.toOmega}\ (0 : \mathbb{Z}/k\mathbb{Z}) = 1$.
+Let $k \ge 1$ and write $\omega_k = e^{2\pi i/k}$ for the primitive $k$-th root of
+unity, and for $a \in \mathbb{Z}/k\mathbb{Z}$ let its image under the homomorphism
+$(\mathbb{Z}/k\mathbb{Z}, +) \to (\mathbb{C}^\times, \cdot)$ be $\omega_k^{a}$. Then the
+additive identity $0 \in \mathbb{Z}/k\mathbb{Z}$ maps to $1$; that is, $\omega_k^{0} =
+1$.
 \end{lemma}
 
-\begin{lemma}[Additivity of the embedding]
+\begin{lemma}[Additivity of the root-of-unity embedding]
 \lean{ZkFourier.toOmega_add}
 \label{ZkFourier.toOmega_add}
 \leanok
 \uses{ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega}
 \difficulty{3}
-For $a, b : \mathbb{Z}/k\mathbb{Z}$,
-$\omega_k^{a+b} = \omega_k^a \cdot \omega_k^b$.
-That is, $\texttt{ZkFourier.toOmega}$ is a group homomorphism from
-$(\mathbb{Z}/k\mathbb{Z}, +)$ to $(\mathbb{C}^\times, \cdot)$.
+Fix an integer $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$ be the primitive $k$-th root
+of unity. For $a \in \mathbb{Z}/k\mathbb{Z}$ write $\chi(a) = \omega_k^{a}$, where the
+exponent is the canonical representative of $a$ in $\{0, 1, \ldots, k-1\}$. Then for all
+$a, b \in \mathbb{Z}/k\mathbb{Z}$,
+\[
+\chi(a + b) = \chi(a)\,\chi(b),
+\]
+so $\chi$ is a homomorphism from the additive group $\mathbb{Z}/k\mathbb{Z}$ to the
+multiplicative group $\mathbb{C}^{\times}$.
 \end{lemma}
 
-\begin{lemma}[Negation and complex conjugation]
+\begin{lemma}[Conjugation of a Fourier character under negation]
 \lean{ZkFourier.toOmega_neg}
 \label{ZkFourier.toOmega_neg}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
 \difficulty{5}
-For $a : \mathbb{Z}/k\mathbb{Z}$,
-$\omega_k^{-a} = \overline{\omega_k^a}$,
-i.e.\ $\texttt{ZkFourier.toOmega}\ (-a) = \overline{\texttt{ZkFourier.toOmega}\ a}$.
+Let $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$ be the primitive $k$-th root of unity,
+and for $a \in \mathbb{Z}/k\mathbb{Z}$ write $\omega_k^{a}$ for the value $\omega_k$
+raised to the canonical representative of $a$ in $\{0,\dots,k-1\}$. Then for every $a
+\in \mathbb{Z}/k\mathbb{Z}$,
+\[
+\omega_k^{-a} = \overline{\omega_k^{a}},
+\]
+that is, replacing $a$ by its additive inverse conjugates the corresponding character
+value.
 \end{lemma}
 
-\begin{lemma}[Unit norm of the embedding]
+\begin{lemma}[Unit modulus of powers of a root of unity]
 \lean{ZkFourier.norm_toOmega}
 \label{ZkFourier.norm_toOmega}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.toOmega}
 \difficulty{1}
-For every $a : \mathbb{Z}/k\mathbb{Z}$, $\|\omega_k^a\| = 1$; the image of
-$\texttt{ZkFourier.toOmega}$ lies on the complex unit circle.
+Fix an integer $k \ge 1$ and write $\omega_k = e^{2\pi i/k}$ for the primitive $k$-th
+root of unity. For every residue $a \in \mathbb{Z}/k\mathbb{Z}$, the complex number
+$\omega_k^{a}$, obtained by raising $\omega_k$ to the canonical representative of $a$ in
+$\{0,\dots,k-1\}$, satisfies $\norm{\omega_k^{a}} = 1$, so it lies on the unit circle.
 \end{lemma}
 
-\begin{lemma}[Multiplicativity of the embedding]
+\begin{lemma}[Multiplicativity of the root-of-unity embedding]
 \lean{ZkFourier.toOmega_mul}
 \label{ZkFourier.toOmega_mul}
 \leanok
 \uses{ZkFourier.rootOfUnity, ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega}
 \difficulty{3}
-For $j, a : \mathbb{Z}/k\mathbb{Z}$,
-$\omega_k^{j \cdot a} = (\omega_k^j)^a$, i.e.\
-$\texttt{ZkFourier.toOmega}\ (j \cdot a) = (\omega_k^{j.\mathrm{val}})^{a.\mathrm{val}}$.
+Fix a positive integer $k$ and let $\omega_k = e^{2\pi i / k}$. For $b \in
+\mathbb{Z}/k\mathbb{Z}$, write $\lfloor b\rfloor \in \{0,\ldots,k-1\}$ for its canonical
+representative and set $\chi(b) = \omega_k^{\lfloor b\rfloor}$. Then for all $j, a \in
+\mathbb{Z}/k\mathbb{Z}$,
+\[
+  \chi(j \cdot a) = \bigl(\omega_k^{\lfloor j\rfloor}\bigr)^{\lfloor a\rfloor}.
+\]
 \end{lemma}
 
-\begin{lemma}[Geometric sum orthogonality]
+\begin{lemma}[Character orthogonality on $\mathbb{Z}/k\mathbb{Z}$]
 \lean{ZkFourier.geom_sum_toOmega}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b002,
@@ -138,12 +165,14 @@ $\texttt{ZkFourier.toOmega}\ (j \cdot a) = (\omega_k^{j.\mathrm{val}})^{a.\mathr
 \leanok
 \uses{ZkFourier.isPrimitiveRoot_rootOfUnity, ZkFourier.rootOfUnity, ZkFourier.rootOfUnity_pow_k, ZkFourier.toOmega, ZkFourier.toOmega_mul}
 \difficulty{5}
-For $j : \mathbb{Z}/k\mathbb{Z}$,
+Let $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$ be the primitive $k$-th root of unity.
+For each $a \in \mathbb{Z}/k\mathbb{Z}$, write $\omega_k^{a}$ for $\omega_k$ raised to
+the canonical representative of $a$ in $\{0,\ldots,k-1\}$. Then for every $j \in
+\mathbb{Z}/k\mathbb{Z}$,
 \[
-  \sum_{a \in \mathbb{Z}/k\mathbb{Z}} \omega_k^{j \cdot a}
+  \sum_{a \in \mathbb{Z}/k\mathbb{Z}} \omega_k^{\,j a}
   = \begin{cases} k & \text{if } j = 0, \\ 0 & \text{if } j \neq 0. \end{cases}
 \]
-This is the fundamental character-orthogonality identity for $\mathbb{Z}/k\mathbb{Z}$.
 \end{lemma}
 
 \begin{definition}[Functions on $\mathbb{Z}_k^n$]
@@ -230,55 +259,73 @@ The $k^n$ characters $\{\chi_s\}_{s \in \mathbb{Z}_k^n}$ form an orthonormal
 basis of $L^2(\mathbb{Z}_k^n)$.
 \end{definition}
 
-\begin{lemma}[Dot product is additive in the right argument]
+\begin{lemma}[Right-additivity of the dot product over $\mathbb{Z}/k\mathbb{Z}$]
 \lean{ZkFourier.zkDot_add_right}
 \label{ZkFourier.zkDot_add_right}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{2}
-For $s, x, y \in \mathbb{Z}_k^n$,
-$s \cdot (x + y) = s \cdot x + s \cdot y$.
+Fix an integer $k \ge 1$ and a dimension $n$, and let $s, x, y \in
+(\mathbb{Z}/k\mathbb{Z})^n$. Writing $s \cdot x = \sum_{i=0}^{n-1} s_i x_i \in
+\mathbb{Z}/k\mathbb{Z}$ for the componentwise dot product, the dot product is additive
+in its right argument:
+\[
+s \cdot (x + y) = s \cdot x + s \cdot y,
+\]
+where $x + y$ denotes the componentwise sum.
 \end{lemma}
 
-\begin{lemma}[Zero vector on the left]
+\begin{lemma}[Dot product with the zero vector]
 \lean{ZkFourier.zkDot_zero_left}
 \label{ZkFourier.zkDot_zero_left}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{1}
-For any $x \in \mathbb{Z}_k^n$, $0 \cdot x = 0$.
+Fix an integer $k \ge 1$ and let $x \in (\bbz/k\bbz)^n$ be any vector. Then the dot
+product of the zero vector with $x$ is zero: $0 \cdot x = 0$ in $\bbz/k\bbz$.
 \end{lemma}
 
-\begin{lemma}[Zero vector on the right]
+\begin{lemma}[Dot product against the zero vector]
 \lean{ZkFourier.zkDot_zero_right}
 \label{ZkFourier.zkDot_zero_right}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{1}
-For any $s \in \mathbb{Z}_k^n$, $s \cdot 0 = 0$.
+Fix an integer $k \ge 1$ and a length $n \ge 0$, and let $s \in (\bbz/k\bbz)^n$. Writing
+$0$ for the zero vector of $(\bbz/k\bbz)^n$, the dot product of $s$ with $0$ equals $0$
+in $\bbz/k\bbz$; that is, $\sum_{i=0}^{n-1} s_i \cdot 0 = 0$.
 \end{lemma}
 
-\begin{lemma}[Negation on the left argument of the dot product]
+\begin{lemma}[Negating the left argument of the dot product]
 \lean{ZkFourier.zkDot_neg_left}
 \label{ZkFourier.zkDot_neg_left}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{2}
-For $s, x \in \mathbb{Z}_k^n$,
-$(-s) \cdot x = -(s \cdot x)$.
+Fix an integer $k \ge 1$ and a dimension $n$, and work in the module $\mathbb{Z}_k^n =
+(\mathbb{Z}/k\mathbb{Z})^n$ with dot product $s \cdot x = \sum_{i=0}^{n-1} s_i x_i \in
+\mathbb{Z}/k\mathbb{Z}$. Then for all $s, x \in \mathbb{Z}_k^n$,
+\[
+(-s) \cdot x = -(s \cdot x).
+\]
 \end{lemma}
 
-\begin{lemma}[Subtraction on the left argument of the dot product]
+\begin{lemma}[Left additivity of the dot product under subtraction]
 \lean{ZkFourier.zkDot_sub}
 \label{ZkFourier.zkDot_sub}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.zkDot}
 \difficulty{2}
-For $s, t, x \in \mathbb{Z}_k^n$,
-$(s - t) \cdot x = s \cdot x - t \cdot x$.
+For any three vectors $s, t, x \in \mathbb{Z}_k^n$, the dot product is additive in its
+left argument under subtraction:
+\[
+(s - t) \cdot x = s \cdot x - t \cdot x,
+\]
+where the subtraction on the left is taken componentwise and both sides are elements of
+$\mathbb{Z}/k\mathbb{Z}$.
 \end{lemma}
 
-\begin{lemma}[Characters are multiplicative in the input]
+\begin{lemma}[Additivity of a Fourier character on $\mathbb{Z}_k^n$]
 \lean{ZkFourier.char_s_add}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p021-b004,
@@ -288,67 +335,85 @@ $(s - t) \cdot x = s \cdot x - t \cdot x$.
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_add, ZkFourier.zkDot_add_right}
 \difficulty{1}
-For $s, x, y \in \mathbb{Z}_k^n$,
-$\chi_s(x + y) = \chi_s(x) \cdot \chi_s(y)$.
-Each character is a group homomorphism from $(\mathbb{Z}_k^n, +)$ to
-$(\mathbb{C}^\times, \cdot)$.
+Fix integers $k \ge 1$ and $n \ge 0$, let $\omega_k = e^{2\pi i/k}$, and for $s \in
+(\mathbb{Z}/k\mathbb{Z})^n$ let $\chi_s : (\mathbb{Z}/k\mathbb{Z})^n \to \mathbb{C}$ be
+the character $\chi_s(x) = \omega_k^{\,s\cdot x}$, where $s\cdot x = \sum_{i=1}^{n} s_i
+x_i \in \mathbb{Z}/k\mathbb{Z}$ is the componentwise dot product. Then for all $x, y \in
+(\mathbb{Z}/k\mathbb{Z})^n$,
+\[
+\chi_s(x + y) = \chi_s(x)\,\chi_s(y).
+\]
 \end{lemma}
 
-\begin{lemma}[Character at zero input]
+\begin{lemma}[Character evaluated at the zero vector]
 \lean{ZkFourier.char_s_zero_vec}
 \label{ZkFourier.char_s_zero_vec}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_zero, ZkFourier.zkDot_zero_right}
 \difficulty{1}
-For any $s \in \mathbb{Z}_k^n$, $\chi_s(0) = 1$.
+Fix an integer $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$. For any $s \in
+\mathbb{Z}_k^n$, the Fourier character $\chi_s(x) = \omega_k^{s \cdot x}$ satisfies
+$\chi_s(0) = 1$, where $0$ denotes the zero vector of $\mathbb{Z}_k^n$.
 \end{lemma}
 
-\begin{lemma}[Trivial character equals one]
+\begin{lemma}[The zero-index character is identically one]
 \lean{ZkFourier.char_s_zero_index}
 \label{ZkFourier.char_s_zero_index}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_zero, ZkFourier.zkDot_zero_left}
 \difficulty{1}
-For any $x \in \mathbb{Z}_k^n$, $\chi_0(x) = 1$; the character indexed by
-the zero frequency is identically one.
+Fix an integer $k \ge 1$ and a dimension $n$, and let $\chi_s(x) = \omega_k^{s \cdot x}$
+denote the Fourier character on $\mathbb{Z}_k^n$ indexed by $s \in \mathbb{Z}_k^n$,
+where $\omega_k = e^{2\pi i/k}$ and $s \cdot x = \sum_{i} s_i x_i$ is the dot product
+modulo $k$. Then the character indexed by the zero vector is the constant function $1$:
+for every $x \in \mathbb{Z}_k^n$, \[ \chi_0(x) = 1. \]
 \end{lemma}
 
-\begin{lemma}[Characters have unit norm]
+\begin{lemma}[Fourier characters have unit modulus]
 \lean{ZkFourier.norm_char_s}
 \label{ZkFourier.norm_char_s}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.norm_toOmega}
 \difficulty{1}
-For all $s, x \in \mathbb{Z}_k^n$, $\|\chi_s(x)\| = 1$.
+Fix an integer $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$ be the primitive $k$-th root
+of unity. For $s \in \mathbb{Z}_k^n$, let $\chi_s \colon \mathbb{Z}_k^n \to \bbc$ be the
+Fourier character $\chi_s(x) = \omega_k^{\,s\cdot x}$, where $s \cdot x = \sum_{i} s_i
+x_i \in \mathbb{Z}/k\mathbb{Z}$ is the componentwise dot product. Then for every $s, x
+\in \mathbb{Z}_k^n$ one has $\abs{\chi_s(x)} = 1$.
 \end{lemma}
 
-\begin{lemma}[Characters are nonzero]
+\begin{lemma}[Nonvanishing of the Fourier characters]
 \lean{ZkFourier.char_s_ne_zero}
 \label{ZkFourier.char_s_ne_zero}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.norm_char_s}
 \difficulty{2}
-For all $s, x \in \mathbb{Z}_k^n$, $\chi_s(x) \neq 0$.
+Fix $k \geq 1$ and $n \in \bbn$, and let $s \in \bbz_k^n$. Then the Fourier character
+$\chi_s(x) = \omega_k^{s \cdot x}$ is nonzero for every $x \in \bbz_k^n$.
 \end{lemma}
 
-\begin{lemma}[Conjugate of a character]
+\begin{lemma}[Conjugate of a Fourier character]
 \lean{ZkFourier.char_s_conj}
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{ZkFourier.char_s_conj}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega_neg, ZkFourier.zkDot_neg_left}
 \difficulty{1}
-For $s, x \in \mathbb{Z}_k^n$,
-$\overline{\chi_s(x)} = \chi_{-s}(x)$.
-Complex conjugation of a character corresponds to negating its index.
+Fix an integer $k \ge 1$, and for $s \in \mathbb{Z}_k^n$ let $\chi_s(x) = \omega_k^{s
+\cdot x}$ be the Fourier character on $\mathbb{Z}_k^n$ indexed by $s$, where $\omega_k =
+e^{2\pi i/k}$ and $s \cdot x = \sum_{i} s_i x_i \in \mathbb{Z}/k\mathbb{Z}$. Then for
+every $s, x \in \mathbb{Z}_k^n$,
+\[
+\overline{\chi_s(x)} = \chi_{-s}(x);
+\]
+that is, complex conjugation of a character amounts to negating its index.
 \end{lemma}
 
-\begin{lemma}[Product of two characters]
+\begin{lemma}[Multiplicativity of Fourier characters]
 \lean{ZkFourier.char_s_mul}
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{ZkFourier.char_s_mul}
 \leanok
-
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -446,13 +511,18 @@ Complex conjugation of a character corresponds to negating its index.
   {pdf-50833afe7403-p022-b008}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
 \difficulty{3}
-For $s, t, x \in \mathbb{Z}_k^n$,
-$\chi_s(x) \cdot \chi_t(x) = \chi_{s+t}(x)$.
-Pointwise multiplication of characters corresponds to addition of their
+Fix an integer $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$. For a frequency vector $s
+\in \mathbb{Z}_k^n$, let $\chi_s \colon \mathbb{Z}_k^n \to \mathbb{C}$ be the Fourier
+character $\chi_s(x) = \omega_k^{\,s \cdot x}$, where $s \cdot x = \sum_{i} s_i x_i$ is
+the dot product in $\mathbb{Z}/k\mathbb{Z}$. Then for all $s, t, x \in \mathbb{Z}_k^n$,
+\[
+\chi_s(x)\,\chi_t(x) = \chi_{s+t}(x),
+\]
+so that pointwise multiplication of characters corresponds to addition of their
 frequency indices.
 \end{lemma}
 
-\begin{lemma}[Expectation of a nontrivial character is zero]
+\begin{lemma}[Mean of a nontrivial Fourier character vanishes]
 \lean{ZkFourier.expectation_char_nontrivial}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b002,
@@ -462,22 +532,30 @@ frequency indices.
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.geom_sum_toOmega, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
 \difficulty{5}
-If $s \neq 0$, then $\mathbb{E}[\chi_s] = 0$.
-This follows from the geometric sum identity: when some coordinate $s_i \neq 0$,
-the sum over that coordinate vanishes.
+Fix a modulus $k \ge 1$ and a dimension $n$, and let $\omega_k = e^{2\pi i/k}$. For a
+frequency $s \in \bbz_k^n$, let $\chi_s(x) = \omega_k^{s\cdot x}$ be the associated
+Fourier character on $\bbz_k^n$. If $s \neq 0$, then the character has vanishing mean:
+\[
+  \E[\chi_s] = \frac{1}{k^n}\sum_{x \in \bbz_k^n} \omega_k^{s\cdot x} = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Expectation of the trivial character is one]
+\begin{lemma}[Expectation of the trivial character equals one]
 \lean{ZkFourier.expectation_char_trivial}
 \label{ZkFourier.expectation_char_trivial}
 \leanok
 \uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation}
 \difficulty{2}
-$\mathbb{E}[\chi_0] = 1$, since $\chi_0 \equiv 1$ and the sum of $k^n$ ones
-divided by $k^n$ equals one.
+Fix an integer $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$ be the associated primitive
+$k$-th root of unity. For a natural number $n$ and an index $s \in
+(\mathbb{Z}/k\mathbb{Z})^n$, let $\chi_s \colon (\mathbb{Z}/k\mathbb{Z})^n \to
+\mathbb{C}$ be the Fourier character $\chi_s(x) = \omega_k^{\,s \cdot x}$, and write
+$\mathbb{E}[f] = k^{-n}\sum_{x} f(x)$ for the uniform average of a complex-valued
+function $f$ over $(\mathbb{Z}/k\mathbb{Z})^n$. Then the trivial character $\chi_0$,
+indexed by the zero vector, has expectation $\mathbb{E}[\chi_0] = 1$.
 \end{lemma}
 
-\begin{lemma}[Self-inner-product of a character]
+\begin{lemma}[Self-inner-product of a Fourier character]
 \lean{ZkFourier.inner_product_char_self}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b004,
@@ -485,7 +563,6 @@ divided by $k^n$ equals one.
 }
 \label{ZkFourier.inner_product_char_self}
 \leanok
-
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -591,8 +668,12 @@ divided by $k^n$ equals one.
   {pdf-50833afe7403-p021-b004}
 \uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.inner_product, ZkFourier.norm_char_s}
 \difficulty{2}
-For any $s \in \mathbb{Z}_k^n$, $\langle \chi_s, \chi_s \rangle = 1$.
-Every character is a unit-norm vector in $L^2(\mathbb{Z}_k^n)$.
+Fix an integer $k \ge 1$ and a dimension $n \ge 0$, and let $\omega_k = e^{2\pi i/k}$.
+For $s \in \mathbb{Z}_k^n$, let $\chi_s(x) = \omega_k^{\,s\cdot x}$ be the Fourier
+character indexed by $s$, and equip functions on $\mathbb{Z}_k^n$ with the Hermitian
+inner product $\langle f,g\rangle = \frac{1}{k^n}\sum_{x\in\mathbb{Z}_k^n}
+f(x)\,\overline{g(x)}$. Then every character has unit norm: for all $s \in
+\mathbb{Z}_k^n$, \[ \langle \chi_s, \chi_s\rangle = 1. \]
 \end{lemma}
 
 \begin{lemma}[Orthogonality of distinct characters]
@@ -603,7 +684,6 @@ Every character is a unit-norm vector in $L^2(\mathbb{Z}_k^n)$.
 }
 \label{ZkFourier.inner_product_char_nonself}
 \leanok
-
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -746,9 +826,11 @@ Every character is a unit-norm vector in $L^2(\mathbb{Z}_k^n)$.
     pdf-50833afe7403-p022-b003}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.char_s_mul, ZkFourier.expectation_char_nontrivial, ZkFourier.inner_product}
 \difficulty{3}
-If $s \neq t$, then $\langle \chi_s, \chi_t \rangle = 0$.
-Together with $\texttt{ZkFourier.inner\_product\_char\_self}$, this shows that the
-characters form an orthonormal system.
+Let $k \ge 1$ and $n \ge 0$, and let $\omega_k = e^{2\pi i/k}$. For $s, t \in
+\mathbb{Z}_k^n$ with $s \ne t$, the Fourier characters $\chi_s(x) = \omega_k^{s\cdot x}$
+and $\chi_t(x) = \omega_k^{t\cdot x}$ are orthogonal with respect to the Hermitian inner
+product $\langle f, g\rangle = \frac{1}{k^n}\sum_{x \in \mathbb{Z}_k^n}
+f(x)\,\overline{g(x)}$; that is, $\langle \chi_s, \chi_t\rangle = 0$.
 \end{lemma}
 
 \begin{definition}[Fourier coefficient]
@@ -765,7 +847,7 @@ $s$ is
 \]
 \end{definition}
 
-\begin{lemma}[Fourier coefficient of a character at its own frequency]
+\begin{lemma}[Character has unit Fourier coefficient at its own frequency]
 \lean{ZkFourier.fourier_coeff_char_self}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b005,
@@ -773,7 +855,6 @@ $s$ is
 }
 \label{ZkFourier.fourier_coeff_char_self}
 \leanok
-
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -889,11 +970,14 @@ $s$ is
   {pdf-50833afe7403-p005-b001}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_self}
 \difficulty{1}
-For any $s \in \mathbb{Z}_k^n$,
-$\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
+Fix an integer $k \ge 1$ and a dimension $n$, and let $\chi_s(x) = \omega_k^{s \cdot x}$
+denote the Fourier character on $\mathbb{Z}_k^n$ indexed by a frequency $s \in
+\mathbb{Z}_k^n$, where $\omega_k = e^{2\pi i / k}$. Then for every $s \in
+\mathbb{Z}_k^n$, the Fourier coefficient of $\chi_s$ at its own frequency equals $1$;
+equivalently, $\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
 \end{lemma}
 
-\begin{lemma}[Fourier coefficient of a character at a different frequency]
+\begin{lemma}[Orthogonality of distinct Fourier characters]
 \lean{ZkFourier.fourier_coeff_char_of_ne}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b004,
@@ -901,7 +985,6 @@ $\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
 }
 \label{ZkFourier.fourier_coeff_char_of_ne}
 \leanok
-
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -1062,10 +1145,18 @@ $\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
     pdf-50833afe7403-p005-b001}
 \uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_nonself}
 \difficulty{1}
-If $s \neq t$, then $\widehat{\chi_s}(t) = \langle \chi_s, \chi_t \rangle = 0$.
+Fix an integer $k \ge 1$ and a dimension $n$, and let $\omega_k = e^{2\pi i / k}$. For a
+frequency $s \in \mathbb{Z}_k^n$, write $\chi_s(x) = \omega_k^{\,s \cdot x}$ for the
+associated Fourier character on $\mathbb{Z}_k^n$, where $s \cdot x = \sum_{i} s_i x_i$
+is computed in $\mathbb{Z}/k\mathbb{Z}$. Then for any two distinct frequencies $s \ne t$
+in $\mathbb{Z}_k^n$, the Fourier coefficient of the character $\chi_s$ at $t$ vanishes:
+\[
+\widehat{\chi_s}(t) = \langle \chi_s, \chi_t \rangle =
+\mathbb{E}_{x}\!\left[\chi_s(x)\,\overline{\chi_t(x)}\right] = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Fourier expansion]
+\begin{lemma}[Fourier expansion on $\mathbb{Z}_k^n$]
 \lean{ZkFourier.fourier_expansion}
 \label{ZkFourier.fourier_expansion}
 \leanok
@@ -1075,14 +1166,19 @@ If $s \neq t$, then $\widehat{\chi_s}(t) = \langle \chi_s, \chi_t \rangle = 0$.
 }
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.zkDot}
 \difficulty{6}
-Every function $f : \mathbb{Z}_k^n \to \mathbb{C}$ admits the Fourier expansion
+Fix integers $k \ge 1$ and $n$, and let $\omega_k = e^{2\pi i/k}$. For a frequency $s
+\in \mathbb{Z}_k^n$, let $\chi_s(x) = \omega_k^{\,s\cdot x}$ be the corresponding
+Fourier character, where $s\cdot x = \sum_{i} s_i x_i \in \mathbb{Z}/k\mathbb{Z}$, and
+let $\hat f(s) = \tfrac{1}{k^n}\sum_{x \in \mathbb{Z}_k^n} f(x)\,\overline{\chi_s(x)}$
+be the Fourier coefficient of $f$ at $s$. Then every function $f : \mathbb{Z}_k^n \to
+\mathbb{C}$ is recovered from its Fourier coefficients by
 \[
-  f(x) = \sum_{s \in \mathbb{Z}_k^n} \hat{f}(s)\,\chi_s(x).
+  f(x) = \sum_{s \in \mathbb{Z}_k^n} \hat f(s)\,\chi_s(x)
+  \qquad\text{for all } x \in \mathbb{Z}_k^n.
 \]
-The characters form a complete orthonormal basis of $L^2(\mathbb{Z}_k^n)$.
 \end{lemma}
 
-\begin{lemma}[Parseval's identity]
+\begin{lemma}[Parseval's identity on $\mathbb{Z}_k^n$]
 \lean{ZkFourier.parseval_identity}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p006-b001,
@@ -1091,7 +1187,6 @@ The characters form a complete orthonormal basis of $L^2(\mathbb{Z}_k^n)$.
 }
 \label{ZkFourier.parseval_identity}
 \leanok
-
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -1262,25 +1357,30 @@ The characters form a complete orthonormal basis of $L^2(\mathbb{Z}_k^n)$.
     pdf-50833afe7403-p022-b009}
 \uses{ZkFourier.L2_norm_sq, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion}
 \difficulty{5}
-For any $f : \mathbb{Z}_k^n \to \mathbb{C}$,
+Let $k \ge 1$ and $n$ be natural numbers, and let $f : \mathbb{Z}_k^n \to \mathbb{C}$ be
+a complex-valued function on $\mathbb{Z}_k^n$. Then the sum of the squared magnitudes of
+its Fourier coefficients equals its squared $L^2$ norm:
 \[
-  \sum_{s \in \mathbb{Z}_k^n} |\hat{f}(s)|^2 = \|f\|_2^2.
+  \sum_{s \in \mathbb{Z}_k^n} \bigl|\hat{f}(s)\bigr|^2 = \|f\|_2^2,
 \]
-Parseval's identity expresses the conservation of $L^2$ energy under the
-Fourier transform.
+where $\hat{f}(s) = \mathbb{E}_{x}\!\left[f(x)\,\overline{\omega_k^{\,s \cdot
+x}}\right]$ is the Fourier coefficient at frequency $s$ and $\|f\|_2^2 =
+\tfrac{1}{k^n}\sum_{x \in \mathbb{Z}_k^n} |f(x)|^2$.
 \end{lemma}
 
-\begin{lemma}[Convolution theorem]
+\begin{lemma}[Convolution theorem for the Fourier transform on $\mathbb{Z}_k^n$]
 \lean{ZkFourier.fourier_coeff_convolution}
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b006}
 \label{ZkFourier.fourier_coeff_convolution}
 \leanok
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s_add, ZkFourier.convolution, ZkFourier.expectation, ZkFourier.fourier_coeff, ZkFourier.inner_product}
 \difficulty{4}
-For $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ and $s \in \mathbb{Z}_k^n$,
+Fix an integer $k \ge 1$ and let $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ be
+complex-valued functions on $\mathbb{Z}_k^n$, with convolution $(f * g)(x) =
+\mathbb{E}_y\!\left[f(y)\,g(x - y)\right]$ and Fourier coefficients $\hat{f}(s) =
+\langle f, \chi_s\rangle$ taken at any frequency $s \in \mathbb{Z}_k^n$. Then the
+Fourier transform carries convolution to pointwise multiplication:
 \[
   \widehat{f * g}(s) = \hat{f}(s)\,\hat{g}(s).
 \]
-Convolution in the spatial domain corresponds to pointwise multiplication in
-the frequency domain.
 \end{lemma}

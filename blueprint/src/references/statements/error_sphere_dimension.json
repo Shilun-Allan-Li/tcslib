@@ -1,0 +1,15 @@
+{
+ "lean_name": "error_sphere_dimension",
+ "key": "1f52d1c3bc66c4d3",
+ "kind": "lemma",
+ "title": "Dimension of the error sphere of a non-degenerate code",
+ "statement": "Let $C \\le \\mathcal{H}_n$ be a code on $n$ qubits that is non-degenerate for $t$ errors, meaning it satisfies the Knill--Laflamme condition $P_C E^\\dagger F P_C = \\lambda_{EF} P_C$ for all Pauli strings $E,F$ of weight at most $t$ and moreover $P_C E^\\dagger F P_C = 0$ whenever $E \\neq F$. Then the error sphere $\\mathrm{ES}(C,t) = \\bigvee_{\\mathrm{wt}(p)\\le t} \\hat{p}(C)$ has dimension\n\\[\n\\dim_{\\mathbb{C}} \\mathrm{ES}(C,t) = |\\mathcal{E}(n,t)| \\cdot \\dim_{\\mathbb{C}} C,\n\\]\nwhere $\\mathcal{E}(n,t)$ is the set of Pauli strings of weight at most $t$.",
+ "hypotheses_covered": [
+  "C is a code (subspace) on n qubits",
+  "C is non-degenerate for t errors (Knill--Laflamme condition plus orthogonality of distinct errors)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $C$ is non-degenerate,\n\\[\n\\dim(\\mathrm{ES}(C,t)) \\;=\\; |\\mathcal{E}(n,t)|\\cdot\\dim(C).\n\\]"
+}

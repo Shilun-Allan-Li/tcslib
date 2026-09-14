@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_le_average_xVector_info",
+ "key": "a5236a3614e15b79",
+ "kind": "theorem",
+ "title": "Averaged information bound for Alice's special-coordinate bit",
+ "statement": "Fix an integer $n \\ge 1$ and a deterministic two-party communication protocol $p$ for set disjointness on inputs of length $n$, in which Alice and Bob each hold a subset of $\\{1,\\dots,n\\}$. Let $\\mu$ denote the hard distribution over such input pairs conditioned on the event that Alice's and Bob's sets are disjoint, and take all mutual information $I(\\,\\cdot\\,;\\,\\cdot\\mid\\,\\cdot\\,)$ below with respect to $\\mu$. Under $\\mu$, let $X, Y \\colon \\{1,\\dots,n\\} \\to \\{0,1\\}$ be the input vectors of Alice and Bob, let $T$ be the special coordinate, let $X_T$ be Alice's bit at coordinate $T$, and let $M$ be the transcript produced by running $p$ on the pair $(X,Y)$; write $X_{<T}$ for the vector of Alice's bits at coordinates strictly below $T$, padded with $0$ at every other coordinate, and $Y_{\\ge T}$ for the vector of Bob's bits at coordinates at least $T$, padded with $0$ at every other coordinate. Then\n\\[\nI\\big(X_T \\,;\\, M \\mid T,\\, X_{<T},\\, Y_{\\ge T}\\big) \\;\\le\\; \\frac{1}{n}\\, I\\big(X \\,;\\, M \\mid Y\\big).\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer (n ≥ 1)",
+  "p is a deterministic disjointness protocol on inputs of length n",
+  "all mutual information is taken under the hard distribution conditioned on the disjointness event",
+  "M is the transcript of p run on the sampled input pair (X,Y)",
+  "left side conditions on the special coordinate T, Alice's bits before T, and Bob's bits from T onward (each padded with 0 elsewhere)",
+  "right side is the full-vector conditional mutual information divided by n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice fixed-coordinate chain-rule bound after conditioning on disjointness and averaging over the uniform special coordinate: $I(X_{T} : M | T, X_{<T}, Y_{≥T}, D) ≤ I(X : M | Y, D) / n$."
+}

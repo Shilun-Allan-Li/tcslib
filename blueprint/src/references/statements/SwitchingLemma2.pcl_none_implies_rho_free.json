@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.pcl_none_implies_rho_free",
+ "key": "bc047659da8495d1",
+ "kind": "lemma",
+ "title": "Processing preserves free variables in the base restriction",
+ "statement": "Fix a number $n$ of variables. Let $\\mathrm{lits}$ be a list of literals, each paired with its position index in a clause; let $\\mathrm{path}$ be a decision-tree path; let $\\rho_0$ and $\\sigma$ be restrictions on the $n$ variables; and let $v$ be a variable. Let $\\rho_0'$ denote the updated restriction produced in place of $\\rho_0$ by the clause-processing procedure applied to $\\mathrm{lits}$, $\\mathrm{path}$, $\\rho_0$, and $\\sigma$. If $\\rho_0'$ leaves $v$ free, then $\\rho_0$ already leaves $v$ free.",
+ "hypotheses_covered": [
+  "a literal-and-index list, a path, restrictions rho_0 and sigma, and a variable v",
+  "the updated rho_0 restriction produced by the clause-processing procedure is free (none) at v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the restriction component $(\\mathrm{processClauseLits}\\ \\mathit{lits}\\ \\mathit{path}\\ \\rho_0\\ \\sigma).2.1$\nis unset at a variable $v$ (equal to \\texttt{none}), then $\\rho_0$ is already unset at $v$,\ni.e.\\ $\\rho_0\\,v = \\texttt{none}$."
+}

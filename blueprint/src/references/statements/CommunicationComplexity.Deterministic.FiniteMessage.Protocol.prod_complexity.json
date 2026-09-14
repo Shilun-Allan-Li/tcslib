@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.prod_complexity",
+ "key": "8ce6a514bf880728",
+ "kind": "theorem",
+ "title": "Additivity of complexity under products",
+ "statement": "Let $p_1$ be a finite-message protocol over inputs $X_1$, $Y_1$ with outputs in $\\alpha_1$, and let $p_2$ be a finite-message protocol over inputs $X_2$, $Y_2$ with outputs in $\\alpha_2$. Then the communication complexity of their product protocol, which runs $p_1$ on the first input components and $p_2$ on the second and pairs the two outputs, equals the sum of their individual complexities:\n\\[\n  \\mathrm{complexity}(p_1 \\times p_2) \\;=\\; \\mathrm{complexity}(p_1) + \\mathrm{complexity}(p_2).\n\\]",
+ "hypotheses_covered": [
+  "p1 is a finite-message protocol over X1, Y1, α1",
+  "p2 is a finite-message protocol over X2, Y2, α2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The complexity of the product protocol satisfies\n\\[\n  (p_1.\\texttt{prod}\\;p_2).\\texttt{complexity}\n  \\;=\\; p_1.\\texttt{complexity} + p_2.\\texttt{complexity}.\n\\]"
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue_dualConditioningValue",
+ "key": "715cd7e03cbb58b8",
+ "kind": "theorem",
+ "title": "The dual conditioning-value recoding is an involution",
+ "statement": "Fix a positive integer $n$, and let a triple $c = (i, x, y)$ consist of a coordinate $i \\in \\{0, 1, \\dots, n-1\\}$ together with two Boolean vectors $x, y \\colon \\{0, 1, \\dots, n-1\\} \\to \\{\\text{true}, \\text{false}\\}$. Applying the dual conditioning-value recoding — which sends $c$ to $(n-1-i,\\, y \\circ \\mathrm{rev},\\, x \\circ \\mathrm{rev})$, where $\\mathrm{rev}$ reverses the coordinate order — twice in succession returns the original triple $c$; that is, the recoding is an involution.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "c is a triple of a coordinate in Fin n and two Boolean vectors on Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Recoding a conditioning value twice recovers the original value."
+}

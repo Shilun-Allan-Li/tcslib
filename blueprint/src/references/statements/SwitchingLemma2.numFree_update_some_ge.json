@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.numFree_update_some_ge",
+ "key": "c35c7f08ea62e3b0",
+ "kind": "lemma",
+ "title": "Fixing a variable lowers the free count by at most one",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, let $v$ be one of these variables, and let $b$ be a Boolean value. Let $\\rho'$ be the restriction that fixes $v$ to $b$ and agrees with $\\rho$ on every other variable. Writing $f(\\sigma)$ for the number of free variables of a restriction $\\sigma$, we have $f(\\rho') + 1 \\ge f(\\rho)$; that is, fixing a single variable reduces the number of free variables by at most one.",
+ "hypotheses_covered": [
+  "ρ is a restriction on n variables",
+  "v is a variable index",
+  "b is a Boolean value",
+  "ρ' fixes v to b and agrees with ρ elsewhere"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Updating $\\rho$ at $v$ to $\\mathrm{some}\\,b$ decreases $\\mathrm{numFree}$ by at\nmost one: $\\mathrm{numFree}(\\rho[v \\mapsto b]) + 1 \\geq \\rho.\\mathrm{numFree}$."
+}

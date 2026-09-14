@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.BitString.signedInner_append",
+ "key": "2e315fab356adc59",
+ "kind": "theorem",
+ "title": "Additivity of the signed inner product under concatenation",
+ "statement": "Let $x_1, y_1 : \\mathrm{Fin}\\,m \\to \\mathrm{Bool}$ be $m$-bit strings and $x_2, y_2 : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be $n$-bit strings, and write $x_1 \\frown x_2$ for the length-$(m+n)$ string obtained by concatenation, whose first $m$ coordinates are those of $x_1$ and whose last $n$ coordinates are those of $x_2$. Writing $\\langle x, y\\rangle$ for the signed inner product of two equal-length bit strings — the number of coordinates on which they agree minus the number on which they disagree — the signed inner product of the two concatenations splits as the sum of the block-wise signed inner products:\n\\[\n  \\langle x_1 \\frown x_2,\\; y_1 \\frown y_2\\rangle\n  \\;=\\; \\langle x_1, y_1\\rangle + \\langle x_2, y_2\\rangle.\n\\]",
+ "hypotheses_covered": [
+  "x₁, y₁ are bit strings of length m",
+  "x₂, y₂ are bit strings of length n",
+  "concatenation places the length-m block before the length-n block"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For strings $x_1, y_1 : \\mathrm{Fin}\\,m \\to \\mathrm{Bool}$ and\n$x_2, y_2 : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$,\n\\[\n  \\mathrm{signedInner}(\\mathrm{append}(x_1, x_2),\\,\\mathrm{append}(y_1, y_2))\n  \\;=\\; \\mathrm{signedInner}(x_1, y_1) + \\mathrm{signedInner}(x_2, y_2).\n\\]\nConcatenating both pairs of bit strings adds their signed inner products."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yVector_message_info_le_complexity_mul_log_two",
+ "key": "ad5a4ef677bc7311",
+ "kind": "theorem",
+ "title": "Conditional information between Bob's input and the transcript",
+ "statement": "Let $n$ be a positive integer, and let $p$ be a deterministic two-party communication protocol for the length-$n$ set-disjointness problem, in which Alice holds a set $X \\subseteq \\{0,\\dots,n-1\\}$ and Bob holds a set $Y \\subseteq \\{0,\\dots,n-1\\}$. Draw an input pair from the hard distribution conditioned on the disjointness event $X \\cap Y = \\varnothing$; write $x, y \\in \\{0,1\\}^{n}$ for the indicator vectors of $X$ and $Y$ respectively, and write $M$ for the transcript produced by executing $p$ on the pair $(X, Y)$. The conditional mutual information, measured in nats, between $y$ and $M$ given $x$ then satisfies \\[ I(y \\,;\\, M \\mid x) \\;\\le\\; \\mathrm{complexity}(p)\\cdot\\log 2, \\] where $\\mathrm{complexity}(p)$ denotes the worst-case number of bits exchanged by $p$.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic protocol for length-n disjointness inputs",
+  "the underlying measure is the hard distribution conditioned on the disjointness event"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Bob full-vector information is bounded by the transcript entropy."
+}

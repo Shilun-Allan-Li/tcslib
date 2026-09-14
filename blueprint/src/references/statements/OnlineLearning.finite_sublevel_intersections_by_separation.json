@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.finite_sublevel_intersections_by_separation",
+ "key": "368c371a5320ce7d",
+ "kind": "lemma",
+ "title": "Nonempty finite intersection of minimax sublevel sets",
+ "statement": "Let $X, Y \\subseteq \\bbr$ and $f : \\bbr \\times \\bbr \\to \\bbr$ satisfy the convex-compact minimax hypotheses, and write $v = \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y)$ for the lower value of the payoff. Then for every $\\varepsilon > 0$ and every finite set $u$ of columns chosen from $Y$, there is a row $x \\in X$ with $f(x,y) \\le v + \\varepsilon$ simultaneously for all $y \\in u$; equivalently, the intersection over $y \\in u$ of the sublevel sets $\\{x \\in X : f(x,y) \\le v + \\varepsilon\\}$ is nonempty.",
+ "hypotheses_covered": [
+  "convex-compact minimax hypotheses hold for X, Y, f",
+  "epsilon > 0",
+  "u is a finite set of columns from Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Assume the convex-compact minimax hypotheses\n$\\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$. Then for every\n$\\varepsilon > 0$ and every finite column sample $u \\subseteq Y$, the set\n\\[\n  X \\cap \\bigcap_{y \\in u} \\bigl(X \\cap \\{x \\mid f(x,y) \\le v + \\varepsilon\\}\\bigr),\n  \\qquad v = \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y),\n\\]\nis nonempty, the inner sets being the sublevel sets\n$\\texttt{OnlineLearning.minimaxSublevel}$; i.e.\\ some row $x \\in X$ satisfies\n$f(x,y) \\le v + \\varepsilon$ simultaneously for all sampled columns $y \\in u$."
+}

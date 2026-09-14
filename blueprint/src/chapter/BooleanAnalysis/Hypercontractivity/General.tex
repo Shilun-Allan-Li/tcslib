@@ -39,20 +39,25 @@ $x$ to $y$ under $\rho$-correlated noise.
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, GeneralHypercontractivity.noiseKernel}
 \difficulty{2}
-If $0 \le \rho \le 1$ then $K_\rho(x,y) \ge 0$ for all $x, y \in \mathrm{BoolCube}\,n$.
+Let $n$ be a natural number and let $\rho$ be a real number with $0 \le \rho \le 1$.
+Then for all points $x, y$ of the Boolean hypercube $\mathrm{BoolCube}\,n$, the noise
+kernel is nonnegative: $K_\rho(x, y) \ge 0$.
 \end{lemma}
 
-\begin{lemma}[Fourier form of the kernel product]
+\begin{lemma}[Fourier form of the noise kernel]
 \lean{GeneralHypercontractivity.sum_fourier_kernel}
 \label{GeneralHypercontractivity.sum_fourier_kernel}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{3}
-For all $\rho \in \bbr$ and $x, y \in \mathrm{BoolCube}\,n$,
+For every real number $\rho$ and all points $x, y$ of the Boolean hypercube $\{0,1\}^n$,
 \[
   \sum_{S \subseteq [n]} \rho^{\abs{S}}\,\chi_S(x)\,\chi_S(y)
-  \;=\; \prod_{i} \bigl(1 + \rho\,\chi(x_i)\,\chi(y_i)\bigr).
+  \;=\; \prod_{i=1}^{n} \bigl(1 + \rho\,\sigma(x_i)\,\sigma(y_i)\bigr),
 \]
+where the sum ranges over all subsets $S$ of $[n]=\{1,\dots,n\}$, $\chi_S$ is the
+Walsh--Fourier character indexed by $S$, and $\sigma$ is the sign encoding sending
+$0\mapsto 1$ and $1\mapsto -1$.
 \end{lemma}
 
 \begin{lemma}[Noise operator as a kernel sum]
@@ -61,22 +66,31 @@ For all $\rho \in \bbr$ and $x, y \in \mathrm{BoolCube}\,n$,
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.sum_fourier_kernel}
 \difficulty{3}
-For every $g : \mathrm{BoolCube}\,n \to \bbr$ and every $x$,
+Fix $\rho \in \bbr$, an arity $n$, and a point $x \in \{0,1\}^n$. For every Boolean
+function $g : \{0,1\}^n \to \bbr$, the value of the noise operator $T_\rho$ at $x$
+equals the average of $g$ against the noise kernel, namely
 \[
-  (T_\rho g)(x) \;=\; \sum_{y} K_\rho(x,y)\, g(y).
+  (T_\rho g)(x) \;=\; \sum_{y \in \{0,1\}^n} K_\rho(x,y)\, g(y),
 \]
+where $K_\rho(x,y) = \prod_{i} \tfrac{1 + \rho\,\sigma(x_i)\,\sigma(y_i)}{2}$ is the
+noise kernel and $\sigma$ is the $\pm 1$ sign encoding of a bit.
 \end{lemma}
 
-\begin{lemma}[Inner product as a kernel-weighted double sum]
+\begin{lemma}[Inner product against the noise operator as a kernel-weighted double sum]
 \lean{GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
 \label{GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseOp_eq_kernel_sum}
 \difficulty{3}
-For all $f, g : \mathrm{BoolCube}\,n \to \bbr$,
+Fix a dimension $n$ and a real number $\rho$. For any two Boolean functions $f, g :
+\{0,1\}^n \to \bbr$, the $L^2$ inner product of $f$ with the noised function $T_\rho g$
+can be written as a double average against the noise kernel:
 \[
-  \inn{f, T_\rho g} \;=\; \frac{1}{2^n} \sum_{x} \sum_{y} K_\rho(x,y)\, f(x)\, g(y).
+\langle f, T_\rho g\rangle \;=\; 2^{-n} \sum_{x \in \{0,1\}^n} \sum_{y \in \{0,1\}^n}
+K_\rho(x,y)\, f(x)\, g(y),
 \]
+where $K_\rho(x,y) = \prod_{i} \tfrac{1 + \rho\,\sigma(x_i)\,\sigma(y_i)}{2}$ is the
+noise kernel and $\sigma$ is the $\pm 1$ sign encoding of a bit.
 \end{lemma}
 
 \begin{lemma}[Monotonicity of kernel-weighted expectations]
@@ -85,9 +99,11 @@ For all $f, g : \mathrm{BoolCube}\,n \to \bbr$,
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_nonneg}
 \difficulty{2}
-Let $0 \le \rho \le 1$ and let $h, h' : \mathrm{BoolCube}\,n \times \mathrm{BoolCube}\,n \to \bbr$
-satisfy $h(x,y) \le h'(x,y)$ for all $x, y$. Then the kernel-weighted average of $h$ is at
-most that of $h'$:
+Fix a dimension $n$ and a correlation parameter $\rho$ with $0 \le \rho \le 1$, and let
+$K_\rho(x,y) = \prod_{i} \tfrac{1 + \rho\,\chi(x_i)\,\chi(y_i)}{2}$ denote the noise
+kernel on the Boolean hypercube $\{0,1\}^n$, where $\chi(\cdot)$ is the $\pm 1$ encoding
+of a bit. If $h, h' : \{0,1\}^n \times \{0,1\}^n \to \bbr$ satisfy $h(x,y) \le h'(x,y)$
+for all $x$ and $y$, then the kernel-weighted average of $h$ is at most that of $h'$:
 \[
   \frac{1}{2^n}\sum_{x}\sum_{y} K_\rho(x,y)\, h(x,y)
   \;\le\;
@@ -95,17 +111,21 @@ most that of $h'$:
 \]
 \end{lemma}
 
-\begin{lemma}[Factorization of the kernel along the last coordinate]
+\begin{lemma}[Factorization of the noise kernel along the last coordinate]
 \lean{GeneralHypercontractivity.noiseKernel_snoc}
 \label{GeneralHypercontractivity.noiseKernel_snoc}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, GeneralHypercontractivity.noiseKernel}
 \difficulty{2}
-For $x', y' \in \mathrm{BoolCube}\,n$ and bits $b, b'$,
+Fix $\rho \in \bbr$, points $x', y'$ in the Boolean hypercube $\{0,1\}^n$, and bits $b,
+b'$. Write $(x', b)$ and $(y', b')$ for the points of $\{0,1\}^{n+1}$ obtained by
+appending $b$ and $b'$, respectively, as the final coordinate. Then the noise kernel of
+the extended pair factors as
 \[
-  K_\rho\bigl(\mathrm{snoc}(x',b),\ \mathrm{snoc}(y',b')\bigr)
-  \;=\; K_\rho(x',y') \cdot \frac{1 + \rho\,\chi(b)\,\chi(b')}{2}.
+  K_\rho\bigl((x', b),\, (y', b')\bigr)
+  \;=\; K_\rho(x', y') \cdot \frac{1 + \rho\,\chi(b)\,\chi(b')}{2},
 \]
+where $\chi(\cdot)$ is the $\pm 1$ sign encoding of a bit.
 \end{lemma}
 
 \subsection{Fubini-style decompositions}
@@ -116,42 +136,54 @@ For $x', y' \in \mathrm{BoolCube}\,n$ and bits $b, b'$,
 \leanok
 \uses{Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{3}
-For $h : \mathrm{BoolCube}\,(n+1) \to \bbr$,
+Let $h : \{0,1\}^{n+1} \to \bbr$ be a Boolean function on $n+1$ bits. Writing $(x', b)
+\in \{0,1\}^n \times \{0,1\}$ for the point of $\{0,1\}^{n+1}$ obtained by appending the
+bit $b$ to $x'$ as its last coordinate, the uniform expectation of $h$ can be computed
+by first averaging over the last bit and then over the remaining $n$ bits:
 \[
-  \E[h] \;=\; \E_{x'}\Bigl[\tfrac12\bigl(h(\mathrm{snoc}(x',\mathit{false})) + h(\mathrm{snoc}(x',\mathit{true}))\bigr)\Bigr],
+  \E[h] \;=\; \E_{x' \in \{0,1\}^n}\Bigl[\tfrac12\bigl(h(x', 0) + h(x', 1)\bigr)\Bigr].
 \]
-the outer expectation being over $x' \in \mathrm{BoolCube}\,n$.
 \end{lemma}
 
-\begin{lemma}[Collapse of the $p$-th moment along the last bit]
+\begin{lemma}[Collapse of the $p$-th moment along the last coordinate]
 \lean{GeneralHypercontractivity.norm_collapse_rpow}
 \label{GeneralHypercontractivity.norm_collapse_rpow}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, GeneralHypercontractivity.expect_succ_eq_iterated}
 \difficulty{1}
-For $p > 0$ and $f : \mathrm{BoolCube}\,(n+1) \to \bbr$,
+Let $p > 0$ and let $f : \{0,1\}^{n+1} \to \bbr$ be a Boolean function of arity $n+1$.
+Writing $(x', b) \in \{0,1\}^n \times \{0,1\}$ for the point of $\{0,1\}^{n+1}$ whose
+first $n$ coordinates are $x'$ and whose last coordinate is $b$, one has
 \[
-  \E\bigl[\abs{f}^p\bigr]
-  \;=\; \E_{x'}\Bigl[\tfrac12\bigl(\abs{f(\mathrm{snoc}(x',\mathit{false}))}^p + \abs{f(\mathrm{snoc}(x',\mathit{true}))}^p\bigr)\Bigr].
+  \E\bigl[\,\abs{f}^p\,\bigr]
+  \;=\;
+\E_{x' \in \{0,1\}^n}\!\left[\tfrac12\Bigl(\abs{f(x', 0)}^p + \abs{f(x',
+1)}^p\Bigr)\right],
 \]
+where both expectations are taken with respect to the uniform measure on the respective
+hypercubes.
 \end{lemma}
 
-\begin{lemma}[Decomposition of the kernel-weighted sum at dimension $n+1$]
+\begin{lemma}[Last-coordinate decomposition of the noise-kernel average]
 \lean{GeneralHypercontractivity.weighted_sum_succ_decomp}
 \label{GeneralHypercontractivity.weighted_sum_succ_decomp}
 \leanok
 \uses{Bonami.sum_boolCube_succ, Bonami.uniformWeight_succ, BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_snoc}
 \difficulty{5}
-For $F : \mathrm{BoolCube}\,(n+1) \times \mathrm{BoolCube}\,(n+1) \to \bbr$, the kernel-weighted
-bilinear average at dimension $n+1$ equals the $n$-dimensional kernel-weighted average of the
-one-bit average of the last coordinate:
+Fix a real number $\rho$ and a function $F \colon \{0,1\}^{n+1} \times \{0,1\}^{n+1} \to
+\bbr$ on pairs of points of the Boolean hypercube of dimension $n+1$. Write $\chi$ for
+the $\pm 1$ sign encoding of a bit, $K_\rho$ for the noise kernel, and
+$\mathrm{snoc}(x',b)$ for the point of $\{0,1\}^{n+1}$ obtained by appending the bit $b$
+to $x' \in \{0,1\}^n$. Then
 \[
-  \frac{1}{2^{n+1}}\sum_{x}\sum_{y} K_\rho(x,y)\, F(x,y)
+  \frac{1}{2^{\,n+1}}\sum_{x}\sum_{y} K_\rho(x,y)\, F(x,y)
   =
-  \frac{1}{2^{n}}\sum_{x'}\sum_{y'} K_\rho(x',y')\,
-  \Bigl[\tfrac12 \sum_{b}\sum_{b'} \tfrac{1+\rho\,\chi(b)\chi(b')}{2}\,
-  F(\mathrm{snoc}(x',b), \mathrm{snoc}(y',b'))\Bigr].
+  \frac{1}{2^{\,n}}\sum_{x'}\sum_{y'} K_\rho(x',y')\,
+  \Biggl[\frac12 \sum_{b}\sum_{b'} \frac{1+\rho\,\chi(b)\,\chi(b')}{2}\,
+  F\bigl(\mathrm{snoc}(x',b),\,\mathrm{snoc}(y',b')\bigr)\Biggr],
 \]
+where $x,y$ range over $\{0,1\}^{n+1}$, the points $x',y'$ range over $\{0,1\}^{n}$, and
+the bits $b,b'$ range over $\{0,1\}$.
 \end{lemma}
 
 \begin{lemma}[One-bit slice sum as a one-bit inner product]
@@ -160,72 +192,88 @@ one-bit average of the last coordinate:
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-Fix $x', y' \in \mathrm{BoolCube}\,n$ and $f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$. The
-one-bit kernel-weighted sum of the slices of $f$ at $x'$ and of $g$ at $y'$ equals the one-bit
-inner product of those slices against the noise operator:
+Fix a real number $\rho$, Boolean functions $f, g : \{0,1\}^{n+1} \to \bbr$, and points
+$x', y' \in \{0,1\}^n$. For a bit $b$, write $(x', b)$ for the point of $\{0,1\}^{n+1}$
+obtained by appending $b$ as the last coordinate of $x'$, and let $\sigma$ denote the
+sign encoding. Then
 \[
-  \tfrac12 \sum_{b}\sum_{b'} \tfrac{1+\rho\,\chi(b)\chi(b')}{2}\,
-  f(\mathrm{snoc}(x',b))\, g(\mathrm{snoc}(y',b'))
+  \frac12 \sum_{b \in \{0,1\}} \sum_{b' \in \{0,1\}}
+    \frac{1 + \rho\,\sigma(b)\,\sigma(b')}{2}\,
+    f(x', b)\, g(y', b')
   \;=\;
-  \inn{f_{x'}, T_\rho g_{y'}},
+  \langle F,\; T_\rho G\rangle,
 \]
-where $f_{x'}(t) = f(\mathrm{snoc}(x', t_0))$ and $g_{y'}(t) = g(\mathrm{snoc}(y', t_0))$ are
-functions on $\mathrm{BoolCube}\,1$.
+where $F, G : \{0,1\}^1 \to \bbr$ are the one-bit slices $F(t) = f(x', t_0)$ and $G(t) =
+g(y', t_0)$, and the inner product and the noise operator $T_\rho$ are taken on the
+one-dimensional cube $\{0,1\}^1$.
 \end{lemma}
 
-\begin{lemma}[$L^p$ norm of a one-bit slice]
+\begin{lemma}[Averaging the one-bit slice of an $L^p$ norm]
 \lean{GeneralHypercontractivity.one_bit_norm_slice}
 \label{GeneralHypercontractivity.one_bit_norm_slice}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{3}
-For $p > 0$, $f : \mathrm{BoolCube}\,(n+1) \to \bbr$ and $x' \in \mathrm{BoolCube}\,n$,
+Fix $p > 0$, let $f : \{0,1\}^{n+1} \to \bbr$ be a Boolean function, and let $x' \in
+\{0,1\}^n$. Writing $(x', b) \in \{0,1\}^{n+1}$ for the point obtained by appending a
+bit $b \in \{0,1\}$ to $x'$, and taking the expectation over the single free bit under
+the uniform measure, one has
 \[
-  \Bigl(\E_{t \in \mathrm{BoolCube}\,1}\bigl[\abs{f(\mathrm{snoc}(x',t_0))}^p\bigr]\Bigr)^{1/p}
+  \Bigl(\E_{b \in \{0,1\}}\bigl[\,\abs{f(x', b)}^p\,\bigr]\Bigr)^{1/p}
   \;=\;
-  \Bigl(\tfrac{\abs{f(\mathrm{snoc}(x',\mathit{false}))}^p + \abs{f(\mathrm{snoc}(x',\mathit{true}))}^p}{2}\Bigr)^{1/p}.
+  \left(\frac{\abs{f(x', 0)}^p + \abs{f(x', 1)}^p}{2}\right)^{1/p}.
 \]
 \end{lemma}
 
-\begin{lemma}[Norm collapse, clean form]
+\begin{lemma}[Averaging over the last coordinate preserves the p-th power mean]
 \lean{GeneralHypercontractivity.norm_collapse_clean}
 \label{GeneralHypercontractivity.norm_collapse_clean}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, GeneralHypercontractivity.norm_collapse_rpow}
 \difficulty{2}
-For $p \ge 1$ and $f : \mathrm{BoolCube}\,(n+1) \to \bbr$,
+Let $p \ge 1$ and let $f : \{0,1\}^{n+1} \to \bbr$ be a Boolean function on the
+$(n+1)$-dimensional cube. For a point $x' \in \{0,1\}^n$, write $(x',0)$ and $(x',1)$
+for the two extensions of $x'$ obtained by appending a final bit. Then averaging over
+the last coordinate leaves the expected $p$-th power of $\abs{f}$ unchanged:
 \[
-  \E_{x'}\Bigl[\tfrac{\abs{f(\mathrm{snoc}(x',\mathit{false}))}^p + \abs{f(\mathrm{snoc}(x',\mathit{true}))}^p}{2}\Bigr]
-  \;=\; \E\bigl[\abs{f}^p\bigr].
+  \E_{x' \in \{0,1\}^n}\!\left[\frac{\abs{f(x',0)}^p + \abs{f(x',1)}^p}{2}\right]
+  \;=\; \E_{x \in \{0,1\}^{n+1}}\!\bigl[\abs{f(x)}^p\bigr],
 \]
+where both expectations are taken with respect to the uniform measure.
 \end{lemma}
 
 \subsection{H\"older and contraction bounds}
 
-\begin{lemma}[H\"older inequality for Boolean functions]
+\begin{lemma}[Hölder's inequality for Boolean functions]
 \lean{GeneralHypercontractivity.holder_ineq_bool}
 \label{GeneralHypercontractivity.holder_ineq_bool}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-For $p > 1$ and $f, h : \mathrm{BoolCube}\,n \to \bbr$,
+Let $p > 1$ and let $f, h : \{0,1\}^n \to \bbr$ be Boolean functions, with expectations
+taken under the uniform measure on $\{0,1\}^n$. Then their $L^2$ inner product satisfies
 \[
-  \inn{f, h} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p} \cdot
-  \bigl(\E[\abs{h}^{p/(p-1)}]\bigr)^{(p-1)/p}.
+  \langle f, h\rangle \;\le\; \bigl(\E\bigl[\abs{f}^{p}\bigr]\bigr)^{1/p}\,
+  \bigl(\E\bigl[\abs{h}^{p/(p-1)}\bigr]\bigr)^{(p-1)/p},
 \]
+where the exponents $p$ and $p/(p-1)$ are conjugate.
 \end{lemma}
 
-\begin{lemma}[$L^q$ contractivity of the noise operator on one bit]
+\begin{lemma}[$L^q$ contractivity of the one-bit noise operator]
 \lean{GeneralHypercontractivity.noise_Lp_contraction_one_bit}
 \label{GeneralHypercontractivity.noise_Lp_contraction_one_bit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, OneBit.one_bit_val_false, OneBit.one_bit_val_true}
 \difficulty{6}
-For $q \ge 1$, $0 \le \rho \le 1$ and $g : \mathrm{BoolCube}\,1 \to \bbr$,
+Let $q \ge 1$ and let $\rho$ be a real number with $0 \le \rho \le 1$. Then for every
+Boolean function $g \colon \{0,1\}^1 \to \bbr$ on a single bit, the noise operator
+$T_\rho$ satisfies
 \[
-  \bigl(\E[\abs{T_\rho g}^q]\bigr)^{1/q} \;\le\; \bigl(\E[\abs{g}^q]\bigr)^{1/q},
+  \bigl(\E\!\left[\,\abs{T_\rho g}^{\,q}\,\right]\bigr)^{1/q}
+  \;\le\;
+  \bigl(\E\!\left[\,\abs{g}^{\,q}\,\right]\bigr)^{1/q},
 \]
-i.e.\ $T_\rho$ is a contraction in $L^q$ on one bit.
+where both expectations are taken with respect to the uniform measure on $\{0,1\}^1$.
 \end{lemma}
 
 \subsection{Induction from one bit to $n$ bits}
@@ -236,10 +284,14 @@ i.e.\ $T_\rho$ is a contraction in $L^q$ on one bit.
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-For $p, q \ge 1$, any $\rho \in \bbr$, and $f, g : \mathrm{BoolCube}\,0 \to \bbr$,
+Let $p, q \ge 1$ and let $\rho \in \bbr$ be arbitrary. For any two Boolean functions $f,
+g : \{0,1\}^0 \to \bbr$ on the zero-dimensional cube, the $L^2$ inner product of $f$
+with the noise-operator image $T_\rho g$ satisfies
 \[
-  \inn{f, T_\rho g} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}\,\bigl(\E[\abs{g}^q]\bigr)^{1/q}.
+\langle f, T_\rho g\rangle \;\le\;
+\bigl(\E\bigl[\abs{f}^p\bigr]\bigr)^{1/p}\,\bigl(\E\bigl[\abs{g}^q\bigr]\bigr)^{1/q},
 \]
+where $\E$ denotes expectation under the uniform measure.
 \end{lemma}
 
 \begin{lemma}[Inductive step for two-function hypercontractivity]
@@ -255,7 +307,6 @@ For $p, q \ge 1$, any $\rho \in \bbr$, and $f, g : \mathrm{BoolCube}\,0 \to \bbr
   pdf-4ba63c9394e5-p015-b002,
   pdf-4ba63c9394e5-p015-b003
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -553,13 +604,18 @@ For $p, q \ge 1$, any $\rho \in \bbr$, and $f, g : \mathrm{BoolCube}\,0 \to \bbr
   {pdf-4ba63c9394e5-p015-b003}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.innerProduct_noiseOp_eq_weighted_sum, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_nonneg, GeneralHypercontractivity.norm_collapse_clean, GeneralHypercontractivity.one_bit_slice_eq_innerProduct, GeneralHypercontractivity.weighted_sum_succ_decomp}
 \difficulty{6}
-Let $p, q \ge 1$ and $0 \le \rho \le 1$. If the bound
-$\inn{f, T_\rho g} \le (\E[\abs{f}^p])^{1/p}(\E[\abs{g}^q])^{1/q}$ holds for all pairs of
-functions on one bit and for all pairs of functions on $n$ bits, then it holds for all
-$f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$.
+Let $p, q \ge 1$ and let $\rho$ satisfy $0 \le \rho \le 1$, and write $T_\rho$ for the
+noise operator with parameter $\rho$. Suppose the two-function bound
+\[
+\langle f, T_\rho g\rangle \;\le\;
+\bigl(\E[\abs{f}^p]\bigr)^{1/p}\,\bigl(\E[\abs{g}^q]\bigr)^{1/q}
+\]
+holds for every pair of functions $f, g$ on the one-dimensional cube $\{0,1\}^1$, and
+also for every pair of functions on the $n$-dimensional cube $\{0,1\}^n$. Then the same
+bound holds for every pair of functions $f, g : \{0,1\}^{n+1} \to \bbr$.
 \end{lemma}
 
-\begin{theorem}[Two-function hypercontractivity induction theorem]
+\begin{theorem}[Tensorisation of the two-function hypercontractive inequality]
 \lean{GeneralHypercontractivity.hypercontractivity_induction}
 \proofsource{boolean-ch10-advanced-hypercontractivity}{pdf-9d1751394783-p004-b003}
 \proofsource{boolean-ch09-hypercontractivity-kkl}{
@@ -573,7 +629,6 @@ $f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$.
   pdf-4ba63c9394e5-p015-b002,
   pdf-4ba63c9394e5-p015-b003
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -881,10 +936,15 @@ $f, g : \mathrm{BoolCube}\,(n+1) \to \bbr$.
   {pdf-4ba63c9394e5-p015-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.two_func_hyp_succ, GeneralHypercontractivity.two_func_hyp_zero}
 \difficulty{2}
-Let $p, q \ge 1$ and $0 \le \rho \le 1$. If
-$\inn{f, T_\rho g} \le (\E[\abs{f}^p])^{1/p}(\E[\abs{g}^q])^{1/q}$ holds for all
-$f, g : \mathrm{BoolCube}\,1 \to \bbr$, then the same bound holds for all $n$ and all
-$f, g : \mathrm{BoolCube}\,n \to \bbr$.
+Fix exponents $p, q \ge 1$ and a noise parameter $\rho$ with $0 \le \rho \le 1$, and
+write $T_\rho$ for the associated noise operator. Suppose the two-function bound
+\[
+\langle f, T_\rho g\rangle \;\le\;
+\bigl(\E[\abs{f}^p]\bigr)^{1/p}\,\bigl(\E[\abs{g}^q]\bigr)^{1/q}
+\]
+holds for every pair of Boolean functions $f, g \colon \{0,1\}^1 \to \bbr$ on the
+one-dimensional cube. Then, for every $n$, the same inequality holds for every pair of
+Boolean functions $f, g \colon \{0,1\}^n \to \bbr$.
 \end{theorem}
 
 \subsection{Weak two-function hypercontractivity}
@@ -902,7 +962,6 @@ $f, g : \mathrm{BoolCube}\,n \to \bbr$.
   pdf-4ba63c9394e5-p014-b003,
   pdf-4ba63c9394e5-p014-b004
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1270,11 +1329,15 @@ $f, g : \mathrm{BoolCube}\,n \to \bbr$.
   {pdf-4ba63c9394e5-p014-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, OneBit.cauchy_schwarz_bool, OneBit.one_bit_p2_hypercontractivity, SimpleHypercontractivity.expect_rpow_abs_nonneg, SimpleHypercontractivity.expect_sq_noiseOp_nonneg, SimpleHypercontractivity.noiseOp_compose}
 \difficulty{5}
-For $1 \le p \le 2$, $1 \le q \le 2$ and $f, g : \mathrm{BoolCube}\,1 \to \bbr$, with
-$\rho = \sqrt{(p-1)(q-1)}$,
+Let $1 \le p \le 2$ and $1 \le q \le 2$, and set $\rho = \sqrt{(p-1)(q-1)}$. Then for
+any two Boolean functions $f, g : \{0,1\}^1 \to \bbr$ on a single bit,
 \[
-  \inn{f, T_\rho g} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}\,\bigl(\E[\abs{g}^q]\bigr)^{1/q}.
+\inn{f, T_\rho g} \;\le\;
+\bigl(\E[\,\abs{f}^p\,]\bigr)^{1/p}\,\bigl(\E[\,\abs{g}^q\,]\bigr)^{1/q},
 \]
+where $T_\rho$ is the noise operator, $\E[\cdot]$ is the expectation, and
+$\inn{\cdot,\cdot}$ is the $L^2$ inner product, all taken with respect to the uniform
+measure on $\{0,1\}$.
 \end{theorem}
 
 \begin{theorem}[Equivalence of one- and two-function hypercontractivity]
@@ -1295,18 +1358,22 @@ $\rho = \sqrt{(p-1)(q-1)}$,
 }
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.holder_ineq_bool, OneBit.expect_nonneg_of_nonneg, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
 \difficulty{5}
-Let $1 \le p \le q$ with $q \ge 2$, and let $0 \le \rho \le 1$ satisfy
-$\rho \le \sqrt{(p-1)/(q-1)}$. Then the one-function bound
+Let $1 \le p \le q$ with $q \ge 2$, and let $\rho$ satisfy $0 \le \rho \le 1$ together
+with $\rho \le \sqrt{(p-1)/(q-1)}$. Then the one-function hypercontractive inequality
 \[
-  \bigl(\E[\abs{T_\rho f}^q]\bigr)^{1/q} \le \bigl(\E[\abs{f}^p]\bigr)^{1/p}
-  \qquad \text{for all } f
+\bigl(\E\bigl[\abs{T_\rho f}^q\bigr]\bigr)^{1/q} \le
+\bigl(\E\bigl[\abs{f}^p\bigr]\bigr)^{1/p}
+  \qquad \text{for every Boolean function } f
 \]
-holds if and only if the dual two-function bound
+holds if and only if the dual two-function inequality
 \[
-  \inn{f, T_\rho g} \le \bigl(\E[\abs{f}^{q/(q-1)}]\bigr)^{(q-1)/q}\,\bigl(\E[\abs{g}^p]\bigr)^{1/p}
-  \qquad \text{for all } f, g
+\langle f, T_\rho g\rangle \le
+\bigl(\E\bigl[\abs{f}^{q/(q-1)}\bigr]\bigr)^{(q-1)/q}\,\bigl(\E\bigl[\abs{g}^p\bigr]\bigr)^{1/p}
+  \qquad \text{for every pair of Boolean functions } f, g
 \]
-holds.
+holds, where $T_\rho$ is the noise operator and $\E$ and
+$\langle\,\cdot\,,\cdot\,\rangle$ are the expectation and $L^2$ inner product with
+respect to the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
 \begin{theorem}[Weak two-function hypercontractivity]
@@ -1324,7 +1391,6 @@ holds.
   pdf-4ba63c9394e5-p015-b003,
   pdf-4ba63c9394e5-p015-b005
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1775,33 +1841,48 @@ holds.
     pdf-4ba63c9394e5-p014-b003}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.hypercontractivity_induction, GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit}
 \difficulty{3}
-For $1 \le p \le 2$, $1 \le q \le 2$, any $n$, and $f, g : \mathrm{BoolCube}\,n \to \bbr$, with
-$\rho = \sqrt{(p-1)(q-1)}$,
+Let $p, q \in \bbr$ satisfy $1 \le p \le 2$ and $1 \le q \le 2$, and set $\rho =
+\sqrt{(p-1)(q-1)}$. Then for every $n \in \bbn$ and all Boolean functions $f, g :
+\{0,1\}^n \to \bbr$,
 \[
-  \inn{f, T_\rho g} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}\,\bigl(\E[\abs{g}^q]\bigr)^{1/q}.
+\langle f,\, T_\rho g\rangle \;\le\;
+\bigl(\E[\,\abs{f}^p\,]\bigr)^{1/p}\,\bigl(\E[\,\abs{g}^q\,]\bigr)^{1/q},
 \]
+where $\langle\cdot,\cdot\rangle$ is the $L^2$ inner product under the uniform measure
+on $\{0,1\}^n$, $\E$ is the corresponding expectation, and $T_\rho$ is the noise
+operator with parameter $\rho$.
 \end{theorem}
 
 \subsection{Stochasticity of the kernel and trivial contractivity}
 
-\begin{lemma}[Kernel rows sum to one]
+\begin{lemma}[Noise kernel rows sum to one]
 \lean{GeneralHypercontractivity.noiseKernel_sum_right}
 \label{GeneralHypercontractivity.noiseKernel_sum_right}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, GeneralHypercontractivity.noiseKernel}
 \difficulty{3}
-For $0 \le \rho \le 1$ and any fixed $x \in \mathrm{BoolCube}\,n$,
-$\sum_{y} K_\rho(x,y) = 1$.
+Fix a real number $\rho$ with $0 \le \rho \le 1$, and let $x$ be a point of the Boolean
+hypercube $\mathrm{BoolCube}\,n$. Then the noise kernel $K_\rho(x,y)$, summed over every
+point $y$ of the cube, equals one:
+\[
+  \sum_{y} K_\rho(x,y) \;=\; 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Kernel columns sum to one]
+\begin{lemma}[Noise kernel sums to one over the cube]
 \lean{GeneralHypercontractivity.noiseKernel_sum_left}
 \label{GeneralHypercontractivity.noiseKernel_sum_left}
 \leanok
 \uses{BooleanAnalysis.BoolCube, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_sum_right}
 \difficulty{2}
-For $0 \le \rho \le 1$ and any fixed $y \in \mathrm{BoolCube}\,n$,
-$\sum_{x} K_\rho(x,y) = 1$.
+Fix a correlation parameter $\rho$ with $0 \le \rho \le 1$ and a point $y$ in the
+Boolean hypercube $\{0,1\}^n$. Then summing the noise kernel over all $x$ in the cube
+gives
+\[
+  \sum_{x \in \{0,1\}^n} K_\rho(x,y) \;=\; 1,
+\]
+so that for each fixed $y$ the values $K_\rho(\cdot,y)$ form a probability distribution
+on the hypercube.
 \end{lemma}
 
 \begin{lemma}[Jensen bound for powers of the noise operator]
@@ -1810,21 +1891,29 @@ $\sum_{x} K_\rho(x,y) = 1$.
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.noiseOp, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_nonneg, GeneralHypercontractivity.noiseKernel_sum_right, GeneralHypercontractivity.noiseOp_eq_kernel_sum}
 \difficulty{4}
-For $0 \le \rho \le 1$, $s \ge 1$, $f : \mathrm{BoolCube}\,n \to \bbr$ and any $x$,
+Let $n$ be a natural number, and let $T_\rho$ denote the noise operator with parameter
+$\rho \in [0,1]$ acting on Boolean functions $f : \{0,1\}^n \to \bbr$. Then for every
+real exponent $s \ge 1$ and every point $x \in \{0,1\}^n$,
 \[
-  \abs{(T_\rho f)(x)}^s \;\le\; \sum_{y} K_\rho(x,y)\,\abs{f(y)}^s.
+  \abs{(T_\rho f)(x)}^{s} \;\le\; \sum_{y \in \{0,1\}^n} K_\rho(x,y)\,\abs{f(y)}^{s},
 \]
+where $K_\rho(x,y) = \prod_{i} \tfrac{1 + \rho\,\sigma(x_i)\,\sigma(y_i)}{2}$ is the
+noise kernel of $\rho$-correlated pairs.
 \end{lemma}
 
-\begin{lemma}[Trivial contractivity of the noise operator]
+\begin{lemma}[Contractivity of the noise operator in $L^s$]
 \lean{GeneralHypercontractivity.trivial_contractivity}
 \label{GeneralHypercontractivity.trivial_contractivity}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, GeneralHypercontractivity.noiseKernel, GeneralHypercontractivity.noiseKernel_sum_left, GeneralHypercontractivity.noiseOp_abs_rpow_le_kernel_avg}
 \difficulty{4}
-For $s \ge 1$, $0 \le \rho \le 1$ and $f : \mathrm{BoolCube}\,n \to \bbr$,
+Let $s \ge 1$ and $\rho \in [0,1]$, and let $f : \{0,1\}^n \to \bbr$ be a Boolean
+function. Then, with expectations taken under the uniform measure on the cube, the noise
+operator $T_\rho$ satisfies
 \[
-  \bigl(\E[\abs{T_\rho f}^s]\bigr)^{1/s} \;\le\; \bigl(\E[\abs{f}^s]\bigr)^{1/s}.
+  \bigl(\E\bigl[\abs{T_\rho f}^{s}\bigr]\bigr)^{1/s}
+  \;\le\;
+  \bigl(\E\bigl[\abs{f}^{s}\bigr]\bigr)^{1/s}.
 \]
 \end{lemma}
 
@@ -1840,7 +1929,6 @@ For $s \ge 1$, $0 \le \rho \le 1$ and $f : \mathrm{BoolCube}\,n \to \bbr$,
   pdf-4ba63c9394e5-p013-b002,
   pdf-4ba63c9394e5-p013-b003
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2128,27 +2216,32 @@ For $s \ge 1$, $0 \le \rho \le 1$ and $f : \mathrm{BoolCube}\,n \to \bbr$,
   {pdf-4ba63c9394e5-p016-b006}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, GeneralHypercontractivity.holder_ineq_bool, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
 \difficulty{6}
-For $p, q > 1$ and $0 \le \rho \le 1$, the $(p \to q)$ bound
+Fix exponents $p, q > 1$ and a noise parameter $\rho$ with $0 \le \rho \le 1$, and write
+$p' = p/(p-1)$ and $q' = q/(q-1)$ for the H\"older conjugates. Then the noise operator
+$T_\rho$ on Boolean functions $f : \{0,1\}^n \to \bbr$ satisfies the $(p \to q)$ bound
 \[
-  \bigl(\E[\abs{T_\rho f}^q]\bigr)^{1/q} \le \bigl(\E[\abs{f}^p]\bigr)^{1/p}
-  \qquad \text{for all } f
+\bigl(\E\bigl[\,\abs{T_\rho f}^q\,\bigr]\bigr)^{1/q} \;\le\;
+\bigl(\E\bigl[\,\abs{f}^p\,\bigr]\bigr)^{1/p}
+  \qquad \text{for every } f
 \]
-holds if and only if the bound for the H\"older-conjugate exponents holds:
+if and only if it satisfies the conjugate $(q' \to p')$ bound
 \[
-  \bigl(\E[\abs{T_\rho f}^{p/(p-1)}]\bigr)^{(p-1)/p} \le
-  \bigl(\E[\abs{f}^{q/(q-1)}]\bigr)^{(q-1)/q}
-  \qquad \text{for all } f.
+\bigl(\E\bigl[\,\abs{T_\rho f}^{p'}\,\bigr]\bigr)^{1/p'} \;\le\;
+\bigl(\E\bigl[\,\abs{f}^{q'}\,\bigr]\bigr)^{1/q'}
+  \qquad \text{for every } f,
 \]
+where all norms are taken with respect to the uniform measure on $\{0,1\}^n$.
 \end{lemma}
 
 \subsection{The bridging case}
 
-\begin{lemma}[Square root of a ratio at most one]
+\begin{lemma}[Square root of a ratio bounded by one]
 \lean{GeneralHypercontractivity.sqrt_div_le_one}
 \label{GeneralHypercontractivity.sqrt_div_le_one}
 \leanok
 \difficulty{1}
-If $0 \le a$, $0 < b$ and $a \le b$, then $\sqrt{a/b} \le 1$.
+Let $a$ and $b$ be real numbers with $0 \le a$, $0 < b$, and $a \le b$. Then $\sqrt{a/b}
+\le 1$.
 \end{lemma}
 
 \begin{lemma}[Noise-parameter identity]
@@ -2156,13 +2249,13 @@ If $0 \le a$, $0 < b$ and $a \le b$, then $\sqrt{a/b} \le 1$.
 \label{GeneralHypercontractivity.noise_param_eq}
 \leanok
 \difficulty{1}
-If $u - 1 > 0$, then
+Let $p, u \in \bbr$ with $u > 1$. Then
 \[
   \Bigl(\frac{u}{u-1} - 1\Bigr)(p-1) \;=\; \frac{p-1}{u-1}.
 \]
 \end{lemma}
 
-\begin{theorem}[Bridging case of one-function hypercontractivity]
+\begin{theorem}[Bridging case of hypercontractivity on the Boolean cube]
 \lean{GeneralHypercontractivity.bridging_hypercontractivity}
 \proofsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p004-b007,
@@ -2178,7 +2271,6 @@ If $u - 1 > 0$, then
   pdf-4ba63c9394e5-p001-b002,
   pdf-4ba63c9394e5-p027-b004
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2673,11 +2765,15 @@ If $u - 1 > 0$, then
   {pdf-9d1751394783-p003-b007}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.noise_param_eq, GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.weak_two_function_hypercontractivity}
 \difficulty{4}
-For $1 \le p \le 2 \le u$, $f : \mathrm{BoolCube}\,n \to \bbr$, and
-$\rho = \sqrt{(p-1)/(u-1)}$,
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, and let $p,u\in\bbr$ satisfy $1\le p\le
+2\le u$. Set $\rho=\sqrt{(p-1)/(u-1)}$ and let $T_\rho$ denote the noise operator with
+parameter $\rho$. Then
 \[
-  \bigl(\E[\abs{T_\rho f}^u]\bigr)^{1/u} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}.
+  \bigl(\E\bigl[\,\abs{T_\rho f}^{\,u}\,\bigr]\bigr)^{1/u}
+  \;\le\;
+  \bigl(\E\bigl[\,\abs{f}^{\,p}\,\bigr]\bigr)^{1/p},
 \]
+where the expectations are taken with respect to the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
 \subsection{Real analytic ingredients for the low-norms case}
@@ -2687,12 +2783,12 @@ $\rho = \sqrt{(p-1)/(u-1)}$,
 \label{GeneralHypercontractivity.low_norms_interpolation_params}
 \leanok
 \difficulty{4}
-Let $1 < p < u < 2$ and $\rho^2 = (p-1)/(u-1)$. Then there exist $\theta \in (0,1)$ and
-$s > 0$ with
+Let $p, u, \rho$ be real numbers with $1 < p < u < 2$, and suppose $\rho^2 =
+(p-1)/(u-1)$. Then there exist real numbers $\theta \in (0,1)$ and $s > 0$ such that
 \[
-  \frac1p = \frac{\theta}{1+\rho^2} + \frac{1-\theta}{s}
+  \frac{1}{p} = \frac{\theta}{1+\rho^2} + \frac{1-\theta}{s}
   \qquad\text{and}\qquad
-  \frac1u = \frac{\theta}{2} + \frac{1-\theta}{s}.
+  \frac{1}{u} = \frac{\theta}{2} + \frac{1-\theta}{s}.
 \]
 \end{lemma}
 
@@ -2701,7 +2797,7 @@ $s > 0$ with
 \label{GeneralHypercontractivity.avg_rpow_ge_one}
 \leanok
 \difficulty{3}
-For $p \ge 1$ and $b \in [0,1]$,
+Let $p \ge 1$ be a real number and let $b \in [0,1]$. Then
 \[
   1 \;\le\; \frac{(1+b)^p + (1-b)^p}{2}.
 \]
@@ -2712,7 +2808,8 @@ For $p \ge 1$ and $b \in [0,1]$,
 \label{GeneralHypercontractivity.convex_sym_sum_mono}
 \leanok
 \difficulty{5}
-If $f$ is convex on $[0,\infty)$ and $0 \le x \le y \le 1$, then
+Let $f\colon\bbr\to\bbr$ be convex on the half-line $[0,\infty)$, and let $x,y$ be real
+numbers with $0 \le x \le y \le 1$. Then
 \[
   f(1+x) + f(1-x) \;\le\; f(1+y) + f(1-y).
 \]
@@ -2723,31 +2820,33 @@ If $f$ is convex on $[0,\infty)$ and $0 \le x \le y \le 1$, then
 \label{GeneralHypercontractivity.rpow_sum_antitone_exponent}
 \leanok
 \difficulty{6}
-For $0 < x < 1$ and exponents $p \le q \le 0$,
+Let $0 < x < 1$, and let $p \le q \le 0$ be real exponents. Then
 \[
   (1+x)^p + (1-x)^p \;\ge\; (1+x)^q + (1-x)^q.
 \]
 \end{lemma}
 
-\begin{lemma}[Two-point derivative inequality]
+\begin{lemma}[A two-point convexity inequality]
 \lean{GeneralHypercontractivity.h_alpha_ineq}
 \label{GeneralHypercontractivity.h_alpha_ineq}
 \leanok
 \uses{GeneralHypercontractivity.rpow_sum_antitone_exponent}
 \difficulty{7}
-Let $0 \le r \le s \le 1$, $c = \sqrt{r/s}$ and $t \in [0,1]$. Then
+Let $r, s \in \bbr$ satisfy $0 \le r \le s \le 1$, put $c = \sqrt{r/s}$, and let $t \in
+[0,1]$. Then
 \[
   (1+t)^r - (1-t)^r \;\ge\; c\bigl((1+ct)^s - (1-ct)^s\bigr).
 \]
 \end{lemma}
 
-\begin{lemma}[Integrated two-point inequality]
+\begin{lemma}[Integrated two-point hypercontractive inequality]
 \lean{GeneralHypercontractivity.integrated_h_alpha_ineq}
 \label{GeneralHypercontractivity.integrated_h_alpha_ineq}
 \leanok
 \uses{GeneralHypercontractivity.h_alpha_ineq}
 \difficulty{6}
-Let $1 \le p \le q \le 2$, $b \in [0,1]$ and $\rho = \sqrt{(p-1)/(q-1)}$. Then
+Let $p, q, b$ be real numbers with $1 \le p \le q \le 2$ and $0 \le b \le 1$, and set
+$\rho = \sqrt{(p-1)/(q-1)}$. Then
 \[
   \frac{(1+\rho b)^q + (1-\rho b)^q - 2}{q}
   \;\le\;
@@ -2755,12 +2854,16 @@ Let $1 \le p \le q \le 2$, $b \in [0,1]$ and $\rho = \sqrt{(p-1)/(q-1)}$. Then
 \]
 \end{lemma}
 
-\begin{lemma}[Tangent line inequality for $x^r$ at $x = 1$]
+\begin{lemma}[Tangent line inequality for $x^r$ at $x=1$]
 \lean{GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
 \label{GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
 \leanok
 \difficulty{4}
-For $x \ge 0$ and $r \ge 1$, $x^r \ge 1 + r(x-1)$.
+For every real number $x \ge 0$ and every exponent $r \ge 1$, the power $x^r$ lies above
+its tangent line at $x = 1$; that is,
+\[
+x^r \ge 1 + r\,(x - 1).
+\]
 \end{lemma}
 
 \begin{theorem}[General two-point inequality, unit case]
@@ -2774,11 +2877,12 @@ For $x \ge 0$ and $r \ge 1$, $x^r \ge 1 + r(x-1)$.
 }
 \uses{GeneralHypercontractivity.integrated_h_alpha_ineq, GeneralHypercontractivity.rpow_ge_one_add_mul_sub}
 \difficulty{5}
-Let $1 \le p \le q \le 2$, $b \in [0,1]$ and $\rho = \sqrt{(p-1)/(q-1)}$. Then
+Let $p, q, b \in \bbr$ satisfy $1 \le p \le q \le 2$ and $0 \le b \le 1$, and set $\rho
+= \sqrt{(p-1)/(q-1)}$. Then
 \[
-  \frac{(1+\rho b)^q + (1-\rho b)^q}{2}
+  \frac{(1+\rho b)^{q} + (1-\rho b)^{q}}{2}
   \;\le\;
-  \Bigl(\frac{(1+b)^p + (1-b)^p}{2}\Bigr)^{q/p}.
+  \left(\frac{(1+b)^{p} + (1-b)^{p}}{2}\right)^{q/p}.
 \]
 \end{theorem}
 
@@ -2797,14 +2901,16 @@ Let $1 \le p \le q \le 2$, $b \in [0,1]$ and $\rho = \sqrt{(p-1)/(q-1)}$. Then
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.two_point_ineq_general_unit, OneBit.expect_abs_rpow_one_bit}
 \difficulty{7}
-For $1 < p \le q \le 2$, $f : \mathrm{BoolCube}\,1 \to \bbr$ and
-$\rho = \sqrt{(p-1)/(q-1)}$,
+Let $1 < p \le q \le 2$, let $f : \{0,1\}^1 \to \bbr$ be a Boolean function of arity
+$1$, and set $\rho = \sqrt{(p-1)/(q-1)}$. Then, with expectations taken under the
+uniform measure and $T_\rho$ the noise operator,
 \[
-  \bigl(\E[\abs{T_\rho f}^q]\bigr)^{1/q} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}.
+\bigl(\E\bigl[\,\abs{T_\rho f}^q\,\bigr]\bigr)^{1/q} \;\le\;
+\bigl(\E\bigl[\,\abs{f}^p\,\bigr]\bigr)^{1/p}.
 \]
 \end{theorem}
 
-\begin{theorem}[Low-norms hypercontractivity]
+\begin{theorem}[Low-norms hypercontractivity on the Boolean hypercube]
 \lean{GeneralHypercontractivity.low_norms_hypercontractivity}
 \label{GeneralHypercontractivity.low_norms_hypercontractivity}
 \leanok
@@ -2817,14 +2923,22 @@ $\rho = \sqrt{(p-1)/(q-1)}$,
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.bridging_hypercontractivity, GeneralHypercontractivity.holder_ineq_bool, GeneralHypercontractivity.hypercontractivity_induction, GeneralHypercontractivity.low_norms_one_bit, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.trivial_contractivity, OneBit.expect_nonneg_of_nonneg, OneBit.holder_sharpness, SimpleHypercontractivity.expect_rpow_abs_nonneg}
 \difficulty{6}
-For $1 < p \le u \le 2$, any $n$, $f : \mathrm{BoolCube}\,n \to \bbr$ and
-$\rho = \sqrt{(p-1)/(u-1)}$,
+Fix a dimension $n$ and real exponents $p, u$ with $1 < p \le u \le 2$, and set the
+noise rate
 \[
-  \bigl(\E[\abs{T_\rho f}^u]\bigr)^{1/u} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}.
+  \rho \;=\; \sqrt{\frac{p-1}{u-1}} \;\in\; (0,1].
 \]
+Then for every function $f : \{0,1\}^n \to \bbr$ on the Boolean hypercube, the noise
+operator $T_\rho$ contracts $L^p$ into $L^u$:
+\[
+  \bigl(\E\bigl[\,\abs{T_\rho f}^{\,u}\,\bigr]\bigr)^{1/u}
+  \;\le\;
+  \bigl(\E\bigl[\,\abs{f}^{\,p}\,\bigr]\bigr)^{1/p},
+\]
+where the expectations are taken with respect to the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
-\begin{theorem}[High-norms hypercontractivity]
+\begin{theorem}[High-norms hypercontractivity for the noise operator]
 \lean{GeneralHypercontractivity.high_norms_hypercontractivity}
 \label{GeneralHypercontractivity.high_norms_hypercontractivity}
 \leanok
@@ -2835,10 +2949,14 @@ $\rho = \sqrt{(p-1)/(u-1)}$,
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.noiseOp, GeneralHypercontractivity.low_norms_hypercontractivity, GeneralHypercontractivity.noise_op_norm_dual, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.trivial_contractivity, SimpleHypercontractivity.noiseOp_compose}
 \difficulty{5}
-For $2 \le p \le u$, any $\rho$ with $0 \le \rho \le 1$ and
-$\rho \le \sqrt{(p-1)/(u-1)}$, and $f : \mathrm{BoolCube}\,n \to \bbr$,
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and let $p, u$ be real exponents
+with $2 \le p \le u$. Suppose $\rho \in \bbr$ satisfies $0 \le \rho \le 1$ together with
+$\rho \le \sqrt{(p-1)/(u-1)}$. Then, with expectations taken under the uniform measure
+on $\{0,1\}^n$ and $T_\rho$ the noise operator, the higher $L^u$ norm of the noised
+function is bounded by the lower $L^p$ norm of $f$:
 \[
-  \bigl(\E[\abs{T_\rho f}^u]\bigr)^{1/u} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}.
+\bigl(\E\bigl[\,\abs{T_\rho f}^u\,\bigr]\bigr)^{1/u} \;\le\;
+\bigl(\E\bigl[\,\abs{f}^p\,\bigr]\bigr)^{1/p}.
 \]
 \end{theorem}
 
@@ -2857,7 +2975,6 @@ $\rho \le \sqrt{(p-1)/(u-1)}$, and $f : \mathrm{BoolCube}\,n \to \bbr$,
   pdf-9d1751394783-p004-b007
 }
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -3430,11 +3547,14 @@ $\rho \le \sqrt{(p-1)/(u-1)}$, and $f : \mathrm{BoolCube}\,n \to \bbr$,
     pdf-9d1751394783-p003-b007}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight, GeneralHypercontractivity.bridging_hypercontractivity, GeneralHypercontractivity.high_norms_hypercontractivity, GeneralHypercontractivity.low_norms_hypercontractivity, GeneralHypercontractivity.sqrt_div_le_one, GeneralHypercontractivity.trivial_contractivity, SimpleHypercontractivity.noiseOp_compose}
 \difficulty{5}
-Let $1 \le p \le u$ with $u > 1$, and let $0 \le \rho \le 1$ satisfy
-$\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr$,
+Let $1 \le p \le u$ with $u > 1$, and let $\rho$ satisfy $0 \le \rho \le 1$ together
+with $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every Boolean function $f:\{0,1\}^n \to
+\bbr$, the noise operator $T_\rho$ contracts the $L^u$ norm below the $L^p$ norm:
 \[
-  \bigl(\E[\abs{T_\rho f}^u]\bigr)^{1/u} \;\le\; \bigl(\E[\abs{f}^p]\bigr)^{1/p}.
+\bigl(\E\!\left[\abs{T_\rho f}^u\right]\bigr)^{1/u} \;\le\;
+\bigl(\E\!\left[\abs{f}^p\right]\bigr)^{1/p},
 \]
+where the expectations are taken over the uniform measure on $\{0,1\}^n$.
 \end{theorem}
 
 \begin{theorem}[General two-function hypercontractivity]
@@ -3454,7 +3574,6 @@ $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr
   pdf-4ba63c9394e5-p001-b002,
   pdf-4ba63c9394e5-p013-b002
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -4033,10 +4152,16 @@ $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every $f : \mathrm{BoolCube}\,n \to \bbr
     pdf-9d1751394783-p001-b005}
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, GeneralHypercontractivity.general_one_function_hypercontractivity, GeneralHypercontractivity.one_function_iff_two_function_hypercontractivity}
 \difficulty{1}
-Let $1 \le p \le u$ with $u \ge 2$, and let $0 \le \rho \le 1$ satisfy
-$\rho \le \sqrt{(p-1)/(u-1)}$. Then for all $f, g : \mathrm{BoolCube}\,n \to \bbr$,
+Fix real exponents $1 \le p \le u$ with $u \ge 2$, and a noise rate $\rho$ with $0 \le
+\rho \le 1$ satisfying $\rho \le \sqrt{(p-1)/(u-1)}$. Then for every pair of Boolean
+functions $f, g : \{0,1\}^n \to \bbr$,
 \[
-  \inn{f, T_\rho g} \;\le\;
-  \bigl(\E[\abs{f}^{u/(u-1)}]\bigr)^{(u-1)/u}\,\bigl(\E[\abs{g}^p]\bigr)^{1/p}.
+  \langle f, T_\rho g\rangle
+  \;\le\;
+  \bigl(\E\bigl[\,\abs{f}^{u/(u-1)}\,\bigr]\bigr)^{(u-1)/u}\,
+  \bigl(\E\bigl[\,\abs{g}^{p}\,\bigr]\bigr)^{1/p},
 \]
+where $\langle\cdot,\cdot\rangle$ is the $L^2$ inner product, $\E$ the expectation, and
+$T_\rho$ the noise operator, all taken with respect to the uniform measure on the
+hypercube.
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformDisjointCoordinateVector_crossInfo_condBits_eq_zero",
+ "key": "a669d0953c20a46a",
+ "kind": "theorem",
+ "title": "Conditional independence of Alice's bit from Bob's earlier bits",
+ "statement": "Fix $n \\ge 1$ and draw a random vector $C = (C_1, \\dots, C_n)$ whose $n$ coordinates are independent, each uniform over the three states of a disjoint coordinate-pair: one in which both parties' bits are $0$, one carrying only Alice's bit, and one carrying only Bob's bit. For each coordinate $k$ let $X_k$ be Alice's bit, equal to $1$ exactly in the second state, and let $Y_k$ be Bob's bit, equal to $1$ exactly in the third; in particular $X_k$ and $Y_k$ are never simultaneously $1$. Fix a coordinate $i$ and form Alice's conditioning vector $A = (A_1, \\dots, A_n)$ by setting $A_k = X_k$ for $k < i$ and $A_k = Y_k$ for $k \\ge i$. Then the conditional mutual information between $X_i$ and the tuple $(Y_k)_{k < i}$ of Bob's bits at the coordinates strictly before $i$, given $A$, vanishes:\n\\[ I\\big(X_i : (Y_k)_{k<i} \\;\\big|\\; A\\big) = 0. \\]",
+ "hypotheses_covered": [
+  "a fixed coordinate i",
+  "at least one coordinate (n ≥ 1)",
+  "the uniform law on disjoint coordinate vectors: independent coordinates, each uniform over the three states"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Product-coordinate form of the fixed-coordinate independence input: $I(X_{i} : Y_{<i} | X_{<i},Y_{≥i})=0$, first with the one-bit-per-coordinate conditioning."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "GeneralHypercontractivity.two_point_ineq_general_unit",
+ "key": "acc190d80f8ee2ab",
+ "kind": "theorem",
+ "title": "General two-point inequality, unit case",
+ "statement": "Let $p, q, b \\in \\bbr$ satisfy $1 \\le p \\le q \\le 2$ and $0 \\le b \\le 1$, and set $\\rho = \\sqrt{(p-1)/(q-1)}$. Then\n\\[\n  \\frac{(1+\\rho b)^{q} + (1-\\rho b)^{q}}{2}\n  \\;\\le\\;\n  \\left(\\frac{(1+b)^{p} + (1-b)^{p}}{2}\\right)^{q/p}.\n\\]",
+ "hypotheses_covered": [
+  "1 ≤ p",
+  "p ≤ q",
+  "q ≤ 2",
+  "0 ≤ b",
+  "b ≤ 1",
+  "ρ defined as √((p-1)/(q-1))"
+ ],
+ "confidence": "low",
+ "caveat": "The provided formal statement is truncated: the correlation parameter is given as `let ρ := sorry` and the conclusion (the inequality itself) is absent from the snippet. The rendered prose is reconstructed from the declaration name, the visible hypotheses (1 ≤ p ≤ q ≤ 2, b ∈ [0,1]), and the standard two-point inequality of hypercontractivity theory (as in the `current` hint), but it cannot be verified against the actual Lean conclusion because that conclusion was not supplied.",
+ "rubric": [],
+ "replaced": "Let $1 \\le p \\le q \\le 2$, $b \\in [0,1]$ and $\\rho = \\sqrt{(p-1)/(q-1)}$. Then\n\\[\n  \\frac{(1+\\rho b)^q + (1-\\rho b)^q}{2}\n  \\;\\le\\;\n  \\Bigl(\\frac{(1+b)^p + (1-b)^p}{2}\\Bigr)^{q/p}.\n\\]"
+}

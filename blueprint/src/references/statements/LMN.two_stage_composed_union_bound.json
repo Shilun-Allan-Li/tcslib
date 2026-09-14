@@ -1,0 +1,21 @@
+{
+ "lean_name": "LMN.two_stage_composed_union_bound",
+ "key": "1c1291f3285b2d59",
+ "kind": "theorem",
+ "title": "A union bound for two-stage Bernoulli restrictions",
+ "statement": "Fix $n$, and let $p,q$ be real parameters with $0\\le p\\le 1$ and $0\\le q\\le 1$. For a parameter $r$ write $w_r(\\rho)$ for the Bernoulli weight of a restriction $\\rho$ on $n$ variables at parameter $r$, and write $\\bbP_r[E]$ for the Bernoulli event probability of a predicate $E$ on restrictions at parameter $r$. Then for any two predicates $A$ and $B$ on restrictions of $n$ variables,\n\\[\n\\sum_{\\rho_1} w_p(\\rho_1)\\,\\bbP_q\\!\\big[\\,\\rho_2 \\mapsto A(\\rho_1)\\lor B(\\rho_2)\\,\\big]\n\\;\\le\\; \\bbP_p[A] + \\bbP_q[B],\n\\]\nwhere the inner sum ranges over all restrictions $\\rho_1$ on $n$ variables and, for each fixed $\\rho_1$, the predicate $\\rho_2 \\mapsto A(\\rho_1)\\lor B(\\rho_2)$ holds at a second-stage restriction $\\rho_2$ exactly when $A$ holds at $\\rho_1$ or $B$ holds at $\\rho_2$.",
+ "hypotheses_covered": [
+  "p is a real parameter",
+  "q is a real parameter",
+  "0 ≤ p",
+  "p ≤ 1",
+  "0 ≤ q",
+  "q ≤ 1",
+  "A is a (decidable) predicate on restrictions of n variables",
+  "B is a (decidable) predicate on restrictions of n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0\\le p\\le 1$ and $0\\le q\\le 1$, and decidable events $A,B$ on restrictions,\n\\[\n\\sum_{\\rho_1}\\mathrm{bernoulliRestrWeight}\\,p\\,\\rho_1\\cdot\n\\mathrm{bernoulliRestrProb}\\,q\\,(A(\\rho_1)\\vee B(\\rho_2))\n\\le \\mathrm{bernoulliRestrProb}\\,p\\,A + \\mathrm{bernoulliRestrProb}\\,q\\,B,\n\\]\nwhere the inner event combines $A$ on the first-stage restriction with $B$ on the\nsecond-stage restriction. This bounds the failure of a composed two-stage\nBernoulli restriction by the sum of the two individual stage probabilities."
+}

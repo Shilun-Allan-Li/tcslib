@@ -1,0 +1,20 @@
+{
+ "lean_name": "CodingTheory.Johnson.binary_johnson_card_bound_parametric",
+ "key": "f0b12fad781e4bf7",
+ "kind": "theorem",
+ "title": "Johnson cardinality bound, parametric form",
+ "statement": "Let $n \\ge 1$, let $d, w$ be natural numbers, and let $C$ be a finite set of binary words of length $n$ such that any two distinct words of $C$ are at Hamming distance at least $d$, and every word of $C$ has weight at most $w$. Suppose $\\alpha \\ge 0$ is a real parameter for which the shifted $\\pm 1$ vector $\\hat{x}^\\alpha$ is nonzero for every $x \\in C$, and for which\n\\[\n(n - 2d) + \\alpha^2 n + 2\\alpha(2w - n) \\le 0 .\n\\]\nThen $\\abs{C} \\le 2n$.",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "C is a finite set of binary words of length n",
+  "pairwise Hamming distance at least d",
+  "every word has weight at most w",
+  "α ≥ 0",
+  "shifted ±1 vector x̂^α nonzero for all x in C",
+  "arithmetic inequality (n−2d)+α²n+2α(2w−n) ≤ 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n > 0$ and let $C$ be a finite set of binary words of length $n$ with pairwise\nHamming distance at least $d$ and all weights at most $w$. If $\\alpha \\ge 0$ is such\nthat $\\hat{x}^\\alpha \\neq 0$ for all $x \\in C$ and\n$(n - 2d) + \\alpha^2 n + 2\\alpha(2w - n) \\le 0$, then $\\abs{C} \\le 2n$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolCircuit.toNAnd_toNOr_size_le",
+ "key": "f607404b9e1350b5",
+ "kind": "theorem",
+ "title": "Normalization at most doubles circuit size",
+ "statement": "Let $c$ be a Boolean circuit on $n$ variables, and write $\\mathrm{size}(c)$ for its total node count. Converting $c$ into either alternating normal form increases its size by at most a factor of two: the normal-form AND circuit obtained by normalizing $c$ has size at most $2\\,\\mathrm{size}(c)$, and the normal-form OR circuit obtained by normalizing $c$ likewise has size at most $2\\,\\mathrm{size}(c)$.",
+ "hypotheses_covered": [
+  "an arbitrary Boolean circuit c on n variables (no side conditions)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$, both normalizations have size at most twice the original:\n$(c.\\mathrm{toNAnd}).\\mathrm{size} \\le 2\\,c.\\mathrm{size}$ and\n$(c.\\mathrm{toNOr}).\\mathrm{size} \\le 2\\,c.\\mathrm{size}$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measurePreserving_dualHardSample",
+ "key": "cb7c4482b4d74b89",
+ "kind": "theorem",
+ "title": "Invariance of the disjoint-conditioned hard distribution under dualization",
+ "statement": "Fix a positive integer $n$, and consider the finite sample space of hard samples $\\omega = (T, x_T, y_T, \\text{other})$, where $T \\in \\{0, \\dots, n-1\\}$, the bits $x_T, y_T$ lie in $\\{\\text{false}, \\text{true}\\}$, and $\\text{other}$ assigns to each coordinate one of $\\{\\text{neither}, \\text{leftOnly}, \\text{rightOnly}\\}$. Let the dual map send $\\omega$ to the sample whose distinguished coordinate is the reversal $\\mathrm{rev}(T) = n-1-T$, whose distinguished bits are $x_T$ and $y_T$ interchanged, and whose remaining coordinate is $i \\mapsto \\mathrm{swap}\\big(\\text{other}(\\mathrm{rev}(i))\\big)$; and let the disjoint-conditioned measure be the uniform distribution on this sample space conditioned on the event that Alice's and Bob's induced input sets are disjoint. Then the dual map is measure-preserving for the disjoint-conditioned measure: it is measurable, and the pushforward of the disjoint-conditioned measure along it is again the disjoint-conditioned measure.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Hard-sample duality preserves the disjoint-conditioned hard-sample measure."
+}

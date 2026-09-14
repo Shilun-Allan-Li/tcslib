@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_foldl_sets_member",
+ "key": "3a6346b04185a7f0",
+ "kind": "lemma",
+ "title": "Folding literals fixes each initially free variable",
+ "statement": "Fix $n$ variables, let $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be a Boolean assignment, let $\\rho$ be a restriction on these variables, and let $\\ell_1, \\dots, \\ell_m$ be a list of literals. Process the literals from left to right, maintaining a current restriction that begins as $\\rho$: at each literal $\\ell$, if its underlying variable $\\ell.\\mathrm{var}$ is free in the current restriction, update that restriction by fixing $\\ell.\\mathrm{var}$ to the value $x(\\ell.\\mathrm{var})$, and otherwise leave the restriction unchanged; write $\\rho^*$ for the restriction obtained after the whole list has been processed. Then for every literal $\\ell$ in the list whose variable is free in the original restriction $\\rho$, the value $\\rho^*(\\ell.\\mathrm{var})$ is set, i.e.\\ $\\ell.\\mathrm{var}$ is not free in $\\rho^*$.",
+ "hypotheses_covered": [
+  "l is a member of the list lits",
+  "l.var is free in the initial restriction ρ",
+  "ρ* is the left fold over lits with the update-if-free step starting from ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a literal $l \\in \\mathit{lits}$ has variable free in $\\rho$, then after the $\\mathrm{termSubTree}$\nfold the entry at $l.\\mathrm{var}$ is no longer \\texttt{none} (it has been set to some value)."
+}

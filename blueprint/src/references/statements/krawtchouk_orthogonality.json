@@ -1,0 +1,16 @@
+{
+ "lean_name": "krawtchouk_orthogonality",
+ "key": "93e534405a5708ab",
+ "kind": "theorem",
+ "title": "Orthogonality of the Krawtchouk polynomials",
+ "statement": "Fix a natural number $n$, and let $r, s$ be natural numbers with $r \\le n$ and $s \\le n$. Then the binary Krawtchouk polynomials satisfy\n\\[\n  \\sum_{x=0}^{n} \\binom{n}{x}\\, K_r^{(n)}(x)\\, K_s^{(n)}(x)\n  \\;=\\;\n  \\begin{cases}\n    2^{n}\\dbinom{n}{r}, & r = s,\\\\[2pt]\n    0, & r \\ne s;\n  \\end{cases}\n\\]\nthat is, they are orthogonal with respect to the weights $\\binom{n}{x}$ on $\\{0, 1, \\dots, n\\}$.",
+ "hypotheses_covered": [
+  "r ≤ n",
+  "s ≤ n",
+  "n a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $r \\le n$ and $s \\le n$,\n\\[\n  \\sum_{x=0}^{n} \\binom{n}{x} K_r^{(n)}(x)\\,K_s^{(n)}(x)\n  \\;=\\;\n  \\begin{cases}\n    2^{n}\\binom{n}{r}, & r = s,\\\\\n    0, & r \\ne s.\n  \\end{cases}\n\\]"
+}

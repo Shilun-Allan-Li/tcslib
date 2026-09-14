@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.dedupTermVar_preserves_term_eval",
+ "key": "0f4176f835c69a81",
+ "kind": "lemma",
+ "title": "De-duplication preserves term value on consistent terms",
+ "statement": "Let $t$ be a term over $n$ variables, that is, a list of literals $l$, each carrying a variable $l.\\mathrm{var} \\in \\{0,\\dots,n-1\\}$ and a polarity flag, and interpreted conjunctively: $t$ evaluates to true on an assignment $x \\in \\{0,1\\}^n$ exactly when every literal in $t$ holds under $x$. Suppose $t$ is consistent, meaning it contains no two literals on the same variable with opposite polarities. Let $t'$ be the term obtained from $t$ by keeping, for each variable, only its first occurrence and discarding every later literal whose variable has already appeared. Then $t'$ and $t$ have the same value on every assignment $x$.",
+ "hypotheses_covered": [
+  "t is a term (list of literals) over Fin n",
+  "t is non-contradictory: no variable appears with both polarities",
+  "x is an arbitrary assignment Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a non-contradictory term $t$ (i.e.\\ $\\mathrm{termHasContradiction}\\,t = \\texttt{false}$),\nde-duplication does not change the conjunction value:\n$\\mathrm{Term.eval}\\,(\\mathrm{dedupTermVar}\\,t)\\,x = \\mathrm{Term.eval}\\,t\\,x$ for all $x$."
+}

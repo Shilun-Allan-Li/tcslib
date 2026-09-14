@@ -1,0 +1,17 @@
+{
+ "lean_name": "GeneralHypercontractivity.one_bit_slice_eq_innerProduct",
+ "key": "62d8b2d1cbab3151",
+ "kind": "lemma",
+ "title": "One-bit slice sum as a one-bit inner product",
+ "statement": "Fix a real number $\\rho$, Boolean functions $f, g : \\{0,1\\}^{n+1} \\to \\bbr$, and points $x', y' \\in \\{0,1\\}^n$. For a bit $b$, write $(x', b)$ for the point of $\\{0,1\\}^{n+1}$ obtained by appending $b$ as the last coordinate of $x'$, and let $\\sigma$ denote the sign encoding. Then\n\\[\n  \\frac12 \\sum_{b \\in \\{0,1\\}} \\sum_{b' \\in \\{0,1\\}}\n    \\frac{1 + \\rho\\,\\sigma(b)\\,\\sigma(b')}{2}\\,\n    f(x', b)\\, g(y', b')\n  \\;=\\;\n  \\langle F,\\; T_\\rho G\\rangle,\n\\]\nwhere $F, G : \\{0,1\\}^1 \\to \\bbr$ are the one-bit slices $F(t) = f(x', t_0)$ and $G(t) = g(y', t_0)$, and the inner product and the noise operator $T_\\rho$ are taken on the one-dimensional cube $\\{0,1\\}^1$.",
+ "hypotheses_covered": [
+  "ρ is an arbitrary real number",
+  "f and g are real-valued Boolean functions on the (n+1)-cube",
+  "x' and y' are points of the n-cube",
+  "the slices F, G and the operators live on the one-bit cube {0,1}^1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix $x', y' \\in \\mathrm{BoolCube}\\,n$ and $f, g : \\mathrm{BoolCube}\\,(n+1) \\to \\bbr$. The\none-bit kernel-weighted sum of the slices of $f$ at $x'$ and of $g$ at $y'$ equals the one-bit\ninner product of those slices against the noise operator:\n\\[\n  \\tfrac12 \\sum_{b}\\sum_{b'} \\tfrac{1+\\rho\\,\\chi(b)\\chi(b')}{2}\\,\n  f(\\mathrm{snoc}(x',b))\\, g(\\mathrm{snoc}(y',b'))\n  \\;=\\;\n  \\inn{f_{x'}, T_\\rho g_{y'}},\n\\]\nwhere $f_{x'}(t) = f(\\mathrm{snoc}(x', t_0))$ and $g_{y'}(t) = g(\\mathrm{snoc}(y', t_0))$ are\nfunctions on $\\mathrm{BoolCube}\\,1$."
+}

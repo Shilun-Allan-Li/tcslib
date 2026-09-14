@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemmaCNF.cnfToDualDNF_nodup",
+ "key": "0eba38b4880e0c96",
+ "kind": "lemma",
+ "title": "Dual DNF preserves duplicate-free clauses",
+ "statement": "Let $\\psi$ be a CNF formula whose clauses are lists of literals, and suppose that every clause of $\\psi$ contains no repeated literal. Then every term of the De Morgan dual DNF obtained from $\\psi$ — the DNF formed by negating each literal of each clause — likewise contains no repeated literal.",
+ "hypotheses_covered": [
+  "ψ is a CNF formula (list of clauses, each a list of literals)",
+  "every clause of ψ has no duplicate literal (Nodup)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every clause of $\\psi$ has no duplicate literals, then every term of\n$\\mathrm{cnfToDualDNF}\\,\\psi$ has no duplicate literals."
+}

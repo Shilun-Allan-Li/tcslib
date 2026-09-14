@@ -1,0 +1,17 @@
+{
+ "lean_name": "symB_apply",
+ "key": "359d0a4fda564a5a",
+ "kind": "lemma",
+ "title": "Evaluation of the bundled symplectic form",
+ "statement": "Fix a prime $p$ and an integer $n$, and set $V = \\bbf_p^n \\times \\bbf_p^n$, equipped with the alternating bilinear form\n\\[\n\\omega\\big((x,z),(x',z')\\big) \\;=\\; \\sum_{i=1}^{n}\\big(x_i z'_i - z_i x'_i\\big),\n\\qquad (x,z),(x',z') \\in V.\n\\]\nLet $B \\colon V \\times V \\to \\bbf_p$ be the bilinear form on $V$ obtained by bundling $\\omega$. Then $B$ agrees with $\\omega$ on every pair of arguments: for all $u, v \\in V$ one has $B(u,v) = \\omega(u,v)$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "n is a natural number",
+  "u, v range over V = F_p^n × F_p^n",
+  "B is the bilinear form obtained by bundling ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The bundled bilinear form $\\mathrm{symB}$ agrees with $\\omega$:\n$\\mathrm{symB}(x,y) = \\omega(x,y)$ for all $x,y \\in V$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.NAndCircuit.node_eval_eq_toCNF_eval",
+ "key": "c3ee91fdb662eb0f",
+ "kind": "theorem",
+ "title": "Evaluation of a depth-2 AND circuit matches its CNF",
+ "statement": "Let $cs$ be a list of normal-form OR circuits on $n$ variables, and suppose that every entry of $cs$ is an OR-clause — that is, a base clause given by a list of literals, rather than an internal OR node. Then for every assignment $x : \\mathrm{Fin}\\,n \\to \\bbf_2$, evaluating the normal-form AND circuit that conjoins the circuits in $cs$ agrees with evaluating the CNF formula built from it: the value at $x$ of the AND-node over $cs$ equals the value at $x$ of the CNF whose clauses are obtained by converting each OR-clause of $cs$ into a disjunction of literals.",
+ "hypotheses_covered": [
+  "cs is a list of normal-form OR circuits on n variables",
+  "every entry of cs is an OR-clause (of clause form, not a node)",
+  "x is an assignment of the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every child $c$ of an $\\texttt{NAndCircuit}.\\mathrm{node}\\,cs$ is an OR-clause, then for\nall $x$ the circuit evaluation $(\\texttt{NAndCircuit}.\\mathrm{node}\\,cs).\\mathrm{eval}\\,x$\nequals the CNF evaluation $\\texttt{CNF.eval}\\,((\\texttt{NAndCircuit}.\\mathrm{node}\\,cs).\\mathrm{toCNF})\\,x$."
+}

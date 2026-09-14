@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.fourier_expansion",
+ "key": "a999085554548e1e",
+ "kind": "lemma",
+ "title": "Fourier expansion on $\\mathbb{Z}_k^n$",
+ "statement": "Fix integers $k \\ge 1$ and $n$, and let $\\omega_k = e^{2\\pi i/k}$. For a frequency $s \\in \\mathbb{Z}_k^n$, let $\\chi_s(x) = \\omega_k^{\\,s\\cdot x}$ be the corresponding Fourier character, where $s\\cdot x = \\sum_{i} s_i x_i \\in \\mathbb{Z}/k\\mathbb{Z}$, and let $\\hat f(s) = \\tfrac{1}{k^n}\\sum_{x \\in \\mathbb{Z}_k^n} f(x)\\,\\overline{\\chi_s(x)}$ be the Fourier coefficient of $f$ at $s$. Then every function $f : \\mathbb{Z}_k^n \\to \\mathbb{C}$ is recovered from its Fourier coefficients by\n\\[\n  f(x) = \\sum_{s \\in \\mathbb{Z}_k^n} \\hat f(s)\\,\\chi_s(x)\n  \\qquad\\text{for all } x \\in \\mathbb{Z}_k^n.\n\\]",
+ "hypotheses_covered": [
+  "$k \\ge 1$ (nonzero modulus)",
+  "$f$ an arbitrary complex-valued function on $\\mathbb{Z}_k^n$",
+  "$x$ an arbitrary point of $\\mathbb{Z}_k^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every function $f : \\mathbb{Z}_k^n \\to \\mathbb{C}$ admits the Fourier expansion\n\\[\n  f(x) = \\sum_{s \\in \\mathbb{Z}_k^n} \\hat{f}(s)\\,\\chi_s(x).\n\\]\nThe characters form a complete orthonormal basis of $L^2(\\mathbb{Z}_k^n)$."
+}

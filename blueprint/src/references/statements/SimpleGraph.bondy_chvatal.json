@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.bondy_chvatal",
+ "key": "7eedf06a1bff4c01",
+ "kind": "theorem",
+ "title": "Bondy–Chvátal edge-closure lemma for Hamiltonicity",
+ "statement": "Let $G$ be a finite simple graph on a vertex set with $n$ vertices, and let $u$ and $v$ be two distinct, nonadjacent vertices of $G$ whose degrees satisfy $\\deg(u) + \\deg(v) \\ge n$. Then $G$ is Hamiltonian if and only if the graph $G + uv$, obtained from $G$ by adding the edge joining $u$ and $v$, is Hamiltonian.",
+ "hypotheses_covered": [
+  "finite graph (Fintype V, n = number of vertices)",
+  "u and v nonadjacent",
+  "u ≠ v",
+  "deg(u) + deg(v) ≥ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Lem 4.4.1: for nonadjacent \\texttt{u,v} with \\texttt{d(u)+d(v) $\\ge$ $\\nu$}, \\texttt{G}\nis hamiltonian iff \\texttt{G+uv} is.\n\nLet $G$ be a simple graph and let $u$ and $v$ be nonadjacent\nvertices in $G$ such that\n\\[d(u) + d(v) \\geq \\nu \\qquad (4.5)\\]\nThen $G$ is hamiltonian if and only if $G + uv$ is hamiltonian."
+}

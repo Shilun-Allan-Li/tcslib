@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolCircuit.toNAnd_size_le",
+ "key": "be9c6828e36e4868",
+ "kind": "theorem",
+ "title": "AND-normalization at most doubles circuit size",
+ "statement": "Let $c$ be a Boolean circuit on $n$ variables, where the size of a circuit is its total number of nodes, counting internal AND/OR gates together with literal leaves. Normalizing $c$ into strictly alternating AND-normal form — a literal becoming a singleton clause, an AND gate normalizing each child into OR-normal form, and an OR gate becoming a single wrapping OR node over its children's AND-normal forms — yields a normal-form AND circuit whose size is at most twice the size of $c$.",
+ "hypotheses_covered": [
+  "c is a Boolean circuit on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$,\n$(c.\\mathrm{toNAnd}).\\mathrm{size} \\le 2\\,c.\\mathrm{size}$."
+}

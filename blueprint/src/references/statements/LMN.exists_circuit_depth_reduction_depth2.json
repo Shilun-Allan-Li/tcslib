@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.exists_circuit_depth_reduction_depth2",
+ "key": "eb82133bd3fae092",
+ "kind": "lemma",
+ "title": "Depth reduction for depth-2 circuits over narrow gates",
+ "statement": "Let $c$ be a Boolean circuit of depth exactly $2$ on $m$ inputs, and let $g_1,\\dots,g_m \\colon \\{0,1\\}^n \\to \\{0,1\\}$ be Boolean functions such that each $g_i$ is computed both by a DNF formula of width at most $l$ and by a CNF formula of width at most $l$, where the width of a DNF or CNF formula is the maximum number of literals occurring in any single one of its terms or clauses. Then there exist a number $m'$, DNF formulas $D_1,\\dots,D_{m'}$ on $n$ variables, and a Boolean circuit $c'$ of depth at most $1$ on $m'$ inputs, such that each $D_j$ has width at most $l$, every term of every $D_j$ contains each variable at most once (equivalently, its literals are pairwise distinct and no two of them share a variable), and for every assignment $x \\in \\{0,1\\}^n$,\n\\[ c\\bigl(g_1(x),\\dots,g_m(x)\\bigr) = c'\\bigl(D_1(x),\\dots,D_{m'}(x)\\bigr). \\]",
+ "hypotheses_covered": [
+  "circuit c on m inputs",
+  "gate functions g_i on n-bit inputs",
+  "width parameter l",
+  "c has depth exactly 2",
+  "each g_i computed by a width-≤ l DNF",
+  "each g_i computed by a width-≤ l CNF"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A circuit $c$ of depth exactly $2$ over gates with width-$l$ DNF and CNF representations\nreduces to a circuit $c'$ of depth at most $1$ over a fresh gate family $\\mathrm{gates}'$\nof width-$l$ DNFs (with duplicate-free, non-repeating-variable terms), so that $c$ and\n$c'$ compute the same function on every $x$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "hedge_construction",
+ "key": "09fcb85772a166f9",
+ "kind": "lemma",
+ "title": "Hedge yields an approximate minimax pair",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M \\ge 2$ row actions and $N \\ge 1$ column actions, with payoff matrix $(A_{ij})$ satisfying $0 \\le A_{ij} \\le 1$; the row player maximises and the column player minimises. Fix an integer $T > 0$ and a learning rate $\\eta > 0$. Then there exist a mixed row strategy $p$ and a mixed column strategy $q$ such that, for every pure row $i \\in \\{1,\\dots,M\\}$ and every pure column $j \\in \\{1,\\dots,N\\}$,\n\\[\n  \\sum_{i'} p_{i'}\\,A_{i'j} \\;+\\; \\frac{(\\ln M)/\\eta + \\eta T/8}{T}\n  \\;\\ge\\;\n  \\sum_{j'} A_{ij'}\\,q_{j'}.\n\\]",
+ "hypotheses_covered": [
+  "finite zero-sum game G with payoffs in [0,1]",
+  "at least two row actions, M ≥ 2 (with M nonzero)",
+  "at least one column action, N ≥ 1 (N nonzero)",
+  "positive number of rounds, T > 0",
+  "positive learning rate, η > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Given a game $G$ with $M \\ge 2$ rows, a number of rounds $T > 0$, and a\nlearning rate $\\eta > 0$, there exist mixed strategies $p$ (row) and $q$\n(column) such that for all pure $i \\in \\mathrm{Fin}\\,M$ and $j \\in\n\\mathrm{Fin}\\,N$,\n\\[\n  \\mathrm{payoffVsPure}(G, p, j)\n  + \\frac{\\ln M / \\eta + \\eta T / 8}{T}\n  \\;\\ge\\;\n  \\mathrm{pureVsPayoff}(G, i, q).\n\\]\nThe strategies are constructed by running Hedge for $T$ rounds, with the\ncolumn player taking pure best responses, and then averaging."
+}

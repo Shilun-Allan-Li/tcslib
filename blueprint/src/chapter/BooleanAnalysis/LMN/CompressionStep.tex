@@ -10,14 +10,16 @@ the switched gates can be repackaged as clean, bounded-width DNFs.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Depth-zero circuit is a literal]
+\begin{lemma}[Depth-zero circuits are literals]
 \lean{LMN.circuit_depth_zero_is_lit}
 \label{LMN.circuit_depth_zero_is_lit}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
 \difficulty{2}
-If a circuit $c$ has depth $0$, then $c$ is a single literal: there exists a literal
-$l$ with $c = \mathrm{Circuit.lit}\,l$.
+Let $c$ be a Boolean circuit on $m$ variables — a tree whose leaves are literals and
+whose internal nodes are AND or OR gates applied to lists of subcircuits — and suppose
+its depth is $0$. Then $c$ is a single leaf: there exists a literal $l$ such that $c$
+consists of that literal alone.
 \end{lemma}
 
 \begin{lemma}[Layer-2 composed bound, base case]
@@ -29,7 +31,6 @@ $l$ with $c = \mathrm{Circuit.lit}\,l$.
 }
 \label{LMN.layer2_composed_bound_base}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1032,21 +1033,25 @@ $l$ with $c = \mathrm{Circuit.lit}\,l$.
   {pdf-fc447f326910-p011-b004}
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.size, BoolCircuit.Lit, DNF.eval, LMN.Layer2Data, LMN.circuit_depth_zero_is_lit, LMN.composedDelta, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth, dtDepth_neg}
 \difficulty{5}
-Base case ($d_{\mathrm{inner}} = 2$) of the composed layer-2 bound. Here the top circuit
-$c_{\mathrm{top}}$ has depth $0$, hence is a single literal, so the composed function is one
-DNF gate or its negation. Under a Bernoulli random restriction with parameter
-$\mathrm{composedDelta}\,l\,l\,2$, the probability that the restricted function has
-decision-tree depth exceeding $t$ is at most
+Let $g_1,\dots,g_m$ be DNF formulas on $n$ Boolean variables, and let $w$ be a positive
+integer such that every $g_i$ has width at most $w$; assume $n \ge 1$, and that in each
+term the literals occupy distinct positions and any two literals sharing a variable are
+equal (so each variable is queried at most once per term). Let $c$ be a Boolean circuit
+on the $m$ gate-inputs whose depth is $0$ (hence a single literal), and let $F$ be the
+composed Boolean function on $n$ variables given by $F(x) =
+c\bigl(g_1(x),\dots,g_m(x)\bigr)$. Fix natural numbers $s$, $l$, $t$ with $l \ge 1$, $s
+\ge 1$, $w \le l$, and $\mathrm{size}(c) \le s$. Then, for a Bernoulli random
+restriction $\rho$ with parameter $\tfrac{1}{40l}$, the probability that the restriction
+of $F$ along $\rho$ — the function sending $x$ to $F$ evaluated with the coordinates
+fixed by $\rho$ and the free coordinates read from $x$ — has decision-tree depth
+exceeding $t$ is at most
 \[
-s_{\mathrm{rem}}\cdot\Bigl(\tfrac12\Bigr)^{l} + \Bigl(\tfrac12\Bigr)^{t}
-+ s_{\mathrm{rem}}\cdot e^{-n/(120 l)} + e^{-n/(120 l)},
+s\left(\tfrac12\right)^{l} + \left(\tfrac12\right)^{t} + s\,e^{-n/(120 l)} + e^{-n/(120
+l)}.
 \]
-under the hypotheses $0 < l$, $0 < n$, $c_{\mathrm{top}}.\mathrm{depth}+2\le 2$,
-$c_{\mathrm{top}}.\mathrm{size}\le s_{\mathrm{rem}}$, $\mathrm{data.width}\le l$, and
-$0 < s_{\mathrm{rem}}$.
 \end{lemma}
 
-\begin{lemma}[Switched gates yield new bounded-width DNFs]
+\begin{lemma}[Switched gates yield bounded-width clean DNFs]
 \lean{LMN.switched_gates_give_new_dnfs}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
@@ -1054,7 +1059,6 @@ $0 < s_{\mathrm{rem}}$.
 }
 \label{LMN.switched_gates_give_new_dnfs}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1263,9 +1267,14 @@ $0 < s_{\mathrm{rem}}$.
   {pdf-b5e074215b9e-p001-b004}
 \uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-Suppose for each gate $i$ the restricted function $\mathrm{restrictFn}\,(\mathrm{gates}\,i).\mathrm{eval}\,\rho_1$
-has decision-tree depth at most $l$. Then there exist DNFs $\mathrm{gates}'$ such that each
-$(\mathrm{gates}'\,i)$ has width at most $l$, evaluates to the corresponding restricted gate
-function on every input, and is clean: within each term every literal is determined by its
-variable (injectivity on variables) and each term has no duplicate literals.
+Let $n$, $m$, and $l$ be natural numbers, let $\rho_1$ be a restriction on $n$
+variables, and let $g_1, \dots, g_m$ be DNF formulas on $n$ variables. For each $i$,
+write $g_i|_{\rho_1}$ for the restricted Boolean function $x \mapsto
+g_i\bigl(\rho_1.\mathrm{extend}\,x\bigr)$, that is, $g_i$ evaluated on the input
+obtained by setting the fixed coordinates of $\rho_1$ and reading the free coordinates
+from $x$. Suppose that for every $i$ the decision-tree depth of $g_i|_{\rho_1}$ is at
+most $l$. Then there exist DNF formulas $g_1', \dots, g_m'$ such that, for every $i$:
+the width of $g_i'$ is at most $l$; $g_i'$ computes $g_i|_{\rho_1}$ on every input;
+within each term of $g_i'$ any two literals on the same variable are identical; and no
+term of $g_i'$ contains a repeated literal.
 \end{lemma}

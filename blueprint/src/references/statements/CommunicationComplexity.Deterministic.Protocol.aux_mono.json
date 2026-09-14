@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_mono",
+ "key": "866f0f175d9c8ddb",
+ "kind": "lemma",
+ "title": "Leaf rectangles are output-monochromatic",
+ "statement": "Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$ (Bob) with outputs in $\\alpha$, and let $A \\subseteq X$ and $B \\subseteq Y$. If $R$ is one of the auxiliary leaf rectangles of $p$ constrained to $A \\times B$, and $(x, y)$ and $(x', y')$ both belong to $R$, then running $p$ yields the same output at both inputs; that is, $p(x, y) = p(x', y')$.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol over X, Y with outputs in α",
+  "A is a subset of X",
+  "B is a subset of Y",
+  "R is one of the auxiliary leaf rectangles of p constrained to A × B",
+  "(x, y) belongs to R",
+  "(x', y') belongs to R"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $R \\in \\texttt{leafRectanglesAux}(p, A, B)$ and both $(x, y) \\in R$ and $(x', y') \\in R$,\nthen $p.\\texttt{run}(x, y) = p.\\texttt{run}(x', y')$: the protocol outputs the same value at\nevery input in $R$."
+}

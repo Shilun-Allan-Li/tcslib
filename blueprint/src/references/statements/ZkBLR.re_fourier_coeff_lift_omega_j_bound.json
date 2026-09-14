@@ -1,0 +1,19 @@
+{
+ "lean_name": "ZkBLR.re_fourier_coeff_lift_omega_j_bound",
+ "key": "6cd916002b2b2032",
+ "kind": "lemma",
+ "title": "Fourier coefficient bound for a twisted lift of an $\\varepsilon$-far function",
+ "statement": "Let $p$ be a prime, let $n \\ge 0$, and write $\\omega_p = e^{2\\pi i/p}$ for the primitive $p$-th root of unity. Let $f : \\bbz_p^{\\,n} \\to \\bbz_p$ be normalized ($f(0)=0$) and $\\varepsilon$-far from linear, meaning $0 \\le \\varepsilon \\le 1$ and $\\Pr_x[f(x)\\ne g(x)] \\ge \\varepsilon$ for every additive homomorphism $g : \\bbz_p^{\\,n} \\to \\bbz_p$. Fix $j \\in \\bbz_p$ with $j \\ne 0$, and for $s \\in \\bbz_p^{\\,n}$ let $\\widehat{h}(s) = \\E_x\\bigl[h(x)\\,\\omega_p^{-\\,s\\cdot x}\\bigr]$ denote the Fourier coefficient of a function $h : \\bbz_p^{\\,n} \\to \\bbc$ at frequency $s$, where $s\\cdot x = \\sum_{i} s_i x_i \\in \\bbz_p$. Then the $j$-twisted lift $\\widetilde{f}_j(x) = \\omega_p^{\\,j\\,f(x)}$ satisfies\n\\[\n  \\operatorname{Re}\\,\\widehat{\\widetilde{f}_j}(s) \\;\\le\\; 1 - \\bigl(1 - \\cos(2\\pi/p)\\bigr)\\,\\varepsilon\n\\]\nfor every $s \\in \\bbz_p^{\\,n}$.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$f : \\bbz_p^n \\to \\bbz_p$ is normalized ($f(0)=0$)",
+  "$0 \\le \\varepsilon \\le 1$",
+  "$f$ is $\\varepsilon$-far from every linear function",
+  "$j \\in \\bbz_p$ with $j \\ne 0$",
+  "$s \\in \\bbz_p^n$ arbitrary frequency"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\mathbb{Z}_p^n \\to \\mathbb{Z}_p$ is $\\varepsilon$-far from linear\n(normalized), $j \\ne 0$, and $s \\in \\mathbb{Z}_p^n$, then\n\\[\n  \\operatorname{Re}\\!\\left[\\widehat{(\\widetilde{f}_j)}(s)\\right]\n  \\;\\le\\; 1 - \\bigl(1-\\cos(2\\pi/p)\\bigr)\\varepsilon.\n\\]"
+}

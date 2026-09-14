@@ -181,15 +181,16 @@ This is the intended truth value of the auxiliary chain variable $y_j$ in the en
 of $\mathit{lits}$.
 \end{definition}
 
-\begin{lemma}[extraVal as prefix-all-false]
+\begin{lemma}[Auxiliary variable valuation as an all-false prefix]
 \lean{SATTo3SAT.extraVal_iff_prefix_all_false}
 \label{SATTo3SAT.extraVal_iff_prefix_all_false}
 \leanok
 \uses{SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
 \difficulty{1}
-Provided $j + 2 \le |\mathit{lits}|$, \texttt{SATTo3SAT.extraVal} $\alpha$ $\mathit{lits}$ $j$
-is logically equivalent to the condition that every element of $\mathit{lits}.\mathtt{take}(j+2)$
-is false under $\alpha$.
+Fix an assignment $\alpha$ and a list of literals $\mathit{lits}$, and let $j$ be an
+index with $j + 2 \le |\mathit{lits}|$. Then the auxiliary variable valuation associated
+with $\alpha$, $\mathit{lits}$, and $j$ holds if and only if every one of the first $j +
+2$ literals of $\mathit{lits}$ evaluates to false under $\alpha$.
 \end{lemma}
 
 \begin{definition}[Global assignment lift]
@@ -204,46 +205,66 @@ $\texttt{SATTo3SAT.extraVal}\,\alpha\,(f.\mathtt{get}\,i)\,j$, i.e.\ the chain i
 ``the first $j+2$ literals of clause $i$ are all false.''
 \end{definition}
 
-\begin{lemma}[Membership in to3SATAux]
+\begin{lemma}[Membership in the clause-by-clause 3-SAT encoding]
 \lean{SATTo3SAT.mem_to3SATAux_iff}
 \label{SATTo3SAT.mem_to3SATAux_iff}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.to3SATAux, SATTo3SAT.transformClause}
 \difficulty{4}
-A 3-clause $c_3$ belongs to $\texttt{SATTo3SAT.to3SATAux}\,\mathit{cs}\,\mathit{idx}$ if
-and only if there exists $i < |\mathit{cs}|$ such that $c_3$ belongs to
-$\texttt{SATTo3SAT.transformClause}\,(\mathit{idx} + i)\,(\mathit{cs}_i)$.
+Let $\mathit{cs} = (c_0,\dots,c_{m-1})$ be a list of clauses over a variable type $V$,
+let $\mathit{idx} \in \bbn$ be a starting index, and let $c_3$ be a 3-clause over the
+auxiliary variable type $\mathtt{AuxVar}\,V$. Encode $\mathit{cs}$ into 3-clauses by
+transforming each clause $c_i$ at the shifted index $\mathit{idx}+i$ and concatenating
+the outputs in order of increasing $i$. Then $c_3$ occurs in the resulting encoding of
+$\mathit{cs}$ if and only if there is a position $i < m$ for which $c_3$ occurs among
+the 3-clauses produced by transforming the clause $c_i$ at index $\mathit{idx}+i$.
 \end{lemma}
 
-\begin{lemma}[Membership in to3SAT]
+\begin{lemma}[Membership in the SAT-to-3-SAT encoding]
 \lean{SATTo3SAT.mem_to3SAT_iff}
 \label{SATTo3SAT.mem_to3SAT_iff}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause3, SATTo3SAT.mem_to3SATAux_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause}
 \difficulty{2}
-A 3-clause $c_3$ belongs to $\texttt{SATTo3SAT.to3SAT}\,f$ if and only if there exists
-$i < |f|$ such that $c_3$ belongs to $\texttt{SATTo3SAT.transformClause}\,i\,(f_i)$.
+Let $f = (C_0, \dots, C_{m-1})$ be a CNF formula over a variable type $V$, and write
+$\mathrm{Aux}(V)$ for the auxiliary variable type built from $V$. For each index $i$
+with $0 \le i < m$, let $T_i$ be the list of $3$-clauses obtained by encoding the single
+clause $C_i$ at index $i$, and take the SAT-to-3-SAT encoding of $f$ to be the $3$-CNF
+formula over $\mathrm{Aux}(V)$ formed by concatenating $T_0, T_1, \dots, T_{m-1}$ in
+order. Then a $3$-clause $c$ over $\mathrm{Aux}(V)$ occurs in the SAT-to-3-SAT encoding
+of $f$ if and only if there exists an index $i < m$ such that $c$ occurs in $T_i$.
 \end{lemma}
 
-\begin{lemma}[List take after drop-cons]
+\begin{lemma}[Extending a list prefix past a dropped head]
 \lean{SATTo3SAT.List.take_succ_of_drop_cons}
 \label{SATTo3SAT.List.take_succ_of_drop_cons}
 \leanok
 \difficulty{4}
-If $l.\mathtt{drop}\,n = a :: \mathit{rest}$, then $l.\mathtt{take}\,(n+1) = l.\mathtt{take}\,n \mathbin{+\!\!+} [a]$.
+Let $l$ be a list over a type $\alpha$, let $n$ be a natural number, and suppose that
+dropping the first $n$ entries of $l$ leaves a nonempty list whose head is $a$ (so that
+$l$ has more than $n$ entries and its $(n+1)$-st entry is $a$). Then the prefix
+consisting of the first $n+1$ entries of $l$ equals the prefix consisting of the first
+$n$ entries with $a$ appended: taking $n+1$ entries of $l$ gives (taking $n$ entries of
+$l$) followed by $[a]$.
 \end{lemma}
 
-\begin{lemma}[Chain clauses all satisfied under completeness]
+\begin{lemma}[Chain clauses satisfied by the completed assignment]
 \lean{SATTo3SAT.buildChain_all_satisfied}
 \label{SATTo3SAT.buildChain_all_satisfied}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.List.take_succ_of_drop_cons, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
 \difficulty{6}
-Let $\alpha$ be an assignment satisfying at least one literal of a clause, and let
-$\alpha_3$ be an assignment on $\mathtt{AuxVar}\,V$ that evaluates auxiliary variables via
-\texttt{SATTo3SAT.extraVal} and lifted literals faithfully.  Then every 3-clause produced
-by $\texttt{SATTo3SAT.buildChain}\,c\_idx\,ml\,\mathit{lits}\,j$ (with $j \ge 1$ and
-$\mathit{lits} = \mathit{clause}.\mathtt{drop}(j+1)$) is satisfied by $\alpha_3$.
+Fix a clause index $i$ and a clause presented as a list of literals over a variable type
+$V$, and let $\alpha : V \to \mathrm{Prop}$ be an assignment that makes at least one
+literal of the clause true. Let $ml$ be a map lifting each literal over $V$ to a literal
+over the extended type $\mathtt{AuxVar}\,V$, and let $\alpha_3$ be an assignment on
+$\mathtt{AuxVar}\,V$ such that: (i) for every $k$ the auxiliary variable $y_{i,k}$ is
+true under $\alpha_3$ exactly when all of the first $k+2$ literals of the clause are
+false under $\alpha$; and (ii) for every literal $\ell$, the lifted literal $ml(\ell)$
+is true under $\alpha_3$ if and only if $\ell$ is true under $\alpha$. Then for every
+chain counter $j \ge 1$, letting $\mathit{lits}$ be the suffix of the clause obtained by
+dropping its first $j+1$ literals, every 3-clause in the chain built for clause $i$ from
+$\mathit{lits}$ starting at counter $j$ is satisfied by $\alpha_3$.
 \end{lemma}
 
 \begin{definition}[Local literal predicate]
@@ -256,115 +277,156 @@ every auxiliary variable appearing in $l$ carries index $i$.  Literals over orig
 variables are always local.
 \end{definition}
 
-\begin{lemma}[Global and local assignments agree on local literals]
+\begin{lemma}[Local and global assignments agree on local literals]
 \lean{SATTo3SAT.eval_local_eq_global}
 \label{SATTo3SAT.eval_local_eq_global}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.IsLocalVar, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment}
 \difficulty{3}
-For a literal $l$ local to index $i$, the evaluation of $l$ under the global assignment
-\texttt{SATTo3SAT.globalAssignment} $\alpha\,f$ agrees with its evaluation under the local
-assignment that maps $\mathtt{extra}\,i\,j \mapsto \texttt{SATTo3SAT.extraVal}\,\alpha\,(f_i)\,j$.
+Let $\alpha$ be a truth assignment of the variables $V$, and let $f$ be a CNF formula
+over $V$ with clauses $C_0, \dots, C_{m-1}$. Fix an index $i$ with $0 \le i < m$ and
+write $C_i$ for the $i$-th clause. Let $l$ be a literal over the auxiliary variable type
+$\mathtt{AuxVar}\,V$ that is local to $i$, meaning that every auxiliary variable
+$y_{i',j}$ occurring in $l$ satisfies $i' = i$. Write $\hat\alpha$ for the global
+assignment determined by $\alpha$ and $f$, which sends each original variable to its
+value under $\alpha$ and each auxiliary variable $y_{i',j}$ to the truth of the
+assertion that the first $j+2$ literals of clause $C_{i'}$ are all false under $\alpha$;
+and write $\alpha_i$ for the corresponding local assignment, built from clause $C_i$
+alone. Then $l$ takes the same truth value under $\hat\alpha$ as under $\alpha_i$.
 \end{lemma}
 
-\begin{lemma}[buildChain produces local literals]
+\begin{lemma}[Chain-encoding clauses stay local to their index]
 \lean{SATTo3SAT.buildChain_isLocal}
 \label{SATTo3SAT.buildChain_isLocal}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.buildChain}
 \difficulty{4}
-Every literal in any 3-clause produced by $\texttt{SATTo3SAT.buildChain}\,i\,ml\,\ldots$
-is local to index $i$, provided the lifting map $ml$ itself produces only literals local
-to $i$.
+Let $i$ be a natural number and let $ml$ be a lifting map sending each literal over a
+variable type $V$ to a literal over $\mathtt{AuxVar}\,V$, and suppose that $ml(l)$ is
+local to index $i$ for every literal $l$. Then, for every list of literals
+$\mathit{lits}$ over $V$ and every chain counter $j$, each $3$-clause occurring in the
+chain of clauses built from $\mathit{lits}$ (with clause index $i$, lifting map $ml$,
+and counter $j$) has all three of its literals local to index $i$.
 \end{lemma}
 
-\begin{lemma}[transformClause produces local literals]
+\begin{lemma}[Locality of the 3-clause encoding of a single clause]
 \lean{SATTo3SAT.transformClause_isLocal}
 \label{SATTo3SAT.transformClause_isLocal}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.buildChain_isLocal, SATTo3SAT.transformClause}
 \difficulty{4}
-Every literal in any 3-clause produced by $\texttt{SATTo3SAT.transformClause}\,i\,\mathit{clause}$
-is local to index $i$.
+Fix a clause index $i$ and let $C$ be a clause over a variable type $V$. If a 3-clause
+occurs in the list produced by encoding $C$ at index $i$, then each of its three
+literals is local to $i$; that is, every auxiliary variable appearing in the 3-clause
+carries the index $i$, while literals over original variables of $V$ are local
+automatically.
 \end{lemma}
 
-\begin{lemma}[Global matches local for transformClause]
+\begin{lemma}[Global and local assignments agree on an encoded clause]
 \lean{SATTo3SAT.global_matches_local}
 \label{SATTo3SAT.global_matches_local}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.clause3Satisfied, SATTo3SAT.eval_local_eq_global, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment, SATTo3SAT.transformClause, SATTo3SAT.transformClause_isLocal}
 \difficulty{2}
-For a 3-clause $c_3$ produced by $\texttt{SATTo3SAT.transformClause}\,i\,\mathit{clause}$
-(where $\mathit{clause} = f_i$), satisfaction of $c_3$ under the global assignment
-\texttt{SATTo3SAT.globalAssignment} $\alpha\,f$ is equivalent to satisfaction under the
-local assignment $\mathtt{extra}\,i\,j \mapsto \texttt{SATTo3SAT.extraVal}\,\alpha\,\mathit{clause}\,j$.
+Fix an assignment $\alpha$ of truth values to the variables of a type $V$, a CNF formula
+$f$, and an index $i$ with $i < \mathrm{length}(f)$; let $C$ be the $i$-th clause of
+$f$, and let $c_3$ be any of the 3-clauses produced by encoding $C$ as clause number
+$i$. Consider the global lifted assignment on $\mathtt{AuxVar}\,V$, which sends each
+original variable $v$ to $\alpha(v)$ and each auxiliary chain variable $y_{i',j}$ to the
+truth value of the assertion ``the first $j+2$ literals of the $i'$-th clause of $f$ are
+all false under $\alpha$'', together with the local assignment that agrees with $\alpha$
+on original variables and sends $y_{i,j}$ to the truth value of ``the first $j+2$
+literals of $C$ are all false under $\alpha$''. Then $c_3$ is satisfied by the global
+assignment if and only if it is satisfied by the local assignment.
 \end{lemma}
 
-\begin{lemma}[Satisfied clause yields satisfied 3-clause encoding]
+\begin{lemma}[Extended assignment satisfies the 3-clause encoding of a satisfied clause]
 \lean{SATTo3SAT.transformClause_satisfied}
 \label{SATTo3SAT.transformClause_satisfied}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.buildChain_all_satisfied, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.transformClause}
 \difficulty{5}
-If a clause has at least one true literal under $\alpha$, then every 3-clause in its
-encoding $\texttt{SATTo3SAT.transformClause}\,c\_idx\,\mathit{clause}$ is satisfied by
-the local assignment $\mathtt{extra}\,c\_idx\,j \mapsto \texttt{SATTo3SAT.extraVal}\,\alpha\,\mathit{clause}\,j$.
+Let $\alpha$ be a truth assignment on a variable set $V$, and let $C$ be a clause over
+$V$ — a finite list of literals read as their disjunction — carrying the index $i$.
+Assume $\alpha$ satisfies $C$, meaning at least one literal of $C$ is true under
+$\alpha$. Extend $\alpha$ to an assignment $\alpha_3$ on the enlarged variable set
+consisting of the original variables of $V$ together with the auxiliary chain variables
+$y_{i,j}$: leave each original variable at its value under $\alpha$, and set $y_{i,j}$
+to true exactly when the first $j+2$ literals of $C$ are all false under $\alpha$. Then
+every $3$-clause in the list obtained by encoding $C$ at index $i$ as $3$-clauses is
+satisfied by $\alpha_3$.
 \end{lemma}
 
-\begin{theorem}[SAT to 3-SAT completeness]
+\begin{theorem}[Completeness of the SAT to 3-SAT encoding]
 \lean{SATTo3SAT.SAT_to_3SAT_completeness}
 \label{SATTo3SAT.SAT_to_3SAT_completeness}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.clauseSatisfied, SATTo3SAT.globalAssignment, SATTo3SAT.global_matches_local, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.mem_to3SAT_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause_satisfied}
 \difficulty{3}
-If a CNF formula $f$ is satisfiable, then $\texttt{SATTo3SAT.to3SAT}\,f$ is 3-satisfiable.
-The witnessing 3-SAT assignment is \texttt{SATTo3SAT.globalAssignment} $\alpha\,f$, where
-$\alpha$ is the original satisfying assignment.
+Let $f$ be a CNF formula over a variable type $V$, and let $\mathrm{to3SAT}(f)$ be the
+3-CNF formula produced by the standard clause-splitting transformation, whose variables
+are those of $V$ together with fresh auxiliary chain variables introduced to break each
+long clause into a chain of three-literal clauses. If $f$ is satisfiable — that is, some
+assignment to $V$ makes every clause of $f$ true — then $\mathrm{to3SAT}(f)$ is
+3-satisfiable: there is an assignment to its variables under which every 3-clause is
+true.
 \end{theorem}
 
-\begin{lemma}[Chain contradiction under all-false literals]
+\begin{lemma}[Contradiction from a satisfied chain of all-false literals]
 \lean{SATTo3SAT.buildChain_forced_false}
 \label{SATTo3SAT.buildChain_forced_false}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral}
 \difficulty{5}
-If $y_{j-1}$ is true, every $ml$-lifted literal in $\mathit{lits}$ is false under $\alpha_3$,
-and every 3-clause in $\texttt{SATTo3SAT.buildChain}\,c\_idx\,ml\,\mathit{lits}\,j$ is satisfied
-by $\alpha_3$ (with $j \ge 1$ and $|\mathit{lits}| \ge 2$), then a contradiction follows:
-the auxiliary variables are forced true one by one until the final chain clause has all
-three disjuncts false.
+Fix a clause index $i$ and an assignment $\alpha$ of truth values to the auxiliary
+variables. Let $\ell \mapsto \widehat{\ell}$ be a map lifting each literal over the base
+variable type to a literal over the auxiliary-variable type, let $j \ge 1$, and let $L$
+be a list of at least two literals over the base type such that the lifted literal
+$\widehat{\ell}$ evaluates to false under $\alpha$ for every $\ell$ in $L$. If every
+3-clause of the chain encoding built from clause index $i$, the lifting $\ell \mapsto
+\widehat{\ell}$, the list $L$, and the counter $j$ is satisfied by $\alpha$, then
+$\alpha$ cannot also make the entry variable $y_{i,\,j-1}$ true; these hypotheses taken
+together are contradictory.
 \end{lemma}
 
-\begin{lemma}[Satisfied 3-clause encoding yields satisfied clause]
+\begin{lemma}[Soundness of the clause-to-3-clause encoding]
 \lean{SATTo3SAT.transformClause_soundness}
 \label{SATTo3SAT.transformClause_soundness}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.buildChain_forced_false, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.transformClause}
 \difficulty{5}
-If every 3-clause in $\texttt{SATTo3SAT.transformClause}\,c\_idx\,\mathit{clause}$ is
-satisfied by $\alpha_3$, then the original clause has at least one true literal under
-the restriction $v \mapsto \alpha_3(\mathtt{orig}\,v)$.
+Fix a variable type $V$, a clause index $c \in \bbn$, and a clause $C$ over $V$ — a
+finite list of literals read as their disjunction. Let $\alpha$ be a truth assignment to
+the auxiliary variables (the original variables of $V$ together with the fresh chain
+variables), and suppose that every $3$-clause produced by encoding $C$ at index $c$ is
+satisfied by $\alpha$. Then $C$ has at least one literal that is true under the
+assignment obtained by reading each original variable $v$ through its copy among the
+auxiliary variables, i.e.\ $v \mapsto \alpha(\mathrm{orig}\,v)$.
 \end{lemma}
 
-\begin{theorem}[SAT to 3-SAT soundness]
+\begin{theorem}[Soundness of the SAT-to-3-SAT encoding]
 \lean{SATTo3SAT.SAT_to_3SAT_soundness}
 \label{SATTo3SAT.SAT_to_3SAT_soundness}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.mem_to3SAT_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause_soundness}
 \difficulty{3}
-If $\texttt{SATTo3SAT.to3SAT}\,f$ is 3-satisfiable, then the original CNF formula $f$ is
-satisfiable.  The witnessing assignment for $f$ is the restriction of any 3-SAT
-satisfying assignment $\alpha_3$ to original variables, $v \mapsto \alpha_3(\mathtt{orig}\,v)$.
+Let $f$ be a CNF formula over a variable type $V$, and let its SAT-to-3-SAT encoding be
+the 3-CNF formula over the extended variable type (the original variables together with
+the fresh auxiliary chain variables). If this encoded 3-CNF formula is 3-satisfiable —
+that is, some assignment of the extended variables satisfies all of its 3-clauses — then
+$f$ itself is satisfiable.
 \end{theorem}
 
-\begin{theorem}[SAT to 3-SAT equivalence]
+\begin{theorem}[SAT-to-3-SAT preserves satisfiability]
 \lean{SATTo3SAT.SAT_to_3SAT_equivalence}
 \label{SATTo3SAT.SAT_to_3SAT_equivalence}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.SAT_to_3SAT_completeness, SATTo3SAT.SAT_to_3SAT_soundness, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.to3SAT}
 \difficulty{1}
-A CNF formula $f$ over $V$ is satisfiable if and only if the 3-CNF formula
-$\texttt{SATTo3SAT.to3SAT}\,f$ (over $\mathtt{AuxVar}\,V$) is 3-satisfiable.
-This combines \texttt{SATTo3SAT.SAT\_to\_3SAT\_completeness} and
-\texttt{SATTo3SAT.SAT\_to\_3SAT\_soundness} into a single biconditional.
+Let $f$ be a CNF formula over a variable type $V$, and let $\tau(f)$ denote its $3$-CNF
+encoding: the formula obtained by replacing each clause of $f$ with an equisatisfiable
+chain of $3$-clauses over an enlarged variable type that adjoins to $V$ a supply of
+fresh auxiliary variables (a clause of more than three literals is split into linked
+triples using these auxiliary variables, while shorter clauses are padded to three
+literals). Then $f$ is satisfiable if and only if $\tau(f)$ is $3$-satisfiable.
 \end{theorem}

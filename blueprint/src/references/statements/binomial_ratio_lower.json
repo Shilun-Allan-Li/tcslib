@@ -1,0 +1,18 @@
+{
+ "lean_name": "binomial_ratio_lower",
+ "key": "8210ddab8f587c32",
+ "kind": "theorem",
+ "title": "Lower bound for a ratio of binomial coefficients",
+ "statement": "Let $n$, $\\ell$, and $q$ be natural numbers with $n \\ge 1$ and $q \\ge 1$, and suppose that $q \\le \\ell$, $2\\ell \\le n$, and $2q \\le n$. Then\n\\[\n  e^{-3q}\\left(\\frac{\\ell}{n}\\right)^{q} \\ \\le\\ \\frac{\\binom{n-2q}{\\ell-q}}{\\binom{n}{\\ell}},\n\\]\nwhere the binomial coefficients are evaluated in $\\bbr$.",
+ "hypotheses_covered": [
+  "n ≥ 1",
+  "q ≥ 1",
+  "q ≤ ℓ",
+  "2ℓ ≤ n",
+  "2q ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFact 4.2 (lower half).  Under the same hypotheses $n > 0$, $q > 0$, $q \\le \\ell$,\n$2\\ell \\le n$ and $2q \\le n$,\n\\[\n  e^{-3q}\\left(\\frac{\\ell}{n}\\right)^{q} \\ \\le\\ \\frac{\\binom{n-2q}{\\ell-q}}{\\binom{n}{\\ell}},\n\\]\nwith the binomial coefficients again read in $\\bbr$ via $\\texttt{chooseR}$."
+}

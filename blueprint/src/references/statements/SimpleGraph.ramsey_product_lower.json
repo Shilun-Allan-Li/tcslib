@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.ramsey_product_lower",
+ "key": "2ab8efe49182f0db",
+ "kind": "theorem",
+ "title": "Product lower bound for diagonal Ramsey numbers",
+ "statement": "For positive integers $k$ and $l$, write $r(a,b)$ for the Ramsey number: the least $n$ such that every simple graph on $n$ vertices contains either a clique on $a$ vertices or an independent set of $b$ vertices. Then, provided $k \\ge 1$ and $l \\ge 1$,\n\\[\n\\bigl(r(k+1,\\,k+1) - 1\\bigr)\\bigl(r(l+1,\\,l+1) - 1\\bigr) + 1 \\;\\le\\; r(kl+1,\\,kl+1).\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1",
+  "l ≥ 1",
+  "conclusion: product of (r(k+1,k+1)-1) and (r(l+1,l+1)-1), plus 1, bounds r(kl+1,kl+1) from below"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{\\texttt{r(kl+1, kl+1) - 1 $\\ge$ (r(k+1, k+1) - 1)(r(l+1, l+1) -\n1)}.}\n\n($b$) Using ($a$), show that\n\\[r(kl + 1, kl + 1) - 1 \\geq (r(k + 1, k + 1) - 1) \\times (r(l + 1, l + 1) - 1)\\]"
+}

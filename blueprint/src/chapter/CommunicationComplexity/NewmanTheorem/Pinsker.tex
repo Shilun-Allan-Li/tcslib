@@ -22,104 +22,135 @@ converting the extended non-negative real value $\mu.\mathrm{rnDeriv}\,\nu\,x$
 to a real number via \texttt{ENNReal.toReal}.
 \end{definition}
 
-\begin{theorem}[Radon-Nikodym density is nonnegative]
+\begin{theorem}[Nonnegativity of the Radon–Nikodym density]
 \lean{CommunicationComplexity.rnDensity_nonneg}
 \label{CommunicationComplexity.rnDensity_nonneg}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{1}
-For all $x \in \Omega$, $\mathrm{rnDensity}(\mu,\nu)(x) \ge 0$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$. Then at
+every point $x \in \Omega$, the real-valued Radon–Nikodym density $\frac{d\mu}{d\nu}(x)$
+satisfies $\frac{d\mu}{d\nu}(x) \ge 0$.
 \end{theorem}
 
-\begin{theorem}[Radon-Nikodym density is measurable]
+\begin{theorem}[Measurability of the Radon–Nikodym density]
 \lean{CommunicationComplexity.measurable_rnDensity}
 \label{CommunicationComplexity.measurable_rnDensity}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{1}
-The function $x \mapsto \mathrm{rnDensity}(\mu,\nu)(x)$ is measurable.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and consider
+the real-valued Radon–Nikodym density $x \mapsto \left(\tfrac{d\mu}{d\nu}(x)\right)$,
+obtained from the $[0,\infty]$-valued Radon–Nikodym derivative $\tfrac{d\mu}{d\nu}\colon
+\Omega \to [0,\infty]$ by taking its real value at each point. Then this function
+$\Omega \to \bbr$ is measurable.
 \end{theorem}
 
-\begin{theorem}[Radon-Nikodym density is $\nu$-integrable]
+\begin{theorem}[Integrability of the Radon–Nikodym density]
 \lean{CommunicationComplexity.integrable_rnDensity}
 \label{CommunicationComplexity.integrable_rnDensity}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{1}
-The function $\mathrm{rnDensity}(\mu,\nu)$ is integrable with respect to $\nu$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let
+$f\colon \Omega \to \bbr$ be the real-valued Radon–Nikodym density of $\mu$ with respect
+to $\nu$, that is, the function whose value at each point $x$ is the real number
+obtained from the Radon–Nikodym derivative $\frac{d\mu}{d\nu}(x)$. Then $f$ is
+integrable with respect to $\nu$.
 \end{theorem}
 
-\begin{theorem}[Integral of density equals one under absolute continuity]
+\begin{theorem}[Integral of the Radon–Nikodym derivative equals one]
 \lean{CommunicationComplexity.integral_rnDensity_eq_one_of_ac}
 \label{CommunicationComplexity.integral_rnDensity_eq_one_of_ac}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{2}
-If $\mu \ll \nu$, then $\int \mathrm{rnDensity}(\mu,\nu)(x)\,d\nu = 1$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+that $\mu$ is absolutely continuous with respect to $\nu$, written $\mu \ll \nu$. Then
+the Radon–Nikodym derivative $\frac{d\mu}{d\nu}$ integrates to one against $\nu$:
+\[
+  \int_{\Omega} \frac{d\mu}{d\nu}(x)\,d\nu(x) = 1.
+\]
 \end{theorem}
 
-\begin{theorem}[$\mathrm{rnDensity} - 1$ is integrable]
+\begin{theorem}[Integrability of the Radon–Nikodym density minus one]
 \lean{CommunicationComplexity.integrable_rnDensity_sub_one}
 \label{CommunicationComplexity.integrable_rnDensity_sub_one}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.rnDensity}
 \difficulty{1}
-The function $x \mapsto \mathrm{rnDensity}(\mu,\nu)(x) - 1$ is integrable with
-respect to $\nu$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let
+$\frac{d\mu}{d\nu}\colon \Omega \to \bbr$ denote the real-valued Radon–Nikodym density
+of $\mu$ with respect to $\nu$. Then the function $x \mapsto \frac{d\mu}{d\nu}(x) - 1$
+is integrable with respect to $\nu$.
 \end{theorem}
 
-\begin{theorem}[$|\mathrm{rnDensity} - 1|$ is integrable]
+\begin{theorem}[Integrability of the deviation of the Radon–Nikodym density from one]
 \lean{CommunicationComplexity.integrable_abs_rnDensity_sub_one}
 \label{CommunicationComplexity.integrable_abs_rnDensity_sub_one}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity_sub_one, CommunicationComplexity.rnDensity}
 \difficulty{1}
-The function $x \mapsto |\mathrm{rnDensity}(\mu,\nu)(x) - 1|$ is integrable with
-respect to $\nu$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let
+$\frac{d\mu}{d\nu} : \Omega \to \bbr$ be the real-valued Radon–Nikodym density of $\mu$
+with respect to $\nu$ (the extended nonnegative Radon–Nikodym derivative converted to a
+real number). Then the function $x \mapsto \abs{\frac{d\mu}{d\nu}(x) - 1}$ is integrable
+with respect to $\nu$.
 \end{theorem}
 
-\begin{theorem}[Integral of $\mathrm{rnDensity} - 1$ is zero under absolute continuity]
+\begin{theorem}[Mean of the Radon–Nikodym density minus one vanishes]
 \lean{CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac}
 \label{CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.integral_rnDensity_eq_one_of_ac, CommunicationComplexity.rnDensity}
 \difficulty{2}
-If $\mu \ll \nu$, then $\int (\mathrm{rnDensity}(\mu,\nu)(x) - 1)\,d\nu = 0$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+that $\mu$ is absolutely continuous with respect to $\nu$. Writing $\frac{d\mu}{d\nu}$
+for the Radon–Nikodym density of $\mu$ with respect to $\nu$ (the real-valued version of
+the Radon–Nikodym derivative), one has \[ \int_{\Omega} \left(\frac{d\mu}{d\nu}(x) -
+1\right)\, d\nu(x) = 0. \]
 \end{theorem}
 
-\begin{theorem}[Measure difference as set integral of density shift]
+\begin{theorem}[Set difference of two measures as an integral of the density minus one]
 \lean{CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one}
 \label{CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one}
 \leanok
 \uses{CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.rnDensity}
 \difficulty{3}
-If $\mu \ll \nu$ and $S \subseteq \Omega$ is measurable, then
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$ with $\mu$
+absolutely continuous with respect to $\nu$ (that is, $\mu \ll \nu$), and let $S
+\subseteq \Omega$. Writing $\frac{d\mu}{d\nu}$ for the (real-valued) Radon–Nikodym
+derivative of $\mu$ with respect to $\nu$, one has
 \[
-  \mu(S) - \nu(S) \;=\; \int_S \bigl(\mathrm{rnDensity}(\mu,\nu)(x) - 1\bigr)\,d\nu.
+  \mu(S) - \nu(S) \;=\; \int_{S} \left( \frac{d\mu}{d\nu}(x) - 1 \right) d\nu(x).
 \]
 \end{theorem}
 
-\begin{theorem}[Nonneg-part integral equals half the $L^1$ norm when mean is zero]
+\begin{theorem}[Positive part integrates to half the $L^1$ norm at mean zero]
 \lean{CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero}
 \label{CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero}
 \leanok
 \difficulty{4}
-Let $\mu$ be a finite measure and $g : \Omega \to \mathbb{R}$ measurable, integrable,
-and mean-zero ($\int g\,d\mu = 0$).  Then
+Let $\mu$ be a finite measure on a measurable space $\Omega$, and let $g : \Omega \to
+\bbr$ be measurable and integrable with mean zero, $\int_\Omega g\,d\mu = 0$. Then the
+integral of $g$ over the region where it is nonnegative equals half its $L^1$ norm:
 \[
-  \int_{\{x\,:\,g(x)\ge 0\}} g(x)\,d\mu \;=\; \tfrac{1}{2}\int |g(x)|\,d\mu.
+  \int_{\{x\,:\,g(x)\ge 0\}} g(x)\,d\mu \;=\; \tfrac{1}{2}\int_\Omega \abs{g(x)}\,d\mu.
 \]
 \end{theorem}
 
-\begin{theorem}[Supremum of absolute set-integrals equals nonneg part when mean is zero]
+\begin{theorem}[Supremum of absolute set-integrals of a mean-zero function]
 \lean{CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero}
 \label{CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero}
 \leanok
 \difficulty{5}
-Let $\mu$ be a finite measure and $g$ measurable, integrable, and mean-zero.  Then
+Let $\mu$ be a finite measure on a measurable space $\Omega$, and let $g \colon \Omega
+\to \bbr$ be measurable and integrable with mean zero, $\int_\Omega g\,d\mu = 0$. Then
+the supremum of $\abs{\int_S g\,d\mu}$ taken over all measurable sets $S \subseteq
+\Omega$ equals the integral of $g$ over the region where it is nonnegative:
 \[
-  \sup_{S\text{ measurable}}\Bigl|\int_S g\,d\mu\Bigr|
-  \;=\; \int_{\{g \ge 0\}} g\,d\mu.
+\sup_{S\text{ measurable}} \abs*{\int_S g\,d\mu} \;=\; \int_{\{x \,:\, g(x) \ge 0\}}
+g\,d\mu.
 \]
 \end{theorem}
 
@@ -140,13 +171,17 @@ The \emph{density positive set} is $\{x \in \Omega : \mathrm{rnDensity}(\mu,\nu)
 the region where $\mu$ locally dominates $\nu$.
 \end{definition}
 
-\begin{theorem}[Density positive set is measurable]
+\begin{theorem}[Measurability of the density positive set]
 \lean{CommunicationComplexity.measurableSet_densityPositiveSet}
 \label{CommunicationComplexity.measurableSet_densityPositiveSet}
 \leanok
 \uses{CommunicationComplexity.densityPositiveSet, CommunicationComplexity.measurable_rnDensity}
 \difficulty{1}
-The density positive set $\{x : \mathrm{rnDensity}(\mu,\nu)(x) \ge 1\}$ is a measurable subset of $\Omega$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and for each
+$x \in \Omega$ let $\frac{d\mu}{d\nu}(x) \in \bbr$ denote the Radon–Nikodym derivative
+of $\mu$ with respect to $\nu$, taken as a real number. Then the set $\left\{x \in
+\Omega : \frac{d\mu}{d\nu}(x) \ge 1\right\}$, on which $\mu$ locally dominates $\nu$, is
+a measurable subset of $\Omega$.
 \end{theorem}
 
 \begin{definition}[Density positive integral]
@@ -159,174 +194,255 @@ $\mathrm{densityPositiveIntegral}(\mu,\nu) := \int_{\mathrm{densityPositiveSet}}
 the excess mass of $\mu$ over $\nu$ on the region where $\mu$ dominates.
 \end{definition}
 
-\begin{theorem}[TV distance supremum equals density positive integral under absolute continuity]
+\begin{theorem}[Total variation distance as the excess-mass integral]
 \lean{CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac}
 \label{CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.densityPositiveIntegral, CommunicationComplexity.densityPositiveSet, CommunicationComplexity.integrable_rnDensity_sub_one, CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.measureReal_sub_eq_setIntegral_rnDensity_sub_one, CommunicationComplexity.rnDensity, CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero, CommunicationComplexity.tvDistanceSup}
 \difficulty{4}
-If $\mu \ll \nu$, then
-$\mathrm{tvDistanceSup}(\mu,\nu) = \mathrm{densityPositiveIntegral}(\mu,\nu)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+$\mu$ is absolutely continuous with respect to $\nu$. Write $\frac{d\mu}{d\nu}$ for the
+Radon–Nikodym derivative of $\mu$ with respect to $\nu$. Then the total variation
+distance, taken as the supremum
+\[
+\mathrm{TV}_{\sup}(\mu,\nu) = \sup\bigl\{\,\abs{\mu(S) - \nu(S)} : S \subseteq \Omega
+\text{ measurable}\,\bigr\},
+\]
+equals the excess mass of $\mu$ over $\nu$ on the region where $\mu$ locally dominates:
+\[
+\mathrm{TV}_{\sup}(\mu,\nu) = \int_{\{x\,:\,\frac{d\mu}{d\nu}(x)\,\ge\,1\}}
+\left(\frac{d\mu}{d\nu}(x) - 1\right)\,d\nu(x).
+\]
 \end{theorem}
 
-\begin{theorem}[TV distance equals density positive integral under absolute continuity]
+\begin{theorem}[Total variation distance as an integral of density excess]
 \lean{CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
 \label{CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup, CommunicationComplexity.densityPositiveIntegral, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac}
 \difficulty{1}
-If $\mu \ll \nu$, then $\mathrm{TV}(\mu,\nu) = \mathrm{densityPositiveIntegral}(\mu,\nu)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+that $\mu$ is absolutely continuous with respect to $\nu$. Write $\frac{d\mu}{d\nu}$ for
+the (real-valued) Radon–Nikodym derivative of $\mu$ with respect to $\nu$. Then the
+total variation distance between $\mu$ and $\nu$ equals the excess mass of $\mu$ over
+$\nu$ on the region where $\mu$ locally dominates $\nu$:
+\[
+\tfrac{1}{2}\,\norm{\mu - \nu}_{\mathrm{TV}}
+= \int_{\left\{\,x \in \Omega \;:\; \frac{d\mu}{d\nu}(x) \ge 1\,\right\}}
+\left(\frac{d\mu}{d\nu}(x) - 1\right)\, d\nu.
+\]
 \end{theorem}
 
-\begin{theorem}[Density positive integral equals half the density absolute integral]
+\begin{theorem}[Positive part equals half the total variation of the density]
 \lean{CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac}
 \label{CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.densityPositiveIntegral, CommunicationComplexity.densityPositiveSet, CommunicationComplexity.integrable_rnDensity_sub_one, CommunicationComplexity.integral_nonneg_part_eq_half_integral_abs_of_integral_eq_zero, CommunicationComplexity.integral_rnDensity_sub_one_eq_zero_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.rnDensity}
 \difficulty{2}
-If $\mu \ll \nu$, then
-$\mathrm{densityPositiveIntegral}(\mu,\nu) = \tfrac{1}{2}\,\mathrm{densityAbsIntegral}(\mu,\nu)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, with $\mu$
+absolutely continuous with respect to $\nu$, and write $\frac{d\mu}{d\nu}$ for the
+Radon–Nikodym density of $\mu$ with respect to $\nu$. Then the excess mass of the
+density above $1$, integrated over the region where the density is at least $1$, equals
+half the $L^1(\nu)$-distance of the density from $1$:
+\[
+\int_{\{x\,:\,\frac{d\mu}{d\nu}(x)\,\ge\,1\}}
+\left(\frac{d\mu}{d\nu}(x)-1\right)\,d\nu(x) \;=\; \frac{1}{2}\int_{\Omega}
+\left|\frac{d\mu}{d\nu}(x)-1\right|\,d\nu(x).
+\]
 \end{theorem}
 
-\begin{theorem}[Pointwise KL inequality: $u y \le \mathrm{klFun}(u) + e^y - 1$]
+\begin{theorem}[A Fenchel-type inequality for the Kullback–Leibler function]
 \lean{CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
 \label{CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
 \leanok
 \difficulty{4}
-For real numbers $u \ge 0$ and $y$, one has $u \cdot y \le \mathrm{klFun}(u) + e^y - 1$,
-where $\mathrm{klFun}(u) = u \ln u - u + 1$.
+For every real number $u \ge 0$ and every real number $y$,
+\[
+u\,y \;\le\; \left(u\ln u - u + 1\right) + e^{y} - 1,
+\]
+where the term $u\ln u$ is taken to be $0$ at $u = 0$.
 \end{theorem}
 
-\begin{theorem}[Integral of $e^{tX - \Lambda(t)}$ equals one]
+\begin{theorem}[Exponential tilting by the cumulant generating function normalises to one]
 \lean{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
 \label{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
 \leanok
 \difficulty{3}
-Let $\mu$ be a probability measure, $X : \Omega \to \mathbb{R}$ and $t \in \mathbb{R}$.
-If $e^{tX}$ is $\mu$-integrable, then
-$\int e^{t X(x) - \Lambda_\mu(t)}\,d\mu = 1$,
-where $\Lambda_\mu(t) = \log\int e^{tX}\,d\mu$ is the cumulant generating function.
+Let $\mu$ be a probability measure on a measurable space $\Omega$, let $X : \Omega \to
+\bbr$ be a random variable, and let $t \in \bbr$. Write $\Lambda(t) = \log \int_\Omega
+e^{t X(x)}\,d\mu(x)$ for the cumulant generating function of $X$ at $t$. If the function
+$x \mapsto e^{t X(x)}$ is $\mu$-integrable, then
+\[
+\int_\Omega e^{\,t X(x) - \Lambda(t)}\,d\mu(x) = 1.
+\]
 \end{theorem}
 
-\begin{theorem}[$e^{tX - \Lambda(t)}$ is integrable]
+\begin{theorem}[Integrability of the centred exponential moment]
 \lean{CommunicationComplexity.integrable_exp_sub_cgf}
 \label{CommunicationComplexity.integrable_exp_sub_cgf}
 \leanok
 \difficulty{2}
-If $e^{tX}$ is $\mu$-integrable, then so is $x \mapsto e^{t X(x) - \Lambda_\mu(t)}$.
+Let $(\Omega,\mu)$ be a measure space, let $X\colon\Omega\to\bbr$ be a measurable
+function, and let $t\in\bbr$. Write $\Lambda(t)$ for the cumulant generating function of
+$X$ under $\mu$, that is, the logarithm of the moment generating function evaluated at
+$t$. If the function $x\mapsto e^{t\,X(x)}$ is $\mu$-integrable, then so is the function
+$x\mapsto e^{t\,X(x)-\Lambda(t)}$.
 \end{theorem}
 
-\begin{theorem}[Variational bound: $t \int f X\,d\mu \le \int \mathrm{klFun}(f)\,d\mu + \Lambda_\mu(t)$]
+\begin{theorem}[A variational inequality for the mean of a random variable]
 \lean{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
 \label{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
 \leanok
 \uses{CommunicationComplexity.integrable_exp_sub_cgf, CommunicationComplexity.integral_exp_sub_cgf_eq_one, CommunicationComplexity.mul_le_klFun_add_exp_sub_one}
 \difficulty{5}
-Let $f, X : \Omega \to \mathbb{R}$ with $f \ge 0$ and $\int f\,d\mu = 1$.  Under suitable
-integrability conditions on $f$, $X$, and $e^{tX}$,
+Let $\mu$ be a probability measure on a measurable space $\Omega$, let $f, X : \Omega
+\to \bbr$, and let $t \in \bbr$. Suppose that $f \ge 0$ pointwise, that $\int_\Omega
+f\,d\mu = 1$, and that $f$, the map $x \mapsto f(x)\log f(x) - f(x) + 1$, the map $x
+\mapsto e^{tX(x)}$, and the product $fX$ are all $\mu$-integrable. Writing $\Lambda(t) =
+\log \int_\Omega e^{tX}\,d\mu$ for the cumulant generating function of $X$ under $\mu$,
+one has
 \[
-  t \int f(x)\,X(x)\,d\mu \;\le\; \int \mathrm{klFun}(f(x))\,d\mu + \Lambda_\mu(t).
+t \int_\Omega f(x)\,X(x)\,d\mu(x) \;\le\; \int_\Omega \bigl(f(x)\log f(x) - f(x) +
+1\bigr)\,d\mu(x) + \Lambda(t).
 \]
 \end{theorem}
 
-\begin{theorem}[$\tfrac{1}{2}(\int|f-1|)^2 \le \int \mathrm{klFun}(f)$]
+\begin{theorem}[A Pinsker-type inequality for the Kullback–Leibler generator]
 \lean{CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun}
 \label{CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun}
 \leanok
 \uses{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
 \difficulty{6}
-Let $f : \Omega \to \mathbb{R}$ with $f \ge 0$, $\int f\,d\mu = 1$, $f$ integrable,
-and $\mathrm{klFun}(f)$ integrable.  Then
+Let $(\Omega, \mu)$ be a probability space, and let $\varphi(t) = t \log t - t + 1$ for
+$t \ge 0$ denote the convex generator of the Kullback–Leibler divergence. Let $f :
+\Omega \to \bbr$ be a measurable, integrable, nonnegative function with $\int_\Omega f
+\, d\mu = 1$, so that $f$ is the density of a probability measure with respect to $\mu$,
+and assume that $x \mapsto \varphi(f(x))$ is integrable with respect to $\mu$. Then
 \[
-  \tfrac{1}{2}\Bigl(\int |f(x) - 1|\,d\mu\Bigr)^2 \;\le\; \int \mathrm{klFun}(f(x))\,d\mu.
+\tfrac{1}{2}\Bigl(\int_\Omega \abs{f(x) - 1}\, d\mu\Bigr)^{2} \;\le\; \int_\Omega
+\varphi(f(x))\, d\mu .
 \]
 \end{theorem}
 
-\begin{theorem}[TV distance equals half density absolute integral under absolute continuity]
+\begin{theorem}[Total variation distance via the density's L¹-deviation from one]
 \lean{CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
 \label{CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.densityPositiveIntegral_eq_half_densityAbsIntegral_of_ac, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac}
 \difficulty{1}
-If $\mu \ll \nu$, then
-$\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\,\mathrm{densityAbsIntegral}(\mu,\nu)$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+that $\mu$ is absolutely continuous with respect to $\nu$. Then the total variation
+distance between $\mu$ and $\nu$ equals one half of the density absolute integral, that
+is,
+\[
+\mathrm{TV}(\mu,\nu) = \frac{1}{2}\int_{\Omega} \left| \frac{d\mu}{d\nu}(x) - 1 \right|
+\, d\nu(x).
+\]
 \end{theorem}
 
-\begin{theorem}[$\tfrac{1}{2}(\mathrm{densityAbsIntegral})^2 \le \int\mathrm{klFun}(\mathrm{rnDensity})$]
+\begin{theorem}[A Pinsker-type inequality for the Radon–Nikodym density]
 \lean{CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity}
 \label{CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun, CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.integral_rnDensity_eq_one_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.rnDensity, CommunicationComplexity.rnDensity_nonneg}
 \difficulty{2}
-If $\mu \ll \nu$ and the log-likelihood ratio $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable,
-then
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$ with $\mu$
+absolutely continuous with respect to $\nu$, and write $f = \frac{d\mu}{d\nu}$ for the
+(real-valued) Radon–Nikodym density. Suppose the log-likelihood ratio $x \mapsto
+\log\frac{d\mu}{d\nu}(x)$ is $\mu$-integrable. Then
 \[
-  \tfrac{1}{2}\,\mathrm{densityAbsIntegral}(\mu,\nu)^2
+  \frac{1}{2}\left(\int_\Omega \abs{f(x) - 1}\,d\nu(x)\right)^{2}
   \;\le\;
-  \int \mathrm{klFun}\bigl(\mathrm{rnDensity}(\mu,\nu)(x)\bigr)\,d\nu.
+  \int_\Omega \bigl(f(x)\log f(x) - f(x) + 1\bigr)\,d\nu(x),
 \]
+where the left-hand inner integral is the $L^1(\nu)$-distance of the density from $1$
+and the right-hand integrand is the Kullback–Leibler integrand $t \mapsto t\log t - t +
+1$.
 \end{theorem}
 
-\begin{theorem}[KL-function integral equals log-likelihood integral]
+\begin{theorem}[Two integral forms of the Kullback–Leibler divergence]
 \lean{CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral}
 \label{CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral}
 \leanok
 \uses{CommunicationComplexity.rnDensity}
 \difficulty{1}
-If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$ with $\mu$
+absolutely continuous with respect to $\nu$, and write $\frac{d\mu}{d\nu}$ for the
+(real-valued) Radon–Nikodym density of $\mu$ with respect to $\nu$. Assume that the
+log-likelihood ratio $x \mapsto \log\frac{d\mu}{d\nu}(x)$ is $\mu$-integrable. Then
 \[
-  \int \mathrm{klFun}\bigl(\mathrm{rnDensity}(\mu,\nu)(x)\bigr)\,d\nu
+  \int_\Omega \varphi\!\left(\frac{d\mu}{d\nu}(x)\right) d\nu(x)
   \;=\;
-  \int \mathrm{llr}(\mu,\nu)(x)\,d\mu.
+  \int_\Omega \log\frac{d\mu}{d\nu}(x)\, d\mu(x),
 \]
+where $\varphi(t) = t\log t + 1 - t$.
 \end{theorem}
 
-\begin{theorem}[Density $L^1$ Pinsker bound via KL integral]
+\begin{theorem}[Pinsker-type bound via the KL integral]
 \lean{CommunicationComplexity.density_l1_pinsker_le_kl_integral}
 \label{CommunicationComplexity.density_l1_pinsker_le_kl_integral}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity, CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral, CommunicationComplexity.rnDensity}
 \difficulty{2}
-If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$ with $\mu$
+absolutely continuous with respect to $\nu$, and write $\frac{d\mu}{d\nu}$ for the
+(real-valued) Radon–Nikodym density. Suppose the log-likelihood ratio $x \mapsto
+\log\frac{d\mu}{d\nu}(x)$ is $\mu$-integrable. Then
 \[
-  \tfrac{1}{2}\,\mathrm{densityAbsIntegral}(\mu,\nu)^2
-  \;\le\; \int \mathrm{llr}(\mu,\nu)(x)\,d\mu.
+\frac{1}{2}\left(\int_{\Omega} \left|\frac{d\mu}{d\nu}(x) - 1\right|\,d\nu(x)\right)^{2}
+  \;\le\;
+  \int_{\Omega} \log\frac{d\mu}{d\nu}(x)\,d\mu(x),
 \]
+where the inner integral on the left is the $L^{1}(\nu)$-distance of the density from
+the constant $1$.
 \end{theorem}
 
-\begin{theorem}[Real Pinsker inequality under absolute continuity and integrability]
+\begin{theorem}[Pinsker's inequality under absolute continuity]
 \lean{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable}
 \label{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.density_l1_pinsker_le_kl_integral, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
 \difficulty{2}
-If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and write
+$\mathrm{TV}(\mu,\nu)$ for their total variation distance. Suppose $\mu$ is absolutely
+continuous with respect to $\nu$, and that the log-likelihood ratio $x \mapsto
+\log\frac{d\mu}{d\nu}(x)$ is $\mu$-integrable. Then
 \[
-  2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \int \mathrm{llr}(\mu,\nu)(x)\,d\mu.
+  2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \int_\Omega \log\frac{d\mu}{d\nu}(x)\,d\mu(x),
 \]
+the right-hand side being the Kullback–Leibler divergence of $\mu$ from $\nu$.
 \end{theorem}
 
-\begin{theorem}[Pinsker inequality ($\mathbb{R}_{\ge 0}^\infty$ form) under absolute continuity and integrability]
+\begin{theorem}[Pinsker's inequality under absolute continuity]
 \lean{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable}
 \label{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
 \difficulty{2}
-If $\mu \ll \nu$ and $\mathrm{llr}(\mu,\nu)$ is $\mu$-integrable, then
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+$\mu$ is absolutely continuous with respect to $\nu$ and that the log-likelihood ratio
+$\log\frac{d\mu}{d\nu}$ is $\mu$-integrable. Then, as an inequality in the extended
+nonnegative reals $\bbr_{\ge 0} \cup \{\infty\}$,
 \[
-  \mathrm{ofReal}\bigl(2\,\mathrm{TV}(\mu,\nu)^2\bigr) \;\le\; \mathrm{KL}(\mu \| \nu)
+  2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \mathrm{KL}(\mu \,\|\, \nu),
 \]
-in $\mathbb{R}_{\ge 0}^\infty$.
+where $\mathrm{TV}(\mu,\nu)$ is the total variation distance between $\mu$ and $\nu$ and
+$\mathrm{KL}(\mu \,\|\, \nu)$ is the Kullback–Leibler divergence of $\mu$ from $\nu$.
 \end{theorem}
 
-\begin{theorem}[Pinsker inequality under absolute continuity]
+\begin{theorem}[Pinsker's inequality under absolute continuity]
 \lean{CommunicationComplexity.pinsker_inequality_of_ac}
 \label{CommunicationComplexity.pinsker_inequality_of_ac}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
 \difficulty{2}
-If $\mu \ll \nu$ (without any integrability assumption), then
-$\mathrm{ofReal}(2\,\mathrm{TV}(\mu,\nu)^2) \le \mathrm{KL}(\mu \| \nu)$ in $\mathbb{R}_{\ge 0}^\infty$.
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+that $\mu$ is absolutely continuous with respect to $\nu$. Then the total variation
+distance $\mathrm{TV}(\mu,\nu)$ and the Kullback–Leibler divergence $D_{\mathrm{KL}}(\mu
+\,\|\, \nu)$ (both taking values in $[0,\infty]$) satisfy
+\[
+2\,\mathrm{TV}(\mu,\nu)^2 \le D_{\mathrm{KL}}(\mu \,\|\, \nu).
+\]
 \end{theorem}
 
 \begin{theorem}[Pinsker's inequality]
@@ -335,23 +451,27 @@ $\mathrm{ofReal}(2\,\mathrm{TV}(\mu,\nu)^2) \le \mathrm{KL}(\mu \| \nu)$ in $\ma
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac, CommunicationComplexity.tvDistance}
 \difficulty{2}
-For any two probability measures $\mu$ and $\nu$ on $\Omega$,
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let
+$\mathrm{TV}(\mu,\nu)$ denote their total variation distance and
+$\mathrm{KL}(\mu\,\|\,\nu)$ their Kullback–Leibler divergence. Then
 \[
-  \mathrm{ofReal}\bigl(2\,\mathrm{TV}(\mu,\nu)^2\bigr) \;\le\; \mathrm{KL}(\mu \| \nu),
+  2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \mathrm{KL}(\mu\,\|\,\nu),
 \]
-where the inequality is in $\mathbb{R}_{\ge 0}^\infty$ and KL divergence uses natural logarithms.
+where the left-hand side is regarded as an element of the extended nonnegative reals
+$[0,\infty]$.
 \end{theorem}
 
-\begin{theorem}[Real-valued Pinsker corollary for finite KL divergence]
+\begin{theorem}[Pinsker's inequality for finite KL divergence]
 \lean{CommunicationComplexity.two_mul_tvDistance_sq_le_toReal_klDiv}
 \label{CommunicationComplexity.two_mul_tvDistance_sq_le_toReal_klDiv}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality, CommunicationComplexity.tvDistance}
 \difficulty{2}
-If $\mathrm{KL}(\mu \| \nu) \ne \infty$, then
+Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and suppose
+that the Kullback–Leibler divergence $\mathrm{KL}(\mu \,\|\, \nu)$ is finite. Then the
+total variation distance $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\|\mu -
+\nu\|_{\mathrm{TV}}$ satisfies
 \[
-  2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \mathrm{KL}(\mu \| \nu).\mathrm{toReal},
+  2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \mathrm{KL}(\mu \,\|\, \nu).
 \]
-providing a real-valued form of Pinsker's inequality convenient when finiteness of
-the KL divergence is already known.
 \end{theorem}

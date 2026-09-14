@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.encode_go_snd_sigma_indep",
+ "key": "54ffd191bfef56cf",
+ "kind": "lemma",
+ "title": "Encoder output's second component is independent of σ",
+ "statement": "Fix a DNF formula $f$ on $n$ variables, two natural-number parameters $w$ and $t$ (a fuel bound), a list of decisions pairing a variable with a Boolean value, and a restriction $\\rho_0$. Run the Razborov encoding loop on this data, started with empty auxiliary data, using a restriction $\\sigma$. Then the second component of the loop's output is the same whether one supplies the restriction $\\sigma_1$ or the restriction $\\sigma_2$ in place of $\\sigma$; that is, this component does not depend on the $\\sigma$ argument.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "w is a natural number",
+  "fuel bound t is a natural number",
+  "path is a list of (variable, Boolean) decisions",
+  "ρ₀ is a restriction",
+  "σ₁ and σ₂ are restrictions",
+  "the auxiliary accumulator starts empty"
+ ],
+ "confidence": "low",
+ "caveat": "The declaration is about the internal recursive helper of the Razborov encoding procedure, which is not defined in the given snippet, so the precise meaning of its output's second component cannot be pinned down; only the structural claim (invariance under swapping the σ argument) is rendered.",
+ "rubric": [],
+ "replaced": "The second component (the emitted bit list) of the encoder loop\n\\texttt{SwitchingLemma2.razborovEncode}'s \\texttt{go} does not depend on the $\\sigma$\nargument: starting from $\\sigma_1$ or $\\sigma_2$ gives the same output."
+}

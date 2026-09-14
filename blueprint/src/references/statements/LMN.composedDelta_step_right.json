@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.composedDelta_step_right",
+ "key": "cecd3c7aaef8847e",
+ "kind": "lemma",
+ "title": "Recursive step for the composed restriction parameter",
+ "statement": "Fix a fan-in bound $w$, a width parameter $l > 0$, and a depth $d \\ge 3$, and for these values write $\\delta(w,l,d)$ for the composed Bernoulli restriction parameter, namely $\\delta(w,l,d) = \\frac{1}{40w}\\left(\\frac{1}{40l}\\right)^{d-2}$. Then decreasing the depth by one removes a single factor of $1/(40l)$:\n\\[\n  \\delta(w,l,d) = \\delta(w,l,d-1)\\cdot\\frac{1}{40l}.\n\\]",
+ "hypotheses_covered": [
+  "depth d ≥ 3",
+  "width parameter l > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $d\\ge 3$ and $l>0$, the composed parameter factors as the $(d-1)$ case times $1/(40l)$:\n\\[\n  \\mathrm{composedDelta}(w,l,d) = \\mathrm{composedDelta}(w,l,d-1)\\cdot\\frac{1}{40l}.\n\\]"
+}

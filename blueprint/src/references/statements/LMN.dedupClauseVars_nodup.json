@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.dedupClauseVars_nodup",
+ "key": "f18c3c2c200f0fd2",
+ "kind": "lemma",
+ "title": "Deduplicated clause has no repeated literals",
+ "statement": "Let $c$ be a finite list of literals over the variable set $\\{0,1,\\dots,n-1\\}$, and form a new list from $c$ by scanning left to right and discarding every literal whose variable has already appeared, keeping only the first occurrence of each variable. Then this deduplicated list is repetition-free: no literal occurs in it more than once.",
+ "hypotheses_covered": [
+  "c is a list of literals over Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The list $\\mathrm{dedupClauseVars}\\,c$ has no duplicate literals."
+}

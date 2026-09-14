@@ -1,0 +1,14 @@
+{
+ "lean_name": "ACP.Circuit.toFeedForward_size_le",
+ "key": "2f04fb0e51f9908c",
+ "kind": "theorem",
+ "title": "Size bound for the feedforward embedding of a Boolean circuit",
+ "statement": "Let $C$ be a Boolean circuit on $n$ variables, and let $\\mathrm{size}(C)$ and $\\mathrm{depth}(C)$ denote its total number of nodes and its depth, respectively. Writing $\\widehat{C}$ for the layered feedforward circuit obtained by embedding $C$, the number of non-input nodes of $\\widehat{C}$ satisfies\n\\[\n\\mathrm{size}(\\widehat{C}) \\;\\le\\; \\mathrm{size}(C)\\,\\bigl(\\mathrm{depth}(C) + 1\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "C is a Boolean circuit on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $C$ on $n$ inputs,\n$C.\\texttt{toFeedForward}.\\texttt{size} \\le C.\\texttt{size} \\cdot (C.\\texttt{depth} + 1)$."
+}

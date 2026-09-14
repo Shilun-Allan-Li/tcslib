@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.run_eq_zOutput_of_zVariable_eq",
+ "key": "439c277fa7b55d26",
+ "kind": "theorem",
+ "title": "Protocol output agrees with the Z-value output",
+ "statement": "Fix $n \\ge 1$ and a deterministic protocol $p$ for disjointness inputs of length $n$. Let $\\omega$ be a sample of the hard distribution, and let $z$ be an achievable value of the $Z$-variable $Z = (M, T, X_{<T}, Y_{>T})$ for $p$. If $z$ is exactly the value of the $Z$-variable at $\\omega$, then running $p$ on Alice's input set $X(\\omega)$ and Bob's input set $Y(\\omega)$ produces the same Boolean output as the output determined by $z$ through its transcript leaf: \\[ p\\bigl(X(\\omega),\\, Y(\\omega)\\bigr) = \\mathrm{zOutput}(z). \\]",
+ "hypotheses_covered": [
+  "p is a deterministic disjointness protocol of length n",
+  "ω is a hard-distribution sample",
+  "z is an achievable value of the Z-variable",
+  "z equals the Z-variable evaluated at ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Technical auxiliary result for \\texttt{run\\_eq\\_zOutput\\_of\\_zVariable\\_eq}."
+}

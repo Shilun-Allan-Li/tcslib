@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.and_of_gates_has_cnf",
+ "key": "df165f283155cf78",
+ "kind": "lemma",
+ "title": "A bounded-width CNF for a conjunction of restricted gates",
+ "statement": "Fix natural numbers $n$, $s_2$, and $l$, a restriction $\\rho_1$ on $n$ variables, and a family of DNF formulas $g_0, g_1, \\dots, g_{s_2-1}$ on $n$ variables. For each index $i$, write $\\tilde g_i$ for the restricted function $x \\mapsto g_i(\\rho_1.\\mathrm{extend}\\,x)$, obtained by evaluating $g_i$ with the coordinates fixed by $\\rho_1$ set accordingly and the free coordinates supplied by $x$. Suppose that every $\\tilde g_i$ has decision-tree depth at most $l$. Then there is a CNF formula $\\Psi$ on $n$ variables of width at most $l$ in which each clause has no repeated literal and no two distinct literals sharing a variable, such that for every assignment $x$,\n\\[\n\\Psi(x) \\;=\\; \\bigwedge_{i=0}^{s_2-1} \\tilde g_i(x).\n\\]",
+ "hypotheses_covered": [
+  "number of gates $s_2$",
+  "family of DNF formulas $g_i$ indexed by $i \\in \\mathrm{Fin}\\,s_2$",
+  "depth bound $l$",
+  "restriction $\\rho_1$",
+  "each restricted gate $\\tilde g_i$ has decision-tree depth at most $l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf each restricted gate $\\mathrm{restrictFn}\\,(\\mathrm{gates}\\,i).\\mathrm{eval}\\,\\rho_1$ has\ndecision-tree depth $\\le l$, then there is a CNF $\\Psi$ of width $\\le l$, with nodup and\nvariable-injective clauses, whose evaluation equals the AND over all gates of their\nrestricted evaluations."
+}

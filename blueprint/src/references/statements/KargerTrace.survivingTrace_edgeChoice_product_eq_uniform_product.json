@@ -1,0 +1,14 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_edgeChoice_product_eq_uniform_product",
+ "key": "80fc41d736cf8bb8",
+ "kind": "lemma",
+ "title": "Occurrence-space and uniform survival products agree",
+ "statement": "Let $T$ be an indexed surviving trace of $\\text{steps}$ steps, so that $T$ assigns to each index $i \\in \\bbn$ a state $T_i$ and, for every $i < \\text{steps}$, the passage from $T_i$ to $T_{i+1}$ is a surviving step. Then\n\\[\n\\prod_{i \\,<\\, \\text{steps}} r(T_i) \\;=\\; \\prod_{i \\,<\\, \\text{steps}} p(T_i),\n\\]\nwhere $r(T_i)$ denotes the occurrence-space survival ratio of $T_i$ (the number of surviving edge occurrences divided by the total number of edge occurrences) and $p(T_i)$ denotes its uniform one-step survival probability (the number of non-crossing edges divided by the total edge count).",
+ "hypotheses_covered": [
+  "T is an indexed surviving trace of `steps` steps (a state at each natural index, with a surviving step between consecutive states below `steps`)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every indexed surviving trace, the product of occurrence-space survival ratios equals\nthe product of uniform survival probabilities."
+}

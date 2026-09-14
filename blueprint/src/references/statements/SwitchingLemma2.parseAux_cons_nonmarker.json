@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.parseAux_cons_nonmarker",
+ "key": "497c10b39f9db53a",
+ "kind": "lemma",
+ "title": "Parsing an entry followed by an in-range entry",
+ "statement": "Fix $w \\geq 1$, and consider parsing an aux list whose first two entries are $(\\mathrm{idx}, \\mathrm{dir})$ and $(\\mathrm{idx}', \\mathrm{dir}')$, both with in-range indices $\\mathrm{idx} < w$ and $\\mathrm{idx}' < w$, followed by any further list $\\mathrm{rest}$. Then parsing $(\\mathrm{idx}, \\mathrm{dir}) :: (\\mathrm{idx}', \\mathrm{dir}') :: \\mathrm{rest}$ yields the triple $(\\mathrm{idx}, \\mathrm{dir}, \\mathrm{false})$ — with no termination marker recorded — prepended to the parse of $(\\mathrm{idx}', \\mathrm{dir}') :: \\mathrm{rest}$.",
+ "hypotheses_covered": [
+  "window width w ≥ 1",
+  "first index in range (idx < w)",
+  "second index in range (idx' < w)",
+  "list has the form (idx,dir)::(idx',dir')::rest"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Equational lemma: if an entry $(idx, dir)$ is immediately followed by another\nin-range entry $(idx', dir')$, then $\\mathrm{parseAux}$ emits the triple\n$(\\langle idx, h\\rangle, dir, \\mathrm{false})$ followed by the parse of the\nremaining list starting at $(idx', dir')$."
+}

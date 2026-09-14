@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_integral_xDistance_le_of_integral_sq_le",
+ "key": "f179cbdb7a5444c0",
+ "kind": "theorem",
+ "title": "Linear average-distance bound from a squared bound",
+ "statement": "Fix $n \\ge 1$, a deterministic communication protocol $p$ for disjointness inputs on $n$ coordinates, and a real number $\\gamma$. Let $\\mu$ be the uniform distribution on hard samples, conditioned on the event that the generated sets $X(\\omega)$ and $Y(\\omega)$ are disjoint and that Bob's bit at the special coordinate is $\\mathrm{false}$. For a sample $\\omega$, let $Z(\\omega)$ record the transcript of $p$ on the input pair together with the special coordinate, Alice's input bits before it, and Bob's input bits after it, and write\n\\[\n\\Delta(\\omega) = \\mathrm{TV}\\!\\left(\\mathcal{L}\\!\\left(\\text{Alice's special-coordinate bit}\\mid Z(\\omega)\\right),\\, U\\right),\n\\]\nthe total variation distance between the conditional law of Alice's bit at the special coordinate given $Z(\\omega)$ and the uniform law $U$ on one bit. If $\\int \\Delta(\\omega)^2 \\, d\\mu(\\omega) \\le \\gamma^4$, then $\\int \\Delta(\\omega) \\, d\\mu(\\omega) \\le \\gamma^2$.",
+ "hypotheses_covered": [
+  "p is a deterministic disjointness protocol on n coordinates",
+  "gamma is a real number",
+  "integration is against the disjoint-and-special-Y-false conditional measure",
+  "squared-distance integral bounded by gamma^4"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Jensen's inequality converts a squared Alice-side average-distance estimate under $D ∧ Y_{T}=false$ into the average-distance estimate used before Markov."
+}

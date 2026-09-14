@@ -11,15 +11,26 @@ variable deduplication) needed to put restricted gates into normal form.
 
 \section{Declarations}
 
-\begin{theorem}[Restriction of a function by a composed restriction]
+\begin{theorem}[Restriction by a composite equals iterated restriction]
 \lean{LMN.restrictFn_composeRestr}
 \label{LMN.restrictFn_composeRestr}
 \leanok
 \uses{LMN.composeRestr, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn}
 \difficulty{2}
-For a Boolean function $f$ and restrictions $\rho_1,\rho_2$, restricting $f$ by the
-composition $\rho_1 \circ \rho_2$ equals first restricting by $\rho_1$ and then by
-$\rho_2$: $\mathrm{restrictFn}\, f\,(\mathrm{composeRestr}\,\rho_1\,\rho_2) = \mathrm{restrictFn}\,(\mathrm{restrictFn}\, f\,\rho_1)\,\rho_2$.
+Let $f : (\mathrm{Fin}\,n \to \bbf_2) \to \bbf_2$ be a Boolean function on $n$
+variables, and let $\rho_1, \rho_2 : \mathrm{Fin}\,n \to \{0, 1, *\}$ be two
+restrictions, where a coordinate is either fixed to a Boolean value or left free. Write
+$\rho_1 * \rho_2$ for their composition, the restriction that on each coordinate takes
+the value fixed by $\rho_1$ if there is one and otherwise the value assigned by
+$\rho_2$, and for a restriction $\rho$ write $f\!\restriction_\rho$ for the function $x
+\mapsto f(\rho.\mathrm{extend}\,x)$ obtained by evaluating $f$ with the fixed
+coordinates of $\rho$ substituted and the free coordinates read off from $x$. Then
+restricting $f$ by the composite restriction agrees with restricting first by $\rho_1$
+and then by $\rho_2$:
+\[
+f\!\restriction_{\rho_1 * \rho_2} \;=\;
+\bigl(f\!\restriction_{\rho_1}\bigr)\!\restriction_{\rho_2}.
+\]
 \end{theorem}
 
 \begin{lemma}[Decision-tree depth respects pointwise equality]
@@ -28,8 +39,9 @@ $\rho_2$: $\mathrm{restrictFn}\, f\,(\mathrm{composeRestr}\,\rho_1\,\rho_2) = \m
 \leanok
 \uses{dtDepth}
 \difficulty{1}
-If two Boolean functions $f$ and $g$ agree at every input, then they have the same
-decision-tree depth: $\mathrm{dtDepth}\,f = \mathrm{dtDepth}\,g$.
+Let $f$ and $g$ be Boolean functions of $n$ variables, that is, maps $\{0,1\}^n \to
+\{0,1\}$, and suppose they agree on every input, so $f(x) = g(x)$ for all $x \in
+\{0,1\}^n$. Then $f$ and $g$ have the same decision-tree depth.
 \end{lemma}
 
 \begin{lemma}[Restriction respects pointwise equality]
@@ -38,9 +50,12 @@ decision-tree depth: $\mathrm{dtDepth}\,f = \mathrm{dtDepth}\,g$.
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{2}
-If two Boolean functions $f$ and $g$ agree at every input, then for any restriction
-$\rho$ their restrictions agree pointwise: $\mathrm{restrictFn}\, f\,\rho\,x = \mathrm{restrictFn}\, g\,\rho\,x$
-for all $x$.
+Let $f, g : (\mathrm{Fin}\,n \to \bbf_2\text{-valued Boolean inputs}) \to \mathrm{Bool}$
+be two Boolean functions on $n$ variables that agree everywhere, $f(y) = g(y)$ for every
+input $y$, and let $\rho$ be a restriction on $n$ variables. Then the restricted
+functions agree as well: writing $f_\rho(x) = f(\rho.\mathrm{extend}\,x)$ for the
+restriction of $f$ by $\rho$, one has $f_\rho(x) = g_\rho(x)$ for every $x :
+\mathrm{Fin}\,n \to \mathrm{Bool}$.
 \end{lemma}
 
 \begin{definition}[Pointwise AND of a list of functions]
@@ -52,18 +67,21 @@ constant $\mathrm{true}$ function, and $f :: fs$ evaluates at $x$ to $f(x)$ AND 
 value of the list $fs$ at $x$.
 \end{definition}
 
-\begin{lemma}[Restriction distributes over list AND]
+\begin{lemma}[Restriction commutes with list conjunction]
 \lean{LMN.restrictFn_listAnd}
 \label{LMN.restrictFn_listAnd}
 \leanok
 \uses{LMN.listAnd, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
 \difficulty{4}
-Restricting the pointwise AND of a list of functions equals the pointwise AND of the
-restricted functions: for all $x$, $\mathrm{restrictFn}\,(\mathrm{listAnd}\,fs)\,\rho\,x =
-\mathrm{listAnd}(fs.\mathrm{map}\,(\lambda f.\ \mathrm{restrictFn}\, f\,\rho))\,x$.
+Let $f_1, \dots, f_k$ be Boolean functions on $n$ variables and let $\rho$ be a
+restriction of those variables, and write $f|_\rho$ for the restriction of a function
+$f$ along $\rho$ (the function $x \mapsto f(\rho.\mathrm{extend}\,x)$). Then restricting
+the pointwise conjunction $f_1 \wedge \cdots \wedge f_k$ along $\rho$ agrees, at every
+point $x : \mathrm{Fin}\,n \to \mathrm{Bool}$, with the pointwise conjunction of the
+individually restricted functions $f_1|_\rho, \dots, f_k|_\rho$.
 \end{lemma}
 
-\begin{theorem}[Depth-3 one-step compression]
+\begin{theorem}[One-step depth-3 compression under a random restriction]
 \lean{LMN.depth3_compression}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -77,12 +95,22 @@ restricted functions: for all $x$, $\mathrm{restrictFn}\,(\mathrm{listAnd}\,fs)\
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_and_of_cnfs, LMN.listAnd, LMN.one_step_reduction_with_compression, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{6}
-Given $s_2$ DNF gates each of width $\le w$ (with $w > 0$, non-degenerate and
-duplicate-free terms) and $n > 0$, for any $0 < p \le 1/(40w)$ the Bernoulli$(p)$
-random restriction satisfies, with probability at least
-$1 - s_2\bigl((1/2)^l + \exp(-np/3)\bigr)$, that there exists a CNF $\Psi$ of width
-$\le l$ whose evaluation equals the AND of the restricted gates. This is the depth-3
-to depth-2 compression step.
+Fix $n \ge 1$, and let $D_1,\dots,D_{s_2}$ be DNF formulas on $n$ variables, each of
+width at most $w$ with $w \ge 1$, subject to the two syntactic conditions that within
+every term any two literals on the same variable coincide (so no term repeats a variable
+with opposite polarities) and that no term lists the same literal twice. Let $l \in
+\bbn$, and let $p \in \bbr$ satisfy $0 < p \le 1/(40w)$ and $p \le 1$. Draw a
+Bernoulli$(p)$ random restriction $\rho$ on the $n$ variables. Then with probability at
+least
+\[
+1 - s_2\!\left(\left(\tfrac{1}{2}\right)^{l} +
+\exp\!\left(-\,\tfrac{np}{3}\right)\right)
+\]
+there exists a CNF formula $\Psi$ of width at most $l$ that computes the conjunction of
+the restricted gates: writing $D_i\!\restriction_\rho$ for the function $x \mapsto
+D_i(\rho.\mathrm{extend}\,x)$ obtained by fixing the coordinates set by $\rho$ and
+leaving the free coordinates to $x$, one has $\Psi(x) = \bigwedge_{i=1}^{s_2}
+\bigl(D_i\!\restriction_\rho\bigr)(x)$ for every assignment $x$.
 \end{theorem}
 
 \begin{definition}[Tautological clause]
@@ -94,14 +122,19 @@ A clause (a list of literals interpreted as their disjunction) is tautological i
 contains two literals on the same variable with opposite signs.
 \end{definition}
 
-\begin{lemma}[A tautological clause evaluates to true]
+\begin{lemma}[Tautological clauses are satisfied by every assignment]
 \lean{LMN.clauseIsTaut_eval_true}
 \label{LMN.clauseIsTaut_eval_true}
 \leanok
 \uses{LMN.clauseIsTaut, Literal, Literal.eval}
 \difficulty{3}
-If a clause $c$ is tautological, then for every assignment $x$ the disjunction of its
-literals evaluates to $\mathrm{true}$.
+Let $c$ be a clause on the variables $x_0,\dots,x_{n-1}$, that is, a list of literals
+read as their disjunction, where a literal is a variable together with a sign and
+evaluates to that variable's value if positive and to its negation if negated. Suppose
+$c$ is tautological: it contains two literals on the same variable with opposite signs.
+Then for every Boolean assignment $x \colon \{0,\dots,n-1\} \to
+\{\text{true},\text{false}\}$, at least one literal of $c$ evaluates to $\mathrm{true}$,
+so the disjunction of the literals of $c$ evaluates to $\mathrm{true}$.
 \end{lemma}
 
 \begin{definition}[Deduplicate clause variables]
@@ -113,32 +146,43 @@ Removes duplicate variables from a clause, keeping the first occurrence of each
 variable.
 \end{definition}
 
-\begin{lemma}[Deduplication yields variable-injective clause]
+\begin{lemma}[Variable-injectivity of a deduplicated clause]
 \lean{LMN.dedupClauseVars_var_inj}
 \label{LMN.dedupClauseVars_var_inj}
 \leanok
 \uses{LMN.dedupClauseVars, Literal}
 \difficulty{3}
-In $\mathrm{dedupClauseVars}\,c$, any two literals with the same variable are equal;
-that is, the resulting clause has pairwise distinct variable indices.
+Let $c$ be a clause, that is, a list of literals over the variables $\{0,1,\dots,n-1\}$,
+each literal consisting of a variable together with a negation flag. Form the
+deduplicated clause obtained from $c$ by keeping, for each variable, only its first
+occurrence. Then any two literals of this deduplicated clause that share the same
+variable are in fact the same literal; equivalently, distinct literals of the
+deduplicated clause have distinct variables.
 \end{lemma}
 
-\begin{lemma}[Deduplication yields nodup clause]
+\begin{lemma}[Deduplicated clause has no repeated literals]
 \lean{LMN.dedupClauseVars_nodup}
 \label{LMN.dedupClauseVars_nodup}
 \leanok
 \uses{LMN.dedupClauseVars, Literal}
 \difficulty{2}
-The list $\mathrm{dedupClauseVars}\,c$ has no duplicate literals.
+Let $c$ be a finite list of literals over the variable set $\{0,1,\dots,n-1\}$, and form
+a new list from $c$ by scanning left to right and discarding every literal whose
+variable has already appeared, keeping only the first occurrence of each variable. Then
+this deduplicated list is repetition-free: no literal occurs in it more than once.
 \end{lemma}
 
-\begin{lemma}[Deduplication does not increase length]
+\begin{lemma}[Deduplication does not increase clause length]
 \lean{LMN.dedupClauseVars_length_le}
 \label{LMN.dedupClauseVars_length_le}
 \leanok
 \uses{LMN.dedupClauseVars, Literal}
 \difficulty{2}
-The length of $\mathrm{dedupClauseVars}\,c$ is at most the length of $c$.
+Let $c$ be a clause, that is, a finite list of literals over the variables
+$\{0,1,\dots,n-1\}$, and let $\mathrm{dedup}(c)$ be the clause obtained from $c$ by
+retaining, for each variable, only its first occurring literal and discarding every
+later literal on the same variable. Then the length of $\mathrm{dedup}(c)$ is at most
+the length of $c$.
 \end{lemma}
 
 \begin{lemma}[Deduplication preserves evaluation of non-tautological clauses]
@@ -146,9 +190,13 @@ The length of $\mathrm{dedupClauseVars}\,c$ is at most the length of $c$.
 \label{LMN.dedupClauseVars_eval_of_not_taut}
 \leanok
 \uses{LMN.clauseIsTaut, LMN.dedupClauseVars, Literal, Literal.eval}
-If a clause $c$ is not tautological, then for every assignment $x$ the disjunction of
-the literals of $\mathrm{dedupClauseVars}\,c$ has the same value as the disjunction of
-the literals of $c$.
+Let $c$ be a clause over the variables $x_0,\dots,x_{n-1}$ — a list of literals read as
+their disjunction, where a literal evaluates to $x_i$ if positive and $\lnot x_i$ if
+negated. Suppose $c$ is not tautological, meaning it contains no two literals on the
+same variable with opposite signs. Then for every Boolean assignment $x \colon
+\{0,\dots,n-1\} \to \{\mathrm{false},\mathrm{true}\}$, the clause obtained from $c$ by
+keeping only the first literal on each variable evaluates to the same truth value as $c$
+itself.
 \end{lemma}
 
 \begin{definition}[Clean a CNF]
@@ -166,51 +214,70 @@ within each remaining clause.
 \leanok
 \uses{CNF, CNF.eval, CNF.evalClause, LMN.clauseIsTaut, LMN.clauseIsTaut_eval_true, LMN.cleanCNF_D3}
 \difficulty{4}
-For every assignment $x$, the cleaned CNF $\mathrm{cleanCNF\_D3}\,\psi$ evaluates to the
-same value as $\psi$.
+Let $\psi$ be a CNF formula over $n$ Boolean variables — a conjunction of clauses, each
+clause a disjunction of literals — and let $x \in \{0,1\}^n$ be an assignment. Form the
+cleaned formula from $\psi$ by first deleting every tautological clause (a clause
+containing two literals on the same variable with opposite signs) and then, within each
+surviving clause, keeping only the first literal on each variable and discarding later
+literals on variables already seen. Then the cleaned formula and $\psi$ evaluate to the
+same Boolean value on $x$.
 \end{lemma}
 
-\begin{lemma}[Cleaning does not increase width]
+\begin{lemma}[Cleaning a CNF does not increase its width]
 \lean{LMN.cleanCNF_D3_width_le}
 \label{LMN.cleanCNF_D3_width_le}
 \leanok
 \uses{CNF, CNF.width, LMN.cleanCNF_D3, LMN.dedupClauseVars_length_le, Term, Term.width}
 \difficulty{5}
-The width of $\mathrm{cleanCNF\_D3}\,\psi$ is at most the width of $\psi$.
+Let $\psi$ be a CNF formula over $n$ variables, and form its cleaned version by
+discarding every tautological clause (one containing two literals on the same variable
+with opposite signs) and then, within each surviving clause, keeping only the first
+occurrence of each variable. Writing the width of a CNF formula for the largest number
+of literals in any of its clauses (and $0$ for the empty formula), the width of the
+cleaned formula is at most the width of $\psi$.
 \end{lemma}
 
-\begin{lemma}[Cleaned CNF has nodup clauses]
+\begin{lemma}[Cleaned clauses have no repeated literals]
 \lean{LMN.cleanCNF_D3_nodup}
 \label{LMN.cleanCNF_D3_nodup}
 \leanok
 \uses{CNF, LMN.cleanCNF_D3, LMN.dedupClauseVars_nodup}
 \difficulty{1}
-Every clause of $\mathrm{cleanCNF\_D3}\,\psi$ has no duplicate literals.
+Let $\psi$ be a CNF formula over $n$ variables, and let $\mathrm{clean}(\psi)$ be the
+formula obtained from $\psi$ by discarding every tautological clause and then, in each
+surviving clause, keeping only the first literal on each variable. Then every clause of
+$\mathrm{clean}(\psi)$, viewed as a list of literals, contains no repeated literal.
 \end{lemma}
 
-\begin{lemma}[Cleaned CNF has variable-injective clauses]
+\begin{lemma}[Variable-injective clauses in a cleaned CNF]
 \lean{LMN.cleanCNF_D3_var_inj}
 \label{LMN.cleanCNF_D3_var_inj}
 \leanok
 \uses{CNF, LMN.cleanCNF_D3, LMN.dedupClauseVars, LMN.dedupClauseVars_var_inj}
 \difficulty{3}
-In every clause of $\mathrm{cleanCNF\_D3}\,\psi$, any two literals sharing the same
-variable are equal.
+Let $\psi$ be a CNF formula over the variables $\mathrm{Fin}\,n$. After cleaning $\psi$
+— that is, after discarding every tautological clause and then deduplicating the
+variables within each surviving clause — every clause becomes variable-injective: in any
+clause of the cleaned formula, any two literals sharing the same variable are in fact
+the same literal.
 \end{lemma}
 
-\begin{theorem}[Every CNF has an equivalent nice CNF]
+\begin{theorem}[Reduction of a CNF to a duplicate-free normal form]
 \lean{LMN.exists_nice_cnf_of_cnf}
 \label{LMN.exists_nice_cnf_of_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF_D3, LMN.cleanCNF_D3_eval, LMN.cleanCNF_D3_nodup, LMN.cleanCNF_D3_var_inj, LMN.cleanCNF_D3_width_le}
 \difficulty{1}
-For any CNF $\psi$ there exists a CNF $\psi'$ of width $\le$ that of $\psi$, evaluating
-identically to $\psi$ on every input, with no duplicate literals in any clause and with
-each clause variable-injective. Hence every CNF can be cleaned to satisfy the switching
-lemma hypotheses.
+Let $\psi$ be a CNF formula in the variables $x_1,\dots,x_n$, written as a conjunction
+of clauses, each clause a disjunction of literals. Then there is a CNF formula $\psi'$
+that computes the same Boolean function as $\psi$, that is, $\psi'(x)=\psi(x)$ for every
+assignment $x\in\{0,1\}^n$, whose width (the maximum number of literals in any of its
+clauses) is at most that of $\psi$, and in which every clause is free of repetition in
+the strong sense that no literal occurs twice and no two distinct literals share a
+variable.
 \end{theorem}
 
-\begin{theorem}[Bounded decision-tree depth gives a nice CNF]
+\begin{theorem}[Bounded decision-tree depth yields a narrow, clean CNF]
 \lean{LMN.dtDepth_le_implies_nice_cnf}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
@@ -218,7 +285,6 @@ lemma hypotheses.
 }
 \label{LMN.dtDepth_le_implies_nice_cnf}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -428,11 +494,15 @@ lemma hypotheses.
     pdf-b5e074215b9e-p001-b004}
 \uses{CNF, CNF.eval, CNF.width, LMN.exists_nice_cnf_of_cnf, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, dtDepth}
 \difficulty{2}
-If a Boolean function $f$ has decision-tree depth $\le d$, then there is a CNF $\psi$ of
-width $\le d$ that computes $f$, with all clauses nodup and variable-injective.
+Let $f\colon (\mathrm{Fin}\,n \to \bbf_2) \to \{0,1\}$ be a Boolean function on $n$
+variables, and let $d$ be a natural number. If the decision-tree depth of $f$ is at most
+$d$, then there is a CNF formula $\psi$ that computes $f$ (that is, $\psi(x) = f(x)$ for
+every assignment $x$) and whose width is at most $d$, meaning every clause has at most
+$d$ literals. Moreover $\psi$ can be taken clean: within each clause no literal is
+repeated, and no two literals share the same underlying variable.
 \end{theorem}
 
-\begin{theorem}[Bounded decision-tree depth gives a nice DNF]
+\begin{theorem}[Bounded decision-tree depth yields a narrow, tidy DNF]
 \lean{LMN.dtDepth_le_implies_nice_dnf}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
@@ -440,7 +510,6 @@ width $\le d$ that computes $f$, with all clauses nodup and variable-injective.
 }
 \label{LMN.dtDepth_le_implies_nice_dnf}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -557,11 +626,17 @@ width $\le d$ that computes $f$, with all clauses nodup and variable-injective.
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b002}
 \uses{DNF, DNF.eval, DNF.width, dtDepth}
-If a Boolean function $f$ has decision-tree depth $\le d$, then there is a DNF $\varphi$
-of width $\le d$ that computes $f$, with all terms nodup and variable-injective.
+Let $f : (\mathrm{Fin}\,n \to \bbf_2)$ — more precisely $f$ a Boolean function on $n$
+variables — have decision-tree depth at most $d$. Then $f$ is computed by a DNF formula
+$\varphi$ (a disjunction of terms, each term a conjunction of literals) of width at most
+$d$, meaning every term of $\varphi$ contains at most $d$ literals, such that
+$\varphi(x) = f(x)$ for all inputs $x$. Moreover each term of $\varphi$ is tidy: no
+literal is repeated within a term, and no two literals in the same term share a variable
+(equivalently, within any one term each variable occurs at most once, and with a single
+fixed polarity).
 \end{theorem}
 
-\begin{theorem}[Functional switching lemma for CNFs]
+\begin{theorem}[Functional switching lemma under Bernoulli restrictions]
 \lean{LMN.switching_bernoulli_dtDepth_function}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \statementsource{switching-lemma}{
@@ -575,25 +650,39 @@ of width $\le d$ that computes $f$, with all terms nodup and variable-injective.
 \leanok
 \uses{CNF.eval, LMN.dtDepth_congr, LMN.dtDepth_le_implies_nice_cnf, LMN.restrictFn_congr, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-For any function $f$ with decision-tree depth $\le w$ (with $w > 0$, $n > 0$) and any
-$0 < p \le 1/(40w)$, the Bernoulli$(p)$ restriction satisfies
-$\Pr_\rho[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,\rho) > t] \le (1/2)^t + \exp(-np/3)$.
-This is the switching lemma stated at the level of functions rather than formulas.
+Fix an integer $n \ge 1$ and a Boolean function $f : \{0,1\}^n \to \{0,1\}$ whose
+decision-tree depth is at most $w$, for some integer $w \ge 1$. Let $p$ be a real
+parameter with $0 < p \le 1/(40w)$ (so in particular $p \le 1$), and draw a
+Bernoulli$(p)$ random restriction $\rho$ on the $n$ variables: independently, each
+variable is left free with probability $p$ and otherwise fixed to $0$ or to $1$, each
+with probability $(1-p)/2$. Then for every $t \in \bbn$, the restricted function
+$f\restriction\rho$ (that is, $f$ evaluated on the free coordinates with the remaining
+coordinates set by $\rho$) satisfies
+\[
+\bbP_\rho\big[\, \text{decision-tree depth of } f\restriction\rho > t \,\big] \;\le\;
+\left(\tfrac12\right)^{t} + \exp\!\left(-\,\tfrac{np}{3}\right).
+\]
 \end{theorem}
 
-\begin{theorem}[General two-stage bound]
+\begin{theorem}[General two-stage restriction bound]
 \lean{LMN.two_stage_bound}
 \label{LMN.two_stage_bound}
 \leanok
 \uses{LMN.composeRestr, LMN.restriction_compose_eq, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{5}
-Let $0 < p_1,p_2 \le 1$, let $E$ be an event on restrictions and $A$ a ``failure''
-event, and let $\beta \ge 0$. If for every $\rho_1$ with $\lnot A(\rho_1)$ the
-conditional probability $\Pr_{p_2}[E(\mathrm{composeRestr}\,\rho_1\,\rho_2)] \le \beta$, then
-$\Pr_{p_1 p_2}[E] \le \Pr_{p_1}[A] + \beta$.
+Let $p_1, p_2 \in (0,1]$, let $E$ and $A$ be events on restrictions of $n$ variables,
+and let $\beta \ge 0$. Write $\Pr_p[\,\cdot\,]$ for the probability of an event under a
+Bernoulli($p$) random restriction, and for restrictions $\rho_1, \rho_2$ let $\rho_1
+\circ \rho_2$ denote their composition (the values fixed by $\rho_1$, filled in by
+$\rho_2$ on the coordinates $\rho_1$ leaves free). Suppose that for every restriction
+$\rho_1$ for which $A(\rho_1)$ fails, one has $\Pr_{p_2}[\,E(\rho_1 \circ \rho_2)\,] \le
+\beta$. Then
+\[
+  \Pr_{p_1 p_2}[E] \;\le\; \Pr_{p_1}[A] + \beta .
+\]
 \end{theorem}
 
-\begin{lemma}[AND of switched gates has a nice CNF]
+\begin{lemma}[A bounded-width CNF for a conjunction of restricted gates]
 \lean{LMN.and_of_gates_has_cnf}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -601,7 +690,6 @@ $\Pr_{p_1 p_2}[E] \le \Pr_{p_1}[A] + \beta$.
 }
 \label{LMN.and_of_gates_has_cnf}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -850,13 +938,20 @@ $\Pr_{p_1 p_2}[E] \le \Pr_{p_1}[A] + \beta$.
   {pdf-fc447f326910-p012-b001}
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.compression_and_of_cnfs, LMN.exists_nice_cnf_of_cnf, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-If each restricted gate $\mathrm{restrictFn}\,(\mathrm{gates}\,i).\mathrm{eval}\,\rho_1$ has
-decision-tree depth $\le l$, then there is a CNF $\Psi$ of width $\le l$, with nodup and
-variable-injective clauses, whose evaluation equals the AND over all gates of their
-restricted evaluations.
+Fix natural numbers $n$, $s_2$, and $l$, a restriction $\rho_1$ on $n$ variables, and a
+family of DNF formulas $g_0, g_1, \dots, g_{s_2-1}$ on $n$ variables. For each index
+$i$, write $\tilde g_i$ for the restricted function $x \mapsto
+g_i(\rho_1.\mathrm{extend}\,x)$, obtained by evaluating $g_i$ with the coordinates fixed
+by $\rho_1$ set accordingly and the free coordinates supplied by $x$. Suppose that every
+$\tilde g_i$ has decision-tree depth at most $l$. Then there is a CNF formula $\Psi$ on
+$n$ variables of width at most $l$ in which each clause has no repeated literal and no
+two distinct literals sharing a variable, such that for every assignment $x$,
+\[
+\Psi(x) \;=\; \bigwedge_{i=0}^{s_2-1} \tilde g_i(x).
+\]
 \end{lemma}
 
-\begin{lemma}[Restricted depth-3 circuit has a nice CNF]
+\begin{lemma}[Restricted conjunction of DNFs has a low-width simple CNF]
 \lean{LMN.depth3_restricted_has_nice_cnf}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -866,13 +961,20 @@ restricted evaluations.
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.and_of_gates_has_cnf, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-Suppose $f$ is the AND of the gates ($f(x) = \mathrm{true}$ iff every gate is true at
-$x$) and each restricted gate has decision-tree depth $\le l$. Then there is a CNF
-$\Psi$ of width $\le l$, with nodup and variable-injective clauses, whose evaluation
-equals $\mathrm{restrictFn}\, f\,\rho_1$.
+Let $g_1,\dots,g_s$ be DNF formulas in $n$ Boolean variables, and let $f :
+(\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be their conjunction, so that
+$f(x) = \mathrm{true}$ if and only if $g_i(x) = \mathrm{true}$ for every $i$. Fix a
+restriction $\rho$ of the $n$ variables, and write $h_\rho$ for the restriction of a
+Boolean function $h$ by $\rho$ (the function obtained by fixing each coordinate that
+$\rho$ sets and leaving the rest free). Suppose that for every $i$ the restricted gate
+$(g_i)_\rho$ has decision-tree depth at most $l$. Then the restricted function $f_\rho$
+is computed by some CNF formula $\Psi$ of width at most $l$ — every clause contains at
+most $l$ literals — in which each clause is simple: no literal occurs twice, and any two
+literals in a clause that share a variable are identical. That is, $\Psi(x) = f_\rho(x)$
+for all $x$.
 \end{lemma}
 
-\begin{lemma}[Second-stage switching bound]
+\begin{lemma}[Second-stage switching bound for an AND of DNFs]
 \lean{LMN.depth3_second_stage_bound}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
@@ -882,11 +984,21 @@ equals $\mathrm{restrictFn}\, f\,\rho_1$.
 \leanok
 \uses{CNF.eval, DNF, DNF.eval, LMN.cleanCNF_D3, LMN.cleanCNF_D3_eval, LMN.cleanCNF_D3_nodup, LMN.cleanCNF_D3_var_inj, LMN.cleanCNF_D3_width_le, LMN.composeRestr, LMN.depth3_restricted_has_nice_cnf, LMN.dtDepth_congr, LMN.restrictFn_composeRestr, LMN.restrictFn_congr, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{6}
-Suppose $f$ is the AND of the gates and, under the first-stage restriction $\rho_1$,
-each restricted gate has decision-tree depth $\le l$ (with $l > 0$, $n > 0$). Then for
-any $0 < p_2 \le 1/(40l)$ the second-stage Bernoulli$(p_2)$ restriction satisfies
-$\Pr_{\rho_2}[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,(\mathrm{composeRestr}\,\rho_1\,\rho_2)) > t]
-\le (1/2)^t + \exp(-np_2/3)$.
+Let $f:\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables, and write
+$D(h)$ for the decision-tree depth of a Boolean function $h$, i.e. the least depth of a
+decision tree computing it. Suppose $f$ is the conjunction $f=g_1\wedge\cdots\wedge
+g_{s_2}$ of DNF formulas $g_1,\dots,g_{s_2}$, meaning $f(x)=1$ exactly when $g_i(x)=1$
+for every $i$. Fix a restriction $\rho_1$ on the $n$ variables such that each restricted
+gate satisfies $D(g_i\!\restriction\!\rho_1)\le l$, where $l\ge 1$, and let $t$ be a
+natural number. Suppose $0<p_2\le \tfrac{1}{40l}$ (so in particular $p_2\le 1$), and let
+$\rho_2$ be a Bernoulli($p_2$) random restriction — each variable independently left
+free with probability $p_2$ and fixed to $0$ or $1$ with probability $(1-p_2)/2$ each.
+Writing $\rho_1\circ\rho_2$ for the composite restriction that applies $\rho_1$ first
+and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
+\[
+\Pr_{\rho_2}\!\big[\, D\big(f\!\restriction\!(\rho_1\circ\rho_2)\big) > t
+\,\big]\;\le\;\left(\tfrac12\right)^{t}+\exp\!\big(-n\,p_2/3\big).
+\]
 \end{lemma}
 
 \begin{theorem}[Depth-3 two-stage switching bound]
@@ -903,7 +1015,6 @@ $\Pr_{\rho_2}[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,(\mathrm{composeRestr}\,
 }
 \label{LMN.depth3_switching_bound}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2083,16 +2194,25 @@ $\Pr_{\rho_2}[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,(\mathrm{composeRestr}\,
     pdf-fc447f326910-p008-b005}
 \uses{DNF, DNF.eval, DNF.width, LMN.depth3_second_stage_bound, LMN.switching_bernoulli_union_bound, LMN.two_stage_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
-Let $f$ be the AND of $s_2$ DNF gates each of width $\le w$ (with $w,l > 0$,
-non-degenerate and duplicate-free terms, $n > 0$). For $0 < p_1 \le 1/(40w)$ and
-$0 < p_2 \le 1/(40l)$, the composed Bernoulli$(p_1 p_2)$ restriction satisfies
+Let $n \ge 1$, and let $f : \{0,1\}^n \to \{0,1\}$ be the conjunction of $s_2$ DNF
+formulas $g_1, \dots, g_{s_2}$ on $n$ variables, so that $f(x) = \mathrm{true}$ exactly
+when $g_i(x) = \mathrm{true}$ for every $i$. Suppose each $g_i$ has width at most $w$,
+where $w \ge 1$, and that within every term of every $g_i$ no literal is repeated and no
+two distinct literals share the same variable. Fix natural numbers $l \ge 1$ and $t$,
+together with real parameters $p_1, p_2 \in (0,1]$ satisfying $p_1 \le 1/(40w)$ and $p_2
+\le 1/(40l)$. Writing $D(g)$ for the decision-tree depth of a Boolean function $g$ and
+$f\restriction_\rho$ for the restricted function $x \mapsto f(\rho\text{-extension of
+}x)$, a Bernoulli$(p_1 p_2)$ random restriction $\rho$ then satisfies
 \[
-\Pr_\rho[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,\rho) > t]
-\le s_2\bigl((1/2)^l + \exp(-np_1/3)\bigr) + \bigl((1/2)^t + \exp(-np_2/3)\bigr).
+  \Pr_{\rho}\!\big[\, D(f\restriction_\rho) > t \,\big]
+  \;\le\;
+  s_2\Big( \big(\tfrac12\big)^{l} + \exp\!\big(-\tfrac{n p_1}{3}\big) \Big)
+  \;+\;
+  \Big( \big(\tfrac12\big)^{t} + \exp\!\big(-\tfrac{n p_2}{3}\big) \Big).
 \]
 \end{theorem}
 
-\begin{lemma}[Depth-3 circuit reduction bound]
+\begin{lemma}[Decision-tree depth after a random restriction of a depth-three circuit]
 \lean{LMN.circuit_reduction_depth3}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b003,
@@ -2106,7 +2226,6 @@ $0 < p_2 \le 1/(40l)$, the composed Bernoulli$(p_1 p_2)$ restriction satisfies
 }
 \label{LMN.circuit_reduction_depth3}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -3261,17 +3380,24 @@ $0 < p_2 \le 1/(40l)$, the composed Bernoulli$(p_1 p_2)$ restriction satisfies
     pdf-fc447f326910-p012-b004}
 \uses{DNF, DNF.eval, DNF.width, LMN.composedDelta, LMN.depth3_switching_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{4}
-For a depth-3 circuit in normal form (AND of $s_2$ width-$w$ DNF gates, with $w,l > 0$,
-$n > 0$), under the composed Bernoulli$(\mathrm{composedDelta}\,w\,l\,3) =
-\mathrm{Bernoulli}(1/(40w) \cdot 1/(40l))$ restriction, writing $p_1 = 1/(40w)$ and
-$p_2 = 1/(40l)$,
+Fix $n \ge 1$, and let $f\colon \{0,1\}^n \to \{0,1\}$ be the conjunction of $s_2$ DNF
+formulas $g_1,\dots,g_{s_2}$, so that $f(x)=1$ if and only if $g_i(x)=1$ for every $i$.
+Assume a width bound $w \ge 1$ under which each $g_i$ has width at most $w$ (every term
+of every gate has at most $w$ literals), and assume that within each term of each gate
+the literals are distinct and no variable occurs twice. Fix integers $l \ge 1$ and $t$,
+and let $\rho$ be a Bernoulli random restriction with parameter
+$\frac{1}{40w}\cdot\frac{1}{40l}$; write $p_1=\frac{1}{40w}$ and $p_2=\frac{1}{40l}$.
+Write $f\!\restriction_\rho$ for the function obtained by extending each input with the
+values $\rho$ fixes, and let $D(\cdot)$ denote decision-tree depth (the least depth of a
+decision tree computing the given function). Then the probability that the restricted
+function has decision-tree depth exceeding $t$ obeys
 \[
-\Pr_\rho[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,\rho) > t]
-\le s_2\bigl((1/2)^l + \exp(-np_1/3)\bigr) + \bigl((1/2)^t + \exp(-np_2/3)\bigr).
+\Pr_\rho\!\big[\,D(f\!\restriction_\rho) > t\,\big]
+\;\le\; s_2\big((1/2)^{l} + e^{-n p_1/3}\big) + \big((1/2)^{t} + e^{-n p_2/3}\big).
 \]
 \end{lemma}
 
-\begin{theorem}[Depth-3 switching lemma, $\le \varepsilon$ version]
+\begin{theorem}[Depth-three circuit reduction with error at most $\varepsilon$]
 \lean{LMN.circuit_reduction_depth3_le_eps}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b003,
@@ -3283,7 +3409,6 @@ $p_2 = 1/(40l)$,
 }
 \label{LMN.circuit_reduction_depth3_le_eps}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -4455,14 +4580,18 @@ $p_2 = 1/(40l)$,
   {pdf-fc447f326910-p012-b003}
 \uses{DNF, DNF.eval, DNF.width, LMN.circuit_reduction_depth3, LMN.composedDelta, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{2}
-For a depth-3 circuit in normal form, if $l$ and $t$ are chosen so that
-$s_2 (1/2)^l \le \varepsilon/2$ and $(1/2)^t \le \varepsilon/2$, then under the
-composed Bernoulli$(\mathrm{composedDelta}\,w\,l\,3)$ restriction (with $p_1 = 1/(40w)$,
-$p_2 = 1/(40l)$),
+Let $f:\{0,1\}^n\to\{0,1\}$ with $n\ge 1$, and suppose $f$ is the conjunction of $s_2$
+DNF formulas $D_1,\dots,D_{s_2}$, so that $f(x)=1$ exactly when $D_i(x)=1$ for every
+index $i$; equivalently, $f$ is computed by a depth-three AND-of-OR-of-AND circuit.
+Assume each formula $D_i$ has width at most $w$ with $w\ge 1$, and that within every
+term no literal is repeated and no variable occurs in two opposite polarities, so that a
+term reads each variable at most once. Fix integers $l\ge 1$ and $t\ge 0$ and a real
+number $\varepsilon$ satisfying $s_2\,(1/2)^{l}\le \varepsilon/2$ and
+$(1/2)^{t}\le\varepsilon/2$, and put $p_1=1/(40w)$ and $p_2=1/(40l)$. Draw a Bernoulli
+random restriction $\rho$ with parameter $p_1 p_2$, and write $f_\rho$ for the
+restriction of $f$ by $\rho$. Then the probability that the decision-tree depth of
+$f_\rho$ exceeds $t$ is at most
 \[
-\Pr_\rho[\mathrm{dtDepth}(\mathrm{restrictFn}\, f\,\rho) > t]
-\le \varepsilon + s_2\exp(-np_1/3) + \exp(-np_2/3).
+\varepsilon+s_2\,e^{-np_1/3}+e^{-np_2/3}.
 \]
-The exponential tails vanish as $n \to \infty$, so the bound is $\le \varepsilon$
-asymptotically.
 \end{theorem}

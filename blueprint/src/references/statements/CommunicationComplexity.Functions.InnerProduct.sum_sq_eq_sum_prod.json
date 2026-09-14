@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_sq_eq_sum_prod",
+ "key": "05f153084f73956c",
+ "kind": "lemma",
+ "title": "Sum of squared row-sums as a sum over column pairs",
+ "statement": "Let $\\alpha$ and $\\beta$ be finite types and let $f : \\alpha \\to \\beta \\to \\bbr$. Then\n\\[\n  \\sum_{x \\in \\alpha} \\Bigl(\\sum_{y \\in \\beta} f(x,y)\\Bigr)^2\n  \\;=\\;\n  \\sum_{(y,z) \\in \\beta \\times \\beta} \\; \\sum_{x \\in \\alpha} f(x,y)\\, f(x,z).\n\\]\nThat is, squaring each row-sum of $f$ and summing over rows yields the same value as summing, over every ordered pair of columns $(y,z)$, the inner product of those two columns.",
+ "hypotheses_covered": [
+  "α is a finite type",
+  "β is a finite type",
+  "f is a real-valued function of two arguments f : α → β → ℝ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For finite types $\\alpha$ and $\\beta$ and $f : \\alpha \\to \\beta \\to \\mathbb{R}$,\n\\[\n  \\sum_{x : \\alpha} \\Bigl(\\sum_{y : \\beta} f(x, y)\\Bigr)^2\n  \\;=\\; \\sum_{(y_1, y_2) : \\beta \\times \\beta} \\sum_{x : \\alpha} f(x, y_1) \\cdot f(x, y_2).\n\\]"
+}

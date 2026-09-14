@@ -1,0 +1,15 @@
+{
+ "lean_name": "Bonami.restrictLast_true_eq",
+ "key": "4c17c45cb0c31f9e",
+ "kind": "lemma",
+ "title": "Recovering the true-restriction from average and half-difference",
+ "statement": "Let $f : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function on $n+1$ variables. For a bit $b$, write $f_b : \\{0,1\\}^n \\to \\bbr$ for the restriction $x \\mapsto f(x,b)$ that fixes the last coordinate to $b$, and let its average and half-difference over the last coordinate be the functions $\\tfrac12(f_0 + f_1)$ and $\\tfrac12(f_0 - f_1)$. Then for every point $x \\in \\{0,1\\}^n$, the restriction fixing the last coordinate to $\\mathrm{true}$ equals the average minus the half-difference at that point:\n\\[\nf_1(x) \\;=\\; \\tfrac12\\bigl(f_0(x) + f_1(x)\\bigr) \\;-\\; \\tfrac12\\bigl(f_0(x) - f_1(x)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n+1 variables",
+  "x is a point of the n-dimensional Boolean cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $x$, the restriction of $f$ fixing the last coordinate to true equals the difference\nof the average and the half-difference: $\\mathrm{restrictLast}\\,f\\,\\mathrm{true}\\,x = \\mathrm{avgLast}\\,f\\,x - \\mathrm{diffLast}\\,f\\,x$."
+}

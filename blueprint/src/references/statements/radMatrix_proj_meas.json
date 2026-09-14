@@ -1,0 +1,17 @@
+{
+ "lean_name": "radMatrix_proj_meas",
+ "key": "5ad7446cced1bd91",
+ "kind": "lemma",
+ "title": "Measurability of a row of the Rademacher projection",
+ "statement": "Fix natural numbers $k, d$, a vector $x \\in \\bbr^d$, and an index $i \\in \\{1, \\dots, k\\}$. Regard the sample space $\\mathrm{Rad\\Omega}(k,d)$ of $k \\times d$ real arrays with its product measurable structure, and for a sample $\\omega$ let $A(\\omega)$ be the Rademacher matrix with entries $A(\\omega)_{ij} = \\omega_{ij}/\\sqrt{k}$, acting as a linear map $\\bbr^d \\to \\bbr^k$. Then the map $\\omega \\mapsto (A(\\omega)\\,x)_i$, sending each sample to the $i$-th coordinate of the image of $x$, is measurable.",
+ "hypotheses_covered": [
+  "k, d natural numbers",
+  "fixed vector x in R^d",
+  "fixed row index i in Fin k",
+  "sample space RadΩ(k,d) with product measurable structure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $x \\in \\mathbb{R}^d$ and $i \\in \\mathrm{Fin}\\,k$, the map\n$\\omega \\mapsto (A(\\omega)\\,x)_i$ is measurable."
+}

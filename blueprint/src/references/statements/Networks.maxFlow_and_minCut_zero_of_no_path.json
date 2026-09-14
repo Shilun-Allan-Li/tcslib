@@ -1,0 +1,16 @@
+{
+ "lean_name": "Networks.maxFlow_and_minCut_zero_of_no_path",
+ "key": "9f6295cdd490cf89",
+ "kind": "theorem",
+ "title": "Zero maximum flow and minimum cut without a positive-capacity path",
+ "statement": "Let $N$ be a network with distinguished single source $x$ and single sink $y$, and suppose there is no directed path from $x$ to $y$ every arc of which has positive capacity. Then every maximum flow $f$ in $N$ has value $0$, and every minimum cut $S$ (a vertex set with $x \\in S$ and $y \\notin S$) has capacity $0$.",
+ "hypotheses_covered": [
+  "no directed path from x to y through arcs of positive capacity",
+  "f is a maximum flow in N",
+  "S is a minimum cut in N"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{If there exists no directed \\texttt{(x, y)}-path in \\texttt{N}, then the\nvalue of a maximum flow and the capacity of a minimum cut are both zero.}"
+}

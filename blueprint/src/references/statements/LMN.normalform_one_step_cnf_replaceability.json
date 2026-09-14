@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.normalform_one_step_cnf_replaceability",
+ "key": "c7794350b543585a",
+ "kind": "theorem",
+ "title": "One-step CNF replaceability for a layer of DNF gates",
+ "statement": "Fix layer-2 data over $n \\ge 1$ variables: a family of $m$ DNF gates $G_1, \\dots, G_m$ together with a common width bound $w > 0$ satisfying $\\mathrm{width}(G_i) \\le w$ for every $i$. Let $l \\in \\bbn$ and let $p \\in \\bbr$ satisfy $0 < p \\le \\tfrac{1}{40\\,w}$ and $p \\le 1$. Then, under a Bernoulli($p$) random restriction $\\rho$ on the $n$ variables, the probability that some gate fails the property — that is, the probability that it is *not* the case that for every $i$ the restricted function $x \\mapsto G_i(\\rho.\\mathrm{extend}\\,x)$ agrees, on all inputs, with some CNF formula of width at most $l$ — is at most\n\\[\n  m\\left(\\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\left(-\\tfrac{n p}{3}\\right)\\right).\n\\]",
+ "hypotheses_covered": [
+  "n > 0 (at least one variable)",
+  "0 < p",
+  "p ≤ 1/(40·width)",
+  "p ≤ 1",
+  "common width bound width > 0 with each gate's width ≤ width (from the layer-2 data)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor layer-2 data and a Bernoulli parameter $p$ with $0<p\\le 1/(40\\cdot\\mathrm{width})$ and\n$p\\le 1$, the probability that it fails that every gate's restricted function is computed by\nsome width-$l$ CNF is at most\n\\[\n  \\mathrm{numGates}\\cdot\\left((1/2)^{l} + \\exp(-np/3)\\right).\n\\]"
+}

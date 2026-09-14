@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.tvDistance_eq_densityPositiveIntegral_of_ac",
+ "key": "7f950f9e891b4329",
+ "kind": "theorem",
+ "title": "Total variation distance as an integral of density excess",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on a measurable space $\\Omega$, and suppose that $\\mu$ is absolutely continuous with respect to $\\nu$. Write $\\frac{d\\mu}{d\\nu}$ for the (real-valued) Radon–Nikodym derivative of $\\mu$ with respect to $\\nu$. Then the total variation distance between $\\mu$ and $\\nu$ equals the excess mass of $\\mu$ over $\\nu$ on the region where $\\mu$ locally dominates $\\nu$:\n\\[\n\\tfrac{1}{2}\\,\\norm{\\mu - \\nu}_{\\mathrm{TV}}\n= \\int_{\\left\\{\\,x \\in \\Omega \\;:\\; \\frac{d\\mu}{d\\nu}(x) \\ge 1\\,\\right\\}} \\left(\\frac{d\\mu}{d\\nu}(x) - 1\\right)\\, d\\nu.\n\\]",
+ "hypotheses_covered": [
+  "μ and ν are probability measures on a measurable space Ω",
+  "μ is absolutely continuous with respect to ν"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mu \\ll \\nu$, then $\\mathrm{TV}(\\mu,\\nu) = \\mathrm{densityPositiveIntegral}(\\mu,\\nu)$."
+}

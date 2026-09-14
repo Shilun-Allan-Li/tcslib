@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage",
+ "key": "55d04b9569daf34d",
+ "kind": "theorem",
+ "title": "Finite-message characterization of deterministic communication complexity",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $f : X \\to Y \\to \\alpha$ be a two-argument function, and let $n$ be a natural number. Then the deterministic communication complexity satisfies $D(f) \\le n$ if and only if there exists a finite-message protocol $p$ over inputs $X$, $Y$ and outputs $\\alpha$ whose execution computes $f$, in the sense that $p$ run on inputs $x$ and $y$ returns $f(x)(y)$ for all $x$ and $y$, and whose communication complexity is at most $n$.",
+ "hypotheses_covered": [
+  "f : X → Y → α is a two-argument function",
+  "n : ℕ is a natural number bound",
+  "conclusion: D(f) ≤ n (in ENat)",
+  "iff: existence of a finite-message protocol p",
+  "p.run = f (p computes f on all inputs)",
+  "p.complexity ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : X \\to Y \\to \\alpha$ and $n : \\mathbb{N}$, we have $D(f) \\le n$ if and only if\nthere exists a finite-message protocol $p : \\mathrm{FiniteMessage.Protocol}\\;X\\;Y\\;\\alpha$\nsuch that $p.\\mathrm{run} = f$ and $p.\\mathrm{complexity} \\le n$.  This equivalence follows\nfrom the mutual simulation between general protocols and their finite-message counterparts."
+}

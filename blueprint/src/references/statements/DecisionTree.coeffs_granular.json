@@ -1,0 +1,15 @@
+{
+ "lean_name": "DecisionTree.coeffs_granular",
+ "key": "1edb9e0570885f0b",
+ "kind": "lemma",
+ "title": "Dyadic granularity of a decision tree's coefficients",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and let $S \\subseteq \\{0,\\dots,n-1\\}$ be a frequency set. Then the coefficient $\\mathrm{coeffs}\\,T\\,S$ is a dyadic rational with denominator $2^{\\mathrm{depth}(T)}$: there exists an integer $m \\in \\bbz$ such that \\[ \\mathrm{coeffs}\\,T\\,S = \\frac{m}{2^{\\mathrm{depth}(T)}}. \\] Equivalently, every such coefficient is an integer multiple of $2^{-\\mathrm{depth}(T)}$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables",
+  "S is a subset of Fin n (a frequency set)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $S$ there is an integer $m$ with\n$\\mathrm{coeffs}\\,T\\,S = m / 2^{T.\\mathrm{depth}}$; that is, every coefficient is an\ninteger multiple of $2^{-T.\\mathrm{depth}}$."
+}

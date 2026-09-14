@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.restriction_compose_le",
+ "key": "69f4bd1e79ab1fc4",
+ "kind": "theorem",
+ "title": "Composition inequality for Bernoulli random restrictions",
+ "statement": "Fix $n$, let $E$ be an event on restrictions of $n$ variables, and let $0 < p \\le 1$ and $0 < q \\le 1$ be real parameters. Then the probability that $E$ holds under a Bernoulli$(pq)$ random restriction is at most the probability, under a Bernoulli$(p)$ random restriction $\\rho_1$, that there is some restriction $\\rho_2$ for which $E$ holds of the composition of $\\rho_1$ with $\\rho_2$:\n\\[\n  \\Pr_{\\rho \\sim \\mathrm{Bernoulli}(pq)}\\bigl[E(\\rho)\\bigr]\n  \\;\\le\\;\n  \\Pr_{\\rho_1 \\sim \\mathrm{Bernoulli}(p)}\\bigl[\\,\\exists\\,\\rho_2\\ :\\ E(\\rho_1 \\circ \\rho_2)\\,\\bigr].\n\\]",
+ "hypotheses_covered": [
+  "p is positive (0 < p)",
+  "p ≤ 1",
+  "q is positive (0 < q)",
+  "q ≤ 1",
+  "E is an event (decidable predicate) on restrictions of n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 < p \\le 1$ and $0 < q \\le 1$, the Bernoulli($pq$) probability of an event is\nat most the Bernoulli($p$) probability that some $\\rho_2$ makes the event hold after\ncomposition:\n\\[\n  \\mathrm{bernoulliRestrProb}\\,(pq)\\,\\mathrm{event}\n  \\le \\mathrm{bernoulliRestrProb}\\,p\\,\\bigl(\\rho_1 \\mapsto \\exists \\rho_2,\\;\n      \\mathrm{event}(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2)\\bigr).\n\\]"
+}

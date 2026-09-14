@@ -1,0 +1,17 @@
+{
+ "lean_name": "Kruskal.mergeAll_iff_reach",
+ "key": "3a47a062b170962d",
+ "kind": "lemma",
+ "title": "Merging preserves the reachability invariant",
+ "statement": "Fix $n$ and let $uf : \\mathrm{Fin}\\,n \\to \\bbn$ be a union-find state assigning each of the $n$ nodes a representative. Let $\\mathit{base}$ and $\\mathit{edges}$ be lists of weighted edges on these $n$ vertices, and suppose $uf$ already encodes reachability along $\\mathit{base}$, in the sense that for all nodes $a, b$ one has $uf(a) = uf(b)$ if and only if $a$ and $b$ are connected by a path through the edges of $\\mathit{base}$. Then, writing $uf'$ for the state obtained by merging the endpoints of every edge of $\\mathit{edges}$ into $uf$ in order, for all nodes $a, b$ one has $uf'(a) = uf'(b)$ if and only if $a$ and $b$ are connected by a path through the edges of the concatenated list $\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{edges}$.",
+ "hypotheses_covered": [
+  "n nodes and union-find state uf : Fin n → ℕ",
+  "base and edges are lists of weighted edges on n vertices",
+  "invariant: uf a = uf b ↔ Reach base a b for all a, b",
+  "conclusion holds for all nodes a, b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the union--find state $\\mathit{uf}$ represents reachability in a base edge list,\ni.e.\\ $\\mathit{uf}\\,a = \\mathit{uf}\\,b \\leftrightarrow \\mathtt{Reach}\\,\\mathit{base}\\,a\\,b$\nfor all $a, b$. Then after merging along $\\mathit{edges}$,\n\\[\n  (\\mathit{uf}.\\mathtt{mergeAll}\\,\\mathit{edges})\\,a\n    = (\\mathit{uf}.\\mathtt{mergeAll}\\,\\mathit{edges})\\,b\n  \\quad\\longleftrightarrow\\quad\n  \\mathtt{Reach}\\,(\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{edges})\\,a\\,b .\n\\]"
+}

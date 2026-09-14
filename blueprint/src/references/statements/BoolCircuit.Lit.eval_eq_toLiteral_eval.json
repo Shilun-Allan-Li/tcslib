@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.Lit.eval_eq_toLiteral_eval",
+ "key": "4ffd8aa8d54ea868",
+ "kind": "theorem",
+ "title": "Conversion preserves literal evaluation",
+ "statement": "Let $l$ be a circuit literal on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be an assignment of Boolean values to those variables. Then evaluating $l$ as a circuit literal at $x$ yields the same Boolean value as first converting $l$ to the corresponding switching-lemma literal and evaluating that at $x$.",
+ "hypotheses_covered": [
+  "a circuit literal l on n variables",
+  "an assignment x : Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every literal $l$ and input $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$, the circuit\nevaluation $l.\\mathrm{eval}\\,x$ equals the evaluation of its converted literal\n$l.\\mathrm{toLiteral}.\\mathrm{eval}\\,x$."
+}

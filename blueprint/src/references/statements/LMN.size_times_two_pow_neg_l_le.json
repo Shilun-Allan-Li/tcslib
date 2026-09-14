@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.size_times_two_pow_neg_l_le",
+ "key": "376912d2b1fcdfed",
+ "kind": "lemma",
+ "title": "Bound on $s\\cdot(1/2)^{\\log_2(2s/\\varepsilon)}$",
+ "statement": "Let $s$ be a positive integer and let $\\varepsilon > 0$ be a real number. Then\n\\[\n  s \\cdot \\left(\\tfrac{1}{2}\\right)^{\\log_2(2s/\\varepsilon)} \\;\\le\\; \\frac{\\varepsilon}{2},\n\\]\nwhere the exponent $\\log_2(2s/\\varepsilon)$ is the base-$2$ logarithm.",
+ "hypotheses_covered": [
+  "s is a positive integer (0 < s)",
+  "ε is a positive real (0 < ε)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $s \\in \\bbn$ with $0 < s$ and $\\varepsilon \\in \\bbr$ with $0 < \\varepsilon$,\ntaking $l = \\log_2(2s/\\varepsilon)$ gives\n\\[\n  s \\cdot 2^{-l} \\le \\frac{\\varepsilon}{2},\n\\]\nsince $2^{-l} = \\varepsilon/(2s)$."
+}

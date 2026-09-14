@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.NOrCircuit.toDNF_terms_nodup",
+ "key": "d6480ec73bc41752",
+ "kind": "theorem",
+ "title": "DNF terms of a normal-form OR circuit are duplicate-free",
+ "statement": "Let $cs$ be a list of normal-form AND circuits on $n$ variables, and suppose every element of $cs$ is a clause — that is, each is given by a list of circuit literals whose variable indices are pairwise distinct. Consider the normal-form OR circuit that combines the members of $cs$, and let its associated DNF formula be the list of terms obtained by converting each clause into a term (mapping every circuit literal to the corresponding switching-lemma literal with the same variable and polarity). Then every term of this DNF is duplicate-free: no term contains the same literal twice.",
+ "hypotheses_covered": [
+  "cs is a list of normal-form AND circuits on n variables",
+  "every element of cs is a clause of the form clause lits h",
+  "the variable indices of each clause's literals are pairwise distinct (Nodup)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every child of an $\\texttt{NOrCircuit}.\\mathrm{node}\\,cs$ is an AND-clause with distinct\nliteral indices, then every term in the resulting DNF has the \\texttt{Nodup} property."
+}

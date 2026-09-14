@@ -1,0 +1,17 @@
+{
+ "lean_name": "Schnorr.schnorr_completeness",
+ "key": "8f5b4dd8674bc64e",
+ "kind": "theorem",
+ "title": "Completeness of the Schnorr identification protocol",
+ "statement": "Let $q$ be a prime, let $G$ be a commutative group, and let $g \\in G$ be an element of order $q$. For any witness $w$, randomness $r$, and challenge $c$ in $\\mathbb{Z}_q$, the honest transcript — commitment $a = g^{r}$, challenge $c$, and response $s = r + c\\,w$ — is accepted by the verifier against the public key $\\mathit{pk} = g^{w}$; that is,\n\\[\n  g^{\\,s} \\;=\\; a \\cdot \\mathit{pk}^{\\,c},\n\\]\nwhere each exponent is taken via the canonical lift of the corresponding element of $\\mathbb{Z}_q$ to $\\mathbb{N}$.",
+ "hypotheses_covered": [
+  "q is prime",
+  "G is a commutative group",
+  "g has order q",
+  "witness w, randomness r, challenge c lie in Z_q"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g \\in G$ be an element of order $q$ and let $w, r, c \\in \\mathbb{Z}_q$.\nThen the honest transcript $(g^r, c, r + c \\cdot w)$ satisfies the verifier\nequation with respect to the public key $\\mathit{pk} = g^w$:\n\\[\n  g^{(r + c \\cdot w).\\mathrm{val}} \\;=\\; g^{r.\\mathrm{val}} \\cdot (g^{w.\\mathrm{val}})^{c.\\mathrm{val}}.\n\\]"
+}

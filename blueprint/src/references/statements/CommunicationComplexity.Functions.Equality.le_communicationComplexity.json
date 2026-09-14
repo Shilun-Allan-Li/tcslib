@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Equality.le_communicationComplexity",
+ "key": "46affe4d37860116",
+ "kind": "theorem",
+ "title": "Deterministic complexity lower bound for equality",
+ "statement": "For every natural number $n \\ge 1$, the deterministic communication complexity of the $n$-bit equality function satisfies\n\\[\n  n + 1 \\;\\le\\; D(\\mathrm{equality}_n),\n\\]\nwhere $\\mathrm{equality}_n$ is the Boolean function on $\\mathrm{BoolInput}\\,n \\times \\mathrm{BoolInput}\\,n$ that returns $\\mathtt{true}$ exactly when Alice's input equals Bob's input.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$1 \\le n$",
+  "conclusion: $n+1 \\le D(\\mathrm{equality}_n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every $n \\ge 1$,\n\\[\n  n + 1 \\;\\le\\; D(\\mathrm{equality}_n).\n\\]\nThe key argument is that any monochromatic rectangle that contains a diagonal\npair $(x, x)$ must equal the singleton $\\{(x,x)\\}$, so any valid partition\nof the input matrix into monochromatic rectangles contains at least $2^n + 1$\npieces, requiring $n + 1$ bits to index."
+}

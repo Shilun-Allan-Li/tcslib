@@ -1,0 +1,16 @@
+{
+ "lean_name": "GeneralHypercontractivity.corrExpect_mono",
+ "key": "2e8ff8a49275c7ec",
+ "kind": "lemma",
+ "title": "Monotonicity of kernel-weighted expectations",
+ "statement": "Fix a dimension $n$ and a correlation parameter $\\rho$ with $0 \\le \\rho \\le 1$, and let $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\chi(x_i)\\,\\chi(y_i)}{2}$ denote the noise kernel on the Boolean hypercube $\\{0,1\\}^n$, where $\\chi(\\cdot)$ is the $\\pm 1$ encoding of a bit. If $h, h' : \\{0,1\\}^n \\times \\{0,1\\}^n \\to \\bbr$ satisfy $h(x,y) \\le h'(x,y)$ for all $x$ and $y$, then the kernel-weighted average of $h$ is at most that of $h'$:\n\\[\n  \\frac{1}{2^n}\\sum_{x}\\sum_{y} K_\\rho(x,y)\\, h(x,y)\n  \\;\\le\\;\n  \\frac{1}{2^n}\\sum_{x}\\sum_{y} K_\\rho(x,y)\\, h'(x,y).\n\\]",
+ "hypotheses_covered": [
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "h(x,y) ≤ h'(x,y) for all x, y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $0 \\le \\rho \\le 1$ and let $h, h' : \\mathrm{BoolCube}\\,n \\times \\mathrm{BoolCube}\\,n \\to \\bbr$\nsatisfy $h(x,y) \\le h'(x,y)$ for all $x, y$. Then the kernel-weighted average of $h$ is at\nmost that of $h'$:\n\\[\n  \\frac{1}{2^n}\\sum_{x}\\sum_{y} K_\\rho(x,y)\\, h(x,y)\n  \\;\\le\\;\n  \\frac{1}{2^n}\\sum_{x}\\sum_{y} K_\\rho(x,y)\\, h'(x,y).\n\\]"
+}

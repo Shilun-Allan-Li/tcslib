@@ -1,0 +1,16 @@
+{
+ "lean_name": "toEuclideanLin_apply_eq_sum",
+ "key": "9f2b5c936044a40b",
+ "kind": "lemma",
+ "title": "Coordinates of a matrix-vector product",
+ "statement": "Let $A\\in\\bbr^{k\\times d}$ be a $k\\times d$ real matrix, regarded as the linear map from the Euclidean space $\\bbr^{d}$ to $\\bbr^{k}$ that it induces, and let $x\\in\\bbr^{d}$. Then for each index $i\\in\\{1,\\dots,k\\}$, the $i$-th coordinate of the image $Ax$ is given by\n\\[\n  (Ax)_i \\;=\\; \\sum_{j} A_{ij}\\,x_j .\n\\]",
+ "hypotheses_covered": [
+  "A is a k×d real matrix",
+  "x is a vector in Euclidean d-space",
+  "i is a row index in {1,...,k}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a matrix $A\\in\\mathbb{R}^{k\\times d}$, a vector\n$x\\in\\mathbb{R}^d$, and an index $i\\in\\mathrm{Fin}\\,k$,\n\\[\n  (A.\\texttt{toEuclideanLin}\\,x)\\,i \\;=\\; \\sum_{j} A_{i,j}\\,x_j.\n\\]\nThis definitional equality unfolds the linear map into its explicit sum form."
+}

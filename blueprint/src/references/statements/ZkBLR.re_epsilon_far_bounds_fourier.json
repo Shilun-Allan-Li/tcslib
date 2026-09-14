@@ -1,0 +1,18 @@
+{
+ "lean_name": "ZkBLR.re_epsilon_far_bounds_fourier",
+ "key": "e4575e839cabaae3",
+ "kind": "lemma",
+ "title": "Fourier bound for functions far from linear",
+ "statement": "Fix an integer $k \\ge 2$ and let $f : \\bbz_k^n \\to \\bbz_k$ be $\\varepsilon$-far from linear in the normalized sense: that is, $f(0) = 0$, the parameter satisfies $0 \\le \\varepsilon \\le 1$, and $\\dist(f, g) \\ge \\varepsilon$ for every linear $g : \\bbz_k^n \\to \\bbz_k$. Write $\\widetilde{f}(x) = \\omega_k^{f(x)}$ for the lift of $f$ to the unit circle, where $\\omega_k = e^{2\\pi i/k}$, and let $\\widehat{\\widetilde{f}}(s)$ denote its Fourier coefficient at frequency $s$. Then for every $s \\in \\bbz_k^n$,\n\\[\n  \\operatorname{Re}\\bigl[\\widehat{\\widetilde{f}}(s)\\bigr]\n  \\;\\le\\; 1 - \\bigl(1 - \\cos(2\\pi/k)\\bigr)\\,\\varepsilon.\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 2",
+  "f is normalized (f(0)=0)",
+  "0 ≤ ε ≤ 1",
+  "dist(f,g) ≥ ε for every linear g",
+  "s is an arbitrary frequency in ℤ_k^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $k \\ge 2$ and $f$ is $\\varepsilon$-far from linear (in the normalized sense),\nthen for every $s \\in \\mathbb{Z}_k^n$,\n\\[\n  \\operatorname{Re}\\bigl[\\widehat{\\widetilde{f}}(s)\\bigr]\n  \\;\\le\\; 1 - \\bigl(1-\\cos(2\\pi/k)\\bigr)\\varepsilon.\n\\]"
+}

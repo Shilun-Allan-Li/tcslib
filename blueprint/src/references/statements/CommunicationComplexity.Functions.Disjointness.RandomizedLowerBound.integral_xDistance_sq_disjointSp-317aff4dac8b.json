@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xDistance_sq_disjointSpecialYFalse_le_gamma_pow_four",
+ "key": "511f02d825a57e46",
+ "kind": "theorem",
+ "title": "Averaged squared bias of Alice's special bit under disjointness",
+ "statement": "Fix an input length $n \\ge 1$, a deterministic communication protocol $p$ for disjointness on inputs of length $n$, and a real number $\\gamma > 0$. Draw a sample $\\omega$ from the hard distribution $\\mathbb{P}$; write $M$ for the transcript produced by $p$ on the associated input pair, write $T$ for the special coordinate, and set $Z = (M,\\, T,\\, X_{<T},\\, Y_{>T})$, collecting the transcript together with $T$, Alice's bits strictly before $T$, and Bob's bits strictly after $T$. For each value $z$ of $Z$, let $\\Delta(z)$ denote the total variation distance between the conditional law of Alice's special bit $X_T$ given $Z = z$ under $\\mathbb{P}$ and the uniform law on one bit. Suppose the combined conditional mutual information\n\\[\n  I\\!\\left(X_T : M \\,\\middle|\\, T,\\, X_{<T},\\, Y_{\\ge T}\\right) + I\\!\\left(Y_T : M \\,\\middle|\\, T,\\, X_{\\le T},\\, Y_{>T}\\right) \\;\\le\\; \\tfrac{2}{3}\\,\\gamma^4,\n\\]\nwhere both terms are computed under $\\mathbb{P}$ conditioned on the disjointness event $D$ (that Alice's and Bob's input sets are disjoint). Then, with the expectation taken under $\\mathbb{P}$ conditioned on $D$ together with $Y_T = 0$,\n\\[\n  \\E\\!\\left[\\Delta(Z)^2 \\,\\middle|\\, D,\\ Y_T = 0\\right] \\;\\le\\; \\gamma^4.\n\\]",
+ "hypotheses_covered": [
+  "input length n is at least 1 (n a positive natural)",
+  "p is a deterministic disjointness protocol on inputs of length n",
+  "gamma > 0",
+  "combined Alice/Bob conditional mutual information (under the disjointness-conditioned hard distribution) is at most 2*gamma^4/3",
+  "expectation taken under the hard distribution conditioned on the disjointness event and on Y_T = false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice Pinsker/information step under $D ∧ Y_{T}=false$: the squared one-bit marginal distance has average at most $γ^{4}$. This is the KL-to-information comparison from the inequality $(2/3) I(X_{T} : M | T, X_{<T}, Y_{≥T}, Y_{T}=0, D) ≤ I(X_{T} : M | T, X_{<T}, Y_{≥T}, D)$."
+}

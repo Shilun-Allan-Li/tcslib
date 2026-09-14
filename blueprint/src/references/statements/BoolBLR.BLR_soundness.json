@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolBLR.BLR_soundness",
+ "key": "36c4c8abb1892415",
+ "kind": "lemma",
+ "title": "Soundness of the BLR linearity test",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ and let $\\varepsilon \\in \\bbr$ satisfy $0 \\le \\varepsilon \\le 1$. Suppose $f$ is $\\varepsilon$-far from linear, meaning that every linear function $g : \\{0,1\\}^n \\to \\{0,1\\}$ (one satisfying $g(x \\oplus y) = g(x) \\oplus g(y)$ for all $x, y$) has distance $\\Pr_{x}[f(x) \\ne g(x)] \\ge \\varepsilon$ from $f$. Then the BLR acceptance probability of $f$ satisfies\n\\[\n  \\E_{x}\\!\\left[\\E_{y}\\!\\left[\\mathbf{1}\\!\\left[(-1)^{f(x \\oplus y)} = (-1)^{f(x)}\\,(-1)^{f(y)}\\right]\\right]\\right] \\;\\le\\; 1 - \\varepsilon,\n\\]\nwhere $x$ and $y$ range uniformly over $\\{0,1\\}^n$; equivalently, the test rejects $f$ with probability at least $\\varepsilon$.",
+ "hypotheses_covered": [
+  "0 ≤ ε",
+  "ε ≤ 1",
+  "f is ε-far from every linear Boolean function (distance ≥ ε)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\{0,1\\}^n \\to \\{0,1\\}$ is $\\varepsilon$-far from linear, then\n\\[\n  \\texttt{BoolBLR.BLR\\_accept\\_prob}\\,f \\;\\le\\; 1 - \\varepsilon.\n\\]\nThat is, a function that is $\\varepsilon$-far from every linear function\ncauses the BLR test to reject with probability at least $\\varepsilon$."
+}

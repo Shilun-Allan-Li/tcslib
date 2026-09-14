@@ -1,0 +1,18 @@
+{
+ "lean_name": "sym_form_r_E_left",
+ "key": "1d38f8897dbadeaf",
+ "kind": "lemma",
+ "title": "Restriction on the left argument of the symplectic form",
+ "statement": "Let $p$ be prime, $\\bbf_p$ the field with $p$ elements, and let $V = \\bbf_p^n \\times \\bbf_p^n$ carry the symplectic form $\\omega\\big((x,z),(x',z')\\big) = \\sum_{i=0}^{n-1}(x_i z'_i - z_i x'_i)$. For a subset $M \\subseteq \\{0,\\dots,n-1\\}$, let $r_M : V \\to V$ be the endomorphism that keeps the coordinates indexed by $M$ and sets all others to zero, and let $V_M \\subseteq V$ be the subspace of vectors whose support is contained in $M$. Then for every $s \\in V$ and every $v \\in V_M$, \\[ \\omega\\big(r_M(s),\\, v\\big) = \\omega(s, v). \\]",
+ "hypotheses_covered": [
+  "p prime",
+  "M a subset of the index set Fin n",
+  "s an arbitrary vector in V",
+  "v a vector in V",
+  "v is supported on M (v ∈ V_sub M)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $v \\in V_M$, then $\\omega(r_M^V(s), v) = \\omega(s, v)$ for all $s \\in V$."
+}

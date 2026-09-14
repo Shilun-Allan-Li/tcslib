@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.alice_to_bob",
+ "key": "c339c571c46fdd7a",
+ "kind": "theorem",
+ "title": "Swapping an Alice-rooted protocol to a Bob-rooted one",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $f : X \\to \\mathrm{Bool}$, and let $P$ assign to each bit $b \\in \\mathrm{Bool}$ a deterministic communication protocol $P(b)$ over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$. Consider the protocol whose root is an Alice node: on inputs $x$ and $y$ it applies $f$ to $x$ and continues with $P(f(x))$. Then there exists a protocol $q$ over input types $Y$ (Alice) and $X$ (Bob) with output type $\\alpha$ such that, for all $x \\in X$ and $y \\in Y$, executing $q$ on inputs $y$ and $x$ returns the same value of $\\alpha$ as executing the original Alice-rooted protocol on inputs $x$ and $y$, and moreover $q$ has the same communication complexity as that protocol.",
+ "hypotheses_covered": [
+  "f : X → Bool is Alice's query function",
+  "P : Bool → Protocol X Y α gives the two continuation subprotocols",
+  "the given protocol is the Alice node (alice f P)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any alice-rooted protocol $\\texttt{alice}\\;f\\;P$ over $X \\times Y$, there exists a\nprotocol $q$ over $Y \\times X$ such that $q.\\texttt{run}\\;y\\;x = (\\texttt{alice}\\;f\\;P).\\texttt{run}\\;x\\;y$\nfor all $x, y$, and $q.\\texttt{complexity} = (\\texttt{alice}\\;f\\;P).\\texttt{complexity}$.\nThis allows reducing the bob case to the alice case in inductive arguments."
+}

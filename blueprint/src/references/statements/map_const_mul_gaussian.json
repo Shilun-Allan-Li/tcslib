@@ -1,0 +1,16 @@
+{
+ "lean_name": "map_const_mul_gaussian",
+ "key": "59673fa41a831b84",
+ "kind": "lemma",
+ "title": "Scaling a centered real Gaussian",
+ "statement": "Let $X\\colon \\Omega \\to \\bbr$ be a measurable random variable on a measure space $(\\Omega, \\mu)$ whose law is the centered Gaussian $N(0, \\sigma_0)$ with variance $\\sigma_0 \\ge 0$. Then for every scalar $c \\in \\bbr$, the scaled variable $c\\,X$ has law\n\\[\n  N\\!\\bigl(0,\\; c^2 \\sigma_0\\bigr),\n\\]\nthe centered Gaussian with variance $c^2 \\sigma_0$.",
+ "hypotheses_covered": [
+  "X is measurable",
+  "the law of X is the centered Gaussian N(0, σ₀) with variance σ₀",
+  "c is an arbitrary real scalar"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X : \\Omega \\to \\mathbb{R}$ be measurable with $X_*\\mu = N(0,\\sigma_0)$.\nThen for any constant $c\\in\\mathbb{R}$,\n\\[\n  (c\\,X)_*\\mu \\;=\\; N\\!\\bigl(0,\\,c^2\\cdot\\sigma_0\\bigr).\n\\]\nThis is an auxiliary restatement of \\texttt{gaussianReal\\_map\\_const\\_mul}\nphrased for easy application in the inductive step of\n\\texttt{sum\\_scaled\\_iid\\_gaussian\\_map}."
+}

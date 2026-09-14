@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.le_communicationComplexity_iff",
+ "key": "62863b83f4986dfd",
+ "kind": "theorem",
+ "title": "Lower-bound characterization of communication complexity",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a two-argument function, let $D(f) \\in \\bbn_\\infty$ denote its deterministic communication complexity, and let $n$ be a natural number. Then $n \\le D(f)$ if and only if every deterministic protocol $p$ that computes $f$ has communication complexity at least $n$.",
+ "hypotheses_covered": [
+  "f : X → Y → α is the target function",
+  "n is a natural number",
+  "biconditional: n ≤ D(f) iff every protocol computing f has complexity ≥ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : X \\to Y \\to \\alpha$ and $n : \\mathbb{N}$, we have $n \\le D(f)$ (in\n$\\mathbb{N}_\\infty$) if and only if every protocol $p : \\mathrm{Protocol}\\;X\\;Y\\;\\alpha$\nthat computes $f$ satisfies $n \\le p.\\mathrm{complexity}$."
+}

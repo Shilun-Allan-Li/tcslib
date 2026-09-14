@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkBLR.linear_iff_character",
+ "key": "22fc07cae741c393",
+ "kind": "lemma",
+ "title": "Linear functions as dot-product characters",
+ "statement": "Fix an integer $k \\ge 1$ and a dimension $n$, and let $f : (\\bbz/k\\bbz)^n \\to \\bbz/k\\bbz$ be any function. Then $f$ is linear — that is, $f(x+y) = f(x) + f(y)$ for all $x, y \\in (\\bbz/k\\bbz)^n$ — if and only if there is a vector $s \\in (\\bbz/k\\bbz)^n$ with $f(x) = s \\cdot x = \\sum_{i=0}^{n-1} s_i x_i$ for every $x$, all sums taken modulo $k$.",
+ "hypotheses_covered": [
+  "k is a positive modulus (NeZero k)",
+  "n is the dimension",
+  "f is a function from (Z/kZ)^n to Z/kZ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A function $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$ is linear if and only if\nthere exists $s \\in \\mathbb{Z}_k^n$ such that $f(x) = s \\cdot x$ for all $x$,\nwhere $s \\cdot x = \\sum_i s_i x_i$ denotes the dot product in $\\mathbb{Z}_k$."
+}

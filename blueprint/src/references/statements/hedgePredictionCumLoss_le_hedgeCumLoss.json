@@ -1,0 +1,17 @@
+{
+ "lean_name": "hedgePredictionCumLoss_le_hedgeCumLoss",
+ "key": "35af96d031185eb3",
+ "kind": "lemma",
+ "title": "Jensen bound for Hedge's averaged predictions",
+ "statement": "Fix a learning rate $\\eta \\in \\bbr$, a loss function $\\ell : \\bbr \\to \\Omega \\to \\bbr$, expert predictions $p : \\mathrm{Fin}\\,T \\to \\mathrm{Fin}\\,N \\to \\bbr$ (with $N \\ge 1$), and a sequence of outcomes $o : \\mathrm{Fin}\\,T \\to \\Omega$. Suppose $S \\subseteq \\bbr$ is convex, every expert prediction $p_t(i)$ lies in $S$, and for each round $t$ the map $x \\mapsto \\ell(x, o_t)$ is convex on $S$. Then the cumulative loss of Hedge's weighted-average predictions is at most the cumulative Hedge loss computed on the induced loss sequence:\n\\[\n  \\sum_{t=0}^{T-1} \\ell\\!\\left(\\widehat{x}_t,\\, o_t\\right)\n  \\;\\le\\;\n  \\sum_{t=0}^{T-1} \\sum_{i=1}^{N} p_t(i)\\,\\ell\\!\\left(p_t(i), o_t\\right),\n\\]\nwhere $\\widehat{x}_t = \\sum_{i} p_t(i)\\, p_t(i)$ is the Hedge weighted-average prediction at round $t$ and $p_t$ is the Hedge distribution at that round.",
+ "hypotheses_covered": [
+  "S is a convex subset of the reals",
+  "every expert prediction lies in S",
+  "for each round t, the loss as a function of the prediction is convex on S",
+  "at least one expert (NeZero N)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Summing the per-round Jensen bound over all $T$ rounds, we obtain\n\\[\n  \\mathcal{L}^{\\mathrm{pred}}_T\n  \\;\\le\\;\n  \\texttt{hedgeCumLoss}\\,\\eta\\,L,\n\\]\ni.e.\\ the actual cumulative loss of Hedge's convex-combination predictions is at most\nthe abstract cumulative Hedge loss on the induced expert loss table."
+}

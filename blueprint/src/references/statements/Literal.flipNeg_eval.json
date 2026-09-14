@@ -1,0 +1,15 @@
+{
+ "lean_name": "Literal.flipNeg_eval",
+ "key": "f1bb872bd2951f8d",
+ "kind": "lemma",
+ "title": "Flipping a literal negates its value",
+ "statement": "Let $l$ be a literal over $n$ Boolean variables, given by a variable index and a polarity that marks it as positive or negated, and let $x \\in \\{\\text{true},\\text{false}\\}^n$ be an assignment. Writing $\\bar{l}$ for the literal obtained from $l$ by flipping its polarity while keeping the same variable, the value of $\\bar{l}$ under $x$ is the negation of the value of $l$ under $x$; that is, $\\bar{l}(x) = \\lnot\\, l(x)$.",
+ "hypotheses_covered": [
+  "l is a literal over n variables",
+  "x is a Boolean assignment on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$(l.\\mathrm{flipNeg}).\\mathrm{eval}\\,x = \\lnot\\,(l.\\mathrm{eval}\\,x)$."
+}

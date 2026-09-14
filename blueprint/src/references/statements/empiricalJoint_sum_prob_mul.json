@@ -1,0 +1,17 @@
+{
+ "lean_name": "empiricalJoint_sum_prob_mul",
+ "key": "73e89c6d807beb31",
+ "kind": "lemma",
+ "title": "Averaging a payoff against the empirical joint distribution",
+ "statement": "Fix $T > 0$ rounds of play in which, in round $t$, the row player uses a mixed strategy $p_t$ over $\\mathrm{Fin}\\,M$ and the column player a mixed strategy $q_t$ over $\\mathrm{Fin}\\,N$; write $(p_t)_i$ and $(q_t)_j$ for the weights placed on actions $i$ and $j$. Let $\\sigma$ be the empirical joint distribution, whose value at each profile $(i,j)$ is the time average $\\sigma_{ij} = \\frac{1}{T}\\sum_{t=1}^{T} (p_t)_i\\,(q_t)_j$. Then for every function $f : \\mathrm{Fin}\\,M \\times \\mathrm{Fin}\\,N \\to \\bbr$,\n\\[\n\\sum_{i}\\sum_{j} \\sigma_{ij}\\, f(i,j) \\;=\\; \\frac{1}{T}\\sum_{t=1}^{T}\\sum_{i}\\sum_{j} (p_t)_i\\,(q_t)_j\\, f(i,j).\n\\]",
+ "hypotheses_covered": [
+  "T > 0 rounds",
+  "row player mixed strategies p_t over Fin M",
+  "column player mixed strategies q_t over Fin N",
+  "arbitrary function f : Fin M × Fin N → ℝ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any function $f : \\mathrm{Fin}\\,M \\to \\mathrm{Fin}\\,N \\to \\mathbb{R}$,\nthe sum $\\sum_{i,j} \\sigma_{ij} \\cdot f(i,j)$ over the empirical joint\ndistribution equals the time-average\n$(1/T)\\sum_{t}\\sum_{i,j}(p_t)_i(q_t)_j f(i,j)$."
+}

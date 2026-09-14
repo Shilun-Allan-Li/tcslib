@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.bind_rrun",
+ "key": "7a97825dcacfa2cb",
+ "kind": "theorem",
+ "title": "Execution of a sequentially composed private-coin protocol",
+ "statement": "Let $p$ be a private-coin finite-message protocol with input types $X$, $Y$, private-coin types $\\Omega_X$, $\\Omega_Y$, and output type $\\alpha$, and let $q$ assign to each value $a \\in \\alpha$ a private-coin finite-message protocol $q(a)$ over input types $X$, $Y$ and private-coin types $\\Omega_X$, $\\Omega_Y$ with output type $\\beta$. Then for all inputs $x \\in X$, $y \\in Y$ and private coins $\\omega_x \\in \\Omega_X$, $\\omega_y \\in \\Omega_Y$,\n\\[\n  (p \\mathbin{\\gg\\!=} q)\\;\\text{run on }(x,y)\\text{ with coins }(\\omega_x,\\omega_y)\n  \\;=\\;\n  q(a)\\;\\text{run on }(x,y)\\text{ with coins }(\\omega_x,\\omega_y),\n\\]\nwhere $a \\in \\alpha$ is the output of executing $p$ on inputs $x, y$ with coins $\\omega_x, \\omega_y$. That is, running the sequential composition of $p$ and $q$ on inputs $x, y$ with private coins $\\omega_x, \\omega_y$ gives the value obtained by first running $p$ on $x, y$ with coins $\\omega_x, \\omega_y$ to produce an output $a$, and then running $q(a)$ on $x, y$ with coins $\\omega_x, \\omega_y$.",
+ "hypotheses_covered": [
+  "p is a private-coin finite-message protocol over Ω_X, Ω_Y, X, Y with output type α",
+  "q assigns to each output a ∈ α a private-coin finite-message protocol q(a) over the same input and coin types with output type β",
+  "inputs x ∈ X and y ∈ Y",
+  "private coins ω_x ∈ Ω_X and ω_y ∈ Ω_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $x, y, \\omega_x, \\omega_y$, the randomised run of the bound protocol satisfies\n\\[\n  (p.\\mathrm{bind}\\;q).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y\n  \\;=\\; (q\\,(p.\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y)).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y.\n\\]"
+}

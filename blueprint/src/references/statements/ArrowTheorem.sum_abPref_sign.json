@@ -1,0 +1,15 @@
+{
+ "lean_name": "ArrowTheorem.sum_abPref_sign",
+ "key": "ba8cfbe0ccd4192c",
+ "kind": "lemma",
+ "title": "Balance of the a-vs-b preference signs",
+ "statement": "There are six strict orderings $k \\in \\{0,1,\\dots,5\\}$ of the three alternatives $a,b,c$. For each such ordering, let $p_{ab}(k)$ be its $a$-vs-$b$ preference, the Boolean that records whether $b$ is ranked above $a$, and apply the sign encoding $\\sigma$, so that $\\sigma(p_{ab}(k))$ equals $+1$ when ordering $k$ ranks $a$ above $b$ and $-1$ when it ranks $b$ above $a$. Then these six signed preferences sum to zero:\n\\[\n  \\sum_{k=0}^{5} \\sigma\\bigl(p_{ab}(k)\\bigr) = 0.\n\\]",
+ "hypotheses_covered": [
+  "sum ranges over the six orderings k = 0,...,5",
+  "each term is the sign encoding of the a-vs-b preference of ordering k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For each of the six strict orderings $k\\in\\{0,1,\\dots,5\\}$ of the three alternatives\n$a,b,c$, apply the sign encoding $\\sigma$ to the $a$-vs-$b$ preference\n$\\mathrm{abPref}(k)$, which equals $+1$ when ordering $k$ ranks $a$ above $b$ and $-1$\nwhen it ranks $b$ above $a$. These six signed preferences sum to zero:\n\\[\n  \\sum_{k=0}^{5} \\sigma\\bigl(\\mathrm{abPref}(k)\\bigr) = 0.\n\\]"
+}

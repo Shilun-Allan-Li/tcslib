@@ -1,0 +1,16 @@
+{
+ "lean_name": "karger_survival_prob_algorithmic",
+ "key": "5c01863412ee90f4",
+ "kind": "theorem",
+ "title": "Lower bound for the min-cut survival product",
+ "statement": "Let $C$ be a minimum cut of a multigraph $G$, and write $n$ for its number of vertices; suppose $n \\ge 4$. Then\n\\[\n  \\frac{2}{n(n-1)} \\;\\le\\; \\prod_{i=0}^{n-3} \\frac{n-i-2}{n-i}.\n\\]",
+ "hypotheses_covered": [
+  "$C$ is a cut of the multigraph $G$",
+  "$C$ is a minimum cut",
+  "$n = $ vertex count of $G$ satisfies $n \\ge 4$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a minimum cut of a multigraph $G$ with $n = \\abs{V(G)} \\ge 4$. Then the\ntelescoping product of per-step survival factors, which represents the probability that\nnone of the $n-2$ contractions picks a cut edge, is bounded below by\n\\[\n  \\frac{2}{n(n-1)} \\;\\le\\; \\prod_{i=0}^{n-3} \\frac{n - i - 2}{n - i} .\n\\]"
+}

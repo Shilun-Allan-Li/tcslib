@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.composeRestr_eq_iff",
+ "key": "9d5a0e411789a026",
+ "kind": "lemma",
+ "title": "Pointwise criterion for a composed restriction",
+ "statement": "Let $\\rho_1,\\rho_2,\\sigma$ be restrictions on $n$ variables, and let $\\rho_1 \\ast \\rho_2$ denote the composition of $\\rho_1$ and $\\rho_2$, whose value at a coordinate $i$ is the value fixed by $\\rho_1$ at $i$ if $\\rho_1$ fixes it and otherwise the value $\\rho_2$ assigns at $i$. Then $\\rho_1 \\ast \\rho_2 = \\sigma$ if and only if, for every coordinate $i \\in \\mathrm{Fin}\\,n$, the value of $\\rho_1 \\ast \\rho_2$ at $i$ equals $\\sigma(i)$.",
+ "hypotheses_covered": [
+  "three restrictions on n variables",
+  "composition given coordinatewise by the falling-back rule",
+  "equality tested against sigma"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The composition $\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2$ equals $\\sigma$ if and only if\nfor every coordinate $i$ the value $(\\rho_1\\,i)$, falling back to $(\\rho_2\\,i)$,\nequals $\\sigma\\,i$."
+}

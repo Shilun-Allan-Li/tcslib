@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolFourier.fourier_coeff_convolution_aux_h_fubini",
+ "key": "b4816fa157a3f26c",
+ "kind": "lemma",
+ "title": "Interchange of summation in the convolution coefficient",
+ "statement": "Let $n$ be a natural number, let $f, g : \\{0,1\\}^n \\to \\bbr$ be Boolean functions, and let $S \\subseteq [n]$ with associated Walsh character $\\chi_S(x) = \\prod_{i \\in S}(-1)^{x_i}$. Writing $x \\oplus y$ for the componentwise XOR of $x, y \\in \\{0,1\\}^n$, the following identity holds:\n\\[\n  \\sum_{x \\in \\{0,1\\}^n} \\Bigl(\\sum_{y \\in \\{0,1\\}^n} f(y)\\,g(x \\oplus y)\\Bigr)\\,\\chi_S(x)\n  \\;=\\;\n  \\sum_{y \\in \\{0,1\\}^n} f(y) \\sum_{x \\in \\{0,1\\}^n} g(x \\oplus y)\\,\\chi_S(x).\n\\]",
+ "hypotheses_covered": [
+  "f, g are Boolean functions {0,1}^n → ℝ",
+  "S is a subset of [n] with Walsh character χ_S",
+  "x ⊕ y denotes componentwise XOR"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $f, g : \\{0,1\\}^n \\to \\mathbb{R}$ and $S \\subseteq [n]$, the double sum defining\nthe unnormalised convolution coefficient may be reordered:\n\\[\n  \\sum_{x} \\Bigl(\\sum_{y} f(y)\\,g(x \\oplus y)\\Bigr) \\chi_S(x)\n  \\;=\\; \\sum_{y} f(y) \\sum_{x} g(x \\oplus y)\\,\\chi_S(x).\n\\]"
+}

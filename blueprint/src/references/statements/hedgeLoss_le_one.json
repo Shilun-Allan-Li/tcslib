@@ -1,0 +1,17 @@
+{
+ "lean_name": "hedgeLoss_le_one",
+ "key": "088ca3baf9db6c7f",
+ "kind": "lemma",
+ "title": "Hedge's expected loss is at most one",
+ "statement": "Fix a learning rate $\\eta \\in \\bbr$, and let $\\ell$ be a valid loss sequence for $N \\ge 1$ experts over $T$ rounds, so that $0 \\le \\ell_t(i) \\le 1$ for every round $t$ and expert $i$. Then at each round $t$ the expected loss of the learner under the Hedge distribution satisfies $\\widehat{\\ell}_t \\le 1$.",
+ "hypotheses_covered": [
+  "N ≥ 1 experts (NeZero N)",
+  "arbitrary real learning rate η",
+  "loss sequence is valid: each loss lies in [0,1]",
+  "fixed round t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a valid loss sequence, the expected loss at each round satisfies\n$\\widehat{\\ell}_t \\le 1$, since individual losses are at most $1$ and the\nHedge distribution is a probability measure."
+}

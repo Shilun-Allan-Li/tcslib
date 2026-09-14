@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleHypercontractivity.chiS_snoc_with_last",
+ "key": "f7b1f4a766f962af",
+ "kind": "lemma",
+ "title": "Walsh character on an extended coordinate set",
+ "statement": "Let $S \\subseteq [n]$, let $x \\in \\{0,1\\}^n$, and let $b$ be a bit. Write $(x,b) \\in \\{0,1\\}^{n+1}$ for the point obtained by appending $b$ as the final coordinate, and let $S' \\subseteq [n+1]$ be the image of $S$ under the inclusion $[n] \\hookrightarrow [n+1]$ of the first $n$ coordinates, together with the new last coordinate $n+1$. Then\n\\[\n  \\chi_{S'}(x,b) \\;=\\; \\sigma(b)\\,\\chi_S(x),\n\\]\nwhere $\\sigma$ is the sign encoding; that is, adjoining the last coordinate to the lifted index set multiplies the Walsh character by the sign of $b$.",
+ "hypotheses_covered": [
+  "S is a subset of the first n coordinates",
+  "x is a point of the n-dimensional cube",
+  "b is a bit",
+  "index set is the lift of S together with the last coordinate",
+  "evaluation point extends x by appending b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $S \\subseteq \\mathrm{Fin}\\,n$, a point $x$, and a bit $b$, adjoining the last\ncoordinate to the lifted set multiplies the character by the sign of $b$:\n\\[\n  \\chi_{\\,\\mathrm{castSucc}(S)\\cup\\{\\mathrm{last}\\,n\\}}(\\mathrm{snoc}\\,x\\,b)\n  = (-1)^{b}\\,\\chi_S(x),\n\\]\nwhere $(-1)^b$ denotes \\texttt{boolToSign}\\,$b$."
+}

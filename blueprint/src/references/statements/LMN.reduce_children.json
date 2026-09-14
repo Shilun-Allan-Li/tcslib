@@ -1,0 +1,21 @@
+{
+ "lean_name": "LMN.reduce_children",
+ "key": "faf6c1e43f06c3fa",
+ "kind": "lemma",
+ "title": "Merging child reductions into a shared gate family",
+ "statement": "Fix a number of variables $n$ and let assignments $x$ range over $\\{0,1\\}^n$. Let $C_1,\\dots,C_r$ be Boolean circuits, each on the same set of $m$ inputs, and let $\\gamma_1,\\dots,\\gamma_m$ be functions assigning to every assignment $x$ a bit, so that feeding input $i$ the value $\\gamma_i(x)$ turns each $C_j$ into a Boolean function of $x$. Fix a width bound $l$ and, for each $j$, a depth bound $b_j$. Assume every child admits a DNF reduction: for each $j$ there are a Boolean circuit $c_j$ of depth at most $b_j$ on some number $m_j$ of inputs, together with DNF formulas $g_{j,1},\\dots,g_{j,m_j}$ over $x_1,\\dots,x_n$, each of width at most $l$ and each of whose terms has its literals on pairwise distinct variables, such that\n\\[ C_j\\big(i \\mapsto \\gamma_i(x)\\big) = c_j\\big(k \\mapsto g_{j,k}(x)\\big) \\qquad \\text{for every } x. \\]\nThen these per-child families can be amalgamated into a single one: there exist a family of DNF formulas $h_1,\\dots,h_M$ over $x_1,\\dots,x_n$, each of width at most $l$ and each with all its terms' literals on pairwise distinct variables, together with circuits $C'_1,\\dots,C'_r$ on these $M$ shared inputs, such that $\\mathrm{depth}(C'_j) \\le b_j$ and\n\\[ C'_j\\big(k \\mapsto h_k(x)\\big) = C_j\\big(i \\mapsto \\gamma_i(x)\\big) \\qquad \\text{for every } j \\text{ and every } x. \\]",
+ "hypotheses_covered": [
+  "circuits C_1,...,C_r on m shared inputs",
+  "gate functions gamma_i turning each circuit into a function of x",
+  "common width bound l",
+  "per-child depth bounds b_j",
+  "each child has a reducing circuit c_j of depth at most b_j",
+  "over per-child DNF families g_{j,k} of width at most l",
+  "each g_{j,k} term has literals on pairwise distinct variables (distinct-variable and no repeated literal)",
+  "each reduction reproduces the child's function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Given a list $cs$ of circuits where each child $cs.\\mathrm{get}\\,j$ has been reduced to a\ncircuit $c_j$ of depth at most $\\mathrm{bound}\\,j$ over its own width-$l$ DNF gate family,\nthis combines all the per-child gate families into a single merged family\n$\\mathrm{merged}$ indexed by $\\mathrm{Fin}\\,M$, with re-indexed circuits $\\mathrm{new\\_cs}\\,j$\nof depth at most $\\mathrm{bound}\\,j$ that reproduce each child's function."
+}

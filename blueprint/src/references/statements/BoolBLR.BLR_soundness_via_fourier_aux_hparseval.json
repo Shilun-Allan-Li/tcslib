@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolBLR.BLR_soundness_via_fourier_aux_hparseval",
+ "key": "be2e06c55cb36d5f",
+ "kind": "lemma",
+ "title": "Parseval identity for the sign lift of a Boolean function",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function, and let $g : \\{0,1\\}^n \\to \\bbr$ be its $\\pm 1$ lift, given by $g(x) = (-1)^{f(x)}$. Then the Fourier coefficients $\\hat g(S) = \\langle g, \\chi_S\\rangle$, taken over all subsets $S \\subseteq [n]$, satisfy\n\\[\n  \\sum_{S \\subseteq [n]} \\hat g(S)^2 \\;=\\; 1.\n\\]",
+ "hypotheses_covered": [
+  "f is a function from the Boolean hypercube to {0,1} (Bool)",
+  "g is the ±1 lift of f, i.e. g(x) = (-1)^{f(x)}",
+  "the sum ranges over all subsets S of [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $f : \\{0,1\\}^n \\to \\{0,1\\}$, the $\\pm 1$ lift\n$g = \\texttt{BoolBLR.lift\\_pm1}\\,f$ has unit Fourier mass:\n\\[\n  \\sum_{S \\subseteq [n]} \\hat{g}(S)^2 \\;=\\; 1.\n\\]"
+}

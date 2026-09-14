@@ -1,0 +1,20 @@
+{
+ "lean_name": "LMN.switching_bernoulli_dtDepth_function",
+ "key": "0f6d5d7d3dc520ad",
+ "kind": "theorem",
+ "title": "Functional switching lemma under Bernoulli restrictions",
+ "statement": "Fix an integer $n \\ge 1$ and a Boolean function $f : \\{0,1\\}^n \\to \\{0,1\\}$ whose decision-tree depth is at most $w$, for some integer $w \\ge 1$. Let $p$ be a real parameter with $0 < p \\le 1/(40w)$ (so in particular $p \\le 1$), and draw a Bernoulli$(p)$ random restriction $\\rho$ on the $n$ variables: independently, each variable is left free with probability $p$ and otherwise fixed to $0$ or to $1$, each with probability $(1-p)/2$. Then for every $t \\in \\bbn$, the restricted function $f\\restriction\\rho$ (that is, $f$ evaluated on the free coordinates with the remaining coordinates set by $\\rho$) satisfies\n\\[\n  \\bbP_\\rho\\big[\\, \\text{decision-tree depth of } f\\restriction\\rho > t \\,\\big] \\;\\le\\; \\left(\\tfrac12\\right)^{t} + \\exp\\!\\left(-\\,\\tfrac{np}{3}\\right).\n\\]",
+ "hypotheses_covered": [
+  "decision-tree depth of $f$ is at most $w$",
+  "$w \\ge 1$ (positive width)",
+  "$n \\ge 1$ (positive number of variables)",
+  "$p > 0$",
+  "$p \\le 1/(40w)$",
+  "$p \\le 1$",
+  "$t$ an arbitrary natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any function $f$ with decision-tree depth $\\le w$ (with $w > 0$, $n > 0$) and any\n$0 < p \\le 1/(40w)$, the Bernoulli$(p)$ restriction satisfies\n$\\Pr_\\rho[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\, f\\,\\rho) > t] \\le (1/2)^t + \\exp(-np/3)$.\nThis is the switching lemma stated at the level of functions rather than formulas."
+}

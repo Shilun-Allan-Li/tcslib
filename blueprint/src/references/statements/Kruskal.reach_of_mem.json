@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.reach_of_mem",
+ "key": "aaade96c48101030",
+ "kind": "lemma",
+ "title": "Endpoints of a listed edge are reachable",
+ "statement": "Let $\\mathit{edges}$ be a list of weighted edges on $n$ vertices, and let $e$ be a weighted edge belonging to $\\mathit{edges}$. Then the endpoints $u$ and $v$ of $e$ satisfy $\\mathtt{Reach}\\,\\mathit{edges}\\,u\\,v$; that is, they are connected by a path through $\\mathit{edges}$.",
+ "hypotheses_covered": [
+  "edges is a list of weighted edges on n vertices",
+  "e is an edge belonging to edges"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $e \\in \\mathit{edges}$ then $\\mathtt{Reach}\\,\\mathit{edges}\\,e.u\\,e.v$; that is,\nthe two endpoints of any listed edge are immediately reachable from each other."
+}

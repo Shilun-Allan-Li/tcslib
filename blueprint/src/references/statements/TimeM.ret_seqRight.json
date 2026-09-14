@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.ret_seqRight",
+ "key": "a45cb7067137b32e",
+ "kind": "theorem",
+ "title": "Return value of right-sequenced timed computations",
+ "statement": "Model a computation that tracks its running time as a pair consisting of a return value and an accumulated time cost drawn from a type $T$ equipped with an addition. Given such a computation $x$, with return value in a type $\\alpha$, and a thunk $y$ producing a second such computation with return value in a type $\\beta$, the right-sequencing of $x$ and $y$ — which runs $x$, then $y()$, combines their time costs, and discards the value of $x$ — has return value equal to that of $y()$.",
+ "hypotheses_covered": [
+  "time-cost type $T$ carries an addition",
+  "$x$ is a timed computation with value in $\\alpha$",
+  "$y$ is a thunk producing a timed computation with value in $\\beta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The right-sequencing of $x$ and $y$ returns the value returned by $y\\,()$."
+}

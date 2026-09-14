@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.card_connectedComponent_le_of_le",
+ "key": "5bc8d26363595c99",
+ "kind": "theorem",
+ "title": "Adding edges cannot increase the number of connected components",
+ "statement": "Let $H$ and $K$ be two simple graphs on a common finite vertex set $V$, and suppose $H \\le K$, meaning that every edge of $H$ is also an edge of $K$. Then $K$ has no more connected components than $H$; that is, the number of connected components of $K$ is at most the number of connected components of $H$.",
+ "hypotheses_covered": [
+  "finite vertex set V",
+  "H and K are simple graphs on the same vertex set",
+  "H ≤ K (every edge of H is an edge of K)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\textbf{Component count is antitone in the subgraph order.}  If \\texttt{H $\\le$ K} then\n\\texttt{$\\omega$(K) $\\le$ $\\omega$(H)} --- adding edges can only merge components."
+}

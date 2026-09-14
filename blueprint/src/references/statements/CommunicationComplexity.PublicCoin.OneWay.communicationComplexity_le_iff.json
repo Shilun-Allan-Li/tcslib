@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.OneWay.communicationComplexity_le_iff",
+ "key": "1f366b08d73e7fe7",
+ "kind": "theorem",
+ "title": "Upper-bound characterisation of public-coin communication complexity",
+ "statement": "Fix a function $f : X \\to Y \\to \\alpha$, a real error bound $\\varepsilon$, and a natural number $m$. Then the $\\varepsilon$-error one-way public-coin communication complexity of $f$ is at most $m$ (as an element of $\\bbn_\\infty$) if and only if there exist a length $n \\in \\bbn$ and a one-way public-coin protocol $p$ over the coin-tape space $\\mathrm{CoinTape}(n)$ such that $p$ $\\varepsilon$-computes $f$ and the bit cost of $p$ is at most $m$.",
+ "hypotheses_covered": [
+  "f : X → Y → α a function of two arguments",
+  "ε a real error bound",
+  "m a natural number bound",
+  "complexity compared in ℕ_∞ (ENat)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : X \\to Y \\to \\alpha$, $\\varepsilon \\in \\mathbb{R}$, and $m \\in \\mathbb{N}$,\nthe complexity satisfies $\\mathrm{CC}(f,\\varepsilon) \\le m$ if and only if there\nexist $n \\in \\mathbb{N}$ and a protocol $p$ over $\\mathrm{CoinTape}(n)$ such that\n$p$ $\\varepsilon$-computes $f$ and $p.\\mathrm{cost} \\le m$."
+}

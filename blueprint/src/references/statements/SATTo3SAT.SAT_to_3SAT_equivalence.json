@@ -1,0 +1,14 @@
+{
+ "lean_name": "SATTo3SAT.SAT_to_3SAT_equivalence",
+ "key": "4a9841591610ccc9",
+ "kind": "theorem",
+ "title": "SAT-to-3-SAT preserves satisfiability",
+ "statement": "Let $f$ be a CNF formula over a variable type $V$, and let $\\tau(f)$ denote its $3$-CNF encoding: the formula obtained by replacing each clause of $f$ with an equisatisfiable chain of $3$-clauses over an enlarged variable type that adjoins to $V$ a supply of fresh auxiliary variables (a clause of more than three literals is split into linked triples using these auxiliary variables, while shorter clauses are padded to three literals). Then $f$ is satisfiable if and only if $\\tau(f)$ is $3$-satisfiable.",
+ "hypotheses_covered": [
+  "f is a CNF formula over an arbitrary variable type V"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A CNF formula $f$ over $V$ is satisfiable if and only if the 3-CNF formula\n$\\texttt{SATTo3SAT.to3SAT}\\,f$ (over $\\mathtt{AuxVar}\\,V$) is 3-satisfiable.\nThis combines \\texttt{SATTo3SAT.SAT\\_to\\_3SAT\\_completeness} and\n\\texttt{SATTo3SAT.SAT\\_to\\_3SAT\\_soundness} into a single biconditional."
+}

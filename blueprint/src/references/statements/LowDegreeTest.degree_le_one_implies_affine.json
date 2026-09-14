@@ -1,0 +1,15 @@
+{
+ "lean_name": "LowDegreeTest.degree_le_one_implies_affine",
+ "key": "fe5e9d76043bc33b",
+ "kind": "lemma",
+ "title": "Degree-one Boolean functions are affine",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function of degree at most $1$; that is, its $\\pm 1$ lift $x \\mapsto (-1)^{f(x)}$ has degree at most $1$, meaning every second-order multiplicative derivative is trivial: for all $x, h_1, h_2 \\in \\{0,1\\}^n$ the order-$2$ Gowers product of $(-1)^f$ at $x$ in directions $h_1, h_2$ equals $1$. Then $f$ is affine over $\\bbf_2$: either $f$ itself is linear, satisfying $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y$, or its pointwise negation $x \\mapsto \\lnot f(x)$ is linear.",
+ "hypotheses_covered": [
+  "f is a Boolean function on the hypercube {0,1}^n",
+  "f has degree at most 1 (its ±1 lift's order-2 Gowers products all equal 1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\{0,1\\}^n \\to \\{0,1\\}$ has degree $\\le 1$, then $f$ is affine: either\n$f$ is $\\mathbb{F}_2$-linear or $\\lnot f$ (bitwise negation) is $\\mathbb{F}_2$-linear."
+}

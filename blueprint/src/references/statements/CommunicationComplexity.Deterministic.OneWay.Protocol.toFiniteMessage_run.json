@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_run",
+ "key": "0e1d77e6df0a4add",
+ "kind": "theorem",
+ "title": "Embedding into the finite-message model preserves output",
+ "statement": "Let $p$ be a one-way deterministic communication protocol over input types $X$, $Y$ and a finite, nonempty output type $\\alpha$, and let $x \\in X$ and $y \\in Y$. Then executing the finite-message protocol obtained from $p$ by the embedding into the finite-message model on the inputs $x$ and $y$ yields the same element of $\\alpha$ as executing $p$ directly on $x$ and $y$.",
+ "hypotheses_covered": [
+  "output type $\\alpha$ is finite",
+  "output type $\\alpha$ is nonempty",
+  "$p$ is a one-way deterministic protocol",
+  "$x \\in X$",
+  "$y \\in Y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any one-way protocol $p$ and inputs $(x, y)$, running $p$'s embedding in the\nfinite-message model yields the same output as running $p$ directly:\n$\\mathtt{FiniteMessage.Protocol.run}(p.\\mathtt{toFiniteMessage},\\, x,\\, y) = p.\\mathtt{run}(x, y)$."
+}

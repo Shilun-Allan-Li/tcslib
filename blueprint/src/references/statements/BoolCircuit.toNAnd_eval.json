@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.toNAnd_eval",
+ "key": "9fe3f2133f33dcc3",
+ "kind": "theorem",
+ "title": "Correctness of AND-normal-form conversion",
+ "statement": "Let $c$ be a Boolean circuit on $n$ variables — a tree of literals combined by AND and OR gates — and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$ be an assignment to those variables. Converting $c$ into strictly alternating AND-normal form and evaluating the resulting normal-form AND circuit at $x$ yields the same Boolean value as evaluating $c$ directly at $x$.",
+ "hypotheses_covered": [
+  "c is a Boolean circuit on n variables",
+  "x is an assignment from Fin n to Bool",
+  "equality of the two evaluations at that arbitrary x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "For every circuit $c$ and assignment $x$,\n$(c.\\mathrm{toNAnd}).\\mathrm{eval}\\,x = c.\\mathrm{eval}\\,x$."
+}

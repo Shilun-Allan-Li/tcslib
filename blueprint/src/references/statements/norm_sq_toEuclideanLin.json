@@ -1,0 +1,15 @@
+{
+ "lean_name": "norm_sq_toEuclideanLin",
+ "key": "42438ee18f759904",
+ "kind": "lemma",
+ "title": "Squared Euclidean norm as a sum of squared coordinates",
+ "statement": "Let $A$ be a $k \\times d$ real matrix, regarded as the linear map $x \\mapsto Ax$ from the Euclidean space $\\bbr^d$ to $\\bbr^k$, and let $x \\in \\bbr^d$. Then the squared Euclidean norm of the image is the sum of the squares of its coordinates,\n\\[\n  \\norm{Ax}^2 = \\sum_{i=1}^{k} (Ax)_i^2 .\n\\]",
+ "hypotheses_covered": [
+  "A is a k×d real matrix",
+  "x is a vector in the d-dimensional Euclidean space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a matrix $A$ and vector $x$,\n\\[\n  \\|A.\\texttt{toEuclideanLin}\\,x\\|^2\n  \\;=\\; \\sum_{i\\in\\mathrm{Fin}\\,k} \\bigl((A.\\texttt{toEuclideanLin}\\,x)\\,i\\bigr)^2.\n\\]\nThis expresses the squared Euclidean norm of $Ax$ as the sum of the squares of\nits coordinates."
+}

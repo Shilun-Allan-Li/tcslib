@@ -11,18 +11,21 @@ restrictions. The intermediate lemmas track invariants on the encoder/decoder st
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Free variable preserved by clause processing]
+\begin{lemma}[Processing preserves free variables in the base restriction]
 \lean{SwitchingLemma2.pcl_none_implies_rho_free}
 \label{SwitchingLemma2.pcl_none_implies_rho_free}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
 \difficulty{2}
-If the restriction component $(\mathrm{processClauseLits}\ \mathit{lits}\ \mathit{path}\ \rho_0\ \sigma).2.1$
-is unset at a variable $v$ (equal to \texttt{none}), then $\rho_0$ is already unset at $v$,
-i.e.\ $\rho_0\,v = \texttt{none}$.
+Fix a number $n$ of variables. Let $\mathrm{lits}$ be a list of literals, each paired
+with its position index in a clause; let $\mathrm{path}$ be a decision-tree path; let
+$\rho_0$ and $\sigma$ be restrictions on the $n$ variables; and let $v$ be a variable.
+Let $\rho_0'$ denote the updated restriction produced in place of $\rho_0$ by the
+clause-processing procedure applied to $\mathrm{lits}$, $\mathrm{path}$, $\rho_0$, and
+$\sigma$. If $\rho_0'$ leaves $v$ free, then $\rho_0$ already leaves $v$ free.
 \end{lemma}
 
-\begin{lemma}[First non-killed clause preserved under encoding]
+\begin{lemma}[First surviving term preserved by the decoded restriction]
 \lean{SwitchingLemma2.find_clause_preserved_in_encode}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
@@ -30,7 +33,6 @@ i.e.\ $\rho_0\,v = \texttt{none}$.
 }
 \label{SwitchingLemma2.find_clause_preserved_in_encode}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -163,79 +165,116 @@ i.e.\ $\rho_0\,v = \texttt{none}$.
   {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_not_kills_first_clause, SwitchingLemma2.first_clause_preserved, Term}
 \difficulty{4}
-For a DNF $f$ with no two literals in a term sharing a variable, suppose the encoder finds
-$t_{\mathrm{clause}}$ as the first term not killed by $\rho_0$. Under the agreement
-hypotheses relating $\rho_0$, $\sigma$, and the decoder restriction $\rho_{0,\mathrm{dec}}$
-(agreeing with the encoder output on free variables and with $\rho_0$ on set variables),
-the decoder restriction also finds $t_{\mathrm{clause}}$ as its first non-killed clause.
+Let $f$ be a DNF formula on $n$ variables, viewed as an ordered list of terms, in which
+no term contains two distinct literals on the same variable. Fix restrictions $\rho_0$
+and $\sigma$ such that $\sigma$ leaves free every variable that $\rho_0$ leaves free,
+and suppose that $t_{\mathrm{clause}}$ is the first term of $f$, in list order, that is
+not killed by $\rho_0$. Let $\rho_{\mathrm{enc}}$ be the restriction obtained as the
+first component of the output of the Razborov encoding procedure applied to $f$ — with
+width parameter $w$ and the given fuel and path arguments — started from $\rho_0$ and
+$\sigma$, and let $\rho_{\mathrm{dec}}$ be any restriction that agrees with $\rho_0$ on
+every variable that $\rho_0$ fixes and with $\rho_{\mathrm{enc}}$ on every variable that
+$\rho_0$ leaves free. Then $t_{\mathrm{clause}}$ is also the first term of $f$, in list
+order, that is not killed by $\rho_{\mathrm{dec}}$.
 \end{lemma}
 
-\begin{lemma}[Filtered free-variable literals stay in the index list]
+\begin{lemma}[Filtering enumerated literals by free variables]
 \lean{SwitchingLemma2.mem_filter_freeVars_zipIdx}
 \label{SwitchingLemma2.mem_filter_freeVars_zipIdx}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
 \difficulty{2}
-If a pair $p$ lies in the list obtained by filtering the indexed literals of
-$t_{\mathrm{clause}}$ (its \texttt{zipIdx}) to those whose variable is free under $\rho_0$,
-then $p$ is a member of $t_{\mathrm{clause}}.\mathrm{zipIdx}$ and its variable is free,
-i.e.\ $\rho_0\,(p.1.\mathrm{var}) = \texttt{none}$.
+Fix a natural number $n$, a restriction $\rho_0$ on $n$ variables, and a list $t$ of
+literals. Enumerate $t$ as the list of pairs $(\ell, i)$, where $\ell$ ranges over the
+literals of $t$ and $i$ is the position of $\ell$ in $t$, and keep only those pairs
+whose literal's variable is a free variable of $\rho_0$. Then every pair $(\ell, i)$
+surviving this filter is itself one of the enumerated pairs of $t$, and its literal's
+variable $v$ is free under $\rho_0$, meaning $\rho_0$ leaves $v$ unset.
 \end{lemma}
 
-\begin{lemma}[No aux entry targets a still-free variable]
+\begin{lemma}[No auxiliary entry targets a still-free variable]
 \lean{SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
 \label{SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none, SwitchingLemma2.zipIdx_drop_spec, Term}
 \difficulty{5}
-Assuming every literal in $\mathit{lits}$ is an indexed literal of the term $t$, if the
-restriction component $(\mathrm{processClauseLits}\ \mathit{lits}\ \mathit{path}\ \rho_0\ \sigma).2.1$
-is unset at $v$, then no auxiliary entry produced by the fold targets $v$: for every aux
-entry $e$, dropping $e.1$ literals of $t$ to a head literal $l$ gives $l.\mathrm{var} \neq v$.
+Let $t$ be a term on $n$ variables (a list of literals), let $L$ be a list of literals
+each paired with a natural-number position, let $\pi$ be a path (a list of
+variable–direction pairs), and let $\rho_0$ and $\sigma$ be restrictions on $n$
+variables. Suppose every pair in $L$ occurs in the indexed enumeration of $t$, so that
+each $(l,i)\in L$ records a literal $l$ sitting at position $i$ of $t$. Run the
+clause-processing procedure that consumes the free literals of $L$ against $\pi$
+starting from $\rho_0$ and $\sigma$, and let $\rho_0'$ denote its updated
+$\rho_0$-restriction and $A$ its list of clause auxiliary entries. If $\rho_0'$ leaves
+the variable $v$ free, then for every entry $(i,d)\in A$ and every literal $l$ such that
+deleting the first $i$ literals of $t$ leaves a nonempty list with head $l$, the
+variable of $l$ is not $v$.
 \end{lemma}
 
-\begin{lemma}[Encoder first component agrees with recursive step]
+\begin{lemma}[Encoder first component matches the recursive step]
 \lean{SwitchingLemma2.encode_go_fst_eq_rec}
 \label{SwitchingLemma2.encode_go_fst_eq_rec}
 \leanok
 \uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits, Term}
 \difficulty{4}
-When the encoder finds $t_{\mathrm{clause}}$ as the first clause not killed by $\rho_0$ and
-its filtered free-variable literals form a nonempty list $\mathit{fl}::\mathit{fls}$, the
-first component of the encoder run with fuel $\mathrm{fuel}+1$ on path $\mathit{step}::\mathit{rest}$
-equals the first component of the recursive encoder run with fuel $\mathrm{fuel}$ on the
-processed state $\mathrm{pcl} = \mathrm{processClauseLits}\,(\mathit{fl}::\mathit{fls})\,(\mathit{step}::\mathit{rest})\,\rho_0\,\sigma$.
+Fix a DNF formula $f$ on $n$ variables, two restrictions $\rho_0$ and $\sigma$, a fuel
+budget, and a path $\mathrm{step} :: \mathrm{rest}$ consisting of a first
+variable–direction pair $\mathrm{step}$ followed by a list $\mathrm{rest}$ of further
+such pairs. Suppose $t_{\mathrm{clause}}$ is the first term of $f$ that is not killed by
+$\rho_0$, and that, listing the literals of $t_{\mathrm{clause}}$ each tagged with its
+position in the term and keeping only those whose variable is free under $\rho_0$, this
+filtered list is nonempty, of the form $\mathit{fl} :: \mathit{fls}$. Then the first
+component of the encoder run at fuel one greater on the whole path $\mathrm{step} ::
+\mathrm{rest}$ coincides with the first component of the encoder run at the smaller fuel
+started from the state obtained by processing the clause's free literals $\mathit{fl} ::
+\mathit{fls}$ against that same path from $\rho_0$ and $\sigma$.
 \end{lemma}
 
-\begin{lemma}[Round-trip invariant for $\sigma$]
+\begin{lemma}[Round-trip recovery of the restriction from a processed clause]
 \lean{SwitchingLemma2.roundtrip_inv_hC'}
 \label{SwitchingLemma2.roundtrip_inv_hC'}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_sigma_stable, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_ne_nonfree, Term}
 \difficulty{4}
-Under the freeness and membership hypotheses on $\mathit{lits}$ and the agreement of
-$\sigma_{\mathrm{dec}}$ with $\sigma$ on variables set by $\rho_0$, the $\sigma$-fold over
-the aux entries (which clears $l.\mathrm{var}$ for each dropped head literal $l$) applied to
-$\sigma_{\mathrm{dec}}$ agrees with $\sigma$ at every variable $v$ where the processed
-restriction $(\mathrm{processClauseLits}\ \mathit{lits}\ \mathit{path}\ \rho_0\ \sigma).2.1$
-is set.
+Let $t$ be a term on $n$ variables, let $\mathit{lits}$ be a list of literals each
+tagged with a position index, and let $\mathit{path}$ be a list of variable–direction
+pairs. Let $\rho_0$, $\sigma$, and $\sigma_{\mathrm{dec}}$ be restrictions on $n$
+variables, and suppose that every variable occurring in a literal of $\mathit{lits}$ is
+free under $\rho_0$; that every tagged literal in $\mathit{lits}$ occurs at its recorded
+position in $t$; that $\sigma$ is free at every variable that is free under $\rho_0$;
+and that $\sigma_{\mathrm{dec}}$ agrees with $\sigma$ at every variable that $\rho_0$
+fixes. Write $(\mathit{path}', \rho_0', \sigma', a)$ for the result of processing
+$\mathit{lits}$ along $\mathit{path}$ starting from $\rho_0$ and $\sigma$, where $a$ is
+the accumulated list of (position, direction) pairs. Then for every variable $v$ that
+$\rho_0'$ fixes, the restriction obtained by folding over $a$ — starting from
+$\sigma_{\mathrm{dec}}$ and, for each recorded pair with position $i$, freeing the
+variable of the literal at position $i$ in $t$ (and leaving the restriction unchanged
+when $i$ lies beyond the end of $t$) — agrees with $\sigma$ at $v$.
 \end{lemma}
 
-\begin{lemma}[Round-trip invariant for $\rho_0$]
+\begin{lemma}[Reconstructing the processed restriction from its auxiliary data]
 \lean{SwitchingLemma2.roundtrip_inv_hD'}
 \label{SwitchingLemma2.roundtrip_inv_hD'}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_rho_stable, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set, SwitchingLemma2.processClauseLits_rho_stable, Term}
 \difficulty{4}
-Under the freeness and membership hypotheses on $\mathit{lits}$ and the agreement of
-$\rho_{0,\mathrm{dec}}$ with $\rho_0$ on variables set by $\rho_0$, the $\rho_0$-fold over
-the aux entries (which sets $l.\mathrm{var}$ to $e.2$ for each dropped head literal $l$)
-applied to $\rho_{0,\mathrm{dec}}$ agrees with the processed restriction
-$(\mathrm{processClauseLits}\ \mathit{lits}\ \mathit{path}\ \rho_0\ \sigma).2.1$ at every
-variable $v$ where that restriction is set.
+Let $t$ be a term on $n$ variables (a list of literals), let $\mathit{lits}$ be a list
+of literals each paired with a position index, let a decision-tree path be given, and
+let $\rho_0$, $\sigma$, and $\rho_{0,\mathrm{dec}}$ be restrictions on the $n$
+variables. Assume that every literal in $\mathit{lits}$ has its variable left free by
+$\rho_0$, that every pair in $\mathit{lits}$ occurs in the indexed enumeration of $t$
+(each literal of $t$ paired with its position), and that $\rho_{0,\mathrm{dec}}$ agrees
+with $\rho_0$ at every variable that $\rho_0$ fixes. Write $\rho_0^{\ast}$ for the
+restriction and $A$ for the auxiliary list of index–direction pairs produced by
+processing $\mathit{lits}$ against the path starting from $\rho_0$ and $\sigma$.
+Reconstruct a restriction from $\rho_{0,\mathrm{dec}}$ by folding over $A$: for each
+pair $(i,b)$, if deleting the first $i$ literals of $t$ leaves a nonempty list, set the
+variable of that list's head literal to $b$, and otherwise leave the restriction
+unchanged. Then at every variable $v$ at which $\rho_0^{\ast}$ is defined, this
+reconstructed restriction and $\rho_0^{\ast}$ take the same value.
 \end{lemma}
 
-\begin{lemma}[Generalized go-level round-trip]
+\begin{lemma}[Round-trip core of the Razborov encoding]
 \lean{SwitchingLemma2.go_roundtrip_gen}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
@@ -243,7 +282,6 @@ variable $v$ where that restriction is set.
 }
 \label{SwitchingLemma2.go_roundtrip_gen}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -507,19 +545,25 @@ variable $v$ where that restriction is set.
   {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, DNF.width, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_acc, SwitchingLemma2.encode_go_fst_sigma_indep_at_free, SwitchingLemma2.encode_go_snd_sigma_indep, SwitchingLemma2.find_clause_preserved_in_encode, SwitchingLemma2.foldl_rho_stable, SwitchingLemma2.foldl_sigma_stable, SwitchingLemma2.mem_filter_freeVars_zipIdx, SwitchingLemma2.pcl_none_implies_rho_free, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none, SwitchingLemma2.processEntries_of_processClauseLits, SwitchingLemma2.roundtrip_base, SwitchingLemma2.roundtrip_inv_hC', SwitchingLemma2.roundtrip_inv_hD', SwitchingLemma2.term_length_le_width}
 \difficulty{7}
-The generalized round-trip statement: for a DNF $f$ of width at most $w$ with distinct
-variables per term, given decoder states $\sigma_{\mathrm{dec}}$ and $\rho_{0,\mathrm{dec}}$
-that satisfy the round-trip invariants relative to the encoder output and enough decoder
-fuel, the first component of the decoder run on the encoder's output list equals the
-original $\sigma$. This is the inductive core from which the closed round trip follows.
+Fix a DNF formula $f$ on $n$ variables whose width is at most $w$ and in which no term
+repeats a variable (within a single term, any two literals on the same variable are
+equal). Given a fuel budget, a partial decision path, and restrictions $\rho_0$ and
+$\sigma$, let the encoding procedure, started with empty auxiliary data, return a
+restriction $\rho^\ast$ together with an output list $c$; let $D$ denote the decoding
+procedure run on $c$ with a fuel budget $m$ and starting restrictions
+$\sigma_{\mathrm{dec}}$ and $\rho_{0,\mathrm{dec}}$. Suppose that $\sigma$ is free
+wherever $\rho_0$ is free; that on every variable left free by $\rho_0$ both
+$\sigma_{\mathrm{dec}}$ and $\rho_{0,\mathrm{dec}}$ agree with $\rho^\ast$; that on
+every variable fixed by $\rho_0$ one has $\sigma_{\mathrm{dec}} = \sigma$ and
+$\rho_{0,\mathrm{dec}} = \rho_0$; and that $m$ is at least one more than the length of
+$c$. Then the restriction returned by $D$ equals $\sigma$.
 \end{lemma}
 
-\begin{lemma}[Go-level round-trip]
+\begin{lemma}[Round-trip of the restriction encoder and decoder]
 \lean{SwitchingLemma2.go_roundtrip}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma2.go_roundtrip}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -789,13 +833,15 @@ original $\sigma$. This is the inductive core from which the closed round trip f
     pdf-b5e074215b9e-p002-b003}
 \uses{DNF, DNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.go_roundtrip_gen}
 \difficulty{2}
-Specializing the generalized round trip to $\sigma = \rho_0 = \rho$: for a width-$w$ DNF
-$f$ with distinct variables per term, running the encoder on $\rho$ and then running the
-decoder (with one more than the encoded list length as fuel) on the encoder output recovers
-$\rho$.
+Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that
+within every term of $f$ any two literals naming the same variable are in fact equal.
+Given a natural number serving as a step budget for the encoder, a finite list of
+variable–value pairs, and a restriction $\rho$ on the $n$ variables, encoding $\rho$
+relative to $f$ produces a list from which the decoder — run with a step budget one
+larger than that list's length — recovers $\rho$ exactly.
 \end{lemma}
 
-\begin{lemma}[Decode of encode recovers the restriction]
+\begin{lemma}[Razborov decoding inverts encoding on bad restrictions]
 \lean{SwitchingLemma2.razborovDecode_encode}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
@@ -803,7 +849,6 @@ $\rho$.
 }
 \label{SwitchingLemma2.razborovDecode_encode}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1116,17 +1161,21 @@ $\rho$.
   {pdf-b5e074215b9e-p002-b004}
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.go_roundtrip, SwitchingLemma2.razborovDecode, SwitchingLemma2.razborovEncode}
 \difficulty{1}
-For a width-$w$ DNF $f$ with distinct variables per term and a bad restriction $\rho$ for
-$f.\mathrm{eval}$ at depth $d$, decoding the Razborov encoding of $\rho$ returns $\rho$:
-$\mathrm{razborovDecode}\ f\ w\ (\mathrm{razborovEncode}\ f\ w\ d\ \rho) = \rho$.
+Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that
+no term of $f$ contains two distinct literals on the same variable (within each term,
+any two literals sharing a variable coincide). Let $\rho$ be a restriction that is bad
+for $f$ at depth $d$, meaning the restriction of the Boolean function computed by $f$
+along $\rho$ has decision-tree depth strictly greater than $d$. Writing $(\gamma,
+\mathrm{aux})$ for the pair produced by the Razborov encoding of $f$, $w$, $d$, $\rho$,
+the Razborov decoding of $(\gamma, \mathrm{aux})$ with parameters $f$ and $w$ returns
+the original restriction $\rho$.
 \end{lemma}
 
-\begin{theorem}[Injectivity of the Razborov encoding]
+\begin{theorem}[Injectivity of the Razborov encoding on bad restrictions]
 \lean{SwitchingLemma2.razborovEncode_injective}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma2.razborovEncode_injective}
 \leanok
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1446,9 +1495,12 @@ $\mathrm{razborovDecode}\ f\ w\ (\mathrm{razborovEncode}\ f\ w\ d\ \rho) = \rho$
     pdf-b5e074215b9e-p002-b001}
 \uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.razborovDecode_encode, SwitchingLemma2.razborovEncode}
 \difficulty{2}
-The Razborov encoding is injective on bad restrictions: for a width-$w$ DNF $f$ with
-distinct variables per term, if $\rho_1$ and $\rho_2$ are both bad restrictions for
-$f.\mathrm{eval}$ at depth $d$ and their encodings agree,
-$\mathrm{razborovEncode}\ f\ w\ d\ \rho_1 = \mathrm{razborovEncode}\ f\ w\ d\ \rho_2$,
+Fix a DNF formula $f$ on $n$ variables and parameters $w, d \in \bbn$, and suppose that
+$f$ has width at most $w$ and that no term of $f$ repeats a variable — within any single
+term, two literals sharing the same variable are identical. Under these hypotheses the
+Razborov encoding with parameters $w$ and $d$ is injective on the restrictions that are
+bad for $f$ at depth $d$: if $\rho_1$ and $\rho_2$ are restrictions, each bad for the
+Boolean function computed by $f$ at depth $d$ (that is, the corresponding restricted
+function has decision-tree depth exceeding $d$), and their Razborov encodings agree,
 then $\rho_1 = \rho_2$.
 \end{theorem}

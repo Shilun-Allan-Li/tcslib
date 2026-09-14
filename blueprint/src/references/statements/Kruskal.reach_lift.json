@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.reach_lift",
+ "key": "ee1f1b99586082b1",
+ "kind": "lemma",
+ "title": "Lifting reachability along an edge set",
+ "statement": "Let $\\mathit{edges}$ and $\\mathit{edges}'$ be two lists of weighted edges on $n$ vertices, and suppose that whenever two vertices $a$ and $b$ are symmetrically adjacent in $\\mathit{edges}$ — that is, some edge of $\\mathit{edges}$ has endpoints $\\{a,b\\}$ — the vertices $a$ and $b$ are connected by a path through $\\mathit{edges}'$. Then for any vertices $u$ and $v$, if $u$ and $v$ are connected by a path through $\\mathit{edges}$, they are also connected by a path through $\\mathit{edges}'$.",
+ "hypotheses_covered": [
+  "every symmetric adjacency in edges yields reachability in edges'",
+  "u and v are reachable through edges"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every symmetric adjacency in $\\mathit{edges}$ implies reachability in\n$\\mathit{edges}'$, and $\\mathtt{Reach}\\,\\mathit{edges}\\,u\\,v$, then\n$\\mathtt{Reach}\\,\\mathit{edges}'\\,u\\,v$."
+}

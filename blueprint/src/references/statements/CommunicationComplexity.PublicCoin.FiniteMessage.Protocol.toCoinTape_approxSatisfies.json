@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies",
+ "key": "7e6bc4444630ce17",
+ "kind": "theorem",
+ "title": "Coin-tape conversion preserves approximate satisfaction",
+ "statement": "Let $p$ be a public-coin finite-message protocol over a finite probability space $\\Omega$, with private input sets $X$ and $Y$ and outputs in $\\alpha$; let $Q : X \\to Y \\to \\alpha \\to \\mathrm{Prop}$ be a predicate; and let $\\varepsilon$ and $\\delta$ be real numbers with $\\delta > 0$. If $p$ approximately satisfies $Q$ with error at most $\\varepsilon$, then the coin-tape protocol obtained by converting $p$ with slack $\\delta$ approximately satisfies $Q$ with error at most $\\varepsilon + \\delta$.",
+ "hypotheses_covered": [
+  "p is a public-coin finite-message protocol over a finite probability space Ω",
+  "Q : X → Y → α → Prop is a predicate",
+  "ε and δ are real numbers",
+  "0 < δ",
+  "p approximately satisfies Q with error at most ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a public-coin finite-message protocol over a finite probability space\n$\\Omega$, let $Q : X \\to Y \\to \\alpha \\to \\mathrm{Prop}$ be a correctness predicate,\nand let $\\varepsilon, \\delta > 0$. If $p$ approximately satisfies $Q$ with error at\nmost $\\varepsilon$ (i.e.\\ $p.\\mathrm{ApproxSatisfies}\\;Q\\;\\varepsilon$ holds), then\nthe \\texttt{CoinTape} approximation $(p.\\mathrm{toCoinTape}\\;\\delta).2$ approximately\nsatisfies $Q$ with error at most $\\varepsilon + \\delta$."
+}

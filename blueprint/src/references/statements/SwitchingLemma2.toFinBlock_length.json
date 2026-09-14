@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.toFinBlock_length",
+ "key": "26aecf54d62ffc96",
+ "kind": "lemma",
+ "title": "Casting to bounded blocks preserves length",
+ "statement": "Fix a natural number $w$ and let $l$ be a finite list of pairs $(i, b)$ with $i \\in \\bbn$ and $b$ a Boolean, every first coordinate of which satisfies $i < w$. Recasting $l$ into a list of pairs in $\\mathrm{Fin}\\,w \\times \\{\\text{true}, \\text{false}\\}$ — by reinterpreting each index $i$ as the element of $\\mathrm{Fin}\\,w$ it names, while leaving the Booleans untouched — yields a list of the same length as $l$.",
+ "hypotheses_covered": [
+  "a natural number w",
+  "a finite list l of (natural, Boolean) pairs",
+  "every first coordinate of l is less than w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$(\\mathrm{toFinBlock}\\,w\\,l\\,h).\\mathrm{length} = l.\\mathrm{length}$."
+}

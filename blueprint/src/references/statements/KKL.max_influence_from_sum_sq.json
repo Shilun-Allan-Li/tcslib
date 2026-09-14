@@ -1,0 +1,15 @@
+{
+ "lean_name": "KKL.max_influence_from_sum_sq",
+ "key": "42a60dc7eec89569",
+ "kind": "lemma",
+ "title": "Maximum influence bounds the normalized sum of squares",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function with positive total influence, $I[f] = \\sum_{j=1}^{n} \\mathrm{Inf}_j[f] > 0$. Then some coordinate $i$ satisfies\n\\[\n  \\mathrm{Inf}_i[f] \\;\\ge\\; \\frac{\\sum_{j=1}^{n} \\mathrm{Inf}_j[f]^2}{I[f]}.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n",
+  "total influence of f is positive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $I[f] > 0$, then some coordinate $i$ satisfies\n\\[\n  \\mathrm{Inf}_i[f] \\;\\ge\\; \\frac{\\sum_{j} \\mathrm{Inf}_j[f]^2}{I[f]} .\n\\]"
+}

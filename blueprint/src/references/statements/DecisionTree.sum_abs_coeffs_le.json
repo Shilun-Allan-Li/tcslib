@@ -1,0 +1,14 @@
+{
+ "lean_name": "DecisionTree.sum_abs_coeffs_le",
+ "key": "a9ab2febc34e97a8",
+ "kind": "lemma",
+ "title": "Coefficient one-norm bounded by tree size",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and for each subset $S \\subseteq \\{0,\\dots,n-1\\}$ let $\\mathrm{coeffs}\\,T\\,(S)$ denote its recursively defined Fourier coefficient at frequency $S$. Then the total absolute mass of these coefficients is bounded by the number of leaves of $T$:\n\\[\n\\sum_{S} \\abs{\\mathrm{coeffs}\\,T\\,(S)} \\;\\le\\; \\mathrm{size}(T).\n\\]",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables (arbitrary, no side conditions)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every decision tree $T$,\n\\[\n\\sum_{S} \\abs{\\mathrm{coeffs}\\,T\\,S} \\le T.\\mathrm{size},\n\\]\ni.e.\\ the spectral $1$-norm of the coefficients is at most the number of leaves."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.parseval",
+ "key": "1c17e4f32a5872ab",
+ "kind": "theorem",
+ "title": "Parseval's identity for Boolean functions",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function, and equip $\\{0,1\\}^n$ with the uniform probability measure. Then the $L^2$ inner product of $f$ with itself equals the sum of the squares of its Fourier--Walsh coefficients over all subsets $S \\subseteq [n]$:\n\\[\n  \\langle f, f\\rangle \\;=\\; \\sum_{S \\subseteq [n]} \\hat f(S)^2.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n (f : {0,1}^n → ℝ)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The squared $L^2$ norm of $f$ equals the sum of squared Fourier coefficients:\n\\[\n  \\|f\\|^2 \\;=\\; \\langle f, f\\rangle \\;=\\; \\sum_{S\\subseteq[n]} \\hat f(S)^2.\n\\]"
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateOfBits_xBit_yBit",
+ "key": "90d525f9ecfd0102",
+ "kind": "theorem",
+ "title": "Recovering a disjointness coordinate from its two bits",
+ "statement": "Let a *disjointness coordinate* be one of three values, recording, for a single index, whether that index belongs to neither of two subsets, to the first subset only (Alice's), or to the second subset only (Bob's). To each coordinate $c$ attach two Boolean bits: Alice's bit $x(c)$, which is set precisely when $c$ marks the index as belonging to Alice's subset only, and Bob's bit $y(c)$, which is set precisely when $c$ marks it as belonging to Bob's subset only. Conversely, from a pair of bits $(x, y)$ form a coordinate $\\kappa(x, y)$ by taking \"Alice only\" if $x$ is set, otherwise \"Bob only\" if $y$ is set, and otherwise \"neither.\" Then $\\kappa\\bigl(x(c), y(c)\\bigr) = c$ for every coordinate $c$; that is, splitting a coordinate into its two bits and reassembling recovers the original coordinate.",
+ "hypotheses_covered": [
+  "c ranges over the three-valued type of disjointness coordinates (no further hypotheses)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\texttt{coordinateOfBits} reconstructs an existing disjoint coordinate from its two projections."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_run",
+ "key": "c3b9fffc7fec4850",
+ "kind": "theorem",
+ "title": "Fixing randomness commutes with execution",
+ "statement": "Let $p$ be a public-coin finite-message protocol over a shared-randomness space $\\Omega$, private input sets $X$ and $Y$, and output type $\\alpha$. Fix a randomness sample $\\omega \\in \\Omega$ and private inputs $x \\in X$ and $y \\in Y$, and let $p_\\omega$ denote the deterministic finite-message protocol obtained from $p$ by substituting $\\omega$ for the shared randomness. Then executing $p_\\omega$ on $x$ and $y$ yields the same output as the randomized execution of $p$ on $x$ and $y$ with shared randomness $\\omega$:\n\\[\np_\\omega.\\mathrm{run}(x, y) \\;=\\; \\mathrm{rrun}(p, x, y, \\omega).\n\\]",
+ "hypotheses_covered": [
+  "fixed randomness sample ω ∈ Ω",
+  "private input x ∈ X",
+  "private input y ∈ Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any inputs $x : X$ and $y : Y$, the deterministic run of\n$p.\\mathrm{toDeterministic}\\,\\omega$ equals the randomised run at $\\omega$:\n$(p.\\mathrm{toDeterministic}\\,\\omega).\\mathrm{run}\\,x\\,y = p.\\mathrm{rrun}\\,x\\,y\\,\\omega$."
+}

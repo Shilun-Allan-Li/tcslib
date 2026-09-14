@@ -13,6 +13,11 @@ subtree holding between one third and two thirds of all leaves.
 
 \begin{definition}[Protocol tree shape]
 \lean{CommunicationComplexity.Deterministic.Protocol.shape}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p004-b003,
+  pdf-d54d402b16e2-p004-b005
+}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b001}
 \label{CommunicationComplexity.Deterministic.Protocol.shape}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
@@ -26,6 +31,7 @@ $\mathtt{true}$, respectively.
 
 \begin{definition}[Number of protocol leaves]
 \lean{CommunicationComplexity.Deterministic.Protocol.numLeaves}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p004-b005}
 \label{CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.shape}
@@ -51,32 +57,169 @@ implementation).
 \leanok
 \uses{CommunicationComplexity.TreeIsSubtree}
 \difficulty{3}
-If $s$ is a subtree of $t$ and $t$ is a subtree of $u$, then $s$ is a subtree of $u$.
-That is, \texttt{TreeIsSubtree} is transitive.
+Let $s$, $t$, and $u$ be binary trees with node labels in a type $\alpha$. If $s$ is a
+subtree of $t$ and $t$ is a subtree of $u$, then $s$ is a subtree of $u$.
 \end{lemma}
 
-\begin{lemma}[Balanced subtree — auxiliary]
+\begin{lemma}[Existence of a balanced subtree]
 \lean{CommunicationComplexity.tree_balanced_subtree_aux}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p004-b003,
+  pdf-fa052d8c95c0-p004-b004
+}
 \label{CommunicationComplexity.tree_balanced_subtree_aux}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.TreeIsSubtree}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
+\proofstep
+  {CommunicationComplexity.TreeIsSubtree.trans}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
 \uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.TreeIsSubtree.trans}
 \difficulty{5}
-Let $t$ be a binary tree and $n$ a natural number with $n > 1$ and
-$3 \cdot \lvert t \rvert \ge 2n$, where $\lvert t \rvert$ denotes the number of leaves
-of $t$.  Then there exists a subtree $s$ of $t$ such that
-$n \le 3\lvert s \rvert < 2n$.
+Let $t$ be a binary tree, and write $\ell(t)$ for its number of leaves. Let $n$ be a
+natural number with $n > 1$, and suppose that $3\,\ell(t) \ge 2n$. Then $t$ has a
+subtree $s$ whose number of leaves satisfies
+\[
+n \le 3\,\ell(s) < 2n.
+\]
 \end{lemma}
 
-\begin{theorem}[Balanced subtree]
+\begin{theorem}[Existence of a balanced subtree]
 \lean{CommunicationComplexity.tree_balanced_subtree}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p004-b003,
+  pdf-fa052d8c95c0-p004-b004
+}
 \label{CommunicationComplexity.tree_balanced_subtree}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.TreeIsSubtree}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
+\proofstep
+  {CommunicationComplexity.TreeIsSubtree.trans}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
+\proofstep
+  {CommunicationComplexity.tree_balanced_subtree_aux}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003,
+    pdf-fa052d8c95c0-p004-b004}
 \uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.TreeIsSubtree.trans, CommunicationComplexity.tree_balanced_subtree_aux}
 \difficulty{5}
-Every binary tree $t$ with more than one leaf has a subtree $s$ satisfying
+Let $t$ be a binary tree with more than one leaf, and write $\abs{u}$ for the number of
+leaves of a tree $u$. Then $t$ has a subtree $s$ whose leaf count satisfies
 \[
-  \lvert t \rvert \;\le\; 3\lvert s \rvert \;<\; 2\lvert t \rvert,
+  \abs{t} \;\le\; 3\abs{s} \;<\; 2\abs{t}.
 \]
-where $\lvert \cdot \rvert$ denotes the leaf count.  Equivalently, $s$ contains at
-least one third and strictly fewer than two thirds of the total leaves of $t$.
+Equivalently, $s$ contains at least one third and strictly fewer than two thirds of the
+leaves of $t$.
 \end{theorem}

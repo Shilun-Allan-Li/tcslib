@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.stability_formula",
+ "key": "f60b470c5179bd53",
+ "kind": "theorem",
+ "title": "Noise stability via Fourier coefficients",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function and let $\\rho \\in \\bbr$. Then the correlation of $f$ with its noised version under the uniform measure is given by\n\\[\n  \\langle f, T_\\rho f\\rangle \\;=\\; \\sum_{S\\subseteq[n]} \\rho^{|S|}\\,\\hat f(S)^2,\n\\]\nwhere $\\langle\\cdot,\\cdot\\rangle$ is the $L^2$ inner product, $T_\\rho$ is the noise operator, and $\\hat f(S)$ denotes the Fourier--Walsh coefficient of $f$ at $S$.",
+ "hypotheses_covered": [
+  "a real parameter ρ",
+  "a Boolean function f of arity n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\n\\[\n  \\langle f, T_\\rho f\\rangle \\;=\\; \\sum_{S\\subseteq[n]} \\rho^{|S|}\\,\\hat f(S)^2.\n\\]"
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.dnfToDualCNF_width",
+ "key": "73694d260defb514",
+ "kind": "lemma",
+ "title": "Dual CNF preserves width",
+ "statement": "Let $\\varphi$ be a DNF formula on $n$ variables, that is, a list of terms, each term a list of literals, and let its De Morgan dual CNF be obtained by negating every literal of every term. Then the dual CNF has the same width as $\\varphi$, where the width of a formula is the maximum number of literals appearing in any of its terms (equal to $0$ when the formula is empty).",
+ "hypotheses_covered": [
+  "φ is a DNF formula on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The dual CNF $\\mathrm{dnfToDualCNF}\\,\\varphi$ has the same width as $\\varphi$, since\nflipping the sign of each literal leaves the number of literals per term (and hence\nper clause) unchanged."
+}

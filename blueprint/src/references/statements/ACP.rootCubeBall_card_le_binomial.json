@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.rootCubeBall_card_le_binomial",
+ "key": "7d02fc97da4258d7",
+ "kind": "theorem",
+ "title": "Volume bound for a Hamming ball on the root cube",
+ "statement": "Let $K$ be a finite field, let $\\omega \\in K$, and let $n, e \\in \\bbn$. Write $\\{1,\\omega\\}^n$ for the root cube of vectors $x : \\{0,\\dots,n-1\\} \\to K$ each of whose coordinates equals $1$ or $\\omega$, and consider functions $f : \\{1,\\omega\\}^n \\to K$, the Hamming distance between two such functions being the number of points of the cube on which they differ. For any function $\\mathrm{center} : \\{1,\\omega\\}^n \\to K$, the number of functions whose Hamming distance from $\\mathrm{center}$ is at most $e$ satisfies\n\\[\n\\abs{\\{\\, f : \\{1,\\omega\\}^n \\to K \\;\\mid\\; f \\text{ differs from } \\mathrm{center} \\text{ on at most } e \\text{ points}\\,\\}}\n  \\;\\le\\; \\sum_{t=0}^{e} \\binom{\\,\\abs{\\{1,\\omega\\}^n}\\,}{t}\\,\\abs{K}^{\\,t},\n\\]\nwhere $\\abs{\\{1,\\omega\\}^n}$ is the number of points of the cube and $\\abs{K}$ is the number of elements of $K$.",
+ "hypotheses_covered": [
+  "K is a finite field",
+  "ω is an element of K",
+  "n is a natural number",
+  "e is a natural number (the ball radius)",
+  "center is a function from the root cube to K"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any center function on the root cube and any radius $e$, the Hamming ball\n$\\texttt{ACP.rootCubeBall}$ of radius $e$ around it satisfies\n\\[\n\\abs{B_e(\\mathrm{center})}\n  \\;\\le\\; \\sum_{t=0}^{e} \\binom{\\abs{\\{1,\\omega\\}^n}}{t}\\,\\abs{K}^{\\,t}.\n\\]"
+}

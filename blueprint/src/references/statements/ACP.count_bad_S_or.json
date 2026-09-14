@@ -1,0 +1,20 @@
+{
+ "lean_name": "ACP.count_bad_S_or",
+ "key": "f9d182bb46559c83",
+ "kind": "lemma",
+ "title": "Bad-seed bound for the value-level OR approximator",
+ "statement": "Fix a prime $p$ and natural numbers $w$ and $\\ell$, and let $v = (v_1,\\dots,v_w)$ be an arbitrary vector in $(\\bbz/p)^w$ (no coordinate is assumed nonzero). Call a *seed* a tuple $S = (S_1,\\dots,S_\\ell)$ of subsets of $\\{1,\\dots,w\\}$, and call it *bad* when the value-level OR approximator determined by $v$ and $S$ differs from the value-level OR detector of $v$. Then, writing $N = (2^{w})^{\\ell}$ for the total number of seeds, the number of bad seeds satisfies\n\\[\n(\\text{number of bad seeds})\\cdot 2^{\\ell} \\;\\le\\; N.\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "w = width is a natural number",
+  "ℓ is a natural number",
+  "v is an arbitrary vector in (ℤ/p)^w",
+  "seeds range over all ℓ-tuples of subsets of {1,...,w}",
+  "a seed is bad when the value-level OR approximator differs from the value-level OR detector",
+  "N is the total number of seeds, equal to (2^w)^ℓ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a prime $p$ and natural numbers $w$ and $\\ell$, and let $v = (v_1,\\dots,v_w)$ be an\narbitrary vector in $(\\bbz/p)^w$, with no assumption that any coordinate is nonzero.\nCall a *seed* a tuple $S = (S_1,\\dots,S_\\ell)$ of subsets of $\\{1,\\dots,w\\}$, and call\nit *bad* when the value-level OR approximator $\\mathrm{approxOr}(v,S)$ differs from the\nvalue-level OR detector $\\mathrm{OR}(v)$. Writing $N$ for the total number of seeds —\nequivalently $N = (2^{w})^{\\ell} = 2^{w\\ell}$ — the number of bad seeds satisfies\n\\[\n\\bigl(\\text{number of bad seeds}\\bigr)\\cdot 2^{\\ell} \\;\\le\\; N.\n\\]"
+}

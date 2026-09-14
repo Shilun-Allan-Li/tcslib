@@ -1,0 +1,15 @@
+{
+ "lean_name": "Kruskal.reach_symm",
+ "key": "d272071cd8a1b65a",
+ "kind": "lemma",
+ "title": "Symmetry of reachability",
+ "statement": "Let $\\mathit{edges}$ be a list of weighted edges on $n$ vertices, and call two vertices reachable when they are joined by a path along these edges (in the sense of the reflexive–transitive closure of symmetric adjacency). Then reachability is symmetric: for all vertices $u, v$, if $u$ is reachable from $v$, then $v$ is reachable from $u$.",
+ "hypotheses_covered": [
+  "edges is a list of weighted edges on n vertices",
+  "u is reachable from v via Reach"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathtt{Reach}\\,\\mathit{edges}\\,u\\,v$ then $\\mathtt{Reach}\\,\\mathit{edges}\\,v\\,u$."
+}

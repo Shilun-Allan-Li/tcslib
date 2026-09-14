@@ -1,0 +1,14 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_deepPath_split",
+ "key": "13fd1d71ee50b950",
+ "kind": "lemma",
+ "title": "Deepest-path split of a term's sub-tree",
+ "statement": "Let $\\mathit{lits}$ be a list of literals on $n$ variables in which no two literals share the same variable, let $\\rho$ be a restriction on $n$ variables, and let $c$ be a continuation, that is, a map sending each restriction to a decision tree. Then there exist a list $P$ of (variable, branch-direction) pairs and a restriction $\\rho'$ such that the deepest path of the sub-tree for the term $\\mathit{lits}$ built from $\\rho$ and $c$ equals $P$ followed by the deepest path of $c(\\rho')$; the length of $P$ equals the number of literals of $\\mathit{lits}$ whose variable is free under $\\rho$; and $\\rho'$ agrees with $\\rho$ on every variable that does not occur among the variables of $\\mathit{lits}$.",
+ "hypotheses_covered": [
+  "the literals of lits have pairwise distinct variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $\\mathit{lits}$ with pairwise distinct variables, the deep path of\n$\\mathrm{termSubTree}\\,\\mathit{lits}\\,\\rho\\,\\mathrm{cont}$ splits as a prefix (one entry per free literal of\n$\\mathit{lits}$) appended with the deep path of $\\mathrm{cont}\\,\\rho'$, where $\\rho'$ agrees with $\\rho$\noff the variables of $\\mathit{lits}$."
+}

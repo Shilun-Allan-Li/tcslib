@@ -64,24 +64,27 @@ $\sigma^{\mathrm{col}}_j = \sum_{i} \sigma_{ij}$,
 i.e.\ the probability that the column player plays $j$ under $\sigma$.
 \end{definition}
 
-\begin{lemma}[Row marginals are nonnegative]
+\begin{lemma}[Nonnegativity of the row marginal]
 \lean{JointDistribution.rowMarginal_nonneg}
 \label{JointDistribution.rowMarginal_nonneg}
 \leanok
 \uses{JointDistribution, JointDistribution.rowMarginal}
 \difficulty{1}
-For any joint distribution $\sigma$ and row action $i$,
+Let $\sigma$ be a joint distribution on $\mathrm{Fin}\,M \times \mathrm{Fin}\,N$, so
+$\sigma_{ij} \ge 0$ for all $i,j$ and $\sum_{i,j} \sigma_{ij} = 1$. Then for every row
+action $i$ the row marginal $\sigma^{\mathrm{row}}_i = \sum_{j} \sigma_{ij}$ satisfies
 $\sigma^{\mathrm{row}}_i \ge 0$.
 \end{lemma}
 
-\begin{lemma}[Column marginals are nonnegative]
+\begin{lemma}[Nonnegativity of the column marginal]
 \lean{JointDistribution.colMarginal_nonneg}
 \label{JointDistribution.colMarginal_nonneg}
 \leanok
 \uses{JointDistribution, JointDistribution.colMarginal}
 \difficulty{1}
-For any joint distribution $\sigma$ and column action $j$,
-$\sigma^{\mathrm{col}}_j \ge 0$.
+Let $\sigma$ be a joint distribution on $\mathrm{Fin}\,M \times \mathrm{Fin}\,N$, and
+let $j$ be a column action. Then the column marginal $\sigma^{\mathrm{col}}_j = \sum_{i}
+\sigma_{ij}$ satisfies $\sigma^{\mathrm{col}}_j \ge 0$.
 \end{lemma}
 
 \begin{lemma}[Row marginals sum to one]
@@ -90,8 +93,12 @@ $\sigma^{\mathrm{col}}_j \ge 0$.
 \leanok
 \uses{JointDistribution, JointDistribution.rowMarginal}
 \difficulty{1}
-The row marginals form a valid probability distribution:
-$\sum_{i} \sigma^{\mathrm{row}}_i = 1$.
+Let $\sigma$ be a joint distribution over $\mathrm{Fin}\,M \times \mathrm{Fin}\,N$, and
+for each row action $i$ let $\sigma^{\mathrm{row}}_i = \sum_{j} \sigma_{ij}$ denote its
+row marginal. Then the row marginals sum to one:
+\[
+\sum_{i} \sigma^{\mathrm{row}}_i = 1.
+\]
 \end{lemma}
 
 \begin{lemma}[Column marginals sum to one]
@@ -100,8 +107,8 @@ $\sum_{i} \sigma^{\mathrm{row}}_i = 1$.
 \leanok
 \uses{JointDistribution, JointDistribution.colMarginal}
 \difficulty{2}
-The column marginals form a valid probability distribution:
-$\sum_{j} \sigma^{\mathrm{col}}_j = 1$.
+Let $\sigma$ be a joint distribution on $\mathrm{Fin}\,M \times \mathrm{Fin}\,N$. Then
+the column marginals sum to one: $\sum_{j} \sigma^{\mathrm{col}}_j = 1$.
 \end{lemma}
 
 \begin{definition}[Row expected utility]
@@ -166,14 +173,23 @@ $\mathrm{rowDevUtil}(\sigma, G, i') \le \mathrm{rowExpUtil}(\sigma, G) + \vareps
 and similarly for the column player.
 \end{definition}
 
-\begin{lemma}[Exact CCE implies approximate CCE]
+\begin{lemma}[Exact coarse correlated equilibrium is approximate]
 \lean{IsCoarseCorrelatedEquilibrium.toApprox}
 \label{IsCoarseCorrelatedEquilibrium.toApprox}
 \leanok
 \uses{Game, IsCoarseCorrelatedEquilibrium, IsApproxCoarseCorrelatedEquilibrium, JointDistribution, productDistribution}
 \difficulty{2}
-If $\sigma$ is an exact CCE of $G$ and $\varepsilon \ge 0$, then $\sigma$ is
-also an $\varepsilon$-CCE of $G$.
+Let $G$ be a finite two-player game with $M$ row actions and $N$ column actions, and let
+$\sigma$ be a joint distribution over the action profiles $(i,j)$ that is a coarse
+correlated equilibrium of $G$; that is, neither player can increase their expected
+utility under $\sigma$ by committing in advance to a fixed pure action, so that for
+every row action $i'$ the row player's utility from deviating to $i'$ (against the
+column marginal of $\sigma$) is at most their expected utility under $\sigma$, and
+likewise the column player's utility from deviating to any fixed action $j'$ (against
+the row marginal of $\sigma$) is at most their expected utility under $\sigma$. Then for
+every real $\varepsilon \ge 0$, the distribution $\sigma$ is an $\varepsilon$-coarse
+correlated equilibrium of $G$: each player's gain from any such unilateral pure
+deviation exceeds zero by at most $\varepsilon$.
 \end{lemma}
 
 \begin{definition}[Product distribution]
@@ -186,24 +202,30 @@ the product (independent) joint distribution assigns to each profile $(i,j)$
 the probability $p_i \cdot q_j$.
 \end{definition}
 
-\begin{lemma}[Product distribution row marginal]
+\begin{lemma}[Row marginal of a product distribution]
 \lean{productDistribution_rowMarginal}
 \label{productDistribution_rowMarginal}
 \leanok
 \uses{JointDistribution.rowMarginal, MixedStrategy, productDistribution}
 \difficulty{2}
-For the product distribution of $p$ and $q$, the row marginal at $i$ equals
-$p_i$ (the original row mixed-strategy weight).
+Let $p$ be a mixed strategy for the row player over $M$ actions and $q$ a mixed strategy
+for the column player over $N$ actions, and let $\sigma$ be their product distribution,
+so that $\sigma_{ij} = p_i q_j$ for every profile $(i,j)$. Then for each row action $i$
+the row marginal of $\sigma$ equals the corresponding weight of $p$, that is, $\sum_{j}
+p_i q_j = p_i$.
 \end{lemma}
 
-\begin{lemma}[Product distribution column marginal]
+\begin{lemma}[Column marginal of a product distribution]
 \lean{productDistribution_colMarginal}
 \label{productDistribution_colMarginal}
 \leanok
 \uses{JointDistribution.colMarginal, MixedStrategy, productDistribution}
 \difficulty{2}
-For the product distribution of $p$ and $q$, the column marginal at $j$ equals
-$q_j$ (the original column mixed-strategy weight).
+Let $p$ be a mixed strategy over $M$ actions for the row player and $q$ a mixed strategy
+over $N$ actions for the column player, and let $\sigma$ be their product distribution,
+which assigns probability $p_i\,q_j$ to each pure profile $(i,j)$. Then for every column
+action $j$, the column marginal of $\sigma$ at $j$ equals $q_j$; that is, $\sum_{i}
+p_i\,q_j = q_j$.
 \end{lemma}
 
 \begin{definition}[Empirical joint distribution]
@@ -217,109 +239,162 @@ each profile $(i,j)$ the time-averaged probability
 $\frac{1}{T}\sum_{t=1}^{T} (p_t)_i \cdot (q_t)_j$.
 \end{definition}
 
-\begin{lemma}[Empirical joint row marginal]
+\begin{lemma}[Row marginal of the empirical joint distribution]
 \lean{empiricalJoint_rowMarginal}
 \label{empiricalJoint_rowMarginal}
 \leanok
 \uses{JointDistribution.rowMarginal, MixedStrategy, empiricalJoint}
 \difficulty{3}
-The row marginal of the empirical joint distribution at action $i$ equals the
-time-average of the row player's mixed-strategy weights:
-$(1/T)\sum_{t} (p_t)_i$.
+Fix $T \ge 1$ rounds of play in which the row player uses mixed strategies
+$p_1,\dots,p_T$ over $M$ actions and the column player uses mixed strategies
+$q_1,\dots,q_T$ over $N$ actions, and let $\sigma$ be the empirical joint distribution,
+which assigns to each profile $(i,j)$ the time-averaged probability
+$\frac{1}{T}\sum_{t=1}^{T} (p_t)_i (q_t)_j$. Then for every row action $i$, the row
+marginal $\sigma^{\mathrm{row}}_i = \sum_{j} \sigma_{ij}$ equals the time-average of the
+row player's weight on $i$:
+\[
+\sigma^{\mathrm{row}}_i \;=\; \frac{1}{T}\sum_{t=1}^{T} (p_t)_i .
+\]
 \end{lemma}
 
-\begin{lemma}[Empirical joint column marginal]
+\begin{lemma}[Column marginal of the empirical joint distribution]
 \lean{empiricalJoint_colMarginal}
 \label{empiricalJoint_colMarginal}
 \leanok
 \uses{JointDistribution.colMarginal, MixedStrategy, empiricalJoint}
 \difficulty{3}
-The column marginal of the empirical joint distribution at action $j$ equals
-the time-average of the column player's mixed-strategy weights:
-$(1/T)\sum_{t} (q_t)_j$.
+Consider $T > 0$ rounds of play between a row player with $M$ actions and a column
+player with $N$ actions, where in round $t$ the row player uses the mixed strategy $p_t$
+over the row actions and the column player uses the mixed strategy $q_t$ over the column
+actions. Form the empirical joint distribution $\sigma$ assigning to each profile
+$(i,j)$ the time-averaged probability $\frac{1}{T}\sum_{t=1}^{T} (p_t)_i (q_t)_j$. Then
+for each column action $j$, the column marginal $\sigma^{\mathrm{col}}_j = \sum_i
+\sigma_{ij}$ equals the time-average of the column player's weights on $j$,
+\[
+\sigma^{\mathrm{col}}_j = \frac{1}{T}\sum_{t=1}^{T} (q_t)_j.
+\]
 \end{lemma}
 
-\begin{lemma}[Empirical utility sum factorization]
+\begin{lemma}[Averaging a payoff against the empirical joint distribution]
 \lean{empiricalJoint_sum_prob_mul}
 \label{empiricalJoint_sum_prob_mul}
 \leanok
 \uses{MixedStrategy, empiricalJoint}
 \difficulty{4}
-For any function $f : \mathrm{Fin}\,M \to \mathrm{Fin}\,N \to \mathbb{R}$,
-the sum $\sum_{i,j} \sigma_{ij} \cdot f(i,j)$ over the empirical joint
-distribution equals the time-average
-$(1/T)\sum_{t}\sum_{i,j}(p_t)_i(q_t)_j f(i,j)$.
+Fix $T > 0$ rounds of play in which, in round $t$, the row player uses a mixed strategy
+$p_t$ over $\mathrm{Fin}\,M$ and the column player a mixed strategy $q_t$ over
+$\mathrm{Fin}\,N$; write $(p_t)_i$ and $(q_t)_j$ for the weights placed on actions $i$
+and $j$. Let $\sigma$ be the empirical joint distribution, whose value at each profile
+$(i,j)$ is the time average $\sigma_{ij} = \frac{1}{T}\sum_{t=1}^{T} (p_t)_i\,(q_t)_j$.
+Then for every function $f : \mathrm{Fin}\,M \times \mathrm{Fin}\,N \to \bbr$,
+\[
+\sum_{i}\sum_{j} \sigma_{ij}\, f(i,j) \;=\; \frac{1}{T}\sum_{t=1}^{T}\sum_{i}\sum_{j}
+(p_t)_i\,(q_t)_j\, f(i,j).
+\]
 \end{lemma}
 
-\begin{lemma}[Empirical row expected utility]
+\begin{lemma}[Row expected utility of the empirical joint distribution]
 \lean{empiricalJoint_rowExpectedUtility}
 \label{empiricalJoint_rowExpectedUtility}
 \leanok
 \uses{Game, JointDistribution.rowExpectedUtility, MixedStrategy, empiricalJoint, empiricalJoint_sum_prob_mul}
 \difficulty{1}
-The row player's expected utility under the empirical joint distribution equals
-the time-average of the per-round bilinear utilities:
+Fix a finite two-player game with $M$ row actions and $N$ column actions, and write
+$u_r(i,j)$ for the row player's payoff at the pure profile $(i,j)$. Suppose that over $T
+> 0$ rounds the row player plays a mixed strategy $p_t$ and the column player a mixed
+strategy $q_t$ in each round $t$, and let $\sigma$ be the empirical joint distribution
+given by $\sigma_{ij} = \frac{1}{T}\sum_{t=1}^{T}(p_t)_i\,(q_t)_j$. Then the row
+player's expected utility under $\sigma$ equals the time-average of the per-round
+bilinear payoffs:
 \[
-  \mathrm{rowExpUtil}(\sigma^{\mathrm{emp}}, G) =
-  \frac{1}{T}\sum_{t}\sum_{i,j}(p_t)_i\,(q_t)_j\,u_r(i,j).
+  \sum_{i,j}\sigma_{ij}\,u_r(i,j)
+    = \frac{1}{T}\sum_{t=1}^{T}\sum_{i,j}(p_t)_i\,(q_t)_j\,u_r(i,j).
 \]
 \end{lemma}
 
-\begin{lemma}[Empirical column expected utility]
+\begin{lemma}[Column utility of the empirical joint distribution]
 \lean{empiricalJoint_colExpectedUtility}
 \label{empiricalJoint_colExpectedUtility}
 \leanok
 \uses{Game, JointDistribution.colExpectedUtility, MixedStrategy, empiricalJoint, empiricalJoint_sum_prob_mul}
 \difficulty{1}
-The column player's expected utility under the empirical joint distribution
-equals the time-average of the per-round bilinear column utilities:
+Consider a finite two-player game with $M$ row actions and $N$ column actions, whose
+column payoff is $u_c(i,j)$ for the action profile $(i,j)$. Fix $T \ge 1$ rounds in
+which the row player plays the mixed strategy $p_t$ and the column player plays the
+mixed strategy $q_t$, and let $\sigma$ be the empirical joint distribution, which
+assigns to each profile $(i,j)$ the time-averaged probability $\frac{1}{T}\sum_{t=1}^{T}
+(p_t)_i\,(q_t)_j$. Then the column player's expected utility under $\sigma$ equals the
+time-average of the per-round bilinear column payoffs:
 \[
-  \mathrm{colExpUtil}(\sigma^{\mathrm{emp}}, G) =
-  \frac{1}{T}\sum_{t}\sum_{i,j}(p_t)_i\,(q_t)_j\,u_c(i,j).
+  \sum_{i=1}^{M}\sum_{j=1}^{N} \sigma_{ij}\, u_c(i,j)
+  = \frac{1}{T}\sum_{t=1}^{T}\sum_{i=1}^{M}\sum_{j=1}^{N} (p_t)_i\,(q_t)_j\, u_c(i,j).
 \]
 \end{lemma}
 
-\begin{lemma}[Empirical row deviation utility]
+\begin{lemma}[Empirical row deviation utility as a time average]
 \lean{empiricalJoint_rowDeviationUtility}
 \label{empiricalJoint_rowDeviationUtility}
 \leanok
 \uses{Game, JointDistribution.rowDeviationUtility, MixedStrategy, empiricalJoint, empiricalJoint_colMarginal}
 \difficulty{3}
-The row player's deviation utility for pure action $i'$ in the empirical
-distribution equals the time-average utility of always playing $i'$:
+Let $G$ be a finite two-player game with $M$ row actions and $N$ column actions, and let
+$u_r(i,j)$ denote the row player's utility. Fix an integer $T \ge 1$, and suppose that
+in each round $t \in \{1,\dots,T\}$ the row player plays the mixed strategy $p_t$ over
+the $M$ row actions and the column player plays the mixed strategy $q_t$ over the $N$
+column actions, giving rise to the empirical joint distribution $\sigma$ with
+$\sigma_{ij} = \tfrac{1}{T}\sum_{t=1}^{T} (p_t)_i\,(q_t)_j$. Then for every pure row
+action $i'$, the row player's deviation utility under $\sigma$ equals the time average
+of the expected utilities of playing $i'$ against each round's column strategy:
 \[
-  \mathrm{rowDevUtil}(\sigma^{\mathrm{emp}}, G, i') =
-  \frac{1}{T}\sum_{t}\sum_{j}(q_t)_j\,u_r(i',j).
+  \sum_{j} \sigma^{\mathrm{col}}_j\, u_r(i',j)
+  = \frac{1}{T}\sum_{t=1}^{T}\sum_{j} (q_t)_j\, u_r(i',j).
 \]
 \end{lemma}
 
-\begin{lemma}[Empirical column deviation utility]
+\begin{lemma}[Column deviation utility of the empirical joint distribution]
 \lean{empiricalJoint_colDeviationUtility}
 \label{empiricalJoint_colDeviationUtility}
 \leanok
 \uses{Game, JointDistribution.colDeviationUtility, MixedStrategy, empiricalJoint, empiricalJoint_rowMarginal}
 \difficulty{3}
-The column player's deviation utility for pure action $j'$ in the empirical
-distribution equals the time-average utility of always playing $j'$:
+Let $G$ be a finite two-player game with $M$ row actions and $N$ column actions and
+column utility $u_c(i,j)$, and fix a number of rounds $T \ge 1$. Suppose that in each
+round $t \in \{1,\dots,T\}$ the row player plays a mixed strategy $p_t$ over the $M$ row
+actions and the column player plays a mixed strategy $q_t$ over the $N$ column actions,
+and let $\sigma$ be the empirical joint distribution that assigns mass
+$\frac{1}{T}\sum_{t=1}^{T} (p_t)_i\,(q_t)_j$ to each action profile $(i,j)$. Then, for
+every column action $j'$, the column player's expected utility from deviating to the
+pure action $j'$ against the row marginal $\sigma^{\mathrm{row}}_i = \sum_{j}
+\sigma_{ij}$ is the time average of the round-by-round deviation utilities:
 \[
-  \mathrm{colDevUtil}(\sigma^{\mathrm{emp}}, G, j') =
-  \frac{1}{T}\sum_{t}\sum_{i}(p_t)_i\,u_c(i,j').
+  \sum_{i} \sigma^{\mathrm{row}}_i\, u_c(i,j')
+  = \frac{1}{T}\sum_{t=1}^{T}\sum_{i} (p_t)_i\, u_c(i,j').
 \]
 \end{lemma}
 
-\begin{theorem}[No-regret play yields an approximate CCE]
+\begin{theorem}[No-regret play yields an approximate coarse correlated equilibrium]
 \lean{empiricalJoint_isApproxCCE}
 \label{empiricalJoint_isApproxCCE}
 \leanok
 \uses{Game, IsApproxCoarseCorrelatedEquilibrium, MixedStrategy, empiricalJoint, empiricalJoint_rowDeviationUtility, empiricalJoint_rowExpectedUtility, empiricalJoint_colDeviationUtility, empiricalJoint_colExpectedUtility}
 \difficulty{4}
-Let $G$ be a two-player game, $T > 0$, and let $p_t$, $q_t$ be the mixed
-strategies played at round $t$ by the row and column players respectively.
-Suppose that for every pure row deviation $i'$,
+Let $G$ be a finite two-player game with row utility $u_r$ and column utility $u_c$ over
+$M$ row actions and $N$ column actions, and consider $T > 0$ rounds of play in which the
+row player uses the mixed strategy $p_t$ and the column player uses the mixed strategy
+$q_t$ at round $t$. Fix $\varepsilon \in \bbr$, and suppose that for every pure row
+deviation $i'$,
 \[
-  \sum_{t}\sum_{j}(q_t)_j u_r(i',j)
-  - \sum_{t}\sum_{i,j}(p_t)_i(q_t)_j u_r(i,j) \le \varepsilon T,
+  \sum_{t=1}^{T}\sum_{j}(q_t)_j\, u_r(i',j)
+  \;-\; \sum_{t=1}^{T}\sum_{i,j}(p_t)_i (q_t)_j\, u_r(i,j)
+  \;\le\; \varepsilon T,
 \]
-and similarly for every column deviation $j'$ using $u_c$.
-Then the empirical joint distribution is an $\varepsilon$-CCE of $G$.
+and for every pure column deviation $j'$,
+\[
+  \sum_{t=1}^{T}\sum_{i}(p_t)_i\, u_c(i,j')
+  \;-\; \sum_{t=1}^{T}\sum_{i,j}(p_t)_i (q_t)_j\, u_c(i,j)
+  \;\le\; \varepsilon T.
+\]
+Then the empirical joint distribution of the play, which assigns to each profile $(i,j)$
+the probability $\frac{1}{T}\sum_{t=1}^{T}(p_t)_i (q_t)_j$, is an $\varepsilon$-coarse
+correlated equilibrium of $G$.
 \end{theorem}

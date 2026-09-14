@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.switching_bernoulli_gate_to_dnf_from_cnf",
+ "key": "6efcd5a9a49ca080",
+ "kind": "theorem",
+ "title": "A Bernoulli-restricted CNF collapses to a narrow DNF",
+ "statement": "Let $g$ be a CNF formula on $n \\ge 1$ variables whose width is at most $w$, where $w \\ge 1$, and suppose that within each clause no two distinct literals share a variable and no literal is repeated. Fix a natural number $l$ and a real parameter $p$ with $0 < p \\le \\tfrac{1}{40w}$, so in particular $p \\le 1$. Then, drawing a Bernoulli$(p)$ random restriction $\\rho$ on the $n$ variables, the probability that the restricted function $g|_\\rho$ (the function $x \\mapsto g(\\rho.\\mathrm{extend}\\,x)$ on the free coordinates) cannot be computed exactly by any DNF formula of width at most $l$ is at most\n\\[\n  \\left(\\tfrac12\\right)^{l} + \\exp\\!\\left(-\\tfrac{np}{3}\\right).\n\\]",
+ "hypotheses_covered": [
+  "g is a CNF on n variables",
+  "width of g at most w",
+  "w > 0",
+  "within each clause, literals on the same variable are identical",
+  "each clause has no duplicate literals",
+  "n > 0",
+  "p is real with p > 0",
+  "p ≤ 1/(40w)",
+  "p ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The dual statement. Let $g$ be a $\\mathrm{CNF}$ of width at most $w>0$ (with distinct\nvariables per clause and no duplicate literals), let $n>0$, and let $0<p\\le \\tfrac{1}{40w}$\nwith $p\\le 1$. Then the probability under a Bernoulli$(p)$ restriction $\\rho$ that $g|_\\rho$\ncannot be expressed as a $\\mathrm{DNF}$ of width at most $l$ is at most\n\\[\n  \\Bigl(\\tfrac12\\Bigr)^l + \\exp\\!\\Bigl(-\\tfrac{np}{3}\\Bigr).\n\\]"
+}

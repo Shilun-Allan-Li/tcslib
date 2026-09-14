@@ -1,0 +1,17 @@
+{
+ "lean_name": "OnlineLearning.pureVsPayoff_nonneg",
+ "key": "8c0591e5ab10787e",
+ "kind": "lemma",
+ "title": "Nonnegativity of a pure row's expected payoff",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column actions, whose payoff matrix $A$ has entries satisfying $0 \\le A_{ij} \\le 1$. Fix a pure row action $i$ and a mixed column strategy $q$, so its weights $q_j$ are non-negative and sum to $1$. Then the expected payoff of row $i$ against $q$ is non-negative:\n\\[\n  \\sum_{j} A_{ij}\\, q_j \\;\\ge\\; 0.\n\\]",
+ "hypotheses_covered": [
+  "G is a finite zero-sum game with M row and N column actions",
+  "payoff entries satisfy 0 ≤ A_ij ≤ 1 (nonnegativity used)",
+  "i is a pure row action",
+  "q is a mixed column strategy with nonnegative weights summing to 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any game $G$, pure row action $i$, and mixed column strategy $q$,\n$\\mathrm{pureVsPayoff}(G,i,q) \\geq 0$."
+}

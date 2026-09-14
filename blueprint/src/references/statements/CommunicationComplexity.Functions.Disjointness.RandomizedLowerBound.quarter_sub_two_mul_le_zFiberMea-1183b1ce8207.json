@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.quarter_sub_two_mul_le_zFiberMeasure_protocolErrorEvent",
+ "key": "2628b177351c90f4",
+ "kind": "theorem",
+ "title": "Conditional protocol-error probability on a good fiber",
+ "statement": "Fix a positive integer $n$ and consider the set-disjointness problem on subsets of $[n]$ under the hard distribution: a sample $\\omega$ specifies a special coordinate $T \\in [n]$, a bit-pair $(x_T, y_T)$ at $T$, and at each remaining coordinate one of the three options *neither*, *Alice only*, or *Bob only*; from $\\omega$ one reads off Alice's set $X(\\omega)$ and Bob's set $Y(\\omega)$. Let $p$ be a deterministic communication protocol with Boolean output on such inputs, and let $Z(\\omega)$ be the statistic recording the transcript of $p$ on $(X(\\omega), Y(\\omega))$, the special coordinate $T$, Alice's bits at the coordinates below $T$, and Bob's bits at the coordinates above $T$. Let $\\gamma \\in \\bbr$, and suppose the value $z$ of $Z$ is *good*, meaning that the total variation distance between the conditional law of the special bit-pair $(x_T, y_T)$ given $Z = z$ and the uniform distribution on $\\{0,1\\}^2$ is at most $2\\gamma$. Then, conditioning on the event $Z = z$, the probability that $p$ errs on disjointness — that its output on $(X(\\omega), Y(\\omega))$ disagrees with whether $X(\\omega)$ and $Y(\\omega)$ are disjoint — is at least $\\tfrac{1}{4} - 2\\gamma$.",
+ "hypotheses_covered": [
+  "$n$ a positive integer",
+  "$p$ a deterministic Boolean protocol on disjointness inputs of length $n$",
+  "$\\gamma$ a real number",
+  "$z$ a value of the statistic $Z$",
+  "goodness of $z$: conditional special-pair law within total variation distance $2\\gamma$ of uniform"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On a good $Z$ fiber, the conditional protocol-error probability is at least $1 / 4 - 2 * γ$. If the protocol output on the fiber is \\texttt{true}, then the $(true, true)$ special bit-pair witnesses errors; otherwise $(false, false)$ witnesses errors."
+}

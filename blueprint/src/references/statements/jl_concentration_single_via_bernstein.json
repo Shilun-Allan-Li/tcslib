@@ -1,0 +1,21 @@
+{
+ "lean_name": "jl_concentration_single_via_bernstein",
+ "key": "81e3881a57c15dad",
+ "kind": "theorem",
+ "title": "Distribution-free Johnson–Lindenstrauss concentration via Bernstein tails",
+ "statement": "Fix an integer $k \\ge 1$, a dimension $d$, a probability space $(\\Omega, \\mu)$, and a vector $x \\in \\bbr^d$. Let $A : \\Omega \\to \\bbr^{k \\times d}$ be a random matrix, and for each outcome $\\omega$ write $y(\\omega) = A(\\omega)\\,x \\in \\bbr^k$ for the image of $x$ under the random linear map, with coordinates $y_1(\\omega), \\dots, y_k(\\omega)$. Suppose each coordinate $y_i$ is measurable, the coordinates $y_1, \\dots, y_k$ are independent, and, for some constants $c > 0$ and $t_{\\max}$, each centered squared coordinate $y_i^2 - \\norm{x}^2/k$ satisfies the Bernstein moment generating function condition with parameters $(c, t_{\\max})$. Then for every $s$ with $0 \\le s \\le 2kc\\,t_{\\max}$,\n\\[\n  \\mu\\bigl\\{\\omega \\;:\\; s < \\bigl|\\,\\norm{A(\\omega)\\,x}^2 - \\norm{x}^2\\,\\bigr|\\bigr\\}\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\frac{s^2}{4kc}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1 (0 < k)",
+  "μ is a probability measure",
+  "each projection coordinate y_i is measurable",
+  "the coordinates y_1,…,y_k are independent",
+  "c > 0",
+  "each centered squared coordinate y_i² − ‖x‖²/k has the Bernstein MGF condition with parameters (c, tmax)",
+  "0 ≤ s",
+  "s ≤ 2kc·tmax"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A:\\Omega\\to\\mathbb{R}^{k\\times d}$ be a random matrix whose row\nprojections $(A\\,\\omega).\\texttt{toEuclideanLin}\\,x\\,i$ are measurable,\nindependent across $i$, and such that each centered squared summand\n$((A\\,\\omega).\\texttt{toEuclideanLin}\\,x\\,i)^2 - \\|x\\|^2/k$ satisfies\n$\\text{\\texttt{ProbabilityTheory.HasBernsteinMGF}}(c, t_{\\max})$ for some $c>0$.  For any\n$s\\ge 0$ with $s\\le 2k\\,c\\,t_{\\max}$,\n\\[\n  \\mu\\!\\left\\{\\omega \\;\\middle|\\;\n    s < \\bigl|\\,\\|(A\\,\\omega).\\texttt{toEuclideanLin}\\,x\\|^2 - \\|x\\|^2\\,\\bigr|\n  \\right\\}\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\frac{s^2}{4k\\,c}\\Bigr).\n\\]\nThis theorem makes no assumption on the distribution of the matrix entries\nbeyond the Bernstein MGF condition, giving a general tail bound for the\nsquared-norm distortion."
+}

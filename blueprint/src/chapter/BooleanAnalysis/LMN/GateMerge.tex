@@ -23,100 +23,134 @@ from $g_1$ on indices $0,\dots,m_1-1$ and from $g_2$ on indices
 $m_1,\dots,m_1+m_2-1$.
 \end{definition}
 
-\begin{lemma}[Left projection of merge]
+\begin{lemma}[Left component of a merged gate array]
 \lean{LMN.mergeGates_castAdd}
 \label{LMN.mergeGates_castAdd}
 \leanok
 \uses{LMN.mergeGates}
 \difficulty{2}
-For every $i : \mathrm{Fin}\,m_1$, evaluating the merged array at the left-embedded index
-$\mathrm{castAdd}\,m_2\,i$ recovers $g_1\,i$, i.e.
-$\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{castAdd}\,m_2\,i) = g_1\,i$.
+Let $g_1 : \mathrm{Fin}\,m_1 \to \alpha$ and $g_2 : \mathrm{Fin}\,m_2 \to \alpha$ be two
+gate arrays, and let $g_1 \ast g_2 : \mathrm{Fin}\,(m_1+m_2) \to \alpha$ denote their
+merge, which agrees with $g_1$ on the indices $0,\dots,m_1-1$ and with $g_2$ on the
+indices $m_1,\dots,m_1+m_2-1$. Then for every $i \in \mathrm{Fin}\,m_1$, evaluating the
+merge at the index $i$ regarded as an element of $\mathrm{Fin}\,(m_1+m_2)$ (i.e. the
+same value $i < m_1$) returns $g_1\,i$.
 \end{lemma}
 
-\begin{lemma}[Right projection of merge]
+\begin{lemma}[Merged array on right-hand indices]
 \lean{LMN.mergeGates_natAdd}
 \label{LMN.mergeGates_natAdd}
 \leanok
 \uses{LMN.mergeGates}
 \difficulty{2}
-For every $i : \mathrm{Fin}\,m_2$, evaluating the merged array at the right-embedded index
-$\mathrm{natAdd}\,m_1\,i$ recovers $g_2\,i$, i.e.
-$\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i) = g_2\,i$.
+Let $g_1 : \mathrm{Fin}\,m_1 \to \alpha$ and $g_2 : \mathrm{Fin}\,m_2 \to \alpha$ be
+gate arrays, and let $i \in \mathrm{Fin}\,m_2$. Then the merged array of $g_1$ and $g_2$
+takes the value $g_2(i)$ at the index $m_1 + i$.
 \end{lemma}
 
-\begin{lemma}[Reindex into left half evaluates the original]
+\begin{lemma}[Left re-indexing preserves circuit evaluation]
 \lean{LMN.reidx_eval_mergeGates_left}
 \label{LMN.reidx_eval_mergeGates_left}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.reidx, BoolCircuit.Circuit.reidx_eval, LMN.mergeGates}
 \difficulty{2}
-For a circuit $c$ on $m_1$ gates and Boolean gate values $g_1, g_2$, reindexing $c$ along
-the left embedding $\mathrm{castAdd}\,m_2$ and evaluating against the merged array yields
-the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{castAdd}\,m_2)).\mathrm{eval}\,(\mathrm{mergeGates}\,g_1\,g_2) = c.\mathrm{eval}\,g_1$.
+Let $c$ be a Boolean circuit on $m_1$ variables, and let $g_1 : \mathrm{Fin}\,m_1 \to
+\bbf_2$ and $g_2 : \mathrm{Fin}\,m_2 \to \bbf_2$ be assignments. Write $\iota :
+\mathrm{Fin}\,m_1 \to \mathrm{Fin}\,(m_1+m_2)$, $i \mapsto i$, for the order-preserving
+inclusion of the first block, and let $g$ be the merged assignment on $m_1 + m_2$
+variables that agrees with $g_1$ on the first $m_1$ indices and with $g_2$ on the last
+$m_2$. Then the circuit obtained by replacing each literal index $i$ of $c$ by
+$\iota(i)$ (keeping its sign), evaluated under $g$, has the same value as $c$ evaluated
+under $g_1$.
 \end{lemma}
 
-\begin{lemma}[Reindex into right half evaluates the original]
+\begin{lemma}[Right embedding evaluates a circuit through the merged assignment]
 \lean{LMN.reidx_eval_mergeGates_right}
 \label{LMN.reidx_eval_mergeGates_right}
 \leanok
 \uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.reidx, BoolCircuit.Circuit.reidx_eval, LMN.mergeGates}
 \difficulty{2}
-For a circuit $c$ on $m_2$ gates and Boolean gate values $g_1, g_2$, reindexing $c$ along
-the right embedding $\mathrm{natAdd}\,m_1$ and evaluating against the merged array yields
-the original evaluation: $(\mathrm{reidx}\,c\,(\mathrm{natAdd}\,m_1)).\mathrm{eval}\,(\mathrm{mergeGates}\,g_1\,g_2) = c.\mathrm{eval}\,g_2$.
+Let $m_1, m_2$ be natural numbers, let $c$ be a Boolean circuit on $m_2$ variables, and
+let $g_1 : \bbf_2^{m_1}$ and $g_2 : \bbf_2^{m_2}$ be Boolean assignments. Form the
+merged assignment on $m_1 + m_2$ variables that takes the values of $g_1$ on indices
+$0,\dots,m_1-1$ and the values of $g_2$ on indices $m_1,\dots,m_1+m_2-1$, and re-index
+$c$ by the right embedding $i \mapsto m_1 + i$ from $\mathrm{Fin}\,m_2$ into
+$\mathrm{Fin}\,(m_1+m_2)$. Then \[ \bigl(\mathrm{reidx}(c,\; i \mapsto m_1 +
+i)\bigr)(\text{merged assignment}) = c(g_2), \] where each side denotes circuit
+evaluation; that is, evaluating the re-indexed circuit under the merged assignment gives
+the same Boolean value as evaluating $c$ directly under $g_2$.
 \end{lemma}
 
-\begin{lemma}[Width bound on the left part of a merge]
+\begin{lemma}[Width bound on the left block of a merged array]
 \lean{LMN.mergeGates_width_left}
 \label{LMN.mergeGates_width_left}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
 \difficulty{1}
-If every $g_1\,k$ has width at most $l$, then for each $i : \mathrm{Fin}\,m_1$ the merged
-gate at the left-embedded index satisfies
-$(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{castAdd}\,m_2\,i)).\mathrm{width} \le l$.
+Let $g_1$ and $g_2$ be families of DNF formulas over $n$ variables, indexed by
+$\mathrm{Fin}\,m_1$ and $\mathrm{Fin}\,m_2$ respectively, and let $\ell$ be a natural
+number. Suppose every formula $g_1(k)$ has width at most $\ell$. Form the merged array
+of length $m_1+m_2$, which reproduces $g_1$ on the first $m_1$ indices and $g_2$ on the
+remaining ones. Then for each $i \in \mathrm{Fin}\,m_1$, the entry of the merged array
+at the position of $i$ inside the first block again has width at most $\ell$.
 \end{lemma}
 
-\begin{lemma}[Width bound on the right part of a merge]
+\begin{lemma}[Width bound on the right block of a merged formula array]
 \lean{LMN.mergeGates_width_right}
 \label{LMN.mergeGates_width_right}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
 \difficulty{1}
-If every $g_2\,k$ has width at most $l$, then for each $i : \mathrm{Fin}\,m_2$ the merged
-gate at the right-embedded index satisfies
-$(\mathrm{mergeGates}\,g_1\,g_2\,(\mathrm{natAdd}\,m_1\,i)).\mathrm{width} \le l$.
+Let $g_1$ and $g_2$ be families of DNF formulas in $n$ variables, indexed by
+$\{0,\dots,m_1-1\}$ and $\{0,\dots,m_2-1\}$ respectively, and let $g$ be their merge:
+the family on $\{0,\dots,m_1+m_2-1\}$ that agrees with $g_1$ on the first $m_1$ indices
+and with $g_2$ on the remaining ones, so that $g(m_1+i)=g_2(i)$. Suppose $l$ is a
+natural number for which every formula $g_2(k)$ has width at most $l$. Then for each
+index $i$ of the second family, the merged formula $g(m_1+i)$ has width at most $l$.
 \end{lemma}
 
-\begin{lemma}[Width bound preserved under merging]
+\begin{lemma}[Width bound preserved under concatenating families of formulas]
 \lean{LMN.mergeGates_width}
 \label{LMN.mergeGates_width}
 \leanok
 \uses{DNF, DNF.width, LMN.mergeGates}
 \difficulty{2}
-If every gate of $g_1$ and every gate of $g_2$ has width at most $l$, then every gate of
-the merged array $\mathrm{mergeGates}\,g_1\,g_2$ has width at most $l$.
+Let $g_1$ and $g_2$ be two families of DNF formulas over $n$ variables, indexed
+respectively by $m_1$ and $m_2$ positions, and let $l$ be a natural number. Suppose
+every formula in $g_1$ and every formula in $g_2$ has width at most $l$. Then every
+formula in the merged family of $m_1 + m_2$ formulas — those of $g_1$ in order, followed
+by those of $g_2$ — also has width at most $l$.
 \end{lemma}
 
-\begin{lemma}[Variable injectivity preserved under merging]
+\begin{lemma}[Variable-injectivity is preserved by merging gate arrays]
 \lean{LMN.mergeGates_varInj}
 \label{LMN.mergeGates_varInj}
 \leanok
 \uses{DNF, LMN.mergeGates}
 \difficulty{2}
-If, in each DNF gate of $g_1$ and of $g_2$, any two literals of a common term that share
-the same variable are equal, then the same holds for every gate of the merged array
-$\mathrm{mergeGates}\,g_1\,g_2$.
+Let $g_1$ and $g_2$ be two arrays of DNF formulas over $n$ variables, indexed
+respectively by $\{0,\dots,m_1-1\}$ and $\{0,\dots,m_2-1\}$, and let $g$ be their merge:
+the array indexed by $\{0,\dots,m_1+m_2-1\}$ that agrees with $g_1$ on the first $m_1$
+indices and with $g_2$, shifted down by $m_1$, on the remaining $m_2$. Suppose that in
+every formula of $g_1$ and in every formula of $g_2$, any two literals lying in one and
+the same term whose variables coincide are in fact the identical literal. Then the
+merged array $g$ inherits this property: for every index $k$ and any two literals
+occurring in a common term of the formula $g(k)$ that share the same variable, the two
+literals are equal.
 \end{lemma}
 
-\begin{lemma}[No-duplication preserved under merging]
+\begin{lemma}[Merging arrays of DNF formulas preserves duplicate-free terms]
 \lean{LMN.mergeGates_nodup}
 \label{LMN.mergeGates_nodup}
 \leanok
 \uses{DNF, LMN.mergeGates}
 \difficulty{2}
-If every term of every DNF gate of $g_1$ and of $g_2$ has no duplicate literals
-($\mathrm{Nodup}$), then every term of every gate of the merged array
-$\mathrm{mergeGates}\,g_1\,g_2$ likewise has no duplicate literals.
+Fix $n \in \bbn$, and let $g_1$ and $g_2$ be two arrays of DNF formulas over $n$
+variables, of lengths $m_1$ and $m_2$ respectively; write $g_1 \sqcup g_2$ for their
+merge, the array of length $m_1+m_2$ whose first $m_1$ entries are the formulas of
+$g_1$, in order, and whose remaining $m_2$ entries are those of $g_2$, in order. Suppose
+that every term occurring in any formula of $g_1$, and every term occurring in any
+formula of $g_2$, is a list of literals with no repetition. Then the same holds for the
+merged array: for every index $k$ and every term $t$ of the formula at position $k$ in
+$g_1 \sqcup g_2$, the literals of $t$ are pairwise distinct.
 \end{lemma}

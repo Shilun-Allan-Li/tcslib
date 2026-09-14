@@ -1,0 +1,18 @@
+{
+ "lean_name": "ZkBLR.weighted_sum_lift_omega_j_bound",
+ "key": "e9930042018f9087",
+ "kind": "lemma",
+ "title": "Weighted Fourier bound for the twisted lift of a far-from-linear function",
+ "statement": "Let $p$ be prime and let $f : \\bbz_p^n \\to \\bbz_p$ be normalized, meaning $f(0) = 0$, and $\\varepsilon$-far from linear: $0 \\le \\varepsilon \\le 1$ and $\\mathrm{dist}(f,g) \\ge \\varepsilon$ for every linear function $g : \\bbz_p^n \\to \\bbz_p$, where $\\mathrm{dist}$ denotes the fraction of inputs on which the two functions disagree. Fix a nonzero $j \\in \\bbz_p$ and let $\\widetilde{f}_j(x) = \\omega_p^{\\,j\\, f(x)}$ be the associated $j$-twisted lift, with $\\omega_p = e^{2\\pi i / p}$, and write $\\widehat{\\widetilde{f}_j}(s)$ for its Fourier coefficient at frequency $s$. Then\n\\[\n  \\sum_{s \\in \\bbz_p^n} \\bigl|\\widehat{\\widetilde{f}_j}(s)\\bigr|^2 \\,\\operatorname{Re}\\widehat{\\widetilde{f}_j}(s)\n  \\;\\le\\; 1 - \\bigl(1 - \\cos(2\\pi/p)\\bigr)\\varepsilon .\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "f is normalized: f(0) = 0",
+  "0 ≤ ε ≤ 1",
+  "f is ε-far from every linear function",
+  "j ≠ 0 in Z_p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\mathbb{Z}_p^n \\to \\mathbb{Z}_p$ is $\\varepsilon$-far from linear\n(normalized) and $j \\ne 0$, then\n\\[\n  \\sum_{s\\in\\mathbb{Z}_p^n}\n  \\bigl\\|\\widehat{(\\widetilde{f}_j)}(s)\\bigr\\|^2\\,\n  \\operatorname{Re}\\!\\left[\\widehat{(\\widetilde{f}_j)}(s)\\right]\n  \\;\\le\\; 1 - \\bigl(1-\\cos(2\\pi/p)\\bigr)\\varepsilon.\n\\]"
+}

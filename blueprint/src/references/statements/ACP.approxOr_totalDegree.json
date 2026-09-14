@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.approxOr_totalDegree",
+ "key": "29ae3f91bd091a27",
+ "kind": "theorem",
+ "title": "Degree bound for the OR-approximating polynomial",
+ "statement": "Let $p$ be a prime, and work over the ring of polynomials in $\\mathrm{vars}$ variables with coefficients in $\\bbz/p$. Given a family of polynomials $P_1,\\dots,P_{\\mathrm{width}}$ from this ring, together with a seed consisting of $\\ell$ subsets $S_1,\\dots,S_\\ell$ of the index set $\\{1,\\dots,\\mathrm{width}\\}$, the associated OR-approximating polynomial has total degree at most\n\\[\n(p-1)\\,\\ell\\cdot \\sup_i \\deg(P_i),\n\\]\nwhere the supremum is taken over all indices $i$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "family of polynomials P_i over Z/p in vars variables, indexed by i",
+  "seed of ℓ subsets S_1,…,S_ℓ of the index set of the polynomials"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The total degree of $\\texttt{ACP.approxOr}$ applied to $P_1,\\dots,P_{\\mathrm{width}}$ and a\nseed $S$ is at most $(p-1)\\,\\ell \\cdot \\sup_i \\deg(P_i)$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.time_seqRight",
+ "key": "28cd7f43920bc62f",
+ "kind": "theorem",
+ "title": "Time cost of right-sequencing",
+ "statement": "A *timed computation* over an additive cost type $T$ records a return value together with an accumulated cost in $T$; write $\\mathrm{time}(c) \\in T$ for the cost of such a computation $c$. Let $x$ be a timed computation and let $y$ be a thunk that, when forced, produces a timed computation. The right-sequencing $x \\mathbin{*>} y$, which performs $x$ and then $y()$ and returns the value of $y()$, has time cost \\[\\mathrm{time}(x \\mathbin{*>} y) = \\mathrm{time}(x) + \\mathrm{time}(y()).\\]",
+ "hypotheses_covered": [
+  "cost type T carries an addition operation",
+  "x is a timed computation",
+  "y is a thunk producing a timed computation"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The time cost of the right-sequencing of $x$ and $y$ is $x.\\mathrm{time} + (y\\,()).\\mathrm{time}$."
+}

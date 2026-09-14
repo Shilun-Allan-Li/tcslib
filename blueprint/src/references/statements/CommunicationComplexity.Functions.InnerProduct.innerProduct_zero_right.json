@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.innerProduct_zero_right",
+ "key": "f30186bf1e158643",
+ "kind": "lemma",
+ "title": "Inner product with the zero vector is false",
+ "statement": "For every $n$-bit Boolean vector $x \\in \\{0,1\\}^n$, the mod-$2$ inner product of $x$ with the all-zero vector $\\mathbf{0}$ equals $\\mathrm{false}$; that is, $\\bigoplus_{i=1}^{n} (x_i \\wedge 0) = 0$.",
+ "hypotheses_covered": [
+  "x is an arbitrary n-bit Boolean input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $x : \\mathrm{BoolInput}\\,n$, the inner product of $x$ with the all-zero\ninput is \\texttt{false}: $\\mathrm{innerProduct}(n, x, \\mathbf{0}) = \\mathtt{false}$."
+}

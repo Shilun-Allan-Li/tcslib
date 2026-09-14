@@ -1,0 +1,17 @@
+{
+ "lean_name": "measurable_radMatrix",
+ "key": "5ec7243aa63086bd",
+ "kind": "lemma",
+ "title": "Measurability of the Rademacher matrix map",
+ "statement": "Equip the sample space $\\Omega = \\{\\omega : \\mathrm{Fin}\\,k \\to \\mathrm{Fin}\\,d \\to \\bbr\\}$ of $k \\times d$ real arrays with its product $\\sigma$-algebra, and the space $\\bbr^{k \\times d}$ of matrices likewise. Then the map $A : \\Omega \\to \\bbr^{k\\times d}$ sending $\\omega$ to the matrix with entries $A(\\omega)_{ij} = \\omega_{ij}/\\sqrt{k}$ is measurable.",
+ "hypotheses_covered": [
+  "k, d : ℕ are the matrix dimensions",
+  "domain is RadΩ(k,d) with product σ-algebra",
+  "codomain is matrices over ℝ with product σ-algebra",
+  "map is entrywise scaling by 1/√k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The map $\\omega \\mapsto \\mathrm{radMatrix}(k,d,\\omega)$ is measurable with\nrespect to the product $\\sigma$-algebra on $\\mathrm{Rad\\Omega}(k,d)$."
+}

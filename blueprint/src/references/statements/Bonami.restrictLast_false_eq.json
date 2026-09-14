@@ -1,0 +1,15 @@
+{
+ "lean_name": "Bonami.restrictLast_false_eq",
+ "key": "d476a41572bcc5f8",
+ "kind": "lemma",
+ "title": "Recovering the false-restriction from average and half-difference",
+ "statement": "Let $f$ be a Boolean function on $n+1$ variables, and let $x$ be a point of the $n$-dimensional Boolean hypercube. Then the restriction of $f$ obtained by fixing its last coordinate to $\\mathrm{false}$ equals the sum of the average and the half-difference of $f$ over that coordinate:\n\\[\nf(x,\\mathrm{false}) = \\frac{f(x,\\mathrm{false}) + f(x,\\mathrm{true})}{2} + \\frac{f(x,\\mathrm{false}) - f(x,\\mathrm{true})}{2}.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n+1 variables",
+  "x is a point of the n-dimensional Boolean hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $x$, the restriction of $f$ fixing the last coordinate to false equals the sum of\nthe average and the half-difference: $\\mathrm{restrictLast}\\,f\\,\\mathrm{false}\\,x = \\mathrm{avgLast}\\,f\\,x + \\mathrm{diffLast}\\,f\\,x$."
+}

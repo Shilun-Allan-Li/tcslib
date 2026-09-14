@@ -1,0 +1,18 @@
+{
+ "lean_name": "SATTo3SAT.buildChain_all_satisfied",
+ "key": "c283aed4b1ba843a",
+ "kind": "lemma",
+ "title": "Chain clauses satisfied by the completed assignment",
+ "statement": "Fix a clause index $i$ and a clause presented as a list of literals over a variable type $V$, and let $\\alpha : V \\to \\mathrm{Prop}$ be an assignment that makes at least one literal of the clause true. Let $ml$ be a map lifting each literal over $V$ to a literal over the extended type $\\mathtt{AuxVar}\\,V$, and let $\\alpha_3$ be an assignment on $\\mathtt{AuxVar}\\,V$ such that: (i) for every $k$ the auxiliary variable $y_{i,k}$ is true under $\\alpha_3$ exactly when all of the first $k+2$ literals of the clause are false under $\\alpha$; and (ii) for every literal $\\ell$, the lifted literal $ml(\\ell)$ is true under $\\alpha_3$ if and only if $\\ell$ is true under $\\alpha$. Then for every chain counter $j \\ge 1$, letting $\\mathit{lits}$ be the suffix of the clause obtained by dropping its first $j+1$ literals, every 3-clause in the chain built for clause $i$ from $\\mathit{lits}$ starting at counter $j$ is satisfied by $\\alpha_3$.",
+ "hypotheses_covered": [
+  "assignment α satisfies at least one literal of the clause",
+  "α₃ assigns each auxiliary variable y_{i,k} the value 'all first k+2 clause literals false under α'",
+  "ml preserves literal truth between α₃ and α",
+  "chain counter j ≥ 1",
+  "lits is the clause with its first j+1 literals dropped"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ be an assignment satisfying at least one literal of a clause, and let\n$\\alpha_3$ be an assignment on $\\mathtt{AuxVar}\\,V$ that evaluates auxiliary variables via\n\\texttt{SATTo3SAT.extraVal} and lifted literals faithfully.  Then every 3-clause produced\nby $\\texttt{SATTo3SAT.buildChain}\\,c\\_idx\\,ml\\,\\mathit{lits}\\,j$ (with $j \\ge 1$ and\n$\\mathit{lits} = \\mathit{clause}.\\mathtt{drop}(j+1)$) is satisfied by $\\alpha_3$."
+}

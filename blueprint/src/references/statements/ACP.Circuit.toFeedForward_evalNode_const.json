@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.Circuit.toFeedForward_evalNode_const",
+ "key": "2c4e7e326147dbc9",
+ "kind": "theorem",
+ "title": "Non-input nodes of the circuit embedding compute the circuit",
+ "statement": "Let $C$ be a Boolean circuit on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$ be an assignment of Boolean values to the inputs of $C$. The feedforward embedding of $C$ is a layered circuit of depth $\\mathrm{depth}(C) + 1$ whose layer $0$ carries the $n$ input variables and each of whose higher layers carries a single node. Then for every layer index $m$ with $1 \\le m \\le \\mathrm{depth}(C) + 1$ and every node $v$ of layer $m$, the value assigned to $v$ by the feedforward embedding on input $x$ equals $\\mathrm{eval}(C, x)$, the value of $C$ on $x$.",
+ "hypotheses_covered": [
+  "C is a Boolean circuit on n variables",
+  "x is a Boolean assignment on Fin n",
+  "layer index m satisfies m < depth(C) + 1 + 1, i.e. m ≤ depth(C)+1",
+  "m is positive (1 ≤ m), so v lies above the input layer",
+  "v is a node of layer m of the feedforward embedding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a Boolean circuit on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$\nbe an assignment of Boolean values to its inputs. The feedforward embedding of $C$ is a\nlayered circuit of depth $\\mathrm{depth}(C) + 1$ whose layer $0$ carries the $n$ input\nvariables and each of whose higher layers carries a single node. For every layer index\n$m$ with $1 \\le m \\le \\mathrm{depth}(C) + 1$ and every node $v$ of layer $m$, the value\nthat the embedding assigns to $v$ on input $x$ equals $\\mathrm{eval}(C, x)$, the value\nof $C$ itself on $x$."
+}

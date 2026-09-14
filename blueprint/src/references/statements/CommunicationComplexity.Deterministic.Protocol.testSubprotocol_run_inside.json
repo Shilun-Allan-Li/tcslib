@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside",
+ "key": "fa1e39949d68eae6",
+ "kind": "lemma",
+ "title": "Test subprotocol runs the inside branch on reaching inputs",
+ "statement": "Let $s$ be a subprotocol of a deterministic communication protocol $p$, and let $q_{\\mathrm{in}}$ and $q_{\\mathrm{out}}$ be two further protocols on the same input types. If the input pair $(x,y)$ reaches $s$ — that is, $x$ lies in Alice's reach set and $y$ in Bob's reach set for $s$ — then executing the test subprotocol built from $s$, $q_{\\mathrm{in}}$, and $q_{\\mathrm{out}}$ on $(x,y)$ yields the same output as executing $q_{\\mathrm{in}}$ on $(x,y)$.",
+ "hypotheses_covered": [
+  "s is a subprotocol of p (IsSubprotocol s p)",
+  "qIn and qOut are protocols on the same types",
+  "(x, y) reaches the subprotocol s (reaches hsp x y, i.e. x in reachX and y in reachY)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $(x, y)$ reaches the subprotocol $s$ of $p$, then\n$(\\texttt{testSubprotocol}\\;\\texttt{hsp}\\;\\texttt{qIn}\\;\\texttt{qOut}).\\texttt{run}\\;x\\;y = \\texttt{qIn}.\\texttt{run}\\;x\\;y$."
+}

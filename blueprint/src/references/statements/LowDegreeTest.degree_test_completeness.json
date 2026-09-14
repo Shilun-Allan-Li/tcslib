@@ -1,0 +1,16 @@
+{
+ "lean_name": "LowDegreeTest.degree_test_completeness",
+ "key": "24d1d7a8b5fec66d",
+ "kind": "lemma",
+ "title": "Completeness of the low-degree test",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function of degree at most $d$, meaning that its $\\pm 1$ lift $(-1)^f$ has every $(d{+}1)$-fold Gowers product equal to $1$: for all base points $x$ and all direction vectors $h_1,\\ldots,h_{d+1} \\in \\{0,1\\}^n$, one has $\\mathrm{GP}\\bigl((-1)^f, d{+}1, x, h_1,\\ldots,h_{d+1}\\bigr) = 1$. Then the $(d{+}1)$-fold derivative test accepts $f$ with probability exactly $1$; that is,\n\\[\n  \\E_{x}\\,\\E_{h_1,\\ldots,h_{d+1}}\\bigl[\\mathbf{1}[\\mathrm{GP}((-1)^f,\\, d{+}1,\\, x,\\, h_1,\\ldots,h_{d+1}) = 1]\\bigr] = 1.\n\\]",
+ "hypotheses_covered": [
+  "d is a natural number",
+  "f is a Boolean function on the n-dimensional hypercube",
+  "f has degree at most d (its pm-1 lift has all (d+1)-fold Gowers products equal to 1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\deg(f) \\le d$, then the degree-$d$ test accepts $f$ with probability $1$."
+}

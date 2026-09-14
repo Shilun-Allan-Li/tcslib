@@ -16,81 +16,95 @@ Gilbert--Varshamov argument.
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p071-b001}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{5}
-For $0<p\le 1-1/q$ and $q=|\alpha|$,
+Let $\alpha$ be a finite alphabet with at least two symbols, write $q = \abs{\alpha}$
+for its size, and let $n$ be a natural number. Fix a real number $p$ with $0 < p \le 1 -
+1/q$, and let
 \[
-|B_{\lfloor np\rfloor}(c)| \;\le\; q^{H_q(p)\,n}.
+H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p)
+\]
+be the $q$-ary entropy function. Then for every codeword $c \in \alpha^n$, the Hamming
+ball of radius $\lfloor np\rfloor$ about $c$, namely $B_{\lfloor np\rfloor}(c) = \{c'
+\in \alpha^n : d(c',c) \le \lfloor np\rfloor\}$, satisfies
+\[
+\abs{B_{\lfloor np\rfloor}(c)} \;\le\; q^{\,H_q(p)\,n}.
 \]
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Entropy algebra lemmas}
 
-\begin{lemma}[Simplifying $q^{H_q(p)}$]
+\begin{lemma}[Closed form for $q^{H_q(p)}$]
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \label{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{4}
-For $q\ge 2$ and $0<p<1$,
+Let $q \ge 2$ be an integer and let $p$ be a real number with $0 < p < 1$. Then the
+$q$-th power of the $q$-ary entropy $H_q(p)$ is given by
 \[
-q^{H_q(p)} \;=\; (q-1)^p\,p^{-p}\,(1-p)^{-(1-p)}.
+q^{H_q(p)} \;=\; (q-1)^{p}\, p^{-p}\, (1-p)^{-(1-p)}.
 \]
 \end{lemma}
 
-\begin{lemma}[Same identity, alternate exponentiation]
+\begin{lemma}[Exponential form of the $q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
 \label{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \difficulty{1}
-Variant using a different exponentiation operator.
+Let $q \ge 2$ be an integer and let $p$ be a real number with $0 < p < 1$. Then the
+base-$q$ power of the $q$-ary entropy $H_q(p)$ admits the closed form
+\[
+q^{\,H_q(p)} \;=\; (q-1)^{p}\, p^{-p}\,(1-p)^{-(1-p)}.
+\]
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analytic helpers}
 
-\begin{lemma}[Square-root/floor inequality]
+\begin{lemma}[Square root minus square root of floor is at most one]
 \lean{ErrorCorrectingCodes.Codeword.sqrt_sub_sqrt_floor_le_one}
 \label{ErrorCorrectingCodes.Codeword.sqrt_sub_sqrt_floor_le_one}
 \leanok
 \difficulty{5}
-For $x\ge 0$,
+For every real number $x \ge 0$,
 \[
-\sqrt{x} - \sqrt{\lfloor x\rfloor} \;\le\; 1.
+\sqrt{x} - \sqrt{\lfloor x \rfloor} \le 1,
 \]
+where $\lfloor x \rfloor$ denotes the greatest integer not exceeding $x$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Stirling-based binomial lower bound}
 
-\begin{lemma}[Asymptotic lower bound on binomial term]
+\begin{lemma}[Asymptotic lower bound on a weighted binomial coefficient]
 \lean{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
 \label{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p072-b001}
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{7}
-For $0<p<1$ and $q\ge 2$, eventually
+Fix a real number $p$ with $0 < p < 1$ and an integer $q \ge 2$, and let $H_q$ denote
+the $q$-ary entropy function. Then there is a function $\varepsilon \colon \bbn \to
+\bbr$ with $\varepsilon(n) = o(n)$ such that, for all sufficiently large $n$,
 \[
-\tbinom{n}{\lfloor np\rfloor}(q-1)^{pn}
-\;\ge\;
-q^{H_q(p)\,n - \varepsilon(n)},
-\quad \varepsilon(n) = o(n).
+\binom{n}{\lfloor np \rfloor}\,(q-1)^{pn} \;\ge\; q^{\,H_q(p)\,n \,-\, \varepsilon(n)}.
 \]
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Positivity of $q$-ary entropy}
 
-\begin{theorem}[Positivity of $q$-ary entropy]
+\begin{theorem}[Positivity of the $q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \label{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{5}
-For $q=|\alpha|$ and $0<p\le 1-1/q$,
+Let $\alpha$ be a finite alphabet with $q = \abs{\alpha}$ symbols, and let $p$ be a real
+number with $0 < p \le 1 - 1/q$. Then the $q$-ary entropy of $p$ is strictly positive:
 \[
-H_q(p) \;>\; 0.
+H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p) \;>\; 0.
 \]
 \end{theorem}
 
@@ -98,25 +112,29 @@ H_q(p) \;>\; 0.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Expansion of the $q$-ary entropy exponent]
+\begin{lemma}[Rearrangement of the $q$-ary entropy expression]
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}
 \label{ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}
 \leanok
 \difficulty{2}
-Algebraic rewrite of the $q$-ary entropy exponent: for $q\in\mathbb{N}$ and $p\in\mathbb{R}$,
+For every natural number $q$ and every real number $p$,
 \[
 p\,\log_q(q-1) - p\,\log_q p - (1-p)\,\log_q(1-p)
 =
-\log_q(q-1)\,p + \log_q p\,(-p) + \log_q(1-p)\,(-(1-p)).
+\log_q(q-1)\cdot p + \log_q p\cdot(-p) + \log_q(1-p)\cdot\bigl(-(1-p)\bigr),
 \]
+where $\log_q$ denotes the base-$q$ logarithm. That is, the three terms of the $q$-ary
+entropy expression may be rewritten by commuting each product and absorbing the
+subtractions into the sign of the multiplier.
 \end{lemma}
 
-\begin{lemma}[AM--GM for two nonnegative reals]
+\begin{lemma}[AM–GM inequality for two nonnegative reals]
 \lean{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum}
 \label{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum}
 \leanok
 \difficulty{3}
-For nonnegative reals $a,b\ge 0$, the geometric mean is at most the arithmetic mean:
+For any nonnegative real numbers $a, b \ge 0$, the geometric mean is at most the
+arithmetic mean:
 \[
 \sqrt{ab} \;\le\; \frac{a+b}{2}.
 \]
@@ -127,7 +145,8 @@ For nonnegative reals $a,b\ge 0$, the geometric mean is at most the arithmetic m
 \label{ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
 \leanok
 \difficulty{3}
-For $n\ge 0$,
+For every real number $n \ge 0$, the three square roots $\sqrt{2\pi n}$, $\sqrt{\pi/2}$,
+and $\sqrt{n}$ multiply to $\pi n$; that is,
 \[
 \sqrt{2\pi n}\,\cdot\,\sqrt{\pi/2}\,\cdot\,\sqrt{n} \;=\; \pi n.
 \]
@@ -138,15 +157,16 @@ For $n\ge 0$,
 \label{ErrorCorrectingCodes.Codeword.floor_np_pos}
 \leanok
 \difficulty{4}
-Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le n$, then $\lfloor np\rfloor > 0$.
+Let $p$ be a real number with $0 < p$ and $0 < 1 - p$, and set $N_2 = \lceil
+2/(p(1-p))\rceil + 1$. Then for every natural number $n$ with $N_2 \le n$, the floor
+$\lfloor np\rfloor$ is strictly positive, i.e. $\lfloor np\rfloor \ge 1$.
 \end{lemma}
 
-\begin{lemma}[Stirling-based ratio bound for the binomial term]
+\begin{lemma}[Stirling-type lower bound for a factorial ratio]
 \lean{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p072-b001}
 \label{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
 \leanok
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -193,13 +213,15 @@ Let $0<p$ and $0<1-p$, and set $N_2 = \lceil 2/(p(1-p))\rceil + 1$. If $N_2 \le 
     pdf-7251cb8e4bc5-p201-b005}
 \uses{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum, ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
 \difficulty{5}
-Let $a,b,n\in\mathbb{N}$ with $a,b>0$, $a+b=n$, and let $c>0$. Suppose the Stirling-type bound
+Let $a,b,n\in\bbn$ with $a>0$, $b>0$, and $a+b=n$, and let $c>0$ be a real number.
+Suppose the factorial product $a!\,b!$ admits the Stirling-type upper bound
 \[
-a!\,\cdot\,b! \;\le\; c\cdot\Big(\sqrt{2}\sqrt{a}\sqrt{\pi}\,(a/e)^a\cdot\sqrt{2}\sqrt{b}\sqrt{\pi}\,(b/e)^b\Big)
+a!\,b! \;\le\;
+c\cdot\Bigl(\sqrt{2}\,\sqrt{a}\,\sqrt{\pi}\,(a/e)^{a}\Bigr)\Bigl(\sqrt{2}\,\sqrt{b}\,\sqrt{\pi}\,(b/e)^{b}\Bigr).
 \]
-holds. Then
+Then the ratio $n!/(a!\,b!)$ is bounded below by
 \[
-\frac{n^n}{a^a\,b^b}\,\Big/\,\big(c\,\sqrt{\pi/2}\,\sqrt{n}\big)
+\frac{n^{n}}{a^{a}\,b^{b}}\cdot\frac{1}{c\,\sqrt{\pi/2}\,\sqrt{n}}
 \;\le\;
 \frac{n!}{a!\,b!}.
 \]

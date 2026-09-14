@@ -58,52 +58,73 @@ An auxiliary construction: given $d$ binary query functions $\mathrm{query}_i : 
 from Alice in sequence and then runs $Q$ on the collected bit pattern.
 \end{definition}
 
-\begin{theorem}[Run of complete Alice tree]
+\begin{theorem}[Evaluation of the complete Alice-query tree]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{4}
-For all inputs $x : X$ and $y : Y$, executing \texttt{completeTreeAlice} gives the same
-output as running $Q$ applied to the bit pattern $i \mapsto \mathrm{query}_i(x)$, i.e.\
-$(\mathrm{completeTreeAlice}\,d\,\mathrm{query}\,Q).\mathrm{run}\,x\,y =
-(Q\,(\lambda i,\,\mathrm{query}_i\,x)).\mathrm{run}\,x\,y$.
+Fix a depth $d \in \bbn$, a family of binary query functions $\mathrm{query}_i : X \to
+\mathrm{Bool}$ for $i \in \mathrm{Fin}\,d$, and a family of deterministic protocols
+$Q(b)$ indexed by bit patterns $b : \mathrm{Fin}\,d \to \mathrm{Bool}$. Then for every
+pair of inputs $x : X$ and $y : Y$, the protocol that first has Alice read the $d$ query
+bits in sequence and then runs $Q$ on the collected pattern evaluates on $(x,y)$ to the
+same value as the single protocol $Q\bigl(i \mapsto \mathrm{query}_i(x)\bigr)$ evaluated
+on $(x,y)$.
 \end{theorem}
 
-\begin{theorem}[Complexity of complete Alice tree]
+\begin{theorem}[Complexity of the complete Alice-query tree]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{5}
-The complexity of \texttt{completeTreeAlice} equals $d$ plus the supremum of the complexities
-of all leaf protocols: $(\mathrm{completeTreeAlice}\,d\,\mathrm{query}\,Q).\mathrm{complexity}
-= d + \sup_{\mathrm{bits}} (Q\,\mathrm{bits}).\mathrm{complexity}$.
+Fix a natural number $d$, together with binary query functions
+$\mathrm{query}_0,\dots,\mathrm{query}_{d-1} : X \to \mathrm{Bool}$ and a family of
+deterministic protocols $Q(\mathrm{bits})$ indexed by the bit patterns $\mathrm{bits} :
+\mathrm{Fin}\,d \to \mathrm{Bool}$. Form the protocol that has Alice read the bits
+$\mathrm{query}_0(x),\dots,\mathrm{query}_{d-1}(x)$ in sequence and then run $Q$ on the
+collected pattern. Its communication complexity is
+\[
+d + \max_{\mathrm{bits} : \mathrm{Fin}\,d \to \mathrm{Bool}} \;
+\mathrm{complexity}\bigl(Q(\mathrm{bits})\bigr),
+\]
+the maximum being taken over all $2^d$ length-$d$ bit patterns.
 \end{theorem}
 
-\begin{theorem}[Binary encoding of Alice's finite-type message]
+\begin{theorem}[Binary encoding of a finite-alphabet message from Alice]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{6}
-Given a finite nonempty type $\beta$, a function $f : X \to \beta$, and a family of binary
-protocols $Q : \beta \to \mathrm{Protocol}\,X\,Y\,\alpha$, there exists a binary protocol $R$
-such that $R.\mathrm{run}\,x\,y = (Q(f(x))).\mathrm{run}\,x\,y$ for all $x,y$, and whose
-complexity satisfies $R.\mathrm{complexity} = \lceil \log_2 |\beta| \rceil +
-\sup_{b \in \beta}(Q\,b).\mathrm{complexity}$, constructed via a complete binary tree
-encoding of $\beta$.
+Let $X$, $Y$, and $\alpha$ be types, let $\beta$ be a finite nonempty type, let $f : X
+\to \beta$ be a function, and let $Q : \beta \to \mathrm{Protocol}\,X\,Y\,\alpha$ assign
+to each value $b \in \beta$ a deterministic two-party communication protocol. Then there
+exists a deterministic protocol $R$ over the same input types such that, on every pair
+of inputs $x : X$ and $y : Y$, running $R$ yields the same output as running the
+protocol $Q(f(x))$, and the communication complexity of $R$ equals
+\[
+\lceil \log_2 \abs{\beta} \rceil \;+\; \max_{b \in \beta}
+\operatorname{complexity}(Q(b)),
+\]
+where $\abs{\beta}$ denotes the cardinality of $\beta$.
 \end{theorem}
 
-\begin{theorem}[Existence of binary simulation]
+\begin{theorem}[Binary simulation of a finite-message protocol]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swap_complexity, CommunicationComplexity.Deterministic.Protocol.swap_run}
 \difficulty{4}
-For every finite-message protocol $p$, there exists a binary protocol $P$ such that
-$P.\mathrm{run} = p.\mathrm{run}$ and $P.\mathrm{complexity} = p.\mathrm{complexity}$.
-This is the key existence result underlying \texttt{toProtocol}.
+Let $X$, $Y$, and $\alpha$ be types, and let $p$ be a finite-message two-party protocol
+over inputs $X$ (Alice) and $Y$ (Bob) with output type $\alpha$, in which each message
+ranges over an arbitrary finite nonempty type and a $\beta$-valued message is charged
+$\lceil \log_2 |\beta| \rceil$ bits. Then there exists a binary deterministic protocol
+$P$ over the same input types $X$, $Y$ and output type $\alpha$ — one in which every
+message is a single bit — that computes the same function, i.e.\ $P$ and $p$ return the
+same output on every pair of inputs, and has exactly the same communication complexity
+as $p$.
 \end{theorem}
 
 \begin{definition}[Conversion to binary protocol]
@@ -116,24 +137,31 @@ A noncomputable function that converts a finite-message protocol $p$ into a bina
 encoding each $\beta$-valued message as $\lceil \log_2 |\beta| \rceil$ bits.
 \end{definition}
 
-\begin{theorem}[Conversion preserves run behavior]
+\begin{theorem}[Conversion to binary protocol preserves output]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-For every finite-message protocol $p$, the converted binary protocol satisfies
-$(\texttt{toProtocol}\,p).\mathrm{run} = p.\mathrm{run}$ as functions $X \to Y \to \alpha$.
+Let $p$ be a finite-message deterministic two-party protocol over input types $X$ and
+$Y$ with output type $\alpha$, and let $q$ be the binary protocol obtained by converting
+$p$ (encoding each message drawn from a finite nonempty type $\beta$ as $\lceil \log_2
+\abs{\beta} \rceil$ bits). Then $q$ computes the same function as $p$: for every pair of
+inputs $x \in X$ and $y \in Y$, running $q$ on $(x, y)$ returns the same value in
+$\alpha$ as running $p$ on $(x, y)$.
 \end{theorem}
 
-\begin{theorem}[Conversion preserves complexity]
+\begin{theorem}[Conversion to a binary protocol preserves complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{1}
-For every finite-message protocol $p$, the converted binary protocol satisfies
-$(\texttt{toProtocol}\,p).\mathrm{complexity} = p.\mathrm{complexity}$.
+Let $p$ be a finite-message deterministic two-party communication protocol over input
+types $X$ (Alice) and $Y$ (Bob) with outputs in $\alpha$, in which each message is an
+element of an arbitrary finite nonempty type. Its conversion into a binary protocol,
+obtained by encoding every $\beta$-valued message as $\lceil \log_2 \abs{\beta} \rceil$
+bits, has communication complexity equal to that of $p$.
 \end{theorem}
 
 \begin{definition}[Embedding binary protocols as finite-message protocols]
@@ -146,37 +174,45 @@ Boolean message as an element of $\beta = \mathrm{Bool}$, giving a
 \texttt{CommunicationComplexity.Deterministic.Protocol} $X\,Y\,\alpha$ with the same tree structure.
 \end{definition}
 
-\begin{theorem}[Embedding preserves run behavior]
+\begin{theorem}[Embedding preserves protocol output]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{2}
-For every binary protocol $p$ and inputs $x : X$, $y : Y$,
-$(\texttt{ofProtocol}\,p).\mathrm{run}\,x\,y = p.\mathrm{run}\,x\,y$.
+Let $X$ and $Y$ be the input types of Alice and Bob, let $\alpha$ be an output type, and
+let $p$ be a deterministic binary two-party communication protocol producing values in
+$\alpha$. Regard $p$ as a finite-message protocol by treating each of its Boolean
+messages as an element of the two-element type. Then for all inputs $x \in X$ and $y \in
+Y$, executing this embedded finite-message protocol on $x$ and $y$ yields the same value
+in $\alpha$ as executing $p$ directly on $x$ and $y$.
 \end{theorem}
 
-\begin{theorem}[Embedding preserves complexity]
+\begin{theorem}[Embedding binary protocols preserves complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{2}
-For every binary protocol $p$,
-$(\texttt{ofProtocol}\,p).\mathrm{complexity} = p.\mathrm{complexity}$, using the fact that
-$\lceil \log_2 |\mathrm{Bool}| \rceil = 1$.
+Let $p$ be a deterministic binary two-party communication protocol over input types $X$
+and $Y$ with output type $\alpha$, and let its embedding into the finite-message
+framework send each Boolean message as an element of $\{\mathtt{false},\mathtt{true}\}$.
+Then the communication complexity of the embedded finite-message protocol equals the
+communication complexity of $p$.
 \end{theorem}
 
-\begin{theorem}[Every binary protocol embeds into the generalized model]
+\begin{theorem}[Realizing binary protocols as finite-message protocols]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-For every binary protocol $p$, there exists a finite-message protocol $P$ with
-$P.\mathrm{run} = p.\mathrm{run}$ and $P.\mathrm{complexity} = p.\mathrm{complexity}$.
-Together with \texttt{toProtocol\_exists}, this shows the two models are equivalent up to
-complexity.
+Let $X$ and $Y$ be the input types of Alice and Bob and let $\alpha$ be an output type.
+For every binary deterministic communication protocol $p$ over $X$, $Y$, and $\alpha$,
+there is a finite-message protocol $P$ over the same input and output types that
+computes the same output on every pair of inputs — that is, $\mathrm{run}(P) =
+\mathrm{run}(p)$ as functions of $x \in X$ and $y \in Y$ — and has the same
+communication complexity, $\mathrm{complexity}(P) = \mathrm{complexity}(p)$.
 \end{theorem}
 
 \begin{definition}[Pullback along input maps]
@@ -190,22 +226,32 @@ precomposing every message function with $f_X$ or $f_Y$ respectively, leaving th
 tree structure unchanged.
 \end{definition}
 
-\begin{theorem}[Pullback run behavior]
+\begin{theorem}[Execution commutes with pullback]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
 \difficulty{2}
-For all $x' : X'$ and $y' : Y'$,
-$(p.\mathrm{comap}\,f_X\,f_Y).\mathrm{run}\,x'\,y' = p.\mathrm{run}\,(f_X\,x')\,(f_Y\,y')$.
+Let $p$ be a finite-message deterministic communication protocol over input types $X$,
+$Y$ with output type $\alpha$, and let $f_X : X' \to X$ and $f_Y : Y' \to Y$ be maps
+into those input types. Then for every pair of inputs $x' : X'$ and $y' : Y'$, executing
+the pullback protocol $p.\mathrm{comap}\,f_X\,f_Y$ on $(x', y')$ yields the same output
+as executing $p$ on the transported inputs $(f_X(x'), f_Y(y'))$; that is,
+\[
+\mathrm{run}\bigl(p.\mathrm{comap}\,f_X\,f_Y\bigr)(x', y') \;=\;
+\mathrm{run}(p)\bigl(f_X(x'),\, f_Y(y')\bigr).
+\]
 \end{theorem}
 
-\begin{theorem}[Pullback preserves complexity]
+\begin{theorem}[Pullback preserves communication complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
 \difficulty{2}
-The pullback does not change the communication complexity:
-$(p.\mathrm{comap}\,f_X\,f_Y).\mathrm{complexity} = p.\mathrm{complexity}$.
+Let $p$ be a finite-message deterministic communication protocol over input types $X$
+and $Y$ with output type $\alpha$, and let $f_X : X' \to X$ and $f_Y : Y' \to Y$ be maps
+of input types. Then the pullback protocol obtained by precomposing every message
+function of $p$ with $f_X$ or $f_Y$ (as appropriate) has the same communication
+complexity as $p$.
 \end{theorem}

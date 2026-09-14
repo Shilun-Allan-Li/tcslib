@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yAfterSpecial_dualHardSample",
+ "key": "8d9196348df8bf68",
+ "kind": "theorem",
+ "title": "Duality exchanges Alice's prefix vector and Bob's suffix vector",
+ "statement": "Fix a coordinate count $n \\ge 1$ and let $\\omega$ be a sample of the hard distribution, with special coordinate $T$. Form the dual sample $\\omega^{*}$ by swapping the roles of Alice and Bob and reversing the coordinate order $i \\mapsto \\bar\\imath$. Then Bob's after-special vector of $\\omega^{*}$ — the vector whose entry at each coordinate $i$ is Bob's bit of $\\omega^{*}$ at $i$ when $i$ lies strictly after the special coordinate of $\\omega^{*}$, and is $\\mathrm{false}$ otherwise — equals the coordinate reversal of Alice's before-special vector of $\\omega$, whose entry at each coordinate $i$ is Alice's bit of $\\omega$ at $i$ when $i$ lies strictly before $T$, and is $\\mathrm{false}$ otherwise. Equivalently, for every coordinate $i$ the $i$-th entry of Bob's after-special vector of $\\omega^{*}$ agrees with the $\\bar\\imath$-th entry of Alice's before-special vector of $\\omega$.",
+ "hypotheses_covered": [
+  "n is a positive natural number (at least one coordinate)",
+  "omega is a hard-distribution sample"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Bob's after-special vector in the dual is Alice's before-special vector in reverse order."
+}

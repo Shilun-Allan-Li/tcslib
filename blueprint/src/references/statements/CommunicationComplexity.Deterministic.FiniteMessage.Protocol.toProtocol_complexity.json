@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity",
+ "key": "65b9cc3fa3976f9b",
+ "kind": "theorem",
+ "title": "Conversion to a binary protocol preserves complexity",
+ "statement": "Let $p$ be a finite-message deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with outputs in $\\alpha$, in which each message is an element of an arbitrary finite nonempty type. Its conversion into a binary protocol, obtained by encoding every $\\beta$-valued message as $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits, has communication complexity equal to that of $p$.",
+ "hypotheses_covered": [
+  "p is a finite-message protocol over input types X, Y and output type alpha"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every finite-message protocol $p$, the converted binary protocol satisfies\n$(\\texttt{toProtocol}\\,p).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.exists_multilinear_representative_on_rootCube",
+ "key": "c6592a0eadc8df80",
+ "kind": "theorem",
+ "title": "Polynomial representative on the root cube",
+ "statement": "Let $K$ be a field, let $\\omega \\in K$, and let $n$ be a natural number. Write $\\{1,\\omega\\}^n$ for the root cube, the set of vectors $x = (x_1,\\dots,x_n) \\in K^n$ with $x_i \\in \\{1,\\omega\\}$ for every $i$. Then for every function $f : \\{1,\\omega\\}^n \\to K$ there exists a polynomial $P \\in K[X_1,\\dots,X_n]$ such that $P(x_1,\\dots,x_n) = f(x)$ for all $x$ in the cube.",
+ "hypotheses_covered": [
+  "$K$ a field",
+  "$\\omega \\in K$ an element",
+  "$n$ a natural number",
+  "$f$ a function from the root cube $\\{1,\\omega\\}^n$ to $K$"
+ ],
+ "confidence": "high",
+ "caveat": "The declaration is named \"multilinear representative\", but the Lean conclusion asserts only the existence of some multivariate polynomial agreeing with $f$ on the cube; it does not require that polynomial to be multilinear, so the prose does not claim multilinearity. The prime $p$ carried in the ambient variables does not appear in the statement and is omitted.",
+ "rubric": [],
+ "replaced": "Every function $f : \\{1,\\omega\\}^n \\to K$ agrees on the cube with the evaluation of some\npolynomial $P \\in K[X_1,\\dots,X_n]$, i.e.\\ $P(x) = f(x)$ for all $x$ in the cube."
+}

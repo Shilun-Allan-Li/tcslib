@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.roundtrip_inv_hC'",
+ "key": "0497748d7f3faf98",
+ "kind": "lemma",
+ "title": "Round-trip recovery of the restriction from a processed clause",
+ "statement": "Let $t$ be a term on $n$ variables, let $\\mathit{lits}$ be a list of literals each tagged with a position index, and let $\\mathit{path}$ be a list of variable–direction pairs. Let $\\rho_0$, $\\sigma$, and $\\sigma_{\\mathrm{dec}}$ be restrictions on $n$ variables, and suppose that every variable occurring in a literal of $\\mathit{lits}$ is free under $\\rho_0$; that every tagged literal in $\\mathit{lits}$ occurs at its recorded position in $t$; that $\\sigma$ is free at every variable that is free under $\\rho_0$; and that $\\sigma_{\\mathrm{dec}}$ agrees with $\\sigma$ at every variable that $\\rho_0$ fixes. Write $(\\mathit{path}', \\rho_0', \\sigma', a)$ for the result of processing $\\mathit{lits}$ along $\\mathit{path}$ starting from $\\rho_0$ and $\\sigma$, where $a$ is the accumulated list of (position, direction) pairs. Then for every variable $v$ that $\\rho_0'$ fixes, the restriction obtained by folding over $a$ — starting from $\\sigma_{\\mathrm{dec}}$ and, for each recorded pair with position $i$, freeing the variable of the literal at position $i$ in $t$ (and leaving the restriction unchanged when $i$ lies beyond the end of $t$) — agrees with $\\sigma$ at $v$.",
+ "hypotheses_covered": [
+  "every variable in a literal of lits is free under ρ₀ (hfree_lits)",
+  "every tagged literal in lits occurs at its recorded position in t (hmem_zip)",
+  "σ is free wherever ρ₀ is free (hE)",
+  "σ_dec agrees with σ wherever ρ₀ is fixed (hC)",
+  "v is a variable at which the processed restriction ρ₀' is fixed (hv)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the freeness and membership hypotheses on $\\mathit{lits}$ and the agreement of\n$\\sigma_{\\mathrm{dec}}$ with $\\sigma$ on variables set by $\\rho_0$, the $\\sigma$-fold over\nthe aux entries (which clears $l.\\mathrm{var}$ for each dropped head literal $l$) applied to\n$\\sigma_{\\mathrm{dec}}$ agrees with $\\sigma$ at every variable $v$ where the processed\nrestriction $(\\mathrm{processClauseLits}\\ \\mathit{lits}\\ \\mathit{path}\\ \\rho_0\\ \\sigma).2.1$\nis set."
+}

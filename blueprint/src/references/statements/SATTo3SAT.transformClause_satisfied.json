@@ -1,0 +1,17 @@
+{
+ "lean_name": "SATTo3SAT.transformClause_satisfied",
+ "key": "e37c58ac364b6c61",
+ "kind": "lemma",
+ "title": "Extended assignment satisfies the 3-clause encoding of a satisfied clause",
+ "statement": "Let $\\alpha$ be a truth assignment on a variable set $V$, and let $C$ be a clause over $V$ — a finite list of literals read as their disjunction — carrying the index $i$. Assume $\\alpha$ satisfies $C$, meaning at least one literal of $C$ is true under $\\alpha$. Extend $\\alpha$ to an assignment $\\alpha_3$ on the enlarged variable set consisting of the original variables of $V$ together with the auxiliary chain variables $y_{i,j}$: leave each original variable at its value under $\\alpha$, and set $y_{i,j}$ to true exactly when the first $j+2$ literals of $C$ are all false under $\\alpha$. Then every $3$-clause in the list obtained by encoding $C$ at index $i$ as $3$-clauses is satisfied by $\\alpha_3$.",
+ "hypotheses_covered": [
+  "α is a truth assignment on the variable set V",
+  "c_idx is the clause's index i",
+  "clause is a clause (list of literals) over V",
+  "the clause has at least one literal true under α"
+ ],
+ "confidence": "low",
+ "caveat": "The provided formal statement is truncated: the lemma's conclusion is a bare `sorry` inside an unfinished `let α₃ : Assignment (AuxVar V) := sorry`, so the actual claimed conclusion and the exact definition of α₃ are not present in the ground-truth snippet. I reconstructed the conclusion (every 3-clause of the encoding is satisfied by the extended assignment, with auxiliary variables valued by the `extraVal` rule) from the `current` statement and the upstream definitions rather than from the formal statement itself, so it cannot be fully verified against the Lean.",
+ "rubric": [],
+ "replaced": "If a clause has at least one true literal under $\\alpha$, then every 3-clause in its\nencoding $\\texttt{SATTo3SAT.transformClause}\\,c\\_idx\\,\\mathit{clause}$ is satisfied by\nthe local assignment $\\mathtt{extra}\\,c\\_idx\\,j \\mapsto \\texttt{SATTo3SAT.extraVal}\\,\\alpha\\,\\mathit{clause}\\,j$."
+}

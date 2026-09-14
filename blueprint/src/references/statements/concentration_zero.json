@@ -1,0 +1,17 @@
+{
+ "lean_name": "concentration_zero",
+ "key": "ccd57e5016709338",
+ "kind": "lemma",
+ "title": "Concentration bound at the zero vector",
+ "statement": "Let $\\mu$ be a probability measure on a measurable space $\\Omega$, let $\\omega \\mapsto A(\\omega)$ be a family of $k \\times d$ real matrices indexed by $\\Omega$, and let $\\varepsilon \\in \\bbr$. Then the probability that the zero vector $0 \\in \\bbr^d$ triggers the bad distortion event, namely that\n\\[\n  \\varepsilon\\,\\|0\\|^2 < \\bigl|\\,\\|A(\\omega)\\,0\\|^2 - \\|0\\|^2\\,\\bigr|,\n\\]\nsatisfies\n\\[\n  \\mu\\bigl\\{\\omega : \\varepsilon\\,\\|0\\|^2 < \\bigl|\\,\\|A(\\omega)\\,0\\|^2 - \\|0\\|^2\\,\\bigr|\\bigr\\}\n    \\;\\le\\; 2\\exp\\!\\Bigl(-\\tfrac{k\\,\\varepsilon^2}{8}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "$\\mu$ is a probability measure on a measurable space $\\Omega$",
+  "$\\omega \\mapsto A(\\omega)$ is a family of $k \\times d$ real matrices",
+  "$\\varepsilon$ is a real number",
+  "$k$ is the number of rows of the matrices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any probability measure $\\mu$ on $\\Omega$, any random matrix $A$, and any\n$\\varepsilon\\in\\mathbb{R}$,\n\\[\n  \\mu\\bigl\\{\\omega \\mid \\texttt{BadSingle}\\,\\varepsilon\\,(A\\,\\omega)\\,0\\bigr\\} = 0\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\frac{k\\,\\varepsilon^2}{8}\\Bigr).\n\\]\nThe bad event at $x=0$ is always empty because $\\varepsilon\\cdot 0 < |0-0|$\nsimplifies to $0 < 0$, which is false."
+}

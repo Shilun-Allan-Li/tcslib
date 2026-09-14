@@ -1,0 +1,15 @@
+{
+ "lean_name": "ZkFourier.toOmega_add",
+ "key": "489469743303e992",
+ "kind": "lemma",
+ "title": "Additivity of the root-of-unity embedding",
+ "statement": "Fix an integer $k \\ge 1$ and let $\\omega_k = e^{2\\pi i/k}$ be the primitive $k$-th root of unity. For $a \\in \\mathbb{Z}/k\\mathbb{Z}$ write $\\chi(a) = \\omega_k^{a}$, where the exponent is the canonical representative of $a$ in $\\{0, 1, \\ldots, k-1\\}$. Then for all $a, b \\in \\mathbb{Z}/k\\mathbb{Z}$,\n\\[\n\\chi(a + b) = \\chi(a)\\,\\chi(b),\n\\]\nso $\\chi$ is a homomorphism from the additive group $\\mathbb{Z}/k\\mathbb{Z}$ to the multiplicative group $\\mathbb{C}^{\\times}$.",
+ "hypotheses_covered": [
+  "k is nonzero (k ≥ 1)",
+  "a and b range over Z/kZ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $a, b : \\mathbb{Z}/k\\mathbb{Z}$,\n$\\omega_k^{a+b} = \\omega_k^a \\cdot \\omega_k^b$.\nThat is, $\\texttt{ZkFourier.toOmega}$ is a group homomorphism from\n$(\\mathbb{Z}/k\\mathbb{Z}, +)$ to $(\\mathbb{C}^\\times, \\cdot)$."
+}

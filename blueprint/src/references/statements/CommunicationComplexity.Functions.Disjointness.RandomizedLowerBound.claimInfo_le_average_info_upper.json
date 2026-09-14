@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo_le_average_info_upper",
+ "key": "4877e5986d104b29",
+ "kind": "theorem",
+ "title": "Claim-information bound for disjointness protocols",
+ "statement": "Fix a positive integer $n$ and let $p$ be a deterministic two-party communication protocol whose inputs are the pairs of subsets of $\\{1,\\dots,n\\}$ held by Alice and Bob in the set-disjointness problem. Draw a sample from the hard distribution on such inputs conditioned on the event that Alice's set $X$ and Bob's set $Y$ are disjoint, let $M$ be the transcript that $p$ produces on the resulting input pair, let $T$ be the special coordinate carried by the sample, and write $X_T$ and $Y_T$ for Alice's and Bob's bits at $T$; for a threshold coordinate, write $X_{<T}$, $X_{\\le T}$, $Y_{>T}$, $Y_{\\ge T}$ for the tuples of input bits at the coordinates strictly before, up to and including, strictly after, and from $T$ onward. Then, writing $C(p)$ for the communication complexity of $p$ (the worst-case number of bits exchanged) and $\\ln$ for the natural logarithm, the sum of the conditional mutual information of $X_T$ with $M$ given $(T, X_{<T}, Y_{\\ge T})$ and the conditional mutual information of $Y_T$ with $M$ given $(T, X_{\\le T}, Y_{>T})$ satisfies\n\\[\nI\\bigl(X_T ; M \\mid T, X_{<T}, Y_{\\ge T}\\bigr) + I\\bigl(Y_T ; M \\mid T, X_{\\le T}, Y_{>T}\\bigr) \\;\\le\\; \\frac{2\\, C(p)\\, \\ln 2}{n}.\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic protocol of the disjointness protocol type on length-n inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "The corrected claim information is at most the averaged full-vector transcript information coming from the entropy bound $H(M) ≤ ℓ$."
+}

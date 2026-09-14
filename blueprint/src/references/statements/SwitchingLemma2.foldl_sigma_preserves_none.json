@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.foldl_sigma_preserves_none",
+ "key": "a6c124b48d005382",
+ "kind": "lemma",
+ "title": "Folding never assigns a free variable",
+ "statement": "Let $t$ be a term on $n$ variables (a list of literals), let $(k_1,b_1),\\dots,(k_m,b_m)$ be a list of pairs in $\\bbn\\times\\mathrm{Bool}$, and let $\\rho$ be a restriction on $n$ variables. Process the entries left to right, starting from $\\rho$: for the entry $(k_i,b_i)$, delete the first $k_i$ literals of $t$; if nothing remains, leave the current restriction unchanged, and otherwise reset the variable of the first surviving literal to free. Then for every variable $v$ left free by $\\rho$, the restriction obtained at the end of this process still leaves $v$ free.",
+ "hypotheses_covered": [
+  "t is a term on n variables (list of literals)",
+  "entries is a list of pairs in ℕ × Bool",
+  "σ is a restriction on n variables",
+  "v is a variable",
+  "σ v = none (v is free in the starting restriction)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\sigma\\,v = \\mathrm{none}$, then folding the decoder's $\\sigma$-update over any list\nof entries still gives $\\mathrm{none}$ at $v$; the fold never sets a previously unset\nvariable to a value via the $\\sigma$-update."
+}

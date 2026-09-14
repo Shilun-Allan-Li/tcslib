@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.subsequent_step_dtDepth",
+ "key": "ddf474b5b5fb5033",
+ "kind": "theorem",
+ "title": "Decision-tree depth of restricted DNF gates",
+ "statement": "Fix an integer $n \\ge 1$ and a positive integer $l$, and let $\\phi_1, \\dots, \\phi_s$ be DNF formulas on $n$ Boolean variables, each of width at most $l$ and each written so that no variable occurs more than once in any single term — that is, no term repeats a literal, and no term contains two literals on the same variable. Let $p \\in \\bbr$ satisfy $0 < p \\le \\tfrac{1}{40 l}$ (so in particular $p \\le 1$). Then a Bernoulli$(p)$ random restriction $\\rho$ on the $n$ variables satisfies, with probability at least\n\\[\n  1 - s\\left(\\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\left(-\\tfrac{np}{3}\\right)\\right),\n\\]\nthat for every $i$ the restricted function $x \\mapsto \\phi_i$ evaluated on the coordinates left free by $\\rho$ (with the fixed coordinates set by $\\rho$) has decision-tree depth at most $l$.",
+ "hypotheses_covered": [
+  "a family of s DNF formulas on n variables",
+  "l is a positive integer",
+  "each DNF has width at most l",
+  "within each term, literals on the same variable are identical (no conflicting polarities)",
+  "each term has no duplicate literals",
+  "n is positive",
+  "p is positive",
+  "p ≤ 1/(40l)",
+  "p ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses, a Bernoulli$(p)$ restriction $\\rho$ leaves every one of\nthe $s_i$ width-$\\le l$ gates with restricted function of decision-tree depth at\nmost $l$, with probability at least\n$1-s_i\\cdot\\bigl((1/2)^l+\\exp(-np/3)\\bigr)$. This is the decision-tree-depth form\nof the one-step bound applied with width $l$."
+}

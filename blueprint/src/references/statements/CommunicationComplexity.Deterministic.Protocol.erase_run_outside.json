@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.erase_run_outside",
+ "key": "d36a47d28ef58df4",
+ "kind": "lemma",
+ "title": "Erasing a subprotocol preserves behaviour off its reach set",
+ "statement": "Let $p$ be a deterministic two-party communication protocol, and let $s$ be a subprotocol of $p$ (a rooted subtree of $p$). Form the erased protocol $\\mathrm{erase}(s,p)$, obtained from $p$ by collapsing the subtree $s$ to a single leaf. Then for every pair of inputs $x$ (Alice) and $y$ (Bob) that does not reach $s$, running the erased protocol and running $p$ produce the same output:\n\\[\n\\mathrm{run}\\bigl(\\mathrm{erase}(s,p)\\bigr)(x,y) = \\mathrm{run}(p)(x,y).\n\\]",
+ "hypotheses_covered": [
+  "s is a subprotocol of p (IsSubprotocol s p)",
+  "the pair (x, y) does not reach the subprotocol s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $(x, y)$ does not reach the subprotocol $s$ of $p$, then\n$(\\texttt{erase}\\;\\texttt{hsp}).\\texttt{run}\\;x\\;y = p.\\texttt{run}\\;x\\;y$."
+}

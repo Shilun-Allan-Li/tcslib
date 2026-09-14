@@ -1,0 +1,18 @@
+{
+ "lean_name": "RestrictionFourier.expectation_fourierCoeff_restrictBF",
+ "key": "5ad3fd50feacda31",
+ "kind": "theorem",
+ "title": "Expected Fourier coefficient under a random restriction",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function, let $S\\subseteq[n]$ be a frequency set, and let $p\\in\\bbr$. For a restriction $\\rho$ on $n$ variables, write $f_\\rho$ for the restricted function and $k(\\rho)$ for the number of free variables of $\\rho$. Summing the Fourier coefficient $\\widehat{f_\\rho}(S)$ over all restrictions $\\rho$, each weighted by its Bernoulli weight $p^{k(\\rho)}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-k(\\rho)}$, gives\n\\[\n  \\sum_{\\rho} p^{k(\\rho)}\\left(\\tfrac{1-p}{2}\\right)^{\\,n-k(\\rho)}\\widehat{f_\\rho}(S)\n  \\;=\\; p^{\\abs{S}}\\,\\hat f(S).\n\\]\n(When $0\\le p\\le 1$ these weights form the distribution of a Bernoulli$(p)$-random restriction, and the left-hand side is the expectation $\\E_\\rho[\\widehat{f_\\rho}(S)]$.)",
+ "hypotheses_covered": [
+  "p is a real parameter",
+  "f is a Boolean function of arity n",
+  "S is a subset of [n]",
+  "sum ranges over all restrictions on n variables",
+  "each restriction weighted by its Bernoulli weight"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under a Bernoulli($p$)-random restriction $\\rho$, the expected Fourier coefficient of the\nrestricted function at $S$ is\n\\[\n  \\E_\\rho\\bigl[\\widehat{f_\\rho}(S)\\bigr] \\;=\\; p^{\\abs{S}}\\cdot \\widehat{f}(S),\n\\]\nthe expectation being the $\\mathrm{bernoulliRestrWeight}\\,p$-weighted sum over all\nrestrictions."
+}

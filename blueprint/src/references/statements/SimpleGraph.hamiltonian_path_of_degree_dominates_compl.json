@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.hamiltonian_path_of_degree_dominates_compl",
+ "key": "8c66d7d8a21a7980",
+ "kind": "theorem",
+ "title": "Degree-domination criterion for a Hamiltonian path (Clapham Ex. 4.2.5(a))",
+ "statement": "Let $G$ be a finite simple graph on $n$ vertices with complement $G^{c}$, and arrange the vertex degrees of each graph in nondecreasing order, writing $d_{0} \\le d_{1} \\le \\cdots \\le d_{n-1}$ for the sorted degree sequence of $G$ and $d'_{0} \\le d'_{1} \\le \\cdots \\le d'_{n-1}$ for that of $G^{c}$. If $d'_{m} \\le d_{m}$ for every index $m$ with $2m \\le n$, then $G$ has a Hamiltonian path: there are vertices $a$ and $b$ and a walk from $a$ to $b$ that visits every vertex of $G$ exactly once.",
+ "hypotheses_covered": [
+  "G is a finite simple graph on n vertices",
+  "degrees of G listed in nondecreasing order (σ sorts G-degrees)",
+  "degrees of the complement G^c listed in nondecreasing order (τ sorts G^c-degrees)",
+  "d'_m ≤ d_m for every index m with 2m ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Ex 4.2.5(a) (Clapham): if \\texttt{G} dominates \\texttt{G$^{c}$} on the lower half of the\nsorted\ndegree sequence, \\texttt{G} has a Hamilton path.\n\n\\textbf{4.2.5} (a) Let $G$ be a simple graph with degree sequence $(d_1, d_2, \\ldots,\nd_\\nu)$ and let $G^c$ have degree sequence $(d_1', d_2', \\ldots, d_\\nu')$ where $d_1 \\le\nd_2 \\le \\ldots \\le d_\\nu$ and $d_1' \\le d_2' \\le \\ldots \\le d_\\nu'$. Show that if $d_m\n\\ge d_m'$ for all $m \\le \\nu/2$, then $G$ has a Hamilton path."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.bob_to_alice",
+ "key": "b4fe693ad9b59289",
+ "kind": "theorem",
+ "title": "Turning a Bob-rooted protocol into a role-swapped protocol",
+ "statement": "Let $X$ and $Y$ be the input types of Alice and Bob and let $\\alpha$ be the output type. Fix a function $f : Y \\to \\mathrm{Bool}$ together with a family of deterministic communication protocols $P(\\mathtt{false})$ and $P(\\mathtt{true})$, and let $R$ be the protocol whose root is a bob node: on inputs $x$ (Alice) and $y$ (Bob) it computes the bit $f(y)$ and then runs $P(f(y))$. Then there is a deterministic communication protocol $q$ with the roles of Alice and Bob interchanged — Alice's input drawn from $Y$ and Bob's from $X$ — such that for all $x$ and $y$, running $q$ on Alice-input $y$ and Bob-input $x$ yields the same output value as running $R$ on Alice-input $x$ and Bob-input $y$, and moreover $q$ has the same communication complexity as $R$.",
+ "hypotheses_covered": [
+  "a branching function f : Y → Bool",
+  "a bit-indexed family of subprotocols P over input types X and Y",
+  "R is the bob-rooted protocol formed from f and P"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any bob-rooted protocol $\\texttt{bob}\\;g\\;P$ over $X \\times Y$, there exists a protocol\n$q$ over $Y \\times X$ such that $q.\\texttt{run}\\;y\\;x = (\\texttt{bob}\\;g\\;P).\\texttt{run}\\;x\\;y$\nfor all $x, y$, and $q.\\texttt{complexity} = (\\texttt{bob}\\;g\\;P).\\texttt{complexity}$.\nThis allows reducing the alice case to the bob case in inductive arguments."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.Protocol.toDeterministic_complexity",
+ "key": "42b258dc6f09f4bf",
+ "kind": "theorem",
+ "title": "Fixing shared randomness preserves communication complexity",
+ "statement": "Let $p$ be a public-coin communication protocol over a shared randomness space $\\Omega$, with Alice's private input in $X$, Bob's in $Y$, and output in $\\alpha$, and let $\\omega \\in \\Omega$ be any outcome of the shared randomness. Then the communication complexity of the deterministic protocol obtained from $p$ by fixing the shared randomness to $\\omega$ equals the communication complexity of $p$ itself.",
+ "hypotheses_covered": [
+  "p is a public-coin protocol over randomness space Ω with inputs in X and Y and output in α",
+  "ω is an element of Ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fixing the shared randomness does not change the communication complexity:\n$(p.\\mathrm{toDeterministic}\\,\\omega).\\mathrm{complexity} = p.\\mathrm{complexity}$\nfor every $\\omega : \\Omega$."
+}

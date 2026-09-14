@@ -1,0 +1,17 @@
+{
+ "lean_name": "ZkBLR.BLR_soundness_general",
+ "key": "69e51f06f27ab282",
+ "kind": "lemma",
+ "title": "BLR soundness over $\\mathbb{Z}_k$",
+ "statement": "Let $k \\ge 2$, and let $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$ be normalized, so that $f(0) = 0$. Fix a real number $\\varepsilon$ with $0 \\le \\varepsilon \\le 1$, and suppose $f$ is $\\varepsilon$-far from linear: for every linear function $g : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$ (one satisfying $g(x+y) = g(x)+g(y)$ for all $x,y$), the fraction of inputs on which $f$ and $g$ disagree is at least $\\varepsilon$. Then the acceptance probability of the BLR linearity test, taken over independent uniform $x, y \\in \\mathbb{Z}_k^n$, obeys\n\\[\n  \\Pr_{x,y}\\bigl[f(x+y) = f(x)+f(y)\\bigr]\n  \\;\\le\\; 1 - \\frac{\\varphi(k)}{k}\\bigl(1 - \\cos(2\\pi/k)\\bigr)\\,\\varepsilon,\n\\]\nwhere $\\varphi$ denotes Euler's totient function.",
+ "hypotheses_covered": [
+  "k ≥ 2",
+  "f normalized: f(0) = 0",
+  "0 ≤ ε ≤ 1",
+  "dist(f,g) ≥ ε for every linear g"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k \\ge 2$, if $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$ is $\\varepsilon$-far\nfrom linear (normalized), then\n\\[\n  \\Pr[{\\rm BLR\\ accepts}\\ f]\n  \\;\\le\\; 1 - \\frac{\\varphi(k)}{k}\\bigl(1-\\cos(2\\pi/k)\\bigr)\\varepsilon,\n\\]\nwhere $\\varphi(k)$ denotes Euler's totient function."
+}

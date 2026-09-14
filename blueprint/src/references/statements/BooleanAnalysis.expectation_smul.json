@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.expectation_smul",
+ "key": "3e5f77b7d1269e5a",
+ "kind": "lemma",
+ "title": "Homogeneity of the expectation operator",
+ "statement": "Let $n$ be an arity and let $i$ be one of its coordinates. For every scalar $c \\in \\bbr$ and every Boolean function $f : \\{0,1\\}^n \\to \\bbr$, applying the expectation operator in direction $i$ to the scaled function $c\\,f$ yields $c$ times the expectation operator applied to $f$:\n\\[\n  E_i(c\\,f) = c\\,E_i f.\n\\]",
+ "hypotheses_covered": [
+  "arity n and coordinate direction i : Fin n",
+  "scalar c : ℝ",
+  "Boolean function f : {0,1}^n → ℝ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The expectation operator commutes with scalar multiplication:\n$E_i(c\\cdot f) = c\\cdot E_i f$ for $c\\in\\bbr$."
+}

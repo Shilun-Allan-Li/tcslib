@@ -1,0 +1,19 @@
+{
+ "lean_name": "Kruskal.reduce_to_rest",
+ "key": "11684b64338f16c6",
+ "kind": "lemma",
+ "title": "Dropping a redundant edge from a candidate set",
+ "statement": "Let $\\mathit{uf}$ be a union-find state on $n$ nodes, let $e$ be a weighted edge with endpoints $u$ and $v$, and let $\\mathit{rest}$ and $S$ be lists of weighted edges. Suppose every edge of $S$ occurs in the list $e :: \\mathit{rest}$ formed by prepending $e$ to $\\mathit{rest}$; that merging all edges of $S$ into $\\mathit{uf}$ induces the same partition of the nodes as merging all edges of $\\mathit{rest}$ into $\\mathit{uf}$; and that $e$ is already redundant for $\\mathit{uf}$, meaning $\\mathit{uf}(u) = \\mathit{uf}(v)$. Then there exists a list $S'$ of weighted edges, every one of which occurs in $\\mathit{rest}$, such that merging all edges of $S'$ into $\\mathit{uf}$ induces the same partition as merging all edges of $\\mathit{rest}$, and the total weight of $S'$ is at most the total weight of $S$.",
+ "hypotheses_covered": [
+  "uf is a union-find state on n nodes",
+  "e is a weighted edge with endpoints u, v",
+  "rest and S are lists of weighted edges",
+  "every edge of S lies in e :: rest",
+  "mergeAll of S has the same partition as mergeAll of rest",
+  "e is redundant: uf(u) = uf(v)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathit{uf}$ be a union--find state, $e$ an edge, and $\\mathit{rest}, S$ edge lists\nwith every element of $S$ lying in $e :: \\mathit{rest}$, such that\n$\\mathit{uf}.\\mathtt{mergeAll}\\,S$ and $\\mathit{uf}.\\mathtt{mergeAll}\\,\\mathit{rest}$\ninduce the same partition. If $e$ is redundant for $\\mathit{uf}$, i.e.\\\n$\\mathit{uf}\\,e.u = \\mathit{uf}\\,e.v$, then there exists a list $S'$ all of whose edges\nlie in $\\mathit{rest}$, such that $\\mathit{uf}.\\mathtt{mergeAll}\\,S'$ induces the same\npartition as $\\mathit{uf}.\\mathtt{mergeAll}\\,\\mathit{rest}$ and\n$\\mathtt{totalWeight}\\,S' \\leq \\mathtt{totalWeight}\\,S$."
+}

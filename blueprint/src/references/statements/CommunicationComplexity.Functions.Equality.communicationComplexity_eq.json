@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Equality.communicationComplexity_eq",
+ "key": "b1cfbbdb69263f37",
+ "kind": "theorem",
+ "title": "Exact deterministic complexity of equality",
+ "statement": "For a natural number $n$, let $\\mathrm{equality}_n$ denote the two-party Boolean function on $n$-bit strings that returns $\\mathtt{true}$ precisely when Alice's input $x \\in \\mathrm{BoolInput}(n)$ equals Bob's input $y \\in \\mathrm{BoolInput}(n)$. Its deterministic communication complexity, measured in $\\bbn_\\infty$ as the least worst-case number of bits exchanged by any deterministic protocol computing it, is\n\\[\n  D(\\mathrm{equality}_n) \\;=\\;\n  \\begin{cases}\n    0 & \\text{if } n = 0,\\\\\n    n + 1 & \\text{otherwise.}\n  \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "n : ℕ is an arbitrary natural number",
+  "value is 0 when n = 0",
+  "value is n + 1 when n ≠ 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe deterministic communication complexity of the equality function on $n$-bit\nstrings is\n\\[\n  D(\\mathrm{equality}_n) \\;=\\; \\begin{cases} 0 & \\text{if } n = 0, \\\\ n + 1 & \\text{otherwise.} \\end{cases}\n\\]"
+}

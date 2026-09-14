@@ -1,0 +1,17 @@
+{
+ "lean_name": "DecisionTree.coeffs_mul_two_pow_int",
+ "key": "3594c06bfb8f2a31",
+ "kind": "lemma",
+ "title": "Dyadic granularity of decision-tree Fourier coefficients",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and write $\\mathrm{coeffs}(T) : \\mathcal{P}(\\{0,\\dots,n-1\\}) \\to \\bbr$ for its recursively defined coefficient function. If $k$ is a natural number with $\\mathrm{depth}(T) \\le k$, then for every set $S$ of variables the scaled coefficient $\\mathrm{coeffs}(T)(S)\\cdot 2^{k}$ is an integer; that is, there exists $m \\in \\bbz$ with $\\mathrm{coeffs}(T)(S)\\cdot 2^{k} = m$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables",
+  "k is a natural number",
+  "depth(T) ≤ k",
+  "S is a subset of the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $T.\\mathrm{depth} \\le k$, then for every $S$ there is an integer $m$ with\n$\\mathrm{coeffs}\\,T\\,S \\cdot 2^k = m$."
+}

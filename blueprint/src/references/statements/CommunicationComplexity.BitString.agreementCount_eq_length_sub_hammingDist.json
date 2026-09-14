@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.BitString.agreementCount_eq_length_sub_hammingDist",
+ "key": "3e63cfca799a7c83",
+ "kind": "theorem",
+ "title": "Agreement count as complement of Hamming distance",
+ "statement": "Let $x, y : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be two $n$-bit strings, with agreement count $\\mathrm{agr}(x,y)$ the number of coordinates on which they coincide and $d_H(x,y)$ their Hamming distance (the number of coordinates on which they differ). Then, as an identity of integers,\n\\[\n  \\mathrm{agr}(x,y) = n - d_H(x,y).\n\\]",
+ "hypotheses_covered": [
+  "x and y are n-bit strings (functions Fin n → Bool)",
+  "equality of integers after casting the natural-number agreement count to ℤ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two $n$-bit strings $x$ and $y$, the agreement count satisfies\n\\[\n  \\mathrm{agreementCount}(x, y) = n - \\mathrm{hammingDist}(x, y)\n\\]\nas an equality of integers (after casting the natural numbers to $\\mathbb{Z}$)."
+}

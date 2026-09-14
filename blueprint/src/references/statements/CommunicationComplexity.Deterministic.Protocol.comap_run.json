@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.comap_run",
+ "key": "a28755b33715db03",
+ "kind": "theorem",
+ "title": "Pull-back commutes with protocol execution",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn from $X$ and Bob's from $Y$, producing values in $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be arbitrary maps of input types. Then for all $x' \\in X'$ and $y' \\in Y'$, running the pull-back of $p$ along $f_X$ and $f_Y$ on the inputs $x'$ and $y'$ yields the same output as running $p$ itself on the transported inputs $f_X(x')$ and $f_Y(y')$.",
+ "hypotheses_covered": [
+  "p is a protocol over X, Y with outputs in α",
+  "input map f_X : X' → X",
+  "input map f_Y : Y' → Y",
+  "input x' ∈ X'",
+  "input y' ∈ Y'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$ over $X \\times Y$, input maps $f_X : X' \\to X$ and $f_Y : Y' \\to Y$,\nand inputs $x' : X'$, $y' : Y'$,\n\\[\n  (p.\\texttt{comap}\\;f_X\\;f_Y).\\texttt{run}\\;x'\\;y' \\;=\\; p.\\texttt{run}\\;(f_X\\,x')\\;(f_Y\\,y').\n\\]"
+}

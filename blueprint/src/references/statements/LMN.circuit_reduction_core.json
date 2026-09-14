@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.circuit_reduction_core",
+ "key": "449a7666a2b75d9d",
+ "kind": "theorem",
+ "title": "Switching-lemma bound on decision-tree depth after a random restriction",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function on $n\\ge 1$ variables, and let $d,s,w,l,t$ be natural numbers with $d\\ge 2$ and $s,w,l\\ge 1$. Suppose $f$ is computed by some Boolean circuit of depth at most $d$, size at most $s$, and fan-in at most $w$. Draw a random restriction $\\rho$ on the $n$ variables in which each variable is independently left free with probability\n\\[\n  p \\;=\\; \\frac{1}{40w}\\left(\\frac{1}{40l}\\right)^{d-2},\n\\]\nand is otherwise fixed to $0$ or to $1$, each with probability $(1-p)/2$; let $f\\restriction_\\rho$ denote the function of the free variables obtained by substituting the fixed values into $f$. Then the probability that $f\\restriction_\\rho$ cannot be computed by any decision tree of depth at most $t$ satisfies\n\\[\n  \\bbP\\!\\left[\\,\\text{decision-tree depth of } f\\restriction_\\rho > t\\,\\right]\n  \\;\\le\\; s\\left(\\tfrac12\\right)^{l} + \\left(\\tfrac12\\right)^{t}\n  + s\\,\\exp\\!\\left(-\\frac{n}{120w}\\right) + s\\,\\exp\\!\\left(-\\frac{n}{120l}\\right).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "n > 0",
+  "d >= 2",
+  "s > 0 (size bound)",
+  "w > 0 (fan-in bound)",
+  "l > 0 (width parameter)",
+  "f is computed by a circuit of depth <= d, size <= s, fan-in <= w",
+  "restriction is Bernoulli with parameter composedDelta(w,l,d)",
+  "threshold t on decision-tree depth"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe user-facing form of the iterative reduction: for $f$ computed by a circuit of depth at\nmost $d\\ge 2$, size at most $s$, and fan-in at most $w$, under $\\mathrm{composedDelta}(w,l,d)$,\n\\[\n  \\Pr\\!\\left[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,f\\,\\rho) > t\\right]\n  \\le s(1/2)^{l} + (1/2)^{t} + s\\,\\exp\\!\\left(-\\tfrac{n}{120w}\\right)\n    + s\\,\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]"
+}

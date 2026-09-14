@@ -1,0 +1,17 @@
+{
+ "lean_name": "Kruskal.processEdges_optimal",
+ "key": "521ce8520493fd0f",
+ "kind": "lemma",
+ "title": "Optimality of the greedy edge-selection sweep",
+ "statement": "Let $\\mathit{edges}$ be a list of weighted edges on $n$ vertices, sorted in nondecreasing order of weight, and let $\\mathit{uf}$ be a union-find state whose induced partition is exactly the reachability relation of some base edge list $\\mathit{base}$: for all vertices $a$ and $b$, the representatives $\\mathit{uf}(a)$ and $\\mathit{uf}(b)$ are equal if and only if $a$ and $b$ are joined by a path through the edges of $\\mathit{base}$. Let $S$ be any list of edges, each of which occurs in $\\mathit{edges}$, such that merging all of $S$ into $\\mathit{uf}$ and merging all of $\\mathit{edges}$ into $\\mathit{uf}$ yield the same partition of the vertices. Then the greedy sweep — which starts from $\\mathit{uf}$, scans $\\mathit{edges}$ in order, and keeps each edge exactly when its two endpoints lie in currently distinct components — produces a set of edges whose total weight is at most the total weight of $S$.",
+ "hypotheses_covered": [
+  "uf's partition equals the reachability relation of the base edge list",
+  "every edge of S occurs in edges",
+  "merging S into uf gives the same partition as merging all of edges into uf",
+  "edges is sorted in nondecreasing order of weight"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $uf$ be a union--find state whose classes are exactly the reachability classes of a\nbase edge list, and let the input list $edges$ be sorted by nondecreasing weight. Then\nfor any competing sublist $S \\subseteq edges$ that induces the same partition as $edges$\ndoes over $uf$, the greedy output satisfies\n\\[\n  \\mathrm{totalWeight}\\bigl(\\mathrm{processEdges}\\;edges\\;uf\\;[\\,]\\bigr)\n  \\;\\le\\; \\mathrm{totalWeight}(S).\n\\]"
+}

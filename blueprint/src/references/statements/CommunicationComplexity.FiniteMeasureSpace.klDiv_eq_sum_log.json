@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log",
+ "key": "52603750a276a4c6",
+ "kind": "theorem",
+ "title": "KL divergence on a finite space as a sum of log-ratios",
+ "statement": "Let $\\Omega$ be a finite discrete measurable space, and let $\\mu$ and $\\nu$ be finite measures on $\\Omega$. If there is a point $\\omega \\in \\Omega$ with $\\nu(\\{\\omega\\}) = 0$ but $\\mu(\\{\\omega\\}) \\neq 0$, then the Kullback–Leibler divergence is infinite:\n\\[\n  D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu) = \\infty.\n\\]\nOtherwise,\n\\[\n  D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu)\n  = \\left(\n      \\sum_{\\omega \\in \\Omega}\n        \\mu(\\{\\omega\\}) \\,\\log\\!\\frac{\\mu(\\{\\omega\\})}{\\nu(\\{\\omega\\})}\n      + \\nu(\\Omega) - \\mu(\\Omega)\n    \\right)_{+},\n\\]\nwhere each $\\mu(\\{\\omega\\})$, $\\nu(\\{\\omega\\})$, $\\mu(\\Omega)$, $\\nu(\\Omega)$ denotes the (real-valued) mass of the indicated set and $(x)_{+} = \\max(x, 0)$ is the nonnegative part.",
+ "hypotheses_covered": [
+  "Ω is a finite discrete measurable space",
+  "μ and ν are finite measures on Ω",
+  "case split: some singleton has ν-mass zero and nonzero μ-mass gives value ∞",
+  "otherwise the value is the nonnegative part (ENNReal.ofReal) of the sum of μ-mass times log of the mass ratio over all points, plus total ν-mass minus total μ-mass"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Omega$ be a finite measurable space and let $\\mu, \\nu$ be finite measures on $\\Omega$.\nThen\n\\[\n  D_{\\mathrm{KL}}(\\mu \\,\\|\\, \\nu)\n  = \\begin{cases}\n      \\infty & \\text{if } \\exists\\,\\omega,\\; \\nu\\{\\omega\\} = 0 \\text{ and } \\mu\\{\\omega\\} \\neq 0,\\\\[4pt]\n      \\mathrm{ofReal}\\!\\displaystyle\\left(\n        \\sum_{\\omega}\n          \\mu.\\mathrm{real}\\,\\{\\omega\\}\n          \\cdot\\log\\!\\frac{\\mu.\\mathrm{real}\\,\\{\\omega\\}}{\\nu.\\mathrm{real}\\,\\{\\omega\\}}\n        +\\nu.\\mathrm{real}\\,\\mathrm{univ}-\\mu.\\mathrm{real}\\,\\mathrm{univ}\n      \\right) & \\text{otherwise.}\n    \\end{cases}\n\\]"
+}

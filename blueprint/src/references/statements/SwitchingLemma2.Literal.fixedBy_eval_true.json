@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.Literal.fixedBy_eval_true",
+ "key": "9988c5ce705bfccb",
+ "kind": "lemma",
+ "title": "A fixed literal evaluates to true on any extension",
+ "statement": "Let $l$ be a literal on $n$ variables and let $\\rho$ be a restriction on those same variables that fixes $l$, meaning $\\rho$ assigns $l$'s variable the Boolean value that makes $l$ true. Then for every assignment $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$, the literal $l$ evaluates to true on the extension of $x$ along $\\rho$ (the assignment using $\\rho$'s fixed value on each set variable and $x$ on the free ones).",
+ "hypotheses_covered": [
+  "l is a literal on n variables",
+  "ρ is a restriction on n variables",
+  "ρ fixes l (assigns its variable the value making l true)",
+  "x is an arbitrary Boolean assignment"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a literal $l$ is fixed by $\\rho$, then for every $x$ it evaluates to true on the\nextended point: $l.\\mathrm{eval}(\\rho.\\mathrm{extend}\\,x) = \\mathrm{true}$."
+}

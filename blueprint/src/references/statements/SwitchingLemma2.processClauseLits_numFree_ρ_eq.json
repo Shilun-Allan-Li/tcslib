@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_numFree_ρ_eq",
+ "key": "1069844dd2efcdf2",
+ "kind": "lemma",
+ "title": "Free variables removed when processing a clause",
+ "statement": "Let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, and write $f(\\rho)$ for the number of free variables of a restriction $\\rho$. Present a single clause as a list of $k$ literals, each paired with its position index, and a decision-tree path as a list of $m$ variable–direction pairs. Suppose that every literal's variable is free in $\\rho_0$ and that the listed literals have pairwise distinct variables. Let $\\rho_0'$ be the updated restriction returned in place of $\\rho_0$ when these literals are processed against the path. Then\n\\[\nf(\\rho_0') + \\min(k, m) = f(\\rho_0),\n\\]\nso processing fixes exactly $\\min(k, m)$ of the previously free variables of $\\rho_0$.",
+ "hypotheses_covered": [
+  "ρ₀ and σ are restrictions on n variables",
+  "a clause given as a list of k literals paired with position indices",
+  "a decision-tree path given as a list of m variable–direction pairs",
+  "every literal's variable is free in ρ₀",
+  "the listed literals have pairwise distinct variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Provided each literal's variable is free in $\\rho_0$ and the variables are\npairwise distinct, the $\\rho_0$-component of $\\mathrm{processClauseLits}$ loses\nexactly $\\min(\\mathrm{lits.length}, \\mathrm{path.length})$ free variables."
+}

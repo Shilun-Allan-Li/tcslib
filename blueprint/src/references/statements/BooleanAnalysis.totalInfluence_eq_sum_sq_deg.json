@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.totalInfluence_eq_sum_sq_deg",
+ "key": "b63b4db9e2257c1e",
+ "kind": "theorem",
+ "title": "Total influence via Fourier coefficients",
+ "statement": "For every Boolean function $f\\colon\\{0,1\\}^n\\to\\bbr$, the total influence of $f$ is recovered from its Fourier--Walsh spectrum by\n\\[\n  I[f] \\;=\\; \\sum_{S\\subseteq[n]} \\abs{S}\\,\\hat f(S)^2,\n\\]\nwhere the sum ranges over all subsets $S$ of $[n]=\\{1,\\dots,n\\}$, $\\abs{S}$ is the cardinality of $S$, and $\\hat f(S)$ is the Fourier--Walsh coefficient of $f$ at frequency $S$.",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n (f : {0,1}^n → ℝ)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\n\\[\n  I[f] \\;=\\; \\sum_{S\\subseteq[n]} |S|\\,\\hat f(S)^2.\n\\]"
+}

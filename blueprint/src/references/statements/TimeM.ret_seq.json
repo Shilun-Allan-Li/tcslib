@@ -1,0 +1,18 @@
+{
+ "lean_name": "TimeM.ret_seq",
+ "key": "56bc0c9d6d9f8b10",
+ "kind": "theorem",
+ "title": "Return value of sequenced timed computations",
+ "statement": "Regard a value of type $\\mathrm{TimeM}\\,T\\,\\alpha$ as a timed computation, carrying both a return value in $\\alpha$ and an accumulated time cost in $T$, and suppose $T$ is equipped with an addition, so that such computations may be sequenced. Let $f$ be a timed computation whose return value is a function $\\alpha \\to \\beta$, and let $x$ be a thunk, that is, a function on the one-point type producing a timed computation with return value in $\\alpha$. Then the return value of the computation obtained by sequencing $f$ with $x$ equals the return value of $f$ applied to the return value of the computation $x(\\,)$ obtained by forcing the thunk.",
+ "hypotheses_covered": [
+  "time type carries an addition",
+  "f is a timed computation returning a function α → β",
+  "x is a thunk producing a timed computation returning α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For $f : \\texttt{TimeM T (α → β)}$ and $x : \\texttt{Unit → TimeM T α}$, the application\n$\\mathrm{seq}\\,f\\,x$ returns $f.\\mathrm{ret}\\bigl((x\\,()).\\mathrm{ret}\\bigr)$."
+}

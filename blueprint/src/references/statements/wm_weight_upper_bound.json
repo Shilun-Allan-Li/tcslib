@@ -1,0 +1,20 @@
+{
+ "lean_name": "wm_weight_upper_bound",
+ "key": "ff099d5c433b3441",
+ "kind": "theorem",
+ "title": "Geometric decay of a shrinking weight sequence",
+ "statement": "Fix an integer $n \\ge 1$ and a real number $\\beta$ with $0 < \\beta < 1$, and let $W \\colon \\bbn \\to \\bbr$ be a sequence of strictly positive reals with $W(0) = n$. Suppose that for every $k < M$ the sequence shrinks by at least the factor $(1+\\beta)/2$ at each step, in the sense that\n\\[\n  W(k+1) \\;\\le\\; W(k)\\cdot\\frac{1+\\beta}{2}.\n\\]\nThen\n\\[\n  W(M) \\;\\le\\; n\\left(\\frac{1+\\beta}{2}\\right)^{\\!M}.\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer (0 < n)",
+  "0 < β",
+  "β < 1",
+  "W maps naturals to reals",
+  "W(0) = n",
+  "W(k) > 0 for all k",
+  "W(k+1) ≤ W(k)·((1+β)/2) for all k < M"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same shrinkage hypothesis as \\texttt{wm\\_weight\\_shrinkage}, if additionally\n$n \\ge 1$ and the initial total weight satisfies $W(0) = n$, then\n\\[\n  W(M) \\;\\le\\; n \\cdot \\left(\\frac{1+\\beta}{2}\\right)^{\\!M}.\n\\]"
+}

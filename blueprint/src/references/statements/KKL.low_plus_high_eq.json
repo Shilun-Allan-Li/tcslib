@@ -1,0 +1,16 @@
+{
+ "lean_name": "KKL.low_plus_high_eq",
+ "key": "ece304be25afec29",
+ "kind": "lemma",
+ "title": "Low and high degree parts reconstruct the function",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function and let $k \\in \\bbn$ be a threshold level. Then for every point $x \\in \\{0,1\\}^n$ of the cube,\n\\[\n  f_{\\le k}(x) + f_{>k}(x) = f(x),\n\\]\nwhere $f_{\\le k}(x) = \\sum_{\\abs{S}\\le k}\\hat f(S)\\,\\chi_S(x)$ and $f_{>k}(x) = \\sum_{\\abs{S} > k}\\hat f(S)\\,\\chi_S(x)$ are the low- and high-degree parts of $f$ at level $k$. That is, splitting the Fourier–Walsh expansion of $f$ into frequencies of degree at most $k$ and degree greater than $k$ recovers $f$ exactly.",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n",
+  "k is a natural-number level",
+  "x is a point of the Boolean cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $f$, every level $k$ and every point $x$ of the cube,\n$f_{\\le k}(x) + f_{>k}(x) = f(x)$."
+}

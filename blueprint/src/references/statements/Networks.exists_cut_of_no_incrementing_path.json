@@ -1,0 +1,15 @@
+{
+ "lean_name": "Networks.exists_cut_of_no_incrementing_path",
+ "key": "9f39613fbd3460bb",
+ "kind": "theorem",
+ "title": "A cut matching the flow when no incrementing path exists",
+ "statement": "Let $N$ be a network with a single source $x$ and a single sink $y$, and let $f$ be a flow in $N$. Suppose $N$ contains no $f$-incrementing path from $x$ to $y$ — that is, no path from the source to the sink each of whose arcs is either a forward arc that is not yet saturated ($f < c$) or a backward arc carrying positive flow ($f > 0$). Then there is a cut $(S,\\bar S)$, a set of vertices with $x \\in S$ and $y \\notin S$, whose capacity equals the value of $f$: \\[ \\mathrm{val}(f) = \\mathrm{cap}(S,\\bar S). \\]",
+ "hypotheses_covered": [
+  "$f$ is a flow in $N$",
+  "$N$ has no $f$-incrementing path reaching the sink $y$"
+ ],
+ "confidence": "high",
+ "caveat": "The notion of an $f$-incrementing path is used in the statement but its formal definition is not included in the given snippet; it has been rendered in its standard (Ford–Fulkerson augmenting-path) sense.",
+ "rubric": [],
+ "replaced": "\\textbf{Extracted from the proof of theorem 11.2.}  \\emph{If \\texttt{N} contains no\n\\texttt{f}-incrementing path, then there is a cut \\texttt{K} with \\texttt{val f = cap K}.}"
+}

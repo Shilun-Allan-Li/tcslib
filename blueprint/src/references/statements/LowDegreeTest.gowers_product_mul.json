@@ -1,0 +1,17 @@
+{
+ "lean_name": "LowDegreeTest.gowers_product_mul",
+ "key": "6b5400063a265c8e",
+ "kind": "lemma",
+ "title": "Multiplicativity of the Gowers product",
+ "statement": "Let $f, g : \\{0,1\\}^n \\to \\bbr$ be Boolean functions, fix an order $k \\ge 0$, a base point $x \\in \\{0,1\\}^n$, and direction vectors $h_1, \\ldots, h_k \\in \\{0,1\\}^n$, and write $f \\cdot g$ for the pointwise product $(f \\cdot g)(y) = f(y)\\,g(y)$. Then the order-$k$ Gowers product of the product function equals the product of the two Gowers products:\n\\[\n  \\mathrm{GP}(f \\cdot g,\\, k,\\, x,\\, h_1, \\ldots, h_k)\n  = \\mathrm{GP}(f,\\, k,\\, x,\\, h_1, \\ldots, h_k)\n    \\cdot \\mathrm{GP}(g,\\, k,\\, x,\\, h_1, \\ldots, h_k).\n\\]",
+ "hypotheses_covered": [
+  "two Boolean functions f, g of arity n",
+  "an order k (a natural number)",
+  "a base point x in the hypercube",
+  "k direction vectors h_1,...,h_k in the hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f, g : \\{0,1\\}^n \\to \\bbr$,\n$\\mathrm{GP}(f \\cdot g, k, x, h_1,\\ldots,h_k)\n = \\mathrm{GP}(f, k, x, h_1,\\ldots,h_k) \\cdot \\mathrm{GP}(g, k, x, h_1,\\ldots,h_k)$."
+}

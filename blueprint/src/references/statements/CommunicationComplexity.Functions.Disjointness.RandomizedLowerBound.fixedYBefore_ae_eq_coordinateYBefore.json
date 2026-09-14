@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedYBefore_ae_eq_coordinateYBefore",
+ "key": "b2486867ad9ba3fd",
+ "kind": "theorem",
+ "title": "Almost-sure agreement of Bob's fixed prefix and coordinate-vector prefix",
+ "statement": "Fix a coordinate index $i$. Consider the hard distribution on samples $\\omega$ conditioned on the event that the generated input pair is disjoint. Then, almost surely with respect to this conditioned distribution, the two prefix functions on coordinates agree: the map sending each $j$ to Bob's bit $\\mathrm{yBit}(\\omega, j)$ when $j < i$ and to $\\mathrm{false}$ otherwise coincides with the map sending each $j$ to Bob's bit at coordinate $j$ of the generated disjoint coordinate vector of $\\omega$ when $j < i$ and to $\\mathrm{false}$ otherwise.",
+ "hypotheses_covered": [
+  "a fixed coordinate index $i$",
+  "the measure is the hard distribution conditioned on the disjointness event",
+  "agreement is asserted only almost surely (a.e.) with respect to that measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under $D$, Bob's fixed prefix is the corresponding coordinate-vector projection."
+}

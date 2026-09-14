@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.concaveOn_le_mixed_sum",
+ "key": "c8c5ed721f734323",
+ "kind": "lemma",
+ "title": "Jensen's inequality for a concave function",
+ "statement": "Let $S \\subseteq \\bbr$ and let $g : \\bbr \\to \\bbr$ be concave on $S$. Let $p = (p_1, \\dots, p_n)$ be a mixed strategy over $n$ actions, that is, a tuple of weights $p_j \\ge 0$ with $\\sum_{j=1}^{n} p_j = 1$, and let $y_1, \\dots, y_n$ be points of $S$. Then\n\\[\n  \\sum_{j=1}^{n} p_j\\, g(y_j) \\;\\le\\; g\\!\\left(\\sum_{j=1}^{n} p_j\\, y_j\\right).\n\\]",
+ "hypotheses_covered": [
+  "g is concave on S",
+  "p is a mixed strategy (weights nonnegative, summing to one)",
+  "each y_j lies in S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $g$ is concave on $S \\subseteq \\bbr$, $p \\in \\Delta_n$, and every $y_j \\in S$,\nthen\n\\[\n  \\sum_{j} p_j\\, g(y_j)\n  \\;\\leq\\;\n  g\\!\\left(\\sum_{j} p_j\\, y_j\\right).\n\\]"
+}

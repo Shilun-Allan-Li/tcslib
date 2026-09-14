@@ -1,0 +1,18 @@
+{
+ "lean_name": "KargerTrace.card_mul_le_sum_ite_of_lower_bound",
+ "key": "883ad8132802f4e6",
+ "kind": "lemma",
+ "title": "Counting lower bound for a conditional sum",
+ "statement": "Let $S$ be a finite set, let $p$ be a predicate on $S$, and let $f\\colon S \\to \\bbr$. Suppose $B \\in \\bbr$ is a lower bound for $f$ on the elements satisfying $p$, that is, $B \\le f(x)$ for every $x \\in S$ with $p(x)$. Then\n\\[\n  \\abs{\\{x \\in S : p(x)\\}} \\cdot B \\;\\le\\; \\sum_{x \\in S} \\begin{cases} f(x) & \\text{if } p(x),\\\\ 0 & \\text{otherwise.}\\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "S is a finite set",
+  "p is a predicate on S",
+  "f maps S to the reals",
+  "B is a real number",
+  "B ≤ f(x) for every x ∈ S satisfying p(x)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a finite set, $p$ a decidable predicate, $f : S \\to \\bbr$ and $B \\in \\bbr$ with\n$B \\le f(x)$ for every $x \\in S$ satisfying $p$.  Then\n\\[\n  \\abs{\\{x \\in S : p(x)\\}} \\cdot B \\;\\le\\; \\sum_{x \\in S} \\bigl[\\, p(x) \\,\\bigr] f(x),\n\\]\nwhere terms failing $p$ contribute $0$."
+}

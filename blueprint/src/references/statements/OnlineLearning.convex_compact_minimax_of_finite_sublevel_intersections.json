@@ -1,0 +1,24 @@
+{
+ "lean_name": "OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections",
+ "key": "9054337cf76293cf",
+ "kind": "theorem",
+ "title": "Minimax equality from finite sublevel intersections",
+ "statement": "Let $X, Y \\subseteq \\bbr$ with $X$ and $Y$ nonempty, $X$ compact and convex, and $Y$ convex, and let $f : \\bbr \\times \\bbr \\to \\bbr$ be bounded above and below on $X \\times Y$, with $f(\\cdot, y)$ continuous and convex on $X$ for every $y \\in Y$ and $f(x, \\cdot)$ concave on $Y$ for every $x \\in X$. Write $v = \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y)$ for the lower value, and suppose that for every $\\varepsilon > 0$ and every finite set $u$ of column points from $Y$, the set\n\\[\n  \\{x \\in X : f(x,y) \\leq v + \\varepsilon \\text{ for all } y \\in u\\}\n\\]\nis nonempty. Then the minimax equality\n\\[\n  \\inf_{x \\in X}\\,\\sup_{y \\in Y}\\,f(x,y) \\;=\\; \\sup_{y \\in Y}\\,\\inf_{x \\in X}\\,f(x,y)\n\\]\nholds.",
+ "hypotheses_covered": [
+  "X nonempty",
+  "Y nonempty",
+  "X compact",
+  "X convex",
+  "Y convex",
+  "f(·,y) continuous on X for each y∈Y",
+  "f(·,y) convex on X for each y∈Y",
+  "f(x,·) concave on Y for each x∈X",
+  "f bounded above on X×Y",
+  "f bounded below on X×Y",
+  "for every ε>0 and every finite u⊆Y, the common sublevel set {x∈X : f(x,y)≤v+ε for all y∈u} is nonempty, where v is the lower value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Assume the hypotheses $\\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for\n$X$, $Y$, $f$, and suppose that for every $\\varepsilon > 0$ and every finite\n$u \\subseteq Y$ the intersection of $X$ with the sublevel sets\n$\\texttt{OnlineLearning.minimaxSublevel}$ at level $v + \\varepsilon$ over $y \\in u$ is\nnonempty, where $v = \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y)$. Then the minimax identity\n$\\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds for $X$, $Y$, $f$, i.e.\n\\[\n  \\inf_{x \\in X} \\sup_{y \\in Y} f(x,y) \\;=\\; \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y).\n\\]"
+}

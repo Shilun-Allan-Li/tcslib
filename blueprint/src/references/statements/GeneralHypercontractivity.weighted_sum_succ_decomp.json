@@ -1,0 +1,16 @@
+{
+ "lean_name": "GeneralHypercontractivity.weighted_sum_succ_decomp",
+ "key": "04882793d424b231",
+ "kind": "lemma",
+ "title": "Last-coordinate decomposition of the noise-kernel average",
+ "statement": "Fix a real number $\\rho$ and a function $F \\colon \\{0,1\\}^{n+1} \\times \\{0,1\\}^{n+1} \\to \\bbr$ on pairs of points of the Boolean hypercube of dimension $n+1$. Write $\\chi$ for the $\\pm 1$ sign encoding of a bit, $K_\\rho$ for the noise kernel, and $\\mathrm{snoc}(x',b)$ for the point of $\\{0,1\\}^{n+1}$ obtained by appending the bit $b$ to $x' \\in \\{0,1\\}^n$. Then\n\\[\n  \\frac{1}{2^{\\,n+1}}\\sum_{x}\\sum_{y} K_\\rho(x,y)\\, F(x,y)\n  =\n  \\frac{1}{2^{\\,n}}\\sum_{x'}\\sum_{y'} K_\\rho(x',y')\\,\n  \\Biggl[\\frac12 \\sum_{b}\\sum_{b'} \\frac{1+\\rho\\,\\chi(b)\\,\\chi(b')}{2}\\,\n  F\\bigl(\\mathrm{snoc}(x',b),\\,\\mathrm{snoc}(y',b')\\bigr)\\Biggr],\n\\]\nwhere $x,y$ range over $\\{0,1\\}^{n+1}$, the points $x',y'$ range over $\\{0,1\\}^{n}$, and the bits $b,b'$ range over $\\{0,1\\}$.",
+ "hypotheses_covered": [
+  "ρ is an arbitrary real number",
+  "F is an arbitrary real-valued function on pairs of points of the (n+1)-cube",
+  "the dimension is a successor n+1 for a natural number n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $F : \\mathrm{BoolCube}\\,(n+1) \\times \\mathrm{BoolCube}\\,(n+1) \\to \\bbr$, the kernel-weighted\nbilinear average at dimension $n+1$ equals the $n$-dimensional kernel-weighted average of the\none-bit average of the last coordinate:\n\\[\n  \\frac{1}{2^{n+1}}\\sum_{x}\\sum_{y} K_\\rho(x,y)\\, F(x,y)\n  =\n  \\frac{1}{2^{n}}\\sum_{x'}\\sum_{y'} K_\\rho(x',y')\\,\n  \\Bigl[\\tfrac12 \\sum_{b}\\sum_{b'} \\tfrac{1+\\rho\\,\\chi(b)\\chi(b')}{2}\\,\n  F(\\mathrm{snoc}(x',b), \\mathrm{snoc}(y',b'))\\Bigr].\n\\]"
+}

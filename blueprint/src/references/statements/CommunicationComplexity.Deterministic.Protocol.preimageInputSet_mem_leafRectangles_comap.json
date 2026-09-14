@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectangles_comap",
+ "key": "d71c9dc1aaf09bc7",
+ "kind": "theorem",
+ "title": "Leaf rectangles are preserved under input pull-back",
+ "statement": "Let $p$ be a deterministic communication protocol over input types $X$ and $Y$ producing values in $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be arbitrary maps. Write $p'$ for the protocol over $X' \\times Y'$ obtained from $p$ by pre-composing every message function with $f_X$ or $f_Y$ as appropriate. If $R \\subseteq X \\times Y$ is a leaf rectangle of $p$, then its pullback $\\{(x', y') \\in X' \\times Y' \\mid (f_X(x'), f_Y(y')) \\in R\\}$ along the product map $f_X \\times f_Y$ is a leaf rectangle of $p'$.",
+ "hypotheses_covered": [
+  "p is a protocol over X, Y with output type α",
+  "f_X : X' → X and f_Y : Y' → Y are maps",
+  "R is a leaf rectangle of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $R$ is a leaf rectangle of $p$ and $f_X : X' \\to X$, $f_Y : Y' \\to Y$, then\n$\\texttt{preimageInputSet}(f_X, f_Y, R)$ is a leaf rectangle of $p.\\texttt{comap}(f_X, f_Y)$."
+}

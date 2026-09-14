@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.circuit_reduction_depth3_le_eps",
+ "key": "4095e1650e77e924",
+ "kind": "theorem",
+ "title": "Depth-three circuit reduction with error at most $\\varepsilon$",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\{0,1\\}$ with $n\\ge 1$, and suppose $f$ is the conjunction of $s_2$ DNF formulas $D_1,\\dots,D_{s_2}$, so that $f(x)=1$ exactly when $D_i(x)=1$ for every index $i$; equivalently, $f$ is computed by a depth-three AND-of-OR-of-AND circuit. Assume each formula $D_i$ has width at most $w$ with $w\\ge 1$, and that within every term no literal is repeated and no variable occurs in two opposite polarities, so that a term reads each variable at most once. Fix integers $l\\ge 1$ and $t\\ge 0$ and a real number $\\varepsilon$ satisfying $s_2\\,(1/2)^{l}\\le \\varepsilon/2$ and $(1/2)^{t}\\le\\varepsilon/2$, and put $p_1=1/(40w)$ and $p_2=1/(40l)$. Draw a Bernoulli random restriction $\\rho$ with parameter $p_1 p_2$, and write $f_\\rho$ for the restriction of $f$ by $\\rho$. Then the probability that the decision-tree depth of $f_\\rho$ exceeds $t$ is at most\n\\[\n\\varepsilon+s_2\\,e^{-np_1/3}+e^{-np_2/3}.\n\\]",
+ "hypotheses_covered": [
+  "f is the conjunction of s_2 DNF gates (f(x)=1 iff every gate evaluates true)",
+  "each gate has width at most w",
+  "w > 0",
+  "within each term, literals sharing a variable are equal (no variable in both polarities)",
+  "each term has no duplicated literal",
+  "n > 0",
+  "l > 0",
+  "s_2 · (1/2)^l ≤ ε/2",
+  "(1/2)^t ≤ ε/2"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion of the Lean statement is elided in the snippet: its body reads `let p₁ : ℝ := sorry`, so the probability bound above could not be checked against the formal ground truth. All hypotheses are rendered faithfully from the Lean, but the displayed conclusion — the event, the composed Bernoulli restriction with parameter $p_1 p_2 = (1/(40w))(1/(40l))$, and the exponential tail terms — is reconstructed from the existing informal statement together with the supplied definitions (composed restriction parameter, decision-tree depth, restricted function, Bernoulli event probability). It should be re-verified once the actual conclusion is available.",
+ "rubric": [],
+ "replaced": "\nFor a depth-3 circuit in normal form, if $l$ and $t$ are chosen so that\n$s_2 (1/2)^l \\le \\varepsilon/2$ and $(1/2)^t \\le \\varepsilon/2$, then under the\ncomposed Bernoulli$(\\mathrm{composedDelta}\\,w\\,l\\,3)$ restriction (with $p_1 = 1/(40w)$,\n$p_2 = 1/(40l)$),\n\\[\n\\Pr_\\rho[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\, f\\,\\rho) > t]\n\\le \\varepsilon + s_2\\exp(-np_1/3) + \\exp(-np_2/3).\n\\]\nThe exponential tails vanish as $n \\to \\infty$, so the bound is $\\le \\varepsilon$\nasymptotically."
+}

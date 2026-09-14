@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.Protocol.rrun_eq",
+ "key": "4eac80a89ae7a3b7",
+ "kind": "theorem",
+ "title": "Randomized execution as deterministic run on paired inputs",
+ "statement": "Let $p$ be a private-coin protocol with randomness spaces $\\Omega_X$ and $\\Omega_Y$, input spaces $X$ and $Y$, and output type $\\alpha$. Then for all inputs $x \\in X$ and $y \\in Y$ and all coin outcomes $\\omega_x \\in \\Omega_X$ and $\\omega_y \\in \\Omega_Y$, the randomized execution of $p$ equals the deterministic execution of $p$ on the paired inputs $(\\omega_x, x)$ and $(\\omega_y, y)$:\n\\[\n  \\mathrm{rrun}(p, x, y, \\omega_x, \\omega_y) \\;=\\; \\mathrm{run}\\bigl(p, (\\omega_x, x), (\\omega_y, y)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "p a private-coin protocol over Ω_X, Ω_Y, X, Y, α",
+  "inputs x ∈ X and y ∈ Y",
+  "coin outcomes ω_x ∈ Ω_X and ω_y ∈ Ω_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any private-coin protocol $p$ and any inputs $x$, $y$, $\\omega_x$, $\\omega_y$, we\nhave $p.\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y = p.\\mathrm{run}\\,(\\omega_x, x)\\,(\\omega_y, y)$.\nThis is a definitional equality used as a simp lemma to unfold the randomized\nexecution to the underlying deterministic run."
+}

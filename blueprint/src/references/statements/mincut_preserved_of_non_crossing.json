@@ -1,0 +1,17 @@
+{
+ "lean_name": "mincut_preserved_of_non_crossing",
+ "key": "04a393551bb6d399",
+ "kind": "lemma",
+ "title": "Non-crossing contraction preserves minimality",
+ "statement": "Let $G$ be a multigraph, and let $C$ be a minimum cut of $G$, given by a vertex subset $S$ that is nonempty and has nonempty complement in $V(G)$. Suppose $e \\in E(G)$ is an edge that does not cross $C$, so that both endpoints of $e$ lie on the same side of the partition. Then the cut induced by $C$ on the contracted multigraph $G/e$ — obtained by merging the endpoints of $e$ and intersecting $S$ with the surviving vertices — is again a minimum cut, of $G/e$.",
+ "hypotheses_covered": [
+  "$C$ is a cut of $G$",
+  "$C$ is a minimum cut of $G$",
+  "$e$ is an edge of $G$",
+  "$e$ does not cross $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $C$ is a minimum cut of $G$ and $e \\in E(G)$ does not cross $C$, then the induced cut\non $G/e$ is again a minimum cut. Thus only crossing edges can destroy a fixed minimum\ncut during contraction."
+}

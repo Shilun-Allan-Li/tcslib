@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_prefix_run",
+ "key": "4270edbc884de8aa",
+ "kind": "lemma",
+ "title": "Prefixes of a surviving trace are surviving runs",
+ "statement": "Let $T$ be a surviving trace of length $\\text{steps}$ over a vertex type $\\alpha$, that is, a family of states $(T_j)_{j \\in \\bbn}$ in which each consecutive pair $T_j, T_{j+1}$ with $j < \\text{steps}$ is related by a surviving step. Then for every index $i$ with $i \\le \\text{steps}$, the states $T_0, T_1, \\dots, T_i$ constitute a surviving run of length $i$ from the initial state $T_0$ to the state $T_i$.",
+ "hypotheses_covered": [
+  "T is a surviving trace of length steps",
+  "index i satisfies i ≤ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i \\le \\text{steps}$, the first $i$ stages of an indexed surviving trace form a\nsurviving run from the initial state to the state at index $i$."
+}

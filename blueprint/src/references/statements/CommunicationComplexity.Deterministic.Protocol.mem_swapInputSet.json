@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet",
+ "key": "c6e35ce3580fb8c9",
+ "kind": "theorem",
+ "title": "Membership in the coordinate-swapped set",
+ "statement": "Let $R \\subseteq X \\times Y$, and write $\\mathrm{swap}(R) = \\{(y,x) \\mid (x,y) \\in R\\} \\subseteq Y \\times X$ for the set obtained by exchanging the two coordinates of every element of $R$. Then for any pair $(y, x) \\in Y \\times X$, one has $(y, x) \\in \\mathrm{swap}(R)$ if and only if $(x, y) \\in R$.",
+ "hypotheses_covered": [
+  "$R$ is a set of pairs in $X \\times Y$",
+  "$(y,x)$ is a pair in $Y \\times X$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any set $R \\subseteq X \\times Y$ and pair $(y, x) \\in Y \\times X$,\n$(y, x) \\in \\texttt{swapInputSet}(R)$ if and only if $(x, y) \\in R$."
+}

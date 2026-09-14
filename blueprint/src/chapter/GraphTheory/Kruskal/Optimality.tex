@@ -24,48 +24,66 @@ otherwise. Unlike $\texttt{Kruskal.processEdges}$ it returns only the final stat
 list of accepted edges.
 \end{definition}
 
-\begin{lemma}[Greedy loop induces the full merge partition]
+\begin{lemma}[Greedy loop and unconditional merge give the same partition]
 \lean{Kruskal.ufAfterProcessEdges_partition}
 \label{Kruskal.ufAfterProcessEdges_partition}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.merge_noop, Kruskal.ufAfterProcessEdges}
 \difficulty{4}
-For every edge list and every initial state $uf$, the state
-$\texttt{Kruskal.ufAfterProcessEdges}$ produces induces the same partition of the vertices
-as merging all the edges unconditionally, i.e.\ it has the same partition as
-$uf.\mathrm{mergeAll}$ applied to the whole list.
+Fix $n \in \bbn$, let $\mathit{es}$ be a list of weighted edges over $n$ vertices, and
+let $\mathit{uf} : \mathrm{Fin}\,n \to \bbn$ be an initial union--find state. The greedy
+loop, which scans $\mathit{es}$ in order and merges the endpoints of each edge only when
+they currently carry different representatives, yields a final state that induces the
+same partition of the vertices as the unconditional fold, which merges the endpoints of
+every edge of $\mathit{es}$ in order without regard to their current components. That
+is, for all $i, j : \mathrm{Fin}\,n$, nodes $i$ and $j$ share a representative in the
+greedy-loop state if and only if they share a representative in the unconditional-fold
+state.
 \end{lemma}
 
-\begin{lemma}[Accumulator factors out of the greedy loop]
+\begin{lemma}[Accumulator splits off as a reversed prefix]
 \lean{Kruskal.processEdges_acc}
 \label{Kruskal.processEdges_acc}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.merge, Kruskal.WEdge, Kruskal.processEdges}
 \difficulty{4}
-Running $\texttt{Kruskal.processEdges}$ with an accumulator $acc$ yields
-$acc^{\mathrm{rev}}$ followed by the output of the same run started from the empty
-accumulator; the accumulator only contributes a reversed prefix.
+Fix $n \in \bbn$, and let $\mathit{es}$ be a list of weighted edges over $n$ vertices,
+$\mathit{uf}$ a union-find state on $n$ nodes, and $\mathit{acc}$ a list of weighted
+edges over $n$ vertices. Then running the edge-selection sweep on $\mathit{es}$ from
+state $\mathit{uf}$ with initial accumulator $\mathit{acc}$ yields the reversal of
+$\mathit{acc}$ concatenated (on the left) with the result of running the same sweep on
+$\mathit{es}$ from the same state $\mathit{uf}$ but with the empty accumulator.
 \end{lemma}
 
-\begin{lemma}[Selected edges span the same partition]
+\begin{lemma}[Edge selection preserves the induced partition]
 \lean{Kruskal.processEdges_same_partition}
 \label{Kruskal.processEdges_same_partition}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.find, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.processEdges, Kruskal.processEdges_acc, Kruskal.ufAfterProcessEdges, Kruskal.ufAfterProcessEdges_partition}
 \difficulty{4}
-Merging the edges selected by the greedy loop into $uf$ gives the same partition as
-merging all the input edges into $uf$: the discarded edges never change connectivity.
+Let $n \in \bbn$, let $\mathit{uf} : \mathrm{Fin}\,n \to \bbn$ be a union-find state,
+and let $\mathit{es}$ be a list of weighted edges over $n$ vertices. Merging into
+$\mathit{uf}$ only the edges retained by the edge-selection sweep (running the sweep
+from $\mathit{uf}$ with an empty accumulator) yields a union-find state inducing the
+same equivalence relation on nodes as merging all of $\mathit{es}$ into $\mathit{uf}$:
+for all $i, j : \mathrm{Fin}\,n$, the two nodes share a representative after the first
+process exactly when they share a representative after the second.
 \end{lemma}
 
-\begin{lemma}[Skipping an edge inside a component]
+\begin{lemma}[Skipping an intra-component edge in the sweep]
 \lean{Kruskal.processEdges_skip}
 \label{Kruskal.processEdges_skip}
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.find, Kruskal.WEdge, Kruskal.processEdges}
 \difficulty{1}
-If the endpoints of $e$ already have the same union--find representative, then the
-greedy loop on $e :: rest$ from state $uf$ returns exactly the output of the loop on
-$rest$ from the same state.
+Fix a number of nodes $n$, a union-find state $\mathit{uf} : \mathrm{Fin}\,n \to \bbn$,
+a weighted edge $e$ over $n$ vertices with endpoints $u$ and $v$, and a list
+$\mathit{rest}$ of further weighted edges over $n$ vertices. Suppose the two endpoints
+of $e$ already have the same representative in $\mathit{uf}$, that is, $\mathit{uf}(u) =
+\mathit{uf}(v)$. Then the edge-selection sweep applied to the list $e :: \mathit{rest}$
+starting from state $\mathit{uf}$ with empty accumulator returns exactly the same edge
+list as the sweep applied to $\mathit{rest}$ starting from the same state $\mathit{uf}$
+with empty accumulator.
 \end{lemma}
 
 \begin{lemma}[Weight contributed by an accepted edge]
@@ -74,36 +92,46 @@ $rest$ from the same state.
 \leanok
 \uses{Kruskal.UF, Kruskal.UF.find, Kruskal.UF.merge, Kruskal.WEdge, Kruskal.processEdges, Kruskal.processEdges_acc, Kruskal.totalWeight}
 \difficulty{3}
-If the endpoints of $e$ lie in different components of $uf$, then the total weight of the
-greedy output on $e :: rest$ equals $e.\mathrm{weight}$ plus the total weight of the
-greedy output on $rest$ started from the merged state $uf.\mathrm{merge}\,e.u\,e.v$.
+Fix a natural number $n$ and a union-find state $\mathit{uf}$ over $n$ nodes, and let
+$e$ be a weighted edge over $n$ vertices — with endpoints $u_e, v_e$ and weight $w_e$ —
+followed by a list $\mathit{rest}$ of further weighted edges. Suppose the endpoints of
+$e$ lie in different components, that is, $\mathit{uf}(u_e) \ne \mathit{uf}(v_e)$. Then
+the total weight of the edge-selection sweep applied to the list $e :: \mathit{rest}$
+starting from $\mathit{uf}$ and an empty accumulator equals $w_e$ plus the total weight
+of the sweep applied to $\mathit{rest}$ starting from an empty accumulator and the state
+obtained by merging the components of $u_e$ and $v_e$ in $\mathit{uf}$.
 \end{lemma}
 
-\begin{lemma}[Optimality of the greedy edge-selection loop]
+\begin{lemma}[Optimality of the greedy edge-selection sweep]
 \lean{Kruskal.processEdges_optimal}
 \label{Kruskal.processEdges_optimal}
 \leanok
 \uses{Kruskal.Reach, Kruskal.UF, Kruskal.UF.SamePartition, Kruskal.UF.SamePartition.symm, Kruskal.UF.SamePartition.trans, Kruskal.UF.find, Kruskal.UF.merge, Kruskal.UF.mergeAll, Kruskal.WEdge, Kruskal.erase_append_perm, Kruskal.mergeAll_cons_eq, Kruskal.mergeAll_iff_reach, Kruskal.mergeAll_perm, Kruskal.merge_noop, Kruskal.processEdges, Kruskal.processEdges_skip, Kruskal.processEdges_take_weight, Kruskal.reduce_to_rest, Kruskal.totalWeight, Kruskal.totalWeight_erase, Kruskal.uf_exchange}
 \difficulty{6}
-Let $uf$ be a union--find state whose classes are exactly the reachability classes of a
-base edge list, and let the input list $edges$ be sorted by nondecreasing weight. Then
-for any competing sublist $S \subseteq edges$ that induces the same partition as $edges$
-does over $uf$, the greedy output satisfies
-\[
-  \mathrm{totalWeight}\bigl(\mathrm{processEdges}\;edges\;uf\;[\,]\bigr)
-  \;\le\; \mathrm{totalWeight}(S).
-\]
+Let $\mathit{edges}$ be a list of weighted edges on $n$ vertices, sorted in
+nondecreasing order of weight, and let $\mathit{uf}$ be a union-find state whose induced
+partition is exactly the reachability relation of some base edge list $\mathit{base}$:
+for all vertices $a$ and $b$, the representatives $\mathit{uf}(a)$ and $\mathit{uf}(b)$
+are equal if and only if $a$ and $b$ are joined by a path through the edges of
+$\mathit{base}$. Let $S$ be any list of edges, each of which occurs in $\mathit{edges}$,
+such that merging all of $S$ into $\mathit{uf}$ and merging all of $\mathit{edges}$ into
+$\mathit{uf}$ yield the same partition of the vertices. Then the greedy sweep — which
+starts from $\mathit{uf}$, scans $\mathit{edges}$ in order, and keeps each edge exactly
+when its two endpoints lie in currently distinct components — produces a set of edges
+whose total weight is at most the total weight of $S$.
 \end{lemma}
 
-\begin{theorem}[Kruskal's output spans the input]
+\begin{theorem}[Kruskal's output preserves connectivity]
 \lean{Kruskal.kruskal_spans}
 \label{Kruskal.kruskal_spans}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SpansLike, Kruskal.UF.init, Kruskal.WEdge, Kruskal.kruskal, Kruskal.mergeAll_init_iff, Kruskal.processEdges_same_partition, Kruskal.reach_mono}
 \difficulty{3}
-For every weighted edge list $E$ over $\mathrm{Fin}\,n$, the output $\mathrm{kruskal}\,n\,E$
-spans like $E$: any two vertices reachable in $E$ are reachable using only the selected
-edges.
+Fix $n \in \bbn$, and let $E$ be a list of weighted edges on the vertex set
+$\mathrm{Fin}\,n$. Then the edge list $\mathrm{kruskal}\,n\,E$ produced by Kruskal's
+algorithm on $E$ spans $E$: for every pair of vertices $u, v \in \mathrm{Fin}\,n$, if
+$u$ and $v$ are connected by a path through the edges of $E$, then they are also
+connected by a path through the selected edges $\mathrm{kruskal}\,n\,E$.
 \end{theorem}
 
 \begin{theorem}[Optimality of Kruskal's algorithm]
@@ -112,9 +140,13 @@ edges.
 \leanok
 \uses{Kruskal.SpansLike, Kruskal.WEdge, Kruskal.kruskal, Kruskal.mergeAll_init_iff, Kruskal.processEdges_optimal, Kruskal.reach_mono, Kruskal.totalWeight}
 \difficulty{5}
-If $S$ is a sublist of $E$ that spans like $E$, then
+Let $E$ be a list of weighted edges on $n$ vertices, and let $S$ be another such list in
+which every edge is also an edge of $E$. Suppose that $S$ spans like $E$: whenever two
+vertices $u$ and $v$ are joined by a path through the edges of $E$, they are also joined
+by a path through the edges of $S$. Let $K$ denote the edge list produced by Kruskal's
+algorithm on $E$, and write $w(e)$ for the weight of an edge $e$. Then the total weight
+of $K$ is no greater than that of $S$:
 \[
-  \mathrm{totalWeight}\bigl(\mathrm{kruskal}\;n\;E\bigr) \;\le\; \mathrm{totalWeight}(S),
+  \sum_{e \in K} w(e) \;\le\; \sum_{e \in S} w(e).
 \]
-so Kruskal's output has minimum total weight among all spanning subsets of $E$.
 \end{theorem}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prodDet_complexity",
+ "key": "8b64f9cbb444b897",
+ "kind": "theorem",
+ "title": "Additivity of complexity under product with a deterministic protocol",
+ "statement": "Let $\\Omega$ be a shared-randomness space and let $X$, $Y$ be private input sets. Let $p_1$ be a public-coin finite-message protocol over $\\Omega$, $X$, $Y$ with output type $\\alpha_1$, and let $p_2$ be a deterministic finite-message protocol over $X$, $Y$ with output type $\\alpha_2$. Form their product: the public-coin protocol over $\\Omega$, $X$, $Y$ with output type $\\alpha_1 \\times \\alpha_2$ that runs both $p_1$ and $p_2$ on the same inputs, sharing the randomness $\\Omega$, and returns the pair of their outputs. Then the worst-case communication complexity of this product protocol equals the sum of the complexities of $p_1$ and $p_2$.",
+ "hypotheses_covered": [
+  "p_1 is a public-coin finite-message protocol over Ω, X, Y with output α₁",
+  "p_2 is a deterministic finite-message protocol over X, Y with output α₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The complexity of $\\mathrm{prodDet}\\;p_1\\;p_2$ equals the sum of the complexity of $p_1$\nand the complexity of $p_2$:\n$(\\mathrm{prodDet}\\;p_1\\;p_2).\\mathrm{complexity} =\n  p_1.\\mathrm{complexity} + p_2.\\mathrm{complexity}$."
+}

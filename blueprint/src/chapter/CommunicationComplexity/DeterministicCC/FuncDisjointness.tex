@@ -11,6 +11,9 @@ the pairs $(X, X^c)$, it shows that for $n \ge 1$ the complexity is exactly $n +
 
 \begin{definition}[Set disjointness function]
 \lean{CommunicationComplexity.Functions.Disjointness.disjointness}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p006-b001}
+\statementsource{roughgarden-cc-oneway}{pdf-043896d6545f-p004-b002}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p008-b005}
 \label{CommunicationComplexity.Functions.Disjointness.disjointness}
 \leanok
 For $n \in \mathbb{N}$ and subsets $X, Y \subseteq [n]$, $\mathrm{disjointness}(n, X, Y)$
@@ -18,77 +21,1539 @@ is the Boolean function that returns $\mathtt{true}$ if and only if $X$ and $Y$ 
 disjoint, i.e.\ $X \cap Y = \emptyset$.
 \end{definition}
 
-\begin{theorem}[Commutativity of disjointness]
+\begin{theorem}[Symmetry of the set disjointness function]
 \lean{CommunicationComplexity.Functions.Disjointness.disjointness_comm}
 \label{CommunicationComplexity.Functions.Disjointness.disjointness_comm}
 \leanok
 \uses{CommunicationComplexity.Functions.Disjointness.disjointness}
 \difficulty{1}
-The disjointness function is symmetric in its two set arguments: for all
-$X, Y \subseteq [n]$, $\mathrm{disjointness}(n, X, Y) = \mathrm{disjointness}(n, Y, X)$.
+For every $n \in \bbn$ and all subsets $X, Y \subseteq [n]$, the disjointness function
+is symmetric in its two arguments: $\mathrm{disjointness}(n, X, Y) =
+\mathrm{disjointness}(n, Y, X)$. That is, since $X$ and $Y$ are disjoint if and only if
+$Y$ and $X$ are disjoint, swapping the two sets leaves the Boolean value unchanged.
 \end{theorem}
 
 \begin{definition}[Fooling set for disjointness]
 \lean{CommunicationComplexity.Functions.Disjointness.foolingSet}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p010-b005}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p011-b007}
 \label{CommunicationComplexity.Functions.Disjointness.foolingSet}
 \leanok
 The candidate fooling set for disjointness is the collection of all pairs
 $(X, X^c)$ where $X \subseteq [n]$, i.e.\ $\mathrm{foolingSet}(n) = \{(X, Y) \mid Y = X^c\}$.
 \end{definition}
 
-\begin{theorem}[Fooling set validity]
+\begin{theorem}[The disjointness fooling set]
 \lean{CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p011-b007}
 \label{CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle_iff}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsFoolingSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b005,
+    pdf-fa052d8c95c0-p011-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.disjointness}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p008-b005}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.foolingSet}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b007}
 \uses{CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.foolingSet, CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsRectangle_iff}
 \difficulty{5}
-The collection $\{(X, X^c) \mid X \subseteq [n]\}$ is a fooling set for
-$\mathrm{disjointness}(n)$: every pair $(X, X^c)$ evaluates to $\mathtt{true}$,
-and for any monochromatic rectangle $R$ with $\mathrm{disjointness} = \mathtt{true}$
-that contains two distinct fooling-set pairs, those pairs must coincide.
+Fix $n \in \bbn$, and consider the set-disjointness function on subsets of $[n]$, namely
+the Boolean function $g(X, Y)$ that is $\mathtt{true}$ exactly when $X \cap Y =
+\emptyset$. Then the collection $\{(X, X^c) \mid X \subseteq [n]\}$ of complementary
+pairs is a fooling set for $g$: for every rectangle $R = A \times B$ (with $A, B$
+families of subsets of $[n]$) that is monochromatic for $g$, the intersection of $R$
+with this collection contains at most one point.
 \end{theorem}
 
-\begin{theorem}[Fooling set cardinality]
+\begin{theorem}[Cardinality of the disjointness fooling set]
 \lean{CommunicationComplexity.Functions.Disjointness.foolingSet_card}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p012-b001}
 \label{CommunicationComplexity.Functions.Disjointness.foolingSet_card}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.foolingSet}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b007}
 \uses{CommunicationComplexity.Functions.Disjointness.foolingSet}
 \difficulty{4}
-The fooling set $\mathrm{foolingSet}(n)$ has cardinality $2^n$, since it is in
-bijection with the power set of $[n]$ via $X \mapsto (X, X^c)$.
+For every $n \in \bbn$, the fooling set for disjointness — the collection of all pairs
+$(X, X^c)$ with $X \subseteq [n]$ — has exactly $2^n$ elements.
 \end{theorem}
 
-\begin{theorem}[Upper bound on complexity of disjointness]
+\begin{theorem}[Upper bound on the communication complexity of disjointness]
 \lean{CommunicationComplexity.Functions.Disjointness.communicationComplexity_le}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p008-b005}
 \label{CommunicationComplexity.Functions.Disjointness.communicationComplexity_le}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Computes}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.disjointness}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p008-b005}
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha, CommunicationComplexity.Functions.Disjointness.disjointness}
 \difficulty{3}
-The deterministic communication complexity of $\mathrm{disjointness}(n)$ is at most
-$n + 1$: Alice can communicate her entire set $X \subseteq [n]$ in $n$ bits, after
-which Bob sends a single bit for the answer.
+Fix $n \in \bbn$, and let both players' inputs range over subsets of $[n] = \{0, 1,
+\dots, n-1\}$, so that Alice holds $X \subseteq [n]$ and Bob holds $Y \subseteq [n]$.
+The deterministic communication complexity of the set-disjointness function, which
+returns $\mathtt{true}$ exactly when $X \cap Y = \emptyset$, is at most $n + 1$.
 \end{theorem}
 
-\begin{theorem}[Lower bound on complexity of disjointness]
+\begin{theorem}[Lower bound on the communication complexity of disjointness]
 \lean{CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
+\statementsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p004-b003}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p012-b001,
+  pdf-fa052d8c95c0-p011-b007
+}
 \label{CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Computes}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001,
+    pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.le_communicationComplexity_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle_iff}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsFoolingSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b005}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonoPartition}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_point_mem}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_values_eq}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_subset}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_cover}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_mono}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_card}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005,
+    pdf-fa052d8c95c0-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_card}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003,
+    pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005,
+    pdf-fa052d8c95c0-p007-b006}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.disjointness}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p008-b005}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.foolingSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b007}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b007,
+    pdf-fa052d8c95c0-p012-b001}
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.foolingSet, CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \difficulty{5}
-For $n \ge 1$, the deterministic communication complexity of $\mathrm{disjointness}(n)$
-is at least $n + 1$.  The proof uses the fooling set of size $2^n$ together with an
-additional input $(x_0, y_0)$ with $x_0 \cap y_0 \ne \emptyset$ to show that any
-monochromatic partition of the input space into rectangles requires more than $2^n$
-pieces.
+Fix an integer $n \ge 1$, and consider the set-disjointness function on subsets of
+$[n]$: it takes a pair of subsets $X, Y \subseteq [n]$ — Alice holding $X$ and Bob
+holding $Y$ — to $\mathtt{true}$ exactly when $X \cap Y = \emptyset$. Then the
+deterministic communication complexity of this function is at least $n + 1$.
 \end{theorem}
 
-\begin{theorem}[Exact complexity of disjointness]
+\begin{theorem}[Deterministic complexity of set disjointness]
 \lean{CommunicationComplexity.Functions.Disjointness.communicationComplexity_eq}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p008-b005,
+  pdf-fa052d8c95c0-p012-b001
+}
 \label{CommunicationComplexity.Functions.Disjointness.communicationComplexity_eq}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Computes}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.le_communicationComplexity_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle_iff}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b007}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonochromatic}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsFoolingSet}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b005}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsMonoPartition}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_point_mem}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.monoPartition_values_eq}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_subset}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_cover}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003,
+    pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003,
+    pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003,
+    pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003,
+    pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_mono}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005,
+    pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005,
+    pdf-fa052d8c95c0-p005-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.aux_card}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005,
+    pdf-fa052d8c95c0-p003-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_card}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005,
+    pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p007-b006,
+    pdf-fa052d8c95c0-p005-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p001-b002,
+    pdf-fa052d8c95c0-p008-b005}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.disjointness}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p008-b005}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.foolingSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b007}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p011-b007}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.communicationComplexity_le}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p008-b005}
+\proofstep
+  {CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p012-b001,
+    pdf-fa052d8c95c0-p011-b007}
 \uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Functions.Disjointness.communicationComplexity_le, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
 \difficulty{1}
-For $n \ge 1$, the deterministic communication complexity of the set-disjointness
-function on subsets of $[n]$ is exactly $n + 1$.  This follows by combining the
-matching upper and lower bounds.
+Let $n \geq 1$, and let $\mathrm{disjointness}(n, \cdot, \cdot)$ denote the two-party
+Boolean function that, given subsets $X, Y \subseteq [n]$ held by Alice and Bob
+respectively, returns $\mathtt{true}$ exactly when $X \cap Y = \emptyset$. Then the
+deterministic communication complexity of this function is exactly $n + 1$.
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.ufAfterProcessEdges_partition",
+ "key": "d9bc6b07349b4d84",
+ "kind": "lemma",
+ "title": "Greedy loop and unconditional merge give the same partition",
+ "statement": "Fix $n \\in \\bbn$, let $\\mathit{es}$ be a list of weighted edges over $n$ vertices, and let $\\mathit{uf} : \\mathrm{Fin}\\,n \\to \\bbn$ be an initial union--find state. The greedy loop, which scans $\\mathit{es}$ in order and merges the endpoints of each edge only when they currently carry different representatives, yields a final state that induces the same partition of the vertices as the unconditional fold, which merges the endpoints of every edge of $\\mathit{es}$ in order without regard to their current components. That is, for all $i, j : \\mathrm{Fin}\\,n$, nodes $i$ and $j$ share a representative in the greedy-loop state if and only if they share a representative in the unconditional-fold state.",
+ "hypotheses_covered": [
+  "arbitrary vertex count n : ℕ",
+  "arbitrary edge list es over n vertices",
+  "arbitrary initial union-find state uf"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every edge list and every initial state $uf$, the state\n$\\texttt{Kruskal.ufAfterProcessEdges}$ produces induces the same partition of the vertices\nas merging all the edges unconditionally, i.e.\\ it has the same partition as\n$uf.\\mathrm{mergeAll}$ applied to the whole list."
+}

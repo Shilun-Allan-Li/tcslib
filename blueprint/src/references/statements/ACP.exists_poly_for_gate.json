@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.exists_poly_for_gate",
+ "key": "24d1a8dae5617fcc",
+ "kind": "lemma",
+ "title": "Low-degree approximating polynomials for an $\\mathrm{AC}^0[p]$ gate",
+ "statement": "Let $p$ be a prime, and fix natural numbers $n$ and $\\ell$. Let $\\mathrm{op}$ be a gate operation from the $\\mathrm{AC}^0[p]$ gate set, and for each input wire $i$ of $\\mathrm{op}$ let $P_i$ be a polynomial in $\\mathbb{Z}/p[X_1,\\dots,X_n]$. Then there exist a nonempty finite index set $\\mathrm{Seed}$ with decidable equality and a family of polynomials $(P_s)_{s\\in\\mathrm{Seed}}$ in $\\mathbb{Z}/p[X_1,\\dots,X_n]$ with the following two properties. First, each $P_s$ has total degree at most $(p-1)\\,\\ell\\,\\sup_i \\deg(P_i)$. Second, for every Boolean assignment $x\\in\\{0,1\\}^n$, write $y\\in(\\mathbb{Z}/p)^n$ for the coordinatewise image of $x$ under the inclusion $\\mathrm{Fin}\\,2\\hookrightarrow\\mathbb{Z}/p$; then, provided every value $P_i(y)$ lies in $\\{0,1\\}$, the number of seeds $s\\in\\mathrm{Seed}$ for which $P_s(y)$ differs from the gate output $\\mathrm{op}\\bigl(i\\mapsto\\mathrm{bitify}(P_i(y))\\bigr)$, multiplied by $2^\\ell$, is at most $\\abs{\\mathrm{Seed}}$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "op belongs to the AC^0[p] gate set",
+  "for each input wire i of op, a polynomial P_i over Z/p in n variables",
+  "the parameters n and ℓ (number of variables and error/subset parameter)"
+ ],
+ "confidence": "low",
+ "caveat": "The provided formal snippet is truncated: the final conjunct is cut off, with the assignment `y` given as `sorry` and no proposition body following the `let`. The degree bound and the existence structure (nonempty finite seed type, decidable equality, polynomial family) are fully determined by the snippet, but the concluding approximation predicate — the definition of $y$ as the coordinatewise cast and the error-count bound weighted by $2^\\ell$ — is reconstructed from the surrounding definitions (bitify, approxOr, exactMod) and the existing informal statement rather than read directly from the Lean, so its exact form cannot be certified.",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{op}$ be a gate in $\\texttt{ACP.ACp\\_GateOps}$ and let $P_i$ be polynomials over\n$\\mathbb{Z}/p$ computing its inputs. Then there exist a nonempty finite seed type\n$\\mathrm{Seed}$ with decidable equality and a family $P : \\mathrm{Seed} \\to\n\\mathrm{MvPolynomial}(\\mathrm{Fin}\\,n, \\mathbb{Z}/p)$ such that every $P(s)$ has total degree\nat most $(p-1)\\ell\\cdot\\sup_i \\deg(P_i)$, and for every Boolean input $x$, writing\n$y_j = x_j$ cast into $\\mathbb{Z}/p$ and $\\mathrm{inputs}_i = P_i(y)$, if all\n$\\mathrm{inputs}_i$ lie in $\\{0,1\\}$ then the number of seeds $s$ with\n$P(s)(y)$ different from the gate value\n$\\mathrm{op}.\\mathrm{func}(i \\mapsto \\texttt{ACP.bitify}(\\mathrm{inputs}_i))$, multiplied by\n$2^\\ell$, is at most $\\abs{\\mathrm{Seed}}$."
+}

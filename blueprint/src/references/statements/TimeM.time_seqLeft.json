@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.time_seqLeft",
+ "key": "66605a5715f9471d",
+ "kind": "theorem",
+ "title": "Time cost of left-sequencing",
+ "statement": "Fix a type $T$ carrying an addition, and regard a value of type $\\mathrm{TimeM}\\,T\\,\\alpha$ as a computation that records both a return value in $\\alpha$ and an accumulated time cost $\\mathrm{time}\\in T$. Given such a computation $x$ and a thunked computation $y\\colon \\mathrm{Unit}\\to \\mathrm{TimeM}\\,T\\,\\beta$, the left-sequencing $x \\mathbin{<*} y$ — which runs both but keeps the return value of $x$ — has time cost $\\mathrm{time}(x) + \\mathrm{time}\\bigl(y()\\bigr)$, the sum of the two individual costs.",
+ "hypotheses_covered": [
+  "$T$ is equipped with an addition",
+  "$x$ is a computation of type $\\mathrm{TimeM}\\,T\\,\\alpha$",
+  "$y$ is a thunk $\\mathrm{Unit}\\to\\mathrm{TimeM}\\,T\\,\\beta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The time cost of the left-sequencing of $x$ and $y$ is $x.\\mathrm{time} + (y\\,()).\\mathrm{time}$."
+}

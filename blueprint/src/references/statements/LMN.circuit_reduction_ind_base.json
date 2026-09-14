@@ -1,0 +1,23 @@
+{
+ "lean_name": "LMN.circuit_reduction_ind_base",
+ "key": "cd035f0f6b29715b",
+ "kind": "lemma",
+ "title": "Base case of the circuit-to-decision-tree reduction (depth 2)",
+ "statement": "Let $f\\colon\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function on $n\\ge 1$ variables, let $s,w,l\\ge 1$ be positive integers, let $t\\ge 0$, and suppose $f$ is computed by a Boolean circuit of depth at most $2$, size at most $s$, and fan-in at most $w$. Draw a random restriction $\\rho$ that leaves each variable free independently with probability $p=\\tfrac{1}{40w}$ and otherwise fixes it to $0$ or $1$, each with probability $\\tfrac{1-p}{2}$. Writing $D(g)$ for the least depth of a decision tree computing a Boolean function $g$, and $f\\!\\restriction_\\rho$ for the function obtained from $f$ by substituting the fixed values of $\\rho$ and keeping the free coordinates as inputs, the probability that the restricted function is hard to compute by a shallow decision tree satisfies\n\\[\n  \\Pr_{\\rho}\\!\\big[\\,D(f\\!\\restriction_\\rho) > t\\,\\big]\n  \\le (s-1)\\left(\\tfrac12\\right)^{l} + \\left(\\tfrac12\\right)^{t}\n     + (s-1)\\exp\\!\\left(-\\tfrac{n}{120w}\\right) + s\\,\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "n \\ge 1 (0 < n)",
+  "s \\ge 1 (0 < s)",
+  "w \\ge 1 (0 < w)",
+  "l \\ge 1 (0 < l)",
+  "t a natural number (t \\ge 0)",
+  "f computed by a Boolean circuit of depth at most 2",
+  "that circuit has size at most s",
+  "that circuit has fan-in at most w",
+  "restriction drawn Bernoulli with parameter composedDelta(w,l,2) = 1/(40w)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe base case ($d=2$) of the inductive bound: if $f$ is computed by a depth-$2$ circuit of\nsize at most $s$ and fan-in at most $w$ (with $s,w,l>0$ and $n>0$), then under the composed\nrestriction parameter $\\mathrm{composedDelta}(w,l,2)$,\n\\[\n  \\Pr\\!\\left[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,f\\,\\rho) > t\\right]\n  \\le (s-1)(1/2)^{l} + (1/2)^{t} + (s-1)\\exp\\!\\left(-\\tfrac{n}{120w}\\right)\n    + s\\,\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]"
+}

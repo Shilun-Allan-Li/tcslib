@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.restriction_compose_eq",
+ "key": "e500ea7784cd1b4a",
+ "kind": "theorem",
+ "title": "Composition law for Bernoulli random restrictions",
+ "statement": "Fix real parameters $p, q$ with $0 < p \\le 1$ and $0 < q \\le 1$, and let $E$ be any decidable predicate on the restrictions of $n$ variables. Write $w_p(\\rho)$ for the Bernoulli weight of a restriction $\\rho$, write $\\Pr_p[E]$ for the Bernoulli($p$) probability of $E$, and let $\\rho_1 * \\rho_2$ denote the composition of $\\rho_1$ and $\\rho_2$. Then\n\\[\n  \\Pr_{pq}[E] \\;=\\; \\sum_{\\rho_1} w_p(\\rho_1)\\,\\Pr_q\\!\\bigl[\\,\\rho_2 \\mapsto E(\\rho_1 * \\rho_2)\\,\\bigr],\n\\]\nwhere the sum runs over all restrictions $\\rho_1$ on the $n$ variables, and the inner probability is that of the event that $E$ holds of the composition $\\rho_1 * \\rho_2$ as $\\rho_2$ ranges over a Bernoulli($q$) restriction.",
+ "hypotheses_covered": [
+  "0 < p",
+  "p ≤ 1",
+  "0 < q",
+  "q ≤ 1",
+  "E a decidable predicate on restrictions of n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 < p \\le 1$, $0 < q \\le 1$ and any event on restrictions, the Bernoulli($pq$)\nprobability of the event equals the weighted average, over Bernoulli($p$)\nrestrictions $\\rho_1$, of the Bernoulli($q$) probability that the event holds after\ncomposing with $\\rho_1$:\n\\[\n  \\mathrm{bernoulliRestrProb}\\,(pq)\\,\\mathrm{event}\n  = \\sum_{\\rho_1} \\mathrm{bernoulliRestrWeight}\\,p\\,\\rho_1 \\cdot\n    \\mathrm{bernoulliRestrProb}\\,q\\,\\bigl(\\rho_2 \\mapsto \\mathrm{event}(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2)\\bigr).\n\\]\nThis says a Bernoulli($p$) restriction followed by a Bernoulli($q$) restriction on\nthe remaining free variables has the same distribution as a single Bernoulli($pq$)\nrestriction."
+}

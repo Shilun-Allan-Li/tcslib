@@ -1,0 +1,21 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff",
+ "key": "50b8657aede53339",
+ "kind": "theorem",
+ "title": "Characterization of private-coin complexity by upper bounds",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function, let $\\varepsilon \\in \\bbr$ be an error bound, and let $n \\in \\bbn$. Then the $\\varepsilon$-error private-coin randomized communication complexity of $f$ is at most $n$ if and only if there exist coin-tape lengths $n_X, n_Y \\in \\bbn$ and a private-coin protocol $p$ with Alice's randomness space $\\{0,1\\}^{n_X}$ and Bob's randomness space $\\{0,1\\}^{n_Y}$, inputs in $X$ and $Y$, and outputs in $\\alpha$, such that $p$ computes $f$ with error at most $\\varepsilon$ on every input and the communication complexity of $p$ is at most $n$.",
+ "hypotheses_covered": [
+  "function f : X → Y → α",
+  "error bound ε ∈ ℝ",
+  "threshold n ∈ ℕ",
+  "R_ε(f) ≤ n on the left-hand side",
+  "existence of coin-tape lengths n_X, n_Y",
+  "existence of a private-coin protocol p over those coin tapes",
+  "p ε-computes f (error ≤ ε on every input)",
+  "complexity of p ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $n \\in \\mathbb{N}$, we have $R_\\varepsilon(f) \\le n$ if and only if there exist\ncoin-tape sizes $n_X, n_Y \\in \\mathbb{N}$ and a protocol\n$p : \\mathrm{Protocol}(\\{0,1\\}^{n_X}, \\{0,1\\}^{n_Y}, X, Y, \\alpha)$ such that\n$p$ $\\varepsilon$-approximately computes $f$ and $p.\\mathrm{complexity} \\le n$."
+}

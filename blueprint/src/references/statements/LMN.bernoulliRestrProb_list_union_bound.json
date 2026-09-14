@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.bernoulliRestrProb_list_union_bound",
+ "key": "275356249eb0dbb6",
+ "kind": "lemma",
+ "title": "Union bound for a random restriction over a list of circuits",
+ "statement": "Fix a parameter $p$ with $0 \\le p \\le 1$, and consider a Bernoulli$(p)$ random restriction on $n$ variables, under which each variable is independently left free with probability $p$ and fixed to each of the two Boolean values with probability $(1-p)/2$. Let $c_1, \\dots, c_m$ be a list of Boolean circuits on $n$ variables, and for each circuit $c$ let $\\mathrm{bad}(c, \\cdot)$ be a predicate on restrictions. Then the probability that some circuit in the list is bad is at most the sum of the individual probabilities:\n\\[\n  \\Pr_p\\!\\left[\\exists\\, i,\\ \\mathrm{bad}(c_i, \\rho)\\right] \\;\\le\\; \\sum_{i=1}^{m} \\Pr_p\\!\\left[\\mathrm{bad}(c_i, \\rho)\\right],\n\\]\nwhere each term is the probability, under the same random restriction, that the corresponding predicate holds.",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "a list of Boolean circuits on n variables",
+  "a per-circuit predicate 'bad' on restrictions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0\\le p\\le 1$, a list of circuits $\\mathit{cs}$, and a predicate $\\mathrm{bad}$ on circuits\nand restrictions, the probability that some circuit in $\\mathit{cs}$ is bad is bounded by the\nfolded sum of the per-circuit probabilities $\\sum_{c\\in \\mathit{cs}}\\Pr_{p}[\\mathrm{bad}\\,c]$."
+}

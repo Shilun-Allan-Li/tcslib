@@ -1,0 +1,17 @@
+{
+ "lean_name": "episodeLossSeq_valid",
+ "key": "3cc5583a8112a7a9",
+ "kind": "theorem",
+ "title": "Validity of the generated episode loss sequence",
+ "statement": "Fix a number of experts $N \\ge 1$ and a horizon $T$, and let a learner policy play against an adaptive adversary over $N$ experts. Then the episode loss sequence they generate over the first $T$ rounds is valid: for every round $t < T$ and every expert $i$, the realized loss satisfies $0 \\le \\ell_t(i) \\le 1$.",
+ "hypotheses_covered": [
+  "N experts with N nonzero (N ≥ 1)",
+  "horizon T rounds",
+  "a learner policy over N experts",
+  "an adaptive adversary over N experts"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any learner policy and adaptive adversary, the generated loss sequence\n$\\texttt{episodeLossSeq}\\ T\\ \\mathrm{learner}\\ \\mathrm{adversary}$ is valid,\nmeaning every entry lies in $[0, 1]$.  Validity is inherited directly from the\nadversary's range condition."
+}

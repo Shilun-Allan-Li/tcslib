@@ -14,6 +14,11 @@ operations on transcripts, both shown to be injective.
 
 \begin{definition}[Syntactic transcript type]
 \lean{CommunicationComplexity.Deterministic.Protocol.Transcript}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p004-b005}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p003-b001,
+  pdf-fa052d8c95c0-p003-b002
+}
 \label{CommunicationComplexity.Deterministic.Protocol.Transcript}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol}
@@ -34,6 +39,11 @@ the output value $\alpha$ attached to the leaf of the execution path described b
 
 \begin{definition}[Input set of a transcript]
 \lean{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p006-b005,
+  pdf-d54d402b16e2-p007-b002
+}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
@@ -45,19 +55,260 @@ where the current player's Boolean function matches the bit recorded in $t$ and 
 remaining pair belongs to the child transcript's input set.
 \end{definition}
 
-\begin{theorem}[Input set is a rectangle]
+\begin{theorem}[Every transcript's input set is a rectangle]
 \lean{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet_isRectangle}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p005-b002,
+  pdf-fa052d8c95c0-p005-b003
+}
 \label{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet_isRectangle}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b007}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Rectangle.IsRectangle}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Transcript}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptFintype}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcriptSwap, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
-For every protocol $p$ and every syntactic transcript $t$ of $p$, the input set
-$\mathrm{inputSet}(t)$ is a combinatorial rectangle, i.e.\ there exist sets $A \subseteq X$
-and $B \subseteq Y$ such that $\mathrm{inputSet}(t) = A \times B$.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$, and let $t$ be a syntactic transcript of $p$.
+Then the input set of $t$ — the set of all input pairs $(x, y) \in X \times Y$ whose
+execution of $p$ follows exactly the path recorded by $t$ — is a rectangle: there exist
+$A \subseteq X$ and $B \subseteq Y$ such that this set equals $A \times B$.
 \end{theorem}
 
 \begin{definition}[Execute protocol to transcript]
 \lean{CommunicationComplexity.Deterministic.Protocol.transcript}
+\statementsource{roughgarden-cc-bootcamp}{
+  pdf-d54d402b16e2-p006-b003,
+  pdf-d54d402b16e2-p006-b005
+}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.transcript}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
@@ -66,67 +317,553 @@ executes $p$ on $xy$ and returns the syntactic transcript reached, recording eac
 message sent along the way.
 \end{definition}
 
-\begin{theorem}[Input follows its own transcript]
+\begin{theorem}[Every input lies in the input set of its own transcript]
 \lean{CommunicationComplexity.Deterministic.Protocol.mem_transcript}
 \label{CommunicationComplexity.Deterministic.Protocol.mem_transcript}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{2}
-For every protocol $p$ and every input pair $xy$, the pair $xy$ belongs to the input set
-of its own computed transcript: $xy \in \mathrm{inputSet}(p.\mathrm{transcript}(xy))$.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$, and let $(x, y) \in X \times Y$ be an input
+pair. Executing $p$ on $(x, y)$ yields a syntactic transcript, and the pair $(x, y)$
+itself belongs to the input set of that transcript.
 \end{theorem}
 
-\begin{theorem}[Transcript determined by membership]
+\begin{theorem}[Transcript recovered from its input set]
 \lean{CommunicationComplexity.Deterministic.Protocol.transcript_eq_of_mem}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b003}
 \label{CommunicationComplexity.Deterministic.Protocol.transcript_eq_of_mem}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{4}
-If an input pair $xy$ belongs to the input set of a syntactic transcript $t$ of $p$,
-then $t$ is exactly the transcript computed by running $p$ on $xy$:
-$p.\mathrm{transcript}(xy) = t$.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$, let $t$ be a syntactic transcript of $p$, and
+let $(x, y) \in X \times Y$ be an input pair. If $(x, y)$ belongs to the input set of
+$t$, then executing $p$ on $(x, y)$ produces exactly the transcript $t$; that is,
+$p.\mathrm{transcript}(x, y) = t$.
 \end{theorem}
 
-\begin{theorem}[Protocol output equals transcript output]
+\begin{theorem}[Execution agrees with the transcript output]
 \lean{CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output}
 \label{CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.output, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{2}
-For every protocol $p$ and input pair $xy$, running $p$ yields the same result as
-reading the output from the computed transcript:
-$p.\mathrm{run}(xy.1, xy.2) = \mathrm{Transcript.output}(p.\mathrm{transcript}(xy))$.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$, and let $(x, y) \in X \times Y$ be an input
+pair. Running $p$ on $x$ and $y$ produces the same value as first executing $p$ on
+$(x,y)$ to obtain its syntactic transcript and then reading off the output value
+attached to the leaf of that transcript.
 \end{theorem}
 
-\begin{theorem}[Same transcript implies same output]
+\begin{theorem}[Transcript determines output]
 \lean{CommunicationComplexity.Deterministic.Protocol.run_eq_of_transcript_eq}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b005}
 \label{CommunicationComplexity.Deterministic.Protocol.run_eq_of_transcript_eq}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Transcript}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Transcript.output}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptFintype}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcript}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.output, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{1}
-If two input pairs $xy$ and $xy'$ produce the same syntactic transcript under $p$, then
-they also produce the same protocol output:
-$p.\mathrm{transcript}(xy) = p.\mathrm{transcript}(xy')$ implies
-$p.\mathrm{run}(xy.1, xy.2) = p.\mathrm{run}(xy'.1, xy'.2)$.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with outputs in $\alpha$, and let $(x, y)$ and $(x', y')$ be two input
+pairs in $X \times Y$. If executing $p$ on $(x, y)$ produces the same syntactic
+transcript as executing $p$ on $(x', y')$, then $p$ returns the same output on both
+inputs: the value obtained by running $p$ on $(x, y)$ equals the value obtained by
+running $p$ on $(x', y')$.
 \end{theorem}
 
-\begin{theorem}[Auxiliary bound on transcript count]
+\begin{theorem}[Sum bound from powers of two]
 \lean{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux}
 \label{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux}
 \leanok
 \difficulty{3}
-For natural numbers $a, b, c_a, c_b$ with $a \le 2^{c_a}$ and $b \le 2^{c_b}$, one has
-$a + b \le 2^{1 + \max(c_a, c_b)}$.
+Let $a$, $b$, $c_a$, $c_b$ be natural numbers with $a \le 2^{c_a}$ and $b \le 2^{c_b}$.
+Then
+\[
+a + b \le 2^{1 + \max(c_a, c_b)}.
+\]
 \end{theorem}
 
-\begin{theorem}[Number of transcripts bounded by complexity]
+\begin{theorem}[Transcript count bounded by communication complexity]
 \lean{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p003-b005,
+  pdf-fa052d8c95c0-p003-b006
+}
 \label{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swapInputSet_swapInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.mem_preimageInputSet}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b006}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.Transcript}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005,
+    pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptFintype}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptMeasurableSpace}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b006,
+    pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{4}
-A deterministic protocol $p$ has at most $2^{\mathrm{complexity}(p)}$ syntactic
-transcripts: $|\mathrm{Transcript}(p)| \le 2^{p.\mathrm{complexity}}$.
+For every deterministic two-party communication protocol $p$ with input types $X$ and
+$Y$ and output type $\alpha$, the number of syntactic transcripts of $p$ is at most $2$
+raised to its communication complexity:
+\[
+\abs{\mathrm{Transcript}(p)} \le 2^{\mathrm{complexity}(p)}.
+\]
 \end{theorem}
 
 \begin{definition}[Transcript swap]
@@ -140,26 +877,34 @@ roles), obtained by preserving the Boolean message sequence while reinterpreting
 node as the opposite player.
 \end{definition}
 
-\begin{theorem}[Transcript swap is injective]
+\begin{theorem}[Injectivity of the transcript swap]
 \lean{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_injective}
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_injective}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{4}
-For every protocol $p$, the map \texttt{transcriptSwap} from $\mathrm{Transcript}(p)$ to
-$\mathrm{Transcript}(p.\mathrm{swap})$ is injective: distinct transcripts of $p$ give
-distinct transcripts of the swapped protocol.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$, and let $p'$ be the role-swapped protocol
+obtained by exchanging the roles of Alice and Bob throughout $p$. The transcript-swap
+map, which sends each syntactic transcript of $p$ to its corresponding transcript of
+$p'$ by preserving the Boolean message sequence while reinterpreting each communication
+node as the opposite player, is injective: distinct transcripts of $p$ are sent to
+distinct transcripts of $p'$.
 \end{theorem}
 
-\begin{theorem}[Swap commutes with transcript computation]
+\begin{theorem}[Role swap commutes with transcript computation]
 \lean{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_transcript}
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_transcript}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{2}
-For every protocol $p$ and inputs $x \in X$, $y \in Y$, swapping the transcript of $p$
-on $(x, y)$ equals the transcript of the swapped protocol on the reversed pair $(y, x)$:
-$\mathrm{transcriptSwap}(p.\mathrm{transcript}(x, y)) = p.\mathrm{swap}.\mathrm{transcript}(y, x)$.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob), and let $x \in X$ and $y \in Y$ be inputs. Running $p$ on the pair
+$(x,y)$ produces a syntactic transcript, and applying the transcript-swap operation to
+it — reinterpreting each communication node as the opposite player while preserving the
+Boolean message sequence — yields exactly the transcript obtained by running the
+role-swapped protocol (in which Alice and Bob exchange roles) on the reversed pair
+$(y,x)$.
 \end{theorem}
 
 \begin{definition}[Transcript comap]
@@ -173,26 +918,33 @@ the pulled-back protocol $p.\mathrm{comap}(f_X, f_Y)$, obtained by preserving th
 Boolean message sequence while re-routing through the input maps.
 \end{definition}
 
-\begin{theorem}[Transcript comap is injective]
+\begin{theorem}[Injectivity of the transcript pull-back]
 \lean{CommunicationComplexity.Deterministic.Protocol.transcriptComap_injective}
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptComap_injective}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.transcriptComap, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{4}
-For every protocol $p$ and input maps $f_X : X' \to X$, $f_Y : Y' \to Y$, the map
-\texttt{CommunicationComplexity.Deterministic.Protocol.transcriptComap}~$p$~$f_X$~$f_Y$ from $\mathrm{Transcript}(p)$ to
-$\mathrm{Transcript}(p.\mathrm{comap}(f_X, f_Y))$ is injective.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$, and let $f_X : X' \to X$ and $f_Y : Y' \to Y$
+be maps on the input spaces. Consider the pulled-back protocol over $X' \times Y'$
+obtained by pre-composing every message function of $p$ with $f_X$ or $f_Y$ as
+appropriate. Then the map that sends each syntactic transcript of $p$ to the
+corresponding transcript of this pulled-back protocol — preserving the sequence of
+Boolean messages while re-routing through the input maps — is injective.
 \end{theorem}
 
-\begin{theorem}[Comap commutes with transcript computation]
+\begin{theorem}[Pull-back commutes with transcript execution]
 \lean{CommunicationComplexity.Deterministic.Protocol.transcriptComap_transcript}
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptComap_transcript}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.comap, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptComap, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{2}
-For every protocol $p$, maps $f_X : X' \to X$, $f_Y : Y' \to Y$, and inputs
-$x' \in X'$, $y' \in Y'$, pulling back the transcript of $p$ on $(f_X(x'), f_Y(y'))$
-equals the transcript of the comapped protocol on $(x', y')$:
-$\mathrm{transcriptComap}(p,f_X,f_Y,p.\mathrm{transcript}(f_X(x'),f_Y(y')))
-= (p.\mathrm{comap}(f_X,f_Y)).\mathrm{transcript}(x',y')$.
+Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
+and $Y$ (Bob) with output type $\alpha$, and let $f_X : X' \to X$ and $f_Y : Y' \to Y$
+be functions; write $p'$ for the pulled-back protocol over $X' \times Y'$ obtained by
+pre-composing each of Alice's and Bob's message functions with $f_X$ and $f_Y$
+respectively. Then for every $x' \in X'$ and $y' \in Y'$, running $p$ on the pair
+$(f_X(x'), f_Y(y'))$ to obtain its syntactic transcript and then re-routing that
+transcript through $f_X$ and $f_Y$ into a transcript of $p'$ yields exactly the
+syntactic transcript produced by running $p'$ directly on $(x', y')$.
 \end{theorem}

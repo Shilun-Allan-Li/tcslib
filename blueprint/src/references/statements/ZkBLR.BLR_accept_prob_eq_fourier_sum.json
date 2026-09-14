@@ -1,0 +1,15 @@
+{
+ "lean_name": "ZkBLR.BLR_accept_prob_eq_fourier_sum",
+ "key": "ee13deb1e5a436ce",
+ "kind": "lemma",
+ "title": "BLR acceptance probability as a Fourier sum",
+ "statement": "Let $k \\ge 1$, and let $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$. For each $j \\in \\mathbb{Z}_k$ let $\\widetilde{f}_j(x) = \\omega_k^{\\,j\\,f(x)}$ denote the $j$-twisted lift of $f$, and write $\\widehat{\\widetilde{f}_j}(s)$ for its Fourier coefficient at frequency $s \\in \\mathbb{Z}_k^n$. Then the BLR acceptance probability of $f$ admits the representation\n\\[\n  \\Pr_{x,y}\\bigl[f(x+y)=f(x)+f(y)\\bigr]\n  = \\frac{1}{k}\n    \\sum_{j\\in\\mathbb{Z}_k}\\;\n    \\sum_{s\\in\\mathbb{Z}_k^n}\n    \\bigl|\\widehat{\\widetilde{f}_j}(s)\\bigr|^2\\,\n    \\operatorname{Re}\\widehat{\\widetilde{f}_j}(s),\n\\]\nwhere $|\\cdot|$ is the complex modulus and $\\operatorname{Re}$ the real part.",
+ "hypotheses_covered": [
+  "k ≥ 1 (NeZero k)",
+  "f : ℤ_k^n → ℤ_k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The BLR acceptance probability admits the Fourier representation\n\\[\n  \\Pr[{\\rm accept}]\n  = \\frac{1}{k}\n    \\sum_{j\\in\\mathbb{Z}_k}\n    \\sum_{s\\in\\mathbb{Z}_k^n}\n    \\bigl\\|\\widehat{(\\widetilde{f}_j)}(s)\\bigr\\|^2\n    \\operatorname{Re}\\!\\left[\\widehat{(\\widetilde{f}_j)}(s)\\right].\n\\]"
+}

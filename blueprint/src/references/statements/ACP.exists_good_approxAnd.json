@@ -1,0 +1,20 @@
+{
+ "lean_name": "ACP.exists_good_approxAnd",
+ "key": "0afbed1d3cd5e86d",
+ "kind": "theorem",
+ "title": "Existence of a good AND-approximating polynomial family",
+ "statement": "Let $p$ be prime, let $\\mathrm{vars}$, $\\mathrm{width}$, and $\\ell$ be natural numbers, and let $P_1,\\dots,P_{\\mathrm{width}}$ be polynomials over $\\bbz/p$ in $\\mathrm{vars}$ variables. Call a *seed* an $\\ell$-tuple $S=(S_1,\\dots,S_\\ell)$ of subsets of $\\{1,\\dots,\\mathrm{width}\\}$, and for each seed $S$ write $A_S$ for the associated AND-approximating polynomial; there are exactly $2^{\\mathrm{width}\\cdot\\ell}$ seeds. Then the list whose entries are the polynomials $A_S$, one per seed, has length $2^{\\mathrm{width}\\cdot\\ell}$, and every entry has total degree at most $(p-1)\\,\\ell\\,\\sup_i \\deg(P_i)$. Moreover, for every point $y\\in(\\bbz/p)^{\\mathrm{vars}}$, if $N(y)$ denotes the number of seeds $S$ for which\n\\[\nA_S(y)\\ \\neq\\ \\prod_{k=1}^{\\mathrm{width}}\\Bigl(1-\\bigl(1-P_k(y)\\bigr)^{p-1}\\Bigr)\n\\]\n(the right-hand side being the exact conjunction value at $y$), then $N(y)\\cdot 2^{\\ell}\\le 2^{\\mathrm{width}\\cdot\\ell}$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "natural-number parameters vars, width, ℓ",
+  "family of polynomials P_i over Z/p in vars variables indexed by i in Fin width",
+  "conclusion: the list is the family of AND-approximators, one entry per seed",
+  "conclusion: list length equals 2^(width·ℓ)",
+  "conclusion: each entry has total degree at most (p-1)·ℓ·sup_i deg(P_i)",
+  "conclusion: for every point y, (number of failing seeds)·2^ℓ ≤ list length (= 2^(width·ℓ))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There is a list $Ps$ of polynomials, namely $\\texttt{ACP.approxAndPolyList}\\,(P)$, of length\n$2^{\\mathrm{width}\\cdot\\ell}$, every entry of which has total degree at most\n$(p-1)\\ell\\cdot\\sup_i \\deg(P_i)$, and such that for every evaluation point $y$ the number of\nseeds failing to compute the AND value at $y$, times $2^\\ell$, is at most the length of\n$Ps$."
+}

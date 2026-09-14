@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies",
+ "key": "ad01260f0690621a",
+ "kind": "theorem",
+ "title": "Coin-tape conversion preserves approximate correctness",
+ "statement": "Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$ and output type $\\alpha$, whose private randomness for Alice and Bob is drawn from finite probability spaces $\\Omega_X$ and $\\Omega_Y$. Let $Q : X \\to Y \\to \\alpha \\to \\mathrm{Prop}$ be a predicate on input–output triples, and let $\\varepsilon$ and $\\delta$ be real numbers with $\\delta > 0$. Suppose $p$ $\\varepsilon$-satisfies $Q$; that is, for every input pair $(x, y)$ the probability, over Alice's and Bob's private coins $(\\omega_x, \\omega_y)$, that the output of $p$ fails to satisfy $Q\\,x\\,y$ is at most $\\varepsilon$. Then the protocol obtained by converting $p$ at tolerance $\\delta$ — replacing the private randomness by fair coin tapes of some lengths $n_X$ and $n_Y$ — $(\\varepsilon + \\delta)$-satisfies $Q$.",
+ "hypotheses_covered": [
+  "Ω_X, Ω_Y are finite probability spaces",
+  "p is a private-coin finite-message protocol over X, Y with output α",
+  "Q is a predicate on input–output triples",
+  "ε and δ are real numbers",
+  "δ > 0",
+  "p ε-satisfies Q"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$ and output\ntype $\\alpha$, whose private randomness for Alice and Bob is drawn from finite\nprobability spaces $\\Omega_X$ and $\\Omega_Y$. Let $Q : X \\to Y \\to \\alpha \\to\n\\mathrm{Prop}$ be a predicate on input–output triples, and let $\\varepsilon$ and\n$\\delta$ be real numbers with $\\delta > 0$. Suppose $p$ $\\varepsilon$-satisfies $Q$,\nmeaning that for every input pair $(x,y)$ the measure of the set of coin pairs\n$(\\omega_x,\\omega_y)$ for which the output produced by running $p$ on inputs $x$, $y$\nwith private coins $\\omega_x$, $\\omega_y$ fails $Q\\,x\\,y$ is at most $\\varepsilon$. Then\nthe protocol obtained from the coin-tape conversion $\\mathrm{toCoinTape}(p,\\delta)$ —\nwhich replaces the private randomness by fair coin tapes of lengths $n_X$ and $n_Y$ —\n$(\\varepsilon+\\delta)$-satisfies $Q$."
+}

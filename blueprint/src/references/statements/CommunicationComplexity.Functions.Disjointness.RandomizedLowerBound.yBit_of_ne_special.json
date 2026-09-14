@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yBit_of_ne_special",
+ "key": "6c30efdff2d39bf2",
+ "kind": "theorem",
+ "title": "Bob's bit away from the special coordinate",
+ "statement": "Fix a positive integer $n$ and a sample $\\omega$ of the hard distribution, consisting of a distinguished coordinate $T \\in \\{0, 1, \\dots, n-1\\}$, two bits $x_T$ and $y_T$, and an assignment $i \\mapsto \\omega_{\\text{other}}(i)$ of a disjoint coordinate-type (one of *neither*, *left only*, *right only*) to each coordinate. For every coordinate $i \\ne T$, Bob's bit at $i$ under this sample equals the bit $y(\\omega_{\\text{other}}(i))$ read off from the coordinate-type assigned to $i$; that is, away from the distinguished coordinate the distinguished bit $y_T$ plays no role.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "ω is a HardSample (distinguished coordinate T, bits xT and yT, coordinate-type assignment `other`)",
+  "i is a coordinate in Fin n",
+  "i ≠ ω.T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Technical auxiliary result for \\texttt{yBit\\_of\\_ne\\_special}."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.numFree_update_lt",
+ "key": "705f82f0e9dec1d7",
+ "kind": "lemma",
+ "title": "Fixing a free variable lowers the free count",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, and let $v$ be a free variable of $\\rho$. For any Boolean value $b$, let $\\rho'$ be the restriction that agrees with $\\rho$ everywhere except at $v$, where it assigns the fixed value $b$. Then the number of free variables of $\\rho'$ is strictly less than the number of free variables of $\\rho$.",
+ "hypotheses_covered": [
+  "ρ is a restriction on n variables",
+  "v is a free variable of ρ",
+  "b is a Boolean value",
+  "ρ' updates ρ at v to the fixed value b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $v$ is a free variable of a restriction $\\rho$, then fixing $v$ to a value $b$\nstrictly decreases the number of free variables: $\\mathrm{numFree}(\\rho[v \\mapsto b]) < \\mathrm{numFree}(\\rho)$."
+}

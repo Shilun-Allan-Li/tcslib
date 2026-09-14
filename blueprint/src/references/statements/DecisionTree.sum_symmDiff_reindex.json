@@ -1,0 +1,16 @@
+{
+ "lean_name": "DecisionTree.sum_symmDiff_reindex",
+ "key": "aa5f99ce4d8420a4",
+ "kind": "lemma",
+ "title": "Invariance of a subset-sum under symmetric difference with a point",
+ "statement": "Fix $n \\in \\bbn$, let $i$ be an element of $\\{0, 1, \\dots, n-1\\}$, and let $g$ assign a real number to each subset of $\\{0, 1, \\dots, n-1\\}$. Then summing $g$ over all subsets is unaffected by first toggling the membership of $i$; that is,\n\\[\n\\sum_{S} g\\big(S \\mathbin{\\triangle} \\{i\\}\\big) = \\sum_{S} g(S),\n\\]\nwhere both sums range over all subsets $S \\subseteq \\{0, 1, \\dots, n-1\\}$ and $S \\mathbin{\\triangle} \\{i\\}$ denotes the symmetric difference of $S$ with the singleton $\\{i\\}$.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "i is an index in Fin n",
+  "g is a real-valued function on subsets of Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $g : \\mathcal{P}(\\mathrm{Fin}\\,n) \\to \\bbr$ and any $i$,\n\\[\n\\sum_{S} g(S \\triangle \\{i\\}) = \\sum_{S} g(S),\n\\]\nthe sums ranging over all subsets $S$ of $\\mathrm{Fin}\\,n$."
+}

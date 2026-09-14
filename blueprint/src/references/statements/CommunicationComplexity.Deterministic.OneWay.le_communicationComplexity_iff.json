@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.OneWay.le_communicationComplexity_iff",
+ "key": "90c0c91f6f9d2cf6",
+ "kind": "theorem",
+ "title": "Lower bound characterization of one-way communication complexity",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function and let $k \\in \\bbn$. Then $k$ is at most the one-way deterministic communication complexity of $f$ (as an inequality in $\\bbn_\\infty$) if and only if every one-way deterministic protocol that computes $f$ has bit cost at least $k$.",
+ "hypotheses_covered": [
+  "f : X → Y → α is an arbitrary function",
+  "k is a natural number",
+  "comparison k ≤ complexity taken in ℕ∞ (ENat)",
+  "quantification over all one-way protocols computing f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a function $f$ and $k \\in \\mathbb{N}$, $k$ is at most the one-way complexity of $f$\nif and only if every one-way protocol $p$ computing $f$ satisfies\n$k \\le p.\\mathtt{cost}$."
+}

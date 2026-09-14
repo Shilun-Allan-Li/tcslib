@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.reach_mem_iff",
+ "key": "dfcb09a41394ae86",
+ "kind": "lemma",
+ "title": "Reachability depends only on the edge set",
+ "statement": "Fix $n \\in \\bbn$, and let $l_1$ and $l_2$ be two lists of weighted edges on the vertex set $\\mathrm{Fin}\\,n$ that have the same members, i.e.\\ $x \\in l_1 \\Leftrightarrow x \\in l_2$ for every weighted edge $x$. Then for any vertices $a, b \\in \\mathrm{Fin}\\,n$, the vertex $b$ is reachable from $a$ through the edges of $l_1$ if and only if it is reachable from $a$ through the edges of $l_2$.",
+ "hypotheses_covered": [
+  "l1 and l2 have the same members (∀ x, x ∈ l1 ↔ x ∈ l2)",
+  "a, b are vertices in Fin n",
+  "n is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two edge lists $l_1$ and $l_2$ have the same elements (i.e.\\\n$\\forall x,\\; x \\in l_1 \\leftrightarrow x \\in l_2$), then\n$\\mathtt{Reach}\\,l_1\\,a\\,b \\leftrightarrow \\mathtt{Reach}\\,l_2\\,a\\,b$."
+}

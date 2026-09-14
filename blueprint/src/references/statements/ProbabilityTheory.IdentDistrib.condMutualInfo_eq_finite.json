@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite",
+ "key": "110711b789f40c1a",
+ "kind": "theorem",
+ "title": "Conditional mutual information depends only on the joint law",
+ "statement": "Let $(\\Omega,\\mu)$ and $(\\Omega',\\mu')$ be finite probability spaces, and let $S$, $T$, $U$ be finite sets. Consider random variables $X\\colon\\Omega\\to S$, $Y\\colon\\Omega\\to T$, $Z\\colon\\Omega\\to U$ defined on the first space and $X'\\colon\\Omega'\\to S$, $Y'\\colon\\Omega'\\to T$, $Z'\\colon\\Omega'\\to U$ defined on the second. If the joint random vectors $(X,Y,Z)$ and $(X',Y',Z')$ are identically distributed — that is, they induce the same probability measure on $S\\times T\\times U$ — then their conditional mutual informations agree: \\[ I(X;Y\\mid Z) = I(X';Y'\\mid Z'). \\]",
+ "hypotheses_covered": [
+  "Ω and Ω' are finite (discrete) measurable spaces",
+  "S, T, U are finite value sets",
+  "μ and μ' are probability measures",
+  "X, Y, Z on Ω and X', Y', Z' on Ω' take values in S, T, U",
+  "(X,Y,Z) and (X',Y',Z') are identically distributed (same joint law)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Finite-space version of \\texttt{ProbabilityTheory.IdentDistrib.condMutualInfo\\_eq}: measurability\nand finite-range conditions are inferred from \\texttt{CommunicationComplexity.FiniteMeasureSpace}\nand \\texttt{Finite} instances."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq",
+ "key": "002ef364303b909e",
+ "kind": "lemma",
+ "title": "Indicator sum over leaf rectangles recovers the protocol output",
+ "statement": "Let $X$ and $Y$ be input types whose product $X \\times Y$ carries a finite probability space, and let $p$ be a deterministic Boolean two-party protocol over $X$ (Alice) and $Y$ (Bob). Write $\\{R\\}$ for the finite collection of leaf rectangles of $p$, and for each such rectangle assign the sign $\\varepsilon(R) = +1$ if $p$ outputs $\\mathrm{false}$ at every point of $R$ and $\\varepsilon(R) = -1$ otherwise. Then for every point $(x,y) \\in X \\times Y$,\n\\[\n\\sum_{R} \\mathbf{1}_R(x,y)\\,\\varepsilon(R) \\;=\\; \\begin{cases} 1 & \\text{if } p(x,y) = \\mathrm{false},\\\\ -1 & \\text{if } p(x,y) = \\mathrm{true},\\end{cases}\n\\]\nwhere $p(x,y)$ denotes the Boolean value returned by running $p$ on inputs $x$ and $y$.",
+ "hypotheses_covered": [
+  "X × Y carries a finite probability space",
+  "p is a deterministic Boolean protocol over X and Y",
+  "(x,y) is a point of X × Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every point $(x,y) \\in X \\times Y$, the sum over all leaf rectangles $R$ of\n$\\mathbf{1}_{R}(x,y) \\cdot \\mathrm{rectangleSign}(p,R)$ equals $\\sigma(p.\\mathrm{run}(x,y))$.\nThis uses the fact that the leaf rectangles form a partition of $X \\times Y$."
+}

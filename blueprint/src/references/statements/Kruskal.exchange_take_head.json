@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.exchange_take_head",
+ "key": "3a838eb16e02a022",
+ "kind": "lemma",
+ "title": "Head-edge exchange preserves reachability",
+ "statement": "Let $\\mathit{base}$ and $\\mathit{rest}$ be lists of weighted edges on $n$ vertices, and let $g$ and $e$ be two further weighted edges, with respective endpoints $u_g, v_g$ and $u_e, v_e$. Suppose that, using only the edges in the concatenation $\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest}$, the vertex $u_e$ is connected to $u_g$ and the vertex $v_g$ is connected to $v_e$. Then for every pair of vertices $a, b$ that are connected using the edges of $\\mathit{base} \\mathbin{+\\!\\!+} (g :: \\mathit{rest})$, the vertices $a$ and $b$ are also connected using the edges of $\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest} \\mathbin{+\\!\\!+} [e]$.",
+ "hypotheses_covered": [
+  "u_e reaches u_g through base ++ rest",
+  "v_g reaches v_e through base ++ rest",
+  "a and b reachable through base ++ (g :: rest)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathit{base}, \\mathit{rest}$ be edge lists on $n$ vertices and let $g, e$ be edges.\nSuppose that in $\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest}$ the vertex $e.u$ reaches\n$g.u$ and $g.v$ reaches $e.v$. Then every pair $a, b$ that is reachable in\n$\\mathit{base} \\mathbin{+\\!\\!+} (g :: \\mathit{rest})$ is also reachable in\n$\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest} \\mathbin{+\\!\\!+} [e]$; that is, $g$ may be\nreplaced by $e$ without losing connectivity."
+}

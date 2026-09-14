@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.swap_complexity",
+ "key": "417537dcbbdcc7c9",
+ "kind": "theorem",
+ "title": "Role swap preserves communication complexity",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn from a type $X$, Bob's from a type $Y$, and outputs in a type $\\alpha$. Let $p^{\\mathrm{swap}}$ be the protocol obtained by interchanging the roles of Alice and Bob throughout — turning every Alice node into a Bob node and vice versa while leaving output nodes unchanged. Then $p^{\\mathrm{swap}}$ has the same communication complexity as $p$: the worst-case number of bits exchanged is unaffected by the swap.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over input types X (Alice) and Y (Bob) with outputs in α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$ over $X \\times Y$,\n\\[\n  p.\\texttt{swap}.\\texttt{complexity} \\;=\\; p.\\texttt{complexity}.\n\\]"
+}

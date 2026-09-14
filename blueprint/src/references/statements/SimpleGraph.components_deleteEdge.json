@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleGraph.components_deleteEdge",
+ "key": "f9e62f0dddd92890",
+ "kind": "theorem",
+ "title": "Change in component count from deleting an edge",
+ "statement": "Let $G$ be a finite simple graph and let $e$ be an edge of $G$. Writing $c(H)$ for the number of connected components of a graph $H$, and $G - e$ for the graph obtained from $G$ by removing the edge $e$ (keeping all vertices), one has\n\\[\nc(G) \\;\\le\\; c(G - e) \\;\\le\\; c(G) + 1 .\n\\]\nThat is, deleting a single edge either leaves the number of connected components unchanged or increases it by exactly one.",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "e is an edge of G (e ∈ G.edgeSet)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{If \\texttt{e $\\in$ E}, then \\texttt{$\\omega$(G) $\\le$ $\\omega$(G - e) $\\le$\n$\\omega$(G) + 1}.}"
+}

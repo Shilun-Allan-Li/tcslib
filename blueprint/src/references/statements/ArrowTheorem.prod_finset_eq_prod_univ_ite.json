@@ -1,0 +1,15 @@
+{
+ "lean_name": "ArrowTheorem.prod_finset_eq_prod_univ_ite",
+ "key": "47727f01b326aa56",
+ "kind": "lemma",
+ "title": "Product over a finset as an indicator product",
+ "statement": "Let $A \\subseteq \\mathrm{Fin}\\,n$ be a finite set of indices and let $g : \\mathrm{Fin}\\,n \\to \\bbr$. Then\n\\[\n  \\prod_{j \\in A} g(j) \\;=\\; \\prod_{j : \\mathrm{Fin}\\,n}\n    \\begin{cases} g(j) & \\text{if } j \\in A, \\\\ 1 & \\text{if } j \\notin A, \\end{cases}\n\\]\nso that a product taken only over the members of $A$ may equivalently be written as a product over all of $\\mathrm{Fin}\\,n$ in which each factor outside $A$ is replaced by $1$.",
+ "hypotheses_covered": [
+  "A is a finite subset of Fin n",
+  "g is a real-valued function on Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $A\\subseteq\\mathrm{Fin}\\,n$ and $g:\\mathrm{Fin}\\,n\\to\\bbr$,\n\\[\n  \\prod_{j\\in A} g(j) \\;=\\; \\prod_{j:\\mathrm{Fin}\\,n}\n    \\begin{cases} g(j) & j\\in A \\\\ 1 & j\\notin A \\end{cases},\n\\]\nrewriting a product over a finset as a product over all of $\\mathrm{Fin}\\,n$\nwith an indicator."
+}

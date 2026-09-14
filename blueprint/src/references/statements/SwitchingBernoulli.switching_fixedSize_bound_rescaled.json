@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingBernoulli.switching_fixedSize_bound_rescaled",
+ "key": "6edda96d7ef306a8",
+ "kind": "lemma",
+ "title": "Rescaled fixed-size switching lemma bound",
+ "statement": "Let $f$ be a DNF formula on $n \\ge 1$ Boolean variables whose width is at most $w$, with $w \\ge 1$, and suppose that within each term of $f$ no variable occurs more than once — that is, every term is a repetition-free list of literals in which any two literals sharing a variable are identical. Fix an integer $k$ with $0 \\le k \\le n$, and let $R_k$ denote the fixed-size restriction model, uniform over all restrictions of the $n$ variables that leave exactly $k$ of them free. Then for every $d$, the probability under $R_k$ that the restricted function $f_\\rho$ (with the assigned coordinates fixed according to $\\rho$ and the $k$ free coordinates left as inputs) has decision-tree depth greater than $d$ satisfies\n\\[ \\bbP_{\\rho \\sim R_k}\\!\\left[\\, \\mathrm{depth}(f_\\rho) > d \\,\\right] \\;\\le\\; \\left(\\frac{5k \\cdot 2w}{n}\\right)^{d}. \\]",
+ "hypotheses_covered": [
+  "n > 0 (at least one variable)",
+  "f is a DNF with width at most w",
+  "w > 0",
+  "k ≤ n",
+  "within each term, two literals on the same variable are equal (no repeated variable)",
+  "each term's literal list is duplicate-free"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe same fixed-size bound written in the form expected by the Bernoulli\nrestriction-cost theorem: the probability is at most\n$\\left(5k\\cdot(2w)/n\\right)^d$, using $10kw/n = 5k\\cdot(2w)/n$."
+}

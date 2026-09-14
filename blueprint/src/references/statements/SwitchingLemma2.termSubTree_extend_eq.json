@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_extend_eq",
+ "key": "f8f129576a0fa40a",
+ "kind": "lemma",
+ "title": "Fixing free variables to a point preserves its extension",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, let $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be a point, and let $\\ell_1, \\dots, \\ell_m$ be a list of literals over these variables. Form a sequence of restrictions $\\rho_0 = \\rho, \\rho_1, \\dots, \\rho_m$ by processing the literals in order: for each $k$, writing $v_k$ for the variable of $\\ell_k$, if $v_k$ is free in $\\rho_{k-1}$ then let $\\rho_k$ agree with $\\rho_{k-1}$ except that $v_k$ is fixed to the value $x(v_k)$, and otherwise let $\\rho_k = \\rho_{k-1}$. Then the extension of $\\rho_m$ along $x$ equals the extension of $\\rho$ along $x$.",
+ "hypotheses_covered": [
+  "ρ is a restriction on n variables",
+  "x is a Boolean point on Fin n",
+  "ℓ₁,…,ℓₘ is a list of literals over these variables",
+  "each ρₖ is obtained from ρₖ₋₁ by fixing the variable of ℓₖ to x's value there when that variable is free in ρₖ₋₁, and leaving it unchanged otherwise"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "After $\\mathrm{termSubTree}$ assigns all free variables of $\\mathit{lits}$ from $x$, the resulting\nrestriction extends by $x$ to the same total assignment as $\\rho$ does: $(\\mathrm{fold}\\,\\mathit{lits}\\,\\rho).\\mathrm{extend}\\,x = \\rho.\\mathrm{extend}\\,x$."
+}

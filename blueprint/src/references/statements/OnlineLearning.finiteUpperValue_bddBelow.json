@@ -1,0 +1,17 @@
+{
+ "lean_name": "OnlineLearning.finiteUpperValue_bddBelow",
+ "key": "94565637606be539",
+ "kind": "lemma",
+ "title": "Lower boundedness of the row-supremum values",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M \\ge 1$ row actions and $N$ column actions, whose payoff matrix $A$ satisfies $A_{ij} \\in [0,1]$ for all $i,j$. For a mixed column strategy $q$ (a probability distribution on the $N$ columns), let\n\\[\n  v(q) \\;=\\; \\sup_{i}\\, \\sum_{j} A_{ij}\\, q_j\n\\]\nbe the best expected payoff that a single pure row can achieve against $q$. Then the set $\\{\\, v(q) : q \\text{ a mixed column strategy}\\,\\}$ is bounded below.",
+ "hypotheses_covered": [
+  "at least one row action ($M \\ge 1$)",
+  "payoff entries lie in $[0,1]$",
+  "$q$ ranges over mixed strategies on the $N$ columns",
+  "for each $q$ the value is the supremum over rows of the expected payoff"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When $M \\geq 1$, the set\n$\\bigl\\{\\sup_{i}\\,\\mathrm{pureVsPayoff}(G,i,q) : q \\in \\Delta_N\\bigr\\}$\nis bounded below by~$0$."
+}

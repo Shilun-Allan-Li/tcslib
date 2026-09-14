@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.survivalEventProb_succ",
+ "key": "5c40aa70e8dea950",
+ "kind": "lemma",
+ "title": "One-step recursion for the survival probability",
+ "statement": "Let $s$ be a state, consisting of a multigraph $G$ together with a distinguished cut $C$ of $G$, and let $\\mathrm{steps}$ be a natural number. Write $P_k(s)$ for the survival probability of the cut over $k$ random edge-occurrence choices starting from $s$. Then\n\\[\nP_{\\mathrm{steps}+1}(s)\n  \\;=\\;\n  \\frac{1}{N}\\sum_{\\text{occurrences } c}\n  \\begin{cases}\n    P_{\\mathrm{steps}}\\!\\bigl(s_c\\bigr) & \\text{if the edge of } c \\text{ does not cross } C,\\\\[4pt]\n    0 & \\text{otherwise,}\n  \\end{cases}\n\\]\nwhere the sum ranges over the finite set of edge occurrences of $G$ (each parallel copy of an edge counted separately), $N$ is the number of such occurrences, and $s_c$ denotes the state obtained by contracting $s$ along the underlying edge of a surviving occurrence $c$.",
+ "hypotheses_covered": [
+  "steps is a natural number",
+  "s is a state (multigraph with a distinguished cut)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The unfolding equation: the survival probability for $\\text{steps}+1$ contractions at $s$\nis the average over all edge occurrences of $s$ of the survival probability for\n$\\text{steps}$ contractions at the contracted state, with crossing occurrences\ncontributing $0$."
+}

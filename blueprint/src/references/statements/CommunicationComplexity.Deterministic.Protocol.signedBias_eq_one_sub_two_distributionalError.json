@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError",
+ "key": "55f98b75f3b10b8c",
+ "kind": "lemma",
+ "title": "Signed correlation and distributional error",
+ "statement": "Let $X$ and $Y$ be the input types of Alice and Bob, and let $\\mu$ be a finite probability measure on $X \\times Y$. Write $\\sigma \\colon \\mathrm{Bool} \\to \\{\\pm 1\\}$ for the map sending $\\mathrm{false}$ to $1$ and $\\mathrm{true}$ to $-1$. For a deterministic communication protocol $p$ with Boolean output and a target function $g \\colon X \\to Y \\to \\mathrm{Bool}$, the expected signed correlation between the protocol's output and the target satisfies\n\\[\n  \\E_{(x,y)\\sim\\mu}\\bigl[\\sigma\\bigl(p(x,y)\\bigr)\\,\\sigma\\bigl(g(x,y)\\bigr)\\bigr]\n  \\;=\\; 1 - 2\\,\\varepsilon_\\mu(p,g),\n\\]\nwhere $p(x,y)$ denotes the value computed by running $p$ on $(x,y)$ and $\\varepsilon_\\mu(p,g) = \\mu\\bigl(\\{(x,y) \\mid p(x,y) \\ne g(x,y)\\}\\bigr)$ is the distributional error of $p$ against $g$ under $\\mu$.",
+ "hypotheses_covered": [
+  "finite probability space μ on X × Y",
+  "p is a deterministic protocol with Boolean output",
+  "g : X → Y → Bool is the target function",
+  "identity equates the μ-expectation of the product of Boolean signs with 1 − 2·(distributional error)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a deterministic protocol $p$ and Boolean function $g$,\n\\[\n  \\mathbb{E}_{(x,y)\\sim\\mu}\\bigl[\\sigma(p.\\mathrm{run}(x,y))\\cdot\\sigma(g(x,y))\\bigr]\n  \\;=\\;\n  1 - 2\\cdot p.\\mathrm{distributionalError}_\\mu(g).\n\\]"
+}

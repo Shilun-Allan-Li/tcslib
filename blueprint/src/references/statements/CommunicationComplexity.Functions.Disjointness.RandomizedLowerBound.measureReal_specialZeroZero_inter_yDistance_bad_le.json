@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.measureReal_specialZeroZero_inter_yDistance_bad_le",
+ "key": "c724a1476311e668",
+ "kind": "theorem",
+ "title": "Probability bound for a biased special y-bit",
+ "statement": "Fix a positive integer $n$ and a deterministic two-party protocol $p$ for the set-disjointness problem in which Alice and Bob hold subsets $X, Y \\subseteq \\{1, \\dots, n\\}$. Draw a sample $\\omega$ uniformly from the finite hard-sample space; a draw fixes a special coordinate $T$, Alice's and Bob's bits $x_T$ and $y_T$ at the special coordinate, and the two input sets $X(\\omega)$ and $Y(\\omega)$. Let $M(\\omega)$ be the transcript produced by $p$ on the input $(X(\\omega), Y(\\omega))$, and let\n\\[ Z(\\omega) = \\bigl(M(\\omega),\\, T,\\, x_{<T},\\, y_{>T}\\bigr) \\]\nrecord the transcript, the special coordinate, Alice's bits at coordinates strictly below $T$, and Bob's bits at coordinates strictly above $T$. For a value $z$ taken by $Z$, let $\\delta(z)$ be the total-variation distance between the uniform law on a single bit and the conditional law of $y_T$ given $Z = z$, the latter formed under the uniform law on the hard-sample space. Write $I(\\,\\cdot\\,;\\,\\cdot \\mid \\cdot\\,)$ for conditional mutual information computed under the measure obtained by conditioning the uniform law on the event that $X(\\omega)$ and $Y(\\omega)$ are disjoint. Let $\\gamma > 0$ be a real number for which\n\\[ I\\bigl(x_T ; M \\mid T,\\, x_{<T},\\, y_{\\ge T}\\bigr) + I\\bigl(y_T ; M \\mid T,\\, x_{\\le T},\\, y_{>T}\\bigr) \\le \\tfrac{2}{3}\\gamma^{4}. \\]\nThen the probability, under the uniform law on the hard-sample space, that $x_T = y_T = 0$ and $\\delta(Z(\\omega)) > \\gamma$ is at most $\\gamma/2$.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic protocol for length-n disjointness",
+  "gamma > 0",
+  "sum of the two conditional mutual informations at most 2*gamma^4/3"
+ ],
+ "confidence": "high",
+ "caveat": "The ambient measure on the finite hard-sample type is read as the uniform probability measure, so the real-valued measure of the event is a probability; the two mutual-information terms are instead computed under the measure conditioned on disjointness, as stated.",
+ "rubric": [],
+ "replaced": "Bob marginal estimate, symmetric to the Alice marginal estimate."
+}

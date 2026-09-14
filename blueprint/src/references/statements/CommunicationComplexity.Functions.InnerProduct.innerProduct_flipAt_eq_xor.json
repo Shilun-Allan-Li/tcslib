@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.innerProduct_flipAt_eq_xor",
+ "key": "065e7020cd31d00d",
+ "kind": "lemma",
+ "title": "Flipping an active coordinate toggles the mod-2 inner product",
+ "statement": "Let $x, y$ be $n$-bit Boolean inputs, and let $i$ be a coordinate at which $y_i = \\mathtt{true}$. Write $\\langle u, v\\rangle = \\bigoplus_{j} (u_j \\wedge v_j)$ for the mod-2 inner product of two $n$-bit inputs, and let $x'$ denote the input agreeing with $x$ at every coordinate except $i$, where $x'_i = \\lnot\\, x_i$. Then \\[ \\langle x', y\\rangle = \\langle x, y\\rangle \\oplus \\mathtt{true}, \\] so negating the $i$-th coordinate of $x$ flips the value of the inner product.",
+ "hypotheses_covered": [
+  "x, y are n-bit Boolean inputs",
+  "i is a coordinate index in Fin n",
+  "y_i = true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $y_i = \\mathtt{true}$, then flipping coordinate $i$ of $x$ toggles the inner\nproduct: $\\mathrm{innerProduct}(n, \\mathrm{flipAt}(i, x), y) =\n\\mathrm{innerProduct}(n, x, y) \\oplus \\mathtt{true}$."
+}

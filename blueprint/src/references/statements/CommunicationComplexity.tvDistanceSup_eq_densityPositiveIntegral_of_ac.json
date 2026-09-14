@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.tvDistanceSup_eq_densityPositiveIntegral_of_ac",
+ "key": "dbf59c223863f307",
+ "kind": "theorem",
+ "title": "Total variation distance as the excess-mass integral",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on a measurable space $\\Omega$, and suppose $\\mu$ is absolutely continuous with respect to $\\nu$. Write $\\frac{d\\mu}{d\\nu}$ for the Radon–Nikodym derivative of $\\mu$ with respect to $\\nu$. Then the total variation distance, taken as the supremum\n\\[\n  \\mathrm{TV}_{\\sup}(\\mu,\\nu) = \\sup\\bigl\\{\\,\\abs{\\mu(S) - \\nu(S)} : S \\subseteq \\Omega \\text{ measurable}\\,\\bigr\\},\n\\]\nequals the excess mass of $\\mu$ over $\\nu$ on the region where $\\mu$ locally dominates:\n\\[\n  \\mathrm{TV}_{\\sup}(\\mu,\\nu) = \\int_{\\{x\\,:\\,\\frac{d\\mu}{d\\nu}(x)\\,\\ge\\,1\\}} \\left(\\frac{d\\mu}{d\\nu}(x) - 1\\right)\\,d\\nu(x).\n\\]",
+ "hypotheses_covered": [
+  "μ and ν are probability measures on a measurable space Ω",
+  "μ is absolutely continuous with respect to ν (μ ≪ ν)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mu \\ll \\nu$, then\n$\\mathrm{tvDistanceSup}(\\mu,\\nu) = \\mathrm{densityPositiveIntegral}(\\mu,\\nu)$."
+}

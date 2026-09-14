@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.FeedForward.toCircuit_eval",
+ "key": "768587c1995e88d5",
+ "kind": "theorem",
+ "title": "Tree-unrolling preserves evaluation",
+ "statement": "Let $F$ be a Boolean feedforward circuit with input variables indexed by $\\mathrm{Fin}\\,n$ and output nodes of type $\\mathrm{out}$, equipped with a flag assigning to each non-input node the label AND or OR and a witness that each gate has finite arity. Suppose $F$ is an AND/OR circuit: every gate computes the conjunction of the values on its input wires when its node is labelled AND, and their disjunction when it is labelled OR. Then for every output node $o$ and every assignment $x : \\mathrm{Fin}\\,n \\to \\bbf_2$, the tree-shaped Boolean circuit obtained by unrolling $o$ from the last layer down to the inputs, evaluated at $x$, agrees with the value that $F$ itself assigns to $o$ under the input assignment $x$.",
+ "hypotheses_covered": [
+  "F is a Boolean feedforward circuit with inputs Fin n and outputs out",
+  "isAnd: an AND/OR label on each non-input node",
+  "gfin: each gate has finite arity",
+  "hcorrect: F is an AND/OR circuit — each gate is the conjunction or disjunction of its inputs per its label",
+  "o: a chosen output node",
+  "x: an input assignment Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every gate of $F$ is an AND or OR gate, then for every output node $o$ and every\ninput $x$,\n\\[\n(F.\\texttt{toCircuit}\\ \\texttt{isAnd}\\ \\texttt{gfin}\\ o).\\texttt{eval}\\ x\n = F.\\texttt{eval}\\ x\\ o .\n\\]"
+}

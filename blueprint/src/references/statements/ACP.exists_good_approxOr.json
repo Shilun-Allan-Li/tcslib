@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.exists_good_approxOr",
+ "key": "80e31208cc69509a",
+ "kind": "theorem",
+ "title": "Existence of a good OR-approximating polynomial list",
+ "statement": "Fix a prime $p$ and natural numbers $\\mathrm{vars}$, $\\mathrm{width}$, and $\\ell$, and let $P_1,\\dots,P_{\\mathrm{width}}$ be polynomials in $\\mathrm{vars}$ variables over $\\bbz/p$. Then there is a list $Ps$ of polynomials over $\\bbz/p$ that is exactly the list of OR-approximating polynomials — one entry for every seed $S$, a seed being an assignment $k \\mapsto S_k$ of a subset $S_k$ of the $\\mathrm{width}$ positions to each of the $\\ell$ rounds — and this list has the following three properties. Its length is $2^{\\mathrm{width}\\cdot\\ell}$; every entry has total degree at most $(p-1)\\,\\ell\\,\\sup_i \\deg(P_i)$; and for every evaluation point $y \\in (\\bbz/p)^{\\mathrm{vars}}$, the number of seeds $S$ for which the OR-approximating polynomial of $S$ evaluated at $y$ differs from the exact value $1 - \\prod_{k=1}^{\\mathrm{width}}\\bigl(1 - P_k(y)^{p-1}\\bigr)$, when multiplied by $2^{\\ell}$, is at most the length $2^{\\mathrm{width}\\cdot\\ell}$ of $Ps$.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "$P_1,\\dots,P_{\\mathrm{width}}$ are polynomials in $\\mathrm{vars}$ variables over $\\bbz/p$",
+  "the list is exactly the list of OR-approximating polynomials, one per seed",
+  "its length equals $2^{\\mathrm{width}\\cdot\\ell}$",
+  "each entry has total degree at most $(p-1)\\,\\ell\\,\\sup_i \\deg(P_i)$",
+  "for every evaluation point $y$, the count of disagreeing seeds times $2^{\\ell}$ is at most the list length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There is a list $Ps$ of polynomials, namely $\\texttt{ACP.approxOrPolyList}\\,(P)$, of length\n$2^{\\mathrm{width}\\cdot\\ell}$, every entry of which has total degree at most\n$(p-1)\\ell\\cdot\\sup_i \\deg(P_i)$, and such that for every evaluation point $y$ the number of\nseeds failing to compute the OR value at $y$, times $2^\\ell$, is at most the length of $Ps$."
+}

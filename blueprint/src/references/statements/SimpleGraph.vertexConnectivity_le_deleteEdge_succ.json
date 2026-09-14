@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.vertexConnectivity_le_deleteEdge_succ",
+ "key": "87c938e3851b04a4",
+ "kind": "theorem",
+ "title": "Edge deletion drops vertex connectivity by at most one",
+ "statement": "Let $G$ be a finite simple graph on a vertex set $V$, and let $e$ be an unordered pair of vertices; write $G - e$ for the graph obtained from $G$ by deleting the edge $e$ (leaving $G$ unchanged if $e$ is not an edge of $G$). Then the vertex connectivities satisfy\n\\[\n\\kappa(G) \\;\\le\\; \\kappa(G - e) + 1 .\n\\]",
+ "hypotheses_covered": [
+  "finite simple graph G on vertex set V",
+  "an unordered pair e of vertices (the edge to delete)",
+  "G - e is G with the single edge e removed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Successor step, part 2: deleting a single edge drops \\texttt{$\\kappa$} by at most one."
+}

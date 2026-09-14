@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleHypercontractivity.hypercontractivity_2_q",
+ "key": "a8cd59de2f38a079",
+ "kind": "theorem",
+ "title": "$(2,q)$-hypercontractivity for even exponents",
+ "statement": "Let $q \\ge 2$ be an even integer, and let $\\rho \\in \\bbr$ satisfy $\\rho^2 \\le \\tfrac{1}{q-1}$. Then for every Boolean function $f : \\{0,1\\}^n \\to \\bbr$, the noise operator $T_\\rho$ contracts from $L^2$ to $L^q$ in the sense that\n\\[\n  \\E\\bigl[(T_\\rho f)^q\\bigr] \\;\\le\\; \\bigl(\\E[f^2]\\bigr)^{q/2},\n\\]\nwhere both expectations are taken with respect to the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "q is an integer with q ≥ 2",
+  "q is even",
+  "ρ is real",
+  "ρ² ≤ 1/(q−1)",
+  "f is a Boolean function on {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For an even integer $q \\ge 2$ and noise parameter $\\rho$ with $\\rho^2 \\le 1/(q-1)$,\n\\[\n  \\E[(T_\\rho f)^q] \\le \\bigl(\\E[f^2]\\bigr)^{q/2}.\n\\]\nThis is the $(2,2k)$ theorem restated in terms of an even exponent $q = 2k$."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.approxOr_pointwise_bad_count",
+ "key": "26bd5861990ed22b",
+ "kind": "theorem",
+ "title": "Few seeds miss the true OR at a point",
+ "statement": "Fix a prime $p$, and let $P_1,\\dots,P_{\\mathrm{width}}$ be polynomials in $\\mathrm{vars}$ variables over $\\bbz/p$, evaluated at a fixed point $y \\in (\\bbz/p)^{\\mathrm{vars}}$. A seed is a tuple $S = (S_1,\\dots,S_\\ell)$ of $\\ell$ subsets of $\\{1,\\dots,\\mathrm{width}\\}$, of which there are $2^{\\mathrm{width}\\cdot\\ell}$ in all; call $S$ bad at $y$ when the randomized OR-approximating polynomial built from the $P_i$ and $S$, evaluated at $y$, differs from the value-level OR\n\\[\n1 - \\prod_{k=1}^{\\mathrm{width}}\\bigl(1 - P_k(y)^{\\,p-1}\\bigr).\n\\]\nThen the number of seeds that are bad at $y$, multiplied by $2^\\ell$, is at most $2^{\\mathrm{width}\\cdot\\ell}$; equivalently, at most a $2^{-\\ell}$ fraction of all seeds are bad at $y$.",
+ "hypotheses_covered": [
+  "$p$ is prime",
+  "polynomials $P_1,\\dots,P_{\\mathrm{width}}$ over $\\bbz/p$ in $\\mathrm{vars}$ variables",
+  "a fixed evaluation point $y \\in (\\bbz/p)^{\\mathrm{vars}}$",
+  "$\\mathrm{vars}, \\mathrm{width}, \\ell$ natural numbers",
+  "seeds range over all $\\ell$-tuples of subsets of $\\{1,\\dots,\\mathrm{width}\\}$",
+  "bad = randomized OR-approximating polynomial at $y$ disagrees with the width-fold value-level OR of the $P_k(y)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix an evaluation point $y$. The number of seeds $S$ for which\n$\\texttt{ACP.approxOr}\\,(P,S)$ evaluated at $y$ differs from\n$1 - \\prod_k \\bigl(1 - P_k(y)^{p-1}\\bigr)$, multiplied by $2^\\ell$, is at most\n$2^{\\mathrm{width}\\cdot\\ell}$; that is, at most a $2^{-\\ell}$ fraction of seeds fail at $y$."
+}

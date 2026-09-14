@@ -22,27 +22,31 @@ is the deterministic protocol obtained by substituting $\omega$ for the shared
 randomness (implemented via \texttt{comap} with $\mathrm{Prod.mk}\,\omega$).
 \end{definition}
 
-\begin{theorem}[Fixed-randomness run equals randomised run]
+\begin{theorem}[Fixing the shared randomness agrees with the randomised run]
 \lean{CommunicationComplexity.PublicCoin.Protocol.toDeterministic_run}
 \label{CommunicationComplexity.PublicCoin.Protocol.toDeterministic_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.rrun, CommunicationComplexity.PublicCoin.Protocol.toDeterministic}
 \difficulty{1}
-For any inputs $x : X$ and $y : Y$, running the deterministic protocol
-$(p.\mathrm{toDeterministic}\,\omega)$ on $(x, y)$ yields the same output as
-running the randomised protocol $p$ on $(x, y, \omega)$, i.e.\
-$(p.\mathrm{toDeterministic}\,\omega).\mathrm{run}\,x\,y = p.\mathrm{rrun}\,x\,y\,\omega$.
+Let $p$ be a public-coin protocol over a randomness space $\Omega$, with Alice's private
+input in $X$, Bob's in $Y$, and output in $\alpha$, and fix a random outcome $\omega \in
+\Omega$. For all private inputs $x \in X$ and $y \in Y$, executing the deterministic
+protocol obtained from $p$ by fixing the shared randomness to $\omega$ on the pair $(x,
+y)$ returns the same output in $\alpha$ as the randomised execution of $p$ on $x$ and
+$y$ with shared random string $\omega$.
 \end{theorem}
 
-\begin{theorem}[Fixed-randomness complexity equals original]
+\begin{theorem}[Fixing shared randomness preserves communication complexity]
 \lean{CommunicationComplexity.PublicCoin.Protocol.toDeterministic_complexity}
 \label{CommunicationComplexity.PublicCoin.Protocol.toDeterministic_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PublicCoin.Protocol, CommunicationComplexity.PublicCoin.Protocol.toDeterministic}
 \difficulty{1}
-Fixing the shared randomness does not change the communication complexity:
-$(p.\mathrm{toDeterministic}\,\omega).\mathrm{complexity} = p.\mathrm{complexity}$
-for every $\omega : \Omega$.
+Let $p$ be a public-coin communication protocol over a shared randomness space $\Omega$,
+with Alice's private input in $X$, Bob's in $Y$, and output in $\alpha$, and let $\omega
+\in \Omega$ be any outcome of the shared randomness. Then the communication complexity
+of the deterministic protocol obtained from $p$ by fixing the shared randomness to
+$\omega$ equals the communication complexity of $p$ itself.
 \end{theorem}
 
 \begin{definition}[Deterministic finite-message protocol to private-coin]
@@ -56,26 +60,35 @@ private-coin finite-message protocol over arbitrary coin spaces $\Omega_X$ and
 $\Omega_Y$ by ignoring both coin inputs (via \texttt{comap} with $\mathrm{Prod.snd}$).
 \end{definition}
 
-\begin{theorem}[Private-coin run of embedded deterministic protocol]
+\begin{theorem}[Ignoring private coins recovers the deterministic output]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_rrun}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For any inputs $x : X$, $y : Y$ and any coin draws $\omega_X : \Omega_X$,
-$\omega_Y : \Omega_Y$, the randomised run of $p.\mathrm{toPrivateCoin}$ equals
-the deterministic run of $p$:
-$\mathrm{rrun}(p.\mathrm{toPrivateCoin})\,x\,y\,\omega_X\,\omega_Y = p.\mathrm{run}\,x\,y$.
+Let $p$ be a deterministic finite-message protocol over input types $X$ and $Y$ with
+output type $\alpha$, and fix arbitrary private-coin spaces $\Omega_X$ and $\Omega_Y$.
+Form from $p$ the private-coin protocol over $\Omega_X$, $\Omega_Y$ that runs $p$ on the
+underlying inputs while discarding both players' coins. Then for all inputs $x \in X$,
+$y \in Y$ and all coin draws $\omega_x \in \Omega_X$, $\omega_y \in \Omega_Y$, executing
+this private-coin protocol on $x$, $y$ with the coins $\omega_x$, $\omega_y$ returns
+exactly the value that the deterministic execution of $p$ on $x$, $y$ produces,
+regardless of the coins.
 \end{theorem}
 
-\begin{theorem}[Complexity preserved under embedding into private-coin]
+\begin{theorem}[Complexity is preserved by passage to the private-coin model]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin}
 \difficulty{1}
-Embedding a deterministic finite-message protocol into the private-coin model
-preserves its complexity: $(p.\mathrm{toPrivateCoin}).\mathrm{complexity} = p.\mathrm{complexity}$.
+Let $p$ be a deterministic finite-message protocol over input types $X$, $Y$ and output
+type $\alpha$, and let $\Omega_X$, $\Omega_Y$ be arbitrary types to serve as
+private-randomness spaces. Form the private-coin finite-message protocol over
+$\Omega_X$, $\Omega_Y$ obtained from $p$ by having each player ignore their private
+coin, so that Alice's message function $f : X \to \beta$ is replaced by $(\omega, x)
+\mapsto f(x)$ and Bob's by $(\omega, y) \mapsto f(y)$, with the protocol tree otherwise
+unchanged. Then this private-coin protocol has the same communication complexity as $p$.
 \end{theorem}
 
 \begin{definition}[Public-coin finite-message protocol fixed to deterministic]
@@ -89,39 +102,48 @@ is the deterministic finite-message protocol obtained by substituting $\omega$
 for the shared randomness (via \texttt{comap} with $\mathrm{Prod.mk}\,\omega$).
 \end{definition}
 
-\begin{theorem}[Fixed-randomness run equals randomised run (finite-message)]
+\begin{theorem}[Fixing randomness commutes with execution]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_run}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic}
 \difficulty{1}
-For any inputs $x : X$ and $y : Y$, the deterministic run of
-$p.\mathrm{toDeterministic}\,\omega$ equals the randomised run at $\omega$:
-$(p.\mathrm{toDeterministic}\,\omega).\mathrm{run}\,x\,y = p.\mathrm{rrun}\,x\,y\,\omega$.
+Let $p$ be a public-coin finite-message protocol over a shared-randomness space
+$\Omega$, private input sets $X$ and $Y$, and output type $\alpha$. Fix a randomness
+sample $\omega \in \Omega$ and private inputs $x \in X$ and $y \in Y$, and let
+$p_\omega$ denote the deterministic finite-message protocol obtained from $p$ by
+substituting $\omega$ for the shared randomness. Then executing $p_\omega$ on $x$ and
+$y$ yields the same output as the randomized execution of $p$ on $x$ and $y$ with shared
+randomness $\omega$:
+\[
+p_\omega.\mathrm{run}(x, y) \;=\; \mathrm{rrun}(p, x, y, \omega).
+\]
 \end{theorem}
 
-\begin{theorem}[Fixed-randomness complexity equals original (finite-message)]
+\begin{theorem}[Fixing shared randomness preserves communication complexity]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toDeterministic}
 \difficulty{1}
-Fixing the shared randomness of a public-coin finite-message protocol does not
-change its complexity:
-$(p.\mathrm{toDeterministic}\,\omega).\mathrm{complexity} = p.\mathrm{complexity}$.
+Let $p$ be a public-coin finite-message protocol over a shared-randomness space
+$\Omega$, private input sets $X$ and $Y$, and output type $\alpha$, and let $\omega \in
+\Omega$ be any fixed randomness sample. Then the deterministic finite-message protocol
+obtained by substituting $\omega$ for the shared randomness has the same communication
+complexity as $p$ itself.
 \end{theorem}
 
-\begin{theorem}[Private-coin complexity at most deterministic]
+\begin{theorem}[Private-coin complexity at most deterministic complexity]
 \lean{CommunicationComplexity.PrivateCoin.communicationComplexity_le_deterministic}
 \label{CommunicationComplexity.PrivateCoin.communicationComplexity_le_deterministic}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.communicationComplexity, CommunicationComplexity.PrivateCoin.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
-For any function $f : X \to Y \to \alpha$ and any error parameter $\varepsilon \ge 0$,
-the private-coin communication complexity satisfies
+Let $f : X \times Y \to \alpha$ be a function of two arguments, and let $\varepsilon \ge
+0$ be an error parameter. Then the $\varepsilon$-error private-coin randomized
+communication complexity of $f$ is at most its deterministic communication complexity:
 \[
-  \mathrm{CC}_{\mathrm{priv}}(f, \varepsilon) \;\le\; \mathrm{CC}_{\mathrm{det}}(f).
+  R_\varepsilon(f) \;\le\; D(f),
 \]
-The inequality holds because every deterministic protocol can be viewed as a
-private-coin protocol with zero error by embedding it via \texttt{toPrivateCoin}.
+as an inequality of extended natural numbers.
 \end{theorem}

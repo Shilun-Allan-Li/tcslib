@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolFourier.expectation_eq_expect",
+ "key": "34bce8ab12788e1b",
+ "kind": "lemma",
+ "title": "Agreement of two definitions of the uniform expectation",
+ "statement": "Let $n$ be a natural number and let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function of arity $n$. Then the two forms of the uniform expectation of $f$ coincide, namely\n\\[\n  \\frac{1}{2^n} \\sum_{x \\in \\{0,1\\}^n} f(x) \\;=\\; 2^{-n} \\sum_{x \\in \\{0,1\\}^n} f(x).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n (f : {0,1}^n → ℝ)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The locally-defined expectation \\texttt{BoolFourier.expectation} agrees with\n\\texttt{BooleanAnalysis.expect}: for every $f$, $\\mathbb{E}[f] = \\mathrm{expect}(f)$."
+}

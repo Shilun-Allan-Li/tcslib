@@ -1,0 +1,16 @@
+{
+ "lean_name": "BernoulliCost.bernoulli_decompose",
+ "key": "dacef2aed35c28ca",
+ "kind": "lemma",
+ "title": "Decomposition of Bernoulli restriction probability by free-variable count",
+ "statement": "Fix $n$ and a real parameter $p$ with $0 \\le p \\le 1$, and let $\\mathrm{event}$ be any (decidable) property of restrictions on $n$ variables. Then the probability that $\\mathrm{event}$ holds under a Bernoulli($p$) random restriction equals its average over the fixed-size restriction models, weighted by the binomial distribution on the number of free variables:\n\\[\n  \\Pr_{p}[\\mathrm{event}] \\;=\\; \\sum_{k=0}^{n} \\binom{n}{k}\\, p^{k}\\, (1-p)^{\\,n-k}\\; R_k(\\mathrm{event}),\n\\]\nwhere $R_k(\\mathrm{event})$ is the fraction of restrictions with exactly $k$ free variables that satisfy $\\mathrm{event}$.",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "event is a decidable predicate on restrictions of n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 \\le p \\le 1$ and any event, the Bernoulli$(p)$ restriction probability decomposes\naccording to the number of free variables:\n\\[\n  \\Pr_{R_p}[\\mathrm{event}] = \\sum_{k=0}^{n} \\mathrm{binomialPMF}\\,n\\,p\\,k \\cdot \\mathrm{fixedSizeRestrProb}\\,(\\mathrm{event})\\,k,\n\\]\nbecause conditioning $R_p$ on having exactly $k$ free variables yields exactly the model $R_k$."
+}

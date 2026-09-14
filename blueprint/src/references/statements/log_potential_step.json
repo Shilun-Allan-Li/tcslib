@@ -1,0 +1,17 @@
+{
+ "lean_name": "log_potential_step",
+ "key": "f432e596ec9e63c0",
+ "kind": "lemma",
+ "title": "One-step logarithmic potential bound for Hedge",
+ "statement": "Fix $N \\ge 1$ experts and $T$ rounds, a learning rate $\\eta > 0$, and a valid loss sequence $\\ell$, so that $0 \\le \\ell_t(i) \\le 1$ for every round $t$ and expert $i$. Writing $W_t = \\sum_{i=1}^N \\exp\\!\\bigl(-\\eta L_t(i)\\bigr)$ for the Hedge potential and $\\widehat{\\ell}_t = \\sum_{i=1}^N p_t(i)\\,\\ell_t(i)$ for the expected loss under the Hedge distribution, the one-round change in log-potential is controlled by the expected loss: for each round $t$,\n\\[\n  \\ln W_{t+1} - \\ln W_t \\;\\le\\; -\\bigl(1 - e^{-\\eta}\\bigr)\\,\\widehat{\\ell}_t.\n\\]",
+ "hypotheses_covered": [
+  "at least one expert ($N \\ge 1$)",
+  "positive learning rate $\\eta > 0$",
+  "valid loss sequence (each loss in $[0,1]$)",
+  "$t$ is a round with $t+1 \\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a valid loss sequence, $\\eta > 0$, and $t < T$,\n\\[\n  \\ln W_{t+1} - \\ln W_t \\;\\le\\; -(1 - e^{-\\eta})\\,\\widehat{\\ell}_t,\n\\]\nwhich follows from $\\ln(1-x) \\le -x$ applied to the potential ratio bound."
+}

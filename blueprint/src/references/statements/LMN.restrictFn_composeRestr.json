@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.restrictFn_composeRestr",
+ "key": "87f8e37795930b30",
+ "kind": "theorem",
+ "title": "Restriction by a composite equals iterated restriction",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\bbf_2) \\to \\bbf_2$ be a Boolean function on $n$ variables, and let $\\rho_1, \\rho_2 : \\mathrm{Fin}\\,n \\to \\{0, 1, *\\}$ be two restrictions, where a coordinate is either fixed to a Boolean value or left free. Write $\\rho_1 * \\rho_2$ for their composition, the restriction that on each coordinate takes the value fixed by $\\rho_1$ if there is one and otherwise the value assigned by $\\rho_2$, and for a restriction $\\rho$ write $f\\!\\restriction_\\rho$ for the function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ obtained by evaluating $f$ with the fixed coordinates of $\\rho$ substituted and the free coordinates read off from $x$. Then restricting $f$ by the composite restriction agrees with restricting first by $\\rho_1$ and then by $\\rho_2$:\n\\[\nf\\!\\restriction_{\\rho_1 * \\rho_2} \\;=\\; \\bigl(f\\!\\restriction_{\\rho_1}\\bigr)\\!\\restriction_{\\rho_2}.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "ρ₁ and ρ₂ are restrictions on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a Boolean function $f$ and restrictions $\\rho_1,\\rho_2$, restricting $f$ by the\ncomposition $\\rho_1 \\circ \\rho_2$ equals first restricting by $\\rho_1$ and then by\n$\\rho_2$: $\\mathrm{restrictFn}\\, f\\,(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2) = \\mathrm{restrictFn}\\,(\\mathrm{restrictFn}\\, f\\,\\rho_1)\\,\\rho_2$."
+}

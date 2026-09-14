@@ -1,0 +1,19 @@
+{
+ "lean_name": "GeneralHypercontractivity.high_norms_hypercontractivity",
+ "key": "696f695aeaea9883",
+ "kind": "theorem",
+ "title": "High-norms hypercontractivity for the noise operator",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function, and let $p, u$ be real exponents with $2 \\le p \\le u$. Suppose $\\rho \\in \\bbr$ satisfies $0 \\le \\rho \\le 1$ together with $\\rho \\le \\sqrt{(p-1)/(u-1)}$. Then, with expectations taken under the uniform measure on $\\{0,1\\}^n$ and $T_\\rho$ the noise operator, the higher $L^u$ norm of the noised function is bounded by the lower $L^p$ norm of $f$:\n\\[\n  \\bigl(\\E\\bigl[\\,\\abs{T_\\rho f}^u\\,\\bigr]\\bigr)^{1/u} \\;\\le\\; \\bigl(\\E\\bigl[\\,\\abs{f}^p\\,\\bigr]\\bigr)^{1/p}.\n\\]",
+ "hypotheses_covered": [
+  "2 ≤ p",
+  "p ≤ u",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "ρ ≤ √((p−1)/(u−1))",
+  "f is a Boolean function on n bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $2 \\le p \\le u$, any $\\rho$ with $0 \\le \\rho \\le 1$ and\n$\\rho \\le \\sqrt{(p-1)/(u-1)}$, and $f : \\mathrm{BoolCube}\\,n \\to \\bbr$,\n\\[\n  \\bigl(\\E[\\abs{T_\\rho f}^u]\\bigr)^{1/u} \\;\\le\\; \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}.\n\\]"
+}

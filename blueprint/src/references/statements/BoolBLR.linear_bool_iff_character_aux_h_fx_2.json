@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolBLR.linear_bool_iff_character_aux_h_fx_2",
+ "key": "302ddf01c25c271a",
+ "kind": "lemma",
+ "title": "Value of a linear Boolean function from its values on basis vectors",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a linear Boolean function, meaning $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y \\in \\{0,1\\}^n$, and for each coordinate $i$ let $e_i \\in \\{0,1\\}^n$ denote the standard basis vector that is $1$ in position $i$ and $0$ elsewhere. Then for every $x \\in \\{0,1\\}^n$, the value $f(x)$ equals the parity of the number of coordinates $i$ with $x_i = 1$ and $f(e_i) = 1$; that is, $f(x) = 1$ if that count is odd and $f(x) = 0$ if it is even.",
+ "hypotheses_covered": [
+  "f is a linear Boolean function on the n-dimensional hypercube",
+  "x is an arbitrary point of the hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Specialization of the previous lemma to the support of an arbitrary point:\nif $f : \\{0,1\\}^n \\to \\{0,1\\}$ is linear, then for every $x \\in \\{0,1\\}^n$\nthe value $f(x)$ is the parity of the number of coordinates $i$ with\n$x_i = \\texttt{true}$ and $f(e_i) = \\texttt{true}$."
+}

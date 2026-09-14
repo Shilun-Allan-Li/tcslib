@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolBLR.linear_bool_iff_character_aux_h_fx_1",
+ "key": "cc08d792b615b0ee",
+ "kind": "lemma",
+ "title": "Value of a linear Boolean function on an indicator vector",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a linear Boolean function, meaning $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y \\in \\{0,1\\}^n$, where $\\oplus$ is componentwise XOR. For a subset $s \\subseteq \\{0, \\dots, n-1\\}$, let $\\mathbf{1}_s \\in \\{0,1\\}^n$ be its indicator vector, whose $i$-th coordinate is $1$ when $i \\in s$ and $0$ otherwise, and for each index $i$ let $e_i \\in \\{0,1\\}^n$ be the standard basis vector, whose $i$-th coordinate is $1$ and all others $0$. Then for every $s$ the value $f(\\mathbf{1}_s)$ is $0$ when\n\\[\n  \\sum_{i \\in s} \\mathbf{1}[\\,f(e_i) = 1\\,] \\equiv 0 \\pmod 2,\n\\]\nand $1$ otherwise; that is, $f(\\mathbf{1}_s)$ equals the parity of the number of $i \\in s$ with $f(e_i) = 1$.",
+ "hypotheses_covered": [
+  "f is a linear Boolean function on {0,1}^n",
+  "the statement holds for every subset s of the index set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be linear.  Then for every\n$s \\subseteq [n]$, writing $\\mathbf{1}_s$ for the indicator vector of $s$ and\n$e_i$ for the $i$-th basis vector, the value $f(\\mathbf{1}_s)$ is\n\\texttt{false} when\n\\[\n  \\sum_{i \\in s} \\mathbf{1}[f(e_i) = \\texttt{true}] \\equiv 0 \\pmod 2\n\\]\nand \\texttt{true} otherwise; that is, $f(\\mathbf{1}_s)$ is the parity of the\nnumber of $i \\in s$ with $f(e_i) = \\texttt{true}$."
+}

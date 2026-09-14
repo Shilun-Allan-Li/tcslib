@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.compose_fiber_weight_eq",
+ "key": "15cbd2e5d5a93f9a",
+ "kind": "lemma",
+ "title": "Composition law for Bernoulli restriction weights",
+ "statement": "Fix parameters $p, q \\in \\bbr$ and a restriction $\\sigma$ on $n$ variables. Summing the product of the Bernoulli weight of $\\rho_1$ at parameter $p$ and the Bernoulli weight of $\\rho_2$ at parameter $q$ over all pairs of restrictions $(\\rho_1, \\rho_2)$ on $n$ variables whose composition equals $\\sigma$ yields the Bernoulli weight of $\\sigma$ at parameter $pq$:\n\\[\n  \\sum_{\\rho_1}\\sum_{\\rho_2}\n    w_p(\\rho_1)\\, w_q(\\rho_2)\\,\n    [\\,\\rho_1 \\circ \\rho_2 = \\sigma\\,]\n  = w_{pq}(\\sigma),\n\\]\nwhere $w_r(\\rho)$ denotes the Bernoulli weight of $\\rho$ at parameter $r$, $\\rho_1 \\circ \\rho_2$ is the restriction that fixes each coordinate to the value given by $\\rho_1$ where defined and to that of $\\rho_2$ otherwise, and $[\\,\\cdot\\,]$ is the indicator taking the value $1$ when its condition holds and $0$ otherwise.",
+ "hypotheses_covered": [
+  "parameters p, q are real numbers",
+  "sigma is a restriction on n variables",
+  "sum ranges over all pairs of restrictions on n variables",
+  "indicator selects pairs whose composition equals sigma"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Summing the product $\\mathrm{bernoulliRestrWeight}\\,p\\,\\rho_1 \\cdot\n\\mathrm{bernoulliRestrWeight}\\,q\\,\\rho_2$ over all pairs $(\\rho_1, \\rho_2)$ that\ncompose to $\\sigma$ equals the Bernoulli weight of $\\sigma$ at parameter $pq$:\n\\[\n  \\sum_{\\rho_1}\\sum_{\\rho_2} \\mathrm{bernoulliRestrWeight}\\,p\\,\\rho_1 \\cdot\n    \\mathrm{bernoulliRestrWeight}\\,q\\,\\rho_2 \\cdot\n    [\\,\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2 = \\sigma\\,]\n  = \\mathrm{bernoulliRestrWeight}\\,(pq)\\,\\sigma.\n\\]"
+}

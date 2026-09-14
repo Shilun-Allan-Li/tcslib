@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkFourier.parseval_identity",
+ "key": "072ba7835039d82a",
+ "kind": "lemma",
+ "title": "Parseval's identity on $\\mathbb{Z}_k^n$",
+ "statement": "Let $k \\ge 1$ and $n$ be natural numbers, and let $f : \\mathbb{Z}_k^n \\to \\mathbb{C}$ be a complex-valued function on $\\mathbb{Z}_k^n$. Then the sum of the squared magnitudes of its Fourier coefficients equals its squared $L^2$ norm:\n\\[\n  \\sum_{s \\in \\mathbb{Z}_k^n} \\bigl|\\hat{f}(s)\\bigr|^2 = \\|f\\|_2^2,\n\\]\nwhere $\\hat{f}(s) = \\mathbb{E}_{x}\\!\\left[f(x)\\,\\overline{\\omega_k^{\\,s \\cdot x}}\\right]$ is the Fourier coefficient at frequency $s$ and $\\|f\\|_2^2 = \\tfrac{1}{k^n}\\sum_{x \\in \\mathbb{Z}_k^n} |f(x)|^2$.",
+ "hypotheses_covered": [
+  "k is a positive natural number (NeZero k)",
+  "n is a natural number",
+  "f is a complex-valued function on Z_k^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any $f : \\mathbb{Z}_k^n \\to \\mathbb{C}$,\n\\[\n  \\sum_{s \\in \\mathbb{Z}_k^n} |\\hat{f}(s)|^2 = \\|f\\|_2^2.\n\\]\nParseval's identity expresses the conservation of $L^2$ energy under the\nFourier transform."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.map_rrun",
+ "key": "18624c8576dc9e10",
+ "kind": "theorem",
+ "title": "Mapping commutes with private-coin execution",
+ "statement": "Let $p$ be a private-coin finite-message communication protocol with input types $X$ and $Y$, private-randomness types $\\Omega_X$ and $\\Omega_Y$, and output type $\\alpha$, and let $g \\colon \\alpha \\to \\beta$. Write $\\mathrm{map}(g, p)$ for the protocol that runs $p$ and then applies $g$ to the result, and let executing a protocol on inputs $x, y$ with private coins $\\omega_x, \\omega_y$ denote running it on the paired inputs $(\\omega_x, x)$ and $(\\omega_y, y)$. Then for all $x \\in X$, $y \\in Y$, $\\omega_x \\in \\Omega_X$, and $\\omega_y \\in \\Omega_Y$,\n\\[\n  \\bigl(\\text{executing } \\mathrm{map}(g, p) \\text{ on } x, y \\text{ with coins } \\omega_x, \\omega_y\\bigr)\n  \\;=\\;\n  g\\bigl(\\text{executing } p \\text{ on } x, y \\text{ with coins } \\omega_x, \\omega_y\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "a function g : α → β",
+  "a private-coin finite-message protocol p over Ω_X, Ω_Y, X, Y with output type α",
+  "inputs x ∈ X and y ∈ Y",
+  "private coins ω_x ∈ Ω_X and ω_y ∈ Ω_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "For any inputs $x : X$, $y : Y$ and random coins $\\omega_x : \\Omega_X$,\n$\\omega_y : \\Omega_Y$, the randomised run of the mapped protocol satisfies\n\\[\n  (p.\\mathrm{map}\\;g).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y\n  \\;=\\; g\\,(p.\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y).\n\\]"
+}

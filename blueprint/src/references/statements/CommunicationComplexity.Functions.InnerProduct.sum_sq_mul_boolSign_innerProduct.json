@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_boolSign_innerProduct",
+ "key": "5801e1b3e3eb96fb",
+ "kind": "lemma",
+ "title": "Parseval identity for mod-2 inner-product characters",
+ "statement": "Let $b$ be an arbitrary real-valued function on the set of $n$-bit Boolean inputs. For two such inputs $x,y$, write $\\langle x,y\\rangle = \\sum_{i=1}^{n}(x_i \\wedge y_i)$ for the number of coordinates on which both are true, so that $(-1)^{\\langle x,y\\rangle}$ is the sign of their mod-2 inner product, equal to $+1$ when $\\langle x,y\\rangle$ is even and $-1$ when it is odd. Then\n\\[\n  \\sum_{x}\\Bigl(\\sum_{y} b(y)\\,(-1)^{\\langle x,y\\rangle}\\Bigr)^2\n  \\;=\\; 2^n \\sum_{y} b(y)^2,\n\\]\nwhere both the inner and outer sums range over all $n$-bit Boolean inputs.",
+ "hypotheses_covered": [
+  "b is an arbitrary real-valued function on the n-bit Boolean inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $b : \\mathrm{BoolInput}\\,n \\to \\mathbb{R}$,\n\\[\n  \\sum_{x : \\mathrm{BoolInput}\\,n}\n    \\Bigl(\\sum_{y : \\mathrm{BoolInput}\\,n} b(y)\\,\\mathrm{boolSign}(\\mathrm{IP}(x,y))\\Bigr)^2\n  \\;=\\; \\sum_{y : \\mathrm{BoolInput}\\,n} b(y)^2 \\cdot 2^n.\n\\]"
+}

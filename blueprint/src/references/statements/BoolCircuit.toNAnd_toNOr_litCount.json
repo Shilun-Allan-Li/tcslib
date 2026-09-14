@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolCircuit.toNAnd_toNOr_litCount",
+ "key": "d068dd16da2206f8",
+ "kind": "theorem",
+ "title": "Normalization preserves the literal count",
+ "statement": "Let $c$ be a Boolean circuit on $n$ variables, whose literal count is the number of literal occurrences it contains (a leaf literal counting once, and an AND or OR gate counting the total over its children). Converting $c$ to strictly alternating AND/OR normal form preserves this count: both the AND-normal form of $c$ and the OR-normal form of $c$ have the same number of literal occurrences as $c$ itself.",
+ "hypotheses_covered": [
+  "c is a Boolean circuit on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$, both normalizations preserve the literal count:\n$(c.\\mathrm{toNAnd}).\\mathrm{litCount} = c.\\mathrm{litCount}$ and\n$(c.\\mathrm{toNOr}).\\mathrm{litCount} = c.\\mathrm{litCount}$."
+}

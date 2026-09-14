@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_aux_ne_nonfree",
+ "key": "1239e6c2b0294379",
+ "kind": "lemma",
+ "title": "Recorded positions avoid a designated variable",
+ "statement": "Let $t$ be a term in $n$ variables, let $v \\in \\mathrm{Fin}\\,n$ be a variable, and let $\\rho_0, \\sigma$ be restrictions on $n$ variables. Let $\\mathit{lits}$ be a list of literals each tagged with a natural-number position, and suppose that every tagged literal in $\\mathit{lits}$ occurs in the position-indexed enumeration of $t$ (each literal of $t$ paired with its index), and that no literal appearing in $\\mathit{lits}$ has variable $v$. Consider the clause auxiliary data — the list of (position, direction) pairs — produced by processing $\\mathit{lits}$ against a path starting from $\\rho_0$ and $\\sigma$. Then for every pair $(i, b)$ in this auxiliary data, whenever the literals of $t$ from position $i$ onward form a nonempty list with leading literal $\\ell$, the variable of $\\ell$ is different from $v$.",
+ "hypotheses_covered": [
+  "every tagged literal in lits occurs in the position-indexed enumeration of t",
+  "no literal in lits has variable v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose every input literal pair occurs in $t.\\texttt{zipIdx}$ and no input literal has\nvariable $v$. Then for every auxiliary entry $e$ of\n\\texttt{SwitchingLemma2.processClauseLits}, the literal at position $e.1$ in $t$ does not\nhave variable $v$."
+}

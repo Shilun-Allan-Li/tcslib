@@ -43,65 +43,75 @@ updated to $\mathtt{update}(\mathtt{eval}, V, x, y) = \mathtt{voteFor}(\mathtt{e
 V, x, y)$, i.e.\ only the hypotheses that correctly predict $y$ on $x$ are retained.
 \end{definition}
 
-\begin{lemma}[Partition of version space by vote]
+\begin{lemma}[Vote counts partition the version space]
 \lean{Halving.voteFor_false_add_true}
 \label{Halving.voteFor_false_add_true}
 \leanok
 \uses{Halving.voteFor}
 \difficulty{3}
-For any version space $V$ and input $x$, the false-voters and true-voters partition
-$V$:
+Let $\mathrm{eval}$ be a Boolean evaluation map assigning to each hypothesis and each
+input a truth value, let $V$ be a finite version space of hypotheses, and let $x$ be an
+input. Every hypothesis in $V$ predicts either $\mathsf{false}$ or $\mathsf{true}$ on
+$x$, so the number of hypotheses in $V$ predicting $\mathsf{false}$ on $x$ and the
+number predicting $\mathsf{true}$ on $x$ sum to the total number of hypotheses in $V$:
 \[
-  |\mathtt{voteFor}(\mathtt{eval}, V, x, \mathsf{false})| +
-  |\mathtt{voteFor}(\mathtt{eval}, V, x, \mathsf{true})| = |V|.
+  \abs{\{\,h \in V : \mathrm{eval}(h, x) = \mathsf{false}\,\}} +
+  \abs{\{\,h \in V : \mathrm{eval}(h, x) = \mathsf{true}\,\}} = \abs{V}.
 \]
 \end{lemma}
 
-\begin{lemma}[Update is a subset]
+\begin{lemma}[The updated version space is a subset]
 \lean{Halving.update_subset}
 \label{Halving.update_subset}
 \leanok
 \uses{Halving.update, Halving.voteFor}
 \difficulty{2}
-The updated version space is always a subset of the previous one:
+Fix an evaluation map $\mathtt{eval} : \mathit{Hyp} \to X \to \mathsf{Bool}$, a finite
+version space $V \subseteq \mathit{Hyp}$, an input $x \in X$, and a label $y \in
+\mathsf{Bool}$. Then the updated version space is contained in the original one:
 $\mathtt{update}(\mathtt{eval}, V, x, y) \subseteq V$.
 \end{lemma}
 
-\begin{lemma}[Target survives every update]
+\begin{lemma}[Target survives its own update]
 \lean{Halving.target_mem_update}
 \label{Halving.target_mem_update}
 \leanok
 \uses{Halving.update, Halving.voteFor}
 \difficulty{1}
-In the realizable setting, if $\mathtt{target} \in V$ then after updating on the
-correctly labelled example $(x,\, \mathtt{eval}\;\mathtt{target}\;x)$ the target
-hypothesis remains in the new version space:
-$\mathtt{target} \in \mathtt{update}(\mathtt{eval}, V, x, \mathtt{eval}\;\mathtt{target}\;x)$.
+Let $\mathtt{eval} : \mathit{Hyp} \to X \to \mathsf{Bool}$ be an evaluation map, let $V
+\subseteq \mathit{Hyp}$ be a version space, fix an input $x \in X$, and let
+$\mathtt{target} \in V$ be a hypothesis. Then $\mathtt{target}$ remains in the version
+space obtained by updating $V$ on $x$ with the label that $\mathtt{target}$ itself
+assigns, that is, $\mathtt{target} \in \mathtt{update}(\mathtt{eval}, V, x,
+\mathtt{eval}\,\mathtt{target}\,x)$.
 \end{lemma}
 
-\begin{lemma}[Mistakes halve the version space]
+\begin{lemma}[Mistake bound for the Halving algorithm]
 \lean{Halving.mistake_halves}
 \label{Halving.mistake_halves}
 \leanok
 \uses{Halving.predict, Halving.update, Halving.voteFor, Halving.voteFor_false_add_true}
 \difficulty{4}
-If the algorithm makes a mistake on input $x$ with true label $y$ (i.e.\
-$\mathtt{predict}(\mathtt{eval}, V, x) \ne y$), then after the update at most half
-the hypotheses survive:
+Let $\mathtt{eval} : \mathit{Hyp} \to X \to \mathsf{Bool}$ be an evaluation map, let $V
+\subseteq \mathit{Hyp}$ be a finite version space, let $x \in X$ be an input, and let $y
+\in \mathsf{Bool}$ be its true label. If the Halving prediction on $x$ is wrong, that is
+$\mathtt{predict}(\mathtt{eval}, V, x) \ne y$, then the updated version space contains
+at most half of the hypotheses:
 \[
-  2 \cdot |\mathtt{update}(\mathtt{eval}, V, x, y)| \;\le\; |V|.
+  2 \cdot \abs{\mathtt{update}(\mathtt{eval}, V, x, y)} \le \abs{V}.
 \]
 \end{lemma}
 
-\begin{lemma}[Logarithm step from doubling]
+\begin{lemma}[Logarithm increment under doubling]
 \lean{Halving.log_succ_le_log_of_double_le}
 \label{Halving.log_succ_le_log_of_double_le}
 \leanok
 \difficulty{3}
 For natural numbers $a$ and $b$ with $b > 0$ and $2b \le a$,
 \[
-  \lfloor\log_2 b\rfloor + 1 \;\le\; \lfloor\log_2 a\rfloor.
+  \lfloor \log_2 b \rfloor + 1 \;\le\; \lfloor \log_2 a \rfloor,
 \]
+where $\lfloor \log_2 \cdot \rfloor$ denotes the integer (floor) base-$2$ logarithm.
 \end{lemma}
 
 \begin{definition}[Mistake count over a sequence]
@@ -117,18 +127,21 @@ for a list $x :: xs$ the count is $1$ if the algorithm mispredicts on $x$ (else 
 plus the mistakes on the remainder using the updated version space.
 \end{definition}
 
-\begin{theorem}[Mistake bound — general version space]
+\begin{theorem}[Mistake bound for the Halving Algorithm]
 \lean{Halving.mistakes_bound}
 \label{Halving.mistakes_bound}
 \leanok
 \uses{Halving.log_succ_le_log_of_double_le, Halving.mistake_halves, Halving.mistakes, Halving.predict, Halving.target_mem_update, Halving.update, Halving.update_subset}
 \difficulty{5}
-In the realizable setting ($\mathtt{target} \in V$), the total number of mistakes made
-by the Halving Algorithm on any input sequence $xs$ is at most $\lfloor\log_2
-|V|\rfloor$:
+Let $\mathtt{eval} : \mathit{Hyp} \to X \to \mathsf{Bool}$ be an evaluation map, let $V$
+be a finite version space of hypotheses, and fix a target hypothesis $\mathtt{target}
+\in V$ whose predictions supply the true label at each step. Then for every input
+sequence $xs$, the total number of mistakes made by the Halving Algorithm — which
+predicts by majority vote over the current version space and, after each input, retains
+only those hypotheses that agreed with the observed label — satisfies
 \[
-  \mathtt{mistakes}(\mathtt{eval}, \mathtt{target}, V, xs)
-  \;\le\; \lfloor\log_2 |V|\rfloor.
+\mathtt{mistakes}(\mathtt{eval}, \mathtt{target}, V, xs) \;\le\; \lfloor \log_2 \abs{V}
+\rfloor.
 \]
 \end{theorem}
 
@@ -138,11 +151,14 @@ by the Halving Algorithm on any input sequence $xs$ is at most $\lfloor\log_2
 \leanok
 \uses{Halving.mistakes, Halving.mistakes_bound}
 \difficulty{1}
-Specialising to the initial hypothesis class $H$ (with $\mathtt{target} \in H$), the
-Halving Algorithm makes at most $\lfloor\log_2 |H|\rfloor$ mistakes on any input
-sequence:
+Let $\mathtt{eval} : \mathit{Hyp} \to X \to \mathsf{Bool}$ assign a Boolean label to
+each input under each hypothesis, let $H$ be a finite class of hypotheses, and fix a
+target hypothesis $\mathtt{target} \in H$ that supplies the correct label
+$\mathtt{eval}(\mathtt{target}, x)$ for every input $x$. Then, on any finite sequence
+$xs$ of inputs, the number of mistakes made by the Halving Algorithm run from the
+initial version space $H$ is at most $\lfloor \log_2 \abs{H} \rfloor$:
 \[
-  \mathtt{mistakes}(\mathtt{eval}, \mathtt{target}, H, xs)
-  \;\le\; \lfloor\log_2 |H|\rfloor.
+\mathtt{mistakes}(\mathtt{eval}, \mathtt{target}, H, xs) \;\le\; \lfloor \log_2 \abs{H}
+\rfloor.
 \]
 \end{theorem}

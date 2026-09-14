@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.child_depth_le1_has_signed_dnf",
+ "key": "12d31ea4e681bb12",
+ "kind": "lemma",
+ "title": "Signed width-$l$ DNF for a depth-$\\le 1$ gate over subcircuits",
+ "statement": "Fix natural numbers $m,n,l$. Let $c_j$ be a Boolean circuit whose $m$ inputs are indexed by $\\mathrm{Fin}\\,m$ and whose depth is at most $1$, and let $\\mathrm{gates}$ assign to each index $i \\in \\mathrm{Fin}\\,m$ a Boolean function $\\mathrm{gates}_i \\colon (\\mathrm{Fin}\\,n \\to \\bbf_2) \\to \\bbf_2$. Suppose that every $\\mathrm{gates}_i$ is computed by some DNF over $n$ variables of width at most $l$, and also by some CNF over $n$ variables of width at most $l$. Then there exist a DNF $\\varphi$ over $n$ variables of width at most $l$ and a sign bit $s \\in \\mathrm{Bool}$ such that, for every assignment $x \\colon \\mathrm{Fin}\\,n \\to \\bbf_2$, the value $\\varphi$ takes at $x$ when $s = \\mathrm{true}$, and its negation when $s = \\mathrm{false}$, equals the value of $c_j$ under the assignment $i \\mapsto \\mathrm{gates}_i(x)$; moreover, each term of $\\varphi$ contains no repeated literal, and no two of its literals share a variable.",
+ "hypotheses_covered": [
+  "circuit $c_j$ has depth at most $1$",
+  "each gate function $\\mathrm{gates}_i$ has a DNF of width $\\le l$",
+  "each gate function $\\mathrm{gates}_i$ has a CNF of width $\\le l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A circuit $c_j$ of depth at most $1$ over gates that each have a width-$l$ DNF and CNF\nrepresentation admits a width-$l$ DNF $\\varphi$ together with a sign bit such that, for\nall $x$, the signed evaluation $\\big(\\mathrm{if}\\ \\mathit{sign}\\ \\mathrm{then}\\\n\\varphi.\\mathrm{eval}\\,x\\ \\mathrm{else}\\ \\neg\\varphi.\\mathrm{eval}\\,x\\big)$ equals\n$c_j.\\mathrm{eval}\\,(\\lambda i,\\ \\mathrm{gates}\\,i\\,x)$; moreover the terms of $\\varphi$\nare duplicate-free with no repeated variable."
+}

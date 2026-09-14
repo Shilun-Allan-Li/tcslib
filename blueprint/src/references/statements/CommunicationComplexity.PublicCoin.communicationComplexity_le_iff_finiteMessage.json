@@ -1,0 +1,21 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.communicationComplexity_le_iff_finiteMessage",
+ "key": "623b49f5687f03a1",
+ "kind": "theorem",
+ "title": "Finite-message characterization of public-coin complexity",
+ "statement": "Fix an output type $\\alpha$, a function $f : X \\to Y \\to \\alpha$, an error tolerance $\\varepsilon \\in \\bbr$, and a natural number $m$. Then the $\\varepsilon$-error public-coin randomized communication complexity of $f$ satisfies $\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\le m$ if and only if there exist a coin-tape length $n \\in \\bbn$ and a public-coin finite-message protocol $p$ over the shared randomness $\\mathrm{CoinTape}(n)$ such that $p$ $\\varepsilon$-computes $f$ — that is, for every input pair $(x,y)$ the probability over the coin tape $\\omega$ that $p$ outputs a value other than $f(x,y)$ is at most $\\varepsilon$ — and the communication complexity of $p$ is at most $m$.",
+ "hypotheses_covered": [
+  "f : X → Y → α",
+  "real error tolerance ε",
+  "natural number bound m",
+  "R^pub_ε(f) ≤ m (defined via binary protocols)",
+  "existence of coin-tape length n",
+  "existence of a finite-message public-coin protocol over CoinTape(n)",
+  "that protocol ε-computes f",
+  "that protocol's complexity ≤ m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : X \\to Y \\to \\alpha$, $\\varepsilon \\in \\mathbb{R}$, and $m \\in \\mathbb{N}$,\nwe have $\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f) \\le m$ if and only if there exist\n$n \\in \\mathbb{N}$ and a finite-message public-coin protocol $p$ on\n$\\mathrm{CoinTape}(n)$ such that $p$ $\\varepsilon$-approximates $f$ and\n$p.\\mathrm{complexity} \\le m$. This shows that the binary-message and\nfinite-message formulations of public-coin complexity coincide."
+}

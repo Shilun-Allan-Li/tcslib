@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.and_of_lit_children_cnf",
+ "key": "891bf235076d33ee",
+ "kind": "lemma",
+ "title": "AND of literal gates has a width-$l$ CNF",
+ "statement": "Fix natural numbers $m$, $n$, and $l$, and let $g_0, \\dots, g_{m-1}$ be Boolean functions of an input $x : \\mathrm{Fin}\\,n \\to \\{0,1\\}$, one for each index $i \\in \\mathrm{Fin}\\,m$, such that each $g_i$ is computed both by some DNF of width at most $l$ and by some CNF of width at most $l$. Let the circuits $c \\in cs$ each be a single literal over the variables $0, \\dots, m-1$, and let $C$ be the AND gate whose children are exactly these literals, evaluated on an input $x$ by substituting the value $g_i(x)$ for the $i$-th variable. Then the Boolean function computed in this way — the conjunction of the literal values $g_i(x)$ or their negations — is itself represented by a CNF $\\psi$ of width at most $l$, in the sense that $\\psi$ evaluates to $C$'s value on every input $x$.",
+ "hypotheses_covered": [
+  "every child circuit in cs is a literal",
+  "each gate function has a DNF of width at most l",
+  "each gate function has a CNF of width at most l",
+  "the node is an AND node evaluated by substituting gate values for variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider an AND node $\\mathrm{Circuit.node}\\,\\mathrm{true}\\,cs$ whose children are all\nliterals, where each gate function has a width-$l$ DNF and a width-$l$ CNF\nrepresentation. Then the function computed by the node has a width-$l$ CNF $\\psi$ with\n$\\mathrm{CNF.eval}\\,\\psi\\,x = (\\mathrm{Circuit.node}\\,\\mathrm{true}\\,cs).\\mathrm{eval}\\,(\\lambda i,\\ \\mathrm{gates}\\,i\\,x)$ for all $x$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.bad_filter_empty_of_d_ge_s",
+ "key": "40dfd623b42366b6",
+ "kind": "lemma",
+ "title": "No bad restrictions with few free variables",
+ "statement": "Let $f$ be a DNF formula in $n$ variables, and let $d$ and $s$ be natural numbers with $s \\le d$. Then no restriction of the $n$ variables that leaves exactly $s$ variables free is bad for the Boolean function computed by $f$ at depth $d$; that is, the set of restrictions $\\rho$ that both have exactly $s$ free variables and whose restricted function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth strictly greater than $d$ is empty.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "s ≤ d",
+  "ρ has exactly s free variables (IsRestriction s ρ)",
+  "ρ is bad for f.eval at depth d (restricted function has decision-tree depth > d)",
+  "conclusion: the filtered set of such restrictions is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s \\leq d$, the set of restrictions that are simultaneously $s$-restrictions\nand bad restrictions for depth $d$ is empty."
+}

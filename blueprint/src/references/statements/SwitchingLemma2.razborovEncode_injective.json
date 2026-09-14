@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.razborovEncode_injective",
+ "key": "aacbb12a75afba39",
+ "kind": "theorem",
+ "title": "Injectivity of the Razborov encoding on bad restrictions",
+ "statement": "Fix a DNF formula $f$ on $n$ variables and parameters $w, d \\in \\bbn$, and suppose that $f$ has width at most $w$ and that no term of $f$ repeats a variable — within any single term, two literals sharing the same variable are identical. Under these hypotheses the Razborov encoding with parameters $w$ and $d$ is injective on the restrictions that are bad for $f$ at depth $d$: if $\\rho_1$ and $\\rho_2$ are restrictions, each bad for the Boolean function computed by $f$ at depth $d$ (that is, the corresponding restricted function has decision-tree depth exceeding $d$), and their Razborov encodings agree, then $\\rho_1 = \\rho_2$.",
+ "hypotheses_covered": [
+  "f has width at most w",
+  "no term of f repeats a variable",
+  "ρ₁ is bad for f's Boolean function at depth d",
+  "ρ₂ is bad for f's Boolean function at depth d",
+  "the Razborov encodings of ρ₁ and ρ₂ agree"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe Razborov encoding is injective on bad restrictions: for a width-$w$ DNF $f$ with\ndistinct variables per term, if $\\rho_1$ and $\\rho_2$ are both bad restrictions for\n$f.\\mathrm{eval}$ at depth $d$ and their encodings agree,\n$\\mathrm{razborovEncode}\\ f\\ w\\ d\\ \\rho_1 = \\mathrm{razborovEncode}\\ f\\ w\\ d\\ \\rho_2$,\nthen $\\rho_1 = \\rho_2$."
+}

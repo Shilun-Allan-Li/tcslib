@@ -67,56 +67,69 @@ For $x, y \in \{0,1\}^n$, the vector $\mathrm{xor\_vec}(x,y)_i = x_i \oplus y_i$
 the componentwise XOR, giving the group operation on $(\mathbb{F}_2)^n$.
 \end{definition}
 
-\begin{lemma}[Cardinality of the hypercube]
+\begin{lemma}[Cardinality of the Boolean hypercube]
 \lean{BoolFourier.card_hypercube}
 \label{BoolFourier.card_hypercube}
 \leanok
 \uses{BoolFourier.hypercube, BooleanAnalysis.BoolCube}
 \difficulty{1}
-For every $n : \mathbb{N}$, the Boolean hypercube satisfies
-$|\{0,1\}^n| = 2^n$.
+For every natural number $n$, the Boolean hypercube $\{0,1\}^n$ has exactly $2^n$
+elements.
 \end{lemma}
 
-\begin{lemma}[Average of $\pm 1$ values is zero]
+\begin{lemma}[Mean of the Bool-to-$\pm 1$ embedding vanishes]
 \lean{BoolFourier.avg_BoolToPM1}
 \label{BoolFourier.avg_BoolToPM1}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign}
 \difficulty{1}
-The average of the two values of the $\pm 1$ embedding is zero:
+Under the embedding $\mathrm{BoolToPM1} : \mathrm{Bool} \to \bbr$ that sends
+$\mathtt{false}$ to $1$ and $\mathtt{true}$ to $-1$, the average of its two values is
+zero:
 \[
   \frac{\mathrm{BoolToPM1}(\mathtt{false}) + \mathrm{BoolToPM1}(\mathtt{true})}{2} = 0.
 \]
 \end{lemma}
 
-\begin{lemma}[$\pm 1$ values square to one]
+\begin{lemma}[Square of the Bool-to-$\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1_sq}
 \label{BoolFourier.BoolToPM1_sq}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign_mul_self}
 \difficulty{1}
-For every $b : \mathrm{Bool}$, $\mathrm{BoolToPM1}(b)^2 = 1$.
+For every Boolean value $b$, the image $\mathrm{BoolToPM1}(b)$ under the map sending
+$\mathtt{false}$ to $1$ and $\mathtt{true}$ to $-1$ satisfies
+$\mathrm{BoolToPM1}(b)\cdot\mathrm{BoolToPM1}(b) = 1$; that is, this $\pm 1$-valued
+quantity squares to $1$.
 \end{lemma}
 
-\begin{lemma}[Negation under $\pm 1$ embedding]
+\begin{lemma}[Negation under the $\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1_not}
 \label{BoolFourier.BoolToPM1_not}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign_not}
 \difficulty{1}
-For every $b : \mathrm{Bool}$,
-$\mathrm{BoolToPM1}(\lnot b) = -\mathrm{BoolToPM1}(b)$.
+Let $\mathrm{BoolToPM1} : \mathrm{Bool} \to \bbr$ be the Bool-to-$\pm 1$ embedding,
+which sends $\mathtt{false}$ to $1$ and $\mathtt{true}$ to $-1$. Then for every Boolean
+value $b$, negating $b$ flips the sign of its image:
+\[
+  \mathrm{BoolToPM1}(\lnot b) = -\,\mathrm{BoolToPM1}(b).
+\]
 \end{lemma}
 
-\begin{lemma}[XOR under $\pm 1$ embedding]
+\begin{lemma}[XOR as multiplication under the $\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1_xor}
 \label{BoolFourier.BoolToPM1_xor}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign}
 \difficulty{2}
-For all $a, b : \mathrm{Bool}$,
-$\mathrm{BoolToPM1}(a \oplus b) = \mathrm{BoolToPM1}(a) \cdot \mathrm{BoolToPM1}(b)$;
-that is, XOR corresponds to multiplication in $\{\pm 1\} \subset \mathbb{R}$.
+Let $\mathrm{BoolToPM1} : \mathrm{Bool} \to \bbr$ be the map sending $\mathtt{false}$ to
+$1$ and $\mathtt{true}$ to $-1$. Then for all Booleans $a$ and $b$,
+\[
+  \mathrm{BoolToPM1}(a \oplus b) = \mathrm{BoolToPM1}(a)\cdot\mathrm{BoolToPM1}(b),
+\]
+so the exclusive-or $a \oplus b$ is carried to the ordinary product in
+$\{-1,1\}\subset\bbr$.
 \end{lemma}
 
 \begin{definition}[Uniform expectation]
@@ -136,11 +149,12 @@ For $f : \{0,1\}^n \to \mathbb{R}$, the uniform expectation is
 \leanok
 \uses{BoolFourier.expectation, BoolFourier.hypercube}
 \difficulty{6}
-If $g : \mathrm{Fin}\,n \to \mathrm{Bool} \to \mathbb{R}$ and
-$f(x) = \prod_{i} g_i(x_i)$, then
+Let $g : \{0,1\}^n \to \bbr$ be given coordinatewise, so that for each index $i \in
+\{0,\dots,n-1\}$ we have a function $g_i : \{0,1\} \to \bbr$, and let $f : \{0,1\}^n \to
+\bbr$ be the product function $f(x) = \prod_{i} g_i(x_i)$. Then its uniform expectation
+over the Boolean hypercube factorises as
 \[
-  \mathbb{E}[f]
-  = \prod_{i=0}^{n-1} \frac{g_i(\mathtt{false}) + g_i(\mathtt{true})}{2}.
+  \E[f] = \prod_{i} \frac{g_i(0) + g_i(1)}{2}.
 \]
 \end{lemma}
 
@@ -194,81 +208,104 @@ $\chi_S : \{0,1\}^n \to \mathbb{R}$ is
 defined as an alias for \texttt{BooleanAnalysis.chiS}.
 \end{definition}
 
-\begin{lemma}[Character evaluated at zero]
+\begin{lemma}[Walsh character at the origin]
 \lean{BoolFourier.char_S_of_zero}
 \label{BoolFourier.char_S_of_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{1}
-For every $S \subseteq [n]$, $\chi_S(\mathbf{0}) = 1$.
+Let $n$ be a natural number and let $S \subseteq [n]$. Evaluating the Walsh character
+$\chi_S : \{0,1\}^n \to \bbr$ at the all-zeros point $\mathbf{0}$ (the vector whose
+every coordinate is $\mathtt{false}$) gives
+\[
+  \chi_S(\mathbf{0}) = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Character squared equals one]
+\begin{lemma}[Walsh characters take values in the unit sphere]
 \lean{BoolFourier.char_S_sq}
 \label{BoolFourier.char_S_sq}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
 \difficulty{2}
-For every $S \subseteq [n]$ and $x \in \{0,1\}^n$,
-$\chi_S(x)^2 = 1$.
+Let $n$ be a natural number, let $S \subseteq [n]$, and let $x \in \{0,1\}^n$. Then the
+Walsh–Fourier character $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ satisfies
+\[
+  \chi_S(x)\,\chi_S(x) = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Empty character is constant one]
+\begin{lemma}[Empty Walsh character is the constant one]
 \lean{BoolFourier.char_S_empty}
 \label{BoolFourier.char_S_empty}
 \leanok
 \uses{BoolFourier.char_S, BooleanAnalysis.chiS_empty}
 \difficulty{1}
-$\chi_\emptyset = \mathbf{1}$, the constant function equal to $1$.
+Let $n$ be a natural number. The Walsh character $\chi_\emptyset$ associated to the
+empty subset of $[n]$ is the constant function equal to $1$ on the Boolean hypercube;
+that is, $\chi_\emptyset(x) = 1$ for every $x \in \{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Product of characters]
+\begin{lemma}[Product of Walsh characters]
 \lean{BoolFourier.char_S_times_char_T}
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{BoolFourier.char_S_times_char_T}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_mul_chiS}
 \difficulty{1}
-For all $S, T \subseteq [n]$ and $x \in \{0,1\}^n$,
+For any two subsets $S, T \subseteq [n]$ and any point $x \in \{0,1\}^n$,
 \[
   \chi_S(x)\,\chi_T(x) = \chi_{S \mathbin{\triangle} T}(x),
 \]
-where $S \mathbin{\triangle} T$ denotes the symmetric difference.
+where $\chi_S$ denotes the Walsh--Fourier character of $S$ and $S \mathbin{\triangle} T$
+is the symmetric difference of $S$ and $T$.
 \end{lemma}
 
-\begin{lemma}[Sum of characters at zero equals $2^n$]
+\begin{lemma}[Summing all Walsh characters at the origin]
 \lean{BoolFourier.sum_char_S_at_zero}
 \label{BoolFourier.sum_char_S_at_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.hypercube, BoolFourier.zero_vec}
 \difficulty{1}
+Fix $n \in \bbn$, and for each subset $S \subseteq [n]$ let $\chi_S \colon \{0,1\}^n \to
+\bbr$ denote the Walsh--Fourier character $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$.
+Writing $\mathbf{0}$ for the all-zeros point of $\{0,1\}^n$, summing these characters
+evaluated at $\mathbf{0}$ over all $2^n$ subsets of $[n]$ gives
 \[
-  \sum_{S \subseteq [n]} \chi_S(\mathbf{0}) = 2^n.
+  \sum_{S \subseteq [n]} \chi_S(\mathbf{0}) \;=\; \abs{\{0,1\}^n},
 \]
+the number of points of the Boolean hypercube.
 \end{lemma}
 
-\begin{lemma}[Sum of characters at non-zero point is zero]
+\begin{lemma}[Vanishing of the character sum at a nonzero point]
 \lean{BoolFourier.sum_char_S_ne_zero}
 \label{BoolFourier.sum_char_S_ne_zero}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{4}
-For every $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$,
+Fix $n\in\bbn$ and a point $x\in\{0,1\}^n$, and for each subset $S\subseteq[n]$ let
+$\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ be the Walsh–Fourier character. If $x$ is not the
+all-zeros point, then
 \[
-  \sum_{S \subseteq [n]} \chi_S(x) = 0.
+  \sum_{S\subseteq[n]}\chi_S(x)=0,
 \]
+the sum ranging over all $2^n$ subsets of $[n]$.
 \end{lemma}
 
-\begin{lemma}[Expectation of empty character is one]
+\begin{lemma}[Expectation of the empty Walsh character]
 \lean{BoolFourier.expectation_char_empty}
 \label{BoolFourier.expectation_char_empty}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.expectation}
 \difficulty{1}
-$\mathbb{E}[\chi_\emptyset] = 1$.
+For every $n \in \bbn$, the Walsh character $\chi_\emptyset$ associated to the empty
+subset of $[n]$ has uniform expectation equal to one:
+\[
+\E[\chi_\emptyset] \;=\; \frac{1}{2^n}\sum_{x \in \{0,1\}^n} \chi_\emptyset(x) \;=\; 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Expectation of non-empty character is zero]
+\begin{lemma}[Non-trivial characters have mean zero]
 \lean{BoolFourier.expectation_char_nonempty}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b002,
@@ -282,10 +319,15 @@ $\mathbb{E}[\chi_\emptyset] = 1$.
 }
 \uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
 \difficulty{1}
-If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
+Let $n$ be a natural number and let $S \subseteq [n]$ be a nonempty set of coordinates.
+Then the Walsh--Fourier character $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ has vanishing
+uniform expectation over the Boolean hypercube $\{0,1\}^n$:
+\[
+  \E[\chi_S] = \frac{1}{2^n}\sum_{x \in \{0,1\}^n} \chi_S(x) = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Orthonormality: self inner product]
+\begin{lemma}[Self inner product of a Walsh character]
 \lean{BoolFourier.inner_product_char_self}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
@@ -299,10 +341,16 @@ If $S \ne \emptyset$, then $\mathbb{E}[\chi_S] = 0$.
 }
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.expectation, BoolFourier.inner_product}
 \difficulty{3}
-For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
+Let $n$ be a natural number and let $S \subseteq [n]$. Then the Walsh--Fourier character
+$\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ satisfies
+\[
+\langle \chi_S, \chi_S \rangle \;=\; \frac{1}{2^n}\sum_{x \in \{0,1\}^n} \chi_S(x)^2
+\;=\; 1,
+\]
+where the inner product is the uniform expectation of the pointwise product.
 \end{lemma}
 
-\begin{lemma}[Orthonormality: distinct characters are orthogonal]
+\begin{lemma}[Orthogonality of distinct Walsh characters]
 \lean{BoolFourier.inner_product_char_nonself}
 \label{BoolFourier.inner_product_char_nonself}
 \leanok
@@ -310,7 +358,6 @@ For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
   pdf-50833afe7403-p004-b006,
   pdf-50833afe7403-p004-b005
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -578,7 +625,13 @@ For every $S \subseteq [n]$, $\langle \chi_S, \chi_S \rangle = 1$.
     pdf-50833afe7403-p003-b003}
 \uses{BoolFourier.char_S, BoolFourier.char_S_times_char_T, BoolFourier.expectation_char_nonempty, BoolFourier.inner_product}
 \difficulty{3}
-If $S \ne T$, then $\langle \chi_S, \chi_T \rangle = 0$.
+Fix $n \in \bbn$, and let $S, T \subseteq [n]$ be two distinct subsets. Then the
+Walsh--Fourier characters $\chi_S$ and $\chi_T$ are orthogonal with respect to the
+uniform inner product on $\{0,1\}^n$:
+\[
+\langle \chi_S, \chi_T \rangle = \frac{1}{2^n}\sum_{x \in \{0,1\}^n}
+\chi_S(x)\,\chi_T(x) = 0.
+\]
 \end{lemma}
 
 \begin{definition}[Fourier coefficient]
@@ -593,62 +646,81 @@ The Fourier coefficient of $f : \{0,1\}^n \to \mathbb{R}$ at $S \subseteq [n]$ i
 \]
 \end{definition}
 
-\begin{lemma}[Fourier coefficient of a character at itself]
+\begin{lemma}[Self-Fourier coefficient of a Walsh character]
 \lean{BoolFourier.fourier_coeff_char_self}
 \label{BoolFourier.fourier_coeff_char_self}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_self}
 \difficulty{1}
-For every $S \subseteq [n]$, $\widehat{\chi_S}(S) = 1$.
+For every subset $S \subseteq [n]$, the Fourier coefficient of the Walsh character
+$\chi_S$ at the same set $S$ equals $1$; that is,
+\[
+  \widehat{\chi_S}(S) = \langle \chi_S, \chi_S \rangle = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Fourier coefficient of a character at a different set]
+\begin{lemma}[Orthogonality of Walsh characters]
 \lean{BoolFourier.fourier_coeff_char_of_ne}
 \label{BoolFourier.fourier_coeff_char_of_ne}
 \leanok
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_nonself}
 \difficulty{1}
-If $S \ne T$, then $\widehat{\chi_S}(T) = 0$.
+Let $S, T \subseteq [n]$ be distinct subsets of coordinates. Then the Fourier
+coefficient of the Walsh character $\chi_S : \{0,1\}^n \to \bbr$ at $T$ vanishes:
+\[
+  \widehat{\chi_S}(T) = \langle \chi_S, \chi_T \rangle = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Expectation equals uniform-weight expectation]
+\begin{lemma}[Agreement of two definitions of the uniform expectation]
 \lean{BoolFourier.expectation_eq_expect}
 \label{BoolFourier.expectation_eq_expect}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{2}
-The locally-defined expectation \texttt{BoolFourier.expectation} agrees with
-\texttt{BooleanAnalysis.expect}: for every $f$, $\mathbb{E}[f] = \mathrm{expect}(f)$.
+Let $n$ be a natural number and let $f : \{0,1\}^n \to \bbr$ be a Boolean function of
+arity $n$. Then the two forms of the uniform expectation of $f$ coincide, namely
+\[
+  \frac{1}{2^n} \sum_{x \in \{0,1\}^n} f(x) \;=\; 2^{-n} \sum_{x \in \{0,1\}^n} f(x).
+\]
 \end{lemma}
 
-\begin{lemma}[Fourier coefficient agrees with upstream definition]
+\begin{lemma}[Agreement of two Fourier coefficient definitions]
 \lean{BoolFourier.fourier_coeff_eq}
 \label{BoolFourier.fourier_coeff_eq}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.inner_product, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 \difficulty{2}
-For every $f$ and $S$,
-$\mathrm{fourier\_coeff}(f, S) = \mathrm{fourierCoeff}(f, S)$, bridging the
-local and upstream definitions.
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function of arity $n$, and let $S \subseteq
+[n]$. Then the two definitions of the Fourier–Walsh coefficient $\hat f(S)$ coincide:
+both are equal to the $L^2$ inner product of $f$ with the Walsh character $\chi_S$,
+\[
+\hat f(S) \;=\; \langle f, \chi_S\rangle \;=\; 2^{-n}\sum_{x\in\{0,1\}^n}
+f(x)\,\chi_S(x).
+\]
 \end{lemma}
 
-\begin{lemma}[Fourier--Walsh expansion]
+\begin{lemma}[Fourier–Walsh expansion]
 \lean{BoolFourier.fourier_expansion}
 \label{BoolFourier.fourier_expansion}
 \leanok
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BoolFourier.hypercube, BooleanAnalysis.walsh_expansion}
 \difficulty{2}
-Every Boolean function $f : \{0,1\}^n \to \mathbb{R}$ expands in the
-Walsh--Fourier basis:
+Let $f : \{0,1\}^n \to \bbr$ be a Boolean function and let $x \in \{0,1\}^n$. Then $f$
+agrees pointwise with the sum of its Walsh characters weighted by its Fourier
+coefficients:
 \[
-  f(x) = \sum_{S \subseteq [n]} \hat f(S)\,\chi_S(x).
+  f(x) = \sum_{S \subseteq [n]} \hat f(S)\,\chi_S(x),
 \]
+where the sum ranges over all subsets $S$ of $[n]$, $\hat f(S) = \langle f,
+\chi_S\rangle$ is the Fourier coefficient of $f$ at $S$, and $\chi_S$ is the Walsh
+character of $S$.
 \end{lemma}
 
-\begin{lemma}[Parseval's identity]
+\begin{lemma}[Parseval's identity for the Walsh–Fourier expansion]
 \lean{BoolFourier.parseval_identity}
 \label{BoolFourier.parseval_identity}
 \leanok
@@ -656,7 +728,6 @@ Walsh--Fourier basis:
   pdf-50833afe7403-p005-b006,
   pdf-50833afe7403-p006-b001
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -959,90 +1030,107 @@ Walsh--Fourier basis:
   {pdf-50833afe7403-p005-b006}
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
 \difficulty{2}
-For every $f : \{0,1\}^n \to \mathbb{R}$,
+Let $f : \{0,1\}^n \to \bbr$ be a real-valued function on the Boolean hypercube, and for
+each subset $S \subseteq [n]$ let $\hat f(S) = \langle f, \chi_S\rangle$ be its Fourier
+coefficient, where the inner product and expectation are taken with respect to the
+uniform measure. Then the sum of the squared Fourier coefficients equals the squared
+$L^2$ norm of $f$:
 \[
-  \sum_{S \subseteq [n]} \hat f(S)^2 = \|f\|_2^2.
+  \sum_{S \subseteq [n]} \hat f(S)^2 \;=\; \|f\|_2^2 \;=\; \E\bigl[f^2\bigr].
 \]
 \end{lemma}
 
-\begin{lemma}[Convolution theorem]
+\begin{lemma}[Convolution theorem on the Boolean cube]
 \lean{BoolFourier.fourier_coeff_convolution}
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b006}
 \label{BoolFourier.fourier_coeff_convolution}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{4}
-For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$,
+Let $n$ be a natural number, and let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions.
+Then for every subset $S \subseteq [n]$, the Fourier coefficient of the convolution $f *
+g$ at $S$ equals the product of the Fourier coefficients of $f$ and $g$ at $S$:
 \[
-  \widehat{f * g}(S) = \hat f(S) \cdot \hat g(S).
+  \widehat{f * g}(S) = \hat f(S)\,\hat g(S).
 \]
 \end{lemma}
 
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Character squared equals one, powered form]
+\begin{lemma}[Walsh characters square to one]
 \lean{BoolFourier.char_S_sq_aux_h}
 \label{BoolFourier.char_S_sq_aux_h}
 \leanok
 \uses{BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
 \difficulty{1}
-For every $S \subseteq [n]$ and every $x \in \{0,1\}^n$,
-$\chi_S(x)^2 = 1$.  This is the squaring form (with exponent $2$ rather than an explicit
-product) of the fact that Walsh characters take values in $\{\pm 1\}$.
+Fix a natural number $n$, and let $S \subseteq \{1,\dots,n\}$ be a set of coordinates.
+For every point $x$ of the Boolean hypercube $\{0,1\}^n$, the Walsh character $\chi_S$
+satisfies
+\[
+\chi_S(x)^2 = 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Characters at the origin form the constant function one]
+\begin{lemma}[Walsh characters equal one at the origin]
 \lean{BoolFourier.sum_char_S_at_zero_aux_h}
 \label{BoolFourier.sum_char_S_at_zero_aux_h}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.zero_vec}
 \difficulty{1}
-As functions of $S$, the evaluation of characters at the all-zeros vector is constant:
+Fix $n \ge 0$, and for each subset $S \subseteq [n]$ let $\chi_S : \{0,1\}^n \to \bbr$
+be the Walsh character $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$. Writing $\mathbf{0}$ for
+the all-zeros point of $\{0,1\}^n$, the map sending each $S$ to $\chi_S(\mathbf{0})$ is
+the constant function equal to $1$:
 \[
-  \bigl(S \mapsto \chi_S(\mathbf{0})\bigr) = \bigl(S \mapsto 1\bigr).
+  \bigl(S \mapsto \chi_S(\mathbf{0})\bigr) \;=\; \bigl(S \mapsto 1\bigr).
 \]
 \end{lemma}
 
-\begin{lemma}[Sign-flip pairing of characters at a non-zero point]
+\begin{lemma}[Sign-flip symmetry of the character sum at a nonzero point]
 \lean{BoolFourier.sum_char_S_ne_zero_aux_h_pair}
 \label{BoolFourier.sum_char_S_ne_zero_aux_h_pair}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{6}
-Let $x \in \{0,1\}^n$ with $x \ne \mathbf{0}$ and let $i$ be a coordinate with
-$x_i = \mathtt{true}$.  Then the sum of all characters at $x$ equals the sum of their
-negations:
+Let $x \in \{0,1\}^n$ be a point of the Boolean hypercube that differs from the
+all-zeros point $\mathbf{0}$, and suppose $i$ is a coordinate at which $x_i =
+\mathtt{true}$. Then summing the Walsh–Fourier characters over all subsets $S \subseteq
+[n]$, evaluated at $x$, gives the same value as summing their negations:
 \[
-  \sum_{S \subseteq [n]} \chi_S(x) \;=\; \sum_{S \subseteq [n]} -\chi_S(x).
+  \sum_{S \subseteq [n]} \chi_S(x) \;=\; \sum_{S \subseteq [n]} \bigl(-\chi_S(x)\bigr).
 \]
 \end{lemma}
 
-\begin{lemma}[Expectation of a character as a coordinate product]
+\begin{lemma}[Expectation of a Walsh character as a coordinate product]
 \lean{BoolFourier.expectation_char_nonempty_aux_h_exp}
 \label{BoolFourier.expectation_char_nonempty_aux_h_exp}
 \leanok
 \uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
 \difficulty{5}
-For a non-empty $S \subseteq [n]$, the uniform expectation of the character $\chi_S$
-factorises over the coordinates of $S$:
+Let $n$ be a natural number and let $S \subseteq [n]$ be a nonempty set of coordinates.
+Then the uniform expectation of the Walsh character $\chi_S$ over the Boolean hypercube
+factorises as a product over the coordinates in $S$:
 \[
   \mathbb{E}[\chi_S]
   \;=\; \prod_{j \in S}
-        \frac{\mathrm{BoolToPM1}(\mathtt{false}) + \mathrm{BoolToPM1}(\mathtt{true})}{2}.
+\frac{\mathrm{BoolToPM1}(\mathtt{false}) + \mathrm{BoolToPM1}(\mathtt{true})}{2},
 \]
+where $\mathrm{BoolToPM1}$ sends $\mathtt{false}$ to $1$ and $\mathtt{true}$ to $-1$.
 \end{lemma}
 
-\begin{lemma}[$L^2$ norm as a self inner product]
+\begin{lemma}[$L^2$ norm squared as a self inner product]
 \lean{BoolFourier.parseval_identity_aux_hL2}
 \label{BoolFourier.parseval_identity_aux_hL2}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BooleanAnalysis.innerProduct}
 \difficulty{3}
-For every $f : \{0,1\}^n \to \mathbb{R}$, the locally-defined squared $L^2$ norm agrees
-with the upstream inner product of $f$ with itself:
+Let $f : \{0,1\}^n \to \bbr$ be a real-valued function on the Boolean hypercube, and
+equip such functions with the uniform-measure inner product $\langle g, h \rangle =
+2^{-n}\sum_{x \in \{0,1\}^n} g(x)\,h(x)$. Then the squared $L^2$ norm of $f$ equals the
+inner product of $f$ with itself:
 \[
-  \|f\|_2^2 \;=\; \langle f, f \rangle_{\mathbb{B}}.
+  \|f\|_2^2 \;=\; \langle f, f \rangle.
 \]
 \end{lemma}
 
@@ -1052,26 +1140,36 @@ with the upstream inner product of $f$ with itself:
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.xor_vec}
 \difficulty{2}
-For all $f, g : \{0,1\}^n \to \mathbb{R}$ and $S \subseteq [n]$, the double sum defining
-the unnormalised convolution coefficient may be reordered:
+Let $n$ be a natural number, let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions, and
+let $S \subseteq [n]$ with associated Walsh character $\chi_S(x) = \prod_{i \in
+S}(-1)^{x_i}$. Writing $x \oplus y$ for the componentwise XOR of $x, y \in \{0,1\}^n$,
+the following identity holds:
 \[
-  \sum_{x} \Bigl(\sum_{y} f(y)\,g(x \oplus y)\Bigr) \chi_S(x)
-  \;=\; \sum_{y} f(y) \sum_{x} g(x \oplus y)\,\chi_S(x).
+\sum_{x \in \{0,1\}^n} \Bigl(\sum_{y \in \{0,1\}^n} f(y)\,g(x \oplus y)\Bigr)\,\chi_S(x)
+  \;=\;
+  \sum_{y \in \{0,1\}^n} f(y) \sum_{x \in \{0,1\}^n} g(x \oplus y)\,\chi_S(x).
 \]
 \end{lemma}
 
-\begin{lemma}[Multiplicative splitting of a character along XOR]
+\begin{lemma}[Multiplicative splitting of a Walsh character along XOR]
 \lean{BoolFourier.fourier_coeff_convolution_aux_h_split}
 \label{BoolFourier.fourier_coeff_convolution_aux_h_split}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{4}
-For all $x, y \in \{0,1\}^n$ and $S \subseteq [n]$,
+Let $S \subseteq [n]$, let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions, and suppose
+the interchange-of-summation identity
+\[
+  \sum_{x} \Big(\sum_{y} f(y)\, g(x \oplus y)\Big)\,\chi_S(x)
+  \;=\; \sum_{y} f(y) \sum_{x} g(x \oplus y)\,\chi_S(x)
+\]
+holds, where all sums range over $\{0,1\}^n$ and $\oplus$ is componentwise XOR. Then for
+all $x, y \in \{0,1\}^n$,
 \[
   \chi_S(x) \;=\; \chi_S(x \oplus y)\,\chi_S(y),
 \]
-expressing that $\chi_S$ is a character of the group $(\mathbb{F}_2)^n$.  The statement
-also carries the (unused) Fubini hypothesis of the enclosing proof.
+where $\chi_S$ is the Walsh--Fourier character of $S$; that is, $\chi_S$ is a character
+of the group $(\bbf_2)^n$.
 \end{lemma}
 
 \begin{lemma}[Shift rule for character-weighted sums]
@@ -1080,12 +1178,20 @@ also carries the (unused) Fubini hypothesis of the enclosing proof.
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff_convolution_aux_h_split, BoolFourier.hypercube, BoolFourier.xor_vec}
 \difficulty{5}
-Let $f, g : \{0,1\}^n \to \mathbb{R}$, let $S \subseteq [n]$, assume the Fubini
-interchange for the convolution coefficient, and let $y \in \{0,1\}^n$.  Then
-translating the argument of $g$ by $y$ only multiplies the character-weighted sum by
-$\chi_S(y)$:
+Let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions, let $S \subseteq [n]$, and write
+$\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ for the associated Walsh character, where
+$\oplus$ denotes componentwise XOR. Suppose the order of summation may be interchanged
+in the double sum
+\[
+  \sum_{x}\Big(\sum_{y} f(y)\,g(x \oplus y)\Big)\chi_S(x)
+  \;=\;
+  \sum_{y} f(y)\sum_{x} g(x \oplus y)\,\chi_S(x).
+\]
+Then for every $y \in \{0,1\}^n$, translating the argument of $g$ by $y$ multiplies the
+character-weighted sum by the factor $\chi_S(y)$:
 \[
   \sum_{x} g(x \oplus y)\,\chi_S(x)
-  \;=\; \chi_S(y) \sum_{x} g(x)\,\chi_S(x).
+  \;=\;
+  \chi_S(y)\sum_{x} g(x)\,\chi_S(x).
 \]
 \end{lemma}

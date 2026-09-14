@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingBernoulli.switching_fixedSize_bound_small",
+ "key": "44a34486cb93b81d",
+ "kind": "lemma",
+ "title": "Fixed-size switching bound for small restriction size",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables with $n \\ge 1$, and suppose every term of $f$ has width at most $w$, so that $f$ is a disjunction of conjunctions of at most $w$ literals. Assume that no variable occurs more than once within any single term, that is, each term consists of literals with pairwise distinct variables (and hence has no repeated literal). Fix natural numbers $k$ and $d$ with $5k \\le n$, and draw a restriction $\\rho$ uniformly at random from the fixed-size model $R_k$, which is uniform over all restrictions of the $n$ variables that leave exactly $k$ variables free. Then the probability that the restricted function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth greater than $d$ satisfies\n\\[\n\\bbP_{\\rho \\sim R_k}\\!\\bigl[\\, \\mathrm{depth}\\bigl(f\\!\\restriction_\\rho\\bigr) > d \\,\\bigr] \\;\\le\\; \\left(\\frac{10\\,k\\,w}{n}\\right)^{d},\n\\]\nwhere $\\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $g$.",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "every term of f has width ≤ w",
+  "no two literals in a term share a variable (hnd)",
+  "no term has a repeated literal (hnodup)",
+  "5k ≤ n",
+  "restriction drawn uniformly from the fixed-size model R_k (exactly k free variables)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a width-$w$ DNF $f$ with no repeated variables per term, $0 < n$, and\n$5k \\le n$, the probability over uniform size-$k$ restrictions that the\nrestricted function has decision-tree depth exceeding $d$ is at most\n$\\left(10kw/n\\right)^d$."
+}

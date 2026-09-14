@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.circuit_reduction_ind_step",
+ "key": "52b22ea8b5386fc4",
+ "kind": "lemma",
+ "title": "Inductive step of the circuit-to-decision-tree reduction",
+ "statement": "Let $f:\\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function on $n \\ge 1$ variables, and fix natural numbers $d,s,w,l,t$ with $d \\ge 3$ and $s,w,l \\ge 1$. Suppose $f$ is computed by a Boolean circuit of depth at most $d$, size at most $s$, and maximum fan-in at most $w$. For parameters $w,l$ and a depth $e$, write $\\delta_e = \\frac{1}{40w}\\left(\\frac{1}{40l}\\right)^{e-2}$ for the composed restriction parameter; let $D(g)$ denote the decision-tree depth of a Boolean function $g$, and let $g|_\\rho$ denote its restriction by a restriction $\\rho$. Assume the following inductive hypothesis: for every Boolean function $g$ on $n$ variables and every integer $s' \\ge 1$, if $g$ is computed by a circuit of depth at most $d-1$, size at most $s'$, and maximum fan-in at most $w$, then under a Bernoulli random restriction $\\rho$ with parameter $\\delta_{d-1}$,\n\\[\n  \\Pr_{\\rho}\\!\\left[D(g|_\\rho) > l\\right] \\le (s'-1)(1/2)^{l} + (1/2)^{l} + (s'-1)\\exp\\!\\left(-\\tfrac{n}{120w}\\right) + s'\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]\nThen under a Bernoulli random restriction $\\rho$ with parameter $\\delta_{d}$,\n\\[\n  \\Pr_{\\rho}\\!\\left[D(f|_\\rho) > t\\right] \\le (s-1)(1/2)^{l} + (1/2)^{t} + (s-1)\\exp\\!\\left(-\\tfrac{n}{120w}\\right) + s\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "n > 0",
+  "d, s, w, l, t are natural numbers",
+  "d >= 3",
+  "s > 0",
+  "w > 0",
+  "l > 0",
+  "f is computed by a circuit of depth <= d, size <= s, max fan-in <= w",
+  "inductive hypothesis: the depth-(d-1) bound holds for every function computed by a circuit of depth <= d-1, size <= s', fan-in <= w, for all s' > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The inductive step: for depth $d\\ge 3$, assuming the bound holds for depth $d-1$ (the\nhypothesis $\\mathit{ih}$ applied to each child of the root), a circuit of depth at most $d$,\nsize at most $s$, and fan-in at most $w$ satisfies, under $\\mathrm{composedDelta}(w,l,d)$,\n\\[\n  \\Pr\\!\\left[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,f\\,\\rho) > t\\right]\n  \\le (s-1)(1/2)^{l} + (1/2)^{t} + (s-1)\\exp\\!\\left(-\\tfrac{n}{120w}\\right)\n    + s\\,\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]"
+}

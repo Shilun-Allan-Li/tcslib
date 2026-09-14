@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run",
+ "key": "94ca3390f7d0fd19",
+ "kind": "theorem",
+ "title": "Execution commutes with pullback",
+ "statement": "Let $p$ be a finite-message deterministic communication protocol over input types $X$, $Y$ with output type $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be maps into those input types. Then for every pair of inputs $x' : X'$ and $y' : Y'$, executing the pullback protocol $p.\\mathrm{comap}\\,f_X\\,f_Y$ on $(x', y')$ yields the same output as executing $p$ on the transported inputs $(f_X(x'), f_Y(y'))$; that is,\n\\[\n\\mathrm{run}\\bigl(p.\\mathrm{comap}\\,f_X\\,f_Y\\bigr)(x', y') \\;=\\; \\mathrm{run}(p)\\bigl(f_X(x'),\\, f_Y(y')\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "p is a finite-message protocol over X, Y, α",
+  "input map f_X : X' → X",
+  "input map f_Y : Y' → Y",
+  "input x' : X'",
+  "input y' : Y'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $x' : X'$ and $y' : Y'$,\n$(p.\\mathrm{comap}\\,f_X\\,f_Y).\\mathrm{run}\\,x'\\,y' = p.\\mathrm{run}\\,(f_X\\,x')\\,(f_Y\\,y')$."
+}

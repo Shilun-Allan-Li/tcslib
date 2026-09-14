@@ -1,0 +1,15 @@
+{
+ "lean_name": "variance_entry",
+ "key": "b732361e718e822b",
+ "kind": "lemma",
+ "title": "Variance of a single Rademacher entry",
+ "statement": "Let $\\omega$ be a $k \\times d$ random array whose entries are independent and identically distributed with the Rademacher distribution $\\tfrac{1}{2}\\delta_{-1} + \\tfrac{1}{2}\\delta_{+1}$, taking each of the values $-1$ and $+1$ with probability $1/2$. Then for every index $(i,j)$ with $i \\in \\{0,\\dots,k-1\\}$ and $j \\in \\{0,\\dots,d-1\\}$, the single entry $\\omega_{ij}$ has variance\n\\[\n\\mathrm{Var}(\\omega_{ij}) = 1.\n\\]",
+ "hypotheses_covered": [
+  "entries i.i.d. Rademacher under the joint product measure",
+  "fixed index (i,j) with i in Fin k and j in Fin d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $(i,j)$, the variance of the entry $\\omega \\mapsto \\omega_{ij}$ under\nthe joint measure is $1$:\n$\\mathrm{Var}[\\omega \\mapsto \\omega_{ij}; \\mathrm{radJointMeasure}] = 1$."
+}

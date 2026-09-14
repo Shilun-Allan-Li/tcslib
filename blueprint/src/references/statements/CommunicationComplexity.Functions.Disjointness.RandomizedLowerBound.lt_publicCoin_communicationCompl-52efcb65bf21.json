@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.lt_publicCoin_communicationComplexity_disjointness_of_lt_const_mul_n",
+ "key": "cc00dafabf319817",
+ "kind": "theorem",
+ "title": "Linear lower bound for randomized disjointness communication",
+ "statement": "Fix a positive integer $n$, and let $\\mathrm{DISJ}_n$ denote the set-disjointness function that sends a pair of subsets $X, Y \\subseteq [n]$ to $\\mathtt{true}$ precisely when $X \\cap Y = \\emptyset$. Write $\\mathrm{R}^{\\mathrm{pub}}_{1/32}(\\mathrm{DISJ}_n) \\in \\bbn \\cup \\{\\infty\\}$ for the public-coin randomized communication complexity of $\\mathrm{DISJ}_n$ at error $\\tfrac{1}{32}$, i.e.\\ the least worst-case number of bits exchanged by any public-coin protocol that computes $\\mathrm{DISJ}_n$ correctly with probability at least $\\tfrac{31}{32}$ on every input. Then for every natural number $k$ satisfying\n\\[\n  k \\;<\\; \\Bigl(\\tfrac{1}{32768}\\Bigr)^{2}\\,\\frac{n}{3\\ln 2},\n\\]\none has $k < \\mathrm{R}^{\\mathrm{pub}}_{1/32}(\\mathrm{DISJ}_n)$.",
+ "hypotheses_covered": [
+  "n is a positive integer (n : ℕ+)",
+  "k is a natural number",
+  "k < (1/32768)^2 · n / (3 · ln 2)",
+  "error parameter is 1/32",
+  "conclusion: k < public-coin communication complexity of disjointness on [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Public-coin fixed-error lower bound from the deterministic distributional lower bound via minimax."
+}

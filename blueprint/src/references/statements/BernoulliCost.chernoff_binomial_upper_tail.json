@@ -1,0 +1,17 @@
+{
+ "lean_name": "BernoulliCost.chernoff_binomial_upper_tail",
+ "key": "f4c94513b1893b1e",
+ "kind": "lemma",
+ "title": "Chernoff upper-tail bound for the binomial distribution",
+ "statement": "Let $n$ be a natural number and let $p$ be a real number with $0 < p \\le 1$. Summing the binomial probability mass function $\\binom{n}{k}\\,p^k\\,(1-p)^{n-k}$ over those integers $k \\in \\{0, 1, \\dots, n\\}$ satisfying $k > 2np$ yields at most $e^{-np/3}$; that is, the probability that $\\mathrm{Bin}(n,p)$ exceeds twice its mean is bounded by $e^{-np/3}$.",
+ "hypotheses_covered": [
+  "p is positive (0 < p)",
+  "p is at most 1 (p ≤ 1)",
+  "summation index k ranges over {0,…,n}",
+  "k restricted to those with k > 2np"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 < p \\le 1$, the upper tail of the binomial distribution beyond $2np$ is exponentially\nsmall: summing $\\mathrm{binomialPMF}\\,n\\,p\\,k$ over those $k \\in \\{0, \\dots, n\\}$ with $k > 2np$\nis at most $e^{-np/3}$."
+}

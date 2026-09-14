@@ -1,0 +1,19 @@
+{
+ "lean_name": "GeneralHypercontractivity.two_func_hyp_succ",
+ "key": "aa2322e686a847cf",
+ "kind": "lemma",
+ "title": "Inductive step for two-function hypercontractivity",
+ "statement": "Let $p, q \\ge 1$ and let $\\rho$ satisfy $0 \\le \\rho \\le 1$, and write $T_\\rho$ for the noise operator with parameter $\\rho$. Suppose the two-function bound\n\\[\n  \\langle f, T_\\rho g\\rangle \\;\\le\\; \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}\\,\\bigl(\\E[\\abs{g}^q]\\bigr)^{1/q}\n\\]\nholds for every pair of functions $f, g$ on the one-dimensional cube $\\{0,1\\}^1$, and also for every pair of functions on the $n$-dimensional cube $\\{0,1\\}^n$. Then the same bound holds for every pair of functions $f, g : \\{0,1\\}^{n+1} \\to \\bbr$.",
+ "hypotheses_covered": [
+  "p ≥ 1",
+  "q ≥ 1",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "base case: bound holds for all pairs on the 1-bit cube",
+  "inductive hypothesis: bound holds for all pairs on the n-bit cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $p, q \\ge 1$ and $0 \\le \\rho \\le 1$. If the bound\n$\\inn{f, T_\\rho g} \\le (\\E[\\abs{f}^p])^{1/p}(\\E[\\abs{g}^q])^{1/q}$ holds for all pairs of\nfunctions on one bit and for all pairs of functions on $n$ bits, then it holds for all\n$f, g : \\mathrm{BoolCube}\\,(n+1) \\to \\bbr$."
+}

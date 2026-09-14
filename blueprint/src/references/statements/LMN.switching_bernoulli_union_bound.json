@@ -1,0 +1,22 @@
+{
+ "lean_name": "LMN.switching_bernoulli_union_bound",
+ "key": "9cbbf18b8dc53440",
+ "kind": "theorem",
+ "title": "Union bound for large decision-tree depth under a random restriction",
+ "statement": "Let $D_0,\\dots,D_{s-1}$ be $s$ DNF formulas on $n$ Boolean variables, with $n \\ge 1$, each of width at most $w$ where $w \\ge 1$, and suppose that in every term of every $D_i$ each variable occurs at most once (no term repeats a literal, and any two literals of a term on the same variable coincide). Let $p \\in \\bbr$ satisfy $0 < p \\le \\tfrac{1}{40w}$ and $p \\le 1$. Draw a Bernoulli$(p)$ random restriction $\\rho$, which independently leaves each variable free with probability $p$ and otherwise fixes it to $\\mathtt{false}$ or $\\mathtt{true}$ each with probability $(1-p)/2$. Then the probability that some restricted formula $D_i\\!\\restriction_\\rho$ computes a Boolean function of decision-tree depth greater than $l$ is at most\n\\[\n  s\\left(\\left(\\tfrac12\\right)^{l} + \\exp\\!\\left(-\\tfrac{np}{3}\\right)\\right).\n\\]",
+ "hypotheses_covered": [
+  "family of s DNF formulas gates_i on n variables",
+  "each DNF has width at most w",
+  "w > 0",
+  "within each term, literals sharing a variable are equal",
+  "each term has no duplicate literals",
+  "n > 0",
+  "p is real with 0 < p",
+  "p ≤ 1/(40w)",
+  "p ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\mathrm{gates}_0,\\dots,\\mathrm{gates}_{s-1}$ be $s$ many $\\mathrm{DNF}$s, each of width at\nmost $w>0$ (with distinct variables per term and no duplicate literals), let $n>0$, and let\n$0<p\\le \\tfrac{1}{40w}$ with $p\\le 1$. Then the probability under a Bernoulli$(p)$ restriction\n$\\rho$ that some gate $\\mathrm{gates}_i$ has $\\mathrm{dtDepth}(\\mathrm{gates}_i|_\\rho) > l$ is\nat most\n\\[\n  s\\cdot\\Bigl(\\Bigl(\\tfrac12\\Bigr)^l + \\exp\\!\\Bigl(-\\tfrac{np}{3}\\Bigr)\\Bigr).\n\\]"
+}

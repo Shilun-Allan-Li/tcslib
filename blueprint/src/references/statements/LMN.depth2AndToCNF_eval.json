@@ -1,0 +1,18 @@
+{
+ "lean_name": "LMN.depth2AndToCNF_eval",
+ "key": "b7ed6229453795a4",
+ "kind": "lemma",
+ "title": "Correctness of the depth-2 AND-to-CNF conversion",
+ "statement": "Let $cs$ be a list of Boolean circuits on $n$ variables, viewed as the children of a top-level AND gate, and suppose the AND-of-children circuit $\\bigwedge cs$ has depth at most $2$. Then the depth-$2$ AND-to-CNF conversion applied to $cs$ produces a CNF formula computing the same Boolean function as $\\bigwedge cs$: for every assignment $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$, the value of the resulting CNF at $x$ equals the value of $\\bigwedge cs$ at $x$.",
+ "hypotheses_covered": [
+  "cs is a list of Boolean circuits on n variables",
+  "the top AND node over cs has depth at most 2",
+  "the identity holds for every assignment x : Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "If the top AND node $\\mathrm{node}\\,\\texttt{true}\\,cs$ has depth at most $2$, then the CNF\n$\\mathrm{depth2AndToCNF}\\,cs$ computes the same Boolean function as the circuit:\n$\\mathrm{CNF.eval}\\,(\\mathrm{depth2AndToCNF}\\,cs)\\,x = (\\mathrm{node}\\,\\texttt{true}\\,cs).\\mathrm{eval}\\,x$\nfor all $x$."
+}

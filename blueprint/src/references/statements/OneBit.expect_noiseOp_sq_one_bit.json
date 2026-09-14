@@ -1,0 +1,15 @@
+{
+ "lean_name": "OneBit.expect_noiseOp_sq_one_bit",
+ "key": "46eb9180c9bfe2b1",
+ "kind": "lemma",
+ "title": "Expected square of a noised one-bit function",
+ "statement": "Let $f\\colon\\{0,1\\}^1\\to\\bbr$ be a Boolean function of arity one, and let $\\rho$ be any real number. Then the expectation of the square of the noised function $T_\\rho f$ under the uniform measure is\n\\[\n  \\E\\big[(T_\\rho f)^2\\big] \\;=\\; \\hat f(\\emptyset)^2 \\;+\\; \\rho^2\\,\\hat f(\\{0\\})^2,\n\\]\nwhere $\\emptyset$ and $\\{0\\}$ are the only two frequencies for a single coordinate.",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity 1",
+  "ρ is an arbitrary real number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a one-bit function $f$ and noise rate $\\rho$,\n\\[\n  \\E\\big[(T_\\rho f)^2\\big] = \\widehat{f}(\\emptyset)^2 + \\rho^2\\,\\widehat{f}(\\{0\\})^2 .\n\\]"
+}

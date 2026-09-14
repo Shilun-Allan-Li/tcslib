@@ -1,0 +1,16 @@
+{
+ "lean_name": "ZkBLR.BLR_completeness",
+ "key": "4720d8a3d03e8504",
+ "kind": "lemma",
+ "title": "Completeness of the BLR linearity test",
+ "statement": "Let $k \\ge 1$ and $n \\ge 0$, and let $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$ be a linear function, meaning $f(x+y) = f(x) + f(y)$ for all $x, y \\in \\mathbb{Z}_k^n$. Then the BLR acceptance probability of $f$ equals $1$; that is,\n\\[\n  \\Pr_{x,y}\\bigl[f(x+y) = f(x) + f(y)\\bigr] = 1,\n\\]\nwhere $x$ and $y$ range independently and uniformly over $\\mathbb{Z}_k^n$.",
+ "hypotheses_covered": [
+  "k is a positive modulus (NeZero k)",
+  "f maps Z_k^n to Z_k",
+  "f is linear: f(x+y)=f(x)+f(y) for all x,y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\mathbb{Z}_k^n \\to \\mathbb{Z}_k$ is linear, then\n$\\Pr[{\\rm BLR\\ accepts}\\ f] = 1$."
+}

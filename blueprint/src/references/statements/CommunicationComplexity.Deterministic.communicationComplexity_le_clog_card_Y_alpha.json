@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_Y_alpha",
+ "key": "50c51d1d4f3a9389",
+ "kind": "theorem",
+ "title": "Complexity bound of ceil-log of range and codomain sizes",
+ "statement": "Let $X$ be an arbitrary type and let $Y$ and $\\alpha$ be finite nonempty types. Then for every function $f : X \\to Y \\to \\alpha$, the deterministic communication complexity of $f$ satisfies\n\\[\n  D(f) \\;\\le\\; \\lceil \\log_2 \\abs{Y} \\rceil + \\lceil \\log_2 \\abs{\\alpha} \\rceil,\n\\]\nwhere $\\abs{Y}$ and $\\abs{\\alpha}$ denote the cardinalities of $Y$ and $\\alpha$.",
+ "hypotheses_covered": [
+  "Y is finite",
+  "α is finite",
+  "Y is nonempty",
+  "α is nonempty",
+  "f : X → Y → α is an arbitrary two-argument function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For finite, nonempty types $Y$ and $\\alpha$ and any function $f : X \\to Y \\to \\alpha$,\nthe deterministic communication complexity satisfies\n\\[\n  \\mathrm{CC}(f) \\;\\le\\; \\lceil\\log_2 |Y|\\rceil + \\lceil\\log_2 |\\alpha|\\rceil.\n\\]\nThis bound is achieved by the protocol in which Bob sends his input $y$ to Alice,\nand Alice computes and sends back the output $f(x, y)$."
+}

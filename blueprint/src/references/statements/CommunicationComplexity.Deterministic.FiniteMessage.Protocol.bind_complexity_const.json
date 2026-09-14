@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_complexity_const",
+ "key": "1b1fa7a5226f62d6",
+ "kind": "theorem",
+ "title": "Additivity of protocol complexity under constant-cost bind",
+ "statement": "Let $p$ be a finite-message protocol with inputs of types $X$, $Y$ and outputs in a type $\\alpha$, and let $q$ assign to each output value $a \\in \\alpha$ a finite-message protocol $q\\,a$ with inputs of types $X$, $Y$ and outputs in a type $\\beta$. Suppose there is a natural number $c$ such that every continuation has the same communication complexity, that is, $\\mathrm{complexity}(q\\,a) = c$ for all $a \\in \\alpha$. Then the sequential composition of $p$ with $q$ has communication complexity $\\mathrm{complexity}(p) + c$.",
+ "hypotheses_covered": [
+  "p is a finite-message protocol over X, Y with output type alpha",
+  "q maps each output value in alpha to a finite-message protocol over X, Y with output type beta",
+  "c is a natural number",
+  "every continuation q a has complexity equal to c"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $q\\,a$ has the same complexity $c$ for every output $a$ of $p$, then\n\\[\n  (\\texttt{bind}\\;p\\;q).\\texttt{complexity} \\;=\\; p.\\texttt{complexity} + c.\n\\]"
+}

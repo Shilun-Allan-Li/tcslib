@@ -1,0 +1,19 @@
+{
+ "lean_name": "exists_iid_gaussian_matrix",
+ "key": "dfa292a352ebf660",
+ "kind": "lemma",
+ "title": "Existence of a Gaussian matrix with independent entries",
+ "statement": "Let $k \\ge 1$ and $d \\ge 0$ be integers. Then there is a probability space $(\\Omega, \\mathcal{F}, \\mu)$ carrying a measurable map $\\omega \\mapsto A(\\omega)$, valued in the $k \\times d$ real matrices, with the following properties: each entry $A_{ij}$, for $1 \\le i \\le k$ and $1 \\le j \\le d$, has law $\\mathcal{N}(0, 1/k)$ (mean zero and variance $1/k$); for each row index $i$ the family of entries $(A_{ij})_{j}$ is jointly independent; and the family of rows $\\bigl((A_{ij})_{j}\\bigr)_{i}$ is jointly independent.",
+ "hypotheses_covered": [
+  "k > 0",
+  "d a natural number",
+  "conclusion: exists probability space and measurable matrix-valued map",
+  "each entry has law N(0, 1/k)",
+  "entries within each row jointly independent",
+  "rows jointly independent"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $k > 0$ and $d \\ge 0$, there exists a probability space\n$(\\Omega, \\mathcal{F}, \\mu)$ carrying a measurable random matrix\n$A : \\Omega \\to \\mathrm{Matrix}(\\mathrm{Fin}\\,k, \\mathrm{Fin}\\,d, \\mathbb{R})$\nwhose entries are i.i.d.\\ $\\mathcal{N}(0, 1/k)$, with rows mutually independent\nand entries within each row jointly independent."
+}

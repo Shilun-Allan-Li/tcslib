@@ -1,0 +1,15 @@
+{
+ "lean_name": "ACP.bitify_boolVal",
+ "key": "7944392cb79a95d1",
+ "kind": "lemma",
+ "title": "Booleanization recovers a bit from its field value",
+ "statement": "Let $p$ be a prime and let $b \\in \\mathrm{Fin}\\,2$ be a bit. Booleanizing the field value of $b$ recovers $b$: taking the element of $\\bbz/p$ represented by $b$ and then mapping it back to $\\mathrm{Fin}\\,2$ (sending $1$ to $1$ and everything else to $0$) yields $b$ again.",
+ "hypotheses_covered": [
+  "p is a prime",
+  "b is a bit in Fin 2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying $\\mathrm{bitify}_p$ to $\\mathrm{boolVal}_p(b)$ returns the original bit $b$, for every\n$b : \\mathrm{Fin}\\,2$."
+}

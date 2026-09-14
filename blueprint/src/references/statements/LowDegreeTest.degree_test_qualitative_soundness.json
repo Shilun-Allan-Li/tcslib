@@ -1,0 +1,15 @@
+{
+ "lean_name": "LowDegreeTest.degree_test_qualitative_soundness",
+ "key": "552e7d954f1680df",
+ "kind": "lemma",
+ "title": "Qualitative soundness of the degree test",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function that does not have degree at most $d$, meaning that its $\\pm 1$ lift $(-1)^f$ has at least one nonvanishing $(d{+}1)$-fold multiplicative derivative: there exist a base point $x$ and directions $h_1,\\ldots,h_{d+1} \\in \\{0,1\\}^n$ with $\\mathrm{GP}\\!\\left((-1)^f,\\, d{+}1,\\, x,\\, h_1,\\ldots,h_{d+1}\\right) \\neq 1$. Then the $(d{+}1)$-fold derivative test accepts $f$ with probability strictly less than $1$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on the hypercube {0,1}^n",
+  "f does not have degree at most d (its ±1 lift has a nonvanishing (d+1)-fold Gowers product)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\deg(f) > d$, then the degree-$d$ test accepts $f$ with probability strictly\nless than $1$."
+}

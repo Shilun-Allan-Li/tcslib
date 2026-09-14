@@ -1,0 +1,16 @@
+{
+ "lean_name": "ACP.approxAnd_totalDegree",
+ "key": "f2ec3c40f1c15f3c",
+ "kind": "theorem",
+ "title": "Total-degree bound for the AND approximator",
+ "statement": "Fix a prime $p$, and let $P_1,\\dots,P_{\\mathrm{width}}$ be polynomials over $\\bbz/p$ in the input variables, together with subsets $S_1,\\dots,S_\\ell$ of the index set $\\{1,\\dots,\\mathrm{width}\\}$. Then the AND-approximating polynomial built from these data has total degree at most\n\\[\n(p-1)\\,\\ell\\,\\cdot\\,\\sup_{1 \\le i \\le \\mathrm{width}} \\deg(P_i).\n\\]",
+ "hypotheses_covered": [
+  "p is prime",
+  "polynomials P_i over ℤ/p indexed by i ∈ {1,…,width}",
+  "ℓ subsets S_1,…,S_ℓ of the index set {1,…,width}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The total degree of $\\texttt{ACP.approxAnd}\\,(P,S)$ is at most\n$(p-1)\\,\\ell\\cdot\\sup_i \\deg(P_i)$, the same bound as for the OR approximator."
+}

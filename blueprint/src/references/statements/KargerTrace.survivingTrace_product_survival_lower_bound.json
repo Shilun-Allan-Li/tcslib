@@ -1,0 +1,18 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_product_survival_lower_bound",
+ "key": "17bcfaa40dcbc0d2",
+ "kind": "theorem",
+ "title": "Product lower bound for min-cut survival in Karger contraction",
+ "statement": "Let $T$ be an indexed surviving trace of $n-2$ steps over a vertex type $\\alpha$, with states $s_0, s_1, s_2, \\ldots$, and suppose $2 \\le n$. Write $c$ for the size of the distinguished cut of the initial state $s_0$, and $m_i$ for the edge count of the multigraph at state $s_i$. Assume that the distinguished cut of $s_0$ is a minimum cut of its multigraph, that the multigraph of $s_0$ has exactly $n$ vertices, and that for every $i < n-2$ the multigraph of $s_i$ has at least two vertices. Then\n\\[\n  \\frac{2}{n(n-1)} \\;\\le\\; \\prod_{i=0}^{n-3}\\left(1 - \\frac{c}{m_i}\\right),\n\\]\nwhere each factor $1 - c/m_i$ is the step-survival probability determined by the initial cut size $c$ and the edge count $m_i$.",
+ "hypotheses_covered": [
+  "surviving trace of n-2 steps",
+  "n ≥ 2",
+  "distinguished cut of the initial state is a minimum cut",
+  "initial multigraph has exactly n vertices",
+  "at least two vertices at every state before termination"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For an indexed surviving trace of $n-2$ steps starting from an $n$-vertex graph with\n$n \\ge 2$, initial min-cut, and at least two vertices at every step,\n\\[\n  \\frac{2}{n(n-1)} \\;\\le\\;\n  \\prod_{i<n-2} \\mathrm{survivalProb}\\bigl(\\,\\text{initial cut size},\\;\n  \\text{edge count at }i\\,\\bigr).\n\\]"
+}

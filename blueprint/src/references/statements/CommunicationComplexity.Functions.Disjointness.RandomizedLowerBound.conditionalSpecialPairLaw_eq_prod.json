@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod",
+ "key": "8892d6988a4ab34d",
+ "kind": "theorem",
+ "title": "Product form of the conditional special-pair law",
+ "statement": "Fix a deterministic communication protocol $p$ for the disjointness problem on $n$ coordinates and an achievable value $z$ of the summary variable $Z = (M, T, X_{<T}, Y_{>T})$, whose components are the transcript $M$, the special coordinate $T$, the vector $X_{<T}$ of Alice's bits at coordinates below $T$, and the vector $Y_{>T}$ of Bob's bits at coordinates above $T$. Let $\\nu$ be the uniform distribution on hard samples conditioned on the fiber $\\{Z = z\\}$, let $\\mu$ be the law of the special bit-pair $(X_T, Y_T)$ under $\\nu$, and let $\\mu_X$ and $\\mu_Y$ be the laws of the single bits $X_T$ and $Y_T$ under $\\nu$. Then\n\\[\n\\mu = \\mu_X \\otimes \\mu_Y.\n\\]",
+ "hypotheses_covered": [
+  "p is a deterministic disjointness protocol on n coordinates",
+  "z is an achievable value of the summary variable Z = (M, T, X_{<T}, Y_{>T})"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The protocol transcript is a rectangle on each coarse fiber, so conditioned on a positive $Z=z$ fiber the special bits factor as the product of their two marginals."
+}

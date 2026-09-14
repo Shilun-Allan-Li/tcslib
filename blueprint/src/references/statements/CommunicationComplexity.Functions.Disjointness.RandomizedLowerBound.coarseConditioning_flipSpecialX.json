@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coarseConditioning_flipSpecialX",
+ "key": "b87b67247cf276dd",
+ "kind": "theorem",
+ "title": "Invariance of the coarse conditioning under flipping Alice's special bit",
+ "statement": "Fix $n \\ge 1$, and let $\\omega$ be a sample of the hard distribution: a special coordinate $T \\in \\{0,1,\\dots,n-1\\}$, bits $x_T$ and $y_T$ for Alice and Bob at that coordinate, and a disjointness type assigned to every coordinate. From $\\omega$ form the coarse conditioning $(T,\\, X_{<T},\\, Y_{>T})$, where $X_{<T}$ is Alice's input bits at the coordinates strictly below $T$ (padded with $\\mathrm{false}$ elsewhere) and $Y_{>T}$ is Bob's input bits at the coordinates strictly above $T$ (padded with $\\mathrm{false}$ elsewhere). Let $\\omega'$ be obtained from $\\omega$ by toggling only Alice's special bit $x_T$, leaving $T$, $y_T$, and all coordinate types unchanged. Then $\\omega$ and $\\omega'$ produce the same coarse conditioning: $(T,\\, X_{<T},\\, Y_{>T})$ is identical for $\\omega'$ and $\\omega$.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "omega is a hard-distribution sample (special coordinate T, bits x_T and y_T, and a disjointness type at every coordinate)",
+  "omega' is omega with only Alice's special bit x_T flipped"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Technical auxiliary result for \\texttt{coarseConditioning\\_flipSpecialX}."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_sigma_indep",
+ "key": "d87ec231ebfb783f",
+ "kind": "lemma",
+ "title": "Independence of the path, restriction, and auxiliary outputs from $\\sigma$",
+ "statement": "Fix a list of literals, each paired with its position index within a clause, a decision-tree path, a restriction $\\rho_0$, and two arbitrary restrictions $\\sigma_1$ and $\\sigma_2$ on $n$ variables. Running the clause-processing procedure on this data with $\\sigma_1$ and with $\\sigma_2$ produces the same three outputs in each case: the same remaining path, the same updated restriction $\\rho_0$, and the same accumulated auxiliary list of (position index, path direction) pairs. In other words, of the procedure's outputs only the returned $\\sigma$ can depend on the $\\sigma$ supplied as input; the path, the $\\rho_0$ component, and the auxiliary data are all unaffected by that choice.",
+ "hypotheses_covered": [
+  "a list of literals each paired with a position index",
+  "a decision-tree path",
+  "an input restriction $\\rho_0$",
+  "two arbitrary input restrictions $\\sigma_1$ and $\\sigma_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The remaining path, the $\\rho_0$ output, and the auxiliary entry list produced by\n\\texttt{SwitchingLemma2.processClauseLits} are all independent of the input $\\sigma$: for\nany two starting restrictions $\\sigma_1, \\sigma_2$ these three components coincide."
+}

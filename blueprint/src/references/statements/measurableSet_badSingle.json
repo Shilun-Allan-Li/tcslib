@@ -1,0 +1,17 @@
+{
+ "lean_name": "measurableSet_badSingle",
+ "key": "a2f3fef17eda6613",
+ "kind": "lemma",
+ "title": "Measurability of the single-vector distortion event",
+ "statement": "Fix a vector $x\\in\\bbr^d$ and a real number $\\varepsilon$, and let $(\\Omega,\\mathcal{F})$ be a measurable space. Suppose $A\\colon\\Omega\\to\\bbr^{k\\times d}$ is a measurable map assigning to each $\\omega$ a $k\\times d$ real matrix $A(\\omega)$. Then the set of outcomes on which $x$ is badly distorted,\n\\[\n  \\bigl\\{\\,\\omega\\in\\Omega \\;:\\; \\varepsilon\\,\\|x\\|^2 < \\bigl|\\,\\|A(\\omega)\\,x\\|^2 - \\|x\\|^2\\,\\bigr|\\,\\bigr\\},\n\\]\nis measurable.",
+ "hypotheses_covered": [
+  "A is a measurable map from Omega to k-by-d real matrices",
+  "x is a fixed vector in R^d",
+  "epsilon is a fixed real number",
+  "Omega carries a measurable space structure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any measurable map $A : \\Omega \\to \\mathrm{Matrix}(\\mathrm{Fin}\\,k,\n\\mathrm{Fin}\\,d,\\mathbb{R})$, fixed $x \\in \\mathbb{R}^d$, and $\\varepsilon \\in\n\\mathbb{R}$, the set $\\{\\omega \\mid \\text{BadSingle}\\;\\varepsilon\\;(A\\,\\omega)\\;x\\}$\nis measurable.  The key step is that each coordinate map\n$\\omega \\mapsto (A\\,\\omega \\cdot \\text{toEuclideanLin}\\; x)_i$ is measurable, hence\nso is the squared norm."
+}

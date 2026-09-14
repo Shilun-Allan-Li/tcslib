@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.tree_balanced_subtree",
+ "key": "5be1d375b9c057bd",
+ "kind": "theorem",
+ "title": "Existence of a balanced subtree",
+ "statement": "Let $t$ be a binary tree with more than one leaf, and write $\\abs{u}$ for the number of leaves of a tree $u$. Then $t$ has a subtree $s$ whose leaf count satisfies\n\\[\n  \\abs{t} \\;\\le\\; 3\\abs{s} \\;<\\; 2\\abs{t}.\n\\]\nEquivalently, $s$ contains at least one third and strictly fewer than two thirds of the leaves of $t$.",
+ "hypotheses_covered": [
+  "t is a binary tree",
+  "t has more than one leaf (1 < numLeaves)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nEvery binary tree $t$ with more than one leaf has a subtree $s$ satisfying\n\\[\n  \\lvert t \\rvert \\;\\le\\; 3\\lvert s \\rvert \\;<\\; 2\\lvert t \\rvert,\n\\]\nwhere $\\lvert \\cdot \\rvert$ denotes the leaf count.  Equivalently, $s$ contains at\nleast one third and strictly fewer than two thirds of the total leaves of $t$."
+}

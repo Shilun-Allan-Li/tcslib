@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.and_children_have_cnf",
+ "key": "b2f0152873932765",
+ "kind": "lemma",
+ "title": "Small-width CNF for a restricted AND of circuits",
+ "statement": "Let $cs$ be a finite list of Boolean circuits on $n$ variables, let $\\rho$ be a restriction on those variables, and let $l$ be a natural number. Suppose that for every circuit $c$ in $cs$, the restricted function $x \\mapsto c(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth at most $l$. Then there is a CNF formula $\\psi$ of width at most $l$ that computes the restriction of the AND of $cs$: writing $g$ for the AND gate applied to the circuits in $cs$, one has $\\psi(x) = g(\\rho.\\mathrm{extend}\\,x)$ for every assignment $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$.",
+ "hypotheses_covered": [
+  "cs a list of Boolean circuits on n variables",
+  "rho a restriction on the n variables",
+  "l a natural number bound",
+  "each child circuit's restricted function has decision-tree depth at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf every child $c \\in cs$ satisfies $\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,c.\\mathrm{eval}\\,\\rho) \\le l$,\nthen there is a CNF $\\psi$ of width at most $l$ that computes the restriction of the AND node:\n$\\mathrm{CNF.eval}\\,\\psi\\,x = \\mathrm{restrictFn}\\,(\\mathrm{eval}\\,(\\mathrm{node}\\,\\mathrm{true}\\,cs))\\,\\rho\\,x$\nfor all $x$."
+}

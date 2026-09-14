@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalDTree_deepPath_match_freeLits",
+ "key": "8e2c86a0dc345dfd",
+ "kind": "lemma",
+ "title": "Deepest-path variables match a term's free literals",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables and $\\rho$ a restriction, and let $t$ be the first term of $f$, in list order, that is not killed by $\\rho$. Suppose the literals of $t$ are pairwise distinct and no two of them share a variable, and write $l_{i_0}, l_{i_1}, \\ldots$ for the subsequence of literals of $t$ whose variables are free under $\\rho$, taken in their order of occurrence in $t$. Then for every index $k$ smaller than both the number of these free literals and the length of the deepest root-to-leaf path of the canonical decision tree of $f$ under $\\rho$, the variable queried at the $k$-th step of that path equals the variable of the $k$-th free literal $l_{i_k}$.",
+ "hypotheses_covered": [
+  "t is the first term of f not killed by ρ",
+  "no two literals of t share a variable",
+  "t has no duplicate literals",
+  "flis is the free literals of t (variable free under ρ), in term order",
+  "k below the number of free literals",
+  "k below the length of the deepest path"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nWhen $f.\\mathrm{find?}$ returns an alive clause $t$ and $\\mathrm{flis}$ is the\nfiltered (zipIdx) list of $t$'s free literals under $\\rho$, the variable at\nposition $k$ of $(\\mathrm{canonicalDTree}\\,f\\,\\rho).\\mathrm{deepPath}$ equals the\nvariable of the $k$-th free literal, since the canonical tree branches on the\nfree literals of $t$ in clause order."
+}

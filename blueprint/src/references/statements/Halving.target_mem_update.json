@@ -1,0 +1,15 @@
+{
+ "lean_name": "Halving.target_mem_update",
+ "key": "f437c365aa07ffc1",
+ "kind": "lemma",
+ "title": "Target survives its own update",
+ "statement": "Let $\\mathtt{eval} : \\mathit{Hyp} \\to X \\to \\mathsf{Bool}$ be an evaluation map, let $V \\subseteq \\mathit{Hyp}$ be a version space, fix an input $x \\in X$, and let $\\mathtt{target} \\in V$ be a hypothesis. Then $\\mathtt{target}$ remains in the version space obtained by updating $V$ on $x$ with the label that $\\mathtt{target}$ itself assigns, that is, $\\mathtt{target} \\in \\mathtt{update}(\\mathtt{eval}, V, x, \\mathtt{eval}\\,\\mathtt{target}\\,x)$.",
+ "hypotheses_covered": [
+  "target is a member of the version space V ($\\mathtt{target} \\in V$)",
+  "the update uses the label that target assigns to x ($y = \\mathtt{eval}\\,\\mathtt{target}\\,x$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In the realizable setting, if $\\mathtt{target} \\in V$ then after updating on the\ncorrectly labelled example $(x,\\, \\mathtt{eval}\\;\\mathtt{target}\\;x)$ the target\nhypothesis remains in the new version space:\n$\\mathtt{target} \\in \\mathtt{update}(\\mathtt{eval}, V, x, \\mathtt{eval}\\;\\mathtt{target}\\;x)$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.erase_numLeaves",
+ "key": "5cc5b482ccb3c492",
+ "kind": "lemma",
+ "title": "Leaf count after erasing a subprotocol",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols over the same input types $X$, $Y$ and output type $\\alpha$, and suppose that $s$ is a subprotocol of $p$, i.e.\\ a rooted subtree of $p$. Write $L(q)$ for the number of leaves (output nodes) of a protocol $q$. Erasing $s$ from $p$ — collapsing the subtree $s$ to a single leaf carrying its canonical (leftmost) output value — yields a protocol whose number of leaves is\n\\[\nL(p) - L(s) + 1,\n\\]\nwhere the subtraction is truncated natural-number subtraction.",
+ "hypotheses_covered": [
+  "s is a subprotocol (rooted subtree) of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If \\texttt{hsp} witnesses that $s$ is a subprotocol of $p$, then\n$(\\texttt{erase}\\;\\texttt{hsp}).\\mathrm{numLeaves} = p.\\mathrm{numLeaves} - s.\\mathrm{numLeaves} + 1$."
+}

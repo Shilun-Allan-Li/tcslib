@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.ramseyMulti_recursion",
+ "key": "9a1724f2e97480e0",
+ "kind": "theorem",
+ "title": "A recursive upper bound for multicolour Ramsey numbers",
+ "statement": "Fix an integer $m \\ge 1$ of colours and integers $k_1, k_2, \\dots, k_m$ with $k_i \\ge 2$ for every $i$, and let $r(k_1, \\dots, k_m)$ denote the multicolour Ramsey number: the least $n$ such that every colouring of the edges of the complete graph $K_n$ with $m$ colours contains, for some colour $i$, a complete subgraph on $k_i$ vertices all of whose edges have colour $i$. Then\n\\[\nr(k_1, \\dots, k_m) + m \\;\\le\\; \\sum_{i=1}^{m} r(k_1, \\dots, k_{i-1}, \\, k_i - 1, \\, k_{i+1}, \\dots, k_m) \\;+\\; 2,\n\\]\nwhere the $i$th summand is obtained from $r(k_1, \\dots, k_m)$ by decreasing the argument $k_i$ by one.",
+ "hypotheses_covered": [
+  "m ≥ 1 (at least one colour, 0 < m)",
+  "each target size k_i ≥ 2",
+  "c is a function Fin m → ℕ giving the m target clique sizes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$r(k_1, k_2, \\ldots, k_m) \\leq r(k_1 - 1, k_2, \\ldots, k_m) +$\n\\[r(k_1, k_2 - 1, \\ldots, k_m) + \\ldots + r(k_1, k_2, \\ldots, k_m - 1) - m + 2\\]\n\nThe following theorem and corollary generalise (7.7) and theorem 7.5, and can be proved\nin a similar manner. They are left as an exercise (7.2.2)."
+}

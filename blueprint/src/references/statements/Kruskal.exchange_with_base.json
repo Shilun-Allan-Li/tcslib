@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.exchange_with_base",
+ "key": "8a6bf2975adf26fc",
+ "kind": "lemma",
+ "title": "Base-relative exchange of an edge in Kruskal's algorithm",
+ "statement": "Let $\\mathit{base}$ and $S$ be lists of weighted edges on $n$ vertices, and let $e$ be a weighted edge whose two endpoints are distinct. Suppose the endpoints of $e$ are connected by a path using the edges of $\\mathit{base}$ together with those of $S$, but are not connected using the edges of $\\mathit{base}$ alone. Then there is an edge $f$ occurring in $S$ such that, for every pair of vertices $a$ and $b$ connected by a path through the edges of $\\mathit{base}$ together with $S$, the vertices $a$ and $b$ are still connected by a path through the edges of $\\mathit{base}$ together with the edges of $S$ after removing one occurrence of $f$ and adjoining $e$.",
+ "hypotheses_covered": [
+  "endpoints of e reachable in base ++ S",
+  "endpoints of e not reachable in base alone",
+  "e has distinct endpoints (e.u ≠ e.v)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathit{base}, S$ be edge lists and let $e$ be an edge with $e.u \\neq e.v$ whose\nendpoints are connected in $\\mathit{base} \\mathbin{+\\!\\!+} S$ but not in $\\mathit{base}$\nalone. Then there exists an edge $f \\in S$ such that every pair $a, b$ reachable in\n$\\mathit{base} \\mathbin{+\\!\\!+} S$ remains reachable in\n$\\mathit{base} \\mathbin{+\\!\\!+} (S \\setminus \\{f\\}) \\mathbin{+\\!\\!+} [e]$, where\n$S \\setminus \\{f\\}$ denotes $\\mathtt{S.erase}\\,f$."
+}

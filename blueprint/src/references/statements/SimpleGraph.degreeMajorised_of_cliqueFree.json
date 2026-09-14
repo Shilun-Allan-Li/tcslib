@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleGraph.degreeMajorised_of_cliqueFree",
+ "key": "ad493770ddff239a",
+ "kind": "theorem",
+ "title": "Erdős's degree-majorisation of clique-free graphs",
+ "statement": "(Erdős, 1970.) Let $m \\ge 1$, and let $G$ be a finite simple graph that is $K_{m+1}$-free, i.e.\\ contains no complete subgraph on $m+1$ vertices. Then there exists a complete multipartite graph $H$ on the same number of vertices such that $G$ is degree-majorised by $H$; that is, writing the degree sequences of $G$ and $H$ in nondecreasing order, each entry of $G$'s sequence is at most the corresponding entry of $H$'s. Moreover, if $G$ and $H$ have the same degree sequence, then $G$ and $H$ are isomorphic.",
+ "hypotheses_covered": [
+  "$G$ is a finite simple graph",
+  "$m \\ge 1$",
+  "$G$ is $K_{m+1}$-free (contains no clique on $m+1$ vertices)"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean conclusion asserts only that H is complete multipartite (IsCompleteMultipartite), not that it has exactly m parts, so I did not write \"complete m-partite\" as the existing statement did. The same-order condition is folded into \"degree-majorised\" per its definition.",
+ "rubric": [],
+ "replaced": "(Erd\\H{o}s, 1970). \\emph{If a simple graph \\texttt{G} contains no \\texttt{K\\_\\{m+1\\}},\nthen \\texttt{G} is degree-majorised by some complete \\texttt{m}-partite graph\n\\texttt{H}. Moreover, if \\texttt{G} has the same degree sequence as \\texttt{H}, then\n\\texttt{G $\\cong$ H}.}\n\nIf a simple graph $G$ contains no $K_{m+1}$, then $G$ is degree-majorised by some\ncomplete $m$-partite graph $H$. Moreover, if $G$ has the same degree sequence as $H$,\nthen $G \\cong H$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "LowDegreeTest.derivative_distance_lemma",
+ "key": "e5c5d389eb3b13f9",
+ "kind": "lemma",
+ "title": "Distance of the discrete derivative from low degree",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function that is $\\varepsilon$-far from degree $\\le d$, where $d \\ge 2$; in particular $0 \\le \\varepsilon \\le 1$. For a shift $h \\in \\{0,1\\}^n$, write $\\partial_h f$ for the discrete derivative $\\partial_h f(x) = f(x) \\oplus f(x \\oplus h)$. Then there exists a real number $\\delta \\ge \\varepsilon$ such that for every $h \\in \\{0,1\\}^n$ there is a Boolean function $g : \\{0,1\\}^n \\to \\{0,1\\}$ for which, if $g$ has degree $\\le d-1$, then $\\dist(\\partial_h f, g) \\ge \\delta$.",
+ "hypotheses_covered": [
+  "d ≥ 2",
+  "f is a Boolean function on {0,1}^n",
+  "f is ε-far from degree ≤ d (which includes 0 ≤ ε ≤ 1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $d \\ge 2$ and $f : \\{0,1\\}^n \\to \\{0,1\\}$ is $\\varepsilon$-far from degree\n$\\le d$, then there exists $\\delta \\ge \\varepsilon$ such that for every\n$h \\in \\{0,1\\}^n$ there exists a Boolean function $g$ of degree $\\le d{-}1$\nwith $\\dist(\\Delta_h f, g) \\ge \\delta$.  Intuitively, the multiplicative derivative\n$\\Delta_h f(x) = f(x) \\oplus f(x \\oplus h)$ is on average far from degree\n$\\le d{-}1$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.comapRandomness_complexity",
+ "key": "1985ceb212201ccc",
+ "kind": "theorem",
+ "title": "Randomness reindexing preserves communication complexity",
+ "statement": "Let $p$ be a public-coin finite-message protocol with shared-randomness space $\\Omega$, private inputs $X$ and $Y$, and outputs in $\\alpha$, and let $h : \\Omega' \\to \\Omega$ be any map. Form the protocol over the new randomness space $\\Omega'$ by replacing each player's effective input $\\Omega \\times X$ or $\\Omega \\times Y$ with $\\Omega' \\times X$ or $\\Omega' \\times Y$ and precomposing every message function with $h$ on the randomness coordinate (leaving the private inputs untouched). Then this reindexed protocol has exactly the same worst-case communication complexity as $p$.",
+ "hypotheses_covered": [
+  "a map h : Ω' → Ω on randomness spaces",
+  "a public-coin finite-message protocol p over Ω, X, Y with outputs in α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $h : \\Omega' \\to \\Omega$ and protocol $p$, reindexing the randomness does not\nchange the complexity:\n$(\\mathrm{comapRandomness}\\;h\\;p).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_rho_ne_none",
+ "key": "7a239ede51ac035e",
+ "kind": "lemma",
+ "title": "Processing a clause preserves fixed variables of the restriction",
+ "statement": "Fix $n$, and let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, let $\\ell$ be a list of literals each paired with its position index in a clause, and let a decision-tree path be given. Suppose the variable $v$ is fixed under $\\rho_0$, i.e. $\\rho_0(v) \\neq \\mathrm{none}$. Then, after processing the clause's free literals against the path — which returns updated versions of $\\rho_0$, $\\sigma$, together with the remaining path and the accumulated auxiliary data — the variable $v$ remains fixed in the returned restriction $\\rho_0$: its value there is again not $\\mathrm{none}$. In other words, this process never frees a variable that was already fixed in $\\rho_0$.",
+ "hypotheses_covered": [
+  "v is fixed under the input restriction: ρ₀(v) ≠ none",
+  "inputs: a list of literals with position indices, a decision-tree path, and restrictions ρ₀ and σ on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\rho_0\\,v \\neq \\mathrm{none}$, then after running\n\\texttt{SwitchingLemma2.processClauseLits} the resulting $\\rho_0$ at $v$ is still not\n$\\mathrm{none}$; the routine never turns a set value into an unset one."
+}

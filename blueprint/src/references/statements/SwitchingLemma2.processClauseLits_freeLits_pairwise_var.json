@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_freeLits_pairwise_var",
+ "key": "a2e57fcb5ddf197e",
+ "kind": "lemma",
+ "title": "Free literals of a term have pairwise distinct variables",
+ "statement": "Let $t$ be a term on $n$ variables (a list of literals) and let $\\rho$ be a restriction on those variables. Suppose that $t$ contains no repeated literal, and that any two literals of $t$ sharing the same underlying variable are in fact equal. Form the list of literals of $t$ whose variable is free under $\\rho$, each kept together with its position in $t$. Then this list has pairwise distinct variables: any two of its entries carry different variables.",
+ "hypotheses_covered": [
+  "t is a term (a list of literals) on n variables",
+  "ρ₀ is a restriction on the n variables",
+  "t contains no repeated literal (Nodup)",
+  "any two literals of t with the same variable are equal",
+  "conclusion: the free-variable filter of t paired with positions has pairwise distinct variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $t$ has no duplicate literals and any two literals of $t$ with the same\nvariable are equal, then the free-variable filter of $t.\\mathrm{zipIdx}$ has\npairwise distinct variables."
+}

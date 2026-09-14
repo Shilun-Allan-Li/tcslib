@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleHypercontractivity.hypercontractivity_2_2k_rpow",
+ "key": "1467495a952a688d",
+ "kind": "theorem",
+ "title": "$(2,2k)$-hypercontractivity in norm form",
+ "statement": "Fix an integer $k \\ge 1$ and a real noise rate $\\rho$ satisfying $\\rho^2 \\le \\tfrac{1}{2k-1}$. Then for every Boolean function $f\\colon\\{0,1\\}^n\\to\\bbr$, the image $T_\\rho f$ under the noise operator obeys the $L^{2k}$-to-$L^2$ hypercontractive bound\n\\[\n  \\bigl(\\E\\bigl[(T_\\rho f)^{2k}\\bigr]\\bigr)^{1/(2k)} \\;\\le\\; \\bigl(\\E[f^2]\\bigr)^{1/2},\n\\]\nwhere the expectation is taken with respect to the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "k is an integer with k ≥ 1",
+  "ρ real with ρ² ≤ 1/(2k−1)",
+  "f is a Boolean function of arity n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k \\ge 1$ and noise parameter $\\rho$ with $\\rho^2 \\le 1/(2k-1)$, the $(2,2k)$\nbound in the form $\\norm{T_\\rho f}_{2k} \\le \\norm{f}_2$:\n\\[\n  \\bigl(\\E[(T_\\rho f)^{2k}]\\bigr)^{1/(2k)} \\le \\bigl(\\E[f^2]\\bigr)^{1/2}.\n\\]"
+}

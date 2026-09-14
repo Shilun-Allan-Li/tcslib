@@ -59,39 +59,41 @@ where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
   {direct}
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p029-b006}
-
 \difficulty{7}
-For any center $c$ and radius $l$,
+Let $\alpha$ be a finite alphabet, and regard a codeword of length $n$ as a function
+$\mathrm{Fin}\,n \to \alpha$, with the Hamming distance $d(x,y)$ counting the
+coordinates in which two codewords differ. For every radius $l$ and every center
+codeword $c$, the Hamming ball $B_l(c) = \{c' : d(c',c) \le l\}$ has cardinality
 \[
-|B_l(c)| \;=\; \sum_{i=0}^{l} \binom{n}{i}\,(|\alpha|-1)^i.
+\abs{B_l(c)} \;=\; \sum_{i=0}^{l} \binom{n}{i}\,(\abs{\alpha}-1)^{i},
 \]
+where $\abs{\alpha}$ is the number of symbols in the alphabet.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Disjointness of decoding balls}
 
-\begin{lemma}[Decoding balls around distinct codewords are disjoint]
+\begin{lemma}[Disjointness of decoding balls around distinct codewords]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \label{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.distance}
 \difficulty{4}
-If $C$ has minimum distance $d>0$, then for distinct $c_1,c_2\in C$,
-\[
-B_{\lfloor(d-1)/2\rfloor}(c_1)
-\;\cap\;
-B_{\lfloor(d-1)/2\rfloor}(c_2)
-\;=\;\varnothing.
-\]
+Let $C$ be a code of length $n$ over a finite alphabet $\alpha$ whose minimum Hamming
+distance is $d$, with $d > 0$; that is, some two distinct codewords of $C$ lie at
+Hamming distance exactly $d$, and no two distinct codewords lie at distance less than
+$d$. Then for any two distinct codewords $c_1, c_2 \in C$, the Hamming balls of radius
+$\lfloor (d-1)/2 \rfloor$ centered at $c_1$ and $c_2$ are disjoint: no codeword $c'$
+satisfies both $d(c', c_1) \le \lfloor (d-1)/2 \rfloor$ and $d(c', c_2) \le \lfloor
+(d-1)/2 \rfloor$.
 \end{lemma}
 
-\begin{lemma}[\texttt{Finset.Disjoint} formulation]
+\begin{lemma}[Disjointness of Hamming balls at minimum distance]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \label{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \leanok
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -142,7 +144,10 @@ B_{\lfloor(d-1)/2\rfloor}(c_2)
     pdf-7251cb8e4bc5-p030-b002}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \difficulty{3}
-Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
+Let $C$ be a code of length $n$ over an alphabet $\alpha$ whose minimum Hamming distance
+is $d$, and suppose $d > 0$. Write $t = \left\lfloor \frac{d-1}{2} \right\rfloor$. Then
+for any two distinct codewords $c_1, c_2 \in C$, the Hamming balls $B_t(c_1)$ and
+$B_t(c_2)$ of radius $t$ centered at $c_1$ and $c_2$ are disjoint.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,7 +165,6 @@ Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
   pdf-24e94ad30862-p021-b003,
   pdf-24e94ad30862-p021-b001
 }
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -226,10 +230,11 @@ Reformulation of the previous lemma as \texttt{Finset.Disjoint}.
   {pdf-7251cb8e4bc5-p032-b001}
 \uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \difficulty{5}
-Let $q=|\alpha|>1$.  If $C\subseteq\alpha^n$ has minimum distance $d>0$, then
+Let $\alpha$ be a finite alphabet with $q = \abs{\alpha} > 1$ symbols, and let $C
+\subseteq \alpha^n$ be a code (a finite set of length-$n$ codewords) whose minimum
+Hamming distance is $d$, with $d > 0$. Then
 \[
-|C|
-\;\le\;
-\frac{q^n}{\displaystyle\sum_{i=0}^{\lfloor(d-1)/2\rfloor}\binom{n}{i}(q-1)^i}.
+\abs{C} \;\le\; \frac{q^{\,n}}{\displaystyle\sum_{i=0}^{\lfloor (d-1)/2 \rfloor}
+\binom{n}{i}\,(q-1)^{i}}.
 \]
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.NAndCircuit.toCNF_terms_nodup",
+ "key": "ecd7fc2ddeb0378b",
+ "kind": "theorem",
+ "title": "Duplicate-free clauses in the CNF of an AND-node",
+ "statement": "Let $cs$ be a list of normal-form OR circuits on $n$ variables, and suppose every member of $cs$ is an OR-clause $\\mathrm{clause}\\,(lits)$ whose literals have pairwise distinct variable indices. Form the depth-2 AND circuit that conjoins the circuits in $cs$, and pass to the CNF formula obtained by turning each of these OR-clauses into a clause (a disjunction of literals). Then every clause of this CNF is a list of literals with no repeated entry.",
+ "hypotheses_covered": [
+  "cs is a list of normal-form OR circuits on n variables",
+  "every member of cs is an OR-clause of the form clause(lits)",
+  "within each such clause the variable indices of its literals are pairwise distinct"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every child of an $\\texttt{NAndCircuit}.\\mathrm{node}\\,cs$ is an OR-clause with distinct\nliteral indices, then every clause in the resulting CNF has the \\texttt{Nodup} property."
+}

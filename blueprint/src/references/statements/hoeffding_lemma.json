@@ -1,0 +1,16 @@
+{
+ "lean_name": "hoeffding_lemma",
+ "key": "d5bd8d8923d1f79b",
+ "kind": "lemma",
+ "title": "Hoeffding's lemma",
+ "statement": "Let $p \\in [0,1]$ and let $h \\in \\bbr$ be arbitrary. Then\n\\[\n  \\log\\!\\bigl((1-p) + p\\,e^{h}\\bigr) \\;\\le\\; p\\,h + \\frac{h^{2}}{8}.\n\\]",
+ "hypotheses_covered": [
+  "$0 \\le p$",
+  "$p \\le 1$",
+  "$h \\in \\bbr$ arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p \\in [0,1]$ and any $h \\in \\mathbb{R}$,\n\\[\n  \\ln\\!\\bigl((1-p) + p\\,e^h\\bigr) \\;\\le\\; p\\,h + \\frac{h^2}{8}.\n\\]\nThis specializes the Bernoulli moment-generating-function bound from\n\\texttt{bernoulli\\_mgf\\_bound} by substituting $\\eta = -h$."
+}

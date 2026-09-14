@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_dualProtocol_dualZValue",
+ "key": "0ad58857971e0e93",
+ "kind": "theorem",
+ "title": "Special-bit conditional law under protocol duality",
+ "statement": "Fix a positive integer $n$ and consider deterministic communication protocols whose two players, Alice and Bob, each receive a subset of an $n$-element coordinate set. The hard distribution is the uniform law on a finite sample space in which a sample fixes a distinguished coordinate $T$ together with both players' bits at every coordinate, and hence an input pair. Given a protocol $q$, define the summary of a sample to be the four-tuple $(\\tau, t, a, b)$, where $\\tau$ is the transcript $q$ produces on the induced input pair, $t = T$, the vector $a$ gives Alice's bits at the coordinates strictly below $T$ and $\\mathrm{false}$ at every other coordinate, and the vector $b$ gives Bob's bits at the coordinates strictly above $T$ and $\\mathrm{false}$ at every other coordinate.\n\nLet $p$ be such a protocol and let $z = (\\tau, t, a, b)$ be a summary realised by at least one sample of $p$. Let $p^{\\ast}$ be the dual protocol, formed by exchanging the roles of Alice and Bob and reversing the coordinate order of both input sets via $i \\mapsto n+1-i$. Let $z^{\\ast}$ be the summary of $p^{\\ast}$ whose special coordinate is the reversal $n+1-t$, whose Alice-vector is the coordinate reversal of $b$, whose Bob-vector is the coordinate reversal of $a$, and whose transcript is the image of $\\tau$ under the map on transcripts induced by passing to $p^{\\ast}$.\n\nThen the law of Alice's bit at the special coordinate, for the hard distribution conditioned on the event that the summary under $p^{\\ast}$ equals $z^{\\ast}$, coincides with the law of Bob's bit at the special coordinate, for the hard distribution conditioned on the event that the summary under $p$ equals $z$.",
+ "hypotheses_covered": [
+  "positive integer $n$",
+  "a deterministic communication protocol $p$ for length-$n$ disjointness inputs",
+  "$z$ a summary value realised by at least one sample of $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Alice one-bit law on the dual protocol's recoded $Z$ fiber is Bob's one-bit law on the original $Z$ fiber."
+}

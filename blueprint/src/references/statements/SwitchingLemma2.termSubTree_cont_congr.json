@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_cont_congr",
+ "key": "6bff22b0d25238b9",
+ "kind": "lemma",
+ "title": "Continuation-extensionality of the term sub-tree",
+ "statement": "Let $\\ell$ be a list of literals on $n$ variables and let $\\rho$ be a restriction. For a continuation $c : \\mathrm{Restriction}\\,n \\to \\mathrm{DecisionTree}\\,n$, write $T(\\ell, \\rho, c)$ for the term sub-tree built from $\\ell$ starting at $\\rho$ with continuation $c$. If two continuations $c_1$ and $c_2$ agree on every restriction $\\rho'$ whose number of free variables is at most the number of free variables of $\\rho$ — that is, $c_1(\\rho') = c_2(\\rho')$ whenever $\\rho'$ has no more free variables than $\\rho$ — then $T(\\ell, \\rho, c_1) = T(\\ell, \\rho, c_2)$.",
+ "hypotheses_covered": [
+  "lits is a list of literals on n variables",
+  "rho is a restriction",
+  "cont1, cont2 are two continuations from restrictions to decision trees",
+  "cont1 and cont2 agree on every restriction with at most as many free variables as rho"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two continuations $\\mathrm{cont}_1, \\mathrm{cont}_2$ agree on all restrictions $\\rho'$ with\n$\\rho'.\\mathrm{numFree} \\le \\rho.\\mathrm{numFree}$, then $\\mathrm{termSubTree}\\,\\mathit{lits}\\,\\rho\\,\\mathrm{cont}_1 = \\mathrm{termSubTree}\\,\\mathit{lits}\\,\\rho\\,\\mathrm{cont}_2$."
+}

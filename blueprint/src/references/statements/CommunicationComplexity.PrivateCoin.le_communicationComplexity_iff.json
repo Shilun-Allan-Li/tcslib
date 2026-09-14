@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.le_communicationComplexity_iff",
+ "key": "061f0cba3cec37b9",
+ "kind": "theorem",
+ "title": "Lower bound characterization of private-coin complexity",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function, let $\\varepsilon \\in \\bbr$, and let $R_\\varepsilon(f) \\in \\bbn \\cup \\{\\infty\\}$ denote its $\\varepsilon$-error private-coin randomized communication complexity, namely the least worst-case number of bits exchanged by any private-coin protocol that computes $f$ with error probability at most $\\varepsilon$ on every input. Then for every $n \\in \\bbn$, the inequality $n \\le R_\\varepsilon(f)$ holds (in the extended natural numbers) if and only if every private-coin protocol $p$ — over coin tapes $\\{0,1\\}^{n_X}$ for Alice and $\\{0,1\\}^{n_Y}$ for Bob, for arbitrary lengths $n_X, n_Y \\in \\bbn$ — that $\\varepsilon$-computes $f$ has communication complexity at least $n$.",
+ "hypotheses_covered": [
+  "f : X → Y → α",
+  "error parameter ε ∈ ℝ",
+  "n ∈ ℕ, compared in the extended naturals",
+  "quantification over all coin-tape lengths n_X, n_Y",
+  "quantification over all private-coin protocols p on those coin tapes",
+  "the protocol ε-computes f (ApproxComputes)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $n \\in \\mathbb{N}$, we have $n \\le R_\\varepsilon(f)$ (in $\\mathbb{N}_\\infty$) if and only if\nevery private-coin protocol $p$ over coin tapes of any size that $\\varepsilon$-approximately\ncomputes $f$ satisfies $n \\le p.\\mathrm{complexity}$."
+}

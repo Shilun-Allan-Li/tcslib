@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le_bool",
+ "key": "fca9260df9d95a87",
+ "kind": "theorem",
+ "title": "One-way bound implies deterministic bound for Boolean functions",
+ "statement": "Let $X$ and $Y$ be the input types of Alice and Bob, and let $f : X \\to Y \\to \\mathrm{Bool}$ be a two-party Boolean-valued function. If the one-way deterministic communication complexity of $f$ is at most $n$ for some $n \\in \\bbn$, then the (interactive) deterministic communication complexity of $f$ is at most $n + 1$.",
+ "hypotheses_covered": [
+  "f : X → Y → Bool is a Boolean-valued two-argument function",
+  "n is a natural number",
+  "one-way deterministic communication complexity of f is ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a Boolean function $f : X \\to Y \\to \\mathtt{Bool}$, if the one-way complexity of $f$\nis at most $n$, then the deterministic complexity of $f$ is at most $n + 1$; this\nspecializes the general bound using $\\lceil \\log_2 |\\mathtt{Bool}| \\rceil = 1$."
+}

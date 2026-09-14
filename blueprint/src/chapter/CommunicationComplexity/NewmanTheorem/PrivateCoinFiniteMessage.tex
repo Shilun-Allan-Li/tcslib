@@ -68,15 +68,18 @@ underlying deterministic protocol on the paired inputs $(\omega_x, x)$ and
 $(\omega_y, y)$.
 \end{definition}
 
-\begin{theorem}[\texttt{rrun} unfolding]
+\begin{theorem}[Explicit-coin execution as paired-input execution]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun_eq}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun_eq}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun}
 \difficulty{1}
-For any protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$, we have
-$p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y = p.\texttt{run}\,(\omega_x, x)\,(\omega_y, y)$.
-This is a definitional equality exposed as a \texttt{simp} lemma.
+Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$, with
+private-randomness types $\Omega_X$, $\Omega_Y$ and output type $\alpha$. For all inputs
+$x : X$ and $y : Y$ and all private coins $\omega_x : \Omega_X$ and $\omega_y :
+\Omega_Y$, executing $p$ with those explicit coins agrees with executing the underlying
+deterministic finite-message protocol on the paired inputs $(\omega_x, x)$ for Alice and
+$(\omega_y, y)$ for Bob; that is, both yield the same element of $\alpha$.
 \end{theorem}
 
 \begin{definition}[Approximate satisfaction of a predicate]
@@ -103,16 +106,19 @@ for every input pair $(x, y)$,
 \]
 \end{definition}
 
-\begin{theorem}[\texttt{ApproxComputes} equals \texttt{ApproxSatisfies} for equality]
+\begin{theorem}[Approximate computation as approximate satisfaction of equality]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes_eq_ApproxSatisfies}
 \leanok
 \uses{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxComputes, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ApproxSatisfies}
 \difficulty{1}
-For any protocol $p$, function $f$, and $\varepsilon \in \mathbb{R}$,
-$p.\texttt{ApproxComputes}\,f\,\varepsilon = p.\texttt{ApproxSatisfies}\,(\lambda\,x\,y\,a \Rightarrow a = f\,x\,y)\,\varepsilon$.
-That is, $\varepsilon$-computing $f$ is exactly $\varepsilon$-satisfying the pointwise
-equality predicate.
+Let $p$ be a private-coin finite-message protocol over input types $X$, $Y$ with
+private-randomness types $\Omega_X$, $\Omega_Y$ and output type $\alpha$, each of
+$\Omega_X$ and $\Omega_Y$ carrying a measure, let $f : X \times Y \to \alpha$ be a
+target function, and let $\varepsilon \in \bbr$. Then the proposition that $p$
+$\varepsilon$-computes $f$ coincides with the proposition that $p$
+$\varepsilon$-satisfies the predicate $Q(x,y,a)$ given by $a = f(x,y)$; that is, the two
+propositions are equal.
 \end{theorem}
 
 \begin{definition}[Conversion to binary private-coin protocol]
@@ -125,24 +131,35 @@ protocol by delegating to
 \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}.
 \end{definition}
 
-\begin{theorem}[\texttt{toProtocol} preserves execution]
+\begin{theorem}[Execution is preserved under conversion to a binary private-coin protocol]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{1}
-For any protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$,
-$(p.\texttt{toProtocol}).\texttt{rrun}\,x\,y\,\omega_x\,\omega_y =
-p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$.
+Let $p$ be a private-coin finite-message protocol with private-randomness spaces
+$\Omega_X$ and $\Omega_Y$, input spaces $X$ and $Y$, and output type $\alpha$, in which
+each message is an element of an arbitrary finite nonempty type. Fix inputs $x \in X$
+and $y \in Y$ together with private coins $\omega_x \in \Omega_X$ and $\omega_y \in
+\Omega_Y$. Then converting $p$ to a binary private-coin protocol leaves its randomized
+execution unchanged: running the converted protocol on $x, y$ with coins $\omega_x,
+\omega_y$ returns the same element of $\alpha$ as running $p$ itself on the same inputs
+and coins.
 \end{theorem}
 
-\begin{theorem}[\texttt{toProtocol} preserves complexity]
+\begin{theorem}[Complexity is preserved by the binary conversion]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
 \difficulty{1}
-For any protocol $p$, $(p.\texttt{toProtocol}).\texttt{complexity} = p.\texttt{complexity}$.
+Let $p$ be a private-coin finite-message protocol with private randomness spaces
+$\Omega_X$ and $\Omega_Y$, input types $X$ and $Y$, and output type $\alpha$, in which
+each message is an element of an arbitrary finite nonempty type $\beta$ costing $\lceil
+\log_2 \abs{\beta} \rceil$ bits. Converting $p$ into the associated binary private-coin
+protocol, in which every message is encoded as a string of bits, leaves the worst-case
+communication complexity unchanged: the complexity of the converted binary protocol
+equals the complexity of $p$.
 \end{theorem}
 
 \begin{definition}[Embedding of binary private-coin protocol]
@@ -154,35 +171,50 @@ Embeds a binary private-coin protocol into a private-coin finite-message protoco
 delegating to \texttt{Deterministic.FiniteMessage.Protocol.ofProtocol}.
 \end{definition}
 
-\begin{theorem}[\texttt{ofProtocol} preserves execution]
+\begin{theorem}[Embedding preserves randomized execution of private-coin protocols]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{1}
-For any binary private-coin protocol $p$ and inputs $x$, $y$, $\omega_x$, $\omega_y$,
-$(\texttt{ofProtocol}\,p).\texttt{rrun}\,x\,y\,\omega_x\,\omega_y =
-p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$.
+The embedding of a binary private-coin protocol into the finite-message framework does
+not change what the protocol computes. Let $p$ be a binary private-coin communication
+protocol with input spaces $X$ and $Y$, private-randomness spaces $\Omega_X$ and
+$\Omega_Y$, and output type $\alpha$, and let $\widehat{p}$ be the finite-message
+private-coin protocol obtained by embedding $p$ (interpreting each Boolean message as an
+element of a two-element message alphabet). Then for every pair of inputs $x \in X$, $y
+\in Y$ and every pair of private coins $\omega_x \in \Omega_X$, $\omega_y \in \Omega_Y$,
+the randomized execution of $\widehat{p}$ agrees with that of $p$:
+\[
+\widehat{p}\text{'s output on }(x, y, \omega_x, \omega_y) \;=\; p\text{'s output on }(x,
+y, \omega_x, \omega_y).
+\]
 \end{theorem}
 
-\begin{theorem}[\texttt{ofProtocol} preserves complexity]
+\begin{theorem}[Embedding a binary private-coin protocol preserves complexity]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.Protocol}
 \difficulty{1}
-For any binary private-coin protocol $p$,
-$(\texttt{ofProtocol}\,p).\texttt{complexity} = p.\texttt{complexity}$.
+Let $p$ be a binary private-coin protocol with randomness spaces $\Omega_X$ and
+$\Omega_Y$, input spaces $X$ and $Y$, and output type $\alpha$. Then the private-coin
+finite-message protocol obtained by embedding $p$ has the same communication complexity
+as $p$; that is, viewing each Boolean message of $p$ as an element of the two-element
+message alphabet leaves the worst-case number of bits exchanged unchanged.
 \end{theorem}
 
-\begin{theorem}[Equivalence via finite-message embedding]
+\begin{theorem}[Faithful finite-message simulation of private-coin protocols]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_equiv}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.Protocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{1}
-For every binary private-coin protocol $p$, there exists a finite-message protocol $P$
-such that $P.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y = p.\texttt{rrun}\,x\,y\,\omega_x\,\omega_y$
-for all inputs and coins, and $P.\texttt{complexity} = p.\texttt{complexity}$.  The witness
-is $P = \texttt{ofProtocol}\,p$.
+Let $p$ be a binary private-coin protocol with randomness spaces $\Omega_X$ and
+$\Omega_Y$, input spaces $X$ and $Y$, and output type $\alpha$, in which Alice's and
+Bob's messages are single bits. Then there exists a private-coin finite-message protocol
+$P$ over the same spaces such that, for every pair of inputs $x \in X$, $y \in Y$ and
+every pair of private coins $\omega_x \in \Omega_X$, $\omega_y \in \Omega_Y$, the two
+protocols return the same output when run on $x, y$ with coins $\omega_x, \omega_y$, and
+moreover $P$ has exactly the same communication complexity as $p$.
 \end{theorem}

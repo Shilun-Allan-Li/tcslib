@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.pi_rrun",
+ "key": "058e09e35db8939e",
+ "kind": "theorem",
+ "title": "Componentwise execution of the product protocol",
+ "statement": "Let $k$ be a natural number and, for each $i \\in \\mathrm{Fin}\\,k$, let $p_i$ be a private-coin finite-message protocol with private-randomness types $\\Omega_{X,i}$ for Alice and $\\Omega_{Y,i}$ for Bob, common public input types $X$ and $Y$, and output type $\\alpha_i$. Fix public inputs $x \\in X$ and $y \\in Y$, together with coin vectors $\\omega_x \\in \\prod_{i} \\Omega_{X,i}$ and $\\omega_y \\in \\prod_{i} \\Omega_{Y,i}$. Then executing the product protocol on these data agrees componentwise with executing each factor on its own coordinate of the randomness:\n\\[\n  (\\pi\\,p).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y\n  \\;=\\; \\bigl(\\, i \\mapsto (p_i).\\mathrm{rrun}\\;x\\;y\\;(\\omega_x\\,i)\\;(\\omega_y\\,i) \\,\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "a natural number $k$ indexing the family",
+  "a family of private-coin finite-message protocols $p_i$ over $\\mathrm{Fin}\\,k$ with heterogeneous randomness and output types but common inputs $X$, $Y$",
+  "public inputs $x \\in X$ and $y \\in Y$",
+  "Alice's coin vector $\\omega_x$ in the product $\\prod_i \\Omega_{X,i}$",
+  "Bob's coin vector $\\omega_y$ in the product $\\prod_i \\Omega_{Y,i}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $x, y, \\omega_x, \\omega_y$,\n\\[\n  (\\mathrm{pi}\\;p).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y\n  \\;=\\; \\lambda\\,i.\\; (p\\,i).\\mathrm{rrun}\\;x\\;y\\;(\\omega_x\\,i)\\;(\\omega_y\\,i).\n\\]"
+}

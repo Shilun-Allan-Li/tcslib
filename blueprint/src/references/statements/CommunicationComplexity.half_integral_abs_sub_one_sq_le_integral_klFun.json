@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun",
+ "key": "c38eb8949fb3e734",
+ "kind": "theorem",
+ "title": "A Pinsker-type inequality for the Kullback–Leibler generator",
+ "statement": "Let $(\\Omega, \\mu)$ be a probability space, and let $\\varphi(t) = t \\log t - t + 1$ for $t \\ge 0$ denote the convex generator of the Kullback–Leibler divergence. Let $f : \\Omega \\to \\bbr$ be a measurable, integrable, nonnegative function with $\\int_\\Omega f \\, d\\mu = 1$, so that $f$ is the density of a probability measure with respect to $\\mu$, and assume that $x \\mapsto \\varphi(f(x))$ is integrable with respect to $\\mu$. Then\n\\[\n  \\tfrac{1}{2}\\Bigl(\\int_\\Omega \\abs{f(x) - 1}\\, d\\mu\\Bigr)^{2} \\;\\le\\; \\int_\\Omega \\varphi(f(x))\\, d\\mu .\n\\]",
+ "hypotheses_covered": [
+  "μ is a probability measure",
+  "f is measurable",
+  "f is integrable",
+  "φ ∘ f is integrable",
+  "f is nonnegative pointwise",
+  "∫ f dμ = 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : \\Omega \\to \\mathbb{R}$ with $f \\ge 0$, $\\int f\\,d\\mu = 1$, $f$ integrable,\nand $\\mathrm{klFun}(f)$ integrable.  Then\n\\[\n  \\tfrac{1}{2}\\Bigl(\\int |f(x) - 1|\\,d\\mu\\Bigr)^2 \\;\\le\\; \\int \\mathrm{klFun}(f(x))\\,d\\mu.\n\\]"
+}

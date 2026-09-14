@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.bernoulliRestrProb_dtDepth_mono",
+ "key": "f81654e4cc3ce53b",
+ "kind": "lemma",
+ "title": "Monotonicity of the depth-threshold probability",
+ "statement": "Fix a parameter $p$ with $0 \\le p \\le 1$, a Boolean function $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$, and thresholds $l_1 \\le l_2$. Under a Bernoulli($p$) random restriction $\\rho$ on the $n$ variables, the probability that the restricted function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ has decision-tree depth strictly greater than $l_2$ is at most the probability that it has decision-tree depth strictly greater than $l_1$.",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "f a Boolean function on n variables",
+  "thresholds l₁ ≤ l₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0\\le p\\le 1$, a Boolean function $f$, and thresholds $l_1\\le l_2$, the probability that\nthe restricted function exceeds depth $l_2$ is at most the probability that it exceeds depth\n$l_1$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity",
+ "key": "2d2e503319778bb7",
+ "kind": "theorem",
+ "title": "A Pinsker-type inequality for the Radon–Nikodym density",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on a measurable space $\\Omega$ with $\\mu$ absolutely continuous with respect to $\\nu$, and write $f = \\frac{d\\mu}{d\\nu}$ for the (real-valued) Radon–Nikodym density. Suppose the log-likelihood ratio $x \\mapsto \\log\\frac{d\\mu}{d\\nu}(x)$ is $\\mu$-integrable. Then\n\\[\n  \\frac{1}{2}\\left(\\int_\\Omega \\abs{f(x) - 1}\\,d\\nu(x)\\right)^{2}\n  \\;\\le\\;\n  \\int_\\Omega \\bigl(f(x)\\log f(x) - f(x) + 1\\bigr)\\,d\\nu(x),\n\\]\nwhere the left-hand inner integral is the $L^1(\\nu)$-distance of the density from $1$ and the right-hand integrand is the Kullback–Leibler integrand $t \\mapsto t\\log t - t + 1$.",
+ "hypotheses_covered": [
+  "mu and nu are probability measures on a measurable space",
+  "mu is absolutely continuous with respect to nu",
+  "the log-likelihood ratio of mu with respect to nu is mu-integrable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mu \\ll \\nu$ and the log-likelihood ratio $\\mathrm{llr}(\\mu,\\nu)$ is $\\mu$-integrable,\nthen\n\\[\n  \\tfrac{1}{2}\\,\\mathrm{densityAbsIntegral}(\\mu,\\nu)^2\n  \\;\\le\\;\n  \\int \\mathrm{klFun}\\bigl(\\mathrm{rnDensity}(\\mu,\\nu)(x)\\bigr)\\,d\\nu.\n\\]"
+}

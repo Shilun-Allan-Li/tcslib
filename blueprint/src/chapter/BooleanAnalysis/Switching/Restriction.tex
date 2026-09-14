@@ -160,52 +160,66 @@ The number of restrictions on $n$ variables leaving exactly $s$ free, namely
 $\binom{n}{s}\, 2^{\,n-s}$.
 \end{definition}
 
-\begin{lemma}[Killed literal evaluates to false]
+\begin{lemma}[Killed literals vanish under the induced assignment]
 \lean{SwitchingLemma2.Literal.killedBy_eval_false}
 \label{SwitchingLemma2.Literal.killedBy_eval_false}
 \leanok
 \uses{Literal, Literal.eval, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
 \difficulty{2}
-If a literal $l$ is killed by $\rho$, then for every $x$ it evaluates to false on the
-extended point: $l.\mathrm{eval}(\rho.\mathrm{extend}\,x) = \mathrm{false}$.
+Fix $n$ and let $l$ be a literal on $n$ variables, with underlying variable $v \in
+\mathrm{Fin}\,n$ and polarity flag $b \in \{\text{false}, \text{true}\}$ (with $b =
+\text{true}$ marking a negated literal). Let $\rho$ be a restriction on $n$ variables
+that kills $l$, meaning $\rho$ fixes $v$ to the value $b$. Then for every assignment $x
+: \mathrm{Fin}\,n \to \{\text{false}, \text{true}\}$, the literal $l$ evaluates to false
+at the extension of $x$ along $\rho$.
 \end{lemma}
 
-\begin{lemma}[Fixed literal evaluates to true]
+\begin{lemma}[A fixed literal evaluates to true on any extension]
 \lean{SwitchingLemma2.Literal.fixedBy_eval_true}
 \label{SwitchingLemma2.Literal.fixedBy_eval_true}
 \leanok
 \uses{Literal, Literal.eval, SwitchingLemma2.Literal.fixedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
 \difficulty{2}
-If a literal $l$ is fixed by $\rho$, then for every $x$ it evaluates to true on the
-extended point: $l.\mathrm{eval}(\rho.\mathrm{extend}\,x) = \mathrm{true}$.
+Let $l$ be a literal on $n$ variables and let $\rho$ be a restriction on those same
+variables that fixes $l$, meaning $\rho$ assigns $l$'s variable the Boolean value that
+makes $l$ true. Then for every assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$, the
+literal $l$ evaluates to true on the extension of $x$ along $\rho$ (the assignment using
+$\rho$'s fixed value on each set variable and $x$ on the free ones).
 \end{lemma}
 
-\begin{lemma}[Decision-tree depth bound from a witnessing tree]
+\begin{lemma}[Decision-tree depth bound from a computing tree]
 \lean{SwitchingLemma2.dtDepth_le_of_tree}
 \label{SwitchingLemma2.dtDepth_le_of_tree}
 \leanok
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
 \difficulty{2}
-If a decision tree $T$ of depth at most $d$ computes $f$ (i.e.\ $T.\mathrm{eval}\,x = f(x)$
-for all $x$), then the decision-tree depth of $f$ is at most $d$.
+Let $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean function,
+and let $T$ be a decision tree on $n$ variables of depth at most $d$ that computes $f$,
+meaning $T$ evaluates to $f(x)$ on every input $x$. Then the decision-tree depth of $f$
+is at most $d$.
 \end{lemma}
 
-\begin{lemma}[List \texttt{any} false from pointwise false]
+\begin{lemma}[Boolean existential over a list is false when the predicate always fails]
 \lean{SwitchingLemma2.list_any_eq_false}
 \label{SwitchingLemma2.list_any_eq_false}
 \leanok
 \difficulty{3}
-If a Boolean predicate $p$ is false on every element of a list $l$, then $l.\mathrm{any}\,p$
-is false.
+Let $l$ be a finite list of elements of a type $\alpha$, and let $p \colon \alpha \to
+\{\mathrm{true}, \mathrm{false}\}$ be a Boolean predicate. If $p(x) = \mathrm{false}$
+for every entry $x$ of $l$, then the Boolean existential $\bigvee_{x \in l} p(x)$ — the
+value $\mathrm{true}$ exactly when some entry of $l$ satisfies $p$ — is
+$\mathrm{false}$.
 \end{lemma}
 
-\begin{lemma}[List \texttt{all} false from a false member]
+\begin{lemma}[A false witness makes a universal test fail]
 \lean{SwitchingLemma2.list_all_eq_false_of_mem}
 \label{SwitchingLemma2.list_all_eq_false_of_mem}
 \leanok
 \difficulty{4}
-If some element $a$ of a list $l$ satisfies $p(a) = \mathrm{false}$, then $l.\mathrm{all}\,p$
-is false.
+Let $l$ be a list of elements of a type $\alpha$ and let $p \colon \alpha \to
+\{\mathrm{true}, \mathrm{false}\}$ be a Boolean predicate. If some element $a$ of $l$
+satisfies $p(a) = \mathrm{false}$, then the test whether every entry of $l$ satisfies
+$p$ evaluates to $\mathrm{false}$.
 \end{lemma}
 
 \begin{lemma}[A fixed term forces zero decision-tree depth]
@@ -213,7 +227,6 @@ is false.
 \label{SwitchingLemma2.fixedTerm_implies_dtDepth_zero}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -311,17 +324,16 @@ is false.
   {pdf-b5e074215b9e-p001-b005}
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.fixedBy_eval_true, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.dtDepth_le_of_tree, SwitchingLemma2.restrictFn, Term.eval, dtDepth}
 \difficulty{4}
-If some term of a DNF $f$ is fixed by $\rho$, then the restricted function
-$\mathrm{restrictFn}\,f.\mathrm{eval}\,\rho$ is identically true and hence has
-decision-tree depth $0$.
+Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction of
+those variables. If at least one term of $f$ is fixed by $\rho$, then the restricted
+Boolean function $x \mapsto f(\rho\text{-extension of }x)$ has decision-tree depth $0$.
 \end{lemma}
 
-\begin{lemma}[All terms killed forces zero decision-tree depth]
+\begin{lemma}[Killed terms force zero decision-tree depth]
 \lean{SwitchingLemma2.killedAll_implies_dtDepth_zero}
 \label{SwitchingLemma2.killedAll_implies_dtDepth_zero}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -429,31 +441,38 @@ decision-tree depth $0$.
   {pdf-b5e074215b9e-p002-b002}
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.killedBy_eval_false, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Term.killedBy, SwitchingLemma2.dtDepth_le_of_tree, SwitchingLemma2.list_all_eq_false_of_mem, SwitchingLemma2.list_any_eq_false, SwitchingLemma2.restrictFn, Term.eval, dtDepth}
 \difficulty{4}
-If every term of a DNF $f$ is killed by $\rho$, then the restricted function
-$\mathrm{restrictFn}\,f.\mathrm{eval}\,\rho$ is identically false and hence has
-decision-tree depth $0$.
+Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction on
+these variables. If every term of $f$ is killed by $\rho$ — that is, each term contains
+a literal whose variable $\rho$ fixes to the value making that literal false — then the
+restricted function $x \mapsto f\bigl(\rho.\mathrm{extend}\,x\bigr)$ has decision-tree
+depth $0$.
 \end{lemma}
 
-\begin{lemma}[Killing is preserved under agreement on non-free variables]
+\begin{lemma}[Killing preserved under agreement on fixed variables]
 \lean{SwitchingLemma2.killedBy_of_nonfree_agree}
 \label{SwitchingLemma2.killedBy_of_nonfree_agree}
 \leanok
 \uses{SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, Term}
 \difficulty{3}
-If a term $t$ is killed by $\rho$ and a restriction $\sigma$ agrees with $\rho$ on every
-non-free variable (i.e.\ $\sigma(v) = \rho(v)$ whenever $\rho(v) \neq \mathrm{none}$), then
-$t$ is also killed by $\sigma$.
+Let $t$ be a term on $n$ variables and let $\rho, \sigma : \mathrm{Fin}\,n \to
+\mathrm{Option}\,\mathrm{Bool}$ be two restrictions such that $\sigma(v) = \rho(v)$ for
+every variable $v$ that $\rho$ fixes (that is, whenever $\rho(v) \neq \mathrm{none}$).
+If $t$ is killed by $\rho$, then $t$ is also killed by $\sigma$.
 \end{lemma}
 
-\begin{lemma}[First surviving clause is preserved under non-free agreement]
+\begin{lemma}[First surviving term is preserved under agreement on fixed variables]
 \lean{SwitchingLemma2.first_clause_preserved}
 \label{SwitchingLemma2.first_clause_preserved}
 \leanok
 \uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.killedBy_of_nonfree_agree, Term}
 \difficulty{4}
-Suppose $t$ is the first term of $f$ not killed by $\rho$, that $\sigma$ agrees with
-$\rho$ on all non-free variables, and that $t$ is not killed by $\sigma$. Then $t$ is also
-the first term of $f$ not killed by $\sigma$.
+Let $f$ be a DNF formula on $n$ variables — a list of terms, each a conjunction of
+literals — and let $\rho$ and $\sigma$ be restrictions of these $n$ variables. Suppose
+$\sigma$ agrees with $\rho$ on every variable that $\rho$ fixes, that is, $\sigma(v) =
+\rho(v)$ for every variable $v$ on which $\rho$ takes a Boolean value rather than
+leaving it free. Let $t$ be the first term of $f$ (in list order) that is not killed by
+$\rho$, and suppose in addition that $t$ is not killed by $\sigma$. Then $t$ is also the
+first term of $f$ that is not killed by $\sigma$.
 \end{lemma}
 
 \begin{lemma}[Term length bounded by DNF width]
@@ -462,33 +481,48 @@ the first term of $f$ not killed by $\sigma$.
 \leanok
 \uses{DNF, DNF.width, Term, Term.width}
 \difficulty{3}
-Every term $t$ belonging to a DNF $f$ has length at most the width of $f$.
+Let $f$ be a DNF formula in $n$ variables, that is, a disjunction $t_1 \vee \cdots \vee
+t_m$ of terms, where each term is a conjunction of literals, and let its width be the
+largest number of literals occurring in any of its terms (and $0$ if $f$ has no terms).
+Then for every term $t$ appearing in $f$, the number of literals in $t$ is at most the
+width of $f$.
 \end{lemma}
 
-\begin{lemma}[\texttt{zipIdx.find?} projects to \texttt{find?}]
+\begin{lemma}[Projecting an indexed search back to the list]
 \lean{SwitchingLemma2.zipIdx_find_to_find}
 \label{SwitchingLemma2.zipIdx_find_to_find}
 \leanok
 \difficulty{4}
-Searching the indexed list $l.\mathrm{zipIdx}$ with a predicate and projecting onto the
-first component agrees with the corresponding $\mathrm{find?}$ on $l$.
+Let $l$ be a list over a type $\alpha$, let
+$p\colon\alpha\to\{\text{true},\text{false}\}$ be a predicate, and fix a starting index
+$s$. Form the indexed list obtained by pairing each entry of $l$ with its position,
+numbered consecutively from $s$. If the first pair in this indexed list whose first
+component satisfies $p$ is the pair $(x,\mathrm{idx})$, then $x$ is the first entry of
+$l$ satisfying $p$.
 \end{lemma}
 
-\begin{lemma}[\texttt{zipIdx} membership locates a tail]
+\begin{lemma}[Membership in the index-tagged list locates a tail]
 \lean{SwitchingLemma2.zipIdx_drop_spec}
 \label{SwitchingLemma2.zipIdx_drop_spec}
 \leanok
 \difficulty{3}
-If $(l, \mathit{idx}) \in t.\mathrm{zipIdx}$, then dropping $\mathit{idx}$ elements from $t$
-yields a list starting with $l$, i.e.\ $t.\mathrm{drop}\,\mathit{idx} = l :: \mathit{rest}$
-for some remaining tail.
+Let $t$ be a list over a type $\alpha$, and tag each entry of $t$ with its zero-based
+position, forming the list of pairs $(t_i, i)$. If a pair $(l, i)$ occurs among these
+tagged entries — equivalently, the entry of $t$ at position $i$ is $l$ — then deleting
+the first $i$ entries of $t$ leaves a nonempty list whose first element is $l$; that is,
+there is a list $\mathit{rest}$ with $t$ from position $i$ onward equal to $l$ prepended
+to $\mathit{rest}$.
 \end{lemma}
 
-\begin{lemma}[Filtered \texttt{zipIdx} index is below the length bound]
+\begin{lemma}[Position index of a filtered tagged list stays below the length bound]
 \lean{SwitchingLemma2.zipIdx_filter_idx_lt}
 \label{SwitchingLemma2.zipIdx_filter_idx_lt}
 \leanok
 \difficulty{3}
-If $(l, \mathit{idx})$ arises from filtering $t.\mathrm{zipIdx}$ by a predicate and $t$ has
-length at most $w$, then $\mathit{idx} < w$.
+Let $t$ be a finite list of elements of a type $\alpha$, and tag each entry of $t$ with
+its position to form the list of pairs $(t_i, i)$, whose second coordinates run through
+$0, 1, \dots, |t| - 1$. Let $p$ be any Boolean predicate on such pairs, and let $w$ be a
+natural number with $|t| \le w$. If a pair $(l, \mathit{idx})$ occurs in the sublist
+obtained by keeping exactly those tagged pairs on which $p$ is true, then $\mathit{idx}
+< w$.
 \end{lemma}

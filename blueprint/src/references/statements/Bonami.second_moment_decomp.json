@@ -1,0 +1,14 @@
+{
+ "lean_name": "Bonami.second_moment_decomp",
+ "key": "1914e1b8f9db2ec5",
+ "kind": "lemma",
+ "title": "Second-moment decomposition over the last coordinate",
+ "statement": "Let $f : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function on $n+1$ variables. Define its average and half-difference over the last coordinate as the functions on $n$ variables\n\\[\n  g(x) = \\tfrac12\\bigl(f(x,0) + f(x,1)\\bigr), \\qquad h(x) = \\tfrac12\\bigl(f(x,0) - f(x,1)\\bigr).\n\\]\nThen, with the expectation on the left taken under the uniform measure on $\\{0,1\\}^{n+1}$ and those on the right under the uniform measure on $\\{0,1\\}^n$, the second moment of $f$ decomposes as\n\\[\n  \\E\\bigl[f^2\\bigr] = \\E\\bigl[g^2\\bigr] + \\E\\bigl[h^2\\bigr].\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n+1 variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nWriting $g = \\mathrm{avgLast}\\,f$ and $h = \\mathrm{diffLast}\\,f$, the second moment of $f$\ndecomposes as $\\E[f^2] = \\E[g^2] + \\E[h^2]$."
+}

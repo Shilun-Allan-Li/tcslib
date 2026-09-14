@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.roundtrip_base",
+ "key": "05e03ed340080377",
+ "kind": "lemma",
+ "title": "Round-trip base case for the decoder",
+ "statement": "Fix $n$, and let $f$ be a DNF formula on $n$ variables and $w$ a natural number. Let $\\rho_0$, $\\sigma$, $\\sigma_{\\mathrm{dec}}$, and $\\rho_0^{\\mathrm{dec}}$ be restrictions on $n$ variables (each variable either assigned a Boolean value or left free), and let $d$ be a fuel bound. Suppose that $\\sigma$ leaves free every variable that $\\rho_0$ leaves free, and that $\\sigma_{\\mathrm{dec}}$ agrees with $\\sigma$ on every variable — both those that $\\rho_0$ leaves free and those that $\\rho_0$ fixes. Then running the Razborov decoding loop on $f$, with width $w$, fuel $d$, working restrictions $\\sigma_{\\mathrm{dec}}$ and $\\rho_0^{\\mathrm{dec}}$, and the empty list of emitted advice, yields an output whose first component is exactly $\\sigma$.",
+ "hypotheses_covered": [
+  "σ leaves free every variable ρ₀ leaves free",
+  "σ_dec agrees with σ on the variables ρ₀ leaves free",
+  "σ_dec agrees with σ on the variables ρ₀ fixes",
+  "the emitted advice list is empty"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion is stated in terms of the internal decoding loop `razborovDecode.go`, whose definition is not among the supplied upstream definitions; its precise behavior (what the first output component represents and how fuel/width enter) cannot be verified from the given snippet, so the informalization of that procedure is necessarily approximate.",
+ "rubric": [],
+ "replaced": "When the encoder returns $(\\sigma, [])$ (an empty emitted list), the decoder loop\n\\texttt{SwitchingLemma2.razborovDecode}'s \\texttt{go} recovers $\\sigma$ exactly, given\nthat $\\sigma$ and the decoder's starting restriction $\\sigma_{\\mathrm{dec}}$ agree with\n$\\sigma$ on both free and non-free variables and that $\\sigma$ is unset wherever\n$\\rho_0$ is unset."
+}

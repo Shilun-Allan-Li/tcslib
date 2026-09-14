@@ -10,12 +10,13 @@ a weak bound with constant $\eta^2/2$ and a tight bound with constant $\eta^2/8$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[$x(1-x) \le 1/4$]
+\begin{lemma}[Product of a fraction and its complement]
 \lean{mul_one_sub_le_quarter}
 \label{mul_one_sub_le_quarter}
 \leanok
 \difficulty{2}
-For any $x \in [0,1]$, the product $x(1-x) \le \tfrac{1}{4}$.
+For every real number $x$ with $0 \le x \le 1$, the product $x(1-x)$ is at most
+$\tfrac{1}{4}$.
 \end{lemma}
 
 \begin{theorem}[Convexity bound for the exponential]
@@ -23,42 +24,43 @@ For any $x \in [0,1]$, the product $x(1-x) \le \tfrac{1}{4}$.
 \label{exp_convexity_bound'}
 \leanok
 \difficulty{4}
-For any $\eta, x \in \bbr$ with $x \in [0,1]$, convexity of $\exp$ gives
+Let $\eta$ be a real number and let $x \in [0,1]$. Then
 \[
   e^{-\eta x} \;\le\; 1 - x + x\,e^{-\eta}.
 \]
 \end{theorem}
 
-\begin{theorem}[Weighted exponential sum vs.\ affine upper bound]
+\begin{theorem}[Weighted exponential sum versus affine upper bound]
 \lean{weighted_exp_le_affine}
 \label{weighted_exp_le_affine}
 \leanok
 \uses{exp_convexity_bound'}
 \difficulty{3}
-Let $p : \mathrm{Fin}\,n \to \bbr$ be a probability vector ($p_i \ge 0$,
-$\sum_i p_i = 1$) and let $\ell : \mathrm{Fin}\,n \to \bbr$ satisfy $0 \le \ell_i \le 1$
-for all $i$.  For any $\eta \in \bbr$,
+Let $p_1,\dots,p_n$ be a probability vector, that is $p_i \ge 0$ for every $i$ and
+$\sum_{i} p_i = 1$, and let $\ell_1,\dots,\ell_n \in \bbr$ satisfy $0 \le \ell_i \le 1$
+for every $i$. Then for every $\eta \in \bbr$,
 \[
-  \sum_{i} p_i \,e^{-\eta\,\ell_i}
+  \sum_{i} p_i\, e^{-\eta\,\ell_i}
   \;\le\;
-  1 - \bigl(1 - e^{-\eta}\bigr)\!\sum_{i} p_i\,\ell_i.
+  1 - \bigl(1 - e^{-\eta}\bigr)\sum_{i} p_i\,\ell_i.
 \]
 \end{theorem}
 
-\begin{theorem}[$\ln(1+u) \le u$]
+\begin{theorem}[The logarithmic inequality $\ln(1+u)\le u$]
 \lean{log_one_add_le}
 \label{log_one_add_le}
 \leanok
 \difficulty{2}
-For any $u > -1$, $\ln(1+u) \le u$.
+For every real number $u > -1$, the natural logarithm satisfies $\ln(1+u) \le u$.
 \end{theorem}
 
-\begin{theorem}[$\eta - 1 + e^{-\eta} \le \eta^2/2$]
+\begin{theorem}[A quadratic upper bound for $\eta - 1 + e^{-\eta}$]
 \lean{eta_exp_bound}
 \label{eta_exp_bound}
 \leanok
 \difficulty{5}
-For any $\eta \ge 0$,
+For every real number $\eta \ge 0$, the quantity $\eta - 1 + e^{-\eta}$ satisfies the
+bound
 \[
   \eta - 1 + e^{-\eta} \;\le\; \frac{\eta^2}{2}.
 \]
@@ -70,10 +72,11 @@ For any $\eta \ge 0$,
 \leanok
 \uses{eta_exp_bound}
 \difficulty{5}
-Let $p$ be a probability vector on $\mathrm{Fin}\,n$ and let $\ell_i \in [0,1]$ for all
-$i$.  For $\eta > 0$, setting $L = \sum_i p_i \ell_i$,
+Let $n \ge 1$ and let $p = (p_1, \dots, p_n)$ be a probability vector, so that $p_i \ge
+0$ for every $i$ and $\sum_{i} p_i = 1$. Let $\ell_1, \dots, \ell_n \in [0,1]$, and let
+$\eta > 0$. Writing $L = \sum_{i} p_i \ell_i$ for the average loss, one has
 \[
-  \ln\!\Bigl(\sum_{i} p_i\,e^{-\eta\,\ell_i}\Bigr)
+  \log\!\Bigl(\sum_{i} p_i\, e^{-\eta\, \ell_i}\Bigr)
   \;\le\;
   -\eta L + \frac{\eta^2}{2}.
 \]
@@ -84,29 +87,27 @@ $i$.  For $\eta > 0$, setting $L = \sum_i p_i \ell_i$,
 \label{bernoulli_mgf_bound}
 \leanok
 \difficulty{7}
-For $L \in [0,1]$ and any $\eta \in \bbr$,
+Let $L \in [0,1]$ and let $\eta$ be a real number. Then the moment generating function
+of the shifted Bernoulli weight $1 - L + L\,e^{-\eta}$ satisfies
 \[
   \ln\!\bigl(1 - L + L\,e^{-\eta}\bigr)
   \;\le\;
   -L\eta + \frac{\eta^2}{8}.
 \]
-The bound is established by showing that the function
-$\varphi(\eta) = -L\eta + \eta^2/8 - \ln(1-L+Le^{-\eta})$ is convex with
-$\varphi(0) = 0$ and $\varphi'(0) = 0$.
 \end{theorem}
 
-\begin{theorem}[Tight Hoeffding log-MGF bound]
+\begin{theorem}[Tight Hoeffding bound on the exponential loss]
 \lean{hoeffding_log_mgf_tight}
 \label{hoeffding_log_mgf_tight}
 \leanok
 \uses{bernoulli_mgf_bound, weighted_exp_le_affine}
 \difficulty{4}
-Under the same hypotheses as \texttt{hoeffding\_log\_mgf\_weak}, the tighter bound holds:
+Let $p_1,\dots,p_n$ be a probability distribution, so $p_i \ge 0$ for every $i$ and
+$\sum_{i=1}^n p_i = 1$, and let $\ell_1,\dots,\ell_n \in [0,1]$ be losses. Write $L =
+\sum_{i=1}^n p_i\,\ell_i$ for the expected loss. Then for every $\eta > 0$,
 \[
-  \ln\!\Bigl(\sum_{i} p_i\,e^{-\eta\,\ell_i}\Bigr)
+  \log\!\Bigl(\sum_{i=1}^n p_i\,e^{-\eta\,\ell_i}\Bigr)
   \;\le\;
-  -\eta L + \frac{\eta^2}{8}.
+  -\eta\,L + \frac{\eta^2}{8}.
 \]
-This follows by first applying \texttt{weighted\_exp\_le\_affine} and then
-\texttt{bernoulli\_mgf\_bound}.
 \end{theorem}

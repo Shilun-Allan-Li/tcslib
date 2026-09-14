@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.bernoulliRestrProb_congr_fn",
+ "key": "03c14ff2a3f6f0f8",
+ "kind": "lemma",
+ "title": "Depth-exceedance probability depends only on the function",
+ "statement": "Let $f, g : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be Boolean functions on $n$ variables that agree at every input, and fix a real parameter $p$ and a threshold $t \\in \\bbn$. Then the Bernoulli($p$) restriction probability of the event that a random restriction $\\rho$ produces a restricted function of decision-tree depth strictly greater than $t$ is the same for $f$ as for $g$.",
+ "hypotheses_covered": [
+  "f and g agree pointwise on every input",
+  "a real parameter p",
+  "a natural-number threshold t",
+  "the depth threshold is strict (> t)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f$ and $g$ agree pointwise, then for any $p\\in\\bbr$ and $t\\in\\bbn$ the Bernoulli\nrestriction probabilities of the events $\\{\\rho : \\mathrm{dtDepth}(\\mathrm{restrictFn}\\,f\\,\\rho) > t\\}$\nand $\\{\\rho : \\mathrm{dtDepth}(\\mathrm{restrictFn}\\,g\\,\\rho) > t\\}$ are equal."
+}

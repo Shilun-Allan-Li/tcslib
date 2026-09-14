@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.sum_fixedAliceInfoTerm_le_xVector_info",
+ "key": "6a9014e67b1469aa",
+ "kind": "theorem",
+ "title": "Chain-rule bound on Alice's per-coordinate information terms",
+ "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for the $n$-coordinate disjointness problem. Draw an input from the hard distribution conditioned on the event that Alice's and Bob's sets are disjoint, and write $X = (X_1,\\dots,X_n)$ and $Y = (Y_1,\\dots,Y_n)$ for Alice's and Bob's Boolean input vectors and $M$ for the transcript produced by running $p$ on that input pair; for each coordinate $i$ let $X_i$ be Alice's bit there, $X_{<i}$ her vector of bits at earlier coordinates, and $Y_{\\ge i}$ Bob's vector of bits at $i$ and later coordinates. Then, with every mutual information taken under this disjointness-conditioned distribution,\n\\[\n\\sum_{i=1}^{n} I\\bigl(X_i : M \\mid X_{<i},\\, Y_{\\ge i}\\bigr) \\;\\le\\; I\\bigl(X : M \\mid Y\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "p is a deterministic protocol for n-coordinate disjointness",
+  "all mutual informations taken under the disjointness-conditioned hard distribution"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Chain-rule step for the Alice summands: $∑_{i} I(X_{i} : M | X_{<i}, Y_{≥i}, D) ≤ I(X : M | Y, D)$.  Its only probabilistic input is \\texttt{fixedAliceCrossInfoTerm\\_eq\\_zero}."
+}

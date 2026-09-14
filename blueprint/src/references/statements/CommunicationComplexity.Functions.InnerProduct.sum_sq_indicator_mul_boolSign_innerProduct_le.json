@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_sq_indicator_mul_boolSign_innerProduct_le",
+ "key": "39a939ef197ac3bd",
+ "kind": "lemma",
+ "title": "A second-moment bound for character sums over a Boolean set",
+ "statement": "Let $n \\in \\bbn$, and identify the set of $n$-bit Boolean inputs with $\\{0,1\\}^n$. For $x, y \\in \\{0,1\\}^n$, write $\\langle x, y\\rangle = \\bigoplus_{i=1}^{n} (x_i \\wedge y_i) \\in \\{0,1\\}$ for their mod-$2$ inner product, so that $(-1)^{\\langle x, y\\rangle}$ equals $+1$ when $\\langle x, y\\rangle = 0$ and $-1$ when $\\langle x, y\\rangle = 1$. Then for every subset $B \\subseteq \\{0,1\\}^n$,\n\\[\n  \\sum_{x \\in \\{0,1\\}^n}\n    \\Bigl(\\, \\sum_{y \\in B} (-1)^{\\langle x, y\\rangle} \\Bigr)^{2}\n  \\;\\le\\; \\bigl(2^{n}\\bigr)^{2}.\n\\]",
+ "hypotheses_covered": [
+  "n is a fixed natural number",
+  "B is an arbitrary subset of the n-bit Boolean inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any set $B \\subseteq \\mathrm{BoolInput}\\,n$,\n\\[\n  \\sum_{x : \\mathrm{BoolInput}\\,n}\n    \\Bigl(\\sum_{y : \\mathrm{BoolInput}\\,n}\n      \\mathbf{1}_B(y)\\,\\mathrm{boolSign}(\\mathrm{IP}(x,y))\\Bigr)^2\n  \\;\\le\\; (2^n)^2.\n\\]"
+}

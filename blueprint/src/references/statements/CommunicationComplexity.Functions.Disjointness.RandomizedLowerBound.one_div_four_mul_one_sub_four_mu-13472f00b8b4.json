@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.one_div_four_mul_one_sub_four_mul_le_measureReal_goodZEvent",
+ "key": "a20fe2a30feec9d6",
+ "kind": "theorem",
+ "title": "Good-fiber probability under small claim information",
+ "statement": "Fix a positive integer $n$ and a deterministic two-party protocol $p$ for the set-disjointness problem on subsets of $\\{1,\\dots,n\\}$. The hard distribution is the uniform probability measure on the finite sample space; a sample $\\omega$ determines a special coordinate $T \\in \\{1,\\dots,n\\}$, Alice's input set $X$ and Bob's input set $Y$, and the two special-coordinate bits $X_T$ and $Y_T$. Let $M$ denote the transcript that $p$ produces on the pair $(X,Y)$, and let $Z = (M,\\,T,\\,X_{<T},\\,Y_{>T})$ be the statistic recording the transcript, the special coordinate, Alice's input bits strictly before the special coordinate, and Bob's input bits strictly after the special coordinate. Say that a value $z$ is \\emph{good} when the law of $(X_T,Y_T)$ under the hard distribution conditioned on the fiber $\\{Z = z\\}$ lies within total variation distance $2\\gamma$ of the uniform distribution on $\\{0,1\\}^2$. Suppose $\\gamma > 0$ and that, under the hard distribution conditioned on the event that $X$ and $Y$ are disjoint,\n\\[\nI\\!\\left(X_T ; M \\mid T,\\,X_{<T},\\,Y_{\\ge T}\\right) + I\\!\\left(Y_T ; M \\mid T,\\,X_{\\le T},\\,Y_{>T}\\right) \\le \\frac{2\\gamma^{4}}{3}.\n\\]\nThen the hard-distribution probability that $Z$ is good is at least $\\tfrac14\\,(1-4\\gamma)$.",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic disjointness protocol on subsets of {1,...,n}",
+  "gamma > 0",
+  "claim information (sum of the two conditional mutual informations, taken under the hard distribution conditioned on disjointness of X and Y) at most 2*gamma^4/3"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the corrected special-coordinate information is $≤ 2γ^{4} / 3$, then the set of $Z$ fibers where the conditional law of $(X_{T}, Y_{T})$ is within $2γ$ of uniform has hard-distribution mass at least $(1 - 4γ) / 4$."
+}

@@ -51,206 +51,260 @@ fail the distortion predicate, i.e.\ the projection distorts that pair by
 more than a factor of $\varepsilon$.
 \end{definition}
 
-\begin{theorem}[JL concentration --- single vector]
+\begin{theorem}[Johnson–Lindenstrauss concentration for a single vector]
 \lean{jl_concentration_single}
 \label{jl_concentration_single}
 \leanok
 \uses{BadSingle, jl_concentration_single_via_chi_squared}
 \difficulty{1}
-Let $A$ be a random $k \times d$ matrix whose entries are i.i.d.\
-$\mathcal{N}(0, 1/k)$ (rows mutually independent, entries independent within
-each row).  For any fixed $x \in \mathbb{R}^d$ and any $0 < \varepsilon < 1$,
+Let $k \ge 1$ and let $A$ be a random $k \times d$ matrix whose entries $A_{ij}$ are
+independent Gaussian random variables, each distributed as $\mathcal{N}(0, 1/k)$. Then
+for every fixed vector $x \in \bbr^d$ and every $\varepsilon$ with $0 < \varepsilon <
+1$, the probability that $A$ distorts the squared norm of $x$ by more than a factor
+$\varepsilon$ satisfies
 \[
-  \Pr\bigl[\text{BadSingle}\;\varepsilon\;A\;x\bigr] \;\le\;
-  2\,\exp\!\bigl(-k\varepsilon^2/8\bigr).
+  \bbP\!\left[\, \bigl|\,\|Ax\|^2 - \|x\|^2\,\bigr| > \varepsilon\,\|x\|^2 \,\right]
+  \;\le\; 2\,\exp\!\left(-\frac{k\,\varepsilon^2}{8}\right).
 \]
 \end{theorem}
 
-\begin{lemma}[Distortion from non-bad single]
+\begin{lemma}[Distortion bound from a controlled single-vector event]
 \lean{JLDistortion.of_not_bad}
 \label{JLDistortion.of_not_bad}
 \leanok
 \uses{BadSingle, JLDistortion}
 \difficulty{3}
-If the matrix $A$ does \emph{not} trigger the bad-single event for the
-difference $u - v$, then \texttt{JLDistortion} $\varepsilon\; u\; v\;
-(A.toEuclideanLin\; u)\; (A.toEuclideanLin\; v)$ holds; that is, the
-squared-distance of the images is within a factor of $(1 \pm \varepsilon)$
-of the squared-distance of the originals.
+Let $\varepsilon \in \bbr$, let $u, v \in \bbr^d$, and let $A$ be a real $k \times d$
+matrix, acting as a linear map $\bbr^d \to \bbr^k$. Suppose the difference $u - v$ does
+not trigger the bad distortion event for $A$; that is, the squared-norm distortion of
+$u-v$ stays within the allowed band,
+\[
+  \bigl|\,\norm{A(u-v)}^2 - \norm{u-v}^2\,\bigr| \;\le\; \varepsilon\,\norm{u-v}^2 .
+\]
+Then the images $Au$ and $Av$ satisfy the two-sided single-pair distortion bound
+\[
+(1 - \varepsilon)\,\norm{u - v}^2 \;\le\; \norm{Au - Av}^2 \;\le\; (1 +
+\varepsilon)\,\norm{u - v}^2 .
+\]
 \end{lemma}
 
-\begin{theorem}[JL union bound]
+\begin{theorem}[Union bound for Johnson–Lindenstrauss distortion]
 \lean{jl_union_bound}
 \label{jl_union_bound}
 \leanok
 \uses{BadPair, BadSingle, JLDistortion.of_not_bad}
 \difficulty{5}
-Suppose each per-pair bad event satisfies
-$\Pr[\text{BadSingle}\;\varepsilon\;A\;\cdot] \le 2\exp(-k\varepsilon^2/8)$.
-Then the probability that \emph{some} ordered pair in $V \times V$ is
-distorted is at most
+Let $(\Omega,\mu)$ be a probability space, and let $A\colon\Omega\to\bbr^{k\times d}$ be
+a measurable random $k\times d$ matrix. Fix a finite set $V\subseteq\bbr^d$ and a
+parameter $\varepsilon\in\bbr$, and suppose that for every pair $u,v\in V$ the
+single-vector bad event for the difference $u-v$ has probability at most
+$2\exp(-k\varepsilon^2/8)$, that is,
 \[
-  |V|^2 \cdot 2\,\exp\!\bigl(-k\varepsilon^2/8\bigr).
+\mu\bigl\{\,\omega : \varepsilon\,\|u-v\|^2 < \bigl|\,\|A(\omega)(u-v)\|^2 -
+\|u-v\|^2\,\bigr|\,\bigr\} \le 2\exp\!\bigl(-k\varepsilon^2/8\bigr).
+\]
+Then the probability of the bad-pair event — that some ordered pair $(u,v)\in V\times V$
+fails the two-sided distortion bound $(1-\varepsilon)\|u-v\|^2 \le \|A(\omega)(u-v)\|^2
+\le (1+\varepsilon)\|u-v\|^2$ — is at most
+\[
+  |V|^2 \cdot 2\exp\!\bigl(-k\varepsilon^2/8\bigr).
 \]
 \end{theorem}
 
-\begin{theorem}[Structural JL --- Gaussian probabilistic method]
+\begin{theorem}[Johnson–Lindenstrauss embedding from a Gaussian matrix]
 \lean{johnson_lindenstrauss_of_gaussian}
 \label{johnson_lindenstrauss_of_gaussian}
 \leanok
 \uses{BadPair, BadSingle, IsJLEmbedding, jl_concentration_single, jl_union_bound}
 \difficulty{4}
-Let $A$ be a random Gaussian $k \times d$ matrix as above.  If the union-bound
-failure probability satisfies
-$|V|^2 \cdot 2\exp(-k\varepsilon^2/8) < 1$,
-then there exists a linear map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ that is an
-$\varepsilon$-JL embedding of $V$, extracted from the positive-measure good
-event.
+Fix dimensions $d$ and $k$ with $k \ge 1$, a distortion parameter $\varepsilon \in
+(0,1)$, and a finite set of points $V \subseteq \bbr^d$. Let $A$ be a random $k \times
+d$ matrix whose entries $A_{ij}$ are independent Gaussian random variables, each with
+mean $0$ and variance $1/k$. If the union-bound quantity satisfies
+\[
+  |V|^2 \cdot 2\exp\!\left(-\,k\varepsilon^2/8\right) < 1,
+\]
+then there exists a linear map $f : \bbr^d \to \bbr^k$ that is an $\varepsilon$-JL
+embedding of $V$: for every pair $u, v \in V$,
+\[
+  (1-\varepsilon)\,\|u-v\|^2 \;\le\; \|f(u)-f(v)\|^2 \;\le\; (1+\varepsilon)\,\|u-v\|^2.
+\]
 \end{theorem}
 
-\begin{theorem}[Structural JL --- sub-Gaussian probabilistic method]
+\begin{theorem}[Sub-Gaussian random projections give a Johnson–Lindenstrauss embedding]
 \lean{johnson_lindenstrauss_of_subgaussian}
 \label{johnson_lindenstrauss_of_subgaussian}
 \leanok
 \uses{BadPair, BadSingle, IsJLEmbedding, concentration_zero, jl_concentration_single_subgaussian, jl_union_bound}
 \difficulty{4}
-Sub-Gaussian analogue of \texttt{johnson\_lindenstrauss\_of\_gaussian}: the Gaussian
-entry hypotheses are replaced by the assumptions that each row projection
-$(Ax)_i$ is sub-Gaussian with parameter $\|x\|^2/k$ and has variance exactly
-$\|x\|^2/k$.  Under the same failure-probability bound
-$|V|^2 \cdot 2\exp(-k\varepsilon^2/8) < 1$, an $\varepsilon$-JL embedding of
-$V$ is guaranteed to exist; this covers, for instance, Rademacher ($\pm 1/\sqrt{k}$)
-matrices.
+Let $k \ge 1$, and let $A$ be a random $k \times d$ real matrix defined on a probability
+space $(\Omega,\mu)$, so that for each $x \in \bbr^d$ the image $Ax \in \bbr^k$ has
+coordinates $(Ax)_1,\dots,(Ax)_k$. Suppose that for every $x \in \bbr^d$ these $k$
+coordinates are independent, and that each coordinate $(Ax)_i$ is sub-Gaussian with
+variance proxy $\|x\|^2/k$, in the sense that $t \mapsto e^{t(Ax)_i}$ is integrable and
+its moment generating function obeys $\E\!\left[e^{t(Ax)_i}\right] \le
+\exp\!\bigl(\tfrac{\|x\|^2}{k}\cdot\tfrac{t^2}{2}\bigr)$ for all $t \in \bbr$, and
+moreover has second moment $\E\!\left[(Ax)_i^2\right] = \|x\|^2/k$. Fix $0 < \varepsilon
+< 1$ and a finite set $V \subseteq \bbr^d$ satisfying the union bound $|V|^2 \cdot
+2\exp(-k\varepsilon^2/8) < 1$. Then there exists a linear map $f : \bbr^d \to \bbr^k$
+that is an $\varepsilon$-JL embedding of $V$: for all $u,v \in V$,
+\[
+  (1-\varepsilon)\,\|u-v\|^2 \;\le\; \|f(u)-f(v)\|^2 \;\le\; (1+\varepsilon)\,\|u-v\|^2.
+\]
 \end{theorem}
 
-\begin{lemma}[Measurability of bad-single event]
+\begin{lemma}[Measurability of the single-vector distortion event]
 \lean{measurableSet_badSingle}
 \label{measurableSet_badSingle}
 \leanok
 \uses{BadSingle}
 \difficulty{4}
-For any measurable map $A : \Omega \to \mathrm{Matrix}(\mathrm{Fin}\,k,
-\mathrm{Fin}\,d,\mathbb{R})$, fixed $x \in \mathbb{R}^d$, and $\varepsilon \in
-\mathbb{R}$, the set $\{\omega \mid \text{BadSingle}\;\varepsilon\;(A\,\omega)\;x\}$
-is measurable.  The key step is that each coordinate map
-$\omega \mapsto (A\,\omega \cdot \text{toEuclideanLin}\; x)_i$ is measurable, hence
-so is the squared norm.
+Fix a vector $x\in\bbr^d$ and a real number $\varepsilon$, and let
+$(\Omega,\mathcal{F})$ be a measurable space. Suppose $A\colon\Omega\to\bbr^{k\times d}$
+is a measurable map assigning to each $\omega$ a $k\times d$ real matrix $A(\omega)$.
+Then the set of outcomes on which $x$ is badly distorted,
+\[
+\bigl\{\,\omega\in\Omega \;:\; \varepsilon\,\|x\|^2 < \bigl|\,\|A(\omega)\,x\|^2 -
+\|x\|^2\,\bigr|\,\bigr\},
+\]
+is measurable.
 \end{lemma}
 
-\begin{lemma}[Existence of i.i.d.\ Gaussian matrix]
+\begin{lemma}[Existence of a Gaussian matrix with independent entries]
 \lean{exists_iid_gaussian_matrix}
 \label{exists_iid_gaussian_matrix}
 \leanok
 \difficulty{6}
-For any $k > 0$ and $d \ge 0$, there exists a probability space
-$(\Omega, \mathcal{F}, \mu)$ carrying a measurable random matrix
-$A : \Omega \to \mathrm{Matrix}(\mathrm{Fin}\,k, \mathrm{Fin}\,d, \mathbb{R})$
-whose entries are i.i.d.\ $\mathcal{N}(0, 1/k)$, with rows mutually independent
-and entries within each row jointly independent.
+Let $k \ge 1$ and $d \ge 0$ be integers. Then there is a probability space $(\Omega,
+\mathcal{F}, \mu)$ carrying a measurable map $\omega \mapsto A(\omega)$, valued in the
+$k \times d$ real matrices, with the following properties: each entry $A_{ij}$, for $1
+\le i \le k$ and $1 \le j \le d$, has law $\mathcal{N}(0, 1/k)$ (mean zero and variance
+$1/k$); for each row index $i$ the family of entries $(A_{ij})_{j}$ is jointly
+independent; and the family of rows $\bigl((A_{ij})_{j}\bigr)_{i}$ is jointly
+independent.
 \end{lemma}
 
-\begin{lemma}[Numerical failure-probability bound]
+\begin{lemma}[Numerical failure-probability bound for Johnson–Lindenstrauss]
 \lean{jl_failure_bound_of_dim}
 \label{jl_failure_bound_of_dim}
 \leanok
 \difficulty{5}
-Given $0 < \varepsilon$, $n \ge 2$, $k \ge 32 \log n / \varepsilon^2$, and
-$|V| \le n$, this lemma derives (i) $k > 0$ and (ii)
-$|V|^2 \cdot 2\exp(-k\varepsilon^2/8) < 1$, the numerical precondition
-consumed by both \texttt{johnson\_lindenstrauss\_of\_gaussian} and
-\texttt{johnson\_lindenstrauss\_of\_subgaussian}.
+Let $\varepsilon > 0$ and let $n \ge 2$ be an integer, and suppose the target dimension
+$k$ satisfies $k \ge 32 \log n / \varepsilon^2$. Then for any finite set $V$ of points
+in a Euclidean space with $\abs{V} \le n$, one has $k > 0$ and \[ \abs{V}^2 \cdot
+2\exp\!\left(-\tfrac{k\varepsilon^2}{8}\right) < 1. \]
 \end{lemma}
 
-\begin{theorem}[Johnson--Lindenstrauss flattening lemma (Gaussian)]
+\begin{theorem}[Johnson–Lindenstrauss flattening lemma]
 \lean{johnson_lindenstrauss}
 \label{johnson_lindenstrauss}
 \leanok
 \uses{BadSingle, IsJLEmbedding, exists_iid_gaussian_matrix, jl_failure_bound_of_dim, johnson_lindenstrauss_of_gaussian, measurableSet_badSingle}
 \difficulty{2}
-For any $0 < \varepsilon < 1$, $n \ge 2$, $k \ge 32 \log n / \varepsilon^2$,
-and any finite set $V \subseteq \mathbb{R}^d$ of at most $n$ points, there
-exists a linear map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ that is an
-$\varepsilon$-JL embedding of $V$, i.e.\ it satisfies
-$(1 - \varepsilon)\|u-v\|^2 \le \|f(u)-f(v)\|^2 \le (1+\varepsilon)\|u-v\|^2$
+Let $0 < \varepsilon < 1$ and let $n \ge 2$ be an integer. Suppose the target dimension
+$k$ satisfies $k \ge 32\,\log n / \varepsilon^2$. Then for every finite set $V \subseteq
+\bbr^d$ of at most $n$ points there exists a linear map $f : \bbr^d \to \bbr^k$ that is
+an $\varepsilon$-JL embedding of $V$; that is,
+\[
+(1 - \varepsilon)\,\norm{u - v}^2 \;\le\; \norm{f(u) - f(v)}^2 \;\le\; (1 +
+\varepsilon)\,\norm{u - v}^2
+\]
 for all $u, v \in V$.
 \end{theorem}
 
-\begin{theorem}[Johnson--Lindenstrauss flattening lemma (sub-Gaussian)]
+\begin{theorem}[Johnson–Lindenstrauss flattening lemma]
 \lean{johnson_lindenstrauss_subgaussian}
 \label{johnson_lindenstrauss_subgaussian}
 \leanok
 \uses{BadSingle, IsJLEmbedding, hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_failure_bound_of_dim, johnson_lindenstrauss_of_subgaussian, measurableSet_badSingle, measurable_radMatrix, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
 \difficulty{3}
-Rademacher ($\pm 1/\sqrt{k}$ entries) analogue of \texttt{johnson\_lindenstrauss}:
-same hypotheses on $\varepsilon$, $n$, $k$, and $V$, same conclusion---an
-$\varepsilon$-JL embedding of $V$ exists---but now realized by a Rademacher
-matrix.  The proof uses the sub-Gaussian concentration bound
-\texttt{jl\_concentration\_single\_subgaussian} (which inherits the Hanson-Wright
-axiom) and the identical union-bound argument.
+Let $0 < \varepsilon < 1$, let $n \ge 2$ be an integer, and let $k$ be a target
+dimension satisfying $k \ge 32\,\log n / \varepsilon^2$. Then for every finite set $V$
+of at most $n$ points in $\bbr^d$ there exists a linear map $f \colon \bbr^d \to \bbr^k$
+such that every pair $u, v \in V$ has its squared distance preserved up to a factor
+$\varepsilon$:
+\[
+(1 - \varepsilon)\,\|u - v\|^2 \;\le\; \|f(u) - f(v)\|^2 \;\le\; (1 + \varepsilon)\,\|u
+- v\|^2.
+\]
 \end{theorem}
 
-\begin{lemma}[Distance form of embedding]
+\begin{lemma}[Distance form of a JL embedding]
 \lean{jl_dist_of_embedding}
 \label{jl_dist_of_embedding}
 \leanok
 \uses{IsJLEmbedding, JLDistortion}
 \difficulty{4}
-If $f$ is an $\varepsilon$-JL embedding of $V$ (in the squared-distance sense),
-then for all $u, v \in V$,
+Let $0 < \varepsilon < 1$, let $V$ be a finite set of points in $\bbr^d$, and let $f :
+\bbr^d \to \bbr^k$ be a linear map that is an $\varepsilon$-JL embedding of $V$, so that
+for every pair $u, v \in V$ one has $(1-\varepsilon)\,\|u-v\|^2 \le \|f(u)-f(v)\|^2 \le
+(1+\varepsilon)\,\|u-v\|^2$. Then for all $u, v \in V$,
 \[
-  \sqrt{1-\varepsilon}\,\|u - v\| \;\le\; \|f(u) - f(v)\| \;\le\;
-  \sqrt{1+\varepsilon}\,\|u - v\|,
+\sqrt{1-\varepsilon}\,\|u - v\| \;\le\; \|f(u) - f(v)\| \;\le\;
+\sqrt{1+\varepsilon}\,\|u - v\|.
 \]
-obtained by taking square roots of the \texttt{JLDistortion} bounds.
 \end{lemma}
 
-\begin{theorem}[JL flattening --- distance form (Gaussian)]
+\begin{theorem}[Johnson–Lindenstrauss flattening in distance form]
 \lean{johnson_lindenstrauss_dist}
 \label{johnson_lindenstrauss_dist}
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss}
 \difficulty{1}
-Under the same hypotheses as \texttt{johnson\_lindenstrauss}, there exists a linear
-map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ such that for all $u, v \in V$,
+Let $\varepsilon \in (0,1)$ and let $n \ge 2$ be an integer, and suppose the target
+dimension $k$ satisfies $k \ge 32\,\log n / \varepsilon^2$. Then for every finite set $V
+\subseteq \bbr^d$ of at most $n$ points there exists a linear map $f : \bbr^d \to
+\bbr^k$ such that, for all $u, v \in V$,
 \[
-  \sqrt{1-\varepsilon}\,\|u - v\| \;\le\; \|f(u) - f(v)\| \;\le\;
-  \sqrt{1+\varepsilon}\,\|u - v\|.
+\sqrt{1-\varepsilon}\,\norm{u - v} \;\le\; \norm{f(u) - f(v)} \;\le\;
+\sqrt{1+\varepsilon}\,\norm{u - v},
 \]
+where $\norm{\cdot}$ denotes the Euclidean norm.
 \end{theorem}
 
-\begin{theorem}[JL flattening --- distance form (sub-Gaussian)]
+\begin{theorem}[Johnson–Lindenstrauss flattening: distance form]
 \lean{johnson_lindenstrauss_subgaussian_dist}
 \label{johnson_lindenstrauss_subgaussian_dist}
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss_subgaussian}
 \difficulty{1}
-Under the same hypotheses as \texttt{johnson\_lindenstrauss\_subgaussian}, there
-exists a linear map $f : \mathbb{R}^d \to_L \mathbb{R}^k$ satisfying the same
-two-sided distance-ratio bounds as \texttt{johnson\_lindenstrauss\_dist}, now
-realized by a Rademacher random matrix.
+Let $\varepsilon \in (0,1)$ and let $n \ge 2$ be an integer. Suppose $k$ is a natural
+number with $k \ge 32\,(\log n)/\varepsilon^2$, and let $V$ be a finite set of at most
+$n$ points in $\bbr^d$. Then there exists a linear map $f : \bbr^d \to \bbr^k$ such that
+for all $u, v \in V$,
+\[
+\sqrt{1-\varepsilon}\,\norm{u-v} \;\le\; \norm{f(u)-f(v)} \;\le\;
+\sqrt{1+\varepsilon}\,\norm{u-v}.
+\]
 \end{theorem}
 
-\begin{theorem}[Logarithmic dimension bound (Gaussian)]
+\begin{theorem}[Existence of a Johnson–Lindenstrauss dimension threshold]
 \lean{johnson_lindenstrauss_dim_bound}
 \label{johnson_lindenstrauss_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss}
 \difficulty{2}
-For any $0 < \varepsilon < 1$ and $n \ge 2$, there exists a threshold
-$k_0 \in \mathbb{N}$ such that for every $k \ge k_0$, every ambient
-dimension $d$, and every set $V \subseteq \mathbb{R}^d$ of at most $n$ points,
-an $\varepsilon$-JL embedding $f : \mathbb{R}^d \to_L \mathbb{R}^k$ of $V$
-exists.  In particular the target dimension is $O(\log n / \varepsilon^2)$.
+Let $\varepsilon$ be a real number with $0 < \varepsilon < 1$, and let $n \ge 2$ be an
+integer. Then there is a threshold $k_0 \in \bbn$ such that for every target dimension
+$k \ge k_0$, every ambient dimension $d$, and every finite set $V \subseteq \bbr^d$ of
+at most $n$ points, there exists a linear map $f : \bbr^d \to \bbr^k$ that is an
+$\varepsilon$-JL embedding of $V$; that is, for all $u, v \in V$,
+\[
+(1 - \varepsilon)\,\norm{u - v}^2 \;\le\; \norm{f(u) - f(v)}^2 \;\le\; (1 +
+\varepsilon)\,\norm{u - v}^2.
+\]
 \end{theorem}
 
-\begin{theorem}[Logarithmic dimension bound (sub-Gaussian)]
+\begin{theorem}[Dimension threshold for Johnson–Lindenstrauss embeddings]
 \lean{johnson_lindenstrauss_subgaussian_dim_bound}
 \label{johnson_lindenstrauss_subgaussian_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss_subgaussian}
 \difficulty{2}
-Sub-Gaussian (Rademacher) analogue of \texttt{johnson\_lindenstrauss\_dim\_bound}:
-same threshold $k_0 = O(\log n / \varepsilon^2)$, same universal conclusion for
-all $k \ge k_0$, $d$, and $V$ of size at most $n$, but inheriting the
-Hanson-Wright axiom from the sub-Gaussian concentration chain.
+Fix a distortion parameter $\varepsilon$ with $0 < \varepsilon < 1$ and an integer $n
+\ge 2$. Then there is a threshold $k_0 \in \bbn$ such that for every target dimension $k
+\ge k_0$, every source dimension $d$, and every finite set $V \subseteq \bbr^d$ of at
+most $n$ points, there exists a linear map $f : \bbr^d \to \bbr^k$ that is an
+$\varepsilon$-JL embedding of $V$: that is, $(1-\varepsilon)\,\|u - v\|^2 \le \|f(u) -
+f(v)\|^2 \le (1+\varepsilon)\,\|u - v\|^2$ for all $u, v \in V$.
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "DecisionTree.coeffs_eq_zero_of_depth_lt",
+ "key": "8c887d08806eeb12",
+ "kind": "lemma",
+ "title": "Fourier coefficients vanish above the tree depth",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and let $S \\subseteq \\{0,1,\\dots,n-1\\}$ be a set of variables whose cardinality $\\abs{S}$ exceeds the depth of $T$. Then the coefficient assigned to the frequency $S$ vanishes, $\\mathrm{coeffs}\\,T\\,S = 0$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n variables",
+  "S is a subset of the variable indices",
+  "depth of T is strictly less than the cardinality of S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $T.\\mathrm{depth} < \\abs{S}$, then $\\mathrm{coeffs}\\,T\\,S = 0$: frequencies of\ncardinality exceeding the tree depth carry no weight."
+}

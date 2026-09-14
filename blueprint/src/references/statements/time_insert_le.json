@@ -1,0 +1,16 @@
+{
+ "lean_name": "time_insert_le",
+ "key": "cc91aae773eafd54",
+ "kind": "theorem",
+ "title": "Cost of one ordered insertion",
+ "statement": "Let $\\alpha$ carry a linear order, and for $x \\in \\alpha$ and a list $\\mathit{xs}$ over $\\alpha$ let $\\mathrm{insert}(x, \\mathit{xs})$ denote the ordered insertion that scans $\\mathit{xs}$ from the front, spending one unit of time on each element compared, until it reaches the first entry not smaller than $x$. Then the time cost incurred by $\\mathrm{insert}(x, \\mathit{xs})$ is at most the length of $\\mathit{xs}$.",
+ "hypotheses_covered": [
+  "α is a linear order",
+  "x is an element of α",
+  "xs is a list over α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Inserting $x$ into a list $\\mathit{xs}$ costs at most $\\abs{\\mathit{xs}}$ comparisons."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_congr_ae_left_right",
+ "key": "f80322e27d17119a",
+ "kind": "theorem",
+ "title": "Conditional mutual information under a.e. change of both arguments",
+ "statement": "Let $\\mu$ be a probability measure on a sample space $\\Omega$, and let $X, X' \\colon \\Omega \\to S$, $Y, Y' \\colon \\Omega \\to T$, and $Z \\colon \\Omega \\to U$ be measurable maps into countable spaces, each taking only finitely many values $\\mu$-almost surely. If $X = X'$ and $Y = Y'$ hold $\\mu$-almost everywhere, then the conditional mutual informations agree:\n\\[\nI[X : Y \\mid Z\\,;\\,\\mu] \\;=\\; I[X' : Y' \\mid Z\\,;\\,\\mu].\n\\]",
+ "hypotheses_covered": [
+  "μ is a probability measure",
+  "X, Y, Z, X', Y' measurable into countable spaces",
+  "each of X, Y, Z, X', Y' has finite range",
+  "X = X' μ-almost everywhere",
+  "Y = Y' μ-almost everywhere"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under a probability measure, if $X =^{\\mu\\text{-a.e.}} X'$ and $Y =^{\\mu\\text{-a.e.}} Y'$,\nthen $I[X : Y \\mid Z;\\mu] = I[X' : Y' \\mid Z;\\mu]$ (the conditioning variable $Z$ is\nunchanged)."
+}

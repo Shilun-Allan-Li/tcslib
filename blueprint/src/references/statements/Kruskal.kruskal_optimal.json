@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.kruskal_optimal",
+ "key": "9a813d4899ff26ee",
+ "kind": "theorem",
+ "title": "Optimality of Kruskal's algorithm",
+ "statement": "Let $E$ be a list of weighted edges on $n$ vertices, and let $S$ be another such list in which every edge is also an edge of $E$. Suppose that $S$ spans like $E$: whenever two vertices $u$ and $v$ are joined by a path through the edges of $E$, they are also joined by a path through the edges of $S$. Let $K$ denote the edge list produced by Kruskal's algorithm on $E$, and write $w(e)$ for the weight of an edge $e$. Then the total weight of $K$ is no greater than that of $S$:\n\\[\n  \\sum_{e \\in K} w(e) \\;\\le\\; \\sum_{e \\in S} w(e).\n\\]",
+ "hypotheses_covered": [
+  "S is a sub-collection of E (every edge of S lies in E)",
+  "S spans like E (E-reachability implies S-reachability)",
+  "edges live on n vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $S$ is a sublist of $E$ that spans like $E$, then\n\\[\n  \\mathrm{totalWeight}\\bigl(\\mathrm{kruskal}\\;n\\;E\\bigr) \\;\\le\\; \\mathrm{totalWeight}(S),\n\\]\nso Kruskal's output has minimum total weight among all spanning subsets of $E$."
+}

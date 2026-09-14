@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.restrictFn_composeRestr'",
+ "key": "f7c3d6b40925eab2",
+ "kind": "lemma",
+ "title": "Restricting by a composed restriction in two stages",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be a Boolean function on $n$ variables, and let $\\rho_1, \\rho_2$ be two restrictions on those variables, each fixing some coordinates to Boolean values and leaving the rest free. Write $\\rho_1 \\circ \\rho_2$ for their composition, the restriction that on each coordinate uses the value fixed by $\\rho_1$ when there is one and otherwise the value assigned by $\\rho_2$, and for a restriction $\\rho$ write $f\\!\\restriction_\\rho$ for the function obtained from $f$ by fixing the coordinates set by $\\rho$ and evaluating on the remaining free coordinates. Then restricting $f$ by the composition $\\rho_1 \\circ \\rho_2$ gives the same function as first restricting $f$ by $\\rho_1$ and then restricting the function $f\\!\\restriction_{\\rho_1}$ by $\\rho_2$:\n\\[\n  f\\!\\restriction_{\\rho_1 \\circ \\rho_2} \\;=\\; \\bigl(f\\!\\restriction_{\\rho_1}\\bigr)\\!\\restriction_{\\rho_2}.\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on Fin n → Bool",
+  "ρ₁ is a restriction on n variables",
+  "ρ₂ is a restriction on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a Boolean function $f$ and restrictions $\\rho_1,\\rho_2$, restricting by the composed\nrestriction equals restricting by $\\rho_1$ and then by $\\rho_2$:\n\\[\n  \\mathrm{restrictFn}\\,f\\,(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2)\n    = \\mathrm{restrictFn}\\,(\\mathrm{restrictFn}\\,f\\,\\rho_1)\\,\\rho_2.\n\\]"
+}

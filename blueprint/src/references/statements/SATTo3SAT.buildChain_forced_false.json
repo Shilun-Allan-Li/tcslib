@@ -1,0 +1,18 @@
+{
+ "lean_name": "SATTo3SAT.buildChain_forced_false",
+ "key": "8d65fe62ebbcbfd3",
+ "kind": "lemma",
+ "title": "Contradiction from a satisfied chain of all-false literals",
+ "statement": "Fix a clause index $i$ and an assignment $\\alpha$ of truth values to the auxiliary variables. Let $\\ell \\mapsto \\widehat{\\ell}$ be a map lifting each literal over the base variable type to a literal over the auxiliary-variable type, let $j \\ge 1$, and let $L$ be a list of at least two literals over the base type such that the lifted literal $\\widehat{\\ell}$ evaluates to false under $\\alpha$ for every $\\ell$ in $L$. If every 3-clause of the chain encoding built from clause index $i$, the lifting $\\ell \\mapsto \\widehat{\\ell}$, the list $L$, and the counter $j$ is satisfied by $\\alpha$, then $\\alpha$ cannot also make the entry variable $y_{i,\\,j-1}$ true; these hypotheses taken together are contradictory.",
+ "hypotheses_covered": [
+  "counter j ≥ 1",
+  "the literal list has length at least 2",
+  "the lifted literal of every member of the list is false under α",
+  "every 3-clause of the chain encoding is satisfied by α",
+  "the entry auxiliary variable y_{i,j-1} is true under α (jointly contradictory)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $y_{j-1}$ is true, every $ml$-lifted literal in $\\mathit{lits}$ is false under $\\alpha_3$,\nand every 3-clause in $\\texttt{SATTo3SAT.buildChain}\\,c\\_idx\\,ml\\,\\mathit{lits}\\,j$ is satisfied\nby $\\alpha_3$ (with $j \\ge 1$ and $|\\mathit{lits}| \\ge 2$), then a contradiction follows:\nthe auxiliary variables are forced true one by one until the final chain clause has all\nthree disjuncts false."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.time_bind",
+ "key": "1644e82ba7726d6e",
+ "kind": "theorem",
+ "title": "Additivity of time cost under bind",
+ "statement": "Model a computation as a pair consisting of a return value in a type $\\alpha$ together with an accumulated time cost drawn from a type $T$ equipped with an addition operation; write $\\mathrm{ret}(\\cdot)$ for the returned value and $\\mathrm{time}(\\cdot)$ for the cost. Given such a computation $m$ and a continuation $f$ that assigns to each value of type $\\alpha$ a further computation returning a value of type $\\beta$, the sequential composition $m \\gg\\!= f$ (run $m$, then run $f$ on its result) has cost equal to the cost of $m$ plus the cost of running $f$ on the value returned by $m$: \\[ \\mathrm{time}(m \\gg\\!= f) = \\mathrm{time}(m) + \\mathrm{time}\\bigl(f(\\mathrm{ret}(m))\\bigr). \\]",
+ "hypotheses_covered": [
+  "cost type T carries an addition operation",
+  "m is a computation returning a value of type α",
+  "f maps each value of type α to a computation returning a value of type β"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The time cost of the bind of $m$ with $f$ is $m.\\mathrm{time} + (f\\,m.\\mathrm{ret}).\\mathrm{time}$."
+}

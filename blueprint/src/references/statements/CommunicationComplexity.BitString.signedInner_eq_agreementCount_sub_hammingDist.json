@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.BitString.signedInner_eq_agreementCount_sub_hammingDist",
+ "key": "9b38383988be0985",
+ "kind": "theorem",
+ "title": "Signed inner product as agreements minus Hamming distance",
+ "statement": "Let $x$ and $y$ be two $n$-bit strings. Their signed inner product $\\langle x, y\\rangle$ is the integer $\\sum_{i} \\varepsilon_i$, where $\\varepsilon_i = +1$ at each coordinate $i$ on which $x_i = y_i$ and $\\varepsilon_i = -1$ at each coordinate on which $x_i \\neq y_i$. Writing $a(x,y)$ for the agreement count of $x$ and $y$, the number of coordinates on which they agree, and $d_H(x,y)$ for the Hamming distance between them, the number of coordinates on which they differ, one has\n\\[\n  \\langle x, y\\rangle \\;=\\; a(x,y) - d_H(x,y),\n\\]\nan equality of integers in which the two counts are regarded as integers.",
+ "hypotheses_covered": [
+  "x and y are n-bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two $n$-bit strings $x$ and $y$,\n\\[\n  \\mathrm{signedInner}(x, y) \\;=\\; \\mathrm{agreementCount}(x, y) - \\mathrm{hammingDist}(x, y).\n\\]\nThat is, the signed inner product equals the number of agreeing coordinates minus\nthe number of disagreeing coordinates."
+}

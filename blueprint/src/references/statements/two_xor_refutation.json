@@ -1,0 +1,17 @@
+{
+ "lean_name": "two_xor_refutation",
+ "key": "bc9338cc83062032",
+ "kind": "theorem",
+ "title": "2-XOR refutation bound",
+ "statement": "Fix natural numbers $k, n, d$ with $k \\ge 1$, $n \\ge 2$, and $d \\ge 1$. Then there is a positive constant $C_0 > 0$ such that for every natural number $n_P$ satisfying $n_P\\, d \\le n k$, one has\n\\[\n  n \\, \\sqrt{n_P} \\, \\sqrt{k \\log n}\n    \\;\\le\\; C_0 \\, n \\, k \\, \\sqrt{\\frac{\\log n}{d}} ,\n\\]\nwhere $\\log$ denotes the natural logarithm.",
+ "hypotheses_covered": [
+  "k \\ge 1",
+  "n \\ge 2",
+  "d \\ge 1",
+  "quantifier over natural numbers n_P with n_P d \\le nk"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $k, n, d$ be natural numbers with $0 < k$, $2 \\le n$ and $0 < d$. Then there is a\nconstant $C_0 > 0$ such that for every number of heavy pairs $n_P$ satisfying\n$n_P \\cdot d \\le n k$ one has\n\\[\n  n \\, \\sqrt{n_P} \\, \\sqrt{k \\log n}\n    \\;\\le\\; C_0 \\, n \\, k \\, \\sqrt{\\frac{\\log n}{d}} .\n\\]\nIn other words, the bound coming from the spectral estimate\n$\\sqrt{n \\abs{P}} \\cdot \\norm{A}_2$ together with $\\abs{P} \\le nk/d$ is\n$O\\!\\left(n k \\sqrt{\\log n / d}\\right)$.\n\n\\emph{Placeholder.}  The constant $C_0$ is quantified after $n$ and the Lean proof takes\n$C_0 := 1 + n$, so it is not a constant at all and the bound carries no refutation content.\nLemma 7.1 is \\emph{not} formalised here."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "hedgePrediction_loss_le_hedgeLoss",
+ "key": "644b66cc6ce708ff",
+ "kind": "lemma",
+ "title": "Jensen bound for Hedge's weighted-average prediction",
+ "statement": "Fix $N \\ge 1$ experts, a horizon of $T$ rounds, a learning rate $\\eta \\in \\bbr$, and a convex set $S \\subseteq \\bbr$. Let $\\ell : \\bbr \\times \\Omega \\to \\bbr$ be a loss function, let $e_t(i) \\in \\bbr$ be expert $i$'s prediction at round $t$, and let $o_t \\in \\Omega$ be the outcome at round $t$; write $L_{t,i} = \\ell(e_t(i), o_t)$ for the induced loss table and let $q_t(i)$ denote the Hedge distribution over the experts computed from $L$ at round $t$. Suppose every prediction $e_t(i)$ lies in $S$, and that for each round $t$ the map $x \\mapsto \\ell(x, o_t)$ is convex on $S$. Then at every round $t$ the loss of Hedge's weighted-average prediction $\\widehat{x}_t = \\sum_{i} q_t(i)\\, e_t(i)$ is at most its expected loss under $q_t$:\n\\[\n  \\ell\\!\\left(\\widehat{x}_t,\\, o_t\\right)\n  \\;\\le\\;\n  \\sum_{i=1}^{N} q_t(i)\\, \\ell\\!\\left(e_t(i),\\, o_t\\right).\n\\]",
+ "hypotheses_covered": [
+  "at least one expert ($N \\ge 1$)",
+  "$S$ is a convex subset of $\\mathbb{R}$",
+  "every expert prediction lies in $S$",
+  "for each round $t$, $x \\mapsto \\ell(x, o_t)$ is convex on $S$",
+  "a learning rate $\\eta \\in \\mathbb{R}$",
+  "a fixed round $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses as above, assume additionally that for each round $t$ the\nmap $x \\mapsto \\ell(x, o_t)$ is convex on $S$.  Then Jensen's inequality gives, for\nevery $t$,\n\\[\n  \\ell\\!\\left(\\widehat{x}_t,\\, o_t\\right)\n  \\;\\le\\;\n  \\texttt{hedgeLoss}\\,\\eta\\,L\\,t\n  \\;=\\;\n  \\sum_{i} w^{(\\eta)}_{t,i}\\,\\ell(p_t(i),\\, o_t).\n\\]\nThat is, the loss of the averaged prediction is at most the Hedge-weighted average of\nthe individual expert losses."
+}

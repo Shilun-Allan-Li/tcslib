@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.IsKCritical.not_uniquelyColorable_of_isVertexCut",
+ "key": "b27b81eb993e01fb",
+ "kind": "theorem",
+ "title": "Vertex cuts of critical graphs are not uniquely colourable",
+ "statement": "Let $G$ be a finite simple graph on a nonempty vertex set, and let $k$ be a natural number such that $G$ is $k$-critical (that is, $\\chi(G) = k$ and $\\chi(H) < k$ for every proper subgraph $H$ of $G$). Let $S$ be a vertex cut of $G$, i.e.\\ a proper subset of the vertices whose deletion leaves $G$ disconnected. Then the subgraph of $G$ induced on $S$ is not uniquely $(k-1)$-colourable: there exist two colourings of this induced subgraph with $k-1$ colours that induce different partitions of $S$ into colour classes.",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "the vertex set is nonempty",
+  "G is k-critical (k-chromatic and critical)",
+  "S is a vertex cut of G (proper subset whose deletion disconnects G)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{A graph \\texttt{G} is uniquely \\texttt{k}-colourable\nif any two \\texttt{k}-colourings of \\texttt{G} induce the same partition of \\texttt{V}.\nShow that no\nvertex cut of a \\texttt{k}-critical graph induces a uniquely \\texttt{(k-1)}-colourable\nsubgraph.}"
+}

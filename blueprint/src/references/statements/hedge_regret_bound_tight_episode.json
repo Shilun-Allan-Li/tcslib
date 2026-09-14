@@ -1,0 +1,18 @@
+{
+ "lean_name": "hedge_regret_bound_tight_episode",
+ "key": "f280cb3226d40c4f",
+ "kind": "theorem",
+ "title": "Hedge regret bound against an adaptive adversary",
+ "statement": "Fix $N \\ge 1$ experts, a horizon of $T$ rounds, and a learning rate $\\eta > 0$. Let the Hedge algorithm with rate $\\eta$ — the learner policy whose round-$t$ distribution is the exponential-weights distribution $p_t(i) \\propto \\exp(-\\eta L_t(i))$ built from the past realized cumulative losses — play against an arbitrary adaptive adversary, whose loss vectors have every coordinate in $[0,1]$ and may depend on the full history of losses and on the learner's current distribution. Let $\\ell$ be the loss sequence realized over the $T$ rounds of this interaction. Then the regret of Hedge, its cumulative expected loss minus the least cumulative loss $L^* = \\min_{i} L_T(i)$ of any single expert in hindsight, satisfies\n\\[\n  R_T(\\eta) \\;\\le\\; \\frac{\\log N}{\\eta} + \\frac{\\eta\\, T}{8}.\n\\]",
+ "hypotheses_covered": [
+  "at least one expert, N ≥ 1",
+  "positive learning rate η > 0",
+  "arbitrary adaptive adversary with loss coordinates in [0,1]",
+  "horizon of T rounds",
+  "losses realized by running Hedge against the adversary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $N, T \\ge 1$, learning rate $\\eta > 0$, and adaptive adversary,\nthe regret of the Hedge policy with rate $\\eta$ on the generated episode\nsatisfies\n\\[\n  \\mathrm{regret}(\\eta,\\; \\texttt{episodeLossSeq}\\ T\\ (\\texttt{hedgePolicy}\\ N\\ \\eta)\\ \\mathrm{adversary})\n  \\;\\le\\; \\frac{\\ln N}{\\eta} + \\frac{\\eta T}{8}.\n\\]"
+}

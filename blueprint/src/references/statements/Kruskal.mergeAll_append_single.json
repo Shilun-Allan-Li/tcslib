@@ -1,0 +1,17 @@
+{
+ "lean_name": "Kruskal.mergeAll_append_single",
+ "key": "47d7969acfbbdb91",
+ "kind": "lemma",
+ "title": "Appending a final edge to a merge fold",
+ "statement": "Fix $n \\in \\bbn$ and a union-find state $\\mathit{uf} \\colon \\mathrm{Fin}\\,n \\to \\bbn$ on $n$ nodes. For any list $l$ of weighted edges over $n$ vertices and any single weighted edge $e$ over $n$ vertices with endpoints $u$ and $v$, merging all edges of the list $l \\mathbin{+\\!\\!+} [e]$ into $\\mathit{uf}$ in order produces the same union-find state as first merging all edges of $l$ into $\\mathit{uf}$ in order and then merging the components of $u$ and $v$ in the state so obtained.",
+ "hypotheses_covered": [
+  "number of nodes n : ℕ",
+  "union-find state uf : Fin n → ℕ",
+  "list l of weighted edges over n vertices",
+  "single weighted edge e over n vertices with endpoints u, v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Merging along $l \\mathbin{+\\!\\!+} [e]$ equals first merging along $l$ and then merging the\nendpoints of $e$:\n$\\mathit{uf}.\\mathtt{mergeAll}\\,(l \\mathbin{+\\!\\!+} [e]) = (\\mathit{uf}.\\mathtt{mergeAll}\\,l).\\mathtt{merge}\\,e.u\\,e.v$."
+}

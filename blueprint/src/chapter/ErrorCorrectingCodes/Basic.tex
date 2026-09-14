@@ -155,73 +155,80 @@ implemented as a \texttt{Finset}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Basic lemma: distance vs.\ block length}
 
-\begin{lemma}[Distance is at most block length]
+\begin{lemma}[Minimum distance is at most the block length]
 \lean{ErrorCorrectingCodes.Codeword.dist_le_length}
 \label{ErrorCorrectingCodes.Codeword.dist_le_length}
 \leanok
 \difficulty{3}
-If a code $C$ has minimum distance $d$, then $d \le n$.
+Let $C$ be a code of length $n$ over an alphabet $\alpha$ — that is, a finite set of
+codewords, each a function $\mathrm{Fin}\,n \to \alpha$ — and let $d$ be a natural
+number that is the minimum distance of $C$: there exist two distinct codewords of $C$ at
+Hamming distance exactly $d$, and every pair of distinct codewords of $C$ is at Hamming
+distance at least $d$. Then $d \le n$.
 \end{lemma}
 
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Alphabet size positive]
+\begin{lemma}[Positivity of a natural number at least two]
 \lean{ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le}
 \label{ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le}
 \leanok
 \difficulty{1}
-If $q \ge 2$, then $q > 0$ as a real number.
+Let $q$ be a natural number with $q \ge 2$. Then its image in the real numbers satisfies
+$0 < q$.
 \end{lemma}
 
-\begin{lemma}[Alphabet size exceeds one]
+\begin{lemma}[One is less than a natural number at least two]
 \lean{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \label{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \leanok
 \difficulty{1}
-If $q \ge 2$, then $1 < q$ as a real number.
+For any natural number $q$ with $q \ge 2$, the image of $q$ under the canonical
+embedding of the naturals into the reals satisfies $1 < q$.
 \end{lemma}
 
-\begin{lemma}[$q-1$ positive]
+\begin{lemma}[Positivity of $q-1$ for $q \ge 2$]
 \lean{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
 \label{ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \difficulty{2}
-If $q \ge 2$, then $0 < q - 1$ as a real number.
+Let $q$ be a natural number with $q \ge 2$. Then, regarded as a real number, $q - 1$ is
+strictly positive: $0 < q - 1$.
 \end{lemma}
 
-\begin{lemma}[Alphabet size differs from one]
+\begin{lemma}[Integers at least two are not one as reals]
 \lean{ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le}
 \label{ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le}
 \difficulty{2}
-If $q \ge 2$, then $q \ne 1$ as a real number.
+Let $q$ be a natural number with $q \ge 2$. Then, regarded as a real number, $q \ne 1$.
 \end{lemma}
 
-\begin{lemma}[$1-p$ positive when $p < 1$]
+\begin{lemma}[Positivity of one minus a subunital real]
 \lean{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \label{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \leanok
 \difficulty{1}
-If $p < 1$, then $0 < 1 - p$.
+Let $p$ be a real number with $p < 1$. Then $1 - p > 0$.
 \end{lemma}
 
-\begin{lemma}[$p(1-p)$ positive]
+\begin{lemma}[Positivity of $p(1-p)$ on the unit interval]
 \lean{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
 \label{ErrorCorrectingCodes.Codeword.mul_one_sub_pos}
 \leanok
 \uses{ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \difficulty{1}
-If $0 < p$ and $p < 1$, then $0 < p(1 - p)$.
+Let $p$ be a real number with $0 < p < 1$. Then $p(1-p) > 0$.
 \end{lemma}
 
-\begin{lemma}[Below $1 - 1/q$ implies below one]
+\begin{lemma}[A rate bound below one]
 \lean{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv}
 \label{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv}
 \leanok
 \difficulty{2}
-If $0 < q$ and $p \le 1 - 1/q$, then $p < 1$.
+Let $q$ and $p$ be real numbers with $q > 0$. If $p \le 1 - 1/q$, then $p < 1$.
 \end{lemma}
 

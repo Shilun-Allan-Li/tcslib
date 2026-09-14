@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiberMeasure_inter_fiber",
+ "key": "e73f96e1ff50129c",
+ "kind": "theorem",
+ "title": "Conditioning on a fiber is supported on that fiber",
+ "statement": "Fix a length $n \\ge 1$ and a deterministic protocol $p$ for the disjointness problem on inputs indexed by $\\{0,\\dots,n-1\\}$, and let $z$ be an achievable value of the coarse variable $Z = (M, T, X_{<T}, Y_{>T})$ recorded by the protocol. Write $F_z$ for the fiber of $Z$ above $z$, that is, the set of hard-distribution samples $\\omega$ with $Z(\\omega) = z$, and let $\\mu_z(\\cdot) = \\operatorname{vol}(\\cdot \\mid F_z)$ denote the hard distribution conditioned on the event $F_z$. Then for every set $S$ of samples,\n\\[\n  \\mu_z(F_z \\cap S) = \\mu_z(S),\n\\]\nwhere both sides are taken as real numbers. In other words, restricting to the conditioning event $F_z$ leaves the conditional measure unchanged, so $\\mu_z$ is supported on $F_z$.",
+ "hypotheses_covered": [
+  "a deterministic disjointness protocol p on n coordinates",
+  "z an achievable value of the coarse Z variable (M, T, X_{<T}, Y_{>T})",
+  "S an arbitrary set of hard-distribution samples",
+  "measures compared as real numbers (.real)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Intersecting with the defining $Z=z$ fiber does not change probabilities under the corresponding fiber measure."
+}

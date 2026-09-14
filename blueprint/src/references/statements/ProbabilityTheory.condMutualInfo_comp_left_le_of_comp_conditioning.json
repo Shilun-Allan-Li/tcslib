@@ -1,0 +1,19 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_comp_left_le_of_comp_conditioning",
+ "key": "cdb1433f08b4ce13",
+ "kind": "theorem",
+ "title": "Conditional data processing with conditioning-dependent maps",
+ "statement": "Let $X$, $Y$, and $Z$ be random variables on a probability space $(\\Omega, \\mu)$, taking values in countable measurable spaces $S$, $T$, and $U$ respectively, each measurable and of finite range. For any function $f \\colon U \\times S \\to V$ into a countable measurable space $V$, form the postprocessed variable $W(\\omega) = f\\bigl(Z(\\omega), X(\\omega)\\bigr)$, obtained by applying to $X$ a map that may itself depend on the conditioning value $Z$. Then the conditional mutual information satisfies\n\\[\n  I[\\,W : Y \\mid Z;\\, \\mu\\,] \\;\\le\\; I[\\,X : Y \\mid Z;\\, \\mu\\,].\n\\]",
+ "hypotheses_covered": [
+  "X, Y, Z random variables into countable measurable spaces S, T, U",
+  "each of X, Y, Z measurable",
+  "each of X, Y, Z has finite range",
+  "μ is a probability measure",
+  "f : U → S → V into a countable measurable space V",
+  "W(ω) = f(Z(ω), X(ω))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : U \\to S \\to V$ is any function (where $Z : \\Omega \\to U$ is the conditioning\nvariable), then applying $f(Z(\\omega))$ to $X(\\omega)$ before measuring mutual information\ncannot increase it:\n\\[\n  I[\\omega \\mapsto f(Z(\\omega))(X(\\omega)) : Y \\mid Z;\\mu]\n  \\;\\le\\; I[X : Y \\mid Z;\\mu].\n\\]"
+}

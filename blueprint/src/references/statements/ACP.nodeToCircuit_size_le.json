@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.nodeToCircuit_size_le",
+ "key": "be6b1d242257c2f0",
+ "kind": "theorem",
+ "title": "Exponential size bound for tree-unrolling",
+ "statement": "Let $F$ be a Boolean feedforward circuit from the inputs $\\mathrm{Fin}\\,n$ to an output type, in which every gate has finitely many input wires, and suppose $k \\in \\bbn$ bounds these arities, so that each gate has at most $k$ input wires. Then for every layer $m \\le \\mathrm{depth}(F)$ and every node $v$ of layer $m$, the tree-unrolling of $v$ is a Boolean circuit of size at most $(k+1)^m$.",
+ "hypotheses_covered": [
+  "Boolean feedforward circuit F with inputs Fin n",
+  "each gate has finite arity",
+  "k bounds every gate's arity (at most k input wires)",
+  "m is a layer index (m < depth + 1)",
+  "v is a node of layer m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every gate of $F$ has at most $k$ input wires, i.e.\\\n$\\mathrm{card}\\,(F.\\texttt{gates}\\ d\\ v).\\texttt{op}.\\iota \\le k$ for all $d$ and $v$,\nthen the unrolling of any node at layer $m$ has size at most $(k+1)^m$."
+}

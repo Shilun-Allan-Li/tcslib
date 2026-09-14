@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.support_dist",
+ "key": "f042d7a680c5bcab",
+ "kind": "lemma",
+ "title": "Hamming distance as the size of the support",
+ "statement": "Let $u,v$ be words of length $n$ over a finite alphabet $\\alpha$, that is, functions $\\mathrm{Fin}\\,n \\to \\alpha$. Then the Hamming distance between them equals the number of coordinates on which they differ:\n\\[\nd(u,v) = \\abs{\\{i \\in \\mathrm{Fin}\\,n : u_i \\ne v_i\\}}.\n\\]",
+ "hypotheses_covered": [
+  "u and v are words of length n over a finite alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two words $u,v$, the Hamming distance equals the cardinality of their support:\n$\\mathrm{hammingDist}(u,v) = |\\mathrm{support}(u,v)|$."
+}

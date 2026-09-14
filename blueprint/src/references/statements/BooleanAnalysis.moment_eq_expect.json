@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.moment_eq_expect",
+ "key": "bace2da8c1576b07",
+ "kind": "lemma",
+ "title": "Moments under the uniform measure",
+ "statement": "Let $P$ be a probability measure on the Boolean hypercube $\\{0,1\\}^n$ that assigns every singleton the uniform weight $2^{-n}$. Then for any Boolean function $f : \\{0,1\\}^n \\to \\bbr$ and any $p \\in \\bbn$, the $p$-th moment of $f$ under $P$ equals the uniform expectation of $f^p$:\n\\[\n  \\E_P\\!\\left[f^p\\right] \\;=\\; 2^{-n}\\sum_{x\\in\\{0,1\\}^n} f(x)^p.\n\\]",
+ "hypotheses_covered": [
+  "P is a probability measure on the Boolean hypercube",
+  "P assigns each singleton the uniform weight 2^{-n}",
+  "f is a Boolean function of arity n",
+  "p is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a probability measure on $\\{0,1\\}^n$ that assigns the uniform weight\nto each singleton.  Then for any Boolean function $f$ and $p\\in\\mathbb{N}$, the\n$p$-th moment of $f$ under $P$ equals the uniform expectation of $f^p$:\n\\[\n  \\mathbb{E}_P[f^p] \\;=\\; \\E\\!\\left[f(x)^p\\right].\n\\]"
+}

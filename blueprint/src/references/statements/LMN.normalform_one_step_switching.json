@@ -1,0 +1,20 @@
+{
+ "lean_name": "LMN.normalform_one_step_switching",
+ "key": "1c35198c5378d36a",
+ "kind": "theorem",
+ "title": "One-step switching bound for a layer-2 DNF circuit",
+ "statement": "Fix layer-2 data over $n \\ge 1$ Boolean variables: a family of $N$ gates, each computing a DNF formula, with a common width bound $w \\ge 1$ so that every gate has width at most $w$. Let $l \\in \\bbn$ and let $p \\in \\bbr$ satisfy $0 < p \\le \\tfrac{1}{40 w}$ and $p \\le 1$. Consider a Bernoulli($p$) random restriction $\\rho$ on the $n$ variables, in which each variable is independently left free with probability $p$ and otherwise fixed to $0$ or to $1$, each with probability $\\tfrac{1-p}{2}$. Then the probability that some gate $i$ has restricted function $f_i\\!\\restriction_\\rho$ (the gate's DNF evaluated on the free coordinates, with the fixed coordinates set by $\\rho$) of decision-tree depth greater than $l$ satisfies\n\\[\n  \\bbP\\!\\left[\\,\\exists\\, i:\\ \\mathrm{depth}\\big(f_i\\!\\restriction_\\rho\\big) > l\\,\\right]\n  \\;\\le\\; N\\left(\\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\big(-np/3\\big)\\right),\n\\]\nwhere $\\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $g$.",
+ "hypotheses_covered": [
+  "layer-2 data over n variables with N gates, common width bound w and w > 0",
+  "n ≥ 1 (0 < n)",
+  "threshold l ∈ ℕ",
+  "p > 0",
+  "p ≤ 1/(40·width)",
+  "p ≤ 1",
+  "probability taken over a Bernoulli(p) random restriction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor layer-2 data and a Bernoulli parameter $p$ with $0<p\\le 1/(40\\cdot\\mathrm{width})$ and\n$p\\le 1$, the probability that some gate's restricted function has decision-tree depth greater\nthan $l$ is at most\n\\[\n  \\mathrm{numGates}\\cdot\\left((1/2)^{l} + \\exp(-np/3)\\right).\n\\]"
+}

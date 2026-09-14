@@ -1,0 +1,18 @@
+{
+ "lean_name": "Kruskal.exchange_take_head'",
+ "key": "bde7d2af33f09497",
+ "kind": "lemma",
+ "title": "Edge exchange preserving reachability, reversed orientation",
+ "statement": "Fix $n$ and consider weighted edges on a vertex set of size $n$, each edge carrying a first and a second endpoint. For a list of edges $L$, write $a \\leadsto_L b$ to mean that $a$ reaches $b$ through $L$, i.e.\\ $a$ and $b$ are joined by a path whose edges lie in $L$ (the reflexive–transitive closure of the symmetric adjacency relation induced by $L$). Let $\\mathit{base}$ and $\\mathit{rest}$ be lists of weighted edges, and let $g$ and $e$ be weighted edges, with first and second endpoints $g_1, g_2$ and $e_1, e_2$ respectively. Suppose that, using the edges in the concatenation $\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest}$, the endpoint $e_1$ reaches $g_2$ and the endpoint $g_1$ reaches $e_2$. Then for every pair of vertices $a, b$: if $a \\leadsto b$ using the list obtained by placing $g$ at the front of $\\mathit{rest}$ and appending that to $\\mathit{base}$, then $a \\leadsto b$ using $\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest} \\mathbin{+\\!\\!+} [e]$, the concatenation of $\\mathit{base}$, $\\mathit{rest}$, and the single edge $e$.",
+ "hypotheses_covered": [
+  "in base ++ rest, first endpoint of e reaches second endpoint of g",
+  "in base ++ rest, first endpoint of g reaches second endpoint of e",
+  "a reaches b using base ++ (g prepended to rest)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "latex-unsafe"
+ ],
+ "replaced": "The same exchange statement with the endpoints of $g$ taken in the opposite order:\nif in $\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest}$ the vertex $e.u$ reaches $g.v$ and\n$g.u$ reaches $e.v$, then every pair reachable in\n$\\mathit{base} \\mathbin{+\\!\\!+} (g :: \\mathit{rest})$ is reachable in\n$\\mathit{base} \\mathbin{+\\!\\!+} \\mathit{rest} \\mathbin{+\\!\\!+} [e]$."
+}

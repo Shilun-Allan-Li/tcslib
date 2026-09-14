@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.width_le_iff_forall",
+ "key": "5a45a3720bbe697d",
+ "kind": "lemma",
+ "title": "Maximum term width bounded iff every term bounded",
+ "statement": "Let $t_1, \\dots, t_k$ be a finite list of terms, each a conjunction of literals, and let $\\ell$ be a natural number; write $w(t)$ for the width of a term (its number of literals). Then the maximum width over the list, taken to be $0$ when the list is empty, satisfies $\\max_{1 \\le i \\le k} w(t_i) \\le \\ell$ if and only if $w(t) \\le \\ell$ for every term $t$ in the list.",
+ "hypotheses_covered": [
+  "a finite list of terms",
+  "a natural-number bound $\\ell$",
+  "folded maximum of widths (with base value 0)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a list of terms $ts$, the folded maximum of their widths is at most $\\ell$ if and\nonly if every term $t \\in ts$ satisfies $t.\\mathrm{width} \\le \\ell$."
+}

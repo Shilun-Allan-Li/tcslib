@@ -1,0 +1,18 @@
+{
+ "lean_name": "binomial_ratio_upper",
+ "key": "e5f4d067e4ea2e43",
+ "kind": "theorem",
+ "title": "Binomial ratio bound, upper",
+ "statement": "Let $n, \\ell, q$ be natural numbers with $n > 0$, $q > 0$, $q \\le \\ell$, $2\\ell \\le n$, and $2q \\le n$. Then the ratio of real-valued binomial coefficients satisfies\n\\[\n  \\frac{\\binom{n-2q}{\\ell-q}}{\\binom{n}{\\ell}} \\ \\le\\ e^{3q}\\left(\\frac{\\ell}{n}\\right)^{q}.\n\\]",
+ "hypotheses_covered": [
+  "n > 0",
+  "q > 0",
+  "q ≤ ℓ",
+  "2ℓ ≤ n",
+  "2q ≤ n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFact 4.2 (upper half).  Let $n, \\ell, q$ be naturals with $n > 0$, $q > 0$, $q \\le \\ell$,\n$2\\ell \\le n$ and $2q \\le n$.  Then\n\\[\n  \\frac{\\binom{n-2q}{\\ell-q}}{\\binom{n}{\\ell}} \\ \\le\\ e^{3q}\\left(\\frac{\\ell}{n}\\right)^{q},\n\\]\nwhere both binomial coefficients are taken in $\\bbr$ via $\\texttt{chooseR}$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SATTo3SAT.transformClause_soundness",
+ "key": "96491c2c2b2e81a9",
+ "kind": "lemma",
+ "title": "Soundness of the clause-to-3-clause encoding",
+ "statement": "Fix a variable type $V$, a clause index $c \\in \\bbn$, and a clause $C$ over $V$ — a finite list of literals read as their disjunction. Let $\\alpha$ be a truth assignment to the auxiliary variables (the original variables of $V$ together with the fresh chain variables), and suppose that every $3$-clause produced by encoding $C$ at index $c$ is satisfied by $\\alpha$. Then $C$ has at least one literal that is true under the assignment obtained by reading each original variable $v$ through its copy among the auxiliary variables, i.e.\\ $v \\mapsto \\alpha(\\mathrm{orig}\\,v)$.",
+ "hypotheses_covered": [
+  "clause index c is a natural number",
+  "C is a clause (finite list of literals) over V",
+  "alpha is an assignment on the auxiliary variable type AuxVar V",
+  "every 3-clause in the encoding of C at index c is satisfied by alpha"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every 3-clause in $\\texttt{SATTo3SAT.transformClause}\\,c\\_idx\\,\\mathit{clause}$ is\nsatisfied by $\\alpha_3$, then the original clause has at least one true literal under\nthe restriction $v \\mapsto \\alpha_3(\\mathtt{orig}\\,v)$."
+}

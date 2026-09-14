@@ -1,0 +1,18 @@
+{
+ "lean_name": "jl_concentration_single_rademacher",
+ "key": "5a31deb446e7ff41",
+ "kind": "theorem",
+ "title": "Johnson–Lindenstrauss concentration for a single Rademacher projection",
+ "statement": "Let $k \\ge 1$ be an integer, let $x \\in \\bbr^d$ be a nonzero vector, and fix $\\varepsilon$ with $0 < \\varepsilon < 1$. Let $A$ be the $k \\times d$ matrix whose $kd$ entries are independent, each taking the values $+1/\\sqrt{k}$ and $-1/\\sqrt{k}$ with probability $1/2$ apiece. Then the squared norm $\\norm{Ax}^2$ concentrates about $\\norm{x}^2$, with the probability of a deviation exceeding $\\varepsilon\\norm{x}^2$ bounded by\n\\[\n  \\Pr\\!\\bigl[\\, \\varepsilon\\norm{x}^2 < \\bigl|\\,\\norm{Ax}^2 - \\norm{x}^2\\,\\bigr| \\,\\bigr]\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\frac{k\\varepsilon^2}{8}\\Bigr).\n\\]\nThe bound is Achlioptas's $\\pm1$-entry variant of the Johnson–Lindenstrauss lemma, with the Dasgupta–Gupta exponent.",
+ "hypotheses_covered": [
+  "k ≥ 1 (0 < k)",
+  "x is a nonzero vector in ℝ^d",
+  "0 < ε < 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Let $k, d \\geq 1$ and let $A$ be the Rademacher matrix $\\mathrm{radMatrix}(k,d)$\non the joint $\\pm 1$ sample space.  For every nonzero $x \\in \\mathbb{R}^d$ and\nevery $0 < \\varepsilon < 1$,\n\\[\n  \\Pr_{\\mathrm{radJointMeasure}}\\!\\bigl[\n    \\varepsilon\\norm{x}^2 < \\bigl|\\norm{A\\omega\\, x}^2 - \\norm{x}^2\\bigr|\n  \\bigr]\n  \\;\\leq\\; 2\\exp\\!\\Bigl(-\\frac{k\\varepsilon^2}{8}\\Bigr).\n\\]\nThis recovers Achlioptas's $\\pm 1$-entries variant of Johnson--Lindenstrauss\nwith the Dasgupta--Gupta exponent."
+}

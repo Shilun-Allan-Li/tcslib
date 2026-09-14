@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.child_size_le_parent",
+ "key": "15b9dec606140a54",
+ "kind": "lemma",
+ "title": "Child circuit size bounded by parent",
+ "statement": "Let $g$ be a Boolean circuit on $n$ variables that is a single gate — an AND or OR gate applied to a list of child circuits — and let $c$ be one of those children. If the size of $g$ (its total number of gate and literal nodes) is at most $s$, then the size of $c$ is at most $s - 1$.",
+ "hypotheses_covered": [
+  "g is a gate node (AND or OR) with a given list of children",
+  "c is a child in that list",
+  "the size of the node is at most s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a node circuit $\\mathrm{node}\\,\\mathit{isAnd}\\,cs$ has size at most $s$, then every\nchild $c \\in cs$ has size at most $s - 1$."
+}

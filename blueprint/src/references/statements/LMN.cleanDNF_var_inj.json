@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.cleanDNF_var_inj",
+ "key": "155b66d948e65a83",
+ "kind": "lemma",
+ "title": "Variable-injectivity of literals in a cleaned DNF",
+ "statement": "Let $d$ be a DNF formula over $n$ variables — a list of terms, each term a list of literals, where a literal names a variable in $\\{0,\\dots,n-1\\}$ together with a polarity (negated or not). Form a new formula $d'$ from $d$ by first discarding every term that contains two literals on the same variable with opposite polarities, and then, in each surviving term, keeping only the first literal encountered on each variable and deleting all later literals that repeat an already-kept variable. Then in every term of $d'$ the variable determines the literal: for any two literals $l_1, l_2$ occurring in such a term, if $l_1$ and $l_2$ name the same variable, then $l_1 = l_2$.",
+ "hypotheses_covered": [
+  "t is a term of the cleaned formula d'",
+  "l1 occurs in t",
+  "l2 occurs in t",
+  "l1 and l2 have the same variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In every term of $\\mathrm{cleanDNF}\\,d$, the variable determines the literal: for each such\nterm, any two of its literals with the same variable are equal."
+}

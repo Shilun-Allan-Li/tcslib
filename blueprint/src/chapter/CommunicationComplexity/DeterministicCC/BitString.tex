@@ -51,11 +51,12 @@ $\#\{i : x_i = y_i\}$ as a natural number.
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.agreementCount}
 \difficulty{2}
-For any two $n$-bit strings $x$ and $y$,
+Let $x$ and $y$ be $n$-bit strings. Then the number of coordinates on which $x$ and $y$
+agree, together with their Hamming distance $d(x, y)$ — the number of coordinates on
+which they differ — sums to the length:
 \[
-  \mathrm{agreementCount}(x, y) + \mathrm{hammingDist}(x, y) = n.
+  \#\{i : x_i = y_i\} + d(x, y) = n.
 \]
-The agreeing and disagreeing coordinates partition $\{0, \ldots, n-1\}$.
 \end{theorem}
 
 \begin{theorem}[Agreement count as complement of Hamming distance]
@@ -64,11 +65,13 @@ The agreeing and disagreeing coordinates partition $\{0, \ldots, n-1\}$.
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.agreementCount, CommunicationComplexity.BitString.agreementCount_add_hammingDist_eq_length}
 \difficulty{2}
-For any two $n$-bit strings $x$ and $y$, the agreement count satisfies
+Let $x, y : \mathrm{Fin}\,n \to \mathrm{Bool}$ be two $n$-bit strings, with agreement
+count $\mathrm{agr}(x,y)$ the number of coordinates on which they coincide and
+$d_H(x,y)$ their Hamming distance (the number of coordinates on which they differ).
+Then, as an identity of integers,
 \[
-  \mathrm{agreementCount}(x, y) = n - \mathrm{hammingDist}(x, y)
+  \mathrm{agr}(x,y) = n - d_H(x,y).
 \]
-as an equality of integers (after casting the natural numbers to $\mathbb{Z}$).
 \end{theorem}
 
 \begin{theorem}[Signed inner product via Hamming distance]
@@ -77,53 +80,68 @@ as an equality of integers (after casting the natural numbers to $\mathbb{Z}$).
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_append}
 \difficulty{4}
-For any two $n$-bit strings $x$ and $y$,
+Let $x, y$ be two $n$-bit strings, that is, functions from $\{0, 1, \dots, n-1\}$ to
+$\{0,1\}$, and let $d(x,y)$ denote their Hamming distance, the number of coordinates on
+which they disagree. Then their signed inner product — the sum over all coordinates of
+$+1$ where $x$ and $y$ agree and $-1$ where they disagree — satisfies
 \[
-  \mathrm{signedInner}(x, y) \;=\; n - 2\,\mathrm{hammingDist}(x, y).
+  \langle x, y\rangle_{\pm} \;=\; n - 2\,d(x, y).
 \]
 \end{theorem}
 
-\begin{theorem}[Signed inner product via agreement and disagreement counts]
+\begin{theorem}[Signed inner product as agreements minus Hamming distance]
 \lean{CommunicationComplexity.BitString.signedInner_eq_agreementCount_sub_hammingDist}
 \label{CommunicationComplexity.BitString.signedInner_eq_agreementCount_sub_hammingDist}
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.agreementCount, CommunicationComplexity.BitString.agreementCount_eq_length_sub_hammingDist, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_eq_length_sub_twice_hammingDist}
 \difficulty{2}
-For any two $n$-bit strings $x$ and $y$,
+Let $x$ and $y$ be two $n$-bit strings. Their signed inner product $\langle x, y\rangle$
+is the integer $\sum_{i} \varepsilon_i$, where $\varepsilon_i = +1$ at each coordinate
+$i$ on which $x_i = y_i$ and $\varepsilon_i = -1$ at each coordinate on which $x_i \neq
+y_i$. Writing $a(x,y)$ for the agreement count of $x$ and $y$, the number of coordinates
+on which they agree, and $d_H(x,y)$ for the Hamming distance between them, the number of
+coordinates on which they differ, one has
 \[
-  \mathrm{signedInner}(x, y) \;=\; \mathrm{agreementCount}(x, y) - \mathrm{hammingDist}(x, y).
+  \langle x, y\rangle \;=\; a(x,y) - d_H(x,y),
 \]
-That is, the signed inner product equals the number of agreeing coordinates minus
-the number of disagreeing coordinates.
+an equality of integers in which the two counts are regarded as integers.
 \end{theorem}
 
-\begin{theorem}[Signed inner product is additive under concatenation]
+\begin{theorem}[Additivity of the signed inner product under concatenation]
 \lean{CommunicationComplexity.BitString.signedInner_append}
 \label{CommunicationComplexity.BitString.signedInner_append}
 \leanok
 \uses{CommunicationComplexity.BitString.signedInner}
 \difficulty{3}
-For strings $x_1, y_1 : \mathrm{Fin}\,m \to \mathrm{Bool}$ and
-$x_2, y_2 : \mathrm{Fin}\,n \to \mathrm{Bool}$,
+Let $x_1, y_1 : \mathrm{Fin}\,m \to \mathrm{Bool}$ be $m$-bit strings and $x_2, y_2 :
+\mathrm{Fin}\,n \to \mathrm{Bool}$ be $n$-bit strings, and write $x_1 \frown x_2$ for
+the length-$(m+n)$ string obtained by concatenation, whose first $m$ coordinates are
+those of $x_1$ and whose last $n$ coordinates are those of $x_2$. Writing $\langle x,
+y\rangle$ for the signed inner product of two equal-length bit strings — the number of
+coordinates on which they agree minus the number on which they disagree — the signed
+inner product of the two concatenations splits as the sum of the block-wise signed inner
+products:
 \[
-  \mathrm{signedInner}(\mathrm{append}(x_1, x_2),\,\mathrm{append}(y_1, y_2))
-  \;=\; \mathrm{signedInner}(x_1, y_1) + \mathrm{signedInner}(x_2, y_2).
+  \langle x_1 \frown x_2,\; y_1 \frown y_2\rangle
+  \;=\; \langle x_1, y_1\rangle + \langle x_2, y_2\rangle.
 \]
-Concatenating both pairs of bit strings adds their signed inner products.
 \end{theorem}
 
-\begin{theorem}[Signed inner product is invariant under index recast]
+\begin{theorem}[Invariance of the signed inner product under reindexing]
 \lean{CommunicationComplexity.BitString.signedInner_comp_cast}
 \label{CommunicationComplexity.BitString.signedInner_comp_cast}
 \leanok
 \uses{CommunicationComplexity.BitString.signedInner}
 \difficulty{1}
-If $m = n$ and $x, y : \mathrm{Fin}\,n \to \mathrm{Bool}$, then
+Let $m$ and $n$ be natural numbers with $m = n$, and let $x, y \colon \mathrm{Fin}\,n
+\to \mathrm{Bool}$ be two $n$-bit strings, writing $\langle x, y\rangle$ for their
+signed inner product. The equality $m = n$ gives a bijection $\sigma \colon
+\mathrm{Fin}\,m \to \mathrm{Fin}\,n$, and precomposing with it turns $x$ and $y$ into
+the $m$-bit strings $x \circ \sigma$ and $y \circ \sigma$. Then reindexing both strings
+in this way leaves the signed inner product unchanged:
 \[
-  \mathrm{signedInner}(x \circ \mathrm{Fin.cast}\,h,\; y \circ \mathrm{Fin.cast}\,h)
-  \;=\; \mathrm{signedInner}(x, y).
+  \langle x \circ \sigma,\; y \circ \sigma\rangle \;=\; \langle x, y\rangle.
 \]
-Reindexing both inputs along a $\mathrm{Fin.cast}$ does not change the signed inner product.
 \end{theorem}
 
 \begin{theorem}[Signed inner product scales under repetition]
@@ -132,10 +150,12 @@ Reindexing both inputs along a $\mathrm{Fin.cast}$ does not change the signed in
 \leanok
 \uses{CommunicationComplexity.BitString, CommunicationComplexity.BitString.signedInner, CommunicationComplexity.BitString.signedInner_append, CommunicationComplexity.BitString.signedInner_comp_cast}
 \difficulty{4}
-For any $n$-bit strings $x$ and $y$ and any $a : \mathbb{N}$,
+Let $x, y \colon \{0, \dots, n-1\} \to \{0,1\}$ be two $n$-bit strings, and write
+$\langle x, y\rangle$ for their signed inner product, the integer $\sum_{i} \sigma_i$
+where $\sigma_i = +1$ when $x_i = y_i$ and $\sigma_i = -1$ otherwise. For a natural
+number $a$, let $x^{(a)}$ and $y^{(a)}$ denote the $an$-bit strings obtained by
+concatenating $a$ consecutive copies of $x$ and of $y$, respectively. Then
 \[
-  \mathrm{signedInner}(\mathrm{Fin.repeat}\,a\,x,\;\mathrm{Fin.repeat}\,a\,y)
-  \;=\; a \cdot \mathrm{signedInner}(x, y).
+  \langle x^{(a)}, y^{(a)}\rangle \;=\; a \cdot \langle x, y\rangle.
 \]
-Repeating both inputs $a$ times multiplies the signed inner product by $a$.
 \end{theorem}

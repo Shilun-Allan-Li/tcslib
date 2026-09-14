@@ -73,13 +73,17 @@ and recording its path direction in $\rho_0$ until a termination marker is reach
 and returns the resulting restriction.
 \end{definition}
 
-\begin{lemma}[Processing does not lengthen the path]
+\begin{lemma}[Processing does not lengthen the remaining path]
 \lean{SwitchingLemma2.processClauseLits_path_le}
 \label{SwitchingLemma2.processClauseLits_path_le}
 \leanok
 \uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits}
 \difficulty{4}
-The remaining path returned by \texttt{processClauseLits} is no longer than the input
-path: the length of the first component of $\mathrm{processClauseLits}\,(\mathit{lits},
-\mathit{path}, \rho_0, \sigma)$ is at most the length of $\mathit{path}$.
+Let $n$ be a natural number, let $\mathit{lits}$ be a list of literals on $n$ variables
+each tagged with its position index, let $\mathit{path}$ be a list of decision-tree
+branch entries (each a variable together with a Boolean direction), and let $\rho_0,
+\sigma$ be restrictions on $n$ variables. Then the remaining path returned by processing
+$\mathit{lits}$ against $\mathit{path}$ starting from $\rho_0$ and $\sigma$ — that is,
+the first component of the result of this processing — has length at most the length of
+$\mathit{path}$.
 \end{lemma}

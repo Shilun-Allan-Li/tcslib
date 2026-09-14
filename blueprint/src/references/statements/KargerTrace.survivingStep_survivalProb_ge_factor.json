@@ -1,0 +1,18 @@
+{
+ "lean_name": "KargerTrace.survivingStep_survivalProb_ge_factor",
+ "key": "76d5e83a3b4d1da4",
+ "kind": "lemma",
+ "title": "One-step survival bound for a minimum cut",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $C$ of $G$. Suppose that a surviving step is possible from $s$, meaning that $G$ has an edge that does not cross $C$, whose contraction — merging the endpoints of that edge, deleting the resulting self-loops, and passing to the cut that $C$ induces on the contracted graph — yields a further state of the process. Assume moreover that $C$ is a minimum cut of $G$ and that $G$ has at least two vertices. Writing $n$ for the number of vertices of $G$, $k$ for the size of $C$ (its number of crossing edges, counted with multiplicity), and $m$ for the number of edges of $G$ (counted with multiplicity), one has\n\\[\n  \\frac{n-2}{n} \\;\\le\\; 1 - \\frac{k}{m},\n\\]\nso that $\\frac{n-2}{n}$ is at most the one-step survival probability of $C$.",
+ "hypotheses_covered": [
+  "a surviving step is possible from $s$ (an edge of $G$ not crossing $C$ whose contraction yields a further state)",
+  "$C$ is a minimum cut of $G$",
+  "$G$ has at least two vertices ($2 \\le n$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "If a surviving step is possible from $s$, the distinguished cut $s.C$ is a min-cut, and\n$s.G$ has at least two vertices, then writing $n = s.G.\\mathrm{vertexCount}$,\n\\[\n  \\frac{n-2}{n} \\;\\le\\; \\mathrm{survivalProb}(s.C.\\mathrm{size},\\, s.G.\\mathrm{edgeCount}).\n\\]"
+}

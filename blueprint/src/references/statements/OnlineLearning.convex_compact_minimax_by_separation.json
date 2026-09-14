@@ -1,0 +1,23 @@
+{
+ "lean_name": "OnlineLearning.convex_compact_minimax_by_separation",
+ "key": "edfb3eda6ce566bd",
+ "kind": "theorem",
+ "title": "A convex–concave minimax equality",
+ "statement": "Let $X, Y \\subseteq \\bbr$ be nonempty sets with $X$ compact and both $X$ and $Y$ convex, and let $f : \\bbr \\times \\bbr \\to \\bbr$ be a payoff function that is bounded above and below on $X \\times Y$. Suppose that for every $y \\in Y$ the section $x \\mapsto f(x,y)$ is continuous and convex on $X$, while for every $x \\in X$ the section $y \\mapsto f(x,y)$ is concave on $Y$. Then the minimax equality\n\\[\n  \\inf_{x \\in X}\\,\\sup_{y \\in Y} f(x,y)\n  \\;=\\;\n  \\sup_{y \\in Y}\\,\\inf_{x \\in X} f(x,y)\n\\]\nholds.",
+ "hypotheses_covered": [
+  "X nonempty",
+  "Y nonempty",
+  "X compact",
+  "X convex",
+  "Y convex",
+  "f(·,y) continuous on X for each y∈Y",
+  "f(·,y) convex on X for each y∈Y",
+  "f(x,·) concave on Y for each x∈X",
+  "f bounded above on X×Y",
+  "f bounded below on X×Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the convex-compact minimax hypotheses\n$\\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$, the minimax\nidentity $\\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds:\n\\[\n  \\inf_{x \\in X} \\sup_{y \\in Y} f(x,y) \\;=\\; \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y).\n\\]\nThis is the final form of the theorem obtained via the finite-column separation route."
+}

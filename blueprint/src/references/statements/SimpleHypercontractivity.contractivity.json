@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleHypercontractivity.contractivity",
+ "key": "610189ab7a8bdc90",
+ "kind": "theorem",
+ "title": "Contractivity of the noise operator in $L^2$",
+ "statement": "Fix $n$, let $f\\colon\\{0,1\\}^n\\to\\bbr$ be any Boolean function, and let $\\rho\\in\\bbr$ satisfy $\\rho^2\\le 1$. Writing $T_\\rho$ for the noise operator, so that $T_\\rho f(x)=\\sum_{S\\subseteq[n]}\\rho^{|S|}\\,\\hat f(S)\\,\\chi_S(x)$, one has\n\\[\n  \\E\\big[(T_\\rho f)^2\\big]\\;\\le\\;\\E\\big[f^2\\big],\n\\]\nwhere the expectation is taken with respect to the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "ρ is real with ρ² ≤ 1",
+  "f is an arbitrary Boolean function of arity n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $\\rho^2 \\le 1$ and any Boolean function $f$,\n\\[\n  \\E[(T_\\rho f)^2] \\le \\E[f^2].\n\\]\nThis is the $q = 2$ case of hypercontractivity."
+}

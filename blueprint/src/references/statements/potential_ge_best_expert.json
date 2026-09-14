@@ -1,0 +1,15 @@
+{
+ "lean_name": "potential_ge_best_expert",
+ "key": "f2a6d457af70955d",
+ "kind": "lemma",
+ "title": "Potential lower bound via the best expert",
+ "statement": "Fix $N \\ge 1$ experts and $T$ rounds, a loss sequence $\\ell$, and a learning rate $\\eta > 0$. Then the final potential is at least the unnormalized Hedge weight of the best expert in hindsight:\n\\[\n  W_T \\;\\ge\\; \\exp\\!\\bigl(-\\eta \\, L^*\\bigr),\n\\]\nwhere $L^* = \\min_{i} L_T(i)$ is the smallest cumulative loss over the full horizon $T$.",
+ "hypotheses_covered": [
+  "at least one expert (N nonzero)",
+  "positive learning rate η > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The final potential is at least the weight of the best expert:\n\\[\n  W_T \\;\\ge\\; \\exp\\!\\bigl(-\\eta \\cdot L^*\\bigr),\n\\]\nwhere $L^* = \\min_i L_T(i)$ is the best expert's cumulative loss."
+}

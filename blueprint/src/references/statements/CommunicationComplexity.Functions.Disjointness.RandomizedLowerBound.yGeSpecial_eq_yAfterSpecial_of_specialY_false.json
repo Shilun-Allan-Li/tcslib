@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yGeSpecial_eq_yAfterSpecial_of_specialY_false",
+ "key": "0d28040700945aef",
+ "kind": "theorem",
+ "title": "Equality of the two suffix vectors when Bob's special bit is false",
+ "statement": "Let $\\omega$ be a sample of the hard distribution, with special coordinate $T$, and suppose Bob's bit at the special coordinate is false. Then Bob's bit-vector from the special coordinate onward — his bits at all coordinates $i \\ge T$, set to false at every coordinate $i < T$ — coincides, as a function $\\mathrm{Fin}\\,n \\to \\{\\text{false}, \\text{true}\\}$, with Bob's bit-vector strictly after the special coordinate — his bits at all coordinates $i > T$, set to false elsewhere.",
+ "hypotheses_covered": [
+  "ω is a hard-distribution sample on Fin n",
+  "Bob's bit at the special coordinate T is false (specialY ω = false)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On the branch $Y_{T}=false$, the corrected Alice suffix $Y_{≥T}$ is the same information as the coarse suffix $Y_{>T}$, since the missing coordinate is fixed to \\texttt{false}."
+}

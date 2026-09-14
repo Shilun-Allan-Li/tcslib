@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm_nonneg",
+ "key": "0f37d0d080a322b8",
+ "kind": "theorem",
+ "title": "Nonnegativity of Bob's special-coordinate information term",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the disjointness problem on inputs indexed by $\\{0,1,\\dots,n-1\\}$. Draw a sample from the hard distribution over inputs, conditioned on the event that Alice's set and Bob's set are disjoint, and consider the following random variables: the special coordinate $T$; Alice's input bits $X_{\\le T}$ at coordinates up to and including $T$ (padded by $0$ elsewhere); Bob's input bits $Y_{>T}$ at coordinates strictly above $T$ (padded by $0$ elsewhere); Bob's bit $Y_T$ at the special coordinate; and the transcript $M$ obtained by running $p$ on the generated input pair. Then the conditional mutual information of $Y_T$ and $M$ given the tuple $(T, X_{\\le T}, Y_{>T})$ is nonnegative:\n\\[\nI\\bigl(Y_T : M \\mid T, X_{\\le T}, Y_{>T}\\bigr) \\ge 0.\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "p is a deterministic disjointness protocol",
+  "the hard distribution conditioned on the disjointness event",
+  "the quantity is the conditional mutual information I(Y_T : M | T, X_{≤T}, Y_{>T})"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Bob's corrected information term is nonnegative."
+}

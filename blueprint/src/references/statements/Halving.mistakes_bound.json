@@ -1,0 +1,16 @@
+{
+ "lean_name": "Halving.mistakes_bound",
+ "key": "1a984d979f6c13ea",
+ "kind": "theorem",
+ "title": "Mistake bound for the Halving Algorithm",
+ "statement": "Let $\\mathtt{eval} : \\mathit{Hyp} \\to X \\to \\mathsf{Bool}$ be an evaluation map, let $V$ be a finite version space of hypotheses, and fix a target hypothesis $\\mathtt{target} \\in V$ whose predictions supply the true label at each step. Then for every input sequence $xs$, the total number of mistakes made by the Halving Algorithm — which predicts by majority vote over the current version space and, after each input, retains only those hypotheses that agreed with the observed label — satisfies\n\\[\n  \\mathtt{mistakes}(\\mathtt{eval}, \\mathtt{target}, V, xs) \\;\\le\\; \\lfloor \\log_2 \\abs{V} \\rfloor.\n\\]",
+ "hypotheses_covered": [
+  "target hypothesis lies in the version space (target ∈ V)",
+  "V is a finite set of hypotheses",
+  "xs is an arbitrary finite input sequence"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In the realizable setting ($\\mathtt{target} \\in V$), the total number of mistakes made\nby the Halving Algorithm on any input sequence $xs$ is at most $\\lfloor\\log_2\n|V|\\rfloor$:\n\\[\n  \\mathtt{mistakes}(\\mathtt{eval}, \\mathtt{target}, V, xs)\n  \\;\\le\\; \\lfloor\\log_2 |V|\\rfloor.\n\\]"
+}

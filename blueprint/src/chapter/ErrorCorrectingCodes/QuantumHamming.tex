@@ -68,7 +68,7 @@ The set of all Pauli strings of weight at most $t$:
 \]
 \end{definition}
 
-\begin{theorem}[Cardinality of the Pauli error set]
+\begin{theorem}[Cardinality of the bounded-weight Pauli error set]
 \lean{card_pauliErrorsLe}
 \label{card_pauliErrorsLe}
 \leanok
@@ -80,9 +80,15 @@ The set of all Pauli strings of weight at most $t$:
 \proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \uses{PauliErrorsLe, weight}
 \difficulty{5}
+For natural numbers $n$ and $t$, the number of Pauli strings of length $n$ whose weight
+is at most $t$ is
 \[
-|\mathcal{E}(n,t)| \;=\; \sum_{i=0}^{t}\binom{n}{i}\,3^i.
+|\mathcal{E}(n,t)| \;=\; \sum_{j=0}^{t} \binom{n}{j}\, 3^{\,j}.
 \]
+Here a Pauli string is a function $p : \mathrm{Fin}\,n \to \{I,X,Y,Z\}$, and its weight
+$\mathrm{wt}(p)$ is the number of coordinates $i$ with $p(i) \neq I$; the sum counts,
+for each $j \le t$, the $\binom{n}{j}$ choices of a weight-$j$ support together with the
+$3^{j}$ assignments of a non-identity Pauli to each chosen coordinate.
 \end{theorem}
 
 \begin{proof}
@@ -115,13 +121,14 @@ $\mathcal{H}_n = \ell^2\!\bigl(\{0,1\}^n,\mathbb{C}\bigr)$,
 implemented as \texttt{EuclideanSpace ℂ (Fin n → Fin 2)}.
 \end{definition}
 
-\begin{lemma}[Dimension of $\mathcal{H}_n$]
+\begin{lemma}[Complex dimension of the $n$-qubit space]
 \lean{finrank_Hn}
 \label{finrank_Hn}
 \leanok
 \uses{Hn}
 \difficulty{1}
-$\dim_{\mathbb{C}}(\mathcal{H}_n) = 2^n$.
+For every natural number $n$, the $n$-qubit Hilbert space $\mathcal{H}_n$ has complex
+dimension $\dim_{\mathbb{C}}(\mathcal{H}_n) = 2^n$.
 \end{lemma}
 
 \begin{definition}[Pauli operator]
@@ -206,7 +213,7 @@ $\bigvee_{\mathrm{wt}(p)\le t} \hat{p}(C)$, i.e.\ the supremum of the
 Pauli images of $C$ over all $t$-errors.
 \end{definition}
 
-\begin{lemma}[Error subspaces are pairwise orthogonal]
+\begin{lemma}[Orthogonality of distinct error subspaces]
 \lean{error_subspaces_orthogonal}
 \label{error_subspaces_orthogonal}
 \leanok
@@ -229,11 +236,14 @@ Pauli images of $C$ over all $t$-errors.
 }
 \uses{IsNondegenerate, pauliOp}
 \difficulty{6}
-If $C$ is non-degenerate and $E \neq F$ both have weight $\le t$, then
-$\hat{E}(C) \perp \hat{F}(C)$.
+Let $C \le \mathcal{H}_n$ be a code that is non-degenerate for $t$-error correction, and
+let $E, F$ be Pauli strings on $n$ qubits with weights $\mathrm{wt}(E) \le t$ and
+$\mathrm{wt}(F) \le t$ and $E \neq F$. Then the images $\hat{E}(C)$ and $\hat{F}(C)$ of
+$C$ under the corresponding Pauli operators are orthogonal subspaces of $\mathcal{H}_n$;
+that is, $\langle \hat{E}\,u,\, \hat{F}\,v\rangle = 0$ for all $u, v \in C$.
 \end{lemma}
 
-\begin{lemma}[Dimension of the error sphere]
+\begin{lemma}[Dimension of the error sphere of a non-degenerate code]
 \lean{error_sphere_dimension}
 \label{error_sphere_dimension}
 \leanok
@@ -243,16 +253,21 @@ $\hat{E}(C) \perp \hat{F}(C)$.
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
 \uses{ErrorSphere, error_subspaces_orthogonal, card_pauliErrorsLe}
 \difficulty{7}
-If $C$ is non-degenerate,
+Let $C \le \mathcal{H}_n$ be a code on $n$ qubits that is non-degenerate for $t$ errors,
+meaning it satisfies the Knill--Laflamme condition $P_C E^\dagger F P_C = \lambda_{EF}
+P_C$ for all Pauli strings $E,F$ of weight at most $t$ and moreover $P_C E^\dagger F P_C
+= 0$ whenever $E \neq F$. Then the error sphere $\mathrm{ES}(C,t) =
+\bigvee_{\mathrm{wt}(p)\le t} \hat{p}(C)$ has dimension
 \[
-\dim(\mathrm{ES}(C,t)) \;=\; |\mathcal{E}(n,t)|\cdot\dim(C).
+\dim_{\mathbb{C}} \mathrm{ES}(C,t) = |\mathcal{E}(n,t)| \cdot \dim_{\mathbb{C}} C,
 \]
+where $\mathcal{E}(n,t)$ is the set of Pauli strings of weight at most $t$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Quantum Hamming bound}
 
-\begin{theorem}[Quantum Hamming bound]
+\begin{theorem}[Quantum Hamming bound for non-degenerate codes]
 \lean{quantum_hamming_bound}
 \label{quantum_hamming_bound}
 \leanok
@@ -271,10 +286,14 @@ If $C$ is non-degenerate,
 }
 \uses{error_sphere_dimension, finrank_Hn}
 \difficulty{3}
-If $C \le \mathcal{H}_n$ is non-degenerate, then
+Let $C \le \mathcal{H}_n$ be a subspace of the $n$-qubit Hilbert space whose complex
+dimension is $\dim_{\mathbb{C}} C = 2^k$, and suppose $k \le n$. If $C$ is a
+non-degenerate code correcting $t$ errors — meaning it satisfies the Knill–Laflamme
+condition $P_C\,E^\dagger F\,P_C = \lambda_{EF}\,P_C$ for all Pauli strings $E,F$ of
+weight at most $t$, and moreover $P_C\,E^\dagger F\,P_C = 0$ whenever $E \ne F$, where
+$P_C$ is the orthogonal projection onto $C$ — then
 \[
-\left(\sum_{i=0}^{t}\binom{n}{i}\,3^i\right)\cdot\dim_{\mathbb{C}}(C)
-\;\le\; 2^n.
+\sum_{j=0}^{t} \binom{n}{j}\, 3^{\,j} \;\le\; 2^{\,n-k}.
 \]
 \end{theorem}
 
@@ -363,13 +382,17 @@ constructs the Pauli string that equals $f(i).\mathrm{toBasis}$ on each $i \in S
 elsewhere.
 \end{definition}
 
-\begin{lemma}[Support of \texttt{mkWithSupport}]
+\begin{lemma}[Support of a Pauli string built from prescribed data]
 \lean{support_mkWithSupport}
 \label{support_mkWithSupport}
 \leanok
 \uses{mkWithSupport, support}
 \difficulty{1}
-The Pauli string $\mathrm{mkWithSupport}\,S\,f$ has support exactly $S$.
+Fix $n$, a finset $S \subseteq \mathrm{Fin}\,n$, and an assignment $f : S \to \{X,Y,Z\}$
+of a non-identity Pauli to each coordinate in $S$. Let $p$ be the Pauli string of length
+$n$ that equals $f(i)$ at each $i \in S$ and equals the identity $I$ at every coordinate
+outside $S$. Then the support of $p$ — the set of coordinates where $p$ differs from $I$
+— is exactly $S$.
 \end{lemma}
 
 \begin{definition}[Pauli strings with exact support]
@@ -381,15 +404,16 @@ The finset of all Pauli strings on $n$ qubits whose support equals exactly the g
 finset $S$.
 \end{definition}
 
-\begin{lemma}[Count of Pauli strings with exact support]
+\begin{lemma}[Number of Pauli strings with a prescribed support]
 \lean{card_pauliStringsExactSupport}
 \label{card_pauliStringsExactSupport}
 \leanok
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \uses{PauliNZ.toBasis, mkWithSupport, pauliStringsExactSupport, support, support_mkWithSupport}
 \difficulty{5}
-The number of Pauli strings with support exactly $S$ is $3^{|S|}$, since each coordinate in $S$
-is assigned one of the three non-identity Paulis.
+Let $n$ be a natural number and let $S \subseteq \mathrm{Fin}\,n$ be a set of
+coordinates. The number of Pauli strings $p$ of length $n$ whose support
+$\mathrm{supp}(p)$ equals exactly $S$ is $3^{|S|}$.
 \end{lemma}
 
 \begin{definition}[Quantum code]
@@ -428,26 +452,32 @@ $P_C : \mathcal{H}_n \to \mathcal{H}_n$.
 \leanok
 \uses{Hn, codeProj}
 \difficulty{1}
-For any $x \in \mathcal{H}_n$, the value $P_C\,x$ coincides with the orthogonal projection
-$\Pi_C(x)$ of $x$ onto $C$.
+Let $C$ be a closed subspace of the $n$-qubit Hilbert space $\mathcal{H}_n$, and let
+$P_C : \mathcal{H}_n \to \mathcal{H}_n$ be the associated orthogonal projection onto
+$C$. Then for every $x \in \mathcal{H}_n$, the value $P_C\,x$ is exactly the orthogonal
+projection of $x$ onto $C$.
 \end{lemma}
 
-\begin{lemma}[Image of the code projection lies in $C$]
+\begin{lemma}[Image of the code projection lies in the code]
 \lean{codeProj_mem}
 \label{codeProj_mem}
 \leanok
 \uses{Hn, codeProj, codeProj_apply}
 \difficulty{2}
-For any $x \in \mathcal{H}_n$, the projected vector $P_C\,x$ belongs to the code subspace $C$.
+Let $C$ be a subspace of the $n$-qubit Hilbert space $\mathcal{H}_n$, and let $P_C :
+\mathcal{H}_n \to \mathcal{H}_n$ be the orthogonal projection onto $C$. Then for every
+$x \in \mathcal{H}_n$, the projected vector $P_C\,x$ belongs to $C$.
 \end{lemma}
 
-\begin{lemma}[Projection fixes code vectors]
+\begin{lemma}[Projection onto a code fixes its own vectors]
 \lean{codeProj_eq_self_of_mem}
 \label{codeProj_eq_self_of_mem}
 \leanok
 \uses{Hn, codeProj}
 \difficulty{2}
-If $x \in C$, then $P_C\,x = x$.
+Let $C$ be a subspace of the $n$-qubit Hilbert space $\mathcal{H}_n$, and let $P_C :
+\mathcal{H}_n \to \mathcal{H}_n$ be the orthogonal projection onto $C$. If $x \in C$,
+then $P_C x = x$.
 \end{lemma}
 
 \begin{lemma}[Idempotence of the code projection]
@@ -456,10 +486,13 @@ If $x \in C$, then $P_C\,x = x$.
 \leanok
 \uses{Hn, codeProj, codeProj_eq_self_of_mem, codeProj_mem}
 \difficulty{2}
-The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathcal{H}_n$.
+Let $C$ be a closed subspace of the $n$-qubit Hilbert space $\mathcal{H}_n =
+\ell^2(\{0,1\}^n, \bbc)$, and let $P_C : \mathcal{H}_n \to \mathcal{H}_n$ be the
+orthogonal projection onto $C$. Then $P_C$ is idempotent: for every $x \in
+\mathcal{H}_n$, \[ P_C(P_C\, x) = P_C\, x. \]
 \end{lemma}
 
-\begin{theorem}[Quantum Hamming bound, raw form]
+\begin{theorem}[Quantum Hamming bound for non-degenerate codes]
 \lean{quantum_hamming_bound_raw}
 \label{quantum_hamming_bound_raw}
 \leanok
@@ -478,20 +511,21 @@ The code projection is idempotent: $P_C(P_C\,x) = P_C\,x$ for all $x \in \mathca
 }
 \uses{ErrorSphere, Hn, IsNondegenerate, card_pauliErrorsLe, error_sphere_dimension, finrank_Hn}
 \difficulty{3}
-For a non-degenerate $[[n,k]]$ quantum code $C \le \mathcal{H}_n$ correcting $t$ errors, with
-$\dim_{\mathbb{C}}(C) = 2^k$, the dimension of the error sphere does not exceed the ambient
-dimension:
+Let $C \le \mathcal{H}_n$ be a subspace of the $n$-qubit Hilbert space that is a
+non-degenerate quantum code correcting $t$ errors, and suppose its complex dimension is
+$\dim_{\mathbb{C}} C = 2^{k}$ for some natural number $k$. Then
 \[
-\left(\sum_{j=0}^{t}\binom{n}{j}\,3^j\right)\cdot 2^k \;\le\; 2^n.
+\left(\sum_{j=0}^{t}\binom{n}{j}\,3^{j}\right)\cdot 2^{k} \;\le\; 2^{n}.
 \]
 \end{theorem}
 
-\begin{lemma}[Embedded non-identity Paulis are not $I$]
+\begin{lemma}[Non-identity Paulis embed away from the identity]
 \lean{PauliNZ.toBasis_ne_I}
 \label{PauliNZ.toBasis_ne_I}
 \leanok
 \uses{PauliNZ.toBasis}
 \difficulty{1}
-For every $a \in \mathrm{PauliNZ}$, its image $a.\mathrm{toBasis}$ in the Pauli basis
-differs from $I$; that is, the embedding of $\{X,Y,Z\}$ never hits the identity element.
+Write $\{X, Y, Z\}$ for the three non-identity Pauli labels, embedded in the natural way
+into the full Pauli basis $\{I, X, Y, Z\}$. Then the image of every such label differs
+from the identity element $I$.
 \end{lemma}

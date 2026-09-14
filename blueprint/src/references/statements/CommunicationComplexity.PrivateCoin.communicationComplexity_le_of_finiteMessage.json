@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.communicationComplexity_le_of_finiteMessage",
+ "key": "c307b628db358346",
+ "kind": "theorem",
+ "title": "Finite-probability protocols bound private-coin complexity",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $f : X \\to Y \\to \\alpha$ be the function to be computed, and let $\\Omega_X$ and $\\Omega_Y$ be finite probability spaces serving as the two players' private randomness. Fix real numbers $\\varepsilon'$ and $\\varepsilon$ with $\\varepsilon' < \\varepsilon$, and let $p$ be a finite-message private-coin protocol with randomness spaces $\\Omega_X$ and $\\Omega_Y$, input types $X$ and $Y$, and output type $\\alpha$, and suppose that $p$ computes $f$ with error at most $\\varepsilon'$, i.e.\\ for every input pair $(x,y)$ the probability that $p$ returns a value other than $f(x,y)$ is at most $\\varepsilon'$. Then the $\\varepsilon$-error private-coin randomized communication complexity of $f$ satisfies $R_\\varepsilon(f) \\le \\mathrm{complexity}(p)$, where the right-hand side is the worst-case number of bits exchanged by $p$.",
+ "hypotheses_covered": [
+  "Ω_X, Ω_Y are finite probability spaces",
+  "f : X → Y → α is the target function",
+  "real parameters ε' < ε",
+  "p is a finite-message private-coin protocol over Ω_X, Ω_Y",
+  "p ε'-approximately computes f (error ≤ ε' on every input)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Omega_X$ and $\\Omega_Y$ be finite probability spaces and let\n$p : \\mathrm{FiniteMessage.Protocol}(\\Omega_X, \\Omega_Y, X, Y, \\alpha)$ be a finite-message\nprotocol that $\\varepsilon'$-approximately computes $f$.\nIf $\\varepsilon' < \\varepsilon$, then $R_\\varepsilon(f) \\le p.\\mathrm{complexity}$.\nThis is the key reduction step showing that protocols over arbitrary finite probability spaces\nwitness upper bounds on the private-coin complexity."
+}

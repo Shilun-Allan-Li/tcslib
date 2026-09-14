@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.ret_map",
+ "key": "4145b841205bfd3f",
+ "kind": "theorem",
+ "title": "Return value of a mapped timed computation",
+ "statement": "A value of type $\\mathrm{TimeM}\\ T\\ \\alpha$ is a timed computation, consisting of a return value $\\mathrm{ret} \\in \\alpha$ together with an accumulated time cost in $T$, and $\\mathrm{TimeM}\\ T$ carries the functor structure that acts on the return value. For any function $f : \\alpha \\to \\beta$ and any timed computation $x$ of type $\\mathrm{TimeM}\\ T\\ \\alpha$, the return value of the mapped computation obtained by applying $f$ through this functor to $x$ equals $f(\\mathrm{ret}(x))$.",
+ "hypotheses_covered": [
+  "f : α → β a function",
+  "x a timed computation of type TimeM T α",
+  "map is the functor action on TimeM T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : \\alpha \\to \\beta$ and $x : \\texttt{TimeM T α}$, the value returned by the mapped\ncomputation is $f(x.\\mathrm{ret})$."
+}

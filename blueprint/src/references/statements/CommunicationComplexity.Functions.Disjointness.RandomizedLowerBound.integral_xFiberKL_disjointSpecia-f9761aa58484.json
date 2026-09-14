@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_le_two_mul_gamma_pow_four",
+ "key": "528c88a28c80f11e",
+ "kind": "theorem",
+ "title": "Average KL cost of Alice's special bit under small claimed information",
+ "statement": "Fix a positive integer $n$ and a deterministic two-party communication protocol $p$ for set-disjointness on $n$ coordinates, and let $\\gamma > 0$. For a sample $\\omega$ of the hard distribution, write $T$ for its special coordinate, $X_T$ and $Y_T$ for Alice's and Bob's bits at $T$, $\\Pi$ for the transcript produced by running $p$ on the induced input pair $(X(\\omega), Y(\\omega))$, and $Z = (\\Pi,\\, T,\\, X_{<T},\\, Y_{>T})$ for the transcript together with the special coordinate, Alice's input bits strictly before $T$, and Bob's input bits strictly after $T$. Suppose that, under the hard distribution conditioned on the two input sets being disjoint, the total claimed information satisfies\n\\[\nI\\big(X_T ; \\Pi \\,\\big|\\, T,\\, X_{<T},\\, Y_{\\ge T}\\big) \\;+\\; I\\big(Y_T ; \\Pi \\,\\big|\\, T,\\, X_{\\le T},\\, Y_{>T}\\big) \\;\\le\\; \\tfrac{2}{3}\\,\\gamma^4 .\n\\]\nThen, taking the expectation over the same disjoint-conditioned hard distribution further conditioned on $Y_T$ being $\\mathrm{false}$, the mean Kullback–Leibler divergence of the conditional law of $X_T$ given the observed value of $Z$ from the uniform distribution on one bit satisfies\n\\[\n\\E\\Big[\\, D_{\\mathrm{KL}}\\big(\\operatorname{law}(X_T \\mid Z) \\,\\big\\|\\, \\mathrm{Unif}\\{0,1\\}\\big) \\,\\Big] \\;\\le\\; 2\\,\\gamma^4 .\n\\]",
+ "hypotheses_covered": [
+  "n a positive integer",
+  "p a deterministic protocol for n-coordinate disjointness",
+  "gamma real with 0 < gamma",
+  "claimed information (sum of the two conditional mutual informations under the disjoint-conditioned hard distribution) at most 2 gamma^4 / 3",
+  "expectation taken under the disjoint-conditioned hard distribution further conditioned on Bob's special bit Y_T being false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice information step under $D ∧ Y_{T}=false$: the average one-bit KL cost is bounded by the small total information assumption."
+}

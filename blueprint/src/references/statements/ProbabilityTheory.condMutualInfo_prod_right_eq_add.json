@@ -1,0 +1,17 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_prod_right_eq_add",
+ "key": "c8e8456240abf5ad",
+ "kind": "theorem",
+ "title": "Chain rule for conditional mutual information",
+ "statement": "Let $X$, $Y$, $Z$, and $W$ be measurable functions on a probability space $(\\Omega, \\mu)$, where $\\mu$ is either the zero measure or a probability measure, each taking values in a countable measurable space and attaining only finitely many values. Write $I(X ; Y \\mid Z)$ for the conditional mutual information between $X$ and $Y$ given $Z$. Then the conditional mutual information between $X$ and the pair $(Y, W)$ given $Z$ satisfies\n\\[\n  I\\bigl(X ; (Y, W) \\mid Z\\bigr) \\;=\\; I(X ; Y \\mid Z) \\;+\\; I\\bigl(X ; W \\mid (Y, Z)\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "X, Y, W, Z measurable",
+  "each valued in a countable measurable space (with measurable singletons)",
+  "each of X, Y, W, Z has finite range",
+  "μ is a zero-or-probability measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For measurable $X$, $Y$, $W$, $Z$ with finite ranges under a zero-or-probability measure,\n\\[\n  I[X : (Y, W) \\mid Z;\\mu]\n  \\;=\\; I[X : Y \\mid Z;\\mu] \\;+\\; I[X : W \\mid (Y, Z);\\mu].\n\\]"
+}

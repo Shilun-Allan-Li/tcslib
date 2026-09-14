@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.completeTreeAlice_run",
+ "key": "388e996ddbca69e7",
+ "kind": "theorem",
+ "title": "Evaluation of the complete Alice-query tree",
+ "statement": "Fix a depth $d \\in \\bbn$, a family of binary query functions $\\mathrm{query}_i : X \\to \\mathrm{Bool}$ for $i \\in \\mathrm{Fin}\\,d$, and a family of deterministic protocols $Q(b)$ indexed by bit patterns $b : \\mathrm{Fin}\\,d \\to \\mathrm{Bool}$. Then for every pair of inputs $x : X$ and $y : Y$, the protocol that first has Alice read the $d$ query bits in sequence and then runs $Q$ on the collected pattern evaluates on $(x,y)$ to the same value as the single protocol $Q\\bigl(i \\mapsto \\mathrm{query}_i(x)\\bigr)$ evaluated on $(x,y)$.",
+ "hypotheses_covered": [
+  "depth d : ℕ",
+  "query functions query_i : X → Bool for i ∈ Fin d",
+  "family of protocols Q indexed by bit patterns Fin d → Bool",
+  "input x : X",
+  "input y : Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all inputs $x : X$ and $y : Y$, executing \\texttt{completeTreeAlice} gives the same\noutput as running $Q$ applied to the bit pattern $i \\mapsto \\mathrm{query}_i(x)$, i.e.\\\n$(\\mathrm{completeTreeAlice}\\,d\\,\\mathrm{query}\\,Q).\\mathrm{run}\\,x\\,y =\n(Q\\,(\\lambda i,\\,\\mathrm{query}_i\\,x)).\\mathrm{run}\\,x\\,y$."
+}

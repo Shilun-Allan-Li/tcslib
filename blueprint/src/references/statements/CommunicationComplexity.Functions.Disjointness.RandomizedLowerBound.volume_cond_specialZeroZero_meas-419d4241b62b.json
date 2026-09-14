@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_cond_specialZeroZero_measureReal_le_two_mul_disjointSpecialYFalseMeasure",
+ "key": "38ebab07e3a82570",
+ "kind": "theorem",
+ "title": "A factor-two bound between two conditionings of the hard distribution",
+ "statement": "Fix $n\\ge 1$ and let $\\mu$ be the uniform distribution on the hard-sample space, where each sample selects a special coordinate $T\\in\\{1,\\dots,n\\}$, Alice's and Bob's bits $x_T,y_T$ at that coordinate, and a disjoint-coordinate type at every other coordinate; these data determine Alice's set $X$ and Bob's set $Y$. Write $\\mu[\\,\\cdot\\mid E\\,]$ for $\\mu$ conditioned on an event $E$, and let $\\nu$ denote $\\mu$ conditioned first on the pair $(X,Y)$ being disjoint and then further on Bob's special bit satisfying $y_T=\\mathrm{false}$. Then for every set $S$ of samples,\n\\[\n\\mu\\big(S \\mid x_T=\\mathrm{false}\\ \\text{and}\\ y_T=\\mathrm{false}\\big)\\ \\le\\ 2\\,\\nu(S).\n\\]",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "S is an arbitrary set of hard samples",
+  "left measure: uniform distribution conditioned on both special bits being false",
+  "right measure: uniform distribution conditioned on disjointness of the input pair, then on Bob's special bit being false",
+  "comparison of the real-valued conditional measures with factor 2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Conditioning on $(X_{T},Y_{T})=(0,0)$ costs at most a factor $2$ relative to conditioning only on $Y_{T}=false$ under the disjoint distribution. This is the reweighting step before Markov's inequality."
+}

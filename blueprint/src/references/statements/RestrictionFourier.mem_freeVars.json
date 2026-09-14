@@ -1,0 +1,15 @@
+{
+ "lean_name": "RestrictionFourier.mem_freeVars",
+ "key": "0941b5e1fcb04082",
+ "kind": "lemma",
+ "title": "Characterizing the free coordinates of a restriction",
+ "statement": "Let $\\rho : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ be a restriction on $n$ variables, and let $i \\in \\mathrm{Fin}\\,n$ be a coordinate. Then $i$ belongs to the set of free variables of $\\rho$ if and only if $\\rho(i)$ is unset; that is, exactly when $\\rho$ leaves the coordinate $i$ free rather than fixing it to a Boolean value.",
+ "hypotheses_covered": [
+  "ρ is a restriction on n variables",
+  "i is a coordinate in Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a restriction $\\rho$ and a coordinate $i$, we have $i \\in \\rho.\\mathrm{freeVars}$ if\nand only if $\\rho\\,i = \\mathtt{none}$, i.e. exactly when $\\rho$ leaves the coordinate $i$\nunfixed. The companion definition $\\mathrm{signProd}\\,\\rho\\,T = \\prod_{i \\in T}\n\\mathrm{boolToSign}((\\rho\\,i).\\mathrm{getD}\\ \\mathtt{false})$ collects the $\\pm1$-encodings of\nthe bits $\\rho$ fixes on a set $T$."
+}

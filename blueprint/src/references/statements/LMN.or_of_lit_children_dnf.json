@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.or_of_lit_children_dnf",
+ "key": "be0f50fbfa4359db",
+ "kind": "lemma",
+ "title": "DNF for an OR of literals over gate functions",
+ "statement": "Fix natural numbers $m,n$ and a width bound $l$. Let $c_1,\\dots,c_k$ be Boolean circuits on $m$ variables, each of which is a single literal, and let $N$ be the OR node whose children are exactly these circuits. Suppose that to each variable index $i \\in \\mathrm{Fin}\\,m$ there is associated a gate function $g_i$ taking a Boolean assignment $x : \\mathrm{Fin}\\,n \\to \\{0,1\\}$ to a Boolean value, and that every $g_i$ is computed both by some DNF formula on the $n$ inputs of width at most $l$ and by some CNF formula on the $n$ inputs of width at most $l$. Then the composite function $x \\mapsto N\\bigl((g_i(x))_{i}\\bigr)$ — the disjunction of the literal children evaluated at the gate values $g_i(x)$ — is itself computed by a DNF formula $\\varphi$ on the $n$ inputs of width at most $l$, in the sense that $\\varphi(x)$ equals the value of $N$ on the assignment $i \\mapsto g_i(x)$ for every $x$.",
+ "hypotheses_covered": [
+  "every child circuit in the list is a literal",
+  "each gate function g_i has a DNF of width at most l computing it",
+  "each gate function g_i has a CNF of width at most l computing it",
+  "the node is an OR node (Circuit.node false) over the children"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider an OR node $\\mathrm{Circuit.node}\\,\\mathrm{false}\\,cs$ whose children are all\nliterals, where each gate function has a width-$l$ DNF and a width-$l$ CNF\nrepresentation. Then the function computed by the node also has a width-$l$ DNF\n$\\varphi$ with $\\varphi.\\mathrm{eval}\\,x = (\\mathrm{Circuit.node}\\,\\mathrm{false}\\,cs).\\mathrm{eval}\\,(\\lambda i,\\ \\mathrm{gates}\\,i\\,x)$ for all $x$."
+}

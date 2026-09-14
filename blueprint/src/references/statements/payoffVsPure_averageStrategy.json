@@ -1,0 +1,19 @@
+{
+ "lean_name": "payoffVsPure_averageStrategy",
+ "key": "40eb6b841f6626df",
+ "kind": "lemma",
+ "title": "Average strategy's payoff against a pure column",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M \\ge 1$ row actions and $N$ column actions, given by a payoff matrix $A$ with $0 \\le A_{ij} \\le 1$, and fix a pure column action $j$. Let $T > 0$ and let $p_0, \\dots, p_{T-1}$ be probability distributions over the $M$ row actions, each presented as non-negative weights $p_t(i)$ summing to $1$, and let $\\bar{p}$ be their average strategy, the mixed row strategy with weights $\\bar{p}_i = \\frac{1}{T}\\sum_{t=0}^{T-1} p_t(i)$. Then the expected payoff of $\\bar{p}$ against column $j$ satisfies\n\\[\n  \\sum_{i} \\bar{p}_i \\, A_{ij}\n  \\;=\\;\n  \\frac{1}{T} \\sum_{t=0}^{T-1} \\sum_{i} p_t(i) \\, A_{ij}.\n\\]",
+ "hypotheses_covered": [
+  "M ≥ 1 (at least one row action)",
+  "T > 0",
+  "each per-round strategy has non-negative weights",
+  "each per-round strategy's weights sum to 1",
+  "fixed pure column action j",
+  "payoff entries lie in [0,1] (from the game structure)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a game $G$, a column $j$, and $T$ row distributions\n$p_0, \\dots, p_{T-1}$,\n\\[\n  \\mathrm{payoffVsPure}(G, \\bar{p}, j)\n  \\;=\\;\n  \\frac{1}{T} \\sum_{t=0}^{T-1} \\sum_{i} p_t(i) \\cdot A_{ij},\n\\]\nwhere $\\bar{p}$ is the average strategy."
+}

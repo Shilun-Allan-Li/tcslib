@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.rectangle_partition",
+ "key": "52d111e1726094c9",
+ "kind": "theorem",
+ "title": "Leaf rectangles form a monochromatic partition",
+ "statement": "Let $p$ be a deterministic two-party communication protocol on input types $X$ and $Y$ with output type $\\alpha$, and let $g : X \\to Y \\to \\alpha$ be a function that $p$ computes. Then the leaf rectangles of $p$ form a monochromatic rectangle partition of $X \\times Y$ for $g$; that is, they are pairwise disjoint rectangles covering $X \\times Y$, each of which is monochromatic for $g$. Moreover, the number of leaf rectangles is at most $2^{c}$, where $c$ is the communication complexity of $p$.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol on X, Y with output type α",
+  "g : X → Y → α",
+  "p computes g (p.run = g)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $p$ computes $g : X \\to Y \\to \\alpha$ with communication complexity $c$, then\n$\\texttt{leafRectangles}(p)$ is a monochromatic rectangle partition of $X \\times Y$ with\nrespect to $g$ and has at most $2^c$ parts."
+}

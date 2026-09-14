@@ -1,0 +1,16 @@
+{
+ "lean_name": "TimeM.ret_bind",
+ "key": "7fd6b9da9b7985e6",
+ "kind": "theorem",
+ "title": "Return value of a bound cost-annotated computation",
+ "statement": "Consider computations that carry both a return value and an accumulated time cost drawn from a type $T$ equipped with an addition, and let the monadic bind of such a computation $m$ with a continuation $f$ run $m$, pass its return value to $f$, and add the two costs. Then the return value of $m \\mathbin{>\\!\\!>\\!\\!=} f$ equals the return value of $f$ applied to the return value of $m$.",
+ "hypotheses_covered": [
+  "cost type T carries an addition",
+  "m is a cost-annotated computation",
+  "f is a continuation from the value type to another cost-annotated computation"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The value returned by the bind of $m$ with $f$ is the value returned by $f\\,m.\\mathrm{ret}$."
+}

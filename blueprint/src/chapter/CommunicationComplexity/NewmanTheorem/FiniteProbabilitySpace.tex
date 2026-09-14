@@ -71,27 +71,32 @@ returns a \texttt{FiniteProbabilitySpace} instance.
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{3}
-Let $\Omega$ be a finite measurable space, $\mu$ a finite measure on it, and $S
-\subseteq \Omega$ any set.  Then
+Let $\Omega$ be a finite measurable space — finite and discrete, so that every subset is
+measurable — and let $\mu$ be a finite measure on $\Omega$, writing $\mu^{\bbr}$ for its
+real-valued mass function. Then for every subset $S \subseteq \Omega$,
 \[
-  \mu^{\mathbb{R}}(S) \;=\; \sum_{\omega \in \Omega}
-    \begin{cases} \mu^{\mathbb{R}}(\{\omega\}) & \text{if } \omega \in S, \\ 0 & \text{otherwise.} \end{cases}
+  \mu^{\bbr}(S) \;=\; \sum_{\omega \in \Omega}
+\begin{cases} \mu^{\bbr}(\{\omega\}) & \text{if } \omega \in S, \\ 0 & \text{otherwise.}
+\end{cases}
 \]
-In other words, a finite measure on a finite measurable space is determined by and
-recovers as a finite sum over its singleton masses.
+That is, the measure of $S$ is the sum of the masses of its individual points.
 \end{theorem}
 
-\begin{theorem}[Measure of a preimage via fibers]
+\begin{theorem}[Measure of a preimage as a sum over fibers]
 \lean{CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers}
 \label{CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
 \difficulty{4}
-Let $Z : \Omega \to \alpha$ be a function from a finite measurable space to a finite
-type, $\mu$ a finite measure on $\Omega$, and $P$ a predicate on $\alpha$.  Then
+Let $\Omega$ be a finite discrete measurable space, $\alpha$ a finite type, $\mu$ a
+finite measure on $\Omega$, $Z : \Omega \to \alpha$ a function, and $P$ a predicate on
+$\alpha$. Writing $\mu^{\bbr}$ for the real-valued measure obtained from $\mu$, the
+measure of the set of points whose image under $Z$ satisfies $P$ decomposes as a sum
+over the fibers of $Z$:
 \[
-  \mu^{\mathbb{R}}\{\omega \mid P(Z(\omega))\}
-  \;=\; \sum_{z \in \alpha} \begin{cases} \mu^{\mathbb{R}}(Z^{-1}\{z\}) & \text{if } P(z), \\ 0 & \text{otherwise.} \end{cases}
+  \mu^{\bbr}\{\omega \mid P(Z(\omega))\}
+\;=\; \sum_{z \in \alpha} \begin{cases} \mu^{\bbr}\bigl(Z^{-1}\{z\}\bigr) & \text{if }
+P(z), \\ 0 & \text{otherwise.} \end{cases}
 \]
 \end{theorem}
 
@@ -101,85 +106,101 @@ type, $\mu$ a finite measure on $\Omega$, and $P$ a predicate on $\alpha$.  Then
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{4}
-On a finite measurable space, two measures satisfy $\mu \ll \nu$ if and only if for
-every $\omega \in \Omega$, $\nu(\{\omega\}) = 0$ implies $\mu(\{\omega\}) = 0$.
+Let $\Omega$ be a finite measurable space, and let $\mu$ and $\nu$ be two measures on
+$\Omega$. Then $\mu$ is absolutely continuous with respect to $\nu$, written $\mu \ll
+\nu$, if and only if for every point $\omega \in \Omega$ with $\nu(\{\omega\}) = 0$ one
+also has $\mu(\{\omega\}) = 0$.
 \end{theorem}
 
-\begin{theorem}[Jensen's inequality: square of expectation]
+\begin{theorem}[Square of the expectation is at most the expectation of the square]
 \lean{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
 \label{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{3}
-For any probability measure $\mu$ on a finite measurable space and any function $f :
-\Omega \to \mathbb{R}$,
+Let $\Omega$ be a finite measurable space, let $\mu$ be a probability measure on
+$\Omega$, and let $f : \Omega \to \bbr$ be any real-valued function. Then
 \[
-  \Bigl(\int_\Omega f\,d\mu\Bigr)^2 \;\le\; \int_\Omega f^2\,d\mu.
+  \Bigl(\int_\Omega f\,d\mu\Bigr)^{2} \;\le\; \int_\Omega f^{2}\,d\mu.
 \]
 \end{theorem}
 
-\begin{theorem}[Integral as a sum over fibers]
+\begin{theorem}[Integral of a discrete-valued function as a sum over fibers]
 \lean{CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers}
 \label{CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{3}
-Let $Z : \Omega \to \alpha$ be a measurable map from a finite measurable space to a
-finite discrete type, $\mu$ a finite measure on $\Omega$, and $f : \alpha \to
-\mathbb{R}$.  Then
+Let $\Omega$ be a finite measurable space, $\alpha$ a finite type on which every subset
+is measurable, $\mu$ a finite measure on $\Omega$, and $Z : \Omega \to \alpha$ and $f :
+\alpha \to \bbr$ any functions. Then
 \[
   \int_\Omega f(Z(\omega))\,d\mu(\omega)
-  \;=\; \sum_{z \in \alpha} \mu^{\mathbb{R}}(Z^{-1}\{z\}) \cdot f(z).
+  \;=\; \sum_{z \in \alpha} \mu\bigl(Z^{-1}(\{z\})\bigr)\, f(z),
 \]
+where $\mu(Z^{-1}(\{z\}))$ denotes the real number giving the measure of the fiber
+$Z^{-1}(\{z\}) = \{\omega \in \Omega : Z(\omega) = z\}$.
 \end{theorem}
 
-\begin{theorem}[Law of total probability over fibers]
+\begin{theorem}[Law of total probability over the fibers of a random variable]
 \lean{CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real}
 \label{CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
 \difficulty{4}
-Let $Z : \Omega \to \alpha$ be a finite-valued random variable on a finite measurable
-space with finite measure $\mu$, and let $S \subseteq \Omega$.  Then
+Let $\Omega$ be a finite measurable space equipped with a finite measure $\mu$, let
+$\alpha$ be a finite set, let $Z : \Omega \to \alpha$ be a measurable ($\alpha$-valued)
+map, and let $S \subseteq \Omega$. Writing $\mu^{\bbr}$ for the real-valued measure and
+$\mu[\,\cdot \mid A\,]$ for the measure conditioned on an event $A$, we have
 \[
-  \mu^{\mathbb{R}}(S)
-  \;=\; \sum_{z \in \alpha} \mu^{\mathbb{R}}(Z^{-1}\{z\})
-        \cdot \mu\bigl[\,\cdot \mid Z^{-1}\{z\}\bigr]^{\mathbb{R}}(S).
+  \mu^{\bbr}(S)
+  \;=\; \sum_{z \in \alpha} \mu^{\bbr}\bigl(Z^{-1}(\{z\})\bigr)\,
+        \cdot\, \mu\bigl[\,\cdot \mid Z^{-1}(\{z\})\,\bigr]^{\bbr}(S),
 \]
-This is the law of total probability expressed in real-valued measure notation.
+so the total mass of $S$ is recovered by summing, over the values $z$ of $Z$, the mass
+of the fiber $Z^{-1}(\{z\})$ times the conditional mass of $S$ given that fiber.
 \end{theorem}
 
-\begin{theorem}[Uniform measure of a set is its relative cardinality]
+\begin{theorem}[Uniform measure of a set equals its relative cardinality]
 \lean{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \label{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \leanok
 \difficulty{2}
-Let $\Omega$ be a nonempty finite discrete type and let $S \subseteq \Omega$.  Under
-the uniform probability measure on $\Omega$,
+Let $\Omega$ be a nonempty finite set, equipped with the uniform probability measure
+that assigns each point mass $1/\abs{\Omega}$, and let $S \subseteq \Omega$. Then the
+measure of $S$, as a real number, is
 \[
-  \bigl(\mathrm{uniformOn}\,\Omega\bigr)^{\mathbb{R}}(S)
-  \;=\; \frac{\#\{\omega \in \Omega \mid \omega \in S\}}{|\Omega|}.
+  \frac{\abs{\{\omega \in \Omega \mid \omega \in S\}}}{\abs{\Omega}},
 \]
+the number of elements of $\Omega$ lying in $S$ divided by the total number of elements
+of $\Omega$.
 \end{theorem}
 
-\begin{theorem}[Uniform measure equals subtype cardinality ratio]
+\begin{theorem}[Uniform measure of a set as a cardinality ratio]
 \lean{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
 \label{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_subtype}
 \leanok
 \uses{CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
 \difficulty{2}
-Under the uniform measure on a nonempty finite discrete type $\Omega$, the
-real-valued measure of a set $S$ equals $|\{S\}| / |\Omega|$ where $|\{S\}|$ denotes
-the cardinality of the subtype $\{\omega : \Omega \mid \omega \in S\}$.
+Let $\Omega$ be a nonempty finite set, equipped with its discrete measurable structure,
+and let $S \subseteq \Omega$. Under the uniform probability measure on $\Omega$, the
+measure of $S$, regarded as a real number, equals
+\[
+\frac{\abs{S}}{\abs{\Omega}},
+\]
+where $\abs{S}$ is the number of elements of $\Omega$ lying in $S$ and $\abs{\Omega}$ is
+the total number of elements of $\Omega$.
 \end{theorem}
 
-\begin{theorem}[A finite probability space is nonempty]
+\begin{theorem}[Nonemptiness of a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.nonempty}
 \label{CommunicationComplexity.FiniteProbabilitySpace.nonempty}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{1}
-Any type carrying a \texttt{FiniteProbabilitySpace} instance is nonempty.
+If a type $\Omega$ carries the structure of a finite probability space — that is, it is
+finite and discrete, and is equipped with a probability measure — then $\Omega$ is
+nonempty.
 \end{theorem}
 
 \begin{definition}[Probability mass function of a finite probability space]
@@ -192,39 +213,45 @@ measure to a probability mass function $\mathrm{PMF}\,\Omega$, assigning to each
 $\omega$ the real weight $\mu(\{\omega\})$.
 \end{definition}
 
-\begin{theorem}[Measure of a set as a PMF sum]
+\begin{theorem}[Measure of a set as a sum of point masses]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measure_eq}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measure_eq}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
-For a finite probability space $\Omega$ and any set $S \subseteq \Omega$,
-$\mathrm{volume}(S) = \sum_{\omega \in S} \mathrm{toPMF}(\Omega)(\omega)$.
+Let $\Omega$ be a finite probability space, write $\mu$ for its canonical probability
+measure, and let $p(\omega) = \mu(\{\omega\})$ denote the associated probability mass
+function. Then for every subset $S \subseteq \Omega$,
+\[
+\mu(S) = \sum_{\omega \in S} p(\omega).
+\]
 \end{theorem}
 
-\begin{theorem}[Singleton masses sum to one]
+\begin{theorem}[Singleton masses of a finite probability space sum to one]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.hasSum_measure_singletons}
 \label{CommunicationComplexity.FiniteProbabilitySpace.hasSum_measure_singletons}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
-For any bijection $e : \Omega \xrightarrow{\sim} \alpha$ with $\alpha$ finite, the
-family $a \mapsto \mathrm{volume}(\{e^{-1}(a)\})$ has sum $1$ as an $\mathtt{HasSum}$
-statement.
+Let $\Omega$ be a finite probability space, so that $\Omega$ is finite and discrete and
+its canonical volume measure $\mathbb{P}$ is a probability measure, and let $\alpha$ be
+a finite type equipped with a bijection $e : \Omega \xrightarrow{\sim} \alpha$. Then the
+family of singleton masses $\bigl(\mathbb{P}(\{e^{-1}(a)\})\bigr)_{a \in \alpha}$ is
+summable with sum $1$.
 \end{theorem}
 
-\begin{theorem}[PMF of a product space factors]
+\begin{theorem}[Probability mass function of a product factors]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.pmf_prod}
 \label{CommunicationComplexity.FiniteProbabilitySpace.pmf_prod}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
-For finite probability spaces $\Omega_1$ and $\Omega_2$ and any $(x, y) \in \Omega_1
-\times \Omega_2$,
-\[
-  \mathrm{toPMF}(\Omega_1 \times \Omega_2)(x, y)
-  \;=\; \mathrm{toPMF}(\Omega_1)(x) \cdot \mathrm{toPMF}(\Omega_2)(y).
-\]
+Let $\Omega_1$ and $\Omega_2$ be finite probability spaces, and give the product
+$\Omega_1 \times \Omega_2$ its induced finite probability space structure. Then for
+every $x \in \Omega_1$ and $y \in \Omega_2$, the probability mass function of the
+product assigns to the pair $(x, y)$ the product of the individual masses; that is, its
+value at $(x, y)$ equals the value of the mass function of $\Omega_1$ at $x$ times the
+value of the mass function of $\Omega_2$ at $y$.
 \end{theorem}
 
 \begin{theorem}[Product measure of a rectangle]
@@ -233,26 +260,31 @@ For finite probability spaces $\Omega_1$ and $\Omega_2$ and any $(x, y) \in \Ome
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{2}
-For finite probability spaces $\Omega_1$ and $\Omega_2$ and sets $A \subseteq \Omega_1$,
-$B \subseteq \Omega_2$,
+Let $\Omega_1$ and $\Omega_2$ be finite probability spaces, with respective probability
+measures $\bbP_1$ and $\bbP_2$, and let $A \subseteq \Omega_1$ and $B \subseteq
+\Omega_2$ be any subsets. Then, under the product probability measure $\bbP$ on
+$\Omega_1 \times \Omega_2$, the measure of the rectangle $A \times B$ factors as
 \[
-  \mathrm{volume}^{\mathbb{R}}(A \times B) \;=\;
-  \mathrm{volume}^{\mathbb{R}}(A) \cdot \mathrm{volume}^{\mathbb{R}}(B).
+  \bbP(A \times B) \;=\; \bbP_1(A) \cdot \bbP_2(B),
 \]
+where each quantity is taken as a real number.
 \end{theorem}
 
-\begin{theorem}[Measure of a finite disjoint union]
+\begin{theorem}[Finite additivity of the probability measure]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{2}
-If $(A_i)_{i \in \iota}$ is a pairwise-disjoint family of sets indexed by a finite
-type $\iota$ in a finite probability space $\Omega$, then
+Let $\Omega$ be a finite probability space and let $\iota$ be a finite index set. If
+$(A_i)_{i \in \iota}$ is a pairwise disjoint family of subsets of $\Omega$, then the
+probability of their union is the sum of their probabilities:
 \[
-  \mathrm{volume}^{\mathbb{R}}\!\Bigl(\bigcup_{i} A_i\Bigr)
-  \;=\; \sum_{i \in \iota} \mathrm{volume}^{\mathbb{R}}(A_i).
+\mathbb{P}\!\Bigl(\bigcup_{i \in \iota} A_i\Bigr) \;=\; \sum_{i \in \iota}
+\mathbb{P}(A_i),
 \]
+where $\mathbb{P}(\,\cdot\,) \in \bbr$ denotes the real-valued probability measure of
+$\Omega$.
 \end{theorem}
 
 \begin{theorem}[Measure of a preimage of a finite set]
@@ -261,162 +293,202 @@ type $\iota$ in a finite probability space $\Omega$, then
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
-For a map $\varphi : \Xi \to \Omega$ from a finite probability space and a finite set
-$T \subseteq \Omega$,
+Let $\Xi$ be a finite probability space and let $\Omega$ be a measurable space in which
+every subset is measurable. For any map $\varphi \colon \Xi \to \Omega$ and any finite
+set $T \subseteq \Omega$, the probability that $\varphi$ lands in $T$ decomposes as a
+sum over the points of $T$:
 \[
-  \mathrm{volume}^{\mathbb{R}}(\varphi^{-1}(T))
-  \;=\; \sum_{a \in T} \mathrm{volume}^{\mathbb{R}}(\varphi^{-1}\{a\}).
+  \mathrm{volume}^{\mathbb{R}}\bigl(\varphi^{-1}(T)\bigr)
+  \;=\; \sum_{a \in T} \mathrm{volume}^{\mathbb{R}}\bigl(\varphi^{-1}(\{a\})\bigr),
 \]
+where $\mathrm{volume}^{\mathbb{R}}$ denotes the real-valued measure of the underlying
+probability measure on $\Xi$.
 \end{theorem}
 
-\begin{theorem}[Measure of a finite set as a sum of singletons]
+\begin{theorem}[Additivity of the measure over a finite set]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_finset}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_finset}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_preimage_finset}
 \difficulty{1}
-For a finite probability space $\Omega$ and a finset $T \subseteq \Omega$,
+Let $\Omega$ be a finite probability space, and let $T$ be a finite subset of $\Omega$.
+Writing $\mathbb{P}$ for the real-valued probability measure on $\Omega$, the measure of
+$T$ is the sum of the measures of its singletons:
 \[
-  \mathrm{volume}^{\mathbb{R}}(T)
-  \;=\; \sum_{a \in T} \mathrm{volume}^{\mathbb{R}}(\{a\}).
+  \mathbb{P}(T) \;=\; \sum_{a \in T} \mathbb{P}(\{a\}).
 \]
 \end{theorem}
 
-\begin{theorem}[Integral as a PMF-weighted sum]
+\begin{theorem}[Integral as a probability-weighted sum on a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
 \label{CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{1}
-For a finite probability space $\Omega$ and any $f : \Omega \to \mathbb{R}$,
+Let $\Omega$ be a finite probability space, and let $p(\omega)$ denote the probability
+mass it assigns to each point $\omega \in \Omega$. Then for every function $f \colon
+\Omega \to \bbr$,
 \[
-  \int_\Omega f(\omega)\,d\omega
-  \;=\; \sum_{\omega \in \Omega} \mathrm{toPMF}(\Omega)(\omega)_{\mathbb{R}} \cdot f(\omega).
+  \int_\Omega f(\omega)\,d\omega \;=\; \sum_{\omega \in \Omega} p(\omega)\, f(\omega),
 \]
+so that the expectation of $f$ under the canonical probability measure equals the finite
+$p$-weighted sum of its values.
 \end{theorem}
 
-\begin{theorem}[Jensen's inequality on a finite probability space]
+\begin{theorem}[Squared mean at most mean of square on a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
 \label{CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq, CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{1}
-For a finite probability space $\Omega$ and any $f : \Omega \to \mathbb{R}$,
+Let $\Omega$ be a finite probability space, and let $f\colon\Omega\to\bbr$ be any
+real-valued function. Then the square of the expectation of $f$ is at most the
+expectation of its square:
 \[
-  \Bigl(\int_\Omega f\Bigr)^2 \;\le\; \int_\Omega f^2.
+  \Bigl(\int_\Omega f\,\Bigr)^2 \;\le\; \int_\Omega f^2,
 \]
+where both integrals are taken with respect to the underlying probability measure.
 \end{theorem}
 
-\begin{theorem}[Integral over a coordinate of a product space]
+\begin{theorem}[Marginal of a coordinate integral over a product space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval}
 \label{CommunicationComplexity.FiniteProbabilitySpace.integral_comp_eval}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
-Let $\Omega$ be a finite probability space, $\iota$ a finite index type, and $f :
-\Omega \to \mathbb{R}$.  For any coordinate $i \in \iota$, integrating $\omega_{\bullet}
-\mapsto f(\omega_i)$ over the product space $(j : \iota) \to \Omega$ (with the product
-measure) equals $\int_\Omega f$.
+Let $\iota$ be a finite index type and let $\Omega$ be a finite probability space, so
+that the product $\Omega^{\iota}$ of copies of $\Omega$ indexed by $\iota$ carries the
+corresponding product probability measure. Fix an index $i \in \iota$ and a function $f
+: \Omega \to \bbr$. Then integrating the map $\omega_{\bullet} \mapsto f(\omega_i)$
+against the product measure on $\Omega^{\iota}$ gives the same value as integrating $f$
+against the measure on $\Omega$:
+\[
+\int_{\Omega^{\iota}} f(\omega_i) \, d\omega_{\bullet} \;=\; \int_{\Omega} f(\omega)\,
+d\omega.
+\]
 \end{theorem}
 
-\begin{theorem}[Measure of a cylinder set in a product space]
+\begin{theorem}[Product measure of a box factorises]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{2}
-For a finite index type $\iota$, finite probability spaces $\Omega_i$ for each $i$,
-and sets $s_i \subseteq \Omega_i$,
+Let $\iota$ be a finite index set, and for each $i \in \iota$ let $\Omega_i$ be a finite
+probability space carrying its canonical probability measure. For any choice of subsets
+$s_i \subseteq \Omega_i$, the product measure on the finite product $\prod_{i \in \iota}
+\Omega_i$ assigns to the box $\prod_{i \in \iota} s_i$ the value
 \[
-  \mathrm{volume}^{\mathbb{R}}\!\Bigl(\prod_{i \in \iota} s_i\Bigr)
-  \;=\; \prod_{i \in \iota} \mathrm{volume}^{\mathbb{R}}(s_i).
+\mathbb{P}\!\Bigl(\prod_{i \in \iota} s_i\Bigr) \;=\; \prod_{i \in \iota}
+\mathbb{P}(s_i),
 \]
+where both sides are read as real numbers.
 \end{theorem}
 
-\begin{theorem}[Measure equals integral of indicator (one-valued)]
+\begin{theorem}[Measure of a set as the integral of its indicator]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{1}
-For a finite probability space $\Omega$ and $S \subseteq \Omega$,
-$\mathrm{volume}^{\mathbb{R}}(S) = \int_\Omega \mathbf{1}_S(\omega)\,d\omega$,
-where $\mathbf{1}_S$ denotes the indicator of $S$ as an element of $\Omega \to \mathbb{R}$.
+Let $\Omega$ be a finite probability space and let $S \subseteq \Omega$. Then the
+(real-valued) probability of $S$ equals the integral over $\Omega$ of the indicator
+function of $S$, taken with value $1$ on $S$ and $0$ elsewhere:
+\[
+\mathbb{P}(S) \;=\; \int_{\Omega} \mathbf{1}_S(\omega)\, d\omega,
+\]
+where $\mathbf{1}_S \colon \Omega \to \bbr$ is the function equal to $1$ at points of
+$S$ and $0$ at points outside $S$.
 \end{theorem}
 
-\begin{theorem}[Measure equals integral of $0/1$ indicator]
+\begin{theorem}[Probability as the integral of an indicator]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one}
 \difficulty{2}
-For a finite probability space $\Omega$ and $S \subseteq \Omega$,
+Let $\Omega$ be a finite probability space and let $S \subseteq \Omega$ be any subset.
+Then the probability of $S$ equals the integral of the indicator function of $S$ against
+the probability measure:
 \[
-  \mathrm{volume}^{\mathbb{R}}(S) \;=\;
-  \int_\Omega \bigl(\text{if } \omega \in S \text{ then } 1 \text{ else } 0\bigr)\,d\omega.
+\mathbb{P}(S) \;=\; \int_\Omega \bigl(\text{if } \omega \in S \text{ then } 1 \text{
+else } 0\bigr)\,d\omega,
 \]
+where the left-hand side is the real number obtained from the measure of $S$.
 \end{theorem}
 
-\begin{theorem}[PMF weights sum to one]
+\begin{theorem}[Probability mass function sums to one]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one}
 \label{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
-For any finite probability space $\Omega$,
-$\sum_{\omega \in \Omega} \mathrm{toPMF}(\Omega)(\omega)_{\mathbb{R}} = 1$.
+Let $\Omega$ be a finite probability space, and for each $\omega \in \Omega$ let
+$p(\omega)$ denote the weight that the associated probability mass function assigns to
+$\omega$, viewed as a real number. Then these weights sum to one: \[ \sum_{\omega \in
+\Omega} p(\omega) = 1. \]
 \end{theorem}
 
-\begin{theorem}[PMF weights are nonneg]
+\begin{theorem}[Nonnegativity of probability mass weights]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg}
 \label{CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{1}
-For any finite probability space $\Omega$ and $\omega \in \Omega$,
-$0 \le \mathrm{toPMF}(\Omega)(\omega)_{\mathbb{R}}$.
+Let $\Omega$ be a finite probability space, and let $\mu(\{\omega\})$ denote the
+probability mass that its associated probability mass function assigns to a point
+$\omega \in \Omega$. Then this weight, taken as a real number, is nonnegative: \[ 0 \le
+\mu(\{\omega\}). \]
 \end{theorem}
 
-\begin{theorem}[Some point has positive mass]
+\begin{theorem}[Existence of a point of positive mass]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos}
 \label{CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
-For any finite probability space $\Omega$, there exists $\omega \in \Omega$ such that
-$\mathrm{toPMF}(\Omega)(\omega)_{\mathbb{R}} > 0$.
+Let $\Omega$ be a finite probability space, and let $\mu$ denote its associated
+probability mass function, assigning to each point $\omega \in \Omega$ the real weight
+$\mu(\{\omega\}) \ge 0$. Then there exists a point $\omega \in \Omega$ with
+$\mu(\{\omega\}) > 0$.
 \end{theorem}
 
-\begin{theorem}[Integral is bounded by a pointwise bound]
+\begin{theorem}[Pointwise upper bound descends to the integral]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le}
 \label{CommunicationComplexity.FiniteProbabilitySpace.integral_le_of_le}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
-If $f : \Omega \to \mathbb{R}$ satisfies $f(\omega) \le c$ for all $\omega$ in a
-finite probability space, then $\int_\Omega f \le c$.
+Let $\Omega$ be a finite probability space, and let $f : \Omega \to \bbr$ be a function
+satisfying $f(\omega) \le c$ for every $\omega \in \Omega$, where $c \in \bbr$ is a
+constant. Then the integral of $f$ with respect to the probability measure on $\Omega$
+satisfies $\int_\Omega f \le c$.
 \end{theorem}
 
-\begin{theorem}[Markov's inequality]
+\begin{theorem}[Markov's inequality on a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
 \difficulty{3}
-For a nonneg function $f : \Omega \to \mathbb{R}$ on a finite probability space and
-$\varepsilon > 0$,
+Let $\Omega$ be a finite probability space and let $f : \Omega \to \bbr$ be a
+nonnegative function, so that $f(\omega) \ge 0$ for every $\omega \in \Omega$. Then for
+every real $\varepsilon > 0$, the probability that $f$ attains at least $\varepsilon$ is
+bounded by the mean of $f$ divided by $\varepsilon$:
 \[
-  \mathrm{volume}^{\mathbb{R}}\{\omega \mid \varepsilon \le f(\omega)\}
-  \;\le\; \frac{\int_\Omega f}{\varepsilon}.
+  \E\!\left[\,\{\omega \mid \varepsilon \le f(\omega)\}\,\right]
+  \;\le\; \frac{\int_\Omega f(\omega)\,d\omega}{\varepsilon}.
 \]
 \end{theorem}
 
-\begin{theorem}[Integral exceeds a pointwise lower bound]
+\begin{theorem}[Strict lower bound for an integral]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
 \label{CommunicationComplexity.FiniteProbabilitySpace.lt_integral_of_lt}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.exists_pmf_toReal_pos, CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_nonneg, CommunicationComplexity.FiniteProbabilitySpace.pmf_toReal_sum_eq_one, CommunicationComplexity.FiniteProbabilitySpace.toPMF}
 \difficulty{3}
-If $f : \Omega \to \mathbb{R}$ satisfies $c < f(\omega)$ for every $\omega$ in a
-finite probability space, then $c < \int_\Omega f$.
+Let $\Omega$ be a finite probability space and let $f : \Omega \to \bbr$ be a function.
+If there is a constant $c \in \bbr$ with $c < f(\omega)$ for every $\omega \in \Omega$,
+then $c < \int_\Omega f$, where the integral is taken with respect to the probability
+measure on $\Omega$.
 \end{theorem}

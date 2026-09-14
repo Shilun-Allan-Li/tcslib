@@ -1,0 +1,19 @@
+{
+ "lean_name": "ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound",
+ "key": "b77c443b9b568bd5",
+ "kind": "lemma",
+ "title": "Real-part bound for a unit-twisted lift",
+ "statement": "Let $k \\ge 2$ and let $f : \\bbz_k^n \\to \\bbz_k$ be normalized and $\\varepsilon$-far from linear, meaning that $f(0) = 0$, that $0 \\le \\varepsilon \\le 1$, and that $\\dist(f,g) \\ge \\varepsilon$ for every linear $g : \\bbz_k^n \\to \\bbz_k$ (where $\\dist$ is the fraction of inputs on which two functions disagree). Fix a unit $j \\in (\\bbz/k\\bbz)^\\times$ and a frequency $s \\in \\bbz_k^n$, and let $\\widetilde{f}_j(x) = \\omega_k^{\\,j\\,f(x)}$ be the corresponding $j$-twisted lift, with $\\omega_k = e^{2\\pi i/k}$. Then the Fourier coefficient of $\\widetilde{f}_j$ at $s$ has real part bounded by\n\\[\n  \\operatorname{Re}\\,\\widehat{\\widetilde{f}_j}(s) \\;\\le\\; 1 - \\bigl(1 - \\cos(2\\pi/k)\\bigr)\\,\\varepsilon .\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 2",
+  "f is normalized (f(0)=0)",
+  "0 ≤ ε ≤ 1",
+  "f is ε-far from every linear function",
+  "j is a unit in Z/kZ",
+  "s is an arbitrary frequency in Z_k^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $k \\ge 2$, $f$ is $\\varepsilon$-far from linear (normalized), $j \\in\n\\mathbb{Z}_k^\\times$, and $s \\in \\mathbb{Z}_k^n$, then\n\\[\n  \\operatorname{Re}\\!\\left[\\widehat{(\\widetilde{f}_j)}(s)\\right]\n  \\;\\le\\; 1 - \\bigl(1-\\cos(2\\pi/k)\\bigr)\\varepsilon.\n\\]"
+}

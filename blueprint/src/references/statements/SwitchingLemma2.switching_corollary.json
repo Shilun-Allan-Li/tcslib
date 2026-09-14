@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.switching_corollary",
+ "key": "2778a4d97da86249",
+ "kind": "theorem",
+ "title": "Switching corollary: restrictions with no narrow CNF",
+ "statement": "Let $f$ be a DNF formula on $n \\ge 1$ variables in which no variable occurs more than once within any single term, and let $w, s \\in \\bbn$ satisfy $5s \\le n$ and $\\mathrm{width}(f) \\le w$ (that is, every term of $f$ has at most $w$ literals). For a restriction $\\rho$ that fixes some variables and leaves the others free, write $f\\!\\restriction_\\rho$ for the Boolean function obtained by evaluating $f$ with the fixed coordinates set by $\\rho$ and the free coordinates supplied as input. Then the number of restrictions $\\rho$ leaving exactly $s$ of the $n$ variables free for which $f\\!\\restriction_\\rho$ agrees with no CNF formula of width at most $w$ satisfies\n\\[\n  \\bigl|\\{\\rho : \\rho \\text{ leaves exactly } s \\text{ variables free, and } f\\!\\restriction_\\rho \\text{ has no width-}{\\le}w\\text{ CNF}\\}\\bigr| \\cdot n^{w}\n  \\;\\le\\; \\binom{n}{s}\\, 2^{\\,n-s}\\,(10sw)^{w}.\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "f is a DNF formula on n variables",
+  "width of f ≤ w",
+  "5s ≤ n",
+  "no variable repeats within any term (distinct literals with equal variable are identical, and terms have no duplicate literals)",
+  "s free variables (IsRestriction s ρ)",
+  "no CNF of width ≤ w equals the restricted function f↾ρ pointwise"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses as Theorem~\\ref{thm:switching_lemma},\n\\[\n  \\bigl|\\{\\rho : \\mathrm{IsRestriction}\\ s\\ \\rho,\\ f|_\\rho\n    \\text{ has no CNF of width}\\le w\\}\\bigr| \\cdot n^w\n  \\le \\mathrm{numSRestrictions}(n,s)\\,(10sw)^w.\n\\]"
+}

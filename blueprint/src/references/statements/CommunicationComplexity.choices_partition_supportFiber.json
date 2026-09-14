@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.choices_partition_supportFiber",
+ "key": "c883b0daa590c3d0",
+ "kind": "lemma",
+ "title": "Partitioning a support fiber by the symbol at one coordinate",
+ "statement": "Let $\\alpha$ be a finite alphabet, and let $u$ be a word of length $n$ over $\\alpha$, that is, a function $u \\colon \\mathrm{Fin}\\,n \\to \\alpha$. Fix a set $S \\subseteq \\mathrm{Fin}\\,n$ of coordinate positions together with a further position $i \\in \\mathrm{Fin}\\,n$, and let $F$ be the support fiber of $u$ over $\\{i\\} \\cup S$, namely the set of words that differ from $u$ in exactly the positions belonging to $\\{i\\} \\cup S$. Since $i$ lies in $\\{i\\} \\cup S$, every word in $F$ carries at position $i$ some symbol distinct from $u_i$, and grouping the words of $F$ by that symbol partitions $F$: it equals the disjoint union, taken over all symbols $a \\in \\alpha$ with $a \\ne u_i$, of the sets $\\{v \\in F : v_i = a\\}$,\n\\[\n  F = \\bigsqcup_{\\substack{a \\in \\alpha \\\\ a \\ne u_i}} \\{\\, v \\in F : v_i = a \\,\\}.\n\\]",
+ "hypotheses_covered": [
+  "a finite alphabet α (Fintype, DecidableEq)",
+  "a word u of length n over α",
+  "a set S of coordinate positions",
+  "a coordinate position i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a word $u$, a set $S$ of positions, and a position $i$, the support fiber over\n$\\{i\\} \\cup S$ is partitioned by the value chosen at position $i$:\n\\[\n  \\mathrm{supportFiber}(u, \\{i\\} \\cup S)\n  = \\bigsqcup_{a \\in \\mathrm{choices}(u,i)}\n    \\{v \\in \\mathrm{supportFiber}(u,\\{i\\}\\cup S) : v_i = a\\}.\n\\]"
+}

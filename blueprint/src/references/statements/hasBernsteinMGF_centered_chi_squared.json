@@ -1,0 +1,17 @@
+{
+ "lean_name": "hasBernsteinMGF_centered_chi_squared",
+ "key": "21f7ad2fe92eded4",
+ "kind": "theorem",
+ "title": "Bernstein MGF bound for a centered chi-squared summand",
+ "statement": "Fix an integer $k \\ge 1$, and let $Y$ be a real-valued random variable on a probability space $(\\Omega, \\mu)$ whose law is the centered Gaussian $\\mathcal{N}(0, 1/k)$ of mean $0$ and variance $1/k$. Then the centered square $Y^2 - 1/k$ satisfies the Bernstein MGF condition on $(\\Omega, \\mu)$ with quadratic-growth parameter $c = 2/k^2$ and radius $t_{\\max} = k/4$.",
+ "hypotheses_covered": [
+  "k a natural number with 0 < k",
+  "mu is a probability measure",
+  "Y is measurable / a genuine random variable",
+  "the law of Y is the centered Gaussian N(0, 1/k)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the same hypotheses as \\texttt{centered\\_chi\\_squared\\_step}, the\ncentered summand $Y^2 - 1/k$ satisfies\n$\\text{\\texttt{ProbabilityTheory.HasBernsteinMGF}}\\bigl(2/k^2,\\;k/4\\bigr)$ under $\\mu$."
+}

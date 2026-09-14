@@ -1,0 +1,14 @@
+{
+ "lean_name": "contract_edge_count_le",
+ "key": "f607ac46396d4ff8",
+ "kind": "lemma",
+ "title": "Contraction removes at least one edge",
+ "statement": "Let $G$ be a multigraph and let $e \\in E(G)$ be one of its edges. Then the multigraph $G/e$ obtained by contracting $e$ satisfies\n\\[\n  \\abs{E(G/e)} \\le \\abs{E(G)} - 1,\n\\]\nwhere both edge counts are taken with multiplicity; in particular, contracting an edge never increases the number of edges and eliminates at least the contracted edge itself.",
+ "hypotheses_covered": [
+  "e is an edge of G (e ∈ E(G))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every edge $e \\in E(G)$, the contracted multigraph satisfies\n\\[\n  \\abs{E(G/e)} \\le \\abs{E(G)} - 1 ,\n\\]\nso contraction never increases the edge count and removes at least the contracted edge."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.UF.SamePartition.trans",
+ "key": "5a6027cee33bf5fa",
+ "kind": "lemma",
+ "title": "Transitivity of the same-partition relation",
+ "statement": "Let $n$ be a natural number, and let $\\mathit{uf}_1, \\mathit{uf}_2, \\mathit{uf}_3 : \\mathrm{Fin}\\,n \\to \\bbn$ be three union-find states on $n$ nodes. Suppose that $\\mathit{uf}_1$ and $\\mathit{uf}_2$ induce the same partition of the nodes, and that $\\mathit{uf}_2$ and $\\mathit{uf}_3$ induce the same partition. Then $\\mathit{uf}_1$ and $\\mathit{uf}_3$ induce the same partition: for all nodes $i, j$, one has $\\mathit{uf}_1(i) = \\mathit{uf}_1(j)$ if and only if $\\mathit{uf}_3(i) = \\mathit{uf}_3(j)$.",
+ "hypotheses_covered": [
+  "uf1, uf2, uf3 are union-find states on n nodes",
+  "uf1 and uf2 induce the same partition",
+  "uf2 and uf3 induce the same partition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathtt{SamePartition}\\,\\mathit{uf}_1\\,\\mathit{uf}_2$ and\n$\\mathtt{SamePartition}\\,\\mathit{uf}_2\\,\\mathit{uf}_3$, then\n$\\mathtt{SamePartition}\\,\\mathit{uf}_1\\,\\mathit{uf}_3$. Together with reflexivity and\nsymmetry, $\\mathtt{SamePartition}$ is an equivalence relation on union--find states."
+}

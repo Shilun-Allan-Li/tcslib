@@ -1,0 +1,21 @@
+{
+ "lean_name": "ProbabilityTheory.mutualInfo_prod_right_eq_add",
+ "key": "519fb46a538ca71b",
+ "kind": "theorem",
+ "title": "Chain rule for mutual information over a pair",
+ "statement": "Let $X$, $Y$, and $W$ be measurable random variables on a probability space $(\\Omega, \\mu)$, taking values in countable measurable spaces, and suppose each of $X$, $Y$, $W$ takes only finitely many values almost surely. Then the mutual information between $X$ and the pair $(Y, W)$ decomposes as\n\\[\n  I(X : (Y, W)) \\;=\\; I(X : Y) \\;+\\; I(X : W \\mid Y),\n\\]\nwhere $I(X : W \\mid Y)$ is the mutual information of $X$ and $W$ conditioned on $Y$. (If $\\mu$ is the zero measure rather than a probability measure, both sides are $0$.)",
+ "hypotheses_covered": [
+  "X measurable",
+  "Y measurable",
+  "W measurable",
+  "X, Y, W valued in countable measurable-singleton spaces",
+  "μ is zero-or-probability measure",
+  "X has finite range",
+  "Y has finite range",
+  "W has finite range"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For measurable $X$, $Y$, $W$ with finite ranges under a zero-or-probability measure,\n\\[\n  I[X : (Y, W);\\mu] \\;=\\; I[X : Y;\\mu] \\;+\\; I[X : W \\mid Y;\\mu].\n\\]"
+}

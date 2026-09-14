@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.rectangleSign_eq_boolSign",
+ "key": "99fbd5d827b1b52e",
+ "kind": "lemma",
+ "title": "Rectangle sign equals Boolean sign on leaf rectangles",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Boolean output, over input types $X$ (Alice) and $Y$ (Bob). If $R$ is a leaf rectangle of $p$ and $(x, y)$ is any point of $R$, then the rectangle sign of $R$ agrees with the Boolean sign of the value that $p$ computes on $(x, y)$: it equals $+1$ when $p$ outputs $\\mathrm{false}$ at $(x, y)$ and $-1$ when $p$ outputs $\\mathrm{true}$.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol with Boolean output",
+  "R is a leaf rectangle of p",
+  "(x,y) belongs to R"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $R$ is a leaf rectangle of protocol $p$ and $(x,y) \\in R$, then\n$\\mathrm{rectangleSign}(p,R) = \\sigma(p.\\mathrm{run}(x,y))$, where $\\sigma$ is the sign\nmap \\texttt{CommunicationComplexity.boolSign}."
+}

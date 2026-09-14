@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.ofProtocol_rrun",
+ "key": "701d1bf90d0b693e",
+ "kind": "theorem",
+ "title": "Embedding preserves randomized execution of private-coin protocols",
+ "statement": "The embedding of a binary private-coin protocol into the finite-message framework does not change what the protocol computes. Let $p$ be a binary private-coin communication protocol with input spaces $X$ and $Y$, private-randomness spaces $\\Omega_X$ and $\\Omega_Y$, and output type $\\alpha$, and let $\\widehat{p}$ be the finite-message private-coin protocol obtained by embedding $p$ (interpreting each Boolean message as an element of a two-element message alphabet). Then for every pair of inputs $x \\in X$, $y \\in Y$ and every pair of private coins $\\omega_x \\in \\Omega_X$, $\\omega_y \\in \\Omega_Y$, the randomized execution of $\\widehat{p}$ agrees with that of $p$:\n\\[\n\\widehat{p}\\text{'s output on }(x, y, \\omega_x, \\omega_y) \\;=\\; p\\text{'s output on }(x, y, \\omega_x, \\omega_y).\n\\]",
+ "hypotheses_covered": [
+  "p is a binary private-coin protocol over X, Y with randomness spaces Ω_X, Ω_Y and output type α",
+  "an input x in X",
+  "an input y in Y",
+  "Alice's private coin ω_x in Ω_X",
+  "Bob's private coin ω_y in Ω_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any binary private-coin protocol $p$ and inputs $x$, $y$, $\\omega_x$, $\\omega_y$,\n$(\\texttt{ofProtocol}\\,p).\\texttt{rrun}\\,x\\,y\\,\\omega_x\\,\\omega_y =\np.\\texttt{rrun}\\,x\\,y\\,\\omega_x\\,\\omega_y$."
+}

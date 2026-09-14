@@ -1,0 +1,17 @@
+{
+ "lean_name": "prefixHedgeWeight_pos",
+ "key": "e78ce98e0aae139b",
+ "kind": "lemma",
+ "title": "Positivity of the prefix Hedge weight",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column actions, let $\\eta \\in \\bbr$ be a learning rate, and fix any prefix $a_0, \\dots, a_{t-1}$ of $t$ column actions together with a row $i$. Then the prefix Hedge weight $w_t(i) = \\exp\\!\\bigl(-\\eta \\cdot L_t(i)\\bigr)$ is strictly positive, where $L_t(i) = \\sum_{s=0}^{t-1}\\bigl(1 - A_{i,a_s}\\bigr)$ is the prefix cumulative loss of row $i$.",
+ "hypotheses_covered": [
+  "a finite zero-sum game G",
+  "a real learning rate η",
+  "a prefix of t column actions",
+  "a fixed row i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any game $G$, learning rate $\\eta$, prefix of column actions, and row $i$,\nthe prefix Hedge weight $w_t(i) = \\exp(-\\eta L_t(i)) > 0$."
+}

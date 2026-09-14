@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.dtRestrict_depth_le",
+ "key": "3b62e30ea09e6b16",
+ "kind": "theorem",
+ "title": "Restriction does not increase decision-tree depth",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and let $\\rho$ be a restriction on those variables, that is, an assignment giving each variable either a fixed Boolean value or leaving it free. Let $T|_\\rho$ denote the tree obtained by collapsing every branch whose query variable is fixed by $\\rho$ into the corresponding subtree while keeping the unrestricted branches intact, and write $\\mathrm{depth}$ for the maximum length of a path from the root to a leaf. Then\n\\[\n\\mathrm{depth}(T|_\\rho) \\le \\mathrm{depth}(T).\n\\]",
+ "hypotheses_covered": [
+  "T is a decision tree on n Boolean variables",
+  "rho is a restriction on those n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every decision tree $T$ and restriction $\\rho$, the depth of the restricted tree\nsatisfies $\\mathrm{depth}(\\mathrm{dtRestrict}\\,T\\,\\rho) \\le \\mathrm{depth}(T)$."
+}

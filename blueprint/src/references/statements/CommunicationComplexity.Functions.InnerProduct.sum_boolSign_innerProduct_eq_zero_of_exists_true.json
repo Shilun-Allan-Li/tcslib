@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_boolSign_innerProduct_eq_zero_of_exists_true",
+ "key": "a344ff9fce83bd64",
+ "kind": "lemma",
+ "title": "Vanishing Walsh character sum for a nonzero index",
+ "statement": "Fix $n \\in \\bbn$, and let $z$ be an $n$-bit Boolean input that is $\\mathrm{true}$ in at least one coordinate, say $z_i = \\mathrm{true}$ for some index $i$. For a Boolean input $x$, write $\\langle x, z\\rangle = \\bigoplus_{j} (x_j \\wedge z_j)$ for their mod-2 inner product, and let $s(x) \\in \\{\\pm 1\\}$ be the sign $+1$ when $\\langle x, z\\rangle$ is $\\mathrm{false}$ and $-1$ when it is $\\mathrm{true}$. Then summing this sign over all $2^n$ Boolean inputs $x$ gives\n\\[\n  \\sum_{x} s(x) = 0.\n\\]",
+ "hypotheses_covered": [
+  "n : ℕ",
+  "z is an n-bit Boolean input",
+  "z has some coordinate i with z_i = true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $z : \\mathrm{BoolInput}\\,n$ has a coordinate $i$ with $z_i = \\mathtt{true}$, then\n\\[\n  \\sum_{x : \\mathrm{BoolInput}\\,n} \\mathrm{boolSign}(\\mathrm{innerProduct}(n, x, z)) = 0.\n\\]\nThis is the orthogonality of Walsh characters for the inner product function."
+}

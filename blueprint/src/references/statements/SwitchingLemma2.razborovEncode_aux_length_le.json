@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.razborovEncode_aux_length_le",
+ "key": "a89972bd46870296",
+ "kind": "lemma",
+ "title": "Auxiliary encoding length is at most twice the depth",
+ "statement": "Let $f$ be a DNF formula on $n$ Boolean variables, let $w, d \\in \\bbn$, and let $\\rho$ be a restriction that is bad for $f$ at depth $d$; that is, the restriction of the Boolean function computed by $f$ along $\\rho$ has decision-tree depth strictly greater than $d$. Then the auxiliary component of the Razborov encoding of $f$ and $\\rho$ with parameters $w$ and $d$ — the list of $(\\bbn \\times \\mathrm{Bool})$ pairs returned as the second entry of the encoding — has length at most $2d$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n Boolean variables",
+  "w and d are natural-number parameters",
+  "ρ is a restriction on the n variables",
+  "ρ is a bad restriction for the function computed by f at depth d (its restricted decision-tree depth exceeds d)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a bad restriction $\\rho$ of a DNF $f$ with depth parameter $d$, the encoded output\n\\texttt{SwitchingLemma2.razborovEncode} has length at most $2d$."
+}

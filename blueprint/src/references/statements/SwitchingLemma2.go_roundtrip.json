@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.go_roundtrip",
+ "key": "fac863d38113400d",
+ "kind": "lemma",
+ "title": "Round-trip of the restriction encoder and decoder",
+ "statement": "Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that within every term of $f$ any two literals naming the same variable are in fact equal. Given a natural number serving as a step budget for the encoder, a finite list of variable–value pairs, and a restriction $\\rho$ on the $n$ variables, encoding $\\rho$ relative to $f$ produces a list from which the decoder — run with a step budget one larger than that list's length — recovers $\\rho$ exactly.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "the width of f is at most w",
+  "within each term, literals sharing a variable are equal",
+  "a natural-number step budget for the encoder (enc_fuel)",
+  "a finite list of variable-value pairs (path)",
+  "a restriction rho on the n variables"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement is truncated: its conclusion is literally `sorry` (the body ends at `let enc := sorry`), so the exact round-trip claim being proved is absent from the snippet. The hypotheses (width bound, per-term variable distinctness, encoder step budget, list of variable-value pairs, and restriction) are recoverable, but the precise conclusion — the exact roles of the step budget and the pair list, and the exact sense of the round-trip — is inferred only from the untrusted `current` hint and cannot be verified against the ground truth.",
+ "rubric": [],
+ "replaced": "\nSpecializing the generalized round trip to $\\sigma = \\rho_0 = \\rho$: for a width-$w$ DNF\n$f$ with distinct variables per term, running the encoder on $\\rho$ and then running the\ndecoder (with one more than the encoded list length as fuel) on the encoder output recovers\n$\\rho$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.survivingRun_graphRun",
+ "key": "68d08096442a542c",
+ "kind": "lemma",
+ "title": "Surviving runs project to graph runs",
+ "statement": "Let $s$ and $t$ be states of the contraction process over a vertex type $\\alpha$, each consisting of a multigraph together with a distinguished cut of it. If $t$ is reached from $s$ by a surviving run of some number $\\mathrm{steps}$ of consecutive surviving steps — each contracting an edge that does not cross the current distinguished cut — then the underlying multigraph of $t$ is reached from the underlying multigraph of $s$ by a graph-only Karger run of the same length $\\mathrm{steps}$, that is, by $\\mathrm{steps}$ successive edge-occurrence contractions.",
+ "hypotheses_covered": [
+  "a surviving run of length `steps` from state s to state t",
+  "each step contracts a non-crossing edge (folded into the meaning of surviving run)",
+  "vertex type with decidable equality (Lean scaffolding, dropped)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A surviving run of $\\text{steps}$ steps from $s$ to $t$ induces a graph-only Karger run of\nthe same length from $s.G$ to $t.G$."
+}

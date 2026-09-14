@@ -1,0 +1,16 @@
+{
+ "lean_name": "KKL.fourierCoeff_lowDegreePart",
+ "key": "5ff213a85b4a5d70",
+ "kind": "lemma",
+ "title": "Fourier coefficients of the low-degree truncation",
+ "statement": "Let $f\\colon\\{0,1\\}^n\\to\\bbr$ be a Boolean function and $k$ a natural number. For every subset $S\\subseteq[n]$, the Fourier--Walsh coefficient of the low-degree part $f_{\\le k}$ at frequency $S$ satisfies\n\\[\n  \\widehat{f_{\\le k}}(S) \\;=\\;\n  \\begin{cases}\n    \\hat f(S) & \\text{if } \\abs{S}\\le k,\\\\[2pt]\n    0 & \\text{if } \\abs{S} > k.\n  \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on the n-dimensional cube",
+  "k is a natural number (truncation level)",
+  "S is an arbitrary subset of [n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The truncation acts as a projection on the Fourier side: for every $S$,\n$\\widehat{f_{\\le k}}(S) = \\hat f(S)$ when $\\abs{S} \\le k$, and\n$\\widehat{f_{\\le k}}(S) = 0$ otherwise."
+}

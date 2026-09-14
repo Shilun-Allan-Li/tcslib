@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.Protocol.toDeterministic_run",
+ "key": "8272c2351af858e9",
+ "kind": "theorem",
+ "title": "Fixing the shared randomness agrees with the randomised run",
+ "statement": "Let $p$ be a public-coin protocol over a randomness space $\\Omega$, with Alice's private input in $X$, Bob's in $Y$, and output in $\\alpha$, and fix a random outcome $\\omega \\in \\Omega$. For all private inputs $x \\in X$ and $y \\in Y$, executing the deterministic protocol obtained from $p$ by fixing the shared randomness to $\\omega$ on the pair $(x, y)$ returns the same output in $\\alpha$ as the randomised execution of $p$ on $x$ and $y$ with shared random string $\\omega$.",
+ "hypotheses_covered": [
+  "a public-coin protocol p over randomness space Ω with inputs X, Y and output α",
+  "a fixed random outcome ω ∈ Ω",
+  "an input x ∈ X for Alice",
+  "an input y ∈ Y for Bob"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any inputs $x : X$ and $y : Y$, running the deterministic protocol\n$(p.\\mathrm{toDeterministic}\\,\\omega)$ on $(x, y)$ yields the same output as\nrunning the randomised protocol $p$ on $(x, y, \\omega)$, i.e.\\\n$(p.\\mathrm{toDeterministic}\\,\\omega).\\mathrm{run}\\,x\\,y = p.\\mathrm{rrun}\\,x\\,y\\,\\omega$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "ArrowTheorem.arrow_theorem",
+ "key": "3a2696177d9857b6",
+ "kind": "theorem",
+ "title": "Arrow's impossibility theorem",
+ "statement": "Let $n$ be a natural number and let $f:\\{0,1\\}^n\\to\\bbr$ be a social welfare function that aggregates the pairwise opinions of $n$ voters. Suppose $f$ is odd, meaning $f(\\bar x) = -f(x)$ for every $x$, where $\\bar x$ is the bitwise complement of $x$; is $\\pm 1$-valued, meaning $f(x)\\in\\{-1,1\\}$ for every $x$; is unanimous, meaning $f$ takes the value $1$ at the all-zeros input; and is acyclic, meaning that no profile of voter orderings produces a Condorcet cycle. Here a profile assigns to each of the $n$ voters one of the six linear orderings of three alternatives $a,b,c$, and from it one forms three vote vectors in $\\{0,1\\}^n$ whose $i$-th entries record voter $i$'s preference in the $a$-vs-$b$, $b$-vs-$c$, and $c$-vs-$a$ comparisons; acyclicity requires that $f$ never sends all three of these vectors to $1$, and never sends all three to $-1$. Then $f$ is a dictatorship: there is a voter $i$ such that $f(x) = (-1)^{x_i}$ for all $x$.",
+ "hypotheses_covered": [
+  "f is odd (antisymmetric)",
+  "f is pm-one valued",
+  "f is unanimous (value 1 at all-zeros)",
+  "f is acyclic (no Condorcet cycle in either direction)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a social welfare function that is odd\n(antisymmetric), $\\pm 1$-valued, unanimous, and acyclic.  Then $f$ is a\n\\emph{dictatorship}: there exists a voter $i_0$ such that\n$f = \\mathrm{dict}_{i_0}$."
+}

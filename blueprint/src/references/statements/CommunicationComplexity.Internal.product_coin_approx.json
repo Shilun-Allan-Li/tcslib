@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Internal.product_coin_approx",
+ "key": "710b4b2033cac5bb",
+ "kind": "theorem",
+ "title": "Product-space coin approximation",
+ "statement": "Let $\\Omega_X$ and $\\Omega_Y$ be finite probability spaces, and let $\\delta > 0$. Give each coin-tape space $\\mathrm{CoinTape}(n)$ the uniform probability measure arising from $n$ independent fair coin flips (mass $2^{-n}$ on each string), and give every product space — both $\\Omega_X \\times \\Omega_Y$ and $\\mathrm{CoinTape}(n_X) \\times \\mathrm{CoinTape}(n_Y)$ — the corresponding product measure. Then there exist $n_X, n_Y \\in \\bbn$ and maps $\\varphi_X : \\mathrm{CoinTape}(n_X) \\to \\Omega_X$ and $\\varphi_Y : \\mathrm{CoinTape}(n_Y) \\to \\Omega_Y$ such that, writing $\\varphi_X \\times \\varphi_Y$ for the map $(u,v) \\mapsto (\\varphi_X(u), \\varphi_Y(v))$, every subset $S \\subseteq \\Omega_X \\times \\Omega_Y$ satisfies\n\\[\n  \\Pr\\!\\big[(\\varphi_X \\times \\varphi_Y)^{-1}(S)\\big] \\;\\le\\; \\Pr[S] + \\delta .\n\\]",
+ "hypotheses_covered": [
+  "$\\Omega_X$ is a finite probability space",
+  "$\\Omega_Y$ is a finite probability space",
+  "$\\delta$ is real with $0 < \\delta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two finite probability spaces $\\Omega_X$ and $\\Omega_Y$ and any $\\delta > 0$,\nthere exist $n_X, n_Y \\in \\mathbb{N}$ and maps $\\varphi_X : \\mathrm{CoinTape}(n_X) \\to \\Omega_X$,\n$\\varphi_Y : \\mathrm{CoinTape}(n_Y) \\to \\Omega_Y$ such that for every set\n$S \\subseteq \\Omega_X \\times \\Omega_Y$,\n\\[\n  \\mu((\\varphi_X \\times \\varphi_Y)^{-1}(S)) \\;\\le\\; \\mu(S) + \\delta.\n\\]"
+}

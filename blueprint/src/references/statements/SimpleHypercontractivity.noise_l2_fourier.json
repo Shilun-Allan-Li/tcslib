@@ -1,0 +1,16 @@
+{
+ "lean_name": "SimpleHypercontractivity.noise_l2_fourier",
+ "key": "e19bba416795bf64",
+ "kind": "lemma",
+ "title": "Fourier expansion of the squared norm of a noised function",
+ "statement": "Let $n\\in\\bbn$, let $f\\colon\\{0,1\\}^n\\to\\bbr$ be a Boolean function, and let $\\rho\\in\\bbr$. Write $T_\\rho$ for the noise operator with parameter $\\rho$, $\\langle\\,\\cdot\\,,\\,\\cdot\\,\\rangle$ for the $L^2$ inner product under the uniform measure on $\\{0,1\\}^n$, and $\\hat f(S)$ for the Fourier--Walsh coefficient of $f$ at frequency $S\\subseteq[n]$. Then\n\\[\n  \\langle T_\\rho f,\\, T_\\rho f\\rangle\n  \\;=\\; \\sum_{S\\subseteq[n]} \\bigl(\\rho^{|S|}\\bigr)^2\\,\\hat f(S)^2 .\n\\]",
+ "hypotheses_covered": [
+  "ρ is a real number",
+  "f is a Boolean function of arity n",
+  "n is the (implicit) arity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The squared $L^2$ norm of $T_\\rho f$ expands over the Fourier spectrum:\n\\[\n  \\langle T_\\rho f, T_\\rho f \\rangle\n  = \\sum_{S \\subseteq \\mathrm{Fin}\\,n} \\rho^{2\\abs{S}}\\,\\widehat{f}(S)^2.\n\\]"
+}

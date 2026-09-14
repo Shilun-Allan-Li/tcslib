@@ -1,0 +1,14 @@
+{
+ "lean_name": "LMN.cleanDNF_width_le",
+ "key": "0a93b56d0f563d01",
+ "kind": "lemma",
+ "title": "Cleaning a DNF does not increase its width",
+ "statement": "Let $d$ be a DNF formula over $n$ variables — a disjunction of terms, each term a conjunction of literals — and form its cleaned version by first deleting every contradictory term (one containing a variable together with its negation) and then, in each surviving term, discarding any literal whose variable already occurs in an earlier retained literal of that term. The width of a term is its number of literals, and the width of a formula is the largest width of any of its terms (with width $0$ for the empty formula). Then the width of the cleaned formula is at most the width of $d$.",
+ "hypotheses_covered": [
+  "d is a DNF formula over n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The cleaned DNF has width at most that of the original:\n$(\\mathrm{cleanDNF}\\,d).\\mathrm{width} \\le d.\\mathrm{width}$."
+}

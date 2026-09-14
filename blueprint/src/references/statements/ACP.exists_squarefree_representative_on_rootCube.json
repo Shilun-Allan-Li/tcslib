@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.exists_squarefree_representative_on_rootCube",
+ "key": "c0bf57a8a3cb60bd",
+ "kind": "theorem",
+ "title": "Squarefree polynomial representation on the root cube",
+ "statement": "Let $K$ be a field, fix an element $\\omega \\in K$, and let $n$ be a natural number. Write $\\{1,\\omega\\}^n$ for the set of vectors $x = (x_1,\\dots,x_n)$ with each coordinate $x_i \\in \\{1,\\omega\\}$. Then for every function $f : \\{1,\\omega\\}^n \\to K$ there exist coefficients $c_S \\in K$, indexed by the subsets $S \\subseteq \\{1,\\dots,n\\}$, such that the squarefree (multilinear) polynomial\n\\[\n  P(X_1,\\dots,X_n) \\;=\\; \\sum_{S} c_S \\prod_{i \\in S} X_i\n\\]\nsatisfies $P(x) = f(x)$ for every $x \\in \\{1,\\omega\\}^n$.",
+ "hypotheses_covered": [
+  "$K$ is a field",
+  "a fixed element $\\omega \\in K$",
+  "a natural number $n$",
+  "an arbitrary function $f$ on the root cube $\\{1,\\omega\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every function $f : \\{1,\\omega\\}^n \\to K$ on the root cube is represented by a squarefree\n(multilinear) polynomial: there are coefficients $c$ indexed by finsets of\n$\\mathrm{Fin}\\,n$ such that $(\\texttt{ACP.squarefreePolynomial}\\ c)(x) = f(x)$ for all\n$x$ in the root cube."
+}

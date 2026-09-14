@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.affineInvPoly_eval",
+ "key": "79784a1caafe36b7",
+ "kind": "theorem",
+ "title": "Evaluation of the affine inverse polynomial",
+ "statement": "Let $K$ be a field, let $\\omega \\in K$, let $n$ be a natural number, and let $i \\in \\{0,\\dots,n-1\\}$ index one of the $n$ coordinates. Then for every point $x = (x_0,\\dots,x_{n-1}) \\in K^n$, evaluating the affine inverse coordinate polynomial $1 + \\omega^{-1} - \\omega^{-1} X_i$ at $x$ yields \\[ 1 + \\omega^{-1} - \\omega^{-1} x_i. \\]",
+ "hypotheses_covered": [
+  "$K$ is a field",
+  "$\\omega \\in K$ is a scalar",
+  "$n$ is a natural number",
+  "$i \\in \\{0,\\dots,n-1\\}$ is a coordinate index",
+  "$x : \\mathrm{Fin}\\,n \\to K$ is an evaluation point in $K^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $x : \\mathrm{Fin}\\,n \\to K$, the polynomial $\\mathrm{affineInvPoly}\\,\\omega\\,i$\nevaluates to $1 + \\omega^{-1} - \\omega^{-1} x_i$."
+}

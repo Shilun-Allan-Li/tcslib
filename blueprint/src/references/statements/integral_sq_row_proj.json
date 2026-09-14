@@ -1,0 +1,18 @@
+{
+ "lean_name": "integral_sq_row_proj",
+ "key": "2b5f3488626eeadd",
+ "kind": "lemma",
+ "title": "Second moment of a single row of a Rademacher projection",
+ "statement": "Fix integers $k > 0$ and $d \\ge 0$, a vector $x \\in \\bbr^d$, and a row index $i \\in \\{1, \\dots, k\\}$. Draw $\\omega$ from the joint Rademacher measure on $\\mathrm{Rad\\Omega}(k,d)$, form the Rademacher matrix $A(\\omega) \\in \\bbr^{k \\times d}$, and let $(A(\\omega)x)_i$ denote the $i$-th coordinate of the image of $x$ under the linear map $A(\\omega)$. Then the second moment of this coordinate is\n\\[\n  \\E\\bigl[\\,(A(\\omega)x)_i^2\\,\\bigr] = \\frac{\\norm{x}^2}{k}.\n\\]",
+ "hypotheses_covered": [
+  "k > 0",
+  "d a natural number (ambient dimension)",
+  "x a vector in R^d",
+  "i a row index in Fin k",
+  "expectation taken over the joint Rademacher product measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k > 0$, $x \\in \\mathbb{R}^d$, and $i \\in \\mathrm{Fin}\\,k$,\n\\[\n  \\int \\bigl((A(\\omega)\\,x)_i\\bigr)^2 \\, d\\mathrm{radJointMeasure}\n  = \\frac{\\norm{x}^2}{k}.\n\\]"
+}

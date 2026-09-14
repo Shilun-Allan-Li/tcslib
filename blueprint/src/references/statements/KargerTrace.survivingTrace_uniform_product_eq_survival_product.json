@@ -1,0 +1,17 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_uniform_product_eq_survival_product",
+ "key": "7a613e78ef39e0b1",
+ "kind": "lemma",
+ "title": "Uniform survival product equals the product of one-step survival probabilities",
+ "statement": "Let $T$ be an indexed surviving trace of length $\\text{steps}$, recording at each index $i$ a state consisting of a multigraph $G_i$ together with a distinguished cut $C_i$, with consecutive states below $\\text{steps}$ related by a surviving step. Then the product of the uniform one-step survival probabilities of the states of $T$ equals the product, over all $i < \\text{steps}$, of the one-step survival probability $1 - \\dfrac{c_i}{m_i}$, where $c_i$ is the size of the cut $C_i$ (its number of crossing edges) and $m_i$ is the total edge count of $G_i$; that is,\n\\[\n  \\prod_{i < \\text{steps}} \\frac{\\#\\{\\text{non-crossing edges of state } i\\}}{m_i}\n  \\;=\\;\n  \\prod_{i < \\text{steps}} \\left(1 - \\frac{c_i}{m_i}\\right).\n\\]",
+ "hypotheses_covered": [
+  "T is a surviving trace of length steps over a vertex type with decidable equality",
+  "each factor ranges over i < steps",
+  "cut size c_i is the number of crossing edges of C_i",
+  "m_i is the edge count of G_i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The uniform survival product of a trace equals the product over $i < \\text{steps}$ of\n$\\mathrm{survivalProb}$ applied to the cut size and edge count at index $i$."
+}

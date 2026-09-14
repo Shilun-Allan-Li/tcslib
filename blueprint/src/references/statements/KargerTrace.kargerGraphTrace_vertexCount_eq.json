@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.kargerGraphTrace_vertexCount_eq",
+ "key": "37b601efd9f89829",
+ "kind": "lemma",
+ "title": "Vertex count decreases by one per contraction step",
+ "statement": "Let $(G_i)_{i \\in \\bbn}$ be an adaptive contraction trace over $\\text{steps}$ rounds on a vertex type with decidable equality: a family of multigraphs in which, for each index $i < \\text{steps}$, the graph $G_{i+1}$ is obtained from $G_i$ by contracting the edge underlying a sampled edge occurrence of $G_i$. Then for every $i \\le \\text{steps}$, the number of vertices of $G_i$ equals the initial vertex count minus $i$; that is, $\\lvert V(G_i)\\rvert = \\lvert V(G_0)\\rvert - i$.",
+ "hypotheses_covered": [
+  "decidable equality on the vertex type",
+  "an adaptive graph trace of a given number of steps (each graph is the contraction of the previous along the sampled occurrence)",
+  "the index i satisfies i ≤ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i \\le \\text{steps}$, the graph at index $i$ of an adaptive trace has vertex count\nequal to the initial vertex count minus $i$."
+}

@@ -23,59 +23,71 @@ $\ell_1 \mathbin{+\!\!+} \ell_2 \mathbin{+\!\!+} \cdots$, defined by recursion o
 outer list. Used to merge the clause (or term) lists of several CNFs (or DNFs).
 \end{definition}
 
-\begin{lemma}[Bounded width iff all terms bounded]
+\begin{lemma}[Maximum term width bounded iff every term bounded]
 \lean{LMN.width_le_iff_forall}
 \label{LMN.width_le_iff_forall}
 \leanok
 \uses{Term, Term.width}
 \difficulty{4}
-For a list of terms $ts$, the folded maximum of their widths is at most $\ell$ if and
-only if every term $t \in ts$ satisfies $t.\mathrm{width} \le \ell$.
+Let $t_1, \dots, t_k$ be a finite list of terms, each a conjunction of literals, and let
+$\ell$ be a natural number; write $w(t)$ for the width of a term (its number of
+literals). Then the maximum width over the list, taken to be $0$ when the list is empty,
+satisfies $\max_{1 \le i \le k} w(t_i) \le \ell$ if and only if $w(t) \le \ell$ for
+every term $t$ in the list.
 \end{lemma}
 
-\begin{lemma}[CNF concatenation preserves width]
+\begin{lemma}[Concatenating CNFs bounds their width]
 \lean{LMN.cnf_concat_width_le}
 \label{LMN.cnf_concat_width_le}
 \leanok
 \uses{CNF, CNF.width, LMN.listConcat}
 \difficulty{4}
-If CNFs $\psi_1, \dots, \psi_s$ each have width at most $\ell$, then the CNF obtained by
-concatenating all their clause lists also has width at most $\ell$.
+Let $\psi_1, \dots, \psi_s$ be CNF formulas over $n$ variables, and let $\ell$ be a
+natural number such that each $\psi_i$ has width at most $\ell$. Then the CNF formula
+obtained by concatenating all of their clause lists into a single list has width at most
+$\ell$.
 \end{lemma}
 
-\begin{lemma}[CNF concatenation evaluates as conjunction]
+\begin{lemma}[Evaluation of concatenated CNF formulas]
 \lean{LMN.cnf_concat_eval}
 \label{LMN.cnf_concat_eval}
 \leanok
 \uses{CNF, CNF.eval, LMN.listConcat}
 \difficulty{3}
-For any input $x$, the value of the concatenated CNF at $x$ equals the conjunction over
-all $\psi$ in the list of $\psi.\mathrm{eval}\,x$; that is, it holds iff every component
-CNF holds at $x$.
+Let $\psi_1, \dots, \psi_k$ be CNF formulas over the variables $\{1, \dots, n\}$, and
+form the single CNF formula obtained by concatenating all of their clause lists into
+one. Then for every assignment $x \colon \{1,\dots,n\} \to
+\{\text{true},\text{false}\}$, this concatenated formula evaluates to true at $x$ if and
+only if every $\psi_i$ evaluates to true at $x$.
 \end{lemma}
 
-\begin{lemma}[DNF concatenation preserves width]
+\begin{lemma}[Width bound for a concatenation of DNF formulas]
 \lean{LMN.dnf_concat_width_le}
 \label{LMN.dnf_concat_width_le}
 \leanok
 \uses{CNF, CNF.width, DNF, DNF.width, LMN.cnf_concat_width_le, LMN.listConcat, Term.width, cnfToDualDNF_width}
 \difficulty{6}
-If DNFs $\varphi_1, \dots, \varphi_s$ each have width at most $\ell$, then the DNF
-obtained by concatenating all their term lists also has width at most $\ell$.
+Let $\varphi_1, \dots, \varphi_s$ be DNF formulas over $n$ variables, and let $\ell$ be
+a natural number such that each $\varphi_i$ has width at most $\ell$ (that is, every
+term of every $\varphi_i$ contains at most $\ell$ literals). Then the DNF formula
+obtained by concatenating all of their term lists into a single list of terms also has
+width at most $\ell$.
 \end{lemma}
 
-\begin{lemma}[DNF concatenation evaluates as disjunction]
+\begin{lemma}[Concatenating DNFs evaluates as their disjunction]
 \lean{LMN.dnf_concat_eval}
 \label{LMN.dnf_concat_eval}
 \leanok
 \uses{DNF, DNF.eval, LMN.listConcat}
 \difficulty{3}
-For any input $x$, the value of the concatenated DNF at $x$ equals the disjunction over
-all $\varphi$ in the list of $\varphi.\mathrm{eval}\,x$; that is, it holds iff some
-component DNF holds at $x$.
+Let $\varphi_1, \dots, \varphi_k$ be DNF formulas over $n$ variables, and let $x \in
+\{0,1\}^n$ be a Boolean assignment. Form the single DNF whose term-list is the
+concatenation of the term-lists of $\varphi_1, \dots, \varphi_k$. Then this concatenated
+formula evaluates to true at $x$ if and only if at least one of the formulas $\varphi_i$
+evaluates to true at $x$.
 \end{lemma}
 
-\begin{theorem}[Circuit compression for CNFs under AND]
+\begin{theorem}[Closure of bounded-width CNFs under conjunction]
 \lean{LMN.compression_and_of_cnfs}
 \label{LMN.compression_and_of_cnfs}
 \leanok
@@ -85,13 +97,15 @@ component DNF holds at $x$.
 }
 \uses{CNF, CNF.eval, CNF.width, LMN.cnf_concat_eval, LMN.cnf_concat_width_le, LMN.listConcat}
 \difficulty{4}
-Let an AND gate have a list of children, each of which computes a function expressible
-by a CNF of width at most $\ell$. Then the AND of all children is itself computed by a
-single CNF of width at most $\ell$, namely the concatenation of the children's clause
-lists. This collapses the AND layer and the CNF layer into one.
+Fix $n$ and a width bound $\ell$, and let $f_1, \dots, f_k$ be Boolean functions on $n$
+variables, each mapping an assignment $x \in \{0,1\}^n$ to a truth value. Suppose that
+every $f_i$ is computed by some CNF formula of width at most $\ell$, that is, a
+conjunction of clauses in which each clause has at most $\ell$ literals. Then their
+conjunction $x \mapsto \bigwedge_{i=1}^{k} f_i(x)$ is also computed by a single CNF
+formula of width at most $\ell$.
 \end{theorem}
 
-\begin{theorem}[Circuit compression for DNFs under OR]
+\begin{theorem}[Closure of bounded-width DNFs under disjunction]
 \lean{LMN.compression_or_of_dnfs}
 \label{LMN.compression_or_of_dnfs}
 \leanok
@@ -101,12 +115,14 @@ lists. This collapses the AND layer and the CNF layer into one.
 }
 \uses{DNF, DNF.eval, DNF.width, LMN.dnf_concat_eval, LMN.dnf_concat_width_le, LMN.listConcat}
 \difficulty{3}
-Dual to the AND case: if an OR gate has children each expressible by a DNF of width at
-most $\ell$, then the OR of all children is computed by a single DNF of width at most
-$\ell$, obtained by concatenating the children's term lists.
+Let $f_1, \dots, f_m$ be Boolean functions on $\{0,1\}^n$, and let $\ell$ be a natural
+number. Suppose that each $f_i$ is computed by some DNF formula of width at most $\ell$,
+that is, a disjunction of terms in which every term has at most $\ell$ literals. Then
+their disjunction $x \mapsto f_1(x) \lor \cdots \lor f_m(x)$ is also computed by a
+single DNF formula of width at most $\ell$.
 \end{theorem}
 
-\begin{theorem}[One-step reduction failure bound]
+\begin{theorem}[Failure probability for one-step CNF representation of DNF gates]
 \lean{LMN.one_step_reduction_failure_bound}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -120,14 +136,22 @@ $\ell$, obtained by concatenating the children's term lists.
 }
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.layer2_cnf_replaceability_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{2}
-For $s_2$ layer-2 DNF gates of width at most $w$ (with the usual no-duplicate-variable
-and nodup hypotheses on terms) and a Bernoulli restriction with parameter
-$p \le 1/(40w)$, the probability that some gate fails to admit a width-$\ell$ CNF
-representation of its restriction is at most
-$s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
+Fix an integer $w \ge 1$ and let $D_1, \dots, D_{s_2}$ be DNF formulas over $n \ge 1$
+Boolean variables, each of width at most $w$, and suppose that within every term of
+every $D_i$ no variable occurs more than once (distinct literals of a term have distinct
+underlying variables, and no literal is repeated). Let $0 < p \le \tfrac{1}{40w}$ (so in
+particular $p \le 1$), and draw a Bernoulli$(p)$ random restriction $\rho$ on the $n$
+variables, in which each variable is independently left free with probability $p$ and
+otherwise fixed to $0$ or to $1$, each with probability $\tfrac{1-p}{2}$. Then for any
+target width $l$, the probability that some restricted gate $x \mapsto
+D_i(\rho.\mathrm{extend}\,x)$ fails to be computed by any CNF formula of width at most
+$l$ is at most
+\[
+  s_2\!\left( \left(\tfrac{1}{2}\right)^{l} + \exp\!\left(-\tfrac{np}{3}\right) \right).
+\]
 \end{theorem}
 
-\begin{theorem}[One-step decision-tree depth bound]
+\begin{theorem}[One-step decision-tree depth bound under a random restriction]
 \lean{LMN.one_step_dtDepth_bound}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b004}
 \proofsource{switching-lemma}{
@@ -140,7 +164,6 @@ $s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p008-b005
 }
-
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1028,22 +1051,35 @@ $s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
   {pdf-b5e074215b9e-p004-b002}
 \uses{DNF, DNF.eval, DNF.width, LMN.switching_bernoulli_union_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one, SwitchingLemma2.restrictFn, dtDepth}
 \difficulty{5}
-Under a Bernoulli restriction with $p \le 1/(40w)$ on $s_2$ width-$w$ DNF gates, the
-probability that every restricted gate has decision-tree depth at most $\ell$ is at
-least $1 - s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$.
+Fix an integer $n \ge 1$, let $w \ge 1$, and let $g_1, \dots, g_{s_2}$ be $s_2$ DNF
+formulas on $n$ Boolean variables, each of width at most $w$. Assume that in every term
+of every $g_i$ no literal is repeated and no two distinct literals share a variable. Let
+$p \in \bbr$ satisfy $0 < p \le \tfrac{1}{40w}$ (so in particular $p \le 1$). Then,
+under a Bernoulli($p$) random restriction $\rho$ on the $n$ variables, the probability
+that every restricted formula $x \mapsto g_i(\rho.\mathrm{extend}\,x)$ has decision-tree
+depth at most $\ell$ is at least
+\[
+  1 - s_2\left( \left(\tfrac{1}{2}\right)^{\ell} + \exp\!\left(-np/3\right) \right).
+\]
 \end{theorem}
 
-\begin{lemma}[Complement probability sums to one]
+\begin{lemma}[Complementary events partition Bernoulli restriction probability]
 \lean{LMN.bernoulliRestrProb_complement}
 \label{LMN.bernoulliRestrProb_complement}
 \leanok
 \uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one}
 \difficulty{4}
-For a Bernoulli restriction probability with parameter $0 \le p \le 1$ and a decidable
-predicate $A$ on restrictions, $\Pr[A] + \Pr[\lnot A] = 1$.
+Fix $n$ and a parameter $p$ with $0 \le p \le 1$, and let $A$ be a predicate on
+restrictions of $n$ variables. Writing $\Pr[A]$ for the probability that $A$ holds under
+a Bernoulli($p$) random restriction, one has
+\[
+  \Pr[A] + \Pr[\neg A] = 1,
+\]
+where $\neg A$ is the predicate that holds exactly for those restrictions on which $A$
+fails.
 \end{lemma}
 
-\begin{theorem}[One-step reduction with compression]
+\begin{theorem}[One-step compression of DNF gates under random restriction]
 \lean{LMN.one_step_reduction_with_compression}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -1057,9 +1093,18 @@ predicate $A$ on restrictions, $\Pr[A] + \Pr[\lnot A] = 1$.
 }
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn}
 \difficulty{2}
-Combining Steps 6 and 7: after a Bernoulli restriction with $p \le 1/(40w)$ on $s_2$
-width-$w$ DNF gates, the probability that every restricted gate admits a width-$\ell$
-CNF representation is at least $1 - s_2 \cdot \left( (1/2)^{\ell} + \exp(-np/3) \right)$,
-so that the compression of Step 6 applies and the circuit reduces to depth $(d-1)$ with
-width at most $\ell$.
+Let $g_1,\dots,g_{s_2}$ be DNF formulas on $n \ge 1$ variables, each of width at most
+$w$, where $w \ge 1$; assume that in every term of every $g_i$ any two literals on the
+same variable coincide (so no term repeats a variable or contains both a literal and its
+negation) and no literal occurs twice in the term. Fix a natural number $\ell$ and a
+real $p$ with $0 < p \le \tfrac{1}{40w}$ and $p \le 1$. Then, for a Bernoulli-$p$ random
+restriction $\rho$ of the $n$ variables,
+\[
+\Pr_\rho\Bigl[\text{for every } i,\ g_i|_\rho \text{ is computed by some CNF formula of
+width } \le \ell\Bigr]
+\;\ge\; 1 - s_2\left(\left(\tfrac12\right)^{\ell} +
+\exp\!\left(-\tfrac{np}{3}\right)\right),
+\]
+where $g_i|_\rho$ is the restriction of $g_i$ by $\rho$ and a CNF formula $\psi$
+*computes* $g_i|_\rho$ when $\psi$ and $g_i|_\rho$ agree on every input.
 \end{theorem}

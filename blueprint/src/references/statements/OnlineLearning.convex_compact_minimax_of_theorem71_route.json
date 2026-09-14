@@ -1,0 +1,25 @@
+{
+ "lean_name": "OnlineLearning.convex_compact_minimax_of_theorem71_route",
+ "key": "d0fda85e077787cd",
+ "kind": "theorem",
+ "title": "Minimax equality on convex compact sets",
+ "statement": "Let $X, Y \\subseteq \\bbr$ and let $f : \\bbr \\to \\bbr \\to \\bbr$. Suppose that $X$ and $Y$ are nonempty, that $X$ is compact and convex, that $Y$ is convex, that the map $x \\mapsto f(x,y)$ is continuous and convex on $X$ for every $y \\in Y$, that the map $y \\mapsto f(x,y)$ is concave on $Y$ for every $x \\in X$, and that $f$ is bounded above and below on $X \\times Y$. Suppose moreover that for every nonempty finite subset $u \\subseteq X$,\n\\[\n  \\inf_{x \\in X} \\sup_{y \\in Y} f(x,y) \\;\\le\\; \\sup_{y \\in Y} \\inf_{x \\in u} f(x,y),\n\\]\nand that for every $\\varepsilon > 0$ there exists a nonempty finite subset $u \\subseteq X$ with\n\\[\n  \\sup_{y \\in Y} \\inf_{x \\in u} f(x,y) \\;\\le\\; \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y) + \\varepsilon.\n\\]\nThen\n\\[\n  \\inf_{x \\in X} \\sup_{y \\in Y} f(x,y) \\;=\\; \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y).\n\\]",
+ "hypotheses_covered": [
+  "X nonempty",
+  "Y nonempty",
+  "X compact",
+  "X convex",
+  "Y convex",
+  "f(·,y) continuous on X for each y in Y",
+  "f(·,y) convex on X for each y in Y",
+  "f(x,·) concave on Y for each x in X",
+  "f bounded above on X×Y",
+  "f bounded below on X×Y",
+  "for every nonempty finite u ⊆ X, the full upper value is ≤ the finite-sample lower value",
+  "for every ε>0 some nonempty finite u ⊆ X makes its lower value within ε of the full lower value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the standard convex-compact minimax hypotheses hold, the finite no-regret bound\n$\\texttt{OnlineLearning.Theorem71FiniteNoRegretBound}$ holds, and the compact approximation\nproperty $\\texttt{OnlineLearning.Theorem71CompactApproximation}$ holds, then the minimax\nequality\n\\[\n  \\inf_{x \\in X} \\sup_{y \\in Y} f(x,y)\n    = \\sup_{y \\in Y} \\inf_{x \\in X} f(x,y)\n\\]\nholds."
+}

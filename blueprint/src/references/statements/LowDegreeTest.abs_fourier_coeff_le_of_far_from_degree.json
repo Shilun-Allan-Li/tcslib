@@ -1,0 +1,18 @@
+{
+ "lean_name": "LowDegreeTest.abs_fourier_coeff_le_of_far_from_degree",
+ "key": "146ab84d4448cbe3",
+ "kind": "lemma",
+ "title": "Fourier coefficients of a function far from low degree",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function, let $d \\ge 1$, and let $\\varepsilon$ be a real number with $0 \\le \\varepsilon \\le 1$. Suppose $f$ is $\\varepsilon$-far from degree $\\le d$, meaning that $\\dist(f,g) \\ge \\varepsilon$ for every Boolean function $g$ of degree $\\le d$. Then, writing $\\widehat{(-1)^f}(S)$ for the Fourier coefficient at $S$ of the $\\pm 1$ lift $x \\mapsto (-1)^{f(x)}$, we have\n\\[\n  \\bigl|\\widehat{(-1)^f}(S)\\bigr| \\;\\le\\; 1 - 2\\varepsilon\n  \\qquad\\text{for every } S \\subseteq [n].\n\\]",
+ "hypotheses_covered": [
+  "d ≥ 1",
+  "0 ≤ ε ≤ 1",
+  "f is ε-far from degree ≤ d",
+  "conclusion holds for every S ⊆ [n]",
+  "Fourier coefficient is that of the ±1 lift of f"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $d \\ge 1$ and $f$ is $\\varepsilon$-far from degree $\\le d$, then for every\n$S \\subseteq [n]$, $|\\hat{f}(S)| \\le 1 - 2\\varepsilon$."
+}

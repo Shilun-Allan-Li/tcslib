@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt",
+ "key": "b674f4076a0add52",
+ "kind": "lemma",
+ "title": "Deletion succeeds along a proper subprotocol path",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols, and suppose $s$ occurs as a rooted subtree of $p$, witnessed by a subprotocol path recording the branching choices from the root of $p$ down to the root of $s$. If $s$ has strictly fewer leaves than $p$, then deleting the branch leading to $s$ yields a protocol: the splicing operation along this path is defined and produces some protocol $q$.",
+ "hypotheses_covered": [
+  "s and p are deterministic communication protocols",
+  "a subprotocol path witnesses that s is a rooted subtree of p",
+  "s has strictly fewer leaves than p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$, then there exists a protocol $q$ such\nthat $\\texttt{deletePath}\\;\\texttt{hsp} = \\texttt{some}\\;q$."
+}

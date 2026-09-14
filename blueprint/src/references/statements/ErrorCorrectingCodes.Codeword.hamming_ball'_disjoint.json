@@ -1,0 +1,18 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint",
+ "key": "c3fa5399ccbab7f2",
+ "kind": "lemma",
+ "title": "Disjointness of Hamming balls at minimum distance",
+ "statement": "Let $C$ be a code of length $n$ over an alphabet $\\alpha$ whose minimum Hamming distance is $d$, and suppose $d > 0$. Write $t = \\left\\lfloor \\frac{d-1}{2} \\right\\rfloor$. Then for any two distinct codewords $c_1, c_2 \\in C$, the Hamming balls $B_t(c_1)$ and $B_t(c_2)$ of radius $t$ centered at $c_1$ and $c_2$ are disjoint.",
+ "hypotheses_covered": [
+  "C is a code of length n over alpha",
+  "d is the minimum Hamming distance of C (distance C d)",
+  "d > 0",
+  "c_1 and c_2 are codewords in C",
+  "c_1 differs from c_2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nReformulation of the previous lemma as \\texttt{Finset.Disjoint}."
+}

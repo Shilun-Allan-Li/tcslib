@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.evalNode_succ_eq",
+ "key": "b03754944ec3109c",
+ "kind": "lemma",
+ "title": "One-step unfolding of node evaluation",
+ "statement": "Let $F$ be a feedforward circuit over an alphabet $\\alpha$, let $d$ be a layer index with $0 \\le d < \\mathrm{depth}(F)$, let $u$ be a node of layer $d+1$, and let $x$ be an assignment of alphabet values to the input nodes of $F$. Writing $g$ for the gate attached to $u$, the value of $u$ under $x$ equals the gate operation of $g$ applied to the tuple whose entry at each input slot $i$ is the value under $x$ of the layer-$d$ node to which slot $i$ is wired.",
+ "hypotheses_covered": [
+  "F is a feedforward circuit over alpha",
+  "d is a layer index with d < depth(F)",
+  "u is a node of layer d+1",
+  "x is an input assignment from inputs to alpha"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a feed-forward circuit $F$, a layer index $d$, a node $u$ at layer $d+1$ and an input $x$, the\nvalue of $u$ is obtained by applying the gate operation attached to $u$ to the values of its input\nnodes at layer $d$."
+}

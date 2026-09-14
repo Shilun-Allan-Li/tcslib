@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_singleton_factorization",
+ "key": "2b63320614869d5e",
+ "kind": "theorem",
+ "title": "Product-measure criterion for the conditional special-pair law",
+ "statement": "Fix a positive integer $n$ and a deterministic disjointness protocol $p$ on inputs of length $n$, and let $z$ be an achievable value of the variable $Z=(M,T,X_{<T},Y_{>T})$. Write $\\mu$ for the conditional law, on the fiber $\\{Z=z\\}$, of the special bit-pair $(X_T,Y_T)\\in\\{0,1\\}^2$, and write $\\mu_X$ and $\\mu_Y$ for the conditional laws on that same fiber of the individual special bits $X_T$ and $Y_T$. Suppose that for every pair $b=(b_1,b_2)\\in\\{0,1\\}^2$ the mass assigned by $\\mu$ to the singleton $\\{b\\}$ equals the product $\\mu_X(\\{b_1\\})\\,\\mu_Y(\\{b_2\\})$. Then $\\mu$ is the product measure $\\mu_X\\otimes\\mu_Y$.",
+ "hypotheses_covered": [
+  "positive integer n",
+  "a deterministic disjointness protocol p on inputs of length n",
+  "an achievable value z of the variable Z=(M,T,X_{<T},Y_{>T})",
+  "for every bit-pair b, the joint conditional mass on {b} factors as the product of the two marginal conditional masses on {b_1} and {b_2}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "To prove the conditional special-pair law factors, it suffices to prove singleton factorization for the four bit-pairs."
+}

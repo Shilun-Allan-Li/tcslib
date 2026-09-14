@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.affineSquarefreeMonomial_eval",
+ "key": "bbf2ed16511e2227",
+ "kind": "theorem",
+ "title": "Evaluation of the affine-substituted squarefree monomial",
+ "statement": "Let $K$ be a field, let $\\omega \\in K$, and fix $n \\in \\bbn$. For a subset $s \\subseteq \\{1,\\dots,n\\}$, form the polynomial $\\prod_{i \\in s}\\bigl(1 + \\omega^{-1} - \\omega^{-1} X_i\\bigr) \\in K[X_1,\\dots,X_n]$. Then for every point $x \\colon \\{1,\\dots,n\\} \\to K$, this polynomial evaluates at $x$ to\n\\[\n\\prod_{i \\in s}\\bigl(1 + \\omega^{-1} - \\omega^{-1}\\, x_i\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "K is a field",
+  "ω is an element of K",
+  "n is a natural number",
+  "s is a subset of the index set Fin n",
+  "x is an assignment Fin n → K of coordinate values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $x : \\mathrm{Fin}\\,n \\to K$, the affine squarefree monomial indexed by $s$\nevaluates to $\\prod_{i \\in s} (1 + \\omega^{-1} - \\omega^{-1} x_i)$."
+}

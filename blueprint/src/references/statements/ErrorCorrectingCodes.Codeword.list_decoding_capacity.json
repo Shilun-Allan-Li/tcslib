@@ -1,0 +1,18 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.list_decoding_capacity",
+ "key": "02927039af6d62da",
+ "kind": "theorem",
+ "title": "List-decoding over a q-ary alphabet",
+ "statement": "Let $\\alpha$ be a finite field, write $q = \\abs{\\alpha}$ for the number of its elements, and fix a real number $p$ with $0 < p \\le 1 - \\tfrac{1}{q}$ together with an integer $L \\ge 1$. In this regime one considers block codes over the alphabet $\\alpha$ that admit list decoding from a $p$-fraction of symbol errors with output lists of size at most $L$, and the associated rate $r$ they can achieve.",
+ "hypotheses_covered": [
+  "α is a finite (nonempty, decidable) field",
+  "q equals the cardinality of α",
+  "p is real with 0 < p",
+  "p ≤ 1 − 1/q",
+  "L is a natural number with 1 ≤ L"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement carries only hypotheses (a finite field α with q = |α|, a rate parameter p ∈ (0, 1 − 1/q], and a list size L ≥ 1); its conclusion is a bare placeholder (`let r := sorry`) that asserts no proposition. No claim can therefore be faithfully rendered, only the setting. The `current` text (existence of rate-$(1 - H_q(p) - 1/L)$ codes that are $(p,L)$-list-decodable) is the presumed intent but is absent from the Lean, so it is not stated here.",
+ "rubric": [],
+ "replaced": "For any $q=|\\alpha|$, $0<\\rho\\le 1-1/q$, and $L\\ge 1$, there exist codes of rate\n$r = 1-H_q(\\rho)-1/L$ that are $(\\rho,L)$-list-decodable."
+}

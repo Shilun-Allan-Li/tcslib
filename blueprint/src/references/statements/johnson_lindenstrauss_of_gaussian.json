@@ -1,0 +1,21 @@
+{
+ "lean_name": "johnson_lindenstrauss_of_gaussian",
+ "key": "c55df51f215c336e",
+ "kind": "theorem",
+ "title": "Johnson–Lindenstrauss embedding from a Gaussian matrix",
+ "statement": "Fix dimensions $d$ and $k$ with $k \\ge 1$, a distortion parameter $\\varepsilon \\in (0,1)$, and a finite set of points $V \\subseteq \\bbr^d$. Let $A$ be a random $k \\times d$ matrix whose entries $A_{ij}$ are independent Gaussian random variables, each with mean $0$ and variance $1/k$. If the union-bound quantity satisfies\n\\[\n  |V|^2 \\cdot 2\\exp\\!\\left(-\\,k\\varepsilon^2/8\\right) < 1,\n\\]\nthen there exists a linear map $f : \\bbr^d \\to \\bbr^k$ that is an $\\varepsilon$-JL embedding of $V$: for every pair $u, v \\in V$,\n\\[\n  (1-\\varepsilon)\\,\\|u-v\\|^2 \\;\\le\\; \\|f(u)-f(v)\\|^2 \\;\\le\\; (1+\\varepsilon)\\,\\|u-v\\|^2.\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1",
+  "A is a random k×d matrix with entries ~ N(0, 1/k)",
+  "entries within each row are independent",
+  "the rows of A are independent",
+  "0 < ε < 1",
+  "V is a finite subset of ℝ^d",
+  "the bad-distortion events are measurable",
+  "the failure bound |V|²·2·exp(−kε²/8) < 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A$ be a random Gaussian $k \\times d$ matrix as above.  If the union-bound\nfailure probability satisfies\n$|V|^2 \\cdot 2\\exp(-k\\varepsilon^2/8) < 1$,\nthen there exists a linear map $f : \\mathbb{R}^d \\to_L \\mathbb{R}^k$ that is an\n$\\varepsilon$-JL embedding of $V$, extracted from the positive-measure good\nevent."
+}

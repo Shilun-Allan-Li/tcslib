@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.preimageInputSet_mem_leafRectanglesAux_comap",
+ "key": "4ba2c63e252c9459",
+ "kind": "theorem",
+ "title": "Pullback preserves leaf rectangles",
+ "statement": "Let $p$ be a deterministic communication protocol over input types $X$ and $Y$, let $A \\subseteq X$ and $B \\subseteq Y$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be arbitrary maps. If $R \\subseteq X \\times Y$ is one of the leaf rectangles of $p$ relative to the constraint $A \\times B$, then its pullback along $f_X \\times f_Y$, namely $\\{(x', y') \\in X' \\times Y' \\mid (f_X(x'), f_Y(y')) \\in R\\}$, is one of the leaf rectangles of the pulled-back protocol $\\mathrm{comap}(p, f_X, f_Y)$ relative to the constraint $f_X^{-1}(A) \\times f_Y^{-1}(B)$.",
+ "hypotheses_covered": [
+  "p is a protocol over X and Y",
+  "A is a subset of X",
+  "B is a subset of Y",
+  "f_X maps X' to X",
+  "f_Y maps Y' to Y",
+  "R is a leaf rectangle of p relative to A and B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $R \\in \\texttt{leafRectanglesAux}(p, A, B)$ and $f_X : X' \\to X$, $f_Y : Y' \\to Y$, then\n$\\texttt{preimageInputSet}(f_X, f_Y, R) \\in \\texttt{leafRectanglesAux}(p.\\texttt{comap}(f_X, f_Y),\\, f_X^{-1}(A),\\, f_Y^{-1}(B))$.\nThis is an internal auxiliary result proved by structural induction."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "empiricalJoint_colMarginal",
+ "key": "d5472885acad8fb8",
+ "kind": "lemma",
+ "title": "Column marginal of the empirical joint distribution",
+ "statement": "Consider $T > 0$ rounds of play between a row player with $M$ actions and a column player with $N$ actions, where in round $t$ the row player uses the mixed strategy $p_t$ over the row actions and the column player uses the mixed strategy $q_t$ over the column actions. Form the empirical joint distribution $\\sigma$ assigning to each profile $(i,j)$ the time-averaged probability $\\frac{1}{T}\\sum_{t=1}^{T} (p_t)_i (q_t)_j$. Then for each column action $j$, the column marginal $\\sigma^{\\mathrm{col}}_j = \\sum_i \\sigma_{ij}$ equals the time-average of the column player's weights on $j$,\n\\[\n\\sigma^{\\mathrm{col}}_j = \\frac{1}{T}\\sum_{t=1}^{T} (q_t)_j.\n\\]",
+ "hypotheses_covered": [
+  "T > 0 rounds",
+  "row player's mixed strategies p_t over M row actions",
+  "column player's mixed strategies q_t over N column actions",
+  "fixed column action j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The column marginal of the empirical joint distribution at action $j$ equals\nthe time-average of the column player's mixed-strategy weights:\n$(1/T)\\sum_{t} (q_t)_j$."
+}

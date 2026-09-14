@@ -1,0 +1,15 @@
+{
+ "lean_name": "OneBit.expect_abs_rpow_one_bit",
+ "key": "3d2964181f294555",
+ "kind": "lemma",
+ "title": "Expected $p$-th power of $|f|$ on one bit",
+ "statement": "Let $f\\colon\\{0,1\\}^1\\to\\bbr$ be a Boolean function of one bit and let $p\\in\\bbr$. Writing $\\hat f(\\emptyset)$ and $\\hat f(\\{0\\})$ for its two Fourier--Walsh coefficients, the expectation of $|f|^p$ under the uniform measure is\n\\[\n  \\E\\big[\\,|f|^p\\,\\big] \\;=\\; \\frac{\\big|\\hat f(\\emptyset) + \\hat f(\\{0\\})\\big|^p + \\big|\\hat f(\\emptyset) - \\hat f(\\{0\\})\\big|^p}{2}.\n\\]",
+ "hypotheses_covered": [
+  "$f$ is a Boolean function of arity $1$",
+  "$p$ is a real number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a one-bit function $f$, writing $a = \\widehat{f}(\\emptyset)$ and $b = \\widehat{f}(\\{0\\})$,\n\\[\n  \\E\\big[|f|^p\\big] = \\frac{|a+b|^p + |a-b|^p}{2}.\n\\]"
+}

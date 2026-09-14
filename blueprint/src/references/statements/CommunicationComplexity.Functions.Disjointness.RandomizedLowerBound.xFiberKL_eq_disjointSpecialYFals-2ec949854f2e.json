@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL_eq_disjointSpecialYFalseMeasure_cond_zVariable_klDiv",
+ "key": "7671d1103cd6d1e3",
+ "kind": "theorem",
+ "title": "Fiberwise KL of Alice's special bit under disjointness conditioning",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic communication protocol for the length-$n$ set-disjointness problem, whose inputs are pairs of subsets of $\\{0,\\dots,n-1\\}$. Write $\\mathbb{P}$ for the uniform hard distribution on samples $\\omega$ (each specifying a special coordinate together with the coordinatewise data generating Alice's set $X(\\omega)$ and Bob's set $Y(\\omega)$), let $X_T(\\omega)$ and $Y_T(\\omega)$ be Alice's and Bob's bits at the special coordinate, and let $D$ be the event that the generated pair $(X,Y)$ is disjoint. Let $Z = Z_p$ be the statistic recording the transcript produced by running $p$ on the generated input, together with the special coordinate, Alice's input bits strictly before it, and Bob's input bits strictly after it. Write $U$ for the uniform law on one bit and $D_{\\mathrm{KL}}$ for Kullback–Leibler divergence. Fix a value $z$ of $Z$ and suppose the conditional probability $\\mathbb{P}\\big(Y_T = \\mathrm{false} \\mid Z = z\\big)$ is nonzero. Then\n\\[\nD_{\\mathrm{KL}}\\!\\big(\\mathrm{Law}_{\\mathbb{P}}(X_T \\mid Z = z)\\,\\big\\|\\,U\\big)\n=\nD_{\\mathrm{KL}}\\!\\big(\\mathrm{Law}_{\\mathbb{P}}(X_T \\mid D,\\; Y_T = \\mathrm{false},\\; Z = z)\\,\\big\\|\\,U\\big),\n\\]\nboth sides taken as real numbers.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol for length-n disjointness",
+  "z is a fixed value of the statistic Z",
+  "the conditional probability that Bob's special bit is false given Z = z is nonzero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice's \\texttt{xFiberKL} can be rewritten as KL for the special Alice bit under $D ∧ Y_{T}=false$ conditioned on the same $Z=z$ fiber."
+}

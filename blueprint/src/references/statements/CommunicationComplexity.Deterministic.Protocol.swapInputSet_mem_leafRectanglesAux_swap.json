@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectanglesAux_swap",
+ "key": "7be6ef0cfd10969b",
+ "kind": "theorem",
+ "title": "Coordinate swap commutes with role swap on leaf rectangles",
+ "statement": "Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$ (Bob), and let $A \\subseteq X$ and $B \\subseteq Y$. Denote by $p^{\\mathrm{sw}}$ the role-swapped protocol over $Y \\times X$ obtained by exchanging Alice and Bob throughout, and for a set $R \\subseteq X \\times Y$ write $R^{\\mathrm{sw}} = \\{(y,x) \\mid (x,y) \\in R\\} \\subseteq Y \\times X$ for its coordinate swap. Then for every rectangle $R$ in the collection of auxiliary leaf rectangles of $p$ relative to $A \\times B$, the swapped set $R^{\\mathrm{sw}}$ belongs to the collection of auxiliary leaf rectangles of $p^{\\mathrm{sw}}$ relative to $B \\times A$.",
+ "hypotheses_covered": [
+  "p is a protocol over X, Y with output type α",
+  "A ⊆ X and B ⊆ Y are the constraint sets",
+  "R is a member of the auxiliary leaf rectangles of p relative to A, B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $R \\in \\texttt{leafRectanglesAux}(p, A, B)$, then\n$\\texttt{swapInputSet}(R) \\in \\texttt{leafRectanglesAux}(p.\\texttt{swap}, B, A)$.\nThis is an internal auxiliary result proved by structural induction on the protocol."
+}

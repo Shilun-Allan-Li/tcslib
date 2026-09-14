@@ -1,0 +1,20 @@
+{
+ "lean_name": "prefixHedgeWeight_eq_hedgeWeight",
+ "key": "bd021ad4c778675d",
+ "kind": "lemma",
+ "title": "Prefix Hedge weight agrees with the induced-loss Hedge weight",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column actions, with payoff matrix $A$, let $\\eta \\in \\bbr$ be a learning rate, and let $a_0, \\dots, a_{T-1}$ be a sequence of column actions, so that $a : \\mathrm{Fin}\\,T \\to \\mathrm{Fin}\\,N$. Fix a round $t \\in \\mathrm{Fin}\\,T$ and a row $i \\in \\mathrm{Fin}\\,M$. Then the prefix Hedge weight of row $i$ at learning rate $\\eta$, computed from the length-$t$ prefix $a_0, \\dots, a_{t-1}$ of column actions, equals the Hedge weight of expert $i$ at time $t$ and learning rate $\\eta$ for the loss sequence $\\ell_s(j) = 1 - A_{j, a_s}$ induced by $G$ along $a$; that is, both equal\n\\[\n  \\exp\\!\\Bigl(-\\eta \\sum_{s < t} \\bigl(1 - A_{i, a_s}\\bigr)\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "G a finite zero-sum game with M rows and N columns",
+  "learning rate η ∈ ℝ",
+  "sequence of T column actions a : Fin T → Fin N",
+  "round index t ∈ Fin T",
+  "row index i ∈ Fin M",
+  "prefix taken as the first t.val actions of a",
+  "loss sequence induced by G from a via ℓ_s(j) = 1 − A_{j,a_s}"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The prefix Hedge weight of row $i$ at round $t$ equals the abstract Hedge\nweight $\\mathrm{hedgeWeight}(\\eta, G.\\mathrm{toLossSeq}(a), t, i)$ for the\ninduced loss sequence."
+}

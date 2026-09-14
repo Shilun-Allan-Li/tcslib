@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.hammingBall_card",
+ "key": "b27d808afb3144b1",
+ "kind": "lemma",
+ "title": "Hamming ball cardinality",
+ "statement": "Let $\\alpha$ be a finite alphabet, and consider words of length $n$ over $\\alpha$. For any centre word $u \\in \\alpha^n$ and any radius $r$, the Hamming ball $B_r(u)$ has cardinality equal to the ball volume at radius $r$ for a length-$n$ code over an alphabet of size $\\abs{\\alpha}$; that is,\n\\[\n  \\abs{B_r(u)} = \\sum_{i=0}^{r} \\binom{n}{i}\\,(\\abs{\\alpha} - 1)^i.\n\\]",
+ "hypotheses_covered": [
+  "finite alphabet α",
+  "word length n",
+  "centre word u ∈ α^n",
+  "radius r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any centre $u \\in \\alpha^n$ and radius $r$,\n\\[\n  |B_r(u)| = \\mathrm{ballVol}(n,r,|\\alpha|) = \\sum_{i=0}^{r}\\binom{n}{i}(|\\alpha|-1)^i.\n\\]"
+}

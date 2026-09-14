@@ -1,0 +1,15 @@
+{
+ "lean_name": "Networks.fOut_X_sub_fIn_X_eq_fIn_Y_sub_fOut_Y",
+ "key": "2800c3566cbc61ca",
+ "kind": "theorem",
+ "title": "Resultant flow out of the sources equals resultant flow into the sinks",
+ "statement": "Let $N$ be a network with disjoint nonempty source set $X$ and sink set $Y$, and let $f$ be a flow in $N$. For a vertex set $S$, write $f^{+}(S)$ for the total flow along the arcs directed from $S$ to its complement and $f^{-}(S)$ for the total flow along the arcs directed from the complement into $S$. Then\n\\[\nf^{+}(X) - f^{-}(X) \\;=\\; f^{-}(Y) - f^{+}(Y).\n\\]",
+ "hypotheses_covered": [
+  "N is a network with source set X and sink set Y, disjoint and nonempty",
+  "f is a flow in N (capacity constraint together with conservation at every intermediate vertex)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Relative to any flow \\texttt{f} in \\texttt{N}, the resultant flow out of\n\\texttt{X} is equal to the resultant flow into \\texttt{Y}.}"
+}

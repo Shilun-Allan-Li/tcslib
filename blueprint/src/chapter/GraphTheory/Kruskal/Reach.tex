@@ -55,7 +55,10 @@ also reachable in $F$.
 \leanok
 \uses{Kruskal.SymAdj, Kruskal.WEdge}
 \difficulty{1}
-If $\mathtt{SymAdj}\,\mathit{edges}\,u\,v$ then $\mathtt{SymAdj}\,\mathit{edges}\,v\,u$.
+Fix a list of weighted edges on $n$ vertices, and let $u$ and $v$ be two vertices.
+Recall that $u$ and $v$ are symmetrically adjacent when some edge in the list has $\{u,
+v\}$ as its pair of endpoints, in either order. If $u$ and $v$ are symmetrically
+adjacent, then so are $v$ and $u$.
 \end{lemma}
 
 \begin{lemma}[Monotonicity of symmetric adjacency]
@@ -64,8 +67,11 @@ If $\mathtt{SymAdj}\,\mathit{edges}\,u\,v$ then $\mathtt{SymAdj}\,\mathit{edges}
 \leanok
 \uses{Kruskal.SymAdj, Kruskal.WEdge}
 \difficulty{1}
-If $\mathtt{SymAdj}\,e_1\,u\,v$ and every edge of $e_1$ also belongs to $e_2$, then
-$\mathtt{SymAdj}\,e_2\,u\,v$.
+Fix $n \in \bbn$ and two vertices $u, v \in \mathrm{Fin}\,n$, and let $e_1$ and $e_2$ be
+lists of weighted edges on $n$ vertices such that every edge of $e_1$ also occurs in
+$e_2$. If $u$ and $v$ are symmetrically adjacent in $e_1$ — that is, some edge of $e_1$
+has endpoints $\{u,v\}$ in either order — then $u$ and $v$ are symmetrically adjacent in
+$e_2$.
 \end{lemma}
 
 \begin{lemma}[Symmetry of reachability]
@@ -74,78 +80,99 @@ $\mathtt{SymAdj}\,e_2\,u\,v$.
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.symAdj_symm}
 \difficulty{3}
-If $\mathtt{Reach}\,\mathit{edges}\,u\,v$ then $\mathtt{Reach}\,\mathit{edges}\,v\,u$.
+Let $\mathit{edges}$ be a list of weighted edges on $n$ vertices, and call two vertices
+reachable when they are joined by a path along these edges (in the sense of the
+reflexive–transitive closure of symmetric adjacency). Then reachability is symmetric:
+for all vertices $u, v$, if $u$ is reachable from $v$, then $v$ is reachable from $u$.
 \end{lemma}
 
-\begin{lemma}[Monotonicity of reachability]
+\begin{lemma}[Monotonicity of reachability under edge addition]
 \lean{Kruskal.reach_mono}
 \label{Kruskal.reach_mono}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.symAdj_mono}
 \difficulty{3}
-If $\mathtt{Reach}\,e_1\,u\,v$ and every edge of $e_1$ also belongs to $e_2$, then
-$\mathtt{Reach}\,e_2\,u\,v$.
+Fix $n$, let $e_1$ and $e_2$ be lists of weighted edges on the vertex set
+$\mathrm{Fin}\,n$, and let $u, v : \mathrm{Fin}\,n$. Suppose $u$ and $v$ are connected
+by a path through the edges of $e_1$, and that every edge of $e_1$ also occurs in $e_2$.
+Then $u$ and $v$ are connected by a path through the edges of $e_2$.
 \end{lemma}
 
-\begin{lemma}[Reachability from a membership witness]
+\begin{lemma}[Endpoints of a listed edge are reachable]
 \lean{Kruskal.reach_of_mem}
 \label{Kruskal.reach_of_mem}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge}
 \difficulty{1}
-If $e \in \mathit{edges}$ then $\mathtt{Reach}\,\mathit{edges}\,e.u\,e.v$; that is,
-the two endpoints of any listed edge are immediately reachable from each other.
+Let $\mathit{edges}$ be a list of weighted edges on $n$ vertices, and let $e$ be a
+weighted edge belonging to $\mathit{edges}$. Then the endpoints $u$ and $v$ of $e$
+satisfy $\mathtt{Reach}\,\mathit{edges}\,u\,v$; that is, they are connected by a path
+through $\mathit{edges}$.
 \end{lemma}
 
-\begin{lemma}[Reachability lifting]
+\begin{lemma}[Lifting reachability along an edge set]
 \lean{Kruskal.reach_lift}
 \label{Kruskal.reach_lift}
 \leanok
 \uses{Kruskal.Reach, Kruskal.SymAdj, Kruskal.WEdge, Kruskal.reach_mem_iff}
 \difficulty{3}
-If every symmetric adjacency in $\mathit{edges}$ implies reachability in
-$\mathit{edges}'$, and $\mathtt{Reach}\,\mathit{edges}\,u\,v$, then
-$\mathtt{Reach}\,\mathit{edges}'\,u\,v$.
+Let $\mathit{edges}$ and $\mathit{edges}'$ be two lists of weighted edges on $n$
+vertices, and suppose that whenever two vertices $a$ and $b$ are symmetrically adjacent
+in $\mathit{edges}$ — that is, some edge of $\mathit{edges}$ has endpoints $\{a,b\}$ —
+the vertices $a$ and $b$ are connected by a path through $\mathit{edges}'$. Then for any
+vertices $u$ and $v$, if $u$ and $v$ are connected by a path through $\mathit{edges}$,
+they are also connected by a path through $\mathit{edges}'$.
 \end{lemma}
 
-\begin{lemma}[Cons decomposition of reachability]
+\begin{lemma}[Head–tail decomposition of reachability]
 \lean{Kruskal.reach_cons_iff}
 \label{Kruskal.reach_cons_iff}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.reach_mono, Kruskal.reach_of_mem, Kruskal.reach_symm}
 \difficulty{6}
-For a non-empty edge list $(g :: \mathit{rest})$, $\mathtt{Reach}\,(g :: \mathit{rest})\,a\,b$
-if and only if one of three cases holds: (1) $\mathtt{Reach}\,\mathit{rest}\,a\,b$;
-(2) $\mathtt{Reach}\,\mathit{rest}\,a\,g.u$ and $\mathtt{Reach}\,\mathit{rest}\,g.v\,b$;
-or (3) $\mathtt{Reach}\,\mathit{rest}\,a\,g.v$ and $\mathtt{Reach}\,\mathit{rest}\,g.u\,b$.
+Let $g$ be a weighted edge on $n$ vertices with endpoints $p$ and $q$, let
+$\mathit{rest}$ be a list of weighted edges on the same $n$ vertices, and let $a$ and
+$b$ be vertices; say two vertices are \emph{$\mathit{rest}$-connected} when they are
+joined by a path using only the edges in $\mathit{rest}$. Then $a$ and $b$ are joined by
+a path through the edges of the list obtained by prepending $g$ to $\mathit{rest}$ if
+and only if at least one of the following holds: $a$ and $b$ are
+$\mathit{rest}$-connected; or $a$ is $\mathit{rest}$-connected to $p$ while $q$ is
+$\mathit{rest}$-connected to $b$; or $a$ is $\mathit{rest}$-connected to $q$ while $p$
+is $\mathit{rest}$-connected to $b$.
 \end{lemma}
 
-\begin{lemma}[Reachability depends only on membership]
+\begin{lemma}[Reachability depends only on the edge set]
 \lean{Kruskal.reach_mem_iff}
 \label{Kruskal.reach_mem_iff}
 \leanok
 \uses{Kruskal.Reach, Kruskal.WEdge, Kruskal.reach_mono}
 \difficulty{1}
-If two edge lists $l_1$ and $l_2$ have the same elements (i.e.\
-$\forall x,\; x \in l_1 \leftrightarrow x \in l_2$), then
-$\mathtt{Reach}\,l_1\,a\,b \leftrightarrow \mathtt{Reach}\,l_2\,a\,b$.
+Fix $n \in \bbn$, and let $l_1$ and $l_2$ be two lists of weighted edges on the vertex
+set $\mathrm{Fin}\,n$ that have the same members, i.e.\ $x \in l_1 \Leftrightarrow x \in
+l_2$ for every weighted edge $x$. Then for any vertices $a, b \in \mathrm{Fin}\,n$, the
+vertex $b$ is reachable from $a$ through the edges of $l_1$ if and only if it is
+reachable from $a$ through the edges of $l_2$.
 \end{lemma}
 
-\begin{lemma}[Total weight of empty list]
+\begin{lemma}[Total weight of the empty edge list]
 \lean{Kruskal.totalWeight_nil}
 \label{Kruskal.totalWeight_nil}
 \leanok
 \uses{Kruskal.WEdge, Kruskal.totalWeight}
 \difficulty{1}
-$\mathtt{totalWeight}\,([] : \mathtt{List}\,(\mathtt{WEdge}\,n)) = 0$.
+Over any number of vertices $n$, the total weight of the empty list of weighted edges is
+$0$; that is, the sum of the weights of no edges is $\sum_{e \in [\,]} e.\mathit{weight}
+= 0$.
 \end{lemma}
 
-\begin{lemma}[Total weight after erasing an edge]
+\begin{lemma}[Total weight after removing an edge]
 \lean{Kruskal.totalWeight_erase}
 \label{Kruskal.totalWeight_erase}
 \leanok
 \uses{Kruskal.WEdge, Kruskal.totalWeight}
 \difficulty{3}
-If $e \in \mathit{edges}$ then
-$\mathtt{totalWeight}\,\mathit{edges} = e.\mathit{weight} + \mathtt{totalWeight}\,(\mathit{edges}.\mathtt{erase}\,e)$.
+Let $\mathit{edges}$ be a list of weighted edges over $n$ vertices, and let $e$ be a
+weighted edge occurring in $\mathit{edges}$. Then the total weight of $\mathit{edges}$
+equals the weight of $e$ plus the total weight of the list obtained by deleting the
+first occurrence of $e$ from $\mathit{edges}$.
 \end{lemma}

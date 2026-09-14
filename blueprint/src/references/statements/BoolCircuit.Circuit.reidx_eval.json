@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.Circuit.reidx_eval",
+ "key": "8e3698f4cfe8b33d",
+ "kind": "theorem",
+ "title": "Re-indexing commutes with evaluation",
+ "statement": "Let $c$ be a Boolean circuit on $m$ variables, let $f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$ be a re-indexing map, and let $g : \\mathrm{Fin}\\,m' \\to \\bbf_2$ be an assignment to the $m'$ variables. Then evaluating the re-indexed circuit $\\mathrm{reidx}(c, f)$ under $g$ gives the same value as evaluating the original circuit $c$ under the pulled-back assignment $g \\circ f$:\n\\[\n\\mathrm{eval}\\big(\\mathrm{reidx}(c, f),\\, g\\big) = \\mathrm{eval}\\big(c,\\, g \\circ f\\big).\n\\]",
+ "hypotheses_covered": [
+  "a Boolean circuit $c$ on $m$ variables",
+  "a re-indexing map $f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$",
+  "an assignment $g : \\mathrm{Fin}\\,m' \\to \\mathbb{F}_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$ on $m$ variables, every $f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$,\nand every assignment $g : \\mathrm{Fin}\\,m' \\to \\mathrm{Bool}$, evaluating the re-indexed\ncircuit under $g$ equals evaluating $c$ under the pulled-back assignment $g \\circ f$, i.e.\n$\\mathrm{eval}(\\mathrm{reidx}(c, f), g) = \\mathrm{eval}(c, g \\circ f)$."
+}

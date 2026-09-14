@@ -1,0 +1,14 @@
+{
+ "lean_name": "CodingTheory.Johnson.inner_pmOne_pmOne",
+ "key": "4cecd21f99b858c0",
+ "kind": "lemma",
+ "title": "Inner product of two ±1 embeddings",
+ "statement": "For any two binary words $x, y$ of length $n$, let $\\phi(x), \\phi(y) \\in \\mathbb{R}^n$ be their $\\pm 1$ embeddings, whose $i$-th coordinates are $-1$ when the corresponding bit is true and $+1$ otherwise. Then their Euclidean inner product is\n\\[\n\\langle \\phi(x),\\, \\phi(y)\\rangle \\;=\\; n - 2\\,d(x,y),\n\\]\nwhere $d(x,y)$ is the Hamming distance, the number of coordinates on which $x$ and $y$ differ.",
+ "hypotheses_covered": [
+  "x and y are binary words of length n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary words $x,y$ of length $n$,\n\\[\n\\langle \\mathrm{pmOne}(x), \\mathrm{pmOne}(y)\\rangle \\;=\\; n - 2\\,\\mathrm{hdist}(x,y).\n\\]"
+}

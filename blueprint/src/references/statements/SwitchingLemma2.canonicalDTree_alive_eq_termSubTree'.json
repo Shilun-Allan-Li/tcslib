@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'",
+ "key": "01f40c0f74b3329e",
+ "kind": "lemma",
+ "title": "One-step unfolding of the canonical tree at a live restriction",
+ "statement": "Let $f$ be a DNF formula and $\\rho$ a restriction on $n$ variables such that $\\rho$ does not kill every term of $f$ and fixes no term of $f$, and let $t$ be the first term of $f$, in list order, that $\\rho$ does not kill. Then the canonical decision tree of $f$ under $\\rho$ equals the term sub-tree built for $t$ over $\\rho$ whose continuation, evaluated at each leaf restriction $\\rho'$ reached along a root-to-leaf path, returns the constant-true leaf when $\\rho'$ fixes $t$ and otherwise returns the fuel-bounded canonical construction for $f$ under $\\rho'$ run with fuel budget equal to the number of free variables of $\\rho$.",
+ "hypotheses_covered": [
+  "ρ does not kill every term of f",
+  "ρ fixes no term of f",
+  "t is the first term of f (in list order) that ρ does not kill"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The top-level analogue of the previous lemma for $\\mathrm{canonicalDTree}$ itself:\nunder the alive-branch hypotheses with first non-killed clause $t$, $\\mathrm{canonicalDTree}\\,f\\,\\rho$\nequals $\\mathrm{termSubTree}\\,t\\,\\rho\\,\\mathrm{cont}$ with the same fixed-or-recurse continuation\nrunning at fuel $\\rho.\\mathrm{numFree}$."
+}

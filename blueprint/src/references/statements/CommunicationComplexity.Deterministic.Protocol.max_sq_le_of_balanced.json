@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced",
+ "key": "e6f808db40ee55fb",
+ "kind": "lemma",
+ "title": "Balanced split bound on the squared larger part",
+ "statement": "Let $m, n \\in \\bbn$ satisfy $3m \\le 2n$ and $3(n - m) \\le 2n$, so that neither of the two parts $m$ and $n - m$ exceeds two-thirds of $n$. Then\n\\[\n9 \\cdot \\max\\bigl(m^2,\\,(n - m)^2\\bigr) \\le 4 n^2.\n\\]",
+ "hypotheses_covered": [
+  "m, n natural numbers",
+  "3m ≤ 2n (first part at most two-thirds of n)",
+  "3(n − m) ≤ 2n (second part at most two-thirds of n)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m, n \\in \\mathbb{N}$ with $3m \\le 2n$ and $3(n - m) \\le 2n$.\nThen $9 \\cdot \\max(m^2,\\,(n-m)^2) \\le 4n^2$.\nThis arithmetic inequality captures the key quantitative gain obtained when a split is\n\\emph{balanced}: neither piece exceeds $\\tfrac{2}{3}$ of the total."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "ACP.exists_poly_distribution_for_circuit_one",
+ "key": "d6d935ed9259aea9",
+ "kind": "theorem",
+ "title": "Polynomial approximation of a single-output AC⁰[p] circuit",
+ "statement": "Let $p$ be prime and let $n, \\ell \\in \\bbn$. Let $F$ be a feedforward circuit over the alphabet $\\mathrm{Fin}\\,2$ with input type $\\mathrm{Fin}\\,n$, a single output node, and a finite node set at every layer, each of whose gates is an $\\mathrm{AC}^0[p]$ gate (the identity, NOT, an unbounded fan-in AND, or an unbounded $\\mathrm{MOD}_p$ gate of some arity); write $d$ for its depth. For a Boolean input $x : \\mathrm{Fin}\\,n \\to \\mathrm{Fin}\\,2$, let $\\hat{x}$ be its coordinatewise image in $\\bbz/p$ and let $F(x) \\in \\{0,1\\} \\subseteq \\bbz/p$ be the resulting single output value cast into the field. Then there exist a nonempty finite seed set $\\mathrm{Seed}$ and a family of polynomials $P_s \\in (\\bbz/p)[X_0,\\dots,X_{n-1}]$ indexed by $s \\in \\mathrm{Seed}$, each of total degree at most $\\bigl((p-1)\\ell\\bigr)^{d}$, such that for every Boolean input $x$,\n\\[\n\\abs{\\{\\,s \\in \\mathrm{Seed} : P_s(\\hat{x}) \\ne F(x)\\,\\}} \\cdot 2^{\\ell}\n\\;\\le\\;\nG \\cdot \\abs{\\mathrm{Seed}},\n\\]\nwhere $G$ is the total number of non-input gates of $F$, that is, the total number of nodes across layers $1,\\dots,d$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "F is a feedforward circuit over Fin 2 with input type Fin n",
+  "F has a single (unique) output node",
+  "every layer of F has a finite node set",
+  "F uses only AC⁰[p] gates",
+  "ℓ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "The same statement for a circuit with a unique output node: there is a nonempty finite seed type and\npolynomials $P(s)$ of total degree at most $\\mathrm{circuitDegreeBound}(p,\\ell,F.\\mathrm{depth})$ such\nthat for every Boolean input $x$,\n\\[\n\\abs{\\{s : P(s)(\\mathrm{boolInput}_p\\,x) \\ne F.\\mathrm{eval}_1\\,x\\}} \\cdot 2^{\\ell}\n\\;\\le\\; \\mathrm{gateCountBefore}\\,F\\,F.\\mathrm{depth} \\cdot \\abs{\\mathrm{Seed}}.\n\\]"
+}

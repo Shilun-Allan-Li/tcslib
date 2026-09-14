@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemmaCNF.IsBadRestriction_neg",
+ "key": "5cdb37e61ba1bb2c",
+ "kind": "lemma",
+ "title": "Negation-invariance of bad restrictions",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be a Boolean function, $d$ a natural number, and $\\rho$ a restriction on the $n$ variables. Then $\\rho$ is bad for the negation $\\lnot f$ at depth $d$ if and only if $\\rho$ is bad for $f$ at depth $d$; that is, the restricted function of $\\lnot f$ under $\\rho$ has decision-tree depth greater than $d$ exactly when the restricted function of $f$ under $\\rho$ does.",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "d is a natural number (the depth threshold)",
+  "ρ is a restriction on the n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "$\\mathrm{IsBadRestriction}(\\lnot f)\\,d\\,\\rho \\iff \\mathrm{IsBadRestriction}\\,f\\,d\\,\\rho$."
+}

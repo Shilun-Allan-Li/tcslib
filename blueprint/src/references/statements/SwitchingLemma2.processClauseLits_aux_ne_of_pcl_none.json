@@ -1,0 +1,20 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none",
+ "key": "a2d5d55c48bd4af2",
+ "kind": "lemma",
+ "title": "No auxiliary entry targets a still-free variable",
+ "statement": "Let $t$ be a term on $n$ variables (a list of literals), let $L$ be a list of literals each paired with a natural-number position, let $\\pi$ be a path (a list of variable–direction pairs), and let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables. Suppose every pair in $L$ occurs in the indexed enumeration of $t$, so that each $(l,i)\\in L$ records a literal $l$ sitting at position $i$ of $t$. Run the clause-processing procedure that consumes the free literals of $L$ against $\\pi$ starting from $\\rho_0$ and $\\sigma$, and let $\\rho_0'$ denote its updated $\\rho_0$-restriction and $A$ its list of clause auxiliary entries. If $\\rho_0'$ leaves the variable $v$ free, then for every entry $(i,d)\\in A$ and every literal $l$ such that deleting the first $i$ literals of $t$ leaves a nonempty list with head $l$, the variable of $l$ is not $v$.",
+ "hypotheses_covered": [
+  "t is a term on n variables (a list of literals)",
+  "L is a list of literals each paired with a natural-number position",
+  "pi is a path: a list of variable-direction pairs",
+  "rho_0 and sigma are restrictions on n variables",
+  "v is a variable",
+  "every pair in L occurs in the indexed enumeration of t",
+  "the updated rho_0-restriction produced by the procedure leaves v free"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Assuming every literal in $\\mathit{lits}$ is an indexed literal of the term $t$, if the\nrestriction component $(\\mathrm{processClauseLits}\\ \\mathit{lits}\\ \\mathit{path}\\ \\rho_0\\ \\sigma).2.1$\nis unset at $v$, then no auxiliary entry produced by the fold targets $v$: for every aux\nentry $e$, dropping $e.1$ literals of $t$ to a head literal $l$ gives $l.\\mathrm{var} \\neq v$."
+}

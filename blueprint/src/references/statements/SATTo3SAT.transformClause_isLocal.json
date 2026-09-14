@@ -1,0 +1,16 @@
+{
+ "lean_name": "SATTo3SAT.transformClause_isLocal",
+ "key": "43ca6772f6c6fa4c",
+ "kind": "lemma",
+ "title": "Locality of the 3-clause encoding of a single clause",
+ "statement": "Fix a clause index $i$ and let $C$ be a clause over a variable type $V$. If a 3-clause occurs in the list produced by encoding $C$ at index $i$, then each of its three literals is local to $i$; that is, every auxiliary variable appearing in the 3-clause carries the index $i$, while literals over original variables of $V$ are local automatically.",
+ "hypotheses_covered": [
+  "clause index i",
+  "C is a clause over variable type V",
+  "the 3-clause is a member of the encoding transformClause i C"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every literal in any 3-clause produced by $\\texttt{SATTo3SAT.transformClause}\\,i\\,\\mathit{clause}$\nis local to index $i$."
+}

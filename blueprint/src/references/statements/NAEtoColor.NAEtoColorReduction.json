@@ -1,0 +1,14 @@
+{
+ "lean_name": "NAEtoColor.NAEtoColorReduction",
+ "key": "896bab74731f085d",
+ "kind": "theorem",
+ "title": "Correctness of the NAE-SAT to 3-coloring reduction",
+ "statement": "Let $f$ be a NAE-SAT instance over a variable type $V$, and let $\\Gamma(f)$ denote its reduction graph, the simple graph built from $f$ as described above (a ground vertex joined to every variable vertex, each variable vertex joined to the clause-gadget vertices for the clauses in which it occurs, and the three gadget vertices of each clause joined pairwise into a triangle). Then $f$ is satisfiable if and only if $\\Gamma(f)$ is 3-colorable.",
+ "hypotheses_covered": [
+  "f is a NAE-SAT instance over variable type V (arbitrary V)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any NAE-SAT instance $f$ over variable type $V$,\n\\[\n  \\texttt{NAEtoColor.IsSatisfiable}\\;f\n  \\;\\iff\\;\n  \\texttt{NAEtoColor.Is3Colorable}\\;(\\texttt{NAEtoColor.ReductionGraph}\\;f).\n\\]\nThis is the main reduction theorem, combining completeness and soundness."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.prob_method_averaging",
+ "key": "37a523e9c0a8491a",
+ "kind": "lemma",
+ "title": "Averaging for the probabilistic method",
+ "statement": "Let $\\alpha$ be a finite type and $\\beta$ a finite nonempty type, let $\\mathrm{Bad} \\subseteq \\alpha$ be a finite set, let $\\mathrm{Fail} \\subseteq \\alpha \\times \\beta$ be a decidable relation, and let $C$ be a natural number. Suppose that for every $a \\in \\mathrm{Bad}$ we have $\\abs{\\{b \\in \\beta : \\mathrm{Fail}(a,b)\\}} \\cdot C \\le \\abs{\\beta}$. Then there exists a single $b \\in \\beta$ such that $\\abs{\\{a \\in \\mathrm{Bad} : \\mathrm{Fail}(a,b)\\}} \\cdot C \\le \\abs{\\mathrm{Bad}}$.",
+ "hypotheses_covered": [
+  "α finite",
+  "β finite and nonempty",
+  "Bad a finite subset of α",
+  "Fail a decidable relation on α × β",
+  "C a natural number",
+  "for each a ∈ Bad, |{b : Fail(a,b)}| · C ≤ |β|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{Bad}$ be a finite set of elements of $\\alpha$, let $\\mathrm{Fail} : \\alpha \\to\n\\beta \\to \\mathrm{Prop}$ be decidable with $\\beta$ finite and nonempty, and let $C$ be a\nnatural number. If for every $a \\in \\mathrm{Bad}$ we have\n$\\abs{\\{b : \\mathrm{Fail}(a,b)\\}} \\cdot C \\le \\abs{\\beta}$, then there exists a single\n$b \\in \\beta$ with $\\abs{\\{a \\in \\mathrm{Bad} : \\mathrm{Fail}(a,b)\\}} \\cdot C \\le\n\\abs{\\mathrm{Bad}}$."
+}

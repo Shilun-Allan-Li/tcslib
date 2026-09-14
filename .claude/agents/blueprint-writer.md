@@ -75,6 +75,26 @@ Rules:
    - For a **definition**, say what object/operation/predicate is introduced.
    - For a **lemma/theorem**, state the claim (hypotheses ⇒ conclusion). **Describe
      the statement, never the proof.** Do not write `\begin{proof}`.
+   - **It must stand on its own.** A reader with the right background, but with no
+     access to this repo, this file, or the entry next to it, must be able to read
+     your sentence and know exactly what is claimed. Concretely:
+     - **Introduce every object before using it** — "Let $G$ be a connected simple
+       graph on $n \ge 3$ vertices", not a bare $G$ that appeared in the entry above.
+     - **No pointing outside the statement** — no "the embedding", "this lemma",
+       "as above", "under the same hypotheses as", "restated", "the mirror of".
+       If it really is a restatement, say the mathematics again in full.
+     - **Every hypothesis the Lean carries** appears, including `0 < n`, `p ≤ 1`,
+       finiteness and nonemptiness. Instance arguments (`[Fintype V]`,
+       `[DecidableEq V]`) fold into the prose as "a finite graph", or are dropped
+       when they say nothing mathematical.
+     - **Mathematics, not Lean.** Write $\mathrm{depth}(C)$, never
+       `C.toFeedForward.depth`; never present a Lean identifier as notation, and
+       never use `\texttt{}` for a mathematical object. The formal statement ships
+       alongside the prose, so nothing is lost by naming objects in words.
+     - **No formalisation commentary** — nothing about Mathlib, instances, `sorry`,
+       universes, or why the Lean is phrased as it is.
+   - `python3 scripts/statement_quality.py`'s rubric is the mechanical floor for
+     all of this; `scripts/dataset_hygiene.py --strict` gates the hard failures.
    - Base the description on the `doc` and `signature` fields. If they are insufficient,
      read the exact lines (`startLine`–`endLine`) of `lean_file` for the real statement.
    - Do not invent hypotheses or mathematical content that is not in the Lean. When the

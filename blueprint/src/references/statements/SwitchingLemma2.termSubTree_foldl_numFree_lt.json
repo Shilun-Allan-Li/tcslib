@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.termSubTree_foldl_numFree_lt",
+ "key": "a4e9e991fba755a5",
+ "kind": "lemma",
+ "title": "Sequential fixing strictly reduces the free count",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables, let $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be a Boolean assignment, and let $\\ell_1, \\dots, \\ell_k$ be a list of literals on $n$ variables. Process the literals from left to right, starting from $\\rho$: at each step, if the current literal's variable is still free in the restriction obtained so far, fix that variable to the value $x$ assigns it, and otherwise leave the restriction unchanged; write $\\rho'$ for the restriction produced after all $k$ steps. If at least one literal in the list has its variable free in the original restriction $\\rho$, then $\\rho'$ has strictly fewer free variables than $\\rho$.",
+ "hypotheses_covered": [
+  "lits is a list of literals on n variables",
+  "rho is a restriction on n variables",
+  "x is a Boolean assignment Fin n to Bool",
+  "some literal l belongs to the list",
+  "the variable of that literal l is free in rho"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When at least one literal of $\\mathit{lits}$ has a variable free in $\\rho$, the $\\mathrm{termSubTree}$\nfold strictly decreases $\\mathrm{numFree}$."
+}

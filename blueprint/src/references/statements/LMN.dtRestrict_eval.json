@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.dtRestrict_eval",
+ "key": "84356a7f5406417a",
+ "kind": "theorem",
+ "title": "Restricting a decision tree commutes with evaluation",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, let $\\rho$ be a restriction on those variables, and let $x \\in \\{\\mathrm{true},\\mathrm{false}\\}^n$ be an input. Then evaluating the restricted tree at $x$ agrees with evaluating $T$ at the assignment obtained by extending $\\rho$ with $x$; that is, the restricted tree returns the same bit at $x$ as $T$ does at the point that takes each variable's fixed value under $\\rho$ where $\\rho$ sets it and the value $x_i$ on the free variables.",
+ "hypotheses_covered": [
+  "decision tree T on n variables",
+  "restriction ρ on n variables",
+  "input point x : Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every decision tree $T$, restriction $\\rho$, and input $x$, the restricted tree\nevaluates as $(\\mathrm{dtRestrict}\\,T\\,\\rho).\\mathrm{eval}(x) = T.\\mathrm{eval}(\\mathrm{extend}\\,\\rho\\,x)$,\nwhere $\\mathrm{extend}\\,\\rho\\,x$ fills in the unset coordinates of $\\rho$ using $x$."
+}

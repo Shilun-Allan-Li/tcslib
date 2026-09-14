@@ -1,0 +1,16 @@
+{
+ "lean_name": "support_mkWithSupport",
+ "key": "9ef88ece192ae5e2",
+ "kind": "lemma",
+ "title": "Support of a Pauli string built from prescribed data",
+ "statement": "Fix $n$, a finset $S \\subseteq \\mathrm{Fin}\\,n$, and an assignment $f : S \\to \\{X,Y,Z\\}$ of a non-identity Pauli to each coordinate in $S$. Let $p$ be the Pauli string of length $n$ that equals $f(i)$ at each $i \\in S$ and equals the identity $I$ at every coordinate outside $S$. Then the support of $p$ — the set of coordinates where $p$ differs from $I$ — is exactly $S$.",
+ "hypotheses_covered": [
+  "length n",
+  "finset S of coordinates",
+  "assignment f from S to non-identity Paulis"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The Pauli string $\\mathrm{mkWithSupport}\\,S\\,f$ has support exactly $S$."
+}

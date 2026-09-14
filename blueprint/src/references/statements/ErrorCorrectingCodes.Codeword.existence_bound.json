@@ -1,0 +1,19 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.existence_bound",
+ "key": "9691468b86cbb211",
+ "kind": "theorem",
+ "title": "Existence bound via union bound",
+ "statement": "Let $\\alpha$ be a finite nonempty field, let $n$ and $k$ be natural numbers with $k \\ge 1$, and let $d$ be a positive integer. Regard an $n \\times k$ matrix $G$ over $\\alpha$ as a map sending a message $x \\in \\alpha^{k}$ to the length-$n$ codeword $Gx$. Then the number of such matrices $G$ for which some nonzero message $x$ has $\\mathrm{wt}(Gx) < d$ is at most\n\\[\n(\\abs{\\alpha}^{k} - 1)\\cdot \\abs{\\alpha}^{\\,nk - n}\\cdot \\abs{B_{d-1}(\\mathbf 0)},\n\\]\nwhere $\\mathrm{wt}$ denotes Hamming weight and $B_{d-1}(\\mathbf 0)$ is the Hamming ball of radius $d-1$ about the all-zero codeword of length $n$.",
+ "hypotheses_covered": [
+  "alphabet α is a finite nonempty field",
+  "k ≥ 1",
+  "d > 0",
+  "G ranges over n×k matrices over α",
+  "counts G admitting a nonzero message x",
+  "with weight of the codeword Gx less than d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe number of $n\\times k$ matrices that send some nonzero message to a codeword of\nweight $<d$ is at most\n\\[\n(|\\alpha|^k-1)\\cdot|\\alpha|^{nk-n}\\cdot|B_{d-1}(\\mathbf{0})|.\n\\]"
+}

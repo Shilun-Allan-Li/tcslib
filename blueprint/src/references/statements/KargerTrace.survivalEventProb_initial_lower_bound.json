@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.survivalEventProb_initial_lower_bound",
+ "key": "7229d5b1eb81cca7",
+ "kind": "theorem",
+ "title": "Karger survival lower bound at the initial state",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $C$ of $G$, and write $n$ for the number of vertices of $G$. Suppose that $C$ is a minimum cut of $G$, that its size is positive, and that $n \\ge 2$. Then the probability that $C$ survives $n-2$ successive uniformly random edge-occurrence contractions is at least\n\\[\n  \\frac{2}{n(n-1)}.\n\\]",
+ "hypotheses_covered": [
+  "C is a minimum cut of G",
+  "the size of C is positive",
+  "G has at least two vertices (n \\ge 2)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a state $s$ whose distinguished cut is a min-cut of positive size and whose graph has\nat least two vertices, writing $n = s.G.\\mathrm{vertexCount}$,\n\\[\n  \\frac{2}{n(n-1)} \\;\\le\\; \\mathrm{survivalEventProb}(n-2,\\, s).\n\\]"
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "BernoulliCost.bernoulli_restriction_cost",
+ "key": "c45ceefb73fbf681",
+ "kind": "theorem",
+ "title": "Bernoulli restriction cost bound",
+ "statement": "Let $n \\ge 1$, let $p \\in \\bbr$ satisfy $0 < p \\le 1$, and let $w, s$ be positive integers. Let $\\mathrm{event}$ be a decidable predicate on restrictions of $n$ variables, and suppose that for every $k \\le n$ its probability under the fixed-size restriction model $R_k$ satisfies\n\\[\n  \\Pr_{R_k}[\\mathrm{event}] \\le \\left(\\frac{5kw}{n}\\right)^{s}.\n\\]\nThen the probability of $\\mathrm{event}$ under a Bernoulli($p$) random restriction satisfies\n\\[\n  \\Pr_{R_p}[\\mathrm{event}] \\le (10\\,p\\,w)^{s} + \\exp\\!\\left(-\\frac{n\\,p}{3}\\right).\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "0 < p",
+  "p ≤ 1",
+  "w > 0",
+  "s > 0",
+  "event is a decidable predicate on restrictions",
+  "for all k ≤ n, the fixed-size restriction probability R_k of the event is at most (5kw/n)^s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n > 0$, $0 < p \\le 1$, and $w, s > 0$. If the event satisfies\n$\\mathrm{fixedSizeRestrProb}\\,(\\mathrm{event})\\,k \\le (5kw/n)^s$ for every $k \\le n$, then under\nthe Bernoulli model,\n\\[\n  \\Pr_{R_p}[\\mathrm{event}] \\le (10pw)^s + e^{-np/3}.\n\\]"
+}

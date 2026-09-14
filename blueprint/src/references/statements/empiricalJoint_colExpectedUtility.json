@@ -1,0 +1,17 @@
+{
+ "lean_name": "empiricalJoint_colExpectedUtility",
+ "key": "95c0f5f4c848ba01",
+ "kind": "lemma",
+ "title": "Column utility of the empirical joint distribution",
+ "statement": "Consider a finite two-player game with $M$ row actions and $N$ column actions, whose column payoff is $u_c(i,j)$ for the action profile $(i,j)$. Fix $T \\ge 1$ rounds in which the row player plays the mixed strategy $p_t$ and the column player plays the mixed strategy $q_t$, and let $\\sigma$ be the empirical joint distribution, which assigns to each profile $(i,j)$ the time-averaged probability $\\frac{1}{T}\\sum_{t=1}^{T} (p_t)_i\\,(q_t)_j$. Then the column player's expected utility under $\\sigma$ equals the time-average of the per-round bilinear column payoffs:\n\\[\n  \\sum_{i=1}^{M}\\sum_{j=1}^{N} \\sigma_{ij}\\, u_c(i,j)\n  = \\frac{1}{T}\\sum_{t=1}^{T}\\sum_{i=1}^{M}\\sum_{j=1}^{N} (p_t)_i\\,(q_t)_j\\, u_c(i,j).\n\\]",
+ "hypotheses_covered": [
+  "T ≥ 1 rounds (0 < T)",
+  "row mixed strategies p_t for each round",
+  "column mixed strategies q_t for each round",
+  "a finite two-player game G with column utility u_c"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The column player's expected utility under the empirical joint distribution\nequals the time-average of the per-round bilinear column utilities:\n\\[\n  \\mathrm{colExpUtil}(\\sigma^{\\mathrm{emp}}, G) =\n  \\frac{1}{T}\\sum_{t}\\sum_{i,j}(p_t)_i\\,(q_t)_j\\,u_c(i,j).\n\\]"
+}

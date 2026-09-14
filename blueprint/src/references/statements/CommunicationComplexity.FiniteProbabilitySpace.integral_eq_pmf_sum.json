@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.FiniteProbabilitySpace.integral_eq_pmf_sum",
+ "key": "d04ff4f01b49e919",
+ "kind": "theorem",
+ "title": "Integral as a probability-weighted sum on a finite probability space",
+ "statement": "Let $\\Omega$ be a finite probability space, and let $p(\\omega)$ denote the probability mass it assigns to each point $\\omega \\in \\Omega$. Then for every function $f \\colon \\Omega \\to \\bbr$,\n\\[\n  \\int_\\Omega f(\\omega)\\,d\\omega \\;=\\; \\sum_{\\omega \\in \\Omega} p(\\omega)\\, f(\\omega),\n\\]\nso that the expectation of $f$ under the canonical probability measure equals the finite $p$-weighted sum of its values.",
+ "hypotheses_covered": [
+  "Ω is a finite probability space",
+  "f is a real-valued function on Ω",
+  "p(ω) is the probability mass of ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a finite probability space $\\Omega$ and any $f : \\Omega \\to \\mathbb{R}$,\n\\[\n  \\int_\\Omega f(\\omega)\\,d\\omega\n  \\;=\\; \\sum_{\\omega \\in \\Omega} \\mathrm{toPMF}(\\Omega)(\\omega)_{\\mathbb{R}} \\cdot f(\\omega).\n\\]"
+}

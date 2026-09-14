@@ -1,0 +1,21 @@
+{
+ "lean_name": "LMN.circuit_reduction_aux",
+ "key": "f46aca4624b2c196",
+ "kind": "theorem",
+ "title": "Random-restriction bound on the decision-tree depth of a small circuit",
+ "statement": "Let $f\\colon\\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function on $n \\ge 1$ variables, and let $d,s,w,l,t \\in \\bbn$ satisfy $d \\ge 2$ and $s,w,l \\ge 1$. Suppose $f$ is computed by some Boolean circuit of depth at most $d$, size at most $s$, and maximum fan-in at most $w$. Write $f\\!\\restriction_\\rho$ for the restriction of $f$ by a restriction $\\rho$, and let $D(g)$ denote the decision-tree depth of a Boolean function $g$, that is, the least depth of a decision tree computing it. Then, under a Bernoulli random restriction $\\rho$ with parameter $\\delta = \\dfrac{1}{40w}\\left(\\dfrac{1}{40l}\\right)^{d-2}$,\n\\[\n  \\bbP\\bigl[\\, D(f\\!\\restriction_\\rho) > t \\,\\bigr]\n  \\;\\le\\; s\\left(\\tfrac{1}{2}\\right)^{l} + \\left(\\tfrac{1}{2}\\right)^{t}\n    + s\\,\\exp\\!\\left(-\\tfrac{n}{120w}\\right) + s\\,\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "d, s, w, l, t are natural numbers",
+  "d >= 2",
+  "s > 0",
+  "w > 0",
+  "l > 0",
+  "n > 0",
+  "f is computed by a circuit of depth <= d, size <= s, and maximum fan-in <= w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nReplacing the coefficient $s-1$ by $s$ in the previous bound: under the same hypotheses and\nthe parameter $\\mathrm{composedDelta}(w,l,d)$,\n\\[\n  \\Pr\\!\\left[\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,f\\,\\rho) > t\\right]\n  \\le s(1/2)^{l} + (1/2)^{t} + s\\,\\exp\\!\\left(-\\tfrac{n}{120w}\\right)\n    + s\\,\\exp\\!\\left(-\\tfrac{n}{120l}\\right).\n\\]"
+}

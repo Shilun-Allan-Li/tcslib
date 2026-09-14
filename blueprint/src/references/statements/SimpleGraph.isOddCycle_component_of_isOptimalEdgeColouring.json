@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleGraph.isOddCycle_component_of_isOptimalEdgeColouring",
+ "key": "31ac345871b14564",
+ "kind": "theorem",
+ "title": "Optimal edge colourings force odd-cycle components",
+ "statement": "Let $\\mathscr{C}$ be an optimal $k$-edge colouring of a finite graph $G$, and suppose there is a vertex $u$ and colours $i, j$ for which colour $i$ is not represented at $u$ while at least two edges incident with $u$ carry colour $j$. Then the connected component of $u$ in the subgraph $G[E_i \\cup E_j]$ spanned by the edges coloured $i$ or $j$ is an odd cycle: there is a closed walk based at $u$ that is a cycle of odd length whose vertices are precisely those of that component.",
+ "hypotheses_covered": [
+  "$G$ is a finite graph",
+  "$\\mathscr{C}$ is an optimal $k$-edge colouring",
+  "$u$ is a vertex and $i,j$ are colours",
+  "colour $i$ is not represented at $u$",
+  "at least two edges incident with $u$ have colour $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathscr{C} = (E_1, E_2, \\ldots, E_k)$ be an optimal $k$-edge colouring of $G$. If\nthere is a vertex $u$ in $G$ and colours $i$ and $j$ such that $i$ is not represented at\n$u$ and $j$ is represented at least twice at $u$, then the component of $G[E_i \\cup\nE_j]$ that contains $u$ is an odd cycle."
+}

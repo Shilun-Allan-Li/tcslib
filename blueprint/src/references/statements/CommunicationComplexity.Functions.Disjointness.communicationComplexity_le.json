@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.communicationComplexity_le",
+ "key": "0226a07ab310ceaa",
+ "kind": "theorem",
+ "title": "Upper bound on the communication complexity of disjointness",
+ "statement": "Fix $n \\in \\bbn$, and let both players' inputs range over subsets of $[n] = \\{0, 1, \\dots, n-1\\}$, so that Alice holds $X \\subseteq [n]$ and Bob holds $Y \\subseteq [n]$. The deterministic communication complexity of the set-disjointness function, which returns $\\mathtt{true}$ exactly when $X \\cap Y = \\emptyset$, is at most $n + 1$.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "inputs X, Y are subsets of [n]",
+  "function is set disjointness on Fin n",
+  "bound is at most n + 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe deterministic communication complexity of $\\mathrm{disjointness}(n)$ is at most\n$n + 1$: Alice can communicate her entire set $X \\subseteq [n]$ in $n$ bits, after\nwhich Bob sends a single bit for the answer."
+}

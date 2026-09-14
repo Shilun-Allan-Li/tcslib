@@ -1,0 +1,17 @@
+{
+ "lean_name": "g_expansion",
+ "key": "cbd7ba8ca130c2f2",
+ "kind": "lemma",
+ "title": "Expansion of the operator count $g(S,M)$",
+ "statement": "Fix a prime $p$ and equip $V = \\bbf_p^{\\,n} \\times \\bbf_p^{\\,n}$ with the symplectic form $\\omega\\big((x,z),(x',z')\\big) = \\sum_{i=0}^{n-1}\\big(x_i z'_i - z_i x'_i\\big)$. For a set of coordinates $M \\subseteq \\{0,\\dots,n-1\\}$, let $V_M \\le V$ be the subspace of vectors supported on $M$, and for a subspace $W \\le V$ write $W_M = W \\cap V_M$. Let $S \\le V$ be isotropic, meaning $\\omega(u,v) = 0$ for all $u,v \\in S$, let $S^{\\perp}$ denote its symplectic orthogonal complement, and set $g(S,M) = \\dim_{\\bbf_p}\\!\\big(S^{\\perp}\\cap V_M\\big) - \\dim_{\\bbf_p}(S_M)$. Then, writing $M^c$ for the complementary set of coordinates,\n\\[\ng(S,M) \\;=\\; 2\\,\\abs{M} + \\dim_{\\bbf_p}\\!\\big(S_{M^c}\\big) - \\dim_{\\bbf_p}(S) - \\dim_{\\bbf_p}(S_M).\n\\]",
+ "hypotheses_covered": [
+  "$p$ is prime and $V=\\mathbb{F}_p^n\\times\\mathbb{F}_p^n$ with symplectic form $\\omega$",
+  "$S$ is an isotropic subspace of $V$",
+  "$M$ is a subset of the coordinates $\\{0,\\dots,n-1\\}$",
+  "$g(S,M)=\\dim(S^\\perp\\cap V_M)-\\dim(S_M)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For isotropic $S$,\n\\[\ng(S,M) = 2|M| + \\dim(S_{M^c}) - \\dim(S) - \\dim(S_M).\n\\]"
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.integral_sq_indicator_mul_boolSign_innerProduct_le",
+ "key": "d2d88ec31a251f82",
+ "kind": "lemma",
+ "title": "Second-moment bound for the sign-weighted inner-product average",
+ "statement": "Let $B \\subseteq \\{0,1\\}^n$ be an arbitrary set of $n$-bit Boolean inputs, with indicator $\\mathbf 1_B$, and write $\\langle x,y\\rangle = \\bigoplus_{i=1}^{n} (x_i \\wedge y_i)$ for the mod-2 inner product of $x,y \\in \\{0,1\\}^n$. Taking $x$ and $y$ to range independently over $\\{0,1\\}^n$ under the uniform probability measure,\n\\[\n\\int_{x}\\left(\\int_{y} \\mathbf 1_B(y)\\,(-1)^{\\langle x,y\\rangle}\\right)^{2} \\;\\le\\; \\frac{1}{2^{n}}.\n\\]\nHere $(-1)^{\\langle x,y\\rangle}$ is the $\\pm 1$ value that is $-1$ when the inner product is $1$ and $+1$ when it is $0$; equivalently, the average over uniformly random $x$ of the square of the average over uniformly random $y$ of $\\mathbf 1_B(y)\\,(-1)^{\\langle x,y\\rangle}$ is at most $2^{-n}$.",
+ "hypotheses_covered": [
+  "B is an arbitrary subset of the n-bit Boolean inputs {0,1}^n",
+  "x and y range independently over {0,1}^n under the uniform probability measure (integrals normalized to total mass 1)"
+ ],
+ "confidence": "high",
+ "caveat": "The integrals are over the finite type of n-bit inputs; the right-hand side 1/2^n is the value forced by the uniform probability normalization (equality holds when B is all of {0,1}^n), which fixes the intended meaning of the integrals.",
+ "rubric": [],
+ "replaced": "\nFor any set $B \\subseteq \\mathrm{BoolInput}\\,n$,\n\\[\n  \\int_{x} \\Bigl(\\int_{y}\n    \\mathbf{1}_B(y)\\,\\mathrm{boolSign}(\\mathrm{IP}(x,y))\\Bigr)^2\n  \\;\\le\\; \\frac{1}{2^n}.\n\\]\nThis is the key second-moment estimate used in the discrepancy bound."
+}

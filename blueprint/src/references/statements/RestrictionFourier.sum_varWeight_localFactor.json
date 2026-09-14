@@ -1,0 +1,17 @@
+{
+ "lean_name": "RestrictionFourier.sum_varWeight_localFactor",
+ "key": "eb10c5af065bdaf9",
+ "kind": "lemma",
+ "title": "Averaging a single local factor against the Bernoulli weight",
+ "statement": "Fix a real parameter $p$, two coordinate sets $U, S \\subseteq [n]$, and a coordinate $i \\in [n]$. Writing $w_p$ for the per-variable Bernoulli weight — which assigns $p$ to the free value and $(1-p)/2$ to each of the two fixed values — and $\\ell_{U,S,i}$ for the per-coordinate local factor at $i$, the weighted sum over the three possible per-coordinate values $v$ (free, or fixed to either Boolean) is\n\\[\n  \\sum_{v} w_p(v)\\,\\ell_{U,S,i}(v)\n  \\;=\\;\n  \\begin{cases}\n    p & \\text{if } i \\in S,\\\\\n    0 & \\text{if } i \\in U \\setminus S,\\\\\n    1 & \\text{otherwise.}\n  \\end{cases}\n\\]",
+ "hypotheses_covered": [
+  "real parameter p",
+  "coordinate sets U, S ⊆ [n]",
+  "coordinate i",
+  "sum over the three per-coordinate values (free, fixed-false, fixed-true)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p \\in \\bbr$, sets $U, S$ and a coordinate $i$,\n\\[\n  \\sum_{v} \\mathrm{varWeight}\\,p\\,v \\cdot \\mathrm{localFactor}\\,U\\,S\\,i\\,v\n  \\;=\\; \\begin{cases} p & i \\in S,\\\\ 0 & i \\in U \\setminus S,\\\\ 1 & \\text{otherwise.}\\end{cases}\n\\]"
+}

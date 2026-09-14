@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.transcriptSwap_injective",
+ "key": "10ce4c44101ccee9",
+ "kind": "theorem",
+ "title": "Injectivity of the transcript swap",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, and let $p'$ be the role-swapped protocol obtained by exchanging the roles of Alice and Bob throughout $p$. The transcript-swap map, which sends each syntactic transcript of $p$ to its corresponding transcript of $p'$ by preserving the Boolean message sequence while reinterpreting each communication node as the opposite player, is injective: distinct transcripts of $p$ are sent to distinct transcripts of $p'$.",
+ "hypotheses_covered": [
+  "p is a deterministic protocol over input types X, Y with output type alpha"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every protocol $p$, the map \\texttt{transcriptSwap} from $\\mathrm{Transcript}(p)$ to\n$\\mathrm{Transcript}(p.\\mathrm{swap})$ is injective: distinct transcripts of $p$ give\ndistinct transcripts of the swapped protocol."
+}

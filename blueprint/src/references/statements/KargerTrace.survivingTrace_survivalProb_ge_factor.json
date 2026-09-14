@@ -1,0 +1,17 @@
+{
+ "lean_name": "KargerTrace.survivingTrace_survivalProb_ge_factor",
+ "key": "3296b93300f59b64",
+ "kind": "lemma",
+ "title": "Per-step survival bound along a surviving trace",
+ "statement": "Let $T = (G_0, C_0), (G_1, C_1), \\dots$ be a surviving trace: a family of states indexed by $\\bbn$ in which each state at an index below $\\text{steps}$ passes to its successor by contracting some edge of its current multigraph that does not cross its distinguished cut. Suppose the initial cut $C_0$ is a minimum cut of $G_0$, and fix an index $i < \\text{steps}$ at which the multigraph $G_i$ has at least two vertices. Writing $n_i$ for the number of vertices of $G_i$, $m_i$ for the number of edges of $G_i$ (counted with multiplicity), and $c$ for the size of the initial cut $C_0$ (its number of crossing edges), one has\n\\[\n  \\frac{n_i - 2}{n_i} \\;\\le\\; 1 - \\frac{c}{m_i}.\n\\]",
+ "hypotheses_covered": [
+  "T is a surviving trace of length steps",
+  "the initial cut C_0 is a minimum cut",
+  "i < steps",
+  "the graph at step i has at least 2 vertices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the initial cut of an indexed surviving trace is a min-cut, $i < \\text{steps}$, and the\ngraph at index $i$ has at least two vertices, then with $n_i$ its vertex count,\n\\[\n  \\frac{n_i-2}{n_i} \\;\\le\\;\n  \\mathrm{survivalProb}\\bigl(\\,\\text{initial cut size},\\; \\text{edge count at }i\\,\\bigr).\n\\]"
+}

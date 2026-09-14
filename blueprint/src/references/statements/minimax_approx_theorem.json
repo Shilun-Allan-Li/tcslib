@@ -1,0 +1,17 @@
+{
+ "lean_name": "minimax_approx_theorem",
+ "key": "95fc4ba1b9912312",
+ "kind": "theorem",
+ "title": "Approximate minimax theorem for finite zero-sum games",
+ "statement": "Let $G$ be a finite two-player zero-sum game with payoff matrix $A$, having at least two row actions and at least one column action, and suppose every entry satisfies $0 \\le A_{ij} \\le 1$. Then for every $\\varepsilon > 0$ there exist a mixed row strategy $p$ and a mixed column strategy $q$ such that, for every pure row $i$ and every pure column $j$,\n\\[\n  \\sum_{k} p_k \\, A_{kj} + \\varepsilon \\;\\ge\\; \\sum_{\\ell} A_{i\\ell} \\, q_\\ell.\n\\]\nThat is, the row player's guaranteed payoff under $p$ against any column falls short of the column player's exposure under $q$ against any row by at most $\\varepsilon$.",
+ "hypotheses_covered": [
+  "payoffs lie in [0,1]",
+  "at least two row actions (1 < M)",
+  "at least one column action (N nonzero)",
+  "ε > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any finite zero-sum game $G$ with at least $2$ row actions and any\n$\\varepsilon > 0$, there exist mixed strategies $p, q$ such that for all pure\n$i, j$,\n\\[\n  \\mathrm{payoffVsPure}(G, p, j) + \\varepsilon\n  \\;\\ge\\;\n  \\mathrm{pureVsPayoff}(G, i, q).\n\\]\nThis is the same guarantee as \\texttt{approx\\_minimax}, stated in the\n$\\forall \\varepsilon > 0, \\exists p, q$ form."
+}

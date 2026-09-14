@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.comap_complexity",
+ "key": "f040911d36318263",
+ "kind": "theorem",
+ "title": "Pull-back preserves communication complexity",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn from $X$, Bob's inputs from $Y$, and outputs in $\\alpha$, and let $f_X : X' \\to X$ and $f_Y : Y' \\to Y$ be maps re-indexing the two input types. Then the pull-back protocol over $X'$ and $Y'$ obtained by pre-composing each of Alice's message functions with $f_X$ and each of Bob's message functions with $f_Y$ has the same communication complexity as $p$.",
+ "hypotheses_covered": [
+  "a deterministic protocol p over input types X, Y with output type alpha",
+  "a re-indexing map f_X : X' → X for Alice's inputs",
+  "a re-indexing map f_Y : Y' → Y for Bob's inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any protocol $p$ over $X \\times Y$ and input maps $f_X : X' \\to X$, $f_Y : Y' \\to Y$,\n\\[\n  (p.\\texttt{comap}\\;f_X\\;f_Y).\\texttt{complexity} \\;=\\; p.\\texttt{complexity}.\n\\]"
+}

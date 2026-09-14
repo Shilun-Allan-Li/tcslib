@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.count_bad_S",
+ "key": "7dd0f0b36f5d08c1",
+ "kind": "lemma",
+ "title": "Bad-seed count for a nonzero input",
+ "statement": "Fix a prime $p$ and let $v : \\mathrm{Fin}\\,\\mathrm{width} \\to \\bbz/p$ be a nonzero vector. Consider families $S = (S_1,\\dots,S_\\ell)$ of subsets $S_k \\subseteq \\mathrm{Fin}\\,\\mathrm{width}$, indexed by $\\mathrm{Fin}\\,\\ell$, and call such a family *bad* for $v$ if the value-level OR approximator $1 - \\prod_k\\bigl(1 - (\\sum_{i \\in S_k} v_i)^{p-1}\\bigr)$ disagrees with the value-level OR detector $1 - \\prod_k\\bigl(1 - v_k^{\\,p-1}\\bigr)$. Then the number of bad families, multiplied by $2^\\ell$, is at most the total number of families $S : \\mathrm{Fin}\\,\\ell \\to \\mathrm{Finset}(\\mathrm{Fin}\\,\\mathrm{width})$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "v is nonzero",
+  "S ranges over families (Fin ℓ → Finset (Fin width))",
+  "bad = approxOr_val disagrees with OR_val",
+  "conclusion: (bad count) · 2^ℓ ≤ total number of families"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a nonzero $v$, the number of seeds $S : \\mathrm{Fin}\\,\\ell \\to \\mathrm{Finset}\n(\\mathrm{Fin}\\,\\mathrm{width})$ on which the value-level approximator disagrees with the OR\ndetector, multiplied by $2^\\ell$, is at most the total number of seeds."
+}

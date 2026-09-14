@@ -29,113 +29,118 @@ This is the ``bad event'' whose probability must be controlled by the JL
 concentration argument.
 \end{definition}
 
-\begin{lemma}[Zero vector has probability zero of being bad]
+\begin{lemma}[Concentration bound at the zero vector]
 \lean{concentration_zero}
 \label{concentration_zero}
 \leanok
 \uses{BadSingle}
 \difficulty{3}
-For any probability measure $\mu$ on $\Omega$, any random matrix $A$, and any
-$\varepsilon\in\mathbb{R}$,
+Let $\mu$ be a probability measure on a measurable space $\Omega$, let $\omega \mapsto
+A(\omega)$ be a family of $k \times d$ real matrices indexed by $\Omega$, and let
+$\varepsilon \in \bbr$. Then the probability that the zero vector $0 \in \bbr^d$
+triggers the bad distortion event, namely that
 \[
-  \mu\bigl\{\omega \mid \texttt{BadSingle}\,\varepsilon\,(A\,\omega)\,0\bigr\} = 0
-  \;\le\; 2\exp\!\Bigl(-\frac{k\,\varepsilon^2}{8}\Bigr).
+  \varepsilon\,\|0\|^2 < \bigl|\,\|A(\omega)\,0\|^2 - \|0\|^2\,\bigr|,
 \]
-The bad event at $x=0$ is always empty because $\varepsilon\cdot 0 < |0-0|$
-simplifies to $0 < 0$, which is false.
+satisfies
+\[
+\mu\bigl\{\omega : \varepsilon\,\|0\|^2 < \bigl|\,\|A(\omega)\,0\|^2 -
+\|0\|^2\,\bigr|\bigr\}
+    \;\le\; 2\exp\!\Bigl(-\tfrac{k\,\varepsilon^2}{8}\Bigr).
+\]
 \end{lemma}
 
-\begin{lemma}[Scalar multiple of a centered Gaussian]
+\begin{lemma}[Scaling a centered real Gaussian]
 \lean{map_const_mul_gaussian}
 \label{map_const_mul_gaussian}
 \leanok
 \difficulty{3}
-Let $X : \Omega \to \mathbb{R}$ be measurable with $X_*\mu = N(0,\sigma_0)$.
-Then for any constant $c\in\mathbb{R}$,
+Let $X\colon \Omega \to \bbr$ be a measurable random variable on a measure space
+$(\Omega, \mu)$ whose law is the centered Gaussian $N(0, \sigma_0)$ with variance
+$\sigma_0 \ge 0$. Then for every scalar $c \in \bbr$, the scaled variable $c\,X$ has law
 \[
-  (c\,X)_*\mu \;=\; N\!\bigl(0,\,c^2\cdot\sigma_0\bigr).
+  N\!\bigl(0,\; c^2 \sigma_0\bigr),
 \]
-This is an auxiliary restatement of \texttt{gaussianReal\_map\_const\_mul}
-phrased for easy application in the inductive step of
-\texttt{sum\_scaled\_iid\_gaussian\_map}.
+the centered Gaussian with variance $c^2 \sigma_0$.
 \end{lemma}
 
-\begin{lemma}[Row-projection of i.i.d.\ Gaussians is Gaussian]
+\begin{lemma}[Weighted sum of independent Gaussians is Gaussian]
 \lean{sum_scaled_iid_gaussian_map}
 \label{sum_scaled_iid_gaussian_map}
 \leanok
 \uses{map_const_mul_gaussian}
 \difficulty{5}
-Let $Y_j : \Omega \to \mathbb{R}$ be i.i.d.\ with law $N(0,\sigma_0)$, and
-let $x : \iota \to \mathbb{R}$ be a fixed coefficient vector.  For any finite
-set $s$,
-\[
-  \Bigl(\textstyle\sum_{j\in s} x_j Y_j\Bigr)_*\mu
-  \;=\; N\!\Bigl(0,\;\sigma_0 \cdot \textstyle\sum_{j\in s} x_j^2\Bigr).
-\]
-The proof proceeds by induction on the finset $s$, using independence and
-\texttt{map\_const\_mul\_gaussian} at each step.
+Let $(\Omega,\mu)$ be a probability space, and let $(Y_j)_{j}$ be a family of
+independent, measurable real-valued random variables, each distributed as a centred
+Gaussian with mean $0$ and variance $\sigma_0 \ge 0$. Then for any real coefficients
+$(x_j)_j$ and any finite index set $s$, the random variable $\sum_{j \in s} x_j\, Y_j$
+has distribution $N\!\Bigl(0,\; \bigl(\sum_{j \in s} x_j^2\bigr)\,\sigma_0\Bigr)$; that
+is, its law is the centred Gaussian on $\bbr$ with variance $\sigma_0 \sum_{j \in s}
+x_j^2$.
 \end{lemma}
 
-\begin{lemma}[Row projections are independent]
+\begin{lemma}[Independence of coordinates of a random matrix–vector product]
 \lean{rows_indep}
 \label{rows_indep}
 \leanok
 \difficulty{3}
-If the row vectors of $A$ (as $(\mathrm{Fin}\,d\to\mathbb{R})$-valued random
-variables) are mutually independent under $\mu$, then for any fixed
-$x\in\mathbb{R}^d$ the scalar row-projections
-$(A\,\omega).\texttt{toEuclideanLin}\,x\,i = \sum_j A_{\omega,i,j}\,x_j$
-are independent across $i\in\mathrm{Fin}\,k$, since each is a measurable
-function of a distinct row of $A$.
+Let $(\Omega,\mu)$ be a probability space, and let $A$ be a random $k\times d$ real
+matrix, that is, a measurable map assigning to each $\omega\in\Omega$ a matrix
+$A(\omega)\in\bbr^{k\times d}$. Suppose the rows of $A$ are mutually independent,
+meaning the $k$ random vectors
+$\omega\mapsto\bigl(A(\omega)_{i,1},\dots,A(\omega)_{i,d}\bigr)\in\bbr^{d}$, for
+$i=1,\dots,k$, are mutually independent under $\mu$. Then for every fixed $x\in\bbr^{d}$
+the $k$ coordinates of the product $A(\omega)\,x$, namely the real-valued random
+variables $\omega\mapsto (A(\omega)\,x)_i=\sum_{j=1}^{d}A(\omega)_{i,j}\,x_j$ for
+$i=1,\dots,k$, are mutually independent under $\mu$.
 \end{lemma}
 
-\begin{lemma}[Coordinate-sum form of a row projection]
+\begin{lemma}[Coordinates of a matrix-vector product]
 \lean{toEuclideanLin_apply_eq_sum}
 \label{toEuclideanLin_apply_eq_sum}
 \leanok
 \difficulty{1}
-For a matrix $A\in\mathbb{R}^{k\times d}$, a vector
-$x\in\mathbb{R}^d$, and an index $i\in\mathrm{Fin}\,k$,
+Let $A\in\bbr^{k\times d}$ be a $k\times d$ real matrix, regarded as the linear map from
+the Euclidean space $\bbr^{d}$ to $\bbr^{k}$ that it induces, and let $x\in\bbr^{d}$.
+Then for each index $i\in\{1,\dots,k\}$, the $i$-th coordinate of the image $Ax$ is
+given by
 \[
-  (A.\texttt{toEuclideanLin}\,x)\,i \;=\; \sum_{j} A_{i,j}\,x_j.
+  (Ax)_i \;=\; \sum_{j} A_{ij}\,x_j .
 \]
-This definitional equality unfolds the linear map into its explicit sum form.
 \end{lemma}
 
-\begin{lemma}[Squared norm as sum of squared row projections]
+\begin{lemma}[Squared Euclidean norm as a sum of squared coordinates]
 \lean{norm_sq_toEuclideanLin}
 \label{norm_sq_toEuclideanLin}
 \leanok
 \difficulty{2}
-For a matrix $A$ and vector $x$,
+Let $A$ be a $k \times d$ real matrix, regarded as the linear map $x \mapsto Ax$ from
+the Euclidean space $\bbr^d$ to $\bbr^k$, and let $x \in \bbr^d$. Then the squared
+Euclidean norm of the image is the sum of the squares of its coordinates,
 \[
-  \|A.\texttt{toEuclideanLin}\,x\|^2
-  \;=\; \sum_{i\in\mathrm{Fin}\,k} \bigl((A.\texttt{toEuclideanLin}\,x)\,i\bigr)^2.
+  \norm{Ax}^2 = \sum_{i=1}^{k} (Ax)_i^2 .
 \]
-This expresses the squared Euclidean norm of $Ax$ as the sum of the squares of
-its coordinates.
 \end{lemma}
 
-\begin{lemma}[Derivative of Taylor auxiliary function]
+\begin{lemma}[Derivative of a Taylor auxiliary function]
 \lean{taylorAux_hasDerivAt}
 \label{taylorAux_hasDerivAt}
 \leanok
 \difficulty{4}
-The function $h(u) = u^2 + u + \log(1-u)$ has derivative
-$h'(u) = u(1-2u)/(1-u)$ at every $u < 1$.
-This derivative identity is the key ingredient in the monotonicity argument
-used to bound the centered chi-squared log-MGF.
+Let $h \colon \bbr \to \bbr$ be the function $h(x) = x^2 + x + \log(1 - x)$. Then at
+every point $u < 1$, the function $h$ is differentiable with derivative
+\[
+h'(u) = \frac{u(1 - 2u)}{1 - u}.
+\]
 \end{lemma}
 
-\begin{lemma}[Taylor auxiliary function vanishes at zero]
+\begin{lemma}[An auxiliary expression vanishes at zero]
 \lean{taylorAux_zero}
 \label{taylorAux_zero}
 \leanok
 \difficulty{1}
-The evaluation $0^2 + 0 + \log(1-0) = 0$ establishes the base case for the
-Taylor bound, confirming that $h(0)=0$ in the derivative argument for
-\texttt{neg\_log\_one\_sub\_two\_mul\_le\_two\_sq}.
+The real-valued expression $x^2 + x + \log(1 - x)$ takes the value $0$ at $x = 0$; that
+is, $0^2 + 0 + \log(1 - 0) = 0$.
 \end{lemma}
 
 \begin{lemma}[Taylor bound for the centered chi-squared log-MGF]
@@ -144,55 +149,47 @@ Taylor bound, confirming that $h(0)=0$ in the derivative argument for
 \leanok
 \uses{taylorAux_hasDerivAt, taylorAux_zero}
 \difficulty{6}
-For every $s\in\mathbb{R}$ with $|s|\le 1/4$,
+For every real number $s$ with $\abs{s} \le 1/4$, one has
 \[
-  -s - \tfrac{1}{2}\log(1 - 2s) \;\le\; 2s^2.
+  -s - \tfrac{1}{2}\log(1 - 2s) \;\le\; 2s^2 .
 \]
-This inequality is the Taylor-based analytic core of the centered chi-squared
-MGF bound; it is proved by showing that the auxiliary function
-$h(u)=u^2+u+\log(1-u)$ satisfies $h(0)=0$ and has non-negative derivative
-on $[0,1/2]$ and non-positive derivative on $[-1/2,0]$.
 \end{lemma}
 
-\begin{lemma}[Quadratic MGF of the standard Gaussian]
+\begin{lemma}[Quadratic Gaussian integral]
 \lean{integral_exp_mul_sq_standardGaussian}
 \label{integral_exp_mul_sq_standardGaussian}
 \leanok
 \difficulty{5}
-For $Z\sim N(0,1)$ and $2s<1$,
+Let $Z$ be a standard Gaussian random variable, $Z \sim N(0,1)$, and let $s \in \bbr$
+satisfy $2s < 1$. Then
 \[
-  \int z.\, e^{s z^2}\,\mathrm{d}(N(0,1))
-  \;=\; \frac{1}{\sqrt{1-2s}}.
+  \E\!\left[e^{s Z^2}\right]
+  = \int_{\bbr} e^{s z^2}\, \mathrm{d}N(0,1)(z)
+  = \frac{1}{\sqrt{1 - 2s}}.
 \]
-This is the closed-form moment-generating function of the standard chi-squared
-distribution.
 \end{lemma}
 
-\begin{lemma}[Quadratic MGF of a general centered Gaussian]
+\begin{lemma}[Quadratic exponential integral against a centered Gaussian]
 \lean{integral_exp_mul_sq_gaussianReal_zero}
 \label{integral_exp_mul_sq_gaussianReal_zero}
 \leanok
 \uses{integral_exp_mul_sq_standardGaussian}
 \difficulty{5}
-For $Y\sim N(0,v)$ with $v\ne 0$ and $2tv < 1$,
+Let $v > 0$ and write $N(0,v)$ for the centered Gaussian distribution on $\bbr$ with
+mean $0$ and variance $v$. Then for every real number $t$ with $2tv < 1$,
 \[
-  \int y.\, e^{t y^2}\,\mathrm{d}(N(0,v))
-  \;=\; \frac{1}{\sqrt{1-2tv}}.
+  \int_{\bbr} e^{t y^2}\, \mathrm{d}N(0,v)(y) = \frac{1}{\sqrt{1 - 2tv}}.
 \]
-This generalizes \texttt{integral\_exp\_mul\_sq\_standardGaussian} from unit
-variance to an arbitrary non-zero NNReal variance $v$.
 \end{lemma}
 
-\begin{lemma}[Integrability of $e^{ty^2}$ under $N(0,v)$]
+\begin{lemma}[Integrability of a Gaussian moment generating integrand]
 \lean{integrable_exp_mul_sq_gaussianReal_zero}
 \label{integrable_exp_mul_sq_gaussianReal_zero}
 \leanok
 \difficulty{4}
-For $v\ne 0$ and $2tv < 1$, the function $y\mapsto e^{t y^2}$ is integrable
-with respect to $N(0,v)$.  This integrability statement accompanies
-\texttt{integral\_exp\_mul\_sq\_gaussianReal\_zero} and is a prerequisite for
-the Fubini and interchange-of-expectation arguments in
-\texttt{centered\_chi\_squared\_step}.
+Let $v$ be a nonnegative real number with $v \ne 0$, and let $N(0,v)$ denote the centred
+Gaussian probability measure on $\bbr$ with variance $v$. If $t \in \bbr$ satisfies $2tv
+< 1$, then the function $y \mapsto e^{t y^2}$ is integrable with respect to $N(0,v)$.
 \end{lemma}
 
 \begin{theorem}[Centered chi-squared MGF bound]
@@ -201,90 +198,82 @@ the Fubini and interchange-of-expectation arguments in
 \leanok
 \uses{integrable_exp_mul_sq_gaussianReal_zero, integral_exp_mul_sq_gaussianReal_zero, neg_log_one_sub_two_mul_le_two_sq}
 \difficulty{6}
-Let $(\Omega,\mu)$ be a probability space, $k>0$, and let $Y:\Omega\to\mathbb{R}$
-be measurable with $Y_*\mu = N(0,1/k)$.  For every $t\in\mathbb{R}$ with
-$|t|\le k/4$, the map $\omega\mapsto\exp\bigl(t(Y(\omega)^2-1/k)\bigr)$ is
-$\mu$-integrable and
+Let $(\Omega,\mu)$ be a probability space and let $k$ be a positive natural number.
+Suppose $Y:\Omega\to\bbr$ is measurable and normally distributed with mean $0$ and
+variance $1/k$, that is, its law $Y_*\mu$ equals $N(0,1/k)$. Then for every real $t$
+with $\abs{t}\le k/4$, the function $\omega\mapsto \exp\!\bigl(t\,(Y(\omega)^2 -
+1/k)\bigr)$ is $\mu$-integrable, and the moment generating function of the centered
+variable $Y^2 - 1/k$ satisfies
 \[
-  \mathbb{E}_\mu\!\left[e^{t(Y^2 - 1/k)}\right]
-  \;\le\; \exp\!\Bigl(\frac{2t^2}{k^2}\Bigr).
+  \E_\mu\!\left[e^{t(Y^2 - 1/k)}\right] \;\le\; \exp\!\Bigl(\frac{2t^2}{k^2}\Bigr).
 \]
-The proof combines the Gaussian quadratic MGF closed form
-(\texttt{integral\_exp\_mul\_sq\_gaussianReal\_zero}) with the Taylor inequality
-(\texttt{neg\_log\_one\_sub\_two\_mul\_le\_two\_sq}) applied at $s := t/k$.
 \end{theorem}
 
-\begin{theorem}[Bernstein MGF instance for centered chi-squared]
+\begin{theorem}[Bernstein MGF bound for a centered chi-squared summand]
 \lean{hasBernsteinMGF_centered_chi_squared}
 \label{hasBernsteinMGF_centered_chi_squared}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, centered_chi_squared_step}
 \difficulty{2}
-Under the same hypotheses as \texttt{centered\_chi\_squared\_step}, the
-centered summand $Y^2 - 1/k$ satisfies
-$\text{\texttt{ProbabilityTheory.HasBernsteinMGF}}\bigl(2/k^2,\;k/4\bigr)$ under $\mu$.
-This packages the chi-squared MGF bound into the abstract Bernstein form, so
-that the i.i.d.-sum tail-bound machinery of \texttt{bernstein.lean} can be
-applied uniformly to Gaussian and other sub-Gaussian matrix families.
+Fix an integer $k \ge 1$, and let $Y$ be a real-valued random variable on a probability
+space $(\Omega, \mu)$ whose law is the centered Gaussian $\mathcal{N}(0, 1/k)$ of mean
+$0$ and variance $1/k$. Then the centered square $Y^2 - 1/k$ satisfies the Bernstein MGF
+condition on $(\Omega, \mu)$ with quadratic-growth parameter $c = 2/k^2$ and radius
+$t_{\max} = k/4$.
 \end{theorem}
 
-\begin{lemma}[Chi-squared tail bound for i.i.d.\ $N(0,1/k)$ variables]
+\begin{lemma}[Chi-squared tail bound for independent $N(0,1/k)$ variables]
 \lean{chi_squared_tail}
 \label{chi_squared_tail}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le, ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun, hasBernsteinMGF_centered_chi_squared}
 \difficulty{5}
-Let $Y_1,\dots,Y_k:\Omega\to\mathbb{R}$ be i.i.d.\ with law $N(0,1/k)$ under
-a probability measure $\mu$, and let $0<\varepsilon<1$.  Then
+Let $\mu$ be a probability measure on $\Omega$, let $k \ge 1$, and let $Y_1,\dots,Y_k :
+\Omega \to \bbr$ be independent random variables, each with law $N(0, 1/k)$. Then for
+every $\varepsilon$ with $0 < \varepsilon < 1$,
 \[
   \mu\!\left\{\omega \;\middle|\; \varepsilon
-    < \Bigl|\textstyle\sum_{i=1}^k Y_i(\omega)^2 - 1\Bigr|\right\}
-  \;\le\; 2\exp\!\Bigl(-\frac{k\,\varepsilon^2}{8}\Bigr).
+    < \Bigl|\,\textstyle\sum_{i=1}^{k} Y_i(\omega)^2 - 1\Bigr|\right\}
+  \;\le\; 2\exp\!\Bigl(-\tfrac{k\,\varepsilon^2}{8}\Bigr).
 \]
-The proof applies the Bernstein tail bound to the i.i.d.\ sum of centered
-chi-squared summands, using \texttt{hasBernsteinMGF\_centered\_chi\_squared} and
-the generic sum and tail-bound lemmas from the Bernstein framework.
 \end{lemma}
 
-\begin{theorem}[JL single-vector concentration via chi-squared reduction]
+\begin{theorem}[Johnson–Lindenstrauss concentration for a single vector]
 \lean{jl_concentration_single_via_chi_squared}
 \label{jl_concentration_single_via_chi_squared}
 \leanok
 \uses{BadSingle, chi_squared_tail, concentration_zero, map_const_mul_gaussian, norm_sq_toEuclideanLin, rows_indep, sum_scaled_iid_gaussian_map, toEuclideanLin_apply_eq_sum}
 \difficulty{6}
-Let $A:\Omega\to\mathbb{R}^{k\times d}$ be a random matrix under a probability
-measure $\mu$ whose entries $A_{ij}$ are each $N(0,1/k)$ and are jointly
-independent (row entries and row vectors alike).  For any fixed
-$x\in\mathbb{R}^d$ and $0<\varepsilon<1$,
+Let $k \ge 1$, and let $A$ be a random $k \times d$ real matrix on a probability space
+$(\Omega, \mu)$ whose $kd$ entries $A_{ij}$ are jointly independent, each Gaussian with
+law $N(0, 1/k)$. Then for every fixed vector $x \in \bbr^d$ and every $\varepsilon$ with
+$0 < \varepsilon < 1$,
 \[
-  \mu\bigl\{\omega \mid \texttt{BadSingle}\,\varepsilon\,(A\,\omega)\,x\bigr\}
-  \;\le\; 2\exp\!\Bigl(-\frac{k\,\varepsilon^2}{8}\Bigr).
+\mu\bigl\{\,\omega : \bigl|\,\|A(\omega)\,x\|^2 - \|x\|^2\,\bigr| > \varepsilon\,\|x\|^2
+\,\bigr\}
+  \;\le\; 2\exp\!\Bigl(-\frac{k\,\varepsilon^2}{8}\Bigr),
 \]
-The proof handles $x=0$ via \texttt{concentration\_zero} and the general case by
-showing each row projection $\sum_j A_{ij}\,x_j$ is Gaussian with variance
-$\|x\|^2/k$, establishing independence of row projections via
-\texttt{rows\_indep}, and then applying \texttt{chi\_squared\_tail}.
+where $\|A(\omega)\,x\|$ denotes the Euclidean norm of the image $A(\omega)\,x \in
+\bbr^k$.
 \end{theorem}
 
-\begin{theorem}[Distribution-agnostic JL concentration via Bernstein tails]
+\begin{theorem}[Distribution-free Johnson–Lindenstrauss concentration via Bernstein tails]
 \lean{jl_concentration_single_via_bernstein}
 \label{jl_concentration_single_via_bernstein}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.centered_squared_iid_tail, norm_sq_toEuclideanLin}
 \difficulty{4}
-Let $A:\Omega\to\mathbb{R}^{k\times d}$ be a random matrix whose row
-projections $(A\,\omega).\texttt{toEuclideanLin}\,x\,i$ are measurable,
-independent across $i$, and such that each centered squared summand
-$((A\,\omega).\texttt{toEuclideanLin}\,x\,i)^2 - \|x\|^2/k$ satisfies
-$\text{\texttt{ProbabilityTheory.HasBernsteinMGF}}(c, t_{\max})$ for some $c>0$.  For any
-$s\ge 0$ with $s\le 2k\,c\,t_{\max}$,
+Fix an integer $k \ge 1$, a dimension $d$, a probability space $(\Omega, \mu)$, and a
+vector $x \in \bbr^d$. Let $A : \Omega \to \bbr^{k \times d}$ be a random matrix, and
+for each outcome $\omega$ write $y(\omega) = A(\omega)\,x \in \bbr^k$ for the image of
+$x$ under the random linear map, with coordinates $y_1(\omega), \dots, y_k(\omega)$.
+Suppose each coordinate $y_i$ is measurable, the coordinates $y_1, \dots, y_k$ are
+independent, and, for some constants $c > 0$ and $t_{\max}$, each centered squared
+coordinate $y_i^2 - \norm{x}^2/k$ satisfies the Bernstein moment generating function
+condition with parameters $(c, t_{\max})$. Then for every $s$ with $0 \le s \le
+2kc\,t_{\max}$,
 \[
-  \mu\!\left\{\omega \;\middle|\;
-    s < \bigl|\,\|(A\,\omega).\texttt{toEuclideanLin}\,x\|^2 - \|x\|^2\,\bigr|
-  \right\}
-  \;\le\; 2\exp\!\Bigl(-\frac{s^2}{4k\,c}\Bigr).
+  \mu\bigl\{\omega \;:\; s < \bigl|\,\norm{A(\omega)\,x}^2 - \norm{x}^2\,\bigr|\bigr\}
+  \;\le\; 2\exp\!\Bigl(-\frac{s^2}{4kc}\Bigr).
 \]
-This theorem makes no assumption on the distribution of the matrix entries
-beyond the Bernstein MGF condition, giving a general tail bound for the
-squared-norm distortion.
 \end{theorem}

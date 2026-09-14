@@ -1,0 +1,21 @@
+{
+ "lean_name": "LMN.two_stage_bound'",
+ "key": "803afc4bfe92852b",
+ "kind": "theorem",
+ "title": "Two-stage bound for composed Bernoulli restrictions",
+ "statement": "Let $p_1, p_2 \\in (0,1]$, let $E$ and $A$ be predicates on restrictions of $n$ variables, and let $\\beta \\ge 0$. For a parameter $p$ write $\\bbP_p[\\,\\cdot\\,]$ for the Bernoulli event probability under a Bernoulli($p$) random restriction, and for two restrictions $\\rho_1, \\rho_2$ write $\\rho_1 \\ast \\rho_2$ for their composition (using the value $\\rho_1$ fixes on each coordinate, and otherwise the value from $\\rho_2$). Suppose that for every restriction $\\rho_1$ with $\\neg A(\\rho_1)$ one has $\\bbP_{p_2}\\!\\left[\\, E(\\rho_1 \\ast \\rho_2) \\,\\right] \\le \\beta$. Then\n\\[\n  \\bbP_{p_1 p_2}[E] \\;\\le\\; \\bbP_{p_1}[A] + \\beta .\n\\]",
+ "hypotheses_covered": [
+  "0 < p_1",
+  "p_1 ≤ 1",
+  "0 < p_2",
+  "p_2 ≤ 1",
+  "E a (decidable) predicate on restrictions",
+  "A a (decidable) predicate on restrictions",
+  "β ≥ 0",
+  "for every ρ₁ with ¬A(ρ₁), the Bernoulli(p₂)-probability of E on the composition ρ₁∗ρ₂ is ≤ β"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p_1,p_2\\in(0,1]$, let $E$ and $A$ be predicates on restrictions, and let $\\beta\\ge 0$.\nIf for every $\\rho_1$ with $\\neg A(\\rho_1)$ the conditional probability\n$\\Pr_{p_2}[E(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2)]\\le\\beta$, then\n\\[\n  \\Pr_{p_1 p_2}[E] \\le \\Pr_{p_1}[A] + \\beta.\n\\]"
+}

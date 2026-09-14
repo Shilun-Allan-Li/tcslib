@@ -1,0 +1,17 @@
+{
+ "lean_name": "log_potential_step_tight",
+ "key": "fa389c180606eaa6",
+ "kind": "lemma",
+ "title": "Tight per-step logarithmic potential bound for Hedge",
+ "statement": "Fix $N \\ge 1$ experts and a learning rate $\\eta > 0$, and let $\\ell$ be a valid loss sequence over $T$ rounds, so that every individual loss satisfies $0 \\le \\ell_t(i) \\le 1$. Write $W_t = \\sum_{i=1}^{N} \\exp(-\\eta L_t(i))$ for the Hedge potential after $t$ rounds, and $\\widehat{\\ell}_t$ for the expected loss of the learner at round $t$ under the Hedge distribution. Then for every round $t$ (with $0 \\le t < T$),\n\\[\n  \\log W_{t+1} - \\log W_t \\;\\le\\; -\\eta\\,\\widehat{\\ell}_t + \\frac{\\eta^2}{8}.\n\\]",
+ "hypotheses_covered": [
+  "N is nonempty (at least one expert)",
+  "learning rate eta > 0",
+  "loss sequence is valid (all losses in [0,1])",
+  "t is a round index with t+1 <= T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a valid loss sequence and $\\eta > 0$, applying Hoeffding's lemma gives the\ntighter per-step bound\n\\[\n  \\ln W_{t+1} - \\ln W_t \\;\\le\\; -\\eta\\,\\widehat{\\ell}_t + \\frac{\\eta^2}{8}.\n\\]"
+}

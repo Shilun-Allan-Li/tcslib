@@ -1,0 +1,18 @@
+{
+ "lean_name": "ACP.rootCube_counting_obstruction_lowDegreeSquarefree",
+ "key": "541e56faa57b5ee9",
+ "kind": "theorem",
+ "title": "Counting obstruction for low-degree squarefree approximation on the root cube",
+ "statement": "Let $K$ be a finite field, let $\\omega \\in K$ satisfy $\\omega \\neq 1$, and fix natural numbers $n, D, e, B$. Suppose the ball bound\n\\[\n\\sum_{t=0}^{e} \\binom{2^n}{t}\\,\\abs{K}^{\\,t} \\;\\le\\; B\n\\]\nholds, together with the strict counting inequality\n\\[\n\\abs{K}^{\\,2^n} \\;>\\; \\abs{\\mathcal{S}_{n,D} \\to K}\\cdot B .\n\\]\nThen it is \\emph{not} the case that every function $f : \\{1,\\omega\\}^n \\to K$ admits a multivariate polynomial $Q \\in K[X_i : i \\in \\mathrm{Fin}\\,n]$ of total degree at most $D$ that disagrees with $f$ on at most $e$ points of the cube $\\{1,\\omega\\}^n$; that is, some $f$ fails to be approximated in this sense by any such $Q$.",
+ "hypotheses_covered": [
+  "K is a finite field",
+  "omega is not equal to 1",
+  "ball bound: sum_{t=0}^{e} C(2^n, t) |K|^t <= B",
+  "strict counting inequality: |K|^{2^n} > |S_{n,D} -> K| * B",
+  "n, D, e, B are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K$ be finite and $\\omega \\ne 1$.  Suppose the ball bound\n$\\sum_{t=0}^{e} \\binom{2^n}{t}\\,\\abs{K}^{\\,t} \\le B$ holds and the counting is strict,\n\\[\n\\abs{K}^{2^n} \\;>\\; \\abs{\\mathcal{S}_{n,D} \\to K}\\cdot B .\n\\]\nThen it is \\emph{not} the case that every function $f : \\{1,\\omega\\}^n \\to K$ admits a\npolynomial $Q$ with $\\deg Q \\le D$ and $\\texttt{ACP.rootCubeBadCount}\\ f\\ Q \\le e$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Kruskal.merge_swap_partition",
+ "key": "637d0437d4a85665",
+ "kind": "lemma",
+ "title": "Merge order is irrelevant to the induced partition",
+ "statement": "Let $n$ be a natural number, let $\\mathit{uf}\\colon \\mathrm{Fin}\\,n \\to \\bbn$ be a union-find state, and let $a$ and $b$ be weighted edges over $n$ vertices, with endpoints $a_u, a_v$ and $b_u, b_v$ respectively. Form one state by merging the components of $a_u$ and $a_v$ and then merging the components of $b_u$ and $b_v$, and a second state by performing these two merges in the opposite order. Then the two resulting states induce the same partition of the nodes: for all $i, j : \\mathrm{Fin}\\,n$, the first state assigns $i$ and $j$ the same representative if and only if the second state does.",
+ "hypotheses_covered": [
+  "n : ℕ, a natural number of nodes",
+  "uf : a union-find state on Fin n",
+  "a : a weighted edge over n vertices, with endpoints a_u, a_v",
+  "b : a weighted edge over n vertices, with endpoints b_u, b_v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any state $\\mathit{uf}$ and edges $a, b$, merging the endpoints of $a$ and then those\nof $b$ yields the same partition as merging them in the opposite order:\n$\\mathtt{SamePartition}\\,((\\mathit{uf}.\\mathtt{merge}\\,a.u\\,a.v).\\mathtt{merge}\\,b.u\\,b.v)\\,((\\mathit{uf}.\\mathtt{merge}\\,b.u\\,b.v).\\mathtt{merge}\\,a.u\\,a.v)$."
+}

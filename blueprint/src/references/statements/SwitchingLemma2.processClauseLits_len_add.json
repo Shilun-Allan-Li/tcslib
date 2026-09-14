@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_len_add",
+ "key": "2f607f583c68ba02",
+ "kind": "lemma",
+ "title": "Length bound for processing a clause's literals",
+ "statement": "Let $n$ be a natural number, let $\\mathit{lits}$ be a list of literals on $n$ variables each paired with its position index, let $\\mathit{path}$ be a list of variable–direction pairs, and let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables. Running the clause-processing procedure on $\\mathit{lits}$, $\\mathit{path}$, $\\rho_0$, and $\\sigma$ yields, among its outputs, a remaining path and a list of accumulated auxiliary pairs. The length of the auxiliary list plus the length of the remaining path is at most the length of $\\mathit{path}$.",
+ "hypotheses_covered": [
+  "a natural number n",
+  "a list of literals paired with position indices",
+  "a path list of variable–direction pairs",
+  "two restrictions ρ₀ and σ on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The aux output length of $\\mathrm{processClauseLits}$ plus the remaining path\nlength never exceeds the initial path length."
+}

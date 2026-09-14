@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.uf_exchange",
+ "key": "85f94d18f5de1c1b",
+ "kind": "lemma",
+ "title": "Union-find form of the exchange argument",
+ "statement": "Let $\\mathit{uf}\\colon \\mathrm{Fin}\\,n \\to \\bbn$ be a union-find state whose classes coincide with the reachability classes of an edge list $\\mathit{base}$: for all nodes $a,b$ one has $\\mathit{uf}(a) = \\mathit{uf}(b)$ if and only if $a$ and $b$ are joined by a path through the edges of $\\mathit{base}$. Let $S$ be a further list of weighted edges, and let $e$ be a weighted edge with endpoints $u$ and $v$ such that merging every edge of $S$ into $\\mathit{uf}$ places $u$ and $v$ in a common component, while $\\mathit{uf}$ itself keeps them in distinct components. Then there is an edge $f \\in S$ for which the state obtained by first merging $u$ with $v$ and then merging all edges of $S$ other than $f$ induces the same partition of the nodes as the state obtained by merging all edges of $S$ into $\\mathit{uf}$.",
+ "hypotheses_covered": [
+  "uf's classes are exactly the reachability classes of base",
+  "merging all of S into uf identifies the endpoints of e",
+  "uf keeps the endpoints of e in distinct classes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathit{uf}$ be a union--find state whose classes are exactly the reachability\nclasses of an edge list $\\mathit{base}$, i.e.\\ $\\mathit{uf}\\,a = \\mathit{uf}\\,b$ iff\n$a$ and $b$ are reachable in $\\mathit{base}$. If merging all edges of $S$ into\n$\\mathit{uf}$ identifies $e.u$ and $e.v$ while $\\mathit{uf}$ itself keeps them apart,\nthen there is an edge $f \\in S$ such that\n$(\\mathit{uf}.\\mathtt{merge}\\,e.u\\,e.v).\\mathtt{mergeAll}\\,(S \\setminus \\{f\\})$\ninduces the same partition as $\\mathit{uf}.\\mathtt{mergeAll}\\,S$."
+}

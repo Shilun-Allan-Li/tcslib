@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.finiteLowerValue_le_upperValue",
+ "key": "cddda6c57f46d8f3",
+ "kind": "lemma",
+ "title": "Weak duality for finite zero-sum games",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M \\geq 1$ row actions and $N \\geq 1$ column actions, given by a payoff matrix $A_{ij} \\in [0,1]$ that the row player seeks to maximise and the column player to minimise. Then the lower value never exceeds the upper value:\n\\[\n  \\sup_{p \\in \\Delta_M}\\; \\min_{j}\\; \\sum_{i} p_i A_{ij}\n  \\;\\;\\leq\\;\\;\n  \\inf_{q \\in \\Delta_N}\\; \\max_{i}\\; \\sum_{j} A_{ij} q_j,\n\\]\nwhere $\\Delta_M$ and $\\Delta_N$ denote the sets of mixed strategies (probability distributions) over the row and column actions, respectively.",
+ "hypotheses_covered": [
+  "finite zero-sum game G with payoff entries in [0,1]",
+  "at least one row action (M ≥ 1)",
+  "at least one column action (N ≥ 1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any finite zero-sum game $G$ (with $M,N \\geq 1$),\n$v^-(G) \\leq v^+(G)$."
+}

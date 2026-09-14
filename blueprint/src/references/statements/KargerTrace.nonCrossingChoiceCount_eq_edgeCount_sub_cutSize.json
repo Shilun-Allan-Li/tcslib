@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.nonCrossingChoiceCount_eq_edgeCount_sub_cutSize",
+ "key": "cd5352d755fcaea4",
+ "kind": "lemma",
+ "title": "Non-crossing edge count equals edges minus cut size",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a multigraph $G$ together with a distinguished cut $C$, whose two sides are given by a vertex subset $S$ and its complement. Then the number of edges of $G$ that do not cross $C$ — those having no endpoint in $S$ or no endpoint outside $S$, counted with multiplicity — equals the total edge count of $G$ minus the size of $C$, the difference being taken as truncated subtraction in $\\bbn$:\n\\[\n\\#\\{\\text{non-crossing edges of }s\\} \\;=\\; \\abs{E(G)} - \\abs{C}.\n\\]",
+ "hypotheses_covered": [
+  "s is a state: a multigraph G together with a cut C of G",
+  "difference taken as natural-number (truncated) subtraction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every state $s$, the number of non-crossing edge choices equals\n$s.G.\\mathrm{edgeCount} - s.C.\\mathrm{size}$."
+}

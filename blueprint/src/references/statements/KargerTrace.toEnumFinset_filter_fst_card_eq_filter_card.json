@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.toEnumFinset_filter_fst_card_eq_filter_card",
+ "key": "b6b410507fc838f3",
+ "kind": "lemma",
+ "title": "Filtering enumerated multiset occurrences by element",
+ "statement": "Let $\\alpha$ be a type with decidable equality, let $m$ be a finite multiset over $\\alpha$, and let $p$ be a decidable predicate on $\\alpha$. Form the enumeration set of $m$, consisting of all pairs $(a, i)$ with $a$ an element of $m$ and $0 \\le i < \\text{count}_m(a)$, so that each occurrence of each element of $m$ is represented exactly once. Then the number of such pairs $(a,i)$ whose first coordinate $a$ satisfies $p$ equals the size (counted with multiplicity) of the sub-multiset of $m$ consisting of the elements satisfying $p$.",
+ "hypotheses_covered": [
+  "α has decidable equality",
+  "m is a multiset over α",
+  "p is a decidable predicate on α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a multiset $m$ and a decidable predicate $p$, the number of enumerated occurrences of\n$m$ whose first coordinate satisfies $p$ equals the cardinality of the sub-multiset of $m$\nfiltered by $p$."
+}

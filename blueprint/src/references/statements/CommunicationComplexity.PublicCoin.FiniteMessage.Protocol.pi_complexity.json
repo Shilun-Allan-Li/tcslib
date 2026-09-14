@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_complexity",
+ "key": "9e4fa2efb2d8cc60",
+ "kind": "theorem",
+ "title": "Complexity of a product of public-coin protocols is additive",
+ "statement": "Let $k$ be a natural number, and for each index $i \\in \\mathrm{Fin}\\,k$ let $p_i$ be a public-coin finite-message protocol with shared-randomness space $\\Omega_i$, common private input sets $X$ and $Y$, and output type $\\alpha_i$. Then the communication complexity of their $k$-fold product — the protocol $\\mathrm{pi}\\,p$ over the combined randomness space $\\prod_i \\Omega_i$ that runs each $p_i$ on its own randomness component and returns the tuple of outputs — is the sum of the complexities of the factors:\n\\[\n\\mathrm{complexity}(\\mathrm{pi}\\,p) \\;=\\; \\sum_{i \\in \\mathrm{Fin}\\,k} \\mathrm{complexity}(p_i).\n\\]",
+ "hypotheses_covered": [
+  "natural number $k$ indexing the family",
+  "family $p_i$ of public-coin finite-message protocols over randomness $\\Omega_i$, inputs $X$, $Y$, output $\\alpha_i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The complexity of $\\mathrm{pi}\\;p$ equals the sum of the complexities of all components:\n$(\\mathrm{pi}\\;p).\\mathrm{complexity} = \\sum_{i} (p\\;i).\\mathrm{complexity}$."
+}

@@ -27,14 +27,16 @@ $\texttt{zeroInput}(n) : \texttt{BoolInput}(n)$ is the constant $\mathrm{false}$
 i.e.\ the $n$-bit string consisting entirely of zeros.
 \end{definition}
 
-\begin{lemma}[Nonzero input has a true coordinate]
+\begin{lemma}[Nonzero Boolean input has a true coordinate]
 \lean{CommunicationComplexity.exists_true_of_ne_zeroInput}
 \label{CommunicationComplexity.exists_true_of_ne_zeroInput}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.boolSign, CommunicationComplexity.zeroInput}
 \difficulty{3}
-If $x : \texttt{BoolInput}(n)$ satisfies $x \ne \texttt{zeroInput}(n)$, then there exists
-some index $i \in \mathrm{Fin}\,n$ such that $x\,i = \mathrm{true}$.
+Let $x$ be an $n$-bit Boolean input, that is, a function assigning a Boolean value to
+each of the $n$ coordinates. If $x$ is not the all-zero input — the constant function
+taking the value $\mathrm{false}$ everywhere — then there exists a coordinate $i$ at
+which $x$ takes the value $\mathrm{true}$.
 \end{lemma}
 
 \begin{definition}[Boolean sign]
@@ -46,31 +48,38 @@ $\mathrm{false}$ and $-1$ to $\mathrm{true}$, embedding Boolean values into the
 multiplicative group $\{\pm 1\} \subset \mathbb{R}$.
 \end{definition}
 
-\begin{lemma}[Boolean sign converts xor to multiplication]
+\begin{lemma}[Boolean sign turns XOR into multiplication]
 \lean{CommunicationComplexity.boolSign_xor}
 \label{CommunicationComplexity.boolSign_xor}
 \leanok
 \uses{CommunicationComplexity.boolSign}
 \difficulty{2}
-For all $a, b : \mathrm{Bool}$,
+Write $\mathrm{sgn} : \mathrm{Bool} \to \bbr$ for the Boolean sign map, which sends
+$\mathrm{false}$ to $1$ and $\mathrm{true}$ to $-1$. Then for all Boolean values $a, b$,
 \[
-  \texttt{CommunicationComplexity.boolSign}(a \oplus b) \;=\; \texttt{CommunicationComplexity.boolSign}(a) \cdot \texttt{CommunicationComplexity.boolSign}(b).
+  \mathrm{sgn}(a \oplus b) \;=\; \mathrm{sgn}(a)\,\mathrm{sgn}(b),
 \]
-That is, $\texttt{boolSign}$ is a group homomorphism from $(\mathrm{Bool}, \oplus)$ to
-$(\{\pm 1\}, \cdot)$.
+where $a \oplus b$ denotes the exclusive-or of $a$ and $b$; equivalently, $\mathrm{sgn}$
+is a homomorphism from $(\mathrm{Bool}, \oplus)$ to the multiplicative group $\{\pm
+1\}$.
 \end{lemma}
 
-\begin{lemma}[Boolean sign of a finite sum]
+\begin{lemma}[Boolean sign turns parity into a product of signs]
 \lean{CommunicationComplexity.boolSign_sum}
 \label{CommunicationComplexity.boolSign_sum}
 \leanok
 \uses{CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_xor}
 \difficulty{4}
-For a finite type $\alpha$, a finite set $s : \mathrm{Finset}\,\alpha$, and a function
-$f : \alpha \to \mathrm{Bool}$,
+Let $\alpha$ be a type, let $s$ be a finite set of indices from $\alpha$, and let $f :
+\alpha \to \{\mathrm{false}, \mathrm{true}\}$ be a Boolean-valued function. Write
+$\sigma$ for the Boolean sign, so that $\sigma(\mathrm{false}) = 1$ and
+$\sigma(\mathrm{true}) = -1$, and let $\bigoplus_{i \in s} f(i)$ denote the sum of the
+values $f(i)$ taken in the Booleans under exclusive-or, so that this sum equals
+$\mathrm{true}$ precisely when an odd number of indices $i \in s$ satisfy $f(i) =
+\mathrm{true}$. Then the sign of this parity equals the product of the individual signs:
 \[
-  \texttt{CommunicationComplexity.boolSign}\!\left(\sum_{i \in s} f(i)\right)
-  \;=\; \prod_{i \in s} \texttt{boolSign}(f(i)).
+\sigma\!\left(\bigoplus_{i \in s} f(i)\right) \;=\; \prod_{i \in s}
+\sigma\bigl(f(i)\bigr).
 \]
 \end{lemma}
 
@@ -80,13 +89,14 @@ $f : \alpha \to \mathrm{Bool}$,
 \leanok
 \uses{CommunicationComplexity.boolSign}
 \difficulty{2}
-For all $a, b : \mathrm{Bool}$,
+For all Boolean values $a$ and $b$, the product of their signs satisfies
 \[
-  \texttt{CommunicationComplexity.boolSign}(a) \cdot \texttt{CommunicationComplexity.boolSign}(b)
-  \;=\; 1 - 2 \cdot \mathbf{1}[a \ne b].
+  \mathrm{sign}(a)\cdot\mathrm{sign}(b) \;=\; 1 - 2\,\mathbf{1}[a \ne b],
 \]
-In other words, the product of two $\pm 1$ signs equals $1$ when the bits agree and
-$-1$ when they disagree.
+where $\mathrm{sign}(\cdot)$ sends $\mathrm{false}$ to $1$ and $\mathrm{true}$ to $-1$,
+and $\mathbf{1}[a \ne b]$ is $1$ when $a$ and $b$ differ and $0$ when they agree.
+Equivalently, this product equals $1$ when the two bits are equal and $-1$ when they
+disagree.
 \end{lemma}
 
 \begin{definition}[Single-coordinate flip]
@@ -99,14 +109,16 @@ the Boolean input obtained from $x$ by negating the $i$-th coordinate and leavin
 other coordinates unchanged.
 \end{definition}
 
-\begin{lemma}[Flip applies at the flipped coordinate]
+\begin{lemma}[Value of the single-coordinate flip at the flipped coordinate]
 \lean{CommunicationComplexity.flipAt_apply_same}
 \label{CommunicationComplexity.flipAt_apply_same}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt}
 \difficulty{1}
-For $i : \mathrm{Fin}\,n$ and $x : \texttt{BoolInput}(n)$,
-$(\texttt{flipAt}\,i\,x)\,i = \neg(x\,i)$.
+Let $n \in \bbn$, let $i \in \mathrm{Fin}\,n$ be a coordinate index, and let $x$ be an
+$n$-bit Boolean input. The single-coordinate flip of $x$ at $i$ — the input obtained
+from $x$ by negating its $i$-th coordinate and leaving all others unchanged — has value
+$\neg\,x_i$ at coordinate $i$.
 \end{lemma}
 
 \begin{lemma}[Flip leaves other coordinates unchanged]
@@ -115,28 +127,35 @@ $(\texttt{flipAt}\,i\,x)\,i = \neg(x\,i)$.
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt}
 \difficulty{1}
-For $i, j : \mathrm{Fin}\,n$ with $j \ne i$ and $x : \texttt{BoolInput}(n)$,
-$(\texttt{flipAt}\,i\,x)\,j = x\,j$.
+Let $x \colon \mathrm{Fin}\,n \to \mathrm{Bool}$ be an $n$-bit Boolean input, and let
+$i, j \in \mathrm{Fin}\,n$ be coordinates with $j \ne i$. Then the input obtained from
+$x$ by flipping its $i$-th coordinate agrees with $x$ at coordinate $j$; that is, its
+value at $j$ equals $x(j)$.
 \end{lemma}
 
-\begin{lemma}[Flip is an involution]
+\begin{lemma}[Single-coordinate flip is an involution]
 \lean{CommunicationComplexity.flipAt_flipAt}
 \label{CommunicationComplexity.flipAt_flipAt}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt}
 \difficulty{3}
-For $i : \mathrm{Fin}\,n$ and $x : \texttt{BoolInput}(n)$,
-$\texttt{flipAt}\,i\,(\texttt{flipAt}\,i\,x) = x$.
-That is, applying $\texttt{flipAt}\,i$ twice recovers the original input.
+Fix $n \in \bbn$, a coordinate $i \in \mathrm{Fin}\,n$, and an $n$-bit Boolean input $x
+\colon \mathrm{Fin}\,n \to \mathrm{Bool}$. Writing $\mathrm{flip}_i$ for the operation
+that negates the $i$-th coordinate of an input and leaves all other coordinates
+unchanged, applying it twice recovers the original input:
+\[
+\mathrm{flip}_i\bigl(\mathrm{flip}_i(x)\bigr) = x.
+\]
 \end{lemma}
 
-\begin{lemma}[Flip is bijective]
+\begin{lemma}[Bijectivity of a single-coordinate flip]
 \lean{CommunicationComplexity.flipAt_bijective}
 \label{CommunicationComplexity.flipAt_bijective}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.flipAt, CommunicationComplexity.flipAt_flipAt}
 \difficulty{2}
-For every $i : \mathrm{Fin}\,n$, the map
-$\texttt{flipAt}\,i : \texttt{BoolInput}(n) \to \texttt{BoolInput}(n)$ is bijective; its
-two-sided inverse is itself.
+Fix $n \in \bbn$ and a coordinate $i \in \mathrm{Fin}\,n$. On the space of $n$-bit
+Boolean inputs, functions $\mathrm{Fin}\,n \to \mathrm{Bool}$, consider the
+single-coordinate flip that negates the $i$-th bit of its argument and leaves every
+other bit unchanged. This map is a bijection.
 \end{lemma}

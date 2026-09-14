@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.tutte_perfect_matching",
+ "key": "3bd0d996da64d131",
+ "kind": "theorem",
+ "title": "Tutte's theorem on perfect matchings",
+ "statement": "Let $G$ be a simple graph on a finite vertex set $V$. For a set $S \\subseteq V$, write $G - S$ for the graph obtained by deleting the vertices of $S$ (together with their incident edges), and let $o(G - S)$ denote the number of odd components of $G - S$, that is, the connected components with an odd number of vertices. Then $G$ has a perfect matching if and only if\n\\[o(G - S) \\le \\abs{S} \\qquad \\text{for every } S \\subseteq V.\\]",
+ "hypotheses_covered": [
+  "G is a simple graph",
+  "the vertex set V is finite",
+  "condition quantified over all subsets S of V",
+  "odd-component count of G minus S is at most the cardinality of S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Thm 5.4 (Tutte): \\texttt{G} has a perfect matching iff \\texttt{o(G $-$ S) $\\le$ |S|} for\nall \\texttt{S}.\n\n$G$ has a perfect matching if and only if\n\\[o(G - S) \\leq |S| \\quad \\text{for all} \\quad S \\subset V \\qquad (5.6)\\]\n\nwith, from the same page:\n\nA component of a graph is \\emph{odd} or \\emph{even} according as it has an odd or even\nnumber of vertices. We denote by $o(G)$ the number of odd components of $G$."
+}

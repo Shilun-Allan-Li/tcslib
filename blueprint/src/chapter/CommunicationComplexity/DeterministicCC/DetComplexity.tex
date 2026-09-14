@@ -11,18 +11,22 @@ in terms of general protocols and in terms of finite-message protocols.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Infimum over \texttt{ENat}-valued family bounded by coercion]
+\begin{theorem}[Infimum of an extended-natural family bounded by a coercion]
 \lean{CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
 \label{CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
 \leanok
 \difficulty{4}
-Let $\iota$ be a type and $f : \iota \to \mathbb{N}_\infty$ an $\mathbb{N}_\infty$-valued
-family.  Then $\inf_{i} f(i) \le n$ if and only if there exists an index $i$ such that
-$f(i) \le n$.  Here $n : \mathbb{N}$ is coerced into $\mathbb{N}_\infty = \mathrm{ENat}$.
+Let $(f_i)_{i \in \iota}$ be a family of values in the extended natural numbers
+$\bbn_\infty = \bbn \cup \{\infty\}$, indexed by an arbitrary type $\iota$, and let $n
+\in \bbn$. Then $\inf_{i} f_i \le n$ if and only if there exists an index $i$ with $f_i
+\le n$, where $n$ is regarded as an element of $\bbn_\infty$ via the canonical
+inclusion.
 \end{theorem}
 
 \begin{definition}[Deterministic communication complexity]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity}
+\statementsource{roughgarden-cc-bootcamp}{pdf-d54d402b16e2-p002-b002}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b003}
 \label{CommunicationComplexity.Deterministic.communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity}
@@ -35,36 +39,40 @@ The infimum is taken over all deterministic protocols $p$ that compute $f$, and 
 result lives in $\mathrm{ENat}$ to accommodate the case where no finite protocol exists.
 \end{definition}
 
-\begin{theorem}[Upper bound characterization of communication complexity]
+\begin{theorem}[Threshold characterization of deterministic communication complexity]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
 \difficulty{1}
-For $f : X \to Y \to \alpha$ and $n : \mathbb{N}$, we have $D(f) \le n$ if and only if
-there exists a protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$ such that $p$ computes $f$
-and $p.\mathrm{complexity} \le n$.
+Let $f : X \to Y \to \alpha$ be a two-argument function and let $n$ be a natural number.
+Then the deterministic communication complexity $D(f)$ satisfies $D(f) \le n$ if and
+only if there exists a deterministic communication protocol $p$ over inputs $X$ and $Y$
+that computes $f$ and whose communication complexity is at most $n$.
 \end{theorem}
 
-\begin{theorem}[Finite-message upper bound characterization]
+\begin{theorem}[Finite-message characterization of deterministic communication complexity]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_equiv, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
 \difficulty{4}
-For $f : X \to Y \to \alpha$ and $n : \mathbb{N}$, we have $D(f) \le n$ if and only if
-there exists a finite-message protocol $p : \mathrm{FiniteMessage.Protocol}\;X\;Y\;\alpha$
-such that $p.\mathrm{run} = f$ and $p.\mathrm{complexity} \le n$.  This equivalence follows
-from the mutual simulation between general protocols and their finite-message counterparts.
+Let $X$, $Y$, and $\alpha$ be types, let $f : X \to Y \to \alpha$ be a two-argument
+function, and let $n$ be a natural number. Then the deterministic communication
+complexity satisfies $D(f) \le n$ if and only if there exists a finite-message protocol
+$p$ over inputs $X$, $Y$ and outputs $\alpha$ whose execution computes $f$, in the sense
+that $p$ run on inputs $x$ and $y$ returns $f(x)(y)$ for all $x$ and $y$, and whose
+communication complexity is at most $n$.
 \end{theorem}
 
-\begin{theorem}[Lower bound characterization of communication complexity]
+\begin{theorem}[Lower-bound characterization of communication complexity]
 \lean{CommunicationComplexity.Deterministic.le_communicationComplexity_iff}
 \label{CommunicationComplexity.Deterministic.le_communicationComplexity_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity}
 \difficulty{1}
-For $f : X \to Y \to \alpha$ and $n : \mathbb{N}$, we have $n \le D(f)$ (in
-$\mathbb{N}_\infty$) if and only if every protocol $p : \mathrm{Protocol}\;X\;Y\;\alpha$
-that computes $f$ satisfies $n \le p.\mathrm{complexity}$.
+Let $f : X \to Y \to \alpha$ be a two-argument function, let $D(f) \in \bbn_\infty$
+denote its deterministic communication complexity, and let $n$ be a natural number. Then
+$n \le D(f)$ if and only if every deterministic protocol $p$ that computes $f$ has
+communication complexity at least $n$.
 \end{theorem}

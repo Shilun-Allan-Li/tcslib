@@ -1,0 +1,14 @@
+{
+ "lean_name": "ACP.Circuit.toFeedForward_depth",
+ "key": "1ff7f8e684ef67b2",
+ "kind": "theorem",
+ "title": "Depth of the feedforward embedding",
+ "statement": "Let $C$ be a Boolean circuit on $n$ variables, with depth $\\mathrm{depth}(C)$ equal to the length of the longest root-to-leaf path in $C$. Embedding $C$ as a layered feedforward circuit — in which layer $0$ carries the $n$ input variables and each higher layer carries a single wire — produces a circuit whose depth equals $\\mathrm{depth}(C) + 1$.",
+ "hypotheses_covered": [
+  "C is a Boolean circuit on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The embedding uses one extra layer for the inputs:\n$C.\\texttt{toFeedForward}.\\texttt{depth} = C.\\texttt{depth} + 1$."
+}

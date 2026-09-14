@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol",
+ "key": "bd4a9abde5f15ec7",
+ "kind": "theorem",
+ "title": "Existence of a balanced subprotocol",
+ "statement": "Let $p$ be a deterministic two-party communication protocol, and for any such protocol $q$ write $\\ell(q)$ for its number of leaves (its output nodes). Suppose $\\ell(p) > 1$. Then there is a protocol $s$ that is a rooted subtree of $p$ whose number of leaves satisfies\n\\[\n  \\ell(p) \\;\\le\\; 3\\,\\ell(s) \\;<\\; 2\\,\\ell(p),\n\\]\nso that $s$ carries at least one-third and strictly fewer than two-thirds of the leaves of $p$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol",
+  "p has more than one leaf (1 < number of leaves of p)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf a protocol $p$ has more than one leaf (i.e.\\ $p.\\mathrm{numLeaves} > 1$), then there\nexists a subprotocol $s$ of $p$ satisfying\n\\[\n  p.\\mathrm{numLeaves} \\;\\le\\; 3\\cdot s.\\mathrm{numLeaves} \\;<\\; 2\\cdot p.\\mathrm{numLeaves}.\n\\]\nIn other words, $s$ contains between one-third and two-thirds of $p$'s leaves."
+}

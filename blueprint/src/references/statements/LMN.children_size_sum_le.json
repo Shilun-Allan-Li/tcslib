@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.children_size_sum_le",
+ "key": "f5008f1ae2bc7e36",
+ "kind": "lemma",
+ "title": "Bound on the total size of a gate's children",
+ "statement": "Let $g = \\mathrm{node}\\,(\\mathit{isAnd},\\, cs)$ be an internal gate of a Boolean circuit on $n$ variables, with $cs$ the list of its child subcircuits, and let $s$ be a natural number with $\\mathrm{size}(g) \\le s$. Then the sum of the sizes of the children, $\\sum_{c \\in cs} \\mathrm{size}(c)$, is at most $s - 1$ (truncated natural-number subtraction).",
+ "hypotheses_covered": [
+  "g is an internal gate node(isAnd, cs) on n variables",
+  "the gate has size at most s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a node circuit $\\mathrm{node}\\,\\mathit{isAnd}\\,cs$ has size at most $s$, then the sum of\nthe sizes of its children is at most $s - 1$."
+}

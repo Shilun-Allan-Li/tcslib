@@ -26,44 +26,55 @@ of vectors that strictly dominate the payoff vector of some row on the sample $u
 This set is written $\texttt{OnlineLearning.finiteUpperImage}$ in Lean.
 \end{definition}
 
-\begin{lemma}[Upper image is nonempty]
+\begin{lemma}[Nonemptiness of the finite upper image]
 \lean{OnlineLearning.finiteUpperImage_nonempty}
 \label{OnlineLearning.finiteUpperImage_nonempty}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 \difficulty{2}
-If $X$ is nonempty, then for every finite column sample $u$ the upper image
-$U(X,f,u)$ is nonempty.
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff function, and
+let $u$ be a finite sample of columns from $Y$. If $X$ is nonempty, then the finite
+upper image $U(X,f,u)$ is nonempty; that is, there exists a vector $z : u \to \bbr$ for
+which some $x \in X$ satisfies $f(x,y) < z_y$ for every $y \in u$.
 \end{lemma}
 
-\begin{lemma}[Upper image is convex]
+\begin{lemma}[Convexity of the finite upper image]
 \lean{OnlineLearning.finiteUpperImage_convex}
 \label{OnlineLearning.finiteUpperImage_convex}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 \difficulty{5}
-If $X$ is convex and $x \mapsto f(x,y)$ is convex on $X$ for every $y \in Y$, then
-$U(X,f,u)$ is a convex subset of $u \to \bbr$ for every finite column sample $u$.
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff, and let $u$ be
+a finite sample of columns from $Y$. If $X$ is convex and, for every $y \in Y$, the map
+$x \mapsto f(x,y)$ is convex on $X$, then the finite upper image $U(X,f,u)$ is a convex
+subset of $u \to \bbr$.
 \end{lemma}
 
-\begin{lemma}[Upper image is upward closed]
+\begin{lemma}[Finite upper image is upward closed]
 \lean{OnlineLearning.finiteUpperImage_upper}
 \label{OnlineLearning.finiteUpperImage_upper}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 \difficulty{1}
-If $z \in U(X,f,u)$ and $z_y \le z'_y$ for all $y \in u$, then $z' \in U(X,f,u)$ as
-well; that is, the upper image is closed under coordinatewise increase.
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff, and let $u$ be
+a finite sample of columns from $Y$. If a vector $z : u \to \bbr$ belongs to the finite
+upper image $U(X,f,u)$, and $z' : u \to \bbr$ satisfies $z_y \le z'_y$ for every $y \in
+u$, then $z'$ also belongs to $U(X,f,u)$.
 \end{lemma}
 
-\begin{lemma}[Upper image is open]
+\begin{lemma}[The finite upper image is open]
 \lean{OnlineLearning.finiteUpperImage_isOpen}
 \label{OnlineLearning.finiteUpperImage_isOpen}
 \leanok
 \uses{OnlineLearning.finiteUpperImage}
 \difficulty{5}
-For every finite column sample $u$, the upper image $U(X,f,u)$ is an open subset
-of $u \to \bbr$.
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff function, and
+let $u$ be a finite sample of columns from $Y$. Then the finite upper image
+\[
+U(X,f,u) \;=\; \{\, z : u \to \bbr \;\mid\; \exists\, x \in X,\ \forall y \in u,\ f(x,y)
+< z_y \,\}
+\]
+is an open subset of the space $u \to \bbr$ of vectors indexed by $u$.
 \end{lemma}
 
 \begin{lemma}[Coordinate expansion of a continuous linear functional]
@@ -71,94 +82,109 @@ of $u \to \bbr$.
 \label{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single}
 \leanok
 \difficulty{4}
-Let $\iota$ be a finite type and $L$ a continuous linear functional on $\iota \to \bbr$. Then for every $z : \iota \to \bbr$,
+Let $\iota$ be a finite index set and let $L \colon \bbr^{\iota} \to \bbr$ be a
+continuous linear functional. Writing $e_i$ for the standard basis vector whose $i$-th
+coordinate is $1$ and whose other coordinates are $0$, every vector $z \in \bbr^{\iota}$
+satisfies
 \[
-  L(z) \;=\; \sum_{i \in \iota} z_i \, L(e_i),
+  L(z) \;=\; \sum_{i \in \iota} z_i \, L(e_i).
 \]
-where $e_i$ is the standard basis vector $\mathrm{Pi.single}\,i\,1$.
 \end{lemma}
 
-\begin{lemma}[Separating functional has nonpositive coordinates]
+\begin{lemma}[Separating functional is coordinatewise nonpositive]
 \lean{OnlineLearning.separating_coordinate_nonpos}
 \label{OnlineLearning.separating_coordinate_nonpos}
 \leanok
 \uses{OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_nonempty, OnlineLearning.finiteUpperImage_upper}
 \difficulty{5}
-Assume $X$ is nonempty and $L$ is a continuous linear functional on $u \to \bbr$
-with $L(z) < L(c)$ for every $z \in U(X,f,u)$, where $c$ is a fixed vector. Then
-$L(e_y) \le 0$ for every coordinate $y \in u$.
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff, let $u$ be a
+finite sample of columns from $Y$, and let $c : u \to \bbr$ be a fixed vector. Suppose
+$X$ is nonempty and $L : (u \to \bbr) \to \bbr$ is a continuous linear functional such
+that $L(z) < L(c)$ for every $z$ in the finite upper image $U(X,f,u)$. Then for each
+coordinate $y \in u$ one has $L(e_y) \le 0$, where $e_y \in (u \to \bbr)$ is the
+standard basis vector taking the value $1$ at $y$ and $0$ elsewhere.
 \end{lemma}
 
-\begin{lemma}[Separating functional is nonzero]
+\begin{lemma}[A nonzero separating functional over the upper image]
 \lean{OnlineLearning.separating_functional_ne_zero}
 \label{OnlineLearning.separating_functional_ne_zero}
 \leanok
 \uses{OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_nonempty}
 \difficulty{2}
-Under the same separation hypothesis $L(z) < L(c)$ for all $z$ in the upper image,
-with $X$ nonempty, the functional $L$ is not the zero functional.
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff, and let $u$ be
+a finite sample of columns drawn from $Y$, with $X$ nonempty. Fix a vector $c : u \to
+\bbr$ and a continuous linear functional $L : (u \to \bbr) \to \bbr$. If $L(z) < L(c)$
+for every $z$ in the finite upper image $U(X,f,u)$, then $L$ is not the zero functional.
 \end{lemma}
 
-\begin{lemma}[Positive total weight of the separator]
+\begin{lemma}[Positivity of the separator's total weight]
 \lean{OnlineLearning.separating_weight_sum_pos}
 \label{OnlineLearning.separating_weight_sum_pos}
 \leanok
 \uses{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_functional_ne_zero}
 \difficulty{4}
-Under the same separation hypothesis, with $X$ nonempty,
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff function, and
+let $u$ be a finite sample of columns drawn from $Y$. Suppose $X$ is nonempty, fix a
+vector $c \in \bbr^u$, and let $L : \bbr^u \to \bbr$ be a continuous linear functional
+that strictly separates $c$ from the finite upper image $U(X,f,u)$, in the sense that
+$L(z) < L(c)$ for every $z \in U(X,f,u)$. Writing $e_y \in \bbr^u$ for the standard
+basis vector supported at coordinate $y$, one then has
 \[
   0 \;<\; \sum_{y \in u} \bigl(-L(e_y)\bigr).
 \]
-Consequently the negated coordinates can be normalized to a probability vector on
-the sampled columns.
 \end{lemma}
 
-\begin{lemma}[Finite sublevel intersections via separation]
+\begin{lemma}[Nonempty finite intersection of minimax sublevel sets]
 \lean{OnlineLearning.finite_sublevel_intersections_by_separation}
 \label{OnlineLearning.finite_sublevel_intersections_by_separation}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_convex, OnlineLearning.finiteUpperImage_isOpen, OnlineLearning.minimaxSublevel, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_weight_sum_pos}
 \difficulty{7}
-Assume the convex-compact minimax hypotheses
-$\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$. Then for every
-$\varepsilon > 0$ and every finite column sample $u \subseteq Y$, the set
-\[
-  X \cap \bigcap_{y \in u} \bigl(X \cap \{x \mid f(x,y) \le v + \varepsilon\}\bigr),
-  \qquad v = \sup_{y \in Y} \inf_{x \in X} f(x,y),
-\]
-is nonempty, the inner sets being the sublevel sets
-$\texttt{OnlineLearning.minimaxSublevel}$; i.e.\ some row $x \in X$ satisfies
-$f(x,y) \le v + \varepsilon$ simultaneously for all sampled columns $y \in u$.
+Let $X, Y \subseteq \bbr$ and $f : \bbr \times \bbr \to \bbr$ satisfy the convex-compact
+minimax hypotheses, and write $v = \sup_{y \in Y} \inf_{x \in X} f(x,y)$ for the lower
+value of the payoff. Then for every $\varepsilon > 0$ and every finite set $u$ of
+columns chosen from $Y$, there is a row $x \in X$ with $f(x,y) \le v + \varepsilon$
+simultaneously for all $y \in u$; equivalently, the intersection over $y \in u$ of the
+sublevel sets $\{x \in X : f(x,y) \le v + \varepsilon\}$ is nonempty.
 \end{lemma}
 
-\begin{theorem}[Minimax identity from finite sublevel intersections]
+\begin{theorem}[Minimax equality from finite sublevel intersections]
 \lean{OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections}
 \label{OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.exists_forall_le_of_finite_sublevel_intersections, OnlineLearning.minimaxSublevel, OnlineLearning.weak_convex_compact_minimax}
 \difficulty{5}
-Assume the hypotheses $\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for
-$X$, $Y$, $f$, and suppose that for every $\varepsilon > 0$ and every finite
-$u \subseteq Y$ the intersection of $X$ with the sublevel sets
-$\texttt{OnlineLearning.minimaxSublevel}$ at level $v + \varepsilon$ over $y \in u$ is
-nonempty, where $v = \sup_{y \in Y} \inf_{x \in X} f(x,y)$. Then the minimax identity
-$\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds for $X$, $Y$, $f$, i.e.
+Let $X, Y \subseteq \bbr$ with $X$ and $Y$ nonempty, $X$ compact and convex, and $Y$
+convex, and let $f : \bbr \times \bbr \to \bbr$ be bounded above and below on $X \times
+Y$, with $f(\cdot, y)$ continuous and convex on $X$ for every $y \in Y$ and $f(x,
+\cdot)$ concave on $Y$ for every $x \in X$. Write $v = \sup_{y \in Y} \inf_{x \in X}
+f(x,y)$ for the lower value, and suppose that for every $\varepsilon > 0$ and every
+finite set $u$ of column points from $Y$, the set
 \[
-  \inf_{x \in X} \sup_{y \in Y} f(x,y) \;=\; \sup_{y \in Y} \inf_{x \in X} f(x,y).
+  \{x \in X : f(x,y) \leq v + \varepsilon \text{ for all } y \in u\}
 \]
+is nonempty. Then the minimax equality
+\[
+  \inf_{x \in X}\,\sup_{y \in Y}\,f(x,y) \;=\; \sup_{y \in Y}\,\inf_{x \in X}\,f(x,y)
+\]
+holds.
 \end{theorem}
 
-\begin{theorem}[Convex-compact minimax theorem by separation]
+\begin{theorem}[A convex–concave minimax equality]
 \lean{OnlineLearning.convex_compact_minimax_by_separation}
 \label{OnlineLearning.convex_compact_minimax_by_separation}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.ConvexCompactMinimaxStatement, OnlineLearning.convex_compact_minimax_of_finite_sublevel_intersections, OnlineLearning.finite_sublevel_intersections_by_separation}
 \difficulty{1}
-Under the convex-compact minimax hypotheses
-$\texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}$ for $X$, $Y$, $f$, the minimax
-identity $\texttt{OnlineLearning.ConvexCompactMinimaxStatement}$ holds:
+Let $X, Y \subseteq \bbr$ be nonempty sets with $X$ compact and both $X$ and $Y$ convex,
+and let $f : \bbr \times \bbr \to \bbr$ be a payoff function that is bounded above and
+below on $X \times Y$. Suppose that for every $y \in Y$ the section $x \mapsto f(x,y)$
+is continuous and convex on $X$, while for every $x \in X$ the section $y \mapsto
+f(x,y)$ is concave on $Y$. Then the minimax equality
 \[
-  \inf_{x \in X} \sup_{y \in Y} f(x,y) \;=\; \sup_{y \in Y} \inf_{x \in X} f(x,y).
+  \inf_{x \in X}\,\sup_{y \in Y} f(x,y)
+  \;=\;
+  \sup_{y \in Y}\,\inf_{x \in X} f(x,y)
 \]
-This is the final form of the theorem obtained via the finite-column separation route.
+holds.
 \end{theorem}

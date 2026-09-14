@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.failureIntegral_swap",
+ "key": "454b385fc5a99806",
+ "kind": "lemma",
+ "title": "Swapping input and coin averages of the failure probability",
+ "statement": "Suppose $X\\times Y$ is a finite probability space, whose probability measure we write $\\mathbb{P}$, let $m\\in\\bbn$, and let $p$ be a public-coin protocol whose shared randomness is a coin tape in $\\mathrm{CoinTape}(m)$, with Alice's private input drawn from $X$, Bob's from $Y$, and outputs in $\\alpha$. Write $\\mathrm{vol}$ for the measure on $\\mathrm{CoinTape}(m)$, and for a coin tape $\\omega$ and inputs $x,y$ let $\\mathrm{rrun}(p,x,y,\\omega)$ be the randomized execution of $p$. Then for every function $f\\colon X\\times Y\\to\\alpha$,\n\\[\n\\int_{\\mathrm{CoinTape}(m)} \\mathbb{P}\\!\\left(\\bigl\\{(x,y)\\in X\\times Y : \\mathrm{rrun}(p,x,y,\\omega)\\neq f(x,y)\\bigr\\}\\right)\\,d\\omega\n=\n\\int_{X\\times Y} \\mathrm{vol}\\!\\left(\\bigl\\{\\omega\\in\\mathrm{CoinTape}(m) : \\mathrm{rrun}(p,x,y,\\omega)\\neq f(x,y)\\bigr\\}\\right)\\,d\\mathbb{P}(x,y).\n\\]\nOn the left one first measures, for each fixed coin tape $\\omega$, the $\\mathbb{P}$-probability of the inputs on which $p$ disagrees with $f$, and then averages over $\\omega$; on the right one first measures, for each fixed input pair $(x,y)$, the set of coin tapes on which $p$ disagrees with $f$, and then averages over the inputs.",
+ "hypotheses_covered": [
+  "X × Y is a finite probability space (probability measure P)",
+  "m is a natural number (coin tape length)",
+  "p is a public-coin protocol over CoinTape(m), X, Y, α",
+  "f : X × Y → α is an arbitrary reference function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu$ be a finite probability space on $X \\times Y$, let $m \\in \\mathbb{N}$, and let\n$p$ be a public-coin protocol with coin tape of length $m$.  For any $f : X \\to Y \\to \\alpha$,\n\\[\n  \\int_{\\omega}\\,\\mu\\!\\left(\\bigl\\{(x,y) \\mid p.\\mathrm{rrun}(x,y,\\omega) \\ne f(x,y)\\bigr\\}\\right)\\,d\\omega\n  \\;=\\;\n  \\int_{(x,y)}\\,\\mathrm{vol}\\!\\left(\\bigl\\{\\omega : \\mathrm{CoinTape}\\,m \\mid\n    p.\\mathrm{rrun}(x,y,\\omega) \\ne f(x,y)\\bigr\\}\\right)\\,d\\mu,\n\\]\nobtained by swapping the order of integration via Fubini's theorem applied to the\nfailure-indicator function."
+}

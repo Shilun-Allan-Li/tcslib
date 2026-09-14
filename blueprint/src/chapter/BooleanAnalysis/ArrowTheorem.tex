@@ -125,7 +125,7 @@ The following lemma encodes the core computation: for a single voter drawn
 uniformly from the 6 orderings, the expected product of any two distinct
 pairwise preference signs is $-1/3$.
 
-\begin{lemma}[Pairwise sign sums]
+\begin{lemma}[Sum of paired preference signs]
 \lean{ArrowTheorem.sum_abPref_bcPref}
 \label{ArrowTheorem.sum_abPref_bcPref}
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
@@ -140,14 +140,33 @@ pairwise preference signs is $-1/3$.
 \leanok
 \uses{ArrowTheorem.abPref, ArrowTheorem.bcPref, ArrowTheorem.caPref, BooleanAnalysis.boolToSign}
 \difficulty{1}
-Summing pairwise sign products over all 6 orderings:
+Label the six strict orderings of three alternatives $a,b,c$ by $k\in\{0,\dots,5\}$. For
+each ordering let $x_k\in\{-1,+1\}$ record the $a$-versus-$b$ comparison, taking the
+value $+1$ when $a$ is preferred to $b$ and $-1$ when $b$ is preferred to $a$, and let
+$y_k\in\{-1,+1\}$ record the $b$-versus-$c$ comparison in the same way, with $+1$ when
+$b$ is preferred to $c$ and $-1$ otherwise. Then
 \[
-  \sum_{k=0}^{5} s_{ab}(k)\cdot s_{bc}(k)
-  \;=\; \sum_{k=0}^{5} s_{bc}(k)\cdot s_{ca}(k)
-  \;=\; \sum_{k=0}^{5} s_{ab}(k)\cdot s_{ca}(k)
-  \;=\; -2.
+\sum_{k=0}^{5} x_k\,y_k \;=\; -2.
 \]
-Hence $\E[s_{ab}\cdot s_{bc}] = -2/6 = -1/3$.
+
+For each of the six strict orderings $k \in \{0,\dots,5\}$ of three alternatives
+$a,b,c$, let $\sigma$ be the sign encoding, sending $\mathrm{false}$ to $+1$ and
+$\mathrm{true}$ to $-1$. Write $y_k = \sigma(p_k)$, where $p_k$ is the Boolean
+preference of ordering $k$ in the $b$-vs-$c$ comparison, and $z_k = \sigma(q_k)$, where
+$q_k$ is the preference in the $c$-vs-$a$ comparison. Then
+\[
+\sum_{k=0}^{5} y_k\, z_k \;=\; -2.
+\]
+
+For each of the six strict orderings $k \in \{0,\dots,5\}$ of three alternatives
+$a,b,c$, write $p_{ab}(k)$ and $p_{ca}(k)$ for the Boolean preferences of ordering $k$
+in the $a$-vs-$b$ and $c$-vs-$a$ comparisons, and let $\sigma$ be the sign encoding
+sending $\mathrm{false}$ to $1$ and $\mathrm{true}$ to $-1$. Then the sum over all six
+orderings of the products of the encoded signs is
+\[
+\sum_{k=0}^{5} \sigma\big(p_{ab}(k)\big)\,\sigma\big(p_{ca}(k)\big)
+\;=\; -2.
+\]
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,53 +184,64 @@ The \emph{Fourier correlation function} of $f$ is
 For odd $f$, only odd-level terms contribute.
 \end{definition}
 
-\begin{lemma}[Expected pairwise product equals correlation function]
+\begin{lemma}[Expected pairwise vote product equals the Fourier correlation function]
 \lean{ArrowTheorem.expected_product_eq_corrFunc}
 \label{ArrowTheorem.expected_product_eq_corrFunc}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.corrFunc, ArrowTheorem.abVotes, ArrowTheorem.bcVotes, BooleanAnalysis.fourierCoeff, BooleanAnalysis.chiS, ArrowTheorem.sum_abPref_bcPref}
 \difficulty{1}
-For voters with i.i.d.\ uniform orderings,
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function. Suppose each of the $n$ voters chooses,
+independently and uniformly, one of the six strict orderings of three candidates
+$a,b,c$; for such a profile $p$ write $x_p\in\{0,1\}^n$ for the vector whose $i$-th
+entry records voter $i$'s preference in the $a$-versus-$b$ comparison, and
+$y_p\in\{0,1\}^n$ for the vector recording each voter's preference in the $b$-versus-$c$
+comparison. Then, averaging the product of the values of $f$ on these two vectors over
+all $6^n$ profiles,
 \[
-  \E_p\bigl[f(\mathrm{abVotes}(p))\cdot f(\mathrm{bcVotes}(p))\bigr]
-  \;=\; \mathrm{corr}(f).
+  \frac{1}{6^{\,n}}\sum_{p}\, f(x_p)\,f(y_p)
+  \;=\; \sum_{S\subseteq[n]} \hat f(S)^2\,(-1/3)^{|S|},
 \]
-The same identity holds for the $bc$--$ca$ and $ab$--$ca$ pairs.
+where $\hat f(S)$ denotes the Fourier--Walsh coefficient of $f$ at frequency $S$.
 \end{lemma}
 
-\begin{lemma}[Correlation function lower bound]
+\begin{lemma}[Lower bound for the Fourier correlation function]
 \lean{ArrowTheorem.corrFunc_ge_neg_third}
 \label{ArrowTheorem.corrFunc_ge_neg_third}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
 \uses{ArrowTheorem.corrFunc, BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
 \difficulty{5}
-For any odd $\pm 1$-valued function,
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function that is odd, so that $f(\lnot x)=-f(x)$
+for all $x$, and $\pm 1$-valued, so that $f(x)\in\{-1,1\}$ for all $x$. Then its Fourier
+correlation function satisfies
 \[
-  \mathrm{corr}(f) \;\ge\; -1/3.
+\mathrm{corr}(f) \;=\; \sum_{S\subseteq[n]} \hat f(S)^2\,(-1/3)^{|S|} \;\ge\; -\tfrac13,
 \]
-\emph{Proof sketch:}  For odd $|S|\ge 1$ we have $(-1/3)^{|S|}\ge -1/3$.
-Even-level coefficients vanish by oddness.  Hence
-$\mathrm{corr}(f) \ge (-1/3)\sum_S \hat f(S)^2 = -1/3$.
+where $\hat f(S)$ denotes the Fourier--Walsh coefficient of $f$ at frequency $S$.
 \end{lemma}
 
-\begin{lemma}[Equality forces all weight on level 1]
+\begin{lemma}[Extremal correlation concentrates weight on level one]
 \lean{ArrowTheorem.corrFunc_eq_neg_third_of_weight_one}
 \label{ArrowTheorem.corrFunc_eq_neg_third_of_weight_one}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
 \uses{ArrowTheorem.corrFunc, ArrowTheorem.corrFunc_ge_neg_third, BooleanAnalysis.isOddFunc, BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff_odd_even, BooleanAnalysis.parseval_pm_one}
 \difficulty{6}
-If $\mathrm{corr}(f) = -1/3$, then $\hat f(S) = 0$ for all $S$ with
-$|S| \ne 1$.  Combined with oddness ($\hat f(\varnothing) = 0$), all Fourier
-weight lies on level 1: $W_1[f] = 1$.
+Let $f:\{0,1\}^n\to\bbr$ be a $\pm 1$-valued Boolean function that is odd, meaning
+$f(\lnot x)=-f(x)$ for every $x$, and suppose its Fourier correlation function attains
+the value
+\[
+  \mathrm{corr}(f)\;=\;\sum_{S\subseteq[n]}\hat f(S)^2\,(-1/3)^{|S|}\;=\;-\tfrac13.
+\]
+Then $\hat f(S)=0$ for every subset $S\subseteq[n]$ with $|S|\neq 1$; that is, all
+Fourier--Walsh weight of $f$ is carried by the singleton frequencies.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Acyclicity implies degree-1 structure}
 
-\begin{lemma}[Acyclicity implies $\mathrm{corr}(f) = -1/3$]
+\begin{lemma}[Acyclicity forces correlation $-1/3$]
 \lean{ArrowTheorem.acyclic_implies_corrFunc}
 \label{ArrowTheorem.acyclic_implies_corrFunc}
 \leanok
@@ -221,47 +251,33 @@ weight lies on level 1: $W_1[f] = 1$.
 }
 \uses{ArrowTheorem.acyclic, ArrowTheorem.corrFunc, ArrowTheorem.expected_product_eq_corrFunc, BooleanAnalysis.isPmOne}
 \difficulty{5}
-If $f$ is $\pm 1$-valued and acyclic, then $\mathrm{corr}(f) = -1/3$.
-
-\emph{Proof sketch:}
-\begin{enumerate}
-  \item For any $\pm 1$ triple $(a,b,c)$ avoiding the two all-equal cycles,
-        $ab + bc + ac = -1$.
-  \item Summing over all $6^n$ profiles:
-        $\sum_p (f_{\!ab}\cdot f_{\!bc} + f_{\!bc}\cdot f_{\!ca} + f_{\!ab}\cdot f_{\!ca}) = -6^n$.
-  \item Each pairwise expected product equals $\mathrm{corr}(f)$, so
-        $3\cdot\mathrm{corr}(f) = -1$, giving $\mathrm{corr}(f) = -1/3$.
-\end{enumerate}
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function that is odd, $\pm 1$-valued, and acyclic.
+Then its Fourier correlation function satisfies
+\[
+  \mathrm{corr}(f)\;=\;\sum_{S\subseteq[n]}\hat f(S)^2\,(-1/3)^{|S|}\;=\;-\tfrac{1}{3}.
+\]
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Degree-1 implies dictatorship}
 
-\begin{lemma}[Degree-1 unanimous $\pm 1$ function is a dictator]
+\begin{lemma}[Degree-one unanimous voting rules are dictatorships]
 \lean{ArrowTheorem.degree_one_implies_dictator}
 \label{ArrowTheorem.degree_one_implies_dictator}
 \leanok
 \statementsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b003}
 \uses{ArrowTheorem.isDictator, ArrowTheorem.unanimity, BooleanAnalysis.isPmOne, BooleanAnalysis.fourierCoeff, BooleanAnalysis.parseval_pm_one, BooleanAnalysis.walsh_expansion, BooleanAnalysis.dictator_eq_chi, BooleanAnalysis.chiS_singleton}
 \difficulty{6}
-Suppose $f$ is $\pm 1$-valued, unanimous, and $\hat f(S) = 0$ for all $|S|\ne 1$.
-Then $f$ is a dictator.
-
-\emph{Proof sketch:}  Write $f = \sum_i a_i\chi_{\{i\}}$ where $a_i = \hat f(\{i\})$.
-\begin{enumerate}
-  \item Parseval: $\sum_i a_i^2 = 1$.
-  \item Unanimity: $f(\mathbf{0}) = \sum_i a_i = 1$.
-  \item For each $j$, the value $f(e_j) = 1 - 2a_j \in\{-1,1\}$ forces $a_j\in\{0,1\}$.
-  \item From $a_j\in\{0,1\}$ and $\sum a_j^2 = \sum a_j = 1$: exactly one
-        $a_{j_0} = 1$ and the rest are $0$.
-  \item Hence $f = \chi_{\{j_0\}} = \mathrm{dict}_{j_0}$.
-\end{enumerate}
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function that is odd, is $\pm 1$-valued, and is
+unanimous. Suppose further that $f$ has degree one, in the sense that its Fourier--Walsh
+coefficient $\hat f(S)$ vanishes for every set $S\subseteq[n]$ with $\abs{S}\neq 1$.
+Then $f$ is a dictatorship: there is a coordinate $i$ with $f=\mathrm{dict}_i$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Arrow's Impossibility Theorem}
 
-\begin{theorem}[Arrow's Impossibility Theorem]
+\begin{theorem}[Arrow's impossibility theorem]
 \lean{ArrowTheorem.arrow_theorem}
 \label{ArrowTheorem.arrow_theorem}
 \leanok
@@ -271,54 +287,67 @@ Then $f$ is a dictator.
 }
 \uses{ArrowTheorem.acyclic_implies_corrFunc, ArrowTheorem.corrFunc_eq_neg_third_of_weight_one, ArrowTheorem.degree_one_implies_dictator}
 \difficulty{2}
-Let $f:\{0,1\}^n\to\bbr$ be a social welfare function that is odd
-(antisymmetric), $\pm 1$-valued, unanimous, and acyclic.  Then $f$ is a
-\emph{dictatorship}: there exists a voter $i_0$ such that
-$f = \mathrm{dict}_{i_0}$.
-
-\emph{Proof:}
-\begin{enumerate}
-  \item Acyclicity $\Rightarrow$ $\mathrm{corr}(f) = -1/3$
-        (Lemma~\texttt{ArrowTheorem.acyclic\_implies\_corrFunc}).
-  \item $\mathrm{corr}(f) = -1/3$ $\Rightarrow$ $\hat f(S) = 0$ for $|S|\ne 1$
-        (Lemma~\texttt{ArrowTheorem.corrFunc\_eq\_neg\_third\_of\_weight\_one}).
-  \item Degree-1 + unanimous + $\pm 1$-valued $\Rightarrow$ dictator
-        (Lemma~\texttt{ArrowTheorem.degree\_one\_implies\_dictator}).
-\end{enumerate}
+Let $n$ be a natural number and let $f:\{0,1\}^n\to\bbr$ be a social welfare function
+that aggregates the pairwise opinions of $n$ voters. Suppose $f$ is odd, meaning $f(\bar
+x) = -f(x)$ for every $x$, where $\bar x$ is the bitwise complement of $x$; is $\pm
+1$-valued, meaning $f(x)\in\{-1,1\}$ for every $x$; is unanimous, meaning $f$ takes the
+value $1$ at the all-zeros input; and is acyclic, meaning that no profile of voter
+orderings produces a Condorcet cycle. Here a profile assigns to each of the $n$ voters
+one of the six linear orderings of three alternatives $a,b,c$, and from it one forms
+three vote vectors in $\{0,1\}^n$ whose $i$-th entries record voter $i$'s preference in
+the $a$-vs-$b$, $b$-vs-$c$, and $c$-vs-$a$ comparisons; acyclicity requires that $f$
+never sends all three of these vectors to $1$, and never sends all three to $-1$. Then
+$f$ is a dictatorship: there is a voter $i$ such that $f(x) = (-1)^{x_i}$ for all $x$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Sum of $ab$ preference signs vanishes]
+\begin{lemma}[Balance of the a-vs-b preference signs]
 \lean{ArrowTheorem.sum_abPref_sign}
 \label{ArrowTheorem.sum_abPref_sign}
 \leanok
 \uses{ArrowTheorem.abPref, BooleanAnalysis.boolToSign}
 \difficulty{1}
-Summing the signed $a$-vs-$b$ preference over all six orderings gives
-$\sum_{k=0}^{5} s_{ab}(k) = 0$; the $ab$ marginal is balanced.
+There are six strict orderings $k \in \{0,1,\dots,5\}$ of the three alternatives
+$a,b,c$. For each such ordering, let $p_{ab}(k)$ be its $a$-vs-$b$ preference, the
+Boolean that records whether $b$ is ranked above $a$, and apply the sign encoding
+$\sigma$, so that $\sigma(p_{ab}(k))$ equals $+1$ when ordering $k$ ranks $a$ above $b$
+and $-1$ when it ranks $b$ above $a$. Then these six signed preferences sum to zero:
+\[
+  \sum_{k=0}^{5} \sigma\bigl(p_{ab}(k)\bigr) = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Sum of $bc$ preference signs vanishes]
+\begin{lemma}[Balanced b-versus-c preferences over the six orderings]
 \lean{ArrowTheorem.sum_bcPref_sign}
 \label{ArrowTheorem.sum_bcPref_sign}
 \leanok
 \uses{ArrowTheorem.bcPref, BooleanAnalysis.boolToSign}
 \difficulty{1}
-Summing the signed $b$-vs-$c$ preference over all six orderings gives
-$\sum_{k=0}^{5} s_{bc}(k) = 0$; the $bc$ marginal is balanced.
+Consider the six strict orderings of three alternatives $a$, $b$, and $c$, indexed by $k
+\in \{0,\dots,5\}$, and let $p(k)$ denote the $b$-versus-$c$ pairwise preference of
+ordering $k$. Under the sign encoding $\sigma$, these preferences sum to zero across all
+six orderings:
+\[
+  \sum_{k=0}^{5} \sigma\bigl(p(k)\bigr) = 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Sum of $ca$ preference signs vanishes]
+\begin{lemma}[Vanishing sum of signed $c$-vs-$a$ preferences]
 \lean{ArrowTheorem.sum_caPref_sign}
 \label{ArrowTheorem.sum_caPref_sign}
 \leanok
 \uses{ArrowTheorem.caPref, BooleanAnalysis.boolToSign}
 \difficulty{1}
-Summing the signed $c$-vs-$a$ preference over all six orderings gives
-$\sum_{k=0}^{5} s_{ca}(k) = 0$; the $ca$ marginal is balanced.
+For each of the six strict orderings $k\in\{0,1,\dots,5\}$ of three alternatives, let
+$b_k\in\mathrm{Bool}$ record the $c$-vs-$a$ preference of ordering $k$, and encode it as
+a sign by $\sigma(b_k)=1$ when $b_k$ is false and $\sigma(b_k)=-1$ when $b_k$ is true.
+Then these six signed preferences sum to zero:
+\[
+  \sum_{k=0}^{5} \sigma(b_k) = 0.
+\]
 \end{lemma}
 
 \begin{lemma}[Product over a finset as an indicator product]
@@ -326,36 +355,41 @@ $\sum_{k=0}^{5} s_{ca}(k) = 0$; the $ca$ marginal is balanced.
 \label{ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \leanok
 \difficulty{2}
-For $A\subseteq\mathrm{Fin}\,n$ and $g:\mathrm{Fin}\,n\to\bbr$,
+Let $A \subseteq \mathrm{Fin}\,n$ be a finite set of indices and let $g :
+\mathrm{Fin}\,n \to \bbr$. Then
 \[
-  \prod_{j\in A} g(j) \;=\; \prod_{j:\mathrm{Fin}\,n}
-    \begin{cases} g(j) & j\in A \\ 1 & j\notin A \end{cases},
+  \prod_{j \in A} g(j) \;=\; \prod_{j : \mathrm{Fin}\,n}
+    \begin{cases} g(j) & \text{if } j \in A, \\ 1 & \text{if } j \notin A, \end{cases}
 \]
-rewriting a product over a finset as a product over all of $\mathrm{Fin}\,n$
-with an indicator.
+so that a product taken only over the members of $A$ may equivalently be written as a
+product over all of $\mathrm{Fin}\,n$ in which each factor outside $A$ is replaced by
+$1$.
 \end{lemma}
 
-\begin{lemma}[General profile kernel]
+\begin{lemma}[General profile kernel for paired preference assignments]
 \lean{ArrowTheorem.profile_kernel_gen}
 \label{ArrowTheorem.profile_kernel_gen}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, ArrowTheorem.prod_finset_eq_prod_univ_ite}
 \difficulty{6}
-Let $\mathrm{xPref},\mathrm{yPref}:\mathrm{Fin}\,6\to\mathrm{Bool}$ be two
-preference assignments with balanced marginals
-$\sum_k s(\mathrm{xPref}(k)) = \sum_k s(\mathrm{yPref}(k)) = 0$ and cross-sum
-$\sum_k s(\mathrm{xPref}(k))\,s(\mathrm{yPref}(k)) = -2$.  Then for all
-$S,T\subseteq[n]$,
+Let $x, y : \mathrm{Fin}\,6 \to \mathrm{Bool}$ be two preference assignments whose sign
+encodings have balanced marginals, $\sum_{k=1}^{6}\sigma(x_k) =
+\sum_{k=1}^{6}\sigma(y_k) = 0$, and whose signed correlation is
+$\sum_{k=1}^{6}\sigma(x_k)\,\sigma(y_k) = -2$. For a profile $p : \mathrm{Fin}\,n \to
+\mathrm{Fin}\,6$, write $x\circ p$ and $y\circ p$ for the points of the Boolean
+hypercube whose $i$-th coordinates are $x_{p(i)}$ and $y_{p(i)}$. Then for all subsets
+$S, T \subseteq [n]$, the average of the product of Walsh characters over all $6^n$
+profiles satisfies
 \[
-  \Bigl(\tfrac16\Bigr)^{\!n}\sum_{p:\mathrm{Profile}\,n}
-    \chi_S\bigl(\mathrm{xPref}\circ p\bigr)\,\chi_T\bigl(\mathrm{yPref}\circ p\bigr)
+  \Bigl(\tfrac16\Bigr)^{n}\sum_{p:\mathrm{Fin}\,n \to \mathrm{Fin}\,6}
+    \chi_S(x\circ p)\,\chi_T(y\circ p)
   \;=\;
-  \begin{cases} (-1/3)^{|S|} & S = T \\ 0 & S\ne T. \end{cases}
+  \begin{cases} \bigl(-\tfrac13\bigr)^{\abs{S}} & S = T,\\[2pt] 0 & S \ne T. \end{cases}
 \]
 \end{lemma}
 
-\begin{lemma}[$ab$--$bc$ kernel]
+\begin{lemma}[Orthogonality kernel for the $ab$–$bc$ vote pair]
 \lean{ArrowTheorem.profile_inner_product_kernel}
 \label{ArrowTheorem.profile_inner_product_kernel}
 \leanok
@@ -365,17 +399,22 @@ $S,T\subseteq[n]$,
 }
 \uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.bcVotes, ArrowTheorem.sum_abPref_bcPref, BooleanAnalysis.chiS, ArrowTheorem.profile_kernel_gen, ArrowTheorem.sum_abPref_sign, ArrowTheorem.sum_bcPref_sign}
 \difficulty{1}
-Specialization of the general kernel to the $ab$--$bc$ vote pair: for all
-$S,T\subseteq[n]$,
+Fix $n$, and for each profile $p \in \{0,\dots,5\}^n$ let $v_{ab}(p), v_{bc}(p) \in
+\{0,1\}^n$ be the vote vectors recording, voter by voter, each voter's pairwise
+preference in the $a$-vs-$b$ and $b$-vs-$c$ comparisons, and for $S \subseteq [n]$ let
+$\chi_S$ be the associated Walsh–Fourier character. Then for all subsets $S, T \subseteq
+[n]$, the uniform average of the product $\chi_S(v_{ab}(p))\,\chi_T(v_{bc}(p))$ over the
+$6^n$ profiles satisfies
 \[
-  \Bigl(\tfrac16\Bigr)^{\!n}\sum_{p}
-    \chi_S(\mathrm{abVotes}(p))\,\chi_T(\mathrm{bcVotes}(p))
+  \Bigl(\tfrac{1}{6}\Bigr)^{\!n}\sum_{p}
+    \chi_S\bigl(v_{ab}(p)\bigr)\,\chi_T\bigl(v_{bc}(p)\bigr)
   \;=\;
-  \begin{cases} (-1/3)^{|S|} & S = T \\ 0 & S\ne T. \end{cases}
+\begin{cases} \left(-\tfrac{1}{3}\right)^{\abs{S}} & S = T,\\[2pt] 0 & S \ne T.
+\end{cases}
 \]
 \end{lemma}
 
-\begin{lemma}[$bc$--$ca$ kernel]
+\begin{lemma}[The $bc$–$ca$ profile kernel]
 \lean{ArrowTheorem.profile_kernel_bcca}
 \label{ArrowTheorem.profile_kernel_bcca}
 \leanok
@@ -385,51 +424,67 @@ $S,T\subseteq[n]$,
 }
 \uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes, ArrowTheorem.sum_bcPref_caPref, BooleanAnalysis.chiS, ArrowTheorem.profile_kernel_gen, ArrowTheorem.sum_bcPref_sign, ArrowTheorem.sum_caPref_sign}
 \difficulty{1}
-Specialization of the general kernel to the $bc$--$ca$ vote pair: for all
-$S,T\subseteq[n]$,
+Let $S, T \subseteq [n]$, and for a profile $p \colon \mathrm{Fin}\,n \to
+\mathrm{Fin}\,6$ write $x(p)$ for its $bc$-vote vector and $y(p)$ for its $ca$-vote
+vector, each lying in $\{0,1\}^n$. Averaging the product of Walsh characters over all
+$6^n$ profiles gives
 \[
-  \Bigl(\tfrac16\Bigr)^{\!n}\sum_{p}
-    \chi_S(\mathrm{bcVotes}(p))\,\chi_T(\mathrm{caVotes}(p))
+  \left(\tfrac{1}{6}\right)^{n} \sum_{p} \chi_S\bigl(x(p)\bigr)\,\chi_T\bigl(y(p)\bigr)
   \;=\;
-  \begin{cases} (-1/3)^{|S|} & S = T \\ 0 & S\ne T. \end{cases}
+\begin{cases} \left(-\tfrac{1}{3}\right)^{\abs{S}} & \text{if } S = T,\\[2pt] 0 &
+\text{if } S \ne T. \end{cases}
 \]
 \end{lemma}
 
-\begin{lemma}[$ab$--$ca$ kernel]
+\begin{lemma}[Kernel of the ab–ca vote correlation]
 \lean{ArrowTheorem.profile_kernel_abca}
 \label{ArrowTheorem.profile_kernel_abca}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes, ArrowTheorem.sum_abPref_caPref, BooleanAnalysis.chiS, ArrowTheorem.profile_kernel_gen, ArrowTheorem.sum_abPref_sign, ArrowTheorem.sum_caPref_sign}
 \difficulty{1}
-Specialization of the general kernel to the $ab$--$ca$ vote pair: for all
-$S,T\subseteq[n]$,
+Fix a natural number $n$ and consider profiles $p$ of $n$ voters, each of whom reports
+one of the six strict orderings of the three alternatives $a, b, c$; there are $6^n$
+such profiles. For a profile $p$, let $x^{ab}(p) \in \{0,1\}^n$ be the vector recording
+each voter's preference in the $a$-vs-$b$ comparison, and $x^{ca}(p) \in \{0,1\}^n$ the
+vector recording each voter's preference in the $c$-vs-$a$ comparison. Then for any two
+subsets $S, T \subseteq \{1,\dots,n\}$, the averaged product of the corresponding
+Walsh–Fourier characters satisfies
 \[
-  \Bigl(\tfrac16\Bigr)^{\!n}\sum_{p}
-    \chi_S(\mathrm{abVotes}(p))\,\chi_T(\mathrm{caVotes}(p))
+\left(\tfrac{1}{6}\right)^{\!n} \sum_{p}
+\chi_S\bigl(x^{ab}(p)\bigr)\,\chi_T\bigl(x^{ca}(p)\bigr)
   \;=\;
-  \begin{cases} (-1/3)^{|S|} & S = T \\ 0 & S\ne T. \end{cases}
+\begin{cases} \left(-\tfrac{1}{3}\right)^{|S|} & \text{if } S = T,\\[2pt] 0 & \text{if }
+S \neq T, \end{cases}
 \]
+where the sum ranges over all $6^n$ profiles.
 \end{lemma}
 
-\begin{lemma}[Expected product from a kernel]
+\begin{lemma}[Expected product from the character kernel]
 \lean{ArrowTheorem.expected_product_helper}
 \label{ArrowTheorem.expected_product_helper}
 \leanok
 \proofsource{boolean-ch02-social-choice-arrow}{pdf-352ab7ff3113-p017-b002}
 \uses{ArrowTheorem.Profile, ArrowTheorem.corrFunc, BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion}
 \difficulty{5}
-Let $f:\{0,1\}^n\to\bbr$ and let $\mathrm{votes}_1,\mathrm{votes}_2$ map each
-profile to a Boolean cube point.  If the pair satisfies the kernel identity
-$\bigl(\tfrac16\bigr)^n\sum_p \chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}_2(p))
- = [S = T]\,(-1/3)^{|S|}$ for all $S,T$, then
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, and let
+$\mathrm{votes}_1,\mathrm{votes}_2$ each assign to every profile
+$p\in(\mathrm{Fin}\,6)^{\,n}$ a point of the Boolean hypercube $\{0,1\}^n$. Suppose the
+pair satisfies the kernel identity
+\[
+\Bigl(\tfrac16\Bigr)^{\!n}\sum_{p}
+\chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}_2(p))
+  \;=\; \begin{cases}(-1/3)^{|S|} & S = T,\\ 0 & S \ne T,\end{cases}
+\]
+for all $S,T\subseteq[n]$, where the sum runs over all $6^n$ profiles. Then
 \[
   \Bigl(\tfrac16\Bigr)^{\!n}\sum_{p} f(\mathrm{votes}_1(p))\,f(\mathrm{votes}_2(p))
-  \;=\; \mathrm{corr}(f).
+  \;=\; \mathrm{corr}(f)
+  \;=\; \sum_{S\subseteq[n]} \hat f(S)^2\,(-1/3)^{|S|}.
 \]
 \end{lemma}
 
-\begin{lemma}[Expected product for the $bc$--$ca$ pair]
+\begin{lemma}[Expected product of the $bc$ and $ca$ vote vectors]
 \lean{ArrowTheorem.expected_product_bcca}
 \label{ArrowTheorem.expected_product_bcca}
 \leanok
@@ -439,12 +494,19 @@ $\bigl(\tfrac16\bigr)^n\sum_p \chi_S(\mathrm{votes}_1(p))\,\chi_T(\mathrm{votes}
 }
 \uses{ArrowTheorem.Profile, ArrowTheorem.bcVotes, ArrowTheorem.caVotes, ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc, ArrowTheorem.expected_product_helper, ArrowTheorem.profile_kernel_bcca}
 \difficulty{1}
-For any $f:\{0,1\}^n\to\bbr$,
-$\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{bcVotes}(p))\,f(\mathrm{caVotes}(p))
- = \mathrm{corr}(f)$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, and for each profile
+$p:\mathrm{Fin}\,n\to\{0,\dots,5\}$ write $x_{bc}(p),\,x_{ca}(p)\in\{0,1\}^n$ for the
+$b$-vs-$c$ and $c$-vs-$a$ vote vectors it induces. Then the average of the product
+$f\bigl(x_{bc}(p)\bigr)\,f\bigl(x_{ca}(p)\bigr)$ over all $6^n$ profiles equals the
+Fourier correlation function of $f$:
+\[
+  \Bigl(\tfrac16\Bigr)^{n}\sum_{p} f\bigl(x_{bc}(p)\bigr)\,f\bigl(x_{ca}(p)\bigr)
+  \;=\; \mathrm{corr}(f)
+  \;=\; \sum_{S\subseteq[n]} \hat f(S)^2\,(-1/3)^{|S|}.
+\]
 \end{lemma}
 
-\begin{lemma}[Expected product for the $ab$--$ca$ pair]
+\begin{lemma}[Expected product of the $ab$ and $ca$ votes]
 \lean{ArrowTheorem.expected_product_abca}
 \label{ArrowTheorem.expected_product_abca}
 \leanok
@@ -454,7 +516,14 @@ $\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{bcVotes}(p))\,f(\mathrm{caVotes}(p))
 }
 \uses{ArrowTheorem.Profile, ArrowTheorem.abVotes, ArrowTheorem.caVotes, ArrowTheorem.corrFunc, BooleanAnalysis.BooleanFunc, ArrowTheorem.expected_product_helper, ArrowTheorem.profile_kernel_abca}
 \difficulty{1}
-For any $f:\{0,1\}^n\to\bbr$,
-$\bigl(\tfrac16\bigr)^n\sum_p f(\mathrm{abVotes}(p))\,f(\mathrm{caVotes}(p))
- = \mathrm{corr}(f)$.
+Let $f:\{0,1\}^n\to\bbr$ be a Boolean function. For a profile $p$ that assigns each of
+the $n$ voters one of the six strict orderings of the three alternatives $a,b,c$, let
+$x^{ab}(p)\in\{0,1\}^n$ record each voter's preference in the $a$-vs-$b$ comparison and
+let $x^{ca}(p)\in\{0,1\}^n$ record each voter's preference in the $c$-vs-$a$ comparison.
+Averaging uniformly over all $6^n$ profiles, the expected product of $f$ at these two
+vote vectors equals the Fourier correlation function of $f$:
+\[
+  \Bigl(\tfrac{1}{6}\Bigr)^{n}\sum_{p} f\bigl(x^{ab}(p)\bigr)\,f\bigl(x^{ca}(p)\bigr)
+  \;=\; \sum_{S\subseteq[n]} \hat f(S)^{2}\,(-1/3)^{|S|}.
+\]
 \end{lemma}

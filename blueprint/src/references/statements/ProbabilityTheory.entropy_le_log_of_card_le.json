@@ -1,0 +1,17 @@
+{
+ "lean_name": "ProbabilityTheory.entropy_le_log_of_card_le",
+ "key": "a9e05dff7e457956",
+ "kind": "theorem",
+ "title": "Entropy bounded by the logarithm of the alphabet size",
+ "statement": "Let $S$ be a finite nonempty set, let $(\\Omega,\\mu)$ be a measure space, and let $X\\colon\\Omega\\to S$ be a random variable. If $N$ is a natural number with $\\abs{S}\\le N$, then the Shannon entropy of $X$ satisfies\n\\[\n  H[X;\\mu]\\;\\le\\;\\log N.\n\\]",
+ "hypotheses_covered": [
+  "S is a finite type (Fintype S)",
+  "S is nonempty (Nonempty S)",
+  "N is a natural number with card(S) ≤ N",
+  "X : Ω → S is a random variable on the measure space (Ω, μ)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the alphabet type $S$ has $\\mathrm{card}(S) \\le N$, then for any random variable\n$X : \\Omega \\to S$ and measure $\\mu$,\n\\[\n  H[X;\\mu] \\;\\le\\; \\log N.\n\\]"
+}

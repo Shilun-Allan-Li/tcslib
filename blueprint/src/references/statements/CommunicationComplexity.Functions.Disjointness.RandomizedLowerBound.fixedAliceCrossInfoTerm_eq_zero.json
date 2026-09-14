@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceCrossInfoTerm_eq_zero",
+ "key": "2327f2a4fc6d5c2d",
+ "kind": "theorem",
+ "title": "Vanishing cross-information for Alice's fixed coordinate",
+ "statement": "Fix a positive integer $n$, write the coordinates as $i \\in \\{0,\\dots,n-1\\}$, and consider the hard distribution on samples conditioned on the event that Alice's input set and Bob's input set are disjoint. For any coordinate $i$, under this conditioned distribution the conditional mutual information between Alice's bit $X_i$ at coordinate $i$ and Bob's prefix $Y_{<i}$ (his bits at all coordinates below $i$), given the pair $(X_{<i}, Y_{\\ge i})$ formed by Alice's prefix and Bob's suffix, is zero:\n\\[\n  I\\!\\left(X_i : Y_{<i} \\,\\middle|\\, X_{<i},\\, Y_{\\ge i}\\right) = 0.\n\\]",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "i is a coordinate in Fin n",
+  "the measure is the hard distribution conditioned on the disjointness event"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fixed-coordinate independence input for the hard distribution conditioned on $D$: $I(X_{i} : Y_{<i} | X_{<i}, Y_{≥i}, D) = 0$."
+}

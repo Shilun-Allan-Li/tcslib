@@ -1,0 +1,22 @@
+{
+ "lean_name": "ACP.size_lower_bound_from_badCountLB",
+ "key": "4b5633fdb6b52748",
+ "kind": "theorem",
+ "title": "Size lower bound from a low-degree bad-count bound",
+ "statement": "Let $p$ and $q$ be primes, and let $F$ be a feedforward circuit over the alphabet $\\{0,1\\}$ with input coordinates indexed by $\\mathrm{Fin}\\,n$, finitely many nodes in each layer, and a single output node. Suppose every gate of $F$ belongs to the $\\mathrm{AC}^0[p]$ gate set (identity, NOT, unbounded fan-in AND, and unbounded $\\mathrm{MOD}_p$ gates of every arity), and that $F$ computes the $\\mathrm{MOD}_q$ function on every Boolean input $x \\in \\{0,1\\}^n$. Let $\\ell, E \\in \\bbn$, and suppose the low-degree bad-count lower bound holds for $\\mathrm{MOD}_q$ (viewed as a function into $\\bbz/p$) with degree budget $\\bigl((p-1)\\ell\\bigr)^{\\mathrm{depth}(F)}$ and count $E$; that is, every polynomial in $(\\bbz/p)[X_1,\\dots,X_n]$ of total degree at most $\\bigl((p-1)\\ell\\bigr)^{\\mathrm{depth}(F)}$ disagrees with $\\mathrm{MOD}_q$ on at least $E$ points of the Boolean cube. Then\n\\[\nE \\cdot 2^{\\ell} \\le \\abs{F} \\cdot 2^{n},\n\\]\nwhere $\\abs{F}$ is the number of non-input nodes of $F$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "q is prime",
+  "F is a feedforward circuit over {0,1} with n input coordinates",
+  "each layer of F has finitely many nodes",
+  "F has a unique output node",
+  "every gate of F lies in the AC⁰[p] gate set",
+  "F computes MOD_q on all Boolean inputs",
+  "ℓ, E are natural numbers",
+  "the low-degree bad-count lower bound holds for MOD_q (into ℤ/p) with degree ((p−1)ℓ)^depth(F) and count E"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a feed-forward circuit $F$ over the $\\mathrm{AC}^0[p]$ gate set computes\n$\\mathrm{MOD}_q$ on all Boolean inputs, and if $\\mathrm{MOD}_q$ (viewed in $\\mathbb{Z}/p$)\nadmits the lower bound $\\mathrm{LowDegreeBadCountLB}$ with parameters\n$(\\mathrm{circuitDegreeBound}\\,p\\,\\ell\\,(\\mathrm{depth}\\,F), E)$, then\n$E \\cdot 2^{\\ell} \\le \\abs{F}\\cdot 2^{n}$."
+}

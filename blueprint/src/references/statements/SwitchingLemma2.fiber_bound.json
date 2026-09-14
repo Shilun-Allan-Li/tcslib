@@ -1,0 +1,21 @@
+{
+ "lean_name": "SwitchingLemma2.fiber_bound",
+ "key": "c2384561ff193d89",
+ "kind": "lemma",
+ "title": "Fiber bound for the Razborov encoding",
+ "statement": "Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose no variable occurs twice within any single term of $f$ (any two literals of a term sharing a variable are equal). Fix natural numbers $s$ and $d$ with $d \\le s$, and fix a target restriction $\\gamma$. Consider the restrictions $\\rho$ that are *bad* — having exactly $s$ free variables while the Boolean function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$ computed by $f$ under $\\rho$ has decision-tree depth strictly greater than $d$ — and that the Razborov encoding sends to $\\gamma$, i.e.\\ the first component of the encoding of $f$ and $\\rho$ with parameters $w, d$ equals $\\gamma$. The number of such restrictions $\\rho$ is at most $(4w)^d$.",
+ "hypotheses_covered": [
+  "f is a DNF formula on n variables",
+  "f.width ≤ w",
+  "no variable repeats within a term (literals of a term with equal variable are equal)",
+  "d ≤ s",
+  "γ is a fixed restriction",
+  "ρ has exactly s free variables (IsRestriction s ρ)",
+  "ρ is bad: dtDepth of the restricted DNF function exceeds d",
+  "the Razborov encoding of ρ has first component equal to γ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe number of bad $s$-restrictions $\\rho$ mapping to a fixed $\\gamma$ under the\nencoder is at most $(4w)^d$, since each of the $d$ path steps carries\n$w \\cdot 2 \\cdot 2 = 4w$ possibilities."
+}

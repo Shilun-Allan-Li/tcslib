@@ -51,93 +51,128 @@ where the column player minimises over mixed strategies and the row player
 maximises over pure responses.
 \end{definition}
 
-\begin{lemma}[Payoff vs.\ pure column is nonnegative]
+\begin{lemma}[Nonnegativity of the mixed payoff against a pure column]
 \lean{OnlineLearning.payoffVsPure_nonneg}
 \label{OnlineLearning.payoffVsPure_nonneg}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
 \difficulty{1}
-For any game $G$, mixed row strategy $p$, and pure column action $j$,
-$\mathrm{payoffVsPure}(G,p,j) \geq 0$. This follows because every entry
-of $G$ is nonnegative and the mixing weights are nonnegative.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, let $p$ be a mixed row strategy over the $M$ rows, and let $j$ be a pure column
+action. Then the expected payoff of $p$ against column $j$ is non-negative:
+\[
+  \sum_{i} p_i \cdot A_{ij} \;\ge\; 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Payoff vs.\ pure column is at most one]
+\begin{lemma}[Expected payoff against a pure column is at most one]
 \lean{OnlineLearning.payoffVsPure_le_one}
 \label{OnlineLearning.payoffVsPure_le_one}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
 \difficulty{3}
-For any game $G$, mixed row strategy $p$, and pure column action $j$,
-$\mathrm{payoffVsPure}(G,p,j) \leq 1$. This follows because every entry
-of $G$ is at most one and the mixing weights sum to one.
+Let $G$ be a finite two-player zero-sum game whose payoff matrix $A$ has every entry in
+$[0,1]$, let $p$ be a mixed row strategy with weights $p_i$, and let $j$ be a fixed pure
+column action. Then the row player's expected payoff against column $j$ satisfies \[
+\sum_i p_i \cdot A_{ij} \;\le\; 1. \]
 \end{lemma}
 
-\begin{lemma}[Pure row payoff vs.\ mixed column is nonnegative]
+\begin{lemma}[Nonnegativity of a pure row's expected payoff]
 \lean{OnlineLearning.pureVsPayoff_nonneg}
 \label{OnlineLearning.pureVsPayoff_nonneg}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
 \difficulty{1}
-For any game $G$, pure row action $i$, and mixed column strategy $q$,
-$\mathrm{pureVsPayoff}(G,i,q) \geq 0$.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, whose payoff matrix $A$ has entries satisfying $0 \le A_{ij} \le 1$. Fix a pure
+row action $i$ and a mixed column strategy $q$, so its weights $q_j$ are non-negative
+and sum to $1$. Then the expected payoff of row $i$ against $q$ is non-negative:
+\[
+  \sum_{j} A_{ij}\, q_j \;\ge\; 0.
+\]
 \end{lemma}
 
-\begin{lemma}[Pure row payoff vs.\ mixed column is at most one]
+\begin{lemma}[Pure row payoff against a mixed column is at most one]
 \lean{OnlineLearning.pureVsPayoff_le_one}
 \label{OnlineLearning.pureVsPayoff_le_one}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
 \difficulty{3}
-For any game $G$, pure row action $i$, and mixed column strategy $q$,
-$\mathrm{pureVsPayoff}(G,i,q) \leq 1$.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, whose payoff matrix $A$ satisfies $0 \le A_{ij} \le 1$ for all entries, and let
+$q$ be a mixed column strategy, that is, a probability distribution $q_1, \dots, q_N$
+over the columns. Then for every pure row action $i$, the expected payoff of row $i$
+against $q$ satisfies
+\[
+  \sum_{j} A_{ij}\, q_j \;\le\; 1.
+\]
 \end{lemma}
 
-\begin{lemma}[Row-guaranteed payoffs bounded above]
+\begin{lemma}[Row player's guaranteed payoffs are bounded above]
 \lean{OnlineLearning.finiteLowerValue_bddAbove}
 \label{OnlineLearning.finiteLowerValue_bddAbove}
 \leanok
 \uses{MixedStrategy, OnlineLearning.payoffVsPure_le_one, OnlineLearning.payoffVsPure_nonneg, ZeroSumGame, payoffVsPure}
 \difficulty{3}
-When $N \geq 1$, the set
-$\bigl\{\inf_{j}\,\mathrm{payoffVsPure}(G,p,j) : p \in \Delta_M\bigr\}$
-is bounded above by~$1$.
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N \ge 1$ column
+actions, whose payoff matrix $(A_{ij})$ satisfies $0 \le A_{ij} \le 1$ for all $i,j$.
+For a mixed row strategy $p = (p_i)$ over the $M$ rows, let $L(p) = \inf_{j} \sum_i p_i
+A_{ij}$ be the least expected payoff against a pure column, taken over all $N$ columns.
+Then the set $\{\, L(p) : p \text{ is a mixed strategy over the rows} \,\}$ is bounded
+above.
 \end{lemma}
 
-\begin{lemma}[Column-induced upper values bounded below]
+\begin{lemma}[Lower boundedness of the row-supremum values]
 \lean{OnlineLearning.finiteUpperValue_bddBelow}
 \label{OnlineLearning.finiteUpperValue_bddBelow}
 \leanok
 \uses{MixedStrategy, OnlineLearning.pureVsPayoff_le_one, OnlineLearning.pureVsPayoff_nonneg, ZeroSumGame, pureVsPayoff}
 \difficulty{3}
-When $M \geq 1$, the set
-$\bigl\{\sup_{i}\,\mathrm{pureVsPayoff}(G,i,q) : q \in \Delta_N\bigr\}$
-is bounded below by~$0$.
+Let $G$ be a finite two-player zero-sum game with $M \ge 1$ row actions and $N$ column
+actions, whose payoff matrix $A$ satisfies $A_{ij} \in [0,1]$ for all $i,j$. For a mixed
+column strategy $q$ (a probability distribution on the $N$ columns), let
+\[
+  v(q) \;=\; \sup_{i}\, \sum_{j} A_{ij}\, q_j
+\]
+be the best expected payoff that a single pure row can achieve against $q$. Then the set
+$\{\, v(q) : q \text{ a mixed column strategy}\,\}$ is bounded below.
 \end{lemma}
 
-\begin{lemma}[Weak duality for finite games]
+\begin{lemma}[Weak duality for finite zero-sum games]
 \lean{OnlineLearning.finiteLowerValue_le_upperValue}
 \label{OnlineLearning.finiteLowerValue_le_upperValue}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, ZeroSumGame, weak_duality}
 \difficulty{2}
-For any finite zero-sum game $G$ (with $M,N \geq 1$),
-$v^-(G) \leq v^+(G)$.
+Let $G$ be a finite two-player zero-sum game with $M \geq 1$ row actions and $N \geq 1$
+column actions, given by a payoff matrix $A_{ij} \in [0,1]$ that the row player seeks to
+maximise and the column player to minimise. Then the lower value never exceeds the upper
+value:
+\[
+  \sup_{p \in \Delta_M}\; \min_{j}\; \sum_{i} p_i A_{ij}
+  \;\;\leq\;\;
+  \inf_{q \in \Delta_N}\; \max_{i}\; \sum_{j} A_{ij} q_j,
+\]
+where $\Delta_M$ and $\Delta_N$ denote the sets of mixed strategies (probability
+distributions) over the row and column actions, respectively.
 \end{lemma}
 
-\begin{theorem}[Exact finite minimax value]
+\begin{theorem}[Minimax theorem for finite zero-sum games]
 \lean{OnlineLearning.finite_minimax_value}
 \label{OnlineLearning.finite_minimax_value}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteLowerValue_bddAbove, OnlineLearning.finiteLowerValue_le_upperValue, OnlineLearning.finiteUpperValue, OnlineLearning.finiteUpperValue_bddBelow, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, approx_minimax, payoffVsPure, pureVsPayoff}
 \difficulty{5}
-For a finite zero-sum game $G$ with $M > 1$ rows and $N \geq 1$ columns,
-the lower and upper values coincide:
+Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column
+actions, whose payoff matrix $A = (A_{ij})$ satisfies $0 \le A_{ij} \le 1$ for all
+$i,j$. Suppose $M > 1$ and $N \ge 1$. Then the lower and upper values of $G$ coincide:
 \[
-  v^-(G) \;=\; v^+(G).
+  \sup_{p \in \Delta_M}\; \inf_{j \in [N]}\; \sum_{i} p_i\, A_{ij}
+  \;=\;
+  \inf_{q \in \Delta_N}\; \sup_{i \in [M]}\; \sum_{j} A_{ij}\, q_j,
 \]
-The proof extracts arbitrarily good approximate saddle points from the Hedge
-algorithm, then passes to the limit in~$\varepsilon$.
+where $\Delta_M$ and $\Delta_N$ denote the sets of mixed strategies (probability
+distributions) over the row and column actions respectively.
 \end{theorem}
 
 \begin{definition}[Convex-compact minimax statement]
@@ -166,44 +201,45 @@ continuous and convex on $X$ for every $y \in Y$, $f(x,\cdot)$ is concave on
 $Y$ for every $x \in X$, and $f$ is bounded above and below on $X \times Y$.
 \end{definition}
 
-\begin{lemma}[Mixed-strategy convex combination stays in convex set]
+\begin{lemma}[Convex sets are closed under mixed-strategy averages]
 \lean{OnlineLearning.mixed_sum_mem_convex}
 \label{OnlineLearning.mixed_sum_mem_convex}
 \leanok
 \uses{MixedStrategy}
 \difficulty{2}
-If $S \subseteq \bbr$ is convex, $p \in \Delta_n$ is a mixed strategy, and
-$x_1,\dots,x_n \in S$, then
-$\sum_{i} p_i\, x_i \in S$.
+Let $S \subseteq \bbr$ be a convex set, let $p$ be a mixed strategy over $n$ actions
+with weights $p_1, \dots, p_n \ge 0$ satisfying $\sum_{i=1}^{n} p_i = 1$, and let $x_1,
+\dots, x_n \in S$. Then the weighted average $\sum_{i=1}^{n} p_i\, x_i$ again lies in
+$S$.
 \end{lemma}
 
-\begin{lemma}[Jensen's inequality for mixed-strategy combinations (convex)]
+\begin{lemma}[Jensen's inequality for a mixed strategy]
 \lean{OnlineLearning.convexOn_mixed_sum_le}
 \label{OnlineLearning.convexOn_mixed_sum_le}
 \leanok
 \uses{MixedStrategy}
 \difficulty{2}
-If $g$ is convex on $S \subseteq \bbr$, $p \in \Delta_n$, and every $x_i \in S$,
-then
+Let $S \subseteq \bbr$ be a convex set and let $g : \bbr \to \bbr$ be convex on $S$. Let
+$p$ be a mixed strategy over $n$ actions, that is, a family of weights $p_1, \dots, p_n
+\ge 0$ with $\sum_{i=1}^{n} p_i = 1$, and let $x_1, \dots, x_n$ be points of $S$. Then
 \[
-  g\!\left(\sum_{i} p_i\, x_i\right)
-  \;\leq\;
-  \sum_{i} p_i\, g(x_i).
+  g\!\left(\sum_{i=1}^{n} p_i\, x_i\right)
+  \;\le\;
+  \sum_{i=1}^{n} p_i\, g(x_i).
 \]
 \end{lemma}
 
-\begin{lemma}[Jensen's inequality for mixed-strategy combinations (concave)]
+\begin{lemma}[Jensen's inequality for a concave function]
 \lean{OnlineLearning.concaveOn_le_mixed_sum}
 \label{OnlineLearning.concaveOn_le_mixed_sum}
 \leanok
 \uses{MixedStrategy}
 \difficulty{2}
-If $g$ is concave on $S \subseteq \bbr$, $p \in \Delta_n$, and every $y_j \in S$,
-then
+Let $S \subseteq \bbr$ and let $g : \bbr \to \bbr$ be concave on $S$. Let $p = (p_1,
+\dots, p_n)$ be a mixed strategy over $n$ actions, that is, a tuple of weights $p_j \ge
+0$ with $\sum_{j=1}^{n} p_j = 1$, and let $y_1, \dots, y_n$ be points of $S$. Then
 \[
-  \sum_{j} p_j\, g(y_j)
-  \;\leq\;
-  g\!\left(\sum_{j} p_j\, y_j\right).
+  \sum_{j=1}^{n} p_j\, g(y_j) \;\le\; g\!\left(\sum_{j=1}^{n} p_j\, y_j\right).
 \]
 \end{lemma}
 
@@ -218,45 +254,58 @@ $y : [N] \to \bbr$, the \emph{sampled game} is the $M\times N$ matrix game
 whose $(i,j)$ entry is $f(x_i, y_j)$.
 \end{definition}
 
-\begin{theorem}[Finite minimax for sampled games]
+\begin{theorem}[Minimax theorem for a sampled finite game]
 \lean{OnlineLearning.finite_sampled_minimax_value}
 \label{OnlineLearning.finite_sampled_minimax_value}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.sampledGame}
 \difficulty{1}
-Under the same size hypotheses as \texttt{OnlineLearning.finite\_minimax\_value},
-the sampled game satisfies $v^-(\mathrm{sampledGame}) = v^+(\mathrm{sampledGame})$.
+Let $f : \bbr \to \bbr \to \bbr$ be a payoff function, and let $x : [M] \to \bbr$ and $y
+: [N] \to \bbr$ be finite families of row and column points such that $0 \le f(x_i, y_j)
+\le 1$ for all $i$ and $j$. Suppose the column action set is nonempty ($N \ge 1$) and
+there are at least two row actions ($M \ge 2$). Then the sampled game — the $M \times N$
+matrix game with entries $f(x_i, y_j)$ — has equal lower and upper values,
+\[
+  \sup_{p \in \Delta_M}\; \inf_{j \in [N]}\; \sum_{i} p_i\, f(x_i, y_j)
+  \;=\;
+  \inf_{q \in \Delta_N}\; \sup_{i \in [M]}\; \sum_{j} f(x_i, y_j)\, q_j,
+\]
+where $\Delta_M$ and $\Delta_N$ denote the sets of mixed strategies over the row and
+column actions.
 \end{theorem}
 
-\begin{lemma}[Convexity gives lower bound on sampled payoff vs.\ pure column]
+\begin{lemma}[Jensen bound for the sampled payoff against a pure column]
 \lean{OnlineLearning.sampled_payoffVsPure_ge_convex_combo}
 \label{OnlineLearning.sampled_payoffVsPure_ge_convex_combo}
 \leanok
 \uses{MixedStrategy, OnlineLearning.convexOn_mixed_sum_le, OnlineLearning.sampledGame, payoffVsPure}
 \difficulty{2}
-If $f(\cdot, y_j)$ is convex on $X$ and every $x_i \in X$, then for any mixed
-row strategy $p \in \Delta_M$,
+Let $f : \bbr \to \bbr \to \bbr$ take values in $[0,1]$, and let $x : [M] \to \bbr$ and
+$y : [N] \to \bbr$ be finite families of row and column points, giving rise to the
+sampled game whose $(i,j)$ entry is $f(x_i, y_j)$. Fix a column index $j$, and suppose
+the section $x' \mapsto f(x', y_j)$ is convex on a set $X \subseteq \bbr$ with $x_i \in
+X$ for every $i$. Then for any mixed row strategy $p$ over the $M$ rows,
 \[
-  f\!\left(\sum_i p_i\,x_i,\; y_j\right)
-  \;\leq\;
-  \mathrm{payoffVsPure}(\mathrm{sampledGame},\,p,\,j).
+  f\!\left(\sum_{i} p_i\, x_i,\; y_j\right) \;\le\; \sum_{i} p_i\, f(x_i, y_j),
 \]
-That is, convexity in the row variable means the continuous mixed-action payoff
-is at most the finite-game expected payoff.
+where the right-hand side is the expected payoff of the sampled game against column $j$
+under $p$.
 \end{lemma}
 
-\begin{lemma}[Concavity gives upper bound on sampled payoff vs.\ mixed column]
+\begin{lemma}[Concavity bound on sampled payoff against a mixed column]
 \lean{OnlineLearning.sampled_pureVsPayoff_le_concave_combo}
 \label{OnlineLearning.sampled_pureVsPayoff_le_concave_combo}
 \leanok
 \uses{MixedStrategy, OnlineLearning.concaveOn_le_mixed_sum, OnlineLearning.sampledGame, pureVsPayoff}
 \difficulty{2}
-If $f(x_i,\cdot)$ is concave on $Y$ and every $y_j \in Y$, then for any mixed
-column strategy $q \in \Delta_N$,
+Let $f:\bbr\times\bbr\to\bbr$ be a payoff function taking values in $[0,1]$, and let
+$x:[M]\to\bbr$ and $y:[N]\to\bbr$ be finite families of row and column points. Fix a row
+index $i$ and a mixed column strategy $q$, whose weights $q_j\ge 0$ sum to $1$. Suppose
+$Y\subseteq\bbr$ contains every $y_j$ and the section $y'\mapsto f(x_i,y')$ is concave
+on $Y$. Then the expected payoff of pure row $i$ against $q$ in the sampled game is at
+most the value of $f$ at the $q$-averaged column point:
 \[
-  \mathrm{pureVsPayoff}(\mathrm{sampledGame},\,i,\,q)
-  \;\leq\;
-  f\!\left(x_i,\; \sum_j q_j\,y_j\right).
+  \sum_{j} f(x_i,y_j)\, q_j \;\le\; f\!\left(x_i,\; \sum_{j} q_j\, y_j\right).
 \]
 \end{lemma}
 
@@ -266,15 +315,15 @@ column strategy $q \in \Delta_N$,
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses}
 \difficulty{4}
-Under the hypotheses \texttt{OnlineLearning.ConvexCompactMinimaxHypotheses},
+Let $X, Y \subseteq \bbr$ be nonempty convex sets with $X$ also compact, and let $f : X
+\times Y \to \bbr$ be a payoff that is bounded above and below on $X \times Y$, such
+that for every $y \in Y$ the map $x \mapsto f(x,y)$ is continuous and convex on $X$, and
+for every $x \in X$ the map $y \mapsto f(x,y)$ is concave on $Y$. Then
 \[
-  \sup_{y \in Y}\,\inf_{x \in X}\,f(x,y)
+  \sup_{y \in Y}\,\inf_{x \in X}\, f(x,y)
   \;\leq\;
-  \inf_{x \in X}\,\sup_{y \in Y}\,f(x,y).
+  \inf_{x \in X}\,\sup_{y \in Y}\, f(x,y).
 \]
-This is the easy direction of the minimax theorem: for every fixed $(x,y)$,
-$\inf_{x'} f(x',y) \leq f(x,y) \leq \sup_{y'} f(x,y')$, and the inequality
-is preserved when taking $\sup$ then $\inf$.
 \end{lemma}
 
 \begin{definition}[Minimax sublevel set]
@@ -288,44 +337,53 @@ a threshold $c \in \bbr$, the \emph{minimax sublevel set} is
 \]
 \end{definition}
 
-\begin{lemma}[Sublevel set contained in row set]
+\begin{lemma}[Minimax sublevel set is contained in the row set]
 \lean{OnlineLearning.minimaxSublevel_subset}
 \label{OnlineLearning.minimaxSublevel_subset}
 \leanok
 \uses{OnlineLearning.minimaxSublevel}
 \difficulty{1}
-$\mathrm{sublevel}(X,f,y,c) \subseteq X$ for all $f$, $y$, $c$.
+Let $X \subseteq \bbr$ be a set, let $f \colon \bbr \times \bbr \to \bbr$ be a payoff
+function, and let $y, c \in \bbr$. Then the minimax sublevel set
+$\mathrm{sublevel}(X,f,y,c) = X \cap \{x \in \bbr : f(x,y) \leq c\}$ is contained in
+$X$.
 \end{lemma}
 
-\begin{lemma}[Sublevel set is closed]
+\begin{lemma}[Closedness of the minimax sublevel set]
 \lean{OnlineLearning.minimaxSublevel_isClosed}
 \label{OnlineLearning.minimaxSublevel_isClosed}
 \leanok
 \uses{OnlineLearning.minimaxSublevel}
 \difficulty{2}
-If $X$ is closed and $f(\cdot,y)$ is continuous on $X$, then
-$\mathrm{sublevel}(X,f,y,c)$ is closed.
+Let $X \subseteq \bbr$ be a closed set, let $f\colon \bbr \times \bbr \to \bbr$ be a
+payoff function, and fix a column point $y \in \bbr$ and a threshold $c \in \bbr$. If
+the map $x \mapsto f(x,y)$ is continuous on $X$, then the minimax sublevel set
+$\mathrm{sublevel}(X,f,y,c) = X \cap \{x \in \bbr : f(x,y) \le c\}$ is closed.
 \end{lemma}
 
-\begin{lemma}[Sublevel set is compact]
+\begin{lemma}[Compactness of a minimax sublevel set]
 \lean{OnlineLearning.minimaxSublevel_isCompact}
 \label{OnlineLearning.minimaxSublevel_isCompact}
 \leanok
 \uses{OnlineLearning.minimaxSublevel, OnlineLearning.minimaxSublevel_isClosed, OnlineLearning.minimaxSublevel_subset}
 \difficulty{1}
-If $X$ is compact and $f(\cdot,y)$ is continuous on $X$, then
-$\mathrm{sublevel}(X,f,y,c)$ is compact (as a closed subset of a compact set).
+Let $X \subseteq \bbr$ be compact, fix a payoff function $f : \bbr \times \bbr \to
+\bbr$, a column point $y \in \bbr$, and a threshold $c \in \bbr$, and suppose the map $x
+\mapsto f(x,y)$ is continuous on $X$. Then the minimax sublevel set
+$\mathrm{sublevel}(X,f,y,c) = X \cap \{x \in \bbr : f(x,y) \le c\}$ is compact.
 \end{lemma}
 
-\begin{lemma}[Finite-intersection gives global row minimiser]
+\begin{lemma}[From finite feasibility to a uniform row point]
 \lean{OnlineLearning.exists_forall_le_of_finite_sublevel_intersections}
 \label{OnlineLearning.exists_forall_le_of_finite_sublevel_intersections}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.minimaxSublevel, OnlineLearning.minimaxSublevel_isClosed}
 \difficulty{4}
-Under \texttt{OnlineLearning.ConvexCompactMinimaxHypotheses}, let $c \in \bbr$.
-If for every finite subset $u \subseteq Y$ there exists $x \in X$ with
-$f(x,y) \leq c$ for all $y \in u$, then there exists $x \in X$ with
-$f(x,y) \leq c$ for \emph{all} $y \in Y$. The proof applies the
-finite-intersection property to the compact collection of sublevel sets.
+Let $X, Y \subseteq \bbr$ together with a payoff function $f : \bbr \to \bbr \to \bbr$
+satisfy the convex-compact minimax hypotheses, and let $c \in \bbr$. Suppose that for
+every finite subset $u \subseteq Y$ the set $X \cap \bigcap_{y \in u}
+\mathrm{sublevel}(X,f,y,c)$ is nonempty, where $\mathrm{sublevel}(X,f,y,c) = X \cap \{x
+\in \bbr : f(x,y) \le c\}$; that is, there is a common row point $x \in X$ with $f(x,y)
+\le c$ for all $y$ in that finite set. Then there exists a single $x \in X$ with $f(x,y)
+\le c$ for every $y \in Y$.
 \end{lemma}

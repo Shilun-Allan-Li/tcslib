@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.dtDepth_restrictFn_le_numFree",
+ "key": "7abd0b2d68f7c50d",
+ "kind": "lemma",
+ "title": "Decision-tree depth bounded by the number of free variables",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be a Boolean function and let $\\rho$ be a restriction on $n$ variables, fixing some coordinates to Boolean values and leaving the rest free. Then the decision-tree depth of the restricted function $f\\!\\restriction_\\rho$, which sends $x$ to $f$ evaluated with the free coordinates taken from $x$ and the remaining coordinates set by $\\rho$, is at most the number of free variables of $\\rho$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on Fin n → Bool",
+  "ρ is a restriction on n variables",
+  "conclusion: dtDepth of the restricted function ≤ number of free variables of ρ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any function $f$ and restriction $\\rho$, the decision-tree depth of the restricted function is at\nmost the number of free variables: $\\mathrm{dtDepth}\\,(\\mathrm{restrictFn}\\,f\\,\\rho) \\le \\rho.\\mathrm{numFree}$."
+}

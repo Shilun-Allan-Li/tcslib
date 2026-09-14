@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr",
+ "key": "4b11fa7b9200aeaf",
+ "kind": "theorem",
+ "title": "KL divergence of probability mass functions",
+ "statement": "Let $\\Omega$ be a finite discrete measurable space, and let $p$ and $q$ be probability mass functions on $\\Omega$. Then the Kullback–Leibler divergence between the probability measures they induce is\n\\[\n  D_{\\mathrm{KL}}(p \\,\\|\\, q) =\n  \\begin{cases}\n    \\infty & \\text{if } q(\\omega) = 0 \\text{ and } p(\\omega) \\neq 0 \\text{ for some } \\omega \\in \\Omega, \\\\[4pt]\n    \\displaystyle\\sum_{\\omega \\in \\Omega} p(\\omega)\\,\\log\\!\\frac{p(\\omega)}{q(\\omega)} & \\text{otherwise,}\n  \\end{cases}\n\\]\nwhere in the second case the (nonnegative) real sum is read as an element of $[0,\\infty]$.",
+ "hypotheses_covered": [
+  "Ω is a finite discrete measurable space",
+  "p and q are probability mass functions on Ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Omega$ be a finite measurable space and let $p, q$ be PMFs on $\\Omega$.  Then\n\\[\n  D_{\\mathrm{KL}}(p \\,\\|\\, q)\n  = \\begin{cases}\n      \\infty & \\text{if } \\exists\\,\\omega,\\; q(\\omega) = 0 \\text{ and } p(\\omega) \\neq 0,\\\\[4pt]\n      \\mathrm{ofReal}\\!\\displaystyle\\left(\n        \\sum_{\\omega} p(\\omega).\\mathrm{toReal} \\cdot \\mathrm{llr}(p,q,\\omega)\n      \\right) & \\text{otherwise.}\n    \\end{cases}\n\\]"
+}

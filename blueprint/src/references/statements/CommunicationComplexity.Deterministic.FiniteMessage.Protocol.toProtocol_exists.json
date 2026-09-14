@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists",
+ "key": "9b998be5e6a118d9",
+ "kind": "theorem",
+ "title": "Binary simulation of a finite-message protocol",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, and let $p$ be a finite-message two-party protocol over inputs $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, in which each message ranges over an arbitrary finite nonempty type and a $\\beta$-valued message is charged $\\lceil \\log_2 |\\beta| \\rceil$ bits. Then there exists a binary deterministic protocol $P$ over the same input types $X$, $Y$ and output type $\\alpha$ — one in which every message is a single bit — that computes the same function, i.e.\\ $P$ and $p$ return the same output on every pair of inputs, and has exactly the same communication complexity as $p$.",
+ "hypotheses_covered": [
+  "p is a finite-message protocol over X (Alice), Y (Bob), output α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every finite-message protocol $p$, there exists a binary protocol $P$ such that\n$P.\\mathrm{run} = p.\\mathrm{run}$ and $P.\\mathrm{complexity} = p.\\mathrm{complexity}$.\nThis is the key existence result underlying \\texttt{toProtocol}."
+}

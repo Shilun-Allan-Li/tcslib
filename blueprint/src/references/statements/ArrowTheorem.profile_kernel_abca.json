@@ -1,0 +1,15 @@
+{
+ "lean_name": "ArrowTheorem.profile_kernel_abca",
+ "key": "ccb4e371c667dc04",
+ "kind": "lemma",
+ "title": "Kernel of the ab–ca vote correlation",
+ "statement": "Fix a natural number $n$ and consider profiles $p$ of $n$ voters, each of whom reports one of the six strict orderings of the three alternatives $a, b, c$; there are $6^n$ such profiles. For a profile $p$, let $x^{ab}(p) \\in \\{0,1\\}^n$ be the vector recording each voter's preference in the $a$-vs-$b$ comparison, and $x^{ca}(p) \\in \\{0,1\\}^n$ the vector recording each voter's preference in the $c$-vs-$a$ comparison. Then for any two subsets $S, T \\subseteq \\{1,\\dots,n\\}$, the averaged product of the corresponding Walsh–Fourier characters satisfies\n\\[\n  \\left(\\tfrac{1}{6}\\right)^{\\!n} \\sum_{p} \\chi_S\\bigl(x^{ab}(p)\\bigr)\\,\\chi_T\\bigl(x^{ca}(p)\\bigr)\n  \\;=\\;\n  \\begin{cases} \\left(-\\tfrac{1}{3}\\right)^{|S|} & \\text{if } S = T,\\\\[2pt] 0 & \\text{if } S \\neq T, \\end{cases}\n\\]\nwhere the sum ranges over all $6^n$ profiles.",
+ "hypotheses_covered": [
+  "S and T are subsets (finite sets) of the index set {1,...,n}",
+  "n is a natural number and the sum is over all 6^n profiles p : Fin n → Fin 6"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Specialization of the general kernel to the $ab$--$ca$ vote pair: for all\n$S,T\\subseteq[n]$,\n\\[\n  \\Bigl(\\tfrac16\\Bigr)^{\\!n}\\sum_{p}\n    \\chi_S(\\mathrm{abVotes}(p))\\,\\chi_T(\\mathrm{caVotes}(p))\n  \\;=\\;\n  \\begin{cases} (-1/3)^{|S|} & S = T \\\\ 0 & S\\ne T. \\end{cases}\n\\]"
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.sSup_abs_setIntegral_eq_nonneg_part_of_integral_eq_zero",
+ "key": "365caada3b4e79f7",
+ "kind": "theorem",
+ "title": "Supremum of absolute set-integrals of a mean-zero function",
+ "statement": "Let $\\mu$ be a finite measure on a measurable space $\\Omega$, and let $g \\colon \\Omega \\to \\bbr$ be measurable and integrable with mean zero, $\\int_\\Omega g\\,d\\mu = 0$. Then the supremum of $\\abs{\\int_S g\\,d\\mu}$ taken over all measurable sets $S \\subseteq \\Omega$ equals the integral of $g$ over the region where it is nonnegative:\n\\[\n  \\sup_{S\\text{ measurable}} \\abs*{\\int_S g\\,d\\mu} \\;=\\; \\int_{\\{x \\,:\\, g(x) \\ge 0\\}} g\\,d\\mu.\n\\]",
+ "hypotheses_covered": [
+  "μ is a finite measure on Ω",
+  "g is measurable",
+  "g is integrable with respect to μ",
+  "g has mean zero (integral of g is 0)",
+  "supremum ranges over all measurable sets S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu$ be a finite measure and $g$ measurable, integrable, and mean-zero.  Then\n\\[\n  \\sup_{S\\text{ measurable}}\\Bigl|\\int_S g\\,d\\mu\\Bigr|\n  \\;=\\; \\int_{\\{g \\ge 0\\}} g\\,d\\mu.\n\\]"
+}

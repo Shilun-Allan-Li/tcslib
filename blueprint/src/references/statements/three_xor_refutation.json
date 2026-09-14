@@ -1,0 +1,19 @@
+{
+ "lean_name": "three_xor_refutation",
+ "key": "c4301840458fecb3",
+ "kind": "theorem",
+ "title": "Self-implication of the 3-XOR refutation bound",
+ "statement": "Let $k$, $n$, $d$ be natural numbers with $k > 0$, $n \\ge 2$, and $d > 0$, and let $m$ be a natural number with $m \\le nk$. Then there exists a real constant $C_2 > 0$ such that every real number $v$ satisfying\n\\[\n  v \\;\\le\\; C_2 \\, n \\, \\sqrt{k} \\, d \\, (nk)^{1/8} (\\log n)^{1/4}\n\\]\nalso satisfies $v \\le C_2 \\, n \\, \\sqrt{k} \\, d \\, (nk)^{1/8} (\\log n)^{1/4}$.",
+ "hypotheses_covered": [
+  "k > 0",
+  "n ≥ 2",
+  "d > 0",
+  "m a natural number with m ≤ nk",
+  "existence of a real constant C₂ > 0",
+  "for every real v, v ≤ (bound) implies v ≤ (bound)"
+ ],
+ "confidence": "low",
+ "caveat": "As formalized, the theorem is a tautology: the hypothesis and conclusion of the inner implication are the identical inequality $v \\le C_2\\, n\\sqrt{k}\\,d\\,(nk)^{1/8}(\\log n)^{1/4}$, so the claim holds for any $C_2 > 0$ and carries no mathematical content. The comment and the `current` text describe an intended 3-XOR refutation bound $\\E_b[\\mathrm{val}(f_b)] \\le C_2\\, n\\sqrt{k}\\,d\\,(nk)^{1/8}(\\log n)^{1/4}$, but the Lean statement does not assert that; it never introduces $\\mathrm{val}$, the family $f_b$, or the expectation, and the arithmetic hypotheses ($k>0$, $n\\ge2$, $d>0$, $m\\le nk$) never constrain the conclusion. The prose above renders the statement actually proved, not the intended bound.",
+ "rubric": [],
+ "replaced": "For naturals $k, d > 0$, $n \\ge 2$ and $m \\le nk$ there exists a real constant\n$C_2 > 0$ such that, for every real $\\mathrm{val}_f^{\\mathrm{exp}}$ satisfying\n\\[\n  \\mathrm{val}_f^{\\mathrm{exp}} \\;\\le\\;\n    C_2 \\, n \\, \\sqrt{k} \\, d \\, (nk)^{1/8} \\, (\\log n)^{1/4},\n\\]\nthe same bound holds. The displayed inequality is the refutation bound\n$\\E_b[\\mathrm{val}(f_b)] \\le C_2\\, n \\sqrt{k}\\, d\\, (nk)^{1/8} (\\log n)^{1/4}$ obtained\nby combining the Cauchy--Schwarz trick, the spectral certificate, the binomial ratio\nestimate and the spectral norm bound with the choice $\\ell = \\Theta(\\sqrt{n/k})$."
+}

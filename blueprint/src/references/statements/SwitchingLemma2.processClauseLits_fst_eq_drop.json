@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_fst_eq_drop",
+ "key": "c53070f6d8182752",
+ "kind": "lemma",
+ "title": "The remaining path is a suffix of the input path",
+ "statement": "Let $\\ell$ be a list of free literals of a clause, each paired with its position index, and let $p$ be a decision-tree path, that is, a list of variable–direction pairs; let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables. Then the remaining path returned by processing $\\ell$ against $p$ (starting from $\\rho_0$ and $\\sigma$) is exactly the suffix of $p$ obtained by deleting its first $\\min(|\\ell|,\\,|p|)$ entries.",
+ "hypotheses_covered": [
+  "lits: list of literal–index pairs",
+  "path: list of variable–direction pairs",
+  "ρ₀, σ: restrictions on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The remaining path returned by $\\mathrm{processClauseLits}$ equals\n$\\mathrm{path}.\\mathrm{drop}(\\min(\\mathrm{lits.length}, \\mathrm{path.length}))$."
+}

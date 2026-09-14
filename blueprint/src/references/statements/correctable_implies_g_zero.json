@@ -1,0 +1,17 @@
+{
+ "lean_name": "correctable_implies_g_zero",
+ "key": "2fa8dbb85d3a8fd6",
+ "kind": "lemma",
+ "title": "Correctable coordinate sets carry no supportable logical operators",
+ "statement": "Fix a prime $p$, let $V = \\bbf_p^n \\times \\bbf_p^n$ be equipped with the symplectic form $\\omega\\big((x,z),(x',z')\\big) = \\sum_{i} (x_i z'_i - z_i x'_i)$, and let $S \\le V$ be a subspace with symplectic orthogonal complement $S^{\\perp_\\omega} = \\{v \\in V : \\omega(v,s) = 0 \\text{ for all } s \\in S\\}$. Let $M \\subseteq \\{0,1,\\dots,n-1\\}$ be a set of coordinates, write $V_M$ for the subspace of vectors supported on $M$, and set $S_M = S \\cap V_M$ and $S^{\\perp}_M = S^{\\perp_\\omega} \\cap V_M$. If $M$ is correctable for $S$ — meaning every vector of $S^{\\perp_\\omega}$ supported on $M$ already lies in $S$, i.e. $S^{\\perp}_M \\le S$ — then $g(S,M) = \\dim_{\\bbf_p}(S^{\\perp}_M) - \\dim_{\\bbf_p}(S_M) = 0$.",
+ "hypotheses_covered": [
+  "p is prime (F_p is the prime field)",
+  "S is a subspace of V = F_p^n × F_p^n",
+  "M is a subset of the coordinate indices",
+  "M is correctable for S: S^{⊥ω} ∩ V_M ≤ S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $M$ is correctable for $S$, then $g(S,M) = 0$."
+}

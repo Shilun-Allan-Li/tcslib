@@ -1,0 +1,19 @@
+{
+ "lean_name": "ACP.pi_coordinate_bad_mul_le",
+ "key": "b686dc6c91919527",
+ "kind": "lemma",
+ "title": "Counting functions bad at a fixed coordinate",
+ "statement": "Let $\\iota$ be a finite index type with decidable equality, let $(\\beta_j)_{j \\in \\iota}$ be a family of finite types, and fix a coordinate $i \\in \\iota$. Let $\\mathrm{Bad}$ be a decidable predicate on $\\beta_i$, and let $C$ be a natural number such that\n\\[\n\\abs{\\{\\, b \\in \\beta_i : \\mathrm{Bad}(b) \\,\\}} \\cdot C \\;\\le\\; \\abs{\\beta_i}.\n\\]\nThen the number of dependent functions $f \\in \\prod_{j \\in \\iota} \\beta_j$ whose value at $i$ is bad satisfies\n\\[\n\\abs{\\{\\, f \\in \\textstyle\\prod_{j \\in \\iota} \\beta_j : \\mathrm{Bad}(f(i)) \\,\\}} \\cdot C \\;\\le\\; \\abs{\\textstyle\\prod_{j \\in \\iota} \\beta_j}.\n\\]",
+ "hypotheses_covered": [
+  "ι finite with decidable equality",
+  "each β_j finite",
+  "fixed coordinate i",
+  "Bad a decidable predicate on β_i",
+  "C a natural number",
+  "|{b : Bad(b)}| · C ≤ |β_i|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a coordinate $i$ and a decidable predicate $\\mathrm{Bad}$ on $\\beta_i$, and suppose\n$\\abs{\\{b : \\mathrm{Bad}(b)\\}} \\cdot C \\le \\abs{\\beta_i}$.  Then the number of dependent functions\n$f$ with $\\mathrm{Bad}(f_i)$ satisfies\n\\[\n\\abs{\\{f : \\mathrm{Bad}(f_i)\\}} \\cdot C \\;\\le\\; \\abs{(j : \\iota) \\to \\beta_j}.\n\\]"
+}

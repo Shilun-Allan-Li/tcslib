@@ -1,0 +1,16 @@
+{
+ "lean_name": "LowDegreeTest.RM_test_soundness",
+ "key": "167e68d01033b74b",
+ "kind": "lemma",
+ "title": "Soundness of the low-degree derivative test",
+ "statement": "Fix $d \\ge 1$ and let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean function. Suppose $f$ is $\\varepsilon$-far from degree $\\le d$; that is, $0 \\le \\varepsilon \\le 1$ and $\\dist(f,g) \\ge \\varepsilon$ for every Boolean function $g$ of degree $\\le d$. Then the $(d{+}1)$-fold derivative test accepts $f$ with probability at most $1 - \\varepsilon$.",
+ "hypotheses_covered": [
+  "d ≥ 1",
+  "f is a Boolean function {0,1}^n → {0,1}",
+  "f is ε-far from degree ≤ d (which includes 0 ≤ ε ≤ 1 and dist(f,g) ≥ ε for all degree ≤ d functions g)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $d \\ge 1$ and $f$ is $\\varepsilon$-far from every codeword of $\\mathrm{RM}(d, n)$,\nthen the Reed--Muller test accepts $f$ with probability at most $1 - \\varepsilon$,\ni.e.\\ it rejects with probability at least $\\varepsilon$."
+}

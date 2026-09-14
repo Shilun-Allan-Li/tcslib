@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.hamiltonian_path_toughness",
+ "key": "9c11d24303991f4b",
+ "kind": "theorem",
+ "title": "A Hamilton path bounds the components of a vertex-deletion",
+ "statement": "Let $G$ be a finite simple graph on vertex set $V$, and suppose $G$ has a Hamilton path, that is, a path passing through every vertex of $G$ exactly once. Then for every nonempty proper subset $S \\subsetneq V$, the graph $G - S$ obtained by deleting the vertices of $S$ has at most $\\abs{S} + 1$ connected components.",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "G has a Hamilton path (some walk between two vertices visiting every vertex once)",
+  "S is nonempty",
+  "S is a proper subset of V (S ≠ univ)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Ex 4.2.3: a Hamilton path implies \\texttt{$\\omega$(G $-$ S) $\\le$ |S| + 1}.\n\n4.2.3 Show that if $G$ has a Hamilton path then, for every proper subset $S$ of\n$V$, $\\omega(G - S) \\leq |S| + 1$."
+}

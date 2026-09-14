@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.communicationComplexity_le_deterministic",
+ "key": "71ca517713b2542a",
+ "kind": "theorem",
+ "title": "Private-coin complexity at most deterministic complexity",
+ "statement": "Let $f : X \\times Y \\to \\alpha$ be a function of two arguments, and let $\\varepsilon \\ge 0$ be an error parameter. Then the $\\varepsilon$-error private-coin randomized communication complexity of $f$ is at most its deterministic communication complexity:\n\\[\n  R_\\varepsilon(f) \\;\\le\\; D(f),\n\\]\nas an inequality of extended natural numbers.",
+ "hypotheses_covered": [
+  "f : X → Y → α is a two-argument function",
+  "ε is a real number",
+  "0 ≤ ε"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any function $f : X \\to Y \\to \\alpha$ and any error parameter $\\varepsilon \\ge 0$,\nthe private-coin communication complexity satisfies\n\\[\n  \\mathrm{CC}_{\\mathrm{priv}}(f, \\varepsilon) \\;\\le\\; \\mathrm{CC}_{\\mathrm{det}}(f).\n\\]\nThe inequality holds because every deterministic protocol can be viewed as a\nprivate-coin protocol with zero error by embedding it via \\texttt{toPrivateCoin}."
+}

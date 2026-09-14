@@ -1,0 +1,18 @@
+{
+ "lean_name": "RestrictionFourier.fourierCoeff_restrictBF",
+ "key": "e1b93376152e9961",
+ "kind": "theorem",
+ "title": "Fourier coefficients of a restricted Boolean function",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$, and let $\\rho$ be a restriction on $n$ variables; write $J \\subseteq [n]$ for its set of free coordinates, namely the coordinates left unset by $\\rho$. Let $f_\\rho : \\{0,1\\}^n \\to \\bbr$ be the restricted function whose value at a point $x$ is obtained by evaluating $f$ at the assignment that agrees with $x$ on the free coordinates in $J$ and takes the bit fixed by $\\rho$ on every other coordinate. Then for every $S \\subseteq [n]$,\n\\[\n  \\widehat{f_\\rho}(S) \\;=\\; \\sum_{\\substack{U \\subseteq [n] \\\\ U \\cap J = S}} \\widehat{f}(U)\\;\\prod_{i \\in U \\setminus J} \\sigma(\\rho_i),\n\\]\nwhere $\\sigma$ denotes the sign encoding and, for each $i \\in U \\setminus J$ (which lies outside $J$ and is therefore a coordinate fixed by $\\rho$), $\\rho_i \\in \\{\\mathtt{false},\\mathtt{true}\\}$ is the bit that $\\rho$ assigns there. This is O'Donnell's Corollary 3.22.",
+ "hypotheses_covered": [
+  "f is a real-valued Boolean function on {0,1}^n",
+  "ρ is a restriction on n variables with free coordinate set J",
+  "S is a subset of [n]",
+  "sum ranges over U ⊆ [n] with U ∩ J = S",
+  "product of sign encodings of the fixed bits over U ∖ J"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $f : \\{0,1\\}^n \\to \\bbr$, a restriction $\\rho$ with free set $J = \\rho.\\mathrm{freeVars}$,\nand $S \\subseteq [n]$,\n\\[\n  \\widehat{f_\\rho}(S) \\;=\\; \\sum_{U \\subseteq [n]} \\mathbf{1}[U \\cap J = S]\\cdot\n  \\widehat{f}(U)\\cdot \\mathrm{signProd}\\,\\rho\\,(U \\setminus J),\n\\]\nwhere $f_\\rho = \\mathrm{restrictBF}\\,f\\,\\rho$. This is the analogue of O'Donnell\nCorollary 3.22."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleHypercontractivity.noiseOp_snoc",
+ "key": "271d4e65f22f5b86",
+ "kind": "lemma",
+ "title": "Noise operator splits along the last coordinate",
+ "statement": "Fix $\\rho \\in \\bbr$ and a Boolean function $f \\colon \\{0,1\\}^{n+1} \\to \\bbr$, and let $Af$ and $Df$ be the average and the half-difference of $f$ over its last coordinate, each a Boolean function on $\\{0,1\\}^n$. For every $x \\in \\{0,1\\}^n$ and every bit $b$,\n\\[\n  T_\\rho f(x, b) \\;=\\; T_\\rho(Af)(x) \\;+\\; \\sigma(b)\\,\\rho\\,T_\\rho(Df)(x),\n\\]\nwhere $(x,b) \\in \\{0,1\\}^{n+1}$ is the point obtained by appending $b$ as the last coordinate, $\\sigma$ is the sign encoding, and $T_\\rho$ is the noise operator.",
+ "hypotheses_covered": [
+  "ρ is a real number",
+  "f is a Boolean function on n+1 variables",
+  "x is a point of the n-dimensional cube",
+  "b is a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : \\{0,1\\}^{n+1} \\to \\bbr$ the noise operator splits over the last coordinate:\n\\[\n  T_\\rho f(\\mathrm{snoc}\\,x\\,b)\n  = T_\\rho(\\mathrm{avgLast}\\,f)(x) + (-1)^b\\,\\rho\\,T_\\rho(\\mathrm{diffLast}\\,f)(x),\n\\]\nwhere $\\mathrm{avgLast}\\,f$ and $\\mathrm{diffLast}\\,f$ are the average and difference of\n$f$ over the last bit."
+}

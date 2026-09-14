@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.clauseIsTaut_eval_true",
+ "key": "21b9a91c382e8ac6",
+ "kind": "lemma",
+ "title": "Tautological clauses are satisfied by every assignment",
+ "statement": "Let $c$ be a clause on the variables $x_0,\\dots,x_{n-1}$, that is, a list of literals read as their disjunction, where a literal is a variable together with a sign and evaluates to that variable's value if positive and to its negation if negated. Suppose $c$ is tautological: it contains two literals on the same variable with opposite signs. Then for every Boolean assignment $x \\colon \\{0,\\dots,n-1\\} \\to \\{\\text{true},\\text{false}\\}$, at least one literal of $c$ evaluates to $\\mathrm{true}$, so the disjunction of the literals of $c$ evaluates to $\\mathrm{true}$.",
+ "hypotheses_covered": [
+  "c is a clause (list of literals)",
+  "c is tautological (two literals on the same variable with opposite signs)",
+  "x is an arbitrary Boolean assignment"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a clause $c$ is tautological, then for every assignment $x$ the disjunction of its\nliterals evaluates to $\\mathrm{true}$."
+}

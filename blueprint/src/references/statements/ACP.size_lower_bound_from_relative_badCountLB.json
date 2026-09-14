@@ -1,0 +1,21 @@
+{
+ "lean_name": "ACP.size_lower_bound_from_relative_badCountLB",
+ "key": "0c76b43beb7f94f7",
+ "kind": "theorem",
+ "title": "Size lower bound from a relative bad-count bound",
+ "statement": "Let $p$ and $q$ be primes, and let $F$ be a layered feedforward circuit over the Boolean alphabet with input coordinates $\\mathrm{Fin}\\,n$ and a single output, each of whose layers is finite. Suppose $F$ uses only $\\mathrm{AC}^0[p]$ gates (the identity gate, the NOT gate, unbounded fan-in AND gates, and unbounded $\\mathrm{MOD}_p$ gates), and that $F$ computes the $\\mathrm{MOD}_q$ function on its $n$ Boolean inputs. Fix $\\ell, \\delta \\in \\bbn$, and assume the relative low-degree bad-count bound: every polynomial $P \\in (\\bbz/p)[X_1,\\dots,X_n]$ of total degree at most $\\bigl((p-1)\\ell\\bigr)^{\\mathrm{depth}(F)}$ disagrees with the $\\mathrm{MOD}_q$ target (viewed in $\\bbz/p$) on at least $\\delta \\cdot 2^{n}$ of the $2^{n}$ Boolean inputs. Then the size of $F$ satisfies $\\delta \\cdot 2^{\\ell} \\le \\abs{F}$.",
+ "hypotheses_covered": [
+  "p is prime",
+  "q is prime",
+  "F is a feedforward circuit over Fin 2 with inputs Fin n",
+  "each layer of F is finite",
+  "F has a unique output",
+  "F uses only AC^0[p] gates",
+  "F computes the MOD_q function on n bits",
+  "relative low-degree bad-count lower bound: every polynomial of total degree at most ((p-1)ℓ)^depth(F) has at least δ·2^n bad inputs against the MOD_q target"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Same hypotheses as the previous theorem, but with the bad-count bound taken in the\nrelative form $E = \\delta \\cdot 2^{n}$; the conclusion is then the clean size bound\n$\\delta \\cdot 2^{\\ell} \\le \\abs{F}$."
+}

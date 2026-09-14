@@ -1,0 +1,19 @@
+{
+ "lean_name": "LMN.bernoulliRestrProb_dtDepth_compose_le",
+ "key": "3ec183db1a959b72",
+ "kind": "theorem",
+ "title": "Monotonicity of the decision-tree depth tail under Bernoulli restrictions",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be a Boolean function, let $t \\in \\bbn$ be a threshold, and let $p_1, p_2 \\in \\bbr$ satisfy $0 < p_1 \\le 1$ and $0 < p_2 \\le 1$. For a parameter $p$, let $\\Pr_p[\\,\\cdot\\,]$ denote the probability of an event under a Bernoulli($p$) random restriction $\\rho$, in which each variable is left free with probability $p$ and is otherwise fixed to a constant Boolean value, each of the two values with probability $(1-p)/2$. For a restriction $\\rho$, write $f_\\rho$ for the function of the free coordinates obtained from $f$ by fixing each set coordinate $i$ to the value $\\rho(i)$, and let $D(f_\\rho)$ be its decision-tree depth, that is, the least $d$ for which some decision tree of depth at most $d$ computes $f_\\rho$. Then\n\\[\n  \\Pr_{p_1 p_2}\\bigl[D(f_\\rho) > t\\bigr] \\le\n  \\Pr_{p_1}\\bigl[D(f_\\rho) > t\\bigr].\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function on Fin n → Bool",
+  "t is a natural-number threshold",
+  "0 < p₁",
+  "p₁ ≤ 1",
+  "0 < p₂",
+  "p₂ ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every Boolean function $f$, threshold $t$, and parameters $p_1, p_2 \\in (0,1]$, the\nprobability that the restricted depth exceeds $t$ under the stronger Bernoulli restriction\nof parameter $p_1 p_2$ is at most that under parameter $p_1$:\n\\[\n  \\Pr_{p_1 p_2}\\bigl[\\mathrm{dtDepth}(f|_\\rho) > t\\bigr] \\le\n  \\Pr_{p_1}\\bigl[\\mathrm{dtDepth}(f|_\\rho) > t\\bigr].\n\\]"
+}

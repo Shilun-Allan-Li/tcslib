@@ -1,0 +1,15 @@
+{
+ "lean_name": "KargerTrace.kargerGraphTrace_prefix_run",
+ "key": "68664993e0797f41",
+ "kind": "lemma",
+ "title": "Prefixes of a graph trace are graph runs",
+ "statement": "Let $T$ be an adaptive graph trace of length $\\text{steps}$, so that $T$ records a graph at each index, a sampled edge occurrence at each index below $\\text{steps}$, and produces each successive graph as the contraction of its predecessor along that occurrence. Then for every index $i \\le \\text{steps}$, the graph-only Karger run relation holds for $i$ steps between the initial graph $T_0$ and the graph $T_i$; that is, $T_i$ is reachable from $T_0$ by exactly $i$ successive edge-occurrence contractions.",
+ "hypotheses_covered": [
+  "T is an adaptive graph trace of length steps",
+  "index i satisfies i ≤ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i \\le \\text{steps}$, the first $i$ stages of an adaptive graph trace form a graph run\nfrom the initial graph to the graph at index $i$."
+}

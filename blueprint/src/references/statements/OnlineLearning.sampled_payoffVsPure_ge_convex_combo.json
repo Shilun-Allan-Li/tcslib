@@ -1,0 +1,19 @@
+{
+ "lean_name": "OnlineLearning.sampled_payoffVsPure_ge_convex_combo",
+ "key": "5d4665caf655dfe4",
+ "kind": "lemma",
+ "title": "Jensen bound for the sampled payoff against a pure column",
+ "statement": "Let $f : \\bbr \\to \\bbr \\to \\bbr$ take values in $[0,1]$, and let $x : [M] \\to \\bbr$ and $y : [N] \\to \\bbr$ be finite families of row and column points, giving rise to the sampled game whose $(i,j)$ entry is $f(x_i, y_j)$. Fix a column index $j$, and suppose the section $x' \\mapsto f(x', y_j)$ is convex on a set $X \\subseteq \\bbr$ with $x_i \\in X$ for every $i$. Then for any mixed row strategy $p$ over the $M$ rows,\n\\[\n  f\\!\\left(\\sum_{i} p_i\\, x_i,\\; y_j\\right) \\;\\le\\; \\sum_{i} p_i\\, f(x_i, y_j),\n\\]\nwhere the right-hand side is the expected payoff of the sampled game against column $j$ under $p$.",
+ "hypotheses_covered": [
+  "f takes values in [0,1] (payoff nonnegative and at most one)",
+  "finite row points x and column points y",
+  "fixed column index j",
+  "f(-, y_j) convex on X",
+  "every x_i lies in X",
+  "p is a mixed strategy over the M rows"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f(\\cdot, y_j)$ is convex on $X$ and every $x_i \\in X$, then for any mixed\nrow strategy $p \\in \\Delta_M$,\n\\[\n  f\\!\\left(\\sum_i p_i\\,x_i,\\; y_j\\right)\n  \\;\\leq\\;\n  \\mathrm{payoffVsPure}(\\mathrm{sampledGame},\\,p,\\,j).\n\\]\nThat is, convexity in the row variable means the continuous mixed-action payoff\nis at most the finite-game expected payoff."
+}

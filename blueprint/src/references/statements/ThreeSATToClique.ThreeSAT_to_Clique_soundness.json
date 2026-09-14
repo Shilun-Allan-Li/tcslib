@@ -1,0 +1,15 @@
+{
+ "lean_name": "ThreeSATToClique.ThreeSAT_to_Clique_soundness",
+ "key": "9431f277642fb6f2",
+ "kind": "theorem",
+ "title": "Soundness of the 3-SAT to clique reduction",
+ "statement": "Let $f$ be a 3-CNF formula consisting of $m$ clauses. If the conflict graph of $f$ has an $m$-clique, then $f$ is satisfiable.",
+ "hypotheses_covered": [
+  "f is a 3-CNF formula (list of m 3-clauses)",
+  "its conflict graph has a clique of size m (the number of clauses)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the conflict graph of a 3-CNF formula $f$ with $m$ clauses contains an\n$m$-clique, then $f$ is satisfiable:\n$\\mathtt{hasClique}\\,(\\mathtt{toCliqueGraph}\\,f)\\,f.\\mathtt{length} \\to\n\\mathtt{is3Satisfiable}\\,f$."
+}

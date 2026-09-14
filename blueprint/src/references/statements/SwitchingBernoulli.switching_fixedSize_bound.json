@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingBernoulli.switching_fixedSize_bound",
+ "key": "c4ec3310b570010f",
+ "kind": "lemma",
+ "title": "Switching lemma for fixed-size restrictions",
+ "statement": "Let $f$ be a DNF formula on $n \\ge 1$ variables in which every term has width at most $w$, where $w \\ge 1$, and in which each term is reduced: no literal is repeated, and any two literals of a term sharing the same variable are equal (so a variable occurs at most once, and never with both polarities, within a term). For a Boolean function $g$ on some set of inputs, write $D(g)$ for its decision-tree depth, the least depth of a decision tree computing $g$. Fix a natural number $d$ and an integer $k$ with $k \\le n$, and draw a restriction $\\rho$ uniformly at random among all restrictions of the $n$ variables that leave exactly $k$ variables free (the fixed-size restriction model $R_k$). Writing $f|_\\rho$ for the function obtained by fixing each set variable to the value assigned by $\\rho$ and keeping the $k$ free variables as inputs, one has\n\\[\n  \\bbP_{\\rho}\\!\\left[\\, D(f|_\\rho) > d \\,\\right] \\;\\le\\; \\left(\\frac{10\\,k\\,w}{n}\\right)^{d}.\n\\]",
+ "hypotheses_covered": [
+  "n \\ge 1 (0 < n)",
+  "every term has width at most w",
+  "w \\ge 1 (0 < w)",
+  "k \\le n",
+  "within each term, literals sharing a variable are equal (no variable with both polarities)",
+  "each term has no repeated literal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a width-$w$ DNF $f$ with $0 < w$, $0 < n$, and $k \\le n$, the size-$k$\nrestriction probability that $\\mathrm{dtDepth}(f|_\\rho) > d$ is at most\n$\\left(10kw/n\\right)^d$. This removes the $5k \\le n$ restriction by using the\ntrivial bound when $5k > n$."
+}

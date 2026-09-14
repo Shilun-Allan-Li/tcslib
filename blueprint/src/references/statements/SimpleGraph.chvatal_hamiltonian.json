@@ -1,0 +1,15 @@
+{
+ "lean_name": "SimpleGraph.chvatal_hamiltonian",
+ "key": "db1ae37afd386631",
+ "kind": "theorem",
+ "title": "Chvátal's degree condition for hamiltonicity",
+ "statement": "Let $G$ be a finite simple graph on $n \\ge 3$ vertices, and write $\\deg(v)$ for the degree of a vertex $v$. Suppose that for every integer $m$ with $1 \\le m$ and $2m < n$, it is not the case that both $G$ has at least $m$ vertices of degree at most $m$ and $G$ has at least $n - m$ vertices of degree strictly less than $n - m$. Then $G$ is Hamiltonian, that is, $G$ possesses a Hamiltonian cycle.",
+ "hypotheses_covered": [
+  "at least 3 vertices ($3 \\le n$)",
+  "for every $m$ with $1 \\le m$ and $2m < n$, one does not simultaneously have at least $m$ vertices of degree $\\le m$ and at least $n-m$ vertices of degree $< n-m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Thm 4.5 (counting form): the Chv\\'atal degree condition implies hamiltonicity.\n\nLet $G$ be a simple graph with degree sequence $(d_1, d_2, \\ldots, d_\\nu)$, where $d_1\n\\leq d_2 \\leq \\ldots \\leq d_\\nu$ and $\\nu \\geq 3$. Suppose that there is no value of $m$\nless than $\\nu/2$ for which $d_m \\leq m$ and $d_{\\nu-m} < \\nu - m$. Then $G$ is\nhamiltonian.\n\nOne can often deduce that a given graph is hamiltonian simply by computing its degree\nsequence and applying theorem 4.5. This method works with the graph of figure 4.7 but\nnot with the graph $G$ of figure 4.6, even though the closure of the latter graph is\ncomplete. From these examples, we see that theorem 4.5 is stronger than theorem 4.3 but\nnot as strong as corollary 4.4."
+}

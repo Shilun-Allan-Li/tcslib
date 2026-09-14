@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.numLeaves_pos",
+ "key": "b7d5539ba0a1b24b",
+ "kind": "lemma",
+ "title": "Every protocol has at least one leaf",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$. Then the number of leaves of $p$ — that is, the number of output nodes in its tree shape — is strictly positive, and so is at least one.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over input types X, Y with output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every deterministic protocol $p : \\mathrm{Protocol}\\;X\\;Y\\;\\alpha$, the number of\nleaves satisfies $0 < \\texttt{CommunicationComplexity.Deterministic.Protocol.numLeaves}\\;p$.\nIn particular, the leaf count of a protocol is always at least one."
+}

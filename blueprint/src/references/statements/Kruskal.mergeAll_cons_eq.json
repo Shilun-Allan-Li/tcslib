@@ -1,0 +1,16 @@
+{
+ "lean_name": "Kruskal.mergeAll_cons_eq",
+ "key": "8656d2a6d23084ba",
+ "kind": "lemma",
+ "title": "Peeling the leading edge off a merge fold",
+ "statement": "Let $\\mathit{uf} : \\mathrm{Fin}\\,n \\to \\bbn$ be a union-find state on $n$ nodes, let $e$ be a weighted edge with endpoints $u$ and $v$ over these nodes, and let $S$ be a list of weighted edges over the same nodes. Folding the list $e :: S$ into $\\mathit{uf}$ and folding the list $S$ into the union-find state that merges the components of $u$ and $v$ in $\\mathit{uf}$ induce the same partition of the nodes: for all nodes $i$ and $j$, folding $e :: S$ into $\\mathit{uf}$ assigns $i$ and $j$ a common representative if and only if folding $S$ into the merge of $u$ and $v$ assigns $i$ and $j$ a common representative.",
+ "hypotheses_covered": [
+  "union-find state uf on n nodes",
+  "a weighted edge e with endpoints u, v",
+  "a list S of weighted edges"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Merging along $e :: S$ gives the same partition as first merging the endpoints of $e$ and\nthen merging along $S$:\n$\\mathtt{SamePartition}\\,(\\mathit{uf}.\\mathtt{mergeAll}\\,(e :: S))\\,((\\mathit{uf}.\\mathtt{merge}\\,e.u\\,e.v).\\mathtt{mergeAll}\\,S)$."
+}

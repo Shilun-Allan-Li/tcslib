@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prodDet_rrun",
+ "key": "141449cfee8e6edd",
+ "kind": "theorem",
+ "title": "Execution of a private-coin–deterministic product protocol",
+ "statement": "Let $X$, $Y$ be input types and $\\Omega_X$, $\\Omega_Y$ private-randomness types. Let $p_1$ be a private-coin finite-message protocol over these types with output type $\\alpha_1$, and let $p_2$ be a deterministic finite-message protocol over $X$, $Y$ with output type $\\alpha_2$. Then for all inputs $x : X$, $y : Y$ and all private coins $\\omega_x : \\Omega_X$, $\\omega_y : \\Omega_Y$, executing the product protocol of $p_1$ and $p_2$ on $x$, $y$ with coins $\\omega_x$, $\\omega_y$ yields the pair whose first component is the output of $p_1$ executed on $x$, $y$ with coins $\\omega_x$, $\\omega_y$ and whose second component is the output of the deterministic protocol $p_2$ run on $x$, $y$.",
+ "hypotheses_covered": [
+  "p_1 is a private-coin finite-message protocol with output type α₁",
+  "p_2 is a deterministic finite-message protocol with output type α₂",
+  "public inputs x : X and y : Y",
+  "private coins ω_x : Ω_X and ω_y : Ω_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $x, y, \\omega_x, \\omega_y$,\n\\[\n  (\\mathrm{prodDet}\\;p_1\\;p_2).\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y\n  \\;=\\; (p_1.\\mathrm{rrun}\\;x\\;y\\;\\omega_x\\;\\omega_y,\\; p_2.\\mathrm{run}\\;x\\;y).\n\\]"
+}

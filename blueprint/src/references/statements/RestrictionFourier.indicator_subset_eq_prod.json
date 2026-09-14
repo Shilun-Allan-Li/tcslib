@@ -1,0 +1,15 @@
+{
+ "lean_name": "RestrictionFourier.indicator_subset_eq_prod",
+ "key": "10b6246a61c4efeb",
+ "kind": "lemma",
+ "title": "Indicator of a subset lying among free variables as a coordinate product",
+ "statement": "Let $\\rho$ be a restriction on $n$ variables — a map assigning each index $i \\in \\{0,\\dots,n-1\\}$ either a fixed Boolean value or the free mark — and let $T \\subseteq \\{0,\\dots,n-1\\}$. Then the indicator of the event that every index in $T$ is free under $\\rho$ factors as a product over all $n$ coordinates: \\[ \\mathbf{1}\\bigl[\\,T \\subseteq \\{i : \\rho(i)\\ \\text{is free}\\}\\,\\bigr] \\;=\\; \\prod_{i=0}^{n-1} c_i, \\] where the factor $c_i$ equals $\\mathbf{1}[\\rho(i)\\ \\text{is free}]$ when $i \\in T$ and equals $1$ otherwise.",
+ "hypotheses_covered": [
+  "T is a finite subset of the n indices",
+  "ρ is a restriction on n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a set $T \\subseteq \\{0,\\dots,n-1\\}$ and a restriction $\\rho$, the indicator of the event\n$T \\subseteq \\mathrm{freeVars}(\\rho)$ equals the product over all coordinates $i$ of the factor\nthat is the indicator of $\\rho(i) = \\star$ when $i \\in T$, and $1$ otherwise."
+}

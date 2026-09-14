@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_dualProtocol_eq_bobInfoTerm",
+ "key": "f7e6b201c48684f4",
+ "kind": "theorem",
+ "title": "Alice–Bob duality of the disjointness information terms",
+ "statement": "Fix a length $n \\ge 1$ and a deterministic communication protocol $p$ for the set-disjointness problem, whose inputs are subsets of $\\{0, \\dots, n-1\\}$. Write $\\mu$ for the hard-distribution measure on samples conditioned on the event that Alice's set $X$ and Bob's set $Y$ are disjoint, let $T$ be the special coordinate, and let $M_q$ denote the transcript produced by a protocol $q$ on the input $(X, Y)$. Let $p^\\ast$ be the protocol dual, obtained from $p$ by exchanging the roles of Alice and Bob and reversing the coordinate order of both input sets. Then the conditional mutual information (under $\\mu$) between Alice's bit $x_T$ at the special coordinate and the transcript of $p^\\ast$, given the special coordinate together with Alice's bits strictly before $T$ and Bob's bits from $T$ onward, equals the conditional mutual information between Bob's bit $y_T$ at the special coordinate and the transcript of $p$, given the special coordinate together with Alice's bits up to and including $T$ and Bob's bits strictly after $T$:\n\\[\nI\\!\\left[\\,x_T : M_{p^\\ast} \\mid (T,\\, x_{<T},\\, y_{\\ge T})\\,;\\, \\mu\\,\\right]\n\\;=\\;\nI\\!\\left[\\,y_T : M_{p} \\mid (T,\\, x_{\\le T},\\, y_{>T})\\,;\\, \\mu\\,\\right].\n\\]",
+ "hypotheses_covered": [
+  "length n ≥ 1",
+  "a deterministic disjointness protocol p on n coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Alice's corrected information term for the dual protocol is Bob's corrected information term for the original protocol."
+}

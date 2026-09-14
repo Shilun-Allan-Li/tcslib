@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.coordinateAliceCondBits_fiber_eq_iInter",
+ "key": "4dc2d21d5517d6ea",
+ "kind": "theorem",
+ "title": "Alice's conditioning fiber as an intersection of coordinate fibers",
+ "statement": "Fix $n \\ge 1$, an index $i \\in \\{0, 1, \\dots, n-1\\}$, and a target bit-string $b \\colon \\{0,1,\\dots,n-1\\} \\to \\{\\mathrm{false},\\mathrm{true}\\}$. For a configuration $c$ that assigns to each coordinate one of the three disjointness states, write $A_i(c) \\in \\{\\mathrm{false},\\mathrm{true}\\}^n$ for Alice's fixed conditioning string and $A_{i,k}(c)$ for its value at coordinate $k$. Then the set of configurations whose conditioning string equals $b$ exactly is the intersection over all coordinates of the sets on which each individual conditioning bit is correct:\n\\[\nA_i^{-1}(\\{b\\}) \\;=\\; \\bigcap_{k=0}^{n-1} A_{i,k}^{-1}(\\{b_k\\}).\n\\]",
+ "hypotheses_covered": [
+  "n a positive natural number",
+  "a fixed index i in Fin n",
+  "a fixed target bit-string b : Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Technical auxiliary result for \\texttt{coordinateAliceCondBits\\_fiber\\_eq\\_iInter}."
+}

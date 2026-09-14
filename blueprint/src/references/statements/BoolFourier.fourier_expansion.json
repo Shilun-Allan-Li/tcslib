@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolFourier.fourier_expansion",
+ "key": "33c8bd1254c37c1e",
+ "kind": "lemma",
+ "title": "Fourier–Walsh expansion",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function and let $x \\in \\{0,1\\}^n$. Then $f$ agrees pointwise with the sum of its Walsh characters weighted by its Fourier coefficients:\n\\[\n  f(x) = \\sum_{S \\subseteq [n]} \\hat f(S)\\,\\chi_S(x),\n\\]\nwhere the sum ranges over all subsets $S$ of $[n]$, $\\hat f(S) = \\langle f, \\chi_S\\rangle$ is the Fourier coefficient of $f$ at $S$, and $\\chi_S$ is the Walsh character of $S$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on {0,1}^n",
+  "x is a point of the hypercube {0,1}^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every Boolean function $f : \\{0,1\\}^n \\to \\mathbb{R}$ expands in the\nWalsh--Fourier basis:\n\\[\n  f(x) = \\sum_{S \\subseteq [n]} \\hat f(S)\\,\\chi_S(x).\n\\]"
+}

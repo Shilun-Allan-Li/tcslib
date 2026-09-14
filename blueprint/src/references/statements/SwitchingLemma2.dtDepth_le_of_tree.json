@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.dtDepth_le_of_tree",
+ "key": "e0b6501ceb9cba7c",
+ "kind": "lemma",
+ "title": "Decision-tree depth bound from a computing tree",
+ "statement": "Let $f : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ be a Boolean function, and let $T$ be a decision tree on $n$ variables of depth at most $d$ that computes $f$, meaning $T$ evaluates to $f(x)$ on every input $x$. Then the decision-tree depth of $f$ is at most $d$.",
+ "hypotheses_covered": [
+  "T is a decision tree on n variables",
+  "depth of T is at most d",
+  "T evaluates to f(x) for every input x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a decision tree $T$ of depth at most $d$ computes $f$ (i.e.\\ $T.\\mathrm{eval}\\,x = f(x)$\nfor all $x$), then the decision-tree depth of $f$ is at most $d$."
+}

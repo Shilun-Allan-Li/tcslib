@@ -1,0 +1,17 @@
+{
+ "lean_name": "hedgeDist_sum",
+ "key": "d53711161d1536b8",
+ "kind": "lemma",
+ "title": "The Hedge distribution sums to one",
+ "statement": "Fix a number of experts $N \\ge 1$, a horizon $T$, a learning rate $\\eta \\in \\bbr$, a loss sequence $\\ell$ for $N$ experts over $T$ rounds, and a round $t$. Then the Hedge distribution at round $t$ sums to one over all experts,\n\\[\n  \\sum_{i=1}^{N} p_t(i) = 1,\n\\]\nso it is a probability distribution on the $N$ experts.",
+ "hypotheses_covered": [
+  "at least one expert (N ≥ 1, from NeZero N)",
+  "arbitrary learning rate η ∈ ℝ",
+  "arbitrary loss sequence ℓ for N experts over T rounds",
+  "arbitrary round t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $\\eta$, valid loss sequence $\\ell$, and time $t$,\n$\\sum_{i=1}^{N} p_t(i) = 1$, so the Hedge distribution is a proper probability\ndistribution."
+}

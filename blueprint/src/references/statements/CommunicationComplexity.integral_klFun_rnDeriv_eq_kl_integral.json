@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral",
+ "key": "b64583322cd8a6e4",
+ "kind": "theorem",
+ "title": "Two integral forms of the Kullback–Leibler divergence",
+ "statement": "Let $\\mu$ and $\\nu$ be probability measures on a measurable space $\\Omega$ with $\\mu$ absolutely continuous with respect to $\\nu$, and write $\\frac{d\\mu}{d\\nu}$ for the (real-valued) Radon–Nikodym density of $\\mu$ with respect to $\\nu$. Assume that the log-likelihood ratio $x \\mapsto \\log\\frac{d\\mu}{d\\nu}(x)$ is $\\mu$-integrable. Then\n\\[\n  \\int_\\Omega \\varphi\\!\\left(\\frac{d\\mu}{d\\nu}(x)\\right) d\\nu(x)\n  \\;=\\;\n  \\int_\\Omega \\log\\frac{d\\mu}{d\\nu}(x)\\, d\\mu(x),\n\\]\nwhere $\\varphi(t) = t\\log t + 1 - t$.",
+ "hypotheses_covered": [
+  "$\\mu$ and $\\nu$ are probability measures on a measurable space $\\Omega$",
+  "$\\mu$ is absolutely continuous with respect to $\\nu$ ($\\mu \\ll \\nu$)",
+  "the log-likelihood ratio $\\log(d\\mu/d\\nu)$ is $\\mu$-integrable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mu \\ll \\nu$ and $\\mathrm{llr}(\\mu,\\nu)$ is $\\mu$-integrable, then\n\\[\n  \\int \\mathrm{klFun}\\bigl(\\mathrm{rnDensity}(\\mu,\\nu)(x)\\bigr)\\,d\\nu\n  \\;=\\;\n  \\int \\mathrm{llr}(\\mu,\\nu)(x)\\,d\\mu.\n\\]"
+}

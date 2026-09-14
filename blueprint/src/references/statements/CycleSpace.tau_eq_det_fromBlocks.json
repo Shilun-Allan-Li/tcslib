@@ -1,0 +1,18 @@
+{
+ "lean_name": "CycleSpace.tau_eq_det_fromBlocks",
+ "key": "a559e010f9b13458",
+ "kind": "theorem",
+ "title": "Spanning-tree count as a determinant of stacked bond- and cycle-space basis matrices",
+ "statement": "Let $G$ be a finite digraph with vertex set $V$ and arc set $A$, and let $T$ be a spanning tree of $G$. Let $B$ be the basis matrix of the bond space $\\mathcal{B}$ corresponding to $T$, whose rows are indexed by the arcs of $T$, and let $C$ be the basis matrix of the cycle space $\\mathcal{C}$ corresponding to $T$, whose rows are indexed by the arcs not in $T$; both have integer entries and columns indexed by all of $A$. Form the square integer matrix $M$ with rows indexed by $A$ by assigning to each arc of $T$ its row of $B$ and to each remaining arc its row of $C$. Then the number $\\tau(G)$ of spanning trees of $G$ satisfies $\\tau(G) = \\det M$ or $\\tau(G) = -\\det M$; that is, $\\tau(G) = \\abs{\\det M}$.",
+ "hypotheses_covered": [
+  "T is a spanning tree of the digraph",
+  "B is the tree-T basis matrix of the bond space (rows indexed by arcs in T)",
+  "C is the tree-T basis matrix of the cycle space (rows indexed by arcs not in T)",
+  "B and C have integer entries with columns indexed by all arcs",
+  "the square matrix M is formed by stacking B on the arcs of T and C on the complementary arcs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{\\texttt{$\\tau$(G) = $\\pm$ det [B; C]}}, the determinant of the square\nmatrix obtained by stacking a tree-basis matrix of \\texttt{$\\mathcal{B}$} on top of one\nof \\texttt{$\\mathcal{C}$}."
+}

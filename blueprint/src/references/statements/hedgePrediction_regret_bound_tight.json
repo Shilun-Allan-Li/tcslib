@@ -1,0 +1,19 @@
+{
+ "lean_name": "hedgePrediction_regret_bound_tight",
+ "key": "8b158bdfa16ffd02",
+ "kind": "theorem",
+ "title": "Tight regret bound for Hedge's convex predictions",
+ "statement": "Let $S \\subseteq \\bbr$ be a convex set, let $\\eta > 0$ be a learning rate, and consider a prediction problem with $N \\ge 1$ experts over $T$ rounds, an outcome $o_t$ at each round $t$, and a loss function $\\ell(x, o)$. Suppose that every expert prediction $p_t(i)$ lies in $S$, that for each round $t$ the map $x \\mapsto \\ell(x, o_t)$ is convex on $S$, and that the induced loss sequence is valid, so that each expert's per-round loss $\\ell(p_t(i), o_t)$ lies in $[0,1]$. Then the cumulative loss $\\mathcal{L}^{\\mathrm{pred}}_T = \\sum_{t} \\ell(\\widehat{x}_t, o_t)$ of Hedge's weighted-average predictions $\\widehat{x}_t$ exceeds the best expert loss in hindsight $L^* = \\min_{i} \\sum_{t} \\ell(p_t(i), o_t)$ by at most\n\\[\n  \\mathcal{L}^{\\mathrm{pred}}_T - L^* \\;\\le\\; \\frac{\\ln N}{\\eta} + \\frac{\\eta T}{8}.\n\\]",
+ "hypotheses_covered": [
+  "S is a convex subset of the reals",
+  "learning rate eta > 0",
+  "at least one expert (N >= 1)",
+  "every expert prediction lies in S",
+  "each round's loss is convex in the prediction on S",
+  "the induced loss sequence is valid (per-round losses in [0,1])"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S \\subseteq \\mathbb{R}$ be convex, $\\eta > 0$, and suppose all expert predictions\nlie in $S$, each round loss is convex on $S$, and the induced loss table is valid.\nThen the regret of Hedge's actual weighted-average predictions satisfies\n\\[\n  \\mathcal{L}^{\\mathrm{pred}}_T\n    - \\min_{i}\\,\\sum_{t} \\ell(p_t(i),\\, o_t)\n  \\;\\le\\;\n  \\frac{\\ln N}{\\eta} + \\frac{\\eta T}{8}.\n\\]"
+}

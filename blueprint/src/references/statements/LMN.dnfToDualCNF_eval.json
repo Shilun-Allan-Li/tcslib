@@ -1,0 +1,15 @@
+{
+ "lean_name": "LMN.dnfToDualCNF_eval",
+ "key": "eab815966dd2827a",
+ "kind": "lemma",
+ "title": "Dual CNF computes the negation of a DNF",
+ "statement": "Let $\\varphi$ be a DNF formula on $n$ variables — a disjunction of terms, each term a conjunction of literals — and let $x \\in \\{0,1\\}^n$ be an assignment. Form its De~Morgan dual CNF by negating every literal of every term of $\\varphi$ and reading each resulting term as a clause (a disjunction of literals), so that the whole is a conjunction of clauses. Then this dual CNF evaluates on $x$ to the negation of the value of $\\varphi$ on $x$.",
+ "hypotheses_covered": [
+  "φ is a DNF on n variables",
+  "x is an assignment Fin n → Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x : \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$, the dual CNF evaluates to the\nnegation of the original DNF: $\\mathrm{CNF.eval}\\,(\\mathrm{dnfToDualCNF}\\,\\varphi)\\,x\n= \\neg(\\mathrm{DNF.eval}\\,\\varphi\\,x)$."
+}

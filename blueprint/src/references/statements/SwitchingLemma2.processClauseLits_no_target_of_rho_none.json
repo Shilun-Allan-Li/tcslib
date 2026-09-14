@@ -1,0 +1,19 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_no_target_of_rho_none",
+ "key": "644e5be7f8562ee5",
+ "kind": "lemma",
+ "title": "Still-free variables avoid the clause's literals",
+ "statement": "Fix a number $n$ of variables, and let $\\rho_0$ and $\\sigma$ be restrictions on them. Suppose the free literals of a clause are given as a list, each literal paired with its position index, and let a decision-tree path be a list of variable–direction pairs whose length is at least the number of literals. Running the clause-processing operation on this list, this path, $\\rho_0$, and $\\sigma$ returns an updated restriction $\\rho_0'$ in place of $\\rho_0$. If a variable $v$ is free under $\\rho_0$ and remains free under $\\rho_0'$, then no literal on the list has $v$ as its underlying variable.",
+ "hypotheses_covered": [
+  "ρ₀ and σ are restrictions on n variables",
+  "the clause's literals form a list, each tagged with its position index",
+  "the path is a list of variable–direction pairs",
+  "the number of literals is at most the path length",
+  "v is free under ρ₀",
+  "v remains free under the updated restriction ρ₀' returned by the operation"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Contrapositive of $\\rho_0$-stability: if $\\rho_0\\,v = \\mathrm{none}$, the\n\\texttt{SwitchingLemma2.processClauseLits} output keeps $\\rho_0$ unset at $v$, and there\nare at least as many path entries as literals, then no input literal has variable $v$."
+}

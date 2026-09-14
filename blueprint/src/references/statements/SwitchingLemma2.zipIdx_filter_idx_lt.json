@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.zipIdx_filter_idx_lt",
+ "key": "42e311ed4e93fc1d",
+ "kind": "lemma",
+ "title": "Position index of a filtered tagged list stays below the length bound",
+ "statement": "Let $t$ be a finite list of elements of a type $\\alpha$, and tag each entry of $t$ with its position to form the list of pairs $(t_i, i)$, whose second coordinates run through $0, 1, \\dots, |t| - 1$. Let $p$ be any Boolean predicate on such pairs, and let $w$ be a natural number with $|t| \\le w$. If a pair $(l, \\mathit{idx})$ occurs in the sublist obtained by keeping exactly those tagged pairs on which $p$ is true, then $\\mathit{idx} < w$.",
+ "hypotheses_covered": [
+  "t is a list over α, tagged with positional indices",
+  "p is a Boolean predicate on element–index pairs",
+  "(l, idx) belongs to the filtered tagged list",
+  "the length of t is at most w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $(l, \\mathit{idx})$ arises from filtering $t.\\mathrm{zipIdx}$ by a predicate and $t$ has\nlength at most $w$, then $\\mathit{idx} < w$."
+}

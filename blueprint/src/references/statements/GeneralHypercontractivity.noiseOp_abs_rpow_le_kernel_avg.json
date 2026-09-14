@@ -1,0 +1,18 @@
+{
+ "lean_name": "GeneralHypercontractivity.noiseOp_abs_rpow_le_kernel_avg",
+ "key": "c7498224afd90b9a",
+ "kind": "lemma",
+ "title": "Jensen bound for powers of the noise operator",
+ "statement": "Let $n$ be a natural number, and let $T_\\rho$ denote the noise operator with parameter $\\rho \\in [0,1]$ acting on Boolean functions $f : \\{0,1\\}^n \\to \\bbr$. Then for every real exponent $s \\ge 1$ and every point $x \\in \\{0,1\\}^n$,\n\\[\n  \\abs{(T_\\rho f)(x)}^{s} \\;\\le\\; \\sum_{y \\in \\{0,1\\}^n} K_\\rho(x,y)\\,\\abs{f(y)}^{s},\n\\]\nwhere $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$ is the noise kernel of $\\rho$-correlated pairs.",
+ "hypotheses_covered": [
+  "ρ ≥ 0",
+  "ρ ≤ 1",
+  "s ≥ 1",
+  "f a Boolean function of arity n",
+  "x a point of the cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 \\le \\rho \\le 1$, $s \\ge 1$, $f : \\mathrm{BoolCube}\\,n \\to \\bbr$ and any $x$,\n\\[\n  \\abs{(T_\\rho f)(x)}^s \\;\\le\\; \\sum_{y} K_\\rho(x,y)\\,\\abs{f(y)}^s.\n\\]"
+}

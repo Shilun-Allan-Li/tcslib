@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialY_of_mem_fiber_specialPair",
+ "key": "633cfff2e604c358",
+ "kind": "theorem",
+ "title": "Mixing two fiber samples preserves the fiber and Bob's special bit",
+ "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the length-$n$ disjointness problem, and consider the hard-distribution samples together with the derived variable $Z = (M, T, X_{<T}, Y_{>T})$ recording the transcript, the special coordinate, Alice's bits before it, and Bob's bits after it. Let $z$ be an achievable value of $Z$, let $\\omega$ and $\\omega'$ be two samples, and let $b = (b_1, b_2)$ be a pair of Booleans. Suppose that both $\\omega$ and $\\omega'$ produce the value $z$ (that is, each lies in the fiber $Z^{-1}(z)$), and that the special-coordinate bit-pair of $\\omega'$ equals $b$, so that Alice's and Bob's bits at the special coordinate of $\\omega'$ are $b_1$ and $b_2$ respectively. Then the mixed sample formed by taking Alice's data from $\\omega$ and Bob's data from $\\omega'$ again produces the value $z$, and its bit for Bob at the special coordinate equals $b_2$.",
+ "hypotheses_covered": [
+  "ω lies in the fiber Z^{-1}(z)",
+  "ω' lies in the fiber Z^{-1}(z)",
+  "the special-coordinate bit-pair of ω' equals b = (b_1, b_2)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If one sample in a fiber has special pair $b$ and the other is just in the fiber, mixing with the special-pair sample on Bob's side lands in the fiber with Bob special bit \\texttt{b.2}."
+}

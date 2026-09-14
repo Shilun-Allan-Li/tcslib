@@ -1,0 +1,17 @@
+{
+ "lean_name": "matrix_khintchine",
+ "key": "759312c5364f3070",
+ "kind": "theorem",
+ "title": "A positive constant below the matrix Khintchine bound",
+ "statement": "Let $k$ be a positive integer, let $\\sigma^2 > 0$ be a real number, and let $d_1$ and $d_2$ be positive integers. Then there exists a positive real number $C_{\\mathrm{MK}} > 0$ satisfying\n\\[\n  C_{\\mathrm{MK}} \\ \\le\\ \\sqrt{\\,2\\,\\sigma^2 \\log(d_1 + d_2)\\,}.\n\\]",
+ "hypotheses_covered": [
+  "$k$ a positive integer ($0 < k$)",
+  "$\\sigma^2 > 0$ real",
+  "$d_1$ a positive integer ($0 < d_1$)",
+  "$d_2$ a positive integer ($0 < d_2$)"
+ ],
+ "confidence": "high",
+ "caveat": "The Lean statement is fully understood and rendered exactly: it asserts only the existence of some positive real lying at or below the stated square root. Despite its name, it does not formalise the matrix Khintchine inequality — no matrices, random signs, or spectral norms appear, and the hypothesis $0 < k$ plays no role in the conclusion. I have stated what the Lean actually claims, not the theorem the name evokes.",
+ "rubric": [],
+ "replaced": "Fact 4.1 (Tropp 2015, Theorem 4.1.1), stated abstractly through the bounding quantity it\nproduces: for $k > 0$, a variance proxy $\\sigma^2 > 0$ and dimensions $d_1, d_2 > 0$ there is a\nconstant $C_{\\mathrm{MK}} > 0$ with\n\\[\n  C_{\\mathrm{MK}} \\ \\le\\ \\sqrt{\\,2\\,\\sigma^2 \\log(d_1 + d_2)\\,}.\n\\]\nThis is the bound the Khintchine inequality supplies for\n$\\E\\bigl[\\norm{\\sum_i b_i X_i}_2\\bigr]$ when the $b_i$ are i.i.d.\\ uniform signs and\n$\\sigma^2 = \\max\\bigl(\\norm{\\sum_i X_i X_i^{\\mathsf T}}_2, \\norm{\\sum_i X_i^{\\mathsf T} X_i}_2\\bigr)$.\n\n\\emph{Placeholder.}  No matrices, random signs, or spectral norms appear in the Lean\nstatement: it asserts only that some positive real lies below the stated square root, and is\ndischarged by taking that square root itself.  It records the shape of the Khintchine bound\nfor downstream use and does \\emph{not} formalise Tropp's inequality.  It must not be cited as\na formalisation of that inequality."
+}

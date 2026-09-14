@@ -1,0 +1,21 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.exists_listDecodable_code",
+ "key": "8470bf20d308e3c9",
+ "kind": "lemma",
+ "title": "Existence of list-decodable codes",
+ "statement": "Let $\\alpha$ be a finite field, and fix natural numbers $n$, $L$, $M$ and a real number $p$ with $0 \\le p \\le 1$, $1 \\le L$, $L < M$, and $M \\le \\abs{\\alpha}^n$. Suppose $V$ is a natural number bounding the volume of every Hamming ball of radius $\\lfloor pn\\rfloor$, in the sense that each such ball around an arbitrary word $y \\in \\alpha^n$ contains at most $V$ codewords, and suppose that\n\\[\n\\abs{\\alpha}^n \\cdot \\binom{V}{L+1} \\cdot \\binom{\\abs{\\alpha}^n - (L+1)}{\\,M-(L+1)\\,} \\;<\\; \\binom{\\abs{\\alpha}^n}{M}.\n\\]\nThen there exists a code $C$ of length $n$ over $\\alpha$ consisting of exactly $M$ codewords that is $(p,L)$-list-decodable.",
+ "hypotheses_covered": [
+  "finite field alphabet with q = |α| symbols",
+  "0 ≤ p",
+  "p ≤ 1",
+  "1 ≤ L",
+  "L < M",
+  "M ≤ |α|^n",
+  "every Hamming ball of radius ⌊pn⌋ contains at most V codewords",
+  "the counting inequality |α|^n·C(V,L+1)·C(|α|^n−(L+1), M−(L+1)) < C(|α|^n, M)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the ball volume $V$ and code size $M$ satisfy the counting inequality\n\\[\n|\\alpha|^n\\cdot\\tbinom{V}{L+1}\\cdot\\tbinom{|\\alpha|^n-(L+1)}{M-(L+1)}\n\\;<\\;\n\\tbinom{|\\alpha|^n}{M},\n\\]\nthen there exists a code $C$ of size $M$ that is $(p,L)$-list-decodable."
+}

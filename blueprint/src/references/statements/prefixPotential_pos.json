@@ -1,0 +1,17 @@
+{
+ "lean_name": "prefixPotential_pos",
+ "key": "bf20a4ef0817cee4",
+ "kind": "lemma",
+ "title": "Positivity of the prefix potential",
+ "statement": "Let $G$ be a finite two-player zero-sum game with at least one row action, fix a learning rate $\\eta \\in \\bbr$, and let $a_0, \\dots, a_{t-1}$ be any prefix of column actions. Then the prefix potential is strictly positive,\n\\[\n  \\Phi_t \\;=\\; \\sum_{i} \\exp\\!\\bigl(-\\eta\\, L_t(i)\\bigr) \\;>\\; 0,\n\\]\nwhere $L_t(i)$ is the prefix cumulative loss of row $i$.",
+ "hypotheses_covered": [
+  "at least one row action (M ≥ 1)",
+  "a finite zero-sum game G",
+  "a learning rate η ∈ ℝ",
+  "a prefix of t column actions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When $M \\ge 1$, the prefix potential $\\Phi_t > 0$, since it is a non-empty sum\nof positive terms."
+}

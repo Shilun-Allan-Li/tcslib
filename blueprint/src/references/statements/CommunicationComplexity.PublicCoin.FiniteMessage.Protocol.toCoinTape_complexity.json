@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity",
+ "key": "c4809334973e7e56",
+ "kind": "theorem",
+ "title": "Coin-tape conversion preserves complexity",
+ "statement": "Let $\\Omega$ be a finite probability space, and let $p$ be a public-coin finite-message protocol over shared randomness $\\Omega$ with input sets $X$, $Y$ and output type $\\alpha$. For every real number $\\delta > 0$, the coin-tape conversion of $p$ at slack $\\delta$ yields a length $n$ and a finite-message protocol over $\\mathrm{CoinTape}(n)$ whose communication complexity equals the communication complexity of $p$.",
+ "hypotheses_covered": [
+  "Ω is a finite probability space",
+  "p is a public-coin finite-message protocol over Ω with inputs X, Y and output α",
+  "δ > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any finite-message protocol $p$ over a finite probability space $\\Omega$ and any\n$\\delta > 0$, the complexity of the \\texttt{CoinTape} approximation\n$(p.\\mathrm{toCoinTape}\\;\\delta).2$ equals the complexity of the original protocol $p$."
+}

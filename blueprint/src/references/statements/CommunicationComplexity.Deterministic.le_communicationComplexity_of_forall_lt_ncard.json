@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard",
+ "key": "9a01be53302d7702",
+ "kind": "theorem",
+ "title": "Rectangle-partition lower bound on communication complexity",
+ "statement": "Let $g : X \\to Y \\to \\alpha$ be a two-argument function and let $n$ be a natural number. If every monochromatic rectangle partition of $g$ consists of strictly more than $2^n$ parts, then the deterministic communication complexity of $g$ satisfies $n + 1 \\le D(g)$.",
+ "hypotheses_covered": [
+  "g : X → Y → α is a two-argument function",
+  "n is a natural number",
+  "every monochromatic rectangle partition of g has more than 2^n parts (2^n < |Part|)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nTo prove $\\mathrm{CC}(g) \\geq n + 1$, it suffices to show that every monochromatic\nrectangle partition of $g$ has more than $2^n$ parts: if every $\\texttt{IsMonoPartition}\\,P\\,g$\nsatisfies $2^n < |P|$, then $(n+1) \\leq \\mathrm{CC}(g)$."
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "statement", "hypotheses_covered", "confidence"],
+  "properties": {
+    "title": {"type": "string", "minLength": 3, "maxLength": 120},
+    "statement": {"type": "string", "minLength": 20, "maxLength": 4000},
+    "hypotheses_covered": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "confidence": {"type": "string", "enum": ["high", "low"]},
+    "caveat": {"type": "string"}
+  }
+}

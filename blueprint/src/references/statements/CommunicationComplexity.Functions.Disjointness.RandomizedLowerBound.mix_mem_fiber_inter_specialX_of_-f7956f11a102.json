@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialX_of_mem_specialPair_fiber",
+ "key": "d7e79505f345dcc5",
+ "kind": "theorem",
+ "title": "Mixing preserves the Z-fiber and the special Alice bit",
+ "statement": "Fix a deterministic disjointness protocol $p$ on inputs of length $n$, and let $z$ be an achievable value of the variable $Z = (M, T, X_{<T}, Y_{>T})$, whose fiber $Z^{-1}(z)$ is the set of hard-distribution samples mapping to $z$. Let $\\omega_{\\mathrm{pair}}$ and $\\omega$ be two samples of this fiber, and suppose that the pair of bits at the special coordinate of $\\omega_{\\mathrm{pair}}$, namely Alice's bit and Bob's bit there, equals $b = (b_1, b_2)$. Form the mixed sample by taking Alice's input from $\\omega_{\\mathrm{pair}}$ and Bob's input from $\\omega$ (keeping their common special coordinate $T$, the bits of $X$ before $T$, and the bits of $Y$ after $T$). Then this mixed sample again lies in $Z^{-1}(z)$, and Alice's bit at its special coordinate equals $b_1$.",
+ "hypotheses_covered": [
+  "$\\omega_{\\mathrm{pair}}$ lies in the fiber $Z^{-1}(z)$",
+  "the pair of bits at the special coordinate of $\\omega_{\\mathrm{pair}}$ equals $b = (b_1, b_2)$",
+  "$\\omega$ lies in the fiber $Z^{-1}(z)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If one sample in a fiber has special pair $b$ and the other is just in the fiber, mixing with the special-pair sample on Alice's side lands in the fiber with Alice special bit \\texttt{b.1}."
+}

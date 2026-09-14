@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolFourier.BoolToPM1_xor",
+ "key": "6c3b89245fdaaa85",
+ "kind": "lemma",
+ "title": "XOR as multiplication under the $\\pm 1$ embedding",
+ "statement": "Let $\\mathrm{BoolToPM1} : \\mathrm{Bool} \\to \\bbr$ be the map sending $\\mathtt{false}$ to $1$ and $\\mathtt{true}$ to $-1$. Then for all Booleans $a$ and $b$,\n\\[\n  \\mathrm{BoolToPM1}(a \\oplus b) = \\mathrm{BoolToPM1}(a)\\cdot\\mathrm{BoolToPM1}(b),\n\\]\nso the exclusive-or $a \\oplus b$ is carried to the ordinary product in $\\{-1,1\\}\\subset\\bbr$.",
+ "hypotheses_covered": [
+  "a, b are arbitrary Booleans"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $a, b : \\mathrm{Bool}$,\n$\\mathrm{BoolToPM1}(a \\oplus b) = \\mathrm{BoolToPM1}(a) \\cdot \\mathrm{BoolToPM1}(b)$;\nthat is, XOR corresponds to multiplication in $\\{\\pm 1\\} \\subset \\mathbb{R}$."
+}

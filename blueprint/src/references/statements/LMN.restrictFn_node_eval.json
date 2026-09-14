@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.restrictFn_node_eval",
+ "key": "9c32d82c999d569f",
+ "kind": "lemma",
+ "title": "Restriction commutes with gate evaluation",
+ "statement": "Fix $n$ variables and let $C_1,\\dots,C_k$ be a finite list of Boolean circuits on them, let $\\rho$ be a restriction, and let $b$ be a Boolean flag. For a Boolean function $f$ write $f_\\rho$ for its restriction by $\\rho$, the function $x \\mapsto f(\\rho.\\mathrm{extend}\\,x)$. Form the circuit node with children $C_1,\\dots,C_k$, read as an AND gate when $b$ is true and as an OR gate when $b$ is false, and let $g$ be its evaluation. Then the restriction of the gate's evaluation agrees, as a Boolean function, with the gate applied to the restricted evaluations of the children: for every assignment $x$,\n\\[\ng_\\rho(x) =\n\\begin{cases}\n\\displaystyle\\bigwedge_{i=1}^{k} (C_i)_\\rho(x) & \\text{if } b = \\mathrm{true},\\\\[1ex]\n\\displaystyle\\bigvee_{i=1}^{k} (C_i)_\\rho(x) & \\text{if } b = \\mathrm{false},\n\\end{cases}\n\\]\nwhere $(C_i)_\\rho$ denotes the restriction by $\\rho$ of the evaluation of $C_i$, an empty conjunction is $\\mathrm{true}$, and an empty disjunction is $\\mathrm{false}$.",
+ "hypotheses_covered": [
+  "a Boolean flag isAnd selecting AND vs OR",
+  "a finite list cs of child circuits",
+  "a restriction ρ",
+  "empty conjunction unit is true, empty disjunction unit is false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The restriction of the evaluation of a node circuit equals the conjunction or disjunction,\naccording to $\\mathit{isAnd}$, of the restricted evaluations of its children. That is,\n$\\mathrm{restrictFn}\\,(\\mathrm{eval}\\,(\\mathrm{node}\\,\\mathit{isAnd}\\,cs))\\,\\rho$ sends $x$\nto the fold-$\\mathrm{and}$ over $cs$ of $\\mathrm{restrictFn}\\,c.\\mathrm{eval}\\,\\rho\\,x$ when\n$\\mathit{isAnd}$ is true, and to the corresponding fold-$\\mathrm{or}$ otherwise."
+}

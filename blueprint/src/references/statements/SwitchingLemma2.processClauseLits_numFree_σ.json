@@ -1,0 +1,16 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_numFree_σ",
+ "key": "c1445d7d9f30327e",
+ "kind": "lemma",
+ "title": "Free-variable count of the σ-output after processing a clause",
+ "statement": "Fix a list of literals on $n$ variables, each paired with its position index within its clause; a decision path presented as a list of variable–direction pairs; and two restrictions $\\rho_0, \\sigma$ on $n$ variables. For a restriction $\\rho$, write $F(\\rho)$ for the number of variables left free by $\\rho$. Suppose that $\\rho_0$ and $\\sigma$ are free at exactly the same variables (for every variable $v$, $\\rho_0(v)$ is unset if and only if $\\sigma(v)$ is unset), that each listed literal's variable is free in $\\rho_0$, and that the listed literals have pairwise distinct variables. Let $\\sigma'$ be the restriction returned as the $\\sigma$-component of processing these literals against the path. Then\n\\[\nF(\\sigma') + \\min(\\ell, m) = F(\\sigma),\n\\]\nwhere $\\ell$ is the number of literals and $m$ is the length of the path.",
+ "hypotheses_covered": [
+  "ρ₀ and σ are free at exactly the same variables",
+  "each listed literal's variable is free in ρ₀",
+  "the listed literals have pairwise distinct variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the invariants that $\\rho_0$ and $\\sigma$ share free variables and each\nprocessed literal's variable is free in $\\rho_0$, the $\\sigma$-component of\n$\\mathrm{processClauseLits}$ has $\\mathrm{numFree}$ decreased by exactly\n$\\min(\\mathrm{lits.length}, \\mathrm{path.length})$."
+}

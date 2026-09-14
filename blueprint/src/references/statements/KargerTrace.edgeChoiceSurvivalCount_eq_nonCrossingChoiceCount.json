@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.edgeChoiceSurvivalCount_eq_nonCrossingChoiceCount",
+ "key": "6ebfe727f21e3263",
+ "kind": "lemma",
+ "title": "Surviving edge occurrences equal non-crossing edge count",
+ "statement": "Let $s$ be a state of the contraction process, consisting of a loopless multigraph $G$ together with a distinguished cut $S \\subseteq V(G)$, and enumerate the edge multiset of $G$ as a finite set of edge occurrences $(e, i)$, where the index $i$ distinguishes parallel copies of the same edge. Say that an occurrence $(e, i)$ survives when its underlying edge $e$ does not cross $S$, that is, when it is not the case that one endpoint of $e$ lies in $S$ and the other lies outside $S$. Then the number of surviving edge occurrences equals the number of edges of $G$ that do not cross $S$, counted with multiplicity.",
+ "hypotheses_covered": [
+  "s is a state: a multigraph G with a distinguished cut S",
+  "edge occurrences enumerate the edge multiset with parallel-copy indices",
+  "an occurrence survives iff its underlying edge does not cross S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The number of surviving edge occurrences of a state equals its number of non-crossing edge\nchoices."
+}

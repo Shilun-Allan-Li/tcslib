@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity",
+ "key": "3f29acf7e7634613",
+ "kind": "theorem",
+ "title": "Complexity is preserved by passage to the private-coin model",
+ "statement": "Let $p$ be a deterministic finite-message protocol over input types $X$, $Y$ and output type $\\alpha$, and let $\\Omega_X$, $\\Omega_Y$ be arbitrary types to serve as private-randomness spaces. Form the private-coin finite-message protocol over $\\Omega_X$, $\\Omega_Y$ obtained from $p$ by having each player ignore their private coin, so that Alice's message function $f : X \\to \\beta$ is replaced by $(\\omega, x) \\mapsto f(x)$ and Bob's by $(\\omega, y) \\mapsto f(y)$, with the protocol tree otherwise unchanged. Then this private-coin protocol has the same communication complexity as $p$.",
+ "hypotheses_covered": [
+  "p is a deterministic finite-message protocol over X, Y, α",
+  "Ω_X, Ω_Y are arbitrary private-randomness types",
+  "the private-coin protocol is obtained by ignoring both coin inputs (comap along the second projections)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Embedding a deterministic finite-message protocol into the private-coin model\npreserves its complexity: $(p.\\mathrm{toPrivateCoin}).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

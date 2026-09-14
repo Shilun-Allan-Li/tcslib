@@ -1,0 +1,16 @@
+{
+ "lean_name": "RestrictionFourier.expectation_free_indicator_pair",
+ "key": "2815622b5369364b",
+ "kind": "lemma",
+ "title": "Probability that two fixed coordinates are both free",
+ "statement": "Fix $n$ and two distinct variables $i \\neq j$ among the $n$ variables, and let $p \\in \\bbr$. Write $w_p(\\rho)$ for the Bernoulli weight of a restriction $\\rho$ on $n$ variables, namely $p^{k}\\left(\\tfrac{1-p}{2}\\right)^{n-k}$ where $k$ is the number of free variables of $\\rho$. Then, summing over all such restrictions, the total weight carried by those $\\rho$ that leave both $i$ and $j$ free equals $p^2$; that is,\n\\[\n  \\sum_{\\rho} w_p(\\rho)\\,\\mathbf{1}[\\rho(i)\\text{ free}]\\,\\mathbf{1}[\\rho(j)\\text{ free}] = p^2.\n\\]",
+ "hypotheses_covered": [
+  "p is a real parameter",
+  "i and j are variables among the n variables",
+  "i ≠ j (distinct)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For distinct coordinates $i \\ne j$, the Bernoulli($p$)-weighted sum over all restrictions of the\nproduct of the two indicators that $i$ and $j$ are free equals $p^2$; that is,\n$\\E[\\mathbf{1}[i \\in J]\\,\\mathbf{1}[j \\in J]] = p^2$."
+}

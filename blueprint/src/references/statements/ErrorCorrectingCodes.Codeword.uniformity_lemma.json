@@ -1,0 +1,17 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.uniformity_lemma",
+ "key": "d959903cc298d2c5",
+ "kind": "theorem",
+ "title": "Random matrix images of a nonzero vector are uniform",
+ "statement": "Let $\\alpha$ be a finite field, and fix $n \\ge 0$ and $k \\ge 1$. Let $x \\in \\alpha^k$ be a nonzero vector. Then the distribution on $\\alpha^n$ obtained by sampling an $n \\times k$ matrix $G$ with entries in $\\alpha$ uniformly at random and returning the product $Gx$ coincides with the uniform distribution on $\\alpha^n$; that is, for every $v \\in \\alpha^n$,\n\\[\n\\frac{\\bigl|\\{\\,G \\in \\alpha^{n \\times k} : Gx = v\\,\\}\\bigr|}{\\abs{\\alpha}^{nk}} = \\frac{1}{\\abs{\\alpha}^{n}}.\n\\]",
+ "hypotheses_covered": [
+  "alpha is a finite field",
+  "codeword length k satisfies k >= 1",
+  "x is a nonzero codeword of length k",
+  "equality of the two distributions holds at every v in alpha^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $x\\neq 0$ and $k\\ge 1$, then for a uniformly random $n\\times k$ matrix $G$ over $\\alpha$,\nthe product $Gx$ is uniformly distributed over $\\alpha^n$:\n\\[\n\\Pr[Gx = v] = \\frac{1}{|\\alpha|^n}\n\\quad\\text{for all }v\\in\\alpha^n.\n\\]"
+}

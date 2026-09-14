@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mem_disjointEvent_of_specialY_eq_false",
+ "key": "af7fcab6ee4b33cd",
+ "kind": "theorem",
+ "title": "Disjointness when Bob's special bit is off",
+ "statement": "Fix $n \\ge 1$, and consider a sample from the hard distribution: a special coordinate $T \\in \\{1,\\dots,n\\}$, bits $x_T, y_T \\in \\{0,1\\}$ at that coordinate, and for every coordinate a label drawn from $\\{\\text{neither},\\text{leftOnly},\\text{rightOnly}\\}$ that fixes the two players' bits away from $T$. This sample determines Alice's set $X = \\{\\,i : \\text{Alice's bit at } i = 1\\,\\}$ and Bob's set $Y = \\{\\,i : \\text{Bob's bit at } i = 1\\,\\}$. If Bob's bit at the special coordinate satisfies $y_T = 0$, then $X$ and $Y$ are disjoint.",
+ "hypotheses_covered": [
+  "n a positive natural number",
+  "ω is a HardSample (special coordinate T, bits xT and yT, and a label per coordinate)",
+  "Bob's special bit yT = false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If Bob's special bit is \\texttt{false}, the generated inputs are disjoint."
+}

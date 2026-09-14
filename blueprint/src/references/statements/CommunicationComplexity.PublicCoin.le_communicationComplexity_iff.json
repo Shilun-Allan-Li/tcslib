@@ -1,0 +1,20 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.le_communicationComplexity_iff",
+ "key": "f9f89056490e5575",
+ "kind": "theorem",
+ "title": "Lower-bound characterisation of public-coin complexity",
+ "statement": "Let $f : X \\to Y \\to \\alpha$ be a function, let $\\varepsilon \\in \\bbr$, and let $m \\in \\bbn$. Write $\\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f)$ for the $\\varepsilon$-error public-coin randomized communication complexity of $f$, namely the infimum in $\\bbn \\cup \\{\\infty\\}$ of the worst-case bit complexity over all public-coin protocols that compute $f$ with error at most $\\varepsilon$ on every input. Then $m \\le \\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f)$ if and only if, for every $n \\in \\bbn$ and every public-coin protocol $p$ using a coin tape of length $n$, whenever $p$ $\\varepsilon$-computes $f$ its communication complexity satisfies $m \\le \\mathrm{complexity}(p)$.",
+ "hypotheses_covered": [
+  "f : X → Y → α",
+  "error parameter ε ∈ ℝ",
+  "natural number m",
+  "quantification over all tape lengths n",
+  "quantification over all public-coin protocols p on CoinTape(n)",
+  "the hypothesis that p ε-computes f",
+  "the conclusion m ≤ complexity(p)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $f : X \\to Y \\to \\alpha$, $\\varepsilon \\in \\mathbb{R}$, and $m \\in \\mathbb{N}$,\nwe have $m \\le \\mathrm{R}^{\\mathrm{pub}}_\\varepsilon(f)$ if and only if every\npublic-coin protocol $p$ on any $\\mathrm{CoinTape}(n)$ that $\\varepsilon$-approximates\n$f$ satisfies $m \\le p.\\mathrm{complexity}$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle",
+ "key": "6f7617cac5ae4964",
+ "kind": "lemma",
+ "title": "Leaf rectangles are combinatorial rectangles",
+ "statement": "Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn from $X$ and Bob's from $Y$, and let $R$ belong to the collection of leaf rectangles of $p$ over the full input space $X \\times Y$. Then $R$ is a rectangle: there exist subsets $A \\subseteq X$ and $B \\subseteq Y$ with $R = A \\times B$.",
+ "hypotheses_covered": [
+  "p is a deterministic communication protocol over X, Y with output type alpha",
+  "R is a member of the leaf rectangles of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any protocol $p$ and any $R \\in \\texttt{leafRectangles}(p)$, the set $R$ is a\ncombinatorial rectangle, i.e.\\ $\\texttt{Rectangle.IsRectangle}(R)$ holds."
+}

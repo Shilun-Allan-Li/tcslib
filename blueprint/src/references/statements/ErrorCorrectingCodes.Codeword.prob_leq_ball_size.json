@@ -1,0 +1,20 @@
+{
+ "lean_name": "ErrorCorrectingCodes.Codeword.prob_leq_ball_size",
+ "key": "95df132ab1c4bab3",
+ "kind": "theorem",
+ "title": "Weight distribution of a random linear image is dominated by a Hamming ball",
+ "statement": "Let $\\alpha$ be a finite field, let $n$ and $k \\ge 1$ be natural numbers, and fix a nonzero codeword $x \\in \\alpha^{k}$ together with an integer $d > 0$. Regard an $n \\times k$ matrix $G$ over $\\alpha$ as chosen uniformly at random among all $\\abs{\\alpha}^{nk}$ such matrices, so that the image $Gx$ is a codeword of length $n$. Then the probability that $Gx$ has Hamming weight strictly less than $d$ is at most the fraction of all codewords of length $n$ that lie in the Hamming ball of radius $d-1$ about the all-zero codeword:\n\\[\n\\frac{\\abs{\\{\\, G \\in \\alpha^{n \\times k} : \\operatorname{wt}(Gx) < d \\,\\}}}{\\abs{\\alpha}^{nk}}\n\\;\\le\\;\n\\frac{\\abs{B_{d-1}(\\mathbf{0})}}{\\abs{\\alpha}^{n}}.\n\\]",
+ "hypotheses_covered": [
+  "alphabet is a finite field",
+  "k ≥ 1",
+  "x is a nonzero codeword of length k",
+  "d > 0",
+  "G ranges over n×k matrices over α",
+  "left side counts matrices with weight(Gx) < d, normalized by |α|^{nk}",
+  "right side is |B_{d-1}(0)| over codewords of length n, normalized by |α|^n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor any nonzero $x\\in\\alpha^k$,\n\\[\n\\frac{|\\{G : \\mathrm{wt}(Gx) < d\\}|}{|\\alpha|^{nk}}\n\\;\\le\\;\n\\frac{|B_{d-1}(\\mathbf{0})|}{|\\alpha|^n}.\n\\]"
+}

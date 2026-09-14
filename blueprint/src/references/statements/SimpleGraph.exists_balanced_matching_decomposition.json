@@ -1,0 +1,18 @@
+{
+ "lean_name": "SimpleGraph.exists_balanced_matching_decomposition",
+ "key": "3bb0ca2c1f44beb1",
+ "kind": "theorem",
+ "title": "Balanced matching decomposition of a bipartite graph",
+ "statement": "Let $G$ be a finite bipartite graph with edge set $E$ of size $\\varepsilon = |E|$ and maximum degree $\\Delta$, and let $p$ be a positive integer with $\\Delta \\le p$. Then there exist $p$ matchings $M_1, M_2, \\ldots, M_p$ of $G$ that are pairwise edge-disjoint and satisfy\n\\[ E = M_1 \\cup M_2 \\cup \\cdots \\cup M_p, \\]\nwith each of their sizes controlled by\n\\[ \\left\\lfloor \\varepsilon/p \\right\\rfloor \\le |M_i| \\le \\left\\lceil \\varepsilon/p \\right\\rceil \\qquad (1 \\le i \\le p); \\]\nin particular, any two of the matchings differ in size by at most one.",
+ "hypotheses_covered": [
+  "G is a finite graph (Fintype V, DecidableEq V)",
+  "G is bipartite",
+  "p is a natural number",
+  "maximum degree of G is at most p",
+  "0 < p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $G$ is bipartite, and if $p \\geq \\Delta$, then there exist\n$p$ disjoint matchings $M_1, M_2, \\ldots, M_p$ of $G$ such that\n\\[E = M_1 \\cup M_2 \\cup \\ldots \\cup M_p \\qquad (6.4)\\]\nand, for $1 \\leq i \\leq p$\n\\[[\\varepsilon/p] \\leq |M_i| \\leq \\{\\varepsilon/p\\} \\qquad (6.5)\\]\n(Note: condition (6.5) says that any two matchings $M_i$ and $M_j$ differ in\nsize by at most one.)"
+}

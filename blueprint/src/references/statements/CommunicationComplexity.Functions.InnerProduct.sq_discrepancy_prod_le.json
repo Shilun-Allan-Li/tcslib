@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sq_discrepancy_prod_le",
+ "key": "eeb6829fa8981363",
+ "kind": "lemma",
+ "title": "Squared discrepancy of an inner-product rectangle",
+ "statement": "Fix $n \\in \\bbn$ and equip the product $\\mathrm{BoolInput}(n) \\times \\mathrm{BoolInput}(n)$ with its uniform probability measure. For any two sets $A, B \\subseteq \\mathrm{BoolInput}(n)$, the discrepancy of the mod-2 inner product $\\mathrm{IP}_n$ over the combinatorial rectangle $A \\times B$ satisfies\n\\[\n  \\bigl(\\mathrm{disc}(\\mathrm{IP}_n,\\, A \\times B)\\bigr)^2 \\;\\le\\; \\frac{1}{2^n}.\n\\]",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "A and B are subsets of the n-bit Boolean input type",
+  "the product space carries the (uniform) finite probability measure supplied as the ambient instance",
+  "the rectangle is the product set A × B",
+  "the function is the mod-2 inner product"
+ ],
+ "confidence": "high",
+ "caveat": "The probability measure on the product space enters the discrepancy through an instance argument rather than an explicit hypothesis, so it is not literally written in the declaration; the bound $2^{-n}$ is exactly the value forced by the uniform measure (and fails for arbitrary measures), so the ambient measure is taken to be uniform.",
+ "rubric": [],
+ "replaced": "\nFor all $A, B \\subseteq \\mathrm{BoolInput}\\,n$,\n\\[\n  \\bigl(\\mathrm{disc}(\\mathrm{IP}_n,\\, A \\times B)\\bigr)^2 \\;\\le\\; \\frac{1}{2^n}.\n\\]"
+}

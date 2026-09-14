@@ -1,0 +1,15 @@
+{
+ "lean_name": "DecisionTree.fourierCoeff_signEval",
+ "key": "25c250d73634f438",
+ "kind": "theorem",
+ "title": "Fourier coefficients of a decision tree",
+ "statement": "Let $T$ be a decision tree on $n$ Boolean variables, and let $\\sigma\\!\\circ\\! T$ denote its sign-encoded function $x \\mapsto \\sigma(T(x))$ on the Boolean hypercube $\\{0,1\\}^n$. Then for every frequency set $S \\subseteq [n]$, the Fourier–Walsh coefficient of this function at $S$ agrees with the recursively defined tree coefficient:\n\\[\n  \\widehat{\\sigma\\!\\circ\\! T}(S) \\;=\\; \\mathrm{coeffs}(T)(S).\n\\]",
+ "hypotheses_covered": [
+  "T is a decision tree on n variables",
+  "S is a subset of [n] (frequency set)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every decision tree $T$ and every $S$, the Fourier coefficient\n$\\widehat{T.\\mathrm{signEval}}(S)$ equals $\\mathrm{coeffs}\\,T\\,S$; the recursively defined\ncoefficients are exactly the Fourier coefficients."
+}

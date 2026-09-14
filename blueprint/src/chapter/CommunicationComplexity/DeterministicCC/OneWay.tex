@@ -13,6 +13,7 @@ overhead for Bob to transmit the decoded output.
 
 \begin{definition}[One-way deterministic protocol]
 \lean{CommunicationComplexity.Deterministic.OneWay.Protocol}
+\statementsource{roughgarden-cc-oneway}{pdf-043896d6545f-p002-b003}
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol}
 \leanok
 A one-way deterministic communication protocol for inputs $x \in X$, $y \in Y$, and
@@ -25,6 +26,7 @@ from the received message and his own input.
 
 \begin{definition}[Protocol execution]
 \lean{CommunicationComplexity.Deterministic.OneWay.Protocol.run}
+\statementsource{roughgarden-cc-oneway}{pdf-043896d6545f-p002-b003}
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol}
@@ -34,6 +36,7 @@ yields the output $p.\mathtt{decode}(p.\mathtt{send}(x),\, y) \in \alpha$.
 
 \begin{definition}[Protocol bit cost]
 \lean{CommunicationComplexity.Deterministic.OneWay.Protocol.cost}
+\statementsource{roughgarden-cc-oneway}{pdf-043896d6545f-p002-b004}
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.cost}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol}
@@ -43,6 +46,7 @@ bits, where $\mathtt{Message}$ is the protocol's codebook.
 
 \begin{definition}[Protocol computes a function]
 \lean{CommunicationComplexity.Deterministic.OneWay.Protocol.Computes}
+\statementsource{roughgarden-cc-oneway}{pdf-043896d6545f-p002-b003}
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.Computes}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.run}
@@ -60,30 +64,41 @@ finite-message protocol by having Alice send her one-way message and then having
 encode the decoded output as an index in $\{0,\ldots,|\alpha|-1\}$ and transmit it.
 \end{definition}
 
-\begin{theorem}[Embedding preserves execution]
+\begin{theorem}[Embedding into the finite-message model preserves output]
 \lean{CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_run}
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage}
 \difficulty{1}
-For any one-way protocol $p$ and inputs $(x, y)$, running $p$'s embedding in the
-finite-message model yields the same output as running $p$ directly:
-$\mathtt{FiniteMessage.Protocol.run}(p.\mathtt{toFiniteMessage},\, x,\, y) = p.\mathtt{run}(x, y)$.
+Let $p$ be a one-way deterministic communication protocol over input types $X$, $Y$ and
+a finite, nonempty output type $\alpha$, and let $x \in X$ and $y \in Y$. Then executing
+the finite-message protocol obtained from $p$ by the embedding into the finite-message
+model on the inputs $x$ and $y$ yields the same element of $\alpha$ as executing $p$
+directly on $x$ and $y$.
 \end{theorem}
 
-\begin{theorem}[Embedding complexity formula]
+\begin{theorem}[Complexity of the finite-message embedding]
 \lean{CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_complexity}
 \label{CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage}
 \difficulty{1}
-The interactive complexity of the embedding equals the one-way cost plus the cost for
-Bob to transmit the decoded output:
-$(p.\mathtt{toFiniteMessage}).\mathtt{complexity} = p.\mathtt{cost} + \lceil \log_2 |\alpha| \rceil$.
+Let $p$ be a one-way deterministic communication protocol with inputs in $X$, $Y$ and
+output type $\alpha$, and suppose $\alpha$ is finite and nonempty. The finite-message
+protocol obtained from $p$ — Alice sends her one-way message, after which Bob transmits
+the decoded output as an index in $\{0,\ldots,\abs{\alpha}-1\}$ — has communication
+complexity
+\[
+\left\lceil \log_2 \abs{\mathrm{Message}} \right\rceil + \left\lceil \log_2 \abs{\alpha}
+\right\rceil,
+\]
+that is, the bit cost of $p$ plus $\lceil \log_2 \abs{\alpha}\rceil$, where
+$\mathrm{Message}$ is the codebook of $p$.
 \end{theorem}
 
 \begin{definition}[One-way communication complexity]
 \lean{CommunicationComplexity.Deterministic.OneWay.communicationComplexity}
+\statementsource{roughgarden-cc-oneway}{pdf-043896d6545f-p002-b004}
 \label{CommunicationComplexity.Deterministic.OneWay.communicationComplexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.Computes, CommunicationComplexity.Deterministic.OneWay.Protocol.cost}
@@ -92,38 +107,40 @@ infimum (in $\mathbb{N}_\infty$) of the bit costs $p.\mathtt{cost}$ over all one
 protocols $p$ that compute $f$.
 \end{definition}
 
-\begin{theorem}[Upper-bound characterization]
+\begin{theorem}[Cost bound for one-way communication complexity]
 \lean{CommunicationComplexity.Deterministic.OneWay.communicationComplexity_le_iff}
 \label{CommunicationComplexity.Deterministic.OneWay.communicationComplexity_le_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.Computes, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.communicationComplexity, CommunicationComplexity.Internal.enat_iInf_le_coe_iff}
 \difficulty{1}
-For a function $f$ and $n \in \mathbb{N}$, the one-way complexity of $f$ is at most $n$
-if and only if there exists a one-way protocol $p$ that computes $f$ with
-$p.\mathtt{cost} \le n$.
+Let $f : X \to Y \to \alpha$ be a function and let $n \in \bbn$. The one-way
+deterministic communication complexity of $f$ is at most $n$ if and only if there exists
+a one-way deterministic protocol $p$ that computes $f$ and whose bit cost satisfies
+$\mathrm{cost}(p) \le n$.
 \end{theorem}
 
-\begin{theorem}[Lower-bound characterization]
+\begin{theorem}[Lower bound characterization of one-way communication complexity]
 \lean{CommunicationComplexity.Deterministic.OneWay.le_communicationComplexity_iff}
 \label{CommunicationComplexity.Deterministic.OneWay.le_communicationComplexity_iff}
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.Computes, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.communicationComplexity}
 \difficulty{1}
-For a function $f$ and $k \in \mathbb{N}$, $k$ is at most the one-way complexity of $f$
-if and only if every one-way protocol $p$ computing $f$ satisfies
-$k \le p.\mathtt{cost}$.
+Let $f : X \to Y \to \alpha$ be a function and let $k \in \bbn$. Then $k$ is at most the
+one-way deterministic communication complexity of $f$ (as an inequality in
+$\bbn_\infty$) if and only if every one-way deterministic protocol that computes $f$ has
+bit cost at least $k$.
 \end{theorem}
 
-\begin{theorem}[One-way bound implies deterministic bound]
+\begin{theorem}[One-way bound implies interactive bound]
 \lean{CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le}
 \label{CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol.Computes, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol.toFiniteMessage, CommunicationComplexity.Deterministic.OneWay.communicationComplexity, CommunicationComplexity.Deterministic.OneWay.communicationComplexity_le_iff, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
 \difficulty{4}
-If the one-way communication complexity of $f : X \to Y \to \alpha$ is at most $n$, then
-the (interactive) deterministic communication complexity of $f$ is at most
-$n + \lceil \log_2 |\alpha| \rceil$, with the additive term accounting for Bob's cost
-of transmitting the decoded output in the interactive model.
+Let $f : X \to Y \to \alpha$ be a two-argument function whose output type $\alpha$ is
+finite and nonempty, and let $n \in \bbn$. If the one-way deterministic communication
+complexity of $f$ is at most $n$, then the (interactive) deterministic communication
+complexity of $f$ is at most $n + \lceil \log_2 \abs{\alpha} \rceil$.
 \end{theorem}
 
 \begin{theorem}[One-way bound implies deterministic bound for Boolean functions]
@@ -132,7 +149,8 @@ of transmitting the decoded output in the interactive model.
 \leanok
 \uses{CommunicationComplexity.Deterministic.OneWay.communicationComplexity, CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le, CommunicationComplexity.Deterministic.communicationComplexity}
 \difficulty{3}
-For a Boolean function $f : X \to Y \to \mathtt{Bool}$, if the one-way complexity of $f$
-is at most $n$, then the deterministic complexity of $f$ is at most $n + 1$; this
-specializes the general bound using $\lceil \log_2 |\mathtt{Bool}| \rceil = 1$.
+Let $X$ and $Y$ be the input types of Alice and Bob, and let $f : X \to Y \to
+\mathrm{Bool}$ be a two-party Boolean-valued function. If the one-way deterministic
+communication complexity of $f$ is at most $n$ for some $n \in \bbn$, then the
+(interactive) deterministic communication complexity of $f$ is at most $n + 1$.
 \end{theorem}

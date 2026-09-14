@@ -1,0 +1,20 @@
+{
+ "lean_name": "Kruskal.mergeAll_init_iff",
+ "key": "ddf9b10d8cfd34a3",
+ "kind": "lemma",
+ "title": "Correctness of union-find merging from the initial state",
+ "statement": "Fix a natural number $n$, and let $\\mathit{edges}$ be a list of weighted edges on the vertex set $\\mathrm{Fin}\\,n$. Consider the union-find state obtained by starting from the initial state on $n$ nodes, in which every node is its own representative, and processing $\\mathit{edges}$ in order, so that at each weighted edge the components of the two endpoints of that edge are merged. Then, for any two vertices $a, b \\in \\mathrm{Fin}\\,n$, the vertices $a$ and $b$ carry the same representative in the resulting state if and only if $a$ and $b$ are connected by a path through the edges of $\\mathit{edges}$ — equivalently, if and only if the reflexive--transitive closure of symmetric adjacency along $\\mathit{edges}$ relates $a$ to $b$.",
+ "hypotheses_covered": [
+  "vertex count n",
+  "a list of weighted edges on Fin n",
+  "two vertices a and b of Fin n",
+  "merging starts from the initial union-find state (every node its own representative)",
+  "all edges are merged in order via mergeAll"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Starting from the initial union--find state $\\mathtt{UF.init}\\,n$, in which every vertex\nis its own component, two vertices $a, b$ end up with the same representative after\nmerging along $\\mathit{edges}$ if and only if $\\mathtt{Reach}\\,\\mathit{edges}\\,a\\,b$."
+}

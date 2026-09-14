@@ -20,7 +20,6 @@ would be less than $d$), so $|C|$ is at most the number of possible projections.
   pdf-7251cb8e4bc5-p087-b003,
   pdf-7251cb8e4bc5-p087-b004
 }
-
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -71,9 +70,12 @@ would be less than $d$), so $|C|$ is at most the number of possible projections.
   {pdf-7251cb8e4bc5-p029-b006}
 \uses{ErrorCorrectingCodes.Codeword.dist_le_length}
 \difficulty{6}
-Assuming $\alpha$ is nontrivial, a code $C\subseteq\alpha^n$ with minimum distance $d$
-satisfies
+Let $\alpha$ be a finite alphabet with at least two symbols, and let $C$ be a code of
+length $n$ over $\alpha$ — that is, a finite set of codewords $c : \mathrm{Fin}\,n \to
+\alpha$. Suppose $C$ has minimum distance $d$, meaning that some two distinct codewords
+of $C$ are at Hamming distance exactly $d$ and no two distinct codewords are at distance
+less than $d$. Then
 \[
-|C| \;\le\; |\alpha|^{\,n-d+1}.
+\abs{C} \;\le\; \abs{\alpha}^{\,n-d+1}.
 \]
 \end{theorem}

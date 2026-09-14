@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ofProtocol_equiv",
+ "key": "6d6315ecb3b306b0",
+ "kind": "theorem",
+ "title": "Every public-coin protocol has an equal-complexity finite-message form",
+ "statement": "For every public-coin protocol $p$ over shared-randomness space $\\Omega$, private input sets $X$ and $Y$, and output type $\\alpha$, there exists a public-coin finite-message protocol $P$ over the same data that computes exactly the same output under randomized execution and has the same communication complexity. Precisely, $\\mathrm{rrun}(P, x, y, \\omega) = \\mathrm{rrun}(p, x, y, \\omega)$ for all private inputs $x \\in X$, $y \\in Y$ and every shared random string $\\omega \\in \\Omega$, and the communication complexity of $P$ equals that of $p$.",
+ "hypotheses_covered": [
+  "a public-coin protocol p over Ω, X, Y, α (existential conclusion: a finite-message protocol P)",
+  "P and p agree on rrun for all x, y, ω",
+  "P.complexity equals p.complexity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any binary public-coin protocol $p$, there exists a finite-message protocol $P$ such\nthat $P.\\mathrm{rrun}\\,x\\,y\\,\\omega = p.\\mathrm{rrun}\\,x\\,y\\,\\omega$ for all $x$, $y$,\n$\\omega$, and $P.\\mathrm{complexity} = p.\\mathrm{complexity}$."
+}

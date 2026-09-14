@@ -1,0 +1,21 @@
+{
+ "lean_name": "ProbabilityTheory.condMutualInfo_boolVector_eq_sum_strictPrefix",
+ "key": "7c82459910faefb8",
+ "kind": "theorem",
+ "title": "Chain rule for conditional mutual information over a boolean vector",
+ "statement": "Let $Y$ and $Z$ be random variables on a probability space $(\\Omega, \\mu)$ (allowing also the zero measure), each taking countably many values with finite range, and let $X : \\Omega \\to (\\{0,1\\}^m)$ be a random boolean vector; assume $X$, $Y$, and $Z$ are measurable. Writing $X_i(\\omega) = X(\\omega)(i)$ for the $i$-th coordinate and $X_{<i}(\\omega)$ for the strict prefix consisting of coordinates $0, 1, \\ldots, i-1$, the conditional mutual information of $X$ and $Y$ given $Z$ decomposes as\n\\[\n  I[X : Y \\mid Z;\\mu]\n  \\;=\\; \\sum_{i=0}^{m-1}\n        I\\bigl[X_i : Y \\mid (X_{<i},\\, Z);\\mu\\bigr].\n\\]",
+ "hypotheses_covered": [
+  "mu is a zero-or-probability measure",
+  "Y has finite range",
+  "Z has finite range",
+  "Y and Z take countably many values (countable codomains)",
+  "X is measurable",
+  "Y is measurable",
+  "Z is measurable",
+  "X is a boolean vector of length m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a boolean-vector-valued $X : \\Omega \\to (\\mathrm{Fin}\\,m \\to \\mathrm{Bool})$,\n\\[\n  I[X : Y \\mid Z;\\mu]\n  \\;=\\; \\sum_{i=0}^{m-1}\n        I[X_i : Y \\mid (\\mathrm{boolVectorStrictPrefix}\\,X\\,i,\\, Z);\\mu],\n\\]\nwhere $X_i(\\omega) = X(\\omega)(i)$."
+}

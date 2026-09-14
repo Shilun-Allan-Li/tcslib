@@ -1,0 +1,17 @@
+{
+ "lean_name": "SATTo3SAT.extraVal_iff_prefix_all_false",
+ "key": "29d31afe854ac17a",
+ "kind": "lemma",
+ "title": "Auxiliary variable valuation as an all-false prefix",
+ "statement": "Fix an assignment $\\alpha$ and a list of literals $\\mathit{lits}$, and let $j$ be an index with $j + 2 \\le |\\mathit{lits}|$. Then the auxiliary variable valuation associated with $\\alpha$, $\\mathit{lits}$, and $j$ holds if and only if every one of the first $j + 2$ literals of $\\mathit{lits}$ evaluates to false under $\\alpha$.",
+ "hypotheses_covered": [
+  "assignment α",
+  "list of literals lits",
+  "index j",
+  "j + 2 ≤ length of lits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Provided $j + 2 \\le |\\mathit{lits}|$, \\texttt{SATTo3SAT.extraVal} $\\alpha$ $\\mathit{lits}$ $j$\nis logically equivalent to the condition that every element of $\\mathit{lits}.\\mathtt{take}(j+2)$\nis false under $\\alpha$."
+}

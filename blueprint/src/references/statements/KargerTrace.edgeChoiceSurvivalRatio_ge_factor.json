@@ -1,0 +1,16 @@
+{
+ "lean_name": "KargerTrace.edgeChoiceSurvivalRatio_ge_factor",
+ "key": "ef7cfc244a092804",
+ "kind": "lemma",
+ "title": "Survival ratio bounded below by the Karger factor",
+ "statement": "Let $s$ be a state of the contraction process — a multigraph $G$ together with a distinguished cut $C$ of $G$ — and write $n$ for the number of vertices of $G$. Suppose that $C$ is a minimum cut of $G$, that the size of $C$ is strictly positive, and that $n \\ge 2$. Then the survival ratio of the edge-occurrence sample space of $s$ is at least $\\tfrac{n-2}{n}$; that is,\n\\[\n  \\frac{n-2}{n} \\;\\le\\; \\rho(s),\n\\]\nwhere $\\rho(s)$ is the fraction of edge occurrences whose underlying edge does not cross $C$.",
+ "hypotheses_covered": [
+  "C is a minimum cut of G",
+  "the size of C is strictly positive (0 < size)",
+  "G has at least two vertices (n ≥ 2)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s.C$ is a min-cut of positive size and $s.G$ has at least two vertices, then with\n$n = s.G.\\mathrm{vertexCount}$,\n\\[\n  \\frac{n-2}{n} \\;\\le\\; \\mathrm{edgeChoiceSurvivalRatio}(s).\n\\]"
+}

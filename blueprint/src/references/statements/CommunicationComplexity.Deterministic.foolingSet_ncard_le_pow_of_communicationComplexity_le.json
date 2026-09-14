@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le",
+ "key": "3d09babba1e9838e",
+ "kind": "theorem",
+ "title": "Fooling set bound from communication complexity",
+ "statement": "Let $g : X \\times Y \\to \\alpha$ be a two-argument function, and let $S \\subseteq X \\times Y$ be a fooling set for $g$, meaning that $S$ meets every $g$-monochromatic rectangle in at most one point. If the deterministic communication complexity of $g$ satisfies $D(g) \\le n$ for some $n \\in \\bbn$, then the cardinality of $S$ satisfies $\\abs{S} \\le 2^{n}$.",
+ "hypotheses_covered": [
+  "S is a fooling set for g",
+  "deterministic communication complexity of g is at most n",
+  "n is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf $\\mathrm{CC}(g) \\leq n$ and $S \\subseteq X \\times Y$ is a fooling set for $g$, then\n$|S| \\leq 2^n$."
+}

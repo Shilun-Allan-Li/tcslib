@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves",
+ "key": "9f3470fb33b97848",
+ "kind": "lemma",
+ "title": "Leaf count after collapsing a subprotocol",
+ "statement": "Let $p$ be a deterministic two-party communication protocol, and let $s$ be a subprotocol of $p$, witnessed by a subprotocol path recording the sequence of branch choices leading from the root of $p$ down to the root of $s$. Form the protocol obtained from $p$ by collapsing the entire subtree $s$ to a single output leaf carrying its canonical output value. Writing $\\ell(q)$ for the number of leaves (output nodes) of a protocol $q$, the collapsed protocol has $\\ell(p) - \\ell(s) + 1$ leaves, where the subtraction is truncated subtraction of natural numbers.",
+ "hypotheses_covered": [
+  "a subprotocol path witnessing that s is a rooted subtree of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "After erasing subprotocol $s$ from $p$ via path \\texttt{hsp}, the resulting protocol has\n$p.\\mathrm{numLeaves} - s.\\mathrm{numLeaves} + 1$ leaves."
+}

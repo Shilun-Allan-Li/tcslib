@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.PublicCoin.newman",
+ "key": "b7017826e869eba9",
+ "kind": "theorem",
+ "title": "Newman's theorem for communication complexity",
+ "statement": "Let $X$ and $Y$ be finite types, let $f : X \\to Y \\to \\alpha$, and let $\\varepsilon, \\varepsilon', c \\in \\bbr$ satisfy $1 < c$ and $c\\varepsilon < \\varepsilon'$. Then the private-coin communication complexity of $f$ at error tolerance $\\varepsilon'$ does not exceed the public-coin communication complexity of $f$ at error tolerance $\\varepsilon$ increased by $\\lceil \\log_2 t(X, Y, \\varepsilon, c)\\rceil$, where $t(X, Y, \\varepsilon, c)$ is the derandomization sample count; that is,\n\\[\n  \\mathrm{CC}^{\\mathrm{priv}}_{\\varepsilon'}(f)\n  \\;\\le\\;\n  \\mathrm{CC}^{\\mathrm{pub}}_{\\varepsilon}(f)\n  \\;+\\;\n  \\bigl\\lceil \\log_2 t(X, Y, \\varepsilon, c) \\bigr\\rceil ,\n\\]\nwith both complexities taken as values in $\\bbn \\cup \\{\\infty\\}$.",
+ "hypotheses_covered": [
+  "X and Y are finite types",
+  "f : X → Y → α",
+  "ε, ε', c are real",
+  "1 < c",
+  "c·ε < ε'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : X \\to Y \\to \\alpha$ with $X, Y$ finite, let $\\varepsilon, \\varepsilon' \\in \\mathbb{R}$\nand $c > 1$ satisfy $c \\cdot \\varepsilon < \\varepsilon'$.\nThen the private-coin communication complexity of $f$ at error $\\varepsilon'$ is at most the\npublic-coin complexity at error $\\varepsilon$ plus\n$\\lceil \\log_2(\\mathtt{derandomizationSamples}\\;X\\;Y\\;\\varepsilon\\;c) \\rceil$:\n\\[\n  \\mathrm{CC}^{\\mathrm{priv}}_{\\varepsilon'}(f)\n  \\;\\le\\;\n  \\mathrm{CC}^{\\mathrm{pub}}_{\\varepsilon}(f)\n  + \\left\\lceil \\log_2\\!\\left(\\mathtt{derandomizationSamples}\\;X\\;Y\\;\\varepsilon\\;c\\right) \\right\\rceil.\n\\]\nIn particular, switching from public-coin to private-coin randomness costs only\n$O(\\log(|X| \\cdot |Y|) / \\varepsilon^2)$ additional bits."
+}

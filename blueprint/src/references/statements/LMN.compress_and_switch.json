@@ -1,0 +1,23 @@
+{
+ "lean_name": "LMN.compress_and_switch",
+ "key": "3b2584af4611f57f",
+ "kind": "lemma",
+ "title": "Compression and switching at a single gate",
+ "statement": "Fix $n \\ge 1$, an integer $l \\ge 1$, and a natural number $t$, and write $D(g)$ for the decision-tree depth of a Boolean function $g$ on $n$ variables, that is, the least depth of a decision tree computing $g$. For a function $g$ and a restriction $\\rho$ on the $n$ variables, let $g\\!\\restriction_{\\rho}$ denote the function obtained from $g$ by fixing each coordinate to the value $\\rho$ assigns it and leaving the coordinates $\\rho$ marks free as inputs. Let $c_1,\\dots,c_m$ be Boolean circuits on $n$ variables, and let $F$ be the function computed by a single AND gate, or by a single OR gate, applied to $c_1,\\dots,c_m$; the bound below holds for either gate. Suppose a restriction $\\rho_1$ satisfies $D\\!\\left(c_i\\!\\restriction_{\\rho_1}\\right) \\le l$ for every $i$. Draw a random restriction $\\rho_2$ under which each of the $n$ variables is independently left free with probability $p = \\tfrac{1}{40 l}$ and otherwise fixed, taking each of the values $0$ and $1$ with probability $\\tfrac{1-p}{2}$, and let $\\rho_1 \\circ \\rho_2$ be the composite restriction that keeps every value fixed by $\\rho_1$ and applies $\\rho_2$ to the coordinates $\\rho_1$ leaves free. Then\n\\[\n  \\Pr_{\\rho_2}\\!\\left[\\, D\\!\\left(F\\!\\restriction_{\\rho_1 \\circ \\rho_2}\\right) > t \\,\\right]\n  \\;\\le\\; \\left(\\tfrac{1}{2}\\right)^{t} + \\exp\\!\\left(-\\frac{n}{120\\, l}\\right).\n\\]",
+ "hypotheses_covered": [
+  "n ≥ 1 (0 < n)",
+  "l ≥ 1 (0 < l)",
+  "t a natural number",
+  "gate is a single AND or OR gate (isAnd)",
+  "children c₁,…,c_m are Boolean circuits on n variables",
+  "an initial restriction ρ₁ is given",
+  "each child restricted by ρ₁ has decision-tree depth ≤ l",
+  "ρ₂ is a Bernoulli restriction with free-probability 1/(40l) and each fixed value taken with probability (1-p)/2",
+  "composition applies ρ₁ first then ρ₂ on the free coordinates",
+  "conclusion: tail bound (1/2)^t + exp(-n/(120l))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nSuppose $0 < l$, $0 < n$, and every child $c \\in cs$ satisfies\n$\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,c.\\mathrm{eval}\\,\\rho_1) \\le l$. Then under a further\nBernoulli random restriction $\\rho_2$ with parameter $1/(40 l)$, the probability that the\nrestricted node $\\mathrm{restrictFn}\\,(\\mathrm{eval}\\,(\\mathrm{node}\\,\\mathit{isAnd}\\,cs))\\,(\\mathrm{composeRestr}\\,\\rho_1\\,\\rho_2)$\nhas decision-tree depth greater than $t$ is at most\n\\[\n  \\left(\\tfrac{1}{2}\\right)^{t} + \\exp\\!\\left(-\\tfrac{n}{120 l}\\right).\n\\]"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.prod_complexity",
+ "key": "e6b5accf3ba26157",
+ "kind": "theorem",
+ "title": "Communication cost of the product protocol",
+ "statement": "Let $p_1$ and $p_2$ be private-coin finite-message protocols, both over the same input types $X$ and $Y$, with private-randomness types $(\\Omega_{X_1}, \\Omega_{Y_1})$ and $(\\Omega_{X_2}, \\Omega_{Y_2})$ and output types $\\alpha_1$ and $\\alpha_2$ respectively. Their product, the protocol on inputs $X$ and $Y$ that runs $p_1$ and $p_2$ in parallel using independent randomness drawn from $\\Omega_{X_1} \\times \\Omega_{X_2}$ and $\\Omega_{Y_1} \\times \\Omega_{Y_2}$ and returns the pair of their outputs, has worst-case communication cost (in bits) equal to the sum of the individual costs:\n\\[\n\\mathrm{complexity}(p_1 \\times p_2) = \\mathrm{complexity}(p_1) + \\mathrm{complexity}(p_2).\n\\]",
+ "hypotheses_covered": [
+  "p1 a private-coin finite-message protocol with randomness (Ω_X1, Ω_Y1) and output α₁",
+  "p2 a private-coin finite-message protocol with randomness (Ω_X2, Ω_Y2) and output α₂",
+  "both over the same input types X and Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The communication complexity of the product protocol is the sum of the individual\ncomplexities: $(\\mathrm{prod}\\;p_1\\;p_2).\\mathrm{complexity} = p_1.\\mathrm{complexity} + p_2.\\mathrm{complexity}$."
+}

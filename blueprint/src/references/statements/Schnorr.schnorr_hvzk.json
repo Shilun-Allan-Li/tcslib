@@ -1,0 +1,18 @@
+{
+ "lean_name": "Schnorr.schnorr_hvzk",
+ "key": "a1dc55ebec02b4b8",
+ "kind": "theorem",
+ "title": "Honest-verifier zero knowledge of the Schnorr protocol",
+ "statement": "Let $G$ be a commutative group, let $q$ be prime, and let $g \\in G$ be an element of order $q$, taken as the public generator. Fix a witness $w \\in \\bbz_q$ and a challenge $c \\in \\bbz_q$, and let $\\mathit{pk} = g^{w}$ be the associated public key. Then, as functions $\\bbz_q \\to G \\times \\bbz_q \\times \\bbz_q$ of the prover's randomness $r$, the honest transcript map $r \\mapsto \\big(g^{r},\\, c,\\, r + c\\cdot w\\big)$ coincides with the simulator map fed the reindexed randomness $\\sigma_{w,c}(r) = r + c\\cdot w$, namely $r \\mapsto \\big(g^{\\sigma_{w,c}(r)}\\cdot(\\mathit{pk}^{\\,c})^{-1},\\, c,\\, \\sigma_{w,c}(r)\\big)$; that is, these two maps are equal.",
+ "hypotheses_covered": [
+  "g has order q",
+  "q is prime",
+  "w in Z_q (witness)",
+  "c in Z_q (challenge)",
+  "public key taken as g^w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g \\in G$ have order $q$ and let $w, c \\in \\mathbb{Z}_q$.  The honest\ntranscript map $r \\mapsto \\mathrm{honest}(g, w, r, c)$ and the simulator map\n$r \\mapsto \\mathrm{simulate}(g,\\, g^w,\\, c,\\, \\sigma_{w,c}(r))$ are equal as\nfunctions $\\mathbb{Z}_q \\to \\mathrm{Transcript}(G, q)$, where\n$\\sigma_{w,c} = \\mathrm{reindex}(w, c)$ is the bijective shift $r \\mapsto r + c \\cdot w$."
+}

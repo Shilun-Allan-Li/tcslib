@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectangles_swap",
+ "key": "e6decba9e5a84a20",
+ "kind": "theorem",
+ "title": "Role swap sends leaf rectangles to their coordinate swaps",
+ "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob), and let $p^{\\mathrm{swap}}$ be the protocol over $Y \\times X$ obtained by exchanging the roles of Alice and Bob throughout. If $R \\subseteq X \\times Y$ is one of the leaf rectangles of $p$, then its coordinate swap $\\{(y,x) \\mid (x,y) \\in R\\} \\subseteq Y \\times X$ is one of the leaf rectangles of $p^{\\mathrm{swap}}$.",
+ "hypotheses_covered": [
+  "$p$ is a protocol over $X \\times Y$",
+  "$R$ is a leaf rectangle of $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $R$ is a leaf rectangle of $p$, then $\\texttt{swapInputSet}(R)$ is a leaf rectangle of\n$p.\\texttt{swap}$, the protocol with Alice and Bob's roles exchanged."
+}

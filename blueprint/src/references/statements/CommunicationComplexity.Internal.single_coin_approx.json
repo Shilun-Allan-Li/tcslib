@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Internal.single_coin_approx",
+ "key": "2ed5177bb740f6c4",
+ "kind": "theorem",
+ "title": "Approximating a finite probability space by fair coin flips",
+ "statement": "Let $\\Omega$ be a finite probability space, and let $\\delta > 0$. Then there exist a natural number $n$ and a map $\\varphi : \\mathrm{CoinTape}(n) \\to \\Omega$ from the length-$n$ binary strings such that, writing $\\mu_n$ for the uniform probability measure on $\\mathrm{CoinTape}(n)$ (each of the $2^n$ strings equally likely) and $\\mu$ for the probability measure on $\\Omega$, every subset $S \\subseteq \\Omega$ satisfies\n\\[\n  \\mu_n\\bigl(\\varphi^{-1}(S)\\bigr) \\;\\le\\; \\mu(S) + \\delta.\n\\]",
+ "hypotheses_covered": [
+  "Ω is a finite probability space",
+  "δ > 0",
+  "conclusion holds for every subset S of Ω"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any finite probability space $\\Omega$ and any $\\delta > 0$, there exist $n \\in \\mathbb{N}$\nand a map $\\varphi : \\mathrm{CoinTape}(n) \\to \\Omega$ such that for every set $S \\subseteq \\Omega$,\n\\[\n  \\mu_{\\mathrm{CoinTape}(n)}(\\varphi^{-1}(S)) \\;\\le\\; \\mu_\\Omega(S) + \\delta.\n\\]"
+}

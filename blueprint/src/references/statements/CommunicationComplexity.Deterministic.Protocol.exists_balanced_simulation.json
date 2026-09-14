@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.exists_balanced_simulation",
+ "key": "f4ee1fe5f025220e",
+ "kind": "theorem",
+ "title": "Balanced simulation of a deterministic protocol",
+ "statement": "For every deterministic two-party communication protocol $p$ over input types $X$ and $Y$ with outputs in $\\alpha$, there exists a protocol $q$ that computes the same function — that is, $q$ and $p$ return the same value on every pair of inputs $(x,y)$ — and whose communication complexity $c(q)$ satisfies\n\\[\n  3^{c(q)} \\;\\le\\; 2^{c(q)} \\cdot \\ell(p)^{2},\n\\]\nwhere $\\ell(p)$ denotes the number of leaves (output nodes) of $p$.",
+ "hypotheses_covered": [
+  "p is an arbitrary deterministic protocol over X, Y, alpha"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every deterministic protocol $p : \\mathrm{Protocol}\\;X\\;Y\\;\\alpha$ there exists a\nprotocol $q$ such that $q.\\mathrm{run} = p.\\mathrm{run}$ (i.e.\\ $q$ computes the same\nfunction as $p$) and\n\\[\n  3^{c(q)} \\;\\le\\; 2^{c(q)} \\cdot (\\#\\mathrm{leaves}(p))^{2},\n\\]\nwhere $c(q)$ denotes the communication complexity of $q$."
+}

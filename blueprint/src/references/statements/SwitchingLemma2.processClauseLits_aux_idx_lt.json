@@ -1,0 +1,18 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_aux_idx_lt",
+ "key": "8a936f36d9333849",
+ "kind": "lemma",
+ "title": "Auxiliary indices bounded by term length",
+ "statement": "Let $t$ be a term on $n$ variables (a list of literals), and let $\\ell$ be a list of literal–index pairs with the property that every pair in $\\ell$ occurs in the indexed enumeration of $t$; that is, each entry of $\\ell$ is a literal of $t$ paired with its position in $t$. Then for any decision-tree path and any restrictions $\\rho_0,\\sigma$, every pair $(i,b)$ appearing in the auxiliary output produced when $\\ell$ is processed against the path against $t$ satisfies $i < \\lvert t\\rvert$.",
+ "hypotheses_covered": [
+  "t is a term (list of literals) on n variables",
+  "ℓ is a list of literal-index pairs",
+  "every pair of ℓ lies in the indexed enumeration t.zipIdx",
+  "an arbitrary path is given",
+  "arbitrary restrictions ρ₀ and σ are given"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "When the processed literals come from $t.\\mathrm{zipIdx}$, every entry of the aux\noutput of $\\mathrm{processClauseLits}$ has first coordinate strictly less than\n$t.\\mathrm{length}$."
+}

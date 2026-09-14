@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none",
+ "key": "7f8caa39acb64d1e",
+ "kind": "lemma",
+ "title": "Deleting a subprotocol returns nothing only for the whole protocol",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols over input types $X$ (Alice) and $Y$ (Bob) producing values in $\\alpha$, and suppose $s$ is a rooted subtree of $p$, as recorded by a subprotocol path from the root of $p$ down to the root of $s$. If splicing that path out of $p$ produces no protocol at all, then $s$ is in fact all of $p$; that is, $s = p$.",
+ "hypotheses_covered": [
+  "a subprotocol path witnessing that s is a rooted subtree of p",
+  "deleting that path yields no protocol (the none result)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\texttt{deletePath}\\;\\texttt{hsp} = \\texttt{none}$, then $s = p$.  That is, deletion\nreturns \\texttt{none} only when $s$ is the entire protocol $p$."
+}

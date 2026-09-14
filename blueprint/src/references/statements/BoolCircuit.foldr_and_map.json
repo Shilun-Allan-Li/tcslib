@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolCircuit.foldr_and_map",
+ "key": "afac2cb8746f4ac7",
+ "kind": "theorem",
+ "title": "Mapped conjunction fold equals the original",
+ "statement": "Let $\\alpha$ and $\\beta$ be types, let $f\\colon\\alpha\\to\\{\\mathrm{true},\\mathrm{false}\\}$ and $g\\colon\\beta\\to\\{\\mathrm{true},\\mathrm{false}\\}$ be Boolean-valued functions, let $h\\colon\\alpha\\to\\beta$, and let $cs$ be a finite list of elements of $\\alpha$. Suppose that $g(h(c)) = f(c)$ for every $c$ appearing in $cs$. Then the Boolean conjunction of $g$ over the mapped list, $\\bigwedge_{c\\in cs} g(h(c))$, equals the Boolean conjunction of $f$ over $cs$, namely $\\bigwedge_{c\\in cs} f(c)$, where in each case the conjunction is folded from the right starting from $\\mathrm{true}$.",
+ "hypotheses_covered": [
+  "g(h(c)) = f(c) for every element c of the list cs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A technical lemma: if $g(h\\,c) = f\\,c$ for all $c \\in cs$, then the conjunctive\n\\texttt{foldr} of $g$ over $cs.\\mathrm{map}\\;h$ equals the conjunctive \\texttt{foldr} of\n$f$ over $cs$."
+}

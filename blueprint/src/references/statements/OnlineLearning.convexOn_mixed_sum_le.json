@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.convexOn_mixed_sum_le",
+ "key": "f939ce5a80491cd2",
+ "kind": "lemma",
+ "title": "Jensen's inequality for a mixed strategy",
+ "statement": "Let $S \\subseteq \\bbr$ be a convex set and let $g : \\bbr \\to \\bbr$ be convex on $S$. Let $p$ be a mixed strategy over $n$ actions, that is, a family of weights $p_1, \\dots, p_n \\ge 0$ with $\\sum_{i=1}^{n} p_i = 1$, and let $x_1, \\dots, x_n$ be points of $S$. Then\n\\[\n  g\\!\\left(\\sum_{i=1}^{n} p_i\\, x_i\\right)\n  \\;\\le\\;\n  \\sum_{i=1}^{n} p_i\\, g(x_i).\n\\]",
+ "hypotheses_covered": [
+  "g is convex on the (convex) set S ⊆ ℝ",
+  "p is a mixed strategy: weights nonnegative and summing to 1",
+  "each point x_i lies in S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $g$ is convex on $S \\subseteq \\bbr$, $p \\in \\Delta_n$, and every $x_i \\in S$,\nthen\n\\[\n  g\\!\\left(\\sum_{i} p_i\\, x_i\\right)\n  \\;\\leq\\;\n  \\sum_{i} p_i\\, g(x_i).\n\\]"
+}

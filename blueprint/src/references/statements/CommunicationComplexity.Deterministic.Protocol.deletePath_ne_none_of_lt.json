@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt",
+ "key": "fbbecc50add8e093",
+ "kind": "lemma",
+ "title": "Deleting a strict subprotocol yields a protocol",
+ "statement": "Let $s$ and $p$ be deterministic two-party communication protocols, and suppose that $s$ occurs as a rooted subprotocol of $p$, witnessed by a path recording the sequence of left/right branchings from the root of $p$ down to the root of $s$. If $s$ has strictly fewer leaves (output nodes) than $p$, then splicing out the branch leading to $s$ does not collapse the whole protocol: the result of the deletion is some protocol rather than the empty result.",
+ "hypotheses_covered": [
+  "a subprotocol path witnessing that s is a rooted subprotocol of p",
+  "the number of leaves of s is strictly less than the number of leaves of p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$ (i.e.\\ $s$ is a proper subtree), then\n$\\texttt{deletePath}\\;\\texttt{hsp} \\ne \\texttt{none}$."
+}

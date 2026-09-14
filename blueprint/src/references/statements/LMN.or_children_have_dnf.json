@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.or_children_have_dnf",
+ "key": "a87d241f116400af",
+ "kind": "lemma",
+ "title": "A small-width DNF for the restriction of an OR gate",
+ "statement": "Let $c_1,\\dots,c_m$ be Boolean circuits on $n$ variables, let $\\rho$ be a restriction of those variables, and let $l$ be a natural number. For a Boolean function $g$ write $g\\!\\restriction_\\rho$ for its restriction by $\\rho$, the function $x \\mapsto g(\\rho.\\mathrm{extend}\\,x)$ that fixes each coordinate assigned by $\\rho$ and reads the remaining coordinates from $x$. Suppose that for every child $c$ among $c_1,\\dots,c_m$ the restricted function $c\\!\\restriction_\\rho$ is computed by some decision tree of depth at most $l$. Then there is a DNF formula $\\varphi$ of width at most $l$ that computes the restriction $F\\!\\restriction_\\rho$ of the OR gate $F$ over the children, i.e.\\ $\\varphi(x) = F\\!\\restriction_\\rho(x)$ for every assignment $x$, where $F$ evaluates to the disjunction of the values $c_1,\\dots,c_m$.",
+ "hypotheses_covered": [
+  "c_1,...,c_m are Boolean circuits on n variables",
+  "rho is a restriction of the variables",
+  "l is a natural number",
+  "every child's restricted function has decision-tree depth at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf every child $c \\in cs$ satisfies $\\mathrm{dtDepth}(\\mathrm{restrictFn}\\,c.\\mathrm{eval}\\,\\rho) \\le l$,\nthen there is a DNF $\\varphi$ of width at most $l$ that computes the restriction of the OR node:\n$\\mathrm{DNF.eval}\\,\\varphi\\,x = \\mathrm{restrictFn}\\,(\\mathrm{eval}\\,(\\mathrm{node}\\,\\mathrm{false}\\,cs))\\,\\rho\\,x$\nfor all $x$."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "SwitchingLemma2.processClauseLits_termSubTree_drop",
+ "key": "9b23467881be1a71",
+ "kind": "lemma",
+ "title": "Deepest path after dropping the free-literal prefix",
+ "statement": "Let $t$ be a term on $n$ variables whose literals have pairwise distinct variables, let $\\rho_0$ and $\\sigma$ be restrictions on $n$ variables, and let $c$ be a continuation sending each restriction to a decision tree. Let $S$ be the sub-tree built for $t$ under $\\rho_0$ with continuation $c$, and let $\\pi$ denote its deepest root-to-leaf path. Write $F$ for the sublist of $t$ consisting of those literals whose variable is free under $\\rho_0$, and set $m = |F|$. Suppose $L$ is a list of $m$ literal–index pairs whose literal components are exactly $F$, in order, and that $P$ is a list of variable–direction pairs coinciding with the length-$|P|$ prefix of $\\pi$, with $m \\le |P| \\le |\\pi|$. Then dropping the first $m$ entries of $\\pi$ leaves exactly the deepest path of $c$ evaluated at the restriction obtained from $\\rho_0$ and $\\sigma$ by processing the literals $L$ against the path $P$ (the updated $\\rho_0$ component that this process returns).",
+ "hypotheses_covered": [
+  "t is a term whose literals have pairwise distinct variables",
+  "rho_0 and sigma are restrictions on n variables",
+  "c is a continuation from restrictions to decision trees",
+  "L has length equal to the number of free literals of t under rho_0",
+  "the literals of L equal, in order, the free literals of t under rho_0",
+  "P coincides with the prefix of the deepest path of the sub-tree of its own length",
+  "the number of free literals is at most the length of P",
+  "the length of P is at most the length of the deepest path of the sub-tree"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Dropping the free-literal prefix from $(\\mathrm{termSubTree}\\,t\\,\\rho_0\\,\\mathrm{cont}).\\mathrm{deepPath}$\nyields the deep path of the continuation evaluated at the\n$\\mathrm{processClauseLits}$-updated restriction, connecting the canonical tree\nstructure to the encoder's restriction update."
+}

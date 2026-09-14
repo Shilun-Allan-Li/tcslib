@@ -1,0 +1,19 @@
+{
+ "lean_name": "GeneralHypercontractivity.weak_two_function_hypercontractivity_one_bit",
+ "key": "b861097bcf55274a",
+ "kind": "theorem",
+ "title": "Weak two-function hypercontractivity on a single bit",
+ "statement": "Let $1 \\le p \\le 2$ and $1 \\le q \\le 2$, and set $\\rho = \\sqrt{(p-1)(q-1)}$. Then for any two Boolean functions $f, g : \\{0,1\\}^1 \\to \\bbr$ on a single bit,\n\\[\n  \\inn{f, T_\\rho g} \\;\\le\\; \\bigl(\\E[\\,\\abs{f}^p\\,]\\bigr)^{1/p}\\,\\bigl(\\E[\\,\\abs{g}^q\\,]\\bigr)^{1/q},\n\\]\nwhere $T_\\rho$ is the noise operator, $\\E[\\cdot]$ is the expectation, and $\\inn{\\cdot,\\cdot}$ is the $L^2$ inner product, all taken with respect to the uniform measure on $\\{0,1\\}$.",
+ "hypotheses_covered": [
+  "1 ≤ p",
+  "p ≤ 2",
+  "1 ≤ q",
+  "q ≤ 2",
+  "f, g are Boolean functions on one bit",
+  "noise parameter ρ = √((p-1)(q-1))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $1 \\le p \\le 2$, $1 \\le q \\le 2$ and $f, g : \\mathrm{BoolCube}\\,1 \\to \\bbr$, with\n$\\rho = \\sqrt{(p-1)(q-1)}$,\n\\[\n  \\inn{f, T_\\rho g} \\;\\le\\; \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}\\,\\bigl(\\E[\\abs{g}^q]\\bigr)^{1/q}.\n\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.floor_div_pow_lt_publicCoin_communicationComplexity_disjointness",
+ "key": "321c7b440c7a5d08",
+ "kind": "theorem",
+ "title": "Linear randomized lower bound for set disjointness",
+ "statement": "Let $n$ be a positive integer, and consider the set-disjointness function on subsets of $[n] = \\{0, 1, \\dots, n-1\\}$, which sends a pair $X, Y \\subseteq [n]$ to $\\mathtt{true}$ precisely when $X \\cap Y = \\emptyset$. Then its $\\tfrac{1}{32}$-error public-coin randomized communication complexity $R^{\\mathrm{pub}}_{1/32}$ satisfies\n\\[\n  \\left\\lfloor \\frac{n}{2^{32}} \\right\\rfloor \\;<\\; R^{\\mathrm{pub}}_{1/32}\\bigl(\\mathrm{disjointness}_n\\bigr),\n\\]\nwhere the left-hand side is the floor of the real number $n / 2^{32}$ and the right-hand side is valued in $\\bbn_\\infty$.",
+ "hypotheses_covered": [
+  "n is a positive natural number",
+  "error tolerance equals 1/32",
+  "the function computed is set-disjointness on subsets of [n]",
+  "the bound is on the public-coin randomized communication complexity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Headline theorem: public-coin randomized communication complexity of disjointness is linear at fixed error $1 / 32$, with a concrete conservative constant. The cutoff is the floor of the real number $n / 2^{32}$, so the asymptotic constant is stated over the reals."
+}

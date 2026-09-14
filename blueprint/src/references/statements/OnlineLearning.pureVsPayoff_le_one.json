@@ -1,0 +1,16 @@
+{
+ "lean_name": "OnlineLearning.pureVsPayoff_le_one",
+ "key": "3346ae1394dd4069",
+ "kind": "lemma",
+ "title": "Pure row payoff against a mixed column is at most one",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M$ row actions and $N$ column actions, whose payoff matrix $A$ satisfies $0 \\le A_{ij} \\le 1$ for all entries, and let $q$ be a mixed column strategy, that is, a probability distribution $q_1, \\dots, q_N$ over the columns. Then for every pure row action $i$, the expected payoff of row $i$ against $q$ satisfies\n\\[\n  \\sum_{j} A_{ij}\\, q_j \\;\\le\\; 1.\n\\]",
+ "hypotheses_covered": [
+  "G is a finite zero-sum game with payoff entries in [0,1]",
+  "i is a pure row action",
+  "q is a mixed column strategy (probability distribution over columns)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any game $G$, pure row action $i$, and mixed column strategy $q$,\n$\\mathrm{pureVsPayoff}(G,i,q) \\leq 1$."
+}

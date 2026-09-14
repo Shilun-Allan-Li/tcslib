@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.hardSample_measureReal_fieldProduct",
+ "key": "2aa7cf4d75b70652",
+ "kind": "theorem",
+ "title": "Rectangle events of the hard sample factor as a product",
+ "statement": "Fix a positive integer $n$, and let $\\mathrm{HardSample}(n)$ be the finite sample space whose points $\\omega$ record a special coordinate $\\omega.T \\in \\{0,\\dots,n-1\\}$, two bits $\\omega.x_T,\\omega.y_T \\in \\{0,1\\}$, and a coordinate vector $\\omega.\\mathrm{other}\\colon \\{0,\\dots,n-1\\} \\to \\mathrm{DisjointCoordinate}$. For any set $\\mathcal T$ of special coordinates, any sets $\\mathcal X,\\mathcal Y$ of bits, and any set $\\mathcal O$ of coordinate vectors, the ambient measure of the rectangle event\n\\[\n\\bigl\\{\\omega : \\omega.T \\in \\mathcal T,\\ \\omega.x_T \\in \\mathcal X,\\ \\omega.y_T \\in \\mathcal Y,\\ \\omega.\\mathrm{other} \\in \\mathcal O\\bigr\\},\n\\]\ntaken as a real number, equals the product\n\\[\n\\mu_{\\mathrm{Fin}}(\\mathcal T)\\cdot \\mu_{\\mathrm{bit}}(\\mathcal X)\\cdot \\mu_{\\mathrm{bit}}(\\mathcal Y)\\cdot \\mu_{\\mathrm{vec}}(\\mathcal O),\n\\]\nwhere $\\mu_{\\mathrm{Fin}}$ is the uniform law on the special coordinate, $\\mu_{\\mathrm{bit}}$ is the uniform law on one bit, and $\\mu_{\\mathrm{vec}}$ is the uniform law on coordinate vectors, each evaluated on the corresponding set as a real number.",
+ "hypotheses_covered": [
+  "n is a positive integer",
+  "TSet is an arbitrary set of special coordinates",
+  "XSet is an arbitrary set of bits",
+  "YSet is an arbitrary set of bits",
+  "OtherSet is an arbitrary set of coordinate vectors"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The hard sample distribution is the product distribution on the independent fields $T$, $X_{T}$, $Y_{T}$, and \\texttt{other}.  This rectangle form is the most convenient way to compute probabilities of events depending separately on the four fields."
+}

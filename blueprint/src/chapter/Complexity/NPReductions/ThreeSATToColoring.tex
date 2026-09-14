@@ -190,60 +190,62 @@ $\mathrm{clauseGadgetColor}$ applied to the truth values of $c$'s three
 literals.
 \end{definition}
 
-\begin{lemma}[Literal node color formula]
+\begin{lemma}[Color of a literal node]
 \lean{SATtoColor.sat3Coloring_litNode}
 \label{SATtoColor.sat3Coloring_litNode}
 \leanok
 \uses{SATtoColor.SatisfiesLiteral, SATtoColor.sat3Coloring}
 \difficulty{2}
-For any assignment $\mathrm{assign}$ and literal $\ell$,
+Fix a variable type $V$ and a Boolean assignment $\alpha : V \to \{\text{true},
+\text{false}\}$, and consider the coloring of the reduction graph induced by $\alpha$,
+which sends each vertex to a color in $\{0, 1, 2\}$ (with $1$ standing for True and $2$
+for False). For every literal $\ell$ over $V$, the literal node of $\ell$ receives color
+$1$ if $\ell$ is satisfied by $\alpha$, and color $2$ otherwise:
 \[
-  \mathrm{sat3Coloring}(\mathrm{assign},\,\mathrm{literalNode}(\ell))
+  \text{color of the literal node of } \ell
   \;=\;
-  \text{if } \mathrm{SatisfiesLiteral}(\mathrm{assign}, \ell) \text{ then } 1 \text{ else } 2.
+\begin{cases} 1 & \text{if $\ell$ is satisfied by $\alpha$,}\\ 2 &
+\text{otherwise.}\end{cases}
 \]
 \end{lemma}
 
-\begin{lemma}[Completeness of reduction]
+\begin{lemma}[Completeness of the 3-SAT to 3-coloring reduction]
 \lean{SATtoColor.SATtoColorCompleteness}
 \label{SATtoColor.SATtoColorCompleteness}
 \leanok
 \uses{SATtoColor.EdgeRelation, SATtoColor.Is3Colorable, SATtoColor.IsSatisfiable, SATtoColor.OutputVertex, SATtoColor.ReductionGraph, SATtoColor.Sat3, SATtoColor.SatisfiesClause, SATtoColor.SatisfiesLiteral, SATtoColor.clauseGadgetColor, SATtoColor.sat3Coloring, SATtoColor.sat3Coloring_litNode}
 \difficulty{6}
-If the 3-SAT instance $f$ is satisfiable, then the reduction graph
-$\mathrm{ReductionGraph}(f)$ is 3-colorable.  Formally:
-\[
-  \mathrm{IsSatisfiable}(f) \;\Longrightarrow\;
-  \mathrm{Is3Colorable}(\mathrm{ReductionGraph}(f)).
-\]
+Let $f$ be a 3-SAT instance over a variable type $V$, that is, a list of clauses, each a
+disjunction of three literals. If $f$ is satisfiable — there exists a Boolean assignment
+$\mathrm{assign} : V \to \mathrm{Bool}$ under which every clause of $f$ has at least one
+true literal — then the reduction graph $\mathrm{ReductionGraph}(f)$ is 3-colorable,
+i.e.\ it admits a proper coloring by the three colors $\mathrm{Fin}\,3$.
 \end{lemma}
 
-\begin{lemma}[Soundness of reduction]
+\begin{lemma}[Soundness of the 3-SAT to 3-colouring reduction]
 \lean{SATtoColor.SATtoColorSoundness}
 \label{SATtoColor.SATtoColorSoundness}
 \leanok
 \uses{SATtoColor.Clause, SATtoColor.EdgeRelation, SATtoColor.Is3Colorable, SATtoColor.IsSatisfiable, SATtoColor.OutputVertex, SATtoColor.ReductionGraph, SATtoColor.Sat3, SATtoColor.SatisfiesClause, SATtoColor.SatisfiesLiteral, SATtoColor.SatisfiesSat3}
 \difficulty{6}
-If the reduction graph $\mathrm{ReductionGraph}(f)$ is 3-colorable, then the
-3-SAT instance $f$ is satisfiable.  Formally:
-\[
-  \mathrm{Is3Colorable}(\mathrm{ReductionGraph}(f)) \;\Longrightarrow\;
-  \mathrm{IsSatisfiable}(f).
-\]
+Let $f$ be a 3-SAT instance over a variable type $V$, that is, a list of clauses, each
+clause a triple of literals (positive or negative occurrences of variables). If the
+reduction graph $\mathrm{ReductionGraph}(f)$ admits a proper $3$-colouring, then $f$ is
+satisfiable: there exists a Boolean assignment $\mathrm{assign} \colon V \to
+\{\mathrm{true}, \mathrm{false}\}$ under which every clause of $f$ has at least one
+literal evaluating to $\mathrm{true}$.
 \end{lemma}
 
-\begin{theorem}[3-SAT to 3-Coloring reduction]
+\begin{theorem}[Correctness of the 3-SAT to 3-coloring reduction]
 \lean{SATtoColor.SATtoColorReduction}
 \label{SATtoColor.SATtoColorReduction}
 \leanok
 \uses{SATtoColor.Is3Colorable, SATtoColor.IsSatisfiable, SATtoColor.ReductionGraph, SATtoColor.SATtoColorCompleteness, SATtoColor.SATtoColorSoundness, SATtoColor.Sat3}
 \difficulty{1}
-A 3-SAT instance $f$ is satisfiable if and only if the reduction graph is
-3-colorable:
-\[
-  \mathrm{IsSatisfiable}(f)
-  \;\longleftrightarrow\;
-  \mathrm{Is3Colorable}(\mathrm{ReductionGraph}(f)).
-\]
-This is the conjunction of completeness and soundness of the reduction.
+Let $f$ be a 3-SAT instance over a variable type $V$: a list of clauses, each clause an
+ordered triple of literals, where a literal is a positive or a negative occurrence of a
+variable in $V$. Then $f$ is satisfiable — some Boolean assignment $V \to
+\{\mathrm{true}, \mathrm{false}\}$ makes every clause in $f$ true — if and only if the
+reduction graph associated to $f$ is 3-colorable, that is, admits a proper coloring by
+three colors.
 \end{theorem}

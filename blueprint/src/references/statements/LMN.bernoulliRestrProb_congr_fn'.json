@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.bernoulliRestrProb_congr_fn'",
+ "key": "41b4767f2f3d5843",
+ "kind": "lemma",
+ "title": "Congruence of the depth-exceedance probability for equal functions",
+ "statement": "Fix a real parameter $p$, a threshold $t \\in \\bbn$, and two Boolean functions $f, g : (\\mathrm{Fin}\\,n \\to \\mathrm{Bool}) \\to \\mathrm{Bool}$ that agree at every input, so $f(x) = g(x)$ for all $x$. Draw a Bernoulli($p$) random restriction $\\rho$ of the $n$ variables, write $h_\\rho$ for the restricted function obtained from a Boolean function $h$ under $\\rho$, and let $D(\\cdot)$ denote decision-tree depth. Then\n\\[\n  \\bbP_p\\!\\left[\\,D(f_\\rho) > t\\,\\right] = \\bbP_p\\!\\left[\\,D(g_\\rho) > t\\,\\right],\n\\]\ni.e.\\ the two functions assign the same probability to the event that the restricted function has decision-tree depth strictly greater than $t$.",
+ "hypotheses_covered": [
+  "f and g agree at every input (f x = g x for all x)",
+  "real parameter p",
+  "threshold natural number t",
+  "ambient dimension n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f$ and $g$ agree on every input, then the probability that the restriction of $f$ exceeds\ndepth $t$ equals the corresponding probability for $g$."
+}

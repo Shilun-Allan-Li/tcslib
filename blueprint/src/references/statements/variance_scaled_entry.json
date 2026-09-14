@@ -1,0 +1,18 @@
+{
+ "lean_name": "variance_scaled_entry",
+ "key": "992b1e40173312cf",
+ "kind": "lemma",
+ "title": "Variance of a scaled Rademacher entry",
+ "statement": "Let $k > 0$ and let $x \\in \\bbr^d$. Draw a $k \\times d$ array $\\omega$ whose entries $\\omega_{ij}$ are independent Rademacher variables, each equal to $-1$ or $+1$ with probability $\\tfrac{1}{2}$. Then for any indices $i \\in \\{1,\\dots,k\\}$ and $j \\in \\{1,\\dots,d\\}$, the real random variable $\\omega \\mapsto (x_j/\\sqrt{k})\\,\\omega_{ij}$ has variance\n\\[\n\\mathrm{Var}\\!\\left[\\frac{x_j}{\\sqrt{k}}\\,\\omega_{ij}\\right] = \\frac{x_j^2}{k}.\n\\]",
+ "hypotheses_covered": [
+  "k > 0",
+  "x is a vector in ℝ^d",
+  "i is an index in Fin k",
+  "j is an index in Fin d",
+  "entries ω_ij are i.i.d. Rademacher under the joint product measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k > 0$, $x \\in \\mathbb{R}^d$, and indices $i,j$,\n$\\mathrm{Var}[\\omega \\mapsto (x_j/\\sqrt{k})\\,\\omega_{ij}; \\mathrm{radJointMeasure}]\n= x_j^2/k$."
+}

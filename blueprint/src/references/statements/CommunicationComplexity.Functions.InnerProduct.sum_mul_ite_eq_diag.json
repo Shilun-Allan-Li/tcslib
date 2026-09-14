@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.InnerProduct.sum_mul_ite_eq_diag",
+ "key": "0980a1680b18917b",
+ "kind": "lemma",
+ "title": "Diagonal collapse of an indexed sum",
+ "statement": "Let $\\alpha$ be a finite type with decidable equality, let $h \\colon \\alpha \\times \\alpha \\to \\bbr$ be any function, and let $c \\in \\bbr$. Summing $h(y,z)$ against the weight that equals $c$ when $y = z$ and $0$ otherwise, over all ordered pairs, leaves only the diagonal terms:\n\\[\n  \\sum_{(y,z)\\,\\in\\,\\alpha \\times \\alpha} h(y,z)\\cdot\\bigl(\\text{$c$ if $y = z$, else $0$}\\bigr)\n    \\;=\\; \\sum_{y\\,\\in\\,\\alpha} h(y,y)\\cdot c.\n\\]",
+ "hypotheses_covered": [
+  "α is a finite type",
+  "α has decidable equality",
+  "h is a real-valued function on α × α",
+  "c is a real scalar"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a finite type $\\alpha$ with decidable equality, a function $h : \\alpha \\to \\alpha\n\\to \\mathbb{R}$, and a scalar $c \\in \\mathbb{R}$,\n\\[\n  \\sum_{(y_1, y_2) : \\alpha \\times \\alpha} h(y_1, y_2)\n    \\cdot [\\![y_1 = y_2]\\!] \\cdot c\n  \\;=\\; \\sum_{y : \\alpha} h(y, y) \\cdot c,\n\\]\nwhere $[\\![\\cdot]\\!]$ denotes the indicator of the condition."
+}

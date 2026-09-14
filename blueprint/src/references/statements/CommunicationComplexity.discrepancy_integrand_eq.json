@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.discrepancy_integrand_eq",
+ "key": "2a32a9257fa59f85",
+ "kind": "lemma",
+ "title": "Discrepancy integrand as a signed indicator difference",
+ "statement": "Let $X$ and $Y$ be arbitrary types, let $g : X \\times Y \\to \\mathrm{Bool}$ (written $g(x,y)$), let $S \\subseteq X \\times Y$, and let $\\sigma : \\mathrm{Bool} \\to \\bbr$ send $\\mathrm{false}$ to $1$ and $\\mathrm{true}$ to $-1$. Then for every point $(x,y) \\in X \\times Y$,\n\\[\n\\mathbf{1}_{S}(x,y)\\,\\sigma\\bigl(g(x,y)\\bigr)\n= \\mathbf{1}_{\\{(x,y)\\in S \\,:\\, g(x,y)=\\mathrm{false}\\}}(x,y)\n- \\mathbf{1}_{\\{(x,y)\\in S \\,:\\, g(x,y)=\\mathrm{true}\\}}(x,y),\n\\]\nwhere each indicator takes the value $1$ on its set and $0$ elsewhere.",
+ "hypotheses_covered": [
+  "g : X → Y → Bool",
+  "subset S of X × Y",
+  "a fixed point (x,y) in X × Y",
+  "σ = boolSign sending false to 1 and true to −1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any $g : X \\to Y \\to \\mathrm{Bool}$, $S \\subseteq X \\times Y$, and point\n$(x,y) \\in X \\times Y$, the pointwise integrand\n$\\mathbf{1}_{S}(x,y)\\cdot\\sigma(g(x,y))$\nequals the indicator of $\\{(x,y)\\in S \\mid g(x,y)=\\mathrm{false}\\}$ minus the\nindicator of $\\{(x,y)\\in S \\mid g(x,y)=\\mathrm{true}\\}$ evaluated at $(x,y)$."
+}

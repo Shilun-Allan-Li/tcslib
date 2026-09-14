@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rbind_complexity_const",
+ "key": "8dba3c03422990c7",
+ "kind": "theorem",
+ "title": "Complexity of bind with fresh randomness under a constant continuation",
+ "statement": "Let $p$ be a private-coin finite-message protocol over inputs $X$, $Y$ with private randomness $(\\Omega_X, \\Omega_Y)$ and output type $\\alpha$, and let $q$ assign to each output $a \\in \\alpha$ a private-coin finite-message protocol $q\\,a$ over $X$, $Y$ with fresh randomness $(\\Omega_X', \\Omega_Y')$ and output type $\\beta$. Suppose there is a natural number $c$ with $\\mathrm{complexity}(q\\,a) = c$ for every $a \\in \\alpha$. Then the protocol obtained by running $p$ and then $q\\,a$ with independent randomness satisfies\n\\[\n  \\mathrm{complexity}(\\mathrm{rbind}\\,p\\,q) \\;=\\; \\mathrm{complexity}(p) + c.\n\\]",
+ "hypotheses_covered": [
+  "p is a private-coin finite-message protocol with output type alpha",
+  "q is a family of continuation protocols indexed by alpha with fresh randomness and output type beta",
+  "there is a constant c in N",
+  "complexity(q a) = c for every output a"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the continuation $q\\,a$ has the same complexity $c$ for every output $a$ of $p$,\nthen\n\\[\n  (\\mathrm{rbind}\\;p\\;q).\\mathrm{complexity} \\;=\\; p.\\mathrm{complexity} + c.\n\\]"
+}

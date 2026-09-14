@@ -1,0 +1,14 @@
+{
+ "lean_name": "OneBit.one_bit_val_false",
+ "key": "3fd8a9ec6a4ddd7c",
+ "kind": "lemma",
+ "title": "Value of a one-bit function at the false input",
+ "statement": "Let $f:\\{0,1\\}^1\\to\\bbr$ be a Boolean function of arity $1$, and let $x_0\\in\\{0,1\\}^1$ be the input whose single coordinate is $\\mathit{false}$ (that is, the sign encoding of that coordinate is $+1$). Then the value of $f$ at this input equals the sum of its degree-zero and degree-one Fourier--Walsh coefficients:\n\\[\n  f(x_0) \\;=\\; \\hat f(\\emptyset) + \\hat f(\\{0\\}).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a one-bit function $f$, its value on the all-$\\mathit{false}$ input is the sum of its\ntwo Fourier coefficients: $f(\\mathit{false}) = \\widehat{f}(\\emptyset) + \\widehat{f}(\\{0\\})$."
+}

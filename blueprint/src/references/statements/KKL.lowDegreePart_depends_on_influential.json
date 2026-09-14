@@ -1,0 +1,16 @@
+{
+ "lean_name": "KKL.lowDegreePart_depends_on_influential",
+ "key": "4f2d8046bb776d2c",
+ "kind": "lemma",
+ "title": "Low-degree part is close to a junta on the influential coordinates",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function, let $k$ be a natural number, and let $\\tau>0$. Then there is a Boolean function $g:\\{0,1\\}^n\\to\\bbr$ that is a junta on the set $J_\\tau(f)=\\{\\,i\\in[n]:\\mathrm{Inf}_i[f]\\ge\\tau\\,\\}$ of $\\tau$-influential coordinates and that approximates the low-degree part $f_{\\le k}$ in squared $L^2$ distance, namely\n\\[\n  \\E\\big[(f_{\\le k}(x)-g(x))^2\\big]\\;\\le\\;n\\,\\tau,\n\\]\nwhere the expectation is taken under the uniform measure on the cube.",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity n",
+  "k is a natural number (truncation level)",
+  "tau > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $f$, every level $k$ and every $\\tau > 0$ there is a function $g$ that is a\njunta on the $\\tau$-influential coordinates $J_\\tau(f)$ and satisfies\n$\\E\\big[(f_{\\le k} - g)^2\\big] \\le n\\tau$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toPrivateCoin_rrun",
+ "key": "4fcfe40e13ac347e",
+ "kind": "theorem",
+ "title": "Ignoring private coins recovers the deterministic output",
+ "statement": "Let $p$ be a deterministic finite-message protocol over input types $X$ and $Y$ with output type $\\alpha$, and fix arbitrary private-coin spaces $\\Omega_X$ and $\\Omega_Y$. Form from $p$ the private-coin protocol over $\\Omega_X$, $\\Omega_Y$ that runs $p$ on the underlying inputs while discarding both players' coins. Then for all inputs $x \\in X$, $y \\in Y$ and all coin draws $\\omega_x \\in \\Omega_X$, $\\omega_y \\in \\Omega_Y$, executing this private-coin protocol on $x$, $y$ with the coins $\\omega_x$, $\\omega_y$ returns exactly the value that the deterministic execution of $p$ on $x$, $y$ produces, regardless of the coins.",
+ "hypotheses_covered": [
+  "p is a deterministic finite-message protocol over X, Y with output alpha",
+  "arbitrary private-coin spaces Omega_X and Omega_Y",
+  "arbitrary inputs x in X, y in Y",
+  "arbitrary coin draws omega_x in Omega_X, omega_y in Omega_Y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a deterministic finite-message protocol over input types $X$, $Y$ with output\ntype $\\alpha$, and fix arbitrary private-coin spaces $\\Omega_X$ and $\\Omega_Y$. Form the\nprivate-coin protocol over $\\Omega_X$, $\\Omega_Y$ that runs $p$ while discarding both\nplayers' coins. Then for every pair of inputs $x : X$, $y : Y$ and every pair of coin\ndraws $\\omega_x : \\Omega_X$, $\\omega_y : \\Omega_Y$, executing this private-coin protocol\non $x$, $y$ with coins $\\omega_x$, $\\omega_y$ returns exactly the value that the\ndeterministic execution of $p$ on $x$, $y$ produces:\n\\[\n\\mathrm{rrun}\\bigl(\\mathrm{toPrivateCoin}(p)\\bigr)(x, y, \\omega_x, \\omega_y) \\;=\\;\n\\mathrm{run}(p)(x, y).\n\\]"
+}

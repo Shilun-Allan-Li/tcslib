@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.restricted_has_small_dnf_of_dtDepth_le",
+ "key": "7f87b7b1e9622717",
+ "kind": "theorem",
+ "title": "From small decision-tree depth to a small-width DNF",
+ "statement": "Let $f : (\\bbf_2^{\\,n} \\to \\{0,1\\})$ be a Boolean function on $n$ variables and let $\\rho$ be a restriction that fixes some variables to Boolean values and leaves the others free, so that the restricted function $f|_\\rho$ sends a point $x$ to the value of $f$ on the assignment agreeing with $\\rho$ on the fixed coordinates and with $x$ on the free ones. If $f|_\\rho$ has decision-tree depth at most $l$ — that is, some decision tree of depth at most $l$ computes it — then there exists a DNF formula $\\varphi$ whose width (the maximum number of literals in any of its terms) is at most $l$ and which agrees with $f|_\\rho$ on every input.",
+ "hypotheses_covered": [
+  "f is a Boolean function on n variables",
+  "ρ is a restriction on the n variables",
+  "the restricted function f|_ρ has decision-tree depth at most l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf the restricted function $f|_\\rho$ has decision-tree depth at most $l$, then there exists a\n$\\mathrm{DNF}$ $\\varphi$ of width at most $l$ that computes $f|_\\rho$ on every input."
+}

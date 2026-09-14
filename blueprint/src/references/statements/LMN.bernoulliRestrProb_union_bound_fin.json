@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.bernoulliRestrProb_union_bound_fin",
+ "key": "8df5f472a2a67f44",
+ "kind": "theorem",
+ "title": "Union bound for restriction probabilities",
+ "statement": "Fix a parameter $p \\in \\bbr$ with $0 \\le p \\le 1$, and let $A_0, \\dots, A_{m-1}$ be finitely many events on restrictions of $n$ variables. Under a Bernoulli($p$) random restriction, the probability that at least one of the events $A_i$ occurs is at most the sum of the probabilities of the individual events:\n\\[\n  \\bbP_p\\!\\left[\\exists i,\\ A_i(\\rho)\\right] \\le \\sum_{i=0}^{m-1} \\bbP_p\\!\\left[A_i(\\rho)\\right],\n\\]\nwhere $\\bbP_p[\\cdot]$ denotes the Bernoulli event probability at parameter $p$.",
+ "hypotheses_covered": [
+  "0 ≤ p",
+  "p ≤ 1",
+  "finitely many events A_0, …, A_{m-1} on restrictions of n variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0\\le p\\le 1$ and finitely many events $A_0,\\dots,A_{m-1}$ on restrictions, the\nBernoulli$(p)$ probability that some $A_i$ holds is at most the sum of the\nindividual probabilities:\n\\[\n\\mathrm{bernoulliRestrProb}\\,p\\,(\\exists i,\\,A_i)\\le\n\\sum_i \\mathrm{bernoulliRestrProb}\\,p\\,(A_i).\n\\]"
+}

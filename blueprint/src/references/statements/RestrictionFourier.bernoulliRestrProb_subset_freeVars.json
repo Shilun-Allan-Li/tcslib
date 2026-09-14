@@ -1,0 +1,16 @@
+{
+ "lean_name": "RestrictionFourier.bernoulliRestrProb_subset_freeVars",
+ "key": "43a66955ca356ed7",
+ "kind": "theorem",
+ "title": "Free-set marginal of a Bernoulli restriction",
+ "statement": "Fix $n \\in \\bbn$, a real parameter $p$, and a subset $T \\subseteq \\{1, \\dots, n\\}$ of the coordinates. Draw a Bernoulli($p$) random restriction $\\rho$ on $n$ variables, and write $J$ for its set of free variables (the coordinates $\\rho$ leaves unset). Then the probability that every coordinate of $T$ is left free is\n\\[\n  \\Pr\\bigl[\\,T \\subseteq J\\,\\bigr] \\;=\\; p^{\\abs{T}},\n\\]\nthat is, the total Bernoulli weight of those restrictions whose free variables include $T$ equals $p^{\\abs{T}}$.",
+ "hypotheses_covered": [
+  "real parameter p",
+  "subset T of the n coordinates",
+  "event that T is contained in the free variables of the restriction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under a Bernoulli($p$)-random restriction with free-coordinate set $J$, the probability that a\nfixed set $T$ is contained in $J$ is\n\\[\n  \\Pr[T \\subseteq J] \\;=\\; p^{\\abs{T}} .\n\\]\nThis is the first-moment half of O'Donnell Proposition 4.17."
+}

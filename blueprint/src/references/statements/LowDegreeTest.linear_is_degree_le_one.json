@@ -1,0 +1,15 @@
+{
+ "lean_name": "LowDegreeTest.linear_is_degree_le_one",
+ "key": "3225fba5e549a0ab",
+ "kind": "lemma",
+ "title": "Linear Boolean functions have degree at most one",
+ "statement": "Let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be linear, meaning $f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x, y \\in \\{0,1\\}^n$, where $\\oplus$ denotes componentwise XOR. Then $f$ has degree $\\le 1$: its $\\pm 1$ lift $(-1)^f$ has vanishing multiplicative derivatives of order two, so that for every base point $x \\in \\{0,1\\}^n$ and every pair of directions $h_1, h_2 \\in \\{0,1\\}^n$ the order-$2$ Gowers product of $(-1)^f$ over the combinatorial square $x + \\operatorname{span}\\{h_1, h_2\\}$ equals $1$.",
+ "hypotheses_covered": [
+  "f is a Boolean function on the n-dimensional hypercube",
+  "f is linear: f(x XOR y) = f(x) XOR f(y) for all x, y"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f : \\{0,1\\}^n \\to \\{0,1\\}$ is $\\mathbb{F}_2$-linear (i.e.\\\n$f(x \\oplus y) = f(x) \\oplus f(y)$ for all $x,y$), then $f$ has degree $\\le 1$."
+}

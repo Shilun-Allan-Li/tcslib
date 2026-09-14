@@ -1,0 +1,15 @@
+{
+ "lean_name": "deBruijnDigraph_connected",
+ "key": "cec8732c1454f7f8",
+ "kind": "theorem",
+ "title": "Connectivity of the de Bruijn digraph",
+ "statement": "Fix an integer $n \\ge 2$, and let $D_n$ be the de Bruijn digraph whose vertices are the binary strings of length $n-1$ and whose arcs run from each string $p_1 p_2 \\cdots p_{n-1}$ to every string of the form $p_2 p_3 \\cdots p_{n-1} b$ with $b \\in \\{0,1\\}$. Form the underlying undirected simple graph on the same vertex set, in which two distinct strings are adjacent precisely when an arc of $D_n$ joins one to the other in either direction. Then this graph is connected: its vertex set is nonempty and any two vertices are linked by a path.",
+ "hypotheses_covered": [
+  "n ≥ 2",
+  "the underlying inclusive simple graph of the de Bruijn digraph D_n is connected (nonempty and all vertices mutually reachable)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\\emph{Clearly, \\texttt{D\\_n} is connected\\dots{}}"
+}

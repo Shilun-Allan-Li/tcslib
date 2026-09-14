@@ -1,0 +1,18 @@
+{
+ "lean_name": "weighted_exp_le_affine",
+ "key": "cb90d71c9ceeb89d",
+ "kind": "theorem",
+ "title": "Weighted exponential sum versus affine upper bound",
+ "statement": "Let $p_1,\\dots,p_n$ be a probability vector, that is $p_i \\ge 0$ for every $i$ and $\\sum_{i} p_i = 1$, and let $\\ell_1,\\dots,\\ell_n \\in \\bbr$ satisfy $0 \\le \\ell_i \\le 1$ for every $i$. Then for every $\\eta \\in \\bbr$,\n\\[\n  \\sum_{i} p_i\\, e^{-\\eta\\,\\ell_i}\n  \\;\\le\\;\n  1 - \\bigl(1 - e^{-\\eta}\\bigr)\\sum_{i} p_i\\,\\ell_i.\n\\]",
+ "hypotheses_covered": [
+  "p_i ≥ 0 for all i",
+  "∑_i p_i = 1 (probability vector)",
+  "ℓ_i ≥ 0 for all i",
+  "ℓ_i ≤ 1 for all i",
+  "η is an arbitrary real number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p : \\mathrm{Fin}\\,n \\to \\bbr$ be a probability vector ($p_i \\ge 0$,\n$\\sum_i p_i = 1$) and let $\\ell : \\mathrm{Fin}\\,n \\to \\bbr$ satisfy $0 \\le \\ell_i \\le 1$\nfor all $i$.  For any $\\eta \\in \\bbr$,\n\\[\n  \\sum_{i} p_i \\,e^{-\\eta\\,\\ell_i}\n  \\;\\le\\;\n  1 - \\bigl(1 - e^{-\\eta}\\bigr)\\!\\sum_{i} p_i\\,\\ell_i.\n\\]"
+}

@@ -11,6 +11,7 @@ collision event into $k$ pairwise-disjoint pieces, measuring each piece, and sum
 
 \begin{definition}[Hash function space]
 \lean{CommunicationComplexity.Functions.Hash.HashSpace}
+\statementsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p001-b002}
 \label{CommunicationComplexity.Functions.Hash.HashSpace}
 \leanok
 $\texttt{HashSpace}\,\alpha\,k$ is the type of all functions $\alpha \to \mathrm{Fin}\,k$,
@@ -30,48 +31,54 @@ $h(y) = a$, i.e.\ the subset of the product space where both $x$ and $y$ are map
 the fixed value $a$.  These pieces partition the collision event $\{h \mid h(x) = h(y)\}$.
 \end{definition}
 
-\begin{lemma}[Collision event as union of pieces]
+\begin{lemma}[Collision event as a union of collision pieces]
 \lean{CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
 \label{CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
 \leanok
 \uses{CommunicationComplexity.Functions.Hash.HashSpace, CommunicationComplexity.Functions.Hash.collisionPiece}
 \difficulty{4}
-For any $x, y : \alpha$ and any $k$,
+Let $\alpha$ be a type, let $k$ be a natural number, and let $x, y \in \alpha$. Writing
+a hash function as a map $h : \alpha \to \mathrm{Fin}\,k$, the collision event on which
+$x$ and $y$ receive the same hash value decomposes as the union of collision pieces over
+all possible common values:
 \[
-  \{h : \texttt{HashSpace}\,\alpha\,k \mid h(x) = h(y)\}
-  \;=\; \bigcup_{a : \mathrm{Fin}\,k} \texttt{collisionPiece}\,k\,x\,y\,a.
+  \{\, h : \alpha \to \mathrm{Fin}\,k \mid h(x) = h(y) \,\}
+  \;=\; \bigcup_{a \in \mathrm{Fin}\,k} \{\, h \mid h(x) = a \text{ and } h(y) = a \,\}.
 \]
 \end{lemma}
 
-\begin{lemma}[Collision pieces are pairwise disjoint]
+\begin{lemma}[Pairwise disjointness of the collision pieces]
 \lean{CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint}
 \label{CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint}
 \leanok
 \uses{CommunicationComplexity.Functions.Hash.collisionPiece}
 \difficulty{3}
-For any $x, y : \alpha$ and $k$, the sets $\texttt{collisionPiece}\,k\,x\,y\,a$ for
-$a : \mathrm{Fin}\,k$ are pairwise disjoint: if $a \ne b$ then
-$\texttt{collisionPiece}\,k\,x\,y\,a \cap \texttt{collisionPiece}\,k\,x\,y\,b = \emptyset$.
+Fix a type $\alpha$, a natural number $k$, and two elements $x, y : \alpha$. For each
+value $a \in \{0, \dots, k-1\}$, let $C_a$ denote the set of hash functions $h : \alpha
+\to \{0, \dots, k-1\}$ with $h(x) = a$ and $h(y) = a$. Then the family $(C_a)_a$ is
+pairwise disjoint: whenever $a \ne b$, the sets $C_a$ and $C_b$ have empty intersection.
 \end{lemma}
 
-\begin{lemma}[Singleton measure in hash range]
+\begin{lemma}[Volume of a singleton in a finite type]
 \lean{CommunicationComplexity.Functions.Hash.hashRange_singleton_measure}
 \label{CommunicationComplexity.Functions.Hash.hashRange_singleton_measure}
 \leanok
 \difficulty{2}
-For $k \ge 1$ and any $a : \mathrm{Fin}\,k$, the uniform measure of the singleton
-$\{a\} \subseteq \mathrm{Fin}\,k$ equals $1/k$ as an extended non-negative real:
-$\mu(\{a\}) = 1/k \in \mathbb{R}_{\ge 0}^\infty$.
+Let $k \ge 1$ be a natural number and let $a$ be an element of the finite type
+$\mathrm{Fin}\,k = \{0, 1, \dots, k-1\}$, equipped with its canonical (uniform) volume
+measure. Then the measure of the singleton $\{a\}$ equals $1/k$, as an element of the
+extended nonnegative reals $[0, \infty]$.
 \end{lemma}
 
-\begin{lemma}[Singleton measure in hash range (real-valued)]
+\begin{lemma}[Uniform measure of a singleton in a finite type]
 \lean{CommunicationComplexity.Functions.Hash.hashRange_singleton_measureReal}
 \label{CommunicationComplexity.Functions.Hash.hashRange_singleton_measureReal}
 \leanok
 \uses{CommunicationComplexity.Functions.Hash.hashRange_singleton_measure}
 \difficulty{2}
-For $k \ge 1$ and any $a : \mathrm{Fin}\,k$, the real-valued uniform measure of $\{a\}$
-in $\mathrm{Fin}\,k$ equals $1/k \in \mathbb{R}$, i.e.\ $\mu_{\mathbb{R}}(\{a\}) = 1/k$.
+Let $k \ge 1$, and equip the finite set $\mathrm{Fin}\,k = \{0, 1, \dots, k-1\}$ with
+its uniform probability measure. Then for every element $a \in \mathrm{Fin}\,k$, the
+real-valued measure of the singleton $\{a\}$ equals $1/k$.
 \end{lemma}
 
 \begin{lemma}[Measure of a collision piece]
@@ -80,23 +87,199 @@ in $\mathrm{Fin}\,k$ equals $1/k \in \mathbb{R}$, i.e.\ $\mu_{\mathbb{R}}(\{a\})
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ, CommunicationComplexity.Functions.Hash.collisionPiece, CommunicationComplexity.Functions.Hash.hashRange_singleton_measureReal}
 \difficulty{5}
-Let $\alpha$ be a finite type, $k \ge 1$, $x \ne y \in \alpha$, and $a : \mathrm{Fin}\,k$.
-Under the product measure on $\texttt{HashSpace}\,\alpha\,k$,
+Let $\alpha$ be a finite type and let $k \ge 1$. Fix two distinct elements $x \ne y$ of
+$\alpha$ and a value $a \in \mathrm{Fin}\,k$, and equip the space of hash functions
+$\alpha \to \mathrm{Fin}\,k$ with the product of the uniform probability measures on the
+coordinates. Then the collision piece consisting of those hash functions $h$ with $h(x)
+= a$ and $h(y) = a$ has measure
 \[
-  \mu_{\mathbb{R}}(\texttt{collisionPiece}\,k\,x\,y\,a) = \left(\frac{1}{k}\right)^2.
+  \left(\frac{1}{k}\right)^2.
 \]
 \end{lemma}
 
-\begin{theorem}[Collision probability bound]
+\begin{theorem}[Collision probability bound for random hashing]
 \lean{CommunicationComplexity.Functions.Hash.collision_prob_le}
+\proofsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p001-b002}
 \label{CommunicationComplexity.Functions.Hash.collision_prob_le}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p003-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p004-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.measureReal_pi_univ}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.HashSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.measureSpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.isProbabilityMeasure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange.finiteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashSpace.finiteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.collisionPiece}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange_singleton_measure}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.hashRange_singleton_measureReal}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
+\proofstep
+  {CommunicationComplexity.Functions.Hash.collisionPiece_measureReal}
+  {context}
+  {raoyehudayoff-ch03-randomized-protocols}
+  {pdf-3eebfb23ab53-p001-b002}
 \uses{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype, CommunicationComplexity.Functions.Hash.HashSpace, CommunicationComplexity.Functions.Hash.collisionPiece_measureReal, CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint, CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
 \difficulty{4}
-Let $\alpha$ be a finite type, $k \ge 1$, and let $x \ne y \in \alpha$.
-For a uniformly random hash function $h : \alpha \to \mathrm{Fin}\,k$,
+Let $\alpha$ be a finite type and let $k \ge 1$, so that each hash value lies in
+$\{0,\dots,k-1\}$. Consider the space of hash functions $h \colon \alpha \to
+\mathrm{Fin}\,k$, equipped with the uniform product probability measure, and fix two
+distinct points $x \ne y$ in $\alpha$. Then the probability that $x$ and $y$ collide is
+at most $1/k$:
 \[
-  \Pr[h(x) = h(y)] \;\le\; \frac{1}{k}.
+  \Pr\bigl[\,h(x) = h(y)\,\bigr] \;\le\; \frac{1}{k}.
 \]
-That is, $\mu_{\mathbb{R}}\bigl(\{h \in \texttt{HashSpace}\,\alpha\,k \mid h(x) = h(y)\}\bigr) \le 1/k$.
 \end{theorem}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "JLDistortion.of_not_bad",
+ "key": "bfd44cce6a98b35b",
+ "kind": "lemma",
+ "title": "Distortion bound from a controlled single-vector event",
+ "statement": "Let $\\varepsilon \\in \\bbr$, let $u, v \\in \\bbr^d$, and let $A$ be a real $k \\times d$ matrix, acting as a linear map $\\bbr^d \\to \\bbr^k$. Suppose the difference $u - v$ does not trigger the bad distortion event for $A$; that is, the squared-norm distortion of $u-v$ stays within the allowed band,\n\\[\n  \\bigl|\\,\\norm{A(u-v)}^2 - \\norm{u-v}^2\\,\\bigr| \\;\\le\\; \\varepsilon\\,\\norm{u-v}^2 .\n\\]\nThen the images $Au$ and $Av$ satisfy the two-sided single-pair distortion bound\n\\[\n  (1 - \\varepsilon)\\,\\norm{u - v}^2 \\;\\le\\; \\norm{Au - Av}^2 \\;\\le\\; (1 + \\varepsilon)\\,\\norm{u - v}^2 .\n\\]",
+ "hypotheses_covered": [
+  "ε is a real parameter",
+  "u, v are vectors in ℝ^d",
+  "A is a k×d real matrix (a linear map ℝ^d → ℝ^k)",
+  "u − v does not trigger the bad-single event: |‖A(u−v)‖² − ‖u−v‖²| ≤ ε‖u−v‖²"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the matrix $A$ does \\emph{not} trigger the bad-single event for the\ndifference $u - v$, then \\texttt{JLDistortion} $\\varepsilon\\; u\\; v\\;\n(A.toEuclideanLin\\; u)\\; (A.toEuclideanLin\\; v)$ holds; that is, the\nsquared-distance of the images is within a factor of $(1 \\pm \\varepsilon)$\nof the squared-distance of the originals."
+}

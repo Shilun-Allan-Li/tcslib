@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.Circuit.reidx_depth",
+ "key": "5b0067414bb55c92",
+ "kind": "theorem",
+ "title": "Re-indexing preserves circuit depth",
+ "statement": "Let $c$ be a Boolean circuit on $m$ variables and let $f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$ be any map of variable indices. Then re-indexing $c$ along $f$ leaves its depth unchanged: $\\mathrm{depth}(\\mathrm{reidx}(c, f)) = \\mathrm{depth}(c)$.",
+ "hypotheses_covered": [
+  "c is a circuit on m variables",
+  "f is a map Fin m → Fin m'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every circuit $c$ on $m$ variables and every $f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$,\nthe re-indexed circuit has the same depth as $c$, i.e. $\\mathrm{depth}(\\mathrm{reidx}(c, f)) = \\mathrm{depth}(c)$."
+}

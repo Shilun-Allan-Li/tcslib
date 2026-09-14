@@ -1,0 +1,23 @@
+{
+ "lean_name": "LMN.switching_bernoulli_gate_to_cnf",
+ "key": "ad985450c1224aab",
+ "kind": "theorem",
+ "title": "Bernoulli restriction of a narrow DNF to a narrow CNF, with high probability",
+ "statement": "Let $g$ be a DNF formula on $n \\ge 1$ variables whose width is at most $w$, where $w \\ge 1$, and suppose that within each term of $g$ any two literals having the same variable are equal and no literal is repeated. Let $l$ be a natural number, and let $p$ be a real number with $0 < p \\le 1$ and $p \\le \\tfrac{1}{40w}$. Then, under a Bernoulli$(p)$ random restriction $\\rho$, the probability that the restricted function $g|_\\rho$ is computed by no CNF formula of width at most $l$ is at most\n\\[\n  \\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\left(-\\tfrac{np}{3}\\right).\n\\]",
+ "hypotheses_covered": [
+  "DNF g on n variables",
+  "width of g at most w",
+  "w > 0",
+  "within each term, literals with the same variable coincide",
+  "each term has no repeated literal",
+  "n > 0",
+  "l a natural number (target CNF width)",
+  "0 < p",
+  "p ≤ 1/(40w)",
+  "p ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g$ be a $\\mathrm{DNF}$ of width at most $w>0$ (with distinct variables per term and\nno duplicate literals), let $n>0$, and let $0<p\\le \\tfrac{1}{40w}$ with $p\\le 1$. Then the\nprobability under a Bernoulli$(p)$ restriction $\\rho$ that $g|_\\rho$ cannot be expressed as a\n$\\mathrm{CNF}$ of width at most $l$ is at most\n\\[\n  \\Bigl(\\tfrac12\\Bigr)^l + \\exp\\!\\Bigl(-\\tfrac{np}{3}\\Bigr).\n\\]"
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.logb_le_complexity_of_distributionalError",
+ "key": "86c86c650550d3e8",
+ "kind": "theorem",
+ "title": "Discrepancy lower bound on communication complexity",
+ "statement": "Let $\\mu$ be a finite probability space on $X \\times Y$, let $g : X \\times Y \\to \\mathrm{Bool}$ be a Boolean function, and let $\\gamma > 0$ be a real number such that every combinatorial rectangle $R \\subseteq X \\times Y$ satisfies $\\abs{\\mathrm{disc}_\\mu(g, R)} \\le \\gamma$, where $\\mathrm{disc}_\\mu(g, R) = \\E_{(x,y)\\sim\\mu}[\\mathbf{1}_R(x,y)\\,\\sigma(g(x,y))]$ and $\\sigma(\\mathrm{false}) = 1$, $\\sigma(\\mathrm{true}) = -1$. Let $p$ be a deterministic communication protocol with Boolean outputs, and let $\\varepsilon = \\mu(\\{(x,y) : p(x,y) \\ne g(x,y)\\})$ be its distributional error in computing $g$ under $\\mu$. If $1 - 2\\varepsilon > 0$, then the communication complexity of $p$ satisfies\n\\[\n  \\log_2\\!\\left(\\frac{1 - 2\\varepsilon}{\\gamma}\\right) \\;\\le\\; \\mathrm{complexity}(p).\n\\]",
+ "hypotheses_covered": [
+  "finite probability space μ on X × Y",
+  "Boolean function g : X × Y → Bool",
+  "real number γ",
+  "protocol p with Boolean output",
+  "every rectangle R has |discrepancy of g on R| ≤ γ",
+  "γ > 0",
+  "1 - 2·(distributional error of p against g) > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nAssuming $\\gamma > 0$ and $1 - 2 \\cdot p.\\mathrm{distributionalError}_\\mu(g) > 0$, if\nevery rectangle has discrepancy at most $\\gamma$ then\n\\[\n  \\log_2\\!\\left(\\frac{1 - 2\\cdot p.\\mathrm{distributionalError}_\\mu(g)}{\\gamma}\\right)\n  \\;\\le\\;\n  p.\\mathrm{complexity}.\n\\]"
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "prefixHedgeMixedStrategy_weight_eq_hedgeDist",
+ "key": "f18e7f6ab6afa2a0",
+ "kind": "lemma",
+ "title": "Prefix Hedge strategy agrees with the abstract Hedge distribution",
+ "statement": "Let $G$ be a finite two-player zero-sum game with $M \\ge 1$ row actions and $N$ column actions, fix a learning rate $\\eta \\in \\bbr$, and let $a_0, \\dots, a_{T-1}$ be a sequence of column actions. For any round $t < T$ and any row $i$, the weight assigned to $i$ by the prefix Hedge mixed strategy built from the length-$t$ prefix $a_0, \\dots, a_{t-1}$ equals the Hedge distribution value $p_t(i)$ obtained by running abstract Hedge, at the same learning rate $\\eta$, on the loss sequence $\\ell$ induced by $G$ and $a$, namely $\\ell_s(i) = 1 - A_{i, a_s}$. In symbols, both sides equal $w_t(i)/\\Phi_t$, where $w_t(i) = \\exp(-\\eta \\sum_{s<t}(1 - A_{i,a_s}))$ and $\\Phi_t = \\sum_{k} w_t(k)$.",
+ "hypotheses_covered": [
+  "zero-sum game G with M rows and N columns",
+  "M is nonzero (at least one row action)",
+  "learning rate eta is a real number",
+  "sequence of column actions a over T rounds",
+  "round index t < T",
+  "row index i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The weight of row $i$ in the prefix Hedge mixed strategy at round $t$ equals\nthe abstract Hedge distribution $\\mathrm{hedgeDist}(\\eta, G.\\mathrm{toLossSeq}(a), t, i)$."
+}

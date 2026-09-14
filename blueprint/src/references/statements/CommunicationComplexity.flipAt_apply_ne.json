@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.flipAt_apply_ne",
+ "key": "574a6a352cd6b410",
+ "kind": "lemma",
+ "title": "Flip leaves other coordinates unchanged",
+ "statement": "Let $x \\colon \\mathrm{Fin}\\,n \\to \\mathrm{Bool}$ be an $n$-bit Boolean input, and let $i, j \\in \\mathrm{Fin}\\,n$ be coordinates with $j \\ne i$. Then the input obtained from $x$ by flipping its $i$-th coordinate agrees with $x$ at coordinate $j$; that is, its value at $j$ equals $x(j)$.",
+ "hypotheses_covered": [
+  "j ≠ i",
+  "x is an n-bit Boolean input",
+  "i, j are coordinates in Fin n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i, j : \\mathrm{Fin}\\,n$ with $j \\ne i$ and $x : \\texttt{BoolInput}(n)$,\n$(\\texttt{flipAt}\\,i\\,x)\\,j = x\\,j$."
+}

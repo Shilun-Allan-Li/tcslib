@@ -1,0 +1,19 @@
+{
+ "lean_name": "chi_squared_tail",
+ "key": "9aca506bdde60d67",
+ "kind": "lemma",
+ "title": "Chi-squared tail bound for independent $N(0,1/k)$ variables",
+ "statement": "Let $\\mu$ be a probability measure on $\\Omega$, let $k \\ge 1$, and let $Y_1,\\dots,Y_k : \\Omega \\to \\bbr$ be independent random variables, each with law $N(0, 1/k)$. Then for every $\\varepsilon$ with $0 < \\varepsilon < 1$,\n\\[\n  \\mu\\!\\left\\{\\omega \\;\\middle|\\; \\varepsilon\n    < \\Bigl|\\,\\textstyle\\sum_{i=1}^{k} Y_i(\\omega)^2 - 1\\Bigr|\\right\\}\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\tfrac{k\\,\\varepsilon^2}{8}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "k ≥ 1 (positive number of variables)",
+  "μ is a probability measure",
+  "each Y_i has law N(0, 1/k)",
+  "the Y_i are mutually independent",
+  "0 < ε",
+  "ε < 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $Y_1,\\dots,Y_k:\\Omega\\to\\mathbb{R}$ be i.i.d.\\ with law $N(0,1/k)$ under\na probability measure $\\mu$, and let $0<\\varepsilon<1$.  Then\n\\[\n  \\mu\\!\\left\\{\\omega \\;\\middle|\\; \\varepsilon\n    < \\Bigl|\\textstyle\\sum_{i=1}^k Y_i(\\omega)^2 - 1\\Bigr|\\right\\}\n  \\;\\le\\; 2\\exp\\!\\Bigl(-\\frac{k\\,\\varepsilon^2}{8}\\Bigr).\n\\]"
+}

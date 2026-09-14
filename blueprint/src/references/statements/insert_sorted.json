@@ -1,0 +1,16 @@
+{
+ "lean_name": "insert_sorted",
+ "key": "7e334acaf0d20c54",
+ "kind": "theorem",
+ "title": "Timed ordered insertion preserves sortedness",
+ "statement": "Let $\\alpha$ be a linearly ordered type, let $x \\in \\alpha$, and let $\\mathit{xs}$ be a sorted list over $\\alpha$. Then the list returned by the timed ordered insertion of $x$ into $\\mathit{xs}$ — the return value of that computation, discarding its time cost — is again sorted.",
+ "hypotheses_covered": [
+  "α is a linear order",
+  "xs is a sorted list (IsSorted xs)",
+  "x is an element of α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $\\mathit{xs}$ is sorted, then the list returned by inserting $x$ into $\\mathit{xs}$ is sorted."
+}

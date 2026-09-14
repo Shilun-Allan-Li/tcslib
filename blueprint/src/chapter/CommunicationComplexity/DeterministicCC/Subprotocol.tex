@@ -23,39 +23,301 @@ itself), and three step cases recording that $s$ is a subtree of one of the two 
 an Alice-node or the false-child of a Bob-node, and hence a subtree of the parent.
 \end{definition}
 
-\begin{lemma}[Transitivity of subprotocol]
+\begin{lemma}[Transitivity of the subprotocol relation]
 \lean{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
 \label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
 \difficulty{3}
-If $s$ is a subprotocol of $t$ and $t$ is a subprotocol of $u$, then $s$ is a subprotocol
-of $u$.  That is, the subprotocol relation is transitive.
+Let $s$, $t$, and $u$ be deterministic two-party communication protocols over the same
+input types and output type. If $s$ is a subprotocol of $t$ and $t$ is a subprotocol of
+$u$, then $s$ is a subprotocol of $u$. In other words, the subprotocol relation is
+transitive.
 \end{lemma}
 
-\begin{lemma}[Balanced subprotocol auxiliary]
+\begin{lemma}[A near-balanced subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.balanced_aux}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p004-b003,
+  pdf-fa052d8c95c0-p004-b004
+}
 \label{CommunicationComplexity.Deterministic.Protocol.balanced_aux}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.shape}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.numLeaves}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005,
+    pdf-fa052d8c95c0-p004-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003,
+    pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p005-b002,
+    pdf-fa052d8c95c0-p005-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{5}
-Given a protocol $p$ with $3 \cdot p.\mathrm{numLeaves} \ge 2n$ and $n > 1$, there exists a
-subprotocol $s$ of $p$ satisfying $n \le 3 \cdot s.\mathrm{numLeaves} < 2n$.  This is the
-inductive step used to prove the balanced subprotocol theorem.
+Let $p$ be a deterministic two-party communication protocol, and let $n$ be a natural
+number with $n > 1$. Write $\ell(q)$ for the number of leaves of a protocol $q$, and
+suppose that $3\,\ell(p) \ge 2n$. Then there is a subprotocol $s$ of $p$ (a rooted
+subtree of $p$) whose leaf count satisfies
+\[
+n \le 3\,\ell(s) < 2n.
+\]
 \end{lemma}
 
-\begin{theorem}[Balanced subprotocol]
+\begin{theorem}[Existence of a balanced subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol}
+\proofsource{raoyehudayoff-ch01-deterministic-protocols}{
+  pdf-fa052d8c95c0-p004-b003,
+  pdf-fa052d8c95c0-p004-b004
+}
 \label{CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol}
 \leanok
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.run}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.complexity}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.swap_swap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b001}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_run}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.comap_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.shape}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.numLeaves}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p003-b005,
+    pdf-fa052d8c95c0-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.balanced_aux}
+  {direct}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b003,
+    pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.choosePath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b004}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachXPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005,
+    pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachYPath}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005,
+    pdf-fa052d8c95c0-p005-b002}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachX}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.reachY}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
+\proofstep
+  {CommunicationComplexity.Deterministic.Protocol.testSubprotocol_complexity}
+  {context}
+  {raoyehudayoff-ch01-deterministic-protocols}
+  {pdf-fa052d8c95c0-p004-b005}
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.balanced_aux, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{5}
-If a protocol $p$ has more than one leaf (i.e.\ $p.\mathrm{numLeaves} > 1$), then there
-exists a subprotocol $s$ of $p$ satisfying
+Let $p$ be a deterministic two-party communication protocol, and for any such protocol
+$q$ write $\ell(q)$ for its number of leaves (its output nodes). Suppose $\ell(p) > 1$.
+Then there is a protocol $s$ that is a rooted subtree of $p$ whose number of leaves
+satisfies
 \[
-  p.\mathrm{numLeaves} \;\le\; 3\cdot s.\mathrm{numLeaves} \;<\; 2\cdot p.\mathrm{numLeaves}.
+  \ell(p) \;\le\; 3\,\ell(s) \;<\; 2\,\ell(p),
 \]
-In other words, $s$ contains between one-third and two-thirds of $p$'s leaves.
+so that $s$ carries at least one-third and strictly fewer than two-thirds of the leaves
+of $p$.
 \end{theorem}
 
 \begin{definition}[Subprotocol path witness]
@@ -79,15 +341,17 @@ $p$: the function \texttt{SubprotocolPath.toIsSubprotocol} performs this convers
 structural recursion on the path.
 \end{definition}
 
-\begin{theorem}[Existence of a subprotocol path]
+\begin{theorem}[Every subprotocol relation has a path witness]
 \lean{CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
 \label{CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath}
 \difficulty{3}
-If $s$ is a subprotocol of $p$ (i.e.\ \texttt{IsSubprotocol} $s\; p$ holds), then the type
-\texttt{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath} $s\; p$ is nonempty.  That is, every propositional subprotocol
-embedding has at least one data-carrying path witness.
+Let $s$ and $p$ be deterministic two-party communication protocols over the same input
+types $X$ and $Y$ and output type $\alpha$. If $s$ is a subprotocol of $p$ — that is,
+the subprotocol predicate holds of the pair $(s, p)$ — then the type of subprotocol
+paths from $s$ to $p$ is nonempty: there exists a data-carrying witness recording the
+sequence of branch choices leading from the root of $p$ down to the root of $s$.
 \end{theorem}
 
 \begin{definition}[Classical choice of a subprotocol path]
@@ -100,19 +364,21 @@ extract a definite \texttt{SubprotocolPath} $s\; p$ witness.  The resulting func
 noncomputable.
 \end{definition}
 
-\begin{lemma}[Subprotocol has at most as many leaves]
+\begin{lemma}[Leaf count is monotone along subprotocol paths]
 \lean{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le}
 \label{CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{4}
-If \texttt{hsp} is a \texttt{SubprotocolPath} from $s$ to $p$, then
-$s.\mathrm{numLeaves} \le p.\mathrm{numLeaves}$.  A subtree cannot have more leaves than
-its parent.
+Let $s$ and $p$ be deterministic two-party communication protocols over the same input
+types, and suppose there is a subprotocol path from $s$ to $p$, witnessing that $s$
+occurs as a rooted subtree of $p$. Then $s$ has at most as many leaves as $p$; that is,
+the number of leaves of $s$ is less than or equal to the number of leaves of $p$.
 \end{lemma}
 
 \begin{definition}[Reachable Alice inputs along a path]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachXPath}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.reachXPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
@@ -123,6 +389,7 @@ the root of $p$ to the root of $s$.
 
 \begin{definition}[Reachable Bob inputs along a path]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachYPath}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.reachYPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
@@ -133,6 +400,7 @@ root of $p$ to the root of $s$.
 
 \begin{definition}[Inputs that reach a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachesPath}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.reachesPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath}
@@ -143,6 +411,7 @@ $x \in \texttt{reachXPath}\;\texttt{hsp}$ and $y \in \texttt{reachYPath}\;\textt
 
 \begin{definition}[Alice's reach set for a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachX}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.reachX}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachXPath}
@@ -153,6 +422,7 @@ classically chosen path.
 
 \begin{definition}[Bob's reach set for a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachY}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.reachY}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachYPath}
@@ -163,6 +433,7 @@ classically chosen path.
 
 \begin{definition}[Inputs that reach a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.reaches}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.reaches}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY}
@@ -171,25 +442,34 @@ reach the subprotocol $s$; equivalently, $x \in \texttt{reachX}\;\texttt{hsp}$ a
 $y \in \texttt{reachY}\;\texttt{hsp}$.
 \end{definition}
 
-\begin{lemma}[Subprotocol and parent agree on reached inputs (path version)]
+\begin{lemma}[Running a protocol and a reached subprotocol agree]
 \lean{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
 \label{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{4}
-If the input pair $(x, y)$ reaches the subprotocol $s$ of $p$ via path \texttt{hsp}, then
-running $p$ and running $s$ on $(x, y)$ produce the same output: $p.\texttt{run}\;x\;y =
-s.\texttt{run}\;x\;y$.
+Let $p$ and $s$ be deterministic two-party communication protocols over Alice's input
+type $X$ and Bob's input type $Y$ with output type $\alpha$, and let $\pi$ be a
+subprotocol path witnessing that $s$ sits at a rooted subtree of $p$. Suppose the input
+pair $(x, y)$ reaches $s$ along $\pi$, meaning $x$ lies in the set of Alice inputs
+consistent with all of Alice's branching choices on $\pi$ and $y$ lies in the set of Bob
+inputs consistent with all of Bob's branching choices on $\pi$. Then executing $p$ and
+executing $s$ on $(x, y)$ yield the same output.
 \end{lemma}
 
-\begin{lemma}[Subprotocol and parent agree on reached inputs]
+\begin{lemma}[Subprotocol and parent agree on inputs reaching it]
 \lean{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches}
 \label{CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reachesPath}
 \difficulty{1}
-If \texttt{hsp} witnesses that $s$ is a subprotocol of $p$ and $(x, y)$ reaches $s$, then
-$p.\texttt{run}\;x\;y = s.\texttt{run}\;x\;y$.
+Let $p$ and $s$ be deterministic two-party communication protocols with Alice's inputs
+drawn from $X$, Bob's inputs from $Y$, and outputs in $\alpha$, and suppose $s$ is a
+subprotocol of $p$, that is, a rooted subtree of $p$. If an input pair $(x, y)$ reaches
+$s$ — meaning $x$ is consistent with every one of Alice's branch choices and $y$ with
+every one of Bob's branch choices along the path from the root of $p$ down to the root
+of $s$ — then evaluating $p$ on $(x, y)$ returns the same output as evaluating $s$ on
+$(x, y)$.
 \end{lemma}
 
 \begin{definition}[Canonical output of a protocol]
@@ -211,24 +491,35 @@ protocol that is $p$ with the subtree $s$ collapsed to a single leaf whose value
 $\texttt{chooseOutput}\;s$ (the leftmost leaf of $s$).
 \end{definition}
 
-\begin{lemma}[Leaf count after erasing a subprotocol path]
+\begin{lemma}[Leaf count after collapsing a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves}
 \label{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{5}
-After erasing subprotocol $s$ from $p$ via path \texttt{hsp}, the resulting protocol has
-$p.\mathrm{numLeaves} - s.\mathrm{numLeaves} + 1$ leaves.
+Let $p$ be a deterministic two-party communication protocol, and let $s$ be a
+subprotocol of $p$, witnessed by a subprotocol path recording the sequence of branch
+choices leading from the root of $p$ down to the root of $s$. Form the protocol obtained
+from $p$ by collapsing the entire subtree $s$ to a single output leaf carrying its
+canonical output value. Writing $\ell(q)$ for the number of leaves (output nodes) of a
+protocol $q$, the collapsed protocol has $\ell(p) - \ell(s) + 1$ leaves, where the
+subtraction is truncated subtraction of natural numbers.
 \end{lemma}
 
-\begin{lemma}[Erased protocol agrees on non-reaching inputs]
+\begin{lemma}[Erased subprotocol agrees off the reachable region]
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside}
 \label{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{5}
-If $(x, y)$ does not reach the subprotocol path \texttt{hsp}, then running the erased
-protocol \texttt{erasePath hsp} on $(x, y)$ gives the same output as running $p$.
+Let $p$ be a deterministic two-party communication protocol over Alice's inputs $X$ and
+Bob's inputs $Y$, let $s$ be a rooted subprotocol of $p$ recorded by a subprotocol path
+from $s$ to $p$, and let $p'$ be the protocol obtained from $p$ by collapsing the
+subtree $s$ to a single leaf carrying the canonical output of $s$ (its leftmost leaf
+value). Suppose an input pair $(x,y)$, with $x \in X$ and $y \in Y$, does not reach $s$:
+it fails to be consistent with all of Alice's and Bob's branch choices along the path
+from the root of $p$ down to the root of $s$. Then running $p'$ on $(x,y)$ produces the
+same output as running $p$ on $(x,y)$.
 \end{lemma}
 
 \begin{definition}[Erase a subprotocol (propositional version)]
@@ -247,22 +538,37 @@ for \texttt{hsp}.
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.erase, CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \difficulty{1}
-If \texttt{hsp} witnesses that $s$ is a subprotocol of $p$, then
-$(\texttt{erase}\;\texttt{hsp}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves} + 1$.
+Let $s$ and $p$ be deterministic two-party communication protocols over the same input
+types $X$, $Y$ and output type $\alpha$, and suppose that $s$ is a subprotocol of $p$,
+i.e.\ a rooted subtree of $p$. Write $L(q)$ for the number of leaves (output nodes) of a
+protocol $q$. Erasing $s$ from $p$ — collapsing the subtree $s$ to a single leaf
+carrying its canonical (leftmost) output value — yields a protocol whose number of
+leaves is
+\[
+L(p) - L(s) + 1,
+\]
+where the subtraction is truncated natural-number subtraction.
 \end{lemma}
 
-\begin{lemma}[Erased protocol agrees on non-reaching inputs (propositional version)]
+\begin{lemma}[Erasing a subprotocol preserves behaviour off its reach set]
 \lean{CommunicationComplexity.Deterministic.Protocol.erase_run_outside}
 \label{CommunicationComplexity.Deterministic.Protocol.erase_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.erase, CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-If $(x, y)$ does not reach the subprotocol $s$ of $p$, then
-$(\texttt{erase}\;\texttt{hsp}).\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
+Let $p$ be a deterministic two-party communication protocol, and let $s$ be a
+subprotocol of $p$ (a rooted subtree of $p$). Form the erased protocol
+$\mathrm{erase}(s,p)$, obtained from $p$ by collapsing the subtree $s$ to a single leaf.
+Then for every pair of inputs $x$ (Alice) and $y$ (Bob) that does not reach $s$, running
+the erased protocol and running $p$ produce the same output:
+\[
+\mathrm{run}\bigl(\mathrm{erase}(s,p)\bigr)(x,y) = \mathrm{run}(p)(x,y).
+\]
 \end{lemma}
 
 \begin{definition}[Delete a subprotocol path by splicing]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p004-b005}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
@@ -271,24 +577,31 @@ $s$; the result is \texttt{none} if $s = p$ (the root case) and \texttt{some q} 
 $q$ is $p$ with the branch to $s$ deleted.
 \end{definition}
 
-\begin{lemma}[Delete is non-none when subprotocol is proper]
+\begin{lemma}[Deleting a strict subprotocol yields a protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \difficulty{3}
-If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$ (i.e.\ $s$ is a proper subtree), then
-$\texttt{deletePath}\;\texttt{hsp} \ne \texttt{none}$.
+Let $s$ and $p$ be deterministic two-party communication protocols, and suppose that $s$
+occurs as a rooted subprotocol of $p$, witnessed by a path recording the sequence of
+left/right branchings from the root of $p$ down to the root of $s$. If $s$ has strictly
+fewer leaves (output nodes) than $p$, then splicing out the branch leading to $s$ does
+not collapse the whole protocol: the result of the deletion is some protocol rather than
+the empty result.
 \end{lemma}
 
-\begin{lemma}[Delete yields a protocol when subprotocol is proper]
+\begin{lemma}[Deletion succeeds along a proper subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_ne_none_of_lt, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \difficulty{2}
-If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, then there exists a protocol $q$ such
-that $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$.
+Let $s$ and $p$ be deterministic two-party communication protocols, and suppose $s$
+occurs as a rooted subtree of $p$, witnessed by a subprotocol path recording the
+branching choices from the root of $p$ down to the root of $s$. If $s$ has strictly
+fewer leaves than $p$, then deleting the branch leading to $s$ yields a protocol: the
+splicing operation along this path is defined and produces some protocol $q$.
 \end{lemma}
 
 \begin{definition}[Prune a subprotocol path]
@@ -301,74 +614,104 @@ Given a path \texttt{hsp} from $s$ to $p$ with $s.\mathrm{numLeaves} < p.\mathrm
 value from \texttt{deletePath hsp}.
 \end{definition}
 
-\begin{lemma}[Prune path satisfies delete specification]
+\begin{lemma}[Path deletion yields the pruned protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
 \label{CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_exists_of_lt, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath}
 \difficulty{1}
-Under the hypothesis $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, we have
-$\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;(\texttt{prunePath}\;\texttt{hsp}\;\texttt{hlt})$.
+Let $p$ be a deterministic communication protocol and let $s$ be a rooted subprotocol of
+$p$, recorded by a subprotocol path running from the root of $p$ down to the root of
+$s$. Suppose that $s$ has strictly fewer leaves than $p$. Then splicing this path out of
+$p$ does not fall into the empty root case, in which the subprotocol coincides with the
+whole protocol, but instead returns a genuine protocol; and that protocol is exactly the
+pruned protocol determined by the path together with this leaf-count hypothesis.
 \end{lemma}
 
-\begin{lemma}[Delete none implies subprotocol equals parent]
+\begin{lemma}[Deleting a subprotocol returns nothing only for the whole protocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none}
 \label{CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath}
 \difficulty{3}
-If $\texttt{deletePath}\;\texttt{hsp} = \texttt{none}$, then $s = p$.  That is, deletion
-returns \texttt{none} only when $s$ is the entire protocol $p$.
+Let $s$ and $p$ be deterministic two-party communication protocols over input types $X$
+(Alice) and $Y$ (Bob) producing values in $\alpha$, and suppose $s$ is a rooted subtree
+of $p$, as recorded by a subprotocol path from the root of $p$ down to the root of $s$.
+If splicing that path out of $p$ produces no protocol at all, then $s$ is in fact all of
+$p$; that is, $s = p$.
 \end{lemma}
 
-\begin{lemma}[Leaf count of the result of a delete]
+\begin{lemma}[Leaf count after deleting a subprotocol branch]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{5}
-If $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$, then
-$q.\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
+Let $p$ be a deterministic communication protocol and let $s$ be a rooted subtree of
+$p$, witnessed by a subprotocol path from the root of $p$ down to the root of $s$. Write
+$\ell(r)$ for the number of leaves (output nodes) of a protocol $r$. If deleting this
+branch splices out a proper subtree — that is, if the deletion produces a protocol $q$
+rather than the empty result of the root case — then \[ \ell(q) = \ell(p) - \ell(s), \]
+where the subtraction is truncated subtraction on $\bbn$.
 \end{lemma}
 
-\begin{lemma}[Leaf count after pruning a path]
+\begin{lemma}[Leaf count after pruning a subprotocol path]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath, CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
 \difficulty{1}
-If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, then
-$(\texttt{prunePath}\;\texttt{hsp}\;\texttt{hlt}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
+Let $s$ and $p$ be deterministic two-party communication protocols, and let $s$ lie
+along a subprotocol path inside $p$, so that $s$ occurs as a rooted subtree of $p$. If
+$s$ has strictly fewer leaves than $p$, that is, if the number of leaves of $s$ is less
+than the number of leaves of $p$, then the protocol obtained by pruning this path from
+$p$ has exactly $\text{numLeaves}(p) - \text{numLeaves}(s)$ leaves.
 \end{lemma}
 
-\begin{lemma}[All inputs reach when delete is none]
+\begin{lemma}[Trivial path is reached by every input]
 \lean{CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none}
 \label{CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath}
 \difficulty{3}
-If $\texttt{deletePath}\;\texttt{hsp} = \texttt{none}$ (meaning $s = p$), then every input pair
-$(x, y)$ satisfies $\texttt{reachesPath}\;\texttt{hsp}\;x\;y$.
+Let $p$ be a deterministic two-party communication protocol with Alice inputs in $X$ and
+Bob inputs in $Y$, and let $\pi$ be a subprotocol path witnessing that a subprotocol $s$
+is a rooted subtree of $p$. If deleting the path $\pi$ from $p$ returns no protocol —
+which occurs precisely when the path is trivial, so that $s = p$ — then every input pair
+$(x, y) \in X \times Y$ reaches $s$ along $\pi$, meaning $x$ is consistent with all of
+Alice's choices along $\pi$ and $y$ is consistent with all of Bob's choices along $\pi$.
 \end{lemma}
 
-\begin{lemma}[Deleted protocol agrees on non-reaching inputs]
+\begin{lemma}[Deleting an unreached subprotocol preserves outputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{5}
-If $\texttt{deletePath}\;\texttt{hsp} = \texttt{some}\;q$ and $(x, y)$ does not reach the
-subprotocol path, then $q.\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
+Let $p$ be a deterministic two-party communication protocol on input types $X$ (Alice)
+and $Y$ (Bob), and let $s$ be a rooted subprotocol of $p$ witnessed by a subprotocol
+path from $s$ to $p$. Suppose that deleting this path — splicing out the branch of $p$
+leading to $s$ — yields a protocol $q$ (rather than being undefined, which happens only
+when $s$ is the whole of $p$). Then for every pair of inputs $(x,y)$ that does not reach
+the subprotocol $s$ along the path — that is, $x$ is not a reachable Alice input or $y$
+is not a reachable Bob input for that path — executing $q$ on $(x,y)$ produces the same
+output as executing $p$ on $(x,y)$.
 \end{lemma}
 
-\begin{lemma}[Pruned path protocol agrees on non-reaching inputs]
+\begin{lemma}[Pruned protocol agrees off the pruned path]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath, CommunicationComplexity.Deterministic.Protocol.prunePath_spec, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$ and $(x, y)$ does not reach the path, then
-$(\texttt{prunePath}\;\texttt{hsp}\;\texttt{hlt}).\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
+Let $p$ be a deterministic two-party communication protocol with Alice inputs in $X$ and
+Bob inputs in $Y$, and let $s$ be a rooted subprotocol of $p$, witnessed by a
+subprotocol path from the root of $p$ down to the root of $s$. Suppose $s$ has strictly
+fewer leaves than $p$, so that pruning this path yields a protocol $p'$. Then for every
+input pair $(x,y)$ that does not reach $s$ along this path — that is, $x$ is not among
+the Alice inputs consistent with all of Alice's branching choices on the path, or $y$ is
+not among the Bob inputs consistent with all of Bob's choices on it — the pruned
+protocol $p'$ and the original protocol $p$ return the same value on $(x,y)$.
 \end{lemma}
 
 \begin{definition}[Prune a subprotocol (propositional version)]
@@ -387,22 +730,31 @@ The noncomputable variant of \texttt{prunePath} taking an \texttt{IsSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \difficulty{1}
-If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$, then
-$(\texttt{prune}\;\texttt{hsp}\;\texttt{hlt}).\mathrm{numLeaves} = p.\mathrm{numLeaves} - s.\mathrm{numLeaves}$.
+Let $p$ be a deterministic two-party communication protocol and let $s$ be a subprotocol
+of $p$, that is, a rooted subtree of $p$. Write $L(q)$ for the number of leaves (output
+nodes) of a protocol $q$, and suppose that $L(s) < L(p)$. Then the protocol obtained by
+pruning $s$ out of $p$ has exactly $L(p) - L(s)$ leaves.
 \end{lemma}
 
-\begin{lemma}[Pruned protocol agrees on non-reaching inputs]
+\begin{lemma}[Pruning preserves outputs on inputs that miss the subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-If $s.\mathrm{numLeaves} < p.\mathrm{numLeaves}$ and $(x, y)$ does not reach $s$, then
-$(\texttt{prune}\;\texttt{hsp}\;\texttt{hlt}).\texttt{run}\;x\;y = p.\texttt{run}\;x\;y$.
+Let $s$ and $p$ be deterministic two-party communication protocols over Alice's inputs
+$X$, Bob's inputs $Y$, and output type $\alpha$, and suppose $s$ is a subprotocol of $p$
+(a rooted subtree) whose leaf count is strictly smaller than that of $p$. Form the
+pruned protocol obtained by deleting the subtree $s$ from $p$. Then for every pair of
+inputs $x \in X$ and $y \in Y$ that does not reach $s$ — that is, $(x,y)$ fails to be
+consistent with all of the branching choices along the path from the root of $p$ down to
+$s$ — the pruned protocol and $p$ produce the same output on $(x,y)$: running the pruned
+protocol on $x$ and $y$ yields exactly $p$'s output on $x$ and $y$.
 \end{lemma}
 
 \begin{definition}[Test subprotocol construction]
 \lean{CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
+\statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p004-b005}
 \label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY}
@@ -418,26 +770,41 @@ does and to \texttt{qOut} otherwise.
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \difficulty{2}
-The communication complexity of \texttt{testSubprotocol hsp qIn qOut} equals
-$2 + \max(\texttt{qIn}.\texttt{complexity},\; \texttt{qOut}.\texttt{complexity})$.
+Let $X$ and $Y$ be the input types of Alice and Bob in a deterministic two-party
+communication protocol producing values of type $\alpha$, and suppose $s$ is a
+subprotocol of such a protocol $p$. For any two further protocols $q_{\mathrm{in}}$ and
+$q_{\mathrm{out}}$, the test subprotocol — which spends one bit for Alice and one bit
+for Bob to decide whether the input reaches $s$, then continues as $q_{\mathrm{in}}$ if
+it does and as $q_{\mathrm{out}}$ otherwise — has communication complexity \[ 2 +
+\max\bigl(\mathrm{complexity}(q_{\mathrm{in}}),\,
+\mathrm{complexity}(q_{\mathrm{out}})\bigr). \]
 \end{lemma}
 
-\begin{lemma}[Test subprotocol runs qIn on inside inputs]
+\begin{lemma}[Test subprotocol runs the inside branch on reaching inputs]
 \lean{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside}
 \label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \difficulty{2}
-If $(x, y)$ reaches the subprotocol $s$ of $p$, then
-$(\texttt{testSubprotocol}\;\texttt{hsp}\;\texttt{qIn}\;\texttt{qOut}).\texttt{run}\;x\;y = \texttt{qIn}.\texttt{run}\;x\;y$.
+Let $s$ be a subprotocol of a deterministic communication protocol $p$, and let
+$q_{\mathrm{in}}$ and $q_{\mathrm{out}}$ be two further protocols on the same input
+types. If the input pair $(x,y)$ reaches $s$ — that is, $x$ lies in Alice's reach set
+and $y$ in Bob's reach set for $s$ — then executing the test subprotocol built from $s$,
+$q_{\mathrm{in}}$, and $q_{\mathrm{out}}$ on $(x,y)$ yields the same output as executing
+$q_{\mathrm{in}}$ on $(x,y)$.
 \end{lemma}
 
-\begin{lemma}[Test subprotocol runs qOut on outside inputs]
+\begin{lemma}[Test subprotocol agrees with the reject branch off the reach set]
 \lean{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
 \label{CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.testSubprotocol}
 \difficulty{3}
-If $(x, y)$ does not reach the subprotocol $s$ of $p$, then
-$(\texttt{testSubprotocol}\;\texttt{hsp}\;\texttt{qIn}\;\texttt{qOut}).\texttt{run}\;x\;y = \texttt{qOut}.\texttt{run}\;x\;y$.
+Let $p$ be a deterministic two-party communication protocol over Alice's input type $X$
+and Bob's input type $Y$ with outputs in $\alpha$, let $s$ be a subprotocol of $p$, and
+let $q_{\mathrm{in}}$ and $q_{\mathrm{out}}$ be two further such protocols. Suppose an
+input pair $(x, y) \in X \times Y$ does not reach $s$; that is, $x$ fails to lie in
+Alice's reach set for $s$, or $y$ fails to lie in Bob's reach set for $s$. Then
+executing the test subprotocol built from $s$, $q_{\mathrm{in}}$, and $q_{\mathrm{out}}$
+on $(x, y)$ yields the same output as executing $q_{\mathrm{out}}$ on $(x, y)$.
 \end{lemma}

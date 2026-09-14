@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run",
+ "key": "55b2a75c13b577b9",
+ "kind": "theorem",
+ "title": "Conversion to binary protocol preserves output",
+ "statement": "Let $p$ be a finite-message deterministic two-party protocol over input types $X$ and $Y$ with output type $\\alpha$, and let $q$ be the binary protocol obtained by converting $p$ (encoding each message drawn from a finite nonempty type $\\beta$ as $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits). Then $q$ computes the same function as $p$: for every pair of inputs $x \\in X$ and $y \\in Y$, running $q$ on $(x, y)$ returns the same value in $\\alpha$ as running $p$ on $(x, y)$.",
+ "hypotheses_covered": [
+  "p is a finite-message protocol over input types X, Y and output type α"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every finite-message protocol $p$, the converted binary protocol satisfies\n$(\\texttt{toProtocol}\\,p).\\mathrm{run} = p.\\mathrm{run}$ as functions $X \\to Y \\to \\alpha$."
+}

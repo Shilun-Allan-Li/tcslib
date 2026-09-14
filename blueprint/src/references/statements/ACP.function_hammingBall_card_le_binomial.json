@@ -1,0 +1,17 @@
+{
+ "lean_name": "ACP.function_hammingBall_card_le_binomial",
+ "key": "9ea24cae98eb84f6",
+ "kind": "theorem",
+ "title": "Hamming-ball bound for function spaces",
+ "statement": "Let $\\alpha$ and $\\beta$ be finite types, fix a function $\\mathrm{center} : \\alpha \\to \\beta$, and let $e \\in \\bbn$. Then the number of functions $f : \\alpha \\to \\beta$ that disagree with $\\mathrm{center}$ on at most $e$ points of $\\alpha$ — that is, for which $\\abs{\\{a \\in \\alpha : \\mathrm{center}(a) \\ne f(a)\\}} \\le e$ — satisfies\n\\[\n\\abs{\\{\\, f : \\alpha \\to \\beta \\;:\\; \\abs{\\{a \\in \\alpha : \\mathrm{center}(a) \\ne f(a)\\}} \\le e \\,\\}} \\;\\le\\; \\sum_{t=0}^{e} \\binom{\\abs{\\alpha}}{t}\\,\\abs{\\beta}^{\\,t}.\n\\]",
+ "hypotheses_covered": [
+  "α is a finite type",
+  "β is a finite type",
+  "center is a fixed function α → β",
+  "e is a natural-number radius"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For finite types $\\alpha, \\beta$, a center function $\\mathrm{center} : \\alpha \\to \\beta$\nand a radius $e$, the number of functions $f : \\alpha \\to \\beta$ that differ from the\ncenter on at most $e$ coordinates is bounded by\n\\[\n\\sum_{t=0}^{e} \\binom{\\abs{\\alpha}}{t}\\,\\abs{\\beta}^{\\,t}.\n\\]\nThis is a slightly coarser form of the usual bound, which carries\n$(\\abs{\\beta}-1)^t$ in place of $\\abs{\\beta}^t$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SimpleGraph.hall_bipartite_matching",
+ "key": "37a8e642e5f719b7",
+ "kind": "theorem",
+ "title": "Hall's marriage theorem for bipartite matchings",
+ "statement": "Let $G$ be a finite simple graph whose vertex set admits a bipartition into parts $X$ and $Y$, so that every edge of $G$ joins a vertex of $X$ to a vertex of $Y$. For a set $S$ of vertices write $N(S) = \\bigcup_{v \\in S} N(v)$ for the union of the neighborhoods of the vertices in $S$. Then $G$ has a matching that saturates $X$ — a set of pairwise disjoint edges covering every vertex of $X$ — if and only if $\\abs{S} \\le \\abs{N(S)}$ for every $S \\subseteq X$.",
+ "hypotheses_covered": [
+  "G is a finite simple graph",
+  "G is bipartite with parts X and Y",
+  "quantified over all subsets S of X: |S| ≤ |N(S)| (Hall's condition)",
+  "conclusion: existence of a matching subgraph saturating X (X contained in its vertex set)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Thm 5.2 (Hall): a bipartite \\texttt{G} has a matching saturating \\texttt{X} iff\n\\texttt{|N(S)| $\\ge$ |S|}.\n\nLet $G$ be a bipartite graph with bipartition $(X, Y)$. Then $G$ contains a matching\nthat saturates every vertex in $X$ if and only if \\[|N(S)| \\geq |S| \\quad \\text{for all}\n\\quad S \\subseteq X \\qquad (5.2)\\]"
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "SwitchingLemma2.roundtrip_inv_hD'",
+ "key": "b1314b3fb2fa8328",
+ "kind": "lemma",
+ "title": "Reconstructing the processed restriction from its auxiliary data",
+ "statement": "Let $t$ be a term on $n$ variables (a list of literals), let $\\mathit{lits}$ be a list of literals each paired with a position index, let a decision-tree path be given, and let $\\rho_0$, $\\sigma$, and $\\rho_{0,\\mathrm{dec}}$ be restrictions on the $n$ variables. Assume that every literal in $\\mathit{lits}$ has its variable left free by $\\rho_0$, that every pair in $\\mathit{lits}$ occurs in the indexed enumeration of $t$ (each literal of $t$ paired with its position), and that $\\rho_{0,\\mathrm{dec}}$ agrees with $\\rho_0$ at every variable that $\\rho_0$ fixes. Write $\\rho_0^{\\ast}$ for the restriction and $A$ for the auxiliary list of index–direction pairs produced by processing $\\mathit{lits}$ against the path starting from $\\rho_0$ and $\\sigma$. Reconstruct a restriction from $\\rho_{0,\\mathrm{dec}}$ by folding over $A$: for each pair $(i,b)$, if deleting the first $i$ literals of $t$ leaves a nonempty list, set the variable of that list's head literal to $b$, and otherwise leave the restriction unchanged. Then at every variable $v$ at which $\\rho_0^{\\ast}$ is defined, this reconstructed restriction and $\\rho_0^{\\ast}$ take the same value.",
+ "hypotheses_covered": [
+  "every literal in lits has its variable free under ρ₀",
+  "every pair in lits occurs in the indexed enumeration of t_clause",
+  "ρ₀_dec agrees with ρ₀ at every variable ρ₀ fixes",
+  "v is a variable where the processed restriction ρ₀* is defined"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Under the freeness and membership hypotheses on $\\mathit{lits}$ and the agreement of\n$\\rho_{0,\\mathrm{dec}}$ with $\\rho_0$ on variables set by $\\rho_0$, the $\\rho_0$-fold over\nthe aux entries (which sets $l.\\mathrm{var}$ to $e.2$ for each dropped head literal $l$)\napplied to $\\rho_{0,\\mathrm{dec}}$ agrees with the processed restriction\n$(\\mathrm{processClauseLits}\\ \\mathit{lits}\\ \\mathit{path}\\ \\rho_0\\ \\sigma).2.1$ at every\nvariable $v$ where that restriction is set."
+}

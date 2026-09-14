@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.varWeight_compose_sum",
+ "key": "e2d24a7769bb7d6e",
+ "kind": "lemma",
+ "title": "Composition law for per-variable restriction weights",
+ "statement": "Regard each coordinate of a random restriction as being in one of three states: *free* (written $\\ast$) or *fixed* to one of the two Boolean values. For a parameter $p \\in \\bbr$, let $w_p$ be the per-variable weight assigning $w_p(\\ast) = p$ to the free state and $(1-p)/2$ to each of the two fixed states, and define the composite $a \\circ b$ of two states to equal $a$ when $a$ is fixed and $b$ when $a$ is free. Then for all $p, q \\in \\bbr$ and every state $c$,\n\\[\n  \\sum_{a}\\sum_{b} w_p(a)\\, w_q(b)\\, [\\,a \\circ b = c\\,] = w_{pq}(c),\n\\]\nwhere both sums range over the three states and $[\\,\\cdot\\,]$ equals $1$ when the enclosed equation holds and $0$ otherwise.",
+ "hypotheses_covered": [
+  "arbitrary real parameter $p$",
+  "arbitrary real parameter $q$",
+  "arbitrary coordinate state $c$ (an element of $\\mathrm{Option}\\ \\mathrm{Bool}$)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For parameters $p, q \\in \\bbr$ and any outcome $c$, summing the products\n$\\mathrm{varWeight}\\,p\\,a \\cdot \\mathrm{varWeight}\\,q\\,b$ over all pairs $(a,b)$ whose\ncomposition equals $c$ gives $\\mathrm{varWeight}\\,(pq)\\,c$:\n\\[\n  \\sum_{a} \\sum_{b} \\mathrm{varWeight}\\,p\\,a \\cdot \\mathrm{varWeight}\\,q\\,b \\cdot\n    [\\,a \\,\\triangleright\\, b = c\\,] = \\mathrm{varWeight}\\,(pq)\\,c.\n\\]"
+}
