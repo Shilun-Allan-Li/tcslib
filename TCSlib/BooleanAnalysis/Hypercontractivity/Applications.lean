@@ -30,7 +30,7 @@ namespace SmallSetExpansion
 
 variable {n : ℕ}
 
-/-! ## Indicator Functions and Volume -/
+/-! ## Indicator functions and volume -/
 
 /-- The indicator function of a set `A ⊆ {0,1}ⁿ`, taking values 0 and 1. -/
 noncomputable def setIndicator (A : Finset (BoolCube n)) : BooleanFunc n :=
@@ -40,7 +40,7 @@ noncomputable def setIndicator (A : Finset (BoolCube n)) : BooleanFunc n :=
 noncomputable def volume (A : Finset (BoolCube n)) : ℝ :=
   expect (setIndicator A)
 
-/-! ## Properties of Indicator Functions -/
+/-! ## Pointwise indicator facts -/
 
 lemma setIndicator_nonneg (A : Finset (BoolCube n)) (x : BoolCube n) :
     0 ≤ setIndicator A x := by
@@ -84,7 +84,7 @@ lemma indicator_Lr_norm (A : Finset (BoolCube n)) {r : ℝ} (hr : 0 < r) :
     (expect (fun x => |setIndicator A x| ^ r)) ^ (1 / r) = volume A ^ (1 / r) := by
   rw [expect_abs_indicator_rpow A hr]
 
-/-! ## Volume Properties -/
+/-! ## Volume bounds -/
 
 lemma volume_nonneg (A : Finset (BoolCube n)) : 0 ≤ volume A := by
   unfold volume expect uniformWeight
@@ -98,13 +98,6 @@ lemma volume_le_one (A : Finset (BoolCube n)) : volume A ≤ 1 := by
   simp +decide [ uniformWeight ];
   rw [ inv_mul_le_iff₀ ( by positivity ) ];
   exact_mod_cast le_trans ( Finset.card_le_univ _ ) ( by norm_num )
-
-/-! ## Probability as Inner Product -/
-
-/-- `Pr[x ∈ A, y ∈ B] = ⟨1_A, T_ρ 1_B⟩`. -/
-lemma prob_eq_innerProduct (ρ : ℝ) (A B : Finset (BoolCube n)) :
-    innerProduct (setIndicator A) (noiseOp ρ (setIndicator B)) =
-    innerProduct (setIndicator A) (noiseOp ρ (setIndicator B)) := rfl
 
 /-! ## Generalized Small-Set Expansion -/
 

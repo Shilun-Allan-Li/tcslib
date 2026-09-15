@@ -1,19 +1,24 @@
+import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
+import TCSlib.BooleanAnalysis.Hypercontractivity.EvenMoments
 import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
 
 open BooleanAnalysis OneBit Bonami SimpleHypercontractivity Real
+
 set_option maxHeartbeats 800000
+
 namespace GeneralHypercontractivity
 variable {n : ℕ}
 
-/- Note: there are some warnings regarding unnecessary hypotheses. These are
-  in general actually needed, as the noise operator is not defined for negative values of ρ
-  and we don't work with p ≤ 0 norms -/
-/-
+/-!
 ## Main results
-- `Hypercontractivity induction theorem`
-- `Equivalence of two-function and one-function hypercontractivity`
-- `General one-function hypercontractivity`
-- `General two-function hypercontractivity`
+
+- `hypercontractivity_induction`: lifts a one-bit bound to the Boolean cube.
+- `one_function_iff_two_function_hypercontractivity`: relates the two formulations.
+- `general_one_function_hypercontractivity` and
+  `general_two_function_hypercontractivity`: the final bounds.
+
+Some hypotheses that look redundant are retained deliberately: this development only
+uses nonnegative noise parameters and positive-exponent norms.
 -/
 /-! ## Noise Kernel -/
 

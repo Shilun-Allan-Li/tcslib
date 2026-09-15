@@ -1,12 +1,17 @@
-import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.MeasureTheory.Integral.MeanInequalities
+import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
+
 namespace SimpleHypercontractivity
-open BooleanAnalysis
 
 section
-open MeasureTheory Set Filter BooleanAnalysis Real Bonami
+open BooleanAnalysis MeasureTheory Set Filter Real Bonami
 
-/- ## Main results
-This file contains simple hypercontractivity results that don't require the general theorem
+/-!
+## Main results
+
+This file contains even-moment hypercontractivity results that don't require the general theorem.
+
 - `hypercontractivity_2_4`: the (2,4)-hypercontractivity theorem
 - `hypercontractivity_4_div_3_2`: the (4/3, 2)-hypercontractivity theorem
 - `hypercontractivity_2_q`: the q ≥ 2, q even case of hypercontractivity
@@ -14,15 +19,15 @@ This file contains simple hypercontractivity results that don't require the gene
 -/
 /-! ## (2,4)-Hypercontractivity Theorem -/
 
-/-
-`χ_{S.image castSucc}(Fin.snoc x b) = χ_S(x)`: the character of a "lifted" set
+/--
+`χ_{S.image castSucc}(Fin.snoc x b) = χ_S(x)`: the character of a lifted set
   ignores the last coordinate.
 -/
 lemma chiS_snoc_castSucc {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bool) :
     chiS (S.image Fin.castSucc) (Fin.snoc x b) = chiS S x := by
   unfold chiS; simp_all only [Fin.castSucc_inj, implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Fin.snoc_castSucc];
 
-/-
+/--
 `χ_{S.image castSucc ∪ {last n}}(Fin.snoc x b) = boolToSign b * χ_S(x)`.
 -/
 lemma chiS_snoc_with_last {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bool) :
@@ -31,7 +36,7 @@ lemma chiS_snoc_with_last {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : B
     and_false, exists_false, not_false_eq_true, Finset.prod_insert, Fin.snoc_last, Fin.castSucc_inj,
     implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Fin.snoc_castSucc] ;
 
-/-
+/--
 Partition of `∑ S : Finset (Fin (n+1))` by membership of `Fin.last n`:
   every subset of `[n+1]` either avoids or contains the last element.
 -/
@@ -63,7 +68,7 @@ lemma card_image_castSucc {n : ℕ} (S : Finset (Fin n)) :
     (S.image Fin.castSucc).card = S.card := by
   exact Finset.card_image_of_injective S (Fin.castSucc_injective n)
 
-/-
+/--
 Cardinality: `|S.image castSucc ∪ {last n}| = |S| + 1`.
 -/
 lemma card_image_castSucc_union_last {n : ℕ} (S : Finset (Fin n)) :

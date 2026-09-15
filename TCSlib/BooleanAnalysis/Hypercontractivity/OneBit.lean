@@ -1,10 +1,11 @@
 import Mathlib.Analysis.Convex.SpecificFunctions.Pow
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Data.Real.ConjExponents
 import Mathlib.Data.Real.Sign
-import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
-import TCSlib.BooleanAnalysis.Hypercontractivity.Simple
-/-
+import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
+/-!
 ## Main results
+
 - `(p, 2)-hypercontractivity on a single bit`:
   For f : BoolCube 1 → ℝ, 1 ≤ p ≤ 2, and 0 ≤ ρ with ρ² ≤ p − 1:
   (𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}
@@ -19,7 +20,7 @@ set_option maxHeartbeats 1600000
 
 namespace OneBit
 
-open BooleanAnalysis Real Bonami SimpleHypercontractivity
+open BooleanAnalysis Real Bonami
 
 /-! ## Enumeration helpers for BoolCube 1 and Finset (Fin 1) -/
 

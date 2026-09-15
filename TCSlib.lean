@@ -13,11 +13,8 @@ import TCSlib.ErrorCorrectingCodes.MRRW
 import TCSlib.BooleanAnalysis.BLR
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
-import TCSlib.BooleanAnalysis.Hypercontractivity.Simple
+import TCSlib.BooleanAnalysis.Hypercontractivity
 import TCSlib.BooleanAnalysis.Switching
-import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
-import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
-import TCSlib.BooleanAnalysis.Hypercontractivity.General
 import TCSlib.BooleanAnalysis.KKL
 
 import TCSlib.CommunicationComplexity.DeterministicCC
