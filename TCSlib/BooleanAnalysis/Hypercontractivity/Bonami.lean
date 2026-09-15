@@ -4,6 +4,21 @@ import Mathlib.Probability.Moments.Basic
 import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
 import TCSlib.BooleanAnalysis.Hypercontractivity.MomentBounds
 
+/-!
+# Bonami's fourth-moment lemma
+
+This file formalizes the fourth-moment form of Bonami's lemma for Boolean functions of bounded
+Fourier degree.  It supplies the expectation and uniform-measure formulations used by the
+hypercontractivity development.
+
+## Main results
+
+* `bonami_expect`: a degree-`k` Boolean function has fourth moment at most `9^k` times the
+  square of its second moment.
+* `bonami_lemma`: the corresponding moment bound stated using `uniformMeasure`.
+* `degree_zero_const` and `degree_zero_fourth_moment`: base cases for the induction.
+-/
+
 namespace Bonami
 open BooleanAnalysis
 

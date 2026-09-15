@@ -2,21 +2,28 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
 
+/-!
+# Even-moment hypercontractivity
+
+This file proves hypercontractive inequalities for even output exponents on the Boolean cube.
+It develops the last-coordinate and moment decompositions needed for the inductive proofs, then
+derives the `(2, q)` and `(p, 2)` forms used by the general theory.
+
+## Main results
+
+* `hypercontractivity_2_4` and `hypercontractivity_4_div_3_2`: the basic `(2, 4)` and
+  `(4 / 3, 2)` inequalities.
+* `hypercontractivity_2_2k` and `hypercontractivity_2_q`: `(2, q)` hypercontractivity for
+  even `q ≥ 2`.
+* `hypercontractivity_p_2_general`: the `(p, 2)` inequality obtained by duality and
+  composition of noise operators.
+-/
+
 namespace SimpleHypercontractivity
 
 section
 open BooleanAnalysis MeasureTheory Set Filter Real Bonami
 
-/-!
-## Main results
-
-This file contains even-moment hypercontractivity results that don't require the general theorem.
-
-- `hypercontractivity_2_4`: the (2,4)-hypercontractivity theorem
-- `hypercontractivity_4_div_3_2`: the (4/3, 2)-hypercontractivity theorem
-- `hypercontractivity_2_q`: the q ≥ 2, q even case of hypercontractivity
-- `hypercontractivity_p_2_general`: the (p, 2)-hypercontractivity theorem following from (2, q)
--/
 /-! ## (2,4)-Hypercontractivity Theorem -/
 
 /--

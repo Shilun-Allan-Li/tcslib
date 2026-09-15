@@ -13,21 +13,31 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 import Mathlib.Probability.Distributions.Uniform
 
+/-!
+# Moment bounds and anticoncentration
+
+This file develops consequences of fourth-moment (`B`-reasonability) bounds for real-valued random
+variables.  The results provide tail, support, and anticoncentration estimates used with Boolean
+functions.
+
+## Main definitions
+
+* `IsBReasonable`: the assertion that the fourth moment is at most `B` times the square of the
+  second moment.
+
+## Main results
+
+* `b_reasonable_tail_bound`: a fourth-moment tail bound.
+* `min_prob_b_reasonable`: a lower bound on the probability of nonzero values.
+* `paley_zygmund_ineq` and `b_reasonable_anticon_zero`: Paley--Zygmund-style anticoncentration
+  estimates.
+-/
+
 namespace Bonami
 open BooleanAnalysis
 
 section
 open MeasureTheory ProbabilityTheory Filter BooleanAnalysis
-
-/-!
-## Main results
-
-Several results relating to the `B-reasonability` of Boolean functions
-
-- `b_reasonable_tail_bound`
-- `min_prob_b_reasonable`
-- `b_reasonable_anticon_zero`
--/
 
 /-! ## B-Reasonability Bounds -/
 

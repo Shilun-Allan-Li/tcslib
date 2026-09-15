@@ -13,7 +13,7 @@ import TCSlib.ErrorCorrectingCodes.MRRW
 import TCSlib.BooleanAnalysis.BLR
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
-import TCSlib.BooleanAnalysis.Hypercontractivity
+import TCSlib.BooleanAnalysis.Hypercontractivity.Main
 import TCSlib.BooleanAnalysis.Switching
 import TCSlib.BooleanAnalysis.KKL
 

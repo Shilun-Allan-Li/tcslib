@@ -2,6 +2,25 @@ import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
 import TCSlib.BooleanAnalysis.Hypercontractivity.EvenMoments
 import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
 
+/-!
+# General hypercontractivity on the Boolean cube
+
+This file extends the one-bit and even-moment estimates to arbitrary Boolean cubes.  It represents
+the noise operator by a kernel, decomposes it along the final coordinate, and proves the one- and
+two-function hypercontractivity theorems for general exponents.
+
+## Main results
+
+* `hypercontractivity_induction`: lifts a one-bit estimate to any dimension.
+* `one_function_iff_two_function_hypercontractivity`: relates the one- and two-function forms.
+* `general_one_function_hypercontractivity` and `general_two_function_hypercontractivity`:
+  the final hypercontractive bounds.
+
+## Main definitions
+
+* `noiseKernel`: the transition kernel for `ρ`-correlated noise on the Boolean cube.
+-/
+
 open BooleanAnalysis OneBit Bonami SimpleHypercontractivity Real
 
 set_option maxHeartbeats 800000
@@ -9,17 +28,6 @@ set_option maxHeartbeats 800000
 namespace GeneralHypercontractivity
 variable {n : ℕ}
 
-/-!
-## Main results
-
-- `hypercontractivity_induction`: lifts a one-bit bound to the Boolean cube.
-- `one_function_iff_two_function_hypercontractivity`: relates the two formulations.
-- `general_one_function_hypercontractivity` and
-  `general_two_function_hypercontractivity`: the final bounds.
-
-Some hypotheses that look redundant are retained deliberately: this development only
-uses nonnegative noise parameters and positive-exponent norms.
--/
 /-! ## Noise Kernel -/
 
 /-- The noise kernel `K_ρ(x, y) = ∏_i (1 + ρ · sign(x_i) · sign(y_i)) / 2`.

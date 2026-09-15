@@ -3,19 +3,22 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 import Mathlib.Data.Real.ConjExponents
 import Mathlib.Data.Real.Sign
 import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
+
 /-!
+# One-bit hypercontractivity
+
+This file establishes the analytic inequalities on a single Boolean coordinate that seed the
+general hypercontractivity arguments.  It explicitly evaluates Boolean functions on `BoolCube 1`
+and proves both primal and dual noise-operator bounds.
+
 ## Main results
 
-- `(p, 2)-hypercontractivity on a single bit`:
-  For f : BoolCube 1 → ℝ, 1 ≤ p ≤ 2, and 0 ≤ ρ with ρ² ≤ p − 1:
-  (𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}
-- `(2, q)-hypercontractivity on a single bit`:
-  For g : BoolCube 1 → ℝ and q ≥ 2:
-  ‖T_{1 / √(q - 1)} g‖_q ≤ ‖g‖_2
-- `Weak (p, q) two-function hypercontractivity on a single bit`:
-  For f, g : BoolCube 1 → ℝ, 1 ≤ p ≤ 2 ≤ q and ρ = √((p − 1)(q − 1)):
-  ⟨f, T_ρ g⟩ ≤ (𝔼[|f|^p])^{1/p} · (𝔼[|g|^q])^{1/q}
+* `one_bit_p2_hypercontractivity`: `(p, 2)` hypercontractivity for a single bit.
+* `one_bit_2q_hypercontractivity`: `(2, q)` hypercontractivity for a single bit.
+* `two_point_ineq`: the core two-point inequality from which the `(p, 2)` estimate follows.
+* `noise_operator_duality`: self-adjointness of the one-bit noise operator.
 -/
+
 set_option maxHeartbeats 1600000
 
 namespace OneBit
