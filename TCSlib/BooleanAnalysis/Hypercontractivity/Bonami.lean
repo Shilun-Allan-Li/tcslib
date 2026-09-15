@@ -27,6 +27,7 @@ open MeasureTheory Set Filter ProbabilityTheory BooleanAnalysis Real
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
 /- A degree-0 function is constant -/
+/- O'Donnell, Corollary 9.6 (base case of the Bonami-lemma proof). -/
 lemma degree_zero_const {n : ℕ} (f : BooleanFunc n) (hf : has_degree_at_most f 0) :
     ∀ x, f x = f default := by
   intro x;
@@ -40,6 +41,7 @@ lemma degree_zero_const {n : ℕ} (f : BooleanFunc n) (hf : has_degree_at_most f
   simp_all +singlePass [ Finset.card_eq_zero ] ;
 
 /- For a degree-0 (constant) function, E[f^4] = (E[f^2])^2 -/
+/- O'Donnell, Corollary 9.6 (base case of the Bonami-lemma proof). -/
 lemma degree_zero_fourth_moment {n : ℕ} (f : BooleanFunc n) (hf : has_degree_at_most f 0) :
     expect (fun x => f x ^ 4) = (expect (fun x => f x ^ 2)) ^ 2 := by
   -- Since $f$ is constant, we have $f(x) = f(default)$ for all $x$.
@@ -53,6 +55,7 @@ lemma degree_zero_fourth_moment {n : ℕ} (f : BooleanFunc n) (hf : has_degree_a
   Key algebraic inequality for the Bonami lemma inductive step.
   If A ≤ 9^(m+1) a², B ≤ 9^m b², C² ≤ A·B, and all are non-negative,
   then A + 6C + B ≤ 9^(m+1) (a+b)² -/
+/- O'Donnell, Corollary 9.6 (inductive algebra in the proof). -/
 lemma bonami_algebra {m : ℕ} {a b A B C : ℝ}
     (ha : 0 ≤ a) (hb : 0 ≤ b) (hB : 0 ≤ B) (hC : 0 ≤ C)
     (hA_bound : A ≤ 9 ^ (m + 1) * a ^ 2)
@@ -64,6 +67,7 @@ lemma bonami_algebra {m : ℕ} {a b A B C : ℝ}
   nlinarith [ show 0 ≤ 9 ^ m by positivity, show 0 ≤ a * b * 9 ^ m by positivity, sq_nonneg ( C - a * b * 9 ^ m * 3 ), mul_le_mul_of_nonneg_left hB_bound ( show 0 ≤ 9 ^ m by positivity ) ]
 
 /-- The main Bonami lemma, proved without the k ≥ 1 assumption, in terms of expectation -/
+/- O'Donnell, Corollary 9.6 (uniform-bit specialization). -/
 lemma bonami_expect {n : ℕ} (k : ℕ) (f : BooleanFunc n)
     (hf : has_degree_at_most f k) :
     expect (fun x ↦ f x ^ 4) ≤ (9 : ℝ) ^ k * (expect (fun x ↦ f x ^ 2)) ^ 2 := by
@@ -112,6 +116,7 @@ lemma bonami_expect {n : ℕ} (k : ℕ) (f : BooleanFunc n)
       have hC_nn : 0 ≤ C := expect_sq_nonneg_prod g hh
       exact bonami_algebra ha hb hB hC_nn hg_bound hh_bound hCS
 
+/- O'Donnell, Corollary 9.6 (translation to the uniform probability measure). -/
 lemma moment_eq_expect {n : ℕ} (f : BooleanFunc n) (p : ℕ)
     (P : Measure (BoolCube n)) [IsProbabilityMeasure P]
     (hP_unif : ∀ x, (P {x}).toReal = uniformWeight n) :
@@ -126,14 +131,17 @@ lemma moment_eq_expect {n : ℕ} (f : BooleanFunc n) (p : ℕ)
   rw [h_meas_x]
 
 /-- The canonical uniform probability measure on the Boolean Hypercube. -/
+/- O'Donnell, Corollary 9.6 (uniform product-space specialization). -/
 noncomputable def uniformMeasure (n : ℕ) : Measure (BoolCube n) :=
   (PMF.uniformOfFintype (BoolCube n)).toMeasure
 
+/- O'Donnell, Corollary 9.6 (uniform product-space specialization). -/
 instance (n : ℕ) : IsProbabilityMeasure (uniformMeasure n) := by
   unfold uniformMeasure
   infer_instance
 
 /-- Prove that our canonical measure matches the combinatorial uniformWeight. -/
+/- O'Donnell, Corollary 9.6 (uniform product-space specialization). -/
 lemma uniformMeasure_apply {n : ℕ} (x : BoolCube n) :
     ((uniformMeasure n) {x}).toReal = uniformWeight n := by
   dsimp [uniformMeasure]
@@ -150,6 +158,7 @@ lemma uniformMeasure_apply {n : ℕ} (x : BoolCube n) :
 The Bonami Lemma:
 A Boolean function of degree at most k is `9^k`-reasonable under the uniform measure.
 -/
+/- O'Donnell, Corollary 9.6 (uniform-bit specialization). -/
 lemma bonami_lemma {n : ℕ} (k : ℕ) (f : BooleanFunc n)
     (hf : has_degree_at_most f k) :
     IsBReasonable f (uniformMeasure n) ((9 : ℝ) ^ k) := by

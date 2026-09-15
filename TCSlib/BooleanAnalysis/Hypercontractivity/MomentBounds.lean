@@ -41,10 +41,12 @@ open MeasureTheory ProbabilityTheory Filter BooleanAnalysis
 
 /-! ## B-Reasonability Bounds -/
 
+/- O'Donnell, Definition 9.1. -/
 def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=
   moment X 4 P ≤ B * (moment X 2 P) ^ 2
 
 /--If X not equivalent to 0 is B-reasonable, `Pr[|X| ≥ t ||X||₂] ≤ B/t⁴` for all t > 0 -/
+/- O'Donnell, Proposition 9.3. -/
 lemma b_reasonable_tail_bound
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
@@ -112,6 +114,7 @@ lemma b_reasonable_tail_bound
       · exact ne_of_gt (by positivity)
 
 /-- Let X be discrete random variable with PMF π. For μ = min(π), X is (1/μ) reasonable-/
+/- O'Donnell, Proposition 9.5. -/
 lemma min_prob_b_reasonable
   {Ω : Type*} [MeasurableSpace Ω] [Fintype Ω] [DiscreteMeasurableSpace Ω]
   {P : Measure Ω} [IsProbabilityMeasure P]
@@ -198,6 +201,7 @@ open MeasureTheory Set Filter ProbabilityTheory BooleanAnalysis Real
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
 /-- Suppose finite variance. If Z ≥ 0 random, 0 ≤ θ ≤ 1, then `P(Z > θE[Z]) ≥ (1 - θ)²(E[Z]²)/(E[Z²])` -/
+/- O'Donnell, Proposition 9.4 (Paley--Zygmund step). -/
 lemma paley_zygmund_ineq
   {Z : Ω → ℝ}
   (h_meas : Measurable Z)
@@ -335,6 +339,7 @@ lemma paley_zygmund_ineq
                exact ENNReal.toReal_nonneg
 
 /-- X not equivalent to 0 is B-reasonable. Then `Pr[|X| > t||X||₂] ≥ (1 - t²)²/B` for all t ∈ [0, 1]-/
+/- O'Donnell, Proposition 9.4. -/
 lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; general result after
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)

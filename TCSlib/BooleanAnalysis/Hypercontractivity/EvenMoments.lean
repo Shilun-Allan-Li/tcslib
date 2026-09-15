@@ -30,6 +30,7 @@ open BooleanAnalysis MeasureTheory Set Filter Real Bonami
 `χ_{S.image castSucc}(Fin.snoc x b) = χ_S(x)`: the character of a lifted set
   ignores the last coordinate.
 -/
+/- O'Donnell, Theorem 9.17 (last-coordinate calculation in the proof). -/
 lemma chiS_snoc_castSucc {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bool) :
     chiS (S.image Fin.castSucc) (Fin.snoc x b) = chiS S x := by
   unfold chiS; simp_all only [Fin.castSucc_inj, implies_true, injOn_of_eq_iff_eq, Finset.prod_image, Fin.snoc_castSucc];
@@ -37,6 +38,7 @@ lemma chiS_snoc_castSucc {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bo
 /--
 `χ_{S.image castSucc ∪ {last n}}(Fin.snoc x b) = boolToSign b * χ_S(x)`.
 -/
+/- O'Donnell, Theorem 9.17 (last-coordinate calculation in the proof). -/
 lemma chiS_snoc_with_last {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bool) :
     chiS (S.image Fin.castSucc ∪ {Fin.last n}) (Fin.snoc x b) = boolToSign b * chiS S x := by
   unfold chiS; simp +decide only [Finset.union_singleton, Finset.mem_image, Fin.castSucc_ne_last,
@@ -47,6 +49,7 @@ lemma chiS_snoc_with_last {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : B
 Partition of `∑ S : Finset (Fin (n+1))` by membership of `Fin.last n`:
   every subset of `[n+1]` either avoids or contains the last element.
 -/
+/- O'Donnell, Theorem 9.17 (last-coordinate calculation in the proof). -/
 lemma finset_fin_succ_sum_partition {n : ℕ} (φ : Finset (Fin (n + 1)) → ℝ) :
     ∑ S : Finset (Fin (n + 1)), φ S =
     ∑ T : Finset (Fin n), φ (T.image Fin.castSucc) +
@@ -71,6 +74,7 @@ lemma finset_fin_succ_sum_partition {n : ℕ} (φ : Finset (Fin (n + 1)) → ℝ
   · intro a x H; replace H := Finset.ext_iff.mp H ( Fin.last n ) ; simp +decide at H;
 
 /-- Cardinality of a lifted set: `|S.image castSucc| = |S|`. -/
+/- O'Donnell, Theorem 9.17 (last-coordinate calculation in the proof). -/
 lemma card_image_castSucc {n : ℕ} (S : Finset (Fin n)) :
     (S.image Fin.castSucc).card = S.card := by
   exact Finset.card_image_of_injective S (Fin.castSucc_injective n)
@@ -78,6 +82,7 @@ lemma card_image_castSucc {n : ℕ} (S : Finset (Fin n)) :
 /--
 Cardinality: `|S.image castSucc ∪ {last n}| = |S| + 1`.
 -/
+/- O'Donnell, Theorem 9.17 (last-coordinate calculation in the proof). -/
 lemma card_image_castSucc_union_last {n : ℕ} (S : Finset (Fin n)) :
     (S.image Fin.castSucc ∪ {Fin.last n}).card = S.card + 1 := by
   rw [ Finset.card_union, Finset.card_image_of_injective ] <;> norm_num [ Function.Injective ]
@@ -86,6 +91,7 @@ lemma card_image_castSucc_union_last {n : ℕ} (S : Finset (Fin n)) :
 The noise operator decomposes along the last coordinate:
   `T_ρ f(snoc x b) = T_ρ(avgLast f)(x) + boolToSign(b) · ρ · T_ρ(diffLast f)(x)`.
 -/
+/- O'Donnell, Theorem 9.17 (one-bit reduction in the proof). -/
 lemma noiseOp_snoc {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) (x : BoolCube n) (b : Bool) :
     noiseOp ρ f (Fin.snoc x b) =
     noiseOp ρ (avgLast f) x + boolToSign b * ρ * noiseOp ρ (diffLast f) x := by
@@ -101,6 +107,7 @@ lemma noiseOp_snoc {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) (x : BoolCube 
 /--
 Fourth moment decomposition with the noise operator.
 -/
+/- O'Donnell, Theorem 9.17 (the `(2, 4)` proof specialization). -/
 lemma fourth_moment_noise_decomp {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) :
     expect (fun x => (noiseOp ρ f x) ^ 4) =
     expect (fun x => (noiseOp ρ (avgLast f) x) ^ 4) +
@@ -119,6 +126,7 @@ lemma fourth_moment_noise_decomp {n : ℕ} (ρ : ℝ) (f : BooleanFunc (n + 1)) 
     unfold restrictLast; norm_num [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ;
 
 /-- Key algebraic inequality: under `ρ² ≤ 1/3`, the recurrence closes. -/
+/- O'Donnell, Theorem 9.17 (the `(2, 4)` proof specialization). -/
 lemma hypercontractivity_algebra' {a b A B C ρ : ℝ}
     (ha : 0 ≤ a) (hb : 0 ≤ b) (hB_nn : 0 ≤ B)
     (hA_bound : A ≤ a ^ 2) (hB_bound : B ≤ b ^ 2)
@@ -154,6 +162,7 @@ For any Boolean function `f : {0,1}ⁿ → ℝ` and noise parameter `ρ` with `�
   `𝔼[(T_ρ f)⁴] ≤ (𝔼[f²])²`,
 or equivalently `‖T_ρ f‖₄ ≤ ‖f‖₂`.
 -/
+/- O'Donnell, Theorem 9.17, specialized to `q = 4`. -/
 theorem hypercontractivity_2_4 {n : ℕ} (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 3) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ 4) ≤ (expect (fun x => f x ^ 2)) ^ 2 := by
   induction n with
@@ -181,6 +190,7 @@ theorem hypercontractivity_2_4 {n : ℕ} (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 3) (f 
 /- **The (4 / 3, 2)-Hypercontractivity Theorem** :-/
 
 /-- Hölder's inequality for p = 4/3 and q = 4. -/
+/- O'Donnell, Proposition 9.19 (Hölder/duality step). -/
 lemma innerProduct_le_L43_L4 (f g : BooleanFunc n) :
   innerProduct f g ≤
   (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) *
@@ -240,6 +250,7 @@ lemma innerProduct_le_L43_L4 (f g : BooleanFunc n) :
       simp_rw [hq_pow]
       rfl
 /-- Boolean functions are (4/3, 2)-hypercontractive with parameter 1/√3 -/
+/- O'Donnell, Proposition 9.19, applied to Theorem 9.17 at `q = 4`. -/
 theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
     (expect (fun x => (noiseOp (1 / Real.sqrt 3) f x) ^ 2)) ^ (1/2 : ℝ)
     ≤ (expect (fun x => |f x| ^ (4/3 : ℝ))) ^ (3/4 : ℝ) := by
@@ -330,6 +341,7 @@ theorem hypercontractivity_4_div_3_2 {n : ℕ} (f : BooleanFunc n) :
 
 /-- The L² norm of `T_ρ f` in Fourier space:
 `𝔼[(T_ρ f)²] = ∑_S ρ^{2|S|} f̂(S)²`. -/
+/- O'Donnell, Theorem 9.17 (the `q = 2` contraction consequence). -/
 lemma noise_l2_fourier (ρ : ℝ) (f : BooleanFunc n) :
     innerProduct (noiseOp ρ f) (noiseOp ρ f) =
     ∑ S : Finset (Fin n), (ρ ^ S.card) ^ 2 * BooleanAnalysis.fourierCoeff f S ^ 2 := by
@@ -341,6 +353,7 @@ lemma noise_l2_fourier (ρ : ℝ) (f : BooleanFunc n) :
 
 /-- **Contractivity**: `𝔼[(T_ρ f)²] ≤ 𝔼[f²]` for `ρ² ≤ 1`.
 This is the `q = 2` case of hypercontractivity. -/
+/- O'Donnell, Theorem 9.17 (the `q = 2` contraction consequence). -/
 theorem contractivity (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ 2) ≤ expect (fun x => f x ^ 2) := by
   have lhs : expect (fun x => (noiseOp ρ f x) ^ 2) =
@@ -363,6 +376,7 @@ This is proved by induction on `j`. The induction step shows
 `C(2k, 2j) / C(2k, 2(j-1)) · 1/((2k-1) · C(k,j)/C(k,j-1))` ≤ 1,
 which reduces to `(2k - 2j + 1) ≤ (2k - 1)(2j - 1)` for `j ≥ 1`.
 -/
+/- O'Donnell, Theorem 9.17 (even-moment proof detail). -/
 lemma binom_coeff_ineq (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤ k) :
     Nat.choose (2 * k) (2 * j) ≤ Nat.choose k j * (2 * k - 1) ^ j := by
   induction j with
@@ -397,6 +411,7 @@ lemma binom_coeff_ineq (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤ k) :
 /-! ## Moment decomposition for even powers -/
 
 /-- For even q, the q-th moment decomposes using avgLast and diffLast. -/
+/- O'Donnell, Theorem 9.17 (even-moment proof detail). -/
 lemma qth_moment_decomp (q : ℕ) (f : BooleanFunc (n + 1)) :
     expect (fun x => f x ^ q) =
     expect (fun x' => ((avgLast f x' + diffLast f x') ^ q +
@@ -408,6 +423,7 @@ lemma qth_moment_decomp (q : ℕ) (f : BooleanFunc (n + 1)) :
   · exact sum_boolCube_succ fun x => f x ^ q
 
 /-- The noise operator decomposes on (n+1)-cubes for q-th moments. -/
+/- O'Donnell, Theorem 9.17 (even-moment proof detail). -/
 lemma noise_qth_moment_decomp (q : ℕ) (ρ : ℝ) (f : BooleanFunc (n + 1)) :
     expect (fun x => (noiseOp ρ f x) ^ q) =
     expect (fun x' => ((noiseOp ρ (avgLast f) x' + ρ * noiseOp ρ (diffLast f) x') ^ q +
@@ -437,6 +453,7 @@ and noise parameter `ρ` with `ρ² ≤ 1/(2k − 1)`:
 `𝔼[(T_ρ f)^{2k}] ≤ (𝔼[f²])^k`.
 
 Equivalently, `‖T_ρ f‖_{2k} ≤ ‖f‖₂`. -/
+/- O'Donnell, Theorem 9.17 (even-integer-exponent proof specialization). -/
 theorem hypercontractivity_2_2k (k : ℕ) (hk : 1 ≤ k)
     (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / ((2 : ℝ) * k - 1)) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ (2 * k)) ≤ (expect (fun x => f x ^ 2)) ^ k := by
@@ -552,6 +569,7 @@ theorem hypercontractivity_2_2k (k : ℕ) (hk : 1 ≤ k)
 /-! ## Equivalent formulation with q -/
 
 /-- The (2, q)-Hypercontractivity restated with even `q`. -/
+/- O'Donnell, Theorem 9.17 (even-integer-exponent specialization). -/
 theorem hypercontractivity_2_q (q : ℕ) (hq : 2 ≤ q) (hq_even : Even q)
     (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / ((q : ℝ) - 1)) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ q) ≤ (expect (fun x => f x ^ 2)) ^ (q / 2) := by
@@ -565,12 +583,14 @@ theorem hypercontractivity_2_q (q : ℕ) (hq : 2 ≤ q) (hq_even : Even q)
 /-! ## Corollaries and specific cases -/
 
 /-- The (2, 2)-hypercontractivity is just contractivity. -/
+/- O'Donnell, Theorem 9.17, specialized to `q = 2`. -/
 theorem hypercontractivity_2_2 (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ 2) ≤ (expect (fun x => f x ^ 2)) ^ 1 := by
   rw [pow_one]
   exact contractivity ρ hρ f
 
 /-- (2, 6)-hypercontractivity. -/
+/- O'Donnell, Proposition 9.16. -/
 theorem hypercontractivity_2_6 (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 5) (f : BooleanFunc n) :
     expect (fun x => (noiseOp ρ f x) ^ 6) ≤ (expect (fun x => f x ^ 2)) ^ 3 := by
   exact hypercontractivity_2_q 6 (by norm_num) ⟨3, by ring⟩ ρ (by linarith) f
@@ -579,6 +599,7 @@ theorem hypercontractivity_2_6 (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / 5) (f : BooleanF
 /--
 (2, 2k)-hypercontractivity in `‖·‖_{2k} ≤ ‖·‖_2` form.
 -/
+/- O'Donnell, Theorem 9.17 (even-integer-exponent specialization). -/
 theorem hypercontractivity_2_2k_rpow (k : ℕ) (hk : 1 ≤ k)
     (ρ : ℝ) (hρ : ρ ^ 2 ≤ 1 / ((2 : ℝ) * k - 1)) (f : BooleanFunc n) :
     (expect (fun x => (noiseOp ρ f x) ^ (2 * k))) ^ (1 / (2 * k : ℝ)) ≤
@@ -592,6 +613,7 @@ theorem hypercontractivity_2_2k_rpow (k : ℕ) (hk : 1 ≤ k)
 
 /-! ## (p, 2)-Hypercontractivity via Duality -/
 
+/- O'Donnell, Proposition 9.19 (self-adjointness/duality calculation). -/
 lemma innerProduct_eq_expect_sq (f : BooleanFunc n) :
     innerProduct f f = BooleanAnalysis.expect (fun x => f x ^ 2) := by
   unfold innerProduct BooleanAnalysis.expect uniformWeight
@@ -599,6 +621,7 @@ lemma innerProduct_eq_expect_sq (f : BooleanFunc n) :
   apply Finset.sum_congr rfl
   intro x _; ring
 
+/- O'Donnell, Proposition 9.19 (nonnegativity used in the duality proof). -/
 lemma expect_sq_noiseOp_nonneg (ρ : ℝ) (f : BooleanFunc n) :
     0 ≤ BooleanAnalysis.expect (fun x => (noiseOp ρ f x) ^ 2) := by
   unfold BooleanAnalysis.expect uniformWeight
@@ -606,6 +629,7 @@ lemma expect_sq_noiseOp_nonneg (ρ : ℝ) (f : BooleanFunc n) :
   apply Finset.sum_nonneg
   intro x _; positivity
 
+/- O'Donnell, Proposition 9.19 (nonnegativity used in the duality proof). -/
 lemma expect_rpow_abs_nonneg (p : ℝ) (f : BooleanFunc n) :
     0 ≤ BooleanAnalysis.expect (fun x => |f x| ^ p) := by
   unfold BooleanAnalysis.expect uniformWeight
@@ -614,6 +638,7 @@ lemma expect_rpow_abs_nonneg (p : ℝ) (f : BooleanFunc n) :
   intro x _; positivity
 
 /-- Composing noise operators multiplies their parameter -/
+/- O'Donnell, Proposition 9.19 (noise-operator duality calculation). -/
 lemma noiseOp_compose (ρ σ : ℝ) (f : BooleanFunc n) :
     noiseOp ρ (noiseOp σ f) = noiseOp (ρ * σ) f := by
   ext x
@@ -625,6 +650,7 @@ lemma noiseOp_compose (ρ σ : ℝ) (f : BooleanFunc n) :
 **The (p, 2)-Hypercontractivity Theorem** (general duality framework):
 
 Given a (2, q)-hypercontractivity bound, we conclude `(𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}`-/
+/- O'Donnell, Proposition 9.19. -/
 theorem hypercontractivity_p_2_general
     {ρ : ℝ} {p q : ℝ}
     (_hp : 1 < p) (hq : 2 ≤ q)

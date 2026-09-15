@@ -15,30 +15,36 @@ namespace Bonami
 open BooleanAnalysis
 
 /-- Restrict a Boolean function on `n + 1` variables by fixing the last coordinate. -/
+/- O'Donnell, Corollary 9.6 (last-coordinate decomposition in the proof). -/
 noncomputable def restrictLast {n : ℕ} (f : BooleanFunc (n + 1)) (b : Bool) : BooleanFunc n :=
   fun x => f (Fin.snoc x b)
 
 /-- The average of `f` over the last coordinate. -/
+/- O'Donnell, Corollary 9.6 (the `E_n f` component in the proof). -/
 noncomputable def avgLast {n : ℕ} (f : BooleanFunc (n + 1)) : BooleanFunc n :=
   fun x => (restrictLast f false x + restrictLast f true x) / 2
 
 /-- The half-difference of `f` over the last coordinate. -/
+/- O'Donnell, Corollary 9.6 (the `D_n f` component in the proof). -/
 noncomputable def diffLast {n : ℕ} (f : BooleanFunc (n + 1)) : BooleanFunc n :=
   fun x => (restrictLast f false x - restrictLast f true x) / 2
 
 /-- Restriction at `false` is the sum of the average and half-difference. -/
+/- O'Donnell, Corollary 9.6 (last-coordinate decomposition in the proof). -/
 lemma restrictLast_false_eq {n : ℕ} (f : BooleanFunc (n + 1)) (x : BoolCube n) :
     restrictLast f false x = avgLast f x + diffLast f x := by
   simp [restrictLast, avgLast, diffLast]
   ring
 
 /-- Restriction at `true` is the average minus the half-difference. -/
+/- O'Donnell, Corollary 9.6 (last-coordinate decomposition in the proof). -/
 lemma restrictLast_true_eq {n : ℕ} (f : BooleanFunc (n + 1)) (x : BoolCube n) :
     restrictLast f true x = avgLast f x - diffLast f x := by
   simp [restrictLast, avgLast, diffLast]
   ring
 
 /-- A sum over `BoolCube (n + 1)` splits according to the final coordinate. -/
+/- O'Donnell, Corollary 9.6 (product-measure calculation in the proof). -/
 lemma sum_boolCube_succ {n : ℕ} (φ : BoolCube (n + 1) → ℝ) :
     ∑ x : BoolCube (n + 1), φ x =
     ∑ x : BoolCube n, φ (Fin.snoc x false) + ∑ x : BoolCube n, φ (Fin.snoc x true) := by
@@ -58,12 +64,14 @@ lemma sum_boolCube_succ {n : ℕ} (φ : BoolCube (n + 1) → ℝ) :
   exact Finset.sum_congr rfl fun _ _ => by rw [Finset.sum_eq_add] <;> aesop
 
 /-- `uniformWeight (n + 1) = uniformWeight n / 2`. -/
+/- O'Donnell, Corollary 9.6 (uniform product-measure calculation in the proof). -/
 lemma uniformWeight_succ (n : ℕ) :
     uniformWeight (n + 1) = uniformWeight n / 2 := by
   simp [uniformWeight, pow_succ]
   ring
 
 /-- The Fourier coefficient of `avgLast f` at `S` is the lifted coefficient of `f`. -/
+/- O'Donnell, Corollary 9.6 (degree calculation in the proof). -/
 lemma fourierCoeff_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
     BooleanAnalysis.fourierCoeff (avgLast f) S =
       BooleanAnalysis.fourierCoeff f (S.image Fin.castSucc) := by
@@ -83,6 +91,7 @@ lemma fourierCoeff_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin 
 
 /-- The Fourier coefficient of `diffLast f` at `S` is the lifted coefficient containing
 the final coordinate. -/
+/- O'Donnell, Corollary 9.6 (degree calculation in the proof). -/
 lemma fourierCoeff_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin n)) :
     BooleanAnalysis.fourierCoeff (diffLast f) S =
       BooleanAnalysis.fourierCoeff f (S.image Fin.castSucc ∪ {Fin.last n}) := by
@@ -111,6 +120,7 @@ lemma fourierCoeff_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (S : Finset (Fin
         cases i using Fin.lastCases <;> aesop⟩
 
 /-- Expectation on `BoolCube (n + 1)` is the average over the two restrictions. -/
+/- O'Donnell, Corollary 9.6 (product-measure calculation in the proof). -/
 lemma expect_succ_eq {n : ℕ} (φ : BooleanFunc (n + 1)) :
     expect φ = (expect (restrictLast φ false) + expect (restrictLast φ true)) / 2 := by
   unfold expect restrictLast
@@ -118,16 +128,19 @@ lemma expect_succ_eq {n : ℕ} (φ : BooleanFunc (n + 1)) :
   ring
 
 /-- `(a + b)⁴ + (a - b)⁴ = 2(a⁴ + 6a²b² + b⁴)`. -/
+/- O'Donnell, Corollary 9.6 (equation (9.1) in the proof). -/
 lemma fourth_pow_sum (a b : ℝ) :
     (a + b) ^ 4 + (a - b) ^ 4 = 2 * (a ^ 4 + 6 * a ^ 2 * b ^ 2 + b ^ 4) := by
   ring
 
 /-- `(a + b)² + (a - b)² = 2(a² + b²)`. -/
+/- O'Donnell, Corollary 9.6 (equation (9.2) in the proof). -/
 lemma second_pow_sum (a b : ℝ) :
     (a + b) ^ 2 + (a - b) ^ 2 = 2 * (a ^ 2 + b ^ 2) := by
   ring
 
 /-- Fourth-moment decomposition along the final coordinate. -/
+/- O'Donnell, Corollary 9.6 (equation (9.1) in the proof). -/
 lemma fourth_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
     expect (fun x => f x ^ 4) =
     expect (fun x => avgLast f x ^ 4) +
@@ -151,6 +164,7 @@ lemma fourth_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
   simpa only [mul_assoc, ← Finset.mul_sum _ _ _, ← Finset.sum_mul] using by ring
 
 /-- Second-moment decomposition along the final coordinate. -/
+/- O'Donnell, Corollary 9.6 (equation (9.2) in the proof). -/
 lemma second_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
     expect (fun x => f x ^ 2) =
       expect (fun x => avgLast f x ^ 2) + expect (fun x => diffLast f x ^ 2) := by
@@ -173,6 +187,7 @@ lemma second_moment_decomp {n : ℕ} (f : BooleanFunc (n + 1)) :
   ring
 
 /-- Cauchy–Schwarz for expectations: `E[g²h²]² ≤ E[g⁴]E[h⁴]`. -/
+/- O'Donnell, Corollary 9.6 (Cauchy--Schwarz step in the proof). -/
 lemma expect_cs_sq {n : ℕ} (g h : BooleanFunc n) :
     expect (fun x => g x ^ 2 * h x ^ 2) ^ 2 ≤
       expect (fun x => g x ^ 4) * expect (fun x => h x ^ 4) := by
@@ -186,18 +201,21 @@ lemma expect_cs_sq {n : ℕ} (g h : BooleanFunc n) :
   nlinarith [show 0 ≤ uniformWeight n ^ 2 by positivity]
 
 /-- Expectations of squares are nonnegative. -/
+/- O'Donnell, Corollary 9.6 (nonnegativity used in the proof). -/
 lemma expect_sq_nonneg {n : ℕ} (f : BooleanFunc n) :
     0 ≤ expect (fun x => f x ^ 2) := by
   exact mul_nonneg (pow_nonneg (by norm_num) _)
     (Finset.sum_nonneg fun _ _ => sq_nonneg _)
 
 /-- Expectations of products of squares are nonnegative. -/
+/- O'Donnell, Corollary 9.6 (nonnegativity used in the proof). -/
 lemma expect_sq_nonneg_prod {n : ℕ} (g h : BooleanFunc n) :
     0 ≤ expect (fun x => g x ^ 2 * h x ^ 2) := by
   exact mul_nonneg (pow_nonneg (by norm_num) _)
     (Finset.sum_nonneg fun _ _ => by positivity)
 
 /-- Expectations of fourth powers are nonnegative. -/
+/- O'Donnell, Corollary 9.6 (nonnegativity used in the proof). -/
 lemma expect_fourth_nonneg {n : ℕ} (f : BooleanFunc n) :
     0 ≤ expect (fun x => f x ^ 4) := by
   convert expect_sq_nonneg_prod (fun x => f x ^ 2) (fun _ => 1) using 1
@@ -205,6 +223,7 @@ lemma expect_fourth_nonneg {n : ℕ} (f : BooleanFunc n) :
   ring_nf
 
 /-- Averaging over the last coordinate preserves a Fourier degree bound. -/
+/- O'Donnell, Corollary 9.6 (degree calculation in the proof). -/
 lemma degree_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     (hf : has_degree_at_most f k) :
     has_degree_at_most (avgLast f) k := by
@@ -235,6 +254,7 @@ lemma degree_avgLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
   simp_all +decide [Finset.card_image_of_injective, Function.Injective]
 
 /-- Taking the half-difference over the last coordinate lowers a Fourier degree bound by one. -/
+/- O'Donnell, Corollary 9.6 (degree calculation in the proof). -/
 lemma degree_diffLast {n : ℕ} (f : BooleanFunc (n + 1)) (k : ℕ)
     (hf : has_degree_at_most f k) :
     has_degree_at_most (diffLast f) (k - 1) := by
