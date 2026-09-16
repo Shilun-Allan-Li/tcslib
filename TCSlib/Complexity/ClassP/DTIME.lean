@@ -35,10 +35,12 @@ constant `c`. [AB09, §1.6, Definition 1.12]
 * **The output tape is append-only** (the transition emits at most one symbol per step,
   and emitted symbols cannot be erased), whereas [AB09, §1.2] designates a read-write
   work tape as the output tape — [AB09, p. 19] itself lists write-only output among the
-  benign model variations. The simulation (an extra work tape holding the tentative
-  output, copied out before halting, with constant-factor overhead) is a phase-2
-  obligation; until then, exact step counts must not be transported between the two
-  conventions.
+  benign model variations. This bridge is **waived** (phase-2 audit, finding 3; see
+  the plan's decision log): [AB09]'s read-write-output machine is not formalized in
+  this development, so no simulation between the conventions is even statable; the
+  compensating restriction is that no exact [AB09] step count is ever imported as a
+  formal bound. The in-model buffer-and-flush technique lives in
+  `TCSlib.Complexity.TuringMachine.Composition`.
 * **Initialization differs from [AB09]**: there are no start-marker (`▷`) cells — the
   bidirectional tapes make them unnecessary — and the input head begins on the first
   input symbol (on the boundary blank for empty input), with all work tapes blank.

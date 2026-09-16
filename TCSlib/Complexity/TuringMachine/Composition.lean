@@ -35,12 +35,16 @@ bridge. Every statement here — hypotheses and conclusions alike — lives in t
 append-only model, and [AB09]'s read-write-output machine is not formalized in this
 development, so no simulation between the two conventions can even be stated yet. The
 obligation is recorded in the plan's decision log as **waived**, with the compensating
-restriction that no exact-step-count transfer from [AB09] is ever claimed: all bounds
-carry existential constants and every result is self-contained in-model. A formal
-bridge (a read-write-output machine variant plus a simulation theorem) will be added
-if and only if a downstream result needs it. What this file *does* provide is the
-buffer-and-flush technique — an emission can be deferred to a work tape and flushed at
-the end — which is the in-model reason the append-only convention costs no generality.
+restriction that no exact-step-count transfer from [AB09] is ever claimed: every bound
+*adapted from the source* carries an existential constant (purely internal results,
+such as the oracle lockstep lemmas, are legitimately exact but never cross a
+convention), and every result is self-contained in-model. A formal bridge (a
+read-write-output machine variant plus a simulation theorem) will be added if and only
+if a downstream result needs it. What this file *does* provide is the buffer-and-flush
+technique — an emission can be deferred to a work tape and flushed at the end — which
+is what delayed or revisable output looks like *within this model*; whether the
+append-only convention matches [AB09]'s read-write one remains formally unestablished,
+per the waiver.
 
 ## Main results
 

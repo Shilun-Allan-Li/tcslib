@@ -59,8 +59,9 @@ step of `M` is simulated by: reading the `L` bits under each work head into the 
 determined by the table), computing `M`'s transition inside the finite state, writing
 back the `L`-bit codes while returning left (`L` steps per tape), moving each head `L`
 cells in the simulated direction, and emitting the decoded bit whenever `M` emits.
-Total: at most `c` steps of `M'` per step of `M` with `c = O(k · L)`, plus a constant
-start-up. Logical blank is represented by the all-blank (`none`-cell) block — never-
+Total: at most `c` steps of `M'` per step of `M` with `c = O((k + 1) · L)` — the
+`+ 1` covering the input-read, state-update, and emission work that remains even for
+`k = 0` — plus a constant start-up. Logical blank is represented by the all-blank (`none`-cell) block — never-
 visited blocks already have this shape, so no binary code needs reserving and no
 initialization pass is required (phase-2 audit, finding 8). The invariant
 relating block-encoded configurations to `M`'s configurations is preserved by each

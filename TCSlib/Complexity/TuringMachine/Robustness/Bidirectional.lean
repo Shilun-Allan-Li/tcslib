@@ -23,8 +23,10 @@ rendering of Claim 1.8 runs in the only meaningful direction: every machine is
 simulated, with constant-factor slowdown and the same number of work tapes, by one
 whose work heads **never visit a negative cell** (`Turing.FinTM.NonnegativeHeads`),
 i.e. by a machine that uses its tapes unidirectionally. The simulating machine "folds"
-each tape at the origin over the doubled alphabet `Γ × Γ`, exactly as in [AB09]'s
-proof.
+each tape at the origin, following [AB09]'s proof, over the enlarged non-blank
+alphabet `Bool × Option Γ × Option Γ` — an origin flag plus two *independent*,
+possibly blank, payloads. (A bare `Γ × Γ` cannot represent a symbol paired with a
+blank neighbor; phase-2 re-audit, finding 1.)
 
 ## Main results
 
@@ -52,13 +54,17 @@ cells.
 
 **Proof sketch.** Fold each tape at the origin along the coordinate
 `φ z = if 0 ≤ z then z else -z - 1` (note `φ 0 = φ (-1) = 0`; this is *not* the
-absolute value): physical cell `φ z` holds the pair (simulated cell `z ≥ 0` in its
-first component, simulated cell `-z - 1` in its second) over the alphabet of pairs,
-with `Γ` embedded via `e` in the first component. The simulator's state tracks, per
-tape, which component the simulated head is in. Because a transition cannot read a
-head coordinate, the origin is made *detectable* by writing an origin tag into
-physical cell `0` of each tape during a constant-cost initialization and preserving
-it. Moves translate directly except at the fold: crossing between simulated cells `0`
+absolute value): physical cell `p ≥ 0` holds the two *independent* payloads —
+simulated cell `p` and simulated cell `-p - 1`, each possibly blank — over the
+enlarged non-blank alphabet `Γ' = Bool × Option Γ × Option Γ`, whose Boolean
+component is an origin flag; `e γ = (false, some γ, none)` (injective via its first
+payload), and an untouched physical blank decodes as two blanks with no flag. The
+simulator's state tracks, per tape, which component the simulated head is in. Because
+a transition cannot read a head coordinate, the origin is made *detectable* by a
+fresh initialization state whose single action writes `(true, none, none)` at cell
+`0` of every work tape simultaneously (one transition, length-independent); every
+later write updates only the active payload, preserving the other payload and the
+flag. Moves translate directly except at the fold: crossing between simulated cells `0`
 and `-1` flips the component *without* issuing a physical move (the physical
 coordinate stays `0`); each simulated step costs a constant number of physical steps,
 giving `c · (T n + 1)` — [AB09] gets `4T`. Physical head positions are values of `φ`,
