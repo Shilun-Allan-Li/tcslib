@@ -21,6 +21,8 @@ import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem
 
 import TCSlib.Complexity.NPReductions
+import TCSlib.Complexity.TuringMachine
+import TCSlib.Complexity.ClassP
 
 import TCSlib.Cryptography.SchnorrProtocol
 

@@ -145,7 +145,23 @@ Each phase lands first as a **compiling sorry-skeleton** (the GraphTheory/Core p
 statements are the contract, proofs fill in via the sorry-ladder workflow. Per `policy.md`
 §3, proof sketches are written at skeleton time — each `sorry` corresponds to a named
 sketch step. After each phase compiles: dep-graph rebuild, `/blueprint-extract`,
-`blueprint_validate.py --strict`, `dataset_hygiene.py --strict`.
+`blueprint_validate.py --strict`, `dataset_hygiene.py --strict`. The blueprint is
+**late-bound**: extraction runs only at phase boundaries, and no blueprint LaTeX is
+written by hand ahead of the Lean.
+
+### Audit protocol (between phases)
+
+Right after a phase's skeleton lands — statements frozen, proofs mostly `sorry` — an
+**external audit** runs before the next phase begins: an LLM from a different vendor, in
+a fresh context, reviews the phase's trusted surface (definitions, theorem statements,
+remaining sorries) against the book, adversarially. Statement bugs are the dominant
+failure mode of formalization (Lean already checks proofs) and are cheapest to fix at
+this moment. Mechanics: instantiate `audits/TEMPLATE.md` as `audits/phaseN-pack.md`, hand
+it plus the listed files to the auditor, record results in `audits/phaseN-findings.md`;
+every finding is fixed or explicitly waived before the next phase starts. An optional
+light second pass when a phase's proofs complete diffs the statements for quiet
+weakening. Audits complement, not replace, in-Lean sanity theorems, which are the
+machine-checked and permanent form of the same checks.
 
 1. **Core model + classes.** Port the two vendored files to v4.25; `Finite.lean`;
    `ComputesInTime`, `decides`, `DTIME`, `P`; the oracle wrapper + trivial-oracle sanity
@@ -191,4 +207,7 @@ approved.
 | Namespaces: `Turing` (vendored core) / `Complexity` (classes) | Working assumption; revisit on clash |
 | NP/NTM signatures deferred to Chapter 2 work | Decided |
 | §1.7 `O(T log T)` and oblivious-TM proofs are stretch goals | Decided |
+| Blueprint: late-bound — generated from compiled Lean at phase boundaries only, nothing hand-written ahead of the Lean | Decided |
+| External audits between phases: cross-vendor LLM with prepared packs (`audits/`), findings gate the next phase | Decided |
+| Vendored cslib source commit: `a374775894efb9b7196cccf11235c60a97086dc1` (2026-09-14); relational semantics (`RelatesInSteps`) dropped in the port | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |
