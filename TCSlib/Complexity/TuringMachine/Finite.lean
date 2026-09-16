@@ -96,8 +96,10 @@ theorem output_prefix (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol Stat
 end MultiTapeTM
 
 /-- A multi-tape Turing machine over the alphabet `Option Symbol` bundled with a finite
-state type. This is the machine of [AB09, §1.2]: the raw `MultiTapeTM` is internal
-plumbing, and every headline complexity-theoretic definition is stated over `FinTM`.
+state type. This is the machine of [AB09, §1.2] up to the declared model variations
+(append-only output tape, start-marker-free initialization — see the deviations list in
+`TCSlib.Complexity.ClassP.DTIME`): the raw `MultiTapeTM` is internal plumbing, and
+every headline complexity-theoretic definition is stated over `FinTM`.
 
 The instances are data (`Fintype`/`DecidableEq`, not `Finite`) because encoding a machine
 as a string requires enumerating its transition table. -/

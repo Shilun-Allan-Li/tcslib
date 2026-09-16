@@ -14,16 +14,18 @@ set_option autoImplicit false
 
 `P` is the class of languages decidable in polynomial time: the union over `c` of
 `DTIME (n^c + 1)`. [AB09, Definition 1.13, with the `+ 1` padding explained below —
-the literal unpadded union is empty degree by degree in this model, since `n^c`
-vanishes at `n = 0` and no machine halts in zero steps.]
+every *positive*-degree component of the literal unpadded union is empty in this model,
+since `n^c` vanishes at `n = 0` and no machine halts in zero steps; [AB09]'s union
+ranges over `c ≥ 1`, so its literal reading is empty, while including degree `0` would
+give exactly `DTIME 1` (in Lean `0 ^ 0 = 1`).]
 
 ## Design and deviations from [AB09]
 
 * We take the union of `DTIME (fun n => n ^ c + 1)` over all `c : ℕ` where [AB09] writes
   `⋃_{c ≥ 1} DTIME(n^c)`. The `+ 1` repairs the empty-input degeneracy: a machine needs
-  at least one step to halt, so no language whatsoever is decided within `c · 0^d = 0`
-  steps on the empty input, and the literal [AB09] definition would (vacuously) exclude
-  even constant-time machines on that input. For `n ≥ 1` the bounds `c · (n^d + 1)` and
+  at least one step to halt, so for the degrees `d ≥ 1` of [AB09]'s union no language
+  whatsoever is decided within `c · 0^d = 0` steps on the empty input, and the literal
+  [AB09] definition would (vacuously) exclude even constant-time machines on that input. For `n ≥ 1` the bounds `c · (n^d + 1)` and
   `c' · n^d` sandwich each other, so this is the standard reading of the same class.
   Ranging over `c = 0` too is harmless: `n^0 + 1 = 2` is a constant bound, subsumed by
   larger `c`.
@@ -59,8 +61,8 @@ theorem dtime_poly_subset_P (c : ℕ) : DTIME (fun n => n ^ c + 1) ⊆ P :=
 
 /-- Membership in `P` from a concrete polynomial bound: if `L` is decidable within any
 time bound that is pointwise dominated by a polynomial, then `L ∈ P`. (Pointwise, not
-eventual, domination: an eventual-bound variant absorbing finitely many exceptional
-lengths requires patching the machine and is deferred.)
+eventual, domination: an eventual-bound variant follows with the *same machine* by
+absorbing the finitely many exceptional bounds into the constant, and is deferred.)
 
 **Proof sketch.** Pick `c` and `d` with `T n ≤ c * (n ^ d + 1)` for all `n`. By
 `Complexity.DTIME.mono`, `DTIME T ⊆ DTIME (fun n => c * (n ^ d + 1))`; the latter equals

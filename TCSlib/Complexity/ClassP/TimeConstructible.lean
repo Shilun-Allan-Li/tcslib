@@ -14,9 +14,12 @@ set_option autoImplicit false
 # Time-constructible functions
 
 A function `T : ℕ → ℕ` is *time constructible* if `T n ≥ n` and some machine computes,
-on every input `x`, the binary representation of `T |x|` within `T |x|` steps.
-[AB09, §1.3] Time constructibility rules out pathological time bounds; it is the standing
-hypothesis of the timed universal machine (phase 3) and, later, of the hierarchy theorems.
+on every input `x`, the binary representation of `T |x|` within at most
+`c · (T |x| + 1)` steps for a positive constant `c`. [AB09, §1.3, with the audit-mandated
+budget repair below.] Time constructibility rules out pathological time bounds. It is
+needed when a machine must *generate* a step budget from its input length, as in the
+hierarchy theorems; note that the timed universal machine of [AB09, p. 21] receives its
+budget as an explicit extra input and needs no constructibility hypothesis.
 
 ## Design and deviations from [AB09]
 
@@ -30,10 +33,12 @@ hypothesis of the timed universal machine (phase 3) and, later, of the hierarchy
   budget `T n = n`, the first transition on `[false]` and `[false, false]` is the same
   function call, and the length-1 budget forces it to halt with output `[true]`, which
   absorption then freezes at length 2), and even `T n = n + 1` fails by an append-only
-  prefix argument. We therefore allow a positive constant factor on `T n + 1`, which is
-  sufficient for every downstream use (the timed universal machine, and later the
-  hierarchy theorems) and restores the book's examples. Exact constants in downstream
-  results must be derived from this form, not inherited from the strict reading.
+  prefix argument. We therefore allow a positive constant factor on `T n + 1`, which
+  suffices for every downstream use and restores the book's examples *after small-input
+  normalization*: the literal `n · ⌈log₂ n⌉`, for instance, still violates `T n ≥ n` at
+  `n = 1`, so such examples are stated with a `max`-with-`n` or `+ 1` normalization.
+  Exact constants in downstream results must be derived from this form, not inherited
+  from the strict reading.
 
 ## Main definitions
 

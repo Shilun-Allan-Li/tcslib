@@ -12,7 +12,7 @@ module layout, and the phasing. Source tag throughout the development: `[AB09]`.
 
 | Section | Content | In scope |
 |---|---|---|
-| §1.2 | k-tape TM `(Γ, Q, δ)`: read-only input tape, work tapes, write-only output tape; start configuration; halting; Example 1.1 (palindromes in 3n steps) | Yes |
+| §1.2 | k-tape TM `(Γ, Q, δ)`: read-only input tape, work tapes, output tape (read-write in [AB09]; append-only write-only in our model — a variation [AB09, p. 19] itself sanctions, declared in `DTIME.lean`); start configuration; halting; Example 1.1 (palindromes in 3n steps) | Yes |
 | §1.3 | Computing `f` in time `T(n)` (Def 1.3); time-constructibility; Claim 1.5 (alphabet reduction, `4 log|Γ|` slowdown); Claim 1.6 (k tapes → 1 tape, `5kT²`); Remark 1.7 (oblivious TMs); Claim 1.8 (bidirectional → unidirectional, `4T`) | Yes (oblivious: statement only at first) |
 | §1.4 | Machines as strings: every string decodes to some TM, every TM has infinitely many encodings; universal TM; Theorem 1.9 (universal simulation), relaxed `O(T²)` version; time-bounded universal TM | Yes |
 | §1.5 | Uncomputability: `UC` via diagonalization (Thm 1.10); `HALT` via reduction (Thm 1.11); §1.5.2 Gödel discussion | Thms 1.10–1.11 yes; Gödel material is prose — out of scope |
@@ -36,8 +36,9 @@ mathlib `029db123ddaa`, toolchain v4.25.0):
   `Turing.FinEncoding`, and (later, as an optional bridge) the recursion-theory stack
   (`Nat.Partrec`, `Halting`/Rice, `Reduce`, `RecursiveIn`).
 - **cslib** (github.com/leanprover/cslib, `Cslib/Computability/Machines/Turing/MultiTape/`,
-  Apache-2.0) has an Arora-Barak-faithful `MultiTapeTM`: read-only input tape, k work
-  tapes, write-only output tape, explicit time and space semantics, a nondeterministic
+  Apache-2.0) has an Arora-Barak-style `MultiTapeTM` (its write-only output tape is an
+  [AB09, p. 19]-sanctioned variation of the book's read-write one): read-only input
+  tape, k work tapes, explicit time and space semantics, a nondeterministic
   variant, and configuration-count bounds — actively developed, with a complexity roadmap
   (issue #611) that plans oracles as a wrapper over any model.
 - **Why vendor rather than depend:** cslib targets Lean v4.35.0-rc1 with the new module
@@ -144,7 +145,7 @@ TCSlib/Complexity/ClassP/
   DTIME.lean              -- decides, DTIME with constant absorption [AB09, Def 1.12]
   TimeConstructible.lean  -- time-constructibility [AB09, §1.3]
   P.lean                  -- P, closure basics, model-invariance [AB09, Def 1.13]
-  Examples.lean           -- PAL ∈ DTIME(3n) [AB09, Ex 1.1]; selected Ex 1.14
+  Examples.lean           -- PAL ∈ DTIME(n+1) [AB09, Ex 1.1]; selected Ex 1.14
 ```
 
 ## 5. Phasing
@@ -224,4 +225,5 @@ approved.
 | Vendored cslib source commit: `a374775894efb9b7196cccf11235c60a97086dc1` (2026-09-14); relational semantics (`RelatesInSteps`) dropped in the port | Decided |
 | Phase-1 audit round 1 (`audits/phase1-findings.md`): all 8 sorries confirmed true; 3 majors fixed — `TimeConstructible` repaired to `∃ c > 0, … c·(T n + 1)` (the literal exact bound refutes AB's own `id` example in this model), `OracleTM.WellFormed` added, oracle-tape constant-overhead claim corrected to polynomial; minors swept; audit-requested sanity statements added. Oracle citation is [AB09, Definition 3.4] (not 3.6) | Decided |
 | Phase 1 requires a clean re-audit of the fixes before phase 2 starts | Decided |
+| Phase-1 audit round 2 (`audits/phase1-reaudit-findings.md`): zero blockers/majors — all round-1 resolutions verified, all 8 new sorries confirmed true (with a worked `timeConstructible_id` witness machine reusable in the fill phase); 5 prose minors swept, blankness-certificate lemma added per note 6. **Phase-1 audit gate closed**; see `audits/phase1-resolutions.md` | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |

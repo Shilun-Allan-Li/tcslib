@@ -45,8 +45,9 @@ Definitional choices worth auditing:
 * `qYes`/`qNo` are ordinary states from the machine's point of view (its transition
   function handles them); only `qQuery` triggers special behavior. The machine may query
   repeatedly. This reading presumes the three special states are pairwise distinct,
-  which the raw structure does not enforce (e.g. `qYes = qQuery` would re-query
-  forever): results at the faithful interface assume `OracleTM.WellFormed`. Note that
+  which the raw structure does not enforce (e.g. with `qYes = qQuery` the machine
+  re-queries forever after a positive answer): results at the faithful interface assume
+  `OracleTM.WellFormed`. Note that
   `q₀ = qQuery` is legitimate and deliberately allowed (the machine then submits the
   empty query on its first step).
 
@@ -77,8 +78,10 @@ Definitional choices worth auditing:
 * `Turing.OracleTM.runFrom_plainEmptyOracle` — the empty-oracle elimination runs in
   exact lockstep.
 * `Turing.OracleTM.queryString_length_le` — in an initialized run, the query after `t`
-  steps has length at most `t` (so the no-blank fallback in `queryString` is
-  unreachable from initialization).
+  steps has length at most `t`.
+* `Turing.OracleTM.runFrom_workTapes_blank` — in an initialized run, cells at distance
+  `≥ t` are still blank after `t` steps; the certificate that the no-blank fallback in
+  `queryString` is unreachable from initialization.
 
 ## References
 
@@ -94,8 +97,9 @@ variable {k : ℕ} {Symbol State : Type*} {input : List Symbol}
 of index `Fin.last k` in its configurations `Cfg (k + 1)`), and designated query and
 answer states. Finiteness of `State` is deferred exactly as for `MultiTapeTM`, and so is
 distinctness of the three special states: the raw structure allows them to coincide
-(with degenerate behavior, e.g. `qYes = qQuery` re-queries forever), and the faithful
-interface imposes `OracleTM.WellFormed`. [AB09, Definition 3.4] -/
+(with degenerate behavior, e.g. `qYes = qQuery` re-queries forever after a positive
+answer), and the faithful interface imposes `OracleTM.WellFormed`.
+[AB09, Definition 3.4] -/
 structure OracleTM (k : ℕ) (Symbol State : Type*) where
   /-- initial state -/
   q₀ : State
@@ -115,9 +119,13 @@ namespace OracleTM
 variable {M : OracleTM k Symbol State}
 
 /-- Well-formedness of an oracle machine: the query state and the two answer states are
-pairwise distinct. Without this, the advertised semantics degenerates (`qYes = qQuery`
-re-queries the unchanged tape forever; with all three collapsed the transition function
-is never consulted). This is the standing hypothesis of the faithful oracle interface —
+pairwise distinct. Without this, the advertised semantics degenerates: with
+`qYes = qQuery` a positive answer re-queries the unchanged tape forever (a negative
+answer may still reach a distinct `qNo` and halt normally), and with all three states
+collapsed the machine loops once the common query state is reached (an initial state
+elsewhere can still halt via the table without ever querying). Moreover `qYes = qNo`
+alone makes the step function — hence every run — oblivious to the oracle. This is the
+standing hypothesis of the faithful oracle interface —
 oracle complexity classes will require it. `q₀ = qQuery` is deliberately allowed: such a
 machine simply submits the empty query on its first step.
 (`audits/phase1-findings.md`, finding 2.) -/
@@ -194,6 +202,22 @@ terminates at an index `≤ t`. -/
 theorem queryString_length_le (M : OracleTM k Symbol State) (O : Language Symbol)
     (x : List Symbol) (t : ℕ) :
     (queryString (M.runFrom O (M.initCfg x) t)).length ≤ t := by
+  sorry
+
+/-- In an initialized run, every work-tape cell at distance at least `t` from the
+origin is still blank after `t` steps. This is the certificate that the no-blank
+fallback branch of `queryString` is unreachable from initialization (the length bound
+`queryString_length_le` alone does not certify this, since the fallback also returns a
+short list).
+
+**Proof sketch.** Simultaneous induction on `t` with the head-position bound
+`|workTapePos i| ≤ t`: at `t = 0` all tapes are blank and heads are at `0`; an ordinary
+step writes only at the *old* head position (of absolute value `≤ t`, hence `< t + 1`;
+`Action.apply` writes before moving) and moves each head by at most one cell
+(`Turing.workTapePos_apply_le`); oracle-answer and halted steps change no tape. -/
+theorem runFrom_workTapes_blank (M : OracleTM k Symbol State) (O : Language Symbol)
+    (x : List Symbol) (t : ℕ) (i : Fin (k + 1)) (z : ℤ) (hz : (t : ℤ) ≤ |z|) :
+    (M.runFrom O (M.initCfg x) t).workTapes i z = none := by
   sorry
 
 end OracleTM
