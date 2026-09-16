@@ -131,39 +131,52 @@ lemma moveInputPos_leftBoundary {n : ℕ} :
 @[simp]
 lemma moveInputPos_rightBoundary {n : ℕ} :
     moveInputPos (⟨n + 1, by omega⟩ : Fin (n + 2)) 1 = ⟨n + 1, by omega⟩ := by
-  unfold moveInputPos
-  rw [dite_eq_right (by simp; omega)]
+  -- ported proof: `dite_eq_right` does not exist at our mathlib pin
+  apply Fin.ext
+  simp only [moveInputPos, SignType.coe_one]
+  split <;> simp <;> omega
 
 /-- A left move away from the left input boundary decrements the native input position. -/
 lemma moveInputPos_neg_of_ne_left {n : ℕ} (p : Fin (n + 2)) (h : p ≠ 0) :
     moveInputPos p .neg = ⟨p.val - 1, by have := p.isLt; omega⟩ := by
-  have hp : 0 < p.val := Nat.pos_of_ne_zero (fun hz => h (Fin.ext hz))
-  unfold moveInputPos
+  -- ported proof: `dite_eq_left` does not exist at our mathlib pin
+  have hlt := p.isLt
   apply Fin.ext
-  rw [dite_eq_left] <;> simp <;> omega
+  simp only [moveInputPos, SignType.neg_eq_neg_one, SignType.coe_neg_one]
+  split <;> simp <;> omega
 
 /-- A right move away from the right input boundary increments the native input position. -/
 lemma moveInputPos_pos_of_ne_right {n : ℕ} (p : Fin (n + 2)) (h : p.val ≠ n + 1) :
     moveInputPos p .pos = ⟨p.val + 1, by have := p.isLt; omega⟩ := by
-  unfold moveInputPos
-  rw [dite_eq_left]
-  · apply Fin.ext
-    simp
-  · simp
-    omega
+  -- ported proof: `dite_eq_left` does not exist at our mathlib pin
+  have hlt := p.isLt
+  apply Fin.ext
+  simp only [moveInputPos, SignType.pos_eq_one, SignType.coe_one]
+  split <;> simp <;> omega
 
 /-- The symbol currently under the input tape head. -/
 def Cfg.inputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
   if h₁ : cfg.inputPos = 0 then none
   else if h₂ : cfg.inputPos = input.length + 1 then none
-  else input[cfg.inputPos.val - 1]'(by grind)
+  else input[cfg.inputPos.val - 1]'(by
+    -- ported proof: `grind` at our pin does not bridge the `Fin` equality with `.val`
+    have h0 : (cfg.inputPos : ℕ) ≠ 0 := fun hv => h₁ (Fin.val_eq_zero_iff.mp hv)
+    have hlt := cfg.inputPos.isLt
+    omega)
 
 @[simp]
 lemma inputSymbolInner {cfg : Cfg k Symbol State input} (p : ℕ)
     (h₁ : cfg.inputPos.val = 1 + p)
     (h₂ : p < input.length) :
     cfg.inputSymbol = some input[p] := by
-  grind [Cfg.inputSymbol]
+  -- ported proof: `grind` at our pin does not bridge the `Fin` equality with `.val`
+  have h0 : ¬cfg.inputPos = 0 := fun hz => by
+    rw [hz] at h₁
+    simp at h₁
+    omega
+  have hL : ¬(cfg.inputPos : ℕ) = input.length + 1 := by omega
+  simp only [Cfg.inputSymbol, dif_neg h0, dif_neg hL]
+  simp only [show (cfg.inputPos : ℕ) - 1 = p from by omega]
 
 /-- The symbol read by work tape `i`. -/
 def Cfg.workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) : Option Symbol :=
