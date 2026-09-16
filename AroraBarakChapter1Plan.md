@@ -68,12 +68,15 @@ space measures:
 |---|---|
 | Deterministic TM (Ch. 1) | function `State × reads → Action` |
 | Nondeterministic TM (Ch. 2) | relation over actions |
-| Oracle TM (§3.4, pulled forward) | function consulting `O : Language _` via query tape and `q_query`/`q_yes`/`q_no` states |
+| Oracle TM (§3.4, Definition 3.4, pulled forward) | function consulting `O : Language _` via query tape and `q_query`/`q_yes`/`q_no` states (pairwise distinct: `OracleTM.WellFormed`) |
 | Probabilistic TM (Ch. 7, future) | two transition functions + coin |
 
 Because `DTIME`-style definitions are stated over the shared run layer, `P`, `Pᴼ`, and
-later `NP`/`BPP` are instances of one pattern, not parallel developments. Phase 1 includes
-a sanity theorem (oracle machine with trivial oracle ≃ plain machine) to lock the design.
+later `NP`/`BPP` are instances of one pattern, not parallel developments. Phase 1 locks
+the design with sanity theorems in both directions: a plain machine embeds as an oracle
+machine whose runs are in lockstep with the original under *every* oracle
+(`ofMultiTapeTM`), and conversely an oracle machine run with the empty oracle is
+eliminated into a plain machine in exact lockstep (`plainEmptyOracle`).
 
 ### 3.2 Finiteness: raw layer vs. bundled layer
 
@@ -87,12 +90,17 @@ the hypothesis lives:
   here keeps semantics lemmas clean and lets compound state types (`Q × Γᵏ`, `Option Q`,
   sums) arise without instance-threading; finiteness of a constructed machine is an
   afterthought (`inferInstance`). This follows both cslib and mathlib TM0/TM1 practice.
-- **Bundled layer** (`FinTM`: a raw machine bundled with `Fintype Γ`, `Fintype Q`,
-  `DecidableEq` — analogous to mathlib's `FinTM2`): **all headline definitions and
-  theorems** — `DTIME`, `P`, `⌞M⌟`, Theorem 1.9, oracle classes — are stated exclusively
-  over `FinTM`, so a finiteness hypothesis can never be forgotten. Encoding needs
-  `Fintype`/`DecidableEq` as *data* (δ's table must be enumerated), which is why the
-  bundle carries instances rather than `Finite` propositions.
+- **Bundled layer** (`FinTM Symbol`: a raw machine bundled with `Fintype`/`DecidableEq`
+  instances for its *state* type — analogous to mathlib's `FinTM2`): **all headline
+  definitions and theorems** — `DTIME`, `P`, `⌞M⌟`, Theorem 1.9, oracle classes — are
+  stated exclusively over the bundled layer, so a finiteness hypothesis can never be
+  forgotten. The alphabet is *not* bundled: it stays an explicit parameter, fixed to
+  `Bool` by the headline classes; results over a general `Symbol` (e.g. machine
+  encodings) take `[Fintype Symbol]`/`[DecidableEq Symbol]` at their statements, and
+  oracle complexity classes (Ch. 3) will introduce a finite oracle-machine bundle
+  before they are defined. Encoding needs `Fintype`/`DecidableEq` as *data* (δ's table
+  must be enumerated), which is why the bundle carries instances rather than `Finite`
+  propositions.
 
 Per `policy.md` §1 (layering), the raw layer is internal plumbing; the bundled layer is
 the textbook object.
@@ -169,7 +177,11 @@ machine-checked and permanent form of the same checks.
    chapters (NP needs only these definitions).*
 2. **Robustness.** Claims 1.5, 1.6, 1.8; `Composition.lean` combinators; corollary that P
    is invariant under the model tweaks. First real machine-construction proofs — builds
-   the simulation vocabulary everything later reuses.
+   the simulation vocabulary everything later reuses. Scope now explicitly includes the
+   simulation obligations recorded by the phase-1 audit: append-only vs read-write
+   output tape (constant overhead), start-marker/initialization conventions, and
+   persistent vs auto-erased oracle query tape (polynomial overhead only — a
+   constant-overhead simulation is provably impossible; findings 3-4).
 3. **Encodings + universal machine.** `⌞M⌟` with totality and padding lemmas; Theorem 1.9
    in the relaxed `O(T²)` form (U simulates the one-work-tape, four-symbol normal form
    from phase 2) and the time-bounded variant.
@@ -210,4 +222,6 @@ approved.
 | Blueprint: late-bound — generated from compiled Lean at phase boundaries only, nothing hand-written ahead of the Lean | Decided |
 | External audits between phases: cross-vendor LLM with prepared packs (`audits/`), findings gate the next phase | Decided |
 | Vendored cslib source commit: `a374775894efb9b7196cccf11235c60a97086dc1` (2026-09-14); relational semantics (`RelatesInSteps`) dropped in the port | Decided |
+| Phase-1 audit round 1 (`audits/phase1-findings.md`): all 8 sorries confirmed true; 3 majors fixed — `TimeConstructible` repaired to `∃ c > 0, … c·(T n + 1)` (the literal exact bound refutes AB's own `id` example in this model), `OracleTM.WellFormed` added, oracle-tape constant-overhead claim corrected to polynomial; minors swept; audit-requested sanity statements added. Oracle citation is [AB09, Definition 3.4] (not 3.6) | Decided |
+| Phase 1 requires a clean re-audit of the fixes before phase 2 starts | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |

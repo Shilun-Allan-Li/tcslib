@@ -32,6 +32,16 @@ constant `c`. [AB09, §1.6, Definition 1.12]
 * Acceptance is by output (`[true]`/`[false]`), not by accepting states: the vendored
   model has a single halting state and distinguishes outcomes by output, which [AB09]
   does via the output tape as well.
+* **The output tape is append-only** (the transition emits at most one symbol per step,
+  and emitted symbols cannot be erased), whereas [AB09, §1.2] designates a read-write
+  work tape as the output tape — [AB09, p. 19] itself lists write-only output among the
+  benign model variations. The simulation (an extra work tape holding the tentative
+  output, copied out before halting, with constant-factor overhead) is a phase-2
+  obligation; until then, exact step counts must not be transported between the two
+  conventions.
+* **Initialization differs from [AB09]**: there are no start-marker (`▷`) cells — the
+  bidirectional tapes make them unnecessary — and the input head begins on the first
+  input symbol (on the boundary blank for empty input), with all work tapes blank.
 * The constant `c` ranges over all of `ℕ`; `c = 0` yields the bound `0`, within which no
   machine can halt (the initial state is not the halting state), so it contributes
   nothing — this matches [AB09]'s `c > 0` without carrying a positivity side condition.
@@ -46,6 +56,8 @@ constant `c`. [AB09, §1.6, Definition 1.12]
 ## Main results
 
 * `Complexity.DTIME.mono` — `DTIME` is monotone in the time bound.
+* `Complexity.DTIME_eq_empty_of_exists_zero` — a time bound that vanishes at some
+  length has an empty class (every machine needs at least one step to halt).
 
 ## References
 
@@ -80,6 +92,16 @@ def DTIME (T : ℕ → ℕ) : Set (Language Bool) :=
 same output) within `c · T₂ n ≥ c · T₁ n` steps, by `Turing.FinTM.ComputesInTime.mono`
 (halting is absorbing). -/
 theorem DTIME.mono {T₁ T₂ : ℕ → ℕ} (h : ∀ n, T₁ n ≤ T₂ n) : DTIME T₁ ⊆ DTIME T₂ := by
+  sorry
+
+/-- If the time bound vanishes at even one input length, the class is empty: the
+initial state is not the halting state, so no machine halts in `c · 0 = 0` steps on an
+input of that length (e.g. `List.replicate n false`).
+
+**Proof sketch.** Given `T n = 0` and a claimed decider, instantiate `DecidesInTime` at
+the input `List.replicate n false`; the budget is `c * T n = 0`, contradicting
+`Turing.FinTM.not_computesInTime_zero`. -/
+theorem DTIME_eq_empty_of_exists_zero {T : ℕ → ℕ} (h : ∃ n, T n = 0) : DTIME T = ∅ := by
   sorry
 
 end Complexity

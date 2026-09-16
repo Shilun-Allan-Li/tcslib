@@ -22,17 +22,27 @@ hypothesis of the timed universal machine (phase 3) and, later, of the hierarchy
 
 * Binary representation is `Nat.bits` (little-endian, no leading `false`s), where [AB09]
   writes `⌞T(|x|)⌟` without fixing endianness. Nothing in Chapter 1 depends on the choice.
-* **Audit flag.** [AB09] demands the computation run within exactly `T n` steps, with no
-  constant slack, and then asserts that `n`, `n log n`, `n²`, `2ⁿ` are time constructible.
-  For small bounds this exactness is delicate (e.g. for `T = id` the machine must emit
-  all of `⌞n⌟` within `n` steps while the output tape is write-only). We state the
-  faithful definition; if the exactness proves unusable, the fallback — sufficient for
-  every downstream use — is to allow a constant factor, mirroring `DTIME`. No
-  constructibility *instances* are claimed in this phase.
+* **Deviation (audit-mandated).** [AB09] demands the computation run within exactly
+  `T n` steps and then asserts that `n`, `n log n`, `n²`, `2ⁿ` are time constructible.
+  The phase-1 external audit (`audits/phase1-findings.md`, finding 1, adversarial cases
+  5-6) *proved the literal reading false in this model*: under the exact bound, the
+  identity function — [AB09]'s own first example — is not time constructible (on the
+  budget `T n = n`, the first transition on `[false]` and `[false, false]` is the same
+  function call, and the length-1 budget forces it to halt with output `[true]`, which
+  absorption then freezes at length 2), and even `T n = n + 1` fails by an append-only
+  prefix argument. We therefore allow a positive constant factor on `T n + 1`, which is
+  sufficient for every downstream use (the timed universal machine, and later the
+  hierarchy theorems) and restores the book's examples. Exact constants in downstream
+  results must be derived from this form, not inherited from the strict reading.
 
 ## Main definitions
 
-* `Complexity.TimeConstructible` — [AB09, §1.3].
+* `Complexity.TimeConstructible` — [AB09, §1.3], with the constant-slack repair above.
+
+## Main results
+
+* `Complexity.timeConstructible_id` — the identity function is time constructible,
+  restoring [AB09]'s example under the repaired definition.
 
 ## References
 
@@ -45,10 +55,28 @@ namespace Complexity
 open Turing
 
 /-- `T` is time constructible: `T n ≥ n`, and some finite binary machine computes
-`x ↦ ⌞T |x|⌟` (binary via `Nat.bits`) within `T |x|` steps. [AB09, §1.3] -/
+`x ↦ ⌞T |x|⌟` (binary via `Nat.bits`) within `c · (T |x| + 1)` steps for a positive
+constant `c`. [AB09, §1.3], with the constant-slack deviation documented in the module
+docstring (the literal exact-`T n` bound is refuted in this model by
+`audits/phase1-findings.md`, finding 1). -/
 def TimeConstructible (T : ℕ → ℕ) : Prop :=
   (∀ n, n ≤ T n) ∧
-  ∃ M : FinTM Bool, ∀ x : List Bool,
-    M.ComputesInTime x (T x.length).bits (T x.length)
+  ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool, ∀ x : List Bool,
+    M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))
+
+/-- The identity function is time constructible. [AB09, §1.3 examples]
+
+**Proof sketch.** A one-work-tape machine maintains a little-endian binary counter on
+its work tape while scanning the input left to right: for each input symbol it
+increments the counter (walking right over `true` cells turning them `false` until the
+first `false`/blank cell, which becomes `true`, then returning to cell 0). Incrementing
+`n` times costs amortized `O(1)` per increment, `O(n)` in total. When the input head
+reads the blank past the input, the machine walks the counter left to right emitting
+each bit to the output tape (`O(log n)` steps) and halts. The total is at most
+`c · (n + 1)` steps for an absolute constant `c`, and the emitted string is `n.bits`
+(for `n = 0` the counter region is empty and nothing is emitted, matching
+`Nat.bits 0 = []`). -/
+theorem timeConstructible_id : TimeConstructible id := by
+  sorry
 
 end Complexity

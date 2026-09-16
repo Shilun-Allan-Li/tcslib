@@ -46,6 +46,12 @@ sites.
 
 * `Turing.FinTM.ComputesInTime.mono` — halting is absorbing, so the time bound can be
   weakened.
+* `Turing.FinTM.not_computesInTime_zero` — no machine computes anything in zero steps
+  (the initial state is not the halting state).
+* `Turing.MultiTapeTM.output_length_le`, `Turing.MultiTapeTM.output_prefix` — raw-layer
+  output lemmas (at most one symbol is emitted per step, and output only grows), stated
+  here rather than in the vendored `Deterministic.lean` to keep the vendored files
+  unmodified.
 
 ## References
 
@@ -54,6 +60,40 @@ sites.
 -/
 
 namespace Turing
+
+/-!
+### Raw-layer output lemmas
+
+Additions on top of the vendored files (kept here so the vendored `Deterministic.lean`
+stays byte-comparable with upstream).
+-/
+
+namespace MultiTapeTM
+
+variable {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+
+/-- The output of an initialized run after `t` steps has length at most `t`: each step
+appends at most one symbol.
+
+**Proof sketch.** Induction on `t` with `Turing.MultiTapeTM.runFrom_succ_eq_step'` and
+`Turing.MultiTapeTM.step_output` (`Option.toList` has length at most one); the initial
+output is `[]`. -/
+theorem output_length_le (tm : MultiTapeTM k Symbol State) (input : List Symbol) (t : ℕ) :
+    ((tm.runFrom (tm.initCfg input) t).output).length ≤ t := by
+  sorry
+
+/-- Output is monotone along a run: the output at an earlier time is a prefix of the
+output at any later time.
+
+**Proof sketch.** It suffices to treat one step (`Turing.MultiTapeTM.step_output`: a
+step appends), then induct on the difference using
+`Turing.MultiTapeTM.runFrom_add` and transitivity of `List.IsPrefix`. -/
+theorem output_prefix (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    {t t' : ℕ} (h : t ≤ t') :
+    (tm.runFrom cfg t).output <+: (tm.runFrom cfg t').output := by
+  sorry
+
+end MultiTapeTM
 
 /-- A multi-tape Turing machine over the alphabet `Option Symbol` bundled with a finite
 state type. This is the machine of [AB09, §1.2]: the raw `MultiTapeTM` is internal
@@ -102,6 +142,14 @@ theorem ComputesInTime.mono {M : FinTM Symbol} {input output : List Symbol} {t t
     (h : M.ComputesInTime input output t) (hle : t ≤ t') :
     M.ComputesInTime input output t' := by
   sorry
+
+/-- No machine computes anything in zero steps: the initial configuration is in the
+initial state, which is not the halting state. In particular a time budget of `0`
+(e.g. from a vanishing time bound) is never satisfiable. -/
+theorem not_computesInTime_zero (M : FinTM Symbol) (input output : List Symbol) :
+    ¬M.ComputesInTime input output 0 := by
+  rintro ⟨s, hhalt, -⟩
+  simp [MultiTapeTM.runFrom_zero] at hhalt
 
 end FinTM
 
