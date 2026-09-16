@@ -7,6 +7,11 @@ import TCSlib.Complexity.TuringMachine.Configuration
 import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Oracle
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
 
 /-!
 # Complexity — Turing machines
@@ -31,4 +36,12 @@ for the local modifications.
   all headline definitions are stated over it.
 * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
   step; the embedding of plain machines and its oracle-independence sanity theorems.
+* `Composition` — identity/constant machines and closure of time-bounded computability
+  under composition; also the formal home of the append-only-output convention
+  argument.
+* `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
+* `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
+* `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
+* `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
+  [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
 -/

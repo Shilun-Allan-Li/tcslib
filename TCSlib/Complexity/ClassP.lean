@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.ClassP.DTIME
 import TCSlib.Complexity.ClassP.TimeConstructible
 import TCSlib.Complexity.ClassP.P
+import TCSlib.Complexity.ClassP.ModelInvariance
 import TCSlib.Complexity.ClassP.Examples
 
 /-!
@@ -20,6 +21,8 @@ Deterministic time-bounded computation and the class `P`, following [AB09, §1.3
   [AB09, Definition 1.12].
 * `TimeConstructible` — time-constructible functions [AB09, §1.3].
 * `P` — the class `P` [AB09, Definition 1.13] and basic membership lemmas.
+* `ModelInvariance` — `DTIME`/`P` do not depend on alphabet size or tape count
+  [AB09, §1.3.1, §1.6.1]: the class-level corollaries of the robustness theorems.
 * `Examples` — the palindrome language is in `DTIME (n + 1)` and in `P`
   [AB09, Examples 1.1, 1.4].
 -/

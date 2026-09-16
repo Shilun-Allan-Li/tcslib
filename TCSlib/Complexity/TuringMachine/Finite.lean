@@ -132,6 +132,15 @@ every input. [AB09, Definition 1.3: "M computes f in T(n)-time"] -/
 def ComputesFunInTime (M : FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ) : Prop :=
   ∀ input : List Symbol, M.ComputesInTime input (f input) (T input.length)
 
+/-- The machine `M`, over alphabet `Γ`, computes the string function `f` on `α`-strings
+*via* the symbol embedding `e : α ↪ Γ`: on every input `x.map e` it halts within
+`T |x|` steps with `(f x).map e` on its output tape. This is how a machine over a
+larger alphabet is said to compute a function on a smaller one; it is the interface of
+the alphabet-robustness results [AB09, §1.3.1]. -/
+def ComputesFunInTimeVia {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)
+    (f : List α → List α) (T : ℕ → ℕ) : Prop :=
+  ∀ x : List α, M.ComputesInTime (x.map e) ((f x).map e) (T x.length)
+
 /-- Halting is absorbing, so a time bound can be weakened: if `M` produces `output`
 within `t` steps it also does so within any `t' ≥ t` steps.
 
