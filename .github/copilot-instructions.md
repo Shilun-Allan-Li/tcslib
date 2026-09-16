@@ -22,6 +22,7 @@
 - Quick local static preview of Verso site is scripted in `build_local.sh`.
 
 ## Project-specific coding conventions
+- Follow `policy.md` (repo root) for modularity, source attribution, and proof-sketch requirements on all Lean contributions.
 - Never use broad `import Mathlib`; CI lints this explicitly. Use precise module imports.
 - Keep theorem files in existing namespaces:
   - `namespace BooleanAnalysis` in `TCSlib/BooleanAnalysis/*.lean`
