@@ -15,9 +15,14 @@ set_option autoImplicit false
 # "And why it doesn't matter": model invariance of DTIME and P
 
 The payoff of the robustness theorems ([AB09, §1.3.1], formalized in
-`TCSlib.Complexity.TuringMachine.Robustness`): the classes `DTIME` (up to constants)
-and `P` (exactly) do not depend on the low-level model choices — alphabet size and
-number of work tapes. This is the formal content of the chapter's title.
+`TCSlib.Complexity.TuringMachine.Robustness`), stated at the strength the theorems
+actually deliver (phase-2 audit, finding 4): **alphabet size** never matters —
+`DTIME` is alphabet-invariant, the alphabet-dependent constant being absorbed by
+`DTIME`'s own existential — while **the number of work tapes** does not matter *for
+`P`*, where the quadratic overhead of tape reduction is harmless. No invariance of a
+fixed class `DTIME T` under tape reduction is claimed, and [AB09, §1.6.1] likewise
+draws only the polynomial-time conclusion. This is the formal content of the
+chapter's title at class level.
 
 ## Main definitions
 

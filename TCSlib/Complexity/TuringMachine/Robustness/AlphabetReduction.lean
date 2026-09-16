@@ -29,7 +29,11 @@ defining `DTIME` over binary-alphabet machines (see
   directly (its table composes with `e`), block-encodes work-tape symbols in
   `⌈log₂ |Γ|⌉` bits, and decodes each emitted symbol `e b` back to the bit `b`.
   Emitted symbols are always in the range of `e` because the append-only output equals
-  the final output string, which is `(f x).map e`.
+  the final output string, which is `(f x).map e` — early emissions included, since an
+  irrevocable emission remains a prefix of the final output.
+* [AB09]'s Claim 1.5 hypothesizes a time-constructible `T`; the simulation does not
+  need it, so we drop the hypothesis. The statement also generalizes Boolean output to
+  string output.
 
 ## Main results
 
@@ -56,7 +60,9 @@ determined by the table), computing `M`'s transition inside the finite state, wr
 back the `L`-bit codes while returning left (`L` steps per tape), moving each head `L`
 cells in the simulated direction, and emitting the decoded bit whenever `M` emits.
 Total: at most `c` steps of `M'` per step of `M` with `c = O(k · L)`, plus a constant
-start-up; blanks are handled by reserving one block code for "blank". The invariant
+start-up. Logical blank is represented by the all-blank (`none`-cell) block — never-
+visited blocks already have this shape, so no binary code needs reserving and no
+initialization pass is required (phase-2 audit, finding 8). The invariant
 relating block-encoded configurations to `M`'s configurations is preserved by each
 simulated step, and `M`'s halting transfers. -/
 theorem alphabet_reduction {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool ↪ Γ)

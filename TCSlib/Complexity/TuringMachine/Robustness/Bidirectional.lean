@@ -50,15 +50,23 @@ within `T` is simulated, with the same number of work tapes and constant-factor
 slowdown, by a machine over an enlarged alphabet whose work heads never visit negative
 cells.
 
-**Proof sketch.** Fold each tape at the origin: cell `j ≥ 0` of the simulating tape
-holds the pair (simulated cell `j`, simulated cell `-j - 1`) over the alphabet
-`Option Γ × Option Γ` (embedded via `e` in the first component with a blank second
-component). The simulator's state tracks, per tape, which component the simulated head
-is in. Moves translate directly, flipping component when a simulated head crosses the
-origin (detected at cell `0`); each simulated step costs a constant number of steps
-(a boundary check may cost one extra), giving `c · (T n + 1)` — [AB09] gets `4T`.
-Head positions of the simulator are absolute values of simulated positions, hence
-nonnegative, and the folding invariant transfers computation and halting. -/
+**Proof sketch.** Fold each tape at the origin along the coordinate
+`φ z = if 0 ≤ z then z else -z - 1` (note `φ 0 = φ (-1) = 0`; this is *not* the
+absolute value): physical cell `φ z` holds the pair (simulated cell `z ≥ 0` in its
+first component, simulated cell `-z - 1` in its second) over the alphabet of pairs,
+with `Γ` embedded via `e` in the first component. The simulator's state tracks, per
+tape, which component the simulated head is in. Because a transition cannot read a
+head coordinate, the origin is made *detectable* by writing an origin tag into
+physical cell `0` of each tape during a constant-cost initialization and preserving
+it. Moves translate directly except at the fold: crossing between simulated cells `0`
+and `-1` flips the component *without* issuing a physical move (the physical
+coordinate stays `0`); each simulated step costs a constant number of physical steps,
+giving `c · (T n + 1)` — [AB09] gets `4T`. Physical head positions are values of `φ`,
+hence nonnegative; on enlarged-alphabet inputs containing symbols outside the range
+of `e` — where no functional behavior is promised but `NonnegativeHeads` still
+quantifies — the simulator halts safely on first contact, preserving nonnegativity
+(phase-2 audit, finding 10 and case A14). The folding invariant transfers computation
+and halting on embedded inputs. -/
 theorem nonnegative_heads {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) (f : List Γ → List Γ) (T : ℕ → ℕ)
     (hM : M.ComputesFunInTime f T) :

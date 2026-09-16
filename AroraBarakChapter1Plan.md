@@ -178,11 +178,13 @@ machine-checked and permanent form of the same checks.
    chapters (NP needs only these definitions).*
 2. **Robustness.** Claims 1.5, 1.6, 1.8; `Composition.lean` combinators; corollary that P
    is invariant under the model tweaks. First real machine-construction proofs — builds
-   the simulation vocabulary everything later reuses. Scope now explicitly includes the
-   simulation obligations recorded by the phase-1 audit: append-only vs read-write
-   output tape (constant overhead), start-marker/initialization conventions, and
-   persistent vs auto-erased oracle query tape (polynomial overhead only — a
-   constant-overhead simulation is provably impossible; findings 3-4).
+   the simulation vocabulary everything later reuses. The convention obligations
+   recorded by the phase-1 audit are dispositioned per the phase-2 audit (findings 3
+   and 13): the append-only-output and initialization bridges are **waived** (no
+   read-write-output model is formalized; no exact step count is ever imported from
+   [AB09]), to be revisited only if a downstream result needs a formal bridge; the
+   persistent vs auto-erased query-tape statement (polynomial overhead only — constant
+   overhead provably impossible) moves to the Chapter 3 oracle-class work.
 3. **Encodings + universal machine.** `⌞M⌟` with totality and padding lemmas; Theorem 1.9
    in the relaxed `O(T²)` form (U simulates the one-work-tape, four-symbol normal form
    from phase 2) and the time-bounded variant.
@@ -226,7 +228,8 @@ approved.
 | Phase-1 audit round 1 (`audits/phase1-findings.md`): all 8 sorries confirmed true; 3 majors fixed — `TimeConstructible` repaired to `∃ c > 0, … c·(T n + 1)` (the literal exact bound refutes AB's own `id` example in this model), `OracleTM.WellFormed` added, oracle-tape constant-overhead claim corrected to polynomial; minors swept; audit-requested sanity statements added. Oracle citation is [AB09, Definition 3.4] (not 3.6) | Decided |
 | Phase 1 requires a clean re-audit of the fixes before phase 2 starts | Decided |
 | Phase-1 audit round 2 (`audits/phase1-reaudit-findings.md`): zero blockers/majors — all round-1 resolutions verified, all 8 new sorries confirmed true (with a worked `timeConstructible_id` witness machine reusable in the fill phase); 5 prose minors swept, blankness-certificate lemma added per note 6. **Phase-1 audit gate closed**; see `audits/phase1-resolutions.md` | Decided |
-| Phase-2 renderings: Claim 1.6 rendered as **one work tape** (the merged input/work/output single-tape model is a different structure, out of scope); Claim 1.8 rendered as **`NonnegativeHeads`** (our tapes are already bidirectional, so the meaningful direction is unidirectional use); obliviousness compares head positions at all times, which forces length-determined halting and hence the `TimeConstructible` hypothesis in Exercise 1.5 | Decided — for phase-2 audit |
-| Output-tape/initialization convention obligations (phase-1 finding 4) discharged by `Composition.lean`'s buffer-and-flush construction plus documentation, on the grounds that no exact step count is ever imported from [AB09] (every bound carries an existential constant) | Decided — for phase-2 audit to assess |
-| Persistent-vs-erased query-tape polynomial-overhead statement moved from phase 2 to the Chapter 3 oracle-class work, where polynomial overhead is meaningful (class level); the impossibility of constant overhead stays documented in `Oracle.lean` | Decided — for phase-2 audit to assess |
+| Phase-2 renderings: Claim 1.6 rendered as **one work tape** (the merged input/work/output single-tape model is a genuinely different structure — it has an `Ω(n²)` palindrome lower bound our model beats — and is out of scope, with no identification claimed); Claim 1.8 rendered as **`NonnegativeHeads`** (our tapes are already bidirectional, so the meaningful direction is unidirectional use); obliviousness constrains input/work-head trajectories only — it does **not** force length-determined halting (phase-2 audit finding 1 refuted that with a stationary-head counterexample) and leaves emission schedules unconstrained; the `TimeConstructible` hypothesis in Exercise 1.5 is needed by the padding construction, not by the definition | Decided — audited (phase-2 round 1) |
+| Output-tape/initialization convention obligations (phase-1 finding 4): **waived**, per phase-2 audit finding 3 — no formal bridge is possible without formalizing [AB09]'s read-write-output model, which this development does not do; the compensating restriction is that no exact-step-count transfer from [AB09] is ever claimed (all bounds carry existential constants, all results are self-contained in-model). The buffer-and-flush technique is documented in `Composition.lean`; a formal bridge is added only if a downstream result needs it | Decided — waiver accepted by phase-2 audit as a labeled option |
+| Persistent-vs-erased query-tape polynomial-overhead statement moved from phase 2 to the Chapter 3 oracle-class work, where polynomial overhead is meaningful (class level); the impossibility of constant overhead stays documented in `Oracle.lean`. Outstanding obligation before importing any oracle-class invariance | Decided — deferral accepted by phase-2 audit (finding 13) |
+| Phase-2 audit round 1 (`audits/phase2-findings.md`): 4 majors, 6 minors, 3 notes — **no theorem formula refuted**; all 11 new sorries assessed true as stated. Majors were prose/sketch-level: the false frozen-heads implication removed, the oblivious-simulation sketch replaced by the audit's corrected construction, the convention-discharge overclaim converted to the waiver above, ModelInvariance's invariance claims stated at delivered strength (alphabet: DTIME up to constants; tape count: P only). Sketch repairs: all-blank block for logical blank (1.5), tagged `Option Γ` payloads and `k = 0` case (1.6), piecewise fold coordinate with origin tags and safe-halt on non-embedded symbols (1.8). Re-audit pending | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |

@@ -29,13 +29,18 @@ operator on raw machines: the composed machine is existentially produced. Intern
 redirected to a fresh work tape, then simulates `M₂` reading that tape in place of its
 input tape.
 
-**Convention obligation discharged here** (phase-1 audit, finding 4): the redirect-then-
-flush construction inside `computesFunInTime_comp` is precisely the simulation of
-[AB09]'s read-write output tape by our append-only one — a machine that wants to revise
-its output buffers it on a work tape and emits only at the end. Since every
-time bound in this development carries an existential constant, the constant-factor
-overhead of buffering is absorbed, and no exact step count is ever transported between
-the two output conventions.
+**Convention obligation status** (phase-1 audit finding 4; phase-2 audit finding 3):
+this file does *not* formally discharge the append-only vs read-write output-tape
+bridge. Every statement here — hypotheses and conclusions alike — lives in the
+append-only model, and [AB09]'s read-write-output machine is not formalized in this
+development, so no simulation between the two conventions can even be stated yet. The
+obligation is recorded in the plan's decision log as **waived**, with the compensating
+restriction that no exact-step-count transfer from [AB09] is ever claimed: all bounds
+carry existential constants and every result is self-contained in-model. A formal
+bridge (a read-write-output machine variant plus a simulation theorem) will be added
+if and only if a downstream result needs it. What this file *does* provide is the
+buffer-and-flush technique — an emission can be deferred to a work tape and flushed at
+the end — which is the in-model reason the append-only convention costs no generality.
 
 ## Main results
 

@@ -26,6 +26,13 @@ slowdown.
   `MultiTapeTM`).
 * [AB09] states the slowdown as `5k T(n)²`; we existentialize the constant and use
   `(T n + 1)²`.
+* The retained structure is a genuinely different model from [AB09]'s merged one, not
+  a notational variant: with a separate input tape, palindromes are decidable in
+  linear time (`TCSlib.Complexity.ClassP.Examples`), while the merged single-tape
+  model has an `Ω(n²)` lower bound for them ([AB09], chapter notes, citing Maass).
+  Accordingly, the theorems below are *in-model analogues* of Claim 1.6, and no
+  identification with the merged model is claimed anywhere in this development
+  (phase-2 audit, finding 5).
 
 ## Main results
 
@@ -45,11 +52,13 @@ namespace Turing.FinTM
 `T` is simulated by a machine with a single work tape, over an enlarged finite
 alphabet, within `c · (T n + 1)²`.
 
-**Proof sketch.** The single work tape of `M'` stores the `k` tapes of `M`
-interleaved: cell `j·k + i` of the simulated layout holds cell `j` of tape `i`
-(centered at `0` in both directions). The alphabet is enlarged to mark, for each
-simulated tape, the currently scanned cell (`Γ' = pairs of a symbol and a "head here"
-flag`, embedded via `e`). To simulate one step of `M`, `M'` sweeps its work tape once
+**Proof sketch.** For `k = 0`, simulate `M` directly with one unused work tape.
+For `k ≥ 1`, the single work tape of `M'` stores the `k` tapes of `M` interleaved:
+cell `j·k + i` of the simulated layout holds cell `j` of tape `i` (centered at `0` in
+both directions). The alphabet is enlarged to cells carrying a *tagged payload*
+`Option Γ` — so a marked blank is representable, which a bare `Γ × flag` product
+would miss — together with a "head here" flag and zone-boundary tags; `Γ` embeds via
+`e` as an unmarked non-blank payload. To simulate one step of `M`, `M'` sweeps its work tape once
 left-to-right across the visited zone recording the `k` marked symbols in its state,
 computes `M`'s transition, and sweeps back right-to-left updating the marked cells and
 moving the marks. After `t` steps of `M` the visited zone spans `O(k · (t + 1))`
