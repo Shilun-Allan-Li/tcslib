@@ -5,8 +5,10 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Configuration
 import TCSlib.Complexity.TuringMachine.Deterministic
+import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Oracle
+import TCSlib.Complexity.TuringMachine.Simulation
 import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
@@ -34,10 +36,15 @@ for the local modifications.
   space measure. Nothing here mentions a machine (vendored).
 * `Deterministic` — `MultiTapeTM`, the step/run semantics, time and space bounds
   (vendored).
+* `StateRenaming` — transport of actions, configurations, and machines along maps
+  of the state type; shared by the oracle embedding and the code normal form.
 * `Finite` — the bundled `FinTM` layer carrying `Fintype`/`DecidableEq` state instances;
   all headline definitions are stated over it.
 * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
   step; the embedding of plain machines and its oracle-independence sanity theorems.
+* `Simulation` — generic machine-construction gadgets: emission chains, control
+  actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
+  rewind, and the two-machine branch union.
 * `Composition` — identity/constant machines and closure of time-bounded computability
   under composition; also the formal home of the append-only-output convention
   argument.

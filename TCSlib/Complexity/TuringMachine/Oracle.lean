@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import Mathlib.Computability.Language
 import TCSlib.Complexity.TuringMachine.Deterministic
+import TCSlib.Complexity.TuringMachine.StateRenaming
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -59,9 +60,9 @@ Definitional choices worth auditing:
   it).
 * `Turing.OracleTM.step`, `Turing.OracleTM.runFrom` — semantics relative to an oracle.
 * `Turing.OracleTM.ComputesInTime` — output and time bound relative to an oracle.
-* `Turing.Action.extend`, `Turing.Action.mapState`, `Turing.Cfg.embedOracle`,
-  `Turing.OracleTM.ofMultiTapeTM` — the embedding of plain machines as oracle machines
-  that never query.
+* `Turing.Action.extend`, `Turing.Cfg.embedOracle`, `Turing.OracleTM.ofMultiTapeTM` —
+  the embedding of plain machines as oracle machines that never query (state renaming
+  via `Turing.Action.mapState`, now in `TCSlib.Complexity.TuringMachine.StateRenaming`).
 * `Turing.OracleTM.plainEmptyOracle` — the converse direction: an oracle machine run
   with the empty oracle, as a plain `k + 1`-tape machine in exact lockstep.
 
@@ -319,14 +320,6 @@ def Action.extend (a : Action k Symbol State) : Action (k + 1) Symbol State wher
     if h : (i : ℕ) < k then a.workTapes ⟨i, h⟩ else (none, 0)
   output := a.output
   state := a.state
-
-/-- Rename the states of an action along a function. -/
-def Action.mapState {State' : Type*} (f : State → State') (a : Action k Symbol State) :
-    Action k Symbol State' where
-  inputTape := a.inputTape
-  workTapes := a.workTapes
-  output := a.output
-  state := a.state.map f
 
 /-- Embed a `k`-tape configuration into a `k + 1`-tape configuration over the extended
 state type `State ⊕ Fin 3`: the extra work tape is blank with its head at `0`, and the

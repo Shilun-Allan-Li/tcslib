@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.Nat.Bits
+import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 
 set_option maxHeartbeats 0
@@ -454,51 +455,6 @@ the composition combinators of `TCSlib.Complexity.TuringMachine.Composition`. -/
 theorem exists_effectiveMachineCode : Nonempty EffectiveMachineCode := by
   sorry
 
-/-- Rename the successor state of an action, leaving every tape action unchanged. -/
-private def codeMapAction {k : ℕ} {Γ Q Q' : Type*} (e : Q → Q')
-    (a : Action k Γ Q) : Action k Γ Q' :=
-  { a with state := a.state.map e }
-
-/-- Rename a configuration's optional state, preserving its tapes, heads, and output. -/
-private def codeMapCfg {k : ℕ} {Γ Q Q' : Type*} {x : List Γ} (e : Q → Q')
-    (cfg : Cfg k Γ Q x) : Cfg k Γ Q' x :=
-  { cfg with state := cfg.state.map e }
-
-/-- State renaming commutes with applying an action. -/
-private lemma codeMapCfg_apply {k : ℕ} {Γ Q Q' : Type*} {x : List Γ} (e : Q → Q')
-    (a : Action k Γ Q) (cfg : Cfg k Γ Q x) :
-    (codeMapAction e a).apply (codeMapCfg e cfg) = codeMapCfg e (a.apply cfg) := rfl
-
-/-- Transport a machine's initial state and transition table through a state bijection. -/
-private def codeRelabelTM {k : ℕ} {Γ Q Q' : Type*} (e : Q ≃ Q')
-    (tm : MultiTapeTM k Γ Q) : MultiTapeTM k Γ Q' where
-  q₀ := e tm.q₀
-  tr := fun q inp ws => codeMapAction e (tm.tr (e.symm q) inp ws)
-
-/-- Relabeling commutes with each transition, including absorbing halting. -/
-private lemma codeRelabel_step {k : ℕ} {Γ Q Q' : Type*} {x : List Γ} (e : Q ≃ Q')
-    (tm : MultiTapeTM k Γ Q) (cfg : Cfg k Γ Q x) :
-    (codeRelabelTM e tm).step (codeMapCfg e cfg) = codeMapCfg e (tm.step cfg) := by
-  have hin : (codeMapCfg e cfg).inputSymbol = cfg.inputSymbol := rfl
-  have hwork : (codeMapCfg e cfg).workTapeSymbols = cfg.workTapeSymbols := rfl
-  unfold MultiTapeTM.step
-  cases hs : cfg.state with
-  | none => simp [codeMapCfg, hs]
-  | some q =>
-    rw [show (codeMapCfg e cfg).state = some (e q) by
-      simp only [codeMapCfg, hs, Option.map_some]]
-    dsimp only
-    rw [hin, hwork]
-    simp only [codeRelabelTM, Equiv.symm_apply_apply]
-    exact codeMapCfg_apply e _ cfg
-
-/-- The initialized runs correspond at every step by iterating step commutation. -/
-private lemma codeRelabel_run {k : ℕ} {Γ Q Q' : Type*} (e : Q ≃ Q')
-    (tm : MultiTapeTM k Γ Q) (x : List Γ) (t : ℕ) :
-    (codeRelabelTM e tm).runFrom ((codeRelabelTM e tm).initCfg x) t =
-      codeMapCfg e (tm.runFrom (tm.initCfg x) t) :=
-  MultiTapeTM.runFrom_comm_of_step (codeMapCfg e) (codeRelabel_step e tm) (tm.initCfg x) t
-
 /-- Every one-work-tape binary machine is equivalent, input by input and step for
 step, to a coded machine.
 
@@ -510,9 +466,10 @@ configurations is a bijection commuting with `step` (the tapes and heads are
 untouched), so runs, halting, and outputs correspond at every step. The tape-count
 cast uses `hk : M.k = 1`.
 
-The implementation uses the private helper `codeMapAction` for state renaming,
-eliminates `hk` after destructuring the bundle, and iterates step commutation via
-`MultiTapeTM.runFrom_comm_of_step`. -/
+The implementation uses `Turing.MultiTapeTM.relabelState` (the shared state-renaming
+module, `TCSlib.Complexity.TuringMachine.StateRenaming`), eliminates `hk` after
+destructuring the bundle, and concludes with
+`Turing.MultiTapeTM.relabelState_runFrom_init`. -/
 theorem exists_codeTM (M : FinTM Bool) (hk : M.k = 1) :
     ∃ M' : CodeTM, ∀ (x output : List Bool) (t : ℕ),
       M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
@@ -526,10 +483,10 @@ theorem exists_codeTM (M : FinTM Bool) (hk : M.k = 1) :
     have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
     omega
   let e := Fintype.equivFinOfCardEq hcard
-  refine ⟨⟨Fintype.card Q - 1, codeRelabelTM e tm⟩, ?_⟩
+  refine ⟨⟨Fintype.card Q - 1, tm.relabelState e⟩, ?_⟩
   intro x output t
   simp only [CodeTM.toFinTM, FinTM.ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace,
-    codeRelabel_run, codeMapCfg, Option.map_eq_none_iff]
+    MultiTapeTM.relabelState_runFrom_init, Cfg.mapState, Option.map_eq_none_iff]
   constructor
   · rintro ⟨s, hhalt, hout, -⟩
     exact ⟨_, hhalt, hout, rfl⟩

@@ -102,18 +102,6 @@ theorem HALT_pairEncode_eq_true_iff (c : MachineCode) (α x : List Bool) :
   · intro hhalt
     exact ⟨α, x, rfl, hhalt⟩
 
-/-- A total machine's completed outputs are exactly its prescribed values, by
-existence of a computation and uniqueness of completed output. -/
-private theorem halts_iff_eq_of_computes {Symbol : Type} {M : FinTM Symbol}
-    {g : List Symbol → List Symbol} (hM : M.Computes g) (x w : List Symbol) :
-    (∃ t, M.ComputesInTime x w t) ↔ w = g x := by
-  obtain ⟨t, ht⟩ := hM x
-  constructor
-  · rintro ⟨s, hs⟩
-    exact hs.output_unique ht
-  · rintro rfl
-    exact ⟨t, ht⟩
-
 /-- **The reduction** [AB09, proof of Theorem 1.11]: if `HALT` were computable,
 `UC` would be. Stated for an effective scheme, whose universal evaluator the
 reduction runs.
@@ -170,8 +158,8 @@ theorem UC_computable_of_HALT_computable (c : EffectiveMachineCode)
   have hMt' (α z : List Bool) :
       (∃ t, Mt.ComputesInTime α z t) ↔
         ∃ w, (∃ t, U.ComputesInTime (pairEncode α α) w t) ∧ z = r w := by
-    simp only [r, hMt, hPU, halts_iff_eq_of_computes hP.computes,
-      halts_iff_eq_of_computes hQ.computes, exists_eq_left]
+    simp only [r, hMt, hPU, hP.computes.exists_computesInTime_iff,
+      hQ.computes.exists_computesInTime_iff, exists_eq_left]
   obtain ⟨R, hR⟩ := FinTM.exists_cond D' Mt Mf p hDp
   refine ⟨R, fun α => (hR α _).2 ?_⟩
   cases hp : p α with

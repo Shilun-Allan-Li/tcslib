@@ -50,6 +50,9 @@ sites.
   weakened.
 * `Turing.FinTM.ComputesInTime.output_unique` — determinism: a machine has at most one
   completed output on a given input.
+* `Turing.FinTM.computesInTime_iff`, `Turing.FinTM.Computes.exists_computesInTime_iff` —
+  the space-free unfolding of a timed computation, and the completed-output
+  characterization of a total machine (promoted from the epoch-1 fill).
 * `Turing.FinTM.not_computesInTime_zero` — no machine computes anything in zero steps
   (the initial state is not the halting state).
 * `Turing.MultiTapeTM.output_length_le`, `Turing.MultiTapeTM.output_prefix` — raw-layer
@@ -218,6 +221,36 @@ theorem ComputesInTime.output_unique {M : FinTM Symbol} {input w w' : List Symbo
 theorem ComputesFunInTime.computes {M : FinTM Symbol} {f : List Symbol → List Symbol}
     {T : ℕ → ℕ} (h : M.ComputesFunInTime f T) : M.Computes f :=
   fun input => ⟨T input.length, h input⟩
+
+/-- `ComputesInTime` without the space witness: the machine has halted by time `t`
+with completed output exactly `w`. The space existential is uniquely determined by
+the run, so it can always be discharged. (Promoted from the epoch-1 fill and
+generalized from `Bool` to an arbitrary alphabet, per the epoch-1 audit,
+finding 4.) -/
+theorem computesInTime_iff (M : FinTM Symbol) (x w : List Symbol) (t : ℕ) :
+    M.ComputesInTime x w t ↔
+      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = w := by
+  constructor
+  · rintro ⟨s, hs, ho, -⟩
+    exact ⟨hs, ho⟩
+  · rintro ⟨hs, ho⟩
+    exact ⟨_, hs, ho, rfl⟩
+
+/-- A total machine's completed outputs are exactly its prescribed values: if `M`
+computes `g`, then `M` halts on `x` with completed output `w` — in some number of
+steps — iff `w = g x`. Existence of a computation together with determinism of
+completed outputs (`Turing.FinTM.ComputesInTime.output_unique`). (Promoted from
+the epoch-1 fill per the epoch-1 audit, finding 4.) -/
+theorem Computes.exists_computesInTime_iff {M : FinTM Symbol}
+    {g : List Symbol → List Symbol} (hM : M.Computes g) (x w : List Symbol) :
+    (∃ t, M.ComputesInTime x w t) ↔ w = g x := by
+  obtain ⟨t, ht⟩ := hM x
+  constructor
+  · rintro ⟨s, hs⟩
+    exact hs.output_unique ht
+  · rintro rfl
+    exact ⟨t, ht⟩
 
 end FinTM
 
