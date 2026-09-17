@@ -76,7 +76,8 @@ noncomputable def HALT (c : MachineCode) (s : List Bool) : Bool :=
       ∃ (output : List Bool) (t : ℕ), (c.decode α).toFinTM.ComputesInTime x output t
   then true else false
 
-/-- Unfolding lemma for `HALT`. -/
+/-- `HALT c s = true` iff `s` is a pair `Turing.pairEncode α x` whose denoted
+machine halts on `x` — completes some output in some number of steps. -/
 theorem HALT_eq_true_iff (c : MachineCode) (s : List Bool) :
     HALT c s = true ↔
       ∃ α x : List Bool, s = pairEncode α x ∧

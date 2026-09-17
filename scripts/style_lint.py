@@ -23,6 +23,20 @@ SUBTREE = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("TCSlib/Complexity")
 
 SIZE_TARGET = 600     # policy section 1: target upper end
 SIZE_THRESHOLD = 1000 # policy section 1: split unless positively justified
+
+# Vendored files follow upstream style (policy section 2, Statement prose:
+# exempt from the docstring-presence requirement, and frozen anyway).
+VENDORED = {
+    "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+}
+
+# Declaration kinds requiring statement prose (instances exempt per policy).
+DOC_DECL_RE = re.compile(
+    r"^\s*(?:@\[[^\]]*\]\s*)*(?:noncomputable\s+)?(private\s+)?"
+    r"(theorem|lemma|def|structure|abbrev|inductive)\s+([A-Za-z0-9_.']+)"
+)
+ATTR_LINE_RE = re.compile(r"^@\[[^\]]*\]$")
 SET_OPTIONS = [
     "set_option maxHeartbeats 0",
     "set_option relaxedAutoImplicit false",
@@ -109,6 +123,32 @@ def check_file(path: Path):
     pub = sum(1 for m in DECL_RE.finditer(stripped) if not m.group(1))
     priv = sum(1 for m in DECL_RE.finditer(stripped) if m.group(1))
     note("INFO", rel, f"{n} lines; {pub} public / {priv} private declarations")
+
+    # 7. Statement prose (policy section 2): every public declaration
+    #    (instances and vendored files exempt) is immediately preceded by a
+    #    docstring, skipping attribute / `open ... in` / `noncomputable` lines.
+    #    Presence only; statement *quality* is review judgment.
+    if str(rel) not in VENDORED:
+        depth = 0
+        for idx, line in enumerate(lines):
+            if depth == 0:
+                m = DOC_DECL_RE.match(line)
+                if m and not m.group(1):
+                    j = idx - 1
+                    while j >= 0:
+                        prev = lines[j].strip()
+                        if (ATTR_LINE_RE.fullmatch(prev)
+                                or (prev.startswith("open ") and prev.endswith(" in"))
+                                or prev == "noncomputable"):
+                            j -= 1
+                            continue
+                        break
+                    if not (j >= 0 and lines[j].rstrip().endswith("-/")):
+                        note("FAIL", rel,
+                             f"line {idx + 1}: public {m.group(2)} "
+                             f"`{m.group(3)}` has no preceding docstring "
+                             "(policy section 2, statement prose)")
+            depth += line.count("/-") - line.count("-/")
 
 
 def check_facade(path: Path):

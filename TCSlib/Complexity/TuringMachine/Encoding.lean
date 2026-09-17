@@ -93,6 +93,7 @@ def CodeTM.toFinTM (M : CodeTM) : FinTM Bool where
   State := Fin (M.numStates + 1)
   tm := M.tm
 
+/-- The bundled form of a coded machine has exactly one work tape. -/
 @[simp]
 lemma CodeTM.toFinTM_k (M : CodeTM) : M.toFinTM.k = 1 := rfl
 
