@@ -232,6 +232,9 @@ private def foldTM {Γ : Type} [Fintype Γ] [DecidableEq Γ] (M : FinTM Γ) :
             | some a => foldAction side work
                 (M.tm.tr q (some a) (fun i => foldRead (side i) (work i))) }
 
+/-- One-step commutation follows from the action correspondence after transporting
+the input read and reading each active folded payload. Halting is absorbing on both
+sides; valid embedded symbols always pass the input decoder. -/
 private lemma foldCfg_step {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) {x : List Γ} (c : Cfg M.k Γ M.State x) :
     (foldTM M).tm.step (foldCfg c) = foldCfg (M.tm.step c) := by
