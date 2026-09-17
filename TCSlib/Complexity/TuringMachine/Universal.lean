@@ -126,7 +126,24 @@ theorem universal_quadratic (c : EffectiveMachineCode) :
       M₀.ComputesFunInTime f T →
       ∃ (α : List Bool) (C : ℕ), ∀ x : List Bool,
         U.ComputesInTime (pairEncode α x) (f x) (C * (T x.length + 1) ^ 2) := by
-  sorry
+  obtain ⟨U, hU⟩ := universal c
+  refine ⟨U, ?_⟩
+  intro M₀ f T hM
+  obtain ⟨M₁, c₁, hk, h₁⟩ := FinTM.one_work_tape_binary M₀ f T hM
+  obtain ⟨N, hN⟩ := exists_codeTM M₁ hk
+  let α := c.encode N
+  obtain ⟨C_U, hCU⟩ := hU α
+  refine ⟨α, C_U * (c₁ + 1), fun x => ?_⟩
+  have hcoded : (c.decode α).toFinTM.ComputesInTime x (f x)
+      (c₁ * (T x.length + 1) ^ 2) := by
+    rw [show c.decode α = N from c.toMachineCode.decode_encode N]
+    exact (hN x (f x) _).2 (h₁ x)
+  apply ((hCU x).1 (f x) _ hcoded).mono
+  have hpow : 0 < (T x.length + 1) ^ 2 := Nat.pow_pos (Nat.succ_pos _)
+  calc C_U * (c₁ * (T x.length + 1) ^ 2 + 1)
+      ≤ C_U * (c₁ * (T x.length + 1) ^ 2 + (T x.length + 1) ^ 2) :=
+        Nat.mul_le_mul (le_refl C_U) (Nat.add_le_add_left hpow _)
+    _ = C_U * (c₁ + 1) * (T x.length + 1) ^ 2 := by ring
 
 /-- **The time-bounded universal machine** [AB09, §1.4.1, "Universal TM with time
 bound"]: a single machine that, given `⟨⟨⌞t⌟, α⟩, x⟩` (clock and code first, input

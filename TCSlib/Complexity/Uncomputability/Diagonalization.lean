@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.Uncomputability.Computable
 
 set_option maxHeartbeats 0
@@ -96,6 +97,23 @@ through `decode_encode`) says `N.toFinTM` also halts on `α₀` with `[true]`, a
 `UC_eq_false_iff` gives `UC c α₀ = false` — absurd. No step computes `encode` or
 `decode`: the code `α₀` is chosen inside the contradiction. -/
 theorem UC_not_computable (c : MachineCode) : ¬Computable fun α => [UC c α] := by
-  sorry
+  rintro ⟨M, hM⟩
+  obtain ⟨T, hT⟩ := hM.exists_computesFunInTime
+  obtain ⟨M', C, hk, hM'⟩ := FinTM.one_work_tape_binary M _ T hT
+  obtain ⟨N, hN⟩ := exists_codeTM M' hk
+  let α := c.encode N
+  have hrun : (c.decode α).toFinTM.ComputesInTime α [UC c α]
+      (C * (T α.length + 1) ^ 2) := by
+    rw [show c.decode α = N from c.decode_encode N]
+    exact (hN α [UC c α] _).2 (hM' α)
+  cases hu : UC c α with
+  | false =>
+    obtain ⟨t, ht⟩ := (UC_eq_false_iff c α).1 hu
+    have hcontra := hrun.output_unique ht
+    simp only [hu, List.cons.injEq, Bool.false_eq_true, false_and] at hcontra
+  | true =>
+    have hfalse : UC c α = false :=
+      (UC_eq_false_iff c α).2 ⟨_, by simpa only [hu] using hrun⟩
+    simp only [hu, Bool.true_eq_false] at hfalse
 
 end Complexity

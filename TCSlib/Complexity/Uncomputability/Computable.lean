@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Data.Fintype.Vector
 import TCSlib.Complexity.TuringMachine.Finite
 
 set_option maxHeartbeats 0
@@ -64,7 +65,13 @@ downstream. -/
 theorem Computes.exists_computesFunInTime {Symbol : Type} [Fintype Symbol]
     {M : FinTM Symbol} {f : List Symbol → List Symbol} (h : M.Computes f) :
     ∃ T : ℕ → ℕ, M.ComputesFunInTime f T := by
-  sorry
+  classical
+  choose t ht using h
+  let T : ℕ → ℕ := fun n =>
+    (Finset.univ : Finset (List.Vector Symbol n)).sup fun x => t x.val
+  refine ⟨T, fun x => (ht x).mono ?_⟩
+  exact Finset.le_sup (f := fun y : List.Vector Symbol x.length => t y.val)
+    (Finset.mem_univ (α := List.Vector Symbol x.length) ⟨x, rfl⟩)
 
 end Turing.FinTM
 

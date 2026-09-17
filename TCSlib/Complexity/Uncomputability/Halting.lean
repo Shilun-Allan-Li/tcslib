@@ -102,6 +102,18 @@ theorem HALT_pairEncode_eq_true_iff (c : MachineCode) (α x : List Bool) :
   · intro hhalt
     exact ⟨α, x, rfl, hhalt⟩
 
+/-- A total machine's completed outputs are exactly its prescribed values, by
+existence of a computation and uniqueness of completed output. -/
+private theorem halts_iff_eq_of_computes {Symbol : Type} {M : FinTM Symbol}
+    {g : List Symbol → List Symbol} (hM : M.Computes g) (x w : List Symbol) :
+    (∃ t, M.ComputesInTime x w t) ↔ w = g x := by
+  obtain ⟨t, ht⟩ := hM x
+  constructor
+  · rintro ⟨s, hs⟩
+    exact hs.output_unique ht
+  · rintro rfl
+    exact ⟨t, ht⟩
+
 /-- **The reduction** [AB09, proof of Theorem 1.11]: if `HALT` were computable,
 `UC` would be. Stated for an effective scheme, whose universal evaluator the
 reduction runs.
@@ -139,7 +151,53 @@ evaluator of `Turing.universal c`, and write
 theorem UC_computable_of_HALT_computable (c : EffectiveMachineCode)
     (h : Computable fun s => [HALT c.toMachineCode s]) :
     Computable fun α => [UC c.toMachineCode α] := by
-  sorry
+  classical
+  obtain ⟨D, hD⟩ := h
+  obtain ⟨U, hU⟩ := universal c
+  obtain ⟨P, _, hP⟩ := computesFunInTime_pairEncode_diag
+  obtain ⟨Q, _, hQ⟩ := FinTM.computesFunInTime_ifEq [true] [false] [true]
+  obtain ⟨Mf, _, hMf⟩ := FinTM.computesFunInTime_const [true]
+  let p : List Bool → Bool := fun α => HALT c.toMachineCode (pairEncode α α)
+  let r : List Bool → List Bool := fun w => if w = [true] then [false] else [true]
+  -- First decide whether the decoded machine halts on its own code.
+  obtain ⟨D', hD'⟩ := FinTM.exists_comp_partial P D
+  have hDp : D'.Computes fun α => [p α] := by
+    intro α
+    exact (hD' α [p α]).2 ⟨pairEncode α α, hP.computes α, hD _⟩
+  -- The positive branch evaluates the self-pair and postprocesses its output.
+  obtain ⟨PU, hPU⟩ := FinTM.exists_comp_partial P U
+  obtain ⟨Mt, hMt⟩ := FinTM.exists_comp_partial PU Q
+  have hMt' (α z : List Bool) :
+      (∃ t, Mt.ComputesInTime α z t) ↔
+        ∃ w, (∃ t, U.ComputesInTime (pairEncode α α) w t) ∧ z = r w := by
+    simp only [r, hMt, hPU, halts_iff_eq_of_computes hP.computes,
+      halts_iff_eq_of_computes hQ.computes, exists_eq_left]
+  obtain ⟨R, hR⟩ := FinTM.exists_cond D' Mt Mf p hDp
+  refine ⟨R, fun α => (hR α _).2 ?_⟩
+  cases hp : p α with
+  | false =>
+    have huc : UC c.toMachineCode α = true := (UC_eq_true_iff _ _).2 (by
+      rintro ⟨t, ht⟩
+      have htrue : p α = true :=
+        (HALT_pairEncode_eq_true_iff _ _ _).2 ⟨[true], t, ht⟩
+      simp only [hp, Bool.false_eq_true] at htrue)
+    simpa only [hp, Bool.cond_false, huc] using hMf.computes α
+  | true =>
+    obtain ⟨w, t, hw⟩ := (HALT_pairEncode_eq_true_iff _ _ _).1 hp
+    obtain ⟨C, hC⟩ := hU α
+    have huw : ∃ s, U.ComputesInTime (pairEncode α α) w s :=
+      ⟨C * (t + 1), (hC α).1 w t hw⟩
+    have hr : r w = [UC c.toMachineCode α] := by
+      by_cases hwtrue : w = [true]
+      · have huc : UC c.toMachineCode α = false :=
+          (UC_eq_false_iff _ _).2 ⟨t, hwtrue ▸ hw⟩
+        simp only [r, if_pos hwtrue, huc]
+      · have huc : UC c.toMachineCode α = true := (UC_eq_true_iff _ _).2 (by
+          rintro ⟨t', ht'⟩
+          exact hwtrue (hw.output_unique ht'))
+        simp only [r, if_neg hwtrue, huc]
+    have hMtuc := (hMt' α [UC c.toMachineCode α]).2 ⟨w, huw, hr.symm⟩
+    simpa only [hp, Bool.cond_true] using hMtuc
 
 /-- **`HALT` is not computable** [AB09, Theorem 1.11]: immediate from the reduction
 `Complexity.UC_computable_of_HALT_computable` and the diagonal theorem
