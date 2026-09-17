@@ -50,6 +50,13 @@ state type. This is the generic component shared by the oracle embedding
   including the absorbing halted case.
 * `Turing.MultiTapeTM.relabelState_runFrom_init` — initialized runs correspond
   at every time.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2 — the machine model whose state
+  spaces are transported here; the module itself is internal infrastructure
+  with no direct textbook counterpart.)
 -/
 
 namespace Turing
