@@ -31,7 +31,10 @@ composition combinators of `TCSlib.Complexity.TuringMachine.Composition`.
   `Turing.pairEncode_injective` makes the value on genuine pairs unambiguous
   (`Complexity.HALT_pairEncode_eq_true_iff`), and the reduction only ever evaluates
   `HALT` on genuine pairs, so the off-image convention is immaterial to
-  Theorem 1.11.
+  Theorem 1.11. It is *not* immaterial in general — `HALT c [] = false` is a
+  convention-dependent equality — so a downstream client evaluating `HALT` on
+  arbitrary strings must keep the convention or prove its inputs are genuine pairs
+  (phase-4 audit, finding 6).
 * "Halts" is rendered as *has a completed output*: `∃ output t, ComputesInTime`.
   This is equivalent to reaching the halting state (every halted configuration has
   some finite output).

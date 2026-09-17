@@ -229,15 +229,20 @@ the true input step for step, with each emission of `M₁` written to the buffer
 (write, move right) instead of the output tape; the append-only output discipline
 makes the buffer region a verbatim copy of `M₁`'s output, contiguous from the
 initial head cell. If `M₁` never halts, neither does `M`. On `M₁`'s halting
-transition, `M` rewinds the buffer head to the leftmost written cell (walk left to
-the first blank, one step right). Phase two simulates `M₂` with its *input-tape
+transition, `M` rewinds the buffer head to the leftmost written cell — the head
+rests on the blank immediately *right* of the written word, so the rewind's first
+left move is unconditional (testing the current cell before moving would stop at the
+wrong end; phase-4 audit, finding 3), then left while reading a symbol, then one
+step right. Phase two simulates `M₂` with its *input-tape
 reads served from the buffer*: the buffer holds exactly `y` with blank cells on both
 sides, and `M` maintains `M₂`'s virtual input position on it, mirroring the clamped
 input-head semantics of `Turing.moveInputPos` at both boundaries — the same
 virtual-boundary emulation as the universal machine's sketch
 (`TCSlib.Complexity.TuringMachine.Universal`); a blank read identifies a boundary,
 and *which* boundary is determined by the direction of arrival, tracked in the
-state. `M₂`'s work-tape actions go to its own fresh tapes and its emissions to the
+state — for an empty intermediate word the simulation starts with the right-boundary
+tag already set, the left boundary one inward move away (phase-4 audit, finding 3).
+`M₂`'s work-tape actions go to its own fresh tapes and its emissions to the
 real output tape, untouched during phase one. `M` halts exactly when the simulated
 `M₂` halts; step-for-step run correspondence in each phase gives both directions of
 the iff. -/

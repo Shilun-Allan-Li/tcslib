@@ -124,12 +124,16 @@ is the *only* computation on codes that reduction needs (phase-3 audit, round 2,
 Argument F): `encode` itself is never computed by any machine of this development.
 
 **Proof sketch.** Two sweeps of the input with a constant number of states. Pass one
-walks the input left to right emitting each bit twice; on reading the right boundary
-blank it emits the separator `false`, `true` (two steps) and rewinds the input head
-to the start (one step left, then left while reading a symbol, then one step right —
-the clamp at position `0` makes this safe, including on empty input). Pass two walks
-the input again emitting each bit once, and halts on the boundary blank. In total at
-most `3n + 6` steps on inputs of length `n`, absorbed as `c * (n + 1)`. -/
+walks the input left to right emitting each bit twice — one emitted symbol per
+transition, so two steps per bit: emit staying put, emit moving right; on reading the
+right boundary blank it emits the separator `false`, `true` (two steps) and rewinds
+the input head to the start (one step left, then left while reading a symbol, then
+one step right — the clamp at position `0` makes this safe, including on empty
+input). Pass two walks the input again emitting each bit once, and halts on the
+boundary blank. Total on inputs of length `n`: `2n` (doubled pass) `+ 2` (separator)
+`+ (n + 2)` (rewind) `+ n` (second pass) `+ 1` (halt) `= 4n + 5 ≤ 6 · (n + 1)`
+(phase-4 audit, finding 1: an earlier `3n + 6` figure undercounted the doubled
+pass), absorbed as `c * (n + 1)`. -/
 theorem computesFunInTime_pairEncode_diag :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun α => pairEncode α α) fun n => c * (n + 1) := by
