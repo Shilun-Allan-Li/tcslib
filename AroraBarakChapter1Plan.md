@@ -137,6 +137,7 @@ TCSlib/Complexity/TuringMachine/
   UniversalEfficient.lean -- [AB09, §1.7] Hennie-Stearns O(T log T)  [stretch]
 TCSlib/Complexity/Uncomputability.lean        -- facade
 TCSlib/Complexity/Uncomputability/
+  Computable.lean         -- computable functions, no time bound [AB09, §1.4-§1.5]
   Diagonalization.lean    -- UC, [AB09, Thm 1.10]
   Halting.lean            -- HALT, [AB09, Thm 1.11]
   MathlibBridge.lean      -- link to Nat.Partrec / Rice  [optional, later]
@@ -198,8 +199,12 @@ machine-checked and permanent form of the same checks.
    `computesFunInTime_comp` cannot take the partial evaluator as a component — and,
    where a proof needs a globally chosen evaluator or a semantically identified code,
    an explicitly stated named-evaluator interface.
-5. **Stretch — explicitly off the critical path.** §1.7's `O(T log T)` simulation;
-   oblivious TMs; the RAM-TM exercise (Ex 1.9); the mathlib recursion-theory bridge.
+5. **Stretch — explicitly off the critical path, and deferred to a much later
+   effort.** §1.7's `O(T log T)` simulation; oblivious TMs; the RAM-TM exercise
+   (Ex 1.9); the mathlib recursion-theory bridge. **Not scheduled** (decision of
+   2026-09-16): phase 5 is a task for much later — it is not part of the current
+   push, no audit pack will be prepared for it, and it is revisited only after the
+   phase-1-4 fill campaign completes. Chapter 1's critical path *ends with phase 4*.
 
 **Blueprint reference ingestion:** ingest Chapter 1 as
 `blueprint/src/references/arora-barak-ch01-*.md` (raw/clean pair, ch. 13 shows the format)
@@ -244,4 +249,6 @@ approved.
 | Phase-3 audit round 1 (`audits/phase3-findings.md`): **two blockers on the phase-3 statements, both accepted** — (1) the algebraic `MachineCode` admits noncomputable-meaning schemes against which no universal machine exists (Argument A), repaired by `EffectiveMachineCode`: an in-model canonizer into the new **fixed scheme-independent** `CodeTM.serialize` (canonizing into the scheme's own encode provably does not exclude the pathology); (2) the input-first `pairEncode x α` layout falsifies all three time bounds (Argument B), repaired by the **code-first** layout `pairEncode α x`. Majors: `universal` restated as the all-string evaluator `U(x, α) = M_α(x)` with a divergence-preservation converse and α-dependent constants; `universal_quadratic` labeled as the total-function corollary; `serialize` records the initial state (finding 5's collision). Minors: deadline-inclusive timeout convention documented; pack namespace erratum (`Complexity.succ_pow_le`). Fill round and supporting lemmas: audited clean (findings 9-13). Re-audit pending | Decided |
 | Fill round 1 (commit `f8621285`): 20 of 28 phase-1/2 sorries proved — all semantics/arithmetic/chaining obligations, both oracle lockstep theorems, `mem_P_iff`, and `computesFunInTime_id` with an explicit machine. The 8 remaining sorries are exactly the heavy machine constructions (`const`, `comp`, the four robustness simulations, `timeConstructible_id`, `PAL_mem_DTIME_linear`), each with an audited outline. Repository-side verification: no audited declaration signature changed or was removed. Phase-3 skeleton delivered (5 statement sorries): `CodeTM`, abstract `MachineCode` scheme, `pairEncode`, Theorem 1.9 (linear for coded machines / relaxed quadratic / timed). Audit round covering fills + phase-3 pending | Decided |
 | Phase-2 audit round 2 (`audits/phase2-reaudit-findings.md`): zero blockers/majors — both corrected load-bearing sketches certified as adequate proof outlines; 4 prose minors swept (fold alphabet `Bool × Option Γ × Option Γ`, waiver-prose synchronization, `O((k+1)·L)` overhead, one-work-tape *binary* normal form in phase 3); Lean-code identity between the audited commits verified repository-side by comment-stripped git comparison. **Phase-2 audit gate closed**; see `audits/phase2-resolutions.md` | Decided |
+| Phase-4 skeleton landed (after the closed phase-3 loop, gate commit `b61e876d`): `Uncomputability/{Computable,Diagonalization,Halting}.lean` + facade — `Complexity.Computable`, `UC` (over an **arbitrary** `MachineCode`: the diagonalization never computes `encode`/`decode`, per round-2 Argument F; effectivity appears only in Theorem 1.11), `HALT` (totalized `false` off the `pairEncode` image; pair format = the evaluator's code-first layout), `UC_not_computable`, the reduction `UC_computable_of_HALT_computable` (uses only the *forward* clause of `universal`), `HALT_not_computable` (proved from the two). The audit-mandated guarded API landed in `Composition.lean` (`exists_comp_partial` — partial sequential composition with buffered intermediate output; `exists_cond` — branch on a decided predicate; `computesFunInTime_ifEq`), plus `computesFunInTime_pairEncode_diag` in `Encoding.lean` and `FinTM.Computes`/`ComputesInTime.output_unique`/`ComputesFunInTime.computes` in `Finite.lean` (additions to audited files, flagged for the phase-4 audit). 7 new sorries (21 total), every phase-4 proof sketch names only stated results. Phase-4 audit pack pending | Decided |
+| Phase 5 (§1.7 `O(T log T)`, oblivious proofs, RAM-TM, mathlib bridge) **deferred to a much later effort** — not scheduled in the current push; revisit only after the phase-1-4 fill campaign completes | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |

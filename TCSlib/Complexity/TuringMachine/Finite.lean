@@ -41,11 +41,15 @@ sites.
   `Turing.MultiTapeTM.ComputesInTimeAndSpace`). [AB09, Definition 1.3]
 * `Turing.FinTM.ComputesFunInTime` — the machine computes `f` in time `T`.
   [AB09, Definition 1.3]
+* `Turing.FinTM.Computes` — the machine computes `f` with no time constraint; the
+  notion of computability underlying the uncomputability results. [AB09, §1.4, p. 20]
 
 ## Main results
 
 * `Turing.FinTM.ComputesInTime.mono` — halting is absorbing, so the time bound can be
   weakened.
+* `Turing.FinTM.ComputesInTime.output_unique` — determinism: a machine has at most one
+  completed output on a given input.
 * `Turing.FinTM.not_computesInTime_zero` — no machine computes anything in zero steps
   (the initial state is not the halting state).
 * `Turing.MultiTapeTM.output_length_le`, `Turing.MultiTapeTM.output_prefix` — raw-layer
@@ -156,6 +160,16 @@ def ComputesFunInTimeVia {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)
     (f : List α → List α) (T : ℕ → ℕ) : Prop :=
   ∀ x : List α, M.ComputesInTime (x.map e) ((f x).map e) (T x.length)
 
+/-- The machine `M` *computes* the string function `f`, with no time constraint: on
+every input it eventually halts with `f input` on the output tape. This is the notion
+of computability underlying the uncomputability results [AB09, §1.4, p. 20; §1.5];
+`Turing.FinTM.ComputesFunInTime` is the time-bounded refinement, and the two are
+related by `Turing.FinTM.ComputesFunInTime.computes` (below) and
+`Turing.FinTM.Computes.exists_computesFunInTime`
+(in `TCSlib.Complexity.Uncomputability.Computable`). -/
+def Computes (M : FinTM Symbol) (f : List Symbol → List Symbol) : Prop :=
+  ∀ input : List Symbol, ∃ t, M.ComputesInTime input (f input) t
+
 /-- Halting is absorbing, so a time bound can be weakened: if `M` produces `output`
 within `t` steps it also does so within any `t' ≥ t` steps.
 
@@ -181,6 +195,29 @@ theorem not_computesInTime_zero (M : FinTM Symbol) (input output : List Symbol) 
     ¬M.ComputesInTime input output 0 := by
   rintro ⟨s, hhalt, -⟩
   simp [MultiTapeTM.runFrom_zero] at hhalt
+
+/-- Determinism of completed outputs: a machine has at most one completed output on a
+given input — if `M` halts on `input` with `w` within `t` steps and with `w'` within
+`t'` steps, then `w = w'`. Together with `Turing.FinTM.ComputesInTime.mono` this
+makes the halting relation of a machine a partial function.
+
+**Proof.** Absorb both computations to time `max t t'`
+(`Turing.FinTM.ComputesInTime.mono`); both then name the output of one and the same
+run. -/
+theorem ComputesInTime.output_unique {M : FinTM Symbol} {input w w' : List Symbol}
+    {t t' : ℕ} (h : M.ComputesInTime input w t) (h' : M.ComputesInTime input w' t') :
+    w = w' := by
+  have h₁ := h.mono (Nat.le_max_left t t')
+  have h₂ := h'.mono (Nat.le_max_right t t')
+  simp only [ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace] at h₁ h₂
+  obtain ⟨s, -, hout, -⟩ := h₁
+  obtain ⟨s', -, hout', -⟩ := h₂
+  rw [← hout, ← hout']
+
+/-- A time-bounded computation is in particular a computation. -/
+theorem ComputesFunInTime.computes {M : FinTM Symbol} {f : List Symbol → List Symbol}
+    {T : ℕ → ℕ} (h : M.ComputesFunInTime f T) : M.Computes f :=
+  fun input => ⟨T input.length, h input⟩
 
 end FinTM
 

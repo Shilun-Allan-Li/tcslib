@@ -63,6 +63,8 @@ self-delimiting pairing used by the universal machine.
 
 * `Turing.MachineCode.decode_encode` — decoding a code recovers the machine.
 * `Turing.pairEncode_injective` — the pairing is injective (aligned-pair parsing).
+* `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
+  computable in linear time (the only code computation the `HALT` reduction needs).
 * `Turing.exists_effectiveMachineCode` — a concrete effective scheme exists.
 * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
   coded machine (state relabeling).
@@ -114,6 +116,23 @@ of the pairing, and a function with a left inverse is injective. Empty component
 unproblematic (`pairEncode [] α = [false, true] ++ α`). -/
 theorem pairEncode_injective :
     Function.Injective fun p : List Bool × List Bool => pairEncode p.1 p.2 := by
+  sorry
+
+/-- The diagonal pairing `α ↦ pairEncode α α` — the self-application input of the
+`HALT` reduction [AB09, proof of Theorem 1.11] — is computable in linear time. This
+is the *only* computation on codes that reduction needs (phase-3 audit, round 2,
+Argument F): `encode` itself is never computed by any machine of this development.
+
+**Proof sketch.** Two sweeps of the input with a constant number of states. Pass one
+walks the input left to right emitting each bit twice; on reading the right boundary
+blank it emits the separator `false`, `true` (two steps) and rewinds the input head
+to the start (one step left, then left while reading a symbol, then one step right —
+the clamp at position `0` makes this safe, including on empty input). Pass two walks
+the input again emitting each bit once, and halts on the boundary blank. In total at
+most `3n + 6` steps on inputs of length `n`, absorbed as `c * (n + 1)`. -/
+theorem computesFunInTime_pairEncode_diag :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun α => pairEncode α α) fun n => c * (n + 1) := by
   sorry
 
 section Serialize

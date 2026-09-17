@@ -48,9 +48,17 @@ per the waiver.
 
 ## Main results
 
-* `Complexity.TuringMachine`-level combinators (all over the binary alphabet):
+* Time-bounded combinators (all over the binary alphabet):
   `Turing.FinTM.computesFunInTime_id`, `Turing.FinTM.computesFunInTime_const`,
-  `Turing.FinTM.computesFunInTime_comp`.
+  `Turing.FinTM.computesFunInTime_ifEq`, `Turing.FinTM.computesFunInTime_comp`.
+* **Partial (guarded) combinators** — the phase-4 API mandated by the phase-3 audit
+  (round 2, finding 10 and Argument F: the total-function composition cannot take
+  the partially computing universal evaluator as a component):
+  `Turing.FinTM.exists_comp_partial` composes two arbitrary machines at the level of
+  their halting relations, with the intermediate output buffered on a work tape;
+  `Turing.FinTM.exists_cond` branches between two machines on a decided predicate.
+  Both are stated untimed; time-bounded refinements are deliberately deferred until
+  a result needs them.
 
 ## References
 
@@ -155,6 +163,24 @@ theorem computesFunInTime_const (w : List Bool) :
     ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime (fun _ => w) fun n => c * (n + 1) := by
   sorry
 
+/-- Testing equality with a fixed string is computable in linear time: for any fixed
+`w₀ u v`, the function `w ↦ u` if `w = w₀` and `w ↦ v` otherwise. (Instantiated by
+the `HALT` reduction as the postprocessor `w ↦ if w = [true] then [false] else
+[true]`; see `TCSlib.Complexity.Uncomputability.Halting`.)
+
+**Proof sketch.** Hardcode `w₀`, `u`, and `v` in the states. The machine walks the
+input left to right comparing it against `w₀` symbol by symbol (`|w₀| + 1`
+comparison states); on the first mismatch — including the input ending early (blank
+read) or running long (a symbol where `w₀` is exhausted) — it switches to an
+emission chain for `v`, and after matching all of `w₀` and then reading the boundary
+blank it switches to an emission chain for `u` (at most `|u| + |v| + 2` further
+states, one emitted symbol per step). Every run halts within
+`|w₀| + max |u| |v| + 3` steps — a constant, absorbed as `c * (n + 1)`. -/
+theorem computesFunInTime_ifEq (w₀ u v : List Bool) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun w => if w = w₀ then u else v) fun n => c * (n + 1) := by
+  sorry
+
 /-- **Composition.** If `f` is computable within `T₁` and `g` within a monotone `T₂`,
 then `g ∘ f` is computable within `c · (T₁ n + T₂ (T₁ n) + 1)`.
 
@@ -178,6 +204,74 @@ theorem computesFunInTime_comp {M₁ M₂ : FinTM Bool} {f g : List Bool → Lis
     (hT₂ : Monotone T₂) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1) := by
+  sorry
+
+/-- **Partial (guarded) sequential composition** — the phase-4 API obligation
+identified by the phase-3 audit (round 2, finding 10 and Argument F):
+`Turing.FinTM.computesFunInTime_comp` requires both components to compute *total*
+functions, so it cannot take a partially computing machine — such as the universal
+evaluator — as a component. This lemma composes two arbitrary machines at the level
+of their halting relations, with **no totality or time hypotheses**: `M` behaves on
+`x` exactly as `M₂` behaves on `M₁`'s completed output — halting, completed outputs,
+and divergence all correspond.
+
+Statement notes. The intermediate string `y` is existentially quantified, but by
+`Turing.FinTM.ComputesInTime.output_unique` at most one `y` satisfies the first
+conjunct, so the right-hand side reads "`M₁` halts on `x` (necessarily with a unique
+`y`), and then `M₂` halts on `y` with `w`". If `M₁` diverges on `x`, or halts but
+`M₂` diverges on its output, both sides are empty — `M` diverges. A time-bounded
+refinement is deliberately not stated; it will be added if and when a result needs
+it.
+
+**Proof sketch** (buffered intermediate output, per the audit's design). `M` carries
+`M₁`'s and `M₂`'s work tapes plus a fresh *buffer* tape. Phase one simulates `M₁` on
+the true input step for step, with each emission of `M₁` written to the buffer tape
+(write, move right) instead of the output tape; the append-only output discipline
+makes the buffer region a verbatim copy of `M₁`'s output, contiguous from the
+initial head cell. If `M₁` never halts, neither does `M`. On `M₁`'s halting
+transition, `M` rewinds the buffer head to the leftmost written cell (walk left to
+the first blank, one step right). Phase two simulates `M₂` with its *input-tape
+reads served from the buffer*: the buffer holds exactly `y` with blank cells on both
+sides, and `M` maintains `M₂`'s virtual input position on it, mirroring the clamped
+input-head semantics of `Turing.moveInputPos` at both boundaries — the same
+virtual-boundary emulation as the universal machine's sketch
+(`TCSlib.Complexity.TuringMachine.Universal`); a blank read identifies a boundary,
+and *which* boundary is determined by the direction of arrival, tracked in the
+state. `M₂`'s work-tape actions go to its own fresh tapes and its emissions to the
+real output tape, untouched during phase one. `M` halts exactly when the simulated
+`M₂` halts; step-for-step run correspondence in each phase gives both directions of
+the iff. -/
+theorem exists_comp_partial (M₁ M₂ : FinTM Bool) :
+    ∃ M : FinTM Bool, ∀ x w : List Bool,
+      (∃ t, M.ComputesInTime x w t) ↔
+        ∃ y : List Bool,
+          (∃ t, M₁.ComputesInTime x y t) ∧ ∃ t, M₂.ComputesInTime y w t := by
+  sorry
+
+/-- **Branching on a decided predicate** — the second phase-4 combinator (phase-3
+audit, round 2, Argument F, step 2 of the `HALT → UC` reduction): given a total
+decider `D` for `p` and two branch machines, some machine behaves on every input
+exactly as the branch selected by `p` does *on that same input*. The input tape is
+read-only, so both branches see the original input.
+
+**Proof sketch.** `D` computes the singleton output `[p x]` on every input, and
+output is append-only, so along any run `D` emits exactly one symbol; simulate `D`
+with that single emission recorded in a state register instead of emitted (no buffer
+tape needed). On `D`'s halting transition, rewind the true input head to its initial
+position: one step left, then left while reading a symbol, then one step right —
+from any position this ends at input position `1`, the initial position, the clamp
+at position `0` making the walk safe (including on empty input). Then transfer
+control to a disjoint copy of `M₁` or `M₂` according to the register. The branches'
+work tapes are fresh tapes `D` never touched, the output tape is untouched by phase
+one, and the input head is back at its initial position, so the selected branch's
+run is reproduced verbatim; determinism (`Turing.FinTM.ComputesInTime.output_unique`)
+identifies `D`'s completed output with `[p x]`, so the selected branch is
+`cond (p x) M₁ M₂`. -/
+theorem exists_cond (D M₁ M₂ : FinTM Bool) (p : List Bool → Bool)
+    (hD : D.Computes fun x => [p x]) :
+    ∃ M : FinTM Bool, ∀ x w : List Bool,
+      (∃ t, M.ComputesInTime x w t) ↔
+        ∃ t, (cond (p x) M₁ M₂).ComputesInTime x w t := by
   sorry
 
 end Turing.FinTM
