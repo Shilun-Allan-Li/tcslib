@@ -216,6 +216,20 @@ private def foldInitAction {Γ S : Type} {k : ℕ} (q : S) :
   ⟨0, fun _ => (some (some (true, none, none)), 0), none,
     some (some (q, fun _ => true))⟩
 
+/-- Initialize every origin, halting on the same transition if the first input
+read is already outside the embedding. No simulated transition precedes the check. -/
+private def foldStartAction {Γ S : Type} {k : ℕ} (q : S)
+    (inp : Option (FoldSymbol Γ)) : Action k (FoldSymbol Γ) (Option (S × (Fin k → Bool))) :=
+  match inp with
+  | none => foldInitAction q
+  | some v => match foldDecode v with
+    | none => { foldInitAction q with state := none }
+    | some _ => foldInitAction q
+
+private lemma foldStartAction_embed {Γ S : Type} {k : ℕ} (q : S) (inp : Option Γ) :
+    foldStartAction (k := k) q (inp.map foldEmbedding) = foldInitAction q := by
+  cases inp <;> rfl
+
 private def foldTM {Γ : Type} [Fintype Γ] [DecidableEq Γ] (M : FinTM Γ) :
     FinTM (FoldSymbol Γ) where
   k := M.k
@@ -223,7 +237,7 @@ private def foldTM {Γ : Type} [Fintype Γ] [DecidableEq Γ] (M : FinTM Γ) :
   tm :=
     { q₀ := none
       tr := fun q inp work => match q with
-        | none => foldInitAction M.tm.q₀
+        | none => foldStartAction M.tm.q₀ inp
         | some (q, side) =>
           match inp with
           | none => foldAction side work (M.tm.tr q none (fun i => foldRead (side i) (work i)))
@@ -265,15 +279,19 @@ private lemma foldCfg_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) (x : List Γ) :
     (foldTM M).tm.step ((foldTM M).tm.initCfg (x.map foldEmbedding)) =
       foldCfg (M.tm.initCfg x) := by
+  unfold MultiTapeTM.step
+  change (foldStartAction M.tm.q₀ _).apply _ = _
+  have hi := foldCfg_input (M.tm.initCfg x)
+  change ((foldTM M).tm.initCfg (x.map foldEmbedding)).inputSymbol = _ at hi
+  rw [hi, foldStartAction_embed]
   refine Cfg.ext rfl ?_ ?_ ?_ rfl
   · apply Fin.ext
-    simp [MultiTapeTM.step, foldTM, foldInitAction, foldCfg]
+    simp [foldInitAction, foldCfg]
   · funext i p
-    simp [MultiTapeTM.step, foldTM, foldInitAction, foldCfg, foldTape, foldPack,
-      Function.update_apply]
+    simp [foldInitAction, foldCfg, foldTape, foldPack, Function.update_apply]
     split_ifs <;> simp_all
   · funext i
-    simp [MultiTapeTM.step, foldTM, foldInitAction, foldCfg, foldPos]
+    simp [foldInitAction, foldCfg, foldPos]
 
 private lemma foldCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) (x : List Γ) (t : ℕ) :
@@ -360,13 +378,22 @@ private lemma foldSafe_step {Γ : Type} [Fintype Γ] [DecidableEq Γ]
 private lemma foldSafe_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) (x : List (FoldSymbol Γ)) :
     foldSafe ((foldTM M).tm.step ((foldTM M).tm.initCfg x)) := by
-  refine ⟨by simp [MultiTapeTM.step, foldTM, foldInitAction],
-    fun i => by simp [MultiTapeTM.step, foldTM, foldInitAction], ?_⟩
-  intro i p hp
-  by_cases h : p = 0
-  · subst p
-    simp [MultiTapeTM.step, foldTM, foldInitAction, foldUnpack]
-  · simp [MultiTapeTM.step, foldTM, foldInitAction, foldUnpack, h]
+  have hsafe : ∀ (st : Option (foldTM M).State), st ≠ some none →
+      foldSafe (({ foldInitAction M.tm.q₀ with state := st }).apply
+        ((foldTM M).tm.initCfg x)) := by
+    intro st hst
+    refine ⟨hst, fun i => by simp [foldInitAction], ?_⟩
+    intro i p hp
+    by_cases h : p = 0
+    · subst p
+      simp [foldInitAction, foldUnpack]
+    · simp [foldInitAction, foldUnpack, h]
+  unfold MultiTapeTM.step
+  change foldSafe ((foldStartAction M.tm.q₀ _).apply _)
+  unfold foldStartAction
+  split
+  · exact hsafe _ (by simp)
+  · split <;> exact hsafe _ (by simp)
 
 private lemma foldTM_nonnegative {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) : (foldTM M).NonnegativeHeads := by
@@ -416,7 +443,8 @@ and halting on embedded inputs.
 canonical packing: an untagged pair of blanks is a physical blank. Initialization
 costs one step and the subsequent simulation is lockstep, so the displayed constant
 can be chosen as one. Safety is proved separately for every enlarged-alphabet input,
-including malformed symbols, without using the computation premise. -/
+including malformed symbols, without using the computation premise. An invalid
+first symbol causes halting during the initialization transition itself. -/
 theorem nonnegative_heads {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) (f : List Γ → List Γ) (T : ℕ → ℕ)
     (hM : M.ComputesFunInTime f T) :
