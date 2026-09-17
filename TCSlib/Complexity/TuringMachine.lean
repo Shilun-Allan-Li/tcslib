@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Oracle
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Sweep
 import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
@@ -45,6 +46,8 @@ for the local modifications.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.
+* `Sweep` — the generic zipper/transduction layer for sweep-based tape
+  simulations, with the initialized-run head/support bound.
 * `Composition` — identity/constant machines and closure of time-bounded computability
   under composition; also the formal home of the append-only-output convention
   argument.

@@ -3,7 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
-import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Simulation
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.Option
@@ -333,14 +333,6 @@ private lemma arTail_update {Γ : Type} {N : ℕ} (E : Option Γ ↪ ArBlock N)
       split_ifs <;> first | rfl | omega
   · simp [hz]
 
-private lemma arUpdated_tape {Γ S : Type} {k : ℕ} {x : List Γ}
-    (c : Cfg k Γ S x) (a : Action k Γ S) (i : Fin k) :
-    (a.apply c).workTapes i = Function.update (c.workTapes i) (c.workTapePos i)
-      ((a.workTapes i).1.getD (c.workTapeSymbols i)) := by
-  cases hw : (a.workTapes i).1 with
-  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]
-  | some w => simp [Action.apply, hw]
-
 private def arMoveCfg {Γ S : Type} [DecidableEq Γ] {k N : ℕ} {x : List Bool}
     (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (c : Cfg k Γ S (x.map e))
     (a : Action k Γ S) (r : Fin (N + 2)) : Cfg k Bool (ArState Γ S k N) x :=
@@ -440,7 +432,7 @@ private lemma arWriteCfg_finish {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : �
     change arTape (fun z => E (Function.update (c.workTapes i) (c.workTapePos i)
       ((a.workTapes i).1.getD (c.workTapeSymbols i)) z)) =
       arTape (fun z => E ((a.apply c).workTapes i z))
-    rw [arUpdated_tape]
+    rw [Action.apply_workTapes]
   · funext i
     simp [arMoveCfg, arPos, Action.apply]
   · simp [arMoveCfg, arCfg, Action.apply]
