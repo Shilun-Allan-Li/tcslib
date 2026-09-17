@@ -357,14 +357,36 @@ intermediate tape head (at most `T₁ n` steps) and simulates `M₂` step for st
 `M₂`'s input-head reads served from the intermediate tape and `M₂`'s emissions going to
 the real output tape. Phase two costs constant overhead per step of `M₂`, which halts
 within `T₂ |f x| ≤ T₂ (T₁ n)` steps. Bookkeeping (phase switching, boundary detection
-on the intermediate tape) is absorbed into `c`. -/
+on the intermediate tape) is absorbed into `c`.
+
+**Implementation note (epoch 2).** The shared `bufferedCompTM` has
+`M₁.k + (1 + M₂.k)` tapes and uses one physical step per simulated step.
+The first halting time is at most `T₁ |x|`; rewind and dispatch take exactly
+`|f x| + 2` steps, including the unconditional first left move. Consequently
+`2 * T₁ |x| + T₂ (T₁ |x|) + 2` suffices, and the theorem uses `c = 2`. -/
 theorem computesFunInTime_comp {M₁ M₂ : FinTM Bool} {f g : List Bool → List Bool}
     {T₁ T₂ : ℕ → ℕ}
     (h₁ : M₁.ComputesFunInTime f T₁) (h₂ : M₂.ComputesFunInTime g T₂)
     (hT₂ : Monotone T₂) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1) := by
-  sorry
+  refine ⟨bufferedCompTM M₁ M₂, 2, fun x => ?_⟩
+  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
+    bufferedComp_start M₁ M₂ x (f x) (T₁ x.length) (h₁ x)
+  have hlen : (f x).length ≤ T₁ x.length := by
+    have ho := ((computesInTime_iff _ _ _ _).mp (h₁ x)).2
+    simpa only [ho] using M₁.tm.output_length_le x (T₁ x.length)
+  -- This is the only use of monotonicity: transfer the intermediate length bound.
+  have htime : T₂ (f x).length ≤ T₂ (T₁ x.length) := hT₂ hlen
+  obtain ⟨b, _, hr⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg (f x)) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (T₂ (f x).length)
+  have hc := (computesInTime_iff _ _ _ _).mp (h₂ (f x))
+  have hbase : (bufferedCompTM M₁ M₂).ComputesInTime x (g (f x))
+      (a + T₂ (f x).length) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  exact hbase.mono (by dsimp only; omega)
 
 /-- **Partial (guarded) sequential composition** — the phase-4 API obligation
 identified by the phase-3 audit (round 2, finding 10 and Argument F):
@@ -405,13 +427,54 @@ tag already set, the left boundary one inward move away (phase-4 audit, finding 
 `M₂`'s work-tape actions go to its own fresh tapes and its emissions to the
 real output tape, untouched during phase one. `M` halts exactly when the simulated
 `M₂` halts; step-for-step run correspondence in each phase gives both directions of
-the iff. -/
+the iff.
+
+**Implementation note (epoch 2).** The buffer and virtual-input invariants are
+public in `Simulation.lean`. The arrival tag is constrained only at boundaries;
+stationary moves preserve it, including suppressed outward moves. Dispatch always
+sets it to true, which is already the right-boundary tag when the word is empty.
+A simulated phase-one halt remains live through the exact `|y| + 2` rewind.
+For the forward implication, phase-one divergence contradicts a completed run;
+otherwise extend that completed run beyond the verified phase-two start using
+absorbing halting, and recover the second completed computation by lockstep. -/
 theorem exists_comp_partial (M₁ M₂ : FinTM Bool) :
     ∃ M : FinTM Bool, ∀ x w : List Bool,
       (∃ t, M.ComputesInTime x w t) ↔
         ∃ y : List Bool,
           (∃ t, M₁.ComputesInTime x y t) ∧ ∃ t, M₂.ComputesInTime y w t := by
-  sorry
+  classical
+  refine ⟨bufferedCompTM M₁ M₂, fun x w => ?_⟩
+  constructor
+  · rintro ⟨t, ht⟩
+    -- A divergent first component would keep every composite configuration live.
+    have hh : ∃ s, (M₁.tm.runFrom (M₁.tm.initCfg x) s).state = none := by
+      by_contra h
+      have hr := bufferedFirstCfg_run M₁ M₂ (M₁.tm.initCfg x) t
+        (fun s _ hs => h ⟨s, hs⟩)
+      rw [← bufferedFirstCfg_init] at hr
+      have hc := ((computesInTime_iff _ _ _ _).mp ht).1
+      rw [hr] at hc
+      simp only [bufferedFirstCfg, Option.some_ne_none] at hc
+    obtain ⟨s, hs⟩ := hh
+    let y := (M₁.tm.runFrom (M₁.tm.initCfg x) s).output
+    have hy : M₁.ComputesInTime x y s := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+    obtain ⟨a, p, tapes, heads, _, ha⟩ := bufferedComp_start M₁ M₂ x y s hy
+    -- Extend a completed run past the verified administrative prefix.
+    have hc := (computesInTime_iff _ x w (a + t)).mp (ht.mono (by omega))
+    rw [MultiTapeTM.runFrom_add, ha] at hc
+    obtain ⟨b, _, hr⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg y) true
+      (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads t
+    rw [hr] at hc
+    refine ⟨y, ⟨s, hy⟩, t, (computesInTime_iff _ _ _ _).mpr ?_⟩
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  · rintro ⟨y, ⟨s, hs⟩, ⟨t, ht⟩⟩
+    obtain ⟨a, p, tapes, heads, _, ha⟩ := bufferedComp_start M₁ M₂ x y s hs
+    obtain ⟨b, _, hr⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg y) true
+      (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads t
+    have hc := (computesInTime_iff _ _ _ _).mp ht
+    refine ⟨a + t, (computesInTime_iff _ _ _ _).mpr ?_⟩
+    rw [MultiTapeTM.runFrom_add, ha, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
 
 /-- A finite controller runs `D` with its first emission captured in a register,
 rewinds, then enters the selected branch on disjoint fresh tapes. A simulated halt
