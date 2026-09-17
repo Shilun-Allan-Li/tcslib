@@ -47,8 +47,9 @@ for the local modifications.
 * `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
   [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
 * `Encoding` — machines as strings [AB09, §1.4]: the code normal form `CodeTM`, the
-  representation-scheme specification `MachineCode`, and the input pairing.
-* `Universal` — the universal machine [AB09, Theorem 1.9]: linear overhead for coded
-  machines, the relaxed quadratic form for arbitrary binary machines, and the
-  time-bounded variant.
+  fixed canonical serialization, the representation-scheme laws `MachineCode`, and
+  the effective scheme `EffectiveMachineCode` that the universal machine requires.
+* `Universal` — the universal machine [AB09, Theorem 1.9]: the all-string evaluator
+  with linear overhead and divergence preservation, the relaxed quadratic
+  total-function form, and the time-bounded variant (code-first input layout).
 -/
