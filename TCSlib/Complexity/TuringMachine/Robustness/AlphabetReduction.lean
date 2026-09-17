@@ -33,7 +33,11 @@ defining `DTIME` over binary-alphabet machines (see
   binary function" for a `Γ`-machine is expressed via a symbol embedding `e : Bool ↪ Γ`
   (`Turing.FinTM.ComputesFunInTimeVia`): the simulator reads genuine binary input
   directly (its table composes with `e`), block-encodes work-tape symbols in
-  `⌈log₂ |Γ|⌉` bits, and decodes each emitted symbol `e b` back to the bit `b`.
+  fixed-width blocks — the original sketch proposed `⌈log₂ |Γ|⌉` bits, and the
+  delivered implementation uses a **one-hot code of width `|Γ| + 1`** (see the
+  theorem's implementation note; the wider fixed width only changes the
+  existential constant — epoch-2 audit, finding 1) — and decodes each emitted
+  symbol `e b` back to the bit `b`.
   Emitted symbols are always in the range of `e` because the append-only output equals
   the final output string, which is `(f x).map e` — early emissions included, since an
   irrevocable emission remains a prefix of the final output.

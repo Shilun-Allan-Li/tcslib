@@ -42,6 +42,26 @@ def note(level, path, msg):
     findings.append((level, str(path), msg))
 
 
+def strip_comments(src: str) -> str:
+    """Remove nesting-aware block comments (docstrings included) and line
+    comments, so declaration counting never matches prose like `lemma advances`
+    inside a docstring (epoch-2 audit, finding 3)."""
+    out, i, depth = [], 0, 0
+    while i < len(src):
+        if src.startswith("/-", i):
+            depth += 1
+            i += 2
+            continue
+        if src.startswith("-/", i) and depth > 0:
+            depth -= 1
+            i += 2
+            continue
+        if depth == 0:
+            out.append(src[i])
+        i += 1
+    return "\n".join(l.split("--")[0] for l in "".join(out).splitlines())
+
+
 def is_facade(path: Path) -> bool:
     return (path.parent / path.stem).is_dir()
 
@@ -84,8 +104,10 @@ def check_file(path: Path):
                                   "in the preceding docstring")
 
     # 6. Public/private declaration tally (INFO - context for audit packs).
-    pub = sum(1 for m in DECL_RE.finditer(src) if not m.group(1))
-    priv = sum(1 for m in DECL_RE.finditer(src) if m.group(1))
+    #    Counted on comment-stripped source (epoch-2 audit, finding 3).
+    stripped = strip_comments(src)
+    pub = sum(1 for m in DECL_RE.finditer(stripped) if not m.group(1))
+    priv = sum(1 for m in DECL_RE.finditer(stripped) if m.group(1))
     note("INFO", rel, f"{n} lines; {pub} public / {priv} private declarations")
 
 
