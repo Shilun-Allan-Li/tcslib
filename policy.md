@@ -82,6 +82,17 @@ counterpart may omit the tag; anything a reader would recognize as "a result" ma
 strengthened or weakened hypotheses, a reformulation — the docstring must say so and briefly
 say why (e.g. "stated with explicit constant 5k rather than O(·), following the proof").
 
+**Statement prose.** Every public declaration's docstring begins with a natural-language
+statement of what it asserts (for a definition: what it is), precise enough that a reader
+could judge the formalization's fidelity without parsing the Lean. The `[Tag, location]`
+citation and any deviation note attach to that statement; the proof sketch (§3) follows it.
+A bare label ("Unfolding lemma", "Helper for X") is not a statement. Instances are exempt,
+as are vendored files (which follow upstream style). `private` declarations should carry
+docstrings too, but at reviewer discretion rather than as a hard requirement. The blueprint
+remains the cross-referenced informal layer for dependency structure (see **Blueprint**);
+the docstring statement is what external audits compare blind restatements against, so it
+is part of the trusted surface.
+
 **Blueprint.** When an ingested reference exists under `blueprint/src/references/`, blueprint
 entries use `\statementsource{<ref>}{<anchor>}` and `\proofsource{<ref>}{<anchor>}` to cite
 it, subject to the existing rule that these are written only after an approved proofmatch
@@ -133,6 +144,10 @@ Before merging new Lean content, check:
 3. Every file has a `## References` section; every source-derived declaration has a
    `[Tag, location]` in its docstring; deviations from sources are noted.
 4. Every nontrivial proof (or sorry-stub standing in for one) has a proof sketch.
-5. `zsh scripts/lean_check.sh <file>` reports zero errors for each touched file.
-6. If blueprint content was touched: `python3 scripts/blueprint_validate.py --strict` and
+5. Every public declaration (instances and vendored files excepted) has a docstring
+   opening with a natural-language statement of what it asserts
+   (`python3 scripts/style_lint.py` checks presence mechanically; statement quality is
+   review judgment).
+6. `zsh scripts/lean_check.sh <file>` reports zero errors for each touched file.
+7. If blueprint content was touched: `python3 scripts/blueprint_validate.py --strict` and
    `python3 scripts/dataset_hygiene.py --strict` pass.
