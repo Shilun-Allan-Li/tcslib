@@ -206,6 +206,52 @@ machine-checked and permanent form of the same checks.
    push, no audit pack will be prepared for it, and it is revisited only after the
    phase-1-4 fill campaign completes. Chapter 1's critical path *ends with phase 4*.
 
+### Fill campaign (epochs and batches)
+
+With all four phase gates closed, the remaining critical-path work is filling the
+21 audited-true sorries. The campaign runs in **epochs** — sequential, with an
+audit round at each epoch boundary — each consisting of **batches** run in
+parallel, one agent per batch, with disjoint file ownership. Difficulty points
+(1-15 scale) are planning estimates. Agents work in the cloud from the
+self-contained briefs in `briefs/`, branching off `complexity/arora-barak-ch1`
+and PRing back into it (`github.com/Shilun-Allan-Li/tcslib`). Verification is
+`scripts/lean_check_tree.sh` over `scripts/ab_ch1_module_order.txt` (direct
+`lean`; `lake build` stays banned).
+
+| Epoch | Batch | Contents (points) | Owned files |
+|---|---|---|---|
+| **1** | 1A | `Computes.exists_computesFunInTime` (2), `UC_not_computable` (2), `universal_quadratic` (2), `UC_computable_of_HALT_computable` (3) — the assembly/integration tests | `Uncomputability/{Computable,Diagonalization,Halting}.lean`, `Universal.lean` (quadratic only) |
+| 1 | 1B | `computesFunInTime_const` (2), `computesFunInTime_ifEq` (3), `exists_cond` (6) | `Composition.lean` |
+| 1 | 1C | `pairEncode_injective` (3), `computesFunInTime_pairEncode_diag` (4), `exists_codeTM` (5) | `Encoding.lean` |
+| 1 | 1D | `PAL_mem_DTIME_linear` (4), `timeConstructible_id` (5) | `Examples.lean`, `TimeConstructible.lean` |
+| **2** | 2A | `exists_comp_partial` (8) then `computesFunInTime_comp` (7) — shared infrastructure, sequential within the batch | `Composition.lean` |
+| 2 | 2B | `one_work_tape` (12) | `Robustness/SingleTape.lean` |
+| 2 | 2C | `nonnegative_heads` (7), `alphabet_reduction` (8) | `Robustness/{Bidirectional,AlphabetReduction}.lean` |
+| **3** | 3A | `exists_effectiveMachineCode` (13) | `Encoding.lean` |
+| 3 | 3B | `universal` (15) | `Universal.lean` |
+| 3 | 3C | `oblivious_of_mem_DTIME` (12) — droppable per the phase-5 deferral without reopening any gate | `Robustness/Oblivious.lean` |
+| **4** | 4A | `timed_universal` (10), reusing `universal`'s infrastructure | `Universal.lean` |
+| 4 | — | Closure: zero-sorry sweep with build evidence (phase-4 finding 8), final drift attestation across all gates, fill-round audit pack, `/blueprint-extract` | — |
+
+Epoch loads: ≈ 41 / 42 / 40 / 10 points. Rationale: epoch 1 maximizes
+risk-retirement per point (the assemblies machine-check that the phase-3/4
+interfaces compose; the machine batches validate the invariant pattern at small
+scale), epoch 2 retires the two biggest technique risks (guarded composition
+with buffered output; sweep-based simulation), epoch 3 climbs the summit with
+every needed technique already precedented in-repo, epoch 4 is wind-down.
+
+**Ground rules** (binding on every batch; full text in each brief): (1)
+exclusive file ownership — helpers live `private` in owned files; lemmas
+belonging in shared files are *requested* via the PR description and added
+serially at epoch merge, flagged for audit; (2) statement freeze — audited
+declarations are never renamed, re-signatured, or re-stated by a fill PR; a
+target that looks unprovable as stated is an *escalation*, reported in the PR
+with the obstruction, never "fixed" inline; (3) verification per batch via the
+check script, zero `error:` lines, sorry warnings only at documented
+out-of-scope items; (4) at epoch merge the maintainer re-runs the full sweep,
+produces the comment-stripped drift attestation, and prepares the epoch's
+fill-round audit pack with elaboration evidence.
+
 **Blueprint reference ingestion:** ingest Chapter 1 as
 `blueprint/src/references/arora-barak-ch01-*.md` (raw/clean pair, ch. 13 shows the format)
 so `\statementsource`/`\proofsource` citations are possible once proofmatch runs are
@@ -252,4 +298,5 @@ approved.
 | Phase-4 skeleton landed (after the closed phase-3 loop, gate commit `b61e876d`): `Uncomputability/{Computable,Diagonalization,Halting}.lean` + facade — `Complexity.Computable`, `UC` (over an **arbitrary** `MachineCode`: the diagonalization never computes `encode`/`decode`, per round-2 Argument F; effectivity appears only in Theorem 1.11), `HALT` (totalized `false` off the `pairEncode` image; pair format = the evaluator's code-first layout), `UC_not_computable`, the reduction `UC_computable_of_HALT_computable` (uses only the *forward* clause of `universal`), `HALT_not_computable` (proved from the two). The audit-mandated guarded API landed in `Composition.lean` (`exists_comp_partial` — partial sequential composition with buffered intermediate output; `exists_cond` — branch on a decided predicate; `computesFunInTime_ifEq`), plus `computesFunInTime_pairEncode_diag` in `Encoding.lean` and `FinTM.Computes`/`ComputesInTime.output_unique`/`ComputesFunInTime.computes` in `Finite.lean` (additions to audited files, flagged for the phase-4 audit). 7 new sorries (21 total), every phase-4 proof sketch names only stated results. Phase-4 audit pack pending | Decided |
 | Phase-4 audit round 1 (`audits/phase4-findings.md`, audited at `49d25a27`): **zero blockers, zero majors — the first single-round gate**. All 18 new declarations blind-restated in agreement; both headline arguments (UC diagonalization over an arbitrary `MachineCode`; `HALT → UC` reduction using only the forward evaluator clause) independently re-derived end-to-end from stated interfaces — no missing machine-construction API. One minor swept (the diagonal-pairing sketch's step count corrected to the auditor's `4n + 5 ≤ 6(n+1)` schedule; statement unchanged); note-level sketch refinements (unconditional first rewind move + empty-buffer boundary tag in `exists_comp_partial`; `HALT` off-image convention warning for downstream clients). **Phase-4 audit gate closed** — Chapter 1's critical path is fully specified and audited; see `audits/phase4-resolutions.md`. Remaining critical-path work: the 21-sorry fill campaign | Decided |
 | Phase 5 (§1.7 `O(T log T)`, oblivious proofs, RAM-TM, mathlib bridge) **deferred to a much later effort** — not scheduled in the current push; revisit only after the phase-1-4 fill campaign completes | Decided |
+| Fill campaign schedule (2026-09-16, §5 "Fill campaign"): 4 epochs of parallel disjoint-ownership batches (E1 ≈ 41 pts: assemblies + small machines + encoding list layer + classic machines; E2 ≈ 42: guarded-composition core + `one_work_tape` + remaining simulations; E3 ≈ 40: canonizer + `universal` + oblivious (droppable); E4 ≈ 10: `timed_universal` + closure), audit rounds at epoch boundaries. Cloud agents work from `briefs/epoch1-batch{A,B,C,D}.md`, branch off `complexity/arora-barak-ch1`, PR back into it; verification via `scripts/lean_check_tree.sh` + `scripts/ab_ch1_module_order.txt` | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |
