@@ -69,11 +69,8 @@ three-phase invariants by induction on the step count. -/
 theorem PAL_mem_DTIME_linear : PAL ∈ DTIME fun n => n + 1 := by
   sorry
 
-/-- Palindromes are decidable in polynomial time.
-
-**Proof sketch.** `Complexity.PAL_mem_DTIME_linear` with
-`Complexity.mem_P_of_dtime_le`, using `n + 1 ≤ 1 * (n ^ 1 + 1)`. -/
-theorem PAL_mem_P : PAL ∈ P := by
-  sorry
+/-- Palindromes are decidable in polynomial time. -/
+theorem PAL_mem_P : PAL ∈ P :=
+  mem_P_of_dtime_le PAL_mem_DTIME_linear 1 1 fun n => by simp [pow_one]
 
 end Complexity

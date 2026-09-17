@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Tactic.Ring
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 
 set_option maxHeartbeats 0
@@ -85,6 +86,16 @@ theorem one_work_tape_binary (M : FinTM Bool) (f : List Bool → List Bool) (T :
     (hM : M.ComputesFunInTime f T) :
     ∃ (M' : FinTM Bool) (c : ℕ),
       M'.k = 1 ∧ M'.ComputesFunInTime f fun n => c * (T n + 1) ^ 2 := by
-  sorry
+  obtain ⟨Γ', instF, instD, e, M₁, c₁, hk₁, h₁⟩ := one_work_tape M f T hM
+  haveI := instF
+  haveI := instD
+  obtain ⟨c₂, M₂, hk₂, h₂⟩ :=
+    alphabet_reduction e M₁ f (fun n => c₁ * (T n + 1) ^ 2) h₁
+  refine ⟨M₂, c₂ * (c₁ + 1), by rw [hk₂, hk₁], fun x => (h₂ x).mono ?_⟩
+  have hpow : 0 < (T x.length + 1) ^ 2 := Nat.pow_pos (Nat.succ_pos _)
+  calc c₂ * (c₁ * (T x.length + 1) ^ 2 + 1)
+      ≤ c₂ * (c₁ * (T x.length + 1) ^ 2 + (T x.length + 1) ^ 2) :=
+        Nat.mul_le_mul (le_refl c₂) (Nat.add_le_add_left hpow _)
+    _ = c₂ * (c₁ + 1) * (T x.length + 1) ^ 2 := by ring
 
 end Turing.FinTM

@@ -64,14 +64,86 @@ per the waiver.
 
 namespace Turing.FinTM
 
-/-- The identity function is computable in linear time.
+/-- The one-state copy machine: emits each input bit moving right, and halts on the
+boundary blank. -/
+private def idTM : FinTM Bool where
+  k := 0
+  State := Unit
+  tm :=
+    { q₀ := ()
+      tr := fun _ inp _ =>
+        match inp with
+        | some b => ⟨SignType.pos, fun i => i.elim0, some b, some ()⟩
+        | none => ⟨SignType.zero, fun i => i.elim0, none, none⟩ }
 
-**Proof sketch.** A zero-work-tape machine with one state: on reading an input bit,
-emit that bit and move right; on reading the boundary blank, halt. It halts within
-`n + 1` steps having emitted its input verbatim. -/
+/-- Run invariant of the copy machine: after `t ≤ n` steps it is live, its input head
+sits at position `t + 1`, and it has emitted exactly the first `t` input bits. -/
+private lemma idTM_run (x : List Bool) : ∀ t, t ≤ x.length →
+    (idTM.tm.runFrom (idTM.tm.initCfg x) t).state = some () ∧
+    (((idTM.tm.runFrom (idTM.tm.initCfg x) t).inputPos : ℕ) = t + 1) ∧
+    (idTM.tm.runFrom (idTM.tm.initCfg x) t).output = x.take t := by
+  intro t
+  induction t with
+  | zero =>
+    intro _
+    refine ⟨rfl, ?_, rfl⟩
+    simp [MultiTapeTM.runFrom]
+  | succ t ih =>
+    intro ht
+    obtain ⟨hstate, hpos, hout⟩ := ih (Nat.le_of_succ_le ht)
+    have hrun1 : idTM.tm.runFrom (idTM.tm.initCfg x) (t + 1) =
+        (idTM.tm.tr () (some (x[t]'(by omega)))
+          ((idTM.tm.runFrom (idTM.tm.initCfg x) t).workTapeSymbols)).apply
+          (idTM.tm.runFrom (idTM.tm.initCfg x) t) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step']
+      unfold MultiTapeTM.step
+      rw [hstate]
+      dsimp only
+      rw [inputSymbolInner (p := t) (by omega) (by omega)]
+    refine ⟨?_, ?_, ?_⟩
+    · rw [hrun1]
+      simp [idTM, Action.apply]
+    · rw [hrun1]
+      simp only [idTM, Action.apply]
+      rw [moveInputPos_pos_of_ne_right _ (by omega)]
+      show ((idTM.tm.runFrom (idTM.tm.initCfg x) t).inputPos : ℕ) + 1 = t + 2
+      omega
+    · rw [hrun1]
+      simp only [idTM, Action.apply]
+      rw [hout, List.take_succ, List.getElem?_eq_getElem (by omega)]
+
+/-- The identity function is computable in linear time: the copy machine halts within
+`n + 1` steps having emitted its input verbatim (invariant `idTM_run`, then one
+halting step on the boundary blank). -/
 theorem computesFunInTime_id :
     ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime id fun n => c * (n + 1) := by
-  sorry
+  refine ⟨idTM, 1, fun x => ?_⟩
+  obtain ⟨hstate, hpos, hout⟩ := idTM_run x x.length (le_refl _)
+  have h0 : (idTM.tm.runFrom (idTM.tm.initCfg x) x.length).inputPos ≠ 0 := by
+    intro h
+    rw [h] at hpos
+    simp at hpos
+  have hsym : (idTM.tm.runFrom (idTM.tm.initCfg x) x.length).inputSymbol = none := by
+    unfold Cfg.inputSymbol
+    rw [dif_neg h0, dif_pos (by omega)]
+  have hrun1 : idTM.tm.runFrom (idTM.tm.initCfg x) (x.length + 1) =
+      (idTM.tm.tr () none
+        ((idTM.tm.runFrom (idTM.tm.initCfg x) x.length).workTapeSymbols)).apply
+        (idTM.tm.runFrom (idTM.tm.initCfg x) x.length) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    unfold MultiTapeTM.step
+    rw [hstate]
+    dsimp only
+    rw [hsym]
+  have hbase : idTM.ComputesInTime x x (x.length + 1) := by
+    refine ⟨_, ?_, ?_, rfl⟩
+    · rw [hrun1]
+      simp [idTM, Action.apply]
+    · rw [hrun1]
+      simp only [idTM, Action.apply]
+      rw [hout]
+      simp
+  exact hbase.mono (le_of_eq (one_mul _).symm)
 
 /-- Every constant function is computable in linear time (in fact in time `|w| + 1`,
 which the stated bound dominates once `c ≥ |w| + 1`).

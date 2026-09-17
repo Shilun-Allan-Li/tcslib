@@ -188,7 +188,86 @@ def ComputesInTime (M : OracleTM k Symbol State) (O : Language Symbol)
 theorem step_eq_of_ne_qQuery (O₁ O₂ : Language Symbol)
     {cfg : Cfg (k + 1) Symbol State input} (h : cfg.state ≠ some M.qQuery) :
     M.step O₁ cfg = M.step O₂ cfg := by
-  sorry
+  unfold step
+  cases hs : cfg.state with
+  | none => rfl
+  | some q =>
+    have hne : q ≠ M.qQuery := fun hq => h (by rw [hs, hq])
+    dsimp only
+    rw [if_neg hne, if_neg hne]
+
+/-- Applying any action changes a work-tape cell only at the old head position. -/
+private lemma apply_workTapes_eq_of_ne {k' : ℕ} (a : Action k' Symbol State)
+    (cfg : Cfg k' Symbol State input) (i : Fin k') {z : ℤ}
+    (hz : z ≠ cfg.workTapePos i) :
+    (a.apply cfg).workTapes i z = cfg.workTapes i z := by
+  dsimp only [Action.apply]
+  rcases h : (a.workTapes i).1 with _ | s
+  · rfl
+  · exact Function.update_of_ne hz _ _
+
+/-- A work-tape head moves by at most one cell in a single oracle step. -/
+lemma workTapePos_step_le (M : OracleTM k Symbol State) (O : Language Symbol)
+    (cfg : Cfg (k + 1) Symbol State input) (i : Fin (k + 1)) :
+    |(M.step O cfg).workTapePos i - cfg.workTapePos i| ≤ 1 := by
+  unfold step
+  split
+  · simp
+  · split
+    · simp
+    · exact workTapePos_apply_le _ cfg i
+
+/-- An oracle step writes only at the old head position. -/
+lemma workTapes_step_eq_of_ne (M : OracleTM k Symbol State) (O : Language Symbol)
+    {cfg : Cfg (k + 1) Symbol State input} (i : Fin (k + 1)) {z : ℤ}
+    (hz : z ≠ cfg.workTapePos i) :
+    (M.step O cfg).workTapes i z = cfg.workTapes i z := by
+  unfold step
+  split
+  · rfl
+  · split
+    · rfl
+    · exact apply_workTapes_eq_of_ne _ cfg i hz
+
+/-- The two run invariants of an initialized oracle run: after `t` steps every work
+head is within distance `t` of the origin, and every cell at distance at least `t` is
+still blank. -/
+private lemma runFrom_workTapes_invariant (M : OracleTM k Symbol State)
+    (O : Language Symbol) (x : List Symbol) : ∀ t : ℕ,
+    (∀ i, |(M.runFrom O (M.initCfg x) t).workTapePos i| ≤ (t : ℤ)) ∧
+    (∀ i (z : ℤ), (t : ℤ) ≤ |z| → (M.runFrom O (M.initCfg x) t).workTapes i z = none) := by
+  intro t
+  induction t with
+  | zero =>
+    constructor
+    · intro i
+      simp [runFrom]
+    · intro i z _
+      simp [runFrom]
+  | succ t ih =>
+    obtain ⟨hpos, hblank⟩ := ih
+    have hstep : M.runFrom O (M.initCfg x) (t + 1) =
+        M.step O (M.runFrom O (M.initCfg x) t) :=
+      Function.iterate_succ_apply' _ _ _
+    constructor
+    · intro i
+      rw [hstep]
+      have h1 := M.workTapePos_step_le O (M.runFrom O (M.initCfg x) t) i
+      have h2 := hpos i
+      rw [abs_le] at h1 h2 ⊢
+      omega
+    · intro i z hz
+      rw [hstep]
+      have hz' : (t : ℤ) ≤ |z| := le_trans (by omega) hz
+      have hne : z ≠ (M.runFrom O (M.initCfg x) t).workTapePos i := by
+        intro hzeq
+        have h2 := hpos i
+        rw [← hzeq] at h2
+        have h3 : ((t : ℤ) + 1) ≤ |z| := by exact_mod_cast hz
+        have h4 := le_trans h3 h2
+        omega
+      rw [M.workTapes_step_eq_of_ne O i hne]
+      exact hblank i z hz'
 
 /-- In an initialized run, the query after `t` steps has length at most `t`. In
 particular the no-blank fallback branch of `queryString` is unreachable from an initial
@@ -202,7 +281,17 @@ terminates at an index `≤ t`. -/
 theorem queryString_length_le (M : OracleTM k Symbol State) (O : Language Symbol)
     (x : List Symbol) (t : ℕ) :
     (queryString (M.runFrom O (M.initCfg x) t)).length ≤ t := by
-  sorry
+  have hblank : (M.runFrom O (M.initCfg x) t).workTapes (queryTapeIdx k) ((t : ℕ) : ℤ) =
+      none :=
+    (runFrom_workTapes_invariant M O x t).2 _ _ (le_abs_self _)
+  classical
+  simp only [queryString]
+  rw [dif_pos ⟨t, hblank⟩]
+  refine le_trans (List.length_filterMap_le _ _) ?_
+  simpa using Nat.find_min'
+    (p := fun n : ℕ =>
+      (M.runFrom O (M.initCfg x) t).workTapes (queryTapeIdx k) (n : ℤ) = none)
+    ⟨t, hblank⟩ hblank
 
 /-- In an initialized run, every work-tape cell at distance at least `t` from the
 origin is still blank after `t` steps. This is the certificate that the no-blank
@@ -217,8 +306,8 @@ step writes only at the *old* head position (of absolute value `≤ t`, hence `<
 (`Turing.workTapePos_apply_le`); oracle-answer and halted steps change no tape. -/
 theorem runFrom_workTapes_blank (M : OracleTM k Symbol State) (O : Language Symbol)
     (x : List Symbol) (t : ℕ) (i : Fin (k + 1)) (z : ℤ) (hz : (t : ℤ) ≤ |z|) :
-    (M.runFrom O (M.initCfg x) t).workTapes i z = none := by
-  sorry
+    (M.runFrom O (M.initCfg x) t).workTapes i z = none :=
+  (runFrom_workTapes_invariant M O x t).2 i z hz
 
 end OracleTM
 
@@ -251,6 +340,53 @@ def Cfg.embedOracle (cfg : Cfg k Symbol State input) :
   workTapePos := fun i => if h : (i : ℕ) < k then cfg.workTapePos ⟨i, h⟩ else 0
   output := cfg.output
 
+/-- The embedding preserves the scanned input symbol. -/
+lemma Cfg.embedOracle_inputSymbol (cfg : Cfg k Symbol State input) :
+    cfg.embedOracle.inputSymbol = cfg.inputSymbol := rfl
+
+/-- The embedding preserves the scanned work symbols on the original tapes. -/
+lemma Cfg.embedOracle_workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) :
+    cfg.embedOracle.workTapeSymbols i.castSucc = cfg.workTapeSymbols i := by
+  simp [Cfg.workTapeSymbols, Cfg.embedOracle]
+
+/-- The embedding preserves haltedness. -/
+lemma Cfg.embedOracle_state_eq_none {cfg : Cfg k Symbol State input} :
+    cfg.embedOracle.state = none ↔ cfg.state = none := by
+  simp [Cfg.embedOracle, Option.map_eq_none_iff]
+
+/-- The embedding preserves the output tape. -/
+lemma Cfg.embedOracle_output (cfg : Cfg k Symbol State input) :
+    cfg.embedOracle.output = cfg.output := rfl
+
+/-- Applying an extended, state-renamed action to an embedded configuration is the
+embedding of applying the original action. -/
+lemma Cfg.embedOracle_apply (a : Action k Symbol State) (cfg : Cfg k Symbol State input) :
+    ((a.mapState (Sum.inl : State → State ⊕ Fin 3)).extend).apply cfg.embedOracle =
+      (a.apply cfg).embedOracle := by
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · simp [Action.apply, Action.extend, Action.mapState, Cfg.embedOracle]
+  · simp [Action.apply, Action.extend, Action.mapState, Cfg.embedOracle]
+  · funext i
+    by_cases hi : (i : ℕ) < k
+    · simp only [Action.apply, Action.extend, Action.mapState, Cfg.embedOracle,
+        dif_pos hi]
+    · simp only [Action.apply, Action.extend, Action.mapState, Cfg.embedOracle,
+        dif_neg hi]
+  · funext i
+    by_cases hi : (i : ℕ) < k
+    · simp only [Action.apply, Action.extend, Action.mapState, Cfg.embedOracle,
+        dif_pos hi]
+    · simp only [Action.apply, Action.extend, Action.mapState, Cfg.embedOracle,
+        dif_neg hi]
+      simp
+  · simp [Action.apply, Action.extend, Action.mapState, Cfg.embedOracle]
+
+/-- The embedding sends initial configurations to initial configurations. -/
+lemma Cfg.embedOracle_init (q₀ : State) (input : List Symbol) :
+    (Cfg.init q₀ input : Cfg k Symbol State input).embedOracle =
+      Cfg.init (Sum.inl q₀ : State ⊕ Fin 3) input := by
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_ <;> simp [Cfg.embedOracle]
+
 namespace OracleTM
 
 /-- Embed a plain machine as an oracle machine that never queries: the state type is
@@ -276,20 +412,49 @@ theorem ofMultiTapeTM_wellFormed (tm : MultiTapeTM k Symbol State) :
     (ofMultiTapeTM tm).WellFormed := by
   constructor <;> simp [ofMultiTapeTM]
 
-/-- **Sanity check for the oracle architecture** (plan §3.1): an embedded plain machine
-runs in lockstep with the original under every oracle.
+/-- One step of an embedded plain machine, under any oracle, is the embedding of one
+step of the original machine: the embedded state is never `qQuery = Sum.inr 0`, so the
+oracle step reduces to applying the extended action, and `Cfg.embedOracle_apply` turns
+that into the embedding of the original step. -/
+lemma step_ofMultiTapeTM (tm : MultiTapeTM k Symbol State) (O : Language Symbol)
+    (cfg : Cfg k Symbol State input) :
+    (ofMultiTapeTM tm).step O cfg.embedOracle = (tm.step cfg).embedOracle := by
+  unfold OracleTM.step MultiTapeTM.step
+  cases hs : cfg.state with
+  | none =>
+    have h : cfg.embedOracle.state = none := by simp [Cfg.embedOracle, hs]
+    rw [h]
+  | some q =>
+    have h : cfg.embedOracle.state = some (Sum.inl q) := by simp [Cfg.embedOracle, hs]
+    rw [h]
+    dsimp only
+    have hne : (Sum.inl q : State ⊕ Fin 3) ≠ (ofMultiTapeTM tm).qQuery := by
+      simp [ofMultiTapeTM]
+    rw [if_neg hne]
+    have hw : (fun i => cfg.embedOracle.workTapeSymbols i.castSucc) =
+        cfg.workTapeSymbols :=
+      funext fun i => Cfg.embedOracle_workTapeSymbols cfg i
+    have htr : (ofMultiTapeTM tm).tr (Sum.inl q) cfg.embedOracle.inputSymbol
+        cfg.embedOracle.workTapeSymbols =
+        ((tm.tr q cfg.inputSymbol cfg.workTapeSymbols).mapState Sum.inl).extend := by
+      show ((tm.tr q cfg.embedOracle.inputSymbol
+        fun i => cfg.embedOracle.workTapeSymbols i.castSucc).mapState Sum.inl).extend = _
+      rw [Cfg.embedOracle_inputSymbol, hw]
+    rw [htr, Cfg.embedOracle_apply]
 
-**Proof sketch.** By induction on `t` it suffices to show that `Cfg.embedOracle`
-intertwines the two step functions. In a configuration `Cfg.embedOracle cfg` the state is
-of the form `Sum.inl q` (or `none`), which is never `qQuery = Sum.inr 0`, so the oracle
-step reduces to applying the extended action; and applying an extended, state-renamed
-action to an embedded configuration is the embedding of applying the original action —
-the extra tape is untouched (`Action.extend` neither writes nor moves it), and reads
-agree because the embedded work tapes restrict to the original ones. -/
+/-- **Sanity check for the oracle architecture** (plan §3.1): an embedded plain machine
+runs in lockstep with the original under every oracle — `step_ofMultiTapeTM` pointwise,
+then induction on `t`. -/
 theorem runFrom_ofMultiTapeTM (tm : MultiTapeTM k Symbol State) (O : Language Symbol)
     (cfg : Cfg k Symbol State input) (t : ℕ) :
     (ofMultiTapeTM tm).runFrom O cfg.embedOracle t = (tm.runFrom cfg t).embedOracle := by
-  sorry
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    have h1 : (ofMultiTapeTM tm).runFrom O cfg.embedOracle (t + 1) =
+        (ofMultiTapeTM tm).step O ((ofMultiTapeTM tm).runFrom O cfg.embedOracle t) :=
+      Function.iterate_succ_apply' _ _ _
+    rw [h1, ih, MultiTapeTM.runFrom_succ_eq_step', step_ofMultiTapeTM]
 
 /-- An embedded plain machine has the same input/output behavior and time bounds as the
 original, relative to every oracle. In particular its behavior is oracle-independent.
@@ -303,7 +468,11 @@ theorem computesInTime_ofMultiTapeTM (tm : MultiTapeTM k Symbol State) (O : Lang
     (ofMultiTapeTM tm).ComputesInTime O input output t ↔
       ((tm.runFrom (tm.initCfg input) t).state = none ∧
         (tm.runFrom (tm.initCfg input) t).output = output) := by
-  sorry
+  have hinit : (ofMultiTapeTM tm).initCfg input = (tm.initCfg input).embedOracle := by
+    simp only [OracleTM.initCfg, MultiTapeTM.initCfg, ofMultiTapeTM]
+    exact (Cfg.embedOracle_init tm.q₀ input).symm
+  simp only [OracleTM.ComputesInTime, hinit, runFrom_ofMultiTapeTM,
+    Cfg.embedOracle_state_eq_none, Cfg.embedOracle_output]
 
 open Classical in
 /-- The converse of `ofMultiTapeTM` for the empty oracle: an oracle machine run with the
@@ -317,22 +486,38 @@ noncomputable def plainEmptyOracle (M : OracleTM k Symbol State) :
     if q = M.qQuery then ⟨0, fun _ => (none, 0), none, some M.qNo⟩
     else M.tr q inp work
 
+/-- One step of the empty-oracle elimination coincides with one step of the oracle
+machine on the empty oracle: on a halted configuration both sides are fixed; in state
+`qQuery` the empty oracle answers `qNo` and the stationary action's `Action.apply`
+changes only the state; elsewhere both sides apply the same transition-table action. -/
+lemma step_plainEmptyOracle (M : OracleTM k Symbol State)
+    (cfg : Cfg (k + 1) Symbol State input) :
+    M.plainEmptyOracle.step cfg = M.step (0 : Language Symbol) cfg := by
+  unfold MultiTapeTM.step OracleTM.step plainEmptyOracle
+  cases hs : cfg.state with
+  | none => rfl
+  | some q =>
+    dsimp only
+    by_cases hq : q = M.qQuery
+    · rw [if_pos hq, if_pos hq, if_neg (Language.notMem_zero _)]
+      refine Cfg.ext ?_ ?_ ?_ ?_ ?_ <;> simp [Action.apply]
+    · rw [if_neg hq, if_neg hq]
+
 /-- **Sanity check, converse direction**: the empty-oracle elimination runs in exact
 lockstep with the oracle machine on the empty oracle — same configurations at every
-step, from every starting configuration.
-
-**Proof sketch.** Pointwise on `step`, then induction on `t`. On a halted configuration
-both sides are fixed. In state `qQuery` the oracle step answers `qNo` (nothing is in the
-empty oracle) and changes only the state; the plain machine applies the stationary
-action `⟨0, no writes/moves, no output, some qNo⟩`, whose `Action.apply` moves the input
-head by `0` (`Turing.moveInputPos_zero`), leaves every work tape and head unchanged, and
-appends nothing — the same configuration. In any other state both sides apply the same
-transition-table action. -/
+step, from every starting configuration (`step_plainEmptyOracle` pointwise, then
+induction on `t`). -/
 theorem runFrom_plainEmptyOracle (M : OracleTM k Symbol State)
     (cfg : Cfg (k + 1) Symbol State input) (t : ℕ) :
     -- `0` is the empty language (`Language`'s `Zero` instance)
     M.plainEmptyOracle.runFrom cfg t = M.runFrom (0 : Language Symbol) cfg t := by
-  sorry
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    have h1 : M.runFrom (0 : Language Symbol) cfg (t + 1) =
+        M.step 0 (M.runFrom (0 : Language Symbol) cfg t) :=
+      Function.iterate_succ_apply' _ _ _
+    rw [MultiTapeTM.runFrom_succ_eq_step', h1, ih, step_plainEmptyOracle]
 
 end OracleTM
 

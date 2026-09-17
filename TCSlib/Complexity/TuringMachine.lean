@@ -12,6 +12,8 @@ import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Universal
 
 /-!
 # Complexity — Turing machines
@@ -44,4 +46,9 @@ for the local modifications.
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
 * `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
   [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
+* `Encoding` — machines as strings [AB09, §1.4]: the code normal form `CodeTM`, the
+  representation-scheme specification `MachineCode`, and the input pairing.
+* `Universal` — the universal machine [AB09, Theorem 1.9]: linear overhead for coded
+  machines, the relaxed quadratic form for arbitrary binary machines, and the
+  time-bounded variant.
 -/

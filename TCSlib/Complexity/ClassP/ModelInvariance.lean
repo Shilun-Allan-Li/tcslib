@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Tactic.Ring
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.ClassP.P
@@ -70,7 +71,10 @@ theorem mem_DTIME_of_decidesInTimeVia {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (e : Bool ↪ Γ) {M : FinTM Γ} {L : Language Bool} {T : ℕ → ℕ}
     (h : M.DecidesInTimeVia e L T) :
     L ∈ DTIME fun n => T n + 1 := by
-  sorry
+  obtain ⟨c, M', -, hM'⟩ := FinTM.alphabet_reduction e M
+    (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) T
+    (fun x => by simpa using h x)
+  exact ⟨c, M', fun x => hM' x⟩
 
 /-- **`P` is alphabet-invariant**: a language decided in polynomial time by a machine
 over any finite alphabet is in `P`.
@@ -83,7 +87,15 @@ theorem mem_P_of_decidesInTimeVia_poly {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (e : Bool ↪ Γ) {M : FinTM Γ} {L : Language Bool} (C d : ℕ)
     (h : M.DecidesInTimeVia e L fun n => C * (n + 1) ^ d) :
     L ∈ P := by
-  sorry
+  have h1 := mem_DTIME_of_decidesInTimeVia e h
+  refine mem_P_of_dtime_le h1 ((C + 1) * 2 ^ d) d fun n => ?_
+  have h2 : 0 < (n + 1) ^ d := Nat.pow_pos (Nat.succ_pos _)
+  calc C * (n + 1) ^ d + 1
+      ≤ C * (n + 1) ^ d + (n + 1) ^ d := Nat.add_le_add_left h2 _
+    _ = (C + 1) * (n + 1) ^ d := by ring
+    _ ≤ (C + 1) * (2 ^ d * (n ^ d + 1)) :=
+        Nat.mul_le_mul (le_refl _) (succ_pow_le n d)
+    _ = (C + 1) * 2 ^ d * (n ^ d + 1) := by ring
 
 /-- **`P` is tape-count-invariant**: `P` is exactly the class of languages decided by
 binary machines with a *single* work tape in polynomial time. [AB09, Claim 1.6 at the
@@ -98,6 +110,24 @@ binary machine within `c · (C · (n + 1) ^ d + 1)² ≤ C' · (n + 1) ^ (2d)`, 
 theorem mem_P_iff_one_work_tape {L : Language Bool} :
     L ∈ P ↔ ∃ (M : FinTM Bool) (C d : ℕ),
       M.k = 1 ∧ M.DecidesInTime L fun n => C * (n + 1) ^ d := by
-  sorry
+  constructor
+  · intro hL
+    obtain ⟨C, d, M, hM⟩ := mem_P_iff.mp hL
+    obtain ⟨M', c, hk, hM'⟩ := FinTM.one_work_tape_binary M
+      (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x])
+      (fun n => C * (n + 1) ^ d) hM
+    refine ⟨M', c * (C + 1) ^ 2, d * 2, hk, fun x => (hM' x).mono ?_⟩
+    have h2 : 0 < (x.length + 1) ^ d := Nat.pow_pos (Nat.succ_pos _)
+    calc c * (C * (x.length + 1) ^ d + 1) ^ 2
+        ≤ c * ((C + 1) * (x.length + 1) ^ d) ^ 2 := by
+          refine Nat.mul_le_mul (le_refl c) (Nat.pow_le_pow_left ?_ 2)
+          calc C * (x.length + 1) ^ d + 1
+              ≤ C * (x.length + 1) ^ d + (x.length + 1) ^ d :=
+                Nat.add_le_add_left h2 _
+            _ = (C + 1) * (x.length + 1) ^ d := by ring
+      _ = c * (C + 1) ^ 2 * ((x.length + 1) ^ d) ^ 2 := by ring
+      _ = c * (C + 1) ^ 2 * (x.length + 1) ^ (d * 2) := by rw [pow_mul]
+  · rintro ⟨M, C, d, -, hM⟩
+    exact mem_P_iff.mpr ⟨C, d, M, hM⟩
 
 end Complexity

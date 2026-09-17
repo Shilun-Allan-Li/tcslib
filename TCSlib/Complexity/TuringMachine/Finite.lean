@@ -80,7 +80,14 @@ appends at most one symbol.
 output is `[]`. -/
 theorem output_length_le (tm : MultiTapeTM k Symbol State) (input : List Symbol) (t : ℕ) :
     ((tm.runFrom (tm.initCfg input) t).output).length ≤ t := by
-  sorry
+  induction t with
+  | zero => simp
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_output]
+    have hone : (tm.outputSymbol (tm.runFrom (tm.initCfg input) t)).toList.length ≤ 1 := by
+      cases tm.outputSymbol (tm.runFrom (tm.initCfg input) t) <;> simp
+    simp only [List.length_append]
+    omega
 
 /-- Output is monotone along a run: the output at an earlier time is a prefix of the
 output at any later time.
@@ -91,7 +98,15 @@ step appends), then induct on the difference using
 theorem output_prefix (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
     {t t' : ℕ} (h : t ≤ t') :
     (tm.runFrom cfg t).output <+: (tm.runFrom cfg t').output := by
-  sorry
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+  clear h
+  rw [MultiTapeTM.runFrom_add]
+  generalize tm.runFrom cfg t = c
+  induction d with
+  | zero => simp
+  | succ d ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_output]
+    exact ih.trans (List.prefix_append _ _)
 
 end MultiTapeTM
 
@@ -152,7 +167,12 @@ which discharges the existential. -/
 theorem ComputesInTime.mono {M : FinTM Symbol} {input output : List Symbol} {t t' : ℕ}
     (h : M.ComputesInTime input output t) (hle : t ≤ t') :
     M.ComputesInTime input output t' := by
-  sorry
+  simp only [ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace] at h ⊢
+  obtain ⟨s, hhalt, hout, -⟩ := h
+  have hrun : M.tm.runFrom (M.tm.initCfg input) t' = M.tm.runFrom (M.tm.initCfg input) t := by
+    conv_lhs => rw [← Nat.add_sub_cancel' hle]
+    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hhalt]
+  exact ⟨_, by rw [hrun]; exact hhalt, by rw [hrun]; exact hout, rfl⟩
 
 /-- No machine computes anything in zero steps: the initial configuration is in the
 initial state, which is not the halting state. In particular a time budget of `0`

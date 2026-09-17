@@ -94,7 +94,8 @@ def DTIME (T : ℕ → ℕ) : Set (Language Bool) :=
 same output) within `c · T₂ n ≥ c · T₁ n` steps, by `Turing.FinTM.ComputesInTime.mono`
 (halting is absorbing). -/
 theorem DTIME.mono {T₁ T₂ : ℕ → ℕ} (h : ∀ n, T₁ n ≤ T₂ n) : DTIME T₁ ⊆ DTIME T₂ := by
-  sorry
+  rintro L ⟨c, M, hM⟩
+  exact ⟨c, M, fun x => (hM x).mono (Nat.mul_le_mul (le_refl c) (h x.length))⟩
 
 /-- If the time bound vanishes at even one input length, the class is empty: the
 initial state is not the halting state, so no machine halts in `c · 0 = 0` steps on an
@@ -104,6 +105,13 @@ input of that length (e.g. `List.replicate n false`).
 the input `List.replicate n false`; the budget is `c * T n = 0`, contradicting
 `Turing.FinTM.not_computesInTime_zero`. -/
 theorem DTIME_eq_empty_of_exists_zero {T : ℕ → ℕ} (h : ∃ n, T n = 0) : DTIME T = ∅ := by
-  sorry
+  obtain ⟨n, hn⟩ := h
+  ext L
+  simp only [Set.mem_empty_iff_false, iff_false]
+  rintro ⟨c, M, hM⟩
+  have hx := hM (List.replicate n false)
+  simp only [List.length_replicate] at hx
+  rw [hn, Nat.mul_zero] at hx
+  exact M.not_computesInTime_zero _ _ hx
 
 end Complexity
