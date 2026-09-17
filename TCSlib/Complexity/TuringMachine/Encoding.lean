@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.Nat.Bits
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
@@ -106,6 +107,22 @@ can hold). -/
 def pairEncode (x α : List Bool) : List Bool :=
   (x.flatMap fun b => [b, b]) ++ [false, true] ++ α
 
+/-- Parse aligned doubled bits until the separator, leaving its suffix untouched. -/
+private def pairDecode : List Bool → Option (List Bool × List Bool)
+  | false :: false :: rest => (pairDecode rest).map fun p => (false :: p.1, p.2)
+  | true :: true :: rest => (pairDecode rest).map fun p => (true :: p.1, p.2)
+  | false :: true :: rest => some ([], rest)
+  | _ => none
+
+/-- The aligned parser recovers both components, by induction on the first word. -/
+private lemma pairDecode_pairEncode (x α : List Bool) :
+    pairDecode (pairEncode x α) = some (x, α) := by
+  induction x with
+  | nil => rfl
+  | cons b x ih =>
+    have h := congrArg (Option.map fun p : List Bool × List Bool => (b :: p.1, p.2)) ih
+    cases b <;> simpa [pairEncode, pairDecode] using h
+
 /-- The pairing is injective.
 
 **Proof sketch** (phase-3 audit, Argument D). The aligned two-bit parser recovers the
@@ -116,7 +133,187 @@ of the pairing, and a function with a left inverse is injective. Empty component
 unproblematic (`pairEncode [] α = [false, true] ++ α`). -/
 theorem pairEncode_injective :
     Function.Injective fun p : List Bool × List Bool => pairEncode p.1 p.2 := by
-  sorry
+  intro p q h
+  have := congrArg pairDecode h
+  simpa only [pairDecode_pairEncode, Prod.mk.eta, Option.some.injEq] using this
+
+/-- Six-state pairing controller: double-stay, double-move, emit-true,
+first-left, rewind, and copy. The double-stay state's blank branch emits `false`. -/
+private def pairDiagTM : FinTM Bool where
+  k := 0
+  State := Fin 6
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ =>
+        match q with
+        | 0 => match inp with
+          | some b => ⟨.zero, fun i => i.elim0, some b, some 1⟩
+          | none => ⟨.zero, fun i => i.elim0, some false, some 2⟩
+        | 1 => ⟨.pos, fun i => i.elim0, inp, some 0⟩
+        | 2 => ⟨.zero, fun i => i.elim0, some true, some 3⟩
+        | 3 => ⟨.neg, fun i => i.elim0, none, some 4⟩
+        | 4 => match inp with
+          | some _ => ⟨.neg, fun i => i.elim0, none, some 4⟩
+          | none => ⟨.pos, fun i => i.elim0, none, some 5⟩
+        | _ => match inp with
+          | some b => ⟨.pos, fun i => i.elim0, some b, some 5⟩
+          | none => ⟨.zero, fun i => i.elim0, none, none⟩ }
+
+/-- A pairing-machine configuration, with its vacuous work-tape fields suppressed. -/
+private def pairDiagCfg (x : List Bool) (q : Option (Fin 6))
+    (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin 6) x :=
+  ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
+
+/-- One live transition of the pairing controller, given its scanned input symbol. -/
+private lemma pairDiag_step (x : List Bool) (q : Fin 6)
+    (p : Fin (x.length + 2)) (out : List Bool) (b : Option Bool)
+    (hb : (pairDiagCfg x (some q) p out).inputSymbol = b) :
+    pairDiagTM.tm.step (pairDiagCfg x (some q) p out) =
+      let a := pairDiagTM.tm.tr q b (fun i => i.elim0)
+      pairDiagCfg x a.state (moveInputPos p a.inputTape) (out ++ a.output.toList) := by
+  change (pairDiagTM.tm.tr q (pairDiagCfg x (some q) p out).inputSymbol
+    (pairDiagCfg x (some q) p out).workTapeSymbols).apply _ = _
+  rw [hb]
+  exact Cfg.ext_zero_tapes rfl rfl rfl
+
+/-- At position `j + 1`, the pairing machine reads the `j`-th input bit. -/
+private lemma pairDiag_inner (x : List Bool) (q : Option (Fin 6)) (out : List Bool)
+    (j : ℕ) (hj : j < x.length) :
+    (pairDiagCfg x q ⟨j + 1, by omega⟩ out).inputSymbol = some x[j] :=
+  inputSymbolInner j (by simp only [pairDiagCfg]; omega) hj
+
+/-- At the right boundary the pairing machine reads blank, also on empty input. -/
+private lemma pairDiag_right (x : List Bool) (q : Option (Fin 6)) (out : List Bool) :
+    (pairDiagCfg x q ⟨x.length + 1, by omega⟩ out).inputSymbol = none := by
+  simp [pairDiagCfg, Cfg.inputSymbol, Fin.ext_iff]
+
+/-- After `2t` transitions, the first pass has doubled exactly the first `t` bits.
+
+**Proof sketch.** Induct on `t`. Each bit is first emitted without moving and then
+emitted again while moving right. The two emissions extend the doubled prefix. -/
+private lemma pairDiag_double (x : List Bool) : ∀ t, (ht : t ≤ x.length) →
+    pairDiagTM.tm.runFrom (pairDiagTM.tm.initCfg x) (2 * t) =
+      pairDiagCfg x (some 0) ⟨t + 1, by omega⟩ ((x.take t).flatMap fun b => [b, b]) := by
+  intro t
+  induction t with
+  | zero =>
+    intro _
+    apply Cfg.ext_zero_tapes <;> simp [pairDiagTM, pairDiagCfg, MultiTapeTM.runFrom]
+  | succ t ih =>
+    intro ht
+    rw [show 2 * (t + 1) = 2 * t + 1 + 1 by omega,
+      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    rw [pairDiag_step _ _ _ _ _ (pairDiag_inner x (some 0) _ t (by omega))]
+    simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
+    rw [pairDiag_step _ _ _ _ _ (pairDiag_inner x (some 1) _ t (by omega))]
+    simp only [pairDiagTM, Option.toList_some]
+    rw [moveInputPos_pos_of_ne_right _ (by change t + 1 ≠ x.length + 1; omega)]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · rfl
+    · change (((x.take t).flatMap fun b => [b, b]) ++ [x[t]]) ++ [x[t]] =
+        (x.take (t + 1)).flatMap fun b => [b, b]
+      rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
+      simp only [Option.toList_some, List.flatMap_append, List.flatMap_cons,
+        List.flatMap_nil, List.append_nil, List.append_assoc, List.cons_append, List.nil_append]
+
+/-- Rewinding from position `j ≤ n` takes `j + 1` steps and preserves the output.
+
+**Proof sketch.** At position zero, move right and enter the copy state. At a
+positive position at most `n`, the read is a symbol, so move left and apply the
+induction hypothesis. The preceding unconditional left step reaches this range. -/
+private lemma pairDiag_rewind (x out : List Bool) : ∀ j, (hj : j ≤ x.length) →
+    pairDiagTM.tm.runFrom (pairDiagCfg x (some 4) ⟨j, by omega⟩ out) (j + 1) =
+      pairDiagCfg x (some 5) 1 out := by
+  intro j
+  induction j with
+  | zero =>
+    intro _
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      pairDiag_step _ _ _ _ none (by simp [pairDiagCfg, Cfg.inputSymbol])]
+    simp only [pairDiagTM, Option.toList_none, List.append_nil]
+    rw [moveInputPos_pos_of_ne_right _ (by simp)]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · apply Fin.ext; simp [pairDiagCfg]
+    · rfl
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step,
+      pairDiag_step _ _ _ _ _ (pairDiag_inner x (some 4) out j (by omega))]
+    simp only [pairDiagTM, Option.toList_none, List.append_nil]
+    rw [moveInputPos_neg_of_ne_left _ (by simp [Fin.ext_iff])]
+    simpa using ih (by omega)
+
+/-- The second pass appends the first `t` input bits in `t` transitions.
+
+**Proof sketch.** Induct on `t`, reading at position `t + 1`, appending that bit,
+and moving right. The previously emitted doubled word and separator are preserved. -/
+private lemma pairDiag_copy (x out : List Bool) : ∀ t, (ht : t ≤ x.length) →
+    pairDiagTM.tm.runFrom (pairDiagCfg x (some 5) 1 out) t =
+      pairDiagCfg x (some 5) ⟨t + 1, by omega⟩ (out ++ x.take t) := by
+  intro t
+  induction t with
+  | zero =>
+    intro _
+    apply Cfg.ext_zero_tapes <;> simp [pairDiagCfg]
+  | succ t ih =>
+    intro ht
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+      pairDiag_step _ _ _ _ _ (pairDiag_inner x (some 5) _ t (by omega))]
+    simp only [pairDiagTM, Option.toList_some]
+    rw [moveInputPos_pos_of_ne_right _ (by change t + 1 ≠ x.length + 1; omega)]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · rfl
+    · change (out ++ x.take t) ++ [x[t]] = out ++ x.take (t + 1)
+      rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
+      simp only [Option.toList_some, List.append_assoc]
+
+/-- Two stationary separator emissions followed by the unconditional first left move.
+
+**Proof sketch.** At the right blank, states 0 and 2 emit `false` and `true`.
+State 3 then moves from position `n + 1` to `n`, without emitting a bit. -/
+private lemma pairDiag_separator (x out : List Bool) :
+    pairDiagTM.tm.runFrom
+      (pairDiagCfg x (some 0) ⟨x.length + 1, by omega⟩ out) 3 =
+      pairDiagCfg x (some 4) ⟨x.length, by omega⟩ (out ++ [false, true]) := by
+  rw [show 3 = (0 + 1) + 1 + 1 from rfl,
+    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 0) out)]
+  simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
+  rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 2) _)]
+  simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
+  rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 3) _)]
+  simp only [pairDiagTM, Option.toList_none, List.append_nil]
+  rw [moveInputPos_neg_of_ne_left _ (by simp [Fin.ext_iff])]
+  apply Cfg.ext_zero_tapes <;> simp [pairDiagCfg, List.append_assoc]
+
+/-- The complete pairing run is halted with the required output by step `4n + 5`.
+
+**Proof sketch.** Chain the doubled pass (`2n`), the two separator steps and first
+left move (`3`), the rewind from position `n` (`n + 1`), the copy (`n`), and the
+halting transition (`1`). Each equality records the whole configuration. -/
+private lemma pairDiag_run (x : List Bool) :
+    pairDiagTM.tm.runFrom (pairDiagTM.tm.initCfg x) (4 * x.length + 5) =
+      pairDiagCfg x none ⟨x.length + 1, by omega⟩ (pairEncode x x) := by
+  have hd := pairDiag_double x x.length (le_refl _)
+  simp only [List.take_length] at hd
+  have hr : pairDiagTM.tm.runFrom (pairDiagTM.tm.initCfg x) (3 * x.length + 4) =
+      pairDiagCfg x (some 5) 1 ((x.flatMap fun b => [b, b]) ++ [false, true]) := by
+    rw [show 3 * x.length + 4 = 2 * x.length + (3 + (x.length + 1)) by omega,
+      MultiTapeTM.runFrom_add, hd, MultiTapeTM.runFrom_add, pairDiag_separator,
+      pairDiag_rewind x _ x.length (le_refl _)]
+  have hc : pairDiagTM.tm.runFrom (pairDiagTM.tm.initCfg x) (4 * x.length + 4) =
+      pairDiagCfg x (some 5) ⟨x.length + 1, by omega⟩ (pairEncode x x) := by
+    rw [show 4 * x.length + 4 = (3 * x.length + 4) + x.length by omega,
+      MultiTapeTM.runFrom_add, hr, pairDiag_copy x _ x.length (le_refl _)]
+    simp only [List.take_length, pairEncode]
+  rw [show 4 * x.length + 5 = (4 * x.length + 4) + 1 by omega,
+    MultiTapeTM.runFrom_succ_eq_step', hc,
+    pairDiag_step _ _ _ _ _ (pairDiag_right x (some 5) _)]
+  simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_none, List.append_nil]
 
 /-- The diagonal pairing `α ↦ pairEncode α α` — the self-application input of the
 `HALT` reduction [AB09, proof of Theorem 1.11] — is computable in linear time. This
@@ -137,7 +334,12 @@ pass), absorbed as `c * (n + 1)`. -/
 theorem computesFunInTime_pairEncode_diag :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun α => pairEncode α α) fun n => c * (n + 1) := by
-  sorry
+  refine ⟨pairDiagTM, 6, fun x => ?_⟩
+  have h : pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) := by
+    refine ⟨_, ?_, ?_, rfl⟩
+    · rw [pairDiag_run]; rfl
+    · rw [pairDiag_run]; rfl
+  exact h.mono (by change 4 * x.length + 5 ≤ 6 * (x.length + 1); omega)
 
 section Serialize
 
@@ -252,6 +454,51 @@ the composition combinators of `TCSlib.Complexity.TuringMachine.Composition`. -/
 theorem exists_effectiveMachineCode : Nonempty EffectiveMachineCode := by
   sorry
 
+/-- Rename the successor state of an action, leaving every tape action unchanged. -/
+private def codeMapAction {k : ℕ} {Γ Q Q' : Type*} (e : Q → Q')
+    (a : Action k Γ Q) : Action k Γ Q' :=
+  { a with state := a.state.map e }
+
+/-- Rename a configuration's optional state, preserving its tapes, heads, and output. -/
+private def codeMapCfg {k : ℕ} {Γ Q Q' : Type*} {x : List Γ} (e : Q → Q')
+    (cfg : Cfg k Γ Q x) : Cfg k Γ Q' x :=
+  { cfg with state := cfg.state.map e }
+
+/-- State renaming commutes with applying an action. -/
+private lemma codeMapCfg_apply {k : ℕ} {Γ Q Q' : Type*} {x : List Γ} (e : Q → Q')
+    (a : Action k Γ Q) (cfg : Cfg k Γ Q x) :
+    (codeMapAction e a).apply (codeMapCfg e cfg) = codeMapCfg e (a.apply cfg) := rfl
+
+/-- Transport a machine's initial state and transition table through a state bijection. -/
+private def codeRelabelTM {k : ℕ} {Γ Q Q' : Type*} (e : Q ≃ Q')
+    (tm : MultiTapeTM k Γ Q) : MultiTapeTM k Γ Q' where
+  q₀ := e tm.q₀
+  tr := fun q inp ws => codeMapAction e (tm.tr (e.symm q) inp ws)
+
+/-- Relabeling commutes with each transition, including absorbing halting. -/
+private lemma codeRelabel_step {k : ℕ} {Γ Q Q' : Type*} {x : List Γ} (e : Q ≃ Q')
+    (tm : MultiTapeTM k Γ Q) (cfg : Cfg k Γ Q x) :
+    (codeRelabelTM e tm).step (codeMapCfg e cfg) = codeMapCfg e (tm.step cfg) := by
+  have hin : (codeMapCfg e cfg).inputSymbol = cfg.inputSymbol := rfl
+  have hwork : (codeMapCfg e cfg).workTapeSymbols = cfg.workTapeSymbols := rfl
+  unfold MultiTapeTM.step
+  cases hs : cfg.state with
+  | none => simp [codeMapCfg, hs]
+  | some q =>
+    rw [show (codeMapCfg e cfg).state = some (e q) by
+      simp only [codeMapCfg, hs, Option.map_some]]
+    dsimp only
+    rw [hin, hwork]
+    simp only [codeRelabelTM, Equiv.symm_apply_apply]
+    exact codeMapCfg_apply e _ cfg
+
+/-- The initialized runs correspond at every step by iterating step commutation. -/
+private lemma codeRelabel_run {k : ℕ} {Γ Q Q' : Type*} (e : Q ≃ Q')
+    (tm : MultiTapeTM k Γ Q) (x : List Γ) (t : ℕ) :
+    (codeRelabelTM e tm).runFrom ((codeRelabelTM e tm).initCfg x) t =
+      codeMapCfg e (tm.runFrom (tm.initCfg x) t) :=
+  MultiTapeTM.runFrom_comm_of_step (codeMapCfg e) (codeRelabel_step e tm) (tm.initCfg x) t
+
 /-- Every one-work-tape binary machine is equivalent, input by input and step for
 step, to a coded machine.
 
@@ -261,10 +508,32 @@ some `numStates`. Transport the transition function along `e` (renaming states w
 `Turing.Action.mapState` and reading them back through `e.symm`); the induced map on
 configurations is a bijection commuting with `step` (the tapes and heads are
 untouched), so runs, halting, and outputs correspond at every step. The tape-count
-cast uses `hk : M.k = 1`. -/
+cast uses `hk : M.k = 1`.
+
+The implementation uses the private helper `codeMapAction` for state renaming,
+eliminates `hk` after destructuring the bundle, and iterates step commutation via
+`MultiTapeTM.runFrom_comm_of_step`. -/
 theorem exists_codeTM (M : FinTM Bool) (hk : M.k = 1) :
     ∃ M' : CodeTM, ∀ (x output : List Bool) (t : ℕ),
       M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
-  sorry
+  classical
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  letI : Fintype Q := hQ
+  letI : DecidableEq Q := dQ
+  have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
+    have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
+    omega
+  let e := Fintype.equivFinOfCardEq hcard
+  refine ⟨⟨Fintype.card Q - 1, codeRelabelTM e tm⟩, ?_⟩
+  intro x output t
+  simp only [CodeTM.toFinTM, FinTM.ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace,
+    codeRelabel_run, codeMapCfg, Option.map_eq_none_iff]
+  constructor
+  · rintro ⟨s, hhalt, hout, -⟩
+    exact ⟨_, hhalt, hout, rfl⟩
+  · rintro ⟨s, hhalt, hout, -⟩
+    exact ⟨_, hhalt, hout, rfl⟩
 
 end Turing
