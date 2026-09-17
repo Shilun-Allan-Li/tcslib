@@ -29,10 +29,17 @@ M_α(x)` — with the simulation overhead depending only on the code, not on the
   verbatim `x` region on demand.
 * `universal` is the **all-string evaluator** [AB09's `U(x, α) = M_α(x)`, p. 20]:
   it covers every `α` through `c.decode` (padded and fallback representations
-  included), the constant `C` may depend on `α` (it absorbs decoding/canonization),
-  and it carries **both directions** — the forward time bound, and the converse that
-  any output `U` produces is an output of the simulated machine, so divergence is
-  preserved (audit finding 3).
+  included), and it carries **both directions** — the forward time bound, and the
+  converse that any *completed* output of `U` (output on halting; intermediate
+  emissions of a non-halting run are unconstrained) is a completed output of the
+  simulated machine, so divergence is preserved (round-1 finding 3; round-2
+  Argument C).
+* The constant `C` depends on the **representation** `α`, a documented weakening of
+  [AB09]'s machine-dependent constant that is *necessary* at this generality: an
+  effective scheme can reserve arbitrarily long identical-prefix representations of
+  two fixed machines, defeating any constant that factors through `c.decode α`
+  (round-2 audit, finding 6 and Argument E). Recovering the book's dependence would
+  require further representation assumptions.
 * **The core bound is linear**, `C · (t + 1)`: coded machines are already in
   one-work-tape binary normal form, so `U` pays a constant per simulated step.
   [AB09]'s relaxed quadratic bound reappears in `universal_quadratic`, where an
@@ -67,8 +74,9 @@ effective scheme there is a single machine `U` such that for every string `α` t
 is a constant `C` (depending on `α`, absorbing its decoding) with, for every input
 `x`: whenever the machine `α` denotes halts on `x` within `t` steps with `output`,
 `U` on `pairEncode α x` halts with the same output within `C · (t + 1)` steps —
-and conversely every output `U` produces on `pairEncode α x` is an output the
-denoted machine produces on `x`, so divergence is preserved.
+and conversely every *completed* output of `U` on `pairEncode α x` (its output on
+halting) is a completed output of the denoted machine on `x`, so divergence is
+preserved.
 
 **Proof sketch** (after [AB09, Figure 1.6], adapted to the code-first layout).
 Startup: `U` runs the scheme's `canonizer` on the doubled-bit `α`-region (via the
@@ -76,12 +84,19 @@ composition combinators), leaving the fixed serialization of `M := c.decode α` 
 state count, initial state, and table — on a *table* work tape, and writes the
 initial state on a *state* tape; cost `O(canonizerTime |α| + |α| + 1)`, a constant
 for fixed `α`, absorbed into `C`. `U`'s input head then parks at the start of the
-verbatim `x` region, and a *work* tape mirrors `M`'s work tape. Each simulated step:
-read the mirrored work symbol and the input symbol under the simulated head (the
-input head moves one cell per simulated move — `x` is verbatim, no doubling), scan
-the table for the record matching (state, input read, work read) — at most the table
-length, constant in `t` — and apply it: update the state tape, write/move on the
-mirrored tape, emit `M`'s emission verbatim. Forward bound: `C · (t + 1)`. Converse:
+verbatim `x` region, and a *work* tape mirrors `M`'s work tape. **The simulated
+input's left boundary must be emulated explicitly** (round-2 audit, finding 3): the
+cell physically left of the `x` region is the pairing delimiter's `true`, not a
+blank, so `U` keeps a marker on a spare work tape whose head tracks the virtual
+input position — at virtual position zero it supplies a blank read and suppresses
+further outward moves (mirroring `moveInputPos`'s clamp), and for empty `x` the
+virtual head starts at the right boundary blank adjacent to that marked left
+boundary. Each simulated step: read the mirrored work symbol and the input symbol
+under the simulated head (the input head moves one cell per simulated move — `x` is
+verbatim, no doubling — with the boundary marker moved in lockstep), scan the table
+for the record matching (state, input read, work read) — at most the table length,
+constant in `t` — and apply it: update the state tape, write/move on the mirrored
+tape, emit `M`'s emission verbatim. Forward bound: `C · (t + 1)`. Converse:
 `U` emits only what the simulation emits and halts only when the simulation halts,
 so any completed output of `U` is an output of `M` on `x`. -/
 theorem universal (c : EffectiveMachineCode) :

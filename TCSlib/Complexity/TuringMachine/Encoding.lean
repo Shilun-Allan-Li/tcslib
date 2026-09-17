@@ -216,7 +216,11 @@ the initial state, and the table (finding 5) — and let `decode` run the aligne
 parser of `pairEncode_injective` on the doubled-bit region to recover `numStates`,
 then parse the unary initial state and the `9 · (numStates + 1)` fixed-format records;
 any malformation (including trailing non-`true` junk) yields a canonical trivial
-machine, making `decode` total. A complete serialization determines its own length,
+machine, making `decode` total. The parser **short-circuits on the first incomplete
+record** (equivalently, rejects up front any state count whose minimum table length
+exceeds the remaining input), so a short malformed string declaring a huge binary
+state count is rejected in time polynomial in the string, not by enumerating its
+missing records (round-2 audit, finding 8). A complete serialization determines its own length,
 and the parser ignores a trailing all-`true` suffix, giving `decode_encode_pad`. The
 `canonizer` is a machine implementing exactly this parse followed by re-serialization
 (on valid codes, the identity up to padding removal; on invalid ones, the trivial

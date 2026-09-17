@@ -23,8 +23,9 @@ budget as an explicit extra input and needs no constructibility hypothesis.
 
 ## Design and deviations from [AB09]
 
-* Binary representation is `Nat.bits` (little-endian, no leading `false`s), where [AB09]
-  writes `⌞T(|x|)⌟` without fixing endianness. Nothing in Chapter 1 depends on the choice.
+* Binary representation is `Nat.bits` (least-significant-bit first, with no redundant
+  most-significant zeros; `Nat.bits 0 = []`), where [AB09] writes `⌞T(|x|)⌟` without
+  fixing endianness. Nothing in Chapter 1 depends on the choice.
 * **Deviation (audit-mandated).** [AB09] demands the computation run within exactly
   `T n` steps and then asserts that `n`, `n log n`, `n²`, `2ⁿ` are time constructible.
   The phase-1 external audit (`audits/phase1-findings.md`, finding 1, adversarial cases
