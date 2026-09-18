@@ -156,6 +156,7 @@ sketches, an audit pack goes out, gates close on zero blockers/majors.
 | Design question seeded for the **phase-3 audit**: in-house CNF type vs. `Std.Sat.CNF`; serialization scheme and fallback convention | Open — to auditors |
 | §2.4 web of reductions, §2.5 search-to-decision, parsimonious/Levin reductions, Exercise 2.6 (universal NDTM), Berman's theorem: **deferred**, not scheduled in the mandatory core | Decided |
 | `MathlibBridge` poly-time upgrade as an optional lever for reduction machines | Open — revisit at phase 3 |
+| Phase-1 skeleton landed (`ab82bb6a`): 10 definitions + 19 sorried statements + 1 scoped notation across the five `ClassNP/` modules and facade, every statement with a policy-grade sketch; gate-verified per module and by a **full 40-module fresh sweep** (zero errors; exactly the 19 admissions, all in `ClassNP/`); Chapter-1 freeze verified by path enumeration; the eight Chapter-1 headline axiom prints remain admission-free on the fresh tree; style lint zero FAIL. **Phase-1 audit pack prepared** (`audits/ch2-phase1-{pack,bundle}.md`) with the seeded design questions (a)-(e) as auditor priorities, including the Exercise-2.1 marker-free-tail trap found at drafting. Gate awaits `audits/ch2-phase1-findings.md` | Decided |
 
 ## References
 
