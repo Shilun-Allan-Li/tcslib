@@ -583,3 +583,20 @@ Writing $\mathcal{B}$ for the bond space and $\mathcal{C}$ for the cycle space o
 over $F$, the intersection $\mathcal{B} \cap \mathcal{C}$ has positive dimension over
 $F$ if and only if $p$ divides the number $\tau(D)$ of spanning trees of $D$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Evaluation of the dot-product bilinear form]
+\lean{CycleSpace.dotForm_apply}
+\label{CycleSpace.dotForm_apply}
+\leanok
+\uses{CycleSpace.dotForm}
+\difficulty{1}
+Let $K$ be a field and let $\iota$ be a finite index set, and equip the space of
+functions $\iota \to K$ with the standard dot-product bilinear form. Then for all
+functions $x, y \colon \iota \to K$, the value of this form at the pair $(x, y)$ is
+\[
+\langle x, y \rangle \;=\; \sum_{i \in \iota} x(i)\, y(i).
+\]
+\end{theorem}

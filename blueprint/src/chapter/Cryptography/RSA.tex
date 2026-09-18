@@ -584,3 +584,18 @@ satisfying $ed = 1 + k(p-1)(q-1)$. Then for every message $m \in \bbn$, decrypti
 encryption of $m$ returns the class of $m$ modulo $n$: in $\bbz/n\bbz$ we have
 $\bigl(\bar m^{\,e}\bigr)^{d} = \bar m$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Additional declarations}
+
+\begin{definition}[Timed computation]
+\lean{TimeM}
+\label{TimeM}
+\leanok
+For a cost type $T$ (typically $\bbn$) and a value type $\alpha$, a timed computation is
+a pair consisting of a return value $\mathrm{ret} \in \alpha$ together with an
+accumulated time cost $\mathrm{time} \in T$. This is the carrier of the time-complexity
+monad: correctness properties are stated about the return value, and complexity bounds
+about the recorded cost.
+\end{definition}

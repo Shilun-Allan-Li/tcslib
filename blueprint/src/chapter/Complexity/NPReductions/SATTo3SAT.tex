@@ -430,3 +430,15 @@ fresh auxiliary variables (a clause of more than three literals is split into li
 triples using these auxiliary variables, while shorter clauses are padded to three
 literals). Then $f$ is satisfiable if and only if $\tau(f)$ is $3$-satisfiable.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Literal over a variable type]
+\lean{SATTo3SAT.Literal}
+\label{SATTo3SAT.Literal}
+\leanok
+A literal over a variable type $V$ is either a positive or a negative occurrence of a
+variable: for each variable $v \in V$ there is the positive literal $v$ and the negated
+literal $\lnot v$.
+\end{definition}

@@ -278,3 +278,16 @@ number of non-input nodes of $\widehat{C}$ satisfies
 \mathrm{size}(\widehat{C}) \;\le\; \mathrm{size}(C)\,\bigl(\mathrm{depth}(C) + 1\bigr).
 \]
 \end{theorem}
+
+%%% added by the blueprint pipeline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Additional declarations}
+
+\begin{definition}[Gate operation]
+\lean{ACP.GateOp}
+\label{ACP.GateOp}
+\leanok
+A single operation in a feedforward circuit over an alphabet $\alpha$: it consists
+of an arity type $\iota$ together with a function $(\iota \to \alpha) \to \alpha$
+that computes the gate's output value from the values supplied on its input slots.
+\end{definition}
