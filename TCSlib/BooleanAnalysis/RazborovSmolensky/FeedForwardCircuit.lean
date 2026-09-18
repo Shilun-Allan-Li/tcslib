@@ -5,7 +5,7 @@ Authors: Yichuan Wang
 -/
 import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Set.Card
-import TCSlib.BooleanAnalysis.Switching.Circuit
+import TCSlib.Complexity.CircuitComplexity.Basic
 
 universe u v
 

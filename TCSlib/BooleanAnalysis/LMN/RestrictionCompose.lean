@@ -1,3 +1,4 @@
+import TCSlib.Complexity.CircuitComplexity.Basic
 import TCSlib.BooleanAnalysis.Switching.BernoulliRestriction
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum.Basic

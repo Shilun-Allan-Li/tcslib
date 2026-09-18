@@ -1,4 +1,4 @@
-import TCSlib.BooleanAnalysis.Switching.Circuit
+import TCSlib.Complexity.CircuitComplexity.Basic
 
 /-!
 # Circuit Re-indexing

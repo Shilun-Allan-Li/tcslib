@@ -20,6 +20,7 @@ import TCSlib.BooleanAnalysis.KKL
 import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem
 
+import TCSlib.Complexity.CircuitComplexity
 import TCSlib.Complexity.NPReductions
 
 import TCSlib.Cryptography.SchnorrProtocol

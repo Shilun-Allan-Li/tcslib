@@ -1,39 +1,75 @@
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.Data.Int.Star
-import Mathlib.Tactic
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hydroxyi
+-/
+import Mathlib.Data.List.Nodup
+-- Not used below.  This file's base-clause invariant is a `List.Nodup`, that is a
+-- `List.Pairwise`, and `LMN/NormalFormConversion.lean` (which imports this file
+-- and `Formulas.lean`, nothing else) reads it back through `List.Pairwise.forall`.
+-- Of the 46 modules that transitively import this file that is the only one
+-- affected: without this import `lake build` fails there, at line 144, and
+-- nowhere else.
+import Mathlib.Data.List.Pairwise
+import Mathlib.Tactic.Cases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
-# Boolean Circuits, Literals, Terms, DNF/CNF, Decision Trees
+# Boolean Circuits: Literals and Circuit Trees
 
-This file provides:
+## Main definitions
 
-1. **`BoolCircuit.Lit`**: A literal with `idx : Fin n` and `sign : Bool`
-   (`sign = true` = positive literal).
+* `BoolCircuit.Lit` — a literal: an index `idx : Fin n` and a sign
+  (`sign = true` is the positive literal).
+* `BoolCircuit.Circuit` — a Boolean circuit tree, `lit` or `node isAnd children`,
+  with `eval`, `litCount`, `depth`, `size` and `maxFanin`.  Fan-in is unbounded; a
+  bound is imposed downstream as a hypothesis `c.maxFanin ≤ w`, never as structure.
+* `BoolCircuit.NAndCircuit` / `NOrCircuit` — normal-form circuits, strictly
+  alternating AND/OR with a `Nodup` variable-index invariant at the base clauses.
+* `BoolCircuit.Circuit.toNAnd` / `toNOr` — normalization into that form;
+  `NAndCircuit.toCircuit` / `NOrCircuit.toCircuit` — the forgetful map back.
 
-2. **`BoolCircuit.Circuit`**: A general Boolean circuit tree with `lit` and
-   `node isAnd children` constructors, together with `eval`, `litCount`, `depth`,
-   and `size`.
+## Main results
 
-3. **`BoolCircuit.NAndCircuit` / `NOrCircuit`**: Normal-form circuits with
-   strictly alternating AND/OR gates and `Nodup` variable-index invariant at the
-   base clause level.  Includes normalization maps `toNAnd` / `toNOr` with proofs
-   of semantics preservation, literal-count preservation, and size bounds.
+* `Circuit.eval_lit`, `Circuit.eval_node_true_iff`, `Circuit.eval_node_false_iff`
+  — the semantics of a leaf and of an unbounded AND / OR gate.
+* `toNAnd_eval` / `toNOr_eval`, `toNAnd_litCount` / `toNOr_litCount`,
+  `toNAnd_size_le` / `toNOr_size_le` — normalization preserves semantics and
+  literal count, and at most doubles the size.
 
-4. **`Literal` / `Term` / `DNF` / `CNF`**: Types used in the switching-lemma
-   proof (kept for backward compatibility).
+## Divergences from [OD14, §4.5]
 
-5. **`DecisionTree`**: Binary decision trees with `eval`, `depth`, `deepPath`,
-   and `dtDepth` (minimum DT depth).
+`NAndCircuit` / `NOrCircuit` formalize [OD14, Def 4.26]'s alternating-layer
+circuits, with [OD14, Def 4.27]'s condition that no base gate reads a variable
+twice as the `Nodup` invariant.  `size` counts every node, leaves included, where
+[OD14, Def 4.27] counts only the internal layers, and no width measure is defined
+here — bottom-layer fan-in lives on `DNF` / `CNF` in `Formulas.lean`.  `Circuit`,
+the unconstrained AND/OR tree, matches no numbered definition: [OD14]'s circuits
+are DAGs.  `toNAnd` / `toNOr` are this library's own normalization; their
+factor-2 size bound is proved here, not taken from [OD14]'s `2 ^ d` remark.
+
+## Provenance
+
+Split out of `TCSlib/BooleanAnalysis/Switching/Circuit.lean` (commit 94fd7c6),
+which carried no copyright header; `Authors` above is that file's git author.
+`DNF` / `CNF` live in `TCSlib.Complexity.CircuitComplexity.Formulas`, decision
+trees in `...DecisionTree`, and the bridge from normal-form circuits to
+`DNF` / `CNF` in `TCSlib.BooleanAnalysis.LMN.NormalFormConversion`.
+
+## References
+
+* [OD14] R. O'Donnell, *Analysis of Boolean Functions*, Cambridge University
+  Press, 2014.
 -/
 
-set_option maxHeartbeats 800000
-
--- ================================================================
--- Part A: BoolCircuit namespace (from BooleanAnalysis/Circuit.lean)
--- ================================================================
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 namespace BoolCircuit
+
+variable {n : Nat}
 
 -- ----------------------------------------------------------------
 -- Section 1: Literals
@@ -87,6 +123,27 @@ def Circuit.eval : Circuit n → (Fin n → Bool) → Bool
   | .node true cs, x  => cs.foldr (fun c acc => c.eval x && acc) true
   | .node false cs, x => cs.foldr (fun c acc => c.eval x || acc) false
 
+/-- A leaf evaluates to its literal. -/
+theorem Circuit.eval_lit {n : Nat} (l : Lit n) (x : Fin n → Bool) :
+    (Circuit.lit l).eval x = l.eval x := by
+  simp [Circuit.eval]
+
+/-- An unbounded `AND` gate is true exactly when every child is. -/
+theorem Circuit.eval_node_true_iff {n : Nat} (cs : List (Circuit n)) (x : Fin n → Bool) :
+    (Circuit.node true cs).eval x = true ↔ ∀ c ∈ cs, c.eval x = true := by
+  simp only [Circuit.eval]
+  induction cs with
+  | nil => simp
+  | cons c cs ih => simp [ih]
+
+/-- An unbounded `OR` gate is true exactly when some child is. -/
+theorem Circuit.eval_node_false_iff {n : Nat} (cs : List (Circuit n)) (x : Fin n → Bool) :
+    (Circuit.node false cs).eval x = true ↔ ∃ c ∈ cs, c.eval x = true := by
+  simp only [Circuit.eval]
+  induction cs with
+  | nil => simp
+  | cons c cs ih => simp [ih]
+
 /-- Number of literal occurrences in a circuit. -/
 def Circuit.litCount : Circuit n → Nat
   | .lit _ => 1
@@ -119,11 +176,20 @@ def Circuit.maxFanin : Circuit n → Nat
 -- Section 3: Normal-form circuit (alternating, nodup at base)
 -- ----------------------------------------------------------------
 
+/-! The alternating normal form of [OD14, Def 4.26], with [OD14, Def 4.27]'s
+condition that a base gate reads no variable twice, as the `Nodup` invariant. -/
+
 mutual
+/-- A normal-form circuit whose root is an `AND`: either a base `clause` of
+    literals with pairwise distinct variable indices, or a `node` over
+    `OR`-rooted children. -/
 inductive NAndCircuit (n : Nat) where
   | clause : (lits : List (Lit n)) → (lits.map Lit.idx).Nodup → NAndCircuit n
   | node   : List (NOrCircuit n) → NAndCircuit n
 
+/-- A normal-form circuit whose root is an `OR`: either a base `clause` of
+    literals with pairwise distinct variable indices, or a `node` over
+    `AND`-rooted children. -/
 inductive NOrCircuit (n : Nat) where
   | clause : (lits : List (Lit n)) → (lits.map Lit.idx).Nodup → NOrCircuit n
   | node   : List (NAndCircuit n) → NOrCircuit n
@@ -131,10 +197,14 @@ end
 
 -- Evaluation
 mutual
+/-- Evaluate an `AND`-rooted normal-form circuit: a clause is the conjunction of
+    its literals, a node the conjunction of its children. -/
 def NAndCircuit.eval : NAndCircuit n → (Fin n → Bool) → Bool
   | .clause lits _, x => lits.foldr (fun l acc => l.eval x && acc) true
   | .node cs, x       => cs.foldr (fun c acc => c.eval x && acc) true
 
+/-- Evaluate an `OR`-rooted normal-form circuit: a clause is the disjunction of
+    its literals, a node the disjunction of its children. -/
 def NOrCircuit.eval : NOrCircuit n → (Fin n → Bool) → Bool
   | .clause lits _, x => lits.foldr (fun l acc => l.eval x || acc) false
   | .node cs, x       => cs.foldr (fun c acc => c.eval x || acc) false
@@ -142,10 +212,14 @@ end
 
 -- Literal count
 mutual
+/-- Literal occurrences in an `AND`-rooted normal-form circuit: a clause's length,
+    a node's the sum over its children. -/
 def NAndCircuit.litCount : NAndCircuit n → Nat
   | .clause lits _ => lits.length
   | .node cs       => cs.foldr (fun c acc => c.litCount + acc) 0
 
+/-- Literal occurrences in an `OR`-rooted normal-form circuit: a clause's length,
+    a node's the sum over its children. -/
 def NOrCircuit.litCount : NOrCircuit n → Nat
   | .clause lits _ => lits.length
   | .node cs       => cs.foldr (fun c acc => c.litCount + acc) 0
@@ -153,10 +227,14 @@ end
 
 -- Total node count (size)
 mutual
+/-- Node count of an `AND`-rooted normal-form circuit: a clause is one node, a
+    node one plus the sum over its children. -/
 def NAndCircuit.size : NAndCircuit n → Nat
   | .clause _ _ => 1
   | .node cs    => 1 + cs.foldr (fun c acc => c.size + acc) 0
 
+/-- Node count of an `OR`-rooted normal-form circuit: a clause is one node, a
+    node one plus the sum over its children. -/
 def NOrCircuit.size : NOrCircuit n → Nat
   | .clause _ _ => 1
   | .node cs    => 1 + cs.foldr (fun c acc => c.size + acc) 0
@@ -164,10 +242,14 @@ end
 
 -- Depth
 mutual
+/-- Depth of an `AND`-rooted normal-form circuit: a clause has depth `0`, a node
+    one more than its deepest child. -/
 def NAndCircuit.depth : NAndCircuit n → Nat
   | .clause _ _ => 0
   | .node cs    => 1 + cs.foldr (fun c acc => max c.depth acc) 0
 
+/-- Depth of an `OR`-rooted normal-form circuit: a clause has depth `0`, a node
+    one more than its deepest child. -/
 def NOrCircuit.depth : NOrCircuit n → Nat
   | .clause _ _ => 0
   | .node cs    => 1 + cs.foldr (fun c acc => max c.depth acc) 0
@@ -177,10 +259,14 @@ end
 -- Section 4: Properties that hold by construction (hnodup / hnd)
 -- ----------------------------------------------------------------
 
+/-- The `Nodup` invariant of an `AND`-rooted base clause, read back off the
+    constructor. -/
 theorem NAndCircuit.clause_nodup {n : Nat} {c : NAndCircuit n} {lits : List (Lit n)}
     {h : (lits.map Lit.idx).Nodup}
     (_ : c = NAndCircuit.clause lits h) : (lits.map Lit.idx).Nodup := h
 
+/-- The `Nodup` invariant of an `OR`-rooted base clause, read back off the
+    constructor. -/
 theorem NOrCircuit.clause_nodup {n : Nat} {c : NOrCircuit n} {lits : List (Lit n)}
     {h : (lits.map Lit.idx).Nodup}
     (_ : c = NOrCircuit.clause lits h) : (lits.map Lit.idx).Nodup := h
@@ -203,39 +289,53 @@ theorem Lit.eq_of_idx_eq_of_mem_nodup
 -- ----------------------------------------------------------------
 
 mutual
+/-- Normalize into `AND`-rooted alternating form: a leaf becomes a one-literal
+    clause, an `AND` gate maps its children into `OR` form, and an `OR` gate
+    becomes a one-child `AND` node over an `OR` node. -/
 def Circuit.toNAnd : Circuit n → NAndCircuit n
   | .lit l          => .clause [l] (List.nodup_singleton _)
   | .node true  cs  => .node (cs.map Circuit.toNOr)
   | .node false cs  => .node [NOrCircuit.node (cs.map Circuit.toNAnd)]
 
+/-- Normalize into `OR`-rooted alternating form: a leaf becomes a one-literal
+    clause, an `OR` gate maps its children into `AND` form, and an `AND` gate
+    becomes a one-child `OR` node over an `AND` node. -/
 def Circuit.toNOr : Circuit n → NOrCircuit n
   | .lit l          => .clause [l] (List.nodup_singleton _)
   | .node false cs  => .node (cs.map Circuit.toNAnd)
   | .node true  cs  => .node [NAndCircuit.node (cs.map Circuit.toNOr)]
 end
 
-private theorem foldr_and_map {f : α → Bool} {g : β → Bool} {h : α → β}
+/-- Folding `&&` after `List.map h` agrees with folding `&&` directly, when
+    `g (h c) = f c` on every element. -/
+private theorem foldr_and_map {α β : Type*} {f : α → Bool} {g : β → Bool} {h : α → β}
     {cs : List α}
     (heq : ∀ c ∈ cs, g (h c) = f c) :
     (cs.map h).foldr (fun c acc => g c && acc) true =
     cs.foldr (fun c acc => f c && acc) true := by
       induction cs <;> aesop
 
-private theorem foldr_or_map {f : α → Bool} {g : β → Bool} {h : α → β}
+/-- Folding `||` after `List.map h` agrees with folding `||` directly, when
+    `g (h c) = f c` on every element. -/
+private theorem foldr_or_map {α β : Type*} {f : α → Bool} {g : β → Bool} {h : α → β}
     {cs : List α}
     (heq : ∀ c ∈ cs, g (h c) = f c) :
     (cs.map h).foldr (fun c acc => g c || acc) false =
     cs.foldr (fun c acc => f c || acc) false := by
       induction cs <;> aesop
 
-private theorem foldr_add_map {f : α → Nat} {g : β → Nat} {h : α → β}
+/-- Summing after `List.map h` agrees with summing directly, when
+    `g (h c) = f c` on every element. -/
+private theorem foldr_add_map {α β : Type*} {f : α → Nat} {g : β → Nat} {h : α → β}
     {cs : List α}
     (heq : ∀ c ∈ cs, g (h c) = f c) :
     (cs.map h).foldr (fun c acc => g c + acc) 0 =
     cs.foldr (fun c acc => f c + acc) 0 := by
       induction cs <;> aesop
 
-private theorem foldr_add_map_le {f : α → Nat} {g : β → Nat} {h : α → β}
+/-- If `g (h c) ≤ k * f c` on every element, the sum after `List.map h` is at
+    most `k` times the direct sum. -/
+private theorem foldr_add_map_le {α β : Type*} {f : α → Nat} {g : β → Nat} {h : α → β}
     {cs : List α} {k : Nat}
     (heq : ∀ c ∈ cs, g (h c) ≤ k * f c) :
     (cs.map h).foldr (fun c acc => g c + acc) 0 ≤
@@ -260,13 +360,24 @@ theorem toNAnd_toNOr_eval (c : Circuit n) (x : Fin n → Bool) :
           unfold NAndCircuit.eval
           induction cs <;> aesop
 
+/-- `toNAnd` preserves semantics. -/
 theorem toNAnd_eval (c : Circuit n) (x : Fin n → Bool) :
     (c.toNAnd).eval x = c.eval x := (toNAnd_toNOr_eval c x).1
 
+/-- `toNOr` preserves semantics. -/
 theorem toNOr_eval (c : Circuit n) (x : Fin n → Bool) :
     (c.toNOr).eval x = c.eval x := (toNAnd_toNOr_eval c x).2
 
-/-- Combined literal-count preservation. -/
+/-- Combined literal-count preservation.
+
+**Proof sketch.** The two halves are proved together, by structural induction on
+the circuit, because normalizing an AND gate calls the OR normalization on the
+children and vice versa.  A leaf becomes a one-literal clause, so both counts are
+`1`.  At a gate, one normalization maps the children directly and the other wraps
+them in a single extra node; an extra node holds no literals, so in both cases
+the count is the sum over the children of their normalized counts.  A side
+induction on the child list then turns the induction hypothesis for each child
+into equality of the two folded sums. -/
 theorem toNAnd_toNOr_litCount (c : Circuit n) :
     (c.toNAnd).litCount = c.litCount ∧ (c.toNOr).litCount = c.litCount := by
       by_contra h_contra
@@ -296,13 +407,26 @@ theorem toNAnd_toNOr_litCount (c : Circuit n) :
               intros cs hcs; induction cs <;> aesop
             exact h_foldr cs fun c hc => ih c hc |>.2
 
+/-- `toNAnd` preserves the literal count. -/
 theorem toNAnd_litCount (c : Circuit n) :
     (c.toNAnd).litCount = c.litCount := (toNAnd_toNOr_litCount c).1
 
+/-- `toNOr` preserves the literal count. -/
 theorem toNOr_litCount (c : Circuit n) :
     (c.toNOr).litCount = c.litCount := (toNAnd_toNOr_litCount c).2
 
-/-- Combined size bound. -/
+/-- Combined size bound.
+
+**Proof sketch.** Structural induction, again proving the two halves together.  A
+leaf normalizes to a single clause: size one against a circuit of size one.  At a
+gate, the normalization whose connective matches the gate maps the children
+directly, giving size one plus the sum of the children's normalized sizes, while
+the other inserts one node to restore alternation, giving two plus that sum.  The
+step doing the work in each case is the list bound: if every child's normalized
+size is at most twice its own, the sum of the normalized sizes is at most twice
+the sum of the sizes.  The gate's own size is one more than the children's total,
+so twice the gate's size leaves two units of slack over twice the children's
+total — exactly enough to pay for the inserted node. -/
 theorem toNAnd_toNOr_size_le (c : Circuit n) :
     (c.toNAnd).size ≤ 2 * c.size ∧ (c.toNOr).size ≤ 2 * c.size := by
       induction' c using Circuit.ind with l isAnd cs ih
@@ -355,9 +479,11 @@ theorem toNAnd_toNOr_size_le (c : Circuit n) :
               ring
             · ac_rfl
 
+/-- `toNAnd` at most doubles the size. -/
 theorem toNAnd_size_le (c : Circuit n) :
     (c.toNAnd).size ≤ 2 * c.size := (toNAnd_toNOr_size_le c).1
 
+/-- `toNOr` at most doubles the size. -/
 theorem toNOr_size_le (c : Circuit n) :
     (c.toNOr).size ≤ 2 * c.size := (toNAnd_toNOr_size_le c).2
 
@@ -366,10 +492,14 @@ theorem toNOr_size_le (c : Circuit n) :
 -- ----------------------------------------------------------------
 
 mutual
+/-- Forget the normal form: a clause becomes an `AND` gate over its literal
+    leaves, a node an `AND` gate over its converted children. -/
 def NAndCircuit.toCircuit : NAndCircuit n → Circuit n
   | .clause lits _ => .node true (lits.map fun l => .lit l)
   | .node cs       => .node true (cs.map NOrCircuit.toCircuit)
 
+/-- Forget the normal form: a clause becomes an `OR` gate over its literal
+    leaves, a node an `OR` gate over its converted children. -/
 def NOrCircuit.toCircuit : NOrCircuit n → Circuit n
   | .clause lits _ => .node false (lits.map fun l => .lit l)
   | .node cs       => .node false (cs.map NAndCircuit.toCircuit)
@@ -396,165 +526,3 @@ def NOrCircuit.constFalse : NOrCircuit n :=
   .clause [] List.nodup_nil
 
 end BoolCircuit
-
--- ================================================================
--- Part B: Switching-lemma infrastructure (unchanged)
--- ================================================================
-
-/-! ## Literals, Terms, and DNF/CNF formulas -/
-
-/-- A literal: variable `var : Fin n` with polarity `neg` (true = negated literal). -/
-structure Literal (n : ℕ) where
-  var : Fin n
-  neg : Bool
-  deriving DecidableEq
-
-/-- Evaluate literal `l` on input `x`: positive literal returns `x i`, negated returns `¬(x i)`. -/
-def Literal.eval {n : ℕ} (l : Literal n) (x : Fin n → Bool) : Bool :=
-  if l.neg then !x l.var else x l.var
-
-/-- A term is a conjunction of literals. -/
-abbrev Term (n : ℕ) := List (Literal n)
-
-/-- Width of a term (number of literals). -/
-def Term.width {n : ℕ} (t : Term n) : ℕ := t.length
-
-/-- Evaluate term `t` as a conjunction: all literals must hold. -/
-def Term.eval {n : ℕ} (t : Term n) (x : Fin n → Bool) : Bool :=
-  t.all (fun l => l.eval x)
-
-/-- A DNF formula is a disjunction of terms. -/
-abbrev DNF (n : ℕ) := List (Term n)
-
-/-- Width of a DNF formula (maximum term width; 0 for empty). -/
-def DNF.width {n : ℕ} (d : DNF n) : ℕ := (d.map Term.width).foldr max 0
-
-/-- Evaluate DNF `d`: at least one term must hold. -/
-def DNF.eval {n : ℕ} (d : DNF n) (x : Fin n → Bool) : Bool :=
-  d.any (fun t => t.eval x)
-
-/-- A CNF formula is a conjunction of clauses, each a disjunction of literals. -/
-abbrev CNF (n : ℕ) := List (Term n)
-
-/-- Width of a CNF formula (maximum clause width). -/
-def CNF.width {n : ℕ} (c : CNF n) : ℕ := (c.map Term.width).foldr max 0
-
-/-- Evaluate a single clause as a disjunction: some literal must hold. -/
-def CNF.evalClause {n : ℕ} (t : Term n) (x : Fin n → Bool) : Bool :=
-  t.any (fun l => l.eval x)
-
-/-- Evaluate CNF `c`: all clauses must hold. -/
-def CNF.eval {n : ℕ} (c : CNF n) (x : Fin n → Bool) : Bool :=
-  c.all (fun t => CNF.evalClause t x)
-
-/-! ## Decision Trees -/
-
-/-- A decision tree on `n` Boolean variables.
-  - `leaf b`: output `b`.
-  - `branch i lo hi`: query variable `i`; follow `lo` on `false`, `hi` on `true`. -/
-inductive DecisionTree (n : ℕ) where
-  | leaf   (val : Bool)                            : DecisionTree n
-  | branch (var : Fin n) (lo hi : DecisionTree n) : DecisionTree n
-
-/-- Evaluate decision tree `T` on input `x`. -/
-def DecisionTree.eval {n : ℕ} : DecisionTree n → (Fin n → Bool) → Bool
-  | .leaf b,          _  => b
-  | .branch i lo hi,  x  => if x i then hi.eval x else lo.eval x
-
-/-- Depth of a decision tree (maximum path length to a leaf). -/
-def DecisionTree.depth {n : ℕ} : DecisionTree n → ℕ
-  | .leaf _          => 0
-  | .branch _ lo hi  => 1 + max lo.depth hi.depth
-
-/-- Extract a deepest root-to-leaf path from a decision tree.
-    At each branch, follows the deeper subtree (ties broken toward `hi`).
-    Returns `(queried_variable, branch_direction)` pairs. -/
-def DecisionTree.deepPath {n : ℕ} : DecisionTree n → List (Fin n × Bool)
-  | .leaf _ => []
-  | .branch v lo hi =>
-    if hi.depth ≥ lo.depth then
-      (v, true) :: hi.deepPath
-    else
-      (v, false) :: lo.deepPath
-
-/-- The length of the deep path equals the tree's depth. -/
-lemma DecisionTree.length_deepPath {n : ℕ} (T : DecisionTree n) :
-    T.deepPath.length = T.depth := by
-  induction T with
-  | leaf _ => rfl
-  | branch v lo hi ih_lo ih_hi =>
-    simp only [deepPath]
-    split
-    · rename_i h
-      simp only [List.length_cons, ih_hi, depth]
-      omega
-    · rename_i h
-      simp only [List.length_cons, ih_lo, depth]
-      omega
-
-/-- Build a complete decision tree querying variables 0, 1, …, n−1 in order. -/
-def buildFullDTree {n : ℕ} (f : (Fin n → Bool) → Bool)
-    (k : ℕ) (acc : Fin n → Bool) : DecisionTree n :=
-  if h : k < n then
-    .branch ⟨k, h⟩
-      (buildFullDTree f (k + 1) (Function.update acc ⟨k, h⟩ false))
-      (buildFullDTree f (k + 1) (Function.update acc ⟨k, h⟩ true))
-  else
-    .leaf (f acc)
-termination_by n - k
-
-lemma buildFullDTree_depth {n : ℕ} (f : (Fin n → Bool) → Bool)
-    (k : ℕ) (_ : k ≤ n) (acc : Fin n → Bool) :
-    (buildFullDTree f k acc).depth ≤ n - k := by
-  unfold buildFullDTree
-  split
-  · rename_i h
-    simp only [DecisionTree.depth]
-    have h1 := buildFullDTree_depth f (k + 1) (by omega)
-      (Function.update acc ⟨k, h⟩ false)
-    have h2 := buildFullDTree_depth f (k + 1) (by omega)
-      (Function.update acc ⟨k, h⟩ true)
-    have h3 := max_le h1 h2
-    omega
-  · simp [DecisionTree.depth]
-termination_by n - k
-
-lemma buildFullDTree_eval {n : ℕ} (f : (Fin n → Bool) → Bool)
-    (k : ℕ) (hk : k ≤ n) (acc x : Fin n → Bool)
-    (hinv : ∀ i : Fin n, i.val < k → acc i = x i) :
-    (buildFullDTree f k acc).eval x = f x := by
-  unfold buildFullDTree
-  split
-  · rename_i h
-    simp only [DecisionTree.eval]
-    cases hxv : x ⟨k, h⟩ with
-    | false =>
-      rw [if_neg (by decide : ¬(false = true))]
-      apply buildFullDTree_eval f (k + 1) (by omega)
-      intro i hi
-      by_cases heq : i = ⟨k, h⟩
-      · subst heq; simp [Function.update, hxv]
-      · simp only [Function.update, heq]
-        exact hinv i (by have : i.val ≠ k := fun hv => heq (Fin.ext hv); omega)
-    | true =>
-      rw [if_pos rfl]
-      apply buildFullDTree_eval f (k + 1) (by omega)
-      intro i hi
-      by_cases heq : i = ⟨k, h⟩
-      · subst heq; simp [Function.update, hxv]
-      · simp only [Function.update, heq]
-        exact hinv i (by have : i.val ≠ k := fun hv => heq (Fin.ext hv); omega)
-  · simp only [DecisionTree.eval]
-    have : acc = x := funext fun i => hinv i (by omega)
-    rw [this]
-termination_by n - k
-
-/-- The minimum decision-tree depth to compute `f : (Fin n → Bool) → Bool`.
-  Formally: `min { T.depth | T computes f }` =
-  `Nat.sInf {d | ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x}`. -/
-noncomputable def dtDepth {n : ℕ} (f : (Fin n → Bool) → Bool) : ℕ := by
-  classical
-  exact Nat.find (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
-    ⟨n, buildFullDTree f 0 (fun _ => false),
-     buildFullDTree_depth f 0 (Nat.zero_le n) _,
-     fun x => buildFullDTree_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
