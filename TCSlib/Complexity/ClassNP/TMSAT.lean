@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.ClassNP.PolyTime
 import TCSlib.Complexity.ClassNP.Reductions
 
 set_option maxHeartbeats 0
@@ -37,14 +38,20 @@ components rely on.
   `Turing.MachineCode`. The unary components make `n` and `t` at most the
   input length — [AB09]'s footnote 2: padding the input is what entitles the
   verifier and the reduction to run in time polynomial in `n` and `t`.
-* **The generality split mirrors the audited `HALT` treatment**
+* **The generality split refines the audited `HALT` treatment**
   (`Complexity.HALT_NPHard` at `Turing.MachineCode`,
   `Complexity.HALT_not_mem_NP` at `Turing.EffectiveMachineCode`): the language
   and its `NP`-hardness need only a lawful code (`decode` totality and
   `decode_encode`; the reduction writes a *fixed* code string), while
   membership in `NP` runs the universal machine over an input-supplied `α` and
-  therefore takes an effective scheme. `NP`-completeness is stated at
-  `EffectiveMachineCode` accordingly.
+  therefore takes an effective scheme **with a polynomially bounded canonizer**
+  — the hypothesis `Complexity.PolyBound c.canonizerTime` on the membership
+  and completeness statements. Effectivity alone is **not** enough (round-1
+  audit, finding 1, Argument A): `Turing.EffectiveMachineCode` bounds the
+  canonizer's computability, not its cost, and a lawful effective scheme can
+  plant arbitrarily expensive decidable information behind short codes,
+  pushing its `TMSAT` outside `EXP ⊇ NP`. `NP`-completeness carries the same
+  hypothesis.
 * **`Complexity.timeConstructible_poly` is a new statement about a Chapter-1
   notion** (`Complexity.TimeConstructible`, `ClassP/TimeConstructible.lean`) —
   stated here rather than by editing the frozen audited file, and **flagged for
@@ -61,11 +68,13 @@ components rely on.
 * `Complexity.timeConstructible_poly` — `n ↦ C·(n+1)^(c+1)` is
   time-constructible (`C > 0`); the plan's supporting obligation for the
   reduction's unary components. [AB09, §1.3]
-* `Complexity.TMSAT_mem_NP` — the certificate is `u` itself; verification is
-  timed universal simulation. [AB09, Theorem 2.9]
+* `Complexity.TMSAT_mem_NP` — for schemes with polynomially bounded
+  canonizers, the certificate is `u` itself; verification is timed universal
+  simulation. [AB09, Theorem 2.9]
 * `Complexity.TMSAT_NPHard` — the generic reduction: send `x` to
   `⟨⌞M⌟, x, 1^{p(|x|)}, 1^{q(m)}⟩`. [AB09, Theorem 2.9]
-* `Complexity.TMSAT_NPComplete` — [AB09, Theorem 2.9].
+* `Complexity.TMSAT_NPComplete` — [AB09, Theorem 2.9], under the same
+  polynomial-canonizer hypothesis as membership.
 
 ## References
 
@@ -112,9 +121,18 @@ theorem timeConstructible_poly (C c : ℕ) (hC : 0 < C) :
     TimeConstructible fun n => C * (n + 1) ^ (c + 1) := by
   sorry
 
-/-- **`TMSAT ∈ NP`** [AB09, Theorem 2.9, membership]: the certificate is `u`
-itself, and verification is timed universal simulation — this is where the
-effective scheme is load-bearing.
+/-- **`TMSAT ∈ NP` for polynomially canonizable schemes** [AB09, Theorem 2.9,
+membership]: the certificate is `u` itself, and verification is timed
+universal simulation. The hypothesis `Complexity.PolyBound c.canonizerTime`
+is **load-bearing and cannot be dropped** (round-1 audit, finding 1,
+Argument A): `Turing.EffectiveMachineCode` constrains the canonizer's
+*computability*, not its cost, and there is a lawful effective scheme — the
+base scheme behind a one-bit tag, with the tagged branch decoding `[1] ++ z`
+to a one-step machine that outputs the bit `A z` of a decidable language
+`A ∉ EXP` — whose `TMSAT` decides `A` on the trivial instances
+`⟨[1] ++ z, [], 1^0, 1^1⟩`; membership in `NP ⊆ EXP` would contradict
+`A ∉ EXP`. The polynomial canonizer bound is what restores a uniform
+simulation budget.
 
 **Proof sketch.** Certificate parameters `(1, 1)`: length exactly `m + 1` on
 inputs of length `m` (the declared `n` satisfies `n ≤ m`, since `1^n` sits
@@ -123,33 +141,46 @@ first `n` bits — no marker needed, `n` is read off `y`). The verifier language
 `V = {y ++ w : |w| = |y| + 1`, `y` parses as a quadruple
 `⟨α, x, 1^n, 1^t⟩`, and the machine `α` denotes accepts `⟨x, w.take n⟩` within
 `t` steps`}`. `V ∈ P` by a machine with the named fill obligations: (i)
-unique-split recovery `m + (m + 1)` with the explicit odd-length rejection (the
-round-3 pattern); (ii) the **quadruple parser** — three nested `pairDecode`
-passes (the aligned two-bit grammar; the `UniversalStartup` parsing layer is
-the in-repo precedent) plus all-`true` shape checks on the third and fourth
-components, rejecting any failure; (iii) **unary-to-binary clock conversion**:
+unique-split recovery — a well-formed input has length `m + (m + 1) = 2m + 1`,
+**odd**, so the machine **rejects even lengths** and splits an odd length `N`
+at `(N − 1) / 2` (round-1 audit, finding 4, correcting the drafted parity);
+(ii) the **quadruple parser** — three nested `pairDecode` passes (the aligned
+two-bit grammar; the `UniversalStartup` parsing layer is the in-repo
+precedent) plus all-`true` shape checks on the third and fourth components,
+rejecting any failure; (iii) **unary-to-binary clock conversion**:
 `Turing.timed_universal`'s clock input is `Nat.bits t`, so the verifier
-converts the unary `1^t` by counter increments; (iv) **assembly and relocated
+converts the unary `1^t` by counter increments (`Nat.bits 0 = []` at the
+`t = 0` edge, where every instance is negative —
+`Turing.FinTM.not_computesInTime_zero`); (iv) **assembly and relocated
 simulation**: build `pairEncode (pairEncode (Nat.bits t) α) (pairEncode x
 (w.take n))` on a work tape and run the timed universal machine `U` of
 `Turing.timed_universal c` relocated-and-captured (the standing obligations);
-`U` answers `true :: output` or `[false]` by design, so acceptance is "first
-captured bit `true` with output exactly `[true]` after it", i.e. captured
-`[true, true]`; (v) the verdict with buffered output. Budget: `U` completes
-within `C_α·(t+1)^2` steps with `C_α` the statement's per-code constant, and a
-**named new obligation** bounds `C_α` polynomially in `|α|` (the constant is
-the explicit sum of the `Universal` module's startup and block bounds, each a
-polynomial function of the code's component lengths; the fill derives the
-bound by inspecting those definitions). With `t ≤ m` and `|α| ≤ m`, the
-simulation is polynomial in `m`; conclude `V ∈ P` via
-`Complexity.mem_P_of_dtime_le`. Membership equivalence: forward, a `TMSAT`
-witness `u` pads to `m + 1` bits (absorbing halting keeps the accepting run);
-backward, a certificate's first `n` bits are a witness — `Turing.timed_universal`'s
-two branches convert between `U`'s answers and
-`(c.decode α).toFinTM.ComputesInTime (pairEncode x u) [true] t` exactly, and
-`Turing.pairEncode_injective` pins the parsed components to the defining
-existential's. -/
-theorem TMSAT_mem_NP (c : EffectiveMachineCode) : TMSAT c.toMachineCode ∈ NP := by
+`U` answers `true :: output` or `[false]` by design and its branches are
+exhaustive, so acceptance is exactly the complete captured answer
+`[true, true]` — a timeout, or any completed output other than `[true]`,
+rejects; (v) the verdict with buffered output. **Budget** — where the
+hypothesis enters: `U` completes within `C_α·(t+1)^2` steps, and the round-1
+audit's inspection of the `Universal` module's bound definitions gives, with
+`r = |α|` and `H = c.canonizerTime r`, the chain `C_α ≤ 3r + 14·H + 50` (the
+decoded serialization's length `L` bounds the header/state parameters and is
+itself at most `H`, the canonizer writing it within its time budget —
+`Turing.MultiTapeTM.output_length_le`); `PolyBound c.canonizerTime` then
+bounds `C_α` by a polynomial in `r ≤ m` uniformly, and with `t ≤ m` the whole
+simulation is polynomial in `m`: `V ∈ P` via `Complexity.mem_P_of_dtime_le`.
+**Named fill obligation (new public bridge)**: the public
+`Turing.timed_universal` exposes its constant only existentially per code, so
+the fill needs a quantitative public form of the bound (an addition to the
+audited `Universal` surface, to be requested through the standing shared-file
+mechanism and flagged for its audit round — the round-1 finding's repair
+guidance; a prose obligation alone cannot discharge the budget). Membership
+equivalence: forward, a `TMSAT` witness `u` pads to `m + 1` bits (absorbing
+halting keeps the accepting run); backward, a certificate's first `n` bits are
+a witness — `Turing.timed_universal`'s two branches convert between `U`'s
+answers and `(c.decode α).toFinTM.ComputesInTime (pairEncode x u) [true] t`
+exactly, and `Turing.pairEncode_injective` pins the parsed components to the
+defining existential's. -/
+theorem TMSAT_mem_NP (c : EffectiveMachineCode) (hc : PolyBound c.canonizerTime) :
+    TMSAT c.toMachineCode ∈ NP := by
   sorry
 
 /-- **`TMSAT` is `NP`-hard** [AB09, Theorem 2.9, hardness]: the generic
@@ -166,17 +197,27 @@ audited chain `Turing.FinTM.one_work_tape_binary` (its total-function
 hypothesis holds) and `Turing.exists_codeTM`, and let `α₀ := c.encode M''` be
 the resulting **fixed code string** (this is why plain `Turing.MachineCode`
 suffices — the audited `Complexity.HALT_NPHard` recipe). Let
-`T' n := ` the explicit polynomial bounding `M''`'s time on inputs
-`pairEncode x u` with `|x| = n, |u| = Q n` (composing the wrapper's bound with
-the normalization's quadratic overhead on inputs of length `2n + 2 + Q n`).
-**The reduction map** `f x := pairEncode α₀ (pairEncode x (pairEncode
-1^{Q |x|} 1^{T' |x|}))`. `Complexity.PolyTimeComputable f` by the named
-obligations: emit the doubled fixed string `α₀` from finite control (emission
-chains), double-and-copy `x`, and write the unary runs `1^{Q n}`, `1^{T' n}`
-by binary countdown — `Complexity.timeConstructible_poly` supplies the
-arithmetic core for both formulas (their degrees fit the `c + 1` shape after
-the standard majorization), and the output length is the explicit polynomial
-`|f x|`. **Correctness**: `f x ∈ TMSAT c` iff — by
+`T' n` the **explicit** deadline formula below. **The reduction map**
+`f x := pairEncode α₀ (pairEncode x (pairEncode 1^{Q |x|} 1^{T' |x|}))`.
+`Complexity.PolyTimeComputable f` by the named obligations: emit the doubled
+fixed string `α₀` from finite control (emission chains), double-and-copy `x`,
+and write the two unary runs by binary countdown, under the **exact-value
+discipline** of the round-1 audit (finding 3): the certificate length `Q` must
+be emitted **exactly** — majorizing it changes the language (at
+`C₀ = c₀ = 0` and `L = V = {[true]}`, replacing `Q = 0` by `n + 1` flips the
+empty input's membership) — by cases: `C₀ = 0` emits the empty run;
+`C₀ > 0, c₀ = 0` emits the fixed constant `C₀` from finite control;
+`C₀ > 0, c₀ > 0` computes the exact binary value by
+`Complexity.timeConstructible_poly C₀ (c₀ - 1)`. The **deadline may be
+majorized** (enlarging `t` only relaxes the budget of a total machine whose
+verdict is fixed): with a wrapper bound `B·(s+1)^e` (`B, e ≥ 1`) on inputs of
+length `s`, normalization multiplier `K`, and `s = 2n + 2 + Q n` on the
+relevant inputs, take the audit's formula — `r := max 1 c₀`,
+`D := (K+1)·(B+1)^2·(C₀+3)^(2e)`, `T' n := D·(n+1)^(2er)`; then
+`s + 1 ≤ (C₀+3)·(n+1)^r` gives `K·(B·(s+1)^e + 1)^2 ≤ T' n` at every `n`, and
+`Complexity.timeConstructible_poly D (2er - 1)` computes `T'`'s exact binary
+value (`2er ≥ 1`). Output length: `|f x| = 2|α₀| + 2|x| + 2·Q |x| + T' |x| +
+6`, an explicit polynomial. **Correctness**: `f x ∈ TMSAT c` iff — by
 `Turing.pairEncode_injective`, which pins the quadruple's components — some
 `u` with `|u| = Q n` has `M''.toFinTM.ComputesInTime (pairEncode x u) [true]
 (T' n)`; by `M''`'s semantics and budget this holds iff `x ++ u ∈ V` (the
@@ -187,13 +228,16 @@ equivalence for `L` turns "some such `u`" into `x ∈ L`. Conclude
 theorem TMSAT_NPHard (c : MachineCode) : NPHard (TMSAT c) := by
   sorry
 
-/-- **Theorem 2.9** [AB09]: `TMSAT` is `NP`-complete (over an effective
-scheme, which its membership half requires).
+/-- **Theorem 2.9** [AB09]: `TMSAT` is `NP`-complete — over an effective
+scheme with a polynomially bounded canonizer, the hypothesis its membership
+half requires and cannot drop (round-1 audit, findings 1-2: without it, the
+Argument-A scheme's `TMSAT` is `NP`-hard yet outside `NP`, so the completeness
+conjunction fails).
 
-**Proof sketch.** `Complexity.TMSAT_mem_NP` and `Complexity.TMSAT_NPHard`
-at `c.toMachineCode`, assembled by the definition of
-`Complexity.NPComplete`. -/
-theorem TMSAT_NPComplete (c : EffectiveMachineCode) :
+**Proof sketch.** `Complexity.TMSAT_mem_NP` (with the same hypothesis `hc`)
+and `Complexity.TMSAT_NPHard` at `c.toMachineCode`, assembled by the
+definition of `Complexity.NPComplete`. -/
+theorem TMSAT_NPComplete (c : EffectiveMachineCode) (hc : PolyBound c.canonizerTime) :
     NPComplete (TMSAT c.toMachineCode) := by
   sorry
 

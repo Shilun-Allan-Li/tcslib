@@ -27,8 +27,13 @@ their membership in `NP`, and states [AB09, Lemma 2.14] (`SAT ≤ₚ 3SAT`) — 
   the total `Std.Sat.CNF.decode` ([AB09, footnote 3]). With the fallback being
   the empty formula — satisfiable, and vacuously 3CNF — **every non-well-formed
   string lies in `SAT` and in `3SAT`**. [AB09] declares the fallback choice
-  immaterial, and it is: every stated result survives any fixed fallback, only
-  the sketches' malformed-input branches change sides uniformly.
+  immaterial, and every stated result survives any fixed fallback — but not
+  "uniformly": each language's malformed-input branch follows **its own
+  predicate** on the fallback (a satisfiable fallback of width four would put
+  the non-well-formed strings in `SAT` and out of `3SAT` — round-1 audit,
+  finding 5), and the Lemma-2.14 reduction maps a non-well-formed input to the
+  serialization of the **transformed** fallback, which keeps the reduction
+  equivalence whatever the fixed choice.
 * **`TAUTOLOGY` and [AB09, Example 2.21] are deferred to phase 4** (plan
   decision log): [AB09]'s `TAUTOLOGY` ranges over general Boolean formulas, and
   its coNP-hardness reduction negates the Cook-Levin CNF into a **DNF** — while
