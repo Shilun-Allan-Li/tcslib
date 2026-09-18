@@ -93,13 +93,22 @@ width-`Q n` all-`false` candidate certificate; in each round, assemble
 candidate as a **fixed-width** counter and repeat, rejecting on width overflow
 after the `2^(Q n)`-th round. Enumeration is over certificates of exactly the
 definition's length — no majorant mismatch (audit question 4). The remaining
-machine obligations, named for the fill per audit finding 5: fixed-width
-increment with overflow detection (the private `counterInc` layer of
-`ClassP/TimeConstructible.lean` extends on overflow and is a template, not a
-citable API — promotion or private re-derivation is a fill-time decision),
-retention of `x` and the candidate across rounds, reset of `MV`'s work region
-between rounds, and a timed loop invariant (the untimed `exists_cond` does not
-supply one). Budget: at most `2^(Q n)` rounds of cost polynomial in
+machine obligations, named for the fill per phase-1 finding 5 and round-2
+finding 2: fixed-width increment with overflow detection (the private
+`counterInc` layer of `ClassP/TimeConstructible.lean` extends on overflow and
+is a template, not a citable API — promotion or private re-derivation is a
+fill-time decision); retention of `x` and the candidate across rounds;
+**a verifier-call simulation that captures `MV`'s decision bit in finite
+control, suppresses its physical emissions, and redirects its halt to the
+loop controller** — the output tape is append-only, so forwarding per-round
+emissions would accumulate (`[false, true]` across two rounds) and violate
+`DecidesInTime`'s singleton contract; the real output stays empty until the
+final answer (the capture-wrapper pattern of `Turing.universalCaptureTM` is
+the in-repo precedent); reset of `MV`'s simulated state, heads, work region,
+and the captured bit between rounds (a bounded region — each head moves at
+most one cell per step); and a timed loop invariant covering all of the above
+(the untimed `exists_cond` does not supply one; at `C = 0` the single round on
+the empty certificate still executes). Budget: at most `2^(Q n)` rounds of cost polynomial in
 `n + Q n + 1`, i.e. `a · 2^(Q n) (n + Q n + 1)^d ≤ 2^(n^e)` for a fixed degree
 `e`, small lengths absorbed into `DTIME`'s constant (the audit's own estimate):
 `L ∈ EXP`. -/

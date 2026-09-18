@@ -107,16 +107,23 @@ deciding `V'` parses the aligned pair (the `Turing.pairDecode` grammar; a
 polynomial-time scan), checks the length equality against the explicit formula,
 reassembles `x ++ u`, and runs `V`'s decider — each a named machine obligation
 for the fill, none exotic. (⇐) From the bounded form `(C, c, V)`, take exact
-length `C(|x|+1)^c + 1` and pad each certificate right-self-delimitingly to
-`u ++ [true] ++ false-run`. The new verifier, on `y`, recovers the split:
-`n ↦ n + C(n+1)^c + 1` is strictly increasing and the formula is explicitly
-computable, so the unique `n` with `n + C(n+1)^c + 1 = |y|` is found by
-scanning `n ≤ |y|` in polynomial time. It rejects a marker-free certificate
-region (so stripping never eats into `x`), strips the marker, checks the
-stripped `u` against the *original* bound `|u| ≤ C(n+1)^c` — checkable
-precisely because the bound is the explicit formula; this was the residual
-soundness error of the pre-repair sketch (audit finding 2) — and consults `V`
-on `pairEncode x u`. -/
+length `R n = (C+1)(n+1)^c` — **admissible** for the repaired `NP`
+(coefficient `C+1`, degree `c`; the round-2 audit refuted the earlier choice
+`C(n+1)^c + 1`, which is not of the class's required shape — round-2
+finding 1) — leaving `R n - C(n+1)^c = (n+1)^c ≥ 1` room for the marker. Pad
+each certificate right-self-delimitingly to `u ++ [true] ++ false-run` of
+length `R n`. The new verifier, on `y` of length `m`: recover the unique `n`
+with `n + R n = m` by scanning `n ≤ m` (`n ↦ n + R n` is strictly increasing
+and the formula is explicitly computable); split `y = x ++ v` with
+`|v| = R n ≥ 1`; reject if `v` has no `true` bit (so stripping never enters
+`x`); split `v = u ++ [true] ++ false-run` at the **last** `true`; check the
+*original* bound `|u| ≤ C(n+1)^c` — checkable precisely because the bound is
+the explicit formula (phase-1 finding 2's residual error, fixed in round 1) —
+and consult `V` on `pairEncode x u`. Every old witness pads within `R n`
+(`|u| + 1 ≤ C(n+1)^c + 1 ≤ R n`); every accepted new witness strips back to
+an old one (the round-2 audit's reconstruction, checked there across the
+`C = 0`, `c = 0`, `x = []`, `u = []`, all-`false`, and malformed edge
+cases). -/
 theorem mem_NP_iff_exists_length_le {L : Language Bool} :
     L ∈ NP ↔ ∃ (C c : ℕ) (V : Language Bool), V ∈ P ∧
       ∀ x : List Bool, x ∈ L ↔

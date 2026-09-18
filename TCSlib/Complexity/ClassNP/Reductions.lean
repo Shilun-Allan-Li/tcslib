@@ -157,10 +157,18 @@ a decider's output is exactly `[HALT c s]` (off the pair image `HALT` is
 `fun s => [HALT c s]` computable
 (`Complexity.Computable` via `Turing.FinTM.ComputesFunInTime.computes`),
 contradicting `Complexity.HALT_not_computable`. The audit certified this chain
-valid once `NP_subset_EXP` is repaired. Effectivity **is** needed here (unlike
-`Complexity.HALT_NPHard`): for pathological schemes — e.g. one decoding every
-string to the trivial machine — `HALT` is decidable, so nonmembership cannot
-hold at `Turing.MachineCode` generality. -/
+valid once `NP_subset_EXP` is repaired. The `Turing.EffectiveMachineCode`
+hypothesis is a **proof-route restriction, not a mathematical necessity**
+(round-2 audit, finding 3 — the pre-repair docstring's trivial-machine
+"counterexample" violates `decode_encode` and is unlawful): this proof reuses
+Chapter 1's `HALT_not_computable`, whose own proof runs the universal
+evaluator and hence needs effectivity. The round-2 audit exhibited a direct
+diagonalization (diagonal pairing, the searcher's control transform with the
+halt/loop roles swapped, `Turing.exists_codeTM`, no evaluator) proving `HALT`
+undecidable for **every** lawful `Turing.MachineCode`; whether to add that
+diagonal lemma and generalize this statement is a recorded human-review
+design question (`AroraBarakChapter2Plan.md`, open design questions). Until
+decided, this statement stays at the generality its cited API supports. -/
 theorem HALT_not_mem_NP (c : EffectiveMachineCode) :
     {s | HALT c.toMachineCode s = true} ∉ NP := by
   sorry

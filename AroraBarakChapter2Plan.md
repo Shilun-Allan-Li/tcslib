@@ -41,21 +41,24 @@ tool); Berman's theorem (Exercise 2.30).
 
 ## 2. Foundation decisions
 
-* **`NP` is verifier-first, language-level.** `L ∈ NP` iff there are a
-  polynomially bounded certificate length `p` and a *language* `V ∈ P` with
-  `x ∈ L ↔ ∃ u, |u| = p |x| ∧ x ++ u ∈ V`. Rendering the verifier as a
-  `P`-language (rather than a bare machine) reuses the audited Chapter-1 class
-  and — decisively — **sidesteps the pairing/splitting subtlety** of [AB09]'s
-  footnote 4: the definition never needs to recover `x` from `x ++ u`. Every
-  planned consumer constructs its own concatenations (`P ⊆ NP` takes `p = 0`,
-  the `NP ⊆ EXP` enumerator builds `x ++ u` itself, and Cook-Levin's tableau
-  works on the literal string `y = x ∘ u` with condition 1 pinning the
-  `x`-prefix). Concrete `V`s that *do* split (e.g. `EXP ⊆ NEXP`) prove their
-  split computable case by case, against a monotone length majorant.
-* **Certificates have exact length `p |x|`** (Definition 2.1 verbatim); the
-  bounded-length variant is Exercise 2.1, stated as an equivalence whose proof
-  enlarges `p` to the monotone majorant `C(n+1)^c` and pads certificates
-  right-self-delimitingly (`u ++ [true] ++ false-run`).
+* **`NP` is verifier-first, language-level, with explicit length formulas**
+  (as repaired by the phase-1 audit, finding 1): `L ∈ NP` iff there are a
+  coefficient `C`, degree `c`, and a *language* `V ∈ P` with
+  `x ∈ L ↔ ∃ u, |u| = C(|x|+1)^c ∧ x ++ u ∈ V`. The certificate length is
+  always an explicit effective formula — never an abstract bounded function,
+  which can smuggle undecidable information through length arithmetic
+  (Argument A). Rendering the verifier as a `P`-language reuses the audited
+  Chapter-1 class and was certified sound (finding 10). Concatenation is kept
+  in the exact-length form: with the explicit formula, `n ↦ n + C(n+1)^c` is
+  nondecreasing-plus-identity and the split is unique and computable wherever
+  a consumer needs it (round-2 audit).
+* **Certificates have exact length `C(|x|+1)^c`** (Definition 2.1, with the
+  formula for [AB09]'s "polynomial `p`"); the bounded-length variant is
+  Exercise 2.1, stated with **`pairEncode x u` pairing** on the bounded side
+  (plain concatenation there forces `V ⊆ L` and collapses prefix-free
+  languages — Argument B; a concatenation-based bounded variant is
+  **equivalent to `P = NP`** and must never be stated, round-2 audit) and
+  proved by padding to the admissible exact length `(C+1)(n+1)^c`.
 * **NDTMs are binary-choice and functional** (phase 2): two total transition
   functions per [AB09] §2.1.2, semantics by a choice-word-indexed run function
   in the house `runFrom` style — *not* cslib's relational `MultiTapeNTM`
@@ -142,6 +145,31 @@ sketches, an audit pack goes out, gates close on zero blockers/majors.
 * Estimated mandatory-core scale: ~35-45 audited sorries over four phases —
   larger than Chapter 1's 21, with one summit instead of two.
 
+## Open design questions (human review required)
+
+As in Chapter 1 (`AroraBarakChapter1Plan.md` §5), these are reserved for a
+**human** decision; audit rounds verify correctness but do not dispose of them.
+
+1. **Generality of `HALT_not_mem_NP`** (phase-1, round-2 audit, finding 3).
+   The statement is currently at `Turing.EffectiveMachineCode` generality
+   because its proof route reuses Chapter 1's `HALT_not_computable`, whose own
+   proof runs the universal evaluator. The round-2 auditor showed this
+   restriction is **not mathematically necessary**: a direct diagonalization —
+   the public diagonal-pairing machine, the searcher's finite-control
+   transform with the halt/loop roles swapped, `Turing.exists_codeTM`, no
+   evaluator — proves `HALT` undecidable for *every* lawful
+   `Turing.MachineCode` (and my earlier "trivial-machine scheme"
+   counterexample is unlawful: constant decoding violates `decode_encode`).
+   **The question:** add that diagonal lemma as a new audited statement (a
+   strengthening of Chapter 1's uncomputability story that shares its main
+   fill obligation, the control-transform lemma, with `HALT_NPHard`) and
+   generalize `HALT_not_mem_NP` to `MachineCode` — or keep the conservative
+   signature as a documented API/proof-route restriction? Maintainer's
+   provisional choice, pending review: the conservative signature, with the
+   docstring stating the restriction honestly; the diagonal lemma is
+   deliberately *not* slipped into a repair round, since it would enlarge the
+   audited surface of Chapter 1's uncomputability chapter.
+
 ## 6. Decision log
 
 | Decision | Status |
@@ -149,13 +177,15 @@ sketches, an audit pack goes out, gates close on zero blockers/majors.
 | Chapter 2 proceeds on branch `complexity/arora-barak-ch1` (name notwithstanding), same methodology, gates, tooling, and delivery mechanics as Chapter 1; artifacts under `ch2-*` names | Decided |
 | **Prior-art survey for NDTMs** (2026-09-18): Mathlib has none (nondeterminism stops at `NFA`/`EpsilonNFA`; TM0/1/2 deterministic). cslib — at our vendoring pin `a3747758` and unchanged on `main` — has `MultiTape/Nondeterministic.lean` (relational `MultiTapeNTM`, Papadimitriou §2.7 style, `List`-chain `ComputationPath` semantics, per-path exact-time notions, no acceptance, no all-branch time bound) and `MultiTape/DeterministicToNondeterministic.lean` (singleton-relation embedding). **Decision: do not port.** [AB09]'s binary-choice model is load-bearing for Theorem 2.6 (the certificate *is* the choice word; general relations have no canonical certificate encoding and admit stuck configurations), the campaign's proof style is functional (`runFrom` algebra — the original vendoring deliberately dropped cslib's relational semantics), and the port would drag in cslib's `IsChainFromTo` foundation plus new-module-system syntax. cslib's model is recorded as related work; a trivial embedding of our binary machine into their relational one is optional future upstream-reconciliation work | Decided |
 | Vendored-file upstream drift check (2026-09-18): `Configuration.lean` and `Deterministic.lean` byte-identical upstream since pin `a3747758`; cslib's MultiTape directory has since grown (`TapeLemmas`, `ConfigBound`, combinators, `SingleTape/*`) — nothing needed now | Decided |
-| `NP` defined verifier-first with the verifier as a language `V ∈ P` and exact-length concatenated certificates (`x ++ u`, no pairing) — splitting subtleties pushed to the concrete constructions that need them | Decided — flagged for phase-1 audit |
-| `EXP := ⋃ c, DTIME (2 ^ n ^ c)` ([AB09] Claim 2.4 verbatim); `NEXP` in Exercise-2.27 verifier form with `ExpBound` certificate lengths, NTIME-form equivalence deferred to phase 2 | Decided — flagged for phase-1 audit |
+| `NP` defined verifier-first with the verifier as a language `V ∈ P` and exact-length concatenated certificates (`x ++ u`, no pairing) — splitting subtleties pushed to the concrete constructions that need them | **Superseded** (phase-1 audit, finding 1): the abstract length function was the defect; see the repair rows below and §2 |
+| `EXP := ⋃ c, DTIME (2 ^ n ^ c)` ([AB09] Claim 2.4 verbatim); `NEXP` in Exercise-2.27 verifier form with `ExpBound` certificate lengths, NTIME-form equivalence deferred to phase 2 | `EXP` **Decided** (audit-confirmed); the `ExpBound` half **superseded** (finding 1) — `NEXP` uses the explicit formula `C·2^((n+1)^c)`; see the repair rows |
 | Design questions seeded for the **phase-1 audit**: (a) the `V ∈ P` verifier rendering vs. explicit machines; (b) exact-length certificates as primary with Exercise 2.1 as the bridge; (c) `PolyBound`'s `C·(n+1)^c` normal form; (d) `Complexity.compl_mem_P` as a new statement on Chapter-1 classes (addition beyond the audited ch-1 surface, flagged); (e) the `≤ₚ` notation scope | Open — to auditors |
 | Design questions seeded for the **phase-2 audit**: (a) output-based acceptance (`[true]` on some choice word) vs. a literal `qaccept` state — [AB09] deviation to be justified or reversed; (b) `NTIME`'s all-branch halting bound quantifier placement; (c) choice words as `List Bool` vs. `ℕ → Bool` | Open — to auditors |
 | Design question seeded for the **phase-3 audit**: in-house CNF type vs. `Std.Sat.CNF`; serialization scheme and fallback convention | Open — to auditors |
 | §2.4 web of reductions, §2.5 search-to-decision, parsimonious/Levin reductions, Exercise 2.6 (universal NDTM), Berman's theorem: **deferred**, not scheduled in the mandatory core | Decided |
 | `MathlibBridge` poly-time upgrade as an optional lever for reduction machines | Open — revisit at phase 3 |
+| Phase-1 audit round 2 (`audits/ch2-phase1-reaudit-findings.md`): **zero blockers, 3 majors, 2 minors, 2 notes — gate stays open, but the round-1 repairs are certified**: Arguments A, B, D re-fired against the repaired definitions and confirmed dead; "no false Lean theorem statement"; resolution table verified row by row; all 19 statements assessed sound; `pairEncode x u` order confirmed; a concatenation-based bounded Exercise-2.1 variant shown **equivalent to `P = NP`** (never to be stated). Majors, all sketch/prose-level: (1) the Ex-2.1 reverse witness `C(n+1)^c + 1` is not of the class's admissible shape — corrected construction `R n = (C+1)(n+1)^c` supplied with edge-case table and ~8,000 executable checks; (2) the enumerator obligations omitted **output isolation** (append-only output means resets cannot un-emit; round 1's buffering requirement had been dropped); (3) the "effectivity is necessary" justification for `HALT_not_mem_NP` is false — the trivial-machine scheme violates `decode_encode`, and a direct diagonalization proves `HALT` undecidable for every lawful `MachineCode`. Minors: plan §2 prose stale; pack attestation-3 count mixed categories (erratum acknowledged, pack preserved per precedent) | Decided |
+| Round-2 repairs executed (sketch/prose only — **no statement changed**): Ex-2.1 reverse sketch adopts the auditor's `R n = (C+1)(n+1)^c` construction; the enumerator sketch gains the verifier-call capture obligation (suppress emissions, capture the bit in control, redirect the halt; `universalCaptureTM` as in-repo precedent; reset includes heads, control, and the captured bit); `HALT_not_mem_NP`'s docstring restated as a **proof-route restriction** with the unlawful-counterexample retraction and a pointer to the new human-review question; plan §2 synchronized and the two superseded decision rows marked. The `MachineCode`-generalization decision is recorded under "Open design questions (human review required)", question 1 — provisional maintainer choice: keep the conservative signature; do not grow the audited uncomputability surface inside a repair round. All repaired modules re-gated clean; 19 admissions unchanged; lint unchanged. **Round-3 re-audit next** (protocol: no gate closes on a round reporting majors) | Decided |
 | Phase-1 skeleton landed (`ab82bb6a`): 10 definitions + 19 sorried statements + 1 scoped notation across the five `ClassNP/` modules and facade, every statement with a policy-grade sketch; gate-verified per module and by a **full 40-module fresh sweep** (zero errors; exactly the 19 admissions, all in `ClassNP/`); Chapter-1 freeze verified by path enumeration; the eight Chapter-1 headline axiom prints remain admission-free on the fresh tree; style lint zero FAIL. **Phase-1 audit pack prepared** (`audits/ch2-phase1-{pack,bundle}.md`) with the seeded design questions (a)-(e) as auditor priorities, including the Exercise-2.1 marker-free-tail trap found at drafting. Gate awaits `audits/ch2-phase1-findings.md` | Decided |
 | Phase-1 audit round 1 (`audits/ch2-phase1-findings.md`): **3 blockers, 3 majors, 3 minors, 3 notes — gate stays open; all accepted.** The chapter-2 Argument A: `PolyBound p` constrains the certificate-length function only numerically, so length *arithmetic* smuggles undecidable information (`p_A(n) ∈ {2n, 2n+1}` against a mod-3 verifier decides any `A`) — the pre-repair `NP`/`NEXP` contained undecidable languages, `NP ⊆ EXP` and `HALT_NPHard` were false (the latter vacuously: Argument D shows *nothing* was NP-hard for that class), and the Exercise-2.1 equivalence was doubly false (Argument B: bounded-length + plain concatenation forces `V ⊆ L`, collapsing prefix-free languages — an obstruction that survives the length repair, so the bounded form needs pairing). The `V ∈ P` verifier abstraction itself was **certified sound** (finding 10: "the oracle is the unconstrained `p`, not `V`") | Decided |
 | Phase-1 repairs executed per the audit's own proposals: `NP`, `coNP`'s ∀-characterization, and `NEXP` now quantify over **explicit effective length formulas** — exactly `C·(n+1)^c` (resp. `C·2^((n+1)^c)`) certificate bits, never an abstract function; `PolyBound`/`ExpBound` demoted to numerical helpers with corrected docstrings; Exercise 2.1 restated with `pairEncode x u` pairing on the bounded side and a split-then-strip verifier checking the *original* explicit bound (the audit's residual-soundness fix); `NP ⊆ EXP` re-sketched with the polynomial-evaluation, fixed-width-counter, retention/reset, and timed-loop obligations named (finding 5; private `counterInc` acknowledged as template, not API); `compl_mem_P` and `mem_P_of_polyTimeReducible` re-sketched through the timed `computesFunInTime_comp` (finding 4); `HALT_NPHard` **generalized to every `Turing.MachineCode`** (finding 11) with the audit's total-decider-then-loop-on-rejection searcher recipe (finding 6) and the fixed-prefix `pairEncode α ·` machine obligation; `HALT_not_mem_NP` stays at `EffectiveMachineCode` with the pathological-scheme justification recorded; composition degree `max c (c·c')` (finding 7); monotonicity attributions fixed (finding 8); stale names fixed (finding 9); **root `TCSlib.lean` now exports the `ClassNP` facade** (note 12 — a genuine miss). All six modules re-gated clean, same 19 admissions, lint unchanged. **Re-audit round 2 required before any fill** (the Chapter-1 phase-3 precedent) | Decided |
