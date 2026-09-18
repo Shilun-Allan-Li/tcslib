@@ -25,6 +25,7 @@ import TCSlib.Complexity.TuringMachine
 import TCSlib.Complexity.Uncomputability
 import TCSlib.Complexity.ClassP
 import TCSlib.Complexity.Formulas
+import TCSlib.Complexity.CookLevin
 import TCSlib.Complexity.ClassNP
 
 import TCSlib.Cryptography.SchnorrProtocol

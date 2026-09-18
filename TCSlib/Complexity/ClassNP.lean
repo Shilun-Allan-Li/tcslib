@@ -12,6 +12,7 @@ import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassNP.Nondeterminism
 import TCSlib.Complexity.ClassNP.SAT
 import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.ClassNP.Tautology
 
 /-!
 # Complexity — NP and NP-completeness
@@ -42,4 +43,6 @@ The classes and reduction notions of [AB09, ch. 2] (see
   formula layer lives in `TCSlib.Complexity.Formulas`).
 * `TMSAT` — the generic `NP`-complete language [AB09, Theorem 2.9], with the
   polynomial time-constructibility support statement.
+* `Tautology` — `coNP`-hardness/completeness and `TAUTOLOGY` on the DNF
+  fragment [AB09, §2.6.1, Example 2.21].
 -/

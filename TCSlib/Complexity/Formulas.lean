@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.Formulas.CNF
 import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Complexity.Formulas.DNF
 
 /-!
 # Complexity — Boolean formulas
@@ -20,4 +21,6 @@ The formula layer of the Arora-Barak Chapter 2 development (see
   CNF universality [AB09, §2.3.1, Claim 2.13], over `Std.Sat.CNF ℕ`.
 * `CNFEncoding` — the unary-index LL(1) serialization, the exact-consumption
   parser, and the fixed-fallback totalization [AB09, §2.3.1, footnote 3].
+* `DNF` — the DNF reading of the same carrier, the De Morgan dual, and the
+  dual-tautology pivot [AB09, §2.6.1].
 -/
