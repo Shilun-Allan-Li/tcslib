@@ -290,6 +290,37 @@ trust-surface policy that should not be closed by an automated gate.
    written? Until reviewed, the bridge stays private in `Encoding.lean` and
    nothing outside `exists_effectiveMachineCode` depends on it.
 
+2. **The 3B universal-interpreter proof architecture** (epoch 3, batches B +
+   B2; `Universal.lean`, `Turing.universal`). The proof followed the audited
+   sketch's outline (prefix-only startup, canonizer capture onto a table
+   tape, four-work-tape interpreter with a fixed finite controller), but the
+   realized architecture is by far the campaign's most involved artifact:
+   2465 lines, 104 private declarations built across two agent sessions
+   (WIP `f191b918` + continuation), a bespoke checkpoint relation
+   (`universalRelation`) with generic block-simulation assembly
+   (`universal_block_run` / `universal_from_blocks`), a virtual left
+   boundary via a marker tape, a unary state tape with group-wise table
+   scanning, and an *exact* per-phase cost ledger realized to
+   `universalBlockBound = 3L + 5N + 20`. The kernel checks all of it, and
+   the public statement is frozen and audited — but the *design* was never
+   itself an audit deliverable at this level of detail. **Open questions for
+   a human:** (a) is this the right load-bearing shape for epoch 4, where
+   `timed_universal` must reuse the interpreter with a step counter — and
+   which parts (the capture wrapper, the block-run/`universal_run_join`
+   assembly, the marker-directed rewind and unary-copy gadget patterns, all
+   flagged by the agents as promotion candidates) should graduate to shared
+   modules at the epoch-3→4 merge rather than being re-derived? (b) is the
+   exact-ledger posture (`3L + 5N + 20` proved to the transition) worth its
+   brittleness against any future change to `CodeTM.serialize`, or should
+   the maintained invariant be an existential bound with the exact ledger
+   demoted to documentation? (c) does the interpreter's claim to *be* the
+   book's universal machine (as opposed to satisfying the frozen statement,
+   which the kernel settles) deserve a targeted human read of the
+   construction's core definitions (`UniversalControl`,
+   `universalInterpreter`, `universalRelation`), given no executable
+   diagnostics of the whole interpreter ever ran (the batch-B smoke tests
+   aborted on deep recursion and were discarded)?
+
 ## 6. Risks and honest effort assessment
 
 - **The proof-sketch gap is the main cost.** The book proves Claims 1.5/1.6 and Thm 1.9 in
@@ -342,4 +373,5 @@ trust-surface policy that should not be closed by an automated gate.
 | Batch B2 continuation brief written (`briefs/epoch3-batchB2.md`): base = branch `fill/epoch3-B` @ `f191b918` (created locally from the 3B bundle; **push pending**), scope = the single live-step obligation only, private WIP machinery revisable (including `universalBlockBound`), public statements frozen, delivery `epoch3-B2` zip with regression axiom prints; expected residual sorries in that lineage: `exists_effectiveMachineCode`, `oblivious_of_mem_DTIME`, `timed_universal`. Epoch-3 audit pack deferred until B2 lands (or `universal` is carried as the sole admission if B2 stalls) | Decided |
 | Epoch-3 batches A and C **integrated** on user go (agent commits `1b16fcb8`-`cf4618bd` via `git am -3`, authorship preserved): the campaign branch's `TCSlib/` tree is byte-identical to the verified `epoch3-verify` state (the full-sweep and axiom-print evidence carries over verbatim; scratch branch deleted after the identity check). 19/21 sorries proved and integrated; the only remaining admissions are `universal` (B2 in flight from `fill/epoch3-B` @ `f191b918`) and `timed_universal` (epoch 4). Still owed at the epoch-3 boundary: B2 delivery, comment-stripped drift attestation, epoch-3 audit pack (must flag: the 3A bridge design question above, both size escalations, and the two batches' import additions) | Decided |
 | Batch B2 delivered and **integrated** (agent commits `089d9057` + `179d736b` via `git am -3`, WIP commit included unchanged, authorship preserved): `Turing.universal` **proved** — the live-source block realized the WIP's intended ledger exactly (`universalBlockBound = 3L + 5N + 20` unchanged; per-phase proved costs in the B2 report, with the skipped-length refinement `P = P_g + P_b`), 22 new privates mapped to the brief's four sub-obligations, no WIP machinery revised, `Universal.lean` at 2465 lines (escalation accepted; split due at the epoch-3→4 merge alongside the `universal_run_join` shared-lemma request). Maintainer verification on the **combined** A+C+B2 tree (never elaborated in any agent lineage): series removes exactly one line (the `sorry`); freeze intact; zero public-decl drift (3 public / 104 private); full 25-module fresh-olean sweep exit 0, zero errors, exactly one sorry warning (`timed_universal`); axiom prints — `universal`, `universal_quadratic`, `exists_effectiveMachineCode`, `oblivious_of_mem_DTIME`, `UC_not_computable`, `UC_computable_of_HALT_computable`, and **`HALT_not_computable` all clean** (no `sorryAx`); only `timed_universal` still admits. **20/21 sorries proved and integrated — Theorems 1.9 (untimed + quadratic), 1.10, and 1.11 are fully machine-checked**; epoch 4 owes `timed_universal` + closure. Next at the epoch-3 boundary: drift attestation + audit pack | Decided |
+| Epoch-3 boundary artifacts prepared: **drift attestation** (comment-stripped multiset over the fill span `71721842 → b519a004` — the only Lean line removed anywhere is `sorry` ×3; `Halting.lean`'s statement-prose fix verified comment-only; zero public-decl drift on all three owned files) and **epoch-3 audit pack** (`audits/epoch3-{pack,bundle}.md`, 40 attachments incl. all four agent reports in `audits/epoch3-agent-reports/`). Design question 2 added to §5 on user instruction: the 3B universal-interpreter proof architecture (shape for epoch-4 reuse; exact-ledger brittleness; targeted human read of the core definitions) joins the 3A bridge as human-reserved. Pack instructs the auditor that both constructions' *correctness* is in scope but their design *disposition* is a human decision. Gate awaits `audits/epoch3-findings.md` | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |
