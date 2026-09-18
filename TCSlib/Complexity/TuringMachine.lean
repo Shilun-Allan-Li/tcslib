@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.Configuration
 import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Nondeterministic
 import TCSlib.Complexity.TuringMachine.Oracle
 import TCSlib.Complexity.TuringMachine.Simulation
 import TCSlib.Complexity.TuringMachine.Sweep
@@ -50,6 +51,9 @@ for the local modifications.
   of the state type; shared by the oracle embedding and the code normal form.
 * `Finite` — the bundled `FinTM` layer carrying `Fintype`/`DecidableEq` state instances;
   all headline definitions are stated over it.
+* `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
+  choice-word run semantics, all-branch halting, the bundled `FinNDTM` layer, and the
+  deterministic embedding (the classes live in `ClassNP/NTIME`).
 * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
   step; the embedding of plain machines and its oracle-independence sanity theorems.
 * `Simulation` — generic machine-construction gadgets: emission chains, control

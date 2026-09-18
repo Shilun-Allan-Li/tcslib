@@ -8,6 +8,8 @@ import TCSlib.Complexity.ClassNP.NP
 import TCSlib.Complexity.ClassNP.CoNP
 import TCSlib.Complexity.ClassNP.EXP
 import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.ClassNP.Nondeterminism
 
 /-!
 # Complexity — NP and NP-completeness
@@ -28,4 +30,9 @@ The classes and reduction notions of [AB09, ch. 2] (see
 * `Reductions` — Karp reductions, `NP`-hardness and `NP`-completeness
   [AB09, Definition 2.7, Theorem 2.8], and `HALT`'s status
   [AB09, Exercise 2.8].
+* `NTIME` — nondeterministic deciding and the classes `NTIME`
+  [AB09, §2.1.2, Definition 2.5] (the machine model lives in
+  `TuringMachine/Nondeterministic`).
+* `Nondeterminism` — the `NTIME` characterizations of `NP` [AB09, Theorem 2.6] and
+  `NEXP` [AB09, §2.6.2], and the padding theorem [AB09, Theorem 2.22].
 -/
