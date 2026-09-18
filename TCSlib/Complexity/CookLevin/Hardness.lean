@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
 import TCSlib.Complexity.CookLevin.Snapshot
 
 set_option maxHeartbeats 0
@@ -100,9 +102,15 @@ tableau horizon; `M`'s schedule and last-visit data are
 `y_0, …, y_{m-1}` — the first `n` pinned to `x`'s bits, the last `Q n` free
 (the certificate; design question (d)) — and snapshot-block variables
 `z_{t,0}, …, z_{t,B-1}` for `0 ≤ t ≤ T`, where `B` is the bit size of a fixed
-injective encoding of `Complexity.Snapshot M` (a constant of `M`); index
-packing `y_j ↦ j`, `z_{t,i} ↦ m + tB + i` — explicit arithmetic, unary
-serialization polynomial since all indices are `≤ m + (T+1)B`.
+injective **product** encoding of `Complexity.Snapshot M` — a fixed code for
+the optional state followed by fixed codes for the input symbol and each
+work symbol, so the block's fields are literal slices of the block and the
+bitwise pinning of family (ii)-(v) is per-field (round-1 audit, note 5) —
+with a totalized decoder (`dec (enc s) = s`; junk patterns decode to a fixed
+snapshot). `B` is a constant of `M`. Index packing `y_j ↦ j`,
+`z_{t,i} ↦ m + tB + i` — explicit arithmetic, disjoint and injective by
+quotient/remainder by `B`, unary serialization polynomial since all indices
+are `< m + (T+1)B`.
 
 **(3) Clause families**, each of constant size per member except where noted,
 each obtained from a Boolean function on constantly many block bits via
@@ -152,23 +160,50 @@ of the genuine snapshots, and family (vi) rules out `[false]`: so
 the exact audited length — no bounded-length slippage.
 
 **(5) The emitting machine** — `f x := Std.Sat.CNF.serialize φ_x`, with
-`Complexity.PolyTimeComputable f` by the named obligations: evaluate `Q n`,
-`m`, and `T* m` (`Complexity.timeConstructible_poly` and the exact-value
-discipline of the phase-3 audit); **compute the schedule by clocked
-simulation on the reference input** `List.replicate m false` — the
-definitional reference input of `Complexity.inputPosAt`/`workPosAt` — for
-`T` steps, recording positions in binary (`O(log T)` bits each;
-per-step simulation of the *fixed* machine `M` at constant state cost plus
-polynomial bookkeeping; the `Simulation` lockstep gadgets and the phase-2
-compilation obligations are the precedents); derive `prevVisit m t τ` by
-position comparison against the recorded trajectory (quadratically many
-comparisons of `O(log T)`-bit integers); emit the clause families in the
-fixed order (2)-(3) with the packed indices written in unary (run-length
-emission driven by binary counters); the constant per-family clause tables
-are hardwired finite-control data of the fixed `M` (Claim 2.13 applied once,
-off-line, to `M`'s finitely many reconstruction functions). Output length:
-`O(n) + O(T·(m + TB)·const)` unary-serialized — an explicit polynomial in
-`n`; time polynomial likewise.
+`Complexity.PolyTimeComputable f` by the staged obligations below, every
+stage under the **output-silence contract** (round-1 audit, finding 1): the
+preparatory machines' answers are captured on work tapes and their
+emissions discarded — `Complexity.timeConstructible_poly`'s machines answer
+on the real output tape, and the reference simulation of `M` emits its
+verdict bit, so unwrapped forwarding would prefix the serialization and
+collapse the emitted word to the fallback (the audit's concrete false
+positive: `[false] ++ serialize φ_x` fails exact consumption and decodes to
+`[] ∈ SAT`); likewise a forwarded source *halt* would strand the output at
+`[false] = serialize []`. **Invariant: the physical output is empty before
+serialization, and equals the emitted serialization prefix thereafter.**
+Stages (the audit's contract table, adopted verbatim):
+(s1) *exact arithmetic* — retain `x`; compute the exact `Q n`, `m`, and `T`
+(the phase-3 exact-value discipline), capturing binary subroutine answers on
+work tapes and returning control with empty physical output;
+(s2) *reference simulation* — present the **virtual** input
+`List.replicate m false` (the definitional reference input of
+`Complexity.inputPosAt`/`workPosAt`), virtual head starting at `1` and
+clamped to `0..m+1`, on disjoint work tapes: the physical input is still
+`x`, so native-input embeddings alone do not suffice;
+(s3) *simulation output and halt* — discard the source's output field, keep
+an **internal** halted flag rather than halting the controller, and after
+source halting record the frozen positions until the clock reaches `T`;
+(s4) *trajectory* — record times `0..T` inclusive, work counters matching
+the signed source positions and input counters the clamped reference
+positions (`O(log T)` bits each); administrative controller steps do not
+count as simulated time;
+(s5) *last visits* — for each target time and tape, compare all earlier
+recorded positions and keep the greatest match, or `none` (`O(k·T²)`
+comparisons of `O(log T)`-bit integers, with sequential-scan access costs —
+polynomial feasibility, no random-access assumption);
+(s6) *serialization* — emit the clause families in the fixed order of
+(2)-(3) with packed indices in unary (run-length emission driven by binary
+counters), every marker and the final terminator included, and halt only
+after completion. The constant per-family clause tables are hardwired
+finite-control data of the fixed `M` (Claim 2.13 applied once, off-line, to
+`M`'s finitely many reconstruction functions); the `Simulation` lockstep
+gadgets and the buffered-capture precedents are usable *components*, but the
+bare embeddings forward output and halts and are **not** substitutes for
+these contracts. Output length — the fill's ledger is the exact identity
+`|serialize φ_x| = 1 + 2·#clauses + Σ_{(v,b) occurrence} (v + 3)`; the
+pinning family alone costs `n(n-1)/2 + 5n` bits (its unary indices grow),
+absorbed by the dominant terms since `T ≥ (m+1)²` — in all an explicit
+polynomial in `n`, and time polynomial likewise.
 
 **(6) Conclusion.** `x ∈ L ↔ φ_x` satisfiable
 `↔ f x ∈ SAT` (`Std.Sat.CNF.decode_serialize`), so `L ≤ₚ SAT` via

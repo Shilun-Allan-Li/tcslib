@@ -100,8 +100,10 @@ by the same mentioned-variable argument, a named obligation mirroring
 `Complexity.eval_congr_of_lt_numVars`). The verifier machine reuses the
 `SAT_mem_NP` obligations — odd-length split with explicit even rejection,
 the shared parsing machine, the assignment walk — with the **dual**
-evaluation loop (accept when some clause-conjunct fails … i.e. evaluate
-`evalDNF` and answer its negation) and the buffered verdict. Malformed
+evaluation loop: accept iff **every** term contains an unsatisfied literal,
+i.e. evaluate `evalDNF` and answer its negation (an empty term forces
+rejection, the empty formula forces acceptance — round-1 audit, finding 2,
+correcting the drafted some-term phrasing) — and the buffered verdict. Malformed
 strings: the fallback is not a DNF tautology, so they lie in `TAUTOLOGYᶜ`,
 and the verifier accepts them with any certificate (`evalDNF` of `[]` is
 `false` — consistent on both sides). -/
