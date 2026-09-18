@@ -78,11 +78,15 @@ theorem PolyTimeReducible.trans {L L' L'' : Language Bool}
 Definition 2.7]: if `L ≤ₚ L'` and `L' ∈ P` then `L ∈ P`.
 
 **Proof sketch.** Compose the reduction machine with a polynomial-time decider of
-`L'` (`Complexity.mem_P_iff`) via `Turing.FinTM.exists_comp_partial`; the
-intermediate string `f x` has polynomially bounded length
-(`Complexity.PolyTimeComputable.output_length_le`), so the decider's budget on it
-is polynomial in `|x|`, and the composite decides `L` since
-`x ∈ L ↔ f x ∈ L'`. -/
+`L'` (`Complexity.mem_P_iff`, read pointwise as computing the total
+singleton-indicator function) via the **timed** total composition
+`Turing.FinTM.computesFunInTime_comp` — the untimed `exists_comp_partial`
+carries no time bound (phase-1 audit, finding 4). The intermediate string `f x`
+has polynomially bounded length
+(`Complexity.PolyTimeComputable.output_length_le`), so the decider's budget on
+it is polynomial in `|x|` by monotonicity of the explicit polynomial, and the
+composite decides `L` since `x ∈ L ↔ f x ∈ L'`; return through
+`Complexity.mem_P_of_dtime_le`. -/
 theorem mem_P_of_polyTimeReducible {L L' : Language Bool}
     (h : L ≤ₚ L') (h' : L' ∈ P) : L ∈ P := by
   sorry
@@ -113,35 +117,50 @@ theorem NPComplete.mem_P_iff {L : Language Bool} (hL : NPComplete L) :
     L ∈ P ↔ P = NP := by
   sorry
 
-/-- **`HALT` is `NP`-hard** [AB09, Exercise 2.8], for any effective representation
-scheme.
+/-- **`HALT` is `NP`-hard** [AB09, Exercise 2.8] — for **every** representation
+scheme, effective or not: the reduction embeds one *fixed* code, so only
+`Turing.MachineCode.decode_encode` is used (phase-1 audit, finding 11; compare
+Chapter 1's Theorem 1.10/1.11 split, where only the evaluator direction needs
+effectivity).
 
-**Proof sketch.** Fix `L ∈ NP` with certificate length `p` and verifier `V ∈ P`.
-Build the *searcher* machine `S`: on input `x`, enumerate the finitely many
-candidates `u` with `|u| = p |x|` (binary-counter machinery as in
-`Complexity.NP_subset_EXP`'s sketch), running `V`'s decider on `x ++ u`; halt as
-soon as some candidate verifies, and enter a deliberate one-state infinite loop
-after the last candidate fails — so `S` halts on `x` iff `x ∈ L`. Normal-form
-and code `S` (`Turing.FinTM.one_work_tape_binary`, `Turing.exists_codeTM`, then
-`c.encode` — the `universal_quadratic` pattern) as a *fixed* string `α`. The
-reduction maps `x ↦ Turing.pairEncode α x`: with the first component fixed, this
-is a constant doubled prefix followed by the verbatim input, computable by a
-small emit-then-copy machine in linear time. `Complexity.HALT_pairEncode_eq_true_iff`
-turns membership of the image in `HALT` into "`S` halts on `x`", which is
-`x ∈ L`. -/
-theorem HALT_NPHard (c : EffectiveMachineCode) :
-    NPHard {s | HALT c.toMachineCode s = true} := by
+**Proof sketch** (the audit's repaired construction, finding 6 — the earlier
+divergent-searcher route is unusable because
+`Turing.FinTM.one_work_tape_binary` requires a *total* function). Fix `L ∈ NP`.
+(1) Obtain a **total** exponential-time decider `D` of `L` from the repaired
+`Complexity.NP_subset_EXP`. (2) Normal-form `D` with
+`Turing.FinTM.one_work_tape_binary` (legal: `D` is total). (3) Modify the
+one-work-tape machine's finite control with a register remembering the Boolean
+emission — including a bit emitted on the halting transition — and replace its
+halt: halt iff the remembered bit is `true`, otherwise enter a stationary
+one-state live loop (such a deliberately divergent state exists: emit nothing,
+move nothing, return the same live state). This control modification needs its
+own run/halting lemma — a named fill obligation. The result `S` halts on `x`
+iff `x ∈ L`. (4) Code `S` with `Turing.exists_codeTM` (no totality hypothesis)
+and set `α := c.encode S`. The reduction maps `x ↦ Turing.pairEncode α x`: a
+fixed doubled prefix of length `2|α| + 2` followed by the verbatim input,
+computable by an emit-then-copy machine in `2|α| + |x| + 3` steps (a small new
+machine or prefixing lemma — the audited `pairDiagTM` computes the diagonal
+pair, not this fixed-prefix function). `Complexity.HALT_pairEncode_eq_true_iff`
+and `Turing.MachineCode.decode_encode` turn membership of the image in `HALT`
+into "`S` halts on `x`", which is `x ∈ L`. -/
+theorem HALT_NPHard (c : MachineCode) :
+    NPHard {s | HALT c s = true} := by
   sorry
 
 /-- **`HALT` is not in `NP`** [AB09, Exercise 2.8] — so, despite being `NP`-hard,
 it is not `NP`-complete: `NP` languages are decidable, `HALT` is not.
 
 **Proof sketch.** If `HALT`'s language were in `NP`, it would be in `EXP` by
-`Complexity.NP_subset_EXP`, so some machine would decide it — and a decider's
-output is exactly `[HALT c s]` by `Complexity.HALT_eq_true_iff` and the
-indicator convention, making `fun s => [HALT c s]` computable
+the repaired `Complexity.NP_subset_EXP`, so some machine would decide it — and
+a decider's output is exactly `[HALT c s]` (off the pair image `HALT` is
+`false` and the rejection bit matches, per the totalization convention), making
+`fun s => [HALT c s]` computable
 (`Complexity.Computable` via `Turing.FinTM.ComputesFunInTime.computes`),
-contradicting `Complexity.HALT_not_computable`. -/
+contradicting `Complexity.HALT_not_computable`. The audit certified this chain
+valid once `NP_subset_EXP` is repaired. Effectivity **is** needed here (unlike
+`Complexity.HALT_NPHard`): for pathological schemes — e.g. one decoding every
+string to the trivial machine — `HALT` is decidable, so nonmembership cannot
+hold at `Turing.MachineCode` generality. -/
 theorem HALT_not_mem_NP (c : EffectiveMachineCode) :
     {s | HALT c.toMachineCode s = true} ∉ NP := by
   sorry

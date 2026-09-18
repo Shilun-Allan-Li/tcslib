@@ -56,29 +56,38 @@ def coNP : Set (Language Bool) :=
 /-- **`P` is closed under complement**: if `L` is decidable in polynomial time then
 so is its complement.
 
-**Proof sketch.** Obtain a decider of `L` from `Complexity.mem_P_iff` and
-postcompose it with the Boolean-negation postprocessor
-`Turing.FinTM.computesFunInTime_ifEq [true] [false] [true]`
-(`w ↦ if w = [true] then [false] else [true]`) via
-`Turing.FinTM.exists_comp_partial`; the composite decides `Lᶜ` because the
-indicator of the complement is the negated indicator, and the budget stays
-polynomial by the composition ledger. This is a new statement about the
-Chapter-1 class, flagged for audit (plan §6). -/
+**Proof sketch.** Obtain a decider of `L` from `Complexity.mem_P_iff`, read it
+pointwise as computing the total singleton-indicator function (the decider's
+output is exactly `[indicator L x]`), and postcompose with the Boolean-negation
+postprocessor `Turing.FinTM.computesFunInTime_ifEq [true] [false] [true]`
+(`w ↦ if w = [true] then [false] else [true]`) via the **timed** total
+composition `Turing.FinTM.computesFunInTime_comp` — the untimed
+`exists_comp_partial` carries no time bound (phase-1 audit, finding 4). The
+composite computes the complement's indicator within a budget polynomial by the
+composition ledger and the monotonicity of the explicit polynomial; return
+through `Complexity.mem_P_of_dtime_le`. Buffered composition keeps the
+intermediate bit off the real output. This is a new statement about the
+Chapter-1 class, flagged for audit (plan §6) and certified by the phase-1
+round (finding 10). -/
 theorem compl_mem_P {L : Language Bool} (h : L ∈ P) : Lᶜ ∈ P := by
   sorry
 
 /-- **The ∀-certificate characterization of coNP** [AB09, Definition 2.20,
-equivalence per Exercise 2.24]: `L ∈ coNP` iff there are a polynomially bounded
-`p` and a verifier `V ∈ P` with `x ∈ L ↔ ∀ u, |u| = p |x| → x ++ u ∈ V`.
+equivalence per Exercise 2.24]: `L ∈ coNP` iff there are a certificate
+coefficient `C`, degree `c`, and a verifier `V ∈ P` with
+`x ∈ L ↔ ∀ u, |u| = C(|x|+1)^c → x ++ u ∈ V` — the same explicit length
+formula as `Complexity.NP` (phase-1 audit repair, finding 1).
 
 **Proof sketch.** Negate the exact-length existential in `NP`'s membership
-equivalence for `Lᶜ`: `x ∈ L ↔ ¬(∃ u, |u| = p |x| ∧ x ++ u ∈ V₀)
-↔ ∀ u, |u| = p |x| → x ++ u ∈ V₀ᶜ`, and `V₀ᶜ ∈ P` by
-`Complexity.compl_mem_P`; both directions instantiate the same `p`, complementing
-the verifier. -/
+equivalence for `Lᶜ`: `x ∈ L ↔ ¬(∃ u, |u| = C(|x|+1)^c ∧ x ++ u ∈ V₀)
+↔ ∀ u, |u| = C(|x|+1)^c → x ++ u ∈ V₀ᶜ`, and `V₀ᶜ ∈ P` by
+`Complexity.compl_mem_P`; both directions instantiate the same `C, c`,
+complementing the verifier. Purely logical — no certificate-length computation
+is needed (audit finding table). -/
 theorem mem_coNP_iff_forall {L : Language Bool} :
-    L ∈ coNP ↔ ∃ (p : ℕ → ℕ) (V : Language Bool), PolyBound p ∧ V ∈ P ∧
-      ∀ x : List Bool, x ∈ L ↔ ∀ u : List Bool, u.length = p x.length → x ++ u ∈ V := by
+    L ∈ coNP ↔ ∃ (C c : ℕ) (V : Language Bool), V ∈ P ∧
+      ∀ x : List Bool, x ∈ L ↔
+        ∀ u : List Bool, u.length = C * (x.length + 1) ^ c → x ++ u ∈ V := by
   sorry
 
 /-- **`P ⊆ NP ∩ coNP`** [AB09, Exercise 2.23].

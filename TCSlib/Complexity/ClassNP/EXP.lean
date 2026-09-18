@@ -24,6 +24,10 @@ machines exist.
 * `NEXP`'s verifier is a language `V ∈ P`: "polynomial time" is measured in the
   length of the padded string `x ++ u`, which is exponential in `|x|` — this is
   the standard certificate rendering and exactly Exercise 2.27's intent.
+* **The certificate length is the explicit formula `C · 2^((|x|+1)^c)`** — the
+  same phase-1 audit repair as `Complexity.NP` (finding 1, Argument A: an
+  abstract `ExpBound` length function admits undecidable classes). `ExpBound`
+  survives as a numerical helper only.
 * The chain `P ⊆ NP ⊆ EXP ⊆ NEXP` [AB09, Claim 2.4 and §2.6.2] is stated as the
   three individual inclusions below (`P ⊆ NP` lives in `ClassNP/NP.lean`).
 
@@ -59,12 +63,14 @@ def ExpBound (p : ℕ → ℕ) : Prop :=
   ∃ C c : ℕ, ∀ n, p n ≤ C * 2 ^ (n + 1) ^ c
 
 /-- **The class NEXP**, in the certificate form of [AB09, Exercise 2.27]:
-exponential-length certificates with a verifier language decidable in time
+certificates of length exactly `C · 2^((|x|+1)^c)` — an explicit formula, per
+the phase-1 audit repair — with a verifier language decidable in time
 polynomial in the padded string `x ++ u`. The `NTIME` form of [AB09, §2.6.2] and
 its equivalence with this one are phase-2 obligations. -/
 def NEXP : Set (Language Bool) :=
-  {L | ∃ (p : ℕ → ℕ) (V : Language Bool), ExpBound p ∧ V ∈ P ∧
-    ∀ x : List Bool, x ∈ L ↔ ∃ u : List Bool, u.length = p x.length ∧ x ++ u ∈ V}
+  {L | ∃ (C c : ℕ) (V : Language Bool), V ∈ P ∧
+    ∀ x : List Bool, x ∈ L ↔
+      ∃ u : List Bool, u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V}
 
 /-- **`P ⊆ EXP`** [AB09, Claim 2.4].
 
@@ -77,32 +83,43 @@ theorem P_subset_EXP : P ⊆ EXP := by
 
 /-- **`NP ⊆ EXP`** [AB09, Claim 2.4]: brute-force certificate enumeration.
 
-**Proof sketch.** Let `L ∈ NP` with certificate length `p` (bounded by the
-monotone majorant `C (n+1)^c`) and verifier `V ∈ P` decided by machine `MV`.
-The deciding machine, on input `x` of length `n`: maintain a candidate
-certificate `u` on a work tape as a binary counter of width `p n` (initialized to
-all-`false`; width computed by the polynomial-counting machinery of
-`Complexity.counterTM`); in each round, copy `x ++ u` to a buffer and run `MV` on
-it via the guarded composition `Turing.FinTM.exists_comp_partial` and the branch
-combinator `Turing.FinTM.exists_cond`; accept if `MV` accepts, else increment `u`
-(`Complexity.counterInc`) and repeat, rejecting after the `2^(p n)`-th round.
-There are at most `2^(p n) ≤ 2^(C (n+1)^c)` rounds, each costing polynomially
-many steps in `n + p n`, so the total is `2^(n^{c'})`-bounded for a suitable
-`c'`: `L ∈ EXP`. The construction is a bounded-search sibling of the epoch-1
-combinator assemblies; its cost ledger is the fill's main obligation. -/
+**Proof sketch.** Let `L ∈ NP` with certificate length exactly `Q n = C(n+1)^c`
+and verifier `V ∈ P` decided by machine `MV`. The deciding machine, on input
+`x` of length `n`: evaluate the explicit formula `Q n` (a polynomial-evaluation
+machine — a **new obligation**; the explicit formula is what makes the width
+computable at all, phase-1 audit finding 1 and question 4) and lay out a
+width-`Q n` all-`false` candidate certificate; in each round, assemble
+`x ++ u` on a buffer, run `MV`, accept if it accepts, else increment the
+candidate as a **fixed-width** counter and repeat, rejecting on width overflow
+after the `2^(Q n)`-th round. Enumeration is over certificates of exactly the
+definition's length — no majorant mismatch (audit question 4). The remaining
+machine obligations, named for the fill per audit finding 5: fixed-width
+increment with overflow detection (the private `counterInc` layer of
+`ClassP/TimeConstructible.lean` extends on overflow and is a template, not a
+citable API — promotion or private re-derivation is a fill-time decision),
+retention of `x` and the candidate across rounds, reset of `MV`'s work region
+between rounds, and a timed loop invariant (the untimed `exists_cond` does not
+supply one). Budget: at most `2^(Q n)` rounds of cost polynomial in
+`n + Q n + 1`, i.e. `a · 2^(Q n) (n + Q n + 1)^d ≤ 2^(n^e)` for a fixed degree
+`e`, small lengths absorbed into `DTIME`'s constant (the audit's own estimate):
+`L ∈ EXP`. -/
 theorem NP_subset_EXP : NP ⊆ EXP := by
   sorry
 
 /-- **`EXP ⊆ NEXP`** [AB09, §2.6.2].
 
-**Proof sketch.** Given `L ∈ EXP` decided in time `2^(n^c)`, take the certificate
-length `p n = 2^((n+1)^c)` (an `ExpBound`, strictly monotone in `n`) and the
-verifier `V = {x ++ u : x ∈ L, |u| = p |x|}`. `V ∈ P`: on a string `y`, recover
-the unique `n` with `n + p n = |y|` by scanning `n ≤ |y|` (strict monotonicity of
-`n + p n`; each evaluation of `p` is a binary power computable in time polynomial
-in `|y|`), split off `x`, and run `L`'s `2^(n^c)`-time decider — polynomial in
-`|y| ≥ p n = 2^((n+1)^c)`. Certificates carry no information; padding buys the
-verifier its time. -/
+**Proof sketch.** Given `L ∈ EXP` decided in time `2^(n^c)`, take `C = 1` and
+certificate length `p n = 2^((n+1)^c)` — nondecreasing in `n` (constant `2` at
+`c = 0`), so that `n ↦ n + p n` is **strictly increasing** (the monotonicity
+belongs to the sum, not to `p` — phase-1 audit, finding 8) — and the verifier
+`V = {x ++ u : x ∈ L, |u| = p |x|}`. `V ∈ P`: on a string `y` of length `m`,
+recover the unique `n` with `n + p n = m` by scanning `n ≤ m` (each evaluation
+writes `2^((n+1)^c)` in binary, `(n+1)^c + 1 ≤ (m+1)^c + 1` bits — polynomial
+in `m`, the audit's own check), reject if no split exists (including `m = 0`),
+split off `x`, and run `L`'s decider: its `a · 2^(n^c)` budget is at most
+`a · m`. Fixed-degree arithmetic and the split/copy machinery are named new
+machine obligations for the fill. Certificates carry no information; padding
+buys the verifier its time. -/
 theorem EXP_subset_NEXP : EXP ⊆ NEXP := by
   sorry
 
