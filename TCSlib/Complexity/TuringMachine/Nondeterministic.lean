@@ -46,8 +46,13 @@ up, in `TCSlib.Complexity.ClassNP.NTIME`, because they fix the binary alphabet.
 * **Halting is absorbing under every choice**: stepping a halted configuration is the
   identity regardless of the choice bit, mirroring the deterministic `step`. Extending
   a choice word beyond the halting time therefore never changes the reached
-  configuration — the lemma `runWith_of_halt` below — which is what makes exact-length
-  choice-word quantifiers interchangeable with bounded-length ones.
+  configuration — the lemma `runWith_of_halt` below. This is what the exact-length
+  quantifiers lean on, *directionally*: accepting witnesses pad to any larger exact
+  length, and all-branch halting at a larger budget follows by splitting at the old
+  one (`HaltsWithin.mono`). It does **not** make every bounded-length rewriting valid —
+  "every word of length at most `t` is halted" already fails at the empty word — and
+  the correct bounded readings are recorded in `TCSlib.Complexity.ClassNP.NTIME`
+  (round-1 audit, finding 2).
 * The model reuses the vendored configuration layer (`Turing.Cfg`, `Turing.Action`)
   unchanged: an NDTM step applies an `Action` exactly as a deterministic step does; only
   the *selection* of the action is new.

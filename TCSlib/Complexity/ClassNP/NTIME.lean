@@ -39,9 +39,18 @@ deterministic embedding `DTIME ⊆ NTIME`.
   presentational; demanding it on non-members is not, and is the standard reading.
   **Design question (b) for the phase-2 audit.**
 * **Exact-length choice words**: both `AcceptsWithin` and `HaltsWithin` quantify over
-  choice words of length exactly `t`. Halting is absorbing under every choice
-  (`Turing.NDTM.runWith_of_halt`), so exact-length and bounded-length quantifiers agree;
-  the monotonicity lemmas below are the precise form of that remark.
+  choice words of length exactly `t`; the equivalent bounded-length readings differ by
+  quantifier shape (round-1 audit, finding 2). For **acceptance** the bounded
+  existential is equivalent: some `w` with `|w| ≤ t` reaching a halted configuration
+  with output `[true]` pads with `false`-bits to exact length
+  (`Turing.NDTM.runWith_of_halt`). For **all-branch halting** the bounded reading is
+  prefix-shaped: every word of length `t` has a halted prefix `w.take r` with `r ≤ t`
+  (forward take `r = t`; backward absorb the suffix) — **not** "every word of length
+  at most `t` is already halted", which fails at the empty word against the live
+  initial state. Moreover, under `HaltsWithin x t` the run of any longer word `w`
+  *equals* the run of `w.take t` — the whole configuration, not merely the halting
+  flag — which is what the backward (truncation) directions of `Complexity.NTIME.mono`
+  and the compilation sketches use.
 * As with `Complexity.DTIME`, the constant `c` in `NTIME` ranges over all of `ℕ`; the
   value `c = 0` gives the unsatisfiable budget `0` (no machine is halted at time `0`)
   and contributes nothing, matching [AB09]'s `c > 0` without a positivity side

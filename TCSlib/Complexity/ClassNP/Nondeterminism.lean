@@ -209,11 +209,16 @@ padded input `x'`), and verifier
 `V' = {Turing.pairEncode x' u : x' = Turing.pairEncode x (List.replicate (E |x|) true)
 for some x, |u| = E |x|, and x ++ u ∈ V}`. Deciding `V'` in time polynomial in
 `|x'| + |u|`: parse the outer pair (`Turing.pairDecode` — self-delimiting, outermost
-first; a parsing-machine obligation), parse `x'` into `(x, pad)`, evaluate `E |x|`
-(its binary form has `(|x|+1)^c + O(log C)` bits, at most about `log₂ |x'|` — the pad
-dominates `|x'|`), check `pad` is all-`true` of exactly that length and `|u|` equals
-it exactly (rejecting otherwise — malformed `x'` lies in neither `L_pad` nor any
-`V'`-pair, keeping the equivalence for all inputs), assemble `x ++ u` (length
+first; a parsing-machine obligation), parse `x'` into `(x, pad)`, evaluate `E |x|` in
+binary — **before any validity assumption** its bit length is at most
+`(|x|+1)^c + bits(C) + 1`, polynomial in the actual input length since the parsed
+`x` is a substring of the input (`E n = 0` when `C = 0`); the logarithmic-in-`|x'|`
+estimate holds only *after* the padding-length check and must not be used to budget
+the evaluation itself (round-1 audit, finding 1) — check `pad` is all-`true` of
+exactly that length and `|u|` equals it exactly (rejecting otherwise — malformed
+`x'` lies in neither `L_pad` nor any `V'`-pair, keeping the equivalence for all
+inputs; both exact checks are needed, the bounded outer witness condition replaces
+neither), assemble `x ++ u` (length
 `≤ |x'|`), and run `V`'s polynomial decider relocated-and-captured (the shared
 obligations). By `P = NP`, `L_pad ∈ P`; let `M_pad` decide it within `A·(m+1)^d`.
 **`L ∈ EXP`**: on `x`, evaluate `E |x|` and write the pad (`E |x|` symbols —
