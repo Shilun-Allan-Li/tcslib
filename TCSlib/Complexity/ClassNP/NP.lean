@@ -112,9 +112,11 @@ length `R n = (C+1)(n+1)^c` — **admissible** for the repaired `NP`
 `C(n+1)^c + 1`, which is not of the class's required shape — round-2
 finding 1) — leaving `R n - C(n+1)^c = (n+1)^c ≥ 1` room for the marker. Pad
 each certificate right-self-delimitingly to `u ++ [true] ++ false-run` of
-length `R n`. The new verifier, on `y` of length `m`: recover the unique `n`
-with `n + R n = m` by scanning `n ≤ m` (`n ↦ n + R n` is strictly increasing
-and the formula is explicitly computable); split `y = x ++ v` with
+length `R n`. The new verifier, on `y` of length `m`: search `n ≤ m` for
+`n + R n = m` — strict increase of `n ↦ n + R n` gives **at most one**
+solution, and none may exist (e.g. `y = []`, since `R n ≥ 1`): **reject if no
+such `n` exists** (round-3 audit, finding 1); otherwise split `y = x ++ v` at
+that unique `n` with
 `|v| = R n ≥ 1`; reject if `v` has no `true` bit (so stripping never enters
 `x`); split `v = u ++ [true] ++ false-run` at the **last** `true`; check the
 *original* bound `|u| ≤ C(n+1)^c` — checkable precisely because the bound is
