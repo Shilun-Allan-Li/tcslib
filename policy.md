@@ -7,6 +7,8 @@ formal proof is accompanied by readable mathematics).
 
 It complements, and does not replace:
 
+- `workflow.md` — the campaign formalization process (phases, audit gates, fill epochs)
+  that produces code meeting these standards.
 - `.github/copilot-instructions.md` — build workflows, import rules, CI integration points.
 - `AGENTS.md` / `.claude/CLAUDE.md` — the sorry-ladder proof workflow and agent roster.
 - `blueprint/BLUEPRINT_PIPELINE.md` — how blueprint entries are generated and validated.
