@@ -19,7 +19,6 @@ import TCSlib.Complexity.CircuitComplexity.Basic
 * `Language.InAC` — [AB09, Def 6.25], `AC^d`; `BoolCircuit.AC` — `⋃_{i ≥ 0} AC^i`.
 * `BoolCircuit.Circuit.toBinary` — rebuilds every unbounded gate as a balanced
   binary tree of gates of the same type.
-* `Language.parity` — [AB09, Ex 6.26]'s `PARITY`, and `BoolCircuit.parityCircuit`.
 
 ## Main results
 
@@ -27,32 +26,48 @@ import TCSlib.Complexity.CircuitComplexity.Basic
   [AB09, p. 118], hence `BoolCircuit.NC_eq_AC`.
 * `BoolCircuit.toBinary_eval`, `toBinary_maxFanin_le`, `toBinary_depth_le`,
   `toBinary_size_le` — the four facts that inclusion needs.
-* `Language.parity_inNC_one` — [AB09, Ex 6.26], `PARITY ∈ NC¹`.
+
+[AB09, Ex 6.26], `PARITY ∈ NC¹`, is in `TCSlib.Complexity.CircuitComplexity.Parity`.
+The size, depth and fan-in arithmetic these proofs run on is in
+`TCSlib.Complexity.CircuitComplexity.Basic`.
 
 ## Divergences from Arora–Barak §6.7.1
 
-* **Circuit model.** `BoolCircuit.Circuit` is a *tree*: every gate feeds exactly one
-  parent, so this is AB's class with fan-out 1 (a formula, in the usual terminology).
-  The three results below are theorems about that model.  `NC¹` is unaffected — a
-  fan-in-2 tree of depth `O(log n)` has `poly(n)` nodes, and conversely — but for
-  `i ≥ 2` a fan-out-1 `NC^i` is contained in, and not known to equal, AB's.  The
-  alternative, `ACP.FeedForward`, is a layered DAG and is what `PPoly.lean` uses; it
-  was rejected here because `toBinary` — which must *build* a `⌈log₂ w⌉`-deep tree in
-  place of a width-`w` gate — is a recursion over a gate's child list, and
-  `FeedForward` has no child list to recurse on.  Consequently `NC ⊆ P/poly` is not
-  statable: the two classes are over different circuit types.
+* **What is formalized.** `Language.InNC d` and `Language.InAC d` are AB's `NC^d` and
+  `AC^d` taken over `BoolCircuit.Circuit`, which is a *tree*: every gate feeds exactly
+  one parent.  They are therefore AB's classes with fan-out restricted to `1` (formulas),
+  where Def 6.1's circuits are DAGs.  AB's DAG classes are not defined anywhere in this
+  development, and **no comparison between them and these is formalized**.  The next
+  bullet describes the gap to AB; it is not a theorem of anything below.
+* **Informal expectation, not proved here.** Unfolding a fan-in-`f` DAG of depth `d` into
+  a tree duplicates a node once per consumer, blowing the node count up by a factor of at
+  most `f ^ d`, so the fan-out-1 restriction is expected to be harmless exactly where a
+  polynomial-size family stays polynomial: on the `NC` side at `i = 1` (`f = 2`,
+  `d = O(log n)`), and on the `AC` side at `i = 0` (`f = poly(n)`, `d = O(1)`).  The two
+  indices differ, so the `NC` boundary must not be carried across to `AC`.  Neither AB's
+  DAG classes nor this unfolding is formalized, so
+  **neither expectation is a theorem of this development**;
+  `Circuit.size_succ_le_two_pow` (`Basic.lean`) proves only the tree-side bound.
+* **Size measure.** `IsPolySize` is AB's "poly(n) size", measured by `Circuit.size`, which
+  diverges from Def 6.1 in both directions.  It *lowers* the count by charging `1` for a
+  `k`-ary gate where AB charges `k − 1` vertices — unbounded here, not a constant, since
+  `AC^i` is the unbounded-fan-in class — and by not counting AB's `n` input vertices.  It
+  *raises* the count by charging every literal occurrence a separate leaf, since a tree
+  has no shared input vertices and no gate reuse.
 * **Fan-in.** Bounded fan-in is the predicate `Circuit.maxFanin ≤ 2` over the one
-  unbounded-fan-in `Circuit` type, not a separate inductive type — this is the idiom
-  the LMN development already uses (`maxFanin ≤ w` as a hypothesis), and it lets
+  unbounded-fan-in `Circuit` type, not a separate inductive type — this is the idiom the
+  LMN development already uses (`maxFanin ≤ w` as a hypothesis), and it lets
   `toBinary : Circuit n → Circuit n` be a plain function whose four properties are
-  ordinary lemmas about one type.
-* **Negation.** `Circuit` negates only at literals, so a `NOT` gate is free and
-  contributes no depth.  Every circuit built here is in that De Morgan normal form
-  anyway, which is why `PARITY` is built as a dual pair (a circuit and a circuit for
-  its complement) rather than with internal negations.
+  ordinary lemmas about one type.  `ACP.FeedForward`, the layered DAG `PPoly.lean` uses,
+  was rejected because `toBinary` recurses over a gate's child list, which it has not.
+* **Basis.** `Circuit` negates only at literals, so a `NOT` gate is free and contributes
+  no depth, where AB's Def 6.1 basis `{∧, ∨, ¬}` charges one for it.
 * **`O(log^d n)`.** Written `∃ b, ∀ n, depth ≤ b * (Nat.log 2 n + 1) ^ d`, the shape
   `PPoly.lean` uses for size.  The `+ 1` repairs the same degeneracy: `Nat.log 2 n = 0`
   for `n ≤ 1`, so `b * (Nat.log 2 n) ^ d` would force depth `0` at those lengths.
+* **`NC ⊆ P/poly`.** Statable — `BoolCircuit.NC` and `ACP.PPoly` are both
+  `Set (Language Bool)` — but not provable here: there is no bridge from
+  `BoolCircuit.Circuit` to `ACP.CircuitFamily` (`ch6/PLAN.md`, deferred follow-ups).
 * **Uniformity.** AB's "one can also define uniform `NC`" needs logspace and is out of
   scope; see `ch6/NOT_FORMALIZED.md`.
 
@@ -155,94 +170,6 @@ namespace BoolCircuit
 
 variable {n : ℕ}
 
-/-! ### Structural unfoldings -/
-
-/-- Maximum fan-in over a list of circuits. -/
-private def maxFaninL (cs : List (Circuit n)) : ℕ :=
-  cs.foldr (fun c acc => max c.maxFanin acc) 0
-
-/-- A gate's depth is one more than its children's. -/
-private theorem depth_node (b : Bool) (cs : List (Circuit n)) :
-    (Circuit.node b cs).depth = 1 + Circuit.maxDepth cs := by
-  simp [Circuit.depth, Circuit.maxDepth]
-
-/-- A gate's size is one more than its children's total. -/
-private theorem size_node (b : Bool) (cs : List (Circuit n)) :
-    (Circuit.node b cs).size = 1 + Circuit.sumSize cs := by
-  simp [Circuit.size, Circuit.sumSize]
-
-/-- A gate's fan-in is its arity or its children's fan-in, whichever is larger. -/
-private theorem maxFanin_node (b : Bool) (cs : List (Circuit n)) :
-    (Circuit.node b cs).maxFanin = max cs.length (maxFaninL cs) := by
-  simp [Circuit.maxFanin, maxFaninL]
-
-/-- `maxDepth` of the empty list. -/
-private theorem maxDepth_nil : Circuit.maxDepth ([] : List (Circuit n)) = 0 := rfl
-
-/-- `maxDepth` on a cons cell. -/
-private theorem maxDepth_cons (c : Circuit n) (cs : List (Circuit n)) :
-    Circuit.maxDepth (c :: cs) = max c.depth (Circuit.maxDepth cs) := rfl
-
-/-- `sumSize` of the empty list. -/
-private theorem sumSize_nil : Circuit.sumSize ([] : List (Circuit n)) = 0 := rfl
-
-/-- `sumSize` on a cons cell. -/
-private theorem sumSize_cons (c : Circuit n) (cs : List (Circuit n)) :
-    Circuit.sumSize (c :: cs) = c.size + Circuit.sumSize cs := rfl
-
-/-- `maxFaninL` of the empty list. -/
-private theorem maxFaninL_nil : maxFaninL ([] : List (Circuit n)) = 0 := rfl
-
-/-- `maxFaninL` on a cons cell. -/
-private theorem maxFaninL_cons (c : Circuit n) (cs : List (Circuit n)) :
-    maxFaninL (c :: cs) = max c.maxFanin (maxFaninL cs) := rfl
-
-/-- Each child is no deeper than the deepest. -/
-private theorem depth_le_maxDepth {c : Circuit n} :
-    ∀ {cs : List (Circuit n)}, c ∈ cs → c.depth ≤ Circuit.maxDepth cs
-  | _ :: cs, h => by
-      rcases List.mem_cons.mp h with rfl | h
-      · exact le_max_left _ _
-      · exact (depth_le_maxDepth h).trans (le_max_right _ _)
-
-/-- Each child's fan-in is at most the list's. -/
-private theorem maxFanin_le_maxFaninL {c : Circuit n} :
-    ∀ {cs : List (Circuit n)}, c ∈ cs → c.maxFanin ≤ maxFaninL cs
-  | _ :: cs, h => by
-      rcases List.mem_cons.mp h with rfl | h
-      · exact le_max_left _ _
-      · exact (maxFanin_le_maxFaninL h).trans (le_max_right _ _)
-
-/-- A circuit has at least one node, so a child list is no longer than its total size. -/
-private theorem length_le_sumSize : ∀ cs : List (Circuit n), cs.length ≤ Circuit.sumSize cs
-  | [] => le_refl 0
-  | c :: cs => by
-      have hc : 1 ≤ c.size := by cases c <;> simp [Circuit.size]
-      have := length_le_sumSize cs
-      simp only [List.length_cons, sumSize_cons]
-      omega
-
-/-- The list form of `Circuit.maxFanin_le_size`. -/
-private theorem maxFaninL_le_sumSize :
-    ∀ {cs : List (Circuit n)}, (∀ c ∈ cs, c.maxFanin ≤ c.size) →
-      maxFaninL cs ≤ Circuit.sumSize cs
-  | [], _ => le_refl 0
-  | c :: cs, h => by
-      have h1 := h c (List.mem_cons_self ..)
-      have h2 := maxFaninL_le_sumSize (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      simp only [maxFaninL_cons, sumSize_cons]
-      omega
-
-/-- A circuit's fan-in is bounded by its size. -/
-theorem Circuit.maxFanin_le_size (c : Circuit n) : c.maxFanin ≤ c.size := by
-  induction c using Circuit.ind with
-  | hlit l => simp [Circuit.maxFanin, Circuit.size]
-  | hnode b cs ih =>
-      have h₁ := length_le_sumSize cs
-      have h₂ := maxFaninL_le_sumSize ih
-      rw [maxFanin_node, size_node]
-      omega
-
 /-! ### Simulating an unbounded gate by a balanced binary tree -/
 
 /-- Pair adjacent children under a gate of type `b`, halving the list. -/
@@ -276,14 +203,14 @@ private theorem eval_node_pairUp (b : Bool) (x : Fin n → Bool) :
 /-- Pairing adds at most one to the depth. -/
 private theorem maxDepth_pairUp (b : Bool) :
     ∀ cs : List (Circuit n), Circuit.maxDepth (pairUp b cs) ≤ 1 + Circuit.maxDepth cs
-  | [] => by simp [pairUp, maxDepth_nil]
+  | [] => by simp [pairUp, Circuit.maxDepth_nil]
   | [c] => by simp [pairUp]
   | c₁ :: c₂ :: cs => by
       have ih := maxDepth_pairUp b cs
       have h1 : (Circuit.node b [c₁, c₂]).depth
           = 1 + max c₁.depth (max c₂.depth 0) := by
-        rw [depth_node, maxDepth_cons, maxDepth_cons, maxDepth_nil]
-      simp only [pairUp, maxDepth_cons, h1]
+        rw [Circuit.depth_node, Circuit.maxDepth_cons, Circuit.maxDepth_cons, Circuit.maxDepth_nil]
+      simp only [pairUp, Circuit.maxDepth_cons, h1]
       omega
 
 /-- Pairing does not increase the total size plus length. -/
@@ -296,22 +223,23 @@ private theorem sumSize_pairUp (b : Bool) :
   | c₁ :: c₂ :: cs => by
       have ih := sumSize_pairUp b cs
       have h1 : (Circuit.node b [c₁, c₂]).size = 1 + (c₁.size + (c₂.size + 0)) := by
-        rw [size_node, sumSize_cons, sumSize_cons, sumSize_nil]
-      simp only [pairUp, sumSize_cons, h1, List.length_cons]
+        rw [Circuit.size_node, Circuit.sumSize_cons, Circuit.sumSize_cons, Circuit.sumSize_nil]
+      simp only [pairUp, Circuit.sumSize_cons, h1, List.length_cons]
       omega
 
 /-- Pairing introduces only fan-in-2 gates. -/
 private theorem maxFaninL_pairUp (b : Bool) :
-    ∀ cs : List (Circuit n), maxFaninL (pairUp b cs) ≤ max 2 (maxFaninL cs)
+    ∀ cs : List (Circuit n), Circuit.maxFaninL (pairUp b cs) ≤ max 2 (Circuit.maxFaninL cs)
   | [] => Nat.zero_le _
-  | [c] => by simp [pairUp, maxFaninL_cons, maxFaninL_nil]
+  | [c] => by simp [pairUp, Circuit.maxFaninL_cons, Circuit.maxFaninL_nil]
   | c₁ :: c₂ :: cs => by
       have ih := maxFaninL_pairUp b cs
       have h1 : (Circuit.node b [c₁, c₂]).maxFanin
           = max 2 (max c₁.maxFanin (max c₂.maxFanin 0)) := by
-        rw [maxFanin_node, maxFaninL_cons, maxFaninL_cons, maxFaninL_nil]
+        rw [Circuit.maxFanin_node, Circuit.maxFaninL_cons, Circuit.maxFaninL_cons,
+          Circuit.maxFaninL_nil]
         norm_num
-      simp only [pairUp, maxFaninL_cons, h1]
+      simp only [pairUp, Circuit.maxFaninL_cons, h1]
       omega
 
 /-- Repeatedly pair a child list, `k` rounds at most, into a single circuit. -/
@@ -339,13 +267,13 @@ private theorem combineFuel_eval (b : Bool) (x : Fin n → Bool) :
 /-- Combining produces only fan-in-2 gates, given enough rounds. -/
 private theorem combineFuel_maxFanin (b : Bool) :
     ∀ (k : ℕ) (cs : List (Circuit n)), cs.length ≤ k →
-      (combineFuel b k cs).maxFanin ≤ max 2 (maxFaninL cs)
-  | 0, [], _ => by simp [combineFuel, maxFanin_node, maxFaninL_nil]
+      (combineFuel b k cs).maxFanin ≤ max 2 (Circuit.maxFaninL cs)
+  | 0, [], _ => by simp [combineFuel, Circuit.maxFanin_node, Circuit.maxFaninL_nil]
   | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [combineFuel, maxFanin_node, maxFaninL_nil]
+  | _ + 1, [], _ => by simp [combineFuel, Circuit.maxFanin_node, Circuit.maxFaninL_nil]
   | _ + 1, [c], _ => by
       show c.maxFanin ≤ _
-      rw [maxFaninL_cons, maxFaninL_nil]
+      rw [Circuit.maxFaninL_cons, Circuit.maxFaninL_nil]
       omega
   | k + 1, c₁ :: c₂ :: cs, h => by
       have hp := length_pairUp b (c₁ :: c₂ :: cs)
@@ -360,12 +288,12 @@ private theorem combineFuel_maxFanin (b : Bool) :
 private theorem combineFuel_depth (b : Bool) :
     ∀ (k : ℕ) (cs : List (Circuit n)), cs.length ≤ k →
       (combineFuel b k cs).depth ≤ Circuit.maxDepth cs + Nat.clog 2 cs.length + 1
-  | 0, [], _ => by simp [combineFuel, depth_node, maxDepth_nil]
+  | 0, [], _ => by simp [combineFuel, Circuit.depth_node, Circuit.maxDepth_nil]
   | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [combineFuel, depth_node, maxDepth_nil]
+  | _ + 1, [], _ => by simp [combineFuel, Circuit.depth_node, Circuit.maxDepth_nil]
   | _ + 1, [c], _ => by
       show c.depth ≤ _
-      rw [maxDepth_cons, maxDepth_nil]
+      rw [Circuit.maxDepth_cons, Circuit.maxDepth_nil]
       simp
   | k + 1, c₁ :: c₂ :: cs, h => by
       have hp := length_pairUp b (c₁ :: c₂ :: cs)
@@ -386,9 +314,9 @@ private theorem combineFuel_depth (b : Bool) :
 private theorem combineFuel_size (b : Bool) :
     ∀ (k : ℕ) (cs : List (Circuit n)),
       (combineFuel b k cs).size ≤ Circuit.sumSize cs + cs.length + 1
-  | 0, cs => by show (Circuit.node b cs).size ≤ _; rw [size_node]; omega
-  | _ + 1, [] => by simp [combineFuel, size_node, sumSize_nil]
-  | _ + 1, [c] => by show c.size ≤ _; rw [sumSize_cons, sumSize_nil]; omega
+  | 0, cs => by show (Circuit.node b cs).size ≤ _; rw [Circuit.size_node]; omega
+  | _ + 1, [] => by simp [combineFuel, Circuit.size_node, Circuit.sumSize_nil]
+  | _ + 1, [c] => by show c.size ≤ _; rw [Circuit.sumSize_cons, Circuit.sumSize_nil]; omega
   | k + 1, c₁ :: c₂ :: cs => by
       have ih := combineFuel_size b k (pairUp b (c₁ :: c₂ :: cs))
       have h2 := sumSize_pairUp b (c₁ :: c₂ :: cs)
@@ -402,7 +330,7 @@ private theorem combine_eval (b : Bool) (cs : List (Circuit n)) (x : Fin n → B
 
 /-- `combine` has fan-in 2, unless a child already had more. -/
 private theorem combine_maxFanin (b : Bool) (cs : List (Circuit n)) :
-    (combine b cs).maxFanin ≤ max 2 (maxFaninL cs) :=
+    (combine b cs).maxFanin ≤ max 2 (Circuit.maxFaninL cs) :=
   combineFuel_maxFanin b _ cs (le_refl _)
 
 /-- `combine` adds `⌈log₂ |cs|⌉ + 1` to the children's depth. -/
@@ -441,17 +369,18 @@ private theorem maxDepth_map_le (f : Circuit n → Circuit n) (m : ℕ) :
   | c :: cs, h => by
       have ih := maxDepth_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
       have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, maxDepth_cons]
+      simp only [List.map_cons, Circuit.maxDepth_cons]
       omega
 
 /-- A fan-in bound on every image element bounds the image's fan-in. -/
 private theorem maxFaninL_map_le (f : Circuit n → Circuit n) (m : ℕ) :
-    ∀ cs : List (Circuit n), (∀ c ∈ cs, (f c).maxFanin ≤ m) → maxFaninL (cs.map f) ≤ m
+    ∀ cs : List (Circuit n), (∀ c ∈ cs, (f c).maxFanin ≤ m) →
+      Circuit.maxFaninL (cs.map f) ≤ m
   | [], _ => Nat.zero_le _
   | c :: cs, h => by
       have ih := maxFaninL_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
       have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, maxFaninL_cons]
+      simp only [List.map_cons, Circuit.maxFaninL_cons]
       omega
 
 /-- `toBinary` computes the same function. -/
@@ -480,11 +409,11 @@ theorem toBinary_maxFanin_le : ∀ c : Circuit n, c.toBinary.maxFanin ≤ 2 := b
 private theorem sumSize_map_toBinary :
     ∀ cs : List (Circuit n), (∀ c ∈ cs, c.toBinary.size + 1 ≤ 3 * c.size) →
       Circuit.sumSize (cs.map Circuit.toBinary) + cs.length ≤ 3 * Circuit.sumSize cs
-  | [], _ => by simp [sumSize_nil]
+  | [], _ => by simp [Circuit.sumSize_nil]
   | c :: cs, h => by
       have ih := sumSize_map_toBinary cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
       have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, sumSize_cons, List.length_cons]
+      simp only [List.map_cons, Circuit.sumSize_cons, List.length_cons]
       omega
 
 /-- `toBinary` at most triples the size, with one unit to spare. -/
@@ -496,7 +425,7 @@ private theorem toBinary_size_succ_le : ∀ c : Circuit n, c.toBinary.size + 1 �
       simp only [Circuit.toBinary]
       have h1 := combine_size b (cs.map Circuit.toBinary)
       have h2 := sumSize_map_toBinary cs ih
-      rw [size_node]
+      rw [Circuit.size_node]
       simp only [List.length_map] at h1
       omega
 
@@ -512,18 +441,18 @@ theorem toBinary_depth_le {w : ℕ} : ∀ c : Circuit n, c.maxFanin ≤ w →
   | hlit l => intro _; simp [Circuit.toBinary, Circuit.depth]
   | hnode b cs ih =>
       intro h
-      rw [maxFanin_node] at h
+      rw [Circuit.maxFanin_node] at h
       have hlen : cs.length ≤ w := le_trans (le_max_left _ _) h
-      have hfan : maxFaninL cs ≤ w := le_trans (le_max_right _ _) h
+      have hfan : Circuit.maxFaninL cs ≤ w := le_trans (le_max_right _ _) h
       have hB : Circuit.maxDepth (cs.map Circuit.toBinary)
           ≤ Circuit.maxDepth cs * (Nat.clog 2 w + 1) :=
         maxDepth_map_le _ _ cs fun c hc =>
-          le_trans (ih c hc (le_trans (maxFanin_le_maxFaninL hc) hfan))
-            (Nat.mul_le_mul_right _ (depth_le_maxDepth hc))
+          le_trans (ih c hc (le_trans (Circuit.maxFanin_le_maxFaninL hc) hfan))
+            (Nat.mul_le_mul_right _ (Circuit.depth_le_maxDepth hc))
       have hC : Nat.clog 2 cs.length ≤ Nat.clog 2 w := Nat.clog_mono_right 2 hlen
       simp only [Circuit.toBinary]
       refine le_trans (combine_depth b (cs.map Circuit.toBinary)) ?_
-      rw [depth_node, Nat.add_mul, Nat.one_mul, List.length_map]
+      rw [Circuit.depth_node, Nat.add_mul, Nat.one_mul, List.length_map]
       omega
 
 /-- `⌈log₂⌉` of a polynomial is `O(log n)`. -/
@@ -588,7 +517,8 @@ theorem NCLevel_subset_ACLevel (i : ℕ) : NCLevel i ⊆ ACLevel i :=
 theorem ACLevel_subset_NCLevel_succ (i : ℕ) : ACLevel i ⊆ NCLevel (i + 1) :=
   fun _ h => Language.InAC.inNC_succ h
 
-/-- The two inclusions collapse the hierarchies: `NC = AC`.  [AB09, p. 118] -/
+/-- The two inclusions collapse the hierarchies: `NC = AC`, a corollary of
+[AB09, p. 118], which states the inclusions only. -/
 theorem NC_eq_AC : NC = AC := by
   ext L
   rw [mem_NC_iff, mem_AC_iff]
@@ -597,266 +527,5 @@ theorem NC_eq_AC : NC = AC := by
     exact ⟨i, hi.inAC⟩
   · rintro ⟨i, hi⟩
     exact ⟨i + 1, Nat.le_add_left 1 i, hi.inNC_succ⟩
-
-end BoolCircuit
-
-namespace BoolCircuit
-
-variable {n : ℕ}
-
-/-! ### Size from depth, and `PARITY` -/
-
-/-- A uniform bound on the children bounds the total size plus length. -/
-private theorem sumSize_add_length_le (m : ℕ) :
-    ∀ cs : List (Circuit n), (∀ c ∈ cs, c.size + 1 ≤ m) →
-      Circuit.sumSize cs + cs.length ≤ cs.length * m
-  | [], _ => by simp [sumSize_nil]
-  | c :: cs, h => by
-      have ih := sumSize_add_length_le m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      have hc := h c (List.mem_cons_self ..)
-      simp only [sumSize_cons, List.length_cons, Nat.succ_mul]
-      omega
-
-/-- A fan-in-2 circuit of depth `d` has at most `2 ^ (d + 1) - 1` nodes. -/
-theorem Circuit.size_succ_le_two_pow : ∀ c : Circuit n, c.maxFanin ≤ 2 →
-    c.size + 1 ≤ 2 ^ (c.depth + 1) := by
-  intro c
-  induction c using Circuit.ind with
-  | hlit l => intro _; simp [Circuit.size, Circuit.depth]
-  | hnode b cs ih =>
-      intro h
-      rw [maxFanin_node] at h
-      have hlen : cs.length ≤ 2 := le_trans (le_max_left _ _) h
-      have hfan : maxFaninL cs ≤ 2 := le_trans (le_max_right _ _) h
-      have hchild : ∀ c ∈ cs, c.size + 1 ≤ 2 ^ (Circuit.maxDepth cs + 1) := fun c hc =>
-        le_trans (ih c hc (le_trans (maxFanin_le_maxFaninL hc) hfan))
-          (Nat.pow_le_pow_right (by norm_num) (Nat.succ_le_succ (depth_le_maxDepth hc)))
-      have hsum := sumSize_add_length_le _ cs hchild
-      have hpos : 1 ≤ 2 ^ (Circuit.maxDepth cs + 1) := Nat.one_le_two_pow
-      have hD : (2 : ℕ) ^ (Circuit.maxDepth cs + 2) = 2 * 2 ^ (Circuit.maxDepth cs + 1) := by
-        ring
-      rw [size_node, depth_node, show (1 : ℕ) + Circuit.maxDepth cs + 1
-        = Circuit.maxDepth cs + 2 from by omega]
-      rcases Nat.lt_or_ge cs.length 1 with hz | hz
-      · have hnil : cs = [] := List.eq_nil_of_length_eq_zero (by omega)
-        subst hnil
-        simp only [sumSize_nil]
-        omega
-      · rcases Nat.lt_or_ge cs.length 2 with hz2 | hz2
-        · rw [show cs.length = 1 from by omega, Nat.one_mul] at hsum
-          omega
-        · rw [show cs.length = 2 from by omega] at hsum
-          omega
-
-/-- The XOR of two circuits, as a pair of a circuit and a circuit for its complement. -/
-private def xorNode (p q : Circuit n × Circuit n) : Circuit n × Circuit n :=
-  (Circuit.node false [Circuit.node true [p.1, q.2], Circuit.node true [p.2, q.1]],
-   Circuit.node false [Circuit.node true [p.1, q.1], Circuit.node true [p.2, q.2]])
-
-/-- A pair is dual when its second component computes the negation of its first. -/
-private def IsDual (x : Fin n → Bool) (p : Circuit n × Circuit n) : Prop :=
-  p.2.eval x = !p.1.eval x
-
-/-- `xorNode` computes the XOR of the two first components. -/
-private theorem xorNode_eval {x : Fin n → Bool} {p q : Circuit n × Circuit n}
-    (hp : IsDual x p) (hq : IsDual x q) :
-    (xorNode p q).1.eval x = Bool.xor (p.1.eval x) (q.1.eval x) := by
-  simp only [xorNode, Circuit.eval, List.foldr_cons, List.foldr_nil]
-  rw [show q.2.eval x = !q.1.eval x from hq, show p.2.eval x = !p.1.eval x from hp]
-  cases p.1.eval x <;> cases q.1.eval x <;> simp
-
-/-- `xorNode` again produces a dual pair. -/
-private theorem xorNode_isDual {x : Fin n → Bool} {p q : Circuit n × Circuit n}
-    (hp : IsDual x p) (hq : IsDual x q) : IsDual x (xorNode p q) := by
-  simp only [IsDual, xorNode, Circuit.eval, List.foldr_cons, List.foldr_nil]
-  rw [show q.2.eval x = !q.1.eval x from hq, show p.2.eval x = !p.1.eval x from hp]
-  cases p.1.eval x <;> cases q.1.eval x <;> simp
-
-/-- The XOR of the first components of a list of pairs. -/
-private def xorAll (x : Fin n → Bool) (ps : List (Circuit n × Circuit n)) : Bool :=
-  ps.foldr (fun p acc => Bool.xor (p.1.eval x) acc) false
-
-/-- Maximum depth over both components of a list of pairs. -/
-private def pairDepth (ps : List (Circuit n × Circuit n)) : ℕ :=
-  ps.foldr (fun p acc => max (max p.1.depth p.2.depth) acc) 0
-
-/-- Maximum fan-in over both components of a list of pairs. -/
-private def pairFanin (ps : List (Circuit n × Circuit n)) : ℕ :=
-  ps.foldr (fun p acc => max (max p.1.maxFanin p.2.maxFanin) acc) 0
-
-/-- `xorAll` on a cons cell. -/
-private theorem xorAll_cons (x : Fin n → Bool) (p : Circuit n × Circuit n)
-    (ps : List (Circuit n × Circuit n)) :
-    xorAll x (p :: ps) = Bool.xor (p.1.eval x) (xorAll x ps) := rfl
-
-/-- `pairDepth` on a cons cell. -/
-private theorem pairDepth_cons (p : Circuit n × Circuit n)
-    (ps : List (Circuit n × Circuit n)) :
-    pairDepth (p :: ps) = max (max p.1.depth p.2.depth) (pairDepth ps) := rfl
-
-/-- `pairFanin` on a cons cell. -/
-private theorem pairFanin_cons (p : Circuit n × Circuit n)
-    (ps : List (Circuit n × Circuit n)) :
-    pairFanin (p :: ps) = max (max p.1.maxFanin p.2.maxFanin) (pairFanin ps) := rfl
-
-/-- `xorNode` costs two levels of depth. -/
-private theorem pairDepth_xorNode (p q : Circuit n × Circuit n) :
-    max (xorNode p q).1.depth (xorNode p q).2.depth
-      ≤ 2 + max (max p.1.depth p.2.depth) (max q.1.depth q.2.depth) := by
-  simp only [xorNode, depth_node, maxDepth_cons, maxDepth_nil]
-  omega
-
-/-- `xorNode` introduces only fan-in-2 gates. -/
-private theorem pairFanin_xorNode (p q : Circuit n × Circuit n) :
-    max (xorNode p q).1.maxFanin (xorNode p q).2.maxFanin
-      ≤ max 2 (max (max p.1.maxFanin p.2.maxFanin) (max q.1.maxFanin q.2.maxFanin)) := by
-  simp only [xorNode, maxFanin_node, maxFaninL_cons, maxFaninL_nil, List.length_cons,
-    List.length_nil]
-  omega
-
-/-- Pair adjacent entries and XOR each pair. -/
-private def xorPairUp : List (Circuit n × Circuit n) → List (Circuit n × Circuit n)
-  | [] => []
-  | [p] => [p]
-  | p :: q :: ps => xorNode p q :: xorPairUp ps
-
-/-- Pairing halves the list, rounding up. -/
-private theorem length_xorPairUp :
-    ∀ ps : List (Circuit n × Circuit n), (xorPairUp ps).length = (ps.length + 1) / 2
-  | [] => by simp [xorPairUp]
-  | [_] => by simp [xorPairUp]
-  | _ :: _ :: ps => by
-      have := length_xorPairUp ps
-      simp only [xorPairUp, List.length_cons] at *
-      omega
-
-/-- Pairing preserves duality. -/
-private theorem isDual_xorPairUp (x : Fin n → Bool) :
-    ∀ ps : List (Circuit n × Circuit n), (∀ p ∈ ps, IsDual x p) →
-      ∀ p ∈ xorPairUp ps, IsDual x p
-  | [], _ => by simp [xorPairUp]
-  | [p], h => by simpa [xorPairUp] using h p (by simp)
-  | p :: q :: ps, h => by
-      have ih := isDual_xorPairUp x ps (fun r hr => h r (by simp [hr]))
-      intro r hr
-      rcases List.mem_cons.mp (by simpa [xorPairUp] using hr) with rfl | hr'
-      · exact xorNode_isDual (h p (by simp)) (h q (by simp))
-      · exact ih r hr'
-
-/-- Pairing preserves the overall XOR. -/
-private theorem xorAll_xorPairUp (x : Fin n → Bool) :
-    ∀ ps : List (Circuit n × Circuit n), (∀ p ∈ ps, IsDual x p) →
-      xorAll x (xorPairUp ps) = xorAll x ps
-  | [], _ => rfl
-  | [_], _ => rfl
-  | p :: q :: ps, h => by
-      have ih := xorAll_xorPairUp x ps (fun r hr => h r (by simp [hr]))
-      simp only [xorPairUp, xorAll_cons]
-      rw [xorNode_eval (h p (by simp)) (h q (by simp)), ih, Bool.xor_assoc]
-
-/-- Pairing adds two to the depth. -/
-private theorem pairDepth_xorPairUp :
-    ∀ ps : List (Circuit n × Circuit n), pairDepth (xorPairUp ps) ≤ 2 + pairDepth ps
-  | [] => by simp [xorPairUp, pairDepth]
-  | [p] => by simp [xorPairUp, pairDepth_cons]
-  | p :: q :: ps => by
-      have ih := pairDepth_xorPairUp ps
-      have hn := pairDepth_xorNode p q
-      simp only [xorPairUp, pairDepth_cons]
-      omega
-
-/-- Pairing introduces only fan-in-2 gates. -/
-private theorem pairFanin_xorPairUp :
-    ∀ ps : List (Circuit n × Circuit n), pairFanin (xorPairUp ps) ≤ max 2 (pairFanin ps)
-  | [] => by simp [xorPairUp, pairFanin]
-  | [p] => by simp [xorPairUp, pairFanin_cons]
-  | p :: q :: ps => by
-      have ih := pairFanin_xorPairUp ps
-      have hn := pairFanin_xorNode p q
-      simp only [xorPairUp, pairFanin_cons]
-      omega
-
-/-- Repeatedly pair and XOR, `k` rounds at most. -/
-private def xorFuel : ℕ → List (Circuit n × Circuit n) → Circuit n × Circuit n
-  | 0, _ => (Circuit.node false [], Circuit.node true [])
-  | _ + 1, [] => (Circuit.node false [], Circuit.node true [])
-  | _ + 1, [p] => p
-  | k + 1, p :: q :: ps => xorFuel k (xorPairUp (p :: q :: ps))
-
-/-- The XOR tree computes the XOR, and its second component the negation. -/
-private theorem xorFuel_eval (x : Fin n → Bool) :
-    ∀ (k : ℕ) (ps : List (Circuit n × Circuit n)), ps.length ≤ k →
-      (∀ p ∈ ps, IsDual x p) →
-      (xorFuel k ps).1.eval x = xorAll x ps ∧ IsDual x (xorFuel k ps)
-  | 0, [], _, _ => by
-      refine ⟨?_, ?_⟩ <;> simp [xorFuel, xorAll, IsDual, Circuit.eval]
-  | 0, _ :: _, h, _ => by simp at h
-  | _ + 1, [], _, _ => by
-      refine ⟨?_, ?_⟩ <;> simp [xorFuel, xorAll, IsDual, Circuit.eval]
-  | _ + 1, [p], _, h => by
-      refine ⟨?_, h p (by simp)⟩
-      show p.1.eval x = _
-      simp [xorAll]
-  | k + 1, p :: q :: ps, h, hd => by
-      have hp := length_xorPairUp (p :: q :: ps)
-      have hlen : (xorPairUp (p :: q :: ps)).length ≤ k := by
-        simp only [List.length_cons] at h hp ⊢; omega
-      have ih := xorFuel_eval x k _ hlen (isDual_xorPairUp x _ hd)
-      show ((xorFuel k (xorPairUp (p :: q :: ps))).1.eval x = _) ∧ _
-      rw [ih.1, xorAll_xorPairUp x _ hd]
-      exact ⟨rfl, ih.2⟩
-
-/-- The XOR tree has depth `2⌈log₂ m⌉ + 2` over its leaves. -/
-private theorem xorFuel_depth :
-    ∀ (k : ℕ) (ps : List (Circuit n × Circuit n)), ps.length ≤ k →
-      max (xorFuel k ps).1.depth (xorFuel k ps).2.depth
-        ≤ pairDepth ps + 2 * Nat.clog 2 ps.length + 2
-  | 0, [], _ => by simp [xorFuel, depth_node, maxDepth_nil, pairDepth]
-  | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [xorFuel, depth_node, maxDepth_nil, pairDepth]
-  | _ + 1, [p], _ => by
-      show max p.1.depth p.2.depth ≤ _
-      rw [pairDepth_cons]
-      simp [pairDepth]
-  | k + 1, p :: q :: ps, h => by
-      have hp := length_xorPairUp (p :: q :: ps)
-      have hlen : (xorPairUp (p :: q :: ps)).length ≤ k := by
-        simp only [List.length_cons] at h hp ⊢; omega
-      have ih := xorFuel_depth k _ hlen
-      have hd := pairDepth_xorPairUp (p :: q :: ps)
-      have hclog : Nat.clog 2 (p :: q :: ps).length
-          = Nat.clog 2 ((xorPairUp (p :: q :: ps)).length) + 1 := by
-        rw [hp]
-        have := Nat.clog_of_two_le (b := 2) (n := (p :: q :: ps).length)
-          (by norm_num) (by simp)
-        simpa using this
-      show max (xorFuel k (xorPairUp (p :: q :: ps))).1.depth
-        (xorFuel k (xorPairUp (p :: q :: ps))).2.depth ≤ _
-      omega
-
-/-- The XOR tree has fan-in 2. -/
-private theorem xorFuel_fanin :
-    ∀ (k : ℕ) (ps : List (Circuit n × Circuit n)), ps.length ≤ k →
-      max (xorFuel k ps).1.maxFanin (xorFuel k ps).2.maxFanin ≤ max 2 (pairFanin ps)
-  | 0, [], _ => by simp [xorFuel, maxFanin_node, maxFaninL_nil]
-  | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [xorFuel, maxFanin_node, maxFaninL_nil]
-  | _ + 1, [p], _ => by
-      show max p.1.maxFanin p.2.maxFanin ≤ _
-      rw [pairFanin_cons]
-      omega
-  | k + 1, p :: q :: ps, h => by
-      have hp := length_xorPairUp (p :: q :: ps)
-      have hlen : (xorPairUp (p :: q :: ps)).length ≤ k := by
-        simp only [List.length_cons] at h hp ⊢; omega
-      have ih := xorFuel_fanin k _ hlen
-      have hf := pairFanin_xorPairUp (p :: q :: ps)
-      show max (xorFuel k (xorPairUp (p :: q :: ps))).1.maxFanin
-        (xorFuel k (xorPairUp (p :: q :: ps))).2.maxFanin ≤ _
-      omega
-
-/-- The balanced XOR tree over a list of dual pairs. -/
-private def xorTree (ps : List (Circuit n × Circuit n)) : Circuit n × Circuit n :=
-  xorFuel ps.length ps
 
 end BoolCircuit

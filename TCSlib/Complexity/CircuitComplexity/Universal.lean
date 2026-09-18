@@ -36,14 +36,26 @@ we build the dual **DNF** `⋁_{v : f v = 1} T_v` over the satisfying ones.  Bot
 are one gate over at most `2ⁿ` gates of `n` literals; only the DNF is formalized
 here.
 
-**The constant is ours, not AB's.**  AB quotes `n2ⁿ`, which is Claim 2.13's
-count of `∧`/`∨` *symbols*, whereas [AB09, Def 6.1] sizes a circuit by its
-*vertex* count on a fan-in-2 DAG whose `n` sources are shared.  `Circuit.size`
-counts every node of an unbounded-fan-in *tree*, literal leaves included, and a
-variable read `k` times contributes `k` leaves.  What this construction actually
-gives is therefore `2 ^ n * (n + 1) + 1` — the same order as `n2ⁿ`, a larger
-number — and that is what is proved here.  [AB09, Ex 6.1]'s sharper `O(2ⁿ/n)` is
-a different construction and is not attempted.
+**The constant is ours, not AB's.**  `n2ⁿ` is not an artifact of Chapter 2's
+convention — it holds under both of AB's.  On `2ⁿ` clauses of `n` literals,
+[AB09, Claim 2.13]'s count of `∧`/`∨` *symbols* is `(n-1)2ⁿ + (2ⁿ-1)`, that is
+`n·2ⁿ - 1`; and under [AB09, Def 6.1] the same formula is a fan-in-2 DAG with
+`n` shared sources, `n` shared `¬` gates, `(n-1)2ⁿ` binary `∨` and `2ⁿ-1`
+binary `∧`, so `n·2ⁿ + 2n - 1` *vertices*.  The `∨` term is AB's own fan-in-2
+expansion ([AB09, pp.107–108]: a fan-in-`f` gate becomes `f-1` binary ones),
+not a lower bound on what a DAG needs.
+
+`Circuit.size` measures a different object: nodes of an unbounded-fan-in *tree*.
+Ours has `n·2ⁿ` literal leaves (nothing is shared, and a sign rides on the leaf
+instead of a `¬` gate), `2ⁿ` minterm gates and one top gate — `2 ^ n * (n + 1) + 1`.
+The leaves alone already come to within one of AB's whole symbol count, so they
+are not what pushes us over; and a `k`-ary gate costs `1` here where AB's fan-in-2 expansion
+costs `k-1`, a saving large enough that the net excess over `n·2ⁿ - 1` is only
+`2ⁿ + 2`.  Same order as `n2ⁿ`, a larger number, and `2 ^ n * (n + 1) + 1` —
+attained at `f ≡ true` — is what is proved here.  [AB09, Ex 6.1]'s sharper
+`O(2ⁿ/n)` is a different construction and is not attempted.
+
+## Implementation notes
 
 `Formulas.lean`'s `DNF` is not used as the intermediate: it is built on
 `Literal`, a type distinct from `Basic.lean`'s `Lit`; it carries no size measure;

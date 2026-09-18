@@ -14,6 +14,10 @@ import TCSlib.Complexity.CircuitComplexity.Encoding
 Arora–Barak's counting argument: there are more Boolean functions on `n` bits than
 there are small circuits, so some function is computed by none of them.
 
+## Main definitions
+
+None — this file adds only theorems, over `BoolCircuit.Circuit` and `ACP.encodeCircuit`.
+
 ## Main results
 
 * `ACP.length_encodeCircuit_succ_le` — a circuit of size `S` on `n` variables has an
@@ -28,15 +32,20 @@ there are small circuits, so some function is computed by none of them.
 
 ## Divergences from [AB09, Thm 6.21]
 
-**AB's size bound `2 ^ n / (10 n)` is not proved here, and the two are not
+**AB's size bound `2 ^ n / (10 n)` is not proved here, and the two statements are not
 comparable.** [AB09, Def 6.1]'s circuit is a DAG whose `∨`/`∧` gates have fan-in `2`
 and whose `¬` gates have fan-in `1`, with size its number of vertices — one source
 vertex per input variable, however often that variable is read.
 `BoolCircuit.Circuit` is a *tree* with unbounded fan-in and negation folded into its
-literals, and `Circuit.size` counts every node, so each literal *occurrence* costs a
-node and no gate may be reused. "Computed by no circuit of size `≤ S`" therefore rules
-out a far smaller family of objects than AB's does, and is a correspondingly weaker
-conclusion at any `S`.
+literals, and `Circuit.size` counts every node. Two effects push our count up: every
+literal *occurrence* costs a node, and no gate may be reused. One pushes it down:
+`Circuit.size` charges `1` for a `k`-ary gate where Def 6.1 charges `k - 1` vertices.
+A size-`S` tree thus embeds in a DAG on at most `S + 2 * n` vertices while no bound
+runs the other way, so at the `S ≈ 2 ^ n / n` in play AB's conclusion is strictly the
+stronger — but not at every `S`: the three-literal `AND` on `n = 3` has
+`Circuit.size = 4`, whereas Def 6.1 needs at least `5` vertices for that function, so
+at `S = 4` AB's family is empty and ours is not. Neither comparison is formalized;
+both describe the gap to AB, not anything proved below.
 
 The bound proved is `(n + 4) * S < 2 ^ n`, i.e. hardness at size `2 ^ n / (n + 5)`.
 It comes from `Encoding.lean`'s serialiser: a leaf costs `idx + 3` bits, its index
@@ -45,15 +54,14 @@ fits in fewer than `(n + 4) * S` bits, against the `9 · S · log S` AB cites fo
 adjacency list. Since `n + 5 < 10 n` for `n ≥ 1`, `2 ^ n / (n + 5)` is the larger of
 the two numbers — a unary index costs `n` bits a leaf, the same order as AB's
 `log S ≈ n`, against AB's generous constant `9`. That is not a strengthening of AB: it
-is a weaker statement that happens to admit a larger constant.
+is a weaker statement that happens to admit a larger constant. `n + 3` would close for
+every `n ≥ 1` — only `n = 0`, where `.node b []` meets `(n + 4) * 1` with equality,
+forces the `4` — but carrying `0 < n` through every downstream statement to move the
+denominator from `n + 5` to `n + 4` buys nothing.
 
 `n > 1` is not assumed. `(n + 4) * S < 2 ^ n` forces `S = 0` for `n ≤ 2`, and
 `Circuit.size` is never `0`, so the conclusion is vacuous there; it first has content
-at `n = 3`.
-
-`ACP.size_le_length_encodeSigma`, the hook `ch6/PLAN.md` names, bounds a circuit's
-size by its encoding's length. The count needs the converse;
-`length_encodeCircuit_succ_le` below supplies it, and belongs in `Encoding.lean`.
+at `n = 3`. AB's own `2 ^ n / (10 n)` is below `1` until `n = 6`.
 
 ## References
 
@@ -252,7 +260,7 @@ theorem exists_hard_function (n : ℕ) :
 
 /-! Degenerate arities. `Circuit.size` is never `0` and `2 ^ n / (n + 5)` is `0` for
 `n ≤ 2`, so `exists_hard_function` says nothing below `n = 3`; at `n = 3` it excludes
-every single-literal circuit. -/
+every literal and both empty gates. -/
 
 example (C : Circuit 2) : ¬ C.size ≤ 2 ^ 2 / (2 + 5) := by
   cases C <;> simp [Circuit.size]

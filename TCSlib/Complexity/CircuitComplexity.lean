@@ -11,6 +11,9 @@ import TCSlib.Complexity.CircuitComplexity.CircuitSat
 import TCSlib.Complexity.CircuitComplexity.Encoding
 import TCSlib.Complexity.CircuitComplexity.Universal
 import TCSlib.Complexity.CircuitComplexity.HardFunctions
+import TCSlib.Complexity.CircuitComplexity.NCAC
+import TCSlib.Complexity.CircuitComplexity.Parity
+import TCSlib.Complexity.CircuitComplexity.Hierarchy
 import TCSlib.Complexity.CircuitComplexity.UnaryLanguages
 import TCSlib.Complexity.CircuitComplexity.UHalt
 import TCSlib.Complexity.CircuitComplexity.SizeClasses
@@ -51,6 +54,15 @@ Boolean circuits and formulas, the class `P/poly`, and Arora–Barak §6.1.
   the DNF over its satisfying assignments.
 - `CircuitComplexity.HardFunctions`: [AB09, Thm 6.21] — some Boolean function on
   `n` bits is computed by no circuit of size `2 ^ n / (n + 5)`, by counting.
+- `CircuitComplexity.NCAC`: [AB09, Defs 6.24–6.25] — the classes `NC^d` / `AC^d`
+  and their unions, and the inclusions `NC^i ⊆ AC^i ⊆ NC^{i+1}` and hence
+  `NC = AC`. Over the tree-shaped `BoolCircuit.Circuit`, not the `FeedForward`
+  model of `PPoly.lean`.
+- `CircuitComplexity.Parity`: [AB09, Ex 6.26] — `PARITY ∈ NC¹`, by the balanced
+  binary tree, built as dual pairs because `Circuit` negates only at literals.
+- `CircuitComplexity.Hierarchy`: a nonuniform size hierarchy over the tree-shaped
+  `BoolCircuit.Circuit`, from [AB09, Claim 2.13] and [AB09, Thm 6.21] by padding.
+  **Not** [AB09, Thm 6.22]: its class is not `Language.InSIZE`.
 - `CircuitComplexity.SizeClasses`: monotonicity of `SIZE`, the passage from
   `SIZE(T)` to `P/poly` for polynomially bounded `T`, and [AB09, Ex 6.3]
   — the all-ones language `{1ⁿ : n ∈ ℕ}` has linear-size circuits.

@@ -101,12 +101,6 @@ open BoolCircuit
 
 variable {n : ℕ} {out : Type}
 
-/-- Every circuit has at least one node. -/
-theorem _root_.BoolCircuit.Circuit.one_le_size (C : Circuit n) : 1 ≤ C.size := by
-  cases C with
-  | lit l => simp [Circuit.size]
-  | node isAnd cs => simp [Circuit.size]
-
 /-! ### FeedForward Bool → BoolCircuit.Circuit (tree-unrolling) -/
 
 /-- Predicate: every gate in `F` computes AND (when `isAnd d v = true`) or OR (when

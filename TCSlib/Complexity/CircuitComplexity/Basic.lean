@@ -23,8 +23,9 @@ import Mathlib.Tactic.Ring
 * `BoolCircuit.Lit` — a literal: an index `idx : Fin n` and a sign
   (`sign = true` is the positive literal).
 * `BoolCircuit.Circuit` — a Boolean circuit tree, `lit` or `node isAnd children`,
-  with `eval`, `litCount`, `depth`, `size` and `maxFanin`.  Fan-in is unbounded; a
-  bound is imposed downstream as a hypothesis `c.maxFanin ≤ w`, never as structure.
+  with `eval`, `litCount`, `depth`, `size`, `maxFanin` and the list-level `maxDepth`,
+  `sumSize`, `maxFaninL`.  Fan-in is unbounded; a bound is imposed downstream as a
+  hypothesis `c.maxFanin ≤ w`, never as structure.
 * `BoolCircuit.NAndCircuit` / `NOrCircuit` — normal-form circuits, strictly
   alternating AND/OR with a `Nodup` variable-index invariant at the base clauses.
 * `BoolCircuit.Circuit.toNAnd` / `toNOr` — normalization into that form;
@@ -34,6 +35,10 @@ import Mathlib.Tactic.Ring
 
 * `Circuit.eval_lit`, `Circuit.eval_node_true_iff`, `Circuit.eval_node_false_iff`
   — the semantics of a leaf and of an unbounded AND / OR gate.
+* `Circuit.one_le_size`, `Circuit.maxFanin_le_size`, `Circuit.size_succ_le_two_pow` — a
+  circuit has at least one node, a gate no more inputs than the circuit has nodes, and a
+  fan-in-2 circuit's size is bounded by its depth.
+* `Circuit.depth_node` / `size_node` / `maxFanin_node` and the `_nil` / `_cons` unfoldings.
 * `toNAnd_eval` / `toNOr_eval`, `toNAnd_litCount` / `toNOr_litCount`,
   `toNAnd_size_le` / `toNOr_size_le` — normalization preserves semantics and
   literal count, and at most doubles the size.
@@ -50,6 +55,9 @@ are DAGs.  `toNAnd` / `toNOr` are this library's own normalization; their
 factor-2 size bound is proved here, not taken from [OD14]'s `2 ^ d` remark.
 
 ## Provenance
+
+`Circuit.one_le_size` was hoisted here from
+`TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean`, unchanged.
 
 Split out of `TCSlib/BooleanAnalysis/Switching/Circuit.lean` (commit 94fd7c6),
 which carried no copyright header; `Authors` above is that file's git author.
@@ -171,6 +179,144 @@ def Circuit.sumSize {n : Nat} (cs : List (Circuit n)) : Nat :=
 def Circuit.maxFanin : Circuit n → Nat
   | .lit _ => 0
   | .node _ cs => max cs.length (cs.foldr (fun c acc => max c.maxFanin acc) 0)
+
+-- ----------------------------------------------------------------
+-- Section 2b: Size, depth and fan-in arithmetic
+-- ----------------------------------------------------------------
+
+/-- Every circuit has at least one node. -/
+theorem Circuit.one_le_size (c : Circuit n) : 1 ≤ c.size := by
+  cases c with
+  | lit l => simp [Circuit.size]
+  | node isAnd cs => simp [Circuit.size]
+
+/-- Maximum fan-in over a list of circuits. -/
+def Circuit.maxFaninL (cs : List (Circuit n)) : ℕ :=
+  cs.foldr (fun c acc => max c.maxFanin acc) 0
+
+/-- A gate's depth is one more than its children's. -/
+theorem Circuit.depth_node (b : Bool) (cs : List (Circuit n)) :
+    (Circuit.node b cs).depth = 1 + Circuit.maxDepth cs := by
+  simp [Circuit.depth, Circuit.maxDepth]
+
+/-- A gate's size is one more than its children's total. -/
+theorem Circuit.size_node (b : Bool) (cs : List (Circuit n)) :
+    (Circuit.node b cs).size = 1 + Circuit.sumSize cs := by
+  simp [Circuit.size, Circuit.sumSize]
+
+/-- A gate's fan-in is its arity or its children's fan-in, whichever is larger. -/
+theorem Circuit.maxFanin_node (b : Bool) (cs : List (Circuit n)) :
+    (Circuit.node b cs).maxFanin = max cs.length (Circuit.maxFaninL cs) := by
+  simp [Circuit.maxFanin, Circuit.maxFaninL]
+
+/-- `maxDepth` of the empty list. -/
+theorem Circuit.maxDepth_nil : Circuit.maxDepth ([] : List (Circuit n)) = 0 := rfl
+
+/-- `maxDepth` on a cons cell. -/
+theorem Circuit.maxDepth_cons (c : Circuit n) (cs : List (Circuit n)) :
+    Circuit.maxDepth (c :: cs) = max c.depth (Circuit.maxDepth cs) := rfl
+
+/-- `sumSize` of the empty list. -/
+theorem Circuit.sumSize_nil : Circuit.sumSize ([] : List (Circuit n)) = 0 := rfl
+
+/-- `sumSize` on a cons cell. -/
+theorem Circuit.sumSize_cons (c : Circuit n) (cs : List (Circuit n)) :
+    Circuit.sumSize (c :: cs) = c.size + Circuit.sumSize cs := rfl
+
+/-- `Circuit.maxFaninL` of the empty list. -/
+theorem Circuit.maxFaninL_nil : Circuit.maxFaninL ([] : List (Circuit n)) = 0 := rfl
+
+/-- `Circuit.maxFaninL` on a cons cell. -/
+theorem Circuit.maxFaninL_cons (c : Circuit n) (cs : List (Circuit n)) :
+    Circuit.maxFaninL (c :: cs) = max c.maxFanin (Circuit.maxFaninL cs) := rfl
+
+/-- Each child is no deeper than the deepest. -/
+theorem Circuit.depth_le_maxDepth {c : Circuit n} :
+    ∀ {cs : List (Circuit n)}, c ∈ cs → c.depth ≤ Circuit.maxDepth cs
+  | _ :: cs, h => by
+      rcases List.mem_cons.mp h with rfl | h
+      · exact le_max_left _ _
+      · exact (Circuit.depth_le_maxDepth h).trans (le_max_right _ _)
+
+/-- Each child's fan-in is at most the list's. -/
+theorem Circuit.maxFanin_le_maxFaninL {c : Circuit n} :
+    ∀ {cs : List (Circuit n)}, c ∈ cs → c.maxFanin ≤ Circuit.maxFaninL cs
+  | _ :: cs, h => by
+      rcases List.mem_cons.mp h with rfl | h
+      · exact le_max_left _ _
+      · exact (Circuit.maxFanin_le_maxFaninL h).trans (le_max_right _ _)
+
+/-- A circuit has at least one node, so a child list is no longer than its total size. -/
+theorem Circuit.length_le_sumSize : ∀ cs : List (Circuit n), cs.length ≤ Circuit.sumSize cs
+  | [] => le_refl 0
+  | c :: cs => by
+      have hc := Circuit.one_le_size c
+      have := Circuit.length_le_sumSize cs
+      simp only [List.length_cons, Circuit.sumSize_cons]
+      omega
+
+/-- The list form of `Circuit.maxFanin_le_size`. -/
+theorem Circuit.maxFaninL_le_sumSize :
+    ∀ {cs : List (Circuit n)}, (∀ c ∈ cs, c.maxFanin ≤ c.size) →
+      Circuit.maxFaninL cs ≤ Circuit.sumSize cs
+  | [], _ => le_refl 0
+  | c :: cs, h => by
+      have h1 := h c (List.mem_cons_self ..)
+      have h2 := Circuit.maxFaninL_le_sumSize (fun d hd => h d (List.mem_cons_of_mem _ hd))
+      simp only [Circuit.maxFaninL_cons, Circuit.sumSize_cons]
+      omega
+
+/-- A circuit's fan-in is bounded by its size. -/
+theorem Circuit.maxFanin_le_size (c : Circuit n) : c.maxFanin ≤ c.size := by
+  induction c using Circuit.ind with
+  | hlit l => simp [Circuit.maxFanin, Circuit.size]
+  | hnode b cs ih =>
+      have h₁ := Circuit.length_le_sumSize cs
+      have h₂ := Circuit.maxFaninL_le_sumSize ih
+      rw [Circuit.maxFanin_node, Circuit.size_node]
+      omega
+
+/-- A uniform bound on the children bounds the total size plus length. -/
+private theorem Circuit.sumSize_add_length_le (m : ℕ) :
+    ∀ cs : List (Circuit n), (∀ c ∈ cs, c.size + 1 ≤ m) →
+      Circuit.sumSize cs + cs.length ≤ cs.length * m
+  | [], _ => by simp [Circuit.sumSize_nil]
+  | c :: cs, h => by
+      have ih := Circuit.sumSize_add_length_le m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
+      have hc := h c (List.mem_cons_self ..)
+      simp only [Circuit.sumSize_cons, List.length_cons, Nat.succ_mul]
+      omega
+
+/-- A fan-in-2 circuit of depth `d` has at most `2 ^ (d + 1) - 1` nodes. -/
+theorem Circuit.size_succ_le_two_pow : ∀ c : Circuit n, c.maxFanin ≤ 2 →
+    c.size + 1 ≤ 2 ^ (c.depth + 1) := by
+  intro c
+  induction c using Circuit.ind with
+  | hlit l => intro _; simp [Circuit.size, Circuit.depth]
+  | hnode b cs ih =>
+      intro h
+      rw [Circuit.maxFanin_node] at h
+      have hlen : cs.length ≤ 2 := le_trans (le_max_left _ _) h
+      have hfan : Circuit.maxFaninL cs ≤ 2 := le_trans (le_max_right _ _) h
+      have hchild : ∀ c ∈ cs, c.size + 1 ≤ 2 ^ (Circuit.maxDepth cs + 1) := fun c hc =>
+        le_trans (ih c hc (le_trans (Circuit.maxFanin_le_maxFaninL hc) hfan))
+          (Nat.pow_le_pow_right (by norm_num) (Nat.succ_le_succ (Circuit.depth_le_maxDepth hc)))
+      have hsum := Circuit.sumSize_add_length_le _ cs hchild
+      have hpos : 1 ≤ 2 ^ (Circuit.maxDepth cs + 1) := Nat.one_le_two_pow
+      have hD : (2 : ℕ) ^ (Circuit.maxDepth cs + 2) = 2 * 2 ^ (Circuit.maxDepth cs + 1) := by
+        ring
+      rw [Circuit.size_node, Circuit.depth_node, show (1 : ℕ) + Circuit.maxDepth cs + 1
+        = Circuit.maxDepth cs + 2 from by omega]
+      rcases Nat.lt_or_ge cs.length 1 with hz | hz
+      · have hnil : cs = [] := List.eq_nil_of_length_eq_zero (by omega)
+        subst hnil
+        simp only [Circuit.sumSize_nil]
+        omega
+      · rcases Nat.lt_or_ge cs.length 2 with hz2 | hz2
+        · rw [show cs.length = 1 from by omega, Nat.one_mul] at hsum
+          omega
+        · rw [show cs.length = 2 from by omega] at hsum
+          omega
 
 -- ----------------------------------------------------------------
 -- Section 3: Normal-form circuit (alternating, nodup at base)
