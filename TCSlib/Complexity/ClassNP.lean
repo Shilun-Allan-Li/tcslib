@@ -10,6 +10,8 @@ import TCSlib.Complexity.ClassNP.EXP
 import TCSlib.Complexity.ClassNP.Reductions
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassNP.Nondeterminism
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.TMSAT
 
 /-!
 # Complexity — NP and NP-completeness
@@ -35,4 +37,9 @@ The classes and reduction notions of [AB09, ch. 2] (see
   `TuringMachine/Nondeterministic`).
 * `Nondeterminism` — the `NTIME` characterizations of `NP` [AB09, Theorem 2.6] and
   `NEXP` [AB09, §2.6.2], and the padding theorem [AB09, Theorem 2.22].
+* `SAT` — the languages `SAT` and `3SAT`, their membership in `NP`, and
+  `SAT ≤ₚ 3SAT` [AB09, §2.3.1, Theorem 2.10 (membership), Lemma 2.14] (the
+  formula layer lives in `TCSlib.Complexity.Formulas`).
+* `TMSAT` — the generic `NP`-complete language [AB09, Theorem 2.9], with the
+  polynomial time-constructibility support statement.
 -/

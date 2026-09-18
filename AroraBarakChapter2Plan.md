@@ -76,7 +76,10 @@ tool); Berman's theorem (Exercise 2.30).
 * **CNF formulas** (phase 3): the type, its evaluation, and its binary
   serialization with a parser and fallback totalization ([AB09] footnote 3 =
   the `codeFallback` convention). In-house type vs. `Std.Sat.CNF` is a recorded
-  design question for the phase-3 audit.
+  design question for the phase-3 audit. Provisional resolution (2026-09-18,
+  decision log): the carrier is the Lean-core `Std.Sat.CNF ℕ`; serialization
+  uses unary variable indices in an LL(1) marker grammar; the fallback is the
+  empty formula.
 * **Cook-Levin runs on our oblivious machines.** [AB09] proves Lemma 2.11 for
   oblivious *two-tape* machines and notes (footnote 5) the proof generalizes to
   any oblivious machine; `Complexity.oblivious_of_mem_DTIME` (quadratic,
@@ -114,11 +117,14 @@ sketches, an audit pack goes out, gates close on zero blockers/majors.
    Theorem 2.22 (padding).
 3. **Phase 3 — Formulas, SAT, TMSAT**: CNF type + evaluation + serialization +
    parser/fallback; `SAT`, `3SAT`, membership in `NP`; Claim 2.13; Lemma 2.14
-   statement; `TAUTOLOGY` + Example 2.21; `TMSAT` + Theorem 2.9 (supporting
-   obligation: polynomial time-constructibility `n ↦ n^c`).
+   statement; `TMSAT` + Theorem 2.9 (supporting obligation: polynomial
+   time-constructibility). `TAUTOLOGY` + Example 2.21 **moved to phase 4**
+   (decision log: the faithful carrier is the DNF dual, and the hardness half
+   needs Lemma 2.11).
 4. **Phase 4 — Cook-Levin**: snapshot/tableau layer over oblivious machines,
    the schedule-computability interface (head positions from a clocked
-   simulation on a trivial input), Lemma 2.11, Theorem 2.10.
+   simulation on a trivial input), Lemma 2.11, Theorem 2.10; the DNF dual
+   layer with `TAUTOLOGY` + Example 2.21.
 5. **Fill campaign**: scheduled after all gates close, epochs ordered by risk
    exactly as in Chapter 1 — (E1) assemblies + poly-calculus core, (E2) NDTM
    compilations + `NP ⊆ EXP` enumerator + padding + `TMSAT`, (E3)
@@ -194,6 +200,9 @@ As in Chapter 1 (`AroraBarakChapter1Plan.md` §5), these are reserved for a
 | Phase-2 skeleton landed (`e1e68ebd`): binary-choice NDTM with `List Bool` choice-word `runWith` semantics, all-branch `HaltsWithin`, bundled `FinNDTM`, and the deterministic embedding (`TuringMachine/Nondeterministic.lean`); output-based `AcceptsWithin`/`DecidesInTime` and the classes `NTIME` (`ClassNP/NTIME.lean`); both directions of Theorem 2.6, the `NTIME` form of `NEXP` (the Exercise-2.27 reconciliation), and Theorem 2.22 through the certificate route (`ClassNP/Nondeterminism.lean`). 11 definitions + 14 sorried statements with policy-grade sketches + **6 proved definitional-unfolding lemmas** (the `runWith` algebra — a deliberate, flagged deviation from the phase-1 zero-proof convention, mirroring the vendored `runFrom` lemmas of `Deterministic.lean`; their proofs are part of the audited surface). Gate-verified per module and by a full **43-module fresh sweep** (zero errors; exactly 33 admissions = the 19 phase-1 ones unchanged + 2/4/8 new); the only touches to previously audited files are the two facade import/Contents additions and the order-list insertion (path enumeration); the eight Chapter-1 headline axiom prints remain admission-free on the fresh tree; style lint zero campaign FAIL. **Phase-2 audit pack prepared** (`audits/ch2-phase2-{pack,bundle}.md`) carrying seeded questions (a)-(c) plus the drafting-time questions: (d) exact-length choice-word quantifiers with monotonicity lemmas, (e) the `+ 1`-padded polynomial `NTIME` union mirroring `P`, (f) Theorem 2.22 via the certificate form rather than [AB09]'s NTIME-machine padding. Gate awaits `audits/ch2-phase2-findings.md` | Decided |
 
 | Phase-2 audit round 1 (`audits/ch2-phase2-findings.md`, audited at `e1e68ebd`): **zero blockers, zero majors, 2 minors, 2 notes — gate condition met on the first round.** All 11 definitions blind-restated and assessed faithful; all 14 statements assessed sound, with the four compilation directions and the padding theorem adversarially reconstructed (shape inequalities at every degree, unique-split strict increase, the simulator invariant table, guess-phase witness coverage/extraction, budget envelopes, small-length absorption); the six proved lemmas' proof terms checked; design questions (a)-(f) all resolved in favor of the chosen conventions. Minors, both prose: (1) the Theorem-2.22 sketch's binary-length estimate for `E |x|` used validity before checking it — repaired with the pre-validation uniform bound `(n+1)^c + bits(C) + 1`; (2) the exact-vs-bounded interchangeability prose overbroad — the bounded all-branch reading is prefix-shaped, not "all shorter words halted". Notes adopted: the obligation tables are inherited verbatim into the phase-2 fill briefs; future bundles attach `scripts/ab_ch1_module_order.txt`. **Minors swept in the closing commit (comment-only, verified; modules and facades re-gated, admissions unchanged); phase-2 gate closed** (`audits/ch2-phase2-resolutions.md`). Next: phase-3 skeleton (CNF formulas, SAT, TMSAT) | Decided |
+
+| **CNF carrier prior-art decision** (2026-09-18): adopt the Lean-core `Std.Sat.CNF ℕ` — `List (List (ℕ × Bool))` with `eval` an all/any nest, literal `(v, b)` satisfied iff the assignment gives `v` the value `b` — as the formula type, instead of an in-house duplicate. Rationale: the in-house candidate would have been byte-for-byte this shape; core supplies `eval`'s simp set, the mentioned-variable machinery (`Mem`, `eval_congr`) and `relabel`/`eval_relabel` (the fresh-variable tools Lemma 2.14 and the tableau want); policy prefers the existing mechanism. Campaign formula-level additions (`Satisfiable`, `numVars`, `WidthAtMost`, serialization) extend the `Std.Sat.CNF` namespace; complexity-level definitions stay in `Complexity`. Risks accepted and recorded: upstream namespace evolution at future toolchain bumps; the abbrev-based `Literal` (no named fields). Serialization: **unary variable indices** in an LL(1) two-marker grammar (parser-machine simplicity; the polynomial size loss is immaterial — every consumer is polynomial-time), exact-consumption parsing, fallback = the empty formula. Provisional, **to the phase-3 auditors** with the seeded question | Decided |
+| **`TAUTOLOGY` + Example 2.21 moved to phase 4** (2026-09-18, caught at phase-3 drafting): [AB09]'s `TAUTOLOGY` ranges over general Boolean formulas, and Example 2.21's reduction negates the Cook-Levin CNF into a **DNF** — while the CNF-restricted tautology language is polynomial-time decidable (a CNF is a tautology iff every clause contains a complementary literal pair), i.e. **not** [AB09]'s language. The faithful carrier (a DNF dual layer with the literal-negating `CNF → DNF` map) and the hardness half's prerequisite (Lemma 2.11) both belong to phase 4, so the package moves there; phase 3 states nothing about tautologies rather than stating a wrong-language definition | Decided |
 
 ## References
 
