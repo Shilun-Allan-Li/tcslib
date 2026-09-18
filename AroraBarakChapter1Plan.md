@@ -257,6 +257,39 @@ fill-round audit pack with elaboration evidence.
 so `\statementsource`/`\proofsource` citations are possible once proofmatch runs are
 approved.
 
+### Open design questions (human review required)
+
+These are flagged for a **human** auditor/maintainer decision — the LLM audit
+rounds verify correctness, but these are matters of architectural taste and
+trust-surface policy that should not be closed by an automated gate.
+
+1. **The 3A Mathlib-computability bridge** (epoch 3, batch A;
+   `Encoding.lean`, `exists_effectiveMachineCode`). The audited docstring
+   sketch called for the canonizer machine to be **hand-assembled from this
+   repository's composition combinators** ("its construction uses the
+   composition combinators", optionally with a polynomial `canonizerTime`).
+   The delivered proof instead (i) proves the canonization *function*
+   primitive recursive, (ii) compiles it through **Mathlib's verified
+   recursion-theory pipeline** (`ToPartrec.Code.exists_code` →
+   `PartrecToTM2.tr_eval`), (iii) simulates the resulting TM2 stack machine
+   in our model with a bespoke private `bridgeTM`, and (iv) lands in the
+   binary alphabet via the proved `alphabet_reduction`, extracting the time
+   bound by finite maxima (no polynomial bound claimed — permitted, since
+   `canonizerTime` is existential). The batch flagged the deviation itself;
+   the maintainer verification pass confirmed the proof is sorry-free with
+   the standard axiom footprint and zero public-interface drift. **Open
+   questions for a human:** (a) is the heavyweight
+   `Mathlib.Computability.TMToPartrec` import into the TM tree acceptable,
+   or should the bridge be quarantined behind the planned phase-5
+   `MathlibBridge` module boundary (it effectively front-runs that module)?
+   (b) is the enlarged trust/review surface (Mathlib's TM2 semantics + the
+   private `bridgeTM` simulation, ~150 private declarations) preferable to
+   a longer but self-contained combinator construction? (c) should the
+   abandoned polynomial-`canonizerTime` claim be recorded as permanently out
+   of scope, or re-derived later from the combinator route if one is ever
+   written? Until reviewed, the bridge stays private in `Encoding.lean` and
+   nothing outside `exists_effectiveMachineCode` depends on it.
+
 ## 6. Risks and honest effort assessment
 
 - **The proof-sketch gap is the main cost.** The book proves Claims 1.5/1.6 and Thm 1.9 in
@@ -304,4 +337,7 @@ approved.
 | Epoch-2 fill round integrated (agent commits `3794a29c`-`6969c5f9` via git am; hygiene `ee32391c`; pack `f823daad`): **all five targets proved** — `exists_comp_partial` + `computesFunInTime_comp` (batch A: 26 new public `Simulation.lean` declarations, the buffered/virtual-input layer, `c = 2`), `one_work_tape` (batch B: 75 privates, `9k + 6`, 1315-line file escalated and accepted), `nonnegative_heads` (`c = 1`) + `alphabet_reduction` (`3L + 2`, one-hot code) (batch C: 88 privates). Maintainer-side verification: net freeze 10 removals = 5 sorries + 5 flagged docstring tails; 24-module sweep clean under the strengthened gate; **Theorem 1.10 now fully machine-checked (no `sorryAx`)** along with the whole normal-form chain — remaining admissions flow solely through `universal`. 17/21 sorries proved; 4 remain (= epochs 3-4). New `scripts/style_lint.py` provides the policy-conformance attestation (first catch: StateRenaming References section; NPReductions legacy FAILs recorded out of scope). Epoch-2 audit pack/bundle ready (`audits/epoch2-{pack,bundle}.md`); gate awaits `audits/epoch2-findings.md` | Decided |
 | Epoch-2 fill round audited and closed (`audits/epoch2-findings.md` → `audits/epoch2-resolutions.md`): **zero mathematical blockers/majors** — all 26 public `Simulation.lean` declarations blind-restated clean; all three constructions certified (boundary/tag case table, independently re-summed sweep ledger, fold crossing identities, ~63k bounded executable checks); freeze and lint independently reproduced. Three minors swept: `AlphabetReduction` module docstring now discloses the one-hot width vs the sketch's logarithmic width; pack import-inventory erratum acknowledged (future packs generate it programmatically); `style_lint.py` declaration tally now comment-stripped. Epoch-3 merge pre-work endorsed: promote the optional-write normalization (raw layer), `source_bounds`, and B's sweep/zipper + indexed-transducer layers into a separate raw sweep module (not into `Simulation.lean`), `Nodup` hypothesis preserved. Epoch-3/4 obligations recorded: `universal` needs a prefix-only startup invariant (not dischargeable by `computesFunInTime_comp` alone); `timed_universal` counts source transitions in an explicit interpreter; UC's admission-free status is per supplied scheme (concrete schemes await `exists_effectiveMachineCode`) | Decided |
 | Epoch-3 merge refactor executed (commit `71721842`), per the epoch-2 resolutions: new raw `TuringMachine/Sweep.lean` (the one-work-tape construction's generic zipper/transduction layer promoted verbatim — tape zippers + exact-cost transductions both directions + indexed transducers with the load-bearing `Nodup` + initialized-run `source_bounds`); `Turing.Action.apply_workTapes` promoted at the raw layer in `Simulation.lean` with `AlphabetReduction` rewired to it; `SingleTape.lean` down to 981 lines (policy WARN cleared); unused-tape promotion (rec 5) deferred until a consumer appears. 25-module sweep clean; campaign tree fully style-lint clean. Epoch-3 briefs in `briefs/epoch3-batch{A,B,C}.md`, base `71721842`, zip delivery: 3A canonizer (with the extract-the-bound-from-totality simplification via `Computes.exists_computesFunInTime`; short-circuit parser binding; no appeal to `universal`), 3B `universal` (prefix-only startup + captured-table correspondence obligations, virtual left boundary, unary state tape, regression axiom prints for the downstream theorems), 3C oblivious (masked-clock lockstep, full-schedule idling, trajectory-lockstep invariant, no appeal to `alphabet_reduction`) | Decided |
+| Epoch-3 deliveries received (zips; PR path remains unavailable): 3A complete (`exists_effectiveMachineCode`, via the Mathlib computability bridge — **deviation from the audited sketch, recorded as open design question 1 above**), 3C complete (`oblivious_of_mem_DTIME`, three-layer schedule/decoration/parallel-coding architecture, explicit constant `c = 18(a+1)² + 23(a+1) + 3b + 25`), 3B an honest WIP (`fill/epoch3-B` @ `f191b918`: startup, captured table, boundary, halting/output correspondence and both assembly directions proved; **one** scoped sorry — the live-source table-lookup/record-application block — with four enumerated sub-obligations and an intended, unproved ledger `B(α) = 3L + 5N + 20`) | Decided |
+| Epoch-3 A+C **verification pass** (scratch branch `epoch3-verify` = `cead5966` + the four agent commits via `git am -3`; **integration into `complexity/arora-barak-ch1` deliberately held for user go**): SHA256 manifests verified; ownership disjoint and respected (A: `Encoding.lean` only; C: `Robustness/Oblivious.lean` only); vendored freeze intact; diff removals are exactly the 2 target sorries + their 2 sketch-tail lines; the `cead5966` statement-prose docstring survived the 3-way merge; **zero public-declaration drift** in both files (fills are purely private: +153 / +233); full 25-module fresh-olean sweep exit 0, zero `error:` lines, sorry warnings only at `universal`/`timed_universal`; `#print axioms`: `exists_effectiveMachineCode` and `oblivious_of_mem_DTIME` **clean** (no `sorryAx`), `UC_not_computable` clean, `HALT_not_computable` admits only through `universal`. Style lint: campaign tree clean except the two expected size WARNs — `Encoding.lean` 2263 and `Oblivious.lean` 4086 lines, **escalations accepted here** pending the epoch-3→4 merge splits (A's bridge → its own module, C's decoration/coding layers). 19/21 sorries now verified proved | Decided |
+| Batch B2 continuation brief written (`briefs/epoch3-batchB2.md`): base = branch `fill/epoch3-B` @ `f191b918` (created locally from the 3B bundle; **push pending**), scope = the single live-step obligation only, private WIP machinery revisable (including `universalBlockBound`), public statements frozen, delivery `epoch3-B2` zip with regression axiom prints; expected residual sorries in that lineage: `exists_effectiveMachineCode`, `oblivious_of_mem_DTIME`, `timed_universal`. Epoch-3 audit pack deferred until B2 lands (or `universal` is carried as the sole admission if B2 stalls) | Decided |
 | Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |
