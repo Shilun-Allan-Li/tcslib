@@ -243,7 +243,14 @@ private lemma universalAdmin_apply {x : List Bool} (base : Cfg 4 Bool UniversalC
     rcases h with rfl | rfl | rfl | rfl <;>
       first | rfl | exact add_zero _
 
-/-- Read-based administrative step rule. -/
+/-- When the controller's transition at the represented reads (table symbol under
+the cursor, state-tape symbol, and the base configuration's remaining reads)
+selects the administrative action `universalAdmin q' dt (w, ds)`, one interpreter
+step advances the evaluation configuration to controller state `q'`, moves the
+table cursor by `dt` and the state cursor by `ds`, and performs the optional
+state-tape write `w` at the old state cursor — leaving the base configuration's
+other fields unchanged (epoch-4 audit, finding 2: statement prose upgraded from
+the original label). -/
 lemma universalEval_step {x : List Bool} (base : Cfg 4 Bool UniversalControl x)
     (q q' : UniversalControl) (table : List Bool) (tp : ℤ)
     (state : ℤ → Option Bool) (sp : ℤ) (dt ds : SignType) (w : Option (Option Bool))

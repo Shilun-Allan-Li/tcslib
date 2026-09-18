@@ -21,7 +21,10 @@ The construction lives in `UniversalStartup.lean` (prefix parsing,
 canonization, and table capture), `UniversalInterpreter.lean` (the four-tape
 table interpreter and the block-simulation assembly), and `UniversalBlock.lean`
 (the live table block and the checkpoint relation), split out mechanically at
-the epoch-3→4 merge; this file holds only the public statements.
+the epoch-3→4 merge. This file holds the three public statements together with
+the epoch-4 private layer proving `timed_universal` (the deadline interpreter
+`timedUniversalTM` and its lemmas; epoch-4 audit, finding 3: this sentence
+previously claimed the file held only the public statements).
 
 ## Design and deviations from [AB09] (all shaped by the phase-3 audit)
 
