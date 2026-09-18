@@ -2195,11 +2195,16 @@ record** (equivalently, rejects up front any state count whose minimum table len
 exceeds the remaining input), so a short malformed string declaring a huge binary
 state count is rejected in time polynomial in the string, not by enumerating its
 missing records (round-2 audit, finding 8). A complete serialization determines its own length,
-and the parser ignores a trailing all-`true` suffix, giving `decode_encode_pad`. The
-`canonizer` is a machine implementing exactly this parse followed by re-serialization
-(on valid codes, the identity up to padding removal; on invalid ones, the trivial
-machine's serialization), with a polynomial `canonizerTime`; its construction uses
-the composition combinators of `TCSlib.Complexity.TuringMachine.Composition`.
+and the parser ignores a trailing all-`true` suffix, giving `decode_encode_pad`.
+**[Original, superseded proposed sketch for the canonizer — the delivered proof
+takes a different route; see the implementation note below (epoch-3 audit,
+finding 1).]** The `canonizer` is a machine implementing exactly this parse
+followed by re-serialization (on valid codes, the identity up to padding removal;
+on invalid ones, the trivial machine's serialization), with a polynomial
+`canonizerTime`; its construction uses the composition combinators of
+`TCSlib.Complexity.TuringMachine.Composition`. **[End of superseded paragraph:
+no polynomial `canonizerTime` is proved, and no combinator construction was
+built.]**
 
 **Epoch 3 implementation note.** The parser and erased suffix scanner implement
 the grammar above, including the up-front minimum-length guard. For the canonizer,
