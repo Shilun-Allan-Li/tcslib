@@ -154,27 +154,18 @@ sketches, an audit pack goes out, gates close on zero blockers/majors.
 ## Open design questions (human review required)
 
 As in Chapter 1 (`AroraBarakChapter1Plan.md` §5), these are reserved for a
-**human** decision; audit rounds verify correctness but do not dispose of them.
+**human** decision; audit rounds verify correctness but do not dispose of
+them. **The full question statements live in [`backlog.md`](backlog.md) §1**
+(the consolidated tracking file, 2026-09-18); the stable numbering below is
+what audit documents cite.
 
-1. **Generality of `HALT_not_mem_NP`** (phase-1, round-2 audit, finding 3).
-   The statement is currently at `Turing.EffectiveMachineCode` generality
-   because its proof route reuses Chapter 1's `HALT_not_computable`, whose own
-   proof runs the universal evaluator. The round-2 auditor showed this
-   restriction is **not mathematically necessary**: a direct diagonalization —
-   the public diagonal-pairing machine, the searcher's finite-control
-   transform with the halt/loop roles swapped, `Turing.exists_codeTM`, no
-   evaluator — proves `HALT` undecidable for *every* lawful
-   `Turing.MachineCode` (and my earlier "trivial-machine scheme"
-   counterexample is unlawful: constant decoding violates `decode_encode`).
-   **The question:** add that diagonal lemma as a new audited statement (a
-   strengthening of Chapter 1's uncomputability story that shares its main
-   fill obligation, the control-transform lemma, with `HALT_NPHard`) and
-   generalize `HALT_not_mem_NP` to `MachineCode` — or keep the conservative
-   signature as a documented API/proof-route restriction? Maintainer's
-   provisional choice, pending review: the conservative signature, with the
-   docstring stating the restriction honestly; the diagonal lemma is
-   deliberately *not* slipped into a repair round, since it would enlarge the
-   audited surface of Chapter 1's uncomputability chapter.
+1. **CH2-Q1 — generality of `HALT_not_mem_NP`** (phase-1, round-2 audit,
+   finding 3): the round-2 auditor showed the `EffectiveMachineCode`
+   restriction is a proof-route artifact, with a direct diagonalization
+   available at every lawful `MachineCode`. The question: state that
+   diagonal lemma and generalize, or keep the conservative signature as a
+   documented restriction? Provisional maintainer choice: the conservative
+   signature. Full statement: `backlog.md` §1, CH2-Q1.
 
 ## 6. Decision log
 
@@ -220,6 +211,8 @@ As in Chapter 1 (`AroraBarakChapter1Plan.md` §5), these are reserved for a
 | Phase-4 round-1 repairs executed (sketch/prose + two import lines — **no statement changed**): the `SAT_NPHard` emitting-machine sketch rewritten around the **output-silence contract** with the audit's six-stage table adopted verbatim (exact arithmetic with captured answers; virtual-input reference simulation; discarded source output with internal halted flag and frozen trajectory to `T`; trajectory recording; last-visit comparison; serialization with the empty-until-serialization output invariant), the product-encoding choice, and the exact length ledger; the TAUTOLOGY membership prose corrected to the every-term-fails quantifier; `Hardness.lean` gains the two precise imports (`ClassNP.TMSAT`, `Robustness.Oblivious` — the homes of the cited normalization theorems; both precede it in the order list, no cycles). Statement drift enumerated: 0 signatures, 0 definitions, 2 import lines (`Hardness.lean`); `Tautology.lean` comment-only (corrected stripper recipe). Repaired modules and facades re-gated; admissions unchanged (59). **Round-2 re-audit next** (protocol: no gate closes on a round reporting majors) | Decided |
 
 | Phase-4 audit round 2 (`audits/ch2-phase4-reaudit-findings.md`, audited at `c3579472`): **zero blockers, zero majors, zero minors, 3 notes — gate condition met with nothing to sweep**, the campaign's cleanest round. Resolution table verified row by row; the six-stage output-silence transcription judged semantically faithful and the emitter obligation list **complete at statement-phase granularity** (stage-by-stage boundary checks; the round-1 counterexample re-fired against the repaired contract and confirmed closed); the product encoding matches Derivation B with no extra well-formedness family; the length/time ledger independently re-derived (exact serializer identity confirmed; `c ≥ 1` via `not_computesInTime_zero`; pinning cost absorbed by `T ≥ (m+1)²`; `O_M(T²) = poly(n)` total at sequential-scan rates). Notes adopted: both contract tables inherited verbatim into the E4 emitter fill brief; the exact identity is the fill's length ledger; evidence separation retained. **Phase-4 audit gate closed** (`audits/ch2-phase4-resolutions.md`). **All four Chapter-2 statement-phase gates are now closed** — 59 audited-true admissions (19 + 14 + 12 + 14); every mandatory-core statement of the chapter is on the books. Next: the fill campaign (E1-E5), beginning with epoch partitioning and briefs | Decided |
+
+| Backlog consolidation (2026-09-18): the repository-level `backlog.md` created as the canonical tracking file — full human-review question bodies (CH1-Q1, CH1-Q2, CH2-Q1, moved verbatim; the plans keep stable numbered stubs that audit documents cite), the on-hold fill campaign with the audit-mandated fill-brief inheritance index, deferred formalizations across chapters 1-3 and the ch-6 bridge theorems, pending user decisions (ch-6 integration path among them), and housekeeping. `workflow.md` §1 points to it; it joins audit bundle attachment sets from the next round. Decision-log history stays in the plans, never moved | Decided |
 
 ## References
 

@@ -35,7 +35,10 @@ root — `<Source>Chapter<N>Plan.md` — containing:
 * **Risks and honest effort assessment**.
 * **Open design questions (human review required)**: decisions reserved for a human
   maintainer. Audit rounds *verify* these but never *dispose* of them; each records
-  the maintainer's provisional choice and stays open until a human closes it.
+  the maintainer's provisional choice and stays open until a human closes it. The
+  consolidated register — full statements, cross-links, and status — is
+  [`backlog.md`](backlog.md); the plans keep stable numbered stubs, which is what
+  audit documents cite.
 * **Decision log**: an append-only table. Every methodological decision, every audit
   round's verdict, and every repair round gets a row. The log is the campaign's
   memory; when a decision is reversed, the old row is marked **Superseded** in place,

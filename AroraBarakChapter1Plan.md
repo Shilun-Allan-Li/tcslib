@@ -261,70 +261,26 @@ approved.
 
 These are flagged for a **human** auditor/maintainer decision — the LLM audit
 rounds verify correctness, but these are matters of architectural taste and
-trust-surface policy that should not be closed by an automated gate.
+trust-surface policy that should not be closed by an automated gate. **The
+full question statements live in [`backlog.md`](backlog.md) §1** (the
+consolidated tracking file, 2026-09-18); the stable numbering below is what
+audit documents cite.
 
-1. **The 3A Mathlib-computability bridge** (epoch 3, batch A;
-   `Encoding.lean`, `exists_effectiveMachineCode`). The audited docstring
-   sketch called for the canonizer machine to be **hand-assembled from this
-   repository's composition combinators** ("its construction uses the
-   composition combinators", optionally with a polynomial `canonizerTime`).
-   The delivered proof instead (i) proves the canonization *function*
-   primitive recursive, (ii) compiles it through **Mathlib's verified
-   recursion-theory pipeline** (`ToPartrec.Code.exists_code` →
-   `PartrecToTM2.tr_eval`), (iii) simulates the resulting TM2 stack machine
-   in our model with a bespoke private `bridgeTM`, and (iv) lands in the
-   binary alphabet via the proved `alphabet_reduction`, extracting the time
-   bound by finite maxima (no polynomial bound claimed — permitted, since
-   `canonizerTime` is existential). The batch flagged the deviation itself;
-   the maintainer verification pass confirmed the proof is sorry-free with
-   the standard axiom footprint and zero public-interface drift. **Open
-   questions for a human:** (a) is the heavyweight
-   `Mathlib.Computability.TMToPartrec` import into the TM tree acceptable,
-   or should the bridge be quarantined behind the planned phase-5
-   `MathlibBridge` module boundary (it effectively front-runs that module)?
-   (b) is the enlarged trust/review surface (Mathlib's TM2 semantics + the
-   private `bridgeTM` simulation, ~150 private declarations) preferable to
-   a longer but self-contained combinator construction? (c) should the
-   abandoned polynomial-`canonizerTime` claim be recorded as permanently out
-   of scope, or re-derived later from the combinator route if one is ever
-   written? Since the epoch-3→4 merge the bridge lives in the dedicated
-   `MathlibBridge.lean`, which implements the quarantine that part (a)
-   contemplates — the `TMToPartrec` import is confined to that one module and
-   nothing outside `exists_effectiveMachineCode` depends on it — but the
-   implemented quarantine does **not** dispose of this question: parts (a)-(c)
-   remain open for human review (epoch-4 audit, finding 3: this sentence
-   previously said the bridge was still inside `Encoding.lean`).
+1. **CH1-Q1 — the 3A Mathlib-computability bridge** (epoch 3, batch A;
+   `MathlibBridge.lean`, `exists_effectiveMachineCode`): the delivered proof
+   compiles the canonizer through Mathlib's recursion-theory pipeline plus a
+   private `bridgeTM` simulation instead of the sketched combinator
+   construction. Open parts (a) quarantine acceptability, (b) trust-surface
+   preference, (c) the abandoned polynomial-`canonizerTime` claim. Full
+   statement: `backlog.md` §1, CH1-Q1.
 
-2. **The 3B universal-interpreter proof architecture** (epoch 3, batches B +
-   B2; `Universal.lean`, `Turing.universal`). The proof followed the audited
-   sketch's outline (prefix-only startup, canonizer capture onto a table
-   tape, four-work-tape interpreter with a fixed finite controller), but the
-   realized architecture is by far the campaign's most involved artifact:
-   2465 lines, 104 private declarations built across two agent sessions
-   (WIP `f191b918` + continuation), a bespoke checkpoint relation
-   (`universalRelation`) with generic block-simulation assembly
-   (`universal_block_run` / `universal_from_blocks`), a virtual left
-   boundary via a marker tape, a unary state tape with group-wise table
-   scanning, and an *exact* per-phase cost ledger realized to
-   `universalBlockBound = 3L + 5N + 20`. The kernel checks all of it, and
-   the public statement is frozen and audited — but the *design* was never
-   itself an audit deliverable at this level of detail. **Open questions for
-   a human:** (a) is this the right load-bearing shape for epoch 4, where
-   `timed_universal` must reuse the interpreter with a step counter — and
-   which parts (the capture wrapper, the block-run/`universal_run_join`
-   assembly, the marker-directed rewind and unary-copy gadget patterns, all
-   flagged by the agents as promotion candidates) should graduate to shared
-   modules at the epoch-3→4 merge rather than being re-derived? (b) is the
-   exact-ledger posture (`3L + 5N + 20` proved to the transition) worth its
-   brittleness against any future change to `CodeTM.serialize`, or should
-   the maintained invariant be an existential bound with the exact ledger
-   demoted to documentation? (c) does the interpreter's claim to *be* the
-   book's universal machine (as opposed to satisfying the frozen statement,
-   which the kernel settles) deserve a targeted human read of the
-   construction's core definitions (`UniversalControl`,
-   `universalInterpreter`, `universalRelation`), given no executable
-   diagnostics of the whole interpreter ever ran (the batch-B smoke tests
-   aborted on deep recursion and were discarded)?
+2. **CH1-Q2 — the 3B universal-interpreter proof architecture** (epoch 3,
+   batches B + B2; `Universal.lean`, `Turing.universal`): the realized
+   interpreter (checkpoint relation, block assembly, exact cost ledger) is
+   kernel-checked but was never an audit deliverable at design level. Open
+   parts (a) gadget promotion, (b) exact-ledger vs. existential-bound
+   posture, (c) a targeted human read of the core definitions. Full
+   statement: `backlog.md` §1, CH1-Q2.
 
 ## 6. Risks and honest effort assessment
 
@@ -385,4 +341,5 @@ trust-surface policy that should not be closed by an automated gate.
 | Epoch-4 (final) boundary artifacts prepared: **campaign-closure drift attestation** — tree-wide public-name comparison `b519a004` → `fd7bb18e`: 227 → 378 public declarations, **zero lost, exactly 151 gained** = the recorded refactor promotions (4A added zero publics); per-split multiset + ordered-sequence verification carried from the merge; fill span removes exactly the final `sorry`; three byte-verified file relocations; soundness scans on both spans (one new import each: `FinCases`, `Nat.Bits`; `TMToPartrec` confined to `MathlibBridge`) — and **epoch-4 audit pack** (`audits/epoch4-{pack,bundle}.md`, 43 attachments incl. the 4A agent report and the three split-execution reports). Pack priorities: the timed fill's five obligations + ledger, the timeout clause on divergent sources, merge-refactor conformance via the public GitHub span comparisons, statement identity across gates, closure sanity; both design questions remain human-reserved. Gate awaits `audits/epoch4-findings.md` — the campaign's final audit round | Decided |
 | Epoch-4 (final) round audited and closed (`audits/epoch4-findings.md` → `audits/epoch4-resolutions.md`): **zero blockers/majors** — the most thoroughly reproduced round: fresh independent 34-module sweep at the pin (zero admissions), all eight axiom prints reproduced, a 3,984-constant `sorryAx` traversal (zero), the timed fill's five obligations and divergent-source timeout certified from the source with the ledger re-summed to `C = S + B + 14`, split conformance reproduced end-to-end (incl. ablating the single `rfl`), and the delivery zip's provenance verified down to blob identity. Three minors swept: pack attestation-2 tree conflation and attestation-1 relocation count acknowledged as errata (packs preserved per precedent); `universalEval_step`'s bare-label docstring upgraded to statement prose; three stale location descriptions corrected (`Universal.lean` module docstring; plan design-question-1 bridge location — question stays open). Notes adopted: ordered + namespace/context checks retained in future freeze attestations; reproduced-vs-historical evidence distinction preserved. **Epoch-4 audit gate closed — the fill campaign is fully audited end to end.** Remaining post-campaign work: blueprint extraction, the two open human design questions, deferred phase 5 | Decided |
 | **Blueprint extraction executed** (commit `9570f957`) — the campaign's final closure artifact: fresh `.ilean` artifacts emitted for all 34 campaign modules via per-module `lean -i` against the gate script's `LEAN_PATH` (**no `lake build`** — the branch ban stands), merged into `dep_graph.json` (167 kept + 34 added = 201 modules, 5,083 declarations); 44 `blueprint-writer` agents in 8 batches documented **1,084 declarations** (37 new chapter files + 10 appends), every entry with statement prose, `\lean` binding, `\leanok`, and planner-resolved `\uses`; validator: **0 orphan labels, 0 dangling `\uses`**, Complexity area 1143/1143 covered, all areas at full coverage except `TCSlib.Tactics` (92 metaprogramming-scaffolding declarations, deliberately excluded from the dataset — user may override). One correction: `SimpleGraph.turan_edge_bound` (legacy GraphTheory, pre-existing `sorry` body) documented **without** `\leanok`. Writers flagged a handful of planner `\uses` artifacts (extra edges not in the cited proofs) — reproduced verbatim per pipeline rules, noted for a future planner refinement | Decided |
-| Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time |
+| Fate of this file at merge (graduate to `docs/` vs. superseded by blueprint) | Open — decide at merge time; tracked in `backlog.md` §4 |
+| Backlog consolidation (2026-09-18): the full bodies of design questions 1-2 moved to the repository-level `backlog.md` §1 (as CH1-Q1/CH1-Q2, verbatim); §5 keeps stable numbered stubs, which audit documents cite. `backlog.md` also indexes this plan's deferred phase 5, the waived bridges, the `Universal.lean` factoring escalation, and the blueprint follow-ups, and joins audit bundle attachment sets from the next round | Decided |
