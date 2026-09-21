@@ -1,3 +1,4 @@
+import TCSlib.Complexity.CircuitComplexity.Basic
 import TCSlib.BooleanAnalysis.LMN.CircuitCompression
 import TCSlib.BooleanAnalysis.LMN.RestrictionCompose
 
