@@ -1,4 +1,5 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.BigOperators.Expect
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Module.Pi
 import Mathlib.Data.Finset.Powerset
@@ -48,7 +49,7 @@ This file develops the basic theory of Boolean functions `f : {-1, 1}ⁿ → ℝ
 
 ## References
 
-* Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014.
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014.
 -/
 
 set_option maxHeartbeats 400000
@@ -59,32 +60,52 @@ namespace BooleanAnalysis
 
 /-! ## Setup: the Boolean hypercube -/
 
-/-- The Boolean hypercube `{0,1}ⁿ`. -/
+/-- Defines the Boolean hypercube `{0,1}ⁿ`.
+
+**Source:** [OD14, §1.1]. -/
 abbrev BoolCube (n : ℕ) := Fin n → Bool
 
-/-- A Boolean function `f : {0,1}ⁿ → ℝ`. -/
+/-- Defines a real-valued Boolean function `f : {0,1}ⁿ → ℝ`.
+
+**Source:** [OD14, §1.1]. -/
 abbrev BooleanFunc (n : ℕ) := BoolCube n → ℝ
 
 variable {n : ℕ}
 
 /-! ## Uniform measure and expectation -/
 
-/-- The uniform probability measure on `{0,1}ⁿ` assigns weight `2⁻ⁿ` to each point. -/
+/-- Defines the uniform probability weight `2⁻ⁿ` on each point of `{0,1}ⁿ`.
+
+**Source:** [OD14, §1.1]. -/
 noncomputable def uniformWeight (n : ℕ) : ℝ := (2 : ℝ)⁻¹ ^ n
 
 /-- Expectation of `f` under the uniform measure on `{0,1}ⁿ`.
-  `𝔼[f] = 2⁻ⁿ · ∑_{x ∈ {0,1}ⁿ} f(x)`. -/
+  `𝔼[f] = 2⁻ⁿ · ∑_{x ∈ {0,1}ⁿ} f(x)`.
+
+**Source:** [OD14, §1.1]. -/
 noncomputable def expect (f : BooleanFunc n) : ℝ :=
   uniformWeight n * ∑ x : BoolCube n, f x
 
+/-- The Boolean-cube expectation is Mathlib's uniform expectation on the finite cube.
+
+**Source:** [OD14, §1.1]; Mathlib, `Fintype.expect_eq_sum_div_card`. -/
+lemma expect_eq_fintypeExpect (f : BooleanFunc n) : expect f = 𝔼 x, f x := by
+  rw [Fintype.expect_eq_sum_div_card]
+  unfold expect uniformWeight
+  simp [Fintype.card_pi, Fintype.card_bool, div_eq_inv_mul]
+
 /-- The `L²` inner product on Boolean functions with respect to the uniform measure:
-  `⟪f, g⟫ = 𝔼[f · g] = 2⁻ⁿ · ∑_x f(x) g(x)`. -/
+  `⟪f, g⟫ = 𝔼[f · g] = 2⁻ⁿ · ∑_x f(x) g(x)`.
+
+**Source:** [OD14, §1.2]. -/
 noncomputable def innerProduct (f g : BooleanFunc n) : ℝ :=
   expect (fun x ↦ f x * g x)
 
 scoped notation "⟪" f ", " g "⟫_𝔹" => innerProduct f g
 
-/-- The `L²` norm of a Boolean function: `‖f‖ = √(⟪f, f⟫)`. -/
+/-- Defines the `L²` norm of a Boolean function by `‖f‖ = √(⟪f, f⟫)`.
+
+**Source:** [OD14, §1.2]. -/
 noncomputable def l2Norm (f : BooleanFunc n) : ℝ :=
   Real.sqrt (innerProduct f f)
 
@@ -115,7 +136,9 @@ lemma moment_eq_expect {n : ℕ} (f : BooleanFunc n) (p : ℕ)
 
 /-! ## Walsh–Fourier characters -/
 
-/-- Convert a `Bool` to `{-1, 1} ⊆ ℝ`: `false ↦ 1`, `true ↦ -1`. -/
+/-- Converts a `Bool` to `{-1, 1} ⊆ ℝ`: `false ↦ 1`, `true ↦ -1`.
+
+**Source:** [OD14, §1.1]. -/
 def boolToSign (b : Bool) : ℝ := if b then -1 else 1
 
 @[simp]
@@ -135,7 +158,9 @@ lemma boolToSign_mul_self (b : Bool) : boolToSign b * boolToSign b = 1 := by
 /-- The Walsh–Fourier character `χ_S : {0,1}ⁿ → ℝ` associated to a set `S ⊆ [n]`.
   `χ_S(x) = ∏_{i ∈ S} (-1)^{x_i}`.
 
-  This forms an orthonormal basis for `L²({0,1}ⁿ, uniform)`. -/
+  This forms an orthonormal basis for `L²({0,1}ⁿ, uniform)`.
+
+**Source:** [OD14, §1.2]. -/
 noncomputable def chiS (S : Finset (Fin n)) : BooleanFunc n :=
   fun x ↦ ∏ i ∈ S, boolToSign (x i)
 
@@ -202,7 +227,9 @@ lemma chiS_mul_chiS (S T : Finset (Fin n)) (x : BoolCube n) :
 /-! ## Fourier coefficients -/
 
 /-- The Fourier–Walsh coefficient of `f` at frequency `S`:
-  `f̂(S) = ⟪f, χ_S⟫ = 2⁻ⁿ · ∑_x f(x) · χ_S(x)`. -/
+  `f̂(S) = ⟪f, χ_S⟫ = 2⁻ⁿ · ∑_x f(x) · χ_S(x)`.
+
+**Source:** [OD14, §1.2]. -/
 noncomputable def fourierCoeff (f : BooleanFunc n) (S : Finset (Fin n)) : ℝ :=
   innerProduct f (chiS S)
 
@@ -249,7 +276,9 @@ private lemma sum_chiS_mul_eq (x y : BoolCube n) :
 /-- **Walsh Expansion**: every Boolean function `f : {0,1}ⁿ → ℝ` can be written as
   `f(x) = ∑_{S ⊆ [n]} f̂(S) · χ_S(x)`.
 
-  This is the Fourier inversion formula for the uniform measure on `{0,1}ⁿ`. -/
+  This is the Fourier inversion formula for the uniform measure on `{0,1}ⁿ`.
+
+**Source:** [OD14, §1.3]. -/
 theorem walsh_expansion (f : BooleanFunc n) (x : BoolCube n) :
     f x = ∑ S : Finset (Fin n), fourierCoeff f S * chiS S x := by
   simp only [fourierCoeff, innerProduct, expect, uniformWeight]
@@ -285,7 +314,9 @@ theorem walsh_expansion (f : BooleanFunc n) (x : BoolCube n) :
         rw [← mul_assoc, mul_comm ((2:ℝ)⁻¹^n) (f x), mul_assoc, ← mul_pow,
             inv_mul_cancel₀ (by norm_num : (2:ℝ) ≠ 0), one_pow, mul_one]
 
-/-`Maximum Degree of Boolean Function`-/
+/-- Defines the predicate that a Boolean function has Fourier degree at most `k`.
+
+**Source:** [OD14, §1.3]. -/
 def has_degree_at_most {n : ℕ} (f : (BooleanFunc n)) (k : ℕ) : Prop :=
   ∀ S, f ̂( S ) ≠ 0 → S.card ≤ k
 
@@ -323,7 +354,9 @@ private lemma sum_chiS (S : Finset (Fin n)) :
 
 /-- **Orthonormality**: `⟪χ_S, χ_T⟫ = [S = T]`.
 
-  The Walsh characters form an orthonormal system in `L²({0,1}ⁿ, uniform)`. -/
+  The Walsh characters form an orthonormal system in `L²({0,1}ⁿ, uniform)`.
+
+**Source:** [OD14, §1.2]. -/
 theorem fourier_coeff_chi (S T : Finset (Fin n)) :
     innerProduct (chiS S) (chiS T) = if S = T then 1 else 0 := by
   simp only [innerProduct, expect, uniformWeight]
@@ -352,7 +385,9 @@ lemma innerProduct_chi_self (S : Finset (Fin n)) :
 
 /-- **Parseval's Identity**: `‖f‖² = ∑_{S ⊆ [n]} f̂(S)²`.
 
-  The sum of squared Fourier coefficients equals the squared `L²` norm. -/
+  The sum of squared Fourier coefficients equals the squared `L²` norm.
+
+**Source:** [OD14, §1.4]. -/
 theorem parseval (f : BooleanFunc n) :
     innerProduct f f = ∑ S : Finset (Fin n), fourierCoeff f S ^ 2 := by
   -- Expand f = ∑_S f̂(S) χ_S and use bilinearity + orthonormality
@@ -481,12 +516,16 @@ lemma flipBit_ne (x : BoolCube n) (i j : Fin n) (h : i ≠ j) :
   `Inf_i[f] = Pr_x[f(x) ≠ f(xⁱ)]`
   where `xⁱ` denotes `x` with the `i`-th bit flipped.
 
-  For `{-1,1}`-valued functions this equals `𝔼[(f(x) - f(xⁱ))² / 4]`. -/
+  For `{-1,1}`-valued functions this equals `𝔼[(f(x) - f(xⁱ))² / 4]`.
+
+**Source:** [OD14, §2.1]. -/
 noncomputable def influence (i : Fin n) (f : BooleanFunc n) : ℝ :=
   expect (fun x ↦ (f x - f (flipBit x i)) ^ 2 / 4)
 
 /-- The **total influence** of `f`:
-  `I[f] = ∑_{i=1}^{n} Inf_i[f]`. -/
+  `I[f] = ∑_{i=1}^{n} Inf_i[f]`.
+
+**Source:** [OD14, §2.1]. -/
 noncomputable def totalInfluence (f : BooleanFunc n) : ℝ :=
   ∑ i : Fin n, influence i f
 
@@ -548,7 +587,9 @@ lemma influence_chi (i : Fin n) (S : Finset (Fin n)) :
       simp only [chiS_flipBit, hiS, if_false, sub_self, zero_pow (by norm_num : 2 ≠ 0), zero_div]
     simp [step]
 
-/-- **Influence via Fourier**: `Inf_i[f] = ∑_{S ∋ i} f̂(S)²`. -/
+/-- **Influence via Fourier**: `Inf_i[f] = ∑_{S ∋ i} f̂(S)²`.
+
+**Source:** [OD14, §2.2]. -/
 theorem influence_eq_sum_fourier (i : Fin n) (f : BooleanFunc n) :
     influence i f = ∑ S : Finset (Fin n), if i ∈ S then fourierCoeff f S ^ 2 else 0 := by
   -- Key: f(x) - f(flipBit x i) = 2 * ∑_{S∋i} f̂(S) * χ_S(x)
@@ -624,7 +665,9 @@ theorem influence_eq_sum_fourier (i : Fin n) (f : BooleanFunc n) :
   rw [hfc]
   by_cases hiS : i ∈ S <;> simp [hiS]
 
-/-- **Total Influence via Fourier**: `I[f] = ∑_S |S| · f̂(S)²`. -/
+/-- **Total Influence via Fourier**: `I[f] = ∑_S |S| · f̂(S)²`.
+
+**Source:** [OD14, §2.2]. -/
 theorem totalInfluence_eq_sum_sq_deg (f : BooleanFunc n) :
     totalInfluence f = ∑ S : Finset (Fin n), S.card * fourierCoeff f S ^ 2 := by
   simp only [totalInfluence, influence_eq_sum_fourier]
@@ -700,11 +743,15 @@ noncomputable def expectationLm {n : ℕ} (i : Fin n) :
   `T_ρ f(x) = 𝔼_y[f(y)]` where each coordinate of `y` independently equals
   `x_i` with probability `(1+ρ)/2` and `¬x_i` with probability `(1-ρ)/2`.
 
-  In the Fourier domain: `(T_ρ f)̂(S) = ρ^{|S|} · f̂(S)`. -/
+  In the Fourier domain: `(T_ρ f)̂(S) = ρ^{|S|} · f̂(S)`.
+
+**Source:** [OD14, §2.4]. -/
 noncomputable def noiseOp (ρ : ℝ) (f : BooleanFunc n) : BooleanFunc n :=
   fun x ↦ ∑ S : Finset (Fin n), ρ ^ S.card * fourierCoeff f S * chiS S x
 
-/-- **Noise operator in Fourier domain**: `(T_ρ f)̂(S) = ρ^{|S|} · f̂(S)`. -/
+/-- **Noise operator in Fourier domain**: `(T_ρ f)̂(S) = ρ^{|S|} · f̂(S)`.
+
+**Source:** [OD14, §2.4]. -/
 theorem noiseOp_fourier (ρ : ℝ) (f : BooleanFunc n) (S : Finset (Fin n)) :
     fourierCoeff (noiseOp ρ f) S = ρ ^ S.card * fourierCoeff f S := by
   -- ⟨T_ρ f, χ_S⟩ = 2⁻ⁿ ∑_x (∑_T ρ^|T| f̂(T) χ_T(x)) * χ_S(x)
@@ -789,7 +836,9 @@ lemma noiseOp_self_adjoint (ρ : ℝ) (f g : BooleanFunc n) :
         -- Apply Plancherel in reverse
         rw [← plancherel]
 
-/-- **Stability formula**: `⟪f, T_ρ f⟫ = ∑_S ρ^{|S|} · f̂(S)²`. -/
+/-- **Stability formula**: `⟪f, T_ρ f⟫ = ∑_S ρ^{|S|} · f̂(S)²`.
+
+**Source:** [OD14, §2.4]. -/
 theorem stability_formula (ρ : ℝ) (f : BooleanFunc n) :
     innerProduct f (noiseOp ρ f) = ∑ S : Finset (Fin n), ρ ^ S.card * fourierCoeff f S ^ 2 := by
   -- Strategy: expand f in Walsh basis, use noiseOp definition, then apply orthonormality

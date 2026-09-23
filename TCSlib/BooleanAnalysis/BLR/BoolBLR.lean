@@ -19,6 +19,11 @@ is linear iff its ±1 lift is a Fourier character, and derives soundness: any fu
 * **SECTION 1: LINEAR_FUNCTIONS** — Definition of Boolean linearity and its equivalence to Fourier characters
 * **SECTION 2: BLR_TEST** — The BLR acceptance probability and Fourier-analytic soundness analysis
 * **SECTION 3: BLR_RESULTS** — Completeness (linear functions pass) and soundness (ε-far functions fail)
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, §1.6.
 -/
 
 -- ============================================================================
@@ -32,21 +37,29 @@ is linear iff its ±1 lift is a Fourier character, and derives soundness: any fu
 -- ============================================================================
 section LINEAR_FUNCTIONS
 
--- a linear function satisfies f(x + y) = f(x) + f(y) for all x, y
+/-- Defines a Boolean linear function by preservation of pointwise XOR.
+
+**Source:** [OD14, §1.6]. -/
 def is_linear_bool {n : ℕ} (f : hypercube n → Bool) : Prop :=
   ∀ x y, f (xor_vec x y) = Bool.xor (f x) (f y)
 
--- Lift a Boolean function to a real-valued ±1 function via (-1)^{f(x)}.
+/-- Lifts a Boolean-valued function to its `{±1}`-valued encoding.
+
+**Source:** [OD14, §1.6]. -/
 def lift_pm1 (f : hypercube n → Bool) : BoolFun n :=
   fun x => BoolToPM1 (f x)
 
--- dist (f, g) = Pr [ f(x) ≠ g(x) ]
+/-- Defines the uniform Hamming distance between two Boolean functions.
+
+**Source:** [OD14, §1.6]. -/
 noncomputable def bool_dist {n : ℕ}
     (f g : hypercube n → Bool) : ℝ :=
   expectation (fun x =>
     if f x = g x then 0 else 1)
 
--- f is epsilon-far from any linear function if for all linear g, dist(f, g) ≥ ε
+/-- Defines when a Boolean function is at least `ε`-far from every linear Boolean function.
+
+**Source:** [OD14, §1.6]. -/
 def epsilon_far_from_linear {n : ℕ}
     (f : hypercube n → Bool) (ε : ℝ) : Prop :=
   0 ≤ ε ∧ ε ≤ 1 ∧
@@ -106,6 +119,9 @@ private lemma linear_bool_iff_character_aux_h_eq_h {n : ℕ} (f : hypercube n �
     BoolToPM1 (f (xor_vec x y)) = BoolToPM1 (f x ^^ f y) :=
   (linear_bool_iff_character_aux_h_eq f S hS x y (linear_bool_iff_character_aux_h_char S x y))
 
+/-- Characterizes Boolean linear functions as functions whose `{±1}` lift is a Fourier character.
+
+**Source:** [OD14, §1.6]. -/
 lemma linear_bool_iff_character {n : ℕ} (f : hypercube n → Bool) :
   is_linear_bool f ↔ ∃ S, lift_pm1 f = char_S S := by
   classical
@@ -155,7 +171,9 @@ section BLR_TEST
 
 -- In the following comments, we interchange between {0, 1} and {-1, +1} freely
 
--- Pr [ BLR accepts f ] = Pr [ f(x+y) = f(x) + f(y) ]
+/-- Defines the acceptance probability of the Boolean BLR linearity test.
+
+**Source:** [OD14, §1.6]. -/
 noncomputable def BLR_accept_prob {n : ℕ} (f : hypercube n → Bool) : ℝ :=
   expectation (fun x =>
     expectation (fun y =>
@@ -173,6 +191,9 @@ private lemma BLR_accept_prob_pm1_aux_h_eq {n : ℕ} (f : BoolFourier.hypercube 
   -- Reject case: triple product is -1, so (1-1)/2 = 0.
   · cases h : f x <;> cases h' : f y <;> cases h'' : f ( xor_vec x y ) <;> simp_all +decide [ lift_pm1 ];
 
+/-- Expresses BLR acceptance probability through the `{±1}` triple correlation.
+
+**Source:** [OD14, §1.6]. -/
 lemma BLR_accept_prob_pm1 {n : ℕ} (f : hypercube n → Bool) :
   BLR_accept_prob f
   = (1 + expectation (fun x =>
@@ -185,6 +206,9 @@ lemma BLR_accept_prob_pm1 {n : ℕ} (f : hypercube n → Bool) :
   norm_num [ ← Finset.sum_div _ _ _, card_hypercube ] ; ring
 
 -- E [ E [ f(x) f(y) f(x + y) ] ] = E [ f(x) E [ f(y) f(x + y) ] ] = E [ f(x) (f * f) (x) ]
+/-- Rewrites the BLR triple correlation as an inner product with a convolution.
+
+**Source:** [OD14, §1.6 (Fourier soundness proof)]. -/
 lemma triple_expectation_as_convolution {n : ℕ} (f : BoolFun n) :
   expectation (fun x =>
     expectation (fun y =>
@@ -215,6 +239,9 @@ private lemma triple_expectation_eq_cube_fourier_aux_h_substitute {n : ℕ} (f :
   simp +decide only [h_convolution, Finset.mul_sum _ _ _, expectation];
   rw [ Finset.sum_comm ] ; simp +decide [ div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _] ;
 
+/-- Expresses the BLR triple correlation as the cube-sum of Fourier coefficients.
+
+**Source:** [OD14, §1.6 (Fourier soundness proof)]. -/
 lemma triple_expectation_eq_cube_fourier {n : ℕ} (f : hypercube n → Bool) :
   expectation (fun x =>
     expectation (fun y =>
@@ -235,6 +262,9 @@ private lemma fourier_coeff_le_of_dist_ge_aux_h_lift_pm1 {n : ℕ} (f : BoolFour
   unfold lift_pm1;
   intro x; rcases f x with ( _ | _ | f ) <;> rcases g x with ( _ | _ | g ) <;> norm_num [ BoolToPM1 ] ;
 
+/-- Bounds a Fourier coefficient using distance from the corresponding linear function.
+
+**Source:** [OD14, §1.6 (Fourier soundness proof)]. -/
 lemma fourier_coeff_le_of_dist_ge
     {n : ℕ}
     (f g : hypercube n → Bool)
@@ -252,6 +282,9 @@ lemma fourier_coeff_le_of_dist_ge
   norm_num [ ← mul_pow ]
 
 -- if f is epsilon-far from all linear functions, then f-hat (S) ≤ 1 - 2 * ε for all S
+/-- Bounds every Fourier coefficient of a function far from all linear functions.
+
+**Source:** [OD14, §1.6 (Fourier soundness proof)]. -/
 lemma fourier_coeff_le_of_far_from_linear
     {n : ℕ}
     (f : hypercube n → Bool)
@@ -297,6 +330,9 @@ private lemma BLR_soundness_via_fourier_aux_h_bound {n : ℕ} (f : BoolFourier.h
   by
   exact fun S => by nlinarith only [ show fourier_coeff ( lift_pm1 f ) S ≤ 1 - 2 * ε by exact fourier_coeff_le_of_far_from_linear f ε hfar S ] ;
 
+/-- Proves the Fourier-analytic upper bound on BLR acceptance for far functions.
+
+**Source:** [OD14, §1.6]. -/
 lemma BLR_soundness_via_fourier {n : ℕ}
     (f : hypercube n → Bool)
     (ε : ℝ)
@@ -335,6 +371,9 @@ private lemma BLR_completeness_aux_h_lift_linear {n : ℕ} (f : BoolFourier.hype
   convert BoolToPM1_xor ( f x ) ( f y ) using 1;
   exact h_linear x y ▸ rfl);
 
+/-- Shows that every Boolean linear function passes the BLR test with probability one.
+
+**Source:** [OD14, §1.6]. -/
 lemma BLR_completeness {n : ℕ}
     (f : hypercube n → Bool)
     (hlin : is_linear_bool f) :
@@ -346,6 +385,9 @@ lemma BLR_completeness {n : ℕ}
   unfold expectation; norm_num [ (BLR_completeness_aux_h_lift_linear f (BLR_completeness_aux_h_linear f hlin)) ] ;
 
 -- Pr [ BLR accepts f ] ≤ 1 - ε if f is ε-far from any linear function
+/-- Shows that a function `ε`-far from linearity is rejected by BLR with probability at least `ε`.
+
+**Source:** [OD14, §1.6]. -/
 lemma BLR_soundness {n : ℕ}
     (f : hypercube n → Bool)
     (ε : ℝ)

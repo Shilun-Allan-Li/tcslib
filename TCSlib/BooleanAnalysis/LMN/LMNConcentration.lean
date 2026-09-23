@@ -32,6 +32,11 @@ Composes the two halves of the LMN argument:
 
 The Chernoff tail terms `s·e^{−n/120w} + s·e^{−n/120l}` are inherited from
 `odonnell_lemma_4_28` and vanish as `n → ∞`.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Lemmas 4.21 and 4.28.
 -/
 
 open BooleanAnalysis BoolCircuit SwitchingLemma2 LMN

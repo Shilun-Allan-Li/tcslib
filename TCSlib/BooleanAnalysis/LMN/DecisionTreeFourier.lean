@@ -25,6 +25,11 @@ coefficient has magnitude ≥ 2⁻ᵏ).
 `degree_le_dtDepth` restates the degree bound for `dtDepth` (minimum decision-
 tree depth), the form needed by the restriction ⇒ Fourier-concentration
 transfer (O'Donnell Lemma 4.21) in the LMN pipeline.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Prop. 3.16.
 -/
 
 open BooleanAnalysis
@@ -299,7 +304,9 @@ theorem fourierCoeff_signEval (T : DecisionTree n) (S : Finset (Fin n)) :
 /-! ## O'Donnell Proposition 3.16 -/
 
 /-- **Proposition 3.16, degree bound**: a function computed by a decision tree
-    of depth `k` has Fourier degree at most `k`. -/
+    of depth `k` has Fourier degree at most `k`.
+
+**Source:** [OD14, Prop. 3.16]. -/
 theorem degree_le_depth (T : DecisionTree n) :
     has_degree_at_most T.signEval T.depth := by
   intro S hS
@@ -308,7 +315,9 @@ theorem degree_le_depth (T : DecisionTree n) :
   exact hS (by rw [fourierCoeff_signEval]; exact coeffs_eq_zero_of_depth_lt T S hcard)
 
 /-- **Proposition 3.16, spectral 1-norm bound**: `‖f̂‖₁ ≤ s` (the tree size);
-    here `‖f‖∞ = 1` since `f` is ±1-valued. -/
+    here `‖f‖∞ = 1` since `f` is ±1-valued.
+
+**Source:** [OD14, Prop. 3.16]. -/
 theorem spectral_one_norm_le (T : DecisionTree n) :
     ∑ S : Finset (Fin n), |fourierCoeff T.signEval S| ≤ (T.size : ℝ) := by
   calc ∑ S : Finset (Fin n), |fourierCoeff T.signEval S|
@@ -317,7 +326,9 @@ theorem spectral_one_norm_le (T : DecisionTree n) :
     _ ≤ (T.size : ℝ) := sum_abs_coeffs_le T
 
 /-- **Proposition 3.16, granularity**: every `f̂(S)` is an integer multiple
-    of `2^{-k}` where `k` is the tree depth. -/
+    of `2^{-k}` where `k` is the tree depth.
+
+**Source:** [OD14, Prop. 3.16]. -/
 theorem fourierCoeff_granular (T : DecisionTree n) (S : Finset (Fin n)) :
     ∃ m : ℤ, fourierCoeff T.signEval S = (m : ℝ) / 2 ^ T.depth := by
   rw [fourierCoeff_signEval]
@@ -325,7 +336,9 @@ theorem fourierCoeff_granular (T : DecisionTree n) (S : Finset (Fin n)) :
 
 /-- **Proposition 3.16, sparsity**: the Fourier support has size at most
     `s · 2^k`. Follows from granularity (each nonzero coefficient has magnitude
-    `≥ 2^{-k}`) and the spectral 1-norm bound. -/
+    `≥ 2^{-k}`) and the spectral 1-norm bound.
+
+**Source:** [OD14, Prop. 3.16]. -/
 theorem sparsity_le (T : DecisionTree n) :
     (Finset.univ.filter fun S : Finset (Fin n) =>
       fourierCoeff T.signEval S ≠ 0).card ≤ T.size * 2 ^ T.depth := by
@@ -380,7 +393,9 @@ lemma exists_dtree_of_dtDepth (f : (Fin n → Bool) → Bool) :
 
 /-- **Proposition 3.16 for `dtDepth`**: the ±1-encoding of a Boolean function
     has Fourier degree at most its minimum decision-tree depth. This is the
-    "DT(f) ≤ k ⇒ deg(f) ≤ k" input to O'Donnell Lemma 4.21. -/
+    "DT(f) ≤ k ⇒ deg(f) ≤ k" input to O'Donnell Lemma 4.21.
+
+**Source:** [OD14, Prop. 3.16]. -/
 theorem degree_le_dtDepth (f : (Fin n → Bool) → Bool) :
     has_degree_at_most (fun x => boolToSign (f x)) (dtDepth f) := by
   obtain ⟨T, hdepth, heval⟩ := exists_dtree_of_dtDepth f

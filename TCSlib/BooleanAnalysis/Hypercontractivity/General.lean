@@ -19,6 +19,11 @@ two-function hypercontractivity theorems for general exponents.
 ## Main definitions
 
 * `noiseKernel`: the transition kernel for `ρ`-correlated noise on the Boolean cube.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, §9.4 and §10.1.
 -/
 
 open BooleanAnalysis OneBit Bonami SimpleHypercontractivity Real
@@ -31,19 +36,24 @@ variable {n : ℕ}
 /-! ## Noise Kernel -/
 
 /-- The noise kernel `K_ρ(x, y) = ∏_i (1 + ρ · sign(x_i) · sign(y_i)) / 2`.
-This is the transition probability from `x` to `y` under ρ-correlated noise. -/
-/- O'Donnell, Remark 9.20 (product-space noise calculation). -/
+This is the transition probability from `x` to `y` under ρ-correlated noise.
+
+**Source:** [OD14, Rem. 9.20 (product-space calculation)]. -/
 noncomputable def noiseKernel (ρ : ℝ) {n : ℕ} (x y : BoolCube n) : ℝ :=
   ∏ i : Fin n, (1 + ρ * boolToSign (x i) * boolToSign (y i)) / 2
 
-/- O'Donnell, Remark 9.20 (product-space noise calculation). -/
+/-- Shows that the noise kernel is nonnegative for a valid noise parameter.
+
+**Source:** [OD14, Rem. 9.20 (product-space calculation)]. -/
 lemma noiseKernel_nonneg {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
     (x y : BoolCube n) : 0 ≤ noiseKernel ρ x y := by
   refine Finset.prod_nonneg fun i _ ↦ ?_
   cases x i <;> cases y i <;> norm_num [boolToSign] <;> nlinarith
 /-! ## Noise Operator as Kernel Sum -/
 
-/- O'Donnell, Remark 9.20 (product-space noise calculation). -/
+/-- Expands the product form of the noise kernel as a Fourier-character sum.
+
+**Source:** [OD14, Rem. 9.20 (product-space calculation)]. -/
 lemma sum_fourier_kernel (ρ : ℝ) (x y : BoolCube n) :
     ∑ S : Finset (Fin n), ρ ^ S.card * chiS S x * chiS S y =
     ∏ i : Fin n, (1 + ρ * boolToSign (x i) * boolToSign (y i)) := by
@@ -53,8 +63,9 @@ lemma sum_fourier_kernel (ρ : ℝ) (x y : BoolCube n) :
   rw [h_prod_sum, Finset.sum_congr rfl]
   intros; simp_all +decide [Finset.prod_mul_distrib, chiS]
 
-/-- The noise operator equals a kernel sum: `T_ρ g(x) = ∑_y K_ρ(x,y) · g(y)`. -/
-/- O'Donnell, Remark 9.20 (product-space noise calculation). -/
+/-- The noise operator equals a kernel sum: `T_ρ g(x) = ∑_y K_ρ(x,y) · g(y)`.
+
+**Source:** [OD14, Rem. 9.20 (product-space calculation)]. -/
 lemma noiseOp_eq_kernel_sum (ρ : ℝ) (g : BooleanFunc n) (x : BoolCube n) :
     noiseOp ρ g x = ∑ y : BoolCube n, noiseKernel ρ x y * g y := by
   unfold noiseOp noiseKernel BooleanAnalysis.fourierCoeff BooleanAnalysis.innerProduct
@@ -67,8 +78,8 @@ lemma noiseOp_eq_kernel_sum (ρ : ℝ) (g : BooleanFunc n) (x : BoolCube n) :
 
 /-! ## Inner Product as Kernel-Weighted Sum -/
 
-/-- `⟨f, T_ρ g⟩ = (1/2^n) ∑_{x,y} K_ρ(x,y) · f(x) · g(y)`. -/
-/- O'Donnell, Remark 9.20 (correlated-pair expectation calculation). -/
+/-- `⟨f, T_ρ g⟩ = (1/2^n) ∑_{x,y} K_ρ(x,y) · f(x) · g(y)`.
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma innerProduct_noiseOp_eq_weighted_sum (ρ : ℝ) (f g : BooleanFunc n) :
     innerProduct f (noiseOp ρ g) =
     uniformWeight n * ∑ x : BoolCube n, ∑ y : BoolCube n,
@@ -82,8 +93,8 @@ lemma innerProduct_noiseOp_eq_weighted_sum (ρ : ℝ) (f g : BooleanFunc n) :
 /-! ## Correlated Monotonicity -/
 
 /-- If `h(x,y) ≤ h'(x,y)` pointwise and `0 ≤ ρ ≤ 1`, then the kernel-weighted
-expectation of `h` is at most that of `h'`. -/
-/- O'Donnell, Remark 9.20 (correlated-pair expectation calculation). -/
+expectation of `h` is at most that of `h'`.
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma corrExpect_mono {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
     {h h' : BoolCube n → BoolCube n → ℝ} (hle : ∀ x y, h x y ≤ h' x y) :
     uniformWeight n * ∑ x : BoolCube n, ∑ y : BoolCube n,
@@ -97,8 +108,8 @@ lemma corrExpect_mono {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
 
 /-! ## Noise Kernel Factorization -/
 
-/-- The noise kernel on `BoolCube (n+1)` factors along the last coordinate. -/
-/- O'Donnell, Remark 9.20 (last-coordinate product decomposition). -/
+/-- The noise kernel on `BoolCube (n+1)` factors along the last coordinate.
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma noiseKernel_snoc (ρ : ℝ) (x' y' : BoolCube n) (b b' : Bool) :
     noiseKernel ρ (Fin.snoc x' b) (Fin.snoc y' b') =
     noiseKernel ρ x' y' * ((1 + ρ * boolToSign b * boolToSign b') / 2) := by
@@ -106,7 +117,9 @@ lemma noiseKernel_snoc (ρ : ℝ) (x' y' : BoolCube n) (b b' : Bool) :
 
 /-! ## Expectation Decomposition (Fubini for BoolCube) -/
 
-/- O'Donnell, Remark 9.20 (iterated expectation in the proof). -/
+/-- Rewrites an `(n + 1)`-cube expectation as an iterated expectation over its final coordinate.
+
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma expect_succ_eq_iterated (h : BooleanFunc (n + 1)) :
     expect h = expect (fun x' =>
       (1/2 : ℝ) * (h (Fin.snoc x' false) + h (Fin.snoc x' true))) := by
@@ -118,7 +131,9 @@ lemma expect_succ_eq_iterated (h : BooleanFunc (n + 1)) :
 
 /-! ## Norm Collapse (Fubini) -/
 
-/- O'Donnell, Remark 9.20 (iterated norm calculation in the proof). -/
+/-- Collapses an iterated `L^p` moment on an `(n + 1)`-cube to the global moment.
+
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma norm_collapse_rpow (p : ℝ) (_hp : 0 < p) (f : BooleanFunc (n + 1)) :
     expect (fun x => |f x| ^ p) =
     expect (fun x' => (1/2 : ℝ) *
@@ -130,8 +145,7 @@ lemma norm_collapse_rpow (p : ℝ) (_hp : 0 < p) (f : BooleanFunc (n + 1)) :
 /--
 The kernel-weighted bilinear sum at dimension `n+1` decomposes by factoring the
 kernel along the last coordinate.
--/
-/- O'Donnell, Remark 9.20 (last-coordinate product decomposition). -/
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma weighted_sum_succ_decomp (ρ : ℝ) (F : BoolCube (n + 1) → BoolCube (n + 1) → ℝ) :
     uniformWeight (n + 1) * ∑ x : BoolCube (n + 1), ∑ y : BoolCube (n + 1),
       noiseKernel ρ x y * F x y =
@@ -153,8 +167,7 @@ lemma weighted_sum_succ_decomp (ρ : ℝ) (F : BoolCube (n + 1) → BoolCube (n 
 /--
 For fixed `x'` and `y'`, the one-bit kernel-weighted sum of the slices of `f` and `g`
 equals the one-bit inner product with noise operator.
--/
-/- O'Donnell, Remark 9.20 (one-coordinate induction step). -/
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma one_bit_slice_eq_innerProduct (ρ : ℝ) (f g : BooleanFunc (n + 1))
     (x' y' : BoolCube n) :
     (1/2 : ℝ) * ∑ b : Bool, ∑ b' : Bool,
@@ -177,8 +190,7 @@ lemma one_bit_slice_eq_innerProduct (ρ : ℝ) (f g : BooleanFunc (n + 1))
 /-! ## One-bit Lp norm of slices -/
 /-
 The one-bit `L^p` norm of the slice `t ↦ f(snoc x' (t 0))`.
--/
-/- O'Donnell, Remark 9.20 (one-coordinate induction step). -/
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma one_bit_norm_slice (p : ℝ) (_hp : 0 < p) (f : BooleanFunc (n + 1)) (x' : BoolCube n) :
     (expect (fun t : BoolCube 1 => |f (Fin.snoc x' (t 0))| ^ p)) ^ (1/p) =
     ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ^ (1/p) := by
@@ -192,7 +204,9 @@ lemma one_bit_norm_slice (p : ℝ) (_hp : 0 < p) (f : BooleanFunc (n + 1)) (x' :
 The iterated norm collapses: `E_{x'}[F(x')^p] = E_x[|f(x)|^p]` where
 `F(x') = (E_t[|f(x',t)|^p])^{1/p}`.
 -/
-/- O'Donnell, Remark 9.20 (iterated norm calculation in the proof). -/
+/-- Gives the clean iterated-norm identity used in the product-space induction.
+
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma norm_collapse_clean (p : ℝ) (hp : 1 ≤ p) (f : BooleanFunc (n + 1)) :
     expect (fun x' =>
       ((|f (Fin.snoc x' false)| ^ p + |f (Fin.snoc x' true)| ^ p) / 2) ) =
@@ -202,8 +216,9 @@ lemma norm_collapse_clean (p : ℝ) (hp : 1 ≤ p) (f : BooleanFunc (n + 1)) :
 
 /--
 **Hölder inequality for Boolean functions.**
--/
-/- O'Donnell, Proposition 10.4 (Hölder step in the norm/inner-product equivalence). -/
+Applies Hölder's inequality to Boolean-cube functions with conjugate exponents.
+
+**Source:** [OD14, Prop. 10.4 (proof)]. -/
 lemma holder_ineq_bool {n : ℕ} (p : ℝ) (hp : 1 < p) (f h : BooleanFunc n) :
     innerProduct f h ≤
     (expect (fun x => |f x| ^ p)) ^ (1 / p) *
@@ -225,8 +240,7 @@ lemma holder_ineq_bool {n : ℕ} (p : ℝ) (hp : 1 < p) (f h : BooleanFunc n) :
 **Lp contractivity of the noise operator on one bit.**
 For 0 ≤ ρ ≤ 1 and q ≥ 1:
   `‖T_ρ g‖_q ≤ ‖g‖_q`
--/
-/- O'Donnell, Theorem 9.18 (one-bit contraction). -/
+**Source:** [OD14, Thm. 9.18]. -/
 lemma noise_Lp_contraction_one_bit
     (q : ℝ) (hq1 : 1 ≤ q)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
@@ -258,7 +272,9 @@ lemma noise_Lp_contraction_one_bit
 /-
 Helper: the zero-dimensional case is trivial.
 -/
-/- O'Donnell, Remark 9.20 (base case of the product-space induction). -/
+/-- Establishes the zero-dimensional base case of the two-function induction.
+
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma two_func_hyp_zero
     (p q : ℝ) (hp : 1 ≤ p) (hq : 1 ≤ q) (ρ : ℝ)
     (f g : BooleanFunc 0) :
@@ -283,7 +299,9 @@ lemma two_func_hyp_zero
 Helper: the inductive step. Given the result for dimension n,
 prove it for dimension n+1 using the one-bit base case.
 -/
-/- O'Donnell, Remark 9.20 (inductive step of the product-space induction). -/
+/-- Carries the two-function hypercontractive hypothesis from dimension `n` to `n + 1`.
+
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma two_func_hyp_succ
     (p q : ℝ) (hp : 1 ≤ p) (hq : 1 ≤ q)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
@@ -340,9 +358,9 @@ lemma two_func_hyp_succ
     · convert norm_collapse_clean q ( by linarith ) g |> Eq.symm using 1
 /--
 **Two-Function Hypercontractivity Induction Theorem**
-A hypercontractive result on a single bit implies the same result on `n` bits
--/
-/- O'Donnell, Remark 9.20. -/
+ Lifts a one-coordinate two-function hypercontractive estimate to every Boolean-cube dimension.
+
+**Source:** [OD14, Rem. 9.20]. -/
 theorem hypercontractivity_induction
     (p q : ℝ) (hp : 1 ≤ p) (hq : 1 ≤ q)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
@@ -362,11 +380,10 @@ theorem hypercontractivity_induction
 
 /--
 **Weak Two-Function Hypercontractivity on a Single Bit.**
-For `f, g : BoolCube 1 → ℝ`, and exponents `1 ≤ p ≤ 2`, `1 ≤ q ≤ 2`, setting
-`ρ = √((p − 1)(q − 1))`:
-  `⟨f, T_ρ g⟩ ≤ (𝔼[|f|^p])^{1/p} · (𝔼[|g|^q])^{1/q}`
--/
-/- O'Donnell, Theorems 9.17 and 9.18 (one-bit weak two-function form). -/
+
+Derives weak two-function hypercontractivity on one bit from the one-function estimates.
+
+**Source:** [OD14, Thms. 9.17--9.18]. -/
 theorem weak_two_function_hypercontractivity_one_bit
     (p q : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)
     (f g : BooleanFunc 1) :
@@ -418,8 +435,8 @@ prove the remaining one-function cases to obtain the general one function result
 -/
 
 /-- **Two function to one function**
-One function (p, q) hypercontractivity iff two-function (p, q') hypercontractivity -/
-/- O'Donnell, Proposition 10.4. -/
+One function (p, q) hypercontractivity iff two-function (p, q') hypercontractivity
+**Source:** [OD14, Prop. 10.4]. -/
 theorem one_function_iff_two_function_hypercontractivity {n : ℕ} (p q : ℝ)
     (hp1 : 1 ≤ p) (hpq : p ≤ q) (hq : 2 ≤ q)
     (ρ : ℝ) (_hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1)
@@ -449,15 +466,17 @@ theorem one_function_iff_two_function_hypercontractivity {n : ℕ} (p q : ℝ)
         · rw [ inv_eq_one_div, ← add_div, div_eq_iff ] <;> linarith;
         · exact div_pos ( by linarith ) ( by linarith );
         · linarith;
-    exact hf'_inner.trans ( h f' f |> le_trans <| mul_le_of_le_one_left ( by exact Real.rpow_nonneg ( by exact expect_nonneg_of_nonneg fun _ => by positivity ) _ ) hf'_norm )
+    exact hf'_inner.trans (h f' f |> le_trans <| mul_le_of_le_one_left
+      (Real.rpow_nonneg (by
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun _ _ ↦ by positivity) _) hf'_norm)
 
 /--
 **Weak Two-Function Hypercontractivity**
 For `f, g : BoolCube n → ℝ`, and exponents `1 ≤ p ≤ 2`, `1 ≤ q ≤ 2`, setting
 `ρ = √((p − 1)(q − 1))`:
   `⟨f, T_ρ g⟩ ≤ (𝔼[|f|^p])^{1/p} · (𝔼[|g|^q])^{1/q}`
--/
-/- O'Donnell, Remark 9.20. -/
+**Source:** [OD14, Rem. 9.20]. -/
 theorem weak_two_function_hypercontractivity
     (p q : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)
     {n : ℕ} (f g : BooleanFunc n) :
@@ -478,8 +497,7 @@ theorem weak_two_function_hypercontractivity
 
 /-
 The noise kernel sums to 1 over the second argument.
--/
-/- O'Donnell, Remark 9.20 (Markov-kernel calculation). -/
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma noiseKernel_sum_right {ρ : ℝ} (_hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1)
     (x : BoolCube n) : ∑ y : BoolCube n, noiseKernel ρ x y = 1 := by
   unfold noiseKernel;
@@ -491,7 +509,9 @@ lemma noiseKernel_sum_right {ρ : ℝ} (_hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1)
 /-
 The noise kernel sums to 1 over the first argument (doubly stochastic).
 -/
-/- O'Donnell, Remark 9.20 (Markov-kernel calculation). -/
+/-- Shows that the noise kernel has total mass one in its left argument.
+
+**Source:** [OD14, Rem. 9.20 (proof)]. -/
 lemma noiseKernel_sum_left {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
     (y : BoolCube n) : ∑ x : BoolCube n, noiseKernel ρ x y = 1 := by
   convert noiseKernel_sum_right hρ0 hρ1 y using 1;
@@ -502,7 +522,9 @@ lemma noiseKernel_sum_left {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
 Jensen's inequality applied to the noise kernel: for convex `|·|^s` with `s ≥ 1`,
 `|T_ρ f(x)|^s ≤ ∑_y K_ρ(x,y) |f(y)|^s`.
 -/
-/- O'Donnell, Proposition 10.4 (norm estimate through the noise kernel). -/
+/-- Bounds a noisy absolute-power moment by its kernel average.
+
+**Source:** [OD14, Prop. 10.4 (proof)]. -/
 lemma noiseOp_abs_rpow_le_kernel_avg {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
     (s : ℝ) (hs : 1 ≤ s) (f : BooleanFunc n) (x : BoolCube n) :
     |noiseOp ρ f x| ^ s ≤ ∑ y : BoolCube n, noiseKernel ρ x y * |f y| ^ s := by
@@ -520,7 +542,9 @@ lemma noiseOp_abs_rpow_le_kernel_avg {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤
 For any `s ≥ 1` and `0 ≤ ρ ≤ 1`, the noise operator is a contraction on Lˢ.
 Uses Jensen's inequality on the noise kernel and the doubly stochastic property.
 -/
-/- O'Donnell, Proposition 10.4 (the trivial norm contraction used in the proof). -/
+/-- States the elementary `L^s` contraction estimate used in the duality argument.
+
+**Source:** [OD14, Prop. 10.4 (proof)]. -/
 lemma trivial_contractivity {n : ℕ} (s : ℝ) (hs : 1 ≤ s)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (f : BooleanFunc n) :
     (expect (fun x => |noiseOp ρ f x| ^ s)) ^ (1 / s) ≤
@@ -536,7 +560,9 @@ lemma trivial_contractivity {n : ℕ} (s : ℝ) (hs : 1 ≤ s)
 /-
 Duality / Adjointness of operator norms
 -/
-/- O'Donnell, Proposition 10.4 (norm/inner-product duality). -/
+/-- Transfers a noise-operator norm bound to the Hölder-dual exponent.
+
+**Source:** [OD14, Prop. 10.4]. -/
 lemma noise_op_norm_dual {n : ℕ} (p q : ℝ) (hp : 1 < p) (hq : 1 < q)
     (ρ : ℝ) (_hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1) :
     (∀ f : BooleanFunc n,
@@ -594,12 +620,10 @@ lemma noise_op_norm_dual {n : ℕ} (p q : ℝ) (hp : 1 < p) (hq : 1 < q)
       · positivity;
       · positivity
 
-/- O'Donnell, Proposition 10.4 (parameter normalization in the proof). -/
 private lemma sqrt_div_le_one {a b : ℝ} (_ha : 0 ≤ a) (hb : 0 < b) (hab : a ≤ b) :
     Real.sqrt (a / b) ≤ 1 := by
   rw [Real.sqrt_le_one]
   exact div_le_one_iff.mpr (Or.inl ⟨hb, hab⟩)
-/- O'Donnell, Proposition 10.4 (parameter normalization in the proof). -/
 private lemma noise_param_eq {p u : ℝ} (hu_pos : 0 < u - 1) :
     (u / (u - 1) - 1) * (p - 1) = (p - 1) / (u - 1) := by
   field_simp; ring
@@ -610,8 +634,7 @@ For `1 ≤ p ≤ 2 ≤ u` and `ρ = √((p-1)/(u-1))`:
 Derived by using `weak_two_function_hypercontractivity` with `p' = u/(u-1)` and `q' = p`
 to get the two-function bound, then applying the backward direction of
 `one_function_iff_two_function_hypercontractivity`.
--/
-/- O'Donnell, Proposition 10.4 (equivalence of the one- and two-function forms). -/
+**Source:** [OD14, Prop. 10.4]. -/
 theorem bridging_hypercontractivity {n : ℕ}
     (p u : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) (hu : 2 ≤ u) (f : BooleanFunc n) :
     (expect (fun x => |noiseOp (Real.sqrt ((p - 1) / (u - 1))) f x| ^ u)) ^ (1 / u) ≤
@@ -643,7 +666,6 @@ Given `1 < p < u < 2` and `ρ² = (p-1)/(u-1)`, there exist `θ ∈ (0,1)` and `
 such that the interpolation equations hold.
 Concretely, `θ = 2(u+p-2)/(pu)` and `s = 2-p`.
 -/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; interpolation parameter calculation). -/
 private lemma low_norms_interpolation_params (p u ρ : ℝ) (hp : 1 < p) (hpu : p < u) (hu : u < 2)
     (hρ_sq : ρ ^ 2 = (p - 1) / (u - 1)) :
     ∃ θ s : ℝ, 0 < θ ∧ θ < 1 ∧ 0 < s ∧
@@ -658,8 +680,8 @@ private lemma low_norms_interpolation_params (p u ρ : ℝ) (hp : 1 < p) (hpu : 
 /-! ## General Two-Point Inequality (Unit Case)
 The key real-analysis inequality needed for the (p, q) one-bit hypercontractivity.
 -/
-/-- The average M(b) = ((1+b)^p + (1-b)^p)/2 is at least 1 for b ∈ [0,1] and p ≥ 1. -/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; two-point proof detail). -/
+/-- The average M(b) = ((1+b)^p + (1-b)^p)/2 is at least 1 for b ∈ [0,1] and p ≥ 1.
+**Source:** [OD14, §10.1 (two-point proof)]. -/
 lemma avg_rpow_ge_one {p b : ℝ} (hp : 1 ≤ p) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) :
     1 ≤ ((1 + b) ^ p + (1 - b) ^ p) / 2 := by
   have h_jensen : ConvexOn ℝ (Set.Ici 0) (fun x : ℝ => x ^ p) := convexOn_rpow (by linarith)
@@ -668,11 +690,9 @@ lemma avg_rpow_ge_one {p b : ℝ} (hp : 1 ≤ p) (hb0 : 0 ≤ b) (hb1 : b ≤ 1)
     norm_num <;> ring_nf
   norm_num
 
-/-
-For a convex function f on [0, ∞) and 0 ≤ x ≤ y with 1+x, 1-x, 1+y, 1-y ≥ 0:
-    f(1+y) + f(1-y) ≥ f(1+x) + f(1-x).
--/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; two-point proof detail). -/
+/-- Gives the convex symmetric-sum monotonicity used in the two-point argument.
+
+**Source:** [OD14, §10.1 (two-point proof)]. -/
 lemma convex_sym_sum_mono {f : ℝ → ℝ} (hf : ConvexOn ℝ (Set.Ici 0) f)
     {x y : ℝ} (hx0 : 0 ≤ x) (hxy : x ≤ y) (hy1 : y ≤ 1) :
     f (1 + x) + f (1 - x) ≤ f (1 + y) + f (1 - y) := by
@@ -688,10 +708,10 @@ lemma convex_sym_sum_mono {f : ℝ → ℝ} (hf : ConvexOn ℝ (Set.Ici 0) f)
     have := hf.slope_mono_adjacent ( show 0 ≤ 1 - y by linarith ) ( show 0 ≤ 1 + y by linarith ) ( show 1 - y < 1 + x by linarith ) ( show 1 + x < 1 + y by linarith ) ; norm_num at * ; rw [ div_le_div_iff₀ ] at * <;> nlinarith;
   · rw [ le_antisymm hxy ( not_lt.mp hxy' ) ]
 
-/-
-For 0 < b < 1, the function α ↦ b^α is convex (exponential with base < 1).
--/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; two-point proof detail). -/
+
+/-- Shows antitonicity in the exponent for the symmetric real-power sum.
+
+**Source:** [OD14, §10.1 (two-point proof)]. -/
 lemma rpow_sum_antitone_exponent {p q : ℝ} {x : ℝ}
     (hx0 : 0 < x) (hx1 : x < 1) (_hp0 : p ≤ 0) (hpq : p ≤ q) (hq0 : q ≤ 0) :
     (1 + x) ^ p + (1 - x) ^ p ≥ (1 + x) ^ q + (1 - x) ^ q := by
@@ -712,10 +732,10 @@ lemma rpow_sum_antitone_exponent {p q : ℝ} {x : ℝ}
     · exact DifferentiableOn.add ( DifferentiableOn.rpow ( differentiableOn_const _ ) differentiableOn_id ( by intro t ht; linarith ) ) ( DifferentiableOn.rpow ( differentiableOn_const _ ) differentiableOn_id ( by intro t ht; linarith ) );
   obtain ⟨ c, ⟨ hpc, hcq ⟩, hcd ⟩ := h_mvt; have := hf_deriv_nonpos c ( by linarith ) ; rw [ hcd, div_le_iff₀ ] at this <;> linarith;
 
-/-
-Key derivative inequality for the two-point inequality.
--/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; two-point proof detail). -/
+
+/-- Establishes the auxiliary inequality used to compare interpolation parameters.
+
+**Source:** [OD14, §10.1 (two-point proof)]. -/
 lemma h_alpha_ineq {r s c t : ℝ} (hr : 0 ≤ r) (hrs : r ≤ s) (hs : s ≤ 1)
     (hc : c = Real.sqrt (r / s)) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     (1 + t) ^ r - (1 - t) ^ r ≥ c * ((1 + c * t) ^ s - (1 - c * t) ^ s) := by
@@ -789,7 +809,9 @@ From h_alpha_ineq we know that for 0 ≤ r ≤ s ≤ 1, c = √(r/s), 0 ≤ t �
 Integrating (via MVT) from 0 to b gives:
   ((1+b)^(r+1) + (1-b)^(r+1) - 2)/(r+1) ≥ ((1+cb)^(s+1) + (1-cb)^(s+1) - 2)/(s+1)
 -/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; two-point proof detail). -/
+/-- Integrates the auxiliary two-point inequality over a one-bit parameter.
+
+**Source:** [OD14, §10.1 (two-point proof)]. -/
 lemma integrated_h_alpha_ineq {p q b : ℝ} (hp1 : 1 ≤ p) (hpq : p ≤ q) (hq2 : q ≤ 2)
     (hb0 : 0 ≤ b) (hb1 : b ≤ 1) :
     let ρ := Real.sqrt ((p - 1) / (q - 1))
@@ -834,7 +856,9 @@ lemma integrated_h_alpha_ineq {p q b : ℝ} (hp1 : 1 ≤ p) (hpq : p ≤ q) (hq2
 /-
 Tangent line inequality for x^r at x = 1: for x ≥ 0, r ≥ 1, x^r ≥ 1 + r*(x-1).
 -/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; two-point proof detail). -/
+/-- Gives the real-power lower bound used in the two-point hypercontractive inequality.
+
+**Source:** [OD14, §10.1 (two-point proof)]. -/
 lemma rpow_ge_one_add_mul_sub {x r : ℝ} (hx : 0 ≤ x) (hr : 1 ≤ r) :
     x ^ r ≥ 1 + r * (x - 1) := by
       have := @Real.geom_mean_le_arith_mean;
@@ -846,7 +870,9 @@ The general two-point inequality in the unit case.
 Proved using integrated_h_alpha_ineq and rpow_ge_one_add_mul_sub,
 without circular dependence on low_norms_hypercontractivity.
 -/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; two-point inequality). -/
+/-- Proves the normalized two-point inequality for arbitrary exponents between one and two.
+
+**Source:** [OD14, §10.1 (two-point proof)]. -/
 theorem two_point_ineq_general_unit (b p q : ℝ) (hp1 : 1 ≤ p) (hpq : p ≤ q) (hq2 : q ≤ 2)
     (hb0 : 0 ≤ b) (hb1 : b ≤ 1) :
     let ρ := Real.sqrt ((p - 1) / (q - 1))
@@ -870,7 +896,9 @@ One-bit (p, q)-hypercontractivity for 1 < p ≤ q ≤ 2.
 Uses the general two-point inequality applied to the Fourier coefficients.
 This is proved WITHOUT using general_one_function_hypercontractivity (to avoid circularity).
 -/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; one-bit case). -/
+/-- Establishes the one-bit hypercontractive estimate in the low-exponent regime.
+
+**Source:** [OD14, §10.1]. -/
 theorem low_norms_one_bit (p q : ℝ) (hp : 1 < p) (hpq : p ≤ q) (hq : q ≤ 2)
     (f : BooleanFunc 1) :
     (expect (fun x => |noiseOp (Real.sqrt ((p - 1) / (q - 1))) f x| ^ q)) ^ (1 / q) ≤
@@ -964,8 +992,7 @@ theorem low_norms_one_bit (p q : ℝ) (hp : 1 < p) (hpq : p ≤ q) (hq : q ≤ 2
 **Low Norms Hypercontractivity.**
 For `1 < p ≤ u ≤ 2` and `ρ = √((p-1)/(u-1))`:
   `(𝔼[|T_ρ f|^u])^{1/u} ≤ (𝔼[|f|^p])^{1/p}`
--/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; low-exponent case). -/
+**Source:** [OD14, §10.1]. -/
 theorem low_norms_hypercontractivity {n : ℕ}
     (p u : ℝ) (hp : 1 < p) (hpu : p ≤ u) (hu : u ≤ 2)
     (f : BooleanFunc n) :
@@ -1036,15 +1063,16 @@ theorem low_norms_hypercontractivity {n : ℕ}
           · exact div_pos (by linarith) (by linarith)
           · linarith
       exact hf'_inner.trans (le_trans (h_two_func_n f' f)
-        (mul_le_of_le_one_left (Real.rpow_nonneg (expect_nonneg_of_nonneg fun _ => by positivity) _) hf'_norm))
+        (mul_le_of_le_one_left (Real.rpow_nonneg (by
+          rw [expect_eq_fintypeExpect]
+          exact Finset.expect_nonneg fun _ _ ↦ by positivity) _) hf'_norm))
 /--
 **High Norms Hypercontractivity.**
 For `2 ≤ p ≤ u` and `ρ ≤ √((p-1)/(u-1))`:
   `(𝔼[|T_ρ f|^u])^{1/u} ≤ (𝔼[|f|^p])^{1/p}`
 Proof by duality: translating to the Hölder-conjugate exponents `u' ≤ p' ≤ 2`
 and applying the low-norms case.
--/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1; high-exponent case). -/
+**Source:** [OD14, §10.1; Prop. 10.4]. -/
 theorem high_norms_hypercontractivity {n : ℕ}
     (p u : ℝ) (hp : 2 ≤ p) (hpu : p ≤ u)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (_hρ1 : ρ ≤ 1)
@@ -1113,7 +1141,9 @@ Combines the three cases:
 - Low norms: `1 < p ≤ u ≤ 2`
 - High norms: `2 ≤ p ≤ u`
 -/
-/- O'Donnell, Hypercontractivity Theorem (Section 10.1), via Proposition 10.4. -/
+/-- Establishes the full one-function hypercontractivity theorem on the Boolean cube.
+
+**Source:** [OD14, §10.1; Prop. 10.4]. -/
 theorem general_one_function_hypercontractivity {n : ℕ}
     (p u : ℝ) (hp : 1 ≤ p) (hpu : p ≤ u) (hu1 : 1 < u)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
@@ -1199,8 +1229,7 @@ For `1 ≤ p ≤ u` with `u ≥ 2` and `ρ ≤ √((p-1)/(u-1))`:
   `⟨f, T_ρ g⟩ ≤ (𝔼[|f|^{u/(u-1)}])^{(u-1)/u} · (𝔼[|g|^p])^{1/p}`
 
 Derived from the one-function theorem via `one_function_iff_two_function_hypercontractivity`.
--/
-/- O'Donnell, Two-Function Hypercontractivity Theorem (Section 10.1), via Proposition 10.4. -/
+**Source:** [OD14, §10.1; Prop. 10.4]. -/
 theorem general_two_function_hypercontractivity {n : ℕ}
     (p u : ℝ) (hp : 1 ≤ p) (hpu : p ≤ u) (hu : 2 ≤ u)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)

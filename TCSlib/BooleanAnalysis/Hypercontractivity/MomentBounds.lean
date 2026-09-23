@@ -31,6 +31,11 @@ functions.
 * `min_prob_b_reasonable`: a lower bound on the probability of nonzero values.
 * `paley_zygmund_ineq` and `b_reasonable_anticon_zero`: Paley--Zygmund-style anticoncentration
   estimates.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, §9.1.
 -/
 
 namespace Bonami
@@ -41,12 +46,15 @@ open MeasureTheory ProbabilityTheory Filter BooleanAnalysis
 
 /-! ## B-Reasonability Bounds -/
 
-/- O'Donnell, Definition 9.1. -/
+/-- Defines `B`-reasonability by bounding a fourth moment by `B` times the squared second moment.
+
+**Source:** [OD14, Def. 9.1]. -/
 def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=
   moment X 4 P ≤ B * (moment X 2 P) ^ 2
 
-/--If X not equivalent to 0 is B-reasonable, `Pr[|X| ≥ t ||X||₂] ≤ B/t⁴` for all t > 0 -/
-/- O'Donnell, Proposition 9.3. -/
+/-- Bounds the fourth-moment tail of a `B`-reasonable random variable.
+
+**Source:** [OD14, Prop. 9.3]. -/
 lemma b_reasonable_tail_bound
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
@@ -113,8 +121,10 @@ lemma b_reasonable_tail_bound
       rw [mul_div_mul_right B (t ^ 4) (_)]
       · exact ne_of_gt (by positivity)
 
-/-- Let X be discrete random variable with PMF π. For μ = min(π), X is (1/μ) reasonable-/
-/- O'Donnell, Proposition 9.5. -/
+/-- Shows that a discrete random variable is `(1 / μ)`-reasonable when every atom has mass at
+least `μ`.
+
+**Source:** [OD14, Prop. 9.5]. -/
 lemma min_prob_b_reasonable
   {Ω : Type*} [MeasurableSpace Ω] [Fintype Ω] [DiscreteMeasurableSpace Ω]
   {P : Measure Ω} [IsProbabilityMeasure P]
@@ -200,8 +210,9 @@ section
 open MeasureTheory Set Filter ProbabilityTheory BooleanAnalysis Real
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
-/-- Suppose finite variance. If Z ≥ 0 random, 0 ≤ θ ≤ 1, then `P(Z > θE[Z]) ≥ (1 - θ)²(E[Z]²)/(E[Z²])` -/
-/- O'Donnell, Proposition 9.4 (Paley--Zygmund step). -/
+/-- Gives the Paley--Zygmund lower bound for a nonnegative integrable random variable.
+
+**Source:** [OD14, Prop. 9.4]. -/
 lemma paley_zygmund_ineq
   {Z : Ω → ℝ}
   (h_meas : Measurable Z)
@@ -338,8 +349,9 @@ lemma paley_zygmund_ineq
             · -- Prove 0 ≤ P(A)
                exact ENNReal.toReal_nonneg
 
-/-- X not equivalent to 0 is B-reasonable. Then `Pr[|X| > t||X||₂] ≥ (1 - t²)²/B` for all t ∈ [0, 1]-/
-/- O'Donnell, Proposition 9.4. -/
+/-- Gives the Paley--Zygmund anticoncentration bound for a `B`-reasonable random variable.
+
+**Source:** [OD14, Prop. 9.4]. -/
 lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; general result after
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
