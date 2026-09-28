@@ -1,7 +1,7 @@
 import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Probability.CDF
 
-set_option maxHeartbeats 1000000
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -15,9 +15,17 @@ function, and the resulting asymptotics
 
 `φ (Φ⁻¹ α) ∼ α * sqrt (2 * log (1 / α))`  as `α → 0⁺`.
 
+## Main definitions
+
+* `standardGaussianMeasure`, `standardGaussianPDF`, `standardGaussianCDF`,
+  `standardGaussianTail`: the standard Gaussian notation of [OD14, Notation 5.14].
+* `standardGaussianQuantile` and `gaussianIsoperimetric`: the quantile `Φ⁻¹` and the Gaussian
+  isoperimetric function `U = φ ∘ Φ⁻¹`.
+* `millsRatio`: the ratio `Φ(t)·|t| / φ(t)`.
+
 ## Main results
 
-* `gaussTail_le`, `le_gaussTail`: the Mills-ratio bounds
+* `standardGaussianCDF_le_mills`, `mills_le_standardGaussianCDF`: the Mills-ratio bounds
   `(1 - 1/t²) * φ(t)/|t| ≤ Φ(t) ≤ φ(t)/|t|` for `t < 0`.
 * `standardGaussianCDF_quantile`: `Φ (Φ⁻¹ α) = α` for `α ∈ (0,1)`.
 * `gaussianIsoperimetric_equiv_at_zero`: the asymptotic equivalence above.
@@ -73,18 +81,25 @@ O'Donnell's function on `[0, 1]`; the Chapter 5 results below use it near zero f
 noncomputable def gaussianIsoperimetric (α : ℝ) : ℝ :=
   standardGaussianPDF (standardGaussianQuantile α)
 
+/-- The closed form `φ(x) = exp(-x²/2) / sqrt(2π)` of the standard Gaussian density. -/
+lemma standardGaussianPDF_eq :
+    standardGaussianPDF = fun x ↦ (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-x ^ 2 / 2) := by
+  funext x
+  simp [standardGaussianPDF, gaussianPDFReal_def]
+
+/-- The standard Gaussian density is positive everywhere. -/
+lemma standardGaussianPDF_pos (x : ℝ) : 0 < standardGaussianPDF x :=
+  gaussianPDFReal_pos 0 1 x one_ne_zero
+
+/-- The standard Gaussian density is continuous. -/
 lemma continuous_standardGaussianPDF : Continuous standardGaussianPDF := by
-  unfold standardGaussianPDF
-  rw [gaussianPDFReal_def]
+  rw [standardGaussianPDF_eq]
   fun_prop
 
+/-- The Gaussian density satisfies `φ'(x) = -x φ(x)`. -/
 lemma hasDerivAt_standardGaussianPDF (x : ℝ) :
     HasDerivAt standardGaussianPDF (-x * standardGaussianPDF x) x := by
-  have hpdf : standardGaussianPDF =
-      fun y : ℝ => (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-y ^ 2 / 2) := by
-    funext y
-    simp [standardGaussianPDF, gaussianPDFReal_def]
-  rw [hpdf]
+  rw [standardGaussianPDF_eq]
   have h1 : HasDerivAt (fun y : ℝ => -y ^ 2 / 2) (-x) x := by
     have h := (hasDerivAt_pow 2 x).neg.div_const 2
     convert h using 1; push_cast; ring
@@ -93,48 +108,49 @@ lemma hasDerivAt_standardGaussianPDF (x : ℝ) :
   convert h3 using 1
   ring
 
+/-- Squares tend to `+∞` at `-∞`. -/
 lemma tendsto_sq_atBot : Tendsto (fun x : ℝ => x ^ 2) atBot atTop := by
   have habs : Tendsto (fun x : ℝ => |x|) atBot atTop := tendsto_abs_atBot_atTop
   refine (habs.atTop_mul_atTop₀ habs).congr fun x => ?_
   rw [abs_mul_abs_self]; ring
 
+/-- The Gaussian density vanishes at `-∞`. -/
 lemma tendsto_standardGaussianPDF_atBot : Tendsto standardGaussianPDF atBot (nhds 0) := by
-  have hpdf : standardGaussianPDF =
-      fun x : ℝ => (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-x ^ 2 / 2) := by
-    funext x
-    simp [standardGaussianPDF, gaussianPDFReal_def]
-  rw [hpdf]
+  rw [standardGaussianPDF_eq]
   have h : Tendsto (fun x : ℝ => -x ^ 2 / 2) atBot atBot :=
     Filter.Tendsto.atBot_div_const (by norm_num) (tendsto_neg_atTop_atBot.comp tendsto_sq_atBot)
   have h2 := (Real.tendsto_exp_atBot.comp h).const_mul ((Real.sqrt (2 * Real.pi))⁻¹)
   rw [mul_zero] at h2
   exact h2
 
+/-- The logarithm of the Gaussian density: `log φ(x) = -log sqrt(2π) - x²/2`. -/
 lemma log_standardGaussianPDF (x : ℝ) :
     Real.log (standardGaussianPDF x) = -Real.log (Real.sqrt (2 * Real.pi)) - x ^ 2 / 2 := by
-  rw [show standardGaussianPDF x =
-    (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-x ^ 2 / 2) by
-      simp [standardGaussianPDF, gaussianPDFReal_def]]
+  rw [standardGaussianPDF_eq]
   have h : Real.sqrt (2 * Real.pi) ≠ 0 := by positivity
   rw [Real.log_mul (inv_ne_zero h) (Real.exp_ne_zero _), Real.log_inv, Real.log_exp]
   ring
 
 /-! ## The cdf -/
 
+/-- The Gaussian cdf is the integral of the density over a lower half-line. -/
+lemma standardGaussianCDF_eq_integral (t : ℝ) :
+    standardGaussianCDF t = ∫ x in Set.Iic t, standardGaussianPDF x := by
+  unfold standardGaussianCDF standardGaussianMeasure standardGaussianPDF
+  rw [cdf_eq_real, measureReal_def, gaussianReal_apply_eq_integral 0 one_ne_zero,
+    ENNReal.toReal_ofReal]
+  exact integral_nonneg fun x ↦ gaussianPDFReal_nonneg 0 1 x
+
+/-- Increments of the Gaussian cdf are integrals of the density. -/
 lemma standardGaussianCDF_sub (a b : ℝ) :
     standardGaussianCDF b - standardGaussianCDF a =
       ∫ x in a..b, standardGaussianPDF x := by
-  have hCDF_integral (t : ℝ) :
-      standardGaussianCDF t = ∫ x in Set.Iic t, standardGaussianPDF x := by
-    unfold standardGaussianCDF standardGaussianMeasure standardGaussianPDF
-    rw [cdf_eq_real, measureReal_def, gaussianReal_apply_eq_integral 0 one_ne_zero,
-      ENNReal.toReal_ofReal]
-    exact integral_nonneg fun x ↦ gaussianPDFReal_nonneg 0 1 x
-  rw [hCDF_integral, hCDF_integral]
+  rw [standardGaussianCDF_eq_integral, standardGaussianCDF_eq_integral]
   exact intervalIntegral.integral_Iic_sub_Iic
     (integrable_gaussianPDFReal 0 1).integrableOn
     (integrable_gaussianPDFReal 0 1).integrableOn
 
+/-- The Gaussian cdf is differentiable with derivative the density. -/
 lemma hasDerivAt_standardGaussianCDF (t : ℝ) :
     HasDerivAt standardGaussianCDF (standardGaussianPDF t) t := by
   have h : HasDerivAt (fun b => ∫ x in (0 : ℝ)..b, standardGaussianPDF x)
@@ -151,25 +167,30 @@ lemma hasDerivAt_standardGaussianCDF (t : ℝ) :
   rw [he]
   simpa using h.const_add (standardGaussianCDF 0)
 
+/-- The Gaussian cdf is continuous. -/
 lemma continuous_standardGaussianCDF : Continuous standardGaussianCDF :=
   continuous_iff_continuousAt.2 fun t => (hasDerivAt_standardGaussianCDF t).continuousAt
 
+/-- The Gaussian cdf is strictly increasing. -/
 lemma standardGaussianCDF_strictMono : StrictMono standardGaussianCDF :=
   strictMono_of_deriv_pos fun x => by
     rw [(hasDerivAt_standardGaussianCDF x).deriv]
-    exact gaussianPDFReal_pos 0 1 x one_ne_zero
+    exact standardGaussianPDF_pos x
 
+/-- The Gaussian cdf is positive. -/
 lemma standardGaussianCDF_pos (t : ℝ) : 0 < standardGaussianCDF t :=
   lt_of_le_of_lt (by
     simpa [standardGaussianCDF] using cdf_nonneg standardGaussianMeasure (t - 1))
     (standardGaussianCDF_strictMono (by linarith))
 
+/-- The Gaussian cdf is less than one. -/
 lemma standardGaussianCDF_lt_one (t : ℝ) : standardGaussianCDF t < 1 :=
   lt_of_lt_of_le (standardGaussianCDF_strictMono (show t < t + 1 by linarith)) (by
     simpa [standardGaussianCDF] using cdf_le_one standardGaussianMeasure (t + 1))
 
 /-! ## The quantile function -/
 
+/-- Every probability in `(0, 1)` is a value of the Gaussian cdf. -/
 lemma exists_standardGaussianCDF_eq {α : ℝ} (h0 : 0 < α) (h1 : α < 1) :
     ∃ t : ℝ, standardGaussianCDF t = α := by
   have hbot : Tendsto standardGaussianCDF atBot (nhds 0) := by
@@ -185,6 +206,7 @@ lemma exists_standardGaussianCDF_eq {α : ℝ} (h0 : 0 < α) (h1 : α < 1) :
   obtain ⟨t, _, ht⟩ := hsub ⟨le_of_lt ha, le_of_lt hb⟩
   exact ⟨t, ht⟩
 
+/-- The quantile inverts the Gaussian cdf. -/
 lemma standardGaussianQuantile_eq {α t : ℝ} (ht : standardGaussianCDF t = α) :
     standardGaussianQuantile α = t := by
   have hset : {s : ℝ | α ≤ standardGaussianCDF s} = Set.Ici t := by
@@ -194,6 +216,7 @@ lemma standardGaussianQuantile_eq {α t : ℝ} (ht : standardGaussianCDF t = α)
       fun h => standardGaussianCDF_strictMono.monotone h⟩
   rw [standardGaussianQuantile, hset, csInf_Ici]
 
+/-- The Gaussian cdf of the quantile of `α ∈ (0, 1)` is `α`. -/
 lemma standardGaussianCDF_quantile {α : ℝ} (h0 : 0 < α) (h1 : α < 1) :
     standardGaussianCDF (standardGaussianQuantile α) = α := by
   obtain ⟨t, ht⟩ := exists_standardGaussianCDF_eq h0 h1
@@ -201,6 +224,7 @@ lemma standardGaussianCDF_quantile {α : ℝ} (h0 : 0 < α) (h1 : α < 1) :
 
 /-! ## Mills-ratio bounds -/
 
+/-- The first moment density `x φ(x)` is integrable. -/
 lemma integrable_id_mul_standardGaussianPDF :
     Integrable (fun x : ℝ => x * standardGaussianPDF x) := by
   have h := (integrable_mul_exp_neg_mul_sq (b := 1 / 2) (by norm_num)).const_mul
@@ -209,6 +233,7 @@ lemma integrable_id_mul_standardGaussianPDF :
   simp [standardGaussianPDF, gaussianPDFReal_def]
   ring_nf
 
+/-- The truncated first moment `∫_{-∞}^t x φ(x) dx = -φ(t)`. -/
 lemma integral_Iic_id_mul_standardGaussianPDF (t : ℝ) :
     ∫ x in Set.Iic t, x * standardGaussianPDF x = -standardGaussianPDF t := by
   have h := integral_Iic_of_hasDerivAt_of_tendsto
@@ -231,16 +256,11 @@ lemma standardGaussianCDF_le_mills {t : ℝ} (ht : t < 0) :
     have hxt : x ≤ t := hx
     have h1 : 1 ≤ x / t := by rw [le_div_iff_of_neg ht]; linarith
     calc standardGaussianPDF x = 1 * standardGaussianPDF x := (one_mul _).symm
-      _ ≤ x / t * standardGaussianPDF x := mul_le_mul_of_nonneg_right h1 (by
-        simpa [standardGaussianPDF] using (gaussianPDFReal_pos 0 1 x one_ne_zero).le)
+      _ ≤ x / t * standardGaussianPDF x :=
+        mul_le_mul_of_nonneg_right h1 (standardGaussianPDF_pos x).le
       _ = t⁻¹ * (x * standardGaussianPDF x) := by field_simp
-  have hCDF_integral :
-      standardGaussianCDF t = ∫ x in Set.Iic t, standardGaussianPDF x := by
-    unfold standardGaussianCDF standardGaussianMeasure standardGaussianPDF
-    rw [cdf_eq_real, measureReal_def, gaussianReal_apply_eq_integral 0 one_ne_zero,
-      ENNReal.toReal_ofReal]
-    exact integral_nonneg fun x ↦ gaussianPDFReal_nonneg 0 1 x
-  rw [integral_const_mul, integral_Iic_id_mul_standardGaussianPDF, ← hCDF_integral] at key
+  rw [integral_const_mul, integral_Iic_id_mul_standardGaussianPDF,
+    ← standardGaussianCDF_eq_integral] at key
   refine key.trans (le_of_eq ?_)
   field_simp
 
@@ -250,6 +270,7 @@ noncomputable def millsF (x : ℝ) : ℝ := standardGaussianPDF x * ((x ^ 3)⁻�
 /-- The derivative of `millsF`. -/
 noncomputable def millsF' (x : ℝ) : ℝ := standardGaussianPDF x * (1 - 3 * (x ^ 4)⁻¹)
 
+/-- `millsF'` is the derivative of `millsF` away from the origin. -/
 lemma hasDerivAt_millsF {x : ℝ} (hx : x ≠ 0) : HasDerivAt millsF (millsF' x) x := by
   have h1 : HasDerivAt (fun y : ℝ => ((y ^ 3)⁻¹ : ℝ)) (-(3 * x ^ 2) / (x ^ 3) ^ 2) x :=
     ((hasDerivAt_pow 3 x).inv (pow_ne_zero 3 hx)).congr_deriv (by push_cast; ring)
@@ -260,10 +281,12 @@ lemma hasDerivAt_millsF {x : ℝ} (hx : x ≠ 0) : HasDerivAt millsF (millsF' x)
   field_simp
   ring
 
+/-- `millsF'` is measurable. -/
 lemma measurable_millsF' : Measurable millsF' := by
   unfold millsF'
   exact continuous_standardGaussianPDF.measurable.mul (by fun_prop)
 
+/-- `millsF'` is integrable on every lower half-line not containing the origin. -/
 lemma integrableOn_millsF' {t : ℝ} (ht : t < 0) : IntegrableOn millsF' (Set.Iic t) := by
   have htne : t ≠ 0 := ne_of_lt ht
   refine Integrable.mono'
@@ -281,14 +304,14 @@ lemma integrableOn_millsF' {t : ℝ} (ht : t < 0) : IntegrableOn millsF' (Set.Ii
   have h1 : |1 - 3 * (x ^ 4)⁻¹| ≤ 1 + 3 * (t ^ 4)⁻¹ := by
     rw [abs_le]
     exact ⟨by nlinarith [inv_pos.mpr hxx4, inv_pos.mpr ht4], by nlinarith [inv_pos.mpr hxx4]⟩
-  have hxpdf : 0 < standardGaussianPDF x := by
-    simpa [standardGaussianPDF] using gaussianPDFReal_pos 0 1 x one_ne_zero
+  have hxpdf := standardGaussianPDF_pos x
   calc ‖millsF' x‖ = standardGaussianPDF x * |1 - 3 * (x ^ 4)⁻¹| := by
         simp [millsF', abs_of_pos hxpdf]
     _ ≤ standardGaussianPDF x * (1 + 3 * (t ^ 4)⁻¹) :=
       mul_le_mul_of_nonneg_left h1 hxpdf.le
     _ = (1 + 3 * (t ^ 4)⁻¹) * standardGaussianPDF x := by ring
 
+/-- Cubes tend to `-∞` at `-∞`. -/
 lemma tendsto_cube_atBot : Tendsto (fun x : ℝ => x ^ 3) atBot atBot := by
   refine tendsto_atBot_mono' atBot ?_ tendsto_id
   filter_upwards [eventually_le_atBot (-1 : ℝ)] with x hx
@@ -297,12 +320,14 @@ lemma tendsto_cube_atBot : Tendsto (fun x : ℝ => x ^ 3) atBot atBot := by
   simp only [id]
   nlinarith
 
+/-- `millsF` vanishes at `-∞`. -/
 lemma tendsto_millsF_atBot : Tendsto millsF atBot (nhds 0) := by
   have h1 : Tendsto (fun x : ℝ => ((x ^ 3)⁻¹ : ℝ)) atBot (nhds 0) :=
     tendsto_inv_atBot_zero.comp tendsto_cube_atBot
   have h := tendsto_standardGaussianPDF_atBot.mul (h1.sub tendsto_inv_atBot_zero)
   simpa [millsF] using h
 
+/-- `millsF` is continuous away from the origin. -/
 lemma continuousAt_millsF {t : ℝ} (ht : t ≠ 0) : ContinuousAt millsF t := by
   have h1 : ContinuousAt (fun y : ℝ => ((y ^ 3)⁻¹ : ℝ)) t :=
     ((continuous_pow 3).continuousAt).inv₀ (pow_ne_zero 3 ht)
@@ -328,19 +353,11 @@ lemma mills_le_standardGaussianCDF {t : ℝ} (ht : t < 0) : millsF t ≤ standar
     have hxne : x ≠ 0 := ne_of_lt hx0
     have h4 : (0 : ℝ) < x ^ 4 := by positivity
     have : (1 : ℝ) - 3 * (x ^ 4)⁻¹ ≤ 1 := by nlinarith [inv_pos.mpr h4]
-    have hxpdf : 0 < standardGaussianPDF x := by
-      simpa [standardGaussianPDF] using gaussianPDFReal_pos 0 1 x one_ne_zero
     calc millsF' x = standardGaussianPDF x * (1 - 3 * (x ^ 4)⁻¹) := rfl
-      _ ≤ standardGaussianPDF x * 1 := mul_le_mul_of_nonneg_left this hxpdf.le
+      _ ≤ standardGaussianPDF x * 1 :=
+        mul_le_mul_of_nonneg_left this (standardGaussianPDF_pos x).le
       _ = standardGaussianPDF x := mul_one _
-  have hCDF_integral :
-      standardGaussianCDF t = ∫ x in Set.Iic t, standardGaussianPDF x := by
-    unfold standardGaussianCDF standardGaussianMeasure standardGaussianPDF
-    rw [cdf_eq_real, measureReal_def, gaussianReal_apply_eq_integral 0 one_ne_zero,
-      ENNReal.toReal_ofReal]
-    exact integral_nonneg fun x ↦ gaussianPDFReal_nonneg 0 1 x
-  rw [hint, ← hCDF_integral] at hmono
-  exact hmono
+  rwa [hint, ← standardGaussianCDF_eq_integral] at hmono
 
 /-! ## Asymptotics of the isoperimetric profile near zero -/
 
@@ -348,20 +365,16 @@ lemma mills_le_standardGaussianCDF {t : ℝ} (ht : t < 0) : millsF t ≤ standar
 noncomputable def millsRatio (t : ℝ) : ℝ :=
   standardGaussianCDF t * (-t) / standardGaussianPDF t
 
+/-- The upper Mills bound: the Mills ratio is at most one. -/
 lemma millsRatio_le_one {t : ℝ} (ht : t < 0) : millsRatio t ≤ 1 := by
-  have hpdf : 0 < standardGaussianPDF t := by
-    simpa [standardGaussianPDF] using gaussianPDFReal_pos 0 1 t one_ne_zero
-  rw [millsRatio, div_le_one hpdf]
-  have h := standardGaussianCDF_le_mills ht
-  rw [le_div_iff₀ (by linarith)] at h
-  exact h
+  rw [millsRatio, div_le_one (standardGaussianPDF_pos t)]
+  exact (le_div_iff₀ (by linarith)).mp (standardGaussianCDF_le_mills ht)
 
+/-- The lower Mills bound: the Mills ratio is at least `1 - 1/t²`. -/
 lemma one_sub_le_millsRatio {t : ℝ} (ht : t < 0) : 1 - (t ^ 2)⁻¹ ≤ millsRatio t := by
   have htne : t ≠ 0 := ne_of_lt ht
-  have hpdf : 0 < standardGaussianPDF t := by
-    simpa [standardGaussianPDF] using gaussianPDFReal_pos 0 1 t one_ne_zero
   have h := mills_le_standardGaussianCDF ht
-  rw [millsRatio, le_div_iff₀ hpdf]
+  rw [millsRatio, le_div_iff₀ (standardGaussianPDF_pos t)]
   have hmul : (standardGaussianPDF t * ((t ^ 3)⁻¹ - t⁻¹)) * (-t) ≤
       standardGaussianCDF t * (-t) :=
     mul_le_mul_of_nonneg_right h (by linarith)
@@ -369,9 +382,11 @@ lemma one_sub_le_millsRatio {t : ℝ} (ht : t < 0) : 1 - (t ^ 2)⁻¹ ≤ millsR
   field_simp
   ring
 
+/-- `1/t²` vanishes at `-∞`. -/
 lemma tendsto_inv_sq_atBot : Tendsto (fun t : ℝ => ((t ^ 2)⁻¹ : ℝ)) atBot (nhds 0) :=
   tendsto_inv_atTop_zero.comp tendsto_sq_atBot
 
+/-- The Mills ratio tends to one at `-∞`. -/
 lemma tendsto_millsRatio : Tendsto millsRatio atBot (nhds 1) := by
   have hlow : Tendsto (fun t : ℝ => 1 - (t ^ 2)⁻¹) atBot (nhds 1) := by
     simpa using tendsto_const_nhds.sub tendsto_inv_sq_atBot
@@ -379,13 +394,14 @@ lemma tendsto_millsRatio : Tendsto millsRatio atBot (nhds 1) := by
   · filter_upwards [eventually_lt_atBot (0 : ℝ)] with t ht using one_sub_le_millsRatio ht
   · filter_upwards [eventually_lt_atBot (0 : ℝ)] with t ht using millsRatio_le_one ht
 
+/-- The Mills ratio is positive on the negative half-line. -/
 lemma millsRatio_pos {t : ℝ} (ht : t < 0) : 0 < millsRatio t :=
-  div_pos (mul_pos (standardGaussianCDF_pos t) (by linarith)) (by
-    simpa [standardGaussianPDF] using gaussianPDFReal_pos 0 1 t one_ne_zero)
+  div_pos (mul_pos (standardGaussianCDF_pos t) (by linarith)) (standardGaussianPDF_pos t)
 
 /-- `2 log (1/Φ(t))`. -/
 noncomputable def gLog (t : ℝ) : ℝ := 2 * Real.log (standardGaussianCDF t)⁻¹
 
+/-- `2 log (1/Φ(t))` is positive. -/
 lemma gLog_pos (t : ℝ) : 0 < gLog t := by
   have h1 : 1 < (standardGaussianCDF t)⁻¹ := by
     rw [one_lt_inv_iff₀]
@@ -394,17 +410,16 @@ lemma gLog_pos (t : ℝ) : 0 < gLog t := by
   rw [gLog]
   linarith
 
+/-- Expansion of `2 log (1/Φ(t))` through the Mills ratio and the Gaussian density. -/
 lemma gLog_eq {t : ℝ} (ht : t < 0) :
     gLog t = (-2 * Real.log (millsRatio t) + 2 * Real.log (-t) +
       2 * Real.log (Real.sqrt (2 * Real.pi))) + t ^ 2 := by
   have h1 : Real.log (millsRatio t) =
       Real.log (standardGaussianCDF t) + Real.log (-t) -
         Real.log (standardGaussianPDF t) := by
-    have hpdf : 0 < standardGaussianPDF t := by
-      simpa [standardGaussianPDF] using gaussianPDFReal_pos 0 1 t one_ne_zero
     rw [millsRatio,
       Real.log_div (ne_of_gt (mul_pos (standardGaussianCDF_pos t) (by linarith)))
-        (ne_of_gt hpdf),
+        (standardGaussianPDF_pos t).ne',
       Real.log_mul (ne_of_gt (standardGaussianCDF_pos t)) (by linarith)]
   have h2 := log_standardGaussianPDF t
   have h3 : Real.log (standardGaussianCDF t)⁻¹ = -Real.log (standardGaussianCDF t) :=
@@ -412,6 +427,7 @@ lemma gLog_eq {t : ℝ} (ht : t < 0) :
   rw [gLog, h3, h1, h2]
   ring
 
+/-- `log |t| / t²` vanishes at `-∞`. -/
 lemma tendsto_log_neg_div_sq : Tendsto (fun t : ℝ => Real.log (-t) / t ^ 2) atBot (nhds 0) := by
   have h1 : Tendsto (fun u : ℝ => Real.log u / u) atTop (nhds 0) :=
     Real.isLittleO_log_id_atTop.tendsto_div_nhds_zero
@@ -423,6 +439,7 @@ lemma tendsto_log_neg_div_sq : Tendsto (fun t : ℝ => Real.log (-t) / t ^ 2) at
   simp only [Function.comp_apply]
   field_simp
 
+/-- `2 log (1/Φ(t)) ∼ t²` as `t → -∞`. -/
 lemma tendsto_gLog_div_sq : Tendsto (fun t : ℝ => gLog t / t ^ 2) atBot (nhds 1) := by
   have hA : Tendsto (fun t : ℝ => -2 * Real.log (millsRatio t) * (t ^ 2)⁻¹) atBot (nhds 0) := by
     have hlog : Tendsto (fun t : ℝ => Real.log (millsRatio t)) atBot (nhds 0) := by
@@ -450,6 +467,7 @@ lemma tendsto_gLog_div_sq : Tendsto (fun t : ℝ => gLog t / t ^ 2) atBot (nhds 
   rw [gLog_eq ht, add_div, div_self htne]
   ring
 
+/-- `sqrt (2 log (1/Φ(t))) ∼ |t|` as `t → -∞`. -/
 lemma tendsto_sqrt_gLog_div : Tendsto (fun t : ℝ => Real.sqrt (gLog t) / (-t)) atBot (nhds 1) := by
   have h : Tendsto (fun t : ℝ => Real.sqrt (gLog t / t ^ 2)) atBot (nhds 1) := by
     have := (Real.continuous_sqrt.continuousAt (x := (1 : ℝ))).tendsto.comp tendsto_gLog_div_sq
@@ -472,12 +490,12 @@ theorem tendsto_standardGaussianPDF_div :
   filter_upwards [eventually_lt_atBot (0 : ℝ)] with t ht
   have h3 : Real.sqrt (gLog t) ≠ 0 := ne_of_gt (Real.sqrt_pos.2 (gLog_pos t))
   have h4 : standardGaussianCDF t ≠ 0 := ne_of_gt (standardGaussianCDF_pos t)
-  have h5 : standardGaussianPDF t ≠ 0 := ne_of_gt (by
-    simpa [standardGaussianPDF] using gaussianPDFReal_pos 0 1 t one_ne_zero)
+  have h5 : standardGaussianPDF t ≠ 0 := (standardGaussianPDF_pos t).ne'
   have h6 : t ≠ 0 := ne_of_lt ht
   rw [millsRatio]
   field_simp
 
+/-- The Gaussian quantile tends to `-∞` as the probability tends to `0⁺`. -/
 theorem tendsto_standardGaussianQuantile :
     Tendsto standardGaussianQuantile (nhdsWithin 0 (Set.Ioi 0)) atBot := by
   rw [tendsto_atBot]
@@ -519,5 +537,3 @@ theorem gaussianIsoperimetric_equiv_at_zero :
 
 end ThresholdFunctions
 end BooleanAnalysis
-
-#min_imports

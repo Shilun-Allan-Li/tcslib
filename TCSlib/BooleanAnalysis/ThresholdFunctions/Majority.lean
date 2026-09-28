@@ -1,4 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Data.Nat.Choose.Central
 import Mathlib.Data.Nat.Choose.Sum
 import TCSlib.BooleanAnalysis.ThresholdFunctions.Basic
 
@@ -136,41 +137,27 @@ lemma sum_pow_mul_le_of_prefix_le {N : ℕ} {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 :
     (htot : ∑ k ∈ Finset.range N, b k = ∑ k ∈ Finset.range N, a k) :
     ∑ k ∈ Finset.range N, ρ ^ k * b k ≤ ∑ k ∈ Finset.range N, ρ ^ k * a k := by
   set d : ℕ → ℝ := fun k ↦ a k - b k with hd
-  have hsum : ∑ k ∈ Finset.range N, ρ ^ k * a k - ∑ k ∈ Finset.range N, ρ ^ k * b k
-      = ∑ k ∈ Finset.range N, ρ ^ k * d k := by
-    rw [← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl fun k _ ↦ by rw [hd]; ring
-  have hD : ∀ j, j ≤ N → 0 ≤ ∑ k ∈ Finset.range j, d k := by
-    intro j hj
-    have h := hpre j hj
-    have hrw : ∑ k ∈ Finset.range j, d k
-        = ∑ k ∈ Finset.range j, a k - ∑ k ∈ Finset.range j, b k := by
-      rw [← Finset.sum_sub_distrib]
-    rw [hrw]
-    linarith
+  have hD (j : ℕ) (hj : j ≤ N) : 0 ≤ ∑ k ∈ Finset.range j, d k := by
+    simp only [hd, Finset.sum_sub_distrib]
+    linarith [hpre j hj]
   have hDN : ∑ k ∈ Finset.range N, d k = 0 := by
-    have hrw : ∑ k ∈ Finset.range N, d k
-        = ∑ k ∈ Finset.range N, a k - ∑ k ∈ Finset.range N, b k := by
-      rw [← Finset.sum_sub_distrib]
-    rw [hrw, htot]
-    ring
+    simp only [hd, Finset.sum_sub_distrib, htot, sub_self]
+  -- Abel summation against the nonincreasing weights `ρ ^ k`.
   have key : ∑ k ∈ Finset.range N, ρ ^ k * d k
       = ∑ i ∈ Finset.range (N - 1), (ρ ^ i - ρ ^ (i + 1)) * ∑ k ∈ Finset.range (i + 1), d k := by
     have h := Finset.sum_range_by_parts (fun k : ℕ ↦ ρ ^ k) d N
     simp only [smul_eq_mul] at h
     rw [h, hDN, mul_zero, zero_sub, ← Finset.sum_neg_distrib]
     exact Finset.sum_congr rfl fun i _ ↦ by ring
-  have hnonneg : 0 ≤ ∑ i ∈ Finset.range (N - 1),
-      (ρ ^ i - ρ ^ (i + 1)) * ∑ k ∈ Finset.range (i + 1), d k := by
-    refine Finset.sum_nonneg fun i hi ↦ ?_
-    have hi' : i + 1 ≤ N := by
-      rw [Finset.mem_range] at hi
+  have hnonneg : 0 ≤ ∑ k ∈ Finset.range N, ρ ^ k * d k := by
+    rw [key]
+    refine Finset.sum_nonneg fun i hi ↦ mul_nonneg ?_ (hD (i + 1) ?_)
+    · rw [sub_nonneg, pow_succ]
+      exact mul_le_of_le_one_right (pow_nonneg hρ0 i) hρ1
+    · rw [Finset.mem_range] at hi
       omega
-    have h1 : ρ ^ (i + 1) ≤ ρ ^ i := by
-      rw [pow_succ]
-      nlinarith [pow_nonneg hρ0 i]
-    exact mul_nonneg (by linarith) (hD (i + 1) hi')
-  linarith [hsum, key ▸ hnonneg]
+  simp only [hd, mul_sub, Finset.sum_sub_distrib] at hnonneg
+  linarith
 
 /-! ## Exact Fourier coefficients -/
 
@@ -198,6 +185,15 @@ theorem majority_fourierCoeff_odd (m : ℕ) (S : Finset (Fin (2 * m + 1)))
         (Nat.choose m ((S.card - 1) / 2) / Nat.choose (2 * m) (S.card - 1) : ℝ) *
           (Nat.choose (2 * m) m / 2 ^ (2 * m) : ℝ) := sorry
 
+/-- The common magnitude `C(m, p) / C(2m, 2p)` of the level-`(2p+1)` majority coefficients is
+invariant under `p ↦ m - p`. -/
+private lemma choose_div_choose_symm {m p q : ℕ} (hpq : p + q = m) :
+    (Nat.choose m q / Nat.choose (2 * m) (2 * q) : ℝ) =
+      Nat.choose m p / Nat.choose (2 * m) (2 * p) := by
+  obtain rfl : q = m - p := by omega
+  rw [Nat.choose_symm (by omega), show 2 * (m - p) = 2 * m - 2 * p by omega,
+    Nat.choose_symm (by omega)]
+
 /-- Fourier coefficients on complementary odd levels of majority agree up to the sign
 `(-1)^m`. [OD14, Cor. 5.20]
 
@@ -207,50 +203,19 @@ theorem majority_fourierCoeff_duality (m : ℕ)
     (S T : Finset (Fin (2 * m + 1))) (hcard : S.card + T.card = 2 * m + 2) :
     fourierCoeff (majority m) S = (-1 : ℝ) ^ m * fourierCoeff (majority m) T := by
   have hSle : S.card ≤ 2 * m + 1 := by simpa using Finset.card_le_univ S
-  have hTle : T.card ≤ 2 * m + 1 := by simpa using Finset.card_le_univ T
-  rcases Nat.even_or_odd S.card with hS | hS
+  rcases Nat.even_or_odd S.card with hS | ⟨p, hp⟩
   · have hT : Even T.card := by
       obtain ⟨r, hr⟩ := hS
       exact ⟨m + 1 - r, by omega⟩
     rw [majority_fourierCoeff_even m S hS, majority_fourierCoeff_even m T hT, mul_zero]
-  · obtain ⟨p, hp⟩ := hS
-    have hq : T.card = 2 * (m - p) + 1 := by omega
-    set q : ℕ := m - p with hqdef
-    have hpq : p + q = m := by omega
-    rw [majority_fourierCoeff_odd m S ⟨p, hp⟩, majority_fourierCoeff_odd m T ⟨q, hq⟩]
-    have hp1 : (S.card - 1) / 2 = p := by omega
-    have hp2 : S.card - 1 = 2 * p := by omega
-    have hq1 : (T.card - 1) / 2 = q := by omega
-    have hq2 : T.card - 1 = 2 * q := by omega
-    rw [hp1, hp2, hq1, hq2]
-    have hcp : Nat.choose m q = Nat.choose m p := by
-      have hqm : q = m - p := hqdef
-      rw [hqm, Nat.choose_symm (by omega)]
-    have hc2 : Nat.choose (2 * m) (2 * q) = Nat.choose (2 * m) (2 * p) := by
-      have h2q : 2 * q = 2 * m - 2 * p := by omega
-      rw [h2q, Nat.choose_symm (by omega)]
-    have hsign : ((-1 : ℝ)) ^ m = (-1 : ℝ) ^ p * (-1 : ℝ) ^ q := by
-      rw [← pow_add, hpq]
-    have hsq : ((-1 : ℝ)) ^ q * (-1 : ℝ) ^ q = 1 := by
-      rw [← pow_add, ← two_mul]
-      exact Even.neg_one_pow ⟨q, by ring⟩
-    rw [hcp, hc2, hsign]
-    have hX : ∀ X : ℝ, (-1 : ℝ) ^ p * X
-        = (-1 : ℝ) ^ p * (-1 : ℝ) ^ q * ((-1 : ℝ) ^ q * X) := by
-      intro X
-      calc (-1 : ℝ) ^ p * X = (-1 : ℝ) ^ p * ((-1 : ℝ) ^ q * (-1 : ℝ) ^ q) * X := by
-            rw [hsq, mul_one]
-        _ = (-1 : ℝ) ^ p * (-1 : ℝ) ^ q * ((-1 : ℝ) ^ q * X) := by ring
-    calc (-1 : ℝ) ^ p * (Nat.choose m p / Nat.choose (2 * m) (2 * p) : ℝ)
-            * (Nat.choose (2 * m) m / 2 ^ (2 * m) : ℝ)
-        = (-1 : ℝ) ^ p * ((Nat.choose m p / Nat.choose (2 * m) (2 * p) : ℝ)
-            * (Nat.choose (2 * m) m / 2 ^ (2 * m) : ℝ)) := by ring
-      _ = (-1 : ℝ) ^ p * (-1 : ℝ) ^ q * ((-1 : ℝ) ^ q *
-            ((Nat.choose m p / Nat.choose (2 * m) (2 * p) : ℝ)
-              * (Nat.choose (2 * m) m / 2 ^ (2 * m) : ℝ))) := hX _
-      _ = (-1 : ℝ) ^ p * (-1 : ℝ) ^ q * ((-1 : ℝ) ^ q
-            * (Nat.choose m p / Nat.choose (2 * m) (2 * p) : ℝ)
-            * (Nat.choose (2 * m) m / 2 ^ (2 * m) : ℝ)) := by ring
+  · obtain ⟨q, hq, hpq⟩ : ∃ q, T.card = 2 * q + 1 ∧ p + q = m := ⟨m - p, by omega, by omega⟩
+    rw [majority_fourierCoeff_odd m S ⟨p, hp⟩, majority_fourierCoeff_odd m T ⟨q, hq⟩, hp, hq,
+      show (2 * p + 1 - 1) / 2 = p by omega, show 2 * p + 1 - 1 = 2 * p by omega,
+      show (2 * q + 1 - 1) / 2 = q by omega, show 2 * q + 1 - 1 = 2 * q by omega,
+      choose_div_choose_symm hpq, ← hpq, pow_add]
+    have hsq : (-1 : ℝ) ^ q * (-1) ^ q = 1 := by rw [← pow_add]; exact Even.neg_one_pow ⟨q, rfl⟩
+    linear_combination (-((-1 : ℝ) ^ p * (Nat.choose (p + q) p / Nat.choose (2 * (p + q)) (2 * p))
+      * (Nat.choose (2 * (p + q)) (p + q) / 2 ^ (2 * (p + q))))) * hsq
 
 /-- Every even Fourier level of odd-arity majority carries no weight. -/
 lemma majority_weightLevel_even (m k : ℕ) (hk : Even k) : weightLevel k (majority m) = 0 := by
@@ -305,70 +270,53 @@ is a binomial count times that common square; the two counts differ exactly by t
 theorem majority_weight_duality (m k : ℕ) (hk : k ≤ 2 * m + 1) :
     weightLevel (2 * m + 2 - k) (majority m) =
       (k : ℝ) / (2 * m + 2 - k) * weightLevel k (majority m) := by
-  rcases Nat.eq_zero_or_pos k with hk0 | hk0
-  · subst hk0
-    rw [weightLevel_eq_zero_of_lt (by omega) (majority m)]
+  rcases Nat.eq_zero_or_pos k with rfl | hk0
+  · rw [weightLevel_eq_zero_of_lt (by omega) (majority m)]
     simp
-  rcases Nat.even_or_odd k with hke | hko
+  rcases Nat.even_or_odd k with hke | ⟨p, rfl⟩
   · have h1 : Even (2 * m + 2 - k) := by
       obtain ⟨r, hr⟩ := hke
       exact ⟨m + 1 - r, by omega⟩
     rw [majority_weightLevel_even m _ h1, majority_weightLevel_even m k hke]
     ring
-  · obtain ⟨p, hp⟩ := hko
-    have hpm : p ≤ m := by omega
-    have hk' : 2 * m + 2 - k = 2 * (m - p) + 1 := by omega
-    set q : ℕ := m - p with hqdef
-    have hpq : p + q = m := by omega
-    have hkodd : Odd k := ⟨p, hp⟩
-    have hk'odd : Odd (2 * m + 2 - k) := ⟨q, hk'⟩
-    -- the two common coefficient values agree
-    have hidx1 : (k - 1) / 2 = p := by omega
-    have hidx2 : k - 1 = 2 * p := by omega
-    have hidx3 : (2 * m + 2 - k - 1) / 2 = q := by omega
-    have hidx4 : 2 * m + 2 - k - 1 = 2 * q := by omega
-    have hcp : Nat.choose m q = Nat.choose m p := by
-      have hqm : q = m - p := hqdef
-      rw [hqm, Nat.choose_symm hpm]
-    have hc2 : Nat.choose (2 * m) (2 * q) = Nat.choose (2 * m) (2 * p) := by
-      have h2q : 2 * q = 2 * m - 2 * p := by omega
-      rw [h2q, Nat.choose_symm (by omega)]
-    -- the binomial count on the two levels
-    have hsymm : Nat.choose (2 * m + 1) (2 * m + 2 - k) = Nat.choose (2 * m + 1) (k - 1) := by
-      have h : k - 1 = 2 * m + 1 - (2 * m + 2 - k) := by omega
-      rw [h, Nat.choose_symm (by omega)]
-    have hratio : ((2 * m + 2 - k : ℕ) : ℝ) * (Nat.choose (2 * m + 1) (k - 1) : ℝ)
-        = (k : ℝ) * (Nat.choose (2 * m + 1) k : ℝ) := by
-      have hnat : Nat.choose (2 * m + 1) k * k
-          = Nat.choose (2 * m + 1) (k - 1) * (2 * m + 2 - k) := by
-        have h := Nat.choose_succ_right_eq (2 * m + 1) (k - 1)
-        have h1 : k - 1 + 1 = k := by omega
-        have h2 : 2 * m + 1 - (k - 1) = 2 * m + 2 - k := by omega
-        rw [h1, h2] at h
-        exact h
-      have hcastnat := congrArg (fun t : ℕ ↦ (t : ℝ)) hnat
-      simp only [Nat.cast_mul] at hcastnat
-      linear_combination -hcastnat
-    have hden : ((2 : ℝ) * m + 2 - k) ≠ 0 := by
-      have hkR : (k : ℝ) ≤ 2 * m + 1 := by exact_mod_cast hk
-      intro hcon
-      linarith
-    have hcast : ((2 * m + 2 - k : ℕ) : ℝ) = 2 * (m : ℝ) + 2 - (k : ℝ) := by
-      rw [Nat.cast_sub (by omega : k ≤ 2 * m + 2)]
-      push_cast
-      ring
-    have hratio' : (2 * (m : ℝ) + 2 - (k : ℝ)) * (Nat.choose (2 * m + 1) (k - 1) : ℝ)
-        = (k : ℝ) * (Nat.choose (2 * m + 1) k : ℝ) := by
-      rw [← hcast]
-      exact hratio
-    rw [majority_weightLevel_odd m _ hk'odd, majority_weightLevel_odd m k hkodd,
-      hidx1, hidx2, hidx3, hidx4, hcp, hc2, hsymm]
-    conv_rhs => rw [div_mul_eq_mul_div]
-    rw [eq_div_iff hden]
-    linear_combination (((Nat.choose m p / Nat.choose (2 * m) (2 * p) : ℝ)
-      * (Nat.choose (2 * m) m / 2 ^ (2 * m) : ℝ)) ^ 2) * hratio'
+  obtain ⟨q, hq, hpq⟩ : ∃ q, 2 * m + 2 - (2 * p + 1) = 2 * q + 1 ∧ p + q = m :=
+    ⟨m - p, by omega, by omega⟩
+  -- The two levels have binomial counts in the ratio `k : (2m + 2 - k)`.
+  have hcount : ((2 * q + 1 : ℕ) : ℝ) * Nat.choose (2 * m + 1) (2 * q + 1)
+      = ((2 * p + 1 : ℕ) : ℝ) * Nat.choose (2 * m + 1) (2 * p + 1) := by
+    have h := Nat.choose_succ_right_eq (2 * m + 1) (2 * p)
+    rw [show 2 * m + 1 - 2 * p = 2 * q + 1 by omega,
+      ← Nat.choose_symm (show 2 * p ≤ 2 * m + 1 by omega),
+      show 2 * m + 1 - 2 * p = 2 * q + 1 by omega] at h
+    rw [mul_comm, mul_comm ((2 * p + 1 : ℕ) : ℝ)]
+    exact_mod_cast h.symm
+  have hden : (2 : ℝ) * m + 2 - (2 * p + 1 : ℕ) = (2 * q + 1 : ℕ) := by
+    push_cast; rw [← hpq]; push_cast; ring
+  rw [hq, majority_weightLevel_odd m _ ⟨q, rfl⟩, majority_weightLevel_odd m _ ⟨p, rfl⟩,
+    show (2 * p + 1 - 1) / 2 = p by omega, show 2 * p + 1 - 1 = 2 * p by omega,
+    show (2 * q + 1 - 1) / 2 = q by omega, show 2 * q + 1 - 1 = 2 * q by omega,
+    choose_div_choose_symm hpq, hden]
+  conv_rhs => rw [div_mul_eq_mul_div]
+  rw [eq_div_iff (by positivity)]
+  linear_combination (((Nat.choose m p / Nat.choose (2 * m) (2 * p) : ℝ)
+      * (Nat.choose (2 * m) m / 2 ^ (2 * m) : ℝ)) ^ 2) * hcount
 
 /-! ## Monotonicity and asymptotics -/
+
+/-- Two steps of the binomial recurrence `C(n, k) (n + 1) = C(n + 1, k) (n + 1 - k)`, written
+without truncated subtraction: if `N = k + a`, then
+`C(N + 2, k) (a + 2)(a + 1) = C(N, k) (N + 2)(N + 1)`. -/
+private lemma choose_add_two_mul {N k a : ℕ} (h : N = k + a) :
+    (N + 2).choose k * ((a + 2) * (a + 1)) = N.choose k * ((N + 2) * (N + 1)) := by
+  subst h
+  have e1 := Nat.choose_mul_succ_eq (k + a) k
+  have e2 := Nat.choose_mul_succ_eq (k + a + 1) k
+  rw [show k + a + 1 - k = a + 1 by omega] at e1
+  rw [show k + a + 1 + 1 - k = a + 2 by omega] at e2
+  calc (k + a + 2).choose k * ((a + 2) * (a + 1))
+      = (k + a + 1 + 1).choose k * (a + 2) * (a + 1) := by ring
+    _ = (k + a + 1).choose k * (a + 1) * (k + a + 2) := by rw [← e2]; ring
+    _ = (k + a).choose k * ((k + a + 2) * (k + a + 1)) := by rw [← e1]; ring
 
 /-- For every fixed odd level present in the smaller cube, majority's level weight strictly
 decreases when two variables are added. [OD14, Cor. 5.21]
@@ -377,167 +325,65 @@ decreases when two variables are added. [OD14, Cor. 5.21]
 between consecutive odd dimensions. Every remaining factor is strictly less than one. -/
 theorem majority_weight_strictAnti (m k : ℕ) (hkodd : Odd k) (hk : k ≤ 2 * m + 1) :
     weightLevel k (majority (m + 1)) < weightLevel k (majority m) := by
-  obtain ⟨p, hp⟩ := hkodd
-  have hpm : p ≤ m := by omega
-  set u : ℕ := m + 1 - p with hudef
-  set v : ℕ := 2 * u - 1 with hvdef
-  have hu1 : 1 ≤ u := by omega
-  have hum : u ≤ m + 1 := by omega
-  have hv1 : 1 ≤ v := by omega
-  -- the four binomial recurrences
-  have nat1 : Nat.choose (2 * m + 3) k * (2 * u) * v
-      = Nat.choose (2 * m + 1) k * (2 * m + 3) * (2 * m + 2) := by
-    have e1 : Nat.choose (2 * m + 1) k * (2 * m + 1 + 1)
-        = Nat.choose (2 * m + 1 + 1) k * (2 * m + 1 + 1 - k) :=
-      Nat.choose_mul_succ_eq (2 * m + 1) k
-    have e2 : Nat.choose (2 * m + 2) k * (2 * m + 2 + 1)
-        = Nat.choose (2 * m + 2 + 1) k * (2 * m + 2 + 1 - k) :=
-      Nat.choose_mul_succ_eq (2 * m + 2) k
-    have h1 : 2 * m + 1 + 1 - k = v := by omega
-    have h2 : 2 * m + 2 + 1 - k = 2 * u := by omega
-    have h3 : 2 * m + 1 + 1 = 2 * m + 2 := by ring
-    have h4 : 2 * m + 2 + 1 = 2 * m + 3 := by ring
-    rw [h1, h3] at e1
-    rw [h2, h4] at e2
-    calc Nat.choose (2 * m + 3) k * (2 * u) * v
-        = Nat.choose (2 * m + 3) k * (2 * u) * v := rfl
-      _ = (Nat.choose (2 * m + 2) k * (2 * m + 3)) * v := by rw [e2]
-      _ = (Nat.choose (2 * m + 2) k * v) * (2 * m + 3) := by ring
-      _ = (Nat.choose (2 * m + 1) k * (2 * m + 2)) * (2 * m + 3) := by rw [e1]
-      _ = Nat.choose (2 * m + 1) k * (2 * m + 3) * (2 * m + 2) := by ring
-  have nat2 : Nat.choose m p * (m + 1) = Nat.choose (m + 1) p * u := by
-    have e := Nat.choose_mul_succ_eq m p
-    have h1 : m + 1 - p = u := by omega
-    rw [h1] at e
-    exact e
-  have nat3 : Nat.choose (2 * m) (2 * p) * (2 * m + 1) * (2 * m + 2)
-      = Nat.choose (2 * m + 2) (2 * p) * (2 * u) * v := by
-    have e1 : Nat.choose (2 * m) (2 * p) * (2 * m + 1)
-        = Nat.choose (2 * m + 1) (2 * p) * (2 * m + 1 - 2 * p) :=
-      Nat.choose_mul_succ_eq (2 * m) (2 * p)
-    have e2 : Nat.choose (2 * m + 1) (2 * p) * (2 * m + 1 + 1)
-        = Nat.choose (2 * m + 1 + 1) (2 * p) * (2 * m + 1 + 1 - 2 * p) :=
-      Nat.choose_mul_succ_eq (2 * m + 1) (2 * p)
-    have h1 : 2 * m + 1 - 2 * p = v := by omega
-    have h2 : 2 * m + 1 + 1 - 2 * p = 2 * u := by omega
-    have h3 : 2 * m + 1 + 1 = 2 * m + 2 := by ring
-    rw [h1] at e1
-    rw [h2, h3] at e2
-    calc Nat.choose (2 * m) (2 * p) * (2 * m + 1) * (2 * m + 2)
-        = (Nat.choose (2 * m + 1) (2 * p) * v) * (2 * m + 2) := by rw [e1]
-      _ = (Nat.choose (2 * m + 1) (2 * p) * (2 * m + 2)) * v := by ring
-      _ = Nat.choose (2 * m + 2) (2 * p) * (2 * u) * v := by rw [e2]
-  have nat4 : Nat.choose (2 * m + 2) (m + 1) * (m + 1)
-      = 2 * Nat.choose (2 * m) m * (2 * m + 1) := by
-    have hpascal : Nat.choose (2 * m + 2) (m + 1)
-        = Nat.choose (2 * m + 1) m + Nat.choose (2 * m + 1) (m + 1) :=
-      Nat.choose_succ_succ (2 * m + 1) m
-    have hsymm : Nat.choose (2 * m + 1) (m + 1) = Nat.choose (2 * m + 1) m := by
-      have h := Nat.choose_symm (show m + 1 ≤ 2 * m + 1 by omega)
-      have h2 : 2 * m + 1 - (m + 1) = m := by omega
-      rw [h2] at h
-      exact h.symm
-    have e : Nat.choose (2 * m) m * (2 * m + 1) = Nat.choose (2 * m + 1) m * (2 * m + 1 - m) :=
-      Nat.choose_mul_succ_eq (2 * m) m
-    have h1 : 2 * m + 1 - m = m + 1 := by omega
-    rw [h1] at e
-    rw [hpascal, hsymm]
-    calc (Nat.choose (2 * m + 1) m + Nat.choose (2 * m + 1) m) * (m + 1)
-        = 2 * (Nat.choose (2 * m + 1) m * (m + 1)) := by ring
-      _ = 2 * (Nat.choose (2 * m) m * (2 * m + 1)) := by rw [e]
-      _ = 2 * Nat.choose (2 * m) m * (2 * m + 1) := by ring
-  -- positivity of the binomial coefficients involved
-  have hA0 : 0 < Nat.choose (2 * m + 1) k := Nat.choose_pos hk
-  have hB0 : 0 < Nat.choose m p := Nat.choose_pos hpm
-  have hC0 : 0 < Nat.choose (2 * m) (2 * p) := Nat.choose_pos (by omega)
-  have hD0 : 0 < Nat.choose (2 * m) m := Nat.choose_pos (by omega)
-  have hC1 : 0 < Nat.choose (2 * m + 2) (2 * p) := Nat.choose_pos (by omega)
-  -- move to the reals
-  set A0 : ℝ := (Nat.choose (2 * m + 1) k : ℝ) with hA0def
-  set A1 : ℝ := (Nat.choose (2 * m + 3) k : ℝ) with hA1def
-  set B0 : ℝ := (Nat.choose m p : ℝ) with hB0def
-  set B1 : ℝ := (Nat.choose (m + 1) p : ℝ) with hB1def
-  set C0 : ℝ := (Nat.choose (2 * m) (2 * p) : ℝ) with hC0def
-  set C1 : ℝ := (Nat.choose (2 * m + 2) (2 * p) : ℝ) with hC1def
-  set D0 : ℝ := (Nat.choose (2 * m) m : ℝ) with hD0def
-  set D1 : ℝ := (Nat.choose (2 * m + 2) (m + 1) : ℝ) with hD1def
-  have hUR : (u : ℝ) = (m : ℝ) + 1 - (p : ℝ) := by
-    rw [hudef, Nat.cast_sub (by omega : p ≤ m + 1)]
-    push_cast
-    ring
-  have hVR : (v : ℝ) = 2 * (u : ℝ) - 1 := by
-    rw [hvdef, Nat.cast_sub (by omega : 1 ≤ 2 * u)]
-    push_cast
-    ring
-  have hUpos : (0 : ℝ) < (u : ℝ) := by exact_mod_cast hu1
-  have hVpos : (0 : ℝ) < (v : ℝ) := by exact_mod_cast hv1
-  have hA0pos : (0 : ℝ) < A0 := by rw [hA0def]; exact_mod_cast hA0
-  have hB0pos : (0 : ℝ) < B0 := by rw [hB0def]; exact_mod_cast hB0
-  have hC0pos : (0 : ℝ) < C0 := by rw [hC0def]; exact_mod_cast hC0
-  have hD0pos : (0 : ℝ) < D0 := by rw [hD0def]; exact_mod_cast hD0
-  have hC1pos : (0 : ℝ) < C1 := by rw [hC1def]; exact_mod_cast hC1
-  have I1 : A1 * (2 * (u : ℝ)) * (v : ℝ) = A0 * (2 * (m : ℝ) + 3) * (2 * (m : ℝ) + 2) := by
-    have := congrArg (fun t : ℕ ↦ (t : ℝ)) nat1
-    push_cast at this
-    rw [hA0def, hA1def]
-    linear_combination this
-  have I2 : B0 * ((m : ℝ) + 1) = B1 * (u : ℝ) := by
-    have := congrArg (fun t : ℕ ↦ (t : ℝ)) nat2
-    push_cast at this
-    rw [hB0def, hB1def]
-    linear_combination this
-  have I3 : C0 * (2 * (m : ℝ) + 1) * (2 * (m : ℝ) + 2) = C1 * (2 * (u : ℝ)) * (v : ℝ) := by
-    have := congrArg (fun t : ℕ ↦ (t : ℝ)) nat3
-    push_cast at this
-    rw [hC0def, hC1def]
-    linear_combination this
-  have I4 : D1 * ((m : ℝ) + 1) = 2 * D0 * (2 * (m : ℝ) + 1) := by
-    have := congrArg (fun t : ℕ ↦ (t : ℝ)) nat4
-    push_cast at this
-    rw [hD0def, hD1def]
-    linear_combination this
-  -- solve the recurrences for the larger-dimension quantities
-  have hA1eq : A1 = A0 * (2 * (m : ℝ) + 3) * (2 * (m : ℝ) + 2) / ((2 * (u : ℝ)) * (v : ℝ)) := by
-    rw [eq_div_iff (by positivity)]
-    linear_combination I1
-  have hB1eq : B1 = B0 * ((m : ℝ) + 1) / (u : ℝ) := by
-    rw [eq_div_iff (ne_of_gt hUpos)]
-    linear_combination -I2
-  have hC1eq : C1 = C0 * (2 * (m : ℝ) + 1) * (2 * (m : ℝ) + 2) / ((2 * (u : ℝ)) * (v : ℝ)) := by
-    rw [eq_div_iff (by positivity)]
-    linear_combination -I3
-  have hD1eq : D1 = 2 * D0 * (2 * (m : ℝ) + 1) / ((m : ℝ) + 1) := by
-    rw [eq_div_iff (by positivity)]
-    linear_combination I4
-  -- the level weights, and the exact ratio between them
-  have hidx1 : (k - 1) / 2 = p := by omega
-  have hidx2 : k - 1 = 2 * p := by omega
-  have harity : 2 * (m + 1) = 2 * m + 2 := by ring
-  have harity' : 2 * m + 2 + 1 = 2 * m + 3 := by ring
-  rw [majority_weightLevel_odd (m + 1) k ⟨p, hp⟩, majority_weightLevel_odd m k ⟨p, hp⟩,
-    hidx1, hidx2, harity, harity']
-  rw [← hA0def, ← hA1def, ← hB0def, ← hB1def, ← hC0def, ← hC1def, ← hD0def, ← hD1def]
-  have hpow : (2 : ℝ) ^ (2 * m + 2) = 2 ^ (2 * m) * 4 := by
-    rw [pow_add]
-    norm_num
-  have hpowpos : (0 : ℝ) < 2 ^ (2 * m) := by positivity
-  have hMpos : (0 : ℝ) < (m : ℝ) + 1 := by positivity
-  have hratio : A1 * (B1 / C1 * (D1 / 2 ^ (2 * m + 2))) ^ 2 * (4 * (u : ℝ) * ((m : ℝ) + 1))
-      = A0 * (B0 / C0 * (D0 / 2 ^ (2 * m))) ^ 2 * ((2 * (m : ℝ) + 3) * (v : ℝ)) := by
-    rw [hA1eq, hB1eq, hC1eq, hD1eq, hpow]
-    field_simp
-    ring
-  have hRHSpos : (0 : ℝ) < A0 * (B0 / C0 * (D0 / 2 ^ (2 * m))) ^ 2 := by positivity
-  have hstrict : (2 * (m : ℝ) + 3) * (v : ℝ) < 4 * (u : ℝ) * ((m : ℝ) + 1) := by
-    have humR : (u : ℝ) ≤ (m : ℝ) + 1 := by exact_mod_cast hum
-    rw [hVR]
-    nlinarith [hUpos, humR]
-  have hposfac : (0 : ℝ) < 4 * (u : ℝ) * ((m : ℝ) + 1) := by positivity
-  have hlt : A1 * (B1 / C1 * (D1 / 2 ^ (2 * m + 2))) ^ 2 * (4 * (u : ℝ) * ((m : ℝ) + 1))
-      < A0 * (B0 / C0 * (D0 / 2 ^ (2 * m))) ^ 2 * (4 * (u : ℝ) * ((m : ℝ) + 1)) := by
-    rw [hratio]
-    exact mul_lt_mul_of_pos_left hstrict hRHSpos
-  exact lt_of_mul_lt_mul_right (by linarith [hlt]) (le_of_lt hposfac)
+  obtain ⟨p, rfl⟩ := hkodd
+  obtain ⟨w, rfl⟩ : ∃ w, m = p + w := ⟨m - p, by omega⟩
+  -- The four binomial recurrences relating the two dimensions, cast to `ℝ`.
+  have I1 : ((2 * (p + w) + 3).choose (2 * p + 1) : ℝ) * ((2 * w + 2) * (2 * w + 1)) =
+      (2 * (p + w) + 1).choose (2 * p + 1) * ((2 * (p + w) + 3) * (2 * (p + w) + 2)) := by
+    exact_mod_cast choose_add_two_mul (N := 2 * (p + w) + 1) (a := 2 * w) (by ring)
+  have I2 : ((p + w).choose p : ℝ) * ((p + w) + 1) = (p + w + 1).choose p * (w + 1) := by
+    have h := Nat.choose_mul_succ_eq (p + w) p
+    rw [show p + w + 1 - p = w + 1 by omega] at h
+    exact_mod_cast h
+  have I3 : ((2 * (p + w) + 2).choose (2 * p) : ℝ) * ((2 * w + 2) * (2 * w + 1)) =
+      (2 * (p + w)).choose (2 * p) * ((2 * (p + w) + 2) * (2 * (p + w) + 1)) := by
+    exact_mod_cast choose_add_two_mul (N := 2 * (p + w)) (a := 2 * w) (by ring)
+  have I4 : ((2 * (p + w) + 2).choose (p + w + 1) : ℝ) * ((p + w) + 1) =
+      2 * (2 * (p + w)).choose (p + w) * (2 * (p + w) + 1) := by
+    have h := Nat.succ_mul_centralBinom_succ (p + w)
+    rw [Nat.centralBinom, Nat.centralBinom, show 2 * (p + w + 1) = 2 * (p + w) + 2 by ring] at h
+    have h' : ((p + w + 1 : ℕ) : ℝ) * (2 * (p + w) + 2).choose (p + w + 1) =
+        2 * (2 * (p + w) + 1 : ℕ) * (2 * (p + w)).choose (p + w) := by exact_mod_cast h
+    push_cast at h'
+    linear_combination h'
+  -- Positivity of the binomial coefficients in the smaller dimension.
+  have hA : (0 : ℝ) < (2 * (p + w) + 1).choose (2 * p + 1) := by
+    exact_mod_cast Nat.choose_pos (by omega)
+  have hB : (0 : ℝ) < (p + w).choose p := by exact_mod_cast Nat.choose_pos (by omega)
+  have hC : (0 : ℝ) < (2 * (p + w)).choose (2 * p) := by exact_mod_cast Nat.choose_pos (by omega)
+  have hD : (0 : ℝ) < (2 * (p + w)).choose (p + w) := by
+    exact_mod_cast Nat.choose_pos (by omega)
+  rw [majority_weightLevel_odd (p + w + 1) _ ⟨p, rfl⟩, majority_weightLevel_odd (p + w) _ ⟨p, rfl⟩,
+    show (2 * p + 1 - 1) / 2 = p by omega, show 2 * p + 1 - 1 = 2 * p by omega,
+    show 2 * (p + w + 1) + 1 = 2 * (p + w) + 3 by ring,
+    show 2 * (p + w + 1) = 2 * (p + w) + 2 by ring]
+  generalize ((2 * (p + w) + 3).choose (2 * p + 1) : ℝ) = A₁ at I1 ⊢
+  generalize ((2 * (p + w) + 1).choose (2 * p + 1) : ℝ) = A₀ at I1 hA ⊢
+  generalize ((p + w + 1).choose p : ℝ) = B₁ at I2 ⊢
+  generalize ((p + w).choose p : ℝ) = B₀ at I2 hB ⊢
+  generalize ((2 * (p + w) + 2).choose (2 * p) : ℝ) = C₁ at I3 ⊢
+  generalize ((2 * (p + w)).choose (2 * p) : ℝ) = C₀ at I3 hC ⊢
+  generalize ((2 * (p + w) + 2).choose (p + w + 1) : ℝ) = D₁ at I4 ⊢
+  generalize ((2 * (p + w)).choose (p + w) : ℝ) = D₀ at I4 hD ⊢
+  -- Solve the recurrences for the binomial coefficients in the larger dimension.
+  have hA₁ : A₁ = A₀ * ((2 * (p + w) + 3) * (2 * (p + w) + 2)) / ((2 * w + 2) * (2 * w + 1)) := by
+    rw [eq_div_iff (by positivity)]; exact I1
+  have hB₁ : B₁ = B₀ * (p + w + 1) / (w + 1) := by
+    rw [eq_div_iff (by positivity)]; exact I2.symm
+  have hC₁ : C₁ = C₀ * ((2 * (p + w) + 2) * (2 * (p + w) + 1)) / ((2 * w + 2) * (2 * w + 1)) := by
+    rw [eq_div_iff (by positivity)]; exact I3
+  have hD₁ : D₁ = 2 * D₀ * (2 * (p + w) + 1) / (p + w + 1) := by
+    rw [eq_div_iff (by positivity)]; exact I4
+  subst hA₁ hB₁ hC₁ hD₁
+  -- The ratio of the two level weights is `(2m + 3)(2w + 1) / ((2w + 2)(2m + 2)) < 1`.
+  set W₀ := A₀ * (B₀ / C₀ * (D₀ / 2 ^ (2 * (p + w)))) ^ 2 with hW₀def
+  have hW₀ : 0 < W₀ := mul_pos hA (pow_pos (mul_pos (div_pos hB hC) (div_pos hD (by positivity))) 2)
+  calc _ = W₀ * ((2 * (p + w) + 3) * (2 * w + 1) / ((2 * w + 2) * (2 * (p + w) + 2))) := by
+        rw [pow_add, hW₀def]
+        field_simp
+    _ < W₀ := by
+        refine mul_lt_of_lt_one_right hW₀ ((div_lt_one (by positivity)).mpr ?_)
+        nlinarith
 
 /-- Each fixed odd Fourier level of majority converges to the matching coefficient in
 `(2/π) * arcsin ρ`, with the chapter's finite-dimensional error bound.
@@ -598,8 +444,7 @@ theorem majority_noiseStability_antitone {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ
   have hNa : ∀ g : ℕ → ℝ, ∑ k ∈ Finset.range (2 * m + 1 + 1), g k * weightLevel k (majority m)
       = ∑ k ∈ Finset.range (2 * (m + 1) + 2), g k * weightLevel k (majority m) := by
     intro g
-    refine Finset.sum_subset
-      (GCongr.finset_range_subset_of_le (show 2 * m + 1 + 1 ≤ 2 * (m + 1) + 2 by omega)) fun k _ hk ↦ ?_
+    refine Finset.sum_subset (Finset.range_subset_range.mpr (by omega)) fun k _ hk ↦ ?_
     rw [Finset.mem_range] at hk
     rw [weightLevel_eq_zero_of_lt (by omega) (majority m), mul_zero]
   have hstaba : noiseStability ρ (majority m)

@@ -23,7 +23,13 @@ cube. It also gathers the Fourier and metric notation used throughout the Chapte
 
 ## Main results
 
-This file contains definitions only. The source results are stated in the downstream files.
+The source results are stated in the downstream files. This file only adds elementary helper
+lemmas used throughout the chapter:
+
+* `expect_mono`, `expect_nonneg`, `expect_add`, `expect_const_mul`: linearity and monotonicity of
+  the uniform expectation.
+* `mul_thresholdSign_self`, `thresholdSign_mono`, `thresholdSign_eq_of_abs_sub_lt_one`: basic
+  properties of the threshold sign.
 
 ## References
 
@@ -207,6 +213,111 @@ noncomputable def subcubeIndicator (J : Finset (Fin n)) (b : Fin n → Bool) : B
 noncomputable def hammingBallIndicator (n : ℕ) (t : ℝ) : BooleanFunc n :=
   fun x ↦
     if t ≤ (∑ i : Fin n, boolToSign (x i)) / Real.sqrt n then 1 else 0
+
+/-! ## Elementary lemmas
+
+Small facts about the uniform expectation, the threshold sign, and the spectral one-norm that are
+used throughout the chapter. -/
+
+/-- The uniform expectation is monotone. -/
+lemma expect_mono {f g : BooleanFunc n} (h : ∀ x, f x ≤ g x) : expect f ≤ expect g := by
+  rw [expect_eq_fintypeExpect, expect_eq_fintypeExpect]
+  exact Finset.expect_le_expect fun x _ ↦ h x
+
+/-- The uniform expectation of a nonnegative function is nonnegative. -/
+lemma expect_nonneg {f : BooleanFunc n} (h : ∀ x, 0 ≤ f x) : 0 ≤ expect f := by
+  rw [expect_eq_fintypeExpect]
+  exact Finset.expect_nonneg fun x _ ↦ h x
+
+/-- The uniform expectation of a constant function is that constant. -/
+@[simp]
+lemma expect_const (c : ℝ) : expect (fun _ : BoolCube n ↦ c) = c := by
+  rw [expect_eq_fintypeExpect]
+  exact Fintype.expect_const c
+
+/-- The uniform expectation is additive. -/
+lemma expect_add (f g : BooleanFunc n) :
+    expect (fun x ↦ f x + g x) = expect f + expect g := by
+  simp only [expect, Finset.sum_add_distrib, mul_add]
+
+/-- The uniform expectation commutes with scalar multiplication. -/
+lemma expect_const_mul (c : ℝ) (f : BooleanFunc n) :
+    expect (fun x ↦ c * f x) = c * expect f := by
+  simp only [expect, ← Finset.mul_sum]
+  ring
+
+/-- The uniform expectation commutes with negation. -/
+lemma expect_neg (f : BooleanFunc n) : expect (fun x ↦ -f x) = -expect f := by
+  simpa using expect_const_mul (-1) f
+
+/-- The uniform expectation commutes with subtraction. -/
+lemma expect_sub (f g : BooleanFunc n) :
+    expect (fun x ↦ f x - g x) = expect f - expect g := by
+  simp only [sub_eq_add_neg, expect_add, expect_neg]
+
+/-- A nonnegative function with zero expectation vanishes identically. -/
+lemma eq_zero_of_expect_eq_zero {f : BooleanFunc n} (h : ∀ x, 0 ≤ f x) (h0 : expect f = 0) :
+    f = 0 :=
+  (Fintype.expect_eq_zero_iff_of_nonneg h).mp (by rwa [← expect_eq_fintypeExpect])
+
+/-- The threshold sign of a nonnegative number is `1`. -/
+@[simp]
+lemma thresholdSign_of_nonneg {r : ℝ} (h : 0 ≤ r) : thresholdSign r = 1 := if_pos h
+
+/-- The threshold sign of a negative number is `-1`. -/
+@[simp]
+lemma thresholdSign_of_neg {r : ℝ} (h : r < 0) : thresholdSign r = -1 := if_neg (not_le.mpr h)
+
+/-- The threshold sign takes only the values `1` and `-1`. -/
+lemma thresholdSign_pm_one (r : ℝ) : thresholdSign r = 1 ∨ thresholdSign r = -1 := by
+  unfold thresholdSign; split_ifs <;> simp
+
+/-- The threshold sign has absolute value one. -/
+@[simp]
+lemma abs_thresholdSign (r : ℝ) : |thresholdSign r| = 1 := by
+  rcases thresholdSign_pm_one r with h | h <;> simp [h]
+
+/-- Multiplying a number by its threshold sign gives its absolute value. -/
+lemma mul_thresholdSign_self (r : ℝ) : r * thresholdSign r = |r| := by
+  rcases le_or_gt 0 r with h | h
+  · simp [h, abs_of_nonneg h]
+  · simp [h, abs_of_neg h]
+
+/-- The absolute value of a number times its threshold sign is the number itself. -/
+lemma abs_mul_thresholdSign (r : ℝ) : |r| * thresholdSign r = r := by
+  rcases le_or_gt 0 r with h | h
+  · simp [h, abs_of_nonneg h]
+  · simp [h, abs_of_neg h]
+
+/-- The threshold sign is monotone. -/
+lemma thresholdSign_mono {r s : ℝ} (h : r ≤ s) : thresholdSign r ≤ thresholdSign s := by
+  rcases le_or_gt 0 r with hr | hr
+  · rw [thresholdSign_of_nonneg hr, thresholdSign_of_nonneg (hr.trans h)]
+  · rw [thresholdSign_of_neg hr]
+    rcases thresholdSign_pm_one s with hs | hs <;> norm_num [hs]
+
+/-- A positive rescaling does not change the threshold sign. -/
+lemma thresholdSign_mul_of_pos {c : ℝ} (hc : 0 < c) (r : ℝ) :
+    thresholdSign (c * r) = thresholdSign r := by
+  unfold thresholdSign
+  congr 1
+  exact propext ⟨fun h ↦ nonneg_of_mul_nonneg_right (by linarith) hc, fun h ↦ by positivity⟩
+
+/-- A real number at distance less than one from a sign `y = ±1` has threshold sign `y`. -/
+lemma thresholdSign_eq_of_abs_sub_lt_one {y r : ℝ} (hy : y = 1 ∨ y = -1) (h : |y - r| < 1) :
+    thresholdSign r = y := by
+  rcases abs_lt.mp h with ⟨h1, h2⟩
+  rcases hy with rfl | rfl
+  · exact thresholdSign_of_nonneg (by linarith)
+  · exact thresholdSign_of_neg (by linarith)
+
+/-- The threshold of any real function on the cube is `±1`-valued. -/
+lemma isPmOne_thresholdSign (g : BoolCube n → ℝ) :
+    isPmOne (fun x ↦ thresholdSign (g x)) := fun _ ↦ thresholdSign_pm_one _
+
+/-- The Fourier spectral one-norm is nonnegative. -/
+lemma spectralOneNorm_nonneg (f : BooleanFunc n) : 0 ≤ spectralOneNorm f :=
+  Finset.sum_nonneg fun _ _ ↦ abs_nonneg _
 
 end ThresholdFunctions
 end BooleanAnalysis

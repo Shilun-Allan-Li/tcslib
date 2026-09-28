@@ -1,6 +1,6 @@
 import Mathlib.Probability.Distributions.Gaussian.Real
 
-set_option maxHeartbeats 1000000
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -43,6 +43,7 @@ namespace ThresholdFunctions
 noncomputable def gaussianDensity2 (z : ℝ × ℝ) : ℝ :=
   (2 * Real.pi)⁻¹ * Real.exp (-(z.1 ^ 2 + z.2 ^ 2) / 2)
 
+/-- The product of two one-dimensional standard Gaussian densities is the planar density. -/
 lemma gaussianPDF_mul (x y : ℝ) :
     gaussianPDF 0 1 x * gaussianPDF 0 1 y = ENNReal.ofReal (gaussianDensity2 (x, y)) := by
   have h1 : gaussianPDFReal 0 1 x * gaussianPDFReal 0 1 y = gaussianDensity2 (x, y) := by
@@ -68,6 +69,7 @@ lemma gaussian_prod_apply {A : Set (ℝ × ℝ)} (hA : MeasurableSet A) :
 
 /-! ## The radial integral -/
 
+/-- The radial integral `∫₀^∞ r exp(-r²/2) dr = 1`. -/
 lemma lintegral_radial :
     ∫⁻ r in Set.Ioi (0 : ℝ), ENNReal.ofReal (r * Real.exp (-r ^ 2 / 2)) = 1 := by
   have hint : IntegrableOn (fun r : ℝ ↦ r * Real.exp (-r ^ 2 / 2)) (Set.Ioi 0) := by
@@ -95,7 +97,11 @@ lemma lintegral_radial :
 
 /-! ## The Gaussian mass of a cone -/
 
-/-- The Gaussian mass of a cone equals `(2π)⁻¹` times the measure of its set of angles. -/
+/-- The Gaussian mass of a cone equals `(2π)⁻¹` times the measure of its set of angles.
+
+**Proof sketch.** Change to polar coordinates. On the polar target the integrand factors as the
+radial density `r exp(-r²/2)` times `(2π)⁻¹` times the indicator of the angle set, so Tonelli
+splits the integral into the radial integral, which equals one, times the angular measure. -/
 lemma gaussian_cone_lintegral {A : Set (ℝ × ℝ)} (hA : MeasurableSet A) {Θ : Set ℝ}
     (hΘ : MeasurableSet Θ)
     (hcone : ∀ r θ : ℝ, 0 < r → ((r * Real.cos θ, r * Real.sin θ) ∈ A ↔ θ ∈ Θ)) :
@@ -148,6 +154,7 @@ lemma gaussian_cone_lintegral {A : Set (ℝ × ℝ)} (hA : MeasurableSet A) {Θ 
 
 /-! ## Angles at which the cosine is nonpositive -/
 
+/-- On `(-π, π)`, the cosine is nonpositive exactly outside `(-π/2, π/2)`. -/
 lemma cos_nonpos_iff_of_mem_Ioo {θ : ℝ} (h1 : -Real.pi < θ) (h2 : θ < Real.pi) :
     Real.cos θ ≤ 0 ↔ (θ ≤ -(Real.pi / 2) ∨ Real.pi / 2 ≤ θ) := by
   constructor
@@ -162,6 +169,7 @@ lemma cos_nonpos_iff_of_mem_Ioo {θ : ℝ} (h1 : -Real.pi < θ) (h2 : θ < Real.
       rwa [Real.cos_neg] at hneg
     · exact Real.cos_nonpos_of_pi_div_two_le_of_le h (by linarith [Real.pi_pos])
 
+/-- On `(-2π, -π/2]`, the cosine is nonpositive exactly on `[-3π/2, -π/2]`. -/
 lemma cos_nonpos_iff_of_le_neg_pi_div_two {u : ℝ} (h1 : -(2 * Real.pi) < u)
     (h2 : u ≤ -(Real.pi / 2)) : Real.cos u ≤ 0 ↔ -(3 * Real.pi / 2) ≤ u := by
   constructor
@@ -177,6 +185,7 @@ lemma cos_nonpos_iff_of_le_neg_pi_div_two {u : ℝ} (h1 : -(2 * Real.pi) < u)
       Real.cos_nonpos_of_pi_div_two_le_of_le (by linarith) (by linarith)
     rwa [Real.cos_neg] at hneg
 
+/-- On `[-π/2, π)`, the cosine is nonpositive exactly on `[π/2, π)` and at `-π/2`. -/
 lemma cos_nonpos_iff_of_neg_pi_div_two_le {u : ℝ} (h1 : -(Real.pi / 2) ≤ u) (h2 : u < Real.pi) :
     Real.cos u ≤ 0 ↔ (Real.pi / 2 ≤ u ∨ u = -(Real.pi / 2)) := by
   constructor
@@ -195,6 +204,7 @@ lemma cos_nonpos_iff_of_neg_pi_div_two_le {u : ℝ} (h1 : -(Real.pi / 2) ≤ u) 
 
 /-! ## The angular measure of an intersection of two half-planes -/
 
+/-- The set of angles in the intersection of two half-planes is measurable. -/
 lemma measurableSet_twoHalfplaneAngles (α : ℝ) :
     MeasurableSet {θ : ℝ | Real.cos θ ≤ 0 ∧ Real.cos (θ - α) ≤ 0} := by
   apply MeasurableSet.inter
@@ -204,7 +214,12 @@ lemma measurableSet_twoHalfplaneAngles (α : ℝ) :
       measurable_const
 
 /-- The set of angles `θ ∈ (-π, π)` with `cos θ ≤ 0` and `cos (θ - α) ≤ 0` has measure `π - α`,
-for `α ∈ [0, π]`. -/
+for `α ∈ [0, π]`.
+
+**Proof sketch.** Split the angles into the two arcs `(-π, -π/2]` and `[π/2, π)` where
+`cos θ ≤ 0`. On each arc the second condition cuts out an interval, up to a single point, with
+endpoints `max(-π, α - 3π/2)` and `max(π/2, α + π/2)` respectively. Adding the two lengths gives
+`π - α` in both cases `α ≤ π/2` and `α > π/2`. -/
 lemma angular_measure_two_halfplanes {α : ℝ} (h0 : 0 ≤ α) (hpi : α ≤ Real.pi) :
     volume ({θ : ℝ | Real.cos θ ≤ 0 ∧ Real.cos (θ - α) ≤ 0} ∩
         Set.Ioo (-Real.pi) Real.pi)
@@ -296,5 +311,3 @@ lemma angular_measure_two_halfplanes {α : ℝ} (h0 : 0 ≤ α) (hpi : α ≤ Re
 
 end ThresholdFunctions
 end BooleanAnalysis
-
-#min_imports
