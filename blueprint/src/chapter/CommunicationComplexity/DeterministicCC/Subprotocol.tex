@@ -808,3 +808,107 @@ Alice's reach set for $s$, or $y$ fails to lie in Bob's reach set for $s$. Then
 executing the test subprotocol built from $s$, $q_{\mathrm{in}}$, and $q_{\mathrm{out}}$
 on $(x, y)$ yields the same output as executing $q_{\mathrm{out}}$ on $(x, y)$.
 \end{lemma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Children of an Alice node are subprotocols]
+\lean{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.alice_child}
+\label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.alice_child}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+Let $f : X \to \{0,1\}$ be an Alice decision function and let $P$ assign a protocol
+$P(b)$ to each bit $b$. Then for every bit $b$, the child $P(b)$ is a subprotocol of the
+Alice node $\texttt{alice}\; f\; P$.
+\end{lemma}
+
+\begin{lemma}[Children of a Bob node are subprotocols]
+\lean{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.bob_child}
+\label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.bob_child}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
+Let $f : Y \to \{0,1\}$ be a Bob decision function and let $P$ assign a protocol $P(b)$
+to each bit $b$. Then for every bit $b$, the child $P(b)$ is a subprotocol of the Bob
+node $\texttt{bob}\; f\; P$.
+\end{lemma}
+
+\begin{lemma}[Balanced child-selection step]
+\lean{CommunicationComplexity.Deterministic.Protocol.balanced_children}
+\label{CommunicationComplexity.Deterministic.Protocol.balanced_children}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.numLeaves}
+Let $p$ be a protocol, let $P(\mathrm{false})$ and $P(\mathrm{true})$ be two protocols
+that are both subprotocols of $p$, and let $n$ be a natural number with
+$3\,(\ell(P(\mathrm{false})) + \ell(P(\mathrm{true}))) \ge 2n$, where $\ell(\cdot)$ denotes
+the number of leaves. Suppose further that for each bit $b$ with $3\,\ell(P(b)) \ge 2n$
+there is a subprotocol $s$ of $P(b)$ with $n \le 3\,\ell(s) < 2n$. Then there is a
+subprotocol $s$ of $p$ with $n \le 3\,\ell(s) < 2n$.
+\end{lemma}
+
+\begin{lemma}[Leaf-count step for path erasure]
+\lean{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves_step}
+\label{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves_step}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.numLeaves}
+Let $P$ assign a protocol to each bit, let $b$ be a bit, and let $s$ be a subprotocol of
+$P(b)$ witnessed by a subprotocol path. If $e = \ell(P(b)) - \ell(s) + 1$ (truncated
+subtraction on $\mathbb{N}$), then replacing the leaf count of branch $b$ by $e$ in the sum
+of the two children's leaf counts gives
+\[
+  \ell(P(\mathrm{false})) + \ell(P(\mathrm{true})) - \ell(s) + 1 ,
+\]
+i.e.\ $\ell(P(\mathrm{false})) + e = \ell(P(\mathrm{false})) + \ell(P(\mathrm{true})) - \ell(s) + 1$
+when $b = \mathrm{true}$, and $e + \ell(P(\mathrm{true}))$ equals the same quantity when
+$b = \mathrm{false}$.
+\end{lemma}
+
+\begin{lemma}[One-branch step: erasure preserves runs off the path]
+\lean{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside_branch}
+\label{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside_branch}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.erase_numLeaves, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
+Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $(x,y)$ be an input
+pair, and let $N$ be a node constructor (an Alice or Bob node) such that for every
+family $Q$ of children, running $N(Q)$ on $(x,y)$ is the same as running $Q(c)$ on $(x,y)$
+for a fixed bit $c$. Let $P$ be a family of children with $P(b) = r$, and let $Q$ be the
+family obtained from $P$ by replacing the branch $b$ by the erasure of $h_s$ while keeping
+the sibling $Q(\neg b) = P(\neg b)$. Assume that if $(x,y)$ reaches $s$ along the path
+then $c \ne b$, and that (inductively) if $(x,y)$ does not reach $s$ along the path then
+the erasure of $h_s$ runs like $r$ on $(x,y)$. Then $N(Q)$ and $N(P)$ produce the same
+output on $(x,y)$.
+\end{lemma}
+
+\begin{lemma}[One-branch step: leaf count after path deletion]
+\lean{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_branch}
+\label{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_branch}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt}
+Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $P$ be a family of
+children with $P(b) = r$, and let $N$ be a node constructor whose leaf count is the sum of
+its two children's leaf counts. Let $Q$ be a rebuilding map with $Q(q_c)(b) = q_c$ and
+$Q(q_c)(\neg b) = P(\neg b)$, and suppose $q$ is the result of deleting along the path
+inside branch $b$: $q = P(\neg b)$ if the deletion of $h_s$ returns nothing, and
+$q = N(Q(q_c))$ if it returns $q_c$. Assume (inductively) that whenever the deletion of
+$h_s$ returns some $q'$ one has $\ell(q') = \ell(r) - \ell(s)$. Then
+\[
+  \ell(q) = \ell(N(P)) - \ell(s) .
+\]
+\end{lemma}
+
+\begin{lemma}[One-branch step: deletion preserves runs off the path]
+\lean{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_branch}
+\label{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_branch}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.run}
+Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $(x,y)$ be an input
+pair, let $P$ be a family of children with $P(b) = r$, and let $N$ be a node constructor
+such that running $N(Q)$ on $(x,y)$ is the same as running $Q(c)$ on $(x,y)$ for a fixed
+bit $c$ and every family $Q$. Let $Q$ be a rebuilding map with $Q(q_c)(b) = q_c$ and
+$Q(q_c)(\neg b) = P(\neg b)$, and suppose $q$ is the result of deleting along the path
+inside branch $b$: $q = P(\neg b)$ if the deletion of $h_s$ returns nothing, and
+$q = N(Q(q_c))$ if it returns $q_c$. Assume that if $(x,y)$ reaches $s$ along the path
+then $c \ne b$, and (inductively) that whenever the deletion of $h_s$ returns some $q'$
+and $(x,y)$ does not reach $s$ along the path, $q'$ runs like $r$ on $(x,y)$. Then $q$
+and $N(P)$ produce the same output on $(x,y)$.
+\end{lemma}

@@ -13,16 +13,38 @@ set_option autoImplicit false
 /-!
 # Deterministic Communication Protocol
 
+The two-party deterministic model of Yao [RY20, Ch. 1]: a protocol is a binary tree whose
+internal nodes are owned by Alice or Bob and send one bit computed from the owner's input;
+its complexity is the depth of the tree.
+
+## Main definitions
+
+- `Protocol`: deterministic two-party protocols as an inductive tree with `output`, `alice`
+  and `bob` nodes
+- `Protocol.run`: execute a protocol on inputs `x : X` and `y : Y`, returning the output value
+- `Protocol.complexity`: worst-case number of bits exchanged by a protocol
+- `Protocol.Equiv`, `Protocol.Computes`: extensional equality of protocols and the predicate
+  "protocol `p` computes `f`"
+- `Protocol.comap`: pull back a protocol along input-transforming functions
+- `Protocol.swap`: swap the roles of Alice and Bob in a protocol
+
 ## Main results
 
-- `Protocol.run`: Execute a protocol on inputs `x : X` and `y : Y`, returning the output value
-- `Protocol.complexity`: Worst-case number of bits exchanged by a protocol
-- `Protocol.comap`: Pull back a protocol along input-transforming functions
-- `Protocol.swap`: Swap the roles of Alice and Bob in a protocol
+- `Protocol.swap_run`, `Protocol.swap_complexity`, `Protocol.swap_swap`: swapping preserves
+  the outcome (with arguments exchanged) and the complexity, and is an involution
+- `Protocol.comap_run`, `Protocol.comap_complexity`: pulling back preserves the outcome
+  (composed with the input maps) and the complexity
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+* [Yao79] A. C.-C. Yao, "Some complexity questions related to distributive computing",
+  *STOC 1979*, pp. 209–213.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -32,7 +54,9 @@ namespace Deterministic
 /-- A deterministic two-party communication protocol where Alice holds input `x : X`,
 Bob holds input `y : Y`, and the protocol computes a value of type `α`.
 At each step, either Alice or Bob sends a single bit based on their input,
-and the protocol branches accordingly. -/
+and the protocol branches accordingly. [RY20, Ch. 1, Definition (2-party deterministic
+protocol)]. The tree is represented inductively: a leaf carries the output value, and an
+internal node carries its owner's message function together with the two subtrees. -/
 inductive Protocol (X Y α : Type*) where
   | output (val : α) : Protocol X Y α
   | alice (f : X → Bool) (P : Bool → Protocol X Y α) : Protocol X Y α
@@ -42,14 +66,19 @@ namespace Protocol
 
 variable {X Y α : Type*}
 
-/-- Executes the protocol on inputs `x` and `y`, returning the output value. -/
+/-- Executes the protocol on inputs `x` and `y`, returning the output value: starting at
+the root, the owner of the current node evaluates its message function on its own input and
+both parties descend to the indicated child, until a leaf is reached.
+[RY20, Ch. 1, Definition (outcome)]. -/
 def run (p : Protocol X Y α) (x : X) (y : Y) : α :=
   match p with
   | .output val => val
   | .alice f P => (P (f x)).run x y
   | .bob f P => (P (f y)).run x y
 
-/-- The communication complexity of a protocol, i.e. the worst-case number of bits exchanged. -/
+/-- The communication complexity of a protocol, i.e. the worst-case number of bits exchanged,
+which is the depth of the protocol tree.
+[RY20, Ch. 1, Definition (computing a function, complexity, rounds)]. -/
 def complexity : Protocol X Y α → ℕ
   | .output _ => 0
   | .alice _ P => 1 + max (P false).complexity (P true).complexity
@@ -59,7 +88,10 @@ def complexity : Protocol X Y α → ℕ
 def Equiv (p q : Protocol X Y α) : Prop :=
   p.run = q.run
 
-/-- A protocol computes a function `f` if it produces `f x y` on all inputs `(x, y)`. -/
+/-- A protocol computes a function `f` if it produces `f x y` on all inputs `(x, y)`.
+[RY20, Ch. 1, Definition (computing a function, complexity, rounds)]. Deviation: the output
+type `α` is arbitrary rather than Boolean, and the leaf must output `f x y` itself rather
+than merely determine it. -/
 def Computes (p : Protocol X Y α) (f : X → Y → α) : Prop :=
   p.run = f
 
@@ -70,11 +102,14 @@ def swap : Protocol X Y α → Protocol Y X α
   | .alice f P => .bob f (fun b => (P b).swap)
   | .bob f P => .alice f (fun b => (P b).swap)
 
+/-- Running the swapped protocol on `(y, x)` gives the same output as running the original
+protocol on `(x, y)`. -/
 @[simp]
 theorem swap_run (p : Protocol X Y α) (x : X) (y : Y) :
     p.swap.run y x = p.run x y := by
   induction p <;> simp [swap, run, *]
 
+/-- Swapping the roles of Alice and Bob does not change the complexity of a protocol. -/
 @[simp]
 theorem swap_complexity (p : Protocol X Y α) :
     p.swap.complexity = p.complexity := by
@@ -113,12 +148,15 @@ def comap {X' Y' : Type*} (p : Protocol X Y α) (fX : X' → X) (fY : Y' → Y) 
   | .alice f P => .alice (f ∘ fX) (fun b => (P b).comap fX fY)
   | .bob f P => .bob (f ∘ fY) (fun b => (P b).comap fX fY)
 
+/-- Running the pulled-back protocol on `(x', y')` gives the same output as running the
+original protocol on `(fX x', fY y')`. -/
 @[simp]
 theorem comap_run {X' Y' : Type*} (p : Protocol X Y α) (fX : X' → X) (fY : Y' → Y)
     (x' : X') (y' : Y') :
     (p.comap fX fY).run x' y' = p.run (fX x') (fY y') := by
   induction p <;> simp [comap, run, *]
 
+/-- Pulling a protocol back along input maps does not change its complexity. -/
 @[simp]
 theorem comap_complexity {X' Y' : Type*} (p : Protocol X Y α) (fX : X' → X) (fY : Y' → Y) :
     (p.comap fX fY).complexity = p.complexity := by

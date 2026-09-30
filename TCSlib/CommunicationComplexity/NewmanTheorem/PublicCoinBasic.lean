@@ -15,14 +15,38 @@ set_option autoImplicit false
 /-!
 # Public-Coin Communication Protocol
 
+A public-coin protocol is a randomized protocol in which Alice and Bob share one random string
+`ω` [RY20, Ch. 3, §Variants of Randomized Protocols: public coins]. It is modelled as a
+deterministic protocol (`Deterministic.Protocol`) whose inputs are the pairs `(ω, x)` and
+`(ω, y)`, so that every result about deterministic protocols applies verbatim once the
+randomness is fixed. Correctness is measured by the worst-case error over inputs, with the
+probability taken over the shared randomness.
+
+## Main definitions
+
+- `PublicCoin.Protocol`: a deterministic protocol on `(Ω × X) × (Ω × Y)`, i.e. one where
+  both players see the shared randomness `ω : Ω`.
+- `PublicCoin.Protocol.output`, `PublicCoin.Protocol.alice`, `PublicCoin.Protocol.bob`: the
+  constructors, with message functions taking the input and the shared randomness.
+- `PublicCoin.Protocol.rrun`: the output of the protocol on inputs `x`, `y` and randomness
+  `ω`.
+- `PublicCoin.Protocol.ApproxSatisfies`, `PublicCoin.Protocol.ApproxComputes`: a public-coin
+  protocol `ε`-computes a function if on every input the probability of an incorrect answer
+  is at most `ε`; the predicate version replaces "incorrect" by the failure of a relation.
+
 ## Main results
 
-- `PublicCoin.Protocol`: A deterministic protocol where both players see shared randomness
-- `PublicCoin.Protocol.ApproxComputes`: A public-coin protocol ε-computes a function if the probability of an incorrect answer is at most ε
+- `PublicCoin.Protocol.ApproxComputes_eq_ApproxSatisfies`: `ε`-computing `f` is the same as
+  `ε`-satisfying the relation "the output equals `f x y`".
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University Press,
+  1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -31,9 +55,10 @@ open MeasureTheory ProbabilityTheory
 
 namespace PublicCoin
 
-/-- A public-coin protocol is a deterministic protocol where both
-Alice and Bob see shared randomness `Ω`. Alice's input is `(ω, x)`
-and Bob's is `(ω, y)`. -/
+/-- A public-coin protocol with randomness `Ω`, inputs `X`, `Y` and outputs `α`: a
+deterministic protocol where both Alice and Bob see the shared random string `ω : Ω` in
+addition to their own inputs, so Alice's input is `(ω, x)` and Bob's is `(ω, y)`
+[RY20, Ch. 3, §Variants of Randomized Protocols: public coins]. -/
 abbrev Protocol (Ω : Type*) (X Y α : Type*) :=
   Deterministic.Protocol (Ω × X) (Ω × Y) α
 
@@ -41,7 +66,8 @@ namespace Protocol
 
 variable {Ω : Type*} {X Y α : Type*}
 
-/-- Output node for a public-coin protocol. -/
+/-- The public-coin protocol that sends no message and outputs `a` on every input and every
+random string. -/
 def output (a : α) : Protocol Ω X Y α :=
   Deterministic.Protocol.output a
 
@@ -59,11 +85,15 @@ def bob (f : Y → Ω → Bool)
     Protocol Ω X Y α :=
   Deterministic.Protocol.bob (fun ⟨ω, y⟩ => f y ω) P
 
-/-- Execute a public-coin protocol on inputs `x`, `y` with
-shared randomness `ω`. -/
+/-- The output of the public-coin protocol `p` on inputs `x`, `y` when the shared random
+string is `ω`: the deterministic run of `p` on `(ω, x)` and `(ω, y)`
+[RY20, Ch. 3, §Variants of Randomized Protocols: public coins]. -/
 def rrun (p : Protocol Ω X Y α) (x : X) (y : Y) (ω : Ω) : α :=
   p.run (ω, x) (ω, y)
 
+/-- Running a public-coin protocol on inputs `x`, `y` with randomness `ω` is the same as
+running the underlying deterministic protocol on `(ω, x)` and `(ω, y)`. Definitional
+unfolding lemma for `rrun`. -/
 @[simp]
 theorem rrun_eq (p : Protocol Ω X Y α) (x : X) (y : Y) (ω : Ω) :
     p.rrun x y ω = p.run (ω, x) (ω, y) := rfl
@@ -81,7 +111,8 @@ def ApproxSatisfies
 
 /-- A public-coin protocol `ε`-computes a function `f` if for every
 input `(x, y)`, the probability (under the shared coin-flip measure)
-of producing an incorrect answer is at most `ε`. -/
+of producing an incorrect answer is at most `ε`; this is worst-case error `ε`
+[RY20, Ch. 3, §Variants of Randomized Protocols: worst-case error e]. -/
 noncomputable def ApproxComputes
     [MeasureSpace Ω]
     (p : Protocol Ω X Y α) (f : X → Y → α) (ε : ℝ) : Prop :=
@@ -89,6 +120,8 @@ noncomputable def ApproxComputes
     (volume {ω : Ω |
       p.rrun x y ω ≠ f x y}).toReal ≤ ε
 
+/-- A public-coin protocol `ε`-computes `f` if and only if it `ε`-satisfies the relation
+"the output on `(x, y)` equals `f x y`"; the two propositions are equal. -/
 theorem ApproxComputes_eq_ApproxSatisfies
     [MeasureSpace Ω]
     (p : Protocol Ω X Y α) (f : X → Y → α) (ε : ℝ) :

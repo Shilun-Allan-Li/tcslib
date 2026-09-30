@@ -18,6 +18,11 @@ set_option autoImplicit false
 /-!
 # Minimax Principle for Public-Coin Communication Complexity
 
+## Main definitions
+
+- `Deterministic.Protocol.distributionalError`: the probability, under a distribution `μ`
+  on `X × Y`, that a deterministic protocol's output disagrees with `f`
+
 ## Main results
 
 - `PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt`: Yao's minimax
@@ -26,7 +31,17 @@ set_option autoImplicit false
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [Rou16] T. Roughgarden, *Communication Complexity (for Algorithm Designers)*,
+  Foundations and Trends in Theoretical Computer Science 11(3–4), 2016;
+  arXiv:1509.06257.
+* [Yao77] A. C.-C. Yao, "Probabilistic computations: toward a unified measure of
+  complexity", *FOCS 1977*, pp. 222–227.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -40,8 +55,9 @@ namespace Protocol
 variable {X Y α : Type*}
 
 /-- The distributional error of a deterministic protocol with respect
-to a distribution `μ` on `X × Y`: the probability that the protocol
-output disagrees with `f`. -/
+to a distribution `μ` on `X × Y`: the probability, for an input `(x, y)` drawn from `μ`,
+that the protocol's output disagrees with `f x y`.
+[RY20, Ch. 3, §Variants of Randomized Protocols: average-case error e w.r.t. µ]. -/
 noncomputable def distributionalError
     (p : Protocol X Y α)
     (μ : FiniteProbabilitySpace (X × Y))
@@ -55,6 +71,13 @@ end Deterministic
 
 namespace PublicCoin
 
+/-- Fubini for the failure event of a public-coin protocol: averaging over the coin tape
+the `μ`-probability that the protocol fails equals averaging over inputs (under `μ`) the
+probability over the coin tape that the protocol fails.
+
+**Proof sketch.** Write each inner probability as the integral of the failure indicator
+on a finite space, so both sides are iterated integrals of the same indicator on
+`CoinTape m × (X × Y)`; then swap the order of integration. -/
 private lemma failureIntegral_swap
     {X Y α : Type*} {m : ℕ} [μ : FiniteProbabilitySpace (X × Y)]
     (p : Protocol (CoinTape m) X Y α)
@@ -87,10 +110,24 @@ private lemma failureIntegral_swap
           (fun _ => (1 : ℝ)) xy).symm
 
 open Classical in
-/-- Yao's minimax principle (one direction): if there exists a joint
-distribution μ over X × Y such that every deterministic protocol of
-complexity ≤ n fails with probability > ε under μ, then the public-coin
-randomized communication complexity of f at error ε is greater than n. -/
+/-- Yao's minimax principle (the easy direction): if there is a distribution `μ` on
+`X × Y` such that every deterministic protocol of complexity at most `n` has
+distributional error greater than `ε` under `μ`, then the public-coin randomized
+communication complexity of `f` at error `ε` is greater than `n`.
+[RY20, Thm 3.3] (easy direction) / [Rou16, Lemma 4.10]; historically [Yao77].
+Deviation: stated in the strict form `n < R^pub_ε(f)` from "every `n`-bit deterministic
+protocol errs with probability `> ε` under `μ`", rather than as the equality of the
+worst-case and the maximal distributional complexities.
+
+**Proof sketch.** Step 1: argue by contradiction: if the public-coin complexity were at
+most `n`, there would be a public-coin protocol `p` on some coin tape with complexity at
+most `n` and worst-case error at most `ε`. Step 2: for every fixed coin tape `ω`, the
+deterministic protocol obtained by fixing the coins of `p` has complexity at most `n`,
+so by hypothesis its failure probability `g(ω)` under `μ` exceeds `ε`; hence the average
+of `g` over the coin tape exceeds `ε`. Step 3: for every fixed input `(x, y)`, the failure
+probability `h(x, y)` over the coin tape is at most `ε`, so the average of `h` under `μ`
+is at most `ε`. Step 4: by Fubini (`failureIntegral_swap`) the two averages are equal,
+a contradiction. -/
 theorem lt_communicationComplexity_of_forall_distributionalError_gt
     {X Y α : Type*}
     (f : X → Y → α) (ε : ℝ) (n : ℕ)
@@ -99,13 +136,13 @@ theorem lt_communicationComplexity_of_forall_distributionalError_gt
       p.complexity ≤ n →
       p.distributionalError μ f > ε) :
     n < communicationComplexity f ε := by
-  -- Prove by contradiction: suppose CC(f, ε) ≤ n
+  -- Step 1: prove by contradiction: suppose CC(f, ε) ≤ n
   rw [show (n : ENat) < communicationComplexity f ε ↔
     ¬(communicationComplexity f ε ≤ n) from not_le.symm]
   intro hle
   -- Get a randomized protocol p with complexity ≤ n and error ≤ ε
   obtain ⟨m, p, hp, hc⟩ := (communicationComplexity_le_iff f ε n).mp hle
-  -- By h, each p.toDeterministic ω has failure prob > ε under μ
+  -- Step 2: by h, each p.toDeterministic ω has failure prob > ε under μ
   have hdet_fail : ∀ ω : CoinTape m,
       volume.real {xy : X × Y | p.rrun xy.1 xy.2 ω ≠ f xy.1 xy.2} > ε := by
     intro ω
@@ -117,7 +154,7 @@ theorem lt_communicationComplexity_of_forall_distributionalError_gt
   set g : CoinTape m → ℝ := fun ω =>
     volume.real {xy : X × Y | p.rrun xy.1 xy.2 ω ≠ f xy.1 xy.2}
   have hg_gt : ∀ ω, ε < g ω := hdet_fail
-  -- h(x,y) = vol_CoinTape({ω | p fails on (x,y)}), satisfies h(x,y) ≤ ε
+  -- Step 3: h(x,y) = vol_CoinTape({ω | p fails on (x,y)}), satisfies h(x,y) ≤ ε
   set h' : X × Y → ℝ := fun xy =>
     volume.real {ω : CoinTape m | p.rrun xy.1 xy.2 ω ≠ f xy.1 xy.2}
   have hh_le : ∀ xy : X × Y, h' xy ≤ ε := fun ⟨x, y⟩ => hp x y
@@ -127,7 +164,7 @@ theorem lt_communicationComplexity_of_forall_distributionalError_gt
   -- Upper bound: ∫_{(x,y)} h(x,y) ≤ ε (since h ≤ ε pointwise)
   have h_upper : ∫ xy : X × Y, h' xy ≤ ε :=
     FiniteProbabilitySpace.integral_le_of_le hh_le
-  -- Fubini: average first over randomness or first over inputs.
+  -- Step 4: Fubini: average first over randomness or first over inputs.
   have h_fubini : ∫ ω, g ω = ∫ xy : X × Y, h' xy := by
     simpa [g, h'] using failureIntegral_swap (p := p) (f := f)
   linarith

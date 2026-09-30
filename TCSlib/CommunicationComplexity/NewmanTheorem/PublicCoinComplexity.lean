@@ -17,19 +17,43 @@ set_option autoImplicit false
 /-!
 # Public-Coin Randomized Communication Complexity
 
+The `ε`-error public-coin randomized communication complexity `R^pub_ε(f)` of a function `f`
+is the least communication cost of a public-coin protocol that computes `f` with worst-case
+error at most `ε` [RY20, Ch. 3, §Variants of Randomized Protocols]. Here the shared
+randomness ranges over coin tapes `CoinTape n` of every finite length `n`, the infimum is
+taken in `ℕ∞` (so it is `⊤` when no protocol qualifies, e.g. for `ε < 0` and nonempty
+inputs), and the
+characterisations below let one pass freely between binary protocols, finite-message
+protocols over coin tapes, and finite-message protocols over arbitrary finite probability
+spaces (at the price of an arbitrarily small increase in the error).
+
+## Main definitions
+
+- `PublicCoin.communicationComplexity`: the `ε`-error public-coin randomized communication
+  complexity of a function, defined as the minimum worst-case bits exchanged over all
+  public-coin protocols computing the function with error at most `ε`.
+
 ## Main results
 
-- `PublicCoin.communicationComplexity`: The ε-error public-coin randomized communication
-  complexity of a function, defined as the minimum worst-case bits exchanged over all
-  public-coin protocols computing the function with error at most ε.
-- `PublicCoin.communicationComplexity_le_iff`: Characterization of when the complexity
-  is at most m in terms of existence of an approximating protocol.
-- `PublicCoin.communicationComplexity_mono`: Communication complexity is monotone in ε:
+- `PublicCoin.communicationComplexity_le_iff`,
+  `PublicCoin.le_communicationComplexity_iff`: the complexity is at most `m` if and only if
+  some approximating protocol has complexity at most `m`, and at least `m` if and only if
+  every approximating protocol has complexity at least `m`.
+- `PublicCoin.communicationComplexity_le_iff_finiteMessage`: the same upper-bound
+  characterisation with finite-message protocols in place of binary ones.
+- `PublicCoin.communicationComplexity_mono`: communication complexity is monotone in `ε`:
   allowing more error makes computation no harder.
+- `PublicCoin.communicationComplexity_le_of_finiteMessage`: a finite-message protocol over
+  any finite probability space with error `ε' < ε` bounds the complexity at error `ε`.
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University Press,
+  1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -38,10 +62,12 @@ open MeasureTheory ProbabilityTheory
 
 namespace PublicCoin
 
-/-- The `ε`-error public-coin randomized communication complexity of `f`,
+/-- The `ε`-error public-coin randomized communication complexity `R^pub_ε(f)` of `f`,
 defined as the minimum worst-case number of bits exchanged over all
 public-coin randomized protocols that compute `f` with error at most
-`ε` on every input. -/
+`ε` on every input [RY20, Ch. 3, §Variants of Randomized Protocols]. Deviation: the minimum
+is an infimum in `ℕ∞` (equal to `⊤` if no protocol qualifies), and the shared randomness is
+a coin tape `CoinTape n` of some finite length `n`, quantified over all `n`. -/
 noncomputable def communicationComplexity
     {X Y α} (f : X → Y → α) (ε : ℝ) : ENat :=
   ⨅ (n : ℕ)
@@ -49,6 +75,9 @@ noncomputable def communicationComplexity
     (_ : p.ApproxComputes f ε),
     (p.complexity : ENat)
 
+/-- The `ε`-error public-coin communication complexity of `f` is at most `m` if and only if
+there is a public-coin protocol, over a coin tape of some length `n`, that `ε`-computes `f`
+with complexity at most `m`. -/
 theorem communicationComplexity_le_iff
     {X Y α} (f : X → Y → α) (ε : ℝ) (m : ℕ) :
     communicationComplexity f ε ≤ m ↔
@@ -58,6 +87,9 @@ theorem communicationComplexity_le_iff
   unfold communicationComplexity
   simp only [Internal.enat_iInf_le_coe_iff, Nat.cast_le, exists_prop]
 
+/-- The `ε`-error public-coin communication complexity of `f` is at least `m` if and only if
+every public-coin protocol over a coin tape (of any length) that `ε`-computes `f` has
+complexity at least `m`. This is the form in which lower bounds are proved. -/
 theorem le_communicationComplexity_iff
     {X Y α} (f : X → Y → α) (ε : ℝ) (m : ℕ) :
     (m : ENat) ≤ communicationComplexity f ε ↔
@@ -67,6 +99,18 @@ theorem le_communicationComplexity_iff
   unfold communicationComplexity
   simp only [le_iInf_iff, Nat.cast_le]
 
+/-- The `ε`-error public-coin communication complexity of `f` is at most `m` if and only if
+there is a public-coin *finite-message* protocol, over a coin tape of some length `n`, that
+`ε`-computes `f` with complexity at most `m`. Both directions convert the protocol with
+`ofProtocol` / `toProtocol`, which preserve the run function and the complexity.
+
+**Proof sketch.** Rewrite the left side (`communicationComplexity_le_iff`) as the existence of
+a binary protocol that `ε`-computes `f` with complexity at most the bound. Forward: given a
+binary protocol, `ofProtocol` yields a finite-message protocol with the same run on every
+input and the same complexity, so the error bound and the complexity bound carry over.
+Backward: `toProtocol` turns a finite-message protocol into a binary one; unfolding the
+failure event on each input and rewriting with `toProtocol_run` shows the error is unchanged,
+and the complexity is preserved. -/
 theorem communicationComplexity_le_iff_finiteMessage
     {X Y α} (f : X → Y → α) (ε : ℝ) (m : ℕ) :
     communicationComplexity f ε ≤ m ↔
@@ -95,8 +139,9 @@ theorem communicationComplexity_le_iff_finiteMessage
     simp only [Deterministic.FiniteMessage.Protocol.toProtocol_run]
     exact hp x y
 
-/-- Communication complexity is monotone in ε: allowing more error can
-only make computation easier. -/
+/-- Public-coin communication complexity is antitone in the error: if `ε' ≤ ε` then the
+complexity at error `ε` is at most the complexity at error `ε'`, since allowing more error
+can only make computation easier. -/
 theorem communicationComplexity_mono
     {X Y α} (f : X → Y → α) {ε ε' : ℝ} (h : ε' ≤ ε) :
     communicationComplexity f ε ≤ communicationComplexity f ε' := by
@@ -109,8 +154,11 @@ theorem communicationComplexity_mono
       ⟨n, p, fun x y => le_trans (hp x y) h, hc⟩
 
 /-- If a public-coin finite-message protocol over an arbitrary finite
-probability space ε'-computes f with ε' < ε, then the public-coin
-communication complexity at error ε is at most the protocol's complexity. -/
+probability space `ε'`-computes `f` with `ε' < ε`, then the public-coin
+communication complexity at error `ε` is at most the protocol's complexity. The strict
+inequality pays for replacing the given probability space by a coin tape via `toCoinTape`,
+which approximates the distribution to within the slack `ε - ε'` at no cost in
+communication. -/
 theorem communicationComplexity_le_of_finiteMessage
     {X Y α} {Ω : Type*} [FiniteProbabilitySpace Ω]
     (f : X → Y → α) (ε ε' : ℝ) (hε : ε' < ε)

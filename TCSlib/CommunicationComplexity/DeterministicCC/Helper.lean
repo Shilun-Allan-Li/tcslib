@@ -15,15 +15,32 @@ set_option autoImplicit false
 /-!
 # Boolean Helper Definitions for Communication Complexity
 
+Basic vocabulary for Boolean inputs `Fin n → Bool`: the all-zero input, the `{0,1} → {±1}`
+encoding of [OD14, §1.1], and flipping a single coordinate.
+
+## Main definitions
+
+- `CommunicationComplexity.BoolInput`, `CommunicationComplexity.zeroInput`: `n`-bit Boolean
+  inputs and the all-zero input
+- `CommunicationComplexity.boolSign`: the `±1` sign attached to a Boolean value
+  (`false` → `1`, `true` → `-1`)
+- `CommunicationComplexity.flipAt`: flipping one coordinate of a Boolean input
+
 ## Main results
 
-- `CommunicationComplexity.boolSign`: The `±1` sign attached to a Boolean value (`false` → `1`, `true` → `-1`)
-- `CommunicationComplexity.flipAt`: Flipping one coordinate of a Boolean input
-- `CommunicationComplexity.boolSign_xor`: `boolSign` turns xor into multiplication in `{±1}`
+- `CommunicationComplexity.boolSign_xor`, `CommunicationComplexity.boolSign_sum`: `boolSign`
+  turns xor (and Boolean sums) into multiplication in `{±1}`
+- `CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator`: the product of two
+  signs is `1 - 2·[a ≠ b]`
+- `CommunicationComplexity.flipAt_flipAt`, `CommunicationComplexity.flipAt_bijective`:
+  flipping a coordinate is an involution, hence a bijection
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [OD14] R. O'Donnell, *Analysis of Boolean Functions*, Cambridge University
+  Press, 2014.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -45,11 +62,13 @@ lemma exists_true_of_ne_zeroInput {n : ℕ} {x : BoolInput n} (hx : x ≠ zeroIn
   · cases h : x i <;> simp [zeroInput, h] at *
 
 /-- The `±1` sign attached to a Boolean value. We use `1` for `false`
-and `-1` for `true`. -/
+and `-1` for `true`, i.e. the encoding `b ↦ (-1)^b` of [OD14, §1.1]. -/
 def boolSign (b : Bool) : ℝ :=
   if b then -1 else 1
 
-/-- `boolSign` turns xor into multiplication in `{±1}`. -/
+/-- The sign of an exclusive or is the product of the signs: `boolSign (a xor b)` equals
+`boolSign a * boolSign b`. This is the one-bit case of the character identity
+`χ_S · χ_T = χ_{S △ T}` [OD14, §1.3]. -/
 @[simp] lemma boolSign_xor (a b : Bool) :
     boolSign (Bool.xor a b) = boolSign a * boolSign b := by
   cases a <;> cases b <;> norm_num [boolSign]
@@ -77,14 +96,17 @@ lemma boolSign_mul_boolSign_eq_sub_two_indicator
 def flipAt {n : ℕ} (i : Fin n) (x : BoolInput n) : BoolInput n :=
   Function.update x i (!(x i))
 
+/-- Flipping coordinate `i` negates the value at coordinate `i`. -/
 @[simp] lemma flipAt_apply_same {n : ℕ} (i : Fin n) (x : BoolInput n) :
     flipAt i x i = !(x i) := by
   simp [flipAt]
 
+/-- Flipping coordinate `i` leaves every other coordinate `j ≠ i` unchanged. -/
 @[simp] lemma flipAt_apply_ne {n : ℕ} {i j : Fin n} (hij : j ≠ i) (x : BoolInput n) :
     flipAt i x j = x j := by
   simp [flipAt, hij]
 
+/-- Flipping the same coordinate twice returns the original input. -/
 @[simp] lemma flipAt_flipAt {n : ℕ} (i : Fin n) (x : BoolInput n) :
     flipAt i (flipAt i x) = x := by
   ext j
@@ -93,6 +115,7 @@ def flipAt {n : ℕ} (i : Fin n) (x : BoolInput n) : BoolInput n :=
     simp [flipAt]
   · simp [flipAt, hij]
 
+/-- Flipping a fixed coordinate is a bijection of `n`-bit inputs (it is its own inverse). -/
 lemma flipAt_bijective {n : ℕ} (i : Fin n) :
     Function.Bijective (flipAt i : BoolInput n → BoolInput n) := by
   refine Function.bijective_iff_has_inverse.mpr ?_

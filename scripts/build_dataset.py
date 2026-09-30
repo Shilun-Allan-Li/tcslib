@@ -446,10 +446,16 @@ def find_keyword_idx(lines: list[str], start: int):
     take the first real keyword at/after that line — which is this declaration's own.
     """
     lo = max(0, start - 1)
+    depth = 0          # block-comment nesting from the scan start (a docstring opens one)
     for i in range(lo, len(lines)):
-        m = KIND_RE.match(lines[i])
-        if m:
-            return i, m.group(1)
+        line = lines[i]
+        # A docstring line can begin with a keyword ("instance, assembled from ...")
+        # and KIND_RE would take it for the declaration; only match outside comments.
+        if depth == 0 and not line.lstrip().startswith(("--", "/-")):
+            m = KIND_RE.match(line)
+            if m:
+                return i, m.group(1)
+        depth = max(0, depth + line.count("/-") - line.count("-/"))
     return None, None
 
 
@@ -1037,6 +1043,12 @@ def build_proof(target, index, get_items, mod_rank, mod_imports, short_map, by_m
     order: list[str] = []
 
     for m in mods:
+        # Each module's items sit in their own `section`: `set_option`, `universe` and
+        # `open` commands are section-scoped, so a module's options (e.g. `autoImplicit
+        # false`) and universe names no longer leak into the next module's items, and a
+        # module's `universe u` is not re-declared at top level by the module after it.
+        # This is what "for the rest of the original module" meant in the first place.
+        parts.append("section")
         lines, items, by_kidx, _ext = get_items(m)
         kn = by_mod_kidx.get(m, {})                    # kidx -> declaration name
         needed_ids = set()
@@ -1072,11 +1084,15 @@ def build_proof(target, index, get_items, mod_rank, mod_imports, short_map, by_m
             parts.append("")
             emitted.add(nm)
             order.append(nm)
+        parts.append("end")
+        parts.append("")
 
     # Namespace stubs: `open Foo` errors when namespace Foo is not registered yet, and
     # an emitted open may fire before (or without) any declaration in that namespace.
     # Scan the assembled body's open lines and pre-register every TCSlib namespace they
-    # mention. (Registering a namespace that later collides with a declaration name is
+    # mention. An `open Foo` that render_item hoisted out of `namespace NS` resolves
+    # relative to NS, so `NS.Foo` (any registered namespace ending in `.Foo`) is stubbed
+    # as well. (Registering a namespace that later collides with a declaration name is
     # legal Lean — cf. `List` the namespace vs `List` the inductive.)
     body = "\n".join(parts)
     stubs = []
@@ -1087,9 +1103,11 @@ def build_proof(target, index, get_items, mod_rank, mod_imports, short_map, by_m
             tok = tok.strip("()")
             if tok in ("scoped", "in") or not tok:
                 continue
-            if tok in global_ns and tok not in seen_stub:
-                seen_stub.add(tok)
-                stubs.append(f"namespace {tok}\nend {tok}")
+            for ns in sorted(global_ns):
+                if ns == tok or ns.endswith("." + tok):
+                    if ns not in seen_stub:
+                        seen_stub.add(ns)
+                        stubs.append(f"namespace {ns}\nend {ns}")
 
     head = imports + [""] + (stubs + [""] if stubs else [])
     text = "\n".join(head) + "\n" + body.rstrip() + "\n"
@@ -1176,6 +1194,46 @@ def make_proof_builder(graph, index):
         visible = import_closure(rec["module"])   # a decl can only reference its imports
         for tok in IDENT_RE.findall("\n".join(rec["slice"])):
             cand = tok if tok in pindex else short_map.get(tok.split(".")[-1])
+            if cand and cand != nm and pindex[cand]["module"] in visible:
+                deps.add(cand)
+        rec["all_deps"] = sorted(deps)
+
+    # The .ilean-derived graph also misses references inside `match` arms, `let rec` /
+    # `where` helpers and other nested scopes of INDEXED declarations (a flattened file
+    # then fails with "unknown constant"). Widen every declaration's deps with a
+    # conservative token scan: exact names, names relative to the declaration's own
+    # namespace (or an enclosing one), the parent of a dotted projection, and — for
+    # dot-free tokens only — an unambiguous short name. Only declarations in the
+    # module's import closure qualify, so a scan can add a real dependency but never
+    # one the original module could not see.
+    for nm, rec in pindex.items():
+        visible = import_closure(rec["module"])
+        ns = rec.get("namespace") or ""
+        prefixes = []
+        while ns:
+            prefixes.append(ns)
+            ns = ns.rpartition(".")[0]
+        deps = set(rec["all_deps"])
+        for tok in set(IDENT_RE.findall("\n".join(rec["slice"]))):
+            cand = None
+            if tok in pindex:
+                cand = tok
+            else:
+                for p in prefixes:
+                    if f"{p}.{tok}" in pindex:
+                        cand = f"{p}.{tok}"
+                        break
+                if cand is None and "." in tok:
+                    parent = tok.rsplit(".", 1)[0]
+                    if parent in pindex:
+                        cand = parent
+                    else:
+                        for p in prefixes:
+                            if f"{p}.{parent}" in pindex:
+                                cand = f"{p}.{parent}"
+                                break
+                elif cand is None and tok in short_map:
+                    cand = short_map[tok]
             if cand and cand != nm and pindex[cand]["module"] in visible:
                 deps.add(cand)
         rec["all_deps"] = sorted(deps)
