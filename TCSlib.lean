@@ -24,6 +24,10 @@ import TCSlib.CommunicationComplexity.NewmanTheorem
 import TCSlib.Complexity.NPReductions
 
 import TCSlib.Cryptography.SchnorrProtocol
+import TCSlib.Cryptography.SecretSharing
+import TCSlib.Cryptography.MPC
+
+import TCSlib.InformationTheory
 
 import TCSlib.GraphTheory.Kruskal
 
