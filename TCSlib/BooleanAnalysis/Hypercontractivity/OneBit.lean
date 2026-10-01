@@ -17,6 +17,11 @@ and proves both primal and dual noise-operator bounds.
 * `one_bit_2q_hypercontractivity`: `(2, q)` hypercontractivity for a single bit.
 * `two_point_ineq`: the core two-point inequality from which the `(p, 2)` estimate follows.
 * `noise_operator_duality`: self-adjointness of the one-bit noise operator.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, §9.3, especially Theorems 9.17--9.18 and Proposition 9.19.
 -/
 
 set_option maxHeartbeats 1600000
@@ -27,26 +32,23 @@ open BooleanAnalysis Real Bonami
 
 /-! ## Enumeration helpers for BoolCube 1 and Finset (Fin 1) -/
 
-/- O'Donnell, Theorem 9.18 (one-bit enumeration in the proof). -/
 private lemma boolCube1_univ :
     (Finset.univ : Finset (BoolCube 1)) =
     {fun _ => false, fun _ => true} := by decide
 
-/- O'Donnell, Theorem 9.18 (one-bit Fourier enumeration in the proof). -/
 private lemma finsetFin1_univ :
     (Finset.univ : Finset (Finset (Fin 1))) = {∅, {0}} := by decide
 
-/- O'Donnell, Theorem 9.18 (one-bit enumeration in the proof). -/
 private lemma boolCube1_ne :
     (fun _ : Fin 1 => false) ≠ (fun _ : Fin 1 => true) := by decide
 
-/- O'Donnell, Theorem 9.18 (one-bit Fourier enumeration in the proof). -/
 private lemma finsetFin1_ne : (∅ : Finset (Fin 1)) ≠ {0} := by decide
 
 /-! ## One-bit function values in terms of Fourier coefficients -/
 
-/-- For n=1, f(false) = f̂(∅) + f̂({0}). -/
-/- O'Donnell, Theorem 9.18 (one-bit Fourier expansion in the proof). -/
+/-- Evaluates a one-bit Boolean function at `false` using its two Fourier coefficients.
+
+**Source:** [OD14, Thm. 9.18 (proof)]. -/
 lemma one_bit_val_false (f : BooleanFunc 1) :
     f (fun _ => false) = fourierCoeff f ∅ + fourierCoeff f {⟨0, by omega⟩} := by
   conv_lhs => rw [walsh_expansion f]
@@ -54,8 +56,9 @@ lemma one_bit_val_false (f : BooleanFunc 1) :
   rw [Finset.sum_pair finsetFin1_ne]
   simp [chiS, boolToSign]
 
-/-- For n=1, f(true) = f̂(∅) - f̂({0}). -/
-/- O'Donnell, Theorem 9.18 (one-bit Fourier expansion in the proof). -/
+/-- Evaluates a one-bit Boolean function at `true` using its two Fourier coefficients.
+
+**Source:** [OD14, Thm. 9.18 (proof)]. -/
 lemma one_bit_val_true (f : BooleanFunc 1) :
     f (fun _ => true) = fourierCoeff f ∅ - fourierCoeff f {⟨0, by omega⟩} := by
   conv_lhs => rw [walsh_expansion f]
@@ -65,8 +68,10 @@ lemma one_bit_val_true (f : BooleanFunc 1) :
 
 /-! ## L² norm of T_ρ f for one bit -/
 
-/-- For one-bit functions, 𝔼[(T_ρ f)²] = f̂(∅)² + ρ²f̂({0})². -/
-/- O'Donnell, Theorem 9.18 (one-bit norm calculation in the proof). -/
+
+/-- Computes the squared `L²` norm of a noise operator on a one-bit Boolean function.
+
+**Source:** [OD14, Thm. 9.18 (proof)]. -/
 lemma expect_noiseOp_sq_one_bit (ρ : ℝ) (f : BooleanFunc 1) :
     BooleanAnalysis.expect (fun x => (noiseOp ρ f x) ^ 2) =
     (fourierCoeff f ∅) ^ 2 + ρ ^ 2 * (fourierCoeff f {⟨0, by omega⟩}) ^ 2 := by
@@ -81,8 +86,10 @@ lemma expect_noiseOp_sq_one_bit (ρ : ℝ) (f : BooleanFunc 1) :
 
 /-! ## Lp norm of f for one bit -/
 
-/-- For one-bit functions, 𝔼[|f|^p] = (|a+b|^p + |a-b|^p)/2 where a = f̂(∅), b = f̂({0}). -/
-/- O'Donnell, Theorem 9.18 (one-bit norm calculation in the proof). -/
+
+/-- Computes the `L^p` moment of a one-bit Boolean function from its two values.
+
+**Source:** [OD14, Thm. 9.18 (proof)]. -/
 lemma expect_abs_rpow_one_bit (p : ℝ) (f : BooleanFunc 1) :
     BooleanAnalysis.expect (fun x => |f x| ^ p) =
     (|fourierCoeff f ∅ + fourierCoeff f {⟨0, by omega⟩}| ^ p +
@@ -99,8 +106,7 @@ lemma expect_abs_rpow_one_bit (p : ℝ) (f : BooleanFunc 1) :
 For `1 ≤ r ≤ s` and `f : BoolCube n → ℝ`,
   `(𝔼[|f|^r])^{1/r} ≤ (𝔼[|f|^s])^{1/s}`
 This is the power mean inequality for probability measures.
--/
-/- O'Donnell, Theorem 9.18 (norm comparison used in the proof). -/
+**Source:** [OD14, Thm. 9.18 (proof)]. -/
 lemma lp_norm_mono {n : ℕ} (r s : ℝ) (hr : 1 ≤ r) (hrs : r ≤ s)
     (f : BooleanFunc n) :
     (expect (fun x => |f x| ^ r)) ^ (1/r) ≤
@@ -130,7 +136,9 @@ lemma lp_norm_mono {n : ℕ} (r s : ℝ) (hr : 1 ≤ r) (hrs : r ≤ s)
 For 1 ≤ p ≤ 2, 0 ≤ b ≤ 1:
   (1 + (p−1)b²)^{p/2} ≤ ((1+b)^p + (1−b)^p) / 2
 -/
-/- O'Donnell, Theorem 9.18 (two-point inequality). -/
+/-- Proves the normalized two-point inequality underlying one-bit `(p, 2)` hypercontractivity.
+
+**Source:** [OD14, Thm. 9.18]. -/
 theorem two_point_ineq_unit (b p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
     (hb0 : 0 ≤ b) (hb1 : b ≤ 1) :
     (1 + (p - 1) * b ^ 2) ^ (p / 2) ≤ ((1 + b) ^ p + (1 - b) ^ p) / 2 := by
@@ -187,7 +195,9 @@ theorem two_point_ineq_unit (b p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
 **Two-Point Inequality** (core real inequality, a = 0 case).
 For `1 ≤ p ≤ 2`: `(p-1)^{p/2} ≤ 1`, which gives the inequality when `a = 0`.
 -/
-/- O'Donnell, Theorem 9.18 (degenerate two-point case). -/
+/-- Handles the zero-constant case of the one-bit two-point inequality.
+
+**Source:** [OD14, Thm. 9.18 (proof)]. -/
 lemma two_point_ineq_a_zero (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) :
     (p - 1) ^ (p / 2) ≤ 1 := by
   exact Real.rpow_le_one ( by linarith ) ( by linarith ) ( by linarith )
@@ -196,7 +206,9 @@ lemma two_point_ineq_a_zero (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) :
 Noise operator doesn't increase L2 norm when we take absolute values.
 For 0 ≤ ρ ≤ 1: a² + ρ²b² ≤ ((|u|+|v|)/2)² + ρ²((|u|-|v|)/2)² where u=a+b, v=a-b.
 -/
-/- O'Donnell, Theorem 9.18 (two-point normalization in the proof). -/
+/-- Shows that applying allowed noise cannot increase the one-bit `L²` norm.
+
+**Source:** [OD14, Thm. 9.18 (proof)]. -/
 lemma noise_l2_abs_mono (a b ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
     a ^ 2 + ρ ^ 2 * b ^ 2 ≤
     ((|a + b| + |a - b|) / 2) ^ 2 + ρ ^ 2 * ((|a + b| - |a - b|) / 2) ^ 2 := by
@@ -209,8 +221,8 @@ lemma noise_l2_abs_mono (a b ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
 **Two-Point Inequality** (full version).
 For `1 ≤ p ≤ 2` and all `a, b ∈ ℝ, 0 ≤ ρ, ρ² ≤ p − 1`:
   `(a² + ρ²b²)^{1/2} ≤ ((|a+b|^p + |a−b|^p) / 2)^{1/p}`
--/
-/- O'Donnell, Theorem 9.18 (two-point inequality). -/
+
+**Source:** [OD14, Thm. 9.18]. -/
 theorem two_point_ineq (a b p ρ : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
     (_hρ0 : 0 ≤ ρ) (hρ : ρ ^ 2 ≤ p - 1) :
     (a ^ 2 + ρ ^ 2 * b ^ 2) ^ ((1 : ℝ) / 2) ≤
@@ -284,8 +296,8 @@ theorem two_point_ineq (a b p ρ : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
 
 For `f : BoolCube 1 → ℝ, 1 ≤ p ≤ 2`, and `0 ≤ ρ` with `ρ² ≤ p − 1`:
   `(𝔼[(T_ρ f)²])^{1/2} ≤ (𝔼[|f|^p])^{1/p}`
--/
-/- O'Donnell, Theorem 9.18. -/
+
+**Source:** [OD14, Thm. 9.18]. -/
 theorem one_bit_p2_hypercontractivity (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
     (ρ : ℝ) (hρ_nn : 0 ≤ ρ) (hρ : ρ ^ 2 ≤ p - 1)
     (f : BooleanFunc 1) :
@@ -303,7 +315,6 @@ theorem one_bit_p2_hypercontractivity (p : ℝ) (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
 /-! ## Hölder sharpness and noise operator duality -/
 
 /-- sign(x) * x = |x| -/
-/- O'Donnell, Proposition 9.19 (duality normalization in the proof). -/
 private lemma sign_mul_self (x : ℝ) : Real.sign x * x = |x| := by
   rcases lt_trichotomy x 0 with hx | rfl | hx
   · rw [Real.sign_of_neg hx, abs_of_neg hx]; ring
@@ -311,30 +322,15 @@ private lemma sign_mul_self (x : ℝ) : Real.sign x * x = |x| := by
   · rw [Real.sign_of_pos hx, abs_of_pos hx, one_mul]
 
 /-- |sign(x)| = 1 when x ≠ 0 -/
-/- O'Donnell, Proposition 9.19 (duality normalization in the proof). -/
 private lemma abs_sign_eq_one (x : ℝ) (hx : x ≠ 0) : |Real.sign x| = 1 := by
   rcases lt_or_gt_of_ne hx with h | h
   · simp [Real.sign_of_neg h]
   · simp [Real.sign_of_pos h]
 
-/-- Expectation of pointwise nonneg function is nonneg -/
-/- O'Donnell, Proposition 9.19 (nonnegativity used in the duality proof). -/
-lemma expect_nonneg_of_nonneg {n : ℕ} {f : BooleanFunc n} (hf : ∀ x, 0 ≤ f x) :
-    0 ≤ expect f := by
-  unfold expect uniformWeight
-  exact mul_nonneg (pow_nonneg (by positivity) _) (Finset.sum_nonneg (fun x _ => hf x))
 
-/-- Expectation of constant function is the constant-/
-/- O'Donnell, Proposition 9.19 (one-bit duality calculation). -/
-private lemma expect_const_eq {n : ℕ} (c : ℝ) :
-    expect (fun (_ : BoolCube n) => c) = c := by
-  unfold expect uniformWeight
-  simp [Finset.sum_const, Finset.card_univ, Fintype.card_bool, Fintype.card_fin]
+/-- States Cauchy--Schwarz for the Boolean-cube inner product.
 
-/--
-Cauchy-Schwarz for the Boolean inner product
--/
-/- O'Donnell, Proposition 9.19 (Hölder/Cauchy--Schwarz step). -/
+**Source:** [OD14, Prop. 9.19 (proof)]. -/
 lemma cauchy_schwarz_bool {n : ℕ} (f g : BooleanFunc n) :
     innerProduct f g ≤
     (expect (fun x => f x ^ 2)) ^ ((1:ℝ)/2) * (expect (fun x => g x ^ 2)) ^ ((1:ℝ)/2) := by
@@ -351,8 +347,8 @@ lemma cauchy_schwarz_bool {n : ℕ} (f g : BooleanFunc n) :
 /--
 **Hölder sharpness**: For Hölder conjugate exponents `(p, q)`, for any function `u`,
 there exists `f` with `‖f‖_p ≤ 1` and `‖u‖_q ≤ ⟨f, u⟩`.
--/
-/- O'Donnell, Proposition 9.19 (sharpness of Hölder's inequality). -/
+
+**Source:** [OD14, Prop. 9.19 (proof)]. -/
 lemma holder_sharpness {n : ℕ} {p q : ℝ}
     (hpq : Real.HolderConjugate p q)
     (u : BooleanFunc n) :
@@ -361,7 +357,7 @@ lemma holder_sharpness {n : ℕ} {p q : ℝ}
     (expect (fun x => |u x| ^ q)) ^ (1 / q) ≤ innerProduct f u := by
   refine' ⟨ fun x => Real.sign ( u x ) * ( |u x| ^ ( q - 1 ) ) / ( ( expect fun x => |u x| ^ q ) ^ ( 1 / p ) ), _, _ ⟩ <;> norm_num [ hpq.ne_zero, hpq.symm.ne_zero ];
   · by_cases h : ( expect fun x => |u x| ^ q ) ^ p⁻¹ = 0 <;> simp_all +decide [ abs_div, abs_mul, abs_of_nonneg, Real.rpow_nonneg];
-    · norm_num [ hpq.ne_zero, expect_const_eq ];
+    · norm_num [hpq.ne_zero, expect_eq_fintypeExpect, Fintype.expect_const];
     · -- Simplify the expression inside the expectation.
       have h_simp : ∀ x, (|(u x).sign| * |u x| ^ (q - 1) / |(expect fun x => |u x| ^ q) ^ p⁻¹|) ^ p = |u x| ^ q / |(expect fun x => |u x| ^ q) ^ p⁻¹| ^ p := by
         intro x; rw [ Real.div_rpow ( by positivity ) ( by positivity ), Real.mul_rpow ( by positivity ) ( by positivity ) ] ; by_cases hx : u x = 0 <;> simp_all +decide [ Real.sign ] ;
@@ -396,7 +392,9 @@ lemma holder_sharpness {n : ℕ} {p q : ℝ}
       generalize_proofs at *; (
       -- Using the properties of exponents, we can simplify the right-hand side.
       have h_exp : (expect (fun x => |u x| ^ q)) / ((expect (fun x => |u x| ^ q)) ^ p⁻¹) = (expect (fun x => |u x| ^ q)) ^ (1 - p⁻¹) := by
-        rw [ Real.rpow_sub ( lt_of_le_of_ne ( by exact expect_nonneg_of_nonneg fun x => by positivity ) ( Ne.symm h ) ), Real.rpow_one ]
+        rw [Real.rpow_sub (lt_of_le_of_ne (by
+          rw [expect_eq_fintypeExpect]
+          exact Finset.expect_nonneg fun x _ ↦ by positivity) (Ne.symm h)), Real.rpow_one]
       generalize_proofs at *; (
       simp_all +decide [ mul_assoc, mul_comm, innerProduct ];
       rw [ show q⁻¹ = 1 - p⁻¹ by linarith [ hpq.symm.inv_add_inv_eq_one ] ]))
@@ -405,7 +403,9 @@ lemma holder_sharpness {n : ℕ} {p q : ℝ}
 **Noise operator duality**: (p, 2)-hypercontractivity implies (2, p')-hypercontractivity
 where p' is the Hölder conjugate of p.
 -/
-/- O'Donnell, Proposition 9.19. -/
+/-- Transfers a one-bit noise-operator bound to its Hölder-dual bound.
+
+**Source:** [OD14, Prop. 9.19]. -/
 theorem noise_operator_duality
   {p p_conj : ℝ}
   (hp_conj : Real.HolderConjugate p p_conj)
@@ -432,8 +432,7 @@ theorem noise_operator_duality
 **One-Bit (2, q)-Hypercontractivity Theorem**.
 For g : BoolCube 1 → ℝ and q ≥ 2:
   `‖T_{1 / √(q - 1)} g‖_q ≤ ‖g‖_2`
--/
-/- O'Donnell, Theorem 9.17. -/
+**Source:** [OD14, Thm. 9.17]. -/
 theorem one_bit_2q_hypercontractivity (q : ℝ) (hq2 : 2 ≤ q) (g : BooleanFunc 1) :
     (expect (fun x => |noiseOp (1 / Real.sqrt (q - 1)) g x| ^ q)) ^ (1 / q) ≤
     (expect (fun x => |g x| ^ (2 : ℝ))) ^ (1 / 2 : ℝ) := by

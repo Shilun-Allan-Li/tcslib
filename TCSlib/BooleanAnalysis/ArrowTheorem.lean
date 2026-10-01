@@ -35,7 +35,8 @@ must be a dictator.
 
 * Gil Kalai, *A Fourier-Theoretic Perspective on the Condorcet Paradox and
   Arrow's Theorem*, Advances in Applied Mathematics, 2002.
-* Ryan O'Donnell, *Analysis of Boolean Functions*, Chapter 2.
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014,
+  Ch. 2.
 -/
 
 set_option maxHeartbeats 800000
@@ -51,12 +52,16 @@ variable {n : ℕ}
 
 /-- Unanimity: if all voters prefer a to b, society prefers a to b.
     In our encoding, f(all-false) = 1 means "a preferred to b" when every
-    voter marks `false` (i.e., prefers the first alternative). -/
+    voter marks `false` (i.e., prefers the first alternative).
+
+**Source:** [OD14, Ch. 2]. -/
 def unanimity (f : BooleanFunc n) : Prop :=
   f (fun _ => false) = 1
 
 /-- f is a dictatorship: there exists some voter i whose preference always
-    determines society's preference. -/
+    determines society's preference.
+
+**Source:** [OD14, Ch. 2]. -/
 def isDictator (f : BooleanFunc n) : Prop :=
   ∃ i : Fin n, f = dictator i
 
@@ -155,7 +160,9 @@ def caVotes (p : Profile n) : BoolCube n := fun i => caPref (p i)
 
     A Condorcet cycle occurs when f(ab) = f(bc) = f(ca) = 1
     (society prefers a to b, b to c, and c to a — a cycle a>b>c>a)
-    or f(ab) = f(bc) = f(ca) = -1 (the reverse cycle). -/
+    or f(ab) = f(bc) = f(ca) = -1 (the reverse cycle).
+
+**Source:** [OD14, Ch. 2]. -/
 def acyclic (f : BooleanFunc n) : Prop :=
   ∀ p : Profile n,
     ¬ (f (abVotes p) = 1 ∧ f (bcVotes p) = 1 ∧ f (caVotes p) = 1) ∧
@@ -179,7 +186,9 @@ This is because:
 -/
 
 /-- The pairwise correlation function: ∑_S f̂(S)² · (-1/3)^|S|.
-    For odd f, only odd-level terms are nonzero. -/
+    For odd f, only odd-level terms are nonzero.
+
+**Source:** [OD14, Ch. 2]. -/
 noncomputable def corrFunc (f : BooleanFunc n) : ℝ :=
   ∑ S : Finset (Fin n), fourierCoeff f S ^ 2 * (-1/3 : ℝ) ^ S.card
 
@@ -187,7 +196,9 @@ noncomputable def corrFunc (f : BooleanFunc n) : ℝ :=
 
     Proof: (-1/3)^k ≥ -1/3 for all odd k (since |(-1/3)^k| = (1/3)^k ≤ 1/3
     for k ≥ 1). The even-level coefficients vanish by oddness.
-    Hence ∑_S f̂(S)²·(-1/3)^|S| ≥ ∑_S f̂(S)²·(-1/3) = (-1/3)·∑_S f̂(S)² = -1/3. -/
+    Hence ∑_S f̂(S)²·(-1/3)^|S| ≥ ∑_S f̂(S)²·(-1/3) = (-1/3)·∑_S f̂(S)² = -1/3.
+
+**Source:** [OD14, Ch. 2]. -/
 lemma corrFunc_ge_neg_third (f : BooleanFunc n) (hodd : isOddFunc f) (hpm : isPmOne f) :
     corrFunc f ≥ -1/3 := by
   simp only [corrFunc]
@@ -498,6 +509,8 @@ private lemma expected_product_abca (f : BooleanFunc n) :
     2. Summing over all 6^n profiles: ∑_p (f(ab)f(bc)+f(bc)f(ca)+f(ab)f(ca)) = -6^n.
     3. The three pairwise expectations each equal corrFunc f.
     4. Combining: 3·corrFunc f = -1, so corrFunc f = -1/3.
+
+**Source:** [OD14, Ch. 2].
 -/
 lemma acyclic_implies_corrFunc (f : BooleanFunc n) (_hodd : isOddFunc f) (hpm : isPmOne f)
     (hacyc : acyclic f) : corrFunc f = -1/3 := by
@@ -553,7 +566,9 @@ lemma acyclic_implies_corrFunc (f : BooleanFunc n) (_hodd : isOddFunc f) (hpm : 
     - Unanimity: f(false,...,false) = ∑_i a_i = 1.
     - For each j: f(only-j-true) = 1 - 2·a_j ∈ {-1,1}, so a_j ∈ {0,1}.
     - From a_j ∈ {0,1} and ∑ a_j² = ∑ a_j = 1: exactly one a_{j₀} = 1.
-    - Hence f = χ_{{j₀}} = dictator j₀. -/
+    - Hence f = χ_{{j₀}} = dictator j₀.
+
+**Source:** [OD14, Ch. 2]. -/
 lemma degree_one_implies_dictator (f : BooleanFunc n) (_hodd : isOddFunc f)
     (hpm : isPmOne f) (huniv : unanimity f)
     (hdeg1 : ∀ S : Finset (Fin n), S.card ≠ 1 → fourierCoeff f S = 0) :
@@ -700,7 +715,9 @@ lemma degree_one_implies_dictator (f : BooleanFunc n) (_hodd : isOddFunc f)
     The proof uses Fourier analysis on Boolean functions:
     1. Acyclicity forces the Fourier cycle probability to be 0.
     2. This forces all Fourier weight onto level 1 (degree-1 functions).
-    3. A degree-1 ±1-valued unanimous function must be a dictator. -/
+    3. A degree-1 ±1-valued unanimous function must be a dictator.
+
+**Source:** [OD14, Ch. 2]. -/
 theorem arrow_theorem (f : BooleanFunc n) (hodd : isOddFunc f) (hpm : isPmOne f)
     (huniv : unanimity f) (hacyc : acyclic f) :
     isDictator f := by

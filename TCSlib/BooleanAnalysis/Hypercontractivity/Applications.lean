@@ -19,7 +19,8 @@ approach.
 
 ## References
 
-* Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014.
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, §§9.5 and 10.1.
 -/
 
 open BooleanAnalysis GeneralHypercontractivity Real
@@ -32,39 +33,51 @@ variable {n : ℕ}
 
 /-! ## Indicator functions and volume -/
 
-/-- The indicator function of a set `A ⊆ {0,1}ⁿ`, taking values 0 and 1. -/
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5). -/
+/-- The indicator function of a set `A ⊆ {0,1}ⁿ`, taking values 0 and 1.
+
+**Source:** [OD14, §9.5]. -/
 noncomputable def setIndicator (A : Finset (BoolCube n)) : BooleanFunc n :=
   fun x => if x ∈ A then 1 else 0
 
-/-- The volume (density) of a set `A ⊆ {0,1}ⁿ` under the uniform measure. -/
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5). -/
+/-- The volume (density) of a set `A ⊆ {0,1}ⁿ` under the uniform measure.
+
+**Source:** [OD14, §9.5]. -/
 noncomputable def volume (A : Finset (BoolCube n)) : ℝ :=
   expect (setIndicator A)
 
 /-! ## Pointwise indicator facts -/
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-function proof detail). -/
+/-- Shows that the indicator of a Boolean-cube set is pointwise nonnegative.
+
+**Source:** [OD14, §9.5 (indicator-function calculation)]. -/
 lemma setIndicator_nonneg (A : Finset (BoolCube n)) (x : BoolCube n) :
     0 ≤ setIndicator A x := by
   simp [setIndicator]; split <;> norm_num
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-function proof detail). -/
+/-- Shows that the indicator of a Boolean-cube set is pointwise at most one.
+
+**Source:** [OD14, §9.5 (indicator-function calculation)]. -/
 lemma setIndicator_le_one (A : Finset (BoolCube n)) (x : BoolCube n) :
     setIndicator A x ≤ 1 := by
   simp [setIndicator]; split <;> norm_num
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-function proof detail). -/
+/-- Shows that the indicator of a Boolean-cube set equals its absolute value.
+
+**Source:** [OD14, §9.5 (indicator-function calculation)]. -/
 lemma abs_setIndicator (A : Finset (BoolCube n)) (x : BoolCube n) :
     |setIndicator A x| = setIndicator A x := by
   rw [abs_of_nonneg (setIndicator_nonneg A x)]
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-function proof detail). -/
+/-- Shows that the indicator of a Boolean-cube set is idempotent under squaring.
+
+**Source:** [OD14, §9.5 (indicator-function calculation)]. -/
 lemma setIndicator_sq (A : Finset (BoolCube n)) (x : BoolCube n) :
     setIndicator A x ^ 2 = setIndicator A x := by
   simp only [setIndicator]; split <;> norm_num
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-function proof detail). -/
+/-- Shows that every positive real power of an indicator equals the indicator.
+
+**Source:** [OD14, §9.5 (indicator-function calculation)]. -/
 lemma setIndicator_rpow (A : Finset (BoolCube n)) (x : BoolCube n)
     {r : ℝ} (hr : 0 < r) :
     setIndicator A x ^ r = setIndicator A x := by
@@ -73,14 +86,17 @@ lemma setIndicator_rpow (A : Finset (BoolCube n)) (x : BoolCube n)
   · simp [one_rpow]
   · simp [zero_rpow (ne_of_gt hr)]
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-function proof detail). -/
+/-- Shows that every positive real power of an indicator's absolute value equals the indicator.
+
+**Source:** [OD14, §9.5 (indicator-function calculation)]. -/
 lemma abs_setIndicator_rpow (A : Finset (BoolCube n)) (x : BoolCube n)
     {r : ℝ} (hr : 0 < r) :
     |setIndicator A x| ^ r = setIndicator A x := by
   rw [abs_setIndicator, setIndicator_rpow A x hr]
 
-/-- The `r`-th moment of an indicator function equals the volume. -/
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-norm calculation). -/
+/-- The `r`-th moment of an indicator function equals the volume.
+
+**Source:** [OD14, §9.5 (indicator-norm calculation)]. -/
 lemma expect_abs_indicator_rpow (A : Finset (BoolCube n)) {r : ℝ} (hr : 0 < r) :
     expect (fun x => |setIndicator A x| ^ r) = volume A := by
   simp only [volume]
@@ -88,22 +104,27 @@ lemma expect_abs_indicator_rpow (A : Finset (BoolCube n)) {r : ℝ} (hr : 0 < r)
   ext x
   rw [abs_setIndicator_rpow A x hr]
 
-/-- The `L^r` norm of an indicator function: `‖1_A‖_r = μ(A)^{1/r}`. -/
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; indicator-norm calculation). -/
+/-- The `L^r` norm of an indicator function: `‖1_A‖_r = μ(A)^{1/r}`.
+
+**Source:** [OD14, §9.5 (indicator-norm calculation)]. -/
 lemma indicator_Lr_norm (A : Finset (BoolCube n)) {r : ℝ} (hr : 0 < r) :
     (expect (fun x => |setIndicator A x| ^ r)) ^ (1 / r) = volume A ^ (1 / r) := by
   rw [expect_abs_indicator_rpow A hr]
 
 /-! ## Volume bounds -/
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; volume bound). -/
+/-- Shows that the volume of a Boolean-cube set is nonnegative.
+
+**Source:** [OD14, §9.5]. -/
 lemma volume_nonneg (A : Finset (BoolCube n)) : 0 ≤ volume A := by
   unfold volume expect uniformWeight
   apply mul_nonneg
   · positivity
   · exact Finset.sum_nonneg fun x _ => setIndicator_nonneg A x
 
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5; volume bound). -/
+/-- Shows that the volume of a Boolean-cube set is at most one.
+
+**Source:** [OD14, §9.5]. -/
 lemma volume_le_one (A : Finset (BoolCube n)) : volume A ≤ 1 := by
   unfold volume setIndicator;
   unfold expect;
@@ -123,8 +144,8 @@ parameters `p ≥ 1` and `u ≥ 2` with `ρ ≤ √((p-1)/(u-1))`:
 
 Here `(u-1)/u = 1/q` where `q = u/(u-1)` is the Hölder conjugate of `u`.
 The condition `ρ ≤ √((p-1)/(u-1))` is equivalent to `(q-1)(p-1) ≥ ρ²`.
--/
-/- O'Donnell, Generalized Small-Set Expansion Theorem (Section 10.1), via Proposition 10.4. -/
+
+**Source:** [OD14, §10.1, Prop. 10.4]. -/
 theorem generalized_small_set_expansion
     (p u : ℝ) (hp : 1 ≤ p) (hpu : p ≤ u) (hu : 2 ≤ u)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
@@ -147,8 +168,8 @@ For a set `A ⊆ {0,1}ⁿ` with volume `α = μ(A)` and correlation parameter
 
 This follows from the generalized theorem by setting `B = A` and
 optimizing with `p = q = 1 + ρ`, which gives `u = (1+ρ)/ρ`.
--/
-/- O'Donnell, Small-Set Expansion Theorem (Section 9.5), via Theorem 9.21. -/
+
+**Source:** [OD14, §9.5, Thm. 9.21]. -/
 theorem small_set_expansion
     (ρ : ℝ) (hρ0 : 0 < ρ) (hρ1 : ρ ≤ 1)
     (A : Finset (BoolCube n)) :

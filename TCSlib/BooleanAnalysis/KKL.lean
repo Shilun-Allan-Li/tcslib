@@ -36,7 +36,8 @@ This file proves:
 
 * Kahn, Kalai, Linial, "The influence of variables on Boolean functions", FOCS 1988.
 * Friedgut, "Boolean functions with low average sensitivity depend on few coordinates", Combinatorica 1998.
-* O'Donnell, *Analysis of Boolean Functions*, Ch. 9.
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014,
+  Chs. 9--10.
 -/
 
 set_option maxHeartbeats 800000
@@ -53,33 +54,45 @@ open Classical
 /-! ## Part I: Definitions -/
 
 /-- The noisy influence of coordinate `i` at noise rate `rho`:
-    `Inf_i^rho[f] = sum_{S ni i} rho^{|S|-1} * fhat(S)^2`. -/
+    `Inf_i^rho[f] = sum_{S ni i} rho^{|S|-1} * fhat(S)^2`.
+
+**Source:** [OD14, Ch. 9]. -/
 noncomputable def noisyInfluence (ρ : ℝ) (i : Fin n) (f : BooleanFunc n) : ℝ :=
   ∑ S : Finset (Fin n),
     if i ∈ S then ρ ^ (S.card - 1) * fourierCoeff f S ^ 2 else 0
 
 /-- The low-degree truncation of `f`: keep Fourier coefficients at levels `<= k`.
-    `f_{<=k}(x) = sum_{|S| <= k} fhat(S) * chi_S(x)`. -/
+    `f_{<=k}(x) = sum_{|S| <= k} fhat(S) * chi_S(x)`.
+
+**Source:** [OD14, Ch. 10]. -/
 noncomputable def lowDegreePart (f : BooleanFunc n) (k : ℕ) : BooleanFunc n :=
   fun x => ∑ S : Finset (Fin n),
     if S.card ≤ k then fourierCoeff f S * chiS S x else 0
 
 /-- The high-degree part of `f`: Fourier coefficients at levels `> k`.
-    `f_{>k}(x) = sum_{|S| > k} fhat(S) * chi_S(x)`. -/
+    `f_{>k}(x) = sum_{|S| > k} fhat(S) * chi_S(x)`.
+
+**Source:** [OD14, Ch. 10]. -/
 noncomputable def highDegreePart (f : BooleanFunc n) (k : ℕ) : BooleanFunc n :=
   fun x => ∑ S : Finset (Fin n),
     if k < S.card then fourierCoeff f S * chiS S x else 0
 
 /-- The set of `tau`-influential coordinates:
-    `J_tau(f) = {i : Fin n | Inf_i[f] >= tau}`. -/
+    `J_tau(f) = {i : Fin n | Inf_i[f] >= tau}`.
+
+**Source:** [OD14, Ch. 10]. -/
 noncomputable def influentialCoords (f : BooleanFunc n) (τ : ℝ) : Finset (Fin n) :=
   Finset.univ.filter (fun i => τ ≤ influence i f)
 
-/-- A function `g` is a `J`-junta if it depends only on coordinates in `J`. -/
+/-- Defines a `J`-junta as a function depending only on coordinates in `J`.
+
+**Source:** [OD14, Ch. 10]. -/
 def IsJunta (g : BooleanFunc n) (J : Finset (Fin n)) : Prop :=
   ∀ x y : BoolCube n, (∀ i ∈ J, x i = y i) → g x = g y
 
-/-- The L2 distance squared between two Boolean functions. -/
+/-- Defines the squared `L²` distance between two Boolean functions.
+
+**Source:** [OD14, Ch. 10]. -/
 noncomputable def l2DistSq (f g : BooleanFunc n) : ℝ :=
   expect (fun x => (f x - g x) ^ 2)
 
@@ -542,7 +555,12 @@ there exists a coordinate `i` whose influence is at least `Omega(log n / n)`.
 
 More precisely: `max_i Inf_i[f] >= (1/30) * log(n) / n` when `E[f] = 0` and `n >= 2`.
 
-The proof uses hypercontractivity (Bonami lemma) via the noisy influence approach. -/
+The proof uses hypercontractivity (Bonami lemma) via the noisy influence approach.
+
+**Source:** [OD14, Ch. 10].
+
+**Deviation:** This explicit-constant formulation follows the hypercontractive proof strategy;
+the current formal proof retains a `sorry` for its hard log-convexity case. -/
 theorem KKL_balanced (f : BooleanFunc n) (hf : isPmOne f)
     (hbal : expect f = 0) (hn : 2 ≤ n) :
     ∃ i : Fin n, influence i f ≥ Real.log n / (30 * n) := by
@@ -632,7 +650,12 @@ Proof strategy:
 2. The low-degree part `f_{<=k}` satisfies `E[(f - f_{<=k})^2] <= I[f]/k <= epsilon/4`.
 3. There are at most `I[f] / tau = 4 * n * I[f] / epsilon` coordinates with `Inf_i >= tau`.
 4. Restricting to those coordinates loses at most `n * tau = epsilon/4` in L2 from `f_{<=k}`.
-5. By the triangle inequality: `l2DistSq f g <= 2 * (epsilon/4 + epsilon/4) = epsilon`. -/
+5. By the triangle inequality: `l2DistSq f g <= 2 * (epsilon/4 + epsilon/4) = epsilon`.
+
+**Source:** [OD14, Ch. 10].
+
+**Deviation:** The stated junta-size bound is a deliberately weaker finite-dimensional form
+than the standard asymptotic theorem. -/
 theorem friedgut_junta (f : BooleanFunc n) (hf : isPmOne f)
     (ε : ℝ) (hε : 0 < ε) :
     ∃ (J : Finset (Fin n)) (g : BooleanFunc n),

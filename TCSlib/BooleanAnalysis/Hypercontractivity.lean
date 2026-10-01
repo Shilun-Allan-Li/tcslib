@@ -20,4 +20,9 @@ expansion applications, Bonami's lemma, and the reverse Bonami--Beckner outline.
 * `Bonami` and `MomentBounds`: fourth-moment and anticoncentration tools.
 * `Applications` and `ReverseBonamiBeckner`: small-set expansion and reverse-hypercontractivity
   results.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Chapters 9--10.
 -/

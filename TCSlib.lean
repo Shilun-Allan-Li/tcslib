@@ -13,9 +13,10 @@ import TCSlib.ErrorCorrectingCodes.MRRW
 import TCSlib.BooleanAnalysis.BLR
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
-import TCSlib.BooleanAnalysis.Hypercontractivity.Main
+import TCSlib.BooleanAnalysis.Hypercontractivity
 import TCSlib.BooleanAnalysis.Switching
 import TCSlib.BooleanAnalysis.KKL
+import TCSlib.BooleanAnalysis.ThresholdFunctions
 
 import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem
@@ -24,6 +25,10 @@ import TCSlib.Complexity.CircuitComplexity
 import TCSlib.Complexity.NPReductions
 
 import TCSlib.Cryptography.SchnorrProtocol
+import TCSlib.Cryptography.SecretSharing
+import TCSlib.Cryptography.MPC
+
+import TCSlib.InformationTheory
 
 import TCSlib.GraphTheory.Kruskal
 

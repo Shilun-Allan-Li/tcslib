@@ -28,6 +28,11 @@ per-coordinate factorization `sum_bernoulli_prod` of `RestrictionFourier`.
 
 Also provides `bernoulliRestrProb_not` (complement rule), the general lemma
 flagged as missing by the sorry in `CircuitCompression`.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Lemma 4.21.
 -/
 
 open BooleanAnalysis SwitchingLemma2 LMN
@@ -63,7 +68,9 @@ lemma indicator_subset_eq_prod (T : Finset (Fin n)) (ρ : Restriction n) :
     simp [hiT, hfix]
 
 /-- **Free-set marginal**: `Pr[T ⊆ J] = p^{|T|}` under a Bernoulli(`p`)-random
-    restriction. (The first-moment half of O'Donnell Proposition 4.17.) -/
+    restriction. (The first-moment half of O'Donnell Proposition 4.17.)
+
+**Source:** [OD14, Prop. 4.17]. -/
 theorem bernoulliRestrProb_subset_freeVars (p : ℝ) (T : Finset (Fin n)) :
     bernoulliRestrProb p (fun ρ => T ⊆ ρ.freeVars) = p ^ T.card := by
   unfold bernoulliRestrProb
