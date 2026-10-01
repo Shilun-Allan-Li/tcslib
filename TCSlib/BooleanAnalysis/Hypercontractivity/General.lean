@@ -7,7 +7,7 @@ import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
 
 This file extends the one-bit and even-moment estimates to arbitrary Boolean cubes.  It represents
 the noise operator by a kernel, decomposes it along the final coordinate, and proves the one- and
-two-function hypercontractivity theorems for general exponents.
+two-function hypercontractivity theorems for finite real exponents.
 
 ## Main results
 
@@ -18,7 +18,7 @@ two-function hypercontractivity theorems for general exponents.
 
 ## Main definitions
 
-* `noiseKernel`: the transition kernel for `ρ`-correlated noise on the Boolean cube.
+* `noiseKernel`: the transition kernel for `|ρ| ≤ 1`, extended polynomially to real `ρ`.
 
 ## References
 
@@ -35,8 +35,10 @@ variable {n : ℕ}
 
 /-! ## Noise Kernel -/
 
-/-- The noise kernel `K_ρ(x, y) = ∏_i (1 + ρ · sign(x_i) · sign(y_i)) / 2`.
-This is the transition probability from `x` to `y` under ρ-correlated noise.
+/-- The noise kernel is `K_ρ(x, y) = ∏_i ((1 + ρ · sign(x_i) · sign(y_i)) / 2)`.
+For `|ρ| ≤ 1` it is the transition probability from `x` to `y` under correlated noise.
+The formula extends polynomially to every real `ρ`; outside that interval its values
+need not be probabilities.
 
 **Source:** [OD14, Rem. 9.20 (product-space calculation)]. -/
 noncomputable def noiseKernel (ρ : ℝ) {n : ℕ} (x y : BoolCube n) : ℝ :=
@@ -240,7 +242,9 @@ lemma holder_ineq_bool {n : ℕ} (p : ℝ) (hp : 1 < p) (f h : BooleanFunc n) :
 **Lp contractivity of the noise operator on one bit.**
 For 0 ≤ ρ ≤ 1 and q ≥ 1:
   `‖T_ρ g‖_q ≤ ‖g‖_q`
-**Source:** [OD14, Thm. 9.18]. -/
+This is the elementary same-exponent contraction obtained by convexity of `|·|^q`,
+used in the hypercontractivity argument; it is not the `(p,2)` statement of Theorem 9.18.
+**Source:** [OD14, §9.3, noise contraction used with Thm. 9.18]. -/
 lemma noise_Lp_contraction_one_bit
     (q : ℝ) (hq1 : 1 ≤ q)
     (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
@@ -434,8 +438,9 @@ We utilize the weak two-function case to obtain the bridging one-function, then
 prove the remaining one-function cases to obtain the general one function result.
 -/
 
-/-- **Two function to one function**
-One function (p, q) hypercontractivity iff two-function (p, q') hypercontractivity
+/-- One-function `(p,q)` hypercontractivity of cube noise is equivalent to its
+two-function `(p,q')` form, for finite `1 ≤ p ≤ q` with `q ≥ 2` and the stated radius.
+This specializes the source's abstract operator duality to finite cube exponents.
 **Source:** [OD14, Prop. 10.4]. -/
 theorem one_function_iff_two_function_hypercontractivity {n : ℕ} (p q : ℝ)
     (hp1 : 1 ≤ p) (hpq : p ≤ q) (hq : 2 ≤ q)
@@ -560,7 +565,9 @@ lemma trivial_contractivity {n : ℕ} (s : ℝ) (hs : 1 ≤ s)
 /-
 Duality / Adjointness of operator norms
 -/
-/-- Transfers a noise-operator norm bound to the Hölder-dual exponent.
+/-- A cube noise-operator norm bound is equivalent to its Hölder-dual bound for finite
+exponents `p,q > 1`. This is the finite cube specialization of the source's operator duality;
+the conjugate endpoints `1` and `∞` are not represented here.
 
 **Source:** [OD14, Prop. 10.4]. -/
 lemma noise_op_norm_dual {n : ℕ} (p q : ℝ) (hp : 1 < p) (hq : 1 < q)
@@ -1141,7 +1148,11 @@ Combines the three cases:
 - Low norms: `1 < p ≤ u ≤ 2`
 - High norms: `2 ≤ p ≤ u`
 -/
-/-- Establishes the full one-function hypercontractivity theorem on the Boolean cube.
+/-- Cube noise contracts the `p` norm to the `u` norm for finite `1 ≤ p ≤ u`, `u > 1`,
+and `0 ≤ ρ ≤ √((p-1)/(u-1))`.
+This is the finite-exponent specialization of the source's Hypercontractivity Theorem.
+The source's infinite-exponent endpoints are not represented here; the finite `p = u = 1`
+case is covered separately by `trivial_contractivity`.
 
 **Source:** [OD14, §10.1; Prop. 10.4]. -/
 theorem general_one_function_hypercontractivity {n : ℕ}
@@ -1225,10 +1236,12 @@ theorem general_one_function_hypercontractivity {n : ℕ}
 
 /--
 **General Two-Function Hypercontractivity Theorem.**
-For `1 ≤ p ≤ u` with `u ≥ 2` and `ρ ≤ √((p-1)/(u-1))`:
+For finite `1 ≤ p ≤ u` with `u ≥ 2` and `0 ≤ ρ ≤ √((p-1)/(u-1))`:
   `⟨f, T_ρ g⟩ ≤ (𝔼[|f|^{u/(u-1)}])^{(u-1)/u} · (𝔼[|g|^p])^{1/p}`
 
 Derived from the one-function theorem via `one_function_iff_two_function_hypercontractivity`.
+This finite cube parameterization does not assert the source's infinite-exponent endpoints
+or every parameter case of its abstract two-function formulation.
 **Source:** [OD14, §10.1; Prop. 10.4]. -/
 theorem general_two_function_hypercontractivity {n : ℕ}
     (p u : ℝ) (hp : 1 ≤ p) (hpu : p ≤ u) (hu : 2 ≤ u)

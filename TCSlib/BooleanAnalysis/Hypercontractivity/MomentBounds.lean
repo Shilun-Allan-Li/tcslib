@@ -22,13 +22,13 @@ functions.
 
 ## Main definitions
 
-* `IsBReasonable`: the assertion that the fourth moment is at most `B` times the square of the
-  second moment.
+* `IsBReasonable`: probability, finite fourth moment, `B ≥ 1`, and the fourth-to-second
+  moment bound.
 
 ## Main results
 
 * `b_reasonable_tail_bound`: a fourth-moment tail bound.
-* `min_prob_b_reasonable`: a lower bound on the probability of nonzero values.
+* `min_prob_b_reasonable`: a reasonability bound from the minimum sample-space atom mass.
 * `paley_zygmund_ineq` and `b_reasonable_anticon_zero`: Paley--Zygmund-style anticoncentration
   estimates.
 
@@ -46,21 +46,43 @@ open MeasureTheory ProbabilityTheory Filter BooleanAnalysis
 
 /-! ## B-Reasonability Bounds -/
 
-/-- Defines `B`-reasonability by bounding a fourth moment by `B` times the squared second moment.
+/-- A real random variable is `B`-reasonable under a probability measure when `B ≥ 1`,
+its fourth moment is finite, and its fourth moment is at most `B` times the square of
+its second moment.
 
-**Source:** [OD14, Def. 9.1]. -/
-def IsBReasonable {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop :=
-  moment X 4 P ≤ B * (moment X 2 P) ^ 2
+**Source:** [OD14, Def. 9.1].
+`MemLp X 4 P` explicitly enforces the source's intended finite-moment interpretation:
+it records almost-everywhere measurability and finite fourth moment. On a probability
+space it also guarantees finite second moment, so the real-valued moments agree with
+ordinary expectations rather than totalized nonintegrable integrals. -/
+structure IsBReasonable {Ω : Type*} [MeasurableSpace Ω]
+    (X : Ω → ℝ) (P : Measure Ω) (B : ℝ) : Prop where
+  /-- The underlying measure is a probability law. -/
+  probability : IsProbabilityMeasure P
+  /-- The reasonability parameter is at least one. -/
+  one_le : 1 ≤ B
+  /-- The random variable is almost-everywhere measurable with finite fourth moment. -/
+  memLp : MemLp X 4 P
+  /-- The fourth moment is bounded by the prescribed multiple of the squared second moment. -/
+  moment_le : moment X 4 P ≤ B * (moment X 2 P) ^ 2
 
-/-- Bounds the fourth-moment tail of a `B`-reasonable random variable.
+/-- A nonzero `B`-reasonable random variable has absolute value at least `t` times
+its second norm with probability at most `B / t⁴`, for every `t > 0`.
 
-**Source:** [OD14, Prop. 9.3]. -/
+**Source:** [OD14, Prop. 9.3].
+The event is written equivalently after taking fourth powers. Positive second moment
+expresses that the random variable is not almost-everywhere zero. The explicit
+fourth-power integrability argument is retained for compatibility with existing callers;
+it also follows from `hB.memLp`.
+
+**Proof sketch.** Apply Markov's inequality to the nonnegative fourth power at threshold
+`t⁴ E[X²]²`. Bound its expectation using reasonability and cancel the positive squared
+second moment. -/
 lemma b_reasonable_tail_bound
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
-  (t : ℝ) (ht : 0 < t) (hX_pos : 0 < moment X 2 P) -- True if X isn't equivalent to 0
-  (hX_int : Integrable (fun ω ↦ X ω ^ 4) P) : -- probably don't need; target for rewrite
-  -- Below I already applied the power of 4; might want to rewrite later
+  (t : ℝ) (ht : 0 < t) (hX_pos : 0 < moment X 2 P)
+  (hX_int : Integrable (fun ω ↦ X ω ^ 4) P) :
   (P {ω | X ω ^ 4 ≥ t ^ 4 * (moment X 2 P) ^ 2}).toReal ≤ B / t ^ 4 := by
 
   set c : ℝ := t ^ 4 * (moment X 2 P) ^ 2 -- define c to make it easier to write out
@@ -116,94 +138,107 @@ lemma b_reasonable_tail_bound
       rfl
     _ ≤ (B * (moment X 2 P) ^ 2) / (t ^ 4 * (moment X 2 P) ^ 2) := by
       gcongr
-      exact hB
+      exact hB.moment_le
     _ = B / t^4 := by
       rw [mul_div_mul_right B (t ^ 4) (_)]
       · exact ne_of_gt (by positivity)
 
-/-- Shows that a discrete random variable is `(1 / μ)`-reasonable when every atom has mass at
-least `μ`.
+/-- Every real function on a finite probability space with each sample-space atom at
+least `μ > 0` is `(1/μ)`-reasonable.
+This is a sufficient finite full-support specialization of the source, which instead
+uses the smallest positive mass in the value distribution of the random variable.
+Several sample-space atoms may have the same value, so the two minimum masses can differ.
 
-**Source:** [OD14, Prop. 9.5]. -/
+**Source:** [OD14, Prop. 9.5].
+
+**Proof sketch.** Express both moments as finite weighted sums. Rewrite each fourth-moment
+summand as the square of its second-moment summand divided by its atom mass, and bound that
+division by `1/μ`. The sum of squares of nonnegative terms is at most their squared sum. -/
 lemma min_prob_b_reasonable
   {Ω : Type*} [MeasurableSpace Ω] [Fintype Ω] [DiscreteMeasurableSpace Ω]
   {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {π : PMF Ω} (hP : P = π.toMeasure)
   {μ : ℝ} (hμ_pos : 0 < μ) (hμ_min : ∀ ω, μ ≤ (π ω).toReal) :
-  IsBReasonable X P (1 / μ) := by
+  IsBReasonable X P (1 / μ) := (by
+  refine ⟨inferInstance, ?_, MemLp.of_discrete, ?_⟩
+  · obtain ⟨ω, _⟩ := π.support_nonempty
+    apply (one_le_div hμ_pos).2
+    exact (hμ_min ω).trans (by
+      simpa only [ENNReal.toReal_one] using
+        ENNReal.toReal_mono ENNReal.one_ne_top (π.coe_le_one ω))
+  ·
+    classical
+    -- Establish that the integrals equal finite sums
+    have h_mom4 : moment X 4 P = ∑ ω, X ω ^ 4 * (π ω).toReal := by
+      rw [moment]
+      simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
+      rw [hP]
+      apply Finset.sum_congr rfl
+      intro ω _
+      dsimp only [Measure.real]
+      rw [PMF.toMeasure_apply_singleton]; ring
+      simp only [MeasurableSet.singleton]
 
-  -- Unfold the definition of IsBReasonable
-  rw [IsBReasonable]
+    have h_mom2 : moment X 2 P = ∑ ω, X ω ^ 2 * (π ω).toReal := by
+      rw [moment]; simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
+      rw [hP]
+      apply Finset.sum_congr rfl
+      intro ω _
+      dsimp only [Measure.real]
+      rw [PMF.toMeasure_apply_singleton]; ring; simp only [MeasurableSet.singleton]
 
-  -- Establish that the integrals equal finite sums
-  have h_mom4 : moment X 4 P = ∑ ω, X ω ^ 4 * (π ω).toReal := by
-    rw [moment]
-    simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
-    rw [hP]
-    apply Finset.sum_congr rfl
-    intro ω _
-    dsimp only [Measure.real]
-    rw [PMF.toMeasure_apply_singleton]; ring
-    simp only [MeasurableSet.singleton]
+    rw [h_mom4, h_mom2]
 
-  have h_mom2 : moment X 2 P = ∑ ω, X ω ^ 2 * (π ω).toReal := by
-    rw [moment]; simp only [Pi.pow_apply, Integrable.of_finite, integral_fintype, smul_eq_mul]
-    rw [hP]
-    apply Finset.sum_congr rfl
-    intro ω _
-    dsimp only [Measure.real]
-    rw [PMF.toMeasure_apply_singleton]; ring; simp only [MeasurableSet.singleton]
+    -- Set up the algebraic calculation
+    calc
+      ∑ ω, X ω ^ 4 * (π ω).toReal
+        = ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 / (π ω).toReal := by
+          apply Finset.sum_congr rfl
+          intro ω hω
+          have h_pi_pos : 0 < (π ω).toReal := lt_of_lt_of_le hμ_pos (hμ_min ω)
+          have h_pi_ne_zero : (π ω).toReal ≠ 0 := ne_of_gt h_pi_pos
+          -- Algebraic rearrangement: a^4 * p = (a^2 * p)^2 / p
+          ring_nf
+          calc
+            X ω ^ 4 * (π ω).toReal
+              = X ω ^ 4 * (π ω).toReal * 1 := by rw [mul_one]
+              _ = X ω ^ 4 * (π ω).toReal * ((π ω).toReal * (π ω).toReal⁻¹) := by rw [mul_inv_cancel₀ h_pi_ne_zero]
+              _ = X ω ^ 4 * (π ω).toReal ^ 2 * (π ω).toReal⁻¹ := by ring
 
-  rw [h_mom4, h_mom2]
+        _ ≤ ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 / μ := by
+          -- Use the fact that λ ≤ π ω, so 1 / π ω ≤ 1 / λ
+          apply Finset.sum_le_sum
+          intro ω hω
+          have h_pi_pos : 0 < (π ω).toReal := lt_of_lt_of_le hμ_pos (hμ_min ω)
+          rw [div_eq_mul_inv, div_eq_mul_inv]
+          gcongr
+          -- Apply the reciprocal inequality: 1 / (π ω).toReal ≤ 1 / μ
+          simp only [hμ_min]
 
-  -- Set up the algebraic calculation
-  calc
-    ∑ ω, X ω ^ 4 * (π ω).toReal
-      = ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 / (π ω).toReal := by
-        apply Finset.sum_congr rfl
-        intro ω hω
-        have h_pi_pos : 0 < (π ω).toReal := lt_of_lt_of_le hμ_pos (hμ_min ω)
-        have h_pi_ne_zero : (π ω).toReal ≠ 0 := ne_of_gt h_pi_pos
-        -- Algebraic rearrangement: a^4 * p = (a^2 * p)^2 / p
-        ring_nf
-        calc
-          X ω ^ 4 * (π ω).toReal
-            = X ω ^ 4 * (π ω).toReal * 1 := by rw [mul_one]
-            _ = X ω ^ 4 * (π ω).toReal * ((π ω).toReal * (π ω).toReal⁻¹) := by rw [mul_inv_cancel₀ h_pi_ne_zero]
-            _ = X ω ^ 4 * (π ω).toReal ^ 2 * (π ω).toReal⁻¹ := by ring
+        _ = (1 / μ) * ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 := by
+          -- Factor out the (1 / λ)
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro ω _
+          ring
+        _ ≤ (1 / μ) * (∑ ω, X ω ^ 2 * (π ω).toReal) ^ 2 := by
+          -- Apply the inequality: ∑ (y_i)^2 ≤ (∑ y_i)^2 for non-negative terms
+          gcongr
+          let y := fun ω => X ω ^ 2 * (π ω).toReal
+          -- Prove that y_i is non-negative for all ω
+          have hy_nonneg : ∀ ω, 0 ≤ y ω := by
+            intro ω
+            unfold y
+            positivity
 
-      _ ≤ ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 / μ := by
-        -- Use the fact that λ ≤ π ω, so 1 / π ω ≤ 1 / λ
-        apply Finset.sum_le_sum
-        intro ω hω
-        have h_pi_pos : 0 < (π ω).toReal := lt_of_lt_of_le hμ_pos (hμ_min ω)
-        rw [div_eq_mul_inv, div_eq_mul_inv]
-        gcongr
-        -- Apply the reciprocal inequality: 1 / (π ω).toReal ≤ 1 / μ
-        simp only [hμ_min]
+          -- Apply the sum-of-squares inequality
+          calc
+            ∑ ω, (y ω)^2 ≤ (∑ ω, y ω)^2 := by
+              apply Finset.sum_sq_le_sq_sum_of_nonneg
+              intro ω _
+              exact hy_nonneg ω
+)
 
-      _ = (1 / μ) * ∑ ω, (X ω ^ 2 * (π ω).toReal) ^ 2 := by
-        -- Factor out the (1 / λ)
-        rw [Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro ω _
-        ring
-      _ ≤ (1 / μ) * (∑ ω, X ω ^ 2 * (π ω).toReal) ^ 2 := by
-        -- Apply the inequality: ∑ (y_i)^2 ≤ (∑ y_i)^2 for non-negative terms
-        gcongr
-        let y := fun ω => X ω ^ 2 * (π ω).toReal
-        -- Prove that y_i is non-negative for all ω
-        have hy_nonneg : ∀ ω, 0 ≤ y ω := by
-          intro ω
-          unfold y
-          positivity
-
-        -- Apply the sum-of-squares inequality
-        calc
-          ∑ ω, (y ω)^2 ≤ (∑ ω, y ω)^2 := by
-            apply Finset.sum_sq_le_sq_sum_of_nonneg
-            intro ω _
-            exact hy_nonneg ω
 end
 
 section
@@ -351,7 +386,12 @@ lemma paley_zygmund_ineq
 
 /-- Gives the Paley--Zygmund anticoncentration bound for a `B`-reasonable random variable.
 
-**Source:** [OD14, Prop. 9.4]. -/
+**Source:** [OD14, Prop. 9.4].
+
+**Proof sketch.** Apply Paley--Zygmund to the nonnegative variable `X²` at threshold `t²`.
+Its first and second moments are the second and fourth moments of `X`. Positive second
+moment forces positive fourth moment; reasonability then bounds the denominator by
+`B` times the squared second moment and yields the stated probability bound. -/
 lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; general result after
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : Ω → ℝ} {B : ℝ} (hB : IsBReasonable X P B)
@@ -433,7 +473,7 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
         rw [mul_div_mul_right _ _ h_mom2_sq_pos.ne']
       _ ≤ ((1 - t^2)^2 * (moment X 2 P)^2) / moment X 4 P := by
         gcongr
-        exact hB
+        exact hB.moment_le
   exact le_trans h_bound h_pz_mapped
 
 end

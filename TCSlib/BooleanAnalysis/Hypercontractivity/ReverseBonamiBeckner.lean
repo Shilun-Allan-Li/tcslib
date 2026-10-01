@@ -1,7 +1,17 @@
+/-
+Copyright (c) 2026 TCSlib Contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib Contributors
+-/
 import TCSlib.BooleanAnalysis.Hypercontractivity.EvenMoments
 import TCSlib.BooleanAnalysis.Hypercontractivity.General
 import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
+import TCSlib.BooleanAnalysis.Hypercontractivity.CubeBasic
 import Mathlib.Analysis.Analytic.Binomial
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 /-!
 # Reverse Bonami-Beckner inequality
@@ -18,7 +28,13 @@ The existing lemmas `OneBit.expect_abs_rpow_one_bit`, `Bonami.expect_succ_eq`,
 `SimpleHypercontractivity.noiseOp_snoc`, `SimpleHypercontractivity.noiseOp_compose`,
 and `BooleanAnalysis.noiseOp_self_adjoint` provide the Boolean-cube bookkeeping needed below.
 
-## Organisation
+## Main definitions
+
+* `IsNonnegative`: pointwise nonnegativity.
+* `lpMean`: the power mean for finite real exponents, including zero and negative exponents,
+  sharing its ordinary expression with `CubeBasic`.
+
+## Main results
 
 * `lpMean` and its elementary calculus (`lpMean_nonneg`, `lpMean_mono`,
   `lpMean_const_mul`, `lpMean_collapse_last`, `lpMean_comm`);
@@ -40,19 +56,24 @@ namespace ReverseBonamiBeckner
 
 variable {n : ℕ}
 
+attribute [local simp] BooleanAnalysis.Hypercontractivity.cubeLpNorm
+
 /-! ### The extended `L^p` means -/
 
-/-- Pointwise nonnegativity, the natural domain of reverse hypercontractivity. -/
+/-- Pointwise nonnegativity, the natural domain of reverse hypercontractivity.
+[OD14, Exs. 10.6--10.9] -/
 def IsNonnegative (f : BooleanFunc n) : Prop :=
   ∀ x, 0 ≤ f x
 
 open Classical in
-/-- The extended uniform `L^p` mean.  At `p = 0` this is the geometric mean; for
-`p ≤ 0`, a function with a zero has mean zero. -/
+/-- The uniform `L^p` mean for finite real exponents. At `p = 0` this is the geometric mean; for
+`p ≤ 0`, a function with a zero has mean zero. [OD14, Exs. 10.6--10.9]
+The ordinary expression is shared with `Hypercontractivity.cubeLpNorm`. The source also
+defines the `p = -∞` mean as the minimum; that endpoint is not represented here. -/
 noncomputable def lpMean (p : ℝ) (f : BooleanFunc n) : ℝ :=
   if (∃ x, f x = 0) ∧ p ≤ 0 then 0
   else if p = 0 then Real.exp (expect (fun x ↦ Real.log |f x|))
-  else (expect (fun x ↦ |f x| ^ p)) ^ (1 / p)
+  else BooleanAnalysis.Hypercontractivity.cubeLpNorm p f
 
 /-- For positive exponents, `lpMean` is the usual power mean. -/
 lemma lpMean_of_pos (p : ℝ) (hp : 0 < p) (f : BooleanFunc n) :
@@ -1012,8 +1033,10 @@ private lemma reverse_holder_of_pos (r : ℝ) (hr0 : 0 < r) (hr1 : r < 1)
     obtain rfl : u = 0 := funext fun x ↦ le_antisymm (not_lt.mp (not_exists.mp hupos x)) (hu x)
     simp [innerProduct, lpMean, expect, uniformWeight, hr0.ne', not_le.mpr hr0]
 
-/-- Reverse Hölder for the extended means.  This is the duality input in
-Lemma A.3 and in the two-function corollary.
+/-- Reverse Hölder bounds the inner product below by the product of conjugate means
+for finite `p < 1`, `p ≠ 0`. This is the inequality consequence of the source's sharp
+infimum-duality identity, used in the two-function corollary; the full identity and
+its infinite-exponent endpoint are not asserted here.
 
 **Source:** [OD14, Exs. 10.6--10.9]. -/
 lemma reverse_holder (p : ℝ) (hp : p < 1) (hp0 : p ≠ 0)
@@ -1032,11 +1055,16 @@ lemma reverse_holder (p : ℝ) (hp : p < 1) (hp0 : p ≠ 0)
     simpa only [BooleanAnalysis.innerProduct_comm, mul_comm] using h
   · exact reverse_holder_of_pos p hppos hp f g hf hg
 
-/-- Lemma A.3: continuity at `p = 0, 1`, reverse Hölder for nonpositive
-exponents, and the semigroup factorization across zero reduce the full result
-to `reverse_bonami_beckner_positive_sharp`.
+/-- Reverse hypercontractivity extends to nonnegative functions for real exponents
+`q ≤ p ≤ 1` with `q < 1` and correlations `0 ≤ ρ ≤ 1` up to the sharp bound
+`ρ² ≤ (1-p)/(1-q)`.
 
-**Source:** [OD14, Exs. 10.6--10.9]. -/
+**Source:** [OD14, Exs. 10.6--10.9].
+
+**Proof sketch.** Continuity at exponents zero and one reaches the boundary cases.
+Reverse Hölder handles negative exponents, and the noise semigroup factors the case
+where the exponents lie on opposite sides of zero. These steps reduce the inequality
+to the positive-exponent sharp theorem. -/
 lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
     (hq : q < 1) (hqp : q ≤ p) (hp : p ≤ 1)
     (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (hρsq : ρ ^ 2 ≤ (1 - p) / (1 - q))
@@ -1118,7 +1146,8 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
       · subst r
         simp [lpMean, hnz, G, A, abs_of_pos (hu _)]
       · rw [lpMean]
-        simp only [hnz, false_and, if_neg hr]
+        simp only [hnz, false_and, if_neg hr,
+          BooleanAnalysis.Hypercontractivity.cubeLpNorm]
         have habs : expect (fun x ↦ |u x| ^ r) = M r := by
           have heq : (fun x ↦ |u x| ^ r) = fun x ↦ u x ^ r := by
             funext x
@@ -1283,7 +1312,7 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
         dsimp [A]
         rw [lpMean]
         simp only [not_exists.mpr (fun x hx ↦ (hHpos x).ne' hx), false_and, if_false,
-          if_neg hQne]
+          if_neg hQne, BooleanAnalysis.Hypercontractivity.cubeLpNorm]
         simp_rw [abs_of_pos (hHpos _)]
       dsimp [H] at hA
       rw [← hA]
@@ -1364,7 +1393,7 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
         simp [lpMean, hc0, abs_of_pos hcpos, expect, uniformWeight, Real.exp_log hcpos]
       · rw [lpMean]
         simp only [not_exists.mpr (fun _ h ↦ hc0 h), false_and, if_false, if_neg hr0,
-          abs_of_pos hcpos]
+          BooleanAnalysis.Hypercontractivity.cubeLpNorm, abs_of_pos hcpos]
         have he : expect (fun _ : BoolCube n ↦ c ^ r) = c ^ r := by
           simp [expect, uniformWeight]
         rw [he, ← Real.rpow_mul hcpos.le]
@@ -1419,7 +1448,10 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
       exact zero_subsharp p ρ hppos hp' hρ0 hρ1 (by simpa using hρsq) f hf
     · exact positive_subsharp p q ρ hqpos hqp'' hp' hρ0 hρ1 hρsq f hf
 
-/-- Establishes reverse hypercontractivity for nonnegative Boolean-cube functions.
+/-- Reverse hypercontractivity holds for nonnegative cube functions and finite
+`q ≤ p ≤ 1`, `q < 1`, at the stated sharp correlation bound.
+The source's strict `q < p` theorem is extended here to equal finite exponents.
+Its `q = -∞` minimum-mean endpoint is not represented.
 
 **Source:** [OD14, Exs. 10.6--10.9]. -/
 theorem reverse_bonami_beckner (p q ρ : ℝ)
@@ -1429,6 +1461,12 @@ theorem reverse_bonami_beckner (p q ρ : ℝ)
     lpMean q (noiseOp ρ f) ≥ lpMean p f :=
   extend_reverse_bonami_beckner p q ρ hq hqp hp hρ0 hρ1 hρsq f hf
 
+/-- Extended power means of a nonnegative function are nondecreasing in their exponent
+up to one. [OD14, Exs. 10.6--10.9, extended-mean calculus]
+
+**Proof sketch.** Jensen's inequality for powers compares exponents of the same sign.
+Concavity of the logarithm compares either side with the geometric mean at zero.
+If a function has a zero, use the stipulated zero value of its nonpositive means. -/
 private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
     (f : BooleanFunc n) (hf : IsNonnegative f) :
     lpMean a f ≤ lpMean b f := by
@@ -1499,7 +1537,8 @@ private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
       exact le_rfl
     · have hfpos : ∀ x, 0 < f x :=
         fun x ↦ lt_of_le_of_ne (hf x) (Ne.symm (not_exists.mp hz x))
-      simp only [lpMean, hz, false_and, if_false, if_neg ha.ne, if_neg hb.ne]
+      simp only [lpMean, hz, false_and, if_false, if_neg ha.ne, if_neg hb.ne,
+        BooleanAnalysis.Hypercontractivity.cubeLpNorm]
       simp_rw [abs_of_pos (hfpos _)]
       have hA : 0 < expect (fun x ↦ f x ^ a) :=
         expect_pos_of_pos _ fun x ↦ Real.rpow_pos_of_pos (hfpos x) a
@@ -1593,8 +1632,10 @@ private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
       exact lpMean_zero_le_pos hbpos f hf
     · exact lpMean_mono_pos_exp hapos hab f hf
 
-/-- The two-function form: `E[f(x)g(y)] ≥ ‖f‖_p ‖g‖_q` for correlated
-Boolean strings.
+/-- The two-function form gives `E[f(x)g(y)] ≥ ‖f‖_p ‖g‖_q` for nonnegative
+functions on correlated Boolean strings and finite `p,q < 1`.
+The source also permits an exponent of one at correlation zero; those endpoint cases
+and infinite exponents are not represented by this declaration.
 
 **Source:** [OD14, Exs. 10.6--10.9]. -/
 theorem reverse_bonami_beckner_two_function (p q ρ : ℝ)

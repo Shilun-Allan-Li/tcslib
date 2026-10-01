@@ -403,7 +403,9 @@ lemma holder_sharpness {n : ℕ} {p q : ℝ}
 **Noise operator duality**: (p, 2)-hypercontractivity implies (2, p')-hypercontractivity
 where p' is the Hölder conjugate of p.
 -/
-/-- Transfers a one-bit noise-operator bound to its Hölder-dual bound.
+/-- A one-bit `(p,2)` noise-operator bound implies the `(2,p')` bound for finite
+Hölder-conjugate exponents. This specializes the source's general self-adjoint operator
+duality to one-bit noise; the `1` and `∞` conjugate endpoints are not represented here.
 
 **Source:** [OD14, Prop. 9.19]. -/
 theorem noise_operator_duality
@@ -430,8 +432,9 @@ theorem noise_operator_duality
 
 /--
 **One-Bit (2, q)-Hypercontractivity Theorem**.
-For g : BoolCube 1 → ℝ and q ≥ 2:
+For g : BoolCube 1 → ℝ and finite q ≥ 2:
   `‖T_{1 / √(q - 1)} g‖_q ≤ ‖g‖_2`
+This is the finite-exponent specialization; the source's `q = ∞` endpoint is not represented.
 **Source:** [OD14, Thm. 9.17]. -/
 theorem one_bit_2q_hypercontractivity (q : ℝ) (hq2 : 2 ≤ q) (g : BooleanFunc 1) :
     (expect (fun x => |noiseOp (1 / Real.sqrt (q - 1)) g x| ^ q)) ^ (1 / q) ≤

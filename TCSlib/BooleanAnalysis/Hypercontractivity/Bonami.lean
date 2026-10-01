@@ -15,7 +15,7 @@ hypercontractivity development.
 
 * `bonami_expect`: a degree-`k` Boolean function has fourth moment at most `9^k` times the
   square of its second moment.
-* `bonami_lemma`: the corresponding moment bound stated using `uniformMeasure`.
+* `bonami_lemma`: the corresponding guarded reasonability bound under `uniformMeasure`.
 * `degree_zero_const` and `degree_zero_fourth_moment`: base cases for the induction.
 
 ## References
@@ -173,17 +173,11 @@ This is the uniform-bit specialization of the stated corollary.
 **Source:** [OD14, Cor. 9.6]. -/
 lemma bonami_lemma {n : ℕ} (k : ℕ) (f : BooleanFunc n)
     (hf : has_degree_at_most f k) :
-    IsBReasonable f (uniformMeasure n) ((9 : ℝ) ^ k) := by
-
-  -- 1. Unfold your B-reasonability definition
-  rw [IsBReasonable]
-
-  -- 2. Use the bridge lemma specifically on the uniformMeasure
+    IsBReasonable f (uniformMeasure n) ((9 : ℝ) ^ k) := (by
+  refine ⟨inferInstance, one_le_pow₀ (by norm_num), MemLp.of_discrete, ?_⟩
   rw [moment_eq_expect f 4 (uniformMeasure n) uniformMeasure_apply]
   rw [moment_eq_expect f 2 (uniformMeasure n) uniformMeasure_apply]
-
-  -- 3. Apply the purely algebraic expectation bound
   exact bonami_expect k f hf
-
+)
 end
 end Bonami
