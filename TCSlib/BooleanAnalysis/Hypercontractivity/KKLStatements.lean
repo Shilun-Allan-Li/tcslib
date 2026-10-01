@@ -1,12 +1,7 @@
-/-
-Copyright (c) 2026 TCSlib Contributors. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: TCSlib Contributors
--/
 import TCSlib.BooleanAnalysis.Hypercontractivity.CubeDefinitions
 import TCSlib.BooleanAnalysis.ThresholdFunctions.Basic
 import TCSlib.BooleanAnalysis.KKL
-import TCSlib.BooleanAnalysis.Switching.Circuit
+import TCSlib.BooleanAnalysis.Switching
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

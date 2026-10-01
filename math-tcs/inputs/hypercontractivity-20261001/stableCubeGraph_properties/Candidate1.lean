@@ -52,8 +52,7 @@ theorem stableCubeGraph_properties (n : ℕ) (ρ : ℝ) (hρ : ρ ∈ Set.Icc (-
   have hsum (x : BoolCube n) :
       ∑ y : BoolCube n, GeneralHypercontractivity.noiseKernel ρ x y = 1 := by
     unfold GeneralHypercontractivity.noiseKernel
-    rw [← Fintype.prod_sum (fun (i : Fin n) (b : Bool) =>
-      (1 + ρ * boolToSign (x i) * boolToSign b) / 2)]
+    rw [← Fintype.prod_sum]
     apply Finset.prod_eq_one
     intro i _
     norm_num [boolToSign]
@@ -81,8 +80,8 @@ theorem stableCubeGraph_properties (n : ℕ) (ρ : ℝ) (hρ : ρ ∈ Set.Icc (-
     rw [← Finset.mul_sum, hsum, mul_one]
   · change (∑ x : BoolCube n, ∑ y : BoolCube n,
       uniformWeight n * GeneralHypercontractivity.noiseKernel ρ x y) = 1
-    simp_rw [← Finset.mul_sum, hsum]
-    simpa only [expect] using
+    simp_rw [← Finset.mul_sum, hsum, mul_one]
+    simpa only [expect, Finset.mul_sum, mul_one] using
       (ThresholdFunctions.expect_const (n := n) (1 : ℝ))
 )
 

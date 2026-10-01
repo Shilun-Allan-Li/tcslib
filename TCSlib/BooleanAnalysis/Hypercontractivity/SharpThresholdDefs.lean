@@ -1,11 +1,6 @@
-/-
-Copyright (c) 2026 TCSlib Contributors. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: TCSlib Contributors
--/
 import TCSlib.BooleanAnalysis.Hypercontractivity.ProductSpace
 import TCSlib.BooleanAnalysis.Hypercontractivity.CubeBasic
-import TCSlib.BooleanAnalysis.Switching.Circuit
+import TCSlib.BooleanAnalysis.Switching
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Order.Monotone.Defs
 
