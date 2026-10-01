@@ -1,4 +1,5 @@
-import TCSlib.BooleanAnalysis.Switching.Circuit
+import TCSlib.Complexity.CircuitComplexity.Basic
+import TCSlib.Complexity.CircuitComplexity.Formulas
 
 /-!
 # Conversions between Normal-Form Circuits and DNF/CNF

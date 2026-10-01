@@ -398,3 +398,51 @@ Then the empirical joint distribution of the play, which assigns to each profile
 the probability $\frac{1}{T}\sum_{t=1}^{T}(p_t)_i (q_t)_j$, is an $\varepsilon$-coarse
 correlated equilibrium of $G$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Row regret bound gives row deviation bound]
+\lean{empiricalJoint_row_deviation_le}
+\label{empiricalJoint_row_deviation_le}
+\leanok
+\uses{Game, JointDistribution.rowDeviationUtility, JointDistribution.rowExpectedUtility, MixedStrategy, empiricalJoint, empiricalJoint_rowDeviationUtility, empiricalJoint_rowExpectedUtility}
+\difficulty{2}
+Let $G$ be a finite two-player game with row utility $u_r$ over $M$ row actions and $N$
+column actions, and consider $T > 0$ rounds of play in which the row player uses the
+mixed strategy $p_t$ and the column player the mixed strategy $q_t$ at round $t$. Fix
+$\varepsilon \in \bbr$ and a pure row action $i'$, and suppose the row player's
+cumulative external regret against always playing $i'$ is at most $\varepsilon T$:
+\[
+  \sum_{t=1}^{T}\sum_{j}(q_t)_j\, u_r(i',j)
+  \;-\; \sum_{t=1}^{T}\sum_{i,j}(p_t)_i (q_t)_j\, u_r(i,j)
+  \;\le\; \varepsilon T.
+\]
+Then in the empirical joint distribution $\sigma$ of the play, deviating to $i'$ gains
+at most $\varepsilon$ over the expected utility:
+$\mathrm{rowDevUtil}(\sigma, G, i') \le \mathrm{rowExpUtil}(\sigma, G) + \varepsilon$.
+This is the row half of \texttt{empiricalJoint\_isApproxCCE}.
+\end{lemma}
+
+\begin{lemma}[Column regret bound gives column deviation bound]
+\lean{empiricalJoint_col_deviation_le}
+\label{empiricalJoint_col_deviation_le}
+\leanok
+\uses{Game, JointDistribution.colDeviationUtility, JointDistribution.colExpectedUtility, MixedStrategy, empiricalJoint, empiricalJoint_colDeviationUtility, empiricalJoint_colExpectedUtility}
+\difficulty{2}
+Let $G$ be a finite two-player game with column utility $u_c$ over $M$ row actions and
+$N$ column actions, and consider $T > 0$ rounds of play in which the row player uses the
+mixed strategy $p_t$ and the column player the mixed strategy $q_t$ at round $t$. Fix
+$\varepsilon \in \bbr$ and a pure column action $j'$, and suppose the column player's
+cumulative external regret against always playing $j'$ is at most $\varepsilon T$:
+\[
+  \sum_{t=1}^{T}\sum_{i}(p_t)_i\, u_c(i,j')
+  \;-\; \sum_{t=1}^{T}\sum_{i,j}(p_t)_i (q_t)_j\, u_c(i,j)
+  \;\le\; \varepsilon T.
+\]
+Then in the empirical joint distribution $\sigma$ of the play, deviating to $j'$ gains
+at most $\varepsilon$ over the expected utility:
+$\mathrm{colDevUtil}(\sigma, G, j') \le \mathrm{colExpUtil}(\sigma, G) + \varepsilon$.
+This is the column half of \texttt{empiricalJoint\_isApproxCCE}, mirroring
+\texttt{empiricalJoint\_row\_deviation\_le}.
+\end{lemma}

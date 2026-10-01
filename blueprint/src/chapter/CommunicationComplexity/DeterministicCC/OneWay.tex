@@ -154,3 +154,16 @@ Let $X$ and $Y$ be the input types of Alice and Bob, and let $f : X \to Y \to
 communication complexity of $f$ is at most $n$ for some $n \in \bbn$, then the
 (interactive) deterministic communication complexity of $f$ is at most $n + 1$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Ceiling log base two of two]
+\lean{CommunicationComplexity.Deterministic.OneWay.clog_two_two}
+\label{CommunicationComplexity.Deterministic.OneWay.clog_two_two}
+\leanok
+The ceiling of the base-$2$ logarithm of $2$ equals $1$: in Lean's natural-number
+ceiling logarithm, $\lceil \log_2 2 \rceil = 1$. This is the numeric fact used to
+specialize the additive $\lceil \log_2 \abs{\alpha} \rceil$ overhead to $1$ for
+Boolean-valued functions.
+\end{theorem}

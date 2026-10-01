@@ -21,6 +21,7 @@ import TCSlib.BooleanAnalysis.ThresholdFunctions
 import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem
 
+import TCSlib.Complexity.CircuitComplexity
 import TCSlib.Complexity.NPReductions
 
 import TCSlib.Cryptography.SchnorrProtocol
@@ -33,19 +34,7 @@ import TCSlib.GraphTheory.Kruskal
 
 import TCSlib.KikuchiLDC.Main
 
-import TCSlib.LearningTheory.Halving
-import TCSlib.LearningTheory.WeightedMajority
-import TCSlib.LearningTheory.JohnsonLindenstrauss.Bernstein
-import TCSlib.LearningTheory.JohnsonLindenstrauss.ConcentrationBound
-import TCSlib.LearningTheory.JohnsonLindenstrauss.Rademacher
-import TCSlib.LearningTheory.JohnsonLindenstrauss.Main
-
+import TCSlib.LearningTheory.MistakeBounds
 import TCSlib.LearningTheory.Hedge
-import TCSlib.LearningTheory.Hedge.Episode
-import TCSlib.LearningTheory.Hedge.ConvexPrediction
-import TCSlib.LearningTheory.Minimax.FiniteMinimax
-import TCSlib.LearningTheory.Minimax.CCE
-import TCSlib.LearningTheory.Minimax.ConvexMinimaxCore
-import TCSlib.LearningTheory.Minimax.ConvexMinimaxSeparation
-import TCSlib.LearningTheory.Minimax.ConvexMinimaxNoRegret
+import TCSlib.LearningTheory.JohnsonLindenstrauss
 import TCSlib.LearningTheory.Minimax

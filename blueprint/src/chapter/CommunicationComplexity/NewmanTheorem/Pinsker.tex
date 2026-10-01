@@ -475,3 +475,17 @@ total variation distance $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\|\mu -
   2\,\mathrm{TV}(\mu,\nu)^2 \;\le\; \mathrm{KL}(\mu \,\|\, \nu).
 \]
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Factorisation of the CGF-tilted exponential]
+\lean{CommunicationComplexity.exp_sub_cgf_eq}
+\label{CommunicationComplexity.exp_sub_cgf_eq}
+\leanok
+Let $\mu$ be a measure on a measurable space $\Omega$, let $X\colon \Omega \to \bbr$,
+and let $t \in \bbr$. Writing $\Lambda(t)$ for the cumulant generating function of $X$
+under $\mu$ at $t$, the functions $x \mapsto e^{\,t X(x) - \Lambda(t)}$ and
+$x \mapsto e^{-\Lambda(t)} \cdot e^{\,t X(x)}$ are equal, i.e.\ the tilted exponential
+factors as the constant $e^{-\Lambda(t)}$ times $e^{\,tX}$.
+\end{theorem}

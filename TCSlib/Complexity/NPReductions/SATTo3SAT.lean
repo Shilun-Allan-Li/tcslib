@@ -826,4 +826,59 @@ theorem SAT_to_3SAT_equivalence {V : Type} (f : CNFFormula V) :
     isSatisfiable f ↔ is3Satisfiable (to3SAT f) :=
   ⟨SAT_to_3SAT_completeness f, SAT_to_3SAT_soundness f⟩
 
+-- =============================================================
+-- Section 6. Output size of the SAT → 3-SAT encoding
+-- =============================================================
+
+/-! These are counting facts about `to3SAT`, not results from any source: the
+reduction emits one 3-clause per chain link, and the chain for a clause is no
+longer than the clause. -/
+
+/-- The chain for a clause suffix has at most one 3-clause per remaining literal. -/
+theorem length_buildChain_le {V : Type} (i : ℕ) (ml : Literal V → Literal (AuxVar V)) :
+    ∀ (lits : List (Literal V)) (j : ℕ), (buildChain i ml lits j).length ≤ lits.length := by
+  intro lits
+  induction lits with
+  | nil => intro j; simp [buildChain]
+  | cons a t ih =>
+      intro j
+      match t, ih with
+      | [], _ => simp [buildChain]
+      | [b], _ => simp [buildChain]
+      | b :: c :: t', ih =>
+          have h := ih (j + 1)
+          simp only [buildChain, List.length_cons] at h ⊢
+          omega
+
+/-- Encoding one clause costs at most `|c| + 2` 3-clauses; the `+ 2` is the empty
+clause, which becomes the two-clause contradiction `y ∧ ¬y`. -/
+theorem length_transformClause_le {V : Type} (i : ℕ) (c : Clause V) :
+    (transformClause i c).length ≤ c.length + 2 := by
+  match c with
+  | [] => simp [transformClause]
+  | [l1] => simp [transformClause]
+  | [l1, l2] => simp [transformClause]
+  | [l1, l2, l3] => simp [transformClause]
+  | l1 :: l2 :: l3 :: l4 :: rest =>
+      simp only [transformClause, List.length_cons]
+      refine Nat.le_trans (Nat.add_le_add_right (length_buildChain_le _ _ _ _) 1) ?_
+      simp
+
+/-- The worker for `to3SAT` emits at most one 3-clause per literal occurrence
+plus two per clause, whatever clause index it starts from. -/
+private theorem length_to3SATAux_le {V : Type} (cs : List (Clause V)) (idx : ℕ) :
+    (to3SATAux cs idx).length ≤ cs.flatten.length + 2 * cs.length := by
+  induction cs generalizing idx with
+  | nil => simp [to3SATAux]
+  | cons c cs ih =>
+      have h := length_transformClause_le idx c
+      have h2 := ih (idx + 1)
+      simp only [to3SATAux, List.length_append, List.flatten_cons, List.length_cons] at *
+      omega
+
+/-- `to3SAT` emits at most one 3-clause per literal occurrence plus two per clause. -/
+theorem length_to3SAT_le {V : Type} (f : CNFFormula V) :
+    (to3SAT f).length ≤ f.flatten.length + 2 * f.length :=
+  length_to3SATAux_le f 0
+
 end SATTo3SAT

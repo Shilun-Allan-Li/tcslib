@@ -18,14 +18,29 @@ set_option autoImplicit false
 /-!
 # Derandomization via Chernoff + Union Bound
 
+## Main definitions
+
+- `PublicCoin.FiniteMessage.Protocol.derandomizationSamples`: the number of random
+  samples needed for derandomization, `⌈log(|X|·|Y|) / (2·(c-1)²·ε²)⌉₊ + 1`
+
 ## Main results
 
-- `PublicCoin.FiniteMessage.Protocol.derandomizationSamples`: the number of random samples needed for derandomization, `⌈log(|X|·|Y|) / (2·(c-1)²·ε²)⌉₊ + 1`
-- `PublicCoin.FiniteMessage.Protocol.exists_good_randomness`: Chernoff + union bound argument showing there exist O(log(|X||Y|)/ε²) seeds covering all inputs
+- `PublicCoin.FiniteMessage.Protocol.exists_good_randomness`: Chernoff + union bound
+  argument showing there exist O(log(|X||Y|)/ε²) seeds covering all inputs
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [Rou16] T. Roughgarden, *Communication Complexity (for Algorithm Designers)*,
+  Foundations and Trends in Theoretical Computer Science 11(3–4), 2016;
+  arXiv:1509.06257.
+* [New91] I. Newman, "Private vs. common random bits in communication complexity",
+  *Information Processing Letters* 39(2):67–71, 1991.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -34,8 +49,16 @@ namespace CommunicationComplexity
 
 namespace PublicCoin.FiniteMessage.Protocol
 
--- Hoeffding-based bound: if Y_i are iid [0,1]-valued with E[Y_i] ≤ ε,
--- then P[∑ Y_i ≥ c*ε*t] ≤ exp(-2*(c-1)²*ε²*t) for c > 1.
+/-- Hoeffding-type tail bound: if `Y₀, …, Y_{t−1}` are independent `[0,1]`-valued random
+variables each with mean at most `ε ≥ 0`, then for every `c > 1` the probability that
+their sum is at least `c · ε · t` is at most `exp(−2 (c−1)² ε² t)`.
+
+**Proof sketch.** Centre the variables, `Xᵢ = Yᵢ − E[Yᵢ]`; the centred family is still
+independent, and each `Xᵢ` is sub-Gaussian with parameter `(1/2)²` because `Yᵢ` takes
+values in an interval of length one. Mathlib's Hoeffding bound for sums of independent
+sub-Gaussian variables gives the tail of `∑ Xᵢ` at threshold `(c−1) ε t`. Since
+`∑ E[Yᵢ] ≤ ε t`, the event `{∑ Yᵢ ≥ c ε t}` is contained in `{∑ Xᵢ ≥ (c−1) ε t}`;
+conclude by monotonicity of the measure and simplification of the exponent. -/
 private theorem prob_many_events_le
     {Ω' : Type*} [MeasurableSpace Ω'] {μ : Measure Ω'} [IsProbabilityMeasure μ]
     {t : ℕ} {Y : Fin t → Ω' → ℝ} {ε : ℝ} {c : ℝ}
@@ -96,8 +119,12 @@ private theorem prob_many_events_le
 variable {Ω X Y α : Type*}
   [Fintype X] [Fintype Y]
 
-/-- The number of random samples needed for derandomization via
-Chernoff + union bound: `⌈log(|X|·|Y|) / (2·(c-1)²·ε²)⌉₊ + 1`. -/
+/-- The number `t` of seeds sampled in the derandomization step of Newman's theorem,
+`⌈log(|X|·|Y|) / (2·(c-1)²·ε²)⌉₊ + 1`; it is chosen so that
+`|X|·|Y| · exp(−2 (c−1)² ε² t) < 1`. [RY20, Thm 3.5 proof] (`t = O(n/ε²)` sample strings)
+/ [Rou16, Thm 4.9 proof]. Deviation: the count is made explicit as
+`derandomizationSamples X Y ε c` for arbitrary finite input types `X`, `Y` and a slack
+factor `c > 1` on the error, rather than the textbook `O(n/ε²)`. -/
 noncomputable def derandomizationSamples
     (X Y : Type*) [Fintype X] [Fintype Y]
     (ε c : ℝ) : ℕ :=
@@ -105,10 +132,30 @@ noncomputable def derandomizationSamples
     (2 * (c - 1) ^ 2 * ε ^ 2)⌉₊ + 1
 
 open Classical in
-/-- Chernoff + union bound derandomization: given a protocol that
-ε-computes f with c > 1, there exist t = O(log(|X|·|Y|)/((c-1)²ε²))
-randomness values such that for every input (x, y), at most a c·ε
-fraction of them produce incorrect outputs. -/
+/-- Existence of a small table of good seeds (the derandomization step of Newman's
+theorem): if a public-coin finite-message protocol `p` ε-computes `f` and `c > 1`, then
+there is a table `ωs` of `t = derandomizationSamples X Y ε c` seeds such that for every
+input `(x, y)`, at most a `c · ε` fraction of the seeds `ωs i` make `p` output a value
+different from `f x y`. [RY20, Thm 3.5 proof] (Chernoff + union bound over inputs) /
+[Rou16, Thm 4.9 proof]; historically [New91].
+
+**Proof sketch.** Step 1: dispose of the degenerate cases. If `X` or `Y` is empty the
+claim is vacuous; if `ε ≥ 1` any table works because the bad fraction is at most
+`1 < c · ε`; if `ε < 0` the hypothesis contradicts the nonnegativity of probabilities;
+if `ε = 0` every bad set has measure zero, so by a countable union bound some single
+seed is correct on all inputs and the constant table works. Step 2: in the main case
+`0 < ε`, the choice of `t` gives the key numeric bound
+`exp(−2 (c−1)² ε² t) · |X| · |Y| < 1`, since `log(|X||Y|) / (2 (c−1)² ε²) < t`. Step 3:
+sample the `t` seeds independently, i.e. work on the product space `Fin t → Ω`. For a
+fixed input `(x, y)`, the indicators `Yᵢ = 1[p errs on seed ωs i]` are independent (they
+are functions of distinct coordinates), `[0,1]`-valued, and have mean equal to the
+failure probability of `p` on `(x, y)`, which is at most `ε`; the Hoeffding bound
+`prob_many_events_le` shows that the bad event "at least `c ε t` of the seeds err on
+`(x, y)`" has probability at most `exp(−2 (c−1)² ε² t)`. Step 4: a union bound over all
+`|X| · |Y|` inputs shows that the union of the bad events has probability less than one,
+so some table `ωs` lies outside every bad event. Step 5: for that table, the number of
+bad indices for each `(x, y)` is less than `c ε t`, which is the claimed fraction
+bound. -/
 theorem exists_good_randomness
     [FiniteProbabilitySpace Ω]
     (p : Protocol Ω X Y α) (f : X → Y → α) (ε : ℝ) (c : ℝ)
@@ -120,6 +167,7 @@ theorem exists_good_randomness
           (derandomizationSamples X Y ε c)
           ≤ c * ε := by
   haveI : Nonempty Ω := Measure.nonempty_of_neZero (volume : Measure Ω)
+  -- Step 1: degenerate cases.
   -- Handle X or Y empty (conclusion is vacuously true)
   by_cases hX : IsEmpty X
   · exact ⟨fun _ => Classical.arbitrary Ω, fun x => hX.elim x⟩
@@ -182,7 +230,7 @@ theorem exists_good_randomness
   have hε : 0 < ε := lt_of_le_of_ne hε_neg (Ne.symm hε_zero)
   set t := derandomizationSamples X Y ε c with ht_def
   have ht_pos : 0 < t := by simp [ht_def, derandomizationSamples]
-  -- The key bound: exp(-2*(c-1)²*ε²*t) * |X| * |Y| < 1
+  -- Step 2: the key bound: exp(-2*(c-1)²*ε²*t) * |X| * |Y| < 1
   have ht_bound : Real.exp (-2 * (c - 1) ^ 2 * ε ^ 2 * ↑t) *
       (Fintype.card X * Fintype.card Y) < 1 := by
     set N : ℝ := ↑(Fintype.card X) * ↑(Fintype.card Y) with hN_def
@@ -209,7 +257,7 @@ theorem exists_good_randomness
             exact Real.exp_strictMono (by linarith)
         _ = 1 := by
             rw [Real.exp_neg, Real.exp_log hN, inv_mul_cancel₀ (ne_of_gt hN)]
-  -- Probabilistic existence on the product space Fin t → Ω
+  -- Step 3: probabilistic existence on the product space Fin t → Ω
   have : ∃ (ωs : Fin t → Ω), ∀ (x : X) (y : Y),
       ((Finset.univ.filter (fun i => p.rrun x y (ωs i) ≠ f x y)).card : ℝ) / t
         ≤ c * ε := by
@@ -265,7 +313,7 @@ theorem exists_good_randomness
       · linarith
       · exact hc
       · exact ht_pos
-    -- Union bound
+    -- Step 4: union bound
     have hunion : μ.real (⋃ x : X, ⋃ y : Y, bad x y) < 1 := by
       calc μ.real (⋃ x : X, ⋃ y : Y, bad x y)
           ≤ ∑ x : X, μ.real (⋃ y : Y, bad x y) :=
@@ -281,7 +329,7 @@ theorem exists_good_randomness
               Real.exp (-2 * (c - 1) ^ 2 * ε ^ 2 * ↑t) := by
             simp [Finset.sum_const, mul_comm, mul_assoc]
         _ < 1 := by nlinarith [ht_bound]
-    -- Therefore complement is nonempty: ∃ good ωs
+    -- Therefore the complement is nonempty: ∃ good ωs
     have hgood : ∃ ωs : Fin t → Ω, ωs ∉ ⋃ x : X, ⋃ y : Y, bad x y := by
       by_contra h
       push_neg at h
@@ -290,7 +338,7 @@ theorem exists_good_randomness
       linarith
     obtain ⟨ωs, hωs⟩ := hgood
     refine ⟨ωs, fun x y => ?_⟩
-    -- ωs is not bad for any (x,y), so #{bad i}/t ≤ c*ε
+    -- Step 5: ωs is not bad for any (x,y), so #{bad i}/t ≤ c*ε
     simp only [Set.mem_iUnion, not_exists, bad, Set.mem_setOf_eq, not_le] at hωs
     have hlt := hωs x y
     have hsum_eq : ∑ i : Fin t,

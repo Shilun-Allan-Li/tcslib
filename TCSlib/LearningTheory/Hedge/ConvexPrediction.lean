@@ -4,49 +4,70 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Karim Abdel Sadek, Mark Bedaywi
 -/
 
-import TCSlib.LearningTheory.Hedge
+import Mathlib.Analysis.Convex.Jensen
+import TCSlib.LearningTheory.Hedge.Regret
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-open Real Finset BigOperators
-
 /-!
 # Convex Prediction Bridge for Hedge
 
+The exponentially weighted average forecaster of [CBL06, §2.1] in its original form: the
+forecaster predicts the Hedge-weighted average of the experts' real-valued predictions and
+pays a loss that is convex in the prediction.  Jensen's inequality compares this loss with
+the expected expert loss of the abstract expert-setting Hedge in `Hedge.Basic`, so the
+regret bounds of `Hedge.Regret` transfer; `hedgePrediction_regret_bound_tight` is the
+statement that matches [CBL06, Thm 2.2] literally (for a prediction space `S ⊆ ℝ`).
+
+## Main definitions
+
+- `inducedLoss`: the expert-loss table obtained from expert predictions and outcomes.
+- `hedgePrediction`, `hedgePredictionCumLoss`: the weighted-average prediction and its
+  cumulative loss.
+
 ## Main results
 
-- `hedgePrediction_mem`: Hedge's weighted-average prediction stays inside a convex decision set when all expert predictions are in that set.
-- `hedgePrediction_loss_le_hedgeLoss`: Jensen's inequality shows the loss of the weighted-average prediction is at most Hedge's expected expert loss.
-- `hedgePredictionCumLoss_le_hedgeCumLoss`: The actual cumulative prediction loss is bounded by the abstract Hedge cumulative loss.
-- `hedgePrediction_regret_bound_tight`: Tight regret bound for actual weighted-average predictions via the Jensen bridge and the abstract Hedge theorem.
-- `hedgePrediction_regret_tight_optimal`: Optimized-learning-rate regret bound for weighted-average predictions in a convex real decision set.
+- `hedgePrediction_mem`: Hedge's weighted-average prediction stays inside a convex decision
+  set when all expert predictions are in that set.
+- `hedgePrediction_loss_le_hedgeLoss`: Jensen's inequality shows the loss of the
+  weighted-average prediction is at most Hedge's expected expert loss.
+- `hedgePredictionCumLoss_le_hedgeCumLoss`: The actual cumulative prediction loss is
+  bounded by the abstract Hedge cumulative loss.
+- `hedgePrediction_regret_bound_tight`: Tight regret bound for actual weighted-average
+  predictions via the Jensen bridge and the abstract Hedge theorem.
+- `hedgePrediction_regret_tight_optimal`: Optimized-learning-rate regret bound for
+  weighted-average predictions in a convex real decision set.
 
 ## References
 
-- Original formalization by Karim Abdel Sadek, Mark Bedaywi
+* [CBL06] N. Cesa-Bianchi, G. Lugosi, *Prediction, Learning, and Games*, Cambridge
+  University Press, 2006.
+* [MRT18] M. Mohri, A. Rostamizadeh, A. Talwalkar, *Foundations of Machine Learning*,
+  2nd ed., MIT Press, 2018.
+
+Original formalization by Karim Abdel Sadek and Mark Bedaywi.
 -/
+
+open Real Finset BigOperators
 
 /-! ## From Predictions to Expert Losses -/
 
-/-- The loss sequence induced by expert predictions and outcomes. -/
--- Expert `i` at time `t` receives the loss of its own prediction against the
--- realized outcome at time `t`.  This is the abstract loss table used by Hedge.
+/-- The loss sequence induced by expert predictions and outcomes: expert `i` at time `t`
+receives the loss `ℓ(f_{i,t}, y_t)` of its own prediction against the realized outcome
+[CBL06, §2.1].  This is the abstract loss table fed to the expert-setting Hedge. -/
 noncomputable def inducedLoss {Ω : Type*} {N T : ℕ}
     (loss : ℝ → Ω → ℝ)
     (expertPred : Fin T → Fin N → ℝ)
     (outcome : Fin T → Ω) : LossSeq N T :=
   fun t i => loss (expertPred t i) (outcome t)
 
-/-- Hedge's prediction in the original decision space: the weighted average of
-the expert predictions using the Hedge distribution over induced expert losses.
-
-The distribution depends only on losses before `t`, because `hedgeDist` is
-defined from `cumLoss ... t`. -/
--- This is the actual prediction made in the original convex decision set:
--- take the Hedge weights from the induced loss table and average the experts'
--- predictions at the current round.
+/-- The exponentially weighted average forecaster's prediction at round `t`: the weighted
+average `Σ_i p_t(i) f_{i,t}` of the expert predictions using the Hedge distribution over the
+induced expert losses [CBL06, §2.1].  This is the actual prediction made in the original
+convex decision set.  The distribution depends only on losses before `t`, because
+`hedgeDist` is defined from `cumLoss ... t`. -/
 noncomputable def hedgePrediction {Ω : Type*} {N T : ℕ} [NeZero N]
     (η : ℝ)
     (loss : ℝ → Ω → ℝ)
@@ -56,9 +77,10 @@ noncomputable def hedgePrediction {Ω : Type*} {N T : ℕ} [NeZero N]
   ∑ i : Fin N,
     hedgeDist η (inducedLoss loss expertPred outcome) t.val i * expertPred t i
 
-/-- The actual cumulative loss of Hedge's weighted-average predictions. -/
--- This is not the same object as `hedgeCumLoss` in `Hedge.lean`.  Here we first
--- average the predictions, then apply the real loss function to that average.
+/-- The cumulative loss `Σ_t ℓ(p̂_t, y_t)` of the forecaster's weighted-average predictions
+`p̂_t = hedgePrediction … t` [CBL06, §2.1].  This is not the same object as `hedgeCumLoss`
+in `Hedge.Basic`: here the predictions are averaged first and the real loss function is
+applied to the average. -/
 noncomputable def hedgePredictionCumLoss {Ω : Type*} {N T : ℕ} [NeZero N]
     (η : ℝ)
     (loss : ℝ → Ω → ℝ)
@@ -66,10 +88,9 @@ noncomputable def hedgePredictionCumLoss {Ω : Type*} {N T : ℕ} [NeZero N]
     (outcome : Fin T → Ω) : ℝ :=
   ∑ t : Fin T, loss (hedgePrediction η loss expertPred outcome t) (outcome t)
 
-/-- Hedge's weighted-average prediction remains in a convex decision set when all
-expert predictions are in that set. -/
--- The Hedge weights are nonnegative and sum to one, so convexity of `S` keeps
--- the weighted average inside `S`.
+/-- If every expert prediction lies in a convex set `S ⊆ ℝ`, then so does Hedge's
+weighted-average prediction at every round: the Hedge weights are nonnegative and sum to
+one, so convexity of `S` keeps the weighted average inside `S`. -/
 lemma hedgePrediction_mem {Ω : Type*} {N T : ℕ} [NeZero N]
     {S : Set ℝ} (hS : Convex ℝ S)
     (η : ℝ)
@@ -87,11 +108,13 @@ lemma hedgePrediction_mem {Ω : Type*} {N T : ℕ} [NeZero N]
       (by simpa using hedgeDist_sum η (inducedLoss loss expertPred outcome) t.val)
       (fun i _ => hexpert t i)
 
-/-- Jensen bridge: if the round loss is convex in the prediction, then the loss
-of Hedge's weighted-average prediction is at most Hedge's expected expert loss. -/
--- This is the key bridge.  The left side is the real loss of the averaged
--- prediction; the right side is the weighted average of expert losses used in
--- the abstract Hedge proof.
+/-- Jensen bridge: if all expert predictions lie in a convex set `S ⊆ ℝ` and the loss at
+each round is convex in the prediction on `S`, then the loss of Hedge's weighted-average
+prediction at round `t` is at most Hedge's expected expert loss
+`Σ_i p_t(i) ℓ(f_{i,t}, y_t)` at that round [CBL06, proof of Thm 2.2 (Jensen step)].  The
+left side is the real loss of the averaged prediction; the right side is the weighted average
+of expert losses used in the abstract Hedge proof.  After expanding definitions this is
+exactly Jensen's inequality (`ConvexOn.map_sum_le`) for the finite convex combination. -/
 lemma hedgePrediction_loss_le_hedgeLoss {Ω : Type*} {N T : ℕ} [NeZero N]
     {S : Set ℝ} (hS : Convex ℝ S)
     (η : ℝ)
@@ -116,9 +139,10 @@ lemma hedgePrediction_loss_le_hedgeLoss {Ω : Type*} {N T : ℕ} [NeZero N]
       (by simpa using hedgeDist_sum η (inducedLoss loss expertPred outcome) t.val)
       (fun i _ => hexpert t i)
 
-/-- The actual cumulative loss of Hedge's predictions is bounded by the expected
-expert-loss cumulative quantity used in `Hedge.lean`. -/
--- Summing the one-round Jensen inequality gives the cumulative comparison.
+/-- Under the hypotheses of `hedgePrediction_loss_le_hedgeLoss`, the cumulative loss of
+Hedge's weighted-average predictions is at most the cumulative expected expert loss
+`hedgeCumLoss` of the abstract Hedge on the induced losses
+[CBL06, proof of Thm 2.2 (Jensen step)]: sum the one-round Jensen inequality. -/
 lemma hedgePredictionCumLoss_le_hedgeCumLoss {Ω : Type*} {N T : ℕ} [NeZero N]
     {S : Set ℝ} (hS : Convex ℝ S)
     (η : ℝ)
@@ -132,16 +156,20 @@ lemma hedgePredictionCumLoss_le_hedgeCumLoss {Ω : Type*} {N T : ℕ} [NeZero N]
   exact Finset.sum_le_sum fun t _ =>
     hedgePrediction_loss_le_hedgeLoss hS η loss expertPred outcome hexpert hloss_conv t
 
-/-! ## The Writeup-Style Regret Bound -/
+/-! ## CBL Theorem 2.2 in prediction space -/
 
-/-- The tight Hedge regret bound for actual weighted-average predictions in a
-convex real decision set.  This is the prediction-space counterpart of
-`hedge_regret_bound_tight`: the existing expert-loss regret theorem is applied
-to the induced expert losses, while convexity/Jensen moves the left-hand side
-back to the original decision space. -/
--- The proof has two ingredients: Jensen compares actual prediction loss to
--- abstract Hedge loss, and `hedge_regret_bound_tight` controls the abstract
--- Hedge loss against the best expert.
+/-- **Regret of the exponentially weighted average forecaster**: for a convex decision set
+`S ⊆ ℝ`, expert predictions in `S`, round losses convex in the prediction on `S` and taking
+values in `[0,1]` on the experts' predictions, and any `η > 0`, the cumulative loss of the
+weighted-average predictions exceeds the cumulative loss of the best expert by at most
+`(ln N)/η + ηT/8` [CBL06, Thm 2.2]; [MRT18, §8.2.4].  This is the statement that matches
+CBL literally; it is the prediction-space counterpart of `hedge_regret_bound_tight`.
+Deviation: the prediction space is a convex subset of `ℝ` rather than of a general vector
+space, and boundedness of the loss is assumed only on the induced expert losses (`hvalid`).
+
+Proof: Jensen (`hedgePredictionCumLoss_le_hedgeCumLoss`) compares the actual prediction
+loss to the abstract Hedge loss, and `hedge_regret_bound_tight` on the induced loss table
+controls the abstract Hedge loss against the best expert. -/
 theorem hedgePrediction_regret_bound_tight {Ω : Type*} {N T : ℕ} [NeZero N]
     {S : Set ℝ} (hS : Convex ℝ S)
     (η : ℝ) (hη_pos : 0 < η)
@@ -163,9 +191,12 @@ theorem hedgePrediction_regret_bound_tight {Ω : Type*} {N T : ℕ} [NeZero N]
   unfold regret at hreg
   linarith
 
-/-- Optimized tight regret bound for actual weighted-average predictions. -/
--- This is the same bridge as above, but using the optimized learning rate from
--- `Hedge.lean`.
+/-- **Regret of the exponentially weighted average forecaster at the optimal rate**: under
+the hypotheses of `hedgePrediction_regret_bound_tight`, with `T > 0`, `N > 1`, and the
+learning rate `η = optimalEtaTight N T = √(8 ln N / T)`, the cumulative loss of the
+weighted-average predictions exceeds the cumulative loss of the best expert by at most
+`√((T/2) ln N)` [CBL06, Cor 2.2].  This is the same Jensen bridge as above, applied to
+`hedge_regret_tight_optimal` from `Hedge.Regret`. -/
 theorem hedgePrediction_regret_tight_optimal {Ω : Type*} {N T : ℕ} [NeZero N]
     {S : Set ℝ} (hS : Convex ℝ S)
     (hT : 0 < T) (hN : 1 < N)

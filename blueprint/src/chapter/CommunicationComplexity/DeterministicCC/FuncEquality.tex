@@ -5621,3 +5621,16 @@ base-$2$ logarithm. That is, there is a public-coin protocol computing
 $\mathrm{equality}_n$ with error probability at most $\varepsilon$ on every input pair
 whose worst-case number of exchanged bits is bounded by this quantity.
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Ceiling logarithm of $2$ in base $2$]
+\lean{CommunicationComplexity.Functions.Equality.clog_two_two}
+\label{CommunicationComplexity.Functions.Equality.clog_two_two}
+\leanok
+The base-$2$ ceiling logarithm of $2$ equals $1$: $\lceil \log_2 2 \rceil = 1$,
+i.e.\ \texttt{Nat.clog 2 2 = 1}. This is a small arithmetic fact used in the
+deterministic upper bound for the equality function.
+\end{theorem}

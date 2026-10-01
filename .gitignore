@@ -15,4 +15,18 @@ blueprint/src/*.aux
 # to its own gzip, so only the ~14MB .gz copy is committed. Readers go through
 # proofmatch/dataset_io.py, which falls back to the .gz when the .jsonl is absent.
 dataset/tcslib_theorems.jsonl
-math-tcs/
+
+# --- policy-cleanup working area (process artifacts, not library content) ---
+# scripts/{decl_snapshot,decl_snapshot_diff,policy_build,style_lint,code_diff}.py write here:
+# the plan, per-file audits, verification reports, per-declaration snapshots (~18 MB),
+# scratch oleans and the lean lock. Regenerable; not part of the library.
+# To keep the audit trail in the repo instead, un-ignore the small text parts:
+#   !cleanup/PLAN.md
+#   !cleanup/plans/
+#   !cleanup/reports/
+cleanup/
+
+# Generated next to its input by the have->lemma metaprogram fixtures in TCSlib/Tactics
+# (see HANDOFF.md). Regenerate with the fixture; never commit.
+*_iter_output.lean
+*.lean.progress

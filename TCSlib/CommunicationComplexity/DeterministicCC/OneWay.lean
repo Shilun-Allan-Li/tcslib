@@ -15,16 +15,41 @@ set_option autoImplicit false
 /-!
 # One-Way Deterministic Communication Protocols
 
+The one-way model of [Rou16, §1.7]: Alice sends Bob a single message depending only on her
+input, and Bob outputs the answer from that message and his own input. The cost of a protocol
+is the number of bits needed to encode Alice's message, `⌈log₂ |Message|⌉`, and the one-way
+complexity of `f` is the least cost of a one-way protocol computing `f`.
+
+## Main definitions
+
+- `Deterministic.OneWay.Protocol`: one-way protocols as a finite message codebook together
+  with Alice's encoder and Bob's decoder
+- `Deterministic.OneWay.Protocol.run`, `Deterministic.OneWay.Protocol.cost`,
+  `Deterministic.OneWay.Protocol.Computes`: outcome, bit cost and correctness of a protocol
+- `Deterministic.OneWay.Protocol.toFiniteMessage`: a one-way protocol viewed as a two-message
+  interactive protocol
+- `Deterministic.OneWay.communicationComplexity`: one-way deterministic communication
+  complexity of a function, defined as the infimum of bit costs over all one-way protocols
+  computing it.
+
 ## Main results
 
-- `Deterministic.OneWay.communicationComplexity`: One-way deterministic communication complexity
-  of a function, defined as the infimum of bit costs over all one-way protocols computing it.
-- `Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le`: A one-way upper
+- `Deterministic.OneWay.communicationComplexity_le_iff`,
+  `Deterministic.OneWay.le_communicationComplexity_iff`: upper and lower bounds on the one-way
+  complexity in terms of protocols
+- `Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le`: a one-way upper
   bound implies a deterministic upper bound with additive `⌈log₂ |α|⌉` overhead.
+- `Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le_bool`: the
+  Boolean case, with overhead `1`.
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [Rou16] T. Roughgarden, *Communication Complexity (for Algorithm Designers)*,
+  Foundations and Trends in Theoretical Computer Science 11(3–4), 2016.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -33,7 +58,9 @@ namespace OneWay
 
 variable {X Y α : Type*}
 
-/-- A one-way deterministic communication protocol.
+/-- A one-way deterministic communication protocol: Alice sends Bob a single message that is
+a function of her input only, and Bob outputs the answer as a function of that message and
+his own input. [Rou16, §1.7 Definition (one-way protocol)].
 
 `Message` is the protocol's message codebook (language): the finite set of
 admissible full one-shot messages Alice may send. It is not the base symbol
@@ -59,11 +86,15 @@ def run (p : Protocol X Y α) (x : X) (y : Y) : α :=
   p.decode (p.send x) y
 
 /-- Protocol-level communication cost in bits:
-`⌈log₂ |Message|⌉`, where `Message` is the protocol codebook/language. -/
+`⌈log₂ |Message|⌉`, where `Message` is the protocol codebook/language.
+[Rou16, §1.7 Definition (one-way protocol)]. Deviation: Roughgarden charges the length of
+Alice's message; here messages are abstract codewords and the cost is the length of a
+fixed-length binary encoding of the codebook. -/
 def cost (p : Protocol X Y α) : ℕ :=
   Nat.clog 2 (Fintype.card p.Message)
 
-/-- A one-way protocol computes `f` when its execution agrees with `f` everywhere. -/
+/-- A one-way protocol computes `f` when its execution agrees with `f` everywhere.
+[Rou16, §1.7 Definition (one-way protocol)]. -/
 def Computes (p : Protocol X Y α) (f : X → Y → α) : Prop :=
   p.run = f
 
@@ -77,11 +108,15 @@ noncomputable def toFiniteMessage [Fintype α] [Nonempty α]
       (fun y => Fintype.equivFin α (p.decode m y))
       (fun a => .output ((Fintype.equivFin α).symm a)))
 
+/-- The interactive protocol obtained from a one-way protocol has the same outcome on every
+input. -/
 @[simp] theorem toFiniteMessage_run [Fintype α] [Nonempty α]
     (p : Protocol X Y α) (x : X) (y : Y) :
     Deterministic.FiniteMessage.Protocol.run (p.toFiniteMessage) x y = p.run x y := by
   simp [toFiniteMessage, run, Deterministic.FiniteMessage.Protocol.run]
 
+/-- The interactive protocol obtained from a one-way protocol has complexity equal to the
+one-way cost plus `⌈log₂ |α|⌉`, the bits Bob spends announcing the output. -/
 @[simp] theorem toFiniteMessage_complexity [Fintype α] [Nonempty α]
     (p : Protocol X Y α) :
     (p.toFiniteMessage).complexity = p.cost + Nat.clog 2 (Fintype.card α) := by
@@ -91,12 +126,14 @@ noncomputable def toFiniteMessage [Fintype α] [Nonempty α]
 end Protocol
 
 /-- One-way deterministic communication complexity of `f`:
-the infimum, over one-way protocols computing `f`, of protocol bit cost. -/
+the infimum, over one-way protocols computing `f`, of protocol bit cost.
+[Rou16, §1.7 Definition (one-way communication complexity)]. Deviation: defined as an `ENat`
+infimum, so it is `⊤` when no one-way protocol computes `f`. -/
 noncomputable def communicationComplexity (f : X → Y → α) : ENat :=
   ⨅ (p : Protocol X Y α) (_ : Protocol.Computes p f), (Protocol.cost p : ENat)
 
-/-- Characterization of one-way communication complexity bounds by existence of
-a one-way protocol with bounded cost. -/
+/-- The one-way communication complexity of `f` is at most `n` if and only if some one-way
+protocol computes `f` with cost at most `n`. -/
 theorem communicationComplexity_le_iff (f : X → Y → α) (n : ℕ) :
     communicationComplexity f ≤ n ↔
       ∃ p : Protocol X Y α,
@@ -104,13 +141,23 @@ theorem communicationComplexity_le_iff (f : X → Y → α) (n : ℕ) :
   simp only [communicationComplexity,
     CommunicationComplexity.Internal.enat_iInf_le_coe_iff, Nat.cast_le, exists_prop]
 
+/-- The one-way communication complexity of `f` is at least `k` if and only if every one-way
+protocol computing `f` has cost at least `k`. -/
 theorem le_communicationComplexity_iff (f : X → Y → α) (k : ℕ) :
     (k : ENat) ≤ communicationComplexity f ↔
       ∀ p : Protocol X Y α, Protocol.Computes p f → k ≤ Protocol.cost p := by
   simp [communicationComplexity, le_iInf_iff, Nat.cast_le]
 
-/-- A one-way upper bound yields a deterministic upper bound, with additive
-`⌈log₂ |α|⌉` to let Bob send the decoded output in the interactive model. -/
+/-- If the one-way communication complexity of `f` is at most `n`, then its deterministic
+(interactive) communication complexity is at most `n + ⌈log₂ |α|⌉`: a one-way protocol is an
+interactive protocol once Bob announces the decoded output, which costs `⌈log₂ |α|⌉` extra
+bits. [Rou16, §1.7] (a one-way protocol is a protocol).
+
+**Proof sketch.** Pick a one-way protocol `p` computing `f` with cost at most `n`. By the
+finite-message characterisation of deterministic complexity it suffices to exhibit a
+finite-message protocol computing `f` with complexity at most `n + ⌈log₂ |α|⌉`. Viewing `p` as
+a finite-message protocol (`toFiniteMessage`) does this: its run is that of `p`, hence equals
+`f`, and its complexity is exactly the cost of `p` plus `⌈log₂ |α|⌉`. -/
 theorem deterministic_communicationComplexity_le_of_oneWay_le
     [Fintype α] [Nonempty α]
     (f : X → Y → α) (n : ℕ)
@@ -133,13 +180,20 @@ theorem deterministic_communicationComplexity_le_of_oneWay_le
       _ ≤ n + Nat.clog 2 (Fintype.card α) :=
           Nat.add_le_add_right hcost _
 
-/-- Same as `deterministic_communicationComplexity_le_of_oneWay_le` but specialized
-to Bool. -/
+/-- `Nat.clog 2 2 = 1`, kernel-checked (replaces a former `native_decide`). -/
+private theorem clog_two_two : Nat.clog 2 2 = 1 := Nat.clog_eq_one le_rfl le_rfl
+
+/-- If the one-way communication complexity of a Boolean function `f` is at most `n`, then
+its deterministic communication complexity is at most `n + 1`: Bob announces the one-bit
+output after receiving Alice's message. [Rou16, §1.7] (a one-way protocol is a protocol).
+This is `deterministic_communicationComplexity_le_of_oneWay_le` with `⌈log₂ 2⌉ = 1`. -/
 theorem deterministic_communicationComplexity_le_of_oneWay_le_bool
     (f : X → Y → Bool) (n : ℕ)
     (h : OneWay.communicationComplexity f ≤ n) :
     Deterministic.communicationComplexity f ≤ n + 1 := by
-  have h1 : Nat.clog 2 (Fintype.card Bool) = 1 := by native_decide
+  -- Step 1: the one-bit output costs `Nat.clog 2 2 = 1`
+  have h1 : Nat.clog 2 (Fintype.card Bool) = 1 := by
+    rw [Fintype.card_bool]; exact clog_two_two
   have := OneWay.deterministic_communicationComplexity_le_of_oneWay_le (f := f) (n := n) h
   rw [h1] at this
   exact this

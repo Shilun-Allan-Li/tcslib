@@ -24,16 +24,35 @@ set_option autoImplicit false
 /-!
 # Finite Probability Spaces
 
+## Main definitions
+
+- `CommunicationComplexity.FiniteMeasureSpace`: typeclass for finite measurable spaces
+  with discrete measurable structure.
+- `CommunicationComplexity.FiniteProbabilitySpace`: typeclass bundling a finite
+  measurable space with a probability measure.
+- `FiniteProbabilitySpace.toPMF`: the probability mass function of a finite probability
+  space.
+
 ## Main results
 
-- `CommunicationComplexity.FiniteMeasureSpace`: Typeclass for finite measurable spaces with discrete measurable structure.
-- `CommunicationComplexity.FiniteProbabilitySpace`: Typeclass hierarchy bundling a finite measurable space with a probability measure.
-- `FiniteProbabilitySpace.measureReal_prod`: The real-valued measure of a measurable rectangle in a product finite probability space factors as the product of the two measures.
-- `FiniteProbabilitySpace.integral_eq_pmf_sum`: On a finite probability space, integrating a real-valued function equals a finite weighted sum over the PMF.
+- `FiniteProbabilitySpace.measureReal_prod`: the real-valued measure of a measurable
+  rectangle in a product finite probability space factors as the product of the two
+  measures.
+- `FiniteProbabilitySpace.integral_eq_pmf_sum`: on a finite probability space,
+  integrating a real-valued function equals a finite weighted sum over the PMF.
+- `FiniteProbabilitySpace.measureReal_ge_le_integral_div`: Markov's inequality.
+- `FiniteProbabilitySpace.sq_integral_le_integral_sq`: Jensen's inequality for the
+  square.
+
+The facts in this file are generic finite probability theory; where a textbook location
+is given it points to [Ver18], Chapter 1.
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [Ver18] R. Vershynin, *High-Dimensional Probability: An Introduction with Applications
+  in Data Science*, Cambridge University Press, 2018.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 open MeasureTheory
@@ -52,13 +71,18 @@ class FiniteMeasureSpace (Ω : Type*) [MeasurableSpace Ω] where
 attribute [instance] FiniteMeasureSpace.fintype
 attribute [instance] FiniteMeasureSpace.discrete
 
-/-- Helper for bundling already-existing finite measurable-space instances locally. -/
+/-- The `FiniteMeasureSpace` structure on a type `Ω` that already carries `Fintype` and
+`DiscreteMeasurableSpace` instances, assembled from those instances. -/
 def FiniteMeasureSpace.of
     (Ω : Type*) [MeasurableSpace Ω] [Fintype Ω] [DiscreteMeasurableSpace Ω] :
     FiniteMeasureSpace Ω :=
 { fintype := inferInstance
   discrete := inferInstance }
 
+/-- A finite probability space: a type `Ω` equipped with a measure space structure
+whose measurable structure is discrete, whose underlying type is finite, and whose
+`volume` is a probability measure. This is the ambient structure for the randomness of
+public-coin and private-coin protocols. -/
 class FiniteProbabilitySpace (Ω : Type*) where
   toMeasureSpace : MeasureSpace Ω
   finite :
@@ -71,7 +95,9 @@ attribute [instance] FiniteProbabilitySpace.toMeasureSpace
 attribute [instance] FiniteProbabilitySpace.finite
 attribute [instance] FiniteProbabilitySpace.prob
 
-/-- Helper for bundling already-existing instances locally. -/
+/-- The `FiniteProbabilitySpace` structure on a type `Ω` that already carries a
+`MeasureSpace`, `Fintype`, `DiscreteMeasurableSpace` and `IsProbabilityMeasure volume`
+instance, assembled from those instances. -/
 def FiniteProbabilitySpace.of
     (Ω : Type*)
     [m : MeasureSpace Ω]
@@ -111,8 +137,15 @@ theorem FiniteMeasureSpace.measureReal_eq_sum_singletons
   simp [T, Finset.sum_filter]
 
 open Classical in
-/-- On a finite measurable space, the real measure of a preimage event is the sum of the
-real masses of the fibers that imply the event. -/
+/-- On a finite measurable space, the real measure of the event "`P` holds of `Z ω`", for
+a finite-valued map `Z : Ω → α`, is the sum over the values `z` satisfying `P` of the real
+masses of the fibers `Z ⁻¹' {z}`.
+
+**Proof sketch.** Expand the left side as a sum of singleton masses over the points `ω`
+with `P (Z ω)`. On the right side expand each fiber mass as the sum of singleton masses
+over the `ω` with `Z ω = z`, merge the two conditions into a single indicator
+`P z ∧ Z ω = z`, and swap the order of summation; for each fixed `ω` only the term
+`z = Z ω` survives, which gives back the left side. -/
 theorem FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers
     {Ω α : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     [Fintype α] (μ : Measure Ω) [IsFiniteMeasure μ] (Z : Ω → α) (P : α → Prop) :
@@ -181,7 +214,8 @@ theorem FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons
       simpa [T] using hω) hνS)
 
 /-- For any probability measure on a finite measurable space, the square of an expectation is
-bounded by the expectation of the square. -/
+bounded by the expectation of the square (Jensen's inequality for `x ↦ x²`).
+[Ver18, §1.2]. -/
 theorem FiniteMeasureSpace.sq_integral_le_integral_sq
     {Ω : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (f : Ω → ℝ) :
@@ -217,8 +251,10 @@ theorem FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers
   rw [map_measureReal_apply Measurable.of_discrete MeasurableSet.of_discrete]
 
 open Classical in
-/-- Law of total probability over the fibers of a finite-valued random variable, in real-valued
-measure form. -/
+/-- Law of total probability over the fibers of a finite-valued random variable `Z`, in
+real-valued measure form: the measure of `S` is the sum over the values `z` of the
+measure of the fiber `Z ⁻¹' {z}` times the conditional measure of `S` given that fiber.
+Generic finite probability; no textbook location. -/
 theorem FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real
     {Ω α : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     [MeasurableSpace α] [DiscreteMeasurableSpace α] [Fintype α]
@@ -294,7 +330,9 @@ theorem uniformOn_univ_measureReal_eq_card_subtype
 
 namespace FiniteProbabilitySpace
 
-/-- You usually won't need this theorem explicitly, because of the instance below. -/
+/-- The underlying type of a finite probability space is nonempty (the whole space has
+measure one). You usually won't need this theorem explicitly, because of the instance
+below. -/
 theorem nonempty
     {Ω : Type*} [FiniteProbabilitySpace Ω] : Nonempty Ω :=
   (nonempty_of_measure_ne_zero (s := Set.univ) (μ := (volume : Measure Ω))
@@ -304,10 +342,14 @@ instance (priority := 100) instNonempty
     (Ω : Type*) [FiniteProbabilitySpace Ω] : Nonempty Ω :=
   FiniteProbabilitySpace.nonempty (Ω := Ω)
 
+/-- The probability mass function of a finite probability space: `toPMF Ω ω` is the
+`volume` of the singleton `{ω}`. -/
 def toPMF (Ω : Type*) [FiniteProbabilitySpace Ω] : PMF Ω :=
   (volume : Measure Ω).toPMF
 
 open Classical in
+/-- The measure of a set `S` in a finite probability space is the sum of the probability
+masses of its points. -/
 theorem measure_eq {Ω : Type*} [FiniteProbabilitySpace Ω] (S : Set Ω) :
     volume S = ∑ ω : S, toPMF Ω ω := by
   have hμ : (toPMF Ω).toMeasure = (volume : Measure Ω) := by
@@ -332,6 +374,9 @@ theorem hasSum_measure_singletons
     (fun _ => MeasurableSet.of_discrete)]
   exact ENNReal.summable.hasSum
 
+/-- The probability mass function of a product of finite probability spaces is the
+product of the two probability mass functions: `toPMF (Ω₁ × Ω₂) (x, y)` equals
+`toPMF Ω₁ x * toPMF Ω₂ y`. -/
 theorem pmf_prod {Ω₁ Ω₂ : Type*}
     [FiniteProbabilitySpace Ω₁] [FiniteProbabilitySpace Ω₂] :
     ∀ x y, toPMF (Ω₁ × Ω₂) (x, y) = (toPMF Ω₁ x) * (toPMF Ω₂ y) := by
@@ -395,7 +440,7 @@ theorem integral_eq_pmf_sum {Ω : Type*} [FiniteProbabilitySpace Ω]
   rw [MeasureTheory.integral_fintype f (Integrable.of_finite)]; congr 1
 
 /-- On a finite probability space, the square of an expectation is bounded by the expectation of
-the square. -/
+the square (Jensen's inequality for `x ↦ x²`). [Ver18, §1.2]. -/
 theorem sq_integral_le_integral_sq
     {Ω : Type*} [FiniteProbabilitySpace Ω] (f : Ω → ℝ) :
     (∫ ω, f ω)^2 ≤ ∫ ω, (f ω)^2 :=
@@ -476,7 +521,9 @@ theorem integral_le_of_le {Ω : Type*} [FiniteProbabilitySpace Ω]
           mul_le_mul_of_nonneg_left (hf ω) (pmf_toReal_nonneg (Ω := Ω) ω))
     _ = c := by rw [← Finset.sum_mul, pmf_toReal_sum_eq_one (Ω := Ω), one_mul]
 
-/-- Markov's inequality for nonnegative functions on a finite probability space. -/
+/-- Markov's inequality for nonnegative functions on a finite probability space: for
+`f ≥ 0` and `ε > 0`, the probability that `f ≥ ε` is at most `(∫ f) / ε`.
+[Ver18, Prop 1.2.4]. -/
 theorem measureReal_ge_le_integral_div
     {Ω : Type*} [FiniteProbabilitySpace Ω]
     {f : Ω → ℝ} {ε : ℝ} (hf_nonneg : ∀ ω, 0 ≤ f ω) (hε : 0 < ε) :

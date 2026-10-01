@@ -220,3 +220,64 @@ $Y$. Then
   \sup_{y \in Y}\,\inf_{x \in X}\,f(x,y).
 \]
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Range bounded above for a family with values at most one]
+\lean{OnlineLearning.bddAbove_of_le_one}
+\label{OnlineLearning.bddAbove_of_le_one}
+\leanok
+If $g : \iota \to \bbr$ satisfies $g(i) \le 1$ for every index $i$, then the range of
+$g$ is bounded above.
+\end{lemma}
+
+\begin{lemma}[Range bounded below for a nonnegative family]
+\lean{OnlineLearning.bddBelow_of_nonneg}
+\label{OnlineLearning.bddBelow_of_nonneg}
+\leanok
+If $g : \iota \to \bbr$ satisfies $0 \le g(i)$ for every index $i$, then the range of
+$g$ is bounded below.
+\end{lemma}
+
+\begin{lemma}[Infima of a unit-interval family are bounded above]
+\lean{OnlineLearning.bddAbove_range_iInf_of_unitInterval}
+\label{OnlineLearning.bddAbove_range_iInf_of_unitInterval}
+\leanok
+\uses{OnlineLearning.bddBelow_of_nonneg}
+Let $\iota$ be nonempty and let $g : \iota \to \kappa \to \bbr$ take values in $[0,1]$,
+i.e.\ $0 \le g(i,j) \le 1$ for all $i, j$. Then the family
+$j \mapsto \inf_{i \in \iota} g(i, j)$ has range bounded above.
+\end{lemma}
+
+\begin{lemma}[Suprema of a unit-interval family are bounded below]
+\lean{OnlineLearning.bddBelow_range_iSup_of_unitInterval}
+\label{OnlineLearning.bddBelow_range_iSup_of_unitInterval}
+\leanok
+\uses{OnlineLearning.bddAbove_of_le_one}
+Let $\kappa$ be nonempty and let $g : \iota \to \kappa \to \bbr$ take values in $[0,1]$,
+i.e.\ $0 \le g(i,j) \le 1$ for all $i, j$. Then the family
+$i \mapsto \sup_{j \in \kappa} g(i, j)$ has range bounded below.
+\end{lemma}
+
+\begin{theorem}[Finite column-sample step of the indexed no-regret bound]
+\lean{OnlineLearning.finiteIndexed_column_sample_step}
+\label{OnlineLearning.finiteIndexed_column_sample_step}
+\leanok
+\uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.bddAbove_of_le_one, OnlineLearning.bddAbove_range_iInf_of_unitInterval, OnlineLearning.bddBelow_of_nonneg, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.minimaxSublevel, OnlineLearning.payoffVsPure_nonneg, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, payoffVsPure, pureVsPayoff}
+Let $X, Y \subseteq \bbr$ and $f : \bbr \to \bbr \to \bbr$ satisfy the convex-compact
+minimax hypotheses, and suppose $f$ is normalized so that $0 \le f(x,y) \le 1$ for all
+$x \in X$ and $y \in Y$. Fix an integer $M \ge 2$, a row sample
+$x : \mathrm{Fin}\,M \to X$, a real $\varepsilon > 0$, and a finite column sample
+$v \subseteq Y$. Write
+\[
+  K \;:=\; \sup_{y \in Y}\; \inf_{i \in \mathrm{Fin}\,M}\; f(x_i, y)
+\]
+for the indexed sampled lower value. Then the set
+\[
+  X \;\cap\; \bigcap_{y \in v} \bigl\{\, x' \in X : f(x', y) \le K + \varepsilon \,\bigr\}
+\]
+is nonempty; that is, there is a row $\bar{x} \in X$ with $f(\bar{x}, y) \le K + \varepsilon$
+for every $y \in v$. This is the finite $\varepsilon$-net step in the proof of
+Cesa-Bianchi--Lugosi Theorem~7.1.
+\end{theorem}

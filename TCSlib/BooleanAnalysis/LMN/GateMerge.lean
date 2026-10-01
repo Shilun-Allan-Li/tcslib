@@ -1,3 +1,4 @@
+import TCSlib.Complexity.CircuitComplexity.Formulas
 import TCSlib.BooleanAnalysis.LMN.CircuitReindex
 
 /-!

@@ -19,18 +19,41 @@ set_option autoImplicit false
 /-!
 # CoinTape: Uniform Probability Measure on Finite Coin Sequences
 
+The random string of a randomized communication protocol [RY20, Ch. 3, §Variants of
+Randomized Protocols] is modelled here as a tape of `n` fair coins, i.e. a function
+`Fin n → Bool`, carrying the uniform probability measure. Both the public-coin and the
+private-coin models of this topic draw their randomness from such tapes.
+
+## Main definitions
+
+- `CommunicationComplexity.CoinTape`: the type `Fin n → Bool` of `n`-bit coin tapes.
+- `CommunicationComplexity.coinTapeMeasure`: the uniform probability measure on `CoinTape n`,
+  treating every outcome of `n` independent fair coin flips as equally likely (an instance).
+- `CommunicationComplexity.coinTapeIsProbabilityMeasure`,
+  `CommunicationComplexity.coinTapeFiniteProbabilitySpace`: the uniform measure on
+  `CoinTape n` is a probability measure, and `CoinTape n` is a `FiniteProbabilitySpace`
+  (instances).
+
 ## Main results
 
-- `CommunicationComplexity.coinTapeMeasure`: The uniform probability measure on `CoinTape n`, treating every outcome of `n` independent fair coin flips as equally likely.
-- `CommunicationComplexity.coinTapeIsProbabilityMeasure`: The uniform measure on `CoinTape n` is a probability measure.
+None — this file only sets up the coin-tape measure space.
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University Press,
+  1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
 
+/-- A coin tape of length `n`: a sequence of `n` bits, one per fair coin flip, i.e. a
+function `Fin n → Bool`. This is the random string that a randomized protocol has access to
+beyond its inputs [RY20, Ch. 3, Definition (randomized protocol)]; here it consists of `n`
+fair bits, uniformly distributed via `coinTapeMeasure`. -/
 abbrev CoinTape (n : ℕ) := Fin n → Bool
 
 open MeasureTheory ProbabilityTheory

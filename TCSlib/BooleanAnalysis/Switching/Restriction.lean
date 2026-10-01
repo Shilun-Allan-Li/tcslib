@@ -1,4 +1,5 @@
-import TCSlib.BooleanAnalysis.Switching.Circuit
+import TCSlib.Complexity.CircuitComplexity.Formulas
+import TCSlib.Complexity.CircuitComplexity.DecisionTree
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.Data.Int.Star
