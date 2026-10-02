@@ -210,7 +210,7 @@ theorem unaryFamily_language {L : Language Bool} (hL : L ≤ Language.allOnes) :
 
 end BoolCircuit
 
-/-- A unary language is decided by circuits of size `2`.  [AB09, Claim 6.8] -/
+/-- A unary language is decided by circuits of size at most `2`.  [AB09, Claim 6.8] -/
 theorem Language.inSIZE_two_of_le_allOnes {L : Language Bool}
     (hL : L ≤ Language.allOnes) : L.InSIZE (fun _ => 2) :=
   ⟨BoolCircuit.unaryFamily L, BoolCircuit.unaryFamily_onlyUsesGates L, BoolCircuit.unaryFamily_size_le L,

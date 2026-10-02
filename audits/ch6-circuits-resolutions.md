@@ -1,4 +1,4 @@
-# Chapter-6 circuit surface — audit loop resolutions (OPEN, round 2 pending)
+# Chapter-6 circuit surface — audit loop resolutions (OPEN, round 3 pending)
 
 Protocol: `workflow.md` §3. Round 1: pack `audits/ch6-circuits-pack.md`
 (commit `05971a42`, auditing `28690c01`), findings

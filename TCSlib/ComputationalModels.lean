@@ -72,7 +72,7 @@ Model-to-model maps (pointers only — their files are not imported here):
 
 * `BoolCircuit.Circuit.toFeedForward` — a semantic wrapper, not an embedding:
   the tree's evaluation becomes a single unrestricted first-layer gate, so only
-  evaluation is preserved, never a gate basis
+  evaluation is preserved, with no general gate-basis guarantee
   (`Complexity/CircuitComplexity/FeedForward.lean`).
 * `BoolCircuit.Circuit.tseitin` / `Circuit.toCNF` — circuits →
   equisatisfiable `NPReductions.CNFFormula`

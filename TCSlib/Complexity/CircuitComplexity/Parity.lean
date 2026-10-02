@@ -392,7 +392,7 @@ this circuit model negates only at literals, each node carries a *pair* — a ci
 XOR of its leaves and a circuit for its complement — and `xorNode` builds the pair for a
 parent from those of its two children as `(a ∧ b') ∨ (a' ∧ b)` and `(a ∧ b) ∨ (a' ∧ b')`,
 costing two levels of depth.  Halving the list `⌈log₂ n⌉` times therefore gives depth
-`2⌈log₂ n⌉ + 2 ≤ 4(log₂ n + 1)` and fan-in `2`; polynomial size then follows from
+at most `2⌈log₂ n⌉ + 2 ≤ 4(log₂ n + 1)` and fan-in `2`; polynomial size then follows from
 `Circuit.size_succ_le_two_pow`, since a fan-in-2 tree of depth `d` has fewer than `2^(d+1)`
 nodes.  Reading the tree at word length `|w|` and folding `List.finRange_map_get` gives the
 XOR of `w`'s letters, which is `1` exactly when `w` has an odd number of `1`s. -/

@@ -43,8 +43,10 @@ counts the `n` input vertices, so no size-`1` circuit exists there for `n ≥ 2`
 size class of *this* model; quantitative transfer to AB's `SIZE(T)` needs an
 explicit simulation with a transformed budget. AB Def 6.1 fixes fan-in 2; we use unbounded `stdGateOps`,
 which AB calls "essentially without loss of generality" (fan-in `f` costs `f - 1`
-gates) and which is AB's own convention for `AC` (Def 6.25) — fan-in matters only
-under a depth restriction, and `P/poly` imposes none. AB's basis is `{∧, ∨, ¬}`;
+gates) and which is AB's own convention for `AC` (Def 6.25) — for *polynomial-size
+existence* the fan-in choice is immaterial (budgets change by the `f - 1` factor);
+exact size budgets do feel it, which is part of why fixed `SIZE(T)` is not
+preserved (above).  `P/poly` imposes no depth restriction. AB's basis is `{∧, ∨, ¬}`;
 ours adds `id` (needed for layer padding) and recovers `∨` by De Morgan. AB counts
 input vertices in `|C|` and allows arbitrary DAGs; we count non-input nodes and
 require layering, costing `+n` and a factor `≤ s` respectively. AB writes

@@ -230,8 +230,8 @@ are exactly the machine-facing ones:
 * **Interface guidance inherited from the ch6-circuit audit**
   (`audits/ch6-circuits-findings.md`, notes 12–15): (i) build Thm 6.6's
   circuit family gate by gate against `OnlyUsesGates stdGateOps` —
-  `Circuit.toFeedForward` is a semantic wrapper and can never discharge the
-  basis obligation; (ii) reduce to tree CKT-SAT from the audited
+  `Circuit.toFeedForward` is a semantic wrapper and supplies no general basis
+  guarantee; (ii) reduce to tree CKT-SAT from the audited
   `Std.Sat.CNF ℕ` carrier (or via a finite-DAG Tseitin step), with a total
   string map sending malformed inputs to a fixed rejecting word such as
   `encodeSigma ⟨0, .node false []⟩`; (iii) renumber variables densely before

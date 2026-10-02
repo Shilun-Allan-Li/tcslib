@@ -45,7 +45,9 @@ direction only a depth-exponential unrolling is available, no polynomial bound.
 Neither quantified statement implies the other on the strength of that
 conversion: at `n = 20`, AB's cutoff `⌊2²⁰/200⌋ = 5242` transfers along
 `S + 2n` only to tree cutoff `5202`, far below the `⌊2²⁰/25⌋ = 41943` proved
-here, and tree hardness never rules out small DAGs with sharing.  AB's theorem
+here, and the conversion gives no transfer in the other direction at these cutoffs
+(sharing can make a DAG smaller than every tree for the same function, and only
+a depth-exponential unrolling runs DAG-to-tree).  AB's theorem
 is about the more general model; this one has the larger cutoff in its narrower
 one — and the families are not nested at every `S`: the three-literal `AND` on `n = 3` has
 `Circuit.size = 4`, whereas Def 6.1 needs at least `5` vertices for that function, so
@@ -58,8 +60,10 @@ being written in unary, and a gate costs three bits plus one per child, so size 
 fits in fewer than `(n + 4) * S` bits, against the `9 · S · log S` AB cites for an
 adjacency list. Since `n + 5 < 10 n` for `n ≥ 1`, `2 ^ n / (n + 5)` is the larger of
 the two numbers — a unary index costs `n` bits a leaf, the same order as AB's
-`log S ≈ n`, against AB's generous constant `9`. That is not a strengthening of AB: it
-is a weaker statement that happens to admit a larger constant. `n + 3` would close for
+`log S ≈ n`, against AB's generous constant `9`. That larger constant is **not** a strengthening of AB — and, per the
+comparison above, nor is it a weakening: it is a tree-counting analogue with a
+different cutoff in a different model, and the displayed conversion establishes
+neither implication between the two stated bounds. `n + 3` would close for
 every `n ≥ 1` — only `n = 0`, where `.node b []` meets `(n + 4) * 1` with equality,
 forces the `4` — but carrying `0 < n` through every downstream statement to move the
 denominator from `n + 5` to `n + 4` buys nothing.

@@ -128,10 +128,11 @@ fanout > 1.  The two directions of conversion have different costs:
   `f` input wires, the resulting tree has at most `(f + 1) ^ F.depth` nodes — an
   exponential blowup in depth.
 
-* **`BoolCircuit.Circuit.toFeedForward`** (tree → DAG): a tree is already a DAG with
-  fanout ≤ 1, so the embedding is faithful.  The FeedForward circuit has the same depth
-  and its size is at most `C.size * C.depth` after inserting identity wires to pad
-  shorter branches of an unbalanced tree to a uniform depth.
+* **`BoolCircuit.Circuit.toFeedForward`** (tree → semantic wrapper): packages the
+  tree's *evaluation* as a single unrestricted layer-0 gate `⟨Fin n, C.eval⟩`
+  followed by `C.depth` identity layers, so `size = depth = C.depth + 1`.  No
+  source gate is copied, no branch is padded, and no gate basis is preserved in
+  general — see the declaration's docstring.
 -/
 
 section CircuitConversion
@@ -287,9 +288,11 @@ end FeedForward
     the unrestricted operation `⟨Fin n, C.eval⟩` and every later layer is one
     identity wire, so `size = depth = C.depth + 1` whatever `C.size` is.  The
     source gates are not embedded, no branch is padded, and the first gate is in
-    general **not** in `stdGateOps`, so this map can never discharge an
-    `OnlyUsesGates` obligation — a future machine-to-circuit bridge must build
-    its family gate by gate instead.  Only evaluation is preserved
+    general **not** in `stdGateOps`, so this map supplies **no general basis
+    guarantee** and cannot serve as a general machine-to-standard-circuit
+    construction — a future bridge must build its family gate by gate instead.
+    (Individual wrapped gates may happen to be standard: a single positive
+    literal transports to `andGateOp 1`.)  Only evaluation is preserved
     (`Circuit.toFeedForward_eval`). -/
 noncomputable def _root_.BoolCircuit.Circuit.toFeedForward (C : Circuit n) : FeedForward Bool (Fin n) Unit where
   depth := C.depth + 1
@@ -325,19 +328,20 @@ private theorem Circuit.toFeedForward_evalNode_const (C : Circuit n) (x : Fin n 
   · congr! 1;
   · convert ih ( Nat.lt_of_succ_lt hm ) _ using 1
 
-/-- The embedded feedforward circuit evaluates identically to the original `Circuit`.
+/-- The wrapped feedforward circuit evaluates identically to the original `Circuit`.
     Proof: evalNode traces backward through identity gates at layers 1..depth, then
     the layer-0 C.eval gate computes C.eval xs from the input layer. -/
 theorem Circuit.toFeedForward_eval (C : Circuit n) (x : Fin n → Bool) :
     C.toFeedForward.eval₁ x = C.eval x := by
   convert Circuit.toFeedForward_evalNode_const C x ( C.toFeedForward.depth ) ( by simp +decide [ Circuit.toFeedForward ] ) ( by simp +decide [ Circuit.toFeedForward ] ) _
 
-/-- The embedding uses one extra layer for the input, so depth is C.depth + 1. -/
+/-- The wrapper prepends one evaluation layer and keeps one identity layer per
+source depth unit, so depth is `C.depth + 1`. -/
 theorem Circuit.toFeedForward_depth (C : Circuit n) :
     C.toFeedForward.depth = C.depth + 1 := rfl
 
 /-
-The embedded feedforward circuit has size ≤ C.size * (C.depth + 1).
+The wrapped feedforward circuit has size ≤ C.size * (C.depth + 1).
     Its size equals C.depth + 1 (one Unit gate per layer), and C.size ≥ 1.
 -/
 theorem Circuit.toFeedForward_size_le (C : Circuit n) :

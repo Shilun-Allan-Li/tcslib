@@ -32,8 +32,10 @@ theorem below is therefore not [AB09, Thm 6.22]; see `## Divergences`.
 * `BoolCircuit.padLanguage_inTreeSize` / `BoolCircuit.padLanguage_not_inTreeSize` — the two halves of the
   separation, from [AB09, Claim 2.13] and [AB09, Thm 6.21] respectively.
 * `BoolCircuit.treeSize_ssubset` — `TreeSize T ⊂ TreeSize T'` given a padding length `ℓ`; the
-  tree-model analogue of [AB09, Thm 6.22] and **not** that theorem, whose class is
-  `Language.InSIZE`.
+  tree-model analogue of [AB09, Thm 6.22] and **not** that theorem, which lives in
+  the book's bounded-fan-in, input-counting DAG size classes — locally only
+  *rendered*, with declared divergences, by `Language.InSIZE` (see `PPoly.lean`'s
+  ledger).
 * `BoolCircuit.treeSize_ssubset_of_lt` — the same with `ℓ` supplied; `BoolCircuit.treeSize_one_ssubset` an
   instance of it, and `BoolCircuit.zero_mem_treeSize_one` that its smaller class is nonempty.
 
@@ -46,8 +48,9 @@ class (see `PPoly.lean`'s ledger) — by `Language.InSIZE`, over `BoolCircuit.Ci
 *tree*.  Neither transfer is available.  Tree → `FeedForward` exists only as
 `BoolCircuit.Circuit.toFeedForward`, which is over `FeedForward Bool`, not `Fin 2`, and puts
 the whole circuit into one gate `⟨Fin n, C.eval⟩` that is not in `stdGateOps`; every layer
-above the input is `Unit`, so its size is `C.depth + 1` whatever `C.size` is, and a map whose
-image size never mentions its source's cannot transport a size class either way.
+above the input is `Unit`, so its size is `C.depth + 1` whatever `C.size` is.  Size is not
+the obstruction (`C.depth ≤ C.size`, so the image has size `≤ C.size + 1`): what the map
+lacks is any general `stdGateOps` basis proof, which a size-class transport would need.
 `FeedForward` → tree is `BoolCircuit.FeedForward.toCircuit`, correct only under
 `FeedForward.IsAndOrGate` — every gate an AND or an OR — whereas `stdGateOps` also holds
 `id` and `NOT`, for neither of which `BoolCircuit.Circuit` has a gate (it negates only at
