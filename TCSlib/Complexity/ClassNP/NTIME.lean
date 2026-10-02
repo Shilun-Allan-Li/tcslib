@@ -102,7 +102,11 @@ reached by `w`, and `Turing.NDTM.runWith_of_halt` absorbs the padding, preservin
 the halted state and the output `[true]`. -/
 theorem AcceptsWithin.mono {N : FinNDTM Bool} {x : List Bool} {t t' : ℕ}
     (h : N.AcceptsWithin x t) (hle : t ≤ t') : N.AcceptsWithin x t' := by
-  sorry
+  obtain ⟨w, hw, hhalt, hout⟩ := h
+  refine ⟨w ++ List.replicate (t' - t) false, ?_, ?_⟩
+  · rw [List.length_append, List.length_replicate, hw, Nat.add_sub_of_le hle]
+  · rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hhalt]
+    exact ⟨hhalt, hout⟩
 
 /-- The machine `N` *decides* the language `L` within time `T`, nondeterministically:
 on every input `x`, every branch of length `T |x|` has halted
