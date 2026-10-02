@@ -5,6 +5,8 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassNP.EXP
+import TCSlib.Complexity.TuringMachine.Simulation
+import Mathlib.Tactic.FinCases
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -63,6 +65,561 @@ reconciliation of the two), and Theorem 2.22 (`EXP ≠ NEXP → P ≠ NP`, by pa
 namespace Complexity
 
 open Turing
+open Turing.FinTM
+
+/-- The total length of an input and its prescribed certificate strictly increases
+with the input length, including zero coefficient and degree. -/
+private lemma certificate_split_strictMono (C c : ℕ) :
+    StrictMono (fun n : ℕ => n + C * (n + 1) ^ c) := by
+  intro n m hnm
+  exact Nat.add_lt_add_of_lt_of_le hnm
+    (Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) c))
+
+/-- Two concatenations satisfying the same exact certificate-length formula have
+the same input and certificate whenever their concatenated words agree. -/
+private lemma certificate_split_unique (C c : ℕ) {x u y v : List Bool}
+    (hu : u.length = C * (x.length + 1) ^ c)
+    (hv : v.length = C * (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
+    x = y ∧ u = v := by
+  have hlen := congrArg List.length h
+  simp only [List.length_append, hu, hv] at hlen
+  have hx := (certificate_split_strictMono C c).injective hlen
+  exact ⟨List.append_inj_left h hx, List.append_inj_right h hx⟩
+
+/-- A finite, total specification of split recovery. Its implementation on native
+tapes, including the time for polynomial evaluation, remains a startup obligation. -/
+private def certificateSplit (C c m : ℕ) : Option ℕ :=
+  (List.range (m + 1)).find? (fun n => decide (n + C * (n + 1) ^ c = m))
+
+/-- Every returned split is within the actual input and satisfies the exact
+length formula. No validity assumption on the input is needed. -/
+private lemma certificateSplit_spec (C c m n : ℕ)
+    (h : certificateSplit C c m = some n) : n ≤ m ∧ n + C * (n + 1) ^ c = m := by
+  have hn := List.mem_of_find?_eq_some h
+  have he := List.find?_some h
+  exact ⟨Nat.le_of_lt_succ (List.mem_range.mp hn), of_decide_eq_true he⟩
+
+/-- Failed finite search means there is no solution at any natural split position,
+so malformed lengths must be rejected rather than assigned a default split. -/
+private lemma certificateSplit_none_iff (C c m : ℕ) :
+    certificateSplit C c m = none ↔ ¬ ∃ n, n + C * (n + 1) ^ c = m := by
+  rw [certificateSplit, List.find?_eq_none]
+  constructor
+  · intro h hex
+    obtain ⟨n, hn⟩ := hex
+    exact h n (List.mem_range.mpr (by omega)) (by simpa using hn)
+  · intro h n _ hn
+    exact h ⟨n, of_decide_eq_true hn⟩
+
+/-- A valid split is returned by finite search; strict increase rules out a
+different successful candidate before it. -/
+private lemma certificateSplit_complete (C c m n : ℕ)
+    (hn : n + C * (n + 1) ^ c = m) : certificateSplit C c m = some n := by
+  cases hs : certificateSplit C c m with
+  | none => exact False.elim ((certificateSplit_none_iff C c m).mp hs ⟨n, hn⟩)
+  | some k =>
+    have hk := (certificateSplit_spec C c m k hs).2
+    have heq := (certificate_split_strictMono C c).injective (hk.trans hn.symm)
+    exact congrArg some heq
+
+/-- The verifier language described in the forward Theorem-2.6 sketch. This is a
+language specification; polynomial-time decidability still requires a machine. -/
+private def choiceVerifier (N : FinNDTM Bool) (C c : ℕ) : Language Bool :=
+  {y | ∃ x u : List Bool, u.length = C * (x.length + 1) ^ c ∧ y = x ++ u ∧
+    (N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+    (N.tm.runWith u (N.tm.initCfg x)).output = [true]}
+
+/-- On a correctly split word, verifier membership is exactly halted singleton-true
+acceptance of the supplied choice word; a different split cannot create acceptance. -/
+private lemma choiceVerifier_append (N : FinNDTM Bool) (C c : ℕ)
+    (x u : List Bool) (hu : u.length = C * (x.length + 1) ^ c) :
+    x ++ u ∈ choiceVerifier N C c ↔
+      (N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+      (N.tm.runWith u (N.tm.initCfg x)).output = [true] := by
+  constructor
+  · rintro ⟨y, v, hv, heq, hhalt, hout⟩
+    obtain ⟨rfl, rfl⟩ := certificate_split_unique C c hu hv heq
+    exact ⟨hhalt, hout⟩
+  · rintro ⟨hhalt, hout⟩
+    exact ⟨x, u, hu, rfl, hhalt, hout⟩
+
+/-- A word whose length has no valid split is outside the specified verifier
+language. This is the rejecting branch of the total parser specification. -/
+private lemma choiceVerifier_no_split (N : FinNDTM Bool) (C c : ℕ) (y : List Bool)
+    (h : certificateSplit C c y.length = none) : y ∉ choiceVerifier N C c := by
+  rintro ⟨x, u, hu, hy, _, _⟩
+  have hlen := congrArg List.length hy
+  simp only [List.length_append, hu] at hlen
+  exact (certificateSplit_none_iff C c y.length).mp h ⟨x.length, hlen.symm⟩
+
+/-- Once every branch has halted at `t`, extending the common budget changes
+neither existential acceptance nor the accepting output. The reverse implication
+uses the length-`t` prefix and all-branch halting, not just one halted branch. -/
+private lemma acceptsWithin_iff_of_halts {N : FinNDTM Bool} {x : List Bool}
+    {t t' : ℕ} (hhalt : N.tm.HaltsWithin x t) (hle : t ≤ t') :
+    N.AcceptsWithin x t' ↔ N.AcceptsWithin x t := by
+  constructor
+  · rintro ⟨w, hw, _, hout⟩
+    have hlen : (w.take t).length = t := List.length_take_of_le (hle.trans_eq hw.symm)
+    have hp := hhalt (w.take t) hlen
+    have hr := N.tm.runWith_append (w.take t) (w.drop t) (N.tm.initCfg x)
+    rw [List.take_append_drop, NDTM.runWith_of_halt _ hp] at hr
+    exact ⟨w.take t, hlen, hp, hr ▸ hout⟩
+  · intro h
+    exact h.mono hle
+
+/-- The exact certificate length with coefficient `2*a` covers the nondeterministic
+time bound, uniformly at length zero and degree zero. -/
+private lemma choice_budget_le (a c n : ℕ) :
+    a * (n ^ c + 1) ≤ (2 * a) * (n + 1) ^ c := by
+  have hp := Nat.pow_le_pow_left (Nat.le_succ n) c
+  have h1 : 1 ≤ (n + 1) ^ c := Nat.one_le_pow c _ (Nat.succ_pos n)
+  calc
+    a * (n ^ c + 1) ≤ a * ((n + 1) ^ c + (n + 1) ^ c) :=
+      Nat.mul_le_mul_left a (Nat.add_le_add hp h1)
+    _ = (2 * a) * (n + 1) ^ c := by ring
+
+/-- Padding and truncation identify language membership with certificates for the
+specified verifier. This proves the logical correspondence separately from the
+timed construction needed to put the verifier in `P`. -/
+private lemma choice_certificate_iff (N : FinNDTM Bool) (L : Language Bool)
+    (a c : ℕ) (hN : N.DecidesInTime L (fun n => a * (n ^ c + 1)))
+    (x : List Bool) :
+    x ∈ L ↔ ∃ u : List Bool, u.length = (2 * a) * (x.length + 1) ^ c ∧
+      x ++ u ∈ choiceVerifier N (2 * a) c := by
+  rw [(hN x).2, ← acceptsWithin_iff_of_halts (hN x).1 (choice_budget_le a c x.length)]
+  constructor
+  · rintro ⟨u, hu, hhalt, hout⟩
+    exact ⟨u, hu, (choiceVerifier_append N (2 * a) c x u hu).mpr ⟨hhalt, hout⟩⟩
+  · rintro ⟨u, hu, hv⟩
+    exact ⟨u, hu, (choiceVerifier_append N (2 * a) c x u hu).mp hv⟩
+
+/-- A finite summary of captured output: empty, the singleton true, or a rejecting
+nonempty word. The complete word is retained separately on the capture tape. -/
+private def capturedSummary : List Bool → Option Bool
+  | [] => none
+  | [b] => some b
+  | _ => some false
+
+/-- Update the output summary with one optional emission. -/
+private def captureEmission (s : Option Bool) (e : Option Bool) : Option Bool :=
+  match e with
+  | none => s
+  | some b => match s with
+    | none => some b
+    | some _ => some false
+
+/-- The finite summary processes every emission, including one on the source's
+halting transition; two or more emitted bits always give a rejecting summary. -/
+private lemma captureEmission_correct (w : List Bool) (e : Option Bool) :
+    captureEmission (capturedSummary w) e = capturedSummary (w ++ e.toList) := by
+  cases e with
+  | none => simp [captureEmission]
+  | some b =>
+    cases w with
+    | nil => rfl
+    | cons a w =>
+      cases w with
+      | nil => rfl
+      | cons a' w => rfl
+
+/-- The accepting summary recognizes exactly the singleton true, rather than a
+word that merely contains true or starts with true. -/
+private lemma capturedSummary_true (w : List Bool) :
+    capturedSummary w = some true ↔ w = [true] := by
+  cases w with
+  | nil => simp [capturedSummary]
+  | cons b w =>
+    cases w with
+    | nil => simp [capturedSummary]
+    | cons b' w => simp [capturedSummary]
+
+/-- Partition the work tapes into the original source tapes and three private
+tapes, in order: virtual input, choices, captured output. -/
+private def choiceTapes {α : Type} {k : ℕ} (source : Fin k → α)
+    (input choices output : α) : Fin (k + 3) → α :=
+  Fin.addCases source (fun i => if i = 0 then input else if i = 1 then choices else output)
+
+/-- The deterministic simulation phase for a fixed NDTM. It starts only after its
+three private tapes have been prepared. Each copied choice causes one source
+step; a blank choice ends the clock and emits one verdict. Source halts remain
+live simulator states until that clock ends. The physical input is never read.
+
+The source state and the boundary tag are finite control. Every emission is
+written to the capture tape, with a finite summary used only for the final exact
+singleton test; physical output stays empty until that test. -/
+private def choiceCore (N : FinNDTM Bool) : FinTM Bool where
+  k := N.k + 3
+  State := Option N.State × Bool × Option Bool
+  tm :=
+    { q₀ := (some N.tm.q₀, true, none)
+      tr := fun ⟨q, tag, summary⟩ _ work =>
+        match work (Fin.natAdd N.k 1) with
+        | none =>
+          ⟨0, fun _ => (none, 0), some (decide (q = none ∧ summary = some true)), none⟩
+        | some bit =>
+          match q with
+          | none =>
+            ⟨0, choiceTapes (fun _ => (none, 0)) (none, 0) (none, 1) (none, 0),
+              none, some (none, tag, summary)⟩
+          | some q =>
+            let inp := work (Fin.natAdd N.k 0)
+            let a := N.tm.tr bit q inp (fun i => work (Fin.castAdd 3 i))
+            let m := virtualMove tag inp a.inputTape
+            ⟨0, choiceTapes a.workTapes (none, m) (none, 1)
+                (a.output.map some, if a.output.isSome then 1 else 0),
+              none, some (a.state, virtualNextTag tag m, captureEmission summary a.output)⟩ }
+
+/-- Embed a source configuration in the prepared simulator, preserving each
+source tape and storing input, choices and captured output in disjoint blocks.
+The native physical input position is arbitrary and remains fixed. -/
+private def choiceCoreCfg (N : FinNDTM Bool) {x y : List Bool}
+    (cfg : Cfg N.k Bool N.State x) (tag : Bool) (u : List Bool) (j : ℕ)
+    (p : Fin (y.length + 2)) : Cfg (choiceCore N).k Bool (choiceCore N).State y where
+  state := some (cfg.state, tag, capturedSummary cfg.output)
+  inputPos := p
+  workTapes := choiceTapes cfg.workTapes (bufferTape x) (bufferTape u) (bufferTape cfg.output)
+  workTapePos := choiceTapes cfg.workTapePos ((cfg.inputPos.val : ℤ) - 1)
+    (j : ℤ) (cfg.output.length : ℤ)
+  output := []
+
+/-- A prepared simulator consumes exactly the next copied choice in one physical
+step. Its source tapes, virtual input and complete captured output agree with the
+native source step. The physical output is still empty, even on a source halt.
+
+**Proof sketch.** The copied-input read is the native guarded read. Apply the
+existing virtual-movement invariant to preserve both clamping and the boundary
+tag. Check the disjoint tape blocks separately; the output block uses the
+append-at-the-right-blank identity. A halted source is absorbed while the choice
+head still advances. -/
+private lemma choiceCore_step (N : FinNDTM Bool) {x y : List Bool}
+    (cfg : Cfg N.k Bool N.State x) (tag : Bool) (htag : VirtualTag cfg.inputPos tag)
+    (u : List Bool) (j : ℕ) (hj : j < u.length) (p : Fin (y.length + 2)) :
+    ∃ tag', VirtualTag (N.tm.stepWith u[j] cfg).inputPos tag' ∧
+      (choiceCore N).tm.step (choiceCoreCfg N cfg tag u j p) =
+        choiceCoreCfg N (N.tm.stepWith u[j] cfg) tag' u (j + 1) p := by
+  have hu : (choiceCoreCfg N cfg tag u j p).workTapeSymbols (Fin.natAdd N.k 1) =
+      some u[j] := by
+    simp [choiceCoreCfg, choiceTapes, Cfg.workTapeSymbols, List.getElem?_eq_getElem hj]
+  have hi : (choiceCoreCfg N cfg tag u j p).workTapeSymbols (Fin.natAdd N.k 0) =
+      cfg.inputSymbol := by
+    simp [choiceCoreCfg, choiceTapes, Cfg.workTapeSymbols, bufferTape_inputSymbol]
+  have hw : (fun i => (choiceCoreCfg N cfg tag u j p).workTapeSymbols
+      (Fin.castAdd 3 i)) = cfg.workTapeSymbols := by
+    funext i
+    simp [choiceCoreCfg, choiceTapes, Cfg.workTapeSymbols]
+  have hs : (choiceCoreCfg N cfg tag u j p).state =
+      some (cfg.state, tag, capturedSummary cfg.output) := rfl
+  cases hq : cfg.state with
+  | none =>
+    have hc := NDTM.stepWith_of_halt (tm := N.tm) (b := u[j]) hq
+    refine ⟨tag, ?_, ?_⟩
+    · simpa only [hc] using htag
+    · rw [hc]
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only [choiceCore]
+      rw [hu, hq]
+      refine Cfg.ext (by simp [choiceCoreCfg, hq]) (moveInputPos_zero _) ?_ ?_
+        (by simp [choiceCoreCfg])
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [choiceCoreCfg, choiceTapes]
+        · intro i; fin_cases i <;> simp [choiceCoreCfg, choiceTapes]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [choiceCoreCfg, choiceTapes]
+        · intro i; fin_cases i <;> simp [choiceCoreCfg, choiceTapes, Nat.cast_add]
+  | some q =>
+    let a := N.tm.tr u[j] q cfg.inputSymbol cfg.workTapeSymbols
+    let m := virtualMove tag cfg.inputSymbol a.inputTape
+    have hm := virtualMove_correct cfg tag htag a.inputTape
+    have hc : N.tm.stepWith u[j] cfg = a.apply cfg := by
+      simp only [NDTM.stepWith, hq, a]
+    refine ⟨virtualNextTag tag m, ?_, ?_⟩
+    · simpa only [hc, Action.apply] using hm.2
+    · rw [hc]
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only [choiceCore]
+      rw [hu, hq, hi, hw]
+      change (Action.mk 0 (choiceTapes a.workTapes (none, m) (none, 1)
+          (a.output.map some, if a.output.isSome then 1 else 0)) none
+          (some (a.state, virtualNextTag tag m,
+            captureEmission (capturedSummary cfg.output) a.output))).apply
+          (choiceCoreCfg N cfg tag u j p) =
+        choiceCoreCfg N (a.apply cfg) (virtualNextTag tag m) u (j + 1) p
+      refine Cfg.ext (by simp [choiceCoreCfg, captureEmission_correct])
+        (moveInputPos_zero _) ?_ ?_ (by simp [choiceCoreCfg])
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [choiceCoreCfg, choiceTapes]
+        · intro i
+          fin_cases i <;> cases he : a.output <;>
+            simp [choiceCoreCfg, choiceTapes, he, bufferTape_append]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [choiceCoreCfg, choiceTapes]
+        · intro i
+          fin_cases i
+          · simpa [choiceCoreCfg, choiceTapes, m] using hm.1
+          · simp [choiceCoreCfg, choiceTapes, Nat.cast_add]
+          · cases he : a.output <;> simp [choiceCoreCfg, choiceTapes, he]
+
+/-- After `t` physical simulation steps the represented source has consumed
+exactly the first `t` copied choices. Administrative work before this phase is
+not counted as source choices. The full configuration equality includes the
+unchanged physical input, all source tapes, captured output, and empty real output.
+
+**Proof sketch.** Induct on the physical step count, applying the one-step
+invariant to the next indexed choice. The next prefix is the old prefix followed
+by that bit, so the append law identifies the corresponding source run. -/
+private lemma choiceCore_run (N : FinNDTM Bool) {x y : List Bool}
+    (cfg : Cfg N.k Bool N.State x) (tag : Bool) (htag : VirtualTag cfg.inputPos tag)
+    (u : List Bool) (t : ℕ) (ht : t ≤ u.length) (p : Fin (y.length + 2)) :
+    ∃ tag', VirtualTag (N.tm.runWith (u.take t) cfg).inputPos tag' ∧
+      (choiceCore N).tm.runFrom (choiceCoreCfg N cfg tag u 0 p) t =
+        choiceCoreCfg N (N.tm.runWith (u.take t) cfg) tag' u t p := by
+  induction t with
+  | zero => exact ⟨tag, htag, rfl⟩
+  | succ t ih =>
+    obtain ⟨tag', htag', hr⟩ := ih (by omega)
+    obtain ⟨tag'', htag'', hs⟩ :=
+      choiceCore_step N (N.tm.runWith (u.take t) cfg) tag' htag' u t (by omega) p
+    have hn : N.tm.runWith (u.take (t + 1)) cfg =
+        N.tm.stepWith u[t] (N.tm.runWith (u.take t) cfg) := by
+      rw [List.take_succ_eq_append_getElem (by omega), NDTM.runWith_append]
+      rfl
+    refine ⟨tag'', ?_, ?_⟩
+    · simpa only [hn] using htag''
+    · rw [MultiTapeTM.runFrom_succ_eq_step', hr, hs, hn]
+
+/-- At the blank after the copied choice word, one final transition halts and
+emits exactly one decision bit. A live source with output `[true]` rejects, as
+does every halted source whose complete output differs from `[true]`. -/
+private lemma choiceCore_finish (N : FinNDTM Bool) {x y : List Bool}
+    (cfg : Cfg N.k Bool N.State x) (tag : Bool) (u : List Bool)
+    (p : Fin (y.length + 2)) :
+    ((choiceCore N).tm.step (choiceCoreCfg N cfg tag u u.length p)).state = none ∧
+      ((choiceCore N).tm.step (choiceCoreCfg N cfg tag u u.length p)).output =
+        [decide (cfg.state = none ∧ cfg.output = [true])] := by
+  have hu : (choiceCoreCfg N cfg tag u u.length p).workTapeSymbols
+      (Fin.natAdd N.k 1) = none := by
+    simp [choiceCoreCfg, choiceTapes, Cfg.workTapeSymbols]
+  have hs : (choiceCoreCfg N cfg tag u u.length p).state =
+      some (cfg.state, tag, capturedSummary cfg.output) := rfl
+  unfold MultiTapeTM.step
+  rw [hs]
+  dsimp only [choiceCore]
+  rw [hu]
+  simp [choiceCoreCfg, capturedSummary_true]
+
+/-- From a prepared configuration, the deterministic core halts after exactly the
+declared `|u|+1` budget and reports whether the native source run under `u` accepts.
+This is a timed `runFrom` contract, not a claim about blank-tape initialization. -/
+private lemma choiceCore_timed (N : FinNDTM Bool) {x y : List Bool}
+    (cfg : Cfg N.k Bool N.State x) (tag : Bool) (htag : VirtualTag cfg.inputPos tag)
+    (u : List Bool) (p : Fin (y.length + 2)) :
+    let result := (choiceCore N).tm.runFrom (choiceCoreCfg N cfg tag u 0 p) (u.length + 1)
+    result.state = none ∧ result.output =
+      [decide ((N.tm.runWith u cfg).state = none ∧
+        (N.tm.runWith u cfg).output = [true])] := by
+  obtain ⟨tag', _, hr⟩ := choiceCore_run N cfg tag htag u u.length (le_refl _) p
+  simp only [List.take_length] at hr
+  dsimp only
+  rw [MultiTapeTM.runFrom_succ_eq_step', hr]
+  exact choiceCore_finish N (N.tm.runWith u cfg) tag' u p
+
+/-- The native initial source configuration has the correct virtual boundary tag,
+including the empty-input case, where position one is already the right blank. -/
+private lemma choiceCore_initial_tag (N : FinNDTM Bool) (x : List Bool) :
+    VirtualTag (N.tm.initCfg x).inputPos true := by
+  simp [NDTM.initCfg, Cfg.init, VirtualTag]
+
+/-- Three concrete tape slots for the standalone copying phase. -/
+private def copyTapes {α : Type} (left right clock : α) (i : Fin 3) : α :=
+  if i = 0 then left else if i = 1 then right else clock
+
+/-- A fixed copying phase, supplied with a unary split countdown on its third
+tape. It copies the prefix to tape zero and the suffix to tape one, in a single
+left-to-right pass, and never emits physical output. Split recovery and production
+of the countdown are separate startup obligations. -/
+private def choiceCopy : FinTM Bool where
+  k := 3
+  State := Bool
+  tm :=
+    { q₀ := true
+      tr := fun phase inp work => match inp with
+        | none => ⟨0, fun _ => (none, 0), none, none⟩
+        | some bit =>
+          if phase = true ∧ (work 2).isSome then
+            ⟨1, copyTapes (some (some bit), 1) (none, 0) (none, 1),
+              none, some true⟩
+          else
+            ⟨1, copyTapes (none, 0) (some (some bit), 1) (none, 0),
+              none, some false⟩ }
+
+/-- Configuration of the copying phase: completed prefix and suffix buffers,
+with the countdown head equal to the number of prefix bits already copied. -/
+private def choiceCopyCfg {y : List Bool} (n : ℕ) (phase : Bool)
+    (left right : List Bool) (p : Fin (y.length + 2)) :
+    Cfg 3 Bool Bool y where
+  state := some phase
+  inputPos := p
+  workTapes := copyTapes (bufferTape left) (bufferTape right)
+    (bufferTape (List.replicate n true))
+  workTapePos := copyTapes (left.length : ℤ) (right.length : ℤ)
+    (left.length : ℤ)
+  output := []
+
+/-- While the unary countdown is nonempty, one native copying step appends the
+current input bit only to the prefix buffer and advances the countdown once. -/
+private lemma choiceCopy_prefix_step {y : List Bool} (n : ℕ)
+    (left right : List Bool) (p : Fin (y.length + 2)) (bit : Bool)
+    (hlen : left.length < n)
+    (hin : (choiceCopyCfg n true left right p).inputSymbol = some bit) :
+    choiceCopy.tm.step (choiceCopyCfg n true left right p) =
+      choiceCopyCfg n true (left ++ [bit]) right (moveInputPos p 1) := by
+  have hc : (choiceCopyCfg n true left right p).workTapeSymbols 2 = some true := by
+    simp [choiceCopyCfg, copyTapes, Cfg.workTapeSymbols, hlen]
+  unfold MultiTapeTM.step
+  change (choiceCopy.tm.tr true _ _).apply _ = _
+  rw [hin]
+  dsimp only [choiceCopy]
+  rw [hc]
+  refine Cfg.ext rfl rfl ?_ ?_ (by simp [choiceCopyCfg])
+  · funext i
+    fin_cases i <;> simp [choiceCopyCfg, copyTapes, bufferTape_append]
+  · funext i
+    fin_cases i <;> simp [choiceCopyCfg, copyTapes]
+
+/-- Once the countdown is exhausted, one native copying step appends the current
+input bit only to the choice buffer, leaving the source-input buffer unchanged. -/
+private lemma choiceCopy_suffix_step {y : List Bool} (n : ℕ) (phase : Bool)
+    (left right : List Bool) (p : Fin (y.length + 2)) (bit : Bool)
+    (hlen : left.length = n)
+    (hin : (choiceCopyCfg n phase left right p).inputSymbol = some bit) :
+    choiceCopy.tm.step (choiceCopyCfg n phase left right p) =
+      choiceCopyCfg n false left (right ++ [bit]) (moveInputPos p 1) := by
+  have hc : (choiceCopyCfg n phase left right p).workTapeSymbols 2 = none := by
+    simp [choiceCopyCfg, copyTapes, Cfg.workTapeSymbols, hlen]
+  unfold MultiTapeTM.step
+  change (choiceCopy.tm.tr phase _ _).apply _ = _
+  rw [hin]
+  dsimp only [choiceCopy]
+  rw [hc]
+  simp only [Option.isSome_none, Bool.false_eq_true, and_false, if_false]
+  refine Cfg.ext rfl rfl ?_ ?_ (by simp [choiceCopyCfg])
+  · funext i
+    fin_cases i <;> simp [choiceCopyCfg, copyTapes, bufferTape_append]
+  · funext i
+    fin_cases i <;> simp [choiceCopyCfg, copyTapes]
+
+/-- Starting with the unary prefix length and blank data buffers, copying the
+first `t ≤ |x|` input symbols takes exactly `t` native transitions.
+
+**Proof sketch.** Induct on `t`. The native input head reads the next bit of
+`x`, and the unary countdown still has a bit. Apply the prefix-copy step and
+the list-prefix append identity; the native head advances without clamping
+because the next position is still within the input window. -/
+private lemma choiceCopy_prefix_run (x u : List Bool) (t : ℕ) (ht : t ≤ x.length) :
+    choiceCopy.tm.runFrom
+      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) t =
+        choiceCopyCfg x.length true (x.take t) []
+          ⟨t + 1, by simp only [List.length_append]; omega⟩ := by
+  induction t with
+  | zero => simp [MultiTapeTM.runFrom_zero, List.take_zero]
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hp : (x.take t).length = t := List.length_take_of_le (by omega)
+    have hin : (choiceCopyCfg (y := x ++ u) x.length true (x.take t) []
+        ⟨t + 1, by simp only [List.length_append]; omega⟩).inputSymbol = some x[t] := by
+      rw [inputSymbolInner t (by simp only [choiceCopyCfg, Nat.add_comm])
+        (by simp only [List.length_append]; omega)]
+      rw [List.getElem_append_left (by omega)]
+    rw [choiceCopy_prefix_step _ _ _ _ _ (by rw [hp]; omega) hin,
+      ← List.take_succ_eq_append_getElem (by omega)]
+    congr 1
+    apply Fin.ext
+    rw [show (1 : SignType) = .pos from rfl,
+      moveInputPos_pos_of_ne_right _ (by simp only [List.length_append]; omega)]
+
+/-- After copying all of `x`, each additional suffix bit costs one native
+transition. The copied source input and its completed countdown remain unchanged.
+In particular, empty prefixes and empty suffixes are included.
+
+**Proof sketch.** The prefix-run lemma supplies the initial suffix configuration.
+Induct on the number of suffix bits: the countdown stays at its right blank,
+and the input read lies in the suffix of the concatenation. The suffix-copy
+step appends precisely that next bit and advances the native input head. -/
+private lemma choiceCopy_suffix_run (x u : List Bool) (t : ℕ) (ht : t ≤ u.length) :
+    ∃ phase : Bool, choiceCopy.tm.runFrom
+      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) (x.length + t) =
+        choiceCopyCfg x.length phase x (u.take t)
+          ⟨x.length + t + 1, by simp only [List.length_append]; omega⟩ := by
+  induction t with
+  | zero =>
+    refine ⟨true, ?_⟩
+    simpa only [Nat.add_zero, List.take_zero, List.take_length] using
+      choiceCopy_prefix_run x u x.length (le_refl _)
+  | succ t ih =>
+    obtain ⟨phase, hr⟩ := ih (by omega)
+    refine ⟨false, ?_⟩
+    conv_lhs => rw [Nat.add_succ x.length t, MultiTapeTM.runFrom_succ_eq_step', hr]
+    have hin : (choiceCopyCfg (y := x ++ u) x.length phase x (u.take t)
+        ⟨x.length + t + 1, by simp only [List.length_append]; omega⟩).inputSymbol =
+        some u[t] := by
+      rw [inputSymbolInner (x.length + t)
+        (by simp only [choiceCopyCfg, Nat.add_comm])
+        (by simp only [List.length_append]; omega)]
+      rw [List.getElem_append_right (by omega)]
+      simp
+    rw [choiceCopy_suffix_step _ _ _ _ _ _ rfl hin,
+      ← List.take_succ_eq_append_getElem (by omega)]
+    congr 1
+    apply Fin.ext
+    rw [show (1 : SignType) = .pos from rfl,
+      moveInputPos_pos_of_ne_right _ (by simp only [List.length_append]; omega)]
+    change x.length + t + 1 + 1 = x.length + (t + 1) + 1
+    omega
+
+/-- The entire copying pass takes `|x++u|+1` transitions, including its final
+boundary check. Both data buffers are exact, their heads are at their right
+blanks, the countdown is preserved, and physical output is empty. This contract
+still requires the unary split length to be present initially.
+
+**Proof sketch.** Instantiate the suffix-run lemma at the complete suffix length.
+The physical input head then reads the right blank. The next transition halts
+without writing, moving work heads, or emitting, preserving the two full buffers. -/
+private lemma choiceCopy_timed (x u : List Bool) :
+    let result := choiceCopy.tm.runFrom
+      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) ((x ++ u).length + 1)
+    result.state = none ∧
+      result.workTapes = copyTapes (bufferTape x) (bufferTape u)
+        (bufferTape (List.replicate x.length true)) ∧
+      result.workTapePos = copyTapes (x.length : ℤ) (u.length : ℤ) (x.length : ℤ) ∧
+      result.output = [] := by
+  obtain ⟨phase, hr⟩ := choiceCopy_suffix_run x u u.length (le_refl _)
+  simp only [List.take_length] at hr
+  dsimp only
+  rw [MultiTapeTM.runFrom_succ_eq_step']
+  have hr' : choiceCopy.tm.runFrom
+      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) (x ++ u).length =
+        choiceCopyCfg x.length phase x u
+          ⟨x.length + u.length + 1, by simp only [List.length_append]; omega⟩ := by
+    simpa only [List.length_append] using hr
+  rw [hr']
+  have hin : (choiceCopyCfg (y := x ++ u) x.length phase x u
+      ⟨x.length + u.length + 1, by simp only [List.length_append]; omega⟩).inputSymbol =
+      none := by
+    have h := inputSymbol_at (choiceCopyCfg (y := x ++ u) x.length phase x u
+      ⟨x.length + u.length + 1, by simp only [List.length_append]; omega⟩)
+      (x ++ u).length (le_refl _) (by simp [choiceCopyCfg])
+    simpa using h
+  unfold MultiTapeTM.step
+  change ((choiceCopy.tm.tr phase _ _).apply _).state = none ∧ _
+  rw [hin]
+  simp [choiceCopy, choiceCopyCfg]
 
 /-- **The choice word is a certificate** [AB09, Theorem 2.6, ⊆-direction of the
 union]: every fixed-degree nondeterministic time class is contained in `NP`.
@@ -97,8 +654,31 @@ isolation obligation of the `Complexity.NP_subset_EXP` sketch;
 `[true]` iff the simulated run is halted with buffer exactly `[true]`, else `[false]`.
 Budget: `Q n ≤ m` simulated steps at polynomial bookkeeping each, so polynomial in
 `m`; conclude `V ∈ P` via `Complexity.mem_P_of_dtime_le` and `L ∈ NP` with
-`(2a, c, V)`. -/
+`(2a, c, V)`.
+
+**Partial fill note (epoch 2B).** The certificate correspondence, finite split-search
+specification, and two native phase contracts are proved below their private
+definitions. `choiceCopy_timed` assumes a prepared unary split countdown and copies
+the two words in `|x ++ u| + 1` steps. `choiceCore_timed` assumes prepared data tapes
+and uses `|u| + 1` steps. In that core, the virtual input head is represented directly
+by a head on the copied input buffer and a finite boundary tag, using
+`virtualMove_correct`, rather than a binary position counter. This preserves the
+specified guarded reads and clamping with constant overhead per source step. All
+source emissions are captured on a separate tape; a finite summary recognizes
+exactly `[true]` for the final verdict. These prepared-configuration contracts do
+not supply a decider from blank tapes: the native arithmetic/split-search machine,
+its rejecting branch, countdown preparation, rewinds, and timed phase composition
+remain the single admitted verifier-membership obligation in this partial fill. -/
 theorem ntime_poly_subset_NP (c : ℕ) : NTIME (fun n => n ^ c + 1) ⊆ NP := by
+  rintro L ⟨a, N, hN⟩
+  refine ⟨2 * a, c, choiceVerifier N (2 * a) c, ?_,
+    choice_certificate_iff N L a c hN⟩
+  -- Continuation frontier: compile certificateSplit and its arithmetic from
+  -- native blank-tape initialization, produce the unary split countdown,
+  -- run choiceCopy, rewind its two data buffers, and enter choiceCore on
+  -- disjoint tapes. The no-split branch emits false. The proved phase bounds
+  -- are |x++u|+1 for copying and |u|+1 for simulation; startup, rewinding,
+  -- state/tape embeddings and their combined polynomial bound remain open.
   sorry
 
 /-- **Guess the certificate** [AB09, Theorem 2.6, ⊇-direction of the union]: `NP` is
