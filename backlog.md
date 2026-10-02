@@ -141,8 +141,11 @@ uncomputability chapter.
   Deferred from E1: promotion of 1D's `foldr_max_le_of_forall` **and its
   companion `le_foldr_max_of_mem`** (auditor suggestion) to a shared list
   utility (disposition D3).
-  Next after the gate: E2 briefs (2A-2D; axiom wording "at most the
-  standard triple" per disposition D1).
+  **E2 briefs issued** 2026-10-02
+  (`briefs/ch2-epoch2-batch{A,B,C,D}.md`; 10 targets + the mandated
+  `timed_universal` bridge statement; inheritances embedded verbatim;
+  hardened repo/branch headers; D1 axiom wording). Next: dispatch, then
+  E2 integration and the epoch audit.
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —
