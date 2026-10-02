@@ -228,7 +228,11 @@ count on the right is `|w| + 1`, `List.length_cons`). -/
 theorem MultiTapeTM.toNDTM_runWith (tm : MultiTapeTM k Symbol State) {input : List Symbol}
     (w : List Bool) (cfg : Cfg k Symbol State input) :
     tm.toNDTM.runWith w cfg = tm.runFrom cfg w.length := by
-  sorry
+  induction w generalizing cfg with
+  | nil => rfl
+  | cons b w ih =>
+    rw [NDTM.runWith_cons, List.length_cons, runFrom_succ_eq_step]
+    exact ih (tm.step cfg)
 
 /-- A bundled deterministic machine as a bundled nondeterministic one — the `FinTM`
 layer of `Turing.MultiTapeTM.toNDTM`, with the same tapes and state type. -/
