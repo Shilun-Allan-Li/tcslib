@@ -42,7 +42,8 @@ Boolean circuits and formulas, the class `P/poly`, and Arora–Barak §6.1.
   circuit built from the gate set.
 - `CircuitComplexity.UHalt`: [AB09, p.110] — `UHALT`, an undecidable unary language,
   hence a language in `P/poly` that is not computable. `P ⊊ P/poly` itself is not
-  stated: TCSlib has no `P`.
+  stated: the bridge from the campaign's `P` to `P/poly` ([AB09, Thm 6.6]) and
+  the computability-framework bridge are both deferred (`backlog.md` §3).
 - `CircuitComplexity.Encoding`: a bit-string encoding of `BoolCircuit.Circuit` as a
   `Computability.FinEncoding`, CKT-SAT as a genuine `Language Bool`
   ([AB09, Def 6.9]), and the output-size half of [AB09, Lem 6.11] — clause count
@@ -50,8 +51,9 @@ Boolean circuits and formulas, the class `P/poly`, and Arora–Barak §6.1.
 - `CircuitComplexity.Universal`: [AB09, Claim 2.13] — every Boolean function on
   `n` bits is computed by a circuit of size at most `2 ^ n * (n + 1) + 1`, via
   the DNF over its satisfying assignments.
-- `CircuitComplexity.HardFunctions`: [AB09, Thm 6.21] — some Boolean function on
-  `n` bits is computed by no circuit of size `2 ^ n / (n + 5)`, by counting.
+- `CircuitComplexity.HardFunctions`: the tree-circuit analogue of [AB09, Thm 6.21]
+  — some Boolean function on `n` bits is computed by no **tree** circuit of size
+  `2 ^ n / (n + 5)`, by counting over the tree encoding.
 - `CircuitComplexity.NCAC`: [AB09, Defs 6.24–6.25] — the classes `NC^d` / `AC^d`
   and their unions, and the inclusions `NC^i ⊆ AC^i ⊆ NC^{i+1}` and hence
   `NC = AC`. Over the tree-shaped `BoolCircuit.Circuit`, not the `FeedForward`
@@ -61,8 +63,10 @@ Boolean circuits and formulas, the class `P/poly`, and Arora–Barak §6.1.
 - `CircuitComplexity.Hierarchy`: a nonuniform size hierarchy over the tree-shaped
   `BoolCircuit.Circuit`, from [AB09, Claim 2.13] and [AB09, Thm 6.21] by padding.
   **Not** [AB09, Thm 6.22]: its class is not `Language.InSIZE`.
-- `CircuitComplexity.SizeClasses`: monotonicity of `SIZE`, the passage from
-  `SIZE(T)` to `P/poly` for polynomially bounded `T`, and [AB09, Ex 6.3]
+- `CircuitComplexity.SizeClasses`: monotonicity of the model's size classes
+  (`Language.InSIZE` — not [AB09, Def 6.2]'s fixed `SIZE(T)`; see `PPoly.lean`'s
+  ledger), the passage to `P/poly` for polynomially bounded budgets, and
+  [AB09, Ex 6.3]
   — the all-ones language `{1ⁿ : n ∈ ℕ}` has linear-size circuits.
 
 `Basic`, `Formulas` and `DecisionTree` are mutually independent; the bridge from

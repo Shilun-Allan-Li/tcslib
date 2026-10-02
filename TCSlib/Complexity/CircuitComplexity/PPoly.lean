@@ -35,7 +35,13 @@ gate sets are `GateOp (Fin 2)`); `finTwoEquiv` converts at the boundary.
 
 ## Divergences from Arora–Barak §6.1
 
-All are class-preserving. AB Def 6.1 fixes fan-in 2; we use unbounded `stdGateOps`,
+All preserve the polynomial union `P/poly`; **none is claimed to preserve a
+fixed class `SIZE(T)`**, and in general none does: `Language.allOnes` lies in
+this file's `InSIZE (fun _ => 1)` (`SizeClasses.lean`), while [AB09, Def 6.1]
+counts the `n` input vertices, so no size-`1` circuit exists there for `n ≥ 2`.
+`Language.InSIZE` is the finite, layered, unbounded-fan-in, non-input-counting
+size class of *this* model; quantitative transfer to AB's `SIZE(T)` needs an
+explicit simulation with a transformed budget. AB Def 6.1 fixes fan-in 2; we use unbounded `stdGateOps`,
 which AB calls "essentially without loss of generality" (fan-in `f` costs `f - 1`
 gates) and which is AB's own convention for `AC` (Def 6.25) — fan-in matters only
 under a depth restriction, and `P/poly` imposes none. AB's basis is `{∧, ∨, ¬}`;
@@ -44,6 +50,12 @@ input vertices in `|C|` and allows arbitrary DAGs; we count non-input nodes and
 require layering, costing `+n` and a factor `≤ s` respectively. AB writes
 `∃ c, ∀ n, |C n| ≤ n ^ c`; we write `∃ a k, ∀ n, size ≤ a * (n + 1) ^ k`, which
 repairs a degeneracy in AB's literal form (`n ^ c` forces `|C 0| ≤ 0`).
+Further graph conventions, collected: a singleton output type does not forbid
+unused nodes on earlier layers; inputs may go unread; `Gate.inputs` need not be
+injective, so repeated wires are allowed — all harmless for computational
+power, with size/depth accounting model-specific.  `stdGateOps` contains
+`andGateOp 0`, the empty product, i.e. a **constant-one** operation; there is
+no primitive constant-false (`NOT` of the empty `AND` provides it).
 
 ## Trap
 

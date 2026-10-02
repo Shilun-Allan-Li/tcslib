@@ -37,7 +37,8 @@ under `Complexity/`.
   circuits, one per input length; the carrier of `Language.InSIZE` and
   `P/poly` (`Complexity/CircuitComplexity/PPoly.lean`).
 * `BoolCircuit.FeedForward α inp out` — layered DAG circuits over an
-  arbitrary alphabet, with the `stdGateOps` basis
+  arbitrary alphabet; the raw model enforces no gate basis, and classes impose
+  `stdGateOps` via `OnlyUsesGates`
   (`Complexity/CircuitComplexity/FeedForward.lean`).
 * `BoolCircuit.TreeCircuitFamily` — non-uniform families of tree circuits;
   the carrier of `NC` and `AC` (`Complexity/CircuitComplexity/NCAC.lean`).
@@ -69,8 +70,10 @@ under `Complexity/`.
 
 Model-to-model maps (pointers only — their files are not imported here):
 
-* `BoolCircuit.Circuit.toFeedForward` — tree → DAG, faithful embedding with
-  identity-wire padding (`Complexity/CircuitComplexity/FeedForward.lean`).
+* `BoolCircuit.Circuit.toFeedForward` — a semantic wrapper, not an embedding:
+  the tree's evaluation becomes a single unrestricted first-layer gate, so only
+  evaluation is preserved, never a gate basis
+  (`Complexity/CircuitComplexity/FeedForward.lean`).
 * `BoolCircuit.Circuit.tseitin` / `Circuit.toCNF` — circuits →
   equisatisfiable `NPReductions.CNFFormula`
   (`Complexity/CircuitComplexity/CircuitSat.lean`).

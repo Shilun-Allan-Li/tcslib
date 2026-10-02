@@ -28,8 +28,9 @@ import TCSlib.Complexity.CircuitComplexity.SizeClasses
 
 ## Design
 
-`stdGateOps` has no constant gate, so `constZeroCircuit` builds one out of the
-two it uses: the empty `AND` is the empty product `1`, and `NOT` of that is `0`.
+`stdGateOps` has no primitive constant-**false** operation (`andGateOp 0`, the
+empty product, is constant *one*), so `constZeroCircuit` builds false out of the
+two operations it uses: the empty `AND` is the empty product `1`, and `NOT` of that is `0`.
 Hence depth `2` and size `2`.
 
 Whether `1ⁿ ∈ L` is in general undecidable, so `unaryFamily` chooses between the
@@ -39,7 +40,7 @@ true, and is how AB then puts an undecidable language in `P/poly`.
 `Language` has a `CompleteAtomicBooleanAlgebra` instance but no `HasSubset`, so
 AB's `L ⊆ {1ⁿ : n ∈ ℕ}` is written `L ≤ Language.allOnes`.
 
-AB describes a family of linear size; ours has size `2` at every length, so
+AB describes a family of linear size; ours has size at most `2` at every length (`1` on the all-ones branch), so
 `Language.inSIZE_two_of_le_allOnes` states the constant bound and Claim 6.8
 follows from it with `a = 2`, `k = 0`.
 

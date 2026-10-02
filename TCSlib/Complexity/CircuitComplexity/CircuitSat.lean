@@ -27,8 +27,10 @@ Arora–Barak Definition 6.9 and Lemma 6.11.
 
 ## Divergences from Arora–Barak §6.1.2
 
-Only equisatisfiability is formalized, not `≤p`: TCSlib has no machine model, and this
-file proves no bound on the reduction's cost. `toCNF_length_le` counts the clauses of the
+Only equisatisfiability is formalized, not `≤p`: this file proves no bound on the
+reduction's *cost*.  The campaign's machine model and class `P` live on this branch
+(`TuringMachine/`, `ClassP/`); what is missing here is a machine-level implementation
+of the reduction. `toCNF_length_le` counts the clauses of the
 intermediate `C.toCNF` and no more — clause *width* is unbounded (see fan-in below),
 and `CktVar n`, indexed by all of `Circuit n`, is infinite, so the output formula has no
 bit length here.  Relatedly, AB's CKT-SAT is a language of *strings representing*
@@ -37,14 +39,16 @@ encoding.  `CircuitComplexity.Encoding` supplies one downstream, and with it a c
 count bounded in the encoded input length — still not a `≤p` claim.
 
 Model: `BoolCircuit.Circuit`, a tree, not the DAG `BoolCircuit.FeedForward` of `PPoly.lean`. The
-tree is forced, though not for the reason earlier drafts of this file gave: a gate's
+tree is the chosen carrier, not a forced one: a gate's
 membership in these gate sets *can* be cased on: `RazborovSmolensky.ACp_GateOps_cases`
 (`ACpGates.lean:579`) does it for `ACp_GateOps p`, unfolding the `⋃` through
 `Set.mem_iUnion.mp`, and `ACp_GateOps = stdGateOps ∪ ⋃ n, {modGateOp p n}` — no
-`stdGateOps_cases` exists, but nothing obstructs one.  What blocks a clause map over
-`FeedForward` is that `stdGateOps` contains `id` and `NOT`, for which `Circuit` has no
-node, and that `FeedForward.nodes` is an arbitrary type family with nothing to index
-Tseitin variables by.  No equivalence of the two models is claimed, and none is
+`stdGateOps_cases` exists, but nothing obstructs one.  A clause map over `FeedForward` is
+**unimplemented, not impossible**: `id` and `NOT` each admit two binary Tseitin
+clauses (they lack `Circuit` *nodes*, which only blocks reuse of this file's
+unroller), and the dependent sum of layer/node types — the same index
+`FeedForward.size` counts — would serve as a Tseitin variable type.  Missing
+are that implementation and its cost bounds.  No equivalence of the two models is claimed, and none is
 available here. `Circuit` has no `NOT` gate — negation
 lives in the leaf literals — so AB's `zᵢ ↔ ¬z_j` pair occurs exactly at a negative leaf.
 

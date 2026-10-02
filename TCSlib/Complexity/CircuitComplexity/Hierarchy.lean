@@ -39,8 +39,9 @@ theorem below is therefore not [AB09, Thm 6.22]; see `## Divergences`.
 
 ## Divergences from [AB09, Thm 6.22]
 
-**This is not AB's `SIZE`, and AB's theorem is not formalized.** [AB09, Def 6.2]'s `SIZE(T)`
-is `Language.InSIZE` (`PPoly.lean`), over `BoolCircuit.CircuitFamily` — a layered `FeedForward`
+**This is not AB's `SIZE`, and AB's theorem is not formalized.** [AB09, Def 6.2]'s `SIZE(T)` is
+rendered — with that file's declared divergences; it is **not** the same fixed
+class (see `PPoly.lean`'s ledger) — by `Language.InSIZE`, over `BoolCircuit.CircuitFamily` — a layered `FeedForward`
 *DAG* on `stdGateOps`.  Everything here is over `BoolCircuit.Circuit`, an unbounded-fan-in
 *tree*.  Neither transfer is available.  Tree → `FeedForward` exists only as
 `BoolCircuit.Circuit.toFeedForward`, which is over `FeedForward Bool`, not `Fin 2`, and puts
@@ -308,8 +309,8 @@ theorem treeSize_ssubset_of_lt {T : ℕ → ℕ} {n₀ : ℕ} (h : (n₀ + 4) * 
     (fun n => Nat.le_max_left _ _) (fun n => Nat.le_max_right _ _)
     (by simpa using h)
 
-/-- A concrete instance, with `ℓ = 3`, the least length at which [AB09, Thm 6.21] has
-content. -/
+/-- A concrete instance, with `ℓ = 3`, the least length at which the local tree counting
+bound (`exists_hard_function`) has content. -/
 theorem treeSize_one_ssubset :
     TreeSize (fun _ => 1) ⊂ TreeSize fun n => max 1 (2 ^ min n 3 * (min n 3 + 1) + 1) :=
   treeSize_ssubset_of_lt (T := fun _ => 1) (n₀ := 3) (by norm_num)

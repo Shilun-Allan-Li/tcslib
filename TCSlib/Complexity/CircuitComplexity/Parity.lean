@@ -29,8 +29,9 @@ import TCSlib.Complexity.CircuitComplexity.NCAC
   `AND` and `OR` and it negates only at literals, so each node here carries a *pair* — a
   circuit for the XOR of its leaves and a circuit for the complement — and `xorNode` builds
   a parent pair from its children's as `(a ∧ b') ∨ (a' ∧ b)` and `(a ∧ b) ∨ (a' ∧ b')`.
-  That costs two levels per halving where AB's costs one, so the depth is `2⌈log₂ n⌉ + 2`
-  against AB's `⌈log₂ n⌉`.  Both are `O(log n)`, which is all `NC¹` asks.
+  That costs two levels per halving where AB's costs one, so the depth is at most `2⌈log₂ n⌉ + 2`
+  against AB's exact `⌈log₂ n⌉` (at `n = 1` this circuit is a bare literal of
+  depth `0`; the displayed expression is an upper bound, not the depth).  Both are `O(log n)`, which is all `NC¹` asks.
 * **Constants.** `4 * (Nat.log 2 n + 1)` for depth and `32 * (n + 1) ^ 4` for size are what
   this construction gives.  AB states neither and neither is claimed optimal.  The size
   bound is not a separate recurrence: it is read off the depth bound and fan-in `2` through
@@ -213,7 +214,7 @@ private theorem xorFuel_eval (x : Fin n → Bool) :
       rw [ih.1, xorAll_xorPairUp x _ hd]
       exact ⟨rfl, ih.2⟩
 
-/-- The XOR tree has depth `2⌈log₂ m⌉ + 2` over its leaves. -/
+/-- The XOR tree has depth at most `2⌈log₂ m⌉ + 2` over its leaves. -/
 private theorem xorFuel_depth :
     ∀ (k : ℕ) (ps : List (Circuit n × Circuit n)), ps.length ≤ k →
       max (xorFuel k ps).1.depth (xorFuel k ps).2.depth

@@ -227,6 +227,17 @@ are exactly the machine-facing ones:
   locality layer is essentially the tableau-to-circuit core.
 * **CKT-SAT `NP`-hardness** ([AB09] Thm 6.11's completeness half; their
   branch has Tseitin equisatisfiability + size bounds only).
+* **Interface guidance inherited from the ch6-circuit audit**
+  (`audits/ch6-circuits-findings.md`, notes 12–15): (i) build Thm 6.6's
+  circuit family gate by gate against `OnlyUsesGates stdGateOps` —
+  `Circuit.toFeedForward` is a semantic wrapper and can never discharge the
+  basis obligation; (ii) reduce to tree CKT-SAT from the audited
+  `Std.Sat.CNF ℕ` carrier (or via a finite-DAG Tseitin step), with a total
+  string map sending malformed inputs to a fixed rejecting word such as
+  `encodeSigma ⟨0, .node false []⟩`; (iii) renumber variables densely before
+  unary indices (an identifier `2^k` costs `2^k` unary bits against a
+  `k+1`-bit name); (iv) `P ⊊ P/poly` additionally needs the
+  campaign-decidability → Mathlib `ComputablePred` bridge.
 * **Karp-Lipton** (Thm 6.19) — needs the polynomial hierarchy, a new
   surface; **Meyer's theorem** — needs this branch's `EXP`.
 

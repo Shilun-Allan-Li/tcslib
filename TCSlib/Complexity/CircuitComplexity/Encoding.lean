@@ -32,9 +32,9 @@ import TCSlib.Complexity.CircuitComplexity.CircuitSat
 ## Divergences from Arora–Barak §6.1.2 and §6.2
 
 **No `≤p` claim is made or supported here.** `≤p` is polynomial-*time*
-reducibility; TCSlib has no machine model, so the cost of computing the
-reduction is bounded nowhere, and the time half of [AB09, Lem 6.11] remains
-unformalized, as `CircuitSat.lean` already records. What is added is a bound on
+reducibility; no machine-level implementation of this reduction exists yet (the
+campaign's machine model and `P` live on this branch), so its cost is bounded
+nowhere and the time half of [AB09, Lem 6.11] remains unformalized, as `CircuitSat.lean` already records. What is added is a bound on
 the reduction's *output*, and only on its number of 3-clauses: the output's
 variable type `SATTo3SAT.AuxVar (BoolCircuit.CktVar n)` is infinite (`CktVar n`
 is indexed by all of `Circuit n`), so no encoding of the output formula exists
@@ -42,9 +42,10 @@ here and its bit length is not bounded.
 
 AB's concrete representation ([AB09, p. 112]) is the `S × S` adjacency matrix of
 a size-`S` circuit's DAG plus an array of `S` gate labels, vertices identified
-with `[S]`.  `BoolCircuit.Circuit` is a tree, so that representation is not
-available: there is no vertex numbering to index a matrix by, and the accessors
-`SIZE`/`TYPE`/`EDGE` are not defined here.  AB offers the matrix as "a concrete
+with `[S]`.  `BoolCircuit.Circuit` is a tree, and that representation is **not implemented**
+here: a finite tree could be numbered (preorder, say) and given an adjacency
+matrix, but no such numbering and none of the accessors `SIZE`/`TYPE`/`EDGE`
+are defined.  AB offers the matrix as "a concrete
 way", in a remark that [AB09, Def 6.14] "is robust to variations in how we
 represent circuits using strings" — a robustness AB asserts rather than proves,
 and which nothing below uses.  This file gives the concrete way for a tree: a
@@ -53,8 +54,10 @@ the gate's connective and its children, the children delimited by a
 continue/stop bit.  Natural numbers are written in unary, which inflates the
 encoding by a polynomial factor — `O(n)` rather than `O(log n)` bits for an index
 below `n` — and only upwards.  Every bound below is an upper bound in the
-encoding's length, so the inflation cannot weaken one, and being polynomial it
-cannot break a later polynomial-time claim either.
+encoding's length, so the inflation does not invalidate any of them — a longer
+input only slackens a bound stated in its length — and being polynomial it
+cannot break a later polynomial-time claim either (relative, always, to an
+already polynomially bounded index range).
 
 `decodeSigma` parses and then checks that the parse re-encodes to its input, so
 non-canonical strings decode to `none` and are simply absent from `cktSatLang`.

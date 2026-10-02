@@ -40,9 +40,14 @@ vertex per input variable, however often that variable is read.
 literals, and `Circuit.size` counts every node. Two effects push our count up: every
 literal *occurrence* costs a node, and no gate may be reused. One pushes it down:
 `Circuit.size` charges `1` for a `k`-ary gate where Def 6.1 charges `k - 1` vertices.
-A size-`S` tree thus embeds in a DAG on at most `S + 2 * n` vertices while no bound
-runs the other way, so at the `S ≈ 2 ^ n / n` in play AB's conclusion is strictly the
-stronger — but not at every `S`: the three-literal `AND` on `n = 3` has
+A size-`S` tree embeds in a DAG on at most `S + 2 * n` vertices; in the other
+direction only a depth-exponential unrolling is available, no polynomial bound.
+Neither quantified statement implies the other on the strength of that
+conversion: at `n = 20`, AB's cutoff `⌊2²⁰/200⌋ = 5242` transfers along
+`S + 2n` only to tree cutoff `5202`, far below the `⌊2²⁰/25⌋ = 41943` proved
+here, and tree hardness never rules out small DAGs with sharing.  AB's theorem
+is about the more general model; this one has the larger cutoff in its narrower
+one — and the families are not nested at every `S`: the three-literal `AND` on `n = 3` has
 `Circuit.size = 4`, whereas Def 6.1 needs at least `5` vertices for that function, so
 at `S = 4` AB's family is empty and ours is not. Neither comparison is formalized;
 both describe the gap to AB, not anything proved below.

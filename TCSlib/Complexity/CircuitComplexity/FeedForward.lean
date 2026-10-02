@@ -16,8 +16,10 @@ evaluation (`evalNode`, `eval`, `eval₁`), the `size`/`Finite`/`onlyUsesGates`
 measures, and `stdGateOps` — the standard unbounded fan-in gate set that
 `Language.InSIZE` and `P/poly` are defined over.  The second half relates the
 DAG model to the tree-shaped `BoolCircuit.Circuit` in both directions:
-tree-unrolling (`FeedForward.toCircuit`, exponential in depth) and the faithful
-tree embedding (`Circuit.toFeedForward`, padded with identity wires).
+tree-unrolling (`FeedForward.toCircuit`, exponential in depth) and the
+semantic wrapper `Circuit.toFeedForward`, which packages a tree's *evaluation*
+as a single unrestricted first-layer gate — not a gate-level embedding; see
+its docstring.
 
 Written for the Razborov–Smolensky development
 (`BooleanAnalysis/RazborovSmolensky/`) and relocated here as the shared
@@ -275,16 +277,20 @@ theorem toCircuit_size_le
 
 end FeedForward
 
-/-! ### BoolCircuit.Circuit → FeedForward Bool (tree embedding) -/
+/-! ### BoolCircuit.Circuit → FeedForward Bool (semantic wrapper) -/
 
 -- Layer 0 is the input layer (Fin n); all other layers carry Unit (single output wire).
 -- The gate at layer 0 computes C.eval from all inputs at once; gates at layers 1..depth
 -- are identity wires that pass the single Bool value upward unchanged.
-/-- Embed a `BoolCircuit.Circuit n` as a `FeedForward Bool (Fin n) Unit`.
-    The circuit is already tree-shaped (fanout ≤ 1), so no duplication occurs.
-    Shorter branches of an unbalanced tree are padded with identity wires so that
-    all paths reach depth `C.depth`.  The resulting feedforward circuit has size
-    at most `C.size * C.depth`. -/
+/-- Package a `BoolCircuit.Circuit n` as a `FeedForward Bool (Fin n) Unit` — a
+    **semantic wrapper, not a gate-level embedding**: the single layer-0 gate is
+    the unrestricted operation `⟨Fin n, C.eval⟩` and every later layer is one
+    identity wire, so `size = depth = C.depth + 1` whatever `C.size` is.  The
+    source gates are not embedded, no branch is padded, and the first gate is in
+    general **not** in `stdGateOps`, so this map can never discharge an
+    `OnlyUsesGates` obligation — a future machine-to-circuit bridge must build
+    its family gate by gate instead.  Only evaluation is preserved
+    (`Circuit.toFeedForward_eval`). -/
 noncomputable def _root_.BoolCircuit.Circuit.toFeedForward (C : Circuit n) : FeedForward Bool (Fin n) Unit where
   depth := C.depth + 1
   nodes d := if d.val = 0 then Fin n else Unit

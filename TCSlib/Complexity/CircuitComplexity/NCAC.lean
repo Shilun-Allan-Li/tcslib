@@ -517,8 +517,9 @@ theorem NCLevel_subset_ACLevel (i : ℕ) : NCLevel i ⊆ ACLevel i :=
 theorem ACLevel_subset_NCLevel_succ (i : ℕ) : ACLevel i ⊆ NCLevel (i + 1) :=
   fun _ h => Language.InAC.inNC_succ h
 
-/-- The two inclusions collapse the hierarchies: `NC = AC`, a corollary of
-[AB09, p. 118], which states the inclusions only. -/
+/-- The two inclusions make the **unions** coincide: `NC = AC` — no levelwise
+equality is asserted — a corollary of [AB09, p. 118], which states the
+inclusions only. -/
 theorem NC_eq_AC : NC = AC := by
   ext L
   rw [mem_NC_iff, mem_AC_iff]

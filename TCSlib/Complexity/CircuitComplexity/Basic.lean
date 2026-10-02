@@ -45,14 +45,29 @@ import Mathlib.Tactic.Ring
 
 ## Divergences from [OD14, §4.5]
 
-`NAndCircuit` / `NOrCircuit` formalize [OD14, Def 4.26]'s alternating-layer
-circuits, with [OD14, Def 4.27]'s condition that no base gate reads a variable
-twice as the `Nodup` invariant.  `size` counts every node, leaves included, where
-[OD14, Def 4.27] counts only the internal layers, and no width measure is defined
-here — bottom-layer fan-in lives on `DNF` / `CNF` in `Formulas.lean`.  `Circuit`,
-the unconstrained AND/OR tree, matches no numbered definition: [OD14]'s circuits
-are DAGs.  `toNAnd` / `toNOr` are this library's own normalization; their
-factor-2 size bound is proved here, not taken from [OD14]'s `2 ^ d` remark.
+`NAndCircuit` / `NOrCircuit` are **alternating trees over base clauses**, not a
+direct realization of [OD14, Def 4.26]'s layered circuits: alternation holds
+between parent and child connectives, but there is no common input layer and no
+requirement that root-to-literal paths have equal length (an `AND` root may hold
+both an `OR` clause and an `OR` node over an `AND` clause).  [OD14, Def 4.27]'s
+condition that no base gate reads a variable twice is the `Nodup` invariant.
+The size/depth measures are **not interchangeable across the three carriers**:
+`Circuit.size` counts every node, literal leaves included, where [OD14,
+Def 4.27] counts only the internal layers; `NAndCircuit.size` / `NOrCircuit.size`
+count clauses and nodes but not the literals inside a clause (a two-literal
+clause has normal-form size `1` and `toCircuit` size `3`); normal-form `depth`
+gives every base clause depth `0` where its `toCircuit` image has depth `1`;
+and the root is counted in both sizes where [OD14] excludes the input and
+output layers.  An empty `.node []` and an empty `.clause [] h` agree in value
+and size but differ in normal-form depth (`1` vs `0`), so no uniform
+depth-shift identity holds.  On `Circuit` itself, `.node true []` evaluates to
+`true` and `.node false []` to `false` (the empty AND/OR), each with size `1`
+and depth `1`.  No width measure is defined here — bottom-layer fan-in lives
+on `DNF` / `CNF` in `Formulas.lean`.  `Circuit`, the unconstrained AND/OR tree,
+matches no numbered definition: [OD14]'s circuits are DAGs.  `toNAnd` / `toNOr`
+are this library's own normalization, each theorem naming its actual source and
+target measures; their factor-2 size bound is proved here, not taken from
+[OD14]'s `2 ^ d` remark.
 
 ## Provenance
 
@@ -322,8 +337,10 @@ theorem Circuit.size_succ_le_two_pow : ∀ c : Circuit n, c.maxFanin ≤ 2 →
 -- Section 3: Normal-form circuit (alternating, nodup at base)
 -- ----------------------------------------------------------------
 
-/-! The alternating normal form of [OD14, Def 4.26], with [OD14, Def 4.27]'s
-condition that a base gate reads no variable twice, as the `Nodup` invariant. -/
+/-! The alternating normal form — alternating trees over base clauses (see the
+module docstring's Divergences; **not** [OD14, Def 4.26]'s layered circuits) —
+with [OD14, Def 4.27]'s condition that a base gate reads no variable twice as
+the `Nodup` invariant. -/
 
 mutual
 /-- A normal-form circuit whose root is an `AND`: either a base `clause` of
