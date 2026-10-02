@@ -292,7 +292,7 @@ end FeedForward
     guarantee** and cannot serve as a general machine-to-standard-circuit
     construction — a future bridge must build its family gate by gate instead.
     (Individual wrapped gates may happen to be standard: a single positive
-    literal transports to `andGateOp 1`.)  Only evaluation is preserved
+    literal `C : Circuit 1` transports to `andGateOp 1`.)  Only evaluation is preserved
     (`Circuit.toFeedForward_eval`). -/
 noncomputable def _root_.BoolCircuit.Circuit.toFeedForward (C : Circuit n) : FeedForward Bool (Fin n) Unit where
   depth := C.depth + 1

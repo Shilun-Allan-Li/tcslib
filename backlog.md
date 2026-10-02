@@ -215,7 +215,7 @@ uncomputability chapter.
   Solovay) are future Chapter-3 work. *Origin: ch1 plan §5 phase-2 notes;
   session assessment 2026-09-18.*
 
-### Chapter 6 bridge theorems (blocked on the §4 integration decision)
+### Chapter 6 bridge theorems (unblocked: surface audited, gate closed 2026-10-02)
 
 The `complexity/arora-barak-ch6` branch (circuits, `P/poly` — proved,
 sorry-free) and this branch are complementary; the missing ch-6 headliners
@@ -263,11 +263,17 @@ are exactly the machine-facing ones:
   `NPReductions.CNFFormula V`, the audited `Std.Sat.CNF ℕ`) with three
   SAT→3SAT artifacts; `UHalt.lean` introduces a **second computability
   framework** (Mathlib `ComputablePred` vs. the campaign's quarantine and
-  its own `HALT_not_computable`); the merged material is main-track, not
-  campaign-attested (proper, but it must pass the external audit protocol
-  before any campaign statement cites it). Loose ends for the colleague:
-  the dangling `ch6/PLAN.md` reference; `Basic.lean` at 674 lines (> 600
-  target).
+  its own `HALT_not_computable`); the merged circuit surface **passed the external audit protocol**
+  2026-10-02 (three rounds, 0 blockers throughout;
+  `audits/ch6-circuits-resolutions.md`, CLOSED) — campaign statements may
+  cite its definitions, subject to the recorded divergences and the §3
+  interface notes. The dangling `ch6/PLAN.md` references were repointed
+  here in the round-1 repairs. Loose ends for the colleagues:
+  `Basic.lean` at 674 lines (> 600 target); and the audit's sweep logs
+  show the **LMN tree is not sorry-free** (five `sorry` warnings across
+  `CircuitCompression`, `IterativeReduction`, `Depth3Switching`,
+  `CircuitTreeManip`) — outside the audited surface, flagged for its
+  authors.
 * **Fill-campaign start** (§2) — on hold by the same instruction.
 * **Disposition of the three §1 questions** — CH1-Q1, CH1-Q2, CH2-Q1.
 * **`TCSlib.Tactics` blueprint exclusion** — 92 metaprogramming-scaffolding

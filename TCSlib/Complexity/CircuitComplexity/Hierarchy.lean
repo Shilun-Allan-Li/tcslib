@@ -47,7 +47,8 @@ class (see `PPoly.lean`'s ledger) — by `Language.InSIZE`, over `BoolCircuit.Ci
 *DAG* on `stdGateOps`.  Everything here is over `BoolCircuit.Circuit`, an unbounded-fan-in
 *tree*.  Neither transfer is available.  Tree → `FeedForward` exists only as
 `BoolCircuit.Circuit.toFeedForward`, which is over `FeedForward Bool`, not `Fin 2`, and puts
-the whole circuit into one gate `⟨Fin n, C.eval⟩` that is not in `stdGateOps`; every layer
+the whole circuit into one unrestricted gate `⟨Fin n, C.eval⟩` that, even after
+alphabet transport, need not belong to `stdGateOps`; every layer
 above the input is `Unit`, so its size is `C.depth + 1` whatever `C.size` is.  Size is not
 the obstruction (`C.depth ≤ C.size`, so the image has size `≤ C.size + 1`): what the map
 lacks is any general `stdGateOps` basis proof, which a size-class transport would need.
