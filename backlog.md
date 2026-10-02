@@ -124,15 +124,16 @@ uncomputability chapter.
 
 ## 2. Campaign work queued or on hold
 
-* **Chapter-2 fill campaign (E1-E5)** — **on hold** (user decision,
-  2026-09-18, pending the Chapter-6 integration question, §4). All four
-  statement-phase gates are closed; 59 audited-true admissions await fills.
-  Epoch order per `AroraBarakChapter2Plan.md` §4: (E1) assemblies +
-  poly-calculus core, (E2) NDTM compilations + `NP ⊆ EXP` enumerator +
-  padding + `TMSAT`, (E3) `SAT ≤ₚ 3SAT` machine + tableau mathematics, (E4)
-  the Cook-Levin emitter (the summit), (E5) closure. First deliverable when
-  resumed: the epoch/batch partition with points and file ownership, then
-  the E1 briefs.
+* **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
+  2026-10-02 after the ch-6 integration and audit closed). All four
+  statement-phase gates closed; 59 audited-true admissions.
+  **Epoch/batch partition recorded** in `AroraBarakChapter2Plan.md` §4
+  (fill-campaign subsection): E1 assemblies + poly-calculus + formula
+  mathematics (batches 1A–1D, 28 targets), E2 enumerator + compilations +
+  Ex 2.1/HALT + `TMSAT` (2A–2D, 11), E3 padding + SAT track + snapshot
+  locality (3A–3D, 14), E4 the Cook-Levin summit + TAUTOLOGY dual (4A–4B,
+  6), E5 closure. Padding moved E2 → E3 (recorded refinement). Next: the
+  E1 briefs (1A–1D) in `briefs/`.
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —

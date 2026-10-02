@@ -133,6 +133,56 @@ sketches, an audit pack goes out, gates close on zero blockers/majors.
    anticipated), (E5) closure: zero-sorry sweep, drift attestation, final audit
    pack, blueprint increment.
 
+### Fill campaign: epoch/batch partition (2026-10-02)
+
+The 59 audited-true admissions, partitioned per the Chapter-1 precedent
+(difficulty points on the same 1–15 planning scale; **exclusive file
+ownership per batch within an epoch**; epochs sequential with an audit round
+at each boundary). Protocol and delivery: `workflow.md` §4 (zip delivery,
+statement freeze, escalation discipline — full ground-rule text in every
+brief). Verification: `scripts/lean_check_tree.sh` over
+`scripts/ab_ch1_module_order.txt` (53 modules; `lake build` stays banned).
+Audit-mandated brief inheritances are indexed in `backlog.md` §2 and named
+per batch below; each brief carries its tables verbatim.
+
+One refinement against the §4(5) sketch, for batch-size sanity: the padding
+cluster moves from E2 to E3. It lives in `Nondeterminism.lean` alongside the
+E2 compilations (one owner per epoch), depends on the NTIME
+characterizations those compilations produce, and `Nondeterminism.lean` as a
+single E2 batch would be a 37-point outlier.
+
+| Epoch | Batch | Contents (points) | Owned files | Brief inheritances |
+|---|---|---|---|---|
+| **1** | 1A | `polyTimeComputable_id` (3), `PolyTimeComputable.output_length_le` (2), `PolyTimeComputable.comp` (5); `PolyTimeReducible.refl` (1), `.trans` (2), `mem_P_of_polyTimeReducible` (4), `P_eq_NP_of_NPHard_mem_P` (3), `NPComplete.mem_P_iff` (2) | `ClassNP/{PolyTime,Reductions}.lean` | — (ch-1 `computesFunInTime_comp` is the precedent to reuse) |
+| 1 | 1B | `AcceptsWithin.mono` (2), `NTIME.mono` (2), `DTIME_subset_NTIME` (3), `NTIME_eq_empty_of_exists_zero` (2); `HaltsWithin.mono` (2), `MultiTapeTM.toNDTM_runWith` (4) | `ClassNP/NTIME.lean`, `TuringMachine/Nondeterministic.lean` | — |
+| 1 | 1C | `compl_mem_P` (5), `mem_coNP_iff_forall` (3), `P_subset_NP_inter_coNP` (2), `NP_eq_coNP_of_P_eq_NP` (2); `P_subset_NP` (2); `P_subset_EXP` (2), `EXP_subset_NEXP` (3) | `ClassNP/{CoNP,NP,EXP}.lean` | — |
+| 1 | 1D | `eval_congr_of_lt_numVars` (3), `exists_cnf_boolFun` (5); `parse_serialize` (6), `decode_serialize` (2), `numVars_decode_le` (4); `evalDNF_dual` (3), `dnfTautology_dual_iff` (1) | `Formulas/{CNF,CNFEncoding,DNF}.lean` | — (pure mathematics; LL(1) grammar conventions per the phase-3 pack) |
+| **2** | 2A | `NP_subset_EXP` (12) — the certificate enumerator | `ClassNP/EXP.lean` | enumerator contract-by-contract table (`ch2-phase1-round3-findings.md`); verifier-call capture obligations (round-2 repairs row) |
+| 2 | 2B | `ntime_poly_subset_NP` (10), `NP_subset_iUnion_NTIME` (8), `NP_eq_iUnion_NTIME` (1) | `ClassNP/Nondeterminism.lean` | simulator invariant tables + branch-correspondence contracts (`ch2-phase2-findings.md`, note 3: no untimed composition, no bare computability substitutions) |
+| 2 | 2C | `mem_NP_iff_exists_length_le` (8) — Exercise 2.1 both directions; `HALT_NPHard` (6), `HALT_not_mem_NP` (4) | `ClassNP/{NP,Reductions}.lean` | Ex-2.1 reverse construction `R n = (C+1)(n+1)^c` + marker/strip (round-2 repairs row); `HALT_not_mem_NP` proof-route restriction (round-2 repairs row) |
+| 2 | 2D | `timeConstructible_poly` (7), `TMSAT_mem_NP` (12), `TMSAT_NPHard` (10), `TMSAT_NPComplete` (1) — **continuation budget anticipated** (ch-1 B2 precedent). `TMSAT_mem_NP` includes drafting the **new public quantitative `timed_universal` bridge** as a flagged statement (suggested form `(3|α| + 14·canonizerTime(|α|) + 50)·(t+1)²`), requested into the Chapter-1 surface via the shared-file mechanism and flagged for the epoch audit | `ClassNP/TMSAT.lean` (+ serial-merge request into `TuringMachine/Universal.lean`) | `PolyBound` budget chain, both success and timeout clauses; exact-value emission case table + explicit `T'` deadline formula, never majorize certificate length (`ch2-phase3-{findings,reaudit-findings,resolutions}.md`) |
+| **3** | 3A | `ntime_expPow_subset_NEXP` (4), `NEXP_subset_iUnion_NTIME` (4), `NEXP_eq_iUnion_NTIME` (1), `EXP_eq_NEXP_of_P_eq_NP` (8), `P_ne_NP_of_EXP_ne_NEXP` (1) — the padding cluster | `ClassNP/Nondeterminism.lean` | certificate-route Thm 2.22 sketch; deadline majorization `T' n = D(n+1)^(2er)` discipline (phase-3 records) |
+| 3 | 3B | `SAT_mem_NP` (9), `SAT3_mem_NP` (3), `SAT_reducible_SAT3` (12) — **continuation budget anticipated** | `ClassNP/SAT.lean` | parity/validation conventions of the phase-3 repairs (reject even inputs; pre-validation bit bound) |
+| 3 | 3C | `oblivious_schedule_eq` (4), `snapshotAt_zero` (2), `snapshotAt_state_succ` (3), `snapshotAt_inputSymbol` (4), `snapshotAt_workSymbol` (9) | `CookLevin/Snapshot.lean` | locality fills: strict `s < t` in `prevVisit`; no-write vs write-blank distinct (`some none` erases); halting-transition writes count (phase-4 Derivation A) |
+| 3 | 3D | `TAUTOLOGY_mem_coNP` (6) | `ClassNP/Tautology.lean` | DNF evaluation-congruence bridge as a private lemma (phase-4 round 1, note 6) |
+| **4** | 4A | `NPHard.polyTimeReducible` (2), `SAT_NPHard` (15 — **the summit; continuation certain**), `SAT_NPComplete` (1), `SAT3_NPHard` (2), `SAT3_NPComplete` (1) | `CookLevin/Hardness.lean` | the six-stage output-silence contract **and** the round-2 boundary-check table, verbatim; the product snapshot encoding; the exact serialization-length ledger — never constant-per-clause (`ch2-phase4-{findings,reaudit-findings,resolutions}.md`) |
+| 4 | 4B | `TAUTOLOGY_coNPComplete` (7) | `ClassNP/Tautology.lean` | dual-reduction route via `SAT3_NPHard`; fallback-flips-sides convention (phase-4 records) |
+| **5** | — | Closure: zero-sorry sweep with build evidence, campaign-wide drift attestation against the audited baselines, fill-round audit pack, blueprint increment (`/blueprint-extract`) | — | `workflow.md` §5 |
+
+Epoch loads: ≈ 76 / 79 / 70 / 28 points (E5 is process, not points); target
+counts 28 / 11 / 14 / 6 of the 59. Rationale: E1 maximizes risk retirement
+per point — the poly-calculus assemblies machine-check that the phase-1
+interfaces compose, and the formula mathematics is pure induction with no
+machine content; E2 retires the chapter's two biggest technique risks (the
+enumerator with verifier-call capture; the `timed_universal` quantitative
+bridge, the campaign's one planned mid-fill statement addition); E3 builds
+everything the summit consumes (padding calculus, the SAT machine track, and
+the snapshot locality layer); E4 is the summit plus its dual corollary, with
+every needed technique precedented in E2/E3; E5 is wind-down. Within-batch
+orders are sequential where listed (e.g. 2D proves the bridge statement
+before `TMSAT_mem_NP` consumes it; 4A proves `SAT_NPHard` before its
+corollaries).
+
 ## 5. Risks and honest effort assessment
 
 * **The Cook-Levin reduction machine is the summit** — a machine *emitting* the
@@ -213,6 +263,7 @@ what audit documents cite.
 | Phase-4 audit round 2 (`audits/ch2-phase4-reaudit-findings.md`, audited at `c3579472`): **zero blockers, zero majors, zero minors, 3 notes — gate condition met with nothing to sweep**, the campaign's cleanest round. Resolution table verified row by row; the six-stage output-silence transcription judged semantically faithful and the emitter obligation list **complete at statement-phase granularity** (stage-by-stage boundary checks; the round-1 counterexample re-fired against the repaired contract and confirmed closed); the product encoding matches Derivation B with no extra well-formedness family; the length/time ledger independently re-derived (exact serializer identity confirmed; `c ≥ 1` via `not_computesInTime_zero`; pinning cost absorbed by `T ≥ (m+1)²`; `O_M(T²) = poly(n)` total at sequential-scan rates). Notes adopted: both contract tables inherited verbatim into the E4 emitter fill brief; the exact identity is the fill's length ledger; evidence separation retained. **Phase-4 audit gate closed** (`audits/ch2-phase4-resolutions.md`). **All four Chapter-2 statement-phase gates are now closed** — 59 audited-true admissions (19 + 14 + 12 + 14); every mandatory-core statement of the chapter is on the books. Next: the fill campaign (E1-E5), beginning with epoch partitioning and briefs | Decided |
 
 | Backlog consolidation (2026-09-18): the repository-level `backlog.md` created as the canonical tracking file — full human-review question bodies (CH1-Q1, CH1-Q2, CH2-Q1, moved verbatim; the plans keep stable numbered stubs that audit documents cite), the on-hold fill campaign with the audit-mandated fill-brief inheritance index, deferred formalizations across chapters 1-3 and the ch-6 bridge theorems, pending user decisions (ch-6 integration path among them), and housekeeping. `workflow.md` §1 points to it; it joins audit bundle attachment sets from the next round. Decision-log history stays in the plans, never moved | Decided |
+| Fill campaign resumed; epoch/batch partition recorded (2026-10-02): the user lifted the 2026-09-18 hold after the Chapter-6 integration and its audit closed (`audits/ch6-circuits-resolutions.md`, CLOSED — independence of the fill surface from the frozen `Formulas.lean` verified: zero campaign imports of `CircuitComplexity`). Partition in §4 above: all 59 admissions across E1–E4 (28/11/14/6 targets, ≈ 76/79/70/28 points) + E5 closure, with per-batch file ownership, the audit-mandated brief inheritances named per batch, and one recorded refinement — the padding cluster moves E2 → E3 (file-ownership and batch-size rationale in §4). Continuation budgets anticipated at 2D, 3B, 4A; the one planned mid-fill statement addition is 2D's public quantitative `timed_universal` bridge, flagged for the E2 audit. Next: E1 briefs (1A–1D) | Decided |
 
 ## References
 
