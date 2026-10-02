@@ -176,6 +176,9 @@ pipeline detail).
 
 * [`policy.md`](policy.md) — the standards this workflow enforces (modularity,
   attribution, sketches, review checklist).
+* [`lean-glossary.md`](lean-glossary.md) — the Lean/Mathlib jargon appearing in
+  declaration names and docstrings (fuel, Sigma, `Prop` vs `Bool`, the naming
+  grammar, …), for readers fluent in TCS but not in Lean.
 * [`AGENTS.md`](AGENTS.md) / `.claude/` — the sorry-ladder proof technique and agent
   roster; useful *inside* a fill batch, but campaign verification runs through §6, not
   through `lake build` or editor-only checks.
