@@ -32,7 +32,7 @@ immaterial downstream.
    `(1/4)·∑_{3k ≤ p·|U|} f̂(U)² ≤ ε`.
 -/
 
-open BooleanAnalysis SwitchingLemma2 LMN
+open BooleanAnalysis SwitchingLemma LMN
 open Classical
 
 noncomputable section

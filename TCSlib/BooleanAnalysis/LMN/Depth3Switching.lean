@@ -33,7 +33,7 @@ The depth-3 argument proceeds as follows:
   Bernoulli(`p₁ · p₂`) accounts for both stages.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

@@ -11,7 +11,7 @@ i.e. the least decision-tree depth computing `g`.
 
 **Proof.** Exhibit a tree for `restrictFn f ρ` of depth at most `dtDepth f`.
 
-1. `Nat.find_spec` at `d = dtDepth f` (with the same `buildFullDTree`
+1. `Nat.find_spec` at `d = dtDepth f` (with the same `DecisionTree.buildFull`
    nonemptiness witness used to define `dtDepth`) yields `T` with
    `hTd : T.depth ≤ dtDepth f` and `hTe : ∀ x, T.eval x = f x`.
 2. Put `T' := dtRestrict T ρ`. Then `T'.depth ≤ dtDepth f` by

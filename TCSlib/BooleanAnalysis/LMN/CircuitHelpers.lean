@@ -7,7 +7,7 @@ import TCSlib.BooleanAnalysis.LMN.SwitchingBernoulli
 Helper lemmas for proving switching lemma bounds for depth-2 circuits.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli
+open BoolCircuit SwitchingLemma SwitchingBernoulli
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

@@ -17,20 +17,20 @@ import Mathlib.Tactic
 # Decision Trees
 
 Binary decision trees with `eval`, `depth`, `deepPath`, the complete tree
-`buildFullDTree`, and `dtDepth` (the minimum decision-tree depth computing a
+`DecisionTree.buildFull`, and `dtDepth` (the minimum decision-tree depth computing a
 given Boolean function).
 
 ## Main definitions
 
 * `DecisionTree` — the tree type, with `eval` and `depth`.
 * `DecisionTree.deepPath` — a deepest root-to-leaf path.
-* `buildFullDTree` — the complete tree querying the variables in order.
+* `DecisionTree.buildFull` — the complete tree querying the variables in order.
 * `dtDepth` — the least depth of a tree computing a given Boolean function.
 
 ## Main results
 
 * `DecisionTree.length_deepPath` — the deep path has length the tree's depth.
-* `buildFullDTree_depth` / `buildFullDTree_eval` — the complete tree has depth at
+* `DecisionTree.buildFull_depth` / `DecisionTree.buildFull_eval` — the complete tree has depth at
   most `n - k` and computes `f`; together they make `dtDepth` well defined.
 
 ## Divergences from [OD14, §3.2]
@@ -103,27 +103,27 @@ lemma DecisionTree.length_deepPath {n : ℕ} (T : DecisionTree n) :
       omega
 
 /-- Build a complete decision tree querying variables 0, 1, …, n−1 in order. -/
-def buildFullDTree {n : ℕ} (f : (Fin n → Bool) → Bool)
+def DecisionTree.buildFull {n : ℕ} (f : (Fin n → Bool) → Bool)
     (k : ℕ) (acc : Fin n → Bool) : DecisionTree n :=
   if h : k < n then
     .branch ⟨k, h⟩
-      (buildFullDTree f (k + 1) (Function.update acc ⟨k, h⟩ false))
-      (buildFullDTree f (k + 1) (Function.update acc ⟨k, h⟩ true))
+      (DecisionTree.buildFull f (k + 1) (Function.update acc ⟨k, h⟩ false))
+      (DecisionTree.buildFull f (k + 1) (Function.update acc ⟨k, h⟩ true))
   else
     .leaf (f acc)
 termination_by n - k
 
 /-- The complete tree started at level `k` has depth at most `n - k`. -/
-lemma buildFullDTree_depth {n : ℕ} (f : (Fin n → Bool) → Bool)
+lemma DecisionTree.buildFull_depth {n : ℕ} (f : (Fin n → Bool) → Bool)
     (k : ℕ) (_ : k ≤ n) (acc : Fin n → Bool) :
-    (buildFullDTree f k acc).depth ≤ n - k := by
-  unfold buildFullDTree
+    (DecisionTree.buildFull f k acc).depth ≤ n - k := by
+  unfold DecisionTree.buildFull
   split
   · rename_i h
     simp only [DecisionTree.depth]
-    have h1 := buildFullDTree_depth f (k + 1) (by omega)
+    have h1 := DecisionTree.buildFull_depth f (k + 1) (by omega)
       (Function.update acc ⟨k, h⟩ false)
-    have h2 := buildFullDTree_depth f (k + 1) (by omega)
+    have h2 := DecisionTree.buildFull_depth f (k + 1) (by omega)
       (Function.update acc ⟨k, h⟩ true)
     have h3 := max_le h1 h2
     omega
@@ -142,18 +142,18 @@ coordinate, which is exactly the hypothesis the induction step needs.  If none
 remain, the tree is the leaf holding `f` of the accumulator, and the invariant
 now covers every coordinate, so the accumulator and the input are equal as
 functions and the leaf is `f` of the input. -/
-lemma buildFullDTree_eval {n : ℕ} (f : (Fin n → Bool) → Bool)
+lemma DecisionTree.buildFull_eval {n : ℕ} (f : (Fin n → Bool) → Bool)
     (k : ℕ) (hk : k ≤ n) (acc x : Fin n → Bool)
     (hinv : ∀ i : Fin n, i.val < k → acc i = x i) :
-    (buildFullDTree f k acc).eval x = f x := by
-  unfold buildFullDTree
+    (DecisionTree.buildFull f k acc).eval x = f x := by
+  unfold DecisionTree.buildFull
   split
   · rename_i h
     simp only [DecisionTree.eval]
     cases hxv : x ⟨k, h⟩ with
     | false =>
       rw [if_neg (by decide : ¬(false = true))]
-      apply buildFullDTree_eval f (k + 1) (by omega)
+      apply DecisionTree.buildFull_eval f (k + 1) (by omega)
       intro i hi
       by_cases heq : i = ⟨k, h⟩
       · subst heq; simp [Function.update, hxv]
@@ -161,7 +161,7 @@ lemma buildFullDTree_eval {n : ℕ} (f : (Fin n → Bool) → Bool)
         exact hinv i (by have : i.val ≠ k := fun hv => heq (Fin.ext hv); omega)
     | true =>
       rw [if_pos rfl]
-      apply buildFullDTree_eval f (k + 1) (by omega)
+      apply DecisionTree.buildFull_eval f (k + 1) (by omega)
       intro i hi
       by_cases heq : i = ⟨k, h⟩
       · subst heq; simp [Function.update, hxv]
@@ -179,6 +179,6 @@ termination_by n - k
 noncomputable def dtDepth {n : ℕ} (f : (Fin n → Bool) → Bool) : ℕ := by
   classical
   exact Nat.find (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
-    ⟨n, buildFullDTree f 0 (fun _ => false),
-     buildFullDTree_depth f 0 (Nat.zero_le n) _,
-     fun x => buildFullDTree_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+    ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+     DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+     fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩

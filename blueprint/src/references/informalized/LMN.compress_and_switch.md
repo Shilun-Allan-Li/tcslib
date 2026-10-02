@@ -13,7 +13,7 @@
 
 The bound is uniform in `isAnd`, i.e. holds for both an AND and an OR gate.
 
-**Proof.** `by_cases h : isAnd <;> simp_all +decide [SwitchingLemma2.bernoulliRestrProb]`
+**Proof.** `by_cases h : isAnd <;> simp_all +decide [SwitchingLemma.bernoulliRestrProb]`
 splits on the gate type; the two branches are dual.
 
 1. **AND.** `and_children_have_cnf cs ρ₁ l h_all` gives `ψ : CNF n` with

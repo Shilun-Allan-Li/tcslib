@@ -23,7 +23,7 @@ proved where it is needed rather than visible in the definition.
 
 **Used in.** The predicate "`T` computes `f`", i.e. `∀ x, T.eval x = f x`, which
 is the second component of the set `Nat.find`s over in `dtDepth`; established for
-the complete tree by `buildFullDTree_eval`. It is also the semantics side of the
+the complete tree by `DecisionTree.buildFull_eval`. It is also the semantics side of the
 canonical-tree and restriction work (`Switching/CanonicalDTree.lean`,
 `Switching/Restriction.lean`) and of the Fourier-side files
 `LMN/DecisionTreeFourier.lean` and `LMN/RestrictionFourier.lean`.

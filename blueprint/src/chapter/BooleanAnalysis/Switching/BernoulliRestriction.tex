@@ -13,12 +13,12 @@ at most one.
 \section{Declarations}
 
 \begin{definition}[Bernoulli weight of a restriction]
-\lean{SwitchingLemma2.bernoulliRestrWeight}
+\lean{SwitchingLemma.bernoulliRestrWeight}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b003}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p004-b001}
-\label{SwitchingLemma2.bernoulliRestrWeight}
+\label{SwitchingLemma.bernoulliRestrWeight}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 For a parameter $p \in \bbr$ and a restriction $\rho$ on $n$ variables, the Bernoulli
 weight is
 \[
@@ -29,10 +29,10 @@ $(1-p)/2$.
 \end{definition}
 
 \begin{definition}[Bernoulli event probability]
-\lean{SwitchingLemma2.bernoulliRestrProb}
-\label{SwitchingLemma2.bernoulliRestrProb}
+\lean{SwitchingLemma.bernoulliRestrProb}
+\label{SwitchingLemma.bernoulliRestrProb}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrWeight}
 For a parameter $p$ and a (decidable) predicate $\mathrm{event}$ on restrictions, the
 probability that the predicate holds under a Bernoulli($p$) random restriction is the
 sum over all restrictions $\rho$ of $\mathrm{bernoulliRestrWeight}(p,\rho)$ weighted by
@@ -40,10 +40,10 @@ the indicator of $\mathrm{event}(\rho)$.
 \end{definition}
 
 \begin{lemma}[Nonnegativity of the Bernoulli weight]
-\lean{SwitchingLemma2.bernoulliRestrWeight_nonneg'}
-\label{SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+\lean{SwitchingLemma.bernoulliRestrWeight_nonneg'}
+\label{SwitchingLemma.bernoulliRestrWeight_nonneg'}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{3}
 Let $p \in \bbr$ satisfy $0 \le p \le 1$, and let $\rho$ be a restriction on $n$
 variables, with $f$ of its variables left free. Then its Bernoulli weight
@@ -51,10 +51,10 @@ $p^{f}\,\bigl(\tfrac{1-p}{2}\bigr)^{\,n - f}$ is nonnegative.
 \end{lemma}
 
 \begin{lemma}[Bernoulli restriction weights sum to one]
-\lean{SwitchingLemma2.bernoulliRestrWeight_sum_one}
-\label{SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\lean{SwitchingLemma.bernoulliRestrWeight_sum_one}
+\label{SwitchingLemma.bernoulliRestrWeight_sum_one}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{5}
 Fix $n \in \bbn$ and a real parameter $p$ with $0 \le p \le 1$. For a restriction $\rho$
 on $n$ variables, write $F(\rho)$ for its set of free variables. Then, summing the
@@ -67,10 +67,10 @@ variables.
 \end{lemma}
 
 \begin{lemma}[Bernoulli restriction probability is at most one]
-\lean{SwitchingLemma2.bernoulliRestrProb_le_one'}
-\label{SwitchingLemma2.bernoulliRestrProb_le_one'}
+\lean{SwitchingLemma.bernoulliRestrProb_le_one'}
+\label{SwitchingLemma.bernoulliRestrProb_le_one'}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight, SwitchingLemma.bernoulliRestrWeight_nonneg', SwitchingLemma.bernoulliRestrWeight_sum_one}
 \difficulty{4}
 Fix $n$ and a real parameter $p$ with $0 \le p \le 1$. Then for every decidable
 predicate on restrictions of $n$ variables, the probability that it holds under a

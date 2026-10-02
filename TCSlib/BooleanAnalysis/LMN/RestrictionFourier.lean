@@ -35,7 +35,7 @@ coordinates average an odd sign to `0` (or a squared sign to `1−δ`), and
 untouched coordinates contribute `1`.
 -/
 
-open BooleanAnalysis SwitchingLemma2 LMN
+open BooleanAnalysis SwitchingLemma LMN
 open Classical
 
 noncomputable section

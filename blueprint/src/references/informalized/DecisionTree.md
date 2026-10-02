@@ -20,5 +20,5 @@ depth is the longest root-to-leaf path, not the shortest.
 **Remark.** The type is not indexed by depth, and it carries no `DecidableEq`/`Repr`
 derivation; every structural fact about it is proved by `induction T with | leaf | branch`.
 
-**Used in.** `dtDepth`, `buildFullDTree`, `DecisionTree.deepPath`, and the switching-lemma
+**Used in.** `dtDepth`, `DecisionTree.buildFull`, `DecisionTree.deepPath`, and the switching-lemma
 and LMN files.

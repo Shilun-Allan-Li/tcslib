@@ -11,7 +11,7 @@ build a complete sub-tree over all of that term's free variables, and continue.
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -489,15 +489,15 @@ lemma cont_eq_canonicalDTree {n : ℕ} (f : DNF n) (ρ_orig : Restriction n)
     (if decide (Term.fixedBy t ρ') then DecisionTree.leaf true
      else canonicalDTree.go f ρ_orig.numFree ρ') =
     canonicalDTree f ρ' := by
-  split_ifs <;> simp_all +decide [ SwitchingLemma2.canonicalDTree ];
-  · rw [ SwitchingLemma2.canonicalDTree.go ];
+  split_ifs <;> simp_all +decide [ SwitchingLemma.canonicalDTree ];
+  · rw [ SwitchingLemma.canonicalDTree.go ];
     split_ifs;
     · have := ‹∀ t ∈ f, Term.killedBy t ρ'› t ht_mem;
       obtain ⟨ l, hl₁, hl₂ ⟩ := this;
       exact absurd ( ‹Term.fixedBy t ρ'› l hl₁ ) ( by unfold Literal.fixedBy; unfold Literal.killedBy at hl₂; aesop );
     · rfl;
     · exact False.elim <| ‹¬∃ t ∈ f, Term.fixedBy t ρ'› ⟨ t, ht_mem, by assumption ⟩;
-  · apply SwitchingLemma2.canonicalDTree_go_fuel_invariant;
+  · apply SwitchingLemma.canonicalDTree_go_fuel_invariant;
     exacts [ rfl, hfuel, Nat.lt_succ_self _ ]
 
 /-! ## Depth bounds -/
@@ -785,4 +785,4 @@ lemma dtDepth_restrictFn_le_numFree {n : ℕ} (f : (Fin n → Bool) → Bool)
       obtain ⟨T, hT, hev⟩ := ih ρ hρ0
       exact ⟨T, hT.trans (Nat.le_succ _), hev⟩
 
-end SwitchingLemma2
+end SwitchingLemma

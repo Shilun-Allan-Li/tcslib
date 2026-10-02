@@ -18,7 +18,7 @@ The simulation maintains two restrictions: ρ₀ follows the path directions
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -132,4 +132,4 @@ lemma processClauseLits_path_le {n : ℕ}
       simp only [processClauseLits]
       exact le_trans (ih _ _ _) (Nat.le_succ _)
 
-end SwitchingLemma2
+end SwitchingLemma

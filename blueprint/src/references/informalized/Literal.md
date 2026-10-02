@@ -21,7 +21,7 @@ Its semantics are `Literal.eval l x = if l.neg then !x l.var else x l.var`.
 bridged by `Lit.toLiteral` in `LMN/NormalFormConversion.lean`.
 
 **Used in.** The base of the whole DNF/CNF stack: `Term n = List (Literal n)`,
-hence `DNF n` and `CNF n`, and everything in the `SwitchingLemma2` development
+hence `DNF n` and `CNF n`, and everything in the `SwitchingLemma` development
 that speaks of literals being fixed or killed by a restriction
 (`Literal.fixedBy_eval_true`, `Literal.killedBy_eval_false`,
 `Term.freeLiterals`).

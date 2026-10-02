@@ -34,7 +34,7 @@ The Chernoff tail terms `s·e^{−n/120w} + s·e^{−n/120l}` are inherited from
 `odonnell_lemma_4_28` and vanish as `n → ∞`.
 -/
 
-open BooleanAnalysis BoolCircuit SwitchingLemma2 LMN
+open BooleanAnalysis BoolCircuit SwitchingLemma LMN
 open Classical
 
 noncomputable section

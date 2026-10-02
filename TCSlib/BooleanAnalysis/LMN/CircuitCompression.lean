@@ -26,7 +26,7 @@ The failure probability is at most s₂ · ((1/2)^l + exp(-np/3)), where s₂ is
 number of layer-2 gates.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

@@ -5,7 +5,6 @@ Authors: Yichuan Wang, Hydroxyi
 -/
 import TCSlib.Complexity.CircuitComplexity.Basic
 import TCSlib.Complexity.CircuitComplexity.Formulas
-import TCSlib.Complexity.CircuitComplexity.DecisionTree
 import TCSlib.Complexity.CircuitComplexity.FeedForward
 import TCSlib.Complexity.CircuitComplexity.PPoly
 import TCSlib.Complexity.CircuitComplexity.CircuitSat
@@ -33,8 +32,6 @@ Boolean circuits and formulas, the class `P/poly`, and Arora–Barak §6.1.
   `toCircuit`.
 - `CircuitComplexity.Formulas`: `Literal`, `Term`, `DNF`, `CNF` with `eval`
   and `width`.
-- `CircuitComplexity.DecisionTree`: `DecisionTree` with `eval`, `depth`,
-  `deepPath`, `buildFullDTree`, and `dtDepth`.
 - `CircuitComplexity.PPoly`: the class `P/poly` of languages decided by
   polynomial-size non-uniform circuit families, over the `FeedForward` model.
 - `CircuitComplexity.CircuitSat`: CKT-SAT ([AB09, Def 6.9]) and the Tseitin reduction

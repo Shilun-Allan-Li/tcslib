@@ -1,5 +1,5 @@
 {
- "lean_name": "SwitchingLemma2.encode_go_not_kills_first_clause",
+ "lean_name": "SwitchingLemma.encode_go_not_kills_first_clause",
  "key": "a07fb30c498b61a8",
  "kind": "lemma",
  "title": "Encoder does not kill the first surviving clause",
@@ -18,5 +18,5 @@
  "confidence": "low",
  "caveat": "The core function, the recursive worker of the Razborov encoding, is not among the supplied definitions, so its internal behaviour cannot be rendered faithfully; the prose describes it only as an opaque recursion returning a restriction. The remaining hypotheses and the conclusion (the returned restriction does not fix the free literal's variable to its falsifying value) are fully determined by the Lean statement.",
  "rubric": [],
- "replaced": "\nLet $f$ be a DNF whose terms contain no two distinct literals on the same variable, and\nlet $t$ be the first term of $f$ not killed by $\\rho_0$ (as returned by\n\\texttt{find?}). If $l \\in t$ has $\\rho_0\\,l.\\mathrm{var} = \\mathrm{none}$ and $\\sigma$\nis unset wherever $\\rho_0$ is, then the first component of the encoder loop\n\\texttt{SwitchingLemma2.razborovEncode}'s \\texttt{go} (for any fuel, path, and empty\naccumulator) at $l.\\mathrm{var}$ is not $\\mathrm{some}\\ l.\\mathrm{neg}$; the encoder\nnever assigns the free literal $l$ its negating value, so it does not kill the first\nsurviving clause."
+ "replaced": "\nLet $f$ be a DNF whose terms contain no two distinct literals on the same variable, and\nlet $t$ be the first term of $f$ not killed by $\\rho_0$ (as returned by\n\\texttt{find?}). If $l \\in t$ has $\\rho_0\\,l.\\mathrm{var} = \\mathrm{none}$ and $\\sigma$\nis unset wherever $\\rho_0$ is, then the first component of the encoder loop\n\\texttt{SwitchingLemma.razborovEncode}'s \\texttt{go} (for any fuel, path, and empty\naccumulator) at $l.\\mathrm{var}$ is not $\\mathrm{some}\\ l.\\mathrm{neg}$; the encoder\nnever assigns the free literal $l$ its negating value, so it does not kill the first\nsurviving clause."
 }

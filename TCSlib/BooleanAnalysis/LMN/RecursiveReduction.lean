@@ -8,7 +8,7 @@ import TCSlib.BooleanAnalysis.LMN.RestrictionCompose
 Helper lemmas for the recursive proof of circuit_reduction_aux.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section
@@ -112,7 +112,7 @@ lemma compress_and_switch (isAnd : Bool) (cs : List (Circuit n))
     bernoulliRestrProb (1 / (40 * (↑l : ℝ)))
       (fun ρ₂ => dtDepth (restrictFn (Circuit.eval (Circuit.node isAnd cs)) (composeRestr ρ₁ ρ₂)) > t) ≤
     (1 / 2 : ℝ) ^ t + Real.exp (-(↑n / (120 * ↑l))) := by
-  by_cases h : isAnd <;> simp_all +decide [ SwitchingLemma2.bernoulliRestrProb ];
+  by_cases h : isAnd <;> simp_all +decide [ SwitchingLemma.bernoulliRestrProb ];
   · have := and_children_have_cnf cs ρ₁ l h_all;
     obtain ⟨ψ, hψ_width, hψ_eval⟩ := this;
     convert switching_bernoulli_dtDepth_cnf_general ψ l hψ_width hl hn ( 1 / ( 40 * l ) ) ( by positivity ) ( by rw [ div_le_div_iff₀ ] <;> norm_cast <;> linarith ) ( by rw [ div_le_iff₀ ] <;> norm_cast <;> linarith ) t using 1;
@@ -124,7 +124,7 @@ lemma compress_and_switch (isAnd : Bool) (cs : List (Circuit n))
     -- Apply the switching lemma to the DNF φ.
     have h_switch : bernoulliRestrProb (1 / (40 * l)) (fun ρ₂ => dtDepth (restrictFn φ.eval ρ₂) > t) ≤ (1 / 2 : ℝ) ^ t + Real.exp (-(n / (120 * l))) := by
       convert switching_bernoulli_dtDepth_dnf_general φ l hφ₁ hl hn ( 1 / ( 40 * l ) ) ( by positivity ) ( by rw [ div_le_div_iff₀ ] <;> norm_cast <;> nlinarith ) ( by rw [ div_le_iff₀ ] <;> norm_cast <;> nlinarith ) t using 1 ; ring_nf;
-    simp_all +decide [ SwitchingLemma2.bernoulliRestrProb ];
+    simp_all +decide [ SwitchingLemma.bernoulliRestrProb ];
     convert h_switch using 3 ; simp +decide [ restrictFn_composeRestr ];
     rw [ show φ.eval = _ from funext hφ₂ ]
 

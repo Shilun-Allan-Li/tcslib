@@ -6,7 +6,7 @@ import TCSlib.BooleanAnalysis.LMN.CircuitLayerReduction
 Helper lemmas for proving `layer2_composed_bound` and `one_step_layer_reduction`.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

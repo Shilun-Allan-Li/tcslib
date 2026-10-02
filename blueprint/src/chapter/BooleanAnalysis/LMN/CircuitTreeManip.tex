@@ -171,17 +171,17 @@ $\mathrm{gates}\,i$, namely $x \mapsto c_{\mathrm{sub}}.\mathrm{eval}\,(\lambda 
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {buildFullDTree}
+  {DecisionTree.buildFull}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {buildFullDTree_depth}
+  {DecisionTree.buildFull_depth}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {buildFullDTree_eval}
+  {DecisionTree.buildFull_eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
@@ -191,42 +191,42 @@ $\mathrm{gates}\,i$, namely $x \mapsto c_{\mathrm{sub}}.\mathrm{eval}\,(\lambda 
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.extend}
+  {SwitchingLemma.Restriction.extend}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.restrictFn}
+  {SwitchingLemma.restrictFn}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.toDNF}
+  {SwitchingLemma.toDNF}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
 \proofstep
-  {SwitchingLemma2.toCNF}
+  {SwitchingLemma.toCNF}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
 \proofstep
-  {SwitchingLemma2.dtDepth_witness}
+  {SwitchingLemma.dtDepth_witness}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf}
+  {SwitchingLemma.dtDepth_le_implies_small_dnf_cnf}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b002,
@@ -336,7 +336,7 @@ $\mathrm{gates}\,i$, namely $x \mapsto c_{\mathrm{sub}}.\mathrm{eval}\,(\lambda 
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p004-b002}
-\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma2.Restriction, SwitchingLemma2.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma2.restrictFn, dtDepth}
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{3}
 Let $g_1,\dots,g_m$ be DNF formulas on $n$ Boolean variables, let $\rho$ be a
 restriction of these variables, and let $l\in\bbn$. For each $i$, write $f_i$ for the
@@ -651,12 +651,12 @@ assignment $x$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b006}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p006-b003}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p006-b003}
@@ -1003,12 +1003,12 @@ $\bigl(h_j(x)\bigr)_j$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b006}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p006-b003}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p006-b003}

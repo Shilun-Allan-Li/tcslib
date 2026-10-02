@@ -14,7 +14,7 @@ most $(10pw)^s$ plus an exponentially small tail $e^{-np/3}$ that vanishes as $n
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \label{BernoulliCost.fixedSizeRestrs}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 For natural numbers $n$ and $k$, this is the finite set of restrictions on $n$ variables
 whose set of free variables has cardinality exactly $k$.
 \end{definition}
@@ -24,7 +24,7 @@ whose set of free variables has cardinality exactly $k$.
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \label{BernoulliCost.fixedSizeRestrProb}
 \leanok
-\uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction}
+\uses{BernoulliCost.fixedSizeRestrs, SwitchingLemma.Restriction}
 The probability of an event under the fixed-size restriction model $R_k$, which is uniform
 over restrictions with exactly $k$ free variables. It is defined as the fraction of
 restrictions with exactly $k$ free variables that satisfy the event.
@@ -41,7 +41,7 @@ The binomial probability mass function, $\Pr[\mathrm{Bin}(n,p) = k] = \binom{n}{
 \lean{BernoulliCost.fixedSizeRestrProb_nonneg}
 \label{BernoulliCost.fixedSizeRestrProb_nonneg}
 \leanok
-\uses{BernoulliCost.fixedSizeRestrProb, SwitchingLemma2.Restriction}
+\uses{BernoulliCost.fixedSizeRestrProb, SwitchingLemma.Restriction}
 \difficulty{1}
 Fix natural numbers $n$ and $k$, and let $E$ be any event on restrictions of $n$
 variables. Then the probability of $E$ under the fixed-size restriction model $R_k$ —
@@ -56,7 +56,7 @@ nonnegative:
 \lean{BernoulliCost.fixedSizeRestrProb_le_one}
 \label{BernoulliCost.fixedSizeRestrProb_le_one}
 \leanok
-\uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction}
+\uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma.Restriction}
 \difficulty{3}
 Let $E$ be any event, that is, a property of restrictions on $n$ variables, and let $k$
 be a natural number. Under the fixed-size restriction model $R_k$ — the uniform
@@ -90,7 +90,7 @@ binomial probabilities $\binom{n}{k}\, p^k\, (1-p)^{n-k}$ sum to one over all ou
 \lean{BernoulliCost.bernoulli_decompose}
 \label{BernoulliCost.bernoulli_decompose}
 \leanok
-\uses{BernoulliCost.binomialPMF, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
+\uses{BernoulliCost.binomialPMF, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{6}
 Fix $n$ and a real parameter $p$ with $0 \le p \le 1$, and let $\mathrm{event}$ be any
 (decidable) property of restrictions on $n$ variables. Then the probability that
@@ -121,7 +121,7 @@ probability that $\mathrm{Bin}(n,p)$ exceeds twice its mean is bounded by $e^{-n
 \lean{BernoulliCost.bernoulli_restriction_cost}
 \label{BernoulliCost.bernoulli_restriction_cost}
 \leanok
-\uses{BernoulliCost.bernoulli_decompose, BernoulliCost.binomialPMF, BernoulliCost.binomialPMF_nonneg, BernoulliCost.binomialPMF_sum_one, BernoulliCost.chernoff_binomial_upper_tail, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
+\uses{BernoulliCost.bernoulli_decompose, BernoulliCost.binomialPMF, BernoulliCost.binomialPMF_nonneg, BernoulliCost.binomialPMF_sum_one, BernoulliCost.chernoff_binomial_upper_tail, BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb}
 \difficulty{5}
 Let $n \ge 1$, let $p \in \bbr$ satisfy $0 < p \le 1$, and let $w, s$ be positive
 integers. Let $\mathrm{event}$ be a decidable predicate on restrictions of $n$
@@ -153,7 +153,7 @@ such that for all natural numbers $m \ge N$ one has
 \lean{BernoulliCost.bernoulli_restriction_asymptotic}
 \label{BernoulliCost.bernoulli_restriction_asymptotic}
 \leanok
-\uses{BernoulliCost.bernoulli_restriction_cost, BernoulliCost.exp_neg_eventually_small, BernoulliCost.fixedSizeRestrProb, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb}
+\uses{BernoulliCost.bernoulli_restriction_cost, BernoulliCost.exp_neg_eventually_small, BernoulliCost.fixedSizeRestrProb, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb}
 \difficulty{3}
 Fix a parameter $p$ with $0 < p \le 1$, positive integers $w, s > 0$, and a tolerance
 $\varepsilon > 0$. Then there exists $N \in \bbn$ such that for every $n \ge N$ with $n

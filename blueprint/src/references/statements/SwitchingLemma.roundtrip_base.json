@@ -1,5 +1,5 @@
 {
- "lean_name": "SwitchingLemma2.roundtrip_base",
+ "lean_name": "SwitchingLemma.roundtrip_base",
  "key": "05e03ed340080377",
  "kind": "lemma",
  "title": "Round-trip base case for the decoder",
@@ -13,5 +13,5 @@
  "confidence": "low",
  "caveat": "The conclusion is stated in terms of the internal decoding loop `razborovDecode.go`, whose definition is not among the supplied upstream definitions; its precise behavior (what the first output component represents and how fuel/width enter) cannot be verified from the given snippet, so the informalization of that procedure is necessarily approximate.",
  "rubric": [],
- "replaced": "When the encoder returns $(\\sigma, [])$ (an empty emitted list), the decoder loop\n\\texttt{SwitchingLemma2.razborovDecode}'s \\texttt{go} recovers $\\sigma$ exactly, given\nthat $\\sigma$ and the decoder's starting restriction $\\sigma_{\\mathrm{dec}}$ agree with\n$\\sigma$ on both free and non-free variables and that $\\sigma$ is unset wherever\n$\\rho_0$ is unset."
+ "replaced": "When the encoder returns $(\\sigma, [])$ (an empty emitted list), the decoder loop\n\\texttt{SwitchingLemma.razborovDecode}'s \\texttt{go} recovers $\\sigma$ exactly, given\nthat $\\sigma$ and the decoder's starting restriction $\\sigma_{\\mathrm{dec}}$ agree with\n$\\sigma$ on both free and non-free variables and that $\\sigma$ is unset wherever\n$\\rho_0$ is unset."
 }

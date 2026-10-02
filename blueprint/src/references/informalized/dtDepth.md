@@ -13,9 +13,9 @@ some decision tree of depth at most `d` computes `f`, i.e. the least `d` satisfy
 **Proof (that the definition is well-formed).** `Nat.find` demands a nonempty predicate,
 and the term supplied is the explicit witness `d := n`:
 
-* the tree is `buildFullDTree f 0 (fun _ => false)`;
-* its depth is at most `n - 0 = n` by `buildFullDTree_depth f 0 (Nat.zero_le n) _`;
-* it computes `f` at every `x` by `buildFullDTree_eval f 0 (Nat.zero_le n) _ x`, whose
+* the tree is `DecisionTree.buildFull f 0 (fun _ => false)`;
+* its depth is at most `n - 0 = n` by `DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _`;
+* it computes `f` at every `x` by `DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x`, whose
   agreement hypothesis `∀ i, i.val < 0 → acc i = x i` is vacuous and discharged by
   `omega`.
 

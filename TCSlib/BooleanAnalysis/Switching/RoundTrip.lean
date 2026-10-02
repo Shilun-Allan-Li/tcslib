@@ -9,7 +9,7 @@ original restriction.
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -104,8 +104,8 @@ lemma encode_go_fst_eq_rec {n : ℕ} (f : DNF n) (w fuel : ℕ)
     let pcl := processClauseLits (fl :: fls) (step :: rest) ρ₀ σ
     (razborovEncode.go f w (fuel + 1) (step :: rest) ρ₀ σ []).1 =
     (razborovEncode.go f w fuel pcl.1 pcl.2.1 pcl.2.2.1 []).1 := by
-  cases' h : List.find? ( fun t => !Term.killedBy t ρ₀ ) f with t <;> simp_all +decide [ SwitchingLemma2.razborovEncode.go ];
-  rw [ SwitchingLemma2.encode_go_fst_acc ]
+  cases' h : List.find? ( fun t => !Term.killedBy t ρ₀ ) f with t <;> simp_all +decide [ SwitchingLemma.razborovEncode.go ];
+  rw [ SwitchingLemma.encode_go_fst_acc ]
 
 /-! ## Round-trip invariant lemmas -/
 
@@ -131,7 +131,7 @@ lemma roundtrip_inv_hC' {n : ℕ}
   · exact processClauseLits_foldl_sigma_none t_clause lits path ρ₀ σ σ_dec v (fun p => hmem_zip p.1 p.2) hv' hv;
   · convert foldl_sigma_stable t_clause ( processClauseLits lits path ρ₀ σ |> Prod.snd |> Prod.snd |> Prod.snd ) σ_dec v _ using 1;
     · rw [ hC v hv' ];
-    · apply_rules [ SwitchingLemma2.processClauseLits_aux_ne_nonfree ];
+    · apply_rules [ SwitchingLemma.processClauseLits_aux_ne_nonfree ];
       · exact fun p hp => hmem_zip _ _ hp;
       · grind +ring
 
@@ -153,7 +153,7 @@ lemma roundtrip_inv_hD' {n : ℕ}
         match t_clause.drop e.1 with | [] => ρ₀' | l :: _ => Function.update ρ₀' l.var (some e.2))
       ρ₀_dec v = (processClauseLits lits path ρ₀ σ).2.1 v := by
   by_cases hfree : ρ₀ v = none;
-  · convert SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set t_clause lits path ρ₀ σ ρ₀_dec v hmem_zip hfree hv using 1;
+  · convert SwitchingLemma.processClauseLits_foldl_rho_eq_of_set t_clause lits path ρ₀ σ ρ₀_dec v hmem_zip hfree hv using 1;
   · have hnone : ∀ p ∈ lits, p.1.var ≠ v := by
       grind +ring;
     convert foldl_rho_stable t_clause ( processClauseLits lits path ρ₀ σ |>.2.2.2 ) ρ₀_dec v _ using 1;
@@ -353,4 +353,4 @@ theorem razborovEncode_injective {n : ℕ} (f : DNF n) (w d : ℕ)
   rw [← razborovDecode_encode f w d ρ₁ hbad₁ hw hnd,
       ← razborovDecode_encode f w d ρ₂ hbad₂ hw hnd, henc]
 
-end SwitchingLemma2
+end SwitchingLemma

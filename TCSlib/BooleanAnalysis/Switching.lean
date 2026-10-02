@@ -10,7 +10,7 @@ and the corollary converting to CNF representation.
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -1043,7 +1043,7 @@ private lemma canonicalDTree_deepPath_match_freeLits {n : ℕ} (f : DNF n)
     constructor <;> contrapose! hk_path <;> simp_all +decide [ Term.killedBy, Term.fixedBy ] ;
     · grind;
     · have h_depth_zero : (canonicalDTree f ρ).depth = 0 := by
-        apply SwitchingLemma2.canonicalDTree_depth_zero_of_fixed f ρ hk_path
+        apply SwitchingLemma.canonicalDTree_depth_zero_of_fixed f ρ hk_path
       generalize_proofs at *; (
       have h_depth_zero : ∀ (T : DecisionTree n), T.depth = 0 → T.deepPath.length = 0 := by
         intros T hT_depth_zero
@@ -1058,7 +1058,7 @@ private lemma canonicalDTree_deepPath_match_freeLits {n : ℕ} (f : DNF n)
     refine' List.Pairwise.imp_of_mem _ hnodup;
     exact fun { a b } ha hb hab h => hab <| hnd a ha b hb h;
   have := canonicalDTree_alive_eq_termSubTree' f ρ halive.1 halive.2 t hfind;
-  have := termSubTree_deepPath_var_match t ρ (fun ρ' => if decide (Term.fixedBy t ρ') = true then DecisionTree.leaf true else SwitchingLemma2.canonicalDTree.go f ρ.numFree ρ') h_pairwise k ?_ ?_ <;> simp_all +decide ;
+  have := termSubTree_deepPath_var_match t ρ (fun ρ' => if decide (Term.fixedBy t ρ') = true then DecisionTree.leaf true else SwitchingLemma.canonicalDTree.go f ρ.numFree ρ') h_pairwise k ?_ ?_ <;> simp_all +decide ;
   any_goals rw [ ← zipIdx_filter_length ] ; simp +decide [ hk_flis ];
   rw [ ← zipIdx_filter_getElem_fst ]
 
@@ -1723,9 +1723,9 @@ private lemma dtDepth_witness {n : ℕ} (f : (Fin n → Bool) → Bool) :
     ∃ T : DecisionTree n, T.depth ≤ dtDepth f ∧ ∀ x, T.eval x = f x := by
   classical
   let p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x
-  have hexists : ∃ d, p d := ⟨n, buildFullDTree f 0 (fun _ => false),
-    buildFullDTree_depth f 0 (Nat.zero_le n) _,
-    fun x => buildFullDTree_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+  have hexists : ∃ d, p d := ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+    DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+    fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
   have hspec := Nat.find_spec hexists
   show p (dtDepth f)
   unfold dtDepth
@@ -1738,7 +1738,7 @@ lemma dtDepth_le_implies_small_dnf_cnf {n : ℕ} (f : (Fin n → Bool) → Bool)
   obtain ⟨T, hTd, hTeval⟩ := dtDepth_witness f
   have hTd' : T.depth ≤ d := le_trans hTd h
   constructor
-  · use SwitchingLemma2.toDNF T, by
+  · use SwitchingLemma.toDNF T, by
       have h_width_le_depth : ∀ T : DecisionTree n, (toDNF T).width ≤ T.depth := by
         intro T;
         have h_width_induction : ∀ T : DecisionTree n, ∀ t ∈ toDNF T, t.length ≤ T.depth := by
@@ -1813,7 +1813,7 @@ theorem switching_corollary {n : ℕ} (hn : 0 < n) (f : DNF n) (w s : ℕ)
   by_contra hgood; push_neg at hgood
   exact hρ.2 (dtDepth_le_implies_small_dnf_cnf _ w hgood).2
 
-end SwitchingLemma2
+end SwitchingLemma
 
 
 /-!
@@ -1913,24 +1913,24 @@ lemma dtDepth_neg {n : ℕ} (f : (Fin n → Bool) → Bool) :
     unfold dtDepth
     apply Nat.find_le
     have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
-      ⟨n, buildFullDTree f 0 (fun _ => false),
-       buildFullDTree_depth f 0 (Nat.zero_le n) _,
-       fun x => buildFullDTree_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+      ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+       DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+       fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
     obtain ⟨T, hTd, hTeval⟩ := h
     exact ⟨T.negateLeaves, by simp [hTd], by intro x; simp [hTeval]⟩
   · -- dtDepth f ≤ dtDepth (¬f)
     unfold dtDepth
     apply Nat.find_le
     have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = (fun x => !(f x)) x)
-      ⟨n, buildFullDTree _ 0 (fun _ => false),
-       buildFullDTree_depth _ 0 (Nat.zero_le n) _,
-       fun x => buildFullDTree_eval _ 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+      ⟨n, DecisionTree.buildFull _ 0 (fun _ => false),
+       DecisionTree.buildFull_depth _ 0 (Nat.zero_le n) _,
+       fun x => DecisionTree.buildFull_eval _ 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
     obtain ⟨T, hTd, hTeval⟩ := h
     exact ⟨T.negateLeaves, by simp [hTd], by intro x; simp [hTeval]⟩
 
 namespace SwitchingLemmaCNF
 
-open SwitchingLemma2
+open SwitchingLemma
 
 variable {n : ℕ}
 

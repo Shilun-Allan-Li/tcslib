@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (not_in_text) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: SwitchingLemma2.exists_aux_injection -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: SwitchingLemma.exists_aux_injection -->
 <!-- origin: boolean-ch04-dnf-switching-lmn round-7 verdict not_in_text (0.82) -->
 
 # At most (4w)^d auxiliary strings per group

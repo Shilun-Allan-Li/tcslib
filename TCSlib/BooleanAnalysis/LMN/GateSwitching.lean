@@ -30,7 +30,7 @@ CNFs/DNFs at each level).
   `s · ((1/2)^l + exp(-np/3))`.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli
+open BoolCircuit SwitchingLemma SwitchingBernoulli
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

@@ -16,7 +16,7 @@ from shallow Boolean circuits into DNF/CNF formulas.
 \lean{LMN.restrictFn_ext'}
 \label{LMN.restrictFn_ext'}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.restrictFn}
 \difficulty{1}
 Let $f, g : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be two Boolean
 functions that agree at every point, so that $f(x) = g(x)$ for all $x$. Then for every
@@ -28,7 +28,7 @@ of $f$ by $\rho$ equals the restriction of $g$ by $\rho$.
 \lean{LMN.bernoulliRestrProb_congr_fn}
 \label{LMN.bernoulliRestrProb_congr_fn}
 \leanok
-\uses{LMN.dedupTermVar, LMN.restrictFn_ext', SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\uses{LMN.dedupTermVar, LMN.restrictFn_ext', SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{3}
 Let $f, g : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be Boolean functions
 on $n$ variables that agree at every input, and fix a real parameter $p$ and a threshold
@@ -304,7 +304,7 @@ literals, contains no repeated literal.
 }
 \label{LMN.switching_bernoulli_dtDepth_dnf_general}
 \leanok
-\uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{2}
 Let $f$ be a DNF formula on $n \ge 1$ Boolean variables whose width is at most $w$,
 where $w \ge 1$, and let $p \in \bbr$ satisfy $0 < p \le 1$ together with $p \le
@@ -330,7 +330,7 @@ least depth of a decision tree computing it.
 }
 \label{LMN.switching_bernoulli_dtDepth_cnf_general}
 \leanok
-\uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF, LMN.cleanCNF_eval, LMN.cleanCNF_nodup, LMN.cleanCNF_var_inj, LMN.cleanCNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF, LMN.cleanCNF_eval, LMN.cleanCNF_nodup, LMN.cleanCNF_var_inj, LMN.cleanCNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{2}
 Let $f$ be a CNF formula in $n \ge 1$ Boolean variables whose width is at most $w$, with
 $w \ge 1$, and let $p \in \bbr$ satisfy $0 < p \le 1/(40w)$ and $p \le 1$. Consider a

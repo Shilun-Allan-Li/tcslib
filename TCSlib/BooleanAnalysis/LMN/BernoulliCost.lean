@@ -25,7 +25,7 @@ restriction model `R_p` does not cost anything asymptotically.
   model.
 -/
 
-open SwitchingLemma2
+open SwitchingLemma
 noncomputable section
 
 namespace BernoulliCost

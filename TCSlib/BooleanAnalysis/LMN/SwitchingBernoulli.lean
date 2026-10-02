@@ -9,7 +9,7 @@ a width-`w` DNF (or CNF) formula has decision-tree depth exceeding `t` with
 probability at most `(1/2)^t + exp(-np/3)`.
 
 This is the "Bernoulli version" of Håstad's Switching Lemma, derived from the
-counting version (`SwitchingLemma2.switching_lemma`) and the Bernoulli
+counting version (`SwitchingLemma.switching_lemma`) and the Bernoulli
 restriction cost theorem (`BernoulliCost.bernoulli_restriction_cost`).
 
 ## Mathematical argument
@@ -32,7 +32,7 @@ restriction cost theorem (`BernoulliCost.bernoulli_restriction_cost`).
 - `switching_bernoulli_dtDepth_cnf`: Bernoulli switching lemma for CNFs
 -/
 
-open SwitchingLemma2 BernoulliCost
+open SwitchingLemma BernoulliCost
 open Classical in
 attribute [local instance] Classical.propDecidable
 
@@ -98,7 +98,7 @@ lemma switching_fixedSize_bound_small (f : DNF n) (w k d : ℕ)
     (hnodup : ∀ t ∈ f, t.Nodup) :
     fixedSizeRestrProb (fun ρ => dtDepth (restrictFn f.eval ρ) > d) k ≤
     (10 * ↑k * ↑w / ↑n) ^ d := by
-  convert SwitchingLemma2.switching_lemma hn f w k d hw hk hnd hnodup using 1;
+  convert SwitchingLemma.switching_lemma hn f w k d hw hk hnd hnodup using 1;
   rw [ fixedSizeRestrProb ];
   rw [ div_pow, div_le_div_iff₀ ] <;> norm_cast <;> norm_num [ fixedSizeRestrs_card ];
   · rw [ mul_comm, fixedSizeRestrs_filter_bad_eq, fixedSizeRestrs_card ];

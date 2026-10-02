@@ -1,5 +1,5 @@
 import TCSlib.Complexity.CircuitComplexity.Formulas
-import TCSlib.Complexity.CircuitComplexity.DecisionTree
+import TCSlib.BooleanAnalysis.DecisionTree
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.Data.Int.Star
@@ -13,7 +13,7 @@ literals/terms/DNFs, and small auxiliary lemmas used throughout the proof.
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -223,4 +223,4 @@ lemma zipIdx_filter_idx_lt {α : Type*} (t : List α) (p : α × ℕ → Bool)
   obtain ⟨_, hidx, _⟩ := List.mem_zipIdx hmem
   simp at hidx; omega
 
-end SwitchingLemma2
+end SwitchingLemma

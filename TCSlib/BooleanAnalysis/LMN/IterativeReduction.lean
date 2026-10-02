@@ -60,7 +60,7 @@ Applied inductively over d−2 stages:
   Pr_{δ}[any fail] ≤ s₂·α + s₃·α + ⋯ + s_{d−1}·α ≤ s · α = ε/2
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

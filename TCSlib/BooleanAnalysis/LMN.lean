@@ -35,7 +35,7 @@ There is also a Chernoff tail `exp(-np/3)` that vanishes as `n → ∞`.
 The overall δ for the LMN theorem is correspondingly adjusted.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

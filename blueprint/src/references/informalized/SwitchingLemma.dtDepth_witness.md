@@ -11,8 +11,8 @@ minimum in the definition of `dtDepth` is realised, not merely approached.
 **Proof.** Unwrap the `Nat.find` in `dtDepth`.
 
 1. Let `p d := ∃ T, T.depth ≤ d ∧ ∀ x, T.eval x = f x`.
-2. `p` is satisfiable: `⟨n, buildFullDTree f 0 (fun _ => false), …⟩`, using
-   `buildFullDTree_depth` for the depth bound and `buildFullDTree_eval` for
+2. `p` is satisfiable: `⟨n, DecisionTree.buildFull f 0 (fun _ => false), …⟩`, using
+   `DecisionTree.buildFull_depth` for the depth bound and `DecisionTree.buildFull_eval` for
    correctness. This is the same witness `dtDepth` itself uses to justify
    `Nat.find`.
 3. `Nat.find_spec hexists` says `p` holds at `Nat.find`. Since `dtDepth f` is

@@ -17,7 +17,7 @@ restriction.
 - `restriction_compose_le`: inequality corollary
 -/
 
-open BoolCircuit SwitchingLemma2
+open BoolCircuit SwitchingLemma
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

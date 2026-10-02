@@ -15,7 +15,7 @@ and derives the key Bernoulli monotonicity $\Pr_{p\cdot q}[\mathrm{dtDepth} > t]
 \lean{LMN.dtRestrict}
 \label{LMN.dtRestrict}
 \leanok
-\uses{DecisionTree, SwitchingLemma2.Restriction}
+\uses{DecisionTree, SwitchingLemma.Restriction}
 Given a decision tree $T$ and a partial assignment $\rho$, the restricted tree
 $\mathrm{dtRestrict}\,T\,\rho$ is obtained by collapsing every branch whose query variable
 is fixed by $\rho$ into the corresponding subtree, and keeping unrestricted branches intact.
@@ -25,7 +25,7 @@ is fixed by $\rho$ into the corresponding subtree, and keeping unrestricted bran
 \lean{LMN.dtRestrict_depth_le}
 \label{LMN.dtRestrict_depth_le}
 \leanok
-\uses{DecisionTree, DecisionTree.depth, LMN.dtRestrict, SwitchingLemma2.Restriction}
+\uses{DecisionTree, DecisionTree.depth, LMN.dtRestrict, SwitchingLemma.Restriction}
 \difficulty{4}
 Let $T$ be a decision tree on $n$ Boolean variables, and let $\rho$ be a restriction on
 those variables, that is, an assignment giving each variable either a fixed Boolean
@@ -42,7 +42,7 @@ length of a path from the root to a leaf. Then
 \lean{LMN.dtRestrict_eval}
 \label{LMN.dtRestrict_eval}
 \leanok
-\uses{DecisionTree, DecisionTree.eval, LMN.dtRestrict, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
+\uses{DecisionTree, DecisionTree.eval, LMN.dtRestrict, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend}
 \difficulty{4}
 Let $T$ be a decision tree on $n$ Boolean variables, let $\rho$ be a restriction on
 those variables, and let $x \in \{\mathrm{true},\mathrm{false}\}^n$ be an input. Then
@@ -56,7 +56,7 @@ where $\rho$ sets it and the value $x_i$ on the free variables.
 \lean{LMN.dtDepth_restrictFn_le'}
 \label{LMN.dtDepth_restrictFn_le'}
 \leanok
-\uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, LMN.dtRestrict, LMN.dtRestrict_depth_le, LMN.dtRestrict_eval, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn, buildFullDTree, buildFullDTree_depth, buildFullDTree_eval, dtDepth}
+\uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, LMN.dtRestrict, LMN.dtRestrict_depth_le, LMN.dtRestrict_eval, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, DecisionTree.buildFull, DecisionTree.buildFull_depth, DecisionTree.buildFull_eval, dtDepth}
 \difficulty{5}
 Let $f$ be a Boolean function of $n$ Boolean variables, and let $\rho$ be a restriction
 that fixes some of these variables to Boolean values and leaves the remaining ones free.
@@ -70,7 +70,7 @@ the least depth of a decision tree computing $g$ — one has $D(f_\rho) \le D(f)
 \lean{LMN.dtDepth_composeRestr_le}
 \label{LMN.dtDepth_composeRestr_le}
 \leanok
-\uses{LMN.composeRestr, LMN.dtDepth_restrictFn_le', SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.restrictFn, dtDepth}
+\uses{LMN.composeRestr, LMN.dtDepth_restrictFn_le', SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $f$ be a Boolean function of $n$ variables, and let $\rho_1$ and $\rho_2$ be two
 restrictions on those variables, each pinning some coordinates to a fixed Boolean value
@@ -92,7 +92,7 @@ lower this depth:
 \lean{LMN.bernoulliRestrProb_dtDepth_compose_le}
 \label{LMN.bernoulliRestrProb_dtDepth_compose_le}
 \leanok
-\uses{LMN.composeRestr, LMN.dtDepth_composeRestr_le, LMN.restriction_compose_eq, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrProb_le_one', SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg', SwitchingLemma2.restrictFn, dtDepth}
+\uses{LMN.composeRestr, LMN.dtDepth_composeRestr_le, LMN.restriction_compose_eq, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrProb_le_one', SwitchingLemma.bernoulliRestrWeight, SwitchingLemma.bernoulliRestrWeight_nonneg', SwitchingLemma.restrictFn, dtDepth}
 \difficulty{5}
 Let $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean function,
 let $t \in \bbn$ be a threshold, and let $p_1, p_2 \in \bbr$ satisfy $0 < p_1 \le 1$ and

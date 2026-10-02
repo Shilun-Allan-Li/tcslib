@@ -1,5 +1,5 @@
 import TCSlib.BooleanAnalysis.Basic
-import TCSlib.Complexity.CircuitComplexity.DecisionTree
+import TCSlib.BooleanAnalysis.DecisionTree
 
 /-!
 # Decision Trees and the Fourier Spectrum (O'Donnell Proposition 3.16)

@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (not_in_text) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: SwitchingLemma2.encode_go_wellformed -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: SwitchingLemma.encode_go_wellformed -->
 <!-- origin: boolean-ch04-dnf-switching-lmn round-7 verdict not_in_text (0.86) -->
 
 # The Razborov encoder's auxiliary output is well-formed

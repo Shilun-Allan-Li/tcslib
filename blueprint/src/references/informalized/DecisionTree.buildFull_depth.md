@@ -1,21 +1,21 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching/Circuit.lean :: buildFullDTree_depth -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching/Circuit.lean :: DecisionTree.buildFull_depth -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # The full decision tree built from level k has depth at most n − k
 
 **Claim.** For any `f : (Fin n → Bool) → Bool`, any level `k ≤ n` and any partial
 assignment `acc : Fin n → Bool`, the complete tree
-`buildFullDTree f k acc` — which queries variables `k, k+1, …, n−1` in order —
-satisfies `(buildFullDTree f k acc).depth ≤ n - k`.
+`DecisionTree.buildFull f k acc` — which queries variables `k, k+1, …, n−1` in order —
+satisfies `(DecisionTree.buildFull f k acc).depth ≤ n - k`.
 
 **Proof.** Well-founded recursion on `n - k` (`termination_by n - k`), after
-`unfold buildFullDTree; split` on the guard `k < n`.
+`unfold DecisionTree.buildFull; split` on the guard `k < n`.
 
 1. **Branch case** (`h : k < n`). The tree is
    `.branch ⟨k, h⟩ (… false) (… true)`, so `simp only [DecisionTree.depth]`
    turns the goal into `1 + max (depth lo) (depth hi) ≤ n - k`.
-2. Two recursive applications of `buildFullDTree_depth` at level `k + 1` (side
+2. Two recursive applications of `DecisionTree.buildFull_depth` at level `k + 1` (side
    goal `k + 1 ≤ n` by `omega`), one per updated accumulator
    `Function.update acc ⟨k, h⟩ false / true`, bound each subtree by
    `n - (k + 1)`.

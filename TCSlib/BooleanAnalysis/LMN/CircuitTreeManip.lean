@@ -21,7 +21,7 @@ into the Layer2Data gates.
 - `switched_gates_have_dnf_cnf`: After switching, gates have both DNF and CNF reps.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

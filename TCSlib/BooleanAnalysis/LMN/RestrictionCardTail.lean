@@ -30,7 +30,7 @@ Also provides `bernoulliRestrProb_not` (complement rule), the general lemma
 flagged as missing by the sorry in `CircuitCompression`.
 -/
 
-open BooleanAnalysis SwitchingLemma2 LMN
+open BooleanAnalysis SwitchingLemma LMN
 open Classical
 
 noncomputable section

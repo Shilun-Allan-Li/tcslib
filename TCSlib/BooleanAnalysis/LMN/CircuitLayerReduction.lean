@@ -42,7 +42,7 @@ terms telescope: `Σᵢ (sᵢ - 1 + 1) = Σᵢ sᵢ = s - 1`.
 - `circuit_reduction_core`: user-friendly reformulation
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section
