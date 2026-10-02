@@ -182,7 +182,13 @@ factors the run under `w` through it, and `Turing.NDTM.runWith_of_halt` absorbs 
 remaining choices, so the state at `w` equals the halted state at `w.take t`. -/
 theorem HaltsWithin.mono {tm : NDTM k Symbol State} {input : List Symbol} {t t' : ℕ}
     (h : tm.HaltsWithin input t) (hle : t ≤ t') : tm.HaltsWithin input t' := by
-  sorry
+  intro w hw
+  have hlen : (w.take t).length = t := List.length_take_of_le (hle.trans_eq hw.symm)
+  have hhalt := h (w.take t) hlen
+  have hrun := runWith_append (tm := tm) (w.take t) (w.drop t) (tm.initCfg input)
+  rw [List.take_append_drop, runWith_of_halt _ hhalt] at hrun
+  rw [hrun]
+  exact hhalt
 
 end NDTM
 
