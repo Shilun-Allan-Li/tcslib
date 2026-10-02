@@ -89,7 +89,19 @@ negated OR of literals is the AND of negated literals; at the formula level
 the negated AND of clauses is the OR of negated clauses. -/
 theorem evalDNF_dual (φ : CNF ℕ) (a : ℕ → Bool) :
     (dual φ).evalDNF a = !(φ.eval a) := by
-  sorry
+  have hclause (C : Clause ℕ) :
+      (C.map fun ℓ => (ℓ.1, !ℓ.2)).all (fun ℓ => a ℓ.1 == ℓ.2) = !(C.eval a) := by
+    induction C with
+    | nil => rfl
+    | cons ℓ C ih =>
+        simp only [List.map_cons, List.all_cons, Clause.eval_cons, ih, Bool.not_or]
+        cases a ℓ.1 <;> cases ℓ.2 <;> rfl
+  induction φ with
+  | nil => rfl
+  | cons C φ ih =>
+      change ((C.map fun ℓ => (ℓ.1, !ℓ.2)).all (fun ℓ => a ℓ.1 == ℓ.2) ||
+        (dual φ).evalDNF a) = !(C.eval a && eval a φ)
+      rw [hclause, ih, Bool.not_and]
 
 /-- **The De Morgan pivot of Example 2.21**: the dual is a DNF tautology iff
 the original CNF is unsatisfiable.
@@ -100,6 +112,7 @@ satisfies the dual" is "no `a` satisfies `φ`", which is the negation of
 `Std.Sat.CNF.Satisfiable`. -/
 theorem dnfTautology_dual_iff (φ : CNF ℕ) :
     (dual φ).DNFTautology ↔ ¬φ.Satisfiable := by
-  sorry
+  simp only [DNFTautology, evalDNF_dual, Satisfiable, not_exists,
+    Bool.not_eq_true', Bool.eq_false_iff]
 
 end Std.Sat.CNF
