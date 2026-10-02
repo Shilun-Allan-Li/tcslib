@@ -74,10 +74,10 @@ private lemma expect_mul_linear_form (f : BooleanFunc n) (b : Fin n → ℝ) :
 /-- Normalizing the degree-one part: if `W¹[g] > 0`, the coefficients `aᵢ = ĝ({i}) / sqrt W¹[g]`
 form a unit vector whose Rademacher linear form has correlation exactly `sqrt W¹[g]` with `g`.
 [OD14, §5.4, proofs of the Level-1 Inequality and Cor. 5.32] -/
-private lemma exists_unit_linear_form (g : BooleanFunc n) (hw : 0 < weightLevel 1 g) :
+lemma exists_unit_linear_form (g : BooleanFunc n) (hw : 0 < weightLevel 1 g) :
     ∃ a : Fin n → ℝ, ∑ i : Fin n, a i ^ 2 = 1 ∧
       expect (fun x ↦ g x * ∑ i : Fin n, a i * boolToSign (x i)) =
-        Real.sqrt (weightLevel 1 g) := by
+        Real.sqrt (weightLevel 1 g) := (by
   have hr : 0 < Real.sqrt (weightLevel 1 g) := Real.sqrt_pos.mpr hw
   have hroot := Real.sq_sqrt hw.le
   refine ⟨fun i ↦ fourierCoeff g {i} / Real.sqrt (weightLevel 1 g), ?_, ?_⟩
@@ -86,6 +86,7 @@ private lemma exists_unit_linear_form (g : BooleanFunc n) (hw : 0 < weightLevel 
   · rw [expect_mul_linear_form]
     simp only [div_mul_eq_mul_div, ← sq, ← Finset.sum_div, ← weightLevel_one_eq_sum_singleton]
     rw [div_eq_iff hr.ne', ← sq, hroot]
+)
 
 /-! ## Subcubes and Hamming balls -/
 
@@ -166,10 +167,10 @@ theorem hammingBall_degreeOne_limit (t : ℝ) :
 
 **Proof sketch.** The exponential of the linear form factors over the coordinates, so its
 expectation is `∏ᵢ cosh(t aᵢ) ≤ ∏ᵢ exp((t aᵢ)²/2) = exp(t²/2)`. -/
-private lemma rademacher_mgf_le (a : Fin n → ℝ)
+lemma rademacher_mgf_le (a : Fin n → ℝ)
     (hnorm : ∑ i : Fin n, a i ^ 2 = 1) (t : ℝ) :
     expect (fun x ↦ Real.exp (t * ∑ i : Fin n, a i * boolToSign (x i))) ≤
-      Real.exp (t ^ 2 / 2) := by
+      Real.exp (t ^ 2 / 2) := (by
   have hfactor : expect (fun x ↦ Real.exp (t * ∑ i : Fin n, a i * boolToSign (x i))) =
       ∏ i : Fin n, Real.cosh (t * a i) := by
     have hexp (x : BoolCube n) : Real.exp (t * ∑ i : Fin n, a i * boolToSign (x i)) =
@@ -190,6 +191,7 @@ private lemma rademacher_mgf_le (a : Fin n → ℝ)
     _ = Real.exp (t ^ 2 / 2) := by
       rw [← Real.exp_sum, ← Finset.sum_div]
       simp only [mul_pow, ← Finset.mul_sum, hnorm, mul_one]
+)
 
 /-- The truncated first moment of a normalized Rademacher linear form has a Gaussian tail bound.
 [OD14, Lemma 5.31]

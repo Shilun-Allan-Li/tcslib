@@ -558,6 +558,15 @@ private lemma chiS_flipBit (S : Finset (Fin n)) (x : BoolCube n) (i : Fin n) :
     have hji : j ≠ i := fun h => hiS (h ▸ hj)
     simp [Function.update_of_ne hji]
 
+/-- Flipping coordinate `i` negates the Walsh character `χ_S` when `i ∈ S`
+and leaves it unchanged otherwise. [OD14, §2.2] -/
+lemma chiS_flipBit_eq (S : Finset (Fin n)) (x : BoolCube n) (i : Fin n) :
+    chiS S (flipBit x i) = if i ∈ S then -chiS S x else chiS S x :=
+  (by
+  exact chiS_flipBit S x i
+)
+
+
 /-- The influence of `i` on the Walsh character `χ_S` is `[i ∈ S]`. -/
 lemma influence_chi (i : Fin n) (S : Finset (Fin n)) :
     influence i (chiS S) = if i ∈ S then 1 else 0 := by
