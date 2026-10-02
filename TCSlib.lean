@@ -29,6 +29,8 @@ import TCSlib.Complexity.Formulas
 import TCSlib.Complexity.CookLevin
 import TCSlib.Complexity.ClassNP
 
+import TCSlib.ComputationalModels
+
 import TCSlib.Cryptography.SchnorrProtocol
 
 import TCSlib.GraphTheory.Kruskal
