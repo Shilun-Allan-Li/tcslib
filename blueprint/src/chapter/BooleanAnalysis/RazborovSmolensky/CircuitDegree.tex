@@ -14,8 +14,8 @@ the circuit at any fixed input except on a small fraction of seeds.
 \section{Declarations}
 
 \begin{definition}[Boolean input cast to the prime field]
-\lean{ACP.boolInput}
-\label{ACP.boolInput}
+\lean{RazborovSmolensky.boolInput}
+\label{RazborovSmolensky.boolInput}
 \leanok
 For a Boolean input $x : \mathrm{Fin}\,n \to \mathrm{Fin}\,2$, the map
 $\mathrm{boolInput}_p(x)$ sends each coordinate $i$ to the image of the natural number $x_i$ in
@@ -23,18 +23,18 @@ $\bbz/p$.
 \end{definition}
 
 \begin{definition}[Field value of a bit]
-\lean{ACP.boolVal}
-\label{ACP.boolVal}
+\lean{RazborovSmolensky.boolVal}
+\label{RazborovSmolensky.boolVal}
 \leanok
 The value in $\bbz/p$ represented by a bit $b : \mathrm{Fin}\,2$, namely the image of the natural
 number $b$ under the canonical map $\N \to \bbz/p$.
 \end{definition}
 
 \begin{lemma}[Bit values lie in $\{0,1\}$]
-\lean{ACP.boolVal_mem}
-\label{ACP.boolVal_mem}
+\lean{RazborovSmolensky.boolVal_mem}
+\label{RazborovSmolensky.boolVal_mem}
 \leanok
-\uses{ACP.boolVal}
+\uses{RazborovSmolensky.boolVal}
 \difficulty{1}
 Let $p$ be a prime and let $b : \mathrm{Fin}\,2$ be a bit. Then the element of $\bbz/p$
 represented by $b$ — the image of the natural number $b$ under the canonical map $\N \to
@@ -42,10 +42,10 @@ represented by $b$ — the image of the natural number $b$ under the canonical m
 \end{lemma}
 
 \begin{lemma}[Booleanization recovers a bit from its field value]
-\lean{ACP.bitify_boolVal}
-\label{ACP.bitify_boolVal}
+\lean{RazborovSmolensky.bitify_boolVal}
+\label{RazborovSmolensky.bitify_boolVal}
 \leanok
-\uses{ACP.bitify, ACP.boolVal}
+\uses{RazborovSmolensky.bitify, RazborovSmolensky.boolVal}
 \difficulty{1}
 Let $p$ be a prime and let $b \in \mathrm{Fin}\,2$ be a bit. Booleanizing the field
 value of $b$ recovers $b$: taking the element of $\bbz/p$ represented by $b$ and then
@@ -54,10 +54,10 @@ yields $b$ again.
 \end{lemma}
 
 \begin{lemma}[One-step unfolding of node evaluation]
-\lean{ACP.evalNode_succ_eq}
-\label{ACP.evalNode_succ_eq}
+\lean{RazborovSmolensky.evalNode_succ_eq}
+\label{RazborovSmolensky.evalNode_succ_eq}
 \leanok
-\uses{ACP.FeedForward, ACP.FeedForward.evalNode}
+\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode}
 \difficulty{1}
 Let $F$ be a feedforward circuit over an alphabet $\alpha$, let $d$ be a layer index
 with $0 \le d < \mathrm{depth}(F)$, let $u$ be a node of layer $d+1$, and let $x$ be an
@@ -68,8 +68,8 @@ node to which slot $i$ is wired.
 \end{lemma}
 
 \begin{definition}[Degree target after $d$ layers]
-\lean{ACP.circuitDegreeBound}
-\label{ACP.circuitDegreeBound}
+\lean{RazborovSmolensky.circuitDegreeBound}
+\label{RazborovSmolensky.circuitDegreeBound}
 \leanok
 The degree budget for the approximating polynomials after $d$ layers, defined as
 \[
@@ -78,20 +78,20 @@ The degree budget for the approximating polynomials after $d$ layers, defined as
 \end{definition}
 
 \begin{definition}[Gate count in the first $d$ layers]
-\lean{ACP.gateCountBefore}
-\label{ACP.gateCountBefore}
+\lean{RazborovSmolensky.gateCountBefore}
+\label{RazborovSmolensky.gateCountBefore}
 \leanok
-\uses{ACP.FeedForward}
+\uses{BoolCircuit.FeedForward}
 For a circuit $F$ with finite node sets, $\mathrm{gateCountBefore}\,F\,d$ counts the non-input gates
 in layers $1,\dots,d$: it is $0$ for $d = 0$ and, recursively, the count for $d$ plus the number of
 nodes at layer $d+1$.
 \end{definition}
 
 \begin{lemma}[Vanishing of the gate count through layer zero]
-\lean{ACP.gateCountBefore_zero}
-\label{ACP.gateCountBefore_zero}
+\lean{RazborovSmolensky.gateCountBefore_zero}
+\label{RazborovSmolensky.gateCountBefore_zero}
 \leanok
-\uses{ACP.FeedForward, ACP.gateCountBefore}
+\uses{BoolCircuit.FeedForward, RazborovSmolensky.gateCountBefore}
 \difficulty{1}
 Let $F$ be a layered feedforward circuit over the Boolean alphabet $\{0,1\}$, whose
 input layer carries $n$ nodes and each of whose layers has a finite node set. Then the
@@ -100,10 +100,10 @@ contributes no gates.
 \end{lemma}
 
 \begin{lemma}[Gate-count recursion across layers]
-\lean{ACP.gateCountBefore_succ}
-\label{ACP.gateCountBefore_succ}
+\lean{RazborovSmolensky.gateCountBefore_succ}
+\label{RazborovSmolensky.gateCountBefore_succ}
 \leanok
-\uses{ACP.FeedForward, ACP.gateCountBefore}
+\uses{BoolCircuit.FeedForward, RazborovSmolensky.gateCountBefore}
 \difficulty{1}
 Let $F$ be a layered feedforward circuit over the Boolean alphabet $\bbf_2$ with input
 type $\mathrm{Fin}\,n$, in which every layer has finitely many nodes, and for each
@@ -114,8 +114,8 @@ the number of nodes in layer $d+1$.
 \end{lemma}
 
 \begin{lemma}[Cardinality of a product filtered on the left factor]
-\lean{ACP.prod_left_filter_card}
-\label{ACP.prod_left_filter_card}
+\lean{RazborovSmolensky.prod_left_filter_card}
+\label{RazborovSmolensky.prod_left_filter_card}
 \leanok
 \difficulty{4}
 Let $\alpha$ and $\beta$ be finite types, and let $P$ be a decidable predicate on
@@ -125,8 +125,8 @@ the cardinality $\abs{\beta}$.
 \end{lemma}
 
 \begin{lemma}[Fiberwise product counting bound]
-\lean{ACP.prod_filter_fiber_mul_le}
-\label{ACP.prod_filter_fiber_mul_le}
+\lean{RazborovSmolensky.prod_filter_fiber_mul_le}
+\label{RazborovSmolensky.prod_filter_fiber_mul_le}
 \leanok
 \difficulty{5}
 Let $\alpha$ and $\beta$ be finite types, let $P$ be a predicate on $\alpha$ and $Q$ a
@@ -141,8 +141,8 @@ satisfies $\abs{\{\,b : Q(a,b)\,\}} \cdot C \le B$. Then
 \end{lemma}
 
 \begin{definition}[Splitting off one coordinate of a dependent product]
-\lean{ACP.piEquivAt}
-\label{ACP.piEquivAt}
+\lean{RazborovSmolensky.piEquivAt}
+\label{RazborovSmolensky.piEquivAt}
 \leanok
 For an index $i$ with decidable equality on the index type, the equivalence
 \[
@@ -153,10 +153,10 @@ coordinates.
 \end{definition}
 
 \begin{lemma}[Counting functions bad at a fixed coordinate]
-\lean{ACP.pi_coordinate_bad_mul_le}
-\label{ACP.pi_coordinate_bad_mul_le}
+\lean{RazborovSmolensky.pi_coordinate_bad_mul_le}
+\label{RazborovSmolensky.pi_coordinate_bad_mul_le}
 \leanok
-\uses{ACP.piEquivAt}
+\uses{RazborovSmolensky.piEquivAt}
 \difficulty{5}
 Let $\iota$ be a finite index type with decidable equality, let $(\beta_j)_{j \in
 \iota}$ be a family of finite types, and fix a coordinate $i \in \iota$. Let
@@ -174,10 +174,10 @@ at $i$ is bad satisfies
 \end{lemma}
 
 \begin{lemma}[Counting product tuples bad in some coordinate]
-\lean{ACP.pi_exists_bad_card_mul_le}
-\label{ACP.pi_exists_bad_card_mul_le}
+\lean{RazborovSmolensky.pi_exists_bad_card_mul_le}
+\label{RazborovSmolensky.pi_exists_bad_card_mul_le}
 \leanok
-\uses{ACP.pi_coordinate_bad_mul_le}
+\uses{RazborovSmolensky.pi_coordinate_bad_mul_le}
 \difficulty{4}
 Let $\iota$ be a finite index set, and for each $i \in \iota$ let $\beta_i$ be a finite
 set equipped with a predicate $\mathrm{Bad}_i$ singling out its "bad" elements. Fix a
@@ -196,8 +196,8 @@ that are bad in at least one coordinate satisfy
 \end{lemma}
 
 \begin{lemma}[Length is preserved when filtering commutes with mapping]
-\lean{ACP.list_filter_map_length}
-\label{ACP.list_filter_map_length}
+\lean{RazborovSmolensky.list_filter_map_length}
+\label{RazborovSmolensky.list_filter_map_length}
 \leanok
 \difficulty{2}
 Let $l$ be a finite list with entries in a set $\alpha$, let $f\colon \alpha \to \beta$
@@ -209,8 +209,8 @@ filtered by the pulled-back predicate $a \mapsto P(f(a))$ have equal length.
 \end{lemma}
 
 \begin{lemma}[Filtered list length equals filtered finset cardinality]
-\lean{ACP.finset_toList_filter_length_eq_card}
-\label{ACP.finset_toList_filter_length_eq_card}
+\lean{RazborovSmolensky.finset_toList_filter_length_eq_card}
+\label{RazborovSmolensky.finset_toList_filter_length_eq_card}
 \leanok
 \difficulty{3}
 Let $s$ be a finite set of elements of a type $\alpha$, and let $q$ be a decidable
@@ -221,10 +221,10 @@ the cardinality of the subset $\{x \in s : q(x)\}$.
 \end{lemma}
 
 \begin{definition}[Gate approximator family]
-\lean{ACP.GatePolyFamily}
-\label{ACP.GatePolyFamily}
+\lean{BoolCircuit.GatePolyFamily}
+\label{BoolCircuit.GatePolyFamily}
 \leanok
-\uses{ACP.bitify, ACP.boolInput}
+\uses{RazborovSmolensky.bitify, RazborovSmolensky.boolInput}
 A \texttt{GatePolyFamily} for a gate operation $\mathrm{op}$ packages a nonempty finite seed type
 together with, for each tuple of incoming polynomials and each seed, an approximating polynomial in
 $n$ variables over $\bbz/p$ subject to two guarantees: its total degree is at most
@@ -235,10 +235,10 @@ type depends only on the gate, not on the incoming polynomials.
 \end{definition}
 
 \begin{lemma}[Existence of a gate approximator family]
-\lean{ACP.exists_gate_poly_family}
-\label{ACP.exists_gate_poly_family}
+\lean{RazborovSmolensky.exists_gate_poly_family}
+\label{RazborovSmolensky.exists_gate_poly_family}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.GatePolyFamily, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.boolInput, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
+\uses{RazborovSmolensky.ACp_GateOps, RazborovSmolensky.ACp_GateOps_cases, BoolCircuit.GatePolyFamily, RazborovSmolensky.approxAnd, RazborovSmolensky.approxAnd_pointwise_bad_count, RazborovSmolensky.approxAnd_totalDegree, RazborovSmolensky.approxSeed_card, RazborovSmolensky.bitify, RazborovSmolensky.boolInput, RazborovSmolensky.cast_bitify_eq, RazborovSmolensky.exactAnd_on_bits, RazborovSmolensky.exactMod, RazborovSmolensky.exactMod_on_bits, RazborovSmolensky.exactMod_totalDegree, RazborovSmolensky.modGateOp}
 \difficulty{6}
 Let $p$ be a prime, and fix natural numbers $n$ and $\ell$. For every gate operation
 $\mathrm{op}$ belonging to the $\mathrm{AC}^0[p]$ gate set — the identity, the NOT gate,
@@ -254,19 +254,19 @@ the total number of seeds.
 \end{lemma}
 
 \begin{definition}[Chosen gate approximator family]
-\lean{ACP.gatePolyFamily}
-\label{ACP.gatePolyFamily}
+\lean{RazborovSmolensky.gatePolyFamily}
+\label{RazborovSmolensky.gatePolyFamily}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.GatePolyFamily, ACP.exists_gate_poly_family}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.GatePolyFamily, RazborovSmolensky.exists_gate_poly_family}
 A choice of \texttt{GatePolyFamily} for each $\mathrm{AC}^0[p]$ gate operation, obtained from the
 preceding existence statement.
 \end{definition}
 
 \begin{definition}[Layer polynomial family]
-\lean{ACP.LayerPolyFamily}
-\label{ACP.LayerPolyFamily}
+\lean{RazborovSmolensky.LayerPolyFamily}
+\label{RazborovSmolensky.LayerPolyFamily}
 \leanok
-\uses{ACP.FeedForward, ACP.FeedForward.evalNode, ACP.boolInput, ACP.circuitDegreeBound, ACP.gateCountBefore}
+\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 A \texttt{LayerPolyFamily} for a circuit $F$ at layer $d$ consists of a nonempty finite seed type and,
 for each seed, a polynomial for every node of layer $d$, such that each polynomial has total degree at
 most $\mathrm{circuitDegreeBound}(p,\ell,d)$ and, for every Boolean input $x$, the number of seeds
@@ -275,19 +275,19 @@ $\mathrm{gateCountBefore}\,F\,d$ times the number of seeds.
 \end{definition}
 
 \begin{definition}[Input layer family]
-\lean{ACP.inputLayerFamily}
-\label{ACP.inputLayerFamily}
+\lean{RazborovSmolensky.inputLayerFamily}
+\label{RazborovSmolensky.inputLayerFamily}
 \leanok
-\uses{ACP.FeedForward, ACP.FeedForward.evalNode, ACP.LayerPolyFamily, ACP.boolInput, ACP.circuitDegreeBound, ACP.gateCountBefore}
+\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 The \texttt{LayerPolyFamily} at layer $0$: a single seed, with each input node represented exactly by
 the corresponding variable $X_i$, so that no seed is ever bad.
 \end{definition}
 
 \begin{definition}[Inductive layer step]
-\lean{ACP.stepLayerFamily}
-\label{ACP.stepLayerFamily}
+\lean{RazborovSmolensky.stepLayerFamily}
+\label{RazborovSmolensky.stepLayerFamily}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.evalNode, ACP.FeedForward.onlyUsesGates, ACP.GatePolyFamily, ACP.LayerPolyFamily, ACP.bitify, ACP.bitify_boolVal, ACP.boolInput, ACP.boolVal_mem, ACP.circuitDegreeBound, ACP.evalNode_succ_eq, ACP.gateCountBefore, ACP.gatePolyFamily, ACP.pi_exists_bad_card_mul_le, ACP.prod_filter_fiber_mul_le, ACP.prod_left_filter_card}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.GatePolyFamily, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.bitify, RazborovSmolensky.bitify_boolVal, RazborovSmolensky.boolInput, RazborovSmolensky.boolVal_mem, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.evalNode_succ_eq, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gatePolyFamily, RazborovSmolensky.pi_exists_bad_card_mul_le, RazborovSmolensky.prod_filter_fiber_mul_le, RazborovSmolensky.prod_left_filter_card}
 Given a circuit $F$ using only $\mathrm{AC}^0[p]$ gates and a \texttt{LayerPolyFamily} at layer $d$,
 this produces a \texttt{LayerPolyFamily} at layer $d+1$.  Its seed type is the product of the previous
 seed type with one gate seed per node of layer $d+1$, and each node polynomial is the gate
@@ -295,20 +295,20 @@ approximator applied to the layer-$d$ polynomials of its inputs.
 \end{definition}
 
 \begin{definition}[Layer family built by recursion on depth]
-\lean{ACP.buildLayerFamily}
-\label{ACP.buildLayerFamily}
+\lean{RazborovSmolensky.buildLayerFamily}
+\label{RazborovSmolensky.buildLayerFamily}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.onlyUsesGates, ACP.LayerPolyFamily, ACP.inputLayerFamily, ACP.stepLayerFamily}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.inputLayerFamily, RazborovSmolensky.stepLayerFamily}
 For a circuit using only $\mathrm{AC}^0[p]$ gates, the \texttt{LayerPolyFamily} at any layer
 $d \le F.\mathrm{depth}$, obtained by starting from the input layer family and iterating the layer
 step $d$ times.
 \end{definition}
 
 \begin{theorem}[{Polynomial approximation of the outputs of an AC⁰[p] circuit}]
-\lean{ACP.exists_poly_distribution_for_circuit_outputs}
-\label{ACP.exists_poly_distribution_for_circuit_outputs}
+\lean{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs}
+\label{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.evalNode, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.buildLayerFamily, ACP.circuitDegreeBound, ACP.gateCountBefore}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval, BoolCircuit.FeedForward.evalNode, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 \difficulty{4}
 Let $p$ be a prime, let $F$ be a feedforward circuit over the alphabet $\mathrm{Fin}\,2$
 with input type $\mathrm{Fin}\,n$ and a finite output type, all of whose node sets are
@@ -331,10 +331,10 @@ $o$ on input $x$.
 \end{theorem}
 
 \begin{theorem}[{Polynomial approximation of a single-output AC⁰[p] circuit}]
-\lean{ACP.exists_poly_distribution_for_circuit_one}
-\label{ACP.exists_poly_distribution_for_circuit_one}
+\lean{RazborovSmolensky.exists_poly_distribution_for_circuit_one}
+\label{RazborovSmolensky.exists_poly_distribution_for_circuit_one}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval, ACP.FeedForward.evalNode, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.buildLayerFamily, ACP.circuitDegreeBound, ACP.gateCountBefore}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval, BoolCircuit.FeedForward.evalNode, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 \difficulty{4}
 Let $p$ be prime and let $n, \ell \in \bbn$. Let $F$ be a feedforward circuit over the
 alphabet $\mathrm{Fin}\,2$ with input type $\mathrm{Fin}\,n$, a single output node, and
@@ -356,10 +356,10 @@ nodes across layers $1,\dots,d$.
 \end{theorem}
 
 \begin{theorem}[{Polynomial list approximating a single-output $\mathrm{AC}^0[p]$ circuit}]
-\lean{ACP.exists_poly_list_for_circuit_one}
-\label{ACP.exists_poly_list_for_circuit_one}
+\lean{RazborovSmolensky.exists_poly_list_for_circuit_one}
+\label{RazborovSmolensky.exists_poly_list_for_circuit_one}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.boolInput, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one, ACP.finset_toList_filter_length_eq_card, ACP.gateCountBefore, ACP.list_filter_map_length}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one, RazborovSmolensky.finset_toList_filter_length_eq_card, RazborovSmolensky.gateCountBefore, RazborovSmolensky.list_filter_map_length}
 \difficulty{4}
 Let $p$ be a prime and let $F$ be a layered feedforward circuit over the Boolean
 alphabet $\mathrm{Fin}\,2$, with inputs indexed by $\mathrm{Fin}\,n$, finitely many

@@ -27,7 +27,7 @@ set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
 set_option linter.unusedSectionVars false
 
-namespace ACP
+namespace RazborovSmolensky
 
 section RemainingRootCubeRoadmap
 
@@ -1088,4 +1088,4 @@ end FiniteFieldCounting
 
 end RemainingRootCubeRoadmap
 
-end ACP
+end RazborovSmolensky

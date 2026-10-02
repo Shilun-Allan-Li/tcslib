@@ -12,7 +12,9 @@ set_option linter.unnecessarySimpa false
 set_option linter.unusedSimpArgs false
 set_option linter.unusedSectionVars false
 
-namespace ACP
+namespace RazborovSmolensky
+
+open BoolCircuit
 
 section BooleanTransferAndFinalRoadmap
 
@@ -1238,4 +1240,4 @@ theorem MODq_notin_AC0p_quantitative
 
 end BooleanTransferAndFinalRoadmap
 
-end ACP
+end RazborovSmolensky

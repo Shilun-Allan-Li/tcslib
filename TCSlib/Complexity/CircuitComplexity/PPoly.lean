@@ -10,16 +10,16 @@ import TCSlib.BooleanAnalysis.RazborovSmolensky.ACpGates
 # P/poly
 
 The class of languages decided by polynomial-size non-uniform Boolean circuit
-families, built on `ACP.FeedForward` (the model used by the Razborov–Smolensky
+families, built on `BoolCircuit.FeedForward` (the model used by the Razborov–Smolensky
 development) and shaped after Mathlib's `Language.IsRegular`: a complexity class
 is a predicate on languages.
 
 ## Main definitions
 
-* `ACP.CircuitFamily` — one single-output circuit per input length, all layers finite.
+* `BoolCircuit.CircuitFamily` — one single-output circuit per input length, all layers finite.
 * `Language.InSIZE` — [AB09, Def 6.2].
 * `Language.InPPoly` — [AB09, Def 6.5], `P/poly = ⋃_c SIZE(n^c)`.
-* `ACP.PPoly` — the same class as a `Set (Language Bool)`.
+* `BoolCircuit.PPoly` — the same class as a `Set (Language Bool)`.
 
 ## Main results
 
@@ -35,7 +35,7 @@ gate sets are `GateOp (Fin 2)`); `finTwoEquiv` converts at the boundary.
 
 ## Divergences from Arora–Barak §6.1
 
-All are class-preserving. AB Def 6.1 fixes fan-in 2; we use unbounded `AC_GateOps`,
+All are class-preserving. AB Def 6.1 fixes fan-in 2; we use unbounded `stdGateOps`,
 which AB calls "essentially without loss of generality" (fan-in `f` costs `f - 1`
 gates) and which is AB's own convention for `AC` (Def 6.25) — fan-in matters only
 under a depth restriction, and `P/poly` imposes none. AB's basis is `{∧, ∨, ¬}`;
@@ -61,7 +61,7 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-namespace ACP
+namespace BoolCircuit
 
 open FeedForward
 
@@ -102,13 +102,13 @@ def IsPolySize : Prop :=
 
 end CircuitFamily
 
-end ACP
+end BoolCircuit
 
-/-- `L ∈ SIZE(T)`: some `AC_GateOps` family decides `L` with the length-`n`
+/-- `L ∈ SIZE(T)`: some `stdGateOps` family decides `L` with the length-`n`
 circuit of size at most `T n`.  [AB09, Def 6.2] -/
 def Language.InSIZE (T : ℕ → ℕ) (L : Language Bool) : Prop :=
-  ∃ C : ACP.CircuitFamily,
-    C.OnlyUsesGates ACP.AC_GateOps ∧ (∀ n, (C.circuit n).size ≤ T n) ∧ C.language = L
+  ∃ C : BoolCircuit.CircuitFamily,
+    C.OnlyUsesGates BoolCircuit.stdGateOps ∧ (∀ n, (C.circuit n).size ≤ T n) ∧ C.language = L
 
 /-- A language is in `P/poly` when some polynomial-size circuit family decides
 it.  [AB09, Def 6.5] -/
@@ -117,15 +117,15 @@ def Language.InPPoly (L : Language Bool) : Prop :=
 
 /-- `P/poly` membership as one family carrying its own size bound. -/
 theorem Language.inPPoly_iff (L : Language Bool) :
-    L.InPPoly ↔ ∃ C : ACP.CircuitFamily,
-      C.OnlyUsesGates ACP.AC_GateOps ∧ C.IsPolySize ∧ C.language = L := by
+    L.InPPoly ↔ ∃ C : BoolCircuit.CircuitFamily,
+      C.OnlyUsesGates BoolCircuit.stdGateOps ∧ C.IsPolySize ∧ C.language = L := by
   constructor
   · rintro ⟨a, k, C, hG, hS, hL⟩
     exact ⟨C, hG, ⟨a, k, hS⟩, hL⟩
   · rintro ⟨C, hG, ⟨a, k, hS⟩, hL⟩
     exact ⟨a, k, C, hG, hS, hL⟩
 
-namespace ACP
+namespace BoolCircuit
 
 /-- `P/poly` packaged as a set of languages, for `L ∈ PPoly` notation. -/
 def PPoly : Set (Language Bool) :=
@@ -136,4 +136,4 @@ def PPoly : Set (Language Bool) :=
 theorem mem_PPoly_iff (L : Language Bool) : L ∈ PPoly ↔ L.InPPoly :=
   Iff.rfl
 
-end ACP
+end BoolCircuit

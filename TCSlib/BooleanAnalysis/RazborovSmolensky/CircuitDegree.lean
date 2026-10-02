@@ -13,9 +13,9 @@ open scoped BigOperators
 
 universe u v
 
-namespace ACP
+namespace RazborovSmolensky
 
-open FeedForward
+open BoolCircuit BoolCircuit.FeedForward
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
 
@@ -901,4 +901,4 @@ theorem exists_poly_list_for_circuit_one {n : ℕ} {out : Type}
             (((Finset.univ : Finset Seed).toList.map P).length) := by
               rw [← hlen]
 
-end ACP
+end RazborovSmolensky

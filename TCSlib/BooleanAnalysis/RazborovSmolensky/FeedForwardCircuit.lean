@@ -9,7 +9,7 @@ import TCSlib.Complexity.CircuitComplexity.Basic
 
 universe u v
 
-namespace ACP
+namespace BoolCircuit
 
 /-- A single operation in a feedforward circuit. -/
 structure GateOp (α : Type u) where
@@ -96,8 +96,6 @@ fanout > 1.  The two directions of conversion have different costs:
 -/
 
 section CircuitConversion
-
-open BoolCircuit
 
 variable {n : ℕ} {out : Type}
 
@@ -305,4 +303,4 @@ theorem Circuit.toFeedForward_size_le (C : Circuit n) :
 
 end CircuitConversion
 
-end ACP
+end BoolCircuit

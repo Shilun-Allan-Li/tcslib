@@ -18,20 +18,20 @@ $\mathrm{MOD}_q \notin \mathrm{AC}^0[p]$.
 \section{Declarations}
 
 \begin{definition}[Boolean embedding into the root cube]
-\lean{ACP.boolToRootCube}
-\label{ACP.boolToRootCube}
+\lean{RazborovSmolensky.boolToRootCube}
+\label{RazborovSmolensky.boolToRootCube}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 Let $K$ be a field and $\omega \in K$.  A Boolean input $x \in \{0,1\}^n$ is embedded as
 the point of the cube $\{1,\omega\}^n$ whose $i$-th coordinate is $1$ if $x_i = 0$ and
 $\omega$ if $x_i = 1$.
 \end{definition}
 
 \begin{theorem}[Root product of an embedded Boolean input]
-\lean{ACP.boolToRootCube_rootProduct_eq_weightPow}
-\label{ACP.boolToRootCube_rootProduct_eq_weightPow}
+\lean{RazborovSmolensky.boolToRootCube_rootProduct_eq_weightPow}
+\label{RazborovSmolensky.boolToRootCube_rootProduct_eq_weightPow}
 \leanok
-\uses{ACP.boolToRootCube}
+\uses{RazborovSmolensky.boolToRootCube}
 \difficulty{4}
 Let $K$ be a field, $\omega \in K$, and let $x \in \{0,1\}^n$ be a Boolean input.  The
 product of the coordinates of the point of $\{1,\omega\}^n$ obtained from $x$ by the
@@ -40,20 +40,20 @@ $\abs{x} = \sum_i x_i$ is the Hamming weight of $x$.
 \end{theorem}
 
 \begin{definition}[$\omega$-weight of a root-cube point]
-\lean{ACP.rootResidueWeight}
-\label{ACP.rootResidueWeight}
+\lean{RazborovSmolensky.rootResidueWeight}
+\label{RazborovSmolensky.rootResidueWeight}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 Let $K$ be a field and $\omega \in K$.  The $\omega$-weight of a point
 $x \in \{1,\omega\}^n$ is the number of indices $i$ with $x_i = \omega$.  Under the
 Boolean embedding $0 \mapsto 1$, $1 \mapsto \omega$, this is the Boolean Hamming weight.
 \end{definition}
 
 \begin{definition}[Residue indicator on the root cube]
-\lean{ACP.rootResidueIndicator}
-\label{ACP.rootResidueIndicator}
+\lean{RazborovSmolensky.rootResidueIndicator}
+\label{RazborovSmolensky.rootResidueIndicator}
 \leanok
-\uses{ACP.rootCube, ACP.rootResidueWeight}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootResidueWeight}
 Let $K$ be a field, $\omega \in K$, and let $q$ be a positive natural number.  For a
 residue $r \in \{0,\dots,q-1\}$, the residue-$r$ indicator is the $K$-valued function on
 the cube $\{1,\omega\}^n$ that takes the value $1$ at $x$ when the $\omega$-weight of $x$
@@ -61,18 +61,18 @@ is congruent to $r$ modulo $q$, and $0$ otherwise.
 \end{definition}
 
 \begin{definition}[Boolean Hamming weight]
-\lean{ACP.boolWeight}
-\label{ACP.boolWeight}
+\lean{RazborovSmolensky.boolWeight}
+\label{RazborovSmolensky.boolWeight}
 \leanok
 The Hamming weight of a Boolean input $x \in \{0,1\}^n$, i.e.\ the natural number
 $\sum_{i} x_i$.
 \end{definition}
 
 \begin{definition}[Boolean residue indicator]
-\lean{ACP.boolResidueIndicator}
-\label{ACP.boolResidueIndicator}
+\lean{RazborovSmolensky.boolResidueIndicator}
+\label{RazborovSmolensky.boolResidueIndicator}
 \leanok
-\uses{ACP.boolWeight}
+\uses{RazborovSmolensky.boolWeight}
 Let $K$ be a field and let $q$ be a positive natural number.  For a residue
 $r \in \{0,\dots,q-1\}$, the Boolean residue-$r$ indicator is the $K$-valued function on
 Boolean inputs $x \in \{0,1\}^n$ that is $1$ when the Hamming weight of $x$ is congruent
@@ -80,10 +80,10 @@ to $r$ modulo $q$, and $0$ otherwise.
 \end{definition}
 
 \begin{definition}[Decoded bit of a root-cube coordinate]
-\lean{ACP.rootCubeBit}
-\label{ACP.rootCubeBit}
+\lean{RazborovSmolensky.rootCubeBit}
+\label{RazborovSmolensky.rootCubeBit}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 Let $K$ be a field and $\omega \in K$.  The $i$-th decoded bit of a point
 $x \in \{1,\omega\}^n$ is the Boolean value that is $0$ if $x_i = 1$ and $1$ otherwise.
 When $\omega \neq 1$ this inverts the Boolean embedding, sending the coordinate value $1$
@@ -91,8 +91,8 @@ to the bit $0$ and the value $\omega$ to the bit $1$.
 \end{definition}
 
 \begin{definition}[Number of padding ones for a residue]
-\lean{ACP.residuePadOnes}
-\label{ACP.residuePadOnes}
+\lean{RazborovSmolensky.residuePadOnes}
+\label{RazborovSmolensky.residuePadOnes}
 \leanok
 Let $q$ be a positive natural number.  For a residue $r \in \{0,\dots,q-1\}$, the number
 of padding $1$-bits needed to shift Hamming-weight residue $r$ to residue $0$ modulo $q$,
@@ -100,10 +100,10 @@ namely $(q - r) \bmod q$: this is $0$ when $r = 0$ and $q - r$ when $r > 0$.
 \end{definition}
 
 \begin{definition}[Padded Boolean input of a root-cube point]
-\lean{ACP.paddedResidueInput}
-\label{ACP.paddedResidueInput}
+\lean{RazborovSmolensky.paddedResidueInput}
+\label{RazborovSmolensky.paddedResidueInput}
 \leanok
-\uses{ACP.residuePadOnes, ACP.rootCube, ACP.rootCubeBit}
+\uses{RazborovSmolensky.residuePadOnes, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBit}
 Let $K$ be a field, $\omega \in K$, let $q$ be a positive natural number, let
 $r \in \{0,\dots,q-1\}$, and let $x \in \{1,\omega\}^n$.  The associated padded Boolean
 input on $n + (q-1)$ bits has as its first $n$ bits the decoded bits of $x$ (bit $0$
@@ -112,8 +112,8 @@ $(q - r) \bmod q$ ones followed by zeros.
 \end{definition}
 
 \begin{definition}[Affine Boolean decoder polynomial]
-\lean{ACP.rootAffineBoolPoly}
-\label{ACP.rootAffineBoolPoly}
+\lean{RazborovSmolensky.rootAffineBoolPoly}
+\label{RazborovSmolensky.rootAffineBoolPoly}
 \leanok
 Let $K$ be a field and $\omega \in K$.  For a variable index $i \in \{1,\dots,n\}$, the
 affine polynomial $(\omega - 1)^{-1}\,(X_i - 1)$ in $n$ variables over $K$.  When
@@ -122,20 +122,20 @@ $1 \mapsto 0$ and $\omega \mapsto 1$.
 \end{definition}
 
 \begin{theorem}[Degree bound for the affine decoder]
-\lean{ACP.rootAffineBoolPoly_totalDegree_le_one}
-\label{ACP.rootAffineBoolPoly_totalDegree_le_one}
+\lean{RazborovSmolensky.rootAffineBoolPoly_totalDegree_le_one}
+\label{RazborovSmolensky.rootAffineBoolPoly_totalDegree_le_one}
 \leanok
-\uses{ACP.rootAffineBoolPoly}
+\uses{RazborovSmolensky.rootAffineBoolPoly}
 \difficulty{3}
 Let $K$ be a field, $\omega \in K$, and let $i$ be a variable index.  The affine decoder
 polynomial $(\omega - 1)^{-1}\,(X_i - 1)$ has total degree at most $1$.
 \end{theorem}
 
 \begin{definition}[Residue substitution for padded variables]
-\lean{ACP.paddedResidueSubst}
-\label{ACP.paddedResidueSubst}
+\lean{RazborovSmolensky.paddedResidueSubst}
+\label{RazborovSmolensky.paddedResidueSubst}
 \leanok
-\uses{ACP.ModqField, ACP.residuePadOnes, ACP.rootAffineBoolPoly}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.residuePadOnes, RazborovSmolensky.rootAffineBoolPoly}
 Let $p$ and $q$ be primes, let $K = \bbf_{p^{q-1}}$, let $\omega \in K$, and let
 $r \in \{0,\dots,q-1\}$.  The residue-$r$ substitution assigns to each of the $n + (q-1)$
 variables a polynomial in $n$ variables over $K$: a variable $X_j$ with $j < n$ is sent
@@ -145,10 +145,10 @@ constant $0$ otherwise.
 \end{definition}
 
 \begin{definition}[Residue restriction of a padded polynomial]
-\lean{ACP.paddedResiduePolynomial}
-\label{ACP.paddedResiduePolynomial}
+\lean{RazborovSmolensky.paddedResiduePolynomial}
+\label{RazborovSmolensky.paddedResiduePolynomial}
 \leanok
-\uses{ACP.ModqField, ACP.paddedResidueSubst}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.paddedResidueSubst}
 Let $p$ and $q$ be primes, let $K = \bbf_{p^{q-1}}$, let $\omega \in K$, let
 $r \in \{0,\dots,q-1\}$, and let $P$ be a polynomial in $n + (q-1)$ variables over
 $\bbz/p$.  The residue-$r$ restriction of $P$ is the polynomial in $n$ variables over $K$
@@ -159,10 +159,10 @@ padding variables are fixed to the constants encoding residue $r$.
 \end{definition}
 
 \begin{theorem}[Residue restriction does not increase degree]
-\lean{ACP.paddedResiduePolynomial_totalDegree_le}
-\label{ACP.paddedResiduePolynomial_totalDegree_le}
+\lean{RazborovSmolensky.paddedResiduePolynomial_totalDegree_le}
+\label{RazborovSmolensky.paddedResiduePolynomial_totalDegree_le}
 \leanok
-\uses{ACP.ModqField, ACP.paddedResiduePolynomial, ACP.paddedResidueSubst, ACP.residuePadOnes, ACP.rootAffineBoolPoly_totalDegree_le_one}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.paddedResiduePolynomial, RazborovSmolensky.paddedResidueSubst, RazborovSmolensky.residuePadOnes, RazborovSmolensky.rootAffineBoolPoly_totalDegree_le_one}
 \difficulty{5}
 Let $p$ and $q$ be primes, let $\omega \in \bbf_{p^{q-1}}$, and let
 $r \in \{0,\dots,q-1\}$.  For every polynomial $P$ in $n + (q-1)$ variables over
@@ -171,10 +171,10 @@ $\bbf_{p^{q-1}}$) has total degree at most the total degree of $P$.
 \end{theorem}
 
 \begin{theorem}[Evaluation of the residue restriction]
-\lean{ACP.paddedResiduePolynomial_eval_eq_map_eval}
-\label{ACP.paddedResiduePolynomial_eval_eq_map_eval}
+\lean{RazborovSmolensky.paddedResiduePolynomial_eval_eq_map_eval}
+\label{RazborovSmolensky.paddedResiduePolynomial_eval_eq_map_eval}
 \leanok
-\uses{ACP.ModqField, ACP.boolInput, ACP.paddedResidueInput, ACP.paddedResiduePolynomial, ACP.paddedResidueSubst, ACP.residuePadOnes, ACP.rootAffineBoolPoly, ACP.rootCube, ACP.rootCubeBit}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.boolInput, RazborovSmolensky.paddedResidueInput, RazborovSmolensky.paddedResiduePolynomial, RazborovSmolensky.paddedResidueSubst, RazborovSmolensky.residuePadOnes, RazborovSmolensky.rootAffineBoolPoly, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBit}
 \difficulty{5}
 Let $p$ and $q$ be primes, let $\omega \in \bbf_{p^{q-1}}$ with $\omega \neq 1$, let
 $r \in \{0,\dots,q-1\}$, let $P$ be a polynomial in $n + (q-1)$ variables over $\bbz/p$,
@@ -185,10 +185,10 @@ $\bbz/p \to \bbf_{p^{q-1}}$.
 \end{theorem}
 
 \begin{theorem}[$\mathrm{MOD}_q$ of the padded input is the residue indicator]
-\lean{ACP.paddedResidueInput_modQTarget_eq_residueIndicator}
-\label{ACP.paddedResidueInput_modQTarget_eq_residueIndicator}
+\lean{RazborovSmolensky.paddedResidueInput_modQTarget_eq_residueIndicator}
+\label{RazborovSmolensky.paddedResidueInput_modQTarget_eq_residueIndicator}
 \leanok
-\uses{ACP.ModqField, ACP.modQTarget, ACP.paddedResidueInput, ACP.residuePadOnes, ACP.rootCube, ACP.rootCubeBit, ACP.rootResidueIndicator, ACP.rootResidueWeight}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.modQTarget, RazborovSmolensky.paddedResidueInput, RazborovSmolensky.residuePadOnes, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBit, RazborovSmolensky.rootResidueIndicator, RazborovSmolensky.rootResidueWeight}
 \difficulty{6}
 Let $p$ and $q$ be primes, let $\omega \in \bbf_{p^{q-1}}$ with $\omega \neq 1$, let
 $r \in \{0,\dots,q-1\}$, and let $x \in \{1,\omega\}^n$.  Write $\mathrm{MOD}_q$ for the
@@ -200,10 +200,10 @@ congruent to $r$ modulo $q$, and $0$ otherwise.
 \end{theorem}
 
 \begin{theorem}[Injectivity of the padded-input map]
-\lean{ACP.paddedResidueInput_injective}
-\label{ACP.paddedResidueInput_injective}
+\lean{RazborovSmolensky.paddedResidueInput_injective}
+\label{RazborovSmolensky.paddedResidueInput_injective}
 \leanok
-\uses{ACP.ModqField, ACP.paddedResidueInput, ACP.rootCubeBit}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.paddedResidueInput, RazborovSmolensky.rootCubeBit}
 \difficulty{4}
 Let $p$ and $q$ be primes, let $\omega \in \bbf_{p^{q-1}}$ with $\omega \neq 1$, and fix
 a residue $r \in \{0,\dots,q-1\}$.  The map sending a root-cube point
@@ -211,10 +211,10 @@ $x \in \{1,\omega\}^n$ to its padded Boolean input on $n + (q-1)$ bits is inject
 \end{theorem}
 
 \begin{theorem}[Residue approximants from one padded $\mathrm{MOD}_q$ approximant]
-\lean{ACP.padded_modQ_approx_gives_root_residue_approximants}
-\label{ACP.padded_modQ_approx_gives_root_residue_approximants}
+\lean{RazborovSmolensky.padded_modQ_approx_gives_root_residue_approximants}
+\label{RazborovSmolensky.padded_modQ_approx_gives_root_residue_approximants}
 \leanok
-\uses{ACP.ModqField, ACP.badInputCount, ACP.boolInput, ACP.modQTarget, ACP.paddedResidueInput, ACP.paddedResidueInput_injective, ACP.paddedResidueInput_modQTarget_eq_residueIndicator, ACP.paddedResiduePolynomial, ACP.paddedResiduePolynomial_eval_eq_map_eval, ACP.paddedResiduePolynomial_totalDegree_le, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootResidueIndicator}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.badInputCount, RazborovSmolensky.boolInput, RazborovSmolensky.modQTarget, RazborovSmolensky.paddedResidueInput, RazborovSmolensky.paddedResidueInput_injective, RazborovSmolensky.paddedResidueInput_modQTarget_eq_residueIndicator, RazborovSmolensky.paddedResiduePolynomial, RazborovSmolensky.paddedResiduePolynomial_eval_eq_map_eval, RazborovSmolensky.paddedResiduePolynomial_totalDegree_le, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootResidueIndicator}
 \difficulty{5}
 Let $p$ and $q$ be distinct primes and let $\omega \in \bbf_{p^{q-1}}$ satisfy
 $\omega^q = 1$ and $\omega \neq 1$.  Suppose $P$ is a polynomial in $n + (q-1)$
@@ -227,10 +227,10 @@ residue-$r$ indicator on at most $E$ points of the cube $\{1,\omega\}^n$.
 \end{theorem}
 
 \begin{theorem}[Residue expansion of the root product]
-\lean{ACP.rootProduct_eq_residueIndicator_sum}
-\label{ACP.rootProduct_eq_residueIndicator_sum}
+\lean{RazborovSmolensky.rootProduct_eq_residueIndicator_sum}
+\label{RazborovSmolensky.rootProduct_eq_residueIndicator_sum}
 \leanok
-\uses{ACP.rootCube, ACP.rootResidueIndicator, ACP.rootResidueWeight}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootResidueIndicator, RazborovSmolensky.rootResidueWeight}
 \difficulty{5}
 Let $K$ be a field, let $q$ be a prime, and let $\omega \in K$ satisfy $\omega^q = 1$.
 For every point $x \in \{1,\omega\}^n$,
@@ -242,10 +242,10 @@ where $w(x)$ denotes the number of coordinates of $x$ equal to $\omega$.
 \end{theorem}
 
 \begin{theorem}[Union bound for residue recombination]
-\lean{ACP.rootCubeBadCount_residueCombination_le_sum}
-\label{ACP.rootCubeBadCount_residueCombination_le_sum}
+\lean{RazborovSmolensky.rootCubeBadCount_residueCombination_le_sum}
+\label{RazborovSmolensky.rootCubeBadCount_residueCombination_le_sum}
 \leanok
-\uses{ACP.rootCube, ACP.rootCubeBadCount, ACP.rootProduct_eq_residueIndicator_sum, ACP.rootResidueIndicator}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootProduct_eq_residueIndicator_sum, RazborovSmolensky.rootResidueIndicator}
 \difficulty{5}
 Let $K$ be a finite field, let $q$ be a prime, and let $\omega \in K$ satisfy
 $\omega^q = 1$.  For any family $(R_r)_{r \in \{0,\dots,q-1\}}$ of polynomials in $n$
@@ -256,10 +256,10 @@ residue-$r$ indicator.
 \end{theorem}
 
 \begin{theorem}[Combining residue approximants into a root-product approximant]
-\lean{ACP.root_residue_approximants_combine_to_rootProduct}
-\label{ACP.root_residue_approximants_combine_to_rootProduct}
+\lean{RazborovSmolensky.root_residue_approximants_combine_to_rootProduct}
+\label{RazborovSmolensky.root_residue_approximants_combine_to_rootProduct}
 \leanok
-\uses{ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBadCount_residueCombination_le_sum, ACP.rootResidueIndicator}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCubeBadCount_residueCombination_le_sum, RazborovSmolensky.rootResidueIndicator}
 \difficulty{4}
 Let $K$ be a finite field, let $q$ be a prime, and let $\omega \in K$ satisfy
 $\omega^q = 1$ and $\omega \neq 1$.  Given polynomials $R_r$ in $n$ variables over $K$,
@@ -271,10 +271,10 @@ the cube.
 \end{theorem}
 
 \begin{theorem}[Sharp Boolean-to-root-product transfer]
-\lean{ACP.padded_modQ_approx_transfers_to_rootProduct_qE}
-\label{ACP.padded_modQ_approx_transfers_to_rootProduct_qE}
+\lean{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct_qE}
+\label{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct_qE}
 \leanok
-\uses{ACP.ModqField, ACP.badInputCount, ACP.modQTarget, ACP.padded_modQ_approx_gives_root_residue_approximants, ACP.rootCube, ACP.rootCubeBadCount, ACP.root_residue_approximants_combine_to_rootProduct}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.badInputCount, RazborovSmolensky.modQTarget, RazborovSmolensky.padded_modQ_approx_gives_root_residue_approximants, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.root_residue_approximants_combine_to_rootProduct}
 \difficulty{2}
 Let $p$ and $q$ be distinct primes and let $\omega \in \bbf_{p^{q-1}}$ satisfy
 $\omega^q = 1$ and $\omega \neq 1$.  If $P$ is a polynomial in $n + (q-1)$ variables
@@ -286,10 +286,10 @@ $x \mapsto \prod_i x_i$ on at most $q \cdot E$ points of the cube $\{1,\omega\}^
 \end{theorem}
 
 \begin{theorem}[Boolean-to-root-product transfer]
-\lean{ACP.padded_modQ_approx_transfers_to_rootProduct}
-\label{ACP.padded_modQ_approx_transfers_to_rootProduct}
+\lean{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct}
+\label{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct}
 \leanok
-\uses{ACP.ModqField, ACP.badInputCount, ACP.modQTarget, ACP.padded_modQ_approx_transfers_to_rootProduct_qE, ACP.rootCube, ACP.rootCubeBadCount}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.badInputCount, RazborovSmolensky.modQTarget, RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct_qE, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount}
 \difficulty{2}
 Let $p$ and $q$ be distinct primes, let $\omega \in \bbf_{p^{q-1}}$ satisfy
 $\omega^q = 1$ and $\omega \neq 1$, and let $E$ and $e$ be natural numbers with
@@ -302,10 +302,10 @@ most $e$ points of the cube $\{1,\omega\}^n$.
 \end{theorem}
 
 \begin{theorem}[Boolean lower bound from root-product inapproximability]
-\lean{ACP.modQ_lowDegreeBadCountLB_from_rootProduct}
-\label{ACP.modQ_lowDegreeBadCountLB_from_rootProduct}
+\lean{RazborovSmolensky.modQ_lowDegreeBadCountLB_from_rootProduct}
+\label{RazborovSmolensky.modQ_lowDegreeBadCountLB_from_rootProduct}
 \leanok
-\uses{ACP.LowDegreeBadCountLB, ACP.ModqField, ACP.badInputCount, ACP.modQTarget, ACP.padded_modQ_approx_transfers_to_rootProduct, ACP.rootCube, ACP.rootCubeBadCount}
+\uses{RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.ModqField, RazborovSmolensky.badInputCount, RazborovSmolensky.modQTarget, RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount}
 \difficulty{3}
 Let $p$ and $q$ be distinct primes, let $\omega \in \bbf_{p^{q-1}}$ satisfy
 $\omega^q = 1$ and $\omega \neq 1$, and let $d, E, e$ be natural numbers with
@@ -318,10 +318,10 @@ inputs.
 \end{theorem}
 
 \begin{theorem}[Smolensky's low-degree lower bound for $\mathrm{MOD}_q$]
-\lean{ACP.smolensky_modQ_lowDegreeBadCountLB}
-\label{ACP.smolensky_modQ_lowDegreeBadCountLB}
+\lean{RazborovSmolensky.smolensky_modQ_lowDegreeBadCountLB}
+\label{RazborovSmolensky.smolensky_modQ_lowDegreeBadCountLB}
 \leanok
-\uses{ACP.LowDegreeBadCountLB, ACP.LowDegreeSupport, ACP.ModqField, ACP.exists_nontrivial_qth_root_modqField, ACP.modQTarget, ACP.modQ_lowDegreeBadCountLB_from_rootProduct, ACP.no_low_degree_rootProd_approx_concrete, ACP.rootCube, ACP.rootCubeBadCount}
+\uses{RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.ModqField, RazborovSmolensky.exists_nontrivial_qth_root_modqField, RazborovSmolensky.modQTarget, RazborovSmolensky.modQ_lowDegreeBadCountLB_from_rootProduct, RazborovSmolensky.no_low_degree_rootProd_approx_concrete, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount}
 \difficulty{3}
 Let $p$ and $q$ be distinct primes, write $K = \bbf_{p^{q-1}}$, and let $d, E, e, B$ be
 natural numbers with $q \cdot E \le e$.  Assume the counting bounds
@@ -338,10 +338,10 @@ by $q$) on at least $E$ Boolean inputs.
 \end{theorem}
 
 \begin{theorem}[Quantitative $\mathrm{MOD}_q \notin \mathrm{AC}^0[p]$]
-\lean{ACP.MODq_notin_AC0p_quantitative}
-\label{ACP.MODq_notin_AC0p_quantitative}
+\lean{RazborovSmolensky.MODq_notin_AC0p_quantitative}
+\label{RazborovSmolensky.MODq_notin_AC0p_quantitative}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.LowDegreeBadCountLB, ACP.LowDegreeSupport, ACP.ModqField, ACP.circuitDegreeBound, ACP.modGateOp, ACP.modQTarget, ACP.size_lower_bound_from_relative_badCountLB, ACP.smolensky_modQ_lowDegreeBadCountLB}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.FeedForward.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.ModqField, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget, RazborovSmolensky.size_lower_bound_from_relative_badCountLB, RazborovSmolensky.smolensky_modQ_lowDegreeBadCountLB}
 \difficulty{2}
 Let $p$ and $q$ be distinct primes and write $K = \bbf_{p^{q-1}}$.  Let $F$ be a
 feed-forward Boolean circuit on $n + (q-1)$ input bits with a single output and finitely

@@ -8,7 +8,9 @@ import Mathlib.Algebra.BigOperators.Fin
 
 open scoped BigOperators
 
-namespace ACP
+namespace RazborovSmolensky
+
+open BoolCircuit
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
 
@@ -171,4 +173,4 @@ theorem exists_poly_list_for_circuit_one_size {n : ℕ} {out : Type}
   intro x
   simpa [gateCountBefore_depth_eq_size (F := F)] using hbad x
 
-end ACP
+end RazborovSmolensky

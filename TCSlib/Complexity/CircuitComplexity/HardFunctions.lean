@@ -16,18 +16,18 @@ there are small circuits, so some function is computed by none of them.
 
 ## Main definitions
 
-None — this file adds only theorems, over `BoolCircuit.Circuit` and `ACP.encodeCircuit`.
+None — this file adds only theorems, over `BoolCircuit.Circuit` and `BoolCircuit.encodeCircuit`.
 
 ## Main results
 
-* `ACP.length_encodeCircuit_succ_le` — a circuit of size `S` on `n` variables has an
+* `BoolCircuit.length_encodeCircuit_succ_le` — a circuit of size `S` on `n` variables has an
   encoding of fewer than `(n + 4) * S` bits.
-* `ACP.encodeCircuit_injective` — distinct circuits have distinct encodings.
-* `ACP.card_computable_le` — at most `2 ^ ((n + 4) * S)` functions
+* `BoolCircuit.encodeCircuit_injective` — distinct circuits have distinct encodings.
+* `BoolCircuit.card_computable_le` — at most `2 ^ ((n + 4) * S)` functions
   `(Fin n → Bool) → Bool` are computed by a circuit of size at most `S`.
-* `ACP.exists_not_eval_of_lt` — whenever `(n + 4) * S < 2 ^ n`, some function
+* `BoolCircuit.exists_not_eval_of_lt` — whenever `(n + 4) * S < 2 ^ n`, some function
   differs from every size-`≤ S` circuit at some input.  [AB09, Thm 6.21]
-* `ACP.exists_hard_function` — the same with the explicit size bound
+* `BoolCircuit.exists_hard_function` — the same with the explicit size bound
   `2 ^ n / (n + 5)`.  [AB09, Thm 6.21]
 
 ## Divergences from [AB09, Thm 6.21]
@@ -73,9 +73,7 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-namespace ACP
-
-open BoolCircuit
+namespace BoolCircuit
 
 /-! ## Bit strings as numbers -/
 
@@ -271,4 +269,4 @@ example : ∃ f : (Fin 3 → Bool) → Bool,
   norm_num at h
   exact h
 
-end ACP
+end BoolCircuit

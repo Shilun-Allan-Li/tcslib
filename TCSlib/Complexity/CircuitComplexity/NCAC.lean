@@ -58,16 +58,16 @@ The size, depth and fan-in arithmetic these proofs run on is in
   unbounded-fan-in `Circuit` type, not a separate inductive type — this is the idiom the
   LMN development already uses (`maxFanin ≤ w` as a hypothesis), and it lets
   `toBinary : Circuit n → Circuit n` be a plain function whose four properties are
-  ordinary lemmas about one type.  `ACP.FeedForward`, the layered DAG `PPoly.lean` uses,
+  ordinary lemmas about one type.  `BoolCircuit.FeedForward`, the layered DAG `PPoly.lean` uses,
   was rejected because `toBinary` recurses over a gate's child list, which it has not.
 * **Basis.** `Circuit` negates only at literals, so a `NOT` gate is free and contributes
   no depth, where AB's Def 6.1 basis `{∧, ∨, ¬}` charges one for it.
 * **`O(log^d n)`.** Written `∃ b, ∀ n, depth ≤ b * (Nat.log 2 n + 1) ^ d`, the shape
   `PPoly.lean` uses for size.  The `+ 1` repairs the same degeneracy: `Nat.log 2 n = 0`
   for `n ≤ 1`, so `b * (Nat.log 2 n) ^ d` would force depth `0` at those lengths.
-* **`NC ⊆ P/poly`.** Statable — `BoolCircuit.NC` and `ACP.PPoly` are both
+* **`NC ⊆ P/poly`.** Statable — `BoolCircuit.NC` and `BoolCircuit.PPoly` are both
   `Set (Language Bool)` — but not provable here: there is no bridge from
-  `BoolCircuit.Circuit` to `ACP.CircuitFamily` (`ch6/PLAN.md`, deferred follow-ups).
+  `BoolCircuit.Circuit` to `BoolCircuit.CircuitFamily` (`ch6/PLAN.md`, deferred follow-ups).
 * **Uniformity.** AB's "one can also define uniform `NC`" needs logspace and is out of
   scope; see `ch6/NOT_FORMALIZED.md`.
 

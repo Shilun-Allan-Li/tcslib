@@ -15,40 +15,40 @@ theorem below is therefore not [AB09, Thm 6.22]; see `## Divergences`.
 
 ## Main definitions
 
-* `ACP.widenCircuit` / `ACP.restrictCircuit` — reindex a circuit into more variables, and
+* `BoolCircuit.widenCircuit` / `BoolCircuit.restrictCircuit` — reindex a circuit into more variables, and
   restrict a circuit to its first `m` variables by fixing the rest to constants.
-* `ACP.onFirst` — `f` applied to the first `m` of `n` input bits; [AB09, p.116]'s `g`.
-* `Language.InTreeSize`, `ACP.TreeSize` — the size class, as a predicate and as a set.
-* `ACP.padFamily` / `ACP.padLanguage` — the padded language and its circuits: at length `n`,
+* `BoolCircuit.onFirst` — `f` applied to the first `m` of `n` input bits; [AB09, p.116]'s `g`.
+* `Language.InTreeSize`, `BoolCircuit.TreeSize` — the size class, as a predicate and as a set.
+* `BoolCircuit.padFamily` / `BoolCircuit.padLanguage` — the padded language and its circuits: at length `n`,
   `F n` applied to the first `ℓ n` bits.
 
 ## Main results
 
-* `ACP.widenCircuit_size`, `ACP.restrictCircuit_size` — both reindexings preserve `size`
-  exactly; `ACP.restrictCircuit_eval_of_onFirst` is the step [AB09, p.116] needs, pulling a
+* `BoolCircuit.widenCircuit_size`, `BoolCircuit.restrictCircuit_size` — both reindexings preserve `size`
+  exactly; `BoolCircuit.restrictCircuit_eval_of_onFirst` is the step [AB09, p.116] needs, pulling a
   circuit for `g` back to one for `f`.
 * `Language.InTreeSize.mono`, `Language.zero_inTreeSize` — monotonicity in `T`, and that
   every class with `1 ≤ T` is inhabited.
-* `ACP.padLanguage_inTreeSize` / `ACP.padLanguage_not_inTreeSize` — the two halves of the
+* `BoolCircuit.padLanguage_inTreeSize` / `BoolCircuit.padLanguage_not_inTreeSize` — the two halves of the
   separation, from [AB09, Claim 2.13] and [AB09, Thm 6.21] respectively.
-* `ACP.treeSize_ssubset` — `TreeSize T ⊂ TreeSize T'` given a padding length `ℓ`; the
+* `BoolCircuit.treeSize_ssubset` — `TreeSize T ⊂ TreeSize T'` given a padding length `ℓ`; the
   tree-model analogue of [AB09, Thm 6.22] and **not** that theorem, whose class is
   `Language.InSIZE`.
-* `ACP.treeSize_ssubset_of_lt` — the same with `ℓ` supplied; `ACP.treeSize_one_ssubset` an
-  instance of it, and `ACP.zero_mem_treeSize_one` that its smaller class is nonempty.
+* `BoolCircuit.treeSize_ssubset_of_lt` — the same with `ℓ` supplied; `BoolCircuit.treeSize_one_ssubset` an
+  instance of it, and `BoolCircuit.zero_mem_treeSize_one` that its smaller class is nonempty.
 
 ## Divergences from [AB09, Thm 6.22]
 
 **This is not AB's `SIZE`, and AB's theorem is not formalized.** [AB09, Def 6.2]'s `SIZE(T)`
-is `Language.InSIZE` (`PPoly.lean`), over `ACP.CircuitFamily` — a layered `FeedForward`
-*DAG* on `AC_GateOps`.  Everything here is over `BoolCircuit.Circuit`, an unbounded-fan-in
+is `Language.InSIZE` (`PPoly.lean`), over `BoolCircuit.CircuitFamily` — a layered `FeedForward`
+*DAG* on `stdGateOps`.  Everything here is over `BoolCircuit.Circuit`, an unbounded-fan-in
 *tree*.  Neither transfer is available.  Tree → `FeedForward` exists only as
 `BoolCircuit.Circuit.toFeedForward`, which is over `FeedForward Bool`, not `Fin 2`, and puts
-the whole circuit into one gate `⟨Fin n, C.eval⟩` that is not in `AC_GateOps`; every layer
+the whole circuit into one gate `⟨Fin n, C.eval⟩` that is not in `stdGateOps`; every layer
 above the input is `Unit`, so its size is `C.depth + 1` whatever `C.size` is, and a map whose
 image size never mentions its source's cannot transport a size class either way.
-`FeedForward` → tree is `ACP.FeedForward.toCircuit`, correct only under
-`FeedForward.IsAndOrGate` — every gate an AND or an OR — whereas `AC_GateOps` also holds
+`FeedForward` → tree is `BoolCircuit.FeedForward.toCircuit`, correct only under
+`FeedForward.IsAndOrGate` — every gate an AND or an OR — whereas `stdGateOps` also holds
 `id` and `NOT`, for neither of which `BoolCircuit.Circuit` has a gate (it negates only at
 literals); and its bound `(k + 1) ^ depth` is exponential in depth in any case.  Carrying
 U10's hardness over to `SIZE`'s model needs that second direction, so the hierarchy is
@@ -71,7 +71,7 @@ a large-`n` argument, and is not attempted.
 
 **`ℓ n₀ ≥ 3` is what keeps the statement non-degenerate.** Below it `hlow` forces
 `T n₀ = 0`, and `Circuit.size` is never `0`, so `TreeSize T` would be empty and the strict
-inclusion would separate nothing.  `ACP.treeSize_one_ssubset` takes `ℓ n = min n 3`.
+inclusion would separate nothing.  `BoolCircuit.treeSize_one_ssubset` takes `ℓ n = min n 3`.
 
 **One length suffices.** AB relates `T` and `T'` at every length; `hlow` is imposed here at a
 single `n₀`, which is all strictness needs.  Demanding it at every `n` would force `T n = 0`
@@ -93,9 +93,7 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-open BoolCircuit
-
-namespace ACP
+namespace BoolCircuit
 
 variable {m n : ℕ}
 
@@ -174,7 +172,7 @@ theorem restrictCircuit_eval_of_onFirst {h : m ≤ n} {pad : Fin n → Bool} {c 
   rw [restrictCircuit_eval, hc, onFirst]
   exact congrArg f (funext fun i => by simp [extendBy, Fin.castLE])
 
-end ACP
+end BoolCircuit
 
 /-! ## The size class -/
 
@@ -194,10 +192,10 @@ theorem Language.InTreeSize.mono {T T' : ℕ → ℕ} {L : Language Bool} (hL : 
 theorem Language.zero_inTreeSize {T : ℕ → ℕ} (hT : ∀ n, 1 ≤ T n) :
     (0 : Language Bool).InTreeSize T :=
   ⟨fun _ => .node false [], fun n => by simpa [BoolCircuit.Circuit.size] using hT n, fun w => by
-    simp only [ACP.eval_node_nil, Bool.false_eq_true, iff_false]
+    simp only [BoolCircuit.eval_node_nil, Bool.false_eq_true, iff_false]
     exact Language.notMem_zero w⟩
 
-namespace ACP
+namespace BoolCircuit
 
 variable {m n : ℕ}
 
@@ -321,4 +319,4 @@ one between two nonempty classes. -/
 theorem zero_mem_treeSize_one : (0 : Language Bool) ∈ TreeSize fun _ => 1 :=
   Language.zero_inTreeSize fun _ => le_refl 1
 
-end ACP
+end BoolCircuit

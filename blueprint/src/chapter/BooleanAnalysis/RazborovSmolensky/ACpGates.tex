@@ -15,18 +15,18 @@ fraction of the random seeds produce a wrong value.
 \section{Declarations}
 
 \begin{definition}[The $\mathrm{AC}^0$ gate set]
-\lean{ACP.AC_GateOps}
-\label{ACP.AC_GateOps}
+\lean{BoolCircuit.stdGateOps}
+\label{BoolCircuit.stdGateOps}
 \leanok
-\uses{ACP.FeedForward.GateOp.id}
+\uses{BoolCircuit.FeedForward.GateOp.id}
 The set of plain $\mathrm{AC}^0$ gate operations on the alphabet $\mathrm{Fin}\,2$: the
 identity gate, the NOT gate $x \mapsto 1 - x_0$, and, for every arity $n$, the unbounded
 fan-in AND gate $x \mapsto \prod_{i} x_i$.
 \end{definition}
 
 \begin{lemma}[Counting tuples satisfying a pointwise predicate]
-\lean{ACP.tuple_fail_count}
-\label{ACP.tuple_fail_count}
+\lean{RazborovSmolensky.tuple_fail_count}
+\label{RazborovSmolensky.tuple_fail_count}
 \leanok
 \difficulty{4}
 Let $\iota$ be a finite index type, let $\beta$ be a finite type, and let $P$ be a
@@ -36,8 +36,8 @@ P(b)\,\}}^{\abs{\iota}}$.
 \end{lemma}
 
 \begin{lemma}[Averaging for the probabilistic method]
-\lean{ACP.prob_method_averaging}
-\label{ACP.prob_method_averaging}
+\lean{RazborovSmolensky.prob_method_averaging}
+\label{RazborovSmolensky.prob_method_averaging}
 \leanok
 \difficulty{5}
 Let $\alpha$ be a finite type and $\beta$ a finite nonempty type, let $\mathrm{Bad}
@@ -49,18 +49,18 @@ a decidable relation, and let $C$ be a natural number. Suppose that for every $a
 \end{lemma}
 
 \begin{definition}[Booleanization of a field element]
-\lean{ACP.bitify}
-\label{ACP.bitify}
+\lean{RazborovSmolensky.bitify}
+\label{RazborovSmolensky.bitify}
 \leanok
 The map $\mathbb{Z}/p \to \mathrm{Fin}\,2$ sending $a$ to $1$ if $a = 1$ and to $0$
 otherwise. It is intended to be applied only to values lying in $\{0,1\}$.
 \end{definition}
 
 \begin{lemma}[Booleanization is a section on $\{0,1\}$]
-\lean{ACP.cast_bitify_eq}
-\label{ACP.cast_bitify_eq}
+\lean{RazborovSmolensky.cast_bitify_eq}
+\label{RazborovSmolensky.cast_bitify_eq}
 \leanok
-\uses{ACP.bitify}
+\uses{RazborovSmolensky.bitify}
 \difficulty{2}
 Let $p$ be a prime and let $a \in \mathbb{Z}/p$ satisfy $a \in \{0, 1\}$. Write
 $\beta(a) \in \mathrm{Fin}\,2$ for the booleanization of $a$, equal to $1$ when $a = 1$
@@ -70,8 +70,8 @@ back modulo $p$ recovers $a$; that is, the image of $\beta(a)$ under $\mathrm{Fi
 \end{lemma}
 
 \begin{lemma}[Fermat indicator of zero mod p]
-\lean{ACP.one_sub_pow_card_sub_one}
-\label{ACP.one_sub_pow_card_sub_one}
+\lean{RazborovSmolensky.one_sub_pow_card_sub_one}
+\label{RazborovSmolensky.one_sub_pow_card_sub_one}
 \leanok
 \difficulty{3}
 Let $p$ be a prime and let $a \in \bbz/p\bbz$. Then
@@ -82,10 +82,10 @@ That is, $1 - a^{p-1}$ is the indicator of $a = 0$ in the field $\bbz/p\bbz$.
 \end{lemma}
 
 \begin{lemma}[Fermat indicator computes the boolean value]
-\lean{ACP.bit_indicator_eq_bitify}
-\label{ACP.bit_indicator_eq_bitify}
+\lean{RazborovSmolensky.bit_indicator_eq_bitify}
+\label{RazborovSmolensky.bit_indicator_eq_bitify}
 \leanok
-\uses{ACP.bitify}
+\uses{RazborovSmolensky.bitify}
 \difficulty{2}
 Let $p$ be a prime and let $a \in \mathbb{Z}/p$ lie in $\{0, 1\}$. Then
 \[
@@ -98,25 +98,25 @@ $1$ when $a = 1$ and $0$ when $a = 0$.
 \end{lemma}
 
 \begin{definition}[Unbounded $\mathrm{MOD}_p$ gate]
-\lean{ACP.modGateOp}
-\label{ACP.modGateOp}
+\lean{RazborovSmolensky.modGateOp}
+\label{RazborovSmolensky.modGateOp}
 \leanok
 The gate operation of arity \texttt{width} on Boolean inputs that outputs $1$ when the sum
 of its inputs, cast into $\mathbb{Z}/p$, is $0$, and outputs $0$ otherwise.
 \end{definition}
 
 \begin{definition}[{The $\mathrm{AC}^0[p]$ gate set}]
-\lean{ACP.ACp_GateOps}
-\label{ACP.ACp_GateOps}
+\lean{RazborovSmolensky.ACp_GateOps}
+\label{RazborovSmolensky.ACp_GateOps}
 \leanok
-\uses{ACP.AC_GateOps, ACP.modGateOp}
+\uses{BoolCircuit.stdGateOps, RazborovSmolensky.modGateOp}
 The $\mathrm{AC}^0[p]$ gate set: the $\mathrm{AC}^0$ gates (identity, NOT, unbounded AND)
 together with the unbounded $\mathrm{MOD}_p$ gate of every arity.
 \end{definition}
 
 \begin{definition}[Randomized OR-approximating polynomial]
-\lean{ACP.approxOr}
-\label{ACP.approxOr}
+\lean{RazborovSmolensky.approxOr}
+\label{RazborovSmolensky.approxOr}
 \leanok
 Given polynomials $P_1,\dots,P_{\mathrm{width}}$ over $\mathbb{Z}/p$ and a random seed
 consisting of $\ell$ subsets $S_1,\dots,S_\ell$ of the input positions, the approximator is
@@ -126,16 +126,16 @@ consisting of $\ell$ subsets $S_1,\dots,S_\ell$ of the input positions, the appr
 \end{definition}
 
 \begin{definition}[Exact $\mathrm{MOD}_p$ polynomial]
-\lean{ACP.exactMod}
-\label{ACP.exactMod}
+\lean{RazborovSmolensky.exactMod}
+\label{RazborovSmolensky.exactMod}
 \leanok
 The polynomial $1 - \bigl(\sum_i P_i\bigr)^{p-1}$ over $\mathbb{Z}/p$, which computes the
 $\mathrm{MOD}_p$ predicate exactly on Boolean values.
 \end{definition}
 
 \begin{definition}[Value-level OR approximator]
-\lean{ACP.approxOr_val}
-\label{ACP.approxOr_val}
+\lean{RazborovSmolensky.approxOr_val}
+\label{RazborovSmolensky.approxOr_val}
 \leanok
 The value-level analogue of the randomized OR approximator: for $v : \mathrm{Fin}\,
 \mathrm{width} \to \mathbb{Z}/p$ and subsets $S_1,\dots,S_\ell$,
@@ -145,8 +145,8 @@ The value-level analogue of the randomized OR approximator: for $v : \mathrm{Fin
 \end{definition}
 
 \begin{definition}[Value-level OR detector]
-\lean{ACP.OR_val}
-\label{ACP.OR_val}
+\lean{RazborovSmolensky.OR_val}
+\label{RazborovSmolensky.OR_val}
 \leanok
 For $v : \mathrm{Fin}\,\mathrm{width} \to \mathbb{Z}/p$, the quantity
 $1 - \prod_{k}\bigl(1 - v_k^{\,p-1}\bigr)$, which detects whether some coordinate of $v$ is
@@ -154,10 +154,10 @@ nonzero.
 \end{definition}
 
 \begin{theorem}[Degree bound for the OR-approximating polynomial]
-\lean{ACP.approxOr_totalDegree}
-\label{ACP.approxOr_totalDegree}
+\lean{RazborovSmolensky.approxOr_totalDegree}
+\label{RazborovSmolensky.approxOr_totalDegree}
 \leanok
-\uses{ACP.approxOr}
+\uses{RazborovSmolensky.approxOr}
 \difficulty{4}
 Let $p$ be a prime, and work over the ring of polynomials in $\mathrm{vars}$ variables
 with coefficients in $\bbz/p$. Given a family of polynomials
@@ -171,10 +171,10 @@ where the supremum is taken over all indices $i$.
 \end{theorem}
 
 \begin{theorem}[Total degree of the exact $\mathrm{MOD}_p$ polynomial]
-\lean{ACP.exactMod_totalDegree}
-\label{ACP.exactMod_totalDegree}
+\lean{RazborovSmolensky.exactMod_totalDegree}
+\label{RazborovSmolensky.exactMod_totalDegree}
 \leanok
-\uses{ACP.exactMod}
+\uses{RazborovSmolensky.exactMod}
 \difficulty{3}
 Let $p$ be a prime and fix natural numbers $\mathrm{vars}$ and $\mathrm{width}$. Let
 $P_0,\dots,P_{\mathrm{width}-1}$ be polynomials in $\mathrm{vars}$ variables over the
@@ -187,8 +187,8 @@ the supremum being taken over all $i$ (and read as $0$ when $\mathrm{width}=0$).
 \end{theorem}
 
 \begin{lemma}[At most half of subset sums vanish]
-\lean{ACP.subset_sum_zero_bound}
-\label{ACP.subset_sum_zero_bound}
+\lean{RazborovSmolensky.subset_sum_zero_bound}
+\label{RazborovSmolensky.subset_sum_zero_bound}
 \leanok
 \difficulty{5}
 Let $p$ be a prime and let $v = (v_i)_{i \in \{1,\dots,n\}}$ be a nonzero tuple of
@@ -198,10 +198,10 @@ set $\{1,\dots,n\}$ have vanishing subset sum; that is, twice the number of subs
 \end{lemma}
 
 \begin{lemma}[Evaluation commutes with the OR approximator]
-\lean{ACP.approxOr_eval_eq}
-\label{ACP.approxOr_eval_eq}
+\lean{RazborovSmolensky.approxOr_eval_eq}
+\label{RazborovSmolensky.approxOr_eval_eq}
 \leanok
-\uses{ACP.approxOr, ACP.approxOr_val}
+\uses{RazborovSmolensky.approxOr, RazborovSmolensky.approxOr_val}
 \difficulty{1}
 Fix a prime $p$, and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in the variables
 $y_1,\dots,y_{\mathrm{vars}}$ over $\bbz/p$, together with subsets $S_1,\dots,S_\ell$ of
@@ -220,10 +220,10 @@ P_i(y)\bigr)^{p-1}\Bigr).
 \end{lemma}
 
 \begin{lemma}[Failure characterization of the value-level OR approximator]
-\lean{ACP.approxOr_failure_iff}
-\label{ACP.approxOr_failure_iff}
+\lean{RazborovSmolensky.approxOr_failure_iff}
+\label{RazborovSmolensky.approxOr_failure_iff}
 \leanok
-\uses{ACP.OR_val, ACP.approxOr_val, ACP.one_sub_pow_card_sub_one}
+\uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr_val, RazborovSmolensky.one_sub_pow_card_sub_one}
 \difficulty{4}
 Fix a prime $p$, and let $v : \mathrm{Fin}\,\mathrm{width} \to \bbz/p$ be a vector
 together with a family $S_1,\dots,S_\ell$ of subsets of $\{1,\dots,\mathrm{width}\}$.
@@ -233,10 +233,10 @@ in $\bbz/p$ for every index $k$.
 \end{lemma}
 
 \begin{lemma}[Bad-seed count for a nonzero input]
-\lean{ACP.count_bad_S}
-\label{ACP.count_bad_S}
+\lean{RazborovSmolensky.count_bad_S}
+\label{RazborovSmolensky.count_bad_S}
 \leanok
-\uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val}
+\uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr_failure_iff, RazborovSmolensky.approxOr_val}
 \difficulty{5}
 Fix a prime $p$ and let $v : \mathrm{Fin}\,\mathrm{width} \to \bbz/p$ be a nonzero
 vector. Consider families $S = (S_1,\dots,S_\ell)$ of subsets $S_k \subseteq
@@ -249,8 +249,8 @@ the total number of families $S : \mathrm{Fin}\,\ell \to
 \end{lemma}
 
 \begin{lemma}[Cardinality of tuples of subsets]
-\lean{ACP.approxSeed_card}
-\label{ACP.approxSeed_card}
+\lean{RazborovSmolensky.approxSeed_card}
+\label{RazborovSmolensky.approxSeed_card}
 \leanok
 \difficulty{2}
 For natural numbers $\mathrm{width}$ and $\ell$, the number of $\ell$-tuples of subsets
@@ -260,10 +260,10 @@ $\{0,\dots,\mathrm{width}-1\}$ has exactly $2^{\mathrm{width}\cdot\ell}$ element
 \end{lemma}
 
 \begin{lemma}[Bad-seed bound for the value-level OR approximator]
-\lean{ACP.count_bad_S_or}
-\label{ACP.count_bad_S_or}
+\lean{RazborovSmolensky.count_bad_S_or}
+\label{RazborovSmolensky.count_bad_S_or}
 \leanok
-\uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val, ACP.count_bad_S}
+\uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr_failure_iff, RazborovSmolensky.approxOr_val, RazborovSmolensky.count_bad_S}
 \difficulty{2}
 Fix a prime $p$ and natural numbers $w$ and $\ell$, and let $v = (v_1,\dots,v_w)$ be an
 arbitrary vector in $(\bbz/p)^w$ (no coordinate is assumed nonzero). Call a *seed* a
@@ -277,20 +277,20 @@ number of bad seeds satisfies
 \end{lemma}
 
 \begin{definition}[List of OR-approximating polynomials]
-\lean{ACP.approxOrPolyList}
-\label{ACP.approxOrPolyList}
+\lean{RazborovSmolensky.approxOrPolyList}
+\label{RazborovSmolensky.approxOrPolyList}
 \leanok
-\uses{ACP.approxOr}
-The list of all polynomials $\texttt{ACP.approxOr}\,(P,S)$, one entry per random seed $S$. It
+\uses{RazborovSmolensky.approxOr}
+The list of all polynomials $\texttt{RazborovSmolensky.approxOr}\,(P,S)$, one entry per random seed $S$. It
 is a list rather than a set, so a polynomial arising from several seeds appears with the
 corresponding multiplicity.
 \end{definition}
 
 \begin{lemma}[Number of OR-approximating polynomials]
-\lean{ACP.approxOrPolyList_length}
-\label{ACP.approxOrPolyList_length}
+\lean{RazborovSmolensky.approxOrPolyList_length}
+\label{RazborovSmolensky.approxOrPolyList_length}
 \leanok
-\uses{ACP.approxOrPolyList, ACP.approxSeed_card}
+\uses{RazborovSmolensky.approxOrPolyList, RazborovSmolensky.approxSeed_card}
 \difficulty{2}
 Fix a prime $p$ and, for a given width $\mathrm{width}$ and seed length $\ell$, a family
 of polynomials $P_1,\dots,P_{\mathrm{width}}$ over $\bbz/p$ in a fixed number of
@@ -301,10 +301,10 @@ length $2^{\mathrm{width}\cdot\ell}$, the number of such seeds.
 \end{lemma}
 
 \begin{theorem}[Few seeds miss the true OR at a point]
-\lean{ACP.approxOr_pointwise_bad_count}
-\label{ACP.approxOr_pointwise_bad_count}
+\lean{RazborovSmolensky.approxOr_pointwise_bad_count}
+\label{RazborovSmolensky.approxOr_pointwise_bad_count}
 \leanok
-\uses{ACP.OR_val, ACP.approxOr, ACP.approxOr_eval_eq, ACP.approxSeed_card, ACP.count_bad_S_or}
+\uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr, RazborovSmolensky.approxOr_eval_eq, RazborovSmolensky.approxSeed_card, RazborovSmolensky.count_bad_S_or}
 \difficulty{2}
 Fix a prime $p$, and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in
 $\mathrm{vars}$ variables over $\bbz/p$, evaluated at a fixed point $y \in
@@ -321,10 +321,10 @@ are bad at $y$.
 \end{theorem}
 
 \begin{theorem}[Existence of a good OR-approximating polynomial list]
-\lean{ACP.exists_good_approxOr}
-\label{ACP.exists_good_approxOr}
+\lean{RazborovSmolensky.exists_good_approxOr}
+\label{RazborovSmolensky.exists_good_approxOr}
 \leanok
-\uses{ACP.approxOr, ACP.approxOrPolyList, ACP.approxOrPolyList_length, ACP.approxOr_pointwise_bad_count, ACP.approxOr_totalDegree}
+\uses{RazborovSmolensky.approxOr, RazborovSmolensky.approxOrPolyList, RazborovSmolensky.approxOrPolyList_length, RazborovSmolensky.approxOr_pointwise_bad_count, RazborovSmolensky.approxOr_totalDegree}
 \difficulty{3}
 Fix a prime $p$ and natural numbers $\mathrm{vars}$, $\mathrm{width}$, and $\ell$, and
 let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in $\mathrm{vars}$ variables over
@@ -341,19 +341,19 @@ $Ps$.
 \end{theorem}
 
 \begin{definition}[Randomized AND-approximating polynomial]
-\lean{ACP.approxAnd}
-\label{ACP.approxAnd}
+\lean{RazborovSmolensky.approxAnd}
+\label{RazborovSmolensky.approxAnd}
 \leanok
-\uses{ACP.approxOr}
-The De Morgan dual of the OR approximator: $1 - \texttt{ACP.approxOr}\,(1 - P, S)$, where the
+\uses{RazborovSmolensky.approxOr}
+The De Morgan dual of the OR approximator: $1 - \texttt{RazborovSmolensky.approxOr}\,(1 - P, S)$, where the
 approximator is applied to the negated inputs $i \mapsto 1 - P_i$.
 \end{definition}
 
 \begin{theorem}[Total-degree bound for the AND approximator]
-\lean{ACP.approxAnd_totalDegree}
-\label{ACP.approxAnd_totalDegree}
+\lean{RazborovSmolensky.approxAnd_totalDegree}
+\label{RazborovSmolensky.approxAnd_totalDegree}
 \leanok
-\uses{ACP.approxAnd, ACP.approxOr_totalDegree}
+\uses{RazborovSmolensky.approxAnd, RazborovSmolensky.approxOr_totalDegree}
 \difficulty{4}
 Fix a prime $p$, and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials over $\bbz/p$ in
 the input variables, together with subsets $S_1,\dots,S_\ell$ of the index set
@@ -365,18 +365,18 @@ data has total degree at most
 \end{theorem}
 
 \begin{definition}[List of AND-approximating polynomials]
-\lean{ACP.approxAndPolyList}
-\label{ACP.approxAndPolyList}
+\lean{RazborovSmolensky.approxAndPolyList}
+\label{RazborovSmolensky.approxAndPolyList}
 \leanok
-\uses{ACP.approxAnd}
-The list of all polynomials $\texttt{ACP.approxAnd}\,(P,S)$, one entry per random seed $S$.
+\uses{RazborovSmolensky.approxAnd}
+The list of all polynomials $\texttt{RazborovSmolensky.approxAnd}\,(P,S)$, one entry per random seed $S$.
 \end{definition}
 
 \begin{lemma}[Length of the list of AND-approximating polynomials]
-\lean{ACP.approxAndPolyList_length}
-\label{ACP.approxAndPolyList_length}
+\lean{RazborovSmolensky.approxAndPolyList_length}
+\label{RazborovSmolensky.approxAndPolyList_length}
 \leanok
-\uses{ACP.approxAndPolyList, ACP.approxSeed_card}
+\uses{RazborovSmolensky.approxAndPolyList, RazborovSmolensky.approxSeed_card}
 \difficulty{2}
 Fix a prime $p$ and, for natural numbers $\mathrm{vars}$, $\mathrm{width}$, and $\ell$,
 let $P_1,\dots,P_{\mathrm{width}}$ be polynomials in $\mathrm{vars}$ variables over
@@ -388,10 +388,10 @@ $2^{\mathrm{width}\cdot\ell}$.
 \end{lemma}
 
 \begin{theorem}[Pointwise bad-seed count for the AND approximator]
-\lean{ACP.approxAnd_pointwise_bad_count}
-\label{ACP.approxAnd_pointwise_bad_count}
+\lean{RazborovSmolensky.approxAnd_pointwise_bad_count}
+\label{RazborovSmolensky.approxAnd_pointwise_bad_count}
 \leanok
-\uses{ACP.approxAnd, ACP.approxOr, ACP.approxOr_pointwise_bad_count}
+\uses{RazborovSmolensky.approxAnd, RazborovSmolensky.approxOr, RazborovSmolensky.approxOr_pointwise_bad_count}
 \difficulty{4}
 Fix a prime $p$, polynomials $P_1,\dots,P_{\mathrm{width}}$ over $\bbz/p$ in
 $\mathrm{vars}$ variables, and an evaluation point $y \in (\bbz/p)^{\mathrm{vars}}$.
@@ -405,10 +405,10 @@ N \cdot 2^{\ell} \le 2^{\mathrm{width}\cdot\ell}.
 \end{theorem}
 
 \begin{theorem}[Existence of a good AND-approximating polynomial family]
-\lean{ACP.exists_good_approxAnd}
-\label{ACP.exists_good_approxAnd}
+\lean{RazborovSmolensky.exists_good_approxAnd}
+\label{RazborovSmolensky.exists_good_approxAnd}
 \leanok
-\uses{ACP.approxAnd, ACP.approxAndPolyList, ACP.approxAndPolyList_length, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree}
+\uses{RazborovSmolensky.approxAnd, RazborovSmolensky.approxAndPolyList, RazborovSmolensky.approxAndPolyList_length, RazborovSmolensky.approxAnd_pointwise_bad_count, RazborovSmolensky.approxAnd_totalDegree}
 \difficulty{3}
 Let $p$ be prime, let $\mathrm{vars}$, $\mathrm{width}$, and $\ell$ be natural numbers,
 and let $P_1,\dots,P_{\mathrm{width}}$ be polynomials over $\bbz/p$ in $\mathrm{vars}$
@@ -427,10 +427,10 @@ A_S(y)\ \neq\ \prod_{k=1}^{\mathrm{width}}\Bigl(1-\bigl(1-P_k(y)\bigr)^{p-1}\Big
 \end{theorem}
 
 \begin{lemma}[{Case analysis on the $\mathrm{AC}^0[p]$ gate set}]
-\lean{ACP.ACp_GateOps_cases}
-\label{ACP.ACp_GateOps_cases}
+\lean{RazborovSmolensky.ACp_GateOps_cases}
+\label{RazborovSmolensky.ACp_GateOps_cases}
 \leanok
-\uses{ACP.AC_GateOps, ACP.ACp_GateOps, ACP.FeedForward.GateOp.id, ACP.modGateOp}
+\uses{BoolCircuit.stdGateOps, RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward.GateOp.id, RazborovSmolensky.modGateOp}
 \difficulty{3}
 Let $p$ be a prime, and let $\mathrm{op}$ be a gate operation belonging to the
 $\mathrm{AC}^0[p]$ gate set over the alphabet $\mathrm{Fin}\,2$. Then $\mathrm{op}$ is
@@ -441,10 +441,10 @@ some arity $n$.
 \end{lemma}
 
 \begin{lemma}[Exact $\mathrm{MOD}_p$ on Boolean inputs]
-\lean{ACP.exactMod_on_bits}
-\label{ACP.exactMod_on_bits}
+\lean{RazborovSmolensky.exactMod_on_bits}
+\label{RazborovSmolensky.exactMod_on_bits}
 \leanok
-\uses{ACP.bitify, ACP.cast_bitify_eq, ACP.modGateOp, ACP.one_sub_pow_card_sub_one}
+\uses{RazborovSmolensky.bitify, RazborovSmolensky.cast_bitify_eq, RazborovSmolensky.modGateOp, RazborovSmolensky.one_sub_pow_card_sub_one}
 \difficulty{3}
 Let $p$ be a prime and let $\mathrm{inputs}_0, \dots, \mathrm{inputs}_{w-1}$ be elements
 of $\mathbb{Z}/p$, each lying in $\{0,1\}$. Then
@@ -459,10 +459,10 @@ $\mathbb{Z}/p$ and to $0$ otherwise — regarded as an element of $\{0,1\} \subs
 \end{lemma}
 
 \begin{lemma}[Fermat power product computes Boolean AND]
-\lean{ACP.exactAnd_on_bits}
-\label{ACP.exactAnd_on_bits}
+\lean{RazborovSmolensky.exactAnd_on_bits}
+\label{RazborovSmolensky.exactAnd_on_bits}
 \leanok
-\uses{ACP.bitify}
+\uses{RazborovSmolensky.bitify}
 \difficulty{4}
 Let $p$ be a prime, and let $x_0,\dots,x_{w-1}$ be elements of $\mathbb{Z}/p$, each
 lying in $\{0,1\}$. Then
@@ -477,10 +477,10 @@ expression on the left evaluates to the Boolean AND of the inputs.
 \end{lemma}
 
 \begin{lemma}[{Low-degree approximating polynomials for an $\mathrm{AC}^0[p]$ gate}]
-\lean{ACP.exists_poly_for_gate}
-\label{ACP.exists_poly_for_gate}
+\lean{RazborovSmolensky.exists_poly_for_gate}
+\label{RazborovSmolensky.exists_poly_for_gate}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
+\uses{RazborovSmolensky.ACp_GateOps, RazborovSmolensky.ACp_GateOps_cases, RazborovSmolensky.approxAnd, RazborovSmolensky.approxAnd_pointwise_bad_count, RazborovSmolensky.approxAnd_totalDegree, RazborovSmolensky.approxSeed_card, RazborovSmolensky.bitify, RazborovSmolensky.cast_bitify_eq, RazborovSmolensky.exactAnd_on_bits, RazborovSmolensky.exactMod, RazborovSmolensky.exactMod_on_bits, RazborovSmolensky.exactMod_totalDegree, RazborovSmolensky.modGateOp}
 \difficulty{6}
 Let $p$ be a prime, and fix natural numbers $n$ and $\ell$. Let $\mathrm{op}$ be a gate
 operation from the $\mathrm{AC}^0[p]$ gate set, and for each input wire $i$ of

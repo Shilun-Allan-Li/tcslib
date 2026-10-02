@@ -11,8 +11,8 @@ import TCSlib.Complexity.CircuitComplexity.PPoly
 ## Main definitions
 
 * `Language.allOnes` — the language `{1ⁿ}` of [AB09, Ex 6.3], part 1.
-* `ACP.andGateOp` — the unbounded fan-in `AND` gate.
-* `ACP.allOnesCircuit` / `ACP.allOnesFamily` — the circuit and family deciding it.
+* `BoolCircuit.andGateOp` — the unbounded fan-in `AND` gate.
+* `BoolCircuit.allOnesCircuit` / `BoolCircuit.allOnesFamily` — the circuit and family deciding it.
 
 ## Main results
 
@@ -71,15 +71,15 @@ theorem Language.mem_allOnes_iff (w : List Bool) :
     w ∈ Language.allOnes ↔ w = List.replicate w.length true :=
   List.eq_replicate_length.symm
 
-namespace ACP
+namespace BoolCircuit
 
 open FeedForward
 
-/-- The unbounded fan-in `AND` gate on `w` inputs, in the shape used by `AC_GateOps`. -/
+/-- The unbounded fan-in `AND` gate on `w` inputs, in the shape used by `stdGateOps`. -/
 def andGateOp (w : ℕ) : GateOp (Fin 2) := ⟨Fin w, fun x => ∏ i, x i⟩
 
-/-- `andGateOp w` is one of the `AC_GateOps`. -/
-theorem andGateOp_mem_AC_GateOps (w : ℕ) : andGateOp w ∈ AC_GateOps :=
+/-- `andGateOp w` is one of the `stdGateOps`. -/
+theorem andGateOp_mem_stdGateOps (w : ℕ) : andGateOp w ∈ stdGateOps :=
   Set.mem_union_right _ (Set.mem_iUnion.mpr ⟨w, rfl⟩)
 
 /-- Over `Fin 2` a product is `1` exactly when every factor is. -/
@@ -129,12 +129,12 @@ def allOnesFamily : CircuitFamily where
 @[simp]
 theorem allOnesFamily_circuit (n : ℕ) : allOnesFamily.circuit n = allOnesCircuit n := rfl
 
-/-- The family uses only `AC_GateOps`. -/
-theorem allOnesFamily_onlyUsesGates : allOnesFamily.OnlyUsesGates AC_GateOps := by
+/-- The family uses only `stdGateOps`. -/
+theorem allOnesFamily_onlyUsesGates : allOnesFamily.OnlyUsesGates stdGateOps := by
   intro n
-  show (allOnesCircuit n).onlyUsesGates AC_GateOps
+  show (allOnesCircuit n).onlyUsesGates stdGateOps
   rintro ⟨_ | d, hd⟩ u
-  · exact andGateOp_mem_AC_GateOps n
+  · exact andGateOp_mem_stdGateOps n
   · exact absurd hd (by have : (allOnesCircuit n).depth = 1 := rfl; omega)
 
 /-- The family decides exactly `Language.allOnes`. -/
@@ -145,12 +145,12 @@ theorem allOnesFamily_language : allOnesFamily.language = Language.allOnes := by
     List.get_eq_getElem, List.forall_mem_iff_getElem]
   exact ⟨fun h i hi => h ⟨i, hi⟩, fun h i => h i i.2⟩
 
-end ACP
+end BoolCircuit
 
 /-- `{1ⁿ} ∈ SIZE(1)`. -/
 theorem Language.allOnes_inSIZE_one : Language.allOnes.InSIZE (fun _ => 1) :=
-  ⟨ACP.allOnesFamily, ACP.allOnesFamily_onlyUsesGates,
-    fun n => (ACP.allOnesCircuit_size n).le, ACP.allOnesFamily_language⟩
+  ⟨BoolCircuit.allOnesFamily, BoolCircuit.allOnesFamily_onlyUsesGates,
+    fun n => (BoolCircuit.allOnesCircuit_size n).le, BoolCircuit.allOnesFamily_language⟩
 
 /-- [AB09, Ex 6.3], part 1: `{1ⁿ}` is decided by a linear-size circuit family. -/
 theorem Language.allOnes_inSIZE_linear : Language.allOnes.InSIZE (fun n => n + 1) :=

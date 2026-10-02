@@ -12,21 +12,21 @@ import TCSlib.Complexity.CircuitComplexity.CircuitSat
 
 ## Main definitions
 
-* `ACP.encodeCircuit`, `ACP.readCircuit` — a prefix serialisation of
+* `BoolCircuit.encodeCircuit`, `BoolCircuit.readCircuit` — a prefix serialisation of
   `BoolCircuit.Circuit` into `List Bool`, and the parser that reads it back.
-* `ACP.encodeSigma`, `ACP.decodeSigma`, `ACP.circuitEncoding` — the same for an
+* `BoolCircuit.encodeSigma`, `BoolCircuit.decodeSigma`, `BoolCircuit.circuitEncoding` — the same for an
   arity-tagged circuit, packaged as a `Computability.FinEncoding`.
-* `ACP.cktSatLang` — CKT-SAT as a `Language Bool`.  [AB09, Def 6.9]
+* `BoolCircuit.cktSatLang` — CKT-SAT as a `Language Bool`.  [AB09, Def 6.9]
 
 ## Main results
 
-* `ACP.decodeSigma_encodeSigma`, `ACP.encodeSigma_of_decodeSigma` — the encoding
+* `BoolCircuit.decodeSigma_encodeSigma`, `BoolCircuit.encodeSigma_of_decodeSigma` — the encoding
   round-trips, and only canonical strings decode.
-* `ACP.mem_cktSatLang_iff`, `ACP.mem_cktSatLang_iff_exists` — `cktSatLang` is
+* `BoolCircuit.mem_cktSatLang_iff`, `BoolCircuit.mem_cktSatLang_iff_exists` — `cktSatLang` is
   exactly the image of `BoolCircuit.CktSat` under the encoding.
-* `ACP.size_le_length_encodeSigma` — a circuit is never larger than its encoding
+* `BoolCircuit.size_le_length_encodeSigma` — a circuit is never larger than its encoding
   is long, so a bound in the size is a bound in the input length.
-* `ACP.length_to3SAT_toCNF_le` — the reduction of [AB09, Lem 6.11] outputs at
+* `BoolCircuit.length_to3SAT_toCNF_le` — the reduction of [AB09, Lem 6.11] outputs at
   most `13 * |encoding|` 3-clauses.
 
 ## Divergences from Arora–Barak §6.1.2 and §6.2
@@ -75,9 +75,9 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-namespace ACP
+namespace BoolCircuit
 
-open BoolCircuit SATTo3SAT
+open SATTo3SAT
 
 /-! ## Serialising a circuit -/
 
@@ -436,4 +436,4 @@ theorem length_to3SAT_toCNF_le (C : (n : ℕ) × Circuit n) :
   have h4 := size_le_length_encodeSigma C
   omega
 
-end ACP
+end BoolCircuit

@@ -36,13 +36,13 @@ circuits, whereas `CktSat` is a set of circuits: the Tseitin proof must not depe
 encoding.  `CircuitComplexity.Encoding` supplies one downstream, and with it a clause
 count bounded in the encoded input length — still not a `≤p` claim.
 
-Model: `BoolCircuit.Circuit`, a tree, not the DAG `ACP.FeedForward` of `PPoly.lean`. The
+Model: `BoolCircuit.Circuit`, a tree, not the DAG `BoolCircuit.FeedForward` of `PPoly.lean`. The
 tree is forced, though not for the reason earlier drafts of this file gave: a gate's
-membership in these gate sets *can* be cased on: `ACP.ACp_GateOps_cases`
+membership in these gate sets *can* be cased on: `RazborovSmolensky.ACp_GateOps_cases`
 (`ACpGates.lean:585`) does it for `ACp_GateOps p`, unfolding the `⋃` through
-`Set.mem_iUnion.mp`, and `ACp_GateOps = AC_GateOps ∪ ⋃ n, {modGateOp p n}` — no
-`AC_GateOps_cases` exists, but nothing obstructs one.  What blocks a clause map over
-`FeedForward` is that `AC_GateOps` contains `id` and `NOT`, for which `Circuit` has no
+`Set.mem_iUnion.mp`, and `ACp_GateOps = stdGateOps ∪ ⋃ n, {modGateOp p n}` — no
+`stdGateOps_cases` exists, but nothing obstructs one.  What blocks a clause map over
+`FeedForward` is that `stdGateOps` contains `id` and `NOT`, for which `Circuit` has no
 node, and that `FeedForward.nodes` is an arbitrary type family with nothing to index
 Tseitin variables by.  No equivalence of the two models is claimed, and none is
 available here. `Circuit` has no `NOT` gate — negation

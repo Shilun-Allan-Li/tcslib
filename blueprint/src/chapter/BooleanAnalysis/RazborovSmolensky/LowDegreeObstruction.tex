@@ -14,8 +14,8 @@ obstruction to low-degree approximation of the product $\prod_i x_i$.
 \section{Declarations}
 
 \begin{definition}[Low-degree squarefree supports]
-\lean{ACP.LowDegreeSupport}
-\label{ACP.LowDegreeSupport}
+\lean{RazborovSmolensky.LowDegreeSupport}
+\label{RazborovSmolensky.LowDegreeSupport}
 \leanok
 For $n, D \in \mathbb{N}$, the type of supports of squarefree monomials of degree at most
 $D$: the subtype of finsets $s \subseteq \mathrm{Fin}\,n$ with $\abs{s} \le D$.  In the
@@ -23,24 +23,24 @@ displays below this type is written $\mathcal{S}_{n,D}$.
 \end{definition}
 
 \begin{definition}[Low-degree squarefree polynomial from coefficients]
-\lean{ACP.lowDegreeSquarefreePolynomial}
-\label{ACP.lowDegreeSquarefreePolynomial}
+\lean{RazborovSmolensky.lowDegreeSquarefreePolynomial}
+\label{RazborovSmolensky.lowDegreeSquarefreePolynomial}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.squarefreeMonomial}
-Given coefficients $c$ indexed by $\texttt{ACP.LowDegreeSupport}\ n\ D$, the multivariate
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.squarefreeMonomial}
+Given coefficients $c$ indexed by $\texttt{RazborovSmolensky.LowDegreeSupport}\ n\ D$, the multivariate
 polynomial
 \[
 \sum_{\substack{s \subseteq \mathrm{Fin}\,n \\ \abs{s} \le D}} c(s)\, \prod_{i \in s} X_i ,
 \]
-i.e. the sum of the squarefree monomials $\texttt{ACP.squarefreeMonomial}\ s$ weighted by
+i.e. the sum of the squarefree monomials $\texttt{RazborovSmolensky.squarefreeMonomial}\ s$ weighted by
 $c$, with the terms of support size $> D$ set to $0$.
 \end{definition}
 
 \begin{theorem}[Squarefree polynomial representation on the root cube]
-\lean{ACP.exists_squarefree_representative_on_rootCube}
-\label{ACP.exists_squarefree_representative_on_rootCube}
+\lean{RazborovSmolensky.exists_squarefree_representative_on_rootCube}
+\label{RazborovSmolensky.exists_squarefree_representative_on_rootCube}
 \leanok
-\uses{ACP.rootCube, ACP.squarefreeMonomial, ACP.squarefreePolynomial}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.squarefreeMonomial, RazborovSmolensky.squarefreePolynomial}
 \difficulty{7}
 Let $K$ be a field, fix an element $\omega \in K$, and let $n$ be a natural number.
 Write $\{1,\omega\}^n$ for the set of vectors $x = (x_1,\dots,x_n)$ with each coordinate
@@ -54,10 +54,10 @@ satisfies $P(x) = f(x)$ for every $x \in \{1,\omega\}^n$.
 \end{theorem}
 
 \begin{theorem}[Low-degree monomials multilinearize on the root cube]
-\lean{ACP.monomial_lowDegree_squarefree_complete_on_rootCube}
-\label{ACP.monomial_lowDegree_squarefree_complete_on_rootCube}
+\lean{RazborovSmolensky.monomial_lowDegree_squarefree_complete_on_rootCube}
+\label{RazborovSmolensky.monomial_lowDegree_squarefree_complete_on_rootCube}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.rootCube, ACP.squarefreeMonomial}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.rootCube, RazborovSmolensky.squarefreeMonomial}
 \difficulty{6}
 Let $K$ be a field and let $\omega \in K$ satisfy $\omega \ne 1$. Fix $n, D \in \bbn$,
 and consider a monomial $a\,X^m$ in the variables $X_1,\dots,X_n$ over $K$, given by an
@@ -70,10 +70,10 @@ $\{1,\omega\}^n$.
 \end{theorem}
 
 \begin{lemma}[Additivity of the coefficient-to-polynomial map]
-\lean{ACP.lowDegreeSquarefreePolynomial_add}
-\label{ACP.lowDegreeSquarefreePolynomial_add}
+\lean{RazborovSmolensky.lowDegreeSquarefreePolynomial_add}
+\label{RazborovSmolensky.lowDegreeSquarefreePolynomial_add}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial}
 \difficulty{3}
 Fix a field $K$ and natural numbers $n$ and $D$, and let $\mathcal{S}_{n,D}$ be the set
 of subsets $s \subseteq \mathrm{Fin}\,n$ with $\abs{s} \le D$. For a coefficient
@@ -85,10 +85,10 @@ in $K[X_i : i \in \mathrm{Fin}\,n]$. Then for any two coefficient functions $c_1
 \end{lemma}
 
 \begin{lemma}[Zero coefficients yield the zero polynomial]
-\lean{ACP.lowDegreeSquarefreePolynomial_zero}
-\label{ACP.lowDegreeSquarefreePolynomial_zero}
+\lean{RazborovSmolensky.lowDegreeSquarefreePolynomial_zero}
+\label{RazborovSmolensky.lowDegreeSquarefreePolynomial_zero}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial}
 \difficulty{2}
 Let $K$ be a field and let $n, D \in \bbn$. Applying the low-degree squarefree
 polynomial construction to the identically zero coefficient function on
@@ -101,10 +101,10 @@ X_i \;=\; 0 .
 \end{lemma}
 
 \begin{lemma}[Additivity in the coefficients]
-\lean{ACP.lowDegreeSquarefreePolynomial_sum}
-\label{ACP.lowDegreeSquarefreePolynomial_sum}
+\lean{RazborovSmolensky.lowDegreeSquarefreePolynomial_sum}
+\label{RazborovSmolensky.lowDegreeSquarefreePolynomial_sum}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_add, ACP.lowDegreeSquarefreePolynomial_zero}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.lowDegreeSquarefreePolynomial_add, RazborovSmolensky.lowDegreeSquarefreePolynomial_zero}
 \difficulty{4}
 Fix a field $K$ and natural numbers $n, D$, and write $\mathcal{S}_{n,D}$ for the type
 of subsets $s \subseteq \mathrm{Fin}\,n$ with $\abs{s} \le D$. For a coefficient
@@ -120,10 +120,10 @@ P\!\left(\sum_{i \in S} c_i\right) = \sum_{i \in S} P(c_i).
 \end{lemma}
 
 \begin{theorem}[Completeness of low-degree squarefree polynomials on the root cube]
-\lean{ACP.lowDegree_squarefree_complete_on_rootCube}
-\label{ACP.lowDegree_squarefree_complete_on_rootCube}
+\lean{RazborovSmolensky.lowDegree_squarefree_complete_on_rootCube}
+\label{RazborovSmolensky.lowDegree_squarefree_complete_on_rootCube}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegreeSquarefreePolynomial_sum, ACP.monomial_lowDegree_squarefree_complete_on_rootCube, ACP.rootCube}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.lowDegreeSquarefreePolynomial_sum, RazborovSmolensky.monomial_lowDegree_squarefree_complete_on_rootCube, RazborovSmolensky.rootCube}
 \difficulty{5}
 Let $K$ be a field and let $\omega \in K$ satisfy $\omega \ne 1$. For natural numbers
 $n$ and $D$, write $\{1,\omega\}^n$ for the set of vectors $x : \mathrm{Fin}\,n \to K$
@@ -136,10 +136,10 @@ $\{1,\omega\}^n$.
 \end{theorem}
 
 \begin{lemma}[Total degree bound for a low-degree squarefree polynomial]
-\lean{ACP.lowDegreeSquarefreePolynomial_totalDegree_le}
-\label{ACP.lowDegreeSquarefreePolynomial_totalDegree_le}
+\lean{RazborovSmolensky.lowDegreeSquarefreePolynomial_totalDegree_le}
+\label{RazborovSmolensky.lowDegreeSquarefreePolynomial_totalDegree_le}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.squarefreeMonomial, RazborovSmolensky.squarefreeMonomial_totalDegree_le_card}
 \difficulty{4}
 Let $K$ be a field and fix $n, D \in \bbn$. For any assignment of coefficients $c \colon
 \mathcal{S}_{n,D} \to K$, indexed by the subsets $s \subseteq \mathrm{Fin}\,n$ with
@@ -152,10 +152,10 @@ has total degree at most $D$.
 \end{lemma}
 
 \begin{definition}[Support-to-sigma injection]
-\lean{ACP.lowDegreeSupportSigmaMap}
-\label{ACP.lowDegreeSupportSigmaMap}
+\lean{RazborovSmolensky.lowDegreeSupportSigmaMap}
+\label{RazborovSmolensky.lowDegreeSupportSigmaMap}
 \leanok
-\uses{ACP.LowDegreeSupport}
+\uses{RazborovSmolensky.LowDegreeSupport}
 The map sending a low-degree support $s$ to the pair consisting of its exact cardinality
 $\abs{s} \in \mathrm{Fin}(D+1)$ together with $s$ itself, viewed as an element of
 $\{t : \mathrm{Finset}(\mathrm{Fin}\,n) \mid \abs{t} = \abs{s}\}$.  It is used as an
@@ -163,10 +163,10 @@ injection for the binomial-sum bound rather than as a full equivalence.
 \end{definition}
 
 \begin{theorem}[Binomial-sum bound on low-degree supports]
-\lean{ACP.lowDegreeSupport_card_le_binomial_sum}
-\label{ACP.lowDegreeSupport_card_le_binomial_sum}
+\lean{RazborovSmolensky.lowDegreeSupport_card_le_binomial_sum}
+\label{RazborovSmolensky.lowDegreeSupport_card_le_binomial_sum}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeCoeff_card, ACP.lowDegreeSupportSigmaMap}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeCoeff_card, RazborovSmolensky.lowDegreeSupportSigmaMap}
 \difficulty{4}
 For natural numbers $n$ and $D$, let $\mathcal{S}_{n,D}$ denote the (finite) type of
 low-degree squarefree supports on $\mathrm{Fin}\,n$, that is, the subsets $s \subseteq
@@ -177,10 +177,10 @@ low-degree squarefree supports on $\mathrm{Fin}\,n$, that is, the subsets $s \su
 \end{theorem}
 
 \begin{lemma}[Cardinality of the space of coefficient functions]
-\lean{ACP.lowDegreeCoeff_card}
-\label{ACP.lowDegreeCoeff_card}
+\lean{RazborovSmolensky.lowDegreeCoeff_card}
+\label{RazborovSmolensky.lowDegreeCoeff_card}
 \leanok
-\uses{ACP.LowDegreeSupport}
+\uses{RazborovSmolensky.LowDegreeSupport}
 \difficulty{1}
 Fix natural numbers $n$ and $D$, and write $\mathcal{S}_{n,D}$ for the type of supports
 of squarefree monomials of degree at most $D$ in $n$ variables. For any finite type
@@ -191,19 +191,19 @@ $K_0$, the number of functions from $\mathcal{S}_{n,D}$ to $K_0$ is
 \end{lemma}
 
 \begin{definition}[Root cube as Boolean strings]
-\lean{ACP.rootCubeEquivFinTwo}
-\label{ACP.rootCubeEquivFinTwo}
+\lean{RazborovSmolensky.rootCubeEquivFinTwo}
+\label{RazborovSmolensky.rootCubeEquivFinTwo}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 If $\omega \ne 1$, the explicit equivalence $\{1,\omega\}^n \simeq (\mathrm{Fin}\,n \to
 \mathrm{Fin}\,2)$ that records, for each coordinate, whether its value is $1$ or $\omega$.
 \end{definition}
 
 \begin{lemma}[Cardinality of the root cube]
-\lean{ACP.rootCube_card_of_ne_one}
-\label{ACP.rootCube_card_of_ne_one}
+\lean{RazborovSmolensky.rootCube_card_of_ne_one}
+\label{RazborovSmolensky.rootCube_card_of_ne_one}
 \leanok
-\uses{ACP.rootCube, ACP.rootCubeEquivFinTwo}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeEquivFinTwo}
 \difficulty{2}
 Let $K$ be a finite field and let $\omega \in K$ with $\omega \ne 1$. Then the root cube
 $\{1,\omega\}^n$, consisting of those vectors $x : \mathrm{Fin}\,n \to K$ with $x_i \in
@@ -211,10 +211,10 @@ $\{1,\omega\}^n$, consisting of those vectors $x : \mathrm{Fin}\,n \to K$ with $
 \end{lemma}
 
 \begin{lemma}[Counting functions on the root-of-unity cube]
-\lean{ACP.rootCube_function_card_of_ne_one}
-\label{ACP.rootCube_function_card_of_ne_one}
+\lean{RazborovSmolensky.rootCube_function_card_of_ne_one}
+\label{RazborovSmolensky.rootCube_function_card_of_ne_one}
 \leanok
-\uses{ACP.rootCube, ACP.rootCube_card_of_ne_one}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCube_card_of_ne_one}
 \difficulty{2}
 Let $K$ be a finite field, let $\omega \in K$ with $\omega \ne 1$, and let $n \in \bbn$.
 Writing $\{1,\omega\}^n$ for the set of vectors $x : \mathrm{Fin}\,n \to K$ each of
@@ -223,8 +223,8 @@ is \[ \abs{K}^{\,2^n}. \]
 \end{lemma}
 
 \begin{theorem}[Hamming-ball bound for function spaces]
-\lean{ACP.function_hammingBall_card_le_binomial}
-\label{ACP.function_hammingBall_card_le_binomial}
+\lean{RazborovSmolensky.function_hammingBall_card_le_binomial}
+\label{RazborovSmolensky.function_hammingBall_card_le_binomial}
 \leanok
 \difficulty{6}
 Let $\alpha$ and $\beta$ be finite types, fix a function $\mathrm{center} : \alpha \to
@@ -238,10 +238,10 @@ f(a)\}} \le e \,\}} \;\le\; \sum_{t=0}^{e} \binom{\abs{\alpha}}{t}\,\abs{\beta}^
 \end{theorem}
 
 \begin{theorem}[Volume bound for a Hamming ball on the root cube]
-\lean{ACP.rootCubeBall_card_le_binomial}
-\label{ACP.rootCubeBall_card_le_binomial}
+\lean{RazborovSmolensky.rootCubeBall_card_le_binomial}
+\label{RazborovSmolensky.rootCubeBall_card_le_binomial}
 \leanok
-\uses{ACP.function_hammingBall_card_le_binomial, ACP.rootCube, ACP.rootCubeBall, ACP.rootCubeFunctionBadCount}
+\uses{RazborovSmolensky.function_hammingBall_card_le_binomial, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBall, RazborovSmolensky.rootCubeFunctionBadCount}
 \difficulty{2}
 Let $K$ be a finite field, let $\omega \in K$, and let $n, e \in \bbn$. Write
 $\{1,\omega\}^n$ for the root cube of vectors $x : \{0,\dots,n-1\} \to K$ each of whose
@@ -260,10 +260,10 @@ number of elements of $K$.
 \end{theorem}
 
 \begin{theorem}[Counting obstruction for low-degree squarefree approximation on the root cube]
-\lean{ACP.rootCube_counting_obstruction_lowDegreeSquarefree}
-\label{ACP.rootCube_counting_obstruction_lowDegreeSquarefree}
+\lean{RazborovSmolensky.rootCube_counting_obstruction_lowDegreeSquarefree}
+\label{RazborovSmolensky.rootCube_counting_obstruction_lowDegreeSquarefree}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.lowDegreeSquarefreePolynomial, ACP.lowDegree_squarefree_complete_on_rootCube, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCubeBall_card_le_binomial, ACP.rootCube_card_of_ne_one, ACP.rootCube_counting_obstruction, ACP.rootCube_function_card_of_ne_one}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.lowDegree_squarefree_complete_on_rootCube, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCubeBall, RazborovSmolensky.rootCubeBall_card_le_binomial, RazborovSmolensky.rootCube_card_of_ne_one, RazborovSmolensky.rootCube_counting_obstruction, RazborovSmolensky.rootCube_function_card_of_ne_one}
 \difficulty{4}
 Let $K$ be a finite field, let $\omega \in K$ satisfy $\omega \neq 1$, and fix natural
 numbers $n, D, e, B$. Suppose the ball bound
@@ -281,10 +281,10 @@ some $f$ fails to be approximated in this sense by any such $Q$.
 \end{theorem}
 
 \begin{theorem}[No low-degree approximation of the coordinate product on the root cube]
-\lean{ACP.no_low_degree_rootProd_approx_concrete}
-\label{ACP.no_low_degree_rootProd_approx_concrete}
+\lean{RazborovSmolensky.no_low_degree_rootProd_approx_concrete}
+\label{RazborovSmolensky.no_low_degree_rootProd_approx_concrete}
 \leanok
-\uses{ACP.LowDegreeSupport, ACP.exists_squarefree_representative_on_rootCube, ACP.no_low_degree_rootProd_approx, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCube_counting_obstruction_lowDegreeSquarefree, ACP.squarefreePolynomial}
+\uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.exists_squarefree_representative_on_rootCube, RazborovSmolensky.no_low_degree_rootProd_approx, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCube_counting_obstruction_lowDegreeSquarefree, RazborovSmolensky.squarefreePolynomial}
 \difficulty{2}
 Let $K$ be a finite field and let $\omega \in K$ satisfy $\omega \neq 0$ and $\omega
 \neq 1$, and fix natural numbers $n, d, e, B$. Suppose that

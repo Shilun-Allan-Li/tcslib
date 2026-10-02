@@ -21,7 +21,9 @@ import Mathlib.RingTheory.IntegralDomain
 open Finset
 open scoped BigOperators
 
-namespace ACP
+namespace RazborovSmolensky
+
+open BoolCircuit
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
 
@@ -1177,4 +1179,4 @@ end CountingAndApproximation
 
 end ModqRoadmap
 
-end ACP
+end RazborovSmolensky

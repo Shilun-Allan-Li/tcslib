@@ -16,18 +16,18 @@ explicitly bounded size.
 
 ## Main definitions
 
-* `ACP.minterm v` — the `AND` of `n` literals that is true exactly at `v`.
-* `ACP.universalCircuit f` — the `OR` of the minterms of `f`'s satisfying
+* `BoolCircuit.minterm v` — the `AND` of `n` literals that is true exactly at `v`.
+* `BoolCircuit.universalCircuit f` — the `OR` of the minterms of `f`'s satisfying
   assignments.
 
 ## Main results
 
-* `ACP.universalCircuit_eval` — `universalCircuit f` computes `f`.
-* `ACP.universalCircuit_size` — its size is exactly `(n + 1)` times the number
+* `BoolCircuit.universalCircuit_eval` — `universalCircuit f` computes `f`.
+* `BoolCircuit.universalCircuit_size` — its size is exactly `(n + 1)` times the number
   of satisfying assignments, plus one.
-* `ACP.universalCircuit_size_le` — hence at most `2 ^ n * (n + 1) + 1`, a bound
-  `ACP.universalCircuit_const_true_size` shows is attained.
-* `ACP.exists_circuit_eval_eq_size_le` — the headline existence statement.
+* `BoolCircuit.universalCircuit_size_le` — hence at most `2 ^ n * (n + 1) + 1`, a bound
+  `BoolCircuit.universalCircuit_const_true_size` shows is attained.
+* `BoolCircuit.exists_circuit_eval_eq_size_le` — the headline existence statement.
 
 ## Divergences from [AB09, Claim 2.13]
 
@@ -73,9 +73,7 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-open BoolCircuit
-
-namespace ACP
+namespace BoolCircuit
 
 variable {n : ℕ}
 
@@ -176,4 +174,4 @@ theorem universalCircuit_const_true_size :
 theorem minterm_eval_zero (v x : Fin 0 → Bool) : (minterm v).eval x = true :=
   (minterm_eval_iff v x).mpr (funext fun i => i.elim0)
 
-end ACP
+end BoolCircuit
