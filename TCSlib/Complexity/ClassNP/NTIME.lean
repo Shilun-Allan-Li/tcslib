@@ -175,7 +175,31 @@ giving `HaltsWithin`; and some branch of that length is halted with output `[tru
 (`Turing.MultiTapeTM.indicator`) holds iff `x ∈ L` — for `x ∉ L` the output is
 `[false] ≠ [true]` on every branch, so no branch accepts. -/
 theorem DTIME_subset_NTIME (T : ℕ → ℕ) : DTIME T ⊆ NTIME T := by
-  sorry
+  classical
+  rintro L ⟨c, M, hM⟩
+  refine ⟨c, M.toFinNDTM, ?_⟩
+  intro x
+  obtain ⟨hhalt, hout⟩ := (M.computesInTime_iff _ _ _).mp (hM x)
+  have hrun (w : List Bool) :
+      M.toFinNDTM.tm.runWith w (M.toFinNDTM.tm.initCfg x) =
+        M.tm.runFrom (M.tm.initCfg x) w.length :=
+    M.tm.toNDTM_runWith w (M.tm.initCfg x)
+  constructor
+  · intro w hw
+    rw [hrun, hw]
+    exact hhalt
+  · constructor
+    · intro hx
+      refine ⟨List.replicate (c * T x.length) false, List.length_replicate .., ?_, ?_⟩
+      · rw [hrun, List.length_replicate]
+        exact hhalt
+      · rw [hrun, List.length_replicate, hout]
+        simp only [MultiTapeTM.indicator, if_pos hx]
+    · rintro ⟨w, hw, _, hwout⟩
+      rw [hrun, hw, hout] at hwout
+      by_contra hx
+      simp only [MultiTapeTM.indicator, if_neg hx] at hwout
+      cases hwout
 
 /-- If the time bound vanishes at even one input length, the class is empty, exactly as
 for `Complexity.DTIME_eq_empty_of_exists_zero`: the initial configuration is not
