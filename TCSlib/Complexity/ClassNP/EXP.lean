@@ -79,7 +79,15 @@ each `DTIME (n^c + 1)` sits inside `DTIME (2 · 2^(n^c)) ⊆ EXP` by
 `Complexity.DTIME.mono` and the constant-absorbing `Complexity.DTIME`
 definition. -/
 theorem P_subset_EXP : P ⊆ EXP := by
-  sorry
+  intro L hL
+  obtain ⟨c, hc⟩ := Set.mem_iUnion.mp hL
+  have hbound : ∀ n : ℕ, n ^ c + 1 ≤ 2 * 2 ^ n ^ c := by
+    intro n
+    have hn := Nat.lt_two_pow_self (n := n ^ c)
+    omega
+  obtain ⟨a, M, hM⟩ := DTIME.mono hbound hc
+  refine Set.mem_iUnion.mpr ⟨c, a * 2, M, fun x => ?_⟩
+  simpa only [Nat.mul_assoc] using hM x
 
 /-- **`NP ⊆ EXP`** [AB09, Claim 2.4]: brute-force certificate enumeration.
 

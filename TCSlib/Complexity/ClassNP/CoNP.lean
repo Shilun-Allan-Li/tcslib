@@ -70,7 +70,42 @@ intermediate bit off the real output. This is a new statement about the
 Chapter-1 class, flagged for audit (plan §6) and certified by the phase-1
 round (finding 10). -/
 theorem compl_mem_P {L : Language Bool} (h : L ∈ P) : Lᶜ ∈ P := by
-  sorry
+  classical
+  obtain ⟨C, d, M, hM⟩ := mem_P_iff.mp h
+  obtain ⟨N, a, hN⟩ := Turing.FinTM.computesFunInTime_ifEq [true] [false] [true]
+  have hfun : M.ComputesFunInTime (fun x => [Turing.MultiTapeTM.indicator L x])
+      (fun n => C * (n + 1) ^ d) := fun x => hM x
+  -- Buffer the decider's singleton output and apply the timed Boolean postprocessor.
+  obtain ⟨M', b, hcomp⟩ := Turing.FinTM.computesFunInTime_comp
+    hfun hN
+    (fun _ _ hle => Nat.mul_le_mul_left a (Nat.add_le_add_right hle 1))
+  have hdec : M'.DecidesInTime Lᶜ
+      (fun n => b * (C * (n + 1) ^ d + a * (C * (n + 1) ^ d + 1) + 1)) := by
+    intro x
+    by_cases hx : x ∈ L
+    · have hxc : x ∉ (Lᶜ : Language Bool) := fun hnot => hnot hx
+      simpa [Function.comp_apply, Turing.MultiTapeTM.indicator, hx, hxc] using hcomp x
+    · have hxc : x ∈ (Lᶜ : Language Bool) := hx
+      simpa [Function.comp_apply, Turing.MultiTapeTM.indicator, hx, hxc] using hcomp x
+  -- Absorb the linear postprocessor and composition overhead into the same degree.
+  refine mem_P_of_dtime_le
+    (T := fun n => b * (C * (n + 1) ^ d + a * (C * (n + 1) ^ d + 1) + 1))
+    ⟨1, M', by simpa only [one_mul] using hdec⟩
+    (b * (C + a * (C + 1) + 1) * 2 ^ d) d ?_
+  intro n
+  have hpow : 1 ≤ (n + 1) ^ d := Nat.pow_pos (Nat.succ_pos n)
+  have hsum : C * (n + 1) ^ d + 1 ≤ (C + 1) * (n + 1) ^ d := by
+    calc C * (n + 1) ^ d + 1 ≤ C * (n + 1) ^ d + (n + 1) ^ d :=
+        Nat.add_le_add_left hpow _
+      _ = (C + 1) * (n + 1) ^ d := by ring
+  calc b * (C * (n + 1) ^ d + a * (C * (n + 1) ^ d + 1) + 1)
+      ≤ b * (C * (n + 1) ^ d + a * ((C + 1) * (n + 1) ^ d) + (n + 1) ^ d) :=
+        Nat.mul_le_mul_left b
+          (Nat.add_le_add (Nat.add_le_add_left (Nat.mul_le_mul_left a hsum) _) hpow)
+    _ = b * (C + a * (C + 1) + 1) * (n + 1) ^ d := by ring
+    _ ≤ b * (C + a * (C + 1) + 1) * (2 ^ d * (n ^ d + 1)) :=
+        Nat.mul_le_mul_left _ (succ_pow_le n d)
+    _ = b * (C + a * (C + 1) + 1) * 2 ^ d * (n ^ d + 1) := by ring
 
 /-- **The ∀-certificate characterization of coNP** [AB09, Definition 2.20,
 equivalence per Exercise 2.24]: `L ∈ coNP` iff there are a certificate
@@ -88,14 +123,28 @@ theorem mem_coNP_iff_forall {L : Language Bool} :
     L ∈ coNP ↔ ∃ (C c : ℕ) (V : Language Bool), V ∈ P ∧
       ∀ x : List Bool, x ∈ L ↔
         ∀ u : List Bool, u.length = C * (x.length + 1) ^ c → x ++ u ∈ V := by
-  sorry
+  classical
+  constructor
+  · rintro ⟨C, c, V, hV, hmem⟩
+    refine ⟨C, c, Vᶜ, compl_mem_P hV, fun x => ?_⟩
+    have hx : x ∉ L ↔ ∃ u : List Bool,
+        u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V := hmem x
+    change x ∈ L ↔ ∀ u : List Bool,
+      u.length = C * (x.length + 1) ^ c → x ++ u ∉ V
+    simpa only [not_not, not_exists, not_and] using not_congr hx
+  · rintro ⟨C, c, V, hV, hmem⟩
+    refine ⟨C, c, Vᶜ, compl_mem_P hV, fun x => ?_⟩
+    change x ∉ L ↔ ∃ u : List Bool,
+      u.length = C * (x.length + 1) ^ c ∧ x ++ u ∉ V
+    simpa only [not_forall, exists_prop] using not_congr (hmem x)
 
 /-- **`P ⊆ NP ∩ coNP`** [AB09, Exercise 2.23].
 
 **Proof sketch.** `P ⊆ NP` is `Complexity.P_subset_NP`; for the `coNP` half,
 `L ∈ P` gives `Lᶜ ∈ P ⊆ NP` by `Complexity.compl_mem_P`, i.e. `L ∈ coNP`. -/
 theorem P_subset_NP_inter_coNP : P ⊆ NP ∩ coNP := by
-  sorry
+  intro L hL
+  exact ⟨P_subset_NP hL, P_subset_NP (compl_mem_P hL)⟩
 
 /-- **If `P = NP` then `NP = coNP`** [AB09, Exercise 2.25].
 
@@ -103,6 +152,14 @@ theorem P_subset_NP_inter_coNP : P ⊆ NP ∩ coNP := by
 by `Complexity.compl_mem_P`, and symmetrically `L ∈ coNP → Lᶜ ∈ NP = P → L ∈ P =
 NP` by closing under complement once more. -/
 theorem NP_eq_coNP_of_P_eq_NP (h : P = NP) : NP = coNP := by
-  sorry
+  apply Set.Subset.antisymm
+  · intro L hL
+    change Lᶜ ∈ NP
+    rw [← h] at hL ⊢
+    exact compl_mem_P hL
+  · intro L hL
+    change Lᶜ ∈ NP at hL
+    rw [← h] at hL ⊢
+    simpa only [compl_compl] using compl_mem_P hL
 
 end Complexity

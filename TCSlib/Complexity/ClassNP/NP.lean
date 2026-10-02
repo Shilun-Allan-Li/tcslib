@@ -91,7 +91,9 @@ polynomial time is verifiable with empty certificates.
 membership equivalence is the identity. The audit confirmed this covers
 `L = ∅`, `L = univ`, and `x = []` (finding table, question 2). -/
 theorem P_subset_NP : P ⊆ NP := by
-  sorry
+  intro L hL
+  refine ⟨0, 0, L, hL, fun x => ?_⟩
+  simp only [zero_mul, List.length_eq_zero_iff, exists_eq_left, List.append_nil]
 
 /-- **Bounded-length paired certificates define the same class**
 [AB09, Exercise 2.1, repaired per the phase-1 audit]: `L ∈ NP` iff there are
