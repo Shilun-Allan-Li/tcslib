@@ -141,7 +141,26 @@ halted (all-branch halting at the smaller budget), and `Turing.NDTM.runWith_appe
 `w = w.take _ ++ w.drop _` with `Turing.NDTM.runWith_of_halt` shows the full run equals
 the truncated one, so the truncated word already accepts. -/
 theorem NTIME.mono {T₁ T₂ : ℕ → ℕ} (h : ∀ n, T₁ n ≤ T₂ n) : NTIME T₁ ⊆ NTIME T₂ := by
-  sorry
+  rintro L ⟨c, N, hN⟩
+  refine ⟨c, N, ?_⟩
+  intro x
+  obtain ⟨hhalt, haccept⟩ := hN x
+  have hle := Nat.mul_le_mul_left c (h x.length)
+  refine ⟨hhalt.mono hle, ?_⟩
+  constructor
+  · intro hx
+    exact (haccept.mp hx).mono hle
+  · rintro ⟨w, hw, _, hout⟩
+    apply haccept.mpr
+    have hlen : (w.take (c * T₁ x.length)).length = c * T₁ x.length :=
+      List.length_take_of_le (hle.trans_eq hw.symm)
+    have hprefix := hhalt (w.take (c * T₁ x.length)) hlen
+    refine ⟨w.take (c * T₁ x.length), hlen, hprefix, ?_⟩
+    have hrun := NDTM.runWith_append (tm := N.tm)
+      (w.take (c * T₁ x.length)) (w.drop (c * T₁ x.length)) (N.tm.initCfg x)
+    rw [List.take_append_drop, NDTM.runWith_of_halt _ hprefix] at hrun
+    rw [← hrun]
+    exact hout
 
 /-- **Deterministic time is nondeterministic time** [AB09, §2.1.2]: a TM is an NDTM
 that ignores its choices, so `DTIME T ⊆ NTIME T`.
