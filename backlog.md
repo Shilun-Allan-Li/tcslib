@@ -133,9 +133,13 @@ uncomputability chapter.
   Ex 2.1/HALT + `TMSAT` (2A–2D, 11), E3 padding + SAT track + snapshot
   locality (3A–3D, 14), E4 the Cook-Levin summit + TAUTOLOGY dual (4A–4B,
   6), E5 closure. Padding moved E2 → E3 (recorded refinement);
-  `EXP_subset_NEXP` 1C → 3A (recorded amendment). **E1 briefs issued**:
-  `briefs/ch2-epoch1-batch{A,B,C,D}.md` (27 targets, 8/6/6/7). Next:
-  dispatch the four batch agents, then E1 integration and the epoch audit.
+  `EXP_subset_NEXP` 1C → 3A (recorded amendment). **E1 integrated 2026-10-02**
+  (27/27 targets filled, nine agent commits, freeze audit clean, 32
+  admissions remain, zero `sorryAx` across all fills); epoch-1 gate awaits
+  `audits/ch2-epoch1-findings.md`. Deferred from E1: promotion of 1D's
+  `foldr_max_le_of_forall` to a shared list utility (disposition D3).
+  Next after the gate: E2 briefs (2A-2D; axiom wording "at most the
+  standard triple" per disposition D1).
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —
