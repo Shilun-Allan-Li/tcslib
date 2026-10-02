@@ -14,7 +14,7 @@ import TCSlib.Complexity.CircuitComplexity.Basic
 ## Main definitions
 
 * `BoolCircuit.TreeCircuitFamily` — one `BoolCircuit.Circuit n` per input length,
-  with `language`, `IsPolySize`, `HasFaninTwo` and `HasLogDepth`.
+  with `language`, `IsPolySize`, `HasFaninTwo` and `HasPolylogDepth`.
 * `Language.InNC` — [AB09, Def 6.24], `NC^d`; `BoolCircuit.NC` — `⋃_{i ≥ 1} NC^i`.
 * `Language.InAC` — [AB09, Def 6.25], `AC^d`; `BoolCircuit.AC` — `⋃_{i ≥ 0} AC^i`.
 * `BoolCircuit.Circuit.toBinary` — rebuilds every unbounded gate as a balanced
@@ -118,8 +118,8 @@ def IsPolySize : Prop :=
 def HasFaninTwo : Prop :=
   ∀ n, (C.circuit n).maxFanin ≤ 2
 
-/-- The family has depth `O(log^d n)`. -/
-def HasLogDepth (d : ℕ) : Prop :=
+/-- The family has polylogarithmic depth `O(log^d n)` (constant depth when `d = 0`). -/
+def HasPolylogDepth (d : ℕ) : Prop :=
   ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d
 
 end TreeCircuitFamily
@@ -130,12 +130,12 @@ end BoolCircuit
 [AB09, Def 6.24] -/
 def Language.InNC (d : ℕ) (L : Language Bool) : Prop :=
   ∃ C : BoolCircuit.TreeCircuitFamily,
-    C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasLogDepth d ∧ C.language = L
+    C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L
 
 /-- `L ∈ AC^d`: as `NC^d`, but gates may have unbounded fan-in.  [AB09, Def 6.25] -/
 def Language.InAC (d : ℕ) (L : Language Bool) : Prop :=
   ∃ C : BoolCircuit.TreeCircuitFamily,
-    C.IsPolySize ∧ C.HasLogDepth d ∧ C.language = L
+    C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L
 
 namespace BoolCircuit
 
