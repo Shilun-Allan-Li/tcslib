@@ -132,8 +132,10 @@ uncomputability chapter.
   mathematics (batches 1A–1D, 28 targets), E2 enumerator + compilations +
   Ex 2.1/HALT + `TMSAT` (2A–2D, 11), E3 padding + SAT track + snapshot
   locality (3A–3D, 14), E4 the Cook-Levin summit + TAUTOLOGY dual (4A–4B,
-  6), E5 closure. Padding moved E2 → E3 (recorded refinement). Next: the
-  E1 briefs (1A–1D) in `briefs/`.
+  6), E5 closure. Padding moved E2 → E3 (recorded refinement);
+  `EXP_subset_NEXP` 1C → 3A (recorded amendment). **E1 briefs issued**:
+  `briefs/ch2-epoch1-batch{A,B,C,D}.md` (27 targets, 8/6/6/7). Next:
+  dispatch the four batch agents, then E1 integration and the epoch audit.
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —
