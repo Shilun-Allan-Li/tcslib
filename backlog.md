@@ -135,9 +135,12 @@ uncomputability chapter.
   6), E5 closure. Padding moved E2 → E3 (recorded refinement);
   `EXP_subset_NEXP` 1C → 3A (recorded amendment). **E1 integrated 2026-10-02**
   (27/27 targets filled, nine agent commits, freeze audit clean, 32
-  admissions remain, zero `sorryAx` across all fills); epoch-1 gate awaits
-  `audits/ch2-epoch1-findings.md`. Deferred from E1: promotion of 1D's
-  `foldr_max_le_of_forall` to a shared list utility (disposition D3).
+  admissions remain, zero `sorryAx` across all fills); **epoch-1 gate CLOSED**
+  2026-10-02, single round, 0 blockers/majors
+  (`audits/ch2-epoch1-resolutions.md`); 27/59 proved, 32 remain.
+  Deferred from E1: promotion of 1D's `foldr_max_le_of_forall` **and its
+  companion `le_foldr_max_of_mem`** (auditor suggestion) to a shared list
+  utility (disposition D3).
   Next after the gate: E2 briefs (2A-2D; axiom wording "at most the
   standard triple" per disposition D1).
 * **Audit-mandated fill-brief inheritances** (each brief must carry these

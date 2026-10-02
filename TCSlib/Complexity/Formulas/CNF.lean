@@ -198,7 +198,8 @@ private theorem falsifyingCNF_length {ℓ : ℕ} (f : (Fin ℓ → Bool) → Boo
     (Finset.card_filter_le (Finset.univ : Finset (Fin ℓ → Bool))
       (fun v => f v = false))
 
-/-- Every truth-table clause has exactly one literal per prescribed variable. -/
+/-- Every truth-table clause has width at most the prescribed arity; its
+constructed length is exactly that arity. -/
 private theorem falsifyingCNF_width {ℓ : ℕ} (f : (Fin ℓ → Bool) → Bool) :
     (falsifyingCNF f).WidthAtMost ℓ := by
   intro C hC
