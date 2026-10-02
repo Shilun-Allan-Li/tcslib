@@ -63,7 +63,7 @@ def PolyTimeReducible (L L' : Language Bool) : Prop :=
 **Proof sketch.** `Complexity.polyTimeComputable_id` with the trivial membership
 equivalence. -/
 theorem PolyTimeReducible.refl (L : Language Bool) : L ≤ₚ L := by
-  sorry
+  exact ⟨id, polyTimeComputable_id, fun _ => Iff.rfl⟩
 
 /-- **Karp reducibility is transitive** [AB09, Theorem 2.8.1].
 
@@ -72,7 +72,9 @@ theorem PolyTimeReducible.refl (L : Language Bool) : L ≤ₚ L := by
 the polynomial-composition observation of [AB09]'s proof lives inside `comp`. -/
 theorem PolyTimeReducible.trans {L L' L'' : Language Bool}
     (h : L ≤ₚ L') (h' : L' ≤ₚ L'') : L ≤ₚ L'' := by
-  sorry
+  obtain ⟨f, hf, hL⟩ := h
+  obtain ⟨g, hg, hL'⟩ := h'
+  exact ⟨g ∘ f, hg.comp hf, fun x => (hL x).trans (hL' (f x))⟩
 
 /-- **`P` is closed downward under `≤ₚ`** [AB09, Figure 2.1 and the remark after
 Definition 2.7]: if `L ≤ₚ L'` and `L' ∈ P` then `L ∈ P`.
@@ -86,10 +88,36 @@ has polynomially bounded length
 (`Complexity.PolyTimeComputable.output_length_le`), so the decider's budget on
 it is polynomial in `|x|` by monotonicity of the explicit polynomial, and the
 composite decides `L` since `x ∈ L ↔ f x ∈ L'`; return through
-`Complexity.mem_P_of_dtime_le`. -/
+`Complexity.mem_P_of_dtime_le`.
+
+The implementation packages the decider as a polynomial-time computable
+singleton-indicator function and applies `PolyTimeComputable.comp`, whose
+proof invokes the timed interface above with its intermediate-output bound.
+Finally `succ_pow_le` converts the resulting `(n+1)^d` budget to the
+`n^d+1` form consumed by `mem_P_of_dtime_le`. -/
 theorem mem_P_of_polyTimeReducible {L L' : Language Bool}
     (h : L ≤ₚ L') (h' : L' ∈ P) : L ∈ P := by
-  sorry
+  classical
+  obtain ⟨f, hf, hL⟩ := h
+  obtain ⟨C, c, M, hM⟩ := mem_P_iff.mp h'
+  have hg : PolyTimeComputable (fun y => [MultiTapeTM.indicator (L' : Set (List Bool)) y]) :=
+    ⟨M, C, c, hM⟩
+  obtain ⟨S, A, d, hS⟩ := hg.comp hf
+  have hdec : S.DecidesInTime L (fun n => A * (n + 1) ^ d) := by
+    intro x
+    have hi : MultiTapeTM.indicator (L : Set (List Bool)) x =
+        MultiTapeTM.indicator (L' : Set (List Bool)) (f x) := by
+      simp only [MultiTapeTM.indicator, hL x]
+    simpa only [Function.comp_apply, hi] using hS x
+  refine mem_P_of_dtime_le (T := fun n => A * (n + 1) ^ d)
+    ⟨1, S, ?_⟩ (A * 2 ^ d) d ?_
+  · intro x
+    simpa only [Nat.one_mul] using hdec x
+  · intro n
+    calc
+      A * (n + 1) ^ d ≤ A * (2 ^ d * (n ^ d + 1)) :=
+        Nat.mul_le_mul_left A (succ_pow_le n d)
+      _ = A * 2 ^ d * (n ^ d + 1) := (Nat.mul_assoc _ _ _).symm
 
 /-- **`NP`-hardness** [AB09, Definition 2.7]: every `NP` language Karp-reduces to
 `L`. -/
@@ -107,7 +135,9 @@ def NPComplete (L : Language Bool) : Prop :=
 `Complexity.mem_P_of_polyTimeReducible`. -/
 theorem P_eq_NP_of_NPHard_mem_P {L : Language Bool}
     (hL : NPHard L) (h : L ∈ P) : P = NP := by
-  sorry
+  apply Set.Subset.antisymm P_subset_NP
+  intro L' hL'
+  exact mem_P_of_polyTimeReducible (hL L' hL') h
 
 /-- **An `NP`-complete language is in `P` iff `P = NP`** [AB09, Theorem 2.8.3].
 
@@ -115,7 +145,11 @@ theorem P_eq_NP_of_NPHard_mem_P {L : Language Bool}
 half; (⇐) rewrites `L ∈ NP` along `P = NP`. -/
 theorem NPComplete.mem_P_iff {L : Language Bool} (hL : NPComplete L) :
     L ∈ P ↔ P = NP := by
-  sorry
+  constructor
+  · exact P_eq_NP_of_NPHard_mem_P hL.2
+  · intro h
+    rw [h]
+    exact hL.1
 
 /-- **`HALT` is `NP`-hard** [AB09, Exercise 2.8] — for **every** representation
 scheme, effective or not: the reduction embeds one *fixed* code, so only
