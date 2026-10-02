@@ -95,6 +95,234 @@ theorem P_subset_NP : P ⊆ NP := by
   refine ⟨0, 0, L, hL, fun x => ?_⟩
   simp only [zero_mul, List.length_eq_zero_iff, exists_eq_left, List.append_nil]
 
+
+/-- Remove the last `true` marker and the following false suffix. No marker
+means failure, so stripping cannot cross the certificate boundary. -/
+private def stripCertificate : List Bool → Option (List Bool)
+  | [] => none
+  | b :: v => match stripCertificate v with
+    | some u => some (b :: u)
+    | none => if b then some [] else none
+
+/-- An all-false certificate region contains no marker. -/
+private lemma stripCertificate_false (k : ℕ) :
+    stripCertificate (List.replicate k false) = none := by
+  induction k with
+  | zero => rfl
+  | succ k ih => simp [List.replicate_succ, stripCertificate, ih]
+
+/-- Stripping a padded certificate recovers the original certificate, including
+the empty certificate and certificates that themselves contain `true`. -/
+private lemma stripCertificate_pad (u : List Bool) (k : ℕ) :
+    stripCertificate (u ++ true :: List.replicate k false) = some u := by
+  induction u with
+  | nil => simp [stripCertificate, stripCertificate_false]
+  | cons b u ih => simp [stripCertificate, ih]
+
+/-- Successful stripping identifies precisely the last-true decomposition.
+
+**Proof sketch.** Induct from the right through the recursive call. A marker in
+the tail survives, with the head prepended; otherwise the head must be `true`
+and the tail must be all false. The simultaneous no-marker assertion supplies
+that latter fact. -/
+private lemma stripCertificate_spec (v : List Bool) :
+    (stripCertificate v = none ↔ v = List.replicate v.length false) ∧
+    (∀ u, stripCertificate v = some u ↔
+      ∃ k, v = u ++ true :: List.replicate k false) := by
+  induction v with
+  | nil => simp [stripCertificate]
+  | cons b v ih =>
+    cases hv : stripCertificate v with
+    | none =>
+      have hfalse := ih.1.mp hv
+      constructor
+      · constructor
+        · intro h
+          cases b with
+          | false => simpa [List.replicate_succ] using congrArg (false :: ·) hfalse
+          | true => simp [stripCertificate, hv] at h
+        · intro h
+          rw [h]
+          exact stripCertificate_false _
+      · intro u
+        constructor
+        · intro h
+          cases b with
+          | false => simp [stripCertificate, hv] at h
+          | true =>
+            have hu : u = [] := by simpa [stripCertificate, hv] using h.symm
+            subst u
+            exact ⟨v.length, by simpa using congrArg (true :: ·) hfalse⟩
+        · rintro ⟨j, hj⟩
+          rw [hj]
+          exact stripCertificate_pad u j
+    | some w =>
+      obtain ⟨k, hk⟩ := (ih.2 w).mp hv
+      constructor
+      · constructor
+        · simp [stripCertificate, hv]
+        · intro heq
+          have : stripCertificate (b :: v) = none := by
+            rw [heq]; exact stripCertificate_false _
+          simp [stripCertificate, hv] at this
+      · intro u
+        constructor
+        · intro h
+          have hu : b :: w = u := by simpa [stripCertificate, hv] using h
+          subst u
+          exact ⟨k, by simp [hk]⟩
+        · rintro ⟨j, hj⟩
+          rw [hj]
+          exact stripCertificate_pad u j
+
+/-- The padded total length is strictly increasing, even at degree zero. -/
+private lemma certificateTotal_strictMono (C c : ℕ) :
+    StrictMono (fun n : ℕ => n + (C + 1) * (n + 1) ^ c) := by
+  intro m n h
+  dsimp only
+  have hpow := Nat.pow_le_pow_left (Nat.add_le_add_right (Nat.le_of_lt h) 1) c
+  have hmul := Nat.mul_le_mul_left (C + 1) hpow
+  omega
+
+/-- The repaired exact width leaves room for the mandatory marker. -/
+private lemma certificate_room (C c n : ℕ) :
+    C * (n + 1) ^ c + 1 ≤ (C + 1) * (n + 1) ^ c := by
+  have h := Nat.one_le_pow c (n + 1) (Nat.succ_pos n)
+  rw [Nat.add_mul, Nat.one_mul]
+  omega
+
+/-- Bounded search for the unique legal split. Failure remains `none`. -/
+private def certificateSplit (C c m : ℕ) : Option ℕ :=
+  (List.range (m + 1)).find? fun n => n + (C + 1) * (n + 1) ^ c == m
+
+/-- The bounded search succeeds exactly at a solution of the length equation.
+
+**Proof sketch.** Any solution is at most the total length, hence lies in the
+search range. A failed search would reject that very solution; a successful
+search returns a solution, and strict monotonicity makes it unique. -/
+private lemma certificateSplit_spec (C c m n : ℕ) :
+    certificateSplit C c m = some n ↔ n + (C + 1) * (n + 1) ^ c = m := by
+  constructor
+  · intro h
+    have hh := List.find?_some (p := fun i => i + (C + 1) * (i + 1) ^ c == m) h
+    simpa only [beq_iff_eq] using hh
+  · intro h
+    have hn : n ∈ List.range (m + 1) := by simp only [List.mem_range]; omega
+    cases hs : certificateSplit C c m with
+    | none =>
+      have hf := (List.find?_eq_none.mp hs) n hn
+      simp [h] at hf
+    | some j =>
+      have hj : j + (C + 1) * (j + 1) ^ c = m :=
+        by
+          have hh := List.find?_some (p := fun i => i + (C + 1) * (i + 1) ^ c == m) hs
+          simpa only [beq_iff_eq] using hh
+      have : j = n := (certificateTotal_strictMono C c).injective (hj.trans h.symm)
+      simp [this]
+
+/-- In particular the empty input has no legal split. -/
+private lemma certificateSplit_zero (C c : ℕ) : certificateSplit C c 0 = none := by
+  cases h : certificateSplit C c 0 with
+  | none => rfl
+  | some n =>
+    have hn := (certificateSplit_spec C c 0 n).mp h
+    have hr := certificate_room C c n
+    omega
+
+/-- The forward verifier parses the audited pairing, enforces the original
+exact width, and consults the old verifier on the concatenated word. -/
+private def pairedVerifier (C c : ℕ) (V : Language Bool) : Language Bool :=
+  {y | ∃ x u, pairDecode y = some (x, u) ∧
+    u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+
+/-- On an encoded pair, the forward verifier imposes exactly the prescribed
+length test and the old verification condition. -/
+private lemma pairedVerifier_pair (C c : ℕ) (V : Language Bool) (x u : List Bool) :
+    pairEncode x u ∈ pairedVerifier C c V ↔
+      u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V := by
+  change (∃ a b, pairDecode (pairEncode x u) = some (a, b) ∧
+    b.length = C * (a.length + 1) ^ c ∧ a ++ b ∈ V) ↔ _
+  simp [pairDecode_pairEncode]
+
+/-- A malformed pair is rejected before consulting the old verifier. -/
+private lemma pairedVerifier_malformed (C c : ℕ) (V : Language Bool) (y : List Bool)
+    (h : pairDecode y = none) : y ∉ pairedVerifier C c V := by
+  rintro ⟨x, u, hp, -⟩
+  rw [h] at hp
+  cases hp
+
+/-- The reverse verifier rejects a missing length split or marker, rechecks the
+original bound after stripping, and consults the old paired verifier. -/
+private def paddedVerifier (C c : ℕ) (V : Language Bool) : Language Bool :=
+  {y | ∃ n u, certificateSplit C c y.length = some n ∧
+    stripCertificate (y.drop n) = some u ∧
+    u.length ≤ C * (n + 1) ^ c ∧ pairEncode (y.take n) u ∈ V}
+
+/-- A missing solution of the length equation is rejection, not a default
+split. In particular this covers the empty input by `certificateSplit_zero`. -/
+private lemma paddedVerifier_no_split (C c : ℕ) (V : Language Bool) (y : List Bool)
+    (h : certificateSplit C c y.length = none) : y ∉ paddedVerifier C c V := by
+  rintro ⟨n, u, hn, -⟩
+  rw [h] at hn
+  cases hn
+
+/-- For the prescribed exact width the search recovers precisely the input
+boundary; no marker in the input can be mistaken for a certificate marker. -/
+private lemma paddedVerifier_append (C c : ℕ) (V : Language Bool) (x v : List Bool)
+    (hv : v.length = (C + 1) * (x.length + 1) ^ c) :
+    x ++ v ∈ paddedVerifier C c V ↔ ∃ u, stripCertificate v = some u ∧
+      u.length ≤ C * (x.length + 1) ^ c ∧ pairEncode x u ∈ V := by
+  have hs : certificateSplit C c (x ++ v).length = some x.length := by
+    apply (certificateSplit_spec _ _ _ _).mpr
+    simp only [List.length_append, hv]
+  change (∃ n u, certificateSplit C c (x ++ v).length = some n ∧
+    stripCertificate ((x ++ v).drop n) = some u ∧
+    u.length ≤ C * (n + 1) ^ c ∧ pairEncode ((x ++ v).take n) u ∈ V) ↔ _
+  rw [hs]
+  simp
+
+/-- An all-false region is rejected even when the input itself contains true
+bits: the strip function is applied only after the recovered boundary. -/
+private lemma paddedVerifier_no_marker (C c : ℕ) (V : Language Bool) (x : List Bool) :
+    x ++ List.replicate ((C + 1) * (x.length + 1) ^ c) false ∉ paddedVerifier C c V := by
+  rw [paddedVerifier_append C c V x _ (List.length_replicate ..)]
+  simp only [stripCertificate_false, reduceCtorEq, false_and, exists_false, not_false_eq_true]
+
+/-- Even a correctly marked certificate that fits in the enlarged exact
+region is rejected if its stripped witness exceeds the original bound. -/
+private lemma paddedVerifier_too_long (C c : ℕ) (V : Language Bool) (x u : List Bool)
+    (k : ℕ) (hv : (u ++ true :: List.replicate k false).length =
+      (C + 1) * (x.length + 1) ^ c) (hu : C * (x.length + 1) ^ c < u.length) :
+    x ++ (u ++ true :: List.replicate k false) ∉ paddedVerifier C c V := by
+  rw [paddedVerifier_append C c V x _ hv]
+  rintro ⟨u', hs, hu', -⟩
+  rw [stripCertificate_pad] at hs
+  have he : u = u' := Option.some.inj hs
+  subst u'
+  exact Nat.not_le_of_lt hu hu'
+
+/-- Padding and stripping give the exact witness equivalence; the runtime
+obligations are separate from this purely semantic statement. -/
+private lemma paddedVerifier_witness (C c : ℕ) (V : Language Bool) (x : List Bool) :
+    (∃ v, v.length = (C + 1) * (x.length + 1) ^ c ∧ x ++ v ∈ paddedVerifier C c V) ↔
+    ∃ u, u.length ≤ C * (x.length + 1) ^ c ∧ pairEncode x u ∈ V := by
+  constructor
+  · rintro ⟨v, hv, h⟩
+    obtain ⟨u, -, hu, hV⟩ := (paddedVerifier_append C c V x v hv).mp h
+    exact ⟨u, hu, hV⟩
+  · rintro ⟨u, hu, hV⟩
+    let k := (C + 1) * (x.length + 1) ^ c - (u.length + 1)
+    have hroom : u.length + 1 ≤ (C + 1) * (x.length + 1) ^ c :=
+      (Nat.add_le_add_right hu 1).trans (certificate_room C c x.length)
+    have hv : (u ++ true :: List.replicate k false).length =
+        (C + 1) * (x.length + 1) ^ c := by
+      simp only [List.length_append, List.length_cons, List.length_replicate]
+      dsimp [k]
+      omega
+    refine ⟨_, hv, (paddedVerifier_append C c V x _ hv).mpr ?_⟩
+    exact ⟨u, stripCertificate_pad u k, hu, hV⟩
+
+
 /-- **Bounded-length paired certificates define the same class**
 [AB09, Exercise 2.1, repaired per the phase-1 audit]: `L ∈ NP` iff there are
 `C`, `c`, and a verifier `V ∈ P` with
@@ -131,7 +359,24 @@ cases). -/
 theorem mem_NP_iff_exists_length_le {L : Language Bool} :
     L ∈ NP ↔ ∃ (C c : ℕ) (V : Language Bool), V ∈ P ∧
       ∀ x : List Bool, x ∈ L ↔
-        ∃ u : List Bool, u.length ≤ C * (x.length + 1) ^ c ∧ pairEncode x u ∈ V := by
-  sorry
+        ∃ u : List Bool, u.length ≤ C * (x.length + 1) ^ c ∧ pairEncode x u ∈ V  := by
+  constructor
+  · rintro ⟨C, c, V, hV, hL⟩
+    refine ⟨C, c, pairedVerifier C c V, ?_, fun x => ?_⟩
+    · -- Remaining machine obligation: aligned parsing, the explicit polynomial
+      -- length-equality test, concatenation, and timed execution of V's decider.
+      sorry
+    · rw [hL x]
+      constructor
+      · rintro ⟨u, hu, hVu⟩
+        exact ⟨u, hu.le, (pairedVerifier_pair C c V x u).mpr ⟨hu, hVu⟩⟩
+      · rintro ⟨u, -, hVu⟩
+        exact ⟨u, (pairedVerifier_pair C c V x u).mp hVu⟩
+  · rintro ⟨C, c, V, hV, hL⟩
+    refine ⟨C + 1, c, paddedVerifier C c V, ?_, fun x => ?_⟩
+    · -- Remaining machine obligation: bounded split search, last-true stripping,
+      -- the original-bound test, pairing, and timed execution of V's decider.
+      sorry
+    · exact (hL x).trans (paddedVerifier_witness C c V x).symm
 
 end Complexity

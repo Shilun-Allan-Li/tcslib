@@ -151,6 +151,247 @@ theorem NPComplete.mem_P_iff {L : Language Bool} (hL : NPComplete L) :
     rw [h]
     exact hL.1
 
+
+/-- Encode the simulated state and remembered bit. The inner `none` is a live
+loop state, distinct from the outer `none` that denotes actual halting. -/
+private def acceptState {Q : Type} (q : Option Q) (b : Bool) : Option (Option (Q × Bool)) :=
+  match q with
+  | some q => some (some (q, b))
+  | none => if b then none else some none
+
+/-- Update the bit before redirecting the successor state. In particular a bit
+emitted by a halting transition is remembered. Physical output is suppressed. -/
+private def acceptAction {k : ℕ} {Q : Type} (a : Action k Bool Q) (b : Bool) :
+    Action k Bool (Option (Q × Bool)) :=
+  ⟨a.inputTape, a.workTapes, none, acceptState a.state (a.output.getD b)⟩
+
+/-- The halting recognizer associated to a Boolean-output decider. It uses the
+same work tapes and either simulates a source state or stays in its live loop. -/
+private def acceptTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k
+  State := Option (M.State × Bool)
+  tm :=
+    { q₀ := some (M.tm.q₀, false)
+      tr := fun q inp work => match q with
+        | none => ⟨0, fun _ => (none, 0), none, some none⟩
+        | some (q, b) => acceptAction (M.tm.tr q inp work) b }
+
+/-- Configuration correspondence: the finite register holds the last emitted
+bit (initially false), while the recognizer's real output stays empty. -/
+private def acceptCfg (M : FinTM Bool) {x : List Bool} (cfg : Cfg M.k Bool M.State x) :
+    Cfg (acceptTM M).k Bool (acceptTM M).State x :=
+  ⟨acceptState cfg.state (cfg.output.getLast?.getD false), cfg.inputPos,
+    cfg.workTapes, cfg.workTapePos, []⟩
+
+/-- A live loop configuration never changes and therefore never halts. -/
+private lemma acceptTM_loop (M : FinTM Bool) {x : List Bool}
+    (cfg : Cfg (acceptTM M).k Bool (acceptTM M).State x) (h : cfg.state = some none)
+    (t : ℕ) : (acceptTM M).tm.runFrom cfg t = cfg := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih]
+    apply Cfg.ext <;> simp [MultiTapeTM.step, h, acceptTM, Action.apply]
+
+/-- Capturing an action agrees with capturing its resulting configuration. -/
+private lemma acceptCfg_apply (M : FinTM Bool) {x : List Bool}
+    (cfg : Cfg M.k Bool M.State x) (a : Action M.k Bool M.State) :
+    (acceptAction a (cfg.output.getLast?.getD false)).apply (acceptCfg M cfg) =
+      acceptCfg M (a.apply cfg) := by
+  have hlast : (cfg.output ++ a.output.toList).getLast?.getD false =
+      a.output.getD (cfg.output.getLast?.getD false) := by
+    cases a.output <;> simp
+  apply Cfg.ext
+  · dsimp only [acceptCfg, acceptAction, Action.apply]
+    rw [hlast]
+  · rfl
+  · rfl
+  · rfl
+  · rfl
+
+/-- The control transform commutes with every step, including a halt that
+emits the decision bit. Rejection maps to the stationary live loop. -/
+private lemma acceptCfg_step (M : FinTM Bool) {x : List Bool}
+    (cfg : Cfg M.k Bool M.State x) :
+    (acceptTM M).tm.step (acceptCfg M cfg) = acceptCfg M (M.tm.step cfg) := by
+  cases hs : cfg.state with
+  | none =>
+    rw [MultiTapeTM.step_of_halt hs]
+    cases hb : cfg.output.getLast?.getD false with
+    | false =>
+      exact acceptTM_loop M (acceptCfg M cfg) (by simp [acceptCfg, acceptState, hs, hb]) 1
+    | true =>
+      exact MultiTapeTM.step_of_halt (by simp [acceptCfg, acceptState, hs, hb])
+  | some q =>
+    have hi : (acceptCfg M cfg).inputSymbol = cfg.inputSymbol := rfl
+    have hw : (acceptCfg M cfg).workTapeSymbols = cfg.workTapeSymbols := rfl
+    simp only [MultiTapeTM.step, acceptCfg, acceptState, hs]
+    change (acceptAction (M.tm.tr q (acceptCfg M cfg).inputSymbol
+      (acceptCfg M cfg).workTapeSymbols) (cfg.output.getLast?.getD false)).apply
+        (acceptCfg M cfg) = _
+    rw [hi, hw]
+    exact acceptCfg_apply M cfg _
+
+/-- Initialized runs commute with the control transformation, by the step
+correspondence. This is the run invariant for the HALT reduction. -/
+private lemma acceptTM_run (M : FinTM Bool) (x : List Bool) (t : ℕ) :
+    (acceptTM M).tm.runFrom ((acceptTM M).tm.initCfg x) t =
+      acceptCfg M (M.tm.runFrom (M.tm.initCfg x) t) := by
+  have hi : (acceptTM M).tm.initCfg x = acceptCfg M (M.tm.initCfg x) := rfl
+  rw [hi]
+  exact MultiTapeTM.runFrom_comm_of_step (acceptCfg M) (acceptCfg_step M)
+    (M.tm.initCfg x) t
+
+/-- The transformed machine halts exactly when the total source decider's bit
+is true. This lemma assumes totality only for the source decider, never for the
+deliberately divergent result.
+
+**Proof sketch.** The run invariant says a transformed run can halt only when
+the source has halted and its last bit is true. Determinism identifies that
+completed output with the source decider's singleton output. Conversely, at a
+completed accepting run the invariant immediately gives transformed halting. -/
+private lemma acceptTM_halts_iff (M : FinTM Bool) (p : List Bool → Bool)
+    (hM : M.Computes fun x => [p x]) (x : List Bool) :
+    (∃ w t, (acceptTM M).ComputesInTime x w t) ↔ p x = true := by
+  constructor
+  · rintro ⟨w, t, ht⟩
+    have hhalt := ((FinTM.computesInTime_iff _ _ _ _).mp ht).1
+    rw [acceptTM_run] at hhalt
+    change acceptState (M.tm.runFrom (M.tm.initCfg x) t).state
+      ((M.tm.runFrom (M.tm.initCfg x) t).output.getLast?.getD false) = none at hhalt
+    have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := by
+      cases h : (M.tm.runFrom (M.tm.initCfg x) t).state with
+      | none => rfl
+      | some q => simp only [acceptState, h, reduceCtorEq] at hhalt
+    have hcomp : M.ComputesInTime x (M.tm.runFrom (M.tm.initCfg x) t).output t :=
+      (FinTM.computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+    obtain ⟨s, hMs⟩ := hM x
+    have hout := hcomp.output_unique hMs
+    rw [hs, hout] at hhalt
+    simpa [acceptState] using hhalt
+  · intro hp
+    obtain ⟨t, ht⟩ := hM x
+    obtain ⟨hs, hout⟩ := (FinTM.computesInTime_iff _ _ _ _).mp ht
+    refine ⟨[], t, (FinTM.computesInTime_iff _ _ _ _).mpr ?_⟩
+    rw [acceptTM_run]
+    constructor
+    · change acceptState (M.tm.runFrom (M.tm.initCfg x) t).state
+        ((M.tm.runFrom (M.tm.initCfg x) t).output.getLast?.getD false) = none
+      rw [hs, hout]
+      simp [acceptState, hp]
+    · rfl
+
+/-- Emit the fixed prefix, then copy the input verbatim. No work tape is needed;
+the last finite state is the copy state. -/
+private def prefixTM (w : List Bool) : FinTM Bool where
+  k := 0
+  State := Fin (w.length + 1)
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ =>
+        if h : q.val < w.length then
+          ⟨0, fun i => i.elim0, some w[q.val], some ⟨q.val + 1, by omega⟩⟩
+        else match inp with
+          | some b => ⟨1, fun i => i.elim0, some b, some q⟩
+          | none => ⟨0, fun i => i.elim0, none, none⟩ }
+
+/-- A prefixing-machine configuration with the vacuous work fields suppressed. -/
+private def prefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
+    (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin (w.length + 1)) x :=
+  ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
+
+/-- After `i` prefix steps exactly the first `i` fixed bits have been emitted,
+and the input head has not moved. -/
+private lemma prefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
+    (prefixTM w).tm.runFrom ((prefixTM w).tm.initCfg x) i =
+      prefixCfg w x (some ⟨i, by omega⟩) 1 (w.take i) := by
+  intro i
+  induction i with
+  | zero =>
+    intro hi
+    apply Cfg.ext_zero_tapes <;> simp [prefixCfg, prefixTM]
+  | succ i ih =>
+    intro hi
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hlt : i < w.length := by omega
+    simp only [MultiTapeTM.step, prefixCfg, prefixTM, dif_pos hlt, Action.apply]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · simp
+    · rw [List.take_succ, List.getElem?_eq_getElem hlt]
+
+/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
+private lemma prefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
+    (prefixTM w).tm.runFrom
+      (prefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
+      prefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
+        (w ++ x.take i) := by
+  intro i
+  induction i with
+  | zero => intro hi; simp [prefixCfg]
+  | succ i ih =>
+    intro hi
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hsym : (prefixCfg w x (some ⟨w.length, by omega⟩)
+        ⟨i + 1, by omega⟩ (w ++ x.take i)).inputSymbol = some (x[i]'(by omega)) :=
+      inputSymbolInner i (by simp only [prefixCfg]; omega) (by omega)
+    change ((prefixTM w).tm.tr ⟨w.length, by omega⟩
+      (prefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
+        (w ++ x.take i)).inputSymbol _).apply _ = _
+    rw [hsym]
+    simp only [prefixTM, Nat.lt_irrefl, ↓reduceDIte, Action.apply, prefixCfg]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · change moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) .pos = _
+      rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
+    · rw [List.take_succ, List.getElem?_eq_getElem (by omega), List.append_assoc]
+
+/-- Prefixing computes `w ++ x` in exactly the bound `|w| + |x| + 1`,
+including the final blank-reading halting step.
+
+**Proof sketch.** Concatenate the fixed-word emission run and the input-copy
+run; the input head then scans the right boundary, so one final step halts
+without emitting anything further. This also covers empty prefix and input. -/
+private lemma prefixTM_computes (w : List Bool) :
+    (prefixTM w).ComputesFunInTime (fun x => w ++ x) (fun n => w.length + n + 1) := by
+  intro x
+  apply (FinTM.computesInTime_iff _ _ _ _).mpr
+  dsimp only
+  rw [show w.length + x.length + 1 = w.length + (x.length + 1) by omega,
+    MultiTapeTM.runFrom_add, prefixTM_emit w x w.length (Nat.le_refl _)]
+  simp only [List.take_length]
+  rw [MultiTapeTM.runFrom_succ_eq_step', prefixTM_copy w x x.length (Nat.le_refl _)]
+  simp [prefixTM, prefixCfg, MultiTapeTM.step, Cfg.inputSymbol, Fin.ext_iff, Action.apply]
+
+/-- The fixed-code pairing machine has the audited budget
+`2|α| + |x| + 3`: two emissions per code bit, two for the delimiter, one per
+input bit, and one final blank-reading step. -/
+private lemma fixedPair_computes (α : List Bool) :
+    (prefixTM ((α.flatMap fun b => [b, b]) ++ [false, true])).ComputesFunInTime
+      (fun x => pairEncode α x) (fun n => 2 * α.length + n + 3) := by
+  have hlen : (α.flatMap fun b => [b, b]).length = 2 * α.length := by
+    induction α with
+    | nil => rfl
+    | cons b α ih =>
+      simp only [List.flatMap_cons, List.length_append, List.length_cons, List.length_nil, ih]
+      omega
+  intro x
+  have h := prefixTM_computes ((α.flatMap fun b => [b, b]) ++ [false, true]) x
+  have ht : ((α.flatMap fun b => [b, b]) ++ [false, true]).length + x.length + 1 =
+      2 * α.length + x.length + 3 := by
+    simp only [List.length_append, List.length_cons, List.length_nil, hlen]
+    omega
+  simpa only [pairEncode, ht] using h
+
+/-- The fixed-code pairing machine is polynomial-time computable. -/
+private lemma fixedPair_polyTime (α : List Bool) :
+    PolyTimeComputable (fun x => pairEncode α x) := by
+  refine ⟨prefixTM ((α.flatMap fun b => [b, b]) ++ [false, true]),
+    2 * α.length + 3, 1, fun x => (fixedPair_computes α x).mono ?_⟩
+  simp only [Nat.pow_one, Nat.add_mul, Nat.mul_add, Nat.mul_one]
+  omega
+
+
 /-- **`HALT` is `NP`-hard** [AB09, Exercise 2.8] — for **every** representation
 scheme, effective or not: the reduction embeds one *fixed* code, so only
 `Turing.MachineCode.decode_encode` is used (phase-1 audit, finding 11; compare
@@ -179,7 +420,19 @@ and `Turing.MachineCode.decode_encode` turn membership of the image in `HALT`
 into "`S` halts on `x`", which is `x ∈ L`. -/
 theorem HALT_NPHard (c : MachineCode) :
     NPHard {s | HALT c s = true} := by
-  sorry
+  classical
+  intro L hL
+  obtain ⟨d, a, D, hD⟩ := Set.mem_iUnion.mp (NP_subset_EXP hL)
+  let p : List Bool → Bool := MultiTapeTM.indicator (L : Set (List Bool))
+  have hdec : D.ComputesFunInTime (fun x => [p x]) (fun n => a * 2 ^ n ^ d) := hD
+  obtain ⟨M, b, hk, hM⟩ := FinTM.one_work_tape_binary D _ _ hdec
+  obtain ⟨S, hS⟩ := exists_codeTM (acceptTM M) hk
+  refine ⟨fun x => pairEncode (c.encode S) x, fixedPair_polyTime _, fun x => ?_⟩
+  change x ∈ L ↔ HALT c (pairEncode (c.encode S) x) = true
+  rw [HALT_pairEncode_eq_true_iff, c.decode_encode]
+  simp only [hS]
+  rw [acceptTM_halts_iff M p hM.computes x]
+  simp [p, MultiTapeTM.indicator]
 
 /-- **`HALT` is not in `NP`** [AB09, Exercise 2.8] — so, despite being `NP`-hard,
 it is not `NP`-complete: `NP` languages are decidable, `HALT` is not.
@@ -205,6 +458,20 @@ design question (`AroraBarakChapter2Plan.md`, open design questions). Until
 decided, this statement stays at the generality its cited API supports. -/
 theorem HALT_not_mem_NP (c : EffectiveMachineCode) :
     {s | HALT c.toMachineCode s = true} ∉ NP := by
-  sorry
+  classical
+  intro h
+  apply HALT_not_computable c
+  obtain ⟨d, a, M, hM⟩ := Set.mem_iUnion.mp (NP_subset_EXP h)
+  have hi : MultiTapeTM.indicator
+      ({s | HALT c.toMachineCode s = true} : Set (List Bool)) = HALT c.toMachineCode := by
+    funext s
+    simp only [MultiTapeTM.indicator, Set.mem_setOf_eq]
+    split
+    · rename_i hb; exact hb.symm
+    · rename_i hb; exact (Bool.eq_false_iff.mpr hb).symm
+  have hdec : M.ComputesFunInTime (fun s => [HALT c.toMachineCode s])
+      (fun n => a * 2 ^ n ^ d) := by
+    simpa only [FinTM.DecidesInTime, hi] using hM
+  exact ⟨M, hdec.computes⟩
 
 end Complexity
