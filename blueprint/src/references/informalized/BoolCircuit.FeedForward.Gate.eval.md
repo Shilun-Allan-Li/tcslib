@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Gate.eval -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: Gate.eval -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Evaluating one gate

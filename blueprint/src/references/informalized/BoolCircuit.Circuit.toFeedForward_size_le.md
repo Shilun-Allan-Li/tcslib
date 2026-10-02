@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Circuit.toFeedForward_size_le -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: Circuit.toFeedForward_size_le -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Size of the feedforward embedding of a circuit

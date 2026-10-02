@@ -6,6 +6,7 @@ Authors: Yichuan Wang, Hydroxyi
 import TCSlib.Complexity.CircuitComplexity.Basic
 import TCSlib.Complexity.CircuitComplexity.Formulas
 import TCSlib.Complexity.CircuitComplexity.DecisionTree
+import TCSlib.Complexity.CircuitComplexity.FeedForward
 import TCSlib.Complexity.CircuitComplexity.PPoly
 import TCSlib.Complexity.CircuitComplexity.CircuitSat
 import TCSlib.Complexity.CircuitComplexity.Encoding

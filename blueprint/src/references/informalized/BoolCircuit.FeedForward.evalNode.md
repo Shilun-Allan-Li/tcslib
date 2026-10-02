@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: evalNode -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: evalNode -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Value of a single node on a given input

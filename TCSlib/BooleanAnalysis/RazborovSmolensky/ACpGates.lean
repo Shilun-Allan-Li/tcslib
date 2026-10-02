@@ -3,7 +3,7 @@ Copyright (c) 2026 Yichuan Wang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yichuan Wang
 -/
-import TCSlib.BooleanAnalysis.RazborovSmolensky.FeedForwardCircuit
+import TCSlib.Complexity.CircuitComplexity.FeedForward
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Algebra.MvPolynomial.Degrees
@@ -16,21 +16,6 @@ import Mathlib.Logic.Equiv.Basic
 
 open Finset
 open scoped BigOperators
-
-namespace BoolCircuit
-
-open FeedForward
-
-/-- The standard unbounded fan-in gate set — identity, NOT, and unbounded AND.
-This is the basis `Language.InSIZE` and `P/poly` are defined over; it is also
-the gate set of plain `AC⁰` circuits, and `RazborovSmolensky.ACp_GateOps`
-extends it with `MOD p` gates. -/
-def stdGateOps : Set (GateOp (Fin 2)) :=
-  {GateOp.id (Fin 2),
-   ⟨Fin 1, fun x ↦ 1 - x 0⟩} ∪
-  ⋃ n, {⟨Fin n, fun x ↦ ∏ i, x i⟩}
-
-end BoolCircuit
 
 namespace RazborovSmolensky
 

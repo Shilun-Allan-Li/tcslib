@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: FeedForward.IsAndOrGate -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: FeedForward.IsAndOrGate -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Every gate is an AND or an OR

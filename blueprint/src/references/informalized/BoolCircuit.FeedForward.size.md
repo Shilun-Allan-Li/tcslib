@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: size -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: size -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Circuit size: the number of non-input nodes

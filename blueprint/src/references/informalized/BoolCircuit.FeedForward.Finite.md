@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Finite -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: Finite -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Layerwise finiteness of a circuit

@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: eval -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: eval -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # The function computed by a circuit

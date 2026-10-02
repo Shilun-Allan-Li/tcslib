@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Circuit.toFeedForward_eval -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: Circuit.toFeedForward_eval -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # The feedforward embedding computes the same function

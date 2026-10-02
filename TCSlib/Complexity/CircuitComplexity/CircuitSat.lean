@@ -39,7 +39,7 @@ count bounded in the encoded input length — still not a `≤p` claim.
 Model: `BoolCircuit.Circuit`, a tree, not the DAG `BoolCircuit.FeedForward` of `PPoly.lean`. The
 tree is forced, though not for the reason earlier drafts of this file gave: a gate's
 membership in these gate sets *can* be cased on: `RazborovSmolensky.ACp_GateOps_cases`
-(`ACpGates.lean:585`) does it for `ACp_GateOps p`, unfolding the `⋃` through
+(`ACpGates.lean:579`) does it for `ACp_GateOps p`, unfolding the `⋃` through
 `Set.mem_iUnion.mp`, and `ACp_GateOps = stdGateOps ∪ ⋃ n, {modGateOp p n}` — no
 `stdGateOps_cases` exists, but nothing obstructs one.  What blocks a clause map over
 `FeedForward` is that `stdGateOps` contains `id` and `NOT`, for which `Circuit` has no

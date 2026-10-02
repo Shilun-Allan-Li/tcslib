@@ -234,20 +234,28 @@ are exactly the machine-facing ones:
 
 ## 4. Decisions pending (user)
 
-* **Chapter-6 integration path** (assessment of 2026-09-18): options —
-  (A) merge both branches to main independently and build the §3 bridge
-  theorems afterwards; (B) merge ch6 into the campaign branch now; (C)
-  coordinate conventions first. Friction items to settle with the
-  colleague: their `Formulas.lean` defines `Literal`/`Term`/`DNF`/`CNF` at
-  the **root namespace** (policy §1 leak; future ambiguity against
-  `Std.Sat.CNF`/`Std.Sat.Literal`); three CNF ecosystems would coexist
-  (their width-indexed `CNF n`, legacy `NPReductions.CNFFormula V`, the
-  audited `Std.Sat.CNF ℕ`) with three SAT→3SAT artifacts; `UHalt.lean`
-  introduces a **second computability framework** (Mathlib `ComputablePred`
-  vs. the campaign's quarantine and its own `HALT_not_computable`); their
-  work is main-track, not campaign-attested (proper, but it must not
-  silently enter the audited surface). Loose ends for the colleague: the
-  dangling `ch6/PLAN.md` reference; `Basic.lean` at 674 lines (> 600
+* **Chapter-6 integration** — resolved in part: ch6 was merged into the
+  campaign branch (`a2a2728b`), and the circuit nomenclature pass agreed
+  with the ch6 authors landed 2026-10-01 in three commits: `HasLogDepth`
+  → `HasPolylogDepth`; the `ACP` namespace unbundled (generic circuit
+  material → `BoolCircuit`, the Razborov–Smolensky chain →
+  `RazborovSmolensky`, `AC_GateOps` → `BoolCircuit.stdGateOps`);
+  `FeedForwardCircuit.lean` relocated to
+  `Complexity/CircuitComplexity/FeedForward.lean`, so `Complexity` no
+  longer imports from `BooleanAnalysis` (verification:
+  `scripts/circuit_module_order.txt`, the 23-module dependency sweep).
+  Still open: their `Formulas.lean` defines `Literal`/`Term`/`DNF`/`CNF`
+  at the **root namespace** (policy §1 leak; future ambiguity against
+  `Std.Sat.CNF`/`Std.Sat.Literal`) — namespace choice deliberately
+  deferred (user: `BoolCircuit` is not the right home for formulas);
+  three CNF ecosystems coexist (their width-indexed `CNF n`, legacy
+  `NPReductions.CNFFormula V`, the audited `Std.Sat.CNF ℕ`) with three
+  SAT→3SAT artifacts; `UHalt.lean` introduces a **second computability
+  framework** (Mathlib `ComputablePred` vs. the campaign's quarantine and
+  its own `HALT_not_computable`); the merged material is main-track, not
+  campaign-attested (proper, but it must pass the external audit protocol
+  before any campaign statement cites it). Loose ends for the colleague:
+  the dangling `ch6/PLAN.md` reference; `Basic.lean` at 674 lines (> 600
   target).
 * **Fill-campaign start** (§2) — on hold by the same instruction.
 * **Disposition of the three §1 questions** — CH1-Q1, CH1-Q2, CH2-Q1.

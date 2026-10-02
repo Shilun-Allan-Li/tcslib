@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Circuit.one_le_size -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/Basic.lean :: Circuit.one_le_size -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Every circuit has at least one node

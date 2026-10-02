@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: toCircuit -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: toCircuit -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Tree-unrolling a feedforward AND/OR circuit

@@ -5,7 +5,33 @@ Authors: Yichuan Wang
 -/
 import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Set.Card
+import Mathlib.Algebra.BigOperators.Fin
 import TCSlib.Complexity.CircuitComplexity.Basic
+
+/-!
+# Feedforward circuits
+
+Layered DAG circuits over an arbitrary alphabet: `GateOp`/`Gate`/`FeedForward`,
+evaluation (`evalNode`, `eval`, `eval₁`), the `size`/`Finite`/`onlyUsesGates`
+measures, and `stdGateOps` — the standard unbounded fan-in gate set that
+`Language.InSIZE` and `P/poly` are defined over.  The second half relates the
+DAG model to the tree-shaped `BoolCircuit.Circuit` in both directions:
+tree-unrolling (`FeedForward.toCircuit`, exponential in depth) and the faithful
+tree embedding (`Circuit.toFeedForward`, padded with identity wires).
+
+Written for the Razborov–Smolensky development
+(`BooleanAnalysis/RazborovSmolensky/`) and relocated here as the shared
+circuit model.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009.  (Circuit basics: §6.1–6.2.)
+-/
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 universe u v
 
@@ -76,6 +102,17 @@ def onlyUsesGates (S : Set (GateOp α)) : Prop :=
   ∀ d u, (F.gates d u).op ∈ S
 
 end FeedForward
+
+/-! ### The standard gate set -/
+
+/-- The standard unbounded fan-in gate set — identity, NOT, and unbounded AND.
+This is the basis `Language.InSIZE` and `P/poly` are defined over; it is also
+the gate set of plain `AC⁰` circuits, and `RazborovSmolensky.ACp_GateOps`
+extends it with `MOD p` gates. -/
+def stdGateOps : Set (GateOp (Fin 2)) :=
+  {FeedForward.GateOp.id (Fin 2),
+   ⟨Fin 1, fun x ↦ 1 - x 0⟩} ∪
+  ⋃ n, {⟨Fin n, fun x ↦ ∏ i, x i⟩}
 
 /-!
 ## Conversion between FeedForward and BoolCircuit.Circuit
@@ -212,6 +249,8 @@ noncomputable def toCircuit
     (o : out) : Circuit n :=
   nodeToCircuit F isAnd gfin F.depth (Fin.last F.depth).isLt (F.nodes_last.symm.rec o)
 
+/-- Tree-unrolling preserves evaluation: `F.toCircuit isAnd gfin o` computes
+`F.eval x o`. -/
 theorem toCircuit_eval
     (F : FeedForward Bool (Fin n) out)
     (isAnd : ∀ d : Fin F.depth, F.nodes d.succ → Bool)
@@ -222,6 +261,8 @@ theorem toCircuit_eval
   simp only [toCircuit, eval]
   exact nodeToCircuit_eval F isAnd gfin hcorrect _ _ _ x
 
+/-- The tree-unrolled circuit has size at most `(k + 1) ^ F.depth` when every
+gate reads at most `k` wires. -/
 theorem toCircuit_size_le
     (F : FeedForward Bool (Fin n) out)
     (isAnd : ∀ d : Fin F.depth, F.nodes d.succ → Bool)
@@ -236,15 +277,14 @@ end FeedForward
 
 /-! ### BoolCircuit.Circuit → FeedForward Bool (tree embedding) -/
 
+-- Layer 0 is the input layer (Fin n); all other layers carry Unit (single output wire).
+-- The gate at layer 0 computes C.eval from all inputs at once; gates at layers 1..depth
+-- are identity wires that pass the single Bool value upward unchanged.
 /-- Embed a `BoolCircuit.Circuit n` as a `FeedForward Bool (Fin n) Unit`.
     The circuit is already tree-shaped (fanout ≤ 1), so no duplication occurs.
     Shorter branches of an unbalanced tree are padded with identity wires so that
     all paths reach depth `C.depth`.  The resulting feedforward circuit has size
-    at most `C.size * C.depth`. --/
-
--- Layer 0 is the input layer (Fin n); all other layers carry Unit (single output wire).
--- The gate at layer 0 computes C.eval from all inputs at once; gates at layers 1..depth
--- are identity wires that pass the single Bool value upward unchanged.
+    at most `C.size * C.depth`. -/
 noncomputable def _root_.BoolCircuit.Circuit.toFeedForward (C : Circuit n) : FeedForward Bool (Fin n) Unit where
   depth := C.depth + 1
   nodes d := if d.val = 0 then Fin n else Unit

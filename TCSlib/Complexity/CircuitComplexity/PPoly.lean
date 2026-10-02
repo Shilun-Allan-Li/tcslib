@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yichuan Wang
 -/
 import Mathlib.Computability.Language
-import TCSlib.BooleanAnalysis.RazborovSmolensky.ACpGates
+import TCSlib.Complexity.CircuitComplexity.FeedForward
 
 /-!
 # P/poly

@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Circuit.toFeedForward_evalNode_const -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: Circuit.toFeedForward_evalNode_const -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Every non-input node of the embedding carries the circuit's value

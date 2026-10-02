@@ -57,7 +57,7 @@ factor-2 size bound is proved here, not taken from [OD14]'s `2 ^ d` remark.
 ## Provenance
 
 `Circuit.one_le_size` was hoisted here from
-`TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean`, unchanged.
+`TCSlib/Complexity/CircuitComplexity/FeedForward.lean`, unchanged.
 
 Split out of `TCSlib/BooleanAnalysis/Switching/Circuit.lean` (commit 94fd7c6),
 which carried no copyright header; `Authors` above is that file's git author.

@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: toCircuit_eval -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: toCircuit_eval -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Tree-unrolling preserves the computed function

@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: nodeToCircuit -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: nodeToCircuit -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Tree-unrolling a feedforward node into a `BoolCircuit.Circuit`

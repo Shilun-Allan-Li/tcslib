@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: toCircuit_size_le -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: toCircuit_size_le -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Size of the tree-unrolled circuit

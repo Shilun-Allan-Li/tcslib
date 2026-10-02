@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: eval₁ -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: eval₁ -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Evaluating a single-output feedforward circuit
