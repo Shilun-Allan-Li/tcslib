@@ -34,8 +34,9 @@ letter `1` is `true`, and `finTwoEquiv` converts at the circuit boundary.
 
 Not formalized, and not stubbed with `sorry`. AB simulates an oblivious Turing
 machine (Remark 1.7) by a circuit, Cook–Levin style, which needs a machine model,
-the class `P`, and the oblivious-simulation theorem; TCSlib has none, and Mathlib
-has a machine model but no time-bounded classes. See `ch6/PLAN.md`, U5.
+the class `P`, and the oblivious-simulation theorem. All three now live on this
+branch (`TuringMachine/` with `Robustness/ObliviousSchedule.lean`, and
+`ClassP/`); the bridge theorem is tracked in `backlog.md` §3.
 
 ## References
 

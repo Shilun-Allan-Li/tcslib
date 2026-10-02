@@ -32,9 +32,10 @@ through `Denumerable.ofNat Nat.Partrec.Code`, the second as its input, and
 `¬ ComputablePred (· ∈ L)`. `haltingSet` is a `Set ℕ`, not a language, so it
 sits beside `Nat.Partrec.Code.eval` rather than in `Language`.
 
-AB concludes `P ⊊ P/poly`. TCSlib has no machine model and no class `P`, and AB's
-route to it also needs Theorem 6.6, deferred in `ch6/PLAN.md` (U5). Only the
-statable half is here: `exists_le_allOnes_inPPoly_not_computablePred`.
+AB concludes `P ⊊ P/poly`. AB's route also needs Theorem 6.6 (`P ⊆ P/poly`);
+the machine model, the class `P`, and the oblivious-simulation layer all live
+on this branch now, and the bridge theorem is tracked in `backlog.md` §3. Only
+the statable half is here: `exists_le_allOnes_inPPoly_not_computablePred`.
 The undecidability half is not reproved from AB: it is Mathlib's
 `ComputablePred.halting_problem`, transported along the pairing.
 

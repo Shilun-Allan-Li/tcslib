@@ -67,9 +67,9 @@ The size, depth and fan-in arithmetic these proofs run on is in
   for `n ≤ 1`, so `b * (Nat.log 2 n) ^ d` would force depth `0` at those lengths.
 * **`NC ⊆ P/poly`.** Statable — `BoolCircuit.NC` and `BoolCircuit.PPoly` are both
   `Set (Language Bool)` — but not provable here: there is no bridge from
-  `BoolCircuit.Circuit` to `BoolCircuit.CircuitFamily` (`ch6/PLAN.md`, deferred follow-ups).
+  `BoolCircuit.Circuit` to `BoolCircuit.CircuitFamily` (`backlog.md` §3, deferred follow-ups).
 * **Uniformity.** AB's "one can also define uniform `NC`" needs logspace and is out of
-  scope; see `ch6/NOT_FORMALIZED.md`.
+  scope for now (no logspace machinery).
 
 ## References
 
