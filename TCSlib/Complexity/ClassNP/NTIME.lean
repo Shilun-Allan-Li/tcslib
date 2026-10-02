@@ -211,6 +211,12 @@ halted, so all-branch halting already fails at budget `c * 0 = 0`.
 (`Turing.NDTM.runWith_nil`) asserts that the initial configuration is halted,
 contradicting `Turing.Cfg.init`'s state `some q₀`. -/
 theorem NTIME_eq_empty_of_exists_zero {T : ℕ → ℕ} (h : ∃ n, T n = 0) : NTIME T = ∅ := by
-  sorry
+  obtain ⟨n, hn⟩ := h
+  apply Set.eq_empty_iff_forall_not_mem.mpr
+  rintro L ⟨c, N, hN⟩
+  have hhalt := (hN (List.replicate n false)).1
+  simp only [List.length_replicate, hn, Nat.mul_zero] at hhalt
+  have hzero : (some N.tm.q₀ : Option N.State) = none := hhalt [] rfl
+  cases hzero
 
 end Complexity
