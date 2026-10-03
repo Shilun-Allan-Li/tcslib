@@ -144,8 +144,27 @@ uncomputability chapter.
   **E2 briefs issued** 2026-10-02
   (`briefs/ch2-epoch2-batch{A,B,C,D}.md`; 10 targets + the mandated
   `timed_universal` bridge statement; inheritances embedded verbatim;
-  hardened repo/branch headers; D1 axiom wording). Next: dispatch, then
-  E2 integration and the epoch audit.
+  hardened repo/branch headers; D1 axiom wording).
+  **E2 checkpoints integrated 2026-10-03 — all four batches partial, epoch
+  gate OPEN** (four Codex commits `da8bd091`…`4b4cd418` off `6c09453e`;
+  maintainer verification clean — deleted-lines, surface, replay, fresh
+  53-module sweep with 29 direct admissions, axiom-root traversal matching
+  every REPORT; logs `audits/logs/ch2-e2-checkpoint-{sweep,axioms}.log`;
+  decision-log row in the ch2 plan). 5 of 10 target bodies written;
+  admission-free closure: `timeConstructible_poly` only. Uniform frontier:
+  concrete machine construction/timed integration (147 helpers delivered,
+  145 admission-free). Open sites: 2A's single `enumMachine_contracts`
+  (closes `NP_subset_EXP` **and** both HALT targets), 2B's
+  `choiceVerifier ∈ P` + untouched reverse direction, 2C's two verifier
+  memberships (`CONTINUATION.md` shipped), 2D's `D-MEM`/`D-WRAP`/`D-EMIT`
+  + the **bridge escalation** (protocol step 3 fired: maintainer must
+  export a public quantitative bounded-answer theorem from
+  `Universal.lean` — `timedUniversalTM`/`timedStartupBound`/
+  `timed_computes`/`timedAnswer` are private; coefficient arithmetic
+  already proved on the 2D side). 2C also requests promotion of
+  `prefixTM`/`fixedPair` fixed-prefixing lemmas (held with D3).
+  Next: TM-construction methodology discussion (user), then the
+  maintainer bridge export + continuation briefs, then the epoch audit.
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —
