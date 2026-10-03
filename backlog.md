@@ -157,17 +157,19 @@ uncomputability chapter.
   (closes `NP_subset_EXP` **and** both HALT targets), 2B's
   `choiceVerifier ∈ P` + untouched reverse direction, 2C's two verifier
   memberships (`CONTINUATION.md` shipped), 2D's `D-MEM`/`D-WRAP`/`D-EMIT`
-  + the **bridge escalation** (protocol step 3 fired: maintainer must
-  export a public quantitative bounded-answer theorem from
-  `Universal.lean` — `timedUniversalTM`/`timedStartupBound`/
-  `timed_computes`/`timedAnswer` are private; coefficient arithmetic
-  already proved on the 2D side). 2C also requests promotion of
-  `prefixTM`/`fixedPair` fixed-prefixing lemmas (held with D3).
-  Next (sequencing per the frozen library design, 2026-10-03): maintainer
-  spec layer for the machine-construction library + the Chapter-1 bridge
-  export → one shared infrastructure audit round → library fills
-  (harvest-adaptation batches; loop flagged for continuation budget) →
-  E2 continuation briefs citing the library → epoch-2 audit.
+  (+ the bridge escalation — **RESOLVED 2026-10-03**: Chapter 1 exports
+  `Turing.timed_universal_concrete` and the TMSAT bridge is discharged
+  via `tmsat_concrete_coefficient` + monotonicity; `TMSAT_mem_NP` now
+  roots at `D-MEM` alone, tree admissions 46; decision-log rows in both
+  plans). 2C also requests promotion of `prefixTM`/`fixedPair`
+  fixed-prefixing lemmas (held with D3; subsumed by Build P3/P6 at the
+  shared round).
+  Next (sequencing per the frozen library design, 2026-10-03; spec
+  layer and bridge export both landed 2026-10-03): the shared
+  infrastructure audit pack (Build spec surface + the bridge export and
+  its TMSAT discharge) → gate → library fills (harvest-adaptation
+  batches; loop flagged for continuation budget) → E2 continuation
+  briefs citing the library → epoch-2 audit.
 * **Machine-construction library** (`machine-library-design.md`, design
   FROZEN 2026-10-03; decision-log rows in `AroraBarakChapter1Plan.md`):
   `TuringMachine/Build/{Convention,Wrappers,Loop,Primitives}.lean` — 12
@@ -176,10 +178,11 @@ uncomputability chapter.
   `enumMachine_contracts`. **Spec layer LANDED 2026-10-03** (design §9a
   refinements recorded): `Cfg.ofWords` seam + pure vocabulary fully
   proved; 18 sorried contracts (4 wrapper, 2 loop, 12 primitive); order
-  list and facade at 57 modules. Spec audit rides with the bridge
-  export — next: the `Universal.lean` bridge export + the shared
-  infrastructure audit pack, then fills (harvest-adaptation batches;
-  loop flagged for continuation budget). Subsumes 2C's
+  list and facade at 57 modules. **Bridge export landed 2026-10-03**
+  (`Turing.timed_universal_concrete`; TMSAT bridge discharged, tree
+  admissions 46) — next: the shared infrastructure audit pack, then
+  fills (harvest-adaptation batches; loop flagged for continuation
+  budget). Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
