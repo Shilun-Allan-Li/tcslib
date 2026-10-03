@@ -9,6 +9,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.Ring
 import TCSlib.Complexity.ClassP.TimeConstructible
 import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
 import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.Encoding
 
@@ -1360,6 +1361,355 @@ private lemma catalogPoly_unary_computes (c C : ℕ) :
     _ = _ := by ring
 
 
+/-- Administrative actions for the captured length checker move only the
+input and final (countdown) head. No tape is written. -/
+private def lenAction (M : FinTM Bool) (m d : SignType) (b : Option Bool)
+    (q : Option (M.State ⊕ (Fin 4 ⊕ Option Bool))) :
+    Action (M.k + 1) Bool (M.State ⊕ (Fin 4 ⊕ Option Bool)) :=
+  ⟨m, fun i => (none, if i.val < M.k then 0 else d), b, q⟩
+
+/-- Capture a total generator, rewind the physical input, validate its pair
+syntax, then compare the suffix length with the captured word's length.
+Only the final comparison or rejection transition emits a verdict. -/
+private def pairCountTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k + 1
+  State := M.State ⊕ (Fin 4 ⊕ Option Bool)
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun q inp work => match q with
+      | .inl s => captureAction Sum.inl (.inr (.inl 0))
+          (M.tm.tr s inp fun i => work i.castSucc)
+      | .inr (.inl q) => match q.val with
+        | 0 => lenAction M 0 .neg none (some (.inr (.inl 1)))
+        | 1 => controlAction .neg (some (.inr (.inl 2)))
+        | 2 => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl 2)))
+          | none => controlAction .pos (some (.inr (.inr none)))
+        | _ => match inp with
+          | none => lenAction M 0 0 (some true) none
+          | some _ => match work (Fin.last M.k) with
+            | none => lenAction M 0 0 (some false) none
+            | some _ => lenAction M .pos .neg none (some (.inr (.inl 3)))
+      | .inr (.inr none) => match inp with
+        | none => lenAction M 0 0 (some false) none
+        | some b => lenAction M .pos 0 none (some (.inr (.inr (some b))))
+      | .inr (.inr (some b)) => match inp with
+        | none => lenAction M 0 0 (some false) none
+        | some d => if b = d then lenAction M .pos 0 none (some (.inr (.inr none)))
+          else if b then lenAction M 0 0 (some false) none
+          else lenAction M .pos 0 none (some (.inr (.inl 3))) }
+
+/-- Checker configurations retain the completed generator bank and its
+captured output; `r` is the number of still available countdown cells. -/
+private def lenCfg (M : FinTM Bool) {x : List Bool} (c : Cfg M.k Bool M.State x)
+    (q : Option (pairCountTM M).State) (i : ℕ) (hi : i ≤ x.length) (r : ℕ) :
+    Cfg (M.k + 1) Bool (pairCountTM M).State x :=
+  { captureCfg (fun s : M.State => (Sum.inl s : (pairCountTM M).State))
+      (.inr (.inl 0)) [] [] c with
+    state := q
+    inputPos := ⟨i + 1, by omega⟩
+    workTapePos := fun j => if h : j.val < M.k then c.workTapePos ⟨j, h⟩
+      else (r : ℤ) - 1 }
+
+/-- The checker's input read is independent of the saved generator bank. -/
+private lemma lenCfg_read (M : FinTM Bool) {x : List Bool} (c : Cfg M.k Bool M.State x)
+    (q : Option (pairCountTM M).State) (i : ℕ) (hi : i ≤ x.length) (r : ℕ) :
+    (lenCfg M c q i hi r).inputSymbol = x[i]? :=
+  inputSymbol_at _ i hi rfl
+
+/-- A stationary or forward administrative action preserves all work tapes;
+its last-head movement subtracts one precisely when consuming a cell. -/
+private lemma lenAction_apply (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (q q' : Option (pairCountTM M).State)
+    (i j r s : ℕ) (hi : i ≤ x.length) (hj : j ≤ x.length)
+    (m d : SignType) (b : Option Bool)
+    (hm : moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) m = ⟨j + 1, by omega⟩)
+    (hd : (r : ℤ) - 1 + d.cast = (s : ℤ) - 1) :
+    (lenAction M m d b q').apply (lenCfg M c q i hi r) =
+      {lenCfg M c q' j hj s with output := b.toList} := by
+  refine Cfg.ext rfl hm ?_ ?_ rfl
+  · rfl
+  · funext k
+    by_cases hk : k.val < M.k
+    · simp [lenAction, lenCfg, Action.apply, hk]
+    · simpa [lenAction, lenCfg, Action.apply, hk] using hd
+
+/-- Suffix comparison consumes one captured cell per input bit and emits one
+verdict at termination. Empty suffixes succeed even with an empty counter.
+**Proof sketch.** Induct on the suffix. A zero counter rejects a nonempty
+suffix immediately; otherwise one silent step decrements both lengths. -/
+private lemma lenSuffix_run (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (rest : List Bool) :
+    ∀ pre (hx : x = pre ++ rest) r, r ≤ c.output.length →
+    ∃ t ≤ rest.length + 1,
+      ((pairCountTM M).tm.runFrom
+        (lenCfg M c (some (.inr (.inl 3))) pre.length (by simp [hx]) r) t).state = none ∧
+      ((pairCountTM M).tm.runFrom
+        (lenCfg M c (some (.inr (.inl 3))) pre.length (by simp [hx]) r) t).output =
+          [decide (rest.length ≤ r)] := by
+  induction rest with
+  | nil =>
+    intro pre hx r hr
+    refine ⟨1, by simp, ?_⟩
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change (((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _).state = none ∧ _
+    rw [lenCfg_read]
+    simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Action.apply]
+  | cons b rest ih =>
+    intro pre hx r hr
+    cases r with
+    | zero =>
+      refine ⟨1, by simp, ?_⟩
+      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+      unfold MultiTapeTM.step
+      change (((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _).state = none ∧ _
+      rw [lenCfg_read]
+      simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Cfg.workTapeSymbols,
+        bufferTape_left, Action.apply]
+    | succ r =>
+      have hs : (pairCountTM M).tm.step
+          (lenCfg M c (some (.inr (.inl 3))) pre.length (by simp [hx]) (r + 1)) =
+          lenCfg M c (some (.inr (.inl 3))) (pre.length + 1) (by simp [hx]) r := by
+        unfold MultiTapeTM.step
+        change ((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _ = _
+        rw [lenCfg_read]
+        have hin : x[pre.length]? = some b := by simp [hx]
+        have hw : (lenCfg M c (some (.inr (.inl 3))) pre.length
+            (by simp [hx]) (r + 1)).workTapeSymbols (Fin.last M.k) =
+              some (c.output[r]'(by omega)) := by
+          simp [lenCfg, captureCfg, Cfg.workTapeSymbols, bufferTape,
+            List.getElem?_eq_getElem (by omega : r < c.output.length)]
+        simp only [pairCountTM, hin, hw]
+        exact lenAction_apply M c _ _ pre.length (pre.length + 1) (r + 1) r
+          (by simp [hx]) (by simp [hx]) .pos .neg none
+          (moveInputPos_pos_of_ne_right _ (by simp [hx])) (by simp [SignType.cast]; omega)
+      obtain ⟨t, ht, hh, ho⟩ := ih (pre ++ [b]) (by simpa [List.append_assoc] using hx)
+        r (by omega)
+      refine ⟨1 + t, by simp only [List.length_cons]; omega, ?_⟩
+      rw [MultiTapeTM.runFrom_add]
+      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+      rw [hs]
+      simpa using And.intro hh ho
+
+/-- The first half of an aligned block changes only finite control and the
+input position; countdown cells remain untouched during validation. -/
+private lemma lenParse_first (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (pre rest : List Bool) (b : Bool) (r : ℕ)
+    (hx : x = pre ++ b :: rest) :
+    (pairCountTM M).tm.step
+      (lenCfg M c (some (.inr (.inr none))) pre.length (by simp [hx]) r) =
+      lenCfg M c (some (.inr (.inr (some b)))) (pre.length + 1) (by simp [hx]) r := by
+  unfold MultiTapeTM.step
+  change ((pairCountTM M).tm.tr (.inr (.inr none)) _ _).apply _ = _
+  rw [lenCfg_read]
+  have hin : x[pre.length]? = some b := by simp [hx]
+  simp only [pairCountTM, hin]
+  exact lenAction_apply M c _ _ pre.length (pre.length + 1) r r
+    (by simp [hx]) (by simp [hx]) .pos 0 none
+    (moveInputPos_pos_of_ne_right _ (by simp [hx])) (by simp [SignType.cast])
+
+/-- Two parser steps either advance over a doubled bit, enter the suffix
+comparison at `01`, or reject `10`. Nothing is emitted on a valid block. -/
+private lemma lenParse_block (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (pre rest : List Bool) (b d : Bool) (r : ℕ)
+    (hx : x = pre ++ b :: d :: rest) :
+    (pairCountTM M).tm.runFrom
+      (lenCfg M c (some (.inr (.inr none))) pre.length (by simp [hx]) r) 2 =
+      if b = d then lenCfg M c (some (.inr (.inr none)))
+          (pre.length + 2) (by simp [hx]) r
+      else if b then {lenCfg M c none (pre.length + 1) (by simp [hx]) r with output := [false]}
+      else lenCfg M c (some (.inr (.inl 3))) (pre.length + 2) (by simp [hx]) r := by
+  change (pairCountTM M).tm.step ((pairCountTM M).tm.step _) = _
+  rw [lenParse_first M c pre (d :: rest) b r hx]
+  unfold MultiTapeTM.step
+  change ((pairCountTM M).tm.tr (.inr (.inr (some b))) _ _).apply _ = _
+  rw [lenCfg_read]
+  have hin : x[pre.length + 1]? = some d := by simp [hx]
+  rw [hin]
+  have hm : moveInputPos (⟨pre.length + 1 + 1, by simp [hx]⟩ : Fin (x.length + 2)) .pos =
+      ⟨pre.length + 2 + 1, by simp [hx]; omega⟩ :=
+    moveInputPos_pos_of_ne_right _ (by simp [hx])
+  cases b <;> cases d <;>
+    simp only [pairCountTM, Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
+  all_goals first
+    | exact lenAction_apply M c _ _ (pre.length + 1) (pre.length + 2) r r
+        (by simp [hx]) (by simp [hx]) .pos 0 none hm (by simp [SignType.cast])
+    | exact lenAction_apply M c _ _ (pre.length + 1) (pre.length + 1) r r
+        (by simp [hx]) (by simp [hx]) 0 0 (some false)
+        (moveInputPos_zero _) (by simp [SignType.cast])
+
+/-- Aligned validation followed by countdown comparison decides the payload
+bound in at most one more than the unread input length.
+**Proof sketch.** Induct over two-bit blocks, using the existing parser's
+same grammar and induction pattern. Equal-bit blocks preserve the counter;
+`01` invokes suffix comparison; malformed endings and `10` reject. -/
+private lemma lenParse_run (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (rest : List Bool) :
+    ∀ pre (hx : x = pre ++ rest) r, r ≤ c.output.length →
+    ∃ t ≤ rest.length + 1,
+      ((pairCountTM M).tm.runFrom
+        (lenCfg M c (some (.inr (.inr none))) pre.length (by simp [hx]) r) t).state = none ∧
+      ((pairCountTM M).tm.runFrom
+        (lenCfg M c (some (.inr (.inr none))) pre.length (by simp [hx]) r) t).output =
+          [match pairDecode rest with
+            | some (_, b) => decide (b.length ≤ r)
+            | none => false] := by
+  induction rest using List.twoStepInduction with
+  | nil =>
+    intro pre hx r hr
+    refine ⟨1, by simp, ?_⟩
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change (((pairCountTM M).tm.tr (.inr (.inr none)) _ _).apply _).state = none ∧ _
+    rw [lenCfg_read]
+    simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Action.apply, pairDecode]
+  | singleton b =>
+    intro pre hx r hr
+    refine ⟨2, by simp, ?_⟩
+    change ((pairCountTM M).tm.step ((pairCountTM M).tm.step _)).state = none ∧
+      ((pairCountTM M).tm.step ((pairCountTM M).tm.step _)).output = _
+    rw [lenParse_first M c pre [] b r hx]
+    unfold MultiTapeTM.step
+    change (((pairCountTM M).tm.tr (.inr (.inr (some b))) _ _).apply _).state = none ∧ _
+    rw [lenCfg_read]
+    cases b <;> simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Action.apply, pairDecode]
+  | cons_cons b d rest ih _ =>
+    intro pre hx r hr
+    by_cases h : b = d
+    · subst d
+      obtain ⟨t, ht, hs, ho⟩ := ih (pre ++ [b, b])
+        (by simpa [List.append_assoc] using hx) r hr
+      refine ⟨2 + t, by simp only [List.length_cons] at *; omega, ?_⟩
+      rw [MultiTapeTM.runFrom_add, lenParse_block M c pre rest b b r hx, if_pos rfl]
+      simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
+      refine ⟨hs, ?_⟩
+      cases b <;> cases hd : pairDecode rest with
+        | none => simpa [pairDecode, hd] using ho
+        | some p => cases p; simpa [pairDecode, hd] using ho
+    · cases b <;> cases d
+      · exact False.elim (h rfl)
+      · obtain ⟨t, ht, hs, ho⟩ := lenSuffix_run M c rest (pre ++ [false, true])
+          (by simpa [List.append_assoc] using hx) r hr
+        refine ⟨2 + t, by simp only [List.length_cons]; omega, ?_⟩
+        rw [MultiTapeTM.runFrom_add, lenParse_block M c pre rest false true r hx]
+        simp only [Bool.false_eq_true, ↓reduceIte]
+        simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
+        exact ⟨hs, by simpa [pairDecode] using ho⟩
+      · refine ⟨2, by simp, ?_⟩
+        rw [lenParse_block M c pre rest true false r hx]
+        simp [lenCfg, pairDecode]
+      · exact False.elim (h rfl)
+
+/-- Quantitative input rewind, adapted from the wrapper controller's proved
+`timed_rewind` pattern using the public `rewind_scan` interface.
+**Proof sketch.** One mandatory left move is followed by exactly the new
+position plus one scan steps. Work tapes and output are preserved. -/
+private lemma catalogRewind {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+  have hstep : tm.step c =
+      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+    unfold MultiTapeTM.step
+    rw [hs]
+    dsimp only
+    rw [hstart, controlAction_apply]
+  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+    rw [moveInputPos_neg_val]
+    have := c.inputPos.isLt
+    omega
+  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+  · rw [moveInputPos_neg_val]; omega
+  · rw [MultiTapeTM.runFrom_add]
+    change tm.runFrom (tm.step c) _ = _
+    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+
+/-- A completed generator is captured without physical output, then its
+last cell and the first physical input cell are exposed for comparison.
+**Proof sketch.** Use the least source halting time to discharge `capture_run`'s
+liveness guard. One step moves the capture head left; quantitative rewind
+restores the input head while preserving the completed generator bank. -/
+private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
+    (hM : M.ComputesInTime x w T) :
+    ∃ t ≤ T + x.length + 4, ∃ c : Cfg M.k Bool M.State x,
+      c.output = w ∧
+      (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
+        lenCfg M c (some (.inr (.inr none))) 0 (by omega) c.output.length := by
+  classical
+  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+    ⟨T, ((computesInTime_iff _ _ _ _).mp hM).1⟩
+  let t := Nat.find hh
+  let c := M.tm.runFrom (M.tm.initCfg x) t
+  have ht : t ≤ T := Nat.find_min' hh ((computesInTime_iff _ _ _ _).mp hM).1
+  have hs : c.state = none := Nat.find_spec hh
+  have hc : M.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+  have ho : c.output = w := hc.output_unique hM
+  let emb : M.State → (pairCountTM M).State := Sum.inl
+  let ret : (pairCountTM M).State := .inr (.inl 0)
+  have hinit : (pairCountTM M).tm.initCfg x = captureCfg emb ret [] [] (M.tm.initCfg x) := by
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
+    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
+  have hcap : (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
+      captureCfg emb ret [] [] c := by
+    rw [hinit]
+    exact capture_run M.tm (pairCountTM M).tm emb ret (fun _ _ _ => rfl)
+      [] [] _ t (fun s hst => Nat.find_min hh hst)
+  let ready : Cfg (M.k + 1) Bool (pairCountTM M).State x :=
+    {lenCfg M c (some (.inr (.inl 1))) 0 (by omega) c.output.length with
+      inputPos := c.inputPos}
+  have hback : (pairCountTM M).tm.step (captureCfg emb ret [] [] c) = ready := by
+    have hstate : (captureCfg emb ret [] [] c).state = some ret := by simp [captureCfg, hs]
+    simp only [MultiTapeTM.step, hstate]
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_zero _
+    · rfl
+    · funext i
+      by_cases hi : i.val < M.k <;>
+        simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,
+          sub_eq_add_neg]
+    · rfl
+  obtain ⟨r, hrle, hr⟩ := catalogRewind (pairCountTM M).tm
+    (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inr none)))
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) ready rfl
+  refine ⟨t + 1 + r, ?_, c, ho, ?_⟩
+  · change r ≤ c.inputPos.val + 2 at hrle
+    have := c.inputPos.isLt
+    omega
+  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap]
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [hback, hr]
+    rfl
+
+/-- The captured checker compares a valid pair's payload with the length of
+the generator's output, and rejects every malformed input.
+**Proof sketch.** Compose the silent capture/rewind prefix with the aligned
+parser and countdown ledger, then absorb the two linear scans. -/
+private lemma pairCount_computes {M : FinTM Bool} {g : List Bool → List Bool}
+    {T : ℕ → ℕ} (hM : M.ComputesFunInTime g T) :
+    (pairCountTM M).ComputesFunInTime
+      (fun x => [match pairDecode x with
+        | some (_, b) => decide (b.length ≤ (g x).length)
+        | none => false]) (fun n => T n + 2 * n + 5) := by
+  intro x
+  obtain ⟨t, ht, c, ho, hstart⟩ := lenStart M x (g x) (T x.length) (hM x)
+  obtain ⟨r, hr, hs, hout⟩ := lenParse_run M c x [] rfl c.output.length (le_refl _)
+  have hc : (pairCountTM M).ComputesInTime x
+      [match pairDecode x with
+        | some (_, b) => decide (b.length ≤ (g x).length)
+        | none => false] (t + r) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart]
+    exact ⟨hs, by simpa only [ho] using hout⟩
+  exact hc.mono (by dsimp only; omega)
+
 /-- **P3, prepend a fixed word** (spec, fill pending — harvest: the HALT
 batch's `prefixTM`/`prefixTM_computes`, whose promotion the batch formally
 requested). Emitting the fixed word `w` and then copying the input is
@@ -1606,7 +1956,47 @@ theorem computesFunInTime_pairLenCheck (C e : ℕ) :
           | some (a, b) => decide (b.length ≤ C * (a.length + 1) ^ e)
           | none => false])
         fun n => c * (n + 1) ^ (e + 1) := by
-  sorry
+  obtain ⟨F, a, hF⟩ := computesFunInTime_pairFst
+  obtain ⟨U, b, hU⟩ := computesFunInTime_polyUnary C e
+  obtain ⟨G, d, hG⟩ := computesFunInTime_comp hF hU
+    (by
+      intro m n h
+      exact Nat.mul_le_mul_left b
+        (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) (e + 1)))
+  refine ⟨pairCountTM G, d * (a + b * (a + 1) ^ (e + 1) + 1) + 7, fun x => ?_⟩
+  have hc := pairCount_computes hG x
+  have hh : (pairCountTM G).ComputesInTime x
+      [match pairDecode x with
+        | some (u, v) => decide (v.length ≤ C * (u.length + 1) ^ e)
+        | none => false]
+      (d * (a * (x.length + 1) + b * (a * (x.length + 1) + 1) ^ (e + 1) + 1) +
+        2 * x.length + 5) := by
+    cases hd : pairDecode x with
+    | none => simpa [hd, Function.comp_apply] using hc
+    | some uv => cases uv; simpa [hd, Function.comp_apply] using hc
+  apply hh.mono
+  let P := (x.length + 1) ^ (e + 1)
+  have hp : 1 ≤ P := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  have hn : x.length + 1 ≤ P := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
+      (show 1 ≤ e + 1 by omega)
+  have hbase : a * (x.length + 1) + 1 ≤ (a + 1) * (x.length + 1) := by
+    simp only [Nat.add_mul, Nat.one_mul]; omega
+  have hpow : (a * (x.length + 1) + 1) ^ (e + 1) ≤ (a + 1) ^ (e + 1) * P := by
+    simpa only [Nat.mul_pow] using Nat.pow_le_pow_left hbase (e + 1)
+  have hsum : a * (x.length + 1) + b * (a * (x.length + 1) + 1) ^ (e + 1) + 1 ≤
+      (a + b * (a + 1) ^ (e + 1) + 1) * P := by
+    calc
+      _ ≤ a * P + b * ((a + 1) ^ (e + 1) * P) + P :=
+        Nat.add_le_add (Nat.add_le_add (Nat.mul_le_mul_left a hn)
+          (Nat.mul_le_mul_left b hpow)) hp
+      _ = _ := by ring
+  calc
+    _ = d * (a * (x.length + 1) + b * (a * (x.length + 1) + 1) ^ (e + 1) + 1) +
+        (2 * x.length + 5) := by omega
+    _ ≤ d * ((a + b * (a + 1) ^ (e + 1) + 1) * P) + 7 * P :=
+      Nat.add_le_add (Nat.mul_le_mul_left d hsum) (by omega)
+    _ = (d * (a + b * (a + 1) ^ (e + 1) + 1) + 7) * P := by ring
 
 /-- **P9, marker strip** (spec, fill pending — harvest: the semantic layer
 is the Exercise-2.1 batch's proved `stripCertificate` family; the machine
