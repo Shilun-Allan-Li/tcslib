@@ -206,8 +206,16 @@ uncomputability chapter.
   targets, 14/34/18 pts, P and L with continuation anticipated;
   sanctioned roots `capture_run` → P/L and `exists_loopFindTM` →
   P-splitSolve; L carries the round-3 item-4 construction ledger as
-  binding). Next: dispatch, then integration + the library-fill audit
-  round, then the E2 continuation briefs. Subsumes 2C's
+  binding). **Checkpoints integrated 2026-10-03**: W complete (4/4,
+  admission-free; `cond` multiplier 5; two promotion requests held for
+  the fill-audit round), P 11/15 (frontier `pairLenCheck`; sanctioned
+  roots unused), L the 2A pattern (`loop_run` + both summation lemmas
+  proved; combinators at the single admitted `loopHost_contracts`;
+  `capture_run` consumed in the helpers). Tree: 57/57 zero errors,
+  **33 admissions**; size exceptions for `Primitives.lean` (1,687) and
+  `Loop.lean` (1,466) recorded. Next: continuation briefs (P target 12
+  onward; L `loopHost_contracts`), then the fill-audit round, then the
+  E2 continuation briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
