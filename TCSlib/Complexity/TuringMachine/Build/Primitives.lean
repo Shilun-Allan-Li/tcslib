@@ -42,7 +42,13 @@ extractors/validity test; P7 (replicate) is subsumed by the unary clause of
 P5, whose instances are what the emission customers actually consume; P8
 is realized in threaded form (`pairLenCheck`); P12 (`clearTM`) has no
 standalone string-function contract — clearing is intra-machine and lives
-in the loop fill's toolkit.
+in the loop fill's toolkit. **Round-2 additions** (per round-1 finding 3:
+the extractors discard the other component by design, and sequential
+composition alone never yields simultaneous access to two results): P13
+`pairConcat` (the D-WRAP shape), P14 `pairDup` (the entry stage of
+data-retaining pipelines), and the threaded-map combinator `pairMapSnd`;
+P10's narrowing is recorded, and result-bearing search is now
+`Turing.FinTM.exists_loopFindTM` (`machine-library-design.md` §9b).
 
 ## References
 
@@ -88,11 +94,15 @@ budget `(C + 5(e+1) + 4)·(n+1)^(e+1)`). The exact unary value of
 `(n+1)^(e+1)`. Its instances are also the exact-emission primitive the
 reduction constructions consume (catalog entry P7, subsumed here).
 
-**Construction sketch** (the harvest source's, verbatim shape): `e + 1`
-nested unary loop tapes of side length `n + 1`, installed by one input
-scan; the innermost loop emits `C` trues per box point; a recursive
-invariant restores completed inner heads, with loop depth `r` costing at
-most `(C + 1 + 5r)·(n+1)^r`. -/
+**Construction sketch** (indexing corrected per round-1 finding 5: the
+harvest source's `poly_unary_computes` with loop parameter `c` emits
+exponent `c + 1`, so this contract harvests with parameter `e - 1`): for
+`e > 0`, `e` nested unary loop tapes of side length `n + 1`, installed by
+one input scan, the innermost loop emitting `C` trues per box point —
+exactly `C·(n+1)^e` in total; for `e = 0` the output is the constant
+`List.replicate C true`, a fixed emission chain. A recursive invariant
+restores completed inner heads, with loop depth `r` costing at most
+`(C + 1 + 5r)·(n+1)^r`. -/
 theorem computesFunInTime_polyUnary (C e : ℕ) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime
@@ -109,7 +119,8 @@ of `(n+1)^(e+1)`.
 **Construction sketch.** The unary generator above composed with the
 binary length counter of `computesFunInTime_lengthBits` through the public
 buffered composition (`Turing.FinTM.computesFunInTime_comp`) — the harvest
-source's exact route. -/
+source's exact route, under the same `e - 1` harvest-indexing convention
+as the unary clause (round-1 finding 5). -/
 theorem computesFunInTime_polyBits (C e : ℕ) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => Nat.bits (C * (x.length + 1) ^ e))
@@ -176,6 +187,64 @@ theorem computesFunInTime_pairValid :
         fun n => c * (n + 1) := by
   sorry
 
+/-- **P13, pair to concatenation** (spec, fill pending; round-2 addition
+per round-1 finding 3 — the D-WRAP obligation's exact shape). On
+`pairEncode x u`, emit `x ++ u`; malformed inputs yield `[]`, the threaded
+rejection the downstream guard reads (the reduction wrapper's own
+`[false]` rejection is assembled at the decider stage).
+
+**Construction sketch.** Undouble the aligned prefix onto a work tape —
+nothing emitted while validity is unknown; at the aligned separator,
+replay the buffered first component and then copy the suffix verbatim; a
+misaligned block halts with nothing emitted. -/
+theorem computesFunInTime_pairConcat :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime
+        (fun z => match pairDecode z with
+          | some (a, b) => a ++ b
+          | none => [])
+        fun n => c * (n + 1) := by
+  sorry
+
+/-- **P14, duplication into a pair** (spec, fill pending; round-2 addition
+per round-1 finding 3 — the entry stage of data-retaining pipelines:
+the reduction emitter retains `x` while its duplicate feeds the generated
+components). Emit `pairEncode x x`.
+
+**Construction sketch.** Two input passes: emit each read bit doubled,
+then the separator, then copy the input verbatim. No buffering is needed
+— the pairing prefix is valid bit by bit, and every input is legal. -/
+theorem computesFunInTime_pairDup :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => pairEncode x x) fun n => c * (n + 1) := by
+  sorry
+
+/-- **C1, the threaded map combinator** (spec, fill pending; round-2
+addition per round-1 finding 3 — the data-retaining assembly the
+extractors deliberately do not provide: sequential composition yields
+`g (f z)` only, never simultaneous access to a retained component). Given
+a machine for `g`, transform a pair's payload while carrying its head
+component unchanged; malformed inputs yield `[]`. Monotonicity of `Tg`
+converts the payload-length bound `|b| ≤ |z|` into a time bound, exactly
+as in `Turing.FinTM.computesFunInTime_comp`.
+
+**Construction sketch.** Parse `pairEncode a b` onto two work tapes,
+silent until the separator validates; run the `g`-machine on `b`
+relocated-and-captured (the W1 discipline — its output lands on the
+capture tape, with length bounded by its running time via
+`Turing.MultiTapeTM.output_length_le`); then emit the re-encoded pair:
+doubled `a`, separator, captured `g b`. -/
+theorem computesFunInTime_pairMapSnd {Mg : FinTM Bool}
+    {g : List Bool → List Bool} {Tg : ℕ → ℕ}
+    (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime
+        (fun z => match pairDecode z with
+          | some (a, b) => pairEncode a (g b)
+          | none => [])
+        fun n => c * (n + 1 + Tg n) := by
+  sorry
+
 /-- **P8, threaded length-bound check** (spec, fill pending — new; the
 original-bound re-check discipline of the Exercise-2.1 reverse verifier,
 in threaded form). On `pairEncode a b`, decide `|b| ≤ C·(|a|+1)^e` — the
@@ -229,11 +298,23 @@ primitive). Search for the unique `i ≤ |w|` with `i + C·(i+1)^e = |w|`
 `pairEncode (w.take i) (w.drop i)`, and on failure `[]` — rejection when
 no length-equation solution exists is the audited obligation.
 
-**Construction sketch.** A `Turing.FinTM.exists_loopTM` instance: round
-state is the candidate `i` in binary; each round evaluates
-`i + C·(i+1)^e` in unary and compares it to `|w|` by countdown; a hit
-emits the split (doubled prefix, separator, suffix) and a fuel exhaustion
-at `i = |w|` halts silently. Strict monotonicity makes the hit unique. -/
+**Construction sketch** (round 2: an `exists_loopFindTM` instance — the
+decision loop exposes only a Boolean and cannot carry the payload,
+round-1 finding 3; the narrowing from the catalog's supplied-predicate
+search to this fixed length-equation search is recorded in
+`machine-library-design.md` §9b). Instance data: round state
+`s = List.replicate i true`, the candidate in unary;
+`Inv w s := s.length ≤ w.length + 1`;
+`stepF w s := if s.length ≤ w.length then s ++ [true] else s` (stall past
+the end keeps the invariant step-closed); `acceptF w s` holds iff
+`s.length + C·(s.length + 1)^e = w.length`, evaluated by the polynomial
+loop and a countdown compare;
+`out w s := pairEncode (w.take s.length) (w.drop s.length)` — always
+nonempty, so success is distinguishable from the `[]` exhaustion; fuel
+`R n := n`, so the orbit is exactly the candidates `0, …, n` and
+`List.range.find?` returns the least solution, which strict monotonicity
+of `i ↦ i + C·(i+1)^e` makes unique — `Turing.solveSplit`'s own
+semantics. -/
 theorem computesFunInTime_splitSolve (C e : ℕ) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime

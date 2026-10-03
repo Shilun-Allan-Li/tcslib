@@ -274,6 +274,56 @@ frozen §9 decisions:
   until validity is known** — the output-silence discipline reappears at
   the primitive level (extractors, strip, increment's overflow detection).
 
+## 9b. Round-2 repairs (2026-10-03, after `audits/ch1-infra-findings.md`)
+
+The round-1 audit refuted `exists_loopTM` (blocker: a zero-step identity
+"advance" made the hypotheses vacuous while the conclusion violated the
+input-head information bound; major: quantifying rounds over *all* state
+words at budget `T |x|` excluded the intended customers) and rejected
+disposition D5 (missing dynamic assembly and result-bearing search). The
+repairs, all in the spec layer:
+
+**The loop contract, redesigned.** Rounds take positive time (`0 < t`);
+rounds are required only on words satisfying an input-indexed
+admissibility invariant `Inv x s`, established at `s0` and preserved by
+the step; and `stepF`/`acceptF`/payload take the input explicitly (the
+enumerator's acceptance runs the verifier on `x ++ s`). Two forms:
+`exists_loopTM` (Boolean verdict) and the new `exists_loopFindTM` (first
+accepting orbit point's payload; `[]` on exhaustion). The countdown sketch
+debits from the **second** anchor entry, so `R = 0` still checks `s0 x`
+(round-1 finding 4), and the amortized-borrow budget argument was
+validated by the auditor.
+
+**Instantiation tables** (the customer-coverage evidence round 1 asked
+for; `m n := C·(n+1)^c` abbreviates the certificate-width polynomial):
+
+| Parameter | Enumerator (2A's `enumMachine_contracts`) | Split search (P10) |
+|---|---|---|
+| `Inv x s` | `s.length = m x.length` | `s.length ≤ x.length + 1` |
+| `s0 x` | `List.replicate (m x.length) false` | `[]` |
+| `stepF x s` | `(incFixed s).getD s` (stall on overflow keeps the width) | `if s.length ≤ x.length then s ++ [true] else s` (stall keeps `Inv` step-closed) |
+| `acceptF x s` | the captured verifier's verdict on `x ++ s` | `s.length + C·(s.length+1)^e = x.length` |
+| payload | — (decision form) | `pairEncode (x.take s.length) (x.drop s.length)`, never `[]` |
+| `R n` | `2^(m n) − 1` | `n` |
+| fuel bits | `Nat.bits (2^(m n) − 1) = replicate (m n) true` — writable within `T` | `Nat.bits n` — writable within `T` |
+| orbit, `i ≤ R n` | all `2^(m n)` width-`m` words, each once (`incFixed` enumeration; the stall is beyond fuel) | the candidates `0, …, n` in unary; `find?` = `solveSplit`'s least solution |
+| conclusion shape | `[decide (∃ u, u.length = m n ∧ verifier accepts x ++ u)]` | exactly P10's stated function |
+
+Both invariants bound the state-word length by the input, which is
+precisely what dissolves the round-1 finding-2 obstruction (no body is
+asked to transform words longer than its budget can traverse).
+
+**Catalog additions** (finding 3): P13 `pairConcat`
+(`pairEncode x u ↦ x ++ u`, the D-WRAP shape), P14 `pairDup`
+(`x ↦ pairEncode x x`), and the combinator C1 `pairMapSnd` (transform a
+pair's payload, retain its head; the data-retaining assembly sequential
+composition cannot provide). D-EMIT's nested quadruple then factors as
+`pairEncodeFixed α₀ ∘ pairMapSnd (unary-runs generator) ∘ pairDup`, and
+D-MEM's parser chains through the extractors with `pairMapSnd` carrying
+retained components. **P10 narrowing recorded**: the implemented search is
+the fixed length-equation search, not the catalog's supplied-predicate
+search; the general form is `exists_loopFindTM` itself.
+
 ## 10. Cost and sequencing (estimate, campaign points)
 
 | Work | Est. | Note |

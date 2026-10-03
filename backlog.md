@@ -181,11 +181,17 @@ uncomputability chapter.
   list and facade at 57 modules. **Bridge export landed 2026-10-03**
   (`Turing.timed_universal_concrete`; TMSAT bridge discharged, tree
   admissions 46). **Infra audit pack prepared 2026-10-03**
-  (`audits/ch1-infra-{pack,bundle}.md`; pre-pack repair of
-  `exists_loopTM` disclosed — anchor-entry discipline + fuel-machine
-  hypothesis; gate awaits `audits/ch1-infra-findings.md`) — next: the
-  gate, then fills (harvest-adaptation batches; loop flagged for
-  continuation budget). Subsumes 2C's
+  (`audits/ch1-infra-{pack,bundle}.md`). **Round 1: gate OPEN** (blocker:
+  `exists_loopTM` refuted by zero-step advances; majors: all-state-word
+  round domain, D5 interface gaps). **Round-2 repairs executed +
+  re-audit pack prepared 2026-10-03** (`audits/ch1-infra-r2-{pack,
+  bundle}.md`): loop redesigned (positive duration, input-indexed `Inv`,
+  input-dependent step/accept), `exists_loopFindTM` + P13 `pairConcat` +
+  P14 `pairDup` + C1 `pairMapSnd` added, sketches corrected, errata
+  acknowledged, historical evidence supplied, D5 re-issued as a concrete
+  mapping; Build now 22 contracts, tree 50 admissions. Gate awaits
+  `audits/ch1-infra-r2-findings.md` — then fills (harvest-adaptation
+  batches; loop flagged for continuation budget). Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).

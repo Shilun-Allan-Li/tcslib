@@ -15,41 +15,67 @@ set_option autoImplicit false
 # Machine-construction library: the bounded loop
 
 The control centerpiece of the machine-construction library
-(`machine-library-design.md` §5, L): a bounded loop with tape-resident
-round state, specified at two granularities.
+(`machine-library-design.md` §5, L; loop redesign §9b): a bounded loop
+with tape-resident round state, specified at three granularities.
 
 * `Turing.loop_run` is the **summation lemma**: given a family of round
   configurations with an accept-or-advance contract, the run from round 0
   halts within the summed budget with the loop's single verdict bit. It is
   the generic form of the Chapter-2 enumerator's proved private
-  `enumLoop_run`, whose proof is the harvest template.
-* `Turing.FinTM.exists_loopTM` is the **constructive combinator**: from a
-  body machine whose startup and rounds are `Turing.Cfg.ofWords` seam
-  contracts, there is one finite machine iterating the body under a fuel
-  bound, with the exhaustion rejection and the total polynomial budget
-  owned by the combinator. It is the generic form of the enumerator batch's
-  admitted `enumMachine_contracts` — the statement that every fill batch
-  died re-deriving concretely — turned into a once-and-for-all interface.
+  `enumLoop_run`, whose proof is the harvest template. (Round-1 audit:
+  Pass.)
+* `Turing.FinTM.exists_loopTM` is the **decision combinator**: from a fuel
+  machine and a body machine whose startup and rounds are
+  `Turing.Cfg.ofWords` seam contracts, one finite machine iterates the
+  body under a fuel bound and answers the Boolean "some orbit point
+  accepts".
+* `Turing.FinTM.exists_loopFindTM` is the **result-bearing variant**: the
+  accepting round delivers a payload, and the machine outputs the first
+  accepting orbit point's payload (`[]` on exhaustion) — the form the
+  split search (catalog P10) and the reduction emitters instantiate.
 
-**Status: spec phase.** Both theorems and the seam helper are stated; the
-proofs are the library fill's risk concentration (continuation budget
-anticipated, frozen design §10). New Chapter-1 surface, flagged for the
-shared infrastructure audit round.
+**Status: spec phase, round-2 repair.** The round-1 audit
+(`audits/ch1-infra-findings.md`) refuted the previous combinator: finding
+1 (blocker) exhibited a zero-step "advance" (`stepF = id`, `t = 0`) that
+made the hypotheses vacuously satisfiable and the conclusion contradict
+the input-head information bound; finding 2 (major) showed the round
+hypothesis quantified over *all* state words at the budget `T |x|`, which
+no body can satisfy for width-growing rounds and which excludes the
+intended customers. This revision repairs both:
+
+* every round takes **positive time** (`0 < t`), and
+* rounds are required only on **admissible** state words, via an
+  input-indexed invariant `Inv x s` that the startup word satisfies
+  (`hInv0`) and the advance step preserves (`hInvStep`); customers choose
+  `Inv` to pin the state-word width to the input (instantiation tables in
+  `machine-library-design.md` §9b).
+
+`stepF`, `acceptF`, and the payload take the input as an explicit first
+argument (finding 2's repair guidance): the enumerator's acceptance runs
+the verifier on `x ++ s`.
 
 ## The round discipline
 
 Round state is one word on the body's tape 0; every other body tape is
 scratch, blank at both seam ends of a round (body-restores-scratch, frozen
-design decision 9.2 — a body proves its own restore from its own invariant;
-the generic clearing fallback via the visited-region bound of
-`TCSlib.Complexity.TuringMachine.Sweep` is recorded in the design document).
-A round either **accepts** — halts with the single verdict `[true]`,
-nothing else ever emitted — or **advances** to the seam carrying the
-stepped state word. The combinator caps the rounds at a fuel bound
-computed from the input length only, rejecting with `[false]` on
-exhaustion; acceptance within fuel is therefore the Boolean
-`(List.range (R n + 1)).any …` of the abstract orbit, which is the shape
-the Chapter-2 enumerator consumes.
+design decision 9.2). A round either **accepts** — halts with its declared
+output, nothing emitted earlier — or **advances** to the seam carrying the
+stepped state word, in positive time, and in both cases without re-entering
+the anchor state strictly between the seam and that endpoint (the host
+detects round boundaries as entries into the embedded anchor; the clause is
+load-bearing, round-1 attestation 7 and finding 1).
+
+**Countdown discipline** (corrected per round-1 finding 4): the counter is
+loaded from the fuel machine's output `Nat.bits (R |x|)`; the **initial
+anchor entry is free**, and debiting starts with the second entry, so the
+rounds completed before borrow-overflow are exactly `0, …, R |x|` — at
+`R |x| = 0` (`Nat.bits 0 = []`) the single orbit point `s0 x` is still
+checked before the empty counter overflows. Decrement cost is amortized
+(the borrow lengths over a full countdown telescope to `O(R)`, and the
+counter width is at most `T |x|` by `Turing.MultiTapeTM.output_length_le`
+on the fuel machine), which is what keeps the stated budget at
+`(T + 1) · (R + 2)` with no logarithmic factor — the round-1 audit
+validated this budget strategy (finding 4, second half).
 
 ## References
 
@@ -67,7 +93,8 @@ def stateWord (k : ℕ) (s : List Bool) : Fin k → List Bool :=
   fun i => if (i : ℕ) = 0 then s else []
 
 /-- **The loop summation lemma** (spec, fill pending — the generic form of
-the enumerator's proved `enumLoop_run`, which is the harvest template).
+the enumerator's proved `enumLoop_run`, which is the harvest template;
+round-1 audit verdict: Pass, including `N = 0`).
 Given round configurations `cfg 0, …, cfg N` of one machine with empty
 outputs, such that each round `j < N` within budget `B` either halts with
 the verdict `[true]` (when `accept j`) or reaches `cfg (j+1)`, and the
@@ -99,68 +126,56 @@ end Turing
 
 namespace Turing.FinTM
 
-/-- **The loop combinator** (spec, fill pending — the generic form of the
-enumerator batch's admitted `enumMachine_contracts`; the construction is
-the library fill's risk concentration). Given a fuel machine and a body
-machine with
+/-- **The decision loop combinator** (spec, fill pending; repaired per
+round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
 
-* a **fuel** contract: `F` writes the round bound `R |x|` in binary within
-  `T |x|` (an arbitrary `R : ℕ → ℕ` is not machine-evaluable, so the
-  combinator must be handed its fuel; the enumerator's `2^w` and the
-  split search's `n + 1` both have immediately writable bit patterns),
-* a **startup** contract: from its genuine initial configuration on `x`
-  the body reaches, within `T |x|`, the seam `Turing.Cfg.ofWords` carrying
-  the initial state word `s0 x` on tape 0 (scratch blank), **without
-  visiting the anchor state earlier**, and
-* a **round** contract: from the seam carrying any state word `s` it
-  either halts with the verdict `[true]` within `T |x|` (when `acceptF s`)
-  or reaches the seam carrying `stepF s` within `T |x|` — in both cases
-  **without re-entering the anchor state strictly between the seam and
-  that endpoint**,
+* `hF`: the fuel machine writes `Nat.bits (R |x|)` within `T |x|`.
+* `hInv0`, `hInvStep`: the admissibility invariant holds at the initial
+  state word and is preserved by the step, so every orbit point the
+  conclusion mentions is admissible.
+* `hstart`: the body reaches the initial seam within `T |x|` without
+  visiting the anchor state earlier.
+* `hround`: on every **admissible** state word, the body takes **positive**
+  time `t ≤ T |x|`, does not re-enter the anchor strictly before `t`, and
+  either halts with the verdict `[true]` (acceptance) or sits at the seam
+  carrying the stepped word (advance).
 
-there is one finite machine that, on every input `x`, emits the single
-verdict bit of the first `R |x| + 1` orbit points
-`s0 x, stepF (s0 x), …, stepF^[R |x|] (s0 x)` — `[false]` when none
-accepts (fuel exhaustion) — within a constant multiple of
-`(T |x| + 1) · (R |x| + 2)`.
+Conclusion: one finite machine answers, within a constant multiple of
+`(T |x| + 1) · (R |x| + 2)`, whether some orbit point
+`(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted.
 
-The two discipline clauses are load-bearing (maintainer pre-audit
-adversarial pass, recorded for the shared infrastructure round): the
-combinator's host detects round boundaries **as entries into the embedded
-anchor state**, so a mid-round anchor visit would decrement the fuel
-early and change the computed function; and without the fuel machine the
-statement would assert a finite machine materializing an arbitrary
-natural-number function of the input length.
-
-**Proof sketch.** The combinator machine runs `F` relocated-and-captured
-to lay the fuel word on a counter tape, rewinds, and embeds the body via
-the W1 capture discipline of
+**Proof sketch.** The combinator machine runs the fuel machine
+relocated-and-captured to lay `Nat.bits (R |x|)` on a counter tape,
+rewinds, and embeds the body via the W1 capture discipline of
 `TCSlib.Complexity.TuringMachine.Build.Wrappers` (the body's verdict is
-captured, never physically emitted until the end). On each entry into the
-embedded anchor it decrements the binary counter in place; the borrow
-discipline is amortized — total countdown cost over all rounds is linear
-in `R |x|` plus the counter width, and exhaustion is detected exactly
-when a borrow runs off the counter's end, which is what keeps the stated
-budget at `(T + 1) · (R + 2)` rather than acquiring a logarithmic factor.
-`Turing.loop_run` sums the seam family; acceptance surfaces as the
-captured halt (`[true]`), and borrow-overflow emits the exhaustion
-rejection (`[false]`). Phase overheads are absorbed into `c`. -/
+captured, never physically emitted until the end). The initial anchor
+entry is free; each subsequent entry debits the binary counter in place —
+amortized borrow, exhaustion exactly at borrow-overflow, so rounds
+`0, …, R |x|` run before the exhaustion rejection `[false]`. Acceptance
+surfaces as the captured halt and emits `[true]`. `Turing.loop_run` sums
+the seam family; the invariant hypotheses confine every round to
+admissible words, and positive round duration makes each anchor entry a
+genuine round boundary. Phase overheads are absorbed into `c`. -/
 theorem exists_loopTM (body F : FinTM Bool) (anchor : body.State)
-    (stepF : List Bool → List Bool) (acceptF : List Bool → Bool)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
     (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
     (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
     (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
       (∀ t' < t,
         (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
       body.tm.runFrom (body.tm.initCfg x) t =
         Cfg.ofWords anchor (stateWord body.k (s0 x)))
-    (hround : ∀ (x : List Bool) (s : List Bool),
-      ∃ t ≤ T x.length,
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
         (∀ t', 0 < t' → t' < t →
           (body.tm.runFrom
             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
               ≠ some anchor) ∧
-        if acceptF s then
+        if acceptF x s then
           (body.tm.runFrom
             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
               = none ∧
@@ -170,11 +185,68 @@ theorem exists_loopTM (body F : FinTM Bool) (anchor : body.State)
         else
           body.tm.runFrom
             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
-              Cfg.ofWords anchor (stateWord body.k (stepF s))) :
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
     ∃ (E : FinTM Bool) (c : ℕ),
       E.ComputesFunInTime
         (fun x => [(List.range (R x.length + 1)).any
-          fun i => acceptF (stepF^[i] (s0 x))])
+          fun i => acceptF x ((stepF x)^[i] (s0 x))])
+        (fun n => c * (T n + 1) * (R n + 2)) := by
+  sorry
+
+/-- **The result-bearing loop combinator** (spec, fill pending; added per
+round-1 finding 3 — the decision form exposes only a Boolean, which cannot
+express the split search's or the reduction emitters' outputs). Identical
+skeleton to `exists_loopTM`, except the accepting round halts with the
+declared payload `out x s`, and the machine outputs the **first** accepting
+orbit point's payload — `[]` on fuel exhaustion, the library's threaded
+rejection value. `List.range.find?` returns the least accepting index, which
+is exactly the round at which the iterated body first halts.
+
+**Proof sketch.** As `exists_loopTM`, with one change at the surface: on
+the captured halt the host replays the entire capture tape (the payload)
+as its output instead of the fixed verdict — the W1 core captures the
+full output word precisely so that this variant costs nothing extra. A
+payload may be `[]`; the conclusion's function is well-defined regardless,
+and consumers that need to distinguish success from exhaustion use
+nonempty payloads (the split search's `pairEncode` outputs are always
+nonempty). -/
+theorem exists_loopFindTM (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    ∃ (E : FinTM Bool) (c : ℕ),
+      E.ComputesFunInTime
+        (fun x => match (List.range (R x.length + 1)).find?
+            (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
+          | some i => out x ((stepF x)^[i] (s0 x))
+          | none => [])
         (fun n => c * (T n + 1) * (R n + 2)) := by
   sorry
 

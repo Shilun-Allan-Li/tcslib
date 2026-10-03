@@ -25,7 +25,7 @@ transition**; the wrapper's physical output stays untouched; the completed
 source configuration is preserved at the return.
 
 **Status: spec phase.** The two action/configuration transformers and the
-derived machine are real definitions; the three contract theorems are
+derived machine are real definitions; the four contract theorems are
 sorried, to be filled from the existing private proofs (harvest) in the
 library fill batches. New Chapter-1 surface, flagged for the shared
 infrastructure audit round.
