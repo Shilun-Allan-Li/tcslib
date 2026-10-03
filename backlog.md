@@ -201,10 +201,13 @@ uncomputability chapter.
   closing commit; `audits/ch1-infra-resolutions.md`): the spec surface
   is audited-true, D5 v3 approved (D-MEM explicitly limited; 2B
   component-level; E3/E4 deferred to their brief audits), the
-  `enumMachine_contracts` translation certified exactly. Next: library
-  fill batches (harvest-adaptation; the loop fill flagged for
-  continuation budget, with round-3 items 4–5 as its construction
-  ledger), then the E2 continuation briefs. Subsumes 2C's
+  `enumMachine_contracts` translation certified exactly. **Fill briefs
+  issued 2026-10-03** (`briefs/lib-fill-batch{W,P,L}.md`: 4 + 15 + 4
+  targets, 14/34/18 pts, P and L with continuation anticipated;
+  sanctioned roots `capture_run` → P/L and `exists_loopFindTM` →
+  P-splitSolve; L carries the round-3 item-4 construction ledger as
+  binding). Next: dispatch, then integration + the library-fill audit
+  round, then the E2 continuation briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
