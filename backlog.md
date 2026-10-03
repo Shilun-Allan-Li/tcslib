@@ -163,8 +163,20 @@ uncomputability chapter.
   `timed_computes`/`timedAnswer` are private; coefficient arithmetic
   already proved on the 2D side). 2C also requests promotion of
   `prefixTM`/`fixedPair` fixed-prefixing lemmas (held with D3).
-  Next: TM-construction methodology discussion (user), then the
-  maintainer bridge export + continuation briefs, then the epoch audit.
+  Next (sequencing per the frozen library design, 2026-10-03): maintainer
+  spec layer for the machine-construction library + the Chapter-1 bridge
+  export → one shared infrastructure audit round → library fills
+  (harvest-adaptation batches; loop flagged for continuation budget) →
+  E2 continuation briefs citing the library → epoch-2 audit.
+* **Machine-construction library** (`machine-library-design.md`, design
+  FROZEN 2026-10-03; decision-log row in `AroraBarakChapter1Plan.md`):
+  `TuringMachine/Build/{Convention,Primitives,Wrappers,Loop}.lean` — 12
+  primitives (P1–P12, harvest-heavy), capture/silence + halt-redirect +
+  timed cond wrappers, the bounded-loop combinator factored from 2A's
+  `enumMachine_contracts`. Spec audit rides with the bridge export.
+  Subsumes 2C's `prefixTM`/`fixedPair` promotion requests. Dedup of
+  superseded batch privates is an E5 closure task. Mathlib TM2 rejected
+  as substrate (evaluation recorded in the ch1 decision log).
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —
