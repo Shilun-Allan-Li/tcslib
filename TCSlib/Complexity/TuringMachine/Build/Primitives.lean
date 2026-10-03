@@ -292,8 +292,9 @@ theorem computesFunInTime_stripLast :
 
 /-- **P10, padding split search** (spec, fill pending — new; the bounded
 search both padding constructions perform, realizable as a
-`Turing.FinTM.exists_loopTM` instance over the polynomial-evaluation
-primitive). Search for the unique `i ≤ |w|` with `i + C·(i+1)^e = |w|`
+`Turing.FinTM.exists_loopFindTM` instance over the polynomial-evaluation
+primitive — the decision loop returns only a Boolean and cannot carry the
+split). Search for the unique `i ≤ |w|` with `i + C·(i+1)^e = |w|`
 (`Turing.solveSplit`); on success emit the threaded split
 `pairEncode (w.take i) (w.drop i)`, and on failure `[]` — rejection when
 no length-equation solution exists is the audited obligation.

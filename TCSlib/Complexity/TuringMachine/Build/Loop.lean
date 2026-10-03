@@ -15,8 +15,9 @@ set_option autoImplicit false
 # Machine-construction library: the bounded loop
 
 The control centerpiece of the machine-construction library
-(`machine-library-design.md` §5, L; loop redesign §9b): a bounded loop
-with tape-resident round state, specified at three granularities.
+(`machine-library-design.md` §5, L; loop redesign §9b, configuration
+export §9c): a bounded loop with tape-resident round state, specified at
+four granularities.
 
 * `Turing.loop_run` is the **summation lemma**: given a family of round
   configurations with an accept-or-advance contract, the run from round 0
@@ -24,12 +25,19 @@ with tape-resident round state, specified at three granularities.
   the generic form of the Chapter-2 enumerator's proved private
   `enumLoop_run`, whose proof is the harvest template. (Round-1 audit:
   Pass.)
-* `Turing.FinTM.exists_loopTM` is the **decision combinator**: from a fuel
-  machine and a body machine whose startup and rounds are
-  `Turing.Cfg.ofWords` seam contracts, one finite machine iterates the
-  body under a fuel bound and answers the Boolean "some orbit point
-  accepts".
-* `Turing.FinTM.exists_loopFindTM` is the **result-bearing variant**: the
+* `Turing.FinTM.exists_loopCfgTM` is the **configuration-level
+  combinator** (added per round-2 finding 1): its conclusion exposes the
+  host machine's round-configuration family, bounded startup, per-round
+  accept-or-advance segments, and halted exhaustion terminal — the shape
+  the frozen Chapter-2 `enumMachine_contracts` consumes, which the
+  final-answer conclusion below provably cannot supply (the round-2 audit
+  exhibits a final-answer-correct machine violating every per-round
+  bound).
+* `Turing.FinTM.exists_loopTM` is the **decision form**: one finite
+  machine answers the Boolean "some orbit point accepts". At fill time it
+  is a corollary of the configuration form — `Turing.loop_run` performs
+  the summation and the startup is absorbed by monotonicity.
+* `Turing.FinTM.exists_loopFindTM` is the **result-bearing form**: the
   accepting round delivers a payload, and the machine outputs the first
   accepting orbit point's payload (`[]` on exhaustion) — the form the
   split search (catalog P10) and the reduction emitters instantiate.
@@ -126,6 +134,74 @@ end Turing
 
 namespace Turing.FinTM
 
+/-- **The configuration-level loop combinator** (spec, fill pending;
+added per round-2 finding 1 — the final-answer conclusion below cannot
+discharge a configuration contract: the round-2 audit exhibits a machine
+that answers correctly after a deliberate exponential delay, satisfying
+the final-answer form while violating every per-round bound). Same
+hypotheses as `exists_loopTM`; the conclusion instead exposes, for every
+input, the host's **round-configuration family**: a bounded startup
+reaching `cfg 0`, empty output at every round configuration, a per-round
+accept-or-advance segment within a uniform constant multiple of
+`T |x| + 1` — acceptance halting with `[true]`, advance reaching
+`cfg (i + 1)` — and the halted `[false]` exhaustion terminal at index
+`R |x| + 1`. This is the generic shape of the frozen Chapter-2
+`enumMachine_contracts` (`machine-library-design.md` §9c gives the index
+and budget translation); the final-answer forms below are corollaries via
+`Turing.loop_run`.
+
+**Proof sketch.** The intended host of `exists_loopTM` already *has* this
+family: `cfg i` is the host image of the body's seam at the `i`-th orbit
+point together with the counter state after `i` debits (initial entry
+free), and `cfg (R |x| + 1)` is the halted configuration after the borrow
+underflow and the `[false]` emission. Startup is the fuel phase plus the
+body startup; each segment is one captured body round plus one amortized
+counter operation — the same ledger as the decision form, read off at
+segment granularity instead of summed. -/
+theorem exists_loopCfgTM (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = [true]
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    ∃ (E : FinTM Bool) (c : ℕ), ∀ x : List Bool,
+      ∃ (cfg : ℕ → Cfg E.k Bool E.State x) (startup : ℕ),
+        startup ≤ c * (T x.length + 1) ∧
+        E.tm.runFrom (E.tm.initCfg x) startup = cfg 0 ∧
+        (∀ i ≤ R x.length, (cfg i).output = []) ∧
+        (cfg (R x.length + 1)).state = none ∧
+        (cfg (R x.length + 1)).output = [false] ∧
+        (∀ i ≤ R x.length, ∃ t ≤ c * (T x.length + 1),
+          if acceptF x ((stepF x)^[i] (s0 x)) then
+            (E.tm.runFrom (cfg i) t).state = none ∧
+            (E.tm.runFrom (cfg i) t).output = [true]
+          else E.tm.runFrom (cfg i) t = cfg (i + 1)) := by
+  sorry
+
 /-- **The decision loop combinator** (spec, fill pending; repaired per
 round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
 
@@ -143,6 +219,10 @@ round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
 Conclusion: one finite machine answers, within a constant multiple of
 `(T |x| + 1) · (R |x| + 2)`, whether some orbit point
 `(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted.
+
+At fill time this is a corollary of `exists_loopCfgTM`:
+`Turing.loop_run` sums the configuration family's segments and the
+startup is absorbed by `ComputesInTime.mono`.
 
 **Proof sketch.** The combinator machine runs the fuel machine
 relocated-and-captured to lay `Nat.bits (R |x|)` on a counter tape,

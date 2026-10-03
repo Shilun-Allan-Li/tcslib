@@ -1,0 +1,936 @@
+shared infrastructure round 3: verification sweep (57 modules)
+START_UTC: 2026-10-03T17:08:56Z
+=== 1/57 TCSlib/Complexity/TuringMachine/Configuration
+TCSlib/Complexity/TuringMachine/Configuration.lean:137:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Configuration.lean:140:61: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Configuration.lean:155:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+=== 2/57 TCSlib/Complexity/TuringMachine/Deterministic
+=== 3/57 TCSlib/Complexity/TuringMachine/StateRenaming
+=== 4/57 TCSlib/Complexity/TuringMachine/Finite
+=== 5/57 TCSlib/Complexity/TuringMachine/Oracle
+=== 6/57 TCSlib/Complexity/TuringMachine/Simulation
+=== 7/57 TCSlib/Complexity/TuringMachine/Sweep
+=== 8/57 TCSlib/Complexity/TuringMachine/Composition
+=== 9/57 TCSlib/Complexity/TuringMachine/Build/Convention
+=== 10/57 TCSlib/Complexity/TuringMachine/Build/Wrappers
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:135:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:190:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:206:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:226:8: warning: declaration uses 'sorry'
+=== 11/57 TCSlib/Complexity/TuringMachine/Build/Loop
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:118:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:161:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:239:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:293:8: warning: declaration uses 'sorry'
+=== 12/57 TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction
+=== 13/57 TCSlib/Complexity/TuringMachine/Robustness/SingleTape
+=== 14/57 TCSlib/Complexity/TuringMachine/Robustness/Bidirectional
+=== 15/57 TCSlib/Complexity/ClassP/DTIME
+=== 16/57 TCSlib/Complexity/ClassP/TimeConstructible
+=== 17/57 TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule
+=== 18/57 TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:473:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:501:37: warning: This simp argument is unused:
+  hl
+
+Hint: Omit it from the simp argument list.
+  simp [inputTag, clippedMove, hl̵,̵ ̵h̵r]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:533:45: warning: This simp argument is unused:
+  hw
+
+Hint: Omit it from the simp argument list.
+  simp [h̵w̵,̵ ̵Cfg.workTapeSymbols]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:535:49: warning: This simp argument is unused:
+  hw
+
+Hint: Omit it from the simp argument list.
+  simp [hz, h̵w̵,̵ ̵Function.update_of_ne hn]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:535:53: warning: This simp argument is unused:
+  Function.update_of_ne hn
+
+Hint: Omit it from the simp argument list.
+  simp [hz, hw,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:614:44: warning: This simp argument is unused:
+  List.append_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [payloadZone, List.reverse_cons, FinTM.sweepFold_append, he, ih, FinTM.sweepFold,
+  ̲  ̲ ̲ ̲ ̲ ̲p̵a̵y̵l̵o̵a̵d̵B̵a̵c̵k̵w̵a̵r̵d̵_̵r̵o̵w̵,̵ ̵L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵]̵p̲a̲y̲l̲o̲a̲d̲B̲a̲c̲k̲w̲a̲r̲d̲_̲r̲o̲w̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:764:27: warning: This simp argument is unused:
+  act
+
+Hint: Omit it from the simp argument list.
+  simp only [a̵c̵t̵,̵ ̵Option.map_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:768:21: warning: This simp argument is unused:
+  act
+
+Hint: Omit it from the simp argument list.
+  simp only [a̵c̵t̵,̵ ̵Option.map_some, Function.update_self]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:769:21: warning: This simp argument is unused:
+  act
+
+Hint: Omit it from the simp argument list.
+  simp only [a̵c̵t̵,̵ ̵Option.map_some, Function.update_of_ne hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:774:29: warning: This simp argument is unused:
+  act
+
+Hint: Omit it from the simp argument list.
+  simp only [a̵c̵t̵,̵ ̵Option.toList_none, List.append_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:776:21: warning: This simp argument is unused:
+  act
+
+Hint: Omit it from the simp argument list.
+  simp only [a̵c̵t̵,̵ ̵Option.toList_some, clockTape_append]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:784:65: warning: This simp argument is unused:
+  ho
+
+Hint: Omit it from the simp argument list.
+  simp [act, List.length_append,̵ ̵h̵o̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:784:73: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:784:73: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:881:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+=== 19/57 TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:191:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:217:4: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [setupWrite, moveInputPos_zero, SignType.coe_zero, add_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵zero_add]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:249:56: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [setupWrite, SignType.coe_zero, add_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵copyGuide_next]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:64: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:35: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:64: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:16: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:41: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:16: warning: 'simp [SignType.cast]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:41: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:600:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:686:26: warning: This simp argument is unused:
+  hg
+
+Hint: Omit it from the simp argument list.
+  simp_all ̵[̵h̵g̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:731:38: warning: This simp argument is unused:
+  layoutPhase
+
+Hint: Omit it from the simp argument list.
+  simp [layoutP̵h̵a̵s̵e̵,̵ ̵l̵a̵y̵o̵u̵t̵Move, hi]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:747:36: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:747:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:756:32: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:778:15: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵,̵ ̵Nat.cast_add, Nat.cast_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:778:27: warning: This simp argument is unused:
+  Nat.cast_add
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.val_mk, Nat.cast_a̵d̵d̵,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:778:41: warning: This simp argument is unused:
+  Nat.cast_one
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.val_mk, Nat.cast_add,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:879:17: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵,̵ ̵Nat.cast_add, Nat.cast_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:879:29: warning: This simp argument is unused:
+  Nat.cast_add
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.val_mk, Nat.cast_a̵d̵d̵,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:879:43: warning: This simp argument is unused:
+  Nat.cast_one
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.val_mk, Nat.cast_add,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+=== 20/57 TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger
+=== 21/57 TCSlib/Complexity/TuringMachine/Robustness/Oblivious
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:182:25: warning: This simp argument is unused:
+  hc
+
+Hint: Omit it from the simp argument list.
+  simp only [hfirst,̵ ̵h̵c̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:240:19: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵d̵,̵ ̵SignType.cast, add_zero, ← sub_eq_add_neg, hleft', hc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:379:26: warning: This simp argument is unused:
+  hw
+
+Hint: Omit it from the simp argument list.
+  simp [setupWrite, h̵w̵,̵ ̵Function.update_of_ne hz, h, hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:379:30: warning: This simp argument is unused:
+  Function.update_of_ne hz
+
+Hint: Omit it from the simp argument list.
+  simp [setupWrite, hw, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵z̵,̵ ̵h, hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:737:38: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:743:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:756:24: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:756:24: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:695:64: warning: This simp argument is unused:
+  Fin.reduceFinMk
+
+Hint: Omit it from the simp argument list.
+  simp only [prepInvariant, Action.apply, Fin.addCases_right, Fin.r̵e̵d̵u̵c̵e̵F̵i̵n̵M̵k̵,̵ ̵F̵i̵n̵.̵val_one, Nat.one_ne_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲show (2 : ℕ) ≠ 0 by decide, ↓reduceIte,
+  ̵  ̵ ̵ ̵ ̵ ̵SignType.coe_zero, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:695:111: warning: This simp argument is unused:
+  show (2 : ℕ) ≠ 0 by decide
+
+Hint: Omit it from the simp argument list.
+  simp only [prepInvariant, Action.apply, Fin.addCases_right, Fin.reduceFinMk, Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, s̵h̵o̵w̵ ̵(̵2̵ ̵:̵ ̵ℕ̵)̵ ̵≠̵ ̵0̵ ̵b̵y̵ ̵d̵e̵c̵i̵d̵e̵,̵ ̵↓reduceIte, SignType.coe_zero, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:725:52: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [obliviousSchedule, obliviousVisit, h̵i̵,̵ ̵setupWrite, Option.toList_none, List.append_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:729:52: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [obliviousSchedule, obliviousVisit, h̵i̵,̵ ̵setupWrite, Option.toList_none, List.append_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+=== 22/57 TCSlib/Complexity/ClassP/P
+=== 23/57 TCSlib/Complexity/ClassP/ModelInvariance
+=== 24/57 TCSlib/Complexity/ClassP/Examples
+=== 25/57 TCSlib/Complexity/TuringMachine/Encoding
+=== 26/57 TCSlib/Complexity/TuringMachine/Build/Primitives
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:72:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:85:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:106:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:124:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:142:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:156:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:171:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:184:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:200:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:217:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:237:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:260:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:281:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:319:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:340:8: warning: declaration uses 'sorry'
+=== 27/57 TCSlib/Complexity/TuringMachine/CodeParser
+TCSlib/Complexity/TuringMachine/CodeParser.lean:339:13: warning: This simp argument is unused:
+  codeBitsNat_bits
+
+Hint: Omit it from the simp argument list.
+  simp only [c̵o̵d̵e̵B̵i̵t̵s̵N̵a̵t̵_̵b̵i̵t̵s̵,̵ ̵List.append_assoc, codeReadFin_append, bind, Option.bind,
+  ̵  ̵ ̵ ̵codeReadTable_append,
+  ̲  ̲ ̲ ̲List.all_replicate, id_eq, Bool.true_eq, or_true,
+  ̵  ̵ ̵ ̵ite_self, ↓reduceIte, pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CodeParser.lean:339:70: warning: This simp argument is unused:
+  bind
+
+Hint: Omit it from the simp argument list.
+  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, b̵i̵n̵d̵,̵ ̵Option.bind,
+      codeReadTable_append, List.all_replicate, id_eq, Bool.true_eq, or_true,
+  ̵  ̵ ̵ ̵ite_self, ↓reduceIte,
+  ̲  ̲ ̲ ̲pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CodeParser.lean:339:76: warning: This simp argument is unused:
+  Option.bind
+
+Hint: Omit it from the simp argument list.
+  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, bind, O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵,̵
+  ̵ ̵ ̵ ̵ ̵codeReadTable_append,
+  ̲  ̲ ̲ ̲List.all_replicate, id_eq, Bool.true_eq, or_true,
+  ̵  ̵ ̵ ̵ite_self, ↓reduceIte, pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CodeParser.lean:340:53: warning: This simp argument is unused:
+  Bool.true_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, bind, Option.bind,
+      codeReadTable_append, List.all_replicate, id_eq, B̵oo̵l̵.̵t̵ru̵e̵_e̵q̵,̵ ̵o̵r̵_̵true,
+  ̵  ̵ ̵ ̵ite_self, ↓reduceIte, pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CodeParser.lean:340:67: warning: This simp argument is unused:
+  or_true
+
+Hint: Omit it from the simp argument list.
+  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, bind, Option.bind,
+      codeReadTable_append, List.all_replicate, id_eq, Bool.true_eq, o̵r̵_̵t̵r̵u̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵ite_self, ↓reduceIte, pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CodeParser.lean:420:43: warning: This simp argument is unused:
+  h₁
+
+Hint: Omit it from the simp argument list.
+  simp [pairDecode, h₁̵,̵ ̵h̵₂, h₃] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CodeParser.lean:420:47: warning: This simp argument is unused:
+  h₂
+
+Hint: Omit it from the simp argument list.
+  simp [pairDecode, h₁, h₂̵,̵ ̵h̵₃] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CodeParser.lean:420:51: warning: This simp argument is unused:
+  h₃
+
+Hint: Omit it from the simp argument list.
+  simp [pairDecode, h₁, h₂,̵ ̵h̵₃̵] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+=== 28/57 TCSlib/Complexity/TuringMachine/MathlibBridge
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:448:8: warning: This simp argument is unused:
+  Function.update_self
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵hs]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:454:12: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵bridgeOne, bridgeCfg, hi, hk]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:459:8: warning: This simp argument is unused:
+  Function.update_self
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵hs,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.pos_eq_one, SignType.coe_one, List.length_cons, Nat.cast_add, Nat.cast_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:484:8: warning: This simp argument is unused:
+  Function.update_self
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
+          F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:490:12: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵bridgeOne, bridgeCfg, hi, hk]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:495:8: warning: This simp argument is unused:
+  Function.update_self
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
+          F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲List.length_cons, Nat.cast_add, Nat.cast_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:496:50: warning: This simp argument is unused:
+  List.length_cons
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
+          Function.update_self, SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵c̵o̵n̵s̵,̵ ̵Nat.cast_add, Nat.cast_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:496:68: warning: This simp argument is unused:
+  Nat.cast_add
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
+          Function.update_self, SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, List.length_cons, N̵a̵t̵.̵c̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵Nat.cast_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:496:82: warning: This simp argument is unused:
+  Nat.cast_one
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
+          Function.update_self, SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, List.length_cons, N̵a̵t̵.̵c̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵]̵N̲a̲t̲.̲c̲a̲s̲t̲_̲a̲d̲d̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:719:32: warning: This simp argument is unused:
+  Num.cast_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [Num.to_of_nat,̵ ̵N̵u̵m̵.̵c̵a̵s̵t̵_̵z̵e̵r̵o̵] at hz
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:821:75: warning: This simp argument is unused:
+  hk
+
+Hint: Omit it from the simp argument list.
+  simp [bridgeStore, PartrecToTM2.K'.elim, hi, hk̵,̵ ̵h̵] at *
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:869:15: warning: This simp argument is unused:
+  Action.apply
+
+Hint: Omit it from the simp argument list.
+  simp only [̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵,̵ ̵b̵r̵i̵d̵g̵e̵C̵f̵g̵,̵[̲b̲r̲i̲d̲g̲e̲C̲f̲g̲,̲ bridgeOne, SignType.zero_eq_zero, moveInputPos_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:869:40: warning: This simp argument is unused:
+  bridgeOne
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply, bridgeCfg, b̵r̵i̵d̵g̵e̵O̵n̵e̵,̵ ̵SignType.zero_eq_zero, moveInputPos_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:878:41: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [bridgeCfg, bridgeStore_at, ↓reduceIte, List.length_nil, Nat.cast_zero, neg_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.zero_eq_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_neg_one, zero_add]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+=== 29/57 TCSlib/Complexity/TuringMachine/UniversalStartup
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:160:54: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:164:54: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:190:52: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:197:54: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:215:52: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:274:46: warning: This simp argument is unused:
+  VirtualTag
+
+Hint: Omit it from the simp argument list.
+  simp_all ̵[̵V̵i̵r̵t̵u̵a̵l̵T̵a̵g̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+=== 30/57 TCSlib/Complexity/TuringMachine/UniversalInterpreter
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:330:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:353:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:378:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:439:60: warning: This simp argument is unused:
+  zero_add
+
+Hint: Omit it from the simp argument list.
+  simp only [universalStateWindow, Nat.cast_zero, add_zero,̵ ̵z̵e̵r̵o̵_̵a̵d̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:503:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:510:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:519:71: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:519:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:546:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:553:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:563:39: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1020:75: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1021:16: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1021:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+=== 31/57 TCSlib/Complexity/TuringMachine/UniversalBlock
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:68:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:83:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:62:10: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:79:64: warning: This simp argument is unused:
+  universalSkipDone
+
+Hint: Omit it from the simp argument list.
+  simp [universalInterpreter, universalFour, hr, h, hz,̵ ̵u̵n̵i̵v̵e̵r̵s̵a̵l̵S̵k̵i̵p̵D̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:93:50: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:93:62: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:108:10: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:164:53: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:164:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:185:50: warning: This simp argument is unused:
+  Nat.add_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, List.flatMap_nil, Nat.a̵d̵d̵_̵zero,̵ ̵N̵a̵t̵.̵z̵e̵r̵o̵_add,
+  ̵  ̵ ̵ ̵ ̵ ̵Nat.cast_zero, add_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:244:40: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:271:40: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:61: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:73: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:6: warning: 'simp only [Fin.val_mk, Nat.cast_add, Nat.cast_one]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:61: warning: 'congr 1' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:73: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:313:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:321:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:426:40: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:574:68: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+=== 32/57 TCSlib/Complexity/TuringMachine/Universal
+TCSlib/Complexity/TuringMachine/Universal.lean:314:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:337:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:362:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:427:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:434:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:443:71: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:443:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:470:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:477:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:487:39: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:621:75: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:622:16: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:622:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:644:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:659:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:638:10: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Universal.lean:655:85: warning: This simp argument is unused:
+  universalSkipDone
+
+Hint: Omit it from the simp argument list.
+  simp [timedCutInterpreter, universalInterpreter, universalFour, hr, h, hz,̵ ̵u̵n̵i̵v̵e̵r̵s̵a̵l̵S̵k̵i̵p̵D̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Universal.lean:669:50: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:669:62: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:684:10: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Universal.lean:740:53: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:740:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:761:50: warning: This simp argument is unused:
+  Nat.add_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, List.flatMap_nil, Nat.a̵d̵d̵_̵zero,̵ ̵N̵a̵t̵.̵z̵e̵r̵o̵_add,
+  ̵  ̵ ̵ ̵ ̵ ̵Nat.cast_zero, add_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Universal.lean:820:40: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:847:40: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:865:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:865:61: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:865:73: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:865:6: warning: 'simp only [Fin.val_mk, Nat.cast_add, Nat.cast_one]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:865:61: warning: 'congr 1' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:865:73: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:889:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:897:15: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1006:40: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1106:68: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1484:16: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1484:34: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1484:61: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1484:16: warning: 'apply Fin.ext' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1484:34: warning: 'simp only [Fin.val_mk]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1484:61: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1578:30: warning: This simp argument is unused:
+  Nat.reduceAdd
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.add_assoc,̵ ̵N̵a̵t̵.̵r̵e̵d̵u̵c̵e̵A̵d̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1583:16: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1583:34: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1583:61: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1583:16: warning: 'apply Fin.ext' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1583:34: warning: 'simp only [Fin.val_mk]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1583:61: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1606:28: warning: This simp argument is unused:
+  Nat.reduceAdd
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.add_assoc,̵ ̵N̵a̵t̵.̵r̵e̵d̵u̵c̵e̵A̵d̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1608:43: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1608:10: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1608:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:1608:55: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Universal.lean:2278:46: warning: This simp argument is unused:
+  VirtualTag
+
+Hint: Omit it from the simp argument list.
+  simp_all ̵[̵V̵i̵r̵t̵u̵a̵l̵T̵a̵g̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+=== 33/57 TCSlib/Complexity/Uncomputability/Computable
+=== 34/57 TCSlib/Complexity/Uncomputability/Diagonalization
+=== 35/57 TCSlib/Complexity/Uncomputability/Halting
+=== 36/57 TCSlib/Complexity/TuringMachine/Nondeterministic
+=== 37/57 TCSlib/Complexity/Formulas/CNF
+=== 38/57 TCSlib/Complexity/Formulas/CNFEncoding
+=== 39/57 TCSlib/Complexity/Formulas/DNF
+=== 40/57 TCSlib/Complexity/ClassNP/PolyTime
+=== 41/57 TCSlib/Complexity/ClassNP/NP
+TCSlib/Complexity/ClassNP/NP.lean:359:8: warning: declaration uses 'sorry'
+=== 42/57 TCSlib/Complexity/ClassNP/CoNP
+=== 43/57 TCSlib/Complexity/ClassNP/EXP
+TCSlib/Complexity/ClassNP/EXP.lean:750:16: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/EXP.lean:879:8: warning: declaration uses 'sorry'
+=== 44/57 TCSlib/Complexity/ClassNP/Reductions
+=== 45/57 TCSlib/Complexity/ClassNP/NTIME
+TCSlib/Complexity/ClassNP/NTIME.lean:215:8: warning: `Set.eq_empty_iff_forall_not_mem` has been deprecated: Use `Set.eq_empty_iff_forall_notMem` instead
+=== 46/57 TCSlib/Complexity/ClassNP/Nondeterminism
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:672:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:712:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:722:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:742:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:763:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:774:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:810:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:816:8: warning: declaration uses 'sorry'
+=== 47/57 TCSlib/Complexity/ClassNP/SAT
+TCSlib/Complexity/ClassNP/SAT.lean:108:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/SAT.lean:120:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/SAT.lean:155:8: warning: declaration uses 'sorry'
+=== 48/57 TCSlib/Complexity/ClassNP/TMSAT
+TCSlib/Complexity/ClassNP/TMSAT.lean:951:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/TMSAT.lean:1140:8: warning: declaration uses 'sorry'
+=== 49/57 TCSlib/Complexity/CookLevin/Snapshot
+TCSlib/Complexity/CookLevin/Snapshot.lean:176:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Snapshot.lean:192:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Snapshot.lean:204:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Snapshot.lean:217:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Snapshot.lean:244:8: warning: declaration uses 'sorry'
+=== 50/57 TCSlib/Complexity/CookLevin/Hardness
+TCSlib/Complexity/CookLevin/Hardness.lean:82:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Hardness.lean:212:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Hardness.lean:219:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Hardness.lean:228:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CookLevin/Hardness.lean:234:8: warning: declaration uses 'sorry'
+=== 51/57 TCSlib/Complexity/ClassNP/Tautology
+TCSlib/Complexity/ClassNP/Tautology.lean:110:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/ClassNP/Tautology.lean:130:8: warning: declaration uses 'sorry'
+=== 52/57 TCSlib/Complexity/TuringMachine
+=== 53/57 TCSlib/Complexity/ClassP
+=== 54/57 TCSlib/Complexity/Uncomputability
+=== 55/57 TCSlib/Complexity/Formulas
+=== 56/57 TCSlib/Complexity/CookLevin
+=== 57/57 TCSlib/Complexity/ClassNP
+SWEEP_PASS modules=57
+END_UTC: 2026-10-03T17:10:21Z

@@ -189,8 +189,15 @@ uncomputability chapter.
   input-dependent step/accept), `exists_loopFindTM` + P13 `pairConcat` +
   P14 `pairDup` + C1 `pairMapSnd` added, sketches corrected, errata
   acknowledged, historical evidence supplied, D5 re-issued as a concrete
-  mapping; Build now 22 contracts, tree 50 admissions. Gate awaits
-  `audits/ch1-infra-r2-findings.md` — then fills (harvest-adaptation
+  mapping; Build 22 contracts, tree 50 admissions. **Round 2: 0
+  blockers, 1 major, 3 minors** (loops/P13-P14-C1/tables passed; the
+  major: the final-answer loop conclusion cannot discharge
+  `enumMachine_contracts`). **Round-3 repair executed + pack prepared**
+  (`audits/ch1-infra-r3-{pack,bundle}.md`): `exists_loopCfgTM`
+  configuration-level export + §9c translation, coefficient-shift and
+  pairing-derivation notes adopted, D5 v3 narrowed to epoch-2 + P10;
+  Build 23 contracts, tree 51 admissions. Gate awaits
+  `audits/ch1-infra-r3-findings.md` — then fills (harvest-adaptation
   batches; loop flagged for continuation budget). Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate

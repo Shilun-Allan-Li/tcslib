@@ -324,6 +324,51 @@ retained components. **P10 narrowing recorded**: the implemented search is
 the fixed length-equation search, not the catalog's supplied-predicate
 search; the general form is `exists_loopFindTM` itself.
 
+## 9c. Round-3 repairs (2026-10-03, after `audits/ch1-infra-r2-findings.md`)
+
+Round 2 passed the redesigned loops, P13/P14/C1, and the §9b tables, and
+discharged both round-1 refutations; its one major (finding 1) showed the
+loop's *final-answer* conclusion cannot discharge the frozen
+`enumMachine_contracts`, which is a *configuration-level* contract — the
+auditor's delay machine answers correctly yet violates every per-round
+bound. Repairs:
+
+**The configuration-level export.** `exists_loopCfgTM` (same hypotheses
+as the decision form) concludes with the host's round-configuration
+family: startup ≤ `c·(T+1)` reaching `cfg 0`, empty output at rounds
+`0…R`, per-round accept-or-advance segments each within `c·(T+1)`, and
+the halted `[false]` terminal at index `R+1`. The decision form becomes a
+fill-time corollary (`loop_run` + monotonicity). **Index/budget
+translation to `enumMachine_contracts`** (under the §9b enumerator
+instantiation, `w := m n`): candidates `2^w = R n + 1`, so the terminal
+index matches; the customer's uniform bound `b·(n + w + 1)^e` dominates
+`c·(T n + 1)` once `T` is chosen as a polynomial in `n + w` and `b, e`
+absorb `c` and its degree; the per-round indicator matches via the fill's
+orbit bridge `(stepF x)^[i] (s0 x) = enumWord w i` (little-endian rank
+enumeration, `incFixed` = `enumInc` per the round-2 vocabulary note).
+
+**Vocabulary coefficient shift (round-2 note 5, adopted).** The proved
+equalities are `splitAtLastTrue = stripCertificate`, `incFixed = enumInc`,
+and `solveSplit (C+1) c = certificateSplit C c` — the middle one is false
+without the shift. Consequently the padded-verifier pipeline uses P10 at
+`(C + 1, c)` while P8 keeps `(C, c)` for the original witness bound.
+
+**General pairing assembly (round-2 item 10's derivation, adopted
+verbatim as the canonical recipe).** For computed `f, g`:
+`H x := pairEncode (f x) []` (P14 + C1 at the constant-empty function);
+`s x := pairEncode x (H x)`; `t x := pairEncode (s x) (g x)` (P14 + C1,
+the second with `g ∘ pairFst`); then
+`pairSnd (pairConcat (t x)) = pairEncode (f x) (g x)` — the
+self-delimiting grammar makes concatenation-into-payload well-formed at
+every stage. A C1 call on `pairEncode a b` computes `g b` only; any
+cross-component operation goes through this retained-whole-request
+pattern, never through C1 directly (round-2 item 10's D-MEM caveat).
+
+**D5 scope (round-2 items 6/10).** The disposition is re-issued for the
+epoch-2 frontiers and P10 only; the E3/E4 rows are component-level
+plausibility and their full coverage check is deferred to those epochs'
+brief audits, where the six-stage/boundary/ledger tables are in scope.
+
 ## 10. Cost and sequencing (estimate, campaign points)
 
 | Work | Est. | Note |
