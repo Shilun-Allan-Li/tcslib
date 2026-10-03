@@ -196,9 +196,15 @@ uncomputability chapter.
   (`audits/ch1-infra-r3-{pack,bundle}.md`): `exists_loopCfgTM`
   configuration-level export + §9c translation, coefficient-shift and
   pairing-derivation notes adopted, D5 v3 narrowed to epoch-2 + P10;
-  Build 23 contracts, tree 51 admissions. Gate awaits
-  `audits/ch1-infra-r3-findings.md` — then fills (harvest-adaptation
-  batches; loop flagged for continuation budget). Subsumes 2C's
+  Build 23 contracts, tree 51 admissions. **GATE CLOSED 2026-10-03**
+  (round 3: 0 blockers/majors, 3 documentation minors swept in the
+  closing commit; `audits/ch1-infra-resolutions.md`): the spec surface
+  is audited-true, D5 v3 approved (D-MEM explicitly limited; 2B
+  component-level; E3/E4 deferred to their brief audits), the
+  `enumMachine_contracts` translation certified exactly. Next: library
+  fill batches (harvest-adaptation; the loop fill flagged for
+  continuation budget, with round-3 items 4–5 as its construction
+  ledger), then the E2 continuation briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).

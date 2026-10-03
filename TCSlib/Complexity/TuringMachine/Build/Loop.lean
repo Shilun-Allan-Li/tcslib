@@ -35,8 +35,11 @@ four granularities.
   bound).
 * `Turing.FinTM.exists_loopTM` is the **decision form**: one finite
   machine answers the Boolean "some orbit point accepts". At fill time it
-  is a corollary of the configuration form — `Turing.loop_run` performs
-  the summation and the startup is absorbed by monotonicity.
+  is a corollary of the configuration form through an
+  already-halted-terminal summation lemma (the shape of the enumerator's
+  `enumLoop_run`; the frozen `Turing.loop_run` requires an empty-output
+  terminal, which the exported family's `[false]` terminal deliberately
+  is not — round-3 finding R3-1), with startup absorbed by monotonicity.
 * `Turing.FinTM.exists_loopFindTM` is the **result-bearing form**: the
   accepting round delivers a payload, and the machine outputs the first
   accepting orbit point's payload (`[]` on exhaustion) — the form the
@@ -147,17 +150,24 @@ accept-or-advance segment within a uniform constant multiple of
 `cfg (i + 1)` — and the halted `[false]` exhaustion terminal at index
 `R |x| + 1`. This is the generic shape of the frozen Chapter-2
 `enumMachine_contracts` (`machine-library-design.md` §9c gives the index
-and budget translation); the final-answer forms below are corollaries via
-`Turing.loop_run`.
+and budget translation). The decision form below is a corollary through
+an already-halted-terminal summation lemma; the find form shares the
+host construction with the payload surfaced, and is not claimed as a
+`Turing.loop_run` corollary (round-3 finding R3-1).
 
 **Proof sketch.** The intended host of `exists_loopTM` already *has* this
 family: `cfg i` is the host image of the body's seam at the `i`-th orbit
 point together with the counter state after `i` debits (initial entry
 free), and `cfg (R |x| + 1)` is the halted configuration after the borrow
 underflow and the `[false]` emission. Startup is the fuel phase plus the
-body startup; each segment is one captured body round plus one amortized
-counter operation — the same ledger as the decision form, read off at
-segment granularity instead of summed. -/
+body startup; each segment is one captured body round plus counter work
+bounded **worst-case** by the counter width: the fuel word has length at
+most `T |x|` (`Turing.MultiTapeTM.output_length_le` on the fuel machine)
+and never grows, so every debit, rewind, and the final
+underflow-plus-`[false]`-emission each cost a constant multiple of
+`T |x| + 1` — the per-segment bound needs no amortization (round-3
+finding R3-2; the amortized aggregate remains true but is not read off
+per segment). -/
 theorem exists_loopCfgTM (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF : List Bool → List Bool → List Bool)
@@ -220,9 +230,11 @@ Conclusion: one finite machine answers, within a constant multiple of
 `(T |x| + 1) · (R |x| + 2)`, whether some orbit point
 `(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted.
 
-At fill time this is a corollary of `exists_loopCfgTM`:
-`Turing.loop_run` sums the configuration family's segments and the
-startup is absorbed by `ComputesInTime.mono`.
+At fill time this is a corollary of `exists_loopCfgTM` through an
+already-halted-terminal summation lemma — the frozen `Turing.loop_run`
+additionally requires an empty-output terminal, which the exported
+`[false]` terminal is not (round-3 finding R3-1) — with startup absorbed
+by `ComputesInTime.mono`.
 
 **Proof sketch.** The combinator machine runs the fuel machine
 relocated-and-captured to lay `Nat.bits (R |x|)` on a counter tape,

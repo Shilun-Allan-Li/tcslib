@@ -338,7 +338,9 @@ as the decision form) concludes with the host's round-configuration
 family: startup ≤ `c·(T+1)` reaching `cfg 0`, empty output at rounds
 `0…R`, per-round accept-or-advance segments each within `c·(T+1)`, and
 the halted `[false]` terminal at index `R+1`. The decision form becomes a
-fill-time corollary (`loop_run` + monotonicity). **Index/budget
+fill-time corollary through an already-halted-terminal summation lemma
+plus monotonicity (R3-1: the frozen `loop_run` requires an empty-output
+terminal, so it is not invoked directly on the exported family). **Index/budget
 translation to `enumMachine_contracts`** (under the §9b enumerator
 instantiation, `w := m n`): candidates `2^w = R n + 1`, so the terminal
 index matches; the customer's uniform bound `b·(n + w + 1)^e` dominates
@@ -349,8 +351,8 @@ enumeration, `incFixed` = `enumInc` per the round-2 vocabulary note).
 
 **Vocabulary coefficient shift (round-2 note 5, adopted).** The proved
 equalities are `splitAtLastTrue = stripCertificate`, `incFixed = enumInc`,
-and `solveSplit (C+1) c = certificateSplit C c` — the middle one is false
-without the shift. Consequently the padded-verifier pipeline uses P10 at
+and `solveSplit (C+1) c = certificateSplit C c` — the split-search
+equality is false without the shift (R3-3 corrected this pointer). Consequently the padded-verifier pipeline uses P10 at
 `(C + 1, c)` while P8 keeps `(C, c)` for the original witness bound.
 
 **General pairing assembly (round-2 item 10's derivation, adopted
