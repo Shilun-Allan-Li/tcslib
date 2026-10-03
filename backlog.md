@@ -213,9 +213,15 @@ uncomputability chapter.
   proved; combinators at the single admitted `loopHost_contracts`;
   `capture_run` consumed in the helpers). Tree: 57/57 zero errors,
   **33 admissions**; size exceptions for `Primitives.lean` (1,687) and
-  `Loop.lean` (1,466) recorded. Next: continuation briefs (P target 12
-  onward; L `loopHost_contracts`), then the fill-audit round, then the
-  E2 continuation briefs. Subsumes 2C's
+  `Loop.lean` (1,466) recorded. **Continuation briefs issued 2026-10-03**
+  (`briefs/lib-fill-batch{P2,L2}.md`, base `90273dd6`): P2 = targets
+  12–15 (14 pts; one sanctioned root, `loopHost_contracts` via
+  `exists_loopFindTM`, for `splitSolve` only); L2 = `loopHost_contracts`
+  (10 pts; zero sanctioned admissions — completion ends the file
+  admission-free; the checkpoint agent's continuation document is
+  binding). Next: dispatch, then integration, then the library
+  fill-audit round (carrying W's two promotion requests and the P/L
+  size exceptions), then the E2 continuation briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
