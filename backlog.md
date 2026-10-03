@@ -169,14 +169,20 @@ uncomputability chapter.
   (harvest-adaptation batches; loop flagged for continuation budget) →
   E2 continuation briefs citing the library → epoch-2 audit.
 * **Machine-construction library** (`machine-library-design.md`, design
-  FROZEN 2026-10-03; decision-log row in `AroraBarakChapter1Plan.md`):
-  `TuringMachine/Build/{Convention,Primitives,Wrappers,Loop}.lean` — 12
+  FROZEN 2026-10-03; decision-log rows in `AroraBarakChapter1Plan.md`):
+  `TuringMachine/Build/{Convention,Wrappers,Loop,Primitives}.lean` — 12
   primitives (P1–P12, harvest-heavy), capture/silence + halt-redirect +
   timed cond wrappers, the bounded-loop combinator factored from 2A's
-  `enumMachine_contracts`. Spec audit rides with the bridge export.
-  Subsumes 2C's `prefixTM`/`fixedPair` promotion requests. Dedup of
-  superseded batch privates is an E5 closure task. Mathlib TM2 rejected
-  as substrate (evaluation recorded in the ch1 decision log).
+  `enumMachine_contracts`. **Spec layer LANDED 2026-10-03** (design §9a
+  refinements recorded): `Cfg.ofWords` seam + pure vocabulary fully
+  proved; 18 sorried contracts (4 wrapper, 2 loop, 12 primitive); order
+  list and facade at 57 modules. Spec audit rides with the bridge
+  export — next: the `Universal.lean` bridge export + the shared
+  infrastructure audit pack, then fills (harvest-adaptation batches;
+  loop flagged for continuation budget). Subsumes 2C's
+  `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
+  privates is an E5 closure task. Mathlib TM2 rejected as substrate
+  (evaluation recorded in the ch1 decision log).
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —

@@ -239,6 +239,41 @@ catalog calls plus the semantic lemmas the agents already proved.
 6. **Naming**: `Build/` and the P/W/L working names stand; any rename
    happens before the spec audit (renames after it are drift).
 
+## 9a. Spec-phase refinements (2026-10-03, recorded when the spec layer landed)
+
+The spec layer (`TuringMachine/Build/{Convention,Wrappers,Loop,Primitives}.lean`)
+realizes the catalog with these refinements against §4–§5, none touching the
+frozen §9 decisions:
+
+- **Seam notion**: `Cfg.ofWords` is a *constructor* (anchor state, input head
+  at 1, word-per-tape from the origin via `bufferTape`, heads at origin,
+  empty output) and seam contracts are `runFrom`-equations against it —
+  rewrite-friendly, and `initCfg` is provably the empty-words seam.
+- **Packaging**: contracts are existential in the house idiom of
+  `Composition.lean`; fills implement named private machines and close them.
+  The §2 named-machine rule is realized as quantifier discipline inside each
+  statement (machine fixed after its parameters, before all inputs — the
+  bridge lesson), not as global naming.
+- **P6** is realized as `pairEncodeFixed` (provably an instance of P3 at the
+  doubled-word-plus-separator prefix) plus threaded extractors
+  `pairFst`/`pairSnd`/`pairValid`.
+- **P7** is subsumed by P5's unary clause, whose instances are what the
+  emission customers consume. **P8** is realized in threaded form
+  (`pairLenCheck` on `pairEncode a b`, so the original input travels with
+  the payload and the audited original-bound re-check is against it).
+  **P12** has no standalone contract: clearing is intra-machine, part of the
+  loop fill's toolkit.
+- **W1** is host-parametric (`captureAction`/`captureCfg` transformers + one
+  lockstep equation guarded by source liveness), so consumers embed the
+  source into their own controller state type; the register corollary is
+  derived at fill time. **W2** is the closed `redirectTM` with an
+  `Option Bool` last-emission register (`none` = no emission yet; a source
+  with empty output never halts the redirect).
+- The lint-mandated construction sketches surfaced a real obligation worth
+  recording: append-only output means every parser/extractor must **buffer
+  until validity is known** — the output-silence discipline reappears at
+  the primitive level (extractors, strip, increment's overflow detection).
+
 ## 10. Cost and sequencing (estimate, campaign points)
 
 | Work | Est. | Note |

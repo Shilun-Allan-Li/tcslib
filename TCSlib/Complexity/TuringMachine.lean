@@ -12,6 +12,10 @@ import TCSlib.Complexity.TuringMachine.Oracle
 import TCSlib.Complexity.TuringMachine.Simulation
 import TCSlib.Complexity.TuringMachine.Sweep
 import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
@@ -64,6 +68,12 @@ for the local modifications.
 * `Composition` — identity/constant machines and closure of time-bounded computability
   under composition; also the formal home of the append-only-output convention
   argument.
+* `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
+  machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
+  discipline, the capture/silence and halt-redirect wrappers with the timed branch,
+  the bounded-loop combinator, and the primitive catalog of timed string functions.
+  Spec phase: contracts stated, fills pending, flagged for the shared infrastructure
+  audit round.
 * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
 * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
