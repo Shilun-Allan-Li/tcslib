@@ -233,8 +233,11 @@ uncomputability chapter.
   tree admission-free). **P3 integrated 2026-10-04: `pairMapSnd`
   PROVED (coefficient 40), 22/23**; `splitSolve` reduced to the body
   controller (`splitSolve_of_body` + proved components; one named
-  gap). Tree: 57/57 zero errors, **29 admissions**. Next: P4 closure
-  brief (one target), then the fill-audit round. Subsumes 2C's
+  gap). Tree: 57/57 zero errors, **29 admissions**. **P4 closure brief
+  issued 2026-10-04** (`briefs/lib-fill-batchP4.md`, base `494d4835`;
+  one target, 5 pts, zero sanctioned admissions; the P3 frontier
+  document's ten steps are the work plan; completion = 23/23). Next:
+  dispatch, then integration, then the fill-audit round. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
