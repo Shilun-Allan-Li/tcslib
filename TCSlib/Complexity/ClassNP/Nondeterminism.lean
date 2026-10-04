@@ -1228,6 +1228,289 @@ theorem ntime_poly_subset_NP (c : ℕ) : NTIME (fun n => n ^ c + 1) ⊆ NP := by
     choice_certificate_iff N L a c hN⟩
   exact cont_choiceVerifier_mem_P N (2 * a) c
 
+/-- Select the physical choice positions at which the deterministic scheduler
+writes a guess. Administrative positions consume physical choices but contribute
+no certificate bit. A short choice word contributes only its existing positions. -/
+private def contSelect : List Bool → List Bool → List Bool
+  | [], _ => []
+  | _, [] => []
+  | emit :: mask, b :: w => (if emit then [b] else []) ++ contSelect mask w
+
+/-- A fixed mask extracts precisely one certificate bit at each marked position,
+independently of the values of the physical choices. -/
+private lemma cont_select_length (mask w : List Bool) (hw : w.length = mask.length) :
+    (contSelect mask w).length = (mask.filter id).length := by
+  induction mask generalizing w with
+  | nil => simp [contSelect]
+  | cons emit mask ih =>
+    cases w with
+    | nil => simp at hw
+    | cons b w =>
+      have ht : w.length = mask.length := by simpa using hw
+      cases emit <;> simp [contSelect, ih w ht]
+
+/-- Every certificate of the scheduled length is realized at its actual physical
+write positions. Unused choices may all be false; a zero-write schedule realizes
+exactly the empty certificate.
+**Proof sketch.** Induct on the mask. An unmarked position prepends an arbitrary
+false choice. A marked position consumes and prepends the next certificate bit. -/
+private lemma cont_select_surjective (mask u : List Bool)
+    (hu : u.length = (mask.filter id).length) :
+    ∃ w : List Bool, w.length = mask.length ∧ contSelect mask w = u := by
+  induction mask generalizing u with
+  | nil =>
+    have he : u = [] := by simpa using hu
+    subst u
+    exact ⟨[], rfl, rfl⟩
+  | cons emit mask ih =>
+    cases emit with
+    | false =>
+      obtain ⟨w, hw, he⟩ := ih u (by simpa using hu)
+      exact ⟨false :: w, by simp [hw], by simpa [contSelect] using he⟩
+    | true =>
+      cases u with
+      | nil => simp at hu
+      | cons b u =>
+        obtain ⟨w, hw, he⟩ := ih u (by simpa using hu)
+        exact ⟨b :: w, by simp [hw], by simp [contSelect, he]⟩
+
+/-- The deterministic emission schedule, including the halting transition's
+emission and excluding all subsequent absorbed steps. Evaluating it on the
+unary word of length `n` gives a schedule depending on `n` alone. -/
+private def contEmissionMask (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) : ℕ → List Bool
+  | 0 => []
+  | t + 1 => (M.tm.outputSymbol c).isSome :: contEmissionMask M (M.tm.step c) t
+
+/-- The schedule has one entry per physical scheduler transition. -/
+private lemma cont_mask_length (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (t : ℕ) :
+    (contEmissionMask M c t).length = t := by
+  induction t generalizing c with
+  | zero => rfl
+  | succ t ih => simp [contEmissionMask, ih]
+
+/-- Marked positions count every source emission exactly once, including an
+emission on the halting transition.
+**Proof sketch.** One step appends exactly `outputSymbol.toList`; its length
+is zero or one according to the schedule's first entry. Induct on elapsed time. -/
+private lemma cont_mask_count (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (t : ℕ) :
+    c.output.length + ((contEmissionMask M c t).filter id).length =
+      (M.tm.runFrom c t).output.length := by
+  induction t generalizing c with
+  | zero => simp [contEmissionMask]
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step]
+    have h := ih (M.tm.step c)
+    rw [MultiTapeTM.step_output] at h
+    cases he : M.tm.outputSymbol c <;>
+      simpa [contEmissionMask, he, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using h
+
+/-- A native nondeterministic guessing phase driven by a deterministic
+scheduler. At every scheduler emission, capture the current physical choice
+bit on the extra tape; all other transitions ignore it. Source reads never
+consult that extra tape. A completed scheduler stays at the live return
+state `none`; a surrounding controller must perform the later dispatch. -/
+private def contGuessTM (M : FinTM Bool) : FinNDTM Bool where
+  k := M.k + 1
+  State := Option M.State
+  tm :=
+    { q₀ := some M.tm.q₀
+      tr := fun bit q inp work => match q with
+        | none => controlAction 0 (some none)
+        | some q =>
+          let a := M.tm.tr q inp (fun i => work i.castSucc)
+          captureAction some none {a with output := a.output.map (fun _ => bit)} }
+
+/-- The guessing-phase invariant: the deterministic scheduler's state, input
+head and work tapes are exact; the guessed word is held separately at its
+right blank, and physical output is empty. -/
+private def contGuessCfg (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (u : List Bool) :
+    Cfg (contGuessTM M).k Bool (contGuessTM M).State x :=
+  ⟨some c.state, c.inputPos,
+    (fun i => if h : i.val < M.k then c.workTapes ⟨i, h⟩ else bufferTape u),
+    (fun i => if h : i.val < M.k then c.workTapePos ⟨i, h⟩ else u.length), []⟩
+
+/-- One native guessing transition selects its physical choice exactly when
+the scheduler emits. It preserves the complete source configuration, apart
+from storing chosen rather than emitted data on the separate capture tape.
+**Proof sketch.** For a live source, instantiate the capture-action transformer
+with the emission replaced by the current choice. Check source and capture
+tapes separately. A halted source and the phase's return state both stutter. -/
+private lemma cont_guess_step (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (u : List Bool) (bit : Bool) :
+    (contGuessTM M).tm.stepWith bit (contGuessCfg M c u) =
+      contGuessCfg M (M.tm.step c)
+        (u ++ if (M.tm.outputSymbol c).isSome then [bit] else []) := by
+  cases hs : c.state with
+  | none =>
+    rw [MultiTapeTM.step_of_halt hs]
+    simp only [MultiTapeTM.outputSymbol, hs, Option.isSome_none, Bool.false_eq_true,
+      if_false, List.append_nil]
+    unfold NDTM.stepWith
+    simp only [contGuessCfg, hs]
+    change (controlAction 0 (some none)).apply _ = _
+    rw [controlAction_apply, moveInputPos_zero]
+  | some q =>
+    let a := M.tm.tr q c.inputSymbol c.workTapeSymbols
+    have hi : (contGuessCfg M c u).inputSymbol = c.inputSymbol := rfl
+    have hw : (fun i => (contGuessCfg M c u).workTapeSymbols i.castSucc) =
+        c.workTapeSymbols := by
+      funext i
+      simp [contGuessCfg, Cfg.workTapeSymbols, i.isLt]
+    have hstate : (contGuessCfg M c u).state = some (some q) := by simp [contGuessCfg, hs]
+    unfold NDTM.stepWith
+    rw [hstate]
+    dsimp only [contGuessTM]
+    rw [hi, hw]
+    change (captureAction some none {a with output := a.output.map (fun _ => bit)}).apply
+      (contGuessCfg M c u) = contGuessCfg M (M.tm.step c)
+        (u ++ if (M.tm.outputSymbol c).isSome then [bit] else [])
+    have hc : M.tm.step c = a.apply c := by simp [MultiTapeTM.step, hs, a]
+    have he : M.tm.outputSymbol c = a.output := by simp [MultiTapeTM.outputSymbol, hs, a]
+    rw [hc, he]
+    refine Cfg.ext ?_ rfl ?_ ?_ rfl
+    · cases ha : a.state <;> simp [captureAction, contGuessCfg, ha]
+    · funext i
+      by_cases h : i.val < M.k
+      · simp [captureAction, contGuessCfg, h]
+      · cases ho : a.output <;>
+          simp [captureAction, contGuessCfg, h, ho, bufferTape_append]
+    · funext i
+      by_cases h : i.val < M.k
+      · simp [captureAction, contGuessCfg, h]
+      · cases ho : a.output <;> simp [captureAction, contGuessCfg, h, ho]
+
+/-- The native phase realizes the emission-position mask exactly, with one
+physical transition per choice and no changes to the source simulation.
+**Proof sketch.** Induct on the physical choice word. The one-step lemma
+appends its bit precisely at the first marked position; the remaining source
+schedule is the schedule from the stepped configuration. -/
+private lemma cont_guess_run (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (u w : List Bool) :
+    (contGuessTM M).tm.runWith w (contGuessCfg M c u) =
+      contGuessCfg M (M.tm.runFrom c w.length)
+        (u ++ contSelect (contEmissionMask M c w.length) w) := by
+  induction w generalizing c u with
+  | nil => simp [contSelect, contEmissionMask]
+  | cons bit w ih =>
+    rw [NDTM.runWith_cons, cont_guess_step, ih]
+    simp only [List.length_cons, contEmissionMask, contSelect,
+      MultiTapeTM.runFrom_succ_eq_step, List.append_assoc]
+
+/-- The guessing phase's genuine initial configuration has the scheduler's
+blank source bank and an empty capture tape. -/
+private lemma cont_guess_initial (M : FinTM Bool) (x : List Bool) :
+    (contGuessTM M).tm.initCfg x = contGuessCfg M (M.tm.initCfg x) [] := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    by_cases h : i.val < M.k <;>
+      simp [NDTM.initCfg, MultiTapeTM.initCfg, Cfg.init, contGuessCfg]
+  · funext i
+    by_cases h : i.val < M.k <;>
+      simp [NDTM.initCfg, MultiTapeTM.initCfg, Cfg.init, contGuessCfg]
+
+/-- The native guessing phase has both witness extraction and witness coverage
+at the scheduler's physical step budget. It captures exactly as many bits as
+the completed scheduler emitted, and all words of that length occur.
+**Proof sketch.** The emission-count invariant fixes the mask's number of
+marked positions. Exact-length selection gives extraction; mask surjectivity
+gives coverage. The native run invariant then supplies the whole configuration,
+not merely the captured tape. The host's return state is still live here. -/
+private lemma cont_guess_coverage (M : FinTM Bool) (x v : List Bool) (T : ℕ)
+    (hM : M.ComputesInTime x v T) :
+    (∀ w : List Bool, w.length = T → ∃ u : List Bool, u.length = v.length ∧
+      (contGuessTM M).tm.runWith w ((contGuessTM M).tm.initCfg x) =
+        contGuessCfg M (M.tm.runFrom (M.tm.initCfg x) T) u) ∧
+    (∀ u : List Bool, u.length = v.length → ∃ w : List Bool, w.length = T ∧
+      (contGuessTM M).tm.runWith w ((contGuessTM M).tm.initCfg x) =
+        contGuessCfg M (M.tm.runFrom (M.tm.initCfg x) T) u) := by
+  let mask := contEmissionMask M (M.tm.initCfg x) T
+  have hlen : mask.length = T := cont_mask_length M _ T
+  have hcount : (mask.filter id).length = v.length := by
+    have h := cont_mask_count M (M.tm.initCfg x) T
+    have ho := ((computesInTime_iff _ _ _ _).mp hM).2
+    rw [ho] at h
+    simpa only [MultiTapeTM.initCfg, Cfg.init, List.length_nil, Nat.zero_add] using h
+  have hrun (w : List Bool) (hw : w.length = T) :
+      (contGuessTM M).tm.runWith w ((contGuessTM M).tm.initCfg x) =
+        contGuessCfg M (M.tm.runFrom (M.tm.initCfg x) T) (contSelect mask w) := by
+    rw [cont_guess_initial, cont_guess_run, hw, List.nil_append]
+  constructor
+  · intro w hw
+    exact ⟨contSelect mask w, (cont_select_length mask w (hw.trans hlen.symm)).trans hcount,
+      hrun w hw⟩
+  · intro u hu
+    obtain ⟨w, hw, he⟩ := cont_select_surjective mask u (hu.trans hcount.symm)
+    exact ⟨w, hw.trans hlen, by rw [hrun w (hw.trans hlen), he]⟩
+
+/-- The reverse compiler's complete polynomial envelope has the exact padded
+`NTIME` form demanded by the audited statement, including zero certificate
+coefficient, zero degree, and empty inputs.
+**Proof sketch.** Bound `n+1` and `(n+1)^c` by `(n+1)^max(1,c)`, add their
+coefficients, raise to `r`, then apply the proved `succ_pow_le`. -/
+private lemma cont_guess_time_bound (C c K r n : ℕ) :
+    K * (n + C * (n + 1) ^ c + 1) ^ r ≤
+      (K * (C + 1) ^ r * 2 ^ (r * max 1 c)) * (n ^ (r * max 1 c) + 1) := by
+  have hp : 0 < n + 1 := Nat.succ_pos n
+  have h1 : n + 1 ≤ (n + 1) ^ max 1 c := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right hp (Nat.le_max_left 1 c)
+  have hc : (n + 1) ^ c ≤ (n + 1) ^ max 1 c :=
+    Nat.pow_le_pow_right hp (Nat.le_max_right 1 c)
+  have hsum : n + C * (n + 1) ^ c + 1 ≤ (C + 1) * (n + 1) ^ max 1 c := by
+    have hm := Nat.mul_le_mul_left C hc
+    rw [Nat.add_mul, Nat.one_mul]
+    omega
+  calc
+    K * (n + C * (n + 1) ^ c + 1) ^ r ≤
+        K * ((C + 1) * (n + 1) ^ max 1 c) ^ r :=
+      Nat.mul_le_mul_left K (Nat.pow_le_pow_left hsum r)
+    _ = (K * (C + 1) ^ r) * (n + 1) ^ (r * max 1 c) := by
+      rw [Nat.mul_pow, ← Nat.pow_mul, Nat.mul_comm (max 1 c) r, Nat.mul_assoc]
+    _ ≤ (K * (C + 1) ^ r) * (2 ^ (r * max 1 c) * (n ^ (r * max 1 c) + 1)) :=
+      Nat.mul_le_mul_left _ (succ_pow_le n (r * max 1 c))
+    _ = _ := by ring
+
+/-- An all-branch compiler with the stated complete polynomial envelope lands
+in one fixed-degree `NTIME` component. Acceptance at the enlarged budget is
+proved by all-branch truncation as well as accepting-branch padding. -/
+private lemma cont_guess_normalize (L : Language Bool) (C c : ℕ)
+    (h : ∃ (K r : ℕ) (N : FinNDTM Bool),
+      N.DecidesInTime L (fun n => K * (n + C * (n + 1) ^ c + 1) ^ r)) :
+    L ∈ ⋃ e : ℕ, NTIME fun n => n ^ e + 1 := by
+  obtain ⟨K, r, N, hN⟩ := h
+  refine Set.mem_iUnion.mpr ⟨r * max 1 c, K * (C + 1) ^ r * 2 ^ (r * max 1 c), N, ?_⟩
+  intro x
+  have ht := cont_guess_time_bound C c K r x.length
+  refine ⟨(hN x).1.mono ht, ?_⟩
+  exact (hN x).2.trans (acceptsWithin_iff_of_halts (hN x).1 ht).symm
+
+/-- The proved unary polynomial generator supplies a concrete native guessing
+phase for every exact certificate length. Its physical schedule is evaluated
+on the unary input of length `n`, so it depends only on `n`, including when
+`C=0`. This contract does not yet preserve an arbitrary original input or
+run its verifier; those are obligations of the surrounding reverse compiler. -/
+private lemma cont_poly_guess_phase (C c : ℕ) :
+    ∃ (M : FinTM Bool) (A : ℕ), ∀ n : ℕ,
+    let x := List.replicate n true
+    let T := A * (n + 1) ^ (c + 1)
+    (∀ w : List Bool, w.length = T → ∃ u : List Bool,
+      u.length = C * (n + 1) ^ c ∧
+      (contGuessTM M).tm.runWith w ((contGuessTM M).tm.initCfg x) =
+        contGuessCfg M (M.tm.runFrom (M.tm.initCfg x) T) u) ∧
+    (∀ u : List Bool, u.length = C * (n + 1) ^ c → ∃ w : List Bool,
+      w.length = T ∧
+      (contGuessTM M).tm.runWith w ((contGuessTM M).tm.initCfg x) =
+        contGuessCfg M (M.tm.runFrom (M.tm.initCfg x) T) u) := by
+  obtain ⟨M, A, hM⟩ := computesFunInTime_polyUnary C c
+  refine ⟨M, A, fun n => ?_⟩
+  have h := cont_guess_coverage M (List.replicate n true)
+    (List.replicate (C * (n + 1) ^ c) true) (A * (n + 1) ^ (c + 1)) (by
+      simpa only [List.length_replicate] using hM (List.replicate n true))
+  simpa only [List.length_replicate] using h
+
 /-- **Guess the certificate** [AB09, Theorem 2.6, ⊇-direction of the union]: `NP` is
 contained in the union of the fixed-degree nondeterministic time classes.
 
@@ -1255,8 +1538,29 @@ branches to the exact budget is `Turing.FinNDTM.AcceptsWithin.mono`. Total time 
 polynomial in `n` — guessing `Q n` steps with `O(log Q n)`-bit countdowns, assembly
 `O(n + Q n)`, and the relocated `M_V` run `A·(n + Q n + 1)^d` with polynomial
 per-step bookkeeping — hence at most `a'·(n^e + 1)` for a fixed degree `e` (normalize
-with `Complexity.succ_pow_le`), landing `L` in the degree-`e` component. -/
+with `Complexity.succ_pow_le`), landing `L` in the degree-`e` component.
+
+**Continuation checkpoint (E2-cont-B, incomplete).** `contGuessTM` and
+`cont_guess_run` provide a native, silent emission-driven guessing phase;
+`cont_guess_coverage` proves extraction and coverage at actual physical
+write positions. `cont_poly_guess_phase` instantiates the audited unary
+polynomial generator on the unary input of length `n`, giving a schedule
+determined by `n` and covering zero coefficients. This standalone phase has
+a live return state, not a completed decider. Preserving the original input,
+installing the scheduler/countdown in a host, assembling `x++u`, and the
+captured verifier phase with all-branch totality remain open. The exact
+remaining machine-existence goal is exposed below; `cont_guess_normalize`
+proves all final exponent/coefficient arithmetic and budget padding once that
+machine contract is supplied. -/
 theorem NP_subset_iUnion_NTIME : NP ⊆ ⋃ c : ℕ, NTIME fun n => n ^ c + 1 := by
+  rintro L ⟨C, c, V, hV, hcert⟩
+  obtain ⟨A, d, M, hM⟩ := mem_P_iff.mp hV
+  apply cont_guess_normalize L C c
+  -- Exact continuation frontier: construct one finite NDTM deciding L within
+  -- K*(n + C*(n+1)^c + 1)^r on every branch. The native guessing phase and
+  -- its bidirectional physical-position witness contract are proved above;
+  -- preserving x, installing the length-only scheduler/countdown, assembling
+  -- x++u, relocated verifier dispatch, and all-branch termination remain.
   sorry
 
 /-- **Theorem 2.6** [AB09]: `NP = ⋃ c, NTIME (n^c + 1)` — the verifier-certificate
