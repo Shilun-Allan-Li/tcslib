@@ -240,10 +240,12 @@ uncomputability chapter.
   **P4 integrated 2026-10-04: THE LIBRARY IS COMPLETE — 23/23,
   `Build/` admission-free, tree at 28 campaign-only admissions**
   (W 1 round, L 2, P 4; ~250 new privates; every sanctioned root
-  closed at merge). Next: the library fill-audit round (proofs +
-  helpers vs the audited statements; held dispositions: W's two
-  promotion requests, the three size exceptions), then the E2
-  continuation briefs. Subsumes 2C's
+  closed at merge). **Fill-audit pack prepared 2026-10-04**
+  (`audits/ch1-libfill-{pack,bundle}.md`; whole-span attestation:
+  net deletions = exactly the 23 placeholders, zero non-private
+  additions; D6 promotions + D7 post-gate split dispositions
+  requested; gate awaits `audits/ch1-libfill-findings.md`), then the
+  E2 continuation briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
