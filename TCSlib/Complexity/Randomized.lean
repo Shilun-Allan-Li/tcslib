@@ -5,14 +5,18 @@ Authors: TCSlib Contributors
 -/
 import TCSlib.Complexity.Randomized.SchwartzZippel
 import TCSlib.Complexity.Randomized.ErrorReduction
+import TCSlib.Complexity.Randomized.Classes
+import TCSlib.Complexity.Randomized.Adleman
+import TCSlib.Complexity.Randomized.SipserGacs
 
 /-!
 # Randomized Computation
 
-Model-free results from Arora–Barak Chapter 7 (Randomized Computation): the
-probabilistic tools that the chapter's complexity-class theorems are built
-on.  Verifier-style definitions of the classes `BPP`/`RP`/`coRP`/`ZPP` and
-the theorems about them are planned as a separate layer on top of this one.
+Arora–Barak Chapter 7 (Randomized Computation): the model-free
+probabilistic tools, and the chapter's complexity classes and theorems in
+the certificate view of [AB09, Def 7.4], relative to an abstract efficiency
+notion (`Randomized.VerifierModel`) standing in for polynomial-time Turing
+machines.
 
 ## Contents
 
@@ -22,6 +26,13 @@ the theorems about them are planned as a separate layer on top of this one.
 - `Randomized.ErrorReduction`: the Chernoff bound for i.i.d. Boolean trials
   ([AB09, Cor 7.11]) and the majority-vote error bound that is the
   calculation inside the error-reduction theorem ([AB09, Thm 7.10]).
+- `Randomized.Classes`: verifier-style `BPP`/`RP`/`coRP`/`ZPP`
+  ([AB09, Defs 7.1/7.4/7.6/7.7]), `ZPP = RP ∩ coRP` ([AB09, Thm 7.8]), and
+  error reduction at the class level ([AB09, Lem 7.9, Thm 7.10]).
+- `Randomized.Adleman`: `BPP ⊆ P/poly` ([AB09, Thm 7.17]), concluding in
+  `Language.InPPoly` from `CircuitComplexity.PPoly`.
+- `Randomized.SipserGacs`: certificate-style `Σ₂ᵖ`/`Π₂ᵖ` and
+  `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` ([AB09, Thm 7.18]).
 
 ## References
 
