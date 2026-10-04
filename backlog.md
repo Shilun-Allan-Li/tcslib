@@ -243,9 +243,14 @@ uncomputability chapter.
   closed at merge). **Fill-audit pack prepared 2026-10-04**
   (`audits/ch1-libfill-{pack,bundle}.md`; whole-span attestation:
   net deletions = exactly the 23 placeholders, zero non-private
-  additions; D6 promotions + D7 post-gate split dispositions
-  requested; gate awaits `audits/ch1-libfill-findings.md`), then the
-  E2 continuation briefs. Subsumes 2C's
+  additions). **GATE CLOSED 2026-10-04, single round: 0 blockers, 0
+  majors, 2 instrument/documentation minors swept in the closing
+  commit** (`audits/ch1-libfill-resolutions.md`). **The library is
+  complete and audited end to end.** D6 approved-deferred (serial
+  promotion of `timed_input_bound`/`timed_rewind`, post-gate); D7
+  approved-trailing (the `Loop`/`Primitives` split, ride-along
+  audited, with the auditor's cross-file-privates qualification
+  binding). Next: the **E2 continuation briefs**. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).

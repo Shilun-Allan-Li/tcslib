@@ -4,11 +4,11 @@ import Lean
 
 set_option maxHeartbeats 0
 
--- Maintainer axiom attestation: library-fill checkpoint integration (W+P+L).
--- Expected state: W complete (4/4 clean); P 11/15 clean with 4 pending at their
--- own roots; L's loop_run clean and the three combinators rooted solely at the
--- admitted private loopHost_contracts; headline and campaign regressions
--- unchanged.
+-- Maintainer axiom attestation: machine-library closure (fill-audit minor 2's
+-- scope correction applied). This program checks the dependency CLOSURES of the
+-- 23 library contracts and the regression targets; whole-module coverage of
+-- every Build declaration (unused helpers, generated descendants) is the
+-- separate whole-Build traversal instrument of the P4 delivery.
 
 open Lean Elab Command
 
@@ -97,6 +97,6 @@ run_cmd do
       throwError "Unexpected sorryAx for {name}"
     unless expected.isEmpty || ax.contains ``sorryAx do
       throwError "Expected sorryAx for {name} but it is absent"
-  logInfo "LIBRARY CLOSURE AUDIT PASS: all 23 contracts admission-free; the Build tree carries zero admissions; headline and campaign regressions unchanged." -- : W complete and clean; P's eleven fills clean with four pending at their own roots; L's combinators rooted solely at loopHost_contracts; headline and campaign regressions unchanged."
+  logInfo "LIBRARY CLOSURE AUDIT PASS: all 23 contract dependency closures are admission-free with at most the standard axiom triple; headline and campaign regression roots unchanged. (Whole-Build coverage is the separate P4 traversal.)"
 
 end LibFillAudit

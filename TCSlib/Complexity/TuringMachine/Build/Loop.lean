@@ -2504,10 +2504,15 @@ rewinds, and embeds the body via the W1 capture discipline of
 `TCSlib.Complexity.TuringMachine.Build.Wrappers` (the body's verdict is
 captured, never physically emitted until the end). The initial anchor
 entry is free; each subsequent entry debits the binary counter in place —
-amortized borrow, exhaustion exactly at borrow-overflow, so rounds
-`0, …, R |x|` run before the exhaustion rejection `[false]`. Acceptance
-surfaces as the captured halt and emits `[true]`. `Turing.loop_run` sums
-the seam family; the invariant hypotheses confine every round to
+per-segment cost bounded worst-case by the counter width (the proved
+estimate below at the borrow lemmas; the amortized aggregate also holds
+but is not used per segment), exhaustion exactly at borrow-overflow, so
+rounds `0, …, R |x|` run before the exhaustion rejection `[false]`.
+Acceptance surfaces as the captured halt and emits `[true]`. The private
+already-halted-terminal summation lemma `loop_halted_run` sums the seam
+family (the frozen `Turing.loop_run` does not apply to the `[false]`
+terminal — fill-audit minor 1's documentation correction, maintainer
+closing sweep); the invariant hypotheses confine every round to
 admissible words, and positive round duration makes each anchor entry a
 genuine round boundary. Phase overheads are absorbed into `c`. -/
 theorem exists_loopTM (body F : FinTM Bool) (anchor : body.State)
