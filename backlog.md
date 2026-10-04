@@ -236,8 +236,14 @@ uncomputability chapter.
   gap). Tree: 57/57 zero errors, **29 admissions**. **P4 closure brief
   issued 2026-10-04** (`briefs/lib-fill-batchP4.md`, base `494d4835`;
   one target, 5 pts, zero sanctioned admissions; the P3 frontier
-  document's ten steps are the work plan; completion = 23/23). Next:
-  dispatch, then integration, then the fill-audit round. Subsumes 2C's
+  document's ten steps are the work plan; completion = 23/23).
+  **P4 integrated 2026-10-04: THE LIBRARY IS COMPLETE — 23/23,
+  `Build/` admission-free, tree at 28 campaign-only admissions**
+  (W 1 round, L 2, P 4; ~250 new privates; every sanctioned root
+  closed at merge). Next: the library fill-audit round (proofs +
+  helpers vs the audited statements; held dispositions: W's two
+  promotion requests, the three size exceptions), then the E2
+  continuation briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
