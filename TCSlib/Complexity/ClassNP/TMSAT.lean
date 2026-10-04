@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.ClassP.TimeConstructible
 import TCSlib.Complexity.ClassNP.PolyTime
 import TCSlib.Complexity.ClassNP.Reductions
@@ -890,6 +891,623 @@ private lemma tmsat_comp_on_image (M U : FinTM Bool) (f g : List Bool → List B
     exact ⟨by simpa only [FinTM.bufferedSecondCfg, Option.map_eq_none_iff] using hu.1, hu.2⟩
   exact hbase.mono (by dsimp only; omega)
 
+/-- Linear-time catalog contracts are instances of the polynomial calculus. -/
+private lemma tmsat_pt_linear (f : List Bool → List Bool)
+    (h : ∃ (M : FinTM Bool) (C : ℕ),
+      M.ComputesFunInTime f (fun n => C * (n + 1))) : PolyTimeComputable f := by
+  obtain ⟨M, C, hM⟩ := h
+  exact ⟨M, C, 1, by simpa only [Nat.pow_one] using hM⟩
+
+/-- A fixed word is emitted from finite control. -/
+private lemma tmsat_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) := by
+  exact tmsat_pt_linear _ (FinTM.computesFunInTime_const w)
+
+/-- Total first projection; callers independently guard grammar validity. -/
+private def tmsatFst (z : List Bool) : List Bool := ((pairDecode z).map Prod.fst).getD []
+
+/-- Total second projection; callers independently guard grammar validity. -/
+private def tmsatSnd (z : List Bool) : List Bool := ((pairDecode z).map Prod.snd).getD []
+
+/-- The library's pair-to-concatenation function, including malformed inputs. -/
+private def tmsatConcat (z : List Bool) : List Bool :=
+  match pairDecode z with | some (a,b) => a ++ b | none => []
+
+/-- The library's payload-only map; it never inspects the retained head. -/
+private def tmsatMap (g : List Bool → List Bool) (z : List Bool) : List Bool :=
+  match pairDecode z with | some (a,b) => pairEncode a (g b) | none => []
+
+/-- Polynomial payload maps follow C1, with a monotone polynomial runtime.
+The linear administrative term is absorbed at degree `max 1 e`. -/
+private lemma tmsat_pt_map {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+    PolyTimeComputable (tmsatMap g) := by
+  obtain ⟨G, C, e, hG⟩ := hg
+  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
+    (by intro m n h; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))
+  refine ⟨M, a * (C + 1), max 1 e, fun x => (hM x).mono ?_⟩
+  have hlin : x.length + 1 ≤ (x.length + 1) ^ max 1 e := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
+      (Nat.le_max_left 1 e)
+  have hp := Nat.mul_le_mul_left C
+    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_max_right 1 e))
+  simp only [Nat.succ_eq_add_one] at hp
+  calc
+    _ ≤ a * ((C + 1) * (x.length + 1) ^ max 1 e) :=
+      Nat.mul_le_mul_left a (by rw [Nat.add_mul, Nat.one_mul]; omega)
+    _ = _ := by ring
+
+/-- Assemble two computed values by the canonical §9c recipe.
+
+**Proof sketch.** Build `H x = pairEncode (f x) []`, retain the input in
+`s x = pairEncode x (H x)`, then retain `s x` while computing `g` from its
+first projection. Concatenation and second projection remove the two
+administrative encodings, leaving exactly `pairEncode (f x) (g x)`. -/
+private lemma tmsat_pt_pair {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+  have hd := tmsat_pt_linear _ FinTM.computesFunInTime_pairDup
+  have hp := tmsat_pt_linear _ FinTM.computesFunInTime_pairFst
+  have hs := tmsat_pt_linear _ FinTM.computesFunInTime_pairSnd
+  have hc := tmsat_pt_linear _ FinTM.computesFunInTime_pairConcat
+  have hH := ((tmsat_pt_map (tmsat_pt_const [])).comp hd).comp hf
+  have hS := (tmsat_pt_map hH).comp hd
+  have hT := ((tmsat_pt_map (hg.comp hp)).comp hd).comp hS
+  have h := hs.comp (hc.comp hT)
+  convert h using 1
+  funext x
+  simp only [Function.comp_apply, tmsatMap, pairDecode_pairEncode,
+    Option.map_some, Option.getD_some]
+  have he (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
+    simp [pairEncode, List.append_assoc]
+  rw [he, he]
+  simp [pairDecode_pairEncode]
+
+/-- Polynomial-time branches on the original input, using W3's captured
+single-bit decision. All three budgets fit their maximum degree. -/
+private lemma tmsat_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => if p x then f x else g x) := by
+  obtain ⟨P, A, a, hP⟩ := hp
+  obtain ⟨F, B, b, hF⟩ := hf
+  obtain ⟨G, C, c, hG⟩ := hg
+  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hP hF hG
+  let e := max a (max b c)
+  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
+  have ha := Nat.mul_le_mul_left A
+    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show a ≤ e by exact Nat.le_max_left _ _))
+  have hb := Nat.mul_le_mul_left B
+    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show b ≤ e by omega))
+  have hc := Nat.mul_le_mul_left C
+    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show c ≤ e by omega))
+  have h1 : 1 ≤ (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  simp only [Nat.succ_eq_add_one] at ha hb hc
+  calc
+    _ ≤ K * ((A + B + C + 1) * (x.length + 1) ^ e) :=
+      Nat.mul_le_mul_left K (by simp only [Nat.add_mul, Nat.one_mul]; omega)
+    _ = _ := by ring
+
+/-- Equality with an entire fixed answer is a polynomial-time bit test. -/
+private lemma tmsat_pt_eq (w : List Bool) :
+    PolyTimeComputable (fun x => [decide (x = w)]) := by
+  have h := tmsat_pt_linear _ (FinTM.computesFunInTime_ifEq w [true] [false])
+  convert h using 1
+  funext x
+  by_cases hx : x = w <;> simp [hx]
+
+/-- A fixed-width increment never successfully returns the empty word. -/
+private lemma tmsat_inc_nonempty (w : List Bool) : incFixed w ≠ some [] := by
+  cases w with
+  | nil => simp [incFixed]
+  | cons b w => cases b <;> cases h : incFixed w <;> simp [incFixed, h]
+
+/-- Overflow is exactly the all-true unary shape, including length zero. -/
+private lemma tmsat_inc_none (w : List Bool) :
+    incFixed w = none ↔ w = List.replicate w.length true := by
+  induction w with
+  | nil => simp [incFixed]
+  | cons b w ih => cases b <;> simp [incFixed, List.replicate_succ, ih]
+
+/-- The exact all-true shape is decided by P11 overflow and whole-word equality. -/
+private lemma tmsat_pt_unary :
+    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+  have h := (tmsat_pt_eq []).comp (tmsat_pt_linear _ FinTM.computesFunInTime_incFixed)
+  convert h using 1
+  funext x
+  have he : (incFixed x).getD [] = [] ↔ x = List.replicate x.length true := by
+    rw [← tmsat_inc_none]
+    cases hi : incFixed x with
+    | none => simp
+    | some w =>
+      have hw : w ≠ [] := by intro hw; subst w; exact tmsat_inc_nonempty x hi
+      simp [hw]
+  simp only [Function.comp_apply, he]
+
+/-- Count doubled prefix cells on a unary work tape, then emit at most that
+many native payload bits while moving the work head left. The output stays
+silent until the separator; the public use supplies only constructed pairs. -/
+private def tmsatTakeTM : FinTM Bool where
+  k := 1
+  State := Fin 4
+  tm := { q₀ := 0, tr := fun q inp w =>
+    if q = 0 then
+      match inp with
+      | some b => ⟨1, fun _ => (none, 0), none, some (if b then 2 else 1)⟩
+      | none => ⟨0, fun _ => (none, 0), none, none⟩
+    else if q = 1 then
+      match inp with
+      | some false => ⟨1, fun _ => (some (some true), 1), none, some 0⟩
+      | some true => ⟨1, fun _ => (none, -1), none, some 3⟩
+      | none => ⟨0, fun _ => (none, 0), none, none⟩
+    else if q = 2 then
+      match inp with
+      | some true => ⟨1, fun _ => (some (some true), 1), none, some 0⟩
+      | _ => ⟨0, fun _ => (none, 0), none, none⟩
+    else
+      match w 0, inp with
+      | some _, some b => ⟨1, fun _ => (none, -1), some b, some 3⟩
+      | _, _ => ⟨0, fun _ => (none, 0), none, none⟩ }
+
+/-- Prefix-extractor configurations record both the allocated unary interval
+and its current head; the native input index is the number of consumed bits. -/
+private def tmsatTakeCfg (x : List Bool) (q : Option (Fin 4))
+    (i : ℕ) (hi : i ≤ x.length) (m : ℕ) (h : ℤ) (out : List Bool) :
+    Cfg 1 Bool (Fin 4) x :=
+  ⟨q, ⟨i+1, by omega⟩, fun _ => polyTape m, fun _ => h, out⟩
+
+/-- Exact one-step input lookup for the indexed extractor configuration. -/
+private lemma tmsat_take_read (x : List Bool) (q : Option (Fin 4))
+    (i : ℕ) (hi : i ≤ x.length) (m : ℕ) (h : ℤ) (out : List Bool) :
+    (tmsatTakeCfg x q i hi m h out).inputSymbol = x[i]? := by
+  exact FinTM.inputSymbol_at _ i hi rfl
+
+/-- Two equal prefix bits append precisely one unary counter cell. -/
+private lemma tmsat_take_double (x : List Bool) (i m : ℕ) (b : Bool)
+    (hi : i + 2 ≤ x.length) (h₀ : x[i]? = some b) (h₁ : x[i+1]? = some b) :
+    tmsatTakeTM.tm.runFrom (tmsatTakeCfg x (some 0) i (by omega) m m []) 2 =
+      tmsatTakeCfg x (some 0) (i+2) hi (m+1) (m+1) [] := by
+  have hs : tmsatTakeTM.tm.step (tmsatTakeCfg x (some 0) i (by omega) m m []) =
+      tmsatTakeCfg x (some (if b then 2 else 1)) (i+1) (by omega) m m [] := by
+    change (tmsatTakeTM.tm.tr (0 : Fin 4) _ _).apply _ = _
+    rw [tmsat_take_read, h₀]
+    change (⟨1, fun _ => (none, 0), none, some (if b then 2 else 1)⟩ :
+      Action 1 Bool (Fin 4)).apply _ = _
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_pos_of_ne_right _ (by dsimp [tmsatTakeCfg]; omega)
+    · rfl
+    · funext j; simp [Action.apply, tmsatTakeCfg]
+    · rfl
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
+    MultiTapeTM.runFrom_zero]
+  change (tmsatTakeTM.tm.tr (if b then (2 : Fin 4) else (1 : Fin 4)) _ _).apply _ = _
+  rw [tmsat_take_read, h₁]
+  cases b <;>
+    change (⟨1, fun _ => (some (some true), 1), none, some 0⟩ :
+      Action 1 Bool (Fin 4)).apply _ = _
+  all_goals
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_pos_of_ne_right _ (by dsimp [tmsatTakeCfg]; omega)
+    · funext j; exact polyTape_write m
+    · funext j; simp [Action.apply, tmsatTakeCfg]
+    · rfl
+
+/-- The separator consumes two native bits and places the counter at its last cell. -/
+private lemma tmsat_take_separator (x : List Bool) (i m : ℕ)
+    (hi : i + 2 ≤ x.length) (h₀ : x[i]? = some false) (h₁ : x[i+1]? = some true) :
+    tmsatTakeTM.tm.runFrom (tmsatTakeCfg x (some 0) i (by omega) m m []) 2 =
+      tmsatTakeCfg x (some 3) (i+2) hi m ((m : ℤ)-1) [] := by
+  have hs : tmsatTakeTM.tm.step (tmsatTakeCfg x (some 0) i (by omega) m m []) =
+      tmsatTakeCfg x (some 1) (i+1) (by omega) m m [] := by
+    change (tmsatTakeTM.tm.tr (0 : Fin 4) _ _).apply _ = _
+    rw [tmsat_take_read, h₀]
+    change (⟨1, fun _ => (none, 0), none, some 1⟩ : Action 1 Bool (Fin 4)).apply _ = _
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_pos_of_ne_right _ (by dsimp [tmsatTakeCfg]; omega)
+    · rfl
+    · funext j; simp [Action.apply, tmsatTakeCfg]
+    · rfl
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
+    MultiTapeTM.runFrom_zero]
+  change (tmsatTakeTM.tm.tr (1 : Fin 4) _ _).apply _ = _
+  rw [tmsat_take_read, h₁]
+  change (⟨1, fun _ => (none, -1), none, some 3⟩ : Action 1 Bool (Fin 4)).apply _ = _
+  apply Cfg.ext
+  · rfl
+  · exact moveInputPos_pos_of_ne_right _ (by dsimp [tmsatTakeCfg]; omega)
+  · rfl
+  · funext j; simp [Action.apply, tmsatTakeCfg, sub_eq_add_neg]
+  · rfl
+
+/-- The aligned parser installs exactly the first component's length.
+
+**Proof sketch.** Induct on the remaining doubled prefix, preserving an
+arbitrary already-counted prefix. Each pair costs two steps; the separator
+costs two more. No native payload bit has yet been emitted. -/
+private lemma tmsat_take_parse (a b : List Bool) :
+    ∀ (x pre : List Bool) (m : ℕ) (hx : x = pre ++ pairEncode a b),
+    tmsatTakeTM.tm.runFrom
+      (tmsatTakeCfg x (some 0) pre.length (by simp [hx, pairEncode]) m m [])
+      (2*a.length+2) =
+    tmsatTakeCfg x (some 3) (pre.length+2*a.length+2)
+      (by simp [hx, universal_pair_length]; omega)
+      (m+a.length) ((m+a.length : ℕ)-1 : ℤ) [] := by
+  induction a with
+  | nil =>
+    intro x pre m hx
+    have h₀ : x[pre.length]? = some false := by simp [hx, pairEncode]
+    have h₁ : x[pre.length+1]? = some true := by simp [hx, pairEncode]
+    simpa using tmsat_take_separator x pre.length m (by simp [hx, pairEncode]) h₀ h₁
+  | cons v a ih =>
+    intro x pre m hx
+    have hx' : x = (pre ++ [v,v]) ++ pairEncode a b := by
+      simpa [pairEncode, List.append_assoc] using hx
+    have hs := tmsat_take_double x pre.length m v
+      (by simp [hx', List.length_append])
+      (by simp [hx', List.append_assoc]) (by simp [hx', List.append_assoc])
+    conv_lhs => arg 2; rw [show 2*(v::a).length+2 = 2+(2*a.length+2) by simp; omega]
+    rw [MultiTapeTM.runFrom_add, hs]
+    have h := ih x (pre ++ [v,v]) (m+1) hx'
+    simpa only [List.length_append, List.length_cons, List.length_nil,
+      Nat.add_zero, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm, Nat.mul_add,
+      Nat.mul_one, Nat.cast_add, Nat.cast_one, Nat.reduceAdd] using h
+
+/-- The payload phase emits the exact requested prefix, even if the request
+exceeds the payload length; it stops at either boundary.
+
+**Proof sketch.** Induct on the number of emitted bits up to the minimum of
+the counter and payload lengths. Every step preserves the unary tape and
+moves its head left. The next step sees either the left blank or the native
+right boundary and halts without an additional bit. -/
+private lemma tmsat_take_payload (x pre b : List Bool) (hx : x = pre ++ b) (m : ℕ) :
+    ∀ j (hj : j ≤ min m b.length),
+      tmsatTakeTM.tm.runFrom
+        (tmsatTakeCfg x (some 3) pre.length (by simp [hx]) m ((m:ℤ)-1) []) j =
+      tmsatTakeCfg x (some 3) (pre.length+j) (by simp [hx] ; omega)
+        m ((m:ℤ)-j-1) (b.take j) := by
+  intro j
+  induction j with
+  | zero => intro hj; simp [tmsatTakeCfg]
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    change (tmsatTakeTM.tm.tr (3 : Fin 4) _ _).apply _ = _
+    rw [tmsat_take_read]
+    have hr : x[pre.length+j]? = some b[j] := by
+      simp only [hx, List.getElem?_append_right (by omega : pre.length ≤ pre.length+j),
+        Nat.add_sub_cancel_left, List.getElem?_eq_getElem (show j < b.length by omega)]
+    rw [hr]
+    have hw : (tmsatTakeCfg x (some 3) (pre.length+j) (by simp [hx] ; omega)
+        m ((m:ℤ)-j-1) (b.take j)).workTapeSymbols 0 = some true := by
+      simp [tmsatTakeCfg, Cfg.workTapeSymbols, polyTape,
+        show 0 ≤ (m:ℤ)-j-1 ∧ (m:ℤ)-j-1 < m by omega] ; omega
+    simp only [tmsatTakeTM, show (3:Fin 4) ≠ 0 by decide, if_false,
+      show (3:Fin 4) ≠ 1 by decide, show (3:Fin 4) ≠ 2 by decide, hw]
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_pos_of_ne_right _ (by dsimp [tmsatTakeCfg]; simp only [hx, List.length_append]; omega)
+    · rfl
+    · funext i; simp [Action.apply, tmsatTakeCfg]; omega
+    · simp only [Action.apply, tmsatTakeCfg]
+      rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
+
+/-- On every constructed pair, prefix extraction takes at most input length
+plus one steps. Malformed-input behavior is never invoked by the assembly. -/
+private lemma tmsat_take_computes (a b : List Bool) :
+    tmsatTakeTM.ComputesInTime (pairEncode a b) (b.take a.length)
+      ((pairEncode a b).length+1) := by
+  let x := pairEncode a b
+  let pre := (a.flatMap fun v => [v,v]) ++ [false,true]
+  have hx : x = pre ++ b := rfl
+  have hp : pre.length = 2*a.length+2 := by
+    have h := universal_pair_length a ([] : List Bool)
+    simpa [pre, pairEncode] using h
+  have hs := tmsat_take_parse a b x [] 0 rfl
+  simp only [List.length_nil, Nat.zero_add, Nat.cast_zero] at hs
+  have hi : tmsatTakeTM.tm.initCfg x = tmsatTakeCfg x (some 0) 0 (by omega) 0 0 [] := by
+    apply Cfg.ext <;> simp [tmsatTakeCfg, tmsatTakeTM]
+    funext i z
+    simp [polyTape]
+  have hrun : tmsatTakeTM.tm.runFrom (tmsatTakeTM.tm.initCfg x)
+      (2*a.length+2+min a.length b.length) =
+      tmsatTakeCfg x (some 3) (pre.length+min a.length b.length)
+        (by simp [hx] ) a.length
+        ((a.length:ℤ)-min a.length b.length-1) (b.take (min a.length b.length)) := by
+    rw [MultiTapeTM.runFrom_add, hi, hs]
+    simpa only [List.length_nil, Nat.zero_add, hp] using
+      tmsat_take_payload x pre b hx a.length (min a.length b.length) (by omega)
+  have ht : tmsatTakeTM.ComputesInTime x (b.take a.length)
+      (2*a.length+2+min a.length b.length+1) := by
+    apply (FinTM.computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_succ_eq_step', hrun]
+    change ((tmsatTakeTM.tm.tr (3 : Fin 4) _ _).apply _).state = none ∧
+      ((tmsatTakeTM.tm.tr (3 : Fin 4) _ _).apply _).output = b.take a.length
+    rw [tmsat_take_read]
+    have hend :
+      polyTape a.length ((a.length:ℤ)-min a.length b.length-1) = none ∨
+        x[pre.length+min a.length b.length]? = none := by
+      by_cases h : a.length ≤ b.length
+      · left; simp [Nat.min_eq_left h, polyTape]
+      · right; simp [Nat.min_eq_right (by omega : b.length ≤ a.length), hx]
+    rcases hend with hw | hr
+    · simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hw, Action.apply,
+        List.take_eq_take_min]
+    · simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hr, Action.apply,
+        List.take_eq_take_min]
+  apply ht.mono
+  dsimp [x]
+  rw [universal_pair_length]
+  omega
+
+/-- The prefix extractor is used only on pairs made by the §9c assembly.
+Its time is bounded by that preprocessor's actual output-length guarantee. -/
+private lemma tmsat_pt_take {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => (g x).take (f x).length) := by
+  obtain ⟨M, C, e, hM⟩ := tmsat_pt_pair hf hg
+  have hT (x : List Bool) : tmsatTakeTM.ComputesInTime (pairEncode (f x) (g x))
+      ((g x).take (f x).length) (C * (x.length+1)^e+1) := by
+    apply (tmsat_take_computes (f x) (g x)).mono
+    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hM x)).2
+    have hl := M.tm.output_length_le x (C * (x.length+1)^e)
+    rw [ho] at hl
+    dsimp only at hl
+    omega
+  obtain ⟨N, hN⟩ := tmsat_comp_on_image M tmsatTakeTM _ (fun x => (g x).take (f x).length)
+    (fun n => C*(n+1)^e) (fun n => C*(n+1)^e+1) hM hT
+  refine ⟨N, 3*(C+1), e, fun x => (hN x).mono ?_⟩
+  have hp : 1 ≤ (x.length+1)^e := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  dsimp only
+  simp only [Nat.mul_add, Nat.add_mul, Nat.mul_one, Nat.mul_assoc]
+  omega
+
+/-- Conjunction preserves short-circuit guard order: the second test runs
+only after the first succeeded. -/
+private lemma tmsat_pt_and {p q : List Bool → Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hq : PolyTimeComputable (fun x => [q x])) :
+    PolyTimeComputable (fun x => [p x && q x]) := by
+  have h := tmsat_pt_cond hp hq (tmsat_pt_const [false])
+  convert h using 1
+  funext x
+  cases p x <;> rfl
+
+/-- A successful parser returns the unique original pair encoding.
+The proof follows the aligned two-bit grammar, without identifying parse
+failure with an empty first or second component. -/
+private lemma tmsat_pair_inverse (z : List Bool) :
+    ∀ a b, pairDecode z = some (a,b) → z = pairEncode a b := by
+  induction z using List.twoStepInduction with
+  | nil => intro a b h; simp [pairDecode] at h
+  | singleton v => intro a b h; cases v <;> simp [pairDecode] at h
+  | cons_cons v w rest ih _ =>
+    intro a b h
+    cases v <;> cases w
+    · obtain ⟨⟨u,v⟩, hp, he⟩ := Option.map_eq_some_iff.mp h
+      cases he
+      rw [ih u v hp]
+      rfl
+    · cases h; rfl
+    · simp [pairDecode] at h
+    · obtain ⟨⟨u,v⟩, hp, he⟩ := Option.map_eq_some_iff.mp h
+      cases he
+      rw [ih u v hp]
+      rfl
+
+/-- On valid inputs the projections reconstruct the pair. -/
+private lemma tmsat_pair_valid (z : List Bool) (h : (pairDecode z).isSome = true) :
+    z = pairEncode (tmsatFst z) (tmsatSnd z) := by
+  cases hd : pairDecode z with
+  | none => simp [hd] at h
+  | some p =>
+    rcases p with ⟨a,b⟩
+    simpa only [tmsatFst, tmsatSnd, hd, Option.map_some, Option.getD_some] using
+      tmsat_pair_inverse z a b hd
+
+/-- The exact odd split is the P10 search at coefficient and degree one. -/
+private def tmsatSplit (z : List Bool) : List Bool :=
+  match solveSplit 1 1 z.length with
+  | some i => pairEncode (z.take i) (z.drop i)
+  | none => []
+
+/-- A successful split has precisely the required length equation. -/
+private lemma tmsat_split_some (N i : ℕ) (h : solveSplit 1 1 N = some i) :
+    i + (i+1) = N := by
+  have he := List.find?_some h
+  simpa [Nat.pow_one] using he
+
+/-- If the exact length equation has a solution, P10 returns that solution.
+Any returned index satisfies the same strictly increasing linear equation. -/
+private lemma tmsat_split_exists (N i : ℕ) (h : i+(i+1)=N) :
+    solveSplit 1 1 N = some i := by
+  cases hs : solveSplit 1 1 N with
+  | none =>
+    have hn := List.find?_eq_none.mp hs i (by simp; omega)
+    simp [h] at hn
+  | some j =>
+    have hj := tmsat_split_some N j hs
+    congr 1
+    omega
+
+/-- The exact split gives back the original instance and padded certificate. -/
+private lemma tmsat_split_append (y w : List Bool) (hw : w.length=y.length+1) :
+    tmsatSplit (y++w) = pairEncode y w := by
+  unfold tmsatSplit
+  rw [tmsat_split_exists (y++w).length y.length (by simp [hw])]
+  simp
+
+/-- Both halves of a successful odd split retain their original native lengths. -/
+private lemma tmsat_split_components (z : List Bool)
+    (h : (pairDecode (tmsatSplit z)).isSome = true) :
+    z = tmsatFst (tmsatSplit z) ++ tmsatSnd (tmsatSplit z) ∧
+    (tmsatSnd (tmsatSplit z)).length = (tmsatFst (tmsatSplit z)).length+1 := by
+  cases hs : solveSplit 1 1 z.length with
+  | none => simp [tmsatSplit, hs, pairDecode] at h
+  | some i =>
+    have hi := tmsat_split_some z.length i hs
+    simp only [tmsatSplit, hs, tmsatFst, tmsatSnd, pairDecode_pairEncode,
+      Option.map_some, Option.getD_some]
+    refine ⟨(List.take_append_drop i z).symm, ?_⟩
+    simp only [List.length_take, List.length_drop]
+    omega
+
+/-- The parsed instance is the first exact-split component. -/
+private def tmsatY (z : List Bool) : List Bool := tmsatFst (tmsatSplit z)
+
+/-- The padded certificate is the second exact-split component. -/
+private def tmsatW (z : List Bool) : List Bool := tmsatSnd (tmsatSplit z)
+
+/-- The retained code field. -/
+private def tmsatCode (z : List Bool) : List Bool := tmsatFst (tmsatY z)
+
+/-- The retained source input field. -/
+private def tmsatInput (z : List Bool) : List Bool := tmsatFst (tmsatSnd (tmsatY z))
+
+/-- The unary certificate-length field, before shape validation. -/
+private def tmsatWidth (z : List Bool) : List Bool := tmsatFst (tmsatSnd (tmsatSnd (tmsatY z)))
+
+/-- The unary deadline field, before shape validation. -/
+private def tmsatClock (z : List Bool) : List Bool := tmsatSnd (tmsatSnd (tmsatSnd (tmsatY z)))
+
+/-- Grammar guards precede projections at all three quadruple spine levels;
+then both unary fields are checked in full, including the empty word. -/
+private def tmsatGood (z : List Bool) : Bool :=
+  (pairDecode (tmsatSplit z)).isSome &&
+  ((pairDecode (tmsatY z)).isSome &&
+  ((pairDecode (tmsatSnd (tmsatY z))).isSome &&
+  ((pairDecode (tmsatSnd (tmsatSnd (tmsatY z)))).isSome &&
+  (decide (tmsatWidth z = List.replicate (tmsatWidth z).length true) &&
+   decide (tmsatClock z = List.replicate (tmsatClock z).length true)))))
+
+/-- Successful guards reconstruct the exact quadruple and split equation. -/
+private lemma tmsat_good_spec (z : List Bool) (h : tmsatGood z = true) :
+    z = tmsatY z ++ tmsatW z ∧ (tmsatW z).length = (tmsatY z).length+1 ∧
+    tmsatY z = tmsatQuad (tmsatCode z) (tmsatInput z)
+      (tmsatWidth z).length (tmsatClock z).length := by
+  simp only [tmsatGood, Bool.and_eq_true, decide_eq_true_eq] at h
+  obtain ⟨hs, hy, hx, hn, hwidth, hclock⟩ := h
+  obtain ⟨hz, hw⟩ := tmsat_split_components z hs
+  refine ⟨hz, hw, ?_⟩
+  have h₀ := tmsat_pair_valid (tmsatY z) hy
+  have h₁ := tmsat_pair_valid (tmsatSnd (tmsatY z)) hx
+  have h₂ := tmsat_pair_valid (tmsatSnd (tmsatSnd (tmsatY z))) hn
+  change tmsatY z = pairEncode (tmsatCode z)
+    (pairEncode (tmsatInput z) (pairEncode (List.replicate _ true) (List.replicate _ true)))
+  rw [← hwidth, ← hclock]
+  exact h₀.trans (congrArg (pairEncode (tmsatCode z))
+    (h₁.trans (congrArg (pairEncode (tmsatInput z)) h₂)))
+
+/-- Every well-formed quadruple with its padded witness passes every guard,
+and all fields are recovered literally. -/
+private lemma tmsat_good_quad (α x w : List Bool) (n t : ℕ)
+    (hw : w.length = (tmsatQuad α x n t).length+1) :
+    let z := tmsatQuad α x n t ++ w
+    tmsatGood z = true ∧ tmsatCode z = α ∧ tmsatInput z = x ∧
+      (tmsatWidth z).length = n ∧ (tmsatClock z).length = t ∧ tmsatW z = w := by
+  dsimp only
+  simp only [tmsatGood, tmsatCode, tmsatInput, tmsatWidth, tmsatClock, tmsatW, tmsatY]
+  simp only [tmsat_split_append _ _ hw]
+  simp [tmsatQuad, tmsatFst, tmsatSnd, pairDecode_pairEncode]
+
+/-- Computed fields and ordered validation use P10, P6, P11, and W3.
+Each projection consumes the preceding computed word; validity is still
+checked separately before its result can enter an accepted request. -/
+private lemma tmsat_fields_poly :
+    PolyTimeComputable tmsatCode ∧ PolyTimeComputable tmsatInput ∧
+    PolyTimeComputable tmsatWidth ∧ PolyTimeComputable tmsatClock ∧
+    PolyTimeComputable tmsatW ∧ PolyTimeComputable (fun z => [tmsatGood z]) := by
+  obtain ⟨S, A, hS⟩ := FinTM.computesFunInTime_splitSolve 1 1
+  have hsplit : PolyTimeComputable tmsatSplit := ⟨S,A,3,hS⟩
+  have hf : PolyTimeComputable tmsatFst := tmsat_pt_linear _ FinTM.computesFunInTime_pairFst
+  have hs : PolyTimeComputable tmsatSnd := tmsat_pt_linear _ FinTM.computesFunInTime_pairSnd
+  have hv := tmsat_pt_linear _ FinTM.computesFunInTime_pairValid
+  have hy : PolyTimeComputable tmsatY := hf.comp hsplit
+  have h₁ := hs.comp hy
+  have h₂ := hs.comp h₁
+  have hn : PolyTimeComputable tmsatWidth := hf.comp h₂
+  have ht : PolyTimeComputable tmsatClock := hs.comp h₂
+  refine ⟨hf.comp hy, hf.comp h₁, hn, ht, hs.comp hsplit, ?_⟩
+  exact tmsat_pt_and (hv.comp hsplit) (tmsat_pt_and (hv.comp hy)
+    (tmsat_pt_and (hv.comp h₁) (tmsat_pt_and (hv.comp h₂)
+      (tmsat_pt_and (tmsat_pt_unary.comp hn) (tmsat_pt_unary.comp ht)))))
+
+/-- Invalid requests are replaced by a well-formed zero-deadline request,
+so the simulator is used only on its proved totality domain. -/
+private def tmsatRequest (z : List Bool) : List Bool :=
+  if tmsatGood z then
+    pairEncode (pairEncode (Nat.bits (tmsatClock z).length) (tmsatCode z))
+      (pairEncode (tmsatInput z) ((tmsatW z).take (tmsatWidth z).length))
+  else pairEncode (pairEncode [] []) []
+
+/-- The exact completed answer associated with preprocessing. -/
+private def tmsatResult (c : MachineCode) (z : List Bool) : List Bool :=
+  if tmsatGood z then
+    tmsatAnswer c (tmsatCode z)
+      (pairEncode (tmsatInput z) ((tmsatW z).take (tmsatWidth z).length))
+      (tmsatClock z).length
+  else tmsatAnswer c [] [] 0
+
+/-- Construct the guarded timed request by the canonical §9c pairing recipe.
+
+**Proof sketch.** Retain the whole request as the head of a pair while C1
+runs the binary length counter on the unary clock payload. Pair the extracted
+binary clock with the recovered code, and the recovered source input with
+the exact prefix extractor's output. W3 chooses that request only after all
+guards succeed, otherwise emitting the fixed zero-deadline request. -/
+private lemma tmsat_request_poly : PolyTimeComputable tmsatRequest := by
+  obtain ⟨ha,hx,hn,ht,hw,hgood⟩ := tmsat_fields_poly
+  have hb := tmsat_pt_linear _ FinTM.computesFunInTime_lengthBits
+  have hs := tmsat_pt_linear _ FinTM.computesFunInTime_pairSnd
+  have hclock : PolyTimeComputable (fun z => Nat.bits (tmsatClock z).length) := by
+    have h := hs.comp ((tmsat_pt_map hb).comp (tmsat_pt_pair polyTimeComputable_id ht))
+    convert h using 1
+    funext z
+    simp [Function.comp_apply, tmsatMap, pairDecode_pairEncode]
+  exact tmsat_pt_cond hgood
+    (tmsat_pt_pair (tmsat_pt_pair hclock ha) (tmsat_pt_pair hx (tmsat_pt_take hn hw)))
+    (tmsat_pt_const (pairEncode (pairEncode [] []) []))
+
+/-- Valid code lengths and unary deadlines are bounded by the original
+verifier input length, so the simulator consumes the proved uniform budget. -/
+private lemma tmsat_good_bounds (z : List Bool) (h : tmsatGood z = true) :
+    (tmsatCode z).length ≤ z.length ∧ (tmsatClock z).length ≤ z.length := by
+  obtain ⟨hz, hw, hy⟩ := tmsat_good_spec z h
+  have hb := tmsat_quad_bounds (tmsatCode z) (tmsatInput z)
+    (tmsatWidth z).length (tmsatClock z).length
+  rw [← hy] at hb
+  have hlen := congrArg List.length hz
+  simp only [List.length_append] at hlen
+  omega
+
+/-- The guarded simulator's whole-answer test is exactly the existential
+verifier specification, including rejection of every invalid request.
+
+**Proof sketch.** Successful guards reconstruct the original split and
+quadruple, and `tmsatAnswer_accept` identifies the source acceptance event.
+Conversely every witness of the specification passes all guards and is
+recovered literally. A failed guard uses deadline zero, where the source
+machine cannot have halted. -/
+private lemma tmsat_result_accept (c : MachineCode) (z : List Bool) :
+    tmsatResult c z = [true,true] ↔ z ∈ tmsatVerifier c := by
+  constructor
+  · intro h
+    by_cases hg : tmsatGood z = true
+    · obtain ⟨hz, hw, hy⟩ := tmsat_good_spec z hg
+      simp only [tmsatResult, hg, ↓reduceIte, tmsatAnswer_accept] at h
+      exact ⟨tmsatY z, tmsatW z, tmsatCode z, tmsatInput z,
+        (tmsatWidth z).length, (tmsatClock z).length, hz, hw, hy, h⟩
+    · have hzero : ¬(c.decode []).toFinTM.ComputesInTime [] [true] 0 :=
+        FinTM.not_computesInTime_zero _ _ _
+      simp only [tmsatResult, if_neg hg, tmsatAnswer_accept] at h
+      exact (hzero h).elim
+  · rintro ⟨y,w,α,x,n,t,hz,hw,hy,hs⟩
+    subst y
+    subst z
+    obtain ⟨hg,ha,hx,hn,ht,hw'⟩ := tmsat_good_quad α x w n t hw
+    simp only [tmsatResult, hg, ↓reduceIte, ha, hx, hn, ht, hw', tmsatAnswer_accept]
+    exact hs
+
 /-- **`TMSAT ∈ NP` for polynomially canonizable schemes** [AB09, Theorem 2.9,
 membership]: the certificate is `u` itself, and verification is timed
 universal simulation. The hypothesis `Complexity.PolyBound c.canonizerTime`
@@ -947,21 +1565,59 @@ halting keeps the accepting run); backward, a certificate's first `n` bits are
 a witness — `Turing.timed_universal`'s two branches convert between `U`'s
 answers and `(c.decode α).toFinTM.ComputesInTime (pairEncode x u) [true] t`
 exactly, and `Turing.pairEncode_injective` pins the parsed components to the
-defining existential's. -/
+defining existential's.
+
+**Continuation implementation note.** The exact odd split is P10 at `(1,1)`.
+P6 guards each nested parse before extraction; P11 overflow plus whole-word
+equality checks both unary fields. The private prefix machine reads exactly
+the declared number of witness bits. C1 applies the binary length counter
+only to a clock payload while retaining the request, and the canonical §9c
+recipe assembles the timed input. Invalid inputs become a valid zero-deadline
+request; the proved quantitative bridge, both answer clauses, and the existing
+uniform budget close the simulation. Whole-word equality with `[true,true]`
+produces the final verdict. -/
 theorem TMSAT_mem_NP (c : EffectiveMachineCode) (hc : PolyBound c.canonizerTime) :
     TMSAT c.toMachineCode ∈ NP := by
   obtain ⟨U, hU⟩ := timed_universal_quantitative c
   obtain ⟨A, d, hbudget⟩ := tmsat_simulation_budget c hc
   have htotal := tmsat_simulator_total c U hU
   have hV : tmsatVerifier c.toMachineCode ∈ P := by
-    -- CONTINUATION D-MEM: construct the odd-split/quadruple parser and unary
-    -- clock converter, returning a well-formed zero-deadline request on failure.
-    -- Compose its output with `htotal` through `tmsat_comp_on_image`, use
-    -- `hbudget` and `tmsat_quad_bounds`, and compare the entire captured answer
-    -- with `[true,true]` using `tmsatAnswer_accept`. No totality of U on malformed
-    -- strings may be assumed. This is a partial-delivery admission, not a
-    -- discharge of the verifier-machine obligation.
-    sorry
+    -- D-MEM closed: guards, exact prefix extraction, valid request assembly,
+    -- both simulator outcomes, and whole-answer equality are all checked.
+    classical
+    obtain ⟨M, C, e, hM⟩ := tmsat_request_poly
+    have hs (z : List Bool) : U.ComputesInTime (tmsatRequest z)
+        (tmsatResult c.toMachineCode z) (A*(z.length+1)^d) := by
+      by_cases hg : tmsatGood z = true
+      · obtain ⟨ha,ht⟩ := tmsat_good_bounds z hg
+        simpa only [tmsatRequest, tmsatResult, hg, ↓reduceIte] using
+          (htotal (tmsatCode z)
+            (pairEncode (tmsatInput z) ((tmsatW z).take (tmsatWidth z).length))
+            (tmsatClock z).length).mono (hbudget z.length _ _ ha ht)
+      · simpa only [tmsatRequest, tmsatResult, if_neg hg, show Nat.bits 0 = [] by simp] using
+          (htotal [] [] 0).mono (hbudget z.length 0 0 (by omega) (by omega))
+    obtain ⟨N,hN⟩ := tmsat_comp_on_image M U tmsatRequest (tmsatResult c.toMachineCode)
+      (fun n => C*(n+1)^e) (fun n => A*(n+1)^d) hM hs
+    have hresult : PolyTimeComputable (tmsatResult c.toMachineCode) := by
+      refine ⟨N,2*C+A+2,max e d,fun z => (hN z).mono ?_⟩
+      have he := Nat.mul_le_mul_left (2*C)
+        (Nat.pow_le_pow_right (Nat.succ_pos z.length) (Nat.le_max_left e d))
+      have hd := Nat.mul_le_mul_left A
+        (Nat.pow_le_pow_right (Nat.succ_pos z.length) (Nat.le_max_right e d))
+      have h1 : 1 ≤ (z.length+1)^max e d := Nat.one_le_pow _ _ (Nat.succ_pos _)
+      dsimp only
+      simp only [Nat.succ_eq_add_one, Nat.mul_assoc] at he hd
+      simp only [Nat.add_mul, Nat.mul_assoc]
+      omega
+    obtain ⟨D,B,b,hD⟩ := (tmsat_pt_eq [true,true]).comp hresult
+    apply mem_P_iff.mpr
+    refine ⟨B,b,D,fun z => ?_⟩
+    have hout : [decide (tmsatResult c.toMachineCode z = [true,true])] =
+        [MultiTapeTM.indicator (tmsatVerifier c.toMachineCode : Set (List Bool)) z] := by
+      simp only [tmsat_result_accept]
+      simp [MultiTapeTM.indicator]
+    simpa only [Function.comp_apply, hout] using hD z
+
   refine ⟨1, 1, tmsatVerifier c.toMachineCode, hV, ?_⟩
   intro y
   simpa only [Nat.pow_one, Nat.one_mul] using tmsat_certificate_equiv c.toMachineCode y
@@ -1095,6 +1751,23 @@ private lemma tmsat_reduction_correct (c : MachineCode) (L V : Language Bool)
     by_contra hv
     simp [MultiTapeTM.indicator, hv] at ho
 
+/-- Exact unary certificate generation follows the predecessor's three-case
+binary-value discipline; the library emits the same value directly.
+
+**Proof sketch.** Coefficient zero emits the empty word. Positive coefficient
+and degree zero emits its fixed unary word. Otherwise P5 uses exponent
+`c-1+1=c`, whose harvested unary loop parameter is `c-1`. No value is enlarged. -/
+private lemma tmsat_certificate_unary (C c : ℕ) :
+    PolyTimeComputable (fun x => List.replicate (C*(x.length+1)^c) true) := by
+  by_cases hC : C = 0
+  · simpa [hC] using tmsat_pt_const []
+  · by_cases hc : c = 0
+    · simpa [hc] using tmsat_pt_const (List.replicate C true)
+    · obtain ⟨M,A,hM⟩ := FinTM.computesFunInTime_polyUnary C (c-1+1)
+      have he : c-1+1 = c := by omega
+      rw [he] at hM
+      exact ⟨M,A,c+1,hM⟩
+
 /-- **`TMSAT` is `NP`-hard** [AB09, Theorem 2.9, hardness]: the generic
 reduction — for `L ∈ NP`, send `x` to `⟨⌞M⌟, x, 1^{p(|x|)}, 1^{q(m)}⟩`.
 
@@ -1136,7 +1809,17 @@ value (`2er ≥ 1`). Output length: `|f x| = 2|α₀| + 2|x| + 2·Q |x| + T' |x|
 wrapper's verdict is the `V`-indicator, completed outputs are unique —
 `Turing.FinTM.ComputesInTime.output_unique`), and the `NP` membership
 equivalence for `L` turns "some such `u`" into `x ∈ L`. Conclude
-`Complexity.NPHard` by the definition, one reduction per `L ∈ NP`. -/
+`Complexity.NPHard` by the definition, one reduction per `L ∈ NP`.
+
+**Continuation implementation note.** P6 validity, guarded P13 concatenation,
+and W3 implement the total wrapper. Emission uses the proved unary generators
+directly, in place of converting the retained exact binary witnesses back by
+countdown. The certificate still follows exactly the same three-case table:
+zero coefficient, zero degree, and positive coefficient/degree. The deadline
+uses the unchanged in-file generator at loop parameter `2er-1` and coefficient
+`D`, hence exponent exactly `2er`. The canonical §9c construction retains `x`
+and assembles the two exact unary runs; P6 fixed-code pairing supplies the
+outermost layer. Neither harvested generator is modified or removed. -/
 theorem TMSAT_NPHard (c : MachineCode) : NPHard (TMSAT c) := by
   classical
   intro L hL
@@ -1144,12 +1827,25 @@ theorem TMSAT_NPHard (c : MachineCode) : NPHard (TMSAT c) := by
   obtain ⟨A, d, M_V, hM_V⟩ := mem_P_iff.mp hV
   have hwrap : ∃ (W : FinTM Bool) (B e : ℕ), 0 < B ∧ 0 < e ∧
       W.ComputesFunInTime (tmsatWrapperOutput V) (fun s => B * (s + 1) ^ e) := by
-    -- CONTINUATION D-WRAP: implement the total aligned pairing parser;
-    -- reject non-pairs, assemble x ++ u on a buffer, and relocate/capture M_V.
-    -- `tmsat_comp_on_image` supplies the timed simulation composition.
-    -- The remaining obligation is a concrete polynomial-time pair-to-concat
-    -- preprocessing machine and its malformed-input branch.
-    sorry
+    -- D-WRAP closed: guard P13's parse, capture the verifier on the
+    -- concatenated components, and reject malformed inputs via W3.
+    have hv : PolyTimeComputable
+        (fun z => [MultiTapeTM.indicator (V : Set (List Bool)) z]) := ⟨M_V,A,d,hM_V⟩
+    have hp := tmsat_pt_linear _ FinTM.computesFunInTime_pairValid
+    have hc : PolyTimeComputable tmsatConcat :=
+      tmsat_pt_linear _ FinTM.computesFunInTime_pairConcat
+    have hw : PolyTimeComputable (tmsatWrapperOutput V) := by
+      have h := tmsat_pt_cond hp (hv.comp hc) (tmsat_pt_const [false])
+      convert h using 1
+      funext z
+      cases hd : pairDecode z with
+      | none => simp [tmsatWrapperOutput, hd]
+      | some ab => cases ab; simp [tmsatWrapperOutput, tmsatConcat, hd]
+    obtain ⟨W,C,j,hW⟩ := hw
+    refine ⟨W,C+1,max 1 j,Nat.succ_pos _,Nat.le_max_left _ _,fun z => (hW z).mono ?_⟩
+    exact Nat.mul_le_mul (Nat.le_succ C)
+      (Nat.pow_le_pow_right (Nat.succ_pos z.length) (Nat.le_max_right 1 j))
+
   obtain ⟨W, B, e, hB, he, hW⟩ := hwrap
   obtain ⟨M₁, K, hk, h₁⟩ := FinTM.one_work_tape_binary W (tmsatWrapperOutput V)
     (fun s => B * (s + 1) ^ e) hW
@@ -1182,12 +1878,18 @@ theorem TMSAT_NPHard (c : MachineCode) : NPHard (TMSAT c) := by
     simpa only [universal_pair_length, hu] using tmsat_deadline_bound K B e C₀ c₀ x.length
   have hemit : PolyTimeComputable
       (fun x => tmsatQuad α₀ x (C₀ * (x.length + 1) ^ c₀) (T' x.length)) := by
-    -- CONTINUATION D-EMIT: emit the fixed code and doubled input, then the
-    -- exact unary certificate and deadline via binary countdown. The exact
-    -- binary certificate is supplied by `hcertificate` (all three edge cases)
-    -- and the exact binary deadline by `hdeadline`. Compose these submachines
-    -- while retaining x, and prove the stated right-nested pairing layout.
-    sorry
+    -- D-EMIT closed: exact unary values are assembled using §9c;
+    -- the existing binary witnesses record the same exact values.
+    have hq := tmsat_certificate_unary C₀ c₀
+    have ht : PolyTimeComputable (fun x => List.replicate (T' x.length) true) := by
+      have h := poly_unary_computes (2*e*r-1) D
+      have hexact : 2*e*r-1+1 = 2*e*r := by omega
+      rw [hexact] at h
+      exact ⟨polyUnaryTM (2*e*r-1) D,D+5*(2*e*r)+4,2*e*r,h⟩
+    have hinner := tmsat_pt_pair polyTimeComputable_id (tmsat_pt_pair hq ht)
+    have houter := tmsat_pt_linear _ (FinTM.computesFunInTime_pairEncodeFixed α₀)
+    exact houter.comp hinner
+
   exact ⟨_, hemit, tmsat_reduction_correct c L V C₀ c₀ α₀ T' hL hnormalized⟩
 
 /-- **Theorem 2.9** [AB09]: `TMSAT` is `NP`-complete — over an effective
