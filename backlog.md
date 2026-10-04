@@ -221,7 +221,15 @@ uncomputability chapter.
   admission-free; the checkpoint agent's continuation document is
   binding). Next: dispatch, then integration, then the library
   fill-audit round (carrying W's two promotion requests and the P/L
-  size exceptions), then the E2 continuation briefs. Subsumes 2C's
+  size exceptions), then the E2 continuation briefs.
+  **Round 2 integrated 2026-10-04: L2 COMPLETE** (`loopHost_contracts`
+  proved; the loop admission-free end to end, realized constant 10),
+  **P2 13/15** (12–13 filled via the proved W layer; target-14
+  relocation support proved; frontier `pairMapSnd`/`splitSolve`).
+  Tree: 57/57 zero errors, **30 admissions**; 21/23 contracts
+  admission-free. Next: P3 continuation brief (8 pts, zero sanctioned
+  admissions — all dependencies now proved), then the fill-audit
+  round. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
