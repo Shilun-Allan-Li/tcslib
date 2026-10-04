@@ -230,8 +230,11 @@ uncomputability chapter.
   admission-free. **P3 closure brief issued 2026-10-04**
   (`briefs/lib-fill-batchP3.md`, base `b2f46419`; targets 14–15, 8 pts,
   zero sanctioned admissions; completion = 23/23, the whole `Build/`
-  tree admission-free). Next: dispatch, then integration, then the
-  fill-audit round. Subsumes 2C's
+  tree admission-free). **P3 integrated 2026-10-04: `pairMapSnd`
+  PROVED (coefficient 40), 22/23**; `splitSolve` reduced to the body
+  controller (`splitSolve_of_body` + proved components; one named
+  gap). Tree: 57/57 zero errors, **29 admissions**. Next: P4 closure
+  brief (one target), then the fill-audit round. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
