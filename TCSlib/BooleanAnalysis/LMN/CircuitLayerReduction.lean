@@ -40,6 +40,11 @@ terms telescope: `Σᵢ (sᵢ - 1 + 1) = Σᵢ sᵢ = s - 1`.
 - `composedDelta`: the composed restriction parameter `δ = (1/(40w))·(1/(40l))^{d-2}`
 - `circuit_reduction_aux`: the core bound by induction on d
 - `circuit_reduction_core`: user-friendly reformulation
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Lemma 4.28.
 -/
 
 open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN

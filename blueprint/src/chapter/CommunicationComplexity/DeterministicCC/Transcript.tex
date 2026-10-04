@@ -948,3 +948,18 @@ $(f_X(x'), f_Y(y'))$ to obtain its syntactic transcript and then re-routing that
 transcript through $f_X$ and $f_Y$ into a transcript of $p'$ yields exactly the
 syntactic transcript produced by running $p'$ directly on $(x', y')$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Fibrewise injectivity on Boolean sigma types]
+\lean{CommunicationComplexity.Deterministic.Protocol.sigma_map_bool_injective}
+\label{CommunicationComplexity.Deterministic.Protocol.sigma_map_bool_injective}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+Let $\beta, \gamma : \{\mathrm{false}, \mathrm{true}\} \to \mathrm{Type}$ be two
+Boolean-indexed families of types and let $g_b : \beta_b \to \gamma_b$ be a map for each
+$b \in \{\mathrm{false}, \mathrm{true}\}$. If every $g_b$ is injective, then the map
+$\Sigma_b\, \beta_b \to \Sigma_b\, \gamma_b$ sending $(b, t)$ to $(b, g_b(t))$ --- which
+keeps the Boolean index and applies the family fibrewise --- is injective.
+\end{theorem}

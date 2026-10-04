@@ -4968,3 +4968,65 @@ satisfies
 where $\abs{S}$ is the number of elements of $S$ and both sides are compared in
 $\bbn_\infty$.
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Alice's bit is fixed on a child's leaf rectangle]
+\lean{CommunicationComplexity.Deterministic.Protocol.aux_alice_bit}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_alice_bit}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+Let $p$ be a protocol on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
+$f : X \to \{0,1\}$ be the bit Alice sends, and let $b$ be a bit. If $R$ is a leaf
+rectangle of $p$ run on the restricted input set $(A \cap \{x \mid f(x) = b\}) \times B$,
+then every input $(x, y) \in R$ satisfies $f(x) = b$.
+\end{lemma}
+
+\begin{lemma}[Bob's bit is fixed on a child's leaf rectangle]
+\lean{CommunicationComplexity.Deterministic.Protocol.aux_bob_bit}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_bob_bit}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+Let $p$ be a protocol on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
+$f : Y \to \{0,1\}$ be the bit Bob sends, and let $b$ be a bit. If $R$ is a leaf
+rectangle of $p$ run on the restricted input set $A \times (B \cap \{y \mid f(y) = b\})$,
+then every input $(x, y) \in R$ satisfies $f(y) = b$. This is the mirror image of
+\texttt{CommunicationComplexity.Deterministic.Protocol.aux\_alice\_bit}.
+\end{lemma}
+
+\begin{lemma}[Leaf rectangles on opposite Alice branches are disjoint]
+\lean{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_alice_of_ne}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_alice_of_ne}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_alice_bit, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+Let $p, q$ be protocols on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
+$f : X \to \{0,1\}$, and let $b \neq b'$ be distinct bits. If $R$ is a leaf rectangle of
+$p$ on $(A \cap \{x \mid f(x) = b\}) \times B$ and $S$ is a leaf rectangle of $q$ on
+$(A \cap \{x \mid f(x) = b'\}) \times B$, then $R$ and $S$ are disjoint.
+\end{lemma}
+
+\begin{lemma}[Leaf rectangles on opposite Bob branches are disjoint]
+\lean{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_bob_of_ne}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_bob_of_ne}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_bob_bit, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
+Let $p, q$ be protocols on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
+$f : Y \to \{0,1\}$, and let $b \neq b'$ be distinct bits. If $R$ is a leaf rectangle of
+$p$ on $A \times (B \cap \{y \mid f(y) = b\})$ and $S$ is a leaf rectangle of $q$ on
+$A \times (B \cap \{y \mid f(y) = b'\})$, then $R$ and $S$ are disjoint. This is the
+mirror image of \texttt{CommunicationComplexity.Deterministic.Protocol.aux\_disjoint\_alice\_of\_ne}.
+\end{lemma}
+
+\begin{lemma}[Union bound for two power-of-two cardinalities]
+\lean{CommunicationComplexity.Deterministic.Protocol.aux_card_step}
+\label{CommunicationComplexity.Deterministic.Protocol.aux_card_step}
+\leanok
+Let $S_0, S_1$ be sets in a type $\beta$ and let $c_0, c_1 \in \mathbb{N}$. If
+$\abs{S_0} \le 2^{c_0}$ and $\abs{S_1} \le 2^{c_1}$, then
+\[
+  \abs{S_0 \cup S_1} \;\le\; 2^{\,1 + \max(c_0, c_1)},
+\]
+where $\abs{\cdot}$ denotes the number of elements of a set.
+\end{lemma}

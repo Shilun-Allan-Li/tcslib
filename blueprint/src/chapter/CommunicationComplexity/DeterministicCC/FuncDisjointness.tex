@@ -1557,3 +1557,15 @@ Boolean function that, given subsets $X, Y \subseteq [n]$ held by Alice and Bob
 respectively, returns $\mathtt{true}$ exactly when $X \cap Y = \emptyset$. Then the
 deterministic communication complexity of this function is exactly $n + 1$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Ceiling logarithm of two in base two]
+\lean{CommunicationComplexity.Functions.Disjointness.clog_two_two}
+\label{CommunicationComplexity.Functions.Disjointness.clog_two_two}
+\leanok
+The ceiling base-$2$ logarithm of $2$ equals $1$: $\lceil \log_2 2 \rceil = 1$, i.e.\
+$\texttt{Nat.clog}\,2\,2 = 1$. This is a small numerical fact used in the
+communication-complexity bounds of this module.
+\end{theorem}

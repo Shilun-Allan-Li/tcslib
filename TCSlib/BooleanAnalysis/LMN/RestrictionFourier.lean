@@ -33,6 +33,11 @@ in one pass by factoring `bernoulliRestrWeight` per coordinate
 (`bernoulliRestrWeight_eq_prod`): free coordinates contribute `δ`, fixed
 coordinates average an odd sign to `0` (or a squared sign to `1−δ`), and
 untouched coordinates contribute `1`.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Prop. 4.17 and Cor. 3.22.
 -/
 
 open BooleanAnalysis SwitchingLemma2 LMN
@@ -87,7 +92,9 @@ lemma chiS_extend (U : Finset (Fin n)) (ρ : Restriction n) (x : BoolCube n) :
 
 /-- **Closed form for restricted Fourier coefficients**:
     `f̂_ρ(S) = ∑_U 1[U ∩ J = S] · f̂(U) · signProd ρ (U \ J)` where
-    `J = ρ.freeVars`. -/
+    `J = ρ.freeVars`.
+
+**Source:** [OD14, Cor. 3.22]. -/
 theorem fourierCoeff_restrictBF (f : BooleanFunc n) (ρ : Restriction n)
     (S : Finset (Fin n)) :
     fourierCoeff (restrictBF f ρ) S
@@ -259,7 +266,9 @@ lemma prod_if_subset (p : ℝ) (S U : Finset (Fin n)) :
 /-! ## Proposition 4.17, first identity -/
 
 /-- **O'Donnell Proposition 4.17 (first identity)**:
-    `E_ρ[f̂_ρ(S)] = p^{|S|} · f̂(S)` under a Bernoulli(`p`)-random restriction. -/
+    `E_ρ[f̂_ρ(S)] = p^{|S|} · f̂(S)` under a Bernoulli(`p`)-random restriction.
+
+**Source:** [OD14, Prop. 4.17]. -/
 theorem expectation_fourierCoeff_restrictBF (p : ℝ) (f : BooleanFunc n)
     (S : Finset (Fin n)) :
     ∑ ρ : Restriction n,
@@ -321,7 +330,9 @@ theorem expectation_fourierCoeff_restrictBF (p : ℝ) (f : BooleanFunc n)
 /-! ## Proposition 4.17, second identity -/
 
 /-- **O'Donnell Proposition 4.17 (second identity)**:
-    `E_ρ[f̂_ρ(S)²] = ∑_{U ⊇ S} p^{|S|} (1−p)^{|U∖S|} · f̂(U)²`. -/
+    `E_ρ[f̂_ρ(S)²] = ∑_{U ⊇ S} p^{|S|} (1−p)^{|U∖S|} · f̂(U)²`.
+
+**Source:** [OD14, Prop. 4.17]. -/
 theorem expectation_fourierCoeff_sq_restrictBF (p : ℝ) (f : BooleanFunc n)
     (S : Finset (Fin n)) :
     ∑ ρ : Restriction n,
@@ -455,7 +466,9 @@ lemma signProd_sq (ρ : Restriction n) (T : Finset (Fin n)) :
     restriction, `Pr[U ∩ J = S] = p^{|S|} (1−p)^{|U∖S|}` when `S ⊆ U`
     (and `0` otherwise). Obtained by applying the squared-coefficient identity
     to `f = χ_U`. Together with `expectation_fourierCoeff_sq_restrictBF` this
-    gives O'Donnell's `E[f̂_ρ(S)²] = ∑_U Pr[U ∩ J = S]·f̂(U)²`. -/
+    gives O'Donnell's `E[f̂_ρ(S)²] = ∑_U Pr[U ∩ J = S]·f̂(U)²`.
+
+**Source:** [OD14, Prop. 4.17]. -/
 theorem bernoulliRestrProb_inter_freeVars (p : ℝ) (U S : Finset (Fin n)) :
     bernoulliRestrProb p (fun ρ => U ∩ ρ.freeVars = S)
       = if S ⊆ U then p ^ S.card * (1 - p) ^ (U \ S).card else 0 := by

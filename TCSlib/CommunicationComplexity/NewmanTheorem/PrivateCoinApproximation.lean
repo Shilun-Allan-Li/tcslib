@@ -22,13 +22,38 @@ set_option autoImplicit false
 /-!
 # Coin Approximation
 
+This file is the discretisation step of Newman's theorem: a private-coin protocol whose
+coins come from arbitrary finite probability spaces is replaced by one whose coins are
+fair coin tapes, at the cost of an arbitrarily small additive increase `δ` in the error.
+The construction inverts the cumulative distribution function of a finite distribution
+along a uniform grid of `2^n` points.
+
+## Main definitions
+
+- `Internal.cdf`, `Internal.invCdf`: the cumulative distribution function of a PMF on
+  `Fin m` and its (generalised) inverse
+- `Internal.uniformApprox`: the map `Fin n → Fin m` pushing the uniform distribution on
+  `Fin n` forward to an approximation of a given PMF
+- `PrivateCoin.FiniteMessage.Protocol.toCoinTape`: the coin-tape approximation of a
+  private-coin finite-message protocol
+
 ## Main results
 
-- `PrivateCoin.Internal.uniformApprox_approx`: CDF-inversion construction for approximating arbitrary PMFs by uniform distributions over CoinTape randomness
+- `Internal.uniformApprox_approx`: CDF-inversion construction for approximating arbitrary
+  PMFs by uniform distributions over `Fin n`, with additive error `1/n` per point
+- `Internal.single_coin_approx`: every finite probability space is `δ`-approximated by a
+  pushforward of some coin tape
+- `PrivateCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies`: the coin-tape
+  approximation preserves `ApproxSatisfies` up to slack `δ`
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [New91] I. Newman, "Private vs. common random bits in communication complexity",
+  *Information Processing Letters* 39(2):67–71, 1991.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 open MeasureTheory
@@ -38,13 +63,17 @@ namespace CommunicationComplexity
 
 namespace Internal
 
+/-- The cumulative distribution function of a PMF `p` on `Fin m`: `cdf p n` is the total
+mass `p` assigns to the indices `j < n`. -/
 def cdf {m : ℕ} (p : PMF (Fin m)) (n : ℕ) : ℝ≥0∞ :=
   ∑ j : Fin m, if j < n then p j else 0
 
+/-- The cumulative distribution function vanishes at `0`. -/
 @[simp] lemma cdf_zero {m : ℕ} (p : PMF (Fin m)) :
     cdf p 0 = 0 := by
   simp [cdf]
 
+/-- The cumulative distribution function increases by `p n` from `n` to `n + 1`. -/
 lemma cdf_succ {m : ℕ} (p : PMF (Fin m)) (n : Fin m) :
     cdf p (n + 1) = cdf p n + p n := by
   simp only [cdf]
@@ -58,6 +87,7 @@ lemma cdf_succ {m : ℕ} (p : PMF (Fin m)) (n : Fin m) :
   simp_rw [key, Finset.sum_add_distrib, Finset.sum_ite_eq',
     Finset.mem_univ, if_true]
 
+/-- The cumulative distribution function equals `1` at `m` (all the mass is counted). -/
 lemma cdf_one {m : ℕ} (p : PMF (Fin m)) :
     cdf p m = 1 := by
   simp only [cdf, Fin.is_lt, ↓reduceIte]
@@ -65,6 +95,7 @@ lemma cdf_one {m : ℕ} (p : PMF (Fin m)) :
   simp only [tsum_fintype] at hsum
   exact hsum
 
+/-- The cumulative distribution function is monotone. -/
 lemma cdf_mono {m : ℕ} (p : PMF (Fin m)) :
     Monotone (cdf p) := by
   intro i j hij
@@ -77,6 +108,8 @@ lemma cdf_mono {m : ℕ} (p : PMF (Fin m)) :
   · exact zero_le _
   · exact le_refl _
 
+/-- The generalised inverse of the cumulative distribution function: `invCdf p x` is the
+largest index `i` with `cdf p i ≤ x` (always defined, since `cdf p 0 = 0 ≤ x`). -/
 noncomputable def invCdf {m : ℕ} [NeZero m] (p : PMF (Fin m)) (x : ℝ≥0∞) : Fin m :=
   (Finset.univ.filter (fun (i : Fin m) => cdf p i ≤ x)).max' (by
     unfold Finset.Nonempty
@@ -84,6 +117,16 @@ noncomputable def invCdf {m : ℕ} [NeZero m] (p : PMF (Fin m)) (x : ℝ≥0∞)
     simp
   )
 
+/-- For `x < 1`, `invCdf p x = i` if and only if `x` lies in the half-open interval
+`[cdf p i, cdf p (i + 1))`.
+
+**Proof sketch.** `invCdf p x` is the maximum of the set of indices `j` with
+`cdf p j ≤ x`. If `i` is that maximum then `cdf p i ≤ x` by membership; and either
+`i + 1 < m`, in which case `i + 1` is not in the set (it would exceed the maximum), so
+`x < cdf p (i + 1)`, or `i + 1 = m`, in which case `cdf p (i + 1) = 1 > x`. Conversely,
+if `cdf p i ≤ x < cdf p (i + 1)` then `i` is in the set, and every `b` in the set has
+`cdf p b ≤ x < cdf p (i + 1)`, hence `b < i + 1` by monotonicity of `cdf`; so `i` is the
+maximum. -/
 theorem invCdf_eq_iff {m : ℕ} [NeZero m] (p : PMF (Fin m)) (x : ℝ≥0∞) (hx : x < 1) (i : Fin m) :
     invCdf p x = i ↔ cdf p i ≤ x ∧ x < cdf p (i + 1) := by
   constructor
@@ -118,12 +161,19 @@ theorem invCdf_eq_iff {m : ℕ} [NeZero m] (p : PMF (Fin m)) (x : ℝ≥0∞) (h
       have hmono := Monotone.reflect_lt (cdf_mono p) hlt
       omega
 
+/-- The uniform approximation of a PMF `p` on `Fin m` by `n` grid points: the map
+`Fin n → Fin m` sending `i` to `invCdf p (i / n)`. The pushforward of the uniform
+distribution on `Fin n` along this map approximates `p` (`uniformApprox_approx`). -/
 noncomputable def uniformApprox {m : ℕ} [NeZero m]
     (p : PMF (Fin m)) (n : ℕ) [NeZero n] :
     Fin n → Fin m :=
   fun i => invCdf p ((i : ℝ≥0∞) / n)
 
-/-- The number of naturals in [a, b) is at most ⌊b⌋ - ⌈a⌉ + 1 ≤ b - a + 1. -/
+/-- The number of naturals `j < n` in the real interval `[a, b)` is at most `b − a + 1`.
+
+**Proof sketch.** If the set is empty there is nothing to prove. Otherwise let `jlo` and
+`jhi` be its minimum and maximum; the set injects (via `Fin.val`) into the integer
+interval `[jlo, jhi]`, which has `jhi − jlo + 1` elements, and `a ≤ jlo`, `jhi < b`. -/
 private lemma card_nat_in_Ico (n : ℕ) (a b : ℝ) (hab : a ≤ b) :
     ((Finset.univ.filter (fun j : Fin n =>
       a ≤ (j : ℝ) ∧ (j : ℝ) < b)).card : ℝ) ≤ b - a + 1 := by
@@ -155,11 +205,23 @@ private lemma card_nat_in_Ico (n : ℕ) (a b : ℝ) (hab : a ≤ b) :
         rw [Nat.cast_add, Nat.cast_sub hle]; simp
     _ ≤ b - a + 1 := by linarith
 
+/-- The pushforward of the uniform distribution on `Fin n` along `uniformApprox p n`
+overshoots `p` by at most `1/n` at every point: the fraction of grid points `j` with
+`uniformApprox p n j = i` is at most `p i + 1/n`.
+
+**Proof sketch.** Step 1: `cdf p i ≤ cdf p (i + 1) ≤ 1`, so both values are finite.
+Step 2: by `invCdf_eq_iff`, a grid point `j` is mapped to `i` exactly when
+`cdf p i ≤ j/n < cdf p (i + 1)`; converting from `ℝ≥0∞` to real numbers, the preimage
+of `i` is contained in the set of `j` with `cdf p i · n ≤ j < cdf p (i + 1) · n`.
+Step 3: by `card_nat_in_Ico` that set has at most `cdf p (i + 1) · n − cdf p i · n + 1`
+elements. Step 4: since `cdf p (i + 1) − cdf p i = p i`, dividing by `n` gives the
+bound `p i + 1/n`. -/
 theorem uniformApprox_approx {m : ℕ} [NeZero m] (p : PMF (Fin m)) (n : ℕ) [NeZero n] (i : Fin m) :
     ((Finset.univ.filter (fun j : Fin n => uniformApprox p n j = i)).card : ℝ) / n
       ≤ (p i).toReal + 1 / n := by
   -- Characterize the preimage: invCdf p (j/n) = i iff cdf p i ≤ j/n < cdf p (i+1)
   -- Convert ENNReal div conditions to ℝ mul conditions: cdf.toReal*n ≤ j < cdf(i+1).toReal*n
+  -- Step 1: the two cdf values are ordered, at most 1, and finite
   have hn_pos : (0 : ℝ) < n := Nat.cast_pos.mpr (NeZero.pos n)
   have hcdf_le : cdf p i ≤ cdf p (i + 1) := cdf_mono p (Nat.le_succ _)
   have hcdf_le1 : cdf p (i + 1) ≤ 1 := by
@@ -167,6 +229,7 @@ theorem uniformApprox_approx {m : ℕ} [NeZero m] (p : PMF (Fin m)) (n : ℕ) [N
       _ = 1 := cdf_one p
   have hcdf_fin : cdf p i ≠ ⊤ := ne_top_of_le_ne_top ENNReal.one_ne_top (hcdf_le.trans hcdf_le1)
   have hcdf1_fin : cdf p (i + 1) ≠ ⊤ := ne_top_of_le_ne_top ENNReal.one_ne_top hcdf_le1
+  -- Step 2: the preimage of i is contained in a half-open interval of grid points
   have hset : Finset.univ.filter (fun j : Fin n => uniformApprox p n j = i) ⊆
       Finset.univ.filter (fun j : Fin n =>
         (cdf p i).toReal * n ≤ (j : ℝ) ∧ (j : ℝ) < (cdf p (i + 1)).toReal * n) := by
@@ -187,12 +250,12 @@ theorem uniformApprox_approx {m : ℕ} [NeZero m] (p : PMF (Fin m)) (n : ℕ) [N
       rw [← div_lt_iff₀ hn_pos, ← hjn_toReal]
       exact (ENNReal.toReal_lt_toReal (ne_top_of_lt hlt) hcdf1_fin).mpr hhi
   have hcard := Finset.card_le_card hset
-  -- Apply the ℝ counting lemma
+  -- Step 3: apply the ℝ counting lemma
   have hab_real : (cdf p i).toReal ≤ (cdf p (i + 1)).toReal :=
     (ENNReal.toReal_le_toReal hcdf_fin hcdf1_fin).mpr hcdf_le
   have hint := card_nat_in_Ico n ((cdf p i).toReal * n) ((cdf p (i + 1)).toReal * n)
     (mul_le_mul_of_nonneg_right hab_real (Nat.cast_nonneg _))
-  -- cdf p (i+1).toReal - cdf p i.toReal = (p i).toReal
+  -- Step 4: cdf p (i+1).toReal - cdf p i.toReal = (p i).toReal, then divide by n
   have hdiff : (cdf p (↑i + 1)).toReal - (cdf p i).toReal = (p i).toReal := by
     rw [cdf_succ, ENNReal.toReal_add hcdf_fin (PMF.apply_lt_top p _).ne, add_sub_cancel_left]
   calc ((Finset.univ.filter _).card : ℝ) / n
@@ -203,9 +266,23 @@ theorem uniformApprox_approx {m : ℕ} [NeZero m] (p : PMF (Fin m)) (n : ℕ) [N
     _ = (p i).toReal + 1 / n := by rw [← hdiff]; field_simp
 
 
-/-- For any finite type `Ω` with a probability measure and any `δ > 0`,
-there exist `n` and `φ : CoinTape n → Ω` such that for any set `S`,
-the pushforward measure exceeds the true measure by at most `δ`. -/
+/-- Every finite probability space is approximated by a coin tape: for any finite
+probability space `Ω` and any `δ > 0`, there exist `n` and a map `φ : CoinTape n → Ω`
+such that for every set `S ⊆ Ω`, the probability that `φ` of a uniformly random
+`n`-bit tape lies in `S` exceeds the probability of `S` by at most `δ`. This is the
+folklore discretisation step of Newman's theorem [New91]; no textbook statement of it
+was located.
+
+**Proof sketch.** Step 1: let `k = |Ω|` and choose `n` with `k / 2^n ≤ δ`. Step 2: let
+`N = 2^n = |CoinTape n|`, enumerate `Ω` as `Fin k` and transport the singleton masses of
+`Ω` to a PMF `q` on `Fin k`. Step 3: define `φ` as the composite of an enumeration
+`CoinTape n ≃ Fin N`, the map `uniformApprox q N : Fin N → Fin k`, and the inverse
+enumeration `Fin k ≃ Ω`. Step 4: for each point `i`, the fraction of tapes mapped to `i`
+is at most `q i + 1/N` (`uniformApprox_approx`, transported along the enumeration).
+Step 5: the number of tapes mapped into `S` is the sum of the fiber counts over the
+indices of `S`; the probability of the preimage is that count over `N`, and the
+probability of `S` is the sum of `q` over the indices of `S`. Step 6: summing the
+per-point bounds gives at most `vol S + |S| / N ≤ vol S + k / N ≤ vol S + δ`. -/
 theorem single_coin_approx
     {Ω : Type*} [FiniteProbabilitySpace Ω]
     (δ : ℝ) (hδ : 0 < δ) :
@@ -217,7 +294,7 @@ theorem single_coin_approx
   set k := Fintype.card Ω with hk_def
   have hk_pos : 0 < k := Fintype.card_pos
   haveI : NeZero k := ⟨by omega⟩
-  -- Choose n with k / 2^n ≤ δ
+  -- Step 1: choose n with k / 2^n ≤ δ
   obtain ⟨n, hn⟩ : ∃ n : ℕ, (k : ℝ) / 2 ^ n ≤ δ := by
     obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one
       (div_pos hδ (Nat.cast_pos.mpr hk_pos)) (by norm_num : (1 / 2 : ℝ) < 1)
@@ -230,18 +307,18 @@ theorem single_coin_approx
   have hN_pos : 0 < N := Fintype.card_pos
   haveI : NeZero N := ⟨by omega⟩
   have hN_eq : N = 2 ^ n := by simp [N, Fintype.card_fin]
-  -- PMF on Fin k from the measure on Ω
+  -- Step 2: PMF on Fin k from the measure on Ω
   set e := Fintype.equivFin Ω
   have hpmf : HasSum (fun i : Fin k => volume ({e.symm i} : Set Ω)) 1 :=
     FiniteProbabilitySpace.hasSum_measure_singletons e
   set q : PMF (Fin k) := ⟨fun i => volume ({e.symm i} : Set Ω), hpmf⟩
-  -- φ: CoinTape n ≃ Fin N → uniformApprox → Fin k → e.symm → Ω
+  -- Step 3: φ: CoinTape n ≃ Fin N → uniformApprox → Fin k → e.symm → Ω
   set eC : CoinTape n ≃ Fin N := Fintype.equivFin _
   refine ⟨fun c => e.symm (uniformApprox q N (eC c)), fun S => ?_⟩
   set φ := fun c => e.symm (uniformApprox q N (eC c))
   set g := fun c : CoinTape n => uniformApprox q N (eC c)
   set S_idx := Finset.univ.filter (fun i : Fin k => e.symm i ∈ S)
-  -- Per-element bound (bijected via eC)
+  -- Step 4: per-element bound (bijected via eC)
   have helem : ∀ i : Fin k,
       ((Finset.univ.filter (fun c : CoinTape n => g c = i)).card : ℝ) / N ≤
       (q i).toReal + 1 / N := by
@@ -250,7 +327,7 @@ theorem single_coin_approx
       (Finset.univ.filter (fun j : Fin N => uniformApprox q N j = i)).card from
       Finset.card_equiv eC (fun c => by simp [g])]
     exact uniformApprox_approx q N i
-  -- Fiber decomposition: {c | φ c ∈ S} partitions by g(c) value
+  -- Step 5: fiber decomposition: {c | φ c ∈ S} partitions by g(c) value
   have hfiber : (Finset.univ.filter (fun c : CoinTape n => φ c ∈ S)).card =
       ∑ i ∈ S_idx, (Finset.univ.filter (fun c : CoinTape n => g c = i)).card := by
     have : ∀ c : CoinTape n, φ c ∈ S ↔ g c ∈ S_idx := by
@@ -285,7 +362,7 @@ theorem single_coin_approx
         exact e.apply_symm_apply i
     rw [hs]
     rfl
-  -- Combine
+  -- Step 6: combine
   rw [hvol_pre, hfiber]; push_cast
   have hN_pos_real : (0 : ℝ) < N := by positivity
   -- (∑ f_i) / N ≤ vol(S) + δ, using per-element bound
@@ -308,7 +385,12 @@ theorem single_coin_approx
 
 /-- If p approximates q (∑_{a∈T} p(a) ≤ ∑_{a∈T} q(a) + δ for all T)
 and g : α → ℝ with 0 ≤ g ≤ 1, then ∑ p(a)*g(a) ≤ ∑ q(a)*g(a) + δ.
-Used in the product coin approximation. -/
+Used in the product coin approximation.
+
+**Proof sketch.** It suffices to show `Σ (p − q)·g ≤ δ`. Split the sum over
+`A⁺ = {a | q a < p a}` and its complement. On the complement `(p − q)·g ≤ 0` because `g ≥ 0`.
+On `A⁺`, `(p − q)·g ≤ p − q` because `g ≤ 1`, and `Σ_{A⁺} (p − q) ≤ δ` is the approximation
+hypothesis applied to `T = A⁺`. -/
 private lemma weighted_sum_approx {α : Type*} [Fintype α]
     (p q : α → ℝ) (g : α → ℝ)
     (hg_nn : ∀ a, 0 ≤ g a) (hg_le1 : ∀ a, g a ≤ 1)
@@ -338,6 +420,20 @@ private lemma weighted_sum_approx {α : Type*} [Fintype α]
     linarith [hsub]
   linarith
 
+/-- Product version of `single_coin_approx`: for finite probability spaces `Ω_X`, `Ω_Y`
+and `δ > 0`, there exist coin-tape lengths `nX`, `nY` and maps `φ_X`, `φ_Y` such that
+for every set `S ⊆ Ω_X × Ω_Y`, the probability that `(φ_X, φ_Y)` of a pair of uniformly
+random tapes lies in `S` exceeds the probability of `S` by at most `δ`.
+
+**Proof sketch.** Setup: take `φ_X`, `φ_Y` from `single_coin_approx` with slack `δ/2`
+each. Slice `S` by its first coordinate, `S_a = {b | (a, b) ∈ S}`; the preimage of `S`
+is the disjoint union over `a` of the rectangles `φ_X⁻¹{a} × φ_Y⁻¹(S_a)`, so its
+probability is `Σ_a pX(a) · vol(φ_Y⁻¹ S_a)` with `pX(a) = vol(φ_X⁻¹{a})`, and
+likewise `vol S = Σ_a qX(a) · vol(S_a)` with `qX(a) = vol{a}`. Step 1: bound each slice
+using the `φ_Y` approximation, `vol(φ_Y⁻¹ S_a) ≤ vol(S_a) + δ/2`, and use
+`Σ_a pX(a) = 1` to pull the `δ/2` out. Step 2: the weights `g(a) = vol(S_a)` lie in
+`[0, 1]` and `pX` approximates `qX` on every finite set by the `φ_X` approximation, so
+`weighted_sum_approx` gives `Σ pX g ≤ Σ qX g + δ/2`. Combine the two halves. -/
 private theorem product_coin_approx
     {Ω_X Ω_Y : Type*}
     [FiniteProbabilitySpace Ω_X] [FiniteProbabilitySpace Ω_Y]
@@ -352,7 +448,7 @@ private theorem product_coin_approx
   obtain ⟨nX, φ_X, hX⟩ := single_coin_approx (Ω := Ω_X) (δ / 2) hδ2
   obtain ⟨nY, φ_Y, hY⟩ := single_coin_approx (Ω := Ω_Y) (δ / 2) hδ2
   refine ⟨nX, nY, φ_X, φ_Y, fun S => ?_⟩
-  -- Slice: S_a = {b | (a,b) ∈ S}
+  -- Setup: slice S_a = {b | (a,b) ∈ S}
   set S_a : Ω_X → Set Ω_Y := fun a => Prod.mk a ⁻¹' S
   -- Decompose preimage as union of rectangles
   have hunion : (Prod.map φ_X φ_Y ⁻¹' S : Set (CoinTape nX × CoinTape nY)) =
@@ -435,6 +531,7 @@ private theorem product_coin_approx
           (Ξ := CoinTape nX) (Ω := Ω_X) φ_X T] at this
         rw [FiniteProbabilitySpace.measureReal_finset (Ω := Ω_X) T] at this
         linarith)
+  -- Combine the two halves
   calc ∑ a, pX a * volume.real (φ_Y ⁻¹' S_a a : Set (CoinTape nY))
       ≤ (∑ a, pX a * gval a) + δ / 2 := by linarith [hstep1, hexpand]
     _ ≤ (∑ a, qX a * gval a) + δ / 2 + δ / 2 := by linarith [hstep2]
@@ -445,11 +542,13 @@ end Internal
 
 namespace PrivateCoin
 
-/-- Approximate a finite-message protocol over arbitrary finite
-probability spaces by one over CoinTape. Given `δ > 0`, produces
-`nX`, `nY`, and a CoinTape-based protocol with the same complexity
-whose run approximates the original (via inverse CDF construction).
-This does not depend on any predicate Q. -/
+/-- The coin-tape approximation of a private-coin finite-message protocol `p` over
+arbitrary finite probability spaces: given `δ > 0`, the tape lengths `nX`, `nY` and the
+maps `φ_X`, `φ_Y` of `product_coin_approx` are chosen, and the protocol is `p` with
+Alice's and Bob's coins pulled back along `φ_X` and `φ_Y`. It has the same complexity
+as `p`, and its error on every input exceeds that of `p` by at most `δ`
+(`toCoinTape_approxSatisfies`). This is the discretisation step of Newman's theorem
+[New91]; the construction does not depend on any correctness predicate `Q`. -/
 noncomputable def FiniteMessage.Protocol.toCoinTape
     {Ω_X Ω_Y : Type*}
     [FiniteProbabilitySpace Ω_X] [FiniteProbabilitySpace Ω_Y]
@@ -465,6 +564,8 @@ noncomputable def FiniteMessage.Protocol.toCoinTape
   let φ_Y := data.choose_spec.choose_spec.choose_spec.choose
   ⟨nX, nY, p.comap (Prod.map φ_X id) (Prod.map φ_Y id)⟩
 
+/-- The coin-tape approximation of a protocol has the same complexity as the original
+protocol (pulling back the coins does not change the message trees). -/
 @[simp]
 theorem FiniteMessage.Protocol.toCoinTape_complexity
     {Ω_X Ω_Y : Type*}
@@ -475,8 +576,16 @@ theorem FiniteMessage.Protocol.toCoinTape_complexity
     (p.toCoinTape δ hδ).2.2.complexity = p.complexity := by
   simp [FiniteMessage.Protocol.toCoinTape]
 
-/-- The CoinTape approximation of a protocol preserves ApproxSatisfies
-up to the given slack δ. -/
+/-- If a private-coin finite-message protocol `p` satisfies the predicate `Q` on every
+input except with probability at most `ε`, then its coin-tape approximation with slack
+`δ` satisfies `Q` on every input except with probability at most `ε + δ`. This is the
+discretisation step of Newman's theorem [New91].
+
+**Proof sketch.** Fix an input `(x, y)` and unfold the construction to expose the maps
+`φ_X`, `φ_Y` and their approximation property. The set of coin tapes on which the
+approximating protocol violates `Q` is the preimage under `(φ_X, φ_Y)` of the set `S`
+of coins on which `p` violates `Q`. By `product_coin_approx` the probability of that
+preimage is at most `vol S + δ`, and `vol S ≤ ε` by hypothesis. -/
 theorem FiniteMessage.Protocol.toCoinTape_approxSatisfies
     {Ω_X Ω_Y : Type*}
     [FiniteProbabilitySpace Ω_X] [FiniteProbabilitySpace Ω_Y]

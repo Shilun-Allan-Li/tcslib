@@ -111,3 +111,38 @@ $\sum_{i=1}^n p_i = 1$, and let $\ell_1,\dots,\ell_n \in [0,1]$ be losses. Write
   -\eta\,L + \frac{\eta^2}{8}.
 \]
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[First derivative of the Hoeffding auxiliary function]
+\lean{bernoulli_mgf_bound_step1}
+\label{bernoulli_mgf_bound_step1}
+\leanok
+Let $L, x \in \bbr$ and suppose $1 - L + L\,e^{-x} > 0$. Then the auxiliary function
+\[
+  \varphi(x) \;=\; -L x + \frac{x^2}{8} - \ln\!\bigl(1 - L + L\,e^{-x}\bigr)
+\]
+is differentiable at $x$ with derivative
+\[
+  \varphi'(x) \;=\; -L + \frac{x}{4} + \frac{L\,e^{-x}}{1 - L + L\,e^{-x}}.
+\]
+This is the $\varphi'$ computation used in the proof of \texttt{bernoulli\_mgf\_bound}.
+\end{lemma}
+
+\begin{lemma}[Second derivative of the Hoeffding auxiliary function]
+\lean{bernoulli_mgf_bound_step2}
+\label{bernoulli_mgf_bound_step2}
+\leanok
+Let $L, x \in \bbr$ and suppose $1 - L + L\,e^{-x} > 0$. Then the function
+\[
+  \varphi'(x) \;=\; -L + \frac{x}{4} + \frac{L\,e^{-x}}{1 - L + L\,e^{-x}}
+\]
+(the derivative from \texttt{bernoulli\_mgf\_bound\_step1}) is differentiable at $x$ with
+derivative
+\[
+  \varphi''(x) \;=\; \frac{1}{4} - \frac{L\,(1 - L)\,e^{-x}}{\bigl(1 - L + L\,e^{-x}\bigr)^2}.
+\]
+This is the $\varphi''$ computation used in the proof of \texttt{bernoulli\_mgf\_bound}.
+\end{lemma}

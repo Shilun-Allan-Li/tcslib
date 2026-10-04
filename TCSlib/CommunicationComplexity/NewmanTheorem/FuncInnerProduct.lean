@@ -22,6 +22,12 @@ set_option autoImplicit false
 /-!
 # Inner Product Function: Discrepancy Lower Bound
 
+## Main definitions
+
+- `innerProduct`: the mod-2 inner product `IP_n(x, y) = Σᵢ xᵢ yᵢ mod 2` of two `n`-bit
+  vectors.
+- `xorInput`: coordinatewise xor of two Boolean inputs.
+
 ## Main results
 
 - `abs_discrepancy_le_of_isRectangle`: Every combinatorial rectangle has discrepancy at most
@@ -31,7 +37,16 @@ set_option autoImplicit false
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [OD14] R. O'Donnell, *Analysis of Boolean Functions*, Cambridge University
+  Press, 2014.
+* [CG88] B. Chor, O. Goldreich, "Unbiased bits from sources of weak randomness and
+  probabilistic communication complexity", *SIAM J. Comput.* 17(2):230–261, 1988.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -51,15 +66,19 @@ local instance boolInputFiniteProbabilitySpace (n : ℕ) :
   change FiniteProbabilitySpace (CoinTape n)
   infer_instance
 
-/-- The coordinates on which both bit-vectors are `true`. -/
+/-- The set of coordinates on which both bit-vectors are `true`. This definition is
+currently unused: `innerProduct` is defined directly as a mod-2 sum and nothing in the
+library refers to `overlap`. -/
 def overlap (x y : BoolInput n) : Finset (Fin n) :=
   Finset.univ.filter fun i : Fin n => x i && y i
 
 /-- The mod-2 inner product of two `n`-bit vectors: it is `true` exactly when the number
-of coordinates where both inputs are `true` is odd. -/
+of coordinates where both inputs are `true` is odd.
+[RY20, Ch. 5, §Lower bounds for Inner-Product] (`IP(x,y) = Σ xᵢ yᵢ mod 2`). -/
 def innerProduct (n : ℕ) (x y : BoolInput n) : Bool :=
   ∑ i, (x i && y i)
 
+/-- The inner product of any vector with the all-zero vector is `false`. -/
 @[simp] lemma innerProduct_zero_right (x : BoolInput n) :
     innerProduct n x (zeroInput n) = false := by
   unfold innerProduct zeroInput
@@ -92,7 +111,10 @@ private lemma integral_eq_average_sum (f : BoolInput n → ℝ) :
   simp_rw [pmf_toReal_eq_two_pow_inv]
   rw [Finset.mul_sum]
 
-/-- Flipping a coordinate where `y` has a `1` toggles the inner product. -/
+/-- Flipping a coordinate `i` of `x` at which `y` has a `1` toggles the inner product
+with `y`: `IP(x with bit i flipped, y) = IP(x, y) xor true`. This is the character
+property of `x ↦ (−1)^{⟨x,y⟩}` used for orthogonality. [OD14, §1.3] (parity
+characters). -/
 lemma innerProduct_flipAt_eq_xor (x y : BoolInput n) (i : Fin n) (hyi : y i = true) :
     innerProduct n (flipAt i x) y = Bool.xor (innerProduct n x y) true := by
   unfold innerProduct
@@ -108,7 +130,13 @@ lemma innerProduct_flipAt_eq_xor (x y : BoolInput n) (i : Fin n) (hyi : y i = tr
     simp at hx
     simp [hx]
 
-/-- Orthogonality of Walsh characters for the inner product function. -/
+/-- Orthogonality of Walsh characters: if `z` has a `true` coordinate, the sum over all
+`x` of the sign `(−1)^{⟨x,z⟩}` is zero.
+
+**Proof sketch.** Flipping the coordinate `i` with `z i = true` is a bijection of the
+inputs, so the sum `S` is unchanged by reindexing along it; but pointwise the flip
+negates the sign (`innerProduct_flipAt_eq_xor`), so the reindexed sum is `−S`. Hence
+`S = −S` and `S = 0`. -/
 private lemma sum_boolSign_innerProduct_eq_zero_of_exists_true
     (z : BoolInput n) {i : Fin n} (hzi : z i = true) :
     ∑ x : BoolInput n, boolSign (innerProduct n x z) = 0 := by
@@ -154,9 +182,11 @@ private lemma sum_boolSign_innerProduct_eq_zeroInput_indicator
 def xorInput (y z : BoolInput n) : BoolInput n :=
   fun i => Bool.xor (y i) (z i)
 
+/-- Coordinate `i` of `xorInput y z` is `y i xor z i`. -/
 @[simp] private lemma xorInput_apply (y z : BoolInput n) (i : Fin n) :
     xorInput y z i = Bool.xor (y i) (z i) := rfl
 
+/-- The xor of two inputs is the zero input if and only if the inputs are equal. -/
 @[simp] private lemma xorInput_eq_zeroInput_iff (y z : BoolInput n) :
     xorInput y z = zeroInput n ↔ y = z := by
   constructor
@@ -181,7 +211,8 @@ private lemma boolSign_innerProduct_mul_eq_xorInput
   cases hx : x i <;> cases hy : y i <;> cases hz : z i <;>
     simp [xorInput, boolSign, hy, hz]
 
-/-- Summed orthogonality for Walsh characters. -/
+/-- Summed orthogonality for Walsh characters: the sum over all `x` of
+`(−1)^{⟨x,y⟩} (−1)^{⟨x,z⟩}` is `2^n` if `y = z` and `0` otherwise. -/
 private lemma sum_boolSign_innerProduct_mul_eq_indicator
     (y z : BoolInput n) :
     ∑ x : BoolInput n, boolSign (innerProduct n x y) * boolSign (innerProduct n x z) =
@@ -190,18 +221,21 @@ private lemma sum_boolSign_innerProduct_mul_eq_indicator
   rw [sum_boolSign_innerProduct_eq_zeroInput_indicator]
   simp [xorInput_eq_zeroInput_iff]
 
+/-- The `0/1` indicator of a set is idempotent under squaring. -/
 private lemma indicatorOne_sq
     (B : Set (BoolInput n)) (y : BoolInput n) :
     (Set.indicator B (1 : BoolInput n → ℝ) y)^2 =
       Set.indicator B (1 : BoolInput n → ℝ) y := by
   by_cases hy : y ∈ B <;> simp [hy, pow_two]
 
+/-- The `0/1` indicator of a set is at most `1`. -/
 private lemma indicatorOne_le_one
     (B : Set (BoolInput n)) (y : BoolInput n) :
     Set.indicator B (1 : BoolInput n → ℝ) y ≤ 1 := by
   by_cases hy : y ∈ B <;> simp [hy]
 
 open Classical in
+/-- Expanding the square of an inner sum: `Σₓ (Σ_y f x y)² = Σ_{(y,z)} Σₓ f x y · f x z`. -/
 private lemma sum_sq_eq_sum_prod
     {α β : Type*} [Fintype α] [Fintype β] (f : α → β → ℝ) :
     ∑ x : α, (∑ y : β, f x y)^2 =
@@ -213,6 +247,7 @@ private lemma sum_sq_eq_sum_prod
   rw [eq_comm]
   apply Fintype.sum_prod_type
 
+/-- Constants factor out of a sum of products: `Σₓ (a f x)(b g x) = a b Σₓ f x g x`. -/
 private lemma sum_mul_mul
     {α : Type*} [Fintype α] (a b : ℝ) (f g : α → ℝ) :
     ∑ x : α, (a * f x) * (b * g x) = a * b * ∑ x : α, f x * g x := by
@@ -221,6 +256,8 @@ private lemma sum_mul_mul
     equals (a * b) * (f x * g x) => ring
   rw [Finset.mul_sum]
 
+/-- A sum over pairs against the diagonal indicator `if y = z then c else 0` collapses
+to the diagonal sum `Σ_y h y y · c`. -/
 private lemma sum_mul_ite_eq_diag
     {α : Type*} [Fintype α] [DecidableEq α] (h : α → α → ℝ) (c : ℝ) :
     ∑ yz : α × α, h yz.1 yz.2 * (if yz.1 = yz.2 then c else 0) =
@@ -230,7 +267,8 @@ private lemma sum_mul_ite_eq_diag
   intro y hy
   simp
 
-/-- A weighted orthogonality identity for a finite family of functions. -/
+/-- Parseval-type identity for an orthogonal family: if `Σₓ φ x y · φ x z` is `c` when
+`y = z` and `0` otherwise, then `Σₓ (Σ_y b y · φ x y)² = c · Σ_y (b y)²`. -/
 private lemma sum_sq_mul_of_orthogonal
     {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (φ : α → β → ℝ) (c : ℝ) (b : β → ℝ)
@@ -245,7 +283,8 @@ private lemma sum_sq_mul_of_orthogonal
   simp
 
 open Classical in
-/-- Weighted orthogonality identity for Walsh characters of inner product. -/
+/-- Parseval's identity for Walsh characters of the inner product:
+`Σₓ (Σ_y b y · (−1)^{⟨x,y⟩})² = 2^n · Σ_y (b y)²`. -/
 private lemma sum_sq_mul_boolSign_innerProduct
     (b : BoolInput n → ℝ) :
     ∑ x : BoolInput n,
@@ -258,7 +297,11 @@ private lemma sum_sq_mul_boolSign_innerProduct
   simpa [mul_assoc] using sum_boolSign_innerProduct_mul_eq_indicator (n := n) y z
 
 open Classical in
-/-- The inner second moment appearing in the discrepancy calculation is at most `2^{-n}`. -/
+/-- The unnormalised second moment appearing in the discrepancy calculation is at most
+`(2^n)²`: summing over all `x` the square of `Σ_y 1_B(y) (−1)^{⟨x,y⟩}` gives, by
+Parseval, `2^n · Σ_y 1_B(y)² ≤ 2^n · 2^n`. (Dividing by the `(2^n)²` normalisation of the
+two averages gives the `2^{-n}` bound of
+`integral_sq_indicator_mul_boolSign_innerProduct_le`.) -/
 private lemma sum_sq_indicator_mul_boolSign_innerProduct_le
     (B : Set (BoolInput n)) :
     ∑ x : BoolInput n,
@@ -280,7 +323,13 @@ private lemma sum_sq_indicator_mul_boolSign_innerProduct_le
       simp [BoolInput, Fintype.card_pi, Fintype.card_fin, Fintype.card_bool, pow_two]
 
 open Classical in
-/-- The inner second moment appearing in the discrepancy calculation is at most `2^{-n}`. -/
+/-- The inner second moment appearing in the discrepancy calculation is at most `2^{-n}`:
+the average over `x` of the square of the average over `y` of `1_B(y) (−1)^{⟨x,y⟩}` is at
+most `1 / 2^n`. This is the middle quantity of RY20's proof of Lemma 5.5 (after `A` is
+dropped, before `B` is eliminated), bounded by `2^{-n}` [RY20, Lemma 5.5 proof]; the Lean
+proof reaches the bound via Parseval for the Walsh characters
+(`sum_sq_indicator_mul_boolSign_innerProduct_le`) and `1_B² ≤ 1`, rather than RY20's route
+through display (5.1). -/
 private lemma integral_sq_indicator_mul_boolSign_innerProduct_le
     (B : Set (BoolInput n)) :
     ∫ x : BoolInput n,
@@ -296,6 +345,9 @@ private lemma integral_sq_indicator_mul_boolSign_innerProduct_le
   apply sum_sq_indicator_mul_boolSign_innerProduct_le
 
 open Classical in
+/-- The discrepancy of the inner product on a product set `A × B` is the iterated
+average `E_x [1_A(x) · E_y [1_B(y) (−1)^{⟨x,y⟩}]]` (Fubini on the uniform product
+measure). -/
 private lemma discrepancy_prod_eq_integral
     (A B : Set (BoolInput n)) :
     discrepancy (innerProduct n) (A ×ˢ B : Set (BoolInput n × BoolInput n)) =
@@ -313,6 +365,10 @@ private lemma discrepancy_prod_eq_integral
   by_cases hx : x ∈ A <;> simp [hx]
 
 open Classical in
+/-- The squared discrepancy of the inner product on a product set `A × B` is at most
+`1 / 2^n`: by Jensen (`sq_integral_le_integral_sq`) the square of the outer average is at
+most the average of the squares, `1_A(x)² ≤ 1` drops the factor `A`, and the remaining
+second moment is bounded by `integral_sq_indicator_mul_boolSign_innerProduct_le`. -/
 private lemma sq_discrepancy_prod_le
     (A B : Set (BoolInput n)) :
     (discrepancy (innerProduct n) (A ×ˢ B : Set (BoolInput n × BoolInput n)))^2 ≤
@@ -330,8 +386,11 @@ private lemma sq_discrepancy_prod_le
     apply sq_nonneg
 
 open Classical in
-/-- Every rectangle has discrepancy at most `2^{-n/2}` for the inner product function over the
-uniform distribution on `BoolInput n × BoolInput n`. -/
+/-- Every combinatorial rectangle `R` has absolute discrepancy at most `2^{-n/2}` for the
+inner product function over the uniform distribution on `BoolInput n × BoolInput n`.
+[RY20, Lemma 5.5] (Lindsey's lemma; historically [CG88]). Deviation: the bound is
+written as `√(1/2^n)`. The proof writes `R = A × B` and takes the square root of
+`sq_discrepancy_prod_le`. -/
 theorem abs_discrepancy_le_of_isRectangle
     (R : Set (BoolInput n × BoolInput n)) (hR : Rectangle.IsRectangle R) :
     |discrepancy (innerProduct n) R| ≤ Real.sqrt ((1 : ℝ) / 2 ^ n) := by
@@ -341,7 +400,16 @@ theorem abs_discrepancy_le_of_isRectangle
     sq_discrepancy_prod_le (n := n) A B
 
 open Classical in
-/-- Public-coin lower bound for inner product from the discrepancy method. -/
+/-- Public-coin lower bound for the inner product from the discrepancy method: if
+`2^k · √(1/2^n) < 1 − 2ε`, then the public-coin communication complexity of `IP_n` at
+error `ε` is greater than `k`. [RY20, Thm 5.6]. Deviation: stated in hypothesis form —
+the hypothesis `2^k · √(1/2^n) < 1 − 2ε` gives `k < R^pub_ε(IP_n)`, i.e.
+`R^pub_ε(IP_n) ≥ n/2 − log₂(1/(1 − 2ε))` after taking logarithms. RY20 states Thm 5.6 for
+protocols with distributional error `ε` under the uniform distribution; the public-coin form
+here follows via Yao's minimax principle [RY20, Thm 3.3], which is built into
+`PublicCoin.lt_communicationComplexity_of_discrepancy_bound`. The proof feeds the
+rectangle bound `abs_discrepancy_le_of_isRectangle` into
+`PublicCoin.lt_communicationComplexity_of_discrepancy_bound`. -/
 theorem publicCoin_le_communicationComplexity_of_hbound
     (k n : ℕ) {ε : ℝ}
     (hbound : (2 : ℝ) ^ k * Real.sqrt ((1 : ℝ) / 2 ^ n) < 1 - 2 * ε) :

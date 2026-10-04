@@ -15,13 +15,24 @@ set_option autoImplicit false
 /-!
 # Hash Function Collision Probability
 
+## Main definitions
+
+- `Functions.Hash.HashSpace`: the space `α → Fin k` of hash functions, carrying the
+  uniform product measure
+
 ## Main results
 
-- `Functions.Hash.collision_prob_le`: For distinct inputs, a uniformly random hash collides with probability at most `1 / k`.
+- `Functions.Hash.collision_prob_le`: for distinct inputs, a uniformly random hash
+  collides with probability at most `1 / k`.
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -30,7 +41,10 @@ open MeasureTheory ProbabilityTheory
 
 namespace Functions.Hash
 
-/-- A hash function on `α` with outputs in `Fin k`. -/
+/-- The type of hash functions on `α` with outputs in `Fin k`; as a finite probability
+space (instances below) it carries the uniform product measure, so a random element is
+a uniformly random function, the shared random `h` of the public-coin equality protocol.
+[RY20, Ch. 3, Public-coin protocol (Figure 3.1)] (the shared random function `h`). -/
 abbrev HashSpace (α : Type*) (k : ℕ) := α → Fin k
 
 noncomputable instance hashRange.measureSpace (k : ℕ) :
@@ -53,6 +67,8 @@ noncomputable instance hashSpace.finiteProbabilitySpace
   infer_instance
 
 open Classical in
+/-- The set of hash functions sending both `x` and `y` to the value `a`, written as a box
+(a product of coordinate constraints: `{a}` at `x` and at `y`, everything elsewhere). -/
 private def collisionPiece
     {α : Type*} (k : ℕ) (x y : α) (a : Fin k) : Set (HashSpace α k) :=
   Set.pi Set.univ
@@ -62,6 +78,13 @@ private def collisionPiece
       ({a} : Set (Fin k)))
 
 open Classical in
+/-- The collision event `{h | h x = h y}` is the union over the values `a` of the boxes
+`collisionPiece k x y a`.
+
+**Proof sketch.** Extensionality in `h`. If `h x = h y`, then `h` lies in the box for the value
+`a = h x`: the constraint at `y` is `{h x}`, met because `h y = h x`; the constraint at `x` is
+`{h x}`; every other coordinate is unconstrained. Conversely, if `h` lies in the box for some
+`a`, reading off the box's constraints at `x` and at `y` gives `h x = a = h y`. -/
 private lemma collision_mem_iUnion
     {α : Type*} (k : ℕ) (x y : α) :
     {h : HashSpace α k | h x = h y} = ⋃ a : Fin k, collisionPiece k x y a := by
@@ -87,6 +110,8 @@ private lemma collision_mem_iUnion
     exact hx'.trans hy'.symm
 
 open Classical in
+/-- The boxes `collisionPiece k x y a` for distinct values `a` are pairwise disjoint
+(they prescribe different values at `x`). -/
 private lemma collisionPiece_pairwiseDisjoint
     {α : Type*} (k : ℕ) (x y : α) :
     Pairwise fun a b => Disjoint (collisionPiece k x y a) (collisionPiece k x y b) := by
@@ -99,6 +124,7 @@ private lemma collisionPiece_pairwiseDisjoint
     simpa [Set.mem_pi, Function.update] using hb x
   exact hab (hx'.symm.trans hx'')
 
+/-- Under the uniform measure on `Fin k`, a singleton has measure `1 / k`. -/
 private lemma hashRange_singleton_measure
     (k : ℕ) [NeZero k] (a : Fin k) :
     volume ({a} : Set (Fin k)) = (1 : ENNReal) / k := by
@@ -106,6 +132,7 @@ private lemma hashRange_singleton_measure
   rw [ProbabilityTheory.uniformOn_univ]
   simp
 
+/-- Under the uniform measure on `Fin k`, a singleton has real-valued measure `1 / k`. -/
 private lemma hashRange_singleton_measureReal
     (k : ℕ) [NeZero k] (a : Fin k) :
     volume.real ({a} : Set (Fin k)) = (1 : ℝ) / k := by
@@ -115,63 +142,74 @@ private lemma hashRange_singleton_measureReal
   simp
 
 open Classical in
+/-- For `x ≠ y`, the box of hash functions sending both `x` and `y` to `a` has
+probability `(1/k)²`.
+
+**Proof sketch.** Step 1: the measure of a box is the product of the coordinate
+measures. Step 2: peel off the factors at `x` and at `y` from the product. Step 3: the
+remaining coordinates are unconstrained, so their factors are `1`. Step 4: the factors at
+`x` and at `y` are the singleton measure `1/k`, giving `(1/k)²`. -/
 private lemma collisionPiece_measureReal
     {α : Type*} [Fintype α]
     (k : ℕ) [NeZero k] (x y : α) (hxy : x ≠ y) (a : Fin k) :
     volume.real (collisionPiece k x y a) = ((1 : ℝ) / k) ^ 2 := by
   have hyx : y ≠ x := fun hyx => hxy hyx.symm
-  change volume.real
-    (Set.pi Set.univ
-      (Function.update
-        (Function.update (fun _ : α => (Set.univ : Set (Fin k))) x ({a} : Set (Fin k)))
-        y
-        ({a} : Set (Fin k)))) = _
-  rw [FiniteProbabilitySpace.measureReal_pi_univ]
-  rw [← Finset.prod_erase_mul (s := Finset.univ)
-    (f := fun z : α =>
-      volume.real
-        (Function.update
-          (Function.update (fun _ : α => (Set.univ : Set (Fin k))) x ({a} : Set (Fin k)))
-          y
-          ({a} : Set (Fin k)) z))
-    (a := x) (by simp)]
+  -- the coordinate constraints of the box: `{a}` at `x` and at `y`, `univ` elsewhere
+  set S : α → Set (Fin k) :=
+    Function.update
+      (Function.update (fun _ : α => (Set.univ : Set (Fin k))) x ({a} : Set (Fin k)))
+      y ({a} : Set (Fin k)) with hS
+  -- Step 1: the measure of a box is the product of the coordinate measures
+  have step1 : volume.real (collisionPiece k x y a) = ∏ z, volume.real (S z) :=
+    FiniteProbabilitySpace.measureReal_pi_univ S
+  -- Step 2: peel off the factors at `x` and at `y`
   have hy_mem : y ∈ (Finset.univ : Finset α).erase x := by
     simp [Finset.mem_erase, hyx]
-  rw [← Finset.prod_erase_mul (s := (Finset.univ : Finset α).erase x)
-    (f := fun z : α =>
-      volume.real
-        (Function.update
-          (Function.update (fun _ : α => (Set.univ : Set (Fin k))) x ({a} : Set (Fin k)))
-          y
-          ({a} : Set (Fin k)) z))
-    (a := y) hy_mem]
-  have hrest :
-      ∏ z ∈ ((Finset.univ : Finset α).erase x).erase y,
-        volume.real
-          (Function.update
-            (Function.update (fun _ : α => (Set.univ : Set (Fin k))) x ({a} : Set (Fin k)))
-            y
-            ({a} : Set (Fin k)) z) = 1 := by
-    refine Finset.prod_eq_one ?_
-    intro z hz
+  have step2 : ∏ z, volume.real (S z) =
+      (∏ z ∈ ((Finset.univ : Finset α).erase x).erase y, volume.real (S z))
+        * volume.real (S y) * volume.real (S x) := by
+    rw [← Finset.prod_erase_mul _ (fun z => volume.real (S z)) (Finset.mem_univ x),
+      ← Finset.prod_erase_mul _ (fun z => volume.real (S z)) hy_mem]
+  -- Step 3: the remaining coordinates are unconstrained, so their factors are `1`
+  have step3 :
+      ∏ z ∈ ((Finset.univ : Finset α).erase x).erase y, volume.real (S z) = 1 := by
+    refine Finset.prod_eq_one fun z hz => ?_
     have hz_ne_y : z ≠ y := (Finset.mem_erase.1 hz).1
-    have hz_ne_x : z ≠ x := by
-      exact (Finset.mem_erase.1 (Finset.mem_of_mem_erase hz)).1
-    simp [Function.update, hz_ne_x, hz_ne_y]
-  rw [hrest]
-  simp [Function.update, hashRange_singleton_measureReal, hxy, pow_two]
+    have hz_ne_x : z ≠ x := (Finset.mem_erase.1 (Finset.mem_of_mem_erase hz)).1
+    simp [hS, Function.update, hz_ne_x, hz_ne_y]
+  -- Step 4: the factors at `x` and at `y` are the singleton measure `1 / k`
+  have hSx : volume.real (S x) = (1 : ℝ) / k := by
+    simp [hS, Function.update, hxy, hashRange_singleton_measureReal]
+  have hSy : volume.real (S y) = (1 : ℝ) / k := by
+    simp [hS, hashRange_singleton_measureReal]
+  rw [step1, step2, step3, hSx, hSy]
+  ring
 
-/-- For distinct inputs, a uniformly random hash collides with probability `1 / k`. -/
+/-- For distinct inputs `x ≠ y`, a uniformly random hash function `h : α → Fin k`
+collides on them (`h x = h y`) with probability at most `1 / k`; in fact equality holds,
+and the proof computes the probability exactly. [RY20, Ch. 3, Public-coin protocol
+(Figure 3.1)] (`Pr[h(x) = h(y)] ≤ 2^{-k}` for `x ≠ y`). Deviation: the range is an
+arbitrary `Fin k` rather than `{0,1}^k`, so the bound reads `1/k`; equality holds but the
+statement is an inequality.
+
+**Proof sketch.** (1) Rewrite the collision event as the union over the values `a` of the
+boxes `collisionPiece k x y a` (`collision_mem_iUnion`); the boxes are pairwise disjoint, so
+the probability of the union is the sum of their probabilities. (2) Each box has probability
+`(1/k)²` (`collisionPiece_measureReal`, which uses `x ≠ y`). (3) The sum of `k` copies of
+`(1/k)²` is `1/k`, so the bound holds with equality. -/
 theorem collision_prob_le
     (α : Type*) [Fintype α]
     (k : ℕ) [NeZero k] (x y : α) (hxy : x ≠ y) :
     volume.real {h : HashSpace α k | h x = h y} ≤ (1 : ℝ) / k := by
   classical
   let q := Fin k
+  -- Step 1: the collision event is a disjoint union of boxes
   rw [collision_mem_iUnion k x y]
   rw [FiniteProbabilitySpace.measureReal_iUnion_fintype _
     (collisionPiece_pairwiseDisjoint k x y)]
+  -- Step 2: each box has probability `(1/k)²`
   simp_rw [collisionPiece_measureReal k x y hxy]
+  -- Step 3: `k` copies of `(1/k)²` sum to `1/k`
   rw [Finset.sum_const, nsmul_eq_mul]
   have hcard : (((Finset.univ : Finset q).card : ℕ) : ℝ) = k := by
     simp [q]

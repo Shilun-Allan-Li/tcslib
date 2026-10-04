@@ -314,3 +314,38 @@ and whose communication complexity $c(q)$ satisfies
 \]
 where $\ell(p)$ denotes the number of leaves (output nodes) of $p$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Gluing step of the balanced simulation]
+\lean{CommunicationComplexity.Deterministic.Protocol.simulation_step}
+\label{CommunicationComplexity.Deterministic.Protocol.simulation_step}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.subprotocol_run_eq_of_reaches, CommunicationComplexity.Deterministic.Protocol.testSubprotocol, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_inside, CommunicationComplexity.Deterministic.Protocol.testSubprotocol_run_outside}
+\difficulty{3}
+Let $s, p, q_{\mathrm{in}}, q_{\mathrm{out}}$ be deterministic two-party protocols over
+input types $X$ and $Y$ with outputs in $\alpha$, where $s$ is a subprotocol of $p$ with
+strictly fewer leaves than $p$. Suppose $q_{\mathrm{in}}$ computes the same function as
+$s$, and $q_{\mathrm{out}}$ computes the same function as the protocol obtained from $p$
+by pruning $s$ away. Then the glued protocol
+\texttt{CommunicationComplexity.Deterministic.Protocol.testSubprotocol}, which first
+tests whether the inputs reach $s$ and then runs $q_{\mathrm{in}}$ or $q_{\mathrm{out}}$
+accordingly, computes the same function as $p$ on every pair of inputs $(x,y)$.
+\end{lemma}
+
+\begin{lemma}[Arithmetic step of the balanced simulation]
+\lean{CommunicationComplexity.Deterministic.Protocol.simulation_step_bound}
+\label{CommunicationComplexity.Deterministic.Protocol.simulation_step_bound}
+\leanok
+\uses{CommunicationComplexity.Deterministic.Protocol.max_sq_le_of_balanced}
+\difficulty{3}
+Let $c_{\mathrm{in}}, c_{\mathrm{out}}, m, n \in \bbn$ satisfy the two inductive bounds
+$3^{c_{\mathrm{in}}} \le 2^{c_{\mathrm{in}}} m^2$ and
+$3^{c_{\mathrm{out}}} \le 2^{c_{\mathrm{out}}} (n - m)^2$, together with the balance
+conditions $3m \le 2n$ and $3(n - m) \le 2n$. Then, writing
+$c = 2 + \max(c_{\mathrm{in}}, c_{\mathrm{out}})$,
+\[
+  3^{c} \;\le\; 2^{c} \cdot n^2 .
+\]
+\end{lemma}

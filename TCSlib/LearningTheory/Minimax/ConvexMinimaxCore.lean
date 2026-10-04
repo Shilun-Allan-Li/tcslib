@@ -10,24 +10,44 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-open Real Finset BigOperators
-
-namespace OnlineLearning
-
 /-!
 # Toward Convex-Compact Minimax
 
+## Main definitions
+
+- `finiteLowerValue`, `finiteUpperValue`: the lower and upper values of a finite zero-sum
+  game.
+- `ConvexCompactMinimaxStatement`, `ConvexCompactMinimaxHypotheses`: the conclusion and
+  the hypotheses of the convex-compact minimax theorem [CBL06, Thm 7.1], specialized to
+  subsets of `ℝ`.
+- `sampledGame`: the finite matrix game obtained by sampling a payoff function at finitely
+  many row and column points.
+- `minimaxSublevel`: the closed sublevel set `{x ∈ X | f x y ≤ c}` used in the
+  compactness step.
+
 ## Main results
 
-- `finite_minimax_value`: extracts exact finite matrix-game value from the approximate minimax theorem proved via Hedge
-- `finite_sampled_minimax_value`: applies the finite minimax theorem to a game sampled from a continuous payoff function
-- `weak_convex_compact_minimax`: the easy minimax direction — lower value ≤ upper value for convex-compact games
-- `exists_forall_le_of_finite_sublevel_intersections`: finite-intersection compactness step for sublevel sets in the row variable
+- `finite_minimax_value`: exact equality of the lower and upper values of a finite matrix
+  game, extracted from the approximate minimax theorem proved via Hedge.
+- `finite_sampled_minimax_value`: the finite minimax theorem applied to a sampled game.
+- `weak_convex_compact_minimax`: the easy minimax direction — the lower value is at most
+  the upper value for convex-compact games.
+- `exists_forall_le_of_finite_sublevel_intersections`: the finite-intersection compactness
+  step for sublevel sets in the row variable.
 
 ## References
 
-- Original formalization by Karim Abdel Sadek, Mark Bedaywi
+* [CBL06] N. Cesa-Bianchi, G. Lugosi, *Prediction, Learning, and Games*,
+  Cambridge University Press, 2006. Chapter 7 (§7.2, Theorem 7.1).
+* [FS99] Y. Freund, R. E. Schapire, "Adaptive game playing using multiplicative
+  weights", *Games and Economic Behavior* 29(1–2):79–103, 1999. Sections 5–6.1.
+
+Original formalization by Karim Abdel Sadek and Mark Bedaywi.
 -/
+
+open Real Finset BigOperators
+
+namespace OnlineLearning
 
 /-! ## Exact Value for Finite Matrix Games -/
 
@@ -60,13 +80,15 @@ noncomputable instance mixedStrategyNonempty (n : ℕ) [NeZero n] :
     Nonempty (MixedStrategy n) :=
   ⟨arbitraryMixedStrategy n⟩
 
-/-- Lower value of a finite zero-sum game: row chooses a mixed strategy, then
-column chooses the worst pure response. -/
+/-- The lower value of a finite zero-sum game: the supremum over row mixed strategies `p`
+of the infimum over pure columns `j` of the payoff of `p` against `j` (row commits to a
+mixed strategy, then column chooses the worst pure response). [CBL06, §7.2]. -/
 noncomputable def finiteLowerValue {M N : ℕ} (G : ZeroSumGame M N) : ℝ :=
   ⨆ p : MixedStrategy M, ⨅ j : Fin N, payoffVsPure G p j
 
-/-- Upper value of a finite zero-sum game: column chooses a mixed strategy, then
-row chooses the best pure response. -/
+/-- The upper value of a finite zero-sum game: the infimum over column mixed strategies
+`q` of the supremum over pure rows `i` of the payoff of `i` against `q` (column commits
+to a mixed strategy, then row chooses the best pure response). [CBL06, §7.2]. -/
 noncomputable def finiteUpperValue {M N : ℕ} (G : ZeroSumGame M N) : ℝ :=
   ⨅ q : MixedStrategy N, ⨆ i : Fin M, pureVsPayoff G i q
 
@@ -137,18 +159,34 @@ lemma finiteLowerValue_le_upperValue {M N : ℕ} [NeZero M] [NeZero N] (G : Zero
   intro q
   exact weak_duality G p q
 
-/-- Exact equality of finite game lower and upper values, obtained from the
-arbitrarily good approximate saddle points produced by Hedge. -/
+/-- The minimax theorem for finite zero-sum games (von Neumann): for a game `G` with at
+least two row actions, the lower value `sup_p inf_j payoff(p, j)` equals the upper value
+`inf_q sup_i payoff(i, q)`. [CBL06, Thm 7.1 (finite case)]; [FS99, §5 (proof of the
+minmax theorem), §6.1]. Deviation: the
+proof goes through the Hedge-based `approx_minimax`, so it carries the spurious
+hypothesis `1 < M` (at least two row actions), which the theorem itself does not need;
+the case `M = 1` is not covered here.
+
+**Proof sketch.** By `le_antisymm`. Step 1 (easy direction): the lower value is at most
+the upper value by `finiteLowerValue_le_upperValue` (weak duality). Step 2 (hard
+direction): it suffices to show `upper ≤ lower + ε` for every `ε > 0`. Fix `ε`; the
+ε-approximate saddle point `(p, q)` from `approx_minimax` gives (`hq_le`)
+`sup_i payoff(i, q) ≤ inf_j payoff(p, j) + ε`. Then `upper ≤ sup_i payoff(i, q)` since the
+upper value is an infimum over `q` (`h_upper_at_q`), and `inf_j payoff(p, j) ≤ lower` since
+the lower value is a supremum over `p` (`h_lower_at_p`); chain the three inequalities. -/
 theorem finite_minimax_value {M N : ℕ} [NeZero M] [NeZero N]
     (G : ZeroSumGame M N) (hM : 1 < M) :
     finiteLowerValue G = finiteUpperValue G := by
   apply le_antisymm
+  -- Step 1: the easy direction is weak duality.
   · exact finiteLowerValue_le_upperValue G
+  -- Step 2: the hard direction by ε-approximation.
   · apply le_of_forall_pos_le_add
     intro ε hε
     -- The approximate minimax theorem gives strategies whose gap is at most
     -- `ε`.  Since this works for every positive `ε`, the exact values are equal.
     obtain ⟨p, q, hpq⟩ := approx_minimax G hM ε hε
+    -- `hq_le`: the saddle-point gap bounds the row supremum by the column infimum.
     have hq_le :
         (⨆ i : Fin M, pureVsPayoff G i q) ≤
           (⨅ j : Fin N, payoffVsPure G p j) + ε := by
@@ -162,20 +200,24 @@ theorem finite_minimax_value {M N : ℕ} [NeZero M] [NeZero N]
         intro j
         linarith [hpq i j]
       linarith
+    -- `h_upper_at_q`: the upper value is at most its value at `q`.
     have h_upper_at_q :
         finiteUpperValue G ≤ ⨆ i : Fin M, pureVsPayoff G i q := by
       unfold finiteUpperValue
       exact ciInf_le (finiteUpperValue_bddBelow G) q
+    -- `h_lower_at_p`: the lower value is at least its value at `p`.
     have h_lower_at_p :
         (⨅ j : Fin N, payoffVsPure G p j) ≤ finiteLowerValue G := by
       unfold finiteLowerValue
       exact le_ciSup (finiteLowerValue_bddAbove G) p
     linarith
 
-/-! ## The Convex-Compact Target from the Writeup -/
+/-! ## The Convex-Compact Target -/
 
-/-- The exact minimax statement from the project writeup, specialized to
-subsets of `ℝ`.
+/-- The conclusion of the convex-compact minimax theorem for a payoff `f` on `X × Y`:
+the upper value `inf_{x ∈ X} sup_{y ∈ Y} f x y` equals the lower value
+`sup_{y ∈ Y} inf_{x ∈ X} f x y`. [CBL06, Thm 7.1]. Deviation: specialized to subsets
+`X, Y ⊆ ℝ` (the source allows convex subsets of general topological vector spaces).
 
 This is packaged as a `Prop` so that the target can be referenced while the
 proof is developed in smaller lemmas. -/
@@ -186,7 +228,12 @@ section TargetAssumptions
 
 variable (X Y : Set ℝ) (f : ℝ → ℝ → ℝ)
 
-/-- Assumptions of Cesa-Bianchi--Lugosi Theorem 7.1, specialized to `ℝ`. -/
+/-- The hypotheses of the convex-compact minimax theorem [CBL06, Thm 7.1], specialized to
+`ℝ`: `X` and `Y` are nonempty convex subsets of `ℝ`, `X` is compact, the payoff `f` is
+continuous and convex in the row variable for each column point, concave in the column
+variable for each row point, and bounded on `X × Y`. Deviation: `X, Y ⊆ ℝ`, and the
+continuity and boundedness requirements are made explicit fields (the source states
+them in prose). -/
 structure ConvexCompactMinimaxHypotheses : Prop where
   /-- The row set is nonempty. -/
   X_nonempty : X.Nonempty
@@ -246,10 +293,11 @@ lemma concaveOn_le_mixed_sum {n : ℕ} {S : Set ℝ} {g : ℝ → ℝ}
 
 /-! ## Finite Samples of a Convex-Concave Game -/
 
-/-- A finite matrix game obtained by restricting a payoff function to finite
-families of row and column points. This version is for already-normalized
-payoffs in `[0, 1]`; a general bounded payoff can be reduced to this by an
-affine rescaling. -/
+/-- The finite matrix game obtained by restricting a payoff function `f` to finite
+families of row points `x i` and column points `y j`, with payoff matrix `f (x i) (y j)`.
+[CBL06, proof of Thm 7.1 (finite sub-game)]. This version is for already-normalized
+payoffs in `[0, 1]`; a general bounded payoff can be reduced to this by an affine
+rescaling. -/
 noncomputable def sampledGame {M N : ℕ} (f : ℝ → ℝ → ℝ)
     (x : Fin M → ℝ) (y : Fin N → ℝ)
     (h_nonneg : ∀ i j, 0 ≤ f (x i) (y j))
@@ -258,7 +306,10 @@ noncomputable def sampledGame {M N : ℕ} (f : ℝ → ℝ → ℝ)
   payoff_nonneg := h_nonneg
   payoff_le_one := h_le_one
 
-/-- The finite minimax theorem applied to a sampled game. -/
+/-- The finite minimax theorem for a sampled game: for a payoff `f` taking values in
+`[0, 1]` on finitely many row points `x i` (at least two) and column points `y j`, the
+lower and upper values of the sampled matrix game coincide. [CBL06, proof of Thm 7.1
+(finite sub-game)]. Carries the hypothesis `1 < M` from `finite_minimax_value`. -/
 theorem finite_sampled_minimax_value {M N : ℕ} [NeZero M] [NeZero N]
     (f : ℝ → ℝ → ℝ) (x : Fin M → ℝ) (y : Fin N → ℝ)
     (h_nonneg : ∀ i j, 0 ≤ f (x i) (y j))
@@ -267,9 +318,10 @@ theorem finite_sampled_minimax_value {M N : ℕ} [NeZero M] [NeZero N]
       finiteUpperValue (sampledGame f x y h_nonneg h_le_one) := by
   exact finite_minimax_value (sampledGame f x y h_nonneg h_le_one) hM
 
-/-- If the row player mixes over sampled row points, convexity in the row
-variable says the payoff at the mixed row point is no larger than the sampled
-game payoff against a fixed column. -/
+/-- If the row player mixes over sampled row points with a mixed strategy `p`, convexity
+of `f` in the row variable says that the payoff at the mixed row point `Σ_i p i · x i`
+against the column `y j` is at most the sampled game's expected payoff of `p` against
+`j`. [CBL06, proof of Thm 7.1]. -/
 lemma sampled_payoffVsPure_ge_convex_combo {M N : ℕ}
     {X : Set ℝ} {f : ℝ → ℝ → ℝ} {x : Fin M → ℝ} {y : Fin N → ℝ}
     (h_nonneg : ∀ i j, 0 ≤ f (x i) (y j))
@@ -281,9 +333,10 @@ lemma sampled_payoffVsPure_ge_convex_combo {M N : ℕ}
   simpa [payoffVsPure, sampledGame] using
     convexOn_mixed_sum_le (n := M) (S := X) (g := fun x' => f x' (y j)) hf p x hx
 
-/-- If the column player mixes over sampled column points, concavity in the
-column variable says the sampled expected payoff is no larger than the payoff
-at the mixed column point. -/
+/-- If the column player mixes over sampled column points with a mixed strategy `q`,
+concavity of `f` in the column variable says that the sampled game's expected payoff of
+the row `x i` against `q` is at most the payoff at the mixed column point
+`Σ_j q j · y j`. [CBL06, proof of Thm 7.1]. -/
 lemma sampled_pureVsPayoff_le_concave_combo {M N : ℕ}
     {Y : Set ℝ} {f : ℝ → ℝ → ℝ} {x : Fin M → ℝ} {y : Fin N → ℝ}
     (h_nonneg : ∀ i j, 0 ≤ f (x i) (y j))
@@ -297,9 +350,11 @@ lemma sampled_pureVsPayoff_le_concave_combo {M N : ℕ}
 
 /-! ## The Universal Weak Minimax Inequality -/
 
-/-- The easy minimax direction: for every fixed pair `(x, y)`, the lower value
-at `y` is at most the upper value at `x`, so taking `sup` then `inf` preserves
-the inequality. -/
+/-- Weak duality for convex-compact games: under `ConvexCompactMinimaxHypotheses`, the
+lower value `sup_{y ∈ Y} inf_{x ∈ X} f x y` is at most the upper value
+`inf_{x ∈ X} sup_{y ∈ Y} f x y`. [CBL06, §7.2 (weak duality)]. For every fixed pair
+`(x, y)`, the infimum at `y` is at most `f x y`, which is at most the supremum at `x`;
+taking `sup` over `y` and then `inf` over `x` preserves the inequality. -/
 lemma weak_convex_compact_minimax {X Y : Set ℝ} {f : ℝ → ℝ → ℝ}
     (h : ConvexCompactMinimaxHypotheses X Y f) :
     (⨆ y : Y, ⨅ x : X, f x y) ≤ (⨅ x : X, ⨆ y : Y, f x y) := by
@@ -323,7 +378,8 @@ lemma weak_convex_compact_minimax {X Y : Set ℝ} {f : ℝ → ℝ → ℝ}
 
 /-! ## Closed Sublevel Sets for the Compactness Step -/
 
-/-- The closed subset of `X` where the payoff against `y` is at most `c`. -/
+/-- The sublevel set `{x ∈ X | f x y ≤ c}`: the subset of the row set `X` where the payoff
+against the column point `y` is at most `c`. -/
 def minimaxSublevel (X : Set ℝ) (f : ℝ → ℝ → ℝ) (y c : ℝ) : Set ℝ :=
   X ∩ {x | f x y ≤ c}
 
@@ -348,9 +404,11 @@ lemma minimaxSublevel_isCompact {X : Set ℝ} {f : ℝ → ℝ → ℝ} {y c : �
   exact hX.of_isClosed_subset (minimaxSublevel_isClosed hX.isClosed hf)
     (minimaxSublevel_subset X f y c)
 
-/-- Finite-intersection compactness step: if every finite family of sublevel
-constraints has a solution in `X`, then there is one point of `X` satisfying
-all constraints at once. -/
+/-- The finite-intersection compactness step: under `ConvexCompactMinimaxHypotheses`, if
+for every finite set `u` of column points there is a point of `X` with `f x y ≤ c` for
+all `y ∈ u`, then there is a single point `x ∈ X` with `f x y ≤ c` for every `y ∈ Y`.
+This is the finite intersection property of the compact set `X` applied to the closed
+sublevel sets `minimaxSublevel X f y c`. -/
 lemma exists_forall_le_of_finite_sublevel_intersections {X Y : Set ℝ}
     {f : ℝ → ℝ → ℝ} (h : ConvexCompactMinimaxHypotheses X Y f) (c : ℝ)
     (hfin : ∀ u : Finset Y,

@@ -369,3 +369,62 @@ satisfies
 \mathrm{TV}(\mu_1,\nu_1)+\mathrm{TV}(\mu_2,\nu_2).
 \]
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Mass at false on the two-point space]
+\lean{CommunicationComplexity.TVDistance.measureReal_false_eq_one_sub_true}
+\label{CommunicationComplexity.TVDistance.measureReal_false_eq_one_sub_true}
+\leanok
+\difficulty{1}
+Let $\mu$ be a probability measure on the two-point space $\mathrm{Bool} =
+\{\mathrm{true}, \mathrm{false}\}$. Then the mass at $\mathrm{false}$ is one minus the
+mass at $\mathrm{true}$:
+\[
+\mu(\{\mathrm{false}\}) = 1 - \mu(\{\mathrm{true}\}).
+\]
+\end{lemma}
+
+\begin{lemma}[Pointwise triangle bound for a product gap]
+\lean{CommunicationComplexity.TVDistance.abs_mul_sub_mul_le}
+\label{CommunicationComplexity.TVDistance.abs_mul_sub_mul_le}
+\leanok
+\difficulty{1}
+Let $a, b, c, d \in \bbr$ with $b \ge 0$ and $c \ge 0$. Then
+\[
+\abs{ab - cd} \;\le\; \abs{a - c}\, b + c\, \abs{b - d}.
+\]
+\end{lemma}
+
+\begin{lemma}[$\ell^1$ gap of product weights bounded by marginal gaps]
+\lean{CommunicationComplexity.TVDistance.sum_prod_abs_le}
+\label{CommunicationComplexity.TVDistance.sum_prod_abs_le}
+\leanok
+\uses{CommunicationComplexity.TVDistance.abs_mul_sub_mul_le}
+\difficulty{3}
+Let $\alpha$ and $\beta$ be finite types, and let $a, c : \alpha \to \bbr$ and
+$b, d : \beta \to \bbr$ be real-valued weight functions. Suppose $b$ and $c$ are
+nonnegative and each sums to one, i.e.\ $b(y) \ge 0$ for all $y$, $c(x) \ge 0$ for all
+$x$, $\sum_{y \in \beta} b(y) = 1$ and $\sum_{x \in \alpha} c(x) = 1$. Then the $\ell^1$
+gap between the two product weight functions is at most the sum of the marginal $\ell^1$
+gaps:
+\[
+\sum_{(x,y) \in \alpha \times \beta} \abs{a(x)\,b(y) - c(x)\,d(y)}
+\;\le\; \sum_{x \in \alpha} \abs{a(x) - c(x)} + \sum_{y \in \beta} \abs{b(y) - d(y)}.
+\]
+\end{lemma}
+
+\begin{lemma}[Singleton mass of a product measure]
+\lean{CommunicationComplexity.TVDistance.prod_measureReal_singleton}
+\label{CommunicationComplexity.TVDistance.prod_measureReal_singleton}
+\leanok
+\difficulty{2}
+Let $\mu_1$ be a measure on a measurable space $\alpha$ and $\mu_2$ a $\sigma$-finite
+measure on a measurable space $\beta$. Then for every $x \in \alpha$ and $y \in \beta$,
+the real-valued mass that the product measure $\mu_1 \otimes \mu_2$ assigns to the
+singleton $\{(x,y)\}$ is the product of the singleton masses:
+\[
+(\mu_1 \otimes \mu_2)(\{(x,y)\}) = \mu_1(\{x\})\,\mu_2(\{y\}).
+\]
+\end{lemma}

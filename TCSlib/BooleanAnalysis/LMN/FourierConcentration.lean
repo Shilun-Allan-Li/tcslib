@@ -30,6 +30,11 @@ immaterial downstream.
    (`sum_tail_expectation_eq`).
 4. **Conclude**: for `U` with `3k ≤ p·|U|` the probability is `≥ 1/4`, so
    `(1/4)·∑_{3k ≤ p·|U|} f̂(U)² ≤ ε`.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Lemma 4.21.
 -/
 
 open BooleanAnalysis SwitchingLemma2 LMN
@@ -163,7 +168,9 @@ lemma sum_tail_expectation_eq (p : ℝ) (F : BooleanFunc n) (k : ℕ) :
     the Fourier spectrum of the ±1-encoding of `f` is `4ε`-concentrated on
     degrees below `3k/p`:
 
-      `∑_{U : 3k ≤ p·|U|} f̂(U)² ≤ 4ε`. -/
+      `∑_{U : 3k ≤ p·|U|} f̂(U)² ≤ 4ε`.
+
+**Source:** [OD14, Lemma 4.21]. -/
 theorem odonnell_lemma_4_21 (f : (Fin n → Bool) → Bool) (p : ℝ)
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (k : ℕ) (hk : 1 ≤ k) :
     ∑ U : Finset (Fin n),

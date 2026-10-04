@@ -33,6 +33,11 @@ the ideal `1/(10w)`) because:
 
 There is also a Chernoff tail `exp(-np/3)` that vanishes as `n → ∞`.
 The overall δ for the LMN theorem is correspondingly adjusted.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, §4.4, especially Lemma 4.28.
 -/
 
 open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
@@ -134,7 +139,9 @@ lemma iterative_reduction_bound (c : Circuit n)
 
     `Pr[DT(f|_ρ) > t] ≤ ε + s · exp(−n/(120w)) + (s+1) · exp(−n/(120l))`
 
-    The exponential tails vanish as `n → ∞`, giving `Pr ≤ ε` asymptotically. -/
+    The exponential tails vanish as `n → ∞`, giving `Pr ≤ ε` asymptotically.
+
+**Source:** [OD14, Lemma 4.28]. -/
 theorem odonnell_lemma_4_28 (c : Circuit n)
     (d s w : ℕ) (l t : ℕ)
     (hd : c.depth ≤ d) (hs : c.size ≤ s) (hw : c.maxFanin ≤ w)

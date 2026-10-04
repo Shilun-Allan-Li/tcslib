@@ -14,16 +14,31 @@ set_option autoImplicit false
 /-!
 # Monadic Structure of Finite-Message Protocols
 
+Combinators on finite-message protocols (`map`, `bind`, binary and `k`-fold products) and
+the corresponding outcome and complexity laws. The protocol model is that of [RY20, Ch. 1];
+the combinators themselves are original to this formalization and have no textbook
+counterpart, so no declaration in this file carries a citation.
+
+## Main definitions
+
+- `Deterministic.FiniteMessage.Protocol.map`: map a function over the output of a protocol
+- `Deterministic.FiniteMessage.Protocol.bind`: sequentially compose two protocols (monadic bind)
+- `Deterministic.FiniteMessage.Protocol.prod`: product of two protocols with disjoint input types
+- `Deterministic.FiniteMessage.Protocol.pi`: k-fold product of protocols with heterogeneous types
+
 ## Main results
 
-- `Deterministic.FiniteMessage.Protocol.map`: Map a function over the output of a protocol
-- `Deterministic.FiniteMessage.Protocol.bind`: Sequentially compose two protocols (monadic bind)
-- `Deterministic.FiniteMessage.Protocol.prod`: Product of two protocols with disjoint input types
-- `Deterministic.FiniteMessage.Protocol.pi`: k-fold product of protocols with heterogeneous types
+- `map_run`, `bind_run`, `prod_run`, `pi_run`: the outcome of each combinator in terms of
+  the outcomes of its components
+- `map_complexity`, `bind_complexity_const`, `prod_complexity`, `pi_complexity`: `map` is
+  free, and `bind`, `prod`, `pi` cost the sum of the component complexities
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -40,11 +55,14 @@ def map (g : α → β) : Protocol X Y α → Protocol X Y β
   | Protocol.bob f P =>
       Protocol.bob f (fun b => (P b).map g)
 
+/-- The outcome of `p.map g` on `(x, y)` is `g` applied to the outcome of `p` on `(x, y)`. -/
 @[simp]
 theorem map_run (g : α → β) (p : Protocol X Y α) (x : X) (y : Y) :
     (p.map g).run x y = g (p.run x y) := by
   induction p <;> simp [map, run, *]
 
+/-- Post-composing the output with a function does not change the complexity of a
+protocol. -/
 @[simp]
 theorem map_complexity (g : α → β) (p : Protocol X Y α) :
     (p.map g).complexity = p.complexity := by
@@ -58,12 +76,15 @@ def bind : Protocol X Y α → (α → Protocol X Y β) → Protocol X Y β
   | Protocol.bob f P, q =>
       Protocol.bob f (fun b => (P b).bind q)
 
+/-- The outcome of `p.bind q` on `(x, y)` is obtained by first running `p` on `(x, y)` and
+then running `q a` on the same inputs, where `a` is the outcome of `p`. -/
 @[simp]
 theorem bind_run (p : Protocol X Y α) (q : α → Protocol X Y β)
     (x : X) (y : Y) :
     (p.bind q).run x y = (q (p.run x y)).run x y := by
   induction p <;> simp [bind, run, *]
 
+/-- Over a nonempty finite index type, the supremum of `f i + c` is `sup f + c`. -/
 private theorem finset_sup_add_const {ι : Type*} [Fintype ι] [Nonempty ι]
     (f : ι → ℕ) (c : ℕ) :
     Finset.univ.sup (fun i => f i + c) =
@@ -75,6 +96,9 @@ private theorem finset_sup_add_const {ι : Type*} [Fintype ι] [Nonempty ι]
     rw [hj]
     exact Finset.le_sup (f := fun i => f i + c) (Finset.mem_univ j)
 
+/-- If every continuation `q a` has the same complexity `c`, then `p.bind q` has complexity
+`p.complexity + c`: the continuation is appended below every leaf of `p`, so the depth grows
+by exactly `c`. -/
 theorem bind_complexity_const (p : Protocol X Y α)
     (q : α → Protocol X Y β)
     (c : ℕ) (hc : ∀ a, (q a).complexity = c) :
@@ -103,6 +127,8 @@ def prod (p1 : Protocol X₁ Y₁ α₁) (p2 : Protocol X₂ Y₂ α₂) :
       Protocol.bob (f ∘ Prod.fst)
         (fun b => (P b).prod p2)
 
+/-- The outcome of `p1.prod p2` on paired inputs is the pair of outcomes of `p1` on the first
+components and `p2` on the second components. -/
 @[simp]
 theorem prod_run (p1 : Protocol X₁ Y₁ α₁) (p2 : Protocol X₂ Y₂ α₂)
     (x : X₁ × X₂) (y : Y₁ × Y₂) :
@@ -110,6 +136,8 @@ theorem prod_run (p1 : Protocol X₁ Y₁ α₁) (p2 : Protocol X₂ Y₂ α₂)
       (p1.run x.1 y.1, p2.run x.2 y.2) := by
   induction p1 <;> simp [prod, run, *]
 
+/-- The complexity of the product of two protocols is the sum of their complexities (the
+product runs `p1` to completion and then `p2`). -/
 theorem prod_complexity (p1 : Protocol X₁ Y₁ α₁) (p2 : Protocol X₂ Y₂ α₂) :
     (p1.prod p2).complexity =
       p1.complexity + p2.complexity := by
@@ -141,6 +169,8 @@ def pi :
                     (fun (y : (i : Fin (_ + 1)) → _) (i : Fin _) => y i.succ)
       head.bind (fun a => tail.map (fun as => Fin.cons a as))
 
+/-- The outcome of `pi p` on inputs `x`, `y` is the function `i ↦ (p i).run (x i) (y i)`,
+i.e. the `i`-th protocol run on the `i`-th components. -/
 @[simp]
 theorem pi_run
     (p : (i : Fin k) → Protocol (Xf i) (Yf i) (αf i))
@@ -155,6 +185,8 @@ theorem pi_run
     simp only [pi, bind_run, comap_run, map_run, ih]
     ext i; refine Fin.cases ?_ ?_ i <;> simp [Fin.cons]
 
+/-- The complexity of the `k`-fold product `pi p` is the sum over `i` of the complexity of
+`p i` (the component protocols run one after another). -/
 theorem pi_complexity
     (p : (i : Fin k) → Protocol (Xf i) (Yf i) (αf i)) :
     (pi p).complexity =

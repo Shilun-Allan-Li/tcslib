@@ -255,3 +255,16 @@ of input types. Then the pullback protocol obtained by precomposing every messag
 function of $p$ with $f_X$ or $f_Y$ (as appropriate) has the same communication
 complexity as $p$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Ceiling logarithm of two]
+\lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.clog_two_two}
+\label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.clog_two_two}
+\leanok
+\difficulty{1}
+The ceiling base-$2$ logarithm of $2$ equals $1$: $\lceil \log_2 2 \rceil = 1$, i.e.\ 
+\texttt{Nat.clog 2 2 = 1}. This is a numeric fact used when comparing the
+complexity of a binary protocol with its finite-message reformulation.
+\end{theorem}
