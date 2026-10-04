@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassNP.EXP
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Build.Primitives
 import Mathlib.Tactic.FinCases
 
 set_option maxHeartbeats 0
@@ -621,6 +622,549 @@ private lemma choiceCopy_timed (x u : List Bool) :
   rw [hin]
   simp [choiceCopy, choiceCopyCfg]
 
+/-- The library and this file solve the same length equation. The coefficient
+is unchanged here: the `C+1` translation recorded for the marker-padding parser
+in `NP.lean` does not apply to this file's choice-word parser. -/
+private lemma cont_split_bridge (C c m : ℕ) :
+    solveSplit C c m = certificateSplit C c m := by
+  rfl
+
+/-- Parse an aligned pair into the two buffers of the proved choice core.
+States 0--2 parse doubled prefix bits, state 3 copies the suffix, and states
+4--5 rewind the input and choice buffers. Both rewinds first move left from
+the right blank, so empty words have the same startup contract. Every
+administrative transition is physically silent except malformed rejection.
+The core's transition table is embedded verbatim in the right summand. -/
+private def contPairTM (N : FinNDTM Bool) : FinTM Bool where
+  k := N.k + 3
+  State := Fin 6 ⊕ (choiceCore N).State
+  tm :=
+    { q₀ := .inl 0
+      tr := fun q inp work => match q with
+        | .inr q => Action.mapState Sum.inr ((choiceCore N).tm.tr q inp work)
+        | .inl 0 => match inp with
+          | some b => ⟨1, fun _ => (none, 0), none, some (.inl (if b then 2 else 1))⟩
+          | none => ⟨0, fun _ => (none, 0), some false, none⟩
+        | .inl 1 => match inp with
+          | some false => ⟨1, choiceTapes (fun _ => (none, 0))
+              (some (some false), 1) (none, 0) (none, 0), none, some (.inl 0)⟩
+          | some true => ⟨1, fun _ => (none, 0), none, some (.inl 3)⟩
+          | none => ⟨0, fun _ => (none, 0), some false, none⟩
+        | .inl 2 => match inp with
+          | some true => ⟨1, choiceTapes (fun _ => (none, 0))
+              (some (some true), 1) (none, 0) (none, 0), none, some (.inl 0)⟩
+          | _ => ⟨0, fun _ => (none, 0), some false, none⟩
+        | .inl 3 => match inp with
+          | some b => ⟨1, choiceTapes (fun _ => (none, 0))
+              (none, 0) (some (some b), 1) (none, 0), none, some (.inl 3)⟩
+          | none => ⟨0, choiceTapes (fun _ => (none, 0))
+              (none, -1) (none, 0) (none, 0), none, some (.inl 4)⟩
+        | .inl 4 => match work (Fin.natAdd N.k 0) with
+          | some _ => ⟨0, choiceTapes (fun _ => (none, 0))
+              (none, -1) (none, 0) (none, 0), none, some (.inl 4)⟩
+          | none => ⟨0, choiceTapes (fun _ => (none, 0))
+              (none, 1) (none, -1) (none, 0), none, some (.inl 5)⟩
+        | .inl _ => match work (Fin.natAdd N.k 1) with
+          | some _ => ⟨0, choiceTapes (fun _ => (none, 0))
+              (none, 0) (none, -1) (none, 0), none, some (.inl 5)⟩
+          | none => ⟨0, choiceTapes (fun _ => (none, 0))
+              (none, 0) (none, 1) (none, 0), none,
+                some (.inr (some N.tm.q₀, true, none))⟩ }
+
+/-- A silent loader configuration; the source work tapes and capture tape are
+blank, and the two word buffers and their heads are explicit. -/
+private def contLoadCfg (N : FinNDTM Bool) {y : List Bool} (q : Fin 6)
+    (x u : List Bool) (p : Fin (y.length + 2)) (a b : ℤ) :
+    Cfg (contPairTM N).k Bool (contPairTM N).State y :=
+  ⟨some (.inl q), p, choiceTapes (fun _ _ => none) (bufferTape x)
+    (bufferTape u) (fun _ => none), choiceTapes (fun _ => 0) a b 0, []⟩
+
+/-- Once the loader dispatches, the proved core runs in exact lockstep in
+its renamed control states, including its final physical verdict. -/
+private lemma cont_core_run (N : FinNDTM Bool) {y : List Bool}
+    (c : Cfg (choiceCore N).k Bool (choiceCore N).State y) (t : ℕ) :
+    (contPairTM N).tm.runFrom (Cfg.mapState Sum.inr c) t =
+      Cfg.mapState Sum.inr ((choiceCore N).tm.runFrom c t) := by
+  apply MultiTapeTM.runFrom_comm_of_step (Cfg.mapState Sum.inr)
+  intro d
+  cases hs : d.state with
+  | none => simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_none]
+  | some q =>
+    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+    change (Action.mapState Sum.inr ((choiceCore N).tm.tr q _ _)).apply _ = _
+    rfl
+
+/-- Rewinding the choice buffer costs exactly one step per remaining symbol
+and one final dispatch, preserving the source input and every blank source tape.
+**Proof sketch.** Induct on the number of cells to the left of the head. At
+zero the head is at the left blank; otherwise its read is the corresponding
+buffer bit and one left move reduces the induction parameter. -/
+private lemma cont_rewind_choices (N : FinNDTM Bool) {y : List Bool}
+    (x u : List Bool) (p : Fin (y.length + 2)) (j : ℕ) (hj : j ≤ u.length) :
+    (contPairTM N).tm.runFrom (contLoadCfg (y := y) N 5 x u p 0 ((j : ℤ) - 1)) (j + 1) =
+      Cfg.mapState Sum.inr (choiceCoreCfg N (N.tm.initCfg x) true u 0 p) := by
+  induction j with
+  | zero =>
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [Nat.cast_zero]
+    have hw : (contLoadCfg (y := y) N 5 x u p 0 ((0 : ℤ) - 1)).workTapeSymbols
+        (Fin.natAdd N.k 1) = none := by
+      simp [contLoadCfg, Cfg.workTapeSymbols, choiceTapes]
+    unfold MultiTapeTM.step
+    change ((contPairTM N).tm.tr (.inl 5) _ _).apply _ = _
+    dsimp only [contPairTM]
+    rw [hw]
+    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [contLoadCfg, Cfg.mapState, choiceCoreCfg, choiceTapes, NDTM.initCfg, Cfg.init]
+      · intro i; fin_cases i <;>
+          simp [contLoadCfg, Cfg.mapState, choiceCoreCfg, choiceTapes, NDTM.initCfg, Cfg.init]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [contLoadCfg, Cfg.mapState, choiceCoreCfg, choiceTapes, NDTM.initCfg, Cfg.init]
+      · intro i; fin_cases i <;>
+          simp [contLoadCfg, Cfg.mapState, choiceCoreCfg, choiceTapes, NDTM.initCfg, Cfg.init]
+  | succ j ih =>
+    have hw : (contLoadCfg (y := y) N 5 x u p 0 (((j + 1 : ℕ) : ℤ) - 1)).workTapeSymbols
+        (Fin.natAdd N.k 1) = some u[j] := by
+      simp [contLoadCfg, Cfg.workTapeSymbols, choiceTapes, List.getElem?_eq_getElem (by omega : j < u.length)]
+    have hs : (contPairTM N).tm.step
+        (contLoadCfg (y := y) N 5 x u p 0 (((j + 1 : ℕ) : ℤ) - 1)) =
+          contLoadCfg (y := y) N 5 x u p 0 ((j : ℤ) - 1) := by
+      unfold MultiTapeTM.step
+      change ((contPairTM N).tm.tr (.inl 5) _ _).apply _ = _
+      dsimp only [contPairTM]
+      rw [hw]
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+        · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+        · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+
+/-- Rewind the input buffer, then make the mandatory initial left move on
+the choice buffer. The complete tape contents and physical input head survive.
+**Proof sketch.** The same decreasing-head induction as the choice rewind;
+the left-blank transition resets this head to zero and starts the next rewind. -/
+private lemma cont_rewind_input (N : FinNDTM Bool) {y : List Bool}
+    (x u : List Bool) (p : Fin (y.length + 2)) (j : ℕ) (hj : j ≤ x.length) :
+    (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 4 x u p ((j : ℤ) - 1) u.length) (j + 1) =
+        contLoadCfg (y := y) N 5 x u p 0 ((u.length : ℤ) - 1) := by
+  induction j with
+  | zero =>
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [Nat.cast_zero]
+    have hw : (contLoadCfg (y := y) N 4 x u p ((0 : ℤ) - 1) u.length).workTapeSymbols
+        (Fin.natAdd N.k 0) = none := by
+      simp [contLoadCfg, Cfg.workTapeSymbols, choiceTapes]
+    unfold MultiTapeTM.step
+    change ((contPairTM N).tm.tr (.inl 4) _ _).apply _ = _
+    dsimp only [contPairTM]
+    rw [hw]
+    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+      · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+      · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+  | succ j ih =>
+    have hw : (contLoadCfg (y := y) N 4 x u p (((j + 1 : ℕ) : ℤ) - 1) u.length).workTapeSymbols
+        (Fin.natAdd N.k 0) = some x[j] := by
+      simp [contLoadCfg, Cfg.workTapeSymbols, choiceTapes, List.getElem?_eq_getElem (by omega : j < x.length)]
+    have hs : (contPairTM N).tm.step
+        (contLoadCfg (y := y) N 4 x u p (((j + 1 : ℕ) : ℤ) - 1) u.length) =
+          contLoadCfg (y := y) N 4 x u p ((j : ℤ) - 1) u.length := by
+      unfold MultiTapeTM.step
+      change ((contPairTM N).tm.tr (.inl 4) _ _).apply _ = _
+      dsimp only [contPairTM]
+      rw [hw]
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+        · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro i; simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+        · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+
+/-- Appending optional bits at the two right blanks realizes precisely the
+corresponding list appends; all source and capture tapes remain blank. -/
+private lemma cont_write_apply (N : FinNDTM Bool) {y : List Bool}
+    (q q' : Fin 6) (x u : List Bool) (p : Fin (y.length + 2))
+    (m : SignType) (bx bu : Option Bool) :
+    (Action.mk m (choiceTapes (fun _ => (none, 0))
+      (bx.map some, if bx.isSome then 1 else 0)
+      (bu.map some, if bu.isSome then 1 else 0) (none, 0)) none
+      (some (.inl q'))).apply (contLoadCfg (y := y) N q x u p x.length u.length) =
+        contLoadCfg (y := y) N q' (x ++ bx.toList) (u ++ bu.toList) (moveInputPos p m)
+          (x ++ bx.toList).length (u ++ bu.toList).length := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i
+    · intro i; simp [contLoadCfg, choiceTapes]
+    · intro i
+      fin_cases i <;> cases bx <;> cases bu <;>
+        simp [contLoadCfg, choiceTapes, bufferTape_append]
+  · funext i
+    refine Fin.addCases ?_ ?_ i
+    · intro i; simp [contLoadCfg, choiceTapes]
+    · intro i
+      fin_cases i <;> cases bx <;> cases bu <;>
+        simp [contLoadCfg, choiceTapes]
+
+/-- Read the physical input at the loader's explicit position, including its
+right boundary. The buffers have no effect on this read. -/
+private lemma cont_load_read (N : FinNDTM Bool) {y : List Bool} (q : Fin 6)
+    (x u : List Bool) (i : ℕ) (hi : i ≤ y.length) (a b : ℤ) :
+    (contLoadCfg (y := y) N q x u ⟨i + 1, by omega⟩ a b).inputSymbol = y[i]? := by
+  exact inputSymbol_at _ i hi rfl
+
+/-- One right-going loader transition carries an exact physical step bound
+and installs the appended buffers, provided its finite table has the displayed
+write actions. -/
+private lemma cont_load_right (N : FinNDTM Bool) {y : List Bool}
+    (q q' : Fin 6) (x u : List Bool) (i : ℕ) (hi : i < y.length)
+    (bx bu : Option Bool)
+    (htr : (contPairTM N).tm.tr (.inl q) y[i]?
+      (contLoadCfg (y := y) N q x u ⟨i + 1, by omega⟩ x.length u.length).workTapeSymbols =
+        ⟨1, choiceTapes (fun _ => (none, 0))
+          (bx.map some, if bx.isSome then 1 else 0)
+          (bu.map some, if bu.isSome then 1 else 0) (none, 0), none, some (.inl q')⟩) :
+    (contPairTM N).tm.step
+      (contLoadCfg (y := y) N q x u ⟨i + 1, by omega⟩ x.length u.length) =
+        contLoadCfg (y := y) N q' (x ++ bx.toList) (u ++ bu.toList) ⟨i + 2, by omega⟩
+          (x ++ bx.toList).length (u ++ bu.toList).length := by
+  unfold MultiTapeTM.step
+  change ((contPairTM N).tm.tr (.inl q) _ _).apply _ = _
+  rw [cont_load_read N q x u i (by omega), htr, cont_write_apply]
+  congr 1
+  apply Fin.ext
+  rw [show (1 : SignType) = .pos from rfl,
+    moveInputPos_pos_of_ne_right _ (by simp; omega)]
+
+/-- The suffix copier appends each remaining physical input bit in exactly
+one step. The prefix buffer is preserved and physical output stays empty.
+**Proof sketch.** Induct on the remaining suffix, extending the physical
+prefix and the copied suffix together in the inductive step. -/
+private lemma cont_copy_run (N : FinNDTM Bool) (y rest : List Bool) :
+    ∀ (pre x u : List Bool) (hy : y = pre ++ rest),
+    (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 3 x u ⟨pre.length + 1, by simp [hy]; omega⟩
+        x.length u.length) rest.length =
+          contLoadCfg (y := y) N 3 x (u ++ rest) ⟨y.length + 1, by omega⟩
+            x.length (u ++ rest).length := by
+  induction rest with
+  | nil => intro pre x u hy; subst y; simp [MultiTapeTM.runFrom_zero]
+  | cons b rest ih =>
+    intro pre x u hy
+    have hs := cont_load_right (y := y) N 3 3 x u pre.length (by simp [hy]) none (some b) (by
+      have hr : y[pre.length]? = some b := by simp [hy]
+      rw [hr]
+      rfl)
+    simp only [Option.toList_none, Option.toList_some, List.append_nil] at hs
+    simp only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step]
+    rw [hs]
+    have hh : y = (pre ++ [b]) ++ rest := by simp [hy, List.append_assoc]
+    simpa only [List.length_append, List.length_singleton, List.append_assoc,
+      List.singleton_append] using ih (pre ++ [b]) x (u ++ [b]) hh
+
+/-- After suffix copying, one left move plus the two exact rewinds enters the
+proved simulator. No source choices are consumed during these administrative steps. -/
+private lemma cont_start_core (N : FinNDTM Bool) (y x u : List Bool) :
+    (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 3 x u ⟨y.length + 1, by omega⟩ x.length u.length)
+      (1 + (x.length + 1) + (u.length + 1)) =
+        Cfg.mapState Sum.inr (choiceCoreCfg N (N.tm.initCfg x) true u 0
+          ⟨y.length + 1, by omega⟩) := by
+  have hs : (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 3 x u ⟨y.length + 1, by omega⟩ x.length u.length) 1 =
+        contLoadCfg (y := y) N 4 x u ⟨y.length + 1, by omega⟩
+          ((x.length : ℤ) - 1) u.length := by
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change ((contPairTM N).tm.tr (.inl 3) _ _).apply _ = _
+    rw [cont_load_read N 3 x u y.length (le_refl _)]
+    simp only [List.getElem?_length]
+    dsimp only [contPairTM]
+    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [contLoadCfg, choiceTapes]
+      · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [contLoadCfg, choiceTapes]
+      · intro i; fin_cases i <;> simp [contLoadCfg, choiceTapes, sub_eq_add_neg]
+  rw [MultiTapeTM.runFrom_add _ (1 + (x.length + 1)) (u.length + 1),
+    MultiTapeTM.runFrom_add _ 1 (x.length + 1)]
+  rw [hs, cont_rewind_input N x u _ x.length (le_refl _),
+    cont_rewind_choices N x u _ u.length (le_refl _)]
+
+/-- The suffix-copy, rewind, and native simulation phases compose with their
+exact time bounds. A halted source's full output, including its final emission,
+is tested only after the complete choice word has been consumed. -/
+private lemma cont_suffix_run (N : FinNDTM Bool) (y pre x u : List Bool)
+    (hy : y = pre ++ u) :
+    let result := (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 3 x [] ⟨pre.length + 1, by simp [hy]; omega⟩ x.length 0)
+      (u.length + (1 + (x.length + 1) + (u.length + 1)) + (u.length + 1))
+    result.state = none ∧ result.output =
+      [decide ((N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+        (N.tm.runWith u (N.tm.initCfg x)).output = [true])] := by
+  have hc := cont_copy_run N y u pre x [] hy
+  simp only [List.nil_append, List.length_nil, Nat.cast_zero] at hc
+  dsimp only
+  rw [MultiTapeTM.runFrom_add _
+      (u.length + (1 + (x.length + 1) + (u.length + 1))) (u.length + 1),
+    MultiTapeTM.runFrom_add _ u.length (1 + (x.length + 1) + (u.length + 1)),
+    hc, cont_start_core, cont_core_run]
+  have h := choiceCore_timed (y := y) N (N.tm.initCfg x) true
+    (choiceCore_initial_tag N x) u ⟨y.length + 1, by omega⟩
+  exact ⟨by simpa only [Cfg.mapState, Option.map_eq_none_iff] using h.1, h.2⟩
+
+/-- An aligned doubled bit is copied to the input buffer in exactly two
+steps, without touching choices or emitting output. -/
+private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
+    (b : Bool) (hy : y = pre ++ b :: b :: rest) :
+    (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 0 x [] ⟨pre.length + 1, by simp [hy]; omega⟩ x.length 0) 2 =
+        contLoadCfg (y := y) N 0 (x ++ [b]) [] ⟨pre.length + 3, by simp [hy]; omega⟩
+          (x ++ [b]).length 0 := by
+  have h1 := cont_load_right (y := y) N 0 (if b then 2 else 1) x [] pre.length
+    (by simp [hy]) none none (by
+      have hr : y[pre.length]? = some b := by simp [hy]
+      rw [hr]
+      have hz : choiceTapes (fun (_ : Fin N.k) => ((none : Option (Option Bool)), (0 : SignType)))
+          (none, 0) (none, 0) (none, 0) = fun _ => (none, 0) := by
+        funext i
+        refine Fin.addCases (fun _ => by simp [choiceTapes]) (fun i => ?_) i
+        fin_cases i <;> simp [choiceTapes]
+      cases b <;> simp [contPairTM, hz])
+  have h2 := cont_load_right (y := y) N (if b then 2 else 1) 0 x [] (pre.length + 1)
+    (by simp [hy]) (some b) none (by
+      have hr : y[pre.length + 1]? = some b := by simp [hy]
+      rw [hr]
+      cases b <;> rfl)
+  simp only [Option.toList_none, Option.toList_some, List.append_nil,
+    List.length_nil, Nat.cast_zero] at h1 h2
+  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  rw [h1]
+  exact h2
+
+/-- The aligned separator starts suffix copying after exactly two silent
+transitions, leaving the already copied input word unchanged. -/
+private lemma cont_parse_separator (N : FinNDTM Bool) (y pre u x : List Bool)
+    (hy : y = pre ++ false :: true :: u) :
+    (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 0 x [] ⟨pre.length + 1, by simp [hy]; omega⟩ x.length 0) 2 =
+        contLoadCfg (y := y) N 3 x [] ⟨pre.length + 3, by simp [hy]; omega⟩ x.length 0 := by
+  have hz : choiceTapes (fun (_ : Fin N.k) => ((none : Option (Option Bool)), (0 : SignType)))
+      (none, 0) (none, 0) (none, 0) = fun _ => (none, 0) := by
+    funext i
+    refine Fin.addCases (fun _ => by simp [choiceTapes]) (fun i => ?_) i
+    fin_cases i <;> simp [choiceTapes]
+  have h1 := cont_load_right (y := y) N 0 1 x [] pre.length
+    (by simp [hy]) none none (by
+      have hr : y[pre.length]? = some false := by simp [hy]
+      rw [hr]
+      simp [contPairTM, hz])
+  have h2 := cont_load_right (y := y) N 1 3 x [] (pre.length + 1)
+    (by simp [hy]) none none (by
+      have hr : y[pre.length + 1]? = some true := by simp [hy]
+      rw [hr]
+      simp [contPairTM, hz])
+  simp only [Option.toList_none, List.append_nil, List.length_nil, Nat.cast_zero] at h1 h2
+  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  rw [h1]
+  exact h2
+
+/-- On a valid encoded pair, the doubled prefix and separator are parsed in
+exactly `2*|x|+2` steps. The prefix buffer contains precisely the undoubled word.
+**Proof sketch.** Induct on the first component. A data block invokes the
+two-step copying lemma; the empty component invokes the separator lemma.
+The generalized existing buffer and physical prefix make every seam explicit. -/
+private lemma cont_parse_run (N : FinNDTM Bool) (y x u : List Bool) :
+    ∀ (pre a : List Bool) (hy : y = pre ++ pairEncode x u),
+    (contPairTM N).tm.runFrom
+      (contLoadCfg (y := y) N 0 a [] ⟨pre.length + 1, by simp [hy]; omega⟩ a.length 0)
+      (2 * x.length + 2) =
+        contLoadCfg (y := y) N 3 (a ++ x) []
+          ⟨pre.length + 2 * x.length + 3, by simp [hy, pairEncode]; omega⟩ (a ++ x).length 0 := by
+  induction x with
+  | nil =>
+    intro pre a hy
+    simpa only [List.length_nil, Nat.mul_zero, Nat.add_zero, List.append_nil] using
+      cont_parse_separator N y pre u a (by simpa [pairEncode] using hy)
+  | cons b x ih =>
+    intro pre a hy
+    have hy' : y = pre ++ b :: b :: pairEncode x u := by
+      simpa [pairEncode, List.append_assoc] using hy
+    have hr := cont_parse_double N y pre (pairEncode x u) a b hy'
+    have hh : y = (pre ++ [b, b]) ++ pairEncode x u := by
+      simpa [List.append_assoc] using hy'
+    conv_lhs =>
+      arg 2
+      simp only [List.length_cons]
+      rw [show 2 * (x.length + 1) + 2 = 2 + (2 * x.length + 2) by omega]
+    rw [MultiTapeTM.runFrom_add _ 2 (2 * x.length + 2), hr]
+    simpa [List.append_assoc, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm, Nat.mul_add] using
+        ih (pre ++ [b, b]) (a ++ [b]) hh
+
+/-- Blank-tape initialization, parsing, copying, rewinds and simulation give
+a genuine whole-machine contract on every valid pair, with a linear bound.
+**Proof sketch.** The loader starts with two empty buffers and blank source
+tapes. Sum the parser's `2|x|+2` steps, suffix copying's `|u|`, the
+`|x|+|u|+3` rewind/dispatch steps, and the core's `|u|+1` steps. The sum
+`3|x|+3|u|+6` fits `3(|pairEncode x u|+1)`. -/
+private lemma cont_pair_computes (N : FinNDTM Bool) (x u : List Bool) :
+    (contPairTM N).ComputesInTime (pairEncode x u)
+      [decide ((N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+        (N.tm.runWith u (N.tm.initCfg x)).output = [true])]
+      (3 * ((pairEncode x u).length + 1)) := by
+  let y := pairEncode x u
+  have hi : (contPairTM N).tm.initCfg y =
+      contLoadCfg (y := y) N 0 [] [] ⟨1, by omega⟩ 0 0 := by
+    refine Cfg.ext rfl (Fin.ext (by simp [MultiTapeTM.initCfg, Cfg.init, contLoadCfg])) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [MultiTapeTM.initCfg, Cfg.init, contLoadCfg, choiceTapes]
+      · intro i; fin_cases i <;> simp [MultiTapeTM.initCfg, Cfg.init, contLoadCfg, choiceTapes]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro i; simp [MultiTapeTM.initCfg, Cfg.init, contLoadCfg, choiceTapes]
+      · intro i; fin_cases i <;> simp [MultiTapeTM.initCfg, Cfg.init, contLoadCfg, choiceTapes]
+  have hp := cont_parse_run N y x u [] [] rfl
+  simp only [List.nil_append, List.length_nil, Nat.cast_zero, Nat.zero_add] at hp
+  have hf := cont_suffix_run N y (x.flatMap (fun b => [b, b]) ++ [false, true]) x u rfl
+  have hlen : (x.flatMap (fun b => [b, b]) ++ [false, true]).length + 1 =
+      2 * x.length + 3 := by simp; omega
+  simp only [hlen] at hf
+  have hbase : (contPairTM N).ComputesInTime y
+      [decide ((N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+        (N.tm.runWith u (N.tm.initCfg x)).output = [true])]
+      ((2 * x.length + 2) +
+        (u.length + (1 + (x.length + 1) + (u.length + 1)) + (u.length + 1))) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hi, hp]
+    exact hf
+  apply hbase.mono
+  simp [pairEncode]
+  omega
+
+/-- The split-search failure word is rejected in one transition, including
+when the source NDTM would accept an empty input and empty choice word. -/
+private lemma cont_pair_empty (N : FinNDTM Bool) :
+    (contPairTM N).ComputesInTime [] [false] 1 := by
+  apply (computesInTime_iff _ _ _ _).mpr
+  simp [MultiTapeTM.runFrom_succ_eq_step,
+    MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, Cfg.inputSymbol, contPairTM]
+
+/-- The library split emitter, retaining the exact encoded pair on success
+and its distinguished empty failure word otherwise. -/
+private def contSplitWord (C c : ℕ) (y : List Bool) : List Bool :=
+  match solveSplit C c y.length with
+  | some i => pairEncode (y.take i) (y.drop i)
+  | none => []
+
+/-- Split emission increases length by at most the doubled-prefix overhead.
+This bound holds before any validity assumption. -/
+private lemma cont_split_length (C c : ℕ) (y : List Bool) :
+    (contSplitWord C c y).length ≤ 2 * y.length + 2 := by
+  cases hs : solveSplit C c y.length with
+  | none => simp [contSplitWord, hs]
+  | some i =>
+    have hi := (certificateSplit_spec C c y.length i (by
+      simpa only [cont_split_bridge] using hs)).1
+    simp [contSplitWord, hs, pairEncode]
+    omega
+
+/-- Every output of split search is handled in linear time, with exactly the
+verifier's decision bit. Failure rejects; success uses the unique recovered
+prefix and the exact certificate length.
+**Proof sketch.** In the success case the split specification proves the
+dropped suffix has the required length, so `choiceVerifier_append` identifies
+the verdict. In the failure case `choiceVerifier_no_split` excludes membership.
+The emitted pair's length is bounded on both branches before composition. -/
+private lemma cont_split_answer (N : FinNDTM Bool) (C c : ℕ) (y : List Bool) :
+    (contPairTM N).ComputesInTime (contSplitWord C c y)
+      [MultiTapeTM.indicator (choiceVerifier N C c) y] (3 * (2 * y.length + 3)) := by
+  classical
+  cases hs : solveSplit C c y.length with
+  | none =>
+    have hn := choiceVerifier_no_split N C c y (by
+      simpa only [cont_split_bridge] using hs)
+    simpa only [contSplitWord, hs, MultiTapeTM.indicator, if_neg hn] using
+      (cont_pair_empty N).mono (by omega : 1 ≤ 3 * (2 * y.length + 3))
+  | some i =>
+    obtain ⟨hi, he⟩ := certificateSplit_spec C c y.length i (by
+      simpa only [cont_split_bridge] using hs)
+    have hu : (y.drop i).length = C * ((y.take i).length + 1) ^ c := by
+      rw [List.length_drop, List.length_take_of_le hi]
+      omega
+    have hv := choiceVerifier_append N C c (y.take i) (y.drop i) hu
+    rw [List.take_append_drop] at hv
+    have hout : MultiTapeTM.indicator (choiceVerifier N C c) y =
+        decide ((N.tm.runWith (y.drop i) (N.tm.initCfg (y.take i))).state = none ∧
+          (N.tm.runWith (y.drop i) (N.tm.initCfg (y.take i))).output = [true]) := by
+      simp only [MultiTapeTM.indicator, hv]
+      split <;> simp_all
+    rw [contSplitWord, hs, hout]
+    apply (cont_pair_computes N (y.take i) (y.drop i)).mono
+    have hl := cont_split_length C c y
+    simp only [contSplitWord, hs] at hl
+    omega
+
+/-- The complete choice-word verifier is polynomial-time on all inputs.
+**Proof sketch.** The audited native split search costs `A(n+1)^(c+2)`.
+Its output has length at most `2n+2`. Timed buffered composition takes at
+most that cost plus the output length plus two steps to start the loader;
+the loader/simulator then costs at most `3(2n+3)`. Thus the whole budget
+is at most `(A+13)(n+1)^(c+2)`. The second phase is proved on every possible
+split-search output; no untimed composition or unstated totality is used. -/
+private lemma cont_choiceVerifier_mem_P (N : FinNDTM Bool) (C c : ℕ) :
+    choiceVerifier N C c ∈ P := by
+  obtain ⟨M, A, hM⟩ := computesFunInTime_splitSolve C c
+  refine mem_P_iff.mpr ⟨A + 13, c + 2, bufferedCompTM M (contPairTM N), ?_⟩
+  intro y
+  have hfirst : M.ComputesInTime y (contSplitWord C c y)
+      (A * (y.length + 1) ^ (c + 2)) := hM y
+  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
+    bufferedComp_start M (contPairTM N) y (contSplitWord C c y) _ hfirst
+  obtain ⟨tag, _, hr⟩ := bufferedSecondCfg_run M (contPairTM N)
+    ((contPairTM N).tm.initCfg (contSplitWord C c y)) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads
+    (3 * (2 * y.length + 3))
+  have hc := (computesInTime_iff _ _ _ _).mp (cont_split_answer N C c y)
+  have hbase : (bufferedCompTM M (contPairTM N)).ComputesInTime y
+      [MultiTapeTM.indicator (choiceVerifier N C c) y] (a + 3 * (2 * y.length + 3)) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  apply hbase.mono
+  have hl := cont_split_length C c y
+  have hp : y.length + 1 ≤ (y.length + 1) ^ (c + 2) := by
+    simpa only [Nat.pow_one] using
+      Nat.pow_le_pow_right (Nat.succ_pos y.length) (by omega : 1 ≤ c + 2)
+  calc
+    a + 3 * (2 * y.length + 3) ≤
+        A * (y.length + 1) ^ (c + 2) + 13 * (y.length + 1) := by omega
+    _ ≤ A * (y.length + 1) ^ (c + 2) + 13 * (y.length + 1) ^ (c + 2) :=
+      Nat.add_le_add_left (Nat.mul_le_mul_left 13 hp) _
+    _ = (A + 13) * (y.length + 1) ^ (c + 2) := by ring
+
 /-- **The choice word is a certificate** [AB09, Theorem 2.6, ⊆-direction of the
 union]: every fixed-degree nondeterministic time class is contained in `NP`.
 
@@ -668,18 +1212,21 @@ source emissions are captured on a separate tape; a finite summary recognizes
 exactly `[true]` for the final verdict. These prepared-configuration contracts do
 not supply a decider from blank tapes: the native arithmetic/split-search machine,
 its rejecting branch, countdown preparation, rewinds, and timed phase composition
-remain the single admitted verifier-membership obligation in this partial fill. -/
+remain the single admitted verifier-membership obligation in this partial fill.
+
+**Continuation completion (E2-cont-B).** The native library split emitter
+`computesFunInTime_splitSolve C c` has exactly this file's coefficient `C`.
+The new paired-input loader fills the input and choice buffers, rewinds them,
+and enters the unchanged `choiceCore`; it needs no unary countdown. The
+library emitter's empty failure word rejects. Timed buffered composition and
+`cont_choiceVerifier_mem_P` now supply the whole blank-tape decider with bound
+`(A+13)(m+1)^(c+2)`, where `A(m+1)^(c+2)` bounds split search. The predecessor's
+copier and all other private phase proofs are retained unchanged. -/
 theorem ntime_poly_subset_NP (c : ℕ) : NTIME (fun n => n ^ c + 1) ⊆ NP := by
   rintro L ⟨a, N, hN⟩
   refine ⟨2 * a, c, choiceVerifier N (2 * a) c, ?_,
     choice_certificate_iff N L a c hN⟩
-  -- Continuation frontier: compile certificateSplit and its arithmetic from
-  -- native blank-tape initialization, produce the unary split countdown,
-  -- run choiceCopy, rewind its two data buffers, and enter choiceCore on
-  -- disjoint tapes. The no-split branch emits false. The proved phase bounds
-  -- are |x++u|+1 for copying and |u|+1 for simulation; startup, rewinding,
-  -- state/tape embeddings and their combined polynomial bound remain open.
-  sorry
+  exact cont_choiceVerifier_mem_P N (2 * a) c
 
 /-- **Guess the certificate** [AB09, Theorem 2.6, ⊇-direction of the union]: `NP` is
 contained in the union of the fixed-degree nondeterministic time classes.
