@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.ClassNP.PolyTime
 import TCSlib.Complexity.ClassP.P
 import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Build.Primitives
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -323,6 +324,302 @@ private lemma paddedVerifier_witness (C c : ℕ) (V : Language Bool) (x : List B
     exact ⟨u, stripCertificate_pad u k, hu, hV⟩
 
 
+/-- A linear machine contract is already in the polynomial normal form. -/
+private lemma verifier_poly_linear {f : List Bool → List Bool}
+    (h : ∃ (M : FinTM Bool) (a : ℕ),
+      M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f := by
+  obtain ⟨M, a, hM⟩ := h
+  exact ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
+
+/-- Fixed output words are polynomial-time computable. -/
+private lemma verifier_poly_const (w : List Bool) :
+    PolyTimeComputable (fun _ => w) :=
+  verifier_poly_linear (FinTM.computesFunInTime_const w)
+
+/-- A captured Boolean test selects one of two polynomial-time computations.
+
+**Proof sketch.** The audited timed branch captures the test's complete output,
+rewinds, and starts the selected branch on the same input. Enlarge the three
+polynomial degrees to their maximum and absorb the final constant there. -/
+private lemma verifier_poly_cond {p : List Bool → Bool}
+    {f g : List Bool → List Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => if p x then f x else g x) := by
+  obtain ⟨D, A, a, hD⟩ := hp
+  obtain ⟨F, B, b, hF⟩ := hf
+  obtain ⟨G, C, c, hG⟩ := hg
+  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hD hF hG
+  let e := max a (max b c)
+  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
+  have hpow (d : ℕ) (hd : d ≤ e) : (x.length + 1) ^ d ≤ (x.length + 1) ^ e :=
+    Nat.pow_le_pow_right (Nat.succ_pos _) hd
+  have ha := Nat.mul_le_mul_left A (hpow a (Nat.le_max_left _ _))
+  have hb := Nat.mul_le_mul_left B (hpow b
+    ((Nat.le_max_left b c).trans (Nat.le_max_right a (max b c))))
+  have hc := Nat.mul_le_mul_left C (hpow c
+    ((Nat.le_max_right b c).trans (Nat.le_max_right a (max b c))))
+  have hbc : max (B * (x.length + 1) ^ b) (C * (x.length + 1) ^ c) ≤
+      B * (x.length + 1) ^ e + C * (x.length + 1) ^ e := by
+    exact max_le (by omega) (by omega)
+  have hone := Nat.one_le_pow e (x.length + 1) (Nat.succ_pos _)
+  calc
+    _ ≤ K * (A * (x.length + 1) ^ e +
+        (B * (x.length + 1) ^ e + C * (x.length + 1) ^ e) +
+        (x.length + 1) ^ e) :=
+      Nat.mul_le_mul_left K (Nat.add_le_add (Nat.add_le_add ha hbc) hone)
+    _ = _ := by ring
+
+/-- Total first-component projection; malformed words produce the empty word. -/
+private def verifier_fst (z : List Bool) : List Bool :=
+  ((pairDecode z).map Prod.fst).getD []
+
+/-- Total second-component projection; malformed words produce the empty word. -/
+private def verifier_snd (z : List Bool) : List Bool :=
+  ((pairDecode z).map Prod.snd).getD []
+
+/-- The catalog's guarded pair-to-concatenation function. -/
+private def verifier_concat (z : List Bool) : List Bool :=
+  match pairDecode z with
+  | some (a, b) => a ++ b
+  | none => []
+
+/-- The catalog's payload map retains the head and rejects malformed words. -/
+private def verifier_map (g : List Bool → List Bool) (z : List Bool) : List Bool :=
+  match pairDecode z with
+  | some (a, b) => pairEncode a (g b)
+  | none => []
+
+/-- The threaded map preserves polynomial time.
+
+**Proof sketch.** Apply C1 with the monotone polynomial majorant. Degree `c+1`
+dominates both the input scan and the payload computation, including `c=0`. -/
+private lemma verifier_poly_map {g : List Bool → List Bool}
+    (hg : PolyTimeComputable g) : PolyTimeComputable (verifier_map g) := by
+  obtain ⟨G, C, c, hG⟩ := hg
+  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
+    (by
+      intro m n h
+      exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) c))
+  refine ⟨M, K * (C + 1), c + 1, fun x => (hM x).mono ?_⟩
+  have hn : x.length + 1 ≤ (x.length + 1) ^ (c + 1) := by
+    simpa only [Nat.pow_one] using
+      Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ c + 1 by omega)
+  have hc := Nat.mul_le_mul_left C
+    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_succ c))
+  calc
+    _ ≤ K * ((x.length + 1) ^ (c + 1) + C * (x.length + 1) ^ (c + 1)) :=
+      Nat.mul_le_mul_left K (Nat.add_le_add hn hc)
+    _ = _ := by ring
+
+/-- General pairing follows the audit's retained-request `H/s/t` recipe.
+
+**Proof sketch.** First compute `H x = pairEncode (f x) []`, then retain the
+whole input in `s x = pairEncode x (H x)`. Duplicate `s x` and map
+`g ∘ pairFst` on its payload to obtain `t x = pairEncode (s x) (g x)`.
+Concatenating this pair and extracting its second component yields exactly
+`pairEncode (f x) (g x)`. Every payload map acts only on its own payload. -/
+private lemma verifier_poly_pair {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+  have hdup := verifier_poly_linear FinTM.computesFunInTime_pairDup
+  have hfst : PolyTimeComputable verifier_fst :=
+    verifier_poly_linear FinTM.computesFunInTime_pairFst
+  have hsnd : PolyTimeComputable verifier_snd :=
+    verifier_poly_linear FinTM.computesFunInTime_pairSnd
+  have hcat : PolyTimeComputable verifier_concat :=
+    verifier_poly_linear FinTM.computesFunInTime_pairConcat
+  have hH : PolyTimeComputable (fun x => pairEncode (f x) []) := by
+    simpa only [Function.comp_def, verifier_map, pairDecode_pairEncode] using
+      (verifier_poly_map (verifier_poly_const [])).comp (hdup.comp hf)
+  have hs : PolyTimeComputable (fun x => pairEncode x (pairEncode (f x) [])) := by
+    simpa only [Function.comp_def, verifier_map, pairDecode_pairEncode] using
+      (verifier_poly_map hH).comp hdup
+  have ht : PolyTimeComputable
+      (fun x => pairEncode (pairEncode x (pairEncode (f x) [])) (g x)) := by
+    simpa only [Function.comp_def, verifier_map, verifier_fst, pairDecode_pairEncode,
+      Option.map_some, Option.getD_some] using
+      (verifier_poly_map (hg.comp hfst)).comp (hdup.comp hs)
+  convert hsnd.comp (hcat.comp ht) using 1
+  funext x
+  simp only [Function.comp_apply, verifier_concat, pairDecode_pairEncode]
+  have heq : pairEncode x (pairEncode (f x) []) ++ g x =
+      pairEncode x (pairEncode (f x) (g x)) := by
+    simp only [pairEncode, List.append_nil, List.append_assoc]
+  rw [heq]
+  simp only [verifier_snd, pairDecode_pairEncode, Option.map_some, Option.getD_some]
+
+/-- The two bounded searches are literally equal at the shifted coefficient. -/
+private lemma verifier_split_bridge (C c : ℕ) :
+    solveSplit (C + 1) c = certificateSplit C c := rfl
+
+/-- The library's reverse scan implements the existing recursive strip spec.
+
+**Proof sketch.** The semantic strip specification gives either an all-false
+word or its last-true decomposition. Reversing that decomposition makes the
+library scan discard exactly the false suffix and the marker. -/
+private lemma verifier_strip_bridge : splitAtLastTrue = stripCertificate := by
+  funext v
+  cases hs : stripCertificate v with
+  | none =>
+    have hv := (stripCertificate_spec v).1.mp hs
+    rw [hv]
+    simp [splitAtLastTrue]
+  | some u =>
+    obtain ⟨k, hk⟩ := ((stripCertificate_spec v).2 u).mp hs
+    rw [hk]
+    simp [splitAtLastTrue]
+
+/-- The original-bound test returns one Boolean, rejecting parse failures. -/
+private def verifier_bound (C c : ℕ) (z : List Bool) : Bool :=
+  match pairDecode z with
+  | some (a, b) => decide (b.length ≤ C * (a.length + 1) ^ c)
+  | none => false
+
+/-- P8 supplies the timed original-bound test, with its parameters unchanged. -/
+private lemma verifier_poly_bound (C c : ℕ) :
+    PolyTimeComputable (fun z => [verifier_bound C c z]) := by
+  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairLenCheck C c
+  exact ⟨M, a, c + 1, hM⟩
+
+/-- Normalize a `P` decider through the audited capture-and-branch host.
+The W3 controller uses `capture_run` to capture the old verifier's complete
+singleton verdict, including an emission on its halting transition. -/
+private lemma verifier_poly_indicator {V : Language Bool} (hV : V ∈ P) :
+    PolyTimeComputable (fun x => [MultiTapeTM.indicator V x]) := by
+  obtain ⟨C, c, M, hM⟩ := mem_P_iff.mp hV
+  have h : PolyTimeComputable (fun x => [MultiTapeTM.indicator V x]) := ⟨M, C, c, hM⟩
+  have hc := verifier_poly_cond h (verifier_poly_const [true]) (verifier_poly_const [false])
+  convert hc using 1
+  funext x
+  cases MultiTapeTM.indicator V x <;> rfl
+
+/-- A polynomial-time singleton indicator is a polynomial-time decider. -/
+private lemma verifier_mem_P {V : Language Bool}
+    (h : PolyTimeComputable (fun x => [MultiTapeTM.indicator V x])) : V ∈ P := by
+  obtain ⟨M, C, c, hM⟩ := h
+  exact mem_P_iff.mpr ⟨C, c, M, hM⟩
+
+/-- The reverse length comparison uses general pairing and P8 at `(1,1)`.
+
+**Proof sketch.** Generate `C(|a|+1)^c` in unary and prepend one bit. Pair the
+old payload with this generated word. P8 then tests
+`C(|a|+1)^c + 1 ≤ |b| + 1`, exactly the required reverse inequality. -/
+private lemma verifier_poly_reverseBound (C c : ℕ) :
+    PolyTimeComputable (fun z =>
+      [decide (C * ((verifier_fst z).length + 1) ^ c ≤ (verifier_snd z).length)]) := by
+  have hfst : PolyTimeComputable verifier_fst :=
+    verifier_poly_linear FinTM.computesFunInTime_pairFst
+  have hsnd : PolyTimeComputable verifier_snd :=
+    verifier_poly_linear FinTM.computesFunInTime_pairSnd
+  obtain ⟨U, a, hU⟩ := FinTM.computesFunInTime_polyUnary C c
+  have hgen : PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ c) true) :=
+    ⟨U, a, c + 1, hU⟩
+  have hpre := verifier_poly_linear (FinTM.computesFunInTime_prepend [true])
+  have hpair := verifier_poly_pair hsnd (hpre.comp (hgen.comp hfst))
+  simpa only [Function.comp_def, verifier_bound, pairDecode_pairEncode,
+    List.singleton_append, List.length_cons, List.length_replicate, Nat.pow_one,
+    Nat.one_mul, Nat.add_le_add_iff_right] using (verifier_poly_bound 1 1).comp hpair
+
+/-- The forward verifier is decided by the guarded exact-width pipeline.
+
+**Proof sketch.** Validate the pairing grammar, test both length inequalities,
+concatenate the components, and capture the old decider's verdict. All branches
+are timed catalog compositions; malformed words never reach the old verifier. -/
+private lemma pairedVerifier_mem_P (C c : ℕ) {V : Language Bool} (hV : V ∈ P) :
+    pairedVerifier C c V ∈ P := by
+  classical
+  have hfalse := verifier_poly_const [false]
+  have hcat : PolyTimeComputable verifier_concat :=
+    verifier_poly_linear FinTM.computesFunInTime_pairConcat
+  have hrun := (verifier_poly_indicator hV).comp hcat
+  have hreverse := verifier_poly_cond (verifier_poly_reverseBound C c) hrun hfalse
+  have hwidth := verifier_poly_cond (verifier_poly_bound C c) hreverse hfalse
+  have hfinal := verifier_poly_cond
+    (verifier_poly_linear FinTM.computesFunInTime_pairValid) hwidth hfalse
+  apply verifier_mem_P
+  convert hfinal using 1
+  funext y
+  cases hy : pairDecode y with
+  | none =>
+    simp [hy, pairedVerifier, MultiTapeTM.indicator]
+  | some p =>
+    rcases p with ⟨x, u⟩
+    by_cases hlo : u.length ≤ C * (x.length + 1) ^ c
+    · by_cases hhi : C * (x.length + 1) ^ c ≤ u.length
+      · have he := Nat.le_antisymm hlo hhi
+        simp [hy, verifier_bound, verifier_fst, verifier_snd, verifier_concat,
+          pairedVerifier, MultiTapeTM.indicator, he]
+      · have he : u.length ≠ C * (x.length + 1) ^ c := fun h => hhi h.ge
+        simp [hy, verifier_bound, verifier_fst, verifier_snd,
+          pairedVerifier, MultiTapeTM.indicator, hlo, hhi, he]
+    · have he : u.length ≠ C * (x.length + 1) ^ c := fun h => hlo h.le
+      simp [hy, verifier_bound, pairedVerifier, MultiTapeTM.indicator, hlo, he]
+
+/-- The shifted split machine retains the recovered input as the pair head. -/
+private def verifier_split (C c : ℕ) (y : List Bool) : List Bool :=
+  match solveSplit (C + 1) c y.length with
+  | some n => pairEncode (y.take n) (y.drop n)
+  | none => []
+
+/-- Strip only the payload of a valid pair, retaining its original input. -/
+private def verifier_strip (z : List Bool) : List Bool :=
+  match pairDecode z with
+  | some (a, v) =>
+    match splitAtLastTrue v with
+    | some u => pairEncode a u
+    | none => []
+  | none => []
+
+/-- The reverse verifier is decided by shifted split, marker, and bound guards.
+
+**Proof sketch.** P10 at `(C+1,c)` recovers and retains the input prefix. A
+grammar guard rejects its empty failure output. P9 strips only that pair's
+payload; a second grammar guard rejects marker failure. P8 at the original
+`(C,c)` rechecks the stripped witness before the captured old paired decider
+runs. The search equation gives `n ≤ |y|`, so the retained prefix has exactly
+length `n`; the two vocabulary bridges identify the original semantic spec. -/
+private lemma paddedVerifier_mem_P (C c : ℕ) {V : Language Bool} (hV : V ∈ P) :
+    paddedVerifier C c V ∈ P := by
+  classical
+  obtain ⟨S, a, hS⟩ := FinTM.computesFunInTime_splitSolve (C + 1) c
+  have hsplit : PolyTimeComputable (verifier_split C c) := ⟨S, a, c + 2, hS⟩
+  obtain ⟨T, b, hT⟩ := FinTM.computesFunInTime_stripLast
+  have hstrip : PolyTimeComputable verifier_strip := ⟨T, b, 2, hT⟩
+  have hvalid := verifier_poly_linear FinTM.computesFunInTime_pairValid
+  have hfalse := verifier_poly_const [false]
+  have hbound := verifier_poly_cond (verifier_poly_bound C c)
+    (verifier_poly_indicator hV) hfalse
+  have hmarked := verifier_poly_cond hvalid hbound hfalse
+  have hfound := verifier_poly_cond hvalid (hmarked.comp hstrip) hfalse
+  have hfinal := hfound.comp hsplit
+  apply verifier_mem_P
+  convert hfinal using 1
+  funext y
+  cases hs : certificateSplit C c y.length with
+  | none =>
+    simp [verifier_split, verifier_split_bridge, hs,
+      pairDecode, paddedVerifier, MultiTapeTM.indicator]
+  | some n =>
+    have hn : n ≤ y.length := by
+      have heq := (certificateSplit_spec C c y.length n).mp hs
+      omega
+    cases ht : stripCertificate (y.drop n) with
+    | none =>
+      simp [verifier_split, verifier_split_bridge, hs,
+        verifier_strip, verifier_strip_bridge, ht, pairDecode_pairEncode,
+        pairDecode, paddedVerifier, MultiTapeTM.indicator]
+    | some u =>
+      by_cases hu : u.length ≤ C * (n + 1) ^ c
+      · simp [verifier_split, verifier_split_bridge, hs,
+          verifier_strip, verifier_strip_bridge, ht, pairDecode_pairEncode,
+          verifier_bound, List.length_take, Nat.min_eq_left hn,
+          paddedVerifier, MultiTapeTM.indicator, hu]
+      · simp [verifier_split, verifier_split_bridge, hs,
+          verifier_strip, verifier_strip_bridge, ht, pairDecode_pairEncode,
+          verifier_bound, List.length_take, Nat.min_eq_left hn,
+          paddedVerifier, MultiTapeTM.indicator, hu]
+
 /-- **Bounded-length paired certificates define the same class**
 [AB09, Exercise 2.1, repaired per the phase-1 audit]: `L ∈ NP` iff there are
 `C`, `c`, and a verifier `V ∈ P` with
@@ -365,7 +662,7 @@ theorem mem_NP_iff_exists_length_le {L : Language Bool} :
     refine ⟨C, c, pairedVerifier C c V, ?_, fun x => ?_⟩
     · -- Remaining machine obligation: aligned parsing, the explicit polynomial
       -- length-equality test, concatenation, and timed execution of V's decider.
-      sorry
+      exact pairedVerifier_mem_P C c hV
     · rw [hL x]
       constructor
       · rintro ⟨u, hu, hVu⟩
@@ -376,7 +673,7 @@ theorem mem_NP_iff_exists_length_le {L : Language Bool} :
     refine ⟨C + 1, c, paddedVerifier C c V, ?_, fun x => ?_⟩
     · -- Remaining machine obligation: bounded split search, last-true stripping,
       -- the original-bound test, pairing, and timed execution of V's decider.
-      sorry
+      exact paddedVerifier_mem_P C c hV
     · exact (hL x).trans (paddedVerifier_witness C c V x).symm
 
 end Complexity
