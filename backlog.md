@@ -250,7 +250,11 @@ uncomputability chapter.
   promotion of `timed_input_bound`/`timed_rewind`, post-gate); D7
   approved-trailing (the `Loop`/`Primitives` split, ride-along
   audited, with the auditor's cross-file-privates qualification
-  binding). Next: the **E2 continuation briefs**. Subsumes 2C's
+  binding). **E2 continuation briefs issued 2026-10-04**
+  (`briefs/ch2-e2cont-batch{A,B,C,D}.md`, base `64d82f84`; 7/15/6/12
+  pts; zero sanctioned `sorryAx` anywhere; superseded-privates
+  no-touch rule; decision-log row in the ch2 plan). Next: dispatch,
+  then integration + the epoch-2 audit. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
