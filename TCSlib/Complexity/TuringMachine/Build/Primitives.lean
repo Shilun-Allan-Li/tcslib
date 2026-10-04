@@ -108,6 +108,17 @@ return and no earlier visit to its return state. These separate component
 proofs do not yet constitute a combined body or a proof of its `hround`.
 -/
 
+/-! Batch P4 closure note: the split-search body is now constructed and proved.
+`splitBodyTM` separates preparation, counted source evaluation, checked rewind,
+rejection restoration, and native-bit emission into disjoint finite phases.
+`splitBody_round` composes their exact seams and proves positive duration and
+strict-interior anchor exclusion, including the arbitrary-bit past-end stall.
+`splitEmit_run` supplies the native-slice payload; `splitBody_envelope` accounts
+for every phase within the common polynomial bound. Both exponent cases
+instantiate this body through the proved `splitSolve_of_body` loop closure.
+All fifteen primitive contracts are now proved without admissions. Earlier
+spec/checkpoint status notes above are retained as historical documentation. -/
+
 namespace Turing.FinTM
 
 /-! Implementation note (batch P): the private prefix construction below is
@@ -3570,6 +3581,622 @@ private lemma splitPrepare_first (k : ℕ) (w s : List Bool) :
   · rfl
   · exact splitPrepare_run k w s
 
+/-- A phase trace excludes the round anchor even at its two endpoints. -/
+private def splitSafe {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (anchor : S) (c : Cfg k Bool S w) (t : ℕ) : Prop :=
+  ∀ j ≤ t, (tm.runFrom c j).state ≠ some anchor
+
+/-- Safe traces concatenate at their literal configuration seam. -/
+private lemma splitSafe_add {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (anchor : S) (c : Cfg k Bool S w) (u v : ℕ)
+    (hu : splitSafe tm anchor c u) (hv : splitSafe tm anchor (tm.runFrom c u) v) :
+    splitSafe tm anchor c (u + v) := by
+  intro j hj
+  by_cases h : j ≤ u
+  · exact hu j h
+  · have he : j = u + (j - u) := by omega
+    rw [he, MultiTapeTM.runFrom_add]
+    exact hv (j - u) (by omega)
+
+/-- Cut an absorbing source phase at its first terminal control state and
+embed the entire prefix into a disjoint host phase.
+**Proof sketch.** Take the least terminal visit. Absorption identifies its
+configuration with the known endpoint. Induct on the prefix length using
+transition agreement only before that visit; every mapped control state,
+including a halted state, is different from the host anchor. -/
+private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+    (emb : S → H) (anchor : H) (stop : S → Prop) [DecidablePred stop]
+    (haway : ∀ q, emb q ≠ anchor)
+    (hfix : ∀ c : Cfg k Bool S w, (∃ q, c.state = some q ∧ stop q) → tm.step c = c)
+    (hagree : ∀ q, ¬stop q → ∀ inp work,
+      host.tr (emb q) inp work = (tm.tr q inp work).mapState emb)
+    (c d : Cfg k Bool S w) (T : ℕ)
+    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, host.runFrom (c.mapState emb) t = d.mapState emb ∧
+      splitSafe host anchor (c.mapState emb) t := by
+  classical
+  have hex : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=
+    ⟨T, by rw [hT]; exact hd⟩
+  let t := Nat.find hex
+  have ht : t ≤ T := Nat.find_min' hex (by rw [hT]; exact hd)
+  have he : tm.runFrom c t = d := by
+    have hh := tm.runFrom_add c t (T - t)
+    have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+      Function.iterate_fixed (hfix _ (Nat.find_spec hex)) _
+    rw [Nat.add_sub_of_le ht, hT, hconst] at hh
+    exact hh.symm
+  have hp : ∀ j ≤ t, host.runFrom (c.mapState emb) j = (tm.runFrom c j).mapState emb := by
+    intro j
+    induction j with
+    | zero => intro hj; rfl
+    | succ j ih =>
+      intro hj
+      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+        MultiTapeTM.runFrom_succ_eq_step']
+      let z := tm.runFrom c j
+      change host.step (z.mapState emb) = (tm.step z).mapState emb
+      cases hz : z.state with
+      | none => simp [MultiTapeTM.step, Cfg.mapState, hz]
+      | some q =>
+        have hn : ¬stop q := fun hq => Nat.find_min hex (by omega) ⟨q, hz, hq⟩
+        simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]
+        rw [hagree q hn]
+        rfl
+  refine ⟨t, ht, by rw [hp t (le_refl _), he], ?_⟩
+  intro j hj
+  rw [hp j hj]
+  cases hs : (tm.runFrom c j).state with
+  | none => simp [Cfg.mapState, hs]
+  | some q => simpa [Cfg.mapState, hs] using haway q
+
+/-- A standalone native-input rewind, with an absorbing return at state two. -/
+private def splitRewindTM (k : ℕ) : FinTM Bool where
+  k := k + 1
+  State := Fin 3
+  tm := {
+    q₀ := 0
+    tr := fun q inp _ => match q.val with
+      | 0 => controlAction .neg (some 1)
+      | 1 => match inp with
+        | some _ => controlAction .neg (some 1)
+        | none => controlAction .pos (some 2)
+      | _ => controlAction 0 (some 2) }
+
+/-- Emit a native-input split, using tape zero only as a length counter.
+The first two states double native bits, state two completes the separator,
+and state three copies the native suffix. No candidate bit is emitted. -/
+private def splitEmitTM (k : ℕ) : FinTM Bool where
+  k := k + 1
+  State := Fin 4
+  tm := {
+    q₀ := 0
+    tr := fun q inp work => match q.val with
+      | 0 => match work 0 with
+        | none => ⟨0, fun _ => (none, 0), some false, some 2⟩
+        | some _ => ⟨0, fun _ => (none, 0), inp, some 1⟩
+      | 1 => ⟨.pos, Fin.cases (none, .pos) (fun _ => (none, 0)), inp, some 0⟩
+      | 2 => ⟨0, fun _ => (none, 0), some true, some 3⟩
+      | _ => match inp with
+        | some b => ⟨.pos, fun _ => (none, 0), some b, some 3⟩
+        | none => controlAction 0 none }
+
+/-- Each subroutine has its own finite control phase; only cleanup can
+return to the anchor. The acceptance bit survives the native-input rewind. -/
+private inductive SplitBodyState (S : Type) where
+  | anchor
+  | prepare (q : Fin 3 × Bool)
+  | count (q : S) (over : Bool)
+  | check (over : Bool)
+  | rewind (accept : Bool) (q : Fin 3)
+  | restore (q : Fin 5 × Bool)
+  | emit (q : Fin 4)
+
+private instance splitBodyStateFintype (S : Type) [Fintype S] :
+    Fintype (SplitBodyState S) := derive_fintype% _
+
+/-- Equality of controller states compares only matching phases and their
+finite payloads. Keep the instance private, including its generated helpers. -/
+private instance splitBodyStateDecidableEq (S : Type) [DecidableEq S] :
+    DecidableEq (SplitBodyState S) := by
+  intro a b
+  cases a <;> cases b
+  all_goals try (solve | apply isFalse; intro h; cases h)
+  · exact isTrue rfl
+  · exact decidable_of_iff _ (Iff.symm (iff_of_eq (SplitBodyState.prepare.injEq _ _)))
+  · exact decidable_of_iff _ (Iff.symm (iff_of_eq (SplitBodyState.count.injEq _ _ _ _)))
+  · exact decidable_of_iff _ (Iff.symm (iff_of_eq (SplitBodyState.check.injEq _ _)))
+  · exact decidable_of_iff _ (Iff.symm (iff_of_eq (SplitBodyState.rewind.injEq _ _ _ _)))
+  · exact decidable_of_iff _ (Iff.symm (iff_of_eq (SplitBodyState.restore.injEq _ _)))
+  · exact decidable_of_iff _ (Iff.symm (iff_of_eq (SplitBodyState.emit.injEq _ _)))
+
+/-- Combined round controller. The polynomial source starts on the prepared
+bank, and its emissions are counted against native input without physical
+output. Every seam transition is explicit, including the final anchor return. -/
+private def splitBodyTM (M : FinTM Bool) (start : M.State) : FinTM Bool where
+  k := M.k + 1
+  State := SplitBodyState M.State
+  tm := {
+    q₀ := .anchor
+    tr := fun q inp work => match q with
+      | .anchor => controlAction 0 (some (.prepare (0, false)))
+      | .prepare p =>
+        if p.1 = 2 then controlAction 0 (some (.count start p.2))
+        else ((splitPrepareTM M.k).tm.tr p inp work).mapState .prepare
+      | .count q over => splitCountAction .count .check over inp
+          (M.tm.tr q none (fun i => work i.succ))
+      | .check over => controlAction 0 (some (.rewind (!over && inp.isNone) 0))
+      | .rewind ok p =>
+        if p = 2 then controlAction 0 (some (if ok then .emit 0 else .restore (0, false)))
+        else ((splitRewindTM M.k).tm.tr p inp work).mapState (.rewind ok)
+      | .restore p =>
+        if p = (4, false) then controlAction 0 (some .anchor)
+        else ((splitRestoreTM M.k).tm.tr p inp work).mapState .restore
+      | .emit p => ((splitEmitTM M.k).tm.tr p inp work).mapState .emit }
+
+/-- The source bank has the candidate's successor length on each tape and
+all heads at zero; its virtual input is empty. -/
+private def splitBank (M : FinTM Bool) (s : List Bool)
+    (q : Option M.State) (out : List Bool) : Cfg M.k Bool M.State [] :=
+  ⟨q, 1, fun _ => catalogPolyTape (s.length + 1), fun _ => 0, out⟩
+
+/-- The genuine initial configuration is the empty-candidate anchor seam;
+there is no unproved startup work hidden in a zero-time witness. -/
+private lemma splitBody_start (M : FinTM Bool) (start : M.State) (w : List Bool) :
+    (splitBodyTM M start).tm.initCfg w =
+      Cfg.ofWords .anchor (stateWord (M.k + 1) []) := by
+  rw [initCfg_ofWords]
+  congr 1
+  funext i
+  simp [stateWord]
+
+/-- A complete source embedding commutes with every step, including halt. -/
+private lemma splitEmbed_run {k : ℕ} {S H : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H) (emb : S → H)
+    (hagree : ∀ q inp work, host.tr (emb q) inp work = (tm.tr q inp work).mapState emb)
+    (c : Cfg k Bool S w) (t : ℕ) :
+    host.runFrom (c.mapState emb) t = (tm.runFrom c t).mapState emb := by
+  apply MultiTapeTM.runFrom_comm_of_step
+  intro z
+  cases hs : z.state with
+  | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
+  | some q =>
+    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+    rw [hagree]
+    rfl
+
+/-- Preparation reaches its first return with the exact counted-source bank.
+Every configuration of the embedded preparation is outside the anchor phase.
+**Proof sketch.** Cut the absorbing source at its first return, map its full
+configuration into the preparation phase, then take the explicit dispatch.
+Check the source-bank seam field by field, including the native head and flag. -/
+private lemma splitBody_prepare (M : FinTM Bool) (start : M.State) (w s : List Bool) :
+    ∃ t ≤ 2 * (s.length + 1),
+      (splitBodyTM M start).tm.runFrom
+        (Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) =
+          splitCountCfg SplitBodyState.count SplitBodyState.check w s
+            (splitBank M s (some start) []) ∧
+      splitSafe (splitBodyTM M start).tm .anchor
+        (Cfg.ofWords (input := w) (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) := by
+  obtain ⟨t, ht, he, hsafe⟩ := splitEmbed_cut (splitPrepareTM M.k).tm
+    (splitBodyTM M start).tm SplitBodyState.prepare .anchor (fun q => q.1 = 2)
+    (by intro q; simp)
+    (by
+      rintro z ⟨⟨q, over⟩, hz, hq⟩
+      change q = 2 at hq
+      subst q
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (2, over))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    (by intro q hq inp work; simp [splitBodyTM, hq])
+    (Cfg.ofWords (input := w) (0, false) (stateWord (M.k + 1) s))
+    (splitPrepareReady M.k w s 2 0) (2 * (s.length + 1))
+    ⟨_, rfl, rfl⟩ (splitPrepare_run M.k w s)
+  have hstep : (splitBodyTM M start).tm.step
+      ((splitPrepareReady M.k w s 2 0).mapState SplitBodyState.prepare) =
+      splitCountCfg SplitBodyState.count SplitBodyState.check w s
+        (splitBank M s (some start) []) := by
+    simp only [MultiTapeTM.step, Cfg.mapState, splitPrepareReady, Option.map_some,
+      splitBodyTM, ↓reduceIte]
+    refine Cfg.ext ?_ ?_ rfl ?_ rfl
+    · simp [Action.apply, controlAction, splitCountCfg, splitBank]
+    · simp [Action.apply, controlAction, splitCountCfg, splitBank]
+    · funext i
+      refine Fin.cases ?_ (fun j => ?_) i <;>
+        simp [Action.apply, controlAction, splitCountCfg, splitBank]
+  have hinit : (Cfg.ofWords (input := w) (0, false) (stateWord (M.k + 1) s)).mapState
+      (SplitBodyState.prepare (S := M.State)) = Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s) := rfl
+  rw [hinit] at he hsafe
+  have hend : (splitBodyTM M start).tm.runFrom
+      (Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) =
+      splitCountCfg SplitBodyState.count SplitBodyState.check w s
+        (splitBank M s (some start) []) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', he, hstep]
+  refine ⟨t, ht, hend, ?_⟩
+  intro j hj
+  by_cases hjt : j ≤ t
+  · exact hsafe j hjt
+  · have hj' : j = t + 1 := by omega
+    rw [hj', hend]
+    simp [splitCountCfg, splitBank]
+
+/-- Counted evaluation reaches its first source halt; every prefix remains
+in a count or check state and therefore cannot revisit the round anchor.
+**Proof sketch.** Choose the least source halt and remove its constant halted
+suffix. Apply the counted correspondence to every prefix through that halt;
+its control image is disjoint from the anchor, including the return state. -/
+private lemma splitBody_count (M : FinTM Bool) (start : M.State) (w s : List Bool)
+    (out : List Bool) (T : ℕ)
+    (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
+    ∃ t ≤ T, (splitBodyTM M start).tm.runFrom
+      (splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s (some start) [])) t =
+      splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s none out) ∧
+      splitSafe (splitBodyTM M start).tm .anchor
+        (splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s (some start) [])) t := by
+  classical
+  let c := splitBank M s (some start) []
+  let d := splitBank M s none out
+  have hh : ∃ t, (M.tm.runFrom c t).state = none := ⟨T, by rw [hT]; rfl⟩
+  let t := Nat.find hh
+  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; rfl)
+  have he : M.tm.runFrom c t = d := by
+    have h := M.tm.runFrom_add c t (T - t)
+    rw [Nat.add_sub_of_le ht, hT, M.tm.runFrom_of_halt _ (Nat.find_spec hh)] at h
+    exact h.symm
+  have hp (j : ℕ) (hj : j ≤ t) := splitCount_run M.tm (splitBodyTM M start).tm
+    SplitBodyState.count SplitBodyState.check (fun _ _ _ _ => rfl) w s c j
+    (fun l hl => Nat.find_min hh (by omega))
+  refine ⟨t, ht, ?_, ?_⟩
+  · rw [hp t (le_refl _), he]
+  · intro j hj
+    rw [hp j hj]
+    cases hq : (M.tm.runFrom c j).state <;> simp [splitCountCfg, hq]
+
+/-- Rewind preserves the exact source bank and physical output. Its terminal
+state is cut before dispatch to the accepting emitter or rejecting cleanup.
+**Proof sketch.** Use the quantitative native rewind, then cut its absorbing
+return and embed that prefix while retaining the acceptance bit in control. -/
+private lemma splitBody_rewind (M : FinTM Bool) (start : M.State) (w : List Bool)
+    (ok : Bool) (c : Cfg (M.k + 1) Bool (Fin 3) w)
+    (hc : c.state = some 0) :
+    ∃ t ≤ c.inputPos.val + 2,
+      (splitBodyTM M start).tm.runFrom (c.mapState (SplitBodyState.rewind ok)) t =
+        ({c with state := some (2 : Fin 3), inputPos := 1}).mapState (SplitBodyState.rewind ok) ∧
+      splitSafe (splitBodyTM M start).tm .anchor (c.mapState (SplitBodyState.rewind ok)) t := by
+  obtain ⟨T, hT, he⟩ := catalogRewind (splitRewindTM M.k).tm (0 : Fin 3) (1 : Fin 3) (some (2 : Fin 3))
+    (fun _ _ => rfl) (fun _ _ => rfl) c hc
+  obtain ⟨t, ht, hend, hsafe⟩ := splitEmbed_cut (splitRewindTM M.k).tm
+    (splitBodyTM M start).tm (SplitBodyState.rewind ok) .anchor (fun q => q = (2 : Fin 3))
+    (by intro q; simp)
+    (by
+      rintro z ⟨q, hz, rfl⟩
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (2 : Fin 3))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    (by intro q hq inp work; simp [splitBodyTM, hq])
+    c {c with state := some (2 : Fin 3), inputPos := 1} T ⟨(2 : Fin 3), rfl, rfl⟩ he
+  exact ⟨t, ht.trans hT, hend, hsafe⟩
+
+/-- Rejection cleanup is embedded up to its absorbing return, so its exact
+restoration and the no-anchor property hold simultaneously in the body.
+**Proof sketch.** Apply the exact restoration run and cut at its absorbing
+false-flag return. Its host control remains in the restore phase; the final
+transition to the anchor is accounted for separately by the round proof. -/
+private lemma splitBody_restore (M : FinTM Bool) (start : M.State) (w s : List Bool) :
+    ∃ t ≤ 2 * s.length + w.length + 5,
+      (splitBodyTM M start).tm.runFrom
+        ((splitRestoreScan M.k w s 0).mapState SplitBodyState.restore) t =
+        Cfg.ofWords (.restore (4, false)) (stateWord (M.k + 1) (splitStep w s)) ∧
+      splitSafe (splitBodyTM M start).tm .anchor
+        ((splitRestoreScan M.k w s 0).mapState SplitBodyState.restore) t := by
+  obtain ⟨T, hT, he⟩ := splitRestore_run M.k w s
+  obtain ⟨t, ht, hend, hsafe⟩ := splitEmbed_cut (splitRestoreTM M.k).tm
+    (splitBodyTM M start).tm SplitBodyState.restore .anchor (fun q => q = (4, false))
+    (by intro q; simp)
+    (by
+      rintro z ⟨q, hz, rfl⟩
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (4, false))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    (by intro q hq inp work; simp [splitBodyTM, hq])
+    (splitRestoreScan M.k w s 0)
+    (Cfg.ofWords (4, false) (stateWord (M.k + 1) (splitStep w s))) T
+    ⟨_, rfl, rfl⟩ he
+  exact ⟨t, ht.trans hT, hend, hsafe⟩
+
+/-- Emitter configurations preserve the initialized scratch bank and use the
+candidate head only to count the doubled native prefix. -/
+private def splitEmitCfg (k : ℕ) (w s : List Bool) (q : Option (Fin 4))
+    (j h : ℕ) (out : List Bool) : Cfg (k + 1) Bool (Fin 4) w :=
+  ⟨q, splitPos w j, Fin.cases (bufferTape s) (fun _ => catalogPolyTape (s.length + 1)),
+    Fin.cases (h : ℤ) (fun _ => 0), out⟩
+
+/-- Two transitions emit two copies of the current native bit and advance
+both the native head and the candidate counter. Arbitrary candidate bit
+values are read only for their presence.
+**Proof sketch.** Induct on the number of doubled cells. The two transitions
+read the same native bit, emit it twice, and only then advance both heads. -/
+private lemma splitEmit_double (k : ℕ) (w s : List Bool) (hs : s.length ≤ w.length) :
+    ∀ j, j ≤ s.length → (splitEmitTM k).tm.runFrom
+      (splitEmitCfg k w s (some 0) 0 0 []) (2 * j) =
+      splitEmitCfg k w s (some 0) j j ((w.take j).flatMap fun b => [b, b]) := by
+  intro j
+  induction j with
+  | zero => intro hj; rfl
+  | succ j ih =>
+    intro hj
+    rw [show 2 * (j + 1) = 2 * j + 1 + 1 by omega,
+      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hread (q : Fin 4) (out : List Bool) :
+        (splitEmitCfg k w s (some q) j j out).inputSymbol = some (w[j]'(by omega)) := by
+      rw [splitPos_read w _ j rfl, dif_pos (by omega)]
+    have hwork : (splitEmitCfg k w s (some 0) j j
+        ((w.take j).flatMap fun b => [b, b])).workTapeSymbols 0 = some (s[j]'(by omega)) := by
+      simp [splitEmitCfg, Cfg.workTapeSymbols, List.getElem?_eq_getElem (by omega : j < s.length)]
+    have hfirst : (splitEmitTM k).tm.step
+        (splitEmitCfg k w s (some 0) j j ((w.take j).flatMap fun b => [b, b])) =
+        splitEmitCfg k w s (some 1) j j
+          (((w.take j).flatMap fun b => [b, b]) ++ [w[j]'(by omega)]) := by
+      unfold MultiTapeTM.step
+      change ((splitEmitTM k).tm.tr (0 : Fin 4) _ _).apply _ = _
+      simp only [splitEmitTM, hwork, hread]
+      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+      funext i; simp [Action.apply, splitEmitCfg]
+    rw [hfirst]
+    unfold MultiTapeTM.step
+    change ((splitEmitTM k).tm.tr (1 : Fin 4) _ _).apply _ = _
+    simp only [splitEmitTM, hread]
+    refine Cfg.ext rfl (splitPos_succ w j) ?_ ?_ ?_
+    · funext i
+      refine Fin.cases ?_ (fun l => ?_) i <;> rfl
+    · funext i
+      refine Fin.cases ?_ (fun l => ?_) i <;> simp [Action.apply, splitEmitCfg]
+    · change (((w.take j).flatMap fun b => [b, b]) ++ [w[j]'(by omega)]) ++
+          [w[j]'(by omega)] = (w.take (j + 1)).flatMap fun b => [b, b]
+      simp only [List.take_succ, List.getElem?_eq_getElem (by omega : j < w.length),
+        Option.toList_some, List.flatMap_append, List.flatMap_cons, List.flatMap_nil,
+        List.append_nil, List.append_assoc, List.cons_append, List.nil_append]
+
+/-- Once the counter is exhausted, emit the two separator bits without
+moving the native head away from the beginning of the suffix. -/
+private lemma splitEmit_separator (k : ℕ) (w s : List Bool) (out : List Bool) :
+    (splitEmitTM k).tm.runFrom (splitEmitCfg k w s (some 0) s.length s.length out) 2 =
+      splitEmitCfg k w s (some 3) s.length s.length (out ++ [false, true]) := by
+  have hwork : (splitEmitCfg k w s (some 0) s.length s.length out).workTapeSymbols 0 = none := by
+    simp [splitEmitCfg, Cfg.workTapeSymbols]
+  have hf : (splitEmitTM k).tm.step (splitEmitCfg k w s (some 0) s.length s.length out) =
+      splitEmitCfg k w s (some 2) s.length s.length (out ++ [false]) := by
+    unfold MultiTapeTM.step
+    change ((splitEmitTM k).tm.tr (0 : Fin 4) _ _).apply _ = _
+    simp only [splitEmitTM, hwork]
+    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+    funext i; simp [Action.apply, splitEmitCfg]
+  rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step,
+    show (splitEmitTM k).tm.step _ = _ from hf, MultiTapeTM.runFrom_succ_eq_step,
+    MultiTapeTM.runFrom_zero]
+  refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
+  · funext i; simp [MultiTapeTM.step, splitEmitTM, Action.apply, splitEmitCfg]
+  · simp [MultiTapeTM.step, splitEmitTM, Action.apply, splitEmitCfg, List.append_assoc]
+
+/-- The suffix-copy phase preserves all work tapes and copies native bits
+verbatim, including the empty suffix and its final blank-reading halt.
+**Proof sketch.** Induct on the remaining suffix while allowing arbitrary
+already-copied prefix and output. The nonempty case copies one native bit;
+the empty case reads the right blank and halts without an extra emission. -/
+private lemma splitEmit_suffix (k : ℕ) (w s rest : List Bool) :
+    ∀ pre out h, w = pre ++ rest → (splitEmitTM k).tm.runFrom
+      (splitEmitCfg k w s (some 3) pre.length h out) (rest.length + 1) =
+      splitEmitCfg k w s none w.length h (out ++ rest) := by
+  induction rest with
+  | nil =>
+    intro pre out h hw
+    have he : w = pre := by simpa using hw
+    clear hw
+    subst w
+    simp only [List.append_nil, List.length_nil, MultiTapeTM.runFrom_succ_eq_step,
+      MultiTapeTM.runFrom_zero]
+    have hr := splitPos_read pre (splitEmitCfg k pre s (some 3) pre.length h out) pre.length rfl
+    simp only [Nat.lt_irrefl, ↓reduceDIte] at hr
+    unfold MultiTapeTM.step
+    change ((splitEmitTM k).tm.tr (3 : Fin 4) _ _).apply _ = _
+    rw [hr]
+    simp [splitEmitTM, controlAction, splitEmitCfg]
+  | cons b rest ih =>
+    intro pre out h hw
+    have hread : (splitEmitCfg k w s (some 3) pre.length h out).inputSymbol = some b := by
+      rw [splitPos_read w _ pre.length rfl]
+      simp [hw]
+    have hstep : (splitEmitTM k).tm.step (splitEmitCfg k w s (some 3) pre.length h out) =
+        splitEmitCfg k w s (some 3) (pre ++ [b]).length h (out ++ [b]) := by
+      unfold MultiTapeTM.step
+      change ((splitEmitTM k).tm.tr (3 : Fin 4) _ _).apply _ = _
+      rw [hread]
+      refine Cfg.ext rfl ?_ rfl ?_ rfl
+      · simpa only [List.length_append, List.length_singleton] using splitPos_succ w pre.length
+      · funext i; simp [splitEmitTM, Action.apply, splitEmitCfg]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+    simpa only [List.append_assoc, List.singleton_append] using
+      ih (pre ++ [b]) (out ++ [b]) h (by simpa [List.append_assoc] using hw)
+
+/-- The accepting emitter produces exactly the encoded native split in
+`|s|+|w|+3` steps. Its candidate may contain any bit pattern.
+**Proof sketch.** Double exactly the native prefix counted by the candidate,
+emit the separator, and copy the remaining native suffix. Concatenate the
+three exact runs and cancel the prefix length in the time expression. -/
+private lemma splitEmit_run (k : ℕ) (w s : List Bool) (hs : s.length ≤ w.length) :
+    (splitEmitTM k).tm.runFrom (splitEmitCfg k w s (some 0) 0 0 [])
+      (s.length + w.length + 3) =
+      splitEmitCfg k w s none w.length s.length
+        (pairEncode (w.take s.length) (w.drop s.length)) := by
+  have ht : s.length + w.length + 3 =
+      2 * s.length + 2 + ((w.drop s.length).length + 1) := by
+    simp only [List.length_drop]; omega
+  rw [ht, MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_add _ (2 * s.length) 2,
+    splitEmit_double k w s hs _ (le_refl _), splitEmit_separator]
+  have h := splitEmit_suffix k w s (w.drop s.length) (w.take s.length)
+    (((w.take s.length).flatMap fun b => [b, b]) ++ [false, true]) s.length
+    (List.take_append_drop s.length w).symm
+  simpa [List.length_take, Nat.min_eq_left hs, pairEncode] using h
+
+/-- A single transition is safe when both its endpoints exclude the anchor. -/
+private lemma splitSafe_one {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S w)
+    (he : tm.step c = d) (hc : c.state ≠ some anchor) (hd : d.state ≠ some anchor) :
+    tm.runFrom c 1 = d ∧ splitSafe tm anchor c 1 := by
+  refine ⟨he, ?_⟩
+  intro j hj
+  rcases (show j = 0 ∨ j = 1 by omega) with rfl | rfl
+  · exact hc
+  · change (tm.step c).state ≠ _
+    rw [he]; exact hd
+
+/-- Concatenate two safe exact phase runs. -/
+private lemma splitSafe_join {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (anchor : S) (c d f : Cfg k Bool S w) (u v : ℕ)
+    (h1 : tm.runFrom c u = d) (hs1 : splitSafe tm anchor c u)
+    (h2 : tm.runFrom d v = f) (hs2 : splitSafe tm anchor d v) :
+    tm.runFrom c (u + v) = f ∧ splitSafe tm anchor c (u + v) := by
+  refine ⟨by rw [MultiTapeTM.runFrom_add, h1, h2], ?_⟩
+  apply splitSafe_add tm anchor c u v hs1
+  rw [h1]; exact hs2
+
+/-- A completed source gives a complete body round, including acceptance,
+rejection, positive duration, and anchor exclusion over every strict interior
+step. The bound explicitly includes all dispatches, rewinds, and emission.
+**Proof sketch.** Depart the anchor in one step. Concatenate safe preparation,
+counting, decision, and rewind traces. Equality accepts and emits native
+slices. Inequality dispatches to the exact scratch restoration, followed by
+one explicit return to the anchor. All intermediate states belong to disjoint
+phases; the only anchor step is the final rejecting transition. -/
+private lemma splitBody_round (M : FinTM Bool) (start : M.State) (w s out : List Bool)
+    (T : ℕ) (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
+    ∃ t, 0 < t ∧ t ≤ T + 5 * s.length + 3 * w.length + 20 ∧
+      (∀ j, 0 < j → j < t →
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) j).state ≠ some .anchor) ∧
+      if decide (s.length + out.length = w.length) then
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).state = none ∧
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).output =
+            pairEncode (w.take s.length) (w.drop s.length)
+      else (splitBodyTM M start).tm.runFrom
+        (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t =
+          Cfg.ofWords .anchor (stateWord (M.k + 1) (splitStep w s)) := by
+  let tm := (splitBodyTM M start).tm
+  let z : Cfg (M.k + 1) Bool (SplitBodyState M.State) w :=
+    Cfg.ofWords .anchor (stateWord (M.k + 1) s)
+  let p : Cfg (M.k + 1) Bool (SplitBodyState M.State) w :=
+    Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)
+  let d := splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s none out)
+  let ok := decide (s.length + out.length = w.length)
+  let c : Cfg (M.k + 1) Bool (Fin 3) w :=
+    ⟨some 0, splitPos w (s.length + out.length),
+      Fin.cases (bufferTape s) (fun _ => catalogPolyTape (s.length + 1)),
+      Fin.cases 0 (fun _ => 0), []⟩
+  let r : Cfg (M.k + 1) Bool (SplitBodyState M.State) w :=
+    ({c with state := some (2 : Fin 3), inputPos := 1} : Cfg (M.k + 1) Bool (Fin 3) w).mapState
+    (SplitBodyState.rewind (S := M.State) ok)
+  have hdepart : tm.runFrom z 1 = p := by
+    change (controlAction 0 (some (.prepare (0, false)))).apply z = p
+    rw [controlAction_apply, moveInputPos_zero]
+    rfl
+  obtain ⟨a, ha, hprep, hpreps⟩ := splitBody_prepare M start w s
+  obtain ⟨b, hb, hcount, hcounts⟩ := splitBody_count M start w s out T hT
+  obtain ⟨h1, hs1⟩ := splitSafe_join tm .anchor p _ d (a + 1) b hprep hpreps hcount hcounts
+  have hcheck : tm.step d = c.mapState (SplitBodyState.rewind ok) := by
+    unfold MultiTapeTM.step
+    change (controlAction 0 (some (.rewind
+      (!decide (w.length < s.length + out.length) && d.inputSymbol.isNone) 0))).apply d = _
+    rw [controlAction_apply, moveInputPos_zero]
+    have hok := splitCount_accept SplitBodyState.count SplitBodyState.check w s
+      (splitBank M s none out)
+    change (!decide (w.length < s.length + out.length) && d.inputSymbol.isNone) = ok at hok
+    rw [hok]
+    rfl
+  obtain ⟨hcheck', hchecks⟩ := splitSafe_one tm .anchor d _ hcheck
+    (by simp [d, splitCountCfg, splitBank]) (by simp [c, Cfg.mapState])
+  obtain ⟨h2, hs2⟩ := splitSafe_join tm .anchor p d _ (a + 1 + b) 1 h1 hs1 hcheck' hchecks
+  obtain ⟨v, hv, hrew, hrews⟩ := splitBody_rewind M start w ok c rfl
+  obtain ⟨h3, hs3⟩ := splitSafe_join tm .anchor p _ r (a + 1 + b + 1) v h2 hs2 hrew hrews
+  have hv' : v ≤ w.length + 3 := by
+    have hp : c.inputPos.val ≤ w.length + 1 := by simp [c, splitPos]
+    omega
+  by_cases hok : s.length + out.length = w.length
+  · have hs : s.length ≤ w.length := by omega
+    let ec := splitEmitCfg M.k w s (some 0) 0 0 []
+    let ed := splitEmitCfg M.k w s none w.length s.length
+      (pairEncode (w.take s.length) (w.drop s.length))
+    have hdispatch : tm.step r = ec.mapState SplitBodyState.emit := by
+      simp only [r, c, Cfg.mapState, Option.map_some, MultiTapeTM.step,
+        tm, splitBodyTM, ↓reduceIte, ok, hok, decide_true]
+      rw [controlAction_apply, moveInputPos_zero]
+      refine Cfg.ext rfl ?_ rfl rfl rfl
+      simp [ec, splitEmitCfg, splitPos]
+    obtain ⟨hd, hds⟩ := splitSafe_one tm .anchor r _ hdispatch
+      (by simp [r, Cfg.mapState]) (by simp [ec, Cfg.mapState, splitEmitCfg])
+    obtain ⟨h4, hs4⟩ := splitSafe_join tm .anchor p r _ (a + 1 + b + 1 + v) 1 h3 hs3 hd hds
+    have hemit : tm.runFrom (ec.mapState SplitBodyState.emit) (s.length + w.length + 3) =
+        ed.mapState SplitBodyState.emit := by
+      rw [splitEmbed_run (splitEmitTM M.k).tm tm SplitBodyState.emit (fun _ _ _ => rfl)]
+      exact congrArg (Cfg.mapState SplitBodyState.emit) (splitEmit_run M.k w s hs)
+    have hemits : splitSafe tm .anchor (ec.mapState SplitBodyState.emit) (s.length + w.length + 3) := by
+      intro j hj
+      rw [splitEmbed_run (splitEmitTM M.k).tm tm SplitBodyState.emit (fun _ _ _ => rfl)]
+      cases hq : ((splitEmitTM M.k).tm.runFrom ec j).state <;> simp [Cfg.mapState, hq]
+    obtain ⟨h5, hs5⟩ := splitSafe_join tm .anchor p _ _ (a + 1 + b + 1 + v + 1)
+      (s.length + w.length + 3) h4 hs4 hemit hemits
+    let u := a + 1 + b + 1 + v + 1 + (s.length + w.length + 3)
+    have hend : tm.runFrom z (1 + u) = ed.mapState SplitBodyState.emit := by
+      rw [MultiTapeTM.runFrom_add, hdepart]; exact h5
+    refine ⟨1 + u, by omega, by dsimp [u]; omega, ?_, ?_⟩
+    · intro j hj hjt
+      change (tm.runFrom z j).state ≠ _
+      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+      exact hs5 (j - 1) (by dsimp [u] at hjt; omega)
+    · simp only [hok, decide_true, ↓reduceIte]
+      change (tm.runFrom z (1 + u)).state = none ∧ _
+      rw [hend]
+      exact ⟨rfl, rfl⟩
+  · let rc := (splitRestoreScan M.k w s 0).mapState (SplitBodyState.restore (S := M.State))
+    have hdispatch : tm.step r = rc := by
+      simp only [r, c, Cfg.mapState, Option.map_some, MultiTapeTM.step,
+        tm, splitBodyTM, ↓reduceIte, ok, hok, decide_false, Bool.false_eq_true]
+      rw [controlAction_apply, moveInputPos_zero]
+      refine Cfg.ext ?_ ?_ ?_ ?_ rfl
+      · simp [rc, splitRestoreScan, Cfg.mapState]
+      · simp [rc, splitRestoreScan, Cfg.mapState, splitPos]
+      · funext i
+        refine Fin.cases ?_ (fun l => ?_) i
+        · rfl
+        · funext z; simp [rc, splitRestoreScan, Cfg.mapState, splitScratch, catalogPolyTape]
+      · funext i
+        refine Fin.cases ?_ (fun l => ?_) i <;> rfl
+    obtain ⟨hd, hds⟩ := splitSafe_one tm .anchor r rc hdispatch
+      (by simp [r, Cfg.mapState]) (by simp [rc, Cfg.mapState, splitRestoreScan])
+    obtain ⟨h4, hs4⟩ := splitSafe_join tm .anchor p r rc (a + 1 + b + 1 + v) 1 h3 hs3 hd hds
+    obtain ⟨l, hl, hrest, hrests⟩ := splitBody_restore M start w s
+    obtain ⟨h5, hs5⟩ := splitSafe_join tm .anchor p rc _ (a + 1 + b + 1 + v + 1) l h4 hs4 hrest hrests
+    let u := a + 1 + b + 1 + v + 1 + l
+    have hreturn : tm.step (Cfg.ofWords (.restore (4, false)) (stateWord (M.k + 1) (splitStep w s))) =
+        Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) (splitStep w s)) := by
+      change (controlAction 0 (some (SplitBodyState.anchor (S := M.State)))).apply _ = _
+      rw [controlAction_apply, moveInputPos_zero]
+      rfl
+    refine ⟨1 + u + 1, by omega, by dsimp [u]; omega, ?_, ?_⟩
+    · intro j hj hjt
+      change (tm.runFrom z j).state ≠ _
+      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+      exact hs5 (j - 1) (by dsimp [u] at hjt; omega)
+    · simp only [hok, decide_false, Bool.false_eq_true, ↓reduceIte]
+      change tm.runFrom z (1 + u + 1) = _
+      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hdepart, h5, hreturn]
+
 /-- Given the concrete startup and round contracts, the audited loop supplies
 the frozen split-search result and exponent. No body contract is assumed as an
 axiom: both are explicit arguments, including the positive silent stall.
@@ -3629,6 +4256,113 @@ private lemma splitSolve_of_body (C e : ℕ) (body : FinTM Bool) (anchor : body.
   convert hm.mono (splitLoop_bound c (A + a) e w.length) using 1
   exact (splitLoop_result C e w).symm
 
+/-- The positive-exponent source is the already proved nested-loop phase,
+started on the prepared bank rather than rerunning input initialization. -/
+private lemma splitSource_poly (c C : ℕ) (s : List Bool) :
+    (catalogPolyUnaryTM c C).tm.runFrom
+      (splitBank (catalogPolyUnaryTM c C) s (some (.loop (Fin.last c))) [])
+      (catalogPolyCost (s.length + 1) C (c + 1) + 1) =
+      splitBank (catalogPolyUnaryTM c C) s none
+        (List.replicate (C * (s.length + 1) ^ (c + 1)) true) := by
+  simpa [splitBank, catalogPolyCfg] using splitPoly_loop_end c C (s.length + 1) (by omega)
+
+/-- Exponent zero uses the fixed prefix source on empty virtual input, with
+no scratch tapes. Its last blank-reading step is included in the bound. -/
+private lemma splitSource_constant (C : ℕ) (s : List Bool) :
+    (catalogPrefixTM (List.replicate C true)).tm.runFrom
+      (splitBank (catalogPrefixTM (List.replicate C true)) s (some (0 : Fin ((List.replicate C true).length + 1))) []) (C + 1) =
+      splitBank (catalogPrefixTM (List.replicate C true)) s none (List.replicate C true) := by
+  have hi : splitBank (catalogPrefixTM (List.replicate C true)) s (some (0 : Fin ((List.replicate C true).length + 1))) [] =
+      (catalogPrefixTM (List.replicate C true)).tm.initCfg [] := by
+    apply Cfg.ext_zero_tapes <;> rfl
+  rw [hi, MultiTapeTM.runFrom_succ_eq_step']
+  have he := catalogPrefixTM_emit (List.replicate C true) [] C (by simp)
+  rw [he]
+  simp only [List.take_replicate, Nat.min_self]
+  apply Cfg.ext_zero_tapes <;>
+    simp [MultiTapeTM.step, catalogPrefixTM, catalogPrefixCfg, Cfg.inputSymbol,
+      Fin.ext_iff, Action.apply, splitBank]
+
+/-- The invariant bounds every candidate, including the one-past-end stall,
+inside one common body envelope. The factor `2^e` covers the prepared side
+length `|s|+1 ≤ 2(|w|+1)` without increasing the exponent.
+**Proof sketch.** Bound the source by its proved box cost, compare the two
+side lengths, and absorb all linear controller overhead into forty copies of
+the positive polynomial envelope. -/
+private lemma splitBody_envelope (C e l n T : ℕ) (hl : l ≤ n + 1)
+    (hT : T ≤ (C + 1 + 5 * e) * (l + 1) ^ e + 1) :
+    T + 5 * l + 3 * n + 20 ≤
+      ((C + 1 + 5 * e) * 2 ^ e + 40) * (n + 1) ^ (e + 1) := by
+  have hp : (l + 1) ^ e ≤ 2 ^ e * (n + 1) ^ (e + 1) := by
+    calc
+      (l + 1) ^ e ≤ (2 * (n + 1)) ^ e := Nat.pow_le_pow_left (by omega) e
+      _ = 2 ^ e * (n + 1) ^ e := Nat.mul_pow _ _ _
+      _ ≤ 2 ^ e * (n + 1) ^ (e + 1) :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_right (by omega) (by omega))
+  have hmul := Nat.mul_le_mul_left (C + 1 + 5 * e) hp
+  have hn : n + 1 ≤ (n + 1) ^ (e + 1) := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos n)
+      (show 1 ≤ e + 1 by omega)
+  have hlin : 5 * l + 3 * n + 21 ≤ 40 * (n + 1) ^ (e + 1) := by omega
+  calc
+    T + 5 * l + 3 * n + 20 ≤
+        (C + 1 + 5 * e) * (2 ^ e * (n + 1) ^ (e + 1)) +
+          40 * (n + 1) ^ (e + 1) := by omega
+    _ = _ := by ring
+
+/-- Instantiate the completed controller with an exact unary-output source.
+The source assumption is discharged below separately for zero and positive
+exponents; startup and the full body round have already been constructed.
+**Proof sketch.** Supply the exact zero-time startup and constructed round to
+the existing loop closure. The common envelope bounds the actual phase times,
+and the source's unary-output length identifies the checked acceptance test. -/
+private lemma splitSolve_source (C e : ℕ) (M : FinTM Bool) (start : M.State)
+    (B : ℕ → ℕ)
+    (hsource : ∀ s : List Bool, M.tm.runFrom (splitBank M s (some start) []) (B s.length) =
+      splitBank M s none (List.replicate (C * (s.length + 1) ^ e) true))
+    (hbound : ∀ l, B l ≤ (C + 1 + 5 * e) * (l + 1) ^ e + 1) :
+    ∃ (N : FinTM Bool) (c : ℕ),
+      N.ComputesFunInTime
+        (fun w => match solveSplit C e w.length with
+          | some i => pairEncode (w.take i) (w.drop i)
+          | none => []) (fun n => c * (n + 1) ^ (e + 2)) := by
+  apply splitSolve_of_body C e (splitBodyTM M start) .anchor
+    ((C + 1 + 5 * e) * 2 ^ e + 40)
+  · intro w
+    refine ⟨0, Nat.zero_le _, ?_, ?_⟩
+    · intro j hj; omega
+    · exact splitBody_start M start w
+  · intro w s hs
+    obtain ⟨t, htpos, ht, hsafe, hend⟩ := splitBody_round M start w s
+      (List.replicate (C * (s.length + 1) ^ e) true) (B s.length) (hsource s)
+    refine ⟨t, htpos, ht.trans (splitBody_envelope C e s.length w.length (B s.length)
+      hs (hbound s.length)), hsafe, ?_⟩
+    simpa only [splitAccept, List.length_replicate] using hend
+
+/-- Close the two exponent cases privately, so compiler-generated proof
+helpers also remain private. Both cases instantiate the concrete body and
+its proved round contract through the exact source interfaces. -/
+private lemma splitSolve_closed (C e : ℕ) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime
+        (fun w => match solveSplit C e w.length with
+          | some i => pairEncode (w.take i) (w.drop i)
+          | none => [])
+        fun n => c * (n + 1) ^ (e + 2) := by
+  cases e with
+  | zero =>
+    apply splitSolve_source C 0 (catalogPrefixTM (List.replicate C true))
+      (0 : Fin ((List.replicate C true).length + 1)) (fun _ => C + 1)
+    · intro s
+      simpa using splitSource_constant C s
+    · intro l; simp
+  | succ e =>
+    apply splitSolve_source C (e + 1) (catalogPolyUnaryTM e C) (.loop (Fin.last e))
+      (fun l => catalogPolyCost (l + 1) C (e + 1) + 1)
+    · exact splitSource_poly e C
+    · intro l
+      exact Nat.add_le_add_right (catalogPolyCost_le (l + 1) C (by omega) (e + 1)) 1
+
 /-- **P10, padding split search** (spec, fill pending — new; the bounded
 search both padding constructions perform, realizable as a
 `Turing.FinTM.exists_loopFindTM` instance over the polynomial-evaluation
@@ -3662,7 +4396,7 @@ theorem computesFunInTime_splitSolve (C e : ℕ) :
           | some i => pairEncode (w.take i) (w.drop i)
           | none => [])
         fun n => c * (n + 1) ^ (e + 2) := by
-  sorry
+  exact splitSolve_closed C e
 
 /-- **P11, fixed-width increment** (spec, fill pending — harvest: the
 enumerator batch's `enumCarryTM`/`enumCarry_correct`, proved with cost at
